@@ -1,0 +1,66 @@
+;===============================================================================
+; VCodeSnip.vi
+;
+; Version information description file used to create VCodeSnip.res resource
+; file Build this file with DelphiDabbler Version Information Editor from
+; http://www.delphidabbler.com/. Compile the resulting .rc file using the
+; Borland BRCC32 resource compiler.
+;
+;===============================================================================
+;
+; ***** BEGIN LICENSE BLOCK *****
+;
+; Version: MPL 1.1
+;
+; The contents of this file are subject to the Mozilla Public License Version
+; 1.1 (the "License"); you may not use this file except in compliance with the
+; License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+;
+; Software distributed under the License is distributed on an "AS IS" basis,
+; WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+; the specific language governing rights and limitations under the License.
+;
+; The Original Code is VCodeSnip.vi.
+;
+; The Initial Developer of the Original Code is Peter Johnson
+; (http://www.delphidabbler.com/).
+;
+; Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+; Johnson. All Rights Reserved.
+;
+; ***** END LICENSE BLOCK *****
+;
+;===============================================================================
+;
+;
+[Fixed File Info]
+File Version #=3, 0, 0, 145
+Product Version #=3, 0, 0, 0
+File OS=4
+File Type=1
+File Sub-Type=0
+File Flags Mask=63
+File Flags=0
+
+[Variable File Info]
+Language=2057
+Character Set=1252
+
+[String File Info]
+Comments=
+Company Name=DelphiDabbler
+File Description=CodeSnip Database Viewer
+File Version=<#F1>.<#F2>.<#F3> build <#F4>
+Internal Name=<SHORTFNAME>
+Legal Copyright=Copyright © P.D.Johnson, 2005-<YEAR>.
+Legal Trademark=
+Original File Name=CodeSnip.exe
+Private Build=
+Product Name=DelphiDabbler CodeSnip
+Product Version=Release <#P1>.<#P2>.<#P3>
+Special Build=
+
+[Configuration Details]
+Identifier=
+NumRCComments=0
+

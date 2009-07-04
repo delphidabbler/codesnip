@@ -1,0 +1,223 @@
+<?xml version="1.0"?>
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<!--
+ * dlg-about-program-tplt.html
+ *
+ * Renamed from about.html at v0.2
+ * Renamed from dlg-about-tplt.html at v1.5
+ *
+ * About dialog box program tab template.
+ * Content displayed in program's about dialog box's "program" tab. No style
+ * sheet used and CSS must be provided directly to web browser object.
+ *
+ * v0.1 of 20 Jan 2005  - Original version (about.html).
+ * v0.2 of 20 Jan 2005  - Renamed as dlg-about-tplt.html.
+ *                      - Changed page title to file name without extension.
+ * v0.3 of 01 Jan 2005  - Restyled to include "powered by delphi" image and to
+ *                        add program name and version number to white pane with
+ *                        image.
+ *                      - Added ResURL template id that maps to HTML resources.
+ * v0.4 of 19 Jan 2005  - Moved these comments below xml and doctype tags.
+ * v0.5 of 14 Jan 2006  - Added credits for 3rd party MD5 code.
+ * v0.6 of 07 Apr 2006  - Added placeholder for registration information.
+ * v1.0 of 08 Jun 2006  - Reformatted update log comments.
+ *                      - Changed link re source code to CodeSnip home page.
+ *                      - Changed to Mozilla Public License.
+ *                      - Removed "powered by delphi" image.
+ * v1.1 of 21 Oct 2006  - Removed all target attributes from a-links.
+ *                      - Added AppExePath template id that maps to path of
+ *                        program's executable file (used for location of
+ *                        license file).
+ * v1.2 of 26 Oct 2006  - Changed to reference license file via LicenseFileName
+ *                        template id rather than via AppExePath template id and
+ *                        hard-wired file name.
+ * v1.3 of 14 Nov 2006  - Changed execute: protocol link to license file to a
+ *                        help: protocol link to License help topic. Removed
+ *                        LicenseFileName template id.
+ * v1.4 of 25 Nov 2006  - Removed border style from image tag.
+ *                      - Replaced use of hard-wired colours in style attributes
+ *                        by use of CSS .header and .warning classes.
+ * v1.5 of 11 Feb 2007  - Removed header table to separate file.
+ *                      - Renamed from dlg-about-tplt.html to
+ *                        dlg-about-program-tplt.html.
+ *                      - Added titles to online links.
+ * v1.6 of 14 Sep 2008  - Added credits for GIFImage third party source code.
+ *                      - Gave external links "external-link" class.
+ *                      - Revised URL of link to CodeSnip online.
+ *                      - Added title to help link.
+ * v1.7 of 25 Jun 2009  - Added credits for Indy and images used in CodeSnip v3.
+ *                      - Updated MPL link.
+ *                      - Placed credits in a scrolling box.
+ *
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg-about-program-tplt.html.
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+  <head>
+    <title>dlg-about-program-tplt</title>
+    <style type="text/css">
+      .scrollbox {
+        overflow: auto;
+        height: 12em;
+        width: auto;
+        margin: 6px 0;
+      }
+      .scrollbox ul {
+        margin: 0 0.5em 0 2em;
+        list-style-type: disc;
+      }
+      .scrollbox ul li {
+        margin: 0.5em 0;
+      }
+      .scrollbox ul ul {
+        list-style-type: circle;
+        margin-top: 0;
+        margin-bottom: 0;
+        margin-left: 1.25em;
+      }
+      .scrollbox ul ul li {
+        margin: 0.25em 0;
+      }
+    </style>
+  </head>
+
+  <body>
+
+    <p>
+      <%Copyright%>
+      All rights reserved. For terms and conditions of distribution and use see
+      the
+      <a
+        class="help-link"
+        href="help:License"
+        title="View the EULA"
+      >End User License Agreement</a>.
+    </p>
+
+    <p>
+      The source code of some of <em>CodeSnip's</em> functionality is available
+      from the
+      <a
+        class="external-link"
+        href="http://www.delphidabbler.com/software/codesnip"
+        title="Go to the CodeSnip home page"
+      >CodeSnip Home Page</a>. The source is made available under the terms of
+      the
+      <a
+        class="external-link"
+        href="http://www.mozilla.org/MPL/MPL-1.1"
+        title="View the license online"
+      >Mozilla Public License</a> and other open source software licenses.
+    </p>
+
+    <p>
+      <strong>Credits &amp; Attributions</strong>
+    </p>
+
+    <div class="scrollbox">
+      <ul>
+        <li>
+          Thanks to Matthias Fichtner for the MD5 digest unit based on the RSA
+          Data Security, Inc. MD5 Message-Digest Algorithm.
+        </li>
+        <li>
+          This software is based, in part, on the work of Anders Melander who
+          wrote the code used to load and convert GIF images. Finn Tolderlund
+          updated the code.
+        </li>
+        <li>
+          <em>CodeSnip</em> uses v9 of the
+          <em>Indy</em> Internet Direct components from the
+          <a
+            class="external-link"
+            href="http://www.indyproject.org/"
+            title="Go to the Indy Project home page"
+          >Indy project</a>.
+        </li>
+        <li>
+          Some of the images used in this program are licensed as follows:
+          <ul>
+            <li>
+              Images extracted from the
+              <a
+                href="http://www.vistaico.com"
+                class="external-link"
+                title="Go to VistaICO.com"
+              >VistaICO Aero Pack 3</a> are copyright &copy; VistaICO.com and
+              licensed under a
+              <a
+                href="http://creativecommons.org/licenses/by/3.0/"
+                class="external-link"
+                title="Creative Commons Attribution 3.0 License"
+              >Creative Commons Attribution 3.0 License</a>.
+            </li>
+            <li>
+              Images extracted from Mark James'
+              <a
+                href="http://www.famfamfam.com/lab/icons/silk/"
+                class="external-link"
+                title="View the Silk icon set web page"
+              >Silk icon set 1.3</a> are licensed under a
+              <a
+                href="http://creativecommons.org/licenses/by/2.5/"
+                class="external-link"
+                title="Creative Commons Attribution 2.5 License"
+              >Creative Commons Attribution 2.5 License</a>.
+            </li>
+            <li>
+              Images extracted from the
+              <a
+                href="http://led24.de/iconset/"
+                class="external-link"
+                title="View the LED Icon Set page"
+              >Led Icon Set</a> are licensed unser a
+              <a
+                href="http://creativecommons.org/licenses/by-sa/3.0/"
+                class="external-link"
+                title="Creative Commons Attribution Share Alike 3.0 License"
+              >Creative Commons Attribution Share Alike 3.0 License</a>.
+            </li>
+          </ul>
+        </li>
+        <li>
+          <em>CodeSnip</em> was developed and built using CodeGear&trade;
+          Delphi.
+        </li>
+      </ul>
+    </div>
+
+    <p>
+      <%Registered%>
+    </p>
+
+  </body>
+
+</html>
+

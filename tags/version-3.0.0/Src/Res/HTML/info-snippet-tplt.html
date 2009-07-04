@@ -1,0 +1,143 @@
+<!--
+ * info-snippet-tplt.html
+ *
+ * Information pane template.
+ * Used to display details of currently selected snippet.
+ *
+ * Renamed from info-routine-tplt.html to info-snippet-tplt.html as at v3.1.
+ *
+ * v0.1 of 20 Feb 2005  - Original version, named info-routine-tplt.html.
+ * v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+ * v0.3 of 03 Jun 2005  - Now contains only inner HTML of body tag rather than
+ *                        complete XHTML document.
+ * v1.0 of 04 Jun 2006  - Reformatted update log comments.
+ *                      - Changed to Mozilla Public License.
+ * v1.1 of 25 Nov 2006  - Added pas-source CSS class to source code pre tag.
+ * v2.0 of 03 Dec 2006  - Removed all template placeholders except compiler
+ *                        table rows and added ids to relevant tags for details
+ *                        to be updated via DHTML.
+ * v2.1 of 14 Sep 2008  - Added "Edit snippet" link to title line that can be
+ *                        hidden dynamically for non-user defined routines. This
+ *                        link has classes that make it alos appear in context
+ *                        menus.
+ * v3.0 of 25 Jan 2009  - Reinstated and modified template placeholders to
+ *                        be used instead of dynamic updating via DHTML.
+ * v3.1 of 20 Jun 2009  - Replaced reference to "routines" with "snippets".
+ *                      - Added new "snippet type" paragraph and <%Kind%>
+ *                        placeholder.
+ *                      - Added div round compiler table that can show or hide
+ *                        it depending on new <%ShowCompilations%> placeholder.
+ *                      - Replaced <p> tag round <%Extra%> placeholder with a
+ *                        <div>: One or more <p> tags now added as part of
+ *                        template replacement.
+ *                      - Renamed as info-snippet-tplt.html.
+ *
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is info-snippet-tplt.html
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+
+
+<div class="details">
+
+  <div>
+
+    <div
+      id="editlink"
+      class="option"
+      style="<%EditLink%>
+        padding:-0.1em 0 0.3em 0;position:relative;float:right;"
+    >
+      <a
+        id="editimglink"
+        class="command-link"
+        href="javascript:void(0);"
+        onclick="<%EditEventHandler%>;return false;"
+        onmouseover="showHint(vEditSnippet);"
+        onmouseout="clearHint();"
+      ><img
+        src="editsnippet.gif"
+        class="option-img"
+        style="width:16px;height:16px;vertical-align:middle;"
+        title="Edit Snippet"
+      ></a>
+      <a
+        id="edittextlink"
+        class="command-link menu-item"
+        href="javascript:void(0);"
+        onclick="<%EditEventHandler%>;return false;"
+        onmouseover="showHint(vEditSnippet);"
+        onmouseout="clearHint();"
+      >Edit Snippet</a>
+    </div>
+
+    <!-- Routine name common with info-routine-tplt.html -->
+    <h1 id="routinename" class="<%RoutineCSSClass%>">
+      <%RoutineName%>
+    </h1>
+
+  </div>
+
+  <p id="description">
+    <%Description%>
+  </p>
+
+  <div id="sourcecode">
+    <%SourceCode%>
+  </div>
+
+  <p>
+    <strong>Snippet type:</strong>
+    <span id="kind"><%Kind%></span>
+  </p>
+
+  <p>
+    <strong>Required units:</strong>
+    <span id="units"><%Units%></span>
+  </p>
+
+  <p>
+    <strong>Required snippets:</strong>
+    <span id="depends"><%Depends%></span>
+  </p>
+
+  <p>
+    <strong>See also:</strong>
+    <span id="xrefs"><%XRefs%></span>
+  </p>
+
+  <div style="<%ShowCompilations%>">
+    <p>
+      <strong>Supported Compilers:</strong>
+    </p>
+
+    <table class="comptable" cellspacing="1" cellpadding="4">
+      <%CompilerTableRows%>
+    </table>
+  </div>
+
+  <div id="extra">
+    <%Extra%>
+  </div>
+
+</div>
+
