@@ -1,0 +1,184 @@
+{
+ * UpdateIni.ps
+ *
+ * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
+ *
+ * Creates per-user and application-wide ini files in correct data folders. Can
+ * also create the new ini files from the information stored in the single ini
+ * file used in versions of CodeSnip prior to version 1.9.
+ *
+ * v1.0 of 08 Sep 2007  - Original version. Worked with single ini file. Updated
+ *                        ini file from Version 1 to Version 2. Replaces old
+ *                        'SourceOutput' section with new Prefs:SourceCode
+ *                        section.
+ * v1.1 of 17 Oct 2007  - Modified to updates Version 1 & 2 of single ini file
+ *                        to Version 3. Performs as v1.0 and additionally
+ *                        replaces old HiliteOutput section and subsections with
+ *                        single new Prefs:Hiliter section.
+ * v2.0 of 14 Aug 2008  - Major update: added support for twin per-user and
+ *                        application wide ini files.
+ *                        - Added code to create new ini files, either as empty
+ *                          files or with content copied from any old-style ini
+ *                          file. New style files are flagged as v4.
+ *                        - Any old style ini file continues to be updated to v3
+ *                          if necessary before being used to create new ini
+ *                          files.
+ *                        - Old routines that operate only on old style ini file
+ *                          were renamed with CS prefix.
+ *                        - Redundant code removed.
+ * v3.0 of 15 Jun 2009  - Heavily revised to updated ini files required by
+ *                        CodeSnip v3.0 and later:
+ *                        - Now delete source hiliting from config files created
+ *                          by earlier versions than CodeSnip 3.x.
+ *                        - Source code formatting from CodeSnip prior to v1.7
+ *                          is now lost.
+ *                        - Modified to deal with new user ini file name.
+ *                        - Program's version number now stored in common config
+ *                          file.
+ *                        - Redundant code removed.
+ *
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UpdateIni.ps.
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
+}
+
+
+function OriginalIniFileName: string;
+  {Gets fully specified file name of original style, solitary, config file
+  (CodeSnip.ini).
+    @return Ini file name.
+  }
+begin
+  Result := AddBackslash(gUserAppDataDir) + 'CodeSnip.ini';
+end;
+
+function CommonIniFileName: string;
+  {Gets fully specified file name of current application wide config file
+  (Common.ini).
+    @return Ini file name.
+  }
+begin
+  Result := AddBackslash(gCommonAppDataDir) + 'Common.ini';
+end;
+
+function OldUserIniFileName: string;
+  {Gets fully specified file name of original per user config file (User.ini).
+    @return Ini file name.
+  }
+begin
+  Result := AddBackslash(gUserAppDataDir) + 'User.ini';
+end;
+
+function UserIniFileName: string;
+  {Gets fully specified file name of current per user config file (User.3.ini).
+    @return Ini file name.
+  }
+begin
+  Result := AddBackslash(gUserAppDataDir) + 'User.3.ini';
+end;
+
+procedure StampIniFiles;
+  {Updates both config files with correct version information. This records ini
+  file versions and version number of program being installed.
+  }
+begin
+  // Flag ini file version as version 5
+  SetIniInt('IniFile', 'Version', 5, UserIniFileName);
+  SetIniInt('IniFile', 'Version', 5, CommonIniFileName);
+  // Record application version in common ini file
+  SetIniString(
+    'Application',
+    'Version',
+    ExpandConstant('{#AppVersion}'),
+    CommonIniFileName
+  );
+end;
+
+procedure CreateIniFilesFromOldStyle;
+  {Creates new style per user and common config files from content of single,
+  old style config file used before CodeSnip v1.9.
+  }
+var
+  I: Integer; // loops thru all highlight elements
+begin
+  // Create per-user settings file:
+  // Copy file
+  FileCopy(OriginalIniFileName, UserIniFileName, False);
+  // Delete unwanted sections:
+  // - Application section now in common ini file
+  // - Source code output format: format lost when updating from CodeSnip pre
+  //   1.7 since section was SourceOutput, but format preserved from v1.7 since
+  //   current Prefs:SourceCode section used
+  // - Highlighting style is deliberately lost since CodeSnip v3 has new default
+  //   style and main display uses style, therefore sections HiliteOutput
+  //   (pre v1.7.5) and Prefs:Hiliter (v1.7 and later) deleted
+  DeleteIniSection('Application', UserIniFileName);
+  DeleteIniSection('SourceOutput', UserIniFileName);
+  DeleteIniSection('HiliteOutput', UserIniFileName);
+  for I := 0 to 11 do
+    DeleteIniSection('HiliteOutput:Elem' + IntToStr(I), UserIniFileName);
+  DeleteIniSection('Prefs:Hiliter', UserIniFileName);
+  // Main window's overview tabs have changed in v3: so we reset to 0 (default)
+  SetIniInt('MainWindow', 'OverviewTab', 0, UserIniFileName);
+
+  // Create common (application specific) settings file
+  // Copy file
+  FileCopy(OriginalIniFileName, CommonIniFileName, False);
+  // Delete unwanted sections
+  // following sections belong in per-user file
+  DeleteIniSection('Cmp:D2', CommonIniFileName);
+  DeleteIniSection('Cmp:D3', CommonIniFileName);
+  DeleteIniSection('Cmp:D4', CommonIniFileName);
+  DeleteIniSection('Cmp:D5', CommonIniFileName);
+  DeleteIniSection('Cmp:D6', CommonIniFileName);
+  DeleteIniSection('Cmp:D7', CommonIniFileName);
+  DeleteIniSection('Cmp:D2005w32', CommonIniFileName);
+  DeleteIniSection('Cmp:D2006w32', CommonIniFileName);
+  DeleteIniSection('Cmp:D2007', CommonIniFileName);
+  DeleteIniSection('Cmp:FPC', CommonIniFileName);
+  DeleteIniSection('FindCompiler', CommonIniFileName);
+  DeleteIniSection('FindText', CommonIniFileName);
+  DeleteIniSection('FindXRefs', CommonIniFileName);
+  DeleteIniSection('MainWindow', CommonIniFileName);
+  DeleteIniSection('Prefs:General', CommonIniFileName);
+  DeleteIniSection('Prefs:Printing', CommonIniFileName);
+  DeleteIniSection('Prefs:SourceCode', CommonIniFileName);
+  DeleteIniSection('Prefs:Hiliter', CommonIniFileName);
+  // following sections may occur when updating from CodeSnip v1.7.5 or earlier
+  DeleteIniSection('SourceOutput', CommonIniFileName);
+  DeleteIniSection('HiliteOutput', CommonIniFileName);
+  for I := 0 to 11 do
+    DeleteIniSection('HiliteOutput:Elem' + IntToStr(I), CommonIniFileName);
+end;
+
+procedure CopyOldUserIniFile;
+  {Copies original per user config file to current location.
+  }
+begin
+  // Copy the file
+  FileCopy(OldUserIniFileName, UserIniFileName, False);
+  // Delete highlighter preferences: not to be brought forward from old versions
+  DeleteIniSection('Prefs:Hiliter', UserIniFileName);
+  // Main window's overview tabs have changed in v3: so we reset to 0 (default)
+  SetIniInt('MainWindow', 'OverviewTab', 0, UserIniFileName);
+end;
+
