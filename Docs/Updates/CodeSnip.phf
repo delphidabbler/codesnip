@@ -13710,4 +13710,85 @@
       )
     )
   )
+  @REVISION(
+    @VERSION            3.0.1 (build 146)
+    @COMMENTS           + Added support for file:// protocol in links in a
+                          snippet's extra information.
+                        + Updated help file re changes to extra info.
+                        + Updated exported code and user database file formats
+                          to v4 to accommodate revised extra information,
+                          although we now save data in v3 format if possible.
+    @COMPILERS          + Delphi 2006
+                        + BRCC32 5.4
+                        + MS HTML Help Workshop 1.1
+                        + HTML Resource Compiler 1.2
+                        + Version Information Editor 2.11.2
+                        + Inno Setup Compiler v5.2.3 with ISPP preprocessor.
+                        + Microsoft MIDL compiler v7.0
+                        + Borland TLIBIMP v10.0
+    @DATE               06/07/2009
+    @FILES(
+      @UPDATED(
+        @FILE           CodeSnip.dpr
+        @VERSION        1.50
+      )
+      @UPDATED(
+        @FILE           FmUserDBEditDlg.pas
+        @VERSION        1.11
+      )
+      @NEW(
+        @FILE           UAutoFree.pas
+        @VERSION        1.0
+      )
+      @NEW(
+        @FILE           UBrowseProtocol.pas
+        @VERSION        1.0
+      )
+      @UPDATED(
+        @FILE           UCodeImportExport.pas
+        @VERSION        1.4
+      )
+      @NEW(
+        @FILE           UFileProtocol.pas
+        @VERSION        1.0
+      )
+      @UPDATED(
+        @FILE           UHelpProtocol.pas
+        @VERSION        1.2
+      )
+      @UPDATED(
+        @FILE           UHTTPProtocol.pas
+        @VERSION        2.0
+      )
+      @UPDATED(
+        @FILE           UProtocols.pas
+        @VERSION        3.0
+      )
+      @UPDATED(
+        @FILE           UREMLDataIO.pas
+        @VERSION        1.2
+      )
+      @UPDATED(
+        @FILE           URoutineExtraHelper.pas
+        @VERSION        1.2
+      )
+      @UPDATED(
+        @FILE           UXMLDataIO.pas
+        @VERSION        1.8
+      )
+      @UPDATED(
+        @FILE           VCodeSnip.vi
+        @DATE           05/07/2009
+        @COMMENTS       Updated file and product numbers for revision 3.0.1
+                        build 146.
+      )
+      @UPDATED(
+        @FILE           Help\HTML\reml.htm
+        @DATE           05/07/2009
+        @COMMENTS       + Added note to description of <a> tag to note that
+                          http: or file: protocol required.
+                        + Restyled some content.
+      )
+    )
+  )
 )

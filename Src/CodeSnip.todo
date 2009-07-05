@@ -1,3 +1,9 @@
+{TODO -oSelf -cRefactor : Use UAutoFree to free REML info in UREMLDataIO}
+{DONE -oJerry Mack -cFeature : Permit use of file:// protocol in extra text}
+{TODO -oSelf -cFeature :
+Add facility to Snippets Editor to display check, render and display REML text (button on extra tab?)
++ add button to test display if any <a> tags are present to test and display URLs.}
+{TODO -oSelf -cBug : Link to DelphiDabbler CodeSnip database in welcome page is broken.}
 {TODO -oSelf -cImprovement : When Vista UI font is implemented, change extra HTML text on extra tab from content font to UI font.}
 {TODO -oSelf -cRefactor : Merge comp-routine.js and detail.js into a single detail.js file and delete all references to comp-routine.js}
 {TODO -oSelf -cObservation : Update date for UNulFormAligner in unit for v1.1 is wrong: it reads 26 Jul 2007 and should be 26 Sep 2007.}
@@ -40,10 +46,10 @@ Check common code of UCopySourceMgr, UCopyInfoMgr and UCopySnippetMgr and provid
 {TODO -oSelf -cImprovement : Remove database detection code from IniDataReader and XML IO classes - make them know they read / wrtie main and user databases respectively}
 {TODO -oSelf -cRefactor : Get rid of TDataIOFactories and make ini, xml and nul data readers and writers be used directly insetad of via factories.}
 {DONE -oSelf -cFeature (v3) : Change alphabetical display handlers / view item to handle underscore routine names}
-{TODO -oSelf -cFeature (v3.x) : Add OS related fonts (add boolean field to TBaseForm and only implement new fonts if flag is true)}
+{TODO -oSelf -cFeature : Add OS related fonts (add boolean field to TBaseForm and only implement new fonts if flag is true)}
 {DONE -cFeature (v3) : Add option to installer to replace any custom styles in preferences with new default style}
 {TODO -cRefactor : Consider moving syntax highlighting setting (CSS builder) down into FrInfo from FrDetailView since comp check tab no longer uses highlighting}
-{TODO -oSelf -cFeature (v3.x) :
+{TODO -oSelf -cFeature :
 Changes preferences dialog sytem so that dialog box code presents empty body and dynamically adds
 tabs (or other UI code - may want abract base class and implementation class).
 
@@ -100,7 +106,7 @@ const
 }}
 {DONE -oSelf -cFeature (v3) : Create a new backup system - old one fails}
 {TODO -cProposal : New TSingleton class that prevents an object from being freed (descendants should permit this)}
-{TODO -oSelf -cFeature (v3.x) : Institute user defined categories}
+{TODO -oSelf -cFeature : Institute user defined categories}
 {DONE -oSelf -cFeature (v3) : Change Copy Source action to Copy Fragment and revise Copy Source to simply copy the TRoutine.SourceCode property - available only for snippets.}
 {DONE -oSelf -cFeature (v3) : Change uncategorised display to list const/type and routines under separate headings}
 {TODO -oSelf -cBug : Fix bug in Select Routines search. It always selects both the user defined and the main database versions of routines with the same name even if only one of them is selected.}
@@ -168,7 +174,7 @@ Current arrangement is confusing since we to use local copies on occasion.}
 {DONE -oSelf -cImprovement : Try to make selected routines frame (or its base class) focus tree view when frame gets focus.}
 
 {TODO -cRefactor -oSelf  : Use IStringList in TSaveUnitMgr.CreateHeaderComments??}
-{TODO -oSelf -cRefactor : Add enumerator to TProtocolRegistrar and use it in TProtocolFactory}
+{DONE -oSelf -cRefactor : Add enumerator to TProtocolRegistrar and use it in TProtocolFactory}
 
 
 {TODO -oSelf -cRefactor : Pull out common code from USaveDialogEx and UOpenDialogEx}
@@ -179,8 +185,8 @@ Current arrangement is confusing since we to use local copies on occasion.}
 {TODO  -oSelf -cRefactor : Try to decouple UPageSetup, UPrintMgr and source code manager objects from associated dialog boxes}
 {DONE -oSelf -cFeature (v3) : Update pascal parser to recognise keywords added since Delphi 7.}
 {TODO -cProposal -oSelf :Terminate application when unexpected (non-CodeSnip) error trapped.}
-{TODO -oSelf -cFeature (v3.x) : Add code to THilitePasParser to detect location of directives and decide if they should be classed as reserved words or not}
-{TODO -oSelf -cFeature (v3.x) : Add parsing for standard user routine. Must start with procedure or function. Need to
+{TODO -oSelf -cFeature : Add code to THilitePasParser to detect location of directives and decide if they should be classed as reserved words or not}
+{TODO -oSelf -cFeature : Add parsing for standard user routine. Must start with procedure or function. Need to
 parse. Grammar is:
   <proc_proto> ::= "procedure" <ident> [<param_list>] ";" [<directives>]
   <fn_proto> ::= "function" <ident> [<param_list>] ":" <ident> ";" [<directives>]

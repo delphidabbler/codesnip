@@ -1,3 +1,9 @@
+Version 3.0.1 - 06 July 2009
+CodeSnip 3.0.1 - 06 July 2009
++ Added support for file:// protocol in links in a snippet's extra information.
++ Updated help file re changes to extra info.
++ Updated exported code and user database file formats to v4 to accommodate revised extra information, although we now save data in v3 format if possible.
+  
 Version 3.0 - 29 June 2009
 CodeSnip 3.0 - 28 June 2009
 + Added support for constants and type definition snippets: there are now four types of snippets - routines, constants, types and freeform (which don't conform to any format). Freeform snippets cannot be included in generated units.
