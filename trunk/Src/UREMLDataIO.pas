@@ -8,6 +8,13 @@
  * v1.0 of 30 Dec 2008  - Original version.
  * v1.1 of 23 Jun 2009  - Added new REML tags: em, var, p, warning, heading.
  *                      - Added new REML entity: &copy.
+ * v1.2 of 05 Jul 2009  - Added new TREMLVersion type.
+ *                      - Added new TREMLAnalyser static class provides latest
+ *                        REML version number and lowest possible version to
+ *                        use for specified active text.
+ *                      - Changed to be able to recognise version of REML where
+ *                        REML tags and entities were introduced and to generate
+ *                        REML in a specified version.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -46,6 +53,12 @@ uses
 
 
 type
+
+  {
+  TREMLVersion:
+    Range of valid REML version numbers.
+  }
+  TREMLVersion = 1..3;
 
   {
   TREMLReader:
@@ -102,30 +115,57 @@ type
   TREMLWriter:
     Class that creates a REML markup representation of an active text object.
   }
-  TREMLWriter = class(TNoConstructObject)
+  TREMLWriter = class(TNoPublicConstructObject)
   strict private
-    class function TextToREMLText(const Text: string): string;
+    fVersion: TREMLVersion;
+    function TextToREMLText(const Text: string): string;
       {Converts plain text to REML compatible text by replacing illegal
       characters with related character entities.
         @param Text [in] Plain text to be converted.
         @return Converted text.
       }
-    class function RenderTag(const TagElem: IActiveTextActionElem): string;
+    function RenderTag(const TagElem: IActiveTextActionElem): string;
       {Renders an active text action element as a REML tag.
         @param TagElem [in] Active text action element to be rendered.
         @return Required REML tag.
       }
-    class function RenderText(const TextElem: IActiveTextTextElem): string;
+    function RenderText(const TextElem: IActiveTextTextElem): string;
       {Renders an active text text element. Illegal characters are converted to
       REML character entities.
         @param TextElem [in] Active text text element.
         @return REML-safe text containing necessary character entities.
       }
+  strict protected
+    constructor InternalCreate(const Version: TREMLVersion);
+      {Internal class constructor. Sets up object to render using a required
+      version of REML.
+        @param Version [in] Version of REML to write.
+      }
   public
-    class function Render(const ActiveText: IActiveText): string;
+    class function Render(const ActiveText: IActiveText;
+      const REMLVer: TREMLVersion): string;
       {Renders REML representation of an active text object.
         @param ActiveText [in] Active text to be rendered.
+        @param REMLVer [in] Version of REML to be written.
         @return String containing REML markup.
+      }
+  end;
+
+  {
+  TREMLAnalyser:
+    Static class that analyses active text and provides information about latest
+    version and lowest possible version that can be used to render the REML.
+  }
+  TREMLAnalyser = class(TNoConstructObject)
+  public
+    const FIRST_VERSION = Low(TREMLVersion);    // first version of REML
+    const LATEST_VERSION = High(TREMLVersion);  // latest version of REML
+    class function LowestWriterVersion(
+      const ActiveText: IActiveText): TREMLVersion;
+      {Determines lowest possible version REML that can be used to write some
+      active text.
+        @param ActiveText [in] Active text to be analysed.
+        @return Minimum required REML version.
       }
   end;
 
@@ -183,14 +223,23 @@ implementation
   This example specifes a heading "Hello" followed by a single paragraph. In the
   paragraph, "Hello" will be bold, "to" should be plain text and "you" should
   hyperlink to "example.com".
+
+  There are several versions of REML as follows:
+  v1 - supported tags: <strong> and <a>. The href attribute of the <a> tag
+       required the http:// protocol.
+     - supported entities: &gt;, &lt, &quot;, &amp;.
+  v2 - added tags: <em>, <var>, <warning>, <mono>, <p> and <heading>.
+     - added entity: &copy;.
+  v3 - changed <a> tag to accept file:// protocol in additions to http://
+       protocol in href attribute.
 }
 
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, StrUtils,
   // Project
-  UExceptions;
+  UExceptions, UUtils;
 
 
 type
@@ -208,19 +257,21 @@ type
       }
       TREMLTag = record
         Id: TActiveTextElemKind;    // active text element kind
+        Version: TREMLVersion;      // REML version where tag introduced
         TagName: string;            // corresponding REML tag name
         ParamName: string;          // name of any REML parameter
         constructor Create(const AId: TActiveTextElemKind;
-          const ATagName: string; const AParamName: string = '');
+          const AVersion: TREMLVersion; const ATagName: string;
+          const AParamName: string = '');
           {Record contructor. Initialises fields.
             @param AId [in] Active text element kind.
-            @param TagName [in] REML tag name.
-            @param ParamName [in] Optional name of parameter.
+            @param AVersion [in] REML version where tag introduced.
+            @param ATagName [in] REML tag name.
+            @param AParamName [in] Optional name of parameter.
           }
       end;
     var
-      fTagMap: array of TREMLTag;
-        {Array of REML tag info, contains details of all supported tags}
+      fTagMap: array of TREMLTag; // Details of all supported tags
     function IndexOfTagId(const Id: TActiveTextElemKind): Integer;
       {Finds index of a tag id in tag map.
         @param Id [in] Tag id to be found.
@@ -262,6 +313,13 @@ type
           parameter or if tag id is not valid.
         @return True if tag is valid, False if not.
       }
+    function LookupTagVersion(const Id: TActiveTextElemKInd;
+      out Version: TREMLVersion): Boolean;
+      {Looks up REML version when tag was introduced.
+        @param Id [in] Id of tag.
+        @param Version [out] REML version when tag was introduced.
+        @return True if tag id is valid, False if not.
+      }
     property Count: Integer read GetCount;
       {Number of supported tags}
     property Ids[Idx: Integer]: TActiveTextElemKind read GetId;
@@ -282,20 +340,24 @@ type
         Record that associates a character with its REML mnemonic entity.
       }
       TREMLEntity = record
-        Entity: string;   // mnemonic entity
-        Ch: Char;         // character equivalent
-        constructor Create(const AEntity: string; const ACh: Char);
+        Entity: string;         // mnemonic entity
+        Ch: Char;               // character equivalent
+        Version: TREMLVersion;  // REML version where entity introduced
+        constructor Create(const AEntity: string; const ACh: Char;
+          const AVersion: TREMLVersion);
           {Record constructor. Initialises record.
             @param AEntity [in] Mnemonic entity.
             @param ACh [in] Equivalent character.
+            @param AVersion [in] REML version where entity introduced.
           }
       end;
     var
-      fEntityMap: array of TREMLEntity;
-        {Array of REML mnemonic entities mapped to character equivalents}
-    function CharToMnemonicEntity(const Ch: Char): string;
+      fEntityMap: array of TREMLEntity; // Entities mapped to equivalent chars
+    function CharToMnemonicEntity(const Ch: Char;
+      const Ver: TREMLVersion): string;
       {Gets the mnemonic character entity that represents a character.
         @param Entity [in] Character for which equivalent entity is required.
+        @param Ver [in] Version of REML for which entity is required.
         @return Required entity or '' if character has no matching mnemonic
           entity.
       }
@@ -321,9 +383,10 @@ type
     destructor Destroy; override;
       {Class destructor. Tidies up object.
       }
-    function MapToEntity(const Ch: Char): string;
+    function MapToEntity(const Ch: Char; const Ver: TREMLVersion): string;
       {Maps a character to a character entity if appropriate.
         @param Ch [in] Character to be mapped.
+        @param Ver [in] Version of REML for which entity is required.
         @return Mnemonic entity if one exists, character itself if it is
           printable and has ascii value less than 127, or a numeric character
           otherwise.
@@ -350,11 +413,8 @@ type
   }
   TREMLInfo = class(TNoConstructObject)
   strict private
-    class var fTags: TREMLTags;
-      {Permanent instance of object that provides information about tags}
-    class var fEntities: TREMLEntities;
-      {Permanent instance of object that converts between REML character
-      entities and plain text}
+    class var fTags: TREMLTags;         // Provides information about tags
+    class var fEntities: TREMLEntities; // Converts REML char entities <=> chars
   public
     class procedure Init;
       {Initialises permanently instantiated object. Must be called before first
@@ -540,9 +600,21 @@ end;
 
 { TREMLWriter }
 
-class function TREMLWriter.Render(const ActiveText: IActiveText): string;
+constructor TREMLWriter.InternalCreate(const Version: TREMLVersion);
+  {Internal class constructor. Sets up object to render using a required
+  version of REML.
+    @param Version [in] Version of REML to write.
+  }
+begin
+  inherited InternalCreate;
+  fVersion := Version;
+end;
+
+class function TREMLWriter.Render(const ActiveText: IActiveText;
+  const REMLVer: TREMLVersion): string;
   {Renders REML representation of an active text object.
     @param ActiveText [in] Active text to be rendered.
+    @param REMLVer [in] Version of REML to be written.
     @return String containing REML markup.
   }
 var
@@ -550,17 +622,22 @@ var
   TextElem: IActiveTextTextElem;  // an active text text element
   TagElem: IActiveTextActionElem; // an active text action element
 begin
-  Result := '';
-  for Elem in ActiveText do
-  begin
-    if Supports(Elem, IActiveTextTextElem, TextElem) then
-      Result := Result + RenderText(TextElem)
-    else if Supports(Elem, IActiveTextActionElem, TagElem) then
-      Result := Result + RenderTag(TagElem);
-  end;
+  with InternalCreate(REMLVer) do
+    try
+      Result := '';
+      for Elem in ActiveText do
+      begin
+        if Supports(Elem, IActiveTextTextElem, TextElem) then
+          Result := Result + RenderText(TextElem)
+        else if Supports(Elem, IActiveTextActionElem, TagElem) then
+          Result := Result + RenderTag(TagElem);
+      end;
+    finally
+      Free;
+    end;
 end;
 
-class function TREMLWriter.RenderTag(
+function TREMLWriter.RenderTag(
   const TagElem: IActiveTextActionElem): string;
   {Renders an active text action element as a REML tag.
     @param TagElem [in] Active text action element to be rendered.
@@ -593,7 +670,7 @@ begin
   end;
 end;
 
-class function TREMLWriter.RenderText(
+function TREMLWriter.RenderText(
   const TextElem: IActiveTextTextElem): string;
   {Renders an active text text element. Illegal characters are converted to
   REML character entities.
@@ -604,7 +681,7 @@ begin
   Result := TextToREMLText(TextElem.Text);
 end;
 
-class function TREMLWriter.TextToREMLText(const Text: string): string;
+function TREMLWriter.TextToREMLText(const Text: string): string;
   {Converts plain text to REML compatible text by replacing illegal characters
   with related character entities.
     @param Text [in] Plain text to be converted.
@@ -617,7 +694,7 @@ begin
   Result := '';
   for Ch in Text do
   begin
-    Entity := TREMLInfo.EntityInfo.MapToEntity(Ch);
+    Entity := TREMLInfo.EntityInfo.MapToEntity(Ch, fVersion);
     if Entity = '' then
       Result := Result + Ch
     else
@@ -671,14 +748,14 @@ begin
   inherited Create;
   // Record all supported tags
   SetLength(fTagMap, 8);
-  fTagMap[0] := TREMLTag.Create(ekLink, 'a', 'href');
-  fTagMap[1] := TREMLTag.Create(ekStrong, 'strong');
-  fTagMap[2] := TREMLTag.Create(ekEm, 'em');
-  fTagMap[3] := TREMLTag.Create(ekVar, 'var');
-  fTagMap[4] := TREMLTag.Create(ekPara, 'p');
-  fTagMap[5] := TREMLTag.Create(ekWarning, 'warning');
-  fTagMap[6] := TREMLTag.Create(ekHeading, 'heading');
-  fTagMap[7] := TREMLTag.Create(ekMono, 'mono');
+  fTagMap[0] := TREMLTag.Create(ekLink,     1, 'a', 'href');
+  fTagMap[1] := TREMLTag.Create(ekStrong,   1, 'strong');
+  fTagMap[2] := TREMLTag.Create(ekEm,       2, 'em');
+  fTagMap[3] := TREMLTag.Create(ekVar,      2, 'var');
+  fTagMap[4] := TREMLTag.Create(ekPara,     2, 'p');
+  fTagMap[5] := TREMLTag.Create(ekWarning,  2, 'warning');
+  fTagMap[6] := TREMLTag.Create(ekHeading,  2, 'heading');
+  fTagMap[7] := TREMLTag.Create(ekMono,     2, 'mono');
 end;
 
 destructor TREMLTags.Destroy;
@@ -771,26 +848,48 @@ begin
     TagName := '';
 end;
 
+function TREMLTags.LookupTagVersion(const Id: TActiveTextElemKInd;
+  out Version: TREMLVersion): Boolean;
+  {Looks up REML version when tag was introduced.
+    @param Id [in] Id of tag.
+    @param Version [out] REML version when tag was introduced.
+    @return True if tag id is valid, False if not.
+  }
+var
+  Idx: Integer; // Index of tag in map
+begin
+  Idx := IndexOfTagId(Id);
+  Result := Idx >= 0;
+  if Result then
+    Version := fTagMap[Idx].Version
+  else
+    Version := Low(TREMLVersion);
+end;
+
 { TREMLTags.TREMLTag }
 
 constructor TREMLTags.TREMLTag.Create(const AId: TActiveTextElemKind;
-  const ATagName, AParamName: string);
+  const AVersion: TREMLVersion; const ATagName, AParamName: string);
   {Record contructor. Initialises fields.
     @param AId [in] Active text element kind.
-    @param TagName [in] REML tag name.
-    @param ParamName [in] Optional name of parameter.
+    @param AVersion [in] REML version where tag introduced.
+    @param ATagName [in] REML tag name.
+    @param AParamName [in] Optional name of parameter.
   }
 begin
   Id := AId;
+  Version := AVersion;
   TagName := ATagName;
   ParamName := AParamName;
 end;
 
 { TREMLEntities }
 
-function TREMLEntities.CharToMnemonicEntity(const Ch: Char): string;
+function TREMLEntities.CharToMnemonicEntity(const Ch: Char;
+  const Ver: TREMLVersion): string;
   {Gets the mnemonic character entity that represents a character.
     @param Entity [in] Character for which equivalent entity is required.
+    @param Ver [in] Version of REML for which entity is required.
     @return Required entity or '' if character has no matching mnemonic entity.
   }
 var
@@ -799,7 +898,7 @@ begin
   Result := '';
   for Idx := Low(fEntityMap) to High(fEntityMap) do
   begin
-    if fEntityMap[Idx].Ch = Ch then
+    if (fEntityMap[Idx].Version <= Ver) and (fEntityMap[Idx].Ch = Ch) then
     begin
       Result := fEntityMap[Idx].Entity;
       Break;
@@ -814,11 +913,11 @@ begin
   inherited Create;
   SetLength(fEntityMap, 5);
   // Record all supported character entities
-  fEntityMap[0] := TREMLEntity.Create('amp', '&');
-  fEntityMap[1] := TREMLEntity.Create('quot', '"');
-  fEntityMap[2] := TREMLEntity.Create('gt', '>');
-  fEntityMap[3] := TREMLEntity.Create('lt', '<');
-  fEntityMap[4] := TREMLEntity.Create('copy', #$A9);
+  fEntityMap[0] := TREMLEntity.Create('amp',  '&',  1);
+  fEntityMap[1] := TREMLEntity.Create('quot', '"',  1);
+  fEntityMap[2] := TREMLEntity.Create('gt',   '>',  1);
+  fEntityMap[3] := TREMLEntity.Create('lt',   '<',  1);
+  fEntityMap[4] := TREMLEntity.Create('copy', #$A9, 2);
 end;
 
 destructor TREMLEntities.Destroy;
@@ -855,14 +954,16 @@ begin
   Result := fEntityMap[Idx].Entity;
 end;
 
-function TREMLEntities.MapToEntity(const Ch: Char): string;
+function TREMLEntities.MapToEntity(const Ch: Char;
+  const Ver: TREMLVersion): string;
   {Maps a character to a character entity if appropriate.
     @param Ch [in] Character to be mapped.
+    @param Ver [in] Version of REML for which entity is required.
     @return Mnemonic entity if one exists, character itself if it is printable
       and has ascii value less than 127, or a numeric character otherwise.
   }
 begin
-  Result := CharToMnemonicEntity(Ch);
+  Result := CharToMnemonicEntity(Ch, Ver);
   if (Result = '') and ( (Ord(Ch) <= 31) or (Ord(Ch) >= 127) ) then
     Result := '#' + IntToStr(Ord(Ch));
 end;
@@ -870,14 +971,53 @@ end;
 { TREMLEntities.TREMLEntity }
 
 constructor TREMLEntities.TREMLEntity.Create(const AEntity: string;
-  const ACh: Char);
+  const ACh: Char; const AVersion: TREMLVersion);
   {Record constructor. Initialises record.
     @param AEntity [in] Mnemonic entity.
     @param ACh [in] Equivalent character.
+    @param AVersion [in] REML version where entity introduced.
   }
 begin
   Entity := AEntity;
   Ch := ACh;
+  Version := AVersion;
+end;
+
+{ TREMLAnalyser }
+
+class function TREMLAnalyser.LowestWriterVersion(
+  const ActiveText: IActiveText): TREMLVersion;
+  {Determines lowest possible version REML that can be used to write some
+  active text.
+    @param ActiveText [in] Active text to be analysed.
+    @return Minimum required REML version.
+  }
+var
+  Elem: IActiveTextElem;          // each element in active text object
+  TagElem: IActiveTextActionElem; // an active text action element
+  TagVer: TREMLVersion;           // REML version when action element introduced
+begin
+  // Note: we can ignore checking for &copy; entity, introduced at ver 2, since
+  // equivalent character in active text can be written in &#999; format by
+  // ealier versions. Presence of &copy; is only critical when reading REML.
+  Result := FIRST_VERSION;
+  for Elem in ActiveText do
+  begin
+    if Supports(Elem, IActiveTextActionElem, TagElem) and
+      (TagElem.State = fsOpen) then
+    begin
+      if not TREMLInfo.TagInfo.LookupTagVersion(Elem.Kind, TagVer) then
+        raise EBug.Create(ClassName + '.LowestWriterVersion: TagVer not found');
+      if TagVer > Result then
+        Result := TagVer;
+      // special case of <a href="file://...">
+      if (Result < 3) and (TagElem.Kind = ekLink) and
+        AnsiStartsText('file://', TagElem.Param) then
+        Result := 3;
+    end;
+    if Result = LATEST_VERSION then
+      Exit;
+  end;
 end;
 
 

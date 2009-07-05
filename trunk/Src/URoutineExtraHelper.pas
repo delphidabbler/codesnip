@@ -9,6 +9,10 @@
  *                        REML may now end in a block level tag causing spurious
  *                        new lines containing full stops.
  *                      - Refactored some code.
+ * v1.2 of 05 Jul 2009  - Added new TRoutineExtraHelper.BuildREMLMarkupLowestVer
+ *                        method.
+ *                      - Changed TRoutineExtraHelper.BuildREMLMarkup to work
+ *                        with revised TREMLWriter.Render method.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -76,7 +80,14 @@ type
           empty string.
       }
     class function BuildREMLMarkup(const ActiveText: IActiveText): string;
-      {Creates REML markup from an active text object.
+      {Creates REML markup from an active text object using latest version.
+        @param ActiveText [in] Active text object used to generate markup.
+        @return Required REML markup.
+      }
+    class function BuildREMLMarkupLowestVer(
+      const ActiveText: IActiveText): string;
+      {Creates REML markup from an active text object using lowest possible
+      version.
         @param ActiveText [in] Active text object used to generate markup.
         @return Required REML markup.
       }
@@ -172,12 +183,24 @@ end;
 
 class function TRoutineExtraHelper.BuildREMLMarkup(
   const ActiveText: IActiveText): string;
-  {Creates REML markup from an active text object.
+  {Creates REML markup from an active text object using latest version.
     @param ActiveText [in] Active text object used to generate markup.
     @return Required REML markup.
   }
 begin
-  Result := TREMLWriter.Render(ActiveText);
+  Result := TREMLWriter.Render(ActiveText, TREMLAnalyser.LATEST_VERSION);
+end;
+
+class function TRoutineExtraHelper.BuildREMLMarkupLowestVer(
+  const ActiveText: IActiveText): string;
+  {Creates REML markup from an active text object using lowest possible version.
+    @param ActiveText [in] Active text object used to generate markup.
+    @return Required REML markup.
+  }
+begin
+  Result := TREMLWriter.Render(
+    ActiveText, TREMLAnalyser.LowestWriterVersion(ActiveText)
+  );
 end;
 
 end.
