@@ -72,6 +72,9 @@
  *                      - Made extra description HTML use content font and
  *                        removed unused CSS style definitions.
  *                      - Test compilation prevented for freeform snippets.
+ * v1.11 of 05 Jul 2009 - Changed to permit either http: or file: protocol to be
+ *                        used in href attributes of Extra REML code. Only http:
+ *                        protocol was previously permitted.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -292,8 +295,8 @@ uses
   StrUtils, Graphics, Menus,
   // Project
   FmDependenciesDlg, IntfCommon, UColours, UConsts, UCSSUtils, UExceptions,
-  URoutineExtraHelper, USnippetKindInfo, USnippetValidator, UIStringList,
-  UMessageBox, USnippetIDs, UStructs, UThemesEx, UUtils;
+  UHTMLUtils, URoutineExtraHelper, USnippetKindInfo, USnippetValidator,
+  UIStringList, UMessageBox, USnippetIDs, UStructs, UThemesEx, UUtils;
 
 
 type
@@ -1238,19 +1241,46 @@ procedure TUserDBEditDlg.ValidateData;
     {Checks the REML text entered in the extra information memo control.
       @except EDataEntry on error.
     }
+
+    // -------------------------------------------------------------------------
+    procedure ValidateURL(URL: string);
+      {Validates a-link href URLs.
+        @param URL [in] URL to validate.
+        @except EDataEntry raised if validation fails.
+      }
+    const
+      cHTTPProtocol = 'http://';  // http protocol prefix
+      cFileProtocol = 'file://';  // file protocal prefix
+    resourcestring
+      // validation error messages
+      sLinkErr = 'Hyperlink URL "%s" in extra information must use either the '
+        + '"http://" or "file://" protocols';
+      sURLLengthErr
+        = 'Hyperlink URL "%s" in extra information markup is not valid';
+    begin
+      URL := URLDecode(URL, False);
+      if AnsiStartsText(cHTTPProtocol, URL) then
+      begin
+        if Length(URL) < Length(cHTTPProtocol) + 6 then
+          Error(sURLLengthErr, [URL], edExtra);
+      end
+      else if AnsiStartsText(cFileProtocol, URL) then
+      begin
+        if Length(URL) < Length(cFileProtocol) + 4 then
+          Error(sURLLengthErr, [URL], edExtra);
+      end
+      else
+        Error(sLinkErr, [URL], edExtra);
+    end;
+    // -------------------------------------------------------------------------
+
   var
-    ActiveText: IActiveText;            // active text created from text
     Elem: IActiveTextElem;              // each element in active text
     ActionElem: IActiveTextActionElem;  // references action element
+    ActiveText: IActiveText;            // active text created from text
   resourcestring
-    // Error message
+    // parse error message
     sActiveTextErr = 'Error parsing extra information markup:' + EOL2 + '%s';
-    sLinkErr = 'Hyperlink URL "%s" in extra information must be prefixed by '
-      + '"http://"';
-    sEmptyLink = 'Hyperlink URL "%s" in extra information does not specify '
-      + 'a resource';
-  const
-    cHTTPProtocol = 'http://';  // http protocal
   begin
     try
       // Try to create active text: this parses the text and raises exception
@@ -1263,18 +1293,13 @@ procedure TUserDBEditDlg.ValidateData;
       else
         raise;
     end;
-    // Scan all active text looking of hyperlinks: check that URL has a http://
-    // protocol and some url text after it
+    // Scan all active text looking of hyperlinks: check that URL has a
+    // supported protocol and some url text after it
     for Elem in ActiveText do
     begin
       if Supports(Elem, IActiveTextActionElem, ActionElem)
         and (ActionElem.Kind = ekLink) then
-      begin
-        if not AnsiStartsText(cHTTPProtocol, ActionElem.Param) then
-          Error(sLinkErr, [ActionElem.Param], edExtra);
-        if (Length(ActionElem.Param) <= Length(cHTTPProtocol)) then
-          Error(sEmptyLink, [ActionElem.Param], edExtra);
-      end;
+        ValidateURL(ActionElem.Param);
     end;
   end;
 
