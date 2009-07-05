@@ -26,6 +26,11 @@
  *                        of "user".
  *                      - Replaced use of TRoutineID and IRoutineIDList with
  *                        TSnippetID and ISnippetIDList.
+ * v1.4 of 05 Jul 2009  - Revised to export in v3 file format if possible but to
+ *                        use v4 format if v3 of REML is required for any
+ *                        snippet extra properties. This is to prevent earlier
+ *                        program versions from reading REML they won't render
+ *                        properly.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -233,20 +238,24 @@ uses
   // Delphi
   SysUtils, ActiveX, XMLDom,
   // Project
-  UAppInfo, URoutineExtraHelper, USnippetIDs, UStructs, UXMLDocConsts;
+  UAppInfo, UREMLDataIO, URoutineExtraHelper, USnippetIDs, UStructs,
+  UXMLDocConsts;
 
 
 const
   // XML file markers: attributes of root node
   // watermark (never changes for all versions)
-  cWatermark  = 'B46969D4-D367-4F5F-833E-F165FBA78631';
-  // file format version
-  cVersion1   = 1;
-  cVersion2   = 2;
-  cVersion3   = 3;
-
+  cWatermark        = 'B46969D4-D367-4F5F-833E-F165FBA78631';
+  // file format versions
+  cVersion1         = 1;
+  cVersion2         = 2;
+  cVersion3         = 3;
+  cVersion4         = 4;
+  cEarliestVersion  = cVersion1;
+  cMinOutputVersion = cVersion3;
+  cLatestVersion    = cVersion4;
   // ID of user category
-  cUserCat    = 'imports';
+  cUserCat          = 'imports';
 
 
 { TUserInfo }
@@ -312,6 +321,34 @@ procedure TCodeExporter.Execute;
   {Performs the export.
     @except ECodeExporter raised if a known error is encountered.
   }
+
+  // ---------------------------------------------------------------------------
+  function MinVersion: Integer;
+    {Determines the minimum version number of the export file. This depends on
+    attributes of the exported snippets.
+      @return Required version number.
+    }
+  var
+    Snippet: TRoutine;        // each exported snippet
+    MinREMLVer: TREMLVersion; // lowest version no. of REML code in extra prop
+    AREMLVer: TREMLVersion;   // required REML version for a snippet
+  begin
+    MinREMLVer := TREMLAnalyser.FIRST_VERSION;
+    for Snippet in fRoutines do
+    begin
+      AREMLVer := TREMLAnalyser.LowestWriterVersion(Snippet.Extra);
+      if AREMLVer > MinREMLVer then
+        MinREMLVer := AREMLVer;
+    end;
+    // Minimum export file version number is at least 3, and 4 if extra property
+    // contains data that requires later version of REML
+    if MinREMLVer < 3 then
+      Result := cMinOutputVersion
+    else
+      Result := cVersion4;
+  end;
+  // ---------------------------------------------------------------------------
+
 var
   RootNode: IXMLNode;   // document root node
 resourcestring
@@ -327,7 +364,7 @@ begin
     TXMLDocHelper.CreateXMLProcInst(fXMLDoc);
     TXMLDocHelper.CreateComment(fXMLDoc, sFileComment);
     RootNode := TXMLDocHelper.CreateRootNode(
-      fXMLDoc, cExportRootNode, cWatermark, cVersion3 
+      fXMLDoc, cExportRootNode, cWatermark, MinVersion
     );
 
     // Write document content
@@ -449,7 +486,7 @@ begin
     fXMLDoc.CreateElement(
       RoutineNode,
       cExtraNode,
-      TRoutineExtraHelper.BuildREMLMarkup(Routine.Extra)
+      TRoutineExtraHelper.BuildREMLMarkupLowestVer(Routine.Extra)
     );
   // write kind
   TXMLDocHelper.WriteSnippetKind(fXMLDoc, RoutineNode, Routine.Kind);
@@ -713,7 +750,10 @@ resourcestring
 begin
   TXMLDocHelper.ValidateProcessingInstr(fXMLDoc);
   Result := TXMLDocHelper.ValidateRootNode(
-    fXMLDoc, cExportRootNode, cWatermark, TRange.Create(cVersion1, cVersion3)
+    fXMLDoc,
+    cExportRootNode,
+    cWatermark,
+    TRange.Create(cEarliestVersion, cLatestVersion)
   );
   // Must be a "routines" node
   RoutinesNode := fXMLDoc.FindNode(cExportRootNode + '\' + cRoutinesNode);

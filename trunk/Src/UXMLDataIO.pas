@@ -33,6 +33,11 @@
  *                      - Renamed some identifiers.
  *                      - Changed error messages that refer to "routine" to
  *                        refer to "snippet".
+ * v1.8 of 05 Jul 2009  - Revised to export in v3 file format if possible but to
+ *                        use v4 format if v3 of REML is required for any
+ *                        snippet extra properties. This is to prevent earlier
+ *                        program versions from reading REML they won't render
+ *                        properly.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -72,7 +77,7 @@ uses
   // Delphi
   SysUtils, Classes, ActiveX, XMLIntf, XMLDom, Windows {for inlining},
   // Project
-  UActiveText, UAppInfo, UConsts, UExceptions, UIStringList,
+  UActiveText, UAppInfo, UConsts, UExceptions, UIStringList, UREMLDataIO,
   URoutineExtraHelper, USnipData, USnippets, UStructs, UUtils, UXMLDocConsts,
   UXMLDocHelper, UXMLDocumentEx;
 
@@ -230,6 +235,7 @@ type
     fFileNum: Integer;          // Number of next available unused data file
     fRoutinesNode: IXMLNode;    // Reference to <routines> node in document
     fCategoriesNode: IXMLNode;  // Reference to <categories> node in document
+    fMinREMLVer: TREMLVersion;  // Minimum REML version needed for Extra props
     procedure WriteNameList(const Parent: IXMLNode;
       const ListName, ItemName: string; const Items: IStringList);
       {Writes a list of names to XML.
@@ -321,14 +327,18 @@ type
 
 const
   // Database file name
-  cDatabaseFileName = 'database.xml';
+  cDatabaseFileName     = 'database.xml';
   // File markers: attributes of root node
   // watermark (never changes for all versions)
-  cWatermark        = '531257EA-1EE3-4B0F-8E46-C6E7F7140106';
+  cWatermark            = '531257EA-1EE3-4B0F-8E46-C6E7F7140106';
   // supported file format versions
-  cVersion1         = 1;
-  cVersion2         = 2;
-  cVersion3         = 3;
+  cVersion1             = 1;
+  cVersion2             = 2;
+  cVersion3             = 3;
+  cVersion4             = 4;
+  cEarliestVersion      = cVersion1;
+  cMinOutputVersion     = cVersion3;
+  cLatestVersion        = cVersion4;
 
 
 { Support routines }
@@ -486,7 +496,7 @@ begin
     fXMLDoc.Active := True;
     TXMLDocHelper.CreateXMLProcInst(fXMLDoc);
     RootNode := TXMLDocHelper.CreateRootNode(
-      fXMLDoc, cUserDataRootNode, cWatermark, cVersion3 // default to v3 doc
+      fXMLDoc, cUserDataRootNode, cWatermark, cLatestVersion 
     );
     fXMLDoc.CreateElement(RootNode, cCategoriesNode);
     fXMLDoc.CreateElement(RootNode, cRoutinesNode);
@@ -769,7 +779,10 @@ function TXMLDataReader.ValidateDoc: Integer;
 begin
   TXMLDocHelper.ValidateProcessingInstr(fXMLDoc);
   Result := TXMLDocHelper.ValidateRootNode(
-    fXMLDoc, cUserDataRootNode, cWatermark, TRange.Create(cVersion1, cVersion3)
+    fXMLDoc,
+    cUserDataRootNode,
+    cWatermark,
+    TRange.Create(cEarliestVersion, cLatestVersion)
   );
   // Both a categories and a routines node must exist
   if fXMLDoc.FindNode(cUserDataRootNode + '\' + cCategoriesNode) = nil then
@@ -796,8 +809,15 @@ procedure TXMLDataWriter.Finalise;
   {Finalises the database. Always called after all other methods.
   }
 var
-  FS: TFileStream;  // stream onto output file
+  FS: TFileStream;      // stream onto output file
+  RequiredVer: Integer; // required file version number
 begin
+  // Set required database file version
+  if fMinREMLVer < 3 then
+    RequiredVer := cVersion3
+  else
+    RequiredVer := cVersion4;
+  fXMLDoc.DocumentElement.SetAttribute(cRootVersionAttr, RequiredVer);
   // We use a TFileStream and TXMLDocument.SaveToStream rather than calling
   // TXMLDocument.SaveToFile so that any problem creating file is reported via
   // a known Delphi exception that can be handled.
@@ -845,6 +865,9 @@ begin
     // Initialise file count
     fFileNum := 0;
 
+    // Assume lowest version of REML is required
+    fMinREMLVer := TREMLAnalyser.FIRST_VERSION;
+
     // Create minimal document containing tags required to be present by other
     // methods
     fXMLDoc.Active := True;
@@ -852,9 +875,9 @@ begin
     TXMLDocHelper.CreateXMLProcInst(fXMLDoc);
     // comments
     TXMLDocHelper.CreateComment(fXMLDoc, sFileComment);
-    // root node
+    // root node: assume latest version needed
     RootNode := TXMLDocHelper.CreateRootNode(
-      fXMLDoc, cUserDataRootNode, cWatermark, cVersion3
+      fXMLDoc, cUserDataRootNode, cWatermark, cLatestVersion
     );
     // empty <categories> and <routines> nodes
     fCategoriesNode := fXMLDoc.CreateElement(RootNode, cCategoriesNode);
@@ -975,6 +998,7 @@ procedure TXMLDataWriter.WriteRoutineProps(const RoutineName: string;
 var
   RoutineNode: IXMLNode;        // routine's node
   FileName: string;             // name of file where source code stored
+  AREMLVer: TREMLVersion;       // version of REML required for a snippet
 const
   // mask used to format source code file name
   cFileNameMask = '%d.dat';
@@ -993,11 +1017,17 @@ begin
     fXMLDoc.CreateElement(RoutineNode, cSourceCodeFileNode, FileName);
     // extra property is only written if value exists
     if not Props.Extra.IsEmpty then
+    begin
       fXMLDoc.CreateElement(
         RoutineNode,
         cExtraNode,
-        TRoutineExtraHelper.BuildREMLMarkup(Props.Extra)
+        TRoutineExtraHelper.BuildREMLMarkupLowestVer(Props.Extra)
       );
+      // note if a later REML version is required
+      AREMLVer := TREMLAnalyser.LowestWriterVersion(Props.Extra);
+      if AREMLVer > fMinREMLVer then
+        fMinREMLVer := AREMLVer;
+    end;
     // Kind property replaces StandardFormat
     TXMLDocHelper.WriteSnippetKind(fXMLDoc, RoutineNode, Props.Kind);
     // compiler results value: only write known results
