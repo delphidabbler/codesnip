@@ -167,6 +167,8 @@
  *                        USnippetsChkListMgr, USnippetValidator,
  *                        UTestUnitDlgMgr, UToolButtonEx and UViewItemTreeNode
  *                        units.
+ * v1.50 of 05 Jul 2009 - Added new UAutoFree, UBrowseProtocol and UFileProtocol
+ *                        units.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -291,9 +293,11 @@ uses
   UAltBugFix in 'UAltBugFix.pas',
   UAnchors in 'UAnchors.pas',
   UAppInfo in 'UAppInfo.pas',
+  UAutoFree in 'UAutoFree.pas',
   UBaseObjects in 'UBaseObjects.pas',
   UBDSCompiler in 'UBDSCompiler.pas',
   UBorlandCompiler in 'UBorlandCompiler.pas',
+  UBrowseProtocol in 'UBrowseProtocol.pas',
   UBugReporter in 'UBugReporter.pas',
   UCheckSum in 'UCheckSum.pas',
   UClipboardHelper in 'UClipboardHelper.pas',
@@ -339,6 +343,7 @@ uses
   UExceptions in 'UExceptions.pas',
   UExeFileType in 'UExeFileType.pas',
   UFileHiliter in 'UFileHiliter.pas',
+  UFileProtocol in 'UFileProtocol.pas',
   UFileUpdater in 'UFileUpdater.pas',
   UFontHelper in 'UFontHelper.pas',
   UFormAligner in 'UFormAligner.pas',
