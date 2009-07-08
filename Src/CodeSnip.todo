@@ -1,9 +1,10 @@
+{DONE -oSelf -cBug : Fix bug where units required by types and consts are not output to generated units.}
 {TODO -oSelf -cRefactor : Use UAutoFree to free REML info in UREMLDataIO}
 {DONE -oJerry Mack -cFeature : Permit use of file:// protocol in extra text}
 {TODO -oSelf -cFeature :
 Add facility to Snippets Editor to display check, render and display REML text (button on extra tab?)
 + add button to test display if any <a> tags are present to test and display URLs.}
-{TODO -oSelf -cBug : Link to DelphiDabbler CodeSnip database in welcome page is broken.}
+{DONE -oSelf -cBug : Link to DelphiDabbler CodeSnip database in welcome page is broken.}
 {TODO -oSelf -cImprovement : When Vista UI font is implemented, change extra HTML text on extra tab from content font to UI font.}
 {TODO -oSelf -cRefactor : Merge comp-routine.js and detail.js into a single detail.js file and delete all references to comp-routine.js}
 {TODO -oSelf -cObservation : Update date for UNulFormAligner in unit for v1.1 is wrong: it reads 26 Jul 2007 and should be 26 Sep 2007.}
@@ -109,10 +110,10 @@ const
 {TODO -oSelf -cFeature : Institute user defined categories}
 {DONE -oSelf -cFeature (v3) : Change Copy Source action to Copy Fragment and revise Copy Source to simply copy the TRoutine.SourceCode property - available only for snippets.}
 {DONE -oSelf -cFeature (v3) : Change uncategorised display to list const/type and routines under separate headings}
-{TODO -oSelf -cBug : Fix bug in Select Routines search. It always selects both the user defined and the main database versions of routines with the same name even if only one of them is selected.}
+{DONE -oSelf -cBug : Fix bug in Select Routines search. It always selects both the user defined and the main database versions of routines with the same name even if only one of them is selected.}
 {DONE -oSelf -cBug : Fix bug where selecting a routine and selecting View | View Test Unit causes JavaScript error if Compiler Check pane has not been displayed}
 {TODO -oSelf -cImprovement : Make forms use appropriate font for operating system.}
-{DONE -oSelf -Improvement : Change paypal donation URL for http://www.delphidabbler.com/url/donate-cs - may want to use consts to allow for localhost etc.}
+{DONE -cImprovement -oSelf -Improvement : Change paypal donation URL for http://www.delphidabbler.com/url/donate-cs - may want to use consts to allow for localhost etc.}
 {TODO -oSelf -cRefactor : Remove RectWidth and RectHeight local functions from TDlgAligner.OffsetDialog and replace with calls to TRectX functions.}
 {DONE -oSelf -cCode correction : Change result of TTestCompileAction to False from True (doesn't call OnExecute).}
 {TODO -oSelf -cProposal : Share email and user name persistence used by code submission to bug reports, mailing list etc.}
