@@ -1,0 +1,131 @@
+/*
+ * detail.css
+ *
+ * Style sheet used by HTML displayed in Information and Comiler Check detail
+ * panes.
+ *
+ * v0.1 of 26 Jan 2005  - Original version (local.css).
+ * v0.2 of 20 Feb 2005  - Deleted redundant styles and added those needed for
+ *                        options box and compiler check pane.
+ *                      - Renamed as detail.css.
+ * v0.3 of 10 Mar 2005  - Added .pas-* classes to use in syntax highlighting of
+ *                        pascal source if detail pane.
+ * v0.4 of 16 Mar 2005  - Changed pascal comment class to use same colour as
+ *                        default hilighting used elsewhere. Also changed pascal
+ *                        classes to use hex colour numbers rather than names.
+ * v0.5 of 25 Apr 2005  - Added new .hilite class.
+ * v1.0 of 04 Jun 2006  - Reformatted update log comments.
+ *                      - Changed to Mozilla Public License.
+ * v1.1 of 25 Nov 2006  - Removed all colour and font style properties from
+ *                        style sheet. These are now set as default CSS in frame
+ *                         units.
+ *                      - Removed all pascal highlighting code.
+ *                      - Added .comptable td and th selectors to specify
+ *                        alignment of compiler table cells in info pane.
+ * v1.2 of 03 Dec 2006  - Added various .testcomp selectors to lay out
+ *                        compilation result table in compiler check pane.
+ *                      - Deleted unused form and .compinfo classes.
+ *                      - Rationalised some margin definitions.
+ * v1.3 of 09 Feb 2007  - Added new h2 CSS class.
+ * v1.4 of 20 Jun 2009  - Added new div.extra-wrapper and h2.extra CSS classes.
+ *
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is detail.css
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
+ */
+
+body {
+  margin: 4px;
+  padding: 0px;
+}
+
+table {
+  margin: 4px 0 0 0;
+  border: 0;
+}
+
+td {
+  vertical-align: top;
+  text-align: left;
+}
+
+th {
+  vertical-align: top;
+  text-align: center;
+}
+
+.comptable td {
+  text-align: center;
+}
+
+.testcomp th, .testcomp td {
+  vertical-align: middle;
+}
+
+.testcomp .compiler {
+  text-align: left;
+}
+
+.testcomp .dbres, .testcomp .testres {
+  text-align: center;
+}
+
+.testcomp .testerr {
+  text-align: left;
+}
+
+h1 {
+  margin: 0 0 8px 0;
+  padding: 0 0 4px 0;
+}
+
+h2 {
+  margin: 8px 0 0 0;
+}
+
+h2.extra {
+  margin: 4px 0 0 0;
+}
+
+p {
+  margin: 4px 0 0 0;
+}
+
+div.extra-wrapper {
+  margin: 4px 0 0 0;
+}
+
+pre {
+  margin: 4px 0;
+  padding: 4px;
+}
+
+.optionbox {
+  margin: 12px 0 0 0;
+  padding: 4px;
+}
+
+.option {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+

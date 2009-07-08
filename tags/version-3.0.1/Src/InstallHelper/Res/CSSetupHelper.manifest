@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<!--
+ * CSSetupHelper.manifest
+ *
+ * Manifest file for CSSetupHelper, CodeSnip's installation helper program.
+ * Specifies execution level required for Vista.
+ *
+ * Based on a sample manifest in "Windows Vista User Account Control (UAC) and
+ * Delphi" by Fredrik Haglund, CodeGear.
+ *
+ * v1.0 of 21 Apr 2008  - Original version that permits application to run
+ *                        without elevation on Vista (Vista would elevate
+ *                        without this because "Setup" is in file name.
+-->
+
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+  <assemblyIdentity
+    type="win32"
+    name="CSSetupHelper"
+    version="1.0.0.0"
+    processorArchitecture="*"
+  />
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+    <security>
+      <requestedPrivileges>
+        <requestedExecutionLevel level="asInvoker" />
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+</assembly>
+
