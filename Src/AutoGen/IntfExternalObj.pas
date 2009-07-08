@@ -49,7 +49,7 @@ unit IntfExternalObj;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 28/06/2009 20:50:08 from Type Library described below.
+// File generated on 08/07/2009 19:04:46 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: ..\Bin\ExternalObj.tlb (1)
