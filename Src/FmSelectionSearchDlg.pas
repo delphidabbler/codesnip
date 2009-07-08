@@ -14,6 +14,9 @@
  *                        defined routines.
  * v1.4 of 16 May 2009  - Changed caption to Select Snippets from Select
  *                        Routines.
+ * v1.5 of 08 Jul 2009  - Revised to use revised search criteria factory method
+ *                        to take a TRoutineList instead of a TStringList of
+ *                        snippet names.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -151,21 +154,12 @@ procedure TSelectionSearchDlg.btnOKClick(Sender: TObject);
   }
 var
   SearchCriteria: ISelectionSearchCriteria; // user's search criteria
-  Routines: TStringList;                    // list of selected snippets
-  RoutineIdx: Integer;                      // loops thru all selected snippets
 begin
   inherited;
   // Create search criteria for all selected snippets
-  Routines := TStringList.Create;
-  try
-    for RoutineIdx := 0 to Pred(frmSelect.SelectedRoutines.Count) do
-      Routines.Add(frmSelect.SelectedRoutines.Items[RoutineIdx].Name);
-    SearchCriteria := TSearchCriteriaFactory.CreateSelectionSearchCriteria(
-      Routines
-    );
-  finally
-    FreeAndNil(Routines);
-  end;
+  SearchCriteria := TSearchCriteriaFactory.CreateSelectionSearchCriteria(
+    frmSelect.SelectedRoutines
+  );
   // Create search object from the entered criteria
   fSearch := TSearchFactory.CreateSelectionSearch(SearchCriteria);
 end;
