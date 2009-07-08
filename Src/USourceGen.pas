@@ -71,8 +71,6 @@
  *                        methods as IncludeSnippets & IncludeSnippets.
  *                      - Added support for calling conventions and overload
  *                        directives in routine prototypes.
- * v2.1 of 08 Jul 2009  - Fixed bug where units required by constants and type
- *                        definitions were not being added to generated units.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -133,13 +131,6 @@ type
   strict private
     type
       {
-      TUnitRecorder:
-        Method that is called to record the units required by a constant or
-        type.
-          @param Units [in] String list containing list of units.
-      }
-      TUnitRecorder = procedure(const Units: TStringList) of object;
-      {
       TEnumerator:
         Enumerator for snippets in TConstAndTypeList.
       }
@@ -187,7 +178,7 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
-    procedure Add(const ConstOrType: TRoutine; const UnitRecorder: TUnitRecorder);
+    procedure Add(const ConstOrType: TRoutine);
       {Adds a constant or type snippet to the list, ignoring duplicates.
         @param ConstOrType [in] Constant or type snippet to be added.
         @except Exception raised if dependency list is not valid.
@@ -211,13 +202,12 @@ type
   }
   TSourceAnalyser = class(TObject)
   strict private
-    var
-      fTypesAndConsts: TConstAndTypeList; // Value of TypesAndConsts property
-      fIntfRoutines: TRoutineList;        // Value of IntfRoutines property
-      fAllRoutines: TRoutineList;         // Value of AllRoutines property
-      fForwardRoutines: TRoutineList;     // Value of ForwardRoutines property
-      fRequiredRoutines: TRoutineList;    // Value of RequiredRoutines property
-      fUnits: TStringList;                // Value of Units property
+    fTypesAndConsts: TConstAndTypeList; // Value of TypesAndConsts property
+    fIntfRoutines: TRoutineList;        // Value of IntfRoutines property
+    fAllRoutines: TRoutineList;         // Value of AllRoutines property
+    fForwardRoutines: TRoutineList;     // Value of ForwardRoutines property
+    fRequiredRoutines: TRoutineList;    // Value of RequiredRoutines property
+    fUnits: TStringList;                // Value of Units property
     procedure AddIntfRoutine(const Routine: TRoutine);
       {Adds a user-specified routine to list of routines specified by user.
       Duplicates ignored.
@@ -794,7 +784,7 @@ procedure TSourceAnalyser.AddTypeOrConst(const TypeOrConst: TRoutine);
     @param TypeOrConst [in] Type of constant snippet to be added.
   }
 begin
-  fTypesAndConsts.Add(TypeOrConst, RequireUnits);
+  fTypesAndConsts.Add(TypeOrConst);
 end;
 
 constructor TSourceAnalyser.Create;
@@ -908,7 +898,7 @@ end;
 
 { TConstAndTypeList }
 
-procedure TConstAndTypeList.Add(const ConstOrType: TRoutine; const UnitRecorder: TUnitRecorder);
+procedure TConstAndTypeList.Add(const ConstOrType: TRoutine);
   {Adds a constant or type snippet to the list, ignoring duplicates.
     @param ConstOrType [in] Constant or type snippet to be added.
     @except Exception raised if dependency list is not valid.
@@ -929,8 +919,7 @@ begin
   // Add all required snippets to list before adding this one: this ensures
   // required snippets preceed those that depend on them
   for RequiredSnip in ConstOrType.Depends do
-    Add(RequiredSnip, UnitRecorder);
-  UnitRecorder(ConstOrType.Units);
+    Add(RequiredSnip);
   fItems.Add(ConstOrType)
 end;
 
