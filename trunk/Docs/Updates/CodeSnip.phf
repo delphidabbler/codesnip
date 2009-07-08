@@ -13791,4 +13791,47 @@
       )
     )
   )
+  @REVISION(
+    @VERSION            3.0.2 (build 147)
+    @COMMENTS           + Fixed broken link to CodeSnip databsse in welcome
+                          page.
+                        + Fixed bug in selection search that was selecting both
+                          user defined and main database snippets with same name
+                          if only one was selected.
+                        + Fixed bug where units required by constants and type
+                          definitions were not being added to generated units.
+    @COMPILERS          + Delphi 2006
+                        + BRCC32 5.4
+                        + MS HTML Help Workshop 1.1
+                        + HTML Resource Compiler 1.2
+                        + Version Information Editor 2.11.2
+                        + Inno Setup Compiler v5.2.3 with ISPP preprocessor.
+                        + Microsoft MIDL compiler v7.0
+                        + Borland TLIBIMP v10.0
+    @DATE               08/07/2009
+    @FILES(
+      @UPDATED(
+        @FILE           FmSelectionSearchDlg.pas
+        @VERSION        1.5
+      )
+      @UPDATED(
+        @FILE           USearch.pas
+        @VERSION        2.6
+      )
+      @UPDATED(
+        @FILE           USourceGen.pas
+        @VERSION        2.1
+      )
+      @UPDATED(
+        @FILE           VCodeSnip.vi
+        @DATE           08/07/2009
+        @COMMENTS       Updated file and product numbers for revision 3.0.2
+                        build 147.
+      )
+      @UPDATED(
+        @FILE           Res\HTML\welcome-tplt.html
+        @VERSION        3.2
+      )
+    )
+  )
 )

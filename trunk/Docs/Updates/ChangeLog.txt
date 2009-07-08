@@ -1,3 +1,9 @@
+Version 3.0.2 - 08 Jul 2009
+CodeSnip 3.0.2 - 08 Jul 2009
++ Fixed broken link to CodeSnip databsse in welcome page.
++ Fixed bug in selection search that was selecting both user defined and main database snippets with same name if only one was selected.
++ Fixed bug where units required by constants and type definitions were not being added to generated units.
+
 Version 3.0.1 - 06 July 2009
 CodeSnip 3.0.1 - 06 July 2009
 + Added support for file:// protocol in links in a snippet's extra information.
