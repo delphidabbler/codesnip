@@ -2,12 +2,14 @@ inherited FindCompilerDlg: TFindCompilerDlg
   Left = 268
   Top = 121
   Caption = 'Find Compiler'
+  ExplicitWidth = 474
+  ExplicitHeight = 354
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Width = 233
+    Width = 249
     Height = 193
-    ExplicitWidth = 233
+    ExplicitWidth = 249
     ExplicitHeight = 193
     object lblCompilerVer: TLabel
       Left = 0
@@ -26,7 +28,7 @@ inherited FindCompilerDlg: TFindCompilerDlg
       FocusControl = cbCriteria
     end
     object lbCompilerVers: TCheckListBox
-      Left = 58
+      Left = 66
       Top = 32
       Width = 113
       Height = 82
@@ -36,9 +38,9 @@ inherited FindCompilerDlg: TFindCompilerDlg
       TabOrder = 1
     end
     object cbCriteria: TComboBox
-      Left = 58
+      Left = 66
       Top = 0
-      Width = 175
+      Width = 183
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
@@ -46,9 +48,9 @@ inherited FindCompilerDlg: TFindCompilerDlg
       OnSelect = cbCriteriaSelect
     end
     object rgLogic: TRadioGroup
-      Left = 58
+      Left = 66
       Top = 128
-      Width = 175
+      Width = 183
       Height = 65
       Caption = 'Search logic'
       ItemIndex = 1
@@ -59,18 +61,18 @@ inherited FindCompilerDlg: TFindCompilerDlg
       TabStop = True
     end
     object btnSelectAll: TButton
-      Left = 176
+      Left = 184
       Top = 32
-      Width = 57
+      Width = 65
       Height = 25
       Caption = 'Select &All'
       TabOrder = 2
       OnClick = btnSelectAllClick
     end
     object btnClearAll: TButton
-      Left = 176
+      Left = 184
       Top = 60
-      Width = 57
+      Width = 65
       Height = 25
       Caption = 'Cl&ear All'
       TabOrder = 3

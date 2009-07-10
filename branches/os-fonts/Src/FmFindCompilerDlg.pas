@@ -36,7 +36,8 @@
  *                      - Made some private and protected sections strict.
  * v1.3 of 09 Jan 2009  - Changed to use local compilers objects rather than
  *                        global singleton.
- *
+ * v1.4 of 10 Jul 2009  - Enlarged form and some controls to improve appearance
+ *                        when using Vista default font.
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
