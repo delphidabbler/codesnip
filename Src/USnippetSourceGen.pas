@@ -23,6 +23,8 @@
  * v1.6 of 16 May 2009  - Modified to use renamed TSourceGen methods.
  *                      - Asserts now get class name from ClassName method.
  *                      - Renamed some variables and fields.
+ * v1.7 of 10 Jul 2009  - Changed to generate and use comments as IStringList
+ *                        rather than TStringList.
  *
  *
  *
@@ -57,10 +59,8 @@ interface
 
 
 uses
-  // Delphi
-  Classes,
   // Project
-  USourceGen, UView;
+  UIStringList, USourceGen, UView;
 
 
 type
@@ -82,9 +82,9 @@ type
       category view.
         @param View [in] View from which to retrieve source code.
       }
-    procedure BuildHeaderComments(const Comments: TStrings);
+    function BuildHeaderComments: IStringList;
       {Creates and stores header comments to be written to head of snippet.
-        @param Comments [in] String list to receive comments.
+        @return String list containing comments.
       }
   public
     constructor Create(const View: TViewItem);
@@ -115,9 +115,9 @@ uses
 
 { TSnippetSourceGen }
 
-procedure TSnippetSourceGen.BuildHeaderComments(const Comments: TStrings);
+function TSnippetSourceGen.BuildHeaderComments: IStringList;
   {Creates and stores header comments to be written to head of snippet.
-    @param Comments [in] String list to receive comments.
+    @return String list containing comments.
   }
 var
   Header: string; // format string for header comment
@@ -138,8 +138,8 @@ begin
   else
     Header := sUserHeader;
   // Add the comments
-  Comments.Clear;
-  Comments.Add(
+  Result := TIStringList.Create;
+  Result.Add(
     Format(
       Header,
       [TAppInfo.FullProgramName, TAppInfo.ProgramReleaseInfo, DateStamp]
@@ -175,16 +175,8 @@ function TSnippetSourceGen.Generate(
     @param CommentStyle [in] Style of commenting to use in source code.
     @return Required source code.
   }
-var
-  HeaderComments: TStringList;  // comments to be written to top of snippet
 begin
-  HeaderComments := TStringList.Create;
-  try
-    BuildHeaderComments(HeaderComments);
-    Result := fGenerator.IncFileAsString(CommentStyle, HeaderComments);
-  finally
-    FreeAndNil(HeaderComments);
-  end;
+  Result := fGenerator.IncFileAsString(CommentStyle, BuildHeaderComments);
 end;
 
 procedure TSnippetSourceGen.Initialize(const View: TViewItem);
@@ -194,7 +186,7 @@ procedure TSnippetSourceGen.Initialize(const View: TViewItem);
   }
 var
   Snips: TRoutineList; // list of snippets in a category to display
-  Snippet: TRoutine;      // a snippet in Snips list
+  Snippet: TRoutine;   // a snippet in Snips list
 begin
   fContainsMainDBSnippets := False;
   // Record required snippet(s)

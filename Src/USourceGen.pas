@@ -73,6 +73,8 @@
  *                        directives in routine prototypes.
  * v2.1 of 08 Jul 2009  - Fixed bug where units required by constants and type
  *                        definitions were not being added to generated units.
+ * v2.2 of 10 Jul 2009  - Changed to work with header comments as IStringList
+ *                        instead of TStrings.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -109,7 +111,7 @@ uses
   // Delphi
   Classes, Contnrs,
   // Project
-  USnippets, UStrStreamWriter;
+  UIStringList, USnippets, UStrStreamWriter;
 
 
 type
@@ -165,7 +167,7 @@ type
           {Current item in enumeration. Error if at end of enumeration}
       end;
     var
-      fItems: TObjectList;    // records objects in list
+      fItems: TObjectList;  // Records objects in list
     function GetCount: Integer;
       {Read accessor for Count property.
         @return Number of items in list.
@@ -294,7 +296,7 @@ type
       fSourceAnalyser: TSourceAnalyser;
         {Object used to analyse the snippets and take care of dependencies}
     procedure WriteHeaderComments(const Writer: TStrStreamWriter;
-      const HeaderComments: TStrings);
+      const HeaderComments: IStringList);
       {Writes a multi-line comment containing header text.
         @param Writer [in] Object used to output comments.
         @param HeaderComments [in] Header comments to be written.
@@ -316,7 +318,7 @@ type
       }
     function UnitAsString(const UnitName: string;
       const CommentStyle: TCommentStyle = csNone;
-      const HeaderComments: TStrings = nil): string;
+      const HeaderComments: IStringList = nil): string;
       {Generates source code of a unit containing all specified snippets and
       any additional snippets depended upon by the included snippets.
         @param UnitName [in] Name of unit.
@@ -327,7 +329,7 @@ type
         @return Unit source code.
       }
     function IncFileAsString(const CommentStyle: TCommentStyle = csNone;
-      const HeaderComments: TStrings = nil): string;
+      const HeaderComments: IStringList = nil): string;
       {Generates source code of an include file containing all specified
       routines and notes in comments which units, types, consts and other
       routines are also required.
@@ -358,7 +360,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UConsts, UExceptions, UIStringList, USnippetValidator, UUtils;
+  UConsts, UExceptions, USnippetValidator, UUtils;
 
 
 const
@@ -471,7 +473,7 @@ begin
 end;
 
 function TSourceGen.IncFileAsString(const CommentStyle: TCommentStyle;
-  const HeaderComments: TStrings): string;
+  const HeaderComments: IStringList): string;
   {Generates source code of an include file containing all specified routines
   and notes in comments which units, types, consts and other routines are also
   required.
@@ -614,7 +616,7 @@ end;
 
 function TSourceGen.UnitAsString(const UnitName: string;
   const CommentStyle: TCommentStyle = csNone;
-  const HeaderComments: TStrings = nil): string;
+  const HeaderComments: IStringList = nil): string;
   {Generates source code of a unit containing all specified routines and
   routines depended upon by the included routines.
     @param UnitName [in] Name of unit.
@@ -728,7 +730,7 @@ begin
 end;
 
 procedure TSourceGen.WriteHeaderComments(const Writer: TStrStreamWriter;
-  const HeaderComments: TStrings);
+  const HeaderComments: IStringList);
   {Writes a multi-line comment containing header text.
     @param Writer [in] Object used to output comments.
     @param HeaderComments [in] Header comments to be written.
