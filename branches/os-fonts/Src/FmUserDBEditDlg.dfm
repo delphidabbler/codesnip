@@ -18,16 +18,13 @@ inherited UserDBEditDlg: TUserDBEditDlg
       Left = 0
       Top = 0
       Width = 646
-      Height = 453
-      ActivePage = tsComments
+      Height = 465
+      ActivePage = tsCode
+      Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
       object tsCode: TTabSheet
         Caption = 'Code'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblDescription: TLabel
           Left = 3
           Top = 343
@@ -62,7 +59,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
         end
         object lblSnippetKindHelp: TLabel
           Left = 236
-          Top = 316
+          Top = 311
           Width = 118
           Height = 13
           Cursor = crHandPoint
@@ -117,7 +114,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
           Width = 145
           Height = 21
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 4
         end
         object cbKind: TComboBox
@@ -126,7 +123,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
           Width = 145
           Height = 21
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 1
           OnChange = cbKindChange
         end
@@ -134,10 +131,6 @@ inherited UserDBEditDlg: TUserDBEditDlg
       object tsReferences: TTabSheet
         Caption = 'References'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblXRefs: TLabel
           Left = 3
           Top = 3
@@ -147,7 +140,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
           FocusControl = clbXRefs
         end
         object lblDepends: TLabel
-          Left = 220
+          Left = 219
           Top = 3
           Width = 72
           Height = 13
@@ -174,7 +167,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
           OnDrawItem = CLBRoutineRefsDrawItem
         end
         object clbDepends: TCheckListBox
-          Left = 220
+          Left = 219
           Top = 22
           Width = 209
           Height = 368
@@ -219,9 +212,9 @@ inherited UserDBEditDlg: TUserDBEditDlg
           TabOrder = 5
         end
         object btnDependencies: TButton
-          Left = 218
-          Top = 396
-          Width = 143
+          Left = 219
+          Top = 409
+          Width = 141
           Height = 25
           Action = actDependencies
           TabOrder = 2
@@ -287,10 +280,6 @@ inherited UserDBEditDlg: TUserDBEditDlg
       object tsCompileResults: TTabSheet
         Caption = 'Compile Results'
         ImageIndex = 3
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblCompilers: TLabel
           Left = 3
           Top = 3
@@ -300,7 +289,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
           FocusControl = lbCompilers
         end
         object lblCompRes: TLabel
-          Left = 151
+          Left = 167
           Top = 3
           Width = 132
           Height = 13
@@ -308,7 +297,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
           FocusControl = lbCompRes
         end
         object lblCompileShortcuts: TLabel
-          Left = 299
+          Left = 331
           Top = 3
           Width = 45
           Height = 13
@@ -317,7 +306,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
         object lbCompilers: TListBox
           Left = 3
           Top = 22
-          Width = 142
+          Width = 150
           Height = 312
           Style = lbOwnerDrawFixed
           ItemHeight = 28
@@ -326,9 +315,9 @@ inherited UserDBEditDlg: TUserDBEditDlg
           OnDrawItem = lbCompilersDrawItem
         end
         object lbCompRes: TListBox
-          Left = 151
+          Left = 167
           Top = 22
-          Width = 142
+          Width = 150
           Height = 84
           Style = lbOwnerDrawFixed
           ItemHeight = 20
@@ -337,7 +326,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
           OnDrawItem = lbCompResDrawItem
         end
         object btnSetAllSuccess: TBitBtn
-          Left = 299
+          Left = 331
           Top = 22
           Width = 141
           Height = 25
@@ -390,7 +379,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
             FF00FF00FF00FF00FF00}
         end
         object btnCompile: TButton
-          Left = 299
+          Left = 331
           Top = 84
           Width = 140
           Height = 25
@@ -398,7 +387,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
           TabOrder = 4
         end
         object btnSetAllQuery: TBitBtn
-          Left = 299
+          Left = 331
           Top = 53
           Width = 141
           Height = 25
@@ -451,10 +440,10 @@ inherited UserDBEditDlg: TUserDBEditDlg
             FF00FF00FF00FF00FF00}
         end
         object pnlViewCompErrs: TPanel
-          Left = 299
+          Left = 331
           Top = 121
-          Width = 185
-          Height = 32
+          Width = 238
+          Height = 72
           BevelOuter = bvNone
           TabOrder = 5
           object lblViewCompErrsKey: TLabel
