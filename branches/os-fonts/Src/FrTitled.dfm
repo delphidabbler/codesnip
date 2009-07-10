@@ -4,6 +4,7 @@ object TitledFrame: TTitledFrame
   Width = 318
   Height = 238
   TabOrder = 0
+  TabStop = True
   object pnlTitle: TPanel
     Left = 0
     Top = 0

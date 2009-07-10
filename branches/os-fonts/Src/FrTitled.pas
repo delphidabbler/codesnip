@@ -1,31 +1,14 @@
-{ ##
-  @FILE                     FrTitled.pas
-  @COMMENTS                 Base class for frames that display a title bar.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None
-  @HISTORY(
-    @REVISION(
-      @VERSION              0.1
-      @DATE                 30/01/2005
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              0.2
-      @DATE                 18/02/2005
-      @COMMENTS             Deleted unused units from uses clause.
-    )
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 24/05/2006
-      @COMMENTS             Made minor commenting changes.
-    )
-  )
-}
-
-
 {
+ * FrTitled.pas
+ *
+ * Base class for frames that display a title bar.
+ *
+ * v0.1 of 30 Jan 2005  - Original version.
+ * v0.2 of 18 Feb 2005  - Deleted unused units from uses clause.
+ * v1.0 of 24 May 2006  - Made minor commenting changes.
+ * v1.1 of 10 Jul 2009  - Made title text use OS' default font.
+ *
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -43,10 +26,8 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2006 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
- *
- * Contributor(s): None
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -73,12 +54,35 @@ type
     pnlTitle: TPanel;
     lblTitle: TLabel;
     bvlTop: TBevel;
+  public
+    constructor Create(AOwner: TComponent); override;
+      {Class constructor. Sets up frame to use OS' default font for title.
+        @param AOwner [in] Component that owns the frame.
+      }
   end;
 
 
 implementation
 
+
+uses
+  // Project
+  UFontHelper;
+
+
 {$R *.dfm}
+
+
+{ TTitledFrame }
+
+constructor TTitledFrame.Create(AOwner: TComponent);
+  {Class constructor. Sets up frame to use OS' default font for title.
+    @param AOwner [in] Component that owns the frame.
+  }
+begin
+  inherited;
+  TFontHelper.SetDefaultBaseFont(lblTitle.Font, False);
+end;
 
 end.
 
