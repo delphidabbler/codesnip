@@ -45,6 +45,8 @@
  *                        TProtocolFactory.RegisterProtocol method - only class
  *                        reference now provided.
  *                      - Added new EProtocol exception for use in base classes.
+ * v3.1 of 10 Jul 2009  - Removed unnecessary code that duplicated construction
+ *                        of protocol registrar.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -323,11 +325,6 @@ class procedure TProtocolFactory.RegisterProtocol(
     @param ClassRef [in] Reference to class implementing protocol.
   }
 begin
-  if not Assigned(fRegistrar) then
-  begin
-    fRegistrar := TProtocolRegistrar.Create;
-    fRegWrapper := TAutoObjFree.Create(fRegistrar);
-  end;
   Registrar.RegisterProtocol(ClassRef);
 end;
 
