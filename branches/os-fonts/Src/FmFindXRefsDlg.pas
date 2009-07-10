@@ -17,6 +17,12 @@
  *                      - Type specifier removed from constructor call in
  *                        TFindXRefsDlg.Execute.
  *                      - Made private and protected sections of classes strict.
+ * v1.3 of 10 Jul 2009  - Changed so that all labels use OS default font: all
+ *                        reverted to ParentFont = true and styling set in code.
+ *                      - Made user defined snippet name at top of dialog appear
+ *                        in user-defined colour.
+ *                      - Dialog box width now stretches to accomodate text
+ *                        containing long snippet names.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -78,13 +84,19 @@ type
     procedure SearchCheckClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
   strict private
-    fSearchParams: TXRefSearchParams; // persists XRef search options
-    fSearch: ISearch;                 // search for user's criteria
-    fRoutine: TRoutine;               // snippet whose x-refs to be found
+    fSearchParams: TXRefSearchParams; // Persists XRef search options
+    fSearch: ISearch;                 // Search for user's criteria
+    fRoutine: TRoutine;               // Snippet whose x-refs to be found
     procedure UpdateControls;
       {Updates state of controls.
       }
   strict protected
+    procedure ConfigForm; override;
+      {Style labels and record name of snippet in labels and checkboxes.
+      }
+    procedure ArrangeForm; override;
+      {Arranges components on form and rezize form as required.
+      }
     procedure InitForm; override;
       {Populates and initialises controls.
       }
@@ -118,8 +130,8 @@ type
   }
   TXRefSearchParams = class(TObject)
   strict private
-    fUpdated: Boolean;            // flag true if object's properties change
-    fOptions: TXRefSearchOptions; // options controlling X-ref search
+    fUpdated: Boolean;            // Flag true if object's properties change
+    fOptions: TXRefSearchOptions; // Options controlling X-ref search
     procedure SetOptions(const Value: TXRefSearchOptions);
       {Write accessor for Options property.
         @param Value [in] Option controlling X-ref search.
@@ -153,15 +165,29 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Graphics,
   // Project
-  USettings;
+  UColours, USettings;
 
 
 {$R *.dfm}
 
 
 { TFindXRefsDlg }
+
+procedure TFindXRefsDlg.ArrangeForm;
+  {Arranges components on form and rezize form as required.
+  }
+begin
+  // Place snippet name after end of description label
+  lblRoutineName.Left := lblDesc.Left + lblDesc.Width;
+  // Check if snippet name is clipped at right of dialog box and increase
+  // available body panel space if so
+  if lblRoutineName.Left + lblRoutineName.Width > pnlBody.ClientWidth then
+    pnlBody.ClientWidth := lblRoutineName.Left + lblRoutineName.Width;
+  // Inherited arrangement: will set dialog width based on body panel width
+  inherited;
+end;
 
 procedure TFindXRefsDlg.btnOKClick(Sender: TObject);
   {OK button click event handler. Creates and records search criteria.
@@ -199,6 +225,22 @@ begin
   fSearchParams.Options := SearchCriteria.Options;
   // Create search object from the entered criteria
   fSearch := TSearchFactory.CreateXRefSearch(SearchCriteria);
+end;
+
+procedure TFindXRefsDlg.ConfigForm;
+  {Style labels and record name of snippet in labels and checkboxes.
+  }
+begin
+  inherited;
+  // Set label font styles and colours
+  lblRoutineName.Font.Style := [fsBold];
+  if fRoutine.UserDefined then
+    lblRoutineName.Font.Color := clUserRoutine;
+  // Display selected snippet name in appropriate controls
+  lblRoutineName.Caption := fRoutine.Name;
+  chkIncludeRoutine.Caption := Format(
+    chkIncludeRoutine.Caption, [fRoutine.Name]
+  );
 end;
 
 class function TFindXRefsDlg.Execute(const AOwner: TComponent;
@@ -248,11 +290,6 @@ procedure TFindXRefsDlg.InitForm;
   }
 begin
   inherited;
-  // Display selected snippet name in appropriate controls
-  lblRoutineName.Caption := fRoutine.Name;
-  chkIncludeRoutine.Caption := Format(
-    chkIncludeRoutine.Caption, [fRoutine.Name]
-  );
   // Check appropriate check boxes
   chkRequired.Checked := soRequired in fSearchParams.Options;
   chkRequiredRecurse.Checked := soRequiredRecurse in fSearchParams.Options;
