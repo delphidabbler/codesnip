@@ -45,6 +45,7 @@
  * v3.2 of 14 Jan 2009  - Made "&" signs in dialog box appear literally instead
  *                        of being treated as accelerator characters.
  *                      - Deleted LF const: now use equivalent in UConsts.
+ * v3.3 of 10 Jul 2009  - Changed to use OS' default font in message boxes.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -197,9 +198,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows, Forms, StdCtrls, ExtCtrls, Consts, Graphics, Math,
+  SysUtils, Windows, Forms, StdCtrls, ExtCtrls, Consts, Math,
   // Project
-  UAltBugFix, UConsts, UDlgHelper, UGraphicUtils, UStructs, UUtils;
+  UAltBugFix, UConsts, UDlgHelper, UFontHelper, UGraphicUtils, UStructs, UUtils;
 
 
 type
@@ -212,24 +213,15 @@ type
   TMessageBoxForm = class sealed(TForm)
   strict private
     var
-      fImage: TImage;
-        {Image control used to display any icon}
-      fButtons: array of TButton;
-        {Array of buttons displayed in dialog box}
-      fLabels: array of TLabel;
-        {Array of labels used to display text in dialog box. Empty labels are
-        treated differently}
+      fImage: TImage;             // Image control: displays any icon
+      fButtons: array of TButton; // Buttons displayed in dialog box
+      fLabels: array of TLabel;   // Labels that display text in dialog box.
     const
-      cXPadding = 16;
-        {Margin at left and right sides of dialog box}
-      cYPadding = 16;
-        {Margin at top and bottom of dialog box}
-      cParaSpacing = 8;
-        {Spacing between paragraphs}
-      cBtnSpacing = 8;
-        {Spacing between buttons}
-      cBtnStripTopMargin = 24;
-        {Margin above button strip}
+      cXPadding = 16;             // Left and right dialog box margins
+      cYPadding = 16;             // Top and bottom dialog box margins
+      cParaSpacing = 8;           // Spacing between paragraphs
+      cBtnSpacing = 8;            // Spacing between buttons
+      cBtnStripTopMargin = 24;    // Margin above button strip
     function MaxTextWidth: Integer;
       {Calculates maximum horizontal space that can be occupied by the dialog's
       text.
@@ -566,6 +558,8 @@ begin
   inherited CreateNew(Owner);
   Position := poDesigned;   // must be poDesgined to enable alignment
   BorderStyle := bsDialog;  // it's a dialog box
+  // Set font to OS default
+  TFontHelper.SetDefaultFont(Font, False);
   // Initialise controls
   InitCaption(Title, DlgType);
   InitImage(DlgType);
