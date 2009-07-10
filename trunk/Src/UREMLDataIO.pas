@@ -15,6 +15,9 @@
  *                      - Changed to be able to recognise version of REML where
  *                        REML tags and entities were introduced and to generate
  *                        REML in a specified version.
+ * v1.3 of 10 Jul 2009  - Removed TREMLInfo's Init and TidyUp methods. Tags and
+ *                        Entities fields are now created when required and
+ *                        released automatically when unit goes out of scope.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -117,7 +120,7 @@ type
   }
   TREMLWriter = class(TNoPublicConstructObject)
   strict private
-    fVersion: TREMLVersion;
+    fVersion: TREMLVersion; // version of REML being written
     function TextToREMLText(const Text: string): string;
       {Converts plain text to REML compatible text by replacing illegal
       characters with related character entities.
@@ -239,7 +242,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UExceptions, UUtils;
+  UAutoFree, UExceptions, UUtils;
 
 
 type
@@ -340,8 +343,8 @@ type
         Record that associates a character with its REML mnemonic entity.
       }
       TREMLEntity = record
-        Entity: string;         // mnemonic entity
-        Ch: Char;               // character equivalent
+        Entity: string;         // Mnemonic entity
+        Ch: Char;               // Character equivalent
         Version: TREMLVersion;  // REML version where entity introduced
         constructor Create(const AEntity: string; const ACh: Char;
           const AVersion: TREMLVersion);
@@ -413,17 +416,17 @@ type
   }
   TREMLInfo = class(TNoConstructObject)
   strict private
-    class var fTags: TREMLTags;         // Provides information about tags
-    class var fEntities: TREMLEntities; // Converts REML char entities <=> chars
+    class var fTags: TREMLTags;
+      {Provides information about tags}
+    class var fTagsWrapper: IInterface;
+      {Wrapper object for fTags instanace that automatically frees it when unit
+      goes out of scope}
+    class var fEntities: TREMLEntities;
+      {Converts REML char entities <=> chars}
+    class var fEntitiesWrapper: IInterface;
+      {Wrapper object for fEntities instanace that automatically frees it when
+      unit goes out of scope}
   public
-    class procedure Init;
-      {Initialises permanently instantiated object. Must be called before first
-      use of the class.
-      }
-    class procedure TidyUp;
-      {Release permanently instantiated objects. Must be called after last use
-      of this class.
-      }
     class function TagInfo: TREMLTags;
       {Provides a reference to object that provides information about a REML
       tag.
@@ -710,16 +713,12 @@ class function TREMLInfo.EntityInfo: TREMLEntities;
     @return Required object reference.
   }
 begin
+  if not Assigned(fEntities) then
+  begin
+    fEntities := TREMLEntities.Create;
+    fEntitiesWrapper := TAutoObjFree.Create(fEntities);
+  end;
   Result := fEntities;
-end;
-
-class procedure TREMLInfo.Init;
-  {Initialises permanently instantiated object. Must be called before first use
-  of the class.
-  }
-begin
-  fTags := TREMLTags.Create;
-  fEntities := TREMLEntities.Create;
 end;
 
 class function TREMLInfo.TagInfo: TREMLTags;
@@ -727,16 +726,12 @@ class function TREMLInfo.TagInfo: TREMLTags;
     @return Required object reference.
   }
 begin
+  if not Assigned(fTags) then
+  begin
+    fTags := TREMLTags.Create;
+    fTagsWrapper := TAutoObjFree.Create(fTags);
+  end;
   Result := fTags;
-end;
-
-class procedure TREMLInfo.TidyUp;
-  {Release permanently instantiated objects. Must be called after last use of
-  this class.
-  }
-begin
-  FreeAndNil(fEntities);
-  FreeAndNil(fTags);
 end;
 
 { TREMLTags }
@@ -1019,19 +1014,6 @@ begin
       Exit;
   end;
 end;
-
-
-initialization
-
-// Initialise REML info object: it has static instances of classes
-TREMLInfo.Init;
-
-
-finalization
-
-// Release REML info object's static instances
-TREMLInfo.TidyUp;
-
 
 end.
 
