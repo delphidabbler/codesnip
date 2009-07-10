@@ -31,6 +31,8 @@
  *                        and TAppInfo respectively instead of UGlobals unit.
  * v1.7 of 16 May 2009  - Modified to use renamed TSourceGen methods.
  *                      - Renamed some fields and variables.
+ * v1.8 of 10 Jul 2009  - Changed to generate and use comments as IStringList
+ *                        rather than TStringList.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -64,10 +66,8 @@ interface
 
 
 uses
-  // Delphi
-  Classes,
   // Project
-  UBaseObjects, USourceFileOutputMgr, USourceGen, USnippets;
+  UBaseObjects, UIStringList, USourceFileOutputMgr, USourceGen, USnippets;
 
 
 type
@@ -82,13 +82,12 @@ type
   TSaveUnitMgr = class(TNoPublicConstructObject)
   strict private
     fSourceGen: TSourceGen;
-      {Object used to generate source code unit}
+      {Generates source code unit}
     fOutputMgr: TSourceFileOutputMgr;
-      {Object used to get file information from user and to control saving of
-      snippers to disk}
+      {Gets file information from user and controls saving of snippers to disk}
     fUnitName: string;
-      {Records name of generated unit. Name is based on file when saving unit
-      and has a default fixed value when previewing}
+      {Name of generated unit. Name is based on file when saving unit and has a
+      default fixed value when previewing}
     fContainsMainDBSnippets: Boolean;
       {Flag true if unit contains at least one snippet from main database, False
       only if unit is completely user defined}
@@ -116,9 +115,9 @@ type
       {Gets name of unit to be used in generated code.
         @return Name of unit.
       }
-    procedure CreateHeaderComments(const Comments: TStrings);
+    function CreateHeaderComments: IStringList;
       {Creates and stores header comments to be written to head of unit.
-        @param Comments [in] String list to receive comments.
+        @return String list containing comments.
       }
   strict protected
     constructor InternalCreate(const Snips: TRoutineList);
@@ -209,29 +208,29 @@ begin
   end;
 end;
 
-procedure TSaveUnitMgr.CreateHeaderComments(const Comments: TStrings);
+function TSaveUnitMgr.CreateHeaderComments: IStringList;
   {Creates and stores header comments to be written to head of unit.
-    @param Comments [in] String list to receive comments.
+    @return String list containing comments.
   }
 begin
-  Comments.Clear;
+  Result := TIStringList.Create;
   if fContainsMainDBSnippets then
   begin
-    // Comments used for units that contain at snippet(s) from main database
-    Comments.Add(sLicense);
-    Comments.Add('');
-    Comments.Add(Format(sMainDescription, [TWebInfo.DatabaseURL]));
-    Comments.Add('');
-    Comments.Add(sDisclaimer);
-    Comments.Add('');
-    Comments.Add(Format(sGenerated, [DateStamp]));
-    Comments.Add(
+    // Result used for units that contain at snippet(s) from main database
+    Result.Add(sLicense);
+    Result.Add('');
+    Result.Add(Format(sMainDescription, [TWebInfo.DatabaseURL]));
+    Result.Add('');
+    Result.Add(sDisclaimer);
+    Result.Add('');
+    Result.Add(Format(sGenerated, [DateStamp]));
+    Result.Add(
       Format(
         sGenerator, [TAppInfo.FullProgramName, TAppInfo.ProgramReleaseInfo]
       )
     );
-    Comments.Add('');
-    Comments.Add(
+    Result.Add('');
+    Result.Add(
       Format(
         sAdvert,
         [TAppInfo.ProgramName, TAppInfo.CompanyName, TWebInfo.ProgramHomeURL]
@@ -240,11 +239,11 @@ begin
   end
   else
   begin
-    // Comments used for units that contain only user defined snippets
-    Comments.Add(sUserDescription);
-    Comments.Add('');
-    Comments.Add(Format(sGenerated, [DateStamp]));
-    Comments.Add(
+    // Result used for units that contain only user defined snippets
+    Result.Add(sUserDescription);
+    Result.Add('');
+    Result.Add(Format(sGenerated, [DateStamp]));
+    Result.Add(
       Format(
         sGenerator, [TAppInfo.FullProgramName, TAppInfo.ProgramReleaseInfo]
       )
@@ -339,16 +338,10 @@ procedure TSaveUnitMgr.SourceGenHandler(Sender: TObject;
     @param SourceCode [out] Receives generated source code.
     @param DocTitle [out] Receives document title.
   }
-var
-  Comments: TStringList;  // List of comments at top of unit
 begin
-  Comments := TStringList.Create;
-  try
-    CreateHeaderComments(Comments);
-    RawSourceCode := fSourceGen.UnitAsString(UnitName, CommentStyle, Comments);
-  finally
-    FreeAndNil(Comments);
-  end;
+  RawSourceCode := fSourceGen.UnitAsString(
+    UnitName, CommentStyle, CreateHeaderComments
+  );
   DocTitle := Format(sDocTitle, [UnitName, TAppInfo.ProgramName]);
 end;
 
