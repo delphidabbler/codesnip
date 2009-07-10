@@ -9,6 +9,8 @@
  *                        event handler.
  * v2.0 of 25 Jan 2009  - Removed all except getInnerText() routine. This script
  *                        is no longer accessed from Delphi code.
+ * v2.1 of 10 Jul 2009  - Moved showTestCompileHint() function from
+ *                        comp-routine.js.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -43,5 +45,13 @@
 function getInnerText(id) {
   tagObj = document.getElementById(id);
   return tagObj.innerText;
+}
+
+/*
+ * Displays hint information that a test compilation can be performed. Hint
+ * contains name of current routine.
+ */
+function showTestCompileHint() {
+  showHint("Compile \"" + getInnerText("routinename") + "\"");
 }
 
