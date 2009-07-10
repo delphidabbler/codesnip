@@ -22,6 +22,7 @@
  *                      - Now use ClassName method in all assert and raise EBug
  *                        statements.
  * v1.3 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
+ * v1.4 of 10 Jul 2009  - Refactored dialog offset code in dialog aligner.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -41,7 +42,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -90,10 +91,8 @@ type
   }
   TDlgAligner = class(TNoPublicConstructObject)
   strict private
-    fDialog: IInterface;
-      {Interface to object representing window to be aligned}
-    fHostWdw: IInterface;
-      {Interface to object representing host window for alignment}
+    fDialog: IInterface;  // Object representing window to be aligned
+    fHostWdw: IInterface; // Object representing host window for alignment
     procedure GetDialogBounds(out DlgBounds: TRectEx);
       {Gets bounding rectangle of dialog box to be aligned.
         @param DlgBounds [out] Set to required bounding rectangle in screen
@@ -230,8 +229,7 @@ type
     IAlignableWindow, IWindowInfo
   )
   strict private
-    fForm: TCustomForm;
-      {Reference to encapsulated form}
+    fForm: TCustomForm; // Reference to encapsulated form
   protected
     { IAlignableWindow and IWindowInfo methods }
     function BoundsRect: TRectEx;
@@ -267,8 +265,7 @@ type
     IWindowInfo
   )
   strict private
-    fWinCtrl: TWinControl;
-      {Reference to encapsulated control}
+    fWinCtrl: TWinControl;  // Reference to encapsulated control
   protected
     { IWindowInfo methods }
     function IsDialog: Boolean;
@@ -301,8 +298,7 @@ type
     IWindowInfo, IAlignableWindow
   )
   strict protected
-    fDlg: TCommonDialog;
-      {Reference to common dialog to be encapsulated}
+    fDlg: TCommonDialog;  // Reference to common dialog to be encapsulated
   protected
     { IWindowInfo and IAlignableWindow methods }
     function IsDialog: Boolean;
@@ -365,8 +361,7 @@ var
   ParentWindow: IWindowInfo;  // encapsulates parent window
   DlgWindow: IWindowInfo;     // encapsulates dialog box window
 begin
-  Assert(Assigned(Dlg),                                    // ** do not localise
-    ClassName + '.SetDlgParent: Dlg is nil');
+  Assert(Assigned(Dlg), ClassName + '.SetDlgParent: Dlg is nil');
   DlgWindow := TWindowInfoFactory.Instance(Dlg);
   ParentWindow := TWindowInfoFactory.Instance(Parent);
   SetWindowLong(DlgWindow.Handle, GWL_HWNDPARENT, ParentWindow.Handle);
@@ -401,8 +396,7 @@ class procedure TDlgAligner.Align(const Dlg, Host: TComponent);
     @param Host [in] Window over which window is to be aligned. May be nil.
   }
 begin
-  Assert(Assigned(Dlg),                                    // ** do not localise
-    ClassName + '.Align: Dlg is nil');
+  Assert(Assigned(Dlg), ClassName + '.Align: Dlg is nil');
   with InternalCreate do
   try
     DoAlign(Dlg, Host);
@@ -421,8 +415,7 @@ class procedure TDlgAligner.AlignToOwner(const Dlg: TComponent);
       but its owner may be.
   }
 begin
-  Assert(Assigned(Dlg),                                    // ** do not localise
-    ClassName + '.AlignToOwner: Dlg is nil');
+  Assert(Assigned(Dlg), ClassName + '.AlignToOwner: Dlg is nil');
   Align(Dlg, Dlg.Owner);
 end;
 
@@ -434,8 +427,7 @@ procedure TDlgAligner.DoAlign(const Dlg, Host: TComponent);
 var
   DlgBounds: TRectEx; // bounding rectangle of dialog box
 begin
-  Assert(Assigned(Dlg),                                    // ** do not localise
-    ClassName + '.DoAlign: Dlg is nil');
+  Assert(Assigned(Dlg), ClassName + '.DoAlign: Dlg is nil');
   // Encapsulate window and host window
   fDialog := TAlignableDialogFactory.Instance(Dlg);
   fHostWdw := TWindowInfoFactory.Instance(Host);
@@ -480,31 +472,9 @@ procedure TDlgAligner.OffsetDialog(var DlgBounds: TRectEx);
     @param DlgBounds [in/out] Current dialog bounds are passed in and offset
       bounding rectangle passed out.
   }
-
-  //----------------------------------------------------------------------------
-  function RectWidth(const R: TRectEx): Integer;
-    {Gets width of a rectangle.
-      @param R [in] Rectangle for which we want width.
-      @return Required width. Always positive.
-    }
-  begin
-    Result := Abs(R.Right - R.Left);
-  end;
-
-  function RectHeight(const R: TRectEx): Integer;
-    {Gets height of a rectangle.
-      @param R [in] Rectangle for which we want height.
-      @return Required height. Always positive.
-    }
-  begin
-    Result := Abs(R.Bottom - R.Top);
-  end;
-  //----------------------------------------------------------------------------
-
 const
   // Offsets used when aligning over a dialog box
-  cVDlgOffset = 40;   // vertical offset from top of dialog box
-  cHDlgOffset = 40;   // horizontol offset from left of dialog box
+  cDlgOffset: TPoint = (X: 40; Y: 40);
 var
   HostBounds: TRectEx;  // bounding rectangle of AlignCtrl in screen co-ords
 begin
@@ -512,16 +482,16 @@ begin
   if (fHostWdw as IWindowInfo).IsDialog then
     // Aligning over dialog box: offset down and to left
     DlgBounds.OffsetBy(
-      HostBounds.Left - DlgBounds.Left + cHDlgOffset,
-      HostBounds.Top - DlgBounds.Top + cVDlgOffset
+      HostBounds.Left - DlgBounds.Left + cDlgOffset.X,
+      HostBounds.Top - DlgBounds.Top + cDlgOffset.Y
     )
   else
     // Aligning over a main window: "centre" dialog over window
     DlgBounds.OffsetBy(
       HostBounds.Left - DlgBounds.Left +
-        (RectWidth(HostBounds) - RectWidth(DlgBounds)) div 2,
+        (HostBounds.Width - DlgBounds.Width) div 2,
       HostBounds.Top - DlgBounds.Top +
-        (RectHeight(HostBounds) - RectHeight(DlgBounds)) div 3
+        (HostBounds.Height - DlgBounds.Height) div 3
     )
 end;
 
@@ -553,8 +523,7 @@ begin
     else if Assigned(Application.MainForm) then
       Result := TFormWindow.Create(Application.MainForm)
   end;
-  Assert(Assigned(Result),                                 // ** do not localise
-    ClassName + '.Instance: Can''t create instance');
+  Assert(Assigned(Result), ClassName + '.Instance: Can''t create instance');
 end;
 
 { TAlignableDialogFactory }
@@ -568,8 +537,7 @@ class function TAlignableDialogFactory.Instance(
     @except EBug raised if Dlg is not one of required types.
   }
 begin
-  Assert(Assigned(Dlg),                                    // ** do not localise
-    ClassName + '.Instance: Dlg is nil');
+  Assert(Assigned(Dlg), ClassName + '.Instance: Dlg is nil');
   if Dlg is TCustomForm then
     Result := TFormWindow.Create(Dlg as TCustomForm)
   else if Dlg is TOpenDialog then
@@ -577,9 +545,8 @@ begin
   else if Dlg is TCommonDialog then
     Result := TCommonDialogWindow.Create(Dlg as TCommonDialog)
   else
-    raise EBug.CreateFmt(                                  // ** do not localise
-      '%0:s.Instance: Unsupported WdwCtrl type %1:s',
-      [ClassName, Dlg.ClassName]
+    raise EBug.CreateFmt(
+      '%0:s.Instance: Unsupported WdwCtrl type %1:s', [ClassName, Dlg.ClassName]
     );
 end;
 
@@ -610,8 +577,7 @@ constructor TFormWindow.Create(const Form: TCustomForm);
     @param Form [in] Reference to form to be encapsulated.
   }
 begin
-  Assert(Assigned(Form),                                   // ** do not localise
-    ClassName + '.Create: Form is nil');
+  Assert(Assigned(Form), ClassName + '.Create: Form is nil');
   inherited Create;
   fForm := Form;
 end;
@@ -666,10 +632,8 @@ constructor TCommonDialogWindow.Create(const Dlg: TCommonDialog);
       called directly with a TOpenDialog.
   }
 begin
-  Assert(Assigned(Dlg),                                    // ** do not localise
-    ClassName + '.Create: Dlg is nil');
-  Assert((ClassType <> TCommonDialogWindow)
-    or not (Dlg is TOpenDialog),                           // ** do not localise
+  Assert(Assigned(Dlg), ClassName + '.Create: Dlg is nil');
+  Assert((ClassType <> TCommonDialogWindow) or not (Dlg is TOpenDialog),
     ClassName + '.Create: Dlg cannot be a TOpenDialog');
   inherited Create;
   fDlg := Dlg;
@@ -745,9 +709,8 @@ constructor TWinControlWindow.Create(const WinCtrl: TWinControl);
     @param WinCtrl [in] Control to be encapsulated. Must not be a TCustomForm.
   }
 begin
-  Assert(Assigned(WinCtrl),                                // ** do not localise
-    ClassName + '.Create: WinCtrl is nil');
-  Assert(not (WinCtrl is TCustomForm),                     // ** do not localise
+  Assert(Assigned(WinCtrl), ClassName + '.Create: WinCtrl is nil');
+  Assert(not (WinCtrl is TCustomForm),
     ClassName + '.Create: WinCtrl cannot be a TCustomForm');
   inherited Create;
   fWinCtrl := WinCtrl;
