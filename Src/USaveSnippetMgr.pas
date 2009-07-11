@@ -44,6 +44,10 @@
  * v2.4 of 03 Oct 2008  - Changed to use new inherited static Execute method and
  *                        to override new DoExecute method of base class.
  *                      - Made protected and private sections strict.
+ * v3.0 of 11 July 2009 - Changed to descend from TNoPublicConstructObject
+ *                        directly instead of indirectly via TSaveSnippetMgr.
+ *                      - Added methods that were formerly in base class, some
+ *                        of which have new implementations.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -63,7 +67,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -78,25 +82,23 @@ interface
 
 uses
   // Project
-  USourceFileOutputMgr, USourceGen, USnippetMgr, UView;
+  UBaseObjects, USourceFileOutputMgr, USourceGen, UView;
 
 
 type
 
   {
   TSaveSnippetMgr:
-    Manages generation, previewing and saving of a code snippet routine or
+    Manages generation, previewing and saving of a suitable code snippet or
     category to disk. Generated file can be a Pascal include file, a plain text
     file, an HTML file or a RTF file. The last two files types can optionally be
     syntax highlighted.
   }
-  TSaveSnippetMgr = class(TSnippetMgr)
+  TSaveSnippetMgr = class(TNoPublicConstructObject)
   strict private
-    fDocTitle: string;
-      {Title to used for saved documents}
-    fOutputMgr: TSourceFileOutputMgr;
-      {Object used to get file information from user and to control saving of
-      snippers to disk}
+    fView: TViewItem;                 // View to be output
+    fDocTitle: string;                // Title of saved documents
+    fOutputMgr: TSourceFileOutputMgr; // Gets save info and manages output
     procedure SourceGenHandler(Sender: TObject;
       const CommentStyle: TCommentStyle; out RawSourceCode, DocTitle: string);
       {Handles output manager's OnGenerateOutput event by generating source code
@@ -107,18 +109,28 @@ type
         @param DocTitle [out] Receives document title.
       }
   strict protected
-    constructor InternalCreate(const View: TViewItem); override;
-      {Class constructor. Sets up object to save specified routine or category.
-        @param View [in] View that stores category or routine to be saved. Must
-          be a saveable view.
+    constructor InternalCreate(const View: TViewItem);
+      {Class constructor. Sets up object for view.
+        @param View [in] View to be output.
       }
-    procedure DoExecute; override;
+    procedure DoExecute;
       {Gets information from user about name and format of required file and
-      saves required snippet to disk.
+      saves generated source code to disk.
       }
   public
     destructor Destroy; override;
       {Class destructor. Tears down object.
+      }
+    class procedure Execute(const View: TViewItem);
+      {Creates and outputs a compilable include file generated from a view item.
+        @param View [in] View from which source code is generated. CanHandleView
+          must return True for this view.
+      }
+    class function CanHandleView(const View: TViewItem): Boolean;
+      {Checks whether a snippet include file can be created from a view.
+        @param View [in] View to be checked.
+        @return True if view contains code that can be output as a compilable
+          snippet include file, False otherwise.
       }
   end;
 
@@ -130,7 +142,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  USourceFileInfo;
+  USnippetSourceGen, USourceFileInfo;
 
 
 resourcestring
@@ -151,6 +163,16 @@ resourcestring
 
 { TSaveSnippetMgr }
 
+class function TSaveSnippetMgr.CanHandleView(const View: TViewItem): Boolean;
+  {Checks whether a snippet include file can be created from a view.
+    @param View [in] View to be checked.
+    @return True if view contains code that can be output as a compilable
+      snippet include file, False otherwise.
+  }
+begin
+  Result := TSnippetSourceGen.CanGenerate(View);
+end;
+
 destructor TSaveSnippetMgr.Destroy;
   {Class destructor. Tears down object.
   }
@@ -161,22 +183,35 @@ end;
 
 procedure TSaveSnippetMgr.DoExecute;
   {Gets information from user about name and format of required file and saves
-  required snippet to disk.
+  generated source code to disk.
   }
 begin
   // Hand off processing to output manager
   fOutputMgr.Execute;
 end;
 
-constructor TSaveSnippetMgr.InternalCreate(const View: TViewItem);
-  {Class constructor. Sets up object to save specified routine or category.
-    @param View [in] View that stores category or routine to be saved. Must be a
-      saveable view.
+class procedure TSaveSnippetMgr.Execute(const View: TViewItem);
+  {Creates and outputs a compilable include file generated from a view item.
+    @param View [in] View from which source code is generated. CanHandleView
+      must return True for this view.
   }
 begin
-  // ** Do not localise any literal strings in this method
-  // Pass processing of view off to super class
-  inherited InternalCreate(View);
+  with InternalCreate(View) do
+    try
+      DoExecute;
+    finally
+      Free;
+    end;
+end;
+
+constructor TSaveSnippetMgr.InternalCreate(const View: TViewItem);
+  {Class constructor. Sets up object for view.
+    @param View [in] View to be output.
+  }
+begin
+  inherited InternalCreate;
+  // Record reference to view object
+  fView := View;
   // Create and initialise output manager object
   fOutputMgr := TSourceFileOutputMgr.Create;
   fOutputMgr.DlgTitle := Format(sSaveDlgTitle, [View.Description]);
@@ -211,7 +246,7 @@ procedure TSaveSnippetMgr.SourceGenHandler(Sender: TObject;
     @param DocTitle [out] Receives document title.
   }
 begin
-  RawSourceCode := Self.SourceCode(CommentStyle);
+  RawSourceCode := TSnippetSourceGen.Generate(fView, CommentStyle);
   DocTitle := fDocTitle;
 end;
 
