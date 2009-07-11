@@ -5,7 +5,14 @@
  * clipboard. Code is copied as plain text and as rich text. Rich text version
  * is syntax highlighted.
  *
- * v1.0 of 06 Jun 2009  - Original version
+ * v1.0 of 06 Jun 2009  - Original version containing just TCopySourceMgr.
+ * v2.0 of 11 Jul 2009  - Added new TCopySourceCodeBase abtract base class for
+ *                        all objects that copy source code to clipboard.
+ *                      - Re-implemented TCopySourceMgr as a concrete subclass
+ *                        of TCopySourceCodeBase.
+ *                      - Added a re-implementation of TCopySnippetMgr, formerly
+ *                        defined in UCopySnippetMgr, as a concreate subclass of
+ *                        TCopySourceCodeBase.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -40,33 +47,84 @@ interface
 
 uses
   // Project
-  UBaseObjects, UView;
+  UCopyViewMgr, UView;
 
 
 type
+
   {
-  TCopySourceMgr:
-    Static class that manages copying of a snippet's source code to clipboard as
-    plain text and syntax highlighted rich text.
+  TCopySourceCodeBase:
+    Static abstract base class for objects that copy source code to the
+    clipboard.
   }
-  TCopySourceMgr = class(TNoConstructObject)
-  strict private
-    class function GenerateRTF(const Source: string): string;
-      {Generates a syntax highlighted version of source code in rich text
-      format.
-        @param Source [in] Raw source code to be highlighted.
-        @return Required RTF code.
+  TCopySourceCodeBase = class abstract(TCopyViewMgr)
+  strict protected
+    class function GeneratePlainText(const View: TViewItem): string;
+      override;
+      {Generates a plain text document providing information about a snippet's
+      source code.
+        @param View [in] View representing snippet.
+        @return Plain text document as a string.
+      }
+    class function GenerateRichText(const View: TViewItem): string;
+      override;
+      {Generates a RTF document providing information about a snippet's source
+      code.
+        @param View [in] View representing snippet.
+        @return RTF document as a string.
+      }
+    class function GenerateSourceCode(const View: TViewItem): string;
+      virtual; abstract;
+      {Generates source code in required format.
+        @param View [in] View for which source code is required.
+        @return Source code as string.
       }
   public
     class function CanHandleView(const View: TViewItem): Boolean;
+      override; abstract;
+      {Checks if view can be copied to clipboard.
+        @param View [in] View to be checked.
+        @return True if view can be copied, False otherwise.
+      }
+  end;
+
+  {
+  TCopySourceMgr:
+    Static class that manages copying of a snippet's source code to clipboard.
+  }
+  TCopySourceMgr = class sealed(TCopySourceCodeBase)
+  strict protected
+    class function GenerateSourceCode(const View: TViewItem): string; override;
+      {Generates source code in required format.
+        @param View [in] View for which source code is required.
+        @return Snippet's source code as string.
+      }
+  public
+    class function CanHandleView(const View: TViewItem): Boolean; override;
       {Checks if a view can be copied to clipboard.
         @param View [in] View to be checked.
         @return True if view is a snippet, False otherwise.
       }
-    class procedure Execute(const View: TViewItem);
-      {Copies source code of a snippet represented by a view to the clipboard.
-        @param View [in] View that defines snippet whose source code to be
-          copied. Must be supported snippet type.
+  end;
+
+  {
+  TCopySnippetMgr:
+    Statis class that manages creation and copying of one or more code snippets
+    to the clipboard.
+  }
+  TCopySnippetMgr = class sealed(TCopySourceCodeBase)
+  strict protected
+    class function GenerateSourceCode(const View: TViewItem): string; override;
+      {Generates source code in required format.
+        @param View [in] View for which source code is required.
+        @return Generated code snippet(s) as string.
+      }
+  public
+    class function CanHandleView(const View: TViewItem): Boolean; override;
+      {Checks if a view can be copied to clipboard.
+        @param View [in] View to be checked.
+        @return True if view contains code that can be output as a compilable
+          snippet, False otherwise.
       }
   end;
 
@@ -76,8 +134,36 @@ implementation
 
 uses
   // Project
-  IntfHiliter, UClipboardHelper, UHiliteAttrs, USyntaxHiliters;
+  IntfHiliter, UHiliteAttrs, UPreferences, USnippetSourceGen, USyntaxHiliters;
 
+
+{ TCopySourceCodeBase }
+
+class function TCopySourceCodeBase.GeneratePlainText(
+  const View: TViewItem): string;
+  {Generates a plain text document providing information about a snippet's
+  source code.
+    @param View [in] View representing snippet.
+    @return Plain text document as a string.
+  }
+begin
+  Result := GenerateSourceCode(View);
+end;
+
+class function TCopySourceCodeBase.GenerateRichText(
+  const View: TViewItem): string;
+  {Generates a RTF document providing information about a snippet's source code.
+    @param View [in] View representing snippet.
+    @return RTF document as a string.
+  }
+var
+  Hiliter: ISyntaxHiliter;  // object that performs highlighting
+begin
+  Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
+  Result := Hiliter.Hilite(
+    GenerateSourceCode(View), THiliteAttrsFactory.CreateUserAttrs, ''
+  );
+end;
 
 { TCopySourceMgr }
 
@@ -90,39 +176,36 @@ begin
   Result := View.Kind = vkRoutine;
 end;
 
-class procedure TCopySourceMgr.Execute(const View: TViewItem);
-  {Copies source code of a snippet represented by a view to the clipboard.
-    @param View [in] View that defines snippet whose source code to be copied.
-      Must be supported snippet type.
+class function TCopySourceMgr.GenerateSourceCode(const View: TViewItem): string;
+  {Generates source code in required format.
+    @param View [in] View for which source code is required.
+    @return Snippet's source code as string.
   }
-var
-  Source: string; // plain text source code
 begin
-  Assert(View.Kind = vkRoutine,
-    ClassName + '.Execute: View kind must be vkRoutine');
-  Source := View.Routine.SourceCode;
-  with TClipboardHelper.Create do
-    try
-      Open;
-      Add(CF_TEXT, Source);
-      Add(CF_RTF, GenerateRTF(Source));
-    finally
-      Close;
-      Free;
-    end;
+  Result := View.Routine.SourceCode;
 end;
 
-class function TCopySourceMgr.GenerateRTF(const Source: string): string;
-  {Generates a syntax highlighted version of source code in rich text
-  format.
-    @param Source [in] Raw source code to be highlighted.
-    @return Required RTF code.
+{ TCopySnippetMgr }
+
+class function TCopySnippetMgr.CanHandleView(const View: TViewItem): Boolean;
+  {Checks if a view can be copied to clipboard.
+    @param View [in] View to be checked.
+    @return True if view contains code that can be output as a compilable
+      snippet, False otherwise.
   }
-var
-  Hiliter: ISyntaxHiliter;  // object that performs highlighting
 begin
-  Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
-  Result := Hiliter.Hilite(Source, THiliteAttrsFactory.CreateUserAttrs, '');
+  Result := TSnippetSourceGen.CanGenerate(View);
+end;
+
+class function TCopySnippetMgr.GenerateSourceCode(
+  const View: TViewItem): string;
+  {Generates source code in required format.
+    @param View [in] View for which source code is required.
+    @return Generated code snippet(s) as string.
+  }
+begin
+  Result := TSnippetSourceGen.Generate(View, Preferences.SourceCommentStyle);
 end;
 
 end.
+
