@@ -169,6 +169,8 @@
  *                        units.
  * v1.50 of 05 Jul 2009 - Added new UAutoFree, UBrowseProtocol and UFileProtocol
  *                        units.
+ * v1.51 of 11 Jul 2009 - Removed UCopySnippetMgr and USnippetMgr units.
+ *                      - Added new UCopyViewMgr unit.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -320,8 +322,8 @@ uses
   UContributors in 'UContributors.pas',
   UControlStateMgr in 'UControlStateMgr.pas',
   UCopyInfoMgr in 'UCopyInfoMgr.pas',
-  UCopySnippetMgr in 'UCopySnippetMgr.pas',
   UCopySourceMgr in 'UCopySourceMgr.pas',
+  UCopyViewMgr in 'UCopyViewMgr.pas',
   UCSSBuilder in 'UCSSBuilder.pas',
   UCSSUtils in 'UCSSUtils.pas',
   UDataBackupMgr in 'UDataBackupMgr.pas',
@@ -431,7 +433,6 @@ uses
   USnipData in 'USnipData.pas',
   USnippetIDs in 'USnippetIDs.pas',
   USnippetKindInfo in 'USnippetKindInfo.pas',
-  USnippetMgr in 'USnippetMgr.pas',
   USnippets in 'USnippets.pas',
   USnippetsChkListMgr in 'USnippetsChkListMgr.pas',
   USnippetsIO in 'USnippetsIO.pas',
