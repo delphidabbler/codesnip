@@ -336,6 +336,7 @@
  *                      - Made private and protected sections strict.
  *                      - Now deletes history if a snippet is changed: could
  *                        cause GPF in history's dependency references.
+ * v1.43 of 11 Jul 2009 - Removed reference to deleted UCopySnippetMgr unit.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -737,7 +738,7 @@ uses
   // Project
   FmSplash, FmWaitDlg, IntfFrameMgrs, IntfWBPopupMenus,
   UActionFactory, UAppInfo, UCodeShareMgr, UCommandBars, UCompLogAction,
-  UConsts, UCopyInfoMgr, UCopySnippetMgr, UCopySourceMgr, UDatabaseLoader,
+  UConsts, UCopyInfoMgr, UCopySourceMgr, UDatabaseLoader,
   UEditRoutineAction, UExceptions, UHelpMgr, UHistoryMenus, UMessageBox,
   UNotifier, UPrintMgr, UQuery, URoutineAction, USaveSnippetMgr, USaveUnitMgr,
   USnippets, UThreadWrapper, UUserDBMgr, UView, UViewItemAction,
