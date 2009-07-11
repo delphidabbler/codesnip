@@ -122,7 +122,10 @@
  *                        not available in USnippetIDs. Modified other classes
  *                        accordingly.
  *                      - Messages that referred to "routine" changed to refer
- *                        to "snippet"
+ *                        to "snippet".
+ * v3.1 of 11 Jul 2009  - Added new TRoutineList.ContainsKinds method and
+ *                        TSnippetKinds type.
+ *
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -180,6 +183,12 @@ type
     skConstant,   // constant definition in standard format
     skTypeDef     // type definition in standard format
   );
+
+  {
+  TSnippetKinds:
+    Sets of snippet kinds.
+  }
+  TSnippetKinds = set of TSnippetKind;
 
   {
   TRoutineData:
@@ -531,6 +540,12 @@ type
       {Checks whether list contains a specified snippet.
         @param Routine [in] Required snippet.
         @return True if snippet is in list, False otherwise.
+      }
+    function ContainsKinds(const Kinds: TSnippetKinds): Boolean;
+      {Checks if the list contains specified kinds of snippets.
+        @param Kinds [in] Set of kinds to test for.
+        @return True if list contains at least one snippet of any of the
+          specified kinds.
       }
     procedure Clear;
       {Clears the list.
@@ -1810,6 +1825,24 @@ function TRoutineList.Contains(const Routine: TRoutine): Boolean;
   }
 begin
   Result := fList.IndexOf(Routine) >= 0;
+end;
+
+function TRoutineList.ContainsKinds(const Kinds: TSnippetKinds): Boolean;
+  {Checks if the list contains specified kinds of snippets.
+    @param Kinds [in] Set of kinds to test for.
+    @return True if list contains at least one snippet of any of the specified
+      kinds.
+  }
+var
+  Snippet: TRoutine;  // reference to all snippets in list
+begin
+  Result := False;
+  for Snippet in Self do
+    if Snippet.Kind in Kinds then
+    begin
+      Result := True;
+      Break;
+    end;
 end;
 
 function TRoutineList.Count(const UserDefined: Boolean): Integer;
