@@ -1,8 +1,8 @@
 {
  * USnippetSourceGen.pas
  *
- * Implements class that generates source code for a code snippet contained in a
- * routine or category view.
+ * Implements a static class that generates source code for code snippet(s)
+ * contained in a routine or category view.
  *
  * v0.1 of 06 Jan 2006  - Original version.
  * v1.0 of 24 May 2006  - Improved and corrected comments.
@@ -23,9 +23,17 @@
  * v1.6 of 16 May 2009  - Modified to use renamed TSourceGen methods.
  *                      - Asserts now get class name from ClassName method.
  *                      - Renamed some variables and fields.
- * v1.7 of 10 Jul 2009  - Changed to generate and use comments as IStringList
+ * v2.0 of 11 Jul 2009  - Re-implemented TSnippetSourceGen as a static class:
+ *                        - Now descends from TNoPublicConstructObject.
+ *                        - Changed TSnippetSourceGen.Generate into a static
+ *                          method.
+ *                      - Added new static TSnippetSourceGen.CanGenerate method
+ *                        that checks if a source code snippet can be generated
+ *                        for a view.
+ *                      - Changed to generate and use comments as IStringList
  *                        rather than TStringList.
- *
+ *                      - Made private section strict.
+ *                      - Class sealed.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -60,18 +68,18 @@ interface
 
 uses
   // Project
-  UIStringList, USourceGen, UView;
+  UBaseObjects, UIStringList, USourceGen, UView;
 
 
 type
 
   {
   TSnippetSourceGen:
-    Class that generates source code for code snippet(s) contained in a routine
-    or category view.
+    Static class that generates source code for code snippet(s) contained in a
+    routine or category view.
   }
-  TSnippetSourceGen = class(TObject)
-  private
+  TSnippetSourceGen = class sealed(TNoPublicConstructObject)
+  strict private
     fContainsMainDBSnippets: Boolean;
       {Flag true if source code contains at least one snippet from main
       database, False only if source code is completely user defined}
@@ -86,17 +94,31 @@ type
       {Creates and stores header comments to be written to head of snippet.
         @return String list containing comments.
       }
-  public
-    constructor Create(const View: TViewItem);
+    function DoGenerate(const CommentStyle: TCommentStyle): string;
+      {Generates source code for included snippets.
+        @param CommentStyle [in] Style of commenting to use in source code.
+        @return Required source code.
+      }
+  strict protected
+    constructor InternalCreate(const View: TViewItem);
       {Class constructor. Sets up object to record and generate source code for
       a view.
         @param View [in] View for which we are generating source code.
       }
+  public
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
-    function Generate(const CommentStyle: TCommentStyle): string;
-      {Generates source code of all snippets in the view.
+    class function CanGenerate(const View: TViewItem): Boolean;
+      {Checks if a valid source code snippet can be generated from a view.
+        @param View [in] View to be checked.
+        @return True if View is a routine snippet or a category that contains
+          routine snippets for current query.
+      }
+    class function Generate(const View: TViewItem;
+      const CommentStyle: TCommentStyle): string;
+      {Generates source code of all routine snippets in a view.
+        @param View [in] View containing required snippet(s).
         @param CommentStyle [in] Style of commenting to use in source code.
         @return Required source code.
       }
@@ -147,18 +169,30 @@ begin
   );
 end;
 
-constructor TSnippetSourceGen.Create(const View: TViewItem);
-  {Class constructor. Sets up object to record and generate source code for a
-  view.
-    @param View [in] View for which we are generating source code.
+class function TSnippetSourceGen.CanGenerate(const View: TViewItem): Boolean;
+  {Checks if a valid source code snippet can be generated from a view.
+    @param View [in] View to be checked.
+    @return True if View is a routine snippet or a category that contains
+      routine snippets for current query.
   }
+var
+  CatSnippets: TRoutineList;  // list of snippets in a category
 begin
-  Assert(Assigned(View), ClassName + '.Create: View is nil');
-  Assert(View.Kind in [vkRoutine, vkCategory],
-    ClassName + '.Create: View item must be vkCategory or vkRoutine');
-  inherited Create;
-  fGenerator := TSourceGen.Create;
-  Initialize(View);
+  Result := False;
+  case View.Kind of
+    vkRoutine:
+      Result := View.Routine.Kind = skRoutine;
+    vkCategory:
+    begin
+      CatSnippets := TRoutineList.Create;
+      try
+        Query.GetCatSelection(View.Category, CatSnippets);
+        Result := CatSnippets.ContainsKinds([skRoutine]);
+      finally
+        FreeAndNil(CatSnippets);
+      end;
+    end;
+  end;
 end;
 
 destructor TSnippetSourceGen.Destroy;
@@ -169,14 +203,30 @@ begin
   inherited;
 end;
 
-function TSnippetSourceGen.Generate(
+function TSnippetSourceGen.DoGenerate(
   const CommentStyle: TCommentStyle): string;
-  {Generates source code of all routines in the view.
+  {Generates source code for included snippets.
     @param CommentStyle [in] Style of commenting to use in source code.
     @return Required source code.
   }
 begin
   Result := fGenerator.IncFileAsString(CommentStyle, BuildHeaderComments);
+end;
+
+class function TSnippetSourceGen.Generate(const View: TViewItem;
+  const CommentStyle: TCommentStyle): string;
+  {Generates source code of all routine snippets in a view.
+    @param View [in] View containing required snippet(s).
+    @param CommentStyle [in] Style of commenting to use in source code.
+    @return Required source code.
+  }
+begin
+  with InternalCreate(View) do
+    try
+      Result := DoGenerate(CommentStyle);
+    finally
+      Free;
+    end;
 end;
 
 procedure TSnippetSourceGen.Initialize(const View: TViewItem);
@@ -202,7 +252,7 @@ begin
     Snips := TRoutineList.Create;
     try
       Query.GetCatSelection(View.Category, Snips);
-      fGenerator.IncludeSnippets(Snips);
+      fGenerator.IncludeSnippets(Snips);  // ignores freeform snippets
       for Snippet in Snips do
       begin
         if not Snippet.UserDefined then
@@ -215,6 +265,19 @@ begin
       FreeAndNil(Snips);
     end;
   end;
+end;
+
+constructor TSnippetSourceGen.InternalCreate(const View: TViewItem);
+  {Class constructor. Sets up object to record and generate source code for a
+  view.
+    @param View [in] View for which we are generating source code.
+  }
+begin
+  Assert(Assigned(View), ClassName + '.InternalCreate: View is nil');
+  Assert(CanGenerate(View), ClassName + '.InternalCreate: View not supported');
+  inherited InternalCreate;
+  fGenerator := TSourceGen.Create;
+  Initialize(View);
 end;
 
 end.
