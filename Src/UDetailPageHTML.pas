@@ -127,6 +127,8 @@
  *                        are no compilers.
  *                      - Modified TRoutineInfoPageHTML to hide compiler table
  *                        for non-compilable snippets.
+ * v2.2 of 12 Jul 2009  - Added support for new <%Category%> placeholder in
+ *                        snippet information HTML. Creates link to a category.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -626,6 +628,7 @@ begin
   InfoHTML := TInfoHTML.Create(GetRoutine);
   try
     Tplt.ResolvePlaceholderHTML('Kind', InfoHTML.SnippetKind);
+    Tplt.ResolvePlaceholderHTML('Category', InfoHTML.Category);
     Tplt.ResolvePlaceholderHTML('Description', InfoHTML.RoutineDesc);
     Tplt.ResolvePlaceholderHTML('SourceCode', InfoHTML.SourceCode);
     Tplt.ResolvePlaceholderHTML('Units', InfoHTML.Units);
