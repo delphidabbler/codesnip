@@ -337,8 +337,14 @@
  *                      - Now deletes history if a snippet is changed: could
  *                        cause GPF in history's dependency references.
  * v1.43 of 11 Jul 2009 - Removed reference to deleted UCopySnippetMgr unit.
- * v1.44 of 12 Jul 2009 - Added a new dynamically created category display
+ * v1.44 of 13 Jul 2009 - Added a new dynamically created category display
  *                        action that is passed to notifier.
+ *                      - Removed OnExecute handler for dynamically created
+ *                        TRoutineAction: action now displays snippet in its
+ *                        Execute method. Removed URoutineAction unit reference.
+ *                      - Changed actEditSnippetExecute to call notifier rather
+ *                        than call user database manager directly.
+ *                      - Changed a menu item name.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -393,14 +399,19 @@ type
     actAddSnippet: TAction;
     actBackupDatabase: TAction;
     actBugReport: TAction;
+    actCollapseNode: TAction;
+    actCollapseTree: TAction;
     actCompilers: TAction;
     actCopy: TAction;
     actCopyInfo: TAction;
     actCopySnippet: TAction;
+    actCopySource: TAction;
     actDeleteSnippet: TAction;
     actDonate: TAction;
     actEditSnippet: TAction;
     actExit: TFileExit;
+    actExpandNode: TAction;
+    actExpandTree: TAction;
     actExportCode: TAction;
     actFindClear: TAction;
     actFindCompiler: TAction;
@@ -433,21 +444,26 @@ type
     actTestBug: TAction;
     actTestCompile: TAction;
     actUpdateDbase: TAction;
+    actViewAlphabetical: TAction;
     actViewCategorised: TAction;
     actViewCompErrs: TAction;
     actViewCompCheck: TAction;
+    actViewDependencies: TAction;
     actViewInfo: TAction;
+    actViewSnippetKinds: TAction;
     actViewTestUnit: TAction;
-    actViewAlphabetical: TAction;
     actWebSite: TBrowseURL;
     actWelcome: TAction;
     alMain: TActionList;
     appEvents: TApplicationEvents;
     frmDetail: TDetailFrame;
+    frmOverview: TOverviewFrame;
     ilMain: TImageList;
     miAbout: TMenuItem;
     miAddSnippet: TMenuItem;
     miBackupDatabase: TMenuItem;
+    miCollapseNode: TMenuItem;
+    miCollapseTree: TMenuItem;
     miCompilers: TMenuItem;
     miCopy: TMenuItem;
     miCopyInfo: TMenuItem;
@@ -458,6 +474,8 @@ type
     miEdit: TMenuItem;
     miEditSnippet: TMenuItem;
     miExit: TMenuItem;
+    miExpandNode: TMenuItem;
+    miExpandTree: TMenuItem;
     miExportCode: TMenuItem;
     miFile: TMenuItem;
     miFindClear: TMenuItem;
@@ -487,6 +505,7 @@ type
     miSearch: TMenuItem;
     miSelectRoutines: TMenuItem;
     miSelectAll: TMenuItem;
+    miSourceCode: TMenuItem;
     miSpacer1: TMenuItem;
     miSpacer2: TMenuItem;
     miSpacer3: TMenuItem;
@@ -501,6 +520,8 @@ type
     miSpacer12: TMenuItem;
     miSpacer13: TMenuItem;
     miSpacer14: TMenuItem;
+    miSpacer15: TMenuItem;
+    miSpacer16: TMenuItem;
     miSubmit: TMenuItem;
     miTestCompile: TMenuItem;
     miTools: TMenuItem;
@@ -509,7 +530,9 @@ type
     miViewCategorised: TMenuItem;
     miViewCompCheck: TMenuItem;
     miViewCompErrs: TMenuItem;
+    miViewDependencies: TMenuItem;
     miViewInfo: TMenuItem;
+    miViewSnippetKinds: TMenuItem;
     miViewTestUnit: TMenuItem;
     miViewAlphabetical: TMenuItem;
     miWeb: TMenuItem;
@@ -547,23 +570,6 @@ type
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
     tbUpdateDbase: TToolButton;
-    actViewDependencies: TAction;
-    miViewDependencies: TMenuItem;
-    actCollapseTree: TAction;
-    miSpacer15: TMenuItem;
-    miCollapseTree: TMenuItem;
-    miExpandTree: TMenuItem;
-    actExpandTree: TAction;
-    actExpandNode: TAction;
-    actCollapseNode: TAction;
-    miCollapseNode: TMenuItem;
-    miExpandNode: TMenuItem;
-    actViewSnippetKinds: TAction;
-    miViewSnippetKinds: TMenuItem;
-    actCopySource: TAction;
-    miSpacer16: TMenuItem;
-    CopySourceCode1: TMenuItem;
-    frmOverview: TOverviewFrame;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
     procedure actBackupDatabaseExecute(Sender: TObject);
@@ -669,11 +675,6 @@ type
         @param Sender [in] Action triggering this event. Must be a
           TViewItemAction.
       }
-    procedure ActViewRoutineExecute(Sender: TObject);
-      {Displays a named snippet.
-        @param Sender [in] Action triggering this event. Must be a
-          TRoutineAction.
-      }
     procedure ActEditRoutineExecute(Sender: TObject);
       {Edits a named user defined snippet.
         @param Sender [in] Action triggering this event. Must be a
@@ -740,11 +741,11 @@ uses
   // Project
   FmSplash, FmWaitDlg, IntfFrameMgrs, IntfWBPopupMenus,
   UActionFactory, UAppInfo, UCodeShareMgr, UCommandBars, UCompLogAction,
-  UConsts, UCopyInfoMgr, UCopySourceMgr, UDatabaseLoader,
-  UEditRoutineAction, UExceptions, UHelpMgr, UHistoryMenus, UMessageBox,
-  UNotifier, UPrintMgr, UQuery, URoutineAction, USaveSnippetMgr, USaveUnitMgr,
-  USnippets, UThreadWrapper, UUserDBMgr, UView, UViewItemAction,
-  UWaitForActionUI, UWBExternal, UWBNulDropTarget, UWebInfo;
+  UConsts, UCopyInfoMgr, UCopySourceMgr, UDatabaseLoader, UEditRoutineAction,
+  UExceptions, UHelpMgr, UHistoryMenus, UMessageBox, UNotifier, UPrintMgr,
+  UQuery, USaveSnippetMgr, USaveUnitMgr, USnippets, UThreadWrapper, UUserDBMgr,
+  UView, UViewItemAction, UWaitForActionUI, UWBExternal, UWBNulDropTarget,
+  UWebInfo;
 
 
 {$R *.dfm}
@@ -951,7 +952,7 @@ procedure TMainForm.actEditSnippetExecute(Sender: TObject);
 begin
   Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actEditSnippetExecute: Can''t edit current view item');
-  TUserDBMgr.Edit(fMainDisplayMgr.CurrentView);
+  fNotifier.EditRoutine(fMainDisplayMgr.CurrentView.Routine.Name);
   // display of updated snippet is handled by snippets change event handler
 end;
 
@@ -1099,7 +1100,7 @@ procedure TMainForm.actHelpCompChecksExecute(Sender: TObject);
   }
 begin
   // Displays help topic indirected via custom help topic action
-  DisplayHelp('CompChecks');                               
+  DisplayHelp('CompChecks');
 end;
 
 procedure TMainForm.actHelpContentsExecute(Sender: TObject);
@@ -1532,37 +1533,6 @@ begin
   fHistory.NewItem((Sender as TViewItemAction).ViewItem);
 end;
 
-procedure TMainForm.ActViewRoutineExecute(Sender: TObject);
-  {Displays a named snippet.
-    @param Sender [in] Action triggering this event. Must be a TRoutineAction.
-    @except EBug raised if the requested routine doesn't exist.
-  }
-var
-  Routine: TRoutine;    // routine's object
-  ViewItem: TViewItem;  // view item for routine
-const
-  // Bug error message
-  cBadRoutineError = '%0:s.ActViewRoutineExecute: '
-    + 'Snippet "%1:s" not in database';
-begin
-  // Get snippet instance
-  Routine := Snippets.Routines.Find(
-    (Sender as TRoutineAction).RoutineName,
-    (Sender as TRoutineAction).UserDefined
-  );
-  if not Assigned(Routine) then
-    raise EBug.CreateFmt(
-      cBadRoutineError, [ClassName, (Sender as TRoutineAction).RoutineName]
-    );
-  // Create view item for snippet & get notifier to trigger action to display it
-  ViewItem := TViewItem.Create(Routine);
-  try
-    fNotifier.ShowViewItem(ViewItem);
-  finally
-    FreeAndNil(ViewItem);
-  end;
-end;
-
 procedure TMainForm.actViewTestUnitExecute(Sender: TObject);
   {Displays test unit for currently selected snippet in a dialog box.
     @param Sender [in] Not used.
@@ -1765,9 +1735,7 @@ begin
     with fNotifier as ISetActions do
     begin
       SetUpdateDbaseAction(actUpdateDbase);
-      SetDisplayRoutineAction(
-        TActionFactory.CreateRoutineAction(Self, ActViewRoutineExecute)
-      );
+      SetDisplayRoutineAction(TActionFactory.CreateRoutineAction(Self));
       SetDisplayCategoryAction(TActionFactory.CreateCategoryAction(Self));
       SetCompileRoutineAction(actTestCompile);
       SetViewCompilerLogAction(

@@ -2,19 +2,19 @@ inherited MainForm: TMainForm
   Left = 204
   Top = 150
   Caption = 'MainForm'
-  ClientHeight = 656
+  ClientHeight = 676
   ClientWidth = 605
   Constraints.MinHeight = 360
   Constraints.MinWidth = 480
   Menu = mnuMain
   OnResize = FormResize
   ExplicitWidth = 621
-  ExplicitHeight = 712
+  ExplicitHeight = 732
   PixelsPerInch = 96
   TextHeight = 13
   object sbStatusBar: TStatusBar
     Left = 0
-    Top = 636
+    Top = 656
     Width = 605
     Height = 20
     Panels = <
@@ -27,6 +27,7 @@ inherited MainForm: TMainForm
       item
         Width = 50
       end>
+    ExplicitTop = 636
   end
   object tbarMain: TToolBar
     Left = 0
@@ -196,16 +197,17 @@ inherited MainForm: TMainForm
     Left = 0
     Top = 31
     Width = 605
-    Height = 605
+    Height = 625
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
     TabOrder = 2
+    ExplicitHeight = 605
     object splitVert: TSplitter
       Left = 187
       Top = 2
       Width = 6
-      Height = 601
+      Height = 621
       Beveled = True
       OnCanResize = splitVertCanResize
       ExplicitHeight = 292
@@ -214,15 +216,16 @@ inherited MainForm: TMainForm
       Left = 2
       Top = 2
       Width = 185
-      Height = 601
+      Height = 621
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
+      ExplicitHeight = 601
       inline frmOverview: TOverviewFrame
         Left = 1
         Top = 1
         Width = 183
-        Height = 599
+        Height = 619
         Align = alClient
         TabOrder = 0
         TabStop = True
@@ -244,13 +247,13 @@ inherited MainForm: TMainForm
         end
         inherited tcDisplayStyle: TTabControl
           Width = 183
-          Height = 572
+          Height = 592
           ExplicitWidth = 183
           ExplicitHeight = 572
           inherited tvSnippets: TTreeView
             Top = 42
             Width = 175
-            Height = 526
+            Height = 546
             ExplicitLeft = 4
             ExplicitTop = 42
             ExplicitWidth = 175
@@ -263,15 +266,16 @@ inherited MainForm: TMainForm
       Left = 193
       Top = 2
       Width = 410
-      Height = 601
+      Height = 621
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
+      ExplicitHeight = 601
       inline frmDetail: TDetailFrame
         Left = 1
         Top = 1
         Width = 408
-        Height = 599
+        Height = 619
         Align = alClient
         TabOrder = 0
         TabStop = True
@@ -289,7 +293,7 @@ inherited MainForm: TMainForm
         end
         inherited pcDetail: TPageControl
           Width = 408
-          Height = 572
+          Height = 592
           ExplicitWidth = 408
           ExplicitHeight = 572
           inherited tsInfo: TTabSheet
@@ -299,23 +303,23 @@ inherited MainForm: TMainForm
             ExplicitHeight = 544
             inherited frmInfo: TInfoFrame
               Width = 400
-              Height = 544
+              Height = 564
               ExplicitWidth = 400
               ExplicitHeight = 544
               inherited pnlBrowser: TPanel
                 Width = 400
-                Height = 544
+                Height = 564
                 ExplicitWidth = 400
                 ExplicitHeight = 544
                 inherited wbBrowser: TWebBrowser
                   Width = 400
-                  Height = 544
+                  Height = 564
                   ExplicitLeft = 1
                   ExplicitTop = 1
                   ExplicitWidth = 400
                   ExplicitHeight = 544
                   ControlData = {
-                    4C00000057290000393800000000000000000000000000000000000000000000
+                    4C000000572900004B3A00000000000000000000000000000000000000000000
                     000000004C000000000000000000000001000000E0D057007335CF11AE690800
                     2B2E126208000000000000004C0000000114020000000000C000000000000046
                     8000000000000000000000000000000000000000000000000000000000000000
@@ -2190,7 +2194,7 @@ inherited MainForm: TMainForm
       object miCopySnippet: TMenuItem
         Action = actCopySnippet
       end
-      object CopySourceCode1: TMenuItem
+      object miSourceCode: TMenuItem
         Action = actCopySource
       end
       object miSpacer16: TMenuItem
