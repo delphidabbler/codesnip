@@ -28,6 +28,8 @@
  *                      - Added support for new REML tags in TRoutine.Extra
  *                        property.
  *                      - Added new TInfoHTML.SnippetKind method.
+ * v1.7 of 12 Jul 2009  - Added new TInfoHTML.Category method.
+ *                      - Added full stop to end of snippet kind text.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -121,6 +123,10 @@ type
       {Provides HTML containing a description of snippet kind.
         @return Required HTML.
       }
+    function Category: string;
+      {Provides HTML containing the category that a snippet belongs to.
+        @return Required HTML.
+      }
     function SourceCode: string;
       {Provides HTML containing snippet's source code, syntax highlighted in a
       style suitable for display in UI.
@@ -194,6 +200,20 @@ begin
 end;
 
 { TInfoHTML }
+
+function TInfoHTML.Category: string;
+  {Provides HTML containing the category that a snippet belongs to.
+    @return Required HTML.
+  }
+var
+  Cat: TCategory; // category that snippet belongs to
+begin
+  Cat := Snippets.Categories.Find(Routine.Category);
+  Assert(Assigned(Cat), ClassName + '.Category: Category not found');
+  Result := MakeSentence(
+    CategoryALink(Cat.Category, Cat.Description)
+  );
+end;
 
 function TInfoHTML.Depends: string;
   {Provides list of links to snippets on which snippet depends.
@@ -358,7 +378,7 @@ function TInfoHTML.SnippetKind: string;
   }
 begin
   Result := MakeSafeHTMLText(
-    TSnippetKindInfoList.Instance[Routine.Kind].Description
+    MakeSentence(TSnippetKindInfoList.Instance[Routine.Kind].Description)
   );
 end;
 
