@@ -42,6 +42,8 @@
  *                        ShowTestUnit and SetShowTestUnitAction and fields.
  *                      - Added new Donate and SetDonateAction methods to
  *                        TNotifier.
+ * v1.6 of 12 Jul 2009  - Added new DisplayCategory and SetDisplayCategoryAction
+ *                        methods to TNotifier.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -120,6 +122,8 @@ type
       {Action that causes a user defined snippet to be edited}
     fDonateAction: TBasicAction;
       {Action that displays donate dialog box}
+    fDisplayCategoryAction: TBasicAction;
+      {Action that causes a category to be displayed}
   protected // do not make strict
     { INotifier }
     procedure UpdateDbase;
@@ -130,6 +134,10 @@ type
       {Displays a named snippet.
         @param RoutineName [in] Name of snippet to display.
         @param UserDefined [in] Whether snippet is user defined.
+      }
+    procedure DisplayCategory(const CatID: WideString);
+      {Displays an identified category.
+        @param CatID [in] Id of category to display.
       }
     procedure CompileRoutine;
       {Compiles the current snippet.
@@ -228,6 +236,10 @@ type
       displays.
         @param Action [in] Required action.
       }
+    procedure SetDisplayCategoryAction(const Action: TBasicAction);
+      {Sets actions triggered when a category is requested to be displayed.
+        @param Action [in] Required action.
+      }
   end;
 
 
@@ -238,8 +250,8 @@ uses
   // Delphi
   StdActns,
   // Project
-  IntfCompilers, UCompLogAction, UEditRoutineAction, URoutineAction,
-  UViewItemAction;
+  IntfCompilers, UCategoryAction, UCompLogAction, UEditRoutineAction,
+  URoutineAction, UViewItemAction;
 
 
 { TNotifier }
@@ -280,6 +292,18 @@ procedure TNotifier.ConfigCompilers;
 begin
   if Assigned(fConfigCompilersAction) then
     fConfigCompilersAction.Execute;
+end;
+
+procedure TNotifier.DisplayCategory(const CatID: WideString);
+  {Displays an identified category.
+    @param CatID [in] Id of category to display.
+  }
+begin
+  if Assigned(fDisplayCategoryAction) then
+  begin
+    (fDisplayCategoryAction as TCategoryAction).CatID := CatID;
+    fDisplayCategoryAction.Execute;
+  end;
 end;
 
 procedure TNotifier.DisplayRoutine(const RoutineName: WideString;
@@ -348,6 +372,17 @@ begin
   SetLength(fDisplayPaneChangeActions, Length(Actions));
   for Idx := Low(Actions) to High(Actions) do
     fDisplayPaneChangeActions[Idx] := Actions[Idx];
+end;
+
+procedure TNotifier.SetDisplayCategoryAction(const Action: TBasicAction);
+  {Sets actions triggered when a category is requested to be displayed.
+    @param Action [in] Required action.
+  }
+begin
+  Assert(Action is TCategoryAction,
+    ClassName + '.SetDisplayCategoryAction: Action is not TCategoryAction');
+  fDisplayCategoryAction := Action;
+  (fDisplayCategoryAction as ISetNotifier).SetNotifier(Self);
 end;
 
 procedure TNotifier.SetDisplayRoutineAction(

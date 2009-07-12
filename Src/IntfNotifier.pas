@@ -23,14 +23,15 @@
  * v1.3 of 14 Sep 2008  - Changed signature of INotifier.DisplayRoutine method
  *                        to take a parameter identifying which database routine
  *                        is from. Changed to support user database.
- *                      - Added new INotifier.EditRoutine method and setter
- *                        method for associated action.
- *                      - Added new ISetActions.SetEditRoutineAction method.
+ *                      - Added new INotifier.EditRoutine and
+ *                        ISetActions.SetEditRoutineAction methods.
  * v1.4 of 23 May 2009  - Replaced INotifier's ToggleTestUnit with ShowTestUnit.
  *                      - Replaced ISetActions' SetToggleTestUnitAction with
  *                        SetShowTestUnitAction.
  *                      - Added INotifier.Donate and ISetAction.SetDonateAction
  *                        methods.
+ * v1.5 of 12 Jul 2009  - Added INotifier.DisplayCategory and 
+ *                        ISetActions.SetDisplayCategoryAction methods.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -87,6 +88,10 @@ type
       {Displays a named routine.
         @param RoutineName [in] Name of routine to display.
         @param UserDefined [in] Whether routine is user defined.
+      }
+    procedure DisplayCategory(const CatID: WideString);
+      {Displays an identified category.
+        @param CatID [in] Id of category to display.
       }
     procedure CompileRoutine;
       {Compiles the current routine.
@@ -189,8 +194,12 @@ type
         @param Action [in] Required action.
       }
     procedure SetDonateAction(const Action: TBasicAction);
-      {Sets action triggered when user request that the donate dialog box is
+      {Sets action triggered when user requests that the donate dialog box is
       displays.
+        @param Action [in] Required action.
+      }
+    procedure SetDisplayCategoryAction(const Action: TBasicAction);
+      {Sets actions triggered when a category is requested to be displayed.
         @param Action [in] Required action.
       }
   end;
