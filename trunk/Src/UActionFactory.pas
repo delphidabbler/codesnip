@@ -11,6 +11,7 @@
  *                        TNoConstructObject and hence prevented it from being
  *                        constructed.
  *                      - Made private section of TActionFactory strict.
+ * v1.5 of 12 Jul 2009  - Added new CreateCategoryAction method.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -30,7 +31,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -112,6 +113,13 @@ type
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
       }
+    class function CreateCategoryAction(const AOwner: TComponent;
+      const OnExecHandler: TNotifyEvent = nil): TBasicAction;
+      {Creates a Category action and sets OnExecute handler if provided.
+        @param AOwner [in] Owner of action.
+        @param OnExecHandler [in] Handler for action's OnExecute event.
+        @return Reference to newly created action.
+      }
   end;
 
 
@@ -122,8 +130,8 @@ uses
   // Delphi
   StdActns,
   // Project
-  UCompLogAction, UEditRoutineAction, ULinkAction, URoutineAction,
-  UViewItemAction;
+  UCategoryAction, UCompLogAction, UEditRoutineAction, ULinkAction,
+  URoutineAction, UViewItemAction;
 
 
 { TActionFactory }
@@ -140,6 +148,17 @@ class function TActionFactory.CreateAction(
 begin
   Result := ActionClass.Create(AOwner);
   Result.OnExecute := OnExecHandler;
+end;
+
+class function TActionFactory.CreateCategoryAction(const AOwner: TComponent;
+  const OnExecHandler: TNotifyEvent): TBasicAction;
+  {Creates a Category action and sets OnExecute handler if provided.
+    @param AOwner [in] Owner of action.
+    @param OnExecHandler [in] Handler for action's OnExecute event.
+    @return Reference to newly created action.
+  }
+begin
+  Result := CreateAction(TCategoryAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateCompLogAction(const AOwner: TComponent;
