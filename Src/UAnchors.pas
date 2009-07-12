@@ -10,6 +10,7 @@
  *                      - Made TAnchor's private section strict.
  * v1.2 of 12 Jan 2009  - Changed to use IStringList.Contains in place of
  *                        IStringList.IndexOf.
+ * v1.3 of 12 Jul 2009  - Added support for new akCategory anchor kind.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -29,7 +30,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -57,6 +58,7 @@ type
   TAnchorKind = (
     akExternal,   // external link: class name = 'external-link'
     akRoutine,    // link to a routine: class name = 'routine-link'
+    akCategory,   // link to a category: class name = 'category-link'
     akCommand,    // link to a JS command: class name = 'command-link'
     akHelp,       // link to help topic: class name = 'help-link'
     akUnknown,    // unknown link kind
@@ -132,7 +134,6 @@ class function TAnchors.AnchorKind(const Anchor: IDispatch): TAnchorKind;
 var
   ClassNames: IStringList;  // list of element's CSS classes
 begin
-  // ** do not localise string literals
   if IsAnchor(Anchor) then
   begin
     ClassNames := THTMLDocHelper.GetElemClasses(Anchor);
@@ -144,6 +145,8 @@ begin
       Result := akExternal
     else if ClassNames.Contains('routine-link') then
       Result := akRoutine
+    else if ClassNames.Contains('category-link') then
+      Result := akCategory
     else
       Result := akUnknown
   end

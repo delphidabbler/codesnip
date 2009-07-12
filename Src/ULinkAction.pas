@@ -7,6 +7,8 @@
  * v1.1 of 25 May 2009  - Changed action caption for akRoutine anchor from "Show
  *                        Routine" to "Show Snippet".
  *                      - Made private and protected class sections strict.
+ * v1.2 of 12 Jul 2009  - Added support for new display category action kind to
+ *                        display "Show category" in menu.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -41,7 +43,7 @@ interface
 
 uses
   // Delphi
-  Classes, ActnList;
+  ActnList;
 
 
 type
@@ -52,8 +54,7 @@ type
   }
   TLinkAction = class(TCustomAction)
   strict private
-    fLink: IDispatch;
-      {Value of Link property}
+    fLink: IDispatch; // Value of Link property
     procedure SetLink(const Value: IDispatch);
       {Sets link element and action's caption.
         @param Value [in] New link element.
@@ -98,6 +99,7 @@ resourcestring
   sOpen = 'Open Link';
   sOpenInBrowser = 'Open Link In Browser';
   sDisplaySnippet = 'Display Snippet';
+  sDisplayCategory = 'Display Category';
   sExecCommand = 'Execute Command';
   sShowHelp = 'Show Help Topic';
 
@@ -107,6 +109,7 @@ const
   cCaptions: array[TAnchorKind] of string = (
     sOpenInBrowser,   // akExternal
     sDisplaySnippet,  // akRoutine
+    sDisplayCategory, // akCategory
     sExecCommand,     // akCommand
     sShowHelp,        // akHelp
     sOpen,            // akUnknown
