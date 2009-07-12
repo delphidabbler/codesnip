@@ -13834,4 +13834,106 @@
       )
     )
   )
+  @REVISION(
+    @VERSION            3.0.3 (build 148)
+    @COMPILERS          + Delphi 2006
+                        + BRCC32 5.4
+                        + MS HTML Help Workshop 1.1
+                        + HTML Resource Compiler 1.2
+                        + Version Information Editor 2.11.2
+                        + Inno Setup Compiler v5.2.3 with ISPP preprocessor.
+                        + Microsoft MIDL compiler v7.0
+                        + Borland TLIBIMP v10.0
+    @COMMENTS           Refactored code:
+                        + Rationalised some JavaScript code.
+                        + Rationalised some dialog aligment code.
+                        + Changed some object types and class heirachies.
+                        + Added some automatic object lifetime management logic.
+                        + Removed some duplicate code and merged some units.\
+                        Fixed an obscure bug in category code snippet generation
+                        as a side effect of refactoring.
+    @FILES(
+      @REMOVED          UCopySnippetMgr.pas
+      @REMOVED          USnippetMgr.pas
+      @REMOVED          Res\HTML\comp-routine.js
+      @REMOVED          UDataStreamWriter.pas
+      @UPDATED(
+        @FILE           CodeSnip.dpr
+        @VERSION        1.51
+      )
+      @UPDATED(
+        @FILE           FmMain.pas
+        @VERSION        1.43
+      )
+      @UPDATED(
+        @FILE           UCopyInfoMgr.pas
+        @VERSION        2.0
+      )
+      @UPDATED(
+        @FILE           UCopySourceMgr.pas
+        @VERSION        2.0
+      )
+      @NEW(
+        @FILE           UCopyViewMgr.pas
+        @VERSION        1.0
+      )
+      @UPDATED(
+        @FILE           UDataStreamIO.pas
+        @VERSION        2.0
+        @RENAMED_FROM   UDataStreamReader.pas
+      )
+      @UPDATED(
+        @FILE           UDlgHelper.pas
+        @VERSION        1.4
+      )
+      @UPDATED(
+        @FILE           UFileUpdater.pas
+        @VERSION        1.1
+      )
+      @UPDATED(
+        @FILE           UNews.pas
+        @VERSION        1.2
+      )
+      @UPDATED(
+        @FILE           UProtocols.pas
+        @VERSION        3.1
+      )
+      @UPDATED(
+        @FILE           UREMLDataIO.pas
+        @VERSION        1.3
+      )
+      @UPDATED(
+        @FILE           USaveSnippetMgr.pas
+        @VERSION        3.0
+      )
+      @UPDATED(
+        @FILE           USaveUnitMgr.pas
+        @VERSION        1.8
+      )
+      @UPDATED(
+        @FILE           USnippets.pas
+        @VERSION        3.1
+      )
+      @UPDATED(
+        @FILE           USnippetSourceGen.pas
+        @VERSION        2.0
+      )
+      @UPDATED(
+        @FILE           USourceGen.pas
+        @VERSION        2.2
+      )
+      @UPDATED(
+        @FILE           UUserDBBackup.pas
+        @VERSION        1.2
+      )
+      @UPDATED(
+        @FILE           Res\HTML\detail.js
+        @VERSION        2.1
+      )
+      @UPDATED(
+        @FILE           Res\HTML\detail-compcheck.html
+        @VERSION        1.5
+      )
+    )
+  )
 )
