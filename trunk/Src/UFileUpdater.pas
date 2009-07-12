@@ -1,36 +1,21 @@
-{ ##
-  @FILE                     UFileUpdater.pas
-  @COMMENTS                 Object that updates local CodeSnip data files using
-                            a supplied stream of data.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None
-  @HISTORY(
-    @REVISION(
-      @VERSION              0.1
-      @DATE                 02/04/2006
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              0.2
-      @DATE                 01/05/2006
-      @COMMENTS             Complete rewrite. No longer accesses web server, but
-                            now performs local file update from a supplied data
-                            stream.
-    )
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 25/05/2006
-      @COMMENTS             + Improved and corrected comments.
-                            + Removed unused unit reference.
-                            + Renamed EFileList exception as EFileUpdater.
-    )
-  )
-}
-
-
 {
+ * UFileUpdater.pas
+ *
+ * Object that updates local CodeSnip data files using a supplied stream of
+ * data.
+ *
+ * v0.1 of 02 Feb 2006  - Original version.
+ * v0.2 of 01 May 2006  - Complete rewrite. No longer accesses web server, but
+ *                        now performs local file update from a supplied data
+ *                        stream.
+ * v1.0 of 25 May 2006  - Improved and corrected comments.
+ *                      - Removed unused unit reference.
+ *                      - Renamed EFileList exception as EFileUpdater.
+ * v1.1 of 12 Jul 2009  - Replaced reference to UDataStreamRreader with
+ *                        UDataStreamIO unit.
+ *                      - Made TFileUpdater private section strict.
+ *
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -48,10 +33,8 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
- *
- * Contributor(s): None
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -67,7 +50,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UDataStreamReader, UExceptions;
+  UDataStreamIO, UExceptions;
 
 
 type
@@ -78,11 +61,9 @@ type
     data.
   }
   TFileUpdater = class(TObject)
-  private
-    fReader: TDataStreamReader;
-      {Object that provides methods to read data stream}
-    fLocalDir: string;
-      {Local data directory}
+  strict private
+    fReader: TDataStreamReader; // Provides methods to read data stream
+    fLocalDir: string;          // Local data directory
     procedure UndoUpdate;
       {Reverts data files to state they were in before update.
       }
@@ -135,7 +116,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UDataBackupMgr, UUtils, UCheckSum, UDOSDateTime;
+  UCheckSum, UDataBackupMgr, UDOSDateTime, UUtils;
 
 
 resourcestring

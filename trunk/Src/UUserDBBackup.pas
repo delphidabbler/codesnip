@@ -7,6 +7,8 @@
  * v1.1 of 22 May 2009  - Fixed bug where restoring files greater than 32Kb
  *                        caused a stream read error. Changed file format to
  *                        ver 2 and kept ability to read v1 files.
+ * v1.2 of 12 Jul 2009  - Replaced references to UDataStreamReader and
+ *                        UDataStreamWriter units with UDataStreamIO.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -79,8 +81,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UAppInfo, UCheckSum, UDataStreamReader, UDataStreamWriter, UDOSDateTime,
-  UExceptions, UUtils;
+  UAppInfo, UCheckSum, UDataStreamIO, UDOSDateTime, UExceptions, UUtils;
 
 {
   User database backup file format

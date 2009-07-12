@@ -1,39 +1,24 @@
-{ ##
-  @FILE                     UNews.pas
-  @COMMENTS                 Maintains a list of news items for display by
-                            program and reads list from formatted data stream.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None.
-  @HISTORY(
-    @REVISION(
-      @VERSION              0.1
-      @DATE                 01/05/2006
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 25/05/2006
-      @COMMENTS             + Improved and corrected comments.
-                            + Changed exception used to detect bugs from
-                              Exception type to EBug.
-    )
-    @REVISION(
-      @VERSION              1.1
-      @DATE                 12/05/2007
-      @COMMENTS             + Removed all code that tested for program version
-                              numbers at which news items were targetted. This
-                              testing now performed by web service rather than
-                              program.
-                            + Adapted to use revised news data format: versions
-                              field no included in data stream.
-    )
-  )
-}
-
-
 {
+ * UNews.pas
+ *
+ * Maintains a list of news items for display by program and reads list from
+ * formatted data stream.
+ *
+ * v0.1 of 01 May 2006  - Original version.
+ * v1.0 of 25 May 2006  - Improved and corrected comments.
+ *                      - Changed exception used to detect bugs from Exception
+ *                        type to EBug.
+ * v1.1 of 12 May 2007  - Removed all code that tested for program version
+ *                        numbers at which news items were targetted. This
+ *                        testing now performed by web service rather than
+ *                        program.
+ *                      - Adapted to use revised news data format: versions
+ *                        field no included in data stream.
+ * v1.2 of 12 Jul 2009  - Replaced reference to UDataStreamReader unit with
+ *                        UDataStreamIO.
+ *                      - Made TNews and TNewsItems private sections strict.
+ *
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -51,10 +36,8 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
- *
- * Contributor(s): None
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -70,7 +53,7 @@ uses
   // Delphi
   Classes, Contnrs,
   // Project
-  UDataStreamReader;
+  UDataStreamIO;
 
 
 type
@@ -81,13 +64,10 @@ type
     of creating object from a formatted data stream.
   }
   TNewsItem = class(TObject)
-  private
-    fId: SmallInt;
-      {Value of Id property}
-    fDate: TDateTime;
-      {Value of Date property}
-    fHTML: string;
-      {Value of HTML property}
+  strict private
+    fId: SmallInt;    // Value of Id property
+    fDate: TDateTime; // Value of Date property
+    fHTML: string;    // Value of HTML property
   public
     constructor Create(const Reader: TDataStreamReader);
       {Class constructor. Creates news item object from a data stream.
@@ -107,9 +87,8 @@ type
     data stream supplied to constructor.
   }
   TNews = class(TObject)
-  private
-    fNewsItems: TObjectList;
-      {Stores list of news items}
+  strict private
+    fNewsItems: TObjectList;  // Stores list of news items
     procedure Parse(const NewsData: TStream);
       {Creates list of news items from a data stream.
         @param NewsData [in] Data stream containing news items.
@@ -227,7 +206,6 @@ begin
     FreeAndNil(Reader);
   end;
 end;
-
 
 { TNewsItem }
 
