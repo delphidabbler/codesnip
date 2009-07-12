@@ -8,7 +8,7 @@ Add a Garbage collector:
 + local version that can be created and have multiple objects added to it (resource, object etc).
 Store wrapper objects in list, each of which can release a certain resource type, e.g. objects, DCs, handles, etc. Given and add method for each type and generate wrapper object on fly.
 Obvious close link to UAutoFree}
-{TODO -oBill Miller -cFeature :
+{DONE -oBill Miller -cFeature :
 Add snippet's category (with link?) to information tab - near snippet kind. Suggested by Bill Miller:
 "Sometime please add the snippet group to the Information tab.  Without it... it is more difficult to determine which group the snippet is in:  Snippet Group: StringManagement "}
 {TODO -oSelf -cProposal :
@@ -182,7 +182,7 @@ FInal five are new.
     DOCHOSTUIFLAG_ENABLE_ACTIVEX_INACTIVATE_MODE = 0x20000000
 See MS SDK for descriptions}
 {DONE -oSelf -cRefactor :Use IStringList.Contains if list has specified string where IndexOf(xxx) >= 0 is used.}
-{TODO -oSelf -cRefactor : Merge UDataStreamReader and UDataStreamWriter into UDataStreamIO}
+{DONE -oSelf -cRefactor : Merge UDataStreamReader and UDataStreamWriter into UDataStreamIO}
 {DONE -oSelf -cRefactor :
 Move cMax???? constants from UGlobals to relevant units / classes:
 + UHistory
