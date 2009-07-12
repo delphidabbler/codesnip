@@ -1,0 +1,311 @@
+# ==============================================================================
+# HTML.hrc
+#
+# Manifest file used to build HTML.res resource file.
+# Build with DelphiDabbler HTMLRes from http://www.delphidabbler.com/
+#
+# v0.1 of 20 Jan 2005  - Original version (HTMLRes.mfest in DevTools folder).
+# v0.2 of 20 Feb 2005  - Included new and renamed detail pane page templates.
+#                      - Renamed this file HTML.hrc and moved to Src/HTML.
+#                      - Resource changes were:
+#                        - Changed relevant HTML files re template name changes.
+# v0.3 of 23 Feb 2005  - Resource changes only:
+#                        - Expanded information on standard welcome page and
+#                          added information about how to download database on
+#                        - "empty database" welcome page.
+# v0.4 of 04 Mar 2005  - Added new "powered by delphi" .png image file.
+#                      - Resource changes were:
+#                        - Restyled about box HTML template.
+#                        - Restyled compiler error HTML template.
+# v0.5 of 10 Mar 2005  - Resource changes only:
+#                        - Updated detail.css with syntax highlighter classes.
+# v0.6 of 16 Mar 2005  - Resource changes only:
+#                        - Updated detail.css pascal classes to same colours as
+#                          default highlighter classes.
+# v0.7 of 19 Apr 2005  - Resource changes only:
+#                        - Prefixed "Compile" prefix to compile button hint in
+#                          comp-routine-dbase-tplt.html.
+#                        - Moved update history comments to after xml and
+#                          doctype tags in all html files.
+# v0.8 of 25 Apr 2005  - Renamed info-welcome.html to welcome.html (added link
+#                        to file that displays Configure Compilers dialog).
+#                      - Removed comp-welcome.html as no longer used (now
+#                        replaced by a help topic).
+#                      - Resource changes were:
+#                        - external.QuickStartHelp calls replaced by new
+#                          external.HelpTopic method.
+#                        - Added and modified help links to display "About
+#                          Compiler Checks" topic.
+#                        - Changed comp-routine-dbase-tplt.html to disable Test
+#                          Compile button and display message when no compilers
+#                          installed.
+#                        - Added new .hilite class to detail.css.
+# v0.9 of 03 Jun 2005  - Added new comp-blank.html and info-blank.html blank
+#                        documents. These are used to load detail pages into.
+#                      - Resource changes were:
+#                        - Modified info-* and comp-* template files to be
+#                          inserted into *-blank.html documents.
+#                        - comp-routine-dbase-tplt.html changed to use HTML not
+#                          JavaScript to display Test Compile button.
+# v0.10 of 14 Jan 2006 - Resource changes only:
+#                        - Changed dlg-about-tplt.html to add MD5 credits and
+#                          noted source code availability.
+# v0.11 of 28 Jan 2006 - Resource changes only:
+#                        - Removed xml processing instruction from all HTML
+#                          files displayed in details pane to work round display
+#                          problem on some OSs.
+# v0.12 of 07 Apr 2006 - Resource changes only:
+#                        - Added registration info dlg-about-tplt.html.
+# v0.13 of 01 May 2006 - Added new dlg-updt-news-tplt.html that displays news in
+#                        update dialog box.
+# v1.0 of 04 Jun 2006  - Reformatted update log comments.
+#                      - Added Mozilla public license to this file and to all
+#                        referenced HTML, JavaScript and CSS files.
+#                      - Changed to read HTML, JS and CSS files from new
+#                        Res\HTML folder and GIFs and PNGs from Res\Img folder.
+#                      - Added program icon as icon.gif to display in about box.
+#                      - Removed "Powered by Delphi" logo, delphipower.png.
+#                      - Moved this file to Src directory.
+#                      - Added new viewunit.gif glyph to place next to view unit
+#                        links in detail pages.
+#                      - Resource changes were:
+#                        - Redesigned about box.
+#                        - Standardised boxed display style for action links.
+# v1.1 of 24 Oct 2006  - Added new detail-consts.js script storing various
+#                        constants used on detail pages.
+#                      - Resource changes were:
+#                        - Changed relevant files to to use variables from
+#                          detail-consts.js
+#                        - Added introductory text to nodata-welcome.html.
+#                        - Added link to welcome pages.
+#                        - Removed all target attributes from links in
+#                          dlg-about-tplt.html and added AppExePath template id
+#                          that maps to path of program's executable file.
+#                        - Made status bar hint change when test unit visibility
+#                          toggled in compiler info pane.
+# v1.2 of 26 Oct 2006  - Resource changes only:
+#                        - Changed dlg-about-tplt.html to reference license file
+#                          via LicenseFileName template id rather than via
+#                          AppExePath template id with hard-wired file name.
+#                        - Changed all do-nothing links referencing '#'
+#                          call javascript:void(0) instead.
+# v1.3 of 14 Nov 2006  - Resource changes only:
+#                        - Changed license link in dlg-about-tplt.html to
+#                          display help topic rather than external text file.
+# v1.4 of 18 Nov 2006  - Added new dlg-mlist-result-tplt.html HTML template.
+# v1.5 of 21 Nov 2006  - Modified update history to distinguish where
+#                        substantive were to this file or and where only changes
+#                        to this file were to note to resource files.
+# v1.6 of 26 Nov 2006  - Added new external.js JavaScript file.
+# v1.7 of 03 Dec 2006  - Removed comp-routine-dbase-tplt.html and
+#                        comp-routine-test-tplt.html templates.
+#                      - Added new comp-routine-tplt.html to replace above with
+#                        single page.
+#                      - Added new compile.gif image.
+#                      - Changed to use renamed comp-routine.html.
+#                      - Added new detail.js JavaScript file.
+# v1.8 of 03 Dec 2006  - Added new info-routine.html.
+# v1.9 of 04 Dec 2006  - Added new hideunit.gif.
+# v1.10 of 11 Feb 2007 - Added new dlg-about-head-tplt.html and
+#                        dlg-about-database-tplt.html templates.
+#                      - Renamed dlg-about-tplt.html template as
+#                        dlg-about-program-tplt.html.
+# v1.11 of 14 Sep 2008 - Removed nodata-welcome.html. welcome.html v2 now used.
+#                      - Added new editsnippet.gif action gylph.
+# v1.12 of 29 Dec 2008 - Added new dlg-userdb-extra.html fixed content.
+# v1.13 of 19 Jan 2009 - Changed to use nocompcheck-body.html renamed from
+#                        comp-na.html, welcome.html as welcome-tplt.html,
+#                        info-routine.html as detail-info.html and
+#                        comp-routine.html as detail-compcheck.html.
+#                      - Removed info-blank.html.
+# v1.14 of 10 May 2009 - Added new dlg-donate.html fixed dialog box content
+#                        along with pound-sign.png image displayed by it.
+# v1.15 of 19 Jun 2009 - Removed hideunit.gif.
+#                      - Removed info-uncatheader-tplt.html.
+#                      - Renamed info-category-list-tplt.html as
+#                        info-snippet-list-tplt.html,
+#                        info-category-empty-tplt.html as
+#                        info-empty-selection-tplt.html, info-routine-tplt.html
+#                        as info-snippet-tplt.html and comp-routine-tplt.html as
+#                        comp-snippet-tplt.html.
+#                      - Added new donate-btn.gif button image.
+#                      - Added new dlg-easter-egg.html easter egg content,
+#                        associated easteregg.js and easteregg.css, plus images
+#                        tvr.jpg, pj.jpg, cancel.png, cancel-glow.png,
+#                        click-me.png, easter-egg-top.png and
+#                        easter-egg-bottom.png.
+#                      - Added new comp-freeform-tplt.html and
+#                        comp-nocompilers-tplt.html template documents.
+#                      - Added new symbol-information.png and
+#                        symbol-exclamation.png images.
+# v1.16 of 12 Jul 2009 - Deleted reference to comp-routine.js.
+# ==============================================================================
+#
+#
+# ***** BEGIN LICENSE BLOCK *****
+#
+# Version: MPL 1.1
+#
+# The contents of this file are subject to the Mozilla Public License Version
+# 1.1 (the "License"); you may not use this file except in compliance with the
+# License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+# the specific language governing rights and limitations under the License.
+#
+# The Original Code is HTML.hrc.
+#
+# The Initial Developer of the Original Code is Peter Johnson
+# (http://www.delphidabbler.com/).
+#
+# Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+# Johnson. All Rights Reserved.
+#
+# ***** END LICENSE BLOCK *****
+
+
+# Dialog box templates and fixed code
+# ===================================
+
+# about box
+Res\HTML\dlg-about-head-tplt.html
+Res\HTML\dlg-about-program-tplt.html
+Res\HTML\dlg-about-database-tplt.html
+
+# easter egg
+Res\HTML\dlg-easter-egg.html
+Res\HTML\easteregg.css
+Res\HTML\easteregg.js
+
+# compiler error log
+Res\HTML\dlg-comperror-tplt.html
+
+# update dialog news pane
+Res\HTML\dlg-updt-news-tplt.html
+
+# mailing list subscription result pane
+Res\HTML\dlg-mlist-result-tplt.html
+
+# user db edit dialog
+Res\HTML\dlg-userdb-extra.html
+
+# donate dialog
+Res\HTML\dlg-donate.html
+
+
+# Detail pane pages, scripts and CSS
+# ==================================
+
+# common
+# ------
+
+# style sheet
+Res\HTML\detail.css
+
+# javascript "constants"
+Res\HTML\detail-consts.js
+
+# general routines for use in any detail pane
+Res\HTML\detail.js
+
+# routines that call external object
+Res\HTML\external.js
+
+# information pane
+# ----------------
+
+# Container document for all HTML displayed in info pane
+Res\HTML\detail-info.html
+
+# lists of snippets
+Res\HTML\info-snippet-list-tplt.html
+
+# empty snippet list
+Res\HTML\info-empty-selection-tplt.html
+
+# snippet information
+Res\HTML\info-snippet-tplt.html
+
+# compiler check pane
+# -------------------          
+
+# Container document for all HTML displayed in comp check pane
+Res\HTML\detail-compcheck.html
+
+# snippet compiler results
+Res\HTML\comp-snippet-tplt.html
+Res\HTML\comp-freeform-tplt.html
+Res\HTML\comp-nocompilers-tplt.html
+
+# compiler check not applicable
+Res\HTML\nocompcheck-body.html
+
+# welcome page
+# -------------
+
+Res\HTML\welcome-tplt.html
+
+
+# Images
+# ======
+
+# action links
+# ------------
+
+# download / update database
+Res\Img\download.gif
+
+# display quick start help
+Res\Img\help.gif
+
+# show test unit
+Res\Img\viewunit.gif
+
+# comfigure compilers
+Res\Img\configcomp.gif
+
+# test compile
+Res\Img\compile.gif
+
+# edit snippet
+Res\Img\editsnippet.gif
+
+# donate button
+Res\Img\donate-btn.gif
+
+                                        
+# compiler compatibility / compilation results
+# --------------------------------------------
+    
+Res\Img\led-green.png
+Res\Img\led-off.png                                            
+Res\Img\led-red.png
+Res\Img\led-yellow.png
+
+
+# warning and information "icons"
+# -------------------------------
+
+Res\Img\symbol-information.png
+Res\Img\symbol-exclamation.png
+
+
+# dialog box images
+# -----------------
+
+# about box - CodeSnip icon
+Res\Img\icon.gif
+
+# easter egg
+Res\Img\tvr.jpg
+Res\Img\pj.jpg
+Res\Img\easter-egg-top.png
+Res\Img\easter-egg-bottom.png
+Res\Img\click-me.png
+Res\Img\cancel.png
+Res\Img\cancel-glow.png
+
+# donate dialog - £ sign image
+Res\Img\pound-sign.png
+
