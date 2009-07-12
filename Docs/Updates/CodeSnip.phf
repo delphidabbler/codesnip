@@ -13866,6 +13866,10 @@
         @VERSION        1.43
       )
       @UPDATED(
+        @FILE           HTML.hrc
+        @VERSION        1.16
+      )
+      @UPDATED(
         @FILE           UCopyInfoMgr.pas
         @VERSION        2.0
       )
@@ -13927,12 +13931,116 @@
         @VERSION        1.2
       )
       @UPDATED(
+        @FILE           VCodeSnip.vi
+        @DATE           12/07/2009
+        @COMMENTS       Updated file and product numbers for revision 3.0.3
+                        build 148.
+      )
+      @UPDATED(
         @FILE           Res\HTML\detail.js
         @VERSION        2.1
       )
       @UPDATED(
         @FILE           Res\HTML\detail-compcheck.html
         @VERSION        1.5
+      )
+    )
+  )
+  @REVISION(
+    @VERSION            3.0.4 (build 149)
+    @DATE               12/07/2009
+    @COMMENTS           + Added a snippet's category description to main display
+                          and to snippet information copied to clipboard or
+                          printed. Category description in main display can be
+                          clicked to display the category.
+                        + Refactored code that displays clicked routines and
+                          code that displays a snippet for editing.
+    @COMPILERS          + Delphi 2006
+                        + BRCC32 5.4
+                        + MS HTML Help Workshop 1.1
+                        + HTML Resource Compiler 1.2
+                        + Version Information Editor 2.11.2
+                        + Inno Setup Compiler v5.2.3 with ISPP preprocessor.
+                        + Microsoft MIDL compiler v7.0
+                        + Borland TLIBIMP v10.0
+    @FILES(
+      @UPDATED(
+        @FILE           CodeSnip.dpr
+        @VERSION        1.52
+      )
+      @UPDATED(
+        @FILE           ExternalObj.idl
+        @VERSION        5.0
+      )
+      @UPDATED(
+        @FILE           FmMain.pas
+        @VERSION        1.44
+      )
+      @UPDATED(
+        @FILE           IntfNotifier.pas
+        @VERSION        1.5
+      )
+      @UPDATED(
+        @FILE           UActionFactory.pas
+        @VERSION        1.5
+      )
+      @UPDATED(
+        @FILE           UAnchors.pas
+        @VERSION        1.3
+      )
+      @NEW(
+        @FILE           UCategoryAction.pas
+        @VERSION        1.0
+      )
+      @UPDATED(
+        @FILE           UDetailPageHTML.pas
+        @VERSION        2.2
+      )
+      @UPDATED(
+        @FILE           UHTMLDetailUtils.pas
+        @VERSION        1.7
+      )
+      @UPDATED(
+        @FILE           ULinkAction.pas
+        @VERSION        1.2
+      )
+      @UPDATED(
+        @FILE           UNotifier.pas
+        @VERSION        1.6
+      )
+      @UPDATED(
+        @FILE           URoutineAction.pas
+        @VERSION        2.0
+      )
+      @UPDATED(
+        @FILE           URoutineDoc.pas
+        @VERSION        1.4
+      )
+      @UPDATED(
+        @FILE           URoutineHTML.pas
+        @VERSION        1.7
+      )
+      @UPDATED(
+        @FILE           UUserDBMgr.pas
+        @VERSION        1.6
+      )
+      @UPDATED(
+        @FILE           UWBExternal.pas
+        @VERSION        1.5
+      )
+      @UPDATED(
+        @FILE           VCodeSnip.vi
+        @DATE           12/07/2009
+        @COMMENTS       Updated file and product numbers for revision 3.0.4
+                        build 149.
+      )
+      @UPDATED(
+        @FILE           Res\HTML\external.js
+        @VERSION        1.4
+      )
+      @UPDATED(
+        @FILE           Res\HTML\info-snippet-tplt.html
+        @VERSION        3.2
       )
     )
   )

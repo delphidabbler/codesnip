@@ -1,3 +1,8 @@
+Version 3.0.4 - 13 Jul 2009
+CodeSnip 3.0.4 - 13 Jul 2009
++ Added a snippet's category description to main display and to snippet information copied to clipboard or printed. Category description in main display can be clicked to display the category.
++ Refactored code that displays clicked routines and code that displays a snippet for editing.
+
 Version 3.0.3 - no public release
 CodeSnip 3.0.3 - 12 Jul 2009
 + Refactored code:
