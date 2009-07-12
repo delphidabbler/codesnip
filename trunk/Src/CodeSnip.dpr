@@ -173,6 +173,7 @@
  *                        USnippetMgr units.
  *                      - Renamed UDataStreamReader unit as UDataStreamIO.
  *                      - Added new UCopyViewMgr unit.
+ * v1.52 of 12 Jul 2009 - Added new UCategoryAction unit.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -303,6 +304,7 @@ uses
   UBorlandCompiler in 'UBorlandCompiler.pas',
   UBrowseProtocol in 'UBrowseProtocol.pas',
   UBugReporter in 'UBugReporter.pas',
+  UCategoryAction in 'UCategoryAction.pas',
   UCheckSum in 'UCheckSum.pas',
   UClipboardHelper in 'UClipboardHelper.pas',
   UCodeImportExport in 'UCodeImportExport.pas',
