@@ -47,6 +47,8 @@
  *                          CompileRoutine as CompileSnippet, EditRoutine as
  *                          EditSnippet.
  *                      - Made private section strict.
+ * v1.5 of 12 Jul 2009  - Changed to implement IWBExternal6 instead of
+ *                        IWBExternal5 by adding DisplayCategory method.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -61,7 +63,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UWBExternal.pas
+ * The Original Code is UWBExternal.pas 
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -98,7 +100,7 @@ type
     events to application.
   }
   TWBExternal = class(TAutoIntfObject,
-    IWBExternal5,           // browser external object's methods
+    IWBExternal6,           // browser external object's methods
     ISetNotifier            // sets object used to notify app of events
     )
   strict private
@@ -139,6 +141,10 @@ type
       }
     procedure Donate; safecall;
       {Displays the Donate dialog box via notifier.
+      }
+    procedure DisplayCategory(const CatID: WideString); safecall;
+      {Displays a category via notifier.
+        @param CatID [in] ID of category to display.
       }
     { ISetNotifier }
     procedure SetNotifier(const Notifier: INotifier);
@@ -190,7 +196,16 @@ begin
   ExeName := DirToPath(TAppInfo.AppExeDir) + TAppInfo.AppExeFile;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
-  inherited Create(TypeLib, IWBExternal5);
+  inherited Create(TypeLib, IWBExternal6);
+end;
+
+procedure TWBExternal.DisplayCategory(const CatID: WideString);
+  {Displays a category via notifier.
+    @param CatID [in] ID of category to display.
+  }
+begin
+  if Assigned(fNotifier) then
+    fNotifier.DisplayCategory(CatID);
 end;
 
 procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
