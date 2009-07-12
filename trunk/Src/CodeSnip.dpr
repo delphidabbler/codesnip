@@ -169,7 +169,9 @@
  *                        units.
  * v1.50 of 05 Jul 2009 - Added new UAutoFree, UBrowseProtocol and UFileProtocol
  *                        units.
- * v1.51 of 11 Jul 2009 - Removed UCopySnippetMgr and USnippetMgr units.
+ * v1.51 of 12 Jul 2009 - Removed UCopySnippetMgr, UDataStreamWriter and
+ *                        USnippetMgr units.
+ *                      - Renamed UDataStreamReader unit as UDataStreamIO.
  *                      - Added new UCopyViewMgr unit.
  *
  *
@@ -328,8 +330,7 @@ uses
   UCSSUtils in 'UCSSUtils.pas',
   UDataBackupMgr in 'UDataBackupMgr.pas',
   UDatabaseLoader in 'UDatabaseLoader.pas',
-  UDataStreamReader in 'UDataStreamReader.pas',
-  UDataStreamWriter in 'UDataStreamWriter.pas',
+  UDataStreamIO in 'UDataStreamIO.pas',
   UDelphiCompiler in 'UDelphiCompiler.pas',
   UDetailPageHTML in 'UDetailPageHTML.pas',
   UDetailPageLoader in 'UDetailPageLoader.pas',
