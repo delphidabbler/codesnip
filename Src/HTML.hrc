@@ -138,6 +138,7 @@
 #                        comp-nocompilers-tplt.html template documents.
 #                      - Added new symbol-information.png and
 #                        symbol-exclamation.png images.
+# v1.16 of 12 Jul 2009 - Deleted reference to comp-routine.js.
 # ==============================================================================
 #
 #
@@ -239,9 +240,6 @@ Res\HTML\comp-nocompilers-tplt.html
 
 # compiler check not applicable
 Res\HTML\nocompcheck-body.html
-
-# script used by routine pages
-Res\HTML\comp-routine.js
 
 # welcome page
 # -------------
