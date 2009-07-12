@@ -16,6 +16,7 @@
  *                      - Parsing and rendering of extra text removed: must now
  *                        be performed by subclasses since they render it
  *                        differently to each other.
+ * v1.4 of 12 Jul 2009  - Changed to include snippet's category in document.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -225,6 +226,7 @@ procedure TRoutineDoc.Generate(const Routine: TRoutine;
 resourcestring
   // Literal string required in output
   sKindTitle = 'Snippet Type:';
+  sCategoryTitle = 'Category:';
   sUnitListTitle = 'Required units:';
   sDependListTitle = 'Required snippets:';
   sXRefListTitle = 'See also:';
@@ -242,6 +244,9 @@ begin
   RenderSourceCode(Routine.SourceCode);
   RenderTitledText(
     sKindTitle, TSnippetKindInfoList.Instance[Routine.Kind].Description
+  );
+  RenderTitledText(
+    sCategoryTitle, Snippets.Categories.Find(Routine.Category).Description
   );
   RenderTitledList(sUnitListTitle, TIStringList.Create(Routine.Units));
   RenderTitledList(sDependListTitle, RoutinesToStrings(Routine.Depends));
