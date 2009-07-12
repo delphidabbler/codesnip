@@ -1,4 +1,17 @@
-{TODO -oSelf -cProposal : 
+{TODO -oSelf -cRefactor : Add enumerator to TNews and change loop in UUpdateMgr accordingly.}
+{TODO -oSelf -cRefactor : Refactor TQuery to use enumerators and use class var for instance}
+{DONE -oSelf -cBug : TSnippetMgr.CanHandleView can return true for a category view containing only freeform code in current query, providing there is a routine present in while category
+- we need to test for routines in current query using Query.GetCatSelection rather than all snippets in category.}
+{TODO -oSelf -cProposal :
+Add a Garbage collector:
++ global singleton version that maintains lifetimes for life of program - maintains a list of objects / resources and frees when unit goes out of scope
++ local version that can be created and have multiple objects added to it (resource, object etc).
+Store wrapper objects in list, each of which can release a certain resource type, e.g. objects, DCs, handles, etc. Given and add method for each type and generate wrapper object on fly.
+Obvious close link to UAutoFree}
+{TODO -oBill Miller -cFeature :
+Add snippet's category (with link?) to information tab - near snippet kind. Suggested by Bill Miller:
+"Sometime please add the snippet group to the Information tab.  Without it... it is more difficult to determine which group the snippet is in:  Snippet Group: StringManagement "}
+{TODO -oSelf -cProposal :
 Change the Snippets Editor moving code for each pane into separate frame that can
 (1) validate entered data
 (2) calculate required size for controls}
@@ -7,57 +20,55 @@ Change the Snippets Editor moving code for each pane into separate frame that ca
 Selecting a new printer in print dialog and clicking properties can give an exception or properties dialog has wrong title.
 Selecting some printers in print dialog and clicking OK can give an exception.}
 {DONE -oSelf -cBug : Fix bug where units required by types and consts are not output to generated units.}
-{TODO -oSelf -cRefactor : Use UAutoFree to free REML info in UREMLDataIO}
+{DONE -oSelf -cRefactor : Use UAutoFree to free REML info in UREMLDataIO}
 {DONE -oJerry Mack -cFeature : Permit use of file:// protocol in extra text}
 {TODO -oSelf -cFeature :
 Add facility to Snippets Editor to display check, render and display REML text (button on extra tab?)
 + add button to test display if any <a> tags are present to test and display URLs.}
 {DONE -oSelf -cBug : Link to DelphiDabbler CodeSnip database in welcome page is broken.}
-{TODO -oSelf -cImprovement : When Vista UI font is implemented, change extra HTML text on extra tab from content font to UI font.}
-{TODO -oSelf -cRefactor : Merge comp-routine.js and detail.js into a single detail.js file and delete all references to comp-routine.js}
+{DONE -oSelf -cImprovement : When Vista UI font is implemented, change extra HTML text on extra tab from content font to UI font.}
+{DONE -oSelf -cRefactor : Merge comp-routine.js and detail.js into a single detail.js file and delete all references to comp-routine.js}
 {TODO -oSelf -cObservation : Update date for UNulFormAligner in unit for v1.1 is wrong: it reads 26 Jul 2007 and should be 26 Sep 2007.}
 {TODO -oSelf -cProposal : Make sure content font depends on themes}
 
 {TODO -oSelf -cRefactor : Rename identifiers that refer to "routine" with "snippet".}
 {DONE -oBill Miller -cProposal :  Make Graphics unit come after Windows unit in generated units.}
-{TODO -cProposal :
+{TODO -oSelf -cProposal :
 UView
   - completely overhaul this unit (careful of assignements tho - check if this
     actually happens between different types (may need wrapper for various
     IView implementations?)}
-{TODO -cRefactor :Make UOverviewTreeBuilder
+{TODO -oSelf -cRefactor :Make UOverviewTreeBuilder
 .TOverviewSnipKindTreeBuilder.Build better - use Kind to index section list rather than description:
 Uses
     Sections.Add(
       TSnippetKindInfoList.Instance[Snippet.Kind].Description,
       Snippet
     );}
-{TODO -cRefactor :
+{TODO -oSelf -cRefactor :
 FmSelectionSearchDlg.pas
   - Rename a lot of methods etc}
-{TODO -cProposal :
-UDetailPageHTML
-  - Rename some classes such as TRoutinePageHTML}
-{TODO -cProposal :
+
+{TODO -oSelf -cProposal :
 USourceGen
   - Consider separating TConstAndTypeFormatter into two classes
   - Add new format class to format header comments}
 {DONE -cFeature : Make Preview dialogs display "Preview: <Document Title>" where title is supported by doc type (HTML - title tag, RTF ???)}
-{TODO -cRefactor : Extract common resource strings re comment style from FrSourcePrefs and USaveSourceDlg}
-{TODO -cProposal : Add static Execute or Generate method to TSnippetSourceGen}
-{TODO -cRefactor :
+{TODO -oSelf -cRefactor : Extract common resource strings re comment style from FrSourcePrefs and USaveSourceDlg}
+{DONE -oSelf -cProposal : Add static Execute or Generate method to TSnippetSourceGen}
+{DONE -oSelf -cRefactor :
 Check common code of UCopySourceMgr, UCopyInfoMgr and UCopySnippetMgr and provide supporter class that provides common functionality.
 + (May want to refactor TCopySnippetMgr so it no longer descends from base class shared with save snippet manager and pull code generation into separate class that generates code for copy snippet and save snippet)
 + (If we do this may want to collapse save snippet code into single class.}
-{TODO -cRefactor : Merge common code in UCommandBars and UWBPoupMenus
+{TODO -oSelf -cRefactor : Merge common code in UCommandBars and UWBPoupMenus
 + Add detail frame IDs to IFrameMgrs.pas}
 {DONE -cFeature (v3) : Make installer detect empty UserData.3 and create it, offering to copy any data from old UserData it finds. No conversion required.}
 {TODO -oSelf -cImprovement : Remove database detection code from IniDataReader and XML IO classes - make them know they read / wrtie main and user databases respectively}
 {TODO -oSelf -cRefactor : Get rid of TDataIOFactories and make ini, xml and nul data readers and writers be used directly insetad of via factories.}
 {DONE -oSelf -cFeature (v3) : Change alphabetical display handlers / view item to handle underscore routine names}
-{TODO -oSelf -cFeature : Add OS related fonts (add boolean field to TBaseForm and only implement new fonts if flag is true)}
+
 {DONE -cFeature (v3) : Add option to installer to replace any custom styles in preferences with new default style}
-{TODO -cRefactor : Consider moving syntax highlighting setting (CSS builder) down into FrInfo from FrDetailView since comp check tab no longer uses highlighting}
+{TODO -oSelf -cRefactor : Consider moving syntax highlighting setting (CSS builder) down into FrInfo from FrDetailView since comp check tab no longer uses highlighting}
 {TODO -oSelf -cFeature :
 Changes preferences dialog sytem so that dialog box code presents empty body and dynamically adds
 tabs (or other UI code - may want abract base class and implementation class).
@@ -114,15 +125,33 @@ const
   );
 }}
 {DONE -oSelf -cFeature (v3) : Create a new backup system - old one fails}
-{TODO -cProposal : New TSingleton class that prevents an object from being freed (descendants should permit this)}
+{TODO -oSelf -cProposal : New TSingleton class that prevents an object from being freed (descendants should permit this). 
+To ease freeing when necessary (implementation section, garbage collector etc) make destructors check for support for a do nothing interface (ISingletonDestroy) and only free normally if supported, then support in implementations and not in interface of unit. Eg.
+TMySingleton = class(TInterfacedObject)
+...
+end;
+
+TMySingletonImpl = class(TMySingleton, ISingletonDestroyable)
+...
+end;
+
+TMySingleton.Destroy;
+begin
+  if Supports(Self, ISingletonDestroy) then
+   // prermit destruction
+ else
+  // don't permit destruction
+ end;
+
+Could have base class TSingleton = class(TInterfacedObject) that provides default destruction and virtual method called to do tidy up only if can destroy.}
 {TODO -oSelf -cFeature : Institute user defined categories}
 {DONE -oSelf -cFeature (v3) : Change Copy Source action to Copy Fragment and revise Copy Source to simply copy the TRoutine.SourceCode property - available only for snippets.}
 {DONE -oSelf -cFeature (v3) : Change uncategorised display to list const/type and routines under separate headings}
 {DONE -oSelf -cBug : Fix bug in Select Routines search. It always selects both the user defined and the main database versions of routines with the same name even if only one of them is selected.}
 {DONE -oSelf -cBug : Fix bug where selecting a routine and selecting View | View Test Unit causes JavaScript error if Compiler Check pane has not been displayed}
-{TODO -oSelf -cImprovement : Make forms use appropriate font for operating system.}
+{DONE -oSelf -cImprovement : Make forms use appropriate font for operating system.}
 {DONE -cImprovement -oSelf -Improvement : Change paypal donation URL for http://www.delphidabbler.com/url/donate-cs - may want to use consts to allow for localhost etc.}
-{TODO -oSelf -cRefactor : Remove RectWidth and RectHeight local functions from TDlgAligner.OffsetDialog and replace with calls to TRectX functions.}
+{DONE -oSelf -cRefactor : Remove RectWidth and RectHeight local functions from TDlgAligner.OffsetDialog and replace with calls to TRectX functions.}
 {DONE -oSelf -cCode correction : Change result of TTestCompileAction to False from True (doesn't call OnExecute).}
 {TODO -oSelf -cProposal : Share email and user name persistence used by code submission to bug reports, mailing list etc.}
 {DONE -oBill Miller -cProposal : Make Graphics unit come after Windows unit in user defined routines.}
@@ -173,16 +202,16 @@ Current arrangement is confusing since we to use local copies on occasion.}
 {DONE -oSelf -cFeature (v3) : Add support for types and consts}
 
 
-{TODO -oself -cRefactor : See if we can pull out common HTML and REML code into SGML unit}
+{TODO -oSelf -cRefactor : See if we can pull out common HTML and REML code into SGML unit}
 {DONE -oSelf -cBug : Change UMessageBox so that & signs don't display underscores.}
 {TODO -oSelf -cRefactor : Create StringToOrd and OrdToString dictionaries and use to create two way char entity object to replace one in UTaggedTextLexer and UREMLDataIO etc. Also use for tag lookup in TTaggedTextLexer}
 {TODO -oSelf -cRefactor : Re-implement MakeSafeHTML in terms of a char entity class like that for REML? Use common base class with entities class in UREMLDataIO?}
 {TODO -oSelf -cProposal : Consider making TDateTime a record that can use =, < etc and to use TRange in when comparing file differences}
-{TODO -oSelf -cRefactor : Replace private global in USettings with class instance variable?}
+
 {TODO -oSelf -cProposal : Add update date to each routine object}
 {DONE -oSelf -cImprovement : Try to make selected routines frame (or its base class) focus tree view when frame gets focus.}
 
-{TODO -cRefactor -oSelf  : Use IStringList in TSaveUnitMgr.CreateHeaderComments??}
+{DONE -cRefactor -oSelf  : Use IStringList in TSaveUnitMgr.CreateHeaderComments??}
 {DONE -oSelf -cRefactor : Add enumerator to TProtocolRegistrar and use it in TProtocolFactory}
 
 
