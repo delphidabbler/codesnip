@@ -11,7 +11,7 @@
  * v1.0 of 24 May 2006  - Made minor change to comments.
  * v1.1 of 31 Aug 2008  - Added new UserDefined property that indicates if
  *                        routine is from main or user database.
- * v2.0 of 12 Jul 2009  - Changed to display routine via notifier:
+ * v2.0 of 13 Jul 2009  - Changed to display routine via notifier:
  *                        - Added support for ISetNotifier interface: implements
  *                          SetNotifier method.
  *                        - Added execute method. No longer triggers OnExecute
@@ -69,7 +69,14 @@ type
     fNotifier: INotifier;   // Reference to notifier object
   public
     function Execute: Boolean; override;
+      {Executes action by displaying a snippet in the main display via the
+      Notifier object. Any OnExcute event handler is ignored.
+        @return False to indicate OnExecute event handler not called.
+      }
     procedure SetNotifier(const Notifier: INotifier);
+      {Stores a reference to the notifier object.
+        @param Notifier [in] Required notifier object.
+      }
     property RoutineName: string read fRoutineName write fRoutineName;
       {Name of routine to be displayed}
     property UserDefined: Boolean read fUserDefined write fUserDefined;
