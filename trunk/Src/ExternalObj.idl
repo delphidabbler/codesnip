@@ -26,8 +26,11 @@
  *                        - Renamed DisplayRoutine method as DisplaySnippet,
  *                          CompileRoutine as CompileSnippet, EditRoutine as
  *                          EditSnippet.
- *                      - Updated all version references to v5.
+ *                        - Updated all version references to v5.
  *                      - Deleted "Created by MIDL" custom entry.
+ * v5.0 of 12 Jul 2009  - Replaced IWBExternal5 with IWBExternal6:
+ *                        - Added DisplayCategory method.
+ *                        - Updated all version references to v6.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -56,7 +59,7 @@
 
 [
   uuid(FFAFBDD9-3E9A-408D-8616-167018E2083A),
-  version(5.0),
+  version(6.0),
   helpstring("CodeSnip DOM External Object Extender Type Library"),
   custom(DE77BA63-517C-11D1-A2DA-0000F8773CE9, 1219706147),
   custom(DE77BA64-517C-11D1-A2DA-0000F8773CE9, 117441012)
@@ -68,17 +71,17 @@ library ExternalObj
   importlib("stdole2.tlb");
 
   /*
-   * V5 interface of extension to browser DOM's "external" object. Used for
+   * V6 interface of extension to browser DOM's "external" object. Used for
    * browser controls in CodeSnip's main display.
    */
   [
     uuid(61AB2A0B-0262-49D5-8E6D-43161D5A3C9D),
-    version(5.0),
-    helpstring("DOM external object extender v5"),
+    version(6.0),
+    helpstring("DOM external object extender v6"),
     dual,
     oleautomation
   ]
-  interface IWBExternal5: IDispatch
+  interface IWBExternal6: IDispatch
   {
     /*
      * Update database from internet.
@@ -97,7 +100,7 @@ library ExternalObj
     id(0x00000066)
     ]
     HRESULT _stdcall DisplaySnippet([in] BSTR SnippetName,
-    	[in] VARIANT_BOOL UserDefined );
+      [in] VARIANT_BOOL UserDefined );
 
     /*
      * Compiles current snippet.
@@ -159,6 +162,15 @@ library ExternalObj
     id(0x0000006D)
     ]
     HRESULT _stdcall Donate( void );
+
+    /*
+     * Display identified category.
+     *    @param CatID [in] ID of category to display.
+     */
+    [
+    id(0x0000006E)
+    ]
+    HRESULT _stdcall DisplayCategory([in] BSTR CatID);
 
   };
 

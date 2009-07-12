@@ -49,7 +49,7 @@ unit IntfExternalObj;
 // ************************************************************************ //
 
 // PASTLWTR : 1.2
-// File generated on 08/07/2009 19:04:46 from Type Library described below.
+// File generated on 12/07/2009 11:00:54 from Type Library described below.
 
 // ************************************************************************  //
 // Type Lib: ..\Bin\ExternalObj.tlb (1)
@@ -88,26 +88,26 @@ uses Windows, ActiveX, Classes, Graphics, StdVCL, Variants;
 // *********************************************************************//
 const
   // TypeLibrary Major and minor versions
-  ExternalObjMajorVersion = 5;
+  ExternalObjMajorVersion = 6;
   ExternalObjMinorVersion = 0;
 
   LIBID_ExternalObj: TGUID = '{FFAFBDD9-3E9A-408D-8616-167018E2083A}';
 
-  IID_IWBExternal5: TGUID = '{61AB2A0B-0262-49D5-8E6D-43161D5A3C9D}';
+  IID_IWBExternal6: TGUID = '{61AB2A0B-0262-49D5-8E6D-43161D5A3C9D}';
 type
 
 // *********************************************************************//
 // Forward declaration of types defined in TypeLibrary                    
 // *********************************************************************//
-  IWBExternal5 = interface;
-  IWBExternal5Disp = dispinterface;
+  IWBExternal6 = interface;
+  IWBExternal6Disp = dispinterface;
 
 // *********************************************************************//
-// Interface: IWBExternal5
+// Interface: IWBExternal6
 // Flags:     (4416) Dual OleAutomation Dispatchable
 // GUID:      {61AB2A0B-0262-49D5-8E6D-43161D5A3C9D}
 // *********************************************************************//
-  IWBExternal5 = interface(IDispatch)
+  IWBExternal6 = interface(IDispatch)
     ['{61AB2A0B-0262-49D5-8E6D-43161D5A3C9D}']
     procedure UpdateDbase; safecall;
     procedure DisplaySnippet(const SnippetName: WideString; UserDefined: WordBool); safecall;
@@ -118,14 +118,15 @@ type
     procedure ShowTestUnit; safecall;
     procedure EditSnippet(const SnippetName: WideString); safecall;
     procedure Donate; safecall;
+    procedure DisplayCategory(const CatID: WideString); safecall;
   end;
 
 // *********************************************************************//
-// DispIntf:  IWBExternal5Disp
+// DispIntf:  IWBExternal6Disp
 // Flags:     (4416) Dual OleAutomation Dispatchable
 // GUID:      {61AB2A0B-0262-49D5-8E6D-43161D5A3C9D}
 // *********************************************************************//
-  IWBExternal5Disp = dispinterface
+  IWBExternal6Disp = dispinterface
     ['{61AB2A0B-0262-49D5-8E6D-43161D5A3C9D}']
     procedure UpdateDbase; dispid 101;
     procedure DisplaySnippet(const SnippetName: WideString; UserDefined: WordBool); dispid 102;
@@ -136,6 +137,7 @@ type
     procedure ShowTestUnit; dispid 107;
     procedure EditSnippet(const SnippetName: WideString); dispid 108;
     procedure Donate; dispid 109;
+    procedure DisplayCategory(const CatID: WideString); dispid 110;
   end;
 
 implementation
