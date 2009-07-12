@@ -11,6 +11,11 @@
  * v1.0 of 24 May 2006  - Made minor change to comments.
  * v1.1 of 31 Aug 2008  - Added new UserDefined property that indicates if
  *                        routine is from main or user database.
+ * v2.0 of 12 Jul 2009  - Changed to display routine via notifier:
+ *                        - Added support for ISetNotifier interface: implements
+ *                          SetNotifier method.
+ *                        - Added execute method. No longer triggers OnExecute
+ *                          event.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -30,7 +35,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -45,7 +50,9 @@ interface
 
 uses
   // Delphi
-  Classes;
+  Classes,
+  // Project
+  IntfNotifier;
 
 
 type
@@ -55,24 +62,62 @@ type
     Custom action used to request display of a named routine. Stores name of
     required routine, and whether it is user defined, in properties.
   }
-  TRoutineAction = class(TBasicAction)
-  private
-    fRoutineName: string;
-      {Name of routine}
-    fUserDefined: Boolean;
-      {Whether routine is user-defined}
+  TRoutineAction = class(TBasicAction, ISetNotifier)
+  strict private
+    fRoutineName: string;   // Value of RoutineName property
+    fUserDefined: Boolean;  // Value of UserDefined property
+    fNotifier: INotifier;   // Reference to notifier object
   public
-    property RoutineName: string
-      read fRoutineName write fRoutineName;
+    function Execute: Boolean; override;
+    procedure SetNotifier(const Notifier: INotifier);
+    property RoutineName: string read fRoutineName write fRoutineName;
       {Name of routine to be displayed}
-    property UserDefined: Boolean
-      read fUserDefined write fUserDefined;
+    property UserDefined: Boolean read fUserDefined write fUserDefined;
       {Flag indicating whether routine is user defined, i.e. it comes from user
       database}
   end;
 
 
 implementation
+
+
+uses
+  // Project
+  USnippets, UView;
+
+
+{ TRoutineAction }
+
+function TRoutineAction.Execute: Boolean;
+  {Executes action by displaying a snippet in the main display via the Notifier
+  object. Any OnExcute event handler is ignored.
+    @return False to indicate OnExecute event handler not called.
+  }
+var
+  Snippet: TRoutine;    // snippet to be displayed
+  ViewItem: TViewItem;  // view item for snippet
+begin
+  Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
+  Assert(RoutineName <> '', ClassName + '.Execute: RoutineName not provided');
+  Snippet := Snippets.Routines.Find(RoutineName, UserDefined);
+  Assert(Assigned(Snippet), ClassName + '.Execute: RoutineName not valid');
+  // Create a view item for category and get notifier to display it
+  ViewItem := TViewItem.Create(Snippet);
+  try
+    fNotifier.ShowViewItem(ViewItem);
+  finally
+    ViewItem.Free;
+  end;
+  Result := False;
+end;
+
+procedure TRoutineAction.SetNotifier(const Notifier: INotifier);
+  {Stores a reference to the notifier object.
+    @param Notifier [in] Required notifier object.
+  }
+begin
+  fNotifier := Notifier;
+end;
 
 end.
 
