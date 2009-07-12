@@ -6,14 +6,16 @@
  * direct calls to the external object.
  *
  * v1.0 of 26 Nov 2006  - Original version.
- * v1.1 of 04 Nov 2007  - Removed helpTopic function. No longer required.
- * v1.2 of 14 Sep 2008  - Added "userdefined" param to displayRoutine routine.
- *                      - Added new editRoutine function.
+ * v1.1 of 04 Nov 2007  - Removed helpTopic() function. No longer required.
+ * v1.2 of 14 Sep 2008  - Added "userdefined" param to displayRoutine() routine.
+ *                      - Added new editRoutine() function.
  * v1.3 of 17 Jun 2009  - Modified to work with v5 external object:
  *                        - Removed redundant toggleTestUnit() function.
  *                        - Added new showTestUnit() function.
  *                        - Added new donate() function.
  *                        - Changed to call renamed external object methods.
+ * v1.4 of 12 Jul 2009  - Added new displayCategory() function that calls
+ *                        equivalent method of external object v6.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -109,11 +111,21 @@ function showTestUnit() {
 /*
  * Calls external object to get host application to display a named snippet.
  *  @param string snippet [in] Name of snippet to be displayed.
- *  @param boolen userdefined [in] Whether snippet is user defined.
+ *  @param boolean userdefined [in] Whether snippet is user defined.
  *  @return False.
  */
 function displayRoutine(snippet, userdefined) {
   external.DisplaySnippet(snippet, userdefined);
+  return false;
+}
+
+/*
+ * Calls external object to get host application to display a category.
+ *  @param string catid [in] ID of category to be displayed.
+ *  @return False.
+ */
+function displayCategory(catid) {
+  external.DisplayCategory(catid);
   return false;
 }
 
