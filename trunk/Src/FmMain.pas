@@ -337,6 +337,8 @@
  *                      - Now deletes history if a snippet is changed: could
  *                        cause GPF in history's dependency references.
  * v1.43 of 11 Jul 2009 - Removed reference to deleted UCopySnippetMgr unit.
+ * v1.44 of 12 Jul 2009 - Added a new dynamically created category display
+ *                        action that is passed to notifier.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -1766,6 +1768,7 @@ begin
       SetDisplayRoutineAction(
         TActionFactory.CreateRoutineAction(Self, ActViewRoutineExecute)
       );
+      SetDisplayCategoryAction(TActionFactory.CreateCategoryAction(Self));
       SetCompileRoutineAction(actTestCompile);
       SetViewCompilerLogAction(
         TActionFactory.CreateCompLogAction(Self, ActViewCompLogExecute)
