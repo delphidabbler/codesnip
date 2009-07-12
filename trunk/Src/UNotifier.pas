@@ -44,6 +44,8 @@
  *                        TNotifier.
  * v1.6 of 12 Jul 2009  - Added new DisplayCategory and SetDisplayCategoryAction
  *                        methods to TNotifier.
+ *                      - Changed SetDisplayRoutineAction to pass notifier
+ *                        reference to the action.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -248,7 +250,7 @@ implementation
 
 uses
   // Delphi
-  StdActns,
+  SysUtils, StdActns,
   // Project
   IntfCompilers, UCategoryAction, UCompLogAction, UEditRoutineAction,
   URoutineAction, UViewItemAction;
@@ -381,6 +383,8 @@ procedure TNotifier.SetDisplayCategoryAction(const Action: TBasicAction);
 begin
   Assert(Action is TCategoryAction,
     ClassName + '.SetDisplayCategoryAction: Action is not TCategoryAction');
+  Assert(Supports(Action, ISetNotifier),
+    ClassName + '.SetDisplayCategoryAction: Action must support ISetNotifier');
   fDisplayCategoryAction := Action;
   (fDisplayCategoryAction as ISetNotifier).SetNotifier(Self);
 end;
@@ -393,7 +397,10 @@ procedure TNotifier.SetDisplayRoutineAction(
 begin
   Assert(Action is TRoutineAction,
     ClassName + '.SetDisplayRoutineAction: Action is not TRoutineAction');
+  Assert(Supports(Action, ISetNotifier),
+    ClassName + '.SetDisplayRoutineAction: Action must support ISetNotifier');
   fDisplayRoutineAction := Action;
+  (fDisplayRoutineAction as ISetNotifier).SetNotifier(Self);
 end;
 
 procedure TNotifier.SetDonateAction(const Action: TBasicAction);
