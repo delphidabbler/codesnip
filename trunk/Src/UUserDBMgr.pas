@@ -15,6 +15,8 @@
  * v1.4 of 14 Jan 2009  - Replaced control char literals with constants.
  * v1.5 of 06 Jun 2009  - Changed to use TSnippetID and ISnippetIDList instead
  *                        of TRoutineID and IRoutineIDList.
+ * v1.6 of 13 Jul 2009  - Removed unused overloaded TUserDBMgr.Edit method and
+ *                        modified other Edit method to remove dependency.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -85,12 +87,7 @@ type
       {Checks if user database can be saved.
         @return True if database can be saved, False if not.
       }
-    class procedure Edit(const ViewItem: TViewItem); overload;
-      {Gets user to edit a snippet using edit snippet dialog box.
-        @param ViewItem [in] Snippet to be edited. Must be a user defined
-          routine.
-      }
-    class procedure Edit(const RoutineName: string); overload;
+    class procedure Edit(const RoutineName: string); 
       {Gets user to edit a named snippet using edit snippet dialog box.
         @param RoutineName [in] Name of routine to be edited. Must be user
           defined.
@@ -156,7 +153,7 @@ begin
     SaveDlg.Title := sCaption;
     SaveDlg.Options := [ofShowHelp, ofExtensionDifferent, ofPathMustExist,
       ofNoTestFileCreate, ofEnableSizing];
-    SaveDlg.HelpKeyword := 'SaveBackupDlg';                // ** do not localise
+    SaveDlg.HelpKeyword := 'SaveBackupDlg';                
     if SaveDlg.Execute then
     begin
       // Perform backup
@@ -180,8 +177,7 @@ class function TUserDBMgr.CanEdit(const ViewItem: TViewItem): Boolean;
       is user defined.
   }
 begin
-  Assert(Assigned(ViewItem),                               // ** do not localise
-    ClassName + '.CanEdit: VeiwItem is nil');
+  Assert(Assigned(ViewItem), ClassName + '.CanEdit: VeiwItem is nil');
   Result := Assigned(ViewItem) and
     (ViewItem.Kind = vkRoutine) and
     ViewItem.Routine.UserDefined;
@@ -279,9 +275,9 @@ resourcestring
   sHasDependents = 'Sorry, this snippet can''t be deleted. It is required by '
     + 'the following snippets:' + EOL + '    %s';
 begin
-  Assert(ViewItem.Kind = vkRoutine,                        // ** do not localise
+  Assert(ViewItem.Kind = vkRoutine,
     ClassName + '.Delete: Current view kind is not vkRoutine');
-  Assert(ViewItem.Routine.UserDefined,                     // ** do not localise
+  Assert(ViewItem.Routine.UserDefined,
     ClassName + '.Delete: Routine must be user defined');
   // Check if routine has dependents: don't allow deletion if so
   Dependents := (Snippets as ISnippetsEdit).GetDependents(ViewItem.Routine);
@@ -318,31 +314,11 @@ class procedure TUserDBMgr.Edit(const RoutineName: string);
   }
 var
   Routine: TRoutine;    // reference to routine to be edited
-  ViewItem: TViewItem;  // view item for routine
 begin
-  // Find routine in user database
   Routine := Snippets.Routines.Find(RoutineName, True);
-  if not Assigned(Routine) then                            // ** do not localise
+  if not Assigned(Routine) then
     raise EBug.Create(ClassName + '.Edit: Routine not in user database');
-  // Create view item to be edited
-  ViewItem := TViewItem.Create(Routine);
-  try
-    Edit(ViewItem);
-  finally
-    FreeAndNil(ViewItem);
-  end;
-end;
-
-class procedure TUserDBMgr.Edit(const ViewItem: TViewItem);
-  {Gets user to edit a snippet using edit snippet dialog box.
-    @param ViewItem [in] Snippet to be edited. Must be a user defined routine.
-  }
-begin
-  Assert(ViewItem.Kind = vkRoutine,                        // ** do not localise
-    ClassName + '.Edit: Current view kind is not vkRoutine');
-  Assert(ViewItem.Routine.UserDefined,                     // ** do not localise
-    ClassName + '.Edit: Routine must be user defined');
-  TUserDBEditDlg.EditRoutine(nil, ViewItem.Routine);
+  TUserDBEditDlg.EditRoutine(nil, Routine);
 end;
 
 class function TUserDBMgr.RestoreDatabase: Boolean;
@@ -350,12 +326,11 @@ class function TUserDBMgr.RestoreDatabase: Boolean;
     @return True if user OKs, False if not.
   }
 var
-  FileName: string;             // name of backup file
-  Dlg: TOpenDialogEx;           // open dialog box used to select backup file
-  UserDBBackup: TUserDBBackup;  // object used to perform restoration
+  FileName: string;               // name of backup file
+  Dlg: TOpenDialogEx;             // open dialog box used to select backup file
+  UserDBBackup: TUserDBBackup;    // object used to perform restoration
 resourcestring
-  // Dialog box caption
-  sCaption = 'Open Backup File';
+  sCaption = 'Open Backup File';  // dialog box caption
 begin
   // Get name of backup file from user via standard open dialog box
   Dlg := TOpenDialogEx.Create(nil);
@@ -364,7 +339,7 @@ begin
     Dlg.Title := sCaption;
     Dlg.Options := [ofShowHelp, ofPathMustExist, ofHideReadOnly,
       ofEnableSizing];
-    Dlg.HelpKeyword := 'RestoreBackupDlg';                 // ** do not localise
+    Dlg.HelpKeyword := 'RestoreBackupDlg';
     Result := Dlg.Execute;
     if Result then
     begin
