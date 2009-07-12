@@ -1,3 +1,13 @@
+Version 3.0.3 - no public release
+CodeSnip 3.0.3 - 12 Jul 2009
++ Refactored code:
+  - Rationalised some JavaScript code.
+  - Rationalised some dialog aligment code.
+  - Changed some object types and class heirachies.
+  - Added some automatic object lifetime management logic.
+  - Removed some duplicate code and merged some units.
++ Fixed an obscure bug in category code snippet generation as a side effect of refactoring.
+
 Version 3.0.2 - 08 Jul 2009
 CodeSnip 3.0.2 - 08 Jul 2009
 + Fixed broken link to CodeSnip databsse in welcome page.
