@@ -20,6 +20,9 @@
  * v1.3 of 17 Dec 2008  - Fixed bug introduced in v1.2 in SetMargin method. Was
  *                        offsetting rather than shrinking display rectangle.
  *                      - Added new private SetRect method.
+ * v1.4 of 18 Jul 2009  - Reimplemented TMemoHelper.LineExtent method to take
+ *                        account of memo control's font.
+ *                      - Changed assertions to use ClassName.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -39,7 +42,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -69,8 +72,7 @@ type
   }
   TMemoHelper = class(TObject)
   strict private
-    fMemo: TCustomMemo;
-      {Memo control that we're manipulating}
+    fMemo: TCustomMemo;   // Memo control that we're manipulating
     function LineExtent(const LineIdx: Integer): TSize;
       {Gets extent (i.e. width and height) of a memo line.
         @param LineIdx [in] Index of line.
@@ -130,9 +132,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Controls, Messages,
+  SysUtils, Messages, Graphics,
   // Project
-  UStructs;
+  UFontHelper, UGraphicUtils, UStructs;
 
 
 { TMemoHelper }
@@ -142,8 +144,7 @@ constructor TMemoHelper.Create(const AMemo: TCustomMemo);
     @param AMemo [in] Memo for which we want info.
   }
 begin
-  Assert(Assigned(AMemo),   // ** do not localise
-    'TMemoHelper.Create: AMemo is nil');
+  Assert(Assigned(AMemo), ClassName + '.Create: AMemo is nil');
   inherited Create;
   fMemo := AMemo;
 end;
@@ -170,14 +171,23 @@ function TMemoHelper.LineExtent(const LineIdx: Integer): TSize;
     @return Width and height of line in pixels.
   }
 var
-  Canvas: TControlCanvas;   // canvas of memo control
+  Font: TFont;  // memo control's font
 begin
-  Canvas := TControlCanvas.Create;
+  // We need a TFont object that represents the memo control's font. But, we
+  // can't call Font property since it is not exposed by TCustomMemo. Therefore
+  // we create a TFont from a copy of the font whose handle we get by sending a
+  // WM_GETFONT message to memo control. We need to copy it since when the
+  // TFont is freed it deletes the font handle, which is still required by the
+  // memo control and possibly other controls.
+  Font := TFont.Create;
   try
-    Canvas.Control := fMemo;
-    Result := Canvas.TextExtent(fMemo.Lines[LineIdx]);
+    Font.Handle := TFontHelper.CloneFontHandle(
+     fMemo.Perform(WM_GETFONT, 0, 0)
+    );
+    // Get size of memo line in its current font
+    Result := StringExtent(fMemo.Lines[LineIdx], Font);
   finally
-    FreeAndNil(Canvas);
+    FreeAndNil(Font); // releases HCloneFont handle
   end;
 end;
 
