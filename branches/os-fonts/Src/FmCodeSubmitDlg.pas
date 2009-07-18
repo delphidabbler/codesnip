@@ -16,7 +16,6 @@
  *                      - Replaced labels in privacy text containing help link
  *                        with an HTML frame containing required link.
  *                      - Removed unused label and supporting code.
- *                      - Flagged TCodeSubmitDlg as sealed.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****

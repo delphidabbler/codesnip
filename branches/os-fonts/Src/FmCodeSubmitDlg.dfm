@@ -1,5 +1,7 @@
 inherited CodeSubmitDlg: TCodeSubmitDlg
   Caption = 'Code Submission Wizard'
+  ExplicitWidth = 565
+  ExplicitHeight = 433
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -8,10 +10,6 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblIntro: TLabel
           Left = 0
           Top = 8
@@ -70,6 +68,7 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         Caption = 'tsUserInfo'
         ImageIndex = 2
         TabVisible = False
+        ExplicitLeft = 8
         object lblName: TLabel
           Left = 0
           Top = 8
@@ -113,14 +112,14 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
           Top = 123
           Width = 369
           Height = 112
-          TabOrder = 2
+          TabOrder = 3
         end
         inline frmPrivacy: TFixedHTMLDlgFrame
           Left = 0
           Top = 69
           Width = 369
           Height = 18
-          TabOrder = 3
+          TabOrder = 2
           TabStop = True
           ExplicitTop = 69
           ExplicitWidth = 369
@@ -133,6 +132,7 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
             inherited wbBrowser: TWebBrowser
               Width = 369
               Height = 18
+              TabStop = False
               ExplicitTop = -2
               ExplicitWidth = 369
               ExplicitHeight = 18
@@ -150,10 +150,6 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         Caption = 'tsSubmit'
         ImageIndex = 4
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblSubmit: TLabel
           Left = 0
           Top = 3
@@ -183,10 +179,6 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         Caption = 'tsFinished'
         ImageIndex = 3
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblFinished: TLabel
           Left = 0
           Top = 0
