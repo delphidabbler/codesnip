@@ -17,6 +17,10 @@
  *                        constructor.
  * v1.5 of 13 May 2009  - Changed to use revised web service constructor.
  *                      - Removed reference to deleted UParams unit.
+ * v1.6 of 19 Jul 2009  - Modified to accommodate the new Vista default font in
+ *                        controls. Some labels replaced by HTML frames.
+ *                      - Controls now dynamically arranged vertically and
+ *                        dialog box sizes itself to tallest tab sheet.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -53,7 +57,7 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes, Forms,
   // Project
-  FmGenericDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg;
+  FmGenericDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, FrHTMLTpltDlg;
 
 
 type
@@ -69,18 +73,14 @@ type
     edName: TEdit;
     frmResult: THTMLTpltDlgFrame;
     lblEmail: TLabel;
-    lblMailList: TLabel;
-    lblMailListHelp: TLabel;
     lblName: TLabel;
-    lblPrivacy: TLabel;
-    lblPrivacyHelp: TLabel;
     lblSubmit: TLabel;
     lblSubscribing: TLabel;
     pnlData: TPanel;
     pnlResult: TPanel;
+    frmPrivacy: TFixedHTMLDlgFrame;
+    frmMailList: TFixedHTMLDlgFrame;
     procedure btnSubmitClick(Sender: TObject);
-    procedure lblMailListHelpClick(Sender: TObject);
-    procedure lblPrivacyHelpClick(Sender: TObject);
   strict private
     procedure Subscribing(const Flag: Boolean);
       {Updates display according whether we are currently using web service to
@@ -106,15 +106,18 @@ type
         @return Message returned from web service.
       }
   strict protected
+    procedure ConfigForm; override;
+      {Initialises content of HTML frames and sets fonts as required.
+      }
     procedure ArrangeForm; override;
       {Positions controls and sets form size according to body panel dimensions.
+      }
+    procedure InitForm; override;
+      {Populates and initialises controls.
       }
     function ModalResultOnEsc: Integer; override;
       {Gets modal result returned from dialog when user presses ESC key.
         @return mrCancel.
-      }
-    procedure InitForm; override;
-      {Populates and initialises controls.
       }
   public
     class procedure Execute(const AOwner: TComponent);
@@ -129,10 +132,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Math,
   // Project
-  UAppInfo, UConsts, UEmailHelper, UHTMLUtils, UMailListSubscriber, UMessageBox,
-  UUtils;
+  UAppInfo, UConsts, UGraphicUtils, UEmailHelper, UFontHelper, UHTMLUtils,
+  UMailListSubscriber, UMessageBox, UUtils;
 
 
 {$R *.dfm}
@@ -151,7 +154,59 @@ resourcestring
 procedure TMailingListDlg.ArrangeForm;
   {Positions controls and sets form size according to body panel dimensions.
   }
+
+  procedure SetLabelHeight(const Lbl: TLabel);
+    {Sets height of a label to accommodate the text it contains in its font.
+      @param Lbl [in] Label whose height is to be set.
+    }
+  begin
+    Lbl.Height := StringExtent(Lbl.Caption, Lbl.Font, Lbl.Width).cy;
+  end;
+
+  function BottomOf(const Ctrl: TControl): Integer;
+    {Gets position of bottom of a control relative to its parent control in
+    pixels.
+      @param Ctr [in] Control to check.
+      @return Required position.
+    }
+  begin
+    Result := Ctrl.Top + Ctrl.Height;
+  end;
+
+  function VCentre(const ATop: Integer;
+    const Ctrls: array of TControl): Integer;
+    {Vertically centres a list of controls.
+      @param ATop [in] Top tallest control to be aligned.
+      @param Ctrls [in] Array of controls to be aligned.
+      @return Height occupied by controls (= height of tallest control).
+    }
+  var
+    I: Integer; // loops thru all controls to be aligned
+  begin
+    Result := 0;
+    for I := Low(Ctrls) to High(Ctrls) do
+      if Ctrls[I].Height > Result then
+        Result := Ctrls[I].Height;
+    for I := Low(Ctrls) to High(Ctrls) do
+      Ctrls[I].Top := ATop + (Result - Ctrls[I].Height) div 2;
+  end;
+
+var
+  ATop: Integer;  // indicates top of various controls
 begin
+  frmMailList.Height := frmMailList.DocHeight;
+  frmPrivacy.Height := frmPrivacy.DocHeight;
+  SetLabelHeight(lblEmail);
+  SetLabelHeight(lblName);
+  SetLabelHeight(lblSubmit);
+  SetLabelHeight(lblSubscribing);
+  ATop := BottomOf(frmMailList) + 8;
+  frmPrivacy.Top := ATop + VCentre(ATop, [lblEmail, edEmail]);
+  ATop := BottomOf(frmPrivacy) + 8;
+  lblSubmit.Top := ATop + VCentre(ATop, [lblName, edName]) + 8;
+  lblSubscribing.Top := lblSubmit.Top;
+  pnlBody.ClientHeight := Max(BottomOf(lblSubmit), BottomOf(lblSubscribing))
+    + 8;
   inherited;  // aligns inherited controls and sizes form
   // now align buttons added in this dialog
   btnCancel.Left := btnHelp.Left - btnCancel.Width - 4;
@@ -181,6 +236,16 @@ begin
   end;
 end;
 
+procedure TMailingListDlg.ConfigForm;
+  {Initialises content of HTML frames and sets fonts as required.
+  }
+begin
+  inherited;
+  frmPrivacy.Initialise('dlg-mlist-privacy.html');
+  frmMailList.Initialise('dlg-mlist-maillist.html');
+  TFontHelper.SetDefaultBaseFont(lblSubscribing.Font, False);
+end;
+
 class procedure TMailingListDlg.Execute(const AOwner: TComponent);
   {Displays dialog box.
     @param AOwner [in] Owning form.
@@ -206,22 +271,6 @@ begin
   pnlData.Show;
 end;
 
-procedure TMailingListDlg.lblMailListHelpClick(Sender: TObject);
-  {Displays mailing list information in help file.
-    @param Sender [in] Not used.
-  }
-begin
-  DisplayHelp('MailingList');
-end;
-
-procedure TMailingListDlg.lblPrivacyHelpClick(Sender: TObject);
-  {Displays privacy statement in help file.
-    @param Sender [in] Not used.
-  }
-begin
-  DisplayHelp('PrivacyStatement');
-end;
-
 procedure TMailingListDlg.LoadResultAsHTML(const Msg: string);
   {Displays result message as HTML.
     @param Msg [in] Message to convert to HTML.
@@ -245,18 +294,18 @@ begin
     // heading is in first line of message
     if Lines.Count > 0 then
     begin
-      Values.Values['Heading'] := Lines[0];                // ** do not localise
+      Values.Values['Heading'] := Lines[0];
       Lines.Delete(0);
     end;
     // remainder of lines are paragraphs
-    Values.Values['Paragraphs'] :=                         // ** do not localise
+    Values.Values['Paragraphs'] :=
       MakeTag('p', ttOpen) +
       JoinStr(
         Lines, MakeTag('p', ttClose) + EOL + MakeTag('p', ttOpen), False
       ) +
       MakeTag('p', ttClose);
 
-    // Resolve and load template: ** do not localise
+    // Resolve and load template:
     frmResult.Initialise('dlg-mlist-result-tplt.html', Values);
 
   finally
