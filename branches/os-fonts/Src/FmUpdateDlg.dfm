@@ -64,7 +64,7 @@ inherited UpdateDlg: TUpdateDlg
     end
     object btnDoUpdate: TButton
       Left = 88
-      Top = 56
+      Top = 47
       Width = 153
       Height = 41
       Caption = '&Update from Web'

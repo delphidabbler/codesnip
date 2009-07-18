@@ -48,6 +48,9 @@
  * v1.5 of 13 Jan 2009  - Replaced control char literals with constants.
  * v1.6 of 13 May 2009  - Changed to use revised TUpdateMgr constructor.
  *                      - Removed reference to deleted UParams unit.
+ * v1.7 of 18 Jul 2009  - Re-aligned and resized controls to fit Vista UI font,
+ *                        with some fonts now aligned dynamically.
+ *                      - Insured space between error headings and messages.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -84,7 +87,7 @@ uses
   // Project
   Forms, StdCtrls, Controls, ExtCtrls, Classes, Messages,
   // Delphi
-  FmGenericViewDlg, FrNews, UUpdateMgr, UMemoProgBarMgr;
+  FmGenericViewDlg, FrNews, UMemoProgBarMgr, UUpdateMgr;
 
 
 
@@ -118,6 +121,10 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormDestroy(Sender: TObject);
   private
+    fProgressBarMgr: TMemoProgBarMgr; // Displays progress bar in progress memo
+    fDataUpdated: Boolean;            // Flag true if any data was updated
+    fCancelled: Boolean;              // Flag true if user cancelled update
+    fUpdateMgr: TUpdateMgr;           // Handles updating from web
     procedure WMActivateApp(var Msg: TMessage); message WM_ACTIVATEAPP;
       {Responds to activation of application and this window. Refreshes display.
         @param Msg [in/out] Not used.
@@ -126,16 +133,6 @@ type
       {Returns directory where data files stored and ensures it exists.
         @return Data directory.
       }
-  private
-    fProgressBarMgr: TMemoProgBarMgr;
-      {Object that creates, displays and updates a progress bar within the
-      progress memo control}
-    fDataUpdated: Boolean;
-      {Flag true if any data was updated}
-    fCancelled: Boolean;
-      {Flag true if user cancelled update}
-    fUpdateMgr: TUpdateMgr;
-      {Object that handles actual updating from web}
     procedure UpdateStatusHandler(Sender: TObject; Status: TUpdateStatus;
       var Cancel: Boolean);
       {Event handler called by update manager to report progress and permit user
@@ -194,7 +191,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UColours, UConsts, UUtils;
+  UAppInfo, UColours, UConsts, UGraphicUtils, UUtils;
 
 
 {$R *.dfm}
@@ -231,6 +228,11 @@ procedure TUpdateDlg.ArrangeForm;
 begin
   // Arrange inherited controls
   inherited;
+  // Contols in initial display
+  lblUpdateFromWeb.Height := StringExtent(
+    lblUpdateFromWeb.Caption, lblUpdateFromWeb.Font, lblUpdateFromWeb.Width
+  ).cy;
+  btnDoUpdate.Top := lblUpdateFromWeb.Top + lblUpdateFromWeb.Height + 16;
   // Arrange additonal cancel button
   btnCancel.Left := btnClose.Left + btnClose.Width - btnCancel.Width;
   btnCancel.Top := btnClose.Top;
@@ -429,9 +431,12 @@ begin
     end;
     hsError:
     begin
-      // Error message: show in warning text colour followed by extra error info
+      // Error message: show in warning text colour followed by extra error
+      // info. Make sure headline ends in one space to separate headline from
+      // error message
+      lblHeadline.Caption := TrimRight(lblHeadline.Caption) + ' ';
       lblHeadline.Font.Color := clWarningText;
-      lblError.Left := lblHeadline.Left + lblHeadline.Width + 1;
+      lblError.Left := lblHeadline.Left + lblHeadline.Width;
       lblError.Top := lblHeadline.Top;
       lblError.Visible := True;
     end;
