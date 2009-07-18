@@ -1,7 +1,5 @@
 inherited CodeSubmitDlg: TCodeSubmitDlg
   Caption = 'Code Submission Wizard'
-  ExplicitWidth = 565
-  ExplicitHeight = 433
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -10,6 +8,10 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblIntro: TLabel
           Left = 0
           Top = 8
@@ -34,7 +36,7 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
           Left = 0
           Top = 8
           Width = 190
-          Height = 10
+          Height = 13
           Caption = '&Select the snippet(s) you want to submit:'
           FocusControl = frmRoutines
         end
@@ -119,12 +121,15 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
           Width = 369
           Height = 18
           TabOrder = 3
+          TabStop = True
           ExplicitTop = 69
           ExplicitWidth = 369
           ExplicitHeight = 18
           inherited pnlBrowser: TPanel
             Width = 369
             Height = 18
+            ExplicitWidth = 369
+            ExplicitHeight = 18
             inherited wbBrowser: TWebBrowser
               Width = 369
               Height = 18
@@ -145,6 +150,10 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         Caption = 'tsSubmit'
         ImageIndex = 4
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblSubmit: TLabel
           Left = 0
           Top = 3
@@ -174,6 +183,10 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         Caption = 'tsFinished'
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblFinished: TLabel
           Left = 0
           Top = 0
