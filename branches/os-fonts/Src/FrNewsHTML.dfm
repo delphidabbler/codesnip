@@ -1,6 +1,4 @@
 inherited NewsHTMLFrame: TNewsHTMLFrame
-  Font.Name = 'Tahoma'
-  ParentFont = False
   inherited pnlBrowser: TPanel
     BevelOuter = bvLowered
     inherited wbBrowser: TWebBrowser
@@ -8,8 +6,12 @@ inherited NewsHTMLFrame: TNewsHTMLFrame
       Top = 1
       Width = 314
       Height = 234
+      ExplicitLeft = 1
+      ExplicitTop = 1
+      ExplicitWidth = 306
+      ExplicitHeight = 226
       ControlData = {
-        4C000000A01F00005C1700000000000000000000000000000000000000000000
+        4C000000742000002F1800000000000000000000000000000000000000000000
         000000004C000000000000000000000001000000E0D057007335CF11AE690800
         2B2E126208000000000000004C0000000114020000000000C000000000000046
         8000000000000000000000000000000000000000000000000000000000000000
