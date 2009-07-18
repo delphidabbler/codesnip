@@ -19,7 +19,6 @@
  *                        default and disables cancel button on last page.
  * v1.3 of 18 Jul 2009  - Changed to use correct OS UI font for head label and
  *                        vertically centred label in containing panel.
- *                      - Flagged TWizardDlg class as abstract.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -65,7 +64,7 @@ type
   TWizardDlg:
     Base class for multi-page "wizard" dialog boxes.
   }
-  TWizardDlg = class abstract(TGenericDlg)
+  TWizardDlg = class(TGenericDlg)
     btnBack: TButton;
     btnNext: TButton;
     btnCancel: TButton;
