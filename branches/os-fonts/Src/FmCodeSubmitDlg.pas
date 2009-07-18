@@ -53,8 +53,8 @@ uses
   // Delphi
   StdCtrls, Forms, ComCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmWizardDlg, FrCheckedTV, FrSelectSnippets, FrSelectUserSnippets, UExceptions,
-  USnippets, FrBrowserBase, FrHTMLDlg, FrFixedHTMLDlg;(*, UCSSBuilder;*)
+  FmWizardDlg, FrBrowserBase, FrCheckedTV, FrFixedHTMLDlg, FrHTMLDlg,
+  FrSelectSnippets, FrSelectUserSnippets, UExceptions, USnippets;
 
 
 type
@@ -64,7 +64,7 @@ type
     Implements a wizard dialog that gathers data about and submits a user's
     code submission for inclusion in the database.
   }
-  TCodeSubmitDlg = class sealed(TWizardDlg)
+  TCodeSubmitDlg = class(TWizardDlg)
     btnPreview: TButton;
     edComments: TMemo;
     edEMail: TEdit;
@@ -119,7 +119,6 @@ type
     procedure SaveUserData;
       {Saves content of some wizard controls to persistent storage.
       }
-//    procedure InitPrivacyHTML(Sender: TObject; const CSSBuilder: TCSSBuilder);
   strict protected
     procedure ArrangeForm; override;
       {Aligns controls vertically where necessary to accomodate height of
@@ -185,8 +184,8 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  FmPreviewDlg, UCodeImportExport, UCodeSubmitter, (*UCSSUtils, *)UGraphicUtils,
-  UEmailHelper, UMessageBox, USettings, UUtils, UWebService;
+  FmPreviewDlg, UCodeImportExport, UCodeSubmitter, UGraphicUtils, UEmailHelper,
+  UMessageBox, USettings, UUtils, UWebService;
 
 
 {$R *.dfm}
@@ -400,13 +399,6 @@ begin
   edEMail.Text := UserData.ItemValues['Email'];
 end;
 
-//procedure TCodeSubmitDlg.InitPrivacyHTML(Sender: TObject;
-//  const CSSBuilder: TCSSBuilder);
-//begin
-////  with CSSBuilder.Selectors['body'] do
-////    AddProperty(CSSBorderProp(cssAll, 0));
-//end;
-//
 procedure TCodeSubmitDlg.MoveForward(const PageIdx: Integer;
   var CanMove: Boolean);
   {Called when about to move forward to a new page. Prevents movement if there
