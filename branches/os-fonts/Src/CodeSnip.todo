@@ -1,3 +1,4 @@
+{TODO -oSelf -cDocumentation : Remove comment from FmCodeSubmitDlg.pas that says class has been made sealed.}
 {DONE -oSelf -cBug : Fix bug where units required by types and consts are not output to generated units.}
 {TODO -oSelf -cRefactor : Use UAutoFree to free REML info in UREMLDataIO}
 {DONE -oJerry Mack -cFeature : Permit use of file:// protocol in extra text}
