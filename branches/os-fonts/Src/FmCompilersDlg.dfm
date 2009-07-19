@@ -6,9 +6,9 @@ inherited CompilersDlg: TCompilersDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     Width = 449
-    Height = 196
+    Height = 249
     ExplicitWidth = 449
-    ExplicitHeight = 196
+    ExplicitHeight = 249
     object pbCompiler: TPaintBox
       Left = 128
       Top = 0
@@ -28,18 +28,12 @@ inherited CompilersDlg: TCompilersDlg
       Left = 0
       Top = 0
       Width = 121
-      Height = 196
+      Height = 244
       Style = lbOwnerDrawFixed
       Ctl3D = True
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
       IntegralHeight = True
       ItemHeight = 48
       ParentCtl3D = False
-      ParentFont = False
       TabOrder = 0
       OnClick = lbCompilersClick
       OnDrawItem = lbCompilersDrawItem
@@ -48,18 +42,15 @@ inherited CompilersDlg: TCompilersDlg
       Left = 127
       Top = 32
       Width = 321
-      Height = 164
+      Height = 212
       ActivePage = tsExecFile
       TabOrder = 1
       object tsExecFile: TTabSheet
         Caption = '&Compiler'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitHeight = 136
         object lblCompilerPath: TLabel
           Left = 4
-          Top = 5
+          Top = 4
           Width = 170
           Height = 13
           Caption = 'Enter compiler e&xecutable file name:'
@@ -102,15 +93,12 @@ inherited CompilersDlg: TCompilersDlg
       object tsSwitches: TTabSheet
         Caption = 'Co&mmand Line'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitHeight = 136
         object lblExplainSwitches: TLabel
-          Left = 153
-          Top = 76
-          Width = 153
-          Height = 55
+          Left = 160
+          Top = 69
+          Width = 137
+          Height = 34
           AutoSize = False
           Caption = 
             'Enter new switch in edit box and click Add. Click a switch to ed' +
@@ -128,12 +116,12 @@ inherited CompilersDlg: TCompilersDlg
         object lblSwitch: TLabel
           Left = 4
           Top = 4
-          Width = 84
+          Width = 87
           Height = 13
-          Caption = 'Add or &edit switch'
+          Caption = 'Add or &edit switch:'
         end
         object btnDefSwitches: TButton
-          Left = 224
+          Left = 232
           Top = 38
           Width = 65
           Height = 25
@@ -145,7 +133,7 @@ inherited CompilersDlg: TCompilersDlg
           Left = 4
           Top = 62
           Width = 142
-          Height = 69
+          Height = 95
           IntegralHeight = True
           ItemHeight = 13
           TabOrder = 1
@@ -160,7 +148,7 @@ inherited CompilersDlg: TCompilersDlg
           OnChange = edSwitchChange
         end
         object btnAdd: TButton
-          Left = 153
+          Left = 161
           Top = 7
           Width = 65
           Height = 25
@@ -169,7 +157,7 @@ inherited CompilersDlg: TCompilersDlg
           OnClick = btnAddClick
         end
         object btnReplace: TButton
-          Left = 224
+          Left = 232
           Top = 7
           Width = 65
           Height = 25
@@ -178,7 +166,7 @@ inherited CompilersDlg: TCompilersDlg
           OnClick = btnReplaceClick
         end
         object btnDelete: TButton
-          Left = 153
+          Left = 161
           Top = 38
           Width = 65
           Height = 25
@@ -190,16 +178,13 @@ inherited CompilersDlg: TCompilersDlg
       object tsOutputLog: TTabSheet
         Caption = 'Output &Log'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitHeight = 136
         object lblLogPrefixes: TLabel
           Left = 4
           Top = 4
-          Width = 74
+          Width = 77
           Height = 13
-          Caption = 'Edit log &prefixes'
+          Caption = 'Edit log &prefixes:'
           FocusControl = vleLogPrefixes
         end
         object vleLogPrefixes: TValueListEditor
@@ -208,6 +193,7 @@ inherited CompilersDlg: TCompilersDlg
           Width = 304
           Height = 59
           Ctl3D = True
+          DefaultColWidth = 20
           DefaultDrawing = False
           DisplayOptions = [doKeyColFixed]
           FixedColor = clMenuBar
@@ -225,11 +211,8 @@ inherited CompilersDlg: TCompilersDlg
             'Prefix')
           OnDrawCell = vleLogPrefixesDrawCell
           OnSelectCell = vleLogPrefixesSelectCell
-          ColWidths = (
-            70
-            202)
           RowHeights = (
-            18
+            17
             19
             18)
         end
@@ -249,7 +232,7 @@ inherited CompilersDlg: TCompilersDlg
   object btnDetect: TButton
     Left = 8
     Top = 304
-    Width = 121
+    Width = 145
     Height = 25
     Caption = '&Auto Detect Compilers'
     TabOrder = 1
