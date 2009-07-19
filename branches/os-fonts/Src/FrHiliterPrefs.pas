@@ -29,6 +29,11 @@
  *                      - Made private section strict.
  * v1.7 of 19 Jun 2009  - Changed to provide 3 predefined styles and new default
  *                        style.
+ * v1.8 of 19 Jul 2009  - Implemented new inherited ArrangeControls method that
+ *                        arranges controls in frame to allow for resized frame.
+ *                      - Resized some controls to accommodate Vista UI font.
+ *                      - Used anchors for some controls to automate some
+ *                        realignment.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -63,10 +68,10 @@ interface
 
 uses
   // Delphi
-  StdCtrls, Forms, Controls, Classes,
+  StdCtrls, Forms, Controls, Classes, Menus, Buttons,
   // Project
   IntfHiliter, FrPrefsBase, FrRTFShowCase, UColorBoxEx, UColorDialogEx, UConsts,
-  UPreferences, Menus, Buttons;
+  UPreferences;
 
 
 type
@@ -166,6 +171,9 @@ type
       {Called when page is deactivated. Stores information entered by user.
         @param Prefs [in] Object used to store information.
       }
+    procedure ArrangeControls; override;
+      {Arranges controls on frame. Called after frame has been sized.
+      }
   end;
 
 
@@ -257,6 +265,30 @@ procedure THiliterPrefsFrame.Activate(const Prefs: IPreferences);
 begin
   (fAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
   UpdateControls;
+end;
+
+procedure THiliterPrefsFrame.ArrangeControls;
+  {Arranges controls on frame. Called after frame has been sized.
+  }
+var
+  AvailWidth: Integer;  // width available in element group box for controls
+  CtrlWidth: Integer;   // width of side-by-side controls in element group box
+  Spacing: Integer;     // spacing needed to separate controls in element gp box
+begin
+  AvailWidth := gbElements.Width - lbElements.Left * 2;
+  CtrlWidth := lbElements.Width + gbFontStyle.Width + fColorBox.Width;
+  Spacing := (AvailWidth - CtrlWidth) div 2;
+  gbFontStyle.Left := lbElements.Left + lbElements.Width + Spacing;
+  fColorBox.Left := gbElements.Width - fColorBox.Width - 8;
+  lblColour.Left := fColorBox.Left;
+  frmExample.Left := gbFontStyle.Left;
+  frmExample.Width := fColorBox.Left + fColorBox.Width - frmExample.Left;
+  lblExample.Left := frmExample.Left;
+  lbElements.Top := lblElements.Top + lblElements.Height + 4;
+  lbElements.Height := gbElements.ClientHeight - lbElements.Top - 12;
+  frmExample.Top := lblExample.Top + lblElements.Height + 4;
+  frmExample.Height := gbElements.ClientHeight - frmExample.Top - 12;
+  fColorBox.Top := lblColour.Top + lblColour.Height + 4;
 end;
 
 procedure THiliterPrefsFrame.btnResetClick(Sender: TObject);

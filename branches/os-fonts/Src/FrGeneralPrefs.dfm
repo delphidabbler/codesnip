@@ -1,17 +1,23 @@
 inherited GeneralPrefsFrame: TGeneralPrefsFrame
   Width = 397
   Height = 311
+  ExplicitWidth = 397
+  ExplicitHeight = 311
+  DesignSize = (
+    397
+    311)
   object gpMeasurement: TGroupBox
     Left = 0
     Top = 0
     Width = 393
     Height = 57
+    Anchors = [akLeft, akTop, akRight]
     Caption = ' Measurement '
     TabOrder = 0
     object lblUnits: TLabel
       Left = 8
       Top = 24
-      Width = 149
+      Width = 157
       Height = 13
       Caption = 'Preferred units of measurement:'
     end
