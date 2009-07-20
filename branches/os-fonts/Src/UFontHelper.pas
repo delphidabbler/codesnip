@@ -10,6 +10,9 @@
  * v1.2 of 11 May 2009  - Added TFontHelper.SetContentFont method and supporting
  *                        private methods.
  * v1.3 of 23 May 2009  - Added TFontHelper.SetDefaultMonoFont method.
+ * v1.4 of 20 Jul 2009  - Added new TFontHelper methods: SetDefaultBaseFont,
+ *                        SetDefaultFont and CloneFontHandle.
+ *                      - Added new constants for default fonts.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -39,6 +42,7 @@
 unit UFontHelper;
 
 {$WARN UNSAFE_CAST OFF}
+{$WARN UNSAFE_CODE OFF}
 
 interface
 
@@ -78,19 +82,41 @@ type
         @param List [in] Receives list of font sizes. Cleared before sizes
           added.
       }
+    class procedure SetDefaultFont(const Font: TFont;
+      const ForceTrueType: Boolean);
+      {Sets a font to be the default UI font for the underlying operating
+      system.
+        @param Font [in] Font to be set.
+        @param ForceTrueType [in] Whether content font must be true type.
+      }
+    class procedure SetDefaultBaseFont(const BaseFont: TFont;
+      const ForceTrueType: Boolean);
+      {Updates a font to use the face of the underlying operating system. Style,
+      colour etc are preserved and point size may be adjusted to retain relative
+      size to base font.
+        @param Font [in] Font to be updated.
+        @param ForceTrueType [in] Whether content font must be true type.
+      }
     class procedure SetContentFont(const Font: TFont;
       const ForceTrueType: Boolean);
-      {Sets a font to be the appropriate font to use to render content on the
-      underlying operating system.
-        @param Font [in] Font to be set to content font.
+      {Sets a font to be the appropriate content font for the underlying
+      operating system.
+        @param Font [in] Font to be set.
         @param ForceTrueType [in] Whether content font must be true type.
       }
     class procedure SetDefaultMonoFont(const Font: TFont;
       const ForceTrueType: Boolean);
       {Sets a font to be used as the default mono spaced font used by the
       program.
-        @param Font [in] Font to be set to default mono font.
-        @param ForceTrueType [in] Whether content font must be true type.
+        @param Font [in] Font to be set.
+        @param ForceTrueType [in] Whether font must be true type.
+      }
+    class function CloneFontHandle(const Handle: THandle): THandle;
+      {Clones a font described by a font handle. Takes a copy of the specified
+      font.
+        @param Handle [in] Handle to font to be cloned.
+        @return Handle to cloned font. Caller is responsible for releasing the
+          handle.
       }
   end;
 
@@ -106,11 +132,20 @@ uses
 
 
 const
-  cDefaultContentFont = 'MS Sans Serif';        // Default content font name
-  cDefaultTTContentFont = 'Arial';              // Default TT content font name
-  cDefaultContentFontSize = 8;                  // Default content font size
+  cDefaultFont = 'MS Sans Serif';               // Default font name
+  cDefaultTTFont = 'Arial';                     // Default TT font name
+  cDefaultFontSize = 8;                         // Default font size
+  cDefaultContentFont = cDefaultFont;           // Default content font name
+  cDefaultTTContentFont = cDefaultTTFont;       // Default TT content font name
+  cDefaultContentFontSize = cDefaultFontSize;   // Default content font size
+
+  cVistaFont = 'Segoe UI';                      // Vista default font name
+  cVistaFontSize = 9;                           // Vista default font size
   cVistaContentFont = 'Calibri';                // Vista content font name
   cVistaContentFontSize = 10;                   // Vista content font size
+
+  cXPFont = 'Tahoma';                           // XP default font name
+  cXPFontSize = cDefaultFontSize;               // XP default font size
   cXPContentFont = 'Verdana';                   // XP content font name
   cXPContentFontSize = cDefaultContentFontSize; // XP content font size
 
@@ -133,6 +168,21 @@ begin
   if (PLF.elfLogFont.lfPitchAndFamily and $F) = FIXED_PITCH then
     List.Add(PLF.elfLogFont.lfFaceName);
   Result := 1;
+end;
+
+class function TFontHelper.CloneFontHandle(const Handle: THandle): THandle;
+  {Clones a font described by a font handle. Takes a copy of the specified font.
+    @param Handle [in] Handle to font to be cloned.
+    @return Handle to cloned font. Caller is responsible for releasing the
+      handle.
+  }
+var
+  LogFont: TLogFont;  // logical font info for memo control's font
+begin
+  Result := 0;
+  if GetObject(Handle, SizeOf(LogFont), @LogFont) > 0 then
+    Result := CreateFontIndirect(LogFont);
+  Assert(Result <> 0, ClassName + '.CloneFontHandle: Can''t clone handle');
 end;
 
 class function TFontHelper.FontExists(const FontName: string): Boolean;
@@ -197,9 +247,9 @@ end;
 
 class procedure TFontHelper.SetContentFont(const Font: TFont;
   const ForceTrueType: Boolean);
-  {Sets a font to be the appropriate font to use to render content on the
-  underlying operating system.
-    @param Font [in] Font to be set to content font.
+  {Sets a font to be the appropriate content font for the underlying operating
+  system.
+    @param Font [in] Font to be set.
     @param ForceTrueType [in] Whether content font must be true type.
   }
 begin
@@ -231,12 +281,73 @@ begin
     Font.Name := cDefaultTTContentFont;
 end;
 
+class procedure TFontHelper.SetDefaultBaseFont(const BaseFont: TFont;
+  const ForceTrueType: Boolean);
+  {Updates a font to use the face of the underlying operating system. Style,
+  colour etc are preserved and point size may be adjusted to retain relative
+  size to base font.
+    @param Font [in] Font to be updated.
+    @param ForceTrueType [in] Whether content font must be true type.
+  }
+var
+  DefaultFont: TFont;   // default font per OS
+  FontDelta: Integer;   // amount to increment font size by
+begin
+  // Create default font
+  DefaultFont := TFont.Create;
+  try
+    SetDefaultFont(DefaultFont, ForceTrueType);
+    // font delta is difference between normal default font size and that used
+    // on a specific OS (e.g. Vista uses Segoe UI 9 rather than MS Sans Serif 8)
+    FontDelta := DefaultFont.Size - cDefaultFontSize;
+    // change base font name and size as required
+    BaseFont.Name := DefaultFont.Name;
+    BaseFont.Size := BaseFont.Size + FontDelta;
+  finally
+    FreeAndNil(DefaultFont);
+  end;
+end;
+
+class procedure TFontHelper.SetDefaultFont(const Font: TFont;
+  const ForceTrueType: Boolean);
+  {Sets a font to be the default UI font for the underlying operating system.
+    @param Font [in] Font to be set.
+    @param ForceTrueType [in] Whether content font must be true type.
+  }
+begin
+  Assert(TOSInfo.IsWinNT, ClassName + '.SetDefaultFont: NT platform required');
+  // Set default font, size and style
+  Font.Name := cDefaultFont;
+  Font.Size := cDefaultFontSize;
+  Font.Style := [];
+  if TOSInfo.CheckReportedOS(TOSInfo.WinVista) then
+  begin
+    // We have Vista - use Segoe UI if installed
+    if FontExists(cVistaFont) then
+    begin
+      Font.Name := cVistaFont;
+      Font.Size := cVistaFontSize;
+    end;
+  end
+  else if TOSInfo.CheckReportedOS(TOSInfo.Win2K) then
+  begin
+    // We have Win 2K or XP - use Tahoma if installed
+    if FontExists(cXPFont) then
+    begin
+      Font.Name := cXPFont;
+      Font.Size := cXPFontSize;
+    end;
+  end;
+  // Force font to true type if required and necessary
+  if ForceTrueType and not IsTrueTypeFont(Font) then
+    Font.Name := cDefaultTTFont;
+end;
+
 class procedure TFontHelper.SetDefaultMonoFont(const Font: TFont;
   const ForceTrueType: Boolean);
-  {Sets a font to be used as the default mono spaced font used by the
-  program.
+  {Sets a font to be used as the default mono spaced font used by the program.
     @param Font [in] Font to be set to default mono font.
-    @param ForceTrueType [in] Whether content font must be true type.
+    @param ForceTrueType [in] Whether font must be true type.
   }
 begin
   if ForceTrueType then
