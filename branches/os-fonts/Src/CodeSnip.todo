@@ -1,3 +1,4 @@
+{TODO -oSelf -cRefactor : Pull out some common code used in arrangement and alignment of controls on forms into support unit.}
 {TODO -oSelf -cDocumentation : Remove comment from FmCodeSubmitDlg.pas that says class has been made sealed.}
 {DONE -oSelf -cBug : Fix bug where units required by types and consts are not output to generated units.}
 {TODO -oSelf -cRefactor : Use UAutoFree to free REML info in UREMLDataIO}
