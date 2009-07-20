@@ -398,7 +398,7 @@ begin
   frmMailListIntro.OnBuildCSS := BuildCSS;
   frmPrivacy.OnBuildCSS := BuildCSS;
   LoadHTMLFrame(frmMailListIntro, 'dlg-registration-maillist.html');
-  LoadHTMLFrame(frmPrivacy, 'dlg-registration-privacy.html');
+  LoadHTMLFrame(frmPrivacy, 'frm-emailprivacy.html');
 end;
 
 procedure TRegistrationDlg.DoRegistration;

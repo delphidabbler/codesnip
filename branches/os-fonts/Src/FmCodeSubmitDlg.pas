@@ -278,7 +278,7 @@ procedure TCodeSubmitDlg.ConfigForm;
   }
 begin
   inherited;
-  frmPrivacy.Initialise('dlg-codesubmit-privacy.html');
+  frmPrivacy.Initialise('frm-emailprivacy.html');
   lblRoutinePrompt.Font.Style := [fsBold];
 end;
 

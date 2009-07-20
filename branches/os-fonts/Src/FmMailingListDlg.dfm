@@ -163,7 +163,7 @@ inherited MailingListDlg: TMailingListDlg
         inherited pnlBrowser: TPanel
           Width = 355
           Height = 26
-          ExplicitWidth = 249
+          ExplicitWidth = 355
           ExplicitHeight = 26
           inherited wbBrowser: TWebBrowser
             Width = 355
@@ -171,7 +171,7 @@ inherited MailingListDlg: TMailingListDlg
             ExplicitWidth = 249
             ExplicitHeight = 26
             ControlData = {
-              4C000000BC190000B00200000000000000000000000000000000000000000000
+              4C000000B1240000B00200000000000000000000000000000000000000000000
               000000004C000000000000000000000001000000E0D057007335CF11AE690800
               2B2E126208000000000000004C0000000114020000000000C000000000000046
               8000000000000000000000000000000000000000000000000000000000000000

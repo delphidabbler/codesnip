@@ -10,6 +10,10 @@ inherited RegistrationDlg: TRegistrationDlg
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblIntro: TLabel
           Left = 0
           Top = 8
@@ -117,6 +121,7 @@ inherited RegistrationDlg: TRegistrationDlg
             Width = 353
             Height = 26
             TabOrder = 0
+            TabStop = True
             ExplicitLeft = 8
             ExplicitTop = 24
             ExplicitWidth = 353
@@ -148,6 +153,7 @@ inherited RegistrationDlg: TRegistrationDlg
             Width = 353
             Height = 26
             TabOrder = 3
+            TabStop = True
             ExplicitLeft = 8
             ExplicitTop = 102
             ExplicitWidth = 353
@@ -178,6 +184,10 @@ inherited RegistrationDlg: TRegistrationDlg
         Caption = 'tsSubmit'
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblReport: TLabel
           Left = 0
           Top = 8
@@ -219,6 +229,10 @@ inherited RegistrationDlg: TRegistrationDlg
         Caption = 'tsFinish'
         ImageIndex = 4
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblThanks: TLabel
           Left = 0
           Top = 8

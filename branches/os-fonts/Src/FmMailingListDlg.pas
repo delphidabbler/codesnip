@@ -241,7 +241,7 @@ procedure TMailingListDlg.ConfigForm;
   }
 begin
   inherited;
-  frmPrivacy.Initialise('dlg-mlist-privacy.html');
+  frmPrivacy.Initialise('frm-emailprivacy.html');
   frmMailList.Initialise('dlg-mlist-maillist.html');
   TFontHelper.SetDefaultBaseFont(lblSubscribing.Font, False);
 end;

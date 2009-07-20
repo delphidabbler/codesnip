@@ -444,7 +444,7 @@ begin
   // Set default font where necessary
   TFontHelper.SetDefaultBaseFont(lblBugInfo.Font, False);
   // Load HTML into browser control
-  LoadHTMLFrame(frmPrivacy, 'dlg-bugrep-privacy.html');
+  LoadHTMLFrame(frmPrivacy, 'frm-emailprivacy.html');
 end;
 
 procedure TBugReportDlg.CreateReport;

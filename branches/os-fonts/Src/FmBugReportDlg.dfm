@@ -60,6 +60,9 @@ inherited BugReportDlg: TBugReportDlg
         Caption = 'tsIntroBug'
         TabVisible = False
         ExplicitLeft = 8
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblHeading: TLabel
           Left = 0
           Top = 8
@@ -127,6 +130,10 @@ inherited BugReportDlg: TBugReportDlg
         Caption = 'tsIntroUser'
         ImageIndex = 1
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblUserIntro: TLabel
           Left = 0
           Top = 8
@@ -150,6 +157,10 @@ inherited BugReportDlg: TBugReportDlg
         Caption = 'tsBugInfo'
         ImageIndex = 2
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblDesc: TLabel
           Left = 0
           Top = 8
@@ -178,6 +189,9 @@ inherited BugReportDlg: TBugReportDlg
         ImageIndex = 3
         TabVisible = False
         ExplicitLeft = 8
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblEmailRequest: TLabel
           Left = 0
           Top = 8
@@ -308,7 +322,10 @@ inherited BugReportDlg: TBugReportDlg
         Caption = 'tsDone'
         ImageIndex = 5
         TabVisible = False
+        ExplicitLeft = 0
         ExplicitTop = 8
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblDone: TLabel
           Left = 0
           Top = 8
