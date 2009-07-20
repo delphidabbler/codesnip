@@ -29,7 +29,7 @@
  *                      - Made private section strict.
  * v1.7 of 19 Jun 2009  - Changed to provide 3 predefined styles and new default
  *                        style.
- * v1.8 of 19 Jul 2009  - Implemented new inherited ArrangeControls method that
+ * v1.8 of 20 Jul 2009  - Implemented new inherited ArrangeControls method that
  *                        arranges controls in frame to allow for resized frame.
  *                      - Resized some controls to accommodate Vista UI font.
  *                      - Used anchors for some controls to automate some
@@ -275,6 +275,9 @@ var
   CtrlWidth: Integer;   // width of side-by-side controls in element group box
   Spacing: Integer;     // spacing needed to separate controls in element gp box
 begin
+  // We can't rely on anchors to resize this group box since we need its width
+  // below and anchors don't seem to update width in time to use it here
+  gbElements.Width := Width;
   AvailWidth := gbElements.Width - lbElements.Left * 2;
   CtrlWidth := lbElements.Width + gbFontStyle.Width + fColorBox.Width;
   Spacing := (AvailWidth - CtrlWidth) div 2;
