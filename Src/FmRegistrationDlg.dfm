@@ -1,5 +1,7 @@
 inherited RegistrationDlg: TRegistrationDlg
   Caption = 'Registration Wizard'
+  ExplicitWidth = 565
+  ExplicitHeight = 433
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -15,8 +17,9 @@ inherited RegistrationDlg: TRegistrationDlg
         object lblIntro: TLabel
           Left = 0
           Top = 8
-          Width = 195
+          Width = 369
           Height = 13
+          AutoSize = False
           Caption = 'Thanks for deciding to register CodeSnip.'
         end
         object lblIntroExplain: TLabel
@@ -33,8 +36,9 @@ inherited RegistrationDlg: TRegistrationDlg
         object lblInstructions: TLabel
           Left = 0
           Top = 72
-          Width = 208
+          Width = 369
           Height = 13
+          AutoSize = False
           Caption = 'Please click the Next button below to begin.'
         end
       end
@@ -42,26 +46,16 @@ inherited RegistrationDlg: TRegistrationDlg
         Caption = 'tsAboutUser'
         ImageIndex = 1
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object gbRequired: TGroupBox
           Left = 0
           Top = 8
           Width = 369
           Height = 81
           Caption = ' Required information '
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
           TabOrder = 0
           object lblName: TLabel
             Left = 8
-            Top = 16
+            Top = 20
             Width = 353
             Height = 30
             AutoSize = False
@@ -70,12 +64,6 @@ inherited RegistrationDlg: TRegistrationDlg
               'tration is your &name. You can use a nickname if your prefer. Pl' +
               'ease enter it below:'
             FocusControl = edName
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            ParentFont = False
             WordWrap = True
           end
           object edName: TEdit
@@ -87,122 +75,31 @@ inherited RegistrationDlg: TRegistrationDlg
             BevelKind = bkFlat
             BevelOuter = bvRaised
             BorderStyle = bsNone
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            ParentFont = False
             TabOrder = 0
           end
         end
-        object gpMailList: TGroupBox
+        object gbMailList: TGroupBox
           Left = 0
-          Top = 96
+          Top = 95
           Width = 369
           Height = 137
           Caption = ' CodeSnip mailing list '
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
           TabOrder = 1
-          object lblMailListInto: TLabel
-            Left = 8
-            Top = 16
-            Width = 353
-            Height = 28
-            AutoSize = False
-            Caption = 
-              'If you would like to join the CodeSnip mailing list please check' +
-              ' the box and supply your email address. Learn more about the mai' +
-              'ling list.'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            ParentFont = False
-            WordWrap = True
-          end
           object lblEmail: TLabel
             Left = 24
             Top = 78
-            Width = 94
+            Width = 68
             Height = 13
-            Caption = 'My &email address is:'
+            Caption = '&Email address:'
             FocusControl = edEmail
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            ParentFont = False
-          end
-          object lblMailListHelp: TLabel
-            Left = 134
-            Top = 29
-            Width = 154
-            Height = 13
-            Cursor = crHandPoint
-            Caption = 'Learn more about the mailing list.'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clGreen
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsUnderline]
-            ParentFont = False
-            Transparent = False
-            OnClick = lblMailListHelpClick
-          end
-          object lblPrivacy: TLabel
-            Left = 8
-            Top = 102
-            Width = 353
-            Height = 26
-            AutoSize = False
-            Caption = 
-              'Your email address will not be abused. See the privacy statement' +
-              ' for details.'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            ParentFont = False
-            WordWrap = True
-          end
-          object lblPrivacyHelp: TLabel
-            Left = 231
-            Top = 102
-            Width = 83
-            Height = 13
-            Cursor = crHandPoint
-            Caption = 'privacy statement'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clGreen
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = [fsUnderline]
-            ParentFont = False
-            Transparent = False
-            OnClick = lblPrivacyHelpClick
           end
           object chkMailList: TCheckBox
             Left = 8
-            Top = 52
-            Width = 249
+            Top = 55
+            Width = 353
             Height = 17
             Caption = 'I would like to join the CodeSnip &mailing list'
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
-            ParentFont = False
-            TabOrder = 0
+            TabOrder = 1
             OnClick = chkMailListClick
           end
           object edEmail: TEdit
@@ -215,14 +112,71 @@ inherited RegistrationDlg: TRegistrationDlg
             BevelOuter = bvRaised
             BorderStyle = bsNone
             Enabled = False
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clWindowText
-            Font.Height = -11
-            Font.Name = 'MS Sans Serif'
-            Font.Style = []
             ParentColor = True
-            ParentFont = False
-            TabOrder = 1
+            TabOrder = 2
+          end
+          inline frmMailListIntro: TFixedHTMLDlgFrame
+            Left = 8
+            Top = 24
+            Width = 353
+            Height = 26
+            TabOrder = 0
+            TabStop = True
+            ExplicitLeft = 8
+            ExplicitTop = 24
+            ExplicitWidth = 353
+            ExplicitHeight = 26
+            inherited pnlBrowser: TPanel
+              Width = 353
+              Height = 26
+              ExplicitWidth = 353
+              ExplicitHeight = 26
+              inherited wbBrowser: TWebBrowser
+                Width = 353
+                Height = 26
+                TabStop = False
+                ExplicitTop = -1
+                ExplicitWidth = 353
+                ExplicitHeight = 26
+                ControlData = {
+                  4C0000007C240000B00200000000000000000000000000000000000000000000
+                  000000004C000000000000000000000001000000E0D057007335CF11AE690800
+                  2B2E126208000000000000004C0000000114020000000000C000000000000046
+                  8000000000000000000000000000000000000000000000000000000000000000
+                  00000000000000000100000000000000000000000000000000000000}
+              end
+            end
+          end
+          inline frmPrivacy: TFixedHTMLDlgFrame
+            Left = 8
+            Top = 102
+            Width = 353
+            Height = 26
+            TabOrder = 3
+            TabStop = True
+            ExplicitLeft = 8
+            ExplicitTop = 102
+            ExplicitWidth = 353
+            ExplicitHeight = 26
+            inherited pnlBrowser: TPanel
+              Width = 353
+              Height = 26
+              ExplicitWidth = 353
+              ExplicitHeight = 26
+              inherited wbBrowser: TWebBrowser
+                Width = 353
+                Height = 26
+                TabStop = False
+                ExplicitWidth = 353
+                ExplicitHeight = 26
+                ControlData = {
+                  4C0000007C240000B00200000000000000000000000000000000000000000000
+                  000000004C000000000000000000000001000000E0D057007335CF11AE690800
+                  2B2E126208000000000000004C0000000114020000000000C000000000000046
+                  8000000000000000000000000000000000000000000000000000000000000000
+                  00000000000000000100000000000000000000000000000000000000}
+              end
+            end
           end
         end
       end
@@ -239,6 +193,7 @@ inherited RegistrationDlg: TRegistrationDlg
           Top = 8
           Width = 358
           Height = 26
+          AutoSize = False
           Caption = 
             'You are now ready to submit the registration. Here is the inform' +
             'ation that will be sent:'
@@ -247,9 +202,8 @@ inherited RegistrationDlg: TRegistrationDlg
         object lblSubmit: TLabel
           Left = 0
           Top = 200
-          Width = 369
-          Height = 27
-          AutoSize = False
+          Width = 353
+          Height = 26
           Caption = 
             'Please ensure you are connected to the internet and then click t' +
             'he Submit button to send the registration.'
@@ -295,7 +249,7 @@ inherited RegistrationDlg: TRegistrationDlg
         end
         object lblMailListConfirm: TLabel
           Left = 0
-          Top = 81
+          Top = 105
           Width = 369
           Height = 48
           AutoSize = False
@@ -307,9 +261,9 @@ inherited RegistrationDlg: TRegistrationDlg
           WordWrap = True
         end
         object edRegCode: TEdit
-          Left = 128
-          Top = 36
-          Width = 233
+          Left = 0
+          Top = 59
+          Width = 249
           Height = 21
           TabStop = False
           BevelInner = bvSpace

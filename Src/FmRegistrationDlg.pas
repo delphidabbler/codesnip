@@ -26,7 +26,11 @@
  * v1.5 of 13 May 2009  - Changed to use revised web service constructor.
  *                      - Removed reference to deleted UParams unit.
  *                      - Now gets program name and ID from TAppInfo instead of
- *                        UGlobals unit. 
+ *                        UGlobals unit.
+ * v1.6 of 18 Jul 2009  - Modified to accommodate the new Vista default font in
+ *                        controls. Some labels replaced by HTML frames.
+ *                      - Controls now dynamically arranged vertically and
+ *                        dialog box sizes itself to tallest tab sheet.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -61,9 +65,9 @@ interface
 
 uses
   // Delphi
-  StdCtrls, ComCtrls, Controls, ExtCtrls, Classes,
+  StdCtrls, ComCtrls, Controls, ExtCtrls, Classes, Forms,
   // Project
-  FmWizardDlg;
+  FmWizardDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UCSSBuilder;
 
 
 type
@@ -79,18 +83,16 @@ type
     edName: TEdit;
     edRegCode: TEdit;
     edReport: TMemo;
+    frmMailListIntro: TFixedHTMLDlgFrame;
+    frmPrivacy: TFixedHTMLDlgFrame;
     gbRequired: TGroupBox;
-    gpMailList: TGroupBox;
+    gbMailList: TGroupBox;
     lblEmail: TLabel;
     lblInstructions: TLabel;
     lblIntro: TLabel;
     lblIntroExplain: TLabel;
     lblMailListConfirm: TLabel;
-    lblMailListHelp: TLabel;
-    lblMailListInto: TLabel;
     lblName: TLabel;
-    lblPrivacy: TLabel;
-    lblPrivacyHelp: TLabel;
     lblRegCode: TLabel;
     lblReport: TLabel;
     lblSubmit: TLabel;
@@ -100,11 +102,13 @@ type
     tsIntro: TTabSheet;
     tsSubmit: TTabSheet;
     procedure chkMailListClick(Sender: TObject);
-    procedure lblMailListHelpClick(Sender: TObject);
-    procedure lblPrivacyHelpClick(Sender: TObject);
   strict private
-    fRegistered: Boolean;
-      {Flag indicating whether program was registered}
+    fRegistered: Boolean; // Flag indicating whether program was registered
+    procedure BuildCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
+      {Sets CSS for required font for use in HTML frames.
+        @param Sender [in] Not used.
+        @param CSSBuilder [in] Object used to create CSS.
+      }
     procedure BuildSubmission(const Report: TStrings);
       {Builds registration submission as list of values in name=value format.
         @param Report [in] Stores submission on completion.
@@ -124,6 +128,13 @@ type
         @return True if data valid, false if not.
       }
   strict protected
+    procedure ArrangeForm; override;
+      {Vertically arranges controls as required and sizes the tab sheets to be
+      able to display the longest page.
+      }
+    procedure ConfigForm; override;
+      {Sets font styles where necessary and initialises HTML frames.
+      }
     procedure InitForm; override;
       {Initialises controls.
       }
@@ -161,9 +172,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics, Forms,
+  SysUtils, Graphics, Math,
   // Project
-  UAppInfo, UEmailHelper, UMessageBox, URegistrar;
+  UAppInfo, UCSSUtils, UEmailHelper, UFontHelper, UGraphicUtils, UMessageBox,
+  URegistrar;
 
 
 {$R *.dfm}
@@ -196,6 +208,77 @@ resourcestring
 
 { TRegistrationDlg }
 
+procedure TRegistrationDlg.ArrangeForm;
+  {Vertically arranges controls as required and sizes the tab sheets to be able
+  to display the longest page.
+  }
+
+  procedure SetLabelHeight(const Lbl: TLabel);
+    {Sets height of a label to accommodate the text it contains in its font.
+      @param Lbl [in] Label whose height is to be set.
+    }
+  begin
+    Lbl.Height := StringExtent(Lbl.Caption, Lbl.Font, Lbl.Width).cy;
+  end;
+
+  function BottomOf(const Ctrl: TControl): Integer;
+    {Gets position of bottom of a control relative to its parent control in
+    pixels.
+      @param Ctr [in] Control to check.
+      @return Required position.
+    }
+  begin
+    Result := Ctrl.Top + Ctrl.Height;
+  end;
+
+var
+  ATop: Integer;      // records top position of one or more controls
+  AHeight: Integer;   // records height of one or more controls
+  ReqHeight: Integer; // required height to display largest tab sheet
+begin
+  // arrange controls on tsIntro tabsheet
+  SetLabelHeight(lblIntro);
+  lblIntroExplain.Top := BottomOf(lblIntro) + 8;
+  SetLabelHeight(lblIntroExplain);
+  lblInstructions.Top := BottomOf(lblIntroExplain) + 8;
+  SetLabelHeight(lblInstructions);
+  ReqHeight := BottomOf(lblInstructions);
+  // arrange controls on tsAboutUser tabsheet
+  SetLabelHeight(lblName);
+  edName.Top := BottomOf(lblName) + 8;
+  gbRequired.ClientHeight := BottomOf(edName) + 12;
+  gbMailList.Top := BottomOf(gbRequired) + 8;
+  frmMailListIntro.Height := frmMailListIntro.DocHeight;
+  chkMailList.Top := BottomOf(frmMailListIntro) + 8;
+  ATop := BottomOf(chkMailList) + 8;
+  AHeight := Max(lblEmail.Height, edEmail.Height);
+  lblEmail.Top := ATop + (AHeight - lblEmail.Height) div 2;
+  edEmail.Top := ATop + (AHeight - edEmail.Height) div 2;
+  frmPrivacy.Height := frmPrivacy.DocHeight;
+  frmPrivacy.Top := ATop + AHeight + 8;
+  gbMailList.ClientHeight := BottomOf(frmPrivacy) + 12;
+  ReqHeight := Max(ReqHeight, BottomOf(gbMailList));
+  // arrange controls on tsSubmit tabsheet
+  SetLabelHeight(lblReport);
+  edReport.Top := BottomOf(lblReport) + 8;
+  SetLabelHeight(lblSubmit);
+  lblSubmit.Top := BottomOf(edReport) + 8;
+  ReqHeight := Max(ReqHeight, BottomOf(lblSubmit));
+  // arrange controls on tsFinish tabsheet
+  SetLabelHeight(lblThanks);
+  lblRegCode.Top := BottomOf(lblThanks) + 8;
+  SetLabelHeight(lblRegCode);
+  edRegCode.Top := BottomOf(lblRegCode) + 4;
+  lblMailListConfirm.Top := BottomOf(edRegCode) + 8;
+  SetLabelHeight(lblMailListConfirm);
+  ReqHeight := Max(ReqHeight, BottomOf(lblMailListConfirm));
+  // set required height
+  Inc(ReqHeight, 8);
+  pnlBody.ClientHeight := pnlBody.ClientHeight + ReqHeight - tsAboutUser.Height;
+  // Arrange inherited controls and size the form
+  inherited;
+end;
+
 procedure TRegistrationDlg.BeginPage(const PageIdx: Integer);
   {Performs required initialisation when a page is displayed.
     @param PageIdx [in] Index page to be initialised.
@@ -223,12 +306,30 @@ begin
   end;
 end;
 
+procedure TRegistrationDlg.BuildCSS(Sender: TObject;
+  const CSSBuilder: TCSSBuilder);
+  {Sets CSS for required font for use in HTML frames.
+    @param Sender [in] Not used.
+    @param CSSBuilder [in] Object used to create CSS.
+  }
+var
+  DefaultFont: TFont; // default font for OS
+begin
+  DefaultFont := TFont.Create;
+  try
+    TFontHelper.SetDefaultFont(DefaultFont, False);
+    with CSSBuilder.Selectors['body'] do
+      AddProperty(CSSFontProps(DefaultFont));
+  finally
+    FreeAndNil(DefaultFont);
+  end;
+end;
+
 procedure TRegistrationDlg.BuildSubmission(const Report: TStrings);
   {Builds registration submission as list of values in name=value format.
     @param Report [in] Stores submission on completion.
   }
 begin
-  // ** do not localise string literals in this method
   Report.Clear;
   Report.Values['ProgId'] := TAppInfo.ProgramID;
   Report.Values['ProgName'] := TAppInfo.ProgramName;
@@ -259,6 +360,45 @@ begin
     edEmail.Enabled := False;
     edEmail.ParentColor := True;
   end;
+end;
+
+procedure TRegistrationDlg.ConfigForm;
+  {Sets font styles where necessary and initialises HTML frames.
+  }
+
+  procedure LoadHTMLFrame(const Frm: TFixedHTMLDlgFrame; const ResName: string);
+    {Safely loads HTML into an HTML frame. To do this requires the tab sheet
+    containing the frame to be active, so we find and activate the required tab
+    before loading the HTML into the frame.
+      @param Frm [in] HTML frame to be initialised with loaded HTML.
+      @param ResName [in] Name of resource containing HTML.
+    }
+  var
+    Ctrl: TWinControl;  // Scans through frame's parents looking for tab sheet
+  begin
+    Ctrl := Frm.Parent;
+    while Assigned(Ctrl) and not (Ctrl is TTabSheet) do
+      Ctrl := Ctrl.Parent;
+    Assert(Assigned(Ctrl),
+      ClassName + '.ConfigForm:LoadHTMLFrame: HTML Frame not on a tab sheet');
+    pcWizard.ActivePage := Ctrl as TTabSheet;
+    Frm.Initialise(ResName);
+  end;
+
+begin
+  inherited;
+  gbRequired.Font.Style := [fsBold];
+  gbMailList.Font.Style := [fsBold];
+  edName.Font.Style := [];
+  lblName.Font.Style := [];
+  chkMailList.Font.Style := [];
+  edEMail.Font.Style := [];
+  lblEmail.Font.Style := [];
+  TFontHelper.SetDefaultMonoFont(edRegCode.Font, False);
+  frmMailListIntro.OnBuildCSS := BuildCSS;
+  frmPrivacy.OnBuildCSS := BuildCSS;
+  LoadHTMLFrame(frmMailListIntro, 'dlg-registration-maillist.html');
+  LoadHTMLFrame(frmPrivacy, 'frm-emailprivacy.html');
 end;
 
 procedure TRegistrationDlg.DoRegistration;
@@ -311,22 +451,6 @@ begin
   inherited;
   // Use user name if known
   edName.Text := TAppInfo.RegisteredUser;
-end;
-
-procedure TRegistrationDlg.lblMailListHelpClick(Sender: TObject);
-  {Displays mailing list information in help file.
-    @param Sender [in] Not used.
-  }
-begin
-  DisplayHelp('MailingList');       // ** do not localise
-end;
-
-procedure TRegistrationDlg.lblPrivacyHelpClick(Sender: TObject);
-  {Displays privacy statement in help file.
-    @param Sender [in] Not used.
-  }
-begin
-  DisplayHelp('PrivacyStatement');  // ** do not localise
 end;
 
 procedure TRegistrationDlg.MoveForward(const PageIdx: Integer;

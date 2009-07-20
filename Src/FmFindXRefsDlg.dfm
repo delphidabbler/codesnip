@@ -2,6 +2,8 @@ inherited FindXRefsDlg: TFindXRefsDlg
   Left = 426
   Top = 222
   Caption = 'Find Cross References'
+  ExplicitWidth = 474
+  ExplicitHeight = 354
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -15,25 +17,13 @@ inherited FindXRefsDlg: TFindXRefsDlg
       Width = 119
       Height = 13
       Caption = 'Find cross references for '
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = []
-      ParentFont = False
     end
     object lblRoutineName: TLabel
       Left = 119
       Top = 0
-      Width = 90
+      Width = 75
       Height = 13
       Caption = 'lblRoutineName'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
     end
     object chkRequired: TCheckBox
       Left = 0
@@ -77,6 +67,10 @@ inherited FindXRefsDlg: TFindXRefsDlg
       Caption = 'Search rec&ursively'
       TabOrder = 3
     end
+  end
+  inherited btnCancel: TButton
+    Left = 231
+    ExplicitLeft = 231
   end
   inherited btnOK: TButton
     OnClick = btnOKClick

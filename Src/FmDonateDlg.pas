@@ -6,6 +6,7 @@
  * browser.
  *
  * v1.0 of 11 May 2009  - Original version.
+ * v1.1 of 10 Jul 2009  - Set donate button to use bold UI default font.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -63,6 +64,9 @@ type
         @param CSSBuilder [in] Object used to modify CSS.
       }
   strict protected
+    procedure ConfigForm; override;
+      {Sets UI font for emboldened Donate button.
+      }
     procedure ArrangeForm; override;
       {Adjusts position of donation on bottom button line. Called from ancestor
       class.
@@ -103,6 +107,14 @@ begin
   inherited;
   btnDoDonate.Left := pnlBody.Left;
   btnDoDonate.Top := btnClose.Top;
+end;
+
+procedure TDonateDlg.ConfigForm;
+  {Sets UI font for emboldened Donate button.
+  }
+begin
+  inherited;
+  TFontHelper.SetDefaultBaseFont(btnDoDonate.Font, False);
 end;
 
 class procedure TDonateDlg.Execute(const AOwner: TComponent);

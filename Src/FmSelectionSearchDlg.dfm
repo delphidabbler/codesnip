@@ -5,9 +5,9 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Width = 363
+    Width = 371
     Height = 293
-    ExplicitWidth = 363
+    ExplicitWidth = 371
     ExplicitHeight = 293
     inline frmSelect: TSelectSnippetsFrame
       Left = 0
@@ -29,7 +29,7 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
     object btnSelectAll: TButton
       Left = 287
       Top = 1
-      Width = 75
+      Width = 83
       Height = 25
       Caption = '&Select All'
       TabOrder = 1
@@ -38,7 +38,7 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
     object btnClearAll: TButton
       Left = 288
       Top = 32
-      Width = 75
+      Width = 83
       Height = 25
       Caption = '&Clear All'
       TabOrder = 2
@@ -47,7 +47,7 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
     object btnUserDB: TButton
       Left = 287
       Top = 81
-      Width = 75
+      Width = 83
       Height = 25
       Caption = '&User Defined'
       TabOrder = 3
@@ -56,7 +56,7 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
     object btnMainDB: TButton
       Left = 287
       Top = 112
-      Width = 75
+      Width = 83
       Height = 25
       Caption = '&Main'
       TabOrder = 4

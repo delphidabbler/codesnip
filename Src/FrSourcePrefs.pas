@@ -31,6 +31,11 @@
  * v1.6 of 13 Jan 2009  - Replaced control char literals with constants.
  * v1.7 of 05 Jun 2009  - Changed comment style descriptions to refer to
  *                        "snippets" instead of "routines".
+ * v1.8 of 19 Jul 2009  - Implemented new inherited ArrangeControls method that
+ *                        arranges controls in frame to allow for resized frame.
+ *                      - Set all fonts to default.
+ *                      - Used anchors for some controls to automate some
+ *                        realignment.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -128,6 +133,9 @@ type
       {Called when page is deactivated. Stores information entered by user.
         @param Prefs [in] Object used to store information.
       }
+    procedure ArrangeControls; override;
+      {Arranges controls on frame. Called after frame has been sized.
+      }
   end;
 
 
@@ -136,9 +144,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Math,
   // Project
-  IntfCommon, UConsts, UFileHiliter, UHiliteAttrs, URTFUtils, USyntaxHiliters;
+  IntfCommon, UConsts, UFileHiliter, UGraphicUtils, UHiliteAttrs, URTFUtils,
+  USyntaxHiliters;
 
 
 {$R *.dfm}
@@ -216,6 +225,22 @@ begin
   // Update state of controls and preview
   UpdateControlState;
   UpdatePreview;
+end;
+
+procedure TSourcePrefsFrame.ArrangeControls;
+  {Arranges controls on frame. Called after frame has been sized.
+  }
+var
+  Col2Left: Integer;  // position of second column of controls
+begin
+  Col2Left := Max(
+    StringExtent(lblCommentStyle.Caption, lblCommentStyle.Font).cx,
+    StringExtent(lblSnippetFileType.Caption, lblSnippetFileType.Font).cx
+  ) + 8;
+  cbCommentStyle.Left := Col2Left;
+  frmPreview.Left := Col2Left;
+  cbSnippetFileType.Left := Col2Left;
+  chkSyntaxHighlighting.Left := Col2Left;
 end;
 
 procedure TSourcePrefsFrame.cbCommentStyleChange(Sender: TObject);

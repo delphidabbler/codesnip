@@ -10,6 +10,8 @@
  *                      - Made private and protected methods strict.
  *                      - Now use for..in loop to enumerate printers.
  * v1.2 of 14 Jan 2009  - Replaced control char literals with constants.
+ * v1.3 of 10 Jul 2009  - Enlarged form and some controls to accomodate Vista
+ *                        default font.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****

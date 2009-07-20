@@ -3,12 +3,16 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
   Height = 326
   ExplicitWidth = 393
   ExplicitHeight = 326
+  DesignSize = (
+    393
+    326)
   object lblNotice: TLabel
     Left = 0
-    Top = 305
+    Top = 301
     Width = 393
-    Height = 13
+    Height = 18
     Alignment = taCenter
+    Anchors = [akLeft, akTop, akRight]
     AutoSize = False
     Caption = 
       'Changes will be reflected in the main display only when you rest' +
@@ -16,9 +20,10 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
   end
   object gbElements: TGroupBox
     Left = 0
-    Top = 103
+    Top = 95
     Width = 393
     Height = 196
+    Anchors = [akLeft, akTop, akRight]
     Caption = ' Syntactic elements '
     TabOrder = 3
     object lblElements: TLabel
@@ -30,14 +35,14 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
       FocusControl = lbElements
     end
     object lblColour: TLabel
-      Left = 248
+      Left = 270
       Top = 20
       Width = 35
       Height = 13
       Caption = '&Colour:'
     end
     object lblExample: TLabel
-      Left = 136
+      Left = 159
       Top = 116
       Width = 44
       Height = 13
@@ -45,15 +50,15 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
     end
     object lbElements: TListBox
       Left = 8
-      Top = 36
-      Width = 121
-      Height = 147
+      Top = 37
+      Width = 145
+      Height = 148
       ItemHeight = 13
       TabOrder = 0
       OnClick = lbElementsClick
     end
     object gbFontStyle: TGroupBox
-      Left = 136
+      Left = 159
       Top = 20
       Width = 105
       Height = 87
@@ -88,20 +93,20 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
       end
     end
     inline frmExample: TRTFShowCaseFrame
-      Left = 136
-      Top = 132
-      Width = 249
+      Left = 159
+      Top = 133
+      Width = 226
       Height = 51
       TabOrder = 2
       TabStop = True
-      ExplicitLeft = 136
-      ExplicitTop = 132
-      ExplicitWidth = 249
+      ExplicitLeft = 159
+      ExplicitTop = 133
+      ExplicitWidth = 226
       ExplicitHeight = 51
       inherited reView: TRichEdit
-        Width = 249
+        Width = 226
         Height = 51
-        ExplicitWidth = 249
+        ExplicitWidth = 226
         ExplicitHeight = 51
       end
     end
@@ -110,7 +115,7 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
     Left = 0
     Top = 0
     Width = 241
-    Height = 97
+    Height = 89
     Caption = ' Highlighter font '
     TabOrder = 0
     object lblFontName: TLabel
@@ -156,6 +161,7 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
     Top = 46
     Width = 146
     Height = 25
+    Anchors = [akTop, akRight]
     Caption = '&Restore Defaults'
     TabOrder = 2
     OnClick = btnResetClick
@@ -165,6 +171,7 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
     Top = 3
     Width = 146
     Height = 25
+    Anchors = [akTop, akRight]
     Caption = '&Use Predefined Styles'
     TabOrder = 1
     OnClick = btnStyleClick

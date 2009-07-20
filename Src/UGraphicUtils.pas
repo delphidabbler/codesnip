@@ -10,6 +10,10 @@
  * v1.3 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
  * v1.4 of 10 May 2009  - Made CreateDisplayDC function public.
  * v1.5 of 17 Jun 2009  - Removed redundant DrawTextOutline routine.
+ * v1.6 of 10 Jul 2009  - Added an overloaded StringExtent routine that gets
+ *                        size of string word-wrapped within a maximum width.
+ *                      - Added private support routines to create and free
+ *                        display canvases for StringExtent routines.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -70,7 +74,18 @@ procedure GradientFill(const Canvas: TCanvas; const Rect: TRectEx;
     @param Direction [in] Direction of gradient: horizontal or vertical.
   }
 
-function StringExtent(const S: string; const Font: TFont): TSize;
+function StringExtent(const S: string; const Font: TFont;
+  const MaxWidth: Integer): TSize; overload;
+  {Calculates the width and height of a string when rendered in a specified
+  font, word-wrapped within a maximum width.
+    @param S [in] String for which size is required.
+    @param Font [in] Font used to render string.
+    @param MaxWidth [in] Maximum width of rendered string; string word-wraps at
+      this width.
+    @return Structure containing width and height of string in pixels.
+  }
+
+function StringExtent(const S: string; const Font: TFont): TSize; overload;
   {Calculates the width and height of a string when rendered in a specified
   font.
     @param S [in] String for which size is required.
@@ -91,6 +106,11 @@ function GetTextRect(const Text: string; const Canvas: TCanvas;
 implementation
 
 
+uses
+  // Project
+  SysUtils;
+
+
 { Helper routines }
 
 procedure ExtractRGB(const Colour: TColor; out Red, Green, Blue: Byte);
@@ -108,6 +128,32 @@ begin
   Red := GetRValue(RGB);
   Green := GetGValue(RGB);
   Blue := GetBValue(RGB);
+end;
+
+function CreateDisplayCanvas(const Font: TFont): TCanvas;
+  {Creates a display canvas that uses a specified font.
+    @param Font [in] Font to be used by canvas.
+    @return Required canvas. Should be freed using FreeDisplayCanvas.
+  }
+begin
+  Assert(Assigned(Font));
+  Result := TCanvas.Create;
+  Result.Handle := CreateDisplayDC;
+  Result.Font := Font;
+end;
+
+procedure FreeDisplayCanvas(var Canvas: TCanvas);
+  {Releases resources and frees a canvas object created by CreateDisplayCanvas.
+    @param Canvas [in/out] Canvas to be freed. Set to nil once freed.
+  }
+begin
+  if Assigned(Canvas) then
+    try
+      DeleteDC(Canvas.Handle);
+      Canvas.Handle := 0;
+    finally
+      FreeAndNil(Canvas);
+    end;
 end;
 
 { Public routines }
@@ -183,7 +229,33 @@ begin
   end;
 end;
 
-function StringExtent(const S: string; const Font: TFont): TSize;
+function StringExtent(const S: string; const Font: TFont;
+  const MaxWidth: Integer): TSize; overload;
+  {Calculates the width and height of a string when rendered in a specified
+  font, word-wrapped within a maximum width.
+    @param S [in] String for which size is required.
+    @param Font [in] Font used to render string.
+    @param MaxWidth [in] Maximum width of rendered string; string word-wraps at
+      this width.
+    @return Structure containing width and height of string in pixels.
+  }
+var
+  Canvas: TCanvas; // canvas used to measure text extent
+  Rect: TRectEx;   // zero based rectangle required to contain rendered string
+begin
+  Canvas := CreateDisplayCanvas(Font);
+  try
+    Rect := GetTextRect(
+      S, Canvas, TRectEx.Create(0, 0, MaxWidth, 0), DT_WORDBREAK
+    );
+    Result.cx := Rect.Width;
+    Result.cy := Rect.Height;
+  finally
+    FreeDisplayCanvas(Canvas);
+  end;
+end;
+
+function StringExtent(const S: string; const Font: TFont): TSize; overload;
   {Calculates the width and height of a string when rendered in a specified
   font.
     @param S [in] String for which size is required.
@@ -193,19 +265,11 @@ function StringExtent(const S: string; const Font: TFont): TSize;
 var
   Canvas: TCanvas; // canvas used to measure text extent
 begin
-  Assert(Assigned(Font));
-  Canvas := TCanvas.Create;
+  Canvas := CreateDisplayCanvas(Font);
   try
-    Canvas.Handle := CreateDisplayDC;
-    try
-      Canvas.Font := Font;
-      Result := Canvas.TextExtent(S);
-    finally
-      DeleteDC(Canvas.Handle);
-      Canvas.Handle := 0;
-    end;
+    Result := Canvas.TextExtent(S);
   finally
-    Canvas.Free;
+    FreeDisplayCanvas(Canvas);
   end;
 end;
 

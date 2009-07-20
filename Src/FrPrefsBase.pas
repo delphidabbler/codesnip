@@ -1,35 +1,24 @@
-{ ##
-  @FILE                     FrPrefsBase.pas
-  @COMMENTS                 Implements frame that forms an abstract base class
-                            for all frames displayed in preferences dialog box.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None.
-  @HISTORY(
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 09/11/2006
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              2.0
-      @DATE                 07/09/2007
-      @COMMENTS             Major update:
-                            + No longer pure abstract class. Default
-                              implementations of LoadPrefs and SavePrefs methods
-                              provided.
-                            + Changed to load and save data to local preferences
-                              object rather than main preferences.
-                            + Added Activate and Deactivate abstract methods
-                              called when frame is displayed or hidden. Used to
-                              update controls and store entered data.
-    )
-  )
-}
-
-
 {
+ * FrPrefsBase.pas
+ *
+ * Implements frame that forms an abstract base class for all frames displayed
+ * in preferences dialog box.
+ *
+ * v1.0 of 09 Nov 2006  - Original version.
+ * v2.0 of 07 Sep 2007  - Major update:
+ *                        - No longer pure abstract class. Default
+ *                          implementations of LoadPrefs and SavePrefs methods
+ *                          provided.
+ *                        - Changed to load and save data to local preferences
+ *                          object rather than main preferences.
+ *                        - Added Activate and Deactivate abstract methods
+ *                          called when frame is displayed or hidden. Used to
+ *                          update controls and store entered data.
+ * v2.1 of 19 Jul 2009  - Added new abstract ArrangeControls method that
+ *                        preferences dialog box calls to get frames to
+ *                        arrange controls after frames have been sized.
+ *
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -47,10 +36,8 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
- *
- * Contributor(s): None
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -64,7 +51,7 @@ interface
 
 uses
   // Delphi
-  Forms,
+  Forms, Windows,
   // Project
   UPreferences;
 
@@ -96,6 +83,9 @@ type
     procedure Deactivate(const Prefs: IPreferences); virtual; abstract;
       {Called when page is deactivated. Must store information entered by user.
         @param Prefs [in] Object used to store information.
+      }
+    procedure ArrangeControls; virtual; abstract;
+      {Arranges controls on frame. Called after frame has been sized.
       }
   end;
 

@@ -20,6 +20,8 @@
  *                        form's parent if suitable, or to use active form or
  *                        main form as parent. This change needed for app to
  *                        work correctly with Vista task bar.
+ * v2.4 of 10 Jul 2009  - Changed to use correct OS UI font for wait message.
+ *                      - Made private and protected sections strict.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -39,10 +41,8 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
- *
- * Contributor(s): None
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -73,22 +73,22 @@ type
     pnlMain: TPanel;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
-  private
-    fMarquee: TMarquee;
-      {Custom marquee component instance}
+  strict private
+    fMarquee: TMarquee; // Custom marquee component instance
     procedure CMTextChanged(var Msg: TMessage); message CM_TEXTCHANGED;
       {Triggered when form's caption is set. Displays form caption in
       lblCaption.
         @var Msg [in/out] Not used.
       }
-  protected
+  strict protected
     function GetAligner: IFormAligner; override;
       {Creates and returns reference to an object that is used to align the form
       to the owner.
         @return Required aligner object instance.
       }
     procedure CustomiseForm; override;
-      {Creates and locates owned custom marquee component.
+      {Sets required UI font for label and creates and locates custom marquee
+      component.
       }
     procedure InitForm; override;
       {Sets hourglass cursor and starts marquee when form is shown.
@@ -101,7 +101,7 @@ implementation
 
 uses
   // Project
-  UDlgHelper, UFormAligner;
+  UDlgHelper, UFontHelper, UFormAligner, UGraphicUtils;
 
 
 {$R *.dfm}
@@ -119,15 +119,21 @@ begin
 end;
 
 procedure TWaitDlg.CustomiseForm;
-  {Creates and locates owned custom marquee component.
+  {Sets required UI font for label and creates and locates custom marquee
+  component.
   }
 begin
   inherited;
+  // Update label font to use UI default font: it is set to have bold style,
+  // which is preserved. We also have to ensure label is correct size
+  TFontHelper.SetDefaultBaseFont(lblCaption.Font, False);
+  lblCaption.Height := StringExtent(lblCaption.Caption, lblCaption.Font).cy;
+  // Create and locate marquee
   fMarquee := TMarquee.Create(Self);
   fMarquee.Parent := pnlMain;
   fMarquee.Left := 8;
   fMarquee.Width := pnlMain.ClientWidth - 16;
-  fMarquee.Top := lblCaption.Top + lblCaption.Height + 12;
+  fMarquee.Top := lblCaption.Top + lblCaption.Height + 8;
   fMarquee.Height := 13;
 end;
 

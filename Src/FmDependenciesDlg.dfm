@@ -16,14 +16,8 @@ inherited DependenciesDlg: TDependenciesDlg
     object lblNoDependencies: TLabel
       Left = 0
       Top = 0
-      Width = 5
+      Width = 3
       Height = 13
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'MS Sans Serif'
-      Font.Style = [fsBold]
-      ParentFont = False
     end
     object tvDependencies: TTreeView
       Left = 0
@@ -38,7 +32,6 @@ inherited DependenciesDlg: TDependenciesDlg
       ShowRoot = False
       TabOrder = 0
       OnCollapsing = tvDependenciesCollapsing
-      ExplicitTop = 6
     end
   end
 end

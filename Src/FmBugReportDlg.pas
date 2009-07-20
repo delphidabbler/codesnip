@@ -60,6 +60,10 @@
  *                        contact page.
  *                      - Now gets program name and id from TAppInfo instead of
  *                        UGlobals unit.
+ * v2.6 of 19 Jul 2009  - Modified to accommodate the new Vista default font in
+ *                        controls. A label replaced by HTML frames.
+ *                      - Controls now dynamically arranged vertically and
+ *                        some memos sized to available space.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -96,7 +100,7 @@ uses
   // Delphi
   SysUtils, StdCtrls, ComCtrls, Graphics, ExtCtrls, Controls, Classes,
   // Project
-  FmWizardDlg;
+  FmWizardDlg, Forms, FrBrowserBase, FrHTMLDlg, FrFixedHTMLDlg;
 
 
 type
@@ -127,18 +131,17 @@ type
     lblEmailRequest: TLabel;
     lblEmail: TLabel;
     edEmail: TEdit;
-    lblPrivacy1: TLabel;
-    lblPrivacyHelp: TLabel;
-    lblPrivacy2: TLabel;
     lblOS: TLabel;
     edOS: TEdit;
     lblReport: TLabel;
     edReport: TMemo;
     lblSubmit: TLabel;
     lblDone: TLabel;
+    lblUserBegin: TLabel;
+    lblBugBegin: TLabel;
+    frmPrivacy: TFixedHTMLDlgFrame;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure lblPrivacyHelpClick(Sender: TObject);
   strict private
     fErrorObj: Exception;
       {If dialog box displayed as a result of an exception this field stores a
@@ -154,8 +157,12 @@ type
           exceptions are also converted to ECodeSnip.
       }
   strict protected
-    procedure InitForm; override;
-      {Populates and initialises controls.
+    procedure ConfigForm; override;
+      {Configures form. Controls with dynamic text are set. Fonts set to default
+      where required and HTML is loaded into HTML frame.
+      }
+    procedure ArrangeForm; override;
+      {Aligns and sizes of controls depending on text sizes.
       }
     function HeadingText(const PageIdx: Integer): string; override;
       {Gets text of heading of a wizard page.
@@ -213,10 +220,10 @@ implementation
 
 uses
   // Delphi
-  StrUtils, Windows, Forms,
+  StrUtils, Windows,
   // Project
-  UAppInfo, UBugReporter, UConsts, UEmailHelper, UExceptions, UMessageBox,
-  USystemInfo, UWebInfo, UWebService;
+  UAppInfo, UBugReporter, UConsts, UEmailHelper, UExceptions, UFontHelper,
+  UGraphicUtils, UMessageBox, USystemInfo, UWebInfo, UWebService;
 
 
 {$R *.dfm}
@@ -273,6 +280,98 @@ const
 
 { TBugReportDlg }
 
+procedure TBugReportDlg.ArrangeForm;
+  {Aligns and sizes of controls depending on text sizes.
+  }
+
+  // ---------------------------------------------------------------------------
+  procedure SetLabelHeight(const Lbl: TLabel);
+    {Sets height of a label to accommodate the text it contains in its font.
+      @param Lbl [in] Label whose height is to be set.
+    }
+  begin
+    Lbl.Height := StringExtent(Lbl.Caption, Lbl.Font, Lbl.Width).cy;
+  end;
+
+  function BottomOf(const Ctrl: TControl): Integer;
+    {Gets position of bottom of a control relative to its parent control in
+    pixels.
+      @param Ctr [in] Control to check.
+      @return Required position.
+    }
+  begin
+    Result := Ctrl.Top + Ctrl.Height;
+  end;
+
+  function VCentre(const ATop: Integer;
+    const Ctrls: array of TControl): Integer;
+    {Vertically centres a list of controls.
+      @param ATop [in] Top tallest control to be aligned.
+      @param Ctrls [in] Array of controls to be aligned.
+      @return Height occupied by controls (= height of tallest control).
+    }
+  var
+    I: Integer; // loops thru all controls to be aligned
+  begin
+    Result := 0;
+    for I := Low(Ctrls) to High(Ctrls) do
+      if Ctrls[I].Height > Result then
+        Result := Ctrls[I].Height;
+    for I := Low(Ctrls) to High(Ctrls) do
+      Ctrls[I].Top := ATop + (Result - Ctrls[I].Height) div 2;
+  end;
+  // ---------------------------------------------------------------------------
+
+var
+  ATop: Integer; // top of a control
+begin
+  inherited;
+  // tsIntroBug
+  SetLabelHeight(lblHeading);
+  SetLabelHeight(lblBugInfo);
+  SetLabelHeight(lblExceptIntro);
+  SetLabelHeight(lblBugBegin);
+  bvlBugDesc.Height := lblBugInfo.Height + 10;
+  bvlBugDesc.Top := BottomOf(lblHeading) + 8;
+  lblBugMarker.Top := BottomOf(lblHeading) + 12;
+  lblBugInfo.Top := lblBugMarker.Top;
+  lblExceptIntro.Top := BottomOf(bvlBugDesc) + 8;
+  lblBugBegin.Top := BottomOf(lblExceptIntro) + 8;
+
+  // tsIntroUser
+  SetLabelHeight(lblUserIntro);
+  SetLabelHeight(lblUserBegin);
+  lblUserBegin.Top := BottomOf(lblUserIntro) + 8;
+
+  // tsBugInfo
+  SetLabelHeight(lblDesc);
+  memoDesc.Top := BottomOf(lblDesc) + 8;
+  memoDesc.Height := tsUserInfo.Height - memoDesc.Top;
+
+  // tsBugInfo
+  SetLabelHeight(lblEmailRequest);
+  SetLabelHeight(lblEmail);
+  SetLabelHeight(lblOS);
+  frmPrivacy.Height := frmPrivacy.DocHeight;
+  ATop := BottomOf(lblEmailRequest) + 8;
+  ATop := ATop + VCentre(ATop, [lblEmail, edEmail]) + 8;
+  edEmail.Left := lblEmail.Left + lblEmail.Width + 8;
+  edEmail.Width := tsUserInfo.Width - edEmail.Left;
+  frmPrivacy.Top := ATop;
+  lblOS.Top := BottomOf(frmPrivacy) + 8;
+  edOS.Top := BottomOf(frmPrivacy) + 8;
+
+  // tsSubmit
+  SetLabelHeight(lblReport);
+  SetLabelHeight(lblSubmit);
+  edReport.Top := BottomOf(lblReport) + 8;
+  lblSubmit.Top := tsSubmit.Height - lblSubmit.Height;
+  edReport.Height := lblSubmit.Top - edReport.Top - 8;
+
+  // tsDone
+  SetLabelHeight(lblDone);
+end;
+
 procedure TBugReportDlg.BeginPage(const PageIdx: Integer);
   {Performs any required initialisation when a page is displayed.
     @param PageIdx [in] Index of page to be initialised.
@@ -289,6 +388,63 @@ begin
     cSubmitPage:
       CreateReport;
   end;
+end;
+
+procedure TBugReportDlg.ConfigForm;
+  {Configures form. Controls with dynamic text are set. Fonts set to default
+  where required and HTML is loaded into HTML frame.
+  }
+
+  // ---------------------------------------------------------------------------
+  procedure LoadHTMLFrame(const Frm: TFixedHTMLDlgFrame; const ResName: string);
+    {Safely loads HTML into an HTML frame. To do this requires the tab sheet
+    containing the frame to be active, so we find and activate the required tab
+    before loading the HTML into the frame.
+      @param Frm [in] HTML frame to be initialised with loaded HTML.
+      @param ResName [in] Name of resource containing HTML.
+    }
+  var
+    Ctrl: TWinControl;  // Scans through frame's parents looking for tab sheet
+  begin
+    Ctrl := Frm.Parent;
+    while Assigned(Ctrl) and not (Ctrl is TTabSheet) do
+      Ctrl := Ctrl.Parent;
+    Assert(Assigned(Ctrl),
+      ClassName + '.ConfigForm:LoadHTMLFrame: HTML Frame not on a tab sheet');
+    pcWizard.ActivePage := Ctrl as TTabSheet;
+    Frm.Initialise(ResName);
+  end;
+  // ---------------------------------------------------------------------------
+
+begin
+  inherited;
+  // Select and set up first page of wizard according to if shown as a result of
+  // exception or user request
+  if Assigned(fErrorObj) then
+  begin
+    // Displayed as a result of exception: set up first page
+    // show status of exception (bug or other error)
+    if (fErrorObj is EBug) or (fErrorObj is EAssertionFailed) then
+      lblHeading.Caption := sBugDetected
+    else
+      lblHeading.Caption := sErrorDetected;
+    // display the exception's message
+    lblBugInfo.Caption := fErrorObj.Message;
+    // beep before displaying dialog
+    MessageBeep(MB_ICONEXCLAMATION);
+    // set form's caption
+    Caption := sBug;
+  end
+  else
+    // Displayed as a result of user request (no exception): set up first page
+    // set form's caption
+    Caption := sBugReport;
+  // Display the operating system info
+  edOS.Text := TOSInfo.Description;
+  // Set default font where necessary
+  TFontHelper.SetDefaultBaseFont(lblBugInfo.Font, False);
+  // Load HTML into browser control
+  LoadHTMLFrame(frmPrivacy, 'frm-emailprivacy.html');
 end;
 
 procedure TBugReportDlg.CreateReport;
@@ -446,52 +602,12 @@ begin
   Result := cPageHeaders[PageIdx];
 end;
 
-procedure TBugReportDlg.InitForm;
-  {Populates and initialises controls.
-  }
-begin
-  inherited;
-  // Select and set up first page of wizard according to if shown as a result of
-  // exception or user request
-  if Assigned(fErrorObj) then
-  begin
-    // Displayed as a result of exception: set up first page
-    // show status of exception (bug or other error)
-    if (fErrorObj is EBug) or (fErrorObj is EAssertionFailed) then
-      lblHeading.Caption := sBugDetected
-    else
-      lblHeading.Caption := sErrorDetected;
-    // display the exception's message
-    lblBugInfo.Caption := fErrorObj.Message;
-    // beep before displaying dialog
-    MessageBeep(MB_ICONEXCLAMATION);
-    // set form's caption
-    Caption := sBug;
-  end
-  else
-    // Displayed as a result of user request (no exception): set up first page
-    // set form's caption
-    Caption := sBugReport;
-  // Display the operating system info
-  edOS.Text := TOSInfo.Description;
-end;
-
 function TBugReportDlg.LastPage: Integer;
   {Index of last page in wizard.
     @return Required page index.
   }
 begin
   Result := cLastPageIdx;
-end;
-
-procedure TBugReportDlg.lblPrivacyHelpClick(Sender: TObject);
-  {Displays privacy information topic in help file when privacy label is
-  clicked.
-    @param Sender [in] Not used.
-  }
-begin
-  inherited;
-  DisplayHelp('PrivacyStatement');
 end;
 
 procedure TBugReportDlg.MoveForward(const PageIdx: Integer;

@@ -139,6 +139,8 @@
 #                      - Added new symbol-information.png and
 #                        symbol-exclamation.png images.
 # v1.16 of 12 Jul 2009 - Deleted reference to comp-routine.js.
+# v1.17 of 20 Jul 2009 - Added new dlg-registration-maillist.html,
+#                        dlg-mlist-maillist.html and frm-emailprivacy.html.
 # ==============================================================================
 #
 #
@@ -184,14 +186,21 @@ Res\HTML\dlg-comperror-tplt.html
 # update dialog news pane
 Res\HTML\dlg-updt-news-tplt.html
 
-# mailing list subscription result pane
+# mailing list dialog
 Res\HTML\dlg-mlist-result-tplt.html
+Res\HTML\dlg-mlist-maillist.html
 
 # user db edit dialog
 Res\HTML\dlg-userdb-extra.html
 
 # donate dialog
 Res\HTML\dlg-donate.html
+
+# registration dialog box
+Res\HTML\dlg-registration-maillist.html
+
+# email privacy information for display in frames
+Res\HTML\frm-emailprivacy.html
 
 
 # Detail pane pages, scripts and CSS

@@ -35,6 +35,8 @@
  *                        disabled. Uses separate object to perform updating.
  * v2.6 of 13 May 2009  - Now gets company and program name from TAppInfo
  *                        instead of UGlobals unit.
+ * v2.7 of 10 Jul 2009  - Changed to use OS default font instead of MS Sans
+ *                        Serif.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -87,8 +89,7 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   strict private
-    fCtrlStateMgr: TControlStateMgr;
-      {Object used to enable disable all controls on form}
+    fCtrlStateMgr: TControlStateMgr;  // Enables / disables all controls on form
     procedure AlignForm;
       {Optionally aligns form to a "parent" window, using an IAligner instance.
       Called from Form's OnShow event after form is customised and before it is
@@ -137,7 +138,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UAppInfo, UNulFormAligner;
+  UAppInfo, UFontHelper, UNulFormAligner;
 
 
 {$R *.dfm}
@@ -199,6 +200,9 @@ procedure TBaseForm.FormCreate(Sender: TObject);
 begin
   inherited;
   fCtrlStateMgr := TControlStateMgr.Create(Self);
+  // Set form font to OS default font. This will be used by all descendants and
+  // controls that have ParentFont true.
+  TFontHelper.SetDefaultFont(Self.Font, False);
 end;
 
 procedure TBaseForm.FormDestroy(Sender: TObject);

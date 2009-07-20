@@ -27,6 +27,10 @@
  *                        of TTextSearchParams, moved back here from UGlobals.
  *                      - Made various visibility specifies strict.
  * v1.3 of 13 May 2009  - Removed unused UGlobals unit reference.
+ * v1.4 of 10 Jul 2009  - Rearranged dialog box to accomodate default Vista UI
+ *                        font. Vertical position of controls and dialog box
+ *                        height is now determined at run time, depending on UI
+ *                        font.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -88,9 +92,13 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   strict private
-    fSearchParams: TTextSearchParams; // object that persists search options
-    fSearch: ISearch;                 // aearch corresponding to criteria
+    fSearchParams: TTextSearchParams; // Object that persists search options
+    fSearch: ISearch;                 // Search corresponding to criteria
   strict protected
+    procedure ArrangeForm; override;
+      {Sizes and arrange controls in dialog box and determine size of dialog
+      box.
+      }
     procedure InitForm; override;
       {Populates and initialises controls.
       }
@@ -123,12 +131,12 @@ type
   TTextSearchParams = class(TObject)
   strict private
     const
-      cMaxTextSearchHistory = 20;   // max text search items remembered
+      cMaxTextSearchHistory = 20;   // Max text search items remembered
     var
-      fUpdated: Boolean;            // tells if object's properties updaed
-      fHistoryList: TStrings;       // value of HistoryList property
-      fOptions: TTextSearchOptions; // value of Options property
-      fLogic: TSearchLogic;         // value of Logic property
+      fUpdated: Boolean;            // Tells if object's properties updaed
+      fHistoryList: TStrings;       // Value of HistoryList property
+      fOptions: TTextSearchOptions; // Value of Options property
+      fLogic: TSearchLogic;         // Value of Logic property
     procedure SetHistoryList(const Value: TStrings);
       {Write access method for HistoryList property.
         @param Value [in] String list to be assigned to property.
@@ -191,7 +199,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  USettings;
+  UGraphicUtils, USettings, FmGenericDlg;
 
 
 {$R *.dfm}
@@ -207,6 +215,26 @@ procedure TFindTextDlg.cbFindTextChange(Sender: TObject);
 begin
   inherited;
   btnOK.Enabled := cbFindText.Text <> '';
+end;
+
+procedure TFindTextDlg.ArrangeForm;
+  {Sizes and arrange controls in dialog box and determine size of dialog box.
+  }
+begin
+  // Size the descriptive text
+  lblDesc.Height := StringExtent(
+    lblDesc.Caption,
+    lblDesc.Font,
+    lblDesc.Width
+  ).cy;
+  // Vertically arrange controls
+  lblDesc.Top := cbFindText.Top + cbFindText.Height + 4;
+  gbOptions.Top := lblDesc.Top + lblDesc.Height + 8;
+  rgLogic.Top := gbOptions.Top;
+  // Set required height for all controls
+  pnlBody.ClientHeight := rgLogic.Top + rgLogic.Height + 4;
+  // Arrange buttons and size dialog box
+  inherited;
 end;
 
 procedure TFindTextDlg.btnOKClick(Sender: TObject);
@@ -293,7 +321,6 @@ begin
       Free;
     end;
 end;
-
 
 procedure TFindTextDlg.InitForm;
   {Populates and initialises controls.

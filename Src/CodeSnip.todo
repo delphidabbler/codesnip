@@ -1,3 +1,5 @@
+{TODO -oSelf -cRefactor : Pull out some common code used in arrangement and alignment of controls on forms into support unit.}
+{DONE -oSelf -cDocumentation : Remove comment from FmCodeSubmitDlg.pas that says class has been made sealed.}
 {TODO -oSelf -cRefactor : Add enumerator to TNews and change loop in UUpdateMgr accordingly.}
 {TODO -oSelf -cRefactor : Refactor TQuery to use enumerators and use class var for instance}
 {DONE -oSelf -cBug : TSnippetMgr.CanHandleView can return true for a category view containing only freeform code in current query, providing there is a routine present in while category
@@ -29,7 +31,7 @@ Add facility to Snippets Editor to display check, render and display REML text (
 {DONE -oSelf -cImprovement : When Vista UI font is implemented, change extra HTML text on extra tab from content font to UI font.}
 {DONE -oSelf -cRefactor : Merge comp-routine.js and detail.js into a single detail.js file and delete all references to comp-routine.js}
 {TODO -oSelf -cObservation : Update date for UNulFormAligner in unit for v1.1 is wrong: it reads 26 Jul 2007 and should be 26 Sep 2007.}
-{TODO -oSelf -cProposal : Make sure content font depends on themes}
+
 
 {TODO -oSelf -cRefactor : Rename identifiers that refer to "routine" with "snippet".}
 {DONE -oBill Miller -cProposal :  Make Graphics unit come after Windows unit in generated units.}
@@ -66,7 +68,7 @@ Check common code of UCopySourceMgr, UCopyInfoMgr and UCopySnippetMgr and provid
 {TODO -oSelf -cImprovement : Remove database detection code from IniDataReader and XML IO classes - make them know they read / wrtie main and user databases respectively}
 {TODO -oSelf -cRefactor : Get rid of TDataIOFactories and make ini, xml and nul data readers and writers be used directly insetad of via factories.}
 {DONE -oSelf -cFeature (v3) : Change alphabetical display handlers / view item to handle underscore routine names}
-
+{DONE -oSelf -cFeature : Add OS related fonts}
 {DONE -cFeature (v3) : Add option to installer to replace any custom styles in preferences with new default style}
 {TODO -oSelf -cRefactor : Consider moving syntax highlighting setting (CSS builder) down into FrInfo from FrDetailView since comp check tab no longer uses highlighting}
 {TODO -oSelf -cFeature :

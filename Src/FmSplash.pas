@@ -19,6 +19,9 @@
  * v1.5 of 17 Jun 2009  - Splash form content now comes from a gif image.
  *                        Program's version number is overlayed on the image.
  *                      - Made TSplashAligner's private section strict.
+ * v1.6 of 10 Jul 2009  - Changed from using bold Tahoma font for version number
+ *                        text to using plain default OS UI font. Also moved
+ *                        version text slightly to right.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -74,7 +77,7 @@ type
   strict private
     fCloseRequested: Boolean; // Records if RequestClose method has been called
     fTimeOut: Boolean;        // Records if minimum display time has elapsed
-    fTryToCloseLock: Integer; // prevent simultaneous access to TryToCloseLock
+    fTryToCloseLock: Integer; // Prevent simultaneous access to TryToCloseLock
     procedure TryToClose;
       {Closes form only if RequestClose method has been called and if minimum
       display time has elapsed.
@@ -151,7 +154,6 @@ type
       }
   end;
 
-
 { TSplashForm }
 
 procedure TSplashForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -179,7 +181,9 @@ procedure TSplashForm.pbMainPaint(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  GIF: TGIFImage;   // main splash image
+  GIF: TGIFImage; // main splash image
+const
+  cVerPos: TPoint = (X: 46; Y: 113);  // position of version info text
 begin
   // Load and display splash screen image
   GIF := TGIFImage.Create;
@@ -189,27 +193,12 @@ begin
   finally
     GIF.Free;
   end;
-
-  // Draw release version info
-  // 1: as shadow text
+  // Draw version number with offset drop shadow
   Canvas.Brush.Style := bsClear;
-  Canvas.Font.Name := 'Tahoma';
-  Canvas.Font.Size := 9;
-  Canvas.Font.Style := [fsBold];
-  // draw text shadow
   Canvas.Font.Color := clSplashShadowText;
-  Canvas.TextOut(
-    36,
-    112,
-    TAppInfo.ProgramReleaseInfo
-  );
-  // 2: as foreground text
+  Canvas.TextOut(Pred(cVerPos.X), Pred(cVerPos.Y), TAppInfo.ProgramReleaseInfo);
   Canvas.Font.Color := clSplashPlainText;
-  Canvas.TextOut(
-    37,
-    113,
-    TAppInfo.ProgramReleaseInfo
-  );
+  Canvas.TextOut(cVerPos.X, cVerPos.Y, TAppInfo.ProgramReleaseInfo);
 end;
 
 procedure TSplashForm.RequestClose;
@@ -281,7 +270,7 @@ begin
   // We get main form's bounds from persistent storage: we have to do this since
   // the splash form may be displayed before main form is aligned.
   // If we can't read from persistent storage or form is maximized we centre
-  // splash form in work area. This works because main form is centred when
+  // splash form in work area. This works because main form is also centred when
   // storage can't be read, and maximized form takes all of work area.
   with TOwnerWindowSettings.Create(AForm) do
     try

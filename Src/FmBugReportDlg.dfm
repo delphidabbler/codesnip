@@ -54,12 +54,12 @@ inherited BugReportDlg: TBugReportDlg
     end
     inherited pcWizard: TPageControl
       Width = 457
-      ActivePage = tsUserInfo
+      ActivePage = tsSubmit
       ExplicitWidth = 457
       object tsIntroBug: TTabSheet
         Caption = 'tsIntroBug'
         TabVisible = False
-        ExplicitLeft = 0
+        ExplicitLeft = 8
         ExplicitTop = 0
         ExplicitWidth = 0
         ExplicitHeight = 0
@@ -94,10 +94,10 @@ inherited BugReportDlg: TBugReportDlg
           ParentFont = False
         end
         object lblBugInfo: TLabel
-          Left = 17
-          Top = 37
-          Width = 428
-          Height = 28
+          Left = 18
+          Top = 38
+          Width = 423
+          Height = 27
           AutoSize = False
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clPurple
@@ -110,13 +110,20 @@ inherited BugReportDlg: TBugReportDlg
         object lblExceptIntro: TLabel
           Left = 0
           Top = 83
-          Width = 270
+          Width = 449
           Height = 65
+          AutoSize = False
           Caption = 
-            'It will be helpful if you can take the time to report this bug.'#13 +
-            #10#13#10'You can do this by filling in the information in this wizard.' +
-            #13#10#13#10'Click the Next button to begin.'
+            'It will be helpful if you can take the time to report this bug. ' +
+            'You can do this by filling in the information in this wizard.'
           WordWrap = True
+        end
+        object lblBugBegin: TLabel
+          Left = 0
+          Top = 168
+          Width = 143
+          Height = 13
+          Caption = 'Click the Next button to begin.'
         end
       end
       object tsIntroUser: TTabSheet
@@ -131,13 +138,19 @@ inherited BugReportDlg: TBugReportDlg
           Left = 0
           Top = 8
           Width = 449
-          Height = 104
+          Height = 57
           AutoSize = False
           Caption = 
-            'Thanks for taking the time to report a bug.'#13#10#13#10'This wizard colle' +
-            'cts information about the bug and sends it to the author.'#13#10#13#10'Ple' +
-            'ase click the Next button below to begin'
+            'Thanks for taking the time to report a bug. This wizard collects' +
+            ' information about the bug and sends it to the author.'
           WordWrap = True
+        end
+        object lblUserBegin: TLabel
+          Left = 0
+          Top = 104
+          Width = 143
+          Height = 13
+          Caption = 'Click the Next button to begin.'
         end
       end
       object tsBugInfo: TTabSheet
@@ -175,10 +188,14 @@ inherited BugReportDlg: TBugReportDlg
         Caption = 'tsUserInfo'
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 8
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblEmailRequest: TLabel
           Left = 0
           Top = 8
-          Width = 433
+          Width = 449
           Height = 30
           AutoSize = False
           Caption = 
@@ -193,40 +210,12 @@ inherited BugReportDlg: TBugReportDlg
           Height = 13
           Caption = '&Email address:'
         end
-        object lblPrivacy1: TLabel
-          Left = 0
-          Top = 80
-          Width = 256
-          Height = 13
-          Caption = 'Your email address will not be abused. Please see the '
-        end
-        object lblPrivacyHelp: TLabel
-          Left = 256
-          Top = 80
-          Width = 83
-          Height = 13
-          Cursor = crHandPoint
-          Caption = 'privacy statement'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clGreen
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsUnderline]
-          ParentFont = False
-          OnClick = lblPrivacyHelpClick
-        end
-        object lblPrivacy2: TLabel
-          Left = 339
-          Top = 80
-          Width = 72
-          Height = 13
-          Caption = ' for information.'
-        end
         object lblOS: TLabel
           Left = 0
           Top = 112
-          Width = 312
+          Width = 447
           Height = 13
+          AutoSize = False
           Caption = 
             'The following details of your operating system will also be repo' +
             'rted:'
@@ -256,20 +245,47 @@ inherited BugReportDlg: TBugReportDlg
           ReadOnly = True
           TabOrder = 1
         end
+        inline frmPrivacy: TFixedHTMLDlgFrame
+          Left = 0
+          Top = 77
+          Width = 449
+          Height = 23
+          TabOrder = 2
+          TabStop = True
+          ExplicitTop = 77
+          ExplicitWidth = 449
+          ExplicitHeight = 23
+          inherited pnlBrowser: TPanel
+            Width = 449
+            Height = 23
+            ExplicitWidth = 17
+            ExplicitHeight = 23
+            inherited wbBrowser: TWebBrowser
+              Width = 449
+              Height = 23
+              ExplicitTop = -4
+              ExplicitWidth = 17
+              ExplicitHeight = 23
+              ControlData = {
+                4C000000C2010000610200000000000000000000000000000000000000000000
+                000000004C000000000000000000000001000000E0D057007335CF11AE690800
+                2B2E126208000000000000004C0000000114020000000000C000000000000046
+                8000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000100000000000000000000000000000000000000}
+            end
+          end
+        end
       end
       object tsSubmit: TTabSheet
         Caption = 'tsSubmit'
         ImageIndex = 4
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblReport: TLabel
           Left = 0
           Top = 8
-          Width = 393
+          Width = 449
           Height = 13
+          AutoSize = False
           Caption = 
             'You are now ready to submit the bug report. Here is the informat' +
             'ion that will be sent:'
@@ -307,7 +323,7 @@ inherited BugReportDlg: TBugReportDlg
         ImageIndex = 5
         TabVisible = False
         ExplicitLeft = 0
-        ExplicitTop = 0
+        ExplicitTop = 8
         ExplicitWidth = 0
         ExplicitHeight = 0
         object lblDone: TLabel

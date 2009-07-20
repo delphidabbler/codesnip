@@ -75,6 +75,14 @@
  * v1.11 of 05 Jul 2009 - Changed to permit either http: or file: protocol to be
  *                        used in href attributes of Extra REML code. Only http:
  *                        protocol was previously permitted.
+ * v1.12 of 10 Jul 2009 - Modified to accommodate controls using Vista UI
+ *                        default font.
+ *                        - Font set explicitly in some controls.
+ *                        - Some controls are now auto-aligned vertically.
+ *                        - Form height set to accommodate controls.
+ *                        - Set item height for owner drawn check list boxes.
+ *                      - Font of extra info help text changed from content font
+ *                        to default font.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -113,7 +121,7 @@ uses
   CheckLst, ComCtrls, ExtCtrls, Windows,
   // Project
   FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
-  IntfCompilers, UActiveText, UCompileMgr, UCSSBuilder, UFontHelper, USnippets,
+  IntfCompilers, UActiveText, UCompileMgr, UCSSBuilder, USnippets,
   USnippetsChkListMgr;
 
 
@@ -266,6 +274,13 @@ type
         @param Compilers [in] Object containing compilation results.
       }
   strict protected
+    procedure ArrangeForm; override;
+      {Arranges controls on form and sizes it.
+      }
+    procedure ConfigForm; override;
+      {Configures form's controls. Sets font and colors of "link" labels. Also
+      sets item height of owner draw check list boxes.
+      }
     procedure InitForm; override;
       {Performs initialisation of form fields and controls.
       }
@@ -295,8 +310,9 @@ uses
   StrUtils, Graphics, Menus,
   // Project
   FmDependenciesDlg, IntfCommon, UColours, UConsts, UCSSUtils, UExceptions,
-  UHTMLUtils, URoutineExtraHelper, USnippetKindInfo, USnippetValidator,
-  UIStringList, UMessageBox, USnippetIDs, UStructs, UThemesEx, UUtils;
+  UFontHelper, UGraphicUtils, UHTMLUtils, URoutineExtraHelper, USnippetKindInfo,
+  USnippetValidator, UIStringList, UMessageBox, USnippetIDs, UStructs,
+  UThemesEx, UUtils;
 
 
 type
@@ -479,6 +495,61 @@ begin
     end;
 end;
 
+procedure TUserDBEditDlg.ArrangeForm;
+  {Arranges controls on form and sizes it.
+  }
+
+  // ---------------------------------------------------------------------------
+  function VCentre(const ATop: Integer;
+    const Ctrls: array of TControl): Integer;
+    {Vertically centres a list of controls.
+      @param ATop [in] Top tallest control to be aligned.
+      @param Ctrls [in] Array of controls to be aligned.
+      @return Height occupied by controls (= height of tallest control).
+    }
+  var
+    I: Integer; // loops thru all controls to be aligned
+  begin
+    Result := 0;
+    for I := Low(Ctrls) to High(Ctrls) do
+      if Ctrls[I].Height > Result then
+        Result := Ctrls[I].Height;
+    for I := Low(Ctrls) to High(Ctrls) do
+      Ctrls[I].Top := ATop + (Result - Ctrls[I].Height) div 2;
+  end;
+  // ---------------------------------------------------------------------------
+
+var
+  RequiredHeight: Integer;  // height of tab control to display all controls
+  ATop: Integer;            // top of next line of controls in pixels
+begin
+  // Arrange controls on tsCode
+  ATop := edSourceCode.Top + edSourceCode.Height + 8;
+  ATop := ATop + VCentre(ATop, [cbKind, lblKind, lblSnippetKindHelp]) + 8;
+  ATop := ATop + VCentre(ATop, [edDescription, lblDescription]) + 8;
+  ATop := ATop + VCentre(ATop, [edName, lblName]) + 8;
+  RequiredHeight := ATop + VCentre(ATop, [cbCategories, lblCategories]) + 8;
+  // Arrange controls on tsReferences
+  ATop := clbXRefs.Top + clbXRefs.Height + 6;
+  ATop := ATop + VCentre(ATop, [btnDependencies, edUnit, btnAddUnit]) + 8;
+  if ATop > RequiredHeight then
+    RequiredHeight := ATop;
+  // Arrange controls on tsComments
+  ATop := edExtra.Top + edExtra.Height + 4;
+  frmExtraInstructions.Top := ATop;
+  ATop := ATop + frmExtraInstructions.Height;
+  if ATop > RequiredHeight then
+    RequiredHeight := ATop;
+  // Arrange controls on tsCompileResults
+  lblViewCompErrsKey.Top := lblViewCompErrs.Top + lblViewCompErrs.Height;
+  ATop := lbCompilers.Top + lblCompilers.Height; // tallest control on tabsheet
+  if ATop > RequiredHeight then
+    RequiredHeight := ATop;
+  // Set body panel size to accommodate controls
+  pnlBody.ClientHeight := pnlBody.ClientHeight + RequiredHeight - tsCode.Height;
+  inherited;
+end;
+
 procedure TUserDBEditDlg.btnOKClick(Sender: TObject);
   {OnClick event handler for OK button. Validates entries and updates / adds
   snippet if all is well.
@@ -557,6 +628,25 @@ begin
     (Rect.Top + Rect.Bottom - Canvas.TextHeight(CLB.Items[Index])) div 2,
     CLB.Items[Index]
   );
+end;
+
+procedure TUserDBEditDlg.ConfigForm;
+  {Configures form's controls. Sets font and colors of "link" labels. Also sets
+  item height of owner draw check list boxes.
+  }
+begin
+  inherited;
+  // Set colour and actions of link labels
+  lblSnippetKindHelp.Font.Color := clHelpLinkText;
+  TFontHelper.SetDefaultBaseFont(lblSnippetKindHelp.Font, False);
+  lblViewCompErrs.Font.Color := clLinkText;
+  TFontHelper.SetDefaultBaseFont(lblViewCompErrs.Font, False);
+  lblViewCompErrs.Caption := actViewErrors.Caption;
+  lblViewCompErrsKey.Caption :=
+    '(' + ShortcutToText(actViewErrors.ShortCut) + ')';
+  // Set correct item height for owner drawn check list boxes
+  clbDepends.ItemHeight := StringExtent('Xy', clbDepends.Font).cy;
+  clbXRefs.ItemHeight := StringExtent('Xy', clbXRefs.Font).cy;
 end;
 
 function TUserDBEditDlg.CreateTempSnippet: TRoutine;
@@ -777,12 +867,6 @@ begin
   // Select first compiler and update compiler result list
   lbCompilers.ItemIndex := 0;
   lbCompilersClick(lbCompilers);
-  // Set colour and actions of link labels
-  lblSnippetKindHelp.Font.Color := clHelpLinkText;
-  lblViewCompErrs.Font.Color := clLinkText;
-  lblViewCompErrs.Caption := actViewErrors.Caption;
-  lblViewCompErrsKey.Caption :=
-    '(' + ShortcutToText(actViewErrors.ShortCut) + ')';
 end;
 
 procedure TUserDBEditDlg.InitForm;
@@ -1181,15 +1265,15 @@ procedure TUserDBEditDlg.UpdateTabSheetCSS(Sender: TObject;
     @param CSSBuilder [in] Object used to update CSS.
   }
 var
-  ContentFont: TFont; // font used for dialog box content (not controls)
+  DefaultFont: TFont; // font used for dialog box content (not controls)
 begin
-  // Build content font and apply to HTML frame
-  ContentFont := TFont.Create;
+  // Build default font and apply to HTML frame
+  DefaultFont := TFont.Create;
   try
-    TFontHelper.SetContentFont(ContentFont, True);
+    TFontHelper.SetDefaultFont(DefaultFont, True);
     with CSSBuilder.Selectors['body'] do
     begin
-      AddProperty(CSSFontProps(ContentFont));
+      AddProperty(CSSFontProps(DefaultFont));
       if ThemeServicesEx.ThemesEnabled then
         // For themed windows only, modify background colour to suit tab sheet
         // background
@@ -1203,7 +1287,7 @@ begin
       AddProperty(CSSFontFamilyProp('Courier New', cfgMonoSpace));
     end;
   finally
-    FreeAndNil(ContentFont);
+    FreeAndNil(DefaultFont);
   end;
 end;
 
