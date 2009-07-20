@@ -17,6 +17,8 @@
  *                      - Now use ClassName method to get class in assertions.
  *                      - UpdateButtons method now enables "next" button by
  *                        default and disables cancel button on last page.
+ * v1.3 of 18 Jul 2009  - Changed to use correct OS UI font for head label and
+ *                        vertically centred label in containing panel.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -36,10 +38,8 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
- *
- * Contributor(s): None
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -94,6 +94,9 @@ type
     function ModalResultOnEsc: Integer; override;
       {Gets modal result returned from dialog when user presses ESC key.
         @return Required modal result.
+      }
+    procedure ConfigForm; override;
+      {Sets correct UI default font on heading label.
       }
     procedure InitForm; override;
       {Displays and initialises first page of wizard.
@@ -159,6 +162,11 @@ type
 implementation
 
 
+uses
+  // Project
+  UFontHelper;
+
+
 {$R *.dfm}
 
 
@@ -182,6 +190,8 @@ begin
   btnCancel.Top := btnHelp.Top;
   btnNext.Top := btnHelp.Top;
   btnBack.Top := btnHelp.Top;
+  // Centre heading label vertically in title
+  lblHead.Top := (pnlHead.ClientHeight - lblHead.Height) div 2;
 end;
 
 procedure TWizardDlg.BeginPage(const PageIdx: Integer);
@@ -212,6 +222,14 @@ begin
     GoForward(NextPage(CurrentPage))
   else
     Close;
+end;
+
+procedure TWizardDlg.ConfigForm;
+  {Sets correct UI default font on heading label.
+  }
+begin
+  inherited;
+  TFontHelper.SetDefaultBaseFont(lblHead.Font, False);
 end;
 
 function TWizardDlg.CurrentPage: Integer;

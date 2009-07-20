@@ -4,4 +4,5 @@ object PrefsBaseFrame: TPrefsBaseFrame
   Width = 316
   Height = 236
   TabOrder = 0
+  TabStop = True
 end

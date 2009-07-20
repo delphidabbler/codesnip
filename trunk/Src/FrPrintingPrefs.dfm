@@ -3,17 +3,24 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
   Height = 311
   ExplicitWidth = 396
   ExplicitHeight = 311
+  DesignSize = (
+    396
+    311)
   object gpOutputOptions: TGroupBox
     Left = 0
-    Top = 0
+    Top = 2
     Width = 393
     Height = 153
+    Anchors = [akLeft, akTop, akRight]
     Caption = ' Document Formatting Options '
     TabOrder = 0
+    DesignSize = (
+      393
+      153)
     object chkSyntaxPrint: TCheckBox
       Left = 8
       Top = 20
-      Width = 161
+      Width = 195
       Height = 17
       Caption = '&Syntax highlight source code'
       TabOrder = 0
@@ -22,7 +29,7 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
     object chkUseColor: TCheckBox
       Left = 8
       Top = 44
-      Width = 97
+      Width = 195
       Height = 17
       Caption = 'Use &colour'
       TabOrder = 1
@@ -33,6 +40,7 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
       Top = 15
       Width = 199
       Height = 127
+      Anchors = [akTop, akRight]
       TabOrder = 2
       TabStop = True
       ExplicitLeft = 184
@@ -50,7 +58,7 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
   object gpMargins: TGroupBox
     Left = 0
     Top = 161
-    Width = 188
+    Width = 217
     Height = 81
     Caption = 'gpMargins'
     TabOrder = 1
@@ -71,7 +79,7 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
       FocusControl = edTop
     end
     object lblRight: TLabel
-      Left = 96
+      Left = 112
       Top = 24
       Width = 29
       Height = 13
@@ -79,7 +87,7 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
       FocusControl = edRight
     end
     object lblBottom: TLabel
-      Left = 96
+      Left = 112
       Top = 52
       Width = 38
       Height = 13
@@ -87,7 +95,7 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
       FocusControl = edBottom
     end
     object edLeft: TEdit
-      Left = 40
+      Left = 48
       Top = 20
       Width = 41
       Height = 21
@@ -95,7 +103,7 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
       OnKeyPress = NumEditKeyPress
     end
     object edTop: TEdit
-      Left = 40
+      Left = 48
       Top = 48
       Width = 41
       Height = 21
@@ -103,7 +111,7 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
       OnKeyPress = NumEditKeyPress
     end
     object edRight: TEdit
-      Left = 138
+      Left = 162
       Top = 20
       Width = 41
       Height = 21
@@ -111,7 +119,7 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
       OnKeyPress = NumEditKeyPress
     end
     object edBottom: TEdit
-      Left = 138
+      Left = 162
       Top = 48
       Width = 41
       Height = 21
@@ -123,8 +131,9 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
     Left = 0
     Top = 256
     Width = 393
-    Height = 17
+    Height = 25
     Alignment = taCenter
+    Anchors = [akLeft, akTop, akRight]
     AutoSize = False
     Caption = 
       'Your changes will take effect the next time you start the applic' +

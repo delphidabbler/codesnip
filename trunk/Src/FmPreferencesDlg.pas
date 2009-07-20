@@ -50,6 +50,10 @@
  *                        IAssignable.Assign method calls.
  * v3.2 of 21 May 2009  - Resized body panel and frame to accomodate larger
  *                        highlighter preferences frame.
+ * v3.3 of 19 Jul 2009  - Resized form to accommodate revised frames. Also sets
+ *                        width and height of frames and gets them to arrange
+ *                        their own controls.
+ *                      - Changed assertions to use ClassName.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -160,8 +164,15 @@ type
       preferences page to have its own help topic.
         @return Required frame-specific A-link keyword.
       }
+    procedure ConfigForm; override;
+      {Sets up map of pages to frames that display on them.
+      }
+    procedure ArrangeForm; override;
+      {Sizes frames providing content of pages of dialog and gets each to
+      arrange its controls.
+      }
     procedure InitForm; override;
-      {Initialises data and displays and initialises required pages.
+      {Displays and initialises frames used to display pages of dialog.
       }
   public
     class function Execute(AOwner: TComponent;
@@ -207,12 +218,30 @@ implementation
 
 uses
   // Delphi
-  StrUtils,
+  StrUtils, Windows,
   // Project
   IntfCommon;
 
 
 {$R *.dfm}
+
+procedure TPreferencesDlg.ArrangeForm;
+  {Sizes frames providing content of pages of dialog and gets each to arrange
+  its controls.
+  }
+var
+  Page: TPreferencePage;  // loops through all preferences pages
+begin
+  inherited;
+  for Page := Low(TPreferencePage) to High(TPreferencePage) do
+  begin
+    Assert(Assigned(fPageMap[Page]),
+      ClassName + '.ArrangeForm: Page map incomplete');
+    MapTabSheetToPage(fPageMap[Page]).Width := fPageMap[Page].Width - 8;
+    MapTabSheetToPage(fPageMap[Page]).Height := fPageMap[Page].Height - 8;
+    MapTabSheetToPage(fPageMap[Page]).ArrangeControls;
+  end;
+end;
 
 procedure TPreferencesDlg.btnOKClick(Sender: TObject);
   {OK button click event handler. Stores preference data to persistent storage.
@@ -228,6 +257,18 @@ begin
       GetPrefPage(Page).SavePrefs(fLocalPrefs);
   // Update global preferences with data from local preferences object
   (Preferences as IAssignable).Assign(fLocalPrefs);
+end;
+
+procedure TPreferencesDlg.ConfigForm;
+  {Sets up map of pages to frames that display on them.
+  }
+begin
+  inherited;
+  // Set up page map ** IMPORTANT - add entry here for each tabsheet
+  fPageMap[ppGeneral] := tsGeneralPrefs;
+  fPageMap[ppSourceCode] := tsSourceCodePrefs;
+  fPageMap[ppSyntaxHighlighter] := tsHiliterPrefs;
+  fPageMap[ppPrinting] := tsPrintingPrefs;
 end;
 
 function TPreferencesDlg.CustomHelpKeyword: string;
@@ -290,18 +331,13 @@ begin
 end;
 
 procedure TPreferencesDlg.InitForm;
-  {Initialises data and displays and initialises required pages.
+  {Displays and initialises frames used to display pages of dialog.
   }
 var
   TabIdx: Integer;        // loops thru tabs in page control
   Page: TPreferencePage;  // loops through all preferences pages
 begin
   inherited;
-  // Set up page map ** IMPORTANT - add entry here for each tabsheet
-  fPageMap[ppGeneral] := tsGeneralPrefs;
-  fPageMap[ppSourceCode] := tsSourceCodePrefs;
-  fPageMap[ppSyntaxHighlighter] := tsHiliterPrefs;
-  fPageMap[ppPrinting] := tsPrintingPrefs;
   // Take local copy of global preferences. This local copy will be updated as
   // user enters data and global object is only updated if user OKs - local
   // copy is discarded if user cancels.
@@ -309,8 +345,8 @@ begin
   // Display and initialise required pages
   for Page := Low(TPreferencePage) to High(TPreferencePage) do
   begin
-    Assert(Assigned(fPageMap[Page]),                       // ** do not localise
-      'Page map incomplete');
+    Assert(Assigned(fPageMap[Page]),
+      ClassName + '.InitForm: Page map incomplete');
     fPageMap[Page].TabVisible := Page in fVisiblePages;
     if fPageMap[Page].TabVisible then
       // get page to set up controls from preferences
@@ -343,8 +379,7 @@ begin
       Break;
     end;
   end;
-  Assert(Assigned(Result),    // ** do not localise
-    'TPreferencesDlg.MapTabSheetToPage: Frame not found');
+  Assert(Assigned(Result), ClassName + '.MapTabSheetToPage: Frame not found');
 end;
 
 procedure TPreferencesDlg.pcMainChange(Sender: TObject);

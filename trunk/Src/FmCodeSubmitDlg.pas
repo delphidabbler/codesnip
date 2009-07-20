@@ -11,6 +11,11 @@
  *                      - Removed reference to deleted UParams unit.
  * v1.3 of 05 Jun 2009  - Replaced "routines" in text with "snippets" or an
  *                        alternative.
+ * v1.4 of 18 Jul 2009  - Adjusted some controls to accommodate Vista UI font
+ *                        and positioned some controls dynamically as a result.
+ *                      - Replaced labels in privacy text containing help link
+ *                        with an HTML frame containing required link.
+ *                      - Removed unused label and supporting code.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -47,8 +52,8 @@ uses
   // Delphi
   StdCtrls, Forms, ComCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmWizardDlg, FrCheckedTV, FrSelectSnippets, FrSelectUserSnippets, UExceptions,
-  USnippets;
+  FmWizardDlg, FrBrowserBase, FrCheckedTV, FrFixedHTMLDlg, FrHTMLDlg,
+  FrSelectSnippets, FrSelectUserSnippets, UExceptions, USnippets;
 
 
 type
@@ -69,26 +74,18 @@ type
     lblFinished: TLabel;
     lblIntro: TLabel;
     lblName: TLabel;
-    lblPrivacy: TLabel;
-    lblPrivacyHelp: TLabel;
     lblRoutinePrompt: TLabel;
     lblRoutines: TLabel;
     lblSubmit: TLabel;
-    lblUserInfoPrompt: TLabel;
     tsFinished: TTabSheet;
     tsIntro: TTabSheet;
     tsRoutines: TTabSheet;
     tsUserInfo: TTabSheet;
     tsSubmit: TTabSheet;
+    frmPrivacy: TFixedHTMLDlgFrame;
     procedure btnPreviewClick(Sender: TObject);
-    procedure edCommentsEnter(Sender: TObject);
-    procedure edEMailEnter(Sender: TObject);
-    procedure edNameEnter(Sender: TObject);
-    procedure lblPrivacyHelpClick(Sender: TObject);
-    procedure UserInfoEditExit(Sender: TObject);
   strict private
-    fData: TStream;
-      {Stream that contains XML document that describes user's submission}
+    fData: TStream; // Stream containing XML document describing submission
     procedure SelectRoutine(const Routine: TRoutine);
       {Selects the specified snippet in the check list of snippets or clears
       selections.
@@ -122,6 +119,13 @@ type
       {Saves content of some wizard controls to persistent storage.
       }
   strict protected
+    procedure ArrangeForm; override;
+      {Aligns controls vertically where necessary to accomodate height of
+      controls that depend on UI font.
+      }
+    procedure ConfigForm; override;
+      {Loads required HTML into HTML frame and modified fonts where required.
+      }
     procedure InitForm; override;
       {Initialises some wizard controls from persistent data.
       }
@@ -177,9 +181,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Graphics,
   // Project
-  FmPreviewDlg, UCodeImportExport, UCodeSubmitter, UEmailHelper,
+  FmPreviewDlg, UCodeImportExport, UCodeSubmitter, UGraphicUtils, UEmailHelper,
   UMessageBox, USettings, UUtils, UWebService;
 
 
@@ -195,6 +199,28 @@ const
 
 
 { TCodeSubmitDlg }
+
+procedure TCodeSubmitDlg.ArrangeForm;
+  {Aligns controls vertically where necessary to accomodate height of controls
+  that depend on UI font.
+  }
+var
+  CommentsTop: Integer; // position of top of comments memo control
+begin
+  inherited;
+  // tsUserInfo: adjust controls re height of privacy information
+  frmPrivacy.Top := edEMail.Top + edEmail.Height + 8;
+  frmPrivacy.Height := frmPrivacy.DocHeight;
+  lblComments.Top := frmPrivacy.Top + frmPrivacy.Height + 8;
+  CommentsTop := lblComments.Top + lblComments.Height + 8;
+  edComments.Height := edComments.Height - (CommentsTop - edComments.Top);
+  edComments.Top := CommentsTop;
+  // tsSubmit: size submit label and locate preview button below it
+  lblSubmit.Height := StringExtent(
+    lblSubmit.Caption, lblSubmit.Font, lblSubmit.Width
+  ).cy;
+  btnPreview.Top := lblSubmit.Height + 8;
+end;
 
 procedure TCodeSubmitDlg.BeginPage(const PageIdx: Integer);
   {Called when a wizard page is first displayed. Focusses first control and
@@ -245,6 +271,15 @@ begin
     fData
   );
   fData.Position := 0;
+end;
+
+procedure TCodeSubmitDlg.ConfigForm;
+  {Loads required HTML into HTML frame and modified fonts where required.
+  }
+begin
+  inherited;
+  frmPrivacy.Initialise('frm-emailprivacy.html');
+  lblRoutinePrompt.Font.Style := [fsBold];
 end;
 
 constructor TCodeSubmitDlg.Create(AOwner: TComponent);
@@ -298,42 +333,6 @@ begin
         sWebServerError, [E.HTTPErrorCode, Trim(E.Message)]
       );
   end;
-end;
-
-procedure TCodeSubmitDlg.edCommentsEnter(Sender: TObject);
-  {Handles OnEnter events on comments memo. Displays prompt on how to use the
-  control.
-    @param Sender [in] Not used.
-  }
-resourcestring
-  sPrompt =   // prompt on how to use control
-    'Enter any additional comments here (optional).';
-begin
-  lblUserInfoPrompt.Caption := sPrompt;
-end;
-
-procedure TCodeSubmitDlg.edEMailEnter(Sender: TObject);
-  {Handles OnEnter events on email edit box. Displays prompt on how to use the
-  control.
-    @param Sender [in] Not used.
-  }
-resourcestring
-  sPrompt =   // prompt on how to use control
-    'Your email address is needed so you can be contacted about your code.';
-begin
-  lblUserInfoPrompt.Caption := sPrompt;
-end;
-
-procedure TCodeSubmitDlg.edNameEnter(Sender: TObject);
-  {Handles OnEnter events on user name edit box. Displays prompt on how to use
-  the control.
-    @param Sender [in] Not used.
-  }
-resourcestring
-  sPrompt =   // prompt on how to use control
-    'Your name is needed so that you can be credited for your work.';
-begin
-  lblUserInfoPrompt.Caption := sPrompt;
 end;
 
 class procedure TCodeSubmitDlg.Execute(const AOwner: TComponent;
@@ -397,15 +396,6 @@ begin
   UserData := Settings.ReadSection(ssUserInfo);
   edName.Text := UserData.ItemValues['Name'];
   edEMail.Text := UserData.ItemValues['Email'];
-end;
-
-procedure TCodeSubmitDlg.lblPrivacyHelpClick(Sender: TObject);
-  {Handles clicks on privacy help label by displaying privacy topic in help
-  file.
-    @param Sender [in] Not used.
-  }
-begin
-  DisplayHelp('PrivacyStatement');  // ** do not localise
 end;
 
 procedure TCodeSubmitDlg.MoveForward(const PageIdx: Integer;
@@ -494,15 +484,6 @@ begin
   case PageIdx of
     cSubmitPageIdx: btnNext.Caption := sSubmitBtnCaption;
   end;
-end;
-
-procedure TCodeSubmitDlg.UserInfoEditExit(Sender: TObject);
-  {Handles OnExit events for email, user name and comments controls. Hides
-  prompt that relates to the control.
-    @param Sender [in] Not used.
-  }
-begin
-  lblUserInfoPrompt.Caption := '';
 end;
 
 procedure TCodeSubmitDlg.ValidatePage(PageIdx: Integer);

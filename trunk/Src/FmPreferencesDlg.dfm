@@ -9,21 +9,21 @@ inherited PreferencesDlg: TPreferencesDlg
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Width = 411
-    Height = 361
-    ExplicitWidth = 411
-    ExplicitHeight = 361
+    Width = 446
+    Height = 377
+    ExplicitWidth = 446
+    ExplicitHeight = 377
     object pcMain: TPageControl
       Left = 0
       Top = 0
-      Width = 411
-      Height = 361
-      ActivePage = tsHiliterPrefs
+      Width = 446
+      Height = 377
+      ActivePage = tsPrintingPrefs
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
       OnChanging = pcMainChanging
-      ExplicitHeight = 369
+      ExplicitHeight = 393
       object tsGeneralPrefs: TTabSheet
         Caption = 'General'
         ImageIndex = 3
@@ -58,6 +58,12 @@ inherited PreferencesDlg: TPreferencesDlg
           ExplicitLeft = 4
           ExplicitTop = 4
           ExplicitHeight = 310
+          inherited gbSourceCode: TGroupBox
+            inherited lblCommentStyle: TLabel
+              Width = 85
+              ExplicitWidth = 85
+            end
+          end
           inherited gbFileFormat: TGroupBox
             inherited lblSnippetFileType: TLabel
               Width = 71

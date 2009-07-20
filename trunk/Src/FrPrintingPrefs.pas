@@ -15,6 +15,11 @@
  *                      - Made private sections of classes strict.
  *                      - Made use TPageMargins constructor to set margins.
  * v1.4 of 13 Jan 2009  - Replaced control char literals with constants.
+ * v1.5 of 19 Jul 2009  - Added no-nothing implementation of new inherited
+ *                        ArrangeControls method.
+ *                      - Resized some controls to accommodate Vista UI font.
+ *                      - Used anchors for some controls to automate some
+ *                        realignment.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -98,6 +103,9 @@ type
     procedure Deactivate(const Prefs: IPreferences); override;
       {Called when page is deactivated. Stores information entered by user.
         @param Prefs [in] Object used to store information.
+      }
+    procedure ArrangeControls; override;
+      {Arranges controls on frame. Called after frame has been sized.
       }
   end;
 
@@ -204,6 +212,13 @@ begin
   // Record current user highlighting choices and display initial preview
   (fHiliteAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
   DisplayPreview;
+end;
+
+procedure TPrintingPrefsFrame.ArrangeControls;
+  {Arranges controls on frame. Called after frame has been sized.
+  }
+begin
+  // Do nothing: all controls arrange themselves using Anchors property
 end;
 
 procedure TPrintingPrefsFrame.CheckboxClick(Sender: TObject);

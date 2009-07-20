@@ -51,6 +51,7 @@
  * v2.4 of 25 Jan 2009  - Changed to use renamed ICompilers.GetGlyph method.
  *                      - Routine from UHTMLUtils now used to generate HTML
  *                        tags.
+ * v2.5 of 10 Jul 2009  - Made tab control display tabs in default UI font.
  *
  *
  *
@@ -89,7 +90,7 @@ uses
   Forms, StdCtrls, Controls, ExtCtrls, Classes, Tabs,
   // Project
   FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, IntfCompilers,
-  USnippets, ImgList, ActnList;
+  USnippets, ImgList, ActnList, ComCtrls;
 
 
 type
@@ -212,6 +213,9 @@ type
         @except EBug raised if compiler result is not a warning or an error.
       }
   strict protected
+    procedure ConfigForm; override;
+      {Sets UI font for tab set control tabs.
+      }
     procedure InitForm; override;
       {Override of form initialisation that configures tabset and sets caption.
       }
@@ -250,7 +254,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UConsts, UExceptions, UHTMLUtils;
+  UConsts, UExceptions, UHTMLUtils, FmGenericViewDlg;
 
 
 {$R *.dfm}
@@ -306,6 +310,15 @@ begin
     finally
       Free;
     end;
+end;
+
+procedure TCompErrorDlg.ConfigForm;
+  {Sets UI font for tab set control tabs.
+  }
+begin
+  inherited;
+  // required because for some reason tab control sets its font to Tahoma
+  tsCompilers.Font := Self.Font;
 end;
 
 class procedure TCompErrorDlg.Execute(const AOwner: TComponent;

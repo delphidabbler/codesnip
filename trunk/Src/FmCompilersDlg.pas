@@ -54,6 +54,10 @@
  * v1.8 of 09 Jan 2009  - Now accepts a compilers object as parameter to Execute
  *                        method rather than operating on singletion object.
  * v1.9 of 25 Jan 2009  - Revised to used renamed ICompilers.GetGlyph method.
+ * v1.10 of 19 Jul 2009 - Modified to accommodate the new Vista default font in
+ *                        controls.
+ *                      - Controls now dynamically arranged and column widths in
+ *                        value editor now depend on font size.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -183,7 +187,8 @@ type
       {Populates and initialises controls.
       }
     procedure ArrangeForm; override;
-      {Adjusts position of "Auto Detect Compilers" button on bottom button line.
+      {Dynamically sizes and aligns controls to allow for Vista UI font. Also
+      adjusts position of "Auto Detect Compilers" button on bottom button line.
       }
   public
     class function Execute(AOwner: TComponent;
@@ -215,10 +220,82 @@ uses
 { TCompilersDlg }
 
 procedure TCompilersDlg.ArrangeForm;
-  {Adjusts position of "Auto Detect Compilers" button on bottom button line.
+  {Dynamically sizes and aligns controls to allow for Vista UI font. Also
+  adjusts position of "Auto Detect Compilers" button on bottom button line.
   }
+
+  // ---------------------------------------------------------------------------
+  procedure SetLabelHeight(const Lbl: TLabel);
+    {Sets height of a label to accommodate the text it contains in its font.
+      @param Lbl [in] Label whose height is to be set.
+    }
+  begin
+    Lbl.Height := StringExtent(Lbl.Caption, Lbl.Font, Lbl.Width).cy;
+  end;
+
+  function BottomOf(const Ctrl: TControl): Integer;
+    {Gets position of bottom of a control relative to its parent control in
+    pixels.
+      @param Ctr [in] Control to check.
+      @return Required position.
+    }
+  begin
+    Result := Ctrl.Top + Ctrl.Height;
+  end;
+
+  function VCentre(const ATop: Integer;
+    const Ctrls: array of TControl): Integer;
+    {Vertically centres a list of controls.
+      @param ATop [in] Top tallest control to be aligned.
+      @param Ctrls [in] Array of controls to be aligned.
+      @return Height occupied by controls (= height of tallest control).
+    }
+  var
+    I: Integer; // loops thru all controls to be aligned
+  begin
+    Result := 0;
+    for I := Low(Ctrls) to High(Ctrls) do
+      if Ctrls[I].Height > Result then
+        Result := Ctrls[I].Height;
+    for I := Low(Ctrls) to High(Ctrls) do
+      Ctrls[I].Top := ATop + (Result - Ctrls[I].Height) div 2;
+  end;
+  // ---------------------------------------------------------------------------
+
+var
+  ATop: Integer;      // top of a control
+  RowIdx: Integer;    // loops through rows of vleLogPrefixes
+  CellSize: TSize;    // size of left hand cell in vleLogPrefixes
 begin
+  // Arrange controls on tabs
+  // tsExecFile
+  ATop := BottomOf(lblCompilerPath) + 4;
+  ATop := ATop + VCentre(ATop, [edCompilerPath, btnBrowse]) + 8;
+  btnClear.Top := ATop;
+  // tsSwitches
+  edSwitch.Top := BottomOf(lblSwitch) + 4;
+  lblSwitches.Top := BottomOf(edSwitch) + 8;
+  SetLabelHeight(lblExplainSwitches);
+  lblExplainSwitches.Top := BottomOf(btnDelete) + 8;
+  lbSwitches.Top := lblExplainSwitches.Top;
+  lblSwitches.Top := lbSwitches.Top - lblSwitches.Height - 4;
+  // tsOutputLog
+  vleLogPrefixes.Top := BottomOf(lblLogPrefixes) + 4;
+  // size rows and columns in value editor
+  for RowIdx := 0 to Pred(vleLogPrefixes.RowCount) do
+  begin
+    CellSize := StringExtent(vleLogPrefixes.Keys[RowIdx], vleLogPrefixes.Font);
+    if CellSize.cx > vleLogPrefixes.ColWidths[0] then
+      vleLogPrefixes.ColWidths[0] := CellSize.cx;
+    if CellSize.cy > vleLogPrefixes.RowHeights[RowIdx] then
+      vleLogPrefixes.RowHeights[RowIdx] := CellSize.cy;
+  end;
+  vleLogPrefixes.ColWidths[0] := vleLogPrefixes.ColWidths[0] + 16;
+  vleLogPrefixes.ColWidths[1] :=
+    vleLogPrefixes.Width - vleLogPrefixes.ColWidths[0];
+  // Size dialog and arrange inherited controls
   inherited;
+  // Arrange Auto-detect button in bottom button line
   btnDetect.Left := pnlBody.Left;
   btnDetect.Top := btnHelp.Top;
 end;
@@ -261,7 +338,7 @@ begin
     OpenDlg.Options := [ofHideReadOnly, ofEnableSizing];
     OpenDlg.OptionsEx := [];
     OpenDlg.Title := sTitle;
-    OpenDlg.HelpKeyword := 'SelectCompilerDlg';            // ** do not localise
+    OpenDlg.HelpKeyword := 'SelectCompilerDlg';
     // if we have a compiler path use it as default if it exists
     DefFileName := edCompilerPath.Text;
     if FileExists(DefFileName) then
@@ -867,6 +944,7 @@ var
 begin
   // Get reference to value editor
   ValEd := Sender as TValueListEditor;
+  ValEd.Canvas.Font := ValEd.Font;
   with ValEd.Canvas do
   begin
     if gdFixed in State then

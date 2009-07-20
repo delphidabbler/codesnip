@@ -6,15 +6,20 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     inherited pcWizard: TPageControl
-      ActivePage = tsIntro
+      ActivePage = tsUserInfo
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblIntro: TLabel
           Left = 0
           Top = 8
-          Width = 329
-          Height = 130
+          Width = 369
+          Height = 227
+          AutoSize = False
           Caption = 
             'Thanks for deciding to submit code for inclusion in the Code Sni' +
             'ppets database.'#13#10#13#10'This wizard collects some information from yo' +
@@ -40,15 +45,9 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         object lblRoutinePrompt: TLabel
           Left = 0
           Top = 221
-          Width = 221
+          Width = 183
           Height = 13
           Caption = 'One or more snippets must be selected'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsBold]
-          ParentFont = False
           Visible = False
         end
         inline frmRoutines: TSelectUserSnippetsFrame
@@ -73,10 +72,6 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         Caption = 'tsUserInfo'
         ImageIndex = 2
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblName: TLabel
           Left = 0
           Top = 8
@@ -101,54 +96,12 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
           Caption = 'Your &Comments:'
           FocusControl = edComments
         end
-        object lblUserInfoPrompt: TLabel
-          Left = 0
-          Top = 216
-          Width = 369
-          Height = 13
-          AutoSize = False
-        end
-        object lblPrivacy: TLabel
-          Left = 0
-          Top = 67
-          Width = 369
-          Height = 26
-          AutoSize = False
-          Caption = 
-            'Your email address will not be abused. See the privacy statement' +
-            ' for details.'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = []
-          ParentFont = False
-          WordWrap = True
-        end
-        object lblPrivacyHelp: TLabel
-          Left = 223
-          Top = 67
-          Width = 83
-          Height = 13
-          Cursor = crHandPoint
-          Caption = 'privacy statement'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clGreen
-          Font.Height = -11
-          Font.Name = 'MS Sans Serif'
-          Font.Style = [fsUnderline]
-          ParentFont = False
-          Transparent = False
-          OnClick = lblPrivacyHelpClick
-        end
         object edName: TEdit
           Left = 88
           Top = 3
           Width = 185
           Height = 21
           TabOrder = 0
-          OnEnter = edNameEnter
-          OnExit = UserInfoEditExit
         end
         object edEMail: TEdit
           Left = 88
@@ -156,17 +109,44 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
           Width = 185
           Height = 21
           TabOrder = 1
-          OnEnter = edEMailEnter
-          OnExit = UserInfoEditExit
         end
         object edComments: TMemo
           Left = 0
           Top = 123
           Width = 369
           Height = 112
+          TabOrder = 3
+        end
+        inline frmPrivacy: TFixedHTMLDlgFrame
+          Left = 0
+          Top = 69
+          Width = 369
+          Height = 18
           TabOrder = 2
-          OnEnter = edCommentsEnter
-          OnExit = UserInfoEditExit
+          TabStop = True
+          ExplicitTop = 69
+          ExplicitWidth = 369
+          ExplicitHeight = 18
+          inherited pnlBrowser: TPanel
+            Width = 369
+            Height = 18
+            ExplicitWidth = 369
+            ExplicitHeight = 18
+            inherited wbBrowser: TWebBrowser
+              Width = 369
+              Height = 18
+              TabStop = False
+              ExplicitTop = -2
+              ExplicitWidth = 369
+              ExplicitHeight = 18
+              ControlData = {
+                4C00000023260000DC0100000000000000000000000000000000000000000000
+                000000004C000000000000000000000001000000E0D057007335CF11AE690800
+                2B2E126208000000000000004C0000000114020000000000C000000000000046
+                8000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000100000000000000000000000000000000000000}
+            end
+          end
         end
       end
       object tsSubmit: TTabSheet
@@ -193,9 +173,9 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
           WordWrap = True
         end
         object btnPreview: TButton
-          Left = 138
+          Left = 136
           Top = 144
-          Width = 94
+          Width = 98
           Height = 25
           Caption = '&Preview Data...'
           TabOrder = 0
@@ -214,7 +194,7 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
           Left = 0
           Top = 0
           Width = 369
-          Height = 113
+          Height = 201
           AutoSize = False
           Caption = 
             'Thank you. Your submission has been sent successfully.'#13#10#13#10'The da' +

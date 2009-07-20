@@ -20,6 +20,9 @@
  * v1.5 of 21 Apr 2008  - Removed CSS body border style that was displaying
  *                        incorrectly on Vista or with the IE7 browser control.
  *                      - Provided frame to web control using underlying panel.
+ * v1.6 of 18 Jul 2009  - Modified to display news using UI dependent "content"
+ *                        font.
+ *                      - Made protected section strict.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -39,10 +42,8 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
- *
- * Contributor(s): None
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -68,7 +69,7 @@ type
     Frame containing a web browser control that displays news items.
   }
   TNewsHTMLFrame = class(TBrowserBaseFrame)
-  protected
+  strict protected
     procedure BuildCSS(const CSSBuilder: TCSSBuilder); override;
       {Generates CSS classes specific to the news pane. This CSS is added to
       that provided by parent class.
@@ -93,7 +94,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UColours, UCSSUtils, UHTMLTemplate, UWBUIMgr, UWBNulDropTarget;
+  UColours, UCSSUtils, UFontHelper, UHTMLTemplate, UWBUIMgr, UWBNulDropTarget;
 
 
 {
@@ -118,25 +119,25 @@ procedure TNewsHTMLFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
     @param CSSBuilder [in] Object used to build the CSS code.
   }
 var
-  CSSFont: TFont; // font used to set CSS properties
+  ContentFont: TFont; // content font used to set CSS properties
 begin
   inherited;
   // Set body style to use window colour and frame's font with no margin
-  CSSFont := TFont.Create;
+  ContentFont := TFont.Create;
   try
+    TFontHelper.SetContentFont(ContentFont, True);
     with CSSBuilder.AddSelector('body') do
     begin
       AddProperty(CSSBackgroundColorProp(clWindow));
-      AddProperty(CSSFontProps(Self.Font));
+      AddProperty(CSSFontProps(ContentFont));
       AddProperty(CSSMarginProp(3));
     end;
     // Sets H1 style
     with CSSBuilder.AddSelector('h1') do
     begin
-      CSSFont.Assign(Self.Font);
-      CSSFont.Style := [fsBold];
-      CSSFont.Color := clNewsHeading;
-      AddProperty(CSSFontProps(CSSFont));
+      AddProperty(CSSFontSizeProp(ContentFont.Size));
+      AddProperty(CSSFontStyleProp([fsBold]));
+      AddProperty(CSSColorProp(clNewsHeading));
       AddProperty(CSSMarginProp(0, 0, 4, 0));
       AddProperty(CSSPaddingProp(0, 0, 2, 0));
       AddProperty(CSSBorderProp(cssBottom, 1, cbsSolid, clBorder));
@@ -147,21 +148,15 @@ begin
     // Setup .dateline style
     with CSSBuilder.AddSelector('.dateline') do
     begin
-      CSSFont.Assign(Self.Font);
-      CSSFont.Size := CSSFont.Size - 1;
-      CSSFont.Color := clNewsDateText;
-      AddProperty(CSSFontProps(CSSFont));
+      AddProperty(CSSFontSizeProp(ContentFont.Size - 1));
+      AddProperty(CSSColorProp(clNewsDateText));
       AddProperty(CSSTextAlignProp(ctaRight));
       AddProperty(CSSMarginProp(cssTop, 3));
       AddProperty(CSSFloatProp(cfvRight));
     end;
     // Setup .highlight style
     with CSSBuilder.AddSelector('.highlight') do
-    begin
-      CSSFont.Assign(Self.Font);
-      CSSFont.Color := clNewsHighlight;
-      AddProperty(CSSFontProps(CSSFont));
-    end;
+      AddProperty(CSSColorProp(clNewsHighlight));
     // Setup .message style
     with CSSBuilder.AddSelector('.message') do
     begin
@@ -169,7 +164,7 @@ begin
       AddProperty(CSSMarginProp(cssTop, 30));
     end;
   finally
-    FreeAndNil(CSSFont);
+    FreeAndNil(ContentFont);
   end;
 end;
 

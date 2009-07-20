@@ -1,11 +1,14 @@
 {
  * FmDependenciesDlg.pas
  *
- * Implements a dialog box that displays information about donating to support
- * CodeSnip along with button to access Paypal donation web page in default
- * browser.
+ * Implements a dialog box that recursively displays all the dependencies of a
+ * snippet.
  *
  * v1.0 of 06 Jun 2009  - Original version.
+ * v1.1 of 10 Jul 2009  - Changed so that "no snippets" and "circular reference"
+ *                        message labels recognise default OS font.
+ *                      - Revised control alignment code to allow for height of
+ *                        text in "circular reference" label.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -66,8 +69,7 @@ type
       }
       TTVDraw = class(TSnippetsTVDraw)
       strict private
-        fRootID: TSnippetID;
-          {ID of snippet for which dependency nodes displayed}
+        fRootID: TSnippetID;  // ID of snippet whose dependency nodes displayed
       strict protected
         function IsUserDefinedNode(const Node: TTreeNode): Boolean;
           override;
@@ -88,12 +90,9 @@ type
           }
       end;
     var
-      fSnippetID: TSnippetID;
-        {ID of snippet for which dependencies are displayed}
-      fDependsList: TRoutineList;
-        {List of dependencies to be displayed}
-      fTVDraw: TTVDraw;
-        {Object used to customise appearance of tree view}
+      fSnippetID: TSnippetID;     // Snippet whose dependencies are displayed
+      fDependsList: TRoutineList; // List of dependencies to be displayed
+      fTVDraw: TTVDraw;           // Customises appearance of tree view}
     procedure PopulateTreeView;
       {Populates treeview with nodes for each snippet in dependency list.
       }
@@ -144,9 +143,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Graphics,
   // Project
-  UColours, USnippetKindInfo;
+  UColours, UFontHelper, USnippetKindInfo, FmGenericDlg;
 
 {$R *.dfm}
 
@@ -197,6 +196,9 @@ begin
   // Adjust size of treeview
   if lblCircularRef.Visible then
   begin
+    // move label
+    lblCircularRef.Top := pnlBody.Top + pnlBody.ClientHeight
+      - lblCircularRef.Height - 8;
     // circular reference: make room to see circular reference label
     tvDependencies.Align := alTop;
     tvDependencies.Height := lblCircularRef.Top - 6;
@@ -216,8 +218,9 @@ begin
   inherited;
   // Set form caption
   Caption := Format(sTitle, [GetDisplayName]);
-  // Set "no dependencies" label in case needed
+  // Set "no dependencies" label in case needed and make bold
   lblNoDependencies.Caption := Format(sNoDepends, [GetDisplayName]);
+  lblNoDependencies.Font.Style := [fsBold];
   // Set "circular reference" label's colour and visibility
   lblCircularRef.Font.Color := clWarningText;
   lblCircularRef.Visible := False;

@@ -17,6 +17,8 @@
  * v1.5 of 08 Jul 2009  - Revised to use revised search criteria factory method
  *                        to take a TRoutineList instead of a TStringList of
  *                        snippet names.
+ * v1.6 of 10 Jul 2009  - Widended buttons in right hand column of form to
+ *                        accommodate default Vista UI font.
  *
  *
  * ***** BEGIN LICENSE BLOCK *****
@@ -77,8 +79,7 @@ type
     procedure btnUserDBClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   strict private
-    fSearch: ISearch;
-      {Search that corresponds to snippets selected by the user}
+    fSearch: ISearch; // Search corresponding to snippets selected by the user
     procedure SetSelectedRoutines(const Value: TRoutineList);
       {Stores a list of snippets in snippet selection frame. Frame then selects
       all listed snippets in its treeview.
@@ -193,7 +194,7 @@ class function TSelectionSearchDlg.Execute(const AOwner: TComponent;
       if user cancels.
     @return True if user OKs and false if user cancels.
   }
-begin    
+begin
   with TSelectionSearchDlg.Create(AOwner) do
     try
       SetSelectedRoutines(SelectedRoutines);

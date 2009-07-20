@@ -9,29 +9,29 @@ inherited PrintDlg: TPrintDlg
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Width = 345
+    Width = 353
     Height = 167
-    ExplicitWidth = 345
+    ExplicitWidth = 353
     ExplicitHeight = 167
     object gpOptions: TGroupBox
       Left = 0
-      Top = 91
-      Width = 169
+      Top = 89
+      Width = 209
       Height = 70
       Caption = ' Document Formatting Options '
       TabOrder = 1
       object chkSyntaxPrint: TCheckBox
         Left = 8
         Top = 20
-        Width = 157
+        Width = 192
         Height = 17
         Caption = '&Syntax highlight source code'
         TabOrder = 0
       end
       object chkUseColor: TCheckBox
         Left = 8
-        Top = 44
-        Width = 121
+        Top = 43
+        Width = 192
         Height = 17
         Caption = 'Use &colour'
         TabOrder = 1
@@ -40,13 +40,13 @@ inherited PrintDlg: TPrintDlg
     object gpPrinter: TGroupBox
       Left = 0
       Top = 0
-      Width = 345
+      Width = 353
       Height = 83
       Caption = ' Printer '
       TabOrder = 0
       object lblPrinters: TLabel
         Left = 8
-        Top = 16
+        Top = 18
         Width = 79
         Height = 13
         Caption = '&Installed printers:'
@@ -55,7 +55,7 @@ inherited PrintDlg: TPrintDlg
       object btnProperties: TButton
         Left = 262
         Top = 16
-        Width = 75
+        Width = 83
         Height = 25
         Caption = '&Properties...'
         TabOrder = 1
@@ -63,7 +63,7 @@ inherited PrintDlg: TPrintDlg
       end
       object cbPrinters: TComboBox
         Left = 8
-        Top = 34
+        Top = 36
         Width = 241
         Height = 27
         Style = csOwnerDrawFixed
@@ -74,7 +74,7 @@ inherited PrintDlg: TPrintDlg
       object btnSetup: TButton
         Left = 262
         Top = 48
-        Width = 75
+        Width = 83
         Height = 25
         Caption = 'Page Set&up...'
         TabOrder = 2
