@@ -3,8 +3,8 @@
  *
  * JavaScript code used to perform animations in program's easter egg.
  *
- * v1.0 of 19 Jun 2009  - Original version.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -25,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *    NONE
  *
  * ***** END LICENSE BLOCK *****
  */
@@ -182,6 +185,7 @@ function moveEggImages() {
     stretchBlurb();
   }
 }
+
 
 // -----------------------------------------------------------------------------
 // Animation that appears to roll "paper" for blurb out of bottom half of egg
