@@ -1,17 +1,10 @@
 /*
  * detail.js
  *
- * JavaScript code for use by any detail page.
+ * JavaScript code for use by HTML displayed in a detail pane.
  *
- * v1.0 of 03 Dec 2006  - Original version that exposes routines called from
- *                        both JavaScript and Delphi code.
- * v1.1 of 14 Sep 2008  - Added setOnClick function to set a tag's onclick
- *                        event handler.
- * v2.0 of 25 Jan 2009  - Removed all except getInnerText() routine. This script
- *                        is no longer accessed from Delphi code.
- * v2.1 of 10 Jul 2009  - Moved showTestCompileHint() function from
- *                        comp-routine.js.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -32,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *    NONE
  *
  * ***** END LICENSE BLOCK *****
  */

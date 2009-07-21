@@ -1,53 +1,13 @@
 <!--
  * comp-snippet-tplt.html
  *
- * Compiler Check pane template. Used to display compiler compatibilty and test
- * information for a selected snippet in the CodeSnip database.
+ * Compiler Check pane template used to display compiler compatibilty and test
+ * information for a selected snippet.
  *
- * Renamed comp-routine-tplt.html as comp-snippet-tplt.html as at v2.1.
- *
- * v1.0 of 03 Dec 2006  - Original version. Replaces
- *                        comp-routine-dbase-tplt.html and
- *                        comp-routine-test-tplt.html.
- * v1.1 of 04 Dec 2006  - Modified View/Hide Test Unit link's onmouseover and
- *                        onmouseout events to call enterTestUnitLink() and
- *                        exitTestUnitLink() rather than showHint() and
- *                        clearHint().
- *                      - Added new viewunitimg img to View Test Unit image to
- *                        allow image to be changed.
- * v1.2 of 17 Dec 2006  - Changed help text link to use .help-link CSS class.
- * v1.3 of 18 Oct 2007  - Added "return false;" statement to end of each onclick
- *                        event that didn't already have it.
- * v1.4 of 03 Nov 2007  - Updated link class names to designate link type and
- *                        links to be included in popup menus.
- * v1.5 of 04 Nov 2007  - Changed to display help via "help:" protocol rather
- *                        than using JavaScript calls.
- * v1.6 of 14 Sep 2008  - Added extra ids to enable toggle unit and test compile
- *                        links to be hidden when routine being displayed is not
- *                        in standard format.
- *                      - Added message displayed when routine is not in
- *                        standard format.
- *                      - Added class option-img to images related to menu
- *                        links.
- * v2.0 of 25 Jan 2009  - Added template placeholders to be used instead of
- *                        dynamic updating via DHTML.
- *                      - Removed erroneous parameter from enterTestUnitLink
- *                        function call.
- * v2.1 of 19 Jun 2009  - Removed HTML divs that were used to display test unit.
- *                      - Links that previously toggled visibility of test unit
- *                        now call a new external object function that causes
- *                        test unit to be displayed in dialog. These links are
- *                        no longer updated dynamically: they now have static
- *                        text and images.
- *                      - Changed test compile link etc to refer to "snippet"
- *                        rather than "routine"
- *                      - Removed divs that appear when snippet is not
- *                        compilable or there are no compilers: different
- *                        templates are now used in this case.
- *                      - Added enclosing "details" div.
- *                      - Added edit snippet div for user-defined snippets.
- *                      - Renamed as comp-snippet-tplt.html.
- *
+ * Must be hosted within a complete HTML document.
+ * 
+ * $Rev$
+ * $Date$
  *                                                 
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -69,8 +29,12 @@
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
+ * Contributors:
+ *    NONE
+ *
  * ***** END LICENSE BLOCK *****
 -->
+
 
 <div class="details">
 
