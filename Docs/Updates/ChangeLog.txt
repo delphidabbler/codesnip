@@ -103,6 +103,7 @@ CodeSnip 2.3.5 - 25 January 2009
 Version 2.3.4 - no public release
 CodeSnip 2.3.4 - 16 January 2009
 + Copy Source Code menu item now places a copy of selected snippet on clipboard in syntax highlighted rich text in addition to plain text.
++ Updated help file accordingly.
 
 Version 2.3.3 - no public release
 CodeSnip 2.3.3 - 14 January 2009
