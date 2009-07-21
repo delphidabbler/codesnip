@@ -4,39 +4,11 @@
  * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
  *
  * Creates per-user and application-wide ini files in correct data folders. Can
- * also create the new ini files from the information stored in the single ini
- * file used in versions of CodeSnip prior to version 1.9.
+ * also create the ini files from the information stored in the single ini file
+ * used in versions of CodeSnip prior to version 1.9.
  *
- * v1.0 of 08 Sep 2007  - Original version. Worked with single ini file. Updated
- *                        ini file from Version 1 to Version 2. Replaces old
- *                        'SourceOutput' section with new Prefs:SourceCode
- *                        section.
- * v1.1 of 17 Oct 2007  - Modified to updates Version 1 & 2 of single ini file
- *                        to Version 3. Performs as v1.0 and additionally
- *                        replaces old HiliteOutput section and subsections with
- *                        single new Prefs:Hiliter section.
- * v2.0 of 14 Aug 2008  - Major update: added support for twin per-user and
- *                        application wide ini files.
- *                        - Added code to create new ini files, either as empty
- *                          files or with content copied from any old-style ini
- *                          file. New style files are flagged as v4.
- *                        - Any old style ini file continues to be updated to v3
- *                          if necessary before being used to create new ini
- *                          files.
- *                        - Old routines that operate only on old style ini file
- *                          were renamed with CS prefix.
- *                        - Redundant code removed.
- * v3.0 of 15 Jun 2009  - Heavily revised to updated ini files required by
- *                        CodeSnip v3.0 and later:
- *                        - Now delete source hiliting from config files created
- *                          by earlier versions than CodeSnip 3.x.
- *                        - Source code formatting from CodeSnip prior to v1.7
- *                          is now lost.
- *                        - Modified to deal with new user ini file name.
- *                        - Program's version number now stored in common config
- *                          file.
- *                        - Redundant code removed.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -57,6 +29,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *    NONE
  *
  * ***** END LICENSE BLOCK *****
 }
