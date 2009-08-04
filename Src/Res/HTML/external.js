@@ -5,8 +5,18 @@
  * HTML and JavaScript code should call these routines rather than making
  * direct calls to the external object.
  *
- * $Rev$
- * $Date$
+ * v1.0 of 26 Nov 2006  - Original version.
+ * v1.1 of 04 Nov 2007  - Removed helpTopic() function. No longer required.
+ * v1.2 of 14 Sep 2008  - Added "userdefined" param to displayRoutine() routine.
+ *                      - Added new editRoutine() function.
+ * v1.3 of 17 Jun 2009  - Modified to work with v5 external object:
+ *                        - Removed redundant toggleTestUnit() function.
+ *                        - Added new showTestUnit() function.
+ *                        - Added new donate() function.
+ *                        - Changed to call renamed external object methods.
+ * v1.4 of 12 Jul 2009  - Added new displayCategory() function that calls
+ *                        equivalent method of external object v6.
+ *
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -27,9 +37,6 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
- *
- * Contributors:
- *    NONE
  *
  * ***** END LICENSE BLOCK *****
  */

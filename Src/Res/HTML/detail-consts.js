@@ -3,8 +3,17 @@
  *
  * Declares various hint strings used by JavaScript in detail panes.
  *
- * $Rev$
- * $Date$
+ * v1.0 of 22 Oct 2006  - Original version.
+ * v1.1 of 04 Nov 2007  - Removed help topic A-link constants as now unused.
+ * v1.2 of 14 Sep 2008  - Added new constants for standard format and user
+ *                        database help link hints and for edit snippet command
+ *                        link.
+ * v1.3 of 16 Jun 2009  - Removed unused vHideTestUnitHint and vStdFormatHint
+ *                        strings.
+ *                      - Added new vDonateHint, vFreeformHelpHint,
+ *                        vRoutineHelpHint, vTypeDefHelpHint, vConstantHelpHint
+ *                        and vSnippetKindHelpHint strings.
+ *
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -25,9 +34,6 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
- *
- * Contributors:
- *    NONE
  *
  * ***** END LICENSE BLOCK *****
  */
@@ -51,3 +57,5 @@ var vRoutineHelpHint      = "Display help about routine snippets";
 var vTypeDefHelpHint      = "Display help about type definition snippets";
 var vConstantHelpHint     = "Display help about constant snippets";
 var vSnippetKindHelpHint  = "Display help about snippet kinds";
+
+

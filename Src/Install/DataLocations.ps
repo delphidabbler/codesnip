@@ -4,12 +4,18 @@
  * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
  *
  * Gets information about location of application data folder and any existing
- * config files and databaseon on the system where CodeSnip is being installed.
- * Sets global variables storing folder paths that indicate where config files
- * and database can be found.
+ * config files and databaseon the system where CodeSnip is being installed.
+ * Sets global variables storing folder paths and that indicate where config
+ * files and database can be found if present.
  *
- * $Rev$
- * $Date$
+ * v1.0 of 14 Aug 2007  - Original version.
+ * v1.1 of 15 Jun 2009  - Updated for CodeSnip v3. Changes relate to bringing
+ *                        forward and converting config files and changing
+ *                        user database location.
+ *                      - Changed method of detecting different data versions:
+ *                        now attempt to detect program versions and deduce
+ *                        config and database changes.
+ *
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -31,11 +37,9 @@
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributors:
- *    NONE
- *
  * ***** END LICENSE BLOCK *****
 }
+
 
 {
   File locations in CodeSnip versions:

@@ -1480,7 +1480,7 @@
   )
   @REVISION(
     @VERSION            0.7.0 (build 19)
-    @DATE               17/03/2005
+    @DATE               16/03/2005
     @COMPILERS          + Delphi 7
                         + BRCC32 5.4
                         + Help Topic Author 1.16
@@ -2700,7 +2700,7 @@
       )
       @UPDATED(
         @FILE           Help\HTML\dlg_configcompilers.htm
-        @DATE           08/01/2006
+        @DATE           06/01/2006
         @COMMENTS       Updated topic re revised and extended Configure
                         Compilers dialog box.
       )
@@ -3665,7 +3665,7 @@
       )
       @UPDATED(
         @FILE           Help\HTML\dlg_savesnippet.htm
-        @DATE           11/04/2006
+        @DATE           11/11/2006
         @COMMENTS       Removed reference to Save Snippet toolbar button.
       )
       @UPDATED(
@@ -4616,11 +4616,6 @@
         @FILE           Help\Images\BugReport.gif
         @DATE           04/06/2006
         @COMMENTS       Bug report action glyph.
-      )
-      @NEW(
-        @FILE           Help\Images\ConfigCompilers.gif
-        @DATE           29/05/2006
-        @COMMENTS       Configure compilers action glyph.
       )
       @NEW(
         @FILE           Help\Images\Preferences.gif
@@ -6954,7 +6949,7 @@
         @COMMENTS       Selection search glyph
       )
       @NEW(
-        @FILE           Res\Img\XRefSearch.bmp
+        @FILE           Img\Res\XRefSearch.bmp
         @DATE           01/02/2007
         @COMMENTS       XRef search glyph
       )
@@ -7849,7 +7844,7 @@
       )
       @UPDATED(
         @FILE           Install\CodeSnip.iss
-        @VERSION        1.39
+        @VERSION        1/39
       )
     )
   )
@@ -8622,7 +8617,7 @@
   )
   @REVISION(
     @VERSION            1.7.5 (build 100)
-    @DATE               17/10/2007
+    @DATE               16/10/2007
     @COMMENTS           + Refactored code that displays measurement units in
                           preferences dialog box.
                         + Modified preference dialog box so that preview on
@@ -11650,7 +11645,7 @@
   )
   @REVISION(
     @VERSION            2.3 (build 135)
-    @DATE               05/01/2009
+    @DATE               03/01/2009
     @COMMENTS           + Changed name of Copy Snippet menu item to Copy Source
                           Code.
                         + Added new Copy Information menu item to Copy menu -
@@ -12208,10 +12203,9 @@
   @REVISION(
     @VERSION            2.3.4 (build 139)
     @DATE               16/01/2009
-    @COMMENTS           + Copy Source Code menu item now places a copy of the
-                          selected snippet on clipboard in syntax highlighted
-                          rich text in addition to plain text copy.
-                        + Updated help file.
+    @COMMENTS           Copy Source Code menu item now places a copy of the
+                        selected snippet on clipboard in syntax highlighted rich
+                        text in addition to plain text copy.
     @COMPILERS          + Delphi 2006
                         + BRCC32 5.4
                         + MS HTML Help Workshop 1.1
@@ -12581,7 +12575,7 @@
         @VERSION        1.0
       )
       @NEW(
-        @FILE           Res\Img\pound-sign.png
+        @FILE           Res\HTML\pound-sign.png
         @DATE           10/05/2009
         @COMMENTS       Pound sign image displayed in Donate dialog box.
       )
@@ -13554,7 +13548,7 @@
       @NEW(
         @FILE           Help\Images\ViewTestUnit.gif
         @DATE           17/06/2009
-        @COMMENTS       Display Compile Errors action glyph.
+        @COMMENTS       Glyph for action that displays a test unit.
       )
       @UPDATED(
         @FILE           Install\DataLocations.ps
