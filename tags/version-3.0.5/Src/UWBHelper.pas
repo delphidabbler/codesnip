@@ -1,0 +1,177 @@
+{
+ * UWBHelper.pas
+ *
+ * Defines a static class that provides helper methods for manipulating and
+ * interogating web browser controls.
+ *
+ * v1.0 of 17 Feb 2007  - Original version.
+ * v1.1 of 04 Nov 2007  - Change WaitForDocToLoad method to pause using busy
+ *                        wait rather than calling Sleep().
+ * v1.2 of 04 Oct 2008  - Changed TWBHelper to derive from TNoConstructObject
+ *                        and hence prevented it from being constructed.
+ *                      - Made private section of TWBHelper strict.
+ *                      - Now use ClassName method in all assert and raise EBug
+ *                        statements.
+ * v1.3 of 15 Dec 2008  - Removed custom Pause routine and replaced with call to
+ *                        UUtils.Pause.
+ *
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UWBHelper.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2007-2008 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
+}
+
+
+unit UWBHelper;
+
+
+interface
+
+
+uses
+  // Delphi
+  ShDocVw,
+  // Project
+  UBaseObjects;
+
+
+type
+
+  {
+  TWBHelper:
+    Static class that provides helper methods for manipulating and interogating
+    web browser controls.
+  }
+  TWBHelper = class(TNoConstructObject)
+  strict private
+    class procedure WaitForDocToLoad(const WB: TWebBrowser);
+      {Pauses until a browser control's document has fully loaded.
+        @param WB [in] Browser control whose document we are waiting for.
+      }
+    class procedure CheckValidDoc(const WB: TWebBrowser);
+      {Checks that the current document in a web browser control is a valid HTML
+      document.
+        @param WB [in] Browser control whose document is to be checked.
+        @raise EBug if document is not valid.
+      }
+  public
+    class procedure WaitForValidDocToLoad(const WB: TWebBrowser);
+      {Pauses until a browser control's document has fully loaded then checks
+      that the document is a valid HTML document.
+        @param WB [in] Browser control whose document we are waiting for.
+        @raise EBug if document is not valid.
+      }
+    class function IsCommandEnabled(const WB: TWebBrowser;
+      const CmdId: OLECMDID): Boolean;
+      {Checks if a OLE command is enabled on a browser control.
+        @param WB [in] Browser control on which command is to be tested.
+        @param CmdId [in] Id of OLE command.
+        @return True if command is enabled or False if not.
+      }
+    class procedure ExecCommand(const WB: TWebBrowser; const CmdId: OLECMDID);
+      {Executes an OLE command on a browser control.
+        @param WB [in] Browser control on which command is to be tested.
+        @param CmdId [in] Id of OLE command.
+      }
+  end;
+
+
+implementation
+
+
+uses
+  // Delphi
+  Forms, Windows,
+  // Project
+  UExceptions, UHTMLDocHelper, UUtils;
+
+
+{ TWBHelper }
+
+class procedure TWBHelper.CheckValidDoc(const WB: TWebBrowser);
+  {Checks that the current document in a web browser control is a valid HTML
+  document.
+    @param WB [in] Browser control whose document is to be checked.
+    @raise EBug if document is not valid.
+  }
+begin
+  // ** do not localise string literals in this method
+  Assert(Assigned(WB),                                     // ** do not localise
+    ClassName + '.CheckValidDoc: WB is nil');
+  if not Assigned(WB.Document) then
+    raise EBug.Create(                                     // ** do not localise
+      ClassName + '.CheckValidDoc: Document not assigned'
+    );
+  if not THTMLDocHelper.IsValidDocument(WB.Document) then
+    raise EBug.Create(                                     // ** do not localise
+      ClassName + '.CheckValidDoc: Document is not a valid HTML document'
+    );
+end;
+
+class procedure TWBHelper.ExecCommand(const WB: TWebBrowser;
+  const CmdId: OLECMDID);
+  {Executes an OLE command on a browser control.
+    @param WB [in] Browser control on which command is to be tested.
+    @param CmdId [in] Id of OLE command.
+  }
+begin
+  Assert(Assigned(WB),                                     // ** do not localise
+    ClassName + '.ExecCommand: WB is nil');
+  WB.ExecWB(CmdId, OLECMDEXECOPT_DONTPROMPTUSER);
+end;
+
+class function TWBHelper.IsCommandEnabled(const WB: TWebBrowser;
+  const CmdId: OLECMDID): Boolean;
+  {Checks if a OLE command is enabled on a browser control.
+    @param WB [in] Browser control on which command is to be tested.
+    @param CmdId [in] Id of OLE command.
+    @return True if command is enabled or False if not.
+  }
+begin
+  Assert(Assigned(WB),                                     // ** do not localise
+    ClassName + '.IsCommandEnabled: WB is nil');
+  Result := (WB.QueryStatusWB(CmdId) and OLECMDF_ENABLED) <> 0;
+end;
+
+class procedure TWBHelper.WaitForDocToLoad(const WB: TWebBrowser);
+  {Pauses until a browser control's document has fully loaded.
+    @param WB [in] Browser control whose document we are waiting for.
+  }
+begin
+  Assert(Assigned(WB),                                     // ** do not localise
+    ClassName + '.WaitForDocToLoad: WB is nil');
+  while WB.ReadyState <> READYSTATE_COMPLETE do
+    UUtils.Pause(5);
+end;
+
+class procedure TWBHelper.WaitForValidDocToLoad(const WB: TWebBrowser);
+  {Pauses until a browser control's document has fully loaded then checks that
+  the document is a valid HTML document.
+    @param WB [in] Browser control whose document we are waiting for.
+    @raise EBug if document is not valid.
+  }
+begin
+  WaitForDocToLoad(WB);
+  CheckValidDoc(WB);
+end;
+
+end.
+
