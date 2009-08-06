@@ -25,7 +25,6 @@
 -$YD
 -$Z1
 -cg
--AWinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 -H+
 -W+
 -M
@@ -33,8 +32,6 @@
 -K$00400000
 -E"..\Exe"
 -N0"..\Bin"
--LE"C:\Users\Dev\Documents\Borland Studio Projects\Bpl"
--LN"C:\Users\Dev\Documents\Borland Studio Projects\Bpl"
 -U"..\Bin;3rdParty"
 -O"..\Bin;3rdParty"
 -I"..\Bin;3rdParty"
