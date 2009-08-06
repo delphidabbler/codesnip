@@ -18,6 +18,10 @@ FILES:
 + HelpHistory.txt
   Details of changes to all files in Src\Help directory up to 4 July 2009.
   
++ InstallHelper.txt
+  Details of changes to all files in Src\InstallHelper directory up to 4 July
+  2009.
+
 + InstallHistory.txt
   Details of changes to all files in Src\Install directory up to 4 July 2009.
 
