@@ -1,12 +1,16 @@
-;===============================================================================
+;-------------------------------------------------------------------------------
 ; VCodeSnip.vi
 ;
 ; Version information description file used to create VCodeSnip.res resource
-; file Build this file with DelphiDabbler Version Information Editor from
-; http://www.delphidabbler.com/. Compile the resulting .rc file using the
-; Borland BRCC32 resource compiler.
+; file.
 ;
-;===============================================================================
+; $Rev$
+; $Date$
+;
+; Usage:
+;   1) Generate a .rc resource source file from this file using DelphiDabbler
+;      Version Information Editor (http://www.delphidabbler.com/vied).
+;   2) Use the Borland BRCC32 resource compiler to compile the .rc file.
 ;
 ; ***** BEGIN LICENSE BLOCK *****
 ;
@@ -25,12 +29,14 @@
 ; The Initial Developer of the Original Code is Peter Johnson
 ; (http://www.delphidabbler.com/).
 ;
-; Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+; Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
 ; Johnson. All Rights Reserved.
 ;
-; ***** END LICENSE BLOCK *****
+; Contributor(s):
+;   NONE
 ;
-;===============================================================================
+; ***** END LICENSE BLOCK *****
+;-------------------------------------------------------------------------------
 ;
 ;
 [Fixed File Info]
@@ -63,4 +69,3 @@ Special Build=
 [Configuration Details]
 Identifier=
 NumRCComments=0
-
