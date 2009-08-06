@@ -210,8 +210,21 @@ KIND, either express or implied. The code is used entirely at you own risk.
 Source Code
 ________________________________________________________________________________
 
-CodeSnip's original source code and some third party libraries can be downloaded
-from http://www.delphidabbler.com/software/codesnip/download.
+The source code of the latest version of CodeSnip can be downloaded from
+http://www.delphidabbler.com/software/codesnip/download.
+
+The current development source tree and all v3.x versions can be viewed and
+downloaded from SourgeForce.net at
+http://codesnip.svn.sourceforge.net/viewvc/codesnip/.
+
+Subversion users can checkout code from
+https://codesnip.svn.sourceforge.net/svnroot/codesnip. You will usually checkout
+the "trunk" branch (development branch) or one of the stable releases listed in
+the "tags" branch.
+
+Ready zipped source code archives of the current release and earlier versions
+can be downloaded from the CodeSnip Files page on SourceForge.net at:
+https://sourceforge.net/projects/codesnip/files/
 
 Available source code is released under the Mozilla Public license (see
 http://www.mozilla.org/MPL/) and other open source licenses.
