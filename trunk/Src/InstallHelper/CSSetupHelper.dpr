@@ -5,8 +5,8 @@
  * original user's application data folder and writes it to a file that can be
  * read by install program.
  *
- * v1.0 of 14 Aug 2008  - Original version.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -25,10 +25,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributors:
+ *    NONE
  *
  * ***** END LICENSE BLOCK *****
 }

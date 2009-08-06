@@ -9,9 +9,8 @@
  * Based on a sample manifest in "Windows Vista User Account Control (UAC) and
  * Delphi" by Fredrik Haglund, CodeGear.
  *
- * v1.0 of 21 Apr 2008  - Original version that permits application to run
- *                        without elevation on Vista (Vista would elevate
- *                        without this because "Setup" is in file name.
+ * $Rev$
+ * $Date$
 -->
 
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
