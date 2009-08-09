@@ -47,18 +47,30 @@
 DELPHIROOT = $(DELPHI2006)
 !endif
 
+# Define path to DelphiDabbler library code if specified for Delphi 2006
+!ifdef DELPHIDABLIBD2006
+DELPHIDABLIB = $(DELPHIDABLIBD2006);
+!endif
+
+# Check for required macros
+!ifndef DELPHIROOT
+!error DELPHIROOT environment variable required.
+!endif
+!ifndef DELPHIDABLIB
+!error DELPHIDABLIB environment variable required.
+!endif
+!ifndef INDY9
+!error INDY9 environment variable required.
+!endif
+!ifndef BIN
+!error BIN macro must be defined in calling script.
+!endif
+
 # Define common macros that access required build tools
 
 MAKE = "$(MAKEDIR)\Make.exe" -$(MAKEFLAGS)
-
-!ifdef DELPHIROOT
 DCC32 = "$(DELPHIROOT)\Bin\DCC32.exe"
 BRCC32 = "$(DELPHIROOT)\Bin\BRCC32.exe"
-!else
-DCC32 = DCC32.exe
-BRCC32 = BRCC32.exe
-!endif
-
 !ifdef VIEDROOT
 VIED = "$(VIEDROOT)\VIEd.exe" -makerc
 !else
@@ -70,7 +82,7 @@ VIED = VIEd.exe -makerc
 # locations in the project options .cfg file.
 .dpr.exe:
   @echo +++ Compiling Delphi Project $< +++
-  @$(DCC32) $< -B -U"$(DELPHIDABLIBD2006)" -U"$(INDY9)"
+  @$(DCC32) $< -B -U"$(DELPHIDABLIB)" -U"$(INDY9)"
 
 # Resource files are compiled to the directory specified by BIN macro, which
 # must have been set by the caller.
