@@ -47,11 +47,7 @@ MIDL = "$(MSSDK)\Bin\MIDL.exe"
 MIDL = MIDL.exe
 !endif
 
-!ifdef DELPHIROOT
 TLIBIMP = "$(DELPHIROOT)\Bin\TLibImp.exe"
-!else
-TLIBIMP = TLibImp.exe
-!endif
 
 !ifdef HTMLRESROOT
 HTMLRES = "$(HTMLRESROOT)\HTMLRes.exe"
