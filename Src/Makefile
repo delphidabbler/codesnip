@@ -41,12 +41,6 @@ BIN = ..\Bin
 
 # Define macros for all tools that are not common
 
-!ifdef MSSDK
-MIDL = "$(MSSDK)\Bin\MIDL.exe"
-!else
-MIDL = MIDL.exe
-!endif
-
 TLIBIMP = "$(DELPHIROOT)\Bin\TLibImp.exe"
 
 !ifdef HTMLRESROOT
@@ -73,6 +67,17 @@ ZIP = "$(ZIPROOT)\Zip.exe"
 ZIP = Zip.exe
 !endif
 
+!ifndef IGNOREMIDL
+!ifdef MSSDK
+MIDL = "$(MSSDK)\Bin\MIDL.exe"
+!else
+# MSSDK is required
+!error MSSDK environment variable required.
+!endif
+!else
+# MIDL.exe can be ignored if IGNOREMIDL macro is defined: replace with echo
+MIDL = @echo *** IGNORING MIDL
+!endif
 
 # Default is to build everything and release
 everything: config exes setup release
