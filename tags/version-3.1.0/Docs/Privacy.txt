@@ -1,0 +1,213 @@
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+PRIVACY STATEMENT FOR DELPHIDABBLER CODESNIP
+________________________________________________________________________________
+
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Offline Privacy
+________________________________________________________________________________
+
+CodeSnip stores some personal information in two configuration files:
+
+
+Common.ini
+--------------------------------------------------------------------------------
+
+Common.ini is located in the in the DelphiDabbler\CodeSnip sub-folder of your
+system's common application data folder. The location of this folder varies
+depending on the OS. On Vista it is usually at C:\ProgramData.
+
+The data that is stored in Common.ini is:
+
+    * A unique 32 digit hexadecimal key based on attributes of your computer.
+    * A 32 digit hexadecimal registration key (registered programs only).
+    * The registered user name or nickname (registered programs only).
+
+The data that is used to create the hexidecimal keys cannot be recovered from
+the keys.
+
+
+User.3.ini
+--------------------------------------------------------------------------------
+
+User.3.ini is found in the DelphiDabbler\CodeSnip sub-folder of your system's
+per-user application data folder. Again this varies by OS. On Vista it is
+somewhere like C:\Users\[UserName]\AppData\Roaming, where [UserName] is the ID
+of the currently logged on user.
+
+The file stores several user-specific application data settings such as your
+preferences. The only personal information that may be included are the name and
+email address you specified if you ever submitted code to the main database via
+the Code Submission Wizard. 
+
+If you have upgraded from CodeSnip v2 there may will also be a file named 
+User.ini. This contains pretty much the same information as User.3.ini.
+
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Spyware
+________________________________________________________________________________
+
+No spyware or other software that threatens your privacy has been deliberately
+or knowingly included with CodeSnip. If the program is found to contain spyware
+it will have been added by third parties and the author asks to be informed of
+any such occurrence. Please report any suspicious behaviour via
+www.delphidabbler.com/contact.
+
+CodeSnip never tries to "phone home" of its own accord. It only goes online in
+response to user requests. Should you notice any unauthorised activity please
+inform the author since it is likely that your copy of the program has been
+hacked by some third party.
+
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+CodeSnip Online Activity
+________________________________________________________________________________
+
+Various user-initiated actions cause CodeSnip to go online. They are:
+
+   1. Updating the database.
+   2. Reporting a bug.
+   3. Registering the program.
+   4. Subscribing to the mailing list.
+   5. Submitting code for inclusion in the main database.
+   6. Accessing various websites via hyperlinks and menu options.
+
+The first five actions are performed directly by CodeSnip, which communicates
+with web services located at www.delphidabbler.com using HTTP on port 80. The
+sixth action simply displays web pages in a browser.
+
+Personal data will neither be published on the DelphiDabbler website nor
+knowingly passed to third parties. Furthermore your data will only be used by
+the author for the purposes set out below. 
+
+
+Updating the Database
+--------------------------------------------------------------------------------
+
+This activity is started by displaying the "Update From Web" dialog box and
+clicking its "Update from Web" button. CodeSnip then contacts the update web
+service and sends the following information:
+
+    * Unique program key (see above for details).
+    * Program version number.
+
+All update activity is logged on the web server and the program key and version
+number are recorded in the log. The web service sends updated database files to
+CodeSnip along with any current news items. News items may contain web links.
+
+
+Reporting a Bug
+--------------------------------------------------------------------------------
+
+This activity is started when a bug is detected by CodeSnip or the user chooses
+to report an undetected bug. A wizard appears that gathers data about the bug.
+The wizard displays the data that is to be sent to the bug report web service.
+The data is only sent if the user clicks the wizard's "Submit" button. The data
+is:
+
+    * A bug report version number.
+    * The program's id, name and version information.
+    * A description of the user's operating system (not including the product
+      code).
+    * Some information about any exception raised.
+    * The user's description of the bug.
+    * [Optionally] the user's email address.
+
+Where provided the email address will only be used to contact the user about the
+bug and to inform when it is fixed. The submitted data is stored in an archive
+of bug reports and may be included in the author's address book if an email
+exchange takes place.
+
+
+Registering the Program
+--------------------------------------------------------------------------------
+
+This activity is started when the user chooses to register CodeSnip. A wizard
+appears that guides the user through the registration process. The wizard
+displays the data that is to be sent to the registration web service. The data
+is only sent if the user clicks the wizard's "Submit" button. The data is:
+
+    * The program's id, name and version information.
+    * The unique program key (see above for details).
+    * The user name or nickname.
+    * A flag indicating whether the user wishes to join the CodeSnip mailing
+      list.
+    * The user's email address (only required if joining the mailing list).
+
+The registration data is recorded in a database on the DelphiDabbler web server.
+The data is only used to keep track of the number of people using the different
+versions of the program. The registration web service returns a registration
+code to the program. CodeSnip records this code, with the user name, in
+Common.ini.
+
+Should the user elect to join the mailing list, the supplied email address and
+user name will be stored in a further database. See Subscribing to the mailing
+list below for details of how mailing list membership is managed.
+
+
+Subscribing to the mailing list
+--------------------------------------------------------------------------------
+
+When you choose to subscribe to the CodeSnip mailing list a dialog box is used
+to gather subscription information. By connecting to the internet and clicking a
+"Subscribe" button you cause the following information to be sent to mailing
+list web service:
+
+    * The id of the mailing list being subscribed to.
+    * Your email address, as entered in the dialog box.
+    * Your name or nickname (if provided).
+
+The above data will be recorded in a database on the DelphiDabbler web server.
+
+Mailing list membership requires activation by the subscriber in response to an
+email sent from the web service. Subscribers can cancel their subscription at
+any time. The email address and user name are deleted from the database when the
+subscription is cancelled or if it is not activated in a reasonable time.
+Supplied email addresses are used only to send relevant mail shots and will not
+be knowingly released to third parties.
+
+
+Submitting code to the main database
+--------------------------------------------------------------------------------
+
+This activity is started from the Database | Submit Routines menu option and
+data is collected using the resulting wizard. Clicking the Submit button in the
+wizard sends the following information to the DelphiDabbler code submission web
+service:
+
+    * The CodeSnip program version number.
+    * Your name, email address any comments as entered in the wizard.
+    * All the routines you selected to send.
+
+You can preview the data to be sent (in XML format) from the wizard. The XML
+will be stored in a file on the DelphiDabbler server until processed. The data
+is also emailed to the database maintainer (currently the author of CodeSnip).
+
+The routines may be edited and published on the Code Snippets online database
+and distributed to CodeSnip users. Your name ma be used to credit the routines.
+Your email address will not be published and is used only to contact you with
+any queries about the submitted code.
+
+Your name and email address will be recorded in your per-user application data
+settings file (User.3.ini). 
+
+
+Accessing Websites via Links and Menu Options
+--------------------------------------------------------------------------------
+
+CodeSnip's Help | On The Web menu option leads to sub menu items that cause
+various pages from DelphiDabbler.com to be displayed in the user's default
+browser.
+
+In addition, various links in the program's main display, some dialog boxes and
+the help file access remote websites. Links from the program will use your
+default browser while links from the help file use Internet Explorer. You should
+refer to the relevant website's privacy policies to learn how they use any data
+you supply when visiting their pages. DelphiDabbler has no control over the
+content of linked third party websites and you follow these links at your own
+risk.
+
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
