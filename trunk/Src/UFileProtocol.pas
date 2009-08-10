@@ -150,6 +150,12 @@ begin
 end;
 
 class function TFileProtocol.NormaliseURL(const URL: string): string;
+  {Converts URL into its normal form. If URL contains file:// protocol the URL
+  is converted into a standard absolute or UNC file name as appropriate.
+    @param URL [in] URL to be normalised.
+    @return Normalised URL. Any URL or file name expect for file:// is
+      unchanged.
+  }
 const
   cProtocol = 'file://';  // file protocol
 begin
