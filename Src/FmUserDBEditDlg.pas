@@ -4,86 +4,8 @@
  * Implements a dialog box that enables the user to create or edit a user-
  * defined routine.
  *
- * v1.0 of 15 Sep 2008  - Original version.
- * v1.1 of 21 Sep 2008  - Added check to ensure that routine does not refer to
- *                        itself in depends or x-ref lists.
- *                      - Removed duplicate routine names and routine's own name
- *                        from dependency and cross-reference check box lists:
- *                        user database takes precedence over main database when
- *                        there is a clash of names.
- * v1.2 of 11 Oct 2008  - Added button to Compiler Results tab to set all
- *                        compile results to success.
- *                      - Modified label text of Compiler Results tab.
- *                      - Changed Add Unit button to use action.
- *                      - Removed class name from constructor in AddNewRoutine
- *                        and EditRoutine methods.
- *                      - Added message to some Assert statements and made
- *                        others get class name from ClassName method.
- * v1.3 of 16 Dec 2008  - Removed EUserDBEdit exception class and replaced usage
- *                        of it with EDataEntry from UExceptions unit.
- *                      - Made TUserDBEditDlg's protected section strict.
- *                      - Modified to use TRectEx record instead of TRect.
- * v1.4 of 31 Dec 2008  - Changed to support new Extra property of TRoutine on
- *                        "Comments" tab and and removed Credits, Credits URL
- *                        and Comments fields.
- *                      - Renamed "Comments" tab as "Extra Information".
- *                      - Added instructions to "Extra Information" tab using
- *                        HTML frame.
- *                      - Deleted Credits URL help label.
- * v1.5 of 05 Jan 2009  - Added facility to get compiler results from a test
- *                        compilation with all installed compilers.
- *                      - Added new button to set all compiler results to query.
- * v1.6 of 06 Jan 2009  - Changed to use local instance of Compiler object to
- *                        avoid corrupting global object's results that may be
- *                        required in main form.
- *                      - Changed to use revised TTestCompileUI.Execute and
- *                        TCompErrorDlg.Execute method signatures.
- *                      - Now centres wait dialog rather than offsetting it from
- *                        top left of form.
- * v1.7 of 10 Jan 2009  - Changed to use new factory class to create local
- *                        compilers object instead of cloning global singleton.
- *                      - Changed to use new TCompileMgr to manage compilations
- *                        instead of local compilers object.
- *                      - Changed name of TCompilerInfo.Compiler property to
- *                        CompilerID.
- *                      - Added Alt+V view compiler errors action (by adding
- *                        actions). Changed Alt key for test compilation to
- *                        Alt+T from Alt+C since Alt+C already used taken.
- * v1.8 of 14 Jan 2009  - Replaced control char literals with constants.
- * v1.9 of 25 Jan 2009  - Revised to use renamed ICompiler.GetGlyph method.
- * v1.10 of 23 Jun 2009 - Removed reference to Snippet item standard format
- *                        property and associated controls and code.
- *                      - Added support for new snippet item Kind property.
- *                      - Moved management of Dependencies and XRef checklist
- *                        boxes to new TSnippetsChkListMgr manager class and
- *                        varied snippets that appear in Dependencies list
- *                        according to snippet kind.
- *                      - Changed to use TSnippetID etc instead of TRoutineID.
- *                      - Replaced Standard Format help link with one that
- *                        explains snippet kinds.
- *                      - Improved dependency checking code to do a deep
- *                        recursive check.
- *                      - Added View Dependencies button that displays dialog
- *                        box that shows deep dependencies.
- *                      - XRefs are no longer checked: anything is allowed.
- *                      - Default list of units re-ordered so that Graphics unit
- *                        comes after Windows.
- *                      - Made extra information edit control bigger.
- *                      - Made extra description HTML use content font and
- *                        removed unused CSS style definitions.
- *                      - Test compilation prevented for freeform snippets.
- * v1.11 of 05 Jul 2009 - Changed to permit either http: or file: protocol to be
- *                        used in href attributes of Extra REML code. Only http:
- *                        protocol was previously permitted.
- * v1.12 of 10 Jul 2009 - Modified to accommodate controls using Vista UI
- *                        default font.
- *                        - Font set explicitly in some controls.
- *                        - Some controls are now auto-aligned vertically.
- *                        - Form height set to accommodate controls.
- *                        - Set item height for owner drawn check list boxes.
- *                      - Font of extra info help text changed from content font
- *                        to default font.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -104,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -180,6 +105,8 @@ type
     lblKind: TLabel;
     btnDependencies: TButton;
     actDependencies: TAction;
+    btnViewExtra: TButton;
+    actViewExtra: TAction;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -204,6 +131,7 @@ type
     procedure lblSnippetKindHelpClick(Sender: TObject);
     procedure lblViewCompErrsClick(Sender: TObject);
     procedure pcMainChange(Sender: TObject);
+    procedure actViewExtraExecute(Sender: TObject);
   strict private
     fSnippet: TRoutine;         // Snippet being edited (nil for new snippet)
     fCatNames: TStringList;     // List of names of available categories
@@ -273,6 +201,26 @@ type
       compile manager.
         @param Compilers [in] Object containing compilation results.
       }
+    procedure Error(const Msg: string; const Ctrl: TWinControl); overload;
+      {Raises EDataEntry exception with a specified message and control where
+      error occured.
+        @param Msg [in] Exception message.
+        @param Ctrl [in] Control to which exception relates.
+        @except EDataEntry always raised.
+      }
+    procedure Error(const FmtStr: string; const Args: array of const;
+      const Ctrl: TWinControl); overload;
+      {Raises EDataEntry exception with a message built from a format string and
+      parameters, until with a reference to the control where the error occured.
+        @param FmtStr [in] Message's format string.
+        @param Args [in] Array of data displayed in format string.
+        @param Ctrl [in] Control to which exception relates.
+        @except EDataEntry always raised.
+      }
+    procedure CheckExtra;
+      {Checks the REML text entered in the extra information memo control.
+        @except EDataEntry on error.
+      }
   strict protected
     procedure ArrangeForm; override;
       {Arranges controls on form and sizes it.
@@ -309,10 +257,10 @@ uses
   // Delphi
   StrUtils, Graphics, Menus,
   // Project
-  FmDependenciesDlg, IntfCommon, UColours, UConsts, UCSSUtils, UExceptions,
-  UFontHelper, UGraphicUtils, UHTMLUtils, URoutineExtraHelper, USnippetKindInfo,
-  USnippetValidator, UIStringList, UMessageBox, USnippetIDs, UStructs,
-  UThemesEx, UUtils;
+  FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
+  UExceptions, UFontHelper, UGraphicUtils, UHTMLUtils, URoutineExtraHelper,
+  USnippetKindInfo, USnippetValidator, UIStringList, UMessageBox, USnippetIDs,
+  UStructs, UThemesEx, UUtils;
 
 
 type
@@ -476,6 +424,16 @@ begin
   (Sender as TAction).Enabled := pnlViewCompErrs.Visible;
 end;
 
+procedure TUserDBEditDlg.actViewExtraExecute(Sender: TObject);
+  {Validates REML entered in the extra information memo control then displays it
+  as it will appear in the main form.
+    @param Sender [in] Not used.
+  }
+begin
+  CheckExtra;
+  TViewExtraDlg.Execute(Self, BuildExtraActiveText);
+end;
+
 class function TUserDBEditDlg.AddNewRoutine(AOwner: TComponent): Boolean;
   {Displays dialog box to enable user to enter a new snippet.
     @param AOwner [in] Control that owns the dialog box, over which the dialog
@@ -538,6 +496,8 @@ begin
   ATop := edExtra.Top + edExtra.Height + 4;
   frmExtraInstructions.Top := ATop;
   ATop := ATop + frmExtraInstructions.Height;
+  btnViewExtra.Top := ATop;
+  ATop := ATop + btnViewExtra.Height;
   if ATop > RequiredHeight then
     RequiredHeight := ATop;
   // Arrange controls on tsCompileResults
@@ -600,6 +560,72 @@ procedure TUserDBEditDlg.cbKindChange(Sender: TObject);
   }
 begin
   UpdateReferences;
+end;
+
+procedure TUserDBEditDlg.CheckExtra;
+  {Checks the REML text entered in the extra information memo control.
+    @except EDataEntry on error.
+  }
+
+  // ---------------------------------------------------------------------------
+  procedure ValidateURL(URL: string);
+    {Validates a-link href URLs.
+      @param URL [in] URL to validate.
+      @except EDataEntry raised if validation fails.
+    }
+  const
+    cHTTPProtocol = 'http://';  // http protocol prefix
+    cFileProtocol = 'file://';  // file protocal prefix
+  resourcestring
+    // validation error messages
+    sLinkErr = 'Hyperlink URL "%s" in extra information must use either the '
+      + '"http://" or "file://" protocols';
+    sURLLengthErr
+      = 'Hyperlink URL "%s" in extra information markup is not valid';
+  begin
+    URL := URLDecode(URL, False);
+    if AnsiStartsText(cHTTPProtocol, URL) then
+    begin
+      if Length(URL) < Length(cHTTPProtocol) + 6 then
+        Error(sURLLengthErr, [URL], edExtra);
+    end
+    else if AnsiStartsText(cFileProtocol, URL) then
+    begin
+      if Length(URL) < Length(cFileProtocol) + 4 then
+        Error(sURLLengthErr, [URL], edExtra);
+    end
+    else
+      Error(sLinkErr, [URL], edExtra);
+  end;
+  // ---------------------------------------------------------------------------
+
+var
+  Elem: IActiveTextElem;              // each element in active text
+  ActionElem: IActiveTextActionElem;  // references action element
+  ActiveText: IActiveText;            // active text created from text
+resourcestring
+  // parse error message
+  sActiveTextErr = 'Error parsing extra information markup:' + EOL2 + '%s';
+begin
+  try
+    // Try to create active text: this parses the text and raises exception
+    // if there is an error in the REML markup
+    ActiveText := BuildExtraActiveText;
+  except
+    // Convert active text parser to data exception
+    on E: EActiveTextParserError do
+      Error(sActiveTextErr, [E.Message], edExtra);
+    else
+      raise;
+  end;
+  // Scan all active text looking of hyperlinks: check that URL has a
+  // supported protocol and some url text after it
+  for Elem in ActiveText do
+  begin
+    if Supports(Elem, IActiveTextActionElem, ActionElem)
+      and (ActionElem.Kind = ekLink) then
+      ValidateURL(ActionElem.Param);
+  end;
 end;
 
 procedure TUserDBEditDlg.CLBRoutineRefsDrawItem(Control: TWinControl;
@@ -707,6 +733,30 @@ begin
     finally
       Free;
     end;
+end;
+
+procedure TUserDBEditDlg.Error(const Msg: string; const Ctrl: TWinControl);
+  {Raises EDataEntry exception with a specified message and control where
+  error occured.
+    @param Msg [in] Exception message.
+    @param Ctrl [in] Control to which exception relates.
+    @except EDataEntry always raised.
+  }
+begin
+  raise EDataEntry.Create(Msg, Ctrl);
+end;
+
+procedure TUserDBEditDlg.Error(const FmtStr: string; const Args: array of const;
+  const Ctrl: TWinControl);
+  {Raises EDataEntry exception with a message built from a format string and
+  parameters, until with a reference to the control where the error occured.
+    @param FmtStr [in] Message's format string.
+    @param Args [in] Array of data displayed in format string.
+    @param Ctrl [in] Control to which exception relates.
+    @except EDataEntry always raised.
+  }
+begin
+  raise EDataEntry.CreateFmt(FmtStr, Args, Ctrl);
 end;
 
 procedure TUserDBEditDlg.FocusCtrl(const Ctrl: TWinControl);
@@ -1297,96 +1347,6 @@ procedure TUserDBEditDlg.ValidateData;
   }
 
   // ---------------------------------------------------------------------------
-  procedure Error(const Msg: string; const Ctrl: TWinControl); overload;
-    {Raises EDataEntry exception with a specified message and control where
-    error occured.
-      @param Msg [in] Exception message.
-      @param Ctrl [in] Control to which exception relates.
-      @except EDataEntry always raised.
-    }
-  begin
-    raise EDataEntry.Create(Msg, Ctrl);
-  end;
-
-  procedure Error(const FmtStr: string; const Args: array of const;
-    const Ctrl: TWinControl); overload;
-    {Raises EDataEntry exception with a message built from a format string and
-    parameters, until with a reference to the control where the error occured.
-      @param FmtStr [in] Message's format string.
-      @param Args [in] Array of data displayed in format string.
-      @param Ctrl [in] Control to which exception relates.
-      @except EDataEntry always raised.
-    }
-  begin
-    raise EDataEntry.CreateFmt(FmtStr, Args, Ctrl);
-  end;
-
-  procedure CheckExtra;
-    {Checks the REML text entered in the extra information memo control.
-      @except EDataEntry on error.
-    }
-
-    // -------------------------------------------------------------------------
-    procedure ValidateURL(URL: string);
-      {Validates a-link href URLs.
-        @param URL [in] URL to validate.
-        @except EDataEntry raised if validation fails.
-      }
-    const
-      cHTTPProtocol = 'http://';  // http protocol prefix
-      cFileProtocol = 'file://';  // file protocal prefix
-    resourcestring
-      // validation error messages
-      sLinkErr = 'Hyperlink URL "%s" in extra information must use either the '
-        + '"http://" or "file://" protocols';
-      sURLLengthErr
-        = 'Hyperlink URL "%s" in extra information markup is not valid';
-    begin
-      URL := URLDecode(URL, False);
-      if AnsiStartsText(cHTTPProtocol, URL) then
-      begin
-        if Length(URL) < Length(cHTTPProtocol) + 6 then
-          Error(sURLLengthErr, [URL], edExtra);
-      end
-      else if AnsiStartsText(cFileProtocol, URL) then
-      begin
-        if Length(URL) < Length(cFileProtocol) + 4 then
-          Error(sURLLengthErr, [URL], edExtra);
-      end
-      else
-        Error(sLinkErr, [URL], edExtra);
-    end;
-    // -------------------------------------------------------------------------
-
-  var
-    Elem: IActiveTextElem;              // each element in active text
-    ActionElem: IActiveTextActionElem;  // references action element
-    ActiveText: IActiveText;            // active text created from text
-  resourcestring
-    // parse error message
-    sActiveTextErr = 'Error parsing extra information markup:' + EOL2 + '%s';
-  begin
-    try
-      // Try to create active text: this parses the text and raises exception
-      // if there is an error in the REML markup
-      ActiveText := BuildExtraActiveText;
-    except
-      // Convert active text parser to data exception
-      on E: EActiveTextParserError do
-        Error(sActiveTextErr, [E.Message], edExtra);
-      else
-        raise;
-    end;
-    // Scan all active text looking of hyperlinks: check that URL has a
-    // supported protocol and some url text after it
-    for Elem in ActiveText do
-    begin
-      if Supports(Elem, IActiveTextActionElem, ActionElem)
-        and (ActionElem.Kind = ekLink) then
-        ValidateURL(ActionElem.Param);
-    end;
-  end;
-
   procedure CheckDependencies;
     {Checks a snippet's dependencies for validity.
       @except EDataEntry on error.

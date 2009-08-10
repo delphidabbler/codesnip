@@ -19,7 +19,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
       Top = 0
       Width = 646
       Height = 465
-      ActivePage = tsCode
+      ActivePage = tsComments
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
@@ -275,6 +275,14 @@ inherited UserDBEditDlg: TUserDBEditDlg
                 00000000000000000100000000000000000000000000000000000000}
             end
           end
+        end
+        object btnViewExtra: TButton
+          Left = 3
+          Top = 409
+          Width = 166
+          Height = 25
+          Action = actViewExtra
+          TabOrder = 2
         end
       end
       object tsCompileResults: TTabSheet
@@ -1045,6 +1053,10 @@ inherited UserDBEditDlg: TUserDBEditDlg
     object actDependencies: TAction
       Caption = 'View Dependencies...'
       OnExecute = actDependenciesExecute
+    end
+    object actViewExtra: TAction
+      Caption = 'Render Extra Information...'
+      OnExecute = actViewExtraExecute
     end
   end
 end
