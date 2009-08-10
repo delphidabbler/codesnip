@@ -1,3 +1,7 @@
+{TODO 3 -oSelf -cImprovement : Change LoadLibrary in UHTMLHelp to SafeLoadLibrary}
+{TODO -oSelf -cRefactor :
+Move Yes, No and OK resourcestrings in UMessageBox to interface and add string for Cancel.
+Change UCodeImportMgr to use cancel and FmViewExtraDlg to use OK.}
 {TODO -oSelf -cRefactor : Pull out some common code used in arrangement and alignment of controls on forms into support unit.}
 {TODO -oSelf -cRefactor : Add enumerator to TNews and change loop in UUpdateMgr accordingly.}
 {TODO -oSelf -cRefactor : Refactor TQuery to use enumerators and use class var for instance}
@@ -15,7 +19,7 @@ Change the Snippets Editor moving code for each pane into separate frame that ca
 {TODO -oSelf -cBug : 
 Selecting a new printer in print dialog and clicking properties can give an exception or properties dialog has wrong title.
 Selecting some printers in print dialog and clicking OK can give an exception.}
-{TODO -oSelf -cFeature :
+{DONE -oSelf -cFeature :
 Add facility to Snippets Editor to display check, render and display REML text (button on extra tab?)
 + add button to test display if any <a> tags are present to test and display URLs.}
 {TODO -oSelf -cObservation : Update date for UNulFormAligner in unit for v1.1 is wrong: it reads 26 Jul 2007 and should be 26 Sep 2007.}
