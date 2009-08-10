@@ -12,9 +12,9 @@ FILES:
 + DevToolsHistory.txt
   Details of changes to all files in DevTools directory up to 4 July 2009.
   
-+ ResourcesHistory.txt
-  Details of changes to all files in Src\Res directory up to 4 July 2009.
-  
++ SourceHistory.txt
+  Details of changes to all files in Src directory up to 4 July 2009.
+
 + HelpHistory.txt
   Details of changes to all files in Src\Help directory up to 4 July 2009.
   
@@ -25,3 +25,5 @@ FILES:
 + InstallHistory.txt
   Details of changes to all files in Src\Install directory up to 4 July 2009.
 
++ ResourcesHistory.txt
+  Details of changes to all files in Src\Res directory up to 4 July 2009.
