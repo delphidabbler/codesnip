@@ -3,11 +3,8 @@
  *
  * Utility functions to assist in generating CSS code.
  *
- * v1.0 of 07 Nov 2006  - Original version.
- * v1.1 of 05 Nov 2007  - Replaced use of TStringList with IStringList.
- * v1.2 of 25 Jan 2009  - Added support for CSS "display" property.
- *                      - Removed CSSPropList routine.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -28,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -185,6 +185,29 @@ type
     cdsInline         // element displayed inline
   );
 
+  {
+  TCSSLengthType:
+    Enumeration of different types of length property values.
+  }
+  TCSSLengthType = (
+    cltAuto,          // "auto"
+    cltPixels,        // pixels
+    cltEm,            // "em" values
+    cltPercent        // percentage values
+  );
+
+  {
+  TCSSOverflowValue:
+    Enumeration of various overflow property values.
+  }
+  TCSSOverflowValue = (
+    covVisible,     // overflow is not clipped and overflows
+    covHidden,      // overflow is clipped, rest of the content invisible
+    covScroll,      // overflow is clipped, scroll-bar is added
+    covAuto,        // if overflow is clipped a scroll-bar is added
+    covInherit      // value inherited from the parent element
+  );
+
 
 function CSSBackgroundColorProp(const Color: TColor): string;
   {Creates CSS "background-color" property.
@@ -273,9 +296,9 @@ function CSSFontWeightProp(const FS: TFontStyles): string; overload;
     @return Required property.
   }
 
-function CSSHeightProp(const Height: Cardinal): string;
+function CSSHeightProp(const HeightPx: Cardinal): string;
   {Creates a CSS "height" property in pixels.
-    @param Height [in] Height in pixels.
+    @param HeightPx [in] Height in pixels.
     @return Required property.
   }
 
@@ -310,6 +333,17 @@ function CSSMarginProp(const Side: TCSSSide;
     @param Side [in] Specifies side(s) of element whose margin to be set.
     @param Margin [in] Width of margin in pixels.
     @return Required property.
+  }
+
+function CSSMaxHeightProp(const HeightPx: Cardinal): string;
+  {Creates a CSS "max-height" property in pixels.
+    @param HeightPx [in] Height in pixels.
+    @return Required property.
+  }
+
+function CSSOverflowProp(const Value: TCSSOverflowValue): string;
+  {Creates CSS "overflow" property.
+    @param Value [in] Property value identifier.
   }
 
 function CSSPaddingProp(const Padding: Cardinal): string; overload;
@@ -377,9 +411,17 @@ function CSSVerticalAlignProp(const Percent: Integer): string; overload;
     @return Required property.
   }
 
-function CSSWidthProp(const Width: Cardinal): string;
+function CSSWidthProp(const WidthPx: Cardinal): string; overload;
   {Creates a CSS "width" property in pixels.
-    @param Width [in] Width in pixels.
+    @param WidthPx [in] Width in pixels.
+    @return Required property.
+  }
+
+function CSSWidthProp(const LengthType: TCSSLengthType;
+  const Width: Cardinal): string; overload;
+  {Creates a CSS "width" property in a specified length type.
+    @param LengthType [in] Required length type. If "auto" Width is ignored.
+    @param Width [in] Width in specified units.
     @return Required property.
   }
 
@@ -396,6 +438,7 @@ function CSSBlockDisplayProp(const Show: Boolean): string;
   }
 
 
+
 implementation
 
 
@@ -406,17 +449,14 @@ uses
   UHTMLUtils, UIStringList, UUtils;
 
 
-//
-// ** NOTE: Do not localise any string literals in this unit
-//
-
-
 { Forward declarations }
 function CSSMarginProp(const Margin: array of Cardinal): string; overload;
   forward;
 function CSSPaddingProp(const Padding: array of Cardinal): string; overload;
   forward;
-function LengthList(const List: array of Cardinal): string; forward;
+function LengthList(const List: array of Cardinal;
+  const LT: TCSSLengthType = cltPixels): string; forward;
+function LengthTypeStr(const LT: TCSSLengthType): string; forward;
 
 function CSSBackgroundColorProp(const Color: TColor): string;
   {Creates CSS "background-color" property.
@@ -613,13 +653,13 @@ begin
     Result := CSSFontWeightProp(cfwNormal);
 end;
 
-function CSSHeightProp(const Height: Cardinal): string;
+function CSSHeightProp(const HeightPx: Cardinal): string;
   {Creates a CSS "height" property in pixels.
-    @param Height [in] Height in pixels.
+    @param HeightPx [in] Height in pixels.
     @return Required property.
   }
 begin
-  Result := Format('height: %s;', [LengthList([Height])]);
+  Result := Format('height: %s;', [LengthList([HeightPx])]);
 end;
 
 function CSSMarginProp(const Margin: array of Cardinal): string;
@@ -679,6 +719,27 @@ const
   );
 begin
   Result := Format('%s: %s;', [cMarginSides[Side], LengthList([Margin])]);
+end;
+
+function CSSMaxHeightProp(const HeightPx: Cardinal): string;
+  {Creates a CSS "max-height" property in pixels.
+    @param HeightPx [in] Height in pixels.
+    @return Required property.
+  }
+begin
+  Result := Format('max-height: %s;', [LengthList([HeightPx])]);
+end;
+
+function CSSOverflowProp(const Value: TCSSOverflowValue): string;
+  {Creates CSS "overflow" property.
+    @param Value [in] Property value identifier.
+  }
+const
+  cValues: array[TCSSOverflowValue] of string = (
+    'visible', 'hidden', 'scroll', 'auto', 'inherit'
+  );
+begin
+  Result := Format('overflow: %s;', [cValues[Value]]);
 end;
 
 function CSSPaddingProp(const Padding: array of Cardinal): string;
@@ -821,34 +882,67 @@ begin
   Result := Format('vertical-align: %d%;', [Percent]);
 end;
 
-function LengthList(const List: array of Cardinal): string;
+function LengthList(const List: array of Cardinal;
+  const LT: TCSSLengthType = cltPixels): string;
   {Builds a space separated list of length values using pixel measurements.
     @param List [in] List of pixel values to include in list.
+    @param LT [in] Length type: specifies units to use for lengths.
     @return Required space separated list.
   }
 var
   Idx: Integer;     // loops thru list of values
   ALength: Integer; // a length from list
 begin
-  Result := '';
-  for Idx := Low(List) to High(List) do
+  Assert((LT <> cltAuto) or (Length(List) = 1),
+    'LengthList: List size may only be 1 when length type is cltAuto');
+  if LT = cltAuto then
+    Result := LengthTypeStr(LT)
+  else
   begin
-    ALength := List[Idx];
-    if Result <> '' then
-      Result := Result + ' ';
-    Result := Result + IntToStr(ALength);
-    if ALength <> 0 then
-      Result := Result + 'px';  // only add unit if length not 0
+    Result := '';
+    for Idx := Low(List) to High(List) do
+    begin
+      ALength := List[Idx];
+      if Result <> '' then
+        Result := Result + ' ';
+      Result := Result + IntToStr(ALength);
+      if ALength <> 0 then
+        Result := Result + LengthTypeStr(LT);  // only add unit if length not 0
+    end;
   end;
 end;
 
-function CSSWidthProp(const Width: Cardinal): string;
+function LengthTypeStr(const LT: TCSSLengthType): string;
+  {Gets the appropriate length specifier for a length type.
+    @param LT [in] Length type.
+    @return Required specifier.
+  }
+const
+  cUnits: array[TCSSLengthType] of string = (
+    'auto', 'px', 'em', '%'
+  );
+begin
+  Result := cUnits[LT];
+end;
+
+function CSSWidthProp(const WidthPx: Cardinal): string;
   {Creates a CSS "width" property in pixels.
-    @param Width [in] Width in pixels.
+    @param WidthPx [in] Width in pixels.
     @return Required property.
   }
 begin
-  Result := Format('width: %s;', [LengthList([Width])]);
+  Result := CSSWidthProp(cltPixels, WidthPx);
+end;
+
+function CSSWidthProp(const LengthType: TCSSLengthType;
+  const Width: Cardinal): string;
+  {Creates a CSS "width" property in a specified length type.
+    @param LengthType [in] Required length type. If "auto" Width is ignored.
+    @param Width [in] Width in specified units.
+    @return Required property.
+  }
+begin
+  Result := Format('width: %s;', [LengthList([Width], LengthType)]);
 end;
 
 function CSSDisplayProp(const Style: TCSSDisplayStyle): string;
