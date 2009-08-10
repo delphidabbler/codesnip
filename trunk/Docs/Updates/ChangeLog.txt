@@ -1,3 +1,7 @@
+Version 3.1 - 11 August 2009
+CodeSnip 3.1 - 11 August 2009
++ Added a button to the snippets editor to preview an HTML rendering of the markup entered as extra information. Includes facility to check any links in the markup.
+
 Version 3.0.5 - 21 July 2009
 CodeSnip 3.0.5 - 21 July 2009
 + Default font is now dependent on underlying OS: Vista - Segoe UI, XP/2000 - Tahoma, NT - MS Sans Serif.
