@@ -4,33 +4,8 @@
  * Set of classes that generate HTML used to display snippets in information and
  * compiler check panes.
  *
- * v1.0 of 03 Dec 2006  - Original version.
- * v1.1 of 04 Dec 2006  - Changed to use TTestUnit to generate test unit. This
- *                        causes name of test unit to change from 'TestUnit' to
- *                        a name based on routine name.
- * v1.2 of 12 Feb 2007  - Removed MakeSentence routine. Now use version in
- *                        UUtils.
- *                      - Rationalised use of MakeSentence.
- *                      - Improved generated HTML to reduce likelihood of
- *                        illegal characters being included.
- * v1.3 of 31 Oct 2007  - Added 'external-link' class to credits web-links.
- *                      - Modified to use IStringList instead of TStringList.
- * v1.4 of 26 Aug 2008  - Modified to work with revised signature of
- *                        RoutineALink routine.
- * v1.5 of 30 Dec 2008  - Made public and private sections strict.
- *                      - Changed TInfoHTML to generate a routines' extra info
- *                        from new active text TRoutine.Extra property rather
- *                        than from Credits, CreditsURL and Comments properties.
- *                      - Now access all routines in routine list using for..do.
- *                      - Added method to TInfoHTML to generate a sentence
- *                        indicating an empty list.
- * v1.6 of 20 Jun 2009  - Removed TCompHTML class.
- *                      - Added support for new REML tags in TRoutine.Extra
- *                        property.
- *                      - Added new TInfoHTML.SnippetKind method.
- * v1.7 of 12 Jul 2009  - Added new TInfoHTML.Category method.
- *                      - Added full stop to end of snippet kind text.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -51,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -164,8 +142,8 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  IntfHiliter, UActiveText, UHiliteAttrs, UHTMLDetailUtils, UHTMLUtils,
-  USnippetKindInfo, UIStringList, USyntaxHiliters, UTestUnit, UUtils;
+  IntfHiliter, UActiveTextHTML, UHiliteAttrs, UHTMLDetailUtils, UHTMLUtils,
+  USnippetKindInfo, USyntaxHiliters, UUtils;
 
 
 { TRoutineHTML }
@@ -239,103 +217,8 @@ function TInfoHTML.Extra: string;
   contain links and some formatting.
     @return Required HTML.
   }
-const
-  // maps state of an active text element to equivalent HTML tag type
-  cTagTypeMap: array[TActiveTextElemState] of THTMLTagType = (
-    ttClose,  // fsClose: closing tag e.g. </tagname>
-    ttOpen    // fsOpen: opening tag e.g. <tagname [params]>
-  );
-resourcestring
-  sCreditsURLHint = 'Visit %s';       // hint used in <a> tag title attribute
-var
-  Elem: IActiveTextElem;              // each active text element
-  TextElem: IActiveTextTextElem;      // a text active text element
-  ActionElem: IActiveTextActionElem;  // an action active text element
-  EncloseInDiv: Boolean;
-
-  // ---------------------------------------------------------------------------
-  function ClassAttr(const ClassName: string): IHTMLAttributes;
-    {Creates an HTML attributes object containing a class attribute.
-      @param ClassName [in] Name of class.
-      @return Required HTML attributes object.
-    }
-  begin
-    Result := THTMLAttributes.Create;
-    Result.Add('class', ClassName);
-  end;
-  // ---------------------------------------------------------------------------
-
 begin
-  Result := '';
-  // Process each active text element
-  for Elem in Routine.Extra do
-  begin
-    if Supports(Elem, IActiveTextTextElem, TextElem) then
-      // A text element: write it literally as safe HTML text
-      Result := Result + MakeSafeHTMLText(TextElem.Text)
-    else if Supports(Elem, IActiveTextActionElem, ActionElem) then
-    begin
-      // An action element: if supported output it in HTML
-      case ActionElem.Kind of
-        ekLink:
-        begin
-          // REML <a> => HTML <a class="external-link">
-          //   REML href => HTML href
-          if ActionElem.State = fsOpen then
-            // opening tag: element's Param property is HTML href attribute
-            Result := Result + AOpenTag(
-              ActionElem.Param,
-              '',
-              '|' + Format(sCreditsURLHint, [ActionElem.Param]),
-              TIStringList.Create('external-link')
-            )
-          else
-            // an </a> tag
-            Result := Result + MakeTag('a', ttClose);
-        end;
-        ekStrong:
-          // REML <strong> => HTML <strong>
-          Result := Result + MakeTag('strong', cTagTypeMap[ActionElem.State]);
-        ekEm:
-          // REML <em> => HTML <em>
-          Result := Result + MakeTag('em', cTagTypeMap[ActionElem.State]);
-        ekVar:
-          // REML <var> => HTML <var class="extra">
-          Result := Result + MakeTag(
-            'var', cTagTypeMap[ActionElem.State], ClassAttr('extra')
-          );
-        ekPara:
-          // REML <p> => HTML <p>
-          Result := Result + MakeTag('p', cTagTypeMap[ActionElem.State]);
-        ekWarning:
-          // REML <warning> => HTML <span class="extra-warning">
-          Result := Result + MakeTag(
-            'span', cTagTypeMap[ActionElem.State], ClassAttr('extra-warning')
-          );
-        ekMono:
-          // REML <mono> => HTML <span class="extra-mono">
-          Result := Result + MakeTag(
-            'span', cTagTypeMap[ActionElem.State], ClassAttr('extra-mono')
-          );
-        ekHeading:
-          // REML <heading> => HTML <h2 class="extra">
-          Result := Result + MakeTag(
-            'h2', cTagTypeMap[ActionElem.State], ClassAttr('extra')
-          );
-        else
-          {Unsupported action element type: do nothing};
-      end;
-    end;
-  end;
-  // Extra property may have "p" or "heading" tags, but may not have. So we
-  // check and add enclosing "div" tags if necessary with required properties.
-  // paragraph tags if
-  EncloseInDiv := not Routine.Extra.IsEmpty and
-    not ((Routine.Extra[0].Kind in [ekPara, ekHeading]));
-  if EncloseInDiv then
-    Result := MakeTag('div', ttOpen, ClassAttr('extra-wrapper')) +
-      Result +
-      MakeTag('div', ttClose);
+  Result := TActiveTextHTML.Render(Routine.Extra);
 end;
 
 function TInfoHTML.RoutineDesc: string;
