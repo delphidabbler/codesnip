@@ -5,21 +5,8 @@
  *
  * Requires DelphiDabbler System information unit v3 or later.
  *
- * v0.1 of 07 Apr 2006  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- * v1.1 of 02 Jun 2008  - Removed TComputerInfo.MACAddress routine: now in base
- *                        class.
- *                      - Added new TOSInfo.IsVistaOrLater method.
- * v1.2 of 15 Jun 2008  - Added new TOSInfo.IsXPOrLater method.
- *                      - Revised TOSInfo.IsVistaOrLater to call helper method
- *                        to check for required kernel function.
- * v1.3 of 24 Aug 2008  - Removed now unused TComputerInfo class.
- * v1.4 of 10 May 2009  - Added new TOSVer record.
- *                      - Made private section of TOSInfo strict.
- *                      - Added Win2K, WinXP and WinVista TOSVer constants and
- *                        CheckReportedOS method to TOSVer.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -40,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -113,6 +103,12 @@ type
         @param MinVer [in] Minimum OS version required.
         @return True if OS reported by Windows is same as or later than MinVer.
       }
+    class function BrowserVer: Word;
+      {Gets the major version number of the installed internet explorer browser.
+      Works for all version if IE from v4 onwards. See
+      http://support.microsoft.com/kb/969393/en-us.
+        @return Browser version >=4 or 0 if earlier browser or on error.
+      }
   end;
 
 
@@ -121,10 +117,46 @@ implementation
 
 uses
   // Delphi
-  Windows;
+  SysUtils, Registry, Windows,
+  // Project
+  UIStringList;
 
 
 { TOSInfo }
+
+class function TOSInfo.BrowserVer: Word;
+  {Gets the major version number of the installed internet explorer browser.
+  Works for all version if IE from v4 onwards. See
+  http://support.microsoft.com/kb/969393/en-us.
+    @return Browser version >=4 or 0 if earlier browser or on error.
+  }
+var
+  Reg: TRegistry;     // registry access object
+  Vers: IStringList;  // receives parts of version number string
+const
+  cRegKey = 'Software\Microsoft\Internet Explorer'; // required registry key
+  cRegValue = 'Version';  // name of required registry value
+begin
+  Result := 0;
+  Reg := TRegistry.Create;
+  try
+    Reg.RootKey := HKEY_LOCAL_MACHINE;
+    if Reg.OpenKeyReadOnly(cRegKey) then
+    begin
+      if Reg.ValueExists(cRegValue) then
+      begin
+        Vers := TIStringList.Create(
+          Reg.ReadString(cRegValue), '.', False, True
+        );
+        // we want most significant version number
+        if (Vers.Count > 0) then
+          Result := StrToIntDef(Vers[0], 0);
+      end;
+    end;
+  finally
+    Reg.Free;
+  end;
+end;
 
 class function TOSInfo.CheckForKernelFn(const FnName: string): Boolean;
   {Checks if a specified function exists in OSs kernel.
