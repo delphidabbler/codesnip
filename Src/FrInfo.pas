@@ -4,65 +4,8 @@
  * Frame that displays and manages user interaction with the pane that displays
  * details of routines and other selected view items.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Deleted unused units from uses clauses.
- * v0.3 of 19 Feb 2005  - Refactoring: changed frame to implement the renamed
- *                        IFrameActionMgr and IInfoActionMgr interfaces.
- * v0.4 of 20 Feb 2005  - Significantly revised method to generating and
- *                        displaying HTML pages by using new TDetailPageLoader
- *                        classes.
- * v0.5 of 22 Feb 2005  - Modified to use new browser external object extender.
- *                      - Single extender object now supplied to frame (by
- *                        calling its new ISetWBExternal interface) rather than
- *                        frame owning its own custom extender object.
- *                      - All support for IFrameActionMgr interfaces deleted
- *                        since the new extender object handles notification of
- *                        user-initiated events to application.
- * v0.6 of 23 Feb 2005  - Significantly revised to descend from other frames
- *                        that implement functionality that is common to all
- *                        detail view frames. This frame now only implements
- *                        functions specific to the information frame.
- * v0.7 of 28 Feb 2005  - Added support for highlighting found text in current
- *                        document. Uses object in new UWBHighlighter unit to
- *                        perform highlighting.
- * v0.8 of 16 Apr 2006  - Removed ISetWBExternal interface and replaced with new
- *                        IWBCustomiser interface to perform web browser
- *                        customisation. IWBCustomiser methods implemented in
- *                        ancestor class.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- * v1.1 of 03 Dec 2006  - Added support for dynamically updating display via
- *                        DHTML.
- *                      - Added GetPageKind override to return page kind to base
- *                        class to enable it to display correct view.
- *                      - Changed DisplayCurViewItem to override new version in
- *                        base class to perform any required text search
- *                        highlighting.
- *                      - Added code to set CSS specific to information pane.
- * v1.2 of 04 Feb 2007  - Now uses global query object to find details of
- *                        current search query rather than use TDetailView
- *                        object.
- *                      - Added new parameter to TInfoFrame.Display to force
- *                        redisplay of view item even if already displayed. This
- *                        was done to enable pane to highlight or unhilight text
- *                        search results. We previously used a TDetailView
- *                        object to do this.
- *                      - Replaced now redundant TDetailView class references
- *                        with TViewItem.
- * v1.3 of 16 Feb 2007  - Revised to work with redefined display interfaces from
- *                        IntfFrameMgrs.
- *                      - Pushed Display method back into base class.
- * v1.4 of 15 Oct 2007  - Added "extras" division to list of divs that are
- *                        highlighted by text search highlighter.
- * v1.5 of 05 Nov 2007  - Changed to use revised CSS builder classes.
- * v1.6 of 19 Jan 2009  - Changed to support interfaces from IntfHTMLDocHostInfo
- *                        to replace those deleted from UDHTML.
- *                      - Made a protected section strict.
- *                      - ClassName method now provides class name in asserts.
- * v1.7 of 20 Jun 2009  - Removed frame's support for IInfoRoutineHostInfo and
- *                        IDetailViewHostInfo interfaces.
- *                      - Added CSS relating to HTML used to render REML tags
- *                        used when displaying Extra information.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -84,6 +27,9 @@
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
+ * Contributors:
+ *   NONE
+ *
  * ***** END LICENSE BLOCK *****
 }
 
@@ -98,8 +44,8 @@ uses
   // Delphi
   OleCtrls, SHDocVw, Classes, Controls, ExtCtrls,
   // Project
-  FrDetailView, IntfFrameMgrs, IntfHTMLDocHostInfo, UCSSBuilder,
-  UDetailPageLoader, USearch;
+  FrDetailView, IntfFrameMgrs, IntfHTMLDocHostInfo, UActiveTextHTML,
+  UCSSBuilder, UDetailPageLoader, USearch;
 
 
 type
@@ -174,7 +120,6 @@ procedure TInfoFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
   }
 var
   ContentFont: TFont;   // default content font for OS
-  MonoFont: TFont;      // default mono spaced font for OS
 begin
   // NOTE:
   // We only set CSS properties that may need to use system colours or fonts
@@ -187,41 +132,13 @@ begin
     AddProperty(CSSBackgroundColorProp(clCompTblHeadBg));
     AddProperty(CSSFontWeightProp(cfwNormal));
   end;
-  // Add CSS relating to Extra REML code
-  // -- heading tag
-  with CSSBuilder.AddSelector('h2.extra') do
-  begin
-    ContentFont := TFont.Create;
-    try
-      TFontHelper.SetContentFont(Font, True);
-      Font.Size := Font.Size + 1;
-      AddProperty(CSSFontSizeProp(Font.Size));
-    finally
-      FreeAndNil(ContentFont);
-    end;
-  end;
-  // -- warning tag
-  with CSSBuilder.AddSelector('span.extra-warning') do
-  begin
-    AddProperty(CSSFontWeightProp(cfwBold));
-    AddProperty(CSSColorProp(clWarningText));
-  end;
-  // -- mono tag
-  with CSSBuilder.AddSelector('span.extra-mono') do
-  begin
-    MonoFont := TFont.Create;
-    try
-      TFontHelper.SetDefaultMonoFont(MonoFont, True);
-      AddProperty(CSSFontProps(MonoFont));
-    finally
-      FreeAndNil(MonoFont);
-    end;
-  end;
-  // -- var tag
-  with CSSBuilder.AddSelector('var.extra') do
-  begin
-    AddProperty(CSSColorProp(clVarText));
-    AddProperty(CSSFontStyleProp(cfsItalic));
+  ContentFont := TFont.Create;
+  try
+    // Add CSS relating to Extra REML code
+    TFontHelper.SetContentFont(ContentFont, True);
+    TActiveTextHTML.Styles(ContentFont, CSSBuilder);
+  finally
+    FreeAndNil(ContentFont);
   end;
 end;
 
