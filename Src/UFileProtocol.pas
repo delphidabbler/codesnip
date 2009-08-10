@@ -4,8 +4,8 @@
  * Implements a handler for the "file" URL protocol that displays a local file
  * in the associated program.
  *
- * v1.0 of 30 Jun 2009  - Original version.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -26,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -100,6 +103,14 @@ type
     displayed by its associated program.
   }
   TFileProtocol = class sealed(TBrowseProtocol)
+  protected
+    class function NormaliseURL(const URL: string): string; override;
+      {Converts URL into its normal form. If URL contains file:// protocol the
+      URL is converted into a standard absolute or UNC file name as appropriate.
+        @param URL [in] URL to be normalised.
+        @return Normalised URL. Any URL or file name expect for file:// is
+          unchanged.
+      }
   public
     class function SupportsProtocol(const URL: string): Boolean; override;
       {Checks if a URL uses the file: protocol.
@@ -125,14 +136,45 @@ resourcestring
   // error message used if file does not exist
   sBadFile = 'File "%s" does not exist';
   sIsDir = '"%s" is a directory. File expected';
+var
+  FileName: string; // filename from URL
 begin
+  FileName := NormaliseURL(URL);
   // Perform checks: URL must not be a directory and must be absolute path
-  if IsDirectory(URL) then
+  if IsDirectory(FileName) then
     raise EProtocol.CreateFmt(sIsDir, [URL]);
-  if not FileExists(URL) then
+  if not FileExists(FileName) then
     raise EProtocol.CreateFmt(sBadFile, [URL]);
   // We execute the resource using an action
   Result := inherited Execute;
+end;
+
+class function TFileProtocol.NormaliseURL(const URL: string): string;
+const
+  cProtocol = 'file://';  // file protocol
+begin
+  Result := URL;
+  // url doesn't start with file:// so assume a simple file name
+  if not AnsiStartsStr(cProtocol, Result) then
+    Exit;
+  // replace C| with C:
+  Result := ReplaceStr(Result, '|', ':'); // change c| to c:
+  // make all delimiters in unix format for processing
+  Result := ReplaceStr(Result, '\', '/'); // change \ in path to /
+  if AnsiStartsStr(cProtocol + '/', Result) then
+    // starts with "file:///" => remove "file:///"
+    //   file:///C:/filename
+    //     => C:/filename
+    //   file://///servername/sharename/filename
+    //     => //servername/sharename/filename
+    Delete(Result, 1, Length(cProtocol + '/'))
+  else
+    // starts with "file://" => remove "file:"
+    //   file://servername/sharename/filename
+    //     => //servername/sharename/filename
+    Delete(Result, 1, Length(cProtocol) - 2);
+  // change to DOS path delimiters
+  Result := ReplaceStr(Result, '/', '\');
 end;
 
 class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
@@ -165,8 +207,11 @@ class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
   end;
   // ---------------------------------------------------------------------------
 
+var
+  FileName: string; // filename part of URL
 begin
-  Result := IsValidAbsoluteFileName(URL) or IsValidUNCFileName(URL);
+  FileName := NormaliseURL(URL);
+  Result := IsValidAbsoluteFileName(FileName) or IsValidUNCFileName(FileName);
 end;
 
 initialization

@@ -4,8 +4,8 @@
  * Implements a abstract base class for protocol handlers that access a URL
  * using a TBrowseURL action.
  *
- * v1.0 of 04 Jul 2009  - Original version.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -26,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -50,6 +53,13 @@ type
     TBrowseURL action.
   }
   TBrowseProtocol = class abstract(TProtocol)
+  strict protected
+    class function NormaliseURL(const URL: string): string; virtual;
+      {Converts URL into its normal form. Does nothing by default. Descendants
+      may override.
+        @param URL [in] URL to be normalised.
+        @return URL unchanged.
+      }
   public
     class function SupportsProtocol(const URL: string): Boolean;
       override; abstract;
@@ -86,17 +96,27 @@ begin
   try
     with TBrowseURL.Create(nil) do
       try
-        URL := Self.URL;
+        URL := NormaliseURL(Self.URL);
         Execute;
         Result := True;
       finally
         Free;
       end;
   except
-    // any exceptions converted to EProtocol 
+    // any exceptions converted to EProtocol
     on E: Exception do
       raise EProtocol.Create(E);
   end;
+end;
+
+class function TBrowseProtocol.NormaliseURL(const URL: string): string;
+  {Converts URL into its normal form. Does nothing by default. Descendants may
+  override.
+    @param URL [in] URL to be normalised.
+    @return URL unchanged.
+  }
+begin
+  Result := URL;
 end;
 
 end.
