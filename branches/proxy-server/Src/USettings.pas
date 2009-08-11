@@ -4,36 +4,8 @@
  * Implements class that can store application settings in application wide and
  * per user persistent storage.
  *
- * v0.1 of 04 Apr 2006  - Original version. This is a heavily revised version of
- *                        settings code previously in UAppInfo unit.
- * v0.2 of 07 Apr 2006  - Added new ssApplication section mapped to ssUser
- *                        storage.
- * v0.3 of 11 Apr 2006  - Deleted unused ISectionStorage interface.
- *                      - Removed code relating to unused ssGlobal storage.
- * v1.0 of 28 May 2006  - Improved and corrected comments.
- *                      - Removed warnings about un-fixed interfaces.
- *                      - Moved unit reference from interface to implementation.
- *                      - Changed to get name of CodeSnip's exe file from
- *                        TAppInfo.AppExeFile.
- * v1.1 of 29 Oct 2006  - Added new ssFindXRefs section to store persistent
- *                        settings for cross-reference search dialog box.
- * v1.2 of 09 Nov 2006  - Added new ssHiliteOutput storage section to store
- *                        syntax highlighter customisation.
- * v1.3 of 07 Sep 2007  - Added new ssPreferences sections for storing program
- *                        preferences.
- *                      - Removed ssSourceOutput section: now use SourceCode
- *                        subsection of ssPreferences.
- * v1.4 of 17 Oct 2007  - Removed ssHiliteOutput settings type: now use
- *                        Hiliter subsection of ssPreferences.
- * v1.5 of 14 Aug 2008  - Added new "common" storage and revised to use this
- *                        storage for application wide persistent settings while
- *                        retaining "user" storage for per-user settings.
- * v1.6 of 26 Apr 2009  - Added new ssUserInfo section to store user name and
- *                        email address used when submitting data to web
- *                        services.
- * v1.7 of 25 May 2009  - Changed per-user config file name from User.ini to
- *                        User.3.ini.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -54,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -124,6 +99,22 @@ type
       {Loads section and all its data items from application's persistent
       storage.
       }
+    function GetEncryptedItemValue(const Name: string): string; overload;
+      {Gets an encrypted value by name and unencrypts it.
+        @param Name [in] Name of value.
+        @return Required unencrypted value.
+      }
+    function GetEncryptedItemValue(const Idx: Integer): string; overload;
+      {Gets an encrypted value by index and unencrypts it.
+        @param Idx [in] Index of value.
+        @return Required unencrypted value.
+      }
+    procedure SetEncryptedItemValue(const Name, Value: string);
+      overload;
+      {Encrypts and sets a named value.
+        @param Name [in] Name of value.
+        @param Value [in] Unencryped value to be encrypted.
+      }
     property SectionName: string read GetSectionName;
       {Name of section represented by this object}
     property ItemCount: Integer read GetItemCount;
@@ -144,8 +135,8 @@ type
     Identifies a persisent storage used to persist settings.
   }
   TSettingsStorageId = (
-    ssUser,     // storage for per-user settings
-    ssCommon    // storage for common (application level) settings
+    ssUser,               // storage for per-user settings
+    ssCommon              // storage for common (application level) settings
   );
 
   {
@@ -160,7 +151,8 @@ type
     ssCompilerInfo,       // info about each supported compiler
     ssApplication,        // info about the application
     ssPreferences,        // info about program preferences
-    ssUserInfo            // info about user
+    ssUserInfo,           // info about user
+    ssProxyServer         // info about any proxy server
   );
 
   {
@@ -199,6 +191,8 @@ implementation
 uses
   // Delphi
   SysUtils, Classes, IniFiles,
+  // 3rd party
+  UEncrypt,
   // Project
   UAppInfo, UExceptions, UUtils;
 
@@ -298,12 +292,10 @@ type
     ISettingsSection
   )
   private
-    fSectionName: string;
-      {Name of section}
-    fStorage: TSettingsStorageId;
-      {Id of storage to be used}
-    fValues: TStringList;
-      {Stores section's data items as list of name=value pairs}
+    fSectionName: string;         // Name of section
+    fStorage: TSettingsStorageId; // Id of storage to be used
+    fValues: TStringList;         // Stores section's data as name=value pairs
+    const cEncryptKey = 46723;    // Key used for encryption / decryption
   protected
     { ISettingsSection methods }
     function GetSectionName: string;
@@ -355,6 +347,22 @@ type
       {Loads section and all its data items from application's persistent
       storage.
       }
+    function GetEncryptedItemValue(const Name: string): string; overload;
+      {Gets an encrypted value by name and unencrypts it.
+        @param Name [in] Name of value.
+        @return Required unencrypted value.
+      }
+    function GetEncryptedItemValue(const Idx: Integer): string; overload;
+      {Gets an encrypted value by index and unencrypts it.
+        @param Idx [in] Index of value.
+        @return Required unencrypted value.
+      }
+    procedure SetEncryptedItemValue(const Name, Value: string);
+      overload;
+      {Encrypts and sets a named value.
+        @param Name [in] Name of value.
+        @param Value [in] Unencryped value to be encrypted.
+      }
   public
     constructor Create(const Section: string;
       const Storage: TSettingsStorageId);
@@ -367,7 +375,6 @@ type
       }
   end;
 
-
 function Settings: ISettings;
   {Returns reference to Settings singleton.
     @return Reference to singleton.
@@ -375,7 +382,6 @@ function Settings: ISettings;
 begin
   Result := pvtSettings;
 end;
-
 
 { TSettingsBase }
 
@@ -395,12 +401,12 @@ const
     ssUser,     // ssCompilerInfo
     ssCommon,   // ssApplication
     ssUser,     // ssPreferences
-    ssUser      // ssUserInfo
+    ssUser,     // ssUserInfo
+    ssUser      // ssProxyServer
   );
 begin
   Result := cSectionStorageMap[Section];
 end;
-
 
 { TIniSettingsBase }
 
@@ -443,7 +449,6 @@ begin
       );
   end;
 end;
-
 
 { TIniSettings }
 
@@ -501,14 +506,14 @@ const
     'Cmp',              // ssCompilerInfo
     'Application',      // ssApplication
     'Prefs',            // ssPreferences
-    'UserInfo'          // ssUserInfo
+    'UserInfo',         // ssUserInfo
+    'ProxyServer'       // ssProxyServer
   );
 begin
   Result := cSectionNames[Id];
   if SubSection <> '' then
     Result := Result + ':' + SubSection;
 end;
-
 
 { TIniSettingsSection }
 
@@ -551,6 +556,24 @@ destructor TIniSettingsSection.Destroy;
 begin
   FreeAndNil(fValues);
   inherited;
+end;
+
+function TIniSettingsSection.GetEncryptedItemValue(const Name: string): string;
+  {Gets an encrypted value by name and unencrypts it.
+    @param Name [in] Name of value.
+    @return Required unencrypted value.
+  }
+begin
+  Result := Decrypt(GetItemValue(Name), cEncryptKey);
+end;
+
+function TIniSettingsSection.GetEncryptedItemValue(const Idx: Integer): string;
+  {Gets an encrypted value by index and unencrypts it.
+    @param Idx [in] Index of value.
+    @return Required unencrypted value.
+  }
+begin
+  Result := Decrypt(GetItemValueByIdx(Idx), cEncryptKey);
 end;
 
 function TIniSettingsSection.GetItemCount: Integer;
@@ -641,6 +664,15 @@ begin
     end;
 end;
 
+procedure TIniSettingsSection.SetEncryptedItemValue(const Name, Value: string);
+  {Encrypts and sets a named value.
+    @param Name [in] Name of value.
+    @param Value [in] Unencryped value to be encrypted.
+  }
+begin
+  SetItemValue(Name, Encrypt(Value, cEncryptKey));
+end;
+
 procedure TIniSettingsSection.SetItemValue(const Name, Value: string);
   {Sets value of named data item in section.
     @param Name [in] Name of data item.
@@ -663,12 +695,10 @@ begin
   end;
 end;
 
-
 initialization
 
 // Initialise settings singletion
 pvtSettings := TIniSettings.Create as ISettings;
-
 
 finalization
 
