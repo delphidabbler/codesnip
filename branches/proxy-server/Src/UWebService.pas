@@ -5,29 +5,8 @@
  * subclass that interacts with standard DelphiDabbler web services and some
  * exception classes raised by various kinds of web server error.
  *
- * v0.1 of 20 Nov 2005  - Original version.
- * v0.2 of 04 Jan 2006  - Modified to work with Indy components v10.1.1.
- *                      - Deleted now redundant Host parameter from constructor.
- * v0.3 of 10 Jan 2006  - Reverted to Indy components v9.
- * v0.4 of 10 Apr 2006  - Changed EHTTPError exception to use HTTP error code
- *                        and description as error message rather than content
- *                        of error pages returned from server.
- * v0.5 of 30 Apr 2006  - Added support for download progress reporting.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 25 Aug 2008  - Added override of ECodeSnip's new Assign method to
- *                        EWebServiceError and EHTTPError that updates custom
- *                        fields.
- * v1.2 of 30 Nov 2008  - Added new PostData method to both web service classes
- *                        to post raw data to a web service.
- *                      - Added new optional MediaType parameter to web service
- *                        constructor.
- * v1.3 of 13 Jan 2009  - Replaced control char literals with constants.
- *                      - Made private and protected sections strict.
- *                      - Now use ClassName in Assert statements.
- * v1.4 of 13 May 2009  - Changed TWebService constructor to take a single
- *                        TWebServiceInfo that encapsulates  information
- *                        previously provided by former string parameters.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -48,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -88,14 +70,10 @@ type
   }
   TWebService = class(TObject)
   strict private
-    fHTTP: TIdHTTP;
-      {Component used to access server via HTTP}
-    fScriptURI: string;
-      {URI of web service script}
-    fDownloadMonitor: TDownloadMonitor;
-      {Object that monitors and notifies download progress}
-    fOnProgress: TWebServiceProgressEvent;
-      {References event handler of OnProgress event}
+    fHTTP: TIdHTTP;                         // Fsed to access server via HTTP
+    fScriptURI: string;                     // URI of web service script
+    fDownloadMonitor: TDownloadMonitor;     // Monitors download progress
+    fOnProgress: TWebServiceProgressEvent;  // OnProgress event handler
   strict protected
     procedure TriggerProgressEvent;
       {Triggers OnProgress event. Helper method provided to be called by
@@ -254,8 +232,7 @@ type
   }
   EHTTPError = class(EWebService)
   strict private
-    fHTTPErrorCode: Integer;
-      {Stores value of HTTPErrorCode property}
+    fHTTPErrorCode: Integer;  // HTTPErrorCode property value
   public
     constructor Create(const E: EIdHTTPProtocolException); overload;
       {Class constructor. Creates object from properties of given exception.
@@ -292,8 +269,7 @@ type
   }
   EWebServiceError = class(EWebService)
   strict private
-    fErrorCode: Integer;
-      {Value of ErrorCode property}
+    fErrorCode: Integer;  // Value of ErrorCode property
   public
     constructor Create(const Msg: string; const ErrorCode: Integer = -1);
       overload;
@@ -342,12 +318,22 @@ constructor TWebService.Create(const Service: TWebServiceInfo);
   {Class constructor. Sets up object.
     @param Service [in] Description of web service.
   }
+var
+  ProxyInfo: TWebProxyInfo; // details on any proxy server
 begin
   inherited Create;
   // Create and initialise HTTP client component
   fHTTP := TIdHTTP.Create(nil);
   fHTTP.Request.UserAgent := Service.UserAgent;
   fHTTP.Request.Accept := Service.MediaType;
+  ProxyInfo := TWebInfo.WebProxyInfo;
+  if ProxyInfo.UseProxy then
+  begin
+    fHTTP.ProxyParams.ProxyServer := ProxyInfo.IPAddress;
+    fHTTP.ProxyParams.ProxyPort := ProxyInfo.Port;
+    fHTTP.ProxyParams.ProxyUsername := ProxyInfo.UserName;
+    fHTTP.ProxyParams.ProxyPassword := ProxyInfo.Password;
+  end;
   // Create object that monitors download progress
   fDownloadMonitor := TDownloadMonitor.Create(fHTTP, DoProgress);
   // Record script URI for future use
@@ -579,7 +565,6 @@ begin
   end
 end;
 
-
 { EHTTPError }
 
 procedure EHTTPError.Assign(const E: Exception);
@@ -588,8 +573,7 @@ procedure EHTTPError.Assign(const E: Exception);
       EHTTPError or an EIdHTTPProtocolException instance.
   }
 begin
-  Assert(                                                  // ** do not localise
-    (E is EHTTPError) or (E is EIdHTTPProtocolException),
+  Assert((E is EHTTPError) or (E is EIdHTTPProtocolException),
     ClassName + '.Assign: E must be EHTTPError or EIdHTTPProtocolException');
   inherited;
   if E is EHTTPError then
@@ -606,9 +590,8 @@ constructor EHTTPError.Create(const E: EIdHTTPProtocolException);
   }
 begin
   inherited Create(E.Message);
-  fHTTPErrorCode := E.ReplyErrorCode; // ** Indy 10: use E.ErrorCode;
+  fHTTPErrorCode := E.ReplyErrorCode; // ** In Indy 10: use E.ErrorCode;
 end;
-
 
 { EWebServiceError }
 
@@ -618,7 +601,7 @@ procedure EWebServiceError.Assign(const E: Exception);
       EWebServiceError instance.
   }
 begin
-  Assert(E is EWebServiceError,                            // ** do not localise
+  Assert(E is EWebServiceError,
     ClassName + '.Assign: E must be EWebServiceError');
   inherited;
   fErrorCode := (E as EWebServiceError).fErrorCode;
@@ -632,8 +615,7 @@ constructor EWebServiceError.Create(const Msg: string;
     @param ErrorCode [in] Optional non-zero error code (defaults to -1).
   }
 begin
-  Assert(ErrorCode <> 0,                                   // ** do not localise
-    ClassName + '.Create: zero error code');
+  Assert(ErrorCode <> 0, ClassName + '.Create: zero error code');
   inherited Create(Msg);
   fErrorCode := ErrorCode;
 end;
@@ -647,8 +629,7 @@ constructor EWebServiceError.CreateFmt(const Fmt: string;
     @param ErrorCode [in] Optional non-zero error code (defaults to -1).
   }
 begin
-  Assert(ErrorCode <> 0,                                   // ** do not localise
-    ClassName + '.CreateFmt: zero error code');
+  Assert(ErrorCode <> 0, ClassName + '.CreateFmt: zero error code');
   Create(Format(Fmt, Args), ErrorCode);
 end;
 
