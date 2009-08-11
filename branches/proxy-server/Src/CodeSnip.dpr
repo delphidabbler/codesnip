@@ -57,6 +57,7 @@ uses
   Forms,
   GIFImage in '3rdParty\GIFImage.pas',
   MD5 in '3rdParty\MD5.pas',
+  UEncrypt in '3rdParty\UEncrypt.pas',
   IntfExternalObj in 'AutoGen\IntfExternalObj.pas',
   FmAboutDlg in 'FmAboutDlg.pas' {AboutDlg},
   FmBase in 'FmBase.pas' {BaseForm},
