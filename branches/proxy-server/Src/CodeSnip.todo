@@ -1,3 +1,5 @@
+{TODO 1 -ohomolibere@gmail.com -cFeature : Add support for proxy servers to web services}
+{TODO -oSelf -cRefactor : Replace #8 in FrPrintingPrefs with BACKSPACE from UConsts}
 {TODO 3 -oSelf -cImprovement : Change LoadLibrary in UHTMLHelp to SafeLoadLibrary}
 {TODO -oSelf -cRefactor :
 Move Yes, No and OK resourcestrings in UMessageBox to interface and add string for Cancel.
