@@ -516,6 +516,40 @@ v1.6 of 20 Jun 2009  - Removed TCompHTML class.
                      - Added new TInfoHTML.SnippetKind method.
         04 Jul 2009  - IMPORTED TO SVN.
 
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+USettings.pas
+______________________________________________________________________________
+
+v0.1 of 04 Apr 2006  - Original version. This is a heavily revised version of
+                       settings code previously in UAppInfo unit.
+v0.2 of 07 Apr 2006  - Added new ssApplication section mapped to ssUser
+                       storage.
+v0.3 of 11 Apr 2006  - Deleted unused ISectionStorage interface.
+                     - Removed code relating to unused ssGlobal storage.
+v1.0 of 28 May 2006  - Improved and corrected comments.
+                     - Removed warnings about un-fixed interfaces.
+                     - Moved unit reference from interface to implementation.
+                     - Changed to get name of CodeSnip's exe file from
+                       TAppInfo.AppExeFile.
+v1.1 of 29 Oct 2006  - Added new ssFindXRefs section to store persistent
+                       settings for cross-reference search dialog box.
+v1.2 of 09 Nov 2006  - Added new ssHiliteOutput storage section to store
+                       syntax highlighter customisation.
+v1.3 of 07 Sep 2007  - Added new ssPreferences sections for storing program
+                       preferences.
+                     - Removed ssSourceOutput section: now use SourceCode
+                       subsection of ssPreferences.
+v1.4 of 17 Oct 2007  - Removed ssHiliteOutput settings type: now use
+                       Hiliter subsection of ssPreferences.
+v1.5 of 14 Aug 2008  - Added new "common" storage and revised to use this
+                       storage for application wide persistent settings while
+                       retaining "user" storage for per-user settings.
+v1.6 of 26 Apr 2009  - Added new ssUserInfo section to store user name and
+                       email address used when submitting data to web
+                       services.
+v1.7 of 25 May 2009  - Changed per-user config file name from User.ini to
+                       User.3.ini.
+        04 Jul 2009  - IMPORTED TO SVN.
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 USystemInfo.pas
@@ -535,6 +569,41 @@ v1.4 of 10 May 2009  - Added new TOSVer record.
                      - Made private section of TOSInfo strict.
                      - Added Win2K, WinXP and WinVista TOSVer constants and
                        CheckReportedOS method to TOSVer.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+UWebInfo.pas
+______________________________________________________________________________
+
+v1.0 of 13 May 2009  - Original version.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+UWebService.pas
+______________________________________________________________________________
+
+v0.1 of 20 Nov 2005  - Original version.
+v0.2 of 04 Jan 2006  - Modified to work with Indy components v10.1.1.
+                     - Deleted now redundant Host parameter from constructor.
+v0.3 of 10 Jan 2006  - Reverted to Indy components v9.
+v0.4 of 10 Apr 2006  - Changed EHTTPError exception to use HTTP error code
+                       and description as error message rather than content
+                       of error pages returned from server.
+v0.5 of 30 Apr 2006  - Added support for download progress reporting.
+v1.0 of 24 May 2006  - Improved and corrected comments.
+v1.1 of 25 Aug 2008  - Added override of ECodeSnip's new Assign method to
+                       EWebServiceError and EHTTPError that updates custom
+                       fields.
+v1.2 of 30 Nov 2008  - Added new PostData method to both web service classes
+                       to post raw data to a web service.
+                     - Added new optional MediaType parameter to web service
+                       constructor.
+v1.3 of 13 Jan 2009  - Replaced control char literals with constants.
+                     - Made private and protected sections strict.
+                     - Now use ClassName in Assert statements.
+v1.4 of 13 May 2009  - Changed TWebService constructor to take a single
+                       TWebServiceInfo that encapsulates  information
+                       previously provided by former string parameters.
         04 Jul 2009  - IMPORTED TO SVN.
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
