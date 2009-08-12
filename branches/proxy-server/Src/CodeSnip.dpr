@@ -83,6 +83,7 @@ uses
   FmPreferencesDlg in 'FmPreferencesDlg.pas' {PreferencesDlg},
   FmPreviewDlg in 'FmPreviewDlg.pas' {PreviewDlg},
   FmPrintDlg in 'FmPrintDlg.pas' {PrintDlg},
+  FmProxyServerDlg in 'FmProxyServerDlg.pas' {ProxyServerDlg},
   FmRegistrationDlg in 'FmRegistrationDlg.pas' {RegistrationDlg},
   FmSelectionSearchDlg in 'FmSelectionSearchDlg.pas' {SelectionSearchDlg},
   FmSplash in 'FmSplash.pas' {SplashForm},
