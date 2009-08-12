@@ -128,6 +128,10 @@ type
       {Displays dependency tree for a snippet.
         @param Snippet [in] Snippet for which dependency tree is required.
       }
+    function ExecProxyServerDlg: Boolean;
+      {Displays Proxy Server configuration dialog box.
+        @return True if user OKs or False if user cancels.
+      }
   end;
 
 
@@ -138,8 +142,8 @@ uses
   // Project
   FmAboutDlg, FmBugReportDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg,
   FmFindTextDlg, FmFindXRefsDlg, FmMailingListDlg, FmPreferencesDlg, FmPrintDlg,
-  FmRegistrationDlg, FmSelectionSearchDlg, FmUpdateDlg, UPageSetupDlgMgr,
-  UTestUnitDlgMgr;
+  FmProxyServerDlg, FmRegistrationDlg, FmSelectionSearchDlg, FmUpdateDlg,
+  UPageSetupDlgMgr, UTestUnitDlgMgr;
 
 
 { TDialogMgr }
@@ -196,6 +200,14 @@ function TDialogMgr.ExecPrintDlg: Boolean;
   }
 begin
   Result := TPrintDlg.Execute(Owner);
+end;
+
+function TDialogMgr.ExecProxyServerDlg: Boolean;
+  {Displays Proxy Server configuration dialog box.
+    @return True if user OKs or False if user cancels.
+  }
+begin
+  Result := TProxyServerDlg.Execute(Owner);
 end;
 
 function TDialogMgr.ExecRegistrationDlg: Boolean;
