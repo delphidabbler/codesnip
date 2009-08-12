@@ -56,15 +56,15 @@ Character Set=1252
 Comments=
 Company Name=DelphiDabbler
 File Description=CodeSnip Database Viewer
-File Version=<#F1>.<#F2>.<#F3> build <#F4>
+File Version=<#F1>.<#F2>.<#F3> build <#F4> <SPECIALBUILD>
 Internal Name=<SHORTFNAME>
 Legal Copyright=Copyright © P.D.Johnson, 2005-<YEAR>.
 Legal Trademark=
 Original File Name=CodeSnip.exe
 Private Build=
 Product Name=DelphiDabbler CodeSnip
-Product Version=Release <#P1>.<#P2>.<#P3><SPECIALBUILD>
-Special Build=-dev-proxy
+Product Version=Release <#P1>.<#P2>.<#P3>
+Special Build=dev-proxy
 
 [Configuration Details]
 Identifier=
