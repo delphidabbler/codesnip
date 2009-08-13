@@ -4,14 +4,8 @@
  * Interface implemented by objects that can display a document of a certain
  * type in a preview dialog box.
  *
- * v0.1 of 17 Mar 2005  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed warnings about un-fixed interfaces - now
- *                        fixed.
- * v1.1 of 13 May 2007  - Added SetPopupMenu method to IPreview.
- * v1.2 of 17 Jun 2009  - Modified IPreview.Display method with extra out
- *                        parameter that gets document title.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -32,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

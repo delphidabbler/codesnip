@@ -4,54 +4,8 @@
  * Titled frame that displays lists of snippets, arranged in different ways and
  * manages user interaction with the displayed items.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Fixed possible out of bounds error in accessing
- *                        fActions dynamic array before actions stored in it.
- * v0.3 of 18 Feb 2005  - Deleted unused units from uses clauses.
- * v0.4 of 19 Feb 2005  - Simplified and clarified code in
- *                        TOverviewFrame.Display method.
- *                      - Changed frame to implement the renamed IFrameActionMgr
- *                        and IOverviewActionMgr interfaces.
- * v0.5 of 22 Feb 2005  - Changed way that user input is notified to program:
- *                        frame no longer directly records and triggers actions
- *                        but now calls methods of an externally provided
- *                        notifier object.
- *                        - Removed support for IFrameActionMgr interfaces.
- *                        - Added support for ISetNotifier interface.
- *                        - Reworked UI response code to use INotifier object.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- *                      - Made various method parameters constant.
- * v1.1 of 11 Feb 2007  - Implemented new IsActive, NextTab and PreviousTab
- *                        methods of ITabFrameDisplayMgr.
- * v1.2 of 16 Feb 2007  - Changed so that when database is empty Uncategorised
- *                        heading is not displayed.
- * v1.3 of 16 Feb 2007  - Revised to work with redefined and new display
- *                        interfaces from IntfFrameMgrs.
- *                      - Removed redundant fActions field.
- * v1.4 of 26 Aug 2008  - Added OnCustomDrawItem event handler to tree view to
- *                        display items from user database in a different colour
- *                        and to display category and other header items in
- *                        bold.
- * v1.5 of 13 Jan 2009  - Replaced tree view's draw item event with new TTVDraw
- *                        private class that descends from TSnippetsTVDraw.
- *                      - Made some visbility specifiers strict.
- *                      - Made assert statement use ClassName method.
- * v2.0 of 06 Jun 2009  - Removed uncategorised tab and replaced with two new
- *                        tabs: alphabetical (snippets grouped by initial
- *                        letter) and snippet kind (snippets grouped by type).
- *                      - Enabled expanding and collapsing of sections in
- *                        treeview and provided keyboard and local toolbar
- *                        support. State persists when tabs are changed.
- *                      - Clicking to right of tree node now selects it.
- *                      - TTVDraw revised re changes in TSnippetsTVDraw base
- *                        class.
- *                      - Now use a separate set of classes in another unit to
- *                        populate tree view in the various different styles.
- *                      - Added toolbar and popup menu and support for
- *                        ICommandBarConfig using contained TCommandBarMgr
- *                        instance.
- *                      - Renamed some identifiers and components.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -72,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

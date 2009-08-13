@@ -3,13 +3,8 @@
  *
  * Contains common general purpose interfaces.
  *
- * v0.1 of 05 May 2005  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed warnings about un-fixed interfaces - now
- *                        fixed.
- * v1.1 of 04 Nov 2007  - Changed parameter type of IAssignable.Assign from
- *                        IAssignable to IInterface.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -28,10 +23,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

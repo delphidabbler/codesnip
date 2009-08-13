@@ -6,17 +6,8 @@
  * content of the unit is based on Microsoft UI documentation from MSDN. Not all
  * the structures and constants are used in CodeSnip.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Commented out some DOCHOSTUIFLAG_* constants that
- *                        appear to have erroneous values.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- * v1.1 of 14 Jan 2009  - Provided correct values for commented-out
- *                        DOCHOSTUIFLAG_* flags.
- *                      - Added new DOCHOSTUIFLAG_* flags introduced with IE6
- *                        for XP SP2 and IE7.
- *                      - Removed unnecessary $WARN directive.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -37,6 +28,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -4,13 +4,8 @@
  * Declares various types that describe syntax hilighters and and defines
  * interfaces to various syntax highlighters and highlighter attributes.
  *
- * v0.1 of 21 Apr 2005  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed warnings about un-fixed interfaces - now
- *                        fixed.
- * v1.1 of 02 Jul 2007  - Added Title param to Hilite methods of ISyntaxHiliter.
- * v1.2 of 21 May 2009  - Added TPredefinedHiliteStyle enumeration.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -31,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

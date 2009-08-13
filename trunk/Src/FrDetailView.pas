@@ -4,86 +4,8 @@
  * Abstract base class for frames that display content in the detail pane.
  * Implements functionality common to all detail frames.
  *
- * v0.1 of 23 Feb 2005  - Original version based on code originally implemented
- *                        in FrInfo and FrCompCheck units.
- * v0.2 of 28 Jan 2006  - Prevented from setting browser's scroll bars to flat.
- *                        Scroll bars are now displayed normally.
- * v0.3 of 16 Apr 2006  - Removed ISetWBExternal interface and replaced with new
- *                        IWBCustomiser interface to perform web browser
- *                        customisation. Implemented IWBCustomiser's
- *                        SetDragDropHandler method. SetExternalObj has been
- *                        moved from ISetWBExternal to IWBCustomiser. Its
- *                        implementation is unchanged.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit reference.
- * v1.1 of 24 Nov 2006  - Exposed private fActive field as protected Active
- *                        property.
- * v1.2 of 25 Nov 2006  - Added code that generates CSS default styles used by
- *                        detail pane browser controls. This CSS is limited to
- *                        colour and font styles that need to accord to system
- *                        defaults or user preferences. Other CSS remains in
- *                        style sheet embedded in resources.
- * v1.3 of 03 Dec 2006  - Added support for IDHTMLHostInfo and
- *                        IDetailViewHostInfo interfaces.
- *                      - Added code to ensure that all documents displayed are
- *                        scrolled to top.
- *                      - Moved code that loads and dynamically updates pages
- *                        from descendants to this class. DisplayCurViewItem was
- *                        changed from abstract to virtual to do this.
- *                      - Added new abstract GetPageKind method to get kind of
- *                        page to load from sub classes.
- *                      - Moved code that generates CSS for information pane's
- *                        compiler table to FrInfo. Also deleted redundant CSS
- *                        class from CSS builder.
- * v1.4 of 17 Dec 2006  - Removed code that generates old .hilite CSS class
- *                        since class no longer used.
- * v1.5 of 04 Feb 2007  - Replaced redundant TDetailView class references with
- *                        TViewItem.
- * v1.6 of 09 Feb 2007  - Added new h2 class to dynamically generated CSS.
- * v1.7 of 16 Feb 2007  - Revised to work with redefined display interfaces
- *                        from IntfFrameMgrs. Implements various methods of
- *                        these interfaces on behalf of descendant classes.
- *                      - Added Display method previously implemented in
- *                        immediate child classes.
- *                      - Deleted unused Active property and renamed fActive
- *                        field as fIsActivated.
- *                      - Changed to use IDHTML.SupportsUpdating method to
- *                        detect if a view supports DHTML updating rather than
- *                        assuming only routine displays support this.
- *                      - Added IPaneInfo and implemented its IsInteractive
- *                        method.
- * v1.8 of 17 Feb 2007  - Changed various methods that called methods on web
- *                        browser control to instead call new methods of
- *                        TWBUIMgr and THTMLDocHelper.
- *                      - Changed TDetailViewFrame.HTMLDocument to call new
- *                        UUtils.GetIntf routine to get required interface.
- *                      - Removed redundant GetWebBrowser method.
- *                      - Changed return type of TDetailViewFrame's HTMLDocument
- *                        method to IDispatch.
- * v1.9 of 13 May 2007  - Removed implementation of IClipboardMgr and
- *                        ISelectionMgr since these are now implemented in base
- *                        class.
- * v1.10 of 01 Nov 2007 - Added support for IWBPopupMenuConfig and IWBPopupMenus
- *                        via aggregated object.
- * v1.11 of 05 Nov 2007 - Changed to use revised CSS builder classes.
- * v1.12 of 10 Sep 2008 - Added definition of new CSS classes: .routinenameuser
- *                        and .routinenamemain used to customise colour of
- *                        routine name headings.
- * v1.13 of 19 Jan 2009 - Changed to support interfaces from IntfHTMLDocHostInfo
- *                        to replace those deleted from UDHTML.
- *                      - Removed unused GetView method.
- *                      - Changed how new pages are loaded into web borwser
- *                        control. New page loader is used and loaded pages are
- *                        no longer initialised dynamically.
- *                      - Made private and protected sections strict.
- * v1.14 of 23 May 2009 - Removed IDetailViewHostInfo from frame definition.
- *                      - Changed to use revised parameter list of
- *                        TDetailPageLoader.LoadPage.
- *                      - Text used in frame now uses system content font.
- *                      - Source code highlighting now uses user defined syntax
- *                        highlighting except that font name and size always
- *                        uses system mono font.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -104,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

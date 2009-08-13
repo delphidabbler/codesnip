@@ -4,10 +4,8 @@
  * Abstract base class for frames used to display previews of documents using
  * controls that descend from TCustomMemo.
  *
- * v1.0 of 13 May 2007  - Original version.
- * v1.1 of 17 Jun 2009  - Modified to work with modified IPreview.Display method
- *                        that also gets document title where available.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -28,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

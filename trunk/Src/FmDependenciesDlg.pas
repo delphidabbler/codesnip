@@ -4,12 +4,8 @@
  * Implements a dialog box that recursively displays all the dependencies of a
  * snippet.
  *
- * v1.0 of 06 Jun 2009  - Original version.
- * v1.1 of 10 Jul 2009  - Changed so that "no snippets" and "circular reference"
- *                        message labels recognise default OS font.
- *                      - Revised control alignment code to allow for height of
- *                        text in "circular reference" label.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -30,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

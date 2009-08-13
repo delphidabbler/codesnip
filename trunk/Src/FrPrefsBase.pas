@@ -4,20 +4,8 @@
  * Implements frame that forms an abstract base class for all frames displayed
  * in preferences dialog box.
  *
- * v1.0 of 09 Nov 2006  - Original version.
- * v2.0 of 07 Sep 2007  - Major update:
- *                        - No longer pure abstract class. Default
- *                          implementations of LoadPrefs and SavePrefs methods
- *                          provided.
- *                        - Changed to load and save data to local preferences
- *                          object rather than main preferences.
- *                        - Added Activate and Deactivate abstract methods
- *                          called when frame is displayed or hidden. Used to
- *                          update controls and store entered data.
- * v2.1 of 19 Jul 2009  - Added new abstract ArrangeControls method that
- *                        preferences dialog box calls to get frames to
- *                        arrange controls after frames have been sized.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -38,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

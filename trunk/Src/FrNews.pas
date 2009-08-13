@@ -4,17 +4,8 @@
  * Frame used to display news items, containing navigation controls to move
  *  backwards and forwards through a list of news items.
  *
- * v0.1 of 01 May 2006  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 07 Nov 2006  - Changed to use UCSSUtils methods to generate CSS
- *                        attributes.
- * v1.2 of 25 Nov 2006  - Removed explicit styles used to format messages for
- *                        news pane and replaced by new .message CSS styles.
- * v1.3 of 10 May 2007  - Added static text control that displays current news
- *                        page index and page count.
- * v1.4 of 25 Jan 2009  - Changed to use routines and objects in UHTMLUtils to
- *                        generate HTML tags.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -35,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

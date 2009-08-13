@@ -4,14 +4,8 @@
  * Implements a frame that allows user to set general application preferences.
  * Designed for use as one of the tabs in the preferences dialog box.
  *
- * v1.0 of 07 Sep 2007  - Original version.
- * v1.1 of 17 Oct 2007  - Refactored code that gets names of measurement units.
- * v1.2 of 19 Jul 2009  - Implemented new inherited ArrangeControls method that
- *                        arranges controls in frame to allow for resized frame.
- *                      - Resized some controls to accommodate Vista UI font.
- *                      - Used anchors for some controls to automate some
- *                        realignment.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -30,10 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

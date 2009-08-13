@@ -3,102 +3,8 @@
  *
  * Implements about dialog box.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 20 Feb 2005  - Changed name of template html file to
- *                        dlg-about-tplt.html.
- * v0.3 of 23 Feb 2005  - Changed to use new THTMLTpltDlgFrame frame instead of
- *                        THTMLDlgFrame to process HTML template and display
- *                        dialog content.
- * v0.4 of 01 Mar 2005  - Template HTML revised. Resolved new <%ResURL%> place-
- *                        holder with root part of res:// url to program's
- *                        resources. New template changes appearance of dialog
- *                        and adds "Powered by Delphi" logo.
- * v0.5 of 04 Jan 2006  - Fixed problem where help failed to display because F1
- *                        key press was not being detected.
- * v0.6 of 14 Jan 2006  - Resized to accomodate revised content.
- * v0.7 of 07 Apr 2006  - Removed dependency on TPJVersionInfo. Replaced with
- *                        calls to new methods of TAppInfo.
- *                      - Added code to replace new Registration HTML
- *                        placeholder with registration information.
- *                      - Made dialog box resize to accomodate size of dialog's
- *                        HTML.
- *                      - Added new "Register CodeSnip" button that is displayed
- *                        only if application is unregistered and displays
- *                        registration wizard when clicked.
- * v1.0 of 04 Jun 2006  - Improved and corrected comments.
- *                      - Removed unused unit references.
- *                      - Added code to execute files flagged with fake
- *                        'execute' protocol when links clicked in browser.
- *                      - Highlighted note that program unregistered in red.
- *                      - Added directive to turn off unsafe type warnings.
- *                      - Changed to derive from base class that can resize
- *                        dialog to fit HTML content. Removed code from this
- *                        unit that did same job.
- *                      - Widened dialog box.
- * v1.1 of 25 Oct 2006  - Removed OnBeforeNavigate2 event handler and code that
- *                        checked for "execute:" protocol. This has now moved to
- *                        TBrowserBaseFrame and is available to all browser
- *                        frames that descend from it.
- *                      - Changed so that path to license file is provided via
- *                        HTML template rather than hard-wiring path into code
- *                        that displays license.
- * v1.2 of 26 Oct 2006  - Changed to replace LicenseFileName template id with
- *                        path to license file rather than providing only
- *                        directory containing license file.
- * v1.3 of 07 Nov 2006  - Changed to use UCSSUtils methods to generate CSS
- *                        attributes.
- * v1.4 of 14 Nov 2006  - Removed resolution of LicenseFileName template id
- *                        since it has been removed from the dialog box
- *                        template.
- * v1.5 of 25 Nov 2006  - Changed literal colour reference to special program
- *                        colour constant.
- *                      - Added .header class to frame's CSS. This is used to
- *                        colour the dialog's header rather than hard wired
- *                        colour formerly in HTML template file.
- * v1.6 of 08 Feb 2007  - Modified to work with revised THTMLViewDlg base class
- *                        and new form customisation and alignment framework.
- *                      - Re-assigned form's OnCreate event handler that was
- *                        uncoupled when handler in ancestor class was deleted.
- * v1.7 of 11 Feb 2007  - Removed code that made body panel active control on
- *                        start up. We now allow browser control to be focussed.
- * v2.0 of 11 Feb 2007  - Major revision.
- *                      - Added information about database and separated out
- *                        heading from main body of program information. There
- *                        is now an HTML frame containing the heading and two
- *                        further frames giving informaion about program and
- *                        database, hosted by a page control. Database frame
- *                        displays list of contributors loaded from a downloaded
- *                        file.
- *                      - Also made other changes to accomodate modifications to
- *                        base class:
- *                        * Added new GetBodyPanelHeight method override to
- *                          return required height of body panel which now
- *                          depends on height of heading frame and page control,
- *                          which in turn is sized to the longest of the HTML
- *                          documents it contains.
- *                        * Removed redundant GetBrowser method.
- * v2.1 of 22 Sep 2007  - Changed "About The Database" tab to list testers as
- *                        well as contributors.
- * v2.2 of 05 Nov 2007  - Changed to use revised CSS builder classes.
- * v2.3 of 21 Apr 2008  - Fixed problem with border of Title HTML frame: removed
- *                        CSS body border property and added framing panel to
- *                        provide body.
- * v2.4 of 11 Aug 2008  - Replaced calls to ThemeServices with ThemeServicesEx.
- * v2.5 of 24 Aug 2008  - Modified to work with revised contributor classes to
- *                        get list of names of code contributors and testers.
- * v2.6 of 13 Jan 2009  - Replaced control char literals with constants.
- *                      - Made protected section strict.
- * v2.7 of 25 Jan 2009  - Changed to use routines and objects from UHTMLUtils
- *                        to generate HTML tags.
- * v2.8 of 16 Jun 2009  - Added facility to display easter egg by clicking
- *                        program icon in title HTML frame.
- *                      - Changed to use content font in detail (tabbed) frames.
- *                      - Added space to separate "un-registered" message from
- *                        following prompt text.
- *                      - Removed type qualifier from constructor call in
- *                        TAboutDlg.Execute.
- *                      - Widened dialog box.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -119,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

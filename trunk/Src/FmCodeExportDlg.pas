@@ -4,10 +4,8 @@
  * Implements a dialog box that gets snippets to be exported and creates an
  * export file containing the selected snippets.
  *
- * v1.0 of 15 Dec 2008  - Original version.
- * v1.1 of 05 Jun 2009  - Replaced "routines" in text with "snippets".
- *                      - Renamed some components and parameters.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -28,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

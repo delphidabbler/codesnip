@@ -1,54 +1,12 @@
-{ ##
-  @FILE                     FmHTMLViewDlg.pas
-  @COMMENTS                 Implements abstract base class for HTML view dialogs
-                            that need to size themselves to their HTML content.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None
-  @HISTORY(
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 28/05/2006
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.1
-      @DATE                 03/12/2006
-      @COMMENTS             Changed to re-align form to owner after resizing
-                            to fit HTML content.
-    )
-    @REVISION(
-      @VERSION              2.0
-      @DATE                 07/02/2007
-      @COMMENTS             Rewrote to work with revised TGenericDlg base class
-                            and new form customisation / aligment framework:
-                            + Overrode new ConfigForm method to initialise the
-                              HTML displayed in browser control before sizing
-                              the body panel to fit the content.
-                            + Added InitHTMLFrame abstract method that
-                              subclasses override to initialise HTML in browser.
-                            + Revised UpdateFormHeight method to remove call to
-                              resize form. Renamed method as SizeBodyPanel.
-    )
-    @REVISION(
-      @VERSION              2.1
-      @DATE                 11/02/2007
-      @COMMENTS             + Added new abstract GetBodyPanelHeight method to
-                              return required height of body panel.
-                            + Changed SizeBodyPanel method to simply set body
-                              panel height to value returned from
-                              GetBodyPanelHeight method. We no longer simply
-                              assume the body panel should be the same height as
-                              the HTML frame since there may be more that one
-                              frame in a HTML dialog.
-                            + Removed unused GetBrowser abstract method.
-    )
-  )
-}
-
-
 {
+ * FmHTMLViewDlg.pas
+ *
+ * Implements abstract base class for HTML view dialogs that need to size
+ * themselves to their HTML content.
+ *
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -66,10 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

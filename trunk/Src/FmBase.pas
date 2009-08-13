@@ -5,39 +5,8 @@
  * Provides default names for form window classes along with various operations
  * that are common to all forms in application.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- *                      - Prefixed global constants with UGlobals unit name.
- * v1.1 of 31 Oct 2006  - Added handler for CM_WININICHANGE that updates theme
- *                        manager.
- * v2.0 of 08 Feb 2007  - Major update.
- *                      - Added support for form aligment to class:
- *                        - Added code that enables form to be aligned over
- *                          another form via a provided IAligner instance.
- *                        - Added virtual methods that be overridden to
- *                          configure form before aligment and initialise it
- *                          after alignment.
- *                      - WindowClassName now only strips leading character of
- *                        class name if it starts with a 'T'.
- * v2.1 of 26 Sep 2007  - Changed to use renamed IFormAligner interface.
- * v2.2 of 14 Jun 2008  - Registered form with object that fixes Delphi's Alt
- *                        key bug.
- * v2.3 of 11 Aug 2008  - Removed handler for CM_WININICHANGE that updated theme
- *                        manager. Not required now that theme manager can
- *                        detect changes itself.
- * v2.4 of 05 Oct 2008  - Alt key bug fix was not being unregistered correctly.
- *                        Fixed by moving unregistration of form from OnHide
- *                        event handler (which is not always called) to the
- *                        OnDestroy event handler.
- * v2.5 of 04 Jan 2009  - Added code that detects form's enabled state changing
- *                        and causes all controls and actions to be enabled /
- *                        disabled. Uses separate object to perform updating.
- * v2.6 of 13 May 2009  - Now gets company and program name from TAppInfo
- *                        instead of UGlobals unit.
- * v2.7 of 10 Jul 2009  - Changed to use OS default font instead of MS Sans
- *                        Serif.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -58,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

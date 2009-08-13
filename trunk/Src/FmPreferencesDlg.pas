@@ -3,58 +3,8 @@
  *
  * Implements a dialog box that is used to set user preferences.
  *
- * v0.1 of 06 Jan 2006  - Original version.
- * v0.2 of 10 Jan 2006  - Removed unsupported properties from form on reversion
- *                        to Delphi 7.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit reference.
- *                      - Localised file type and comment style descriptions.
- * v1.1 of 29 Oct 2006  - Changed to use renamed IPreferences properties.
- *                      - Changed logic to deal with change in
- *                        SourceDefaultFileType to return enumeration rather
- *                        than file extension.
- *                      - Changed descriptions of supported file types, removing
- *                        file extensions.
- * v2.0 of 09 Nov 2006  - Major revision.
- *                      - Changed form so that each tab in page control now
- *                        simply hosts a frame that in turn lets user edit a
- *                        group of preferences. The frames expose methods to
- *                        load and save relevant preferences. All other controls
- *                        removed.
- *                      - Source Code tab changed to host TSourcePrefsFrame that
- *                        provides same functionality.
- *                      - Added new Syntax Highlighter tab that hosts
- *                        THiliterPrefsFrame that in turn permits customisation
- *                        of highlighter.
- * v2.1 of 08 Feb 2007  - Moved control initialisation code from FormCreate
- *                        event handler to new overridden InitForm method and
- *                        deleted FormCreate method.
- * v3.0 of 07 Sep 2007  - Major revision.
- *                      - Added new General and Printing tabs
- *                      - Added ability to display a subset of them preference
- *                        pages.
- *                      - Dialog now always displayed left-most visible tab
- *                        sheet when it opens.
- *                      - Changed so that help button now displays a help topic
- *                        relating to displayed page.
- *                      - Renamed tab sheets and frames. Frame names may be are
- *                        used for help A-Link names.
- *                      - Changed to use a temporary preferences object to
- *                        received updates and to update main preferences when
- *                        user OKs.
- *                      - Each tab sheet is now activated and deactivated via
- *                        revised interface. On deactivation the sheets update
- *                        the temp preferences object. On activation sheets
- *                        re-initialise controls.
- * v3.1 of 04 Nov 2007  - Removed the IAssignable cast from the parameter to
- *                        IAssignable.Assign method calls.
- * v3.2 of 21 May 2009  - Resized body panel and frame to accomodate larger
- *                        highlighter preferences frame.
- * v3.3 of 19 Jul 2009  - Resized form to accommodate revised frames. Also sets
- *                        width and height of frames and gets them to arrange
- *                        their own controls.
- *                      - Changed assertions to use ClassName.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -76,7 +26,10 @@
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
-  * ***** END LICENSE BLOCK *****
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 

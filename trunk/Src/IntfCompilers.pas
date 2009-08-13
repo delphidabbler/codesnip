@@ -4,45 +4,8 @@
  * Declares various types that describe the compiler and compilation results and
  * defines interfaces to compiler objects.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 22 Feb 2005  - Localised compiler names.
- * v0.3 of 24 Feb 2005  - Removed compiler names from unit: now available via
- *                        global Compilers objects.
- * v0.4 of 05 Mar 2005  - Added interface declarations for new ICompiler,
- *                        ICompilers, IPersistCompilers and ICompilerAutoDetect
- *                        objects.
- *                      - Renamed TDelphhiVersion as TCompilerID and added new
- *                        item to enumeration to represent the Free Pascal
- *                        compiler.
- *                      - Renamed TCompilerLogFilter as TCompLogFilter.
- *                      - Added new TCompLogPrefixID that enumerates the
- *                        recognised compiler log prefixes that identify error
- *                        and warning a error lines and TCompLogPrefixes array
- *                        to hold the prefixes.
- * v0.5 of 20 Apr 2005  - Renamed from UCompilerTypes.pas to IntfCompilers.pas.
- * v0.6 of 25 Apr 2005  - Added new AvailableCount method to ICompilers along
- *                        with associated GetAvailableCount method.
- * v0.7 of 08 Jan 2006  - Removed redundant parameterss from ICompiler's Compile
- *                        and DeleteObjFiles methods.
- *                      - Added ids for Delphi 2005/6 to TCompilerID.
- *                      - Changed ICompilerAutoDetect's only method to enable
- *                        implementation as part of compiler objects rather than
- *                        in removed TCompilerAutoDetect class.
- *                      - Added support to ICompiler for user-defined command
- *                        line switches.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed warnings about un-fixed interfaces: now fixed.
- *                      - Removed unused unit reference.
- * v1.1 of 08 May 2007  - Added support for Delphi 2007 by adding item to
- *                        TCompilerID enumeration.
- * v1.2 of 25 Aug 2008  - Added ICompilersEnum interface and added GetEnumerator
- *                        method to ICompilers.
- * v1.3 of 11 Oct 2008  - Added support for Delphi 2009 by adding item to
- *                        TCompilerID enumeration.
- * v1.4 of 10 Jan 2009  - Added HasErrorsOrWarnings method to ICompiler.
- * v1.5 of 25 Jan 2009  - Corrected name of ICompilers.GetGylph method to
- *                        GetGlyph.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -63,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

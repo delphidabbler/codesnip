@@ -3,21 +3,8 @@
  *
  * Frame used to display previews of HTML documents.
  *
- * v0.1 of 17 Feb 2005  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 07 Nov 2006  - Changed to use TCSSBuilder to build body CSS rather
- *                        than using a hard-wired literal string.
- * v1.2 of 13 May 2007  - Changed to use an 8px rather than 1px margin (old
- *                        BodyCSS method was replaced by BuildCSS override since
- *                        BodyCSS failed to set old 1px margin).
- *                      - Removed redundant constructor.
- *                      - Added support for selection and copying and assigning
- *                        pop-up menu.
- * v1.3 of 05 Nov 2007  - Changed to use revised CSS builder classes.
- * v1.4 of 17 Jun 2009  - Changed to implement revised IPreview.Display method
- *                        that gets HTML document title.
- *                      - Made a protected section strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -38,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

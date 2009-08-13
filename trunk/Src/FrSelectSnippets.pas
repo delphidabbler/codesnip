@@ -4,28 +4,8 @@
  * Implements a frame that enables one or more routines in the snippets database
  * to be selected via a tree view. User defined items are highlighted.
  *
- * v1.0 of 29 Oct 2006  - Original version.
- * v1.1 of 31 Oct 2006  - Added code to render checkboxes using XP theme if
- *                        theme changes.
- * v2.0 of 12 Nov 2006  - Rewrote to decend from new TCheckedTVFrame frame. All
- *                        generic code relating to check boxes and tree view
- *                        handling now in base frame leaving only snippet
- *                        specific code in TSelectSnippetsFrame.
- * v2.1 of 13 Sep 2008  - Made highlight user defined routines and display
- *                        category nodes in bold.
- * v2.2 of 20 Sep 2008  - Fixed assertion failure that arises when an empty
- *                        category is displayed in list by preventing display of
- *                        empty categories.
- *                      - Replace indexed for loops that iterate over routine
- *                        or category lists with for..in construct.
- * v2.3 of 13 Jan 2009  - Replaced tree view's draw item event with new TTVDraw
- *                        private class that descends from TSnippetsTVDraw.
- *                      - Made some visbility specifiers strict.
- *                      - Made assert statement use ClassName method.
- *                      - Removed an unnecessary $WARN directive.
- * v2.4 of 16 May 2009  - Changed TTVDraw to accomodate revised inherited
- *                        TSnippetsTVDraw methods.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -46,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

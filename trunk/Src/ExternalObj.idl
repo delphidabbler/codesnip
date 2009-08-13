@@ -4,34 +4,8 @@
  * Source for type library that defines the interface to extensions to the
  * browser control DOM's "external object".
  *
- * v1.0 of 05 Jun 2006  - Original version. Before this file was created the
- *                        type library was created directly from Delphi's Type
- *                        Library Editor.
- *                      - Updated type library to v1.0.
- *                      - Renamed type library from CodeSnip.tlb to
- *                        ExternalObj.tlb.
- * v1.1 of 23 Nov 2006  - Added IWBExternal2 interface.
- *                      - Updated type library to v1.1.
- * v2.0 of 04 Nov 2007  - Replaced IWBExternal and IWBExternal2 with single
- *                        IWBExternal3 interface. This new interface has same
- *                        methods as IWBExternal2 except that HelpTopic method
- *                        was removed.
- * v3.0 of 14 Sep 2008  - Replaced IWBExternal3 with IWBExternal4:
- *                        - Modified DisplayRoutine to take an extra UserDefined
- *                          parameter.
- *                        - Added new EditRoutine method.
- * v4.0 of 17 Jun 2009  - Replaced IWBExternal4 with IWBExternal5:
- *                        - Replaced ToggleTestUnit method with ShowTestUnit.
- *                        - Added Donate method.
- *                        - Renamed DisplayRoutine method as DisplaySnippet,
- *                          CompileRoutine as CompileSnippet, EditRoutine as
- *                          EditSnippet.
- *                        - Updated all version references to v5.
- *                      - Deleted "Created by MIDL" custom entry.
- * v5.0 of 12 Jul 2009  - Replaced IWBExternal5 with IWBExternal6:
- *                        - Added DisplayCategory method.
- *                        - Updated all version references to v6.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -52,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
  */

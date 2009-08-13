@@ -5,25 +5,8 @@
  * snippets. Also defines a class that is used to persist the last chosen search
  * criteria.
  *
- * v1.0 of 29 Oct 2006  - Original version.
- * v1.1 of 08 Feb 2007  - Moved control initialisation code from the FormCreate
- *                        and FormShow event handlers to new overridden InitForm
- *                        method.
- *                      - Re-assigned form's OnCreate event handler that was
- *                        uncoupled when handler in ancestor class was deleted.
- *                      - Deleted FormShow event handler.
- * v1.2 of 05 Jun 2009  - Replaced all "routine" text with "snippet".
- *                      - Assertion now gets class name from ClassName method.
- *                      - Type specifier removed from constructor call in
- *                        TFindXRefsDlg.Execute.
- *                      - Made private and protected sections of classes strict.
- * v1.3 of 10 Jul 2009  - Changed so that all labels use OS default font: all
- *                        reverted to ParentFont = true and styling set in code.
- *                      - Made user defined snippet name at top of dialog appear
- *                        in user-defined colour.
- *                      - Dialog box width now stretches to accomodate text
- *                        containing long snippet names.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -44,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

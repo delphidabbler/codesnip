@@ -3,57 +3,8 @@
  *
  * Dialog box that displays compiler error or warning logs.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 20 Feb 2005  - Changed name of template html file from to
- *                        dlg-comperror-tplt.html.
- *                      - Localised dialog and HTML text.
- * v0.3 of 23 Feb 2005  - Changed to use new THTMLTpltDlgFrame frame instead of
- *                        THTMLDlgFrame to process HTML template and display
- *                        dialog content.
- * v0.4 of 23 Feb 2005  - Added static method that displays dialog box for a
- *                        specified routine and compiler.
- * v0.5 of 24 Feb 2005  - Changed to compiler names from Compilers global object
- *                        now that name removed from UCompilerTypes.
- * v0.6 of 04 Mar 2005  - Changed to used methods of revised Compiler object.
- *                      - Changed to resolve <%CompilerID%> in template file
- *                        that replaced previous <%Delphi%>.
- * v0.7 of 20 Apr 2005  - Changed to use renamed IntfCompilers unit.
- * v1.0 of 28 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit reference.
- *                      - Changed to derive from base class that can resize
- *                        dialog to fit HTML content. Removed code from this
- *                        unit that did same job.
- * v1.1 of 07 Feb 2007  - Modified to work with revised THTMLViewDlg base class.
- * v1.2 of 11 Feb 2007  - Added GetBodyPanelHeight method override to return
- *                        required height of body panel, which is the height of
- *                        the displayed HTML.
- *                      - Removed redundant GetBrowser method.
- * v2.0 of 05 Jan 2009  - Major revision to allow to display either a list of
- *                        compiler results or the results for a single compiler.
- *                        When multiple compilers are displayed a tab set
- *                        containing the compiler names is displayed. Clicking
- *                        the tab displays that compiler's log. No tab set is
- *                        displayed when the log of a single compiler is
- *                        requested.
- *                      - Added TRequiredCompilers helper object to assist in
- *                        determining which compilers are to be displayed.
- *                      - Made private and protected sections strict.
- *                      - Changed assertions / bug exceptions to use ClassName.
- * v2.1 of 06 Jan 2009  - Changed code that reports each compiler with an error
- *                        or warning log to get compiler information from new
- *                        parameter rather than global Compilers instance.
- *                      - Added actions that enable Ctrl+Tab and Shift+Ctrl+Tab
- *                        to cycle through tabs when more than one is displayed.
- * v2.2 of 10 Jan 2009  - Changed detection of compiler errors / warnings to use
- *                        new ICompiler.HasErrorsOrWarnings method.
- *                      - Fixed bug in displaying correct form caption.
- * v2.3 of 13 Jan 2009  - Replaced control char literals with constants.
- * v2.4 of 25 Jan 2009  - Changed to use renamed ICompilers.GetGlyph method.
- *                      - Routine from UHTMLUtils now used to generate HTML
- *                        tags.
- * v2.5 of 10 Jul 2009  - Made tab control display tabs in default UI font.
- *
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -74,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

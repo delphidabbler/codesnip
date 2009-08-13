@@ -1,28 +1,12 @@
-{ ##
-  @FILE                     FmGenericViewDlg.pas
-  @COMMENTS                 Implements a dialog box base class derived from
-                            TGenericDlg that adds a Close button to the dialog.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None
-  @HISTORY(
-    @REVISION(
-      @VERSION              0.1
-      @DATE                 30/01/2005
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 05/06/2006
-      @COMMENTS             + Implemented new ModalResultOnEsc method to return
-                              modal result of Close button when ESC key pressed.
-    )                       + Improved and corrected comments.
-  )
-}
-
-
 {
+ * FmGenericViewDlg.pas
+ *
+ * Implements a dialog box base class derived from TGenericDlg that adds a Close
+ * button to the dialog.
+ *
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -40,10 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2006 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

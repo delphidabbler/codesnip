@@ -5,11 +5,8 @@
  * host. Used by HTML generators and dynamic HTML manipulators to get reference
  * to HTML document and to get information about what should be displayed.
  *
- * v1.0 of 25 Jan 2009  - Original version.
- * v1.1 of 16 May 2009  - Removed declarations of redundant interfaces
- *                        IDetailViewHostInfo, IInfoRoutineHostInfo,
- *                        ICompCheckRoutineHostInfo.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -30,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

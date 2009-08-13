@@ -4,25 +4,8 @@
  * Implements a borderless dialog box that displays a message. Designed for
  * display when application is waiting.
  *
- * v1.0 of 01 Dec 2006  - Original version.
- * v2.0 of 08 Feb 2007  - Modified to work with revised TBaseForm base class and
- *                        new form customisation and alignment framework:
- *                        - Removed form alignment code. This is now provided by
- *                          an TFormAligner object.
- *                        - Moved code from FormShow to InitForm method.
- *                        - Removed FormShow and FormCreate methods.
- * v2.1 of 25 Sep 2007  - Changed to use renamed IFormAligner interface.
- * v2.2 of 02 Jun 2008  - Removed progress bar and timer components and replaced
- *                        with dynamically created custom marquee control. This
- *                        new control avoids a display problem with old control
- *                        on Vista.
- * v2.3 of 11 Jun 2008  - Changed to use window handle of owner control as
- *                        form's parent if suitable, or to use active form or
- *                        main form as parent. This change needed for app to
- *                        work correctly with Vista task bar.
- * v2.4 of 10 Jul 2009  - Changed to use correct OS UI font for wait message.
- *                      - Made private and protected sections strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -43,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

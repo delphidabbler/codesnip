@@ -4,35 +4,8 @@
  * Defines interfaces to set up and use the notifier object that triggers
  * actions in response to user initiated events in the GUI.
  *
- * v0.1 of 22 Feb 2005  - Original version.
- * v0.2 of 25 Apr 2005  - Added new HelpTopic and ConfigCompilers methods to
- *                        INotifier and corresponding SetHelpTopicAction methods
- *                        to ISetActions interface that adds support for new
- *                        actions that the new methods trigger.
- *                      - Removed INotifier.QuickStartHelp and
- *                        ISetActions.SetQuickStartHelpAction methods that are
- *                        superceded by new help topic methods noted above.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed warnings about un-fixed interfaces - now
- *                        fixed.
- *                      - Removed unused unit reference.
- * v1.1 of 23 Nov 2006  - Added SetToggleTestUnitAction method to ISetActions.
- *                      - Added ToggleTestUnit method to INotifier.
- * v1.2 of 04 Nov 2007  - Removed INotifier.HelpTopic method.
- *                      - Removed ISetActions.SetHelpTopicAction method.
- * v1.3 of 14 Sep 2008  - Changed signature of INotifier.DisplayRoutine method
- *                        to take a parameter identifying which database routine
- *                        is from. Changed to support user database.
- *                      - Added new INotifier.EditRoutine and
- *                        ISetActions.SetEditRoutineAction methods.
- * v1.4 of 23 May 2009  - Replaced INotifier's ToggleTestUnit with ShowTestUnit.
- *                      - Replaced ISetActions' SetToggleTestUnitAction with
- *                        SetShowTestUnitAction.
- *                      - Added INotifier.Donate and ISetAction.SetDonateAction
- *                        methods.
- * v1.5 of 12 Jul 2009  - Added INotifier.DisplayCategory and 
- *                        ISetActions.SetDisplayCategoryAction methods.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -53,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

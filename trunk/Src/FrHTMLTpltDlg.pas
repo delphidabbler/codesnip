@@ -1,28 +1,12 @@
-{ ##
-  @FILE                     FrHTMLTpltDlg.pas
-  @COMMENTS                 Frame containing a web browser control that displays
-                            HTML content generated from a template that also
-                            takes on the appearance of a dialog box.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None
-  @HISTORY(
-    @REVISION(
-      @VERSION              0.1
-      @DATE                 23/02/2005
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 24/05/2006
-      @COMMENTS             Improved and corrected comments.
-    )
-  )
-}
-
-
 {
+ * FrHTMLTpltDlg.pas
+ *
+ * Frame containing a web browser control that displays HTML content generated
+ * from a template that also takes on the appearance of a dialog box.
+ *
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -40,10 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2006 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

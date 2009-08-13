@@ -3,16 +3,8 @@
  *
  * Implements a print dialog box class.
  *
- * v1.0 of 07 Sep 2007  - Original version.
- * v1.1 of 16 Dec 2008  - Revised to use new static Execute method of
- *                        TPageSetupDlgMgr to display page setup dialog box.
- *                      - Added printer glyphs to printers combo box.
- *                      - Made private and protected methods strict.
- *                      - Now use for..in loop to enumerate printers.
- * v1.2 of 14 Jan 2009  - Replaced control char literals with constants.
- * v1.3 of 10 Jul 2009  - Enlarged form and some controls to accomodate Vista
- *                        default font.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -33,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

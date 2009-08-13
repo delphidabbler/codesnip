@@ -4,6 +4,7 @@ object RTFShowCaseFrame: TRTFShowCaseFrame
   Width = 489
   Height = 386
   TabOrder = 0
+  TabStop = True
   object reView: TRichEdit
     Left = 0
     Top = 0

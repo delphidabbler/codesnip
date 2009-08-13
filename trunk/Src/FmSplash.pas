@@ -3,26 +3,8 @@
  *
  * Implements a splash screen with timeout.
  *
- * v1.0 of 25 Feb 2007  - Original version.
- * v1.1 of 27 Sep 2007  - Changed DefaultMonitor property to position splash
- *                        form on same monitor as main form.
- *                      - Changed to use renamed IFormAligner interface.
- *                      - Fixed bug where splash screen was displayed in wrong
- *                        place when application form was off the screen when
- *                        closed.
- * v1.2 of 29 Oct 2007  - Applied lock to form closure method so that main code
- *                        and timer cannot access the method at the same time.
- * v1.3 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
- *                      - Made private and protected sections strict.
- * v1.4 of 13 May 2009  - Now gets program and company name from TAppInfo
- *                        instead of UGlobals unit.
- * v1.5 of 17 Jun 2009  - Splash form content now comes from a gif image.
- *                        Program's version number is overlayed on the image.
- *                      - Made TSplashAligner's private section strict.
- * v1.6 of 10 Jul 2009  - Changed from using bold Tahoma font for version number
- *                        text to using plain default OS UI font. Also moved
- *                        version text slightly to right.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -43,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
