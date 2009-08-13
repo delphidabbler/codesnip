@@ -3,68 +3,8 @@
  *
  * Implements a wizard style bug report dialog box.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 24 Feb 2005  - Now use TMessageBox class to display subsidiary dialog
- *                        box rather than MessageDlg routine.
- * v0.3 of 25 Feb 2005  - Fixed tab order of controls and removed read only
- *                        controls from tab stops.
- *                      - Realign controls.
- * v0.4 of 20 Nov 2005  - Improved and adjusted exception handling to avoid
- *                        re-displaying dialog on unexpected errors and to work
- *                        with new web service exception.
- *                      - Revised to use TBugReporter web service class to
- *                        interact with web service and removed code from this
- *                        class previously used to do this.
- *                      - Made use localhost for script if -localhost switch was
- *                        passed to program.
- *                      - Deleted deprecated TPJSysInfo component and replaced
- *                        with new TPJOSInfo static method calls from v2 of
- *                        PJSysInfo.
- * v0.5 of 04 Jan 2006  - Changed to get web service host from TParams class.
- *                      - Correct host now used in reporting errors rather than
- *                        assuming remote host.
- * v0.6 of 07 Apr 2006  - Removed dependency on TPJVersionInfo. Replaced with
- *                        calls to new methods of TAppInfo.
- *                      - Removed dependency on TPJSystemInfo. Replaced with
- *                        calls to static classes in USystemInfo.
- * v1.0 of 05 Jun 2006  - Improved and corrected comments.
- *                      - Implemented new ModalResultOnEsc method to return
- *                        modal result of Cancel button when ESC key pressed if
- *                        button is enabled.
- *                      - Changed bug glyph.
- * v2.0 of 26 Oct 2006  - Total rewrite as a descendant of TWizardDlg. Dialog
- *                        retains same functionality as v1 code.
- * v2.1 of 08 Feb 2007  - Changed type of Owner parameter of Execute method from
- *                        TForm to TComponent.
- *                      - Removed code used to align dialog to active form if
- *                        owner was nil. This now done by object used to align
- *                        form.
- *                      - Re-assigned form's OnCreate event handler that was
- *                        uncoupled when handler in ancestor class was deleted.
- *                      - Moved code from OnShow event handler into new
- *                        overridden InitForm method and deleted event handler.
- * v2.2 of 14 Dec 2008  - Changed UpdateButtons method override to work
- *                        correctly with revised inherited method (cancel button
- *                        now disabled on last page).
- *                      - Made private and protected sections strict.
- * v2.3 of 15 Dec 2008  - Replaced custom email address checking code with
- *                        routine from UEmailHelper unit.
- * v2.4 of 13 Jan 2009  - Replaced call to StringReplace with ReplaceStr.
- *                      - Removed class specifier from TBugReportDlg's reference
- *                        to own constructor.
- *                      - Replaced control char literals with constants.
- * v2.5 of 13 May 2009  - Changed to use revised web service class constructor.
- *                      - Removed reference to deleted UParams unit.
- *                      - Changed to use new TWebInfo object instead of consts.
- *                      - Modified unexpected error message to mention web
- *                        contact page.
- *                      - Now gets program name and id from TAppInfo instead of
- *                        UGlobals unit.
- * v2.6 of 19 Jul 2009  - Modified to accommodate the new Vista default font in
- *                        controls. A label replaced by HTML frames.
- *                      - Controls now dynamically arranged vertically and
- *                        some memos sized to available space.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -85,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -222,8 +165,8 @@ uses
   // Delphi
   StrUtils, Windows,
   // Project
-  UAppInfo, UBugReporter, UConsts, UEmailHelper, UExceptions, UFontHelper,
-  UGraphicUtils, UMessageBox, USystemInfo, UWebInfo, UWebService;
+  UAppInfo, UBugReporter, UConsts, UCtrlArranger, UEmailHelper, UExceptions,
+  UFontHelper, UMessageBox, USystemInfo, UWebInfo, UWebService;
 
 
 {$R *.dfm}
@@ -283,93 +226,38 @@ const
 procedure TBugReportDlg.ArrangeForm;
   {Aligns and sizes of controls depending on text sizes.
   }
-
-  // ---------------------------------------------------------------------------
-  procedure SetLabelHeight(const Lbl: TLabel);
-    {Sets height of a label to accommodate the text it contains in its font.
-      @param Lbl [in] Label whose height is to be set.
-    }
-  begin
-    Lbl.Height := StringExtent(Lbl.Caption, Lbl.Font, Lbl.Width).cy;
-  end;
-
-  function BottomOf(const Ctrl: TControl): Integer;
-    {Gets position of bottom of a control relative to its parent control in
-    pixels.
-      @param Ctr [in] Control to check.
-      @return Required position.
-    }
-  begin
-    Result := Ctrl.Top + Ctrl.Height;
-  end;
-
-  function VCentre(const ATop: Integer;
-    const Ctrls: array of TControl): Integer;
-    {Vertically centres a list of controls.
-      @param ATop [in] Top tallest control to be aligned.
-      @param Ctrls [in] Array of controls to be aligned.
-      @return Height occupied by controls (= height of tallest control).
-    }
-  var
-    I: Integer; // loops thru all controls to be aligned
-  begin
-    Result := 0;
-    for I := Low(Ctrls) to High(Ctrls) do
-      if Ctrls[I].Height > Result then
-        Result := Ctrls[I].Height;
-    for I := Low(Ctrls) to High(Ctrls) do
-      Ctrls[I].Top := ATop + (Result - Ctrls[I].Height) div 2;
-  end;
-  // ---------------------------------------------------------------------------
-
 var
   ATop: Integer; // top of a control
 begin
   inherited;
+  TCtrlArranger.SetLabelHeights(Self);
   // tsIntroBug
-  SetLabelHeight(lblHeading);
-  SetLabelHeight(lblBugInfo);
-  SetLabelHeight(lblExceptIntro);
-  SetLabelHeight(lblBugBegin);
   bvlBugDesc.Height := lblBugInfo.Height + 10;
-  bvlBugDesc.Top := BottomOf(lblHeading) + 8;
-  lblBugMarker.Top := BottomOf(lblHeading) + 12;
+  bvlBugDesc.Top := TCtrlArranger.BottomOf(lblHeading, 8);
+  lblBugMarker.Top := TCtrlArranger.BottomOf(lblHeading, 12);
   lblBugInfo.Top := lblBugMarker.Top;
-  lblExceptIntro.Top := BottomOf(bvlBugDesc) + 8;
-  lblBugBegin.Top := BottomOf(lblExceptIntro) + 8;
-
+  lblExceptIntro.Top := TCtrlArranger.BottomOf(bvlBugDesc, 8);
+  lblBugBegin.Top := TCtrlArranger.BottomOf(lblExceptIntro, 8);
   // tsIntroUser
-  SetLabelHeight(lblUserIntro);
-  SetLabelHeight(lblUserBegin);
-  lblUserBegin.Top := BottomOf(lblUserIntro) + 8;
-
+  lblUserBegin.Top := TCtrlArranger.BottomOf(lblUserIntro, 8);
   // tsBugInfo
-  SetLabelHeight(lblDesc);
-  memoDesc.Top := BottomOf(lblDesc) + 8;
+  memoDesc.Top := TCtrlArranger.BottomOf(lblDesc, 8);
   memoDesc.Height := tsUserInfo.Height - memoDesc.Top;
-
   // tsBugInfo
-  SetLabelHeight(lblEmailRequest);
-  SetLabelHeight(lblEmail);
-  SetLabelHeight(lblOS);
   frmPrivacy.Height := frmPrivacy.DocHeight;
-  ATop := BottomOf(lblEmailRequest) + 8;
-  ATop := ATop + VCentre(ATop, [lblEmail, edEmail]) + 8;
+  ATop := TCtrlArranger.BottomOf(lblEmailRequest, 8);
+  ATop := ATop + TCtrlArranger.AlignVCentres(ATop, [lblEmail, edEmail]) + 8;
   edEmail.Left := lblEmail.Left + lblEmail.Width + 8;
   edEmail.Width := tsUserInfo.Width - edEmail.Left;
   frmPrivacy.Top := ATop;
-  lblOS.Top := BottomOf(frmPrivacy) + 8;
-  edOS.Top := BottomOf(frmPrivacy) + 8;
-
+  lblOS.Top := TCtrlArranger.BottomOf(frmPrivacy, 8);
+  edOS.Top := TCtrlArranger.BottomOf(frmPrivacy, 8);
   // tsSubmit
-  SetLabelHeight(lblReport);
-  SetLabelHeight(lblSubmit);
-  edReport.Top := BottomOf(lblReport) + 8;
+  edReport.Top := TCtrlArranger.BottomOf(lblReport, 8);
   lblSubmit.Top := tsSubmit.Height - lblSubmit.Height;
   edReport.Height := lblSubmit.Top - edReport.Top - 8;
-
   // tsDone
-  SetLabelHeight(lblDone);
+  { nothing to do }
 end;
 
 procedure TBugReportDlg.BeginPage(const PageIdx: Integer);

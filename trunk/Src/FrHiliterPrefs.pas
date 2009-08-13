@@ -4,37 +4,8 @@
  * Implements a frame that allows user to set syntax highlighter preferences.
  * Designed for use as one of the tabs in the preferences dialog box.
  *
- * v1.0 of 09 Nov 2006  - Original version.
- * v1.1 of 07 Sep 2007  - Adapted to use revised virtual methods in base class.
- *                        LoadPrefs and SavePrefs methods now have parameters
- *                        (unused) and do-nothing implementation of new Activate
- *                        and Deactivate methods are provided.
- *                      - Changed caption of "restore defaults" button.
- * v1.2 of 17 Oct 2007  - Changed to allow highlighting data to be loaded and
- *                        saved by preferences object and to update local
- *                        preferences object when frame deactivated to make
- *                        latest changes available to other tabs in dialog box.
- *                      - Removed LoadPrefs and SavePrefs methods.
- * v1.3 of 04 Nov 2007  - Removed the IAssignable cast from the parameter to
- *                        IAssignable.Assign method calls.
- * v1.4 of 22 Apr 2008  - Replaced RichEdit control used to display source code
- *                        preview with a TRTFShowCaseFrame that doesn't permit
- *                        displayed source code to be selected.
- * v1.5 of 10 Aug 2008  - Replaced TColorBox control from component palette with
- *                        dynamically created, custom TColorBoxEx control along
- *                        with assigned TColorDialogEx dialog box. Done to fix
- *                        bug in TColorBox's built in colour dialog box when
- *                        running on Vista and to provide help keyword support.
- * v1.6 of 14 Jan 2009  - Replaced control char literals with constants.
- *                      - Made private section strict.
- * v1.7 of 19 Jun 2009  - Changed to provide 3 predefined styles and new default
- *                        style.
- * v1.8 of 20 Jul 2009  - Implemented new inherited ArrangeControls method that
- *                        arranges controls in frame to allow for resized frame.
- *                      - Resized some controls to accommodate Vista UI font.
- *                      - Used anchors for some controls to automate some
- *                        realignment.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -55,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -114,12 +88,9 @@ type
     procedure lbElementsClick(Sender: TObject);
     procedure StyleMenuClick(Sender: TObject);
   strict private
-    fColorBox: TColorBoxEx;
-      {Private custom colour combo box component}
-    fColorDlg: TColorDialogEx;
-      {Private custom colour dialog box for use with colour combo box}
-    fAttrs: IHiliteAttrs;
-      {Highlighter attributes object used to load and record user's preferences}
+    fColorBox: TColorBoxEx;     // Custom colour combo box component
+    fColorDlg: TColorDialogEx;  // Custom colour dialog box (use with combo)
+    fAttrs: IHiliteAttrs;       // Loads and records user's hilite preferences
     procedure PopulateElementsList;
       {Populates list box containing customisable highlighter attribute
       elements.
@@ -184,8 +155,8 @@ uses
   // Delphi
   SysUtils, ExtCtrls, Windows, Graphics, Dialogs,
   // Project
-  IntfCommon, UFontHelper, UHiliteAttrs, UMessageBox, URTFBuilder, URTFUtils,
-  UUtils;
+  IntfCommon, UCtrlArranger, UFontHelper, UHiliteAttrs, UMessageBox,
+  URTFBuilder, URTFUtils, UUtils;
 
 
 {$R *.dfm}
@@ -287,11 +258,11 @@ begin
   frmExample.Left := gbFontStyle.Left;
   frmExample.Width := fColorBox.Left + fColorBox.Width - frmExample.Left;
   lblExample.Left := frmExample.Left;
-  lbElements.Top := lblElements.Top + lblElements.Height + 4;
+  lbElements.Top := TCtrlArranger.BottomOf(lblElements, 4);
   lbElements.Height := gbElements.ClientHeight - lbElements.Top - 12;
-  frmExample.Top := lblExample.Top + lblElements.Height + 4;
+  frmExample.Top :=  TCtrlArranger.BottomOf(lblExample, 4);
   frmExample.Height := gbElements.ClientHeight - frmExample.Top - 12;
-  fColorBox.Top := lblColour.Top + lblColour.Height + 4;
+  fColorBox.Top := TCtrlArranger.BottomOf(lblColour, 4);
 end;
 
 procedure THiliterPrefsFrame.btnResetClick(Sender: TObject);

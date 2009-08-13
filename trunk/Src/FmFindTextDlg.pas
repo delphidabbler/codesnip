@@ -4,34 +4,8 @@
  * Dialog box that is used to select criteria for text searches. Also defines a
  * class that is used to persist the last chosen search criteria.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Fixed error where code was creating new instances of
- *                        TAppInfo singleton. Now references global singleton.
- * v0.3 of 23 Feb 2005  - Changed so that a search object rather than a search
- *                        criteria is created when user OKs. Replaced
- *                        SearchCriteria property with Search property.
- *                      - Added static Execute method that displays dialog and
- *                        returns search object if user OKs.
- *                      - Moved constant that determines max size of history
- *                        list to UGlobals.
- * v0.4 of 21 Apr 2005  - Changed code that persists search settings to use
- *                        revised UAppInfo code.
- * v0.5 of 04 Apr 2006  - Changed to use renamed and revised Settings object and
- *                        associated interfaces.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 08 Feb 2007  - Moved control initialisation code from FormCreate
- *                        event handler to new overridden InitForm method.
- *                      - Re-assigned form's OnCreate event handler that was
- *                        uncoupled when handler in ancestor class was deleted.
- * v1.2 of 11 Feb 2009  - cMaxTextSearchHistory const added to private section
- *                        of TTextSearchParams, moved back here from UGlobals.
- *                      - Made various visibility specifies strict.
- * v1.3 of 13 May 2009  - Removed unused UGlobals unit reference.
- * v1.4 of 10 Jul 2009  - Rearranged dialog box to accomodate default Vista UI
- *                        font. Vertical position of controls and dialog box
- *                        height is now determined at run time, depending on UI
- *                        font.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -199,7 +173,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UGraphicUtils, USettings, FmGenericDlg;
+  UCtrlArranger, USettings, FmGenericDlg;
 
 
 {$R *.dfm}
@@ -221,19 +195,11 @@ procedure TFindTextDlg.ArrangeForm;
   {Sizes and arrange controls in dialog box and determine size of dialog box.
   }
 begin
-  // Size the descriptive text
-  lblDesc.Height := StringExtent(
-    lblDesc.Caption,
-    lblDesc.Font,
-    lblDesc.Width
-  ).cy;
-  // Vertically arrange controls
-  lblDesc.Top := cbFindText.Top + cbFindText.Height + 4;
-  gbOptions.Top := lblDesc.Top + lblDesc.Height + 8;
+  TCtrlArranger.SetLabelHeight(lblDesc);
+  lblDesc.Top := TCtrlArranger.BottomOf(cbFindText, 4);
+  gbOptions.Top := TCtrlArranger.BottomOf(lblDesc, 8);
   rgLogic.Top := gbOptions.Top;
-  // Set required height for all controls
   pnlBody.ClientHeight := rgLogic.Top + rgLogic.Height + 4;
-  // Arrange buttons and size dialog box
   inherited;
 end;
 

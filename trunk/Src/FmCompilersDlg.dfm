@@ -47,6 +47,9 @@ inherited CompilersDlg: TCompilersDlg
       TabOrder = 1
       object tsExecFile: TTabSheet
         Caption = '&Compiler'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
         ExplicitHeight = 136
         object lblCompilerPath: TLabel
           Left = 4
@@ -93,7 +96,6 @@ inherited CompilersDlg: TCompilersDlg
       object tsSwitches: TTabSheet
         Caption = 'Co&mmand Line'
         ImageIndex = 2
-        ExplicitHeight = 136
         object lblExplainSwitches: TLabel
           Left = 160
           Top = 69
@@ -178,6 +180,9 @@ inherited CompilersDlg: TCompilersDlg
       object tsOutputLog: TTabSheet
         Caption = 'Output &Log'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
         ExplicitHeight = 136
         object lblLogPrefixes: TLabel
           Left = 4

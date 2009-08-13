@@ -6,14 +6,10 @@ inherited RegistrationDlg: TRegistrationDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     inherited pcWizard: TPageControl
-      ActivePage = tsAboutUser
+      ActivePage = tsFinish
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblIntro: TLabel
           Left = 0
           Top = 8
@@ -184,14 +180,10 @@ inherited RegistrationDlg: TRegistrationDlg
         Caption = 'tsSubmit'
         ImageIndex = 3
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblReport: TLabel
           Left = 0
           Top = 8
-          Width = 358
+          Width = 369
           Height = 26
           AutoSize = False
           Caption = 
@@ -202,8 +194,9 @@ inherited RegistrationDlg: TRegistrationDlg
         object lblSubmit: TLabel
           Left = 0
           Top = 200
-          Width = 353
+          Width = 369
           Height = 26
+          AutoSize = False
           Caption = 
             'Please ensure you are connected to the internet and then click t' +
             'he Submit button to send the registration.'
@@ -229,16 +222,14 @@ inherited RegistrationDlg: TRegistrationDlg
         Caption = 'tsFinish'
         ImageIndex = 4
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblThanks: TLabel
           Left = 0
           Top = 8
-          Width = 291
+          Width = 369
           Height = 13
+          AutoSize = False
           Caption = 'Your registration has been completed successfully - thankyou.'
+          WordWrap = True
         end
         object lblRegCode: TLabel
           Left = 0

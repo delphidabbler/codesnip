@@ -3,25 +3,8 @@
  *
  * Dialog box that is used to subscribe to the CodeSnip mailing list.
  *
- * v1.0 of 18 Nov 2006  - Original version.
- * v1.1 of 08 Feb 2007  - Moved control initialisation code from FormCreate
- *                        event handler to new overridden InitForm method and
- *                        deleted FormCreate method.
- * v1.2 of 15 Dec 2008  - Replaced custom email address checking code with
- *                        routine from UEmailHelper unit.
- *                      - Made private and protected sections strict.
- * v1.3 of 13 Jan 2009  - Replaced control char literals with constants.
- * v1.4 of 25 Jan 2009  - Changed to use routines from UHTMLUtils to generate
- *                        HTML tags instead of using literal strings.
- *                      - Removed class reference from call to TMailingListDlg
- *                        constructor.
- * v1.5 of 13 May 2009  - Changed to use revised web service constructor.
- *                      - Removed reference to deleted UParams unit.
- * v1.6 of 19 Jul 2009  - Modified to accommodate the new Vista default font in
- *                        controls. Some labels replaced by HTML frames.
- *                      - Controls now dynamically arranged vertically and
- *                        dialog box sizes itself to tallest tab sheet.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -42,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -134,7 +120,7 @@ uses
   // Delphi
   SysUtils, Math,
   // Project
-  UAppInfo, UConsts, UGraphicUtils, UEmailHelper, UFontHelper, UHTMLUtils,
+  UAppInfo, UConsts, UCtrlArranger, UEmailHelper, UFontHelper, UHTMLUtils,
   UMailListSubscriber, UMessageBox, UUtils;
 
 
@@ -154,61 +140,26 @@ resourcestring
 procedure TMailingListDlg.ArrangeForm;
   {Positions controls and sets form size according to body panel dimensions.
   }
-
-  procedure SetLabelHeight(const Lbl: TLabel);
-    {Sets height of a label to accommodate the text it contains in its font.
-      @param Lbl [in] Label whose height is to be set.
-    }
-  begin
-    Lbl.Height := StringExtent(Lbl.Caption, Lbl.Font, Lbl.Width).cy;
-  end;
-
-  function BottomOf(const Ctrl: TControl): Integer;
-    {Gets position of bottom of a control relative to its parent control in
-    pixels.
-      @param Ctr [in] Control to check.
-      @return Required position.
-    }
-  begin
-    Result := Ctrl.Top + Ctrl.Height;
-  end;
-
-  function VCentre(const ATop: Integer;
-    const Ctrls: array of TControl): Integer;
-    {Vertically centres a list of controls.
-      @param ATop [in] Top tallest control to be aligned.
-      @param Ctrls [in] Array of controls to be aligned.
-      @return Height occupied by controls (= height of tallest control).
-    }
-  var
-    I: Integer; // loops thru all controls to be aligned
-  begin
-    Result := 0;
-    for I := Low(Ctrls) to High(Ctrls) do
-      if Ctrls[I].Height > Result then
-        Result := Ctrls[I].Height;
-    for I := Low(Ctrls) to High(Ctrls) do
-      Ctrls[I].Top := ATop + (Result - Ctrls[I].Height) div 2;
-  end;
-
-var
-  ATop: Integer;  // indicates top of various controls
 begin
+  // set control heights
+  TCtrlArranger.SetLabelHeights(Self);
   frmMailList.Height := frmMailList.DocHeight;
   frmPrivacy.Height := frmPrivacy.DocHeight;
-  SetLabelHeight(lblEmail);
-  SetLabelHeight(lblName);
-  SetLabelHeight(lblSubmit);
-  SetLabelHeight(lblSubscribing);
-  ATop := BottomOf(frmMailList) + 8;
-  frmPrivacy.Top := ATop + VCentre(ATop, [lblEmail, edEmail]);
-  ATop := BottomOf(frmPrivacy) + 8;
-  lblSubmit.Top := ATop + VCentre(ATop, [lblName, edName]) + 8;
+  // align controls
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(frmMailList, 8), [lblEmail, edEmail]
+  );
+  frmPrivacy.Top := TCtrlArranger.BottomOf([lblEmail, edEmail]);
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(frmPrivacy, 8), [lblName, edName]
+  );
+  lblSubmit.Top := TCtrlArranger.BottomOf([lblName, edName], 8);
   lblSubscribing.Top := lblSubmit.Top;
-  pnlBody.ClientHeight := Max(BottomOf(lblSubmit), BottomOf(lblSubscribing))
-    + 8;
-  inherited;  // aligns inherited controls and sizes form
-  // now align buttons added in this dialog
+  // set body panel height
+  pnlBody.ClientHeight := TCtrlArranger.MaxContainerHeight([pnlData]) + 8;
+  // align inherited controls and size form
+  inherited;
+  // align buttons added in this dialog
   btnCancel.Left := btnHelp.Left - btnCancel.Width - 4;
   btnSubmit.Left := btnCancel.Left - btnSubmit.Width - 4;
   btnCancel.Top := btnHelp.Top;

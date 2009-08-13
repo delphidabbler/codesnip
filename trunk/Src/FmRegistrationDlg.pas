@@ -4,34 +4,8 @@
  * Wizard style dialog box that collects information and sends application
  * registration to web server.
  *
- * v0.1 of 07 Apr 2006  - Original version.
- * v1.0 of 26 May 2006  - Improved and corrected comments.
- *                      - Replaced literal program name and id with constants
- *                        from UGlobals unit.
- * v1.1 of 16 Nov 2006  - Corrected and revised text displayed on final page of
- *                        when user elects to join mailing list.
- * v1.2 of 18 Nov 2006  - Corrected typo on "about user" page of wizard.
- *                      - Now intialises user name edit box if user name is
- *                        already recorded.
- * v1.3 of 08 Feb 2007  - Changed type of Owner parameter of Execute method from
- *                        TForm to TComponent.
- *                      - Removed unused code used to align dialog to active
- *                        form if owner was nil.
- *                      - Moved control initialisation code from FormCreate
- *                        event handler to new overridden InitForm method and
- *                        deleted FormCreate method.
- * v1.4 of 15 Dec 2008  - Replaced custom email address checking code with
- *                        routine from UEmailHelper unit.
- *                      - Made private and protected sections strict.
- * v1.5 of 13 May 2009  - Changed to use revised web service constructor.
- *                      - Removed reference to deleted UParams unit.
- *                      - Now gets program name and ID from TAppInfo instead of
- *                        UGlobals unit.
- * v1.6 of 18 Jul 2009  - Modified to accommodate the new Vista default font in
- *                        controls. Some labels replaced by HTML frames.
- *                      - Controls now dynamically arranged vertically and
- *                        dialog box sizes itself to tallest tab sheet.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -50,8 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -174,7 +151,7 @@ uses
   // Delphi
   SysUtils, Graphics, Math,
   // Project
-  UAppInfo, UCSSUtils, UEmailHelper, UFontHelper, UGraphicUtils, UMessageBox,
+  UAppInfo, UCSSUtils, UEmailHelper, UFontHelper, UCtrlArranger, UMessageBox,
   URegistrar;
 
 
@@ -212,69 +189,42 @@ procedure TRegistrationDlg.ArrangeForm;
   {Vertically arranges controls as required and sizes the tab sheets to be able
   to display the longest page.
   }
-
-  procedure SetLabelHeight(const Lbl: TLabel);
-    {Sets height of a label to accommodate the text it contains in its font.
-      @param Lbl [in] Label whose height is to be set.
-    }
-  begin
-    Lbl.Height := StringExtent(Lbl.Caption, Lbl.Font, Lbl.Width).cy;
-  end;
-
-  function BottomOf(const Ctrl: TControl): Integer;
-    {Gets position of bottom of a control relative to its parent control in
-    pixels.
-      @param Ctr [in] Control to check.
-      @return Required position.
-    }
-  begin
-    Result := Ctrl.Top + Ctrl.Height;
-  end;
-
-var
-  ATop: Integer;      // records top position of one or more controls
-  AHeight: Integer;   // records height of one or more controls
-  ReqHeight: Integer; // required height to display largest tab sheet
 begin
-  // arrange controls on tsIntro tabsheet
-  SetLabelHeight(lblIntro);
-  lblIntroExplain.Top := BottomOf(lblIntro) + 8;
-  SetLabelHeight(lblIntroExplain);
-  lblInstructions.Top := BottomOf(lblIntroExplain) + 8;
-  SetLabelHeight(lblInstructions);
-  ReqHeight := BottomOf(lblInstructions);
-  // arrange controls on tsAboutUser tabsheet
-  SetLabelHeight(lblName);
-  edName.Top := BottomOf(lblName) + 8;
-  gbRequired.ClientHeight := BottomOf(edName) + 12;
-  gbMailList.Top := BottomOf(gbRequired) + 8;
+  // set heights of all labels with AutoSize = False
+  TCtrlArranger.SetLabelHeights(Self);
+
+  // tsIntro tabsheet
+  lblIntroExplain.Top := TCtrlArranger.BottomOf(lblIntro, 8);
+  lblInstructions.Top := TCtrlArranger.BottomOf(lblIntroExplain, 8);
+
+  // tsAboutUser tabsheet
+  edName.Top := TCtrlArranger.BottomOf(lblName, 8);
+  gbRequired.ClientHeight := TCtrlArranger.BottomOf(edName, 12);
+  gbMailList.Top := TCtrlArranger.BottomOf(gbRequired, 8);
   frmMailListIntro.Height := frmMailListIntro.DocHeight;
-  chkMailList.Top := BottomOf(frmMailListIntro) + 8;
-  ATop := BottomOf(chkMailList) + 8;
-  AHeight := Max(lblEmail.Height, edEmail.Height);
-  lblEmail.Top := ATop + (AHeight - lblEmail.Height) div 2;
-  edEmail.Top := ATop + (AHeight - edEmail.Height) div 2;
+  chkMailList.Top := TCtrlArranger.BottomOf(frmMailListIntro, 8);
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(chkMailList, 8),
+    [lblEmail, edEmail]
+  );
+  frmPrivacy.Top := TCtrlArranger.BottomOf([lblEmail, edEmail], 8);
   frmPrivacy.Height := frmPrivacy.DocHeight;
-  frmPrivacy.Top := ATop + AHeight + 8;
-  gbMailList.ClientHeight := BottomOf(frmPrivacy) + 12;
-  ReqHeight := Max(ReqHeight, BottomOf(gbMailList));
-  // arrange controls on tsSubmit tabsheet
-  SetLabelHeight(lblReport);
-  edReport.Top := BottomOf(lblReport) + 8;
-  SetLabelHeight(lblSubmit);
-  lblSubmit.Top := BottomOf(edReport) + 8;
-  ReqHeight := Max(ReqHeight, BottomOf(lblSubmit));
-  // arrange controls on tsFinish tabsheet
-  SetLabelHeight(lblThanks);
-  lblRegCode.Top := BottomOf(lblThanks) + 8;
-  SetLabelHeight(lblRegCode);
-  edRegCode.Top := BottomOf(lblRegCode) + 4;
-  lblMailListConfirm.Top := BottomOf(edRegCode) + 8;
-  SetLabelHeight(lblMailListConfirm);
-  ReqHeight := Max(ReqHeight, BottomOf(lblMailListConfirm));
+  gbMailList.ClientHeight := TCtrlArranger.BottomOf(frmPrivacy, 12);
+
+  // tsSubmit tabsheet
+  edReport.Top := TCtrlArranger.BottomOf(lblReport, 8);
+  lblSubmit.Top := TCtrlArranger.BottomOf(edReport, 8);
+
+  // tsFinish tabsheet
+  lblRegCode.Top := TCtrlArranger.BottomOf(lblThanks, 8);
+  edRegCode.Top := TCtrlArranger.BottomOf(lblRegCode, 4);
+  lblMailListConfirm.Top := TCtrlArranger.BottomOf(edRegCode, 8);
+
   // set required height
-  Inc(ReqHeight, 8);
-  pnlBody.ClientHeight := pnlBody.ClientHeight + ReqHeight - tsAboutUser.Height;
+  pnlBody.ClientHeight := TCtrlArranger.MaxContainerHeight(
+    [tsAboutUser, tsFinish, tsIntro, tsSubmit]
+  ) + pnlBody.ClientHeight - tsAboutUser.Height;
+
   // Arrange inherited controls and size the form
   inherited;
 end;
