@@ -4,15 +4,8 @@
  * Implements a static class that handles import of a codesnip export file into
  * the user-defined database.
  *
- * v1.0 of 15 Dec 2008  - Original version.
- * v1.1 of 14 Jan 2009  - Replaced control char literals with constants.
- * v1.2 of 06 Jun 2009  - Fixed bug in code import where main database routines
- *                        in dependency list were being deleted from dependency
- *                        list because they were assumed to be in user database.
- *                      - Replaced "routine" in text / captions with "snippet".
- *                      - Replaced use of TRoutineID and IRoutineIDList with
- *                        TSnippetID and ISnippetIDList.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -33,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -336,19 +332,18 @@ resourcestring
     + 'rename the imported snippet.' + EOL
     + 'Click cancel to abort the import.';
   // Dialog box button captions
-  sReplace = '&Replace';
-  sSkip = '&Skip';
-  sRename = 'Re&name';
-  sCancel = 'Cancel';
+  sBtnReplace = '&Replace';
+  sBtnSkip = '&Skip';
+  sBtnRename = 'Re&name';
 begin
   Result := TMessageBox.Custom(
     nil,
     Format(sPrompt, [RoutineName]),
     [
-      TMessageBoxButton.Create(sReplace, mrReplace),
-      TMessageBoxButton.Create(sSkip, mrSkip, True),
-      TMessageBoxButton.Create(sRename, mrRename),
-      TMessageBoxButton.Create(sCancel, mrCancel, False, True)
+      TMessageBoxButton.Create(sBtnReplace, mrReplace),
+      TMessageBoxButton.Create(sBtnSkip, mrSkip, True),
+      TMessageBoxButton.Create(sBtnRename, mrRename),
+      TMessageBoxButton.Create(sBtnCancel, mrCancel, False, True)
     ]
   );
 end;
