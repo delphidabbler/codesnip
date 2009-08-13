@@ -258,7 +258,7 @@ uses
   StrUtils, Graphics, Menus,
   // Project
   FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
-  UExceptions, UFontHelper, UGraphicUtils, UHTMLUtils, URoutineExtraHelper,
+  UCtrlArranger, UExceptions, UFontHelper, UGraphicUtils, UHTMLUtils, URoutineExtraHelper,
   USnippetKindInfo, USnippetValidator, UIStringList, UMessageBox, USnippetIDs,
   UStructs, UThemesEx, UUtils;
 
@@ -456,57 +456,37 @@ end;
 procedure TUserDBEditDlg.ArrangeForm;
   {Arranges controls on form and sizes it.
   }
-
-  // ---------------------------------------------------------------------------
-  function VCentre(const ATop: Integer;
-    const Ctrls: array of TControl): Integer;
-    {Vertically centres a list of controls.
-      @param ATop [in] Top tallest control to be aligned.
-      @param Ctrls [in] Array of controls to be aligned.
-      @return Height occupied by controls (= height of tallest control).
-    }
-  var
-    I: Integer; // loops thru all controls to be aligned
-  begin
-    Result := 0;
-    for I := Low(Ctrls) to High(Ctrls) do
-      if Ctrls[I].Height > Result then
-        Result := Ctrls[I].Height;
-    for I := Low(Ctrls) to High(Ctrls) do
-      Ctrls[I].Top := ATop + (Result - Ctrls[I].Height) div 2;
-  end;
-  // ---------------------------------------------------------------------------
-
-var
-  RequiredHeight: Integer;  // height of tab control to display all controls
-  ATop: Integer;            // top of next line of controls in pixels
 begin
-  // Arrange controls on tsCode
-  ATop := edSourceCode.Top + edSourceCode.Height + 8;
-  ATop := ATop + VCentre(ATop, [cbKind, lblKind, lblSnippetKindHelp]) + 8;
-  ATop := ATop + VCentre(ATop, [edDescription, lblDescription]) + 8;
-  ATop := ATop + VCentre(ATop, [edName, lblName]) + 8;
-  RequiredHeight := ATop + VCentre(ATop, [cbCategories, lblCategories]) + 8;
-  // Arrange controls on tsReferences
-  ATop := clbXRefs.Top + clbXRefs.Height + 6;
-  ATop := ATop + VCentre(ATop, [btnDependencies, edUnit, btnAddUnit]) + 8;
-  if ATop > RequiredHeight then
-    RequiredHeight := ATop;
-  // Arrange controls on tsComments
-  ATop := edExtra.Top + edExtra.Height + 4;
-  frmExtraInstructions.Top := ATop;
-  ATop := ATop + frmExtraInstructions.Height;
-  btnViewExtra.Top := ATop;
-  ATop := ATop + btnViewExtra.Height;
-  if ATop > RequiredHeight then
-    RequiredHeight := ATop;
-  // Arrange controls on tsCompileResults
-  lblViewCompErrsKey.Top := lblViewCompErrs.Top + lblViewCompErrs.Height;
-  ATop := lbCompilers.Top + lblCompilers.Height; // tallest control on tabsheet
-  if ATop > RequiredHeight then
-    RequiredHeight := ATop;
-  // Set body panel size to accommodate controls
-  pnlBody.ClientHeight := pnlBody.ClientHeight + RequiredHeight - tsCode.Height;
+  // tsCode
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(edSourceCode, 8),
+    [cbKind, lblKind, lblSnippetKindHelp]
+  );
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf([cbKind, lblKind, lblSnippetKindHelp], 8),
+    [edDescription, lblDescription]
+  );
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf([edDescription, lblDescription], 8),
+    [edName, lblName]
+  );
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf([edName, lblName], 8),
+    [cbCategories, lblCategories]
+  );
+  // tsReferences
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(clbXRefs, 6), [btnDependencies, edUnit, btnAddUnit]
+  );
+  // tsComments
+  frmExtraInstructions.Top := TCtrlArranger.BottomOf(edExtra, 4);
+  btnViewExtra.Top := TCtrlArranger.BottomOf(frmExtraInstructions);
+  // tsCompileResults
+  lblViewCompErrsKey.Top := TCtrlArranger.BottomOf(lblViewCompErrs);
+  // set body panel size to accommodate controls
+  pnlBody.ClientHeight := TCtrlArranger.MaxContainerHeight(
+    [tsCode, tsComments, tsCompileResults, tsReferences]
+  ) + pnlBody.ClientHeight - tsCode.Height + 8;
   inherited;
 end;
 
