@@ -1,27 +1,12 @@
-{ ##
-  @FILE                     UNulFormAligner.pas
-  @COMMENTS                 Defines a do nothing class that implements IAligner
-                            for use with forms that do not support alignment.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None
-  @HISTORY(
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 08/02/2007
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.1
-      @DATE                 26/07/2007
-      @COMMENTS             Changed to use renamed IFormAligner interface.
-    )
-  )
-}
-
-
 {
+ * UNulFormAligner.pas
+ *
+ * Defines a do nothing class that implements IAligner for use with forms that
+ * do not support alignment.
+ *
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -39,10 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributors:
+ *    NONE
  *
  * ***** END LICENSE BLOCK *****
 }
