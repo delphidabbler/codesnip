@@ -165,6 +165,7 @@ uses
   UCopyViewMgr in 'UCopyViewMgr.pas',
   UCSSBuilder in 'UCSSBuilder.pas',
   UCSSUtils in 'UCSSUtils.pas',
+  UCtrlArranger in 'UCtrlArranger.pas',
   UDataBackupMgr in 'UDataBackupMgr.pas',
   UDatabaseLoader in 'UDatabaseLoader.pas',
   UDataStreamIO in 'UDataStreamIO.pas',
