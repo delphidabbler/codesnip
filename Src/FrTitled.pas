@@ -3,11 +3,8 @@
  *
  * Base class for frames that display a title bar.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Deleted unused units from uses clause.
- * v1.0 of 24 May 2006  - Made minor commenting changes.
- * v1.1 of 10 Jul 2009  - Made title text use OS' default font.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -28,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

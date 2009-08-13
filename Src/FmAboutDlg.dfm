@@ -28,10 +28,8 @@ inherited AboutDlg: TAboutDlg
       ActivePage = tsProgram
       Align = alTop
       TabOrder = 0
-      ExplicitWidth = 353
       object tsProgram: TTabSheet
         Caption = 'About The Program'
-        ExplicitWidth = 345
         inline frmProgram: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -40,12 +38,12 @@ inherited AboutDlg: TAboutDlg
           Align = alClient
           TabOrder = 0
           TabStop = True
-          ExplicitWidth = 345
+          ExplicitWidth = 369
           ExplicitHeight = 133
           inherited pnlBrowser: TPanel
             Width = 369
             Height = 133
-            ExplicitWidth = 345
+            ExplicitWidth = 369
             ExplicitHeight = 133
             inherited wbBrowser: TWebBrowser
               Width = 369
@@ -110,7 +108,6 @@ inherited AboutDlg: TAboutDlg
       BorderWidth = 1
       Color = clBtnShadow
       TabOrder = 1
-      ExplicitWidth = 353
       inline frmTitle: THTMLTpltDlgFrame
         Left = 1
         Top = 1
@@ -121,12 +118,12 @@ inherited AboutDlg: TAboutDlg
         TabStop = True
         ExplicitLeft = 1
         ExplicitTop = 1
-        ExplicitWidth = 351
+        ExplicitWidth = 375
         ExplicitHeight = 39
         inherited pnlBrowser: TPanel
           Width = 375
           Height = 39
-          ExplicitWidth = 351
+          ExplicitWidth = 375
           ExplicitHeight = 39
           inherited wbBrowser: TWebBrowser
             Width = 375

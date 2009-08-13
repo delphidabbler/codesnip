@@ -3,27 +3,8 @@
  *
  * Frame containing a web browser control that displays news items.
  *
- * v0.1 of 01 May 2006  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 07 Nov 2006  - Changed to use UCSSUtils methods to generate CSS
- *                        attributes.
- *                      - Changed to use new TCSSSelector.Extras property to add
- *                        custom CSS.
- * v1.2 of 25 Nov 2006  - Changed to build CSS using revised functionality in
- *                        base frame.
- *                      - Added new .message CSS class.
- *                      - Changed literal colour references to use special
- *                        program colour constants.
- * v1.3 of 17 Dec 2006  - Changed direct references to some system colours to
- *                        use special constants from UColours unit.
- * v1.4 of 05 Nov 2007  - Changed to use revised CSS builder classes.
- * v1.5 of 21 Apr 2008  - Removed CSS body border style that was displaying
- *                        incorrectly on Vista or with the IE7 browser control.
- *                      - Provided frame to web control using underlying panel.
- * v1.6 of 18 Jul 2009  - Modified to display news using UI dependent "content"
- *                        font.
- *                      - Made protected section strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -44,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

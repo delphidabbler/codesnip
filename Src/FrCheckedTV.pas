@@ -4,17 +4,8 @@
  * Implements a frame containing a treeview that has check boxes associated with
  * tree nodes and updates parent check boxes according to state of child nodes.
  *
- * v1.0 of 12 Nov 2006  - Original version. This is a generalisation of code
- *                        formerly in FrSelectSnippets, with added support for
- *                        hot lighting of check boxes under mouse cursor.
- * v1.1 of 11 Aug 2008  - Removed code that updated check boxes object when
- *                        themes change. Check boxes object now detects theme
- *                        changes and triggers an event that this code handles.
- * v1.2 of 13 Jan 2009  - Tree view is now focussed whenever frame is entered.
- *                      - Now use ClassName in Assert statement.
- *                      - Removed unnecessary $WARN directive.
- *                      - Made class visibility specifiers strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -35,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

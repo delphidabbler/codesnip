@@ -3,23 +3,8 @@
  *
  * Base class for multi-page "wizard" dialog boxes.
  *
- * v0.1 of 07 Apr 2006  - Original version.
- * v1.0 of 05 Jun 2006  - Implemented new ModalResultOnEsc method to return
- *                        modal result of Cancel button when ESC key pressed if
- *                        button is enabled.
- *                      - Improved and corrected comments.
- * v1.1 of 08 Feb 2007  - Moved code that displays first page of Wizard from
- *                        FormShow event handler to new overridden InitForm
- *                        method and deleted FormShow.
- * v1.2 of 14 Dec 2008  - Moved CurrentPage method from TWizardDlg's private to
- *                        protected sections.
- *                      - Made private and protected sections strict.
- *                      - Now use ClassName method to get class in assertions.
- *                      - UpdateButtons method now enables "next" button by
- *                        default and disables cancel button on last page.
- * v1.3 of 18 Jul 2009  - Changed to use correct OS UI font for head label and
- *                        vertically centred label in containing panel.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -40,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

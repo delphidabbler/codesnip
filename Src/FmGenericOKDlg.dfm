@@ -5,6 +5,8 @@ inherited GenericOKDlg: TGenericOKDlg
   inherited pnlBody: TPanel
     Width = 369
     Height = 305
+    ExplicitWidth = 369
+    ExplicitHeight = 305
   end
   inherited btnHelp: TButton
     TabOrder = 3

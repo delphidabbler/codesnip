@@ -1,51 +1,12 @@
-{ ##
-  @FILE                     FmHelpAware.pas
-  @COMMENTS                 Descends from TBaseForm and adds help-awareness and
-                            F1 key functionality to descendant forms.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None
-  @HISTORY(
-    @REVISION(
-      @VERSION              0.1
-      @DATE                 30/01/2005
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              0.2
-      @DATE                 20/04/2005
-      @COMMENTS             Added DisableHelp property used to inhibit help
-                            being activated.
-    )
-    @REVISION(
-      @VERSION              0.3
-      @DATE                 30/11/2005
-      @COMMENTS             Replaced calls to Application.Help*** methods with
-                            calls to HelpMgr object.
-    )
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 24/05/2006
-      @COMMENTS             Improved and corrected comments.
-    )
-    @REVISION(
-      @VERSION              1.1
-      @DATE                 26/10/2006
-      @COMMENTS             Fixed bug in one of overloaded DisplayHelp methods
-                            that was not calling help when enabled.
-    )
-    @REVISION(
-      @VERSION              1.2
-      @DATE                 04/02/2007
-      @COMMENTS             + Deleted unused THelpActivator enumeration and
-                              revised method signatures accordingly.
-    )
-  )
-}
-
-
 {
+ * FmHelpAware.pas
+ *
+ * Descends from TBaseForm and adds help-awareness and F1 key functionality to
+ * descendant forms.
+ *
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -63,10 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

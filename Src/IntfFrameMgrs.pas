@@ -5,76 +5,8 @@
  * by frames and other classes that manage display of, and user interaction
  * with, various parts of CodeSnip's UI.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 19 Feb 2005  - Refactoring: renamed all *CommandMgr interfaces as
- *                        *ActionMgr.
- * v0.3 of 20 Feb 2005  - Added methods to add actions for download database and
- *                        quick start help ICompCheckActionMgr action manager.
- * v0.4 of 22 Feb 2005  - Removed all I***ActionMgr interfaces - no longer
- *                        required.
- *                      - Added new ISetWBExternal interface used to pass web
- *                        browser extender object to frames.
- * v0.5 of 28 Jan 2006  - Added new parameter to TCompCheckFrame.Display to
- *                        force redisplay of view item even if already
- *                        displayed.
- * v0.6 of 16 Apr 2006  - Removed ISetWBExternal interface and replaced with
- *                        IWBCustomiser that contains ISetWBExternal's former
- *                        SetExternalObj method plus one new method to set
- *                        browser's drag drop handler.
- * v1.0 of 24 May 2006  - Completed, improved and corrected comments.
- *                        Removed warnings about un-fixed interfaces - now
- *                        fixed.
- * v1.1 of 23 Nov 2006  - Added TestUnitVisible property and accessors to
- *                        ICompCheckDisplayMgr.
- * v1.2 of 02 Dec 2006  - Updated re change to single compiler check display
- *                        that is updated dynamically:
- *                        - Deleted TCompCheckDisplayStyle enumeration.
- *                        - Deleted TCompCheckDisplayStyle parameter from
- *                          Display function prototypes.
- *                        - Added new DisplayCompileResults() method to
- *                          ICompCheckDisplayMgr.
- * v1.3 of 04 Feb 2007  - Changed IInfoDisplayMgr.Display by adding extra Force
- *                        Boolean parameter.
- *                      - Replaced redundant TDetailView class references with
- *                        TViewItem.
- * v1.4 of 11 Feb 2007  - Added IsActive, NextTab and PreviousTab methods to
- *                        ITabFrameDisplayMgr.
- *                      - Added new IWBInfo interface that gets information
- *                        about a browser control.
- * v2.0 of 16 Feb 2007  - Heavily revised interfaces used by main display:
- *                        - Renamed ITabFrameDisplayMgr as ITabbedDisplayMgr,
- *                          gave new GUI and descended from IInterface rather
- *                          than IFrameDisplayMgr. Deleted IsActive method - the
- *                          equivalent is now in IPaneInfo.
- *                        - Changed IOverviewDisplayMgr to derive from
- *                          IInterface rather than ITabFrameDisplayMgr, added
- *                          new Clear method and gave new GUID.
- *                        - Changed IWBDisplayMgr to derive from IInterface
- *                          rather than IFrameDisplayMgr. Gave new GUID.
- *                        - Added new IViewItemDisplayMgr interface.
- *                        - Changed ICompCheckDisplayMgr to derive from
- *                          IInterface rather than IWBDisplayMgr. Deleted
- *                          Display method. Gave new GUID.
- *                        - Deleted IFrameDisplayMgr, IInfoDisplayMgr and
- *                          IDetailDisplayMgr interfaces.
- *                        - Added new IPaneInfo interface.
- *                        - Deleted IWBInfo interface - we now use IPaneInfo
- *                          instead.
- * v2.1 of 17 Feb 2007  - Removed redundant IWBDisplayMgr WebBrowser property
- *                        and associated accessor method.
- * v2.2 of 09 Jan 2009  - Added new parameter toICompCheckDisplayMgr's
- *                        DisplayCompileResults method that passes instance of
- *                        compilers object whose results are to be displayed.
- * v2.3 of 06 Jun 2009  - Modified tab index constants for revised 2nd tab and
- *                        new 3rd tab.
- *                      - Added methods to IOverviewDisplayMgr to support
- *                        expanding / collapsing of nodes in tree view.
- *                      - Removed methods from ICompCheckDisplayMgr that
- *                        supported toggling visibility of test units in
- *                        compiler check pane.
- *                      - Added constants to identify command bars in overview
- *                        frame.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -95,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * $Rev$
+ * $Date$
  *
  * ***** END LICENSE BLOCK *****
 }

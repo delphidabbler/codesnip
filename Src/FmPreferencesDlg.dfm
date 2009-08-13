@@ -23,7 +23,6 @@ inherited PreferencesDlg: TPreferencesDlg
       TabOrder = 0
       OnChange = pcMainChange
       OnChanging = pcMainChanging
-      ExplicitHeight = 393
       object tsGeneralPrefs: TTabSheet
         Caption = 'General'
         ImageIndex = 3
@@ -42,6 +41,9 @@ inherited PreferencesDlg: TPreferencesDlg
             inherited lblUnits: TLabel
               Width = 149
               ExplicitWidth = 149
+            end
+            inherited cbUnits: TComboBox
+              ItemHeight = 0
             end
           end
         end
@@ -63,11 +65,17 @@ inherited PreferencesDlg: TPreferencesDlg
               Width = 85
               ExplicitWidth = 85
             end
+            inherited cbCommentStyle: TComboBox
+              ItemHeight = 0
+            end
           end
           inherited gbFileFormat: TGroupBox
             inherited lblSnippetFileType: TLabel
               Width = 71
               ExplicitWidth = 71
+            end
+            inherited cbSnippetFileType: TComboBox
+              ItemHeight = 0
             end
           end
         end
@@ -107,6 +115,12 @@ inherited PreferencesDlg: TPreferencesDlg
             inherited lblFontSize: TLabel
               Width = 45
               ExplicitWidth = 45
+            end
+            inherited cbFontName: TComboBox
+              ItemHeight = 0
+            end
+            inherited cbFontSize: TComboBox
+              ItemHeight = 0
             end
           end
         end

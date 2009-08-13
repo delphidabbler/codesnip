@@ -4,38 +4,8 @@
  * Frame containing a web browser control that displays HTML content that takes
  * on the appearance of a dialog box.
  *
- * v0.1 of 30 Jan 2005  - Original version (handled HTML templates).
- * v0.2 of 23 Feb 2005  - Now derived from TBrowserFrame that provides web
- *                        browser controller object.
- *                      - Moved code that handled HTML templates to a new
- *                        descendant class.
- * v0.3 of 05 Mar 2005  - Added new default CSS style for <table> tag.
- * v0.4 of 16 Apr 2006  - Fixed error where user could drop files on dialog box
- *                        and display the file contents, replacing dialog
- *                        contents. Added drag drop handler to browser control
- *                        that inhibits all drag drop.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- * v1.1 of 07 Nov 2006  - Changed to use UCSSUtils methods to generate CSS
- *                        attributes.
- *                      - Changed to use new TCSSSelector.Extras property to add
- *                        custom CSS.
- * v1.2 of 14 Nov 2006  - Added a:link.help-link, a:visited.help-link and
- *                        a:active.help-link CSS styles to colour links to help
- *                        files appropriately.
- * v1.3 of 18 Nov 2006  - Added new h1 CSS style.
- *                      - Changed p CSS style to specify no padding.
- * v1.4 of 25 Nov 2006  - Changed to set browser's default CSS by overriding
- *                        method of parent class rather than update browser
- *                        control directly.
- *                      - Removed a-link classes from generated CSS since this
- *                        is now provided by parent class.
- * v1.5 of 11 Feb 2007  - Added DocHeight method to retrieve height of current
- *                        HTML document.
- * v1.6 of 17 Feb 2007  - Changed DocHeight method to call same named method in
- *                        TWBUIMgr rather than calculating document height
- *                        directly here.
- * v1.7 of 05 Nov 2007  - Changed to use revised CSS builder classes.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -54,10 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

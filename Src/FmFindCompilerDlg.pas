@@ -5,39 +5,8 @@
  * compile or don't compile with selected compilers. Also defines a class that
  * is used to persist the last chosen search criteria.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Fixed error where code was creating new instances of
- *                        TAppInfo singleton. Now references global singleton.
- * v0.3 of 19 Feb 2005  - Refactoring: renamed SetCompiler property write method
- *                        as SetCompilers.
- * v0.4 of 23 Feb 2005  - Changed so that a search object rather than a search
- *                        criteria is created when user OKs. Replaced
- *                        SearchCriteria property with Search property.
- *                      - Added static Execute method that displays dialog and
- *                        returns search object if user OKs.
- * v0.5 of 24 Feb 2005  - Changed to compiler names from Compilers global object
- *                        now that name removed from UCompilerTypes.
- * v0.6 of 04 Mar 2005  - Changed to use TCompilerIDs enumerated type that
- *                        replaces TDelphiVersion and renamed indentifiers and
- *                        controls that specified "Delphi" now that other
- *                        compilers are supported.
- * v0.7 of 21 Apr 2005  - Changed to use renamed IntfCompilers unit.
- *                      - Changed code that persists search settings to use
- *                        revised UAppInfo code.
- * v0.8 of 10 Jan 2006  - Reordered controls in dialog in more logical order.
- * v0.9 of 04 Apr 2006  - Changed to use renamed and revised Settings object and
- *                        associated interfaces.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 08 Feb 2007  - Moved control initialisation code from FormCreate
- *                        event handler to new overridden InitForm method.
- *                      - Re-assigned form's OnCreate event handler that was
- *                        uncoupled when handler in ancestor class was deleted.
- * v1.2 of 15 Dec 2008  - Replaced some loops thru compilers with for..in loops.
- *                      - Made some private and protected sections strict.
- * v1.3 of 09 Jan 2009  - Changed to use local compilers objects rather than
- *                        global singleton.
- * v1.4 of 10 Jul 2009  - Enlarged form and some controls to improve appearance
- *                        when using Vista default font.
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -58,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

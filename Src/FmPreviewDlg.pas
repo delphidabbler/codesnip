@@ -4,29 +4,8 @@
  * Implements a dialog box that is used to preview or display text, HTML and
  * Rich text documents.
  *
- * v0.1 of 17 Mar 2005  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit reference.
- * v1.1 of 11 Nov 2006  - Replaced code that detects HTML and RTF formats with
- *                        calls to helper routines from RTF and HTML utility
- *                        units.
- *                      - Changed to set page control tabs invisible at design
- *                        time rather than run time.
- * v1.2 of 08 Feb 2007  - Moved code that displays document from FormShow event
- *                        handler to new overridden InitForm method deleted
- *                        FormShow.
- * v1.3 of 13 May 2007  - Added popup menu for selection and copying of
- *                        previewed text along with associated actions and image
- *                        list.
- *                      - Added code to call into viewer objects to perform
- *                        selection and copying.
- * v1.4 of 17 Jun 2009  - Added support for variable dialog box captions:
- *                        - An optional parameter was to the dialog's Execute
- *                          method to allow caller to specify a title.
- *                        - Added support for getting caption from any title
- *                          embedded in displayed document.
- *                      - Made private and protected sections strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -47,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

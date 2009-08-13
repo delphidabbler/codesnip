@@ -4,23 +4,8 @@
  * Implements a frame that allows user to set printing preferences. Designed for
  * use as one of the tabs in the preferences dialog box.
  *
- * v1.0 of 07 Sep 2007  - Original version.
- * v1.1 of 17 Oct 2007  - Refactored code that gets names of measurement units.
- * v1.2 of 21 Apr 2008  - Replaced RichEdit control used to display source code
- *                        preview with a TRTFShowCaseFrame that doesn't permit
- *                        displayed source code to be selected.
- * v1.3 of 16 Dec 2008  - Changed preview frame to reflect syntax highlighting
- *                        changes in preferences, except that font is always
- *                        Courier New.
- *                      - Made private sections of classes strict.
- *                      - Made use TPageMargins constructor to set margins.
- * v1.4 of 13 Jan 2009  - Replaced control char literals with constants.
- * v1.5 of 19 Jul 2009  - Added no-nothing implementation of new inherited
- *                        ArrangeControls method.
- *                      - Resized some controls to accommodate Vista UI font.
- *                      - Used anchors for some controls to automate some
- *                        realignment.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -41,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

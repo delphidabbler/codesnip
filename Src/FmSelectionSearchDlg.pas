@@ -5,21 +5,8 @@
  * next to the required routine names. The dialog creates search criteria based
  * on the selected routines.
  *
- * v1.0 of 29 Oct 2006  - Original version.
- * v1.1 of 12 Nov 2006  - Updated form file re tree view name change in hosted
- *                        frame.
- * v1.2 of 08 Feb 2007  - Re-assigned form's OnCreate event handler that was
- *                        uncoupled when handler in ancestor class was deleted.
- * v1.3 of 03 Jan 2009  - Added buttons to select all main database or user
- *                        defined routines.
- * v1.4 of 16 May 2009  - Changed caption to Select Snippets from Select
- *                        Routines.
- * v1.5 of 08 Jul 2009  - Revised to use revised search criteria factory method
- *                        to take a TRoutineList instead of a TStringList of
- *                        snippet names.
- * v1.6 of 10 Jul 2009  - Widended buttons in right hand column of form to
- *                        accommodate default Vista UI font.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -40,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

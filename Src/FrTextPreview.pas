@@ -4,16 +4,8 @@
  * Frame used to display previews of plain text documents, including source
  * code.
  *
- * v0.1 of 17 Mar 2005  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v2.0 of 13 May 2007  - Revised to descend from TMemoPreviewFrame. Parent
- *                        class sets margin and provides selection and clipboard
- *                        copy behaviour.
- *                      - Revised to support pop-up menu via extended IPreview
- *                        interface.
- * v2.1 of 17 Jun 2009  - Added new GetTitle override method
- *                      - Made a protected section strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -34,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -4,39 +4,8 @@
  * Implements a frame that allows user to set source code preferences. Designed
  * for use as one of the tabs in the preferences dialog box.
  *
- * v1.0 of 09 Nov 2006  - Original version. Based on code foremerly in
- *                        FmPreferences unit and adds comment style preview.
- * v1.1 of 02 Jul 2007  - Changed to use global user-defined highlighter
- *                        preferences for syntax highlighting comment style
- *                        preview.
- * v1.2 of 07 Sep 2007  - Adapted to use revised virtual methods in base class.
- *                        LoadPrefs and SavePrefs methods removed to base class.
- *                        New Activate and Deactivate methods provided that load
- *                        and save UI input in local preferences object. Loading
- *                        and saving to persistent storage now takes place
- *                        elsewhere.
- *                      - Re-aligned controls slightly.
- * v1.3 of 17 Oct 2007  - Style of syntax highlighting use for source code
- *                        preview is now updated from local preferences when
- *                        frame is activated. This enables any changes to
- *                        highlighting style made elsewhere in preferences
- *                        dialog box to be immediately reflected in the preview.
- * v1.4 of 04 Nov 2007  - Removed the IAssignable cast from the parameter to
- *                        IAssignable.Assign method calls.
- * v1.5 of 21 Apr 2008  - Replaced RichEdit control used to display source code
- *                        preview with a TRTFShowCaseFrame that doesn't permit
- *                        displayed source code to be selected.
- *                      - Added missing call to inherited constructor in
- *                        TSourcePrefsPreview.Create.
- * v1.6 of 13 Jan 2009  - Replaced control char literals with constants.
- * v1.7 of 05 Jun 2009  - Changed comment style descriptions to refer to
- *                        "snippets" instead of "routines".
- * v1.8 of 19 Jul 2009  - Implemented new inherited ArrangeControls method that
- *                        arranges controls in frame to allow for resized frame.
- *                      - Set all fonts to default.
- *                      - Used anchors for some controls to automate some
- *                        realignment.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -57,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

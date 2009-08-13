@@ -3,68 +3,8 @@
  *
  * Base class for all frames that contain a web browser control.
  *
- * v0.1 of 23 Feb 2005  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 25 Oct 2006  - Added OnBeforeNavigate2 event handler for browser
- *                        control that traps attempts to navigate to certain
- *                        protocols and provides custom handling for them.
- * v1.2 of 14 Nov 2006  - Changed to use renamed protocol handler factory class
- *                        from renamed UProtocols unit. Also changed to use
- *                        revised protocol handler implementations.
- * v1.3 of 25 Nov 2006  - Added ability to generate default CSS required by all
- *                        browser frames and provide the CSS to the browser
- *                        control. Included over-ridable method that sub classes
- *                        can override to modify the CSS, along with an event
- *                        that owner object can use to modify the CSS.
- * v2.0 of 11 Feb 2007  - Major revision to way frame operates - the frame now
- *                        handles browser activation and deactivation.
- *                      - Added new ParentForm method to get host form.
- *                      - Added new IsBrowserActive method to find if browser is
- *                        active control. This implements the new
- *                        IWBInfo.IsBrowserActive method.
- *                      - Added new MakeBrowserActiveControl method to make
- *                        browser control parent form's active control.
- *                      - Added new TriggerActiveLink method that triggers any
- *                        selected link in web browser control.
- *                      - Added new event handler for browser UI controller
- *                        object's new OnActivate event that makes the browser
- *                        the active control.
- *                      - Changed TranslateAccelHandler event handler to
- *                        (a) pass all function keys on to parent, not just F5;
- *                        (b) enable some key presses to be handled without
- *                            passing on to parent;
- *                        (c) handle Ctrl+Return by triggering any focussed link
- *                            in browser document without passing to parent.
- * v2.1 of 16 Feb 2007  - Removed IWBInfo interface support, but retained
- *                        associated IsBrowserActive method as a support method
- *                        that can be called from child classes.
- * v2.2 of 17 Feb 2007  - Changed to use new TWBIOMgr.OnNavigate event of to
- *                        determine protocols rather than hooking directly into
- *                        OnBeforeNavigate2 event of browser control.
- *                      - Revised TBrowserBaseFrame.TriggerActiveLink to use
- *                        THTMLDocHelper static methods to find and trigger
- *                        active links.
- * v2.3 of 13 May 2007  - Added support for methods of IClipboardMgr and
- *                        ISelectionMgr interfaces.
- * v2.4 of 18 Oct 2007  - Added DoNavigate to handle navigation via protocol
- *                        handler.
- *                      - Modified NavigateHandler to use new DoNavigate method.
- *                      - Added new HTMLEventHandler that checks for clicks on
- *                        <a> tags and prevents default action of starting IE
- *                        when shift key is depressed.
- * v2.5 of 31 Oct 2007  - Changed to use methods from TAnchors static class that
- *                        have moved from THTMLDocHelper.
- * v2.6 of 05 Nov 2007  - Changed to use revised CSS builder classes.
- * v2.7 of 13 Sep 2008  - Modified translate accelerator handler to pass
- *                        Ctrl+Ins and Ctrl+Del through to parent.
- * v2.8 of 13 Jan 2009  - Browser is now activated whenever frame is entered.
- *                      - Now use ClassName in Assert statement.
- *                      - Made some private and protected sections strict.
- * v2.9 of 27 May 2009  - Updated TBrowserBaseFrame.TranslateAccelHandler to
- *                        pass on escape key presses to parent form.
- *                      - Mode TBrowserBaseFrame.HTMLEventHandler virtual and
- *                        added OnHTMLEvent event to pass on HTML events.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -85,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

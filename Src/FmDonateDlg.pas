@@ -5,9 +5,8 @@
  * CodeSnip along with button to access Paypal donation web page in default
  * browser.
  *
- * v1.0 of 11 May 2009  - Original version.
- * v1.1 of 10 Jul 2009  - Set donate button to use bold UI default font.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -28,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -4,53 +4,8 @@
  * Title frame that displays, and manages user interaction with, the detail pane
  * tabs.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Fixed possible out of bounds error in accessing
- *                        fActions dynamic array before actions stored in it.
- * v0.3 of 18 Feb 2005  - Deleted unused units from uses clauses.
- * v0.4 of 19 Feb 2005  - Refactoring: changed frame to implement the renamed
- *                        IFrameActionMgr and IDetailActionMgr interfaces.
- * v0.5 of 22 Feb 2005  - Changed way that user input is notified to program.
- *                        Frame no longer directly records and triggers actions
- *                        but now calls methods of an externally provided
- *                        notifier object.
- *                      - Removed support for IFrameActionMgr interfaces.
- *                      - Added support for ISetNotifier interface.
- *                      - Reworked UI response code to use INotifier object.
- * v0.6 of 23 Feb 2005  - Changed new include new versions of information and
- *                        compiler check frames with new control names.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 11 Feb 2007  - Implemented new IsActive, NextTab and PreviousTab
- *                        methods of ITabFrameDisplayMgr.
- * v2.0 of 16 Feb 2007  - Major update. Revised to work with redefined display
- *                        interfaces from IntfFrameMgrs unit and to take over
- *                        management of Information and Compiler Check sub-panes
- *                        from TMainDisplayMgr.
- *                      - Added support for IClipboardMgr and ISelectionMgr that
- *                        performs required actions on currently selected pane.
- *                      - Added support for IViewItemDisplayMgr. Implemented
- *                        interface's Display method to display required view
- *                        item in all panes.
- *                      - Added support for ICompCheckDisplayMgr. Implemented
- *                        interface's methods by passing calls to same methods
- *                        in compiler check frame.
- *                      - Revised tab selection code to deactivate and activate
- *                        required browser frames. Changed to avoid triggering
- *                        actions more that once for each tab change.
- *                      - Added support for IWBCustomiser to enable frame to
- *                        pass on info to child frames.
- *                      - Removed redundant fActions field.
- *                      - Removed redundant constructor.
- * v2.1 of 31 Oct 2007  - Added support for IWBPopupMenuConfig. All calls are
- *                        passed onto subsidiary frames that support the
- *                        interface.
- * v2.2 of 09 Jan 2009  - Changed DisplayCompileResults to take compilers object
- *                        containing results as a parameter.
- * v2.3 of 16 May 2009  - Removed methods that supported toggling display of
- *                        test compilation units.
- *                      - Changed assert and bug exception messages to use
- *                        ClassName method for class name.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -71,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
