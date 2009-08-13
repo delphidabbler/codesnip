@@ -4,14 +4,8 @@
  * Provides a partial translation of HTMLHelp header files. Dynamically imports
  * HTMLHelp function from hhctrl.ocx.
  *
- * v0.1 of 30 Nov 2005  - Original version.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- *                      - Now loads HtmlHelp function from .ocx file dynamically
- *                        and raises exception if .ocx not found.
- * v1.1 of 13 Jan 2009  - Replaced control char literals with constants.
- *                      - Removed unnecessary $WARN directive.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -32,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *    NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -179,6 +176,8 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   UConsts, UExceptions;
 
@@ -240,12 +239,11 @@ begin
   Result := pvtHtmlHelp(hwndCaller, pszFile, uCommand, dwData);
 end;
 
-
 procedure LoadHtmlHelp;
   {Attempt to load HtmlHelpA function from hhctrl.ocx.
   }
 begin
-  pvtHHCtrl := LoadLibrary('hhctrl.ocx');
+  pvtHHCtrl := SafeLoadLibrary('hhctrl.ocx');
   if pvtHHCtrl <> 0 then
     pvtHtmlHelp := GetProcAddress(pvtHHCtrl, 'HtmlHelpA');
 end;
@@ -262,6 +260,5 @@ finalization
 if pvtHHCtrl <> 0 then
   FreeLibrary(pvtHHCtrl);
 
-  
 end.
 
