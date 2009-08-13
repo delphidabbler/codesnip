@@ -4,19 +4,8 @@
  * Implements a wizard dialog that gathers data about and submits a user's code
  * submission for inclusion in the database.
  *
- * v1.0 of 14 Dec 2008  - Original version.
- * v1.1 of 26 Apr 2009  - Made user name and email address fields persistent on
- *                        a per-user basis.
- * v1.2 of 13 May 2009  - Changed to use revised web service constructor.
- *                      - Removed reference to deleted UParams unit.
- * v1.3 of 05 Jun 2009  - Replaced "routines" in text with "snippets" or an
- *                        alternative.
- * v1.4 of 18 Jul 2009  - Adjusted some controls to accommodate Vista UI font
- *                        and positioned some controls dynamically as a result.
- *                      - Replaced labels in privacy text containing help link
- *                        with an HTML frame containing required link.
- *                      - Removed unused label and supporting code.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -37,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -183,7 +175,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  FmPreviewDlg, UCodeImportExport, UCodeSubmitter, UGraphicUtils, UEmailHelper,
+  FmPreviewDlg, UCodeImportExport, UCodeSubmitter, UCtrlArranger, UEmailHelper,
   UMessageBox, USettings, UUtils, UWebService;
 
 
@@ -204,22 +196,25 @@ procedure TCodeSubmitDlg.ArrangeForm;
   {Aligns controls vertically where necessary to accomodate height of controls
   that depend on UI font.
   }
-var
-  CommentsTop: Integer; // position of top of comments memo control
 begin
   inherited;
-  // tsUserInfo: adjust controls re height of privacy information
-  frmPrivacy.Top := edEMail.Top + edEmail.Height + 8;
+  TCtrlArranger.SetLabelHeights(Self);
+  // tsIntro
+  { nothing to do }
+  // tsRoutines
+  lblRoutinePrompt.Top := tsRoutines.Height - lblRoutinePrompt.Height - 0;
+  frmRoutines.Top := TCtrlArranger.BottomOf(lblRoutines, 4);
+  frmRoutines.Height := lblRoutinePrompt.Top - frmRoutines.Top - 8;
+  // tsUserInfo
+  frmPrivacy.Top := TCtrlArranger.BottomOf(edEmail, 8);
   frmPrivacy.Height := frmPrivacy.DocHeight;
-  lblComments.Top := frmPrivacy.Top + frmPrivacy.Height + 8;
-  CommentsTop := lblComments.Top + lblComments.Height + 8;
-  edComments.Height := edComments.Height - (CommentsTop - edComments.Top);
-  edComments.Top := CommentsTop;
-  // tsSubmit: size submit label and locate preview button below it
-  lblSubmit.Height := StringExtent(
-    lblSubmit.Caption, lblSubmit.Font, lblSubmit.Width
-  ).cy;
-  btnPreview.Top := lblSubmit.Height + 8;
+  lblComments.Top := TCtrlArranger.BottomOf(frmPrivacy, 8);
+  edComments.Top := TCtrlArranger.BottomOf(lblComments, 4);
+  edComments.Height := tsUserInfo.Height - edComments.Top;
+  // tsSubmit
+  btnPreview.Top := TCtrlArranger.BottomOf(lblSubmit, 8);
+  // tsFinished
+  { nothing to do }
 end;
 
 procedure TCodeSubmitDlg.BeginPage(const PageIdx: Integer);
@@ -278,6 +273,7 @@ procedure TCodeSubmitDlg.ConfigForm;
   }
 begin
   inherited;
+  pcWizard.ActivePage := tsUserInfo;  // show page so that HTML can load
   frmPrivacy.Initialise('frm-emailprivacy.html');
   lblRoutinePrompt.Font.Style := [fsBold];
 end;

@@ -54,15 +54,11 @@ inherited BugReportDlg: TBugReportDlg
     end
     inherited pcWizard: TPageControl
       Width = 457
-      ActivePage = tsSubmit
+      ActivePage = tsIntroBug
       ExplicitWidth = 457
       object tsIntroBug: TTabSheet
         Caption = 'tsIntroBug'
         TabVisible = False
-        ExplicitLeft = 8
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblHeading: TLabel
           Left = 0
           Top = 8
@@ -130,10 +126,6 @@ inherited BugReportDlg: TBugReportDlg
         Caption = 'tsIntroUser'
         ImageIndex = 1
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblUserIntro: TLabel
           Left = 0
           Top = 8
@@ -157,19 +149,17 @@ inherited BugReportDlg: TBugReportDlg
         Caption = 'tsBugInfo'
         ImageIndex = 2
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblDesc: TLabel
           Left = 0
           Top = 8
-          Width = 397
+          Width = 449
           Height = 13
+          AutoSize = False
           Caption = 
             'Please provide a &description of the bug and what you were doing' +
             ' when it happened.'
           FocusControl = memoDesc
+          WordWrap = True
         end
         object memoDesc: TMemo
           Left = 0
@@ -188,10 +178,6 @@ inherited BugReportDlg: TBugReportDlg
         Caption = 'tsUserInfo'
         ImageIndex = 3
         TabVisible = False
-        ExplicitLeft = 8
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblEmailRequest: TLabel
           Left = 0
           Top = 8
@@ -213,12 +199,13 @@ inherited BugReportDlg: TBugReportDlg
         object lblOS: TLabel
           Left = 0
           Top = 112
-          Width = 447
+          Width = 449
           Height = 13
           AutoSize = False
           Caption = 
             'The following details of your operating system will also be repo' +
             'rted:'
+          WordWrap = True
         end
         object edEmail: TEdit
           Left = 72
@@ -258,16 +245,15 @@ inherited BugReportDlg: TBugReportDlg
           inherited pnlBrowser: TPanel
             Width = 449
             Height = 23
-            ExplicitWidth = 17
+            ExplicitWidth = 449
             ExplicitHeight = 23
             inherited wbBrowser: TWebBrowser
               Width = 449
               Height = 23
-              ExplicitTop = -4
               ExplicitWidth = 17
               ExplicitHeight = 23
               ControlData = {
-                4C000000C2010000610200000000000000000000000000000000000000000000
+                4C000000682E0000610200000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
                 2B2E126208000000000000004C0000000114020000000000C000000000000046
                 8000000000000000000000000000000000000000000000000000000000000000
@@ -322,16 +308,14 @@ inherited BugReportDlg: TBugReportDlg
         Caption = 'tsDone'
         ImageIndex = 5
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 8
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblDone: TLabel
           Left = 0
           Top = 8
-          Width = 284
+          Width = 449
           Height = 13
+          AutoSize = False
           Caption = 'The bug report has been submitted successfully - thank you.'
+          WordWrap = True
         end
       end
     end

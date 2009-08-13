@@ -5,7 +5,8 @@ inherited GenericDlg: TGenericDlg
   Caption = 'GenericDlg'
   ClientHeight = 328
   ClientWidth = 468
-  OnCreate = FormCreate
+  ExplicitWidth = 320
+  ExplicitHeight = 240
   PixelsPerInch = 96
   TextHeight = 13
   object bvlBottom: TBevel

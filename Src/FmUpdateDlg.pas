@@ -3,55 +3,8 @@
  *
  * Dialog box that updates the CodeSnip database from web.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Deleted unused DataUpdated property.
- * v0.3 of 20 Nov 2005  - Changed error handling to display kind of error that
- *                        occured in main dialog box with text link to click to
- *                        display more detailed information in a message box.
- * v0.4 of 04 Jan 2006  - Fixed minor bug that made label used for error message
- *                        was clickable (but blank) even when no error had
- *                        occured.
- * v0.5 of 04 Jan 2006  - Changed to get web service host from TParams class.
- * v0.6 of 10 Jan 2006  - Reinstated dialog's title bar close button and
- *                        prevented closure while downloading.
- * v0.7 of 12 Jan 2006  - Fixed alignment problem with error label.
- * v0.8 of 02 Apr 2006  - Removed response to TUpdateMgr's usStarting status
- *                        notification now this notification and updated
- *                        usFileList notification to set up dialog for updates.
- *                        Changed usFileList message accordingly.
- * v0.9 of 03 Apr 2006  - Added new status messages for new actions to "log on"
- *                        and "log off" web service.
- *                      - Revised error and cancelled messages to not mention
- *                        database restoration, since this is not always the
- *                        case.
- * v0.10 of 04 Apr 2006 - Changed to use TAppInfo class renamed from
- *                        TAppLocations.
- * v0.11 of 01 May 2006 - Total rewrite to work with revised download code
- *                        including redesign of dialog box and method of
- *                        displaying progress. Added support for news items
- *                        received from server.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 17 Dec 2006  - Replaces hard wired colours in heading message label
- *                        with references to constants from UColours unit and to
- *                        colours of parent form.
- * v1.2 of 08 Feb 2007  - Moved control initialisation code from FormCreate
- *                        event handler to new overridden InitForm method.
- *                      - Moved news frame initialisation from FormShow event
- *                        handler to InitForm and deleted FormShow.
- *                      - Re-assigned form's OnCreate event handler that was
- *                        uncoupled when handler in ancestor class was deleted.
- * v1.3 of 12 May 2007  - Now accepts all news items without checking to see
- *                        which apply to program version. (The web service now
- *                        only sends relevant items.)
- * v1.4 of 21 Apr 2008  - Changed framing of progress memo control to match new
- *                        border to news frame.
- * v1.5 of 13 Jan 2009  - Replaced control char literals with constants.
- * v1.6 of 13 May 2009  - Changed to use revised TUpdateMgr constructor.
- *                      - Removed reference to deleted UParams unit.
- * v1.7 of 18 Jul 2009  - Re-aligned and resized controls to fit Vista UI font,
- *                        with some fonts now aligned dynamically.
- *                      - Insured space between error headings and messages.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -72,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -191,7 +147,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UColours, UConsts, UGraphicUtils, UUtils;
+  UAppInfo, UColours, UConsts, UCtrlArranger, UUtils;
 
 
 {$R *.dfm}
@@ -228,11 +184,9 @@ procedure TUpdateDlg.ArrangeForm;
 begin
   // Arrange inherited controls
   inherited;
-  // Contols in initial display
-  lblUpdateFromWeb.Height := StringExtent(
-    lblUpdateFromWeb.Caption, lblUpdateFromWeb.Font, lblUpdateFromWeb.Width
-  ).cy;
-  btnDoUpdate.Top := lblUpdateFromWeb.Top + lblUpdateFromWeb.Height + 16;
+  TCtrlArranger.SetLabelHeights(Self);
+  // Controls in initial display
+  btnDoUpdate.Top := TCtrlArranger.BottomOf(lblUpdateFromWeb, 16);
   // Arrange additonal cancel button
   btnCancel.Left := btnClose.Left + btnClose.Width - btnCancel.Width;
   btnCancel.Top := btnClose.Top;

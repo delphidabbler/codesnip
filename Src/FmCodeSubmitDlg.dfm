@@ -6,14 +6,10 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     inherited pcWizard: TPageControl
-      ActivePage = tsUserInfo
+      ActivePage = tsRoutines
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblIntro: TLabel
           Left = 0
           Top = 8
@@ -153,10 +149,6 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         Caption = 'tsSubmit'
         ImageIndex = 4
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblSubmit: TLabel
           Left = 0
           Top = 3
@@ -186,10 +178,6 @@ inherited CodeSubmitDlg: TCodeSubmitDlg
         Caption = 'tsFinished'
         ImageIndex = 3
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblFinished: TLabel
           Left = 0
           Top = 0
