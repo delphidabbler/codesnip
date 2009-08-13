@@ -5,52 +5,8 @@
  * various file formats. Contains an interface supported by all highlighters, a
  * factory object and implementation of various different highlighter objects.
  *
- * v0.1 of 17 Mar 2005  - Original version. This is a reworking of earlier
- *                        syntax highlighter implementation in the former
- *                        UBaseHiliter and UDetailHTMLHiliter units.
- * v0.2 of 21 Apr 2005  - Added new IntfHilite unit that contains type
- *                        declarations formerly in other units.
- * v0.3 of 04 Jun 2005  - Changed invalid default font in
- *                        TXHTMLHiliter.GetMainCSSStyle from mono to monospace.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- *                      - Localised literal HTML document title string.
- * v1.1 of 07 Nov 2006  - Changed to use UCSSUtils methods to generate CSS
- *                        attributes.
- *                      - Completely rewrote RTF hiliter using new TRTFBuilder
- *                        class. Also changed class to generate smaller RTF
- *                        code.
- *                      - Changed reference to fAttrs private field of parent
- *                        class to reference to protected Attrs property in
- *                        TXHTMLHiliter.
- * v1.2 of 25 Nov 2006  - Changed to use new THiliterCSS class to handle CSS
- *                        generation and class names. As a result removed all
- *                        explicit CSS generation and interogation code from
- *                        this unit.
- *                      - Pushed BeforeElem() and AfterElem() methods from
- *                        TDetailHTMLHiliter and TCHTMLHiliter up into super
- *                        class TBaseHTMLHiliter. This leaves TDetailHTMLHiliter
- *                        as an empty class that is retained for informational
- *                        purposes.
- *                      - TBaseHTMLHiliter now takes note of provided
- *                        highlighter class when determining which highlighter
- *                        elements are formatted. This means that
- *                        TDetailHTMLHighlighter also now requires a suitable
- *                        highlighter object. (Previously it ignored any
- *                        highlighter and CSS classes were hard wired).
- * v1.3 of 03 Dec 2006  - TDetailHTMLHighlighter changed to surround generated
- *                        HTML in <pre>..</pre> tags. This means that
- *                        TDetailHTMLHighlighter is no longer an empty class.
- * v1.4 of 02 Jul 2007  - Added support for document titles where document type
- *                        supports this.
- *                      - Changed XHTML code generation to use THTMLBuilder.
- * v1.5 of 04 Nov 2007  - Removed the IAssignable cast from the parameter to
- *                        IAssignable.Assign method calls.
- * v1.6 of 05 Oct 2008  - Changed TSyntaxHiliterFactory to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- *                      - Made some private and protected sections of some
- *                        classes strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -69,8 +25,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

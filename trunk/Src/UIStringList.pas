@@ -4,18 +4,8 @@
  * Defines interface to an object that stores and manipulates a list of strings,
  * along with a class that implements the interface.
  *
- * v1.0 of 31 Oct 2007  - Original version.
- * v1.1 of 04 Nov 2007  - Changed parameter type of TIStringList.Assign from
- *                        IAssignable to IInterface.
- * v1.2 of 14 Sep 2008  - Added enumerator object to enable use of for..in with
- *                        IStringList.
- *                      - Added new CopyTo method to copy strings to a TStrings
- *                        object.
- *                      - "Add" method that deals with delimted strings now has
- *                        additional optional TrimStr parameter that causes all
- *                        fields stripped from string to be trimmed. Associated
- *                        constructor and SetText method similarly updated.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -34,8 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

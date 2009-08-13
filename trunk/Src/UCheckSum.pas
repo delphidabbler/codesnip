@@ -5,14 +5,8 @@
  *
  * Uses MD5.pas by Matthias Fichtner (modified by Peter Johnson 12 Jan 2006).
  *
- * v0.1 of 12 Jan 2006  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- * v1.1 of 13 Sep 2008  - Added overloaded TCheckSum.Compare that compares the
- *                        checksum of a string to a known checksum.
- * v1.2 of 04 Oct 2008  - Changed TCheckSum to derive from TNoConstructObject
- *                        and hence prevented it from being constructed.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -31,8 +25,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

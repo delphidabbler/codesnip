@@ -4,12 +4,8 @@
  * Constants defined node names and attributes used in the various XML documents
  * used by CodeSnip.
  *
- * v1.0 of 17 Sep 2008  - Original version.
- * v1.1 of 27 Dec 2008  - Added const for new "extra" node supported by v2 XML
- *                        documents.
- * v1.2 of 16 May 2009  - Added const for new "kind" node supported by v3 XML
- *                        documents.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -30,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

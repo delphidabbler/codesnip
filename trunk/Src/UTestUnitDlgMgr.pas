@@ -1,11 +1,11 @@
 {
- * UTestUnitDlgMgr.pas
+ *  * $Rev$
+ * $Date$
+ *
+UTestUnitDlgMgr.pas
  *
  * Implements a static class that manages and displays a test unit in a dialog
  * box.
- *
- * v1.0 of 16 May 2009  - Original version.
- *
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -26,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

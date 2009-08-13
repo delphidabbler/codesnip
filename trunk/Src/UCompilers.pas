@@ -6,53 +6,8 @@
  * detect some compilers that are registered on the local machine and another
  * that can persist the compilers list to the application's storage.
  *
- * v0.1 of 05 Mar 2005  - Original version.
- * v0.2 of 21 Apr 2005  - Changed to use renamed IntfCompilers unit.
- *                      - Changed code that persists compiler information to use
- *                        revised UAppInfo code. Persistent storage section name
- *                        now got from TAppInfo rather than hard wired.
- * v0.3 of 25 Apr 2005  - Added implementation of ICompiler's new
- *                        GetAvailableCount method.
- * v0.4 of 04 Jun 2005  - Fixed code that ensure the Delphi program directories
- *                        read from registry have trailing backslash.
- * v0.5 of 08 Jan 2006  - Removed redundant TCompilerAutoDetect class since
- *                        detection code merged with compiler classes.
- *                      - Modified class factory to be able to construct new
- *                        TBDSCompiler Borland Development System compiler
- *                        objects.
- *                      - Modified TPersistCompilers to load and save user
- *                        defined command line switches.
- * v0.6 of 04 Apr 2006  - Changed to use renamed and revised Settings object and
- *                        associated interfaces.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit reference.
- * v1.1 of 08 May 2007  - Added support for Delphi 2007 to TCompilerFactory.
- * v1.2 of 04 Nov 2007  - Changed parameter type of TCompilers.Assign from
- *                        IAssignable to IInterface.
- * v1.3 of 25 Aug 2008  - Implemented ICompilersEnum and added GetEnumerator
- *                        method to TCompilers.
- *                      - Refactored code to take advantage of new enumerator.
- * v1.4 of 04 Oct 2008  - Changed TCompilerFactory to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- *                      - Made various private sections of classes strict.
- *                      - Now use ClassName method in all raise EBug statements.
- * v1.5 of 11 Oct 2008  - Added support for Delphi 2009.
- *                      - Replaced some for..to loops in TCompilers with for..in
- *                        loops.
- *                      - Replaced TCompilersEnum with nested enumerator class
- *                        in TCompilers.
- *                      - Replaced private global variable that stores singleton
- *                        with a class property of TCompilers and modified
- *                        Compilers function to access this property.
- * v1.6 of 16 Dec 2008  - Replaced for..to loop TCompilers.Assign with for..in
- *                        loop.
- * v1.7 of 09 Jan 2009  - Removed singleton instance function and supporting
- *                        code, methods and class vars. All compilers instances
- *                        are now created by owning objects.
- *                      - Added new public factory class to create compiler
- *                        instances.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -73,6 +28,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

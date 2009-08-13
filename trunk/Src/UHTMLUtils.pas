@@ -3,31 +3,8 @@
  *
  * Utility functions, interfaces and classes used to generate HTML.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 19 Feb 2005  - Refactoring: deleted unit prefixes from types and
- *                        routine names.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- * v1.1 of 15 Oct 2006  - Added new URLDecode routine.
- * v1.2 of 07 Nov 2006  - Changed ImageTag() to use style attribute and CSS
- *                        rather than width, height, border, valign attributes.
- *                      - Changed to use UCSSUtils methods to generate CSS
- *                        attributes.
- * v1.3 of 11 Nov 2006  - Added new IsValidHTMLCode() routine.
- * v1.4 of 25 Nov 2006  - Removed CSS border property from image tag style since
- *                        this is now default for all images.
- * v1.5 of 02 Dec 2006  - Added optional Id parameter to ImageTag() routine and
- *                        re-implemented the routine.
- *                      - Removed now unused ResImageTag() routine.
- * v2.0 of 29 Dec 2008  - Added new IHTMLAttributes interface and implementating
- *                        THMTLAttributes class.
- *                      - Added new MakeTag routine to create an HTML tag.
- *                      - Converted ImageTag to use THTMLAttributes and MakeTag.
- * v2.1 of 25 Jan 2009  - Added new MakeCompoundTag overloaded routines.
- *                      - Removed unnecessary $WARN directive.
- *                      - Modified method ImageTag routine uses to build
- *                        attribute list.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -48,6 +25,9 @@
 
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

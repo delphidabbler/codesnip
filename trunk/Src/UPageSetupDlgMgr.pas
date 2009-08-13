@@ -3,17 +3,8 @@
  *
  * Implements a class that manages the Page Setup dialog box.
  *
- * v1.0 of 07 Sep 2007  - Original version.
- * v1.1 of 16 Dec 2008  - Changed to static class. Now inherits from
- *                        TNoConstructObject. Removed constructor.
- *                      - Moved DlgUnitsToMM and MMToDlgUnits helper routines to
- *                        class functions of TPageMargins.
- *                      - Modified to user TPageMargins constructor instead of
- *                        deleted PageMargins function to initialise margins.
- *                      - Fixed bug where required margins weren't being
- *                        displayed due to addition of psoMargins to page setup
- *                        dialog options in Delphi 2006.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -32,8 +23,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

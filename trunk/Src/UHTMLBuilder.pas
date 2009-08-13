@@ -3,14 +3,8 @@
  *
  * Implements a class used to create content of an XHTML document.
  *
- * v1.0 of 02 Jul 2007  - Original version.
- * v1.1 of 13 Jan 2009  - Replaced control char literals with constants.
- *                      - Made private section strict.
- * v1.2 of 25 Jan 2009  - Revised to use routines and objects from UHTMLUtils
- *                        to generate HTML tags. OpenTag and CloseTag methods
- *                        removed.
- *                      - Refactored some code.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -31,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

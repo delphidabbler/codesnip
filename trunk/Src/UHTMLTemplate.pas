@@ -4,19 +4,8 @@
  * Implements a class that loads a HTML template from resources and permits
  * replacing of placeholders with values.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Deleted unused THTMLTemplate destructor.
- * v0.3 of 20 Feb 2005  - Added new SaveToStream method.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- *                      - Replaced HTML method with property of same name.
- * v1.1 of 24 Aug 2008  - Added directive to switch off unsafe code warnings in
- *                        Delphi 2006.
- * v1.2 of 11 Jan 2009  - Replaced call to StringReplace with ReplaceStr.
- * v1.3 of 25 Jan 2009  - Replaced call to MakeIntResource with RT_HTML.
- *                      - Removed unnecessay $WARN directive.
- *                      - Made private section strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -37,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

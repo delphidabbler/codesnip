@@ -4,20 +4,8 @@
  * Defines application's exception classes and a handler for untrapped
  * exceptions.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 24 Feb 2005  - Changed to use dialog box provided by new TMessageBox
- *                        class to display non-bug exceptions.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- *                      - Changed call to TMessageBox.Error to remove now
- *                        redundant help context parameter.
- * v1.1 of 01 Sep 2008  - Added new virtual Assign method to ECodeSnip.
- *                      - Added constructor that creates copy of an exception.
- * v1.2 of 04 Oct 2008  - Changed TExceptionHandler to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- * v1.3 of 30 Nov 2008  - Added new EDataEntry exception class for use in
- *                        validating data entered into dialog boxes.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -36,8 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

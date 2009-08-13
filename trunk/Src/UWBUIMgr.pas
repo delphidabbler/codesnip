@@ -5,52 +5,8 @@
  * customisation of IE web browser control's user interface, message
  * translation, pop-up menu, external object and drag-drop handling.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Deleted unused TWBUIMgr destructor.
- * v0.3 of 16 Apr 2006  - Added new DropTarget property and overridden
- *                        IDocHostUIHandler.GetDropTarget method to enable
- *                        customisation of drag-drop handling for web browser
- *                        control.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- *                      - Removed unused unit reference.
- * v1.1 of 25 Nov 2006  - Added new OnUpdateCSS event triggered when browser
- *                        needs default CSS for browser. This provides
- *                        alternative to CSS property as a way to provide CSS to
- *                        browser object.
- * v1.2 of 11 Feb 2007  - Added ShowUI and HideUI method overrides that trigger
- *                        new OnBrowserActivate and OnBrowserDeactivate events.
- *                      - Removed unused (and dodgy!) OnBrowserClick event and
- *                        supporting code.
- *                      - Removed unused OnTextSelection event and supporting
- *                        code.
- *                      - Added event handler for browser's OnEnter event that
- *                        focusses the browser control (which leads to ShowUI
- *                        method call).
- *                      - Modified OnCommandStateChange handler to trigger any
- *                        original event.
- * v2.0 of 17 Feb 2007  - Added significant new functionality over and above
- *                        IDocHostUIHandler implementation. Extended to provide
- *                        methods to execute commands in and interogate browser
- *                        control and current document. Specifically:
- *                        - Added CanCopy, CanSelectAll, CopyToClipboard,
- *                          SelectAll, ClearSelection, ScrollTo and DocHeight
- *                          methods.
- *                        - Changed to use new THTMLDocHelper static class for
- *                          manipulating HTML document objects.
- *                        - Changed how selected text is recorded. Now we only
- *                          read selection when SelectedText property is read.
- *                          Made property read only.
- *                        - Removed OnCommandStateChange event handler - was
- *                          only used to record text selection.
- * v2.1 of 13 May 2007  - Added new PopupMenu property that assigns popup menu
- *                        to browser control.
- *                      - Added test to CanSelectAll to check whether
- *                        AllowTextSelection is true.
- * v2.2 of 11 Aug 2008  - Replaced calls to ThemeServices with ThemeServicesEx.
- * v2.3 of 24 Aug 2008  - Added directive to switch off unsafe code warnings in
- *                        Delphi 2006.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -69,8 +25,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

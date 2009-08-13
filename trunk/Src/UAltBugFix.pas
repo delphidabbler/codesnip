@@ -24,19 +24,8 @@
  * and extended to work with customised standard windows dialog boxes as well as
  * forms.
  *
- * v1.0 of 15 Jun 2008  - Original version.
- * v1.1 of 11 Aug 2008  - Replaced calls to ThemeServices with ThemeServicesEx.
- * v1.2 of 05 Oct 2008  - Added TAltBugFix.IsCtrlRecorded method to check if a
- *                        control is in a list.
- *                      - Replaced private global variable that stores singleton
- *                        with a class property of TAltBugFix and modified
- *                        AltBugFix function to access this property.
- *                      - Made some protected and private section strict.
- *                      - Moved lock timeout constant into TAltBugFix.
- *                      - Adapted a for loop to use TObjectList enumerator.
- *                      - Changed Assert message to ClassName for class name.
- * v1.3 of 11 Oct 2008  - Added code to prevent repainting of TBitBtn on Vista.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -55,8 +44,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

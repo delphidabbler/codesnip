@@ -4,20 +4,8 @@
  * Custom action used to request display of a compiler log. Stores reference to
  * required compiler's id in a property.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Removed debug code.
- * v0.3 of 18 Feb 2005  - Removed TCompLogAction's unused constructor and
- *                        destructor.
- * v0.4 of 04 Mar 2005  - Changed to get compiler info from ICompiler instead
- *                        of TDelphiCompiler (ICompiler adds support for Free
- *                        Pascal).
- * v0.5 of 20 Apr 2005  - Changed to use renamed IntfCompilers unit.
- * v1.0 of 24 May 2006  - Made minor changes to comments.
- * v1.1 of 09 Jan 2009  - Changed to reference a compiler ID rather than a
- *                        compiler instance. Property name changes from Compiler
- *                        to CompilerID.
- *                      - Made private section strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -38,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

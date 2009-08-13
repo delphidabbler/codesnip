@@ -5,11 +5,8 @@
  * helper methods. Also provides a simple list object that can contain XML
  * nodes with enumerator.
  *
- * v1.0 of 14 Sep 2008  - Original version.
- * v1.1 of 17 Dec 2008  - Added new CreateElement methods to create new parented
- *                        elements, optionally with text.
- *                      - Changed WideString parameters to DOMString.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -28,8 +25,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

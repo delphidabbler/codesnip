@@ -4,15 +4,8 @@
  * Implements a class that renders a document that describes a snippet as plain
  * text.
  *
- * v1.0 of 04 Jan 2009  - Original version.
- * v1.1 of 21 Jun 2009  - Added override of new RenderTitledText method that
- *                        writes out a title followed by some text.
- *                      - Reimplemented RenderTitledList method in terms of
- *                        RenderTitledText.
- *                      - Re-implemented RenderExtra method to take an
- *                        IActiveText object as parameter instead of plain text.
- *                        Conversion of active text to plain text implemented.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -33,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

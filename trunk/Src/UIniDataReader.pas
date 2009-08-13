@@ -5,63 +5,8 @@
  * Provides factory class that creates the data reader. The factory is
  * registered with the application.
  *
- * v0.1 of 26 Feb 2005  - Original version.
- * v0.2 of 05 Mar 2005  - Change to use TCompilerID (renamed from
- *                        TDelphiVersion).
- *                      - Renamed DelphiVerToIniName routine as
- *                        CompilerIDToIniName.
- *                      - Added support for Free Pascal compiler using
- *                        FreePascal field.
- * v0.3 of 20 Apr 2005  - Changed to use renamed IntfCompilers unit.
- * v0.4 of 04 Jun 2005  - Fixed potential bug where missing files in database
- *                        can cause endless loop of exceptions to be thrown.
- *                      - Added checks for missing category ini files.
- * v0.5 of 08 Jan 2006  - Added new Ini file entry names for D2005/6 Win32 to
- *                        CompilerIDToIniName routine.
- * v0.6 of 04 Apr 2006  - Changed to use TAppInfo class renamed from
- *                        TAppLocations.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- * v1.1 of 08 May 2007  - Added support for Delphi 2007.
- * v1.2 of 24 Aug 2008  - Changed to define name of master file in this unit
- *                        rather than getting it from now removed
- *                        TAppInfo.MasterFileName method.
- *                      - Changed some visibility specifiers to "strict"
- *                      - Sealed TIniDataReaderFactory and TIniDataReader.
- * v2.0 of 02 Sep 2008  - Made changes to support multiple databases. Can now
- *                        read either user or main database. User database is
- *                        not deleted when corrupt.
- *                      - Added support for reading new category and routine
- *                        properties that assist in supporting user database.
- *                      - Changed to work with revised IDataReader interface.
- *                      - Changed to use revised factory registration class.
- *                      - Moved StreamToString and FileToString routines to
- *                        UUtils.
- *                      - Changed corrupt database exception handling and added
- *                        checks for exceptions for most IDataReader methods.
- * v2.1 of 11 Oct 2008  - Added support for Delphi 2009.
- *                      - Refactoring: pulled out common code from methods that
- *                        get routine references into a separate method.
- * v2.2 of 28 Dec 2008  - Included consts for all ini value names.
- *                      - Added support for routine's new Extra property and
- *                        possible Extra value in ini files.
- *                      - Removed support for routine's Credits, CreditsURL and
- *                        Comments properties.
- *                      - Isolated code that gets compiler results and source
- *                        code for a routine into seperate local routines of
- *                        GetRoutineProps method.
- *                      - Deleted redundant helper routine. Moved remaining
- *                        CommaToStrings into class.
- * v2.3 of 13 Jan 2009  - Replaced control char literals with constants.
- * v2.4 of 20 Jun 2009  - Added support for snippet's Kind property and, where
- *                        missing, conversion of obsolete StandardFormat
- *                        property to a Kind property value.
- *                      - Now uses TDatabaseIniFile (subclass of TCustomIniFile)
- *                        instead of TIniFile to read database files.
- *                      - Category ini file access is now cached to save
- *                        constant re-reading of same ini files.
- *                      - Changed error message to refer to snippet not routine.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -82,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

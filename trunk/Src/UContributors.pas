@@ -4,17 +4,8 @@
  * Defines a classes that encapsulates lists of database contributors taken from
  * files.
  *
- * v1.0 of 11 Feb 2007  - Original version.
- * v1.1 of 22 Sep 2007  - Modified to be passed name of contributors file to be
- *                        encapsulated. There is now more than one such file.
- * v1.2 of 24 Aug 2008  - Modified so that two descendant classes are used to
- *                        encapsulate code contributors and testers. No longer
- *                        need to pass file names: descendant classes have this
- *                        knowledge.
- *                      - Provided enumeration for contributors to enable use of
- *                        for .. in contruct in Delphi 2006.
- *                      - Made some method visibility specifiers "strict".
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -33,8 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

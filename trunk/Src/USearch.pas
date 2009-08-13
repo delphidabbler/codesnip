@@ -5,50 +5,8 @@
  * the CodeSnip database. Also declares interfaces and classes to record search
  * criteria.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Changed nul search Execute method to return false
- *                        (i.e. nothing found) if database is empty.
- * v0.3 of 18 Feb 2005  - Deleted unused TCompilerSearch, TTextSearch,
- *                        TNulSearch and TCompilerSearchCriteria destructors.
- * v0.4 of 04 Mar 2005  - Changed to use TCompileID enumeration that replaces
- *                        TDelphiVersion.
- * v0.5 of 20 Apr 2005  - Changed to use renamed IntfCompilers unit.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- *                      - Removed warnings about un-fixed interfaces: now fixed.
- * v2.0 of 29 Oct 2006  - Major update. Added two new search types:
- *                        - Added Selection Search with associated criteria.
- *                          This search checks for routines in a supplied list
- *                          list of selected routines.
- *                        - Added XRef Search with associated criteria. This
- *                          checks for routines cross-referenced or required by
- *                          a given routine.
- *                        - Modified factory classes to work with the two new
- *                          searches.
- * v2.1 of 03 Feb 2007  - Added new ISearchUIInfo interface.
- *                      - Implemented ISearchUIInfo in all search criteria
- *                        objects via a new common base class.
- *                      - Added new IsNul method to ISearch and implemented the
- *                        method in classes that support ISearch.
- * v2.2 of 14 Oct 2007  - Updated text search algorithm to find text strings
- *                        containing punctuation.
- *                      - Added routine's credits and comments to text that is
- *                        searched.
- * v2.3 of 24 Aug 2008  - Added Windows unit to enable inlining in Delphi 2006.
- * v2.4 of 04 Oct 2008  - Chanegd TSearchFactory and TSearchCriteriaFactory to
- *                        derive from TNoConstructObject and hence prevented
- *                        them from being constructed.
- *                      - Changed some private and protected class sections to
- *                        strict.
- *                      - Now use ClassName method in all assert statements.
- * v2.5 of 28 Dec 2008  - Converted to get some search text from a routine's
- *                        Extra property that replaces Comments and Credits
- *                        properties.
- * v2.6 of 08 Jul 2009  - Fixed bug in selection search that was selecting both
- *                        user defined and main database snippets with same name
- *                        even if only one was specified. Replaced use of
- *                        TStringList with TRoutineList.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -69,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

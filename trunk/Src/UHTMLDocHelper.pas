@@ -4,23 +4,8 @@
  * Defines a static class that provides helper methods for manipulating HTML
  * documents and elements.
  *
- * v1.0 of 17 Feb 2007  - Original version.
- * v1.1 of 18 Oct 2007  - Added new FindEnclosingALink and GetALinkURL methods.
- *                      - Made ParentWindow public instead of protected.
- * v1.2 of 03 Nov 2007  - Added new DocumentFromElem, GetElemClasses and
- *                        ElemHasClass methods to THTMLDocHelper.
- *                      - Replaced THTMLDocHelper ClickLink, FindEnclosingALink
- *                        GetALinkURL with equivalent methods in UAnchors unit.
- *                      - Changed GetActiveElem to return IDispatch rather than
- *                        IHTMLElement.
- * v1.3 of 14 Sep 2008  - Added new ElemIsVisible and ParentElem methods.
- * v1.4 of 04 Oct 2008  - Changed THTMLDocHelper to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- * v1.5 of 25 Jan 2009  - Added new SetTitle and GetElementById methods.
- * v1.6 of 17 Jun 2009  - Added new GetDocTitle method.
- *                      - Removed unused ExecScript method.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -41,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

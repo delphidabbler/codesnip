@@ -3,41 +3,8 @@
  *
  * Implements objects that define attributes of syntax highlighters.
  *
- * v0.1 of 17 Mar 2005  - Original version.
- * v0.2 of 21 Apr 2005  - Replaced UHilitePasParser with IntfHiliter which
- *                        contains definitions formerly in UHilitePasParser.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 09 Nov 2006  - Added new THiliteAttrsFactory.CreateUserAttrs method
- *                        that creates a hilite attributes object and reads its
- *                        properties from persistent storage.
- * v1.2 of 04 Sep 2007  - Added new THiliteAttrsFactory.CreateMonoAttrs method
- *                        that creates mono (black & white) hilite attributes
- *                        object.
- * v1.3 of 17 Oct 2007  - Changed THiliteAttrsFactory.CreateUserAttrs to return
- *                        attributes object from Preferences rather than
- *                        creating own.
- * v1.4 of 04 Nov 2007  - Removed the IAssignable cast from the parameter to
- *                        IAssignable.Assign method calls.
- * v1.5 of 04 Oct 2008  - Changed THiliteAttrsFactory to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- *                      - Made private section of THiliteAttrs and
- *                        THiliteElemAtrrs strict.
- *                      - Now use ClassName method in all raise EBug statements.
- * v1.6 of 16 Dec 2008  - Added new THiliteAttrsFactory.CreatePrintAttrsfactory
- *                        method to create / adapt a highlighter to be suitable
- *                        for printing.
- *                      - Removed THiliteAttrsFactory.CreateMonoAttrs method.
- *                        Functionality now provided in THiliteAttrsFactory's
- *                        CreatePrintAttrsfactory method.
- *                      - Added default font consts to THiliteAttrs.
- * v1.7 of 23 May 2009  - Added THiliterAttrsFactory.CreatePredefinedAttrs and
- *                        THiliteAttrsFactory.CreateDisplayAttrs methods.
- *                      - Changed THiliteAttrsFactory.CreateDefaultAttrs to call
- *                        THiliterAttrsFactory.CreatePredefinedAttrs.
- *                      - Create user attributes now create a clone of
- *                        preferences highlighter rather than a reference.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -58,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

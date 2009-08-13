@@ -3,71 +3,8 @@
  *
  * Class that provides information about the application.
  *
- * v0.1 of 30 Jan 2005  - Original version that accessed config file directly.
- * v0.2 of 18 Feb 2005  - Deleted unused TAppLocations.GeneratorDir method.
- *                      - Deleted unused TAppInfo constructor, destructor and
- *                        fFindHistory field.
- * v0.3 of 21 Apr 2005  - Total rewrite of TAppInfo object that accesses
- *                        sections via identifiers rather than names, implements
- *                        subsection names and provides direct access to data
- *                        items within sections and to whole sections via new
- *                        object that encapsulates them and their data. All
- *                        section and data specific methods were deleted.
- *                        IniFileName method renamed as StorageFileName.
- *                      - Added new IAppSectionInfo interface to the new section
- *                        encapsulation object.
- * v0.4 of 25 Apr 2005  - Added new Source Output storage section.
- * v0.5 of 08 Jan 2006  - Added new ItemExists method to IAppSectionInfo and its
- *                        implememtaion.
- * v0.6 of 04 Apr 2006  - Major revision:
- *                        - Removed AppInfo object and associated code to new
- *                          USettings unit and renamed and revised there.
- *                        - Renamed TAppLocations to TAppInfo. This class will
- *                          be extended at a later stage to provide more than
- *                          application locations.
- * v0.7 of 07 Apr 2006  - Several additions were made to TAppInfo:
- *                        - Added support for setting and querying application
- *                          registration.
- *                        - Added support for generating and storing unique key
- *                          for application.
- *                        - Added support for returning various pieces of
- *                          version information about the application.
- * v1.0 of 28 May 2006  - Improved and corrected comments.
- *                      - Changed methods that created instance of TVersionInfo
- *                        to call new static functions instead.
- *                      - Made TAppInfo.RegistrationCode private.
- *                      - Added new TAppInfo.AppExeDir and TAppInfo.AppExeFile
- *                        methods.
- * v1.1 of 26 Oct 2006  - Added new TAppInfo.LicenseFileName method.
- * v1.2 of 11 Nov 2006  - Added new TAppInfo.HelpFileName method to return path
- *                        to help file.
- * v1.3 of 14 Nov 2006  - Removed now unused TAppInfo.LicenseFileName method.
- * v1.4 of 11 Feb 2007  - Added new TAppInfo.ContribFileName method to return
- *                        path to contributors file.
- * v1.5 of 22 Sep 2007  - Added TAppInfo.TestersFileName method to return path
- *                        to testers file.
- * v1.6 of 13 Aug 2008  - Renamed TAppDir.AppDir as TAppDir.UserAppDir.
- *                      - Added new TAppDir.CommonAppDir class method.
- * v1.7 of 24 Aug 2008  - Changed TAppInfo.GenerateKey to use SystemIDStr to
- *                        build ID string rather using previous method that used
- *                        MAC Address since MAC address code doesn't work on
- *                        Windows Vista.
- *                      - Removed obsolete TAppInfo methods: ContribFileName,
- *                        TestersFileName and MasterFileName.
- * v1.8 of 26 Aug 2008  - Added new TAppInfo.UserDataDir method that returns
- *                        directory where user database is stored.
- * v1.9 of 04 Oct 2008  - Changed TAppInfo to derive from TNoConstructObject and
- *                        hence prevented it from being constructed.
- *                      - Made private section strict.
- * v1.10 of 11 Jan 2009 - Replaced direct call to MD5 routines with call to
- *                        TCheckSum static class.
- * v1.11 of 13 May 2009 - Added new class consts to TAppInfo: CompanyName,
- *                        ProgramName, FullProgramName and ProgamID. These
- *                        value were previosly provided by the UGlobals unit.
- * v1.12 of 23 May 2009 - Changed user database sub-directory to UserData.3 from
- *                        UserData to prevent making data in UserData unreadable
- *                        by CodeSnip versions before release 3. 
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -88,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

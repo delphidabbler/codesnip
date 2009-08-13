@@ -4,19 +4,8 @@
  * Custom action used to request display of a routine by name. Stores name of
  * required routine and its source database in properties.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Removed debug code.
- * v0.3 of 18 Feb 2005  - Deleted unused TRoutineAction contructor and
- *                        destructor.
- * v1.0 of 24 May 2006  - Made minor change to comments.
- * v1.1 of 31 Aug 2008  - Added new UserDefined property that indicates if
- *                        routine is from main or user database.
- * v2.0 of 13 Jul 2009  - Changed to display routine via notifier:
- *                        - Added support for ISetNotifier interface: implements
- *                          SetNotifier method.
- *                        - Added execute method. No longer triggers OnExecute
- *                          event.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -37,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

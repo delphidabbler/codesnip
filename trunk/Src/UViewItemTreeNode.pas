@@ -6,8 +6,8 @@
  *
  * This code was formerly in the FrOverview unit.
  *
- * v1.0 of 16 May 2009  - Original version.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -28,6 +28,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

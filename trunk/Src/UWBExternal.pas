@@ -5,51 +5,8 @@
  * browser control and notifies application of events triggered via JavaScript
  * calls to the external object's methods.
  *
- * v0.1 of 22 Feb 2005  - Original version. Replaced former UExtInfo and
- *                        UExtCompCheck units that provided different external
- *                        object extensions for different browser controls.
- * v0.2 of 25 Apr 2005  - Implemented new HelpTopic and ConfigCompilers methods
- *                        of IWBExternal by calling methods of same names in
- *                        notifier object.
- *                      - Deleted implementation QuickStartHelp method that was
- *                        removed from IWBExternal.
- *                      - Added new InstalledCompilers method of IWBExternal
- *                        that returns number of available compilers to
- *                        JavaScript.
- * v0.3 of 03 Jun 2005  - Deleted InstalledCompilers method since no longer
- *                        required.
- * v1.0 of 05 Jun 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- *                      - Removed unused unit reference.
- *                      - Changed to get path to executable file from TAppInfo
- *                        static class rather than direct.
- *                      - Changed to use renamed IntfExternalObj unit (was
- *                        previously CodeSnip_TLB).
- * v1.1 of 23 Nov 2006  - Added ToggleTestUnit method and implemented by calling
- *                        equivalent method in notifier object.
- *                      - Changed to support IWBExternal2 instead of
- *                        IWBExternal.
- * v1.2 of 04 Nov 2007  - Changed to implement IWBExternal3 instead of
- *                        IWBExternal2 and removed HelpTopic method as
- *                        consequence.
- * v1.3 of 14 Sep 2008  - Changed to implement IWBExternal4 instead of
- *                        IWBExternal3:
- *                        - Changed signature of DisplayRoutine and modified the
- *                          implementation to call the equivalent modified
- *                          notifier method.
- *                        - Added new EditRoutine method that calls method of
- *                          same name in Notifier.
- * v1.4 of 17 Jun 2009  - Changed to implement IWBExternal5 instead of
- *                        IWBExternal4:
- *                        - ShowTestUnit method replaces ToggleTestUnit.
- *                        - Donate method added.
- *                        - Renamed DisplayRoutine method as DisplaySnippet,
- *                          CompileRoutine as CompileSnippet, EditRoutine as
- *                          EditSnippet.
- *                      - Made private section strict.
- * v1.5 of 12 Jul 2009  - Changed to implement IWBExternal6 instead of
- *                        IWBExternal5 by adding DisplayCategory method.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -63,13 +20,16 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UWBExternal.pas 
+ * The Original Code is UWBExternal.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

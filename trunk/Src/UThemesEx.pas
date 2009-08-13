@@ -4,23 +4,8 @@
  * Implements class that extends TThemeServices with new methods and adds
  * support for multiple event handlers for the OnThemeChange event.
  *
- * v1.0 of 31 Oct 2006  - Original version.
- * v1.1 of 11 Feb 2007  - Added new GetTabBodyColour method.
- *                      - Added override of specialised DrawElement method to
- *                        work with TThemedTab.
- * v1.2 of 15 Jun 2008  - Added support for multiple event handlers for the
- *                        OnThemeChange event.
- * v1.3 of 11 Aug 2008  - Added new ThemeServicesEx global function that returns
- *                        ThemesServices object as TThemeServicesEx.
- *                      - Added hidden window to automatically detect theme
- *                        changes. We no longer need another window to detect
- *                        theme changes and call ApplyThemeChange.
- *                      - Added code to detect whether themes have actually
- *                        changed when a theme change notification is received,
- *                        and only to trigger multi-cast change event if so.
- * v1.4 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
- *                      - Made private and protected sections strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -39,10 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

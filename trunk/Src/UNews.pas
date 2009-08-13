@@ -4,22 +4,10 @@
  * Maintains a list of news items for display by program and reads list from
  * formatted data stream.
  *
- * v0.1 of 01 May 2006  - Original version.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- *                      - Changed exception used to detect bugs from Exception
- *                        type to EBug.
- * v1.1 of 12 May 2007  - Removed all code that tested for program version
- *                        numbers at which news items were targetted. This
- *                        testing now performed by web service rather than
- *                        program.
- *                      - Adapted to use revised news data format: versions
- *                        field no included in data stream.
- * v1.2 of 12 Jul 2009  - Replaced reference to UDataStreamReader unit with
- *                        UDataStreamIO.
- *                      - Made TNews and TNewsItems private sections strict.
+ * $Rev$
+ * $Date$
  *
- *
- * ***** BEGIN LICENSE BLOCK *****
+***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
  *
@@ -38,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

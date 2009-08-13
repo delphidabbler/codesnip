@@ -1,30 +1,12 @@
-{ ##
-  @FILE                     UConsoleApp.pas
-  @COMMENTS                 A class that encapsulates and executes a command
-                            line application and optionally redirects the
-                            application's standard input, output and error.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None.
-  @HISTORY(
-    @REVISION(
-      @VERSION              0.1
-      @DATE                 11/01/2006
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 25/05/2006
-      @COMMENTS             + Improved and corrected comments.
-                            + Relocated and rationalised $WARN directives.
-                            + Localised application error message.
-    )
-  )
-}
-
-
 {
+ * UConsoleApp.pas
+ *
+ * A class that encapsulates and executes a command line application and
+ * optionally redirects the application's standard input, output and error.
+ *
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -42,10 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -4,33 +4,8 @@
  * Static classes that generate HTML of parts of tables used to display compiler
  * results.
  *
- * v1.0 of 02 Dec 2006  - Original version.
- * v1.1 of 03 Dec 2006  - Added TInfoCompResHTML class that provides ids and
- *                        table cell HTML for routine view in information pane.
- *                      - Moved DBaseCellId() and DBaseImgId() methods from
- *                        TCompCheckResHTML to TCompResHTML base class to allow
- *                        to be shared between TCompCheckResHTML and
- *                        TInfoCompResHTML.
- * v1.2 of 01 Nov 2007  - Added 'command-link' class to the a-link that displays
- *                        compile errors and warnings.
- * v1.3 of 04 Oct 2008  - Changed TCompResHTML to derive from TNoConstructObject
- *                        and hence prevented it and its subclasses from being
- *                        constructed.
- *                      - Made TCompResHTML's protected section strict.
- * v1.4 of 11 Oct 2008  - Changed formatting of compiler names for info pane so
- *                        that multi-word names use a new line for each word.
- * v1.5 of 10 Jan 2009  - Changed to use new ICompiler.HasErrorsOrWarnings
- *                        method to detect compiler errors or warnings.
- * v1.6 of 13 Jan 2009  - Replaced call to StringReplace with ReplaceStr.
- *                      - Replaced control char literals with constants.
- * v1.7 of 25 Jan 2009  - Replaced some methods that created placeholder HTML
- *                        for later dynamic updating with methods that create
- *                        actual content.
- *                      - Revised code to use routines and objects from
- *                        UHTMLUtils to generate HTML tags and attributes.
- *                      - Made some methods private or protected.
- *                      - Deleted unused methods.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -51,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

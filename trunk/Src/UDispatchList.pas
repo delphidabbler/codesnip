@@ -4,9 +4,8 @@
  * Interface to list of IDispatch objects along with an implementation of the
  * list and an enumerator.
  *
- * v1.0 of 01 Nov 2007  - Original version.
- * v1.1 of 14 Sep 2008  - Added enumerator.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -25,8 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

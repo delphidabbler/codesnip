@@ -5,8 +5,8 @@
  * works correctly with the Vista task bar, provides a Title property and uses
  * UK English. Dialog also supports help keywords.
  *
- * v1.0 of 10 Aug 2008  - Original version.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -25,10 +25,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2209 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

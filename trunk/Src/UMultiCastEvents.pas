@@ -3,21 +3,8 @@
  *
  * Implements class that maintains, and can trigger, a list of event handlers.
  *
- * v1.0 of 15 Jun 2008  - Original version.
- * v1.1 of 11 Aug 2008  - Added compiler directives to switch off "unsafe"
- *                        compiler warnings.
- * v2.0 of 14 Sep 2008  - Major revision:
- *                        - Added TNotifyEventInfo event type that passes an
- *                          IInterface of an object that provides information
- *                          about an event.
- *                        - Modified TMultiCastEvents to support registration
- *                          and triggering of both TNotifyEventInfo and
- *                          TNotifyEvents.
- *                        - Trigger method modified to take event info object.
- *                        - Events now receive reference to object that owns
- *                          the TMultiCastEvents object instead of the
- *                          TMultiCastEvents object itself.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -36,8 +23,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

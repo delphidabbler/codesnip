@@ -3,17 +3,8 @@
  *
  * Implements class that manages the display of dialog boxes.
  *
- * v1.0 of 05 Feb 2007  - Original version.
- * v1.1 of 07 Sep 2007  - Added new TDialogMgr.ExecPrintDlg method.
- *                      - Added new TDialogMgr.ExecPageSetupDlg method.
- * v1.2 of 16 Dec 2008  - Revised to use new static Execute method of
- *                        TPageSetupDlgMgr to display page setup dialog box.
- * v1.3 of 09 Jan 2009  - Delete unused TDialogMgr's ExecCompilersDlg and
- *                        ShowCompErrorDlg methods.
- * v1.4 of 09 May 2009  - Added new TDialogMgr.ShowDonateDlg method.
- * v1.5 of 06 Jun 2009  - Added new ShowTestUnit and ShowDependencyTree methods
- *                        to TDialogMgr.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -34,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -4,10 +4,8 @@
  * Implements a class that submits code snippets database contributions via a
  * webservice.
  *
- * v1.0 of 06 Dec 2008  - Original version.
- * v1.1 of 13 May 2009  - Changed to use revised TWebService inherited
- *                        constructor and its single TWebServiceInfo parameter.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -28,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

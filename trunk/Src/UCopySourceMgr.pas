@@ -5,15 +5,8 @@
  * clipboard. Code is copied as plain text and as rich text. Rich text version
  * is syntax highlighted.
  *
- * v1.0 of 06 Jun 2009  - Original version containing just TCopySourceMgr.
- * v2.0 of 11 Jul 2009  - Added new TCopySourceCodeBase abtract base class for
- *                        all objects that copy source code to clipboard.
- *                      - Re-implemented TCopySourceMgr as a concrete subclass
- *                        of TCopySourceCodeBase.
- *                      - Added a re-implementation of TCopySnippetMgr, formerly
- *                        defined in UCopySnippetMgr, as a concreate subclass of
- *                        TCopySourceCodeBase.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -34,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

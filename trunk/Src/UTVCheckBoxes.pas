@@ -4,24 +4,8 @@
  * Implements class that is used to manage image lists containing check box
  * images for display in tree views.
  *
- * v1.0 of 31 Oct 2006  - Original version.
- * v1.1 of 12 Nov 2006  - Replaced use of constant image indexes with
- *                        TCheckBoxState to identify check boxes.
- *                      - Added support for "hot" check boxes under Windows XP.
- *                      - Added new CheckImageIdx() and ImageIdxToCheckState()
- *                        class functions to TTVCheckBoxes.
- * v1.2 of 11 Aug 2008  - Replaced calls to ThemeServices with ThemeServicesEx.
- *                      - Added code to receive notification from
- *                        ThemeServicesEx when themes change and to update check
- *                        boxes.
- *                      - Fixed bug where wrong checkboxes were drawn when
- *                        themes changed.
- *                      - Added new OnChange event triggered when themes change.
- *                      - Protected Update event by locks and made method
- *                        private.
- * v1.3 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
- *                      - Made private sections strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -40,10 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

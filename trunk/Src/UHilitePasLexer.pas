@@ -3,24 +3,8 @@
  *
  * Defines class that analyses and tokenises Pascal source code.
  *
- * v0.1 of 10 Mar 2005  - Original version.
- * v0.2 of 21 Apr 2005  - Refactored ParseWhiteSpace and ParseIdent methods of
- *                        THilitePasLexer to have same construction as
- *                        ParseWholeNumber method.
- * v0.3 of 04 Jun 2005  - Made lexer detect line ends in multiline comments and
- *                        return alternate comment and new line tokens until
- *                        comment is closed.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 24 Aug 2008  - Added Windows unit to enable inlining in Delphi 2006.
- * v1.2 of 14 Jan 2009  - Changed to use EOL and EOF consts now defined as part
- *                        of TTextStreamReader.
- *                      - Redefined white space in terms of difference between
- *                        sets of characters.
- *                      - Private section made strict.
- *                      - Asserts now get class name from ClassName method.
- * v1.3 of 28 May 2009  - Added new keywords and directives to support later
- *                        versions of Delphi.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -41,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

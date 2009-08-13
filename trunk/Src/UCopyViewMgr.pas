@@ -4,8 +4,8 @@
  * Implements an abstract base class for objects that copy a representation of a
  * view to the clipboard.
  *
- * v1.0 of 11 Jul 2009  - Original version
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -26,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

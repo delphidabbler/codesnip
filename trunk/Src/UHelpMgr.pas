@@ -1,65 +1,13 @@
-{ ##
-  @FILE                     UHelpMgr.pas
-  @COMMENTS                 Provides an interface that the program uses to
-                            access help. Also exposes a routine that enables an
-                            object that implements the interface to be
-                            registered as the program's help manager and makes
-                            that object available as a singleton.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None
-  @HISTORY(
-    @REVISION(
-      @VERSION              0.1
-      @DATE                 30/11/2005
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 28/05/2006
-      @COMMENTS             + Improved and corrected comments.
-                            + Relocated and rationalised $WARN directives.
-                            + Removed unused unit reference.
-                            + Changed to get executable file directory from
-                              TAppInfo static class.
-    )
-    @REVISION(
-      @VERSION              1.1
-      @DATE                 26/10/2006
-      @COMMENTS             + Declared new IHelpMgr interface.
-                            + Moved THelpMgr to implementation section and
-                              changed to descend from TInterfacedObject and
-                              implement IHelpMgr. Renamed as THTMLHelpMgr since
-                              object implements help system via HTML help.
-                            + Changed private implementation variable to be of
-                              IHelpMgr type.
-    )
-    @REVISION(
-      @VERSION              1.2
-      @DATE                 11/11/2006
-      @COMMENTS             + Now gets help file name from TAppInfo rather than
-                              naming it in this method.
-                            + Removed unecessary fHelpFile field and now empty
-                              constructor.
-    )
-    @REVISION(
-      @VERSION              2.0
-      @DATE                 04/02/2007
-      @COMMENTS             Total rewrite.
-                            + Moved help manager implementation to separate
-                              UHTMLHelpMgr unit.
-                            + This unit now simply (a) declares IHTMLMgr
-                              interface (b) provides function that accesses
-                              singleton and (c) provides new function to
-                              register a IHTMLMgr implementation to used as
-                              help manager defined and instantiated elsewhere.
-    )
-  )
-}
-
-
 {
+ * UHelpMgr.pas
+ *
+ * Provides an interface that the program uses to access help. Also exposes a
+ * routine that enables an object that implements the interface to be registered
+ * as the program's help manager and makes that object available as a singleton.
+ *
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -77,10 +25,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

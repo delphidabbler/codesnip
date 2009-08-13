@@ -3,16 +3,8 @@
  *
  * Defines static factory class that can create various kinds of actions.
  *
- * v1.0 of 05 Feb 2007  - Original version.
- * v1.1 of 31 Oct 2007  - Added static CreateLinkAction method.
- * v1.2 of 04 Nov 2007  - Removed redundant CreateHelpTopicAction method.
- * v1.3 of 14 Sep 2008  - Added new CreateEditRoutineAction method.
- * v1.4 of 04 Oct 2008  - Changed TActionFactory to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- *                      - Made private section of TActionFactory strict.
- * v1.5 of 12 Jul 2009  - Added new CreateCategoryAction method.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -33,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

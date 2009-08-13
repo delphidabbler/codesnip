@@ -5,29 +5,8 @@
  * subclass that interacts with standard DelphiDabbler web services and some
  * exception classes raised by various kinds of web server error.
  *
- * v0.1 of 20 Nov 2005  - Original version.
- * v0.2 of 04 Jan 2006  - Modified to work with Indy components v10.1.1.
- *                      - Deleted now redundant Host parameter from constructor.
- * v0.3 of 10 Jan 2006  - Reverted to Indy components v9.
- * v0.4 of 10 Apr 2006  - Changed EHTTPError exception to use HTTP error code
- *                        and description as error message rather than content
- *                        of error pages returned from server.
- * v0.5 of 30 Apr 2006  - Added support for download progress reporting.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 25 Aug 2008  - Added override of ECodeSnip's new Assign method to
- *                        EWebServiceError and EHTTPError that updates custom
- *                        fields.
- * v1.2 of 30 Nov 2008  - Added new PostData method to both web service classes
- *                        to post raw data to a web service.
- *                      - Added new optional MediaType parameter to web service
- *                        constructor.
- * v1.3 of 13 Jan 2009  - Replaced control char literals with constants.
- *                      - Made private and protected sections strict.
- *                      - Now use ClassName in Assert statements.
- * v1.4 of 13 May 2009  - Changed TWebService constructor to take a single
- *                        TWebServiceInfo that encapsulates  information
- *                        previously provided by former string parameters.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -48,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

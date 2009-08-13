@@ -4,12 +4,8 @@
  * Contains routines and enumerations relating to measurement and conversion
  * between measurement systems.
  *
- * v1.0 of 04 Sep 2007  - Original version.
- * v1.1 of 17 Oct 2007  - Added new UnitName routine that gets name of a
- *                        specified unit.
- * v1.2 of 26 Jan 2009  - Changed to use locale information code in ULocales
- *                        unit and removed locale code from this unit.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -30,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

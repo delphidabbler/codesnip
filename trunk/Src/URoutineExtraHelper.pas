@@ -4,16 +4,8 @@
  * Implements a class that helps with parsing of routine's extra property as
  * active text and generating extra property values from active text.
  *
- * v1.0 of 28 Dec 2008  - Original version.
- * v1.1 of 21 Jun 2009  - No longer converts REML markup into a sentence since
- *                        REML may now end in a block level tag causing spurious
- *                        new lines containing full stops.
- *                      - Refactored some code.
- * v1.2 of 05 Jul 2009  - Added new TRoutineExtraHelper.BuildREMLMarkupLowestVer
- *                        method.
- *                      - Changed TRoutineExtraHelper.BuildREMLMarkup to work
- *                        with revised TREMLWriter.Render method.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -34,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

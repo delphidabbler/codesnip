@@ -4,22 +4,8 @@
  * Provides interface and classes that can generate output suitable for printing
  * using print engine.
  *
- * v1.0 of 07 Sep 2007  - Original version.
- * v1.1 of 12 Sep 2008  - Moved information about code snip database from top of
- *                        document to bottom. This information not displayed if
- *                        routine being printed is user-defined.
- * v1.2 of 16 Dec 2008  - Changed to use user-defined highlighter when syntax
- *                        highlighting of source code is required. Always uses
- *                        "print version", where font is always Courier New.
- *                      - Moved database description from const to resources.
- *                      - Made private section of TRoutinePrintDocument strict.
- *                      - Made assertion message get class name from method.
- *                      - Changed routine list enumeration to use for..in loop.
- * v2.0 of 27 Dec 2008  - Complete rewrite. Now uses new TRTFRoutineDoc class to
- *                        create the required RTF code.
- * v2.1 of 20 Jun 2009  - Added facility to inhibit use of colour in body of
- *                        print document as well as in source code formatting.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -40,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

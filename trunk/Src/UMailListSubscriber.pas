@@ -4,11 +4,8 @@
  * Implements class that interacts with mailing list subscription web service to
  * subscribe user to CodeSnip mailing list.
  *
- * v1.0 of 18 Nov 2006  - Original version.
- * v1.1 of 13 May 2009  - Changed to use revised TWebService inherited
- *                        constructor and its single TWebServiceInfo parameter.
- *                      - Assert now uses ClassName instead of string literal.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -29,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

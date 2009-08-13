@@ -3,58 +3,8 @@
  *
  * Implements a singletion object that exposes and persists user preferences.
  *
- * v0.1 of 06 Jan 2006  - Original version.
- * v0.2 of 04 Apr 2006  - Changed to use renamed and revised Settings object and
- *                        associated interfaces.
- * v1.0 of 24 May 2006  - Made minor changes to comments.
- *                      - Prefixed UGlobals reference to global constants.
- * v1.1 of 26 Oct 2006  - Declared new IPreferences interface.
- *                      - Moved TPreferences to implementation section and
- *                        changed to descend from TInterfacedObject and
- *                        implement IPreferences.
- *                      - Changed private implementation variable to be of
- *                        IPreferences type.
- *                      - Changed TPreferences to implement property read/write
- *                        accessor methods of IPreferences rather than using
- *                        direct field access.
- * v1.2 of 29 Oct 2006  - Renamed IPreferences properties:
- *                        * SnippetCommentStyle to SourceCommentStyle,
- *                        * SnippetSyntaxHilited to SourceSyntaxHilited
- *                        * SnippetDefaultFileExt to SourceDefaultFileType.
- *                      - SourceDefaultFileType property changed to return an
- *                        enumeration rather than a file extension. NOTE: this
- *                        breaks compatibility of persistent storage produced by
- *                        CodeSnip v1.0.3 and earlier.
- * v2.0 of 07 Sep 2007  - Major revision:
- *                      - Added ability to get a non-persisting copy of
- *                        singleton to use for temporary preference updates.
- *                        This was done by splitting implementation into two
- *                        classes, one that persists (for singletion) and one
- *                        that does not. Added Clone and Assign methods to
- *                        enable singlton to create a temp copy of itself and to
- *                        assign modified temp data to itself.
- *                      - Added new MeasurementUnits, PrinterOptions and
- *                        PrinterPageMargins properties.
- *                      - Changed to write to various sub sections of
- *                        ssPreferences settings key. NOTE: this breaks
- *                        compatibility with persistent storage produced by
- *                        CodeSnip v1.6.4 and earlier.
- * v2.1 of 17 Oct 2007  - Added HiliteAttrs property and code to support
- *                        persisting syntax highlighter information to
- *                        ssPreferences settings kye. NOTE: this breaks
- *                        compatibility with persistent storage produced by
- *                        CodeSnip v1.7.4 and earlier.
- * v2.2 of 04 Nov 2007  - Changed parameter type of TPreferences.Assign from
- *                        IAssignable to IInterface.
- * v2.3 of 16 Dec 2008  - Modified to user TPageMargins constructor instead of
- *                        deleted PageMargins function to initialise margins.
- *                      - Made TPreferences fields strict protected instead of
- *                        private
- *                      - Moved construction and storage of IPreferences
- *                        singleton into TPreferences. Preferences function now
- *                        calls into TPreferences to get reference to singleton.
- *                      - Move some constants into TPreferencesPersist class.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -73,8 +23,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

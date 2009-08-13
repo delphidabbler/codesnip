@@ -4,8 +4,8 @@
  * Implements class that extends TToolButton to permit new tool buttons and
  * separators to be added dynamically to a toolbar.
  *
- * v1.0 of 25 May 2009  - Original version.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -26,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

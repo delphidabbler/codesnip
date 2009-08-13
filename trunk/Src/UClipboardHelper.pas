@@ -3,8 +3,8 @@
  *
  * Implements a class that assists in working with the clipboard.
  *
- * v1.0 of 04 Jan 2009  - Original version.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -25,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

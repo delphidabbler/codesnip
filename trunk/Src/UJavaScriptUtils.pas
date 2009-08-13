@@ -3,27 +3,8 @@
  *
  * Utilities that assist when working with JavaScript.
  *
- * v1.0 of 24 Nov 2006  - Original version.
- * v1.1 of 02 Dec 2006  - Changed JSExec() to take a IHTMLDocument2 parameter
- *                        instead of a TWebBrowser.
- *                      - Changed JSExec() to trap nul object window errors
- *                        using assertions rather than raising EBug.
- * v1.2 of 07 Feb 2007  - Changed JSExec to execute by calling
- *                        THTMLDocHelper.ExecScript. JSExec reverts to raising
- *                        EBug exception if can't execute a script rather than
- *                        using assertions. Changed type of Doc parameter from
- *                        IHTMLDocument2 to IDispatch.
- *                      - Added new overloaded version of JSExec that takes
- *                        function name and separate parameter list.
- *                      - Made explicit that string is AnsiString and Char is
- *                        AnsiChar in exepected parameter types.
- * v1.3 of 24 Aug 2008  - Added directive to switch off unsafe code warnings in
- *                        Delphi 2006.
- * v1.4 of 14 Jan 2009  - Replaced call to StringReplace with UnixLineBreaks.
- *                      - Removed unnecessary $WARN directives.
- *                      - Replaced control char literals with consts.
- * v1.5 of 17 Jun 2009  - Removed unused JSExec overloaded routines.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -44,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

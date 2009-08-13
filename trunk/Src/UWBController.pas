@@ -5,12 +5,8 @@
  * and saving of browser's HTML and customisation of the user interface. Much of
  * the functionality of the class is handled by owned objects.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed unused $WARN directives.
- * v1.1 of 04 Oct 2008  - Changed to use UBaseObjects instead of UIntfObjects.
- *                      - Now use ClassName method in all assert statements.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -29,8 +25,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

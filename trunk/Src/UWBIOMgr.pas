@@ -5,32 +5,8 @@
  * save HTML from files, streams or strings. Also simplifies navigation to
  * documents stored locally or in resources and exposes some HTML events.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Deleted unused TWBIOMgr destructor.
- * v0.3 of 03 Jun 2005  - Added new methods to support loading a document and
- *                        replacing its <body> tag's inner HTML with specified
- *                        code.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- *                      - Removed unused unit reference and unused methods.
- * v1.1 of 17 Feb 2007  - Added new OnNavigate event triggered when browser is
- *                        about to navigate to a new document, enabling
- *                        intervention in navigation process.
- *                      - Changed SetBodyHTML method to use THTMLDocHelper
- *                        static class to set the body tag's inner HTML.
- *                      - Changed WaitForDocToLoad to use TWBHelper class to
- *                        perform the wait. Now checks document is valid and
- *                        raises EBug exception if not.
- * v1.2 of 18 Oct 2007  - Added support for HTML events triggered by browser.
- * v1.3 of 25 Jan 2009  - Added new HTMLDocumentExists and
- *                        ReplaceExistingBodyHTML methods.
- *                      - Removed unused ReplaceBodyHTML and HTMLErrorHandler
- *                        methods and OnHTMLError property.
- *                      - Assertions now get class name from ClassName method.
- *                      - Removed protected section, made private section strict
- *                        and made some public methods private.
- *                      - Removed unnecessary $WARN directive.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -51,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

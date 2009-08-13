@@ -5,23 +5,8 @@
  * displayed in the user interface, e.g.. routines, categories and the welcome
  * page.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Deleted unused TViewItem constructor.
- * v0.3 of 19 Feb 2005  - Refactoring: TViewItem.IsEqual method now calls new
- *                        IsEqual methods of TRoutine and TCategory objects
- *                        rather than comparing names explicitly.
- * v0.4 of 22 Feb 2005  - Localised string literals.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit references.
- * v1.1 of 04 Feb 2007  - Removed TDetailView class. We now use a combination of
- *                        the Query global object and the TViewItem class to
- *                        provide the same information.
- * v1.2 of 16 May 2009  - Made private sections in both classes strict.
- *                      - Removed Uncategorised view type
- *                      - Added view types for alphabetic and snippet kind
- *                        sections.
- *                      - Refactored some code.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -42,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

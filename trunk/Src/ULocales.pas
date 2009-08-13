@@ -4,10 +4,8 @@
  * Provides locale information in an OS neutral way and declares locale
  * identifiers.
  *
- * v1.0 of 26 Jan 2009  - Commented the unit.
- * v1.1 of 11 May 2009  - Removed code targetted at Windows 9x platform since
- *                        CodeSnip no longer supports the platform.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -28,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

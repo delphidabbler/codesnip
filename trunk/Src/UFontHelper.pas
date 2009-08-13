@@ -3,17 +3,8 @@
  *
  * Implements a static class used to assist when working with fonts.
  *
- * v1.0 of 09 Nov 2006  - Original version.
- * v1.1 of 04 Oct 2008  - Changed TFontHelper to derive from TNoConstructObject
- *                        and hence prevented it from being constructed.
- *                      - Added assertions to check for nil TStrings objects.
- * v1.2 of 11 May 2009  - Added TFontHelper.SetContentFont method and supporting
- *                        private methods.
- * v1.3 of 23 May 2009  - Added TFontHelper.SetDefaultMonoFont method.
- * v1.4 of 20 Jul 2009  - Added new TFontHelper methods: SetDefaultBaseFont,
- *                        SetDefaultFont and CloneFontHandle.
- *                      - Added new constants for default fonts.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -34,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -4,39 +4,8 @@
  * Abstract base class for classes that control and provide information about
  * compilers. Provides common functionality and specialised exception.
  *
- * v0.1 of 04 Mar 2005  - Original version.
- * v0.2 of 20 Apr 2005  - Changed to use renamed IntfCompilers unit.
- * v0.3 of 08 Jan 2006  - Pulled up common functionality from original sub
- *                        classes and inserted abstract methods for some methods
- *                        implemented in sub-classes.
- *                      - Added support for user-defined and default command
- *                        line switches.
- * v0.4 of 09 Jan 2006  - Deleted message box used for debugging left in code in
- *                        error.
- *                      - Added new CreateCopy copy constructor.
- *                      - Deleted unused properties.
- * v0.5 of 11 Jan 2006  - Changed to capture compiler output directly without
- *                        using a log file.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit references.
- * v1.1 of 03 Dec 2006  - Fixed potential bug in GetLastCompileResult method
- *                        which didn't take account of unavailable compilers.
- *                        Now returns crQuery in such a case per method
- *                        description.
- * v1.2 of 25 Aug 2008  - Extended ECompilerError exception to have ErrorCode
- *                        and Compiler properties and added Assign method
- *                        override. Constructor now takes a ECompilerRunner
- *                        exceptions and copies its properties.
- *                      - Some minor refactoring using Delphi 2006 features.
- * v1.3 of 06 Jan 2009  - Fixed copy constructor to properly copy fPrefixes,
- *                        fCompileLog and fLastCompilerResult fields rather than
- *                        ignoring or making shallow copies.
- *                      - Changed assertions to use ClassName rather than
- *                        literal strings for class name in error messages.
- * v1.4 of 10 Jan 2009  - Implemented new ICompiler.HasErrorsOrWarnings method.
- * v1.5 of 25 Jan 2009  - Renamed TCompilerBase.GetGylph method as GetGlyph.
- *
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -57,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

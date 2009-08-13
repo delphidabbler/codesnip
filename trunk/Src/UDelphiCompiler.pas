@@ -3,42 +3,8 @@
  *
  * Class that controls and provides information about the Delphi v2-7 compilers.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Fixed bug in ExecAndWaitRedirect to make return
- *                        expected MaxInt rather than -MaxInt when requested
- *                        program can't be started.
- *                      - Fixed bug where singletion Compilers object was not
- *                        being freed when application closes.
- * v0.3 of 18 Feb 2005  - Deleted unused units from uses clauses.
- * v0.4 of 22 Feb 2005  - Localised compiler error & warning string literals.
- * v0.5 of 24 Feb 2005  - Added Names[] property to TDelphiCompilers that
- *                        returns of a compiler now names removed from
- *                        UCompilerTypes.
- * v0.6 of 05 Mar 2005  - Rewritten to provide only the TDelphiCompiler object
- *                        that now descends from TBaseCompiler and implements
- *                        ICompiler.
- *                      - TDelphiCompilers deleted (now replaced by TCompilers
- *                        in UBaseCompiler).
- *                      - Moved helper routines to UCompilerUtils.
- *                      - Deleted redundant code
- * v0.7 of 20 Apr 2005  - Changed to use renamed IntfCompilers unit.
- * v0.8 of 08 Jan 2006  - Major revision:
- *                        - Pushed up a lot of functionality common with
- *                          TFreePascalCompiler to TCompilerBase.
- *                        - Pushed up other functionality common with new
- *                          TBDSCompiler to new TBorlandCompiler.
- *                        - Added support for ICompilerAutoDetect interface.
- *                        - Made changes to reflect new place in compiler class
- *                          heirachy.
- *                        - Added support for user-defined and default command
- *                          line switches.
- * v0.9 of 09 Jan 2006  - Changed Clone method to call new CreateCopy
- *                        constructor rather than doing copy itself.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                        Removed unused unit references.
- * v1.1 of 11 Aug 2008  - Changed to use renamed glyph resource for Delphi 2 and
- *                        Delphi 3 compilers.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -57,10 +23,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

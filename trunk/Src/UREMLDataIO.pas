@@ -5,20 +5,8 @@
  * code. This markup is used to read and store active text objects as used by
  * the Extra property of a TRoutine object. Also includes helper classes.
  *
- * v1.0 of 30 Dec 2008  - Original version.
- * v1.1 of 23 Jun 2009  - Added new REML tags: em, var, p, warning, heading.
- *                      - Added new REML entity: &copy.
- * v1.2 of 05 Jul 2009  - Added new TREMLVersion type.
- *                      - Added new TREMLAnalyser static class provides latest
- *                        REML version number and lowest possible version to
- *                        use for specified active text.
- *                      - Changed to be able to recognise version of REML where
- *                        REML tags and entities were introduced and to generate
- *                        REML in a specified version.
- * v1.3 of 10 Jul 2009  - Removed TREMLInfo's Init and TidyUp methods. Tags and
- *                        Entities fields are now created when required and
- *                        released automatically when unit goes out of scope.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -39,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -3,28 +3,8 @@
  *
  * Defines some special colour constants that record various program colours.
  *
- * v1.0 of 25 Nov 2006  - Original version.
- * v1.1 of 15 Dec 2006  - Updated some constants to use system colours instead
- *                        of hard wired colours.
- *                      - Added some new constants for update dialog news pane's
- *                        heading and highlight colours.
- *                      - Removed clHiliteText constants since now unused.
- * v1.2 of 17 Feb 2007  - Added new clTextSearchHighlight and clTextSearchText
- *                        constants that define default background and
- *                        foreground colours of search text in info pane. These
- *                        replace hard-wired colours from UWBHighlighter. A
- *                        paler background colour was used.
- * v1.3 of 25 Feb 2007  - Added new constants relating to new splash screen.
- * v1.4 of 26 Aug 2008  - Added new constant that specifies colour used to
- *                        display names of routines from user database.
- * v1.5 of 31 Dec 2008  - Added new constant that specifies colour used to
- *                        display REML markup tags in example code.
- * v1.6 of 20 Jun 2009  - Added new constants relating to new easter egg.
- *                      - Removed constants not now required for new splash
- *                        screen and changed others.
- *                      - Added new constant for colour of rendered REML var
- *                        elements.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -45,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

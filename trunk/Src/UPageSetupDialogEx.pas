@@ -3,18 +3,8 @@
  *
  * Implements an extension of TPageSetupDialog that customises the dialog box.
  *
- * v1.0 of 04 Sep 2007  - Original version.
- * v1.1 of 26 Sep 2007  - Changed to perform alignment using new TDlgAligner
- *                        class instead of TCommonDlgAligner.
- * v1.2 of 11 Jun 2008  - Added calls to TDlgHelper to set dialog box's parent.
- *                        This change needed for app to work correctly with
- *                        Vista task bar.
- *                      - Now uses new TDlgAligner.AlignToOwner method to
- *                        perform form alignment.
- *                      - Changed to use renamed TDlgHelper unit.
- * v1.3 of 16 Dec 2008  - Fixed problem of help button not appearing on Vista.
- *
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -33,10 +23,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

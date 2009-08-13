@@ -7,9 +7,8 @@
  * Requires TGIFImage from GIFImage.pas by Anders Melander updated by Finn
  * Tolderlund.
  *
- * v1.0 of 14 Sep 2008  - Original version.
- * v1.1 of 25 Jan 2009  - Replaced use of MakeIntResource with RT_HTML.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -30,6 +29,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -3,22 +3,8 @@
  *
  * Class that records and retrieves history of page accesses.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Fixed bug where wrong history item was being made
- *                        current when history list overflowed.
- * v0.3 of 18 Feb 2005  - Deleted unused OnChange event and DoChange method that
- *                        triggers it.
- *                      - Deleted unused Clear procedure.
- * v0.4 of 22 Feb 2005  - Moved constant that determines max history size to
- *                        UGlobals unit.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit reference.
- * v1.1 of 16 Feb 2007  - Reinstated Clear method to clear the history.
- * v1.2 of 11 Jan 2009  - cMaxHistoryItems const added to private section of
- *                        THistory, moved back here from UGlobals.
- *                      - Made THistory's private section strict.
- *                      - Now use ClassName in Assrets and EBugs exceptions.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -39,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

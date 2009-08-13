@@ -5,10 +5,8 @@
  * IOleClientSite interface that is sufficient to record the application as a
  * host for the IE web browser control.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v1.0 of 24 May 2006  - Commented the unit.
- * v1.1 of 04 Oct 2008  - Changed to use UBaseObjects instead of UIntfObjects.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -27,8 +25,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

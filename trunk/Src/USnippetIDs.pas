@@ -4,9 +4,8 @@
  * Defines a record that uniquely indentifies a snippet in the database, along
  * with an object that maintains a list of snippet ID records.
  *
- * v1.0 of 06 Jun 2009  - Original version. Based on code extracted from
- *                        USnippets and renamed.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -27,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

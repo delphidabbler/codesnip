@@ -4,13 +4,8 @@
  * Provides an abstract base class that can render tree nodes representing
  * snippets in a tree view.
  *
- * v1.0 of 13 Jan 2009  - Original version.
- * v1.1 of 06 Jun 2009  - Added new TSnippetsTVDraw.IsErrorNode virtual method.
- *                      - Replaced TSnippetsTVDraw's IsCategoryNode abstract
- *                        method with virtual IsSectionHeadNode.
- *                      - Revised code to support error nodes and renamed
- *                        methods.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -31,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

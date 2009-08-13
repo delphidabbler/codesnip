@@ -4,21 +4,8 @@
  * Defines a static class that test compiles a routine in a thread and displays
  * a wait dialog if the compilation is taking a significant of time.
  *
- * v1.0 of 25 Aug 2008  - Original version.
- * v1.1 of 04 Oct 2008  - Changed TTestCompileUI to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- * v1.2 of 06 Jan 2009  - Changed to use a specified compilers object to perform
- *                        test compilation instead of global Compilers object.
- * v1.3 of 13 Jan 2009  - Added new TestCompileAction that encapsulates a test
- *                        compilation.
- *                      - Changed to encapsulate test compilation in an action
- *                        rather than a thread. TWaitForUIAction actually
- *                        creates the thread: we were using two threads!
- *                      - Replaced control char literals with constants.
- * v1.4 of 06 Jun 2009  - Changed result of TTestCompileAction.Execute from
- *                        True to False since it doesn't trigger OnExecute.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -39,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

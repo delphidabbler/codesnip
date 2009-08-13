@@ -4,11 +4,8 @@
  * Defines a static class that gets information about and manipulates HTML
  * image elements.
  *
- * v1.0 of 14 Sep 2008  - Original version.
- * v1.1 of 04 Oct 2008  - Changed TImageTags to derive from TNoConstructObject
- *                        and hence prevented it from being constructed.
- * v1.2 of 25 Jan 2009  - Added new SetSrc method.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -29,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

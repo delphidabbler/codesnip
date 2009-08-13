@@ -8,128 +8,8 @@
  * Originally named UHTMLGenerators.pas. Renamed as UDetailPageHTML.pas as of
  * v2.0
  *
- * v0.1 of 21 Feb 2005  - Original version, named UHTMLGenerators based on some
- *                        code from now deleted UCompCheckHTML.pas and
- *                        UHTMLProducers.pas units.
- * v0.2 of 24 Feb 2005  - Changed to compiler names from Compilers global object
- *                        now that name removed from UCompilerTypes.
- * v0.3 of 04 Mar 2005  - Changed to use TCompilerID that replaces former
- *                        TDelphiVersion and changed some identifiers to suit.
- *                      - Now uses revised version of Compilers object.
- * v0.4 of 10 Mar 2005  - Added ability to syntax highlight the source code
- *                        displayed on info and detail pages. A helper routine
- *                        was added to interface with highlighter classes.
- * v0.5 of 17 Mar 2005  - Changed to use new detail highlighter object in
- *                        USyntaxHiliters instead of previous obsolete
- *                        highlighter.
- * v0.6 of 21 Apr 2005  - Changed to use renamed USourceGen unit and associated
- *                        renamed class and method. Changed to use renamed
- *                        IntfCompilers unit.
- *                      - Added new IntfHiliter unit that contains type
- *                        declarations formerly in other units.
- * v0.7 of 03 Jun 2005  - Changed TDbaseCompRoutineGenerator to enable / disable
- *                        test compile button depending on if compilers
- *                        available. Also inserts HTML display warning message
- *                        if no compilers available.
- *                      - Replaced redundant method in TDetailViewGenerator with
- *                        abstract override.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 25 Oct 2006  - Removed target="_blank" attribute from links to
- *                        external URLs. Display of URLs is now handled by
- *                        program rather than relying on default behaviour of
- *                        web browser control.
- * v1.2 of 07 Nov 2006  - Changed to use UCSSUtils methods to generate CSS
- *                        attributes.
- * v1.3 of 25 Nov 2006  - Changed to use default syntax highlighter when
- *                        highlighting source code.
- *                      - Changed references to fixed colours to use special
- *                        program colour constants.
- *                      - Replaced custom style used to display "no compiler"
- *                        warning note with warning CSS class.
- *                      - Changed to use new .comptable CSS class to format
- *                        compiler table.
- * v1.4 of 26 Nov 2006  - Changed code that generates JavaScript call that
- *                        displays a compiler log to use renamed JavaScript
- *                        function.
- *                      - Now generate above JavaScript call using JSLiteralFunc
- *                        routine.
- * v1.5 of 02 Dec 2006  - Modified to handle compiler check pane change to
- *                        display a single view rather than different views for
- *                        database and test results.
- *                      - Changed TDetailHTMLGeneratorKind enumeration re
- *                        compiler check view changes.
- *                      - Replaced TCompRoutineGeneratorBase,
- *                        TTestCompRoutineGenerator and
- *                        TDbaseCompRoutineGenerator with single
- *                        TCompRoutineGenerator class that resolves only one
- *                        placeholder. Remainder of details are updated
- *                        dynamically.
- *                      - Updated THTMLGeneratorFactory re changes.
- *                      - Modified TInfoRoutineGenerator to get compiler image
- *                        from TCompResHTML.ImageTag().
- * v1.6 of 03 Dec 2006  - Removed HiliteSource helper routine.
- *                      - Changed TInfoRoutineGenerator.ResolvePlaceholders to
- *                        remove all HTML generation code except for nul
- *                        compiler table. Also changed to work with revised
- *                        template document. The only placeholder is now the nul
- *                        compiler table.
- * v1.7 of 04 Feb 2007  - Replaced use of redundant TDetailView objects with
- *                        calls to new global query object and TViewItem
- *                        objects.
- *                      - Removed some redundant code.
- * v1.8 of 10 Sep 2008  - Added new UserDefined param to call RoutineALink
- *                        routine.
- *                      - Added code to resolve new <%H1Class%> placeholder when
- *                        generating category details on information pane.
- * v1.9 of 04 Oct 2008  - Changed THTMLGeneratorFactory to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- *                      - Made various class' private and protected sections
- *                        strict.
- *                      - Now use ClassName method in all assert statements.
- * v1.10 of 12 Dec 2008 - Changed iterations of Compilers and routine lists to
- *                        use for..in loops.
- * v1.11 of 09 Jan 2009 - Added new TRoutineGeneratorBase base class for classes
- *                        that generate HTML for routines: TInfoRoutineGenerator
- *                        and TCompRoutineGenerator.
- * v1.12 of 13 Jan 2009 - Replaced control char literals with constants.
- * v2.0 of 25 Jan 2009  - Renamed as UDetailPageHTML.pas.
- *                      - Major rewrite to generate all required code as body
- *                        HTML to be included in a blank HTML body, without
- *                        reliance on dynamic updating of the generated code.
- *                      - Now uses routines from UHTMLUtils to generate HTML
- *                        tags instead of generating from literal strings.
- *                      - Class structure completely revised.
- * v2.1 of 16 Jun 2009  - Now calls new TRoutine.CanCompile method instead of
- *                        defunct TRoutine.StandardFormat property to check if
- *                        a snippet is compilable.
- *                      - Added TAlphListPageHTML and TSnipKindPageHTML classes,
- *                        descended from TRoutineListPageHTML to display
- *                        snippets of same initial letter or snippet kind.
- *                      - Removed redundant TUncategorisedPageHTML.
- *                      - Modified TRoutineListPageHTML to provide single pair
- *                        of templates for descendants.
- *                      - Changed some of of template "file" names.
- *                      - Removed all support for IDetailViewHostInfo: method
- *                        parameters and local variables removed.
- *                      - Removed support for displaying test units from
- *                        TRoutineCompCheckPageHTML.
- *                      - Provided new TRoutineListPageHTML.HaveSnippets method.
- *                      - Modified TWelcomePageHTML.ResolvePlaceholders to work
- *                        with revised template.
- *                      - Added support for new <%Kind%> placeholder in snippet
- *                        information HTML.
- *                      - Moved edit link code from TRoutineInfoPageHTML down to
- *                        TRoutinePageHTML since now common with
- *                        TRoutineCompCheckPageHTML.
- *                      - Changed TRoutineCompCheckPageHTML to use different
- *                        templates for when snippet is not compilable or there
- *                        are no compilers.
- *                      - Modified TRoutineInfoPageHTML to hide compiler table
- *                        for non-compilable snippets.
- * v2.2 of 12 Jul 2009  - Added support for new <%Category%> placeholder in
- *                        snippet information HTML. Creates link to a category.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -150,6 +30,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

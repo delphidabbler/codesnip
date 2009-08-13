@@ -4,10 +4,8 @@
  * Implements class that provides information about types of source code output
  * that are supported.
  *
- * v1.0 of 29 Oct 2006  - Original version.
- * v1.1 of 02 Jul 2007  - Added source file name property to TSourceFileInfo.
- * v1.2 of 24 Aug 2008  - Added Windows unit to enable inlining in Delphi 2006.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -26,8 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

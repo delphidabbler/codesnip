@@ -4,70 +4,8 @@
  * Class that manages and co-ordinates the display of the program's main UI.
  * Calls into subsidiary manager objects to perform display operations.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 17 Mar 2005  - Exposed object providing detailed information about
- *                        currently selected view item as property.
- * v0.3 of 28 Jan 2006  - Added new Refresh method that redisplays current view
- *                        item if displayed in compiler check pane.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 23 Nov 2006  - Added method that shows / hides test units in Compiler
- *                        Check tab.
- *                      - Added property to get id of currently selected tab in
- *                        detail pane.
- *                      - Changed remaining call to .Free to calls to
- *                        FreeAndNil.
- * v1.2 of 02 Dec 2006  - Modified to work with revised Compiler Check Frame
- *                        manager.
- *                      - Modified DisplayCompileResults to call compiler check
- *                        pane's new dynamic compilation results display code.
- * v1.3 of 03 Feb 2007  - Changed Filter method to return number of records
- *                        found rather than a boolean.
- * v1.4 of 04 Feb 2007  - Changed to work with new Query global object and to
- *                        handle removal of now redundant TDetailView class:
- *                        - Removed Filter method and replaced with QueryUpdated
- *                          method to be called when query changes.
- *                        - Removed fSelectedRoutines field and CurrentSearch
- *                          property: required information now in query object.
- *                        - Replaced all other references to TDetailView objects
- *                          with either calls to query object or to TViewItem
- *                          objects.
- *                        - Replaced CurrentDetailView and CurrentViewItem
- *                          properties with CurrentView property.
- * v1.5 of 11 Feb 2007  - Deleted unused SelectDetailTab property and accessor
- *                        method.
- *                      - Deleted unused ActiveWebBrowser property and accessor
- *                        method.
- *                      - Added new public SelectNextActiveTab and
- *                        SelectPreviousActiveTab methods and supporting code.
- * v1.6 of 16 Feb 2007  - Added new Clear method to clear overview and detail
- *                        panes and modified Initialise method to use Clear.
- * v2.0 of 16 Feb 2007  - Major update. Two major changes were:
- *                        - This TMainDisplayMgr no longer manipulates and
- *                          interogates the information and compiler check panes
- *                          of the details frame. TDetailFrame now supports all
- *                          relevant interfaces and dispatches requests and
- *                          commands to the relevant child pane. Therefore this
- *                          code was revised to communicate only with
- *                          TDetailFrame and TOverviewFrame. All calls that
- *                          required knowledges of the child panes was changed
- *                          to make calls on TDetailFrame.
- *                        - Revised to work with redefined and new display
- *                          interfaces from IntfFrameMgrs and fact that these
- *                          interfaces no longer form a heirachy.
- *                          TMainDisplayMgr casts the managed frames to the
- *                          appropriate interfaces when calling their methods.
- * v2.1 of 05 Jun 2008  - Replaced methods use to select tabs in overview and
- *                        details panes with properties that both select tabs
- *                        and get index of selected tabs.
- *                      - Initialisation code no longer selects Information pane
- *                        but leaves selected pane visible.
- * v2.2 of 09 Jan 2009  - TMainDisplayMgr.DisplayCompileResults now has a
- *                        parameter that specifies compilers object whose
- *                        results are to be displayed.
- * v2.3 of 06 Jun 2009  - Removed TMainDisplayMgr.ShowTestUnit method.
- *                      - Added new TMainDisplayMgr UpdateOverviewTreeState and
- *                        CanUpdateOverviewTreeState methods.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -88,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

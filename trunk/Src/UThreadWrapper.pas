@@ -4,17 +4,8 @@
  * Implements a class that can execute a specified thread while allowing the
  * main thread to process its message queue.
  *
- * v1.0 of 26 Feb 2007  - Original version.
- * v1.1 of 25 Aug 2008  - CloneException method modified to ensure all ECodeSnip
- *                        exceptions are properly cloned using new Assign method
- *                        of ECodeSnip.
- * v1.2 of 04 Oct 2008  - Made constructor protected and made Execute method
- *                        static. Modified other methods accordingly.
- *                      - Made private and protected sections strict.
- *                      - Changed error checking in CloneException method from
- *                        raising EBug to assertion check.
- *                      - Now use ClassName method in all assert statements.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -33,8 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

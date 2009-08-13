@@ -5,19 +5,8 @@
  * a snippet. Should be overridden by class that generate actual documents in
  * required output format.
  *
- * v1.0 of 28 Dec 2008  - Original version.
- * v1.1 of 09 Jan 2009  - Replaced use of global singleton compilers object with
- *                        a locally instantiated compilers object.
- * v1.2 of 13 May 2009  - Changed to get online database URL from TWebInfo
- *                        instead of const in UGlobals unit.
- * v1.3 of 21 Jun 2009  - Changed "routine" text to "snippets"
- *                      - Now includes snippet kind in document.
- *                      - Added new abstract method to write titled text.
- *                      - Parsing and rendering of extra text removed: must now
- *                        be performed by subclasses since they render it
- *                        differently to each other.
- * v1.4 of 12 Jul 2009  - Changed to include snippet's category in document.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -38,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

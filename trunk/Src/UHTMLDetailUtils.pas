@@ -4,28 +4,8 @@
  * Utility functions that assist in generating HTML code used in creating detail
  * pane pages.
  *
- * v0.1 of 20 Feb 2005  - Original version.
- * v0.2 of 20 Apr 2005  - Changed to use renamed IntfCompilers unit.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 25 Oct 2006  - Removed code in ALink() and TextLink() functions that
- *                        created "target" attribute in a-links.
- *                      - Changed so that a-links with '' passed for URL now
- *                        generate href = 'javascript:void(0);' rather than '#'.
- * v1.2 of 26 Nov 2006  - Changed to use JSLiteralFunc() routine to create
- *                        JavaScript routine calls.
- * v1.3 of 02 Dec 2006  - CompilerImg() routine removed.
- * v1.4 of 31 Oct 2007  - Added support for adding class names to generated
- *                        a-links.
- *                      - Added 'routine-link' class to routine a-links.
- *                      - Changed to use IStringList instead of TStringList.
- * v1.5 of 26 Aug 2008  - Modified parameter list of RoutineALink() to add a
- *                        UserDefined parameter. This data is used used as a
- *                        parameter to underlying JavaScript function.
- * v1.6 of 27 Dec 2008  - Added new AOpenTag() routine to create and opening
- *                        hyperlink tag and modified ALink routine to use it.
- * v1.7 of 12 Jul 2009  - Added new CategoryALink() function to create
- *                        hyperlinks to display categories via JavaScript.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -46,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
