@@ -4,75 +4,8 @@
  * Heirachy of classes that can produce and load HTML pages displayed in the
  * detail panes. Also provides a factory class to create the loader objects.
  *
- * v0.1 of 21 Feb 2005  - Original version.
- * v0.2 of 25 Apr 2005  - Changed to use same welcome page (loaded by
- *                        TWelcomePageLoader) for both info and compiler check
- *                        panes when database not empty.
- *                      - Renamed TInfoWelcomePageLoader class as
- *                        TWelcomePageLoader now used for both panes.
- *                      - Deleted redundant TInfoWelcomePageLoader class that
- *                        was used to load compiler check welcome page.
- *                      - Changed TWelcomePageLoader to load renamed
- *                        welcome.html document.
- * v0.3 of 03 Jun 2005  - Changed to load dynamic pages by first loading a
- *                        suitable blank document containing required styles and
- *                        scripts and then inserting code generated using
- *                        templates into blank document's <body> section. This
- *                        is done to allow JavaScript to run when scripts are
- *                        disabled in user's Internet zone. Previous method was
- *                        to load whole document from stream which made web
- *                        browser control use security in internet zone.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- * v1.1 of 03 Dec 2006  - Replaced two different loaders for routines in
- *                        compiler check pane with single one.
- *                      - Added new TCompRoutinePageLoader, that loads renamed
- *                        comp-routine.html, and deleted TCompPageLoader,
- *                        TCompDBRoutinePageLoader and
- *                        TCompTestRoutinePageLoader subclasses.
- *                      - Updated TDetailPageKind enumeration to reflect change
- *                        from three page kinds to two.
- *                      - Updated TDetailPageLoaderFactory re changes.
- * v1.2 of 03 Dec 2006  - Changed TInfoRoutinePageLoader to descend directly
- *                        from TDynamicPageLoader instead of TInfoPageLoader and
- *                        made use info-routine.html as its resource document
- *                        instead of info-blank.html.
- *                      - Renamed TInfoPageLoader as TInfoRoutineListPageLoader
- *                        since it is now base class for information pane views
- *                        that display a table of routines. Made appropriate
- *                        changes to associated sub-classes.
- * v1.3 of 04 Feb 2007  - Replaced redundant TDetailView class references with
- *                        TViewItem.
- * v1.4 of 14 Sep 2008  - Revised TWelcomePageLoader to load only welcome.html.
- *                        nodata-welcome.html no longer used.
- * v1.5 of 04 Oct 2008  - Changed TDetailPageLoaderFactory to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- *                      - Made various protected and private sections strict.
- *                      - Now use ClassName method in all assert statements.
- * v2.0 of 25 Jan 2009  - Total rewrite and simplification. Now provides a
- *                        single static class that ensures a blank HTML document
- *                        is loaded and modifies body to display HTML generated
- *                        by a generator object.
- *                      - Removed TDetailPageLoaderFactory, TDetailPageLoader,
- *                        TEmptyPageLoader, TStaticPageLoader,
- *                        TWelcomePageLoader, TCompNAPageLoader,
- *                        TDynamicPageLoader, TInfoRoutineListPageLoader,
- *                        TInfoUncatHeaderPageLoader, TInfoCategoryPageLoader,
- *                        TInfoRoutinePageLoader and TCompRoutinePageLoader
- *                        classes.
- *                      - Removed TDetailPageLoaderClass class reference.
- *                      - Rewrote TDetailPageLoader and static class.
- *                      - Removed unnecessary $WARN directive.
- *                      - Now use only detail-info.html and
- *                        detail-compcheck.html as base documents.
- * v2.1 of 16 May 2009  - Removed IDetailViewHostInfo parameter from
- *                        TDetailPageLoader.LoadPage method.
- *                      - Removed generators for Uncategorised view type.
- *                      - Added generators for Alphabet and SnippetsKind view
- *                        types.
- *                      - Refactored code into several class methods.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -93,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -8,65 +8,8 @@
  * Unit originally named USaveSnippetDlg.pas. Renamed as USaveSourceDlg.pas as
  * at v1.1.
  *
- * v0.1 of 17 Mar 2005  - Original version.
- * v0.2 of 20 Apr 2005  - Changed to use renamed USourceGen unit.
- * v0.3 of 25 Apr 2005  - Revised GetSelectedExt method to use new
- *                        FilterIndexToExt routine from UUtils unit rather.
- * v0.4 of 20 Nov 2005  - Changed TSaveSnippetDlg.HelpClickHandler event handler
- *                        to use HTMLHelp object to display required help topic.
- * v0.5 of 04 Jan 2006  - Fixed error in source picked up by Delphi 2006. There
- *                        was a missing return value in method implementation.
- * v1.0 of 28 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- *                      - Removed unused unit reference.
- *                      - Localised literal strings.
- *                      - Changed to use renamed dialog box resource.
- *                        EXPORTDIALOG was renamed to SAVESNIPPETEXT.
- * v1.1 of 29 Oct 2006  - Removed code that sets Filter property. This is now
- *                        set by caller.
- *                      - Renamed unit from USaveSnippetsDlg.pas to
- *                        USaveSourceDlg.pas and class from TSaveSnippetDlg to
- *                        TSaveSourceDlg.
- *                      - Added code to check for files with missing extensions
- *                        and add extension of selected filter.
- *                      - Removed ofOverwritePrompt from Options. We now handle
- *                        overwriting manually to account for files without
- *                        extensions that have them added. This fixes a bug
- *                        where extensionless files were having extension added
- *                        and then could silently overwrite an existing file
- *                        with same name.
- * v1.2 of 26 Sep 2007  - Added code to align dialog over owner. Required new
- *                        Explorer hook function to prevent dialog being
- *                        centred.
- *                      - Revised overwrite message box to use TMessageBox
- *                        rather than Windows API and to align properly.
- * v1.3 of 29 May 2008  - Fixed bug that caused dialog box to always set default
- *                        file extension.
- *                      - Also changed so that UseSyntaxHiliting propery value
- *                        only depends on state of check box without reference
- *                        to whether it is enabled.
- * v1.4 of 14 Jun 2008  - Added calls to TDlgHelper to set dialog box's parent.
- *                        This change needed for app to work correctly with
- *                        Vista task bar.
- *                      - Now uses new TDlgAligner.AlignToOwner method to
- *                        perform form alignment.
- *                      - Changed to use renamed TDlgHelper unit.
- *                      - Added fix for Delphi bug that was hiding some controls
- *                        in custom panel when Alt key is clicked.
- * v2.0 of 03 Oct 2008  - Converted to descend from TSaveDialogEx. Removed all
- *                        code now provided in base class.
- * v2.1 of 14 Dec 2008  - Changed to use FileOpenFileNameWithExt routine from
- *                        its new location in the UOpenDialogHelper unit.
- * v2.2 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
- *                      - Made protected section strict.
- *                      - Fixed bug that could wrongly detect an existing file
- *                        by using FileOpenEditedFileName routine in
- *                        UOpenDialogHelper instead of dialog's FileName
- *                        property.
- * v2.3 of 13 Jan 2009  - Replaced control char literals with constants.
- * v2.4 of 05 Jun 2009  - Changed comment style descriptions to refer to
- *                        "snippets" instead of "routines".
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -87,6 +30,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

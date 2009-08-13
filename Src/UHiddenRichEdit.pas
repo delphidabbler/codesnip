@@ -1,22 +1,12 @@
-{ ##
-  @FILE                     UHiddenRichEdit.pas
-  @COMMENTS                 Implements a class that maintains and provides
-                            access to a hidden rich edit control.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None
-  @HISTORY(
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 06/09/2007
-      @COMMENTS             Original version.
-    )
-  )
-}
-
-
 {
+ * UHiddenRichEdit.pas
+ *
+ * Implements a class that maintains and provides access to a hidden rich edit
+ * control.
+ *
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -34,10 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

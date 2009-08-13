@@ -3,11 +3,8 @@
  *
  * Class that registers the application online.
  *
- * v0.1 of 07 Apr 2006  - Original version.
- * v1.0 of 24 May 2006  - Corrected and greatly extended comments.
- * v1.1 of 13 May 2009  - Changed to use revised TWebService inherited
- *                        constructor and its single TWebServiceInfo parameter.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -28,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -4,67 +4,8 @@
  * Set of classes and interfaces to use to dynamically update HTML in detail
  * pane.
  *
- * v1.0 of 02 Dec 2006  - Original version.
- * v1.1 of 03 Dec 2006  - Added interfaces and classes to support dynamic
- *                        updating of routine view in information pane.
- *                      - Reorganised class heirachy to move code common to
- *                        information and compiler check classes into base
- *                        classes. This reorganisation also takes account of
- *                      - Changed factory class to work with information pane
- *                        code.
- *                      - Changed to use new URoutineHTML unit to provide HTML
- *                        relating to routines for information and compiler
- *                        check panes. Removed HTML generation code from
- *                        TCompCheckRoutineInfoDHTML as a result.
- * v1.2 of 04 Feb 2007  - Replaced redundant TDetailView class references with
- *                        TViewItem.
- * v1.3 of 16 Feb 2007  - Added new SupportsUpdating method to IDHTML designed
- *                        to check if a DTHML object supports dynamic updating.
- *                        Added suitable method to implementing classes.
- * v1.4 of 17 Feb 2007  - Calls new version of JSExec in UJavaScriptUtils
- *                        passing function name and parameters separately.
- *                      - Changed return type of IDHTMLHostInfo.HTMLDocument to
- *                        IDispatch.
- * v1.5 of 14 Sep 2008  - Modified TCompCheckRoutineDHTML to hide toggle test
- *                        unit visibility and test compile command links when
- *                        routine is not in standard format.
- *                      - Made some private and protected class sections strict.
- *                      - Made user defined routine headings appear in blue.
- *                      - Added new TWelcomeDetailsDHTML class that dynamically
- *                        update revised welcome page. Modified factory class to
- *                        create it when required.
- *                      - Modified TInfoRoutineDHTML to show edit link for user
- *                        defined routines.
- *                      - Added TDetailDHTML.SetOnClick method.
- * v1.6 of 04 Oct 2008  - Changed TDHTMLFactory to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- *                      - Now use ClassName method in assert statement.
- * v1.7 of 15 Dec 2008  - Changed to iterate compilers using for..in loops.
- * v1.8 of 09 Jan 2009  - Added parameter to ICompCheckRoutineDHTML's
- *                        DisplayCompileResults method to provide reference to
- *                        compilers object whose results are required. Modified
- *                        TCompCheckRoutineDHTML implementation accordingly.
- *                      - Changed TRoutineDetailDHTML to use own instantiation
- *                        of compilers object for compiler info rather than
- *                        global compilers singleton. Provides this to sub
- *                        classes as a protected property.
- * v1.9 of 13 Jan 2009  - Replaced control char literals with constants.
- * v2.0 of 25 Jan 2009  - Heavliy revised now that many interfaces and much code
- *                        is no longer used since generation of detgail HTML
- *                        changed to avoid use of dynamic code generation.
- *                        required interfaces from IHTMLDocHostInfo.
- *                      - HostInfo interfaces that are still required now come
- *                        from IntfHTMLDocHostInfo.
- *                      - Now set inner HTML and image attributes by
- *                        manipulating HTML elements directly instead of by
- *                        calling JavaScript routines.
- * v2.1 of 06 Jun 2009  - Removed UpdateTestUnitVisibility method removed from
- *                        ICompCheckRoutineDHTML.
- *                      - Removed ExecJSFn method from TDHTML.
- *                      - Removed UpdateTestUnitVisibility and ShowTestUnit
- *                        methods from TCompCheckRoutineDHTML.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -85,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

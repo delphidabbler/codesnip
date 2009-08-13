@@ -4,12 +4,8 @@
  * Implements a class that generates Pascal units for use in test compiling
  * snippets.
  *
- * v1.0 of 04 Apr 2006  - Original version.
- * v1.1 of 19 Jun 2009  - Modified to use renamed TSourceGen methods.
- *                      - Renamed "routine" parameters as "snippet".
- *                      - Asserts now get class name from ClassName method.
- *                      - Made TTestUnit's private section strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -30,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

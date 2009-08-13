@@ -4,17 +4,8 @@
  * Object that updates local CodeSnip data files using a supplied stream of
  * data.
  *
- * v0.1 of 02 Feb 2006  - Original version.
- * v0.2 of 01 May 2006  - Complete rewrite. No longer accesses web server, but
- *                        now performs local file update from a supplied data
- *                        stream.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit reference.
- *                      - Renamed EFileList exception as EFileUpdater.
- * v1.1 of 12 Jul 2009  - Replaced reference to UDataStreamRreader with
- *                        UDataStreamIO unit.
- *                      - Made TFileUpdater private section strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -35,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

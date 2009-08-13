@@ -5,8 +5,8 @@
  * a container. Command bars are UI elements used to issue commands, e.g. menus,
  * toolbars etc.
  *
- * v1.0 of 25 May 2009  - Original version.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -27,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

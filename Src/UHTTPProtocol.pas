@@ -4,21 +4,8 @@
  * Implements a handler for the "http" URL protocol that displays the URL in the
  * default browser.
  *
- * v1.0 of 14 Nov 2006  - Original version based on code extracted from former
- *                        UProtocolHandler (now UProtocols) unit.
- * v1.1 of 04 Nov 2007  - Changed to use TBrowseURL action rather than
- *                        TShellExecAction to display URL in browser.
- * v2.0 of 04 Jul 2009  - THTTPProtocol heavily revised:
- *                        - Now implements new abstract SupportsProtocol method
- *                          inherited from revised TProtocol.
- *                        - Now descends from TBrowseProtocol instead of
- *                          directly from TProtocol. Execute method removed as
- *                          inherited method from TBrowseProtocol now used.
- *                        - Class now sealed.
- *                        - Protocol name is now a class constant.
- *                      - Changed call to register protocol to pass only class
- *                        name: protocol prefix no longer required.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -39,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

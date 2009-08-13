@@ -3,9 +3,8 @@
  *
  * Defines various character constants.
  *
- * v1.0 of 14 Jan 2009  - Original version.
- * v1.1 of 25 Jan 2009  - Added RT_HTML constant.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -26,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

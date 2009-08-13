@@ -3,52 +3,8 @@
  *
  * Implements a class that updates database from webservice.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 20 Nov 2005  - Changed TDownloadMgr to descend from
- *                        TDDabStdWebService that provides basic interaction
- *                        with standard DelphiDabbler web service.
- *                      - Changed to use renamed and moved v2 web service.
- *                      - Revised to use new response format from v2 web service
- *                        where each response begins with a status code and
- *                        errors are notified via response rather than server
- *                        errors.
- *                      - Added new exception class that stores long and
- *                        abbreviated error messages.
- * v0.3 of 04 Jan 2006  - Changed re altered inherited constructor parameters.
- * v0.4 of 12 Jan 2006  - Added method to get MD5 checksum of file from server.
- *                      - Refactored to remove duplicate code in web service
- *                        command methods.
- *                      - Added MD5 check on downloaded files that raised
- *                        exception if check fails.
- * v0.5 of 03 Apr 2006  - Updated to work with v3.1 of the update web service.
- *                        Some of log-on parameters have been given dummy values
- *                        since information is not all available in this version
- *                        of the program.
- * v0.6 of 10 Apr 2006  - Replaced placeholder strings for program key and
- *                        registration code sent to web server as part of login
- *                        with actual values.
- *                      - Changed "long" error messages stored when EHTTPError
- *                        exceptions are handled.
- * v0.7 of 01 May 2006  - Changed significantly to support v4 of the update web
- *                        service.
- *                      - Added support for notifying download progress on
- *                        demand.
- *                      - Removed direct dependency on PJVersionInfo. Replaced
- *                        by TVersionInfo class.
- * v1.0 of 26 May 2006  - Improved and corrected comments.
- *                      - Replaced call to TVersionInfo with call to equivalent
- *                        method of TAppInfo.
- *                      - Removed reference to unused unit.
- * v1.1 of 24 Aug 2008  - Added new "filecount" command that gets number of
- *                        files in remote database.
- *                      - Fixed bug in LastUpdate method that was ignoring
- *                        WantProgress parameter.
- *                      - Sealed TDownloadMgr and applied strict keyword to
- *                        visibility specifiers.
- * v1.2 of 13 Jan 2009  - Replaced control char literals with constants.
- * v1.3 of 13 May 2009  - Changed to use revised TWebService inherited
- *                        constructor and its single TWebServiceInfo parameter.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -69,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

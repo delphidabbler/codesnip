@@ -4,19 +4,8 @@
  * Class that controls and provides information about Borland Development System
  * Win32 compilers.
  *
- * v0.1 of 08 Jan 2006  - Original version.
- * v0.2 of 09 Jan 2006  - Changed Clone method to call new CreateCopy
- *                        constructor rather than doing copy itself.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit reference.
- * v1.1 of 08 May 2007  - Added support for Delphi 2007 to TBDSCompiler.
- * v1.2 of 11 Aug 2008  - Changed to use single resource name "BDS" for all
- *                        compiler glyphs.
- * v1.3 of 11 Oct 2008  - Added support for Delphi 2009 to TBDSCompiler.
- *                      - Made protected and private section of class strict.
- *                      - Assert and EBug messages now use ClassName to get name
- *                        of class.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -35,8 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

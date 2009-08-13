@@ -4,23 +4,8 @@
  * Implements class that wraps the Free Pascal compiler. Controls compilation,
  * processes compiler output and provides information about the compiler.
  *
- * v0.1 of 05 Mar 2005  - Original version.
- * v0.2 of 20 Apr 2005  - Changed to use renamed IntfCompilers unit.
- * v0.3 of 08 Jan 2006  - Major changes:
- *                        - Revised signature of TFreePascalCompiler's Compile
- *                          and DeleteObjFiles methods in line with changes to
- *                          ICompiler.
- *                        - Pushed up a lot of functionality common with
- *                          TDelphiCompiler to TCompilerBase and made changes to
- *                          reflect new relationship with base class.
- *                        - Added support for user-defined and default command
- *                          line switches.
- * v0.4 of 09 Jan 2006  - Changed Clone method to call new CreateCopy
- *                        constructor rather than doing copy itself.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit reference.
- * v1.1 of 24 Aug 2008  - Added Windows unit to enable inlining in Delphi 2006.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -39,8 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

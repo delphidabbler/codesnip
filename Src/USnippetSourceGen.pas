@@ -4,37 +4,8 @@
  * Implements a static class that generates source code for code snippet(s)
  * contained in a routine or category view.
  *
- * v0.1 of 06 Jan 2006  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 04 Feb 2007  - Replaced use of redundant TDetailView objects with
- *                        calls to new global query object and TViewItem
- *                        objects.
- *                      - Refactored some code to take advantage of changes.
- * v1.2 of 09 Feb 2007  - Changed to add multiple routines to a code snippet
- *                        using TSourceGen.IncludeRoutines rather than multiple
- *                        calls to IncludeRoutine.
- *                      - Changed to provide header comments to the snippet,
- *                        including disclaimer.
- * v1.3 of 02 Jul 2007  - Corrected typo in source code header comment.
- * v1.4 of 13 Sep 2008  - Changed to use a different header comment if snippet
- *                        contains only user defined routines.
- * v1.5 of 13 May 2009  - Now gets full program name from TAppInfo instead of
- *                        UGlobals unit.
- * v1.6 of 16 May 2009  - Modified to use renamed TSourceGen methods.
- *                      - Asserts now get class name from ClassName method.
- *                      - Renamed some variables and fields.
- * v2.0 of 11 Jul 2009  - Re-implemented TSnippetSourceGen as a static class:
- *                        - Now descends from TNoPublicConstructObject.
- *                        - Changed TSnippetSourceGen.Generate into a static
- *                          method.
- *                      - Added new static TSnippetSourceGen.CanGenerate method
- *                        that checks if a source code snippet can be generated
- *                        for a view.
- *                      - Changed to generate and use comments as IStringList
- *                        rather than TStringList.
- *                      - Made private section strict.
- *                      - Class sealed.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -55,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

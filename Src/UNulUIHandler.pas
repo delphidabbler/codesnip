@@ -6,14 +6,8 @@
  * that will make no changes to the web browser control if this class is
  * assigned as the browser's UI handler.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 20 Apr 2005  - Fixed potential bugs by setting unused [out] params to
- *                        nil in GetOptionKeyPath & TranslateURL methods. Made
- *                        both methods return S_FALSE rather than E_FAIL.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- * v1.1 of 04 Oct 2008  - Changed to use UBaseObjects instead of UIntfObjects.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -32,8 +26,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

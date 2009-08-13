@@ -5,14 +5,8 @@
  *
  * Requires the DelphiDabbler Streams library v2.0.1 or later.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- * v1.1 of 24 Aug 2008  - Added directive to switch off unsafe code warnings in
- *                        Delphi 2006.
- * v1.2 of 13 Jan 2009  - Replaced control char literals with constants.
- *                      - Removed unnecessary $WARN directory.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -33,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

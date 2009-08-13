@@ -4,34 +4,8 @@
  * Implements classes that can import and export user defined snippets and user
  * information from and to XML.
  *
- * v1.0 of 15 Dec 2008  - Original version.
- * v1.1 of 17 Dec 2008  - Extracted code that is common with UXMLDataIO and
- *                        moved to separate unit.
- *                      - Modified exception handling to handle ECodeSnipXML.
- *                      - Changed custom exception to derive from ECodeSnipXML.
- * v1.2 of 28 Dec 2008  - Modified to support new TRoutine.Extra property.
- *                      - Now writes v2 of XML file and imports both v1 and v2.
- *                        v1 and v2 differ in how Extra data is read.
- *                      - Modified reader to detect and record XML version.
- *                      - Removed support for routine's Credits, CreditsURL and
- *                        Comments properties.
- * v1.3 of 06 Jun 2009  - Changed to output file format to v3:
- *                        - Removed support for writing snippet's StandardFormat
- *                          property.
- *                        - Added support for writing Snippet's Kind property.
- *                      - Changed to read files in v1..v3 format, calculating
- *                        value of Kind property from StandardFormat in v1 & v2
- *                        files.
- *                      - Now imports snippets into "imports" category instead
- *                        of "user".
- *                      - Replaced use of TRoutineID and IRoutineIDList with
- *                        TSnippetID and ISnippetIDList.
- * v1.4 of 05 Jul 2009  - Revised to export in v3 file format if possible but to
- *                        use v4 format if v3 of REML is required for any
- *                        snippet extra properties. This is to prevent earlier
- *                        program versions from reading REML they won't render
- *                        properly.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -52,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

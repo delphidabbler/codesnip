@@ -1,28 +1,12 @@
-{ ##
-  @FILE                     UWBNulDropTarget.pas
-  @COMMENTS                 Contains class that implements IDropTarget interface
-                            that is designed to be associated with a web browser
-                            control to inhibit drag and drop operations.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None
-  @HISTORY(
-    @REVISION(
-      @VERSION              0.1
-      @DATE                 16/04/2006
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 24/05/2006
-      @COMMENTS             Improved and corrected comments.
-    )
-  )
-}
-
-
 {
+ * UWBNulDropTarget.pas
+ *
+ * Contains class that implements IDropTarget interface that is designed to be
+ * associated with a web browser control to inhibit drag and drop operations.
+ *
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -40,10 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

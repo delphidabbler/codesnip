@@ -3,22 +3,8 @@
  *
  * Classes that help create and manage cascading style sheet code.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Deleted unused units from uses clauses.
- *                      - Deleted unused constant array.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 07 Nov 2006  - Changed to use UCSSUtils to create CSS attributes.
- *                      - Added new Extras string list property for additional
- *                        CSS that replaces old Extra property.
- * v1.2 of 05 Nov 2007  - Replaced Extras, Margin, BackColor, Font properties of
- *                        TCSSSelector with the Properties property and
- *                        AddProperty method.
- * v1.3 of 13 Jan 2009  - Replaced control char literals with constants.
- *                      - Made some visibility specifies strict.
- *                      - Assert statement now gets class name from ClassName.
- *                      - Deleted unused methods etc from TCSSSelector and
- *                        TCSSBuilder.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -39,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

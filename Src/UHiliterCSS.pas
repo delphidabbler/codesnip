@@ -5,9 +5,8 @@
  * be displayed in HTML. CSS code uses a highlighter's attributes. Access to CSS
  * class names is also provided.
  *
- * v1.0 of 25 Nov 2006  - Original version.
- * v1.1 of 05 Nov 2007  - Changed to use revised CSS builder classes.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -26,10 +25,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

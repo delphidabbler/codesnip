@@ -4,8 +4,8 @@
  * Implements a cass that can enable or disable all controls, actions and
  * menu items on a form depending on the form's Enabled property
  *
- * v1.0 of 04 Jan 2009  - Original version.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -26,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

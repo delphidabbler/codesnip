@@ -3,50 +3,8 @@
  *
  * Object that notifies the main application of certain user-initiated events.
  *
- * v0.1 of 22 Feb 2005  - Original version.
- * v0.2 of 04 Mar 2005  - Changed to use TCompileID to get ids of supported
- *                        compilers.
- *                      - Changed to use revised ICompiler object when setting
- *                        property of compile logs action.
- * v0.3 of 20 Apr 2005  - Changed to use renamed IntfCompilers unit.
- * v0.4 of 25 Apr 2005  - Added implementation of INotifier.HelpTopic and
- *                        ISetActions.SetHelpTopicAction methods that enable
- *                        help topic to be displayed by a-link keyword.
- *                      - Added implementation of INotifier.ConfigCompilers and
- *                        ISetActions.SetConfigCompilersAction methods that
- *                        enable configure compilers dialog box to be displayed.
- *                      - Removed implementation of INotifier.QuickStartHelp and
- *                        ISetActions.SetQuickStartHelpAction methods and quick
- *                        start help action field.
- *                      - Corrected method name in an assertion message.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- *                      - Changed HelpTopic method to handle exceptions to
- *                        prevent them propagating to browser control.
- * v1.1 of 24 Nov 2006  - Implements INotifier's new ToggleTestUnit and
- *                        ISetActions' new SetToggleTestUnitAction methods.
- * v1.2 of 04 Nov 2007  - Removed HelpTopic and SetHelpTopicAction methods and
- *                        associated field.
- * v1.3 of 14 Sep 2008  - Changed signature and implementation of
- *                        TNotifier.DisplayRoutine method to take a parameter
- *                        identifying which database routine and use to set
- *                        TRoutineAction's UserDefined property.
- *                      - Added new EditRoutine method and related
- *                        SetEditRoutineAction method.
- * v1.4 of 09 Jan 2009  - Changed TNotifier.ViewCompilerLog to use revised
- *                        TCompLogAction object. Now pass compiler ID to action
- *                        instead of compiler object reference.
- *                      - Made private section strict.
- *                      - Asserts now use ClassName instead of literal string.
- * v1.5 of 06 Jun 2009  - Replaced ToggleTestUnit and SetToggleTestUnitAction
- *                        methods and associated fields of TNotifier with
- *                        ShowTestUnit and SetShowTestUnitAction and fields.
- *                      - Added new Donate and SetDonateAction methods to
- *                        TNotifier.
- * v1.6 of 12 Jul 2009  - Added new DisplayCategory and SetDisplayCategoryAction
- *                        methods to TNotifier.
- *                      - Changed SetDisplayRoutineAction to pass notifier
- *                        reference to the action.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -67,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

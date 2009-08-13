@@ -4,51 +4,8 @@
  * Defines a class that manages generation, previewing and saving of a code
  * snippet.
  *
- * v0.1 of 17 Mar 2005  - Original version.
- * v0.2 of 21 Apr 2005  - Changed to use renamed USourceGen unit and renamed
- *                        TSourceGen class.
- *                      - Added new IntfHiliter unit that contains required type
- *                        definitions formerly in other units.
- * v0.3 of 25 Apr 2005  - Added code to persist managed save last snippet dialog
- *                        user's settings to application's storage.
- * v0.4 of 08 Jan 2006  - Extracted highlighting code from TSaveSnippetMgr into
- *                        separate class.
- *                      - Extracted source code generation from TSaveSnippetMgr
- *                        into separate class.
- *                      - Extracted super class made up of code shared between
- *                        TSaveSnippetMgr and new TCopySnippetMgr.
- *                      - Heavily revised TSaveSnippetMgr as a result of class
- *                        extractions.
- *                      - Added new CanHandleView class method (in new super
- *                        class) to enable class to test for a valid view from
- *                        which to generate snippet.
- *                      - Extracted dialog box's title to resource string.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit reference.
- * v2.0 of 29 Oct 2006  - Major update. Passed off much of processing to helper
- *                        objects:
- *                        - Now uses TSourceFileInfo object to handle
- *                          extensions, dialog box file type filter, and mapping
- *                          to source file type.
- *                        - Now uses TSourceFileOutputMgr to handle display of
- *                          dialog box and formatting of source code.
- * v2.1 of 04 Feb 2007  - Replaced redundant TDetailView class references with
- *                        TViewItem.
- * v2.2 of 02 Jul 2007  - Added code to build a document title and to include in
- *                        generated snippets.
- *                      - A default file name, based on snippet name and made
- *                        into valid Pascal identifier, is now provided for use
- *                        in dialog box.
- * v2.3 of 12 Sep 2008  - Changed document title to remove reference to
- *                        database.
- * v2.4 of 03 Oct 2008  - Changed to use new inherited static Execute method and
- *                        to override new DoExecute method of base class.
- *                      - Made protected and private sections strict.
- * v3.0 of 11 July 2009 - Changed to descend from TNoPublicConstructObject
- *                        directly instead of indirectly via TSaveSnippetMgr.
- *                      - Added methods that were formerly in base class, some
- *                        of which have new implementations.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -69,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

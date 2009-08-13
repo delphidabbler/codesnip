@@ -4,12 +4,8 @@
  * Defines class that parses Pascal source files and splits into different
  * highlighting elements.
  *
- * v0.1 of 10 Mar 2005  - Original version.
- * v0.2 of 21 Apr 2005  - Added reference to new IntfHiliter unit that contains
- *                        enumerated type formerly defined in this unit.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 24 Aug 2008  - Added Windows unit to enable inlining in Delphi 2006.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -28,8 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

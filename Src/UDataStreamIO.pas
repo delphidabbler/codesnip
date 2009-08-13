@@ -6,15 +6,8 @@
  *
  * Originally named UDataStreamReader.pas. Renamed as UDataStreamIO.pas at v2.0.
  *
- * v0.1 of 30 Apr 2006  - Original version named UDataStreamReader.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- * v1.1 of 22 May 2009  - Added new TDataStreamWriter.ReadSizedLongString
- *                        method.
- * v2.0 of 12 Jul 2009  - Renamed unit as UDataStreamIO.
- *                      - Added TDataStreamWriter formerly in UDataStreamWriter.
- *                      - Made private section of TDataStreamReader strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -35,6 +28,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

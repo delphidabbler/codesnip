@@ -19,14 +19,8 @@
  * language. The object is language agnostic. The user must provide a parser
  * that can interpret the language and create the required elements.
  *
- * v1.0 of 29 Dec 2008  - Original version.
- * v1.1 of 20 Jun 2009  - Added new element kinds: em, var, p, warning, heading
- *                        and mono.
- *                      - Added new IActiveTextActionElem.DisplayStyle property,
- *                        getter and implementation with associated enumeration.
- *                        Used to check whether an element displays as a block
- *                        or inline.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -47,6 +41,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

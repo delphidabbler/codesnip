@@ -4,9 +4,8 @@
  * Implements a class that copies information about a snippet to clipboard in
  * plain text and rich text format. Only routines are supported..
  *
- * v1.0 of 04 Jan 2009  - Original version.
- * v2.0 of 11 Jul 2009  - Re-implemented as a concrete subclass of TCopyViewMgr.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -27,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -3,20 +3,8 @@
  *
  * Implements class that manages customisation and output of source files.
  *
- * v1.0 of 29 Oct 2006  - Original version.
- * v1.1 of 02 Jul 2007  - Changed to generate output files that contain document
- *                        titles where relevant.
- * v1.2 of 26 Sep 2007  - Added ErrorMessage parameter to
- *                        TSourceFileNameCheckEvent.
- *                      - Now display error message if entered file not
- *                        acceptable.
- *                      - Preview dialogs are now aligned over save dialog box.
- * v1.3 of 29 May 2008  - Fixed bug that was always saving files of type
- *                        selected in save dialog's highlight type regardless of
- *                        file extension. Now bases file format on extension.
- * v1.4 of 14 Dec 2008  - Changed to use ExtToFilterIndex routine from
- *                        its new location in the UOpenDialogHelper unit.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -35,10 +23,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

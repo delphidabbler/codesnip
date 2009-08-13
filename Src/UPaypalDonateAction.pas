@@ -4,9 +4,8 @@
  * Custom action used to display the DelphiDabbler Paypal donation page in
  * default web browser.
  *
- * v1.0 of 11 May 2009  - Original version.
- * v1.1 of 13 May 2009  - Changed to use a URL obtained from TWebInfo.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -27,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

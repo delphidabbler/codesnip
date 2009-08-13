@@ -1,61 +1,11 @@
-{ ##
-  @FILE                     URTFUtils.pas
-  @COMMENTS                 Utility functions used when processing RTF.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None
-  @HISTORY(
-    @REVISION(
-      @VERSION              0.1
-      @DATE                 17/03/2005
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 24/05/2006
-      @COMMENTS             + Improved and corrected comments.
-                            + Removed unused unit references.
-    )
-    @REVISION(
-      @VERSION              1.1
-      @DATE                 29/10/2006
-      @COMMENTS             Fixed bug in RTFLoadFromString where long documents
-                            were not displaying correctly. Set max length of RTF
-                            control to length of loaded document.
-    )
-    @REVISION(
-      @VERSION              1.2
-      @DATE                 07/11/2006
-      @COMMENTS             + Added various routines to create RTF controls.
-                            + Renamed MakeSafeRTFText() as RTFMakeSafeText().
-    )
-    @REVISION(
-      @VERSION              1.3
-      @DATE                 11/11/2006
-      @COMMENTS             Added new IsValidRTFCode() routine.
-    )
-    @REVISION(
-      @VERSION              1.4
-      @DATE                 02/07/2007
-      @COMMENTS             Added support for new \info and \title control
-                            words.
-    )
-    @REVISION(
-      @VERSION              1.5
-      @DATE                 05/09/2007
-      @COMMENTS             + Added new RTFInsertString routine and supporting
-                              private routines.
-                            + Added new RTFSaveToStream routine.
-                            + Added new RTFLoadFromStream routine.
-                            + Added support for new \sa and \sb RTF control
-                              words.
-    )
-  )
-}
-
-
 {
+ * URTFUtils.pas
+ *
+ * Utility functions used when processing RTF.
+ *
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -73,10 +23,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

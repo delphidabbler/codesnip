@@ -4,14 +4,8 @@
  * Class that interacts with bug report web service via HTTP to submit bug
  * reports.
  *
- * v0.1 of 20 Nov 2005  - Original version.
- * v0.2 of 04 Jan 2006  - Changed re altered inherited constructor parameters.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit reference.
- * v1.1 of 13 Jan 2009  - Replaced control char literals with constants.
- * v1.2 of 13 May 2009  - Changed to use revised TWebService inherited
- *                        constructor and its single TWebServiceInfo parameter.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -32,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

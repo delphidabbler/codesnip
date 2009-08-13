@@ -3,18 +3,8 @@
  *
  * Utility routines used for working with graphics.
  *
- * v1.0 of 21 Nov 2006  - Original version.
- * v1.1 of 25 Feb 2007  - Added new DrawTextOutline routine.
- * v1.2 of 06 Dec 2008  - Added new StringExtent and GetTextRect routines along
- *                        with supporting private routines.
- * v1.3 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
- * v1.4 of 10 May 2009  - Made CreateDisplayDC function public.
- * v1.5 of 17 Jun 2009  - Removed redundant DrawTextOutline routine.
- * v1.6 of 10 Jul 2009  - Added an overloaded StringExtent routine that gets
- *                        size of string word-wrapped within a maximum width.
- *                      - Added private support routines to create and free
- *                        display canvases for StringExtent routines.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -35,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

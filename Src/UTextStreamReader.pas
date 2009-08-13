@@ -3,15 +3,8 @@
  *
  * Defines class that performs character based access to a stream.
  *
- * v0.1 of 10 Mar 2005  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- * v1.1 of 14 Jan 2009  - Moved public constants into TTextStreamReader as
- *                        public class constants.
- *                      - Made private section strict.
- *                      - Removed private cCR and cLF constants. We now use CR
- *                        and LF from UConsts.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -32,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

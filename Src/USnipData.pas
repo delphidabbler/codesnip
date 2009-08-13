@@ -5,26 +5,8 @@
  * database. Also implememts class that that registers factories that create
  * back end database access objects.
  *
- * v0.1 of 26 Feb 2005  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 24 Aug 2008  - Added Windows unit to enable inlining in Delphi 2006.
- * v2.0 of 01 Sep 2008  - Major update:
- *                        - Modified to work with both user and main databases.
- *                        - Added function to IDataReader so that reader can
- *                          check database exists. Other methods were revised to
- *                          use record structures to return routine and category
- *                          data and IStringList for string list data.
- *                        - Added IDataWriter interface that is implemented by
- *                          objects that can write user database.
- *                        - Removed descriptions of readers and writers and
- *                          unused methods that list ids and descriptions.
- *                        - Added EDataReader exception definition.
- * v2.1 of 04 Oct 2008  - Changed TDataIOFactories and TDataIOFactory to derive
- *                        from TNoConstructObject and hence prevented them from
- *                        being constructed.
- *                      - Made private section of TDataIOFactories strict.
- *                      - Now use ClassName method in all raise EBug statements.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -43,8 +25,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

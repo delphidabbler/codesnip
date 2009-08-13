@@ -3,21 +3,8 @@
  *
  * Implements a static class that manages user's interaction with user database.
  *
- * v1.0 of 14 Sep 2008  - Original version.
- * v1.1 of 19 Sep 2008  - Now prevents deletion of snippets with dependents.
- *                      - Referenced routines now listed in deletion prompt.
- * v1.2 of 04 Oct 2008  - Changed TUserDBMgr to derive from TNoConstructObject
- *                        and hence prevented it from being constructed.
- *                      - Now use ClassName method in all assert and raise EBug
- *                        statements.
- * v1.3 of 15 Dec 2008  - Fixed minor bug where open and save dialogs could
- *                        incorrectly identify existance of a file.
- * v1.4 of 14 Jan 2009  - Replaced control char literals with constants.
- * v1.5 of 06 Jun 2009  - Changed to use TSnippetID and ISnippetIDList instead
- *                        of TRoutineID and IRoutineIDList.
- * v1.6 of 13 Jul 2009  - Removed unused overloaded TUserDBMgr.Edit method and
- *                        modified other Edit method to remove dependency.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -38,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

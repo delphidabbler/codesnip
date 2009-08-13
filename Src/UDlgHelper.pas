@@ -5,25 +5,8 @@
  *
  * Originally named UDlgAligner.pas. Renamed as UDlgHelper.pas as at v1.1.
  *
- * v1.0 of 27 Sep 2007  - Original version.
- * v1.1 of 12 Jun 2008  - Added new TDlgHelper class.
- *                      - Renamed some private interfaces and classes.
- *                      - Fixed potential bug in renamed TWindowInfoFactory.
- *                      - Added new Handle method to renamed IWindowInfo
- *                        interface.
- *                      - Added new AlignToOwner method to TDlgAligner.
- *                      - Renamed from UDlgAligner.pas to UDlgHelper.pas.
- * v1.2 of 04 Oct 2008  - Revised TDlgHelper and private factory classes to
- *                        derive from TNoConstructObject and hence prevented
- *                        them from being constructed.
- *                      - Revised TDlgAligner to use protected constructor and
- *                        prevented public constructor from being called.
- *                      - Made various private sections strict.
- *                      - Now use ClassName method in all assert and raise EBug
- *                        statements.
- * v1.3 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
- * v1.4 of 10 Jul 2009  - Refactored dialog offset code in dialog aligner.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -44,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

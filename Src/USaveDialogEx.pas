@@ -7,11 +7,8 @@
  *
  * Requires that Application.ModalPopupMode <> pmNone.
  *
- * v1.0 of 11 Sep 2008  - Original version.
- * v1.1 of 03 Oct 2008  - Added WantDefaultHelpSupport property that toggles
- *                        support for default help processing. Provided to make
- *                        suitable as a base class for custom save dialogs.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -30,8 +27,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

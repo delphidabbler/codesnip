@@ -4,13 +4,8 @@
  * Implements a static class that can persist syntax highlighter attributes
  * to/from a given storage.
  *
- * v1.0 of 09 Nov 2006  - Original version.
- * v1.1 of 17 Oct 2007  - Changed read/write a single given storage rather than
- *                        hard-wired HiliteOutput sections and sub sections.
- * v1.2 of 04 Oct 2008  - Changed THiliterPersist to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -29,8 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

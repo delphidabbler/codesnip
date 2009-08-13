@@ -4,29 +4,8 @@
  * Custom popup menu components that display menu items for recent view items in
  * the history. Separate menu classes deal with "forward" and "back" menus.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Removed debug code.
- * v0.3 of 18 Feb 2005  - Deleted unused THistoryMenu destructor.
- *                      - Deleted unused THistoryMenuItem constructor and
- *                        destructor.
- * v0.4 of 19 Feb 2005  - Refactoring: moved code that sets history menu item
- *                        caption to describe associated view item into custom
- *                        menu item class.
- * v0.5 of 22 Feb 2005  - Localised literal strings.
- *                      - Moved constant determining max number of menu items to
- *                        UGlobals unit.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 11 Jan 2009  - cMaxHistoryMenuItems const added to private section of
- *                        THistoryMenu, moved back here from UGlobals.
- *                      - Flagged THistoryMenu as abstract and TBackHistoryMenu,
- *                        TForwardHistoryMenu and THistoryMenuItem as sealed.
- *                      - Made private and protected visibility sections strict.
- *                      - Made assertions and buf exceptions use ClassName to
- *                        report name of class.
- * v1.2 of 19 Jun 2009  - Removed support for uncategorised view items.
- *                      - Added support for alphabetic and snippet kind view
- *                        items.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -47,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

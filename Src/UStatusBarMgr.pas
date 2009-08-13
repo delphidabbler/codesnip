@@ -4,25 +4,8 @@
  * Implements class that manages display of status information and hints in a
  * status bar.
  *
- * v1.0 of 03 Feb 2007  - Original version.
- * v1.1 of 04 Feb 2007  - Removed parameters from ShowDatabaseInfo method and
- *                        associated private ShowSearchInfo method. New Query
- *                        global object now provides search information.
- *                      - Moved descriptive string literals to resource strings.
- * v1.2 of 10 Sep 2008  - Forced AutoHint property to false to prevent display
- *                        bug that can happen if this property is true.
- *                      - Moved some literal display text into resource string.
- * v1.3 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
- *                      - Made private section strict.
- * v1.4 of 03 Jan 2009  - Added count of user defined routines to database
- *                        stats.
- *                      - Added owner-draw panel that displays a modification
- *                        indicator when user database has changed.
- *                      - Refactored some code.
- * v1.5 of 06 Jun 2009  - Changed use of "routines" in status bar text to
- *                        "snippets".
- *                      - Renamed some identifiers.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -43,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

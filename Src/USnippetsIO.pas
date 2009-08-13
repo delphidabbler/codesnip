@@ -5,19 +5,8 @@
  * user and main databases. Also provides a class that can write the user
  * database to storage.
  *
- * v1.0 of 15 Sep 2008  - Original version.
- * v1.1 of 17 Sep 2008  - Fixed bug that caused a snippet in user database to be
- *                        ignored if it had same name as a snippet in main
- *                        database.
- * v1.2 of 04 Oct 2008  - Changed TSnippetsIOFactory to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- * v1.3 of 13 Jan 2009  - Replaced control char literals with constants.
- * v1.4 of 06 Jun 2009  - Added "imports" category as a default user-defined
- *                        category in addition to existing "user" category.
- *                      - Changed to use TSnippetID instead of TRoutineID and
- *                        ISnippetIDList instead of IRoutineIDList.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -38,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -3,18 +3,8 @@
  *
  * Implements various classes used to create content of a rich text document.
  *
- * v1.0 of 07 Nov 2006  - Original version.
- * v1.1 of 02 Jul 2007  - Added new TRTFDocProperties class.
- *                      - Added DocProperties property to TRTFBuilder along with
- *                        facility to generate document properties RTF.
- * v1.2 of 06 Sep 2007  - Added SetParaSpacing method to TRTFBuilder.
- *                      - Changed SetFontSize method of TRTFBuilder to accept
- *                        float params.
- * v1.3 of 14 Jan 2009  - Replaced control char literals with constants.
- *                      - Removed unnecessary $WARN directive.
- *                      - Made class private sections strict.
- *                      - Now use ClassName for class name in Assert statement.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -35,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

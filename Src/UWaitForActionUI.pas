@@ -4,42 +4,8 @@
  * Implements a class that executes an action in a thread and displays a dialog
  * box if action takes more than a specified time to complete.
  *
- * v1.0 of 01 Dec 2006  - Original version.
- * v1.1 of 05 Feb 2007  - Added new static Run method to TWaitForActionUI.
- *                      - Fixed bug in TWaitForActionUI.Pause that was freezing
- *                        program if PauseBeforeDisplay was not multiple of 10.
- * v1.2 of 01 Mar 2007  - Added new overloaded TWaitForActionUI.Run method that
- *                        can execute a thread instead of an action. We use new
- *                        TOwnedAction private class to do this.
- *                      - Fixed possible bug in TWaitForActionUI that fails to
- *                        close dialog if MinDisplayTime is zero.
- *                      - Changed TActionThread to descend from TThreadEx and
- *                        removed TActionThread's own Completed property in
- *                        favour of property of same name in new base class.
- * v1.3 of 24 Sep 2007  - Replaced call to Sleep routine in pause processing
- *                        with busy wait. This fixed bug that was freezing whole
- *                        system and therefore not displaying wait form.
- * v1.4 of 29 Oct 2007  - Made form closure thread safe so that timer and thread
- *                        cannot both access at same time. This was done to try
- *                        to fix occasional bug where dialog box never closes.
- * v1.5 of 02 Jun 2008  - Rewrote code from v1.4 to make form opening / closure
- *                        thread safe. Now use critical section rather than lock
- *                        count. Previous fix did not work.
- * v1.6 of 04 Oct 2008  - Made TWaitForActionUI constructor protected, Execute
- *                        method protected, one overloaded version of Run method
- *                        call other one and removed unused public properties.
- *                        static.
- *                      - Modified TOwnedAction to work with revised
- *                        TThreadWrapper class that can now only be accessed via
- *                        a static Execute method.
- *                      - Made all private and protected sections strict.
- *                      - Now use ClassName method in all assert statements.
- * v1.7 of 15 Dec 2008  - Changed TWaitForActionUI.Pause to call UUtils.Pause.
- * v1.8 of 11 Jan 2009  - Removed TWaitForActionUI.Run method overload that
- *                        takes a thread as a parameter. This caused thread to
- *                        be run in a second thread which is not required.
- *                      - Removed now unused private TOwnedAction class.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -60,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -4,14 +4,8 @@
  * Defines a static class that gets information about and manipulates HTML
  * anchor element.
  *
- * v1.0 of 01 Nov 2007  - Original version.
- * v1.1 of 04 Oct 2008  - Changed TAnchors to derive from TNoConstructObject and
- *                        hence prevented it from being constructed.
- *                      - Made TAnchor's private section strict.
- * v1.2 of 12 Jan 2009  - Changed to use IStringList.Contains in place of
- *                        IStringList.IndexOf.
- * v1.3 of 12 Jul 2009  - Added support for new akCategory anchor kind.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -32,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -1,38 +1,11 @@
-{ ##
-  @FILE                     UViewItemAction.pas
-  @COMMENTS                 Custom action used to request display of a view
-                            item.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None
-  @HISTORY(
-    @REVISION(
-      @VERSION              0.1
-      @DATE                 30/01/2005
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              0.2
-      @DATE                 18/02/2005
-      @COMMENTS             Removed debug code.
-    )
-    @REVISION(
-      @VERSION              0.3
-      @DATE                 18/02/2005
-      @COMMENTS             Removed unused TViewItemAction constructor and
-                            destructor.
-    )
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 24/05/2006
-      @COMMENTS             Improved and corrected comments.
-    )
-  )
-}
-
-
 {
+ * UViewItemAction.pas
+ *
+ * Custom action used to request display of a view item.
+ *
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -50,10 +23,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2006 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

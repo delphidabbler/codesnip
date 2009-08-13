@@ -1,48 +1,12 @@
-{ ##
-  @FILE                     UFileHiliter.pas
-  @COMMENTS                 Implements class that generates hilighted and
-                            formatted source code for a specified file type.
-  @PROJECT_NAME             CodeSnip
-  @PROJECT_DESC             Offline viewer for routines from the online
-                            DelphiDabbler CodeSnip database.
-  @DEPENDENCIES             None.
-  @HISTORY(
-    @REVISION(
-      @VERSION              0.1
-      @DATE                 06/01/2006
-      @COMMENTS             Original version.
-    )
-    @REVISION(
-      @VERSION              1.0
-      @DATE                 24/05/2006
-      @COMMENTS             + Improved and corrected comments.
-                            + Removed unused unit reference.
-    )
-    @REVISION(
-      @VERSION              1.1
-      @DATE                 29/10/2006
-      @COMMENTS             + Renamed HiliterKindFromExt method to HiliterKind.
-                            + Changed Various methods that used file extension
-                              to determine type of highlighting to use source
-                              file type enumeration instead.
-    )
-    @REVISION(
-      @VERSION              1.2
-      @DATE                 09/11/2006
-      @COMMENTS             Changed to use user-defined syntax highlighter to
-                            highlight output files instead of predefined default
-                            highlighter.
-    )
-    @REVISION(
-      @VERSION              1.3
-      @DATE                 02/07/2007
-      @COMMENTS             Modified to add title to generated documents.
-    )
-  )
-}
-
-
 {
+ * UFileHiliter.pas
+ *
+ * Implements class that generates hilighted and formatted source code for a
+ * specified file type.
+ *
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -60,10 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2007 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -4,19 +4,8 @@
  * Classes that manage, configure and display popup menu items for web browser
  * controls.
  *
- * v1.0 of 03 Nov 2007  - Original version.
- * v1.1 of 14 Sep 2008  - Prevented invisible menu links from being added to
- *                        menus.
- *                      - Added images to menu items gleaned from menu links in
- *                        HTML where there is a GIF image associated with link.
- *                      - Now use for..in construct to iterate IDispatchList.
- * v1.2 of 04 Oct 2008  - Changed to use UBaseObjects instead of UIntfObjects.
- * v1.3 of 15 Dec 2008  - Flagged TAbstractWBPopupMenu as abstract class.
- *                      - Now use enumerator to loop through menu items.
- *                      - Made various private sections strict.
- * v1.4 of 23 May 2009  - Images associated with menu-item options can now be
- *                        parented by span tags in addition to div tags.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -37,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

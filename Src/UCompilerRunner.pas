@@ -5,16 +5,8 @@
  * code. Also provides specialised exception object that captures information
  * about errors.
  *
- * v0.1 of 11 Jan 2006  - Original version.
- * v0.2 of 11 Apr 2006  - Fixed compiler warning in TCompilerRunner.Execute
- *                        method.
- * v1.0 of 24 May 2006  - Made minor improvements to comments.
- * v1.1 of 25 Aug 2008  - Extended ECompilerRunner exception to have an
- *                        ErrorCode property and added Assign method override.
- *                        Constructor now takes a ECompilerRunner exceptions and
- *                        copies its properties.
- *                      - Made private section of TCompilerRunner strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -33,8 +25,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

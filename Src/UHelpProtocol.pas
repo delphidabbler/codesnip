@@ -4,16 +4,8 @@
  * Implements a handler for the fake "help" URL protocol that displays a help
  * topic specified by an a-link keyword included in the URL.
  *
- * v1.0 of 14 Nov 2006  - Original version.
- * v1.1 of 04 Nov 2007  - Changed to use help manager directly to display help
- *                        topic rather than using THelpTopicAction.
- * v1.2 of 04 Jul 2009  - Added new THelpProtocol.SupportsProtocol class method
- *                        that overrides abstact method added to base class.
- *                      - Protocol name is now a class constant.
- *                      - Sealed THelpProtocol class.
- *                      - Changed call to register protocol to pass only class
- *                        name: protocol prefix no longer required.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -34,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

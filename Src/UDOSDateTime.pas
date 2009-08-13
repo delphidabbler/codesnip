@@ -4,28 +4,8 @@
  * Interface, implementation class and factory object used to encapsulate, read
  * and apply DOS file dates.
  *
- * v0.1 of 30 Apr 2006  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- *                      - Removed warnings about un-fixed interfaces.
- * v1.1 of 14 Oct 2006  - Removed code that converts unix time stamps from GMT
- *                        to local time on Windows 9x systems. The code used
- *                        Windows API routines that are not supported on Windows
- *                        9x. This means that date checks may be inaccurate on
- *                        Windows 9x systems, but has restored the program's
- *                        compatibility with the platform.
- * v1.2 of 04 Nov 2007  - Removed IDOSDateTime.Assign method and replaced with
- *                        IAssignable.Assign method in TDOSDateTime.
- * v1.3 of 24 Aug 2008  - Changed to use FileAge implementation from UUtils
- *                        since SysUtils version is deprecated in Delphi 2006.
- * v1.4 of 04 Oct 2008  - Changed TDOSDateTimeFactory to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- *                      - Made private section of TDOSDateTime strict.
- *                      - Now use ClassName method in raise EBug statement.
- * v1.5 of 11 May 2009  - Removed test for Win9x platform since CodeSnip no
- *                        longer supports the platform.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -46,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

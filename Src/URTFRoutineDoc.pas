@@ -4,16 +4,8 @@
  * Implements a class that renders a document that describes a snippet as rich
  * text. Source code highlighting can be customised.
  *
- * v1.0 of 28 Dec 2008  - Original version.
- * v1.1 of 14 Jan 2009  - Replaced control char literals with consts.
- * v1.2 of 21 Jun 2009  - Added override of new RenderTitledText method that
- *                        writes out a title followed by some text.
- *                      - Reimplemented RenderTitledList method in terms of
- *                        RenderTitledText.
- *                      - Re-implemented RenderExtra method to take an
- *                        IActiveText object as parameter instead of plain text.
- *                        Conversion of active text to plain text implemented.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -34,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

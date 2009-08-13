@@ -4,13 +4,8 @@
  * Implements a static class that helps with input and output to CodeSnip XML
  * documents.
  *
- * v1.0 of 17 Dec 2008  - Original version.
- * v1.1 of 28 Dec 2008  - Changed root node validation to accept a range of
- *                        supported version numbers and to return actual
- *                        version.
- * v1.2 of 06 Jun 2009  - Added new TXMLDocHelper GetSnippetKind,
- *                        GetStandardFormat and WriteSnippetKind methods.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -31,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -4,41 +4,8 @@
  * Class that performs a test compilation of a routine using all supported and
  * installed versions of Delphi and returns details of success or failure.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Deleted unused TTestCompile destructor.
- * v0.3 of 23 Feb 2005  - Added static, overloaded, Compile method to
- *                        TTestCompile that compiles a specified routine without
- *                        user having to instantiate the class.
- * v0.4 of 05 Apr 2005  - Changed to use TCompilerID to list supported
- *                        compilers.
- *                      - Changed to use revised ICompiler based compiler object
- *                        to perform actual compilation.
- *                      - Changed to call ICompiler object to tidy binary files
- *                        rather than deleting in this object: this allows for
- *                        different file type across compilers.
- * v0.5 of 20 Apr 2005  - Changed to use renamed USourceGen unit and associated
- *                        renamed class and method.
- *                      - Changed to use renamed IntfCompilers unit.
- * v0.6 of 08 Jan 2006  - Altered some method signatures to remove unused
- *                        parameters.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Removed unused unit references.
- * v1.1 of 04 Dec 2006  - Changed to use TTestUnit to generate test unit and
- *                        removed code from this class that formerly did this.
- * v1.2 of 01 Mar 2007  - Added new TTestCompileThread class.
- * v1.3 of 24 Aug 2008  - Added Windows unit to enable inlining in Delphi 2006.
- * v1.4 of 04 Oct 2008  - Made constructor protected and removed Compile
- *                        instance method, leaving only class Compile method.
- *                        static. Modified other methods accordingly.
- *                      - Made private and protected sections strict.
- *                      - Moved TTestCompile class to implementation.
- *                      - Now use ClassName method in all assert statements.
- * v1.5 of 16 Dec 2008  - Iteration of Compilers changed to use for..in loop.
- * v1.6 of 06 Jan 2009  - Changed to use a specified compilers object to perform
- *                        test compilation instead of global Compilers object.
- * v1.7 of 11 Jan 2009  - Moved TTestCompile to interface.
- *                      - TTestCompileThread removed as no longer required.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -59,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

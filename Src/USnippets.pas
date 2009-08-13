@@ -4,129 +4,8 @@
  * Defines a singleton object and subsidiary classes that encapsulate the
  * snippets and categories in the CodeSnip database and user defined databases.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Fixed bug where singletion Snippets object was not
- *                        being freed when application closes.
- * v0.3 of 19 Feb 2005  - Refactoring:
- *                        - Added check that requires only unique categories can
- *                          be added to a category list.
- *                        - Added new IsEqual methods to TCategory and TRoutine.
- * v0.4 of 26 Feb 2005  - Refactoring:
- *                        - Extracted code that reads back end "database" and
- *                          moved to new USnipData unit to decouple Snippets
- *                          object from data storage format. Constructors now
- *                          access database via a new reader object that defines
- *                          standard interface to database.
- *                        - Deleted unused properties.
- *                        - Deleted methods and constructors made redundant by
- *                          code changes.
- *                        - Redefined constructors for TRoutine and TCategory to
- *                          create object from Name=Value list of property
- *                          values.
- * v0.5 of 04 Mar 2005  - Changed to use new TCompilerID enumeration that
- *                        replaces TDelphiVersion.
- * v0.6 of 17 Mar 2005  - Source code read from database is now processed to
- *                        ensure that all end of line markers are CR LF pairs.
- * v0.7 of 20 Apr 2005  - Changed to use renamed IntfCompilers unit.
- * v0.8 of 02 Apr 2006  - Added new TSnippets.Clear method to remove all
- *                        snippets data.
- *                      - Renamed TSnippets.ReLoad method as Load and made clear
- *                        all data if Load raises exception.
- *                      - Changed so that TSnippets class has to be explicitly
- *                        loaded rather than being loaded in constructor.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- *                      - Removed redundant field from TCategory.
- * v1.1 of 26 Oct 2006  - Declared new ISnippets interface.
- *                      - Moved TSnippets to implementation section and changed
- *                        to descend from TInterfacedObject and implement
- *                        ISnippets.
- *                      - Changed private implementation variable to be of
- *                        ISnippets type.
- *                      - Changed TSnippets to implement property read / write
- *                        accessor methods of ISnippets rather than using direct
- *                        field access.
- * v1.2 of 24 Aug 2008  - Added Windows unit to enable inlining in Delphi 2006.
- * v2.0 of 15 Sep 2008  - Major update. Added support for user database:
- *                        - Extended TSnippets, TRoutine, TCategory and
- *                          TRoutineList to support editing, creation and
- *                          deletion of routines in the user database. TSnippets
- *                          now exposes editing facilities via the ISnippetsEdit
- *                          interface.
- *                        - Added numerous record and interface types to
- *                          facilitate exchange of editable data with classes
- *                          that control editing.
- *                        - Changed TRoutine to permit duplicate routine names
- *                          providing they one is in the user and other in main
- *                          database.
- *                        - Added Find method to TCategoryList that finds a
- *                          category by name.
- *                        - Moved database loader code to separate units.
- *                        - Added events triggered by Snippets user database is
- *                          modified.
- *                        - Added enumerators to list objects.
- *                        - Changed TRoutineList.Count property to be two
- *                          overloaded methods, one that returns total number of
- *                          routines in list and another that counts routines in
- *                          user or main databases.
- * v2.1 of 19 Sep 2008  - Modified routine update and deletion methods of
- *                        ISnippetsEdit to update Depends and XRef properties of
- *                        routines that refer to routine being modified.
- *                      - Added new methods to ISnippetsEdit that return lists
- *                        of routines that depend on and cross reference a
- *                        specified routine.
- * v2.2 of 21 Sep 2008  - Improved speed of routine searches in routine list by
- *                        changing to use binrary search.
- *                      - Added constructor, Compare method and overloads for
- *                        "=" and "<>" operators to TRoutineID record.
- *                      - Removed unused StrToBoolean helper routine.
- *                      - Prevented any routine from referencing itself in its
- *                        XRef or Depends properties.
- * v2.3 of 14 Dec 2008  - Added new Clone constructor to TRoutineID.
- *                      - Added new Assign methods to: TRoutineIDList
- *                        implementation, TRoutineData, TRoutineReferences,
- *                        and TRoutineEditData.
- *                      - Added new Init method to TRoutineReferences,
- *                        TRoutineEditData and TRoutineData records and modified
- *                        code that performed initialisation to use this method.
- *                      - Added new TRoutineInfo record and TRoutineInfoList
- *                        dynamic array types.
- * v2.4 of 30 Dec 2008  - Removed Credits, CreditsURL and Comments properties
- *                        from TRoutine and TRoutineData and replaced with new
- *                        Extra active text property.
- *                      - Fixed bug in TSnippets.UpdateRoutine where a possibly
- *                        deleted routine reference is passed to change event.
- * v2.5 of 04 Jan 2009  - Added new TTempRoutine subclass of TRoutine that is
- *                        designed for temporary use and can't be added to the
- *                        Snippets routine list.
- *                      - Added override of TRoutineList.Add in TRoutineListEx
- *                        that raises bug error if an attempt is made to add a
- *                        TTempRoutine.
- *                      - Added method to ISnippetsEdit and implementation that
- *                        creates a new user defined TTempRoutine instance.
- * v2.6 of 10 Jan 2009  - Added overload of ISnippetsEdit.CreateTempRoutine
- *                        and implementation that clones a routine as a
- *                        TTempRoutine.
- *                      - All Asserts now use ClassName method to report class.
- * v3.0 of 09 Jun 2009  - Added support for difference kinds of snippet.
- *                        TRoutine modified to have a Kind property that
- *                        determines if snippet is routine, type, constant or
- *                        freeform.
- *                      - Deleted TRoutine.StandardFormat property and
- *                        associated code.
- *                      - Added TRoutine.CanCompile method.
- *                      - Made Items proptery of IRoutineIDList writeable.
- *                      - Removed TRoutineID, IRoutineIDListEnum,
- *                        IRoutineIDList and TRoutineIDList. Renamed versions
- *                        now in USnippetIDs. Private TSnippetIDListEx added to
- *                        implementation to get required overloaded constructor
- *                        not available in USnippetIDs. Modified other classes
- *                        accordingly.
- *                      - Messages that referred to "routine" changed to refer
- *                        to "snippet".
- * v3.1 of 11 Jul 2009  - Added new TRoutineList.ContainsKinds method and
- *                        TSnippetKinds type.
- *
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -147,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -3,13 +3,8 @@
  *
  * Implements a class that can create and restore backups of the user database.
  *
- * v1.0 of 13 Sep 2008  - Original version.
- * v1.1 of 22 May 2009  - Fixed bug where restoring files greater than 32Kb
- *                        caused a stream read error. Changed file format to
- *                        ver 2 and kept ability to read v1 files.
- * v1.2 of 12 Jul 2009  - Replaced references to UDataStreamReader and
- *                        UDataStreamWriter units with UDataStreamIO.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -30,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

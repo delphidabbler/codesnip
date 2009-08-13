@@ -4,36 +4,8 @@
  * Implements class that can store application settings in application wide and
  * per user persistent storage.
  *
- * v0.1 of 04 Apr 2006  - Original version. This is a heavily revised version of
- *                        settings code previously in UAppInfo unit.
- * v0.2 of 07 Apr 2006  - Added new ssApplication section mapped to ssUser
- *                        storage.
- * v0.3 of 11 Apr 2006  - Deleted unused ISectionStorage interface.
- *                      - Removed code relating to unused ssGlobal storage.
- * v1.0 of 28 May 2006  - Improved and corrected comments.
- *                      - Removed warnings about un-fixed interfaces.
- *                      - Moved unit reference from interface to implementation.
- *                      - Changed to get name of CodeSnip's exe file from
- *                        TAppInfo.AppExeFile.
- * v1.1 of 29 Oct 2006  - Added new ssFindXRefs section to store persistent
- *                        settings for cross-reference search dialog box.
- * v1.2 of 09 Nov 2006  - Added new ssHiliteOutput storage section to store
- *                        syntax highlighter customisation.
- * v1.3 of 07 Sep 2007  - Added new ssPreferences sections for storing program
- *                        preferences.
- *                      - Removed ssSourceOutput section: now use SourceCode
- *                        subsection of ssPreferences.
- * v1.4 of 17 Oct 2007  - Removed ssHiliteOutput settings type: now use
- *                        Hiliter subsection of ssPreferences.
- * v1.5 of 14 Aug 2008  - Added new "common" storage and revised to use this
- *                        storage for application wide persistent settings while
- *                        retaining "user" storage for per-user settings.
- * v1.6 of 26 Apr 2009  - Added new ssUserInfo section to store user name and
- *                        email address used when submitting data to web
- *                        services.
- * v1.7 of 25 May 2009  - Changed per-user config file name from User.ini to
- *                        User.3.ini.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -54,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

@@ -3,13 +3,8 @@
  *
  * Implements a custom action used to trigger an HTML anchor element.
  *
- * v1.0 of 01 Nov 2007  - Original version.
- * v1.1 of 25 May 2009  - Changed action caption for akRoutine anchor from "Show
- *                        Routine" to "Show Snippet".
- *                      - Made private and protected class sections strict.
- * v1.2 of 12 Jul 2009  - Added support for new display category action kind to
- *                        display "Show category" in menu.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -30,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

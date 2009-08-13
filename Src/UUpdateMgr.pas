@@ -3,53 +3,8 @@
  *
  * Object used to manage database updates from web.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Fixed bug where download manager object was not being
- *                        freed with TUpdateMgr.
- * v0.3 of 19 Feb 2005  - Refactoring: stored name of local backup directory in
- *                        a TUpdateMgr field and clarified code that restores
- *                        backups.
- * v0.4 of 20 Nov 2005  - Revised to record full and abreviated error messages
- *                        describing exceptions in new LongError and ShortError
- *                        properties.
- * v0.5 of 12 Jan 2006  - Fixed error which was swallowing exceptions raised
- *                        during file download.
- * v0.6 of 20 Jan 2006  - Fixed error in detecting and hence deleting backup
- *                        files and directory after update.
- * v0.7 of 02 Apr 2006  - Heavily refactored.
- *                      - Moved reading of local and remote to new
- *                        TLocalFileList and TRemoteFileList classes.
- *                      - Moved actual downloading of updated files and deletion
- *                        of obsolete files to new TDownloadFileList and
- *                        TObsoleteFileList classes.
- *                      - Separated code that determines what files to update
- *                        and delete to new TUpdateAnalyser class.
- *                      - Separated code that controls downloads and file
- *                        deletion to new TFileUpdater class. This refactoring
- *                        also fixes bugs in backup file restoration code that
- *                        affected v0.6 of this unit.
- *                      - Deleted usStarting state from TUpdateStatus
- *                        enumeration.
- * v0.8 of 03 Apr 2006  - Modified to log on to and log off from webserver using
- *                        revised download manager object.
- *                      - Added new status update codes re log on / off.
- * v0.9 of 01 May 2006  - Major revision to accomodate new v4 web service. All
- *                        handling of download manager is now within this unit.
- *                        Exposed property to enable callers to access news
- *                        items downloaded as part of update process.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- *                      - Changed to handle renamed EFileUpdater exception.
- * v1.1 of 04 Nov 2007  - Changed to use IAssignable cast to assign to
- *                        IDOSDateTime objects.
- * v1.2 of 24 Aug 2008  - Modified code that determines whether update is needed
- *                        to check for same number of files in local and remote
- *                        database and update if not the same.
- *                      - Some refactoring to use for..in construct.
- *                      - Modified visibility specifiers to be strict.
- * v1.3 of 13 May 2009  - Changed to use revised TDownloadMgr parameterless
- *                        constructor.
- *                      - Removed second parameter to TUpdateMgr construtor.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -70,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

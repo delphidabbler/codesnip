@@ -6,16 +6,8 @@
  *
  * Requires DelphiDabbler Window State Components v5.3 of later.
  *
- * v0.1 of 04 Apr 2006  - Original version.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 25 Feb 2007  - Changed to locate window at screen centre when there
- *                        is no record of window state in persistent storage.
- *                      - Changed to ignore state of window if minimised.
- * v1.2 of 05 Jun 2008  - Added new OverviewTab and DetailTab properties to
- *                        permit persistence of selected tabs in main pane.
- * v1.3 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
- *                      - Made private and protected sections strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -34,10 +26,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

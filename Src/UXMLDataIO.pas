@@ -4,41 +4,8 @@
  * Implements classes that can read and write databases stored in XML format
  * with associated source code files.
  *
- * v1.0 of 15 Sep 2008  - Original version.
- * v1.1 of 17 Sep 2008  - Fixed bug that caused an exception to be raised if
- *                        loader requests routines for a category that doesn't
- *                        exist in the XML file.
- * v1.2 of 11 Oct 2008  - Added support for Delphi 2009.
- *                      - Assert messages now use ClassName to get class name.
- *                      - Refactoring: pulled out common code from methods that
- *                        get routine references into a separate method.
- * v1.3 of 15 Dec 2008  - Removed unused StringToChar subsidiary function.
- *                      - Made one private section strict.
- * v1.4 of 17 Dec 2008  - Extracted code that is common with UXMLDataIO and
- *                        moved to separate unit.
- *                      - Changed exception handling to work with ECodeSnipXML.
- * v1.5 of 28 Dec 2008  - Modified to support new TRoutine.Extra property.
- *                      - Now writes v2 of XML file and imports both v1 and v2.
- *                        v1 and v2 differ in how Extra data is read.
- *                      - Modified reader to detect and record XML version.
- *                      - Removed support for routine's Credits, CreditsURL and
- *                        Comments properties.
- * v1.6 of 14 Jan 2009  - Replaced control char literals with constants.
- * v1.7 of 06 Jun 2009  - Updated to write v3 files that have no StandardFormat
- *                        nodes but instead have Kind nodes that specify the
- *                        kind of snippet: routine, const, type or freeform.
- *                      - Reader code can handle v1..v3 formats.
- *                      - Changed code that reads old StandardFormat property to
- *                        use TXMLDocHelper class.
- *                      - Renamed some identifiers.
- *                      - Changed error messages that refer to "routine" to
- *                        refer to "snippet".
- * v1.8 of 05 Jul 2009  - Revised to export in v3 file format if possible but to
- *                        use v4 format if v3 of REML is required for any
- *                        snippet extra properties. This is to prevent earlier
- *                        program versions from reading REML they won't render
- *                        properly.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -59,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

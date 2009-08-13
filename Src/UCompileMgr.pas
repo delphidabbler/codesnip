@@ -4,10 +4,8 @@
  * Provides object that manage test compilation and assoicated UI, display of
  * compilation results via a callback and and compiler configuration.
  *
- * v1.0 of 10 Jan 2009  - Original version.
- * v1.1 of 16 May 2009  - Changed TMainCompileMgr.CanCompile method to call new
- *                        TRoutine.CanCompile method.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -28,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

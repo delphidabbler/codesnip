@@ -21,16 +21,8 @@
  *
  * Unit originally named UIntfObjects.pas. Changed to UBaseObjects.pas at v2.0.
  *
- * v0.1 of 30 Jan 2005  - Original version, named UIntfObjects.pas.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- * v1.1 of 31 Oct 2007  - Made TAggregatedOrLoneObject's constructors virtual.
- * v2.0 of 05 Oct 2008  - Renamed to UBaseObjects.pas
- *                      - Added new TNoConstructObject and
- *                        TNoPublicConstructObject classes that prevent use of
- *                        public constructor. Latter provides a protected
- *                        constructor for use by base classes.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -49,10 +41,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

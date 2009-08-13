@@ -3,32 +3,8 @@
  *
  * Class that highlights text in web browser that match a search criteria.
  *
- * v0.1 of 28 Feb 2005  - Original version.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- *                      - Deleted redundant const in TWBHighlighter.Create.
- * v1.1 of 07 Nov 2006  - Changed to use UCSSUtils methods to generate CSS
- *                        attributes.
- * v1.2 of 17 Feb 2007  - We now create text ranges by calling a method of
- *                        THTMLDocHelper.
- *                      - Changed to use colour constants from UColours for
- *                        text search highlighting. Highlight made paler yellow.
- *                      - Added new assertions to test that text ranges passed
- *                        to methods are assigned.
- *                      - Changed to use TWBHelper to wait for document to load
- *                        and to check it contains a valid HTML document. Raises
- *                        EBug exception if not.
- * v1.3 of 14 Oct 2007  - Fixed strange bug that was raising EOleException when
- *                        user clicks scroll bar on scrolling display then
- *                        selects item with no scroll bar
- *                        (IHTMLTxtRange.moveToPoint(0, 0); raised "expecting
- *                        method or property" exception!!). Fixed by re-creating
- *                        text range for each search word and removing call to
- *                        moveToPoint).
- * v1.4 of 25 Jan 2009  - Modified to generate HTML tags using routines from
- *                        UHTMLUtils rather than hard wiring them.
- *                      - Assertions now get class name from ClassName method.
- *                      - Made private section strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -49,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

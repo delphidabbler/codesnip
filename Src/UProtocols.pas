@@ -5,49 +5,8 @@
  * protocol handler classes according to a URL's protocol. Also provides base
  * class for all protocol implementations.
  *
- * v1.0 of 25 Oct 2006  - Original version.
- * v2.0 of 14 Nov 2006  - Complete rewrite.
- *                      - Renamed unit from UProtocolHandler to UProtocols.
- *                      - Renamed TProtocolHandler as TProtocol.
- *                      - Removed IProtocolHandler and removed from protocol
- *                        handler classes.
- *                      - Moved code from THTTPProtocolHandler and
- *                        TShellExecProtocolHandler to new UHTTProtocol unit
- *                        where both classes were merged as THTTPProtocol.
- *                      - Removed now unused TExecuteProtocolHandler class.
- *                      - Renamed TProtocolHandlerFactory as TProtocolFactory.
- *                      - Added new TProtocolRegistrar and TProtocolRegisterItem
- *                        private classes to manage registered protocol classes
- *                        along with private singleton instance of
- *                        TProtocolRegistrar.
- *                      - Changed TProtocolHandlerFactory to work with
- *                        registered protocol classes rather than hard wired
- *                        protocol classes. This lets new protocols be added
- *                        without modifying this unit.
- * v2.1 of 04 Nov 2007  - Removed redundant uses clause reference to removed
- *                        UHelpTopicAction unit along with other unused units.
- * v2.2 of 04 Oct 2008  - Changed TProtocolFactory to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- *                      - Made private and protected sections of various classes
- *                        strict.
- *                      - Now use ClassName method in assert statement.
- * v3.0 of 05 Jul 2009  - Marked TProtocol as abstract.
- *                      - Added a TProtocol.SupportsProtocol abstract class
- *                        method that checks if class supports the protocol of a
- *                        URL.
- *                      - Made TProtocolRegistrar a private class of
- *                        TProtocolFactory, changed implementation to use
- *                        TClassList instead of custom object in object list and
- *                        added enumerator.
- *                      - Removed the now-unused TProtocolRegisterItem class.
- *                      - Removed protocol name from
- *                        TProtocolFactory.RegisterProtocol method - only class
- *                        reference now provided.
- *                      - Added new EProtocol exception for use in base classes.
- * v3.1 of 10 Jul 2009  - Removed unnecessary code that duplicated construction
- *                        of protocol registrar.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -68,6 +27,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

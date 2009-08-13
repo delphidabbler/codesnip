@@ -6,24 +6,8 @@
  *
  * Originally named UMemoInfo.pas. Changed to UMemoHelper.pas at v1.1.
  *
- * v0.1 of 30 Apr 2006  - Original version, named UMemoInfo.pas.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- * v1.1 of 13 May 2007  - Renamed unit from UMemoInfo to UMemoHelper and renamed
- *                        TMemoInfo as TMemoHelper.
- *                      - Changed TMemoHelper to wrap a TCustomMemo rather than
- *                        TMemo, to allow common functionality to apply to RTF
- *                        controls.
- *                      - Added code to set a memo control margin.
- * v1.2 of 15 Dec 2008  - Modified to use TRectEx record instead of TRect.
- *                      - Made private section strict.
- * v1.3 of 17 Dec 2008  - Fixed bug introduced in v1.2 in SetMargin method. Was
- *                        offsetting rather than shrinking display rectangle.
- *                      - Added new private SetRect method.
- * v1.4 of 18 Jul 2009  - Reimplemented TMemoHelper.LineExtent method to take
- *                        account of memo control's font.
- *                      - Changed assertions to use ClassName.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -44,6 +28,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

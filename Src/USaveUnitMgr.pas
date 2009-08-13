@@ -4,36 +4,8 @@
  * Defines a class that manages generation, previewing and saving of a pascal
  * unit.
  *
- * v1.0 of 29 Oct 2006  - Original version.
- * v1.1 of 09 Feb 2007  - Added disclaimer to generated unit.
- *                      - Modified to use new TSourceGen.IncludeRoutines method
- *                        to add required routines to unit rather than adding
- *                        one by one using IncludeRoutine.
- * v1.2 of 02 Jul 2007  - Fixed typo in source code disclaimer comment.
- *                      - Added code to build a document title and to include it
- *                        in generated units.
- *                      - A unit file name is now suggested for dialog box.
- *                      - Changed default unit name / filename from
- *                        "PreviewUnit" to "Snippets".
- * v1.3 of 26 Sep 2007  - Changed code that checks for acceptable file name to
- *                        pass any error message back via OnCheckFileName event
- *                        handler rather than displaying error in a message box.
- * v1.4 of 13 Sep 2008  - Changed to use a different header comment if snippet
- *                        contains only user defined routines.
- *                      - Changed document title to remove reference to
- *                        database.
- *                      - Changed to use for..in to loop through routine list.
- * v1.5 of 05 Oct 2008  - Made constructor protected and made Execute method
- *                        static.
- *                      - Made protected and private sections strict.
- *                      - Now use ClassName method in assert statement.
- * v1.6 of 13 May 2009  - URL and program information now obtained from TWebInfo
- *                        and TAppInfo respectively instead of UGlobals unit.
- * v1.7 of 16 May 2009  - Modified to use renamed TSourceGen methods.
- *                      - Renamed some fields and variables.
- * v1.8 of 10 Jul 2009  - Changed to generate and use comments as IStringList
- *                        rather than TStringList.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -54,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

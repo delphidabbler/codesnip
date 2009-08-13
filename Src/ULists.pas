@@ -3,8 +3,8 @@
  *
  * Defines various classes that maintain lists of data of various types.
  *
- * v1.0 of 25 May 2009  - Original version, containing TIntegerList only.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -25,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

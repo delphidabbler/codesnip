@@ -4,29 +4,8 @@
  * Provides details of the application's version information and provides a
  * record used to manipulate version numbers.
  *
- * v0.1 of 07 Apr 2006  - Original version.
- * v0.2 of 01 May 2006  - Changed properties to class functions to enabled
- *                        access to product and file versions without user
- *                        instantiating object.
- *                      - Added new ProductVerNum class function to get product
- *                        number as TVersionNumber.
- *                      - Added TVersionNumber type as alias to TPJVersionNumber
- *                        to save other units having to use TPJVersionInfo just
- *                        to get this structure.
- *                      - Added new class function to convert version number as
- *                        string into TVersionNumber.
- * v1.0 of 26 May 2006  - Improved and corrected comments.
- *                      - Added new LegalCopyrightStr and ProductVersionStr
- *                        class functions.
- * v2.0 of 20 Jun 2009  - Re-implemented TVersionInfo as static wrapper round
- *                        TPJVersionInfo rather than extension of it.
- *                      - Changed TVersionNumber into a record with methods that
- *                        can be compared and implicitly converted from a
- *                        TPJVersionInfo record and to and from strings.
- *                      - Removed TVersionInfo.StrToVerNumber and
- *                        TVersionInfo,VerNumberToStr. Now use implicit and
- *                        explicit conversions of TVersionNumber instead.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -47,6 +26,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

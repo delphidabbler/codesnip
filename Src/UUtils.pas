@@ -3,68 +3,8 @@
  *
  * General utility routines.
  *
- * v0.1 of 30 Jan 2005  - Original version.
- * v0.2 of 18 Feb 2005  - Removed unused forward declarations.
- * v0.3 of 17 Mar 2005  - Added new StringToFile routine and private
- *                        StringToStream routine it requires.
- * v0.4 of 25 Apr 2005  - Added new FilterIndexToExt and ExtToFilterIndex
- *                        functions.
- * v0.5 of 20 Jan 2006  - Made IsDirectory function accessible from other units
- *                        by moving prototype to interface section.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- *                      - Relocated and rationalised $WARN directives.
- *                      - Removed units names preceeding several routine calls
- *                        and constants.
- *                      - Moved some unit references from interface to
- *                        implementation.
- *                      - Renamed parameter and local variable in EnsureFolders
- *                        routine.
- * v1.1 of 07 Nov 2006  - Added new QuoteSpacedString routine and supporting
- *                        routines.
- * v1.2 of 09 Feb 2007  - Added new DateStamp routine.
- *                      - Changed all calls to objects' Free method to calls to
- *                        FreeAndNil.
- * v1.3 of 12 Feb 2007  - Added new MakeSentence function.
- *                      - Reimplemented IsDirectory, DirToPath and PathToDir as
- *                        simple aliases for SysUtils routines DirectoryExists,
- *                        IncludeTrailingPathDelimiter and
- *                        ExcludeTrailingPathDelimiter respectively.
- *                      - Reimplemented EnsureFolders using ForceDirectories
- *                        from SysUtils and changed parameter to a const.
- * v1.4 of 17 Feb 2007  - Added new GetIntf procedure.
- * v1.5 of 02 Jul 2007  - Added new StripWhiteSpace and CapitaliseWords
- *                        routines.
- *                      - Added new private IsWhiteSpace routine and
- *                        cWhiteSpaceChars constant.
- *                      - Changed all routines that process white space to use
- *                        new cWhiteSpaceChars constant.
- * v1.6 of 30 May 2008  - Removed unused GetFileDate and SetFileDate routines.
- * v1.7 of 24 Aug 2008  - Provided work-arounds for deprecated warnings in
- *                        Delphi 2006:
- *                        - Redeclared SysUtils faVolume attribute.
- *                        - Added FileAge routine to replace SysUtils version.
- * v1.8 of 08 Sep 2008  - Added TrimsStrs param to ExplodeStr routine that trims
- *                        leading and trailing spaces from fields stripped from
- *                        string.
- *                      - Added FileToString and supporting StreamToString
- *                        routines moved from UIniDataReader unit.
- *                      - Modified ListFiles to optionally exclude directory
- *                        names from list.
- * v1.9 of 14 Dec 2008  - Added new LastPos, UnixLineBreaks, TrimChar,
- *                        TrimLeftChar, TrimRightChar and IsBaseFileName
- *                        routines.
- *                      - Moved FilterIndexToExt and ExtToFilterIndex to
- *                        UOpenDialogHelper unit.
- * v1.10 of 15 Dec 2008 - Added new Pause routine with required ProcessMessages
- *                        private routine.
- * v1.11 of 29 Dec 2008 - Added new CountDelims routine.
- * v1.12 of 03 Jan 2009 - Added new TextWrap routine.
- * v1.13 of 14 Jan 2009 - Changed UnixLineBreaks to use ReplaceStr instead of
- *                        StringReplace.
- *                      - Removed unnecessary unit qualifiers.
- *                      - Replaced some control chars with constants.
- *                      - Removed unnecessary $WARN directive.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -85,6 +25,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

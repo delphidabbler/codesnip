@@ -4,15 +4,8 @@
  * Static class that manages backups of data files. It can back up the local
  * data directory, restore the backup and delete it.
  *
- * v0.1 of 02 Apr 2006  - Original version.
- * v0.2 of 04 Apr 2006  - Changed to use TAppInfo class renamed from
- *                        TAppLocations.
- * v1.0 of 24 May 2006  - Improved and corrected comments.
- * v1.1 of 04 Oct 2008  - Changed TDataBackupMgr to derive from
- *                        TNoConstructObject and hence prevented it from being
- *                        constructed.
- *                      - Made private section strict.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -31,8 +24,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2008 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

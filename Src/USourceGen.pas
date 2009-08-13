@@ -6,76 +6,8 @@
  *
  * Originally named UUnitGen.pas. Renamed as USourceGen.pas as at v0.4.
  *
- * v0.1 of 30 Jan 2005  - Original version named UUnitGen.pas.
- * v0.2 of 19 Feb 2005  - Refactoring:
- *                        - Added new ExtractPrototype function that splits out
- *                          routine prototype from routine source code.
- *                        - Converted code that generates unit to use a
- *                          TStrStreamWriter object to help with writing.
- * v0.3 of 17 Mar 2005  - Added code that can generate an include file for
- *                        specified routines.
- *                      - Added support for writing routine descriptions as
- *                        comments in different styles.
- *                      - Method used to record user-specified and required
- *                        routines has been generalised.
- *                      - Removed StringToFile helper routine - now use routine
- *                        in UUtils.
- * v0.4 of 20 Apr 2005  - Renamed unit from UUnitGen.pas to USourceGen.pas.
- *                      - Renamed TUnitGen class as TSourceGen.
- *                      - Renamed TUnitGen's GenerateFile and GenerateAsString
- *                        methods as UnitFile and UnitAsString in TSourceGen
- *                        respectively.
- * v0.5 of 06 Jan 2006  - Changed comments written to include-style files to
- *                        make sense both with saved and copied snippets.
- * v1.0 of 25 May 2006  - Improved and corrected comments.
- *                      - Localised source code comment text.
- * v1.1 of 29 Oct 2006  - Added new static UnitNameFromFileName and
- *                        IsFileNameValidUnitName methods.
- *                      - Fixed bug in UnitFile method that was ignoring
- *                        CommentStyle and always using "no comment" style.
- *                      - Added facility to specify header comments for
- *                        generated units. Removed fixed header comments.
- *                      - Pulled TextWrap routine from containing routine and
- *                        made accessible by other code in unit.
- *                      - Made uses unit list word wrap.
- *                      - Made minor changes to comments used in .inc files.
- * v1.2 of 09 Feb 2007  - Added new TSourceGen.IncludeRoutines method to enable
- *                        lists of routines to be added to the source code.
- *                      - Extracted code that writes header comments into a
- *                        separate method.
- *                      - Modified to use user provided header comments instead
- *                        of hard wired title with generating include files.
- *                      - Replaced calls to objects' Free method with calls to
- *                        FreeAndNil.
- * v1.3 of 13 Sep 2008  - Modified to work with user defined routines: csAfter
- *                        comment style now replaced with csBefore for routines
- *                        that are not in standard format.
- * v1.4 of 03 Jan 2009  - Moved TextWrap routine to UUtils unit.
- * v1.5 of 13 Jan 2009  - Replaced control char literals with constants.
- *                      - Made private class section strict.
- *                      - Deleted unused method.
- *                      - Now use constants for line width and indent size.
- * v2.0 of 06 Jun 2009  - Added support for constants, types and freeform code
- *                        as well as routines to TSourceGen. TRoutine.Kind
- *                        property now used to get kind of snippet being output.
- *                      - Pulled out code from TSourceGen that analyses the
- *                        code to be output into new TSourceAnalyser class.
- *                      - Pulled out most formatting code from TSourceGen into
- *                        new classes that format consts and types and one that
- *                        formats routines. Old formatting routines removed.
- *                      - Added new TConstAndTypeList class to manage order that
- *                        consts and types are written to source code.
- *                      - Refactored some TSourceGen code and removed redundant
- *                        methods.
- *                      - Renamed TSourceGen's IncludeRoutine & IncludeRoutines
- *                        methods as IncludeSnippets & IncludeSnippets.
- *                      - Added support for calling conventions and overload
- *                        directives in routine prototypes.
- * v2.1 of 08 Jul 2009  - Fixed bug where units required by constants and type
- *                        definitions were not being added to generated units.
- * v2.2 of 10 Jul 2009  - Changed to work with header comments as IStringList
- *                        instead of TStrings.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -96,6 +28,9 @@
  *
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }
