@@ -4,49 +4,8 @@
  * Implements a static class that can display message and confirmation dialog
  * boxes at an appropriate position on screen.
  *
- * v0.1 of 24 Feb 2005  - Original version.
- * v1.0 of 25 Feb 2006  - Improved and corrected comments.
- *                      - Removed all help context parameters and references.
- *                        Unused and not appropriate to program's HTML help
- *                        system.
- * v1.1 of 29 Oct 2006  - When dialog box called with nil Form parameter and
- *                        Screen.ActiveForm is nil, Application.MainForm is now
- *                        use as dialog box parent.
- * v1.2 of 12 Feb 2007  - Ensures that error messages are terminated by
- *                        appropriate punctuation, i.e. a full stop, an
- *                        exclamation mark or a question mark.
- * v2.0 of 26 Sep 2007  - Replaced all custom alignment code with call to
- *                        TDlgAligner.
- *                      - Replaced first "Form" parameter of each TMessageBox
- *                        method with "AlignTo" parameter that identifies
- *                        component that the message box is to be aligned to.
- *                      - Added "const" keyword to all constant parameters.
- * v2.1 of 15 Jun 2008  - Added calls to TDlgHelper to set dialog box's parent.
- *                        This change needed for app to work correctly with
- *                        Vista task bar.
- *                      - Changed to use renamed UDlgHelper unit.
- *                      - Renamed all "AlignTo" parameters as "Parent".
- *                      - Registered dialog form with object that fixes Delphi's
- *                        Alt key bug.
- * v2.2 of 04 Oct 2008  - Changed TMessageBox to derive from TNoConstructObject
- *                        and hence prevented it from being constructed.
- *                      - Made private section strict.
- *                      - Now use ClassName method in assert statement.
- * v3.0 of 06 Dec 2008  - Rewritten to use a custom dialog box form implemented
- *                        in this unit rather than code from Dialogs unit.
- *                      - Added new TMessageBox.Custom method that can display
- *                        a dialog box with custom buttons.
- *                      - Added new record type to use to define custom buttons.
- *                      - Blank lines included in text are now used as paragraph
- *                        spacers.
- *                      - Sealed TMessageBox.
- * v3.1 of 15 Dec 2008  - Further modified to use TRectEx record instead of
- *                        TRect.
- * v3.2 of 14 Jan 2009  - Made "&" signs in dialog box appear literally instead
- *                        of being treated as accelerator characters.
- *                      - Deleted LF const: now use equivalent in UConsts.
- * v3.3 of 10 Jul 2009  - Changed to use OS' default font in message boxes.
- *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -68,6 +27,9 @@
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
+ * Contributor(s)
+ *   NONE
+ *
  * ***** END LICENSE BLOCK *****
 }
 
@@ -84,6 +46,14 @@ uses
   Classes, Controls, Dialogs,
   // Project
   UBaseObjects, UIStringList;
+
+
+resourcestring
+  // Button captions
+  sBtnYes = '&Yes';       // Yes button caption
+  sBtnNo = '&No';         // No button caption
+  sBtnOK = 'OK';          // OK button caption
+  sBtnCancel = 'Cancel';  // Cancel button caption
 
 
 type
@@ -310,11 +280,6 @@ type
 
 { TMessageBox }
 
-resourcestring
-  sYes = '&Yes';  // yes button caption
-  sNo = '&No';    // no button caption
-  sOK = 'OK';     // OK button caption
-
 class function TMessageBox.Confirm(const Parent: TComponent;
   const Msg: string): Boolean;
   {Displays a message in a confirmation dialog box located relative to owner
@@ -332,8 +297,8 @@ begin
     Msg,
     mtConfirmation,
     [
-      TMessageBoxButton.Create(sYes, mrYes, True),
-      TMessageBoxButton.Create(sNo, mrNo, False, True)
+      TMessageBoxButton.Create(sBtnYes, mrYes, True),
+      TMessageBoxButton.Create(sBtnNo, mrNo, False, True)
     ]
   ) = mrYes;
 end;
@@ -429,7 +394,7 @@ class procedure TMessageBox.Error(const Parent: TComponent; const Msg: string);
 begin
   MessageBeep(MB_ICONERROR);
   Display(
-    Parent, Msg, mtError, [TMessageBoxButton.Create(sOK, mrOK, True, True)]
+    Parent, Msg, mtError, [TMessageBoxButton.Create(sBtnOK, mrOK, True, True)]
   );
 end;
 
@@ -448,7 +413,7 @@ begin
     Parent,
     Msg,
     mtInformation,
-    [TMessageBoxButton.Create(sOK, mrOK, True, True)]
+    [TMessageBoxButton.Create(sBtnOK, mrOK, True, True)]
   );
 end;
 
