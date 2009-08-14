@@ -25,10 +25,6 @@ inherited UserDBEditDlg: TUserDBEditDlg
       OnChange = pcMainChange
       object tsCode: TTabSheet
         Caption = 'Code'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblDescription: TLabel
           Left = 3
           Top = 343
@@ -118,7 +114,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
           Width = 145
           Height = 21
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 4
         end
         object cbKind: TComboBox
@@ -127,7 +123,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
           Width = 145
           Height = 21
           Style = csDropDownList
-          ItemHeight = 0
+          ItemHeight = 13
           TabOrder = 1
           OnChange = cbKindChange
         end
@@ -135,10 +131,6 @@ inherited UserDBEditDlg: TUserDBEditDlg
       object tsReferences: TTabSheet
         Caption = 'References'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblXRefs: TLabel
           Left = 3
           Top = 3
@@ -231,10 +223,6 @@ inherited UserDBEditDlg: TUserDBEditDlg
       object tsComments: TTabSheet
         Caption = 'Extra Information'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblExtra: TLabel
           Left = 3
           Top = 3
@@ -300,10 +288,6 @@ inherited UserDBEditDlg: TUserDBEditDlg
       object tsCompileResults: TTabSheet
         Caption = 'Compile Results'
         ImageIndex = 3
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblCompilers: TLabel
           Left = 3
           Top = 3
@@ -1073,6 +1057,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
     object actViewExtra: TAction
       Caption = 'Render Extra Information...'
       OnExecute = actViewExtraExecute
+      OnUpdate = actViewExtraUpdate
     end
   end
 end
