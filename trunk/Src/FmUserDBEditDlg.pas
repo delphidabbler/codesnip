@@ -132,6 +132,7 @@ type
     procedure lblViewCompErrsClick(Sender: TObject);
     procedure pcMainChange(Sender: TObject);
     procedure actViewExtraExecute(Sender: TObject);
+    procedure actViewExtraUpdate(Sender: TObject);
   strict private
     fSnippet: TRoutine;         // Snippet being edited (nil for new snippet)
     fCatNames: TStringList;     // List of names of available categories
@@ -432,6 +433,15 @@ procedure TUserDBEditDlg.actViewExtraExecute(Sender: TObject);
 begin
   CheckExtra;
   TViewExtraDlg.Execute(Self, BuildExtraActiveText);
+end;
+
+procedure TUserDBEditDlg.actViewExtraUpdate(Sender: TObject);
+  {Disables view extra information action if no markup is entered in Extra
+  Information tab.
+    @param Sender [in] Reference to action to be updated.
+  }
+begin
+  (Sender as TAction).Enabled := Trim(edExtra.Text) <> '';
 end;
 
 class function TUserDBEditDlg.AddNewRoutine(AOwner: TComponent): Boolean;
