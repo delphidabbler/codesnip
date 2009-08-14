@@ -19,6 +19,40 @@ v1.0 of 16 Jun 2009  - Original version.
         04 Jul 2009  - IMPORTED TO SVN.
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\comp-routine.js
+________________________________________________________________________________
+
+v0.1 of 27 Jan 2005  - Original script (compcheck.js).
+v0.2 of 20 Jan 2005  - Renamed as comp-routine.js.
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+v1.1 of 24 Oct 2006  - Changed to get hint text from variables from
+                       detail-consts.js.
+                     - Added code to update hint when "view unit" link text
+                       changes.
+v1.2 of 24 Nov 2006  - Changed ToggleUnitView() to simply call new
+                       external.ToggleTestUnit() instead of showing or hiding
+                       unit.
+v1.3 of 26 Nov 2006  - Replaced direct calls to external object with calls to
+                       functions in external.js.
+                     - Renamed ShowSrc() function as showTestUnit().
+                     - Removed ToggleUnitView() function. Replaced by routine
+                       external.js.
+v1.4 of 03 Dec 2006  - Added showTestCompileHint() function.
+v1.5 of 04 Dec 2006  - Modified showTestUnit() so that it only re-displays
+                       hint when the mouse is over the action link. Added
+                       inTestUnitLink global variable and enterTestUnitLink()
+                       and exitTestUnitLink() functions to do this.
+                     - Modified showTestUnit() to change image when unit view
+                       state changes.
+v1.6 of 25 Jan 2009  - Changed showTestUnit() to change image title.
+v2.0 of 07 Jun 2009  - Removed support for showing/hiding test unit:
+                     - vShowHideHint and inTestUnitLink variables removed.
+                     - Removed enterTestUnitLink(), exitTestUnitLink() and
+                       showTestUnit() functions.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Res\HTML\comp-routine-dbase-tplt.html
 ________________________________________________________________________________
 
@@ -702,7 +736,7 @@ ________________________________________________________________________________
 11 Aug 2008 - DELETED.
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-Res\Img\Delphi2007w.bmp
+Res\Img\Delphi2007.bmp
 ________________________________________________________________________________
 
 08 May 2007 - Added to project.
