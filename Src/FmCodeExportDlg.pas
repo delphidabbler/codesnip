@@ -72,6 +72,11 @@ type
     procedure WriteOutputFile;
       {Writes export file.
       }
+  strict protected
+    procedure ArrangeForm; override;
+      {Aligns controls vertically where necessary to accomodate height of
+      controls that depend on UI font.
+      }
   public
     class procedure Execute(const AOwner: TComponent; const Snippet: TRoutine);
       {Displays export dialog box and writes export file if user OKs entries.
@@ -90,13 +95,27 @@ uses
   // Delphi
   SysUtils, Dialogs,
   // Project
-  UCodeImportExport, UExceptions, UMessageBox, UOpenDialogHelper, USaveDialogEx,
-  UUtils;
+  UCodeImportExport, UCtrlArranger, UExceptions, UMessageBox, UOpenDialogHelper,
+  USaveDialogEx, UUtils;
 
 
 {$R *.dfm}
 
 { TCodeExportDlg }
+
+procedure TCodeExportDlg.ArrangeForm;
+  {Aligns controls vertically where necessary to accomodate height of controls
+  that depend on UI font.
+  }
+begin
+  frmSnippets.Top := TCtrlArranger.BottomOf(lblRoutines, 4);
+  lblFile.Top := TCtrlArranger.BottomOf(frmSnippets, 8);
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(lblFile, 4), [edFile, btnBrowse]
+  );
+  pnlBody.ClientHeight := TCtrlArranger.BottomOf([edFile, btnBrowse], 8);
+  inherited;
+end;
 
 procedure TCodeExportDlg.btnBrowseClick(Sender: TObject);
   {Handles clicks on browse (ellipsis) button by displaying file save dialog box
