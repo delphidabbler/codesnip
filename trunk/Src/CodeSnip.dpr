@@ -141,6 +141,7 @@ uses
   UBugReporter in 'UBugReporter.pas',
   UCategoryAction in 'UCategoryAction.pas',
   UCheckSum in 'UCheckSum.pas',
+  UChkListStateMgr in 'UChkListStateMgr.pas',
   UClipboardHelper in 'UClipboardHelper.pas',
   UCodeImportExport in 'UCodeImportExport.pas',
   UCodeImportMgr in 'UCodeImportMgr.pas',
@@ -324,6 +325,7 @@ uses
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
   UXMLDocumentEx in 'UXMLDocumentEx.pas';
+
 
 // Include resources
 {$Resource ExternalObj.tlb} // Type library file
