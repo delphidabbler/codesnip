@@ -226,8 +226,6 @@ const
 procedure TBugReportDlg.ArrangeForm;
   {Aligns and sizes of controls depending on text sizes.
   }
-var
-  ATop: Integer; // top of a control
 begin
   inherited;
   TCtrlArranger.SetLabelHeights(Self);
@@ -243,15 +241,16 @@ begin
   // tsBugInfo
   memoDesc.Top := TCtrlArranger.BottomOf(lblDesc, 8);
   memoDesc.Height := tsUserInfo.Height - memoDesc.Top;
-  // tsBugInfo
+  // tsUserInfo
   frmPrivacy.Height := frmPrivacy.DocHeight;
-  ATop := TCtrlArranger.BottomOf(lblEmailRequest, 8);
-  ATop := ATop + TCtrlArranger.AlignVCentres(ATop, [lblEmail, edEmail]) + 8;
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(lblEmailRequest, 8), [lblEmail, edEmail]
+  );
   edEmail.Left := lblEmail.Left + lblEmail.Width + 8;
   edEmail.Width := tsUserInfo.Width - edEmail.Left;
-  frmPrivacy.Top := ATop;
-  lblOS.Top := TCtrlArranger.BottomOf(frmPrivacy, 8);
-  edOS.Top := TCtrlArranger.BottomOf(frmPrivacy, 8);
+  frmPrivacy.Top := TCtrlArranger.BottomOf([lblEmail, edEmail], 8);
+  lblOS.Top := TCtrlArranger.BottomOf(frmPrivacy, 24);
+  edOS.Top := TCtrlArranger.BottomOf(lblOS, 4);
   // tsSubmit
   edReport.Top := TCtrlArranger.BottomOf(lblReport, 8);
   lblSubmit.Top := tsSubmit.Height - lblSubmit.Height;
