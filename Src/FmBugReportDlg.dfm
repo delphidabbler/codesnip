@@ -54,7 +54,7 @@ inherited BugReportDlg: TBugReportDlg
     end
     inherited pcWizard: TPageControl
       Width = 457
-      ActivePage = tsIntroBug
+      ActivePage = tsUserInfo
       ExplicitWidth = 457
       object tsIntroBug: TTabSheet
         Caption = 'tsIntroBug'
@@ -126,6 +126,10 @@ inherited BugReportDlg: TBugReportDlg
         Caption = 'tsIntroUser'
         ImageIndex = 1
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblUserIntro: TLabel
           Left = 0
           Top = 8
@@ -266,6 +270,10 @@ inherited BugReportDlg: TBugReportDlg
         Caption = 'tsSubmit'
         ImageIndex = 4
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblReport: TLabel
           Left = 0
           Top = 8
@@ -308,6 +316,10 @@ inherited BugReportDlg: TBugReportDlg
         Caption = 'tsDone'
         ImageIndex = 5
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblDone: TLabel
           Left = 0
           Top = 8
