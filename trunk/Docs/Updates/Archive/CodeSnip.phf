@@ -1377,6 +1377,71 @@
         @FILE           Help\CodeSnip.hpj
         @VERSION        0.2
       )
+      @NEW(
+        @FILE           Help\Bmp\About.bmp
+        @DATE           05/03/2005
+        @COMMENTS       Bitmap for inclusion in help file.
+      )
+      @NEW(
+        @FILE           Help\Bmp\Blank.bmp
+        @DATE           05/03/2005
+        @COMMENTS       Bitmap for inclusion in help file.
+      )
+      @NEW(
+        @FILE           Help\Bmp\Copy.bmp
+        @DATE           05/03/2005
+        @COMMENTS       Bitmap for inclusion in help file.
+      )
+      @NEW(
+        @FILE           Help\Bmp\Download.bmp
+        @DATE           05/03/2005
+        @COMMENTS       Bitmap for inclusion in help file.
+      )
+      @NEW(
+        @FILE           Help\Bmp\Exit.bmp
+        @DATE           05/03/2005
+        @COMMENTS       Bitmap for inclusion in help file.
+      )
+      @NEW(
+        @FILE           Help\Bmp\FindClear.bmp
+        @DATE           05/03/2005
+        @COMMENTS       Bitmap for inclusion in help file.
+      )
+      @NEW(
+        @FILE           Help\Bmp\FindCompiler.bmp
+        @COMMENTS       Bitmap for inclusion in help file.
+        @DATE           05/03/2005
+      )
+      @NEW(
+        @FILE           Help\Bmp\FindText.bmp
+        @COMMENTS       Bitmap for inclusion in help file.
+        @DATE           05/03/2005
+      )
+      @NEW(
+        @FILE           Help\Bmp\GoBack.bmp
+        @DATE           05/03/2005
+        @COMMENTS       Bitmap for inclusion in help file.
+      )
+      @NEW(
+        @FILE           Help\Bmp\GoForward.bmp
+        @DATE           05/03/2005
+        @COMMENTS       Bitmap for inclusion in help file.
+      )
+      @NEW(
+        @FILE           Help\Bmp\HelpContents.bmp
+        @DATE           05/03/2005
+        @COMMENTS       Bitmap for inclusion in help file.
+      )
+      @NEW(
+        @FILE           Help\Bmp\TestCompile.bmp
+        @DATE           05/03/2005
+        @COMMENTS       Bitmap for inclusion in help file.
+      )
+      @NEW(
+        @FILE           Help\Bmp\Website.bmp
+        @DATE           05/03/2005
+        @COMMENTS       Bitmap for inclusion in help file.
+      )
       @UPDATED(
         @FILE           HTML\dlg-about-tplt.html
         @VERSION        0.3
@@ -1592,6 +1657,11 @@
         @DATE           17/03/2005
         @COMMENTS       Added topic for Save Snippets dialog box and added Save
                         Snippet description to File menu option.
+      )
+      @NEW(
+        @FILE           Help\Bmp\SaveSnippet.bmp
+        @DATE           14/08/2009
+        @COMMENTS       Bitmap for inclusion in help file.
       )
       @UPDATED(
         @FILE           HTML\detail.css
@@ -2190,6 +2260,20 @@
       @REMOVED          Help\CodeSnip.cnt
       @REMOVED          Help\CodeSnip.hap
       @REMOVED          Help\CodeSnip.hpj
+      @REMOVED          Help\Bmp\About.bmp
+      @REMOVED          Help\Bmp\Blank.bmp
+      @REMOVED          Help\Bmp\Copy.bmp
+      @REMOVED          Help\Bmp\Download.bmp
+      @REMOVED          Help\Bmp\Exit.bmp
+      @REMOVED          Help\Bmp\FindClear.bmp
+      @REMOVED          Help\Bmp\FindCompiler.bmp
+      @REMOVED          Help\Bmp\FindText.bmp
+      @REMOVED          Help\Bmp\GoBack.bmp
+      @REMOVED          Help\Bmp\GoForward.bmp
+      @REMOVED          Help\Bmp\HelpContents.bmp
+      @REMOVED          Help\Bmp\SaveSnippet.bmp
+      @REMOVED          Help\Bmp\TestCompile.bmp
+      @REMOVED          Help\Bmp\Website.bmp
       @UPDATED(
         @FILE           CodeSnip.dpr
         @VERSION        0.14
@@ -3755,6 +3839,12 @@
                           CodeSnip news delivered as part update process.
                         + Updated help file re changes to update dialog box.
     @FILES(
+      @REMOVED          UDatedFile.pas
+      @REMOVED          UDownloadFileList.pas
+      @REMOVED          ULocalFileList.pas
+      @REMOVED          UObsoleteFileList.pas
+      @REMOVED          URemoteFileList.pas
+      @REMOVED          UUpdateAnalyser.pas
       @UPDATED(
         @FILE           CodeSnip.dpr
         @VERSION        0.26
