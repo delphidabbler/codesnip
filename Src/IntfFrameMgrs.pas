@@ -28,8 +28,8 @@
  * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
- * $Rev$
- * $Date$
+ * Contributor(s)
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
 }

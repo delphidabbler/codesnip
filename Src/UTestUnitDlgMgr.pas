@@ -1,11 +1,11 @@
 {
- *  * $Rev$
- * $Date$
- *
-UTestUnitDlgMgr.pas
+ * UTestUnitDlgMgr.pas
  *
  * Implements a static class that manages and displays a test unit in a dialog
  * box.
+ *
+ * $Rev$
+ * $Date$
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
