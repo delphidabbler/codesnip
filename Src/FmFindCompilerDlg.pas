@@ -45,7 +45,7 @@ uses
   // Delphi
   StdCtrls, ExtCtrls, Controls, CheckLst, Classes,
   // Project
-  FmGenericOKDlg, IntfCompilers, USearch;
+  FmGenericOKDlg, IntfCompilers, UChkListStateMgr, USearch;
 
 
 type
@@ -71,14 +71,11 @@ type
     procedure cbCriteriaSelect(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure lbCompilerVersClickCheck(Sender: TObject);
   strict private
-    fCompilers: ICompilers;
-      {Object providing information about compilers}
-    fSearchParams: TCompilerSearchParams;
-      {Object used to persist the compiler search options}
-    fSearch: ISearch;
-      {Search that corresponds to criteria entered by user}
+    fCompilers: ICompilers;               // Provides info about compilers
+    fSearchParams: TCompilerSearchParams; // Persistent compiler search options
+    fSearch: ISearch;                     // Search entered by user
+    fCheckStateMgr: TChkListStateMgr;     // Modifies chklist box click handling
     procedure UpdateOKBtn;
       {Updates state of OK button according to whether valid entries made in
       dialog.
@@ -86,6 +83,10 @@ type
     function CheckedCompilerCount: Integer;
       {Returns number of compilers selected in check list box.
         @return Number of checked list items.
+      }
+    procedure CompilersListStateChange(Sender: TObject);
+      {Handles state changes in check list box.
+        @param Sender [in] Not used.
       }
   strict protected
     procedure InitForm; override;
@@ -117,16 +118,11 @@ type
   }
   TCompilerSearchParams = class(TObject)
   strict private
-    fCompilersObj: ICompilers;
-      {Reference to object that provides information about compilers}
-    fUpdated: Boolean;
-      {Flag that shows if object's properties have been updated since created}
-    fCompilers: TCompilerSearchCompilers;
-      {Value of Compilers property}
-    fOption: TCompilerSearchOption;
-      {Value of Option property}
-    fLogic: TSearchLogic;
-      {Valueof Logic property}
+    fCompilersObj: ICompilers;            // Provides info about compilers
+    fUpdated: Boolean;                    // Flags if properties updated
+    fCompilers: TCompilerSearchCompilers; // Value of Compilers property
+    fOption: TCompilerSearchOption;       // Value of Option property
+    fLogic: TSearchLogic;                 // Value of Logic property
     procedure ReadValues;
       {Reads search parameters from persistent storage.
       }
@@ -306,6 +302,14 @@ begin
       Inc(Result);
 end;
 
+procedure TFindCompilerDlg.CompilersListStateChange(Sender: TObject);
+  {Handles state changes in check list box.
+    @param Sender [in] Not used.
+  }
+begin
+  UpdateOKBtn;
+end;
+
 class function TFindCompilerDlg.Execute(const AOwner: TComponent;
   out ASearch: ISearch): Boolean;
   {Displays dialog and returns search object based on entered criteria.
@@ -315,7 +319,7 @@ class function TFindCompilerDlg.Execute(const AOwner: TComponent;
       and search object is nil.
   }
 begin
-  with TFindCompilerDlg.Create(AOwner) do
+  with Create(AOwner) do
     try
       Result := (ShowModal = mrOK);
       ASearch := Search;
@@ -330,8 +334,10 @@ procedure TFindCompilerDlg.FormCreate(Sender: TObject);
   }
 begin
   inherited;
+  // Create and setup owned objects
+  fCheckStateMgr := TChkListStateMgr.Create(lbCompilerVers);
+  fCheckStateMgr.OnStateChange := CompilersListStateChange;
   fCompilers := TCompilersFactory.CreateAndLoadCompilers;
-  // Create search params object with default values
   fSearchParams := TCompilerSearchParams.Create(fCompilers);
 end;
 
@@ -343,6 +349,7 @@ begin
   inherited;
   FreeAndNil(fSearchParams);
   fCompilers := nil;
+  FreeAndNil(fCheckStateMgr);
 end;
 
 procedure TFindCompilerDlg.InitForm;
@@ -381,15 +388,6 @@ begin
   rgLogic.ItemIndex := Ord(fSearchParams.Logic);
 
   // Update OK button state
-  UpdateOKBtn;
-end;
-
-procedure TFindCompilerDlg.lbCompilerVersClickCheck(Sender: TObject);
-  {Called when a compiler list box item is checked / unchecked. Updates OK
-  button state.
-    @param Sender Not used.
-  }
-begin
   UpdateOKBtn;
 end;
 
