@@ -46,8 +46,8 @@ uses
   CheckLst, ComCtrls, ExtCtrls, Windows,
   // Project
   FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
-  IntfCompilers, UActiveText, UCompileMgr, UCSSBuilder, USnippets,
-  USnippetsChkListMgr;
+  IntfCompilers, UActiveText, UChkListStateMgr, UCompileMgr, UCSSBuilder,
+  USnippets, USnippetsChkListMgr;
 
 
 type
@@ -116,6 +116,8 @@ type
     procedure actSetAllSuccessExecute(Sender: TObject);
     procedure actViewErrorsExecute(Sender: TObject);
     procedure actViewErrorsUpdate(Sender: TObject);
+    procedure actViewExtraExecute(Sender: TObject);
+    procedure actViewExtraUpdate(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure cbKindChange(Sender: TObject);
     procedure CLBRoutineRefsDrawItem(Control: TWinControl; Index: Integer;
@@ -131,14 +133,13 @@ type
     procedure lblSnippetKindHelpClick(Sender: TObject);
     procedure lblViewCompErrsClick(Sender: TObject);
     procedure pcMainChange(Sender: TObject);
-    procedure actViewExtraExecute(Sender: TObject);
-    procedure actViewExtraUpdate(Sender: TObject);
   strict private
     fSnippet: TRoutine;         // Snippet being edited (nil for new snippet)
     fCatNames: TStringList;     // List of names of available categories
     fOrigName: string;          // Original name of snippet ('' for new snippet)
     fEditData: TRoutineEditData;// Record storing a snippet's editable data
     fCompileMgr: TCompileMgr;   // Manages compilations and display of results
+    fCLBMgrs: array[0..2] of TChkListStateMgr;  // Manages check list box clicks
     fDependsCLBMgr: TSnippetsChkListMgr;// Manages dependencies check list box
     fXRefsCLBMgr: TSnippetsChkListMgr;  // Manages x-refs check list box
     procedure UpdateTabSheetCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
@@ -259,9 +260,9 @@ uses
   StrUtils, Graphics, Menus,
   // Project
   FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
-  UCtrlArranger, UExceptions, UFontHelper, UGraphicUtils, UHTMLUtils, URoutineExtraHelper,
-  USnippetKindInfo, USnippetValidator, UIStringList, UMessageBox, USnippetIDs,
-  UStructs, UThemesEx, UUtils;
+  UCtrlArranger, UExceptions, UFontHelper, UGraphicUtils, UHTMLUtils,
+  URoutineExtraHelper, USnippetKindInfo, USnippetValidator, UIStringList,
+  UMessageBox, USnippetIDs, UStructs, UThemesEx, UUtils;
 
 
 type
@@ -781,6 +782,9 @@ begin
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
   fDependsCLBMgr := TSnippetsChkListMgr.Create(clbDepends);
   fXRefsCLBMgr := TSnippetsChkListMgr.Create(clbXRefs);
+  fCLBMgrs[0] := TChkListStateMgr.Create(clbXRefs);
+  fCLBMgrs[1] := TChkListStateMgr.Create(clbDepends);
+  fCLBMgrs[2] := TChkListStateMgr.Create(clbUnits);
 end;
 
 procedure TUserDBEditDlg.FormDestroy(Sender: TObject);
@@ -791,10 +795,11 @@ var
   Idx: Integer; // loops through items in compiler list box
 begin
   inherited;
+  for Idx := Low(fCLBMgrs) to High(fCLBMgrs) do
+    FreeAndNil(fCLBMgrs[Idx]);
   FreeAndNil(fXRefsCLBMgr);
   FreeAndNil(fDependsCLBMgr);
   FreeAndNil(fCatNames);
-  // Free TCompilerInfo objects associated with Compilers list box
   for Idx := 0 to Pred(lbCompilers.Count) do
     lbCompilers.Items.Objects[Idx].Free;
 end;

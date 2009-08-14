@@ -32,7 +32,6 @@ inherited FindCompilerDlg: TFindCompilerDlg
       Top = 32
       Width = 113
       Height = 82
-      OnClickCheck = lbCompilerVersClickCheck
       IntegralHeight = True
       ItemHeight = 13
       TabOrder = 1
