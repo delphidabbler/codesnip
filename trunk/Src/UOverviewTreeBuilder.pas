@@ -222,7 +222,7 @@ begin
         ClassName + '.Build: Category not in section list');
       if (Sections.Objects[SectionIdx] as TRoutineList).Count > 0 then
       begin
-        CatNode := AddViewItemNode(nil, TViewItem.Create(vkCategory, Cat));
+        CatNode := AddViewItemNode(nil, TViewItem.Create(Cat));
         for Snippet in (Sections.Objects[SectionIdx] as TRoutineList) do
           AddViewItemNode(CatNode, TViewItem.Create(Snippet));
       end;
