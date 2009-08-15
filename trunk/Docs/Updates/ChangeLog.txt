@@ -1,3 +1,10 @@
+Version 3.1.1 - 15 August 2009
+CodeSnip 3.1.1 - 15 August 2009
++ Check list boxes throughout program changed so that clicking anywhere on an item toggles check state.
++ Button used to render and display extra information in snippets editor is now disabled when there is no extra information to display.
++ Made minor changes to layout of some dialog boxes: replaced missing text in bug report dialog box.
++ Some refactorings.
+
 Version 3.1 - 11 August 2009
 CodeSnip 3.1 - 11 August 2009
 + Added a button to the snippets editor to preview an HTML rendering of the markup entered as extra information. Includes facility to check any links in the markup.
