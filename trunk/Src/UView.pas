@@ -95,14 +95,9 @@ type
       {Read access for SnippetKind property. Kind must be vkSnipKind.
         @return Data object describing snippet kind section.
       }
-  public
-    constructor Create; overload;
-      {Class constructor. Creates a view item of kind vkNone.
-      }
-    constructor Create(const Kind: TViewKind; const Data: TObject = nil);
-      overload;
-      {Class constructor. Creates a view item of a specified kind with extra
-      information.
+    constructor InternalCreate(const Kind: TViewKind; const Data: TObject);
+      {Private class constructor. Creates a view item of a specified kind with
+      extra information.
         @param Kind [in] Kind of view item to create.
         @param Data [in] Object providing extra information. Object type depends
           on Kind and must be as follows:
@@ -112,6 +107,16 @@ type
           + vkAlphabet => TLetter
           + vkNone or vkWelcome => nil
       }
+  public
+    constructor Create; overload;
+      {Class constructor. Creates a view item of kind vkNone.
+      }
+    constructor Create(const Kind: TViewKind); overload;
+      {Class constructor. Creates a view item of a kind that has no associaed
+      object to store as extra information.
+        @param Kind [in] Kind of view item to create. Must be vkNone or
+          vkWelcome
+      }
     constructor Create(const ViewItem: TViewItem); overload;
       {Class constructor. Creates a view item that is a clone of another view
       item.
@@ -120,6 +125,10 @@ type
     constructor Create(const Routine: TRoutine); overload;
       {Class constructor. Creates a view item representing a routine.
         @param Routine [in] Routine to be represented.
+      }
+    constructor Create(const Category: TCategory); overload;
+      {Class constructor. Creates a view item representing a category.
+        @param Category [in] Category to be represented.
       }
     constructor Create(const SnippetKind: TSnippetKindInfo); overload;
       {Class constructor. Creates a view item representing a snippet kind.
@@ -235,33 +244,6 @@ begin
   fData := nil;
 end;
 
-constructor TViewItem.Create(const Kind: TViewKind; const Data: TObject);
-  {Class constructor. Creates a view item of a specified kind with extra
-  information.
-    @param Kind [in] Kind of view item to create.
-    @param Data [in] Object providing extra information. Object type depends on
-      Kind and must be as follows:
-      + vkRoutine => TRoutine
-      + vkCategory => TCategory
-      + vkSnipKind => TSnippetKindInfo
-      + vkAlphabet => TLetter
-      + vkNone or vkWelcome => nil
-  }
-begin
-  Assert(
-    ( (Kind in [vkNone, vkWelcome]) and not Assigned(Data) )
-    or ( (Kind = vkRoutine) and Assigned(Data) and (Data is TRoutine) )
-    or ( (Kind = vkCategory) and Assigned(Data) and (Data is TCategory) )
-    or ( (Kind = vkSnipKind) and Assigned(Data) and (Data is TSnippetKindInfo) )
-    or ( (Kind = vkAlphabet) and Assigned(Data) and (Data is TLetter) ),
-    ClassName + '.Create: Invalid parameters'
-  );
-  inherited Create;
-  // Record kind and data object
-  fKind := Kind;
-  fData := Data;
-end;
-
 constructor TViewItem.Create(const ViewItem: TViewItem);
   {Class constructor. Creates a view item that is a clone of another view item.
     @param ViewItem [in] View item to be cloned.
@@ -276,7 +258,7 @@ constructor TViewItem.Create(const SnippetKind: TSnippetKindInfo);
     @param SnippetKind [in] Snippet kind to be represented.
   }
 begin
-  Create(vkSnipKind, SnippetKind);
+  InternalCreate(vkSnipKind, SnippetKind);
 end;
 
 constructor TViewItem.Create(const Routine: TRoutine);
@@ -284,7 +266,7 @@ constructor TViewItem.Create(const Routine: TRoutine);
     @param Routine [in] Routine to be represented.
   }
 begin
-  Create(vkRoutine, Routine);
+  InternalCreate(vkRoutine, Routine);
 end;
 
 constructor TViewItem.Create(const Letter: TLetter);
@@ -292,7 +274,26 @@ constructor TViewItem.Create(const Letter: TLetter);
     @param Letter [in] Letter to be represented.
   }
 begin
-  Create(vkAlphabet, Letter);
+  InternalCreate(vkAlphabet, Letter);
+end;
+
+constructor TViewItem.Create(const Kind: TViewKind);
+  {Class constructor. Creates a view item of a kind that has no associaed
+  object to store as extra information.
+    @param Kind [in] Kind of view item to create. Must be vkNone or vkWelcome
+  }
+begin
+  Assert(Kind in [vkNone, vkWelcome],
+    ClassName + '.Create: Kind must be vkNone or vkWelcome');
+  InternalCreate(Kind, nil);
+end;
+
+constructor TViewItem.Create(const Category: TCategory);
+  {Class constructor. Creates a view item representing a category.
+    @param Category [in] Category to be represented.
+  }
+begin
+  InternalCreate(vkCategory, Category);
 end;
 
 function TViewItem.GetAlphChar: TLetter;
@@ -354,6 +355,34 @@ begin
   Assert(fKind = vkSnipKind,
     ClassName + '.GetSnippetKind: Kind is not vkSnipKind');
   Result := fData as TSnippetKindInfo;
+end;
+
+constructor TViewItem.InternalCreate(const Kind: TViewKind;
+  const Data: TObject);
+  {Private class constructor. Creates a view item of a specified kind with extra
+  information.
+    @param Kind [in] Kind of view item to create.
+    @param Data [in] Object providing extra information. Object type depends on
+      Kind and must be as follows:
+      + vkRoutine => TRoutine
+      + vkCategory => TCategory
+      + vkSnipKind => TSnippetKindInfo
+      + vkAlphabet => TLetter
+      + vkNone or vkWelcome => nil
+  }
+begin
+  Assert(
+    ( (Kind in [vkNone, vkWelcome]) and not Assigned(Data) )
+    or ( (Kind = vkRoutine) and Assigned(Data) and (Data is TRoutine) )
+    or ( (Kind = vkCategory) and Assigned(Data) and (Data is TCategory) )
+    or ( (Kind = vkSnipKind) and Assigned(Data) and (Data is TSnippetKindInfo) )
+    or ( (Kind = vkAlphabet) and Assigned(Data) and (Data is TLetter) ),
+    ClassName + '.Create: Invalid parameters'
+  );
+  inherited Create;
+  // Record kind and data object
+  fKind := Kind;
+  fData := Data;
 end;
 
 function TViewItem.IsEqual(const ViewItem: TViewItem): Boolean;
