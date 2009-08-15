@@ -98,7 +98,7 @@ begin
   Cat := Snippets.Categories.Find(CatID);
   Assert(Assigned(Cat), ClassName + '.Execute: CatID not valid');
   // Create a view item for category and get notifier to display it
-  ViewItem := TViewItem.Create(vkCategory, Cat);
+  ViewItem := TViewItem.Create(Cat);
   try
     fNotifier.ShowViewItem(ViewItem);
   finally
