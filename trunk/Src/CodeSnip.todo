@@ -1,8 +1,10 @@
-{TODO 3 -oSelf -cImprovement : Change LoadLibrary in UHTMLHelp to SafeLoadLibrary}
-{TODO -oSelf -cRefactor :
+{DONE -oSelf -cImprovement : Disable "Render Extra Information" button / action on Extra information tab of Snippets Editor if no REML code entered.}
+{DONE -oSelf -cImprovement : Add note to bug report dialog tab where OS is displayed to say what this info is}
+{DONE 3 -oSelf -cImprovement : Change LoadLibrary in UHTMLHelp to SafeLoadLibrary}
+{DONE -oSelf -cRefactor :
 Move Yes, No and OK resourcestrings in UMessageBox to interface and add string for Cancel.
-Change UCodeImportMgr to use cancel and FmViewExtraDlg to use OK.}
-{TODO -oSelf -cRefactor : Pull out some common code used in arrangement and alignment of controls on forms into support unit.}
+Change UCodeImportMgr to use cancel.}
+{DONE -oSelf -cRefactor : Pull out some common code used in arrangement and alignment of controls on forms into support unit.}
 {TODO -oSelf -cRefactor : Add enumerator to TNews and change loop in UUpdateMgr accordingly.}
 {TODO -oSelf -cRefactor : Refactor TQuery to use enumerators and use class var for instance}
 {TODO -oSelf -cProposal :
@@ -10,19 +12,20 @@ Add a Garbage collector:
 + global singleton version that maintains lifetimes for life of program - maintains a list of objects / resources and frees when unit goes out of scope
 + local version that can be created and have multiple objects added to it (resource, object etc).
 Store wrapper objects in list, each of which can release a certain resource type, e.g. objects, DCs, handles, etc. Given and add method for each type and generate wrapper object on fly.
-Obvious close link to UAutoFree}
+Obvious close link to UAutoFree
++ give local version that can accept multiple instances in its constructor and / or an add method.}
 {TODO -oSelf -cProposal :
 Change the Snippets Editor moving code for each pane into separate frame that can
 (1) validate entered data
 (2) calculate required size for controls}
-{TODO -oSelf -cImprovement : Make selecting list item in check list box toggle the check mark}
+{DONE -oSelf -cImprovement : Make selecting list item in check list box toggle the check mark}
 {TODO -oSelf -cBug : 
 Selecting a new printer in print dialog and clicking properties can give an exception or properties dialog has wrong title.
 Selecting some printers in print dialog and clicking OK can give an exception.}
 {DONE -oSelf -cFeature :
 Add facility to Snippets Editor to display check, render and display REML text (button on extra tab?)
 + add button to test display if any <a> tags are present to test and display URLs.}
-{TODO -oSelf -cObservation : Update date for UNulFormAligner in unit for v1.1 is wrong: it reads 26 Jul 2007 and should be 26 Sep 2007.}
+{DONE -oSelf -cObservation : Update date for UNulFormAligner in unit for v1.1 is wrong: it reads 26 Jul 2007 and should be 26 Sep 2007.}
 {TODO -oSelf -cRefactor : Rename identifiers that refer to "routine" with "snippet".}
 {TODO -oSelf -cProposal :
 UView
@@ -36,9 +39,7 @@ Uses
       TSnippetKindInfoList.Instance[Snippet.Kind].Description,
       Snippet
     );}
-{TODO -oSelf -cRefactor :
-FmSelectionSearchDlg.pas
-  - Rename a lot of methods etc}
+
 {TODO -oSelf -cProposal :
 USourceGen
   - Consider separating TConstAndTypeFormatter into two classes
@@ -48,9 +49,9 @@ USourceGen
 + Add detail frame IDs to IFrameMgrs.pas}
 {TODO -oSelf -cImprovement : Remove database detection code from IniDataReader and XML IO classes - make them know they read / wrtie main and user databases respectively}
 {TODO -oSelf -cRefactor : Get rid of TDataIOFactories and make ini, xml and nul data readers and writers be used directly insetad of via factories.}
-{TODO -oSelf -cRefactor : Consider moving syntax highlighting setting (CSS builder) down into FrInfo from FrDetailView since comp check tab no longer uses highlighting}
-{TODO -oSelf -cFeature :
-Changes preferences dialog sytem so that dialog box code presents empty body and dynamically adds
+{TODO -oSelf -cProposal : Consider moving syntax highlighting setting (CSS builder) down into FrInfo from FrDetailView since comp check tab no longer uses highlighting}
+{TODO -oSelf -cImprovement :
+Change preferences dialog sytem so that dialog box code presents empty body and dynamically adds
 tabs (or other UI code - may want abract base class and implementation class).
 
  + Register pages with a prefs page manager - if each page registers itself then we don't need to
