@@ -45,7 +45,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Indy
-  IdHTTP, IdException,
+  IdHTTP, IdException, IdAntiFreeze,
   // Project
   UExceptions, UDownloadMonitor, UWebInfo;
 
@@ -74,6 +74,7 @@ type
     fScriptURI: string;                     // URI of web service script
     fDownloadMonitor: TDownloadMonitor;     // Monitors download progress
     fOnProgress: TWebServiceProgressEvent;  // OnProgress event handler
+    fAntiFreeze: TIdAntiFreeze;
   strict protected
     procedure TriggerProgressEvent;
       {Triggers OnProgress event. Helper method provided to be called by
@@ -307,9 +308,10 @@ uses
 resourcestring
   // Error messages
   sWebConnectionError = 'There was a problem accessing the internet. Please '
-    + 'check your web connection.'
+    + 'check your web connection. '
+    + 'If you are using a proxy server please check its configuration.'
     + EOL2
-    + 'The error reported by Windows was: %0:s';
+    + 'The error reported by Windows was: %0:s.';
 
 
 { TWebService }
@@ -322,6 +324,9 @@ var
   ProxyInfo: TWebProxyInfo; // details on any proxy server
 begin
   inherited Create;
+  // Use anti-freeze component to enable message loop to continue while
+  // Indy components block.
+  fAntiFreeze := TIdAntiFreeze.Create(nil);
   // Create and initialise HTTP client component
   fHTTP := TIdHTTP.Create(nil);
   fHTTP.Request.UserAgent := Service.UserAgent;
@@ -365,6 +370,7 @@ destructor TWebService.Destroy;
 begin
   FreeAndNil(fDownloadMonitor);
   FreeAndNil(fHTTP);
+  FreeAndNil(fAntiFreeze);
   inherited;
 end;
 
