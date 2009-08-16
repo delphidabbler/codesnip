@@ -1,5 +1,7 @@
 inherited ProxyServerDlg: TProxyServerDlg
   Caption = 'Proxy Server Configuration'
+  ExplicitWidth = 474
+  ExplicitHeight = 354
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -151,9 +153,6 @@ inherited ProxyServerDlg: TProxyServerDlg
         TabOrder = 4
       end
     end
-  end
-  inherited btnHelp: TButton
-    Visible = False
   end
   inherited btnOK: TButton
     OnClick = btnOKClick

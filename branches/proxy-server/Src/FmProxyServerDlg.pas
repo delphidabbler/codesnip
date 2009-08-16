@@ -36,48 +36,70 @@
 
 unit FmProxyServerDlg;
 
-// todo: make help button visible and add help topic
-// todo: add button to test proxy
-// todo: reduce uses clauses
-// todo: comment methods
 
 interface
 
+
 uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, FmGenericOKDlg, StdCtrls, ExtCtrls;
+  // Delphi
+  StdCtrls, Controls, ExtCtrls, Classes,
+  // Project
+  FmGenericOKDlg;
+
 
 type
+
+  {
+  TProxyServerDlg:
+    Ddialog box that enables users to specify (or remove) a proxy server for use
+    by CodeSnip's web services.
+  }
   TProxyServerDlg = class(TGenericOKDlg)
     cbUseProxy: TCheckBox;
     gbProxy: TGroupBox;
     lblIPAddress: TLabel;
-    lblPort: TLabel;
-    lblUserName: TLabel;
+    lblIPAddressReq: TLabel;
     lblPassword1: TLabel;
     lblPassword2: TLabel;
+    lblPort: TLabel;
+    lblPortReq: TLabel;
+    lblReqExplain: TLabel;
+    lblReqSymbol: TLabel;
+    lblUserName: TLabel;
     edIPAddress: TEdit;
-    edPort: TEdit;
-    edUserName: TEdit;
     edPassword1: TEdit;
     edPassword2: TEdit;
-    lblIPAddressReq: TLabel;
-    lblPortReq: TLabel;
-    lblReqSymbol: TLabel;
-    lblReqExplain: TLabel;
+    edPort: TEdit;
+    edUserName: TEdit;
     procedure btnOKClick(Sender: TObject);
     procedure edIPAddressKeyPress(Sender: TObject; var Key: Char);
     procedure edPortKeyPress(Sender: TObject; var Key: Char);
     procedure cbUseProxyClick(Sender: TObject);
   strict private
     procedure Validate;
+      {Validates data entered into controls.
+      }
     procedure SaveData;
+      {Stores data entered in controls in settings.
+      }
     procedure SetProxyCtrlState(const Flag: Boolean);
+      {Sets enabled state of all controls in "proxy server details" group box.
+        @param Flag [in] True if controls are to be enabled, False if to be
+          disabled.
+      }
   strict protected
     procedure ConfigForm; override;
+      {Configures form. Ensures correct font is used and sets password
+      character.
+      }
     procedure InitForm; override;
+      {Initialises controls on form from values read from settings.
+      }
   public
     class function Execute(const AOwner: TComponent): Boolean;
+      {Creates and displays the proxy server dialog box.
+        @param AOwner [in] Component that owns the dialog box.
+      }
   end;
 
 
@@ -85,15 +107,22 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils, Windows,
   // Project
   UConsts, UExceptions, UFontHelper, UMessageBox, USettings, UStructs,
   USystemInfo, UUtils;
+
 
 {$R *.dfm}
 
 { TProxyServerDlg }
 
 procedure TProxyServerDlg.btnOKClick(Sender: TObject);
+  {Handles OK button click. Validates entered data and saves proxy information
+  in settings. Handles any errors.
+    @param Sender [in] Not used.
+  }
 begin
   try
     ModalResult := mrNone;
@@ -113,12 +142,18 @@ begin
 end;
 
 procedure TProxyServerDlg.cbUseProxyClick(Sender: TObject);
+  {Handles click on "Use proxy server" check box. Updates state of other
+  controls depending on whether check box is checked.
+    @param Sender [in] Not used.
+  }
 begin
   inherited;
   SetProxyCtrlState(cbUseProxy.Checked);
 end;
 
 procedure TProxyServerDlg.ConfigForm;
+  {Configures form. Ensures correct font is used and sets password character.
+  }
 begin
   inherited;
   TFontHelper.SetDefaultBaseFont(lblIPAddressReq.Font, False);
@@ -137,6 +172,11 @@ begin
 end;
 
 procedure TProxyServerDlg.edIPAddressKeyPress(Sender: TObject; var Key: Char);
+  {Filters keypresses in IP address edit box. Permits only numbers or dots to be
+  entered.
+    @param Sender [in] Not used.
+    @param Key [in/out] Key pressed. Set to #0 if key is not permitted.
+  }
 begin
   if not (Key in ['0'..'9', '.', BACKSPACE]) then
     Key := #0;
@@ -147,6 +187,10 @@ begin
 end;
 
 procedure TProxyServerDlg.edPortKeyPress(Sender: TObject; var Key: Char);
+  {Filters keypresses in Port edit box. Permits only numbers to be entered.
+    @param Sender [in] Not used.
+    @param Key [in/out] Key pressed. Set to #0 if key is not permitted.
+  }
 begin
   if not (Key in ['0'..'9', BACKSPACE]) then
     Key := #0;
@@ -155,6 +199,9 @@ begin
 end;
 
 class function TProxyServerDlg.Execute(const AOwner: TComponent): Boolean;
+  {Creates and displays the proxy server dialog box.
+    @param AOwner [in] Component that owns the dialog box.
+  }
 begin
   with Create(AOwner) do
     try
@@ -165,8 +212,10 @@ begin
 end;
 
 procedure TProxyServerDlg.InitForm;
+  {Initialises controls on form from values read from settings.
+  }
 var
-  Section: ISettingsSection;
+  Section: ISettingsSection;  // settings section containing current settings
 begin
   inherited;
   // init control contents from proxy server settings
@@ -182,8 +231,10 @@ begin
 end;
 
 procedure TProxyServerDlg.SaveData;
+  {Stores data entered in controls in settings.
+  }
 var
-  Section: ISettingsSection;
+  Section: ISettingsSection;  // settings section to receive data
 begin
   Section := Settings.EmptySection(ssProxyServer);
   Section.ItemValues['UseProxy'] := IntToStr(Ord(cbUseProxy.Checked));
@@ -195,8 +246,12 @@ begin
 end;
 
 procedure TProxyServerDlg.SetProxyCtrlState(const Flag: Boolean);
+  {Sets enabled state of all controls in "proxy server details" group box.
+    @param Flag [in] True if controls are to be enabled, False if to be
+      disabled.
+  }
 var
-  Idx: Integer;
+  Idx: Integer; // loops through all child controls of group box
 begin
   for Idx := 0 to Pred(gbProxy.ControlCount) do
     gbProxy.Controls[Idx].Enabled := Flag;
@@ -204,7 +259,10 @@ begin
 end;
 
 procedure TProxyServerDlg.Validate;
+  {Validates data entered into controls.
+  }
 
+  // ---------------------------------------------------------------------------
   function IsValidIPAddress(const Addr: string): Boolean;
     {Checks if an IP address has valid format.
       @param Addr [in] IP address to check.
@@ -256,6 +314,7 @@ procedure TProxyServerDlg.Validate;
       Exit;
     Result := True;
   end;
+  // ---------------------------------------------------------------------------
 
 resourcestring
   // Error messages
