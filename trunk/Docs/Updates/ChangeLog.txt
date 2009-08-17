@@ -1,3 +1,12 @@
+Version 3.2 - 17 August 2009
+CodeSnip 3.2 - 17 August 2009
++ Added facility for CodeSnip to use a proxy server when accessing the internet.
++ Provided a new dialog box to configure any proxy server.
++ Updated help file re proxy server support and configuration.
++ UI is no longer frozen while web services are executing requests. "Update from Web" dialog box changed to indicate if cancel button pressed when a web request is executing.
++ Product version reported in generated source code header comments, splash screen and about box now includes any special build information.
++ Some minor code tweaks and refactoring.
+
 Version 3.1.1 - 15 August 2009
 CodeSnip 3.1.1 - 15 August 2009
 + Check list boxes throughout program changed so that clicking anywhere on an item toggles check state.
