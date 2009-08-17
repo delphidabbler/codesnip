@@ -101,7 +101,8 @@ type
         @return Name of help file.
       }
     class function ProgramReleaseInfo: string;
-      {Gets information about the current program release.
+      {Gets information about the current program release. Includes any special
+      build information if present in version information.
         @return Release information.
       }
     class function ProgramReleaseVersion: string;
@@ -246,11 +247,14 @@ begin
 end;
 
 class function TAppInfo.ProgramReleaseInfo: string;
-  {Gets information about the current program release.
+  {Gets information about the current program release. Includes any special
+  build information if present in version information.
     @return Release information.
   }
 begin
-  Result := TVersionInfo.ProductVersionStr;
+  Result := Trim(TVersionInfo.ProductVersionStr);
+  if Trim(TVersionInfo.SpecialBuildStr) <> '' then
+    Result := Result + '-' + Trim(TVersionInfo.SpecialBuildStr);   
 end;
 
 class function TAppInfo.ProgramReleaseVersion: string;
