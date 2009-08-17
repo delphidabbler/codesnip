@@ -134,8 +134,7 @@ type
   public
     class function ProductVersionStr: string;
       {Gets product version string from string table. May differ from
-      ProductVersionNumberStr. This is an alias for the ProductVersion property
-      that avoids need to instantiate the object.
+      ProductVersionNumberStr.
         @return Product version string.
       }
     class function ProductVersionNumberStr: string;
@@ -144,9 +143,7 @@ type
         @return Version number string in form 9.9.9.9.
       }
     class function ProductVerNum: TVersionNumber;
-      {Product version number from fixed file information. This is an alias for
-      the ProductVersionNumber property that avoids need to instantiate the
-      object.
+      {Product version number from fixed file information.
         @return Required version number record.
       }
     class function FileVersionNumberStr: string;
@@ -155,8 +152,11 @@ type
         @return Version number string in form 9.9.9.9.
       }
     class function LegalCopyrightStr: string;
-      {Gets copyright information from string table. This is an alias for
-      LegalCopyright property that avoids needs to instantiate object.
+      {Gets copyright information from string table.
+        @return Required copyright information.
+      }
+    class function SpecialBuildStr: string;
+      {Gets special build information from string table.
         @return Required copyright information.
       }
   end;
@@ -190,8 +190,7 @@ begin
 end;
 
 class function TVersionInfo.LegalCopyrightStr: string;
-  {Gets copyright information from string table. This is an alias for
-  LegalCopyright property that avoids needs to instantiate object.
+  {Gets copyright information from string table.
     @return Required copyright information.
   }
 begin
@@ -204,8 +203,7 @@ begin
 end;
 
 class function TVersionInfo.ProductVerNum: TVersionNumber;
-  {Product version number from fixed file information. This is an alias for the
-  ProductVersionNumber property that avoids need to instantiate the object.
+  {Product version number from fixed file information.
     @return Required version number record.
   }
 begin
@@ -228,14 +226,26 @@ end;
 
 class function TVersionInfo.ProductVersionStr: string;
   {Gets product version string from string table. May differ from
-  ProductVersionNumberStr. This is an alias for the ProductVersion property that
-  avoids need to instantiate the object.
+  ProductVersionNumberStr.
     @return Product version string.
   }
 begin
   with TPJVersionInfo.Create(nil) do
     try
       Result := ProductVersion;
+    finally
+      Free;
+    end;
+end;
+
+class function TVersionInfo.SpecialBuildStr: string;
+  {Gets special build information from string table.
+    @return Required copyright information.
+  }
+begin
+  with TPJVersionInfo.Create(nil) do
+    try
+      Result := SpecialBuild;
     finally
       Free;
     end;
