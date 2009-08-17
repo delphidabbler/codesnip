@@ -45,7 +45,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Indy
-  IdHTTP, IdException,
+  IdHTTP, IdException, IdAntiFreeze,
   // Project
   UExceptions, UDownloadMonitor, UWebInfo;
 
@@ -70,14 +70,11 @@ type
   }
   TWebService = class(TObject)
   strict private
-    fHTTP: TIdHTTP;
-      {Component used to access server via HTTP}
-    fScriptURI: string;
-      {URI of web service script}
-    fDownloadMonitor: TDownloadMonitor;
-      {Object that monitors and notifies download progress}
-    fOnProgress: TWebServiceProgressEvent;
-      {References event handler of OnProgress event}
+    fHTTP: TIdHTTP;                         // Fsed to access server via HTTP
+    fScriptURI: string;                     // URI of web service script
+    fDownloadMonitor: TDownloadMonitor;     // Monitors download progress
+    fOnProgress: TWebServiceProgressEvent;  // OnProgress event handler
+    fAntiFreeze: TIdAntiFreeze;
   strict protected
     procedure TriggerProgressEvent;
       {Triggers OnProgress event. Helper method provided to be called by
@@ -236,8 +233,7 @@ type
   }
   EHTTPError = class(EWebService)
   strict private
-    fHTTPErrorCode: Integer;
-      {Stores value of HTTPErrorCode property}
+    fHTTPErrorCode: Integer;  // HTTPErrorCode property value
   public
     constructor Create(const E: EIdHTTPProtocolException); overload;
       {Class constructor. Creates object from properties of given exception.
@@ -274,8 +270,7 @@ type
   }
   EWebServiceError = class(EWebService)
   strict private
-    fErrorCode: Integer;
-      {Value of ErrorCode property}
+    fErrorCode: Integer;  // Value of ErrorCode property
   public
     constructor Create(const Msg: string; const ErrorCode: Integer = -1);
       overload;
@@ -313,9 +308,10 @@ uses
 resourcestring
   // Error messages
   sWebConnectionError = 'There was a problem accessing the internet. Please '
-    + 'check your web connection.'
+    + 'check your web connection. '
+    + 'If you are using a proxy server please check its configuration.'
     + EOL2
-    + 'The error reported by Windows was: %0:s';
+    + 'The error reported by Windows was: %0:s.';
 
 
 { TWebService }
@@ -324,12 +320,25 @@ constructor TWebService.Create(const Service: TWebServiceInfo);
   {Class constructor. Sets up object.
     @param Service [in] Description of web service.
   }
+var
+  ProxyInfo: TWebProxyInfo; // details on any proxy server
 begin
   inherited Create;
+  // Use anti-freeze component to enable message loop to continue while
+  // Indy components block.
+  fAntiFreeze := TIdAntiFreeze.Create(nil);
   // Create and initialise HTTP client component
   fHTTP := TIdHTTP.Create(nil);
   fHTTP.Request.UserAgent := Service.UserAgent;
   fHTTP.Request.Accept := Service.MediaType;
+  ProxyInfo := TWebInfo.WebProxyInfo;
+  if ProxyInfo.UseProxy then
+  begin
+    fHTTP.ProxyParams.ProxyServer := ProxyInfo.IPAddress;
+    fHTTP.ProxyParams.ProxyPort := ProxyInfo.Port;
+    fHTTP.ProxyParams.ProxyUsername := ProxyInfo.UserName;
+    fHTTP.ProxyParams.ProxyPassword := ProxyInfo.Password;
+  end;
   // Create object that monitors download progress
   fDownloadMonitor := TDownloadMonitor.Create(fHTTP, DoProgress);
   // Record script URI for future use
@@ -361,6 +370,7 @@ destructor TWebService.Destroy;
 begin
   FreeAndNil(fDownloadMonitor);
   FreeAndNil(fHTTP);
+  FreeAndNil(fAntiFreeze);
   inherited;
 end;
 
@@ -561,7 +571,6 @@ begin
   end
 end;
 
-
 { EHTTPError }
 
 procedure EHTTPError.Assign(const E: Exception);
@@ -570,8 +579,7 @@ procedure EHTTPError.Assign(const E: Exception);
       EHTTPError or an EIdHTTPProtocolException instance.
   }
 begin
-  Assert(                                                  // ** do not localise
-    (E is EHTTPError) or (E is EIdHTTPProtocolException),
+  Assert((E is EHTTPError) or (E is EIdHTTPProtocolException),
     ClassName + '.Assign: E must be EHTTPError or EIdHTTPProtocolException');
   inherited;
   if E is EHTTPError then
@@ -588,9 +596,8 @@ constructor EHTTPError.Create(const E: EIdHTTPProtocolException);
   }
 begin
   inherited Create(E.Message);
-  fHTTPErrorCode := E.ReplyErrorCode; // ** Indy 10: use E.ErrorCode;
+  fHTTPErrorCode := E.ReplyErrorCode; // ** In Indy 10: use E.ErrorCode;
 end;
-
 
 { EWebServiceError }
 
@@ -600,7 +607,7 @@ procedure EWebServiceError.Assign(const E: Exception);
       EWebServiceError instance.
   }
 begin
-  Assert(E is EWebServiceError,                            // ** do not localise
+  Assert(E is EWebServiceError,
     ClassName + '.Assign: E must be EWebServiceError');
   inherited;
   fErrorCode := (E as EWebServiceError).fErrorCode;
@@ -614,8 +621,7 @@ constructor EWebServiceError.Create(const Msg: string;
     @param ErrorCode [in] Optional non-zero error code (defaults to -1).
   }
 begin
-  Assert(ErrorCode <> 0,                                   // ** do not localise
-    ClassName + '.Create: zero error code');
+  Assert(ErrorCode <> 0, ClassName + '.Create: zero error code');
   inherited Create(Msg);
   fErrorCode := ErrorCode;
 end;
@@ -629,8 +635,7 @@ constructor EWebServiceError.CreateFmt(const Fmt: string;
     @param ErrorCode [in] Optional non-zero error code (defaults to -1).
   }
 begin
-  Assert(ErrorCode <> 0,                                   // ** do not localise
-    ClassName + '.CreateFmt: zero error code');
+  Assert(ErrorCode <> 0, ClassName + '.CreateFmt: zero error code');
   Create(Format(Fmt, Args), ErrorCode);
 end;
 

@@ -233,6 +233,8 @@ type
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
     tbUpdateDbase: TToolButton;
+    actProxyServer: TAction;
+    miProxyServer: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
     procedure actBackupDatabaseExecute(Sender: TObject);
@@ -312,6 +314,7 @@ type
     procedure FormResize(Sender: TObject);
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
+    procedure actProxyServerExecute(Sender: TObject);
   strict private
     fIsAppRegistered: Boolean;        // Flag noting if app is registered
     fNotifier: INotifier;             // Notififies app of user-initiated events
@@ -908,7 +911,15 @@ procedure TMainForm.actPrivacyExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  DisplayHelp('PrivacyStatement');                         
+  DisplayHelp('PrivacyStatement');
+end;
+
+procedure TMainForm.actProxyServerExecute(Sender: TObject);
+  {Displays proxy server configuration dialog box.
+    @param Sender [in] Not used.
+  }
+begin
+  fDialogMgr.ExecProxyServerDlg;
 end;
 
 procedure TMainForm.actRegisterExecute(Sender: TObject);

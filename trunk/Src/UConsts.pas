@@ -54,6 +54,8 @@ const
   EOL   = CR + LF;      // end of line character sequence
   EOL2  = EOL + EOL;    // 2 EOLs characters
 
+  BACKSPACE = #8;       // backspace character
+
   RT_HTML = MakeIntResource(23);    // HTML resource identifier
 
 

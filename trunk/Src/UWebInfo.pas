@@ -66,6 +66,18 @@ type
   end;
 
   {
+  TWebProxyInfo:
+    Record that provides informtion about a web proxy
+  }
+  TWebProxyInfo = record
+    UseProxy: Boolean;  // Whether to use a proxy server
+    IPAddress: string;  // IP address of server
+    Port: Word;         // Port of proxy server
+    UserName: string;   // Optional user name
+    Password: string;   // Optional password
+  end;
+
+  {
   TWebInfo:
     Static class that provides information about various web used by CodeSnip.
   }
@@ -96,6 +108,10 @@ type
         @param Script [in] Base name of web service script.
         @return URL of required script on active host.
       }
+    class function WebProxyInfo: TWebProxyInfo;
+      {Gets information about any web proxy to be used from settings.
+        @return Required information.
+      }
   end;
 
 
@@ -104,7 +120,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils;
+  SysUtils,
+  // Project
+  USettings;
 
 
 { TWebInfo }
@@ -119,6 +137,26 @@ begin
     Result := LocalHost
   else
     Result := RemoteHost;
+end;
+
+class function TWebInfo.WebProxyInfo: TWebProxyInfo;
+  {Gets information about any web proxy to be used from settings.
+    @return Required information.
+  }
+var
+  ProxySection: ISettingsSection; // settings section containing proxy info
+begin
+  ProxySection := Settings.ReadSection(ssProxyServer);
+  Result.UseProxy := Boolean(
+    StrToIntDef(ProxySection.ItemValues['UseProxy'], 0)
+  );
+  if Result.UseProxy then
+  begin
+    Result.IPAddress := ProxySection.ItemValues['IPAddress'];
+    Result.Port := StrToIntDef(ProxySection.ItemValues['Port'], 80);
+    Result.UserName := ProxySection.ItemValues['UserName'];
+    Result.Password := ProxySection.GetEncryptedItemValue('Password');
+  end;
 end;
 
 class function TWebInfo.WebServiceURL(const Script: string): string;
