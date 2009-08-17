@@ -134,6 +134,10 @@ unit GIFImage;
 // This means:                                                                //
 // Use rmQuantizeWindows to get precision, use rmQuantize if you need speed.  //
 //                                                                            //
+// Changed 2009.08.17 by Peter Johnson                                        //
+// Added compiler directives to switch off unsafe type, unsafe code and       //
+// unsafe type warnings on Delphi 7 and later                                 //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 // Please read the "Conditions of use" in the release notes.                  //
@@ -361,6 +365,12 @@ interface
 // Delphi 7.x
 {$IFDEF VER150}
 {$WARN SYMBOL_PLATFORM OFF}
+// 2009.08.17 ->
+// Switch "unsafe" warnings off
+{$WARN UNSAFE_CODE OFF}
+{$WARN UNSAFE_TYPE OFF}
+{$WARN UNSAFE_CAST OFF}
+// 2009.08.17 <-
   {$DEFINE VER10_PLUS}
   {$DEFINE VER11_PLUS}
   {$DEFINE VER12_PLUS}
@@ -388,6 +398,12 @@ interface
 {$IFNDEF VER9x}
 {$IFNDEF VER10_PLUS}
 {$WARN SYMBOL_PLATFORM OFF}
+// 2009.08.17 ->
+// Switch "unsafe" warnings off
+{$WARN UNSAFE_CODE OFF}
+{$WARN UNSAFE_TYPE OFF}
+{$WARN UNSAFE_CAST OFF}
+// 2009.08.17 <-
   {$DEFINE VER10_PLUS}
   {$DEFINE VER11_PLUS}
   {$DEFINE VER12_PLUS}

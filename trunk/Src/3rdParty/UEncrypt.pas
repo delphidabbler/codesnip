@@ -1,10 +1,37 @@
 {
   Source: http://www.swissdelphicenter.ch/torry/showcode.php?id=1243
       or: http://www.delphidabbler.com/tips/73
-  
+
   Author: Steve Schafer
   Homepage: http://www.teamb.com
 }
+
+// 2009.08.17 modified delphidabbler ->
+// switch off unsafe code warnings - requires Delphi 7 and later
+// C++ builder defines not supported
+{$DEFINE DELPHI6ANDLATER}
+{$IFDEF VER80}  // Delphi 1
+  {$UNDEF DELPHI6ANDLATER}
+{$ENDIF}
+{$IFDEF VER90}  // Delphi 2
+  {$UNDEF DELPHI6ANDLATER}
+{$ENDIF}
+{$IFDEF VER100} // Delphi 3
+  {$UNDEF DELPHI6ANDLATER}
+{$ENDIF}
+{$IFDEF VER120} // Delphi 4
+  {$UNDEF DELPHI6ANDLATER}
+{$ENDIF}
+{$IFDEF VER130} // Delphi 5
+  {$UNDEF DELPHI6ANDLATER}
+{$ENDIF}
+{$IFDEF DELPHI6ANDLATER}
+  // $IF directive supported
+  {$IF CompilerVersion >= 15.0} // >= Delphi 7
+    {$WARN UNSAFE_CODE OFF}
+  {$IFEND}
+{$ENDIF}
+// 2009.08.17 <-
 
 unit UEncrypt;
 
@@ -148,3 +175,4 @@ begin
 end;
 
 end.
+
