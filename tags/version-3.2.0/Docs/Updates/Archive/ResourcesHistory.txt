@@ -1,0 +1,981 @@
+# This file lists changes to files from CodeSnip's resources before SVN was used
+# to maintain version records.
+#
+# Any changes to files after importing to SVN on 04 Jul 2009 are not recorded
+# here.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\comp-freeform-tplt.html
+________________________________________________________________________________
+
+v1.0 of 16 Jun 2009  - Original version.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\comp-nocompilers-tplt.html
+________________________________________________________________________________
+
+v1.0 of 16 Jun 2009  - Original version.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\comp-routine.js
+________________________________________________________________________________
+
+v0.1 of 27 Jan 2005  - Original script (compcheck.js).
+v0.2 of 20 Jan 2005  - Renamed as comp-routine.js.
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+v1.1 of 24 Oct 2006  - Changed to get hint text from variables from
+                       detail-consts.js.
+                     - Added code to update hint when "view unit" link text
+                       changes.
+v1.2 of 24 Nov 2006  - Changed ToggleUnitView() to simply call new
+                       external.ToggleTestUnit() instead of showing or hiding
+                       unit.
+v1.3 of 26 Nov 2006  - Replaced direct calls to external object with calls to
+                       functions in external.js.
+                     - Renamed ShowSrc() function as showTestUnit().
+                     - Removed ToggleUnitView() function. Replaced by routine
+                       external.js.
+v1.4 of 03 Dec 2006  - Added showTestCompileHint() function.
+v1.5 of 04 Dec 2006  - Modified showTestUnit() so that it only re-displays
+                       hint when the mouse is over the action link. Added
+                       inTestUnitLink global variable and enterTestUnitLink()
+                       and exitTestUnitLink() functions to do this.
+                     - Modified showTestUnit() to change image when unit view
+                       state changes.
+v1.6 of 25 Jan 2009  - Changed showTestUnit() to change image title.
+v2.0 of 07 Jun 2009  - Removed support for showing/hiding test unit:
+                     - vShowHideHint and inTestUnitLink variables removed.
+                     - Removed enterTestUnitLink(), exitTestUnitLink() and
+                       showTestUnit() functions.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\comp-routine-dbase-tplt.html
+________________________________________________________________________________
+
+v0.1 of 20 Feb 2005  - Original version.
+v0.2 of 19 Apr 2005  - Prefixed "Compile" to compile button hint.
+                     - Moved these comments below xml and doctype tags.
+v0.3 of 25 Apr 2005  - Added links to display About Compiler Checks help topic
+                       and Configure Compilers dialog box.
+                     - JavaScript now used to write HTML for Test Compile
+                       button and disables it, and writes message when new
+                       external.InstalledCompilers() method returns 0.
+v0.4 of 03 Jun 2005  - Now contains only inner HTML of body tag rather than
+                       complete XHTML document.
+                     - Removed JavaScript that wrote test button and "no
+                       compilers" message and replaced by hard code.
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+                     - Revised action links in page to use boxed style.
+v1.1 of 24 Oct 2006  - Changed most literal hints and help keywords to use
+                       variables from detail-consts.js.
+v1.2 of 25 Nov 2006  - Added pas-source CSS class to source code pre tag.
+                     - Removed border style from image tags.
+v1.3 of 26 Nov 2006  - Replaced direct calls to external object with calls to
+                       functions in external.js.
+                     - Replaced calls to ToggleViewUnit() function with calls
+                       to toggleTestUnit() in external.js.
+        03 Dec 2006  - DELETED
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\comp-routine-test-tplt.html
+________________________________________________________________________________
+
+v0.1 of 20 Feb 2005  - Original version.
+v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.3 of 25 Apr 2005  - Added links to display About Compiler Checks help topic
+                       and Configure Compilers dialog box.
+v0.4 of 03 Jun 2005  - Now contains only inner HTML of body tag rather than
+                       complete XHTML document.
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+                     - Revised action links in page to use boxed style.
+v1.1 of 24 Oct 2006  - Changed all literal hints and help keywords to use
+                       variables from detail-consts.js.
+v1.2 of 25 Nov 2006  - Added pas-source CSS class to source code pre tag.
+                     - Removed border style from image tags.
+v1.3 of 26 Nov 2006  - Replaced direct calls to external object with calls to
+                       functions in external.js.
+                     - Replaced calls to ToggleViewUnit() function with calls
+                       to toggleTestUnit() in external.js.
+        03 Dec 2006  - DELETED.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\comp-snippet-tplt.html
+________________________________________________________________________________
+
+v1.0 of 03 Dec 2006  - Original version named comp-routine-tplt.html. Replaces
+                       comp-routine-dbase-tplt.html and
+                       comp-routine-test-tplt.html.
+v1.1 of 04 Dec 2006  - Modified View/Hide Test Unit link's onmouseover and
+                       onmouseout events to call enterTestUnitLink() and
+                       exitTestUnitLink() rather than showHint() and
+                       clearHint().
+                     - Added new viewunitimg img to View Test Unit image to
+                       allow image to be changed.
+v1.2 of 17 Dec 2006  - Changed help text link to use .help-link CSS class.
+v1.3 of 18 Oct 2007  - Added "return false;" statement to end of each onclick
+                       event that didn't already have it.
+v1.4 of 03 Nov 2007  - Updated link class names to designate link type and
+                       links to be included in popup menus.
+v1.5 of 04 Nov 2007  - Changed to display help via "help:" protocol rather
+                       than using JavaScript calls.
+v1.6 of 14 Sep 2008  - Added extra ids to enable toggle unit and test compile
+                       links to be hidden when routine being displayed is not
+                       in standard format.
+                     - Added message displayed when routine is not in
+                       standard format.
+                     - Added class option-img to images related to menu
+                       links.
+v2.0 of 25 Jan 2009  - Added template placeholders to be used instead of
+                       dynamic updating via DHTML.
+                     - Removed erroneous parameter from enterTestUnitLink
+                       function call.
+v2.1 of 19 Jun 2009  - Removed HTML divs that were used to display test unit.
+                     - Links that previously toggled visibility of test unit
+                       now call a new external object function that causes
+                       test unit to be displayed in dialog. These links are
+                       no longer updated dynamically: they now have static
+                       text and images.
+                     - Changed test compile link etc to refer to "snippet"
+                       rather than "routine"
+                     - Removed divs that appear when snippet is not
+                       compilable or there are no compilers: different
+                       templates are now used in this case.
+                     - Added enclosing "details" div.
+                     - Added edit snippet div for user-defined snippets.
+                     - Renamed as comp-snippet-tplt.html.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\comp-welcome.html
+________________________________________________________________________________
+
+v0.1 of 20 Feb 2005  - Original version
+v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags
+        25 May 2005  - DELETED.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\detail.css
+________________________________________________________________________________
+
+v0.1 of 26 Jan 2005  - Original version (local.css).
+v0.2 of 20 Feb 2005  - Deleted redundant styles and added those needed for
+                       options box and compiler check pane.
+                     - Renamed as detail.css.
+v0.3 of 10 Mar 2005  - Added .pas-* classes to use in syntax highlighting of
+                       pascal source if detail pane.
+v0.4 of 16 Mar 2005  - Changed pascal comment class to use same colour as
+                       default hilighting used elsewhere. Also changed pascal
+                       classes to use hex colour numbers rather than names.
+v0.5 of 25 Apr 2005  - Added new .hilite class.
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+v1.1 of 25 Nov 2006  - Removed all colour and font style properties from
+                       style sheet. These are now set as default CSS in frame
+                        units.
+                     - Removed all pascal highlighting code.
+                     - Added .comptable td and th selectors to specify
+                       alignment of compiler table cells in info pane.
+v1.2 of 03 Dec 2006  - Added various .testcomp selectors to lay out
+                       compilation result table in compiler check pane.
+                     - Deleted unused form and .compinfo classes.
+                     - Rationalised some margin definitions.
+v1.3 of 09 Feb 2007  - Added new h2 CSS class.
+v1.4 of 20 Jun 2009  - Added new div.extra-wrapper and h2.extra CSS classes.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\detail.js
+________________________________________________________________________________
+
+v1.0 of 03 Dec 2006  - Original version that exposes routines called from
+                       both JavaScript and Delphi code.
+v1.1 of 14 Sep 2008  - Added setOnClick function to set a tag's onclick
+                       event handler.
+v2.0 of 25 Jan 2009  - Removed all except getInnerText() routine. This script
+                       is no longer accessed from Delphi code.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\detail-compcheck.html
+________________________________________________________________________________
+
+v0.1 of 03 Jun 2005  - Original version named comp-blank.html.
+v0.2 of 28 Jan 2006  - Removed xml processing instruction because it caused
+                       some display problems on some OSs (e.g. Win2K).
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+v1.1 of 22 Oct 2006  - Added reference to new detail-consts.js script.
+v1.2 of 26 Nov 2006  - Included new external.js JavaScript file.
+                     - Replaced direct calls to external object with calls to
+                       functions in external.js.
+v1.3 of 03 Dec 2006  - Renamed from comp-blank.html to comp-routine.html.
+                     - Removed embedded #viewunit style definition.
+                     - Added reference to new detail.js script.
+v1.4 of 19 Jan 2009  - Renamed as detail-compcheck.html since now used as
+                       base document for all HTML displayed in info pane.
+                     - Changed title to detail-compcheck.
+                     - Removed "language" attribute from <script> elements.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\detail-consts.js
+________________________________________________________________________________
+
+v1.0 of 22 Oct 2006  - Original version.
+v1.1 of 04 Nov 2007  - Removed help topic A-link constants as now unused.
+v1.2 of 14 Sep 2008  - Added new constants for standard format and user
+                       database help link hints and for edit snippet command
+                       link.
+v1.3 of 16 Jun 2009  - Removed unused vHideTestUnitHint and vStdFormatHint
+                       strings.
+                     - Added new vDonateHint, vFreeformHelpHint,
+                       vRoutineHelpHint, vTypeDefHelpHint, vConstantHelpHint
+                       and vSnippetKindHelpHint strings.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\detail-info.html
+________________________________________________________________________________
+
+v1.0 of 03 Dec 2006  - Original version named info-routine.html.
+v1.1 of 14 Sep 2008  - Added detail-consts.js script.
+                     - Changed title from info-blank to info-routine.
+v1.2 of 19 Jan 2009  - Renamed as detail-info.html since now used as base
+                       document for all HTML displayed in info pane.
+                     - Changed title to detail-info.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\dlg-about-database-tplt.html
+________________________________________________________________________________
+
+v1.0 of 11 Feb 2007  - Original version.
+v1.1 of 22 Sep 2007  - Modified to list testers as well as contributors.
+                     - Created internal styles to format list of contributors
+                       / testers list.
+v1.2 of 14 Oct 2007  - Fixed typo in Credits section.
+v1.3 of 21 Apr 2008  - Increased height of scrollbox.
+v1.4 of 14 Sep 2008  - Fixed tag mismatch and replaced literal quotes with
+                       entities.
+                     - Made "Credits" heading bold.
+                     - Gave external links "external-link" class.
+v1.5 of 16 Jun 2009  - Fixed typo in disclaimer.
+                     - Increased size of contributors scroll box.
+                     - Changed text to refer to all kinds of snippets.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\dlg-about-head-tplt.html
+________________________________________________________________________________
+
+v1.0 of 11 Feb 2007  - Original version.
+v1.1 of 27 May 2009  - Added "icon" id to img element that displays icon and
+                       a title advising to ctrl-click the icon (displays
+                       easter egg).
+                     - Changed sub-title to denote CodeSnip now a database
+                       manager as well as viewer.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\dlg-about-program-tplt.html
+________________________________________________________________________________
+
+v0.1 of 20 Jan 2005  - Original version named about.html.
+v0.2 of 20 Jan 2005  - Renamed as dlg-about-tplt.html.
+                     - Changed page title to file name without extension.
+v0.3 of 01 Jan 2005  - Restyled to include "powered by delphi" image and to
+                       add program name and version number to white pane with
+                       image.
+                     - Added ResURL template id that maps to HTML resources.
+v0.4 of 19 Jan 2005  - Moved these comments below xml and doctype tags.
+v0.5 of 14 Jan 2006  - Added credits for 3rd party MD5 code.
+v0.6 of 07 Apr 2006  - Added placeholder for registration information.
+v1.0 of 08 Jun 2006  - Reformatted update log comments.
+                     - Changed link re source code to CodeSnip home page.
+                     - Changed to Mozilla Public License.
+                     - Removed "powered by delphi" image.
+v1.1 of 21 Oct 2006  - Removed all target attributes from a-links.
+                     - Added AppExePath template id that maps to path of
+                       program's executable file (used for location of
+                       license file).
+v1.2 of 26 Oct 2006  - Changed to reference license file via LicenseFileName
+                       template id rather than via AppExePath template id and
+                       hard-wired file name.
+v1.3 of 14 Nov 2006  - Changed execute: protocol link to license file to a
+                       help: protocol link to License help topic. Removed
+                       LicenseFileName template id.
+v1.4 of 25 Nov 2006  - Removed border style from image tag.
+                     - Replaced use of hard-wired colours in style attributes
+                       by use of CSS .header and .warning classes.
+v1.5 of 11 Feb 2007  - Removed header table to separate file.
+                     - Renamed from dlg-about-tplt.html to
+                       dlg-about-program-tplt.html.
+                     - Added titles to online links.
+v1.6 of 14 Sep 2008  - Added credits for GIFImage third party source code.
+                     - Gave external links "external-link" class.
+                     - Revised URL of link to CodeSnip online.
+                     - Added title to help link.
+v1.7 of 25 Jun 2009  - Added credits for Indy and images used in CodeSnip v3.
+                     - Updated MPL link.
+                     - Placed credits in a scrolling box.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\dlg-comperror-tplt.html
+________________________________________________________________________________
+
+v0.1 of 21 Jan 2005  - Original version named comperror.html.
+v0.2 of 20 Feb 2005  - Renamed as dlg-comperror-tplt.html.
+                     - Changed page title to file name without extension.
+v0.3 of 04 Mar 2005  - Changed <%Delphi%> template code to <%CompilerID%>.
+                     - Restyled title line of HTML.
+v0.4 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\dlg-donate.html
+________________________________________________________________________________
+
+v1.0 of 11 May 2009  - Original version.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\dlg-easter-egg.html
+________________________________________________________________________________
+
+v1.0 of 19 Jun 2009  - Original version.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\dlg-mlist-result-tplt.html
+________________________________________________________________________________
+
+v1.0 of 17 Nov 2006  - Original version.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\dlg-updt-news-tplt.html
+________________________________________________________________________________
+
+v0.1 of 01 May 2006  - Original version.
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\dlg-userdb-extra.html
+________________________________________________________________________________
+
+v1.0 of 31 Dec 2008  - Original version.
+v1.1 of 23 Jun 2009  - Removed detailed explanation of all tags and replaced
+                       with brief overview and link to REML help topic.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\easteregg.css
+________________________________________________________________________________
+
+v1.0 of 19 Jun 2009  - Original version.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\easteregg.js
+________________________________________________________________________________
+
+v1.0 of 19 Jun 2009  - Original version.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\external.js
+________________________________________________________________________________
+
+v1.0 of 26 Nov 2006  - Original version.
+v1.1 of 04 Nov 2007  - Removed helpTopic() function. No longer required.
+v1.2 of 14 Sep 2008  - Added "userdefined" param to displayRoutine() routine.
+                     - Added new editRoutine() function.
+v1.3 of 17 Jun 2009  - Modified to work with v5 external object:
+                       - Removed redundant toggleTestUnit() function.
+                       - Added new showTestUnit() function.
+                       - Added new donate() function.
+                       - Changed to call renamed external object methods.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\info-blank.html
+________________________________________________________________________________
+
+v0.1 of 03 Jun 2005  - Original version.
+v0.2 of 28 Jan 2006  - Removed xml processing instruction because it caused
+                       some display problems on some OSs (e.g. Win2K).
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+v1.1 of 26 Nov 2006  - Included new external.js JavaScript file.
+                     - Replaced direct calls to external object with calls to
+                       functions in external.js.
+        25 Jan 2009  - DELETED.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\info-empty-selection-tplt.html
+________________________________________________________________________________
+
+v0.1 of 20 Feb 2005  - Original version, named info-category-empty-tplt.html.
+v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.3 of 03 Jun 2005  - Now contains only inner HTML of body tag rather than
+                       complete XHTML document.
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+v1.1 of 14 Sep 2008  - Added new <%H1Class%> placeholder for CSS class name
+                       used in heading.
+v2.0 of 07 Jun 2009  - Revised template for use with any view item that
+                       normally displays a table of snippets where there are
+                       no snippets to display.
+                       - Replaced <%Cat%> placeholder as <%Heading%>.
+                       - Replaced literal note text with <%Note%>
+                         placeholder.
+                     - Renamed as info-empty-selection-tplt.html.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\info-snippet-list-tplt.html
+________________________________________________________________________________
+
+v0.1 of 20 Feb 2005  - Original version, named info-category-list-tplt.html.
+v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.3 of 03 Jun 2005  - Now contains only inner HTML of body tag rather than
+                       complete XHTML document.
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+v1.1 of 25 Nov 2006  - Removed border attribute from table tag.
+v1.2 of 14 Sep 2008  - Added new <%H1Class%> placeholder for CSS class name
+                       used in heading.
+v2.0 of 07 Jun 2009  - Revised template for use with any view item that
+                       displays a table of snippets.
+                       - Replaced opening paragraph text with <%Narrative%>
+                         placeholder.
+                       - Renamed <%Cat%> has <%Heading%>
+                     - Renamed as info-snippet-list-tplt.html.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\info-snippet-tplt.html
+________________________________________________________________________________
+
+v0.1 of 20 Feb 2005  - Original version, named info-routine-tplt.html.
+v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.3 of 03 Jun 2005  - Now contains only inner HTML of body tag rather than
+                       complete XHTML document.
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+v1.1 of 25 Nov 2006  - Added pas-source CSS class to source code pre tag.
+v2.0 of 03 Dec 2006  - Removed all template placeholders except compiler
+                       table rows and added ids to relevant tags for details
+                       to be updated via DHTML.
+v2.1 of 14 Sep 2008  - Added "Edit snippet" link to title line that can be
+                       hidden dynamically for non-user defined routines. This
+                       link has classes that make it alos appear in context
+                       menus.
+v3.0 of 25 Jan 2009  - Reinstated and modified template placeholders to
+                       be used instead of dynamic updating via DHTML.
+v3.1 of 20 Jun 2009  - Replaced reference to "routines" with "snippets".
+                     - Added new "snippet type" paragraph and <%Kind%>
+                       placeholder.
+                     - Added div round compiler table that can show or hide
+                       it depending on new <%ShowCompilations%> placeholder.
+                     - Replaced <p> tag round <%Extra%> placeholder with a
+                       <div>: One or more <p> tags now added as part of
+                       template replacement.
+                     - Renamed as info-snippet-tplt.html.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\info-uncatheader-tplt.html
+________________________________________________________________________________
+
+v0.1 of 20 Feb 2005  - Original version.
+v0.2 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.3 of 03 Jun 2005  - Now contains only inner HTML of body tag rather than
+                       complete XHTML document.
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+v1.1 of 25 Nov 2006  - Removed border attribute from table tag.
+        28 Jun 2009  - DELETED.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\nocompcheck-body.html
+________________________________________________________________________________
+
+v0.1 of 16 Jan 2005  - Original version named nocompcheck.html.
+v0.2 of 20 Feb 2005  - Revised to include options box.
+                     - Renamed as comp-na.html.
+                     - Changed page title to file name without extension.
+v0.3 of 19 Apr 2005  - Moved these comments below xml and doctype tag.
+v0.4 of 25 Apr 2005  - Changed to use external.HelpTopic method to display
+                       the About Compiler Checks help topic rather than
+                       QuickStart help.
+v0.5 of 28 Jan 2006  - Removed xml processing instruction because it caused
+                       some display problems on some OSs (e.g. Win2K).
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+v1.1 of 24 Oct 2006  - Added reference to new detail-consts.js script and
+                       changed all literal hints and help keywords to use
+                       variables from it.
+v1.2 of 26 Oct 2006  - Changed do-nothing links to reference
+                       javascript:void(0) rather than '#'.
+v1.3 of 25 Nov 2006  - Replaced width and height attributes of img tag with
+                       style attribute.
+                     - Removed border attribute from img tag.
+v1.4 of 26 Nov 2006  - Included new external.js JavaScript file.
+                     - Replaced direct calls to external object with calls to
+                       functions in external.js.
+v1.5 of 15 Dec 2006  - Changed help text link to use .help-link CSS class.
+v1.6 of 18 Oct 2007  - Added "return false;" statement to end of each onclick
+                       event.
+v1.7 of 03 Nov 2007  - Added external-link class name to links displayed in
+                       external browser and command-link class name to links
+                       that trigger commands.
+                     - Added help-link class name to image links to help
+                       topics.
+                     - Added menu-item class name to links to be placed on
+                       pop-up menu
+                     - Changed case of some link text.
+v1.8 of 04 Nov 2007  - Changed to display help via "help:" protocol rather
+                       than using JavaScript calls.
+v1.9 of 14 Sep 2008  - Added class option-img to images related to menu
+                       links.
+v2.0 of 19 Jan 2009  - Renamed as nocompcheck-body.html.
+                     - Changed from complete HTML document to provide inner
+                       HTML of and existing HTML document:
+                       - doctype and <html> tags removed
+                       - all <head> section, including scripts, removed.
+                       - <body> tags removed.
+v2.1 of 16 Jun 2009  - Replaced reference to "routines" with "snippets".
+                     - Added info image to page and reworded slightly.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\nodata-welcome.html
+________________________________________________________________________________
+
+v0.1 of 20 Feb 2005  - Original version.
+v0.2 of 23 Feb 2005  - Provided information on how to download.
+v0.3 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.4 of 25 Apr 2005  - Changed to use external.HelpTopic method rather than
+                       obsolete external.QuickStartHelp in option box.
+v0.5 of 28 Jan 2006  - Removed xml processing instruction because it caused
+                       some display problems on some OSs (e.g. Win2K).
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+v1.1 of 22 Oct 2006  - Added introductory text to pane with link to online
+                       database.
+                     - Added reference to new detail-consts.js script and
+                       changed all literal hints and help keywords to use
+                       variables from it.
+v1.2 of 26 Oct 2006  - Changed do-nothing links that referenced '#' to call
+                       javascript:void(0) instead.
+v1.3 of 25 Nov 2006  - Replaced use of hard-wired colours in style attributes
+                       by use of .warning CSS class.
+                     - Replaced width and height attributes of img tag with
+                       style attribute.
+                     - Removed border attributes from img tags.
+v1.4 of 26 Nov 2006  - Included new external.js JavaScript file.
+                     - Replaced direct calls to external object with calls to
+                       functions in external.js.
+v1.5 of 15 Dec 2006  - Changed help text link to use .help-link CSS class.
+v1.6 of 18 Oct 2007  - Added "return false;" statement to end of each onclick
+                       event.
+v1.7 of 03 Nov 2007  - Updated link class names to designate link type and
+                       links to be included in popup menus.
+                     - Changed case of some link text.
+v1.8 of 04 Nov 2007  - Changed to display help via "help:" protocol rather
+                       than using JavaScript calls.
+        15 Sep 2008  - DELETED.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\HTML\welcome-tplt.html
+________________________________________________________________________________
+
+v0.1 of 20 Feb 2005  - Original version.
+v0.2 of 23 Feb 2005  - Expanded information about using program.
+v0.3 of 19 Apr 2005  - Moved these comments below xml and doctype tags.
+v0.4 of 25 Apr 2005  - Changed to use external.HelpTopic method rather than
+                       obsolete external.QuickStartHelp in option box.
+                     - Renamed from info-welcome.html to welcome.html,
+                       rephrased text and highlighted tab and menu names.
+v0.5 of 28 Jan 2006  - Removed xml processing instruction because it caused
+                       some display problems on some OSs (e.g. Win2K).
+v1.0 of 04 Jun 2006  - Reformatted update log comments.
+                     - Changed to Mozilla Public License.
+v1.1 of 22 Oct 2006  - Added link to online database.
+                     - Added reference to new detail-consts.js script and
+                       changed all literal hints and help keywrods to use
+                       variables from it.
+v1.2 of 26 Oct 2006  - Changed do-nothing links that referenced '#' to call
+                       javascript:void(0) instead.
+v1.3 of 25 Nov 2006  - Replaced width and height attributes of img tag with
+                       style attribute.
+                     - Removed border attributes from img tags.
+v1.4 of 26 Nov 2006  - Included new external.js JavaScript file.
+                     - Replaced direct calls to external object with calls to
+                       functions in external.js.
+                     - Changed title from info-welcome to welcome.
+v1.5 of 15 Dec 2006  - Removed all hilite class spans.
+                     - Changed help text link to use .help-link CSS class.
+v1.6 of 09 Feb 2007  - Added new disclaimer section.
+v1.7 of 18 Oct 2007  - Added "return false;" statement to end of each onclick
+                       event.
+v1.8 of 03 Nov 2007  - Updated link class names to designate link type and
+                       links to be included in popup menus.
+                     - Changed case of some link text.
+v1.9 of 04 Nov 2007  - Changed to display help via "help:" protocol rather
+                       than using JavaScript calls.
+v2.0 of 14 Sep 2008  - Heavily revised to dynamically updated via DHTML. The
+                       pages displays different content depending on whether
+                       main and user databases are in use. All combinations
+                       catered for. Replaces nodata-welcome.html when main
+                       database is empty.
+                     - Numerous id attributes added to enable dynamic showing
+                       and hiding of content.
+                     - Added class option-img to images related to menu
+                       links.
+                     - Added detail.js to document.
+v3.0 of 25 Jan 2009  - Renamed as welcome-tplt.html.
+                     - Changed from complete HTML document to provide inner
+                       HTML of and existing HTML document:
+                       - doctype and <html> tags removed
+                       - all <head> section, including scripts, removed.
+                       - <body> tags removed.
+                     - Added templates placeholders to specify which divs are
+                       to be displayed and which hidden.
+v3.1 of 07 Jun 2009  - Added donation section and button.
+                     - Significantly edited the welcome text.
+                     - Removed the <%NoDatabases%> placeholder and replaced
+                       <%MainDBOnly%> and <%UserDBOnly%> with <%NoUserDB%>
+                       and <%NoMainDB%> placeholders respectively.
+                     - Added Configure Compilers command to pop-up menu.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\BDS.bmp
+________________________________________________________________________________
+
+08 Jan 2006 - Added to project, named Delphi2005w.bmp.
+11 Aug 2008 - Renamed as BDS.bmp (image unchanged).
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\cancel.png
+________________________________________________________________________________
+
+28 Jun 2009 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\cancel-glow.png
+________________________________________________________________________________
+
+28 Jun 2009 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\click-me.png
+________________________________________________________________________________
+
+28 Jun 2009 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\CodeSnip.ico
+________________________________________________________________________________
+
+02 Apr 2006 - Added to project
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\compile.gif
+________________________________________________________________________________
+
+03 Dec 2006 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\CompilerSearch.bmp
+________________________________________________________________________________
+
+03 Feb 2007 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\configcomp.gif
+________________________________________________________________________________
+
+09 Jun 2006 - Added to project.
+15 Sep 2008 - Modified to display correctly when converted to bitmap.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\Delphi2_3.bmp
+________________________________________________________________________________
+
+05 Mar 2005 - Added to project named Delphi2.bmp.
+11 Aug 2008 - Renamed as Delphi2_3.bmp (image unchanged).
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\Delphi2006w.bmp
+________________________________________________________________________________
+
+08 Jan 2006 - Added to project.
+11 Aug 2008 - DELETED.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\Delphi2007.bmp
+________________________________________________________________________________
+
+08 May 2007 - Added to project.
+11 Aug 2008 - DELETED.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\Delphi3.bmp
+________________________________________________________________________________
+
+05 Mar 2005 - Added to project.
+11 Aug 2008 - DELETED.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\Delphi4.bmp
+________________________________________________________________________________
+
+05 Mar 2005 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\Delphi5.bmp
+________________________________________________________________________________
+
+05 Mar 2005 - Added to project.
+31 Oct 2006 - Resized to same size as other compiler glyphs.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\Delphi6.bmp
+________________________________________________________________________________
+
+05 Mar 2005 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\Delphi7.bmp
+________________________________________________________________________________
+
+05 Mar 2005 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\delphipower.png
+________________________________________________________________________________
+
+05 Mar 2005 - Added to project.
+09 Jun 2006 - DELETED.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\donate-btn.gif
+________________________________________________________________________________
+
+28 Jun 2009 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\download.gif
+________________________________________________________________________________
+
+31 Jan 2005 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\easter-egg-bottom.png
+________________________________________________________________________________
+
+28 Jun 2009 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\easter-egg-top.png
+________________________________________________________________________________
+
+28 Jun 2009 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\editsnippet.gif
+________________________________________________________________________________
+
+15 Sep 2008 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\help.gif
+________________________________________________________________________________
+
+31 Jan 2005 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\hideunit.gif
+________________________________________________________________________________
+
+04 Dec 2006 - Added to project.
+15 Sep 2008 - Modified to display correctly when converted to bitmap.
+28 Jun 2009 - DELETED.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\icon.gif
+________________________________________________________________________________
+
+09 Jun 2006 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\led-green.png
+________________________________________________________________________________
+
+31 Jan 2005 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\led-off.png
+________________________________________________________________________________
+
+31 Jan 2005 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\led-red.png
+________________________________________________________________________________
+
+31 Jan 2005 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\led-yellow.png
+________________________________________________________________________________
+
+31 Jan 2005 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\Modified.bmp
+________________________________________________________________________________
+
+02 Jan 2009 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\NulSearch.bmp
+________________________________________________________________________________
+
+03 Feb 2007 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\pj.jpg
+________________________________________________________________________________
+
+28 Jun 2009 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\pound-sign.png
+________________________________________________________________________________
+
+11 May 2009 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\SelectionSearch.bmp
+________________________________________________________________________________
+
+03 Feb 2007 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\Splash.gif
+________________________________________________________________________________
+
+28 Jun 2009 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\symbol-exclamation.png
+________________________________________________________________________________
+
+28 Jun 2009 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\symbol-information.png
+________________________________________________________________________________
+
+28 Jun 2009 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\TextSearch.bmp
+________________________________________________________________________________
+
+03 Feb 2007 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\TVCheckBoxes.bmp
+________________________________________________________________________________
+
+31 Oct 2006 - Added to project.
+11 Aug 2008 - Changed order of check box faces to match TCheckBoxState ordinals.
+              Duplicated all check boxes as placeholder for "hot" images. This
+              change made to help fix display bug in treeviews that use
+              checkboxes that manifests itself when themes change.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\tvr.jpg
+________________________________________________________________________________
+
+28 Jun 2009 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\viewunit.gif
+________________________________________________________________________________
+
+09 Jun 2006 - Added to project.
+04 Dec 2006 - Changed glyph used for View Test Unit action link.
+15 Sep 2008 - Modified to display correctly when converted to bitmap.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Img\XRefSearch.bmp
+________________________________________________________________________________
+
+03 Feb 2007 - Added to project.
+04 Jul 2009 - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+Res\Misc\CodeSnip.manifest
+________________________________________________________________________________
+
+v1.0 of 21 Apr 2008  - Original version which activates XP and Vista themes
+                       and notes application can run without elevation on
+                       Vista.
+v1.1 of 14 Sep 2008  - Updated assemblyIdentity to v2.
+v1.2 of 06 Jun 2009  - Updated assemblyIdentity to v3.
+        04 Jul 2009  - IMPORTED TO SVN.
+
+¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
