@@ -46,7 +46,7 @@ File OS=4
 File Type=1
 File Sub-Type=0
 File Flags Mask=63
-File Flags=32
+File Flags= 0
 
 [Variable File Info]
 Language=2057
@@ -56,7 +56,7 @@ Character Set=1252
 Comments=
 Company Name=DelphiDabbler
 File Description=CodeSnip Database Viewer
-File Version=<#F1>.<#F2>.<#F3> build <#F4> <SPECIALBUILD>
+File Version=<#F1>.<#F2>.<#F3> build <#F4>
 Internal Name=<SHORTFNAME>
 Legal Copyright=Copyright © P.D.Johnson, 2005-<YEAR>.
 Legal Trademark=
