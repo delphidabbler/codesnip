@@ -163,7 +163,7 @@ resourcestring
   sLoggingOff       = 'Logging off';
   sCompleted        = 'Update completed';
   sCancelled        = 'Update cancelled';
-
+  sCancelling       = 'Cancelling...';
   // Dialog box messages
   sRunning          = 'Performing update';
   sUpdtSuccess      = 'Files updated successfully';
@@ -202,6 +202,7 @@ begin
   inherited;
   // Sets cancelled flag checked during download
   fCancelled := True;
+  ProgressMsg(sCancelling);
 end;
 
 procedure TUpdateDlg.btnDoUpdateClick(Sender: TObject);

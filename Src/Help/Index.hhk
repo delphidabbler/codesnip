@@ -322,6 +322,11 @@
 		<param name="Local" value="HTML\privacy_statement.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="proxy server dialog">
+		<param name="Name" value="Proxy Server Dialog Box">
+		<param name="Local" value="HTML\dlg_proxyserver.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="quickstart guide">
 		<param name="Name" value="QuickStart Guide">
 		<param name="Local" value="HTML\quickstart.htm">

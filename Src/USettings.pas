@@ -99,6 +99,22 @@ type
       {Loads section and all its data items from application's persistent
       storage.
       }
+    function GetEncryptedItemValue(const Name: string): string; overload;
+      {Gets an encrypted value by name and unencrypts it.
+        @param Name [in] Name of value.
+        @return Required unencrypted value.
+      }
+    function GetEncryptedItemValue(const Idx: Integer): string; overload;
+      {Gets an encrypted value by index and unencrypts it.
+        @param Idx [in] Index of value.
+        @return Required unencrypted value.
+      }
+    procedure SetEncryptedItemValue(const Name, Value: string);
+      overload;
+      {Encrypts and sets a named value.
+        @param Name [in] Name of value.
+        @param Value [in] Unencryped value to be encrypted.
+      }
     property SectionName: string read GetSectionName;
       {Name of section represented by this object}
     property ItemCount: Integer read GetItemCount;
@@ -135,7 +151,8 @@ type
     ssCompilerInfo,       // info about each supported compiler
     ssApplication,        // info about the application
     ssPreferences,        // info about program preferences
-    ssUserInfo            // info about user
+    ssUserInfo,           // info about user
+    ssProxyServer         // info about any proxy server
   );
 
   {
@@ -174,6 +191,8 @@ implementation
 uses
   // Delphi
   SysUtils, Classes, IniFiles,
+  // 3rd party
+  UEncrypt,
   // Project
   UAppInfo, UExceptions, UUtils;
 
@@ -273,12 +292,10 @@ type
     ISettingsSection
   )
   private
-    fSectionName: string;
-      {Name of section}
-    fStorage: TSettingsStorageId;
-      {Id of storage to be used}
-    fValues: TStringList;
-      {Stores section's data items as list of name=value pairs}
+    fSectionName: string;         // Name of section
+    fStorage: TSettingsStorageId; // Id of storage to be used
+    fValues: TStringList;         // Stores section's data as name=value pairs
+    const cEncryptKey = 46723;    // Key used for encryption / decryption
   protected
     { ISettingsSection methods }
     function GetSectionName: string;
@@ -330,6 +347,22 @@ type
       {Loads section and all its data items from application's persistent
       storage.
       }
+    function GetEncryptedItemValue(const Name: string): string; overload;
+      {Gets an encrypted value by name and unencrypts it.
+        @param Name [in] Name of value.
+        @return Required unencrypted value.
+      }
+    function GetEncryptedItemValue(const Idx: Integer): string; overload;
+      {Gets an encrypted value by index and unencrypts it.
+        @param Idx [in] Index of value.
+        @return Required unencrypted value.
+      }
+    procedure SetEncryptedItemValue(const Name, Value: string);
+      overload;
+      {Encrypts and sets a named value.
+        @param Name [in] Name of value.
+        @param Value [in] Unencryped value to be encrypted.
+      }
   public
     constructor Create(const Section: string;
       const Storage: TSettingsStorageId);
@@ -342,7 +375,6 @@ type
       }
   end;
 
-
 function Settings: ISettings;
   {Returns reference to Settings singleton.
     @return Reference to singleton.
@@ -350,7 +382,6 @@ function Settings: ISettings;
 begin
   Result := pvtSettings;
 end;
-
 
 { TSettingsBase }
 
@@ -370,12 +401,12 @@ const
     ssUser,     // ssCompilerInfo
     ssCommon,   // ssApplication
     ssUser,     // ssPreferences
-    ssUser      // ssUserInfo
+    ssUser,     // ssUserInfo
+    ssUser      // ssProxyServer
   );
 begin
   Result := cSectionStorageMap[Section];
 end;
-
 
 { TIniSettingsBase }
 
@@ -418,7 +449,6 @@ begin
       );
   end;
 end;
-
 
 { TIniSettings }
 
@@ -476,14 +506,14 @@ const
     'Cmp',              // ssCompilerInfo
     'Application',      // ssApplication
     'Prefs',            // ssPreferences
-    'UserInfo'          // ssUserInfo
+    'UserInfo',         // ssUserInfo
+    'ProxyServer'       // ssProxyServer
   );
 begin
   Result := cSectionNames[Id];
   if SubSection <> '' then
     Result := Result + ':' + SubSection;
 end;
-
 
 { TIniSettingsSection }
 
@@ -526,6 +556,24 @@ destructor TIniSettingsSection.Destroy;
 begin
   FreeAndNil(fValues);
   inherited;
+end;
+
+function TIniSettingsSection.GetEncryptedItemValue(const Name: string): string;
+  {Gets an encrypted value by name and unencrypts it.
+    @param Name [in] Name of value.
+    @return Required unencrypted value.
+  }
+begin
+  Result := Decrypt(GetItemValue(Name), cEncryptKey);
+end;
+
+function TIniSettingsSection.GetEncryptedItemValue(const Idx: Integer): string;
+  {Gets an encrypted value by index and unencrypts it.
+    @param Idx [in] Index of value.
+    @return Required unencrypted value.
+  }
+begin
+  Result := Decrypt(GetItemValueByIdx(Idx), cEncryptKey);
 end;
 
 function TIniSettingsSection.GetItemCount: Integer;
@@ -616,6 +664,15 @@ begin
     end;
 end;
 
+procedure TIniSettingsSection.SetEncryptedItemValue(const Name, Value: string);
+  {Encrypts and sets a named value.
+    @param Name [in] Name of value.
+    @param Value [in] Unencryped value to be encrypted.
+  }
+begin
+  SetItemValue(Name, Encrypt(Value, cEncryptKey));
+end;
+
 procedure TIniSettingsSection.SetItemValue(const Name, Value: string);
   {Sets value of named data item in section.
     @param Name [in] Name of data item.
@@ -638,12 +695,10 @@ begin
   end;
 end;
 
-
 initialization
 
 // Initialise settings singletion
 pvtSettings := TIniSettings.Create as ISettings;
-
 
 finalization
 
