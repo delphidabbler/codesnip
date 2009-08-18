@@ -41,30 +41,12 @@ interface
 
 uses
   // Delphi
-  Classes, ComCtrls, StdCtrls, Controls, ExtCtrls, Forms,
+  Contnrs, ComCtrls, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericOKDlg, FrGeneralPrefs, FrHiliterPrefs, FrPrefsBase, FrPrintingPrefs,
-  FrSourcePrefs, UPreferences;
+  FmGenericOKDlg, FrPrefsBase, UPreferences;
+
 
 type
-
-  {
-  TPreferencePage:
-    Enumeration of IDs of preference pages.
-  }
-  TPreferencePage = (
-    ppGeneral,            // General preferences
-    ppSourceCode,         // Source code formatting
-    ppSyntaxHighlighter,  // Syntax highlighter customisation
-    ppPrinting            // Printing options
-  );
-
-  {
-  TPreferencePages:
-    Sets of preference pages. Used to define which preference pages are
-    displayed in dialog box.
-  }
-  TPreferencePages = set of TPreferencePage;
 
   {
   TPreferencesDlg:
@@ -72,53 +54,45 @@ type
   }
   TPreferencesDlg = class(TGenericOKDlg)
     pcMain: TPageControl;
-    tsSourceCodePrefs: TTabSheet;
-    frmSourceCodePrefs: TSourcePrefsFrame;
-    tsHiliterPrefs: TTabSheet;
-    frmHiliterPrefs: THiliterPrefsFrame;
-    tsPrintingPrefs: TTabSheet;
-    frmPrintingPrefs: TPrintingPrefsFrame;
-    tsGeneralPrefs: TTabSheet;
-    frmGeneralPrefs: TGeneralPrefsFrame;
     procedure btnOKClick(Sender: TObject);
     procedure pcMainChange(Sender: TObject);
     procedure pcMainChanging(Sender: TObject; var AllowChange: Boolean);
-  private
-    fLocalPrefs: IPreferences;
-      {Object that stores local copy of preferences. Use to pass changes between
-      pages. Main preferences object is only updated if user OKs the dialog box}
-    fVisiblePages: TPreferencePages;
-      {Set of IDs of preferences pages displayed in dialog box}
-    fPageMap: array[TPreferencePage] of TTabSheet;
-      {Maps page IDs onto to tab sheets storing the pages}
-    procedure SetVisiblePages(const Pages: TPreferencePages);
-      {Record ids of visible preferences pages.
-        @param Pages [in] Set of visible pages. If Pages=[] then all pages are
-          visible.
+  strict private
+    class var fPages: TClassList;
+      {Maintains list of frames registered as "pages" of the preferences dialog
+      box}
+    class var fPagesAutoFree: IInterface;
+      {Automatically frees fPages when app closes}
+    var fLocalPrefs: IPreferences;
+      {Stores local copy of preferences. Use to pass changes between pages. Main
+      preferences object is only updated if user OKs the dialog box}
+    procedure CreatePages(const FrameClasses: array of TPrefsFrameClass);
+      {Creates the required frames and displays each frame in a tab sheet within
+      the page control.
+        @param Frames [in] Class references for each required frame.
       }
     function MapTabSheetToPage(const TabSheet: TTabSheet): TPrefsBaseFrame;
+      overload;
       {Gets reference to preferences page frame associated with a tab sheet.
         @param TabSheet [in] Tab sheet for which page frame required.
-        @return Reference to associated page frame.
+        @return Reference to associated frame.
       }
-    function GetPrefPage(const Page: TPreferencePage): TPrefsBaseFrame;
-      {Gets reference to a specified preferences frame.
-        @param Page [in] Id of required frame.
-        @return Reference to required frame.
+    function MapTabSheetToPage(const TabIdx: Integer): TPrefsBaseFrame;
+      overload;
+      {Gets reference to preferences page frame associated with a tab index.
+        @param TabIdx [in] Index of tab sheet for which page frame required.
+        @return Reference to associated frame.
       }
     function GetSelectedPage: TPrefsBaseFrame;
       {Gets refence to preferences frame on currently selected tab.
         @return Reference to required frame.
       }
-  protected
+  strict protected
     function CustomHelpKeyword: string; override;
       {Gets the help A-link keyword to be used when help button clicked. Keyword
       depends on which preferences page is displayed. This permits each
       preferences page to have its own help topic.
         @return Required frame-specific A-link keyword.
-      }
-    procedure ConfigForm; override;
-      {Sets up map of pages to frames that display on them.
       }
     procedure ArrangeForm; override;
       {Sizes frames providing content of pages of dialog and gets each to
@@ -129,13 +103,22 @@ type
       }
   public
     class function Execute(AOwner: TComponent;
-      const Pages: TPreferencePages = []): Boolean;
-      {Displays dialog with requested pages displayed and informs whether dialog
-      was OKed or cancelled.
+      const Pages: array of TPrefsFrameClass): Boolean; overload;
+      {Displays dialog with pages for each specified preferences frame.
         @param AOwner [in] Component that owns dialog.
-        @param Pages [in] Pages to be displayed. If Pages=[] then all pages are
-          displayed.
+        @param Pages [in] Class references of frames to be displayed.
         @return True if user accepts changes or false if cancels.
+      }
+    class function Execute(AOwner: TComponent): Boolean; overload;
+      {Displays preferences dialog with all pages for all registered preference
+      frames.
+        @param AOwner [in] Component that owns dialog.
+      }
+    class procedure RegisterPage(const FrameCls: TPrefsFrameClass);
+      {Registers a preferences frame class for inclusion in the preferences
+      dialog box. Registered frames are created when the dialog box is displayed
+      and freed when it closes.
+        @param FrameCls [in] Class of frame to be registered.
       }
   end;
 
@@ -149,79 +132,88 @@ implementation
 
   This dialog box is a multi-page preferences dialog that provides access to
   each page via a tab. The dialog box does not provide an implementation of
-  each page of the dialog. This representation must be provided by a frame
-  descended from TPrefsBaseFrame that
+  each page of the dialog. This representation must be provided by a frames
+  descended from TPrefsBaseFrame. Such frames must:
+    (a) register themselves with the dialog box by passing their class to the
+        TPreferencesDlg.RegisterPage class method.
+    (b) implement all the abstract methods of TPrefsBaseFrame.
 
-  (a) Displays all required controls
-  (b) Manages input via the controls
-  (c) Can load the required data from local copy of preferences object
-  (d) Can save updated data to local copy of preferences object
+  The dialog box will create registered frames when needed and host them within
+  a tab sheet in the main page control.
 
-  Each tab sheet is associated with a value from the TPreferencePage
-  enumeration. TPreferencesDlg contains a field that maps TPreferencePage
-  values to tab sheets.
-
-  When tab sheets are added two things are required:
-  (1) An entry must be added to the TPreference enumeration.
-  (2) An entry must be made in TPreferenceDlg's fPageMap[] array that maps the
-      new TPreferences entry to the new tab sheet (see the InitForm method).
-
+  There is no need to modify this unit when a new frame is to be addded to it.
 }
 
 
 uses
   // Delphi
-  StrUtils, Windows,
+  StrUtils,
   // Project
-  IntfCommon;
-
+  IntfCommon, UAutoFree;
 
 {$R *.dfm}
+
+{ TPreferencesDlg }
 
 procedure TPreferencesDlg.ArrangeForm;
   {Sizes frames providing content of pages of dialog and gets each to arrange
   its controls.
   }
 var
-  Page: TPreferencePage;  // loops through all preferences pages
+  Idx: Integer;           // loops through all displayed tab sheets
+  Frame: TPrefsBaseFrame; // references each preference frame
+  TabSheet: TTabSheet;    // references each tab sheet
 begin
   inherited;
-  for Page := Low(TPreferencePage) to High(TPreferencePage) do
+  for Idx := 0 to Pred(pcMain.PageCount) do
   begin
-    Assert(Assigned(fPageMap[Page]),
-      ClassName + '.ArrangeForm: Page map incomplete');
-    MapTabSheetToPage(fPageMap[Page]).Width := fPageMap[Page].Width - 8;
-    MapTabSheetToPage(fPageMap[Page]).Height := fPageMap[Page].Height - 8;
-    MapTabSheetToPage(fPageMap[Page]).ArrangeControls;
+    TabSheet := pcMain.Pages[Idx];
+    Frame := MapTabSheetToPage(TabSheet);
+    Frame.Width := TabSheet.Width - 8;
+    Frame.Height := TabSheet.Height - 8;
+    Frame.ArrangeControls;
   end;
 end;
 
 procedure TPreferencesDlg.btnOKClick(Sender: TObject);
-  {OK button click event handler. Stores preference data to persistent storage.
+  {OK button click event handler. Writes preference data to persistent storage.
     @param Sender [in] Not used.
   }
 var
-  Page: TPreferencePage;  // loops through all preferences pages
+  TabIdx: Integer; // loops through all tab sheets on page
 begin
   inherited;
   // Get each visible page to update local preferences
-  for Page := Low(TPreferencePage) to High(TPreferencePage) do
-    if fPageMap[Page].TabVisible then
-      GetPrefPage(Page).SavePrefs(fLocalPrefs);
+  for TabIdx := 0 to Pred(pcMain.PageCount) do
+    MapTabSheetToPage(TabIdx).SavePrefs(fLocalPrefs);
   // Update global preferences with data from local preferences object
   (Preferences as IAssignable).Assign(fLocalPrefs);
 end;
 
-procedure TPreferencesDlg.ConfigForm;
-  {Sets up map of pages to frames that display on them.
+procedure TPreferencesDlg.CreatePages(
+  const FrameClasses: array of TPrefsFrameClass);
+  {Creates the required frames and displays each frame in a tab sheet within the
+  page control.
+    @param Frames [in] Class references for each required frame.
   }
+var
+  Idx: Integer;           // loops through FrameClasses array
+  TS: TTabSheet;          // references each tabsheet as it is created
+  Frame: TPrefsBaseFrame; // references each frame as it is created
 begin
-  inherited;
-  // Set up page map ** IMPORTANT - add entry here for each tabsheet
-  fPageMap[ppGeneral] := tsGeneralPrefs;
-  fPageMap[ppSourceCode] := tsSourceCodePrefs;
-  fPageMap[ppSyntaxHighlighter] := tsHiliterPrefs;
-  fPageMap[ppPrinting] := tsPrintingPrefs;
+  for Idx := Low(FrameClasses) to High(FrameClasses) do
+  begin
+    // create a tabsheet in page control
+    TS := TTabSheet.Create(Self);
+    TS.PageControl := pcMain;
+    // create a frame parented by tab sheet
+    Frame := FrameClasses[Idx].Create(Self);
+    Frame.Parent := TS;
+    Frame.Left := 4;
+    Frame.Top := 4;
+    // set tab sheet caption to frame's display name
+    TS.Caption := Frame.DisplayName;
+  end;
 end;
 
 function TPreferencesDlg.CustomHelpKeyword: string;
@@ -230,49 +222,43 @@ function TPreferencesDlg.CustomHelpKeyword: string;
   page to have its own help topic.
     @return Required frame-specific A-link keyword.
   }
-var
-  SelPage: TPrefsBaseFrame; // reference to frame on selected tab sheet
 begin
-  SelPage := GetSelectedPage;
-  // We use any keyword assigned to selected frame in preference
-  Result := SelPage.HelpKeyword;
-  if Result = '' then
-  begin
-    // No specified keyword: use a keyword based on frame name
-    Result := SelPage.Name;
-    if AnsiStartsStr('frm', Result) then
-      // chop off any leading "frm" from frame name
-      Result := AnsiRightStr(Result, Length(Result) - 3);
-  end;
+  // We expect keyword to be stored in frame's HelpKeyword property
+  Result := GetSelectedPage.HelpKeyword;
 end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;
-  const Pages: TPreferencePages = []): Boolean;
-  {Displays dialog with requested pages displayed and informs whether dialog was
-  OKed or cancelled.
+  const Pages: array of TPrefsFrameClass): Boolean;
+  {Displays dialog with pages for each specified preferences frame.
     @param AOwner [in] Component that owns dialog.
-    @param Pages [in] Pages to be displayed. If Pages=[] then all pages are
-      displayed.
+    @param Pages [in] Class references of frames to be displayed.
     @return True if user accepts changes or false if cancels.
   }
 begin
-  with TPreferencesDlg.Create(AOwner) do
+  with Create(AOwner) do
     try
-      SetVisiblePages(Pages);
+      CreatePages(Pages);
       Result := ShowModal = mrOK;
     finally
       Free;
     end;
 end;
 
-function TPreferencesDlg.GetPrefPage(
-  const Page: TPreferencePage): TPrefsBaseFrame;
-  {Gets reference to a specified preferences frame.
-    @param Page [in] Id of required frame.
-    @return Reference to required frame.
+class function TPreferencesDlg.Execute(AOwner: TComponent): Boolean;
+  {Displays preferences dialog with all pages for all registered preference
+  frames.
+    @param AOwner [in] Component that owns dialog.
   }
+var
+  FrameClasses: array of TPrefsFrameClass;  // array of preference frame classes
+  Idx: Integer;                             // loops through registered frames
 begin
-  Result := MapTabSheetToPage(fPageMap[Page]);
+  // Copy registered frame classes into dynamic array and pass this to
+  // constructor that accepts a list of frames classes.
+  SetLength(FrameClasses, fPages.Count);
+  for Idx := 0 to Pred(fPages.Count) do
+    FrameClasses[Idx] := TPrefsFrameClass(fPages[Idx]);
+  Result := Execute(AOwner, FrameClasses);
 end;
 
 function TPreferencesDlg.GetSelectedPage: TPrefsBaseFrame;
@@ -287,8 +273,7 @@ procedure TPreferencesDlg.InitForm;
   {Displays and initialises frames used to display pages of dialog.
   }
 var
-  TabIdx: Integer;        // loops thru tabs in page control
-  Page: TPreferencePage;  // loops through all preferences pages
+  TabIdx: Integer;  // loops thru tabs in page control
 begin
   inherited;
   // Take local copy of global preferences. This local copy will be updated as
@@ -296,33 +281,32 @@ begin
   // copy is discarded if user cancels.
   fLocalPrefs := (Preferences as IClonable).Clone as IPreferences;
   // Display and initialise required pages
-  for Page := Low(TPreferencePage) to High(TPreferencePage) do
-  begin
-    Assert(Assigned(fPageMap[Page]),
-      ClassName + '.InitForm: Page map incomplete');
-    fPageMap[Page].TabVisible := Page in fVisiblePages;
-    if fPageMap[Page].TabVisible then
-      // get page to set up controls from preferences
-      GetPrefPage(Page).LoadPrefs(fLocalPrefs);
-  end;
-  // Select lowest indexed visible tab
   for TabIdx := 0 to Pred(pcMain.PageCount) do
-    if pcMain.Pages[TabIdx].TabVisible then
-    begin
-      pcMain.ActivePageIndex := TabIdx;
-      Break;
-    end;
+    MapTabSheetToPage(TabIdx).LoadPrefs(fLocalPrefs);
+  // Select first TabSheet
+  pcMain.ActivePageIndex := 0;
+end;
+
+function TPreferencesDlg.MapTabSheetToPage(
+  const TabIdx: Integer): TPrefsBaseFrame;
+  {Gets reference to preferences page frame associated with a tab index.
+    @param TabIdx [in] Index of tab sheet for which page frame required.
+    @return Reference to associated frame.
+  }
+begin
+  Result := MapTabSheetToPage(pcMain.Pages[TabIdx]);
 end;
 
 function TPreferencesDlg.MapTabSheetToPage(
   const TabSheet: TTabSheet): TPrefsBaseFrame;
   {Gets reference to preferences page frame associated with a tab sheet.
     @param TabSheet [in] Tab sheet for which page frame required.
-    @return Reference to associated page frame.
+    @return Reference to associated frame.
   }
 var
-  CtrlIdx: Integer; // loops through all controls on tab sheet
+  CtrlIdx: Integer; // loops through all child controls of tab sheet
 begin
+  Assert(Assigned(TabSheet), ClassName + '.MapTabSheetToPage: TabSheet is nil');
   Result := nil;
   for CtrlIdx := 0 to Pred(TabSheet.ControlCount) do
   begin
@@ -357,18 +341,35 @@ begin
   GetSelectedPage.Deactivate(fLocalPrefs);
 end;
 
-procedure TPreferencesDlg.SetVisiblePages(const Pages: TPreferencePages);
-  {Record ids of visible preferences pages.
-    @param Pages [in] Set of visible pages. If Pages=[] then all pages are
-      visible.
+class procedure TPreferencesDlg.RegisterPage(const FrameCls: TPrefsFrameClass);
+  {Registers a preferences frame class for inclusion in the preferences dialog
+  box. Registered frames are created when the dialog box is displayed and freed
+  when it closes.
+    @param FrameCls [in] Class of frame to be registered.
   }
 var
-  Page: TPreferencePage;  // loops through all preferences pages
+  PageIdx: Integer; // loops through all registered frames
+  InsIdx: Integer;  // place to insert new frame in list (per Index property)
 begin
-  fVisiblePages := [];
-  for Page := Low(TPreferencePage) to High(TPreferencePage) do
-    if (Page in Pages) or (Pages = []) then
-      Include(fVisiblePages, Page);
+  // Ensure page list has been created and flagged for garbage collection
+  if not Assigned(fPages) then
+  begin
+    fPages := TClassList.Create;
+    fPagesAutoFree := TAutoObjFree.Create(fPages);
+  end;
+  // Search for place in frame list to insert new frame (sorted on frame's Index
+  // property).
+  InsIdx := fPages.Count;
+  for PageIdx := 0 to Pred(fPages.Count) do
+  begin
+    if FrameCls.Index < TPrefsFrameClass(fPages[PageIdx]).Index then
+    begin
+      InsIdx := PageIdx;
+      Break;
+    end;
+  end;
+  // Record the frame's class reference
+  fPages.Insert(InsIdx, FrameCls);
 end;
 
 end.
