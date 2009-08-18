@@ -105,8 +105,8 @@ uses
   // Delphi
   SysUtils, Printers, Graphics,
   // Project
-  FmPreferencesDlg, UConsts, UMessageBox, UPageSetupDlgMgr, UPrinterDocPropsDlg,
-  UPrintInfo, UStructs;
+  FmPreferencesDlg, FrPrintingPrefs, UConsts, UMessageBox, UPageSetupDlgMgr,
+  UPrinterDocPropsDlg, UPrintInfo;//, UStructs;
 
 
 {$R *.dfm}
@@ -158,7 +158,8 @@ resourcestring
   sMessage = 'Your preferences will take effect the next time you start the '
     + 'application';
 begin
-  if TPreferencesDlg.Execute(Self, [ppPrinting]) then
+//  if TPreferencesDlg.Execute(Self, [ppPrinting]) then
+  if TPreferencesDlg.Execute(Self, [TPrintingPrefsFrame]) then
   begin
     if TMessageBox.Confirm(Self, sQuery) then
     begin
