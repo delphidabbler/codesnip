@@ -102,8 +102,11 @@ type
       already exists in user database.
         @return Code representing required action.
       }
-    class procedure UpdateUserDatabase(const Routines: TRoutineInfoList);
+    class procedure UpdateUserDatabase(const UserInfo: TUserInfo;
+      const Routines: TRoutineInfoList);
       {Updates user database with filtered list of imported snippets.
+        @param UserInfo [in] Record containing user information pertaining to
+          imported snippets.
         @param Routines [in] Details of required snippets.
       }
     class procedure DisplayUserInfo(const UserInfo: TUserInfo);
@@ -135,8 +138,8 @@ uses
   // Delphi
   SysUtils, Classes, Controls, Dialogs,
   // Project
-  FmEditTextDlg, UConsts, UMessageBox, UOpenDialogEx, UOpenDialogHelper,
-  USnippetIDs;
+  FmEditTextDlg, UActiveText, UConsts, UMessageBox, UOpenDialogEx,
+  UOpenDialogHelper, USnippetIDs;
 
 
 { TCodeImportMgr }
@@ -207,7 +210,7 @@ begin
   // overwritten
   if FilterRoutines(Routines) then
   begin
-    UpdateUserDatabase(Routines);
+    UpdateUserDatabase(UserInfo, Routines);
     // report import results to user
     ReportImportedRoutines(Routines);
   end
@@ -451,12 +454,15 @@ begin
   end;
 end;
 
-class procedure TCodeImportMgr.UpdateUserDatabase(
+class procedure TCodeImportMgr.UpdateUserDatabase(const UserInfo: TUserInfo;
   const Routines: TRoutineInfoList);
   {Updates user database with filtered list of imported snippets.
+    @param UserInfo [in] Record containing user information pertaining to
+      imported snippets.
     @param Routines [in] Details of required snippet.
   }
 
+  // ---------------------------------------------------------------------------
   procedure AdjustDependsList(const Depends: ISnippetIDList);
     {Adjusts a snippet's dependency list so that main database is searched for
     a required snippet if it is not in the user database.
@@ -478,6 +484,28 @@ class procedure TCodeImportMgr.UpdateUserDatabase(
     end;
   end;
 
+  function UserInfoActiveText: IActiveText;
+    {Builds an active text representation of the contributing user's name and
+    email address.
+      @return Required active text representation.
+    }
+  resourcestring
+    // user information text template
+    sContributorText = 'Contributed by: %0:s <%1:s>';
+  begin
+    Assert(not UserInfo.IsNul, ClassName +
+      '.UpdateUserDatabase:CreateUserInfoActiveText: UserInfo is nul');
+    Result := TActiveTextFactory.CreateActiveText;
+    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
+    Result.AddElem(
+      TActiveTextFactory.CreateTextElem(
+        Format(sContributorText, [UserInfo.Name, UserInfo.Email])
+      )
+    );
+    Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
+  end;
+  // ---------------------------------------------------------------------------
+
 var
   Idx: Integer;           // loops through all snippets
   Editor: ISnippetsEdit;  // object used to update user database
@@ -487,6 +515,8 @@ begin
   for Idx := Low(Routines) to High(Routines) do
   begin
     AdjustDependsList(Routines[Idx].Data.Refs.Depends);
+    if not UserInfo.IsNul then
+      Routines[Idx].Data.Props.Extra.Append(UserInfoActiveText);
     Routine := Snippets.Routines.Find(Routines[Idx].Name, True);
     if Assigned(Routine) then
       // snippet already exists: overwrite it
