@@ -106,7 +106,7 @@ uses
   SysUtils, Printers, Graphics,
   // Project
   FmPreferencesDlg, FrPrintingPrefs, UConsts, UMessageBox, UPageSetupDlgMgr,
-  UPrinterDocPropsDlg, UPrintInfo;//, UStructs;
+  UPrinterDocPropsDlg, UPrintInfo, UStructs;
 
 
 {$R *.dfm}
