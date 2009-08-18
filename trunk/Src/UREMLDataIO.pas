@@ -62,10 +62,8 @@ type
   }
   TREMLReader = class(TInterfacedObject, IActiveTextParser)
   strict private
-    fLexer: TTaggedTextLexer;
-      {Object that analysis REML markup}
-    fParamStack: TStringStack;
-      {Stack used to store REML tag parameters for use when closing tags}
+    fLexer: TTaggedTextLexer;   // Analysis REML markup
+    fParamStack: TStringStack;  // Stack of REML tag parameters for closing tags
     function TagInfo(const TagIdx: Integer; out TagName: string;
       out TagCode: Word; out IsContainer: WordBool): Boolean;
       {Callback that provides lexer with information about supported tags. Lexer
@@ -111,7 +109,7 @@ type
   }
   TREMLWriter = class(TNoPublicConstructObject)
   strict private
-    fVersion: TREMLVersion; // version of REML being written
+    fVersion: TREMLVersion; // Version of REML being written
     function TextToREMLText(const Text: string): string;
       {Converts plain text to REML compatible text by replacing illegal
       characters with related character entities.
@@ -152,8 +150,8 @@ type
   }
   TREMLAnalyser = class(TNoConstructObject)
   public
-    const FIRST_VERSION = Low(TREMLVersion);    // first version of REML
-    const LATEST_VERSION = High(TREMLVersion);  // latest version of REML
+    const FIRST_VERSION = Low(TREMLVersion);    // First version of REML
+    const LATEST_VERSION = High(TREMLVersion);  // Latest version of REML
     class function LowestWriterVersion(
       const ActiveText: IActiveText): TREMLVersion;
       {Determines lowest possible version REML that can be used to write some
@@ -233,7 +231,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UAutoFree, UExceptions, UUtils;
+  UGC, UExceptions, UUtils;
 
 
 type
@@ -407,16 +405,9 @@ type
   }
   TREMLInfo = class(TNoConstructObject)
   strict private
-    class var fTags: TREMLTags;
-      {Provides information about tags}
-    class var fTagsWrapper: IInterface;
-      {Wrapper object for fTags instanace that automatically frees it when unit
-      goes out of scope}
-    class var fEntities: TREMLEntities;
-      {Converts REML char entities <=> chars}
-    class var fEntitiesWrapper: IInterface;
-      {Wrapper object for fEntities instanace that automatically frees it when
-      unit goes out of scope}
+    class var fGC: IInterface;          // Garbage collector for class vars
+    class var fTags: TREMLTags;         // Provides information about tags
+    class var fEntities: TREMLEntities; // Converts REML char entities <=> chars
   public
     class function TagInfo: TREMLTags;
       {Provides a reference to object that provides information about a REML
@@ -707,7 +698,7 @@ begin
   if not Assigned(fEntities) then
   begin
     fEntities := TREMLEntities.Create;
-    fEntitiesWrapper := TAutoObjFree.Create(fEntities);
+    TGC.GCLocalObj(fGC, fEntities);
   end;
   Result := fEntities;
 end;
@@ -720,7 +711,7 @@ begin
   if not Assigned(fTags) then
   begin
     fTags := TREMLTags.Create;
-    fTagsWrapper := TAutoObjFree.Create(fTags);
+    TGC.GCLocalObj(fGC, fTags);
   end;
   Result := fTags;
 end;

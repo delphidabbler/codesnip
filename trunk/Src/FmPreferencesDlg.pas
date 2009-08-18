@@ -58,14 +58,9 @@ type
     procedure pcMainChange(Sender: TObject);
     procedure pcMainChanging(Sender: TObject; var AllowChange: Boolean);
   strict private
-    class var fPages: TClassList;
-      {Maintains list of frames registered as "pages" of the preferences dialog
-      box}
-    class var fPagesAutoFree: IInterface;
-      {Automatically frees fPages when app closes}
-    var fLocalPrefs: IPreferences;
-      {Stores local copy of preferences. Use to pass changes between pages. Main
-      preferences object is only updated if user OKs the dialog box}
+    class var fPages: TClassList;   // List of registered page frames
+    class var fGC: IInterface;      // Garbage collector for class var
+    var fLocalPrefs: IPreferences;  // Llocal copy of preferences.
     procedure CreatePages(const FrameClasses: array of TPrefsFrameClass);
       {Creates the required frames and displays each frame in a tab sheet within
       the page control.
@@ -149,7 +144,7 @@ uses
   // Delphi
   StrUtils,
   // Project
-  IntfCommon, UAutoFree;
+  IntfCommon, UGC;
 
 {$R *.dfm}
 
@@ -355,7 +350,7 @@ begin
   if not Assigned(fPages) then
   begin
     fPages := TClassList.Create;
-    fPagesAutoFree := TAutoObjFree.Create(fPages);
+    TGC.GCLocalObj(fGC, fPages);
   end;
   // Search for place in frame list to insert new frame (sorted on frame's Index
   // property).
