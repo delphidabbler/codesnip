@@ -67,7 +67,7 @@ type
     lblSnippetFileType: TLabel;
     procedure cbCommentStyleChange(Sender: TObject);
     procedure cbSnippetFileTypeChange(Sender: TObject);
-  private
+  strict private
     fHiliteAttrs: IHiliteAttrs;
       {Style of syntax highlighting to use in sample output}
     procedure SelectSourceFileType(const FT: TSourceFileType);
@@ -108,6 +108,16 @@ type
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
+    function DisplayName: string; override;
+      {Caption that is displayed in the tab sheet that contains this frame when
+      displayed in the preference dialog box.
+        @return Required display name.
+      }
+    class function Index: Byte; override;
+      {Index number that determines the location of the tab containing this
+      frame when displayed in the preferences dialog box.
+        @return Required index number.
+      }
   end;
 
 
@@ -118,8 +128,8 @@ uses
   // Delphi
   SysUtils, Math,
   // Project
-  IntfCommon, UConsts, UFileHiliter, UGraphicUtils, UHiliteAttrs, URTFUtils,
-  USyntaxHiliters;
+  FmPreferencesDlg, IntfCommon, UConsts, UFileHiliter, UGraphicUtils,
+  UHiliteAttrs, URTFUtils, USyntaxHiliters;
 
 
 {$R *.dfm}
@@ -241,6 +251,7 @@ var
   CSIdx: TCommentStyle;       // loops thru comment styles
 begin
   inherited;
+  HelpKeyword := 'SourceCodePrefs';
   // Create syntax highlighter object for use in sample output
   fHiliteAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
   // Populate file type combo
@@ -261,6 +272,17 @@ begin
   Prefs.SourceSyntaxHilited := chkSyntaxHighlighting.Checked;
 end;
 
+function TSourcePrefsFrame.DisplayName: string;
+  {Caption that is displayed in the tab sheet that contains this frame when
+  displayed in the preference dialog box.
+    @return Required display name.
+  }
+resourcestring
+  sDisplayName = 'Source Code'; // display name
+begin
+  Result := sDisplayName;
+end;
+
 function TSourcePrefsFrame.GetCommentStyle: TCommentStyle;
   {Gets comment style selected by user.
     @return Comment style.
@@ -279,6 +301,15 @@ begin
   Result := TSourceFileType(
     cbSnippetFileType.Items.Objects[cbSnippetFileType.ItemIndex]
   );
+end;
+
+class function TSourcePrefsFrame.Index: Byte;
+  {Index number that determines the location of the tab containing this
+  frame when displayed in the preferences dialog box.
+    @return Required index number.
+  }
+begin
+  Result := 20;
 end;
 
 procedure TSourcePrefsFrame.SelectCommentStyle(
@@ -385,6 +416,11 @@ begin
     [sPrevProcName, sPrevCalledProc, sPrevDesc]
   );
 end;
+
+initialization
+
+// Register frame with preferences dialog box
+TPreferencesDlg.RegisterPage(TSourcePrefsFrame);
 
 end.
 

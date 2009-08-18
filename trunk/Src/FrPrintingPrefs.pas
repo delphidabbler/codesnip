@@ -95,6 +95,16 @@ type
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
+    function DisplayName: string; override;
+      {Caption that is displayed in the tab sheet that contains this frame when
+      displayed in the preference dialog box.
+        @return Required display name.
+      }
+    class function Index: Byte; override;
+      {Index number that determines the location of the tab containing this
+      frame when displayed in the preferences dialog box.
+        @return Required index number.
+      }
   end;
 
 
@@ -105,8 +115,8 @@ uses
   // Delphi
   SysUtils, StrUtils, Windows, Graphics, Math, ComCtrls,
   // Project
-  IntfCommon, UConsts, UHiliteAttrs, UPrintInfo, URTFBuilder, URTFUtils,
-  USyntaxHiliters;
+  FmPreferencesDlg, IntfCommon, UConsts, UHiliteAttrs, UPrintInfo, URTFBuilder,
+  URTFUtils, USyntaxHiliters;
 
 
 {$R *.dfm}
@@ -223,6 +233,7 @@ constructor TPrintingPrefsFrame.Create(AOwner: TComponent);
   }
 begin
   inherited;
+  HelpKeyword := 'PrintingPrefs';
   // Create syntax highlighter object for use in sample output
   fHiliteAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
 end;
@@ -267,6 +278,17 @@ begin
   Prefs.PrinterPageMargins := Margins;
 end;
 
+function TPrintingPrefsFrame.DisplayName: string;
+  {Caption that is displayed in the tab sheet that contains this frame when
+  displayed in the preference dialog box.
+    @return Required display name.
+  }
+resourcestring
+  sDisplayName = 'Printing';  // display name
+begin
+  Result := sDisplayName;
+end;
+
 procedure TPrintingPrefsFrame.DisplayPreview;
   {Displays preview of appearance of document according to current state of
   controls.
@@ -280,6 +302,15 @@ begin
   finally
     FreeAndNil(Preview);
   end;
+end;
+
+class function TPrintingPrefsFrame.Index: Byte;
+  {Index number that determines the location of the tab containing this frame
+  when displayed in the preferences dialog box.
+    @return Required index number.
+  }
+begin
+  Result := 40;
 end;
 
 procedure TPrintingPrefsFrame.NumEditKeyPress(Sender: TObject;
@@ -394,6 +425,11 @@ begin
   Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
   Result := Hiliter.Hilite(cSourceCode, Attrs);
 end;
+
+initialization
+
+// Register frame with preferences dialog box
+TPreferencesDlg.RegisterPage(TPrintingPrefsFrame);
 
 end.
 

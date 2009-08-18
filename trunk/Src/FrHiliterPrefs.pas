@@ -145,6 +145,16 @@ type
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
+    function DisplayName: string; override;
+      {Caption that is displayed in the tab sheet that contains this frame when
+      displayed in the preference dialog box.
+        @return Required display name.
+      }
+    class function Index: Byte; override;
+      {Index number that determines the location of the tab containing this
+      frame when displayed in the preferences dialog box.
+        @return Required index number.
+      }
   end;
 
 
@@ -155,8 +165,8 @@ uses
   // Delphi
   SysUtils, ExtCtrls, Windows, Graphics, Dialogs,
   // Project
-  IntfCommon, UCtrlArranger, UFontHelper, UHiliteAttrs, UMessageBox,
-  URTFBuilder, URTFUtils, UUtils;
+  FmPreferencesDlg, IntfCommon, UCtrlArranger, UFontHelper, UHiliteAttrs,
+  UMessageBox, URTFBuilder, URTFUtils, UUtils;
 
 
 {$R *.dfm}
@@ -365,6 +375,8 @@ resourcestring
   sDlgTitle = 'Choose Element Colour';  // colour dialog title
 begin
   inherited;
+  HelpKeyword := 'HiliterPrefs';
+
   // Create object used to store customised attributes
   fAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
 
@@ -444,6 +456,17 @@ begin
   inherited;
 end;
 
+function THiliterPrefsFrame.DisplayName: string;
+  {Caption that is displayed in the tab sheet that contains this frame when
+  displayed in the preference dialog box.
+    @return Required display name.
+  }
+resourcestring
+  sDisplayName = 'Syntax Highlighter';  // display name
+begin
+  Result := sDisplayName;
+end;
+
 function THiliterPrefsFrame.GenerateRTF: string;
   {Generates RTF of example of current highlighter element.
     @return Required RTF code.
@@ -487,6 +510,15 @@ begin
   finally
     FreeAndNil(RTF);
   end;
+end;
+
+class function THiliterPrefsFrame.Index: Byte;
+  {Index number that determines the location of the tab containing this frame
+  when displayed in the preferences dialog box.
+    @return Required index number.
+  }
+begin
+  Result := 30;
 end;
 
 procedure THiliterPrefsFrame.lbElementsClick(Sender: TObject);
@@ -578,6 +610,11 @@ procedure THiliterPrefsFrame.UpdatePreview;
 begin
   RTFLoadFromString(frmExample.RichEdit, GenerateRTF);
 end;
+
+initialization
+
+// Register frame with preferences dialog box
+TPreferencesDlg.RegisterPage(THiliterPrefsFrame);
 
 end.
 
