@@ -156,11 +156,8 @@ type
         property Count: Integer read GetCount;
           {Number of registered protocols}
       end;
-    class var fRegWrapper: IInterface;
-      {Wrapper object for protocol registrar instance that automatically frees
-      it when unit goes out of scope}
-    class var fRegistrar: TProtocolRegistrar;
-      {Stores singleton instance of protocol registrar object}
+    class var fGC: IInterface;                // Garbage collector for class var
+    class var fRegistrar: TProtocolRegistrar; // Singleton protocol registrar
     class function Registrar: TProtocolRegistrar;
       {Gets singleton instance of protocol registar.
         @return Singleton regsitrar object.
@@ -226,7 +223,7 @@ implementation
 
 uses
   // Project
-  UAutoFree;
+  UGC;
 
 
 type
@@ -298,7 +295,7 @@ begin
   if not Assigned(fRegistrar) then
   begin
     fRegistrar := TProtocolRegistrar.Create;
-    fRegWrapper := TAutoObjFree.Create(fRegistrar);
+    TGC.GCLocalObj(fGC, fRegistrar);
   end;
   Result := fRegistrar;
 end;
