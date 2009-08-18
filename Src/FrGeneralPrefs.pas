@@ -59,7 +59,7 @@ type
     gpMeasurement: TGroupBox;
     lblUnits: TLabel;
     cbUnits: TComboBox;
-  private
+  strict private
     procedure SelectUnits(const MU: TMeasurementUnits);
       {Selects combo box item associated with a measurement unit.
         @param Units [in] Measurement unit to be selected.
@@ -80,10 +80,25 @@ type
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
+    function DisplayName: string; override;
+      {Caption that is displayed in the tab sheet that contains this frame when
+      displayed in the preference dialog box.
+        @return Required display name.
+      }
+    class function Index: Byte; override;
+      {Index number that determines the location of the tab containing this
+      frame when displayed in the preferences dialog box.
+        @return Required index number.
+      }
   end;
 
 
 implementation
+
+
+uses
+  // Project
+  FmPreferencesDlg;
 
 
 {$R *.dfm}
@@ -114,6 +129,7 @@ var
   UnitsIdx: TMeasurementUnits;  // loops through each measurement unit
 begin
   inherited;
+  HelpKeyword := 'GeneralPrefs';
   // Populate measurement unit combo
   for UnitsIdx := Low(TMeasurementUnits) to High(TMeasurementUnits) do
     cbUnits.Items.AddObject(UnitName(UnitsIdx), TObject(UnitsIdx));
@@ -127,6 +143,26 @@ begin
   Prefs.MeasurementUnits := TMeasurementUnits(
     cbUnits.Items.Objects[cbUnits.ItemIndex]
   );
+end;
+
+function TGeneralPrefsFrame.DisplayName: string;
+  {Caption that is displayed in the tab sheet that contains this frame when
+  displayed in the preference dialog box.
+    @return Required display name.
+  }
+resourcestring
+  sDisplayName = 'General'; // display name
+begin
+  Result := sDisplayName;
+end;
+
+class function TGeneralPrefsFrame.Index: Byte;
+  {Index number that determines the location of the tab containing this frame
+  when displayed in the preferences dialog box.
+    @return Required index number.
+  }
+begin
+  Result := 10;
 end;
 
 procedure TGeneralPrefsFrame.SelectUnits(const MU: TMeasurementUnits);
@@ -145,6 +181,11 @@ begin
     end;
   end;
 end;
+
+initialization
+
+// Register frame with preferences dialog box
+TPreferencesDlg.RegisterPage(TGeneralPrefsFrame);
 
 end.
 

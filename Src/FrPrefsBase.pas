@@ -42,12 +42,19 @@ interface
 
 uses
   // Delphi
-  Forms, Windows,
+  Forms,
   // Project
   UPreferences;
 
 
 type
+
+  {
+  TPrefsFrameClass:
+    Class reference for preferences frames. All preferences frame must descend
+    from TPrefsBaseFrame.
+  }
+  TPrefsFrameClass = class of TPrefsBaseFrame;
 
   {
   TPrefsBaseFrame:
@@ -77,6 +84,18 @@ type
       }
     procedure ArrangeControls; virtual; abstract;
       {Arranges controls on frame. Called after frame has been sized.
+      }
+    function DisplayName: string; virtual; abstract;
+      {Provides caption that is displayed in the tab sheet that contains this
+      frame when displayed in the preference dialog box.
+        @return Required display name.
+      }
+    class function Index: Byte; virtual; abstract;
+      {Provides an index number that determines the order in which the tabs
+      containing frames are displayed in the preferences dialog box. Gaps
+      between indexes should be left where possible to allow for insertion of
+      new entries at a later date.
+        @return Required index number.
       }
   end;
 
