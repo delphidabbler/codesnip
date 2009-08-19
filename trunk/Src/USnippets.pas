@@ -44,8 +44,7 @@ uses
   // Delphi
   Classes, Contnrs,
   // Project
-  IntfCompilers, UActiveText, UBaseObjects, UIStringList, UMultiCastEvents,
-  USnippetIDs;
+  IntfCompilers, UActiveText, UIStringList, UMultiCastEvents, USnippetIDs;
 
 
 type
@@ -683,7 +682,7 @@ uses
   // Delphi
   SysUtils, Windows {for inlining},
   // Project
-  IntfCommon, UExceptions, USnippetKindInfo, USnippetsIO, USnipData;
+  IntfCommon, UExceptions, USnippetsIO;
 
 
 var

@@ -261,8 +261,8 @@ uses
   // Delphi
   SysUtils, Windows {for inlining},
   // Project
-  IntfCompilers, UAppInfo, UActiveText, UConsts, UIniDataLoader,
-  URoutineExtraHelper, UUtils;
+  IntfCompilers, UActiveText, UConsts, UIniDataLoader, URoutineExtraHelper,
+  UUtils;
 
 
 const
