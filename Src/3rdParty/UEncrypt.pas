@@ -6,32 +6,15 @@
   Homepage: http://www.teamb.com
 }
 
-// 2009.08.17 modified delphidabbler ->
+// 2009.08.19 modified delphidabbler ->
 // switch off unsafe code warnings - requires Delphi 7 and later
-// C++ builder defines not supported
-{$DEFINE DELPHI6ANDLATER}
-{$IFDEF VER80}  // Delphi 1
-  {$UNDEF DELPHI6ANDLATER}
-{$ENDIF}
-{$IFDEF VER90}  // Delphi 2
-  {$UNDEF DELPHI6ANDLATER}
-{$ENDIF}
-{$IFDEF VER100} // Delphi 3
-  {$UNDEF DELPHI6ANDLATER}
-{$ENDIF}
-{$IFDEF VER120} // Delphi 4
-  {$UNDEF DELPHI6ANDLATER}
-{$ENDIF}
-{$IFDEF VER130} // Delphi 5
-  {$UNDEF DELPHI6ANDLATER}
-{$ENDIF}
-{$IFDEF DELPHI6ANDLATER}
+{$IFDEF CONDITIONALEXPRESSIONS}
   // $IF directive supported
   {$IF CompilerVersion >= 15.0} // >= Delphi 7
     {$WARN UNSAFE_CODE OFF}
   {$IFEND}
 {$ENDIF}
-// 2009.08.17 <-
+// 2009.08.19 <-
 
 unit UEncrypt;
 

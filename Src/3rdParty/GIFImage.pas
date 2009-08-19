@@ -138,6 +138,9 @@ unit GIFImage;
 // Added compiler directives to switch off unsafe type, unsafe code and       //
 // unsafe type warnings on Delphi 7 and later                                 //
 //                                                                            //
+// Changed 2009.08.19 by Peter Johnson                                        //
+// Revised code that switches off undesired warnings on Delphi 6 and later    //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 // Please read the "Conditions of use" in the release notes.                  //
@@ -352,7 +355,9 @@ interface
 
 // Delphi 6.x
 {$IFDEF VER140}
-{$WARN SYMBOL_PLATFORM OFF}
+// 2009.08.19 PJ ->
+//{$WARN SYMBOL_PLATFORM OFF}
+// 2009.09.19 PJ <=
   {$DEFINE VER10_PLUS}
   {$DEFINE VER11_PLUS}
   {$DEFINE VER12_PLUS}
@@ -364,13 +369,15 @@ interface
 
 // Delphi 7.x
 {$IFDEF VER150}
-{$WARN SYMBOL_PLATFORM OFF}
-// 2009.08.17 ->
-// Switch "unsafe" warnings off
-{$WARN UNSAFE_CODE OFF}
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CAST OFF}
-// 2009.08.17 <-
+// 2009.08.19 PJ ->
+//{$WARN SYMBOL_PLATFORM OFF}
+//// 2009.08.17 PJ ->
+//// Switch "unsafe" warnings off
+//{$WARN UNSAFE_CODE OFF}
+//{$WARN UNSAFE_TYPE OFF}
+//{$WARN UNSAFE_CAST OFF}
+//// 2009.08.17 <-
+// 2009.09.19 PJ <=
   {$DEFINE VER10_PLUS}
   {$DEFINE VER11_PLUS}
   {$DEFINE VER12_PLUS}
@@ -397,13 +404,15 @@ interface
 // Unknown compiler version - assume D7 compatible
 {$IFNDEF VER9x}
 {$IFNDEF VER10_PLUS}
-{$WARN SYMBOL_PLATFORM OFF}
-// 2009.08.17 ->
-// Switch "unsafe" warnings off
-{$WARN UNSAFE_CODE OFF}
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CAST OFF}
-// 2009.08.17 <-
+// 2009.08.19 PJ ->
+//{$WARN SYMBOL_PLATFORM OFF}
+//// 2009.08.17 PJ ->
+//// Switch "unsafe" warnings off
+//{$WARN UNSAFE_CODE OFF}
+//{$WARN UNSAFE_TYPE OFF}
+//{$WARN UNSAFE_CAST OFF}
+// 2009.08.17 PJ <-
+// 2009.08.19 PJ <-
   {$DEFINE VER10_PLUS}
   {$DEFINE VER11_PLUS}
   {$DEFINE VER12_PLUS}
@@ -415,6 +424,20 @@ interface
 {$ENDIF}
 {$ENDIF}
 // 2003.03.09 <-
+
+// 2009.08.19 PJ ->
+// switch off specified code warnings
+{$IFDEF CONDITIONALEXPRESSIONS}
+  {$IF CompilerVersion >= 14.0} // >= Delphi 6
+    {$WARN SYMBOL_PLATFORM OFF}
+  {$IFEND}
+  {$IF CompilerVersion >= 15.0} // >= Delphi 7
+    {$WARN UNSAFE_CODE OFF}
+    {$WARN UNSAFE_TYPE OFF}
+    {$WARN UNSAFE_CAST OFF}
+  {$IFEND}
+{$ENDIF}
+// 2009.08.19 PJ <-
 
 ////////////////////////////////////////////////////////////////////////////////
 //
