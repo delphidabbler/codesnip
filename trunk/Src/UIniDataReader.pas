@@ -2,8 +2,6 @@
  * UIniDataReader.pas
  *
  * Implements code that reads code snip database from .ini and .dat files.
- * Provides factory class that creates the data reader. The factory is
- * registered with the application.
  *
  * $Rev$
  * $Date$
@@ -42,84 +40,11 @@ unit UIniDataReader;
 interface
 
 
-{*******************************************************************************
-*                                                                              *
-* This unit provides a database reader that gets code snippet data from .ini   *
-* and .dat files. The object implements the IDataReader interface to provide   *
-* access to the data when creating the code snippets global object. The data   *
-* files are described below:                                                   *
-*                                                                              *
-* ---------------------------------------------------------------------------- *
-* categories.ini                                                               *
-*   This is the master ini file. It has one section for each category in the   *
-*   database. The section names are the ids of the categories. Each category   *
-*   section contains two values:                                               *
-*   1)  Desc - a description of the category.                                  *
-*   2)  Ini - the name of a further .ini file that provides details of all the *
-*       snippets in the category.                                              *
-* ---------------------------------------------------------------------------- *
-* <category>.ini                                                               *
-*   There is one of these files for each category - named after the Ini        *
-*   entries in categories.ini. The file contains details of all the snippets   *
-*   in the category. The section names are the names of the snippets. Each     *
-*   snippet section contains the following values (values shown in [ ] are     *
-*   optional):                                                                 *
-*   1)  Desc - a description of the snippet.                                   *
-*   2)  Units - comma separated list of units used by the snippet.             *
-*   3)  Depends - comma separated list of other snippets in database required  *
-*       by the snippet.                                                        *
-*   4)  Snip - name of a .dat file that contains the snippet source code.      *
-*   5)  [SeeAlso] - comma separated list of snippets in database that are      *
-*       cross referenced from this snippet.                                    *
-*   6)  [Credits] - text that gives credit to another individual. May contain  *
-*       text text of a hyperlink enclosed in [ ]. If present the URL is in the *
-*       Credits_URL value. Ignored if Extra is specified.                      *
-*   7)  [Credits_URL] - URL of any hyperlink in Credits. Ignored if Extra is   *
-*       specified.                                                             *
-*   8)  [Comments] - further comments pertaining to snippet. Ignored if Extra  *
-*       is specified.                                                          *
-*   9)  [Extra] - extra information pertaining to snippet. If present then     *
-*       Credits, Credits_URL and Comments are ignored. Contains text in REML,  *
-*       "Routine Extra Markup Language".                                       *
-*   10) DelphiX (where X is 2..7)                                              *
-*         or                                                                   *
-*       DelphiXXXXWin32 (where XXXX is 2005, 2006 or 2009)                     *
-*         or                                                                   *
-*       Delphi2007                                                             *
-*         or                                                                   *
-*       FPC (Free Pascal) - one entry for each supported compiler that         *
-*       indicates compatibility of the snippet with given compiler. Values are *
-*       one of: Y - compiles without warning; N - does not compile; Q or ? -   *
-*       not tested; W - compiles with warnings.                                *
-*   11) [StandardFormat] - whether snippet is in standard format. Assumes true *
-*       if not present and there is no Kind value.                             *
-*   12) [Kind] - kind of snippet. One of freeform, snippet, type or const.     *
-*       If value not present then snippet is assumed unless StandardFormat is  *
-*       present and 0, when freeform is assumed.                               *
-*                                                                              *
-* ---------------------------------------------------------------------------- *
-* <999>.dat                                                                    *
-*   There is one of these files for each snippet in the database. It stores    *
-*   the snippet's Pascal source code. The name of the file is specified by the *
-*   Snip value in the <category>.ini file.                                     *
-* ---------------------------------------------------------------------------- *
-*                                                                              *
-* The database reader object interprets these files and provides the common    *
-* view onto them expected by the program. See the comments in USnipData.pas    *
-* for details.                                                                 *
-*                                                                              *
-*******************************************************************************}
-
-
-implementation
-
-
 uses
   // Delphi
-  SysUtils, Classes, IniFiles, Windows {for inlining},
+  Classes, IniFiles,
   // Project
-  IntfCompilers, UAppInfo, UActiveText, UConsts, UIniDataLoader,
-  URoutineExtraHelper, UIStringList, USnipData, USnippets, UUtils;
+  UIStringList, USnipData, USnippets;
 
 
 type
@@ -128,9 +53,7 @@ type
   TIniDataReader:
     Reads codesnip data from .ini and .dat files.
   }
-  TIniDataReader = class sealed(TInterfacedObject,
-    IDataReader         // interface that abstracts access to code snip database
-  )
+  TIniDataReader = class sealed(TInterfacedObject, IDataReader)
   strict private
     type
       {
@@ -154,11 +77,11 @@ type
           }
       end;
     var
-      fDBType: TDatabaseType;       // type of database to read
-      fMasterIni: TCustomIniFile;   // reference to master ini file
-      fCatNames: TStringList;       // list of category ids in database
-      fRoutineNames: TStringList;   // list of all snippet names in database
-      fIniCache: TIniFileCache;     // cache of category ini file objects
+      fDBDir: string;               // Database directory
+      fMasterIni: TCustomIniFile;   // Reference to master ini file
+      fCatNames: TStringList;       // List of category ids in database
+      fRoutineNames: TStringList;   // List of all snippet names in database
+      fIniCache: TIniFileCache;     // Cache of category ini file objects
     function MasterFileName: string;
       {Gets fully specified name of master file depending on which database is
       being accessed.
@@ -253,29 +176,94 @@ type
         @return String list containing fields.
       }
   public
-    constructor Create(const DBType: TDatabaseType);
+    constructor Create(const DBDir: string);
       {Class constructor. Sets up data reader object.
-        @param DBType [in] Type of database to read.
+        @param DBDir [in] Directory where database is stored.
       }
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
   end;
 
-  {
-  TIniDataReaderFactory:
-    Static factory class that creates an instance of the TIniDataReader object.
-    This class is registered with the TDataReaderFactories class as the factory
-    to use when database needs to be accessed.
-  }
-  TIniDataReaderFactory = class sealed(TDataReaderFactory)
-  public
-    class function Instance(const DBType: TDatabaseType): IInterface; override;
-      {Creates instance of TIniDataReader that supports IDataReader.
-        @param DBType [in] Type of database to be read: main or user.
-        @return Instance of data reader object.
-      }
-  end;
+{*******************************************************************************
+*                                                                              *
+* This unit provides a database reader that gets code snippet data from .ini   *
+* and .dat files. The object implements the IDataReader interface to provide   *
+* access to the data when creating the code snippets global object. The data   *
+* files are described below:                                                   *
+*                                                                              *
+* ---------------------------------------------------------------------------- *
+* categories.ini                                                               *
+*   This is the master ini file. It has one section for each category in the   *
+*   database. The section names are the ids of the categories. Each category   *
+*   section contains two values:                                               *
+*   1)  Desc - a description of the category.                                  *
+*   2)  Ini - the name of a further .ini file that provides details of all the *
+*       snippets in the category.                                              *
+* ---------------------------------------------------------------------------- *
+* <category>.ini                                                               *
+*   There is one of these files for each category - named after the Ini        *
+*   entries in categories.ini. The file contains details of all the snippets   *
+*   in the category. The section names are the names of the snippets. Each     *
+*   snippet section contains the following values (values shown in [ ] are     *
+*   optional):                                                                 *
+*   1)  Desc - a description of the snippet.                                   *
+*   2)  Units - comma separated list of units used by the snippet.             *
+*   3)  Depends - comma separated list of other snippets in database required  *
+*       by the snippet.                                                        *
+*   4)  Snip - name of a .dat file that contains the snippet source code.      *
+*   5)  [SeeAlso] - comma separated list of snippets in database that are      *
+*       cross referenced from this snippet.                                    *
+*   6)  [Credits] - text that gives credit to another individual. May contain  *
+*       text text of a hyperlink enclosed in [ ]. If present the URL is in the *
+*       Credits_URL value. Ignored if Extra is specified.                      *
+*   7)  [Credits_URL] - URL of any hyperlink in Credits. Ignored if Extra is   *
+*       specified.                                                             *
+*   8)  [Comments] - further comments pertaining to snippet. Ignored if Extra  *
+*       is specified.                                                          *
+*   9)  [Extra] - extra information pertaining to snippet. If present then     *
+*       Credits, Credits_URL and Comments are ignored. Contains text in REML,  *
+*       "Routine Extra Markup Language".                                       *
+*   10) DelphiX (where X is 2..7)                                              *
+*         or                                                                   *
+*       DelphiXXXXWin32 (where XXXX is 2005, 2006 or 2009)                     *
+*         or                                                                   *
+*       Delphi2007                                                             *
+*         or                                                                   *
+*       FPC (Free Pascal) - one entry for each supported compiler that         *
+*       indicates compatibility of the snippet with given compiler. Values are *
+*       one of: Y - compiles without warning; N - does not compile; Q or ? -   *
+*       not tested; W - compiles with warnings.                                *
+*   11) [StandardFormat] - whether snippet is in standard format. Assumes true *
+*       if not present and there is no Kind value.                             *
+*   12) [Kind] - kind of snippet. One of freeform, snippet, type or const.     *
+*       If value not present then snippet is assumed unless StandardFormat is  *
+*       present and 0, when freeform is assumed.                               *
+*                                                                              *
+* ---------------------------------------------------------------------------- *
+* <999>.dat                                                                    *
+*   There is one of these files for each snippet in the database. It stores    *
+*   the snippet's Pascal source code. The name of the file is specified by the *
+*   Snip value in the <category>.ini file.                                     *
+* ---------------------------------------------------------------------------- *
+*                                                                              *
+* The database reader object interprets these files and provides the common    *
+* view onto them expected by the program. See the comments in USnipData.pas    *
+* for details.                                                                 *
+*                                                                              *
+*******************************************************************************}
+
+
+implementation
+
+
+uses
+  // Delphi
+  SysUtils, Windows {for inlining},
+  // Project
+  IntfCompilers, UAppInfo, UActiveText, UConsts, UIniDataLoader,
+  URoutineExtraHelper, UUtils;
+
 
 const
   // Name of master file that defines database
@@ -325,13 +313,13 @@ begin
   Result := TIStringList.Create(CommaStr, ',', False, True);
 end;
 
-constructor TIniDataReader.Create(const DBType: TDatabaseType);
+constructor TIniDataReader.Create(const DBDir: string);
   {Class constructor. Sets up data reader object.
-    @param DBType [in] Type of database to read.
+    @param DBDir [in] Directory where database is stored.
   }
 begin
   inherited Create;
-  fDBType := DBType;
+  fDBDir := DBDir;
   // Create helper objects used to speed up access to ini files
   if DatabaseExists then
   begin
@@ -363,10 +351,7 @@ function TIniDataReader.DataDir: string;
     @return Name of directory.
   }
 begin
-  if fDBType = dtMain then
-    Result := ExcludeTrailingPathDelimiter(TAppInfo.AppDataDir)
-  else
-    Result := ExcludeTrailingPathDelimiter(TAppInfo.UserDataDir);
+  Result := ExcludeTrailingPathDelimiter(fDBDir)
 end;
 
 function TIniDataReader.DataFile(const FileName: string): string;
@@ -463,7 +448,7 @@ var
       @return Value of property or a default if property not present.
     }
   begin
-    Result := CatIni.ReadBool(Routine, cStdFormatName, fDBType = dtMain);
+    Result := CatIni.ReadBool(Routine, cStdFormatName, True);
   end;
 
   function GetKindProperty: TSnippetKind;
@@ -735,24 +720,6 @@ begin
     Idx := fCache.AddObject(PathToFile, TDatabaseIniFile.Create(PathToFile));
   Result := fCache.Objects[Idx] as TCustomIniFile;
 end;
-
-{ TIniDataReaderFactory }
-
-class function TIniDataReaderFactory.Instance(
-  const DBType: TDatabaseType): IInterface;
-  {Creates instance of TIniDataReader that supports IDataReader.
-    @param DBType [in] Type of database to be read: main or user.
-    @return Instance of data reader object.
-  }
-begin
-  Result := TIniDataReader.Create(DBType);
-end;
-
-
-initialization
-
-// Register the data reader factory
-TDataIOFactories.RegisterFactory('IniDataReader', TIniDataReaderFactory);
 
 end.
 
