@@ -230,12 +230,6 @@ type
     var
       fSourceAnalyser: TSourceAnalyser;
         {Object used to analyse the snippets and take care of dependencies}
-    procedure WriteHeaderComments(const Writer: TStrStreamWriter;
-      const HeaderComments: IStringList);
-      {Writes a multi-line comment containing header text.
-        @param Writer [in] Object used to output comments.
-        @param HeaderComments [in] Header comments to be written.
-      }
   public
     constructor Create;
       {Class constructor. Sets up the object.
@@ -295,7 +289,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UConsts, UExceptions, USnippetValidator, UUtils;
+  UBaseObjects, UConsts, UExceptions, USnippetValidator, UUtils;
 
 
 const
@@ -307,11 +301,25 @@ const
 type
 
   {
-  TRoutineFormatter:
-    Class that can format a routine to include descriptive comments at required
-    position.
+  THeaderCommentFormatter:
+    Static class that can format the comments written at the head of generated
+    source code.
   }
-  TRoutineFormatter = class(TObject)
+  THeaderCommentFormatter = class(TNoConstructObject)
+  public
+    class function FormatComments(const Comments: IStringList): string;
+      {Formats header comment text as Pascal comments/
+        @param Comments [in] List of comments to format.
+        @return Formatted comments.
+      }
+  end;
+
+  {
+  TRoutineFormatter:
+    Static class that can format a routine to include descriptive comments at
+    required position.
+  }
+  TRoutineFormatter = class(TNoConstructObject)
   strict private
     class procedure Split(const Routine: TRoutine; out Head, Body: string);
       {Splits source code of a routine into the head (routine prototype) and
@@ -355,10 +363,10 @@ type
 
   {
   TConstAndTypeFormatter:
-    Class that can format a constant or type definition to include descriptive
-    comments at required position.
+    Static class that can format a constant or type definition to include
+    descriptive comments at required position.
   }
-  TConstAndTypeFormatter = class(TObject)
+  TConstAndTypeFormatter = class(TNoConstructObject)
   strict private
     class procedure Split(const ConstOrType: TRoutine; out Keyword,
       Body: string);
@@ -443,7 +451,7 @@ begin
     Writer := TStrStreamWriter.Create(SS);
 
     // Write header comment
-    WriteHeaderComments(Writer, HeaderComments);
+    Writer.WriteStr(THeaderCommentFormatter.FormatComments(HeaderComments));
 
     // Write required units, additional routines, types and consts
     if (fSourceAnalyser.Units.Count > 0) or
@@ -573,8 +581,9 @@ begin
     Writer := TStrStreamWriter.Create(SS);
 
     // Write unit
+
     // heading comment
-    WriteHeaderComments(Writer, HeaderComments);
+    Writer.WriteStr(THeaderCommentFormatter.FormatComments(HeaderComments));
 
     // unit name
     Writer.WriteStrLn('unit %s;', [UnitName]);
@@ -662,28 +671,6 @@ begin
   BaseFileName := ExtractFileName(FileName);
   Ext := ExtractFileExt(FileName);
   Result := AnsiLeftStr(BaseFileName, Length(BaseFileName) - Length(Ext));
-end;
-
-procedure TSourceGen.WriteHeaderComments(const Writer: TStrStreamWriter;
-  const HeaderComments: IStringList);
-  {Writes a multi-line comment containing header text.
-    @param Writer [in] Object used to output comments.
-    @param HeaderComments [in] Header comments to be written.
-  }
-var
-  Line: string; // loops through each line of comments
-begin
-  // Only write comment if some comment text is provided
-  if Assigned(HeaderComments) and (HeaderComments.Count > 0) then
-  begin
-    Writer.WriteStrLn('{');
-    for Line in HeaderComments do
-      Writer.WriteStrLn(
-        TextWrap(Line, cLineWidth - cIndent, cIndent)
-      );
-    Writer.WriteStrLn('}');
-    Writer.WriteStrLn;
-  end;
 end;
 
 { TSourceAnalyser }
@@ -845,7 +832,8 @@ end;
 
 { TConstAndTypeList }
 
-procedure TConstAndTypeList.Add(const ConstOrType: TRoutine; const UnitRecorder: TUnitRecorder);
+procedure TConstAndTypeList.Add(const ConstOrType: TRoutine;
+  const UnitRecorder: TUnitRecorder);
   {Adds a constant or type snippet to the list, ignoring duplicates.
     @param ConstOrType [in] Constant or type snippet to be added.
     @except Exception raised if dependency list is not valid.
@@ -1037,6 +1025,7 @@ class function TRoutineFormatter.RenderDescComment(
     @return Formatted comments.
   }
 begin
+
   Assert(Routine.Kind = skRoutine,
     ClassName + '.RenderDescComment: Routine must have kind skRoutine');
   // Format the output
@@ -1269,6 +1258,45 @@ begin
     SplitAtKeyword(ConstOrType.SourceCode, 'const', Keyword, Body)
   else // if ConstOrType.Kind = skTypeDef
     SplitAtKeyword(ConstOrType.SourceCode, 'type', Keyword, Body)
+end;
+
+{ THeaderCommentFormatter }
+
+class function THeaderCommentFormatter.FormatComments(
+  const Comments: IStringList): string;
+  {Formats header comment text as Pascal comments/
+    @param Comments [in] List of comments to format.
+    @return Formatted comments.
+  }
+var
+  Line: string;         // loops thru each line of comments & exploded comments
+  Lines: IStringList;   // comments after exploding multiple wrapped lines
+const
+  cLinePrefix = ' * ';  // prefixes each comment line
+begin
+  // Only create comment if some comment text is provided
+  if Assigned(Comments) and (Comments.Count > 0) then
+  begin
+    // text wrap each line of comments and exploded into separate lines
+    Lines := TIStringList.Create;
+    for Line in Comments do
+      if Length(Line) > 0 then
+        Lines.Add(
+          TextWrap(Line, cLineWidth - Length(cLinePrefix), 0), EOL, True
+        )
+      else
+        Lines.Add('');
+    Result := '{';
+    // write out each comment line
+    for Line in Lines do
+      Result := Result
+        + EOL
+        + cLinePrefix
+        + TextWrap(Line, cLineWidth - Length(cLinePrefix), 0);
+    Result := Result + EOL + '}' + EOL2;
+  end
+  else
+    Result := '';
 end;
 
 end.
