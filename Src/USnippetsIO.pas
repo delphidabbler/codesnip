@@ -42,10 +42,8 @@ interface
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
-  UBaseObjects, UExceptions, USnipData, USnippetIDs, USnippets;
+  UBaseObjects, UExceptions, USnippets;
 
 
 type
@@ -77,8 +75,7 @@ type
   ISnippetsWriter = interface(IInterface)
     ['{F46EE2E3-68A7-4877-9E04-192D15D29BB1}']
     procedure Write(const Routines: TRoutineList;
-      const Categories: TCategoryList;
-      const Provider: ISnippetsDataProvider);
+      const Categories: TCategoryList; const Provider: ISnippetsDataProvider);
       {Writes data from Snippets object to storage.
         @param Routines [in] Contains information about each snippet in the
           database.
@@ -90,21 +87,24 @@ type
   end;
 
   {
-  TSnippetsLoaderFactory:
+  TSnippetsIOFactory:
     Factory class that can create instances of writer and loader objects for the
     Snippets object.
   }
   TSnippetsIOFactory = class(TNoConstructObject)
   public
-    class function CreateLoader(const DBType: TDatabaseType): ISnippetsLoader;
-      {Creates an object that can load data into the Snippets object from
-      storage. param DBType [in] Type of database to be loaded: main or user.
-        @return Instance of loader object.
+    class function CreateMainDBLoader: ISnippetsLoader;
+      {Creates an object to use to load the main database.
+        @return Required object instance.
+      }
+    class function CreateUserDBLoader: ISnippetsLoader;
+      {Creates an object to use to load the user database.
+        @return Required object instance.
       }
     class function CreateWriter: ISnippetsWriter;
       {Create an object that can write user defined data from the Snippets
       object to storage.
-        @return Instance of writer object.
+        @return Required object instance.
       }
   end;
 
@@ -119,8 +119,11 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
-  UConsts, UIStringList;
+  UAppInfo, UConsts, UIniDataReader, UIStringList, UNulDataReader, USnipData,
+  USnippetIDs, UXMLDataIO;
 
 
 type
@@ -136,9 +139,7 @@ type
     Abstract base class for objects that can load data into the Snippets object
     from storage.
   }
-  TSnippetsLoader = class(TInterfacedObject,
-    ISnippetsLoader
-  )
+  TSnippetsLoader = class(TInterfacedObject, ISnippetsLoader)
   strict private
     fReader: IDataReader;       // Object used to read data from storage
     fRoutines: TRoutineList;    // Receives list of snippets
@@ -168,6 +169,7 @@ type
       const Routines: TRoutineList): TRoutine; virtual; abstract;
       {Finds the snippet object with a specified name.
         @param RoutineName [in] Name of required snippet.
+        @param Routines [in] List of snippets to search.
         @return Reference to required snippet object or nil if snippet is not
           found.
       }
@@ -214,9 +216,7 @@ type
   TMainSnippetsLoader:
     Class that updates Snippets object with data read from main database.
   }
-  TMainSnippetsLoader = class(TSnippetsLoader,
-    ISnippetsLoader
-  )
+  TMainSnippetsLoader = class(TSnippetsLoader, ISnippetsLoader)
   strict protected
     function CreateReader: IDataReader; override;
       {Creates reader object. If main database doesn't exist a nul reader is
@@ -227,6 +227,7 @@ type
       const Routines: TRoutineList): TRoutine; override;
       {Finds the snippet object with a specified name in the main database.
         @param RoutineName [in] Name of required snippet.
+        @param Routines [in] List of snippets to search.
         @return Reference to required snippet object or nil if snippet is not
           found.
       }
@@ -249,9 +250,7 @@ type
   TUserSnippetsLoader:
     Class that updates Snippets object with data read from user database.
   }
-  TUserSnippetsLoader = class(TSnippetsLoader,
-    ISnippetsLoader
-  )
+  TUserSnippetsLoader = class(TSnippetsLoader, ISnippetsLoader)
   strict protected
     function CreateReader: IDataReader; override;
       {Creates reader object. If user database doesn't exist a nul reader is
@@ -263,6 +262,7 @@ type
       {Finds the snippet object with a specified name. If snippet is not in this
       (user) database the main database is searched.
         @param RoutineName [in] Name of required snippet.
+        @param Routines [in] List of snippets to search.
         @return Reference to required snippet object or nil if snippet is not
           found.
       }
@@ -324,25 +324,26 @@ type
 
 { TSnippetsIOFactory }
 
-class function TSnippetsIOFactory.CreateLoader(
-  const DBType: TDatabaseType): ISnippetsLoader;
-  {Creates an object that can load data into the Snippets object from storage.
-    @param DBType [in] Type of database to be loaded: main or user.
-    @return Instance of loader object.
+class function TSnippetsIOFactory.CreateMainDBLoader: ISnippetsLoader;
+  {Creates an object to use to load the main database.
+    @return Required object instance.
   }
-const
-  // Map of database types to classes used to read the database
-  cLoaderClasses: array[TDatabaseType] of TSnippetsLoaderClass = (
-    TMainSnippetsLoader, TUserSnippetsLoader
-  );
 begin
-  Result := cLoaderClasses[DBType].Create;
+  Result := TMainSnippetsLoader.Create;
+end;
+
+class function TSnippetsIOFactory.CreateUserDBLoader: ISnippetsLoader;
+  {Creates an object to use to load the user database.
+    @return Required object instance.
+  }
+begin
+  Result := TUserSnippetsLoader.Create;
 end;
 
 class function TSnippetsIOFactory.CreateWriter: ISnippetsWriter;
   {Create an object that can write user defined data from the Snippets object to
   storage.
-    @return Instance of writer object.
+    @return Required object instance.
   }
 begin
   Result := TSnippetsWriter.Create;
@@ -517,9 +518,9 @@ function TMainSnippetsLoader.CreateReader: IDataReader;
     @return Reader object instance.
   }
 begin
-  Result := TDataIOFactories.CreateDataReader('IniDataReader', dtMain);
+  Result := TIniDataReader.Create(TAppInfo.AppDataDir);
   if not Result.DatabaseExists then
-    Result := TDataIOFactories.CreateDataReader('NulDataReader', dtMain);
+    Result := TNulDataReader.Create;
 end;
 
 function TMainSnippetsLoader.ErrorMessageHeading: string;
@@ -536,6 +537,7 @@ function TMainSnippetsLoader.FindRoutine(const RoutineName: string;
   const Routines: TRoutineList): TRoutine;
   {Finds the snippet object with a specified name in the main database.
     @param RoutineName [in] Name of required snippet.
+    @param Routines [in] List of snippets to search.
     @return Reference to required snippet object or nil if snippet is not found.
   }
 begin
@@ -568,9 +570,9 @@ function TUserSnippetsLoader.CreateReader: IDataReader;
     @return Reader object instance.
   }
 begin
-  Result := TDataIOFactories.CreateDataReader('XMLDataReader', dtUser);
+  Result := TXMLDataReader.Create(TAppInfo.UserDataDir);
   if not Result.DatabaseExists then
-    Result := TDataIOFactories.CreateDataReader('NulDataReader', dtUser);
+    Result := TNulDataReader.Create;
 end;
 
 function TUserSnippetsLoader.ErrorMessageHeading: string;
@@ -588,6 +590,7 @@ function TUserSnippetsLoader.FindRoutine(const RoutineName: string;
   {Finds the snippet object with a specified name. If snippet is not in this
   (user) database the main database is searched.
     @param RoutineName [in] Name of required snippet.
+    @param Routines [in] List of snippets to search.
     @return Reference to required snippet object or nil if snippet is not found.
   }
 begin
@@ -648,8 +651,7 @@ function TSnippetsWriter.CreateWriter: IDataWriter;
     @return Requied writer object.
   }
 begin
-  Result := TDataIOFactories.CreateDataWriter('XMLDataWriter', dtUser)
-    as IDataWriter;
+  Result := TXMLDataWriter.Create(TAppInfo.UserDataDir);
 end;
 
 procedure TSnippetsWriter.Write(const Routines: TRoutineList;
