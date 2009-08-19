@@ -90,22 +90,22 @@ type
       {Adds all strings from an array to end of list.
         @param Strs [in] Dynamic array of strings to be added.
       }
-    procedure Add(const Str: string; const Delim: Char;
+    procedure Add(const Str: string; const Delim: string;
       const AllowEmpty: Boolean; const Trim: Boolean = False); overload;
       {Splits a string at delimiter and adds component parts of string to end of
       list.
         @param Str [in] String to be split.
-        @param Delim [in] Character that delimits components of string.
+        @param Delim [in] String that delimits components of string.
         @param AllowEmpty [in] Determines whether empty components are added to
           list (True) or ignored (False).
         @param Trim [in] Determines whether strings are trimmed of trailing and
           leading spaces before adding to list.
       }
-    procedure SetText(const Text: string; const Delim: Char;
+    procedure SetText(const Text: string; const Delim: string;
       const AllowEmpty: Boolean; const Trim: Boolean = False);
       {Sets list to component parts of a string, based on a delimiter.
         @param Str [in] String to be split.
-        @param Delim [in] Character that delimits components of string.
+        @param Delim [in] String that delimits components of string.
         @param AllowEmpty [in] Determines whether empty components are stored in
           list (True) or ignored (False).
         @param Trim [in] Determines whether strings are trimmed of trailing and
@@ -232,22 +232,22 @@ type
       {Adds all strings from an array to end of list.
         @param Strs [in] Dynamic array of strings to be added.
       }
-    procedure Add(const Str: string; const Delim: Char;
+    procedure Add(const Str: string; const Delim: string;
       const AllowEmpty: Boolean; const Trim: Boolean = False); overload;
       {Splits a string at delimiter and adds component parts of string to end of
       list.
         @param Str [in] String to be split.
-        @param Delim [in] Character that delimits components of string.
+        @param Delim [in] String that delimits components of string.
         @param AllowEmpty [in] Determines whether empty components are added to
           list (True) or ignored (False).
         @param Trim [in] Determines whether strings are trimmed of trailing and
           leading spaces before adding to list.
       }
-    procedure SetText(const Text: string; const Delim: Char;
+    procedure SetText(const Text: string; const Delim: string;
       const AllowEmpty: Boolean; const Trim: Boolean = False);
       {Sets list to component parts of a string, based on a delimiter.
         @param Str [in] String to be split.
-        @param Delim [in] Character that delimits components of string.
+        @param Delim [in] String that delimits components of string.
         @param AllowEmpty [in] Determines whether empty components are stored in
           list (True) or ignored (False).
         @param Trim [in] Determines whether strings are trimmed of trailing and
@@ -397,12 +397,12 @@ begin
     Add(Strs[Idx]);
 end;
 
-procedure TIStringList.Add(const Str: string; const Delim: Char;
+procedure TIStringList.Add(const Str: string; const Delim: string;
   const AllowEmpty: Boolean; const Trim: Boolean);
   {Splits a string at delimiter and adds component parts of string to end of
   list.
     @param Str [in] String to be split.
-    @param Delim [in] Character that delimits components of string.
+    @param Delim [in] String that delimits components of string.
     @param AllowEmpty [in] Determines whether empty components are added to list
       (True) or ignored (False).
     @param Trim [in] Determines whether strings are trimmed of trailing and
@@ -624,11 +624,11 @@ begin
   fStrings[Idx] := Str;
 end;
 
-procedure TIStringList.SetText(const Text: string; const Delim: Char;
+procedure TIStringList.SetText(const Text: string; const Delim: string;
   const AllowEmpty: Boolean; const Trim: Boolean);
   {Sets list to component parts of a string, based on a delimiter.
     @param Str [in] String to be split.
-    @param Delim [in] Character that delimits components of string.
+    @param Delim [in] String that delimits components of string.
     @param AllowEmpty [in] Determines whether empty components are stored in
       list (True) or ignored (False).
     @param Trim [in] Determines whether strings are trimmed of trailing and

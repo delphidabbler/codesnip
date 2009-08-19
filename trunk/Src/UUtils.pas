@@ -118,18 +118,18 @@ function StripWhiteSpace(const S: string): string;
     @return String with whitespace removed.
   }
 
-function ExplodeStr(S: string; const Delim: Char; const List: TStrings;
+function ExplodeStr(S: string; const Delim: string; const List: TStrings;
   const AllowEmpty: Boolean = True; const TrimStrs: Boolean = False): Integer;
-  {Splits a delimited string into a list of sub-strings.
-  separated by a delimiter.
+  {Splits a delimited string into a list of sub-strings separated by a
+  delimiter.
     @param S [in] String to be split.
-    @param Delim [in] Character that delimits sub strings.
+    @param Delim [in] String that delimits sub strings.
     @param List [in] Receives split strings.
     @param AllowEmpty [in] True if empty sub strings are to be included in list.
     @param TrimStrs [in] Determines whether strings are trimmed of trailing and
       leading spaces before adding to list. Can mean a string of spaces is
-      ignored if AllowEmpty is False.
-    @return Number of strings in output list.
+      ignored if AllowEmpty is True.
+    @return Number of strings in List.
   }
 
 function JoinStr(const SL: TStrings; const Delim: string;
@@ -550,54 +550,56 @@ begin
     SetLength(Result, ResCount);
 end;
 
-function SplitStr(const S: string; Delim: Char; out S1, S2: string): Boolean;
+function SplitStr(const S: string; const Delim: string;
+  out S1, S2: string): Boolean;
   {Splits the string S at the first occurence of a delimiter.
     @param S [in] String to be split.
     @param Delim [in] Delimiter separating sub strings.
-    @param S1 [out] Sub string preceeded first delimiter or whole string if
+    @param S1 [out] Sub string preceeding first delimiter or whole string if
       delimiter not in string.
     @param S2 [out] Sub string following delimiter or '' if delimiter not in
       string.
-    @return wether delimiter was found in string
+    @return True if delimiter was found in string, False otherwise.
   }
 var
   DelimPos: Integer;  // position of delimiter in source string
 begin
-  // Find position of first occurence of delimter in string
+  // Find position of first occurence of delimiter in string
   DelimPos := AnsiPos(Delim, S);
   if DelimPos > 0 then
   begin
     // Delimiter found: split string at delimiter
     S1 := Copy(S, 1, DelimPos - 1);
-    S2 := Copy(S, DelimPos + 1, MaxInt);
+    S2 := Copy(S, DelimPos + Length(Delim), MaxInt);
     Result := True;
   end
   else
   begin
-    // Delimeter not found: set S1 to whole string
+    // Delimiter not found: set S1 to whole string
     S1 := S;
     S2 := '';
     Result := False;
   end;
 end;
 
-function ExplodeStr(S: string; const Delim: Char; const List: TStrings;
+function ExplodeStr(S: string; const Delim: string; const List: TStrings;
   const AllowEmpty: Boolean = True; const TrimStrs: Boolean = False): Integer;
-  {Splits a delimited string into a list of sub-strings.
-  separated by a delimiter.
+  {Splits a delimited string into a list of sub-strings separated by a
+  delimiter.
     @param S [in] String to be split.
-    @param Delim [in] Character that delimits sub strings.
+    @param Delim [in] String that delimits sub strings.
     @param List [in] Receives split strings.
     @param AllowEmpty [in] True if empty sub strings are to be included in list.
     @param TrimStrs [in] Determines whether strings are trimmed of trailing and
       leading spaces before adding to list. Can mean a string of spaces is
-      ignored if AllowEmpty is False.
-    @return Number of strings in output list.
+      ignored if AllowEmpty is True.
+    @return Number of strings in List.
   }
 var
   Item: string;       // current delimited text
   Remainder: string;  // remaining unconsumed part of string
 
+  // ---------------------------------------------------------------------------
   procedure ProcessItem;
     {Modifies current string as necessary item and adds to list if required.
     }
@@ -607,6 +609,7 @@ var
     if (Item <> '') or AllowEmpty then
       List.Add(Item)
   end;
+  // ---------------------------------------------------------------------------
 
 begin
   // Clear the list
