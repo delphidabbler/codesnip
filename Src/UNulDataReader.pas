@@ -39,12 +39,9 @@ unit UNulDataReader;
 interface
 
 
-implementation
-
-
 uses
   // Project
-  USnipData, USnippets, UIStringList;
+  UIStringList, USnipData, USnippets;
 
 
 type
@@ -100,20 +97,8 @@ type
       }
   end;
 
-  {
-  TNulDataReaderFactory:
-    Static factory class that creates an instance of the TNulDataReader object.
-    This class is registered with the TDataIOFactories class. Designed for use
-    when one of the databases is missing.
-  }
-  TNulDataReaderFactory = class sealed(TDataReaderFactory)
-  public
-    class function Instance(const DBType: TDatabaseType): IInterface; override;
-      {Creates instance of object that supports IDataReader.
-        @param DBType [in] Type of database to be read: main or user.
-        @return Instance of data reader object.
-      }
-  end;
+
+implementation
 
 
 { TNulDataReader }
@@ -191,24 +176,6 @@ function TNulDataReader.GetRoutineXRefs(const Routine: string): IStringList;
 begin
   Result := TIStringList.Create;
 end;
-
-{ TNulDataReaderFactory }
-
-class function TNulDataReaderFactory.Instance(
-  const DBType: TDatabaseType): IInterface;
-  {Creates instance of object that supports IDataReader.
-    @param DBType [in] Type of database to be read: main or user.
-    @return Instance of data reader object.
-  }
-begin
-  Result := TNulDataReader.Create;
-end;
-
-
-initialization
-
-// Register the data reader factory
-TDataIOFactories.RegisterFactory('NulDataReader', TNulDataReaderFactory);
 
 end.
 

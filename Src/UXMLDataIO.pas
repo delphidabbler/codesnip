@@ -40,16 +40,11 @@ unit UXMLDataIO;
 interface
 
 
-implementation
-
-
 uses
   // Delphi
-  SysUtils, Classes, ActiveX, XMLIntf, XMLDom, Windows {for inlining},
+  XMLIntf,
   // Project
-  UActiveText, UAppInfo, UConsts, UExceptions, UIStringList, UREMLDataIO,
-  URoutineExtraHelper, USnipData, USnippets, UStructs, UUtils, UXMLDocConsts,
-  UXMLDocHelper, UXMLDocumentEx;
+  UIStringList, UREMLDataIO, USnipData, USnippets, UXMLDocumentEx;
 
 
 type
@@ -61,7 +56,7 @@ type
   }
   TXMLDataIO = class(TInterfacedObject)
   strict protected
-    fDBType: TDatabaseType;   // Type of database being read or written
+    fDBDir: string;           // Database directory
     fXMLDoc: IXMLDocumentEx;  // Extended XML document object
     function PathToXMLFile: string;
       {Gets fully specified path to the XML file. Path depends on which database
@@ -90,9 +85,9 @@ type
         @return Required node or nil if node doesn't exist.
       }
   public
-    constructor Create(const DBType: TDatabaseType);
+    constructor Create(const DBDir: string);
       {Class constructor. Creates object and XML document for a given database.
-        @param DBType [in] Specifies which database to access: main or user.
+        @param DBDir [in] Directory where database is stored.
       }
     destructor Destroy; override;
       {Class destructor. Tears down object.
@@ -129,10 +124,10 @@ type
         @return List of names of references.
       }
   public
-    constructor Create(const DBType: TDatabaseType);
+    constructor Create(const DBDir: string);
       {Class constructor. Sets up object and loads XML from file if database
       master file exists, otherwise creates a minimal empty document.
-        @param DBType [in] Identifies database to load: main or user.
+        @param DBDir [in] Directory where database is stored.
       }
     { IDataReader methods }
     function DatabaseExists: Boolean;
@@ -175,21 +170,6 @@ type
       {Get list of all units referenced by a snippet.
         @param Routine [in] Name of required snippet.
         @return List of unit names.
-      }
-  end;
-
-  {
-  TXMLDataReaderFactory:
-    Static factory class that creates an instance of the TXMLDataReader object.
-    This class is registered with the TDataIOFactories class as the factory
-    to use when database needs to be accessed via XML.
-  }
-  TXMLDataReaderFactory = class sealed(TDataReaderFactory)
-  public
-    class function Instance(const DBType: TDatabaseType): IInterface; override;
-      {Creates instance of object that supports IDataReader.
-        @param DBType [in] Type of database to be read: main or user.
-        @return Instance of data reader object.
       }
   end;
 
@@ -278,21 +258,16 @@ type
       }
   end;
 
-  {
-  TXMLDataWriterFactory:
-    Static factory class that creates an instance of the TXMLDataWriter object.
-    This class is registered with the TDataIOFactories class as the factory
-    to use when database needs to be accessed.
-  }
-  TXMLDataWriterFactory = class sealed(TDataWriterFactory)
-  public
-    class function Instance(const DBType: TDatabaseType): IInterface; override;
-      {Creates instance of object that supports IDataWriter.
-        @param DBType [in] Type of database to be written: only user is
-          supported.
-        @return Instance of data reader object.
-      }
-  end;
+
+implementation
+
+
+uses
+  // Delphi
+  SysUtils, Classes, ActiveX, XMLDom,
+  // Project
+  UActiveText, UConsts, UExceptions, URoutineExtraHelper, UStructs, UUtils,
+  UXMLDocConsts, UXMLDocHelper;
 
 
 const
@@ -338,13 +313,13 @@ resourcestring
   // Error message
   sMissingNode = 'Document has no %s node.';
 
-constructor TXMLDataIO.Create(const DBType: TDatabaseType);
+constructor TXMLDataIO.Create(const DBDir: string);
   {Class constructor. Creates object and XML document for a given database.
-    @param DBType [in] Specifies which database to access: main or user.
+    @param DBDir [in] Directory where database is stored.
   }
 begin
   inherited Create;
-  fDBType := DBType;
+  fDBDir := DBDir;
   // For some reason we must call OleInitialize here rather than in
   // initialization section
   OleInitialize(nil);
@@ -357,10 +332,7 @@ function TXMLDataIO.DataDir: string;
     @return Path to directory.
   }
 begin
-  if fDBType = dtMain then
-    Result := ExcludeTrailingPathDelimiter(TAppInfo.AppDataDir)
-  else
-    Result := ExcludeTrailingPathDelimiter(TAppInfo.UserDataDir);
+  Result := ExcludeTrailingPathDelimiter(fDBDir);
 end;
 
 function TXMLDataIO.DataFile(const FileName: string): string;
@@ -440,15 +412,15 @@ resourcestring
   sMissingSource = 'Source code file name missing for snippet "%s"';
   sDBError = 'The database is corrupt and had been deleted.' + EOL2 + '%s';
 
-constructor TXMLDataReader.Create(const DBType: TDatabaseType);
+constructor TXMLDataReader.Create(const DBDir: string);
   {Class constructor. Sets up object and loads XML from file if database master
   file exists, otherwise creates a minimal empty document.
-    @param DBType [in] Identifies database to load: main or user.
+    @param DBDir [in] Directory where database is stored.
   }
 var
   RootNode: IXMLNode; // reference to document's root node
 begin
-  inherited;
+  inherited Create(DBDir);
   if DatabaseExists then
   begin
     // Database exists: load it
@@ -466,7 +438,7 @@ begin
     fXMLDoc.Active := True;
     TXMLDocHelper.CreateXMLProcInst(fXMLDoc);
     RootNode := TXMLDocHelper.CreateRootNode(
-      fXMLDoc, cUserDataRootNode, cWatermark, cLatestVersion 
+      fXMLDoc, cUserDataRootNode, cWatermark, cLatestVersion
     );
     fXMLDoc.CreateElement(RootNode, cCategoriesNode);
     fXMLDoc.CreateElement(RootNode, cRoutinesNode);
@@ -608,7 +580,7 @@ var
     }
   begin
     Result := TXMLDocHelper.GetStandardFormat(
-      fXMLDoc, RoutineNode, (fDBType = dtMain)
+      fXMLDoc, RoutineNode, False
     );
   end;
 
@@ -759,18 +731,6 @@ begin
     Error(sMissingNode, [cCategoriesNode]);
   if fXMLDoc.FindNode(cUserDataRootNode + '\' + cRoutinesNode) = nil then
     Error(sMissingNode, [cRoutinesNode]);
-end;
-
-{ TXMLDataReaderFactory }
-
-class function TXMLDataReaderFactory.Instance(
-  const DBType: TDatabaseType): IInterface;
-  {Creates instance of object that supports IDataReader.
-    @param DBType [in] Type of database to be read: main or user.
-    @return Instance of data reader object.
-  }
-begin
-  Result := TXMLDataReader.Create(DBType);
 end;
 
 { TXMLDataWriter }
@@ -1028,25 +988,6 @@ procedure TXMLDataWriter.WriteRoutineXRefs(const RoutineName: string;
 begin
   WriteReferenceList(RoutineName, cXRefNode, XRefs);
 end;
-
-{ TXMLDataWriterFactory }
-
-class function TXMLDataWriterFactory.Instance(
-  const DBType: TDatabaseType): IInterface;
-  {Creates instance of object that supports IDataWriter.
-    @param DBType [in] Type of database to be written: only user is
-      supported.
-    @return Instance of data reader object.
-  }
-begin
-  Result := TXMLDataWriter.Create(DBType);
-end;
-
-initialization
-
-// Register the data reader and writer factories
-TDataIOFactories.RegisterFactory('XMLDataReader', TXMLDataReaderFactory);
-TDataIOFactories.RegisterFactory('XMLDataWriter', TXMLDataWriterFactory);
 
 end.
 
