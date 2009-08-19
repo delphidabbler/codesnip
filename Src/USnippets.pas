@@ -1313,10 +1313,10 @@ begin
   try
     // Load main database: MUST do this first since user database can
     // reference objects in main database
-    with TSnippetsIOFactory.CreateLoader(dtMain) do
+    with TSnippetsIOFactory.CreateMainDBLoader do
       Load(fRoutines, fCategories, Factory);
     // Load any user database
-    with TSnippetsIOFactory.CreateLoader(dtUser) do
+    with TSnippetsIOFactory.CreateUserDBLoader do
       Load(fRoutines, fCategories, Factory);
     fUpdated := False;
   except
