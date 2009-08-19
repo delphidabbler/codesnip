@@ -142,10 +142,10 @@ resourcestring
   sErrorMsg = 'Filename is not valid for a Pascal unit';
 
   // Unit header comments
-  sLicense = 'This unit is freeware and may be freely distributed and used on '
-    + 'the condition that this comment is not removed from the unit.';
-  sMainDescription = 'The unit was generated automatically. It contains a '
-    + 'selection of code taken from the Code Snippets Database at %0:s.';
+  sLicense = 'This unit may be freely distributed and used on the condition '
+    + 'that this comment is not removed from the unit.';
+  sMainDescription = 'The unit was generated automatically from a '
+    + 'selection of source code taken from the Code Snippets Database at %0:s.';
   sDisclaimer = 'The source code contained in this unit is made available on '
     + 'an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either express or '
     + 'implied. The code is used entirely at your own risk.';
