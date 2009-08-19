@@ -54,7 +54,11 @@ type
   }
   TMemoPreviewFrame = class(TFrame)
     pnlView: TPanel;
-  protected
+  strict private
+    procedure SetMargin;
+      {Sets fixed size margin around control.
+      }
+  strict protected
     function GetMemoCtrl: TCustomMemo; virtual; abstract;
       {Gets reference to frame's custom memo control.
         @return Required control reference.
@@ -70,15 +74,14 @@ type
         @param DocContent [in] Content to be displayed in control. Must have a
           format that is displayed by the control.
       }
-    procedure SetMargin;
-      {Sets fixed size margin around control.
-      }
-  protected
+  protected // do not make strict
+    { IPreview methods: partial implementation }
     procedure Display(const DocContent: string; out Title: string);
       {Displays document in preview dialog box.
         @param DocContent [in] Content of document to be displayed.
         @param Title [out] Title of document, if any.
       }
+    { IClipboardMgr methods }
     function CanCopy: Boolean;
       {Checks if there is any selected text in control that can be copied.
       Implements IClipboardMgr.CanCopy for subclasses.
@@ -88,6 +91,7 @@ type
       {Copies control's current selection to clipboard. Implements
       IClipboardMgr.CopyToClipboard for subclasses.
       }
+    { ISelectionMgr methods }
     function CanSelectAll: Boolean;
       {Checks if control permits all text to be selected. Implements
       ISelectionMgr.CanSelectAll for subclasses.
@@ -146,7 +150,7 @@ procedure TMemoPreviewFrame.Display(const DocContent: string;
     @param Title [out] Title of document, if any.
   }
 begin
-  // Set control margin
+  // Set margin of preview control
   SetMargin;
   // Load the document
   GetMemoCtrl.Lines.BeginUpdate;
