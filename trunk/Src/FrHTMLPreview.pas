@@ -96,7 +96,7 @@ procedure THTMLPreviewFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
 begin
   inherited;
   with CSSBuilder.AddSelector('body') do
-    AddProperty(CSSMarginProp(8));
+    AddProperty(CSSMarginProp(cPreviewMargin));
 end;
 
 procedure THTMLPreviewFrame.Display(const DocContent: string;
@@ -106,7 +106,7 @@ procedure THTMLPreviewFrame.Display(const DocContent: string;
     @param Title [out] Title of document, if any.
   }
 begin
-  WBController.IOMgr.LoadFromString(DocContent);  
+  WBController.IOMgr.LoadFromString(DocContent);
   Title := THTMLDocHelper.GetDocTitle(wbBrowser.Document);
 end;
 

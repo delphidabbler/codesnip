@@ -46,7 +46,6 @@ uses
 
 
 type
-
   {
   IPreview:
     Interface implemented by objects that can display a document of a certain
@@ -65,6 +64,10 @@ type
         @param Menu [in] Popup menu to be displayed.
       }
   end;
+
+const
+  // Size of margin to use in previews
+  cPreviewMargin = 8;
 
 
 implementation

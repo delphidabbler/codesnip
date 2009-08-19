@@ -105,7 +105,7 @@ implementation
 
 uses
   // Project
-  UMemoHelper;
+  IntfPreview, UMemoHelper;
 
 
 {$R *.dfm}
@@ -172,7 +172,7 @@ procedure TMemoPreviewFrame.SetMargin;
 begin
   with TMemoHelper.Create(GetMemoCtrl) do
     try
-      SetMargin(8);
+      SetMargin(cPreviewMargin);
     finally
       Free;
     end;
