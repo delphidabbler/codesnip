@@ -141,10 +141,9 @@ implementation
 
 
 uses
-  // Delphi
-  StrUtils,
   // Project
   IntfCommon, UGC;
+
 
 {$R *.dfm}
 

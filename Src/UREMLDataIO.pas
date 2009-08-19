@@ -231,7 +231,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UGC, UExceptions, UUtils;
+  UGC, UExceptions;
 
 
 type
