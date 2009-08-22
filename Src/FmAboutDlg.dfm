@@ -9,12 +9,14 @@ inherited AboutDlg: TAboutDlg
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
+    Width = 409
     Height = 273
+    ExplicitWidth = 409
     ExplicitHeight = 273
     object bvlSeparator: TBevel
       Left = 0
       Top = 41
-      Width = 377
+      Width = 409
       Height = 6
       Align = alTop
       Shape = bsSpacer
@@ -23,17 +25,19 @@ inherited AboutDlg: TAboutDlg
     object pcDetail: TPageControl
       Left = 0
       Top = 47
-      Width = 377
+      Width = 409
       Height = 161
       ActivePage = tsProgram
       Align = alTop
       TabOrder = 0
+      ExplicitWidth = 377
       object tsProgram: TTabSheet
         Caption = 'About The Program'
+        ExplicitWidth = 369
         inline frmProgram: THTMLTpltDlgFrame
           Left = 0
           Top = 0
-          Width = 369
+          Width = 401
           Height = 133
           Align = alClient
           TabOrder = 0
@@ -41,17 +45,17 @@ inherited AboutDlg: TAboutDlg
           ExplicitWidth = 369
           ExplicitHeight = 133
           inherited pnlBrowser: TPanel
-            Width = 369
+            Width = 401
             Height = 133
             ExplicitWidth = 369
             ExplicitHeight = 133
             inherited wbBrowser: TWebBrowser
-              Width = 369
+              Width = 401
               Height = 133
               ExplicitWidth = 345
               ExplicitHeight = 133
               ControlData = {
-                4C00000023260000BF0D00000000000000000000000000000000000000000000
+                4C00000072290000BF0D00000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
                 2B2E126208000000000000004C0000000114020000000000C000000000000046
                 8000000000000000000000000000000000000000000000000000000000000000
@@ -101,17 +105,18 @@ inherited AboutDlg: TAboutDlg
     object pnlTitle: TPanel
       Left = 0
       Top = 0
-      Width = 377
+      Width = 409
       Height = 41
       Align = alTop
       BevelOuter = bvNone
       BorderWidth = 1
       Color = clBtnShadow
       TabOrder = 1
+      ExplicitWidth = 377
       inline frmTitle: THTMLTpltDlgFrame
         Left = 1
         Top = 1
-        Width = 375
+        Width = 407
         Height = 39
         Align = alClient
         TabOrder = 0
@@ -121,17 +126,17 @@ inherited AboutDlg: TAboutDlg
         ExplicitWidth = 375
         ExplicitHeight = 39
         inherited pnlBrowser: TPanel
-          Width = 375
+          Width = 407
           Height = 39
           ExplicitWidth = 375
           ExplicitHeight = 39
           inherited wbBrowser: TWebBrowser
-            Width = 375
+            Width = 407
             Height = 39
             ExplicitWidth = 351
             ExplicitHeight = 39
             ControlData = {
-              4C000000C2260000080400000000000000000000000000000000000000000000
+              4C000000112A0000080400000000000000000000000000000000000000000000
               000000004C000000000000000000000001000000E0D057007335CF11AE690800
               2B2E126208000000000000004C0000000114020000000000C000000000000046
               8000000000000000000000000000000000000000000000000000000000000000
