@@ -12,9 +12,12 @@
  *      Object that provides a protected constructor but fails if the public
  *      constructor is called. For use as a base class for objects that are
  *      constructed via class methods but should not be constructed directly.
- *   3) TNonRefCountedObject implements a non reference counted implementation
+ *   3) TNoPublicConstructIntfObject:
+ *      Same as 2) except class descends from TInterfacedObject instead of
+ *      TObject.
+ *   4) TNonRefCountedObject implements a non reference counted implementation
  *      of IInterface.
- *   4) TAggregatedOrLoneObject is a base class for objects that can either
+ *   5) TAggregatedOrLoneObject is a base class for objects that can either
  *      exist as aggregated objects or as stand-alone reference counted objects.
  *      This implementation is based on code suggested by Hallvard VossBotn, as
  *      presented in Eric Harmon's book "Delphi COM programming".
@@ -83,7 +86,29 @@ type
   strict protected
     constructor InternalCreate;
       {Protected class constructor. Does nothing but call inherited constructor.
-      Should be called by sub class constructors instead of inherited Create.
+      Should be called by class methods of derived classes instead of inherited
+      Create.
+      }
+  public
+    constructor Create;
+      {Class constructor. Causes an assertion failure if called. The object is
+      never constructed.
+      }
+  end;
+
+  {
+  TNoPublicConstructIntfObject:
+    Class that provides a protected constructor but fails if the public
+    constructor is called. For use as a base class for reference counted
+    interfaced objects that are constructed via class methods but should not be
+    constructed directly.
+  }
+  TNoPublicConstructIntfObject = class(TInterfacedObject)
+  strict protected
+    constructor InternalCreate;
+      {Protected class constructor. Does nothing but call inherited constructor.
+      Should be called by class methods of derived classes instead of inherited
+      Create.
       }
   public
     constructor Create;
@@ -191,8 +216,7 @@ constructor TNoConstructObject.Create;
   constructed.
   }
 begin
-  Assert(False,                                            // ** do not localise
-    ClassName + '.Create: Constructor can''t be called');
+  Assert(False, ClassName + '.Create: Constructor can''t be called');
 end;
 
 { TNoPublicConstructObject }
@@ -202,13 +226,32 @@ constructor TNoPublicConstructObject.Create;
   never constructed.
   }
 begin
-  Assert(False,                                            // ** do not localise
-    ClassName + '.Create: Public constructor can''t be called');
+  Assert(False, ClassName + '.Create: Public constructor can''t be called');
 end;
 
 constructor TNoPublicConstructObject.InternalCreate;
   {Protected class constructor. Does nothing but call inherited constructor.
-  Should be called by sub class constructors instead of inherited Create.
+  Should be called by class methods of derived classes instead of inherited
+  Create.
+  }
+begin
+  inherited Create;
+end;
+
+{ TNoPublicConstructIntfObject }
+
+constructor TNoPublicConstructIntfObject.Create;
+  {Class constructor. Causes an assertion failure if called. The object is never
+  constructed.
+  }
+begin
+  Assert(False, ClassName + '.Create: Public constructor can''t be called');
+end;
+
+constructor TNoPublicConstructIntfObject.InternalCreate;
+  {Protected class constructor. Does nothing but call inherited constructor.
+  Should be called by class methods of derived classes instead of inherited
+  Create.
   }
 begin
   inherited Create;
