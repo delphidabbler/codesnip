@@ -113,8 +113,6 @@ type
           or plain text).
         @param ADlgTitle [in] Title of dialog box. Default is used if ''.
       }
-    property DocContent: string read fDocContent write fDocContent;
-      {Content of document being displayed}
   end;
 
 
@@ -207,7 +205,7 @@ begin
   with InternalCreate(AOwner) do
     try
       fDlgTitle := ADlgTitle;
-      DocContent := ADocContent;
+      fDocContent := ADocContent;
       ShowModal;
     finally
       Free;
@@ -232,13 +230,13 @@ procedure TPreviewDlg.GetViewerInfo(out Viewer: IInterface;
     @param TabSheet [out] Tab sheet containing viewer frame.
   }
 begin
-  if URTFUtils.IsValidRTFCode(DocContent) then
+  if URTFUtils.IsValidRTFCode(fDocContent) then
   begin
     // RTF document
     TabSheet := tsRTF;
     Viewer := frRTF;
   end
-  else if UHTMLUtils.IsValidHTMLCode(DocContent) then
+  else if UHTMLUtils.IsValidHTMLCode(fDocContent) then
   begin
     // HTML document
     TabSheet := tsHTML;
@@ -267,7 +265,7 @@ begin
   // update required frame's popup menu and display document in it
   (fViewer as IPreview).SetPopupMenu(mnuPreview);
   // load content into preview and set dialog caption
-  (fViewer as IPreview).Display(DocContent, Title);
+  (fViewer as IPreview).Display(fDocContent, Title);
   if fDlgTitle <> '' then
     Caption := fDlgTitle                // caller specified title - use it
   else if Title <> '' then
