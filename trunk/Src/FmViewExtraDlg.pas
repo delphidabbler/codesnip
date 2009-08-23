@@ -47,7 +47,7 @@ uses
   Forms, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
   FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, UActiveText,
-  UCSSBuilder, UHTMLEvents;
+  UBaseObjects, UCSSBuilder, UHTMLEvents;
 
 
 type
@@ -56,7 +56,7 @@ type
     Dialog box that displays active text rendered from REML markup entered in
     snippets editor. Active text is rendered as HTML.
   }
-  TViewExtraDlg = class(THTMLViewDlg)
+  TViewExtraDlg = class(THTMLViewDlg, INoPublicConstruct)
     frmExtraInfo: THTMLTpltDlgFrame;
   strict private
     fActiveText: IActiveText; // Active text to be displayed.
@@ -135,7 +135,7 @@ class procedure TViewExtraDlg.Execute(const AOwner: TComponent;
     @param ActiveText [in] Active text to be displayed as HTML.
   }
 begin
-  with Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       fActiveText := ActiveText;
       ShowModal;

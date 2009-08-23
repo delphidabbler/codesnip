@@ -46,7 +46,7 @@ uses
   ExtCtrls,
   // Project
   FmGenericViewDlg, FrBrowserBase, FrHTMLPreview, FrMemoPreview, FrRTFPreview,
-  FrTextPreview, IntfPreview;
+  FrTextPreview, IntfPreview, UBaseObjects;
 
 
 type
@@ -55,7 +55,7 @@ type
   TPreviewDlg:
     Dialog box used to preview text, HTML and Rich text documents.
   }
-  TPreviewDlg = class(TGenericViewDlg)
+  TPreviewDlg = class(TGenericViewDlg, INoPublicConstruct)
     actCopy: TAction;
     actSelectAll: TAction;
     alPreview: TActionList;
@@ -204,7 +204,7 @@ class procedure TPreviewDlg.Execute(AOwner: TComponent;
     @param ADlgTitle [in] Title of dialog box. Default is used if ''.
   }
 begin
-  with TPreviewDlg.Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       fDlgTitle := ADlgTitle;
       DocContent := ADocContent;

@@ -45,7 +45,7 @@ uses
   StdCtrls, Forms, ComCtrls, Controls, ExtCtrls, Classes,
   // Project
   FmWizardDlg, FrBrowserBase, FrCheckedTV, FrFixedHTMLDlg, FrHTMLDlg,
-  FrSelectSnippets, FrSelectUserSnippets, UExceptions, USnippets;
+  FrSelectSnippets, FrSelectUserSnippets, UBaseObjects, UExceptions, USnippets;
 
 
 type
@@ -55,7 +55,7 @@ type
     Implements a wizard dialog that gathers data about and submits a user's
     code submission for inclusion in the database.
   }
-  TCodeSubmitDlg = class(TWizardDlg)
+  TCodeSubmitDlg = class(TWizardDlg, INoPublicConstruct)
     btnPreview: TButton;
     edComments: TMemo;
     edEMail: TEdit;
@@ -144,11 +144,10 @@ type
       performs any action required.
         @param PageIdx [in] Index of page to be initialised.
       }
-  public
-    constructor Create(AOwner: TComponent); override;
-      {Class constructor. Override that initialise objects required by this
-      wizard.
+    constructor InternalCreate(AOwner: TComponent); override;
+      {Protected class constructor. Initialise objects required by this wizard.
       }
+  public
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
@@ -278,15 +277,6 @@ begin
   lblRoutinePrompt.Font.Style := [fsBold];
 end;
 
-constructor TCodeSubmitDlg.Create(AOwner: TComponent);
-  {Class constructor. Override that initialise objects required by this wizard.
-  }
-begin
-  inherited;
-  frmRoutines.OnChange := RoutineListChange;
-  fData := TMemoryStream.Create;
-end;
-
 destructor TCodeSubmitDlg.Destroy;
   {Class destructor. Tears down object.
   }
@@ -340,7 +330,7 @@ class procedure TCodeSubmitDlg.Execute(const AOwner: TComponent;
       list. If nil nothing is selected.
   }
 begin
-  with Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       SelectRoutine(Routine);
       ShowModal;
@@ -392,6 +382,15 @@ begin
   UserData := Settings.ReadSection(ssUserInfo);
   edName.Text := UserData.ItemValues['Name'];
   edEMail.Text := UserData.ItemValues['Email'];
+end;
+
+constructor TCodeSubmitDlg.InternalCreate(AOwner: TComponent);
+  {Protected class constructor. Initialise objects required by this wizard.
+  }
+begin
+  inherited;
+  frmRoutines.OnChange := RoutineListChange;
+  fData := TMemoryStream.Create;
 end;
 
 procedure TCodeSubmitDlg.MoveForward(const PageIdx: Integer;

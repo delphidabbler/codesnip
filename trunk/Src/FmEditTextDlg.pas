@@ -43,7 +43,7 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericOKDlg;
+  FmGenericOKDlg, UBaseObjects;
 
 
 type
@@ -52,7 +52,7 @@ type
   TEditTextDlg:
     Dialog box that prompts for and gets a single line string of text from user.
   }
-  TEditTextDlg = class(TGenericOKDlg)
+  TEditTextDlg = class(TGenericOKDlg, INoPublicConstruct)
     lblPrompt: TLabel;
     edText: TEdit;
   strict protected
@@ -96,7 +96,7 @@ class function TEditTextDlg.Execute(const AOwner: TComponent; const ATitle,
     @return True if user OKd, False if cancelled.
   }
 begin
-  with Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       Caption := ATitle;
       HelpKeyword := AHelpKeyword;

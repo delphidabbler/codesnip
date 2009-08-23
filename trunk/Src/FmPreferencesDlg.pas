@@ -43,7 +43,7 @@ uses
   // Delphi
   Contnrs, ComCtrls, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericOKDlg, FrPrefsBase, UPreferences;
+  FmGenericOKDlg, FrPrefsBase, UBaseObjects, UPreferences;
 
 
 type
@@ -52,7 +52,7 @@ type
   TPreferencesDlg:
     Dialog box that sets user preferences.
   }
-  TPreferencesDlg = class(TGenericOKDlg)
+  TPreferencesDlg = class(TGenericOKDlg, INoPublicConstruct)
     pcMain: TPageControl;
     procedure btnOKClick(Sender: TObject);
     procedure pcMainChange(Sender: TObject);
@@ -229,7 +229,7 @@ class function TPreferencesDlg.Execute(AOwner: TComponent;
     @return True if user accepts changes or false if cancels.
   }
 begin
-  with Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       CreatePages(Pages);
       Result := ShowModal = mrOK;

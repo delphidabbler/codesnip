@@ -45,7 +45,7 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericOKDlg, USearch, USnippets;
+  FmGenericOKDlg, UBaseObjects, USearch, USnippets;
 
 
 type
@@ -57,7 +57,7 @@ type
     Defines a dialog box that is used to select criteria for searches for
     cross referenced snippets.
   }
-  TFindXRefsDlg = class(TGenericOKDlg)
+  TFindXRefsDlg = class(TGenericOKDlg, INoPublicConstruct)
     lblDesc: TLabel;
     lblRoutineName: TLabel;
     chkRequired: TCheckBox;
@@ -242,7 +242,7 @@ class function TFindXRefsDlg.Execute(const AOwner: TComponent;
   }
 begin
   Assert(Assigned(Routine), ClassName + '.Execute: Routine is nil');
-  with Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       fRoutine := Routine;
       Result := (ShowModal = mrOK);

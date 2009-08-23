@@ -45,7 +45,7 @@ uses
   Classes, StdCtrls, Controls, Forms, ExtCtrls,
   // Project
   FmGenericOKDlg, FrCheckedTV, FrSelectUserSnippets, FrSelectSnippets,
-  USnippets;
+  UBaseObjects, USnippets;
 
 
 type
@@ -55,7 +55,7 @@ type
     A dialog box that gets snippets to be exported and creates an export file
     containing the selected snippets.
   }
-  TCodeExportDlg = class(TGenericOKDlg)
+  TCodeExportDlg = class(TGenericOKDlg, INoPublicConstruct)
     btnBrowse: TButton;
     edFile: TEdit;
     frmSnippets: TSelectUserSnippetsFrame;
@@ -207,7 +207,7 @@ class procedure TCodeExportDlg.Execute(const AOwner: TComponent;
       list box. If nil or not user-defined then no snippet is pre-selected.
   }
 begin
-  with Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       SelectRoutine(Snippet);
       ShowModal;

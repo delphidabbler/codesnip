@@ -44,7 +44,8 @@ uses
   // Delphi
   StdCtrls, ComCtrls, Controls, ExtCtrls, Classes, Forms,
   // Project
-  FmWizardDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UCSSBuilder;
+  FmWizardDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UBaseObjects,
+  UCSSBuilder;
 
 
 type
@@ -54,7 +55,7 @@ type
     Wizard style dialog box that collects information and sends application
     registration to web server.
   }
-  TRegistrationDlg = class(TWizardDlg)
+  TRegistrationDlg = class(TWizardDlg, INoPublicConstruct)
     chkMailList: TCheckBox;
     edEmail: TEdit;
     edName: TEdit;
@@ -371,7 +372,7 @@ class function TRegistrationDlg.Execute(const Owner: TComponent): Boolean;
     @return True if program was registered, false otherwise.
   }
 begin
-  with TRegistrationDlg.Create(Owner) do
+  with InternalCreate(Owner) do
     try
       ShowModal;
       Result := fRegistered;
