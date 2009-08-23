@@ -107,7 +107,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils;
+  SysUtils,
+  // Project
+  UBaseObjects;
 
 
 type
@@ -116,17 +118,22 @@ type
   TQuery:
     Class that encapsulates a query on the code snippets database. It enables a
     search to be run against the database and makes the found routines
-    available.
+    available. Must only be instantiated once as a singleton.
   }
-  TQuery = class(TInterfacedObject,
+  TQuery = class(TNoPublicConstructIntfObject,
     IQuery
   )
   strict private
-    fSelection: TRoutineList;
-      {List of routines selected by current query}
-    fSearch: ISearch;
-      {Reference to search object used by current query}
-  protected
+    var
+      fSelection: TRoutineList;   // List of routines selected by current query
+      fSearch: ISearch;           // Search object used by current query
+    class var
+      fInstance: IQuery;          // Singleton object instance of this class
+    class function GetInstance: IQuery; static;
+      {Gets singleton instance of class, creating it if necessary
+        @return Singleton instance.
+      }
+  protected // do not make strict
     { IQuery methods }
     function ApplySearch(const Search: ISearch): Boolean;
       {Runs query by applying a search to the whole database. If search succeeds
@@ -160,20 +167,17 @@ type
         @param Routines [in] Object to receive routine list. List is emptied
           before routines are copied in.
       }
-  public
-    constructor Create;
-      {Class constructor. Sets up object with all routines in database selected.
+  strict protected
+    constructor InternalCreate;
+      {Internal class constructor. Sets up object with all routines in database
+      selected.
       }
+  public
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
+    class property Instance: IQuery read GetInstance;
   end;
-
-
-var
-  // Private global query singleton object
-  PvtQuery: IQuery = nil;
-
 
 function Query: IQuery;
   {Returns singleton instance of object that encapsulates a query on the
@@ -181,11 +185,8 @@ function Query: IQuery;
     @return Singleton object.
   }
 begin
-  if not Assigned(PvtQuery) then
-    PvtQuery := TQuery.Create;
-  Result := PvtQuery;
+  Result := TQuery.Instance;
 end;
-
 
 { TQuery }
 
@@ -199,8 +200,7 @@ function TQuery.ApplySearch(const Search: ISearch): Boolean;
 var
   FoundList: TRoutineList;  // list receives found routines
 begin
-  Assert(Assigned(Search),                                 // ** do not localise
-    'TQuery.ApplySearch: Search is nil');
+  Assert(Assigned(Search), ClassName + '.ApplySearch: Search is nil');
   FoundList := TRoutineList.Create;
   try
     // Get list of routines that match search
@@ -215,15 +215,6 @@ begin
   finally
     FreeAndNil(FoundList);
   end;
-end;
-
-constructor TQuery.Create;
-  {Class constructor. Sets up object with all routines in database selected.
-  }
-begin
-  inherited;
-  fSelection := TRoutineList.Create;
-  Reset;
 end;
 
 destructor TQuery.Destroy;
@@ -262,12 +253,34 @@ begin
   Result := fSearch;
 end;
 
+class function TQuery.GetInstance: IQuery;
+  {Gets singleton instance of class, creating it if necessary
+    @return Singleton instance.
+  }
+begin
+  if not Assigned(fInstance) then
+    fInstance := TQuery.InternalCreate; // "TQuery" reference required here
+  Result := fInstance;
+end;
+
 function TQuery.GetSelection: TRoutineList;
   {Gets reference to list of routines selected by last search.
     @return Reference to required list of routines.
   }
 begin
   Result := fSelection;
+end;
+
+constructor TQuery.InternalCreate;
+  {Internal class constructor. Sets up object with all routines in database
+  selected. Must only be called once.
+  }
+begin
+  Assert(not Assigned(fInstance),
+    ClassName + '.InternalCreate: Must only call once - singleton object');
+  inherited InternalCreate;
+  fSelection := TRoutineList.Create;
+  Reset;
 end;
 
 function TQuery.Refresh: Boolean;
@@ -290,15 +303,6 @@ begin
   fSelection.Assign(Snippets.Routines);
   fSearch := TSearchFactory.CreateNulSearch;
 end;
-
-
-initialization
-
-
-finalization
-
-// Free the singletion
-PvtQuery := nil;
 
 end.
 
