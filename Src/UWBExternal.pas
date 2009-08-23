@@ -60,11 +60,14 @@ type
     events to application.
   }
   TWBExternal = class(TAutoIntfObject,
-    IWBExternal6,           // browser external object's methods
-    ISetNotifier            // sets object used to notify app of events
+    IWBExternal6, // browser external object's methods
+    ISetNotifier  // sets object used to notify app of events
     )
   strict private
     fNotifier: INotifier; // Notifies application of events triggered by user
+    procedure HandleException;
+      {Gets application to handle current exception.
+      }
   protected // do not make strict
     { IWBExternal5: defined in type library }
     procedure UpdateDbase; safecall;
@@ -123,6 +126,8 @@ implementation
 
 
 uses
+  // Delphi
+  Forms,
   // Project
   UAppInfo, UUtils;
 
@@ -133,16 +138,24 @@ procedure TWBExternal.CompileSnippet;
   {Compiles the current snippet via notifier.
   }
 begin
-  if Assigned(fNotifier) then
-    fNotifier.CompileRoutine;
+  try
+    if Assigned(fNotifier) then
+      fNotifier.CompileRoutine;
+  except
+    HandleException;
+  end;
 end;
 
 procedure TWBExternal.ConfigCompilers;
   {Displays configure compilers dialog box via notifier.
   }
 begin
-  if Assigned(fNotifier) then
-    fNotifier.ConfigCompilers;
+  try
+    if Assigned(fNotifier) then
+      fNotifier.ConfigCompilers;
+  except
+    HandleException;
+  end;
 end;
 
 constructor TWBExternal.Create;
@@ -164,8 +177,12 @@ procedure TWBExternal.DisplayCategory(const CatID: WideString);
     @param CatID [in] ID of category to display.
   }
 begin
-  if Assigned(fNotifier) then
-    fNotifier.DisplayCategory(CatID);
+  try
+    if Assigned(fNotifier) then
+      fNotifier.DisplayCategory(CatID);
+  except
+    HandleException;
+  end;
 end;
 
 procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
@@ -175,16 +192,24 @@ procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
     @param UserDefined [in] Whether snippet is user defined.
   }
 begin
-  if Assigned(fNotifier) then
-    fNotifier.DisplayRoutine(SnippetName, UserDefined);
+  try
+    if Assigned(fNotifier) then
+      fNotifier.DisplayRoutine(SnippetName, UserDefined);
+  except
+    HandleException;
+  end;
 end;
 
 procedure TWBExternal.Donate;
   {Displays the Donate dialog box via notifier.
   }
 begin
-  if Assigned(fNotifier) then
-    fNotifier.Donate;
+  try
+    if Assigned(fNotifier) then
+      fNotifier.Donate;
+  except
+    HandleException;
+  end;
 end;
 
 procedure TWBExternal.EditSnippet(const SnippetName: WideString);
@@ -193,8 +218,19 @@ procedure TWBExternal.EditSnippet(const SnippetName: WideString);
       snippet.
   }
 begin
-  if Assigned(fNotifier) then
-    fNotifier.EditRoutine(SnippetName);
+  try
+    if Assigned(fNotifier) then
+      fNotifier.EditRoutine(SnippetName);
+  except
+    HandleException;
+  end;
+end;
+
+procedure TWBExternal.HandleException;
+  {Gets application to handle current exception.
+  }
+begin
+  Application.HandleException(ExceptObject);
 end;
 
 procedure TWBExternal.SetNotifier(const Notifier: INotifier);
@@ -210,24 +246,36 @@ procedure TWBExternal.ShowHint(const Hint: WideString);
     @param Hint [in] Hint to be displayed.
   }
 begin
-  if Assigned(fNotifier) then
-    fNotifier.ShowHint(Hint);
+  try
+    if Assigned(fNotifier) then
+      fNotifier.ShowHint(Hint);
+  except
+    HandleException;
+  end;
 end;
 
 procedure TWBExternal.ShowTestUnit;
   {Display the test unit for current snippet.
   }
 begin
-  if Assigned(fNotifier) then
-    fNotifier.ShowTestUnit;
+  try
+    if Assigned(fNotifier) then
+      fNotifier.ShowTestUnit;
+  except
+    HandleException;
+  end;
 end;
 
 procedure TWBExternal.UpdateDbase;
   {Updates database from internet via notifier.
   }
 begin
-  if Assigned(fNotifier) then
-    fNotifier.UpdateDbase;
+  try
+    if Assigned(fNotifier) then
+      fNotifier.UpdateDbase;
+  except
+    HandleException;
+  end;
 end;
 
 procedure TWBExternal.ViewCompilerLog(Ver: SYSINT);
@@ -236,8 +284,12 @@ procedure TWBExternal.ViewCompilerLog(Ver: SYSINT);
       the ordinal value of the required compiler version enumerated type.
   }
 begin
-  if Assigned(fNotifier) then
-    fNotifier.ViewCompilerLog(Ver);
+  try
+    if Assigned(fNotifier) then
+      fNotifier.ViewCompilerLog(Ver);
+  except
+    HandleException;
+  end;
 end;
 
 end.
