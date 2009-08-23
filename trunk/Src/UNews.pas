@@ -7,7 +7,7 @@
  * $Rev$
  * $Date$
  *
-***** BEGIN LICENSE BLOCK *****
+ * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
  *
@@ -56,9 +56,10 @@ type
   }
   TNewsItem = class(TObject)
   strict private
-    fId: SmallInt;    // Value of Id property
-    fDate: TDateTime; // Value of Date property
-    fHTML: string;    // Value of HTML property
+    var
+      fId: SmallInt;    // Value of Id property
+      fDate: TDateTime; // Value of Date property
+      fHTML: string;    // Value of HTML property
   public
     constructor Create(const Reader: TDataStreamReader);
       {Class constructor. Creates news item object from a data stream.
@@ -79,7 +80,30 @@ type
   }
   TNews = class(TObject)
   strict private
-    fNewsItems: TObjectList;  // Stores list of news items
+    type
+      TEnumerator = class(TObject)
+      strict private
+        var
+          fNews: TNews;     // Reference to object being enumerated
+          fIndex: Integer;  // Index of current object in enumeration
+      public
+        constructor Create(const News: TNews);
+          {Class constructor. Initialises enumeration.
+            @param News [in] Object to be enurmerated.
+          }
+        function GetCurrent: TNewsItem;
+          {Gets current news item.
+            @return Required name.
+          }
+        function MoveNext: Boolean;
+          {Moves to next item in enumeration.
+            @return True if there is a next item, False if beyond last item.
+          }
+        property Current: TNewsItem read GetCurrent;
+          {Current news item}
+      end;
+    var
+      fNewsItems: TObjectList;  // Stores list of news items
     procedure Parse(const NewsData: TStream);
       {Creates list of news items from a data stream.
         @param NewsData [in] Data stream containing news items.
@@ -101,6 +125,11 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
+    function GetEnumerator: TEnumerator;
+      {Creates an enumerator for this object.
+        @return Reference to new enumerator. Caller is repsonsible for freeing
+          this object.
+      }
     property Count: Integer read GetCount;
       {Number of news items in list}
     property Items[Idx: Integer]: TNewsItem read GetItem; default;
@@ -113,7 +142,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils;
+  SysUtils,
+  // Project
+  UUtils;
 
 
 {
@@ -168,6 +199,15 @@ begin
   Result := fNewsItems.Count;
 end;
 
+function TNews.GetEnumerator: TEnumerator;
+  {Creates an enumerator for this object.
+    @return Reference to new enumerator. Caller is repsonsible for freeing this
+      object.
+  }
+begin
+  Result := TEnumerator.Create(Self);
+end;
+
 function TNews.GetItem(Idx: Integer): TNewsItem;
   {Read accessor for Items[] property.
     @param Idx [in] Index of required item.
@@ -198,20 +238,36 @@ begin
   end;
 end;
 
-{ TNewsItem }
+{ TNews.TEnumerator }
 
-function MySQLDateToDateTime(const MySQLDate: string): TDateTime;
-  {Converts a date in MySQL format into a TDateTime.
-    @param MySQLDate [in] Date string in format YYYY-MM-DD.
-    @return Binary date value.
+constructor TNews.TEnumerator.Create(const News: TNews);
+  {Class constructor. Initialises enumeration.
+    @param News [in] Object to be enurmerated.
   }
 begin
-  Result := EncodeDate(
-    StrToInt(Copy(MySQLDate, 1, 4)),
-    StrToInt(Copy(MySQLDate, 6, 2)),
-    StrToInt(Copy(MySQLDate, 9, 2))
-  )
+  inherited Create;
+  fNews := News;
 end;
+
+function TNews.TEnumerator.GetCurrent: TNewsItem;
+  {Gets current news item.
+    @return Required name.
+  }
+begin
+  Result := fNews[fIndex];
+end;
+
+function TNews.TEnumerator.MoveNext: Boolean;
+  {Moves to next item in enumeration.
+    @return True if there is a next item, False if beyond last item.
+  }
+begin
+  Result := fIndex < Pred(fNews.Count);
+  if Result then
+    Inc(fIndex);
+end;
+
+{ TNewsItem }
 
 constructor TNewsItem.Create(const Reader: TDataStreamReader);
   {Class constructor. Creates news item object from a data stream.

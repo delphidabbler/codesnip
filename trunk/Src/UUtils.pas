@@ -184,6 +184,12 @@ function QuoteSpacedString(const S: string; const Quote: Char = '"'): string;
     @return Original string, surrounded by quotes only if it contains spaces.
   }
 
+function MySQLDateToDateTime(const MySQLDate: string): TDateTime;
+  {Converts a date in MySQL format into a TDateTime.
+    @param MySQLDate [in] Date string in format YYYY-MM-DD.
+    @return Binary date value.
+  }
+
 function DateStamp: string;
   {Creates a date stamp in standard format
     @return Current date and time as date stamp in GMT.
@@ -822,6 +828,19 @@ begin
     Result := Quote + S + Quote
   else
     Result := S;
+end;
+
+function MySQLDateToDateTime(const MySQLDate: string): TDateTime;
+  {Converts a date in MySQL format into a TDateTime.
+    @param MySQLDate [in] Date string in format YYYY-MM-DD.
+    @return Binary date value.
+  }
+begin
+  Result := EncodeDate(
+    StrToInt(Copy(MySQLDate, 1, 4)),
+    StrToInt(Copy(MySQLDate, 6, 2)),
+    StrToInt(Copy(MySQLDate, 9, 2))
+  );
 end;
 
 function DateStamp: string;

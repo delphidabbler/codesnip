@@ -147,7 +147,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UColours, UConsts, UCtrlArranger, UUtils;
+  UAppInfo, UColours, UConsts, UCtrlArranger, UNews, UUtils;
 
 
 {$R *.dfm}
@@ -270,9 +270,12 @@ procedure TUpdateDlg.DisplayNews;
   }
 var
   Idx: Integer; // loops thru news items, loading into news frame
+  NewsItem: TNewsItem;
 begin
-  for Idx := 0 to Pred(fUpdateMgr.News.Count) do
-    frmNews.AddPage(fUpdateMgr.News[Idx].HTML, fUpdateMgr.News[Idx].Date);
+  for NewsItem in fUpdateMgr.News do
+    frmNews.AddPage(NewsItem.HTML, NewsItem.Date);
+//  for Idx := 0 to Pred(fUpdateMgr.News.Count) do
+//    frmNews.AddPage(fUpdateMgr.News[Idx].HTML, fUpdateMgr.News[Idx].Date);
   frmNews.ShowNews;
 end;
 
