@@ -46,8 +46,8 @@ uses
   CheckLst, ComCtrls, ExtCtrls, Windows,
   // Project
   FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
-  IntfCompilers, UActiveText, UChkListStateMgr, UCompileMgr, UCSSBuilder,
-  USnippets, USnippetsChkListMgr;
+  IntfCompilers, UActiveText, UBaseObjects, UChkListStateMgr, UCompileMgr,
+  UCSSBuilder, USnippets, USnippetsChkListMgr;
 
 
 type
@@ -57,7 +57,7 @@ type
     Dialog box class that enables the user to create or edit a user-defined
     snippet.
   }
-  TUserDBEditDlg = class(TGenericOKDlg)
+  TUserDBEditDlg = class(TGenericOKDlg, INoPublicConstruct)
     alMain: TActionList;
     actAddUnit: TAction;
     actCompile: TAction;
@@ -454,7 +454,7 @@ class function TUserDBEditDlg.AddNewRoutine(AOwner: TComponent): Boolean;
 resourcestring
   sCaption = 'Add a Snippet';   // dialog box caption
 begin
-  with Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       Caption := sCaption;
       fSnippet := nil;
@@ -716,7 +716,7 @@ class function TUserDBEditDlg.EditRoutine(AOwner: TComponent;
 resourcestring
   sCaption = 'Edit %s';   // dialog box caption
 begin
-  with Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       Caption := Format(sCaption, [Routine.Name]);
       fSnippet := Routine;

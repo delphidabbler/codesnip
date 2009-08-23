@@ -41,10 +41,10 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls, Classes, Tabs,
+  Forms, StdCtrls, Controls, ExtCtrls, Classes, Tabs, ActnList, ImgList,
   // Project
   FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, IntfCompilers,
-  USnippets, ImgList, ActnList, ComCtrls;
+  UBaseObjects, USnippets;
 
 
 type
@@ -125,7 +125,7 @@ type
     compilation on one or more compilers for a specified routine. It is an
     error if there are no compiler warnings or errors.
   }
-  TCompErrorDlg = class(THTMLViewDlg)
+  TCompErrorDlg = class(THTMLViewDlg, INoPublicConstruct)
     frmHTML: THTMLTpltDlgFrame;
     tsCompilers: TTabSet;
     ilCompilers: TImageList;
@@ -240,32 +240,6 @@ resourcestring
 
 { TCompErrorDlg }
 
-class procedure TCompErrorDlg.Execute(const AOwner: TComponent;
-  const ARoutine: TRoutine; const ACompiler: ICompiler);
-  {Shows a dialog box that displays error or warning log for a specified
-  compiler as a result of test compiling a routine.
-    @param AOwner [in] Component that owns this form.
-    @param ARoutine [in] Routine that was compiled.
-    @param ACompiler [in] Id of compiler that created log.
-  }
-begin
-  Assert(Assigned(ARoutine),                               // ** do not localise
-    ClassName + '.Execute: ARoutine is nil');
-  Assert(Assigned(ACompiler),                              // ** do not localise
-    ClassName + '.Execute: ACompiler is nil');
-  with Create(AOwner) do
-    try
-      // Record selected compiler and currently selected routine
-      fRoutine := ARoutine;
-      fRequiredCompilers.Add(ACompiler);
-      fWantTabs := False;
-      // Display dialog
-      ShowModal;
-    finally
-      Free;
-    end;
-end;
-
 procedure TCompErrorDlg.ConfigForm;
   {Sets UI font for tab set control tabs.
   }
@@ -287,17 +261,39 @@ class procedure TCompErrorDlg.Execute(const AOwner: TComponent;
 var
   Compiler: ICompiler;  // each supported compiler
 begin
-  Assert(Assigned(ARoutine),                               // ** do not localise
-    ClassName + '.Execute: ARoutine is nil');
-  Assert(Assigned(ACompilers),                             // ** do not localise
-    ClassName + '.Execute: ACompilers is nil');
-  with Create(AOwner) do
+  Assert(Assigned(ARoutine), ClassName + '.Execute: ARoutine is nil');
+  Assert(Assigned(ACompilers), ClassName + '.Execute: ACompilers is nil');
+  with InternalCreate(AOwner) do
     try
       fRoutine := ARoutine;
       for Compiler in ACompilers do
         if Compiler.HasErrorsOrWarnings then
           fRequiredCompilers.Add(Compiler);
       fWantTabs := True;
+      ShowModal;
+    finally
+      Free;
+    end;
+end;
+
+class procedure TCompErrorDlg.Execute(const AOwner: TComponent;
+  const ARoutine: TRoutine; const ACompiler: ICompiler);
+  {Shows a dialog box that displays error or warning log for a specified
+  compiler as a result of test compiling a routine.
+    @param AOwner [in] Component that owns this form.
+    @param ARoutine [in] Routine that was compiled.
+    @param ACompiler [in] Id of compiler that created log.
+  }
+begin
+  Assert(Assigned(ARoutine), ClassName + '.Execute: ARoutine is nil');
+  Assert(Assigned(ACompiler), ClassName + '.Execute: ACompiler is nil');
+  with InternalCreate(AOwner) do
+    try
+      // Record selected compiler and currently selected routine
+      fRoutine := ARoutine;
+      fRequiredCompilers.Add(ACompiler);
+      fWantTabs := False;
+      // Display dialog
       ShowModal;
     finally
       Free;
@@ -425,14 +421,16 @@ var
       @except EBug raised if compiler result is not a warning or an error.
     }
   const
-    cWarnText: array[Boolean] of string = (   // singular & plural warning text
+    // singular & plural warning text
+    cWarnText: array[Boolean] of string = (
       sLogStatusWarning, sLogStatusWarnings
     );
-    cErrorText: array[Boolean] of string = (  // singular & plural error text
+    // singular & plural error text
+    cErrorText: array[Boolean] of string = (
       sLogStatusError, sLogStatusErrors
     );
-    cBadResult = '%s.LoadHTML: '                    // bug error message
-      + 'compile result must be warning or error';  // ** do not localise
+    // bug error message
+    cBadResult = '%s.LoadHTML: compile result must be warning or error';
   begin
     case Compiler.GetLastCompileResult of
       crWarning:
@@ -468,7 +466,6 @@ var
   // ---------------------------------------------------------------------------
 
 begin
-  // ** do not localise literal strings in this method
   inherited;
   // Create log and placeholder values string lists
   Log := nil;

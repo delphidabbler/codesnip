@@ -45,7 +45,7 @@ uses
   // Delphi
   Grids, ValEdit, StdCtrls, ComCtrls, Controls, ExtCtrls, Classes, Windows,
   // Project
-  FmGenericOKDlg, IntfCompilers;
+  FmGenericOKDlg, IntfCompilers, UBaseObjects;
 
 
 type
@@ -55,7 +55,7 @@ type
     Implements a dialog box where the user can configure which Pascal compilers
     installed on the local system can be used by CodeSnip.
   }
-  TCompilersDlg = class(TGenericOKDlg)
+  TCompilersDlg = class(TGenericOKDlg, INoPublicConstruct)
     btnAdd: TButton;
     btnBrowse: TButton;
     btnClear: TButton;
@@ -456,7 +456,7 @@ class function TCompilersDlg.Execute(AOwner: TComponent;
 var
   Persister: IPersistCompilers; // object used to save object to storage
 begin
-  with TCompilersDlg.Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       (fLocalCompilers as IAssignable).Assign(ACompilers);
       Result := ShowModal = mrOK;

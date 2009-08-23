@@ -45,7 +45,7 @@ uses
   // Delphi
   StdCtrls, ExtCtrls, Controls, CheckLst, Classes,
   // Project
-  FmGenericOKDlg, IntfCompilers, UChkListStateMgr, USearch;
+  FmGenericOKDlg, IntfCompilers, UBaseObjects, UChkListStateMgr, USearch;
 
 
 type
@@ -57,7 +57,7 @@ type
     Defines a dialog box that is used to select criteria for searches for
     routines that compile or don't compile with selected compilers.
   }
-  TFindCompilerDlg = class(TGenericOKDlg)
+  TFindCompilerDlg = class(TGenericOKDlg, INoPublicConstruct)
     btnClearAll: TButton;
     btnSelectAll: TButton;
     cbCriteria: TComboBox;
@@ -319,7 +319,7 @@ class function TFindCompilerDlg.Execute(const AOwner: TComponent;
       and search object is nil.
   }
 begin
-  with Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       Result := (ShowModal = mrOK);
       ASearch := Search;

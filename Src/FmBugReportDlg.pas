@@ -41,9 +41,9 @@ interface
 
 uses
   // Delphi
-  SysUtils, StdCtrls, ComCtrls, Graphics, ExtCtrls, Controls, Classes,
+  SysUtils, StdCtrls, ComCtrls, Graphics, ExtCtrls, Controls, Classes, Forms,
   // Project
-  FmWizardDlg, Forms, FrBrowserBase, FrHTMLDlg, FrFixedHTMLDlg;
+  FmWizardDlg, FrBrowserBase, FrHTMLDlg, FrFixedHTMLDlg, UBaseObjects;
 
 
 type
@@ -55,7 +55,7 @@ type
     The wizard gathers information about the bug and sends it to the
     DelphiDabbler website.
   }
-  TBugReportDlg = class(TWizardDlg)
+  TBugReportDlg = class(TWizardDlg, INoPublicConstruct)
     tsIntroBug: TTabSheet;
     tsIntroUser: TTabSheet;
     tsBugInfo: TTabSheet;
@@ -430,7 +430,7 @@ class procedure TBugReportDlg.Execute(Owner: TComponent;
   }
 begin
   // Create dialog box
-  with Create(Owner) do
+  with InternalCreate(Owner) do
     try
       // Record the exception object
       fErrorObj := ErrorObj;

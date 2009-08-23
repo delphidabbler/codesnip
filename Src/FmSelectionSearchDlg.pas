@@ -45,7 +45,8 @@ uses
   // Delphi
   Forms, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericOKDlg, FrCheckedTV, FrSelectSnippets, USearch, USnippets;
+  FmGenericOKDlg, FrCheckedTV, FrSelectSnippets, UBaseObjects, USearch,
+  USnippets;
 
 
 type
@@ -56,7 +57,7 @@ type
     check marks next to the required snippet names. The dialog creates search
     criteria based on the selected snippets.
   }
-  TSelectionSearchDlg = class(TGenericOKDlg)
+  TSelectionSearchDlg = class(TGenericOKDlg, INoPublicConstruct)
     btnClearAll: TButton;
     btnMainDB: TButton;
     btnSelectAll: TButton;
@@ -185,7 +186,7 @@ class function TSelectionSearchDlg.Execute(const AOwner: TComponent;
     @return True if user OKs and false if user cancels.
   }
 begin
-  with TSelectionSearchDlg.Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       SetSelectedRoutines(SelectedRoutines);
       Result := (ShowModal = mrOK);

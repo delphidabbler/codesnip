@@ -41,7 +41,7 @@ uses
   // Delphi
   StdCtrls, ExtCtrls, Controls, Classes,
   // Project
-  USearch, FmGenericOKDlg;
+  FmGenericOKDlg, UBaseObjects, USearch;
 
 
 type
@@ -53,7 +53,7 @@ type
     Defines a dialog box that is used to select criteria for searches for
     routines containing specified text.
   }
-  TFindTextDlg = class(TGenericOKDlg)
+  TFindTextDlg = class(TGenericOKDlg, INoPublicConstruct)
     cbCaseSensitive: TCheckBox;
     cbFindText: TComboBox;
     cbWholeWords: TCheckBox;
@@ -279,7 +279,7 @@ class function TFindTextDlg.Execute(const AOwner: TComponent;
       and search object is nil.
   }
 begin
-  with TFindTextDlg.Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       Result := (ShowModal = mrOK);
       ASearch := Search;

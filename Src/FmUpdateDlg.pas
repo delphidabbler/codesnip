@@ -43,7 +43,7 @@ uses
   // Project
   Forms, StdCtrls, Controls, ExtCtrls, Classes, Messages,
   // Delphi
-  FmGenericViewDlg, FrNews, UMemoProgBarMgr, UUpdateMgr;
+  FmGenericViewDlg, FrNews, UBaseObjects, UMemoProgBarMgr, UUpdateMgr;
 
 
 
@@ -63,7 +63,7 @@ type
   TUpdateDlg:
     Implements dialog box that updates database from web.
   }
-  TUpdateDlg = class(TGenericViewDlg)
+  TUpdateDlg = class(TGenericViewDlg, INoPublicConstruct)
     btnCancel: TButton;
     btnDoUpdate: TButton;
     lblUpdateFromWeb: TLabel;
@@ -302,7 +302,7 @@ class function TUpdateDlg.Execute(AOwner: TComponent): Boolean;
       an error occurred or if user cancelled.
   }
 begin
-  with TUpdateDlg.Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       ShowModal;
       Result := fDataUpdated;

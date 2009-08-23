@@ -45,7 +45,7 @@ uses
   // Delphi
   ComCtrls, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericViewDlg, USnippetIDs, USnippets, USnippetsTVDraw;
+  FmGenericViewDlg, UBaseObjects, USnippetIDs, USnippets, USnippetsTVDraw;
 
 
 type
@@ -53,7 +53,7 @@ type
   TDependenciesDlg:
     Dialog box that displays all the dependencies of a snippet in a tree view.
   }
-  TDependenciesDlg = class(TGenericViewDlg)
+  TDependenciesDlg = class(TGenericViewDlg, INoPublicConstruct)
     tvDependencies: TTreeView;
     lblCircularRef: TLabel;
     lblNoDependencies: TLabel;
@@ -258,7 +258,7 @@ class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
       displayed.
   }
 begin
-  with Create(AOwner) do
+  with InternalCreate(AOwner) do
     try
       fSnippetID := SnippetID;
       fDependsList := DependsList;
