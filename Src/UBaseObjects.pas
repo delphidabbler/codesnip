@@ -22,6 +22,10 @@
  *      This implementation is based on code suggested by Hallvard VossBotn, as
  *      presented in Eric Harmon's book "Delphi COM programming".
  *
+ * Also provides an interface - INoPublicConstruct - that can be supported by
+ * objects that don't allow public construction but cannot inherited from
+ * TNoPublicConstructObject, for example forms.
+ *
  * Unit originally named UIntfObjects.pas. Changed to UBaseObjects.pas at v2.0.
  *
  * $Rev$
@@ -115,6 +119,24 @@ type
       {Class constructor. Causes an assertion failure if called. The object is
       never constructed.
       }
+  end;
+
+  {
+  INoPublicConstruct:
+    Interface that can be supported by objects that do not permit public
+    construction but that cannot descend from TNoPublicConstructObject. Such
+    objects must handle their own detection of attempts to call public
+    constructor. An example of use is in forms that may not be publically
+    constructed. It is also useful to flag some members of a class heirachy as
+    no public construct while leaving others able to be constructed.
+    The interface provides no additional methods - it exists purely for
+    detection purposes.
+    To flag an object as no-public-construct, add INoPublicConstruct to its type
+    definition then test for it in the public constructor using
+    Supports(Self, INoPublicConstruct).
+  }
+  INoPublicConstruct = interface(IInterface)
+    ['{1170DC2C-5B79-453A-94AB-2C35B583F4BD}']
   end;
 
   {
