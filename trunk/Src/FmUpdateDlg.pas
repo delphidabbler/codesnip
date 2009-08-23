@@ -269,13 +269,10 @@ procedure TUpdateDlg.DisplayNews;
   {Displays any news items.
   }
 var
-  Idx: Integer; // loops thru news items, loading into news frame
-  NewsItem: TNewsItem;
+  NewsItem: TNewsItem;  // references each news item
 begin
   for NewsItem in fUpdateMgr.News do
     frmNews.AddPage(NewsItem.HTML, NewsItem.Date);
-//  for Idx := 0 to Pred(fUpdateMgr.News.Count) do
-//    frmNews.AddPage(fUpdateMgr.News[Idx].HTML, fUpdateMgr.News[Idx].Date);
   frmNews.ShowNews;
 end;
 
