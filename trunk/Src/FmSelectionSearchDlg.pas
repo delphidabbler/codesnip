@@ -102,10 +102,6 @@ type
           Set to nil if user cancels.
         @return True if user OKs and false if user cancels.
       }
-    property Search: ISearch
-      read fSearch;
-      {Search object that corresponds to criteria entered in dialog box. Set to
-      nil if users cancels}
   end;
 
 
@@ -190,7 +186,7 @@ begin
     try
       SetSelectedRoutines(SelectedRoutines);
       Result := (ShowModal = mrOK);
-      ASearch := Search;
+      ASearch := fSearch;
     finally
       Free;
     end;
