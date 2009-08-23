@@ -98,10 +98,6 @@ type
         @return True if user OKs and search object created or false if user
           cancels and search object is nil.
       }
-    property Search: ISearch
-      read fSearch;
-      {Search object that corresponds to criteria entered in dialog box. Set to
-      nil if users cancels}
   end;
 
   {
@@ -246,7 +242,7 @@ begin
     try
       fRoutine := Routine;
       Result := (ShowModal = mrOK);
-      ASearch := Search;
+      ASearch := fSearch;
     finally
       Free;
     end;
