@@ -43,7 +43,7 @@ interface
 
 uses
   // Delphi
-  Forms, Controls, Messages,
+  Classes, Forms, Controls, Messages,
   // Project
   IntfAligner, UAltBugFix, UControlStateMgr;
 
@@ -100,6 +100,20 @@ type
       Subclasses should override to initialise the form rather than handling the
       OnShow event. Form size must not be changed in this method.
       }
+    constructor InternalCreate(AOwner: TComponent); virtual;
+      {Protected constructor. Does nothing but call inherited constructor.
+      Must be called by class methods of derived classes instead of inherited
+      Create if and only if the form supports the INoPublicConstruct interface.
+        @param AOwner [in] Component that owns form. May be nil.
+      }
+  public
+    constructor Create(AOwner: TComponent); override;
+      {Public constructor. Does nothing but call inherited constructor. Can be
+      called from descendant classes if necessary to override the constructor.
+      Must not be called, directly or indirectly if the descendant form supports
+      the INoPublicConstruct interface.
+        @param AOwner [in] Component that owns form. May be nil.
+      }
   end;
 
 
@@ -110,7 +124,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UAppInfo, UFontHelper, UNulFormAligner;
+  UAppInfo, UBaseObjects, UFontHelper, UNulFormAligner;
 
 
 {$R *.dfm}
@@ -138,6 +152,19 @@ begin
   // We update state of all controls, menu items and actions if possible
   if Assigned(fCtrlStateMgr) then
     fCtrlStateMgr.Update;
+end;
+
+constructor TBaseForm.Create(AOwner: TComponent);
+  {Public constructor. Does nothing but call inherited constructor. Can be
+  called from descendant classes if necessary to override the constructor. Must
+  not be called, directly or indirectly if the descendant form supports the
+  INoPublicConstruct interface.
+    @param AOwner [in] Component that owns form. May be nil.
+  }
+begin
+  Assert(not Supports(Self, INoPublicConstruct),
+    ClassName + '.Create: Form''s public constructor can''t be called');
+  inherited;
 end;
 
 procedure TBaseForm.CreateParams(var Params: TCreateParams);
@@ -224,6 +251,18 @@ procedure TBaseForm.InitForm;
   }
 begin
   // Do nothing
+end;
+
+constructor TBaseForm.InternalCreate(AOwner: TComponent);
+  {Protected constructor. Does nothing but call inherited constructor. Must be
+  called by class methods of derived classes instead of inherited Create if and
+  only if the form supports the INoPublicConstruct interface.
+    @param AOwner [in] Component that owns form. May be nil.
+  }
+begin
+  Assert(Supports(Self, INoPublicConstruct), ClassName + '.InternalCreate: '
+    + 'Form''s protected constructor can''t be called');
+  inherited Create(AOwner);
 end;
 
 function TBaseForm.WindowClassName: string;
