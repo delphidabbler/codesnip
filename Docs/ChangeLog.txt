@@ -1,3 +1,13 @@
+Version 3.2.1 - 24 August 2009
+CodeSnip 3.2.1 - 24 August 2009
++ Appearance of comments that appear at the top of generated source code was changed.
++ Slightly modified "license" that appears at the top of some generated units.
++ Information about contributor of imported code is now appended to snippet's "extra" information.
++ Added a garbage collector.
++ Changed size of About box - now wider and credits scroll boxes are now taller. Added credit for encryption code.
++ Fixed minor bug that could display a JavaScript error dialog if an exception occured in an action initiated by clicking a link in the main display.
++ Numerous refactorings.
+
 Version 3.2 - 17 August 2009
 CodeSnip 3.2 - 17 August 2009
 + Added facility for CodeSnip to use a proxy server when accessing the internet.
@@ -347,7 +357,8 @@ CodeSnip 1.8.6 - 02 June 2008
 
 Version 1.8.5 - 30 May 2008
 CodeSnip 1.8.5 - 30 May 2008
-+ Fixed bug that was causing Save Snippet and Save Unit dialog boxes to ignore file type selected by user, always outputting default file type.
++ Fixed bug that was causing Save Snippet and Save Unit dialog boxes to ignore file type
+ selected by user, always outputting default file type.
 + Deleted some unused source code.
 + Removed option to install a desktop icon from installer. Also refactored install script to conform to current Inno Setup standards.
 
