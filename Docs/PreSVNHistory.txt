@@ -34,7 +34,7 @@ included in this information.
 For details of changes to each release see ChangeLog.txt
 
 --------------------------------------------------------------------------------
-v0.1.0 (build 1) of 30/01/2005
+v0.1.0 (build 1) of 30 Jan 2005
 --------------------------------------------------------------------------------
 New     - CodeSnip.dpr 0.1
 New     - FmAboutDlg.pas 0.1
@@ -91,26 +91,26 @@ New     - UViewItemAction.pas 0.1
 New     - UWBController.pas 0.1
 New     - UWBIOMgr.pas 0.1
 New     - UWBUIMgr.pas 0.1
-New     - VCodeSnip.vi 30/01/2005
+New     - VCodeSnip.vi 30 Jan 2005
 New     - DevTools\HTMLRes.mfest 0.1
-New     - CodeSnip_TLB.pas 30/01/2005
+New     - CodeSnip_TLB.pas 30 Jan 2005
 New     - Help\CodeSnip.cnt 0.1
 New     - Help\CodeSnip.hpj 0.1
-New     - Help\CodeSnip.hap 30/01/2005
+New     - Help\CodeSnip.hap 30 Jan 2005
 New     - HTML\about.html 0.1
 New     - HTML\compcheck.js 0.1
 New     - HTML\comperror.html 0.1
 New     - HTML\local.css 0.1
 New     - HTML\nocompcheck.html 0.1
-New     - HTML\download.gif 16/01/2005
-New     - HTML\help.gif 16/01/2005
-New     - HTML\led-green.png 29/12/2004
-New     - HTML\led-off.png 29/12/2004
-New     - HTML\led-red.png 29/12/2004
-New     - HTML\led-yellow.png 29/12/2004
+New     - HTML\download.gif 16 Jan 2005
+New     - HTML\help.gif 16 Jan 2005
+New     - HTML\led-green.png 29 Dec 2004
+New     - HTML\led-off.png 29 Dec 2004
+New     - HTML\led-red.png 29 Dec 2004
+New     - HTML\led-yellow.png 29 Dec 2004
 
 --------------------------------------------------------------------------------
-v0.1.1 (build 2) of 18/02/2005
+v0.1.1 (build 2) of 18 Feb 2005
 --------------------------------------------------------------------------------
 Updated - FmFindCompilerDlg.pas 0.2
 Updated - FmFindTextDlg.pas 0.2
@@ -124,10 +124,10 @@ Updated - UHTMLProducers.pas 0.2
 Updated - USearch.pas 0.2
 Updated - USnippets.pas 0.2
 Updated - UUpdateMgr.pas 0.2
-Updated - VCodeSnip.vi 18/02/2005
+Updated - VCodeSnip.vi 18 Feb 2005
 
 --------------------------------------------------------------------------------
-v0.1.2 (build 3) of 18/02/2005
+v0.1.2 (build 3) of 18 Feb 2005
 --------------------------------------------------------------------------------
 Updated - UCompLogAction.pas 0.2
 Updated - UExtCompCheck.pas 0.2
@@ -135,10 +135,10 @@ Updated - UExtInfo.pas 0.2
 Updated - UHistoryMenus.pas 0.2
 Updated - URoutineAction.pas 0.2
 Updated - UViewItemAction.pas 0.2
-Updated - VCodeSnip.vi 18/02/2005
+Updated - VCodeSnip.vi 18 Feb 2005
 
 --------------------------------------------------------------------------------
-v0.1.3 (build 4) of 18/02/2005
+v0.1.3 (build 4) of 18 Feb 2005
 --------------------------------------------------------------------------------
 Updated - FmUpdateDlg.pas 0.2
 Updated - FrCompCheck.pas 0.2
@@ -164,10 +164,10 @@ Updated - UView.pas 0.2
 Updated - UViewItemAction.pas 0.3
 Updated - UWBIOMgr.pas 0.2
 Updated - UWBUIMgr.pas 0.2
-Updated - VCodeSnip.vi 18/02/2005
+Updated - VCodeSnip.vi 18 Feb 2005
 
 --------------------------------------------------------------------------------
-v0.1.4 (build 5) of 19/02/2005
+v0.1.4 (build 5) of 19 Feb 2005
 --------------------------------------------------------------------------------
 Updated - FmFindCompilerDlg.pas 0.3
 Updated - FmMain.pas 0.2
@@ -185,10 +185,10 @@ Updated - USnippets.pas 0.3
 Updated - UUnitGen.pas 0.2
 Updated - UUpdateMgr.pas 0.3
 Updated - UView.pas 0.3
-Updated - VCodeSnip.vi 19/02/2005
+Updated - VCodeSnip.vi 19 Feb 2005
 
 --------------------------------------------------------------------------------
-v0.2.0 (build 6) of 21/02/2005
+v0.2.0 (build 6) of 21 Feb 2005
 --------------------------------------------------------------------------------
 Removed - UCompCheckHTML.pas
 Removed - UHTMLProducers.pas
@@ -204,9 +204,9 @@ Updated - UExtCompCheck.pas 0.5
 New     - UHTMLDetailUtils.pas 0.1
 New     - UHTMLGenerators.pas 0.1
 Updated - UHTMLTemplate.pas 0.3
-Updated - CodeSnip_TLB.pas 20/02/2005
+Updated - CodeSnip_TLB.pas 20 Feb 2005
 Updated - HTML\HTML.hrc 0.2
-Updated - VCodeSnip.vi 20/02/2005
+Updated - VCodeSnip.vi 20 Feb 2005
 Updated - HTML\comp-na.html 0.2
           (renamed from HTML\nocompcheck.html)
 Updated - HTML\comp-routine.js 0.2
@@ -227,7 +227,7 @@ New     - HTML\info-welcome.html 0.1
 New     - HTML\nodata-welcome.html 0.1
 
 --------------------------------------------------------------------------------
-v0.2.1 (build 7) of 22/02/2005
+v0.2.1 (build 7) of 22 Feb 2005
 --------------------------------------------------------------------------------
 Removed - UExtInfo.pas
 Removed - UExtCompCheck.pas
@@ -241,11 +241,11 @@ Updated - IntfFrameMgrs.pas 0.4
 New     - IntfNotifier.pas 0.1
 New     - UNotifier.pas 0.1
 New     - UWBExternal.pas 0.1
-Updated - CodeSnip_TLB.pas 22/02/2005
-Updated - VCodeSnip.vi 22/02/2005
+Updated - CodeSnip_TLB.pas 22 Feb 2005
+Updated - VCodeSnip.vi 22 Feb 2005
 
 --------------------------------------------------------------------------------
-v0.2.2 (build 8) of 22/02/2005
+v0.2.2 (build 8) of 22 Feb 2005
 --------------------------------------------------------------------------------
 Updated - FmMain.pas 0.5
 Updated - UCompilerTypes.pas 0.2
@@ -254,10 +254,10 @@ Updated - UGlobals.pas 0.2
 Updated - UHistory.pas 0.4
 Updated - UHistoryMenus.pas 0.5
 Updated - UView.pas 0.4
-Updated - VCodeSnip.vi 22/02/2005
+Updated - VCodeSnip.vi 22 Feb 2005
 
 --------------------------------------------------------------------------------
-v0.2.3 (build 9) of 23/02/2005
+v0.2.3 (build 9) of 23 Feb 2005
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.4
 New     - FrBrowserBase.pas 0.1
@@ -270,10 +270,10 @@ Updated - FrInfo.pas 0.6
 Updated - FmAboutDlg.pas 0.3
 Updated - FmCompErrorDlg.pas 0.3
 Updated - FmMain.pas 0.6
-Updated - VCodeSnip.vi 23/02/2005
+Updated - VCodeSnip.vi 23 Feb 2005
 
 --------------------------------------------------------------------------------
-v0.2.4 (build 10) of 23/02/2005
+v0.2.4 (build 10) of 23 Feb 2005
 --------------------------------------------------------------------------------
 Updated - FmCompErrorDlg.pas 0.4
 Updated - FmFindCompilerDlg.pas 0.4
@@ -281,63 +281,63 @@ Updated - FmFindTextDlg.pas 0.3
 Updated - FmMain.pas 0.7
 Updated - UGlobals.pas 0.3
 Updated - UTestCompile.pas 0.3
-Updated - VCodeSnip.vi 23/02/2005
+Updated - VCodeSnip.vi 23 Feb 2005
 
 --------------------------------------------------------------------------------
-v0.3.0 (build 11) of 23/02/2005
+v0.3.0 (build 11) of 23 Feb 2005
 --------------------------------------------------------------------------------
 Updated - FmMain.pas 0.8
 Updated - HTML\HTML.hrc 0.3
-Updated - VCodeSnip.vi 23/02/2005
+Updated - VCodeSnip.vi 23 Feb 2005
 Updated - HTML\info-welcome.html 0.2
 Updated - HTML\nodata-welcome.html 0.2
 
 --------------------------------------------------------------------------------
-v0.3.1 (build 12) of 24/02/2005
+v0.3.1 (build 12) of 24 Feb 2005
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.5
 Updated - FmBugReportDlg.pas 0.2
 Updated - FmMain.pas 0.9
 Updated - UExceptions.pas 0.2
 New     - UMessageBox.pas 0.1
-Updated - VCodeSnip.vi 24/02/2005
+Updated - VCodeSnip.vi 24 Feb 2005
 
 --------------------------------------------------------------------------------
-v0.3.2 (build 13) of 24/02/2005
+v0.3.2 (build 13) of 24 Feb 2005
 --------------------------------------------------------------------------------
 Updated - FmCompErrorDlg.pas 0.5
 Updated - FmFindCompilerDlg.pas 0.5
 Updated - UCompilerTypes.pas 0.3
 Updated - UDelphiCompiler.pas 0.5
 Updated - UHTMLGenerators.pas 0.2
-Updated - VCodeSnip.vi 24/02/2005
+Updated - VCodeSnip.vi 24 Feb 2005
 
 --------------------------------------------------------------------------------
-v0.3.3 (build 14) of 25/02/2005
+v0.3.3 (build 14) of 25 Feb 2005
 --------------------------------------------------------------------------------
 Updated - FmBugReportDlg.pas 0.3
 Updated - FmMain.pas 0.10
-Updated - VCodeSnip.vi 25/02/2005
+Updated - VCodeSnip.vi 25 Feb 2005
 
 --------------------------------------------------------------------------------
-v0.3.4 (build 15) of 26/02/2005
+v0.3.4 (build 15) of 26 Feb 2005
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.6
 New     - UIniDataReader.pas 0.1
 New     - USnipData.pas 0.1
 Updated - USnippets.pas 0.4
-Updated - VCodeSnip.vi 26/02/2005
+Updated - VCodeSnip.vi 26 Feb 2005
 
 --------------------------------------------------------------------------------
-v0.4.0 (build 16) of 28/02/2005
+v0.4.0 (build 16) of 28 Feb 2005
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.7
 Updated - FrInfo.pas 0.7
 New     - UWBHighlighter.pas 0.1
-Updated - VCodeSnip.vi 28/02/2005
+Updated - VCodeSnip.vi 28 Feb 2005
 
 --------------------------------------------------------------------------------
-v0.5.0 (build 17) of 05/03/2005
+v0.5.0 (build 17) of 05 Mar 2005
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.8
 Updated - FmAboutDlg.pas 0.4
@@ -362,34 +362,34 @@ Updated - USnippets.pas 0.5
 Updated - UTestCompile.pas 0.4
 Updated - HTML\HTML.hrc 0.4
 New     - Images.rc 0.1
-Updated - VCodeSnip.vi 05/03/2005
-Updated - Help\CodeSnip.hap 05/03/2005
+Updated - VCodeSnip.vi 05 Mar 2005
+Updated - Help\CodeSnip.hap 05 Mar 2005
 Updated - Help\CodeSnip.hpj 0.2
-New     - Help\Bmp\About.bmp 05/03/2005
-New     - Help\Bmp\Blank.bmp 05/03/2005
-New     - Help\Bmp\Copy.bmp 05/03/2005
-New     - Help\Bmp\Download.bmp 05/03/2005
-New     - Help\Bmp\Exit.bmp 05/03/2005
-New     - Help\Bmp\FindClear.bmp 05/03/2005
-New     - Help\Bmp\FindCompiler.bmp 05/03/2005
-New     - Help\Bmp\FindText.bmp 05/03/2005
-New     - Help\Bmp\GoBack.bmp 05/03/2005
-New     - Help\Bmp\GoForward.bmp 05/03/2005
-New     - Help\Bmp\HelpContents.bmp 05/03/2005
-New     - Help\Bmp\TestCompile.bmp 05/03/2005
-New     - Help\Bmp\Website.bmp 05/03/2005
+New     - Help\Bmp\About.bmp 05 Mar 2005
+New     - Help\Bmp\Blank.bmp 05 Mar 2005
+New     - Help\Bmp\Copy.bmp 05 Mar 2005
+New     - Help\Bmp\Download.bmp 05 Mar 2005
+New     - Help\Bmp\Exit.bmp 05 Mar 2005
+New     - Help\Bmp\FindClear.bmp 05 Mar 2005
+New     - Help\Bmp\FindCompiler.bmp 05 Mar 2005
+New     - Help\Bmp\FindText.bmp 05 Mar 2005
+New     - Help\Bmp\GoBack.bmp 05 Mar 2005
+New     - Help\Bmp\GoForward.bmp 05 Mar 2005
+New     - Help\Bmp\HelpContents.bmp 05 Mar 2005
+New     - Help\Bmp\TestCompile.bmp 05 Mar 2005
+New     - Help\Bmp\Website.bmp 05 Mar 2005
 Updated - HTML\dlg-about-tplt.html 0.3
 Updated - HTML\dlg-comperror-tplt.html 0.3
-New     - HTML\delphipower.png 01/03/2005
-New     - Img\Delphi2.bmp 01/03/2005
-New     - Img\Delphi3.bmp 01/03/2005
-New     - Img\Delphi4.bmp 01/03/2005
-New     - Img\Delphi5.bmp 01/03/2005
-New     - Img\Delphi6.bmp 01/03/2005
-New     - Img\Delphi7.bmp 01/03/2005
+New     - HTML\delphipower.png 01 Mar 2005
+New     - Img\Delphi2.bmp 01 Mar 2005
+New     - Img\Delphi3.bmp 01 Mar 2005
+New     - Img\Delphi4.bmp 01 Mar 2005
+New     - Img\Delphi5.bmp 01 Mar 2005
+New     - Img\Delphi6.bmp 01 Mar 2005
+New     - Img\Delphi7.bmp 01 Mar 2005
 
 --------------------------------------------------------------------------------
-v0.6.0 (build 18) of 10/03/2005
+v0.6.0 (build 18) of 10 Mar 2005
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.9
 New     - UBaseHiliter.pas 0.1
@@ -399,11 +399,11 @@ New     - UHilitePasParser.pas 0.1
 Updated - UHTMLGenerators.pas 0.4
 New     - UTextStreamReader.pas 0.1
 Updated - HTML\HTML.hrc 0.5
-Updated - VCodeSnip.vi 10/03/2005
+Updated - VCodeSnip.vi 10 Mar 2005
 Updated - HTML\detail.css 0.3
 
 --------------------------------------------------------------------------------
-v0.7.0 (build 19) of 17/03/2005
+v0.7.0 (build 19) of 17 Mar 2005
 --------------------------------------------------------------------------------
 Removed - UBaseHiliter.pas
 Removed - UDetailHTMLHiliter.pas
@@ -427,19 +427,19 @@ Updated - UUnitGen.pas 0.3
 Updated - UUtils.pas 0.3
 Updated - HTML\HTML.hrc 0.6
 New     - Dialogs.rc 0.1
-Updated - VCodeSnip.vi 17/03/2005
+Updated - VCodeSnip.vi 17 Mar 2005
 Updated - Help\CodeSnip.hpj 0.3
-Updated - Help\CodeSnip.hap 17/03/2005
-New     - Help\Bmp\SaveSnippet.bmp 14/08/2009
+Updated - Help\CodeSnip.hap 17 Mar 2005
+New     - Help\Bmp\SaveSnippet.bmp 14 Aug 2009
 Updated - HTML\detail.css 0.4
 
 --------------------------------------------------------------------------------
-v0.7.1 (build 20) of 20/04/2005
+v0.7.1 (build 20) of 20 Apr 2005
 --------------------------------------------------------------------------------
 Updated - FmGenericDlg.pas 0.3
 Updated - FmHelpAware.pas 0.2
 Updated - UNulUIHandler.pas 0.2
-Updated - VCodeSnip.vi 19/04/2005
+Updated - VCodeSnip.vi 19 Apr 2005
 Updated - HTML\HTML.hrc 0.7
 Updated - HTML\comp-na.html 0.3
 Updated - HTML\comp-routine-dbase-tplt.html 0.2
@@ -455,7 +455,7 @@ Updated - HTML\info-welcome.html 0.3
 Updated - HTML\nodata-welcome.html 0.3
 
 --------------------------------------------------------------------------------
-v0.7.2 (build 21) of 21/04/2005
+v0.7.2 (build 21) of 21 Apr 2005
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.11
 Updated - FmCompErrorDlg.pas 0.7
@@ -487,10 +487,10 @@ Updated - USourceGen.pas 0.4
           (renamed from UUnitGen.pas)
 Updated - USyntaxHiliters.pas 0.2
 Updated - UTestCompile.pas 0.5
-Updated - VCodeSnip.vi 21/04/2005
+Updated - VCodeSnip.vi 21 Apr 2005
 
 --------------------------------------------------------------------------------
-v0.7.3 (build 22) of 25/04/2005
+v0.7.3 (build 22) of 25 Apr 2005
 --------------------------------------------------------------------------------
 Removed - HTML\comp-welcome.html
 Updated - CodeSnip.dpr 0.12
@@ -502,10 +502,10 @@ Updated - UDetailPageLoader.pas 0.2
 New     - UHelpTopicAction.pas 0.1
 Updated - UNotifier.pas 0.4
 Updated - UWBExternal.pas 0.2
-Updated - VCodeSnip.vi 25/04/2005
-Updated - CodeSnip_TLB.pas 25/04/2005
+Updated - VCodeSnip.vi 25 Apr 2005
+Updated - CodeSnip_TLB.pas 25 Apr 2005
 Updated - HTML\HTML.hrc 0.8
-Updated - Help\CodeSnip.hap 25/04/2005
+Updated - Help\CodeSnip.hap 25 Apr 2005
 Updated - HTML\comp-na.html 0.4
 Updated - HTML\comp-routine-dbase-tplt.html 0.3
 Updated - HTML\comp-routine-test-tplt.html 0.3
@@ -515,23 +515,23 @@ Updated - HTML\welcome.html 0.4
           (renamed from HTML\info-welcome.html)
 
 --------------------------------------------------------------------------------
-v0.7.4 (build 23) of 25/04/2005
+v0.7.4 (build 23) of 25 Apr 2005
 --------------------------------------------------------------------------------
 Updated - UAppInfo.pas 0.4
 Updated - USaveSnippetDlg.pas 0.3
 Updated - USaveSnippetMgr.pas 0.3
 Updated - UUtils.pas 0.4
-Updated - VCodeSnip.vi 25/04/2005
+Updated - VCodeSnip.vi 25 Apr 2005
 
 --------------------------------------------------------------------------------
-v0.7.5 (build 24) of 03/06/2005
+v0.7.5 (build 24) of 03 Jun 2005
 --------------------------------------------------------------------------------
 Updated - UDetailPageLoader.pas 0.3
 Updated - UHTMLGenerators.pas 0.7
 Updated - UWBExternal.pas 0.3
 Updated - UWBIOMgr.pas 0.3
-Updated - CodeSnip_TLB.pas 03/06/2005
-Updated - VCodeSnip.vi 03/06/2005
+Updated - CodeSnip_TLB.pas 03 Jun 2005
+Updated - VCodeSnip.vi 03 Jun 2005
 Updated - HTML\HTML.hrc 0.9
 New     - HTML\comp-blank.html 0.1
 Updated - HTML\comp-routine-dbase-tplt.html 0.4
@@ -543,30 +543,30 @@ Updated - HTML\info-routine-tplt.html 0.3
 Updated - HTML\info-uncatheader-tplt.html 0.3
 
 --------------------------------------------------------------------------------
-v0.7.6 (build 25) of 04/06/2005
+v0.7.6 (build 25) of 04 Jun 2005
 --------------------------------------------------------------------------------
 Updated - UCompilers.pas 0.4
 Updated - UCompilerUtils.pas 0.2
 Updated - UHilitePasLexer.pas 0.3
 Updated - UIniDataReader.pas 0.4
 Updated - USyntaxHiliters.pas 0.3
-Updated - VCodeSnip.vi 04/06/2005
+Updated - VCodeSnip.vi 04 Jun 2005
 
 --------------------------------------------------------------------------------
-v0.7.7 (build 26) of 22/11/2005
+v0.7.7 (build 26) of 22 Nov 2005
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.13
 Updated - FmBugReportDlg.pas 0.4
 New     - UBugReporter.pas 0.1
 Updated - UDownloadMgr.pas 0.2
 New     - UWebService.pas 0.1
-Updated - VCodeSnip.vi 20/11/2005
+Updated - VCodeSnip.vi 20 Nov 2005
 Updated - FmUpdateDlg.pas 1.3
 Updated - UUpdateMgr.pas 0.4
-Updated - Help\CodeSnip.hap 21/11/2005
+Updated - Help\CodeSnip.hap 21 Nov 2005
 
 --------------------------------------------------------------------------------
-v0.8.0 (build 27) of 30/11/2005
+v0.8.0 (build 27) of 30 Nov 2005
 --------------------------------------------------------------------------------
 Removed - Help\CodeSnip.cnt
 Removed - Help\CodeSnip.hap
@@ -593,71 +593,71 @@ New     - UHelpMgr.pas 0.1
 Updated - UHelpTopicAction.pas 0.2
 New     - UHTMLHelp.pas 0.1
 Updated - USaveSnippetDlg.pas 0.4
-New     - Help\CodeSnip.hhp 30/11/2005
-New     - Help\Index.hhk 30/11/2005
-New     - Help\TOC.hhc 30/11/2005
-New     - Help\CSS\codesnip.css 27/11/2005
-New     - Help\HTML\about_compiler_checks.htm 27/11/2005
-New     - Help\HTML\dlg_about.htm 27/11/2005
-New     - Help\HTML\dlg_bugreport.htm 27/11/2005
-New     - Help\HTML\dlg_configcompilers.htm 27/11/2005
-New     - Help\HTML\dlg_findcompiler.htm 27/11/2005
-New     - Help\HTML\dlg_findtext.htm 27/11/2005
-New     - Help\HTML\dlg_savesnippet.htm 27/11/2005
-New     - Help\HTML\dlg_update.htm 27/11/2005
-New     - Help\HTML\main_menu.htm 27/11/2005
-New     - Help\HTML\menu_edit.htm 27/11/2005
-New     - Help\HTML\menu_file.htm 27/11/2005
-New     - Help\HTML\menu_help.htm 27/11/2005
-New     - Help\HTML\menu_search.htm 27/11/2005
-New     - Help\HTML\menu_tools.htm 27/11/2005
-New     - Help\HTML\menu_view.htm 27/11/2005
-New     - Help\HTML\overview.htm 27/11/2005
-New     - Help\HTML\privacy_statement.htm 27/11/2005
-New     - Help\HTML\quickstart.htm 27/11/2005
-New     - Help\Images\About.gif 26/11/2005
-New     - Help\Images\Blank.gif 26/11/2005
-New     - Help\Images\Copy.gif 26/11/2005
-New     - Help\Images\Download.gif 26/11/2005
-New     - Help\Images\Exit.gif 26/11/2005
-New     - Help\Images\FindClear.gif 26/11/2005
-New     - Help\Images\FindCompiler.gif 26/11/2005
-New     - Help\Images\FindText.gif 26/11/2005
-New     - Help\Images\GoBack.gif 26/11/2005
-New     - Help\Images\GoForward.gif 26/11/2005
-New     - Help\Images\HelpContents.gif 26/11/2005
-New     - Help\Images\SaveSnippet.gif 26/11/2005
-New     - Help\Images\TestCompile.gif 26/11/2005
-New     - Help\Images\Website.gif 26/11/2005
-Updated - VCodeSnip.vi 30/11/2005
+New     - Help\CodeSnip.hhp 30 Nov 2005
+New     - Help\Index.hhk 30 Nov 2005
+New     - Help\TOC.hhc 30 Nov 2005
+New     - Help\CSS\codesnip.css 27 Nov 2005
+New     - Help\HTML\about_compiler_checks.htm 27 Nov 2005
+New     - Help\HTML\dlg_about.htm 27 Nov 2005
+New     - Help\HTML\dlg_bugreport.htm 27 Nov 2005
+New     - Help\HTML\dlg_configcompilers.htm 27 Nov 2005
+New     - Help\HTML\dlg_findcompiler.htm 27 Nov 2005
+New     - Help\HTML\dlg_findtext.htm 27 Nov 2005
+New     - Help\HTML\dlg_savesnippet.htm 27 Nov 2005
+New     - Help\HTML\dlg_update.htm 27 Nov 2005
+New     - Help\HTML\main_menu.htm 27 Nov 2005
+New     - Help\HTML\menu_edit.htm 27 Nov 2005
+New     - Help\HTML\menu_file.htm 27 Nov 2005
+New     - Help\HTML\menu_help.htm 27 Nov 2005
+New     - Help\HTML\menu_search.htm 27 Nov 2005
+New     - Help\HTML\menu_tools.htm 27 Nov 2005
+New     - Help\HTML\menu_view.htm 27 Nov 2005
+New     - Help\HTML\overview.htm 27 Nov 2005
+New     - Help\HTML\privacy_statement.htm 27 Nov 2005
+New     - Help\HTML\quickstart.htm 27 Nov 2005
+New     - Help\Images\About.gif 26 Nov 2005
+New     - Help\Images\Blank.gif 26 Nov 2005
+New     - Help\Images\Copy.gif 26 Nov 2005
+New     - Help\Images\Download.gif 26 Nov 2005
+New     - Help\Images\Exit.gif 26 Nov 2005
+New     - Help\Images\FindClear.gif 26 Nov 2005
+New     - Help\Images\FindCompiler.gif 26 Nov 2005
+New     - Help\Images\FindText.gif 26 Nov 2005
+New     - Help\Images\GoBack.gif 26 Nov 2005
+New     - Help\Images\GoForward.gif 26 Nov 2005
+New     - Help\Images\HelpContents.gif 26 Nov 2005
+New     - Help\Images\SaveSnippet.gif 26 Nov 2005
+New     - Help\Images\TestCompile.gif 26 Nov 2005
+New     - Help\Images\Website.gif 26 Nov 2005
+Updated - VCodeSnip.vi 30 Nov 2005
 
 --------------------------------------------------------------------------------
-v0.8.1 (build 28) of 04/01/2006
+v0.8.1 (build 28) of 04 Jan 2006
 --------------------------------------------------------------------------------
 Updated - FmUpdateDlg.pas 0.4
-Updated - VCodeSnip.vi 04/01/2006
+Updated - VCodeSnip.vi 04 Jan 2006
 Updated - FmAboutDlg.pas 0.5
 
 --------------------------------------------------------------------------------
-v0.8.2 (build 29) of 04/01/2006
+v0.8.2 (build 29) of 04 Jan 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.15
 Updated - FmBugReportDlg.pas 0.5
 Updated - FmUpdateDlg.pas 0.5
 New     - UParams.pas 1.0
-Updated - VCodeSnip.vi 04/01/2006
+Updated - VCodeSnip.vi 04 Jan 2006
 
 --------------------------------------------------------------------------------
-v0.8.3 (build 30) of 04/01/2006
+v0.8.3 (build 30) of 04 Jan 2006
 --------------------------------------------------------------------------------
 Updated - UBugreporter.pas 0.2
 Updated - UDownloadMgr.pas 0.3
 Updated - USaveSnippetDlg.pas 0.5
 Updated - UWebService.pas 0.2
-Updated - VCodeSnip.vi 04/01/2006
+Updated - VCodeSnip.vi 04 Jan 2006
 
 --------------------------------------------------------------------------------
-v0.9.0 (build 31) of 06/01/2006
+v0.9.0 (build 31) of 06 Jan 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.16
 Updated - FmMain.pas 0.16
@@ -669,16 +669,16 @@ Updated - USaveSnippetMgr.pas 0.4
 New     - USnippetMgr.pas 0.1
 New     - USnippetSourceGen.pas 0.1
 Updated - USourceGen.pas 0.5
-Updated - VCodeSnip.vi 06/01/2006
-Updated - Help\CodeSnip.hhp 06/01/2006
-Updated - Help\Index.hhk 06/01/2006
-New     - Help\HTML\dlg_preferences.htm 06/01/2006
-Updated - Help\HTML\main_menu.htm 06/01/2006
-Updated - Help\HTML\menu_edit.htm 06/01/2006
-Updated - Help\HTML\menu_tools.htm 06/01/2006
+Updated - VCodeSnip.vi 06 Jan 2006
+Updated - Help\CodeSnip.hhp 06 Jan 2006
+Updated - Help\Index.hhk 06 Jan 2006
+New     - Help\HTML\dlg_preferences.htm 06 Jan 2006
+Updated - Help\HTML\main_menu.htm 06 Jan 2006
+Updated - Help\HTML\menu_edit.htm 06 Jan 2006
+Updated - Help\HTML\menu_tools.htm 06 Jan 2006
 
 --------------------------------------------------------------------------------
-v0.10.0 (build 32) of 08/01/2006
+v0.10.0 (build 32) of 08 Jan 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.17
 Updated - FmCompilersDlg.pas 0.3
@@ -693,24 +693,24 @@ Updated - UFreePascalCompiler.pas 0.3
 Updated - UIniDataReader.pas 0.5
 Updated - UTestCompile.pas 0.6
 Updated - UAppInfo.pas 0.5
-Updated - VCodeSnip.vi 08/01/2006
-New     - Img\Delphi2005w.bmp 07/01/2006
-New     - Img\Delphi2006w.bmp 07/01/2006
-Updated - Help\CSS\codesnip.css 08/01/2006
-Updated - Help\HTML\dlg_configcompilers.htm 08/01/2006
+Updated - VCodeSnip.vi 08 Jan 2006
+New     - Img\Delphi2005w.bmp 07 Jan 2006
+New     - Img\Delphi2006w.bmp 07 Jan 2006
+Updated - Help\CSS\codesnip.css 08 Jan 2006
+Updated - Help\HTML\dlg_configcompilers.htm 08 Jan 2006
 
 --------------------------------------------------------------------------------
-v0.10.1 (build 33) of 09/01/2006
+v0.10.1 (build 33) of 09 Jan 2006
 --------------------------------------------------------------------------------
 Updated - UCompilerBase.pas 0.4
 Updated - UFreePascalCompiler.pas 0.4
 Updated - UDelphiCompiler.pas 0.9
 Updated - UBorlandCompiler.pas 0.2
 Updated - UBDSCompiler.pas 0.2
-Updated - VCodeSnip.vi 09/01/2006
+Updated - VCodeSnip.vi 09 Jan 2006
 
 --------------------------------------------------------------------------------
-v0.10.2 (build 34) of 10/01/2006
+v0.10.2 (build 34) of 10 Jan 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.18
 Updated - FmCompilersDlg.pas 0.4
@@ -719,13 +719,13 @@ Updated - FmMain.pas 0.17
 Updated - FmPreferencesDlg.pas 0.2
 Updated - FmUpdateDlg.pas 0.6
 Updated - UWebService.pas 0.3
-Updated - VCodeSnip.vi 10/01/2006
-Updated - Help\HTML\dlg_findcompiler.htm 10/01/2006
-Updated - Help\HTML\dlg_findtext.htm 10/01/2006
-Updated - Help\HTML\menu_search.htm 10/01/2006
+Updated - VCodeSnip.vi 10 Jan 2006
+Updated - Help\HTML\dlg_findcompiler.htm 10 Jan 2006
+Updated - Help\HTML\dlg_findtext.htm 10 Jan 2006
+Updated - Help\HTML\menu_search.htm 10 Jan 2006
 
 --------------------------------------------------------------------------------
-v0.10.3 (build 35) of 11/01/2006
+v0.10.3 (build 35) of 11 Jan 2006
 --------------------------------------------------------------------------------
 Removed - UCompilerUtils.pas
 Updated - CodeSnip.dpr 0.19
@@ -733,72 +733,72 @@ Updated - UCompilerBase.pas 0.5
 New     - UConsoleApp.pas 0.1
 New     - UCompilerRunner.pas 0.1
 New     - UPipe.pas 0.1
-Updated - VCodeSnip.vi 11/01/2006
+Updated - VCodeSnip.vi 11 Jan 2006
 
 --------------------------------------------------------------------------------
-v0.10.4 (build 36) of 12/01/2006
+v0.10.4 (build 36) of 12 Jan 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.20
 Updated - FmUpdateDlg.pas 0.7
 Updated - UDownloadMgr.pas 0.4
 Updated - UUpdateMgr.pas 0.5
 New     - UCheckSum.pas 0.1
-Updated - VCodeSnip.vi 12/01/2006
-New     - 3rdParty\MD5.pas 13/09/2008
+Updated - VCodeSnip.vi 12 Jan 2006
+New     - 3rdParty\MD5.pas 13 Sep 2008
 
 --------------------------------------------------------------------------------
-v0.10.5 (build 37) of 14/01/2006
+v0.10.5 (build 37) of 14 Jan 2006
 --------------------------------------------------------------------------------
 Updated - FmAboutDlg.pas 0.6
 Updated - HTML\HTML.hrc 0.10
-Updated - VCodeSnip.vi 14/01/2006
-Updated - Help\CodeSnip.hhp 14/01/2006
-Updated - Help\Index.hhk 14/01/2006
-Updated - Help\TOC.hhc 14/01/2006
+Updated - VCodeSnip.vi 14 Jan 2006
+Updated - Help\CodeSnip.hhp 14 Jan 2006
+Updated - Help\Index.hhk 14 Jan 2006
+Updated - Help\TOC.hhc 14 Jan 2006
 Updated - HTML\dlg-about-tplt.html 0.5
-Updated - Help\HTML\about_compiler_checks.htm 14/01/2006
-New     - Help\HTML\detail_compilerchecks.htm 14/01/2006
-New     - Help\HTML\detail_information.htm 14/01/2006
-New     - Help\HTML\detail_pane.htm 14/01/2006
-Updated - Help\HTML\dlg_about.htm 14/01/2006
-Updated - Help\HTML\dlg_bugreport.htm 14/01/2006
-Updated - Help\HTML\dlg_configcompilers.htm 14/01/2006
-Updated - Help\HTML\dlg_findcompiler.htm 14/01/2006
-Updated - Help\HTML\dlg_findtext.htm 14/01/2006
-Updated - Help\HTML\dlg_preferences.htm 14/01/2006
-Updated - Help\HTML\dlg_savesnippet.htm 14/01/2006
-Updated - Help\HTML\dlg_update.htm 14/01/2006
-New     - Help\HTML\main_display.htm 14/01/2006
-Updated - Help\HTML\main_menu.htm 14/01/2006
-Updated - Help\HTML\menu_edit.htm 14/01/2006
-Updated - Help\HTML\menu_file.htm 14/01/2006
-Updated - Help\HTML\menu_help.htm 14/01/2006
-Updated - Help\HTML\menu_search.htm 14/01/2006
-Updated - Help\HTML\menu_tools.htm 14/01/2006
-Updated - Help\HTML\menu_view.htm 14/01/2006
-New     - Help\HTML\navigation.htm 14/01/2006
-Updated - Help\HTML\overview_pane.htm 14/01/2006
+Updated - Help\HTML\about_compiler_checks.htm 14 Jan 2006
+New     - Help\HTML\detail_compilerchecks.htm 14 Jan 2006
+New     - Help\HTML\detail_information.htm 14 Jan 2006
+New     - Help\HTML\detail_pane.htm 14 Jan 2006
+Updated - Help\HTML\dlg_about.htm 14 Jan 2006
+Updated - Help\HTML\dlg_bugreport.htm 14 Jan 2006
+Updated - Help\HTML\dlg_configcompilers.htm 14 Jan 2006
+Updated - Help\HTML\dlg_findcompiler.htm 14 Jan 2006
+Updated - Help\HTML\dlg_findtext.htm 14 Jan 2006
+Updated - Help\HTML\dlg_preferences.htm 14 Jan 2006
+Updated - Help\HTML\dlg_savesnippet.htm 14 Jan 2006
+Updated - Help\HTML\dlg_update.htm 14 Jan 2006
+New     - Help\HTML\main_display.htm 14 Jan 2006
+Updated - Help\HTML\main_menu.htm 14 Jan 2006
+Updated - Help\HTML\menu_edit.htm 14 Jan 2006
+Updated - Help\HTML\menu_file.htm 14 Jan 2006
+Updated - Help\HTML\menu_help.htm 14 Jan 2006
+Updated - Help\HTML\menu_search.htm 14 Jan 2006
+Updated - Help\HTML\menu_tools.htm 14 Jan 2006
+Updated - Help\HTML\menu_view.htm 14 Jan 2006
+New     - Help\HTML\navigation.htm 14 Jan 2006
+Updated - Help\HTML\overview_pane.htm 14 Jan 2006
           (renamed from Help\HTML\overview.htm)
-Updated - Help\HTML\privacy_statement.htm 14/01/2006
-Updated - Help\HTML\quickstart.htm 14/01/2006
-New     - Help\HTML\task_copysnippet.htm 14/01/2006
-New     - Help\HTML\task_customise.htm 14/01/2006
-New     - Help\HTML\task_savesnippet.htm 14/01/2006
-New     - Help\HTML\task_search.htm 14/01/2006
-New     - Help\HTML\task_testcompile.htm 14/01/2006
-New     - Help\HTML\task_update.htm 14/01/2006
-New     - Help\HTML\tasks.htm 14/01/2006
-New     - Help\HTML\welcome.htm 14/01/2006
+Updated - Help\HTML\privacy_statement.htm 14 Jan 2006
+Updated - Help\HTML\quickstart.htm 14 Jan 2006
+New     - Help\HTML\task_copysnippet.htm 14 Jan 2006
+New     - Help\HTML\task_customise.htm 14 Jan 2006
+New     - Help\HTML\task_savesnippet.htm 14 Jan 2006
+New     - Help\HTML\task_search.htm 14 Jan 2006
+New     - Help\HTML\task_testcompile.htm 14 Jan 2006
+New     - Help\HTML\task_update.htm 14 Jan 2006
+New     - Help\HTML\tasks.htm 14 Jan 2006
+New     - Help\HTML\welcome.htm 14 Jan 2006
 
 --------------------------------------------------------------------------------
-v0.10.6 (build 38) of 20/01/2006
+v0.10.6 (build 38) of 20 Jan 2006
 --------------------------------------------------------------------------------
 Updated - UUpdateMgr.pas 0.6
 Updated - UUtils.pas 0.5
-Updated - VCodeSnip.vi 20/01/2006
+Updated - VCodeSnip.vi 20 Jan 2006
 
 --------------------------------------------------------------------------------
-v0.10.7 (build 39) of 28/01/2006
+v0.10.7 (build 39) of 28 Jan 2006
 --------------------------------------------------------------------------------
 Updated - HTML\HTML.hrc 0.11
 Updated - FmMain.pas 0.18
@@ -806,7 +806,7 @@ Updated - FrCompCheck.pas 0.7
 Updated - FrDetailView.pas 0.2
 Updated - IntfFrameMgrs.pas 0.5
 Updated - UMainDisplayMgr.pas 0.3
-Updated - VCodeSnip.vi 28/01/2006
+Updated - VCodeSnip.vi 28 Jan 2006
 Updated - HTML\comp-blank.html 0.2
 Updated - HTML\comp-na.html 0.5
 Updated - HTML\info-blank.html 0.2
@@ -814,7 +814,7 @@ Updated - HTML\nodata-welcome.html 0.5
 Updated - HTML\welcome.html 0.5
 
 --------------------------------------------------------------------------------
-v0.10.8 (build 40) of 02/04/2006
+v0.10.8 (build 40) of 02 Apr 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.21
 Updated - FmUpdateDlg.pas 0.8
@@ -826,33 +826,33 @@ New     - UObsoleteFileList.pas 0.1
 New     - URemoteFileList.pas 0.1
 New     - UUpdateAnalyser.pas 0.1
 Updated - UUpdateMgr.pas 0.7
-Updated - VCodeSnip.vi 02/04/2006
+Updated - VCodeSnip.vi 02 Apr 2006
 
 --------------------------------------------------------------------------------
-v0.10.9 (build 41) of 02/04/2006
+v0.10.9 (build 41) of 02 Apr 2006
 --------------------------------------------------------------------------------
 Updated - FmMain.pas 0.19
 Updated - USnippets.pas 0.8
-Updated - VCodeSnip.vi 02/04/2006
+Updated - VCodeSnip.vi 02 Apr 2006
 
 --------------------------------------------------------------------------------
-v0.10.10 (build 42) of 02/04/2006
+v0.10.10 (build 42) of 02 Apr 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.22
 Updated - Images.rc 0.3
-Updated - VCodeSnip.vi 02/04/2006
-New     - Img\CodeSnip.ico 02/04/2006
+Updated - VCodeSnip.vi 02 Apr 2006
+New     - Img\CodeSnip.ico 02 Apr 2006
 
 --------------------------------------------------------------------------------
-v0.10.11 (build 43) of 03/04/2006
+v0.10.11 (build 43) of 03 Apr 2006
 --------------------------------------------------------------------------------
 Updated - FmUpdateDlg.pas 0.9
 Updated - UUpdateMgr.pas 0.8
 Updated - UDownloadMgr.pas 0.5
-Updated - VCodeSnip.vi 03/04/2006
+Updated - VCodeSnip.vi 03 Apr 2006
 
 --------------------------------------------------------------------------------
-v0.10.12 (build 44) of 04/04/2006
+v0.10.12 (build 44) of 04 Apr 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.23
 Updated - FmFindCompilerDlg.pas 0.9
@@ -866,10 +866,10 @@ Updated - UIniDataReader.pas 0.6
 Updated - UPreferences.pas 0.2
 New     - USettings.pas 0.1
 New     - UWindowSettings.pas 0.1
-Updated - VCodeSnip.vi 04/04/2006
+Updated - VCodeSnip.vi 04 Apr 2006
 
 --------------------------------------------------------------------------------
-v0.11.0 (build 45) of 07/04/2006
+v0.11.0 (build 45) of 07 Apr 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.24
 Updated - FmAboutDlg.pas 0.7
@@ -882,38 +882,38 @@ New     - URegistrar.pas 0.1
 Updated - USettings.pas 0.2
 New     - USystemInfo.pas 0.1
 New     - UVersionInfo.pas 0.1
-Updated - VCodeSnip.vi 07/04/2006
-Updated - Help\CodeSnip.hhp 06/04/2006
-Updated - Help\Index.hhk 06/04/2006
+Updated - VCodeSnip.vi 07 Apr 2006
+Updated - Help\CodeSnip.hhp 06 Apr 2006
+Updated - Help\Index.hhk 06 Apr 2006
 Updated - HTML\HTML.hrc 0.12
 Updated - HTML\dlg-about-tplt.html 0.6
-Updated - Help\HTML\dlg_about.htm 07/04/2006
-New     - Help\HTML\dlg_register.htm 07/04/2006
-New     - Help\HTML\mailing_list.htm 06/04/2006
-Updated - Help\HTML\menu_help.htm 07/04/2006
-Updated - Help\HTML\privacy_statement.htm 07/04/2006
+Updated - Help\HTML\dlg_about.htm 07 Apr 2006
+New     - Help\HTML\dlg_register.htm 07 Apr 2006
+New     - Help\HTML\mailing_list.htm 06 Apr 2006
+Updated - Help\HTML\menu_help.htm 07 Apr 2006
+Updated - Help\HTML\privacy_statement.htm 07 Apr 2006
 
 --------------------------------------------------------------------------------
-v0.11.1 (build 46) of 10/04/2006
+v0.11.1 (build 46) of 10 Apr 2006
 --------------------------------------------------------------------------------
 Updated - UDownloadMgr.pas 0.6
 Updated - UWebService.pas 0.4
-Updated - VCodeSnip.vi 10/04/2006
+Updated - VCodeSnip.vi 10 Apr 2006
 
 --------------------------------------------------------------------------------
-v0.11.2 (build 47) of 11/04/2006
+v0.11.2 (build 47) of 11 Apr 2006
 --------------------------------------------------------------------------------
 Updated - UCompilerRunner.pas 0.2
 Updated - USettings.pas 0.3
-Updated - VCodeSnip.vi 11/04/2006
-Updated - Help\HTML\dlg_bugreport.htm 10/04/2006
-Updated - Help\HTML\dlg_register.htm 10/04/2006
-Updated - Help\HTML\dlg_savesnippet.htm 11/04/2006
-Updated - Help\HTML\mailing_list.htm 10/04/2006
-Updated - Help\HTML\welcome.htm 10/04/2006
+Updated - VCodeSnip.vi 11 Apr 2006
+Updated - Help\HTML\dlg_bugreport.htm 10 Apr 2006
+Updated - Help\HTML\dlg_register.htm 10 Apr 2006
+Updated - Help\HTML\dlg_savesnippet.htm 11 Apr 2006
+Updated - Help\HTML\mailing_list.htm 10 Apr 2006
+Updated - Help\HTML\welcome.htm 10 Apr 2006
 
 --------------------------------------------------------------------------------
-v0.11.3 (build 48) of 16/04/2006
+v0.11.3 (build 48) of 16 Apr 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 0.25
 Updated - FmMain.pas 0.22
@@ -924,10 +924,10 @@ Updated - FrInfo.pas 0.8
 Updated - IntfFrameMgrs.pas 0.6
 New     - UWBNulDropTarget.pas 0.1
 Updated - UWBUIMgr.pas 0.3
-Updated - VCodeSnip.vi 16/04/2006
+Updated - VCodeSnip.vi 16 Apr 2006
 
 --------------------------------------------------------------------------------
-v0.12.0 (build 49) of 01/05/2006
+v0.12.0 (build 49) of 01 May 2006
 --------------------------------------------------------------------------------
 Removed - UDatedFile.pas
 Removed - UDownloadFileList.pas
@@ -950,13 +950,13 @@ New     - UNews.pas 0.1
 Updated - UUpdateMgr.pas 0.9
 Updated - UVersionInfo.pas 0.2
 Updated - UWebService.pas 0.5
-Updated - VCodeSnip.vi 30/04/2006
+Updated - VCodeSnip.vi 30 Apr 2006
 Updated - HTML\HTML.hrc 0.13
 New     - HTML\dlg-updt-news-tplt.html 0.1
-Updated - Help\HTML\dlg_update.htm 01/05/2006
+Updated - Help\HTML\dlg_update.htm 01 May 2006
 
 --------------------------------------------------------------------------------
-v1.0 (build 50) of 09/06/2006
+v1.0 (build 50) of 09 Jun 2006
 --------------------------------------------------------------------------------
 Removed - HTML\delphipower.png
 Updated - CodeSnip.dpr 1.0
@@ -1081,15 +1081,15 @@ Updated - UWebService.pas 1.0
 Updated - UWindowSettings.pas 1.0
 Removed - CodeSnip_TLB.pas
           (replaced in history by ExternalObj.idl)
-Updated - VCodeSnip.vi 29/05/2006
+Updated - VCodeSnip.vi 29 May 2006
 Updated - Dialogs.rc 1.0
 Updated - Images.rc 1.0
 Updated - HTML.hrc 1.0
           (Renamed from HTML\HTML.hrc)
-Updated - Help\TOC.hhc 04/06/2006
+Updated - Help\TOC.hhc 04 Jun 2006
 New     - Install\CodeSnip.iss 1.0
 New     - ExternalObj.idl 1.0
-New     - AutoGen\IntfExternalObj.hdr 05/06/2006
+New     - AutoGen\IntfExternalObj.hdr 05 Jun 2006
 New     - Build.bat 1.0
 Updated - Res\HTML\comp-blank.html 1.0
           (renamed from HTML\comp-blank.html)
@@ -1123,88 +1123,88 @@ Updated - Res\HTML\nodata-welcome.html 1.0
           (renamed from HTML\nodata-welcome.html)
 Updated - Res\HTML\welcome.html 1.0
           (renamed from HTML\welcome.html)
-New     - Res\Img\configcomp.gif 29/05/2006
-Updated - Res\Img\download.gif 16/01/2005 
+New     - Res\Img\configcomp.gif 29 May 2006
+Updated - Res\Img\download.gif 16 Jan 2005 
           (renamed from HTML\download.gif)
-Updated - Res\Img\help.gif 16/01/2005
+Updated - Res\Img\help.gif 16 Jan 2005
           (renamed from HTML\help.gif)
-New     - Res\Img\icon.gif 28/05/2006
-Updated - Res\Img\led-green.png 29/12/2004
+New     - Res\Img\icon.gif 28 May 2006
+Updated - Res\Img\led-green.png 29 Dec 2004
           (renamed from HTML\led-green.png)
-Updated - Res\Img\led-off.png 29/12/2004
+Updated - Res\Img\led-off.png 29 Dec 2004
           (renamed from HTML\led-off.png)
-Updated - Res\Img\led-red.png 29/12/2004
+Updated - Res\Img\led-red.png 29 Dec 2004
           (renamed from HTML\led-red.png)
-Updated - Res\Img\led-yellow.png 29/12/2004
+Updated - Res\Img\led-yellow.png 29 Dec 2004
           (renamed from HTML\led-yellow.png) 
-New     - Res\Img\viewunit.gif 28/05/2006
-Updated - Res\Img\Delphi2.bmp 01/03/2005
+New     - Res\Img\viewunit.gif 28 May 2006
+Updated - Res\Img\Delphi2.bmp 01 Mar 2005
           (renamed from Img\Delphi2.bmp)
-Updated - Res\Img\Delphi3.bmp 01/03/2005
+Updated - Res\Img\Delphi3.bmp 01 Mar 2005
           (renamed from Img\Delphi3.bmp)
-Updated - Res\Img\Delphi4.bmp 01/03/2005
+Updated - Res\Img\Delphi4.bmp 01 Mar 2005
           (renamed from Img\Delphi4.bmp)
-Updated - Res\Img\Delphi5.bmp 01/03/2005
+Updated - Res\Img\Delphi5.bmp 01 Mar 2005
           (renamed from Img\Delphi5.bmp)
-Updated - Res\Img\Delphi6.bmp 01/03/2005
+Updated - Res\Img\Delphi6.bmp 01 Mar 2005
           (renamed from Img\Delphi6.bmp)
-Updated - Res\Img\Delphi7.bmp 01/03/2005
+Updated - Res\Img\Delphi7.bmp 01 Mar 2005
           (renamed from Img\Delphi7.bmp)
-Updated - Res\Img\Delphi2005w.bmp 07/01/2006
+Updated - Res\Img\Delphi2005w.bmp 07 Jan 2006
           (renamed from Img\Delphi2005w.bmp)
-Updated - Res\Img\Delphi2006w.bmp 07/01/2006
+Updated - Res\Img\Delphi2006w.bmp 07 Jan 2006
           (renamed from Img\Delphi2006w.bmp)
-Updated - Res\Img\CodeSnip.ico 02/04/2006
+Updated - Res\Img\CodeSnip.ico 02 Apr 2006
           (renamed from Img\CodeSnip.ico)
-Updated - Help\CSS\codesnip.css 04/06/2006
-New     - Help\Images\BugReport.gif 04/06/2006
-New     - Help\Images\ConfigCompilers.gif 29/05/2006
-New     - Help\Images\Preferences.gif 04/06/2006
-New     - Help\Images\Welcome.gif 04/06/2006
-Updated - Help\HTML\about_compiler_checks.htm 04/06/2006
-Updated - Help\HTML\detail_compilerchecks.htm 04/06/2006
-Updated - Help\HTML\detail_information.htm 04/06/2006
-Updated - Help\HTML\detail_pane.htm 04/06/2006
-Updated - Help\HTML\dlg_about.htm 04/06/2006
-Updated - Help\HTML\dlg_bugreport.htm 04/06/2006
-Updated - Help\HTML\dlg_configcompilers.htm 04/06/2006
-Updated - Help\HTML\dlg_findcompiler.htm 04/06/2006
-Updated - Help\HTML\dlg_findtext.htm 04/06/2006
-Updated - Help\HTML\dlg_preferences.htm 04/06/2006
-Updated - Help\HTML\dlg_register.htm 04/06/2006
-Updated - Help\HTML\dlg_savesnippet.htm 04/06/2006
-Updated - Help\HTML\dlg_update.htm 04/06/2006
-Updated - Help\HTML\mailing_list.htm 04/06/2006
-Updated - Help\HTML\main_display.htm 04/06/2006
-Updated - Help\HTML\main_menu.htm 04/06/2006
-Updated - Help\HTML\menu_edit.htm 04/06/2006
-Updated - Help\HTML\menu_file.htm 04/06/2006
-Updated - Help\HTML\menu_help.htm 04/06/2006
-Updated - Help\HTML\menu_search.htm 04/06/2006
-Updated - Help\HTML\menu_tools.htm 04/06/2006
-Updated - Help\HTML\menu_view.htm 04/06/2006
-Updated - Help\HTML\navigation.htm 04/06/2006
-Updated - Help\HTML\overview_pane.htm 04/06/2006
-Updated - Help\HTML\privacy_statement.htm 04/06/2006
-Updated - Help\HTML\quickstart.htm 04/06/2006
-Updated - Help\HTML\task_copysnippet.htm 04/06/2006
-Updated - Help\HTML\task_customise.htm 04/06/2006
-Updated - Help\HTML\task_savesnippet.htm 04/06/2006
-Updated - Help\HTML\task_search.htm 04/06/2006
-Updated - Help\HTML\task_testcompile.htm 04/06/2006
-Updated - Help\HTML\task_update.htm 04/06/2006
-Updated - Help\HTML\tasks.htm 04/06/2006
-Updated - Help\HTML\welcome.htm 04/06/2006
+Updated - Help\CSS\codesnip.css 04 Jun 2006
+New     - Help\Images\BugReport.gif 04 Jun 2006
+New     - Help\Images\ConfigCompilers.gif 29 May 2006
+New     - Help\Images\Preferences.gif 04 Jun 2006
+New     - Help\Images\Welcome.gif 04 Jun 2006
+Updated - Help\HTML\about_compiler_checks.htm 04 Jun 2006
+Updated - Help\HTML\detail_compilerchecks.htm 04 Jun 2006
+Updated - Help\HTML\detail_information.htm 04 Jun 2006
+Updated - Help\HTML\detail_pane.htm 04 Jun 2006
+Updated - Help\HTML\dlg_about.htm 04 Jun 2006
+Updated - Help\HTML\dlg_bugreport.htm 04 Jun 2006
+Updated - Help\HTML\dlg_configcompilers.htm 04 Jun 2006
+Updated - Help\HTML\dlg_findcompiler.htm 04 Jun 2006
+Updated - Help\HTML\dlg_findtext.htm 04 Jun 2006
+Updated - Help\HTML\dlg_preferences.htm 04 Jun 2006
+Updated - Help\HTML\dlg_register.htm 04 Jun 2006
+Updated - Help\HTML\dlg_savesnippet.htm 04 Jun 2006
+Updated - Help\HTML\dlg_update.htm 04 Jun 2006
+Updated - Help\HTML\mailing_list.htm 04 Jun 2006
+Updated - Help\HTML\main_display.htm 04 Jun 2006
+Updated - Help\HTML\main_menu.htm 04 Jun 2006
+Updated - Help\HTML\menu_edit.htm 04 Jun 2006
+Updated - Help\HTML\menu_file.htm 04 Jun 2006
+Updated - Help\HTML\menu_help.htm 04 Jun 2006
+Updated - Help\HTML\menu_search.htm 04 Jun 2006
+Updated - Help\HTML\menu_tools.htm 04 Jun 2006
+Updated - Help\HTML\menu_view.htm 04 Jun 2006
+Updated - Help\HTML\navigation.htm 04 Jun 2006
+Updated - Help\HTML\overview_pane.htm 04 Jun 2006
+Updated - Help\HTML\privacy_statement.htm 04 Jun 2006
+Updated - Help\HTML\quickstart.htm 04 Jun 2006
+Updated - Help\HTML\task_copysnippet.htm 04 Jun 2006
+Updated - Help\HTML\task_customise.htm 04 Jun 2006
+Updated - Help\HTML\task_savesnippet.htm 04 Jun 2006
+Updated - Help\HTML\task_search.htm 04 Jun 2006
+Updated - Help\HTML\task_testcompile.htm 04 Jun 2006
+Updated - Help\HTML\task_update.htm 04 Jun 2006
+Updated - Help\HTML\tasks.htm 04 Jun 2006
+Updated - Help\HTML\welcome.htm 04 Jun 2006
 
 --------------------------------------------------------------------------------
-v1.0.1 (build 51) of 14/10/2006
+v1.0.1 (build 51) of 14 Oct 2006
 --------------------------------------------------------------------------------
 Updated - UDOSDateTime.pas 1.1
-Updated - VCodeSnip.vi 14/10/2006
+Updated - VCodeSnip.vi 14 Oct 2006
 Updated - Install\CodeSnip.iss 1.1
 
 --------------------------------------------------------------------------------
-v1.0.2 (build 52) of 25/10/2006
+v1.0.2 (build 52) of 25 Oct 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.1
 Updated - FmAboutDlg.pas 1.1
@@ -1217,7 +1217,7 @@ New     - UProtocolHandler.pas 1.0
 Updated - UShellExecAction.pas 1.1
           (renamed from UExecFileAction.pas)
 Updated - HTML.hrc 1.1
-Updated - VCodeSnip.vi 25/10/2006
+Updated - VCodeSnip.vi 25 Oct 2006
 Updated - Install\CodeSnip.iss 1.2
 New     - Res\HTML\detail-consts.js 1.0
 Updated - Res\HTML\comp-blank.html 1.1
@@ -1230,7 +1230,7 @@ Updated - Res\HTML\nodata-welcome.html 1.1
 Updated - Res\HTML\welcome.html 1.1
 
 --------------------------------------------------------------------------------
-v1.0.3 (build 53) of 26/10/2006
+v1.0.3 (build 53) of 26 Oct 2006
 --------------------------------------------------------------------------------
 Updated - FmAboutDlg.pas 1.2
 Updated - FmBugReportDlg.pas 2.0
@@ -1241,7 +1241,7 @@ Updated - UHelpMgr.pas 1.1
 Updated - UPreferences.pas 1.1
 Updated - USnippets.pas 1.1
 Updated - HTML.hrc 1.2
-Updated - VCodeSnip.vi 26/10/2006
+Updated - VCodeSnip.vi 26 Oct 2006
 Updated - Install\CodeSnip.iss 1.3
 Updated - Res\HTML\comp-na.html 1.2
 Updated - Res\HTML\dlg-about-tplt.html 1.2
@@ -1249,7 +1249,7 @@ Updated - Res\HTML\nodata-welcome.html 1.2
 Updated - Res\HTML\welcome.html 1.2
 
 --------------------------------------------------------------------------------
-v1.1 (build 54) of 29/10/2006
+v1.1 (build 54) of 29 Oct 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.2
 New     - FmFindXRefsDlg.pas 1.0
@@ -1272,46 +1272,46 @@ Updated - USettings.pas 1.1
 New     - USourceFileInfo.pas 1.0
 New     - USourceFileOutputMgr.pas 1.0
 Updated - USourceGen.pas 1.1
-Updated - VCodeSnip.vi 29/10/2006
-Updated - Help\CodeSnip.hhp 29/10/2006
-Updated - Help\Index.hhk 29/10/2006
-Updated - Help\TOC.hhc 29/10/2006
+Updated - VCodeSnip.vi 29 Oct 2006
+Updated - Help\CodeSnip.hhp 29 Oct 2006
+Updated - Help\Index.hhk 29 Oct 2006
+Updated - Help\TOC.hhc 29 Oct 2006
 Updated - Install\CodeSnip.iss 1.4
-New     - Help\Images\FindXRefs.gif 28/10/2006
-Updated - Help\Images\SaveSnippet.gif 28/10/2006
-New     - Help\Images\SelectRoutines.gif 28/10/2006
-New     - Help\Images\LEDGreen.png 29/10/2006
-New     - Help\Images\LEDOff.png 29/10/2006
-New     - Help\Images\LEDRed.png 29/10/2006
-New     - Help\Images\LEDYellow.png 29/10/2006
-Updated - Help\HTML\about_compiler_checks.htm 29/10/2006
-Updated - Help\HTML\detail_compilerchecks.htm 29/10/2006
-Updated - Help\HTML\dlg_bugreport.htm 29/10/2006
-Updated - Help\HTML\dlg_findcompiler.htm 29/10/2006
-Updated - Help\HTML\dlg_findtext.htm 29/10/2006
-New     - Help\HTML\dlg_findxrefs.htm 28/10/2006
-Updated - Help\HTML\dlg_preferences.htm 29/10/2006
-Updated - Help\HTML\dlg_savesnippet.htm 28/10/2006
-New     - Help\HTML\dlg_saveunit.htm 28/10/2006
-New     - Help\HTML\dlg_selectroutines.htm 28/10/2006
-Updated - Help\HTML\main_menu.htm 28/10/2006
-Updated - Help\HTML\menu_edit.htm 28/10/2006
-Updated - Help\HTML\menu_file.htm 28/10/2006
-Updated - Help\HTML\menu_help.htm 28/10/2006
-Updated - Help\HTML\menu_search.htm 28/10/2006
-Updated - Help\HTML\menu_tools.htm 28/10/2006
-Updated - Help\HTML\menu_view.htm 28/10/2006
-Updated - Help\HTML\privacy_statement.htm 28/10/2006
-Updated - Help\HTML\quickstart.htm 29/10/2006
-New     - Help\HTML\task_generateunit.htm 28/10/2006
-Updated - Help\HTML\task_search.htm 28/10/2006
-Updated - Help\HTML\task_testcompile.htm 29/10/2006
-Updated - Help\HTML\task_update.htm 29/10/2006
-Updated - Help\HTML\tasks.htm 28/10/2006
-Updated - Help\HTML\welcome.htm 29/10/2006
+New     - Help\Images\FindXRefs.gif 28 Oct 2006
+Updated - Help\Images\SaveSnippet.gif 28 Oct 2006
+New     - Help\Images\SelectRoutines.gif 28 Oct 2006
+New     - Help\Images\LEDGreen.png 29 Oct 2006
+New     - Help\Images\LEDOff.png 29 Oct 2006
+New     - Help\Images\LEDRed.png 29 Oct 2006
+New     - Help\Images\LEDYellow.png 29 Oct 2006
+Updated - Help\HTML\about_compiler_checks.htm 29 Oct 2006
+Updated - Help\HTML\detail_compilerchecks.htm 29 Oct 2006
+Updated - Help\HTML\dlg_bugreport.htm 29 Oct 2006
+Updated - Help\HTML\dlg_findcompiler.htm 29 Oct 2006
+Updated - Help\HTML\dlg_findtext.htm 29 Oct 2006
+New     - Help\HTML\dlg_findxrefs.htm 28 Oct 2006
+Updated - Help\HTML\dlg_preferences.htm 29 Oct 2006
+Updated - Help\HTML\dlg_savesnippet.htm 28 Oct 2006
+New     - Help\HTML\dlg_saveunit.htm 28 Oct 2006
+New     - Help\HTML\dlg_selectroutines.htm 28 Oct 2006
+Updated - Help\HTML\main_menu.htm 28 Oct 2006
+Updated - Help\HTML\menu_edit.htm 28 Oct 2006
+Updated - Help\HTML\menu_file.htm 28 Oct 2006
+Updated - Help\HTML\menu_help.htm 28 Oct 2006
+Updated - Help\HTML\menu_search.htm 28 Oct 2006
+Updated - Help\HTML\menu_tools.htm 28 Oct 2006
+Updated - Help\HTML\menu_view.htm 28 Oct 2006
+Updated - Help\HTML\privacy_statement.htm 28 Oct 2006
+Updated - Help\HTML\quickstart.htm 29 Oct 2006
+New     - Help\HTML\task_generateunit.htm 28 Oct 2006
+Updated - Help\HTML\task_search.htm 28 Oct 2006
+Updated - Help\HTML\task_testcompile.htm 29 Oct 2006
+Updated - Help\HTML\task_update.htm 29 Oct 2006
+Updated - Help\HTML\tasks.htm 28 Oct 2006
+Updated - Help\HTML\welcome.htm 29 Oct 2006
 
 --------------------------------------------------------------------------------
-v1.1.1 (build 55) of 31/10/2006
+v1.1.1 (build 55) of 31 Oct 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.3
 Updated - FmBase.pas 1.1
@@ -1319,12 +1319,12 @@ Updated - FrSelectSnippets.pas 1.1
 Updated - Images.rc 1.1
 New     - UThemesEx.pas 1.0
 New     - UTVCheckBoxes.pas 1.0
-Updated - VCodeSnip.vi 31/10/2006
+Updated - VCodeSnip.vi 31 Oct 2006
 Updated - Install\CodeSnip.iss 1.5
-New     - Res\Img\TVCheckBoxes.bmp 30/10/2006
+New     - Res\Img\TVCheckBoxes.bmp 30 Oct 2006
 
 --------------------------------------------------------------------------------
-v1.1.2 (build 56) of 07/11/2006
+v1.1.2 (build 56) of 07 Nov 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.4
 Updated - FmAboutDlg.pas 1.3
@@ -1341,11 +1341,11 @@ Updated - URTFUtils.pas 1.2
 Updated - USyntaxHiliters.pas 1.1
 Updated - UUtils.pas 1.1
 Updated - UWBHighlighter.pas 1.1
-Updated - VCodeSnip.vi 07/11/2006
+Updated - VCodeSnip.vi 07 Nov 2006
 Updated - Install\CodeSnip.iss 1.6
 
 --------------------------------------------------------------------------------
-v1.2 (build 57) of 09/11/2006
+v1.2 (build 57) of 09 Nov 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.5
 New     - FrHiliterPrefs.pas 1.0
@@ -1357,13 +1357,13 @@ Updated - UFileHiliter.pas 1.2
 Updated - UHiliteAttrs.pas 1.1
 New     - UHiliterPersist.pas 1.0
 Updated - USettings.pas 1.2
-Updated - VCodeSnip.vi 08/11/2006
+Updated - VCodeSnip.vi 08 Nov 2006
 Updated - Install\CodeSnip.iss 1.7
-Updated - Help\CSS\codesnip.css 08/11/2006
-Updated - Help\HTML\dlg_preferences.htm 08/11/2006
+Updated - Help\CSS\codesnip.css 08 Nov 2006
+Updated - Help\HTML\dlg_preferences.htm 08 Nov 2006
 
 --------------------------------------------------------------------------------
-v1.2.1 (build 58) of 11/11/2006
+v1.2.1 (build 58) of 11 Nov 2006
 --------------------------------------------------------------------------------
 Updated - UAppInfo.pas 1.2
 Updated - FmPreviewDlg.pas 1.1
@@ -1371,30 +1371,30 @@ Updated - UGlobals.pas 1.2
 Updated - UHelpMgr.pas 1.2
 Updated - UHTMLUtils.pas 1.3
 Updated - URTFUtils.pas 1.3
-Updated - VCodeSnip.vi 11/11/2006
+Updated - VCodeSnip.vi 11 Nov 2006
 Updated - Install\CodeSnip.iss 1.8
 
 --------------------------------------------------------------------------------
-v1.2.2 (build 59) of 12/11/2006
+v1.2.2 (build 59) of 12 Nov 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.6
 Updated - FmSelectionSearchDlg.pas 1.1
 New     - FrCheckedTV.pas 1.0
 Updated - FrSelectSnippets.pas 2.0
 Updated - UTVCheckBoxes.pas 1.1
-Updated - VCodeSnip.vi 12/11/2006
+Updated - VCodeSnip.vi 12 Nov 2006
 Updated - Install\CodeSnip.iss 1.9
 
 --------------------------------------------------------------------------------
-v1.2.3 (build 60) of 12/11/2006
+v1.2.3 (build 60) of 12 Nov 2006
 --------------------------------------------------------------------------------
 Updated - FmMain.pas 1.4
-Updated - VCodeSnip.vi 12/11/2006
+Updated - VCodeSnip.vi 12 Nov 2006
 Updated - Install\CodeSnip.iss 1.10
-Updated - Help\HTML\menu_tools.htm 12/11/2006
+Updated - Help\HTML\menu_tools.htm 12 Nov 2006
 
 --------------------------------------------------------------------------------
-v1.2.4 (build 61) of 14/11/2006
+v1.2.4 (build 61) of 14 Nov 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.7
 Updated - FmAboutDlg.pas 1.4
@@ -1407,24 +1407,24 @@ New     - UHTTPProtocol.pas 1.0
 Updated - UProtocols.pas 
           renamed from UProtocolHandler.pas) 2.0
 Updated - HTML.hrc 1.3
-Updated - VCodeSnip.vi 14/11/2006
-Updated - Help\CodeSnip.hhp 12/11/2006
-Updated - Help\Index.hhk 12/11/2006
+Updated - VCodeSnip.vi 14 Nov 2006
+Updated - Help\CodeSnip.hhp 12 Nov 2006
+Updated - Help\Index.hhk 12 Nov 2006
 Updated - Install\CodeSnip.iss 1.11
 Updated - Res\HTML\dlg-about-tplt.html 1.3
-Updated - Help\HTML\dlg_about.htm 14/11/2006
-New     - Help\HTML\license.htm 12/11/2006
-Updated - Help\HTML\menu_help.htm 14/11/2006
+Updated - Help\HTML\dlg_about.htm 14 Nov 2006
+New     - Help\HTML\license.htm 12 Nov 2006
+Updated - Help\HTML\menu_help.htm 14 Nov 2006
 
 --------------------------------------------------------------------------------
-v1.2.5 (build 62) of 16/11/2006
+v1.2.5 (build 62) of 16 Nov 2006
 --------------------------------------------------------------------------------
 Updated - FmRegistrationDlg.pas 1.1
-Updated - VCodeSnip.vi 16/11/2006
+Updated - VCodeSnip.vi 16 Nov 2006
 Updated - Install\CodeSnip.iss 1.12
 
 --------------------------------------------------------------------------------
-v1.3 (build 63) of 18/11/2006
+v1.3 (build 63) of 18 Nov 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.8
 New     - FmMailingListDlg.pas 1.0
@@ -1433,31 +1433,31 @@ Updated - FmRegistrationDlg.pas 1.2
 Updated - FrHTMLDlg.pas 1.3
 Updated - HTML.hrc 1.4
 New     - UMailListSubscriber.pas 1.0
-Updated - VCodeSnip.vi 18/11/2006
+Updated - VCodeSnip.vi 18 Nov 2006
 Updated - Install\CodeSnip.iss 1.13
-Updated - Help\CodeSnip.hhp 18/11/2006
-Updated - Help\Index.hhk 18/11/2006
-Updated - Help\TOC.hhc 18/11/2006
+Updated - Help\CodeSnip.hhp 18 Nov 2006
+Updated - Help\Index.hhk 18 Nov 2006
+Updated - Help\TOC.hhc 18 Nov 2006
 New     - Res\HTML\dlg-mlist-result-tplt.html 1.0
-New     - Help\Images\JoinMailList.gif 18/11/2006
-New     - Help\HTML\dlg_maillist.htm 18/11/2006
-Updated - Help\HTML\mailing_list.htm 18/11/2006
-Updated - Help\HTML\menu_tools.htm 18/11/2006
-Updated - Help\HTML\privacy_statement.htm 18/11/2006
+New     - Help\Images\JoinMailList.gif 18 Nov 2006
+New     - Help\HTML\dlg_maillist.htm 18 Nov 2006
+Updated - Help\HTML\mailing_list.htm 18 Nov 2006
+Updated - Help\HTML\menu_tools.htm 18 Nov 2006
+Updated - Help\HTML\privacy_statement.htm 18 Nov 2006
 
 --------------------------------------------------------------------------------
-v1.3.1 (build 64) of 21/11/2006
+v1.3.1 (build 64) of 21 Nov 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.9
 Updated - FmCompilersDlg.pas 1.1
 New     - UGraphicUtils.pas 1.0
-Updated - VCodeSnip.vi 20/11/2006
+Updated - VCodeSnip.vi 20 Nov 2006
 Updated - Install\CodeSnip.iss 1.14
 Updated - HTML.hrc 1.5
-Updated - Res\Img\Delphi5.bmp 20/11/2006
+Updated - Res\Img\Delphi5.bmp 20 Nov 2006
 
 --------------------------------------------------------------------------------
-v1.3.2 (build 65) of 24/11/2006
+v1.3.2 (build 65) of 24 Nov 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.10
 Updated - ExternalObj.idl 1.1
@@ -1470,13 +1470,13 @@ New     - UJavaScriptUtils.pas 1.0
 Updated - UMainDisplayMgr.pas 1.1
 Updated - UNotifier.pas 1.1
 Updated - UWBExternal.pas 1.1
-Updated - VCodeSnip.vi 24/11/2006
+Updated - VCodeSnip.vi 24 Nov 2006
 Updated - Install\CodeSnip.iss 1.15
 Updated - Res\HTML\comp-routine.js 1.2
-Updated - AutoGen\IntfExternalObj.pas 23/11/2006
+Updated - AutoGen\IntfExternalObj.pas 23 Nov 2006
 
 --------------------------------------------------------------------------------
-v1.3.3 (build 66) of 25/11/2006
+v1.3.3 (build 66) of 25 Nov 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.11
 Updated - FmAboutDlg.pas 1.5
@@ -1501,17 +1501,17 @@ Updated - Res\HTML\info-routine-tplt.html 1.1
 Updated - Res\HTML\info-uncatheader-tplt.html 1.1
 Updated - Res\HTML\nodata-welcome.html 1.3
 Updated - Res\HTML\welcome.html 1.3
-Updated - VCodeSnip.vi 25/11/2006
+Updated - VCodeSnip.vi 25 Nov 2006
 Updated - Install\CodeSnip.iss 1.16
 
 --------------------------------------------------------------------------------
-v1.3.4 (build 67) of 26/11/2006
+v1.3.4 (build 67) of 26 Nov 2006
 --------------------------------------------------------------------------------
 Updated - FrCompCheck.pas 1.2
 Updated - UHTMLGenerators.pas 1.4
 Updated - UHTMLDetailUtils.pas 1.2
 Updated - HTML.hrc 1.6
-Updated - VCodeSnip.vi 26/11/2006
+Updated - VCodeSnip.vi 26 Nov 2006
 Updated - Install\CodeSnip.iss 1.17
 Updated - Res\HTML\comp-blank.html 1.2
 Updated - Res\HTML\comp-na.html 1.4
@@ -1524,19 +1524,19 @@ Updated - Res\HTML\nodata-welcome.html 1.4
 Updated - Res\HTML\welcome.html 1.4
 
 --------------------------------------------------------------------------------
-v1.3.5 (build 68) of 01/12/2006
+v1.3.5 (build 68) of 01 Dec 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.12
 Updated - FmMain.pas 1.8
 New     - FmWaitDlg.pas 1.0
 New     - UWaitForActionUI.pas 1.0
-Updated - VCodeSnip.vi 01/12/2006
+Updated - VCodeSnip.vi 01 Dec 2006
 Updated - Install\CodeSnip.iss 1.18
-Updated - Help\HTML\menu_file.htm 01/12/2006
-Updated - Help\HTML\menu_search.htm 01/12/2006
+Updated - Help\HTML\menu_file.htm 01 Dec 2006
+Updated - Help\HTML\menu_search.htm 01 Dec 2006
 
 --------------------------------------------------------------------------------
-v1.4 (build 69) of 03/12/2006
+v1.4 (build 69) of 03 Dec 2006
 --------------------------------------------------------------------------------
 Removed - Res\HTML\comp-routine-dbase-tplt.html
 Removed - Res\HTML\comp-routine-test-tplt.html
@@ -1553,7 +1553,7 @@ Updated - UHTMLGenerators.pas 1.5
 Updated - UHTMLUtils.pas 1.5
 Updated - UJavaScriptUtils.pas 1.1
 Updated - UMainDisplayMgr.pas 1.2
-Updated - VCodeSnip.vi 03/12/2006
+Updated - VCodeSnip.vi 03 Dec 2006
 Updated - Install\CodeSnip.iss 1.19
 Updated - Res\HTML\comp-routine.js 1.4
 Updated - Res\HTML\comp-routine.html 1.3
@@ -1561,31 +1561,31 @@ Updated - Res\HTML\comp-routine.html 1.3
 New     - Res\HTML\comp-routine-tplt.html 1.0
 Updated - Res\HTML\detail.css 1.2
 New     - Res\HTML\detail.js 1.0
-New     - Res\Img\compile.gif 26/11/2006
-Updated - Help\Index.hhk 03/12/2006
-Updated - Help\HTML\about_compiler_checks.htm 03/12/2006
-Updated - Help\HTML\detail_compilerchecks.htm 03/12/2006
-Updated - Help\HTML\quickstart.htm 03/12/2006
-Updated - Help\HTML\welcome.htm 03/12/2006
-New     - Help\Images\ViewUnit.gif 03/12/2006
+New     - Res\Img\compile.gif 26 Nov 2006
+Updated - Help\Index.hhk 03 Dec 2006
+Updated - Help\HTML\about_compiler_checks.htm 03 Dec 2006
+Updated - Help\HTML\detail_compilerchecks.htm 03 Dec 2006
+Updated - Help\HTML\quickstart.htm 03 Dec 2006
+Updated - Help\HTML\welcome.htm 03 Dec 2006
+New     - Help\Images\ViewUnit.gif 03 Dec 2006
 
 --------------------------------------------------------------------------------
-v1.4.1 (build 70) of 03/12/2006
+v1.4.1 (build 70) of 03 Dec 2006
 --------------------------------------------------------------------------------
 Updated - FmMain.pas 1.9
-Updated - VCodeSnip.vi 03/12/2006
+Updated - VCodeSnip.vi 03 Dec 2006
 Updated - Install\CodeSnip.iss 1.20
 
 --------------------------------------------------------------------------------
-v1.4.2 (build 71) of 03/12/2006
+v1.4.2 (build 71) of 03 Dec 2006
 --------------------------------------------------------------------------------
 Updated - FmGenericDlg.pas 1.1
 Updated - FmHTMLViewDlg.pas 1.1
-Updated - VCodeSnip.vi 03/12/2006
+Updated - VCodeSnip.vi 03 Dec 2006
 Updated - Install\CodeSnip.iss 1.21
 
 --------------------------------------------------------------------------------
-v1.4.3 (build 72) of 03/12/2006
+v1.4.3 (build 72) of 03 Dec 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.14
 Updated - FrDetailView.pas 1.3
@@ -1598,46 +1598,46 @@ Updated - UDHTML.pas 1.1
 Updated - UHTMLGenerators.pas 1.6
 New     - URoutineHTML.pas 1.0
 Updated - USyntaxHiliters.pas 1.3
-Updated - VCodeSnip.vi 03/12/2006
+Updated - VCodeSnip.vi 03 Dec 2006
 Updated - Install\CodeSnip.iss 1.22
 New     - Res\HTML\info-routine.html 1.0
 Updated - Res\HTML\info-routine-tplt.html 2.0
 
 --------------------------------------------------------------------------------
-v1.4.4 (build 73) of 04/12/2006
+v1.4.4 (build 73) of 04 Dec 2006
 --------------------------------------------------------------------------------
 Updated - FmMain.pas 1.10
 Updated - HTML.hrc 1.9
-Updated - VCodeSnip.vi 04/12/2006
+Updated - VCodeSnip.vi 04 Dec 2006
 Updated - Install\CodeSnip.iss 1.23
 Updated - Res\HTML\comp-routine.js 1.5
 Updated - Res\HTML\comp-routine-tplt.html 1.1
-Updated - Res\Img\viewunit.gif 03/12/2006
-New     - Res\Img\hideunit.gif 04/12/2006
-Updated - Help\HTML\about_compiler_checks.htm 04/12/2006
-Updated - Help\HTML\detail_compilerchecks.htm 04/12/2006
-Updated - Help\HTML\menu_view.htm 04/12/2006
-New     - Help\Images\HideUnit.gif 04/12/2006
-Updated - Help\Images\ViewUnit.gif 03/12/2006
+Updated - Res\Img\viewunit.gif 03 Dec 2006
+New     - Res\Img\hideunit.gif 04 Dec 2006
+Updated - Help\HTML\about_compiler_checks.htm 04 Dec 2006
+Updated - Help\HTML\detail_compilerchecks.htm 04 Dec 2006
+Updated - Help\HTML\menu_view.htm 04 Dec 2006
+New     - Help\Images\HideUnit.gif 04 Dec 2006
+Updated - Help\Images\ViewUnit.gif 03 Dec 2006
 
 --------------------------------------------------------------------------------
-v1.4.5 (build 74) of 04/12/2006
+v1.4.5 (build 74) of 04 Dec 2006
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.15
 Updated - URoutineHTML.pas 1.1
 Updated - UTestCompile.pas 1.1
 New     - UTestUnit.pas 1.0
-Updated - VCodeSnip.vi 04/12/2006
+Updated - VCodeSnip.vi 04 Dec 2006
 Updated - Install\CodeSnip.iss 1.24
 
 --------------------------------------------------------------------------------
-v1.4.6 (build 75) of 17/12/2006
+v1.4.6 (build 75) of 17 Dec 2006
 --------------------------------------------------------------------------------
 Updated - FmUpdateDlg.pas 1.1
 Updated - FrDetailView.pas 1.4
 Updated - FrNewsHTML.pas 1.3
 Updated - UColours.pas 1.1
-Updated - VCodeSnip.vi 17/12/2006
+Updated - VCodeSnip.vi 17 Dec 2006
 Updated - Install\CodeSnip.iss 1.25
 Updated - Res\HTML\comp-na.html 1.5
 Updated - Res\HTML\comp-routine-tplt.html 1.2
@@ -1645,7 +1645,7 @@ Updated - Res\HTML\nodata-welcome.html 1.5
 Updated - Res\HTML\welcome.html 1.5
 
 --------------------------------------------------------------------------------
-v1.5 (build 76) of 03/02/2007
+v1.5 (build 76) of 03 Feb 2007
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.16
 Updated - FmMain.pas 1.11
@@ -1653,18 +1653,18 @@ Updated - Images.rc 1.2
 Updated - UMainDisplayMgr.pas 1.3
 Updated - USearch.pas 2.1
 New     - UStatusBarMgr.pas 1.0
-Updated - VCodeSnip.vi 03/02/2007
+Updated - VCodeSnip.vi 03 Feb 2007
 Updated - Install\CodeSnip.iss 1.26
-New     - Res\Img\CompilerSearch.bmp 01/02/2007
-New     - Res\Img\TextSearch.bmp 01/02/2007
-New     - Res\Img\SelectionSearch.bmp 01/02/2007
-New     - Res\Img\XRefSearch.bmp 01/02/2007
-New     - Res\Img\NulSearch.bmp 01/02/2007
-Updated - Help\HTML\license.htm 03/02/2007
-Updated - Help\HTML\main_display.htm 03/02/2007
+New     - Res\Img\CompilerSearch.bmp 01 Feb 2007
+New     - Res\Img\TextSearch.bmp 01 Feb 2007
+New     - Res\Img\SelectionSearch.bmp 01 Feb 2007
+New     - Res\Img\XRefSearch.bmp 01 Feb 2007
+New     - Res\Img\NulSearch.bmp 01 Feb 2007
+Updated - Help\HTML\license.htm 03 Feb 2007
+Updated - Help\HTML\main_display.htm 03 Feb 2007
 
 --------------------------------------------------------------------------------
-v1.5.1 (build 77) of 04/02/2007
+v1.5.1 (build 77) of 04 Feb 2007
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.17
 Updated - FmMain.pas 1.12
@@ -1682,11 +1682,11 @@ Updated - USnippetMgr.pas 1.1
 Updated - USnippetSourceGen.pas 1.1
 Updated - UStatusBarMgr.pas 1.1
 Updated - UView.pas 1.1
-Updated - VCodeSnip.vi 04/02/2007
+Updated - VCodeSnip.vi 04 Feb 2007
 Updated - Install\CodeSnip.iss 1.27
 
 --------------------------------------------------------------------------------
-v1.5.2 (build 78) of 04/02/2007
+v1.5.2 (build 78) of 04 Feb 2007
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.18
 Updated - FmGenericDlg.pas 1.2
@@ -1694,11 +1694,11 @@ Updated - FmHelpAware.pas 1.2
 Updated - FmMain.pas 1.13
 Updated - UHelpMgr.pas 2.0
 New     - UHTMLHelpMgr.pas 1.0
-Updated - VCodeSnip.vi 04/02/2007
+Updated - VCodeSnip.vi 04 Feb 2007
 Updated - Install\CodeSnip.iss 1.28
 
 --------------------------------------------------------------------------------
-v1.5.3 (build 79) of 08/02/2007
+v1.5.3 (build 79) of 08 Feb 2007
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.18
 Updated - FmAboutDlg.pas 1.6
@@ -1727,24 +1727,24 @@ New     - UDialogMgr.pas 1.0
 New     - UFormAligner.pas 1.0
 New     - UNulFormAligner.pas 1.0
 Updated - UWaitForActionUI.pas 1.1
-Updated - VCodeSnip.vi 08/02/2007
+Updated - VCodeSnip.vi 08 Feb 2007
 Updated - Install\CodeSnip.iss 1.29
 
 --------------------------------------------------------------------------------
-v1.5.4 (build 80) of 09/02/2007
+v1.5.4 (build 80) of 09 Feb 2007
 --------------------------------------------------------------------------------
 Updated - FrDetailView.pas 1.6
 Updated - USaveUnitMgr.pas 1.1
 Updated - USnippetSourceGen.pas 1.2
 Updated - USourceGen.pas 1.2
 Updated - UUtils.pas 1.2
-Updated - VCodeSnip.vi 09/02/2007
+Updated - VCodeSnip.vi 09 Feb 2007
 Updated - Install\CodeSnip.iss 1.30
 Updated - Res\HTML\detail.css 1.3
 Updated - Res\HTML\welcome.html 1.6
 
 --------------------------------------------------------------------------------
-v1.5.5 (build 81) of 11/02/2007
+v1.5.5 (build 81) of 11 Feb 2007
 --------------------------------------------------------------------------------
 Updated - FrBrowserBase.pas 2.0
 Updated - FrDetail.pas 1.1
@@ -1752,11 +1752,11 @@ Updated - FrOverview.pas 1.1
 Updated - IntfFrameMgrs.pas 1.4
 Updated - UMainDisplayMgr.pas 1.5
 Updated - UWBUIMgr.pas 1.2
-Updated - VCodeSnip.vi 11/02/2007
+Updated - VCodeSnip.vi 11 Feb 2007
 Updated - Install\CodeSnip.iss 1.31
 
 --------------------------------------------------------------------------------
-v1.5.6 (build 82) of 11/02/2007
+v1.5.6 (build 82) of 11 Feb 2007
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.19
 Updated - FmAboutDlg.pas 2.0
@@ -1766,8 +1766,8 @@ Updated - UAppInfo.pas 1.4
 New     - UContributors.pas 1.0
 Updated - UThemesEx.pas 1.1
 Updated - HTML.hrc 1.10
-Updated - VCodeSnip.vi 11/02/2007
-Updated - Help\HTML\dlg_about.htm 11/02/2007
+Updated - VCodeSnip.vi 11 Feb 2007
+Updated - Help\HTML\dlg_about.htm 11 Feb 2007
 Updated - Install\CodeSnip.iss 1.32
 New     - Res\HTML\dlg-about-database-tplt.html 1.0
 New     - Res\HTML\dlg-about-head-tplt.html 1.0
@@ -1775,26 +1775,26 @@ Updated - Res\HTML\dlg-about-program-tplt.html 1.5
           (renamed from Res\HTML\dlg-about-tplt.html)
 
 --------------------------------------------------------------------------------
-v1.5.7 (build 83) of 12/02/2007
+v1.5.7 (build 83) of 12 Feb 2007
 --------------------------------------------------------------------------------
 Updated - UMessageBox.pas 1.2
 Updated - URoutineHTML.pas 1.2
 Updated - UUtils.pas 1.3
-Updated - VCodeSnip.vi 12/02/2007
+Updated - VCodeSnip.vi 12 Feb 2007
 Updated - Install\CodeSnip.iss 1.33
 
 --------------------------------------------------------------------------------
-v1.5.8 (build 84) of 16/02/2007
+v1.5.8 (build 84) of 16 Feb 2007
 --------------------------------------------------------------------------------
 Updated - FmMain.pas 1.16
 Updated - FrOverview.pas 1.2
 Updated - UHistory.pas 1.1
 Updated - UMainDisplayMgr.pas 1.6
-Updated - VCodeSnip.vi 16/02/2007
+Updated - VCodeSnip.vi 16 Feb 2007
 Updated - Install\CodeSnip.iss 1.34
 
 --------------------------------------------------------------------------------
-v1.5.9 (build 85) of 16/02/2007
+v1.5.9 (build 85) of 16 Feb 2007
 --------------------------------------------------------------------------------
 Updated - FmMain.pas 1.17
 Updated - FrBrowserBase.pas 2.1
@@ -1806,11 +1806,11 @@ Updated - FrOverview.pas 1.3
 Updated - IntfFrameMgrs.pas 2.0
 Updated - UDHTML.pas 1.3
 Updated - UMainDisplayMgr.pas 2.0
-Updated - VCodeSnip.vi 16/02/2007
+Updated - VCodeSnip.vi 16 Feb 2007
 Updated - Install\CodeSnip.iss 1.35
 
 --------------------------------------------------------------------------------
-v1.5.10 (build 86) of 17/02/2007
+v1.5.10 (build 86) of 17 Feb 2007
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.20
 Updated - FrBrowserBase.pas 2.2
@@ -1826,11 +1826,11 @@ New     - UWBHelper.pas 1.0
 Updated - UWBHighlighter.pas 1.2
 Updated - UWBIOMgr.pas 1.1
 Updated - UWBUIMgr.pas 2.0
-Updated - VCodeSnip.vi 17/02/2007
+Updated - VCodeSnip.vi 17 Feb 2007
 Updated - Install\CodeSnip.iss 1.36
 
 --------------------------------------------------------------------------------
-v1.5.11 (build 87) of 25/02/2007
+v1.5.11 (build 87) of 25 Feb 2007
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.21
 Updated - FmMain.pas 1.18
@@ -1838,11 +1838,11 @@ New     - FmSplash.pas 1.0
 Updated - UColours.pas 1.3
 Updated - UGraphicUtils.pas 1.1
 Updated - UWindowSettings.pas 1.1
-Updated - VCodeSnip.vi 25/02/2007
+Updated - VCodeSnip.vi 25 Feb 2007
 Updated - Install\CodeSnip.iss 1.37
 
 --------------------------------------------------------------------------------
-v1.5.12 (build 88) of 01/03/2007
+v1.5.12 (build 88) of 01 Mar 2007
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.22
 Updated - FmMain.pas 1.19
@@ -1851,49 +1851,49 @@ Updated - UTestCompile.pas 1.2
 New     - UThreadEx.pas 1.0
 New     - UThreadWrapper.pas 1.0
 Updated - UWaitForActionUI.pas 1.2
-Updated - VCodeSnip.vi 01/03/2007
+Updated - VCodeSnip.vi 01 Mar 2007
 Updated - Install\CodeSnip.iss 1.38
 
 --------------------------------------------------------------------------------
-v1.5.13 (build 89) of 04/03/2007
+v1.5.13 (build 89) of 04 Mar 2007
 --------------------------------------------------------------------------------
 Updated - FmMain.pas 1.20
 Updated - FrCompCheck.pas 1.7
-Updated - VCodeSnip.vi 04/03/2007
+Updated - VCodeSnip.vi 04 Mar 2007
 Updated - Install\CodeSnip.iss 1.39
 
 --------------------------------------------------------------------------------
-v1.6 (build 90) of 08/05/2007
+v1.6 (build 90) of 08 May 2007
 --------------------------------------------------------------------------------
 Updated - IntfCompilers.pas 1.1
 Updated - UBDSCompiler.pas 1.1
 Updated - UCompilers.pas 1.1
 Updated - UIniDataReader.pas 1.1
 Updated - Images.rc 1.3
-Updated - VCodeSnip.vi 08/05/2007
+Updated - VCodeSnip.vi 08 May 2007
 Updated - Install\CodeSnip.iss 1.40
-New     - Res\Img\Delphi2007.bmp 08/05/2007
-Updated - Help\HTML\about_compiler_checks.htm 08/05/2007
-Updated - Help\HTML\dlg_configcompilers.htm 08/05/2007
+New     - Res\Img\Delphi2007.bmp 08 May 2007
+Updated - Help\HTML\about_compiler_checks.htm 08 May 2007
+Updated - Help\HTML\dlg_configcompilers.htm 08 May 2007
 
 --------------------------------------------------------------------------------
-v1.6.1 (build 91) of 09/05/2007
+v1.6.1 (build 91) of 09 May 2007
 --------------------------------------------------------------------------------
 Updated - FmMain.pas 1.21
-Updated - VCodeSnip.vi 09/05/2007
+Updated - VCodeSnip.vi 09 May 2007
 Updated - Install\CodeSnip.iss 1.41
 
 --------------------------------------------------------------------------------
-v1.6.2 (build 92) of 12/05/2007
+v1.6.2 (build 92) of 12 May 2007
 --------------------------------------------------------------------------------
 Updated - FmUpdateDlg.pas 1.3
 Updated - FrNews.pas 1.3
 Updated - UNews.pas 1.1
-Updated - VCodeSnip.vi 12/05/2007
+Updated - VCodeSnip.vi 12 May 2007
 Updated - Install\CodeSnip.iss 1.42
 
 --------------------------------------------------------------------------------
-v1.6.3 (build 93) of 13/05/2007
+v1.6.3 (build 93) of 13 May 2007
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.23
 Updated - FmPreviewDlg.pas 1.3
@@ -1908,13 +1908,13 @@ Updated - UMemoHelper.pas 1.1
           (renamed from UMemoInfo.pas)
 Updated - UMemoProgBarMgr.pas 1.1
 Updated - UWBUIMgr.pas 2.1
-Updated - VCodeSnip.vi 13/05/2007
+Updated - VCodeSnip.vi 13 May 2007
 Updated - Install\CodeSnip.iss 1.43
-Updated - Help\HTML\dlg_savesnippet.htm 13/05/2007
-Updated - Help\HTML\dlg_saveunit.htm 13/05/2007
+Updated - Help\HTML\dlg_savesnippet.htm 13 May 2007
+Updated - Help\HTML\dlg_saveunit.htm 13 May 2007
 
 --------------------------------------------------------------------------------
-v1.6.4 (build 94) of 02/07/2007
+v1.6.4 (build 94) of 02 Jul 2007
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.24
 Updated - FrSourcePrefs.pas 1.1
@@ -1930,11 +1930,11 @@ Updated - USourceFileInfo.pas 1.1
 Updated - USourceFileOutputMgr.pas 1.1
 Updated - USyntaxHiliters.pas 1.4
 Updated - UUtils.pas 1.5
-Updated - VCodeSnip.vi 02/07/2007
+Updated - VCodeSnip.vi 02 Jul 2007
 Updated - Install\CodeSnip.iss 1.44
 
 --------------------------------------------------------------------------------
-v1.7 (build 95) of 08/09/2007
+v1.7 (build 95) of 08 Sep 2007
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.25
 Updated - FmMain.pas 1.22
@@ -1963,48 +1963,48 @@ Updated - URTFBuilder.pas 1.2
 New     - URTFMerger.pas 1.0
 Updated - URTFUtils.pas 1.5
 Updated - USettings.pas 1.3
-Updated - VCodeSnip.vi 06/09/2007
+Updated - VCodeSnip.vi 06 Sep 2007
 Updated - Install\CodeSnip.iss 1.45
 New     - Install\UpdateIni.ps 1.0
-Updated - Help\CodeSnip.hhp 04/09/2007
-Updated - Help\Index.hhk 04/09/2007
-Updated - Help\TOC.hhc 07/09/2007
-New     - Help\HTML\dlg_print.htm 07/09/2007
-New     - Help\HTML\dlg_pagesetup.htm 04/09/2007
-Updated - Help\HTML\dlg_preferences.htm 04/09/2007
-New     - Help\HTML\dlg_prefs_general.htm 07/09/2007
-New     - Help\HTML\dlg_prefs_hiliter.htm 07/09/2007
-New     - Help\HTML\dlg_prefs_printing.htm 07/09/2007
-New     - Help\HTML\dlg_prefs_sourcecode.htm 04/09/2007
-Updated - Help\HTML\menu_file.htm 04/09/2007
-Updated - Help\HTML\tasks.htm 04/09/2007
-Updated - Help\HTML\task_copysnippet.htm 04/09/2007
-New     - Help\HTML\task_printroutine.htm 07/09/2007
-New     - Help\Images\Print.gif 04/09/2007
+Updated - Help\CodeSnip.hhp 04 Sep 2007
+Updated - Help\Index.hhk 04 Sep 2007
+Updated - Help\TOC.hhc 07 Sep 2007
+New     - Help\HTML\dlg_print.htm 07 Sep 2007
+New     - Help\HTML\dlg_pagesetup.htm 04 Sep 2007
+Updated - Help\HTML\dlg_preferences.htm 04 Sep 2007
+New     - Help\HTML\dlg_prefs_general.htm 07 Sep 2007
+New     - Help\HTML\dlg_prefs_hiliter.htm 07 Sep 2007
+New     - Help\HTML\dlg_prefs_printing.htm 07 Sep 2007
+New     - Help\HTML\dlg_prefs_sourcecode.htm 04 Sep 2007
+Updated - Help\HTML\menu_file.htm 04 Sep 2007
+Updated - Help\HTML\tasks.htm 04 Sep 2007
+Updated - Help\HTML\task_copysnippet.htm 04 Sep 2007
+New     - Help\HTML\task_printroutine.htm 07 Sep 2007
+New     - Help\Images\Print.gif 04 Sep 2007
 
 --------------------------------------------------------------------------------
-v1.7.1 (build 96) of 22/09/2007
+v1.7.1 (build 96) of 22 Sep 2007
 --------------------------------------------------------------------------------
 Updated - FmAboutDlg.pas 2.1
 Updated - FmMain.pas 1.23
 Updated - UAppInfo.pas 1.5
 Updated - UContributors.pas 1.1
-Updated - VCodeSnip.vi 22/09/2007
-Updated - Help\HTML\dlg_about.htm 22/09/2007
-Updated - Help\HTML\menu_help.htm 22/09/2007
+Updated - VCodeSnip.vi 22 Sep 2007
+Updated - Help\HTML\dlg_about.htm 22 Sep 2007
+Updated - Help\HTML\menu_help.htm 22 Sep 2007
 Updated - Install\CodeSnip.iss 1.46
 Updated - Res\HTML\dlg-about-database-tplt.html 1.1
 
 --------------------------------------------------------------------------------
-v1.7.2 (build 97) of 24/09/2007
+v1.7.2 (build 97) of 24 Sep 2007
 --------------------------------------------------------------------------------
 Updated - FmMain.pas 1.24
 Updated - UWaitForActionUI.pas 1.3
-Updated - VCodeSnip.vi 24/09/2007
+Updated - VCodeSnip.vi 24 Sep 2007
 Updated - Install\CodeSnip.iss 1.47
 
 --------------------------------------------------------------------------------
-v1.7.3 (build 98) of 27/09/2007
+v1.7.3 (build 98) of 27 Sep 2007
 --------------------------------------------------------------------------------
 Deleted - UCommonDlgAligner.pas
 Updated - FmWaitDlg.pas 2.1
@@ -2021,21 +2021,21 @@ Updated - IntfAligner.pas 1.1
 Updated - CodeSnip.dpr 1.26
 Updated - FmSplash.pas 1.1
 New     - UDlgAligner.pas 1.0
-Updated - VCodeSnip.vi 27/09/2007
+Updated - VCodeSnip.vi 27 Sep 2007
 Updated - Install\CodeSnip.iss 1.48
 
 --------------------------------------------------------------------------------
-v1.7.4 (build 99) of 14/10/2007
+v1.7.4 (build 99) of 14 Oct 2007
 --------------------------------------------------------------------------------
 Updated - FrInfo.pas 1.4
 Updated - USearch.pas 2.2
 Updated - UWBHighlighter.pas 1.3
-Updated - VCodeSnip.vi 14/10/2007
+Updated - VCodeSnip.vi 14 Oct 2007
 Updated - Install\CodeSnip.iss 1.49
 Updated - Res\HTML\dlg-about-database-tplt.html 1.2
 
 --------------------------------------------------------------------------------
-v1.7.5 (build 100) of 17/10/2007
+v1.7.5 (build 100) of 17 Oct 2007
 --------------------------------------------------------------------------------
 Updated - FrGeneralPrefs.pas 1.1
 Updated - FrHiliterPrefs.pas 1.2
@@ -2046,12 +2046,12 @@ Updated - UHiliterPersist.pas 1.1
 Updated - UMeasurement.pas 1.1
 Updated - UPreferences.pas 2.1
 Updated - USettings.pas 1.4
-Updated - VCodeSnip.vi 17/10/2007
+Updated - VCodeSnip.vi 17 Oct 2007
 Updated - Install\CodeSnip.iss 1.50
 Updated - Install\UpdateIni.ps 1.1
 
 --------------------------------------------------------------------------------
-v1.7.6 (build 101) of 18/10/2007
+v1.7.6 (build 101) of 18 Oct 2007
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.27
 Updated - FrBrowserBase.pas 2.4
@@ -2059,7 +2059,7 @@ Updated - UHTMLDocHelper.pas 1.1
 New     - UHTMLEvents.pas 1.0
 New     - USimpleDispatch.pas 1.0
 Updated - UWBIOMgr.pas 1.2
-Updated - VCodeSnip.vi 18/10/2007
+Updated - VCodeSnip.vi 18 Oct 2007
 Updated - Install\CodeSnip.iss 1.51
 Updated - Res\HTML\comp-na.html 1.6
 Updated - Res\HTML\comp-routine-tplt.html 1.3
@@ -2067,14 +2067,14 @@ Updated - Res\HTML\nodata-welcome.html 1.6
 Updated - Res\HTML\welcome.html 1.7
 
 --------------------------------------------------------------------------------
-v1.7.7 (build 102) of 29/10/2007
+v1.7.7 (build 102) of 29 Oct 2007
 --------------------------------------------------------------------------------
 Updated - UWaitForActionUI.pas 1.4
-Updated - VCodeSnip.vi 29/10/2007
+Updated - VCodeSnip.vi 29 Oct 2007
 Updated - Install\CodeSnip.iss 1.52
 
 --------------------------------------------------------------------------------
-v1.8 (build 103) of 04/11/2007
+v1.8 (build 103) of 04 Nov 2007
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.28
 Updated - FmMain.pas 1.25
@@ -2093,7 +2093,7 @@ New     - UIStringList.pas 1.0
 New     - ULinkAction.pas 1.0
 Updated - URoutineHTML.pas 1.3
 New     - UWBPopupMenus.pas 1.0
-Updated - VCodeSnip.vi 03/11/2007
+Updated - VCodeSnip.vi 03 Nov 2007
 Updated - Install\CodeSnip.iss 1.53
 Updated - Res\HTML\comp-na.html 1.7
 Updated - Res\HTML\comp-routine-tplt.html 1.4
@@ -2101,7 +2101,7 @@ Updated - Res\HTML\nodata-welcome.html 1.7
 Updated - Res\HTML\welcome.html 1.8
 
 --------------------------------------------------------------------------------
-v1.8.1 (build 104) of 04/11/2007
+v1.8.1 (build 104) of 04 Nov 2007
 --------------------------------------------------------------------------------
 Deleted - UHelpTopicAction.pas
 Deleted - UShellExecAction.pas
@@ -2116,9 +2116,9 @@ Updated - UNotifier.pas 1.2
 Updated - UProtocols.pas 2.1
 Updated - UWBExternal.pas 1.2
 Updated - UWBHelper.pas 1.1
-Updated - VCodeSnip.vi 04/11/2007
-Updated - AutoGen\IntfExternalObj.hdr 04/11/2007
-Updated - AutoGen\IntfExternalObj.pas 04/11/2007
+Updated - VCodeSnip.vi 04 Nov 2007
+Updated - AutoGen\IntfExternalObj.hdr 04 Nov 2007
+Updated - AutoGen\IntfExternalObj.pas 04 Nov 2007
 Updated - Install\CodeSnip.iss 1.54
 Updated - Res\HTML\comp-na.html 1.8
 Updated - Res\HTML\comp-routine-tplt.html 1.5
@@ -2128,7 +2128,7 @@ Updated - Res\HTML\nodata-welcome.html 1.8
 Updated - Res\HTML\welcome.html 1.9
 
 --------------------------------------------------------------------------------
-v1.8.2 (build 105) of 04/11/2007
+v1.8.2 (build 105) of 04 Nov 2007
 --------------------------------------------------------------------------------
 Updated - FmCompilersDlg.pas 1.3
 Updated - FmPreferencesDlg.pas 3.1
@@ -2142,11 +2142,11 @@ Updated - UIStringList.pas 1.1
 Updated - UPreferences.pas 2.2
 Updated - USyntaxHiliters.pas 1.5
 Updated - UUpdateMgr.pas 1.1
-Updated - VCodeSnip.vi 04/11/2007
+Updated - VCodeSnip.vi 04 Nov 2007
 Updated - Install\CodeSnip.iss 1.55
 
 --------------------------------------------------------------------------------
-v1.8.3 (build 106) of 05/11/2007
+v1.8.3 (build 106) of 05 Nov 2007
 --------------------------------------------------------------------------------
 Updated - FmAboutDlg.pas 2.2
 Updated - FrBrowserBase.pas 2.6
@@ -2159,11 +2159,11 @@ Updated - FrNewsHTML.pas 1.4
 Updated - UCSSBuilder.pas 1.2
 Updated - UCSSUtils.pas 1.1
 Updated - UHiliterCSS.pas 1.1
-Updated - VCodeSnip.vi 05/11/2007
+Updated - VCodeSnip.vi 05 Nov 2007
 Updated - Install\CodeSnip.iss 1.56
 
 --------------------------------------------------------------------------------
-v1.8.4 (build 107) of 22/04/2008
+v1.8.4 (build 107) of 22 Apr 2008
 --------------------------------------------------------------------------------
 Deleted - Dialogs.rc
 Updated - CodeSnip.dpr 1.30
@@ -2179,42 +2179,42 @@ Updated - FrSourcePrefs.pas 1.5
 Updated - Resources.rc 2.0
           (renamed from Images.rc)
 New     - UShowCaseCtrl.pas 1.0
-Updated - VCodeSnip.vi 21/04/2008
+Updated - VCodeSnip.vi 21 Apr 2008
 Updated - Install\CodeSnip.iss 2.0
 Updated - Res\HTML\dlg-about-database-tplt.html 1.3
-New     - Res\Misc\CodeSnip.manifest 21/04/2008
-Updated - Help\HTML\license.htm 22/04/2008
+New     - Res\Misc\CodeSnip.manifest 21 Apr 2008
+Updated - Help\HTML\license.htm 22 Apr 2008
 
 --------------------------------------------------------------------------------
-v1.8.5 (build 108) of 30/05/2008
+v1.8.5 (build 108) of 30 May 2008
 --------------------------------------------------------------------------------
 Updated - USaveSourceDlg.pas 1.3
 Updated - USourceFileOutputMgr.pas 1.3
 Updated - UUtils.pas 1.6
-Updated - VCodeSnip.vi 30/05/2008
+Updated - VCodeSnip.vi 30 May 2008
 Updated - Install\CodeSnip.iss 2.1
 
 --------------------------------------------------------------------------------
-v1.8.6 (build 109) of 02/06/2008
+v1.8.6 (build 109) of 02 Jun 2008
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.31
 Updated - FmWaitDlg.pas 2.2
 New     - UMarquee.pas 1.0
 Updated - USystemInfo.pas 1.1
 Updated - UWaitForActionUI.pas 1.5
-Updated - VCodeSnip.vi 02/06/2008
+Updated - VCodeSnip.vi 02 Jun 2008
 
 --------------------------------------------------------------------------------
-v1.8.7 (build 110) of 05/06/2008
+v1.8.7 (build 110) of 05 Jun 2008
 --------------------------------------------------------------------------------
 Updated - Build.bat 1.2
 Updated - FmMain.pas 1.28
 Updated - UMainDisplayMgr.pas 2.1
 Updated - UWindowSettings.pas 1.2
-Updated - VCodeSnip.vi 05/06/2008
+Updated - VCodeSnip.vi 05 Jun 2008
 
 --------------------------------------------------------------------------------
-v1.8.8 (build 111) of 16/06/2008
+v1.8.8 (build 111) of 16 Jun 2008
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.32
 Updated - FmBase.pas 2.2
@@ -2231,10 +2231,10 @@ Updated - UPageSetupDialogEx.pas 1.2
 Updated - USaveSourceDlg.pas 1.4
 Updated - USystemInfo.pas 1.2
 Updated - UThemesEx.pas 1.2
-Updated - VCodeSnip.vi 11/06/2008
+Updated - VCodeSnip.vi 11 Jun 2008
 
 --------------------------------------------------------------------------------
-v1.8.9 (build 112) of 10/08/2008
+v1.8.9 (build 112) of 10 Aug 2008
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.33
 Updated - FmCompilersDlg.pas 1.4
@@ -2242,14 +2242,14 @@ Updated - FrHiliterPrefs.pas 1.5
 New     - UColorBoxEx.pas 1.0
 New     - UColorDialogEx.pas 1.0
 New     - UOpenDialogEx.pas 1.0
-Updated - VCodeSnip.vi 10/08/2008
-Updated - Help\CodeSnip.hhp 10/08/2008
-Updated - Help\Index.hhk 10/08/2008
-New     - Help\HTML\dlg_elementcolour.htm 10/08/2008
-New     - Help\HTML\dlg_selectcompiler.htm 10/08/2008
+Updated - VCodeSnip.vi 10 Aug 2008
+Updated - Help\CodeSnip.hhp 10 Aug 2008
+Updated - Help\Index.hhk 10 Aug 2008
+New     - Help\HTML\dlg_elementcolour.htm 10 Aug 2008
+New     - Help\HTML\dlg_selectcompiler.htm 10 Aug 2008
 
 --------------------------------------------------------------------------------
-v1.8.10 (build 113) of 11/08/2008
+v1.8.10 (build 113) of 11 Aug 2008
 --------------------------------------------------------------------------------
 Updated - FmAboutDlg.pas 2.4
 Updated - FmBase.pas 2.3
@@ -2262,11 +2262,11 @@ Updated - UMultiCastEvents.pas 1.1
 Updated - UThemesEx.pas 1.3
 Updated - UTVCheckBoxes.pas 1.2
 Updated - UWBUIMgr.pas 2.2
-Updated - VCodeSnip.vi 11/08/2008
-Updated - Res\Img\TVCheckBoxes.bmp 11/08/2008
+Updated - VCodeSnip.vi 11 Aug 2008
+Updated - Res\Img\TVCheckBoxes.bmp 11 Aug 2008
 
 --------------------------------------------------------------------------------
-v1.8.11 (build 114) of 11/08/2008
+v1.8.11 (build 114) of 11 Aug 2008
 --------------------------------------------------------------------------------
 Deleted - Res\Img\Delphi3.bmp
 Deleted - Res\Img\Delphi2006w.bmp
@@ -2274,24 +2274,24 @@ Deleted - Res\Img\Delphi2007.bmp
 Updated - Resources.rc 2.1
 Updated - UBDSCompiler.pas 1.2
 Updated - UDelphiCompiler.pas 1.1
-Updated - VCodeSnip.vi 11/08/2008
-Updated - Res\Img\Delphi2_3.bmp 01/03/2005
+Updated - VCodeSnip.vi 11 Aug 2008
+Updated - Res\Img\Delphi2_3.bmp 01 Mar 2005
           (renamed from Res\Img\Delphi2.bmp)
-Updated - Res\Img\BDS.bmp 07/01/2006
+Updated - Res\Img\BDS.bmp 07 Jan 2006
           (renamed from Res\Img\Delphi2005w.bmp)
 
 --------------------------------------------------------------------------------
-v1.9 (build 115) of 14/08/2008
+v1.9 (build 115) of 14 Aug 2008
 --------------------------------------------------------------------------------
 Updated - UAppInfo.pas 1.6
 Updated - USettings.pas 1.5
-Updated - VCodeSnip.vi 13/08/2008
-Updated - Help\HTML\about_compiler_checks.htm 14/08/2008
-Updated - Help\HTML\dlg_configcompilers.htm 14/08/2008
-Updated - Help\HTML\dlg_update.htm 14/08/2008
-Updated - Help\HTML\privacy_statement.htm 14/08/2008
-Updated - Help\HTML\quickstart.htm 14/08/2008
-Updated - Help\HTML\task_update.htm 14/08/2008
+Updated - VCodeSnip.vi 13 Aug 2008
+Updated - Help\HTML\about_compiler_checks.htm 14 Aug 2008
+Updated - Help\HTML\dlg_configcompilers.htm 14 Aug 2008
+Updated - Help\HTML\dlg_update.htm 14 Aug 2008
+Updated - Help\HTML\privacy_statement.htm 14 Aug 2008
+Updated - Help\HTML\quickstart.htm 14 Aug 2008
+Updated - Help\HTML\task_update.htm 14 Aug 2008
 Updated - Install\CodeSnip.iss 2.2
 New     - Install\DataLocations.ps 1.0
 New     - Install\EventHandlers.ps 1.0
@@ -2300,11 +2300,11 @@ Updated - Install\UpdateIni.ps 2.0
 New     - InstallHelper\Build.bat 1.0
 New     - InstallHelper\CSSetupHelper.dpr 1.0
 New     - InstallHelper\CSSetupHelperRes.rc 1.0
-New     - InstallHelper\VCSSetupHelper.vi 14/08/2008
+New     - InstallHelper\VCSSetupHelper.vi 14 Aug 2008
 New     - InstallHelper\Res\CSSetupHelper.manifest 1.0
 
 --------------------------------------------------------------------------------
-v1.9.1 (build 116) of 24/08/2008
+v1.9.1 (build 116) of 24 Aug 2008
 --------------------------------------------------------------------------------
 Updated - Build.bat 1.3
 Updated - UDOSDateTime.pas 1.3
@@ -2323,12 +2323,12 @@ Updated - UStrStreamWriter.pas 1.1
 Updated - UTestCompile.pas 1.3
 Updated - UUtils.pas 1.7
 Updated - UWBUIMgr.pas 2.3
-Updated - VCodeSnip.vi 24/08/2008
+Updated - VCodeSnip.vi 24 Aug 2008
 Updated - InstallHelper\Build.bat 1.1
-Updated - InstallHelper\VCSSetupHelper.vi 24/08/2008
+Updated - InstallHelper\VCSSetupHelper.vi 24 Aug 2008
 
 --------------------------------------------------------------------------------
-v1.9.2 (build 117) of 24/08/2008
+v1.9.2 (build 117) of 24 Aug 2008
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.35
 Updated - FmAboutDlg.pas 2.5
@@ -2337,17 +2337,17 @@ Updated - UContributors.pas 1.2
 Updated - UIniDataReader.pas 1.2
 New     - USystemID.pas 1.0
 Updated - USystemInfo.pas 1.3
-Updated - VCodeSnip.vi 24/08/2008
+Updated - VCodeSnip.vi 24 Aug 2008
 
 --------------------------------------------------------------------------------
-v1.9.3 (build 118) of 24/08/2008
+v1.9.3 (build 118) of 24 Aug 2008
 --------------------------------------------------------------------------------
 Updated - UDownloadMgr.pas 1.1
 Updated - UUpdateMgr.pas 1.2
-Updated - VCodeSnip.vi 24/08/2008
+Updated - VCodeSnip.vi 24 Aug 2008
 
 --------------------------------------------------------------------------------
-v1.9.4 (build 119) of 25/08/2008
+v1.9.4 (build 119) of 25 Aug 2008
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.36
 Updated - FmCompilersDlg.pas 1.6
@@ -2361,10 +2361,10 @@ Updated - UExceptions.pas 1.1
 New     - UTestCompileUI.pas 1.0
 Updated - UThreadWrapper.pas 1.1
 Updated - UWebService.pas 1.1
-Updated - VCodeSnip.vi 25/08/2008
+Updated - VCodeSnip.vi 25 Aug 2008
 
 --------------------------------------------------------------------------------
-v2.0 (build 120) of 15/09/2008
+v2.0 (build 120) of 15 Sep 2008
 --------------------------------------------------------------------------------
 Deleted - Res\HTML\nodata-welcome.html
 Updated - CodeSnip.dpr 1.37
@@ -2418,35 +2418,35 @@ Updated - UWBExternal.pas 1.3
 Updated - UWBPopupMenus.pas 1.1
 New     - UXMLDataIO.pas 1.0
 New     - UXMLDocumentEx.pas 1.0
-Updated - VCodeSnip.vi 14/09/2008
-New     - 3rdParty\GIFImage.pas 18/01/2007
-Updated - AutoGen\IntfExternalObj.hdr 26/08/2008
-Updated - AutoGen\IntfExternalObj.pas 14/09/2008
-Updated - Help\CodeSnip.hhp 10/09/2008
-Updated - Help\Index.hhk 10/09/2008
-Updated - Help\TOC.hhc 10/09/2008
-Updated - Help\HTML\about_compiler_checks.htm 10/09/2008
-New     - Help\HTML\credits_url.htm 09/09/2008
-Updated - Help\HTML\detail_compilerchecks.htm 10/09/2008
-New     - Help\HTML\dlg_backup.htm 10/09/2008
-New     - Help\HTML\dlg_editsnippet.htm 13/09/2008
-New     - Help\HTML\dlg_restore.htm 10/09/2008
-Updated - Help\HTML\dlg_update.htm 11/09/2008
-Updated - Help\HTML\main_menu.htm 11/09/2008
-New     - Help\HTML\menu_database.htm 10/09/2008
-Updated - Help\HTML\menu_file.htm 09/09/2008
-Updated - Help\HTML\quickstart.htm 10/09/2008
-New     - Help\HTML\standard_format.htm 09/09/2008
-Updated - Help\HTML\tasks.htm 10/09/2008
-New     - Help\HTML\task_addsnippets.htm 14/09/2008
-Updated - Help\HTML\task_search.htm 10/09/2008
-Updated - Help\HTML\task_testcompile.htm 11/09/2008
-Updated - Help\HTML\task_update.htm 11/09/2008
-Updated - Help\HTML\welcome.htm 10/09/2008
-New     - Help\Images\AddSnippet.gif 09/09/2008
-New     - Help\Images\DeleteSnippet.gif 09/09/2008
-New     - Help\Images\EditSnippet.gif 09/09/2008
-New     - Help\Images\SaveDatabase.gif 09/09/2008
+Updated - VCodeSnip.vi 14 Sep 2008
+New     - 3rdParty\GIFImage.pas 18 Jan 2007
+Updated - AutoGen\IntfExternalObj.hdr 26 Aug 2008
+Updated - AutoGen\IntfExternalObj.pas 14 Sep 2008
+Updated - Help\CodeSnip.hhp 10 Sep 2008
+Updated - Help\Index.hhk 10 Sep 2008
+Updated - Help\TOC.hhc 10 Sep 2008
+Updated - Help\HTML\about_compiler_checks.htm 10 Sep 2008
+New     - Help\HTML\credits_url.htm 09 Sep 2008
+Updated - Help\HTML\detail_compilerchecks.htm 10 Sep 2008
+New     - Help\HTML\dlg_backup.htm 10 Sep 2008
+New     - Help\HTML\dlg_editsnippet.htm 13 Sep 2008
+New     - Help\HTML\dlg_restore.htm 10 Sep 2008
+Updated - Help\HTML\dlg_update.htm 11 Sep 2008
+Updated - Help\HTML\main_menu.htm 11 Sep 2008
+New     - Help\HTML\menu_database.htm 10 Sep 2008
+Updated - Help\HTML\menu_file.htm 09 Sep 2008
+Updated - Help\HTML\quickstart.htm 10 Sep 2008
+New     - Help\HTML\standard_format.htm 09 Sep 2008
+Updated - Help\HTML\tasks.htm 10 Sep 2008
+New     - Help\HTML\task_addsnippets.htm 14 Sep 2008
+Updated - Help\HTML\task_search.htm 10 Sep 2008
+Updated - Help\HTML\task_testcompile.htm 11 Sep 2008
+Updated - Help\HTML\task_update.htm 11 Sep 2008
+Updated - Help\HTML\welcome.htm 10 Sep 2008
+New     - Help\Images\AddSnippet.gif 09 Sep 2008
+New     - Help\Images\DeleteSnippet.gif 09 Sep 2008
+New     - Help\Images\EditSnippet.gif 09 Sep 2008
+New     - Help\Images\SaveDatabase.gif 09 Sep 2008
 Updated - Res\HTML\dlg-about-database-tplt.html 1.4
 Updated - Res\HTML\dlg-about-program-tplt.html 1.6
 Updated - Res\HTML\comp-na.html 1.9
@@ -2459,51 +2459,51 @@ Updated - Res\HTML\info-category-list-tplt.html 1.2
 Updated - Res\HTML\info-routine.html 1.1
 Updated - Res\HTML\info-routine-tplt.html 2.1
 Updated - Res\HTML\welcome.html 2.0
-Updated - Res\Img\configcomp.gif 13/09/2008
-New     - Res\Img\editsnippet.gif 14/09/2008
-Updated - Res\Img\hideunit.gif 13/09/2008
-Updated - Res\Img\viewunit.gif 13/09/2008
+Updated - Res\Img\configcomp.gif 13 Sep 2008
+New     - Res\Img\editsnippet.gif 14 Sep 2008
+Updated - Res\Img\hideunit.gif 13 Sep 2008
+Updated - Res\Img\viewunit.gif 13 Sep 2008
 Updated - Res\Misc\CodeSnip.manifest 1.1
 
 --------------------------------------------------------------------------------
-v2.0.1 (build 121) of 17/09/2008
+v2.0.1 (build 121) of 17 Sep 2008
 --------------------------------------------------------------------------------
 Updated - FmMain.pas 1.32
 Updated - USnippetsIO.pas 1.1
 Updated - UXMLDataIO.pas 1.1
-Updated - VCodeSnip.vi 17/09/2008
+Updated - VCodeSnip.vi 17 Sep 2008
 
 --------------------------------------------------------------------------------
-v2.0.2 (build 122) of 19/09/2008
+v2.0.2 (build 122) of 19 Sep 2008
 --------------------------------------------------------------------------------
 Updated - FmMain.pas 1.33
 Updated - USnippets.pas 2.1
 Updated - UUserDBMgr.pas 1.1
-Updated - VCodeSnip.vi 19/09/2008
+Updated - VCodeSnip.vi 19 Sep 2008
 Updated - Install\EventHandlers.ps 1.1
 
 --------------------------------------------------------------------------------
-v2.0.3 (build 123) of 20/09/2008
+v2.0.3 (build 123) of 20 Sep 2008
 --------------------------------------------------------------------------------
 Updated - FrSelectSnippets.pas 2.2
-Updated - VCodeSnip.vi 20/09/2008
+Updated - VCodeSnip.vi 20 Sep 2008
 
 --------------------------------------------------------------------------------
-v2.0.4 (build 124) of 21/09/2008
+v2.0.4 (build 124) of 21 Sep 2008
 --------------------------------------------------------------------------------
 Updated - FmUserDBEditDlg.pas 1.1
 Updated - USnippets.pas 2.2
-Updated - VCodeSnip.vi 21/09/2008
+Updated - VCodeSnip.vi 21 Sep 2008
 
 --------------------------------------------------------------------------------
-v2.0.5 (build 125) of 03/10/2008
+v2.0.5 (build 125) of 03 Oct 2008
 --------------------------------------------------------------------------------
 Updated - USaveDialogEx.pas 1.1
 Updated - USaveSourceDlg.pas 2.0
-Updated - VCodeSnip.vi 03/10/2008
+Updated - VCodeSnip.vi 03 Oct 2008
 
 --------------------------------------------------------------------------------
-v2.0.6 (build 126) of 05/10/2008
+v2.0.6 (build 126) of 05 Oct 2008
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.38
 Updated - FmMain.pas 1.34
@@ -2550,17 +2550,17 @@ Updated - UWaitForActionUI.pas 1.6
 Updated - UWBController.pas 1.1
 Updated - UWBHelper.pas 1.2
 Updated - UWBPopupMenus.pas 1.2
-Updated - VCodeSnip.vi 04/10/2008
+Updated - VCodeSnip.vi 04 Oct 2008
 
 --------------------------------------------------------------------------------
-v2.0.7 (build 127) of 05/10/2008
+v2.0.7 (build 127) of 05 Oct 2008
 --------------------------------------------------------------------------------
 Updated - FmBase.pas 2.4
 Updated - UAltBugFix.pas 1.2
-Updated - VCodeSnip.vi 05/10/2008
+Updated - VCodeSnip.vi 05 Oct 2008
 
 --------------------------------------------------------------------------------
-v2.1 (build 128) of 11/10/2008
+v2.1 (build 128) of 11 Oct 2008
 --------------------------------------------------------------------------------
 Updated - FmUserDBEditDlg.pas 1.2
 Updated - IntfCompilers.pas 1.3
@@ -2570,13 +2570,13 @@ Updated - UCompilers.pas 1.5
 Updated - UCompResHTML.pas 1.4
 Updated - UIniDataReader.pas 2.1
 Updated - UXMLDataIO.pas 1.2
-Updated - VCodeSnip.vi 11/10/2008
-Updated - Help\HTML\about_compiler_checks.htm 11/10/2008
-Updated - Help\HTML\dlg_configcompilers.htm 11/10/2008
-Updated - Help\HTML\dlg_editsnippet.htm 11/10/2008
+Updated - VCodeSnip.vi 11 Oct 2008
+Updated - Help\HTML\about_compiler_checks.htm 11 Oct 2008
+Updated - Help\HTML\dlg_configcompilers.htm 11 Oct 2008
+Updated - Help\HTML\dlg_editsnippet.htm 11 Oct 2008
 
 --------------------------------------------------------------------------------
-v2.2 (build 129) of 15/12/2008
+v2.2 (build 129) of 15 Dec 2008
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.39
 Updated - FmBugReportDlg.pas 2.2
@@ -2601,22 +2601,22 @@ Updated - USourceFileOutputMgr.pas 1.4
 New     - UStructs.pas 1.0
 Updated - UUtils.pas 1.9
 Updated - UWebService.pas 1.2
-Updated - VCodeSnip.vi 15/12/2008
-Updated - Help\CodeSnip.hhp 14/12/2008
-Updated - Help\Index.hhk 14/12/2008
-Updated - Help\TOC.hhc 14/12/2008
-New     - Help\HTML\dlg_export.htm 14/12/2008
-New     - Help\HTML\dlg_exportfile.htm 14/12/2008
-New     - Help\HTML\dlg_import.htm 14/12/2008
-New     - Help\HTML\dlg_submit.htm 14/12/2008
-Updated - Help\HTML\privacy_statement.htm 15/12/2008
-Updated - Help\HTML\quickstart.htm 14/12/2008
-Updated - Help\HTML\tasks.htm 14/12/2008
-New     - Help\HTML\task_export.htm 14/12/2008
-New     - Help\HTML\task_submit.htm 14/12/2008
+Updated - VCodeSnip.vi 15 Dec 2008
+Updated - Help\CodeSnip.hhp 14 Dec 2008
+Updated - Help\Index.hhk 14 Dec 2008
+Updated - Help\TOC.hhc 14 Dec 2008
+New     - Help\HTML\dlg_export.htm 14 Dec 2008
+New     - Help\HTML\dlg_exportfile.htm 14 Dec 2008
+New     - Help\HTML\dlg_import.htm 14 Dec 2008
+New     - Help\HTML\dlg_submit.htm 14 Dec 2008
+Updated - Help\HTML\privacy_statement.htm 15 Dec 2008
+Updated - Help\HTML\quickstart.htm 14 Dec 2008
+Updated - Help\HTML\tasks.htm 14 Dec 2008
+New     - Help\HTML\task_export.htm 14 Dec 2008
+New     - Help\HTML\task_submit.htm 14 Dec 2008
 
 --------------------------------------------------------------------------------
-v2.2.1 (build 130) of 16/12/2008
+v2.2.1 (build 130) of 16 Dec 2008
 --------------------------------------------------------------------------------
 Updated - FmBugReportDlg.pas 2.3
 Updated - FmCompilersDlg.pas 1.7
@@ -2645,10 +2645,10 @@ Updated - UWBHelper.pas 1.3
 Updated - UWBPopupMenus.pas 1.3
 Updated - UWindowSettings.pas 1.3
 Updated - UXMLDataIO.pas 1.3
-Updated - VCodeSnip.vi 15/12/2008
+Updated - VCodeSnip.vi 15 Dec 2008
 
 --------------------------------------------------------------------------------
-v2.2.2 (build 131) of 16/12/2008
+v2.2.2 (build 131) of 16 Dec 2008
 --------------------------------------------------------------------------------
 Updated - FmPrintDlg.pas 1.1
 Updated - FrPrintingPrefs.pas 1.3
@@ -2659,10 +2659,10 @@ Updated - UPageSetupDlgMgr.pas 1.1
 Updated - UPreferences.pas 2.3
 Updated - UPrintDocuments.pas 1.2
 Updated - UPrintInfo.pas 1.1
-Updated - VCodeSnip.vi 16/12/2008
+Updated - VCodeSnip.vi 16 Dec 2008
 
 --------------------------------------------------------------------------------
-v2.2.3 (build 132) of 17/12/2008
+v2.2.3 (build 132) of 17 Dec 2008
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr v1.40
 Updated - UCodeImportExport.pas 1.1
@@ -2670,16 +2670,16 @@ Updated - UXMLDataIO.pas 1.4
 New     - UXMLDocConsts.pas 1.0
 New     - UXMLDocHelper.pas 1.0
 Updated - UXMLDocumentEx.pas 1.1
-Updated - VCodeSnip.vi 17/12/2008
+Updated - VCodeSnip.vi 17 Dec 2008
 
 --------------------------------------------------------------------------------
-v2.2.4 (build 133) of 17/12/2008
+v2.2.4 (build 133) of 17 Dec 2008
 --------------------------------------------------------------------------------
 Updated - UMemoHelper.pas 1.3
-Updated - VCodeSnip.vi 17/12/2008
+Updated - VCodeSnip.vi 17 Dec 2008
 
 --------------------------------------------------------------------------------
-v2.2.5 (build 134) of 31/12/2008
+v2.2.5 (build 134) of 31 Dec 2008
 --------------------------------------------------------------------------------
 Deleted - Help\HTML\credits_url.htm
 Updated - CodeSnip.dpr 1.41
@@ -2708,12 +2708,12 @@ Updated - UUtils.pas 1.11
 Updated - UXMLDataIO.pas 1.5
 Updated - UXMLDocConsts.pas 1.1
 Updated - UXMLDocHelper.pas 1.1
-Updated - VCodeSnip.vi 31/12/2008
-Updated - Help\CodeSnip.hhp 29/12/2008
+Updated - VCodeSnip.vi 31 Dec 2008
+Updated - Help\CodeSnip.hhp 29 Dec 2008
 New     - Res\HTML\dlg-userdb-extra.html 1.0
 
 --------------------------------------------------------------------------------
-v2.3 (build 135) of 05/01/2009
+v2.3 (build 135) of 05 Jan 2009
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.42
 Updated - FmBase.pas 2.5
@@ -2731,16 +2731,16 @@ Updated - USourceGen.pas 1.4
 Updated - UStatusBarMgr.pas 1.4
 New     - UTextRoutineDoc.pas 1.0
 Updated - UUtils.pas 1.12
-Updated - VCodeSnip.vi 03/01/2009
-Updated - Help\HTML\dlg_editsnippet.htm 05/01/2009
-Updated - Help\HTML\dlg_selectroutines.htm 03/01/2009
-Updated - Help\HTML\license.htm 03/01/2009
-Updated - Help\HTML\menu_edit.htm 03/01/2009
-Updated - Help\HTML\task_addsnippets.htm 03/01/2009
-New     - Res\Img\Modified.bmp 02/01/2009
+Updated - VCodeSnip.vi 03 Jan 2009
+Updated - Help\HTML\dlg_editsnippet.htm 05 Jan 2009
+Updated - Help\HTML\dlg_selectroutines.htm 03 Jan 2009
+Updated - Help\HTML\license.htm 03 Jan 2009
+Updated - Help\HTML\menu_edit.htm 03 Jan 2009
+Updated - Help\HTML\task_addsnippets.htm 03 Jan 2009
+New     - Res\Img\Modified.bmp 02 Jan 2009
 
 --------------------------------------------------------------------------------
-v2.3.1 (build 136) of 06/01/2009
+v2.3.1 (build 136) of 06 Jan 2009
 --------------------------------------------------------------------------------
 Updated - FmCompErrorDlg.pas 2.1
 Updated - FmMain.pas 1.37
@@ -2748,10 +2748,10 @@ Updated - FmUserDBEditDlg.pas 1.6
 Updated - UCompilerBase.pas 1.3
 Updated - UTestCompile.pas 1.6
 Updated - UTestCompileUI.pas 1.2
-Updated - VCodeSnip.vi 06/01/2009
+Updated - VCodeSnip.vi 06 Jan 2009
 
 --------------------------------------------------------------------------------
-v2.3.2 (build 137) of 10/01/2009
+v2.3.2 (build 137) of 10 Jan 2009
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.43
 Updated - FmCompErrorDlg.pas 2.2
@@ -2775,11 +2775,11 @@ Updated - UMainDisplayMgr.pas 2.2
 Updated - UNotifier.pas 1.4
 Updated - URoutineDoc.pas 1.1
 Updated - USnippets.pas 2.6
-Updated - VCodeSnip.vi 09/01/2009
-Updated - Help\HTML\menu_database.htm 10/01/2009
+Updated - VCodeSnip.vi 09 Jan 2009
+Updated - Help\HTML\menu_database.htm 10 Jan 2009
 
 --------------------------------------------------------------------------------
-v2.3.3 (build 138) of 14/01/2009
+v2.3.3 (build 138) of 14 Jan 2009
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.44
 Updated - FmAboutDlg.pas 2.6
@@ -2833,17 +2833,17 @@ Updated - UUtils.pas 1.13
 Updated - UWaitForActionUI.pas 1.8
 Updated - UWebService.pas 1.3
 Updated - UXMLDataIO.pas 1.6
-Updated - VCodeSnip.vi 11/01/2009
+Updated - VCodeSnip.vi 11 Jan 2009
 
 --------------------------------------------------------------------------------
-v2.3.4 (build 139) of 16/01/2009
+v2.3.4 (build 139) of 16 Jan 2009
 --------------------------------------------------------------------------------
 Updated - UCopySnippetMgr.pas 1.4
-Updated - VCodeSnip.vi 16/01/2009
-Updated - Help\HTML\menu_edit.htm 15/01/2009
+Updated - VCodeSnip.vi 16 Jan 2009
+Updated - Help\HTML\menu_edit.htm 15 Jan 2009
 
 --------------------------------------------------------------------------------
-v2.3.5 (build 140) of 25/01/2009
+v2.3.5 (build 140) of 25 Jan 2009
 --------------------------------------------------------------------------------
 Deleted - Res\HTML\info-blank.html
 Updated - CodeSnip.dpr 1.45
@@ -2875,7 +2875,7 @@ Updated - UHTMLUtils.pas 2.1
 Updated - UImageTags.pas 1.2
 Updated - UWBHighlighter.pas 1.4
 Updated - UWBIOMgr.pas 1.3
-Updated - VCodeSnip.vi 25/01/2009
+Updated - VCodeSnip.vi 25 Jan 2009
 Updated - Res\HTML\comp-routine-tplt.html 2.0
 Updated - Res\HTML\comp-routine.js 1.6
 Updated - Res\HTML\detail.js 2.0
@@ -2890,24 +2890,24 @@ Updated - Res\HTML\welcome-tplt.html 3.0
           (renamed from Res\HTML\welcome.html)
 
 --------------------------------------------------------------------------------
-v2.3.6 (build 141) of 26/01/2009
+v2.3.6 (build 141) of 26 Jan 2009
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.46
 New     - ULocales.pas 1.0
 Updated - UMeasurement.pas 1.2
-Updated - VCodeSnip.vi 26/01/2009
+Updated - VCodeSnip.vi 26 Jan 2009
 
 --------------------------------------------------------------------------------
-v2.3.7 (build 142) of 26/04/2009
+v2.3.7 (build 142) of 26 Apr 2009
 --------------------------------------------------------------------------------
 Updated - FmCodeSubmitDlg.pas 1.1
 Updated - USettings.pas 1.6
-Updated - VCodeSnip.vi 26/04/2009
-Updated - Help\HTML\dlg_submit.htm 26/04/2009
-Updated - Help\HTML\privacy_statement.htm 26/04/2009
+Updated - VCodeSnip.vi 26 Apr 2009
+Updated - Help\HTML\dlg_submit.htm 26 Apr 2009
+Updated - Help\HTML\privacy_statement.htm 26 Apr 2009
 
 --------------------------------------------------------------------------------
-v2.4.0 (build 143) of 11/05/2009
+v2.4.0 (build 143) of 11 May 2009
 --------------------------------------------------------------------------------
 Updated - CodeSnip.dpr 1.47
 New     - FmDonateDlg.pas 1.0
@@ -2920,15 +2920,15 @@ Updated - UGraphicUtils.pas 1.4
 Updated - ULocales.pas 1.1
 New     - UPaypalDonateAction.pas 1.0
 Updated - USystemInfo.pas 1.4
-Updated - VCodeSnip.vi 11/05/2009
-Updated - Help\HTML\menu_help.htm 10/05/2009
-New     - Help\Images\Donate.gif 10/05/2009
+Updated - VCodeSnip.vi 11 May 2009
+Updated - Help\HTML\menu_help.htm 10 May 2009
+New     - Help\Images\Donate.gif 10 May 2009
 Updated - Install\CodeSnip.iss 2.3
 New     - Res\HTML\dlg-donate.html 1.0
-New     - Res\Img\pound-sign.png 10/05/2009
+New     - Res\Img\pound-sign.png 10 May 2009
 
 --------------------------------------------------------------------------------
-v2.4.1 (build 144) of 13/05/2009
+v2.4.1 (build 144) of 13 May 2009
 --------------------------------------------------------------------------------
 Deleted - UGlobals.pas
 Deleted - UParams.pas
@@ -2953,10 +2953,10 @@ Updated - USnippetSourceGen.pas 1.5
 Updated - UUpdateMgr.pas 1.3
 New     - UWebInfo.pas 1.0
 Updated - UWebService.pas 1.4
-Updated - VCodeSnip.vi 13/05/2009
+Updated - VCodeSnip.vi 13 May 2009
 
 --------------------------------------------------------------------------------
-v3.0 (build 145) of 28/06/2009
+v3.0 (build 145) of 28 Jun 2009
 --------------------------------------------------------------------------------
 Deleted - Help\HTML\standard_format.htm
 Deleted - Help\Images\HideUnit.gif
@@ -3061,70 +3061,70 @@ Updated - UWBPopupMenus.pas 1.4
 Updated - UXMLDataIO.pas 1.7
 Updated - UXMLDocConsts.pas 1.2
 Updated - UXMLDocHelper.pas 1.2
-Updated - VCodeSnip.vi 15/06/2009
-Updated - AutoGen\IntfExternalObj.hdr 14/05/2009
-Updated - Help\CodeSnip.hhp 23/06/2009
-Updated - Help\Index.hhk 07/06/2009
-Updated - Help\TOC.hhc 13/06/2009
-Updated - Help\CSS\codesnip.css 13/06/2009
-Updated - Help\HTML\about_compiler_checks.htm 07/06/2009
-Updated - Help\HTML\detail_compilerchecks.htm 07/06/2009
-Updated - Help\HTML\detail_information.htm 07/06/2009
-Updated - Help\HTML\detail_pane.htm 07/06/2009
-New     - Help\HTML\dlg_dependencies.htm 06/06/2009
-Updated - Help\HTML\dlg_editsnippet.htm 23/06/2009
-Updated - Help\HTML\dlg_export.htm 05/06/2009
-Updated - Help\HTML\dlg_exportfile.htm 07/06/2009
-Updated - Help\HTML\dlg_findcompiler.htm 07/06/2009
-Updated - Help\HTML\dlg_findxrefs.htm 07/06/2009
-Updated - Help\HTML\dlg_import.htm 05/06/2009
-Updated - Help\HTML\dlg_prefs_general.htm 07/06/2009
-Updated - Help\HTML\dlg_prefs_hiliter.htm 07/06/2009
-Updated - Help\HTML\dlg_prefs_printing.htm 07/06/2009
-Updated - Help\HTML\dlg_prefs_sourcecode.htm 07/06/2009
-Updated - Help\HTML\dlg_print.htm 07/06/2009
-Updated - Help\HTML\dlg_saveunit.htm 07/06/2009
-Updated - Help\HTML\dlg_selectcompiler.htm 07/06/2009
-Updated - Help\HTML\dlg_selectroutines.htm 16/05/2009
-Updated - Help\HTML\dlg_submit.htm 05/06/2009
-Updated - Help\HTML\dlg_update.htm 07/06/2009
-Updated - Help\HTML\main_display.htm 07/06/2009
-Updated - Help\HTML\main_menu.htm 07/06/2009
-Updated - Help\HTML\menu_database.htm 17/06/2009
-Updated - Help\HTML\menu_edit.htm 07/06/2009
-Updated - Help\HTML\menu_file.htm 07/06/2009
-Updated - Help\HTML\menu_help.htm 17/06/2009
-Updated - Help\HTML\menu_search.htm 07/06/2009
-Updated - Help\HTML\menu_view.htm 07/06/2009
-Updated - Help\HTML\navigation.htm 07/06/2009
-Updated - Help\HTML\overview_pane.htm 07/06/2009
-Updated - Help\HTML\privacy_statement.htm 25/06/2009
-Updated - Help\HTML\quickstart.htm 07/06/2009
-New     - Help\HTML\reml.htm 23/06/2009
-New     - Help\HTML\snippet_constant.htm 13/06/2009
-New     - Help\HTML\snippet_freeform.htm 08/06/2009
-New     - Help\HTML\snippet_kinds.htm 13/06/2009
-New     - Help\HTML\snippet_routine.htm 13/06/2009
-New     - Help\HTML\snippet_type.htm 13/06/2009
-Updated - Help\HTML\task_addsnippets.htm 07/06/2009
-Updated - Help\HTML\task_copysnippet.htm 07/06/2009
-Updated - Help\HTML\task_customise.htm 07/06/2009
-Updated - Help\HTML\task_export.htm 08/06/2009
-Updated - Help\HTML\task_generateunit.htm 07/06/2009
-Updated - Help\HTML\task_printroutine.htm 07/06/2009
-Updated - Help\HTML\task_savesnippet.htm 07/06/2009
-Updated - Help\HTML\task_search.htm 07/06/2009
-Updated - Help\HTML\task_submit.htm 07/06/2009
-Updated - Help\HTML\task_testcompile.htm 07/06/2009
-Updated - Help\HTML\tasks.htm 07/06/2009
-Updated - Help\HTML\welcome.htm 07/06/2009
-New     - Help\Images\BackupDatabase.gif 17/06/2009
-New     - Help\Images\Collapse.gif 05/06/2009
-New     - Help\Images\Dependencies.gif 05/06/2009
-New     - Help\Images\Expand.gif 05/06/2009
-New     - Help\Images\License.gif 17/06/2009
-New     - Help\Images\RestoreDatabase.gif 17/06/2009
-New     - Help\Images\ViewTestUnit.gif 17/06/2009
+Updated - VCodeSnip.vi 15 Jun 2009
+Updated - AutoGen\IntfExternalObj.hdr 14 May 2009
+Updated - Help\CodeSnip.hhp 23 Jun 2009
+Updated - Help\Index.hhk 07 Jun 2009
+Updated - Help\TOC.hhc 13 Jun 2009
+Updated - Help\CSS\codesnip.css 13 Jun 2009
+Updated - Help\HTML\about_compiler_checks.htm 07 Jun 2009
+Updated - Help\HTML\detail_compilerchecks.htm 07 Jun 2009
+Updated - Help\HTML\detail_information.htm 07 Jun 2009
+Updated - Help\HTML\detail_pane.htm 07 Jun 2009
+New     - Help\HTML\dlg_dependencies.htm 06 Jun 2009
+Updated - Help\HTML\dlg_editsnippet.htm 23 Jun 2009
+Updated - Help\HTML\dlg_export.htm 05 Jun 2009
+Updated - Help\HTML\dlg_exportfile.htm 07 Jun 2009
+Updated - Help\HTML\dlg_findcompiler.htm 07 Jun 2009
+Updated - Help\HTML\dlg_findxrefs.htm 07 Jun 2009
+Updated - Help\HTML\dlg_import.htm 05 Jun 2009
+Updated - Help\HTML\dlg_prefs_general.htm 07 Jun 2009
+Updated - Help\HTML\dlg_prefs_hiliter.htm 07 Jun 2009
+Updated - Help\HTML\dlg_prefs_printing.htm 07 Jun 2009
+Updated - Help\HTML\dlg_prefs_sourcecode.htm 07 Jun 2009
+Updated - Help\HTML\dlg_print.htm 07 Jun 2009
+Updated - Help\HTML\dlg_saveunit.htm 07 Jun 2009
+Updated - Help\HTML\dlg_selectcompiler.htm 07 Jun 2009
+Updated - Help\HTML\dlg_selectroutines.htm 16 May 2009
+Updated - Help\HTML\dlg_submit.htm 05 Jun 2009
+Updated - Help\HTML\dlg_update.htm 07 Jun 2009
+Updated - Help\HTML\main_display.htm 07 Jun 2009
+Updated - Help\HTML\main_menu.htm 07 Jun 2009
+Updated - Help\HTML\menu_database.htm 17 Jun 2009
+Updated - Help\HTML\menu_edit.htm 07 Jun 2009
+Updated - Help\HTML\menu_file.htm 07 Jun 2009
+Updated - Help\HTML\menu_help.htm 17 Jun 2009
+Updated - Help\HTML\menu_search.htm 07 Jun 2009
+Updated - Help\HTML\menu_view.htm 07 Jun 2009
+Updated - Help\HTML\navigation.htm 07 Jun 2009
+Updated - Help\HTML\overview_pane.htm 07 Jun 2009
+Updated - Help\HTML\privacy_statement.htm 25 Jun 2009
+Updated - Help\HTML\quickstart.htm 07 Jun 2009
+New     - Help\HTML\reml.htm 23 Jun 2009
+New     - Help\HTML\snippet_constant.htm 13 Jun 2009
+New     - Help\HTML\snippet_freeform.htm 08 Jun 2009
+New     - Help\HTML\snippet_kinds.htm 13 Jun 2009
+New     - Help\HTML\snippet_routine.htm 13 Jun 2009
+New     - Help\HTML\snippet_type.htm 13 Jun 2009
+Updated - Help\HTML\task_addsnippets.htm 07 Jun 2009
+Updated - Help\HTML\task_copysnippet.htm 07 Jun 2009
+Updated - Help\HTML\task_customise.htm 07 Jun 2009
+Updated - Help\HTML\task_export.htm 08 Jun 2009
+Updated - Help\HTML\task_generateunit.htm 07 Jun 2009
+Updated - Help\HTML\task_printroutine.htm 07 Jun 2009
+Updated - Help\HTML\task_savesnippet.htm 07 Jun 2009
+Updated - Help\HTML\task_search.htm 07 Jun 2009
+Updated - Help\HTML\task_submit.htm 07 Jun 2009
+Updated - Help\HTML\task_testcompile.htm 07 Jun 2009
+Updated - Help\HTML\tasks.htm 07 Jun 2009
+Updated - Help\HTML\welcome.htm 07 Jun 2009
+New     - Help\Images\BackupDatabase.gif 17 Jun 2009
+New     - Help\Images\Collapse.gif 05 Jun 2009
+New     - Help\Images\Dependencies.gif 05 Jun 2009
+New     - Help\Images\Expand.gif 05 Jun 2009
+New     - Help\Images\License.gif 17 Jun 2009
+New     - Help\Images\RestoreDatabase.gif 17 Jun 2009
+New     - Help\Images\ViewTestUnit.gif 17 Jun 2009
 Updated - Install\DataLocations.ps 1.1
 Updated - Install\EventHandlers.ps 1.2
 Updated - Install\UpdateDBase.ps 2.0
@@ -3152,17 +3152,17 @@ Updated - Res\HTML\info-snippet-tplt.html 3.1
           (renamed from Res\HTML\info-routine-tplt.html)
 Updated - Res\HTML\nocompcheck-body.html 2.1
 Updated - Res\HTML\welcome-tplt.html 3.1
-New     - Res\Img\cancel.png 19/06/2009
-New     - Res\Img\cancel-glow.png 19/06/2009
-New     - Res\Img\click-me.png 19/06/2009
-New     - Res\Img\donate-btn.gif 19/06/2009
-New     - Res\Img\easter-egg-bottom.png 26/05/2009
-New     - Res\Img\easter-egg-top.png 26/05/2009
-New     - Res\Img\pj.jpg 25/05/2009
-New     - Res\Img\Splash.gif 17/06/2009
-New     - Res\Img\symbol-exclamation.png 16/06/2009
-New     - Res\Img\symbol-information.png 16/06/2009
-New     - Res\Img\tvr.jpg 25/05/2009
+New     - Res\Img\cancel.png 19 Jun 2009
+New     - Res\Img\cancel-glow.png 19 Jun 2009
+New     - Res\Img\click-me.png 19 Jun 2009
+New     - Res\Img\donate-btn.gif 19 Jun 2009
+New     - Res\Img\easter-egg-bottom.png 26 May 2009
+New     - Res\Img\easter-egg-top.png 26 May 2009
+New     - Res\Img\pj.jpg 25 May 2009
+New     - Res\Img\Splash.gif 17 Jun 2009
+New     - Res\Img\symbol-exclamation.png 16 Jun 2009
+New     - Res\Img\symbol-information.png 16 Jun 2009
+New     - Res\Img\tvr.jpg 25 May 2009
 Updated - Res\Misc\CodeSnip.manifest 1.2
 
 
