@@ -335,7 +335,7 @@ type
     constructor Create; overload;
       {Class constructor. Creates new empty list.
       }
-    constructor Create(const Strs: TStringList); overload;
+    constructor Create(const Strs: TStrings); overload;
       {Class constructor. Creates new list containing specified strings.
         @param Strs [in] List of strings to be stored in list.
       }
@@ -452,9 +452,7 @@ procedure TIStringList.Assign(const Src: IInterface);
   }
 begin
   if not Supports(Src, IStringList) then
-    raise EBug.Create(                                     // ** do not localise
-      'TIStringList.Assign: Src must support IStringList'
-    );
+    raise EBug.Create(ClassName + '.Assign: Src must support IStringList');
   Clear;
   Add(Src as IStringList);
 end;
@@ -525,7 +523,7 @@ begin
   fStrings := TStringList.Create;
 end;
 
-constructor TIStringList.Create(const Strs: TStringList);
+constructor TIStringList.Create(const Strs: TStrings);
   {Class constructor. Creates new list containing specified strings.
     @param Strs [in] List of strings to be stored in list.
   }
