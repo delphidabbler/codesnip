@@ -245,6 +245,7 @@ procedure THiliterPrefsFrame.Activate(const Prefs: IPreferences);
   }
 begin
   (fAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
+  Prefs.CustomHiliteColours.CopyTo(fColorDlg.CustomColors, True);
   UpdateControls;
 end;
 
@@ -445,6 +446,7 @@ procedure THiliterPrefsFrame.Deactivate(const Prefs: IPreferences);
   }
 begin
   Prefs.HiliteAttrs := fAttrs;
+  Prefs.CustomHiliteColours.CopyFrom(fColorDlg.CustomColors, True);
 end;
 
 destructor THiliterPrefsFrame.Destroy;
