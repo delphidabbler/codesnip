@@ -128,7 +128,6 @@ begin
   begin
     CustomColor := ColorToRGB(TColor(Self.Items.Objects[0]));
     fColorDialog.Color := CustomColor;
-    fColorDialog.CustomColors.Text := Format('ColorA=%.8x', [CustomColor]);
     Result := fColorDialog.Execute;
     if Result then
     begin
