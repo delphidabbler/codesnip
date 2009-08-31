@@ -169,7 +169,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UCtrlArranger, USettings, FmGenericDlg;
+  UCtrlArranger, UIStringList, USettings, FmGenericDlg;
 
 
 {$R *.dfm}
@@ -378,17 +378,13 @@ procedure TTextSearchParams.ReadValues;
   {Reads search parameters and history list from persistent storage.
   }
 var
-  Idx: Integer;               // loops thru entries in history list
   Storage: ISettingsSection;  // object used to access persistent storage
 begin
-  // Initialise fields
-  fHistoryList.Clear;
-  fOptions := [];
   // Read data from persistent storage
   Storage := Settings.ReadSection(ssFindText);
   // Update data
-  for Idx := 0 to Pred(StrToIntDef(Storage.ItemValues['HistoryCount'], 0)) do
-    fHistoryList.Add(Storage.ItemValues[Format('History%d', [Idx])]);
+  Storage.GetStrings('HistoryCount', 'History%d').CopyTo(fHistoryList, True);
+  fOptions := [];
   if Storage.ItemValues['MatchCase'] = '1' then
     Include(fOptions, soMatchCase);
   if Storage.ItemValues['WholeWord'] = '1' then
@@ -426,15 +422,14 @@ procedure TTextSearchParams.WriteValues;
   {Writes search parameters and history list to persistent storage.
   }
 var
-  Idx: Integer;               // loops thru entries in history list
   Storage: ISettingsSection;  // object used to access persistent storage
 begin
   // Create new empty data object
   Storage := Settings.EmptySection(ssFindText);
   // Update data object
-  Storage.ItemValues['HistoryCount'] := IntToStr(fHistoryList.Count);
-  for Idx := 0 to Pred(fHistoryList.Count) do
-    Storage.ItemValues[Format('History%d', [Idx])] := fHistoryList[Idx];
+  Storage.SetStrings(
+    'HistoryCount', 'History%d', TIStringList.Create(fHistoryList)
+  );
   Storage.ItemValues['MatchCase'] := IntToStr(Ord(soMatchCase in fOptions));
   Storage.ItemValues['WholeWord'] := IntToStr(Ord(soWholeWord in fOptions));
   Storage.ItemValues['Logic'] := IntToStr(Ord(fLogic));
