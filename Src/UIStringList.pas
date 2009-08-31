@@ -78,7 +78,7 @@ type
         @param Str [in] String to be added to list.
         @return Index of new string in list.
       }
-    procedure Add(const Strs: TStringList); overload;
+    procedure Add(const Strs: TStrings); overload;
       {Adds all items from a string list to end of list.
         @param Strs [in] String list to be added.
       }
@@ -165,11 +165,17 @@ type
       {Creates an enumerator for the string list.
         @return Enumerator instance.
       }
-    procedure CopyTo(const SL: TStringList; const Overwrite: Boolean = False);
+    procedure CopyTo(const SL: TStrings; const Overwrite: Boolean = False);
       {Copies this object's string to a string list.
         @param SL [in] String list to receive copy of this object's strings.
         @param Overwrite [in] Flag indicating whether to clear SL before copying
           (True) or to append strings to SL (False).
+      }
+    procedure CopyFrom(const SL: TStrings; const Overwrite: Boolean = False);
+      {Copies a string list's strings to this object.
+        @param SL [in] String list containing strings to be copies.
+        @param Overwrite [in] Flag indicating whether to clear this object
+          before copying (True) or to append the strings to this object (False).
       }
   end;
 
@@ -220,7 +226,7 @@ type
         @param Str [in] String to be added to list.
         @return Index of new string in list.
       }
-    procedure Add(const Strs: TStringList); overload;
+    procedure Add(const Strs: TStrings); overload;
       {Adds all items from a string list to end of list.
         @param Strs [in] String list to be added.
       }
@@ -301,11 +307,17 @@ type
       {Creates an enumerator for the string list.
         @return Enumerator instance.
       }
-    procedure CopyTo(const SL: TStringList; const Overwrite: Boolean = False);
+    procedure CopyTo(const SL: TStrings; const Overwrite: Boolean = False);
       {Copies this object's string to a string list.
         @param SL [in] String list to receive copy of this object's strings.
         @param Overwrite [in] Flag indicating whether to clear SL before copying
           (True) or to append strings to SL (False).
+      }
+    procedure CopyFrom(const SL: TStrings; const Overwrite: Boolean = False);
+      {Copies a string list's strings to this object.
+        @param SL [in] String list containing strings to be copies.
+        @param Overwrite [in] Flag indicating whether to clear this object
+          before copying (True) or to append the strings to this object (False).
       }
     { IAssignable methods }
     procedure Assign(const Src: IInterface);
@@ -369,7 +381,7 @@ uses
 
 { TIStringList }
 
-procedure TIStringList.Add(const Strs: TStringList);
+procedure TIStringList.Add(const Strs: TStrings);
   {Adds all items from a string list to end of list.
     @param Strs [in] String list to be added.
   }
@@ -471,7 +483,20 @@ begin
   Result := IndexOf(Str) >= 0;
 end;
 
-procedure TIStringList.CopyTo(const SL: TStringList; const Overwrite: Boolean);
+procedure TIStringList.CopyFrom(const SL: TStrings; const Overwrite: Boolean);
+  {Copies a string list's strings to this object.
+    @param SL [in] String list containing strings to be copies.
+    @param Overwrite [in] Flag indicating whether to clear this object before
+      copying (True) or to append the strings to this object (False).
+  }
+begin
+  if OverWrite then
+    fStrings.Assign(SL)
+  else
+    Self.Add(SL);
+end;
+
+procedure TIStringList.CopyTo(const SL: TStrings; const Overwrite: Boolean);
   {Copies this object's string to a string list.
     @param SL [in] String list to receive copy of this object's strings.
     @param Overwrite [in] Flag indicating whether to clear SL before copying
