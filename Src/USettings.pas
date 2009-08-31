@@ -40,6 +40,11 @@ unit USettings;
 interface
 
 
+uses
+  // Project
+  UIStringList;
+
+
 type
 
   {
@@ -114,6 +119,27 @@ type
       {Encrypts and sets a named value.
         @param Name [in] Name of value.
         @param Value [in] Unencryped value to be encrypted.
+      }
+    function GetStrings(const CountName, ItemFmt: string): IStringList;
+      {Reads a string list from storage. There must be a value containing number
+      of elements and correct number of further elements containing each entry
+      in string list.
+        @param CountName [in] Name of value containing number of elements in
+          string list.
+        @param ItemFmt [in] Format string that provides a template names of
+          values of list items. ItemFmt must contain a single %d specifier that
+          is replaced by the item number.
+        @return Required string list.
+      }
+    procedure SetStrings(const CountName, ItemFmt: string;
+      const Value: IStringList);
+      {Stores a string list in storage.
+        @param CountName [in] Name of value that stores number of elements in
+          string list.
+        @param ItemFmt [in] Format string that provides a template of the names
+          of the string list entries. It must contain just one %d specifier that
+          is replaced by the item number.
+        @param Value [in] String list to be stored.
       }
     property SectionName: string read GetSectionName;
       {Name of section represented by this object}
@@ -363,6 +389,27 @@ type
         @param Name [in] Name of value.
         @param Value [in] Unencryped value to be encrypted.
       }
+    function GetStrings(const CountName, ItemFmt: string): IStringList;
+      {Reads a string list from storage. There must be a value containing number
+      of elements and correct number of further elements containing each entry
+      in string list.
+        @param CountName [in] Name of value containing number of elements in
+          string list.
+        @param ItemFmt [in] Format string that provides a template names of
+          values of list items. ItemFmt must contain a single %d specifier that
+          is replaced by the item number.
+        @return Required string list.
+      }
+    procedure SetStrings(const CountName, ItemFmt: string;
+      const Value: IStringList);
+      {Stores a string list in storage.
+        @param CountName [in] Name of value that stores number of elements in
+          string list.
+        @param ItemFmt [in] Format string that provides a template of the names
+          of the string list entries. It must contain just one %d specifier that
+          is replaced by the item number.
+        @param Value [in] String list to be stored.
+      }
   public
     constructor Create(const Section: string;
       const Storage: TSettingsStorageId);
@@ -498,7 +545,7 @@ function TIniSettings.SectionName(const Id: TSettingsSectionId;
   }
 const
   // Map of section ids to names
-  cSectionNames: array[TSettingsSectionId] of string = (   // ** do not localise
+  cSectionNames: array[TSettingsSectionId] of string = (   
     'MainWindow',       // ssMainWindow
     'FindText',         // ssFindText
     'FindCompiler',     // ssFindCompiler
@@ -619,6 +666,26 @@ begin
   Result := fSectionName;
 end;
 
+function TIniSettingsSection.GetStrings(const CountName,
+  ItemFmt: string): IStringList;
+  {Reads a string list from storage. There must be a value containing number of
+  elements and correct number of further elements containing each entry in
+  string list.
+    @param CountName [in] Name of value containing number of elements in string
+      list.
+    @param ItemFmt [in] Format string that provides a template names of values
+      of list items. ItemFmt must contain a single %d specifier that is replaced
+      by the item number.
+    @return Required string list.
+  }
+var
+  Idx: Integer; // loops thru string list items
+begin
+  Result := TIStringList.Create;
+  for Idx := 0 to Pred(StrToIntDef(GetItemValue(CountName), 0)) do
+    Result.Add(GetItemValue(Format(ItemFmt, [Idx])));
+end;
+
 function TIniSettingsSection.ItemExists(const Name: string): Boolean;
   {Checks if a specified item in this list exists.
     @param Name [in] Name of item.
@@ -693,6 +760,25 @@ begin
     else
       fValues[Idx] := Name + '=';
   end;
+end;
+
+procedure TIniSettingsSection.SetStrings(const CountName, ItemFmt: string;
+  const Value: IStringList);
+  {Stores a string list in storage.
+    @param CountName [in] Name of value that stores number of elements in string
+      list.
+    @param ItemFmt [in] Format string that provides a template of the names of
+      the string list entries. It must contain just one %d specifier that is
+      replaced by the item number.
+    @param Value [in] String list to be stored.
+  }
+var
+  Idx: Integer; // loops through string list items
+begin
+  Assert(Assigned(Value), ClassName + '.SetStrings: Value is nil');
+  SetItemValue(CountName, IntToStr(Value.Count));
+  for Idx := 0 to Pred(Value.Count) do
+    SetItemValue(Format(ItemFmt, [Idx]), Value[Idx]);
 end;
 
 initialization
