@@ -530,7 +530,6 @@ constructor TPreferencesPersist.Create;
   }
 var
   Storage: ISettingsSection;  // object used to access persistent storage
-  ColourIdx: Integer;         // loops through custom hilite colours
 const
   // Default margin size in millimeters
   cPrintPageMarginSizeMM = 25.0;
@@ -574,13 +573,9 @@ begin
   // syntax highlighter attributes
   THiliterPersist.Load(Storage, fHiliteAttrs);
   // custom colours
-  for ColourIdx := 0 to
-    Pred(StrToIntDef(Storage.ItemValues['CustomColourCount'], 0)) do
-  begin
-    fHiliteCustomColours.Add(
-      Storage.ItemValues[Format('CustomColour%d', [ColourIdx])]
-    );
-  end;
+  fHiliteCustomColours := Storage.GetStrings(
+    'CustomColourCount', 'CustomColour%d'
+  );
 end;
 
 destructor TPreferencesPersist.Destroy;
@@ -589,7 +584,6 @@ destructor TPreferencesPersist.Destroy;
   }
 var
   Storage: ISettingsSection;  // object used to access persistent storage
-  ColourIdx: Integer;         // loops through custom hilite colours
 begin
   // Write general section
   Storage := Settings.EmptySection(ssPreferences, cGeneral);
@@ -624,11 +618,9 @@ begin
   // syntax highlighter attributes
   THiliterPersist.Save(Storage, fHiliteAttrs);
   // custom colours
-  Storage.ItemValues['CustomColourCount'] :=
-    IntToStr(fHiliteCustomColours.Count);
-  for ColourIdx := 0 to Pred(fHiliteCustomColours.Count) do
-    Storage.ItemValues[Format('CustomColour%d', [ColourIdx])] :=
-      fHiliteCustomColours[ColourIdx];
+  Storage.SetStrings(
+    'CustomColourCount', 'CustomColour%d', fHiliteCustomColours
+  );
   Storage.Save;
   inherited;
 end;
