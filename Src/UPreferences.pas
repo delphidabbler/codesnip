@@ -41,7 +41,8 @@ interface
 
 uses
   // Project
-  IntfHiliter, UMeasurement, UPrintInfo, USourceFileInfo, USourceGen;
+  IntfHiliter, UIStringList, UMeasurement, UPrintInfo, USourceFileInfo,
+  USourceGen;
 
 
 type
@@ -138,6 +139,18 @@ type
     property HiliteAttrs: IHiliteAttrs
       read GetHiliteAttrs write SetHiliteAttrs;
       {Attributes of syntax highlighter}
+
+    function GetCustomHiliteColours: IStringList;
+      {Gets custom syntax highlighter colours.
+        @return String list containing custom colours.
+      }
+    procedure SetCustomHiliteColours(const Colours: IStringList);
+      {Sets new custom syntax highlighter colours.
+        @param Colours [in] String list defining new colours.
+      }
+    property CustomHiliteColours: IStringList
+      read GetCustomHiliteColours write SetCustomHiliteColours;
+      {Custom syntax highlighter colours}
   end;
 
 
@@ -186,6 +199,8 @@ type
       {Default print page margins}
     fHiliteAttrs: IHiliteAttrs;
       {User defined syntax highlighter}
+    fHiliteCustomColours: IStringList;
+      {Custom highlighter colours}
   protected // do not make strict
     { IPreferences methods }
     function GetSourceCommentStyle: TCommentStyle;
@@ -247,6 +262,14 @@ type
       {Sets new user defined syntax highlighter.
         @param Attrs [in] New highlighter attributes.
       }
+    function GetCustomHiliteColours: IStringList;
+      {Gets custom syntax highlighter colours.
+        @return String list containing custom colours.
+      }
+    procedure SetCustomHiliteColours(const Colours: IStringList);
+      {Sets new custom syntax highlighter colours.
+        @param Colours [in] String list defining new colours.
+      }
     { IAssignable method }
     procedure Assign(const Src: IInterface);
       {Assigns properties of a given object to this object.
@@ -272,7 +295,7 @@ type
   )
   strict private
     const
-      // Sub-sections of ssPreferences ini file section ** do not localise
+      // Sub-sections of ssPreferences ini file section
       cGeneral = 'General';
       cSourceCode = 'SourceCode';
       cPrinting = 'Printing';
@@ -325,7 +348,7 @@ var
   SrcPref: IPreferences;  // IPreferences interface of Src
 begin
   // Get IPreferences interface of given object
-  if not Supports(Src, IPreferences, SrcPref) then         // ** do not localise
+  if not Supports(Src, IPreferences, SrcPref) then       
     raise EBug.Create(ClassName + '.Assign: Src is wrong type');
   // Copy the data
   Self.fSourceDefaultFileType := SrcPref.SourceDefaultFileType;
@@ -335,6 +358,7 @@ begin
   Self.fPrinterOptions := SrcPref.PrinterOptions;
   Self.fPrinterPageMargins := SrcPref.PrinterPageMargins;
   Self.SetHiliteAttrs(SrcPref.HiliteAttrs);
+  Self.SetCustomHiliteColours(SrcPref.CustomHiliteColours);
 end;
 
 constructor TPreferences.Create;
@@ -344,6 +368,15 @@ begin
   inherited Create;
   // Create object to record syntax highlighter
   fHiliteAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
+  fHiliteCustomColours := TIStringList.Create;
+end;
+
+function TPreferences.GetCustomHiliteColours: IStringList;
+  {Gets custom syntax highlighter colours.
+    @return String list containing custom colours.
+  }
+begin
+  Result := fHiliteCustomColours;
 end;
 
 function TPreferences.GetHiliteAttrs: IHiliteAttrs;
@@ -401,6 +434,14 @@ function TPreferences.GetSourceSyntaxHilited: Boolean;
   }
 begin
   Result := fSourceSyntaxHilited;
+end;
+
+procedure TPreferences.SetCustomHiliteColours(const Colours: IStringList);
+  {Sets new custom syntax highlighter colours.
+    @param Colours [in] String list defining new colours.
+  }
+begin
+  fHiliteCustomColours := Colours;
 end;
 
 procedure TPreferences.SetHiliteAttrs(const Attrs: IHiliteAttrs);
@@ -480,6 +521,7 @@ begin
   NewPref.PrinterOptions := Self.fPrinterOptions;
   NewPref.PrinterPageMargins := Self.fPrinterPageMargins;
   NewPref.HiliteAttrs := Self.GetHiliteAttrs;
+  NewPref.CustomHiliteColours := Self.GetCustomHiliteColours;
 end;
 
 constructor TPreferencesPersist.Create;
@@ -488,6 +530,7 @@ constructor TPreferencesPersist.Create;
   }
 var
   Storage: ISettingsSection;  // object used to access persistent storage
+  ColourIdx: Integer;         // loops through custom hilite colours
 const
   // Default margin size in millimeters
   cPrintPageMarginSizeMM = 25.0;
@@ -528,7 +571,16 @@ begin
 
   // Read syntax highlighter section
   Storage := Settings.ReadSection(ssPreferences, cHiliter);
+  // syntax highlighter attributes
   THiliterPersist.Load(Storage, fHiliteAttrs);
+  // custom colours
+  for ColourIdx := 0 to
+    Pred(StrToIntDef(Storage.ItemValues['CustomColourCount'], 0)) do
+  begin
+    fHiliteCustomColours.Add(
+      Storage.ItemValues[Format('CustomColour%d', [ColourIdx])]
+    );
+  end;
 end;
 
 destructor TPreferencesPersist.Destroy;
@@ -537,6 +589,7 @@ destructor TPreferencesPersist.Destroy;
   }
 var
   Storage: ISettingsSection;  // object used to access persistent storage
+  ColourIdx: Integer;         // loops through custom hilite colours
 begin
   // Write general section
   Storage := Settings.EmptySection(ssPreferences, cGeneral);
@@ -568,8 +621,15 @@ begin
 
   // Write syntax highlighter section
   Storage := Settings.EmptySection(ssPreferences, cHiliter);
+  // syntax highlighter attributes
   THiliterPersist.Save(Storage, fHiliteAttrs);
-
+  // custom colours
+  Storage.ItemValues['CustomColourCount'] :=
+    IntToStr(fHiliteCustomColours.Count);
+  for ColourIdx := 0 to Pred(fHiliteCustomColours.Count) do
+    Storage.ItemValues[Format('CustomColour%d', [ColourIdx])] :=
+      fHiliteCustomColours[ColourIdx];
+  Storage.Save;
   inherited;
 end;
 
