@@ -3,7 +3,7 @@
  *
  * Implements a class that modifies the behaviour of an associated check list
  * box so that clicks anywhere on a list item will toggle the state of the check
- * box.
+ * box. Default behaviour is that only clicks on check box change the state.
  *
  * $Rev$
  * $Date$
@@ -43,7 +43,7 @@ interface
 
 uses
   // Delphi
-  Classes, CheckLst;
+  Classes, Controls, CheckLst;
 
 
 type
@@ -58,22 +58,34 @@ type
   TChkListStateMgr = class(TObject)
   private
     fCLB: TCheckListBox;              // check list box (CLB) being managed
-    fOnClickSave: TNotifyEvent;       // check list's  orig OnClick handler
     fOnClickCheckSave: TNotifyEvent;  // check list's orig OnClickSave handler
+    fOnMouseDownSave: TMouseEvent;    // check list's orig OnMouseDown handler
+    fOnMouseUpSave: TMouseEvent;      // check list's orig OnMouseUp handler
     fOnStateChange: TNotifyEvent;     // ref to OnStateChange event handler
     fCheckClicked: Boolean;           // flag indicating if check box clicked
-    procedure ToggleState;
-      {Toggles state of check box for selected list item. Takes account of
-      greyed state when AllowGrayed is true.
-      }
-    procedure ClickHandler(Sender: TObject);
-      {Handles check list box's OnClick event. Event is passed list box's
-      original handler, if any.
-        @param Sender [in] List box that triggered event.
+    fMouseDownItemIdx: Integer;       // index of elem where mouse went down
+    procedure ToggleState(const Index: Integer);
+      {Toggles state of check box for a list item. Takes account of greyed state
+      when AllowGrayed is true. Triggers OnStateChange event.
+        @param Index [in] Index of list item for which state should be changed.
       }
     procedure ClickCheckHandler(Sender: TObject);
-      {Handles check list box's OnClickCheck event. Event is passed list box's
-      original handler, if any.
+      {Handles check list box's OnClickCheck event. Sets flag to prevent MouseUp
+      event changing state and triggers state change event. Event is passed list
+      box's original handler, if any.
+        @param Sender [in] List box that triggered event.
+      }
+    procedure MouseDownHandler(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+      {Handles check list box's OnMouseDown event. Records list box item where
+      mouse went down. Event is passed list box's original handler, if any.
+        @param Sender [in] List box that triggered event.
+      }
+    procedure MouseUpHandler(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+      {Handles check list box's OnMouseUp event. Toggles state of check box if
+      click was not on checkbox and mouse is on same list item as mouse down.
+      Event is passed list box's original handler, if any.
         @param Sender [in] List box that triggered event.
       }
     procedure StateChange;
@@ -105,8 +117,9 @@ uses
 { TChkListStateMgr }
 
 procedure TChkListStateMgr.ClickCheckHandler(Sender: TObject);
-  {Handles check list box's OnClickCheck event. Event is passed list box's
-  original handler, if any.
+  {Handles check list box's OnClickCheck event. Sets flag to prevent MouseUp
+  event changing state and triggers state change event. Event is passed list
+  box's original handler, if any.
     @param Sender [in] List box that triggered event.
   }
 begin
@@ -114,20 +127,6 @@ begin
   StateChange;
   if Assigned(fOnClickCheckSave) then
     fOnClickCheckSave(fCLB);
-end;
-
-procedure TChkListStateMgr.ClickHandler(Sender: TObject);
-  {Handles check list box's OnClick event. Event is passed list box's original
-  handler, if any.
-    @param Sender [in] List box that triggered event.
-  }
-begin
-  if not fCheckClicked then
-    ToggleState
-  else
-    fCheckClicked := False;
-  if Assigned(fOnClickSave) then
-    fOnClickSave(Sender);
 end;
 
 constructor TChkListStateMgr.Create(const CLB: TCheckListBox);
@@ -138,19 +137,60 @@ begin
   Assert(Assigned(CLB), ClassName + '.Create: CLB is nil');
   inherited Create;
   fCLB := CLB;
-  fOnClickSave := CLB.OnClick;
   fOnClickCheckSave := CLB.OnClickCheck;
-  CLB.OnClick := ClickHandler;
+  fOnMouseDownSave := CLB.OnMouseDown;
+  fOnMouseUpSave := CLB.OnMouseUp;
   CLB.OnClickCheck := ClickCheckHandler;
+  CLB.OnMouseDown := MouseDownHandler;
+  CLB.OnMouseUp := MouseUpHandler;
 end;
 
 destructor TChkListStateMgr.Destroy;
   {Class desctructor. Restores check list box's event handlers.
   }
 begin
-  fCLB.OnClick := fOnClickSave;
   fCLB.OnClickCheck := fOnClickCheckSave;
+  fCLB.OnMouseDown := fOnMouseDownSave;
+  fCLB.OnMouseUp := fOnMouseUpSave;
   inherited;
+end;
+
+procedure TChkListStateMgr.MouseDownHandler(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+  {Handles check list box's OnMouseDown event. Records list box item where mouse
+  went down. Event is passed list box's original handler, if any.
+    @param Sender [in] List box that triggered event.
+  }
+begin
+  fMouseDownItemIdx := fCLB.ItemAtPos(Point(X, Y), True);
+  if Assigned(fOnMouseDownSave) then
+    fOnMouseDownSave(Sender, Button, Shift, X, Y);
+end;
+
+procedure TChkListStateMgr.MouseUpHandler(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+  {Handles check list box's OnMouseUp event. Toggles state of check box if click
+  was not on checkbox and mouse is on same list item as mouse down. Event is
+  passed list box's original handler, if any.
+    @param Sender [in] List box that triggered event.
+  }
+var
+  Idx: Integer; // index of item under mouse
+begin
+  // we only change state if:
+  // 1) check box wasn't clicked: control changes state automatically if so
+  // 2) mouse is still over same item as when mouse went down
+  if not fCheckClicked then
+  begin
+    Idx := fCLB.ItemAtPos(Point(X, Y), True);
+    if Idx = fMouseDownItemIdx then
+      ToggleState(fMouseDownItemIdx)
+  end
+  else
+    fCheckClicked := False;
+  fMouseDownItemIdx := -1;
+  if Assigned(fOnMouseUpSave) then
+    fOnMouseUpSave(Sender, Button, Shift, X, Y);
 end;
 
 procedure TChkListStateMgr.StateChange;
@@ -161,15 +201,14 @@ begin
     fOnStateChange(fCLB);
 end;
 
-procedure TChkListStateMgr.ToggleState;
-  {Toggles state of check box for selected list item. Takes account of greyed
-  state when AllowGrayed is true.
+procedure TChkListStateMgr.ToggleState(const Index: Integer);
+  {Toggles state of check box for a list item. Takes account of greyed state
+  when AllowGrayed is true. Triggers OnStateChange event.
+    @param Index [in] Index of list item for which state should be changed.
   }
 var
   State: TCheckBoxState;  // new state of check box
-  Index: Integer;         // index of item whose check state is being toggled
 begin
-  Index := fCLB.ItemIndex;
   if Index >= 0 then
   begin
     State := fCLB.State[Index];
