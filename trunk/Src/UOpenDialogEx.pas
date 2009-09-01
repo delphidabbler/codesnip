@@ -36,7 +36,6 @@
 
 unit UOpenDialogEx;
 
-{$WARN UNSAFE_TYPE OFF}
 {$WARN UNSAFE_CAST OFF}
 {$WARN UNSAFE_CODE OFF}
 
@@ -57,12 +56,14 @@ type
     help keywords and help button.
   }
   TOpenDialogEx = class(TOpenDialog)
-  private
-    fHelpKeyword: string;
-      {Value of HelpKeyword property}
+  strict private
+    fHelpKeyword: string;       // Value of HelpKeyword property
   protected
-    fOldExplorerHook: Pointer;
-      {Reference to original explorer hook function provided by Delphi}
+    fOldExplorerHook: Pointer;  // Reference to original explorer hook function
+    procedure AlignDlg; virtual;
+      {Aligns dialog box to owner control.
+      }
+  strict protected
     function TaskModalDialog(DialogFunc: Pointer; var DialogData): Bool;
       override;
       {Overridden method that updates the DialogData structure to route message
@@ -84,26 +85,22 @@ type
     procedure DoShow; override;
       {Sets up dialog just before it is displayed.
       }
-    procedure AlignDlg; virtual;
-      {Aligns dialog box to owner control.
-      }
     function DisplayHelp: Boolean; virtual;
-      {Calls program's help manager to display help if HelpKeyword or
-      HelpContext properties are set. HelpKeyword is used in preference.
-        @return True if help manager was called or False if not (i.e. neither
-          HelpKeyword nor HelpContext were set).
+      {Calls program's help manager to display help if HelpKeyword property is
+      set.
+        @return True if help manager was called or False if not (i.e.HelpKeyword
+          not set).
       }
   public
     function Execute: Boolean; override;
-      {Displays dialog box. Esnures help button is displayed if HelpKeyword or
-      HelpContext properties are set.
+      {Displays dialog box. Ensures help button is displayed if HelpKeyword
+      property is set.
         @return True if user OKs and False if cancels.
       }
   published
     property HelpKeyword: string
       read fHelpKeyword write fHelpKeyword;
-      {ALink help keyword used to access help topic when help button clicked.
-      When set this property is used in preference to HelpContext}
+      {Help keyword used to access help topic when help button clicked}
   end;
 
 
@@ -193,17 +190,14 @@ begin
 end;
 
 function TOpenDialogEx.DisplayHelp: Boolean;
-  {Calls program's help manager to display help if HelpKeyword or HelpContext
-  properties are set. HelpKeyword is used in preference.
-    @return True if help manager was called or False if not (i.e. neither
-      HelpKeyword nor HelpContext were set).
+  {Calls program's help manager to display help if HelpKeyword property is set.
+    @return True if help manager was called or False if not (i.e.HelpKeyword not
+      set).
   }
 begin
   Result := True;
   if HelpKeyword <> '' then
     HelpMgr.ShowHelp(HelpKeyword)
-  else if HelpContext <> 0 then
-    HelpMgr.ShowHelp(HelpContext)
   else
     Result := False;
 end;
@@ -218,13 +212,15 @@ begin
 end;
 
 function TOpenDialogEx.Execute: Boolean;
-  {Displays dialog box. Esnures help button is displayed if HelpKeyword or
-  HelpContext properties are set.
+  {Displays dialog box. Ensures help button is displayed if HelpKeyword property
+  is set.
     @return True if user OKs and False if cancels.
   }
 begin
-  if (fHelpKeyword <> '') or (HelpContext <> 0) then
-    Options := Options + [ofShowHelp];
+  if HelpKeyword <> '' then
+    Options := Options + [ofShowHelp]
+  else
+    Options := Options - [ofShowHelp];
   Result := inherited Execute;
 end;
 

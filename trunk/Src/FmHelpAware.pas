@@ -56,27 +56,24 @@ type
   }
   THelpAwareForm = class(TBaseForm)
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
-  private
-    fDisableHelp: Boolean;
-      {Flag true if help is disabled}
-  protected
+  strict private
+    fDisableHelp: Boolean;  // Value of DisableHelp property
+  strict protected
     procedure DisplayHelp; overload; virtual;
-      {Displays help according to various help related form properties. Uses
-      keyword provided by form properties, or if they are not set, by the
-      CustomHelpKeyword method.
+      {Displays help specified by a keyword. Form's HelpKeyword is used if set
+      otherwise the keyword returned by CustomHelpKeyword method is used. Help
+      context numbers are ignored. Help is not called if DisableHelp is true or
+      if no keyword can be found.
       }
     procedure DisplayHelp(const AKeyword: string); overload; virtual;
-      {Displays help using an A-link keyword.
-        @param AKeyword [in] A-link keyword used to select help topic.
-      }
-    procedure DisplayHelp(const AHelpContext: THelpContext); overload; virtual;
-      {Displays help using help context.
-        @param AHelpContext [in] Help context number used to select help topic.
+      {Displays help using a keyword. Does nothing if DisableHelp property is
+      true.
+        @param AKeyword [in] Keyword to be used.
       }
     function CustomHelpKeyword: string; virtual;
-      {Gets the help A-link keyword to be used if help context or keyword is not
-      supplied via form properties.
-        @return Name of form as A-link keyword.
+      {Gets a help keyword to be used if form's HelpKeyword property is not set.
+      Default is to use name of form. Subclasses can override this behaviour.
+        @return Name of form.
       }
     property DisableHelp: Boolean
       read fDisableHelp write fDisableHelp default False;
@@ -97,57 +94,43 @@ uses
 
 {$R *.dfm}
 
+{ THelpAwareForm }
 
 function THelpAwareForm.CustomHelpKeyword: string;
-  {Gets the help A-link keyword to be used if help context or keyword is not
-  supplied via form properties.
-    @return Name of form as A-link keyword.
+  {Gets a help keyword to be used if form's HelpKeyword property is not set.
+  Default is to use name of form. Subclasses can override this behaviour.
+    @return Name of form.
   }
 begin
-  Result := Self.Name;
+  Result := Name;
 end;
 
 procedure THelpAwareForm.DisplayHelp;
-  {Displays help according to various help related form properties. Uses keyword
-  provided by form properties, or if they are not set, by the CustomHelpKeyword
-  method.
+  {Displays help specified by a keyword. Form's HelpKeyword is used if set
+  otherwise the keyword returned by CustomHelpKeyword method is used. Help
+  context numbers are ignored. Help is not called if DisableHelp is true or if
+  no keyword can be found.
   }
+var
+  AKeyword: string;   // A-link keyword
 begin
-  // Only call help if DisableHelp property is false
-  if not fDisableHelp then
-  begin
-    if HelpContext = 0 then
-    begin
-      // No help context number specified: we'll use an A-link keyword
-      if (HelpType = htKeyword) and (HelpKeyword <> '') then
-        // key word property specified: use it
-        DisplayHelp(HelpKeyword)
-      else
-        // no key word specified: use name of form
-        DisplayHelp(CustomHelpKeyword)
-    end
-    else
-      // Help context number specified: use it
-      DisplayHelp(HelpContext);
-  end;
+  if DisableHelp then
+    Exit;
+  if HelpKeyword <> '' then
+    AKeyword := HelpKeyword
+  else
+    AKeyword := CustomHelpKeyword;
+  if AKeyword <> '' then
+    DisplayHelp(AKeyword);
 end;
 
 procedure THelpAwareForm.DisplayHelp(const AKeyword: string);
-  {Displays help using an A-link keyword.
-    @param AKeyword [in] A-link keyword used to select help topic.
+  {Displays help using a keyword. Does nothing if DisableHelp property is true.
+    @param AKeyword [in] Keyword to be used.
   }
 begin
   if not fDisableHelp then
     HelpMgr.ShowHelp(AKeyword);
-end;
-
-procedure THelpAwareForm.DisplayHelp(const AHelpContext: THelpContext);
-  {Displays help using help context.
-    @param AHelpContext [in] Help context number used to select help topic.
-  }
-begin
-  if not fDisableHelp then
-    HelpMgr.ShowHelp(AHelpContext);
 end;
 
 procedure THelpAwareForm.FormKeyDown(Sender: TObject; var Key: Word;
@@ -155,15 +138,14 @@ procedure THelpAwareForm.FormKeyDown(Sender: TObject; var Key: Word;
   {Traps form key-down event. If FI key pressed with no modifiers we display
   help.
     @param Sender [in] Not used.
-    @param Key [in/out] Key pressed by user (setting to 0 inhibits further
-      processing).
+    @param Key [in/out] Key pressed by user. Set to 0 if F1 to inhibit further
+      processing.
     @param Shift [in] Modifier keys pressed.
   }
 begin
   inherited;
   if (Key = VK_F1) and (Shift = []) then
   begin
-    // F1 pressed with no modifier: display help noting called from keypress
     DisplayHelp;
     Key := 0;
   end;

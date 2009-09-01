@@ -74,31 +74,17 @@ type
   }
   TSaveSourceDlg = class(TSaveDialogEx)
   strict private
-    fPanel: TPanel;
-      {Panel used to hold all controls added to dialog}
-    fLblCommentStyle: TLabel;
-      {Label for comment style combo}
-    fCmbCommentStyle: TComboBox;
-      {Combo box used to select commenting style}
-    fChkSyntaxHilite: TCheckBox;
-      {Check box used to determine whether to use syntax highlighting}
-    fHelpBtn: TButton;
-      {Help button added to dialog that is used instead of built in button to
-      enable use of help keyword rather than help context}
-    fPreviewBtn: TButton;
-      {Preview button added to dialog and used to preview source code in
-      selected style}
-    fCommentStyle: TCommentStyle;
-      {Style of commenting to be used in generated source code}
-    fOnPreview: TNotifyEvent;
-      {Event handler for OnPreview event}
-    fOnHiliteQuery: THiliteQuery;
-      {Event handler for OnHiliteQuery event}
-    fUseSyntaxHiliting: Boolean;
-      {Flag indicating generated source code is to be syntax highlighted}
-    fSelectedFilterIdx: Integer;
-      {Used to store index of selected file type. Used to overcome an apparent
-      bug that looses selected file type when dialog box closed}
+    fPanel: TPanel;               // Panel thats hold controls added to dialog
+    fLblCommentStyle: TLabel;     // Label for comment style combo
+    fCmbCommentStyle: TComboBox;  // Combo box used to select commenting style
+    fChkSyntaxHilite: TCheckBox;  // Check box that toggles syntax highlighting
+    fHelpBtn: TButton;            // Help button added to dialog
+    fPreviewBtn: TButton;         // Preview button added to dialog
+    fCommentStyle: TCommentStyle; // Style of commenting to be used source code
+    fOnPreview: TNotifyEvent;     // Event handler for OnPreview event
+    fOnHiliteQuery: THiliteQuery; // Event handler for OnHiliteQuery event
+    fUseSyntaxHiliting: Boolean;  // Flags whether source is syntax highlighted
+    fSelectedFilterIdx: Integer;  // Store index of selected file type.
     procedure HelpClickHandler(Sender: TObject);
       {Handles click on help button. Calls help with required keyword.
         @param Sender [in] Not used.
@@ -434,7 +420,7 @@ begin
   fHelpBtn.BoundsRect := ButtonBounds;
   fHelpBtn.Top := fPreviewBtn.Top + fPreviewBtn.Height + 6;
   fHelpBtn.Caption := sBtnHelp;
-  fHelpBtn.Enabled := (HelpKeyword <> '') or (HelpContext <> 0);
+  fHelpBtn.Enabled := (HelpKeyword <> '');
 
   // Call this to ensure we trigger type change event for default file type
   DoTypeChange;
