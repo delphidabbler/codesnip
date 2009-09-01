@@ -43,7 +43,7 @@ interface
 
 uses
   // Delphi
-  Classes, Controls, Contnrs, ActnList, Menus, ComCtrls,
+  Classes, ActnList, Menus, ComCtrls, ImgList,
   // Project
   ULists;
 
@@ -74,7 +74,7 @@ type
       {Adds a spacer to a command bar.
         @param Kind [in] Id of command bar to receive spacer.
       }
-    procedure SetImages(const Images: TImageList);
+    procedure SetImages(const Images: TCustomImageList);
       {Specifies image list to be used by all command bars.
         @param Images [in] Image list to be used.
       }
@@ -94,11 +94,17 @@ type
     procedure AddSpacer; virtual; abstract;
       {Adds a new spacer to the wrapped command bar.
       }
-    procedure SetImages(const Images: TImageList); virtual; abstract;
+    procedure SetImages(const Images: TCustomImageList); virtual; abstract;
       {Specifies the image list to be used by the wrapped command bar.
         @param Images [in] Image list to be used.
       }
   end;
+
+  {
+  TPopupMenuWrapperClass:
+    Reference to TPopupMenuWrapper class and descendants.
+  }
+  TPopupMenuWrapperClass = class of TPopupMenuWrapper;
 
   {
   TPopupMenuWrapper:
@@ -107,14 +113,25 @@ type
   }
   TPopupMenuWrapper = class(TCommandBarWrapper)
   strict private
-    fMenu: TPopupMenu;    // wrapped popup menu
+    fMenu: TPopupMenu;    // Value of Menu property
     procedure MenuPopupHandler(Sender: TObject);
-      {Handles popup menu's OnPopup event by hiding disabled menu items. Assumes
-      menu items are not nested.
+      {Handles popup menu's OnPopup event by initialising menu and hiding
+      disabled menu items. Assumes menu items are not nested.
         @param Sender [in] Not used.
       }
+  strict protected
+    procedure InitMenu; virtual;
+      {Method called method menu pops up to permit customisation. Does nothing.
+      Sub classes can override.
+      }
+    procedure PrepareMenu; virtual;
+      {Prepares menu before it pops up. Calls InitMenu then hides any disabled
+      menu items. Assumes menu items are not nested.
+      }
+    property Menu: TPopupMenu read fMenu;
+      {Reference to wrapped popup menu}
   public
-    constructor Create(const Menu: TPopupMenu); reintroduce;
+    constructor Create(const Menu: TPopupMenu); reintroduce; virtual;
       {Class constructor. Sets up wrapper for a popup menu.
         @param Menu [in] Popup menu to be wrapped.
       }
@@ -125,7 +142,7 @@ type
     procedure AddSpacer; override;
       {Adds a new spacer to the wrapped poup menu.
       }
-    procedure SetImages(const Images: TImageList); override;
+    procedure SetImages(const Images: TCustomImageList); override;
       {Specifies the image list to be used by the wrapped popup menu.
         @param Images [in] Image list to be used.
       }
@@ -151,7 +168,7 @@ type
     procedure AddSpacer; override;
       {Adds a new spacer to the wrapped toolbar.
       }
-    procedure SetImages(const Images: TImageList); override;
+    procedure SetImages(const Images: TCustomImageList); override;
       {Specifies the image list to be used by the wrapped toolbar.
         @param Images [in] Image list to be used.
       }
@@ -164,8 +181,8 @@ type
   }
   TCommandBarMgr = class(TContainedObject, ICommandBarConfig)
   strict private
-    fCommandBars: TIntegerList; // map of command bar IDs to command bars
-    fImageList: TImageList;     // images list used by all command bars
+    fCommandBars: TIntegerList;   // Map of command bar IDs to command bars
+    fImageList: TCustomImageList; // Images list used by all command bars
     procedure UpdateImageLists;
       {Updates image list used by with all managed command bars.
       }
@@ -181,7 +198,7 @@ type
       {Adds a spacer to a command bar.
         @param Kind [in] Id of command bar to receive spacer.
       }
-    procedure SetImages(const Images: TImageList);
+    procedure SetImages(const Images: TCustomImageList); virtual;
       {Specifies image list to be used by all command bars.
         @param Images [in] Image list to be used.
       }
@@ -209,7 +226,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UToolButtonEx;
+  UMenuHelper, UToolButtonEx;
 
 
 { TCommandBarMgr }
@@ -268,7 +285,7 @@ begin
   inherited;
 end;
 
-procedure TCommandBarMgr.SetImages(const Images: TImageList);
+procedure TCommandBarMgr.SetImages(const Images: TCustomImageList);
   {Specifies image list to be used by all command bars.
     @param Images [in] Image list to be used.
   }
@@ -293,23 +310,15 @@ procedure TPopupMenuWrapper.AddAction(const Action: TCustomAction);
   {Adds a new command action to the wrapped popup menu.
     @param Action [in] Action to be added.
   }
-var
-  MI: TMenuItem;  // new menu item
 begin
-  MI := TMenuItem.Create(nil);
-  MI.Action := Action;
-  fMenu.Items.Add(MI);
+  fMenu.Items.Add(CreateMenuItem(fMenu, TMenuItem, Action));
 end;
 
 procedure TPopupMenuWrapper.AddSpacer;
   {Adds a new spacer to the wrapped poup menu.
   }
-var
-  MI: TMenuItem;  // new menu item
 begin
-  MI := TMenuItem.Create(nil);
-  MI.Caption := '-';
-  fMenu.Items.Add(MI);
+  fMenu.Items.Add(CreateMenuSpacer(fMenu, TMenuItem));
 end;
 
 constructor TPopupMenuWrapper.Create(const Menu: TPopupMenu);
@@ -322,15 +331,32 @@ begin
   fMenu.OnPopup := MenuPopupHandler;
 end;
 
+procedure TPopupMenuWrapper.InitMenu;
+  {Method called method menu pops up to permit customisation. Does nothing. Sub
+  classes can override.
+  }
+begin
+  // Do nothing
+end;
+
 procedure TPopupMenuWrapper.MenuPopupHandler(Sender: TObject);
-  {Handles popup menu's OnPopup event by hiding disabled menu items. Assumes
-  menu items are not nested.
+  {Handles popup menu's OnPopup event by initialising menu and hiding disabled
+  menu items. Assumes menu items are not nested.
     @param Sender [in] Not used.
+  }
+begin
+  PrepareMenu;
+end;
+
+procedure TPopupMenuWrapper.PrepareMenu;
+  {Prepares menu before it pops up. Calls InitMenu then hides any disabled
+  menu items. Assumes menu items are not nested.
   }
 var
   Idx: Integer;   // loops through all menu items
   MI: TMenuItem;  // references each menu item
 begin
+  InitMenu;
   for Idx := 0 to Pred(fMenu.Items.Count) do
   begin
     MI := fMenu.Items[Idx];
@@ -340,7 +366,7 @@ begin
   end;
 end;
 
-procedure TPopupMenuWrapper.SetImages(const Images: TImageList);
+procedure TPopupMenuWrapper.SetImages(const Images: TCustomImageList);
   {Specifies the image list to be used by the wrapped popup menu.
     @param Images [in] Image list to be used.
   }
@@ -374,7 +400,7 @@ begin
   fToolbar := Toolbar;
 end;
 
-procedure TToolBarWrapper.SetImages(const Images: TImageList);
+procedure TToolBarWrapper.SetImages(const Images: TCustomImageList);
   {Specifies the image list to be used by the wrapped toolbar.
     @param Images [in] Image list to be used.
   }
