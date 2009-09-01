@@ -37,7 +37,6 @@
 
 unit UHTMLHelpMgr;
 
-{$WARN UNSAFE_TYPE OFF}
 {$WARN UNSAFE_CODE OFF}
 
 interface
@@ -48,13 +47,12 @@ implementation
 
 uses
   // Delphi
-  Classes, Windows,
+  Windows,
   // Project
   UAppInfo, UHTMLHelp, UHelpMgr;
 
 
 type
-
   {
   THTMLHelpMgr:
     Class that interacts with and controls HTML Help and implements IHelpMgr.
@@ -62,39 +60,34 @@ type
   THTMLHelpMgr = class(TInterfacedObject,
     IHelpMgr
   )
-  private
+  strict private
     procedure DoAppHelp(const Command: LongWord; const HelpPage: string;
       const Data: LongWord);
       {Calls HtmlHelp API with specified command and parameters.
-        @param Command Command to send to HTML Help.
-        @param HelpPage Name of HTML file containing required help page within
-          help file. May be '' if no specific page required.
-        @param Data Data to pass to HTML Help. Format depends on command.
+        @param Command [in] Command to send to HTML Help.
+        @param HelpPage [in] Name of HTML file containing required help page
+          within help file. May be '' if no specific page required.
+        @param Data [in] Data to pass to HTML Help. Format depends on command.
       }
   public
-    procedure ShowHelp(const AKeyword: string); overload;
+    procedure ShowHelp(const AKeyword: string);
       {Displays HTML help topic specified by an A-Link keyword.
-        @param AKeyword Required A-Link keyword.
-      }
-    procedure ShowHelp(const HelpContext: THelpContext); overload;
-      {Displays HTML help topic per a help context number.
-        @param HelpContext Required topic's help context number.
+        @param AKeyword [in] Required A-Link keyword.
       }
     procedure ShowContents;
       {Displays HTML help contents tab and default help page.
       }
   end;
 
-
 { THTMLHelpMgr }
 
 procedure THTMLHelpMgr.DoAppHelp(const Command: LongWord;
   const HelpPage: string; const Data: LongWord);
   {Calls HtmlHelp API with specified command and parameters.
-    @param Command Command to send to HTML Help.
-    @param HelpPage Name of HTML file containing required help page within help
-      file. May be '' if no specific page required.
-    @param Data Data to pass to HTML Help. Format depends on command.
+    @param Command [in] Command to send to HTML Help.
+    @param HelpPage [in] Name of HTML file containing required help page within
+      help file. May be '' if no specific page required.
+    @param Data [in] Data to pass to HTML Help. Format depends on command.
   }
 var
   HelpSpec: string; // Help file followed by any required page
@@ -112,17 +105,9 @@ begin
   DoAppHelp(HH_DISPLAY_TOC, '', 0);
 end;
 
-procedure THTMLHelpMgr.ShowHelp(const HelpContext: THelpContext);
-  {Displays HTML help topic per a help context number.
-    @param HelpContext Required topic's help context number.
-  }
-begin
-  DoAppHelp(HH_HELP_CONTEXT, '', HelpContext);
-end;
-
 procedure THTMLHelpMgr.ShowHelp(const AKeyword: string);
   {Displays HTML help topic specified by an A-Link keyword.
-    @param AKeyword Required A-Link keyword.
+    @param AKeyword [in] Required A-Link keyword.
   }
 var
   ALink: THHAKLink; // structure containing details of A-Link
@@ -138,7 +123,9 @@ end;
 
 initialization
 
-// Create instance of help manager and register it for use as program's help system
+// Create instance of help manager and register it for use as program's help
+// system
 RegisterHelpMgr(THTMLHelpMgr.Create);
 
 end.
+

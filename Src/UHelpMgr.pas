@@ -41,11 +41,6 @@ unit UHelpMgr;
 interface
 
 
-uses
-  // Delphi
-  Classes;
-
-
 type
 
   {
@@ -55,26 +50,20 @@ type
   }
   IHelpMgr = interface(IInterface)
     ['{17CF0CF6-8161-4986-9BE6-AAB19729B826}']
-    procedure ShowHelp(const AKeyword: string); overload;
+    procedure ShowHelp(const AKeyword: string);
       {Display help topic specified by an A-Link keyword.
         @param AKeyword Required A-Link keyword.
-      }
-    procedure ShowHelp(const HelpContext: THelpContext); overload;
-      {Display help topic per a help context number.
-        @param HelpContext Required topic's help context number.
       }
     procedure ShowContents;
       {Display help contents tab and default help page.
       }
   end;
 
-
 function HelpMgr: IHelpMgr;
   {Returns reference to singleton object that implements IHelpMgr, ensuring it
   exists.
     @return Singleton object.
   }
-
 
 procedure RegisterHelpMgr(const AHelpMgr: IHelpMgr);
   {Registers a help manager for use in displaying help.
@@ -89,15 +78,13 @@ var
   // Stores reference to singleton help manager object
   PvtHelpMgr: IHelpMgr = nil;
 
-
 function HelpMgr: IHelpMgr;
   {Returns reference to singleton object that implements IHelpMgr, ensuring it
   exists.
     @return Singleton object.
   }
 begin
-  Assert(Assigned(PvtHelpMgr),                             // ** do not localise
-    'HelpMgr: PvtHelpMgr is nil');
+  Assert(Assigned(PvtHelpMgr), 'HelpMgr: PvtHelpMgr is nil');
   Result := PvtHelpMgr;
 end;
 
@@ -106,8 +93,7 @@ procedure RegisterHelpMgr(const AHelpMgr: IHelpMgr);
     @param AHelpMgr [in] Help manager to be used.
   }
 begin
-  Assert(Assigned(AHelpMgr),                               // ** do not localise
-    'RegisterHelpMgr: AHelpMgr is nil');
+  Assert(Assigned(AHelpMgr), 'RegisterHelpMgr: AHelpMgr is nil');
   PvtHelpMgr := AHelpMgr;
 end;
 
@@ -117,8 +103,10 @@ initialization
 
 finalization
 
+
 // Free the singleton
 PvtHelpMgr := nil;
+
 
 end.
 

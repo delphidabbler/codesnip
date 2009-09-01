@@ -37,7 +37,6 @@
 
 unit UColorDialogEx;
 
-{$WARN UNSAFE_TYPE OFF}
 {$WARN UNSAFE_CAST OFF}
 {$WARN UNSAFE_CODE OFF}
 
@@ -58,14 +57,15 @@ type
     English. Also adds support for help keywords and help button.
   }
   TColorDialogEx = class(TColorDialog)
-  private
-    fTitle: TCaption;
-      {Value of Title property}
-    fHelpKeyword: string;
-      {Value of HelpKeyword property}
+  strict private
+    fTitle: TCaption;     // Value of Title property
+    fHelpKeyword: string; // Value of HelpKeyword property
   protected
-    fOldHook: Pointer;
-      {Reference to original hook function provided by Delphi}
+    fOldHook: Pointer;    // Reference to original hook function
+    procedure AlignDlg; virtual;
+      {Aligns dialog box to owner control.
+      }
+  strict protected
     function TaskModalDialog(DialogFunc: Pointer; var DialogData): Bool;
       override;
       {Overridden method that updates the DialogData structure to route message
@@ -87,19 +87,16 @@ type
     procedure DoShow; override;
       {Sets up dialog just before it is displayed.
       }
-    procedure AlignDlg; virtual;
-      {Aligns dialog box to owner control.
-      }
     function DisplayHelp: Boolean; virtual;
-      {Calls program's help manager to display help if HelpKeyword or
-      HelpContext properties are set. HelpKeyword is used in preference.
-        @return True if help manager was called or False if not (i.e. neither
-          HelpKeyword nor HelpContext were set).
+      {Calls program's help manager to display help if HelpKeyword property is
+      set.
+        @return True if help manager was called or False if not (i.e.
+          HelpKeyword not set).
       }
   public
     function Execute: Boolean; override;
-      {Displays dialog box. Esnures help button is displayed if HelpKeyword or
-      HelpContext properties are set.
+      {Displays dialog box. Ensures help button is displayed if HelpKeyword
+      property is not set.
         @return True if user OKs and False if cancels.
       }
   published
@@ -108,8 +105,7 @@ type
       default dialog box title is used}
     property HelpKeyword: string
       read fHelpKeyword write fHelpKeyword;
-      {ALink help keyword used to access help topic when help button clicked.
-      When set this property is used in preference to HelpContext}
+      {Help keyword used to access help topic when help button clicked}
   end;
 
 
@@ -187,17 +183,14 @@ begin
 end;
 
 function TColorDialogEx.DisplayHelp: Boolean;
-  {Calls program's help manager to display help if HelpKeyword or HelpContext
-  properties are set. HelpKeyword is used in preference.
-    @return True if help manager was called or False if not (i.e. neither
-      HelpKeyword nor HelpContext were set).
+  {Calls program's help manager to display help if HelpKeyword property is set.
+    @return True if help manager was called or False if not (i.e. HelpKeyword
+      not set).
   }
 begin
   Result := True;
   if HelpKeyword <> '' then
     HelpMgr.ShowHelp(HelpKeyword)
-  else if HelpContext <> 0 then
-    HelpMgr.ShowHelp(HelpContext)
   else
     Result := False;
 end;
@@ -263,13 +256,15 @@ begin
 end;
 
 function TColorDialogEx.Execute: Boolean;
-  {Displays dialog box. Esnures help button is displayed if HelpKeyword or
-  HelpContext properties are set.
+  {Displays dialog box. Ensures help button is displayed if HelpKeyword property
+  is not set.
     @return True if user OKs and False if cancels.
   }
 begin
-  if (fHelpKeyword <> '') or (HelpContext <> 0) then
-    Options := Options + [cdShowHelp];
+  if HelpKeyword <> '' then
+    Options := Options + [cdShowHelp]
+  else
+    Options := Options - [cdShowHelp];
   Result := inherited Execute;
 end;
 
