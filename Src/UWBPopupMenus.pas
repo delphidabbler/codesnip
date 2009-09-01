@@ -1,7 +1,7 @@
 {
  * UWBPopupMenus.pas
  *
- * Classes that manage, configure and display popup menu items for web browser
+ * Classes that manage and display popup menus associated with web browser
  * controls.
  *
  * $Rev$
@@ -42,64 +42,93 @@ interface
 
 uses
   // Delphi
-  Windows, Menus, Controls, ActnList,
+  Classes, Windows, Menus,
   // Project
-  IntfWBPopupMenus, UBaseObjects;
+  UCommandBars, ULists;
 
 
 type
+  {
+  TWBPopupMenuQueryPopupEvent:
+    Type of event handler for TWBPopupMenu.OnQueryPopup event.
+      @param Sender [in] Object triggering event.
+      @param Cancel [in/out] Whether to cancel menu popup. Cancel is always
+        False when called. Handler can set Cancel to true to cancel popup.
+  }
+  TWBPopupMenuQueryPopupEvent = procedure(Sender: TObject; var Cancel: Boolean)
+    of object;
 
   {
-  TWBPopupMenus:
-    Class that manages, configures and displays popup menus for we browser
-    controls. Can act as an aggregated object that implements IWBPopupMenus and
-    IWBPopupMenuConfig.
+  TWBPopupMenu:
+    Class that overrides popup menu. Designed for triggering from an browser
+    control. Records HTML element under mouse cursor when menu triggered. Also
+    provides an event that enables popup to be cancelled.
   }
-  TWBPopupMenus = class(TAggregatedOrLoneObject,
-    IWBPopupMenus, IWBPopupMenuConfig
-  )
+  TWBPopupMenu = class(TPopupMenu)
   strict private
-    fMenus: array[TWBPopupMenuKind] of TPopupMenu;
-      {Array of menus displayed for each kind of popup menu supported by browser
-      control}
-    function HasVisibleItems(const Kind: TWBPopupMenuKind): Boolean;
-      {Checks if a menu has any visible menu items.
-        @param Kind [in] Specifies menu to be checked.
-        @return True if menu has visible items, False otherwise.
+    fHTMLElem: IDispatch;                       // Value of HTMLElem property
+    fOnQueryPopup: TWBPopupMenuQueryPopupEvent; // OnQueryPopup event handler
+  public
+    procedure Popup(X, Y: Integer); override;
+      {Override of method that displays popup menu. Triggers OnQueryPopup event
+      and cancels display of menu if event handler cancels the popup.
+        @param X [in] X coordinate of mouse cursor when menu triggered.
+        @param Y [in] Y coordinate of mouse cursor when menu triggered.
       }
-  protected // must not be strict
-    { IWBPopupMenus }
-    function Popup(const Pt: TPoint; const Kind: TWBPopupMenuKind;
-      const Elem: IDispatch): Boolean;
-      {Pops up menu of required kind for a specified HTML element.
-        @param Pt [in] Point on screen where menu to be displayed.
-        @param Kind [in] Kind of menu to be displayed.
-        @param Elem [in] Element under mouse cursor when menu display requested.
-        @return True if menu has visible items and was displayed, False if no
-          visible items and was not displayed.
-      }
-    { IWBPopupMenuConfig }
-    procedure AddAction(const Action: TCustomAction;
-      const Kind: TWBPopupMenuKind);
-      {Adds a menu item with an associated action to a popup menu.
-        @param Action [in] Action to be associated with menu item.
-        @param Kind [in] Specifies menu to add menu item to.
-      }
-    procedure AddSpacer(const Kind: TWBPopupMenuKind);
-      {Adds a spacer to a pop-up menu.
-        @param Kind [in] Specifies menu to add spacer to.
-      }
-    procedure SetImages(const Images: TImageList);
-      {Specifies image list to be used by menus.
-        @param Images [in] Image list to be used.
+    property HTMLElem: IDispatch read fHTMLElem write fHTMLElem;
+      {HTML element under mouse cursor when menu activated}
+    property OnQueryPopup: TWBPopupMenuQueryPopupEvent
+      read fOnQueryPopup write fOnQueryPopup;
+      {Event trigerred before menu pops up. Handler can prevent display of menu
+      by setting event handler's Cancel parameter to true}
+  end;
+
+  {
+  TWBPopupMenuMgr:
+    Class used to manage the various popup menus associated with a web browser
+    control. Associates popup menus with various menu command ids supported by
+    web browser control.
+  }
+  TWBPopupMenuMgr = class(TComponent)
+  strict private
+    fMenus: TIntegerList; // Maps menu ids to menu objects
+    function GetMenu(const ID: TCommandBarID): TWBPopupMenu;
+      {Gets reference to menu associated with a command ID.
+        @param ID [in] ID of required menu.
+        @return Reference to required menu or nil if ID is not found.
       }
   public
-    constructor Create(const Controller: IInterface); override;
-      {Class constructor. Creates either an aggregated or stand-alone object and
-      sets up object.
-        @param Controller [in] IInterface reference to containing object if
-          aggregated or nil if not aggregated.
+    constructor Create(AOwner: TComponent); override;
+      {Class constructor. Sets up object.
+        @param AOwner [in] Component that owns this object.
       }
+    destructor Destroy; override;
+      {Class destructor. Tears down object.
+      }
+    function AddMenu(const ID: TCommandBarID): TWBPopupMenu;
+      {Creates a new menu, identifies it with an ID and adds it to the menu
+      list.
+        @param ID [in] ID of new menu.
+        @return Reference to new menu.
+      }
+    procedure Popup(const ID: TCommandBarID; const Pt: TPoint;
+      const Elem: IDispatch);
+      {Pops up menu of required kind for a specified HTML element.
+        @param ID [in] ID of menu to be displayed.
+        @param Pt [in] Point on screen where menu to be displayed.
+        @param Elem [in] HTML Element under mouse cursor when menu display
+          requested.
+      }
+  end;
+
+  {
+  TWBTempMenuItem:
+    Custom menu item type used for temporary menu items added to menus by
+    TWBDefaultPopupMenuWrapper. Associated action is freed when menu item is
+    freed.
+  }
+  TWBTempMenuItem = class(TMenuItem)
+  public
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
@@ -111,428 +140,83 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils,
-  // Project
-  UAnchors, UDispatchList, UGIFImageList, UHTMLDocHelper, UImageTags,
-  ULinkAction;
+  SysUtils;
 
-
-var
-  // Global image list used by menus
-  pvtImages: TGIFImageList = nil;
-
-
-type
-
-  {
-  TWBPopupMenuClass:
-    Class reference for custom pop-up menu classes.
-  }
-  TWBPopupMenuClass = class of TAbstractWBPopupMenu;
-
-  {
-  TAbstractWBPopupMenu:
-    Abstract base class for browser popup menus.
-  }
-  TAbstractWBPopupMenu = class abstract(TPopupMenu)
-  public
-    procedure Initialise(const Elem: IDispatch); virtual; abstract;
-      {Initialises menu. To be called just before menu displayed. NOTE: Can't
-      override DoPopup since a reference to the selected HTML element is
-      required.
-        @param Elem [in] IDispatch interface of HTML element under mouse cursor.
-      }
-  end;
-
-  {
-  TWBNulPopupMenu:
-    Popup menu class that makes no changed to menu when initialised.
-  }
-  TWBNulPopupMenu = class(TAbstractWBPopupMenu)
-  public
-    procedure Initialise(const Elem: IDispatch); override;
-      {Initialises menu. Does nothing.
-        @param Elem [in] IDispatch interface of HTML element under mouse cursor.
-          Not used.
-      }
-  end;
-
-  {
-  TWBPopupMenu:
-    Class of popup menu that can be initialised before being displayed. Ensures
-    that any menu items that trigger links are updated for selected link.
-  }
-  TWBPopupMenu = class(TAbstractWBPopupMenu)
-  public
-    procedure Initialise(const Elem: IDispatch); override;
-      {Initialises menu. Stores selected HTML element in any link actions
-      associated with menu items.
-        @param Elem [in] IDispatch interface of HTML element under mouse cursor.
-      }
-  end;
-
-  {
-  TWBDefaultPopupMenu:
-    Class of popup menu used for default popup menu kinds. Initialises menu to
-    include item for all links in document that are designated menu items.
-  }
-  TWBDefaultPopupMenu = class(TWBPopupMenu)
-  strict private
-    procedure ClearTempMenuItems;
-      {Clears temporary menu items from menu.
-      }
-    procedure GetLinkMenuItems(const Doc: IDispatch; out CommandItems,
-      HelpItems: IDispatchList);
-      {Gets all command and help links from document that are designated as menu
-      items.
-        @param Doc [in] IDispatch interface of document containing links.
-        @param CommandItems [out] List of command links.
-        @param HelpItems [out] List of help links.
-      }
-    procedure AddLinksToMenu(const Links: IDispatchList);
-      {Adds menu items to menu that can trigger links from a link list.
-        @param Links [in] List of links to be added to menu.
-      }
-    function GetImageIndex(const Link: IDispatch): Integer;
-      {Gets index of any image associated with a link in image list used by
-      menu. If image doesn't exist in list it is added to it.
-        @param Link [in] Link for which image needed.
-        @return Index of image in image or -1 if there is no associated image.
-      }
-  public
-    procedure Initialise(const Elem: IDispatch); override;
-      {Initialises menu. Adds items to menu for any command and help links in
-      current HTML document.
-        @param Elem [in] IDispatch interface of HTML element under mouse cursor.
-      }
-  end;
-
-  {
-  TWBMenuItemClass:
-    Class reference to menu item classes used in popup menus.
-  }
-  TWBMenuItemClass = class of TMenuItem;
-
-  {
-  TWBTempMenuItem:
-    Custom menu item type used for temporary menu items added to menus by
-    TWBDefaultPopupMenu. Class type is used to identify this type of menu item
-    for special processing. Associated action is freed when menu item is freed.
-  }
-  TWBTempMenuItem = class(TMenuItem)
-  public
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
-  end;
-
-
-const
-  // Map of menu kinds to classes implementing menu for each kind
-  cPopupMenuClassMap: array[TWBPopupMenuKind] of TWBPopupMenuClass = (
-    TWBDefaultPopupMenu,  // pmkDefault
-    TWBPopupMenu,         // pmkImage
-    TWBNulPopupMenu,      // pmkControl
-    TWBNulPopupMenu,      // pmkTable
-    TWBPopupMenu,         // pmkTextSelect
-    TWBPopupMenu,         // pmkAnchor
-    TWBNulPopupMenu       // pmkUnknown
-  );
-
-
-function CreateActionItem(const MIClass: TWBMenuItemClass;
-  const Action: TCustomAction): TMenuItem;
-  {Creates a menu item that triggers an action.
-    @param MIClass [in] Class of required menu item.
-    @param Action [in] Action to be associated with menu item.
-    @return New menu item.
-  }
-begin
-  Result := MIClass.Create(nil);
-  Result.Action := Action;
-end;
-
-function CreateSpacer(const MIClass: TWBMenuItemClass): TMenuItem;
-  {Creates a spacer menu item.
-    @param MIClass [in] Class of required menu item.
-    @return New spacer menu item.
-  }
-begin
-  Result := MIClass.Create(nil);
-  Result.Caption := '-';
-end;
-
-{ TWBPopupMenus }
-
-procedure TWBPopupMenus.AddAction(const Action: TCustomAction;
-  const Kind: TWBPopupMenuKind);
-  {Adds a menu item with an associated action to a popup menu.
-    @param Action [in] Action to be associated with menu item.
-    @param Kind [in] Specifies menu to add menu item to.
-  }
-begin
-  fMenus[Kind].Items.Add(CreateActionItem(TMenuItem, Action));
-end;
-
-procedure TWBPopupMenus.AddSpacer(const Kind: TWBPopupMenuKind);
-  {Adds a spacer to a pop-up menu.
-    @param Kind [in] Specifies menu to add spacer to.
-  }
-begin
-  fMenus[Kind].Items.Add(CreateSpacer(TMenuItem));
-end;
-
-constructor TWBPopupMenus.Create(const Controller: IInterface);
-  {Class constructor. Creates either an aggregated or stand-alone object and
-  sets up object.
-    @param Controller [in] IInterface reference to containing object if
-      aggregated or nil if not aggregated.
-  }
-var
-  MenuId: TWBPopupMenuKind; // loops through popup menu array
-begin
-  inherited;
-  // Create all popup menus
-  for MenuId := Low(TWBPopupMenuKind) to High(TWBPopupMenuKind) do
-    fMenus[MenuId] := cPopupMenuClassMap[MenuId].Create(nil);
-end;
-
-destructor TWBPopupMenus.Destroy;
-  {Class destructor. Tears down object.
-  }
-var
-  MenuId: TWBPopupMenuKind; // loops through popup menu array
-begin
-  // Free all menus
-  for MenuId := Low(TWBPopupMenuKind) to High(TWBPopupMenuKind) do
-    FreeAndNil(fMenus[MenuId]);
-  inherited;
-end;
-
-function TWBPopupMenus.HasVisibleItems(const Kind: TWBPopupMenuKind): Boolean;
-  {Checks if a menu has any visible menu items.
-    @param Kind [in] Specifies menu to be checked.
-    @return True if menu has visible items, False otherwise.
-  }
-var
-  VisibleCount: Integer;  // counts visible menu items
-  MI: TMenuItem;          // references a menu item
-begin
-  VisibleCount := 0;
-  for MI in fMenus[Kind].Items do
-  begin
-    // update menu item's action before checking for visibility
-    if (MI.Action is TCustomAction) then
-      (MI.Action as TCustomAction).Update;
-    if MI.Visible then
-      Inc(VisibleCount);
-  end;
-  Result := VisibleCount > 0;
-end;
-
-function TWBPopupMenus.Popup(const Pt: TPoint; const Kind: TWBPopupMenuKind;
-  const Elem: IDispatch): Boolean;
-  {Pops up menu of required kind for a specified HTML element.
-    @param Pt [in] Point on screen where menu to be displayed.
-    @param Kind [in] Kind of menu to be displayed.
-    @param Elem [in] Element under mouse cursor when menu display requested.
-    @return True if menu has visible items and was displayed, False if no
-      visible items and was not displayed.
-  }
-begin
-  (fMenus[Kind] as TWBPopupMenu).Initialise(Elem);
-  Result := HasVisibleItems(Kind);
-  if Result then
-    fMenus[Kind].Popup(Pt.X, Pt.Y);
-end;
-
-procedure TWBPopupMenus.SetImages(const Images: TImageList);
-  {Specifies image list to be used by menus.
-    @param Images [in] Image list to be used.
-  }
-var
-  MenuId: TWBPopupMenuKind; // loops through different menu kinds
-begin
-  // Reset internal image list to store only items from Images
-  pvtImages.Clear;
-  pvtImages.AddImages(Images);
-  // Make each menu use the internal image list
-  for MenuId := Low(TWBPopupMenuKind) to High(TWBPopupMenuKind) do
-    fMenus[MenuId].Images := pvtImages;
-end;
-
-
-{ TWBNulPopupMenu }
-
-procedure TWBNulPopupMenu.Initialise(const Elem: IDispatch);
-  {Initialises menu. Does nothing.
-    @param Elem [in] IDispatch interface of HTML element under mouse cursor. Not
-      used.
-  }
-begin
-  // Do nothing
-end;
 
 { TWBPopupMenu }
 
-procedure TWBPopupMenu.Initialise(const Elem: IDispatch);
-  {Initialises menu. Stores selected HTML element in any link actions associated
-  with menu items.
-    @param Elem [in] IDispatch interface of HTML element under mouse cursor.
+procedure TWBPopupMenu.Popup(X, Y: Integer);
+  {Override of method that displays popup menu. Triggers OnQueryPopup event and
+  cancels display of menu if event handler cancels the popup.
+    @param X [in] X coordinate of mouse cursor when menu triggered.
+    @param Y [in] Y coordinate of mouse cursor when menu triggered.
   }
 var
-  MI: TMenuItem;  // references a menu item
+  Cancel: Boolean;  // flag indicates whether to cancel popup
 begin
-  for MI in Items do
-    if MI.Action is TLinkAction then
-      // menu item associated with a link action: store reference to Elem in it
-      (MI.Action as TLinkAction).Link := Elem;
+  Cancel := False;
+  if Assigned(fOnQueryPopup) then
+    fOnQueryPopup(Self, Cancel);
+  if not Cancel then
+    inherited;
 end;
 
-{ TWBDefaultPopupMenu }
+{ TWBPopupMenuMgr }
 
-procedure TWBDefaultPopupMenu.AddLinksToMenu(const Links: IDispatchList);
-  {Adds menu items to menu that can trigger links from a link list.
-    @param Links [in] List of links to be added to menu.
+function TWBPopupMenuMgr.AddMenu(const ID: TCommandBarID): TWBPopupMenu;
+  {Creates a new menu, identifies it with an ID and adds it to the menu list.
+    @param ID [in] ID of new menu.
+    @return Reference to new menu.
   }
-var
-  Action: TLinkAction;  // action to trigger a link
-  Link: IDispatch;      // references all links in Links
 begin
-  // Do nothing if list is empty
-  if Links.Count = 0 then
-    Exit;
-  // Start list with a spacer
-  Items.Add(CreateSpacer(TWBTempMenuItem));
-  // Add menu items
-  for Link in Links do
-  begin
-    // Create action for menu item: store link reference and get caption from
-    // link text. If link is not visible it is not added to menu.
-    if THTMLDocHelper.ElemIsVisible(Link) then
-    begin
-      Action := TLinkAction.Create(nil);
-      Action.Link := Link;
-      Action.ImageIndex := GetImageIndex(Link);
-      Action.Caption := TAnchors.GetInnerText(Link);
-      Items.Add(CreateActionItem(TWBTempMenuItem, Action));
-    end;
-  end;
+  Assert(fMenus.IndexOf(ID) = -1, ClassName + '.AddMenu: ID already exists');
+  Result := TWBPopupMenu.Create(Self);
+  fMenus.Add(ID, Result);
 end;
 
-procedure TWBDefaultPopupMenu.ClearTempMenuItems;
-  {Clears temporary menu items from menu.
+constructor TWBPopupMenuMgr.Create(AOwner: TComponent);
+  {Class constructor. Sets up object.
+    @param AOwner [in] Component that owns this object.
   }
-var
-  MI: TMenuItem;  // references each menu item in menu
 begin
-  for MI in Items do
-    if MI is TWBTempMenuItem then
-      MI.Free;    // only free temp menu items
-end;
-
-function TWBDefaultPopupMenu.GetImageIndex(const Link: IDispatch): Integer;
-  {Gets index of any image associated with a link in image list used by menu.
-  If image doesn't exist in list it is added to it.
-    @param Link [in] Link for which image needed.
-    @return Index of image in image or -1 if there is no associated image.
-  }
-
-  // ---------------------------------------------------------------------------
-  function URLBaseName(const URL: string): string;
-    {Extracts a base resource name from a URL.
-      @param URL [in] URL containing resource name.
-      @return Required base name.
-    }
-  var
-    Pos: Integer; // position of last path delimiter in URL
-  begin
-    Pos := LastDelimiter('/', URL);
-    if Pos > 0 then
-      Result := AnsiRightStr(URL, Length(URL) - Pos)
-    else
-      Result := URL;
-  end;
-  // ---------------------------------------------------------------------------
-
-var
-  ParentDiv: IDispatch;     // parent <div> or <span> tag that contains Link
-  ImgTags: IDispatchList;   // all <img> children of parent
-  ImgTag: IDispatch;        // <img> child of parent that contains required GIF
-  Src: string;              // resource URL of GIF file
-begin
-  Result := -1;
-  // Check if parent elem is a <div> or <span> with class "option"
-  ParentDiv := THTMLDocHelper.ParentElem(Link, 'div', 'option');
-  if not Assigned(ParentDiv) then
-    ParentDiv := THTMLDocHelper.ParentElem(Link, 'span', 'option');
-  if not Assigned(ParentDiv) then
-    Exit;
-  // So see if there's an child <img> of parent with class "option-img"
-  ImgTags := TImageTags.GetAllImageTags(ParentDiv);
-  ImgTag := nil;
-  for ImgTag in ImgTags do
-    if THTMLDocHelper.ElemHasClass(ImgTag, 'option-img') then
-      Break;
-  if not Assigned(ImgTag) then
-    Exit;
-  // Get resource name of image from <img> tag's "src" attribute
-  Src := URLBaseName(TImageTags.GetSrc(ImgTag));
-  // Get matching bitmap from image list: add one from GIF file if not found
-  Result := pvtImages.ImageIndex(Src);
-  if Result = -1 then
-    Result := pvtImages.AddGIFImage(Src);
-end;
-
-procedure TWBDefaultPopupMenu.GetLinkMenuItems(const Doc: IDispatch;
-  out CommandItems, HelpItems: IDispatchList);
-  {Gets all command and help links from document that are designated as menu
-  items.
-    @param Doc [in] IDispatch interface of document containing links.
-    @param CommandItems [out] List of command links.
-    @param HelpItems [out] List of help links.
-  }
-var
-  AllLinks: IDispatchList;  // list of all links in document
-  Link: IDispatch;          // referenced each link in AllLinks
-begin
-  CommandItems := TDispatchList.Create;
-  HelpItems := TDispatchList.Create;
-  // Get all links from document
-  AllLinks := TAnchors.GetAllAnchors(Doc);
-  // Scan all links
-  for Link in AllLinks do
-  begin
-    // To have a link on menu it must have 'menu-item' class
-    if THTMLDocHelper.ElemHasClass(Link, 'menu-item') then
-    begin
-      case TAnchors.AnchorKind(Link) of
-        akCommand: CommandItems.Add(Link);
-        akHelp: HelpItems.Add(Link);
-      end;
-    end;
-  end;
-end;
-
-procedure TWBDefaultPopupMenu.Initialise(const Elem: IDispatch);
-  {Initialises menu. Adds items to menu for any command and help links in
-  current HTML document.
-    @param Elem [in] IDispatch interface of HTML element under mouse cursor.
-  }
-var
-  CommandLinks: IDispatchList;  // list of command links in document
-  HelpLinks: IDispatchList;     // list of help links in document
-begin
-  // Removes any pre-existing menu items from menu
-  ClearTempMenuItems;
   inherited;
-  // Get list of command and help links from current document
-  GetLinkMenuItems(
-    THTMLDocHelper.DocumentFromElem(Elem), CommandLinks, HelpLinks
-  );
-  // Add the required menu items to the menu
-  AddLinksToMenu(CommandLinks);
-  AddLinksToMenu(HelpLinks);
+  fMenus := TIntegerList.Create;
+end;
+
+destructor TWBPopupMenuMgr.Destroy;
+  {Class destructor. Tears down object.
+  }
+begin
+  FreeAndNil(fMenus);
+  inherited;
+end;
+
+function TWBPopupMenuMgr.GetMenu(const ID: TCommandBarID): TWBPopupMenu;
+  {Gets reference to menu associated with a command ID.
+    @param ID [in] ID of required menu.
+    @return Reference to required menu or nil if ID is not found.
+  }
+begin
+  Result := fMenus.FindObject(ID) as TWBPopupMenu;
+end;
+
+procedure TWBPopupMenuMgr.Popup(const ID: TCommandBarID; const Pt: TPoint;
+  const Elem: IDispatch);
+  {Pops up menu of required kind for a specified HTML element.
+    @param ID [in] ID of menu to be displayed.
+    @param Pt [in] Point on screen where menu to be displayed.
+    @param Elem [in] HTML Element under mouse cursor when menu display
+      requested.
+  }
+var
+  Menu: TWBPopupMenu; // menu to popup
+begin
+  Menu := GetMenu(ID);
+  if Assigned(Menu) then
+  begin
+    Menu.HTMLElem := Elem;
+    Menu.Popup(Pt.X, Pt.Y);
+  end;
 end;
 
 { TWBTempMenuItem }
@@ -544,17 +228,6 @@ begin
   Action.Free;    // free the associated action
   inherited;
 end;
-
-initialization
-
-// Create private image list
-pvtImages := TGIFImageList.Create(nil);
-
-
-finalization
-
-// Dispose of private image list
-FreeAndNil(pvtImages);
 
 end.
 
