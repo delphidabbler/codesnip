@@ -42,11 +42,10 @@ interface
 
 uses
   // Delphi
-  OleCtrls, SHDocVw, Classes, Controls, ExtCtrls, ActiveX, Windows,
+  OleCtrls, SHDocVw, Classes, Controls, ExtCtrls, Windows, ActiveX,
   // Project
-  FrBrowserBase, IntfFrameMgrs, IntfHTMLDocHostInfo, IntfWBPopupMenus,
-  UCSSBuilder, UDetailPageLoader, UView, UWBPopupMenus;
-
+  FrBrowserBase, IntfFrameMgrs, IntfHTMLDocHostInfo, UCommandBars, UCSSBuilder,
+  UDetailPageLoader, UView, UWBPopupMenus;
 
 type
 
@@ -61,16 +60,13 @@ type
   TDetailViewFrame = class(TBrowserBaseFrame,
     IPaneInfo,                                // provides information about pane
     IHTMLDocHostInfo,                       // info for use in HTML manipulation
-    IWBPopupMenus, IWBPopupMenuConfig     // pop-up menu configuration & display
+    ICommandBarConfig                               // command bar configuration
   )
   strict private
-    fCurrentView: TViewItem;
-      {Value of CurrentView property}
-    fIsActivated: Boolean;
-      {Value of Active property}
-    fPopupMenus: TWBPopupMenus;
-      {Object that implements IWBPopupMenus and IWBPopupMenuConfig on behalf of
-      this class}
+    fCurrentView: TViewItem;        // Value of CurrentView property
+    fIsActivated: Boolean;          // Value of Active property
+    fPopupMenuMgr: TWBPopupMenuMgr; // Managed browser related popup menus
+    fCommandBars: TCommandBarMgr;   // Configures command bars (browser popups)
     procedure MoveToDocTop;
       {Scrolls browser control to top. This method is used to ensure that newly
       loaded documents are not partially scrolled.
@@ -124,11 +120,10 @@ type
       control.
         @return Document reference.
       }
-    { IWBPopupMenuConfig and IWBPopupMenus }
-    property PopupMenus: TWBPopupMenus
-      read fPopupMenus implements IWBPopupMenus, IWBPopupMenuConfig;
-      {References aggregated object implementing IWBPopupMenuConfig and
-      IWBPopupMenus interfaces}
+    { ICommandBarConfig }
+    property CommandBars: TCommandBarMgr
+      read fCommandBars implements ICommandBarConfig;
+      {References aggregated object implementing ICommandBarConfig}
   strict protected
     function GetPageKind: TDetailPageKind; virtual; abstract;
       {Gets kind of page to be loaded by DisplayCurViewItem.
@@ -166,14 +161,12 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics,
+  SysUtils, Graphics, Menus,
   // Project
   IntfHiliter, UColours, UCSSUtils, UFontHelper, UHiliteAttrs, UHiliterCSS,
-  UUtils;
-
+  UUtils, UWBCommandBars;
 
 {$R *.dfm}
-
 
 { TDetailViewFrame }
 
@@ -266,10 +259,42 @@ constructor TDetailViewFrame.Create(AOwner: TComponent);
   {Class constructor. Sets up detail view frame.
     @param AOwner [in] Component that owns frame.
   }
+type
+  // Range of browser-related popup menu command ids
+  TWBMenuID = cDetailPopupMenuFirst..cDetailPopupMenuLast;
+const
+  // Maps popup menu ids to command bar wrapper classes for assoicated menus. A
+  // nil entry indicates no menu or wrapper are required for that menu type.
+  cMenuWrapperClassMap: array[TWBMenuID] of TPopupMenuWrapperClass = (
+    TWBDefaultPopupMenuWrapper,   // cDetailPopupMenuDefault
+    TWBPopupMenuWrapper,          // cDetailPopupMenuImage
+    nil,                          // cDetailPopupMenuControl
+    nil,                          // cDetailPopupMenuTable
+    TWBPopupMenuWrapper,          // cDetailPopupMenuTextSelect
+    TWBPopupMenuWrapper,          // cDetailPopupMenuAnchor
+    nil                           // cDetailPopupMenuUnknown
+  );
+var
+  CmdBarID: TCommandBarID;            // loops through browser menu command ids
+  Menu: TPopupMenu;                   // references each required popup menu
+  WrapperCls: TPopupMenuWrapperClass; // class of required command bar wrapper
 begin
   inherited;
-  // Set up popups menus object
-  fPopupMenus := TWBPopupMenus.Create(Self);
+  // Set up objects that manage browser pop-up menus and command bars
+  fPopupMenuMgr := TWBPopupMenuMgr.Create(Self);  // frees itself
+  fCommandBars := TWBCommandBarMgr.Create(Self);
+  // Create required popup menus for use with browser control and add to command
+  // bar manager
+  for CmdBarID := cDetailPopupMenuFirst to cDetailPopupMenuLast do
+  begin
+    WrapperCls := cMenuWrapperClassMap[CmdBarID];
+    if Assigned(WrapperCls) then
+    begin
+      Menu := fPopupMenuMgr.AddMenu(CmdBarID);
+      fCommandBars.AddCommandBar(CmdBarID, WrapperCls.Create(Menu));
+    end;
+  end;
+  // Set pop-up menu handler for browser control
   WBController.UIMgr.OnMenuPopupEx := PopupMenuHandler;
   // Create object to store detailed info about current view item
   fCurrentView := TViewItem.Create;
@@ -288,7 +313,7 @@ destructor TDetailViewFrame.Destroy;
   }
 begin
   FreeAndNil(fCurrentView);
-  FreeAndNil(fPopupMenus);
+  FreeAndNil(fCommandBars);
   inherited;
 end;
 
@@ -361,7 +386,7 @@ procedure TDetailViewFrame.PopupMenuHandler(Sender: TObject;
     @param Obj [in] Reference to HTML element at popup position.
   }
 begin
-  (Self as IWBPopupMenus).Popup(PopupPos, TWBPopupMenuKind(MenuID), Obj);
+  fPopupMenuMgr.Popup(MenuID, PopupPos, Obj);
   Handled := True;
 end;
 
