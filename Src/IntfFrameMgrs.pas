@@ -45,7 +45,7 @@ uses
   // Delphi
   SHDocVw, ActiveX,
   // Project
-  IntfCompilers, UCommandBars, USnippets, UView;
+  IntfCompilers, IntfUIHandlers, UCommandBars, USnippets, UView;
 
 
 const
@@ -59,8 +59,29 @@ const
   cCompCheckTab = 1;      // compiler check tab
 
   // Constants that identify command bars in overview pane
-  cOverviewToolBar: TCommandBarID =  1;     // toolbar
-  cOverviewPopupMenu: TCommandBarID = 2;    // popup menu
+  // toolbar
+  cOverviewToolBar: TCommandBarID =  1;
+  // popup menu
+  cOverviewPopupMenu: TCommandBarID = 2;
+
+  // Constants that identify command bars in detail pane
+  // default menu
+  cDetailPopupMenuDefault: TCommandBarID = CONTEXT_MENU_DEFAULT;
+  // mouse over image control
+  cDetailPopupMenuImage: TCommandBarID = CONTEXT_MENU_IMAGE;
+  // mouse over HTML control
+  cDetailPopupMenuControl: TCommandBarID = CONTEXT_MENU_CONTROL;
+  // mouse over HTML table
+  cDetailPopupMenuTable: TCommandBarID = CONTEXT_MENU_TABLE;
+  // mouse over selected table
+  cDetailPopupMenuTextSelect: TCommandBarID = CONTEXT_MENU_TEXTSELECT;
+  // mouse over HTML anchor
+  cDetailPopupMenuAnchor: TCommandBarID = CONTEXT_MENU_ANCHOR;
+  // unknown menu
+  cDetailPopupMenuUnknown: TCommandBarID = CONTEXT_MENU_UNKNOWN;
+  // first and last ids
+  cDetailPopupMenuFirst = CONTEXT_MENU_DEFAULT;
+  cDetailPopupMenuLast = CONTEXT_MENU_UNKNOWN;
 
 
 type
