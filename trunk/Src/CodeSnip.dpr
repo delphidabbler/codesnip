@@ -127,7 +127,6 @@ uses
   IntfNotifier in 'IntfNotifier.pas',
   IntfPreview in 'IntfPreview.pas',
   IntfUIHandlers in 'IntfUIHandlers.pas',
-  IntfWBPopupMenus in 'IntfWBPopupMenus.pas',
   UActionFactory in 'UActionFactory.pas',
   UActiveText in 'UActiveText.pas',
   UActiveTextHTML in 'UActiveTextHTML.pas',
@@ -228,6 +227,7 @@ uses
   UMeasurement in 'UMeasurement.pas',
   UMemoHelper in 'UMemoHelper.pas',
   UMemoProgBarMgr in 'UMemoProgBarMgr.pas',
+  UMenuHelper in 'UMenuHelper.pas',
   UMessageBox in 'UMessageBox.pas',
   UMessageWindow in 'UMessageWindow.pas',
   UMultiCastEvents in 'UMultiCastEvents.pas',
@@ -312,6 +312,7 @@ uses
   UViewItemAction in 'UViewItemAction.pas',
   UViewItemTreeNode in 'UViewItemTreeNode.pas',
   UWaitForActionUI in 'UWaitForActionUI.pas',
+  UWBCommandBars in 'UWBCommandBars.pas',
   UWBController in 'UWBController.pas',
   UWBExternal in 'UWBExternal.pas',
   UWBHelper in 'UWBHelper.pas',
@@ -327,7 +328,6 @@ uses
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
   UXMLDocumentEx in 'UXMLDocumentEx.pas';
-
 
 // Include resources
 {$Resource ExternalObj.tlb} // Type library file
