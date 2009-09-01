@@ -405,13 +405,12 @@ uses
   // Delphi
   SysUtils, Windows,
   // Project
-  FmSplash, FmWaitDlg, IntfFrameMgrs, IntfWBPopupMenus,
-  UActionFactory, UAppInfo, UCodeShareMgr, UCommandBars, UCompLogAction,
-  UConsts, UCopyInfoMgr, UCopySourceMgr, UDatabaseLoader, UEditRoutineAction,
-  UExceptions, UHelpMgr, UHistoryMenus, UMessageBox, UNotifier, UPrintMgr,
-  UQuery, USaveSnippetMgr, USaveUnitMgr, USnippets, UThreadWrapper, UUserDBMgr,
-  UView, UViewItemAction, UWaitForActionUI, UWBExternal, UWBNulDropTarget,
-  UWebInfo;
+  FmSplash, FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo, UCodeShareMgr,
+  UCommandBars, UCompLogAction, UConsts, UCopyInfoMgr, UCopySourceMgr,
+  UDatabaseLoader, UEditRoutineAction, UExceptions, UHelpMgr, UHistoryMenus,
+  UMessageBox, UNotifier, UPrintMgr, UQuery, USaveSnippetMgr, USaveUnitMgr,
+  USnippets, UThreadWrapper, UUserDBMgr, UView, UViewItemAction,
+  UWaitForActionUI, UWBExternal, UWBNulDropTarget, UWebInfo;
 
 
 {$R *.dfm}
@@ -1478,28 +1477,28 @@ begin
     );
 
     // Set up detail pane's popup menus
-    with frmDetail as IWBPopupMenuConfig do
+    with frmDetail as ICommandBarConfig do
     begin
       // set images to use
       SetImages(ilMain);
       // default menu
-      AddAction(actViewDependencies, pmkDefault);
-      AddSpacer(pmkDefault);
-      AddAction(actCopyInfo, pmkDefault);
-      AddAction(actCopySnippet, pmkDefault);
-      AddAction(actCopySource, pmkDefault);
-      AddSpacer(pmkDefault);
-      AddAction(actSaveSnippet, pmkDefault);
-      AddAction(actPrint, pmkDefault);
-      AddSpacer(pmkDefault);
-      AddAction(actSelectAll, pmkDefault);
+      AddAction(actViewDependencies, cDetailPopupMenuDefault);
+      AddSpacer(cDetailPopupMenuDefault);
+      AddAction(actCopyInfo, cDetailPopupMenuDefault);
+      AddAction(actCopySnippet, cDetailPopupMenuDefault);
+      AddAction(actCopySource, cDetailPopupMenuDefault);
+      AddSpacer(cDetailPopupMenuDefault);
+      AddAction(actSaveSnippet, cDetailPopupMenuDefault);
+      AddAction(actPrint, cDetailPopupMenuDefault);
+      AddSpacer(cDetailPopupMenuDefault);
+      AddAction(actSelectAll, cDetailPopupMenuDefault);
       // selected text menu
-      AddAction(actCopy, pmkTextSelect);
-      AddAction(actSelectAll, pmkTextSelect);
+      AddAction(actCopy, cDetailPopupMenuTextSelect);
+      AddAction(actSelectAll, cDetailPopupMenuTextSelect);
       // anchor menu
-      AddAction(TActionFactory.CreateLinkAction(Self), pmkAnchor);
+      AddAction(TActionFactory.CreateLinkAction(Self), cDetailPopupMenuAnchor);
       // image menu
-      AddAction(TActionFactory.CreateLinkAction(Self), pmkImage);
+      AddAction(TActionFactory.CreateLinkAction(Self), cDetailPopupMenuImage);
     end;
 
     // Set up overview pane's toolbar and popup menu

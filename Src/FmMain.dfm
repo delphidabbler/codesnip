@@ -27,7 +27,6 @@ inherited MainForm: TMainForm
       item
         Width = 50
       end>
-    ExplicitTop = 656
   end
   object tbarMain: TToolBar
     Left = 0
@@ -202,7 +201,6 @@ inherited MainForm: TMainForm
     BevelOuter = bvNone
     BorderWidth = 2
     TabOrder = 2
-    ExplicitHeight = 625
     object splitVert: TSplitter
       Left = 187
       Top = 2
@@ -220,7 +218,6 @@ inherited MainForm: TMainForm
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
-      ExplicitHeight = 621
       inline frmOverview: TOverviewFrame
         Left = 1
         Top = 1
@@ -232,7 +229,7 @@ inherited MainForm: TMainForm
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 183
-        ExplicitHeight = 619
+        ExplicitHeight = 639
         inherited pnlTitle: TPanel
           Width = 183
           ExplicitWidth = 183
@@ -249,7 +246,7 @@ inherited MainForm: TMainForm
           Width = 183
           Height = 612
           ExplicitWidth = 183
-          ExplicitHeight = 592
+          ExplicitHeight = 612
           inherited tvSnippets: TTreeView
             Top = 42
             Width = 175
@@ -257,7 +254,7 @@ inherited MainForm: TMainForm
             ExplicitLeft = 4
             ExplicitTop = 42
             ExplicitWidth = 175
-            ExplicitHeight = 546
+            ExplicitHeight = 566
           end
         end
       end
@@ -270,7 +267,6 @@ inherited MainForm: TMainForm
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
-      ExplicitHeight = 621
       inline frmDetail: TDetailFrame
         Left = 1
         Top = 1
@@ -282,7 +278,7 @@ inherited MainForm: TMainForm
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 408
-        ExplicitHeight = 619
+        ExplicitHeight = 639
         inherited pnlTitle: TPanel
           Width = 408
           ExplicitWidth = 408
@@ -295,22 +291,22 @@ inherited MainForm: TMainForm
           Width = 408
           Height = 612
           ExplicitWidth = 408
-          ExplicitHeight = 592
+          ExplicitHeight = 612
           inherited tsInfo: TTabSheet
             ExplicitLeft = 4
             ExplicitTop = 24
             ExplicitWidth = 400
-            ExplicitHeight = 564
+            ExplicitHeight = 584
             inherited frmInfo: TInfoFrame
               Width = 400
               Height = 584
               ExplicitWidth = 400
-              ExplicitHeight = 564
+              ExplicitHeight = 584
               inherited pnlBrowser: TPanel
                 Width = 400
                 Height = 584
                 ExplicitWidth = 400
-                ExplicitHeight = 564
+                ExplicitHeight = 584
                 inherited wbBrowser: TWebBrowser
                   Width = 400
                   Height = 584
@@ -2161,7 +2157,7 @@ inherited MainForm: TMainForm
         'Proxy Server|Configure proxy server used by CodeSnip when access' +
         'ing web services'
       OnExecute = actProxyServerExecute
-  end
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
