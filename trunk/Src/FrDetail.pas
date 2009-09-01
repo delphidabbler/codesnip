@@ -43,9 +43,10 @@ interface
 uses
   // Delphi
   Forms, ComCtrls, ExtCtrls, Controls, StdCtrls, Classes, ActiveX, ActnList,
+  ImgList,
   // Project
-  FrBrowserBase, FrCompCheck, FrDetailView, FrInfo, FrTitled, IntfCompilers,
-  IntfFrameMgrs, IntfNotifier, IntfWBPopupMenus, UView;
+  FrTitled, FrCompCheck, FrBrowserBase, FrDetailView, FrInfo, IntfCompilers,
+  IntfFrameMgrs, IntfNotifier, UCommandBars, UView;
 
 
 type
@@ -65,7 +66,7 @@ type
     IClipboardMgr,                                          // clipboard manager
     ISelectionMgr,                                          // selection manager
     ISetNotifier,                                        // sets notifier object
-    IWBPopupMenuConfig                  // enables pop-up menus to be configured
+    ICommandBarConfig                               // command bar configuration
   )
     pcDetail: TPageControl;
     tsInfo: TTabSheet;
@@ -153,20 +154,21 @@ type
       {Sets the object's notifier object to be called in response to user input.
         @param Notifier [in] Required Notifier object.
       }
-    { IWBPopupMenuConfig }
+    { ICommandBarConfig }
     procedure AddAction(const Action: TCustomAction;
-      const Kind: TWBPopupMenuKind);
-      {Adds a menu item with an associated action to a popup menu. Passes
-      request to all subsidiary tabs.
+      const ID: TCommandBarID);
+      {Adds an action item to a command bar. Passes request to all subsidiary
+      tabs.
         @param Action [in] Action to be associated with menu item.
-        @param Kind [in] Specifies menu to add menu item to.
+        @param ID [in] Specifies command bar to add action to.
       }
-    procedure AddSpacer(const Kind: TWBPopupMenuKind);
-      {Adds a spacer to a pop-up menu. Passes request to all subsidiary tabs.
-        @param Kind [in] Specifies menu to add spacer to.
+    procedure AddSpacer(const ID: TCommandBarID);
+      {Adds a spacer to a command bar. Passes request to all subsidiary tabs.
+        @param Kind [in] Specifies command bar to add spacer to.
       }
-    procedure SetImages(const Images: TImageList);
-      {Sets image list to be used by menus. Passes on to all subsidiary tabs.
+    procedure SetImages(const Images: TCustomImageList);
+      {Sets image list to be used by command bars. Passes on to all subsidiary
+      tabs.
         @param Images [in] Image list to be used.
       }
   end;
@@ -188,30 +190,29 @@ uses
 { TDetailFrame }
 
 procedure TDetailFrame.AddAction(const Action: TCustomAction;
-  const Kind: TWBPopupMenuKind);
-  {Adds a menu item with an associated action to a popup menu. Passes request to
-  all subsidiary tabs.
+  const ID: TCommandBarID);
+  {Adds an action item to a command bar. Passes request to all subsidiary tabs.
     @param Action [in] Action to be associated with menu item.
-    @param Kind [in] Specifies menu to add menu item to.
+    @param ID [in] Specifies command bar to add action to.
   }
 var
   Idx: Integer; // loops through all tabsheets
 begin
   for Idx := 0 to Pred(pcDetail.PageCount) do
-    if Supports(TabToPane(Idx), IWBPopupMenuConfig) then
-      (TabToPane(Idx) as IWBPopupMenuConfig).AddAction(Action, Kind);
+    if Supports(TabToPane(Idx), ICommandBarConfig) then
+      (TabToPane(Idx) as ICommandBarConfig).AddAction(Action, ID);
 end;
 
-procedure TDetailFrame.AddSpacer(const Kind: TWBPopupMenuKind);
-  {Adds a spacer to a pop-up menu. Passes request to all subsidiary tabs.
-    @param Kind [in] Specifies menu to add spacer to.
+procedure TDetailFrame.AddSpacer(const ID: TCommandBarID);
+  {Adds a spacer to a command bar. Passes request to all subsidiary tabs.
+    @param Kind [in] Specifies command bar to add spacer to.
   }
 var
   Idx: Integer; // loops through all tabsheets
 begin
   for Idx := 0 to Pred(pcDetail.PageCount) do
-    if Supports(TabToPane(Idx), IWBPopupMenuConfig) then
-      (TabToPane(Idx) as IWBPopupMenuConfig).AddSpacer(Kind);
+    if Supports(TabToPane(Idx), ICommandBarConfig) then
+      (TabToPane(Idx) as ICommandBarConfig).AddSpacer(ID);
 end;
 
 function TDetailFrame.CanCopy: Boolean;
@@ -396,16 +397,16 @@ begin
       (TabToPane(Idx) as IWBCustomiser).SetExternalObj(Obj);
 end;
 
-procedure TDetailFrame.SetImages(const Images: TImageList);
-  {Sets image list to be used by menus. Passes on to all subsidiary tabs.
+procedure TDetailFrame.SetImages(const Images: TCustomImageList);
+  {Sets image list to be used by command bars. Passes on to all subsidiary tabs.
     @param Images [in] Image list to be used.
   }
 var
   Idx: Integer; // loops through all tabsheets
 begin
   for Idx := 0 to Pred(pcDetail.PageCount) do
-    if Supports(TabToPane(Idx), IWBPopupMenuConfig) then
-      (TabToPane(Idx) as IWBPopupMenuConfig).SetImages(Images);
+    if Supports(TabToPane(Idx), ICommandBarConfig) then
+      (TabToPane(Idx) as ICommandBarConfig).SetImages(Images);
 end;
 
 procedure TDetailFrame.SetNotifier(const Notifier: INotifier);
