@@ -36,15 +36,16 @@
 
 unit UOpenDialogEx;
 
-{$WARN UNSAFE_CAST OFF}
-{$WARN UNSAFE_CODE OFF}
+
 
 interface
 
 
 uses
   // Delphi
-  Dialogs, Messages, Windows;
+  Classes, Dialogs, Messages, Windows,
+  // Project
+  UCommonDlg;
 
 
 type
@@ -58,17 +59,12 @@ type
   TOpenDialogEx = class(TOpenDialog)
   strict private
     fHelpKeyword: string;       // Value of HelpKeyword property
-  protected
-    fOldExplorerHook: Pointer;  // Reference to original explorer hook function
-    procedure AlignDlg; virtual;
-      {Aligns dialog box to owner control.
-      }
+    fHook: TFileDlgHook;        // Object that wraps dlg and hook function
   strict protected
     function TaskModalDialog(DialogFunc: Pointer; var DialogData): Bool;
       override;
       {Overridden method that updates the DialogData structure to route message
-      processing through a custom explorer hook function while storing the
-      original explorer hook function for later use.
+      processing through a custom explorer hook object.
         @param DialogFunc [in] Windows function to be called to execute dialog
           box (GetOpenFileName() in this case).
         @param DialogData [in] Data describing dialog box to be passed to
@@ -81,17 +77,21 @@ type
       manager.
         @param Msg [in/out] Specifies message. Unchanged by this method. May be
           modified by inherited implementation(s).
+        @return False to pass message on to dilog's window procedure, True to
+          prevent this.
       }
     procedure DoShow; override;
       {Sets up dialog just before it is displayed.
       }
-    function DisplayHelp: Boolean; virtual;
-      {Calls program's help manager to display help if HelpKeyword property is
-      set.
-        @return True if help manager was called or False if not (i.e.HelpKeyword
-          not set).
-      }
   public
+    constructor Create(AOwner: TComponent); override;
+      {Class constructor. Creates dialog box.
+        @param AOwner [in] Owning component. Dialog box will be aligned over
+          AOwner.
+      }
+    destructor Destroy; override;
+      {Class destructor. Tears down object.
+      }
     function Execute: Boolean; override;
       {Displays dialog box. Ensures help button is displayed if HelpKeyword
       property is set.
@@ -109,97 +109,28 @@ implementation
 
 uses
   // Delphi
-  Controls, CommDlg,
+  SysUtils, Controls,
   // Project
-  UDlgHelper, UHelpMgr;
+  UDlgHelper;
 
-
-var
-  HelpMsgID: DWORD = 0; // ID of dialog box help message
-
-
-function NewExplorerHook(Wnd: HWnd; Msg: UINT; WParam: WPARAM;
-  LParam: LPARAM): UINT; stdcall;
-  {Replacement explorer hook function called by Windows to process dialog box
-  messages. Original hook handles only WM_INITDIALOG message and CDN_INITDONE
-  notification. This replacement passes WM_INITDIALOG messages to original
-  hook but handles CDN_INITDONE to align the dialog box (original hook centres
-  it). All other messages are passed to original hook.
-    @param Wnd [in] Window handle of dialog box.
-    @param Msg [in] Identifies message being passed to hook.
-    @param WParam [in] Message parameter. Usage depends on message.
-    @param LParam [in] Message parameter. Usage depends on message.
-    @return Message specific return value.
-  }
-
-  //----------------------------------------------------------------------------
-  function OFNToDlg(const OFN: TOpenFilename): TOpenDialogEx;
-    {Gets reference to open dialog from custom data in open dialog data
-    structure.
-      @param OFN [in] Structure containing reference to dialog box object.
-      @return Required dialog box reference.
-    }
-  begin
-    Result := TOpenDialogEx(OFN.lCustData);
-  end;
-
-  function CallHookFn(const HookFn: Pointer): UINT;
-    {Calls explorer hook function with parameters passed to outer method.
-      @param HookFn [in] Pointer to hook function to be called.
-      @return Return value from called hook function.
-    }
-  type
-    // Hook function prototype
-    THookFn = function(Wnd: HWnd; Msg: UINT; WParam: Integer;
-      LParam: Integer): UINT; stdcall;
-  begin
-    Result := THookFn(HookFn)(Wnd, Msg, WParam, LParam);
-  end;
-  //----------------------------------------------------------------------------
-
-var
-  Dlg: TOpenDialogEx;  // reference to dialog box object
-begin
-  // Set default result passed back to windows
-  Result := 0;
-  if Msg = WM_INITDIALOG then
-    // Dialog initialising: pass on to original hook function
-    Result := CallHookFn(OFNToDlg(POpenFileName(LParam)^).fOldExplorerHook)
-  else if Msg = WM_NOTIFY then
-  begin
-    // Get reference to dialog box object from data structure
-    Dlg := OFNToDlg(POFNotify(LParam)^.lpOFN^);
-    if POFNotify(LParam)^.hdr.code = CDN_INITDONE then
-      // Dialog intialization complete: align the dialog box. We don't call old
-      // hook function since all this does is centre the dialog box!
-      // Windows ignores return value (we leave as default 0)
-      Dlg.AlignDlg
-    else
-      // Other notification: pass on to original hook function
-      Result := CallHookFn(Dlg.fOldExplorerHook);
-  end;
-end;
 
 { TOpenDialogEx }
 
-procedure TOpenDialogEx.AlignDlg;
-  {Aligns dialog box to owner control.
+constructor TOpenDialogEx.Create(AOwner: TComponent);
+  {Class constructor. Creates dialog box.
+    @param AOwner [in] Owning component. Dialog box will be aligned over AOwner.
   }
 begin
-  TDlgAligner.AlignToOwner(Self);
+  inherited;
+  fHook := TFileDlgHook.Create(Self);
 end;
 
-function TOpenDialogEx.DisplayHelp: Boolean;
-  {Calls program's help manager to display help if HelpKeyword property is set.
-    @return True if help manager was called or False if not (i.e.HelpKeyword not
-      set).
+destructor TOpenDialogEx.Destroy;
+  {Class destructor. Tears down object.
   }
 begin
-  Result := True;
-  if HelpKeyword <> '' then
-    HelpMgr.ShowHelp(HelpKeyword)
-  else
-    Result := False;
+  FreeAndNil(fHook);
+  inherited;
 end;
 
 procedure TOpenDialogEx.DoShow;
@@ -231,10 +162,12 @@ function TOpenDialogEx.MessageHook(var Msg: TMessage): Boolean;
   manager.
     @param Msg [in/out] Specifies message. Unchanged by this method. May be
       modified by inherited implementation(s).
+    @return False to pass message on to dilog's window procedure, True to
+      prevent this.
   }
 begin
-  if Msg.Msg = HelpMsgID then
-    Result := DisplayHelp
+  if TCommonDlgHelper.IsHelpMessage(Msg) then
+    Result := TCommonDlgHelper.ShowHelp(HelpKeyword)
   else
     Result := inherited MessageHook(Msg);
 end;
@@ -242,8 +175,7 @@ end;
 function TOpenDialogEx.TaskModalDialog(DialogFunc: Pointer;
   var DialogData): Bool;
   {Overridden method that updates the DialogData structure to route message
-  processing through a custom explorer hook function while storing the original
-  explorer hook function for later use.
+  processing through a custom explorer hook object.
     @param DialogFunc [in] Windows function to be called to execute dialog box
       (GetOpenFileName() in this case).
     @param DialogData [in] Data describing dialog box to be passed to DialogFunc
@@ -251,23 +183,10 @@ function TOpenDialogEx.TaskModalDialog(DialogFunc: Pointer;
   }
 begin
   if NewStyleControls and not (ofOldStyleDialog in Options) then
-  begin
-    // Record previous explorer hook function for later use
-    fOldExplorerHook := @TOpenFileName(DialogData).lpfnHook;
-    // Store reference to our new explorer hook function in DialogData
-    TOpenFileName(DialogData).lpfnHook := NewExplorerHook;
-    // Store reference to this object in DialogData
-    TOpenFileName(DialogData).lCustData := Integer(Self);
-  end;
+    fHook.Initialise(DialogData);
   // Call inherited function with (modified) data structure
   Result := inherited TaskModalDialog(DialogFunc, DialogData);
 end;
-
-
-initialization
-
-// Get ID of common dialog help message
-HelpMsgID := RegisterWindowMessage(CommDlg.HELPMSGSTRING);
 
 end.
 
