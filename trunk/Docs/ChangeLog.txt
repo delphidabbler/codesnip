@@ -1,3 +1,11 @@
+Version 3.2.2 - 08 September 2009
+CodeSnip 3.2.2 - 08 September 2009
++ Fixed bug in check list boxes where moving selection using keyboard causes check state to be toggled.
++ Custom colours used in colour dialog, on syntax highlighter page of preferences dialog box, are now persistent.
++ Re-implemented code that displays popup menus in detail pane, and fixed a minor glitch as a side effect.
++ Simplified code that manages help system.
++ Refactored code that manages and customises common dialogs.
+
 Version 3.2.1 - 24 August 2009
 CodeSnip 3.2.1 - 24 August 2009
 + Appearance of comments that appear at the top of generated source code was changed.
