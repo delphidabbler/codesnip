@@ -58,7 +58,7 @@ Uses
 
 {DONE -oSelf -cProposal :USourceGen - Add new format class to format header comments}
 {TODO -oSelf -cRefactor : Extract common resource strings re comment style from FrSourcePrefs and USaveSourceDlg}
-{TODO -oSelf -cRefactor : Merge common code in UCommandBars and UWBPoupMenus
+{DONE -oSelf -cRefactor : Merge common code in UCommandBars and UWBPoupMenus
 + Add detail frame IDs to IFrameMgrs.pas}
 {DONE -oSelf -cImprovement : Remove database detection code from IniDataReader and XML IO classes - make them know they read / wrtie main and user databases respectively}
 {DONE -oSelf -cRefactor : Get rid of TDataIOFactories and make ini, xml and nul data readers and writers be used directly insetad of via factories.}
@@ -86,7 +86,7 @@ begin
 Could have base class TSingleton = class(TInterfacedObject) that provides default destruction and virtual method called to do tidy up only if can destroy.}
 {TODO -oSelf -cFeature : Institute user defined categories}
 {TODO -oSelf -cProposal : Share email and user name persistence used by code submission to bug reports, mailing list etc.}
-{TODO -oSelf -cRefactor : Pull out Find Text dlg's history list into separate local class.}
+
 {DONE -oSelf -cImprovement : Make margins set in preview controls either configurable or in constant}
 {TODO -oSelf -cProposal : Move Compile, View compile errors and configure compilers menu options to a new Compile menu?}
 {TODO -oSelf -cRefactor : See if we can pull out common HTML and REML code into SGML unit}
@@ -94,8 +94,8 @@ Could have base class TSingleton = class(TInterfacedObject) that provides defaul
 {TODO -oSelf -cRefactor : Re-implement MakeSafeHTML in terms of a char entity class like that for REML? Use common base class with entities class in UREMLDataIO?}
 {TODO -oSelf -cProposal : Consider making TDateTime a record that can use =, < etc and to use TRange in when comparing file differences}
 {TODO -oSelf -cProposal : Add update date to each routine object}
-{TODO -oSelf -cRefactor : Pull out common code from USaveDialogEx and UOpenDialogEx}
-{TODO -oSelf -cImprovement : Make custom colours persistent in colour dialog box on preferences menu.}
+{DONE -oSelf -cRefactor : Pull out common code from USaveDialogEx and UOpenDialogEx}
+{DONE -oSelf -cImprovement : Make custom colours persistent in colour dialog box on preferences menu.}
 {TODO -oSelf -cRefactor : Merge the IO and UI manager code into WBController}
 {TODO -oSelf -cBug : Try to enable all custom printer properties set in Doc Properties dialog to be passed to printer - e.g. number of copies per page in PDF writer}
 {TODO  -oSelf -cRefactor : Try to decouple UPageSetup, UPrintMgr and source code manager objects from associated dialog boxes}
