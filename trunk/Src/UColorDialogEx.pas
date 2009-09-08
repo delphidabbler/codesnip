@@ -45,7 +45,9 @@ interface
 
 uses
   // Delphi
-  Dialogs, Messages, Controls, Windows;
+  Classes, Dialogs, Messages, Controls, Windows,
+  // Project
+  UCommonDlg;
 
 
 type
@@ -58,19 +60,14 @@ type
   }
   TColorDialogEx = class(TColorDialog)
   strict private
-    fTitle: TCaption;     // Value of Title property
-    fHelpKeyword: string; // Value of HelpKeyword property
-  protected
-    fOldHook: Pointer;    // Reference to original hook function
-    procedure AlignDlg; virtual;
-      {Aligns dialog box to owner control.
-      }
+    fTitle: TCaption;           // Value of Title property
+    fHelpKeyword: string;       // Value of HelpKeyword property
+    fHook: TColorDlgHook;       // Object that wraps dialog and hook function
   strict protected
     function TaskModalDialog(DialogFunc: Pointer; var DialogData): Bool;
       override;
       {Overridden method that updates the DialogData structure to route message
-      processing through a custom hook function while storing the original hook
-      function for later use.
+      processing through a custom hook object.
         @param DialogFunc [in] Windows function to be called to execute dialog
           box (ChooseColor() in this case).
         @param DialogData [in] Data describing dialog box to be passed to
@@ -83,17 +80,21 @@ type
       manager.
         @param Msg [in/out] Specifies message. Unchanged by this method. May be
           modified by inherited implementation(s).
+        @return False to pass message on to dilog's window procedure, True to
+          prevent this.
       }
     procedure DoShow; override;
       {Sets up dialog just before it is displayed.
       }
-    function DisplayHelp: Boolean; virtual;
-      {Calls program's help manager to display help if HelpKeyword property is
-      set.
-        @return True if help manager was called or False if not (i.e.
-          HelpKeyword not set).
-      }
   public
+    constructor Create(AOwner: TComponent); override;
+      {Class constructor. Creates dialog box.
+        @param AOwner [in] Owning component. Dialog box will be aligned over
+          AOwner.
+      }
+    destructor Destroy; override;
+      {Class desctructor. Tears down object.
+      }
     function Execute: Boolean; override;
       {Displays dialog box. Ensures help button is displayed if HelpKeyword
       property is not set.
@@ -114,85 +115,28 @@ implementation
 
 uses
   // Delphi
-  CommDlg,
+  SysUtils,
   // Project
-  UDlgHelper, UHelpMgr;
+  UDlgHelper;
 
-
-var
-  HelpMsgID: DWORD = 0; // ID of dialog box help message
-
-
-function NewCCHook(Wnd: HWnd; Msg: UINT; WParam: WPARAM;
-  LParam: LPARAM): UINT; stdcall;
-  {Replacement hook function called by Windows to process dialog box messages.
-  Original hook handles only WM_INITDIALOG message. This replacement passes
-  WM_INITDIALOG messages to original hook and then aligns dialog box as
-  required. No other messages are handled by this hook or by original hook.
-    @param Wnd [in] Window handle of dialog box.
-    @param Msg [in] Identifies message being passed to hook.
-    @param WParam [in] Message parameter. Usage depends on message.
-    @param LParam [in] Message parameter. Usage depends on message.
-    @return Message specific return value.
-  }
-
-  //----------------------------------------------------------------------------
-  function CCToDlg(const CC: TChooseColor): TColorDialogEx;
-    {Gets reference to color dialog from custom data in dialog data
-    structure.
-      @param OFN [in] Structure containing reference to dialog box object.
-      @return Required dialog box reference.
-    }
-  begin
-    Result := TColorDialogEx(CC.lCustData);
-  end;
-
-  function CallHookFn(const HookFn: Pointer): UINT;
-    {Calls hook function with parameters passed to outer method.
-      @param HookFn [in] Pointer to hook function to be called.
-      @return Return value from called hook function.
-    }
-  type
-    // Hook function prototype
-    THookFn = function(Wnd: HWnd; Msg: UINT; WParam: Integer;
-      LParam: Integer): UINT; stdcall;
-  begin
-    Result := THookFn(HookFn)(Wnd, Msg, WParam, LParam);
-  end;
-  //----------------------------------------------------------------------------
-
-begin
-  // Set default result passed back to Windows
-  Result := 0;
-  if Msg = WM_INITDIALOG then
-  begin
-    // Dialog initialising: pass on to original hook function which centres
-    // dialog box (amongst other work), then re-align dialog.
-    Result := CallHookFn(CCToDlg(PChooseColor(LParam)^).fOldHook);
-    CCToDlg(PChooseColor(LParam)^).AlignDlg;
-  end;
-end;
 
 { TColorDialogEx }
 
-procedure TColorDialogEx.AlignDlg;
-  {Aligns dialog box to owner control.
+constructor TColorDialogEx.Create(AOwner: TComponent);
+  {Class constructor. Creates dialog box.
+    @param AOwner [in] Owning component. Dialog box will be aligned over AOwner.
   }
 begin
-  TDlgAligner.AlignToOwner(Self);
+  inherited;
+  fHook := TColorDlgHook.Create(Self);
 end;
 
-function TColorDialogEx.DisplayHelp: Boolean;
-  {Calls program's help manager to display help if HelpKeyword property is set.
-    @return True if help manager was called or False if not (i.e. HelpKeyword
-      not set).
+destructor TColorDialogEx.Destroy;
+  {Class desctructor. Tears down object.
   }
 begin
-  Result := True;
-  if HelpKeyword <> '' then
-    HelpMgr.ShowHelp(HelpKeyword)
-  else
-    Result := False;
+  FreeAndNil(fHook);
+  inherited;
 end;
 
 procedure TColorDialogEx.DoShow;
@@ -275,10 +219,12 @@ function TColorDialogEx.MessageHook(var Msg: TMessage): Boolean;
   manager.
     @param Msg [in/out] Specifies message. Unchanged by this method. May be
       modified by inherited implementation(s).
+    @return False to pass message on to dilog's window procedure, True to
+      prevent this.
   }
 begin
-  if Msg.Msg = HelpMsgID then
-    Result := DisplayHelp
+  if TCommonDlgHelper.IsHelpMessage(Msg) then
+    Result := TCommonDlgHelper.ShowHelp(HelpKeyword)
   else
     Result := inherited MessageHook(Msg);
 end;
@@ -286,8 +232,7 @@ end;
 function TColorDialogEx.TaskModalDialog(DialogFunc: Pointer;
   var DialogData): Bool;
   {Overridden method that updates the DialogData structure to route message
-  processing through a custom hook function while storing the original hook
-  function for later use.
+  processing through a custom hook object.
     @param DialogFunc [in] Windows function to be called to execute dialog box
       (ChooseColor() in this case).
     @param DialogData [in] Data describing dialog box to be passed to DialogFunc
@@ -295,20 +240,10 @@ function TColorDialogEx.TaskModalDialog(DialogFunc: Pointer;
   }
 begin
   if NewStyleControls then
-  begin
-    fOldHook := @TChooseColor(DialogData).lpfnHook;
-    TChooseColor(DialogData).lpfnHook := NewCCHook;
-    TChooseColor(DialogData).lCustData := Integer(Self);
-  end;
+    fHook.Initialise(DialogData);
   // Call inherited function with (possibly modified) data structure
   Result := inherited TaskModalDialog(DialogFunc, DialogData);
 end;
-
-
-initialization
-
-// Get ID of common dialog help message
-HelpMsgID := RegisterWindowMessage(CommDlg.HELPMSGSTRING);
 
 end.
 
