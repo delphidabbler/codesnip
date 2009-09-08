@@ -151,6 +151,7 @@ uses
   UColorDialogEx in 'UColorDialogEx.pas',
   UColours in 'UColours.pas',
   UCommandBars in 'UCommandBars.pas',
+  UCommonDlg in 'UCommonDlg.pas',
   UCompileMgr in 'UCompileMgr.pas',
   UCompilerBase in 'UCompilerBase.pas',
   UCompilerRunner in 'UCompilerRunner.pas',
