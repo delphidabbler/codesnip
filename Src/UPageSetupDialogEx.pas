@@ -54,10 +54,9 @@ type
     custom help handling and relocates some buttons.
   }
   TPageSetupDialogEx = class(TPageSetupDialog)
-  private
-    fHelpKeyword: string;
-      {Value of HelpKeyword property}
-  protected
+  strict private
+    fHelpKeyword: string; // Value of HelpKeyword property
+  strict protected
     procedure DoShow; override;
       {Sets parent of dialog box, aligns and focuses it and customises the
       dialog box when it is shown.
@@ -67,6 +66,8 @@ type
       custom help handling.
         @param Msg [in/out] Dialog box message. Not changed in this method, but
           ancestor methods may make changes.
+        @return False to pass message on to dilog's window procedure, True to
+          prevent this.
       }
     procedure AlignDlg; virtual;
       {Aligns dialog box over another window.
@@ -91,9 +92,9 @@ implementation
 
 uses
   // Delphi
-  Windows, CommDlg, Dlgs,
+  Windows, Dlgs,
   // Project
-  UDlgHelper, UHelpMgr, UStructs;
+  UCommonDlg, UDlgHelper, UStructs;
 
 
 { TPageSetupDialogEx }
@@ -135,21 +136,14 @@ function TPageSetupDialogEx.MessageHook(var Msg: TMessage): Boolean;
   help handling.
     @param Msg [in/out] Dialog box message. Not changed in this method, but
       ancestor methods may make changes.
+    @return False to pass message on to dilog's window procedure, True to
+      prevent this.
   }
-var
-  HelpMsg: Cardinal;  // ID of common dialog help messages
 begin
-  Result := inherited MessageHook(Msg);
-  // Get help message ID
-  HelpMsg := RegisterWindowMessage(CommDlg.HelpMsgString);
-  if not Result and (Msg.Msg = HelpMsg) and (fHelpKeyword <> '') then
-  begin
-    // Help message
-    // display help topic
-    HelpMgr.ShowHelp(HelpKeyword);
-    // prevent further processing of message
-    Result := True;
-  end;
+  if TCommonDlgHelper.IsHelpMessage(Msg) then
+    Result := TCommonDlgHelper.ShowHelp(HelpKeyword)
+  else
+    Result := inherited MessageHook(Msg);
 end;
 
 procedure TPageSetupDialogEx.RealignCtrls;
@@ -214,9 +208,9 @@ const
   var
     RPrinterBtn: TRectEx; // printers button's bounding rectangle
   begin
-    Assert(HPrinterBtn <> 0,                               // ** do not localise
+    Assert(HPrinterBtn <> 0,
       ClassName + '.RealignCtrls.ReplacePrinterBtnWithHelp: HPrinterBtn = 0');
-    Assert(HHelpBtn <> 0,                               // ** do not localise
+    Assert(HHelpBtn <> 0,
       ClassName + '.RealignCtrls.ReplacePrinterBtnWithHelp: HHelpBtn = 0');
     // Get bounds of printer button
     RPrinterBtn := GetWindowClientRect(HPrinterBtn);
