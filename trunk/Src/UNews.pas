@@ -246,6 +246,7 @@ constructor TNews.TEnumerator.Create(const News: TNews);
   }
 begin
   inherited Create;
+  fIndex := -1;
   fNews := News;
 end;
 
