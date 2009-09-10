@@ -240,7 +240,7 @@ uses
 {$R *.dfm}
 
 
-{ TSelectSnippetsFrame }
+{ TCheckedTVFrame }
 
 function TCheckedTVFrame.AddNode(const Parent: TCheckedTreeNode;
   const Text: string; const Data: Pointer): TCheckedTreeNode;
