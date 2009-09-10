@@ -1,8 +1,8 @@
 {
  * FrSelectUserSnippets.pas
  *
- * Implements a frame that enables one or more user-defined routines in the
- * snippets database to be selected via a tree view.
+ * Implements a frame that enables one or more snippets in the user-defined
+ * database to be selected via a tree view.
  *
  * $Rev$
  * $Date$
@@ -44,24 +44,30 @@ uses
   // Delphi
   ImgList, Controls, Classes, ComCtrls,
   // Project
-  FrSelectSnippets;
+  FrSelectSnippetsBase, USnippets;
 
 
 type
 
   {
   TSelectUserSnippetsFrame:
-    Implements a frame that enables one or more user-defined routines in the
-    snippets database to be selected. It displays a two-level tree of snippets
-    categories with their associated user-defined routines. Each category and
-    routine has a check box that can be checked to select them. A property is
-    exposed that gives access to selected routines.
+    Frame class that enables one or more snippets from the user defined
+    database to be selected. Displays a two-level tree of snippets categories
+    with their associated user defined snippets. Each category and snippet has a
+    check box that can be checked to select them. A property is exposed that
+    gives access to selected snippets.
   }
-  TSelectUserSnippetsFrame = class(TSelectSnippetsFrame)
+  TSelectUserSnippetsFrame = class(TSelectSnippetsBaseFrame)
   strict protected
-    procedure AddNodes; override;
-      {Adds nodes for each category and the routines it contains to an empty
-      tree view.
+    function CanAddCatNode(const Cat: TCategory): Boolean; override;
+      {Checks if a category node should be added to treeview.
+        @param Cat [in] Category to be checked.
+        @return True if category contains any user-defined snippets.
+      }
+    function CanAddSnippetNode(const Snippet: TRoutine): Boolean; override;
+      {Checks if a snippet node should be added to treeview.
+        @param Snippet [in] Snippet to be checked.
+        @return True if snippet is user-defined.
       }
   end;
 
@@ -69,37 +75,28 @@ type
 implementation
 
 
-uses
-  // Project
-  FrCheckedTV, USnippets;
-
-
 {$R *.dfm}
 
 
 { TSelectUserSnippetsFrame }
 
-procedure TSelectUserSnippetsFrame.AddNodes;
-  {Adds nodes for each category and the routines it contains to an empty
-  tree view.
+function TSelectUserSnippetsFrame.CanAddCatNode(const Cat: TCategory): Boolean;
+  {Checks if a category node should be added to treeview.
+    @param Cat [in] Category to be checked.
+    @return True if category contains any user-defined snippets.
   }
-var
-  Cat: TCategory;               // reference to a category
-  CatNode: TCheckedTreeNode;    // tree node representing a category
-  Routine: TRoutine;            // reference to routines in a category
 begin
-  // Add each category as top level node
-  for Cat in Snippets.Categories do
-  begin
-    // Don't add category node if has no user defined routines
-    if Cat.Routines.Count(True) = 0 then
-      Continue;
-    CatNode := AddNode(nil, Cat.Description, Cat);
-    // Add each user defined routine in category as child of category node
-    for Routine in Cat.Routines do
-      if Routine.UserDefined then
-        AddNode(CatNode, Routine.Name, Routine);
-  end;
+  Result := Cat.Routines.Count(True) > 0;
+end;
+
+function TSelectUserSnippetsFrame.CanAddSnippetNode(
+  const Snippet: TRoutine): Boolean;
+  {Checks if a snippet node should be added to treeview.
+    @param Snippet [in] Snippet to be checked.
+    @return True if snippet is user-defined.
+  }
+begin
+  Result := Snippet.UserDefined;
 end;
 
 end.
