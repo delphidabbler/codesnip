@@ -1,3 +1,6 @@
+{TODO -oSelf -cImprovement : Ensure categories are properly sirted, with user categories integrated with main categories.}
+{TODO -oSelf -cProposal : Consider what gesture support to add (needs Delphi 2010).}
+{TODO -oSelf -cFeature : Add actions to go to next, previous, first and last category (or alpha or kind)}
 {DONE -oSelf -cRefactor :  Remove un-necessary DocContent property from FmPreviewDlg change references to it with fDocContent.}
 {DONE -oSelf -cRefactor : Remove un-necessary Search property from FmSelectionSearchDlg, FmFindXRefsDlg, FmFindTextDlg and  FmFindCompilerDlg and change reference to Search in Execute method to fSearch}
 {DONE -oSelf -cBug :
