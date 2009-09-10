@@ -113,6 +113,7 @@ uses
   FrRTFPreview in 'FrRTFPreview.pas' {RTFPreviewFrame: TFrame},
   FrRTFShowCase in 'FrRTFShowCase.pas' {RTFShowCaseFrame: TFrame},
   FrCheckedTV in 'FrCheckedTV.pas' {CheckedTVFrame: TFrame},
+  FrSelectSnippetsBase in 'FrSelectSnippetsBase.pas' {SelectSnippetsBaseFrame: TFrame},
   FrSelectSnippets in 'FrSelectSnippets.pas' {SelectSnippetsFrame: TFrame},
   FrSelectUserSnippets in 'FrSelectUserSnippets.pas' {SelectUserSnippetsFrame: TFrame},
   FrSourcePrefs in 'FrSourcePrefs.pas' {SourcePrefsFrame: TFrame},
