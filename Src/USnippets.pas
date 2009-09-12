@@ -1330,7 +1330,7 @@ procedure TSnippets.RemoveChangeEventHandler(const Handler: TNotifyEventInfo);
     @param Handler [in] Handler to remove from list.
   }
 begin
-  fChangeEvents.AddHandler(Handler);
+  fChangeEvents.RemoveHandler(Handler);
 end;
 
 procedure TSnippets.Save;
