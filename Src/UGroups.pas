@@ -279,7 +279,12 @@ type
   TAlphaGrouping = class(TGrouping)
   strict private
     function LetterCompare(const Letter1, Letter2: TObject): Integer;
-      // todo: comment this
+      {Compares two letter objects.
+        @param Letter1 [in] First TLetter object to be compared.
+        @param Letter2 [in] Second TLetter object to be compared.
+        @return -ve if Letter1 < Letter2, 0 if Letter1 = Letter2 or +ve if
+          Letter1 > Letter2.
+      }
   strict protected
     procedure Populate; override;
       {Populates grouping with sorted alphabetic group items and associated
@@ -498,6 +503,12 @@ end;
 { TAlphaGrouping }
 
 function TAlphaGrouping.LetterCompare(const Letter1, Letter2: TObject): Integer;
+  {Compares two letter objects.
+    @param Letter1 [in] First TLetter object to be compared.
+    @param Letter2 [in] Second TLetter object to be compared.
+    @return -ve if Letter1 < Letter2, 0 if Letter1 = Letter2 or +ve if
+      Letter1 > Letter2.
+  }
 begin
   Result := Ord((Letter1 as TLetter).Letter) - Ord((Letter2 as TLetter).Letter);
 end;
