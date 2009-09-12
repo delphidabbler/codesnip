@@ -308,17 +308,7 @@ uses
   // Delphi
   SysUtils, Windows,
   // Project
-  UExceptions, URTFUtils;
-
-
-function FloatToInt(const F: Double): Int64;
-  {Converts a floating point number to an integer, rounding to nearest integer.
-    @param F [in] Floating point number to be rounded off.
-    @return Rounded value as integer.
-  }
-begin
-  Result := Trunc(F + 0.500001);
-end;
+  UExceptions, URTFUtils, UUtils;
 
 
 { TRTFBuilder }

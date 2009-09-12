@@ -43,9 +43,7 @@ interface
 
 uses
   // Delphi
-  Classes,
-  // Project
-  UConsts;
+  Classes;
 
 
 procedure CopyFile(const Source, Dest: string);
@@ -184,6 +182,12 @@ function QuoteSpacedString(const S: string; const Quote: Char = '"'): string;
     @return Original string, surrounded by quotes only if it contains spaces.
   }
 
+function FloatToInt(const F: Double): Int64;
+  {Converts a floating point number to an integer, rounding to nearest integer.
+    @param F [in] Floating point number to be rounded off.
+    @return Rounded value as integer.
+  }
+
 function MySQLDateToDateTime(const MySQLDate: string): TDateTime;
   {Converts a date in MySQL format into a TDateTime.
     @param MySQLDate [in] Date string in format YYYY-MM-DD.
@@ -267,7 +271,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils, Windows, ShlObj, ActiveX, Messages;
+  SysUtils, StrUtils, Windows, ShlObj, ActiveX, Messages,
+  // Project
+  UConsts;
 
 
 const
@@ -415,7 +421,7 @@ var
 const
   faVolumeId = $00000008; // redefined from SysUtils to avoid deprecated warning
 begin
-  Assert(Assigned(List), 'ListFiles(): List is nil');      // ** do not localise
+  Assert(Assigned(List), 'ListFiles(): List is nil');      
   // Check if true directory and exit if not
   Result := IsDirectory(Dir);
   if not Result then
@@ -830,6 +836,15 @@ begin
     Result := S;
 end;
 
+function FloatToInt(const F: Double): Int64;
+  {Converts a floating point number to an integer, rounding to nearest integer.
+    @param F [in] Floating point number to be rounded off.
+    @return Rounded value as integer.
+  }
+begin
+  Result := Trunc(F + 0.500001);
+end;
+
 function MySQLDateToDateTime(const MySQLDate: string): TDateTime;
   {Converts a date in MySQL format into a TDateTime.
     @param MySQLDate [in] Date string in format YYYY-MM-DD.
@@ -852,8 +867,8 @@ var
 begin
   GetSystemTime(ST);
   Result := FormatDateTime(
-    'ddd, dd mmm yyyy hh:nn:ss', SystemTimeToDateTime(ST)  // ** do not localise
-  ) + ' GMT';                                              // ** do not localise
+    'ddd, dd mmm yyyy hh:nn:ss', SystemTimeToDateTime(ST)
+  ) + ' GMT';                                              
 end;
 
 function MakeSentence(const Txt: string): string;
