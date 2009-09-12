@@ -45,7 +45,8 @@ uses
   StdCtrls, Forms, ComCtrls, Controls, ExtCtrls, Classes,
   // Project
   FmWizardDlg, FrBrowserBase, FrCheckedTV, FrFixedHTMLDlg, FrHTMLDlg,
-  FrSelectSnippets, FrSelectUserSnippets, UBaseObjects, UExceptions, USnippets;
+  FrSelectSnippetsBase, FrSelectUserSnippets, UBaseObjects, UExceptions,
+  USnippets;
 
 
 type

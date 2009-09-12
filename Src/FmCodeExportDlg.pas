@@ -45,7 +45,7 @@ uses
   Classes, StdCtrls, Controls, Forms, ExtCtrls,
   // Project
   FmGenericOKDlg, FrCheckedTV, FrSelectUserSnippets, FrSelectSnippets,
-  UBaseObjects, USnippets;
+  FrSelectSnippetsBase, UBaseObjects, USnippets;
 
 
 type
