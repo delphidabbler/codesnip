@@ -143,7 +143,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StdCtrls;
+  SysUtils, StdCtrls,
+  // Project
+  UGroups;
 
 
 {$R *.dfm}
@@ -158,15 +160,24 @@ var
   Cat: TCategory;               // reference to a category
   CatNode: TCheckedTreeNode;    // tree node representing a category
   Snippet: TRoutine;            // reference to snippets in a category
+  Grouping: TGrouping;          // groups/sorts snippets by category
+  Group: TGroupItem;            // group representing a category
 begin
-  for Cat in Snippets.Categories do
-  begin
-    if not CanAddCatNode(Cat) then
-      Continue;
-    CatNode := AddNode(nil, Cat.Description, Cat);
-    for Snippet in Cat.Routines do
-      if CanAddSnippetNode(Snippet) then
-        AddNode(CatNode, Snippet.Name, Snippet);
+  // Create grouping of all snippets by category, with categories alpha sorted
+  Grouping := TCategoryGrouping.Create(Snippets.Routines);
+  try
+    for Group in Grouping do
+    begin
+      Cat := (Group as TCategoryGroupItem).Category;
+      if Group.IsEmpty or not CanAddCatNode(Cat) then
+        Continue;
+      CatNode := AddNode(nil, Group.Title, Cat);
+      for Snippet in Group.SnippetList do
+        if CanAddSnippetNode(Snippet) then
+          AddNode(CatNode, Snippet.Name, Snippet);
+    end;
+  finally
+    FreeAndNil(Grouping);
   end;
 end;
 
