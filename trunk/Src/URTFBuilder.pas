@@ -41,7 +41,7 @@ interface
 
 uses
   // Delphi
-  Classes, Graphics,
+  Graphics,
   // Project
   UConsts, ULists;
 
@@ -54,7 +54,7 @@ type
   }
   TRTFColourTable = class(TObject)
   strict private
-    var fColours: TList;  // List of colours in table
+    var fColours: TIntegerList; // List of colours in table
     function GetColour(const Idx: Integer): TColor;
       {Gets colour from table.
         @param Idx [in] Index of colour in table.
@@ -145,8 +145,7 @@ type
   }
   TRTFFontTable = class(TObject)
   strict private
-    var
-      fFonts: TObjectListEx;  // List of fonts in table
+    var fFonts: TObjectListEx;  // List of fonts in table
     function GetFont(const Idx: Integer): TRTFFont;
       {Gets reference to font in table.
         @param Idx [in] Index of font in table.
@@ -643,7 +642,7 @@ function TRTFColourTable.Add(const Colour: TColor): Integer;
 begin
   Result := FindColour(Colour);
   if Result = -1 then
-    Result := fColours.Add(Pointer(Colour));
+    Result := fColours.Add(Colour);
 end;
 
 function TRTFColourTable.AsString: string;
@@ -702,7 +701,7 @@ constructor TRTFColourTable.Create;
   }
 begin
   inherited;
-  fColours := TList.Create;
+  fColours := TIntegerList.Create;
   Add(clNone);
 end;
 
@@ -739,7 +738,7 @@ function TRTFColourTable.GetColour(const Idx: Integer): TColor;
     @return Colour at specified index.
   }
 begin
-  Result := TColor(fColours[Idx]);
+  Result := fColours[Idx];
 end;
 
 { TRTFDocProperties }
