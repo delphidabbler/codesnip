@@ -42,9 +42,10 @@ interface
 
 uses
   // Delphi
-  Classes, Contnrs,
+  Classes,
   // Project
-  IntfCompilers, UActiveText, UIStringList, UMultiCastEvents, USnippetIDs;
+  IntfCompilers, UActiveText, UIStringList, ULists, UMultiCastEvents,
+  USnippetIDs;
 
 
 type
@@ -354,8 +355,7 @@ type
           SID1 > SID2.
       }
   strict protected
-    var
-      fList: TObjectList;   // Stores list of snippets
+    var fList: TObjectListEx; // Stores list of snippets
   public
     type
       {
@@ -492,7 +492,7 @@ type
   }
   TCategoryList = class(TObject)
   strict private
-    fList: TObjectList;   // Stores list of categories
+    var fList: TObjectListEx; // Stores list of categories
     function GetCount: Integer;
       {Read accessor for Count property.
         @return Number of categories in list.
@@ -1705,7 +1705,7 @@ function TRoutineList.Contains(const Routine: TRoutine): Boolean;
     @return True if snippet is in list, False otherwise.
   }
 begin
-  Result := fList.IndexOf(Routine) >= 0;
+  Result := fList.Contains(Routine);
 end;
 
 function TRoutineList.ContainsKinds(const Kinds: TSnippetKinds): Boolean;
@@ -1757,7 +1757,7 @@ constructor TRoutineList.Create(const OwnsObjects: Boolean = False);
   }
 begin
   inherited Create;
-  fList := TObjectList.Create(OwnsObjects);
+  fList := TObjectListEx.Create(OwnsObjects);
 end;
 
 destructor TRoutineList.Destroy;
@@ -1983,7 +1983,7 @@ function TCategoryList.Add(const Category: TCategory): Integer;
     @return Index where category inserted in list.
   }
 begin
-  Assert(fList.IndexOf(Category) = -1,
+  Assert(not fList.Contains(Category),
     ClassName + '.Add: Category already in list');
   Result := fList.Add(Category);
 end;
@@ -2001,7 +2001,7 @@ constructor TCategoryList.Create;
   }
 begin
   inherited;
-  fList := TObjectList.Create(True);
+  fList := TObjectListEx.Create(True);
 end;
 
 destructor TCategoryList.Destroy;

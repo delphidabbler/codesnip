@@ -43,7 +43,9 @@ interface
 
 uses
   // Delphi
-  Classes, Contnrs;
+  Classes,
+  // Project
+  ULists;
 
 
 type
@@ -62,11 +64,10 @@ type
     Class that maintains, and can trigger, a list of event handlers.
   }
   TMultiCastEvents = class(TObject)
-  private
-    fOwner: TObject;
-      {Object that owns this one and triggers events}
-    fHandlers: TObjectList;
-      {Stores list of event handlers}
+  strict private
+    var
+      fOwner: TObject;          // Owner object that triggers events
+      fHandlers: TObjectListEx; // Stores list of event handlers
     function IndexOfHandler(const Handler: TMethod): Integer;
       {Finds index of a registered event handler in list of handlers.
         @param Handler [in] Reference to event handler to find.
@@ -127,8 +128,8 @@ type
     Abstract base class for classes that wrap event handler methods in order to
     be able to store them in an object list.
   }
-  TEventWrapper = class(TObject)
-  private
+  TEventWrapper = class abstract(TObject)
+  strict private
     fOwner: TObject;
       {Owner of event handler. Used as Sender parameter when calling event
       handler}
@@ -166,6 +167,11 @@ type
       }
   end;
 
+  {
+  TNotifyEventInfoWrapper:
+    Class used to wrap a TNotifyEventInfo method in order to be able to store it
+    in an object list.
+  }
   TNotifyEventInfoWrapper = class(TEventWrapper)
   public
     procedure Trigger(const EvtInfo: IInterface); override;
@@ -222,7 +228,7 @@ constructor TMultiCastEvents.Create(AOwner: TObject);
 begin
   inherited Create;
   fOwner := AOwner;
-  fHandlers := TObjectList.Create(True);
+  fHandlers := TObjectListEx.Create(True);
 end;
 
 destructor TMultiCastEvents.Destroy;
@@ -244,9 +250,7 @@ begin
   Result := -1;
   for Idx := 0 to Pred(fHandlers.Count) do
   begin
-    if IsEqualMethod(
-      (fHandlers[Idx] as TEventWrapper).Handler, Handler
-    ) then
+    if IsEqualMethod((fHandlers[Idx] as TEventWrapper).Handler, Handler) then
     begin
       Result := Idx;
       Break;
@@ -287,10 +291,10 @@ procedure TMultiCastEvents.TriggerEvents(const EvtInfo: IInterface = nil);
       TNotifyEventInfo.
   }
 var
-  Idx: Integer; // loops thru all event handlers in list
+  HandlerWrapper: TObject;  // enumerates event handler wrappers
 begin
-  for Idx := 0 to Pred(fHandlers.Count) do
-    (fHandlers[Idx] as TEventWrapper).Trigger(EvtInfo);
+  for HandlerWrapper in fHandlers do
+    (HandlerWrapper as TEventWrapper).Trigger(EvtInfo);
 end;
 
 { TEventWrapper }
@@ -314,7 +318,7 @@ procedure TNotifyEventWrapper.Trigger(const EvtInfo: IInterface);
     @param EvtInfo [in] Ignored.
   }
 begin
-  TNotifyEvent(fHandler)(fOwner);
+  TNotifyEvent(Handler)(Owner);
 end;
 
 { TNotifyEventInfoWrapper }
@@ -325,7 +329,7 @@ procedure TNotifyEventInfoWrapper.Trigger(const EvtInfo: IInterface);
       the event. May be nil.
   }
 begin
-  TNotifyEventInfo(fHandler)(fOwner, EvtInfo);
+  TNotifyEventInfo(Handler)(Owner, EvtInfo);
 end;
 
 end.

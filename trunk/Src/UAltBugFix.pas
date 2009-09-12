@@ -147,10 +147,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Contnrs, Messages, StdCtrls, ExtCtrls, ComCtrls, AppEvnts, SyncObjs,
-  Forms, Buttons,
+  SysUtils, Messages, StdCtrls, ExtCtrls, ComCtrls, AppEvnts, SyncObjs,
+  Buttons,
   // Project
-  USystemInfo, UThemesEx;
+  ULists, USystemInfo, UThemesEx;
 
 
 type
@@ -170,9 +170,9 @@ type
     IAltBugFix
   )
   strict private
-    fIdleUpdateList: TObjectList;
+    fIdleUpdateList: TObjectListEx;
       {List of controls that will be monitored when application is idle}
-    fTimedUpdateList: TObjectList;
+    fTimedUpdateList: TObjectListEx;
       {List of controls that will be monitored periodically on a timer tick}
     fTimer: TTimer;
       {Timer object used to trigger bug fix being for controls in
@@ -191,7 +191,7 @@ type
     const cLockTimeout = 10000; // 10 secs
       {Timeout used when waiting for an event to signal}
     function FindCtrl(const Ctrl: TWinControl;
-      const List: TObjectList): Integer;
+      const List: TObjectListEx): Integer;
       {Finds location of wrapper class containing a control in a list.
         @param Ctrl [in] Control to be found.
         @param List [in] List containing wrapped control.
@@ -199,7 +199,7 @@ type
           object.
       }
     function IsCtrlRecorded(const Ctrl: TWinControl;
-      const List: TObjectList): Boolean;
+      const List: TObjectListEx): Boolean;
       {Checks if a wrapper class containing a control is in a list.
         @param Ctrl [in] Control to be found.
         @param List [in] List containing wrapped control.
@@ -214,7 +214,7 @@ type
       {Event handler for timer's OnTimer event. Updates controls in timer list.
         @param Sender [in] Not used.
       }
-    procedure UpdateControls(const List: TObjectList);
+    procedure UpdateControls(const List: TObjectListEx);
       {Updates (repaints) controls in a list as necessary.
         @param List [in] List of control wrapper objects to be repainted.
       }
@@ -414,12 +414,12 @@ begin
 
   // Create objects used to maintain and refresh list of forms that are
   // processed during application's idle processing.
-  fIdleUpdateList := TObjectList.Create(True);
+  fIdleUpdateList := TObjectListEx.Create(True);
   fAppEvents := TApplicationEvents.Create(nil);
 
   // Create objects used to maintain and refresh list of container controls
   // that are processed by timer
-  fTimedUpdateList := TObjectList.Create(True);
+  fTimedUpdateList := TObjectListEx.Create(True);
   fTimer := TTimer.Create(nil);
   fTimer.Enabled := False;
   fTimer.Interval := 25;
@@ -462,7 +462,7 @@ begin
 end;
 
 function TAltBugFix.FindCtrl(const Ctrl: TWinControl;
-  const List: TObjectList): Integer;
+  const List: TObjectListEx): Integer;
   {Finds location of wrapper class containing a control in a list.
     @param Ctrl [in] Control to be found.
     @param List [in] List containing wrapped control.
@@ -513,7 +513,7 @@ begin
 end;
 
 function TAltBugFix.IsCtrlRecorded(const Ctrl: TWinControl;
-  const List: TObjectList): Boolean;
+  const List: TObjectListEx): Boolean;
   {Checks if a wrapper class containing a control is in a list.
     @param Ctrl [in] Control to be found.
     @param List [in] List containing wrapped control.
@@ -606,12 +606,12 @@ begin
   end;
 end;
 
-procedure TAltBugFix.UpdateControls(const List: TObjectList);
+procedure TAltBugFix.UpdateControls(const List: TObjectListEx);
   {Updates (repaints) controls in a list as necessary.
     @param List [in] List of control wrapper objects to be repainted.
   }
 var
-  Wrapper: Pointer; // loops through all controls in List
+  Wrapper: TObject; // loops through all controls in List
 begin
   if not fThemesEnabled then
     Exit;
@@ -622,7 +622,7 @@ begin
     // Get each control wrapper to repaint its control (and contained controls)
     // if necessary
     for Wrapper in List do
-      (TObject(Wrapper) as TCtrlWrapper).Repaint;
+      (Wrapper as TCtrlWrapper).Repaint;
   finally
     // Open lock: this permits modification of List
     fLock.SetEvent;
@@ -636,13 +636,13 @@ procedure TAltBugFix.UpdateTimerAndIdler;
 begin
   // We only handle application's OnIdle event there are controls registered in
   // idle update list and themes are enabled
-  if fThemesEnabled and (fIdleUpdateList.Count > 0) then
+  if fThemesEnabled and not fIdleUpdateList.IsEmpty then
     fAppEvents.OnIdle := Idler
   else
     fAppEvents.OnIdle := nil;
   // We enable timer only if there are controls registered in timed update list
   // and themes are enabled
-  fTimer.Enabled := fThemesEnabled and (fTimedUpdateList.Count > 0);
+  fTimer.Enabled := fThemesEnabled and not fTimedUpdateList.IsEmpty;
 end;
 
 { TAltBugFixXP }
@@ -696,8 +696,7 @@ constructor TCtrlWrapper.Create(const Ctrl: TWinControl);
     @param Ctrl [in] Control to be wrapped and sub-classed.
   }
 begin
-  Assert(Assigned(Ctrl),                                   // ** do not localise
-    ClassName + '.Create: Ctrl is nil');
+  Assert(Assigned(Ctrl), ClassName + '.Create: Ctrl is nil');
   inherited Create;
   fCtrl := Ctrl;
   // Subclass Ctrl by providing new window procedure

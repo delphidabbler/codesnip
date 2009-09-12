@@ -43,9 +43,9 @@ interface
 
 uses
   // Delphi
-  ComCtrls, Contnrs,
+  ComCtrls,
   // Project
-  UView, UViewItemTreeNode;
+  ULists, UView, UViewItemTreeNode;
 
 
 type
@@ -56,8 +56,8 @@ type
   }
   TOverviewTreeSectionState = class(TObject)
   strict private
-    fExpanded: Boolean;     // value of Expanded property
-    fViewItem: TViewItem;   // value of ViewItem property
+    fExpanded: Boolean;     // Value of Expanded property
+    fViewItem: TViewItem;   // Value of ViewItem property
   public
     constructor Create(const ViewItem: TViewItem; const Expanded: Boolean);
       {Class constructor. Sets up object.
@@ -81,8 +81,8 @@ type
   }
   TOverviewTreeState = class(TObject)
   strict private
-    fTV: TTreeView;           // reference to treeview
-    fSections: TObjectList;   // list of section objects
+    fTV: TTreeView;           // Reference to treeview
+    fSections: TObjectListEx; // List of section objects
     function GetCount: Integer;
       {Number of sections in list.
         @return Section count.
@@ -184,7 +184,7 @@ constructor TOverviewTreeState.Create(const TV: TTreeView);
   }
 begin
   inherited Create;
-  fSections := TObjectList.Create(True);
+  fSections := TObjectListEx.Create(True);
   fTV := TV;
 end;
 

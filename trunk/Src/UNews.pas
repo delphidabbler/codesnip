@@ -42,9 +42,9 @@ interface
 
 uses
   // Delphi
-  Classes, Contnrs,
+  Classes,
   // Project
-  UDataStreamIO;
+  UDataStreamIO, ULists;
 
 
 type
@@ -103,7 +103,7 @@ type
           {Current news item}
       end;
     var
-      fNewsItems: TObjectList;  // Stores list of news items
+      fNewsItems: TObjectListEx;  // Stores list of news items
     procedure Parse(const NewsData: TStream);
       {Creates list of news items from a data stream.
         @param NewsData [in] Data stream containing news items.
@@ -179,7 +179,7 @@ constructor TNews.Create(const NewsData: TStream);
   }
 begin
   inherited Create;
-  fNewsItems := TObjectList.Create(True);
+  fNewsItems := TObjectListEx.Create(True);
   Parse(NewsData);
 end;
 

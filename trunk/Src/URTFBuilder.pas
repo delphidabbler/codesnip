@@ -41,9 +41,9 @@ interface
 
 uses
   // Delphi
-  Classes, Contnrs, Graphics,
+  Classes, Graphics,
   // Project
-  UConsts;
+  UConsts, ULists;
 
 
 type
@@ -54,8 +54,7 @@ type
   }
   TRTFColourTable = class(TObject)
   strict private
-    fColours: TList;
-      {List of colours in table}
+    var fColours: TList;  // List of colours in table
     function GetColour(const Idx: Integer): TColor;
       {Gets colour from table.
         @param Idx [in] Index of colour in table.
@@ -114,12 +113,10 @@ type
   }
   TRTFFont = class(TObject)
   strict private
-    fName: string;
-      {Value of Name property}
-    fCharset: TFontCharset;
-      {Value of Charset property}
-    fGeneric: TRTFGenericFont;
-      {Value of Generic property}
+    var
+      fName: string;              // Value of Name property
+      fCharset: TFontCharset;     // Value of Charset property
+      fGeneric: TRTFGenericFont;  // Value of Generic property
   public
     constructor Create(const Name: string; const Generic: TRTFGenericFont;
       const Charset: TFontCharset);
@@ -148,8 +145,8 @@ type
   }
   TRTFFontTable = class(TObject)
   strict private
-    fFonts: TObjectList;
-      {List of fonts in table}
+    var
+      fFonts: TObjectListEx;  // List of fonts in table
     function GetFont(const Idx: Integer): TRTFFont;
       {Gets reference to font in table.
         @param Idx [in] Index of font in table.
@@ -197,8 +194,7 @@ type
   }
   TRTFDocProperties = class(TObject)
   strict private
-    fTitle: string;
-      {Value of Title property}
+    var fTitle: string; // Value of Title property
     function IsEmpty: Boolean;
       {Checks if document properties are empty, i.e. non have be defined.
         @return True if no document properties have been defined, False
@@ -219,19 +215,13 @@ type
   }
   TRTFBuilder = class(TObject)
   strict private
-    fBody: string;
-      {Used to accumulate RTF code for body of document}
-    fInControls: Boolean;
-      {Flag set if we are currently emitting RTF controls and false if emitting
-      text}
-    fColourTable: TRTFColourTable;
-      {Value of ColourTable property}
-    fFontTable: TRTFFontTable;
-      {Value of FontTable property}
-    fDefaultFontIdx: Integer;
-      {Value of DefaultFontIdx property}
-    fDocProperties: TRTFDocProperties;
-      {Value of DocProperties property}
+    var
+      fBody: string;                      // Accumulates RTF code for doc body
+      fInControls: Boolean;               // Tells of emitting RTF ctrls or text
+      fColourTable: TRTFColourTable;      // Value of ColourTable property
+      fFontTable: TRTFFontTable;          // Value of FontTable property
+      fDefaultFontIdx: Integer;           // Value of DefaultFontIdx property
+      fDocProperties: TRTFDocProperties;  // Value of DocProperties property
     procedure AppendBody(const S: string);
       {Appends string data to document body.
         @param S [in] String data to add.
@@ -340,7 +330,7 @@ procedure TRTFBuilder.AddControl(const Ctrl: string);
   }
 begin
   Assert((Ctrl <> '') and not (Ctrl[Length(Ctrl)] in [' ', LF, CR, TAB]),
-    ClassName + '.AddControls: Ctrls ends in whitespace'); // ** do not localise
+    ClassName + '.AddControls: Ctrls ends in whitespace');
   AppendBody(Ctrl);
   fInControls := True;
 end;
@@ -468,7 +458,7 @@ procedure TRTFBuilder.SetFont(const FontName: string);
     @except Exception raised if font not in font table.
   }
 var
-  FontIdx: Integer; // Index of font in font table
+  FontIdx: Integer; // index of font in font table
 begin
   // We don't emit control if this is default font
   FontIdx := fFontTable.FontRef(FontName);
@@ -584,7 +574,7 @@ constructor TRTFFontTable.Create;
   }
 begin
   inherited;
-  fFonts := TObjectList.Create(True);
+  fFonts := TObjectListEx.Create(True);
 end;
 
 destructor TRTFFontTable.Destroy;
@@ -631,9 +621,7 @@ function TRTFFontTable.FontRef(const FontName: string): Integer;
 begin
   Result := FindFont(FontName);
   if Result = -1 then
-    raise EBug.Create(                                     // ** do not localise
-      'TRTFFontTable.FontRef: Font not found'
-    );
+    raise EBug.Create(ClassName + '.FontRef: Font not found');
 end;
 
 function TRTFFontTable.GetFont(const Idx: Integer): TRTFFont;
@@ -706,9 +694,7 @@ function TRTFColourTable.ColourRef(const Colour: TColor): Integer;
 begin
   Result := FindColour(Colour);
   if Result = -1 then
-    raise EBug.Create(                                     // ** do not localise
-      'TRTFColourTable.ColourRef: Unknown colour'
-    );
+    raise EBug.Create(ClassName + '.ColourRef: Unknown colour');
 end;
 
 constructor TRTFColourTable.Create;

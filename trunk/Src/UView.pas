@@ -43,9 +43,7 @@ interface
 
 uses
   // Delphi
-  Contnrs,
-  // Project
-  UAlphabet, USnippetKindInfo, USnippets;
+  UAlphabet, ULists, USnippetKindInfo, USnippets;
 
 
 type
@@ -70,11 +68,9 @@ type
   }
   TViewItem = class(TObject)
   strict private
-    fData: TObject;
-      {Object that provides additional information about a view item, depending
-      on its kind}
-    fKind: TViewKind;
-      {Kind of view item}
+    var
+      fData: TObject;   // More information about view item, depending on kind
+      fKind: TViewKind; // Kind of view item
     function GetDescription: string;
       {Read accessor for Description property.
         @return Description.
@@ -172,8 +168,7 @@ type
   }
   TViewItemList = class(TObject)
   strict private
-    fList: TObjectList;
-      {The list of view items}
+    var fList: TObjectListEx; // List of view items
     function GetCount: Integer;
       {Read accessor for Count property.
         @return Number of items in list.
@@ -427,7 +422,7 @@ constructor TViewItemList.Create;
 begin
   inherited;
   // Create list that doesn't own the objects in it
-  fList := TObjectList.Create(False);
+  fList := TObjectListEx.Create(False);
 end;
 
 destructor TViewItemList.Destroy;

@@ -40,10 +40,8 @@ interface
 
 
 uses
-  // Delphi
-  Contnrs,
   // Project
-  UView;
+  ULists, UView;
 
 
 type
@@ -58,7 +56,7 @@ type
   THistory = class(TObject)
   strict private
     var
-      fItems: TObjectList;    // Stores items in history list
+      fItems: TObjectListEx;  // Stores items in history list
       fCursor: Integer;       // Index of current history item in list
     const
       cMaxHistoryItems = 50;  // Max items stored in history
@@ -170,8 +168,8 @@ constructor THistory.Create;
   }
 begin
   inherited;
-  fItems := TObjectList.Create(True); // contained objects freed when list freed
-  Clear;                              // initialise to empty list
+  fItems := TObjectListEx.Create(True);
+  Clear;
 end;
 
 destructor THistory.Destroy;
@@ -248,10 +246,8 @@ var
   I: Integer;             // loops thru history list
   ClonedItem: TViewItem;  // cloned copy of view item
 begin
-  Assert(fCursor <= fItems.Count,                          // ** do not localise
-    ClassName + '.NewItem: fCursor too large');
-  Assert(fCursor >= -1,                                    // ** do not localise
-    ClassName + '.NewItem: fCursor too small');
+  Assert(fCursor <= fItems.Count, ClassName + '.NewItem: fCursor too large');
+  Assert(fCursor >= -1, ClassName + '.NewItem: fCursor too small');
   // Create copy of given view item
   ClonedItem := TViewItem.Create(ViewItem);
   // Increment cursor if possible - it will reference new item
@@ -287,7 +283,7 @@ var
 begin
   Idx := fItems.IndexOf(ViewItem);
   if Idx = -1 then
-    raise EBug.Create(                                     // ** do not localise
+    raise EBug.Create(
       ClassName + '.SelectItem: Selected view item not in history list'
     );
   fCursor := Idx;

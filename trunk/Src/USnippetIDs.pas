@@ -41,10 +41,8 @@ interface
 
 
 uses
-  // Delphi
-  Contnrs,
   // Project
-  IntfCommon;
+  IntfCommon, ULists;
 
 
 type
@@ -149,7 +147,7 @@ type
   TSnippetIDList = class(TInterfacedObject, ISnippetIDList, IAssignable)
   strict private
     var
-      fList: TObjectList; // List of objects that wrap the routine ID records
+      fList: TObjectListEx; // List of objects that wrap the routine ID records
     type
       {
       TSnippetIDWrapper:
@@ -340,7 +338,7 @@ constructor TSnippetIDList.Create;
   }
 begin
   inherited;
-  fList := TObjectList.Create(True);
+  fList := TObjectListEx.Create(True);
 end;
 
 destructor TSnippetIDList.Destroy;
