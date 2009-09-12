@@ -44,7 +44,7 @@ uses
   // Delphu
   ComCtrls,
   // Project
-  USnippets, UView, UViewItemTreeNode;
+  UGroups, USnippets, UView, UViewItemTreeNode;
 
 
 type
@@ -55,8 +55,9 @@ type
   }
   TOverviewTreeBuilder = class abstract(TObject)
   strict private
-    fTreeView: TTreeView;       // Value of TreeView property
-    fSnippetList: TRoutineList; // Value of SnippetList property
+    var
+      fTreeView: TTreeView;       // Value of TreeView property
+      fSnippetList: TRoutineList; // Value of SnippetList property
   strict protected
     property TreeView: TTreeView read fTreeView;
       {Reference to treeview populated by class}
@@ -69,6 +70,16 @@ type
         @param ViewItem [in] View item for which we are adding node.
         @return New tree node.
       }
+    function CreateGrouping: TGrouping; virtual; abstract;
+      {Creates a grouping object of the required type.
+        @return Required grouping object.
+      }
+    function CreateViewItemForGroup(const Group: TGroupItem): TViewItem;
+      virtual; abstract;
+      {Creates a view item of a type that matches the type of a group item.
+        @param Group [in] Group item for which view item is required.
+        @return Required view item object.
+      }
   public
     constructor Create(const TV: TTreeView; const SnippetList: TRoutineList);
       {Class constructor. Sets up object to populate a treeview with a list of
@@ -76,8 +87,8 @@ type
         @param TV [in] Treeview control to be populated.
         @param SnippetList [in] List of snippets to be added to TV.
       }
-    procedure Build; virtual; abstract;
-      {Abstract method that descendants overrride to populate the treeview.
+    procedure Build;
+      {Populates the treeview.
       }
   end;
 
@@ -93,9 +104,16 @@ type
     by category.
   }
   TOverviewCategorisedTreeBuilder = class sealed(TOverviewTreeBuilder)
-  public
-    procedure Build; override;
-      {Populates treeview with snippets grouped by category.
+  strict protected
+    function CreateGrouping: TGrouping; override;
+      {Creates a categorised grouping object.
+        @return Required grouping object.
+      }
+    function CreateViewItemForGroup(const Group: TGroupItem): TViewItem;
+      override;
+      {Creates a category view item from group item.
+        @param Group [in] Group item containing category data.
+        @return Required category view item for group.
       }
   end;
 
@@ -105,10 +123,16 @@ type
     by initial letter of the snippet name.
   }
   TOverviewAlphabeticTreeBuilder = class sealed(TOverviewTreeBuilder)
-  public
-    procedure Build; override;
-      {Populates treeview with snippets grouped by initial letter of snippet
-      name.
+  strict protected
+    function CreateGrouping: TGrouping; override;
+      {Creates an alphabetic grouping object.
+        @return Required grouping object.
+      }
+    function CreateViewItemForGroup(const Group: TGroupItem): TViewItem;
+      override;
+      {Creates an alpha view item from group item.
+        @param Group [in] Group item containing alpha data.
+        @return Required alpha view item for group.
       }
   end;
 
@@ -118,9 +142,16 @@ type
     by snippet kind.
   }
   TOverviewSnipKindTreeBuilder = class sealed(TOverviewTreeBuilder)
-  public
-    procedure Build; override;
-      {Populates treeview with snippets grouped by snippet kind.
+  strict protected
+    function CreateGrouping: TGrouping; override;
+      {Creates a snippet kind grouping object.
+        @return Required grouping object.
+      }
+    function CreateViewItemForGroup(const Group: TGroupItem): TViewItem;
+      override;
+      {Creates a snippet kind view item from group item.
+        @param Group [in] Group item containing snippet kind data.
+        @return Required snippet kind view item for group.
       }
   end;
 
@@ -136,17 +167,15 @@ implementation
   However, attempts to delete the first node from a tree causes an endless loop,
   freezing the program. This could be a bug in the Delphi treeview component.
 
-  Therefore the code in this unit now builds or uses a list of routines in for
+  Therefore the code in this unit now builds or uses a list of snippets for
   each section and does not create a section header node for sections that
-  contain no routines.
+  contain no snippets.
 }
 
 
 uses
   // Delphi
-  SysUtils, Classes,
-  // Project
-  UAlphabet, ULists, USnippetKindInfo;
+  SysUtils;
 
 
 { TOverviewTreeBuilder }
@@ -165,6 +194,33 @@ begin
   Result.ViewItem := ViewItem;
 end;
 
+procedure TOverviewTreeBuilder.Build;
+  {Populates the treeview.
+  }
+var
+  Snippet: TRoutine;              // each snippet in a list
+  ParentNode: TViewItemTreeNode;  // each section node in tree
+  Grouping: TGrouping;            // groups snippets
+  Group: TGroupItem;              // each group of snippets
+begin
+  // Create required grouping of snippets
+  Grouping := CreateGrouping;
+  try
+    // Create tree
+    for Group in Grouping do
+    begin
+      if not Group.IsEmpty then
+      begin
+        ParentNode := AddViewItemNode(nil, CreateViewItemForGroup(Group));
+        for Snippet in Group.SnippetList do
+          AddViewItemNode(ParentNode, TViewItem.Create(Snippet));
+      end;
+    end;
+  finally
+    FreeAndNil(Grouping);
+  end;
+end;
+
 constructor TOverviewTreeBuilder.Create(const TV: TTreeView;
   const SnippetList: TRoutineList);
   {Class constructor. Sets up object to populate a treeview with a list of
@@ -180,163 +236,62 @@ end;
 
 { TOverviewCategorisedTreeBuilder }
 
-procedure TOverviewCategorisedTreeBuilder.Build;
-  {Populates treeview with snippets grouped by category.
+function TOverviewCategorisedTreeBuilder.CreateGrouping: TGrouping;
+  {Creates a categorised grouping object.
+    @return Required grouping object.
   }
-var
-  CatNode: TViewItemTreeNode; // reference to a category section node
-  Cat: TCategory;             // each category in database
-  Snippet: TRoutine;          // each snippet in a category
-  Sections: TStringList;      // maps category to list of snippets in it
-  CatDescs: TStringList;      // alphabetical list of category descriptions
-  CatDescIdx: Integer;        // loops thru category description list
-  SectionIdx: Integer;        // index of a category in Sections
 begin
-  // Create string list that maps categories onto snippets
-  CatDescs := nil;
-  Sections := TStringList.Create;
-  try
-    Sections.Sorted := True;
-    CatDescs := TStringList.Create;
-    CatDescs.Sorted := True;
-    // Create required lists: 1) Sections maps categories to routine lists and
-    // 2) CatDescs maintains alphabetical list of section names
-    for Cat in Snippets.Categories do
-    begin
-      Sections.AddObject(Cat.Category, TRoutineList.Create);
-      CatDescs.AddObject(Cat.Description, Cat);
-    end;
-    // Add all snippets into correct category list
-    for Snippet in SnippetList do
-    begin
-      SectionIdx := Sections.IndexOf(Snippet.Category);
-      if SectionIdx >= 0 then
-        (Sections.Objects[SectionIdx] as TRoutineList).Add(Snippet);
-    end;
-    // Create tree
-    for CatDescIdx := 0 to Pred(CatDescs.Count) do
-    begin
-      Cat := CatDescs.Objects[CatDescIdx] as TCategory;
-      SectionIdx := Sections.IndexOf(Cat.Category);
-      Assert(SectionIdx >= 0,
-        ClassName + '.Build: Category not in section list');
-      if (Sections.Objects[SectionIdx] as TRoutineList).Count > 0 then
-      begin
-        CatNode := AddViewItemNode(nil, TViewItem.Create(Cat));
-        for Snippet in (Sections.Objects[SectionIdx] as TRoutineList) do
-          AddViewItemNode(CatNode, TViewItem.Create(Snippet));
-      end;
-    end;
-  finally
-    FreeAndNil(CatDescs);
-    // Free section list and contained snippet lists
-    for SectionIdx := Pred(Sections.Count) downto 0 do
-      Sections.Objects[SectionIdx].Free;
-    FreeAndNil(Sections);
-  end;
+  Result := TCategoryGrouping.Create(SnippetList);
+end;
+
+function TOverviewCategorisedTreeBuilder.CreateViewItemForGroup(
+  const Group: TGroupItem): TViewItem;
+  {Creates a category view item from group item.
+    @param Group [in] Group item containing category data.
+    @return Required category view item for group.
+  }
+begin
+  Result := TViewItem.Create((Group as TCategoryGroupItem).Category);
 end;
 
 { TOverviewAlphabeticTreeBuilder }
 
-procedure TOverviewAlphabeticTreeBuilder.Build;
-  {Populates treeview with snippets grouped by initial letter of snippet name.
+function TOverviewAlphabeticTreeBuilder.CreateGrouping: TGrouping;
+  {Creates an alphabetic grouping object.
+    @return Required grouping object.
   }
-
-  function FirstCharOfName(const Name: string): Char;
-    {Gets the first character of a name.
-      @param Name [in] Name for which first character required.
-      @return Required character in upper case.
-    }
-  begin
-    Assert(Name <> '', ClassName + '.Build:FirstCharOfName: Name is empty');
-    Result := UpCase(Name[1]);
-    Assert(Result in ['_', 'A'..'Z'],
-      ClassName +
-        '.Build:FirstCharOfName: Name must begin with A..Z or underscore');
-  end;
-
-var
-  Snippet: TRoutine;              // each snippet in a list
-  Sections: TIntegerList;         // alphabetic (+ underscore) sections
-  SectionSnippets: TRoutineList;  // snippets in in section
-  LetterObj: TLetter;             // references each letter object
-  Idx: Integer;                   // loops through all letters in Sections list
-  ParentNode: TViewItemTreeNode;  // each section node in tree
 begin
-  Sections := TIntegerList.Create;
-  try
-    // Create a snippet list for each letter
-    TAlphabet.Instance.InitEnum;
-    while TAlphabet.Instance.NextLetter(LetterObj) do
-      Sections.Add(Ord(LetterObj.Letter), TRoutineList.Create);
-    // populate section snippet list depending on snippet's initial letter
-    for Snippet in SnippetList do
-    begin
-      SectionSnippets := Sections.FindObject(
-        Ord(FirstCharOfName(Snippet.Name))
-      ) as TRoutineList;
-      if Assigned(SectionSnippets) then
-        SectionSnippets.Add(Snippet);
-    end;
-    // Create tree nodes only section contains snippets
-    TAlphabet.Instance.InitEnum;
-    while TAlphabet.Instance.NextLetter(LetterObj) do
-    begin
-      SectionSnippets := Sections.FindObject(Ord(LetterObj.Letter))
-        as TRoutineList;
-      if Assigned(SectionSnippets) and (SectionSnippets.Count > 0) then
-      begin
-        ParentNode := AddViewItemNode(nil, TViewItem.Create(LetterObj));
-        for Snippet in SectionSnippets do
-          AddViewItemNode(ParentNode, TViewItem.Create(Snippet));
-      end;
-    end;
-  finally
-    // Free all sections and owned snippet lists
-    for Idx := 0 to Pred(Sections.Count) do
-      Sections.Objects[Idx].Free;
-    FreeAndNil(Sections);
-  end;
+  Result := TAlphaGrouping.Create(SnippetList);
+end;
+
+function TOverviewAlphabeticTreeBuilder.CreateViewItemForGroup(
+  const Group: TGroupItem): TViewItem;
+  {Creates an alpha view item from group item.
+    @param Group [in] Group item containing alpha data.
+    @return Required alpha view item for group.
+  }
+begin
+  Result := TViewItem.Create((Group as TAlphaGroupItem).Letter);
 end;
 
 { TOverviewSnipKindTreeBuilder }
 
-procedure TOverviewSnipKindTreeBuilder.Build;
-  {Populates treeview with snippets grouped by snippet kind.
+function TOverviewSnipKindTreeBuilder.CreateGrouping: TGrouping;
+  {Creates a snippet kind grouping object.
+    @return Required grouping object.
   }
-var
-  Snippet: TRoutine;              // each snippet in a snippets list
-  Kind: TSnippetKind;             // each snippet kind
-  ParentNode: TViewItemTreeNode;  // tree node for each snippet kind
-  Sections: array[TSnippetKind]   // snippets associated with each kind
-    of TRoutineList;
 begin
-  // Create snippet lists for each snippet kind
-  for Kind := Low(TSnippetKind) to High(TSnippetKind) do
-    Sections[Kind] := nil;  // make safe in case exception occurs below
-  try
-    for Kind := Low(TSnippetKind) to High(TSnippetKind) do
-      Sections[Kind] := TRoutineList.Create;
-    // Allocate each snippet to appropriate snippet kind list
-    for Snippet in SnippetList do
-      Sections[Snippet.Kind].Add(Snippet);
-    // Create tree nodes only if section contains snippets
-    for Kind := Low(TSnippetKind) to High(TSnippetKind) do
-    begin
-      if Sections[Kind].Count > 0 then
-      begin
-        ParentNode := AddViewItemNode(
-          nil, TViewItem.Create(TSnippetKindInfoList.Instance[Kind])
-        );
-        for Snippet in Sections[Kind] do
-          AddViewItemNode(ParentNode, TViewItem.Create(Snippet));
-      end;
-    end;
-  finally
-    // Free each snippet list
-    for Kind := Low(TSnippetKind) to High(TSnippetKind) do
-      Sections[Kind].Free;
-  end;
+  Result := TSnipKindGrouping.Create(SnippetList);
+end;
+
+function TOverviewSnipKindTreeBuilder.CreateViewItemForGroup(
+  const Group: TGroupItem): TViewItem;
+  {Creates a snippet kind view item from group item.
+    @param Group [in] Group item containing snippet kind data.
+    @return Required snippet kind view item for group.
+  }
+begin
+  Result := TViewItem.Create((Group as TSnipKindGroupItem).SnipKindInfo);
 end;
 
 end.
