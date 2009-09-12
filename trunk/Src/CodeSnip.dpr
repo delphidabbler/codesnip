@@ -195,6 +195,7 @@ uses
   UGC in 'UGC.pas',
   UGIFImageList in 'UGIFImageList.pas',
   UGraphicUtils in 'UGraphicUtils.pas',
+  UGroups in 'UGroups.pas',
   UHelpMgr in 'UHelpMgr.pas',
   UHelpProtocol in 'UHelpProtocol.pas',
   UHiddenRichEdit in 'UHiddenRichEdit.pas',
