@@ -44,9 +44,9 @@ interface
 
 uses
   // Delphi
-  Classes, Contnrs,
+  Classes,
   // Project
-  UIStringList, USnippets, UStrStreamWriter;
+  UIStringList, ULists, USnippets, UStrStreamWriter;
 
 
 type
@@ -101,8 +101,7 @@ type
         property Current: TRoutine read GetCurrent;
           {Current item in enumeration. Error if at end of enumeration}
       end;
-    var
-      fItems: TObjectList;  // Records objects in list
+    var fItems: TObjectListEx;  // Records objects in list
     function GetCount: Integer;
       {Read accessor for Count property.
         @return Number of items in list.
@@ -865,7 +864,7 @@ function TConstAndTypeList.Contains(const ConstOrType: TRoutine): Boolean;
     @return True if snippet in list, False if not.
   }
 begin
-  Result := fItems.IndexOf(ConstOrType) >= 0;
+  Result := fItems.Contains(ConstOrType);
 end;
 
 constructor TConstAndTypeList.Create;
@@ -873,7 +872,7 @@ constructor TConstAndTypeList.Create;
   }
 begin
   inherited;
-  fItems := TObjectList.Create(False);
+  fItems := TObjectListEx.Create(False);
 end;
 
 destructor TConstAndTypeList.Destroy;
