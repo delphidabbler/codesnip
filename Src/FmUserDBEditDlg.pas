@@ -47,7 +47,8 @@ uses
   // Project
   FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
   IntfCompilers, UActiveText, UBaseObjects, UCategoryListAdapter,
-  UChkListStateMgr, UCompileMgr, UCSSBuilder, USnippets, USnippetsChkListMgr;
+  UChkListStateMgr, UCompileMgr, UCSSBuilder, USnipKindListAdapter, USnippets,
+  USnippetsChkListMgr;
 
 
 type
@@ -136,12 +137,17 @@ type
   strict private
     fSnippet: TRoutine;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
+    fSnipKindList:
+      TSnipKindListAdapter;         // Accesses sorted list of snippet kinds
     fOrigName: string;              // Original name of snippet ('' for new)
     fEditData: TRoutineEditData;    // Record storing a snippet's editable data
     fCompileMgr: TCompileMgr;       // Manages compilation and results display
-    fCLBMgrs: array[0..2] of TChkListStateMgr;  // Manages check list box clicks
-    fDependsCLBMgr: TSnippetsChkListMgr;// Manages dependencies check list box
-    fXRefsCLBMgr: TSnippetsChkListMgr;  // Manages x-refs check list box
+    fCLBMgrs: array[0..2] of
+      TChkListStateMgr;             // Manages check list box clicks
+    fDependsCLBMgr:
+      TSnippetsChkListMgr;          // Manages dependencies check list box
+    fXRefsCLBMgr:
+      TSnippetsChkListMgr;          // Manages x-refs check list box
     procedure UpdateTabSheetCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
       {Updates CSS used for HTML displayed in frames on tab sheets.
         @param Sender [in] Not used.
@@ -182,12 +188,6 @@ type
       {Updates snippet's data from user entries. Assumes data has been
       validated.
         @return Record containing snippet's data.
-      }
-    function SelectedSnippetKind(out Kind: TSnippetKind): Boolean;
-      {Gets snippet kind selected in drop-down list.
-        @param Kind [out] Set to selected snippet kind. Not defined if False
-          returned.
-        @return True if a snippeet kind has been selected, False if not.
       }
     procedure UpdateReferences;
       {Updates dependencies and cross-references check lists for snippet being
@@ -367,11 +367,9 @@ procedure TUserDBEditDlg.actCompileUpdate(Sender: TObject);
   and if a snippet kind is selected that is not freeform.
     @param Sender [in] Action triggering this event.
   }
-var
-  Kind: TSnippetKind; // selected snippet kind
 begin
   (Sender as TAction).Enabled := fCompileMgr.HaveCompilers
-    and SelectedSnippetKind(Kind) and (Kind <> skFreeform);
+    and (fSnipKindList.SnippetKind(cbKind.ItemIndex) <> skFreeform);
 end;
 
 procedure TUserDBEditDlg.actDependenciesExecute(Sender: TObject);
@@ -779,6 +777,7 @@ procedure TUserDBEditDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fCatList := TCategoryListAdapter.Create(Snippets.Categories);
+  fSnipKindList := TSnipKindListAdapter.Create;
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
   fDependsCLBMgr := TSnippetsChkListMgr.Create(clbDepends);
   fXRefsCLBMgr := TSnippetsChkListMgr.Create(clbXRefs);
@@ -799,6 +798,7 @@ begin
     FreeAndNil(fCLBMgrs[Idx]);
   FreeAndNil(fXRefsCLBMgr);
   FreeAndNil(fDependsCLBMgr);
+  FreeAndNil(fSnipKindList);
   FreeAndNil(fCatList);
   for Idx := 0 to Pred(lbCompilers.Count) do
     lbCompilers.Items.Objects[Idx].Free;
@@ -856,32 +856,6 @@ procedure TUserDBEditDlg.InitControls;
       CheckEntry(AUnit, clbUnits);
     end;
   end;
-
-  procedure SelectKind(const Kind: TSnippetKind);
-    {Selects a snippet kind in drop down list.
-      @param Kind [in] Snippet kind to be selected.
-    }
-  var
-    Idx: Integer; // loops through drop down list entries
-  begin
-    cbKind.ItemIndex := -1;
-    for Idx := 0 to Pred(cbKind.Items.Count) do
-      if TSnippetKind(cbKind.Items.Objects[Idx]) = Kind then
-      begin
-        cbKind.ItemIndex := Idx;
-        Break;
-      end;
-    UpdateReferences; // update references list to match kind
-  end;
-
-  procedure InitKindDropDownList;
-    {Initialises snippet kind drop down list by selecting kind corresponding to
-    snippet being edited.
-    }
-  begin
-    Assert(Assigned(fSnippet));
-    SelectKind(fSnippet.Kind);
-  end;
   // ---------------------------------------------------------------------------
 
 begin
@@ -893,8 +867,9 @@ begin
     edName.Text := fSnippet.Name;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
     edExtra.Text := TRoutineExtraHelper.BuildREMLMarkup(fSnippet.Extra);
-    InitKindDropDownList;
+    cbKind.ItemIndex := fSnipKindList.IndexOf(fSnippet.Kind);
     // check required items in references check list boxes
+    UpdateReferences;
     InitUnitCheckListBox;
     fDependsCLBMgr.CheckSnippets(fSnippet.Depends);
     fXRefsCLBMgr.CheckSnippets(fSnippet.XRef);
@@ -907,7 +882,7 @@ begin
     edName.Clear;
     cbCategories.ItemIndex := -1;
     edExtra.Clear;
-    SelectKind(skFreeform); // update references check boxes
+    cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);
   end;
   // Select first compiler and update compiler result list
   lbCompilers.ItemIndex := 0;
@@ -1127,7 +1102,6 @@ procedure TUserDBEditDlg.PopulateControls;
 var
   Compiler: ICompiler;        // loops thru all compilers
   CompRes: TCompileResult;    // loops thru all compile results
-  Kind: TSnippetKind;         // loops thru all supported snippet kinds
 resourcestring
   // Text for list items in Compiler Result list box
   sSuccess = 'Success';
@@ -1141,11 +1115,7 @@ const
   );
 begin
   // Display all kinds in drop down list
-  for Kind := Low(TSnippetKind) to High(TSnippetKind) do
-    cbKind.Items.AddObject(
-      TSnippetKindInfoList.Instance[Kind].Description,
-      TObject(Kind)
-    );
+  fSnipKindList.ToStrings(cbKind.Items);
   // Display all available categories in drop down list
   fCatList.ToStrings(cbCategories.Items);
   // Display all compilers
@@ -1159,18 +1129,6 @@ begin
   // Display all compiler results
   for CompRes := Low(TCompileResult) to High(TCompileResult) do
     lbCompRes.Items.AddObject(cCompRes[CompRes], TObject(CompRes));
-end;
-
-function TUserDBEditDlg.SelectedSnippetKind(out Kind: TSnippetKind): Boolean;
-  {Gets snippet kind selected in drop-down list.
-    @param Kind [out] Set to selected snippet kind. Not defined if False
-      returned.
-    @return True if a snippeet kind has been selected, False if not.
-  }
-begin
-  Result := (cbKind.ItemIndex >= 0);
-  if Result then
-    Kind := TSnippetKind(cbKind.Items.Objects[cbKind.ItemIndex]);
 end;
 
 procedure TUserDBEditDlg.SetAllCompilerResults(const CompRes: TCompileResult);
@@ -1234,7 +1192,7 @@ begin
   with Result do
   begin
     Props.Cat := fCatList.CatName(cbCategories.ItemIndex);
-    SelectedSnippetKind(Props.Kind);
+    Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
     Props.Desc := Trim(edDescription.Text);
     Props.SourceCode := TrimRight(edSourceCode.Text);
     (Props.Extra as IAssignable).Assign(BuildExtraActiveText);
@@ -1251,7 +1209,6 @@ procedure TUserDBEditDlg.UpdateReferences;
   }
 var
   EditSnippetID: TSnippetID;      // id of snippet being edited
-  EditSnippetKind: TSnippetKind;  // kind of snippet being edited
   Snippet: TRoutine;              // each snippet in database
 begin
   // Save state of dependencies and x-ref check list boxes and clear them
@@ -1260,37 +1217,34 @@ begin
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
   EditSnippetID := TSnippetID.Create(fOrigName, True);
-  if SelectedSnippetKind(EditSnippetKind) then
+  for Snippet in Snippets.Routines do
   begin
-    for Snippet in Snippets.Routines do
+    // We ignore snippet being edited and main database snippets if there is
+    // a user-defined one with same name
+    if (Snippet.ID <> EditSnippetID) and
+      (
+        Snippet.UserDefined or
+        not Assigned(Snippets.Routines.Find(Snippet.Name, True))
+      ) then
     begin
-      // We ignore snippet being edited and main database snippets if there is
-      // a user-defined one with same name
-      if (Snippet.ID <> EditSnippetID) and
-        (
-          Snippet.UserDefined or
-          not Assigned(Snippets.Routines.Find(Snippet.Name, True))
-        ) then
-      begin
-        case EditSnippetKind of
-          skFreeform, skRoutine:
-          begin
-            // For freeform and snippet's depends list can be anything except
-            // freeform
-            if Snippet.Kind in [skRoutine, skConstant, skTypeDef] then
-              fDependsCLBMgr.AddSnippet(Snippet);
-          end;
-          skTypeDef, skConstant:
-          begin
-            // For typedefs and constants depends list can only be other
-            // typedefs and consts
-            if Snippet.Kind in [skConstant, skTypeDef] then
-              fDependsCLBMgr.AddSnippet(Snippet);
-          end;
+      case fSnipKindList.SnippetKind(cbKind.ItemIndex) of
+        skFreeform, skRoutine:
+        begin
+          // For freeform and snippet's depends list can be anything except
+          // freeform
+          if Snippet.Kind in [skRoutine, skConstant, skTypeDef] then
+            fDependsCLBMgr.AddSnippet(Snippet);
         end;
-        // Anything can be in XRefs list
-        fXRefsCLBMgr.AddSnippet(Snippet);
+        skTypeDef, skConstant:
+        begin
+          // For typedefs and constants depends list can only be other
+          // typedefs and consts
+          if Snippet.Kind in [skConstant, skTypeDef] then
+            fDependsCLBMgr.AddSnippet(Snippet);
+        end;
       end;
+      // Anything can be in XRefs list
+      fXRefsCLBMgr.AddSnippet(Snippet);
     end;
   end;
   // Restore checks to any saved checked item that still exist in new list
