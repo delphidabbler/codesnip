@@ -277,6 +277,7 @@ uses
   UShowCaseCtrl in 'UShowCaseCtrl.pas',
   USimpleDispatch in 'USimpleDispatch.pas',
   USnipData in 'USnipData.pas',
+  USnipKindListAdapter in 'USnipKindListAdapter.pas',
   USnippetIDs in 'USnippetIDs.pas',
   USnippetKindInfo in 'USnippetKindInfo.pas',
   USnippets in 'USnippets.pas',
