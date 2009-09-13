@@ -141,6 +141,7 @@ uses
   UBrowseProtocol in 'UBrowseProtocol.pas',
   UBugReporter in 'UBugReporter.pas',
   UCategoryAction in 'UCategoryAction.pas',
+  UCategoryListAdapter in 'UCategoryListAdapter.pas',
   UCheckSum in 'UCheckSum.pas',
   UChkListStateMgr in 'UChkListStateMgr.pas',
   UClipboardHelper in 'UClipboardHelper.pas',
