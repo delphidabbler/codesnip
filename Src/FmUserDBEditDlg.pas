@@ -46,8 +46,8 @@ uses
   CheckLst, ComCtrls, ExtCtrls, Windows,
   // Project
   FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
-  IntfCompilers, UActiveText, UBaseObjects, UChkListStateMgr, UCompileMgr,
-  UCSSBuilder, USnippets, USnippetsChkListMgr;
+  IntfCompilers, UActiveText, UBaseObjects, UCategoryListAdapter,
+  UChkListStateMgr, UCompileMgr, UCSSBuilder, USnippets, USnippetsChkListMgr;
 
 
 type
@@ -134,11 +134,11 @@ type
     procedure lblViewCompErrsClick(Sender: TObject);
     procedure pcMainChange(Sender: TObject);
   strict private
-    fSnippet: TRoutine;         // Snippet being edited (nil for new snippet)
-    fCatNames: TStringList;     // List of names of available categories
-    fOrigName: string;          // Original name of snippet ('' for new snippet)
-    fEditData: TRoutineEditData;// Record storing a snippet's editable data
-    fCompileMgr: TCompileMgr;   // Manages compilations and display of results
+    fSnippet: TRoutine;             // Snippet being edited: nil for new snippet
+    fCatList: TCategoryListAdapter; // Accesses sorted list of categories
+    fOrigName: string;              // Original name of snippet ('' for new)
+    fEditData: TRoutineEditData;    // Record storing a snippet's editable data
+    fCompileMgr: TCompileMgr;       // Manages compilation and results display
     fCLBMgrs: array[0..2] of TChkListStateMgr;  // Manages check list box clicks
     fDependsCLBMgr: TSnippetsChkListMgr;// Manages dependencies check list box
     fXRefsCLBMgr: TSnippetsChkListMgr;  // Manages x-refs check list box
@@ -778,7 +778,7 @@ procedure TUserDBEditDlg.FormCreate(Sender: TObject);
   }
 begin
   inherited;
-  fCatNames := TStringList.Create;
+  fCatList := TCategoryListAdapter.Create(Snippets.Categories);
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
   fDependsCLBMgr := TSnippetsChkListMgr.Create(clbDepends);
   fXRefsCLBMgr := TSnippetsChkListMgr.Create(clbXRefs);
@@ -799,7 +799,7 @@ begin
     FreeAndNil(fCLBMgrs[Idx]);
   FreeAndNil(fXRefsCLBMgr);
   FreeAndNil(fDependsCLBMgr);
-  FreeAndNil(fCatNames);
+  FreeAndNil(fCatList);
   for Idx := 0 to Pred(lbCompilers.Count) do
     lbCompilers.Items.Objects[Idx].Free;
 end;
@@ -891,7 +891,7 @@ begin
     edSourceCode.Text := fSnippet.SourceCode;
     edDescription.Text := fSnippet.Description;
     edName.Text := fSnippet.Name;
-    cbCategories.ItemIndex := fCatNames.IndexOf(fSnippet.Category);
+    cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
     edExtra.Text := TRoutineExtraHelper.BuildREMLMarkup(fSnippet.Extra);
     InitKindDropDownList;
     // check required items in references check list boxes
@@ -1125,7 +1125,6 @@ procedure TUserDBEditDlg.PopulateControls;
   {Populates controls with dynamic data.
   }
 var
-  Cat: TCategory;             // loops through all categories
   Compiler: ICompiler;        // loops thru all compilers
   CompRes: TCompileResult;    // loops thru all compile results
   Kind: TSnippetKind;         // loops thru all supported snippet kinds
@@ -1148,11 +1147,7 @@ begin
       TObject(Kind)
     );
   // Display all available categories in drop down list
-  for Cat in Snippets.Categories do
-  begin
-    cbCategories.Items.Add(Cat.Description);
-    fCatNames.Add(Cat.Category);
-  end;
+  fCatList.ToStrings(cbCategories.Items);
   // Display all compilers
   for Compiler in fCompileMgr.Compilers do
     lbCompilers.Items.AddObject(
@@ -1238,7 +1233,7 @@ begin
   Result.Init;
   with Result do
   begin
-    Props.Cat := fCatNames[cbCategories.ItemIndex];
+    Props.Cat := fCatList.CatName(cbCategories.ItemIndex);
     SelectedSnippetKind(Props.Kind);
     Props.Desc := Trim(edDescription.Text);
     Props.SourceCode := TrimRight(edSourceCode.Text);
