@@ -1,3 +1,13 @@
+Version 3.2.3 - 14 September 2009
+CodeSnip 3.2.3 - 14 September 2009
++ Fixed bug in "update from web" dialog box where most up to date news item was not being displayed.
++ Dialog boxes that that enable selection of categories and snippets by means of tree views and associated check boxes now sort categories by description.
++ Categories and snippet kinds displayed in the snippets editor are now sorted by description.
++ Refactored:
+  - Code that displays tree views in overview pane and snippet selection dialogs.
+  - Some list management code.
+  - Some snippets editor code.
+
 Version 3.2.2 - 08 September 2009
 CodeSnip 3.2.2 - 08 September 2009
 + Fixed bug in check list boxes where moving selection using keyboard causes check state to be toggled.
@@ -13,7 +23,7 @@ CodeSnip 3.2.1 - 24 August 2009
 + Information about contributor of imported code is now appended to snippet's "extra" information.
 + Added a garbage collector.
 + Changed size of About box - now wider and credits scroll boxes are now taller. Added credit for encryption code.
-+ Fixed minor bug that could display a JavaScript error dialog if an exception occured in an action initiated by clicking a link in the main display.
++ Fixed minor bug that could display a JavaScript error dialog if an exception occurred in an action initiated by clicking a link in the main display.
 + Numerous refactorings.
 
 Version 3.2 - 17 August 2009
@@ -50,8 +60,8 @@ Version 3.0.3 - no public release
 CodeSnip 3.0.3 - 12 Jul 2009
 + Refactored code:
   - Rationalised some JavaScript code.
-  - Rationalised some dialog aligment code.
-  - Changed some object types and class heirachies.
+  - Rationalised some dialog alignment code.
+  - Changed some object types and class hierarchies.
   - Added some automatic object lifetime management logic.
   - Removed some duplicate code and merged some units.
 + Fixed an obscure bug in category code snippet generation as a side effect of refactoring.
@@ -195,7 +205,7 @@ CodeSnip 2.2.5 - 31 December 2008
 
 Version 2.2.4 - 19 December 2008
 CodeSnip 2.2.4 - 17 December 2008
-+ Fixed bug in text and rtf preview dialog boxes that was setting margins incorrectly and clipping displayed text.
++ Fixed bug in text and RTF preview dialog boxes that was setting margins incorrectly and clipping displayed text.
 
 Version 2.2.3 - no public release
 CodeSnip 2.2.3 - 17 December 2008
@@ -239,7 +249,7 @@ CodeSnip 2.1 - 11 October 2008
 
 Version 2.0.7 - no public release
 CodeSnip 2.0.7 - 05 October 2008
-+ Fixed residual bug in alt key bug workaround (CodeGear Quality Central bug report #374030). The bug was manifesting itself only for the first dialog box displayed after the program started.
++ Fixed residual bug in alt key bug work-around (CodeGear Quality Central bug report #374030). The bug was manifesting itself only for the first dialog box displayed after the program started.
 
 Version 2.0.6 - no public release
 CodeSnip 2.0.6 - 05 October 2008
@@ -282,8 +292,8 @@ CodeSnip 2.0 - 15 September 2008
 + Added support for user defined snippets:
   - User database can be edited, saved, backed-up and restored.
   - User database can reference code in main database.
-  - Names of user defined snippets are coloured blue to distiguish them from main database.
-  - User database is stored as a mix of XML and source files in a subfolder of the per-user application data folder.
+  - Names of user defined snippets are coloured blue to distinguish them from main database.
+  - User database is stored as a mix of XML and source files in a sub-folder of the per-user application data folder.
   - Queries can now be refreshed when content of user database changes.
 + Modified extended external object that communicates between browser controls and application.
 + Main database engine heavily modified.
@@ -315,7 +325,7 @@ CodeSnip 1.9.3 - 24 August 2008
 Version 1.9.2 - no public release
 CodeSnip 1.9.2 - 24 August 2008
 + Changed method used to generate program key. No longer uses MAC Address, since code to find this fails on Windows Vista.
-+ Refactored to remove knowledge of how contributor information and database are stored from AppInfo class.
++ Refactored to remove knowledge of how contributor information and database are stored from TAppInfo class.
 + Revised code that manages contributors so that storage details are private to the classes.
 
 Version 1.9.1 - no public release
@@ -497,7 +507,7 @@ CodeSnip 1.5.9 - 16 February 2007
 Version 1.5.8 - released 16 February 2007
 CodeSnip 1.5.8 - 16 February 2007
 + Fixed bug in view history where selecting an item from the history list could cause a crash after database has been updated. This was fixed by clearing the history list after updating the database.
-+ Now clears the main display before redisplaying an updated database to prevent an item from the old version of the database being selected.
++ Now clears the main display before re-displaying an updated database to prevent an item from the old version of the database being selected.
 
 Version 1.5.7 - no public release
 CodeSnip 1.5.7 - 12 February 2007
@@ -515,7 +525,7 @@ CodeSnip 1.5.5 - 11 February 2007
 + Made keyboard interaction with application more consistent:
   - Made browser controls activate and focus properly when user tabs into them.
   - Fixed tab order problems in main display and about dialog box so that only controls that may need to receive user input are now activated by tabbing.
-  - Links displayed in browser controls are always now included in tab sequence and can be activated by Ctrl+Return when focussed.
+  - Links displayed in browser controls are always now included in tab sequence and can be activated by Ctrl+Return when focused.
   - Fixed inconsistency in tab sets in overview and details pane responded inconsistently to Ctrl+Tab and Shift+Ctrl+Tab.
 + Changed browser control respond to activation via the mouse to be the same as for the keyboard.
 
@@ -527,7 +537,7 @@ CodeSnip 1.5.4 of 09 February 2007
 Version 1.5.3 - released 08 February 2007
 CodeSnip 1.5.3 of 08 February 2007
 + Refactored and rationalised code in main form and moved some code into help classes.
-+ Revised code that performs customisation, auto-sizing and aligment of forms and dialog boxes.
++ Revised code that performs customisation, auto-sizing and alignment of forms and dialog boxes.
 + Standardised execution method of dialog boxes.
 
 Version 1.5.2 - no public release
@@ -590,7 +600,7 @@ CodeSnip 1.4 of 03 December 2006
 Version 1.3.5 - no public release
 CodeSnip 1.3.5 of 01 December 2006
 + Changed to display a borderless message dialog during long test compilations. The dialog is not displayed for shorter compilations.
-+ Updated help file re above and fixed an error in the seach menu topic.
++ Updated help file re above and fixed an error in the search menu topic.
 
 Version 1.3.4 - no public release
 CodeSnip 1.3.4 of 26 November 2006
@@ -659,7 +669,7 @@ CodeSnip 1.1.2 of 07 November 2006
 
 Version 1.1.1 - no public release
 CodeSnip 1.1.1 of 31 October 2006
-+ Changed Select Routines dialog to use XP style checkboxes when XP themes active and custom check boxes when XP themes inactive.
++ Changed Select Routines dialog to use XP style check boxes when XP themes active and custom check boxes when XP themes inactive.
 
 Version 1.1 - released 30 October 2006
 CodeSnip 1.1 of 29 October 2006
@@ -695,7 +705,7 @@ CodeSnip 1.0.2 of 25 October 2006
 + Changed so that links from program to external web pages display in default browser rather than IE.
 + Refactored code that displays license text file in external application.
 + Reworded some of welcome screen and added links to online database.
-+ Refactored some javascript code that works with main display HTML and web browser code.
++ Refactored some JavaScript code that works with main display HTML and web browser code.
 + Made minor changes to hints displayed in status bar when cursor is over links.
 
 Version 1.0.1 - released 14 October 2006
@@ -716,7 +726,7 @@ CodeSnip 1.0 of 09 June 2006
 + Standardised appearance of all groups of action links in main display.
 + Added Help menu item to display license and to access CodeSnip web page.
 + Moved bug report and registration menu options from Help to Tools menu.
-+ Updated and help file re new commands, corrected some errors and restyled menu help sections.
++ Updated and help file re new commands, corrected some errors and re-styled menu help sections.
 + Created installer using Inno Setup.
 + Added new batch file to build program.
 + Fully commented code.
