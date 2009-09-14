@@ -48,7 +48,7 @@ uses
   FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
   IntfCompilers, UActiveText, UBaseObjects, UCategoryListAdapter,
   UChkListStateMgr, UCompileMgr, UCSSBuilder, USnipKindListAdapter, USnippets,
-  USnippetsChkListMgr;
+  USnippetsChkListMgr, UUnitsChkListMgr;
 
 
 type
@@ -148,6 +148,7 @@ type
       TSnippetsChkListMgr;          // Manages dependencies check list box
     fXRefsCLBMgr:
       TSnippetsChkListMgr;          // Manages x-refs check list box
+    fUnitsCLBMgr: TUnitsChkListMgr; // Manages units check list box
     procedure UpdateTabSheetCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
       {Updates CSS used for HTML displayed in frames on tab sheets.
         @param Sender [in] Not used.
@@ -301,7 +302,6 @@ procedure TUserDBEditDlg.actAddUnitExecute(Sender: TObject);
   }
 var
   UnitName: string;     // name of new unit from edit control
-  InsertIdx: Integer;   // index at which unit name is inserted in list box
 resourcestring
   // Error messages
   sBadUnitName = 'Unit name is not a valid Pascal identifier';
@@ -310,12 +310,11 @@ begin
   UnitName := Trim(edUnit.Text);
   Assert(UnitName <> '',
     ClassName + '.actAddUnitExecute: UnitName is empty string');
-  if not IsValidIdent(UnitName) then
+  if not fUnitsCLBMgr.IsValidUnitName(UnitName) then
     raise ECodeSnip.Create(sBadUnitName);
-  if clbUnits.Items.IndexOf(UnitName) >= 0 then
+  if fUnitsCLBMgr.ContainsUnit(UnitName) then
     raise ECodeSnip.Create(sUnitNameExists);
-  InsertIdx := clbUnits.Items.Add(Trim(UnitName));
-  clbUnits.Checked[InsertIdx] := True;
+  fUnitsCLBMgr.IncludeUnit(UnitName, True);
   edUnit.Text := '';
 end;
 
@@ -781,6 +780,7 @@ begin
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
   fDependsCLBMgr := TSnippetsChkListMgr.Create(clbDepends);
   fXRefsCLBMgr := TSnippetsChkListMgr.Create(clbXRefs);
+  fUnitsCLBMgr := TUnitsChkListMgr.Create(clbUnits);
   fCLBMgrs[0] := TChkListStateMgr.Create(clbXRefs);
   fCLBMgrs[1] := TChkListStateMgr.Create(clbDepends);
   fCLBMgrs[2] := TChkListStateMgr.Create(clbUnits);
@@ -796,6 +796,7 @@ begin
   inherited;
   for Idx := Low(fCLBMgrs) to High(fCLBMgrs) do
     FreeAndNil(fCLBMgrs[Idx]);
+  FreeAndNil(fUnitsCLBMgr);
   FreeAndNil(fXRefsCLBMgr);
   FreeAndNil(fDependsCLBMgr);
   FreeAndNil(fSnipKindList);
@@ -825,39 +826,6 @@ end;
 procedure TUserDBEditDlg.InitControls;
   {Initialises controls to default values.
   }
-
-  // ---------------------------------------------------------------------------
-  procedure CheckEntry(const Entry: string; const CLB: TCheckListBox);
-    {Checks an item in a check list box that has specified text.
-      @param Entry [in] Text of item to be checked.
-      @param CLB [in] Reference to check list box.
-    }
-  var
-    Idx: Integer;   // index of Entry in CLB
-  begin
-    Idx := CLB.Items.IndexOf(Entry);
-    if Idx >= 0 then
-      CLB.Checked[Idx] := True;
-  end;
-
-  procedure InitUnitCheckListBox;
-    {Checks all units in units check list box that are referenced by current
-    snippet. If unit is not in list box it is added.
-    }
-  var
-    AUnit: string;  // name of each referenced unit
-  begin
-    Assert(Assigned(fSnippet),
-      ClassName + '.InitControls.InitUnitCheckListBox: fSnippet is nil');
-    for AUnit in fSnippet.Units do
-    begin
-      if clbUnits.Items.IndexOf(AUnit) = -1 then
-        clbUnits.Items.Add(AUnit);
-      CheckEntry(AUnit, clbUnits);
-    end;
-  end;
-  // ---------------------------------------------------------------------------
-
 begin
   if Assigned(fSnippet) then
   begin
@@ -870,9 +838,10 @@ begin
     cbKind.ItemIndex := fSnipKindList.IndexOf(fSnippet.Kind);
     // check required items in references check list boxes
     UpdateReferences;
-    InitUnitCheckListBox;
     fDependsCLBMgr.CheckSnippets(fSnippet.Depends);
     fXRefsCLBMgr.CheckSnippets(fSnippet.XRef);
+    // ensure snippet's units are displayed checked in units check list box
+    fUnitsCLBMgr.IncludeUnits(fSnippet.Units, True);
   end
   else
   begin
@@ -883,6 +852,7 @@ begin
     cbCategories.ItemIndex := -1;
     edExtra.Clear;
     cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);
+    UpdateReferences;
   end;
   // Select first compiler and update compiler result list
   lbCompilers.ItemIndex := 0;
@@ -1169,22 +1139,6 @@ function TUserDBEditDlg.UpdateData: TRoutineEditData;
       Result[CompInfo.CompilerID] := CompInfo.CompileResult;
     end;
   end;
-
-  procedure CheckedListItemsToStrings(const CLB: TCheckListBox;
-    const Strings: IStringList);
-    {Sets a string list to contain the text of all check items in a check list
-    box.
-      @param CLB [in] Reference to check list box.
-      @param Strings [in] String list to receive checked items.
-    }
-  var
-    Idx: Integer; // loops thru all items in check list box
-  begin
-    Strings.Clear;
-    for Idx := 0 to Pred(CLB.Items.Count) do
-      if CLB.Checked[Idx] then
-        Strings.Add(CLB.Items[Idx]);
-  end;
   // ---------------------------------------------------------------------------
 
 begin
@@ -1197,7 +1151,7 @@ begin
     Props.SourceCode := TrimRight(edSourceCode.Text);
     (Props.Extra as IAssignable).Assign(BuildExtraActiveText);
     Props.CompilerResults := GetCompileResults;
-    CheckedListItemsToStrings(clbUnits, Refs.Units);
+    fUnitsCLBMgr.GetCheckedUnits(Refs.Units);
     fDependsCLBMgr.GetCheckedSnippets(Refs.Depends);
     fXRefsCLBMgr.GetCheckedSnippets(Refs.XRef);
   end;
