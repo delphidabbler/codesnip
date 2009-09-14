@@ -308,6 +308,7 @@ uses
   UThreadWrapper in 'UThreadWrapper.pas',
   UToolButtonEx in 'UToolButtonEx.pas',
   UTVCheckBoxes in 'UTVCheckBoxes.pas',
+  UUnitsChkListMgr in 'UUnitsChkListMgr.pas',
   UUpdateMgr in 'UUpdateMgr.pas',
   UUserDBBackup in 'UUserDBBackup.pas',
   UUserDBMgr in 'UUserDBMgr.pas',
