@@ -36,7 +36,6 @@
 
 unit UThemesEx;
 
-{$WARN UNSAFE_CODE OFF}
 
 interface
 
@@ -57,11 +56,9 @@ type
     }
   TThemeServicesEx = class(TThemeServices)
   strict private
-    fMessageWdw: TMessageWindow;
-      {Hidden window used to intercept messages and inform of possible theme
-      changes when WM_WININICHANGED received}
-    fThemeChanges: TMultiCastEvents;
-      {Object used to support multi-cast events}
+    var
+      fMessageWdw: TMessageWindow;      // Intercepts theme change messages
+      fThemeChanges: TMultiCastEvents;  // Support for multi-cast events
     function InternalGetElementSize(
       const Details: TThemedElementDetails): TSize;
       {Gets size of a theme part in a specified state.
@@ -87,13 +84,21 @@ type
       {Class destructor. Tears down object.
       }
     function GetElementSize(const Elem: TThemedButton): TSize; overload;
-      {Gets size of a themed element.
+      {Gets size of a themed button element. Not all button elements support
+      this method.
         @param Elem [in] Element we want size of.
         @return Size of element.
       }
+    procedure DrawElement(const Elem: TThemedComboBox; const Bmp: TBitmap;
+      const Rect: TRect); overload;
+      {Draws a themed combo box element on a bitmap.
+        @param Elem [in] Element to be drawn.
+        @param Bmp [in] Bitmap on which to draw element.
+        @param Rect [in] Area of bitmap in which to draw element.
+      }
     procedure DrawElement(const Elem: TThemedButton; const Bmp: TBitmap;
       const Rect: TRect); overload;
-      {Draws a themed element on a bitmap.
+      {Draws a themed button element on a bitmap.
         @param Elem [in] Element to be drawn.
         @param Bmp [in] Bitmap on which to draw element.
         @param Rect [in] Area of bitmap in which to draw element.
@@ -161,7 +166,6 @@ uses
     Result := InternalGetElementSize(GetElementDetails(Elem));
 }
 
-
 function ThemeServicesEx: TThemeServicesEx;
   {Casts ThemeServices object to its actual type.
     @return ThemeServices object cast to TThemeServicesEx.
@@ -210,6 +214,18 @@ begin
     fThemeChanges.TriggerEvents;
 end;
 
+procedure TThemeServicesEx.DrawElement(const Elem: TThemedComboBox;
+  const Bmp: TBitmap; const Rect: TRect);
+  {Draws a themed combo box element on a bitmap.
+    @param Elem [in] Element to be drawn.
+    @param Bmp [in] Bitmap on which to draw element.
+    @param Rect [in] Area of bitmap in which to draw element.
+  }
+begin
+  Assert(ThemesEnabled, ClassName + '.DrawElement: Themes not enabled');
+  InternalDrawElement(GetElementDetails(Elem), Bmp, Rect);
+end;
+
 procedure TThemeServicesEx.DrawElement(const Elem: TThemedTab;
   const Bmp: TBitmap; const Rect: TRect);
   {Draws a themed tab element on a bitmap.
@@ -218,32 +234,30 @@ procedure TThemeServicesEx.DrawElement(const Elem: TThemedTab;
     @param Rect [in] Area of bitmap in which to draw element.
   }
 begin
-  Assert(ThemesEnabled,                                    // ** do not localise
-    'TThemeServicesEx.DrawElement: Themes not enabled');
+  Assert(ThemesEnabled, ClassName + '.DrawElement: Themes not enabled');
   InternalDrawElement(GetElementDetails(Elem), Bmp, Rect);
 end;
 
 procedure TThemeServicesEx.DrawElement(const Elem: TThemedButton;
   const Bmp: TBitmap; const Rect: TRect);
-  {Draws a themed element on a bitmap.
+  {Draws a themed button element on a bitmap.
     @param Elem [in] Element to be drawn.
     @param Bmp [in] Bitmap on which to draw element.
     @param Rect [in] Area of bitmap in which to draw element.
   }
 begin
-  Assert(ThemesEnabled,                                    // ** do not localise
-    'TThemeServicesEx.DrawElement: Themes not enabled');
+  Assert(ThemesEnabled, ClassName + '.DrawElement: Themes not enabled');
   InternalDrawElement(GetElementDetails(Elem), Bmp, Rect);
 end;
 
 function TThemeServicesEx.GetElementSize(const Elem: TThemedButton): TSize;
-  {Gets size of a themed element.
+  {Gets size of a themed button element. Not all button elements support this
+  method.
     @param Elem [in] Element we want size of.
     @return Size of element.
   }
 begin
-  Assert(ThemesEnabled,                                    // ** do not localise
-    'TThemeServicesEx.GetElementSize: Themes not enabled');
+  Assert(ThemesEnabled, ClassName + '.GetElementSize: Themes not enabled');
   Result := InternalGetElementSize(GetElementDetails(Elem));
 end;
 
