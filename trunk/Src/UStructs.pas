@@ -1,7 +1,8 @@
 {
  * UStructs.pas
  *
- * Contains various structure with added functionality.
+ * Various structures. Some are extension of existing structures with added
+ * functionality.
  *
  * $Rev$
  * $Date$
@@ -80,9 +81,21 @@ type
         @return TRectEx resulting from cast.
       }
     class operator Implicit(ARect: TRectEx): TRect;
-      {Implicit cast of TRect to a TRectEx.
+      {Implicit cast of TRectEx to a TRect.
         @param ARect [in] TRectEx to be cast.
         @return TRect resulting from cast.
+      }
+    class operator Equal(R1, R2: TRectEx): Boolean;
+      {Equality test for two TRectEx rectangles.
+        @param R1 [in] Left hand operand.
+        @param R2 [in] Right hand operand.
+        @return True if R1 is the same as R2, False if different.
+      }
+    class operator NotEqual(R1, R2: TRectEx): Boolean;
+      {Inequality test for two TRectEx rectangles.
+        @param R1 [in] Left hand operand.
+        @param R2 [in] Right hand operand.
+        @return True if R1 is different to R2, False if same.
       }
     function Width: Longint;
       {Width of rectangle.
@@ -124,6 +137,19 @@ type
       {Write accessor for BottomRight property.
         @param Value [in] Coordinates of bottom right.
       }
+    function ContainsPoint(const Pt: TPoint): Boolean;
+      {Checks if a point is contained in the rectangle.
+        @param Pt [in] Point to be tested.
+        @return True if point is contained in the rectangle, False if not.
+      }
+    function IsEmpty: Boolean;
+      {Checks if a rectangle is empty. Empty is defined as Right <= Left or
+      Bottom <= Top.
+        return True if empty, False if not.
+      }
+    procedure MakeEmpty;
+      {Makes the rectangle empty.
+      }
     property TopLeft: TPoint read GetTopLeft write SetTopLeft;
       {Coordinates of top left corner of rectangle}
     property BottomRight: TPoint read GetBottomRight write SetBottomRight;
@@ -160,6 +186,15 @@ uses
 
 { TRectEx }
 
+function TRectEx.ContainsPoint(const Pt: TPoint): Boolean;
+  {Checks if a point is contained in the rectangle.
+    @param Pt [in] Point to be tested.
+    @return True if point is contained in the rectangle, False if not.
+  }
+begin
+  Result := Types.PtInRect(Self, Pt);
+end;
+
 constructor TRectEx.Create(ALeft, ATop, ARight, ABottom: Integer);
   {Record constructor. Sets initial field values.
     @param ALeft [in] Left position of rectangle.
@@ -195,6 +230,17 @@ begin
   CreateBounds(ALeft, ATop, ASize.cx, ASize.cy);
 end;
 
+class operator TRectEx.Equal(R1, R2: TRectEx): Boolean;
+  {Equality test for two TRectEx rectangles.
+    @param R1 [in] Left hand operand.
+    @param R2 [in] Right hand operand.
+    @return True if R1 is the same as R2, False if different.
+  }
+begin
+  Result := (R1.Left = R2.Left) and (R1.Top = R2.Top)
+    and (R1.Right = R2.Right) and (R1.Bottom = R2.Bottom);
+end;
+
 function TRectEx.GetBottomRight: TPoint;
   {Read accessor for BottomRight property.
     @return Co-ordinates of bottom right of rectangle.
@@ -222,7 +268,7 @@ begin
 end;
 
 class operator TRectEx.Implicit(ARect: TRectEx): TRect;
-  {Implicit cast of TRect to a TRectEx.
+  {Implicit cast of TRectEx to a TRect.
     @param ARect [in] TRectEx to be cast.
     @return TRect resulting from cast.
   }
@@ -266,6 +312,35 @@ begin
   Inc(Right, DeltaX);
   Dec(Top, DeltaY);
   Inc(Bottom, DeltaY);
+end;
+
+function TRectEx.IsEmpty: Boolean;
+  {Checks if a rectangle is empty. Empty is defined as Right <= Left or
+  Bottom <= Top.
+    return True if empty, False if not.
+  }
+begin
+  Result := Types.IsRectEmpty(Self);
+end;
+
+procedure TRectEx.MakeEmpty;
+  {Makes the rectangle empty.
+  }
+begin
+  Left := 0;
+  Top := 0;
+  Right := 0;
+  Bottom := 0;
+end;
+
+class operator TRectEx.NotEqual(R1, R2: TRectEx): Boolean;
+  {Inequality test for two TRectEx rectangles.
+    @param R1 [in] Left hand operand.
+    @param R2 [in] Right hand operand.
+    @return True if R1 is different to R2, False if same.
+  }
+begin
+  Result := not (R1 = R2);
 end;
 
 procedure TRectEx.OffsetBy(AX, AY: Integer);
