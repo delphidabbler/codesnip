@@ -49,6 +49,14 @@ BDS BITMAP "Res/Img/BDS.bmp"
 
 
 /*
+  Images representing compiler results as "LEDs"
+  Note: added to RCDATA instead of BITMAP resources since the resource compiler
+  doesn't recognise the 32 bit bitmap file type, which this is.
+*/
+LEDS RCDATA "Res/Img/LEDs32.bmp"
+
+
+/*
   Check boxes used in treeviews
 */
 TVCHECKBOXES BITMAP "Res/Img/TVCheckBoxes.bmp"
