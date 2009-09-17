@@ -42,13 +42,14 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes, ActnList, ImgList, Controls, Buttons, StdCtrls, Forms,
-  CheckLst, ComCtrls, ExtCtrls, Windows,
+  SysUtils, Classes, ActnList, Buttons, StdCtrls, Forms, Controls, CheckLst,
+  ComCtrls, ExtCtrls,
   // Project
   FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
   IntfCompilers, UActiveText, UBaseObjects, UCategoryListAdapter,
-  UChkListStateMgr, UCompileMgr, UCSSBuilder, USnipKindListAdapter, USnippets,
-  USnippetsChkListMgr, UUnitsChkListMgr;
+  UChkListStateMgr, UCompileMgr, UCompileResultsLBMgr, UCSSBuilder,
+  ULEDImageList, USnipKindListAdapter, USnippets, USnippetsChkListMgr,
+  UUnitsChkListMgr;
 
 
 type
@@ -78,13 +79,10 @@ type
     edSourceCode: TMemo;
     edUnit: TEdit;
     frmExtraInstructions: TFixedHTMLDlgFrame;
-    ilLEDs: TImageList;
     lbCompilers: TListBox;
-    lbCompRes: TListBox;
     lblCategories: TLabel;
     lblCompilers: TLabel;
     lblCompileShortcuts: TLabel;
-    lblCompRes: TLabel;
     lblDepends: TLabel;
     lblDescription: TLabel;
     lblExtra: TLabel;
@@ -108,6 +106,7 @@ type
     actDependencies: TAction;
     btnViewExtra: TButton;
     actViewExtra: TAction;
+    lblCompResDesc: TLabel;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -121,16 +120,8 @@ type
     procedure actViewExtraUpdate(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure cbKindChange(Sender: TObject);
-    procedure CLBRoutineRefsDrawItem(Control: TWinControl; Index: Integer;
-      Rect: TRect; State: TOwnerDrawState);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    procedure lbCompilersClick(Sender: TObject);
-    procedure lbCompilersDrawItem(Control: TWinControl; Index: Integer;
-      Rect: TRect; State: TOwnerDrawState);
-    procedure lbCompResClick(Sender: TObject);
-    procedure lbCompResDrawItem(Control: TWinControl; Index: Integer;
-      Rect: TRect; State: TOwnerDrawState);
     procedure lblSnippetKindHelpClick(Sender: TObject);
     procedure lblViewCompErrsClick(Sender: TObject);
     procedure pcMainChange(Sender: TObject);
@@ -149,6 +140,9 @@ type
     fXRefsCLBMgr:
       TSnippetsChkListMgr;          // Manages x-refs check list box
     fUnitsCLBMgr: TUnitsChkListMgr; // Manages units check list box
+    fCompilersLBMgr:
+      TCompileResultsLBMgr;         // Manages compilers list box
+    fImages: TLEDImageList;         // Image list containing LEDs
     procedure UpdateTabSheetCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
       {Updates CSS used for HTML displayed in frames on tab sheets.
         @param Sender [in] Not used.
@@ -261,34 +255,8 @@ uses
   StrUtils, Graphics, Menus,
   // Project
   FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
-  UCtrlArranger, UExceptions, UFontHelper, UGraphicUtils, UHTMLUtils,
-  URoutineExtraHelper, USnippetKindInfo, USnippetValidator, UIStringList,
-  UMessageBox, USnippetIDs, UStructs, UThemesEx, UUtils;
-
-
-type
-
-  {
-  TCompilerInfo:
-    Helper class that records information about a snippet's compilation results.
-  }
-  TCompilerInfo = class(TObject)
-  strict private
-    fCompilerID: TCompilerID;       // Value of Compiler property
-    fCompileResult: TCompileResult; // Value of CompileResult property
-  public
-    constructor Create(const CompilerID: TCompilerID;
-      const CompileResult: TCompileResult);
-      {Class constructor. Sets up and initialises object.
-        @param CompilerID [in] Id of compiler that result applies to.
-        @param CompileResult [in] Compiler result for compiler.
-      }
-    property CompilerID: TCompilerID read fCompilerID;
-      {Id of compiler to which CompileResult applies}
-    property CompileResult: TCompileResult
-      read fCompileResult write fCompileResult;
-      {Result of compilation with associated compiler}
-  end;
+  UCtrlArranger, UExceptions, UFontHelper, UHTMLUtils, URoutineExtraHelper,
+  USnippetValidator, UMessageBox, USnippetIDs, UThemesEx, UUtils;
 
 
 {$R *.dfm}
@@ -377,7 +345,7 @@ procedure TUserDBEditDlg.actDependenciesExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  DependsList: TRoutineList;
+  DependsList: TRoutineList;  // list of dependencies
 begin
   DependsList := TRoutineList.Create;
   try
@@ -491,6 +459,8 @@ begin
   btnViewExtra.Top := TCtrlArranger.BottomOf(frmExtraInstructions);
   // tsCompileResults
   lblViewCompErrsKey.Top := TCtrlArranger.BottomOf(lblViewCompErrs);
+  TCtrlArranger.SetLabelHeight(lblCompResDesc);
+  lblCompResDesc.Top := TCtrlArranger.BottomOf(lbCompilers, 8);
   // set body panel size to accommodate controls
   pnlBody.ClientHeight := TCtrlArranger.MaxContainerHeight(
     [tsCode, tsComments, tsCompileResults, tsReferences]
@@ -510,7 +480,6 @@ begin
   try
     // Validate and record entered data
     ValidateData;
-
     fEditData.Assign(UpdateData);
     RoutineName := Trim(edName.Text);
     // Add or update snippet
@@ -616,34 +585,6 @@ begin
   end;
 end;
 
-procedure TUserDBEditDlg.CLBRoutineRefsDrawItem(Control: TWinControl;
-  Index: Integer; Rect: TRect; State: TOwnerDrawState);
-  {OnDrawItem event handler for check list boxes that display snippet names.
-  Draws user defined snippet names in a special colour.
-    @param Control [in] Check list box that triggered the event.
-    @param Index [in] Index if item being drawn.
-    @param Rect [in] Rectangle in check list box's canvas where item is to be
-      drawn.
-    @param State [in] State of list item.
-  }
-var
-  CLB: TCheckListBox;   // reference to check list box
-  Canvas: TCanvas;      // check list box's canvas
-begin
-  inherited;
-  CLB := Control as TCheckListBox;
-  Canvas := CLB.Canvas;
-  if not (odSelected in State)
-    and (CLB.Items.Objects[Index] as TRoutine).UserDefined then
-    Canvas.Font.Color := clUserRoutine;
-  Canvas.TextRect(
-    Rect,
-    Rect.Left + 2,
-    (Rect.Top + Rect.Bottom - Canvas.TextHeight(CLB.Items[Index])) div 2,
-    CLB.Items[Index]
-  );
-end;
-
 procedure TUserDBEditDlg.ConfigForm;
   {Configures form's controls. Sets font and colors of "link" labels. Also sets
   item height of owner draw check list boxes.
@@ -658,9 +599,6 @@ begin
   lblViewCompErrs.Caption := actViewErrors.Caption;
   lblViewCompErrsKey.Caption :=
     '(' + ShortcutToText(actViewErrors.ShortCut) + ')';
-  // Set correct item height for owner drawn check list boxes
-  clbDepends.ItemHeight := StringExtent('Xy', clbDepends.Font).cy;
-  clbXRefs.ItemHeight := StringExtent('Xy', clbXRefs.Font).cy;
 end;
 
 function TUserDBEditDlg.CreateTempSnippet: TRoutine;
@@ -686,18 +624,12 @@ procedure TUserDBEditDlg.DisplayCompileResults(const Compilers: ICompilers);
     @param Compilers [in] Object containing compilation results.
   }
 var
-  CompilerIdx: Integer;           // loops through each compiler
-  CompilerInfo: TCompilerInfo;    // provides information about a compiler
+  Results: TCompileResults;       // results of compilation
+  CompID: TCompilerID;            // loops thru each compiler
 begin
-  // Update compiler results from test compilation
-  for CompilerIdx := 0 to Pred(lbCompilers.Count) do
-  begin
-    CompilerInfo := lbCompilers.Items.Objects[CompilerIdx] as TCompilerInfo;
-    CompilerInfo.CompileResult :=
-      Compilers[CompilerInfo.CompilerID].GetLastCompileResult;
-  end;
-  // Redisplay compilers list to reflect change
-  lbCompilers.Invalidate;
+  for CompID := Low(TCompilerID) to High(TCompilerID) do
+    Results[CompID] := Compilers[CompID].GetLastCompileResult;
+  fCompilersLBMgr.SetCompileResults(Results);
   // Update visibility of show errors link
   pnlViewCompErrs.Visible := fCompileMgr.HaveErrors;
 end;
@@ -784,6 +716,13 @@ begin
   fCLBMgrs[0] := TChkListStateMgr.Create(clbXRefs);
   fCLBMgrs[1] := TChkListStateMgr.Create(clbDepends);
   fCLBMgrs[2] := TChkListStateMgr.Create(clbUnits);
+  fCompilersLBMgr := TCompileResultsLBMgr.Create(
+    lbCompilers, fCompileMgr.Compilers
+  );
+  fImages := TLEDImageList.Create(Self);
+  alMain.Images := fImages;
+  btnSetAllSuccess.Action := actSetAllSuccess;
+  btnSetAllQuery.Action := actSetAllQuery;
 end;
 
 procedure TUserDBEditDlg.FormDestroy(Sender: TObject);
@@ -794,6 +733,7 @@ var
   Idx: Integer; // loops through items in compiler list box
 begin
   inherited;
+  FreeAndNil(fCompilersLBMgr);
   for Idx := Low(fCLBMgrs) to High(fCLBMgrs) do
     FreeAndNil(fCLBMgrs[Idx]);
   FreeAndNil(fUnitsCLBMgr);
@@ -801,8 +741,6 @@ begin
   FreeAndNil(fDependsCLBMgr);
   FreeAndNil(fSnipKindList);
   FreeAndNil(fCatList);
-  for Idx := 0 to Pred(lbCompilers.Count) do
-    lbCompilers.Items.Objects[Idx].Free;
 end;
 
 procedure TUserDBEditDlg.HandleException(const E: Exception);
@@ -854,9 +792,8 @@ begin
     cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);
     UpdateReferences;
   end;
-  // Select first compiler and update compiler result list
-  lbCompilers.ItemIndex := 0;
-  lbCompilersClick(lbCompilers);
+  // Display all compiler results
+  fCompilersLBMgr.SetCompileResults(fEditData.Props.CompilerResults);
 end;
 
 procedure TUserDBEditDlg.InitForm;
@@ -881,150 +818,6 @@ begin
   frmExtraInstructions.OnBuildCSS := UpdateTabSheetCSS;
   // Select first tab sheet
   pcMain.ActivePageIndex := 0;
-end;
-
-procedure TUserDBEditDlg.lbCompilersClick(Sender: TObject);
-  {OnClick event handler for Compilers list box. Selects item in Compile Result
-  list box that corresponds to result for the selected compiler.
-    @param Sender [in] Not used.
-  }
-var
-  CompInfo: TCompilerInfo;  // info about selected compiler
-begin
-  inherited;
-  CompInfo := lbCompilers.Items.Objects[lbCompilers.ItemIndex] as TCompilerInfo;
-  lbCompRes.ItemIndex := Ord(CompInfo.CompileResult);
-end;
-
-procedure TUserDBEditDlg.lbCompilersDrawItem(Control: TWinControl;
-  Index: Integer; Rect: TRect; State: TOwnerDrawState);
-  {OnDrawItem event handler for Compilers list box. Custom draws compiler list
-  item to show compiler glyph, name of compilers and current compile result as
-  glyph.
-    @param Control [in] Reference to list box that triggered event.
-    @param Index [in] Index of list item being drawn.
-    @param Rect [in] Rectangle in list box canvas where item being drawn.
-    @param State [in] State of list item (not used).
-  }
-var
-  LB: TListBox;             // reference to list box
-  Cvs: TCanvas;             // list box's canvas
-  CompInfo: TCompilerInfo;  // info about compile result associated with item
-  Text: string;             // text to be displayed
-  TextRect: TRect;          // rectangle in which to display text
-  CompGlyph: TBitmap;       // gylph associated with compiler
-  GlyphRect: TRect;         // rectangle in which to display compiler glyph
-begin
-  // Get reference to list box, its canvas and associated compiler info
-  LB := Control as TListBox;
-  Cvs := LB.Canvas;
-  CompInfo := LB.Items.Objects[Index] as TCompilerInfo;
-  // Clear item's rectangle
-  Cvs.FillRect(Rect);
-  // Display text
-  Text := LB.Items[Index];
-  TextRect := TRectEx.Create(
-    Rect.Left + 24,
-    (Rect.Bottom + Rect.Top - Cvs.TextHeight(Text)) div 2,
-    Rect.Right - 24,
-    Rect.Bottom
-  );
-  if odDisabled in State then
-    Cvs.Font.Color := clGrayText
-  else
-    Cvs.Font.Color := LB.Font.Color;
-  Cvs.TextRect(TextRect, Text, [tfLeft, tfNoPrefix, tfEndEllipsis, tfTop]);
-  // Display any compiler glyph
-  CompGlyph := fCompileMgr.Compilers[CompInfo.CompilerID].GetGlyph;
-  if Assigned(CompGlyph) then
-  begin
-    GlyphRect := TRectEx.CreateBounds(
-      Rect.Left + 2,
-      (Rect.Bottom + Rect.Top - CompGlyph.Height) div 2,
-      CompGlyph.Width,
-      CompGlyph.Height
-    );
-    Cvs.BrushCopy(
-      GlyphRect,
-      CompGlyph,
-      TRectEx.Create(0, 0, CompGlyph.Width, CompGlyph.Height),
-      clFuchsia
-    );
-  end;
-  // Display compile result "LED": assumes image index = Ord(CompileResult)
-  ilLEDs.Draw(
-    Cvs,
-    Rect.Right - 2 - ilLEDs.Width,
-    (Rect.Bottom + Rect.Top - ilLEDs.Height) div 2,
-    Ord(CompInfo.CompileResult)
-  );
-end;
-
-procedure TUserDBEditDlg.lbCompResClick(Sender: TObject);
-  {OnClick event handler for Compiler Result list box. Updates Compilers list
-  to reflect chosen result.
-    @param Sender [in] Not used.
-  }
-var
-  CompilerIdx: Integer;         // index of selected compiler in list
-  CompResIdx: Integer;          // index of selected compile result in list
-  CompilerInfo: TCompilerInfo;  // information about compiler / result
-begin
-  // Get selected compiler and result
-  CompResIdx := lbCompRes.ItemIndex;
-  CompilerIdx := lbCompilers.ItemIndex;
-  if (CompilerIdx = -1) or (CompResIdx = -1) then
-    Exit;
-  // Update compiler with new result
-  CompilerInfo := lbCompilers.Items.Objects[CompilerIdx] as TCompilerInfo;
-  CompilerInfo.CompileResult :=
-    TCompileResult(lbCompRes.Items.Objects[CompResIdx]);
-  // Redisplay compilers list to reflect change
-  lbCompilers.Invalidate;
-end;
-
-procedure TUserDBEditDlg.lbCompResDrawItem(Control: TWinControl; Index: Integer;
-  Rect: TRect; State: TOwnerDrawState);
-  {OnDrawItem event handler for Compiler Result list box. Custom draws compiler
-  result list item to description of result and its "LED".
-    @param Control [in] Reference to list box that triggered event.
-    @param Index [in] Index of list item being drawn.
-    @param Rect [in] Rectangle in list box canvas where item being drawn.
-    @param State [in] State of list item (not used).
-  }
-var
-  LB: TListBox;             // reference to list box
-  Cvs: TCanvas;             // list box's canvas
-  CompRes: TCompileResult;  // compile result for this item
-  Text: string;             // text to be displayed
-  TextRect: TRect;          // rectangle in which to draw text
-begin
-  // Get reference to list box, its canvas and associated compile result
-  LB := Control as TListBox;
-  Cvs := LB.Canvas;
-  CompRes := TCompileResult(LB.Items.Objects[Index]);
-  // Clear item's rectangle
-  Cvs.FillRect(Rect);
-  // Draw text
-  Text := LB.Items[Index];
-  TextRect := TRectEx.Create(
-    Rect.Left + 4 + ilLEDs.Width,
-    (Rect.Bottom + Rect.Top - Cvs.TextHeight(Text)) div 2,
-    Rect.Right,
-    Rect.Bottom
-  );
-  if odDisabled in State then
-    Cvs.Font.Color := clGrayText
-  else
-    Cvs.Font.Color := LB.Font.Color;
-  Cvs.TextRect(TextRect, Text, [tfLeft, tfNoPrefix, tfEndEllipsis, tfTop]);
-  // Draw compiler result: assumes image index = Ord(CompRes)
-  ilLEDs.Draw(
-    Cvs,
-    Rect.Left + 2,
-    (Rect.Bottom + Rect.Top - ilLEDs.Height) div 2,
-    Ord(CompRes)
-  );
 end;
 
 procedure TUserDBEditDlg.lblSnippetKindHelpClick(Sender: TObject);
@@ -1055,7 +848,7 @@ begin
   if pcMain.ActivePage = tsComments then
   begin
     // We have to load instructions here, since loading them when comments tab
-    // is hidden, causes dialog box to freeze and not be displayed. We may only
+    // is hidden causes dialog box to freeze and not be displayed. We may only
     // load the content when tab is visible. The HTML is loaded each time the
     // tab is displayed, but there is no noticable lag as a result.
     frmExtraInstructions.Initialise('dlg-userdb-extra.html');
@@ -1069,78 +862,25 @@ end;
 procedure TUserDBEditDlg.PopulateControls;
   {Populates controls with dynamic data.
   }
-var
-  Compiler: ICompiler;        // loops thru all compilers
-  CompRes: TCompileResult;    // loops thru all compile results
-resourcestring
-  // Text for list items in Compiler Result list box
-  sSuccess = 'Success';
-  sWarning = 'Warning';
-  sError = 'Error';
-  sQuery = 'Unknown';
-const
-  // Map of compiler results onto descriptions
-  cCompRes: array[TCompileResult] of string = (
-    sSuccess, sWarning, sError, sQuery
-  );
 begin
   // Display all kinds in drop down list
   fSnipKindList.ToStrings(cbKind.Items);
   // Display all available categories in drop down list
   fCatList.ToStrings(cbCategories.Items);
-  // Display all compilers
-  for Compiler in fCompileMgr.Compilers do
-    lbCompilers.Items.AddObject(
-      Compiler.GetName,
-      TCompilerInfo.Create(
-        Compiler.GetID, fEditData.Props.CompilerResults[Compiler.GetID]
-      )
-    );
-  // Display all compiler results
-  for CompRes := Low(TCompileResult) to High(TCompileResult) do
-    lbCompRes.Items.AddObject(cCompRes[CompRes], TObject(CompRes));
 end;
 
 procedure TUserDBEditDlg.SetAllCompilerResults(const CompRes: TCompileResult);
   {Sets all compiler results to same value.
     @param CompRes [in] Required compiler result.
   }
-var
-  CompilerIdx: Integer;         // loops thru all compilers in list box
-  CompilerInfo: TCompilerInfo;  // information about compiler / result
 begin
-  // Update compile result of all compilers
-  for CompilerIdx := 0 to Pred(lbCompilers.Count) do
-  begin
-    CompilerInfo := lbCompilers.Items.Objects[CompilerIdx] as TCompilerInfo;
-    CompilerInfo.CompileResult := CompRes
-  end;
-  // Redisplay compilers list to reflect change
-  lbCompilers.Invalidate;
+  fCompilersLBMgr.SetCompileResults(CompRes);
 end;
 
 function TUserDBEditDlg.UpdateData: TRoutineEditData;
   {Updates snippet's data from user entries. Assumes data has been validated.
     @return Record containing snippet's data.
   }
-
-  // ---------------------------------------------------------------------------
-  function GetCompileResults: TCompileResults;
-    {Gets list of compiler results from compilers list box.
-      @return Array of compiler results.
-    }
-  var
-    Idx: Integer;             // loops through all compilers in list box
-    CompInfo: TCompilerInfo;  // information about a compiler
-  begin
-    for Idx := 0 to Pred(lbCompilers.Count) do
-    begin
-      CompInfo := lbCompilers.Items.Objects[Idx] as TCompilerInfo;
-      Result[CompInfo.CompilerID] := CompInfo.CompileResult;
-    end;
-  end;
-  // ---------------------------------------------------------------------------
-
 begin
   Result.Init;
   with Result do
@@ -1150,7 +890,7 @@ begin
     Props.Desc := Trim(edDescription.Text);
     Props.SourceCode := TrimRight(edSourceCode.Text);
     (Props.Extra as IAssignable).Assign(BuildExtraActiveText);
-    Props.CompilerResults := GetCompileResults;
+    Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
     fUnitsCLBMgr.GetCheckedUnits(Refs.Units);
     fDependsCLBMgr.GetCheckedSnippets(Refs.Depends);
     fXRefsCLBMgr.GetCheckedSnippets(Refs.XRef);
@@ -1314,20 +1054,6 @@ begin
   CheckExtra;
   // Check dependencies
   CheckDependencies;
-end;
-
-{ TCompilerInfo }
-
-constructor TCompilerInfo.Create(const CompilerID: TCompilerID;
-  const CompileResult: TCompileResult);
-  {Class constructor. Sets up and initialises object.
-    @param CompilerID [in] Id of compiler that result applies to.
-    @param CompileResult [in] Compiler result for compiler.
-  }
-begin
-  inherited Create;
-  fCompilerID := CompilerID;
-  fCompileResult := CompileResult;
 end;
 
 end.
