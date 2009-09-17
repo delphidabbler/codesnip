@@ -1,9 +1,8 @@
 {
  * USnippetsChkListMgr.pas
  *
- * Implements class that manages check list box controls that display lists of
- * snippets. Builds and clears list, sets check marks for specified snippets and
- * maintains and restores snapshots of checked items.
+ * Implements class that manages and draws check list box controls that display
+ * lists of snippets.
  *
  * $Rev$
  * $Date$
@@ -43,7 +42,7 @@ interface
 
 uses
   // Delphi
-  CheckLst,
+  Controls, CheckLst, Windows,
   // Project
   USnippetIDs, USnippets;
 
@@ -52,14 +51,14 @@ type
 
   {
   TSnippetsChkListMgr:
-    Manages check list box controls that display lists of snippets. Builds and
-    clears list, sets check marks for specified snippets and maintains and
-    restores snapshots of checked items.
+    Manages and draws check list box controls that display lists of snippets.
+    Builds and clears list, sets check marks for specified snippets and
+    maintains and restores snapshots of checked items.
   }
   TSnippetsChkListMgr = class(TObject)
-  private
-    fCLB: TCheckListBox;      // reference to check list box being managed
-    fSaveList: TRoutineList;  // internal snaphot of checked snippets
+  strict private
+    fCLB: TCheckListBox;      // Reference to check list box being managed
+    fSaveList: TRoutineList;  // Internal snaphot of checked snippets
     procedure CheckSnippet(const Snippet: TRoutine);
       {Checks entry corresponding to a snippet in check list box. Snippets not
       in check list box are ignored.
@@ -67,6 +66,17 @@ type
       }
     procedure ClearChecks;
       {Clears all checks from items in check list box.
+      }
+    procedure DrawItem(Control: TWinControl;
+      Index: Integer; Rect: TRect; State: TOwnerDrawState);
+      {OnDrawItem event handler for associated check list box. Draws user
+      defined snippet names in a different colour to main database snippets.
+        @param Control [in] Check list box that triggered the event. Must be the
+          managed control.
+        @param Index [in] Index if item being drawn.
+        @param Rect [in] Rectangle in check list box's canvas where item is to
+          be drawn.
+        @param State [in] State of list item.
       }
   public
     constructor Create(const CLB: TCheckListBox);
@@ -113,7 +123,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils;
+  SysUtils, Graphics, StdCtrls,
+  // Project
+  UColours, UGraphicUtils;
 
 
 { TSnippetsChkListMgr }
@@ -176,6 +188,10 @@ begin
   Assert(Assigned(CLB), ClassName + '.Create: CLB is nil');
   inherited Create;
   fCLB := CLB;
+  // make list box owner drawn and set correct height to allow for check boxes
+  fCLB.OnDrawItem := DrawItem;
+  fCLB.Style := lbOwnerDrawFixed;
+  fCLB.ItemHeight := StringExtent('Xy', fCLB.Font).cy;
   fSaveList := TRoutineList.Create;
 end;
 
@@ -185,6 +201,34 @@ destructor TSnippetsChkListMgr.Destroy;
 begin
   FreeAndNil(fSaveList);
   inherited;
+end;
+
+procedure TSnippetsChkListMgr.DrawItem(Control: TWinControl; Index: Integer;
+  Rect: TRect; State: TOwnerDrawState);
+  {OnDrawItem event handler for associated check list box. Draws user defined
+  snippet names in a different colour to main database snippets.
+    @param Control [in] Check list box that triggered the event. Must be the
+      managed control.
+    @param Index [in] Index if item being drawn.
+    @param Rect [in] Rectangle in check list box's canvas where item is to be
+      drawn.
+    @param State [in] State of list item.
+  }
+var
+  Canvas: TCanvas;      // check list box's canvas
+begin
+  inherited;
+  Assert(fCLB = Control, ClassName + '.DrawItem: Control <> fCLB');
+  Canvas := fCLB.Canvas;
+  if not (odSelected in State)
+    and (fCLB.Items.Objects[Index] as TRoutine).UserDefined then
+    Canvas.Font.Color := clUserRoutine;
+  Canvas.TextRect(
+    Rect,
+    Rect.Left + 2,
+    (Rect.Top + Rect.Bottom - Canvas.TextHeight(fCLB.Items[Index])) div 2,
+    fCLB.Items[Index]
+  );
 end;
 
 procedure TSnippetsChkListMgr.GetCheckedSnippets(
