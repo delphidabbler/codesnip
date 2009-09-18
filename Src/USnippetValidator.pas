@@ -52,15 +52,52 @@ type
   TSnippetValidator = class(TNoConstructObject)
   public
     class function HasValidDependsList(const Snippet: TRoutine;
-      out ErrorMsg: string): Boolean;
+      out ErrorMsg: string): Boolean; overload;
       {Recursively checks dependency list of a snippet for validity.
         @param Snippet [in] Snippet for which dependencies are to be checked.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
         @return True if dependency list is valid or False if not.
       }
+    class function HasValidDependsList(const SnippetName: string;
+      const Data: TRoutineEditData; out ErrorMsg: string): Boolean; overload;
+      {Recursively checks dependency list of a snippet for validity.
+        @param SnippetName [in] Name of snippet for which dependencies are to be
+          checked.
+        @param Data [in] Data describing properties and references of snippet
+          for which dependencies are to be checked.
+        @param ErrorMsg [out] Message that describes error. Undefined if True
+          returned.
+        @return True if dependency list is valid or False if not.
+      }
+    class function ValidateSourceCode(const Source: string;
+      out ErrorMsg: string): Boolean;
+      {Validates a source code from a snippet.
+        @param Source [in] Source code to be checked.
+        @param ErrorMsg [out] Message that describes error. Undefined if True
+          returned.
+        @return True if source code is valid or False if not.
+      }
+    class function ValidateDescription(const Desc: string;
+      out ErrorMsg: string): Boolean;
+      {Validates a description code from a snippet.
+        @param Desc [in] Description to be checked.
+        @param ErrorMsg [out] Message that describes error. Undefined if True
+          returned.
+        @return True if description is valid or False if not.
+      }
+    class function ValidateName(const Name: string;
+      const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
+      {Validates a snippet's name.
+        @param Name [in] Snippet name to be checked.
+        @param CheckForUniqueness [in] Flag indicating whether a check should
+          be made to see if snippet name is already in user database.
+        @param ErrorMsg [out] Message that describes error. Undefined if True
+          returned.
+        @return True if name is valid or False if not.
+      }
     class function Validate(const Snippet: TRoutine;
-      out Error: string): Boolean;
+      out ErrorMsg: string): Boolean;
       {Checks a snippet for validity.
         @param Snippet [in] Snippet to be checked.
         @param ErrorMsg [out] Message that describes error. Undefined if True
@@ -75,7 +112,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, StrUtils,
   // Project
   USnippetKindInfo;
 
@@ -97,6 +134,7 @@ type
   }
   TSnippetKinds = set of TSnippetKind;
 
+  // ---------------------------------------------------------------------------
   function DependsListIsCircular(const Snippet: TRoutine;
     const DependsList: TRoutineList): Boolean;
     {Checks if dependency list is circular, i.e. a snippet is referenced in own
@@ -142,6 +180,7 @@ type
         Exit;
     end;
   end;
+  // ---------------------------------------------------------------------------
 
 resourcestring
   // Error messages
@@ -219,8 +258,32 @@ begin
   end;
 end;
 
+class function TSnippetValidator.HasValidDependsList(const SnippetName: string;
+  const Data: TRoutineEditData; out ErrorMsg: string): Boolean;
+  {Recursively checks dependency list of a snippet for validity.
+    @param SnippetName [in] Name of snippet for which dependencies are to be
+      checked.
+    @param Data [in] Data describing properties and references of snippet for
+      which dependencies are to be checked.
+    @param ErrorMsg [out] Message that describes error. Undefined if True
+      returned.
+    @return True if dependency list is valid or False if not.
+  }
+var
+  TempSnippet: TRoutine;  // temporary snippet that is checked for dependencies
+begin
+  TempSnippet := (Snippets as ISnippetsEdit).CreateTempRoutine(
+    SnippetName, Data
+  );
+  try
+    Result := HasValidDependsList(TempSnippet, ErrorMsg);
+  finally
+    FreeAndNil(TempSnippet);
+  end;
+end;
+
 class function TSnippetValidator.Validate(const Snippet: TRoutine;
-  out Error: string): Boolean;
+  out ErrorMsg: string): Boolean;
   {Checks a snippet for validity.
     @param Snippet [in] Snippet to be checked.
     @param ErrorMsg [out] Message that describes error. Undefined if True
@@ -228,7 +291,78 @@ class function TSnippetValidator.Validate(const Snippet: TRoutine;
     @return True if snippet valid or False if not.
   }
 begin
-  Result := HasValidDependsList(Snippet, Error);
+  Result := ValidateName(Snippet.Name, False, ErrorMsg)
+    and ValidateDescription(Snippet.Description, ErrorMsg)
+    and ValidateSourceCode(Snippet.SourceCode, ErrorMsg)
+    and HasValidDependsList(Snippet, ErrorMsg);
+end;
+
+class function TSnippetValidator.ValidateDescription(const Desc: string;
+  out ErrorMsg: string): Boolean;
+  {Validates a description code from a snippet.
+    @param Desc [in] Description to be checked.
+    @param ErrorMsg [out] Message that describes error. Undefined if True
+      returned.
+    @return True if description is valid or False if not.
+  }
+resourcestring
+  // Error messages
+  sErrNoDesc = 'A description must be provided';
+  sErrDescHasClosingBrace = 'Description must not contain a ''}'' character';
+begin
+  Result := False;
+  if Trim(Desc) = '' then
+    ErrorMsg := sErrNoDesc
+  else if AnsiContainsText(Desc, '}') then
+    ErrorMsg := sErrDescHasClosingBrace
+  else
+    Result := True;
+end;
+
+class function TSnippetValidator.ValidateName(const Name: string;
+  const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
+  {Validates a snippet's name.
+    @param Name [in] Snippet name to be checked.
+    @param CheckForUniqueness [in] Flag indicating whether a check should be
+      made to see if snippet name is already in user database.
+    @param ErrorMsg [out] Message that describes error. Undefined if True
+      returned.
+    @return True if name is valid or False if not.
+  }
+resourcestring
+  // Error messages
+  sErrNoName = 'A name must be provided';
+  sErrDupName = '%s is already in the database. Please choose another name';
+  sErrBadName = '%s is not a valid Pascal identifier';
+begin
+  Result := False;
+  if Trim(Name) = '' then
+    ErrorMsg := sErrNoName
+  else if not IsValidIdent(Name) then
+    ErrorMsg := Format(sErrBadName, [Name])
+  else if CheckForUniqueness and
+    (Snippets.Routines.Find(Name, True) <> nil) then
+    ErrorMsg := Format(sErrDupName, [Name])
+  else
+    Result := True;
+end;
+
+class function TSnippetValidator.ValidateSourceCode(const Source: string;
+  out ErrorMsg: string): Boolean;
+  {Validates a source code from a snippet.
+    @param Source [in] Source code to be checked.
+    @param ErrorMsg [out] Message that describes error. Undefined if True
+      returned.
+    @return True if source code is valid or False if not.
+  }
+resourcestring
+  // Error message
+  sErrNoSource = 'Some source code must be provided';
+begin
+  // Source code must be provided
+  Result := Trim(Source) <> '';
+  if not Result then
+    ErrorMsg := sErrNoSource;
 end;
 
 end.
