@@ -1400,7 +1400,7 @@ begin
     else
       RoutineName := Routine.Name;
     // If name has changed then new name musn't exist in user database
-    if RoutineName <> Routine.Name then
+    if not AnsiSameText(RoutineName, Routine.Name) then    
       if fRoutines.Find(RoutineName, True) <> nil then
         raise ECodeSnip.CreateFmt(sCantRename, [Routine.Name, RoutineName]);
     // We update by deleting old snippet and inserting new one
@@ -2181,12 +2181,14 @@ procedure TRoutineData.Assign(const Src: TRoutineData);
     @param Src [in] Record to be copied.
   }
 begin
-  Self.Kind := Src.Kind;
-  Self.Cat := Src.Cat;
-  Self.Desc := Src.Desc;
-  Self.SourceCode := Src.SourceCode;
-  (Self.Extra as IAssignable).Assign(Src.Extra);
-  Self.CompilerResults := Src.CompilerResults;
+  Kind := Src.Kind;
+  Cat := Src.Cat;
+  Desc := Src.Desc;
+  SourceCode := Src.SourceCode;
+  // we use cloning for Extra below because it deals uccessfully with both
+  // Self.Extra = nil and Src.Extra = nil
+  Extra := TActiveTextFactory.CloneActiveText(Src.Extra);
+  CompilerResults := Src.CompilerResults;
 end;
 
 procedure TRoutineData.Init;
@@ -2195,11 +2197,11 @@ procedure TRoutineData.Init;
 var
   CompID: TCompilerID;  // loops thru compiler IDs
 begin
-  Self.Kind := skFreeform;
-  Self.Cat := '';
-  Self.Desc := '';
-  Self.SourceCode := '';
-  Self.Extra := TActiveTextFactory.CreateActiveText;
+  Kind := skFreeform;
+  Cat := '';
+  Desc := '';
+  SourceCode := '';
+  Extra := TActiveTextFactory.CreateActiveText;
   for CompID := Low(TCompilerID) to High(TCompilerID) do
     CompilerResults[CompID] := crQuery;
 end;
@@ -2212,9 +2214,9 @@ procedure TRoutineReferences.Assign(const Src: TRoutineReferences);
   }
 begin
   Init;
-  (Self.Units as IAssignable).Assign(Src.Units);
-  (Self.Depends as IAssignable).Assign(Src.Depends);
-  (Self.XRef as IAssignable).Assign(Src.XRef);
+  (Units as IAssignable).Assign(Src.Units);
+  (Depends as IAssignable).Assign(Src.Depends);
+  (XRef as IAssignable).Assign(Src.XRef);
 end;
 
 procedure TRoutineReferences.Init;
@@ -2233,17 +2235,16 @@ procedure TRoutineEditData.Assign(const Src: TRoutineEditData);
     @param Src [in] Record to be copied.
   }
 begin
-  Init;
-  Self.Props.Assign(Src.Props);
-  Self.Refs.Assign(Src.Refs);
+  Props.Assign(Src.Props);
+  Refs.Assign(Src.Refs);
 end;
 
 procedure TRoutineEditData.Init;
   {Initialises record by creating default values and field objects.
   }
 begin
-  Self.Props.Init;
-  Self.Refs.Init;
+  Props.Init;
+  Refs.Init;
 end;
 
 { TRoutineInfo }
@@ -2254,8 +2255,8 @@ procedure TRoutineInfo.Assign(const Src: TRoutineInfo);
     @param Src [in] Record containing fields to be copied.
   }
 begin
-  Self.Name := Src.Name;
-  Self.Data.Assign(Src.Data);
+  Name := Src.Name;
+  Data.Assign(Src.Data);
 end;
 
 procedure TRoutineInfo.Init;
