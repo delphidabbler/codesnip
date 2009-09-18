@@ -1,4 +1,6 @@
-{TODO -oSelf -cRefactor : 
+{TODO -oSelf -cRefactor : Move some validattion code from TUserDBEditDlg.ValidateData to snippets validator}
+{TODO -oSelf -cRefactor : Extract common code in UDropDownButtons and UTVCheckBoxes into common base class.}
+{TODO -oSelf -cRefactor :
 Redesign snippets editor compile page. Remove list box used to select compile result and replace with drop down menu or similar on main compiler result list box. 
 Move all management code into separate management unit.
 Re drop down menu: make accessible from a left click on a "button" or drop down arrow  in each list item, from a right click and by pressing space on list item}
