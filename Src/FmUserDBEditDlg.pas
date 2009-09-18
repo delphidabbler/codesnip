@@ -252,7 +252,7 @@ implementation
 
 uses
   // Delphi
-  StrUtils, Graphics, Menus,
+  StrUtils, Windows {for inlining}, Graphics, Menus,
   // Project
   FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
   UCtrlArranger, UExceptions, UFontHelper, UHTMLUtils, URoutineExtraHelper,
@@ -292,7 +292,7 @@ procedure TUserDBEditDlg.actAddUnitUpdate(Sender: TObject);
     @param Sender [in] Action triggering this event.
   }
 begin
-  (Sender as TAction).Enabled := edUnit.Text <> '';
+  (Sender as TAction).Enabled := Trim(edUnit.Text) <> '';
 end;
 
 procedure TUserDBEditDlg.actCompileExecute(Sender: TObject);
@@ -611,7 +611,6 @@ var
 begin
   ValidateData;
   // Create snippet object from entered data
-  EditData.Init;
   EditData.Assign(UpdateData);
   Result := (Snippets as ISnippetsEdit).CreateTempRoutine(
     Trim(edName.Text), EditData
@@ -787,7 +786,9 @@ begin
     edSourceCode.Clear;
     edDescription.Clear;
     edName.Clear;
-    cbCategories.ItemIndex := -1;
+    cbCategories.ItemIndex := fCatList.IndexOf('user');
+    if cbCategories.ItemIndex = -1 then
+      cbCategories.ItemIndex := 0;
     edExtra.Clear;
     cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);
     UpdateReferences;
@@ -983,77 +984,41 @@ procedure TUserDBEditDlg.ValidateData;
   {Checks all user-entered data in all tabs of the form.
     @except EDataEntry raised if data is not valid.
   }
-
-  // ---------------------------------------------------------------------------
-  procedure CheckDependencies;
-    {Checks a snippet's dependencies for validity.
-      @except EDataEntry on error.
-    }
-  var
-    EditData: TRoutineEditData; // data describing edited snippet
-    TempSnippet: TRoutine;      // temporary snippet created from user entries
-    ErrorMessage: string;       // receives any error message
-  resourcestring
-    // text added to any error messages
-    sPrompt = 'See the dependencies by clicking the View Dependencies button '
-      + 'on the References tab.';
-  begin
-    EditData.Init;
-    EditData.Assign(UpdateData);
-    TempSnippet := (Snippets as ISnippetsEdit).CreateTempRoutine(
-      Trim(edName.Text), EditData
-    );
-    try
-      if not TSnippetValidator.HasValidDependsList(
-        TempSnippet, ErrorMessage
-      ) then
-        Error(ErrorMessage + EOL2 + sPrompt, clbDepends);
-    finally
-      TempSnippet.Free;
-    end;
-  end;
-  // ---------------------------------------------------------------------------
-
 resourcestring
   // Error messages
-  sErrNoDesc = 'A description must be provided';
-  sErrDescHasClosingBrace = 'Description must not contain a ''}'' character';
-  sErrNoName = 'A name must be provided';
-  sErrDupName = '%s is already in the database. Please choose another name';
-  sErrBadName = '%s is not a valid Pascal identifier';
-  sErrNoSource = 'Some source code must be provided';
   sErrNoCategory = 'A category must be selected';
   sErrNoKind = 'A kind must be selected';
+  // Messages
+  sDependencyprompt = 'See the dependencies by clicking the View Dependencies '
+    + 'button on the References tab.';
 var
-  SnippetName: string;  // trimmed snippet name
+  ErrorMessage: string; // receives validation error messages
 begin
-  // Source code must be provided
-  if Trim(edSourceCode.Text) = '' then
-    Error(sErrNoSource, edSourceCode);
-  // Description is required and must not contain closing brace character
-  if AnsiContainsText(edDescription.Text, '}') then
-    Error(sErrDescHasClosingBrace, edDescription);
-  if Trim(edDescription.Text) = '' then
-    Error(sErrNoDesc, edDescription);
-  // Unique name required and must be valid Pascal identifier
-  SnippetName := Trim(edName.Text);
-  if SnippetName = '' then
-    Error(sErrNoName, edName);
-  if (SnippetName <> fOrigName)
-    and (Snippets.Routines.Find(SnippetName, True) <> nil) then
-    Error(sErrDupName, [SnippetName], edName);
-  if not IsValidIdent(SnippetName) then
-    Error(sErrBadName, [SnippetName], edName);
-  // Check that a category has been selected
-  if cbCategories.ItemIndex = -1 then
-    Error(sErrNoCategory, cbCategories);
-  // Check that a kind has been selected
-  if cbKind.ItemIndex = -1 then
-    Error(sErrNoKind, cbKind);
+  Assert(cbCategories.ItemIndex >= 0,
+    ClassName + '.ValidateData: No category selected');
+  Assert(cbKind.ItemIndex >= 0,
+    ClassName + '.ValidateData: No snippet kind selected');
+  if not TSnippetValidator.ValidateSourceCode(
+    edSourceCode.Text, ErrorMessage
+  ) then
+    Error(ErrorMessage, edSourceCode);
+  if not TSnippetValidator.ValidateDescription(
+    edDescription.Text, ErrorMessage
+  ) then
+    Error(ErrorMessage, edDescription);
+  if not TSnippetValidator.ValidateName(
+    Trim(edName.Text),
+    not AnsiSameText(Trim(edName.Text), fOrigName),
+    ErrorMessage
+  ) then
+    Error(ErrorMessage, edName);
   // Check extra info
   CheckExtra;
   // Check dependencies
-  CheckDependencies;
+  if not TSnippetValidator.HasValidDependsList(
+    Trim(edName.Text), UpdateData, ErrorMessage
+  ) then
+    Error(MakeSentence(ErrorMessage) + EOL2 + sDependencyprompt, clbDepends);
 end;
 
 end.
