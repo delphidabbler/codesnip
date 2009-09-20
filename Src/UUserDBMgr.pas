@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  UBaseObjects, UView;
+  UBaseObjects, USnippets, UView;
 
 
 type
@@ -66,6 +66,13 @@ type
         @param CanClose [in/out] Set to True to permit dialog to close or False
           to inhibit closure.
       }
+    class function CreateUserCatList(
+      const IncludeSpecial: Boolean): TCategoryList;
+      {Creates a list of user defined categories.
+        @param IncludeSpecial [in] Flag indicating whether list should include
+          special, non-deletable, categories.
+        @return Required category list. Caller must free.
+      }
   public
     class function CanEdit(const ViewItem: TViewItem): Boolean;
       {Checks if a view item can be edited.
@@ -77,7 +84,7 @@ type
       {Checks if user database can be saved.
         @return True if database can be saved, False if not.
       }
-    class procedure Edit(const RoutineName: string); 
+    class procedure Edit(const RoutineName: string);
       {Gets user to edit a named snippet using edit snippet dialog box.
         @param RoutineName [in] Name of routine to be edited. Must be user
           defined.
@@ -100,6 +107,24 @@ type
       {Restores user database from a previously created backup file.
         @return True if user OKs, False if not.
       }
+    class function CanRenameACategory: Boolean;
+      {Checks if it is possoble to rename any categories.
+        @return True if there are some user-defined categories, False if not.
+      }
+    class function CanDeleteACategory: Boolean;
+      {Checks if it is possoble to delete any categories.
+        @return True if there are some user-defined, deletable, categories,
+          False if not.
+      }
+    class procedure AddCategory;
+      {Adds a new category to user database.
+      }
+    class procedure DeleteACategory;
+      {Selects and deletes a category from database if possible.
+      }
+    class procedure RenameACategory;
+      {Selects and renames a category in database if possible.
+      }
   end;
 
 
@@ -108,11 +133,11 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Dialogs,
+  SysUtils, Dialogs, Windows {for inlining},
   // Project
-  FmUserDBEditDlg, UConsts, UExceptions, UIStringList, UMessageBox,
-  UOpenDialogEx, UOpenDialogHelper, USaveDialogEx, USnippetIDs, USnippets,
-  UUserDBBackup;
+  FmAddCategoryDlg, FmDeleteCategoryDlg, FmRenameCategoryDlg, FmUserDBEditDlg,
+  UConsts, UExceptions, UIStringList, UMessageBox, UOpenDialogEx,
+  UOpenDialogHelper, USaveDialogEx, USnippetIDs, UUserDBBackup;
 
 
 { TUserDBMgr }
@@ -123,6 +148,14 @@ class procedure TUserDBMgr.Add;
 begin
   // Display Add Snippet dialog box which performs update of database.
   TUserDBEditDlg.AddNewRoutine(nil);
+end;
+
+class procedure TUserDBMgr.AddCategory;
+  {Adds a new category to user database.
+  }
+begin
+  // all work takes place in dialog box
+  TAddCategoryDlg.Execute(nil);
 end;
 
 class procedure TUserDBMgr.BackupDatabase;
@@ -157,6 +190,22 @@ begin
     end;
   finally
     FreeAndNil(SaveDlg);
+  end;
+end;
+
+class function TUserDBMgr.CanDeleteACategory: Boolean;
+  {Checks if it is possoble to delete any categories.
+    @return True if there are some user-defined, deletable, categories, False if
+      not.
+  }
+var
+  CatList: TCategoryList; // list of user deletable categories
+begin
+  CatList := CreateUserCatList(False);  // builds list of deletable user cats
+  try
+    Result := CatList.Count > 0;
+  finally
+    FreeAndNil(CatList);
   end;
 end;
 
@@ -201,6 +250,21 @@ begin
   CanClose := True;
 end;
 
+class function TUserDBMgr.CanRenameACategory: Boolean;
+  {Checks if it is possoble to rename any categories.
+    @return True if there are some user-defined categories, False if not.
+  }
+var
+  CatList: TCategoryList; // list of user renamable categories
+begin
+  CatList := CreateUserCatList(True); // build list of all user categories
+  try
+    Result := CatList.Count > 0;
+  finally
+    FreeAndNil(CatList);
+  end;
+end;
+
 class function TUserDBMgr.CanSave: Boolean;
   {Checks if user database can be saved.
     @return True if database can be saved, False if not.
@@ -230,6 +294,35 @@ begin
       Sender as TSaveDialogEx,
       Format(sOverwritePrompt, [FileName])
     );
+end;
+
+class function TUserDBMgr.CreateUserCatList(
+  const IncludeSpecial: Boolean): TCategoryList;
+  {Creates a list of user defined categories.
+    @param IncludeSpecial [in] Flag indicating whether list should include
+      special, non-deletable, categories.
+    @return Required category list. Caller must free.
+  }
+
+  // ---------------------------------------------------------------------------
+  function IsSpecialCat(const Cat: TCategory): Boolean;
+    {Checks if a category is "special".
+      @param Cat [in] Category to check.
+      @return True if category special, False if not.
+    }
+  begin
+    Result := AnsiSameText(Cat.Category, 'user') or
+      AnsiSameText(Cat.Category, 'imports');
+  end;
+  // ---------------------------------------------------------------------------
+
+var
+  Cat: TCategory; // references each category in snippets database
+begin
+  Result := TCategoryList.Create;
+  for Cat in Snippets.Categories do
+    if Cat.UserDefined and (IncludeSpecial or not IsSpecialCat(Cat)) then
+      Result.Add(Cat);
 end;
 
 class procedure TUserDBMgr.Delete(const ViewItem: TViewItem);
@@ -298,6 +391,21 @@ begin
     (Snippets as ISnippetsEdit).DeleteRoutine(ViewItem.Routine);
 end;
 
+class procedure TUserDBMgr.DeleteACategory;
+  {Selects and deletes a category from database if possible.
+  }
+var
+  CatList: TCategoryList; // list of deletable categories
+begin
+  CatList := CreateUserCatList(False);
+  try
+    // all work takes place in dialog box
+    TDeleteCategoryDlg.Execute(nil, CatList)
+  finally
+    FreeAndNil(CatList);
+  end;
+end;
+
 class procedure TUserDBMgr.Edit(const RoutineName: string);
   {Gets user to edit a named snippet using edit snippet dialog box.
     @param RoutineName [in] Name of routine to be edited. Must be user defined.
@@ -309,6 +417,21 @@ begin
   if not Assigned(Routine) then
     raise EBug.Create(ClassName + '.Edit: Routine not in user database');
   TUserDBEditDlg.EditRoutine(nil, Routine);
+end;
+
+class procedure TUserDBMgr.RenameACategory;
+  {Selects and renames a category in database if possible.
+  }
+var
+  CatList: TCategoryList; // list of user defined categories
+begin
+  CatList := CreateUserCatList(True);
+  try
+    // all work takes place in dialog box
+    TRenameCategoryDlg.Execute(nil, CatList)
+  finally
+    FreeAndNil(CatList);
+  end;
 end;
 
 class function TUserDBMgr.RestoreDatabase: Boolean;
