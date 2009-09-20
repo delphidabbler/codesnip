@@ -1,7 +1,5 @@
 inherited RenameCategoryDlg: TRenameCategoryDlg
   Caption = 'Rename Category'
-  ExplicitWidth = 320
-  ExplicitHeight = 240
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
