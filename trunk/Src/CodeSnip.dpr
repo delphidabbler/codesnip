@@ -268,6 +268,7 @@ uses
   UQuery in 'UQuery.pas',
   URegistrar in 'URegistrar.pas',
   UREMLDataIO in 'UREMLDataIO.pas',
+  UReservedCategories in 'UReservedCategories.pas',
   URoutineAction in 'URoutineAction.pas',
   URoutineCreditsParser in 'URoutineCreditsParser.pas',
   URoutineDoc in 'URoutineDoc.pas',
