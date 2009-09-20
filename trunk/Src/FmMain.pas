@@ -461,7 +461,7 @@ procedure TMainForm.actAddSnippetExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  TUserDBMgr.Add;
+  TUserDBMgr.AddSnippet;
 end;
 
 procedure TMainForm.actBackupDatabaseExecute(Sender: TObject);
@@ -592,7 +592,7 @@ procedure TMainForm.actDeleteSnippetExecute(Sender: TObject);
 begin
   Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actDeleteSnippetExecute: Can''t delete current view item');
-  TUserDBMgr.Delete(fMainDisplayMgr.CurrentView);
+  TUserDBMgr.DeleteSnippet(fMainDisplayMgr.CurrentView);
   // display updated is handled by snippets change event handler
 end;
 
@@ -643,7 +643,7 @@ procedure TMainForm.ActEditRoutineExecute(Sender: TObject);
       TEditRoutineAction.
   }
 begin
-  TUserDBMgr.Edit((Sender as TEditRoutineAction).RoutineName);
+  TUserDBMgr.EditSnippet((Sender as TEditRoutineAction).RoutineName);
 end;
 
 procedure TMainForm.actEditSnippetExecute(Sender: TObject);
