@@ -255,8 +255,9 @@ uses
   StrUtils, Windows {for inlining}, Graphics, Menus,
   // Project
   FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
-  UCtrlArranger, UExceptions, UFontHelper, UHTMLUtils, URoutineExtraHelper,
-  USnippetValidator, UMessageBox, USnippetIDs, UThemesEx, UUtils;
+  UCtrlArranger, UExceptions, UFontHelper, UHTMLUtils, UReservedCategories,
+  URoutineExtraHelper, USnippetValidator, UMessageBox, USnippetIDs, UThemesEx,
+  UUtils;
 
 
 {$R *.dfm}
@@ -786,7 +787,7 @@ begin
     edSourceCode.Clear;
     edDescription.Clear;
     edName.Clear;
-    cbCategories.ItemIndex := fCatList.IndexOf('user');
+    cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatName);
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
     edExtra.Clear;
