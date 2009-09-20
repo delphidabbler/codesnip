@@ -137,7 +137,8 @@ uses
   // Project
   FmAddCategoryDlg, FmDeleteCategoryDlg, FmRenameCategoryDlg, FmUserDBEditDlg,
   UConsts, UExceptions, UIStringList, UMessageBox, UOpenDialogEx,
-  UOpenDialogHelper, USaveDialogEx, USnippetIDs, UUserDBBackup;
+  UOpenDialogHelper, UReservedCategories, USaveDialogEx, USnippetIDs,
+  UUserDBBackup;
 
 
 { TUserDBMgr }
@@ -303,25 +304,13 @@ class function TUserDBMgr.CreateUserCatList(
       special, non-deletable, categories.
     @return Required category list. Caller must free.
   }
-
-  // ---------------------------------------------------------------------------
-  function IsSpecialCat(const Cat: TCategory): Boolean;
-    {Checks if a category is "special".
-      @param Cat [in] Category to check.
-      @return True if category special, False if not.
-    }
-  begin
-    Result := AnsiSameText(Cat.Category, 'user') or
-      AnsiSameText(Cat.Category, 'imports');
-  end;
-  // ---------------------------------------------------------------------------
-
 var
   Cat: TCategory; // references each category in snippets database
 begin
   Result := TCategoryList.Create;
   for Cat in Snippets.Categories do
-    if Cat.UserDefined and (IncludeSpecial or not IsSpecialCat(Cat)) then
+    if Cat.UserDefined and
+      (IncludeSpecial or not TReservedCategories.IsReserved(Cat)) then
       Result.Add(Cat);
 end;
 
