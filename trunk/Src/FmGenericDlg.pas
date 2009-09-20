@@ -82,9 +82,9 @@ type
       {Initialises inherited DisableHelp property according to whether help
       button is visible or not.
       }
-    procedure CustomiseForm; override;
+    procedure CustomiseForm; override; final;
       {Enables form to be customised and the arranged / sizes the form. Sub
-      classes should override ConfigForm and ArrangeForm rather than this method.
+      classes must override ConfigForm and ArrangeForm rather than this method.
       }
     function GetAligner: IFormAligner; override;
       {Creates and returns reference to an object that is used to align the form
