@@ -101,6 +101,18 @@ type
         @param Containers [in] Controls that parent the controls being measured.
         @return Required height.
       }
+    class function TotalControlHeight(const Container: TWinControl): Integer;
+      {Gets the height that a container needs to be to accommodate all its
+      contained controls.
+        @param Container [in] Container to be checked.
+        @return Required height.
+      }
+    class function TotalControlWidth(const Container: TWinControl): Integer;
+      {Gets the width that a container needs to be to accommodate all its
+      contained controls.
+        @param Container [in] Container to be checked.
+        @return Required width.
+      }
   end;
 
 
@@ -173,17 +185,10 @@ class function TCtrlArranger.MaxContainerHeight(
   }
 var
   ContainerIdx: Integer;    // loops through all containers
-  CtrlIdx: Integer;         // loops through all controls in a container
-  Ctrls: array of TControl; // array of controls contained in each container
 begin
   Result := 0;
   for ContainerIdx := Low(Containers) to High(Containers) do
-  begin
-    SetLength(Ctrls, Containers[ContainerIdx].ControlCount);
-    for CtrlIdx := 0 to Pred(Containers[ContainerIdx].ControlCount) do
-      Ctrls[CtrlIdx + Low(Ctrls)] := Containers[ContainerIdx].Controls[CtrlIdx];
-    Result := Max(Result, BottomOf(Ctrls));
-  end;
+    Result := Max(Result, TotalControlHeight(Containers[ContainerIdx]));
 end;
 
 class function TCtrlArranger.SetLabelHeight(const Lbl: TLabel): Integer;
@@ -217,6 +222,42 @@ begin
       if IgnoreAutoSize or not Lbl.AutoSize then
         SetLabelHeight(Lbl);
     end;
+  end;
+end;
+
+class function TCtrlArranger.TotalControlHeight(
+  const Container: TWinControl): Integer;
+  {Gets the height that a container needs to be to accommodate all its contained
+  controls.
+    @param Container [in] Container to be checked.
+    @return Required height.
+  }
+var
+  CtrlIdx: Integer;         // loops through all controls in Container
+  Ctrls: array of TControl; // array of controls contained in each container
+begin
+  SetLength(Ctrls, Container.ControlCount);
+  for CtrlIdx := 0 to Pred(Container.ControlCount) do
+    Ctrls[CtrlIdx + Low(Ctrls)] := Container.Controls[CtrlIdx];
+  Result := BottomOf(Ctrls);
+end;
+
+class function TCtrlArranger.TotalControlWidth(
+  const Container: TWinControl): Integer;
+  {Gets the width that a container needs to be to accommodate all its contained
+  controls.
+    @param Container [in] Container to be checked.
+    @return Required width.
+  }
+var
+  CtrlIdx: Integer; // loops through all controls in Container
+  Ctrl: TControl;   // references each control in Container
+begin
+  Result := 0;
+  for CtrlIdx := 0 to Pred(Container.ControlCount) do
+  begin
+    Ctrl := Container.Controls[CtrlIdx];
+    Result := Max(Result, Ctrl.Left + Ctrl.Width);
   end;
 end;
 
