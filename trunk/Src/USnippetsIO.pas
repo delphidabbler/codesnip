@@ -122,8 +122,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UConsts, UIniDataReader, UIStringList, UNulDataReader, USnipData,
-  USnippetIDs, UXMLDataIO;
+  UAppInfo, UConsts, UIniDataReader, UIStringList, UNulDataReader,
+  UReservedCategories, USnipData, USnippetIDs, UXMLDataIO;
 
 
 type
@@ -622,25 +622,19 @@ procedure TUserSnippetsLoader.LoadCategories;
   {Loads all categories from storage and adds user and imports categories if not
   present.
   }
-resourcestring
-  // Descriptions of default user-defined categories
-  sUserCatDesc = 'User Defined Snippets';
-  sImportCatDesc = 'Imported Snippets';
-const
-  // User defined category info
-  cUserCatName = 'user';                                  // name
-  cUserCatData: TCategoryData = (Desc: sUserCatDesc);     // properties
-  // Imports category info
-  cImportCatName = 'imports';                             // name
-  cImportCatData: TCategoryData = (Desc: sImportCatDesc); // properties
+var
+  ResCatIdx: Integer;         // loops thru all reserved categories
+  ResCatInfo: TCategoryInfo;  // info about a reserved category
 begin
   // Get all categories from storage
   inherited;
   // Add default user-defined categories if not present
-  if Categories.Find(cUserCatName) = nil then
-    CreateCategory(cUserCatName, cUserCatData);
-  if Categories.Find(cImportCatName) = nil then
-    CreateCategory(cImportCatName, cImportCatData);
+  for ResCatIdx := 0 to Pred(TReservedCategories.Count) do
+  begin
+    ResCatInfo := TReservedCategories.Info(ResCatIdx);
+    if Categories.Find(ResCatInfo.Name) = nil then
+      CreateCategory(ResCatInfo.Name, ResCatInfo.Data);
+  end;
 end;
 
 { TSnippetsWriter }
