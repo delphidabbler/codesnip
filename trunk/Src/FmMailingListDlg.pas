@@ -156,7 +156,7 @@ begin
   lblSubmit.Top := TCtrlArranger.BottomOf([lblName, edName], 8);
   lblSubscribing.Top := lblSubmit.Top;
   // set body panel height
-  pnlBody.ClientHeight := TCtrlArranger.MaxContainerHeight([pnlData]) + 8;
+  pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlData) + 8;
   // align inherited controls and size form
   inherited;
   // align buttons added in this dialog
