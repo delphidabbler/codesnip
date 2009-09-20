@@ -147,6 +147,8 @@ implementation
 
 
 uses
+  // Delphi
+  Classes,
   // Project
   UMessageBox, FmBugReportDlg;
 
@@ -162,7 +164,7 @@ class procedure TExceptionHandler.Handler(Sender: TObject; E: Exception);
     @param E [in] Exception to be handled.
   }
 begin
-  if E is ECodeSnip then
+  if (E is ECodeSnip) or (E is EFileStreamError) then
     TMessageBox.Error(nil, E.Message)
   else
     TBugReportDlg.Execute(nil, E);
