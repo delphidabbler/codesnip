@@ -16,6 +16,11 @@
 		<param name="Local" value="HTML\dlg_about.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="add category dialog box">
+		<param name="Name" value="Add Category Dialog Box">
+		<param name="Local" value="HTML\dlg_addcategory.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="add snippet dialog">
 		<param name="Name" value="Add Snippet Dialog Box">
 		<param name="Local" value="HTML\dlg_editsnippet.htm">
@@ -111,6 +116,11 @@
 		<param name="Name" value="customise codesnip">
 		<param name="Name" value="Customise CodeSnip">
 		<param name="Local" value="HTML\task_customise.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="delete category dialog box">
+		<param name="Name" value="Delete Category Dialog Box">
+		<param name="Local" value="HTML\dlg_deletecategory.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="dependencies dialog box">
@@ -334,6 +344,11 @@
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="registration wizard">
 		<param name="Local" value="HTML\dlg_register.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="rename category dialog box">
+		<param name="Name" value="Rename Category Dialog Box">
+		<param name="Local" value="HTML\dlg_renamecategory.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="save backup dialog">
