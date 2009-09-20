@@ -215,8 +215,8 @@ uses
   // Delphi
   SysUtils, ActiveX, XMLDom,
   // Project
-  UAppInfo, UREMLDataIO, URoutineExtraHelper, USnippetIDs, UStructs,
-  UXMLDocConsts;
+  UAppInfo, UREMLDataIO, UReservedCategories, URoutineExtraHelper, USnippetIDs,
+  UStructs, UXMLDocConsts;
 
 
 const
@@ -231,9 +231,7 @@ const
   cEarliestVersion  = cVersion1;
   cMinOutputVersion = cVersion3;
   cLatestVersion    = cVersion4;
-  // ID of user category
-  cUserCat          = 'imports';
-
+  
 
 { TUserInfo }
 
@@ -610,7 +608,7 @@ begin
         (Snippets as ISnippetsEdit).GetEditableRoutineInfo;
       with fRoutineInfo[Idx].Data do
       begin
-        Props.Cat := cUserCat;
+        Props.Cat := TReservedCategories.ImportsCatName;
         Props.Desc :=
           TXMLDocHelper.GetSubTagText(fXMLDoc, RoutineNode, cDescriptionNode);
         Props.SourceCode :=
