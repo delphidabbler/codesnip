@@ -114,8 +114,8 @@ type
     Provides deatils of a snippet's data that can be edited.
   }
   TRoutineEditData = record
-    Props: TRoutineData;        // snippet's editable properties
-    Refs: TRoutineReferences;   // snippet's editable referfences
+    Props: TRoutineData;        // Snippet's editable properties
+    Refs: TRoutineReferences;   // Snippet's editable referfences
     procedure Init;
       {Initialises record by creating default values and field objects.
       }
@@ -131,8 +131,8 @@ type
     snippet.
   }
   TRoutineInfo = record
-    Name: string;           // snippet name
-    Data: TRoutineEditData; // describes a snippet
+    Name: string;           // Snippet name
+    Data: TRoutineEditData; // Describes a snippet
     procedure Assign(const Src: TRoutineInfo);
       {Sets this record's fields to be same as another TRoutineInfo record.
       Object fields are copied appropriately.
@@ -154,7 +154,14 @@ type
     Provides information about a category's properties.
   }
   TCategoryData = record
-    Desc: string;               // description of categpry
+    Desc: string;     // Description of categpry
+    procedure Assign(const Src: TCategoryData);
+      {Sets this record's fields to be same as another TCategoryData record.
+        @param Src [in] Record containing fields to be copied.
+      }
+    procedure Init;
+      {Initialises record to nul values.
+      }
   end;
 
   {
@@ -167,7 +174,10 @@ type
     evChangeEnd,        // a change to the database has completed
     evRoutineAdded,     // a snippet has been added
     evRoutineDeleted,   // a snippet has been deleted
-    evRoutineChanged    // a snippet's properties and/or reference have changed
+    evRoutineChanged,   // a snippet's properties and/or reference have changed
+    evCategoryAdded,    // a category has been added
+    evCategoryDeleted,  // a category has been deleted
+    evCategoryChanged   // a category's properties have changed
   );
 
   {
@@ -211,15 +221,15 @@ type
       {Gets kind (type) of event.
         @return Event kind.
       }
-    function GetRoutine: TRoutine;
-      {Gets reference to snippet referred to by event.
-        @return Snippet reference. Not defined for some event kinds.
+    function GetInfo: TObject;
+      {Gets additional information about event.
+        @return Object that provides required information.
       }
     property Kind: TSnippetChangeEventKind read GetKind;
       {Identifies kind (type) of an event. Always defined}
-    property Routine: TRoutine read GetRoutine;
-      {References snippet that event refers to. Not defined for some event
-      kinds}
+    property Info: TObject read GetInfo;
+      {Provides additional information about the event. Actual type of object
+      depends on Kind. May be nil}
   end;
 
   {
@@ -492,7 +502,6 @@ type
   }
   TCategoryList = class(TObject)
   strict private
-    var fList: TObjectListEx; // Stores list of categories
     function GetCount: Integer;
       {Read accessor for Count property.
         @return Number of categories in list.
@@ -502,6 +511,8 @@ type
         @param Idx [in] Index of required category in list.
         @return Category at specified index in list.
       }
+  strict protected
+    var fList: TObjectListEx; // Stores list of categories
   public
     type
       {
@@ -530,9 +541,10 @@ type
           {Current item in enumeration. Error if at end of enumeration}
       end;
   public
-    constructor Create;
-      {Class constructor. Creates a new empty list that owns the category
-      objects in it, so that detroying this object frees the category objects.
+    constructor Create(const OwnsObjects: Boolean = False);
+      {Class constructor. Creates a new empty list.
+        @param OwnsObjects [in] Specifies whether list owns the category objects
+          it contains. If True the categories are freed when deleted from list.
       }
     destructor Destroy; override;
       {Class destructor. Tears down object.
@@ -550,6 +562,11 @@ type
         @param CatName [in] Name of required category.
         @return Reference to object representing category in list or nil if not
           in list.
+      }
+    function Contains(const Category: TCategory): Boolean;
+      {Checks if a category is in list. Checks object reference.
+        @param Category [in] Category to be checked.
+        @return True if category object is in list.
       }
     function GetEnumerator: TEnumerator;
       {Gets an intialised category list enumerator.
@@ -657,6 +674,31 @@ type
     procedure DeleteRoutine(const Routine: TRoutine);
       {Deletes a snippet from the user database.
         @param Routine [in] Snippet to be deleted.
+      }
+    function GetEditableCategoryInfo(
+      const Category: TCategory = nil): TCategoryData;
+      {Provides details of all a category's data that may be edited.
+        @param Category [in] Category for which data is required. May be nil in
+          whih case a blank record is returned.
+        @return Required data.
+      }
+    function AddCategory(const CatName: string;
+      const Data: TCategoryData): TCategory;
+      {Adds a new category to the user database.
+        @param CatName [in] Name of new category.
+        @param Data [in] Record storing new category's properties.
+        @return Reference to new category.
+      }
+    function UpdateCategory(const Category: TCategory;
+      const Data: TCategoryData): TCategory;
+      {Updates a user defined category's properties.
+        @param Category [in] Category to be updated. Must be user-defined.
+        @param Data [in] Record containing revised data.
+        @return Reference to updated category. Will have changed.
+      }
+    procedure DeleteCategory(const Category: TCategory);
+      {Deletes a category and all its snippets from the user database.
+        @param Category [in] Category to be deleted.
       }
     function Updated: Boolean;
       {Checks if user database has been updated since last save.
@@ -780,11 +822,27 @@ type
 
   {
   TCategoryEx:
-    Private extension of TCategory for use internally by Snippets object. This
-    version does nothing except provide a placeholder for any future extended
-    object.
+    Private extension of TCategory for use internally by Snippets object.
   }
-  TCategoryEx = class(TCategory);
+  TCategoryEx = class(TCategory)
+  public
+    function GetEditData: TCategoryData;
+      {Gets details of all editable data of category.
+        @return Required editable data.
+      }
+  end;
+
+  {
+  TCategoryListEx:
+    Private extension of TCategoryList for use internally by snippets object.
+  }
+  TCategoryListEx = class(TCategoryList)
+  public
+    procedure Delete(const Category: TCategory);
+      {Deletes a category from the list.
+        @param Category [in] Category to be deleted.
+      }
+  end;
 
   {
   TSnippets:
@@ -809,31 +867,31 @@ type
       TEventInfo = class(TInterfacedObject, ISnippetChangeEventInfo)
       strict private
         fKind: TSnippetChangeEventKind; // Kind of event
-        fRoutine: TRoutine;             // Reference to any affected snippet
-      protected
+        fInfo: TObject;                 // Extra info about event
+      protected // do not make strict
         { ISnippetChangeEventInfo methods }
         function GetKind: TSnippetChangeEventKind;
           {Gets kind (type) of event.
             @return Event kind.
           }
-        function GetRoutine: TRoutine;
-          {Gets reference to snippet referred to by event.
-            @return Snippet reference. Not defined for some event kinds.
+        function GetInfo: TObject;
+          {Gets additional information about event.
+            @return Object that provides required information.
           }
       public
         constructor Create(const Kind: TSnippetChangeEventKind;
-          const Routine: TRoutine = nil);
+          const Info: TObject = nil);
           {Class constructor. Creates an event information object.
             @param Kind [in] Kind of event.
-            @param Routine [in] Reference to any snippet affected by event. May
-              be nil if event does not affect a snippet.
+            @param Info [in] Reference to further information about the event.
+               May be nil if event doesn't have additional information.
           }
       end;
     procedure TriggerEvent(const Kind: TSnippetChangeEventKind;
-      const Routine: TRoutine = nil);
+      const Info: TObject = nil);
       {Triggers a change event. Notifies all registered listeners.
         @param Kind [in] Kind of event.
-        @param Routine [in] Reference to any snippet affected by event. May be
+        @param Info [in] Reference to any further information for event. May be
           nil.
       }
     function InternalAddRoutine(const RoutineName: string;
@@ -848,6 +906,18 @@ type
     procedure InternalDeleteRoutine(const Routine: TRoutine);
       {Deletes a snippet from the user database.
         @param Routine [in] Snippet to delete from database.
+      }
+    function InternalAddCategory(const CatName: string;
+      const Data: TCategoryData): TCategory;
+      {Adds a new category to the user database. Assumes category not already in
+      user database.
+        @param CatName [in] Name of new category.
+        @param Data [in] Properties of new category.
+        @return Reference to new category object.
+      }
+    procedure InternalDeleteCategory(const Cat: TCategory);
+      {Deletes a category from the user database.
+        @param Cat [in] Category to delete from database.
       }
     procedure GetDependentList(const ARoutine: TRoutine;
       const List: TRoutineList);
@@ -942,6 +1012,31 @@ type
       {Deletes a snippet from the user database.
         @param Routine [in] Snippet to be deleted.
       }
+    function GetEditableCategoryInfo(
+      const Category: TCategory = nil): TCategoryData;
+      {Provides details of all a category's data that may be edited.
+        @param Category [in] Category for which data is required. May be nil in
+          which case a blank record is returned.
+        @return Required data.
+      }
+    function AddCategory(const CatName: string;
+      const Data: TCategoryData): TCategory;
+      {Adds a new category to the user database.
+        @param CatName [in] Name of new category.
+        @param Data [in] Record storing new category's properties.
+        @return Reference to new category.
+      }
+    function UpdateCategory(const Category: TCategory;
+      const Data: TCategoryData): TCategory;
+      {Updates a user defined category's properties.
+        @param Category [in] Category to be updated. Must be user-defined.
+        @param Data [in] Record containing revised data.
+        @return Reference to updated category. Will have changed.
+      }
+    procedure DeleteCategory(const Category: TCategory);
+      {Deletes a category and all its snippets from the user database.
+        @param Category [in] Category to be deleted.
+      }
     function Updated: Boolean;
       {Checks if user database has been updated since last save.
         @return True if database has been updated, False otherwise.
@@ -1026,6 +1121,31 @@ end;
 
 { TSnippets }
 
+function TSnippets.AddCategory(const CatName: string;
+  const Data: TCategoryData): TCategory;
+  {Adds a new category to the user database.
+    @param CatName [in] Name of new category.
+    @param Data [in] Record storing new category's properties.
+    @return Reference to new category.
+  }
+resourcestring
+  // Error message
+  sNameExists = 'Category %s already exists in user database';
+begin
+  Result := nil;
+  TriggerEvent(evChangeBegin);
+  try
+    // Check if category with same name exists in user database: error if so
+    if fCategories.Find(CatName) <> nil then
+      raise ECodeSnip.CreateFmt(sNameExists, [CatName]);
+    Result := InternalAddCategory(CatName, Data);
+    TriggerEvent(evCategoryAdded, Result);
+  finally
+    fUpdated := True;
+    TriggerEvent(evChangeEnd);
+  end;
+end;
+
 procedure TSnippets.AddChangeEventHandler(const Handler: TNotifyEventInfo);
   {Adds a change event handler to list of listeners.
     @param Handler [in] Event handler to be added.
@@ -1073,7 +1193,7 @@ constructor TSnippets.Create;
 begin
   inherited Create;
   fRoutines := TRoutineListEx.Create(True);
-  fCategories := TCategoryList.Create;
+  fCategories := TCategoryListEx.Create(True);
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
 
@@ -1110,6 +1230,31 @@ function TSnippets.CreateTempRoutine(const RoutineName: string;
 begin
   Result := TTempRoutine.Create(RoutineName, True, Data.Props);
   (Result as TTempRoutine).UpdateRefs(Data.Refs, fRoutines);
+end;
+
+procedure TSnippets.DeleteCategory(const Category: TCategory);
+  {Deletes a category and all its snippets from the user database.
+    @param Category [in] Category to be deleted.
+  }
+var
+  SnipIdx: Integer; // loops thru all category's snippets
+begin
+  Assert(Category.UserDefined,
+    ClassName + '.DeleteCategory: Category is not user defined');
+  Assert(fCategories.Contains(Category),
+    ClassName + '.DeleteCategory: Category is not in the database');
+  TriggerEvent(evChangeBegin);
+  try
+    // all snippets that belong to category are deleted before category itself
+    // can't use for..in here since Routines list is modified in loop
+    for SnipIdx := Pred(Category.Routines.Count) downto 0 do
+      InternalDeleteRoutine(Category.Routines[SnipIdx]);
+    InternalDeleteCategory(Category);
+    TriggerEvent(evCategoryDeleted);
+  finally
+    TriggerEvent(evChangeEnd);
+    fUpdated := True;
+  end;
 end;
 
 procedure TSnippets.DeleteRoutine(const Routine: TRoutine);
@@ -1201,6 +1346,21 @@ begin
   end;
 end;
 
+function TSnippets.GetEditableCategoryInfo(
+  const Category: TCategory): TCategoryData;
+  {Provides details of all a category's data that may be edited.
+    @param Category [in] Category for which data is required. May be nil in
+      whih case a blank record is returned.
+    @return Required data.
+  }
+begin
+  Assert(not Assigned(Category) or Category.UserDefined,
+    ClassName + '.GetEditableCategoryInfo: Category is not user-defined');
+  if Assigned(Category) then
+  else
+    Result.Init;
+end;
+
 function TSnippets.GetEditableRoutineInfo(
   const Routine: TRoutine): TRoutineEditData;
   {Provides details of all a snippet's data (properties and references) that may
@@ -1259,6 +1419,19 @@ begin
   Result := fRoutines;
 end;
 
+function TSnippets.InternalAddCategory(const CatName: string;
+  const Data: TCategoryData): TCategory;
+  {Adds a new category to the user database. Assumes category not already in
+  user database.
+    @param CatName [in] Name of new category.
+    @param Data [in] Properties of new category.
+    @return Reference to new category object.
+  }
+begin
+  Result := TCategoryEx.Create(CatName, True, Data);
+  fCategories.Add(Result);
+end;
+
 function TSnippets.InternalAddRoutine(const RoutineName: string;
   const Data: TRoutineEditData): TRoutine;
   {Adds a new snippet to the user database. Assumes snippet not already in user
@@ -1281,6 +1454,14 @@ begin
     raise ECodeSnip.CreateFmt(sCatNotFound, [Result.Category, Result.Name]);
   Cat.Routines.Add(Result);
   fRoutines.Add(Result);
+end;
+
+procedure TSnippets.InternalDeleteCategory(const Cat: TCategory);
+  {Deletes a category from the user database.
+    @param Cat [in] Category to delete from database.
+  }
+begin
+  (fCategories as TCategoryListEx).Delete(Cat);
 end;
 
 procedure TSnippets.InternalDeleteRoutine(const Routine: TRoutine);
@@ -1348,16 +1529,49 @@ begin
 end;
 
 procedure TSnippets.TriggerEvent(const Kind: TSnippetChangeEventKind;
-  const Routine: TRoutine);
+  const Info: TObject);
   {Triggers a change event. Notifies all registered listeners.
     @param Kind [in] Kind of event.
-    @param Routine [in] Reference to any snippet affected by event. May be nil.
+    @param Info [in] Reference to any further information for event. May be nil.
   }
 var
   EvtInfo: ISnippetChangeEventInfo; // event information object
 begin
-  EvtInfo := TEventInfo.Create(Kind, Routine);
+  EvtInfo := TEventInfo.Create(Kind, Info);
   fChangeEvents.TriggerEvents(EvtInfo);
+end;
+
+function TSnippets.UpdateCategory(const Category: TCategory;
+  const Data: TCategoryData): TCategory;
+  {Updates a user defined category's properties.
+    @param Category [in] Category to be updated. Must be user-defined.
+    @param Data [in] Record containing revised data.
+    @return Reference to updated category. Will have changed.
+  }
+var
+  SnippetList: TRoutineList;
+  Snippet: TRoutine;
+  CatName: string;
+begin
+  TriggerEvent(evChangeBegin);
+  try
+    SnippetList := TRoutineList.Create;
+    try
+      for Snippet in Category.Routines do
+        SnippetList.Add(Snippet);
+      CatName := Category.Category;
+      InternalDeleteCategory(Category);
+      Result := InternalAddCategory(CatName, Data);
+      for Snippet in SnippetList do
+        Result.Routines.Add(Snippet);
+    finally
+      FreeAndNil(SnippetList);
+    end;
+    TriggerEvent(evCategoryChanged, Result);
+  finally
+    fUpdated := True;
+    TriggerEvent(evChangeEnd);
+  end;
 end;
 
 function TSnippets.Updated: Boolean;
@@ -1400,7 +1614,7 @@ begin
     else
       RoutineName := Routine.Name;
     // If name has changed then new name musn't exist in user database
-    if not AnsiSameText(RoutineName, Routine.Name) then    
+    if not AnsiSameText(RoutineName, Routine.Name) then
       if fRoutines.Find(RoutineName, True) <> nil then
         raise ECodeSnip.CreateFmt(sCantRename, [Routine.Name, RoutineName]);
     // We update by deleting old snippet and inserting new one
@@ -1433,7 +1647,7 @@ end;
 { TSnippets.TEventInfo }
 
 constructor TSnippets.TEventInfo.Create(const Kind: TSnippetChangeEventKind;
-  const Routine: TRoutine);
+  const Info: TObject);
   {Class constructor. Creates an event information object.
     @param Kind [in] Kind of event.
     @param Routine [in] Reference to any snippet affected by event. May be nil
@@ -1442,7 +1656,15 @@ constructor TSnippets.TEventInfo.Create(const Kind: TSnippetChangeEventKind;
 begin
   inherited Create;
   fKind := Kind;
-  fRoutine := Routine;
+  fInfo := Info;
+end;
+
+function TSnippets.TEventInfo.GetInfo: TObject;
+  {Gets additional information about event.
+    @return Object that provides required information.
+  }
+begin
+  Result := fInfo;
 end;
 
 function TSnippets.TEventInfo.GetKind: TSnippetChangeEventKind;
@@ -1451,14 +1673,6 @@ function TSnippets.TEventInfo.GetKind: TSnippetChangeEventKind;
   }
 begin
   Result := fKind;
-end;
-
-function TSnippets.TEventInfo.GetRoutine: TRoutine;
-  {Gets reference to snippet referred to by event.
-    @return Snippet reference. Not defined for some event kinds.
-  }
-begin
-  Result := fRoutine;
 end;
 
 { TRoutine }
@@ -1975,6 +2189,16 @@ begin
   Result := AnsiSameText(Self.Category, Cat.Category);
 end;
 
+{ TCategoryEx }
+
+function TCategoryEx.GetEditData: TCategoryData;
+  {Gets details of all editable data of category.
+    @return Required editable data.
+  }
+begin
+  Result.Desc := Self.Description;
+end;
+
 { TCategoryList }
 
 function TCategoryList.Add(const Category: TCategory): Integer;
@@ -1995,13 +2219,23 @@ begin
   fList.Clear;
 end;
 
-constructor TCategoryList.Create;
-  {Class constructor. Creates a new empty list that owns the category objects in
-  it, so that detroying this object frees the category objects.
+function TCategoryList.Contains(const Category: TCategory): Boolean;
+  {Checks if a category is in list. Checks object reference.
+    @param Category [in] Category to be checked.
+    @return True if category object is in list.
   }
 begin
-  inherited;
-  fList := TObjectListEx.Create(True);
+  Result := fList.Contains(Category);
+end;
+
+constructor TCategoryList.Create(const OwnsObjects: Boolean);
+  {Class constructor. Creates a new empty list.
+    @param OwnsObjects [in] Specifies whether list owns the category objects it
+      contains. If True the categories are freed when deleted from list.
+  }
+begin
+  inherited Create;
+  fList := TObjectListEx.Create(OwnsObjects);
 end;
 
 destructor TCategoryList.Destroy;
@@ -2085,6 +2319,21 @@ begin
   Result := fIndex < Pred(fCategoryList.Count);
   if Result then
     Inc(fIndex);
+end;
+
+{ TCategoryListEx }
+
+procedure TCategoryListEx.Delete(const Category: TCategory);
+  {Deletes a category from the list.
+    @param Category [in] Category to be deleted.
+  }
+var
+  Idx: Integer; // index of snippet in list.
+begin
+  Idx := fList.IndexOf(Category);
+  if Idx = -1 then
+    Exit;
+  fList.Delete(Idx);  // this frees category if list owns objects
 end;
 
 { TSnippetsFactory }
@@ -2267,6 +2516,23 @@ begin
   Data.Init;
 end;
 
+{ TCategoryData }
+
+procedure TCategoryData.Assign(const Src: TCategoryData);
+  {Sets this record's fields to be same as another TCategoryData record.
+    @param Src [in] Record containing fields to be copied.
+  }
+begin
+  Desc := Src.Desc;
+end;
+
+procedure TCategoryData.Init;
+  {Initialises record to nul values.
+  }
+begin
+  Desc := '';
+end;
+
 { TSnippetIDListEx }
 
 constructor TSnippetIDListEx.Create(const Routines: TRoutineList);
@@ -2282,7 +2548,6 @@ begin
   for Snippet in Routines do
     Add(Snippet.ID);
 end;
-
 
 initialization
 
