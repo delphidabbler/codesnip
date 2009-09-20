@@ -59,6 +59,7 @@ type
   }
   TMainForm = class(THelpAwareForm)
     actAbout: TAction;
+    actAddCategory: TAction;
     actAddSnippet: TAction;
     actBackupDatabase: TAction;
     actBugReport: TAction;
@@ -69,6 +70,7 @@ type
     actCopyInfo: TAction;
     actCopySnippet: TAction;
     actCopySource: TAction;
+    actDeleteCategory: TAction;
     actDeleteSnippet: TAction;
     actDonate: TAction;
     actEditSnippet: TAction;
@@ -96,7 +98,9 @@ type
     actPreviousTab: TAction;
     actPrint: TAction;
     actPrivacy: TAction;
+    actProxyServer: TAction;
     actRegister: TAction;
+    actRenameCategory: TAction;
     actRestoreDatabase: TAction;
     actSaveDatabase: TAction;
     actSaveSnippet: TAction;
@@ -123,6 +127,7 @@ type
     frmOverview: TOverviewFrame;
     ilMain: TImageList;
     miAbout: TMenuItem;
+    miAddCategory: TMenuItem;
     miAddSnippet: TMenuItem;
     miBackupDatabase: TMenuItem;
     miCollapseNode: TMenuItem;
@@ -132,6 +137,7 @@ type
     miCopyInfo: TMenuItem;
     miCopySnippet: TMenuItem;
     miDatabase: TMenuItem;
+    miDeleteCategory: TMenuItem;
     miDeleteSnippet: TMenuItem;
     miDonate: TMenuItem;
     miEdit: TMenuItem;
@@ -159,7 +165,9 @@ type
     miPreferences: TMenuItem;
     miPrint: TMenuItem;
     miPrivacy: TMenuItem;
+    miProxyServer: TMenuItem;
     miRegister: TMenuItem;
+    miRenameCategory: TMenuItem;
     miReportBug: TMenuItem;
     miRestoreDatabase: TMenuItem;
     miSaveSnippet: TMenuItem;
@@ -185,6 +193,7 @@ type
     miSpacer14: TMenuItem;
     miSpacer15: TMenuItem;
     miSpacer16: TMenuItem;
+    miSpacer17: TMenuItem;
     miSubmit: TMenuItem;
     miTestCompile: TMenuItem;
     miTools: TMenuItem;
@@ -233,9 +242,8 @@ type
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
     tbUpdateDbase: TToolButton;
-    actProxyServer: TAction;
-    miProxyServer: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
+    procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
     procedure actBackupDatabaseExecute(Sender: TObject);
     procedure actBugReportExecute(Sender: TObject);
@@ -248,6 +256,8 @@ type
     procedure actCopySourceExecute(Sender: TObject);
     procedure actCopySourceUpdate(Sender: TObject);
     procedure actCopyUpdate(Sender: TObject);
+    procedure actDeleteCategoryExecute(Sender: TObject);
+    procedure actDeleteCategoryUpdate(Sender: TObject);
     procedure actDeleteSnippetExecute(Sender: TObject);
     procedure ActDetailTabExecute(Sender: TObject);
     procedure ActDetailTabUpdate(Sender: TObject);
@@ -282,8 +292,11 @@ type
     procedure actPrintExecute(Sender: TObject);
     procedure actPrintUpdate(Sender: TObject);
     procedure actPrivacyExecute(Sender: TObject);
+    procedure actProxyServerExecute(Sender: TObject);
     procedure actRegisterExecute(Sender: TObject);
     procedure actRegisterUpdate(Sender: TObject);
+    procedure actRenameCategoryExecute(Sender: TObject);
+    procedure actRenameCategoryUpdate(Sender: TObject);
     procedure actRestoreDatabaseExecute(Sender: TObject);
     procedure actSaveDatabaseExecute(Sender: TObject);
     procedure actSaveDatabaseUpdate(Sender: TObject);
@@ -314,7 +327,6 @@ type
     procedure FormResize(Sender: TObject);
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
-    procedure actProxyServerExecute(Sender: TObject);
   strict private
     fIsAppRegistered: Boolean;        // Flag noting if app is registered
     fNotifier: INotifier;             // Notififies app of user-initiated events
@@ -436,8 +448,16 @@ begin
     fIsAppRegistered := TAppInfo.IsRegistered;
 end;
 
+procedure TMainForm.actAddCategoryExecute(Sender: TObject);
+  {Gets a new user defined category from user and adds to database.
+    @param Sender [in] Not used.
+  }
+begin
+  TUserDBMgr.AddCategory;
+end;
+
 procedure TMainForm.actAddSnippetExecute(Sender: TObject);
-  {Gets a new user snippet from user.
+  {Gets a new user defined snippet from user and adds to database.
     @param Sender [in] Not used.
   }
 begin
@@ -546,6 +566,23 @@ procedure TMainForm.actCopyUpdate(Sender: TObject);
   }
 begin
   (Sender as TAction).Enabled := fMainDisplayMgr.CanCopy;
+end;
+
+procedure TMainForm.actDeleteCategoryExecute(Sender: TObject);
+  {Deletes a user defined category.
+    @param Sender [in] Not used.
+  }
+begin
+  TUserDBMgr.DeleteACategory;
+end;
+
+procedure TMainForm.actDeleteCategoryUpdate(Sender: TObject);
+  {Enables or disables delete category action depending on whether categories
+  are available for deleting.
+    @param Sender [in] Action triggering the event.
+  }
+begin
+  (Sender as TAction).Enabled := TUserDBMgr.CanDeleteACategory;
 end;
 
 procedure TMainForm.actDeleteSnippetExecute(Sender: TObject);
@@ -940,6 +977,23 @@ begin
     Visible := not fIsAppRegistered;
     Enabled := True;
   end;
+end;
+
+procedure TMainForm.actRenameCategoryExecute(Sender: TObject);
+  {Renames a user defined category.
+    @param Sender [in] Not used.
+  }
+begin
+  TUserDBMgr.RenameACategory;
+end;
+
+procedure TMainForm.actRenameCategoryUpdate(Sender: TObject);
+  {Enables or disables category rename action depending on whether categories
+  are available for renaming.
+    @param Sender [in] Action triggering the event.
+  }
+begin
+  (Sender as TAction).Enabled := TUserDBMgr.CanRenameACategory;
 end;
 
 procedure TMainForm.actRestoreDatabaseExecute(Sender: TObject);
@@ -1605,10 +1659,10 @@ procedure TMainForm.SnippetsChangeHandler(Sender: TObject;
   // ---------------------------------------------------------------------------
 
 var
-  Info: ISnippetChangeEventInfo;  // information about the event
+  EventInfo: ISnippetChangeEventInfo; // information about the event
 begin
-  Info := EvtInfo as ISnippetChangeEventInfo;
-  case Info.Kind of
+  EventInfo := EvtInfo as ISnippetChangeEventInfo;
+  case EventInfo.Kind of
     evChangeBegin:        // database about to change: disable form
       Enabled := False;
     evChangeEnd:          // database change has completed: re-enable form
@@ -1616,19 +1670,32 @@ begin
     evRoutineAdded:       // snippet added: display new routine
     begin
       ReInitialise;
-      fNotifier.DisplayRoutine(Info.Routine.Name, Info.Routine.UserDefined);
+      fNotifier.DisplayRoutine(
+        (EventInfo.Info as TRoutine).Name,
+        (EventInfo.Info as TRoutine).UserDefined
+      );
     end;
     evRoutineChanged:     // snippet edited: display changes
     begin
       fHistory.Clear;
       ReInitialise;
-      fNotifier.DisplayRoutine(Info.Routine.Name, Info.Routine.UserDefined);
+      fNotifier.DisplayRoutine(
+        (EventInfo.Info as TRoutine).Name,
+        (EventInfo.Info as TRoutine).UserDefined
+      );
     end;
-    evRoutineDeleted:     // snippet deleted: display welcome page
+    evRoutineDeleted,     // snippet deleted: display welcome page
+    evCategoryDeleted:    // category deleted: display welcome page
     begin
       fHistory.Clear;
       ReInitialise;
       DisplayWelcomePage;
+    end;
+    evCategoryAdded,      // category added: display new empty category
+    evCategoryChanged:    // category edited: redisplay it
+    begin
+      ReInitialise;
+      fNotifier.DisplayCategory((EventInfo.Info as TCategory).Category);
     end;
   end;
   // Display updated database stats and search results in status bar

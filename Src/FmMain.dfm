@@ -2,19 +2,19 @@ inherited MainForm: TMainForm
   Left = 204
   Top = 150
   Caption = 'MainForm'
-  ClientHeight = 696
+  ClientHeight = 364
   ClientWidth = 605
   Constraints.MinHeight = 360
   Constraints.MinWidth = 480
   Menu = mnuMain
   OnResize = FormResize
   ExplicitWidth = 621
-  ExplicitHeight = 752
+  ExplicitHeight = 420
   PixelsPerInch = 96
   TextHeight = 13
   object sbStatusBar: TStatusBar
     Left = 0
-    Top = 676
+    Top = 344
     Width = 605
     Height = 20
     Panels = <
@@ -196,7 +196,7 @@ inherited MainForm: TMainForm
     Left = 0
     Top = 31
     Width = 605
-    Height = 645
+    Height = 313
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
@@ -205,7 +205,7 @@ inherited MainForm: TMainForm
       Left = 187
       Top = 2
       Width = 6
-      Height = 641
+      Height = 309
       Beveled = True
       OnCanResize = splitVertCanResize
       ExplicitHeight = 292
@@ -214,7 +214,7 @@ inherited MainForm: TMainForm
       Left = 2
       Top = 2
       Width = 185
-      Height = 641
+      Height = 309
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
@@ -222,14 +222,14 @@ inherited MainForm: TMainForm
         Left = 1
         Top = 1
         Width = 183
-        Height = 639
+        Height = 307
         Align = alClient
         TabOrder = 0
         TabStop = True
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 183
-        ExplicitHeight = 639
+        ExplicitHeight = 307
         inherited pnlTitle: TPanel
           Width = 183
           ExplicitWidth = 183
@@ -244,17 +244,17 @@ inherited MainForm: TMainForm
         end
         inherited tcDisplayStyle: TTabControl
           Width = 183
-          Height = 612
+          Height = 280
           ExplicitWidth = 183
-          ExplicitHeight = 612
+          ExplicitHeight = 280
           inherited tvSnippets: TTreeView
             Top = 42
             Width = 175
-            Height = 566
+            Height = 234
             ExplicitLeft = 4
             ExplicitTop = 42
             ExplicitWidth = 175
-            ExplicitHeight = 566
+            ExplicitHeight = 234
           end
         end
       end
@@ -263,7 +263,7 @@ inherited MainForm: TMainForm
       Left = 193
       Top = 2
       Width = 410
-      Height = 641
+      Height = 309
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
@@ -271,14 +271,14 @@ inherited MainForm: TMainForm
         Left = 1
         Top = 1
         Width = 408
-        Height = 639
+        Height = 307
         Align = alClient
         TabOrder = 0
         TabStop = True
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 408
-        ExplicitHeight = 639
+        ExplicitHeight = 307
         inherited pnlTitle: TPanel
           Width = 408
           ExplicitWidth = 408
@@ -289,33 +289,33 @@ inherited MainForm: TMainForm
         end
         inherited pcDetail: TPageControl
           Width = 408
-          Height = 612
+          Height = 280
           ExplicitWidth = 408
-          ExplicitHeight = 612
+          ExplicitHeight = 280
           inherited tsInfo: TTabSheet
             ExplicitLeft = 4
             ExplicitTop = 24
             ExplicitWidth = 400
-            ExplicitHeight = 584
+            ExplicitHeight = 252
             inherited frmInfo: TInfoFrame
               Width = 400
-              Height = 584
+              Height = 252
               ExplicitWidth = 400
-              ExplicitHeight = 584
+              ExplicitHeight = 252
               inherited pnlBrowser: TPanel
                 Width = 400
-                Height = 584
+                Height = 252
                 ExplicitWidth = 400
-                ExplicitHeight = 584
+                ExplicitHeight = 252
                 inherited wbBrowser: TWebBrowser
                   Width = 400
-                  Height = 584
+                  Height = 252
                   ExplicitLeft = 1
                   ExplicitTop = 1
                   ExplicitWidth = 400
                   ExplicitHeight = 544
                   ControlData = {
-                    4C000000572900005C3C00000000000000000000000000000000000000000000
+                    4C000000572900000C1A00000000000000000000000000000000000000000000
                     000000004C000000000000000000000001000000E0D057007335CF11AE690800
                     2B2E126208000000000000004C0000000114020000000000C000000000000046
                     8000000000000000000000000000000000000000000000000000000000000000
@@ -2158,6 +2158,26 @@ inherited MainForm: TMainForm
         'ing web services'
       OnExecute = actProxyServerExecute
     end
+    object actAddCategory: TAction
+      Category = 'Database'
+      Caption = 'Add Category...'
+      Hint = 'Add Category|Adds a new category to the database'
+      OnExecute = actAddCategoryExecute
+    end
+    object actRenameCategory: TAction
+      Category = 'Database'
+      Caption = 'Rename Category...'
+      Hint = 'Rename Category|Renames a user defined category in the database'
+      OnExecute = actRenameCategoryExecute
+      OnUpdate = actRenameCategoryUpdate
+    end
+    object actDeleteCategory: TAction
+      Category = 'Database'
+      Caption = 'Delete Category...'
+      Hint = 'Delete Category|Deletes an empty category from the database'
+      OnExecute = actDeleteCategoryExecute
+      OnUpdate = actDeleteCategoryUpdate
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -2321,6 +2341,18 @@ inherited MainForm: TMainForm
       end
       object miDeleteSnippet: TMenuItem
         Action = actDeleteSnippet
+      end
+      object miSpacer17: TMenuItem
+        Caption = '-'
+      end
+      object miAddCategory: TMenuItem
+        Action = actAddCategory
+      end
+      object miRenameCategory: TMenuItem
+        Action = actRenameCategory
+      end
+      object miDeleteCategory: TMenuItem
+        Action = actDeleteCategory
       end
       object miSpacer12: TMenuItem
         Caption = '-'
