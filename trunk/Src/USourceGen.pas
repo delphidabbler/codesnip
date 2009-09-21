@@ -848,7 +848,7 @@ begin
   if Contains(ConstOrType) then
     Exit;
   // Validate dependency list
-  if not TSnippetValidator.HasValidDependsList(ConstOrType, ErrorMsg) then
+  if not TSnippetValidator.ValidateDependsList(ConstOrType, ErrorMsg) then
     raise ECodeSnip.Create(ErrorMsg);
   // Add all required snippets to list before adding this one: this ensures
   // required snippets preceed those that depend on them
