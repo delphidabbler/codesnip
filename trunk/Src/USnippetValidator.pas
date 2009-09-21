@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  UBaseObjects, USnippets;
+  UActiveText, UBaseObjects, USnippets;
 
 
 type
@@ -50,8 +50,12 @@ type
     Static class that checks a snippet for validity.
   }
   TSnippetValidator = class(TNoConstructObject)
+  strict private
+    const
+      cAllSnippetKinds: TSnippetKinds =   // Set of all possible snippet kinds
+        [skFreeform, skRoutine, skConstant, skTypeDef];
   public
-    class function HasValidDependsList(const Snippet: TRoutine;
+    class function ValidateDependsList(const Snippet: TRoutine;
       out ErrorMsg: string): Boolean; overload;
       {Recursively checks dependency list of a snippet for validity.
         @param Snippet [in] Snippet for which dependencies are to be checked.
@@ -59,7 +63,7 @@ type
           returned.
         @return True if dependency list is valid or False if not.
       }
-    class function HasValidDependsList(const SnippetName: string;
+    class function ValidateDependsList(const SnippetName: string;
       const Data: TRoutineEditData; out ErrorMsg: string): Boolean; overload;
       {Recursively checks dependency list of a snippet for validity.
         @param SnippetName [in] Name of snippet for which dependencies are to be
@@ -96,6 +100,14 @@ type
           returned.
         @return True if name is valid or False if not.
       }
+    class function ValidateExtra(const Extra: IActiveText;
+      out ErrorMsg: string): Boolean;
+      {Validates a extra information from a snippet.
+        @param Extra [in] Extra information to be checked.
+        @param ErrorMsg [out] Message that describes error. Undefined if True
+          returned.
+        @return True if extra information is valid, False if not.
+      }
     class function Validate(const Snippet: TRoutine;
       out ErrorMsg: string): Boolean;
       {Checks a snippet for validity.
@@ -103,6 +115,12 @@ type
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
         @return True if snippet valid or False if not.
+      }
+    class function ValidDependsKinds(const Kind: TSnippetKind): TSnippetKinds;
+      {Gets set of snippet kinds that are valid in a snippet's dependency list.
+        @param Kind [in] Kind of snippet for which valid dependency kinds
+          required.
+        @return Set of valid kinds for snippets in dependenc list.
       }
   end;
 
@@ -114,12 +132,28 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  USnippetKindInfo;
+  UHTMLUtils, USnippetKindInfo;
 
 
 { TSnippetValidator }
 
-class function TSnippetValidator.HasValidDependsList(const Snippet: TRoutine;
+class function TSnippetValidator.Validate(const Snippet: TRoutine;
+  out ErrorMsg: string): Boolean;
+  {Checks a snippet for validity.
+    @param Snippet [in] Snippet to be checked.
+    @param ErrorMsg [out] Message that describes error. Undefined if True
+      returned.
+    @return True if snippet valid or False if not.
+  }
+begin
+  Result := ValidateName(Snippet.Name, False, ErrorMsg)
+    and ValidateDescription(Snippet.Description, ErrorMsg)
+    and ValidateSourceCode(Snippet.SourceCode, ErrorMsg)
+    and ValidateDependsList(Snippet, ErrorMsg)
+    and ValidateExtra(Snippet.Extra, ErrorMsg);
+end;
+
+class function TSnippetValidator.ValidateDependsList(const Snippet: TRoutine;
   out ErrorMsg: string): Boolean;
   {Recursively checks dependency list of a snippet for validity.
     @param Snippet [in] Snippet for which dependencies are to be checked.
@@ -127,12 +161,6 @@ class function TSnippetValidator.HasValidDependsList(const Snippet: TRoutine;
       returned.
     @return True if dependency list is valid or False if not.
   }
-type
-  {
-  TSnippetKinds:
-    Set of TSnippetKind values.
-  }
-  TSnippetKinds = set of TSnippetKind;
 
   // ---------------------------------------------------------------------------
   function DependsListIsCircular(const Snippet: TRoutine;
@@ -170,6 +198,8 @@ type
     RequiredSnippet: TRoutine;  // iterates through depends list
   begin
     Result := False;
+    if Kinds = [] then
+      Exit; // no kinds specified so depends list can't have these kinds!
     for RequiredSnippet in DependsList do
     begin
       if RequiredSnippet.Kind in Kinds then
@@ -186,79 +216,39 @@ resourcestring
   // Error messages
   sInvalidKind = 'Invalid snippet kind in depends list for %0:s "%1:s".';
   sCircular = '%0:s "%1:s" cannot depend on itself';
+var
+  DeniedDepends: TSnippetKinds; // snippet kinds that can't be in depends list
 begin
-  Result := True;
-  case Snippet.Kind of
-    skFreeform:
-    begin
-      // Freeform snippet can have any snippet in list but must not depend on
-      // itself
-      Result := not DependsListIsCircular(Snippet, Snippet.Depends);
-      if not Result then
-        ErrorMsg := Format(
-          sCircular, [
-            TSnippetKindInfoList.Instance[Snippet.Kind].Description,
-            Snippet.Name
-          ]
-        );
-    end;
-    skRoutine:
-    begin
-      // Routine must not depend on itself and must not depend of freeform code
-      // ** MUST do test for circularity first
-      Result := not DependsListIsCircular(Snippet, Snippet.Depends);
-      if not Result then
-        ErrorMsg := Format(
-          sCircular, [
-            TSnippetKindInfoList.Instance[Snippet.Kind].Description,
-            Snippet.Name
-          ]
-        )
-      else
-      begin
-        Result := not DependsListHasKinds(Snippet.Depends, [skFreeform]);
-        if not Result then
-          ErrorMsg := Format(
-            sInvalidKind,
-            [
-              TSnippetKindInfoList.Instance[Snippet.Kind].Description,
-              Snippet.Name
-            ]
-          );
-      end;
-    end;
-    skConstant, skTypeDef:
-    begin
-      // Constants and TypeDefs may only depend on other Constants and TypeDefs
-      // and cannot depend on themselves
-      // ** MUST do test for circularity first
-      Result := not DependsListIsCircular(Snippet, Snippet.Depends);
-      if not Result then
-        ErrorMsg := Format(
-          sCircular, [
-            TSnippetKindInfoList.Instance[Snippet.Kind].Description,
-            Snippet.Name
-          ]
-        )
-      else
-      begin
-        Result := not DependsListHasKinds(
-          Snippet.Depends, [skFreeform, skRoutine]
-        );
-        if not Result then
-          ErrorMsg := Format(
-            sInvalidKInd,
-            [
-              TSnippetKindInfoList.Instance[Snippet.Kind].Description,
-              Snippet.Name
-            ]
-          )
-      end
-    end;
+  // No snippets kinds may depend on themselves
+  // ** MUST do circularity test before any other. Other tests MUST NOT be
+  // applied if this test fails: endless loop could result
+  Result := not DependsListIsCircular(Snippet, Snippet.Depends);
+  if not Result then
+  begin
+    ErrorMsg := Format(
+      sCircular, [
+        TSnippetKindInfoList.Instance[Snippet.Kind].Description,
+        Snippet.Name
+      ]
+    );
+    Exit;
   end;
+  // Now check kinds of snippets in dependency list for validity.
+  // determine which snippet kinds can't appear in a dependency list
+  DeniedDepends := cAllSnippetKinds - ValidDependsKinds(Snippet.Kind);
+  // check dependency list for invalid kinds
+  Result := not DependsListHasKinds(Snippet.Depends, DeniedDepends);
+  if not Result then
+    ErrorMsg := Format(
+      sInvalidKind,
+      [
+        TSnippetKindInfoList.Instance[Snippet.Kind].Description,
+        Snippet.Name
+      ]
+    );
 end;
 
-class function TSnippetValidator.HasValidDependsList(const SnippetName: string;
+class function TSnippetValidator.ValidateDependsList(const SnippetName: string;
   const Data: TRoutineEditData; out ErrorMsg: string): Boolean;
   {Recursively checks dependency list of a snippet for validity.
     @param SnippetName [in] Name of snippet for which dependencies are to be
@@ -276,25 +266,10 @@ begin
     SnippetName, Data
   );
   try
-    Result := HasValidDependsList(TempSnippet, ErrorMsg);
+    Result := ValidateDependsList(TempSnippet, ErrorMsg);
   finally
     FreeAndNil(TempSnippet);
   end;
-end;
-
-class function TSnippetValidator.Validate(const Snippet: TRoutine;
-  out ErrorMsg: string): Boolean;
-  {Checks a snippet for validity.
-    @param Snippet [in] Snippet to be checked.
-    @param ErrorMsg [out] Message that describes error. Undefined if True
-      returned.
-    @return True if snippet valid or False if not.
-  }
-begin
-  Result := ValidateName(Snippet.Name, False, ErrorMsg)
-    and ValidateDescription(Snippet.Description, ErrorMsg)
-    and ValidateSourceCode(Snippet.SourceCode, ErrorMsg)
-    and HasValidDependsList(Snippet, ErrorMsg);
 end;
 
 class function TSnippetValidator.ValidateDescription(const Desc: string;
@@ -317,6 +292,81 @@ begin
     ErrorMsg := sErrDescHasClosingBrace
   else
     Result := True;
+end;
+
+class function TSnippetValidator.ValidateExtra(const Extra: IActiveText;
+  out ErrorMsg: string): Boolean;
+  {Validates a extra information from a snippet.
+    @param Extra [in] Extra information to be checked.
+    @param ErrorMsg [out] Message that describes error. Undefined if True
+      returned.
+    @return True if extra information is valid, False if not.
+  }
+
+  // ---------------------------------------------------------------------------
+  function ValidateURL(URL: string; out ErrorMsg: string): Boolean;
+    {Validates a-link href URLs.
+      @param URL [in] URL to validate.
+      @except EDataEntry raised if validation fails.
+    }
+  const
+    cHTTPProtocol = 'http://';  // http protocol prefix
+    cFileProtocol = 'file://';  // file protocal prefix
+  resourcestring
+    // validation error messages
+    sLinkErr = 'Hyperlink URL "%s" in extra information must use either the '
+      + '"http://" or "file://" protocols';
+    sURLLengthErr = 'Hyperlink URL "%s" in extra information is badly formed';
+  begin
+    Result := True;
+    URL := URLDecode(URL, False);
+    if AnsiStartsText(cHTTPProtocol, URL) then
+    begin
+      // http protocol: check length
+      if Length(URL) < Length(cHTTPProtocol) + 6 then
+      begin
+        Result := False;
+        ErrorMsg := Format(sURLLengthErr, [URL]);
+        Exit;
+      end;
+    end
+    else if AnsiStartsText(cFileProtocol, URL) then
+    begin
+      // file protocol: check length
+      if Length(URL) < Length(cFileProtocol) + 4 then
+      begin
+        Result := False;
+        ErrorMsg := Format(sURLLengthErr, [URL]);
+        Exit;
+      end;
+    end
+    else
+    begin
+      // Error neither file nor http protocols
+      Result := False;
+      ErrorMsg := Format(sLinkErr, [URL]);
+      Exit;
+    end;
+  end;
+  // ---------------------------------------------------------------------------
+
+var
+  Elem: IActiveTextElem;              // each element in active text
+  ActionElem: IActiveTextActionElem;  // references action element
+begin
+  // Scan all active text looking of hyperlinks: check that URL has a
+  // supported protocol and some url text after it
+  Result := True;
+  for Elem in Extra do
+  begin
+    if Supports(Elem, IActiveTextActionElem, ActionElem)
+      and (ActionElem.Kind = ekLink) then
+      if not ValidateURL(ActionElem.Param, ErrorMsg) then
+      begin
+        Result := False;
+        Exit;
+      end;
+  end;
 end;
 
 class function TSnippetValidator.ValidateName(const Name: string;
@@ -363,6 +413,20 @@ begin
   Result := Trim(Source) <> '';
   if not Result then
     ErrorMsg := sErrNoSource;
+end;
+
+class function TSnippetValidator.ValidDependsKinds(
+  const Kind: TSnippetKind): TSnippetKinds;
+  {Gets set of snippet kinds that are valid in a snippet's dependency list.
+    @param Kind [in] Kind of snippet for which valid dependency kinds required.
+    @return Set of valid kinds for snippets in dependenc list.
+  }
+begin
+  case Kind of
+    skFreeform: Result := cAllSnippetKinds;
+    skRoutine: Result := cAllSnippetKinds - [skFreeform];
+    skConstant, skTypeDef: Result := [skConstant, skTypeDef];
+  end;
 end;
 
 end.
