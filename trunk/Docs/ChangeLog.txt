@@ -1,5 +1,5 @@
-Version 3.3 - 
-CodeSnip 3.3 -
+Version 3.3 - 21 September 2009 
+CodeSnip 3.3 - 21 September 2009
 + Added support for user defined categories which can now be added, renamed or deleted.
 + Made changes to snippets editor:
   - On the "Compile Results" Tab, a single simplified list box is now used to both display and change compile results. This replaces two linked controls.
