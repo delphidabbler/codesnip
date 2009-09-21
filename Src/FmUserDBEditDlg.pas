@@ -255,7 +255,7 @@ uses
   StrUtils, Windows {for inlining}, Graphics, Menus,
   // Project
   FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
-  UCtrlArranger, UExceptions, UFontHelper, UHTMLUtils, UReservedCategories,
+  UCtrlArranger, UExceptions, UFontHelper, UReservedCategories,
   URoutineExtraHelper, USnippetValidator, UMessageBox, USnippetIDs, UThemesEx,
   UUtils;
 
@@ -524,43 +524,9 @@ procedure TUserDBEditDlg.CheckExtra;
   {Checks the REML text entered in the extra information memo control.
     @except EDataEntry on error.
   }
-
-  // ---------------------------------------------------------------------------
-  procedure ValidateURL(URL: string);
-    {Validates a-link href URLs.
-      @param URL [in] URL to validate.
-      @except EDataEntry raised if validation fails.
-    }
-  const
-    cHTTPProtocol = 'http://';  // http protocol prefix
-    cFileProtocol = 'file://';  // file protocal prefix
-  resourcestring
-    // validation error messages
-    sLinkErr = 'Hyperlink URL "%s" in extra information must use either the '
-      + '"http://" or "file://" protocols';
-    sURLLengthErr
-      = 'Hyperlink URL "%s" in extra information markup is not valid';
-  begin
-    URL := URLDecode(URL, False);
-    if AnsiStartsText(cHTTPProtocol, URL) then
-    begin
-      if Length(URL) < Length(cHTTPProtocol) + 6 then
-        Error(sURLLengthErr, [URL], edExtra);
-    end
-    else if AnsiStartsText(cFileProtocol, URL) then
-    begin
-      if Length(URL) < Length(cFileProtocol) + 4 then
-        Error(sURLLengthErr, [URL], edExtra);
-    end
-    else
-      Error(sLinkErr, [URL], edExtra);
-  end;
-  // ---------------------------------------------------------------------------
-
 var
-  Elem: IActiveTextElem;              // each element in active text
-  ActionElem: IActiveTextActionElem;  // references action element
-  ActiveText: IActiveText;            // active text created from text
+  ActiveText: IActiveText;  // active text created from text
+  ErrorMsg: string;         // error message from validator
 resourcestring
   // parse error message
   sActiveTextErr = 'Error parsing extra information markup:' + EOL2 + '%s';
@@ -576,14 +542,9 @@ begin
     else
       raise;
   end;
-  // Scan all active text looking of hyperlinks: check that URL has a
-  // supported protocol and some url text after it
-  for Elem in ActiveText do
-  begin
-    if Supports(Elem, IActiveTextActionElem, ActionElem)
-      and (ActionElem.Kind = ekLink) then
-      ValidateURL(ActionElem.Param);
-  end;
+  // Validate the active text
+  if not TSnippetValidator.ValidateExtra(ActiveText, ErrorMsg) then
+    Error(ErrorMsg, edExtra);
 end;
 
 procedure TUserDBEditDlg.ConfigForm;
@@ -783,19 +744,23 @@ begin
   end
   else
   begin
-    // We are adding a new snippet: clear all controls
+    // We are adding a new snippet: clear all controls or set default values
     edSourceCode.Clear;
     edDescription.Clear;
     edName.Clear;
     cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatName);
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
-    edExtra.Clear;
     cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);
+    edExtra.Clear;
     UpdateReferences;
   end;
   // Display all compiler results
   fCompilersLBMgr.SetCompileResults(fEditData.Props.CompilerResults);
+  Assert(cbKind.ItemIndex >= 0,
+    ClassName + '.InitControls: no selection in cbKind');
+  Assert(cbCategories.ItemIndex >= 0,
+    ClassName + '.InitControls: no selection in cbCategories');
 end;
 
 procedure TUserDBEditDlg.InitForm;
@@ -906,6 +871,7 @@ procedure TUserDBEditDlg.UpdateReferences;
 var
   EditSnippetID: TSnippetID;      // id of snippet being edited
   Snippet: TRoutine;              // each snippet in database
+  EditSnippetKind: TSnippetKind;  // kind of snippet being edited
 begin
   // Save state of dependencies and x-ref check list boxes and clear them
   fDependsCLBMgr.Save;
@@ -923,22 +889,11 @@ begin
         not Assigned(Snippets.Routines.Find(Snippet.Name, True))
       ) then
     begin
-      case fSnipKindList.SnippetKind(cbKind.ItemIndex) of
-        skFreeform, skRoutine:
-        begin
-          // For freeform and snippet's depends list can be anything except
-          // freeform
-          if Snippet.Kind in [skRoutine, skConstant, skTypeDef] then
-            fDependsCLBMgr.AddSnippet(Snippet);
-        end;
-        skTypeDef, skConstant:
-        begin
-          // For typedefs and constants depends list can only be other
-          // typedefs and consts
-          if Snippet.Kind in [skConstant, skTypeDef] then
-            fDependsCLBMgr.AddSnippet(Snippet);
-        end;
-      end;
+      // Decide if snippet can be added to depends list: must be correct kind
+      EditSnippetKind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
+      if Snippet.Kind in
+        TSnippetValidator.ValidDependsKinds(EditSnippetKind) then
+        fDependsCLBMgr.AddSnippet(Snippet);
       // Anything can be in XRefs list
       fXRefsCLBMgr.AddSnippet(Snippet);
     end;
@@ -986,19 +941,12 @@ procedure TUserDBEditDlg.ValidateData;
     @except EDataEntry raised if data is not valid.
   }
 resourcestring
-  // Error messages
-  sErrNoCategory = 'A category must be selected';
-  sErrNoKind = 'A kind must be selected';
   // Messages
-  sDependencyprompt = 'See the dependencies by clicking the View Dependencies '
+  sDependencyPrompt = 'See the dependencies by clicking the View Dependencies '
     + 'button on the References tab.';
 var
   ErrorMessage: string; // receives validation error messages
 begin
-  Assert(cbCategories.ItemIndex >= 0,
-    ClassName + '.ValidateData: No category selected');
-  Assert(cbKind.ItemIndex >= 0,
-    ClassName + '.ValidateData: No snippet kind selected');
   if not TSnippetValidator.ValidateSourceCode(
     edSourceCode.Text, ErrorMessage
   ) then
@@ -1013,13 +961,11 @@ begin
     ErrorMessage
   ) then
     Error(ErrorMessage, edName);
-  // Check extra info
   CheckExtra;
-  // Check dependencies
-  if not TSnippetValidator.HasValidDependsList(
+  if not TSnippetValidator.ValidateDependsList(
     Trim(edName.Text), UpdateData, ErrorMessage
   ) then
-    Error(MakeSentence(ErrorMessage) + EOL2 + sDependencyprompt, clbDepends);
+    Error(MakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends);
 end;
 
 end.
