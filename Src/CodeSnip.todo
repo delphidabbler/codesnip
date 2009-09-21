@@ -1,10 +1,10 @@
-{TODO -oSelf -cRefactor : Move some validattion code from TUserDBEditDlg.ValidateData to snippets validator}
+{DONE -oSelf -cRefactor : Move some validattion code from TUserDBEditDlg.ValidateData to snippets validator}
 {TODO -oSelf -cRefactor : Extract common code in UDropDownButtons and UTVCheckBoxes into common base class.}
-{TODO -oSelf -cRefactor :
+{DONE -oSelf -cRefactor :
 Redesign snippets editor compile page. Remove list box used to select compile result and replace with drop down menu or similar on main compiler result list box. 
 Move all management code into separate management unit.
 Re drop down menu: make accessible from a left click on a "button" or drop down arrow  in each list item, from a right click and by pressing space on list item}
-{TODO -oSelf -cRefactor : Extract snippet editor compile management code into new class}
+{DONE -oSelf -cRefactor : Extract snippet editor compile management code into new class}
 {TODO -oSelf -cFeature : Add support for external user defined units.
 + Split list boxes on references page of snippets editor into Delphi and user defined sections.
 + User must provide search path for their own units
@@ -12,7 +12,7 @@ Re drop down menu: make accessible from a left click on a "button" or drop down 
 + Test compiler will need to check for the units, so search paths must be persistent.
 + Unit generator must be able to use these units. Emit a comment in unit saying that user defined units have been used and must be on search path.
 + Add search path page to preferences dialog box?}
-{TODO -oSelf -cImprovement : Ensure categories are properly sirted, with user categories integrated with main categories.}
+{DONE -oSelf -cImprovement : Ensure categories are properly sorted, with user categories integrated with main categories.}
 {TODO -oSelf -cProposal : Consider what gesture support to add (needs Delphi 2010).}
 {TODO -oSelf -cFeature : Add actions to go to next, previous, first and last category (or alpha or kind)}
 {DONE -oSelf -cRefactor :  Remove un-necessary DocContent property from FmPreviewDlg change references to it with fDocContent.}
@@ -101,7 +101,7 @@ begin
  end;
 
 Could have base class TSingleton = class(TInterfacedObject) that provides default destruction and virtual method called to do tidy up only if can destroy.}
-{TODO -oSelf -cFeature : Institute user defined categories}
+{DONE -oSelf -cFeature : Institute user defined categories}
 {TODO -oSelf -cProposal : Share email and user name persistence used by code submission to bug reports, mailing list etc.}
 
 {DONE -oSelf -cImprovement : Make margins set in preview controls either configurable or in constant}
