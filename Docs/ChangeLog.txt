@@ -1,3 +1,17 @@
+Version 3.3 - 
+CodeSnip 3.3 -
++ Added support for user defined categories which can now be added, renamed or deleted.
++ Made changes to snippets editor:
+  - On the "Compile Results" Tab, a single simplified list box is now used to both display and change compile results. This replaces two linked controls.
+  - The text case of a snippet name can now be changed without causing a duplicate name error.
+  - Some controls resized.
++ Fixed bug where attempting to overwrite files that are in use caused the bug report dialog box to appear instead of simply reporting the problem.
++ Improved validity checking of snippets that are included in generated source code.
++ Help file updated.
++ Refactored:
+  - UI handling code in snippets editor.
+  - Some Snippets database and validation code.
+
 Version 3.2.3 - 14 September 2009
 CodeSnip 3.2.3 - 14 September 2009
 + Fixed bug in "update from web" dialog box where most up to date news item was not being displayed.
