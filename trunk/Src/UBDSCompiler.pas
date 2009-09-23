@@ -1,8 +1,8 @@
 {
  * UBDSCompiler.pas
  *
- * Class that controls and provides information about Borland Development System
- * Win32 compilers.
+ * Class that controls and provides information about Borland CodeGear and
+ * Embarcadero "BDS" Win32 compilers.
  *
  * $Rev$
  * $Date$
@@ -120,8 +120,7 @@ constructor TBDSCompiler.Create(const Id: TCompilerID);
     @param Id [in] Identifies compiler version.
   }
 begin
-  Assert(Id in [ciD2005w32, ciD2006w32, ciD2007, ciD2009w32],
-    ClassName + '.Create: Invalid Id');                    // ** do not localise
+  Assert(Id in cBDSCompilers, ClassName + '.Create: Invalid Id');
   inherited Create(Id);
 end;
 
@@ -129,11 +128,15 @@ function TBDSCompiler.GetIDString: string;
   {Provides a non-localisable string that identifies the compiler.
     @return Compiler id string.
   }
+var
+  FmtStr: string; // format for ID string
 begin
-  // ** do not localise string literals in this method
-  Result := Format('D%d', [ProductVersion]);
-  if GetID in [ciD2005w32, ciD2006w32, ciD2009w32] then
-    Result := Result + 'w32';
+  case GetID of        
+    ciD2005w32, ciD2006w32, ciD2009w32: FmtStr := 'D%dw32';
+    ciD2007, ciD2010: FmtStr := 'D%d';
+    else raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
+  end;
+  Result := Format(FmtStr, [ProductVersion]);
 end;
 
 function TBDSCompiler.GetName: string;
@@ -143,7 +146,7 @@ function TBDSCompiler.GetName: string;
 resourcestring
   sCompilerName = 'Delphi %d';  // template for name of compiler
 begin
-  Result := Format(sCompilerName, [ProductVersion])
+  Result := Format(sCompilerName, [ProductVersion]);
 end;
 
 function TBDSCompiler.GlyphResourceName: string;
@@ -151,7 +154,11 @@ function TBDSCompiler.GlyphResourceName: string;
     @return Resource name or '' if the compiler has no glyph.
   }
 begin
-  Result := 'BDS';                                         // ** do not localise
+  case GetID of
+    ciD2005w32, ciD2006w32, ciD2007, ciD2009w32: Result := 'BDS';
+    ciD2010: Result := 'Delphi2010';
+    else raise EBug.Create(ClassName + '.GlyphResourceName: Invalid ID');
+  end;
 end;
 
 function TBDSCompiler.InstallationRegKey: string;
@@ -160,16 +167,13 @@ function TBDSCompiler.InstallationRegKey: string;
     @return Name of key.
   }
 begin
-  // ** do not localise any literal strings in this method
   case GetID of
     ciD2005w32: Result := '\SOFTWARE\Borland\BDS\3.0';
     ciD2006w32: Result := '\SOFTWARE\Borland\BDS\4.0';
     ciD2007   : Result := '\SOFTWARE\Borland\BDS\5.0';
     ciD2009w32: Result := '\SOFTWARE\CodeGear\BDS\6.0';
-    else
-      raise EBug.Create(
-        ClassName + '.InstallationRegKey: Invalid ID'
-      );
+    ciD2010   : Result := '\SOFTWARE\CodeGear\BDS\7.0';
+    else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;
 
@@ -183,10 +187,8 @@ begin
     ciD2006w32: Result := 2006;
     ciD2007:    Result := 2007;
     ciD2009w32: Result := 2009;
-    else
-      raise EBug.Create(
-        ClassName + '.ProductVersion: Invalid ID'          // ** do not localise
-      );
+    ciD2010:    Result := 2010;
+    else raise EBug.Create(ClassName + '.ProductVersion: Invalid ID');
   end;
 end;
 
