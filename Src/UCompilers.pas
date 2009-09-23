@@ -210,21 +210,14 @@ class function TCompilerFactory.CreateCompiler(
     @except EBug raised if CompID is not recognised.
   }
 begin
-  case CompID of
-    ciD2, ciD3, ciD4, ciD5, ciD6, ciD7:
-      // a Delphi compiler (assumes tokens contiguous)
-      Result := TDelphiCompiler.Create(CompID);
-    ciFPC:
-      // the Free Pascal compiler
-      Result := TFreePascalCompiler.Create;
-    ciD2005w32, ciD2006w32, ciD2007, ciD2009w32:
-      // a Borland Development System compiler
-      Result := TBDSCompiler.Create(CompID);
-    else
-      raise EBug.Create(                // ** do not localise
-        ClassName + '.CreateCompiler: CompID not known'
-      );
-  end;
+  if CompID in cClassicDelphiCompilers then
+    Result := TDelphiCompiler.Create(CompID)
+  else if CompID in cBDSCompilers then
+    Result := TBDSCompiler.Create(CompID)
+  else if CompID in cFreePascalCompilers then
+    Result := TFreePascalCompiler.Create
+  else
+    raise EBug.Create(ClassName + '.CreateCompiler: CompID not known');
 end;
 
 { TCompilersFactory }
@@ -265,9 +258,7 @@ var
 begin
   // Get ICompilers interface of given object: raise exception or error
   if not Supports(Src, ICompilers, SrcCompilers) then
-    raise EBug.Create(                                     // ** do not localise
-      ClassName + '.Assign: Src is wrong type'
-    );
+    raise EBug.Create(ClassName + '.Assign: Src is wrong type');
   // Make a copy (clone) of each compiler in list
   fCompilers.Clear;
   for SrcCompiler in SrcCompilers do
@@ -430,7 +421,6 @@ var
   PrefixID: TCompLogPrefixID; // loops thru all compiler log prefixes
   Storage: ISettingsSection;  // object used to access persistent storage
 begin
-  // ** do not localise string literals in this method
   for Compiler in Compilers do
   begin
     // Store required values in persistent storage
