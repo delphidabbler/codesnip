@@ -89,7 +89,7 @@ type
       }
   public
     constructor Create(const Ver: TCompilerID);
-      {Class constructor. Creates object for a Delphi version.
+      {Class constructor. Creates object for a classic Delphi version.
         @param Ver [in] Version of Delphi.
       }
   end;
@@ -100,12 +100,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils;
-
-
-resourcestring
-  // Template for name of compiler
-  sDelphiName = 'Delphi %d';
+  SysUtils,
+  // Project
+  UExceptions;
 
 
 { TDelphiCompiler }
@@ -129,11 +126,11 @@ begin
 end;
 
 constructor TDelphiCompiler.Create(const Ver: TCompilerID);
-  {Class constructor Creates object for a Delphi version.
+  {Class constructor Creates object for a classic Delphi version.
     @param Ver [in] Version of Delphi.
   }
 begin
-  Assert(Ver in [ciD2..ciD7], 'TDelphiCompiler.Create: Invalid Ver');
+  Assert(Ver in cClassicDelphiCompilers, ClassName + '.Create: Invalid Ver');
   inherited Create(Ver);
 end;
 
@@ -142,13 +139,16 @@ function TDelphiCompiler.GetIDString: string;
     @return Compiler id string.
   }
 begin
-  Result := Format('D%d', [CompilerIDToVerNum]);    // ** do not localise
+  Result := Format('D%d', [CompilerIDToVerNum]);
 end;
 
 function TDelphiCompiler.GetName: string;
   {Provides the human readable name of the compiler.
     @return Name of the compiler.
   }
+resourcestring
+  // Template for name of compiler
+  sDelphiName = 'Delphi %d';  // template for name of compiler
 begin
   Result := Format(sDelphiName, [CompilerIDToVerNum]);
 end;
@@ -164,6 +164,7 @@ begin
     ciD5: Result := 'DELPHI5';
     ciD6: Result := 'DELPHI6';
     ciD7: Result := 'DELPHI7';
+    else raise EBug.Create(ClassName + '.GlyphResourceName: Invalid ID');
   end;
 end;
 
@@ -173,9 +174,7 @@ function TDelphiCompiler.InstallationRegKey: string;
     @return Name of key.
   }
 begin
-  Result := Format(                      // ** do not localise this registry key
-    '\SOFTWARE\Borland\Delphi\%d.0', [CompilerIDToVerNum]
-  );
+  Result := Format('\SOFTWARE\Borland\Delphi\%d.0', [CompilerIDToVerNum]);
 end;
 
 end.
