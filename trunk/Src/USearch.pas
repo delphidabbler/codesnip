@@ -254,11 +254,6 @@ type
         @param FoundList [in] List of snippets that match the search criteria.
         @return True if some snippets were found or false if search failed.
       }
-    function IsEqual(const Src: ISearch): Boolean;
-      {Checks whether the search is the same as another search.
-        @param Src [in] Search to be compared.
-        @return True if searches are equal, false otherwise.
-      }
     function IsNul: Boolean;
       {Checks if search is a nul search, i.e. it finds all snippets.
         @return True if search is nul search and false otherwise.
@@ -415,11 +410,6 @@ type
       {Read accessor for Criteria property.
         @return Criteria to be applied to search.
       }
-    function IsEqual(const Src: ISearch): Boolean;
-      {Checks whether the search is the same as another search.
-        @param Src [in] Search to be compared.
-        @return True if searches are equal, false otherwise.
-      }
   public
     constructor Create(const Criteria: ICompilerSearchCriteria);
       {Class constructor. Sets up compiler search.
@@ -447,11 +437,6 @@ type
       {Read accessor for Criteria property.
         @return Criteria to be applied to search.
       }
-    function IsEqual(const Src: ISearch): Boolean;
-      {Checks whether the search is the same as another search.
-        @param Src [in] Search to be compared.
-        @return True if searches are equal, false otherwise.
-      }
   public
     constructor Create(const Criteria: ITextSearchCriteria);
       {Class constructor. Sets up text search.
@@ -478,11 +463,6 @@ type
     function GetCriteria: ISearchCriteria;
       {Read accessor for Criteria property.
         @return Criteria to be applied to search.
-      }
-    function IsEqual(const Src: ISearch): Boolean;
-      {Checks whether the search is the same as another search.
-        @param Src [in] Search to be compared.
-        @return True if searches are equal, false otherwise.
       }
   public
     constructor Create(const Criteria: ISelectionSearchCriteria);
@@ -536,11 +516,6 @@ type
       {Read accessor for Criteria property.
         @return Criteria to be applied to search.
       }
-    function IsEqual(const Src: ISearch): Boolean;
-      {Checks whether the search is the same as another search.
-        @param Src [in] Search to be compared.
-        @return True if searches are equal, false otherwise.
-      }
   public
     constructor Create(const Criteria: IXRefSearchCriteria);
       {Class constructor. Sets up cross-reference search.
@@ -571,11 +546,6 @@ type
         @param InList [in] List of snippets that the search is applied to.
         @param FoundList [in] List of snippets that match the search criteria.
         @return True if some snippets were found or false if search failed.
-      }
-    function IsEqual(const Src: ISearch): Boolean;
-      {Checks whether the search is the same as another search.
-        @param Src [in] Search to be compared.
-        @return True if searches are equal, false otherwise.
       }
     function IsNul: Boolean;
       {Checks if search is a nul search, i.e. it finds all snippets.
@@ -859,22 +829,6 @@ begin
   Result := fCriteria;
 end;
 
-function TCompilerSearch.IsEqual(const Src: ISearch): Boolean;
-  {Checks whether the search is the same as another search.
-    @param Src [in] Search to be compared.
-    @return True if searches are equal, false otherwise.
-  }
-var
-  SrcCriteria: ICompilerSearchCriteria; // source obj's compiler search criteria
-begin
-  Assert(Assigned(Src),  ClassName + '.IsEqual: Src is nil');
-  // Equal if source object is a compiler search object and criteria properties
-  // are the same
-  Result := Supports(Src.Criteria, ICompilerSearchCriteria, SrcCriteria)
-    and (Self.fCriteria.Compilers = SrcCriteria.Compilers)
-    and (Self.fCriteria.Option = SrcCriteria.Option);
-end;
-
 function TCompilerSearch.Match(const Routine: TRoutine): Boolean;
   {Checks whether a snippet matches the search criteria.
     @param Routine [in] Snippet to be tested.
@@ -950,54 +904,6 @@ function TTextSearch.GetCriteria: ISearchCriteria;
   }
 begin
   Result := fCriteria;
-end;
-
-function TTextSearch.IsEqual(const Src: ISearch): Boolean;
-  {Checks whether the search is the same as another search.
-    @param Src [in] Search to be compared.
-    @return True if searches are equal, false otherwise.
-  }
-
-  // ---------------------------------------------------------------------------
-  function SameStrings(const SL1, SL2: TStrings): Boolean;
-    {Checks if two search string lists are same.
-      @param SL1 [in] First string list for comparison.
-      @param SL2 [in] Second string list for comparison.
-      @return True if string lists are same, false if not.
-    }
-  var
-    Idx: Integer; // loops thru string lists
-  begin
-    Assert(Assigned(SL1) and Assigned(SL2),
-      ClassName + '.IsEqual.SameStrings: String lists must be non-nil');
-    // String lists can be same only if they are same size
-    Result := SL1.Count = SL2.Count;
-    if Result then
-    begin
-      // Lists same size: compare each item
-      for Idx := 0 to Pred(SL1.Count) do
-      begin
-        if not AnsiSameStr(SL1[Idx], SL2[Idx]) then
-        begin
-          Result := False;
-          Break;
-        end;
-      end;
-    end;
-  end;
-  // ---------------------------------------------------------------------------
-
-var
-  SrcCriteria: ITextSearchCriteria; // text search criteria of source object
-begin
-  Assert(Assigned(Src), ClassName + '.IsEqual: Src is nil');
-  // First check the source object is a text search
-  Result := Supports(Src.Criteria, ITextSearchCriteria, SrcCriteria);
-  if Result then
-    // Source is text search: equal if criteria properties equal
-    Result := SameStrings(Self.fCriteria.Words, SrcCriteria.Words)
-      and (Self.fCriteria.Logic = SrcCriteria.Logic)
-      and (Self.fCriteria.Options = SrcCriteria.Options);
 end;
 
 function TTextSearch.Match(const Routine: TRoutine): Boolean;
@@ -1177,23 +1083,6 @@ begin
   Result := fCriteria;
 end;
 
-function TSelectionSearch.IsEqual(const Src: ISearch): Boolean;
-  {Checks whether the search is the same as another search.
-    @param Src [in] Search to be compared.
-    @return True if searches are equal, false otherwise.
-  }
-var
-  SrcCriteria: ISelectionSearchCriteria;  // source obj's search criteria
-begin
-  Assert(Assigned(Src), ClassName + '.IsEqual: Src is nil');
-  // First check the source object is a selection search
-  Result := Supports(Src.Criteria, ISelectionSearchCriteria, SrcCriteria);
-  if Result then
-    // We consider searches equal if selections contain same items, in any
-    // order.
-    Result := fCriteria.SelectedItems.IsEqual(SrcCriteria.SelectedItems);
-end;
-
 function TSelectionSearch.Match(const Routine: TRoutine): Boolean;
   {Checks whether a snippet matches the search criteria.
     @param Routine [in] Snippet to be tested.
@@ -1250,21 +1139,6 @@ function TXRefSearch.GetCriteria: ISearchCriteria;
   }
 begin
   Result := fCriteria;
-end;
-
-function TXRefSearch.IsEqual(const Src: ISearch): Boolean;
-  {Checks whether the search is the same as another search.
-    @param Src [in] Search to be compared.
-    @return True if searches are equal, false otherwise.
-  }
-var
-  SrcCriteria: IXRefSearchCriteria;  // source obj's search criteria
-begin
-  Assert(Assigned(Src), ClassName + '.IsEqual: Src is nil');
-  // Equal if search criteria same type and all properties of criteria same
-  Result := Supports(Src.Criteria, IXRefSearchCriteria, SrcCriteria) and
-    fCriteria.BaseRoutine.IsEqual(SrcCriteria.BaseRoutine) and
-    (fCriteria.Options = SrcCriteria.Options);
 end;
 
 function TXRefSearch.Match(const Routine: TRoutine): Boolean;
@@ -1381,17 +1255,6 @@ function TNulSearch.GetCriteria: ISearchCriteria;
   }
 begin
   Result := fCriteria;
-end;
-
-function TNulSearch.IsEqual(const Src: ISearch): Boolean;
-  {Checks whether the search is the same as another search.
-    @param Src [in] Search to be compared.
-    @return True if searches are equal, false otherwise.
-  }
-begin
-  Assert(Assigned(Src), ClassName + '.IsEqual: Src is nil');
-  // Equal if Src also has nul search criteria
-  Result := Supports(Src.Criteria, INulSearchCriteria);
 end;
 
 function TNulSearch.IsNul: Boolean;
