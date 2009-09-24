@@ -99,11 +99,6 @@ uses
   UUtils;
 
 
-resourcestring
-  // Name of compiler
-  sFreePascalName = 'Free Pascal';
-
-
 { TFreePascalCompiler }
 
 function TFreePascalCompiler.Clone: IInterface;
@@ -160,6 +155,8 @@ function TFreePascalCompiler.GetName: string;
   {Provides the human readable name of the compiler.
     @return Name of the compiler.
   }
+resourcestring
+  sFreePascalName = 'Free Pascal';    // name of compiler
 begin
   Result := sFreePascalName;
 end;
