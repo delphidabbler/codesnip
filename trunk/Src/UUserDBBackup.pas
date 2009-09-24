@@ -206,7 +206,7 @@ begin
   EnsureFolders(fUserDBDir);
   // Create reader to access data in backup file
   Reader := TDataStreamReader.Create(
-    TFileStream.Create(fBackupFile, fmOpenRead or fmShareDenyNone)
+    TFileStream.Create(fBackupFile, fmOpenRead or fmShareDenyNone), True
   );
   try
     // Get number of files stored in backup file and process each one
