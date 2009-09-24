@@ -194,6 +194,8 @@ type
     evRoutineDeleted,       // a snippet has been deleted
     evRoutineChanged,       // a snippet's properties / references have changed
     evCategoryAdded,        // a category has been added
+    evBeforeCategoryDelete, // a category is about to be deleted
+    evAfterCategoryDelete,  // a category has just been deleted
     evCategoryDeleted,      // a category has been deleted
     evCategoryChanged       // a category's properties have changed
   );
@@ -1479,7 +1481,9 @@ procedure TSnippets.InternalDeleteCategory(const Cat: TCategory);
     @param Cat [in] Category to delete from database.
   }
 begin
+  TriggerEvent(evBeforeCategoryDelete, Cat);
   (fCategories as TCategoryListEx).Delete(Cat);
+  TriggerEvent(evAfterCategoryDelete);
 end;
 
 procedure TSnippets.InternalDeleteRoutine(const Routine: TRoutine);
