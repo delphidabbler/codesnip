@@ -1667,7 +1667,8 @@ begin
       Enabled := False;
     evChangeEnd:            // database change has completed: re-enable form
       Enabled := True;
-    evRoutineAdded:         // snippet added: display new routine
+    evRoutineAdded,         // snippet added: display new routine
+    evRoutineChanged:       // snippet edited: display changed routine
     begin
       ReInitialise;
       fNotifier.DisplayRoutine(
@@ -1675,16 +1676,8 @@ begin
         (EventInfo.Info as TRoutine).UserDefined
       );
     end;
-    evRoutineChanged:       // snippet edited: display changes
-    begin
-      fHistory.Clear;
-      ReInitialise;
-      fNotifier.DisplayRoutine(
-        (EventInfo.Info as TRoutine).Name,
-        (EventInfo.Info as TRoutine).UserDefined
-      );
-    end;
-    evBeforeRoutineDelete:  // snippet about to be deleted: clear display
+    evBeforeRoutineDelete,  // snippet about to be deleted: clear display
+    evBeforeCategoryDelete: // category about to be deleted: clear display
     begin
       fHistory.Clear;
       fMainDisplayMgr.Clear;
@@ -1692,7 +1685,6 @@ begin
     evRoutineDeleted,       // snippet deleted: display welcome page
     evCategoryDeleted:      // category deleted: display welcome page
     begin
-      fHistory.Clear;
       ReInitialise;
       DisplayWelcomePage;
     end;
