@@ -550,7 +550,7 @@ begin
       Lookup.Add(LetterObj, Item);
     end;
     // Add each snippet to appropriate group
-    for Snippet in Snippets.Routines do
+    for Snippet in SnippetList do
     begin
       // find group item from lookup
       Item := Lookup.Values[
@@ -617,7 +617,7 @@ begin
     Lookup[SnipKind] := Item;
   end;
   // Add each snippet to required group
-  for Snippet in Snippets.Routines do
+  for Snippet in SnippetList do
   begin
     // find group item and add snippet to it
     Item := Lookup[Snippet.Kind];
