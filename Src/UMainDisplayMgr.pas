@@ -53,13 +53,10 @@ type
     subsidiary manager objects to perform display operations.
   }
   TMainDisplayMgr = class(TObject)
-  private
-    fOverviewMgr: IInterface;
-      {Manager object for overview pane}
-    fDetailsMgr: IInterface;
-      {Manager object for details pane}
-    fCurrentView: TViewItem;
-      {Value of CurrentView property}
+  strict private
+    fOverviewMgr: IInterface; // Manager object for overview pane
+    fDetailsMgr: IInterface;  // Manager object for details pane
+    fCurrentView: TViewItem;  // Value of CurrentView property
     procedure InternalDisplayViewItem(const ViewItem: TViewItem;
       const Force: Boolean);
       {Displays a view item. Updates current view item, selects item in overview
@@ -214,8 +211,9 @@ procedure TMainDisplayMgr.Clear;
   {Clears the main display, i.e. overview and detail panes.
   }
 begin
-  DisplayViewItem(nil);
+  fCurrentView.Assign(nil);
   (fOverviewMgr as IOverviewDisplayMgr).Clear;
+  (fDetailsMgr as IViewItemDisplayMgr).Display(fCurrentView, False);
 end;
 
 procedure TMainDisplayMgr.CopyToClipboard;
@@ -231,8 +229,8 @@ constructor TMainDisplayMgr.Create(const OverviewMgr, DetailsMgr: IInterface);
     @param DetailsMgr [in] Manager object for Details pane.
   }
 begin
-  Assert(Assigned(OverviewMgr), 'TMainDisplayMgr.Create: OverviewMgr is nil');
-  Assert(Assigned(DetailsMgr), 'TMainDisplayMgr.Create: DetailsMgr is nil');
+  Assert(Assigned(OverviewMgr), ClassName + '.Create: OverviewMgr is nil');
+  Assert(Assigned(DetailsMgr), ClassName + '.Create: DetailsMgr is nil');
   inherited Create;
   // Record subsidiary display managers
   fOverviewMgr := OverviewMgr;
