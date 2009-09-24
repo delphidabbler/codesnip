@@ -271,6 +271,7 @@ begin
   tvSnippets.OnCustomDrawItem := fTVDraw.CustomDrawItem;
   // Create list to store displayed snippets
   fRoutineList := TRoutineList.Create;
+  // Create objects used to remember state of each tree view
   SetLength(fTreeStates, tcDisplayStyle.Tabs.Count);
   for TabIdx := 0 to Pred(tcDisplayStyle.Tabs.Count) do
     fTreeStates[TabIdx] := TOverviewTreeState.Create(tvSnippets);
@@ -419,26 +420,12 @@ end;
 procedure TOverviewFrame.Redisplay;
   {Redisplays all snippets within current snippet list in required style.
   }
-
-  // ---------------------------------------------------------------------------
-  function AddViewItemNode(const ParentNode: TViewItemTreeNode;
-    const ViewItem: TViewItem): TViewItemTreeNode;
-    {Adds a new node to the tree view that represents a view item.
-      @param ParentNode [in] Node that is parent of new node.
-      @param ViewItem [in] View item for which we are adding node.
-      @return New tree node.
-    }
-  begin
-    Result := tvSnippets.Items.AddChild(ParentNode, ViewItem.Description)
-      as TViewItemTreeNode;
-    Result.ViewItem := ViewItem;
-  end;
-  // ---------------------------------------------------------------------------
-
 var
-  Builder: TOverviewTreeBuilder;
+  Builder: TOverviewTreeBuilder;  // Builds overview tree with correct grouping
   BuilderClasses: array of TOverviewTreeBuilderClass;
+                                  // Overview builder classes for each grouping
 begin
+  // Store list of overview tree builder classes: one for each tab
   SetLength(BuilderClasses, tcDisplayStyle.Tabs.Count);
   BuilderClasses[cCategorisedTab] := TOverviewCategorisedTreeBuilder;
   BuilderClasses[cAlphabeticTab] := TOverviewAlphabeticTreeBuilder;
@@ -446,14 +433,17 @@ begin
   Builder := nil;
   tvSnippets.Items.BeginUpdate;
   try
+    // Clear tree view
     fCanChange := False;
     tvSnippets.Items.Clear;
     if fRoutineList.Count = 0 then
       Exit;
+    // Build new treeview using grouping determined by selected tab
     Builder := BuilderClasses[tcDisplayStyle.TabIndex].Create(
       tvSnippets, fRoutineList
     );
     Builder.Build;
+    // Restore state of treeview based on last time it was displayed
     tvSnippets.FullExpand;
     fTreeStates[tcDisplayStyle.TabIndex].RestoreState;
   finally
