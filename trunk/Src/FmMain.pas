@@ -1663,11 +1663,11 @@ var
 begin
   EventInfo := EvtInfo as ISnippetChangeEventInfo;
   case EventInfo.Kind of
-    evChangeBegin:        // database about to change: disable form
+    evChangeBegin:          // database about to change: disable form
       Enabled := False;
-    evChangeEnd:          // database change has completed: re-enable form
+    evChangeEnd:            // database change has completed: re-enable form
       Enabled := True;
-    evRoutineAdded:       // snippet added: display new routine
+    evRoutineAdded:         // snippet added: display new routine
     begin
       ReInitialise;
       fNotifier.DisplayRoutine(
@@ -1675,7 +1675,7 @@ begin
         (EventInfo.Info as TRoutine).UserDefined
       );
     end;
-    evRoutineChanged:     // snippet edited: display changes
+    evRoutineChanged:       // snippet edited: display changes
     begin
       fHistory.Clear;
       ReInitialise;
@@ -1684,15 +1684,20 @@ begin
         (EventInfo.Info as TRoutine).UserDefined
       );
     end;
-    evRoutineDeleted,     // snippet deleted: display welcome page
-    evCategoryDeleted:    // category deleted: display welcome page
+    evBeforeRoutineDelete:  // snippet about to be deleted: clear display
+    begin
+      fHistory.Clear;
+      fMainDisplayMgr.Clear;
+    end;
+    evRoutineDeleted,       // snippet deleted: display welcome page
+    evCategoryDeleted:      // category deleted: display welcome page
     begin
       fHistory.Clear;
       ReInitialise;
       DisplayWelcomePage;
     end;
-    evCategoryAdded,      // category added: display new empty category
-    evCategoryChanged:    // category edited: redisplay it
+    evCategoryAdded,        // category added: display new empty category
+    evCategoryChanged:      // category edited: redisplay it
     begin
       ReInitialise;
       fNotifier.DisplayCategory((EventInfo.Info as TCategory).Category);
