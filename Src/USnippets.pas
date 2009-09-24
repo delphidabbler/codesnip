@@ -2101,7 +2101,7 @@ begin
     // rely on items being in same order since lists are sorted
     for Idx := 0 to Pred(Self.Count) do
     begin
-      if Self[Idx].IsEqual(AList[Idx]) then
+      if not Self[Idx].IsEqual(AList[Idx]) then
       begin
         Result := False;
         Break;
