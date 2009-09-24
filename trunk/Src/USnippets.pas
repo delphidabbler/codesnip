@@ -186,14 +186,16 @@ type
     the user database.
   }
   TSnippetChangeEventKind = (
-    evChangeBegin,      // a change to the database is about to take place
-    evChangeEnd,        // a change to the database has completed
-    evRoutineAdded,     // a snippet has been added
-    evRoutineDeleted,   // a snippet has been deleted
-    evRoutineChanged,   // a snippet's properties and/or reference have changed
-    evCategoryAdded,    // a category has been added
-    evCategoryDeleted,  // a category has been deleted
-    evCategoryChanged   // a category's properties have changed
+    evChangeBegin,          // a change to the database is about to take place
+    evChangeEnd,            // a change to the database has completed
+    evRoutineAdded,         // a snippet has been added
+    evBeforeRoutineDelete,  // a snippet is about to be deleted
+    evAfterRoutineDelete,   // a snippet has just been deleted
+    evRoutineDeleted,       // a snippet has been deleted
+    evRoutineChanged,       // a snippet's properties / references have changed
+    evCategoryAdded,        // a category has been added
+    evCategoryDeleted,      // a category has been deleted
+    evCategoryChanged       // a category's properties have changed
   );
 
   {
@@ -1492,7 +1494,9 @@ begin
   if Assigned(Cat) then
     (Cat.Routines as TRoutineListEx).Delete(Routine);
   // Delete from "master" list: this frees Routine
+  TriggerEvent(evBeforeRoutineDelete, Routine);
   (fRoutines as TRoutineListEx).Delete(Routine);
+  TriggerEvent(evAfterRoutineDelete);
 end;
 
 procedure TSnippets.Load;
