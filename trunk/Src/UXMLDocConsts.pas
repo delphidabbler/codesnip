@@ -91,7 +91,7 @@ const
   // ID values: common to user-database and export XML
   cCompilerIDs: array[TCompilerID] of string = (
     'd2', 'd3', 'd4', 'd5', 'd6', 'd7',
-    'd2005', 'd2006', 'd2007', 'd2009',
+    'd2005', 'd2006', 'd2007', 'd2009', 'd2010',
     'fpc'
   );
 
