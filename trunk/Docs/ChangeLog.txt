@@ -1,4 +1,12 @@
-Version 3.3 - 21 September 2009 
+Version 3.4 - 24 September 2009
+CodeSnip 3.4 - 24 September 2009
++ Added support for Delphi 2010.
++ Bug fixes:
+  - "Invalid cast" error that occasionally appears when a snippet is updated.
+  - Bug that kept backup files locked open after restoring a database backup.
+  - Current selection is now displayed in Alphabetic and Snippet Kind tabs of overview pane: previously all the database was shown, regardless of search.
+
+Version 3.3 - 21 September 2009
 CodeSnip 3.3 - 21 September 2009
 + Added support for user defined categories which can now be added, renamed or deleted.
 + Made changes to snippets editor:
