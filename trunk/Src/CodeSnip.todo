@@ -1,11 +1,14 @@
+{TODO -oSelf -cBug : 
+Fix bug #2868707
+Selecting snippets using the Search | Select Snippets menu item and then
+editing a selected snippet can cause the snippet to disappear from the
+selection when the snippets editor is closed. 
+-----------------------------
+Snippet selection query uses object reference, but editing snippet
+recreates the object, changing references. This is a deep problem and won't
+be fixed until planned reworking of query / database code.}
 {TODO -oSelf -cInstaller : Change to require Windows 2K as minimum version once project moved to Delphi 2010 }
-{DONE -oSelf -cRefactor : Move some validattion code from TUserDBEditDlg.ValidateData to snippets validator}
 {TODO -oSelf -cRefactor : Extract common code in UDropDownButtons and UTVCheckBoxes into common base class.}
-{DONE -oSelf -cRefactor :
-Redesign snippets editor compile page. Remove list box used to select compile result and replace with drop down menu or similar on main compiler result list box. 
-Move all management code into separate management unit.
-Re drop down menu: make accessible from a left click on a "button" or drop down arrow  in each list item, from a right click and by pressing space on list item}
-{DONE -oSelf -cRefactor : Extract snippet editor compile management code into new class}
 {TODO -oSelf -cFeature : Add support for external user defined units.
 + Split list boxes on references page of snippets editor into Delphi and user defined sections.
 + User must provide search path for their own units
@@ -13,76 +16,23 @@ Re drop down menu: make accessible from a left click on a "button" or drop down 
 + Test compiler will need to check for the units, so search paths must be persistent.
 + Unit generator must be able to use these units. Emit a comment in unit saying that user defined units have been used and must be on search path.
 + Add search path page to preferences dialog box?}
-{DONE -oSelf -cImprovement : Ensure categories are properly sorted, with user categories integrated with main categories.}
 {TODO -oSelf -cProposal : Consider what gesture support to add (needs Delphi 2010).}
 {TODO -oSelf -cFeature : Add actions to go to next, previous, first and last category (or alpha or kind)}
-{DONE -oSelf -cRefactor :  Remove un-necessary DocContent property from FmPreviewDlg change references to it with fDocContent.}
-{DONE -oSelf -cRefactor : Remove un-necessary Search property from FmSelectionSearchDlg, FmFindXRefsDlg, FmFindTextDlg and  FmFindCompilerDlg and change reference to Search in Execute method to fSearch}
-{DONE -oSelf -cBug :
-Wrap all notifier calls in TWBExternal with try..except blocks like this:
-
-  try
-    if Assigned(fNotifier) then
-      fNotifier.ConfigCompilers;
-  except
-    Application.HandleException(ExceptObject);
-  end;
-
-or create new HandleException method that does
-Application.HandleException(ExceptObject);}
-{DONE -oSelf -cImprovement : Disable "Render Extra Information" button / action on Extra information tab of Snippets Editor if no REML code entered.}
-{DONE -oSelf -cImprovement : Add note to bug report dialog tab where OS is displayed to say what this info is}
-{DONE 1 -ohomolibere@gmail.com -cFeature : Add support for proxy servers to web services}
-{DONE -oSelf -cRefactor : Replace #8 in FrPrintingPrefs with BACKSPACE from UConsts}
-{DONE 3 -oSelf -cImprovement : Change LoadLibrary in UHTMLHelp to SafeLoadLibrary}
-{DONE -oSelf -cRefactor :
-Move Yes, No and OK resourcestrings in UMessageBox to interface and add string for Cancel.
-Change UCodeImportMgr to use cancel.}
-{DONE -oSelf -cRefactor : Pull out some common code used in arrangement and alignment of controls on forms into support unit.}
-{DONE -oSelf -cRefactor : Add enumerator to TNews and change loop in FmUpdateDlg accordingly.}
-{DONE -oSelf -cRefactor : Refactor TQuery to use class var for instance}
-{DONE -oSelf -cProposal :
-Add a Garbage collector:
-+ global singleton version that maintains lifetimes for life of program - maintains a list of objects / resources and frees when unit goes out of scope
-+ local version that can be created and have multiple objects added to it (resource, object etc).
-Store wrapper objects in list, each of which can release a certain resource type, e.g. objects, DCs, handles, etc. Given and add method for each type and generate wrapper object on fly.
-Obvious close link to UAutoFree
-+ give local version that can accept multiple instances in its constructor and / or an add method.}
 {TODO -oSelf -cProposal :
 Change the Snippets Editor moving code for each pane into separate frame that can
 (1) validate entered data
 (2) calculate required size for controls}
-{DONE -oSelf -cImprovement : Make selecting list item in check list box toggle the check mark}
-{TODO -oSelf -cBug : 
+{TODO -oSelf -cBug : Fix bug #2868706
 Selecting a new printer in print dialog and clicking properties can give an exception or properties dialog has wrong title.
 Selecting some printers in print dialog and clicking OK can give an exception.}
-{DONE -oSelf -cFeature :
-Add facility to Snippets Editor to display check, render and display REML text (button on extra tab?)
-+ add button to test display if any <a> tags are present to test and display URLs.}
-{DONE -oSelf -cObservation : Update date for UNulFormAligner in unit for v1.1 is wrong: it reads 26 Jul 2007 and should be 26 Sep 2007.}
 {TODO -oSelf -cRefactor : Rename identifiers that refer to "routine" with "snippet".}
 {TODO -oSelf -cProposal :
 UView
   - completely overhaul this unit (careful of assignements tho - check if this
     actually happens between different types (may need wrapper for various
     IView implementations?)}
-{DONE -oSelf -cRefactor :Make UOverviewTreeBuilder
-.TOverviewSnipKindTreeBuilder.Build better - use Kind to index section list rather than description:
-Uses
-    Sections.Add(
-      TSnippetKindInfoList.Instance[Snippet.Kind].Description,
-      Snippet
-    );}
-
-{DONE -oSelf -cProposal :USourceGen - Add new format class to format header comments}
 {TODO -oSelf -cRefactor : Extract common resource strings re comment style from FrSourcePrefs and USaveSourceDlg}
-{DONE -oSelf -cRefactor : Merge common code in UCommandBars and UWBPoupMenus
-+ Add detail frame IDs to IFrameMgrs.pas}
-{DONE -oSelf -cImprovement : Remove database detection code from IniDataReader and XML IO classes - make them know they read / wrtie main and user databases respectively}
-{DONE -oSelf -cRefactor : Get rid of TDataIOFactories and make ini, xml and nul data readers and writers be used directly insetad of via factories.}
 {TODO -oSelf -cProposal : Consider moving syntax highlighting setting (CSS builder) down into FrInfo from FrDetailView since comp check tab no longer uses highlighting}
-{DONE -oSelf -cImprovement :Change preferences dialog sytem so that dialog box code presents empty body and dynamically adds
-tabs}
 {TODO -oSelf -cProposal : New TSingleton class that prevents an object from being freed (descendants should permit this). 
 To ease freeing when necessary (implementation section, garbage collector etc) make destructors check for support for a do nothing interface (ISingletonDestroy) and only free normally if supported, then support in implementations and not in interface of unit. Eg.
 TMySingleton = class(TInterfacedObject)
@@ -102,20 +52,18 @@ begin
  end;
 
 Could have base class TSingleton = class(TInterfacedObject) that provides default destruction and virtual method called to do tidy up only if can destroy.}
-{DONE -oSelf -cFeature : Institute user defined categories}
 {TODO -oSelf -cProposal : Share email and user name persistence used by code submission to bug reports, mailing list etc.}
-
-{DONE -oSelf -cImprovement : Make margins set in preview controls either configurable or in constant}
 {TODO -oSelf -cProposal : Move Compile, View compile errors and configure compilers menu options to a new Compile menu?}
 {TODO -oSelf -cRefactor : See if we can pull out common HTML and REML code into SGML unit}
 {TODO -oSelf -cRefactor : Create StringToOrd and OrdToString dictionaries and use to create two way char entity object to replace one in UTaggedTextLexer and UREMLDataIO etc. Also use for tag lookup in TTaggedTextLexer}
 {TODO -oSelf -cRefactor : Re-implement MakeSafeHTML in terms of a char entity class like that for REML? Use common base class with entities class in UREMLDataIO?}
 {TODO -oSelf -cProposal : Consider making TDateTime a record that can use =, < etc and to use TRange in when comparing file differences}
 {TODO -oSelf -cProposal : Add update date to each routine object}
-{DONE -oSelf -cRefactor : Pull out common code from USaveDialogEx and UOpenDialogEx}
-{DONE -oSelf -cImprovement : Make custom colours persistent in colour dialog box on preferences menu.}
 {TODO -oSelf -cRefactor : Merge the IO and UI manager code into WBController}
-{TODO -oSelf -cBug : Try to enable all custom printer properties set in Doc Properties dialog to be passed to printer - e.g. number of copies per page in PDF writer}
+{TODO -oSelf -cBug :Fix bug #2868704
+Some custom printer properties set in Document Properties dialog box are
+not passed to printer.
+First noticed in v1.7. Still a problem in v3.x}
 {TODO  -oSelf -cRefactor : Try to decouple UPageSetup, UPrintMgr and source code manager objects from associated dialog boxes}
 {TODO -cProposal -oSelf :Terminate application when unexpected (non-CodeSnip) error trapped.}
 {TODO -oSelf -cFeature : Add code to THilitePasParser to detect location of directives and decide if they should be classed as reserved words or not}
@@ -133,4 +81,3 @@ Parsing for consts and types for our purpose is simple:
 
   <type-def> ::= "type" <definitions>
   <const-def> ::= "const" <definitions>}
-
