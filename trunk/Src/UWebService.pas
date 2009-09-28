@@ -301,6 +301,8 @@ implementation
 
 
 uses
+  // Indy
+  IdStack,
   // Project
   UConsts;
 
@@ -585,7 +587,7 @@ begin
   if E is EHTTPError then
     fHTTPErrorCode := (E as EHTTPError).fHTTPErrorCode
   else
-    fHTTPErrorCode := (E as EIdHTTPProtocolException).ReplyErrorCode;
+    fHTTPErrorCode := (E as EIdHTTPProtocolException).ErrorCode;
 end;
 
 constructor EHTTPError.Create(const E: EIdHTTPProtocolException);
@@ -596,7 +598,7 @@ constructor EHTTPError.Create(const E: EIdHTTPProtocolException);
   }
 begin
   inherited Create(E.Message);
-  fHTTPErrorCode := E.ReplyErrorCode; // ** In Indy 10: use E.ErrorCode;
+  fHTTPErrorCode := E.ErrorCode; 
 end;
 
 { EWebServiceError }
