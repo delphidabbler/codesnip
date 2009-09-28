@@ -67,7 +67,7 @@ type
     fBytesReceived: Integer;
       {Number of bytes received to date in current download}
     procedure HTTPWorkHandler(Sender: TObject; AWorkMode: TWorkMode;
-      const AWorkCount: Integer);
+      AWorkCount: Integer);
       {Handles Indy HTTP client's OnWork event. We process only download events.
       Upload events are ignored. Updates record of bytes received.
         @param Sender [in] Not used.
@@ -75,7 +75,7 @@ type
         @param AWorkCount [in] Number of bytes received to date.
       }
     procedure HTTPWorkBeginHandler(Sender: TObject; AWorkMode: TWorkMode;
-      const AWorkCountMax: Integer);
+      AWorkCountMax: Integer);
       {Handles Indy HTTP client's OnWorkBegin event. We process only download
       events. Upload events are ignored. Records number of expected bytes in
       download.
@@ -157,7 +157,7 @@ begin
 end;
 
 procedure TDownloadMonitor.HTTPWorkBeginHandler(Sender: TObject;
-  AWorkMode: TWorkMode; const AWorkCountMax: Integer);
+  AWorkMode: TWorkMode; AWorkCountMax: Integer);
   {Handles Indy HTTP client's OnWorkBegin event. We process only download
   events. Upload events are ignored. Records number of expected bytes in
   download.
@@ -183,7 +183,7 @@ begin
 end;
 
 procedure TDownloadMonitor.HTTPWorkHandler(Sender: TObject;
-  AWorkMode: TWorkMode; const AWorkCount: Integer);
+  AWorkMode: TWorkMode; AWorkCount: Integer);
   {Handles Indy HTTP client's OnWork event. We process only download events.
   Upload events are ignored. Updates record of bytes received.
     @param Sender [in] Not used.
