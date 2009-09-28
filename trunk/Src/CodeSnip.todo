@@ -1,3 +1,4 @@
+{TODO -oSelf -cInstaller : Change to require Windows 2K as minimum version once project moved to Delphi 2010 }
 {DONE -oSelf -cRefactor : Move some validattion code from TUserDBEditDlg.ValidateData to snippets validator}
 {TODO -oSelf -cRefactor : Extract common code in UDropDownButtons and UTVCheckBoxes into common base class.}
 {DONE -oSelf -cRefactor :
