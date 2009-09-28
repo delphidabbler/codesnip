@@ -9,7 +9,7 @@ begore the project was placed was placed under version control with Subversion.
 
 There are three sections:
 
-  1: Releases: Lists all the releases of HTMLRes and notes which files were
+  1: Releases: Lists all the releases of CodeSnip and notes which files were
      added, updated or deleted in each release.
 
   2: Files: Lists all source code and development tools and provides details of
