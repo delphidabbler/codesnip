@@ -59,8 +59,8 @@ DELPHIDABLIB = $(DELPHIDABLIBD2006);
 !ifndef DELPHIDABLIB
 !error DELPHIDABLIB environment variable required.
 !endif
-!ifndef INDY9
-!error INDY9 environment variable required.
+!ifndef INDY10
+!error INDY10 environment variable required.
 !endif
 !ifndef BIN
 !error BIN macro must be defined in calling script.
@@ -82,7 +82,7 @@ VIED = VIEd.exe -makerc
 # locations in the project options .cfg file.
 .dpr.exe:
   @echo +++ Compiling Delphi Project $< +++
-  @$(DCC32) $< -B -U"$(DELPHIDABLIB)" -U"$(INDY9)"
+  @$(DCC32) $< -B -U"$(DELPHIDABLIB)" -U"$(INDY10)"
 
 # Resource files are compiled to the directory specified by BIN macro, which
 # must have been set by the caller.
