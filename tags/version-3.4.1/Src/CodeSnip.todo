@@ -1,0 +1,83 @@
+{TODO -oSelf -cBug :
+Fix bug #2868707
+Selecting snippets using the Search | Select Snippets menu item and then
+editing a selected snippet can cause the snippet to disappear from the
+selection when the snippets editor is closed. 
+-----------------------------
+Snippet selection query uses object reference, but editing snippet
+recreates the object, changing references. This is a deep problem and won't
+be fixed until planned reworking of query / database code.}
+{TODO -oSelf -cInstaller : Change to require Windows 2K as minimum version once project moved to Delphi 2010 }
+{TODO -oSelf -cRefactor : Extract common code in UDropDownButtons and UTVCheckBoxes into common base class.}
+{TODO -oSelf -cFeature : Add support for external user defined units.
++ Split list boxes on references page of snippets editor into Delphi and user defined sections.
++ User must provide search path for their own units
++ Snippets editor / unit manager will check for those units
++ Test compiler will need to check for the units, so search paths must be persistent.
++ Unit generator must be able to use these units. Emit a comment in unit saying that user defined units have been used and must be on search path.
++ Add search path page to preferences dialog box?}
+{TODO -oSelf -cProposal : Consider what gesture support to add (needs Delphi 2010).}
+{TODO -oSelf -cFeature : Add actions to go to next, previous, first and last category (or alpha or kind)}
+{TODO -oSelf -cProposal :
+Change the Snippets Editor moving code for each pane into separate frame that can
+(1) validate entered data
+(2) calculate required size for controls}
+{TODO -oSelf -cBug : Fix bug #2868706
+Selecting a new printer in print dialog and clicking properties can give an exception or properties dialog has wrong title.
+Selecting some printers in print dialog and clicking OK can give an exception.}
+{TODO -oSelf -cRefactor : Rename identifiers that refer to "routine" with "snippet".}
+{TODO -oSelf -cProposal :
+UView
+  - completely overhaul this unit (careful of assignements tho - check if this
+    actually happens between different types (may need wrapper for various
+    IView implementations?)}
+{TODO -oSelf -cRefactor : Extract common resource strings re comment style from FrSourcePrefs and USaveSourceDlg}
+{TODO -oSelf -cProposal : Consider moving syntax highlighting setting (CSS builder) down into FrInfo from FrDetailView since comp check tab no longer uses highlighting}
+{TODO -oSelf -cProposal : New TSingleton class that prevents an object from being freed (descendants should permit this). 
+To ease freeing when necessary (implementation section, garbage collector etc) make destructors check for support for a do nothing interface (ISingletonDestroy) and only free normally if supported, then support in implementations and not in interface of unit. Eg.
+TMySingleton = class(TInterfacedObject)
+...
+end;
+
+TMySingletonImpl = class(TMySingleton, ISingletonDestroyable)
+...
+end;
+
+TMySingleton.Destroy;
+begin
+  if Supports(Self, ISingletonDestroy) then
+   // prermit destruction
+ else
+  // don't permit destruction
+ end;
+
+Could have base class TSingleton = class(TInterfacedObject) that provides default destruction and virtual method called to do tidy up only if can destroy.}
+{DONE -oSelf -cProposal : Share email and user name persistence used by code submission to bug reports, mailing list etc.}
+{TODO -oSelf -cProposal : Move Compile, View compile errors and configure compilers menu options to a new Compile menu?}
+{TODO -oSelf -cRefactor : See if we can pull out common HTML and REML code into SGML unit}
+{TODO -oSelf -cRefactor : Create StringToOrd and OrdToString dictionaries and use to create two way char entity object to replace one in UTaggedTextLexer and UREMLDataIO etc. Also use for tag lookup in TTaggedTextLexer}
+{TODO -oSelf -cRefactor : Re-implement MakeSafeHTML in terms of a char entity class like that for REML? Use common base class with entities class in UREMLDataIO?}
+{TODO -oSelf -cProposal : Consider making TDateTime a record that can use =, < etc and to use TRange in when comparing file differences}
+{TODO -oSelf -cProposal : Add update date to each routine object}
+{TODO -oSelf -cRefactor : Merge the IO and UI manager code into WBController}
+{TODO -oSelf -cBug :Fix bug #2868704
+Some custom printer properties set in Document Properties dialog box are
+not passed to printer.
+First noticed in v1.7. Still a problem in v3.x}
+{TODO  -oSelf -cRefactor : Try to decouple UPageSetup, UPrintMgr and source code manager objects from associated dialog boxes}
+{TODO -cProposal -oSelf :Terminate application when unexpected (non-CodeSnip) error trapped.}
+{TODO -oSelf -cFeature : Add code to THilitePasParser to detect location of directives and decide if they should be classed as reserved words or not}
+{TODO -oSelf -cFeature : Add parsing for standard user routine. Must start with procedure or function. Need to
+parse. Grammar is:
+  <proc_proto> ::= "procedure" <ident> [<param_list>] ";" [<directives>]
+  <fn_proto> ::= "function" <ident> [<param_list>] ":" <ident> ";" [<directives>]
+  <param_list> ::= "(" <param_def> (*repeat ";" <param_def> *) ")"
+  <param_def> ::= <ident> [ ":" <ident> ]
+  <ident> ::= valid Pascal identifier
+  <directives> ::= <directive> (*repeat ";" <directive> *)
+  <directive> ::= "register" | "pascal" | "cdecl" | "stdcall" | "safecall" | "overload"
+
+Parsing for consts and types for our purpose is simple:
+
+  <type-def> ::= "type" <definitions>
+  <const-def> ::= "const" <definitions>}
