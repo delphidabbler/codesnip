@@ -89,8 +89,8 @@ Configuring CodeSnip to Work With Your Compilers
 ________________________________________________________________________________
 
 A feature of CodeSnip is the ability to test compile routines in its database
-with any installed version of Delphi 2-7, the Win32 personalities of Delphi
-2005, 2006 & 2009, Delphi 2007 and FreePascal. User defined snippets can also be
+with any installed Windows 32 version of Delphi (i.e. Delphi 2 to 7 and 2005,
+2006, 2007, 2009 and 2010) and FreePascal. User defined snippets can also be
 test compiled providing some simple rules are followed.
 
 When CodeSnip is first installed it knows nothing about these compilers and so
@@ -226,6 +226,8 @@ Ready zipped source code archives of the current release and earlier versions
 can be downloaded from the CodeSnip Files page on SourceForge.net at:
 https://sourceforge.net/projects/codesnip/files/
 
+Source code older than one year is unlikely to be available.
+
 Available source code is released under the Mozilla Public license (see
 http://www.mozilla.org/MPL/) and other open source licenses.
 
@@ -234,13 +236,22 @@ http://www.mozilla.org/MPL/) and other open source licenses.
 Bugs
 ________________________________________________________________________________
 
-Please do report any bugs you find. Bugs can be reported on-line using
-CodeSnip's bug report wizard, accessed from the Tools menu. It is helpful if you
-add a description to any bug reports, whether initiated by you or detected by
-CodeSnip.
+Please do report any bugs you find. 
 
-A list of known bugs and fixes can be viewed at
-http://www.delphidabbler.com/software/codesnip/bugs.
+From 28th September CodeSnip bugs are recorded in Tracker on SourceForge. View
+the bug list here: https://sourceforge.net/tracker/?group_id=272192&atid=1157220
+
+If you wish to report a bug, please check the current reports on Tracker AND
+the historic list of fixed bugs at
+http://www.delphidabbler.com/software/codesnip/bugs
+
+If your bug hasn't been reported on fixed please add a report using the
+"Add new" link on tracker.
+
+Bugs can still be reported direct from CodeSnip, but this is no longer the
+preferred option - I just wasn't getting enough info to fix them from the
+reports. If you want to use this route, you'll find the bug report wizard on
+the Tools menu.
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
