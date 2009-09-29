@@ -323,6 +323,7 @@ uses
   UUpdateMgr in 'UUpdateMgr.pas',
   UUserDBBackup in 'UUserDBBackup.pas',
   UUserDBMgr in 'UUserDBMgr.pas',
+  UUserDetails in 'UUserDetails.pas',
   UUtils in 'UUtils.pas',
   UVersionInfo in 'UVersionInfo.pas',
   UView in 'UView.pas',
