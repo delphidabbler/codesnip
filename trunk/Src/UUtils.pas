@@ -67,18 +67,6 @@ function DeleteFiles(const Dir, Wildcard: string): Integer;
     @return Number of files deleted.
   }
 
-function DirToPath(const Dir: string): string;
-  {Converts directory name to a path name with trailing backslash.
-    @param Dir [in] Name of directory.
-    @return Required path name.
-  }
-
-function PathToDir(const Path: string): string;
-  {Converts a path name to a directory name by removing any trailing backslash.
-    @param Path [in] Name of path.
-    @return Required directory name.
-  }
-
 procedure EnsureFolders(const Folder: string);
   {Ensures that a folder and all its subfolder exist.
     @param Folder [in] Fully specified name of folder.
@@ -332,7 +320,7 @@ begin
     // Get matching list of files / folders in directory
     if not ListFiles(Dir, Wildcard, Files) then
       Exit;
-    Path := DirToPath(Dir);
+    Path := IncludeTrailingPathDelimiter(Dir);
     for I := 0 to Pred(Files.Count) do
     begin
       AFile := Path + Files[I];
@@ -348,24 +336,6 @@ begin
   finally
     FreeAndNil(Files);
   end;
-end;
-
-function DirToPath(const Dir: string): string;
-  {Converts directory name to a path name with trailing backslash.
-    @param Dir [in] Name of directory.
-    @return Required path name.
-  }
-begin
-  Result := IncludeTrailingPathDelimiter(Dir);
-end;
-
-function PathToDir(const Path: string): string;
-  {Converts a path name to a directory name by removing any trailing backslash.
-    @param Path [in] Name of path.
-    @return Required directory name.
-  }
-begin
-  Result := ExcludeTrailingPathDelimiter(Path);
 end;
 
 procedure EnsureFolders(const Folder: string);
@@ -409,18 +379,18 @@ var
 const
   faVolumeId = $00000008; // redefined from SysUtils to avoid deprecated warning
 begin
-  Assert(Assigned(List), 'ListFiles(): List is nil');      
+  Assert(Assigned(List), 'ListFiles(): List is nil');
   // Check if true directory and exit if not
   Result := IsDirectory(Dir);
   if not Result then
     Exit;
   // Build FileSpec from directory and wildcard
-  FileSpec := DirToPath(Dir);
+  FileSpec := IncludeTrailingPathDelimiter(Dir);
   if Wildcard = '' then
     FileSpec := FileSpec + '*.*'
   else
     FileSpec := FileSpec + Wildcard;
-  Path := DirToPath(Dir);
+  Path := IncludeTrailingPathDelimiter(Dir);
   // Do search
   Success := FindFirst(FileSpec, faAnyFile, SR);
   try
