@@ -1,7 +1,7 @@
 {
  * USystemInfo.pas
  *
- * Static class that provide information about the host system.
+ * Static classes that provide information about the host system.
  *
  * Requires DelphiDabbler System information unit v3 or later.
  *
@@ -53,8 +53,8 @@ type
     Record that records operation system major and minor version numbers.
   }
   TOSVer = packed record
-    VerHi: Word;  // major OS version number
-    VerLo: Word;  // minor OS version number
+    VerHi: Word;  // Major OS version number
+    VerLo: Word;  // Minor OS version number
     constructor Create(const AVerHi, AVerLo: Word);
       {Record constructor. Sets initial field values.
         @param AVerHi [in] Major version number.
@@ -71,7 +71,8 @@ type
   {
   TOSInfo:
     Exposes TPJOSInfo class to rest of program under a new name and extends to
-    add new methods.
+    add new methods. Adds a constructor that enforces nature as static class by
+    causing and assertion failure when called.
   }
   TOSInfo = class(TPJOSInfo)
   private
@@ -87,6 +88,10 @@ type
       {Identifies Windows XP}
     const WinVista: TOSVer = (VerHi: 6; VerLo: 0);
       {Identifies Windows Vista}
+    constructor Create;
+      {Class constructor. Causes an assertion failure if called. The object must
+      not be, and is never, constructed.
+      }
     class function IsVistaOrLater: Boolean;
       {Checks if the underlying operating system is Windows Vista or later.
       Ignores any OS emulation.
@@ -108,6 +113,19 @@ type
       Works for all version if IE from v4 onwards. See
       http://support.microsoft.com/kb/969393/en-us.
         @return Browser version >=4 or 0 if earlier browser or on error.
+      }
+  end;
+
+  {
+  TComputerInfo:
+    Exposes TPJComputerInfo class to rest of program under a new name with no
+    additions or changes other than to enforce nature as static class by adding
+    a constructor that causes an assertion failure when called.
+  }
+  TComputerInfo = class(TPJComputerInfo)
+    constructor Create;
+      {Class constructor. Causes an assertion failure if called. The object must
+      not be, and is never, constructed.
       }
   end;
 
@@ -184,6 +202,14 @@ begin
     >= MinVer;
 end;
 
+constructor TOSInfo.Create;
+  {Class constructor. Causes an assertion failure if called. The object must not
+  be, and is never, constructed.
+  }
+begin
+  Assert(False, ClassName + '.Create: Constructor can''t be called');
+end;
+
 class function TOSInfo.IsVistaOrLater: Boolean;
   {Checks if the underlying operating system is Windows Vista or later. Ignores
   any OS emulation.
@@ -227,6 +253,16 @@ class operator TOSVer.GreaterThanOrEqual(const R1, R2: TOSVer): Boolean;
 begin
   Result := (R1.VerHi > R2.VerHi)
     or ((R1.VerHi = R2.VerHi) and (R1.VerLo >= R2.VerLo));
+end;
+
+{ TComputerInfo }
+
+constructor TComputerInfo.Create;
+  {Class constructor. Causes an assertion failure if called. The object must not
+  be, and is never, constructed.
+  }
+begin
+  Assert(False, ClassName + '.Create: Constructor can''t be called');
 end;
 
 end.
