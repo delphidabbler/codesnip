@@ -59,10 +59,8 @@ type
     Comments: string;       // User's comments
     constructor Create(const UserDetails: TUserDetails;
       const UserComments: string);
-      // todo: recomment
       {Initialises all a fields of a record.
-        @param UserName [in] Name of user.
-        @param UserEmail [in] User's email address.
+        @param UserDetails [in] Information about user.
         @param UserComments [in] User's comments.
       }
     class function CreateNul: TUserInfo; static;
@@ -232,7 +230,7 @@ const
   cEarliestVersion  = cVersion1;
   cMinOutputVersion = cVersion3;
   cLatestVersion    = cVersion4;
-  
+
 
 { TUserInfo }
 
@@ -248,8 +246,7 @@ end;
 constructor TUserInfo.Create(const UserDetails: TUserDetails;
   const UserComments: string);
   {Initialises all a fields of a record.
-    @param UserName [in] Name of user.
-    @param UserEmail [in] User's email address.
+    @param UserDetails [in] Information about user.
     @param UserComments [in] User's comments.
   }
 begin
