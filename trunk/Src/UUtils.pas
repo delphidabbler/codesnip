@@ -139,18 +139,6 @@ function JoinStr(const SL: TStrings; const Delim: string;
     @return Joined string.
   }
 
-function SpecialFolderPath(CSIDL: Integer): string;
-  {Returns the full path to a special file system folder.
-    @param CSIDL [in] Constant specifying the special folder.
-    @return Folder path or '' if the special folder is virtual or CSIDL not
-      supported on the OS.
-  }
-
-function TempFolder: string;
-  {Gets path to Windows temporary folder.
-    @return Required path.
-  }
-
 function LongToShortFilePath(const LongName: string): string;
   {Converts a long file name to the equivalent shortened DOS style 8.3 path.
     @param LongName [in] Long file name to be converted.
@@ -663,60 +651,6 @@ begin
       else
         Result := Result + Delim + SL[Idx];
   end;
-end;
-
-procedure FreePIDL(PIDL: PItemIDList);
-  {Uses to shell allocator to free the memory used by a PIDL.
-    @param PIDL [in] PIDL that is to be freed.
-  }
-var
-  Malloc: IMalloc;  // shell's allocator
-begin
-  if Succeeded(SHGetMalloc(Malloc)) then
-    Malloc.Free(PIDL);
-end;
-
-function PIDLToFolderPath(PIDL: PItemIDList): string;
-  {Returns the full path to a file system folder described by a PIDL.
-    @param PIDL [in] PIDL describing folder.
-    @return Full path to folder described by PIDL or '' if PIDL refers to
-      virtual folder.
-  }
-begin
-  SetLength(Result, MAX_PATH);
-  if SHGetPathFromIDList(PIDL, PChar(Result)) then
-    Result := PChar(Result)
-  else
-    Result := '';
-end;
-
-function SpecialFolderPath(CSIDL: Integer): string;
-  {Returns the full path to a special file system folder.
-    @param CSIDL [in] Constant specifying the special folder.
-    @return Folder path or '' if the special folder is virtual or CSIDL not
-      supported on the OS.
-  }
-var
-  PIDL: PItemIDList;  // PIDL of the special folder
-begin
-  Result := '';
-  if Succeeded(SHGetSpecialFolderLocation(0, CSIDL, PIDL)) then
-  begin
-    try
-      Result := PIDLToFolderPath(PIDL);
-    finally
-      FreePIDL(PIDL);
-    end;
-  end
-end;
-
-function TempFolder: string;
-  {Gets path to Windows temporary folder.
-    @return Required path.
-  }
-begin
-  SetLength(Result, MAX_PATH);
-  SetLength(Result, GetTempPath(MAX_PATH, PChar(Result)));
 end;
 
 function LongToShortFilePath(const LongName: string): string;
