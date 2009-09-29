@@ -127,9 +127,9 @@ implementation
 
 uses
   // Delphi
-  Forms,
+  SysUtils, Forms,
   // Project
-  UAppInfo, UUtils;
+  UAppInfo;
 
 
 { TWBExternal }
@@ -166,7 +166,8 @@ var
   ExeName: WideString;  // name of this executable file
 begin
   // Get type library info from exe file
-  ExeName := DirToPath(TAppInfo.AppExeDir) + TAppInfo.AppExeFile;
+  ExeName := IncludeTrailingPathDelimiter(TAppInfo.AppExeDir)
+    + TAppInfo.AppExeFile;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
   inherited Create(TypeLib, IWBExternal6);

@@ -94,9 +94,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining},
-  // Project
-  UUtils;
+  SysUtils, Windows {for inlining};
 
 
 { TFreePascalCompiler }
@@ -116,8 +114,12 @@ procedure TFreePascalCompiler.DeleteObjFiles(const Path, Project: string);
     @param Project [in] Name of project (source file)
   }
 begin
-  SysUtils.DeleteFile(DirToPath(Path) + ChangeFileExt(Project, '.o'));
-  SysUtils.DeleteFile(DirToPath(Path) + ChangeFileExt(Project, '.ppu'));
+  SysUtils.DeleteFile(
+    IncludeTrailingPathDelimiter(Path) + ChangeFileExt(Project, '.o')
+  );
+  SysUtils.DeleteFile(
+    IncludeTrailingPathDelimiter(Path) + ChangeFileExt(Project, '.ppu')
+  );
 end;
 
 function TFreePascalCompiler.GetDefaultSwitches: string;

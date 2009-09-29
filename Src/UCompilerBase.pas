@@ -247,9 +247,7 @@ uses
 
 const
   // Default prefixes used to identify error and warning entries in logs
-  cPrefixDefaults: TCompLogPrefixes = (
-    'Fatal: ', 'Error: ', 'Warning: '                      // ** do not localise
-  );
+  cPrefixDefaults: TCompLogPrefixes = ('Fatal: ', 'Error: ', 'Warning: ');
 
 
 { TCompilerBase }
@@ -264,9 +262,11 @@ begin
   Result := Format(
     '"%0:s" %1:s %2:s',
     [
-      fExecFile,                                      // compile exe
-      LongToShortFilePath(DirToPath(Path)) + Project, // path to project
-      CommandLineSwitches                             // command line switches
+      fExecFile,                              // compile exe
+      LongToShortFilePath(
+        IncludeTrailingPathDelimiter(Path)
+      ) + Project,                            // path to project
+      CommandLineSwitches                     // command line switches
     ]
   );
 end;
@@ -406,7 +406,9 @@ begin
     // Perform compilation
     CompilerRunner := TCompilerRunner.Create;
     try
-      Result := CompilerRunner.Execute(CommandLine, PathToDir(Path), OutStm);
+      Result := CompilerRunner.Execute(
+        CommandLine, ExcludeTrailingPathDelimiter(Path), OutStm
+      );
     except
       on E: ECompilerRunner do
         raise ECompilerError.Create(E, GetName);
@@ -620,7 +622,7 @@ procedure ECompilerError.Assign(const E: Exception);
       ECompilerError instance.
   }
 begin
-  Assert(E is ECompilerError,                              // ** do not localise
+  Assert(E is ECompilerError,
     ClassName + '.Assign: E is not a ECompilerError instance.'
   );
   inherited;  // copies inherited properties
@@ -637,10 +639,8 @@ constructor ECompilerError.Create(const E: ECompilerRunner;
     @param Compiler [in] Name of compiler that failed to run.
   }
 begin
-  Assert(Assigned(E),                                      // ** do not localise
-    ClassName + '.Create: E is nil');
-  Assert(Compiler <> '',                                   // ** do not localise
-    ClassName + '.Create: Compiler is empty string');
+  Assert(Assigned(E), ClassName + '.Create: E is nil');
+  Assert(Compiler <> '', ClassName + '.Create: Compiler is empty string');
   inherited Create(E.Message);
   fCompiler := Compiler;
   fErrorCode := E.ErrorCode;

@@ -225,7 +225,7 @@ begin
   if Result = '' then
     Exit;
   if IsBaseFileName(Result) then
-    Result := DirToPath(FileOpenFolderPath(Dlg)) + Result;
+    Result := IncludeTrailingPathDelimiter(FileOpenFolderPath(Dlg)) + Result;
 end;
 
 end.

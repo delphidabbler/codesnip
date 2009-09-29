@@ -253,7 +253,7 @@ var
   FilePath: string;   // full path to local file
   Date: IDOSDateTime; // Object that encapsulates DOS date time value
 begin
-  FilePath := UUtils.DirToPath(fLocalDir) + Name;
+  FilePath := IncludeTrailingPathDelimiter(fLocalDir) + Name;
   UUtils.StringToFile(Content, FilePath);
   Date := TDOSDateTimeFactory.CreateFromUnixTimeStamp(UnixDate);
   Date.ApplyToFile(FilePath);
