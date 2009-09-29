@@ -83,8 +83,10 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
-  USourceGen, UUtils;
+  USourceGen, USystemInfo, UUtils;
 
 
 { TTestUnit }
@@ -131,7 +133,7 @@ const
   cPasExt = '.pas'; // file extension for Pascal unit:
 begin
   // Unit file name is in temp folder
-  Result := DirToPath(TempFolder) + UnitName + cPasExt;
+  Result := DirToPath(TSystemFolders.Temp) + UnitName + cPasExt;
 end;
 
 function TTestUnit.UnitName: string;
