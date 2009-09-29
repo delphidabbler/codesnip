@@ -1,4 +1,4 @@
-{TODO -oSelf -cBug : 
+{TODO -oSelf -cBug :
 Fix bug #2868707
 Selecting snippets using the Search | Select Snippets menu item and then
 editing a selected snippet can cause the snippet to disappear from the
@@ -52,7 +52,7 @@ begin
  end;
 
 Could have base class TSingleton = class(TInterfacedObject) that provides default destruction and virtual method called to do tidy up only if can destroy.}
-{TODO -oSelf -cProposal : Share email and user name persistence used by code submission to bug reports, mailing list etc.}
+{DONE -oSelf -cProposal : Share email and user name persistence used by code submission to bug reports, mailing list etc.}
 {TODO -oSelf -cProposal : Move Compile, View compile errors and configure compilers menu options to a new Compile menu?}
 {TODO -oSelf -cRefactor : See if we can pull out common HTML and REML code into SGML unit}
 {TODO -oSelf -cRefactor : Create StringToOrd and OrdToString dictionaries and use to create two way char entity object to replace one in UTaggedTextLexer and UREMLDataIO etc. Also use for tag lookup in TTaggedTextLexer}
