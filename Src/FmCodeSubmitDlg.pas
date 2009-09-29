@@ -176,7 +176,7 @@ uses
   SysUtils, Graphics,
   // Project
   FmPreviewDlg, UCodeImportExport, UCodeSubmitter, UCtrlArranger, UEmailHelper,
-  UMessageBox, USettings, UUtils, UWebService;
+  UMessageBox, UUserDetails, UWebService;
 
 
 {$R *.dfm}
@@ -256,12 +256,14 @@ begin
     ClassName + '.BuildSubmission: No snippets selected');
   Assert(edName.Text <> '',
     ClassName + '.BuildSubmission: No user name provided');
-  Assert(IsValidEmailAddress(edEmail.Text),
+  Assert(IsValidEmailAddress(Trim(edEmail.Text)),
     ClassName + '.BuildSubmission: Invalid or no email address specified');
   // Build the document
   fData.Size := 0;
   TCodeExporter.ExportRoutines(
-    TUserInfo.Create(edName.Text, edEmail.Text, Trim(edComments.Text)),
+    TUserInfo.Create(
+      TUserDetails.Create(edName.Text, edEmail.Text), Trim(edComments.Text)
+    ),
     frmRoutines.SelectedRoutines,
     fData
   );
@@ -377,12 +379,12 @@ procedure TCodeSubmitDlg.InitForm;
   {Initialises some wizard controls from persistent data.
   }
 var
-  UserData: ISettingsSection; // persistent user data settings
+  UserDetails: TUserDetails;  // user details from settings
 begin
   inherited;
-  UserData := Settings.ReadSection(ssUserInfo);
-  edName.Text := UserData.ItemValues['Name'];
-  edEMail.Text := UserData.ItemValues['Email'];
+  UserDetails := TUserDetailsPersist.Load;
+  edName.Text := UserDetails.Name;
+  edEmail.Text := UserDetails.Email;
 end;
 
 constructor TCodeSubmitDlg.InternalCreate(AOwner: TComponent);
@@ -436,13 +438,8 @@ end;
 procedure TCodeSubmitDlg.SaveUserData;
   {Saves content of some wizard controls to persistent storage.
   }
-var
-  UserData: ISettingsSection; // persistent user data settings
 begin
-  UserData := Settings.EmptySection(ssUserInfo);
-  UserData.ItemValues['Name'] := edName.Text;
-  UserData.ItemValues['Email'] := edEMail.Text;
-  UserData.Save;
+  TUserDetailsPersist.Update(TUserDetails.Create(edName.Text, edEMail.Text));
 end;
 
 procedure TCodeSubmitDlg.SelectRoutine(const Routine: TRoutine);
@@ -473,7 +470,7 @@ procedure TCodeSubmitDlg.UpdateButtons(const PageIdx: Integer);
     @param PageIdx [in] Index of current page.
   }
 resourcestring
-  sSubmitBtnCaption = '&Submit';
+  sSubmitBtnCaption = '&Submit';  // submit button caption
 begin
   inherited;
   // We change button caption on submit page
@@ -505,7 +502,7 @@ begin
         raise EDataEntry.Create(sNoName, edName);
       if edEmail.Text = '' then
         raise EDataEntry.Create(sNoEmail, edEmail);
-      if not IsValidEmailAddress(edEmail.Text) then
+      if not IsValidEmailAddress(Trim(edEmail.Text)) then
         raise EDataEntry.Create(sBadEmail, edEmail);
     end;
   end;
