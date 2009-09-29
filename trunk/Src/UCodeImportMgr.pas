@@ -179,7 +179,9 @@ resourcestring
 var
   DisplayStr: string; // text to be displayed in message box
 begin
-  DisplayStr := Format(sUserInfo, [UserInfo.Name, UserInfo.Email]);
+  DisplayStr := Format(
+    sUserInfo, [UserInfo.Details.Name, UserInfo.Details.Email]
+  );
   if UserInfo.Comments <> '' then
     DisplayStr := DisplayStr + EOL2
       + Format(sUserComments, [UserInfo.Comments]);
@@ -499,7 +501,9 @@ class procedure TCodeImportMgr.UpdateUserDatabase(const UserInfo: TUserInfo;
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
     Result.AddElem(
       TActiveTextFactory.CreateTextElem(
-        Format(sContributorText, [UserInfo.Name, UserInfo.Email])
+        Format(
+          sContributorText, [UserInfo.Details.Name, UserInfo.Details.Email]
+        )
       )
     );
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
