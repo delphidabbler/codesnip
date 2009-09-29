@@ -1,3 +1,12 @@
+Version 3.4.1 - 29 September 2009
+CodeSnip 3.4.1 - 29 September 2009
++ All dialog boxes that request a user's name and / or email address now remember the information last entered, to save retyping the same data.
++ Changed to use Indy Internet Components v10 instead of v9 for net access.
++ Refactored:
+  - Code that stores information about a user.
+  - Code that gets details of system folders on local system and other file system related code.
++ Updated privacy statement (text file and in help file).
+
 Version 3.4 - 24 September 2009
 CodeSnip 3.4 - 24 September 2009
 + Added support for Delphi 2010.
