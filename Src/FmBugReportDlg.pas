@@ -166,7 +166,7 @@ uses
   StrUtils, Windows,
   // Project
   UAppInfo, UBugReporter, UConsts, UCtrlArranger, UEmailHelper, UExceptions,
-  UFontHelper, UMessageBox, USystemInfo, UWebInfo, UWebService;
+  UFontHelper, UMessageBox, USystemInfo, UUserDetails, UWebInfo, UWebService;
 
 
 {$R *.dfm}
@@ -303,6 +303,8 @@ procedure TBugReportDlg.ConfigForm;
   end;
   // ---------------------------------------------------------------------------
 
+var
+  UserDetails: TUserDetails;  // details of user (for email address)
 begin
   inherited;
   // Select and set up first page of wizard according to if shown as a result of
@@ -328,6 +330,9 @@ begin
     Caption := sBugReport;
   // Display the operating system info
   edOS.Text := TOSInfo.Description;
+  // Display user email if known
+  UserDetails := TUserDetailsPersist.Load;
+  edEmail.Text := UserDetails.Email;
   // Set default font where necessary
   TFontHelper.SetDefaultBaseFont(lblBugInfo.Font, False);
   // Load HTML into browser control
@@ -377,7 +382,7 @@ begin
   else
     RecordBugListItem('ExceptionInfo', '');
   RecordBugListItem('UserDesc', NoEOL(Trim(memoDesc.Text)));
-  RecordBugListItem('UserEMail', edEmail.Text);
+  RecordBugListItem('UserEMail', Trim(edEmail.Text));
   edReport.Lines.Assign(fBugData);
 end;
 
@@ -394,7 +399,7 @@ begin
     Screen.Cursor := crHourglass;
     BugReporter := TBugReporter.Create;
     try
-      // Store user agent name and POST the data
+      // POST the data
       BugReporter.Submit(fBugData);
     finally
       FreeAndNil(BugReporter);
@@ -510,7 +515,7 @@ begin
     cBugInfoPage:
     begin
       // Validate data entered on bug information page
-      if (memoDesc.Text = '') then
+      if Trim(memoDesc.Text) = '' then
       begin
         // no description entered
         if not Assigned(fErrorObj) then
@@ -532,16 +537,21 @@ begin
     begin
       // Validate data entered on user information page
       // do some basic validation of (optional) email address
-      if (edEmail.Text <> '') and not IsValidEmailAddress(edEmail.Text) then
+      if (Trim(edEmail.Text) <> '') and
+        not IsValidEmailAddress(Trim(edEmail.Text)) then
       begin
         TMessageBox.Error(Self, sBadEmailAddress);
         CanMove := False;
       end;
     end;
     cSubmitPage:
+    begin
       // We submit data to web service on leaving submit page
       // DoSubmit raises exceptions on error, so we don't bother setting CanMove
       DoSubmit;
+      // Store the email address in user data id submission successful
+      TUserDetailsPersist.Update(TUserDetails.Create('', Trim(edEmail.Text)));
+    end;
   end;
 end;
 
