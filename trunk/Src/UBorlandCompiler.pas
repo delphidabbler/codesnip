@@ -99,9 +99,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Registry, Windows,
-  // Project
-  UUtils;
+  SysUtils, Registry, Windows;
 
 
 constructor TBorlandCompiler.Create(const Id: TCompilerID);
@@ -129,7 +127,9 @@ procedure TBorlandCompiler.DeleteObjFiles(const Path, Project: string);
     @param Project Name of project (source file)
   }
 begin
-  SysUtils.DeleteFile(DirToPath(Path) + ChangeFileExt(Project, '.dcu'));
+  SysUtils.DeleteFile(
+    IncludeTrailingPathDelimiter(Path) + ChangeFileExt(Project, '.dcu')
+  );
 end;
 
 function TBorlandCompiler.DetectExeFile: Boolean;
@@ -151,11 +151,11 @@ begin
       // Get compiler file spec. First read Delphi's root path from registry,
       // and check for errors Reg.ReadString may raise exception. We also check
       // for no value from registry
-      InstDir := Reg.ReadString('RootDir');                // ** do not localise
+      InstDir := Reg.ReadString('RootDir');
       Result := (InstDir <> '');
     end;
     if Result then
-      SetExecFile(DirToPath(InstDir) + 'Bin\DCC32.exe');   // ** do not localise
+      SetExecFile(IncludeTrailingPathDelimiter(InstDir) + 'Bin\DCC32.exe');
   finally
     // Close registry
     Reg.Free;

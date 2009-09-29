@@ -182,7 +182,7 @@ constructor TUserDBBackup.Create(const BackupFile: string);
 begin
   inherited Create;
   fBackupFile := BackupFile;
-  fUserDBDir := PathToDir(TAppInfo.UserDataDir);
+  fUserDBDir := ExcludeTrailingPathDelimiter(TAppInfo.UserDataDir);
 end;
 
 procedure TUserDBBackup.Restore;
@@ -254,7 +254,7 @@ function TUserDBBackup.UserDBFileSpec(const FileName: string): string;
     @return Fully specified file name.
   }
 begin
-  Result := DirToPath(fUserDBDir) + FileName;
+  Result := IncludeTrailingPathDelimiter(fUserDBDir) + FileName;
 end;
 
 end.
