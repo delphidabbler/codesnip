@@ -183,8 +183,8 @@ function MySQLDateToDateTime(const MySQLDate: string): TDateTime;
   }
 
 function DateStamp: string;
-  {Creates a date stamp in standard format
-    @return Current date and time as date stamp in GMT.
+  {Creates a date stamp in RFC1123 format
+    @return Current date and time as date stamp in UTC/GMT.
   }
 
 function MakeSentence(const Txt: string): string;
@@ -793,16 +793,20 @@ begin
 end;
 
 function DateStamp: string;
-  {Creates a date stamp in standard format
-    @return Current date and time as date stamp in GMT.
+  {Creates a date stamp in RFC1123 format
+    @return Current date and time as date stamp in UTC/GMT.
   }
+const
+  // Pattern to create RFC1123 date formats
+  cRFC1123Pattern = 'ddd, dd mmm yyyy HH'':''nn'':''ss ''GMT''';
 var
   ST: TSystemTime;  // system time
 begin
+  // This Windows API function gets system time in UTC/GTM
+  // see http://msdn.microsoft.com/en-us/library/ms724390
   GetSystemTime(ST);
-  Result := FormatDateTime(
-    'ddd, dd mmm yyyy hh:nn:ss', SystemTimeToDateTime(ST)
-  ) + ' GMT';                                              
+  // Format system time in RFC1123 format
+  Result := FormatDateTime(cRFC1123Pattern, SystemTimeToDateTime(ST));
 end;
 
 function MakeSentence(const Txt: string): string;
