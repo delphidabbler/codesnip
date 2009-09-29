@@ -153,7 +153,7 @@ uses
   SysUtils, Graphics, Math,
   // Project
   UAppInfo, UCSSUtils, UEmailHelper, UFontHelper, UCtrlArranger, UMessageBox,
-  URegistrar;
+  URegistrar, UUserDetails;
 
 
 {$R *.dfm}
@@ -248,7 +248,9 @@ begin
       // Set up confirmation messages
       if chkMailList.Checked then
       begin
-        lblMailListConfirm.Caption := Format(sMailListConfirm, [edEmail.Text]);
+        lblMailListConfirm.Caption := Format(
+          sMailListConfirm, [Trim(edEmail.Text)]
+        );
         lblMailListConfirm.Visible := True;
       end
       else
@@ -286,10 +288,10 @@ begin
   Report.Values['ProgName'] := TAppInfo.ProgramName;
   Report.Values['ProgVer'] := TAppInfo.ProgramReleaseVersion;
   Report.Values['ProgKey'] := TAppInfo.ProgramKey;
-  Report.Values['UserName'] := edName.Text;
+  Report.Values['UserName'] := Trim(edName.Text);
   Report.Values['MailList'] := IntToStr(Ord(chkMailList.Checked));
   if chkMailList.Checked then
-    Report.Values['UserEmail'] := edEmail.Text
+    Report.Values['UserEmail'] := Trim(edEmail.Text)
   else
     Report.Values['UserEmail'] := '';
 end;
@@ -355,11 +357,15 @@ end;
 procedure TRegistrationDlg.DoRegistration;
   {Registers program and displays registration code.
   }
+var
+  UserDetails: TUserDetails;  // information about user
 begin
   Screen.Cursor := crHourglass;
   try
+    UserDetails := TUserDetails.Create(Trim(edName.Text), Trim(edEmail.Text));
     edRegCode.Text := RegisterWithWebServer;
-    TAppInfo.RegisterProgram(edRegCode.Text, edName.Text);
+    TAppInfo.RegisterProgram(edRegCode.Text, UserDetails.Name);
+    TUserDetailsPersist.Update(UserDetails);
     fRegistered := True;
   finally
     Screen.Cursor := crDefault;
@@ -398,10 +404,14 @@ end;
 procedure TRegistrationDlg.InitForm;
   {Initialises controls.
   }
+var
+  UserDetails: TUserDetails;  // any known information about user
 begin
   inherited;
   // Use user name if known
-  edName.Text := TAppInfo.RegisteredUser;
+  UserDetails := TUserDetailsPersist.Load;
+  edName.Text := UserDetails.Name;
+  edEmail.Text := UserDetails.Email;
 end;
 
 procedure TRegistrationDlg.MoveForward(const PageIdx: Integer;
@@ -484,13 +494,13 @@ function TRegistrationDlg.ValidateUserInfo: Boolean;
 
 begin
   Result := True;
-  if edName.Text = '' then
+  if Trim(edName.Text) = '' then
   begin
     Result := False;
     TMessageBox.Error(Self, sErrNameRequired);
   end
   else if chkMailList.Checked then
-    Result := ValidateEmailAddress(edEmail.Text);
+    Result := ValidateEmailAddress(Trim(edEmail.Text));
 end;
 
 end.

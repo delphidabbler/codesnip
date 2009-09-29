@@ -91,6 +91,9 @@ type
       web service.
         @return Message returned from web service.
       }
+    procedure SaveUserDetails;
+      {Updates persistent storage with any change in user details.
+      }
   strict protected
     procedure ConfigForm; override;
       {Initialises content of HTML frames and sets fonts as required.
@@ -121,7 +124,7 @@ uses
   SysUtils, Math,
   // Project
   UAppInfo, UConsts, UCtrlArranger, UEmailHelper, UFontHelper, UHTMLUtils,
-  UMailListSubscriber, UMessageBox, UUtils;
+  UMailListSubscriber, UMessageBox, UUserDetails, UUtils;
 
 
 {$R *.dfm}
@@ -182,6 +185,7 @@ begin
     Subscribing(True);
     Response := Subscribe;
     ShowResultPane(Response);
+    SaveUserDetails;
   finally
     Subscribing(False);
   end;
@@ -213,10 +217,14 @@ end;
 procedure TMailingListDlg.InitForm;
   {Populates and initialises controls.
   }
+var
+  UserDetails: TUserDetails;  // details of user
 begin
   inherited;
   // Use any registered user name as default name
-  edName.Text := TAppInfo.RegisteredUser;
+  UserDetails := TUserDetailsPersist.Load;
+  edName.Text := UserDetails.Name;
+  edEmail.Text := UserDetails.Email;
   // Make sure correct pane is displayed
   pnlResult.Hide;
   pnlData.Show;
@@ -271,6 +279,13 @@ function TMailingListDlg.ModalResultOnEsc: Integer;
   }
 begin
   Result := btnCancel.ModalResult;
+end;
+
+procedure TMailingListDlg.SaveUserDetails;
+  {Updates persistent storage with any change in user details.
+  }
+begin
+  TUserDetailsPersist.Update(TUserDetails.Create(edName.Text, edEmail.Text));
 end;
 
 procedure TMailingListDlg.ShowResultPane(const Msg: string);
@@ -331,7 +346,7 @@ function TMailingListDlg.ValidateEmailAddress: Boolean;
 var
   Email: string;  // entered email address
 begin
-  Email := edEmail.Text;
+  Email := Trim(edEmail.Text);
   // Assume failure
   Result := False;
   // Check if no email address supplied
