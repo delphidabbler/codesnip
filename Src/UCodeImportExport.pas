@@ -44,8 +44,8 @@ uses
   // Delphi
   Classes, XMLIntf,
   // Project
-  UBaseObjects, UExceptions, UIStringList, USnippets, UXMLDocHelper,
-  UXMLDocumentEx;
+  UBaseObjects, UExceptions, UIStringList, USnippets, UUserDetails,
+  UXMLDocHelper, UXMLDocumentEx;
 
 
 type
@@ -55,10 +55,11 @@ type
     Record that encapsulates user info optionally stored in export files.
   }
   TUserInfo = record
-    Name: string;       // user name
-    Email: string;      // user's email address
-    Comments: string;   // user's comments
-    constructor Create(const UserName, UserEmail, UserComments: string);
+    Details: TUserDetails;  // User's personal details
+    Comments: string;       // User's comments
+    constructor Create(const UserDetails: TUserDetails;
+      const UserComments: string);
+      // todo: recomment
       {Initialises all a fields of a record.
         @param UserName [in] Name of user.
         @param UserEmail [in] User's email address.
@@ -240,20 +241,19 @@ procedure TUserInfo.Assign(const Src: TUserInfo);
     @param Src [in] Record containing fields to be copied.
   }
 begin
-  Name := Src.Name;
-  Email := Src.Email;
+  Details.Assign(Src.Details);
   Comments := Src.Comments;
 end;
 
-constructor TUserInfo.Create(const UserName, UserEmail, UserComments: string);
+constructor TUserInfo.Create(const UserDetails: TUserDetails;
+  const UserComments: string);
   {Initialises all a fields of a record.
     @param UserName [in] Name of user.
     @param UserEmail [in] User's email address.
     @param UserComments [in] User's comments.
   }
 begin
-  Name := UserName;
-  Email := UserEmail;
+  Details := UserDetails;
   Comments := UserComments;
 end;
 
@@ -269,8 +269,7 @@ procedure TUserInfo.Init;
   {Initialises record to nul values.
   }
 begin
-  Name := '';
-  Email := '';
+  Details.Init;
   Comments := '';
 end;
 
@@ -279,7 +278,7 @@ function TUserInfo.IsNul: Boolean;
     @return True if record is nul, False if not.
   }
 begin
-  Result := (Name = '') and (Email = '') and (Comments = '');
+  Result := Details.IsNul and (Comments = '');
 end;
 
 { TCodeExporter }
@@ -505,8 +504,8 @@ begin
   // Add user info node
   UserInfoNode := fXMLDoc.CreateElement(ParentNode, cUserInfoNode);
   // Add separate child node for each piece of user info
-  fXMLDoc.CreateElement(UserInfoNode, cUserNameNode, fUserInfo.Name);
-  fXMLDoc.CreateElement(UserInfoNode, cUserEmailNode, fUserInfo.Email);
+  fXMLDoc.CreateElement(UserInfoNode, cUserNameNode, fUserInfo.Details.Name);
+  fXMLDoc.CreateElement(UserInfoNode, cUserEmailNode, fUserInfo.Details.Email);
   fXMLDoc.CreateElement(UserInfoNode, cUserCommentsNode, fUserInfo.Comments);
 end;
 
@@ -585,10 +584,10 @@ begin
     UserNode :=  fXMLDoc.FindNode(cExportRootNode + '\' + cUserInfoNode);
     if Assigned(UserNode) then
     begin
-      fUserInfo.Name := TXMLDocHelper.GetSubTagText(
+      fUserInfo.Details.Name := TXMLDocHelper.GetSubTagText(
         fXMLDoc, UserNode, cUserNameNode
       );
-      fUserInfo.Email := TXMLDocHelper.GetSubTagText(
+      fUserInfo.Details.Email := TXMLDocHelper.GetSubTagText(
         fXMLDoc, UserNode, cUserEmailNode
       );
       fUserInfo.Comments := TXMLDocHelper.GetSubTagText(
