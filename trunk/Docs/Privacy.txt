@@ -38,11 +38,14 @@ of the currently logged on user.
 
 The file stores several user-specific application data settings such as your
 preferences. The only personal information that may be included are the name and
-email address you specified if you ever submitted code to the main database via
-the Code Submission Wizard. 
+email address you specified if you ever entered the information in a dialog box.
+This is used simply to automatically enter the data in dialog boxes where
+needed, to save you re-typing the information. See below for details of
+activities that require either or both a name or email address to be submitted.
 
-If you have upgraded from CodeSnip v2 there may will also be a file named 
-User.ini. This contains pretty much the same information as User.3.ini.
+If you have upgraded from CodeSnip v2 there may also be a file named User.ini.
+This contains pretty much the same information as User.3.ini. The file is
+ignored by CodeSnip v3. 
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
