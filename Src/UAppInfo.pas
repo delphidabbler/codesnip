@@ -144,9 +144,9 @@ implementation
 
 uses
   // Delphi
-  SHFolder, SysUtils,
+  SysUtils,
   // Project
-  UCheckSum, USettings, USystemID, UVersionInfo, UUtils;
+  UCheckSum, USettings, USystemID, USystemInfo, UVersionInfo;
 
 
 { TAppInfo }
@@ -156,7 +156,7 @@ class function TAppInfo.AppDataDir: string;
     @return Full path to database sub directory.
   }
 begin
-  Result := CommonAppDir + '\Data';                        
+  Result := CommonAppDir + '\Data';
 end;
 
 class function TAppInfo.AppExeDir: string;
@@ -182,8 +182,7 @@ class function TAppInfo.CommonAppDir: string;
     @return Full path to common application data directory.
   }
 begin
-  Result := SpecialFolderPath(CSIDL_COMMON_APPDATA)
-    + '\DelphiDabbler\CodeSnip';
+  Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip';
 end;
 
 class function TAppInfo.GenerateKey: string;
@@ -308,8 +307,7 @@ class function TAppInfo.UserAppDir: string;
     @return Full path to per-user application data directory.
   }
 begin
-  Result := SpecialFolderPath(CSIDL_APPDATA)
-    + '\DelphiDabbler\CodeSnip';
+  Result := TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip';
 end;
 
 class function TAppInfo.UserDataDir: string;
