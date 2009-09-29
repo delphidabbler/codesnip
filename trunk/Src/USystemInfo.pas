@@ -42,6 +42,8 @@ interface
 
 
 uses
+  // Delphi
+  ShlObj,
   // DelphiDabbler library
   PJSysInfo;
 
@@ -129,16 +131,78 @@ type
       }
   end;
 
+  {
+  TSystemFolders:
+    Exposes TPJSystemFolders class to rest of program under a new name and
+    extends to add new methods. Adds a constructor that enforces nature as
+    static class by causing and assertion failure when called.
+  }
+  TSystemFolders = class(TPJSystemFolders)
+  strict protected
+    class procedure FreePIDL(PIDL: PItemIDList);
+      {Uses to shell allocator to free the memory used by a PIDL.
+        @param PIDL [in] PIDL that is to be freed.
+      }
+    class function PIDLToFolderPath(PIDL: PItemIDList): string;
+      {Returns the full path to a file system folder described by a PIDL.
+        @param PIDL [in] PIDL describing folder.
+        @return Full path to folder described by PIDL or '' if PIDL refers to
+          virtual folder.
+      }
+    class function SpecialFolderPath(CSIDL: Integer): string;
+      {Returns the full path to a special file system folder.
+        @param CSIDL [in] Constant specifying the special folder.
+        @return Folder path or '' if the special folder is virtual or CSIDL not
+          supported on the OS.
+      }
+  public
+    constructor Create;
+      {Class constructor. Causes an assertion failure if called. The object must
+      not be, and is never, constructed.
+      }
+    class function CommonAppData: string;
+      {Gets common application data directory.
+        @return Required directory.
+      }
+    class function PerUserAppData: string;
+      {Gets the current user's application data directory.
+        @return Required directory.
+      }
+  end;
+
 
 implementation
 
 
 uses
   // Delphi
-  SysUtils, Registry, Windows,
+  SysUtils, Registry, Windows, ActiveX, ShFolder,
   // Project
   UIStringList;
 
+
+{ TOSVer }
+
+constructor TOSVer.Create(const AVerHi, AVerLo: Word);
+  {Record constructor. Sets initial field values.
+    @param AVerHi [in] Major version number.
+    @param AVerLo [in] Minor version number.
+  }
+begin
+  VerHi := AVerHi;
+  VerLo := AVerLo;
+end;
+
+class operator TOSVer.GreaterThanOrEqual(const R1, R2: TOSVer): Boolean;
+  {Overload for >= operator on TOSVer.
+    @param R1 [in] First record to be checked.
+    @param R2 [in] Second record to be checked.
+    @return True in R1 >= R2, False otherwise.
+  }
+begin
+  Result := (R1.VerHi > R2.VerHi)
+    or ((R1.VerHi = R2.VerHi) and (R1.VerLo >= R2.VerLo));
+end;
 
 { TOSInfo }
 
@@ -232,29 +296,6 @@ begin
   Result := CheckForKernelFn('ActivateActCtx');
 end;
 
-{ TOSVer }
-
-constructor TOSVer.Create(const AVerHi, AVerLo: Word);
-  {Record constructor. Sets initial field values.
-    @param AVerHi [in] Major version number.
-    @param AVerLo [in] Minor version number.
-  }
-begin
-  VerHi := AVerHi;
-  VerLo := AVerLo;
-end;
-
-class operator TOSVer.GreaterThanOrEqual(const R1, R2: TOSVer): Boolean;
-  {Overload for >= operator on TOSVer.
-    @param R1 [in] First record to be checked.
-    @param R2 [in] Second record to be checked.
-    @return True in R1 >= R2, False otherwise.
-  }
-begin
-  Result := (R1.VerHi > R2.VerHi)
-    or ((R1.VerHi = R2.VerHi) and (R1.VerLo >= R2.VerLo));
-end;
-
 { TComputerInfo }
 
 constructor TComputerInfo.Create;
@@ -263,6 +304,77 @@ constructor TComputerInfo.Create;
   }
 begin
   Assert(False, ClassName + '.Create: Constructor can''t be called');
+end;
+
+{ TSystemFolders }
+
+class function TSystemFolders.CommonAppData: string;
+  {Gets common application data directory.
+    @return Required directory.
+  }
+begin
+  Result := SpecialFolderPath(CSIDL_COMMON_APPDATA);
+end;
+
+constructor TSystemFolders.Create;
+  {Class constructor. Causes an assertion failure if called. The object must not
+  be, and is never, constructed.
+  }
+begin
+  Assert(False, ClassName + '.Create: Constructor can''t be called');
+end;
+
+class procedure TSystemFolders.FreePIDL(PIDL: PItemIDList);
+  {Uses to shell allocator to free the memory used by a PIDL.
+    @param PIDL [in] PIDL that is to be freed.
+  }
+var
+  Malloc: IMalloc;  // shell's allocator
+begin
+  if Succeeded(SHGetMalloc(Malloc)) then
+    Malloc.Free(PIDL);
+end;
+
+class function TSystemFolders.PerUserAppData: string;
+  {Gets the current user's application data directory.
+    @return Required directory.
+  }
+begin
+  Result := SpecialFolderPath(CSIDL_APPDATA);
+end;
+
+class function TSystemFolders.PIDLToFolderPath(PIDL: PItemIDList): string;
+  {Returns the full path to a file system folder described by a PIDL.
+    @param PIDL [in] PIDL describing folder.
+    @return Full path to folder described by PIDL or '' if PIDL refers to
+      virtual folder.
+  }
+begin
+  SetLength(Result, MAX_PATH);
+  if SHGetPathFromIDList(PIDL, PChar(Result)) then
+    Result := PChar(Result)
+  else
+    Result := '';
+end;
+
+class function TSystemFolders.SpecialFolderPath(CSIDL: Integer): string;
+  {Returns the full path to a special file system folder.
+    @param CSIDL [in] Constant specifying the special folder.
+    @return Folder path or '' if the special folder is virtual or CSIDL not
+      supported on the OS.
+  }
+var
+  PIDL: PItemIDList;  // PIDL of the special folder
+begin
+  Result := '';
+  if Succeeded(SHGetSpecialFolderLocation(0, CSIDL, PIDL)) then
+  begin
+    try
+      Result := ExcludeTrailingPathDelimiter(PIDLToFolderPath(PIDL));
+    finally
+      FreePIDL(PIDL);
+    end;
+  end
 end;
 
 end.
