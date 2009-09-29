@@ -245,7 +245,7 @@ constructor TTesters.Create;
   }
 begin
   inherited;
-  LoadData(IncludeTrailingPathDelimiter(TAppInfo.AppDataDir) + '\testers.txt');
+  LoadData(IncludeTrailingPathDelimiter(TAppInfo.AppDataDir) + 'testers.txt');
 end;
 
 { TContributorsEnum }
