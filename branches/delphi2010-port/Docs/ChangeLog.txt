@@ -1,0 +1,1031 @@
+Version 3.4.1 - 29 September 2009
+CodeSnip 3.4.1 - 29 September 2009
++ All dialog boxes that request a user's name and / or email address now remember the information last entered, to save retyping the same data.
++ Changed to use Indy Internet Components v10 instead of v9 for net access.
++ Refactored:
+  - Code that stores information about a user.
+  - Code that gets details of system folders on local system and other file system related code.
++ Updated privacy statement (text file and in help file).
+
+Version 3.4 - 24 September 2009
+CodeSnip 3.4 - 24 September 2009
++ Added support for Delphi 2010.
++ Bug fixes:
+  - "Invalid cast" error that occasionally appears when a snippet is updated.
+  - Bug that kept backup files locked open after restoring a database backup.
+  - Current selection is now displayed in Alphabetic and Snippet Kind tabs of overview pane: previously all the database was shown, regardless of search.
+
+Version 3.3 - 21 September 2009
+CodeSnip 3.3 - 21 September 2009
++ Added support for user defined categories which can now be added, renamed or deleted.
++ Made changes to snippets editor:
+  - On the "Compile Results" Tab, a single simplified list box is now used to both display and change compile results. This replaces two linked controls.
+  - The text case of a snippet name can now be changed without causing a duplicate name error.
+  - Some controls resized.
++ Fixed bug where attempting to overwrite files that are in use caused the bug report dialog box to appear instead of simply reporting the problem.
++ Improved validity checking of snippets that are included in generated source code.
++ Help file updated.
++ Refactored:
+  - UI handling code in snippets editor.
+  - Some Snippets database and validation code.
+
+Version 3.2.3 - 14 September 2009
+CodeSnip 3.2.3 - 14 September 2009
++ Fixed bug in "update from web" dialog box where most up to date news item was not being displayed.
++ Dialog boxes that that enable selection of categories and snippets by means of tree views and associated check boxes now sort categories by description.
++ Categories and snippet kinds displayed in the snippets editor are now sorted by description.
++ Refactored:
+  - Code that displays tree views in overview pane and snippet selection dialogs.
+  - Some list management code.
+  - Some snippets editor code.
+
+Version 3.2.2 - 08 September 2009
+CodeSnip 3.2.2 - 08 September 2009
++ Fixed bug in check list boxes where moving selection using keyboard causes check state to be toggled.
++ Custom colours used in colour dialog, on syntax highlighter page of preferences dialog box, are now persistent.
++ Re-implemented code that displays popup menus in detail pane, and fixed a minor glitch as a side effect.
++ Simplified code that manages help system.
++ Refactored code that manages and customises common dialogs.
+
+Version 3.2.1 - 24 August 2009
+CodeSnip 3.2.1 - 24 August 2009
++ Appearance of comments that appear at the top of generated source code was changed.
++ Slightly modified "license" that appears at the top of some generated units.
++ Information about contributor of imported code is now appended to snippet's "extra" information.
++ Added a garbage collector.
++ Changed size of About box - now wider and credits scroll boxes are now taller. Added credit for encryption code.
++ Fixed minor bug that could display a JavaScript error dialog if an exception occurred in an action initiated by clicking a link in the main display.
++ Numerous refactorings.
+
+Version 3.2 - 17 August 2009
+CodeSnip 3.2 - 17 August 2009
++ Added facility for CodeSnip to use a proxy server when accessing the internet.
++ Provided a new dialog box to configure any proxy server.
++ Updated help file re proxy server support and configuration.
++ UI is no longer frozen while web services are executing requests. "Update from Web" dialog box changed to indicate if cancel button pressed when a web request is executing.
++ Product version reported in generated source code header comments, splash screen and about box now includes any special build information.
++ Some minor code tweaks and refactoring.
+
+Version 3.1.1 - 15 August 2009
+CodeSnip 3.1.1 - 15 August 2009
++ Check list boxes throughout program changed so that clicking anywhere on an item toggles check state.
++ Button used to render and display extra information in snippets editor is now disabled when there is no extra information to display.
++ Made minor changes to layout of some dialog boxes: replaced missing text in bug report dialog box.
++ Some refactorings.
+
+Version 3.1 - 11 August 2009
+CodeSnip 3.1 - 11 August 2009
++ Added a button to the snippets editor to preview an HTML rendering of the markup entered as extra information. Includes facility to check any links in the markup.
+
+Version 3.0.5 - 21 July 2009
+CodeSnip 3.0.5 - 21 July 2009
++ Default font is now dependent on underlying OS: Vista - Segoe UI, XP/2000 - Tahoma, NT - MS Sans Serif.
++ Some dialogs and splash screen modified to accommodate OS font, in particular larger Vista font. Some also given a light makeover.
+
+Version 3.0.4 - 13 Jul 2009
+CodeSnip 3.0.4 - 13 Jul 2009
++ Added a snippet's category description to main display and to snippet information copied to clipboard or printed. Category description in main display can be clicked to display the category.
++ Refactored code that displays clicked routines and code that displays a snippet for editing.
+
+Version 3.0.3 - no public release
+CodeSnip 3.0.3 - 12 Jul 2009
++ Refactored code:
+  - Rationalised some JavaScript code.
+  - Rationalised some dialog alignment code.
+  - Changed some object types and class hierarchies.
+  - Added some automatic object lifetime management logic.
+  - Removed some duplicate code and merged some units.
++ Fixed an obscure bug in category code snippet generation as a side effect of refactoring.
+
+Version 3.0.2 - 08 Jul 2009
+CodeSnip 3.0.2 - 08 Jul 2009
++ Fixed broken link to CodeSnip databsse in welcome page.
++ Fixed bug in selection search that was selecting both user defined and main database snippets with same name if only one was selected.
++ Fixed bug where units required by constants and type definitions were not being added to generated units.
+
+Version 3.0.1 - 06 July 2009
+CodeSnip 3.0.1 - 06 July 2009
++ Added support for file:// protocol in links in a snippet's extra information.
++ Updated help file re changes to extra info.
++ Updated exported code and user database file formats to v4 to accommodate revised extra information, although we now save data in v3 format if possible.
+  
+Version 3.0 - 29 June 2009
+CodeSnip 3.0 - 28 June 2009
++ Added support for constants and type definition snippets: there are now four types of snippets - routines, constants, types and freeform (which don't conform to any format). Freeform snippets cannot be included in generated units.
++ Further formatting instructions added to the active text used in database's Extra information field. Also added a contributors field to database.
++ Three predefined syntax highlighters are now provided, with default changing to Delphi 2006 default style. Syntax highlighting used in main display is now customisable. Highlighter keyword list updated.
++ Main display changed:
+  - Test unit is no longer displayed in compiler check pane: it's now displayed in a dialog box.
+  - Compiler check pane's font changed to true type, with face depending on OS.
+  - Information pane now hides compiler table when a freeform snippet is displayed.
+  - Compiler check pane now displays special "not available" pages when no compilers installed or a freeform snippet or a section header is selected.
+  - "Uncategorised" tab removed from overview pane and replaced with new "Alphabetical" tab that groups snippets by initial letter and "Snippet Kind" tab that groups snippets by kind.
+  - "Section" nodes in overview pane can now be expanded and collapsed: pane now has toolbar to perform these actions.
+  - "Edit snippet" links displayed in information pane are now also displayed in compiler check pane.
+  - Information about snippet type added to information pane.
+  - Context menu added to overview pane.
+  - Some changes to menu glyphs and shortcut keys.
+  - Welcome display modified and now has a link to the donate dialog box.
++ Added option to copy an snippet's source code to clipboard in text and RTF formats.
++ Exporting and copying of snippets complete with descriptions and cross references is restricted to routines: not supported for freeform, types and constants.
++ Improved detection of invalid dependencies in snippets, including circular dependencies, and provided option to view all dependencies for any snippet from main window and snippets editor.
++ Revised content of many dialog boxes etc to refer to "snippets" instead of "routines" where necessary.
++ Changed format and location of user-defined database and format of exported and submitted files.
++ Added new "Imported Snippets" category that receives imported routines: they were formerly imported into the "User Defined" category
++ Modified code that reads main database to deal with revised file format for new snippets types and introduction of pre-processor instructions to enable retrofitting of new snippets without breaking earlier versions of CodeSnip.
++ Changed name and location of user preference config file.
++ Revised external object that communicates with JavaScript in browser controls.
++ Updated program credits in about box, restyled and widened it.
++ Changed size of preferences dialog box and revised syntax highlighter tab.
++ Changed captions in preview dialog box.
++ Changed appearance of splash screen.
++ Modified snippets editor to work with new snippet types, improved error checking code and prevented test compilation of freeform snippets.
++ Speeded up loading of main database.
++ Added an easter egg!
++ A few refactorings.
++ Fixed several bugs:
+  - Bug in backup files including database files larger than 32Kb was fixed.
+  - Bug in history list following editing user defined snippets fixed by clearing list after snippets have been edited.
+  - Imported user defined routines no longer forget any dependencies on main database snippets.
+  - Occasional bug in displaying test unit fixed by displaying test unit in dialog box instead of main display.
++ Modified installer re new folder structure and copying over data from previous versions.
++ Revised help file to reflect changes. Added new main contents "chapter" about the various snippet types.
+
+Version 2.4.1 - no public release
+CodeSnip 2.4.1 - 13 May 2009
++ Refactored code that provides information about the program and web URLs and services it accesses.
++ Changed URL accessed by donations dialog box.
+
+Version 2.4 - 11 May 2009
+CodeSnip 2.4 - 11 May 2009
++ Added donate menu option and dialog that accesses a Paypal donation web page.
++ Removed support for the Windows 9x platform since CodeSnip now generates fatal errors on that platform:
+  - Removed Windows 9x specific code.
+  - Changed installer to prevent installation on Windows 9x.
++ Updated help file re changes.
+
+Version 2.3.7 - 26 April 2009
+CodeSnip 2.3.7 - 26 April 2009
++ Made user name and email address entered in Code Submission Wizard persistent on a per-user basis.
++ Updated Code Submission Wizard and Privacy Statement help topics re the changes.
+
+Version 2.3.6 - no public release
+CodeSnip 2.3.6 - 26 January 2009
++ Changed method that is used to get locale information to be compatible with Vista as well as earlier OSs.
+
+Version 2.3.5 - 25 January 2009
+CodeSnip 2.3.5 - 25 January 2009
++ Changed method used to generate HTML displayed in main program window to avoid dynamic updating of documents in attempt to counter a reported JavaScript bug.
++ Refactored generation of HTML tags in all parts of program that use HTML in display.
++ Corrected method naming error.
+
+Version 2.3.4 - no public release
+CodeSnip 2.3.4 - 16 January 2009
++ Copy Source Code menu item now places a copy of selected snippet on clipboard in syntax highlighted rich text in addition to plain text.
++ Updated help file accordingly.
+
+Version 2.3.3 - no public release
+CodeSnip 2.3.3 - 14 January 2009
++ Browser controls and snippets treeviews are now selected when containing frame is entered.
++ Discrepancy in way highlighting works in snippets treeviews fixed.
++ "&" characters are now rendered correctly in TMessageBox dialogs.
++ Code that executes compilers now uses one thread instead of two.
++ Refactorings:
+  - Some constants relocated.
+  - Rationalised some routine and method calls.
+  - Replaced some control character literals with constants.
+  - Updated IntfUIHandlers unit with IE6/7 related constants.
+
+Version 2.3.2 - no public release
+CodeSnip 2.3.2 - 10 January 2009
++ Revised compilers object. Singleton instance removed. Local instances of object are created where needed.
++ Added new method to compiler objects to detect errors and warnings
++ Fixed incorrect caption in compiler error dialog.
++ Added new object that manages test compilations, compiler setup and viewing compile errors. Used by main form and snippets editor.
++ Added "View Compile Errors" menu option to Database menu.
++ Added Alt+V hot key to view compile errors in Snippets editor.
++ Updated help file for database menu to add "View Compile Errors" and missing entries for Submission, import and export of user database.
+
+Version 2.3.1 - no public release
+CodeSnip 2.3.1 - 06 January 2009
++ Fixed test compilation bug in snippets editor that could corrupt compiler errors or warnings displayed from main display.
++ Added support for tab switching in compiler errors dialog box using Ctrl+Tab and Shift+Ctrl+Tab.
+
+Version 2.3 - 05 January 2009
+CodeSnip 2.3 - 05 January 2009
++ Changed name of Copy Snippet menu item to Copy Source Code.
++ Added new Copy Information menu item to Copy menu - copies all snippet information to clipboard in text and RTF.
++ Added Save Database button to toolbar.
++ Changed status bar to display a count of user defined routines and an indicator that shows when user database has been modified.
++ Refactored and extended clipboard management code.
++ Added new buttons to selection search dialog box to select user defined or main database routines.
++ Added facility to test compile routines to user defined snippets editor dialog box.
++ Modified compiler errors dialog box to be able to display results of compilation with more than one compiler.
++ Updated help file re changes.
+
+Version 2.2.5 - 31 December 2008
+CodeSnip 2.2.5 - 31 December 2008
++ Replaced routine's credits and comments properties with new Extra information property that can store formatted text.
++ Added parser for markup language used by new Extra property.
++ Modified snippets edit dialog box to use new Extra property.
++ Changed main database, user database and export file format to support new Extra property. User database and export files generated by this version can't be read by earlier versions of the program.
++ Modified and refactored print document generation code to use new Extra property.
++ Refactored some HTML generation code.
++ Fixed a bug that occasionally causes a GPF when updating a user defined routine.
++ Removed redundant topic from help file.
+
+Version 2.2.4 - 19 December 2008
+CodeSnip 2.2.4 - 17 December 2008
++ Fixed bug in text and RTF preview dialog boxes that was setting margins incorrectly and clipping displayed text.
+
+Version 2.2.3 - no public release
+CodeSnip 2.2.3 - 17 December 2008
++ Refactored code that handles XML files (user database and import / export). Pulled out common code and further extended xml document object.
+
+Version 2.2.2 - no public release
+CodeSnip 2.2.2 - 16 December 2008
++ Added glyphs to printers in print dialog box.
++ Various refactorings of print and highlighting related code.
++ Printing now uses user-defined highlighters. Current highlighting is now previewed in print preferences.
++ Bug fixes:
+  - Help button now displays in page setup dialog on Vista.
+  - Page setup dialog now makes use of custom margin settings.
+
+Version 2.2.1 - no public release
+CodeSnip 2.2.1 - 16 December 2008 
++ Several refactorings:
+  - Rationalised email validation code.
+  - Rationalised exceptions raised when validating entry into dialog box.
+  - Rationalised code that momentarily pauses execution of a thread.
+  - Made wide use of extended TRect structure.
+  - Changed various loops to use enumerators.
+  - Removed some unused code.
++ Fixed minor bug in open and save dialogs that occasionally failed to detect existence of a file.
+
+Version 2.2 - no public release
+CodeSnip 2.2 - 15 December 2008
++ Added facility to submit user defined snippets via internet for inclusion in main database.
++ Added facility to export user defined routines to file and to import exported files.
++ Made minor changes to wizard dialog boxes.
++ Rewrote message dialog box code.
++ Made minor changes to open and save dialog boxes.
++ Updated help file for the new code import, export and submission features.
+  
+Version 2.1 - 11 October 2008
+CodeSnip 2.1 - 11 October 2008
++ Added support for Delphi 2009 Win 32 personality.
++ Added a button to set all compiler results to success to snippets edit dialog box.
++ Refactored some code.
++ Updated help file re Delphi 2009 support.
+
+Version 2.0.7 - no public release
+CodeSnip 2.0.7 - 05 October 2008
++ Fixed residual bug in alt key bug work-around (CodeGear Quality Central bug report #374030). The bug was manifesting itself only for the first dialog box displayed after the program started.
+
+Version 2.0.6 - no public release
+CodeSnip 2.0.6 - 05 October 2008
++ Refactoring:
+  - Added class methods to instantiate and use various classes that have only one public method to save caller having to create, execute and destroy object. Public constructors of these classes were changed to cause assertion failure if directly called.
+  - Made static classes derive from new base class that causes assertion failure if constructor called.
+  - Combined some action update handlers in main form.
+  - Updated assertions and raising of EBug exceptions to programatically get name of class triggering error.
+  - Made some class' protected and private sections strict.
+
+Version 2.0.5 - no public release
+CodeSnip 2.0.5 - 03 October 2008
++ Refactoring: changed custom save source dialog to descend from extended save dialog box.
+
+Version 2.0.4 - 21 September 2008
+CodeSnip 2.0.4 - 21 September 2008
++ Improved speed of looking up routines in database.
++ Prevented any user defined routine from referencing itself. 
++ User defined routines now always reference routines from user database in preference to main database when there is a name conflict.
+
+Version 2.0.3 - no public release
+CodeSnip 2.0.3 - 20 September 2008
++ Fixed bug that caused an assertion failure when an attempt was made to display the Select Routines dialog box when an empty category was present in database.
+
+Version 2.0.2 - no public release
+CodeSnip 2.0.2 - 19 September 2008
++ Now gives option to save changed user defined database before updated main database.
++ When a routine is updated or deleted references to it in other routines are updated or removed.
++ Corrected reference in installer to menu item used to update database (this changed from v2).
+
+Version 2.0.1 - 18 September 2008
+CodeSnip 2.0.1 - 18 September 2008
++ Fixed bug that fails to load user database and deletes it if a category is added to main database during online update.
++ Fixed bug that ignores any user defined snippets that have same name as snippets in main database.
++ Ensured main form is disabled when database is loading.
++ Ensured splash form is hidden if an exception occurs while splash form is displayed.
+
+Version 2.0 - 15 September 2008
+CodeSnip 2.0 - 15 September 2008
++ Added support for user defined snippets:
+  - User database can be edited, saved, backed-up and restored.
+  - User database can reference code in main database.
+  - Names of user defined snippets are coloured blue to distinguish them from main database.
+  - User database is stored as a mix of XML and source files in a sub-folder of the per-user application data folder.
+  - Queries can now be refreshed when content of user database changes.
++ Modified extended external object that communicates between browser controls and application.
++ Main database engine heavily modified.
++ Greater use of DHTML to manipulate main display.
++ Made browser popup menu display glyphs for items menu items that replicate links in browser control.
++ Modified welcome page to appear differently depending on state of main and user defined databases.
++ Disclaimers, copyright and other headers of saved, printed and copied documents changed.
++ Commenting of exported code changed slightly to allow for user snippets that may not support all commenting styles.
++ Fixed status bar display bug.
++ Category headers in overview pane are now in bold.
++ Added enumerators to several list objects to support for..in construct.
++ Tweaked exception handling.
++ Added support for converting GIF resources into bitmaps for use in image lists.
++ Changed URL used to access program's home page.
++ Updated help file to reflect changes.
++ Added credits for use of Anders Melander's GIFImage unit to about box.
+
+Version 1.9.4 - 01 September 2008
+CodeSnip 1.9.4 - 25 August 2008
++ Improved handling of errors encountered when running compilers.
++ Provided checks for invalid compiler exe files in Config Compilers dialog box.
++ Added enumerator to Compilers object.
++ Made ECodeSnip exceptions and descendants clonable when copying between threads.
+
+Version 1.9.3 - no public release
+CodeSnip 1.9.3 - 24 August 2008
++ Fixed bug in the database updater which could cause a deleted local file not to be noticed and not replaced.
+
+Version 1.9.2 - no public release
+CodeSnip 1.9.2 - 24 August 2008
++ Changed method used to generate program key. No longer uses MAC Address, since code to find this fails on Windows Vista.
++ Refactored to remove knowledge of how contributor information and database are stored from TAppInfo class.
++ Revised code that manages contributors so that storage details are private to the classes.
+
+Version 1.9.1 - no public release
+CodeSnip 1.9.1 - 24 August 2008
++ Rebuilt CodeSnip and install helper program with Delphi 2006:
++ Modified CodeSnip source to compile without warnings.
++ Replaced deprecated library calls with alternatives.
+
+Version 1.9 - 14 August 2008
+CodeSnip 1.9 - 14 August 2008
++ Changed so that all user accounts use the same database rather than having their own copy. Database now stored in common application data folder, along with registration information. Per-user configuration information remains in per-user application data folder in renamed file.
++ Installer can now optionally preserve data stored in database and configuration file used by earlier versions of the program. This involves creating new config files and moving the database.
++ Updated help file re these changes.
+
+Version 1.8.11 - no public release
+CodeSnip 1.8.11 - 11 August 2008
++ Removed duplicate compiler glyph resources and modified compiler handling code accordingly.
+
+Version 1.8.10 - no public release
+CodeSnip 1.8.10 - 11 August 2008
++ Refactored various units to use extended theme support.
++ Fixed redraw bug in tree views that use check boxes: check boxes were redrawing in wrong state when themes changed.
++ Improved support for theme changes. Theme manager now gets notified of changes directly from Windows.
++ Suppressed un-necessary compiler warnings.
+
+Version 1.8.9 - no public release
+CodeSnip 1.8.9 - 10 August 2008
++ Modified Select Compiler dialog box (opened from Configure Compiler dialog) and Choose Element Colour dialog (opened from Preferences dialog) to be aligned correctly over dialogs, work correctly with Vista task bar and support help keywords.
++ Select Compiler file open dialog now defaults to display any current compiler executable.
++ Choose Element Colour dialog box now uses UK English and has custom title.
++ Added help topics for Select Compiler and Choose Element Colour dialogs.
+
+Version 1.8.8 - 16 June 2008
+CodeSnip 1.8.8 - 15 June 2008
++ Changed to make application minimisation, task bar preview window, and appearance in "Flip 3D" task switching display correctly on Windows Vista.
++ Provided work-around for Delphi's Alt key bug on XP and Vista (CodeGear Quality Central bug report #374030).
+
+Version 1.8.7 - no public release
+CodeSnip 1.8.6 - 05 June 2008
++ Made selected tabs in information and detail pane persistent.
++ Fixed bug in build script.
+
+Version 1.8.6 - no public release
+CodeSnip 1.8.6 - 02 June 2008
++ Fixed lock-up that could occur when displaying wait dialog box while background tasks execute. Previous attempt to fix this problem failed.
++ Changed "marquee" that is displayed in wait dialog box to appear correctly on Vista.
+
+Version 1.8.5 - 30 May 2008
+CodeSnip 1.8.5 - 30 May 2008
++ Fixed bug that was causing Save Snippet and Save Unit dialog boxes to ignore file type
+ selected by user, always outputting default file type.
++ Deleted some unused source code.
++ Removed option to install a desktop icon from installer. Also refactored install script to conform to current Inno Setup standards.
+
+Version 1.8.4 - 22 April 2008
+CodeSnip 1.8.4 - 22 April 2008
++ Added manifest resource to ensure compatibility with Windows Vista and to use Vista themes.
++ Fixed border problem in web update dialog box and about box when displayed under Vista / IE7 browser control.
++ Prevented selection of text in previews displayed in preferences dialog box.
++ Updated Setup script to use macros.
++ Modified Build batch file to work with Windows SDK 2008.
+
+Version 1.8.3 - no public release
+CodeSnip 1.8.3 - 05 November 2007
++ Refactored dynamic CSS generation code.
+
+Version 1.8.2 - no public release
+CodeSnip 1.8.2 - 04 November 2007
++ Refactored assignable interfaced objects. 
+
+Version 1.8.1 - 04 November 2007
+CodeSnip 1.8.1 - 04 November 2007
++ Made changes to browser control and URL handling.
+
+Version 1.8 - no public release
+CodeSnip 1.8 - 04 November 2007
++ Added popup context menus to main display's detail pane.
+
+Version 1.7.7 - no public release
+CodeSnip 1.7.7 - 29 October 2007
++ Modified code of compiler wait dialog box and splash screen to try to prevent bug that occasionally prevent the dialog from closing, locking up application.
+
+Version 1.7.6 - no public release
+CodeSnip 1.7.6 - 18 October 2007
++ Shift-clicking links in the main display and some dialog boxes was starting Internet Explorer. Fixed so that Internet Explorer is no longer started and shift-clicking external links now starts default browser.
+
+Version 1.7.5 - no public release
+CodeSnip 1.7.5 - 17 October 2007
++ Modified Preferences dialog box:
+  - Refactored code that displays measurement units.
+  - Preview on Source Code tab now takes on appearance of source code highlighter defined on Syntax Highlighter tab.
++ Changed format of ini file that stores persistent settings so that source code highlighter preferences are now stored in Prefs section of ini file rather than own section.
++ Customised installer to update existing ini files to revised version.
+
+Version 1.7.4 released 14 October 2007
+CodeSnip 1.7.4 - 14 October 2007
++ Fixed display bug when selecting routines following a text search.
++ Improved text search algorithm to permit search strings containing punctuation characters.
++ Fixed typo in the "About The Database" section of the About box.
+
+Version 1.7.3 released 27 September 2007
+CodeSnip 1.7.3 - 27 September 2007
++ Improved alignment of dialog boxes and splash screen over owning forms. Alignment code substantially refactored.
++ Added support for multiple monitors.
+
+Version 1.7.2 released 24 September 2007
+CodeSnip 1.7.2 - 24 September 2007
++ Fixed bug that was preventing wait dialog box from displaying during long compilations.
+
+Version 1.7.1 - no public release
+CodeSnip 1.7.1 - 22 September 2007
++ Added list of testers to credits section of Database tab in About box.
++ Added new help menu item that displays privacy statement.
++ Rearranged help menu items.
++ Updated help file re changes to help menu.
+
+Version 1.7 - released 08 September 2007
+CodeSnip 1.7 - 08 September 2007
++ Added new facility to print information about selected routines, with page setup and printer configuration.
++ Added new "general" tab (sets default measurement units) and "printing" tab (to set printing defaults) to preferences dialog box.
++ Changed format of ini file that stores persistent settings.
++ Updated help file to reflect changes.
++ Customised installer to update existing ini files to revised version.
+
+Version 1.6.4 - no public release
+CodeSnip 1.6.4 - 02 July 2007
++ Corrected typos in generated source code header comments.
++ Added support for embedding titles in generated documents where document supports title meta data.
++ Added suggested file name to save unit and save snippets dialog boxes.
++ Refactored code in syntax highlighter that generates XHTML.
+
+Version 1.6.3 - no public release
+CodeSnip 1.6.3 - 13 May 2007
++ Added support for selecting and copying text displayed in preview dialog.
++ Changed so that each document type displayed in preview dialog box has same margins.
++ Updated help file re changes to preview dialog box.
+
+Version 1.6.2 - no public release
+CodeSnip 1.6.2 - 12 May 2007
++ Updated to use revised news data format provided by web service.
++ Update from Web dialog box now displays number of news items along with page number of currently displayed item.
+
+Version 1.6.1 - released 09 May 2007
+CodeSnip 1.6.1 - 09 May 2007
++ Fixed bug that allowed user to select a different routine while compiling another causing display to get out sync.
+
+Version 1.6 - released 08 May 2007
+CodeSnip 1.6 - 08 May 2007
++ Added support for Delphi 2007 compiler.
++ Updated help file re new compiler support.
+
+Version 1.5.13 - released 04 March 2007
+CodeSnip 1.5.13 - 04 March 2007
++ Fixed bug from v1.5.11 where Tools | Register CodeSnip and View | Show/Hide Test Unit menu options were permanently disabled.
++ Fixed bug from v1.5.9 where showing and hiding test units from menus was out of sync with links in compiler check pane.
+
+Version 1.5.12 - released 01 March 2007
+CodeSnip 1.5.12 - 01 March 2007
++ Made long operations (loading database and compiling test units) execute in threads.
++ Changed to display wait dialog while updated database is being loaded.
++ Made progress meters displayed in wait dialogs update more smoothly.
+
+Version 1.5.11 - released 25 February 2007
+CodeSnip 1.5.11 - 25 February 2007
++ Added splash screen displayed when program is loading.
++ Main window, menu and toolbar is now disabled when program is initialising and when updated database is loading.
++ Program window is now centred on screen first time it is run and program is now never started minimized.
+
+Version 1.5.10 - no public release
+CodeSnip 1.5.10 - 17 February 2007
++ Refactored code that handles web browser controls. Moved various pieces of code that manipulates and queries browser controls into central UI and IO manager classes. Also added helper classes to manipulate HTML documents and browser controls.
++ Some code made redundant by above changes was removed.
++ Lightened and centralised colours used to highlight text search results.
+
+Version 1.5.9 - no public release
+CodeSnip 1.5.9 - 16 February 2007
++ Refactoring update. Revised code that manages the main display, i.e overview and details panes.
+
+Version 1.5.8 - released 16 February 2007
+CodeSnip 1.5.8 - 16 February 2007
++ Fixed bug in view history where selecting an item from the history list could cause a crash after database has been updated. This was fixed by clearing the history list after updating the database.
++ Now clears the main display before re-displaying an updated database to prevent an item from the old version of the database being selected.
+
+Version 1.5.7 - no public release
+CodeSnip 1.5.7 - 12 February 2007
++ Refactored, relocated and extended use of some utility routines, resulting in some other minor changes:
+  - All error and information message boxes now have properly terminated sentences.
+  - Generated XHTML less likely to contain illegal characters.
+
+Version 1.5.6 - no public release
+CodeSnip 1.5.6 - 11 February 2007
++ Modified about dialog box to display information about the Code Snippets Database in addition to the program. The two kinds of information are displayed in two tabs.
++ Added code to get list of database contributors from a file downloaded with database updates.
+
+Version 1.5.5 - no public release
+CodeSnip 1.5.5 - 11 February 2007
++ Made keyboard interaction with application more consistent:
+  - Made browser controls activate and focus properly when user tabs into them.
+  - Fixed tab order problems in main display and about dialog box so that only controls that may need to receive user input are now activated by tabbing.
+  - Links displayed in browser controls are always now included in tab sequence and can be activated by Ctrl+Return when focused.
+  - Fixed inconsistency in tab sets in overview and details pane responded inconsistently to Ctrl+Tab and Shift+Ctrl+Tab.
++ Changed browser control respond to activation via the mouse to be the same as for the keyboard.
+
+Version 1.5.4 - released 09 February 2007
+CodeSnip 1.5.4 of 09 February 2007
++ Added disclaimers re database code to generated units and snippets and to program's welcome page.
++ Made slight modifications to source code generation code.
+
+Version 1.5.3 - released 08 February 2007
+CodeSnip 1.5.3 of 08 February 2007
++ Refactored and rationalised code in main form and moved some code into help classes.
++ Revised code that performs customisation, auto-sizing and alignment of forms and dialog boxes.
++ Standardised execution method of dialog boxes.
+
+Version 1.5.2 - no public release
+CodeSnip 1.5.2 of 04 February 2007
++ Refactored help manager system to make it easier to swap in new help systems in future.
++ Modified help handlers in forms to remove redundant code.
++ Modified how help menu items call help topics.
+
+Version 1.5.1 - no public release
+CodeSnip 1.5.1 of 04 February 2007
++ Refactored handling of database searches by creating new global query object to store information about current query on database.
++ Changed relevant code to use the new object and deleted resulting redundant code.
++ Made some other minor code improvements and modifications.
+
+Version 1.5 - no public release
+CodeSnip 1.5 of 03 February 2007
++ Made status bar display database and search information along with other prompts in addition to displaying hints.
+
+Version 1.4.6 - no public release
+CodeSnip 1.4.6 of 17 December 2006
++ Made minor changes to appearance:
+  - Changed some colours to system colours from hard-wired colors.
+  - Changed help links in main display from blue to green.
+  - Removed text highlighting from welcome page.
+
+Version 1.4.5 - no public release
+CodeSnip 1.4.5 of 04 December 2006
++ Refactored code that generates test units. As a consequence names of test units displayed in Compiler Check pane have been corrected to the actual names used in test compilations.
+
+Version 1.4.4 - released 04 December 2006
+CodeSnip 1.4.4 of 04 December 2006
++ Added new menu item to View menu that toggles visibility of test units in the compiler check tab.
++ Changed glyph used for link that performs same action in compiler check tab and made image change depending on visibility of test unit.
+
+Version 1.4.3 - no public release
+CodeSnip 1.4.3 of 03 December 2006
++ Changed information pane to load routines dynamically via DHTML rather than reloading document each time.
++ Refactored DHTML code and detail frames that support DHTML.
++ Refactored routine HTML generation code.
++ Rationalised some dynamic CSS generating code.
++ Revised information pane's underlying HTML code.
+
+Version 1.4.2 - no public release
+CodeSnip 1.4.2 of 03 December 2006
++ Corrected alignment of About and Compiler Errors dialog boxes over main form.
+
+Version 1.4.1 - no public release
+CodeSnip 1.4.1 of 03 December 2006
++ Fixed bug where Test Compile menu option and tool button were always enabled and could cause an assertion failure when no routine was selected or no compilers were available.
+
+Version 1.4 - no public release
+CodeSnip 1.4 of 03 December 2006
++ Revised display in compiler check pane. Now lists database and test results side by side.
++ Changed routine compiler check page to be updated dynamically (using JavaScript) when routine selection changes rather than always reloading page.
++ Modified some JavaScript support code.
++ Fixed potential bug in compiler code.
++ Updated help file re changes to Compiler Check tab.
++ Fixed a typo and index error in help file.
+
+Version 1.3.5 - no public release
+CodeSnip 1.3.5 of 01 December 2006
++ Changed to display a borderless message dialog during long test compilations. The dialog is not displayed for shorter compilations.
++ Updated help file re above and fixed an error in the search menu topic.
+
+Version 1.3.4 - no public release
+CodeSnip 1.3.4 of 26 November 2006
++ Refactored JavaScript used to interface between main program and HTML display.
++ Centralised generation of JavaScript in main code.
+
+Version 1.3.3 - no public release
+CodeSnip 1.3.3 of 25 November 2006
++ Refactored handling of CSS and XHTML:
+  - Changed way CSS is provided to enable use of system font and colours.
+  - Tidied source HTML documents to remove illegal XHTML strict attributes and to remove hard-wired colours.
+
+Version 1.3.2 - released 24 November 2006
+CodeSnip 1.3.2 of 24 November 2006
++ Made program remember whether test units are displayed or hidden until end of session.
+
+Version 1.3.1 - no public release
+CodeSnip 1.3.1 of 21 November 2006
++ Made minor modification to appearance of Configure Compilers dialog box.
+
+Version 1.3 - no public release
+CodeSnip 1.3 of 18 November 2006
++ Added facility to sign up to CodeSnip mailing list online.
++ Corrected further typos in registration wizard.  
++ Updated help file re mailing list sign-up, changed privacy statement and added license to contents page.
+
+Version 1.2.5 - released 16 November 2006
+CodeSnip 1.2.5 of 16 November 2006
++ Corrected and modified text displayed on last page of Registration Wizard when user elects to join mailing list.
+
+Version 1.2.4 - no public release
+CodeSnip 1.2.4 of 14 November 2006
++ Changed about box and help menu to display end user license agreement in help file rather than separate text file.
++ Added license topic and made related changes to help file.
+
+Version 1.2.3 - no public release
+CodeSnip 1.2.3 of 12 November 2006
++ Fixed incorrect glyph used for Show All search menu item and tool button.
++ Moved Tools | Preferences menu option to top of Tools menu.
+
+Version 1.2.2 - no public release
+CodeSnip 1.2.2 of 12 November 2006
++ Added hot tracking to tree view check boxes used in Select Routines dialog box when Windows XP themes are enabled.
+
+Version 1.2.1 - no public release
+CodeSnip 1.2.1 of 11 November 2006
++ Refactoring release:
+  - Method used to construct and use help file changed.
+  - Moved code that detects HTML and RTF files to appropriate utility units.
+  - Streamlined code in preview dialog box.
+
+Version 1.2 - released 11 November 2006
+CodeSnip 1.2 of 09 November 2006
++ Changed syntax highlighter used to format units and code snippets to be able to read custom settings from persistent storage.
++ Added Syntax Highlighter tab to preferences dialog box to enable users to customise the font, style and colours used by the syntax highlighter.
++ Modified preferences dialog box's Source Code tab to display a preview of routines using various comment styles.
++ Updated help file re revised preferences dialog box.
+
+Version 1.1.2 - no public release
+CodeSnip 1.1.2 of 07 November 2006
++ Refactoring release:
+  - Added code to generate CSS properties.
+  - Added new classes to generate RTF code.
+  - Re-implemented RTF highlighted code.
++ Now generates much smaller RTF export files.
+
+Version 1.1.1 - no public release
+CodeSnip 1.1.1 of 31 October 2006
++ Changed Select Routines dialog to use XP style check boxes when XP themes active and custom check boxes when XP themes inactive.
+
+Version 1.1 - released 30 October 2006
+CodeSnip 1.1 of 29 October 2006
++ Added ability to generate and save whole Pascal unit containing currently selected routines. 
++ Added new search that can find all routines cross-referenced by a given routine.
++ Added ability to manually select routines that are displayed in overview pane. 
++ Added shortcut key and changed glyph for File | Save Snippet option / tool button.
++ Updated way source code preferences are stored. Broke backwards compatibility with previous storage method, so upgraders may loose settings.
++ Made minor changes to preferences dialog box.
++ Word-wrapped long uses lists in generated units.
++ Refactored code that determines type of exported files.
++ Refactored and expanded code that deals with source code exporting.
++ Fixed some minor bugs:
+  - Previews of large rich text documents were displaying RTF source instead of rendering document.
+  - Assertion failure could (rarely) happen when displaying message boxes without specifying parent form.
+  - Saving snippets in a file without supplying a file extension could silently overwrite existing files.
+  - Comment style was being ignored when generating a unit.
++ Updated help file:
+  - Added new topics, index entries and TOC entries for new features.
+  - Updated some existing topics to refer to new features.
+  - Revised and corrected several existing help topics.
+
+Version 1.0.3 - no public release
+CodeSnip 1.0.3 of 26 October 2006
++ Refactored various parts of source code. No changes to program's functionality. Details are:
+  - Standardised all singleton objects on interface based implementation.
+  - Centralised code that gets location of license file.
+  - Standardised links that trigger JavaScript in some HTML resources.
+  - Changed bug report dialog box to descend from common wizard dialog box.
+
+Version 1.0.2 - released 25 October 2006
+CodeSnip 1.0.2 of 25 October 2006
++ Changed so that links from program to external web pages display in default browser rather than IE.
++ Refactored code that displays license text file in external application.
++ Reworded some of welcome screen and added links to online database.
++ Refactored some JavaScript code that works with main display HTML and web browser code.
++ Made minor changes to hints displayed in status bar when cursor is over links.
+
+Version 1.0.1 - released 14 October 2006
+CodeSnip 1.0.1 of 14 October 2006
++ Fixed problem in web update that caused program to crash on Windows 9x platforms.
+
+Version 1.0 - released 09 June 2006
+CodeSnip 1.0 of 09 June 2006
++ Version 1 release.
++ Revised About Box text and appearance and added link that displays license file.
++ Refactored and renamed some code.
++ Made minor changes to appearance and effect of Configure Compilers dialog box.
++ Fixed potential bug displaying JavaScript error dialog if help called from links in main display fail.
++ Made some literal strings resource strings.
++ Made calls to help system fail gracefully on machines without HTML Help installed.
++ Modified code that reads program's version information.
++ Added important compiler directives.
++ Standardised appearance of all groups of action links in main display.
++ Added Help menu item to display license and to access CodeSnip web page.
++ Moved bug report and registration menu options from Help to Tools menu.
++ Updated and help file re new commands, corrected some errors and re-styled menu help sections.
++ Created installer using Inno Setup.
++ Added new batch file to build program.
++ Fully commented code.
++ Changed to new end user license agreement for the executable program. The program remains open source.
+
+Version 0.12.0 (v1.0 RC 3) - released 01 May 2006
+CodeSnip 0.12.0 of 01 May 2006
++ 3rd release candidate for the v1.0 release.
++ Updated to use v4 of update web service that uses completely new update protocol. Significant changes to code were needed to achieve this.
++ Redesigned update dialog box accordingly.
++ Added ability to update dialog to display latest CodeSnip news delivered as part update process.
++ Updated help file re changes to update dialog box.
+
+Version 0.11.3 (v1.0 RC 2) - released 17 April 2006
+CodeSnip 0.11.3 of 16 April 2006
++ 2nd release candidate for the v1.0 release.
++ Fixed bug where user could drag and drop files onto web browser controls and file contents would overwrite the display.
+
+Version 0.11.2 (v1.0 RC 1) - released 11 April 2006
+CodeSnip 0.11.2 of 11 April 2006
++ 1st release candidate for the v1.0 release.
++ Updated help file:
+  - Ensured that external links display in a web browser window rather than in the help window.
+  - Added additional internal links to some help topics.
++ Fixed compiler warnings.
++ Removed some redundant code.
+
+Version 0.11.1 Beta - no public release
+CodeSnip 0.11.1 of 10 April 2006
++ Improved and fixed interaction with database update web service:
+  - Download manager now sends program's key and registration code to web service instead of place-holder strings.
+  - Handling for HTTP error messages improved. Short HTTP error descriptions are displayed rather than full content of error pages.
+
+Version 0.11.0 Beta - released 07 April 2006
+CodeSnip 0.11.0 Beta of 07 April 2006
++ Added ability to register CodeSnip at DelphiDabbler.com:
+  - Registration is performed via a new wizard that gathers registration information and interacts with web server.
+  - Wizard is accessed via a Help menu option and About box button that appear only when application is unregistered.
+  - Application is identified by a unique key.
+  - Registration information is stored in persistent storage.
++ Reworked and added classes to centralise access to system and application information.
++ Updated help file with details of registration dialog and CodeSnip mailing list.
+
+Version 0.10.12 Beta - no public release
+CodeSnip 0.10.12 Beta of 04 April 2006
++ Improved code that stores global application settings. Prepared way for having per-user and global settings rather than just per-user settings as at present.
+
+Version 0.10.11 Beta - no public release
+CodeSnip 0.10.11 Beta of 03 April 2006
++ Revised to work with v3.1 of CodeSnip database update web service.
+
+Version 0.10.10 Beta - no public release
+CodeSnip 0.10.10 Beta of 02 April 2006
++ Added program icon (16x16, 32x32 and 48x48 versions).
+
+Version 0.10.9 Beta - released 02 April 2006
+CodeSnip 0.10.9 Beta of 02 April 2006
++ Fixed bug where browser controls displayed JavaScript error dialog when exceptions were raised by database updates initiated from browser control's "external" object.
++ Refactored some code in main form and main snippets object as a result of above fix.
++ Also refactored some of search code in main form.
+
+Version 0.10.8 Beta - no public release
+CodeSnip v0.10.8 Beta of 02 April 2006
++ Removed bug in database update manager that was causing database to be restored unnecessarily.
++ Heavily refactored update manager code as part of bug fix.
+
+Version 0.10.7 Beta - released 28 January 2006
+CodeSnip v0.10.7 of 28 January 2006
++ Fixed display problems in details pane when running on Windows 2000.
++ Changed style of scroll bars from flat to normal when running in Windows XP classic style or on earlier Windows version.
++ Made compiler check pane update itself when compilers are added or removed.
+
+Version 0.10.6 Beta - released 20 January 2006
+CodeSnip v0.10.6 of 20 January 2006
++ Fixed bug where backup directory was not being deleted after database updates.
+
+Version 0.10.5 Beta - released 14 January 2006
+CodeSnip v0.10.5 of 14 January 2006
++ Added credits for third party code to about box.
++ Completed help file.
+
+Version 0.10.4 Beta - released 12 January 2006
+CodeSnip v0.10.4 of 12 January 2006
++ Added checking of checksums of downloaded files to increase security. Exceptions now raised when a file's checksum is incorrect.
++ Fixed small alignment problem in update dialog.
+
+Version 0.10.3 Beta - no public release
+CodeSnip v0.10.3 of 11 January 2006
++ Changed so that compiler output is now captured directly rather than via temporary log file.
++ Compiler execution is now time-sliced and time-limited rather than being allowed infinite processing time.
+
+Version 0.10.2 Beta - no public release
+CodeSnip v0.10.2 of 10 January 2006
++ Reverted to Delphi 7 to avoid Delphi 2006 bug that was enabling dialogs to be minimized and maximized.
++ Reordered controls in Find Compiler dialogs.
++ Restored title bar close button to web update dialog.
++ Reverted to Indy 9 internet controls (from Indy 10) and made relevant adjustments to code.
++ Completed help topics for Find Text and Find Compiler dialogs.
+
+Version 0.10.1 Beta - released 09 January 2006
+CodeSnip v0.10.1 of 09 January 2006
++ Removed debug code (message box) mistakenly left in compiler execution code.
++ Refactored compiler support classes.
+
+Version 0.10.0 Beta - released 08 January 2006
+CodeSnip v0.10.0 of 08 January 2006
++ Added support for Delphi 2005/6 Win32 compilers.
++ Refactored some compiler support code.
++ Added support for user-configurable compiler switches.
++ Used new tabbed layout for Configure Compilers dialog box and added tab for configuring compiler switches.
++ Updated help file to reflect redesign of Configure Compilers dialog box.
+
+Version 0.9.0 Beta - released 06 January 2006
+CodeSnip v0.9.0 of 06 January 2006
++ Added facility to copy code snippets to clipboard.
++ Added new preferences dialog box to enable configuration of default format for code snippets.
++ Added new preferences class to persist data entered in the preferences dialog.
++ Refactored main snippets class to simplify addition of new copy snippet facility.
++ Updated help file re new additions.
+
+Version 0.8.3 Beta - no public release
+CodeSnip v0.8.3 of 04 January 2006
++ Modified to compile with Indy Components v10 and Delphi 2006 for Win 32.
+
+Version 0.8.2 Beta - no public release
+CodeSnip v0.8.2 of 04 January 2006
++ Created static class to interpret command line and changed other code to work with the new class.
+
+Version 0.8.1 Beta - no public release
+CodeSnip v0.8.1 of 04 January 2006
++ Fixed minor display bug in web update dialog box.
++ Fixed about box's problem in displaying help in response to F1 key press.
+
+Version 0.8.0 Beta - released 30 November 2005
+CodeSnip v0.8.0 of 30 November 2005
++ Changed help file from WinHelp (.hlp) format to HTML Help (.chm) format.
++ Changed program to use new format help file.
+
+Version 0.7.7 Beta - released 22 November 2005
+CodeSnip v0.7.6 of 20 November 2005
++ Refactored and revised code that accesses DelphiDabbler web services.
++ Updated to use v2 of the database update web service.
++ Added topics for Bug Report Dialog and Web Update dialog to help file.
+
+Version 0.7.6 Beta - released 04 June 2005
+CodeSnip v0.7.6 of 04 June 2005
++ Fixed Delphi compiler auto-detection bug.
++ Fixed bug that caused endless loop of exceptions when "database" was corrupt.
++ Syntax highlighter now generates correct XHTML for multi-line comments and generates correct CSS for mono-spaced fonts.
++ Occasional failure to create compiler log files now reported as error rather than bug.
+
+Version 0.7.5 Beta - released 03 June 2005
+CodeSnip v0.7.5 of 03 June 2005
++ Fixes bugs that surface when user has disabled scripts in IE's internet zone. Program no longer runs in internet zone.
+
+Version 0.7.4 Beta - released 09 May 2005
+CodeSnip v0.7.4 of 25 April 2005
++ Made user defined settings in Save Snippets dialog box persistent.
+
+Version 0.7.3 Beta - no public release
+CodeSnip v0.7.3 of 25 April 2005
++ Disabled test compile button on compiler checks pane along with associated menu and toolbar button when no compilers installed.
++ Rewrote main welcome page, adding links to compiler check dialog. Made same welcome page appear in both detail panes.
++ Updated compiler check pages by adding links to compiler check dialog and new "about compiler checks" help topic.
++ Updated help file with new "about compiler checks" topic and completed "QuickStart" topic.
++ Added new features to DOM's external object to support above changes.
+
+Version 0.7.2 Beta - no public release
+CodeSnip v0.7.2 of 21 April 2005
++ Refactored code that maintains persistent application data.
++ Refactored syntax highlighter code and moved interfaces and enumerated types to own unit.
++ Renamed unit generation unit now that it generates source code other than complete units.
++ Carried out minor refactoring of Pascal analyser unit.
+
+Version 0.7.1 Beta - no public release
+CodeSnip v0.7.1 of 20 April 2005
++ Disabled F1 key press handling in dialogs with no help button. Was triggering bad topic errors in WinHelp.
++ Added "Compile" prefix to compiler check pages's "Test Compile" button.
++ Fixed errors in "do nothing" doc host handler used by web browser control.
+
+Version 0.7.0 Beta - released 17 March 2005
+CodeSnip v0.7.0 of 17 March 2005
++ Added new facility to save a routine, or a whole category of routines, to file.
++ Reworked syntax highlighter implementation.
++ Updated help file with details of new routine saving feature.
+
+Version 0.6.0 Beta - released 10 March 2005
+CodeSnip v0.6.0 of 10 March 2005
++ Added syntax highlighting for source code displayed in detail panes.
+
+Version 0.5.0 Beta - released 05 March 2005
+CodeSnip v0.5.0 of 05 March 2005
++ Added support for Free Pascal compiler by totally reworking the compiler support engine.
++ Added new dialog box to configure compilers. Compiler detection ability retained but now only works in response to user request.
++ Revised about box to include "powered by Delphi" logo.
++ Updated help file:
+  - Added incomplete topics for each of the main menus.
+  - Added complete new topic for the compiler configuration dialog box.
+  - Fixed K-keyword errors and added extra keywords for dialog boxes.
+
+Version 0.4.0 Beta - released 28 February 2005
+CodeSnip v0.4.0 of 28 February 2005
++ Text search results are now highlighted when routines are displayed in the information pane.
+
+Version 0.3.4 Beta - no public release
+CodeSnip v0.3.4 of 26 February 2005
++ Separated back end database code from Snippets object.
++ New back end code designed to make it easy to change the data provider in future versions. Current version accesses data in .ini and .dat files.
+
+Version 0.3.3 Beta - no public release
+CodeSnip v0.3.3 of 25 February 2005
++ Fixed bug that was preventing Ctrl+F from activating Find Text dialog box.
++ Realigned controls in bug report dialog and fixed tab order problems.
++ Fixed email address validation error in bug report dialog
+
+Version 0.3.2 Beta - released 24 February 2005
+CodeSnip v0.3.2 of 24 February 2005
++ Refactored code that provides compiler names and introduced global Compilers object.
+
+Version 0.3.1 Beta - no public release
+CodeSnip v0.3.1 of 24 February 2005
++ Centralised code that displays message dialogs and standardised their appearance.
+
+Version 0.3.0 Beta - no public release
+CodeSnip v0.3.0 of 23 February 2005
++ Updated welcome pages to provide more help on using CodeSnip.
++ Removed dialogs that appeared on start up when database was empty. Welcome page now provides this information along with an option to download database.
++ Improved handling of welcome page.
+
+Version 0.2.4 Beta - no public release
+CodeSnip v0.2.4 of 23 February 2005
++ Refactored and simplified access to dialog boxes.
++ Improved search code.
+
+Version 0.2.3 Beta - no public release
+CodeSnip v0.2.3 of 23 February 2005
++ Created a class hierarchy for all frames that display HTML in a web browser control.
+
+Version 0.2.2 Beta - no public release
+CodeSnip v0.2.2 of 22 February 2005
++ Localised various literal strings and moved some constant values to a common location.
+
+Version 0.2.1 Beta - no public release
+CodeSnip v0.2.1 of 22 February 2005
++ Overhauled web browser external object extender that communicates browser events to application.
++ Added new notifier object that centralises handling of GUI user interaction.
+
+Version 0.2.0 Beta - no public release
+CodeSnip v0.2.0 of 21 February 2005
++ Made minor changes to appearance of main display.
++ Refactored the HTML generation engine, added several HTML templates to resources and localised all strings used in generated HTML.
+
+Version 0.1.4 Beta - no public release
+CodeSnip v0.1.4 of 19 February 2005
++ Refactored some code.
+
+Version 0.1.3 Beta - no public release
+CodeSnip v0.1.3 of 18 February 2005
++ Removed redundant code.
+
+Version 0.1.2 Beta - no public release
+CodeSnip v0.1.2 of 18 February 2005
++ Removed debug code.
+
+Version 0.1.1 Beta - no public release
+CodeSnip v0.1.1 of 18 February 2005
++ Fixed minor bugs.
+
+Version 0.1.0 Beta - released 30 January 2005
+CodeSnip v0.1.0 of 30 January 2005
++ Original beta version.
