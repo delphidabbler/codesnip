@@ -65,6 +65,8 @@ type
       {Stores name of printer driver}
     fPortBuf: array[0..255] of AnsiChar;
       {Stores name of printer port}
+    fOldPrinterIdx: Integer;
+      {Index of selected printer when object created: restored on destruction}
     function GetPrinterHandle(const PrinterName: string): THandle;
       {Gets handle to a named printer.
         @param PrinterName [in] Name of printer.
@@ -142,13 +144,14 @@ implementation
 
 uses
   // Delphi
-  Printers, WinSpool;
+  SysUtils, Printers, WinSpool;
 
 
 resourcestring
   // Error messages
   sReadWriteError = 'Can''t read or update document properties for device "%s"';
   sCantOpenPrinter = 'Can''t open printer "%s"';
+  sCantFindPrinter = 'Can''t find printer "%s"';
   sReadError = 'Can''t read document properties for device "%s"';
 
 
@@ -183,10 +186,38 @@ constructor TPrinterDocPropsDlg.Create(const OwnerHandle: HWND;
     @param PrinterName [in] Name of printer whose document properties to be
       edited.
   }
+var
+  PrnIdx: Integer;  // loops through all printers
+  Found: Boolean;   // flags if printer is found
 begin
   inherited Create;
   fOwnerHandle := OwnerHandle;
   fPrinterHandle := GetPrinterHandle(PrinterName);
+  // Set current printer to one for which properties required, noting current
+  // one for later restoration
+  fOldPrinterIdx := -1;
+  try
+    fOldPrinterIdx := Printer.PrinterIndex;
+  except
+    on EPrinter do {nothing: swallow exception}
+  end;
+  Found := False;
+  try
+    for PrnIdx := 0 to Pred(Printer.Printers.Count) do
+    begin
+      if AnsiSameText(PrinterName, Printer.Printers[PrnIdx]) then
+      begin
+        Printer.PrinterIndex := PrnIdx;
+        Found := True;
+        Break;
+      end;
+    end;
+  except
+    on EPrinter do
+      Found := False;
+  end;
+  if not Found then
+    raise EPrinterDocPropsDlg.CreateFmt(sCantFindPrinter, [PrinterName]);
 end;
 
 destructor TPrinterDocPropsDlg.Destroy;
@@ -195,6 +226,12 @@ destructor TPrinterDocPropsDlg.Destroy;
 begin
   if fPrinterHandle <> 0 then
     ClosePrinter(fPrinterHandle);
+  if fOldPrinterIdx >= 0 then
+    try
+      Printer.PrinterIndex := fOldPrinterIdx;
+    except
+      on EPrinter do {nothing: swallow exception}
+    end;
   inherited;
 end;
 
