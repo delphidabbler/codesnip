@@ -140,7 +140,8 @@ begin
     Include(Options, poSyntaxPrint);
   PrintInfo.PrintOptions := Options;
   // Update selected printer
-  Printer.PrinterIndex := cbPrinters.ItemIndex;
+  if cbPrinters.ItemIndex >= 0 then
+    Printer.PrinterIndex := cbPrinters.ItemIndex;
 end;
 
 procedure TPrintDlg.btnPrefencesClick(Sender: TObject);
@@ -213,15 +214,22 @@ procedure TPrintDlg.cbPrintersDrawItem(Control: TWinControl; Index: Integer;
   var
     OldPrinterIdx: Integer; // saves current printer
   begin
-    // Save currently selected printer
-    OldPrinterIdx := Printer.PrinterIndex;
     try
-      // Check printer name against default
-      Printer.PrinterIndex := -1; // this selects default printer
-      Result := AnsiSameText(PrnName, Printer.Printers[Printer.PrinterIndex]);
-    finally
-      // Restore selected printer index
-      Printer.PrinterIndex := OldPrinterIdx;
+      // Save currently selected printer
+      OldPrinterIdx := Printer.PrinterIndex;
+      try
+        // Check printer name against default
+        Printer.PrinterIndex := -1; // this selects default printer
+        Result := AnsiSameText(PrnName, Printer.Printers[Printer.PrinterIndex]);
+      finally
+        // Restore selected printer index
+        Printer.PrinterIndex := OldPrinterIdx;
+      end;
+    except
+      on EPrinter do
+        // Checks for exception: will be because no default printer available
+        // fixes bug 2875857
+        Result := False;
     end;
   end;
   // ---------------------------------------------------------------------------
@@ -328,7 +336,13 @@ var
 begin
   for PrinterName in Printer.Printers do
     cbPrinters.Items.Add(PrinterName);
-  cbPrinters.ItemIndex := Printer.PrinterIndex;
+  try
+    cbPrinters.ItemIndex := Printer.PrinterIndex;
+  except
+    on EPrinter do
+      // Exception can occur if no default printer: part of fix for bug 2875857
+      cbPrinters.ItemIndex := -1;
+  end;
 end;
 
 function TPrintDlg.SelectedPrinter: string;
