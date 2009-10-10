@@ -1,3 +1,7 @@
+Version 3.4.2 - 10 October 2009
+CodeSnip 3.4.2 - 10 October 2009
++ Fixed bug nos. 2868706 and 2875857 (see http://www.delphidabbler.com/url/codesnip-bugs)
+
 Version 3.4.1 - 29 September 2009
 CodeSnip 3.4.1 - 29 September 2009
 + All dialog boxes that request a user's name and / or email address now remember the information last entered, to save retyping the same data.
