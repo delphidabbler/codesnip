@@ -143,7 +143,7 @@ setup:
 # Creates auto generated files
 autogen: 
   @$(TLIBIMP) -P+ -Ps+ -D.\AutoGen -FtIntfExternalObj $(BIN)\ExternalObj.tlb
-  if exist .\AutoGen\IntfExternalObj.dcr del .\AutoGen\IntfExternalObj.dcr
+  @if exist .\AutoGen\IntfExternalObj.dcr del .\AutoGen\IntfExternalObj.dcr
 
 # Build release files (.zip)
 !ifndef RELEASEFILENAME
