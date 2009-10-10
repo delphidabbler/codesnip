@@ -1,6 +1,7 @@
 Version 3.4.2 - 10 October 2009
 CodeSnip 3.4.2 - 10 October 2009
 + Fixed bug nos. 2868706 and 2875857 (see http://www.delphidabbler.com/url/codesnip-bugs)
++ Updated GIF image handling code.
 
 Version 3.4.1 - 29 September 2009
 CodeSnip 3.4.1 - 29 September 2009
