@@ -39,7 +39,6 @@
 
 unit UGIFImageList;
 
-{$WARN UNSAFE_CAST OFF}
 
 interface
 

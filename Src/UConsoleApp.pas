@@ -36,7 +36,6 @@
 
 unit UConsoleApp;
 
-{$WARN UNSAFE_TYPE OFF}
 
 interface
 

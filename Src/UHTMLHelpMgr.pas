@@ -37,7 +37,6 @@
 
 unit UHTMLHelpMgr;
 
-{$WARN UNSAFE_CODE OFF}
 
 interface
 

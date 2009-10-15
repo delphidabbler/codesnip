@@ -37,7 +37,6 @@
 
 unit UStrStreamWriter;
 
-{$WARN UNSAFE_CODE OFF}
 
 interface
 

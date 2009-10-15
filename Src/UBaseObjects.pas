@@ -60,7 +60,6 @@
 
 unit UBaseObjects;
 
-{$WARN UNSAFE_TYPE OFF}
 
 interface
 

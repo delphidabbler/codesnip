@@ -36,7 +36,6 @@
 
 unit UCompileResultsLBMgr;
 
-{$WARN UNSAFE_CODE OFF}
 
 interface
 

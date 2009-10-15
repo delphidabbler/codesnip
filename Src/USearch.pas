@@ -37,7 +37,6 @@
 
 unit USearch;
 
-{$WARN UNSAFE_CODE OFF}
 
 interface
 

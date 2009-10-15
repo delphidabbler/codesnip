@@ -36,7 +36,6 @@
 
 unit FrSelectSnippetsBase;
 
-{$WARN UNSAFE_CAST OFF}
 
 interface
 

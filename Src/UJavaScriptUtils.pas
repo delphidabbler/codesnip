@@ -35,7 +35,6 @@
 
 unit UJavaScriptUtils;
 
-{$WARN UNSAFE_CODE OFF}
 
 interface
 
