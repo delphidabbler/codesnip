@@ -94,9 +94,9 @@
 			<Compiler Name="ImagebaseMultiple">True</Compiler>
 			<Compiler Name="SuspiciousTypecast">True</Compiler>
 			<Compiler Name="PrivatePropAccessor">True</Compiler>
-			<Compiler Name="UnsafeType">True</Compiler>
-			<Compiler Name="UnsafeCode">True</Compiler>
-			<Compiler Name="UnsafeCast">True</Compiler>
+			<Compiler Name="UnsafeType">False</Compiler>
+			<Compiler Name="UnsafeCode">False</Compiler>
+			<Compiler Name="UnsafeCast">False</Compiler>
 			<Compiler Name="OptionTruncated">True</Compiler>
 			<Compiler Name="WideCharReduced">True</Compiler>
 			<Compiler Name="DuplicatesIgnored">True</Compiler>

@@ -36,3 +36,6 @@
 -O"..\Bin;3rdParty"
 -I"..\Bin;3rdParty"
 -R"..\Bin;3rdParty"
+-w-UNSAFE_TYPE
+-w-UNSAFE_CODE
+-w-UNSAFE_CAST
