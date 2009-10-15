@@ -543,10 +543,6 @@ set PATHSET=1
   +-- Docs                  - documentation
   |   |
   |   +-- Design            - documents concerning design
-  |   |
-  |   +-- Updates           - notes about program updates
-  |       |
-  |       +-- Archive       - historical update notes: pre svn
   |
   +-- Src                   - main CodeSnip source code
       |
@@ -635,8 +631,8 @@ set PATHSET=1
 	<code>.bdsproj</code> files from templates in the <code>Src</code> and
 	<code>Src\InstallHelper</code> folders.
 	<code>.cfg</code> files are needed for DCC32 to run correctly and 
-	<code>.bdsproj</code> files enable the use of the Delphi IDE. These files
-	will be ignored by Subversion.
+	<code>.bdsproj</code> files provide the Delphi IDE project options. These
+	files will be ignored by Subversion.
 </p>
   
 <p>
@@ -883,7 +879,7 @@ set PATHSET=1
 <p>
 	Once the setup file has been created you can create a zip file containing
 	the setup file along with <code>ReadMe.txt</code> from the <code>Docs</code>
-	directory. If either file is missing the release fails. Build the release by
+	directory. If either file is missing the build fails. Build the release by
 	doing:
 </p>
 
