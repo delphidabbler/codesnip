@@ -21,7 +21,6 @@
 //     13-Sep-99  mf  Reworked the entire unit                                        RFC 1321
 //     17-Sep-99  mf  Reworked the "Test Driver" project                              RFC 1321
 //     19-Sep-99  mf  Release of sources for MD5 unit and "Test Driver" project       RFC 1321
-//     12-Jan-06  pj  Switched off "unsafe" compiler warnings for Delphi >= 7
 //
 // -----------------------------------------------------------------------------------------------
 //                   The latest release of md5.pas will always be available from
@@ -34,42 +33,7 @@
 //                     implied warranty of any kind. Use it at your own risk.
 // -----------------------------------------------------------------------------------------------
 
-unit MD5;
-
-// PJ: 12-Jan-06
-// Find if $WARN compiler directives available
-{$DEFINE WARN_SUPPORTED}
-// Not testing for Delphi 1 since won't compile
-{$IFDEF VER90}  // Delphi 2
-  {$UNDEF WARN_SUPPORTED}
-{$ENDIF}
-{$IFDEF VER93}  // C++ Builder 1
-  {$UNDEF WARN_SUPPORTED}
-{$ENDIF}
-{$IFDEF VER100} // Delphi 3
-  {$UNDEF WARN_SUPPORTED}
-{$ENDIF}
-{$IFDEF VER110} // C++ Builder 3
-  {$UNDEF WARN_SUPPORTED}
-{$ENDIF}
-{$IFDEF VER120} // Delphi 4
-  {$UNDEF WARN_SUPPORTED}
-{$ENDIF}
-{$IFDEF VER125} // C++ Builder 4
-  {$UNDEF WARN_SUPPORTED}
-{$ENDIF}
-{$IFDEF VER130} // Delphi 5
-  {$UNDEF WARN_SUPPORTED}
-{$ENDIF}
-{$IFDEF VER140} // Delphi 6
-  {$UNDEF WARN_SUPPORTED}
-{$ENDIF}
-// Switch of unsafe warnings
-{$IFDEF WARN_SUPPORTED}
-  {$WARN UNSAFE_CODE OFF}
-  {$WARN UNSAFE_TYPE OFF}
-{$ENDIF}
-
+unit md5;
 
 // -----------------------------------------------------------------------------------------------
 INTERFACE

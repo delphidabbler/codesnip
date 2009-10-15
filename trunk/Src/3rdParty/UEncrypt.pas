@@ -6,16 +6,6 @@
   Homepage: http://www.teamb.com
 }
 
-// 2009.08.19 modified delphidabbler ->
-// switch off unsafe code warnings - requires Delphi 7 and later
-{$IFDEF CONDITIONALEXPRESSIONS}
-  // $IF directive supported
-  {$IF CompilerVersion >= 15.0} // >= Delphi 7
-    {$WARN UNSAFE_CODE OFF}
-  {$IFEND}
-{$ENDIF}
-// 2009.08.19 <-
-
 unit UEncrypt;
 
 interface
