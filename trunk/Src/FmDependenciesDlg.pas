@@ -36,7 +36,6 @@
 
 unit FmDependenciesDlg;
 
-{$WARN UNSAFE_CAST OFF}
 
 interface
 

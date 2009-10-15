@@ -35,13 +35,14 @@
 
 unit UUniqueID;
 
-{$WARN UNSAFE_CAST OFF}
 
 interface
+
 
 uses
   // Project
   UBaseObjects;
+
 
 type
 

@@ -35,8 +35,6 @@
 
 unit UMultiCastEvents;
 
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CAST OFF}
 
 interface
 

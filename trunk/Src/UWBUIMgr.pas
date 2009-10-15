@@ -37,8 +37,6 @@
 
 unit UWBUIMgr;
 
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CODE OFF}
 
 interface
 

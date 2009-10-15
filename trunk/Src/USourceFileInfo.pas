@@ -36,7 +36,6 @@
 
 unit USourceFileInfo;
 
-{$WARN UNSAFE_CODE OFF}
 
 interface
 

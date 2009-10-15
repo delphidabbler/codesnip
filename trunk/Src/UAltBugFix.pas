@@ -56,7 +56,6 @@
 
 unit UAltBugFix;
 
-{$WARN UNSAFE_CAST OFF}
 
 interface
 

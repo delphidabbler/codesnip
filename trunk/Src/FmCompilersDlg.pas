@@ -36,7 +36,6 @@
 
 unit FmCompilersDlg;
 
-{$WARN UNSAFE_CODE OFF}
 
 interface
 

@@ -36,9 +36,6 @@
 
 unit USimpleDispatch;
 
-{$WARN UNSAFE_TYPE OFF}
-{$WARN UNSAFE_CAST OFF}
-{$WARN UNSAFE_CODE OFF}
 
 interface
 

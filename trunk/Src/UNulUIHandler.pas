@@ -38,7 +38,6 @@
 
 unit UNulUIHandler;
 
-{$WARN UNSAFE_TYPE OFF}
 
 interface
 

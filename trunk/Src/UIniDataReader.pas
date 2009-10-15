@@ -35,7 +35,6 @@
 
 unit UIniDataReader;
 
-{$WARN UNSAFE_CAST OFF}
 
 interface
 
