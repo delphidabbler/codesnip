@@ -124,7 +124,7 @@ uses
 const
   // Web service info
   cScriptName = 'register-app.php';           // script name
-  cUserAgent = 'DelphiDabbler-Registrar-v1';  // user agent string
+  cUserAgent = 'DelphiDabbler-Registrar-v2';  // user agent string
 
 
 { TRegistrar }
