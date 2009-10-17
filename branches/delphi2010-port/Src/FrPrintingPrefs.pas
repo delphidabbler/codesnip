@@ -171,7 +171,8 @@ begin
   // Update the caption to show current units
   gpMargins.Caption := Format(
     ' ' + sMarginCaption + ' ',
-    [AnsiLowerCase(UnitName(Prefs.MeasurementUnits))]
+    { TODO -oSelf -cNote : Delphi 2010 Fix: Added UMeasurement prefix to UnitName }
+    [AnsiLowerCase(UMeasurement.UnitName(Prefs.MeasurementUnits))]
   );
 
   // Update entries in margins edit boxes

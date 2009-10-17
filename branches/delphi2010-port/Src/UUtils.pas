@@ -408,7 +408,8 @@ begin
   end;
 end;
 
-function IsWhiteSpace(const Ch: AnsiChar): Boolean;
+{ TODO -oSelf -cNote : Unicode Fix: Changed AnsiChar to Char }
+function IsWhiteSpace(const Ch: Char): Boolean;
   {Checks if a character is white space.
     @param Ch [in] Character to be checked.
     @return True if character is white space, False if not.

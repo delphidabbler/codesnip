@@ -58,7 +58,9 @@ type
     V2: Word;   // Minor version number
     V3: Word;   // Revision version number
     V4: Word;   // Build number
-    constructor Nul;
+    { TODO -oSelf -cNote : Delphi 2010 Fix: Change comment for Nul method. }
+    class function Nul: TVersionNumber; static;
+      { TODO -oSelf -cDocumentation : Change comment for this method. }
       {Record constructor that creates a nul version number with all fields set
       to zero.
       }
@@ -380,15 +382,15 @@ begin
   Result := not (Ver1 = Ver2);
 end;
 
-constructor TVersionNumber.Nul;
+class function TVersionNumber.Nul: TVersionNumber;
   {Record constructor that creates a nul version number with all fields set to
   zero.
   }
 begin
-  V1 := 0;
-  V2 := 0;
-  V3 := 0;
-  V4 := 0;
+  Result.V1 := 0;
+  Result.V2 := 0;
+  Result.V3 := 0;
+  Result.V4 := 0;
 end;
 
 end.

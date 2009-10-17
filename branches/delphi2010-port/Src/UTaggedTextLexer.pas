@@ -111,7 +111,8 @@ type
     destructor Destroy; override;
       {Class destructor. Frees owned entity list.
       }
-    function AddEntity(const Entity: string; const Ch: AnsiChar): Boolean;
+    { TODO -oSelf -cNote : Unicode Fix: Changed AnsiChar to Char }
+    function AddEntity(const Entity: string; const Ch: Char): Boolean;
       {Adds a symbolic entity and its corresponding character to the
       list of symbolic entities. Set up the list of entities before attempting
       to translate an entity.
@@ -119,7 +120,8 @@ type
         @param Ch [in] Character corresponding to entity.
         @return True if entity added successfully, False if not.
       }
-    function TranslateEntity(const Entity: string; out Ch: AnsiChar): Boolean;
+    { TODO -oSelf -cNote : Unicode Fix: Changed AnsiChar to Char }
+    function TranslateEntity(const Entity: string; out Ch: Char): Boolean;
       {Translates entity into the character it represents.
         @param Entity [in] Entity to be translated (without leading '&' and
           trailing ';' characters).
@@ -262,8 +264,9 @@ type
       @param EntityChar [out] Set to character equivalent of entity.
       @return True to make lexer call this method again, False to terminate.
   }
+  { TODO -oSelf -cNote : Unicode Fix: Changed EntityChar from AnsiChar to Char }
   TTaggedTextEntityInfoProc = function(const EntityIdx: Integer;
-    out EntityName: string; out EntityChar: AnsiChar): Boolean of object;
+    out EntityName: string; out EntityChar: Char): Boolean of object;
 
   {
   TTaggedTextLexer:
@@ -438,7 +441,7 @@ resourcestring
 { TTaggedTextEntityHandler }
 
 function TTaggedTextEntityHandler.AddEntity(const Entity: string;
-  const Ch: AnsiChar): Boolean;
+  const Ch: Char): Boolean;
   {Adds a symbolic entity and its corresponding character to the list of
   symbolic entities. Set up the list of entities before attempting to translate
   an entity.
@@ -472,7 +475,7 @@ begin
 end;
 
 function TTaggedTextEntityHandler.TranslateEntity(
-  const Entity: string; out Ch: AnsiChar): Boolean;
+  const Entity: string; out Ch: Char): Boolean;
   {Translates entity into the character it represents.
     @param Entity [in] Entity to be translated (without leading '&' and trailing
       ';' characters).
@@ -533,7 +536,8 @@ begin
       Exit;
     end;
     // entity is supported: record it's character value and return true
-    Ch := AnsiChar(fSymbolicEntities.Objects[SymbolIdx]);
+    { TODO -oSelf -cNote : Unicode Fix: Changed AnsiChar cast to Char }
+    Ch := Char(fSymbolicEntities.Objects[SymbolIdx]);
     Result := True;
   end;
 end;
@@ -546,12 +550,13 @@ function TTaggedTextEntityHandler.TranslateTextEntities(
     @return True on success or False on error.
   }
 var
+  { TODO -oSelf -cNote : Unicode Fix: Changed Ch and EntityCh from AnsiChar to Char }
   Idx: Integer;         // index used to scan text
   InsPos: Integer;      // index of insertion point in translated string
-  Ch: AnsiChar;         // current char in text: used to check for entities
+  Ch: Char;             // current char in text: used to check for entities
   EntityStart: Integer; // records start of entity in text
   Entity: string;       // stores any found entity
-  EntityCh: AnsiChar;   // stores character represented by entity
+  EntityCh: Char;       // stores character represented by entity
 begin
   // Assume failure
   Result := False;

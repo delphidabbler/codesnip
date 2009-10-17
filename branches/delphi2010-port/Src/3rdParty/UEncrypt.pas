@@ -31,7 +31,8 @@ const
 
 function Decode(const S: AnsiString): AnsiString;
 const
-  Map: array[Char] of Byte = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+  { TODO -oSelf -cNote :Unicode Fix: Changed Char to AnsiChar }
+  Map: array[AnsiChar] of Byte = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 63, 52, 53,
     54, 55, 56, 57, 58, 59, 60, 61, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2,
@@ -94,7 +95,8 @@ begin
   Seed := Key;
   for I := 1 to Length(Result) do
   begin
-    Result[I] := Char(Byte(Result[I]) xor (Seed shr 8));
+    { TODO -oSelf -cNote : Unicode Fix: Changed Char cast to AnsiChar }
+    Result[I] := AnsiChar(Byte(Result[I]) xor (Seed shr 8));
     Seed := (Byte(S[I]) + Seed) * Word(C1) + Word(C2)
   end
 end;
@@ -147,7 +149,8 @@ begin
   Seed := Key;
   for I := 1 to Length(Result) do
   begin
-    Result[I] := Char(Byte(Result[I]) xor (Seed shr 8));
+    { TODO -oSelf -cNote : Unicode Fix: Changed Char cast to AnsiChar }
+    Result[I] := AnsiChar(Byte(Result[I]) xor (Seed shr 8));
     Seed := (Byte(Result[I]) + Seed) * Word(C1) + Word(C2)
   end
 end;

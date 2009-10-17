@@ -75,8 +75,9 @@ type
         @return True if tag information was provided or False to indicate no
           more tags.
       }
+    { TODO -oSelf -cNote : Unicode Fix: Changed EntityChar from AnsiChar to Char }
     function EntityInfo(const EntityIdx: Integer; out EntityName: string;
-      out EntityChar: AnsiChar): Boolean;
+      out EntityChar: Char): Boolean;
       {Callback that provides lexer with information about supported character
       entities. Lexer calls continually until False is returned.
         @param EntityIdx [in] Index of entity for which information is
@@ -442,7 +443,7 @@ begin
 end;
 
 function TREMLReader.EntityInfo(const EntityIdx: Integer;
-  out EntityName: string; out EntityChar: AnsiChar): Boolean;
+  out EntityName: string; out EntityChar: Char): Boolean;
   {Callback that provides lexer with information about supported character
   entities. Lexer calls continually until False is returned.
     @param EntityIdx [in] Index of entity for which information is requested.

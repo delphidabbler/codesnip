@@ -63,7 +63,8 @@ type
         {Stores all data read from stream}
       fIdx: Integer;
         {Cursor into buffer that indexes next character to be read}
-    function GetCh: AnsiChar;
+    { TODO -oSelf -cNote : Unicode Fix: Changed return from AnsiChar to Char }
+    function GetCh: Char;
       {Read accessor for Ch property.
         @return Last character read, or EOF at end of file.
       }
@@ -75,14 +76,16 @@ type
       {Class constructor. Creates reader for a stream and reads first character.
         @param Stm [in] Stream to be read.
       }
-    function NextChar: AnsiChar;
+    { TODO -oSelf -cNote : Unicode Fix: Changed return from AnsiChar to Char }
+    function NextChar: Char;
       {Fetches next character from buffer.
         @return Character read (EOF at end of buffer and LF at end of line).
       }
     procedure PutBackChar;
       {Puts last read character back on the stream.
       }
-    property Ch: AnsiChar read GetCh;
+    { TODO -oSelf -cNote : Unicode Fix: Changed type from AnsiChar to Char }
+    property Ch: Char read GetCh;
       {Last character read from stream (EOF if at end of stream and LF at end
       of line}
   end;
@@ -107,7 +110,7 @@ begin
   NextChar;
 end;
 
-function TTextStreamReader.GetCh: AnsiChar;
+function TTextStreamReader.GetCh: Char;
   {Read accessor for Ch property.
     @return Last character read, or EOF at end of file.
   }
@@ -125,7 +128,7 @@ begin
     Result := EOF;
 end;
 
-function TTextStreamReader.NextChar: AnsiChar;
+function TTextStreamReader.NextChar: Char;
   {Fetches next character from buffer.
     @return Character read (EOF at end of buffer and EOL at end of line).
   }

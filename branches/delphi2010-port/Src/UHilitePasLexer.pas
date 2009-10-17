@@ -88,7 +88,8 @@ type
     procedure UpdateTokenStr; overload;
       {Appends current character in input to token string. Ignores EOF.
       }
-    procedure UpdateTokenStr(const Ch: AnsiChar); overload;
+    { TODO -oSelf -cNote : Unicode Fix: Changed Ch from AnsiChar to Char }
+    procedure UpdateTokenStr(const Ch: Char); overload;
       {Appends a character to token string. Ignores EOF.
         @param Ch [in] Character to append.
       }
@@ -726,7 +727,8 @@ function THilitePasLexer.ParseNumber: THilitePasToken;
     @return Appropriate token for number (tkNumber or tkFloat).
   }
 var
-  TempCh: AnsiChar; // temporary storage for a character read from input
+  { TODO -oSelf -cNote : Unicode Fix: Changed TempCh from AnsiChar to Char }
+  TempCh: Char; // temporary storage for a character read from input
 begin
   Assert(fReader.Ch in cDigits, ClassName + '.ParseNumber: digit expected');
   // All numbers start with a whole number: read it
@@ -903,7 +905,7 @@ begin
   UpdateTokenStr(fReader.Ch);
 end;
 
-procedure THilitePasLexer.UpdateTokenStr(const Ch: AnsiChar);
+procedure THilitePasLexer.UpdateTokenStr(const Ch: Char);
   {Appends a character to token string. Ignores EOF.
     @param Ch [in] Character to append.
   }
