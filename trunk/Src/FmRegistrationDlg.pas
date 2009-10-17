@@ -153,7 +153,7 @@ uses
   SysUtils, Graphics, Math,
   // Project
   UAppInfo, UCSSUtils, UEmailHelper, UFontHelper, UCtrlArranger, UMessageBox,
-  URegistrar, UUserDetails;
+  URegistrar, USystemInfo, UUserDetails;
 
 
 {$R *.dfm}
@@ -289,6 +289,7 @@ begin
   Report.Values['ProgVer'] := TAppInfo.ProgramReleaseVersion;
   Report.Values['ProgKey'] := TAppInfo.ProgramKey;
   Report.Values['UserName'] := Trim(edName.Text);
+  Report.Values['OSDesc'] := TOSInfo.Description;
   Report.Values['MailList'] := IntToStr(Ord(chkMailList.Checked));
   if chkMailList.Checked then
     Report.Values['UserEmail'] := Trim(edEmail.Text)
@@ -362,8 +363,10 @@ var
 begin
   Screen.Cursor := crHourglass;
   try
-    UserDetails := TUserDetails.Create(Trim(edName.Text), Trim(edEmail.Text));
+    // register with server
     edRegCode.Text := RegisterWithWebServer;
+    // record registration & user details
+    UserDetails := TUserDetails.Create(Trim(edName.Text), Trim(edEmail.Text));
     TAppInfo.RegisterProgram(edRegCode.Text, UserDetails.Name);
     TUserDetailsPersist.Update(UserDetails);
     fRegistered := True;

@@ -6,7 +6,7 @@ inherited RegistrationDlg: TRegistrationDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     inherited pcWizard: TPageControl
-      ActivePage = tsFinish
+      ActivePage = tsIntro
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
@@ -22,11 +22,12 @@ inherited RegistrationDlg: TRegistrationDlg
           Left = 0
           Top = 33
           Width = 369
-          Height = 32
+          Height = 40
           AutoSize = False
           Caption = 
-            'This wizard collects some information from you then contacts the' +
-            ' DelphiDabbler.com website to register the program.'
+            'This wizard collects some information from you and the operating' +
+            ' system then contacts the DelphiDabbler.com website to register ' +
+            'the program.'
           WordWrap = True
         end
         object lblInstructions: TLabel
