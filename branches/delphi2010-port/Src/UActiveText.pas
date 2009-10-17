@@ -331,7 +331,9 @@ type
               completed.
           }
       end;
-  published // do not make strict
+  { TODO -oSelf -cNote : Delphi 2010 Warning Fix: Erroneous published section
+    corrected to protected. }
+  protected // do not make strict
     { IActiveText methods }
     function GetEnumerator: IActiveTextEnum;
       {Gets object that can enumerate object's elements.
@@ -390,7 +392,9 @@ type
   strict private
     fKind: TActiveTextElemKind;
       {Kind of element}
-  published // do not make strict
+  { TODO -oSelf -cNote : Delphi 2010 Warning Fix: Erroneous published section
+    corrected to protected. }
+  protected // do not make strict
     { IActiveTextElem method }
     function GetKind: TActiveTextElemKind;
       {Gets element kind.
@@ -413,7 +417,9 @@ type
   strict private
     fText: string;
       {Text of element}
-  published // do not make strict
+  { TODO -oSelf -cNote : Delphi 2010 Warning Fix: Erroneous published section
+    corrected to protected. }
+  protected // do not make strict
     function GetText: string;
       {Gets element's text.
         @return Required text.
@@ -437,7 +443,9 @@ type
       {State of element: opening or closing}
     fParam: string;
       {Any parameter associated with element}
-  published // do not make strict
+  { TODO -oSelf -cNote : Delphi 2010 Warning Fix: Erroneous published section
+    corrected to protected. }
+  protected // do not make strict
     function GetState: TActiveTextElemState;
       {Gets element state.
         @return Required state.
