@@ -58,11 +58,11 @@ type
     V2: Word;   // Minor version number
     V3: Word;   // Revision version number
     V4: Word;   // Build number
-    { TODO -oSelf -cNote : Delphi 2010 Fix: Change comment for Nul method. }
+    { TODO -oSelf -cNote : Delphi 2010 Fix: Changed from constructor to class
+      method. }
     class function Nul: TVersionNumber; static;
-      { TODO -oSelf -cDocumentation : Change comment for this method. }
-      {Record constructor that creates a nul version number with all fields set
-      to zero.
+      {Creates a nul version number with all fields set to zero.
+        @return Required nul record.
       }
     class operator LessThanOrEqual(Ver1, Ver2: TVersionNumber): Boolean;
       {Operator overload that compares two version numbers to check if first is
@@ -383,8 +383,8 @@ begin
 end;
 
 class function TVersionNumber.Nul: TVersionNumber;
-  {Record constructor that creates a nul version number with all fields set to
-  zero.
+  {Creates a nul version number with all fields set to zero.
+    @return Required nul record.
   }
 begin
   Result.V1 := 0;
