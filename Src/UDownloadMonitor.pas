@@ -44,8 +44,6 @@ uses
   // Indy
   IdHTTP, IdComponent, IdGlobal;
 
-{ TODO -cNote : Indy Fix: Conditional defines to deal with interface differences
-  between early and later versions of Indy 10. }
 
 // TWorkEvent and TWorkBeginEvent have different signatures between Indy v10.1.x
 // and v10.2.x and later. The following is an attempt to decide which signature
@@ -92,7 +90,6 @@ type
       {Number of bytes received to date in curent download}
     procedure HTTPWorkHandler(Sender: TObject; AWorkMode: TWorkMode;
       AWorkCount:
-        { TODO -oSelf -cNote : Indy Fix: Different param types depending on Indy version. }
         {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
         {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
       {Handles Indy HTTP client's OnWork event. We process only download events.
@@ -103,7 +100,6 @@ type
       }
     procedure HTTPWorkBeginHandler(Sender: TObject; AWorkMode: TWorkMode;
       AWorkCountMax:
-        { TODO -oSelf -cNote : Indy Fix: Different param types depending on Indy version. }
         {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
         {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
       {Handles Indy HTTP client's OnWorkBegin event. We process only download
@@ -167,10 +163,8 @@ constructor TDownloadMonitor.Create(const HTTP: TIdHTTP;
       be nil.
     }
 begin
-  Assert(Assigned(HTTP),
-    'TWebServiceProgress.Create: HTTP is nil');            // ** do not localise
-  Assert(Assigned(Callback),
-    'TWebServiceProgress.Create: Callback is nil');        // ** do not localise
+  Assert(Assigned(HTTP), ClassName + '.Create: HTTP is nil');
+  Assert(Assigned(Callback), ClassName + '.Create: Callback is nil');
   inherited Create;
   HTTP.OnWork := HTTPWorkHandler;
   HTTP.OnWorkBegin := HTTPWorkBeginHandler;
@@ -189,7 +183,6 @@ end;
 procedure TDownloadMonitor.HTTPWorkBeginHandler(Sender: TObject;
   AWorkMode: TWorkMode;
   AWorkCountMax:
-    { TODO -oSelf -cNote : Indy Fix: Different param types depending on Indy version. }
     {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
     {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
   {Handles Indy HTTP client's OnWorkBegin event. We process only download
@@ -219,7 +212,6 @@ end;
 procedure TDownloadMonitor.HTTPWorkHandler(Sender: TObject;
   AWorkMode: TWorkMode;
   AWorkCount:
-    { TODO -oSelf -cNote : Indy Fix: Different param types depending on Indy version. }
     {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
     {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
   {Handles Indy HTTP client's OnWork event. We process only download events.
