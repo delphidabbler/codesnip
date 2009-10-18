@@ -42,7 +42,31 @@ interface
 
 uses
   // Indy
-  IdHTTP, IdComponent;
+  IdHTTP, IdComponent, IdGlobal;
+
+{ TODO -cNote : Indy Fix: Conditional defines to deal with interface differences
+  between early and later versions of Indy 10. }
+
+// TWorkEvent and TWorkBeginEvent have different signatures between Indy v10.1.x
+// and v10.2.x and later. The following is an attempt to decide which signature
+// to use. Should this unit fail to compile, you can define INDY_WORKEVENT_INT64
+// in the project options or on the compiler command line to override this
+// code. Define INDY_WORKEVENT_INT64 to use a Int64 parameter and or define
+// INDY_WORKEVENT_INT32 to use a 32 bit integer as the last paramter of both
+// event handler types.
+{$IF not Defined(INDY_WORKEVENT_INT64) and not Defined(INDY_WORKEVENT_INT64)}
+  {$IF gsIdVersion >= '10.2'}
+    {$DEFINE INDY_WORKEVENT_INT64}
+    {$UNDEF INDY_WORKEVENT_INT32}
+  {$ELSE}
+    {$UNDEF INDY_WORKEVENT_INT64}
+    {$DEFINE INDY_WORKEVENT_INT32}
+  {$IFEND}
+{$IFEND}
+{$IF Defined(INDY_WORKEVENT_INT32) and Defined(INDY_WORKEVENT_INT64)}
+  {$MESSAGE FATAL
+    'Can''t define both INDY_WORKEVENT_INT32 and INDY_WORKEVENT_INT32'}
+{$IFEND}
 
 
 type
@@ -65,9 +89,12 @@ type
     fBytesExpected: Integer;
       {Number of bytes expected in current download}
     fBytesReceived: Integer;
-      {Number of bytes received to date in current download}
+      {Number of bytes received to date in curent download}
     procedure HTTPWorkHandler(Sender: TObject; AWorkMode: TWorkMode;
-      AWorkCount: Integer);
+      AWorkCount:
+        { TODO -oSelf -cNote : Indy Fix: Different param types depending on Indy version. }
+        {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
+        {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
       {Handles Indy HTTP client's OnWork event. We process only download events.
       Upload events are ignored. Updates record of bytes received.
         @param Sender [in] Not used.
@@ -75,7 +102,10 @@ type
         @param AWorkCount [in] Number of bytes received to date.
       }
     procedure HTTPWorkBeginHandler(Sender: TObject; AWorkMode: TWorkMode;
-      AWorkCountMax: Integer);
+      AWorkCountMax:
+        { TODO -oSelf -cNote : Indy Fix: Different param types depending on Indy version. }
+        {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
+        {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
       {Handles Indy HTTP client's OnWorkBegin event. We process only download
       events. Upload events are ignored. Records number of expected bytes in
       download.
@@ -157,7 +187,11 @@ begin
 end;
 
 procedure TDownloadMonitor.HTTPWorkBeginHandler(Sender: TObject;
-  AWorkMode: TWorkMode; AWorkCountMax: Integer);
+  AWorkMode: TWorkMode;
+  AWorkCountMax:
+    { TODO -oSelf -cNote : Indy Fix: Different param types depending on Indy version. }
+    {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
+    {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
   {Handles Indy HTTP client's OnWorkBegin event. We process only download
   events. Upload events are ignored. Records number of expected bytes in
   download.
@@ -183,7 +217,11 @@ begin
 end;
 
 procedure TDownloadMonitor.HTTPWorkHandler(Sender: TObject;
-  AWorkMode: TWorkMode; AWorkCount: Integer);
+  AWorkMode: TWorkMode;
+  AWorkCount:
+    { TODO -oSelf -cNote : Indy Fix: Different param types depending on Indy version. }
+    {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
+    {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
   {Handles Indy HTTP client's OnWork event. We process only download events.
   Upload events are ignored. Updates record of bytes received.
     @param Sender [in] Not used.
