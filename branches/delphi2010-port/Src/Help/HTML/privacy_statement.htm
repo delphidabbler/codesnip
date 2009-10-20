@@ -1,6 +1,9 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
-  * ***** BEGIN LICENSE BLOCK *****
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
  *
@@ -24,30 +27,21 @@
 -->
 <html>
   <head>
-    <meta
-     http-equiv="Content-Type"
-     content="text-html; charset=Windows-1252">
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
     <title>
       Privacy Statement
     </title>
-    <link
-     rel="stylesheet"
-     href="../css/codesnip.css"
-     type="text/css">
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
   </head>
   <body>
     <object
-     type="application/x-oleobject"
-     classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
-      <param
-       name="ALink Name"
-       value="PrivacyStatement">
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+      <param name="ALink Name" value="PrivacyStatement">
     </object>
     <h1>
-      <a
-       id="privacy_statement"
-       name="privacy_statement"></a>Privacy Statement for DelphiDabbler
-      Codesnip
+      <a id="privacy_statement" name="privacy_statement"></a>Privacy Statement
+      for DelphiDabbler Codesnip
     </h1>
     <h2>
       Offline Privacy
@@ -57,10 +51,7 @@
       files:
     </p>
     <h3>
-      <a
-        name="common"
-        id="common"
-      ></a><code>Common.ini</code>
+      <code>Common.ini</code>
     </h3>
     <p>
       <code>Common.ini</code> is located in the in the
@@ -71,8 +62,7 @@
     <p>
       The data that is stored in <code>Common.ini</code> is:
     </p>
-    <ul
-     class="unspaced">
+    <ul class="unspaced">
       <li>
         A unique 32 digit hexadecimal key based on attributes of your computer.
       </li>
@@ -88,10 +78,7 @@
       from the keys.
     </p>
     <h3>
-      <a
-        name="user"
-        id="user"
-      ></a><code>User.3.ini</code>
+      <code>User.3.ini</code>
     </h3>
     <p>
       <code>User.3.ini</code> is found in the
@@ -103,13 +90,23 @@
     </p>
     <p>
       The file stores several user-specific application data
-      settings such as your preferences. The only personal information that may
-      be included are the name and email address you specified if you ever
-      entered the information in a dialog box. This is used simply to
-      automatically enter the data in dialog boxes where needed, to save you
-      re-typing the information. See below for details of activities that
-      require either or both a name or email address to be submitted.
-    </p>
+      settings such as your preferences. The only personal information is as
+      follows:
+    </p>  
+    <ul>
+      <li>
+        Any user name or email address you provided if you ever entered the
+        information in a dialog box. This is used simply to automatically enter
+        the data in dialog boxes where needed, to save you re-typing it. See
+        below for details of activities that require either or both a name or
+        email address to be submitted.
+      </li>
+      <li>
+        Your user name and password if you configured <em>CodeSnip</em> to
+        access the internet using a proxy server. The information is used only
+        to access the proxy. Passwords and encrypted.
+      </li>
+    </ul>  
     <p>
       If you have upgraded from CodeSnip v2 there may also be a file named
       <code>User.ini</code>. This contains pretty much the same information as
@@ -124,9 +121,10 @@
       is found to contain spyware it will have been added by third parties and
       the author asks to be informed of any such occurrence. Please report any
       suspicious behaviour via <a
-       href="http://www.delphidabbler.com/contact"
-       class="weblink"
-       target="_blank">www.delphidabbler.com/contact</a>.
+        href="http://www.delphidabbler.com/contact"
+        class="weblink"
+        target="_blank"
+      >www.delphidabbler.com/contact</a>.
     </p>
     <p>
       <em>CodeSnip</em> never tries to &quot;phone home&quot; of its own
@@ -141,8 +139,7 @@
       Various user-initiated actions cause <em>CodeSnip</em> to go online. They
       are:
     </p>
-    <ol
-     class="unspaced">
+    <ol class="unspaced">
       <li>
         Updating the database.
       </li>
@@ -161,19 +158,20 @@
       <li>
         Accessing various websites via hyperlinks and menu options.
       </li>
+      <li>
+        Accessing the internet using a proxy server.
+      </li>
     </ol>
     <p>
       The first five actions are performed directly by <em>CodeSnip</em>,
-      which communicates with web services located at <a
-       href="http://www.delphidabbler.com"
-       class="weblink"
-       target="_blank">www.delphidabbler.com</a> using HTTP on port 80. The
-      sixth action simply displays web pages in a browser.
+      which communicates with web services located at www.delphidabbler.com
+      using HTTP on port 80. The sixth action simply displays web pages in a
+      browser. The seventh passes user information to the proxy server.
     </p>
     <p>
       Personal data will neither be published on the DelphiDabbler website nor
       knowingly passed to third parties. Furthermore your data will only be
-      used by the author for the purposes set out below.
+      used by the author for the purposes described below.
     </p>
     <h3>
       Updating the Database
@@ -184,8 +182,7 @@
       CodeSnip</em> then contacts the update web service and sends the
       following information:
     </p>
-    <ul
-     class="unspaced">
+    <ul class="unspaced">
       <li>
         Unique program key (see above for details).
       </li>
@@ -199,6 +196,10 @@
       database files to <em>CodeSnip</em> along with any current news items.
       News items may contain web links.
     </p>
+    <p>
+      The data is used to provide statistics about database usage and which
+      versions of the program are in active use.
+    </p>
     <h3>
       Reporting a Bug
     </h3>
@@ -209,8 +210,7 @@
       sent to the bug report web service. The data is only sent if the user
       clicks the wizard&#39;s &quot;Submit&quot; button. The data is:
     </p>
-    <ul
-     class="unspaced">
+    <ul class="unspaced">
       <li>
         A bug report version number.
       </li>
@@ -235,7 +235,7 @@
       Where provided the email address will only be used to contact the user
       about the bug and to inform when it is fixed. The submitted data is
       stored in an archive of bug reports and may be included in the
-      author&#39;s address book if an email exchange takes place.
+      author&#39;s email address book if an email exchange takes place.
     </p>
     <h3>
       Registering the Program
@@ -247,8 +247,7 @@
       the registration web service. The data is only sent if the user clicks
       the wizard&#39;s &quot;Submit&quot; button. The data is:
     </p>
-    <ul
-     class="unspaced">
+    <ul class="unspaced">
       <li>
         The program&#39;s id, name and version information.
       </li>
@@ -257,6 +256,9 @@
       </li>
       <li>
         The user name or nickname.
+      </li>
+      <li>
+        A description of the operating system being used.
       </li>
       <li>
         A flag indicating whether the user wishes to join the <em>CodeSnip</em>
@@ -270,9 +272,10 @@
     <p>
       The registration data is recorded in a database on the DelphiDabbler web
       server. The data is only used to keep track of the number of people using
-      the different versions of the program. The registration web service
-      returns a registration code to the program. <em>CodeSnip</em> records this
-      code, with the user name, in <code>Common.ini</code>.
+      the different versions of the program and what operating systems are being
+      used. The registration web service returns a registration code to the
+      program. <em>CodeSnip</em> records this code, with the user name, in
+      <code>Common.ini</code>.
     </p>
     <p>
       Should the user elect to join the mailing list, the supplied email
@@ -327,7 +330,7 @@
         The <em>CodeSnip</em> program version number.
       </li>
       <li>
-        Your name, email address any comments as entered in the wizard.
+        Your name, email address any comments entered in the wizard.
       </li>
       <li>
         All the routines you selected to send.
@@ -341,15 +344,10 @@
     </p>
     <p>
       The routines may be edited and published on the Code Snippets online
-      database and distributed to <em>CodeSnip</em> users. Your name ma be used
+      database and distributed to <em>CodeSnip</em> users. Your name may be used
       to credit the routines. Your email address will not be published and is
       used only to contact you with any queries about the submitted code.
     </p>
-    <p>
-      Your name and email address will be recorded in your per-user application
-      data settings file (<a
-        href="#user"
-      ><code>User.3.ini</code></a>).
     <h3>
       Accessing Websites via Links and Menu Options
     </h3>
@@ -367,6 +365,16 @@
       pages. <strong>DelphiDabbler has no control over the content of linked
       third party websites and you follow these links at your own risk</strong>.
     </p>
+    <h3>
+      Accessing the internet using a proxy server
+    </h3>
+    <p>
+      <em>CodeSnip</em> can be configured to use a proxy server to access the
+      internet. In this case the program sends the appropriate user name and
+      password to the proxy server if required. <strong>DelphiDabbler has no
+      control over the proxy server and you should satisfy yourself that the
+      proxy you use is trustworthy. You use this feature at your own
+      risk.</strong>
+    </p>
   </body>
 </html>
-

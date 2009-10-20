@@ -38,7 +38,6 @@
 
 unit UColorBoxEx;
 
-{$WARN UNSAFE_CAST OFF}
 
 interface
 

@@ -138,10 +138,13 @@ unit GIFImage;
 // Now compatible with Delphi 2009.                                           //
 // Generally changed use of Char/PChar to AnsiChar/PAnsiChar.                 //
 //                                                                            //
-// Changed 2009.10.02 by Peter Johnson (www.delphidabbler.com)                //
-// Changed conditional defines for Delphi 6 and up to simplify and make more  //
-// future proof when new compilers released. Revised code that switches off   //
-// warnings. Added Delphi 2010 to list of compilers.                          //
+// Changed 2009.10.10 by Finn Tolderlund:                                     //
+// Now compatible with Delphi 2010.                                           //
+// Changed conditional defines to assume Delphi 2010 for future compilers.    //
+// Kind thanks to Peter Johnson (www.delphidabbler.com)                       //
+//                                                                            //
+// Changed 2009.10.14 by Finn Tolderlund:                                     //
+// Simplified the list of defines and remove a few warnings in Delphi 2006.   //
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
@@ -355,110 +358,111 @@ interface
   {$DEFINE BAD_STACK_ALIGNMENT}
 {$ENDIF}
 
-// 2009.10.02 pj ->
-// Delphi 6 and up: use conditional expressions
-// This code ensures that future compilers always have same defines as latest
-// compiler listed here.
+(*
+// Delphi 6.x
+{$IFDEF VER140}
+  {$WARN SYMBOL_PLATFORM OFF}
+  {$DEFINE VER10_PLUS}
+  {$DEFINE VER11_PLUS}
+  {$DEFINE VER12_PLUS}
+  {$DEFINE VER125_PLUS}
+  {$DEFINE VER13_PLUS}
+  {$DEFINE VER14_PLUS}
+  {$DEFINE BAD_STACK_ALIGNMENT}
+{$ENDIF}
+
+// Delphi 7.x
+{$IFDEF VER150}
+  {$WARN SYMBOL_PLATFORM OFF}
+  {$DEFINE VER10_PLUS}
+  {$DEFINE VER11_PLUS}
+  {$DEFINE VER12_PLUS}
+  {$DEFINE VER125_PLUS}
+  {$DEFINE VER13_PLUS}
+  {$DEFINE VER14_PLUS}
+  {$DEFINE VER15_PLUS}
+  {$DEFINE BAD_STACK_ALIGNMENT}
+{$ENDIF}
+
+// 2008.10.19 ->
+// Delphi 2009
+{$IFDEF VER200}
+  {$WARN SYMBOL_PLATFORM OFF}
+  {$DEFINE VER10_PLUS}
+  {$DEFINE VER11_PLUS}
+  {$DEFINE VER12_PLUS}
+  {$DEFINE VER125_PLUS}
+  {$DEFINE VER13_PLUS}
+  {$DEFINE VER14_PLUS}
+  {$DEFINE VER15_PLUS}
+  {$DEFINE VER20_PLUS}
+  {$DEFINE BAD_STACK_ALIGNMENT}
+{$ENDIF}
+// 2008.10.19 <-
+
+// 2003.03.09 ->
+// Unknown compiler version - assume D7 compatible
+{$IFNDEF VER9x}
+{$IFNDEF VER10_PLUS}
+  {$WARN SYMBOL_PLATFORM OFF}
+  {$DEFINE VER10_PLUS}
+  {$DEFINE VER11_PLUS}
+  {$DEFINE VER12_PLUS}
+  {$DEFINE VER125_PLUS}
+  {$DEFINE VER13_PLUS}
+  {$DEFINE VER14_PLUS}
+  {$DEFINE VER15_PLUS}
+  {$DEFINE BAD_STACK_ALIGNMENT}
+{$ENDIF}
+{$ENDIF}
+// 2003.03.09 <-
+
+// 2009.10.10 ->
+// This ensures that future compilers always have same defines as latest compiler listed here.
 {$IFDEF CONDITIONALEXPRESSIONS}
-  {$IF CompilerVersion >= 14.0}   // >= Delphi 6
+  {$IF CompilerVersion >= 21.0}   // >= Delphi 2010
     {$WARN SYMBOL_PLATFORM OFF}
+    {$WARN SYMBOL_DEPRECATED OFF}
     {$DEFINE VER10_PLUS}
     {$DEFINE VER11_PLUS}
     {$DEFINE VER12_PLUS}
     {$DEFINE VER125_PLUS}
     {$DEFINE VER13_PLUS}
     {$DEFINE VER14_PLUS}
-    {$DEFINE BAD_STACK_ALIGNMENT}
-    {$WARN SYMBOL_DEPRECATED OFF}
-  {$IFEND}
-  {$IF CompilerVersion >= 15.0}   // >= Delphi 7
     {$DEFINE VER15_PLUS}
-    {$WARN UNSAFE_CAST OFF}
-    {$WARN UNSAFE_CODE OFF}
-    {$WARN UNSAFE_TYPE OFF}
-  {$IFEND}
-  {$IF CompilerVersion >= 17.0}   // >= Delphi 2005
-    {$DEFINE VER17_PLUS}
-  {$IFEND}
-  {$IF CompilerVersion >= 18.0}   // >= Delphi 2006
-    {$DEFINE VER18_PLUS}
-  {$IFEND}
-  {$IF CompilerVersion >= 18.5}   // >= Delphi 2007 Win32
-    {$DEFINE VER185_PLUS}
-  {$IFEND}
-  {$IF CompilerVersion >= 20.0}   // >= Delphi 2009
     {$DEFINE VER20_PLUS}
-    {$WARN EXPLICIT_STRING_CAST_LOSS OFF}
-  {$IFEND}
-  {$IF CompilerVersion >= 21.0}   // >= Delphi 2010
+    {$DEFINE BAD_STACK_ALIGNMENT}
     {$DEFINE VER21_PLUS}
   {$IFEND}
 {$ENDIF}
+// 2009.10.10 <-
+*)
 
-//// Delphi 6.x
-//{$IFDEF VER140}
-//  {$WARN SYMBOL_PLATFORM OFF}
-//  {$DEFINE VER10_PLUS}
-//  {$DEFINE VER11_PLUS}
-//  {$DEFINE VER12_PLUS}
-//  {$DEFINE VER125_PLUS}
-//  {$DEFINE VER13_PLUS}
-//  {$DEFINE VER14_PLUS}
-//  {$DEFINE BAD_STACK_ALIGNMENT}
-//{$ENDIF}
-
-//// Delphi 7.x
-//{$IFDEF VER150}
-//  {$DEFINE VER15_PLUS}
-//{$ENDIF}
-// 2009.10.02 pj <-
-
-// 2003.03.09 ->
-// Unknown compiler version - assume D4 compatible
-//{$IFNDEF VER9x}
-//  {$IFNDEF VER10_PLUS}
-//    {$DEFINE VER10_PLUS}
-//    {$DEFINE VER11_PLUS}
-//    {$DEFINE VER12_PLUS}
-//    {$DEFINE BAD_STACK_ALIGNMENT}
-//  {$ENDIF}
-//{$ENDIF}
-// 2003.03.09 <-
-
-// 2009.10.02 pj ->
-//// 2008.10.19 ->
-//// Delphi 2009
-//{$IFDEF VER200}
-//  {$WARN SYMBOL_PLATFORM OFF}
-//  {$DEFINE VER10_PLUS}
-//  {$DEFINE VER11_PLUS}
-//  {$DEFINE VER12_PLUS}
-//  {$DEFINE VER125_PLUS}
-//  {$DEFINE VER13_PLUS}
-//  {$DEFINE VER14_PLUS}
-//  {$DEFINE VER15_PLUS}
-//  {$DEFINE VER20_PLUS}
-//  {$DEFINE BAD_STACK_ALIGNMENT}
-//{$ENDIF}
-//// 2008.10.19 <-
-//
-//// 2003.03.09 ->
-//// Unknown compiler version - assume D7 compatible
-//{$IFNDEF VER9x}
-//{$IFNDEF VER10_PLUS}
-//  {$WARN SYMBOL_PLATFORM OFF}
-//  {$DEFINE VER10_PLUS}
-//  {$DEFINE VER11_PLUS}
-//  {$DEFINE VER12_PLUS}
-//  {$DEFINE VER125_PLUS}
-//  {$DEFINE VER13_PLUS}
-//  {$DEFINE VER14_PLUS}
-//  {$DEFINE VER15_PLUS}
-//  {$DEFINE BAD_STACK_ALIGNMENT}
-//{$ENDIF}
-//{$ENDIF}
-//// 2003.03.09 <-
-// 2009.10.02 pj <-
+// 2009.10.14 ->
+// This ensures that future compilers always have same defines as latest compiler listed here.
+{$IFDEF CONDITIONALEXPRESSIONS}
+   {$IF CompilerVersion >= 14.0}   // >= Delphi 6
+     {$WARN SYMBOL_PLATFORM OFF}
+     {$WARN SYMBOL_DEPRECATED OFF}
+     {$DEFINE VER10_PLUS}
+     {$DEFINE VER11_PLUS}
+     {$DEFINE VER12_PLUS}
+     {$DEFINE VER125_PLUS}
+     {$DEFINE VER13_PLUS}
+     {$DEFINE VER14_PLUS}
+     {$DEFINE BAD_STACK_ALIGNMENT}
+   {$IFEND}
+   {$IF CompilerVersion >= 15.0}   // >= Delphi 7
+     {$DEFINE VER15_PLUS}
+   {$IFEND}
+   {$IF CompilerVersion >= 20.0}   // >= Delphi 2009
+     {$DEFINE VER20_PLUS}
+   {$IFEND}
+   {$IF CompilerVersion >= 21.0}   // >= Delphi 2010
+     {$DEFINE VER21_PLUS}
+   {$IFEND}
+{$ENDIF}
+// 2009.10.14 <-
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -4801,25 +4805,16 @@ var
     Pal.palNumEntries := 256;
     for i := 0 to 255 do
     begin
-// 2009.10.02 pj ->
-      {$IFDEF VER21_PLUS}
-      // Delphi 2010 doesn't like assignement to these fields in with statement
-      Pal.palPalEntry[i].peRed := i;
-      Pal.palPalEntry[i].peGreen := i;
-      Pal.palPalEntry[i].peBlue  := i;
-      Pal.palPalEntry[i].peFlags := PC_NOCOLLAPSE;
-      {$ELSE}
-// 2009.10.02 <-
-      with (Pal.palPalEntry[i]) do
+      // 2009.10.10 ->
+      //with (Pal.palPalEntry[i]) do
+      with Pal.palPalEntry[i] do
+      // 2009.10.10 <-
       begin
         peRed := i;
         peGreen := i;
         peBlue  := i;
         peFlags := PC_NOCOLLAPSE;
       end;
-// 2009.10.02 pj ->
-      {$ENDIF}
-// 2009.10.02 pj <-
     end;
     Result := CreatePalette(pLogPalette(@Pal)^);
   end;
@@ -4836,24 +4831,16 @@ var
     Pal.palNumEntries := 2;
     for i := 0 to 1 do
     begin
-// 2009.10.02 pj ->
-      {$IFDEF VER21_PLUS}
-      Pal.palPalEntry[i].peRed := Values[i];
-      Pal.palPalEntry[i].peGreen := Values[i];
-      Pal.palPalEntry[i].peBlue  := Values[i];
-      Pal.palPalEntry[i].peFlags := PC_NOCOLLAPSE;
-      {$ELSE}
-// 2009.10.02 pj <-
-      with (Pal.palPalEntry[i]) do
+      // 2009.10.10 ->
+      //with (Pal.palPalEntry[i]) do
+      with Pal.palPalEntry[i] do
+      // 2009.10.10 <-
       begin
         peRed := Values[i];
         peGreen := Values[i];
         peBlue  := Values[i];
         peFlags := PC_NOCOLLAPSE;
       end;
-// 2009.10.02 pj ->
-      {$ENDIF}
-// 2009.10.02 pj <-
     end;
     Result := CreatePalette(pLogPalette(@Pal)^);
   end;
@@ -4870,24 +4857,16 @@ var
     Pal.palNumEntries := 4;
     for i := 0 to 3 do
     begin
-// 2009.10.02 pj ->
-      {$IFDEF VER21_PLUS}
-      Pal.palPalEntry[i].peRed := Values[i];
-      Pal.palPalEntry[i].peGreen := Values[i];
-      Pal.palPalEntry[i].peBlue  := Values[i];
-      Pal.palPalEntry[i].peFlags := PC_NOCOLLAPSE;
-      {$ELSE}
-// 2009.10.02 pj <-
-      with (Pal.palPalEntry[i]) do
+      // 2009.10.10 ->
+      //with (Pal.palPalEntry[i]) do
+      with Pal.palPalEntry[i] do
+      // 2009.10.10 <-
       begin
         peRed := Values[i];
         peGreen := Values[i];
         peBlue  := Values[i];
         peFlags := PC_NOCOLLAPSE;
       end;
-// 2009.10.02 pj ->
-      {$ENDIF}
-// 2009.10.02 pj <-
     end;
     Result := CreatePalette(pLogPalette(@Pal)^);
   end;

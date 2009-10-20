@@ -36,7 +36,6 @@
 
 unit UHTMLEvents;
 
-{$WARN UNSAFE_TYPE OFF}
 {$WARN SYMBOL_PLATFORM OFF}
 
 interface

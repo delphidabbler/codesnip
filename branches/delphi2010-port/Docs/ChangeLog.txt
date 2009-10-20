@@ -1,3 +1,17 @@
+Version 3.4.3 - 19 October 2009
+CodeSnip 3.4.3 - 19 October 2009
++ User's OS is now reported and recorded when program is registered.
++ Text displayed in preview dialog boxes can now be scrolled horizontally.
++ Added support for building source against later releases of Indy 10 components.
++ Help file and privacy statement updated.
++ Further updated third aprty GIF image handling code to latest release.
++ Some changes to source code project options.
+
+Version 3.4.2 - 10 October 2009
+CodeSnip 3.4.2 - 10 October 2009
++ Fixed bug nos. 2868706 and 2875857 (see http://www.delphidabbler.com/url/codesnip-bugs)
++ Updated GIF image handling code.
+
 Version 3.4.1 - 29 September 2009
 CodeSnip 3.4.1 - 29 September 2009
 + All dialog boxes that request a user's name and / or email address now remember the information last entered, to save retyping the same data.

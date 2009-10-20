@@ -35,7 +35,6 @@
 
 unit UPageSetupDialogEx;
 
-{$WARN UNSAFE_CODE OFF}
 
 interface
 

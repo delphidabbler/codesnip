@@ -22,7 +22,7 @@ be fixed until planned reworking of query / database code.}
 Change the Snippets Editor moving code for each pane into separate frame that can
 (1) validate entered data
 (2) calculate required size for controls}
-{TODO -oSelf -cBug : Fix bug #2868706
+{DONE -oSelf -cBug : Fix bug #2868706
 Selecting a new printer in print dialog and clicking properties can give an exception or properties dialog has wrong title.
 Selecting some printers in print dialog and clicking OK can give an exception.}
 {TODO -oSelf -cRefactor : Rename identifiers that refer to "routine" with "snippet".}

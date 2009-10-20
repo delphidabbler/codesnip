@@ -16,7 +16,7 @@ inherited TextPreviewFrame: TTextPreviewFrame
       Font.Style = []
       ParentFont = False
       ReadOnly = True
-      ScrollBars = ssVertical
+      ScrollBars = ssBoth
       TabOrder = 0
       WordWrap = False
     end

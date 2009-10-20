@@ -38,8 +38,6 @@
 
 unit UDataStreamIO;
 
-{$WARN UNSAFE_CAST OFF}
-{$WARN UNSAFE_CODE OFF}
 
 interface
 

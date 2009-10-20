@@ -139,9 +139,9 @@
 		Indy Internet Components
 	</dt>
 	<dd>
-		These components are supplied with Delphi 2006. Note that v10 is
-		required. You need to configure Delphi 2006 to use Indy 10 rather than
-		Indy 9. If you haven't got Indy 10 you can download it from
+		These components are supplied with Delphi 2006. v10 is required. You need to
+		configure Delphi 2006 to use Indy 10 rather than Indy 9. If you haven't got
+		Indy 10 you can download it from
 		<a
 			href="http://www.indyproject.org"
 		>http://www.indyproject.org</a>.
@@ -175,7 +175,7 @@
 
 <p>
 	If you download a copy of Indy 10 you should compile the source code and
-  create the necessary package(s).
+	create the necessary package(s).
 </p>
 
 <p>
@@ -183,6 +183,31 @@
 	Delphi or if you've downloaded and compiled your own version, you should set
 	the <code>INDY10</code> environment variable to the folder where you placed
 	the compiled code.
+</p>
+
+<h4 id="indychanges">
+	Changes between different Indy 10 releases
+</h4>
+
+<p>
+	Changes were made to the parameter list of the <var>TWorkBeginEvent</var>
+	and <var>TWorkEvent</var> events between early and later releases of Indy
+	10. Specifically, earlier version use type <var>Integer</var> for the
+	<var>AWorkCount</var> parameter of <var>TWorkEvent</var> and the
+	<var>AWorkCountMax</var> parameter of <var>TWorkBeginEvent</var>, while
+	later versions use <var>Int64</var>.
+<p>
+
+<p>
+	<em>CodeSnip</em>'s source code uses conditional compilation to provide the
+	correct event handlers &ndash; and it makes an intelligent guess at which
+	signature to use depending on the version number provided by the Indy
+	library code. Should the program fail to compile with an error in the
+	<var>UDownloadMonitor</var> unit, you should check the event signatures in
+	your Indy <var>IdComponent</var> unit and then define the
+	<code>INDY_WORKEVENT_INT64</code> environment variable if <var>Int64</var>
+	parameters are required or <code>INDY_WORKEVENT_INT32</code> if
+	<var>Integer</var> parameters are used.
 </p>
 
 <h3>
@@ -298,6 +323,15 @@
 		Must be set to the directory where the Indy 10 components are installed.
 		The code must have been built with the same version of Delphi used to
 		compile <em>CodeSnip</em>.
+	</dd>
+	<dt class="spaced">
+		<code>INDY_WORKEVENT_INT64</code> <strong>or</strong>
+		<code>INDY_WORKEVENT_INT32</code> - optional
+	</dt>
+	<dd>
+		<a href="#indychanges">See above</a> for details. If used, only one of
+		the environment variables may be defined: defining both causes
+		compilation to fail.
 	</dd>
 </dl>
 
@@ -543,10 +577,6 @@ set PATHSET=1
   +-- Docs                  - documentation
   |   |
   |   +-- Design            - documents concerning design
-  |   |
-  |   +-- Updates           - notes about program updates
-  |       |
-  |       +-- Archive       - historical update notes: pre svn
   |
   +-- Src                   - main CodeSnip source code
       |
@@ -635,8 +665,8 @@ set PATHSET=1
 	<code>.bdsproj</code> files from templates in the <code>Src</code> and
 	<code>Src\InstallHelper</code> folders.
 	<code>.cfg</code> files are needed for DCC32 to run correctly and 
-	<code>.bdsproj</code> files enable the use of the Delphi IDE. These files
-	will be ignored by Subversion.
+	<code>.bdsproj</code> files provide the Delphi IDE project options. These
+	files will be ignored by Subversion.
 </p>
   
 <p>
@@ -883,7 +913,7 @@ set PATHSET=1
 <p>
 	Once the setup file has been created you can create a zip file containing
 	the setup file along with <code>ReadMe.txt</code> from the <code>Docs</code>
-	directory. If either file is missing the release fails. Build the release by
+	directory. If either file is missing the build fails. Build the release by
 	doing:
 </p>
 

@@ -35,7 +35,6 @@
 
 unit UClipboardHelper;
 
-{$WARN UNSAFE_CODE OFF}
 
 interface
 

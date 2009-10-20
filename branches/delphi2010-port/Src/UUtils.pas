@@ -36,7 +36,6 @@
 unit UUtils;
 
 {$WARN SYMBOL_PLATFORM OFF}
-{$WARN UNSAFE_CODE OFF}
 
 interface
 

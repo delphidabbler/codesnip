@@ -35,7 +35,6 @@
 
 unit UTextStreamReader;
 
-{$WARN UNSAFE_CODE OFF}
 
 interface
 

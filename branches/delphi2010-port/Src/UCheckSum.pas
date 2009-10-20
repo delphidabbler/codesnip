@@ -37,7 +37,6 @@
 
 unit UCheckSum;
 
-{$WARN UNSAFE_TYPE OFF}
 
 interface
 
