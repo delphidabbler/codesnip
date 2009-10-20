@@ -479,11 +479,6 @@ end;
 
 { THilitePasLexer }
 
-resourcestring
-  // Error messages
-  sBadHex = 'Bad hex digits';
-  sBadCharLiteral = 'Invalid character literal';
-
 constructor THilitePasLexer.Create(const Stm: TStream);
   {Class constructor. Sets up object to analyse code on a stream.
     @param Stm [in] Stream containing Pascal source.
@@ -549,6 +544,7 @@ begin
   // This method called with token string already containing '#' and current
   // char is char after '#'
   // Numeric part can either by whole number or hex number
+  Result := tkChar;
   if SymbolToToken(fReader.Ch) = tkHex then
   begin
     // Hex number ('$' detected)
@@ -562,9 +558,8 @@ begin
     // This is whole number: parse it
     ParseWholeNumber
   else
-    // Unexpected: error
-    raise ECodeSnip.Create(sBadCharLiteral);
-  Result := tkChar;
+    // Not valid character: error token
+    Result := tkError;
 end;
 
 function THilitePasLexer.ParseCommentFromStart: THilitePasToken;
@@ -692,8 +687,9 @@ begin
   end;
   // Check that we ended in a valid way: error if not
   if not (fReader.Ch in cSeparators) then
-    raise ECodeSnip.Create(sBadHex);
-  Result := tkHex;
+    Result := tkError
+  else
+    Result := tkHex;
 end;
 
 function THilitePasLexer.ParseIdent: THilitePasToken;
