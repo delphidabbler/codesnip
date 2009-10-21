@@ -201,5 +201,16 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
       Caption = 'Delphi 2006'
       OnClick = StyleMenuClick
     end
+    object miVisualStudio: TMenuItem
+      Caption = 'Visual Studio'#8482
+      OnClick = StyleMenuClick
+    end
+    object miSpacer: TMenuItem
+      Caption = '-'
+    end
+    object miNoHilite: TMenuItem
+      Caption = 'No Highlghter'
+      OnClick = StyleMenuClick
+    end
   end
 end
