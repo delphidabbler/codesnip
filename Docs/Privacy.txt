@@ -75,16 +75,15 @@ CodeSnip Online Activity
 Various user-initiated actions cause CodeSnip to go online. They are:
 
    1. Updating the database.
-   2. Reporting a bug.
-   3. Registering the program.
-   4. Subscribing to the mailing list.
-   5. Submitting code for inclusion in the main database.
-   6. Accessing various websites via hyperlinks and menu options.
-   7. Accessing the internet using a proxy server. 
+   2. Registering the program.
+   3. Subscribing to the mailing list.
+   4. Submitting code for inclusion in the main database.
+   5. Accessing various websites via hyperlinks and menu options.
+   6. Accessing the internet using a proxy server.
 
-The first five actions are performed directly by CodeSnip, which communicates
+The first four actions are performed directly by CodeSnip, which communicates
 with web services located at www.delphidabbler.com using HTTP on port 80. The
-sixth action simply displays web pages in a browser. The seventh passes user
+fifth action simply displays web pages in a browser. The sixth passes user
 information to the proxy server.
 
 Personal data will neither be published on the DelphiDabbler website nor
@@ -108,28 +107,6 @@ CodeSnip along with any current news items. News items may contain web links.
 
 The data is used to provide statistics about database usage and which versions
 of the program are in active use.
-
-
-Reporting a Bug
---------------------------------------------------------------------------------
-
-This activity is started when a bug is detected by CodeSnip or the user chooses
-to report an undetected bug. A wizard appears that gathers data about the bug.
-The wizard displays the data that is to be sent to the bug report web service.
-The data is only sent if the user clicks the wizard's "Submit" button. The data
-is:
-
-    * A bug report version number.
-    * The program's id, name and version information.
-    * A description of the user's operating system.
-    * Some information about any exception raised.
-    * The user's description of the bug.
-    * [Optionally] the user's email address.
-
-Where provided the email address will only be used to contact the user about the
-bug and to inform when it is fixed. The submitted data is stored in an archive
-of bug reports and may be included in the author's email address book if an
-email exchange takes place.
 
 
 Registering the Program
@@ -226,4 +203,11 @@ CodeSnip can be configured to use a proxy server to access the internet. In this
 case the program sends the appropriate user name and password to the proxy
 server if required. DelphiDabbler has no control over the proxy server and you
 should satisfy yourself that the proxy you use is trustworthy. You use this
-feature at your own risk. 
+feature at your own risk.
+
+
+================================================================================
+$Rev$
+$Date$
+================================================================================
+
