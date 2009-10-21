@@ -481,7 +481,21 @@ type
 const
   // Defines predefined styles
   cPredefinedStyle: array[TPredefinedHiliteStyle] of TAttrsTable =  (
-    (
+    ( // hsNul
+      (ForeColor: clNone;     FontStyle: [];),          // heWhitespace
+      (ForeColor: clNone;     FontStyle: [];),          // heComment
+      (ForeColor: clNone;     FontStyle: [];),          // heReserved
+      (ForeColor: clNone;     FontStyle: [];),          // heIdentifier
+      (ForeColor: clNone;     FontStyle: [];),          // heSymbol
+      (ForeColor: clNone;     FontStyle: [];),          // heString
+      (ForeColor: clNone;     FontStyle: [];),          // heNumber
+      (ForeColor: clNone;     FontStyle: [];),          // heFloat
+      (ForeColor: clNone;     FontStyle: [];),          // heHex
+      (ForeColor: clNone;     FontStyle: [];),          // hePreProcessor
+      (ForeColor: clNone;     FontStyle: [];),          // heAssembler
+      (ForeColor: clNone;     FontStyle: [];)           // heError
+    ),
+    ( // hsCodeSnip
       (ForeColor: clNone;     FontStyle: [];),          // heWhitespace
       (ForeColor: clNavy;     FontStyle: [fsItalic];),  // heComment
       (ForeColor: clNone;     FontStyle: [fsBold];),    // heReserved
@@ -495,7 +509,7 @@ const
       (ForeColor: clNone;     FontStyle: [fsItalic];),  // heAssembler
       (ForeColor: clRed;      FontStyle: [];)           // heError
     ),
-    (
+    ( // hsDelphi7
       (ForeColor: clNone;     FontStyle: [];),          // heWhitespace
       (ForeColor: clNavy;     FontStyle: [fsItalic];),  // heComment
       (ForeColor: clBlack;    FontStyle: [fsBold];),    // heReserved
@@ -509,7 +523,7 @@ const
       (ForeColor: clBlack;    FontStyle: [];),          // heAssembler
       (ForeColor: clRed;      FontStyle: [];)           // heError
     ),
-    (
+    ( // hsDelphi2006
       (ForeColor: clNone;     FontStyle: [];),          // heWhitespace
       (ForeColor: clGreen;    FontStyle: [fsItalic];),  // heComment
       (ForeColor: clNavy;     FontStyle: [fsBold];),    // heReserved
@@ -521,6 +535,20 @@ const
       (ForeColor: clBlue;     FontStyle: [];),          // heHex
       (ForeColor: clTeal;     FontStyle: [];),          // hePreProcessor
       (ForeColor: clNone;     FontStyle: [];),          // heAssembler
+      (ForeColor: clRed;      FontStyle: [];)           // heError
+    ),
+    ( // hsVisualStudio
+      (ForeColor: clNone;     FontStyle: [];),          // heWhitespace
+      (ForeColor: clGreen;    FontStyle: [];),          // heComment
+      (ForeColor: clBlue;     FontStyle: [];),          // heReserved
+      (ForeColor: clBlack;    FontStyle: [];),          // heIdentifier
+      (ForeColor: clNone;     FontStyle: [];),          // heSymbol
+      (ForeColor: clNone;     FontStyle: [];),          // heString
+      (ForeColor: clNone;     FontStyle: [];),          // heNumber
+      (ForeColor: clNone;     FontStyle: [];),          // heFloat
+      (ForeColor: clNone;     FontStyle: [];),          // heHex
+      (ForeColor: clBlue;     FontStyle: [];),          // hePreProcessor
+      (ForeColor: clBlack;    FontStyle: [];),          // heAssembler
       (ForeColor: clRed;      FontStyle: [];)           // heError
     )
   );

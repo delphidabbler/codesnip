@@ -28,7 +28,7 @@
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="bug report dialog">
 		<param name="Name" value="Bug Report Dialog Box">
-		<param name="Local" value="HTML\dlg_bugreport.htm">
+		<param name="Local" value="HTML\dlg_userbugreport.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="choose element colour dialog box">
