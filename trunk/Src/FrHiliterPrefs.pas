@@ -75,10 +75,13 @@ type
     lblFontSize: TLabel;
     lblElements: TLabel;
     lblNotice: TLabel;
-    mnuStyles: TPopupMenu;
     miClassic: TMenuItem;
     miDelphi7: TMenuItem;
     miDelphi2006: TMenuItem;
+    miNoHilite: TMenuItem;
+    miVisualStudio: TMenuItem;
+    miSpacer: TMenuItem;
+    mnuStyles: TPopupMenu;
     procedure btnResetClick(Sender: TObject);
     procedure btnStyleClick(Sender: TObject);
     procedure cbColourChange(Sender: TObject);
@@ -417,10 +420,12 @@ begin
   chkItalics.Tag := Ord(fsItalic);
   chkUnderline.Tag := Ord(fsUnderline);
 
-  // Set up predefined style drop down list
+  // Set up predefined style drop down menu
   miClassic.Tag := Ord(hsCodeSnip);
   miDelphi7.Tag := Ord(hsDelphi7);
   miDelphi2006.Tag := Ord(hsDelphi2006);
+  miVisualStudio.Tag := Ord(hsVisualStudio);
+  miNoHilite.Tag := Ord(hsNul);
 end;
 
 function THiliterPrefsFrame.CurrentElement: IHiliteElemAttrs;
