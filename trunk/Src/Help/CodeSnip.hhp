@@ -11,7 +11,6 @@ Title=CodeSnip Help
 
 [FILES]
 HTML\dlg_about.htm
-HTML\dlg_bugreport.htm
 HTML\dlg_configcompilers.htm
 HTML\dlg_findcompiler.htm
 HTML\dlg_findtext.htm
@@ -80,4 +79,6 @@ HTML\dlg_proxyserver.htm
 HTML\dlg_addcategory.htm
 HTML\dlg_renamecategory.htm
 HTML\dlg_deletecategory.htm
+HTML\dlg_userbugreport.htm
+HTML\dlg_trappedbugreport.htm
 
