@@ -1,3 +1,11 @@
+Version 3.4.4
+CodeSnip 3.4.4
++ Changed bug reporting mechanism. Bugs are now reported via the online bug tracker. Bug report dialogs changed accordingly. Access to the old bug report web service was removed.
++ Added two new default syntax highlighter styles: "Visual Studio™" and "No Highlighter". The latter switches off syntax highlighting.
++ Fixed bug no. 2882331 (see http://www.delphidabbler.com/url/codesnip-bugs). This was a bug in the syntax highlighter that occurred when an unexpected character was encountered.
++ Updated help file re changes.
++ Some minor source code corrections.
+
 Version 3.4.3 - 19 October 2009
 CodeSnip 3.4.3 - 19 October 2009
 + User's OS is now reported and recorded when program is registered.
@@ -23,7 +31,7 @@ CodeSnip 3.4.1 - 29 September 2009
 
 Version 3.4 - 24 September 2009
 CodeSnip 3.4 - 24 September 2009
-+ Added support for Delphi 2010.
++ Added support for Delphi 2010 to program. Can now test compile and display results with Delphi 2010.
 + Bug fixes:
   - "Invalid cast" error that occasionally appears when a snippet is updated.
   - Bug that kept backup files locked open after restoring a database backup.
