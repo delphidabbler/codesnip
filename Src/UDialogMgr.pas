@@ -134,10 +134,10 @@ implementation
 
 uses
   // Project
-  FmAboutDlg, FmBugReportDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg,
-  FmFindTextDlg, FmFindXRefsDlg, FmMailingListDlg, FmPreferencesDlg, FmPrintDlg,
+  FmAboutDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg, FmFindTextDlg,
+  FmFindXRefsDlg, FmMailingListDlg, FmPreferencesDlg, FmPrintDlg,
   FmProxyServerDlg, FmRegistrationDlg, FmSelectionSearchDlg, FmUpdateDlg,
-  UPageSetupDlgMgr, UTestUnitDlgMgr;
+  FmUserBugReportDlg, UPageSetupDlgMgr, UTestUnitDlgMgr;
 
 
 { TDialogMgr }
@@ -243,7 +243,7 @@ procedure TDialogMgr.ShowBugReportDlg;
   {Displays Bug Report dialog box.
   }
 begin
-  TBugReportDlg.Execute(Owner);
+  TUserBugReportDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowDependencyTree(const Snippet: TRoutine);
