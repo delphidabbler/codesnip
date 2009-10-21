@@ -150,7 +150,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UMessageBox, FmBugReportDlg;
+  UMessageBox, FmTrappedBugReportDlg;
 
 
 { TExceptionHandler }
@@ -167,7 +167,7 @@ begin
   if (E is ECodeSnip) or (E is EFileStreamError) then
     TMessageBox.Error(nil, E.Message)
   else
-    TBugReportDlg.Execute(nil, E);
+    TTrappedBugReportDlg.Execute(nil, E);
 end;
 
 { ECodeSnip }
