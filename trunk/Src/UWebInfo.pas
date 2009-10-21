@@ -103,6 +103,8 @@ type
     const DonateURL = WebsiteURL + '/url/donate-cs';
       {Donation page. Redirects to required page to permit URLs to change
       without modifying this code}
+    const BugTrackerURL = WebsiteURL + '/url/codesnip-bugs';
+      {Bug tracker page}
     class function WebServiceURL(const Script: string): string;
       {Builds the URL of a webservice.
         @param Script [in] Base name of web service script.
