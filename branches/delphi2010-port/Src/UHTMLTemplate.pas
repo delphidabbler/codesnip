@@ -113,13 +113,21 @@ constructor THTMLTemplate.Create(const Inst: THandle; const ResName: string;
   }
 var
   RS: TResourceStream;  // stream used to access HTML template resource
+  SS: TStringStream;    // string stream used to get string from resource stream
 begin
   inherited Create;
+  SS := nil;
+  { TODO -cProposal : Use another custom TStringStream to specify non-unicode
+    stream? Rename TStringStreamEx as TUnicodeStringSteam? }
+  // NOTE: Resource stream is not unicode: therefore standard TStringStream that
+  // uses default encoding on Unicode Delphis is required
   RS := TResourceStream.Create(Inst, ResName, ResType);
   try
-    SetLength(fHTML, RS.Size);
-    RS.ReadBuffer(PChar(fHTML)^, RS.Size);
+    SS := TStringStream.Create('');
+    SS.CopyFrom(RS, 0);
+    fHTML := SS.DataString;
   finally
+    SS.Free;
     RS.Free;
   end;
 end;
