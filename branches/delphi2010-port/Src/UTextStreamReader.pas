@@ -102,8 +102,8 @@ constructor TTextStreamReader.Create(const Stm: TStream);
 begin
   inherited Create;
   // Read stream into buffer
-  SetLength(fBuffer, Stm.Size);
-  Stm.ReadBuffer(fBuffer[1], Stm.Size);
+  SetLength(fBuffer, Stm.Size div SizeOf(Char));
+  Stm.ReadBuffer(Pointer(fBuffer)^, Stm.Size);
   // Set cursor to just before start of buffer then read first char
   fIdx := 0;
   NextChar;
