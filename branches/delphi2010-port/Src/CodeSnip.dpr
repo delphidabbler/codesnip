@@ -319,6 +319,7 @@ uses
   UThreadWrapper in 'UThreadWrapper.pas',
   UToolButtonEx in 'UToolButtonEx.pas',
   UTVCheckBoxes in 'UTVCheckBoxes.pas',
+  UUnicodeHelper in 'UUnicodeHelper.pas',
   UUniqueID in 'UUniqueID.pas',
   UUnitsChkListMgr in 'UUnitsChkListMgr.pas',
   UUpdateMgr in 'UUpdateMgr.pas',
