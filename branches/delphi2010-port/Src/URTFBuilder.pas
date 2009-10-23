@@ -306,7 +306,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows,
+  SysUtils, Classes {for inlining}, Windows,
   // Project
   UExceptions, ULocales, URTFUtils, UUtils;
 

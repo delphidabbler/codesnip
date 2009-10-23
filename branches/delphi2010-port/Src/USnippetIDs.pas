@@ -237,7 +237,7 @@ implementation
 
 
 uses
-  SysUtils, Windows {for inlining};
+  SysUtils, Classes {for inlining}, Windows {for inlining};
 
 
 { TSnippetID }

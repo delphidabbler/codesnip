@@ -135,7 +135,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils;
+  SysUtils, Classes {for inlining};
 
 
 { TOverviewTreeSectionState }
