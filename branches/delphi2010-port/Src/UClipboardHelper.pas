@@ -40,6 +40,8 @@ interface
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   UExceptions;
 
@@ -59,13 +61,28 @@ type
     procedure Close;
       {Closes clipboard. Calls must be matched with calls to Open.
       }
-    procedure Add(const Fmt: Word; const Text: string);
-      {Adds text to the clipboard as a specified format. Clipboard must be open
+    procedure Add(const Fmt: Word; const Data; const DataSize: Integer);
+      overload;
+      {Adds data to the clipboard as a specified format. Clipboard must be open
       before calling this method. Call repeatedly with different formats and
-      text to add multiple formats to clipboard.
+      data to add multiple formats to clipboard.
         @param Fmt [in] Clipboard format.
-        @param Text [in] Text to be added to clipboard.
+        @param Data [in] Data to be added to clipboard.
+        @param Datasize [in] Size of data to be added to clipboard.
       }
+    procedure Add(const Fmt: Word; const Str: string); overload;
+      {Adds a string, with terminating #0 character to clipboard in a specified
+      format.
+        @param Fmt [in] Clipboard format.
+        @param Str [in] String to be added to clipboard.
+      }
+    {$IFDEF UNICODE}
+    procedure Add(const Fmt: Word; const Bytes: TBytes); overload;
+      {Adds an array of bytes to the clipboard in a specified format.
+        @param Fmt [in] Clipboard format.
+        @param Bytes [in] Array of bytes to be added to clipboard.
+      }
+    {$ENDIF}
   end;
 
   {
@@ -77,8 +94,9 @@ type
 
 var
   // Global vars that provide clipboard formats: assigned in initialization
-  CF_TEXT: Word;    // plain text clipboard format
-  CF_RTF: Word;     // rich text clipboard formats
+  CF_TEXT: Word;        // plain text clipboard format
+  CF_UNICODETEXT: Word; // unicode text clipboard format
+  CF_RTF: Word;         // rich text clipboard formats
 
 
 implementation
@@ -91,24 +109,24 @@ uses
 
 { TClipboardHelper }
 
-procedure TClipboardHelper.Add(const Fmt: Word; const Text: string);
-  {Adds text to the clipboard as a specified format. Clipboard must be open
-  before calling this method. Call repeatedly with different formats and text
+procedure TClipboardHelper.Add(const Fmt: Word; const Data;
+  const DataSize: Integer);
+  {Adds data to the clipboard as a specified format. Clipboard must be open
+  before calling this method. Call repeatedly with different formats and data
   to add multiple formats to clipboard.
     @param Fmt [in] Clipboard format.
-    @param Text [in] Text to be added to clipboard.
+    @param Data [in] Data to be added to clipboard.
+    @param Datasize [in] Size of data to be added to clipboard.
   }
 var
   GH: HGLOBAL;    // global memory handle for clipboard data block
   Ptr: Pointer;   // pointer to buffer used to pass data to clipboard
-  Size: Integer;  // size of data to store in clipboard
 resourcestring
   sCantAlloc = 'Can''t allocate memory block for clipboard format %0.8X';
   sCantGetPtr = 'Can''t get pointer to memory block for clipboard format %0.8X';
 begin
-  // Allocate buffer to store text put on clipboard: allow for terminating #0
-  Size := Length(Text) + 1;
-  GH := GlobalAlloc(GMEM_MOVEABLE or GMEM_DDESHARE, Size);
+  // Allocate buffer to store data to on clipboard
+  GH := GlobalAlloc(GMEM_MOVEABLE or GMEM_DDESHARE, DataSize);
   if GH = 0 then
     raise EClipboard.CreateFmt(sCantAlloc, [Fmt]);
   // Lock block to get pointer: raise exception & free mem if can't do so
@@ -120,13 +138,34 @@ begin
   end;
   // Copy string to clipboard memory block
   try
-    Move(PChar(Text)^, Ptr^, Size); // this copies string + terminating #0
+    Move(Data, Ptr^, DataSize); // this copies data + terminating #0
     Clipboard.SetAsHandle(Fmt, GH);
   finally
     // Unlock block - don't free mem since clipboard now owns it
     GlobalUnlock(GH);
   end;
 end;
+
+procedure TClipboardHelper.Add(const Fmt: Word; const Str: string);
+  {Adds a string, with terminating #0 character to clipboard in a specified
+  format.
+    @param Fmt [in] Clipboard format.
+    @param Str [in] String to be added to clipboard.
+  }
+begin
+  Add(Fmt, Pointer(Str)^, SizeOf(Char) * (Length(Str) + 1));
+end;
+
+{$IFDEF UNICODE}
+procedure TClipboardHelper.Add(const Fmt: Word; const Bytes: TBytes);
+  {Adds an array of bytes to the clipboard in a specified format.
+    @param Fmt [in] Clipboard format.
+    @param Bytes [in] Array of bytes to be added to clipboard.
+  }
+begin
+  Add(Fmt, Pointer(Bytes)^, Length(Bytes));
+end;
+{$ENDIF}
 
 procedure TClipboardHelper.Close;
   {Closes clipboard. Calls must be matched with calls to Open.
@@ -142,13 +181,12 @@ begin
   Clipboard.Open;
 end;
 
-
 initialization
 
 // Set clipboard format identifiers
 CF_TEXT := Windows.CF_TEXT;
+CF_UNICODETEXT := Windows.CF_UNICODETEXT;
 CF_RTF := Windows.RegisterClipboardFormat(RichEdit.CF_RTF);
-
 
 end.
 
