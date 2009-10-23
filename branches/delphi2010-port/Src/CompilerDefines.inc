@@ -44,6 +44,10 @@
     When not defined the program needs to provide the correct Vista
     compatibility.
 
+  SupportsUseLatestCommonDialogs
+    Defined for compilers that support the UseLatestCommonDialogs global
+    variable that is used to enable or disable Vista style common dialogs.
+
   AltBugFixNeeded
     Defined for compilers that exhibit the Alt Key Bug (see Embarcadero Quality
     Central as bug report #37403) and need the program to provide a fix.
@@ -58,6 +62,7 @@
 {$UNDEF SupportsMainFormOnTaskBar}
 {$DEFINE AltBugFixNeeded}
 {$UNDEF ThreadResumeDeprecated}
+{$UNDEF SupportsUseLatestCommonDialogs}
 
 {$IFDEF CONDITIONALEXPRESSIONS}
   {$IF CompilerVersion >= 18.0} // Delphi 2006
@@ -65,6 +70,7 @@
   {$IFEND}
   {$IF CompilerVersion >= 18.5} // Delphi 2007
     {$DEFINE SupportsMainFormOnTaskBar}
+    {$DEFINE SupportsUseLatestCommonDialogs}
     {$UNDEF AltBugFixNeeded}
   {$IFEND}
   {$IF CompilerVersion >= 21.0} // Delphi 2010
