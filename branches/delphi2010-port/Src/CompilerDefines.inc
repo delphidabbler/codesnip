@@ -47,6 +47,9 @@
   AltBugFixNeeded
     Defined for compilers that exhibit the Alt Key Bug (see Embarcadero Quality
     Central as bug report #37403) and need the program to provide a fix.
+
+  ThreadResumeDeprecated
+    Defined for compilers where TThread.Resume is a deprecated method.
  }
 
 
@@ -54,6 +57,7 @@
 
 {$UNDEF SupportsMainFormOnTaskBar}
 {$DEFINE AltBugFixNeeded}
+{$UNDEF ThreadResumeDeprecated}
 
 {$IFDEF CONDITIONALEXPRESSIONS}
   {$IF CompilerVersion >= 18.0} // Delphi 2006
@@ -62,6 +66,9 @@
   {$IF CompilerVersion >= 18.5} // Delphi 2007
     {$DEFINE SupportsMainFormOnTaskBar}
     {$UNDEF AltBugFixNeeded}
+  {$IFEND}
+  {$IF CompilerVersion >= 21.0} // Delphi 2010
+    {$DEFINE ThreadResumeDeprecated}
   {$IFEND}
 {$ENDIF}
 
