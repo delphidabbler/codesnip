@@ -21,6 +21,7 @@
 //     13-Sep-99  mf  Reworked the entire unit                                        RFC 1321
 //     17-Sep-99  mf  Reworked the "Test Driver" project                              RFC 1321
 //     19-Sep-99  mf  Release of sources for MD5 unit and "Test Driver" project       RFC 1321
+//     23-Oct-09  pj  Reworked code that assumed SizeOf(Char) = 1 for Delphi 2009...and changed string types to AnsiString
 //
 // -----------------------------------------------------------------------------------------------
 //                   The latest release of md5.pas will always be available from
@@ -40,7 +41,7 @@ INTERFACE
 // -----------------------------------------------------------------------------------------------
 
 uses
-	Windows;
+	SysUtils, Windows;
 
 type
 	MD5Count = array[0..1] of DWORD;
@@ -56,12 +57,12 @@ type
 	end;
 
 procedure MD5Init(var Context: MD5Context);
-procedure MD5Update(var Context: MD5Context; Input: pChar; Length: longword);
+procedure MD5Update(var Context: MD5Context; Input: PByteArray; Length: longword);
 procedure MD5Final(var Context: MD5Context; var Digest: MD5Digest);
 
-function MD5String(M: string): MD5Digest;
+function MD5String(M: AnsiString): MD5Digest;
 function MD5File(N: string): MD5Digest;
-function MD5Print(D: MD5Digest): string;
+function MD5Print(D: MD5Digest): AnsiString;
 
 function MD5Match(D1, D2: MD5Digest): boolean;
 
@@ -278,7 +279,7 @@ begin
 end;
 
 // Update given Context to include Length bytes of Input
-procedure MD5Update(var Context: MD5Context; Input: pChar; Length: longword);
+procedure MD5Update(var Context: MD5Context; Input: PByteArray; Length: longword);
 var
 	Index: longword;
 	PartLen: longword;
@@ -323,12 +324,12 @@ end;
 // -----------------------------------------------------------------------------------------------
 
 // Create digest of given Message
-function MD5String(M: string): MD5Digest;
+function MD5String(M: AnsiString): MD5Digest;
 var
 	Context: MD5Context;
 begin
 	MD5Init(Context);
-	MD5Update(Context, pChar(M), length(M));
+	MD5Update(Context, PByteArray(M), Length(M));
 	MD5Final(Context, Result);
 end;
 
@@ -362,11 +363,11 @@ begin
 end;
 
 // Create hex representation of given Digest
-function MD5Print(D: MD5Digest): string;
+function MD5Print(D: MD5Digest): AnsiString;
 var
 	I: byte;
 const
-	Digits: array[0..15] of char =
+	Digits: array[0..15] of AnsiChar =
 		('0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f');
 begin
 	Result := '';
