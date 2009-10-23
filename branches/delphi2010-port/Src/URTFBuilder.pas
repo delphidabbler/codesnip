@@ -308,7 +308,7 @@ uses
   // Delphi
   SysUtils, Windows,
   // Project
-  UExceptions, URTFUtils, UUtils;
+  UExceptions, ULocales, URTFUtils, UUtils;
 
 
 { TRTFBuilder }
@@ -399,9 +399,9 @@ function TRTFBuilder.DocHeader: string;
 begin
   Result := RTFControl(rcRTF, cRTFVersion)
     + RTFControl(rcAnsi)
-    + RTFControl(rcAnsiCodePage, cDefCodePage)
+    + RTFControl(rcAnsiCodePage, DefaultAnsiCodePage)
     + RTFControl(rcDefFontNum, DefaultFontIdx)
-    + RTFControl(rcDefLanguage, cDefLanguage)
+    + RTFControl(rcDefLanguage, DefaultLanguageID)
     + fFontTable.AsString
     + fColourTable.AsString
     + fDocProperties.AsString

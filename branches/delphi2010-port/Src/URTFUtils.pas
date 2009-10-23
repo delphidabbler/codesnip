@@ -47,8 +47,6 @@ uses
 const
   // Constants relating to RTF
   cRTFVersion = 1;          // RTF version
-  cDefCodePage = 1252;      // default code paeg
-  cDefLanguage = 1033;      // default language
 
 
 type
