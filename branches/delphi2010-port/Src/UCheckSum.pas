@@ -43,7 +43,7 @@ interface
 
 uses
   // Delphi
-  Classes,
+  SysUtils, Classes,
   // Project
   UBaseObjects;
 
@@ -56,27 +56,34 @@ type
   }
   TCheckSum = class(TNoConstructObject)
   public
-    class function Calculate(const Stm: TStream): string; overload;
+    class function Calculate(const Stm: TStream): AnsiString; overload;
       {Calculates MD5 checksum of whole contents of a stream. Position in stream
       is preserved.
         @param Stm [in] Stream to check.
-        @return Checksum as string.
+        @return Checksum as Ansi string.
       }
-    class function Calculate(const S: string): string; overload;
-      {Calculates MD5 checksum of a string.
+    class function Calculate(const S: AnsiString): AnsiString; overload;
+      {Calculates MD5 checksum of an Ansi string.
         @param S [in] String to check.
-        @return Checksum as string.
+        @return Checksum as Ansi string.
       }
-    class function Compare(const Stm: TStream; const CheckSum: string): Boolean;
-      overload;
+    {$IFDEF UNICODE}
+    class function Calculate(const Bytes: TBytes): AnsiString; overload;
+      {Calculates MD5 checksum of a byte array.
+        @param Bytes [in] Byte array to check.
+        @return Checksum as Ansi string.
+      }
+    {$ENDIF}
+    class function Compare(const Stm: TStream;
+      const CheckSum: AnsiString): Boolean; overload;
       {Compares MD5 checksum of content of a stream against a known checksum.
         @param Stm [in] Stream whose checksum is to be compared.
         @param CheckSum [in] Known checksum string to compare to stream's
           checksum.
         @return True if stream's checksum is same as CheckSum, False otherwise.
       }
-    class function Compare(const S, CheckSum: string): Boolean; overload;
-      {Compares MD5 checksum of a string against a known checksum.
+    class function Compare(const S, CheckSum: AnsiString): Boolean; overload;
+      {Compares MD5 checksum of an Ansi string against a known checksum.
         @param S [in] String whose checksum is to be compared.
         @param CheckSum [in] Known checksum string to compare to string's
           checksum.
@@ -89,19 +96,17 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // 3rd Party
-  MD5;  // must be on search path
+  MD5;
 
 
 { TCheckSum }
 
-class function TCheckSum.Calculate(const Stm: TStream): string;
+class function TCheckSum.Calculate(const Stm: TStream): AnsiString;
   {Calculates MD5 checksum of whole contents of a stream. Position in stream is
   preserved.
     @param Stm [in] Stream to check.
-    @return Checksum as string.
+    @return Checksum as Ansi string.
   }
 var
   StmCopy: TMemoryStream;     // copy of stream in memory
@@ -126,17 +131,34 @@ begin
   end;
 end;
 
-class function TCheckSum.Calculate(const S: string): string;
-  {Calculates MD5 checksum of a string.
+class function TCheckSum.Calculate(const S: AnsiString): AnsiString;
+  {Calculates MD5 checksum of an Ansi string.
     @param S [in] String to check.
-    @return Checksum as string.
+    @return Checksum as Ansi string.
   }
 begin
   Result := MD5Print(MD5String(S));
 end;
 
-class function TCheckSum.Compare(const S, CheckSum: string): Boolean;
-  {Compares MD5 checksum of a string against a known checksum.
+{$IFDEF UNICODE}
+class function TCheckSum.Calculate(const Bytes: TBytes): AnsiString;
+  {Calculates MD5 checksum of a byte array.
+    @param Bytes [in] Byte array to check.
+    @return Checksum as Ansi string.
+  }
+var
+  Context: MD5Context;        // MD5 context used in calculating checksum
+  Digest: MD5Digest;          // MD5 digest stores checksum
+begin
+  MD5Init(Context);
+  MD5Update(Context, PByteArray(Bytes), Length(Bytes));
+  MD5Final(Context, Digest);
+  Result := MD5Print(Digest);
+end;
+{$ENDIF}
+
+class function TCheckSum.Compare(const S, CheckSum: AnsiString): Boolean;
+  {Compares MD5 checksum of an Ansi string against a known checksum.
     @param S [in] String whose checksum is to be compared.
     @param CheckSum [in] Known checksum string to compare to string's checksum.
     @return True if string's checksum is same as CheckSum, False otherwise.
@@ -146,7 +168,7 @@ begin
 end;
 
 class function TCheckSum.Compare(const Stm: TStream;
-  const CheckSum: string): Boolean;
+  const CheckSum: AnsiString): Boolean;
   {Compares MD5 checksum of content of a stream against a known checksum.
     @param Stm [in] Stream whose checksum is to be compared.
     @param CheckSum [in] Known checksum string to compare to stream's checksum.
