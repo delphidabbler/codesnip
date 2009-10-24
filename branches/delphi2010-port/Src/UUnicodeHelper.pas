@@ -72,6 +72,7 @@ function BytesOf(const AString: string): TBytes;
 {$ENDIF}
 
 function Latin1BytesOf(const AString: string): TBytes;
+function ASCIIBytesOf(const AString: string): TBytes;
 
 {$IFDEF UNICODE}
 type
@@ -111,6 +112,15 @@ begin
   Result := BytesOf(AString);
 end;
 {$ENDIF}
+
+function ASCIIBytesOf(const AString: string): TBytes;
+begin
+  {$IFDEF UNICODE}
+  Result := TEncoding.ASCII.GetBytes(AString);
+  {$ELSE}
+  Result := BytesOf(AString);
+  {$ENDIF}
+end;
 
 { TStringStreamEx }
 

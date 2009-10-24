@@ -146,7 +146,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UCheckSum, USettings, USystemID, USystemInfo, UVersionInfo;
+  UCheckSum, USettings, USystemID, USystemInfo, UUnicodeHelper, UVersionInfo;
 
 
 { TAppInfo }
@@ -189,8 +189,11 @@ class function TAppInfo.GenerateKey: string;
   {Generates unique program key for application in deterministic way.
     @return Required key.
   }
+var
+  SysID: TBytes;  // byte array containing system id string
 begin
-  Result := UpperCase(TCheckSum.Calculate(USystemID.SystemIDStr));
+  SysID := ASCIIBytesOf(USystemID.SystemIDStr);
+  Result := UpperCase(string(TCheckSum.Calculate(SysID)));
 end;
 
 class function TAppInfo.HelpFileName: string;
