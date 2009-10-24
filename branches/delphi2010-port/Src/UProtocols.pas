@@ -222,6 +222,8 @@ implementation
 
 
 uses
+  // Delphi
+  Classes {for inlining},
   // Project
   UGC;
 
