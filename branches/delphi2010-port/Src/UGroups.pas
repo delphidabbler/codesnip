@@ -311,7 +311,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining};
+  SysUtils, Windows {for inlining},
+  // Project
+  UUnicodeHelper;
 
 
 { TGrouping }
@@ -525,8 +527,12 @@ procedure TAlphaGrouping.Populate;
     }
   begin
     Assert(Name <> '', ClassName + '.Populate:FirstCharOfName: Name is empty');
-    Result := UpCase(Name[1]);
-    Assert(Result in ['_', 'A'..'Z'],
+    { TODO -cNote : Unicode fix: Note these changes }
+    Result := ToUpperCase(Name[1]);
+//    Result := UpCase(Name[1]);
+    // must be 'A'..'Z' (not just any letter) or '_'
+    Assert(IsCharInSet(Result, ['A'..'Z', '_']),
+//    Assert(Result in ['_', 'A'..'Z'],
       ClassName +
         '.Populate:FirstCharOfName: Name must begin with A..Z or underscore');
   end;

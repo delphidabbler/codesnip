@@ -111,7 +111,7 @@ uses
   SysUtils, Windows,
   // Project
   UConsts, UExceptions, UFontHelper, UMessageBox, USettings, UStructs,
-  USystemInfo, UUtils;
+  USystemInfo, UUnicodeHelper, UUtils;
 
 
 {$R *.dfm}
@@ -177,12 +177,19 @@ procedure TProxyServerDlg.edIPAddressKeyPress(Sender: TObject; var Key: Char);
     @param Sender [in] Not used.
     @param Key [in/out] Key pressed. Set to #0 if key is not permitted.
   }
+const
+  cDot = '.';   // dot separator (not decimal point)
 begin
-  if not (Key in ['0'..'9', '.', BACKSPACE]) then
+  { TODO -cImprovement : Disallow dot at first position in text box }
+  { TODO -cNote : Unicode fix: Note this change }
+  if not IsDigit(Key) and (Key <> cDot) and (Key <> BACKSPACE) then
+//  if not (Key in ['0'..'9', '.', BACKSPACE]) then
     Key := #0;
-  if (Key = '.') and (CountDelims(edIPAddress.Text, '.') = 3) then
+  if (Key = cDot) and (CountDelims(edIPAddress.Text, cDot) = 3) then
     Key := #0;
   if Key = #0 then
+    { TODO -cImprovement : Standardise this with other beeps - create UUtils
+      procedure? See also FrPrintingPrefs }
     MessageBeep(Cardinal(-1));
 end;
 
@@ -192,9 +199,13 @@ procedure TProxyServerDlg.edPortKeyPress(Sender: TObject; var Key: Char);
     @param Key [in/out] Key pressed. Set to #0 if key is not permitted.
   }
 begin
-  if not (Key in ['0'..'9', BACKSPACE]) then
+  { TODO -cNote : Unicode fix: Note this change }
+  if not IsDigit(Key) and (Key <> BACKSPACE) then
+//  if not (Key in ['0'..'9', BACKSPACE]) then
     Key := #0;
   if Key = #0 then
+    { TODO -cImprovement : Standardise this with other beeps - create UUtils
+      procedure? See also FrPrintingPrefs }
     MessageBeep(Cardinal(-1));
 end;
 

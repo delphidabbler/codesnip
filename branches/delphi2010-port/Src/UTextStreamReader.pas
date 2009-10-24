@@ -93,6 +93,11 @@ type
 implementation
 
 
+uses
+  // Project
+  UUnicodeHelper;
+
+
 { TTextStreamReader }
 
 constructor TTextStreamReader.Create(const Stm: TStream);
@@ -118,7 +123,9 @@ begin
   begin
     // We are within buffer: get char at current position
     Result := fBuffer[fIdx];
-    if Result in [CR, LF] then
+    { TODO -cNote : Unicode fix: Note this change }
+    if IsCharInSet(Result, [CR, LF]) then
+//    if Result in [CR, LF] then
       // Char is one of EOL chars => return EOL
       Result := EOL;
   end

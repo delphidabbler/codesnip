@@ -47,7 +47,7 @@ uses
   // Delphi
   SysUtils, StrUtils, ExtActns,
   // Project
-  UBrowseProtocol, UProtocols, UUtils;
+  UBrowseProtocol, UProtocols, UUnicodeHelper, UUtils;
 
 
 {
@@ -189,6 +189,7 @@ class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
     @return True if URL's protocol is file:, False if not.
   }
 
+  { TODO -cRefactor : Move these private functions to UUtils }
   // ---------------------------------------------------------------------------
   function IsValidAbsoluteFileName(const FileName: string): Boolean;
     {Checks if a filename is a valid, complete, absolute local file path.
@@ -197,7 +198,11 @@ class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
     }
   begin
     Result := (Length(FileName) > 3) and
-      (UpCase(FileName[1]) in ['A'..'Z']) and
+      { TODO -cNote : UnicodeFix: note this change }
+      { TODO -cRefactor : Replace set test with new UUtils.IsValidDriveLetter
+        function }
+      IsCharInSet(FileName[1], ['A'..'Z', 'a'..'z']) and
+//      (UpCase(FileName[1]) in ['A'..'Z']) and
       (FileName[2] = ':') and (FileName[3] = '\');
   end;
 

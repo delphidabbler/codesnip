@@ -308,7 +308,7 @@ uses
   // Delphi
   SysUtils, Classes {for inlining}, Windows,
   // Project
-  UExceptions, ULocales, URTFUtils, UUtils;
+  UExceptions, ULocales, URTFUtils, UUnicodeHelper, UUtils;
 
 
 { TRTFBuilder }
@@ -318,7 +318,9 @@ procedure TRTFBuilder.AddControl(const Ctrl: string);
     @param Ctrl [in] Text representation of control to be added.
   }
 begin
-  Assert((Ctrl <> '') and not (Ctrl[Length(Ctrl)] in [' ', LF, CR, TAB]),
+  { TODO -cNote : Unicode fix: Note this change }
+  Assert((Ctrl <> '') and not IsWhiteSpace(Ctrl[Length(Ctrl)]),
+//  Assert((Ctrl <> '') and not (Ctrl[Length(Ctrl)] in [' ', LF, CR, TAB]),
     ClassName + '.AddControls: Ctrls ends in whitespace');
   AppendBody(Ctrl);
   fInControls := True;

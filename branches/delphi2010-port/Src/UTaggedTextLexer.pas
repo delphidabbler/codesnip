@@ -47,14 +47,17 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UExceptions, UStacks;
+  UConsts, UExceptions, UStacks, UUnicodeHelper;
 
 
 const
   // Character constants made public
   cSingleQuote = '''';
   cDoubleQuote = '"';
-  cWhiteSpace = [#0..#32];
+  { TODO -cNote : Unicode fix: Note changes to whitespace const to echo
+    Character unit definition, but using consts}
+//  cWhiteSpace = [#0..#32];
+  cWhiteSpace = [' ', TAB, LF, VTAB, FF, CR];
   cQuotes = [cSingleQuote, cDoubleQuote];
 
 
@@ -765,12 +768,16 @@ begin
   NextChPos := 1;
   // Skip any white space before tag
   while (NextChPos <= Length(TagStr))
-    and (TagStr[NextChPos] in cWhiteSpace) do
+    { TODO -cNote : Unicode fix: Note this change }
+    and IsWhiteSpace(TagStr[NextChPos]) do
+//    and (TagStr[NextChPos] in cWhiteSpace) do
     Inc(NextChPos);
   // Now at start of tag name: read it up to next space or end of tag str
   StartPos := NextChPos;
   while (NextChPos <= Length(TagStr))
-    and not (TagStr[NextChPos] in cWhiteSpace) do
+    { TODO -cNote : Unicode fix: Note this change }
+    and not IsWhiteSpace(TagStr[NextChPos]) do
+//    and not (TagStr[NextChPos] in cWhiteSpace) do
     Inc(NextChPos);
   // Copy the name from the string
   Result := MidStr(TagStr, StartPos, NextChPos - StartPos);
@@ -797,9 +804,14 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
     }
   var
     StartPos: Integer;        // start position of name or value in tag string
-    ValDelims: set of Char;   // characters used to delimit values (e.g. quotes)
+    { TODO -cNote : Unicode fix: Note this change }
+//    ValDelims: set of Char;   // characters used to delimit values (e.g. quotes)
+    ValDelims: TSysCharSet;   // characters used to delimit values (e.g. quotes)
     Len: Integer;             // length of whole tag
   begin
+    { TODO -cRefactor: Change implementation and try to loose ValDelims (and
+      then cWhiteSpace). Consider insisting that params are quoted (think they
+      are in this program }
     // Set name & value to '' in case not found
     Name := '';
     Value := '';
@@ -808,7 +820,9 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
 
     // Check to see if we have any params
     // skip white space
-    while (NextChPos <= Len) and (TagStr[NextChPos] in cWhiteSpace) do
+    { TODO -cNote : Unicode fix: Note this change }
+//    while (NextChPos <= Len) and (TagStr[NextChPos] in cWhiteSpace) do
+    while (NextChPos <= Len) and IsWhiteSpace(TagStr[NextChPos]) do
       Inc(NextChPos);
     // check if we've reached end of tag and get out if so: no params
     if NextChPos > Len then
@@ -820,11 +834,15 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
     // We have attribute: get name
     StartPos := NextChPos;
     while (NextChPos <= Len)
-      and not (TagStr[NextChPos] in cWhiteSpace + ['=']) do
+      { TODO -cNote : Unicode fix: Note this change }
+//      and not (TagStr[NextChPos] in cWhiteSpace + ['=']) do
+      and not IsWhiteSpace(TagStr[NextChPos]) and (TagStr[NextChPos] <> '=') do
       Inc(NextChPos);
     Name := MidStr(TagStr, StartPos, NextChPos - StartPos);
     // skip any white space following name
-    while (NextChPos <= Len) and (TagStr[NextChPos] in cWhiteSpace) do
+    { TODO -cNote : Unicode fix: Note this change }
+//    while (NextChPos <= Len) and (TagStr[NextChPos] in cWhiteSpace) do
+    while (NextChPos <= Len) and IsWhiteSpace(TagStr[NextChPos]) do
       Inc(NextChPos);
 
     // Check for value
@@ -834,13 +852,17 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
       // skip '=' symbol
       Inc(NextChPos);
       // skip white space between '=' and value
-      while (NextChPos <= Len) and (TagStr[NextChPos] in cWhiteSpace) do
+      { TODO -cNote : Unicode fix: Note this change }
+//      while (NextChPos <= Len) and (TagStr[NextChPos] in cWhiteSpace) do
+      while (NextChPos <= Len) and IsWhiteSpace(TagStr[NextChPos]) do
         Inc(NextChPos);
       // if NextChPos > Len the there is no value: do nothing
       if NextChPos <= Len then
       begin
         // check to see if we have quoted param or not
-        if TagStr[NextChPos] in cQuotes then
+        { TODO -cNote : Unicode fix: Note this change }
+        if IsCharInSet(TagStr[NextChPos], cQuotes) then
+//        if TagStr[NextChPos] in cQuotes then
         begin
           // value is quoted: record quote as delimter and skip it
           ValDelims := [TagStr[NextChPos]];
@@ -851,7 +873,10 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
           ValDelims := cWhiteSpace;
         // now get the value: it is between current pos and a delimter
         StartPos := NextChPos;
-        while (NextChPos <= Len) and not (TagStr[NextChPos] in ValDelims) do
+        { TODO -cNote : Unicode fix: Note this change }
+//        while (NextChPos <= Len) and not (TagStr[NextChPos] in ValDelims) do
+        while (NextChPos <= Len)
+          and not IsCharInSet(TagStr[NextChPos], ValDelims) do
           Inc(NextChPos);
         // get the value: allows for closing quotes being missing
         Value := MidStr(TagStr, StartPos, NextChPos - StartPos);
@@ -863,7 +888,9 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
         // if value was quoted, skip over any quote
         if (cQuotes * ValDelims <> [])
           and (NextChPos <= Len)
-          and (TagStr[NextChPos] in cQuotes) then
+          { TODO -cNote : Unicode fix: Note this change }
+//          and (TagStr[NextChPos] in cQuotes) then
+          and IsCharInSet(TagStr[NextChPos], cQuotes) then
           Inc(NextChPos);
       end;
     end;

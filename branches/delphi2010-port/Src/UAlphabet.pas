@@ -127,7 +127,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils;
+  SysUtils,
+  // Project
+  UUnicodeHelper;
 
 type
 
@@ -183,7 +185,9 @@ constructor TLetterImpl.Create(const Ch: Char);
     @param Ch [in] Letter to be encapsulated. Must be A..Z or underscore.
   }
 begin
-  Assert(Ch in ['_', 'A'..'Z'],
+  { TODO -cNote : Unicode fix: Note this change }
+  Assert(IsCharInSet(Ch, ['A'..'Z', '_']),  // 'A'..'Z' (not any letter) or '_'
+//  Assert(Ch in ['_', 'A'..'Z'],
     ClassName + '.Create: Ch must be A..Z or underscore.');
   inherited InternalCreate;
   fLetter := Ch;
@@ -247,8 +251,12 @@ function TAlphabet.GetLetter(Ch: Char): TLetter;
     @return Required letter object.
   }
 begin
-  Assert(UpCase(Ch) in ['_', 'A'..'Z'],
+  { TODO -cNote : Unicode fix: Note this change }
+  Assert(IsCharInSet(ToUpperCase(Ch), ['_', 'A'..'Z']),
+//  Assert(UpCase(Ch) in ['_', 'A'..'Z'],
     ClassName + '.GetLetter: Ch must be A..Z or underscore');
+  { TODO -cProposal : Check if this should be a search for Ord(ToUpperCase(Ch))
+    rather than Ord(Ch) }
   Result := fLetters.FindObject(Ord(Ch)) as TLetter;
 end;
 

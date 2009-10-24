@@ -354,7 +354,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UActiveText, UUtils;
+  UActiveText, UUnicodeHelper, UUtils;
 
 
 type
@@ -933,8 +933,9 @@ function TTextSearch.Match(const Routine: TRoutine): Boolean;
       '{', '}', '[', ']', ':', ';', '~', '<', '>', ',', '.',
       '?', '/', '|', '\', ''''
     ];
-    // Characters classed as white space
-    cWhiteSpace = [#0..#32, #127];
+    { TODO -cNote : Unicode fix: Note this change }
+//    // Characters classed as white space
+//    cWhiteSpace = [#0..#32, #127];
   begin
     // Create word lists
     Words := TStringList.Create;
@@ -946,7 +947,9 @@ function TTextSearch.Match(const Routine: TRoutine): Boolean;
       // Convert all white space characters to spaces
       for SrcIdx := 1 to Length(RawText) do
       begin
-        if RawText[SrcIdx] in cWhiteSpace then
+        { TODO -cNote : Unicode fix: Note this change (restricted white space) }
+        if IsWhiteSpace(RawText[SrcIdx]) then
+//        if RawText[SrcIdx] in cWhiteSpace then
           SpacedText[SrcIdx] := ' '
         else
           SpacedText[SrcIdx] := RawText[SrcIdx]
@@ -965,7 +968,9 @@ function TTextSearch.Match(const Routine: TRoutine): Boolean;
           Delete(Word, Length(Word), 1);
         Words[WordIdx] := Word;
         // add any word ending in punctuation in non-punctuated state
-        while (Word <> '') and (Word[Length(Word)] in cWordEnders) do
+        { TODO -cNote : Unicode fix: Note this change }
+        while (Word <> '') and IsCharInSet(Word[Length(Word)], cWordEnders) do
+//        while (Word <> '') and (Word[Length(Word)] in cWordEnders) do
         begin
           // we add any variations to Extra words list
           Delete(Word, Length(Word), 1);

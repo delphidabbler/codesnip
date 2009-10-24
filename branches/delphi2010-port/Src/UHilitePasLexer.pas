@@ -179,7 +179,7 @@ uses
   // Delphi
   SysUtils, Windows {for inlining},
   // Project
-  UConsts, UExceptions;
+  UConsts, UExceptions, UUnicodeHelper;
 
 
 const
@@ -194,10 +194,12 @@ const
   cCloseParen       = ')';
 
   // Character sets
-  cDigits           = ['0'..'9'];                                // valid digits
+//  cDigits           = ['0'..'9'];                                // valid digits
+  { TODO -cImprovement : Add helper routines that detect start and internal
+    ident chars - Unicode Delphis have extended this. }
   cIdentStartChars  = ['A'..'Z', 'a'..'z', '_']; // chars that start identifiers
-  cIdentChars       = cIdentStartChars + cDigits;   // interior identifier chars
-  cHexDigits        = cDigits + ['A'..'F', 'a'..'f'];        // valid hex digits
+  cIdentChars       = cIdentStartChars + ['0'..'9'];// interior identifier chars
+//  cHexDigits        = cDigits + ['A'..'F', 'a'..'f'];        // valid hex digits
   cExponents        = ['E', 'e'];                    // exponents used in floats
   cUnaryPlusMinus   = ['+', '-'];                                 // unary signs
   cWhiteSpace       = [#0..#32] - [CR, LF, #0];     // whitespace read as spaces
@@ -509,13 +511,22 @@ begin
   if not fCommentState.InComment then
   begin
     // We are not in a multi-line comment: process normally
-    if fReader.Ch in cWhiteSpace then
+    { TODO -cNote : Unicode fix: Note these changes }
+//    if fReader.Ch in cWhiteSpace then
+//      Result := ParseWhiteSpace
+//    else if fReader.Ch in cIdentStartChars then
+//      Result := ParseIdent
+//    else if fReader.Ch in cSingleSyms then
+//      Result := ParseSymbol
+//    else if fReader.Ch in cDigits then
+//      Result := ParseNumber
+    if IsCharInSet(fReader.Ch, cWhiteSpace) then
       Result := ParseWhiteSpace
-    else if fReader.Ch in cIdentStartChars then
+    else if IsCharInSet(fReader.Ch, cIdentStartChars) then
       Result := ParseIdent
-    else if fReader.Ch in cSingleSyms then
+    else if IsCharInSet(fReader.Ch, cSingleSyms) then
       Result := ParseSymbol
-    else if fReader.Ch in cDigits then
+    else if IsDigit(fReader.Ch) then
       Result := ParseNumber
     else if fReader.Ch = TTextStreamReader.EOL then
       Result := ParseEOL
@@ -555,7 +566,9 @@ begin
     // now read hex digits
     ParseHex;
   end
-  else if fReader.Ch in cDigits then
+  { TODO -cNote : Unicode fix: Note this change }
+//  else if fReader.Ch in cDigits then
+  else if IsDigit(fReader.Ch) then
     // This is whole number: parse it
     ParseWholeNumber
   else
@@ -681,13 +694,16 @@ function THilitePasLexer.ParseHex: THilitePasToken;
 begin
   // Called with fTokenStr = '$' and fReader.Ch with char after '$'
   // Build string of hex digits
-  while fReader.Ch in cHexDigits do
+  { TODO -cNote : Unicode fix: Note these changes }
+//  while fReader.Ch in cHexDigits do
+  while IsHexDigit(fReader.Ch) do
   begin
     UpdateTokenStr;
     fReader.NextChar;
   end;
   // Check that we ended in a valid way: error if not
-  if not (fReader.Ch in cSeparators) then
+  if not IsCharInSet(fReader.Ch, cSeparators) then
+//  if not (fReader.Ch in cSeparators) then
     Result := tkError
   else
     Result := tkHex;
@@ -700,10 +716,13 @@ function THilitePasLexer.ParseIdent: THilitePasToken;
       tkIdentifier.
   }
 begin
-  Assert(fReader.Ch in cIdentStartChars,
+  { TODO -cNote : Unicode fix: Note these changes }
+  Assert(IsCharInSet(fReader.Ch, cIdentStartChars),
+//  Assert(fReader.Ch in cIdentStartChars,
     ClassName + '.ParseIdent: identifier starting character expected');
   // Build identifier in token string
-  while fReader.Ch in cIdentChars do
+  while IsCharInSet(fReader.Ch, cIdentChars) do
+//  while fReader.Ch in cIdentChars do
   begin
     UpdateTokenStr;
     fReader.NextChar;
@@ -726,7 +745,9 @@ var
   { TODO -oSelf -cNote : Unicode Fix: Changed TempCh from AnsiChar to Char }
   TempCh: Char; // temporary storage for a character read from input
 begin
-  Assert(fReader.Ch in cDigits, ClassName + '.ParseNumber: digit expected');
+  { TODO -cNote : Unicode fix: Note this change }
+//  Assert(fReader.Ch in cDigits, ClassName + '.ParseNumber: digit expected');
+  Assert(IsDigit(fReader.Ch), ClassName + '.ParseNumber: digit expected');
   // All numbers start with a whole number: read it
   ParseWholeNumber; // leaves current char as one immediately after number
   // Assume we have whole number and see if we can disprove it
@@ -738,7 +759,9 @@ begin
     // Store the decimal point then read ahead to see what next char is
     TempCh := fReader.Ch;
     fReader.NextChar;
-    if fReader.Ch in [cDecimalPoint, cCloseParen] then
+    { TODO -cNote : Unicode fix: Note this change }
+//    if fReader.Ch in [cDecimalPoint, cCloseParen] then
+    if IsCharInSet(fReader.Ch, [cDecimalPoint, cCloseParen]) then
     begin
       // decimal point was followed by '.' or ')' making valid two char symbols
       // .. and .) => we put back the read character and get out, leaving first
@@ -751,11 +774,15 @@ begin
     // If we have digits after decimal point read them into token str
     // Note: there may not necessarily be digits after '.' (e.g. 2. is a valid
     // Delphi float)
-    if fReader.Ch in cDigits then
+    { TODO -cNote : Unicode fix: Note this change }
+//    if fReader.Ch in cDigits then
+    if IsDigit(fReader.Ch) then
       ParseWholeNumber;
     Result := tkFloat;
   end;
-  if fReader.Ch in cExponents then
+  { TODO -cNote : Unicode fix: Note this change }
+  if IsCharInSet(fReader.Ch, cExponents) then
+//  if fReader.Ch in cExponents then
   begin
     // Next char is an exponent (e or E) that is present in numbers in
     // "scientific" notation. This can either follow whole number, follow
@@ -765,7 +792,9 @@ begin
     UpdateTokenStr;
     // Read chars after exponent (first may be unary + or -)
     fReader.NextChar;
-    if fReader.Ch in cUnaryPlusMinus then
+    { TODO -cNote : Unicode fix: Note this change }
+    if IsCharInSet(fReader.Ch, cUnaryPlusMinus) then
+//    if fReader.Ch in cUnaryPlusMinus then
     begin
       UpdateTokenStr;
       fReader.NextChar;
@@ -821,13 +850,17 @@ function THilitePasLexer.ParseSymbol: THilitePasToken;
 var
   AToken: THilitePasToken; // token represented by the symbol
 begin
-  Assert(fReader.Ch in cSingleSyms,
+  { TODO -cNote : Unicode fix: Note this change }
+  Assert(IsCharInSet(fReader.Ch, cSingleSyms),
+//  Assert(fReader.Ch in cSingleSyms,
     ClassName + '.ParseSymbol: symbol expected');
   // Add character that starts symbol to token string and read next char
   UpdateTokenStr;
   fReader.NextChar;
   // Check if char read is second char of a two char symbol and process if so
-  if fReader.Ch in cSingleSyms then
+  { TODO -cNote : Unicode fix: Note this change }
+//  if fReader.Ch in cSingleSyms then
+  if IsCharInSet(fReader.Ch, cSingleSyms) then
   begin
     if IsDoubleSym(fTokenStr + fReader.Ch) then
     begin
@@ -869,9 +902,13 @@ function THilitePasLexer.ParseWhiteSpace: THilitePasToken;
     @return White space token (tkWhiteSpace).
   }
 begin
-  Assert(fReader.Ch in cWhiteSpace,
+  { TODO -cNote : Unicode fix: Note this change }
+  Assert(IsCharInSet(fReader.Ch, cWhiteSpace),
+//  Assert(fReader.Ch in cWhiteSpace,
     ClassName + '.ParseWhiteSpace: current char not white space');
-  while fReader.Ch in cWhiteSpace do
+  { TODO -cNote : Unicode fix: Note this change }
+  while IsCharInSet(fReader.Ch, cWhiteSpace) do
+//  while fReader.Ch in cWhiteSpace do
   begin
     UpdateTokenStr;
     fReader.NextChar;
@@ -884,9 +921,12 @@ function THilitePasLexer.ParseWholeNumber: THilitePasToken;
     @return Whole number token (tkNumber).
   }
 begin
-  Assert(fReader.Ch in cDigits,
+  { TODO -cNote : Unicode fix: Note these changes }
+  Assert(IsDigit(fReader.Ch),
+//  Assert(fReader.Ch in cDigits,
     ClassName + '.ParseWholeNumber: current char not a digit');
-  while fReader.Ch in cDigits do
+//  while fReader.Ch in cDigits do
+  while IsDigit(fReader.Ch) do
   begin
     UpdateTokenStr;
     fReader.NextChar;

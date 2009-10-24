@@ -116,7 +116,7 @@ uses
   SysUtils, StrUtils, Windows, Graphics, Math, ComCtrls,
   // Project
   FmPreferencesDlg, IntfCommon, UConsts, UHiliteAttrs, UPrintInfo, URTFBuilder,
-  URTFUtils, USyntaxHiliters;
+  URTFUtils, USyntaxHiliters, UUnicodeHelper;
 
 
 {$R *.dfm}
@@ -328,11 +328,15 @@ begin
     if AnsiContainsStr((Sender as TEdit).Text, DecimalSeparator) then
       Key := #0;
   end
-  else if not (Key in [#8, '0'..'9']) then
+  { TODO -cNote : Unicode fix: Note this change }
+  else if not IsDigit(Key) and (Key <> BACKSPACE) then
+//  else if not (Key in [#8, '0'..'9']) then
     // Disallow any other characters other than backspace or digits
     Key := #0;
   if Key = #0 then
     // Beep because we disallowed key press
+    { TODO -cImprovement : Standardise this with other beeps - create UUtils
+      procedure? See also FmProxyServerDlg }
     MessageBeep(MB_ICONHAND);
 end;
 

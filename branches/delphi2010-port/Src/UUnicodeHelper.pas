@@ -82,7 +82,84 @@ type
   end;
 {$ENDIF}
 
+function IsLetter(C: Char): Boolean;
+function IsDigit(C: Char): Boolean;
+function IsHexDigit(C: Char): Boolean;
+function IsAlphaNumeric(C: Char): Boolean;
+function IsWhiteSpace(C: Char): Boolean;
+function IsCharInSet(C: Char; const CharSet: TSysCharSet): Boolean;
+function ToUpperCase(C: Char): Char;
+
 implementation
+
+{$IFDEF UNICODE}
+uses
+  // Delphi
+  Character;
+{$ENDIF}
+
+  {$IFDEF UNICODE}
+  {$ELSE}
+  {$ENDIF}
+
+function IsLetter(C: Char): Boolean;
+begin
+  {$IFDEF UNICODE}
+  Result := TCharacter.IsLetter(C);
+  {$ELSE}
+  Result := C in ['A'..'Z', 'a'..'z'];
+  {$ENDIF}
+end;
+
+function IsDigit(C: Char): Boolean;
+begin
+  {$IFDEF UNICODE}
+  Result := TCharacter.IsDigit(C);
+  {$ELSE}
+  Result := C in ['0'..'9'];
+  {$ENDIF}
+end;
+
+function IsHexDigit(C: Char): Boolean;
+begin
+  Result := IsCharInSet(C, ['A'..'F', 'a'..'f', '0'..'9']);
+end;
+
+function IsAlphaNumeric(C: Char): Boolean;
+begin
+  {$IFDEF UNICODE}
+  Result := TCharacter.IsLetterOrDigit(C);
+  {$ELSE}
+  Result := IsLetter(C) or IsDigit(C);
+  {$ENDIF}
+end;
+
+function IsWhiteSpace(C: Char): Boolean;
+begin
+  {$IFDEF UNICODE}
+  Result := TCharacter.IsWhiteSpace(C);
+  {$ELSE}
+  Result := (C = ' ') or ((C >= #$09) and (C <= #$0D))
+  {$ENDIF}
+end;
+
+function IsCharInSet(C: Char; const CharSet: TSysCharSet): Boolean;
+begin
+  {$IFDEF UNICODE}
+  Result := CharInSet(C, CharSet);
+  {$ELSE}
+  Result := C in CharSet;
+  {$ENDIF}
+end;
+
+function ToUpperCase(C: Char): Char;
+begin
+  {$IFDEF UNICODE}
+  Result := TCharacter.ToUpper(C);
+  {$ELSE}
+  Result := UpCase(C);
+  {$ENDIF}
+end;
 
 {$IFNDEF UNICODE}
 function BytesOf(const AString: string): TBytes;

@@ -248,7 +248,7 @@ uses
   // Delphi
   SysUtils, StrUtils, Windows, ShlObj, ActiveX, Messages,
   // Project
-  UConsts;
+  UConsts, UUnicodeHelper;
 
 
 const
@@ -414,7 +414,9 @@ function IsWhiteSpace(const Ch: Char): Boolean;
     @return True if character is white space, False if not.
   }
 begin
-  Result := AnsiPos(Ch, cWhiteSpaceChars) > 0;
+  { TODO -cNote : Unicode fix: Note this change }
+//  Result := AnsiPos(Ch, cWhiteSpaceChars) > 0;
+  Result := UUnicodeHelper.IsWhiteSpace(Ch);
 end;
 
 function CapitaliseWords(const S: string): string;
@@ -431,11 +433,15 @@ begin
   WantCapital := True;
   for Idx := 1 to Length(S) do
   begin
-    if Result[Idx] in ['a'..'z', 'A'..'Z'] then
+    { TODO -cNote : UnicodeFix: note this change }
+    if IsLetter(Result[Idx]) then
+//    if Result[Idx] in ['a'..'z', 'A'..'Z'] then
     begin
       if WantCapital then
-        Result[Idx] := UpCase(Result[Idx]); // capital letter required
-      WantCapital := False;                 // following chars lower case
+        { TODO -cNote : UnicodeFix: note this change }
+//        Result[Idx] := UpCase(Result[Idx]); // capital letter required
+        Result[Idx] := ToUpperCase(Result[Idx]);  // capital letter reequired
+      WantCapital := False;                       // following chars lower case
     end
     else
       WantCapital := IsWhiteSpace(Result[Idx]); // space: next char is capital
