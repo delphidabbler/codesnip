@@ -21,7 +21,7 @@ const
 
 function Decode(const S: AnsiString): AnsiString;
 const
-  { TODO -oSelf -cNote :Unicode Fix: Changed Char to AnsiChar }
+  // PJ: Changed from array[Char] to array[AnsiChar]
   Map: array[AnsiChar] of Byte = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 63, 52, 53,
@@ -85,7 +85,7 @@ begin
   Seed := Key;
   for I := 1 to Length(Result) do
   begin
-    { TODO -oSelf -cNote : Unicode Fix: Changed Char cast to AnsiChar }
+    // PJ: Changed cast from Char to AnsiChar
     Result[I] := AnsiChar(Byte(Result[I]) xor (Seed shr 8));
     Seed := (Byte(S[I]) + Seed) * Word(C1) + Word(C2)
   end
@@ -98,7 +98,8 @@ end;
 
 function Encode(const S: AnsiString): AnsiString;
 const
-  Map: array[0..63] of Char = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
+  // PJ: Changed Map from array of Char to array of AnsiChar
+  Map: array[0..63] of AnsiChar = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
     'abcdefghijklmnopqrstuvwxyz0123456789+/';
 var
   I: LongInt;
@@ -139,7 +140,7 @@ begin
   Seed := Key;
   for I := 1 to Length(Result) do
   begin
-    { TODO -oSelf -cNote : Unicode Fix: Changed Char cast to AnsiChar }
+    // PJ: Changed cast from Char to AnsiChar
     Result[I] := AnsiChar(Byte(Result[I]) xor (Seed shr 8));
     Seed := (Byte(Result[I]) + Seed) * Word(C1) + Word(C2)
   end
