@@ -611,7 +611,7 @@ function TIniSettingsSection.GetEncryptedItemValue(const Name: string): string;
     @return Required unencrypted value.
   }
 begin
-  Result := Decrypt(GetItemValue(Name), cEncryptKey);
+  Result := string(Decrypt(GetItemValue(Name), cEncryptKey));
 end;
 
 function TIniSettingsSection.GetEncryptedItemValue(const Idx: Integer): string;
@@ -620,7 +620,7 @@ function TIniSettingsSection.GetEncryptedItemValue(const Idx: Integer): string;
     @return Required unencrypted value.
   }
 begin
-  Result := Decrypt(GetItemValueByIdx(Idx), cEncryptKey);
+  Result := string(Decrypt(GetItemValueByIdx(Idx), cEncryptKey));
 end;
 
 function TIniSettingsSection.GetItemCount: Integer;
@@ -737,7 +737,7 @@ procedure TIniSettingsSection.SetEncryptedItemValue(const Name, Value: string);
     @param Value [in] Unencryped value to be encrypted.
   }
 begin
-  SetItemValue(Name, Encrypt(Value, cEncryptKey));
+  SetItemValue(Name, string(Encrypt(Value, cEncryptKey)));
 end;
 
 procedure TIniSettingsSection.SetItemValue(const Name, Value: string);
