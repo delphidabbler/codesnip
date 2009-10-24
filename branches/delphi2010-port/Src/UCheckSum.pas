@@ -45,7 +45,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UBaseObjects;
+  UBaseObjects, UUnicodeHelper;
 
 
 type
@@ -67,13 +67,11 @@ type
         @param S [in] String to check.
         @return Checksum as Ansi string.
       }
-    {$IFDEF UNICODE}
     class function Calculate(const Bytes: TBytes): AnsiString; overload;
       {Calculates MD5 checksum of a byte array.
         @param Bytes [in] Byte array to check.
         @return Checksum as Ansi string.
       }
-    {$ENDIF}
     class function Compare(const Stm: TStream;
       const CheckSum: AnsiString): Boolean; overload;
       {Compares MD5 checksum of content of a stream against a known checksum.
@@ -131,6 +129,7 @@ begin
   end;
 end;
 
+// todo -cRefactor: remove this and replace by calls to a new TBytes version.
 class function TCheckSum.Calculate(const S: AnsiString): AnsiString;
   {Calculates MD5 checksum of an Ansi string.
     @param S [in] String to check.
@@ -140,7 +139,6 @@ begin
   Result := MD5Print(MD5String(S));
 end;
 
-{$IFDEF UNICODE}
 class function TCheckSum.Calculate(const Bytes: TBytes): AnsiString;
   {Calculates MD5 checksum of a byte array.
     @param Bytes [in] Byte array to check.
@@ -155,8 +153,8 @@ begin
   MD5Final(Context, Digest);
   Result := MD5Print(Digest);
 end;
-{$ENDIF}
 
+// todo -cRefactor: remove this and replace by a new TBytes version.
 class function TCheckSum.Compare(const S, CheckSum: AnsiString): Boolean;
   {Compares MD5 checksum of an Ansi string against a known checksum.
     @param S [in] String whose checksum is to be compared.
