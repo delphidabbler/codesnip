@@ -79,7 +79,8 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UAppInfo, UCheckSum, UDataStreamIO, UDOSDateTime, UExceptions, UUtils;
+  UAppInfo, UCheckSum, UDataStreamIO, UDOSDateTime, UExceptions, UUnicodeHelper,
+  UUtils;
 
 {
   User database backup file format
@@ -122,13 +123,7 @@ uses
   Data types
   ----------
 
-    SmallInt        - 16 bit integer encoded as 4 hex digits
-    LongInt         - 32 bit integer encoded as 8 hex digits
-    SizedString     - SmallInt specifying string length followed by specified
-                      number of characters
-    SizedLongString - LongInt specifying string length followed by specified
-                      number of characters
-    String[32]      - 32 character fixed length string
+  Data types are those defined in UDataStreamIO.
 }
 
 
@@ -166,7 +161,7 @@ begin
       );
       Writer.WriteLongInt(DOSDateTime.DateStamp);
       Content := FileToString(UserDBFileSpec(FileName));
-      Writer.WriteString(TCheckSum.Calculate(Content), 32);
+      Writer.WriteString(TCheckSum.Calculate(BytesOf(Content)), 32);
       Writer.WriteSizedLongString(Content);
     end;
   finally
@@ -193,8 +188,8 @@ var
   FileCount: Integer;         // number of files to restore
   Idx: Integer;               // loops through all files in backup
   FileName: string;           // name of file to restore
-  MD5: string;                // checksum of file to restore
-  Content: string;            // content of file to restore
+  MD5: TDataStreamString;     // checksum of file to restore
+  Content: TDataStreamString; // content of file to restore
   DOSDateTime: IDOSDateTime;  // date stamp of file to restore
   HeaderWord: SmallInt;       // first word value in file
   Version: SmallInt;          // file version
@@ -228,7 +223,7 @@ begin
     for Idx := 1 to FileCount do
     begin
       // Get file details: name, date stamp, checksum and content
-      FileName := UserDBFileSpec(Reader.ReadSizedString);
+      FileName := UserDBFileSpec(string(Reader.ReadSizedString));
       DOSDateTime := TDOSDateTimeFactory.CreateFromDOSTimeStamp(
         Reader.ReadLongInt
       );
@@ -240,7 +235,7 @@ begin
       if not TCheckSum.Compare(Content, MD5) then
         raise ECodeSnip.CreateFmt(sBadFileContent, [FileName]);
       // Write file and set date stamp
-      StringToFile(Content, FileName);
+      StringToFile(string(Content), FileName);
       DOSDateTime.ApplyToFile(FileName);
     end;
   finally
