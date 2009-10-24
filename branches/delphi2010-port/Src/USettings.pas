@@ -220,7 +220,7 @@ uses
   // 3rd party
   UEncrypt,
   // Project
-  UAppInfo, UExceptions, UUtils;
+  UAppInfo, UExceptions, UUnicodeHelper, UUtils;
 
 
 var
@@ -611,7 +611,9 @@ function TIniSettingsSection.GetEncryptedItemValue(const Name: string): string;
     @return Required unencrypted value.
   }
 begin
-  Result := string(Decrypt(GetItemValue(Name), cEncryptKey));
+  Result := string(
+    Decrypt(StringToLatin1String(GetItemValue(Name)), cEncryptKey)
+  );
 end;
 
 function TIniSettingsSection.GetEncryptedItemValue(const Idx: Integer): string;
@@ -620,7 +622,9 @@ function TIniSettingsSection.GetEncryptedItemValue(const Idx: Integer): string;
     @return Required unencrypted value.
   }
 begin
-  Result := string(Decrypt(GetItemValueByIdx(Idx), cEncryptKey));
+  Result := string(
+    Decrypt(StringToLatin1String(GetItemValueByIdx(Idx)), cEncryptKey)
+  );
 end;
 
 function TIniSettingsSection.GetItemCount: Integer;
@@ -737,7 +741,7 @@ procedure TIniSettingsSection.SetEncryptedItemValue(const Name, Value: string);
     @param Value [in] Unencryped value to be encrypted.
   }
 begin
-  SetItemValue(Name, string(Encrypt(Value, cEncryptKey)));
+  SetItemValue(Name, string(Encrypt(StringToLatin1String(Value), cEncryptKey)));
 end;
 
 procedure TIniSettingsSection.SetItemValue(const Name, Value: string);
