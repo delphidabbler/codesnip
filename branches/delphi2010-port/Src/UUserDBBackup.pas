@@ -161,7 +161,7 @@ begin
       );
       Writer.WriteLongInt(DOSDateTime.DateStamp);
       Content := FileToString(UserDBFileSpec(FileName));
-      Writer.WriteString(TCheckSum.Calculate(BytesOf(Content)), 32);
+      Writer.WriteString(TCheckSum.Calculate(Latin1BytesOf(Content)), 32);
       Writer.WriteSizedLongString(Content);
     end;
   finally

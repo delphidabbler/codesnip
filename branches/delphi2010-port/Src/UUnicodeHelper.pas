@@ -67,14 +67,9 @@ type
   TBytes = array of Byte;
   {$IFEND}
 
-{$IFNDEF UNICODE}
-function BytesOf(const AString: string): TBytes;
-{$ENDIF}
-
 function IsLatin1Char(C: Char): Boolean;
 function Latin1BytesOf(const AString: string): TBytes;
 function ASCIIBytesOf(const AString: string): TBytes;
-
 function StringToLatin1String(const S: string): Latin1String;
 
 {$IFDEF UNICODE}
@@ -165,7 +160,7 @@ begin
 end;
 
 {$IFNDEF UNICODE}
-function BytesOf(const AString: string): TBytes;
+function AnsiStringBytesOf(const AString: string): TBytes;
 var
   Len: Integer;
 begin
@@ -194,7 +189,7 @@ begin
 end;
 {$ELSE}
 begin
-  Result := BytesOf(AString);
+  Result := AnsiStringBytesOf(AString);
 end;
 {$ENDIF}
 
@@ -203,7 +198,7 @@ begin
   {$IFDEF UNICODE}
   Result := TEncoding.ASCII.GetBytes(AString);
   {$ELSE}
-  Result := BytesOf(AString);
+  Result := AnsiStringBytesOf(AString);
   {$ENDIF}
 end;
 
