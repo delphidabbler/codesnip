@@ -54,11 +54,9 @@ const
   // Character constants made public
   cSingleQuote = '''';
   cDoubleQuote = '"';
-  { TODO -cNote : Unicode fix: Note changes to whitespace const to echo
-    Character unit definition, but using consts}
-//  cWhiteSpace = [#0..#32];
   cWhiteSpace = [' ', TAB, LF, VTAB, FF, CR];
   cQuotes = [cSingleQuote, cDoubleQuote];
+  { TODO -oSelf -cProposal : Add a new const for '=' symbol }
 
 
 type
@@ -112,7 +110,6 @@ type
     destructor Destroy; override;
       {Class destructor. Frees owned entity list.
       }
-    { TODO -oSelf -cNote : Unicode Fix: Changed AnsiChar to Char }
     function AddEntity(const Entity: string; const Ch: Char): Boolean;
       {Adds a symbolic entity and its corresponding character to the
       list of symbolic entities. Set up the list of entities before attempting
@@ -121,7 +118,6 @@ type
         @param Ch [in] Character corresponding to entity.
         @return True if entity added successfully, False if not.
       }
-    { TODO -oSelf -cNote : Unicode Fix: Changed AnsiChar to Char }
     function TranslateEntity(const Entity: string; out Ch: Char): Boolean;
       {Translates entity into the character it represents.
         @param Entity [in] Entity to be translated (without leading '&' and
@@ -265,7 +261,6 @@ type
       @param EntityChar [out] Set to character equivalent of entity.
       @return True to make lexer call this method again, False to terminate.
   }
-  { TODO -oSelf -cNote : Unicode Fix: Changed EntityChar from AnsiChar to Char }
   TTaggedTextEntityInfoProc = function(const EntityIdx: Integer;
     out EntityName: string; out EntityChar: Char): Boolean of object;
 
@@ -537,7 +532,6 @@ begin
       Exit;
     end;
     // entity is supported: record it's character value and return true
-    { TODO -oSelf -cNote : Unicode Fix: Changed AnsiChar cast to Char }
     Ch := Char(fSymbolicEntities.Objects[SymbolIdx]);
     Result := True;
   end;
@@ -551,7 +545,6 @@ function TTaggedTextEntityHandler.TranslateTextEntities(
     @return True on success or False on error.
   }
 var
-  { TODO -oSelf -cNote : Unicode Fix: Changed Ch and EntityCh from AnsiChar to Char }
   Idx: Integer;         // index used to scan text
   InsPos: Integer;      // index of insertion point in translated string
   Ch: Char;             // current char in text: used to check for entities
@@ -768,16 +761,12 @@ begin
   NextChPos := 1;
   // Skip any white space before tag
   while (NextChPos <= Length(TagStr))
-    { TODO -cNote : Unicode fix: Note this change }
     and IsWhiteSpace(TagStr[NextChPos]) do
-//    and (TagStr[NextChPos] in cWhiteSpace) do
     Inc(NextChPos);
   // Now at start of tag name: read it up to next space or end of tag str
   StartPos := NextChPos;
   while (NextChPos <= Length(TagStr))
-    { TODO -cNote : Unicode fix: Note this change }
     and not IsWhiteSpace(TagStr[NextChPos]) do
-//    and not (TagStr[NextChPos] in cWhiteSpace) do
     Inc(NextChPos);
   // Copy the name from the string
   Result := MidStr(TagStr, StartPos, NextChPos - StartPos);
@@ -804,8 +793,6 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
     }
   var
     StartPos: Integer;        // start position of name or value in tag string
-    { TODO -cNote : Unicode fix: Note this change }
-//    ValDelims: set of Char;   // characters used to delimit values (e.g. quotes)
     ValDelims: TSysCharSet;   // characters used to delimit values (e.g. quotes)
     Len: Integer;             // length of whole tag
   begin
@@ -820,8 +807,6 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
 
     // Check to see if we have any params
     // skip white space
-    { TODO -cNote : Unicode fix: Note this change }
-//    while (NextChPos <= Len) and (TagStr[NextChPos] in cWhiteSpace) do
     while (NextChPos <= Len) and IsWhiteSpace(TagStr[NextChPos]) do
       Inc(NextChPos);
     // check if we've reached end of tag and get out if so: no params
@@ -834,14 +819,10 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
     // We have attribute: get name
     StartPos := NextChPos;
     while (NextChPos <= Len)
-      { TODO -cNote : Unicode fix: Note this change }
-//      and not (TagStr[NextChPos] in cWhiteSpace + ['=']) do
       and not IsWhiteSpace(TagStr[NextChPos]) and (TagStr[NextChPos] <> '=') do
       Inc(NextChPos);
     Name := MidStr(TagStr, StartPos, NextChPos - StartPos);
     // skip any white space following name
-    { TODO -cNote : Unicode fix: Note this change }
-//    while (NextChPos <= Len) and (TagStr[NextChPos] in cWhiteSpace) do
     while (NextChPos <= Len) and IsWhiteSpace(TagStr[NextChPos]) do
       Inc(NextChPos);
 
@@ -852,17 +833,13 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
       // skip '=' symbol
       Inc(NextChPos);
       // skip white space between '=' and value
-      { TODO -cNote : Unicode fix: Note this change }
-//      while (NextChPos <= Len) and (TagStr[NextChPos] in cWhiteSpace) do
       while (NextChPos <= Len) and IsWhiteSpace(TagStr[NextChPos]) do
         Inc(NextChPos);
       // if NextChPos > Len the there is no value: do nothing
       if NextChPos <= Len then
       begin
         // check to see if we have quoted param or not
-        { TODO -cNote : Unicode fix: Note this change }
         if IsCharInSet(TagStr[NextChPos], cQuotes) then
-//        if TagStr[NextChPos] in cQuotes then
         begin
           // value is quoted: record quote as delimter and skip it
           ValDelims := [TagStr[NextChPos]];
@@ -873,8 +850,6 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
           ValDelims := cWhiteSpace;
         // now get the value: it is between current pos and a delimter
         StartPos := NextChPos;
-        { TODO -cNote : Unicode fix: Note this change }
-//        while (NextChPos <= Len) and not (TagStr[NextChPos] in ValDelims) do
         while (NextChPos <= Len)
           and not IsCharInSet(TagStr[NextChPos], ValDelims) do
           Inc(NextChPos);
@@ -888,8 +863,6 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
         // if value was quoted, skip over any quote
         if (cQuotes * ValDelims <> [])
           and (NextChPos <= Len)
-          { TODO -cNote : Unicode fix: Note this change }
-//          and (TagStr[NextChPos] in cQuotes) then
           and IsCharInSet(TagStr[NextChPos], cQuotes) then
           Inc(NextChPos);
       end;

@@ -198,11 +198,9 @@ class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
     }
   begin
     Result := (Length(FileName) > 3) and
-      { TODO -cNote : UnicodeFix: note this change }
-      { TODO -cRefactor : Replace set test with new UUtils.IsValidDriveLetter
+      { TODO -cRefactor : Replace set test with a new UUtils.IsValidDriveLetter
         function }
       IsCharInSet(FileName[1], ['A'..'Z', 'a'..'z']) and
-//      (UpCase(FileName[1]) in ['A'..'Z']) and
       (FileName[2] = ':') and (FileName[3] = '\');
   end;
 

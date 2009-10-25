@@ -218,13 +218,10 @@ begin
   // convert to "camel" case
   fFileName := StripWhiteSpace(CapitaliseWords(Value));
   // replaces invalid Pascal identifier characters with underscore
-  { TODO -cNote : Unicode fix: Note these changes }
   if (fFileName <> '')
     and not IsLetter(fFileName[1]) and (fFileName[1] <> '_') then
-//  if (fFileName <> '') and not (fFileName[1] in ['a'..'z', 'A'..'Z', '_']) then
     fFileName[1] := '_';
   for Idx := 2 to Length(fFileName) do
-//    if not (fFileName[Idx] in ['a'..'z', 'A'..'Z', '0'..'9', '_']) then
     if not IsAlphaNumeric(fFileName[Idx]) and (fFileName[Idx] <> '_') then
       fFileName[Idx] := '_';
   { TODO -cRefactor : Update this Assert statement }

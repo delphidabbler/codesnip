@@ -59,7 +59,6 @@ type
       {Handle of window that owns (parents) the document properties dialog box}
     fPrinterHandle: THandle;
       {Handle of printer whose document properties are being edited}
-    { TODO -oSelf -cNote : Unicode Fix: Changed fDriverBuf and fPortBuf from AnsiChar to Char }
     fDriverBuf: array[0..255] of Char;
       {Stores name of printer driver}
     fPortBuf: array[0..255] of Char;
@@ -338,7 +337,6 @@ procedure TPrinterDocPropsDlg.GetPrinterInfo(out Device: string;
     @param HDevMode [out] Handle to device specific driver information.
   }
 var
-  { TODO -oSelf -cNote : Unicode Fix: Changed DeviceBuf from AnsiChar to Char }
   DeviceBuf: array[0..255] of Char; // receives name of device
 begin
   // Following method gets more info than we need. We store driver and port

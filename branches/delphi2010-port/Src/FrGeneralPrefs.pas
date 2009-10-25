@@ -132,7 +132,6 @@ begin
   HelpKeyword := 'GeneralPrefs';
   // Populate measurement unit combo
   for UnitsIdx := Low(TMeasurementUnits) to High(TMeasurementUnits) do
-    { TODO -oSelf -cD2010Change : Added UMeasurement prefix to UnitName }
     cbUnits.Items.AddObject(UMeasurement.UnitName(UnitsIdx), TObject(UnitsIdx));
 end;
 

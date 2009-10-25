@@ -75,7 +75,6 @@ type
         @return True if tag information was provided or False to indicate no
           more tags.
       }
-    { TODO -oSelf -cNote : Unicode Fix: Changed EntityChar from AnsiChar to Char }
     function EntityInfo(const EntityIdx: Integer; out EntityName: string;
       out EntityChar: Char): Boolean;
       {Callback that provides lexer with information about supported character

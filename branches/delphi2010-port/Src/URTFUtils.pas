@@ -111,14 +111,12 @@ function RTFControl(const Ctrl: TRTFControl; const Param: Integer): string;
     @return RTF control.
   }
 
-{ TODO -oSelf -cNote : Unicode Fix: Changed Ch from AnsiChar to Char }
 function RTFEscape(const Ch: Char): string;
   {Creates RTF escape sequence for a character.
     @param Ch [in] Character to escape.
     @return Escape sequence.
   }
 
-{ TODO -oSelf -cNote : Unicode Fix: Changed Ch from AnsiChar to Char }
 function RTFHexEscape(const Ch: Char): string;
   {Creates RTF hexadecimal escape sequence for a character.
     @param Ch [in] Character to escape.
@@ -234,10 +232,8 @@ function RTFMakeSafeText(const TheText: string): string;
   }
 var
   I: Integer;     // loops thru characters in string
-  { TODO -oSelf -cNote : Unicode Fix: Changed Ch from AnsiChar to Char }
   Ch: Char;       // character being processed
 begin
-  { TODO -oSelf -cNote : Unicode fix: changed following code }
   Result := '';
   for I := 1 to Length(TheText) do
   begin
@@ -250,18 +246,6 @@ begin
       // Pass remaining chars thru unchanged
       Result := Result + Ch;
   end;
-//    case Ch of
-//      #0..#$19, #$80..#$FF:
-//        // Replace these chars by hex control word
-//        Result := Result + RTFHexEscape(Ch);
-//      '{', '\', '}':
-//        // Escape these reserved chars
-//        Result := Result + RTFEscape(Ch);
-//      else
-//        // Pass remaining chars thru unchanged
-//        Result := Result + Ch;
-//    end;
-//  end;
 end;
 
 function EditStreamReader(Stream: TStream; pBuff: Pointer;

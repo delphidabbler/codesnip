@@ -171,7 +171,6 @@ begin
   // Update the caption to show current units
   gpMargins.Caption := Format(
     ' ' + sMarginCaption + ' ',
-    { TODO -oSelf -cNote : Delphi 2010 Fix: Added UMeasurement prefix to UnitName }
     [AnsiLowerCase(UMeasurement.UnitName(Prefs.MeasurementUnits))]
   );
 
@@ -328,9 +327,7 @@ begin
     if AnsiContainsStr((Sender as TEdit).Text, DecimalSeparator) then
       Key := #0;
   end
-  { TODO -cNote : Unicode fix: Note this change }
   else if not IsDigit(Key) and (Key <> BACKSPACE) then
-//  else if not (Key in [#8, '0'..'9']) then
     // Disallow any other characters other than backspace or digits
     Key := #0;
   if Key = #0 then

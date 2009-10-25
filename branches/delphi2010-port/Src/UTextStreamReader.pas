@@ -62,7 +62,6 @@ type
         {Stores all data read from stream}
       fIdx: Integer;
         {Cursor into buffer that indexes next character to be read}
-    { TODO -oSelf -cNote : Unicode Fix: Changed return from AnsiChar to Char }
     function GetCh: Char;
       {Read accessor for Ch property.
         @return Last character read, or EOF at end of file.
@@ -75,7 +74,6 @@ type
       {Class constructor. Creates reader for a stream and reads first character.
         @param Stm [in] Stream to be read.
       }
-    { TODO -oSelf -cNote : Unicode Fix: Changed return from AnsiChar to Char }
     function NextChar: Char;
       {Fetches next character from buffer.
         @return Character read (EOF at end of buffer and LF at end of line).
@@ -83,7 +81,6 @@ type
     procedure PutBackChar;
       {Puts last read character back on the stream.
       }
-    { TODO -oSelf -cNote : Unicode Fix: Changed type from AnsiChar to Char }
     property Ch: Char read GetCh;
       {Last character read from stream (EOF if at end of stream and LF at end
       of line}
@@ -123,9 +120,7 @@ begin
   begin
     // We are within buffer: get char at current position
     Result := fBuffer[fIdx];
-    { TODO -cNote : Unicode fix: Note this change }
     if IsCharInSet(Result, [CR, LF]) then
-//    if Result in [CR, LF] then
       // Char is one of EOL chars => return EOL
       Result := EOL;
   end
