@@ -188,8 +188,8 @@ var
   FileCount: Integer;         // number of files to restore
   Idx: Integer;               // loops through all files in backup
   FileName: string;           // name of file to restore
-  MD5: TDataStreamString;     // checksum of file to restore
-  Content: TDataStreamString; // content of file to restore
+  MD5: Latin1String;          // checksum of file to restore
+  Content: Latin1String;      // content of file to restore
   DOSDateTime: IDOSDateTime;  // date stamp of file to restore
   HeaderWord: SmallInt;       // first word value in file
   Version: SmallInt;          // file version

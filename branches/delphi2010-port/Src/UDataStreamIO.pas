@@ -59,12 +59,6 @@ uses
 type
 
   {
-  TDataStreamString:
-    Type of string read and written by TDataStreamReader and TDataStreamWriter.
-  }
-  TDataStreamString = Latin1String;
-
-  {
   TDataStreamReader:
     Stream wrapper that can read numeric and string data from a stream. Assumes
     integers of various sizes are encoded as ASCII hex digits in stream.
@@ -89,17 +83,17 @@ type
       {Reads an Int64 value from stream, encoded as 16 char hex digit.
         @return Value read from stream.
       }
-    function ReadString(const Length: Integer): TDataStreamString;
+    function ReadString(const Length: Integer): Latin1String;
       {Reads a string of specified size from stream.
         @param Length [in] Length of string to be read.
         @return String read from stream.
       }
-    function ReadSizedString: TDataStreamString;
+    function ReadSizedString: Latin1String;
       {Reads string from stream that is preceded by a small int length
       descriptor.
         @return String read from stream.
       }
-    function ReadSizedLongString: TDataStreamString;
+    function ReadSizedLongString: Latin1String;
       {Reads string from stream that is preceded by a long int length
       descriptor.
         @return String read from stream.
@@ -135,13 +129,13 @@ type
         @param Value [in] Value to be written.
       }
 
-    procedure WriteString(const Str: TDataStreamString;
+    procedure WriteString(const Str: Latin1String;
       const Length: Integer); overload;
       {Writes a fixed number of characters from a string to the stream.
         @param Str [in] String to be written.
         @param Length [in] Number of characters from string to write.
       }
-    procedure WriteString(const Str: TDataStreamString); overload;
+    procedure WriteString(const Str: Latin1String); overload;
       {Writes a string to stream.
         @param Str [in] String to be written.
       }
@@ -150,7 +144,7 @@ type
     procedure WriteString(const Str: string); overload;
     {$ENDIF}
 
-    procedure WriteSizedString(const Str: TDataStreamString); overload;
+    procedure WriteSizedString(const Str: Latin1String); overload;
       {Writes a string to stream preceded by a 16 bit length as hex digits.
         @param Str [in] String to be written.
       }
@@ -164,7 +158,7 @@ type
     procedure WriteSizedString(const Str: string); overload;
     {$ENDIF}
 
-    procedure WriteSizedLongString(const Str: TDataStreamString); overload;
+    procedure WriteSizedLongString(const Str: Latin1String); overload;
       {Writes a string to stream preceded by a 32 bit length as hex digits.
         @param Str [in] String to be written.
       }
@@ -237,7 +231,7 @@ begin
   Result := ReadHexDigits(8);
 end;
 
-function TDataStreamReader.ReadSizedLongString: TDataStreamString;
+function TDataStreamReader.ReadSizedLongString: Latin1String;
   {Reads string from stream that is preceded by a long int length descriptor.
     @return String read from stream.
   }
@@ -248,7 +242,7 @@ begin
   Result := ReadString(Length);
 end;
 
-function TDataStreamReader.ReadSizedString: TDataStreamString;
+function TDataStreamReader.ReadSizedString: Latin1String;
   {Reads string from stream that is preceded by a small int length descriptor.
     @return String read from stream.
   }
@@ -267,7 +261,7 @@ begin
   Result := ReadHexDigits(4);
 end;
 
-function TDataStreamReader.ReadString(const Length: Integer): TDataStreamString;
+function TDataStreamReader.ReadString(const Length: Integer): Latin1String;
   {Reads a string of specified size from stream.
     @param Length [in] length of string to be read.
     @return String read from stream.
@@ -308,7 +302,7 @@ begin
   WriteHex(Value, 8);
 end;
 
-procedure TDataStreamWriter.WriteSizedLongString(const Str: TDataStreamString);
+procedure TDataStreamWriter.WriteSizedLongString(const Str: Latin1String);
   {Writes a string to stream preceded by a 32 bit length as hex digits.
     @param Str [in] String to be written.
   }
@@ -335,7 +329,7 @@ begin
 end;
 {$ENDIF}
 
-procedure TDataStreamWriter.WriteSizedString(const Str: TDataStreamString);
+procedure TDataStreamWriter.WriteSizedString(const Str: Latin1String);
   {Writes a string to stream preceded by a 16 bit length as hex digits.
     @param Str [in] String to be written.
   }
@@ -370,7 +364,7 @@ begin
   WriteHex(Value, 4);
 end;
 
-procedure TDataStreamWriter.WriteString(const Str: TDataStreamString);
+procedure TDataStreamWriter.WriteString(const Str: Latin1String);
   {Writes a string to stream.
     @param Str [in] String to be written.
   }
@@ -378,7 +372,7 @@ begin
   WriteString(Str, Length(Str));
 end;
 
-procedure TDataStreamWriter.WriteString(const Str: TDataStreamString;
+procedure TDataStreamWriter.WriteString(const Str: Latin1String;
   const Length: Integer);
   {Writes a fixed number of characters from a string to the stream.
     @param Str [in] String to be written.

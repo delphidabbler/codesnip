@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UDataStreamIO, UExceptions;
+  UDataStreamIO, UExceptions, UUnicodeHelper;
 
 
 type
@@ -65,7 +65,7 @@ type
       {Creates a file from data stream.
         @except Raises EFileList if file checksum is incorrect.
       }
-    procedure ValidateFile(const Name, Content, MD5: TDataStreamString);
+    procedure ValidateFile(const Name, Content, MD5: Latin1String);
       {Validates checksum of a file.
         @param Name [in] Name of file
         @param File [in] Content from data stream.
@@ -73,7 +73,7 @@ type
         @except Raises EFileList if check sum of file content doesn't
           match expected checksum.
       }
-    procedure WriteFile(const Name, Content: TDataStreamString;
+    procedure WriteFile(const Name, Content: Latin1String;
       const UnixDate: Int64);
       {Writes local database file.
         @param Name [in] Name of file.
@@ -214,10 +214,10 @@ procedure TFileUpdater.UpdateFile;
     @except Raises EFileList if file checksum is incorrect.
   }
 var
-  Name: TDataStreamString;       // name of file
-  UnixDate: Int64;    // update date of file (per server - Unix format & GMT)
-  MD5: TDataStreamString;        // MD5 checksum of file on server
-  Content: TDataStreamString;    // file content
+  Name: Latin1String;     // name of file
+  UnixDate: Int64;        // update date of file (per server: Unix format & GMT)
+  MD5: Latin1String;      // MD5 checksum of file on server
+  Content: Latin1String;  // file content
 begin
   // Get info about file from data stream
   Name := fReader.ReadSizedString;
@@ -229,8 +229,7 @@ begin
   WriteFile(Name, Content, UnixDate);
 end;
 
-procedure TFileUpdater.ValidateFile(const Name, Content,
-  MD5: TDataStreamString);
+procedure TFileUpdater.ValidateFile(const Name, Content, MD5: Latin1String);
   {Validates checksum of a file.
     @param Name [in] Name of file
     @param File [in] Content from data stream.
@@ -243,7 +242,7 @@ begin
     raise EFileUpdater.CreateFmt(sChecksumError, [Name]);
 end;
 
-procedure TFileUpdater.WriteFile(const Name, Content: TDataStreamString;
+procedure TFileUpdater.WriteFile(const Name, Content: Latin1String;
   const UnixDate: Int64);
   {Writes local database file.
     @param Name [in] Name of file.
