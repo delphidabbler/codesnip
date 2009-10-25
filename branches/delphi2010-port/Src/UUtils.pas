@@ -407,18 +407,6 @@ begin
   end;
 end;
 
-{ TODO -oSelf -cNote : Unicode Fix: Changed AnsiChar to Char }
-function IsWhiteSpace(const Ch: Char): Boolean;
-  {Checks if a character is white space.
-    @param Ch [in] Character to be checked.
-    @return True if character is white space, False if not.
-  }
-begin
-  { TODO -cNote : Unicode fix: Note this change }
-//  Result := AnsiPos(Ch, cWhiteSpaceChars) > 0;
-  Result := UUnicodeHelper.IsWhiteSpace(Ch);
-end;
-
 function CapitaliseWords(const S: string): string;
   {Capitalises each word in a string, leaving case of other characters
   unchanged.
@@ -433,13 +421,9 @@ begin
   WantCapital := True;
   for Idx := 1 to Length(S) do
   begin
-    { TODO -cNote : UnicodeFix: note this change }
     if IsLetter(Result[Idx]) then
-//    if Result[Idx] in ['a'..'z', 'A'..'Z'] then
     begin
       if WantCapital then
-        { TODO -cNote : UnicodeFix: note this change }
-//        Result[Idx] := UpCase(Result[Idx]); // capital letter required
         Result[Idx] := ToUpperCase(Result[Idx]);  // capital letter reequired
       WantCapital := False;                       // following chars lower case
     end
