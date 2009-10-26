@@ -894,7 +894,7 @@ begin
   fEntityMap[1] := TREMLEntity.Create('quot', '"',  1);
   fEntityMap[2] := TREMLEntity.Create('gt',   '>',  1);
   fEntityMap[3] := TREMLEntity.Create('lt',   '<',  1);
-  fEntityMap[4] := TREMLEntity.Create('copy', #$A9, 2);
+  fEntityMap[4] := TREMLEntity.Create('copy', '©', 2);
 end;
 
 destructor TREMLEntities.Destroy;

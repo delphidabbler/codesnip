@@ -161,8 +161,8 @@ begin
   TFontHelper.SetDefaultBaseFont(lblReqSymbol.Font, False);
   if TOSInfo.IsVistaOrLater then
   begin
-    edPassword1.PasswordChar := #149;
-    edPassword2.PasswordChar := #149;
+    edPassword1.PasswordChar := '•';
+    edPassword2.PasswordChar := '•';
   end
   else
   begin
