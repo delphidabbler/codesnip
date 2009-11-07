@@ -194,13 +194,15 @@ function ToUpperCase(C: Char): Char;
 implementation
 
 
-{$IFDEF UNICODE}
 uses
+  {$IFDEF UNICODE}
   // Delphi
   Character,
   // Project
   UGC;
-{$ENDIF}
+  {$ELSE}
+  UConsts;
+  {$ENDIF}
 
 
 function IsLetter(C: Char): Boolean;
@@ -260,7 +262,7 @@ begin
   {$IFDEF UNICODE}
   Result := TCharacter.IsWhiteSpace(C);
   {$ELSE}
-  Result := (C = ' ') or ((C >= #$09) and (C <= #$0D))
+  Result := IsCharInSet(C, [TAB, LF, VTAB, FF, CR, ' ']);
   {$ENDIF}
 end;
 
