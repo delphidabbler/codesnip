@@ -197,11 +197,9 @@ class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
       @return True if file name is valid absolute file path, false if not.
     }
   begin
-    Result := (Length(FileName) > 3) and
-      { TODO -cRefactor : Replace set test with a new UUtils.IsValidDriveLetter
-        function }
-      IsCharInSet(FileName[1], ['A'..'Z', 'a'..'z']) and
-      (FileName[2] = ':') and (FileName[3] = '\');
+    Result := (Length(FileName) > 3)
+      and IsValidDriveLetter(FileName[1])
+      and (FileName[2] = ':') and (FileName[3] = '\');
   end;
 
   function IsValidUNCFileName(const FileName: string): Boolean;
@@ -210,9 +208,9 @@ class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
       @return True if file name is valid UNC name, false if not.
     }
   begin
-    Result := (Length(FileName) > 5) and
-      AnsiStartsStr('\\', FileName) and
-      (PosEx('\', FileName, 4) >= 4);
+    Result := (Length(FileName) > 5)
+      and AnsiStartsStr('\\', FileName)
+      and (PosEx('\', FileName, 4) >= 4);
   end;
   // ---------------------------------------------------------------------------
 
