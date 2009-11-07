@@ -293,8 +293,7 @@ type
       {Called just before document is parsed. Used to emit RTF header.
       }
     procedure EndDoc; override;
-      {Called after parsing complete. Writes closing brace that terminates RTF
-      document.
+      {Called after parsing complete. Outputs whole of RTF code.
       }
     procedure BeginLine; override;
       {Called when a new line in output is started. Used to initialise a line in
@@ -390,7 +389,7 @@ type
       {Called just before document is parsed. Used to write opening pre tag.
       }
     procedure EndDoc; override;
-      {Called after parsing complete. Writes closing pre tag.
+      {Called after parsing complete. Writes out HTML.
       }
   end;
 
@@ -723,11 +722,10 @@ begin
 end;
 
 procedure TRTFHiliter.EndDoc;
-  {Called after parsing complete. Writes closing brace that terminates RTF
-  document.
+  {Called after parsing complete. Outputs whole of RTF code.
   }
 begin
-  Writer.WriteStrLn(fRTFBuilder.AsString);
+  Writer.WriteStrLn(string(fRTFBuilder.AsString));
 end;
 
 procedure TRTFHiliter.EndLine;
@@ -824,7 +822,7 @@ begin
 end;
 
 procedure TDetailHTMLHiliter.EndDoc;
-  {Called after parsing complete. Writes closing pre tag.
+  {Called after parsing complete. Writes out HTML.
   }
 begin
   inherited;

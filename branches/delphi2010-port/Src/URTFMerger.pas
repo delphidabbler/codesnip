@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UHiddenRichEdit;
+  UHiddenRichEdit, UUnicodeHelper;
 
 
 type
@@ -54,7 +54,7 @@ type
   }
   TRTFMerger = class(THiddenRichEdit)
   private
-    procedure Merge(const RTF: string);
+    procedure Merge(const RTF: ASCIIString);
       {Merges RTF code into master document at current position. Any selected
       text is deleted.
         @param RTF [in] RTF code to be merged in.
@@ -64,11 +64,12 @@ type
         @param Text [in] Text to be selected.
       }
   public
-    constructor Create(const MasterRTF: string);
+    constructor Create(const MasterRTF: ASCIIString);
       {Class constructor. Sets up object.
         @param MasterRTF [in] RTF code of document to receive merges.
       }
-    procedure ReplacePlaceholder(const Placeholder, RTF: string);
+    procedure ReplacePlaceholder(const Placeholder: string;
+      const RTF: ASCIIString);
       {Replaces placeholder text in rich edit with new content.
         @param Placeholder [in] Place holder text to be replaced.
         @param RTF [in] RTF code to replace place holder.
@@ -90,7 +91,7 @@ uses
 
 { TRTFMerger }
 
-constructor TRTFMerger.Create(const MasterRTF: string);
+constructor TRTFMerger.Create(const MasterRTF: ASCIIString);
   {Class constructor. Sets up object.
     @param MasterRTF [in] RTF code of document to receive merges.
   }
@@ -99,7 +100,7 @@ begin
   RTFLoadFromString(RichEdit, MasterRTF);
 end;
 
-procedure TRTFMerger.Merge(const RTF: string);
+procedure TRTFMerger.Merge(const RTF: ASCIIString);
   {Merges RTF code into master document at current position. Any selected text
   is deleted.
     @param RTF [in] RTF code to be merged in.
@@ -108,7 +109,8 @@ begin
   RTFInsertString(RichEdit, RTF);
 end;
 
-procedure TRTFMerger.ReplacePlaceholder(const Placeholder, RTF: string);
+procedure TRTFMerger.ReplacePlaceholder(const Placeholder: string;
+  const RTF: ASCIIString);
   {Replaces placeholder text in rich edit with new content.
     @param Placeholder [in] Place holder text to be replaced.
     @param RTF [in] RTF code to replace place holder.

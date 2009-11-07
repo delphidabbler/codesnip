@@ -395,7 +395,9 @@ begin
   // Merge in source code
   fRE.SelStart := fRE.FindText(cPlaceholder, 0, MaxInt, []);
   fRE.SelLength := Length(cPlaceholder);
-  RTFInsertString(fRE, HiliteSource(UseColor, SyntaxPrint));
+  RTFInsertString(
+    fRE, StringToASCIIString(HiliteSource(UseColor, SyntaxPrint))
+  );
 end;
 
 function TPrintingPrefsPreview.HiliteSource(const UseColor,
