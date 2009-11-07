@@ -48,7 +48,8 @@ uses
 
 {$IFDEF UNICODE}
 const
-  Latin1CodePage = 1252;  // Code page of the Latin-1 character set
+  Latin1CodePage = 1252;    // Code page for the Latin-1 character set
+  ASCIICodePage = 20127;    // Code page for the ASCII character set
 {$ENDIF}
 
 type
@@ -60,8 +61,10 @@ type
   }
   {$IFDEF UNICODE}
   Latin1String = type AnsiString(Latin1CodePage);
+  ASCIIString = type AnsiString(ASCIICodePage);
   {$ELSE}
   Latin1String = type AnsiString;
+  ASCIIString = type AnsiString;
   {$ENDIF}
 
   {
@@ -104,6 +107,12 @@ function ASCIIBytesOf(const AString: string): TBytes;
 function StringToLatin1String(const S: string): Latin1String;
   {Converts a string to a latin 1 string. On Ansi Delphi versions string is
   unchanged.
+    @param S [in] String to be converted.
+    @return Converted string.
+  }
+
+function StringToASCIIString(const S: string): ASCIIString;
+  {Converts a string to a ASCII string.
     @param S [in] String to be converted.
     @return Converted string.
   }
@@ -343,6 +352,19 @@ begin
 end;
 {$ENDIF}
 
+function BytesToASCIIString(const Bytes: TBytes): ASCIIString;
+  {Creates an ansi string from an array of bytes.
+    @param Bytes [in] Array to be converted to string.
+    @return Required string.
+  }
+var
+  Len: Integer; // length of byte array
+begin
+  Len := Length(Bytes);
+  SetLength(Result, Len);
+  Move(Bytes[0], Result[1], Len);
+end;
+
 function BytesToAnsiString(const Bytes: TBytes): AnsiString;
   {Creates an ansi string from an array of bytes.
     @param Bytes [in] Array to be converted to string.
@@ -369,6 +391,16 @@ begin
   Result := S;
   {$ENDIF}
 end;
+
+function StringToASCIIString(const S: string): ASCIIString;
+  {Converts a string to a ASCII string.
+    @param S [in] String to be converted.
+    @return Converted string.
+  }
+begin
+  Result := BytesToASCIIString(ASCIIBytesOf(S));
+end;
+
 
 { TStringStreamEx }
 
