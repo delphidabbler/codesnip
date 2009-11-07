@@ -479,7 +479,7 @@ function TTaggedTextEntityHandler.TranslateEntity(
     @return True if entity is translated or False if not.
   }
 var
-  AsciiVal: Integer;    // ascii value of a numeric entity
+  EntityVal: Integer;   // value of a numeric entity
   SymbolIdx: Integer;   // index of symbolic entities in symbol list
 begin
   // Assume failure
@@ -493,7 +493,7 @@ begin
   // Check entity type
   if Entity[1] = '#' then
   begin
-    // We have numeric entity: try to extract ascii value
+    // We have numeric entity: try to extract value
     if Entity = '#' then
     begin
       // entity has no associated value
@@ -505,20 +505,20 @@ begin
     // parse out the digits: only 0..9 accepted
     // we reject -ve numbers: use default of -1 so all conversion errors give
     // -ve number to indicate error
-    AsciiVal := StrToIntDef(MidStr(Entity, 2, MaxInt), -1);
-    if AsciiVal < 0 then
+    EntityVal := StrToIntDef(MidStr(Entity, 2, MaxInt), -1);
+    if EntityVal < 0 then
     begin
       fLastErrorMessage := Format(sEntityValueNotValid, [Entity]);
       Exit;
     end;
     // check if value is in range (already know >=0)
-    if AsciiVal > 255 then
+    if EntityVal > Ord(High(Char)) then
     begin
       fLastErrorMessage := Format(sEntityOutOfRange, [Entity]);
       Exit;
     end;
     // we have valid value: record it and return true
-    Ch := Chr(AsciiVal);
+    Ch := Char(EntityVal);
     Result := True;
   end
   else
