@@ -43,7 +43,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  UConsts, ULists;
+  UConsts, ULists, UUnicodeHelper;
 
 
 type
@@ -87,7 +87,7 @@ type
         @return Required index.
         @except EBug raised if colour not in table.
       }
-    function AsString: string;
+    function AsString: ASCIIString;
       {Builds RTF code representing colour table.
         @return Required RTF code.
       }
@@ -181,7 +181,7 @@ type
         @return Required index.
         @except EBug raised if font not in table.
       }
-    function AsString: string;
+    function AsString: ASCIIString;
       {Builds RTF code representing font table.
         @return Required RTF code.
       }
@@ -200,7 +200,7 @@ type
           otherwise.
       }
   public
-    function AsString: string;
+    function AsString: ASCIIString;
       {Builds RTF code representing document properties.
         @return Required RTF code.
       }
@@ -215,21 +215,21 @@ type
   TRTFBuilder = class(TObject)
   strict private
     var
-      fBody: string;                      // Accumulates RTF code for doc body
+      fBody: ASCIIString;                 // Accumulates RTF code for doc body
       fInControls: Boolean;               // Tells of emitting RTF ctrls or text
       fColourTable: TRTFColourTable;      // Value of ColourTable property
       fFontTable: TRTFFontTable;          // Value of FontTable property
       fDefaultFontIdx: Integer;           // Value of DefaultFontIdx property
       fDocProperties: TRTFDocProperties;  // Value of DocProperties property
-    procedure AppendBody(const S: string);
+    procedure AppendBody(const S: ASCIIString);
       {Appends string data to document body.
         @param S [in] String data to add.
       }
-    function DocHeader: string;
+    function DocHeader: ASCIIString;
       {Generates document header RTF.
         @return Required RTF.
       }
-    procedure AddControl(const Ctrl: string);
+    procedure AddControl(const Ctrl: ASCIIString);
       {Adds an RTF control to document body.
         @param Ctrl [in] Text representation of control to be added.
       }
@@ -282,9 +282,9 @@ type
         @param Before [in] Spacing before paragraph in points.
         @param After [in] Spacing after paragraph in points.
       }
-    function AsString: string;
+    function AsString: ASCIIString;
       {Generates RTF code for whole document.
-        @return Required RTF.
+        @return Required RTF as ASCII.
       }
     property ColourTable: TRTFColourTable
       read fColourTable write fColourTable;
@@ -308,17 +308,17 @@ uses
   // Delphi
   SysUtils, Classes {for inlining}, Windows,
   // Project
-  UExceptions, ULocales, URTFUtils, UUnicodeHelper, UUtils;
+  UExceptions, ULocales, URTFUtils, UUtils;
 
 
 { TRTFBuilder }
 
-procedure TRTFBuilder.AddControl(const Ctrl: string);
+procedure TRTFBuilder.AddControl(const Ctrl: ASCIIString);
   {Adds an RTF control to document body.
     @param Ctrl [in] Text representation of control to be added.
   }
 begin
-  Assert((Ctrl <> '') and not IsWhiteSpace(Ctrl[Length(Ctrl)]),
+  Assert((Ctrl <> '') and not IsWhiteSpace(Char(Ctrl[Length(Ctrl)])),
     ClassName + '.AddControls: Ctrls ends in whitespace');
   AppendBody(Ctrl);
   fInControls := True;
@@ -339,7 +339,7 @@ begin
   AppendBody(RTFMakeSafeText(Text));
 end;
 
-procedure TRTFBuilder.AppendBody(const S: string);
+procedure TRTFBuilder.AppendBody(const S: ASCIIString);
   {Appends string data to document body.
     @param S [in] String data to add.
   }
@@ -347,9 +347,9 @@ begin
   fBody := fBody + S;
 end;
 
-function TRTFBuilder.AsString: string;
+function TRTFBuilder.AsString: ASCIIString;
   {Generates RTF code for whole document.
-    @return Required RTF.
+    @return Required RTF as ASCII.
   }
 begin
   Result := '{' + DocHeader + fBody + '}';
@@ -392,7 +392,7 @@ begin
   inherited;
 end;
 
-function TRTFBuilder.DocHeader: string;
+function TRTFBuilder.DocHeader: ASCIIString;
   {Generates document header RTF.
     @return Required RTF.
   }
@@ -528,7 +528,7 @@ begin
     Result := fFonts.Add(TRTFFont.Create(FontName, Generic, Charset));
 end;
 
-function TRTFFontTable.AsString: string;
+function TRTFFontTable.AsString: ASCIIString;
   {Builds RTF code representing font table.
     @return Required RTF code.
   }
@@ -552,7 +552,7 @@ begin
       + RTFControl(cGenericFonts[Font.Generic])
       + RTFControl(rcFontCharset, Font.Charset)
       + ' '
-      + Font.Name
+      + StringToASCIIString(Font.Name)
       + '}';
   end;
   Result := Result + '}';
@@ -635,7 +635,7 @@ begin
     Result := fColours.Add(Colour);
 end;
 
-function TRTFColourTable.AsString: string;
+function TRTFColourTable.AsString: ASCIIString;
   {Builds RTF code representing colour table.
     @return Required RTF code.
   }
@@ -733,7 +733,7 @@ end;
 
 { TRTFDocProperties }
 
-function TRTFDocProperties.AsString: string;
+function TRTFDocProperties.AsString: ASCIIString;
   {Builds RTF code representing document properties.
     @return Required RTF code.
   }
