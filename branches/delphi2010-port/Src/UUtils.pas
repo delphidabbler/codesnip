@@ -240,6 +240,12 @@ function TextWrap(const Text: string; const Width, Margin: Integer): string;
     @return Word wrapped text.
   }
 
+function IsValidDriveLetter(const C: Char): Boolean;
+  {Checks if a character is a valid Windows drive letter.
+    @param C [in] Character to be tested.
+    @return True if C is a valid drive letter, False otherwise.
+  }
+
 
 implementation
 
@@ -249,11 +255,6 @@ uses
   SysUtils, StrUtils, Windows, ShlObj, ActiveX, Messages,
   // Project
   UConsts, UUnicodeHelper;
-
-
-const
-  // String of white space characters
-  cWhiteSpaceChars = TAB + LF + VTAB + FF + CR + ' ';
 
 
 procedure CopyFile(const Source, Dest: string);
@@ -713,8 +714,18 @@ function ContainsWhiteSpace(const S: string): Boolean;
     @param S [in] string to be checked.
     @return True if string contains spaces.
   }
+var
+  Ch: Char;   // scans through string S
 begin
-  Result := ContainsDelims(S, cWhiteSpaceChars);
+  Result := False;
+  for Ch in S do
+  begin
+    if IsWhiteSpace(Ch) then
+    begin
+      Result := True;
+      Break;
+    end;
+  end;
 end;
 
 function QuoteSpacedString(const S: string; const Quote: Char = '"'): string;
@@ -989,6 +1000,15 @@ begin
   finally
     FreeAndNil(Words);
   end;
+end;
+
+function IsValidDriveLetter(const C: Char): Boolean;
+  {Checks if a character is a valid Windows drive letter.
+    @param C [in] Character to be tested.
+    @return True if C is a valid drive letter, False otherwise.
+  }
+begin
+  Result := IsCharInSet(C, ['A'..'Z', 'a'..'z']);
 end;
 
 end.
