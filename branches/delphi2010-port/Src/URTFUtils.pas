@@ -243,8 +243,10 @@ begin
       Result := Result + RTFHexEscape(AnsiChar(Ch))
     else if (Ch = '{') or (Ch = '\') or (Ch = '}') then
       Result := Result + RTFEscape(AnsiChar(Ch))
+    {$IFDEF UNICODE}
     else if Ord(Ch) > $FF then  // Unicode char
       Result := RTFControl(rcUnicodeChar, SmallInt(Ord(Ch))) + '?'
+    {$ENDIF}
     else
       Result := Result + ASCIIString(AnsiChar(Ch));
   end;
