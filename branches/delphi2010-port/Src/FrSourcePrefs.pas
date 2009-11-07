@@ -129,7 +129,7 @@ uses
   SysUtils, Math,
   // Project
   FmPreferencesDlg, IntfCommon, UConsts, UFileHiliter, UGraphicUtils,
-  UHiliteAttrs, URTFUtils, USyntaxHiliters;
+  UHiliteAttrs, URTFUtils, USyntaxHiliters, UUnicodeHelper;
 
 
 {$R *.dfm}
@@ -185,7 +185,7 @@ type
         @param HiliteAttrs [in] Attributes of highlighter used to render
           preview.
       }
-    function Generate: string;
+    function Generate: ASCIIString;
       {Generate RTF code used to render preview.
         @return Required RTF code.
       }
@@ -394,7 +394,7 @@ begin
   fHiliteAttrs := HiliteAttrs;
 end;
 
-function TSourcePrefsPreview.Generate: string;
+function TSourcePrefsPreview.Generate: ASCIIString;
   {Generate RTF code used to render preview.
     @return Required RTF code.
   }
@@ -402,7 +402,7 @@ var
   Hiliter: ISyntaxHiliter;    // syntax highlighter
 begin
   Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
-  Result := Hiliter.Hilite(SourceCode, fHiliteAttrs);
+  Result := StringToASCIIString(Hiliter.Hilite(SourceCode, fHiliteAttrs));
 end;
 
 function TSourcePrefsPreview.SourceCode: string;
