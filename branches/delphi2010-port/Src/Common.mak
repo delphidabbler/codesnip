@@ -38,7 +38,8 @@
 # receive .res and .dcu output.
 
 # The preferred compiler is Delphi 2006. If the DELPHI2006 evironment variable
-# is set, it will be used and expected to Delphi 2006 install directory.
+# is set, it will be used and expected to reference the Delphi 2006 install
+# directory.
 # If DELPHI2006 is not set then the DELPHIROOT environment variable is examined.
 # This can be set to any Delphi compiler (should compile if later than Delphi
 # 2006). If neither DELPHI2006 nor DELPHIROOT is set then a Delphi compiler is
@@ -49,7 +50,7 @@ DELPHIROOT = $(DELPHI2006)
 
 # Define path to DelphiDabbler library code if specified for Delphi 2006
 !ifdef DELPHIDABLIBD2006
-DELPHIDABLIB = $(DELPHIDABLIBD2006);
+DELPHIDABLIB = $(DELPHIDABLIBD2006)
 !endif
 
 # Check for required macros
