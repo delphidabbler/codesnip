@@ -224,7 +224,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Menus, Windows, Graphics;
+  SysUtils, Menus, Windows, Graphics,
+  // Project
+  UKeysHelper;
 
 
 type
@@ -519,10 +521,8 @@ procedure TCompileResultsLBMgr.KeyUp(Sender: TObject; var Key: Word;
 begin
   if fLB.ItemIndex = -1 then
     Exit;
-  // only space with no shoft keys is processed
-  if not (
-    (Shift * [ssCtrl, ssShift, ssAlt] = []) and (Key = VK_SPACE)
-  ) then
+  // only space with no shift keys is processed
+  if HasShiftKeys(Shift) or (Key <> VK_SPACE) then
     Exit;
   // space key pressed: display menu
   ShowPopupMenu(fLB.ItemIndex);
@@ -552,7 +552,7 @@ var
   MousePos: TPoint;   // position of mouse
 begin
   // left mouse button must have been pressed with no modifier keys
-  if (Shift * [ssCtrl, ssShift, ssAlt] <> []) or (Button <> mbLeft) then
+  if HasShiftKeys(Shift) or (Button <> mbLeft) then
     Exit;
   // find list item from modifier keys
   MousePos := Point(X, Y);
