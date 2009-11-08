@@ -52,18 +52,9 @@ inherited PrintDlg: TPrintDlg
         Caption = '&Installed printers:'
         FocusControl = cbPrinters
       end
-      object btnProperties: TButton
-        Left = 262
-        Top = 16
-        Width = 83
-        Height = 25
-        Caption = '&Properties...'
-        TabOrder = 1
-        OnClick = btnPropertiesClick
-      end
       object cbPrinters: TComboBox
         Left = 8
-        Top = 36
+        Top = 37
         Width = 241
         Height = 27
         Style = csOwnerDrawFixed
@@ -73,11 +64,11 @@ inherited PrintDlg: TPrintDlg
       end
       object btnSetup: TButton
         Left = 262
-        Top = 48
+        Top = 38
         Width = 83
         Height = 25
         Caption = 'Page Set&up...'
-        TabOrder = 2
+        TabOrder = 1
         OnClick = btnSetupClick
       end
     end

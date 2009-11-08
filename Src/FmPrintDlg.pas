@@ -54,7 +54,6 @@ type
   }
   TPrintDlg = class(TGenericOKDlg)
     btnPreferences: TButton;
-    btnProperties: TButton;
     btnSetup: TButton;
     cbPrinters: TComboBox;
     chkSyntaxPrint: TCheckBox;
@@ -65,7 +64,6 @@ type
     lblPrinters: TLabel;
     procedure btnOKClick(Sender: TObject);
     procedure btnPrefencesClick(Sender: TObject);
-    procedure btnPropertiesClick(Sender: TObject);
     procedure btnSetupClick(Sender: TObject);
     procedure cbPrintersDrawItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
@@ -76,10 +74,6 @@ type
       }
     procedure InitOptions;
       {Initialises options controls to default values.
-      }
-    function SelectedPrinter: string;
-      {Gets name of currently selected printer.
-        @return Required printer name.
       }
   strict protected
     procedure ArrangeForm; override;
@@ -106,7 +100,7 @@ uses
   SysUtils, Printers, Graphics,
   // Project
   FmPreferencesDlg, FrPrintingPrefs, UConsts, UMessageBox, UPageSetupDlgMgr,
-  UPrinterDocPropsDlg, UPrintInfo, UStructs;
+  UPrintInfo, UStructs;
 
 
 {$R *.dfm}
@@ -170,20 +164,6 @@ begin
     else
       TMessageBox.Information(Self, sMessage);
   end;
-end;
-
-procedure TPrintDlg.btnPropertiesClick(Sender: TObject);
-  {Properties button click handler. Displays current printer's document
-  properties dialog box and stores any changes.
-    @param Sender [in] Not used.
-  }
-begin
-  with TPrinterDocPropsDlg.Create(Handle, SelectedPrinter) do
-    try
-      Execute;
-    finally
-      Free;
-    end;
 end;
 
 procedure TPrintDlg.btnSetupClick(Sender: TObject);
@@ -343,14 +323,6 @@ begin
       // Exception can occur if no default printer: part of fix for bug 2875857
       cbPrinters.ItemIndex := -1;
   end;
-end;
-
-function TPrintDlg.SelectedPrinter: string;
-  {Gets name of currently selected printer.
-    @return Required printer name.
-  }
-begin
-  Result := cbPrinters.Items[cbPrinters.ItemIndex];
 end;
 
 end.
