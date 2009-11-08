@@ -53,6 +53,7 @@ program CodeSnip;
 
 {%ToDo 'CodeSnip.todo'}
 
+
 uses
   Forms,
   GIFImage in '3rdParty\GIFImage.pas',
@@ -262,7 +263,6 @@ uses
   UPreferences in 'UPreferences.pas',
   UPrintDocuments in 'UPrintDocuments.pas',
   UPrintEngine in 'UPrintEngine.pas',
-  UPrinterDocPropsDlg in 'UPrinterDocPropsDlg.pas',
   UPrintInfo in 'UPrintInfo.pas',
   UPrintMgr in 'UPrintMgr.pas',
   UProtocols in 'UProtocols.pas',
