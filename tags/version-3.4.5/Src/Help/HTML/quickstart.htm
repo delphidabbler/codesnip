@@ -1,0 +1,189 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is quickstart.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      QuickStart Guide
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="QuickStart">
+    </object>
+    <h1>
+      <a
+       name="quickstart"></a>QuickStart Guide
+    </h1>
+    <p>
+      This is a guide to getting up and running quickly with <em>CodeSnip</em>.
+    </p>
+    <h2>
+      Download the database
+    </h2>
+    <p>
+      If you have not already done so, you need to get an up to date copy of
+      the <em>CodeSnip</em> database. You will know if this is the case because
+      the program will display a message to that effect when it first starts.
+      Use the <a
+       href="dlg_update.htm">Update From Web</a> dialog box, reached from the
+      <em>Database | Update From Web</em> menu option.
+    </p>
+    <p>
+      If you need <em>CodeSnip</em> to access the internet via a Proxy Server
+      you should use the <em>Tools | Proxy Server</em> menu option and enter
+      information and the proxy in the resulting <a
+       href="dlg_proxyserver.htm">Proxy Server Configuration</a> dialog box.
+    </p>
+    <h2>
+      Customise the Database
+    </h2>
+    <p>
+      You can add your own snippets to the database. These snippets are held 
+      separately to the main database and are not affected by database updates.
+      If you wish you can submit user defined code to be considered for
+      inclusion in the main database.
+    </p>
+    <p>
+      Add, edit and delete snippets using the appropriate menu items on the 
+      <em>Database</em> menu. You can also save, backup and restore the user
+      database from this menu.
+    </p>
+    <p>
+      Snippets can be categorised using any of the available categories or you
+      can defined your own.
+    </p>
+    <h2>
+      Navigating the database
+    </h2>
+    <p>
+      Make sure you have the
+      <a href="detail_information.htm">Information tab</a> of the
+      <a href="detail_pane.htm">Detail Pane</a> selected.
+    </p>
+    <p>
+      All the snippets in the database are displayed in the
+      <a href="overview_pane.htm">Overview Pane</a>, grouped in different ways
+      depending on which tab is selected. Select the name of a snippet in the
+      Overview Pane to display its source code, description and other
+      information in the Detail Pane. Any snippets required to compile
+      the displayed snippet are listed in the &quot;Required snippets&quot;
+      section. Clicking a snippet's name displays its details. Similar
+      snippets are accessible in the &quot;See also&quot; section. The
+      compilers the snippet is known to compile with are inidacted at the bottom
+      of the display.
+    </p>
+    <p>
+      Clicking a section heading in the Overview Pane displays a table listing
+      all the snippets in that section in the Detail Pane. Clicking any snippet
+      name will display the snippet's details.
+    </p>
+    <h2>
+      Searching the database
+    </h2>
+    <p>
+      You can search the database for specific words, for snippets that
+      compile (or don't compile) under certain compilers or for
+      cross-referenced snippets. Use the <a href="dlg_findtext.htm">Find
+      Text</a>, <a href="dlg_findcompiler.htm">Find Compiler</a> or
+      <a href="dlg_findxrefs.htm">File Cross References</a> dialog boxes to
+      perform a search. These dialogs are accessed via the
+      <a href="menu_search.htm">Search</a> menu.
+    </p>
+    <p>
+      When a search has been performed only those snippets that are found are
+      listed in the <a href="overview_pane.htm">Overview Pane</a>. When a text
+      search is performed the found words are highlighted in the detail pane.
+    </p>
+    <p>
+      To cancel a search and view all the database again, select the <em>Search
+      | Show All</em> menu item.
+    </p>
+    <h2>
+      Test Compiling Snippets
+    </h2>
+    <p>
+      When any snippet is selected you can test it with any supported compilers
+      currently installed on your computer, provided it is not a 
+      <a href="snippet_freeform.htm">freeform</a> snippet. To do this you must
+      first have configured <em>CodeSnip</em> to work with your compilers by
+      providing the required information in the
+      <a href="dlg_configcompilers.htm">Configure Compilers</a> dialog box.
+    </p>
+    <p>
+      To perform a test compilation select the required snippet in the Overview
+      pane. Then select the <a href="detail_compilerchecks.htm">Compiler Checks
+      tab</a> in the <a href="detail_pane.htm">Detail Pane</a>. The program will
+      display a list of all supported compilers along with &quot;LEDs&quot; that
+      indicate which compilers should compile the snippet.
+    </p>
+    <p>
+      Click the <em>Test Compile Snippet</em> link to perform the compilation.
+      This may take a few seconds. Once the last compilation has completed the
+      display will change to show the results. If the compilation failed, or
+      resulted in warnings, a link will appear that will report the errors or
+      warnings generated by the compiler.
+    </p>
+    <h2>
+      Exporting Snippets
+    </h2>
+    <p>
+      <em>CodeSnip</em> can export snippets or complete units, as follows:
+    </p>
+    <ul>
+      <li>
+        Any selected routine can be exported to a file using the
+        <a href="dlg_savesnippet.htm">Save Snippet</a> dialog box accessed from
+        the <em>File | Save Snippet</em> menu option.
+      </li>
+      <li>
+        Plain text copies of selected snippets can be copied to the clipboard
+        via the <em>Edit | Copy Snippet</em> or <em>Edit | Copy Source Code</em>
+        menu options.
+      </li>
+      <li>
+        Complete Pascal units can be generated and written to file. The unit
+        will contain all the currently selected snippets (i.e. those displayed
+        in the <a href="overview_pane.htm">Overview Pane</a>). You can
+        explicitly specify the selected snippets by using the
+        <a href="dlg_selectroutines.htm">Select Snippets</a> dialog box
+        available via <em>Search | Select Snippets</em>. The unit is configured
+        and saved from the <a href="dlg_saveunit.htm">Save Unit</a> dialog box,
+        displayed from the <em>File | Save Unit</em> menu option.
+      </li>
+      <li>
+        User-defined snippets can be exported to a file that can be imported by
+        other <em>CodeSnip</em> users.
+      </li>
+    </ul>
+  </body>
+</html>
