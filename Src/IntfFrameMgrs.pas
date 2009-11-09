@@ -170,6 +170,12 @@ type
         @param State [in] Expand / collapse state being queried.
         @return True if request can be fulfilled by treeview, False if not.
       }
+    procedure SaveTreeState;
+      {Saves current expansion state of treeview in memory.
+      }
+    procedure RestoreTreeState;
+      {Restores last saved treeview expansion state from memory.
+      }
   end;
 
   {

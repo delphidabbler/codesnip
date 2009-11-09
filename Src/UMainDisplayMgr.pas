@@ -155,6 +155,12 @@ type
     procedure SelectAll;
       {Selects all text in current tab of detail pane.
       }
+    procedure PrepareForChange;
+      {Makes preparations for a change in the database display.
+      }
+    procedure FinalizeChange;
+      {Updates display following a change in the database.
+      }
     property CurrentView: TViewItem
       read fCurrentView;
       {Information about currently displayed view}
@@ -264,6 +270,14 @@ begin
   InternalDisplayViewItem(ViewItem, False);
 end;
 
+procedure TMainDisplayMgr.FinalizeChange;
+  {Updates display following a change in the database.
+  }
+begin
+  // restore the previously saved state of the overview pane treeview
+  (fOverviewMgr as IOverviewDisplayMgr).RestoreTreeState;
+end;
+
 function TMainDisplayMgr.GetInteractiveTabMgr: ITabbedDisplayMgr;
   {Gets reference to manager object for interactive tab set.
     @return Required tab manager or nil if no tab is interactive.
@@ -319,6 +333,14 @@ begin
   // Select item in overview pane and display in detail pane
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(fCurrentView);
   (fDetailsMgr as IViewItemDisplayMgr).Display(fCurrentView, Force);
+end;
+
+procedure TMainDisplayMgr.PrepareForChange;
+  {Makes preparations for a change in the database display.
+  }
+begin
+  // simply save the state of the overview tree view ready for later restoration
+  (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
 end;
 
 procedure TMainDisplayMgr.QueryUpdated;
