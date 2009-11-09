@@ -1,5 +1,12 @@
-Version 3.4.4
-CodeSnip 3.4.4
+Version 3.4.5 - 09 November 2009
+CodeSnip 3.4.5 - 09 November 2009
++ Home, Ctrl+Home, End and Ctrl+End keys now work in overview pane and go to first and last item in treeview respectively (feature request #2888880 - see http://www.delphidabbler.com/url/codesnip-featurereq).
++ State of tree view in overview pane is now maintained after editing the user database: the tree is no longer always fully expanded after each edit.
++ Removed "Properties" button from print dialog box along with associated dialog boxes. This option has always been buggy. This "fixes" bug #2868706 (see http://www.delphidabbler.com/url/codesnip-bugs).
++ Fixed un-reported makefile bug.
+
+Version 3.4.4 - 21 October 2009
+CodeSnip 3.4.4 - 21 October 2009
 + Changed bug reporting mechanism. Bugs are now reported via the online bug tracker. Bug report dialogs changed accordingly. Access to the old bug report web service was removed.
 + Added two new default syntax highlighter styles: "Visual Studio™" and "No Highlighter". The latter switches off syntax highlighting.
 + Fixed bug no. 2882331 (see http://www.delphidabbler.com/url/codesnip-bugs). This was a bug in the syntax highlighter that occurred when an unexpected character was encountered.
