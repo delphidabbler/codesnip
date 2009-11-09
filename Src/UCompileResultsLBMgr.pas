@@ -550,6 +550,7 @@ procedure TCompileResultsLBMgr.MouseDown(Sender: TObject; Button: TMouseButton;
 var
   ItemIdx: Integer;   // list item under mouse (-1 if mouse not on list item)
   MousePos: TPoint;   // position of mouse
+  DDBounds: TRectEx;  // bounds of drop down button
 begin
   // left mouse button must have been pressed with no modifier keys
   if HasShiftKeys(Shift) or (Button <> mbLeft) then
@@ -560,12 +561,11 @@ begin
   if ItemIdx = -1 then
     Exit;
   // find if drop down button pressed in list item and display menu if so
-  if not GetDropDownBmpBounds(
-    fLB.ItemRect(ItemIdx)
-  ).ContainsPoint(MousePos) then
+  DDBounds := GetDropDownBmpBounds(fLB.ItemRect(ItemIdx));
+  if not DDBounds.ContainsPoint(MousePos) then
     Exit;
   ShowPopupMenu(ItemIdx);
-end;
+end;  
 
 procedure TCompileResultsLBMgr.MouseLeave(Sender: TObject);
   {Handles list box's OnMouseLeave event. Redisplays any drop down button that
