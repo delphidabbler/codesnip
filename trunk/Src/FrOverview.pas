@@ -184,6 +184,12 @@ type
         @param State [in] Expand / collapse action being queried.
         @return True if action can be performed, False if not.
       }
+    procedure SaveTreeState;
+      {Saves current expansion state of treeview in memory.
+      }
+    procedure RestoreTreeState;
+      {Restores last saved treeview expansion state from memory.
+      }
     { IPaneInfo }
     function IsInteractive: Boolean;
       {Checks if the pane is currently interactive with user.
@@ -450,7 +456,7 @@ begin
     Builder.Build;
     // Restore state of treeview based on last time it was displayed
     tvSnippets.FullExpand;
-    fTreeStates[tcDisplayStyle.TabIndex].RestoreState;
+    RestoreTreeState;
   finally
     FreeAndNil(Builder);
     fCanChange := True;
@@ -458,6 +464,20 @@ begin
   end;
   // Reselect current view item if possible
   InternalSelectItem(fSelectedItem);
+end;
+
+procedure TOverviewFrame.RestoreTreeState;
+  {Restores last saved treeview expansion state from memory.
+  }
+begin
+  fTreeStates[tcDisplayStyle.TabIndex].RestoreState;
+end;
+
+procedure TOverviewFrame.SaveTreeState;
+  {Saves current expansion state of treeview in memory.
+  }
+begin
+  fTreeStates[tcDisplayStyle.TabIndex].SaveState;
 end;
 
 function TOverviewFrame.SelectedTab: Integer;
@@ -552,7 +572,7 @@ procedure TOverviewFrame.tcDisplayStyleChanging(Sender: TObject;
     @param AllowChanges [in/out] Not used or modified. Permits tab change.
   }
 begin
-  fTreeStates[tcDisplayStyle.TabIndex].SaveState;
+  SaveTreeState;
 end;
 
 procedure TOverviewFrame.tvSnippetsChanging(Sender: TObject;
