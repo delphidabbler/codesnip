@@ -224,7 +224,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Menus, Windows, Graphics;
+  SysUtils, Menus, Windows, Graphics,
+  // Project
+  UKeysHelper;
 
 
 type
@@ -519,10 +521,8 @@ procedure TCompileResultsLBMgr.KeyUp(Sender: TObject; var Key: Word;
 begin
   if fLB.ItemIndex = -1 then
     Exit;
-  // only space with no shoft keys is processed
-  if not (
-    (Shift * [ssCtrl, ssShift, ssAlt] = []) and (Key = VK_SPACE)
-  ) then
+  // only space with no shift keys is processed
+  if HasShiftKeys(Shift) or (Key <> VK_SPACE) then
     Exit;
   // space key pressed: display menu
   ShowPopupMenu(fLB.ItemIndex);
@@ -550,9 +550,10 @@ procedure TCompileResultsLBMgr.MouseDown(Sender: TObject; Button: TMouseButton;
 var
   ItemIdx: Integer;   // list item under mouse (-1 if mouse not on list item)
   MousePos: TPoint;   // position of mouse
+  DDBounds: TRectEx;  // bounds of drop down button
 begin
   // left mouse button must have been pressed with no modifier keys
-  if (Shift * [ssCtrl, ssShift, ssAlt] <> []) or (Button <> mbLeft) then
+  if HasShiftKeys(Shift) or (Button <> mbLeft) then
     Exit;
   // find list item from modifier keys
   MousePos := Point(X, Y);
@@ -560,12 +561,11 @@ begin
   if ItemIdx = -1 then
     Exit;
   // find if drop down button pressed in list item and display menu if so
-  if not GetDropDownBmpBounds(
-    fLB.ItemRect(ItemIdx)
-  ).ContainsPoint(MousePos) then
+  DDBounds := GetDropDownBmpBounds(fLB.ItemRect(ItemIdx));
+  if not DDBounds.ContainsPoint(MousePos) then
     Exit;
   ShowPopupMenu(ItemIdx);
-end;
+end;  
 
 procedure TCompileResultsLBMgr.MouseLeave(Sender: TObject);
   {Handles list box's OnMouseLeave event. Redisplays any drop down button that

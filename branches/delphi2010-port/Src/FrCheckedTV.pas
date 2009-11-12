@@ -44,7 +44,7 @@ uses
   // Delphi
   ImgList, Controls, Classes, ComCtrls, StdCtrls, Forms,
   // Project
-  UTVCheckBoxes;
+  UKeysHelper, UTVCheckBoxes;
 
 
 type
@@ -536,7 +536,7 @@ begin
   SelNode := tvChecked.GetNodeAt(X, Y) as TCheckedTreeNode;
   HitTestInfo := tvChecked.GetHitTestInfoAt(X, Y);
   if (htOnItem in HitTestInfo) and (Button = mbLeft)
-    and (Shift * [ssShift, ssAlt, ssCtrl] = []) and Assigned(SelNode) then
+    and not HasShiftKeys(Shift) and Assigned(SelNode) then
     ToggleNode(SelNode);
 end;
 

@@ -1652,6 +1652,7 @@ procedure TMainForm.SnippetsChangeHandler(Sender: TObject;
     if not Query.Refresh then
       Query.Reset;
     fMainDisplayMgr.Initialise;
+    fMainDisplayMgr.FinalizeChange;
   end;
   // ---------------------------------------------------------------------------
 
@@ -1660,9 +1661,12 @@ var
 begin
   EventInfo := EvtInfo as ISnippetChangeEventInfo;
   case EventInfo.Kind of
-    evChangeBegin:          // database about to change: disable form
+    evChangeBegin:          // database about to change
+    begin
       Enabled := False;
-    evChangeEnd:            // database change has completed: re-enable form
+      fMainDisplayMgr.PrepareForChange;
+    end;
+    evChangeEnd:            // database change has completed
       Enabled := True;
     evRoutineAdded,         // snippet added: display new routine
     evRoutineChanged:       // snippet edited: display changed routine

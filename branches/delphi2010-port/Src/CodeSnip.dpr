@@ -235,6 +235,7 @@ uses
   UIniDataReader in 'UIniDataReader.pas',
   UIStringList in 'UIStringList.pas',
   UJavaScriptUtils in 'UJavaScriptUtils.pas',
+  UKeysHelper in 'UKeysHelper.pas',
   ULEDImageList in 'ULEDImageList.pas',
   ULinkAction in 'ULinkAction.pas',
   ULists in 'ULists.pas',

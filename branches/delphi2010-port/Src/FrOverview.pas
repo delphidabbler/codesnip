@@ -102,18 +102,25 @@ type
           }
       end;
     var
-      fTVDraw: TTVDraw;             // object that renders tree view nodes
-      fNotifier: INotifier;         // notifies app of user initiated events
-      fCanChange: Boolean;          // whether selected node allowed to change
-      fSelectedItem: TViewItem;     // current selected view item in tree view
-      fPrevSelectedItem: TViewItem; // previous selected view item in tree view
-      fRoutineList: TRoutineList;   // list of currently displayed snippets
+      fTVDraw: TTVDraw;             // Object that renders tree view nodes
+      fNotifier: INotifier;         // Notifies app of user initiated events
+      fCanChange: Boolean;          // Whether selected node allowed to change
+      fSelectedItem: TViewItem;     // Current selected view item in tree view
+      fPrevSelectedItem: TViewItem; // Previous selected view item in tree view
+      fRoutineList: TRoutineList;   // List of currently displayed snippets
       fTreeStates: array of TOverviewTreeState;
-                                    // array of tree state objects: one per tab
-      fCommandBars: TCommandBarMgr; // configures popup menu and toolbar
+                                    // Array of tree state objects: one per tab
+      fCommandBars: TCommandBarMgr; // Configures popup menu and toolbar
     const
-      cPermittedKeys = [VK_UP, VK_DOWN, VK_PRIOR, VK_NEXT, VK_LEFT, VK_RIGHT];
-        {Keypresses allowed on treeview}
+      cPermittedKeys = [            // Keypresses allowed on treeview
+        VK_UP, VK_DOWN, VK_PRIOR, VK_NEXT, VK_LEFT, VK_RIGHT, VK_HOME, VK_END
+      ];
+    procedure SelectNode(const Node: TTreeNode; const MakeVisible: Boolean);
+      {Selects a specified node and optionally make it visible in the tree view.
+        @param Node [in] Node to be selected.
+        @param MakeVisible [in] Flag indicating if node is to be made visible.
+          Ignored if node is nil.
+      }
     procedure SelectionChange(const Item: TViewItem);
       {Records new selected view item and, if item has changed, triggers action
       to notify program of selection change.
@@ -177,6 +184,12 @@ type
         @param State [in] Expand / collapse action being queried.
         @return True if action can be performed, False if not.
       }
+    procedure SaveTreeState;
+      {Saves current expansion state of treeview in memory.
+      }
+    procedure RestoreTreeState;
+      {Restores last saved treeview expansion state from memory.
+      }
     { IPaneInfo }
     function IsInteractive: Boolean;
       {Checks if the pane is currently interactive with user.
@@ -209,7 +222,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UOverviewTreeBuilder;
+  UKeysHelper, UOverviewTreeBuilder;
 
 
 {$R *.dfm}
@@ -361,22 +374,20 @@ var
 begin
   // Get node associated with given view item
   Node := FindItemNode(Item);
-  // Allow tree view selection to change
-  fCanChange := True;
   if Assigned(Node) then
-  begin
     // We found node: select it and make sure visible
-    tvSnippets.Selected := Node;
-    Node.MakeVisible;
-  end
+    SelectNode(Node, True)
   else
   begin
     // Can't find item: show top of tree
-    tvSnippets.Selected := nil;
-    tvSnippets.TopItem := tvSnippets.Items.GetFirstNode;
+    fCanChange := False;
+    try
+      tvSnippets.Selected := nil;
+      tvSnippets.TopItem := tvSnippets.Items.GetFirstNode;
+    finally
+      fCanChange := True;
+    end;
   end;
-  // Prevent selection changes
-  fCanChange := False;
 end;
 
 function TOverviewFrame.IsInteractive: Boolean;
@@ -445,7 +456,7 @@ begin
     Builder.Build;
     // Restore state of treeview based on last time it was displayed
     tvSnippets.FullExpand;
-    fTreeStates[tcDisplayStyle.TabIndex].RestoreState;
+    RestoreTreeState;
   finally
     FreeAndNil(Builder);
     fCanChange := True;
@@ -453,6 +464,20 @@ begin
   end;
   // Reselect current view item if possible
   InternalSelectItem(fSelectedItem);
+end;
+
+procedure TOverviewFrame.RestoreTreeState;
+  {Restores last saved treeview expansion state from memory.
+  }
+begin
+  fTreeStates[tcDisplayStyle.TabIndex].RestoreState;
+end;
+
+procedure TOverviewFrame.SaveTreeState;
+  {Saves current expansion state of treeview in memory.
+  }
+begin
+  fTreeStates[tcDisplayStyle.TabIndex].SaveState;
 end;
 
 function TOverviewFrame.SelectedTab: Integer;
@@ -493,6 +518,24 @@ begin
   fPrevSelectedItem.Assign(fSelectedItem);
 end;
 
+procedure TOverviewFrame.SelectNode(const Node: TTreeNode;
+  const MakeVisible: Boolean);
+  {Selects a specified node and optionally make it visible in the tree view.
+    @param Node [in] Node to be selected.
+    @param MakeVisible [in] Flag indicating if node is to be made visible.
+      Ignored if node is nil.
+  }
+begin
+  fCanChange := True;
+  try
+    tvSnippets.Selected := Node;
+    if MakeVisible and Assigned(Node) then
+      Node.MakeVisible;
+  finally
+    fCanChange := False;
+  end;
+end;
+
 procedure TOverviewFrame.SelectTab(const TabIdx: Integer);
   {Selects tab with specified index.
     @param TabIdx [in] Tab to be selected.
@@ -529,7 +572,7 @@ procedure TOverviewFrame.tcDisplayStyleChanging(Sender: TObject;
     @param AllowChanges [in/out] Not used or modified. Permits tab change.
   }
 begin
-  fTreeStates[tcDisplayStyle.TabIndex].SaveState;
+  SaveTreeState;
 end;
 
 procedure TOverviewFrame.tvSnippetsChanging(Sender: TObject;
@@ -570,24 +613,39 @@ end;
 
 procedure TOverviewFrame.tvSnippetsKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
-  {Handles a key down event on tree view. We manage movement thru tree view in
-  response to Up, Down, PageUp and PageDown. We permit selection to change in
-  when one of these keys is pressed.
+  {Handles a key down event on tree view. We allow movement using keys in
+  cPermittedKeys with no shift keys along with Ctrl+Home and Ctrl+End. We permit
+  the selection to change when one of these keys is pressed.
     @param Sender [in] Not used.
     @param Key [in/out] Key being pressed. Not altered.
     @param Shift [in] Modifier keys.
   }
 begin
-  if Key in cPermittedKeys then
+  if HasShiftKeys(Shift) then
+  begin
+    // shift keys are pressed: inhibit any default processing and handle just
+    // Ctrl+Home and Ctrl+End specially.
+    case Key of
+      VK_HOME:
+        if ExtractShiftKeys(Shift) = [ssCtrl] then
+          SelectNode(tvSnippets.Items.GetFirstNode, True);
+      VK_END:
+        if ExtractShiftKeys(Shift) = [ssCtrl] then
+          SelectNode(tvSnippets.Items[Pred(tvSnippets.Items.Count)], True);
+    end;
+    Key := 0;
+  end
+  else if Key in cPermittedKeys then
+    // no shift keys and one of permitted keys are pressed: permit default
+    // tree view processing (KeyUp event resets fCanChange).
     fCanChange := True;
 end;
 
 procedure TOverviewFrame.tvSnippetsKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
-  {Handles a key up event on tree view. We manage movement thru tree view in
-  response to Up, Down, PageUp and PageDown keys. Release of one these keys
-  follows a selection change and we trigger a notification of this event from
-  here.
+  {Handles a key up event on tree view. We allow movement using keys in
+  cPermittedKey. Release of one these keys follows a selection change and we
+  trigger a notification of this event from here.
     @param Sender [in] Not used.
     @param Key [in/out] Key pressed. Not altered.
     @param Shift [in] Modifier keys.
@@ -627,11 +685,7 @@ begin
     Node := tvSnippets.GetNodeAt(X, Y);
     if Assigned(Node) and (Node is TViewItemTreeNode) then
     begin
-      // Select the node
-      fCanChange := True;
-      tvSnippets.Selected := Node;
-      fCanChange := False;
-      // Notify selection
+      SelectNode(Node, False);
       SelectionChange((Node as TViewItemTreeNode).ViewItem);
     end;
   end;
@@ -673,9 +727,7 @@ begin
       begin
         // collapse section to which selected node belongs
         // select the section node
-        fCanChange := True;
-        tvSnippets.Selected := SectionNode;
-        fCanChange := False;
+        SelectNode(SectionNode, False);
         // collapse section and notify change of selection
         if Assigned(SectionNode) then
         begin
@@ -687,9 +739,7 @@ begin
       begin
         // collapse whole tree
         // select the node
-        fCanChange := True;
-        tvSnippets.Selected := SectionNode;
-        fCanChange := False;
+        SelectNode(SectionNode, False);
         // collapse whole tree and notify change of selection
         tvSnippets.FullCollapse;
         if Assigned(SectionNode) then
