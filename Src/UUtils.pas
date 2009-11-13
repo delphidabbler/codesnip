@@ -911,18 +911,23 @@ begin
   end;
 end;
 
-procedure Pause(const ADelay: Cardinal);
+procedure Pause(const ADelay: LongWord);
   {Pauses for a specified number of milliseconds before returning. Performs a
   busy wait.
     @param ADelay [in] Number of milliseconds to pause.
   }
 var
-  StartTC: Cardinal;  // tick count when routine called
+  StartTC: DWORD;   // tick count when routine called
+  CurrentTC: Int64; // tick count at each loop iteration
 begin
   StartTC := GetTickCount;
   repeat
     ProcessMessages;
-  until Int64(GetTickCount) - Int64(StartTC) >= ADelay;
+    CurrentTC := GetTickCount;
+    if CurrentTC < StartTC then
+      // tick count has wrapped around: adjust it
+      CurrentTC := CurrentTC + High(DWORD);
+  until CurrentTC - StartTC >= ADelay;
 end;
 
 function CountDelims(const S, Delims: string): Integer;
