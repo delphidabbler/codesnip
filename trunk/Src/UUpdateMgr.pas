@@ -212,7 +212,7 @@ uses
 
 resourcestring
   // Error messages
-  sGeneralUpdateError = 'Update Error|%0:s';
+  sGeneralUpdateError = 'Update Error';
   sChecksumError = 'Corrupt File Error';
 
 
