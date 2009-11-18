@@ -200,6 +200,7 @@ uses
   UFileHiliter in 'UFileHiliter.pas',
   UFileProtocol in 'UFileProtocol.pas',
   UFileUpdater in 'UFileUpdater.pas',
+  UFolderBackup in 'UFolderBackup.pas',
   UFontHelper in 'UFontHelper.pas',
   UFormAligner in 'UFormAligner.pas',
   UFreePascalCompiler in 'UFreePascalCompiler.pas',
