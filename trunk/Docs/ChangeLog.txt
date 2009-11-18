@@ -1,3 +1,12 @@
+Version 3.4.6 - 18 November 2009
+CodeSnip 3.4.6 - 18 November 2009
++ Changed code that takes a security backup of main database during updates to store backup in a single file rather as separate files in a temporary folder. This should fix bug #2898687 (see http://www.delphidabbler.com/url/codesnip-bugs).
++ Slightly modified user database backup file format to match that now used for main database backup.
++ Fixed potential bugs:
+  - Code that performs busy waits could have caused program to freeze.
+  - Negative numbers written to backup files were not being written correctly.
+  - A garbled error message was corrected.
+
 Version 3.4.5 - 09 November 2009
 CodeSnip 3.4.5 - 09 November 2009
 + Home, Ctrl+Home, End and Ctrl+End keys now work in overview pane and go to first and last item in treeview respectively (feature request #2888880 - see http://www.delphidabbler.com/url/codesnip-featurereq).
@@ -8,7 +17,7 @@ CodeSnip 3.4.5 - 09 November 2009
 Version 3.4.4 - 21 October 2009
 CodeSnip 3.4.4 - 21 October 2009
 + Changed bug reporting mechanism. Bugs are now reported via the online bug tracker. Bug report dialogs changed accordingly. Access to the old bug report web service was removed.
-+ Added two new default syntax highlighter styles: "Visual Studio™" and "No Highlighter". The latter switches off syntax highlighting.
++ Added two new default syntax highlighter styles: "Visual Studio" and "No Highlighter". The latter switches off syntax highlighting.
 + Fixed bug no. 2882331 (see http://www.delphidabbler.com/url/codesnip-bugs). This was a bug in the syntax highlighter that occurred when an unexpected character was encountered.
 + Updated help file re changes.
 + Some minor source code corrections.
@@ -19,7 +28,7 @@ CodeSnip 3.4.3 - 19 October 2009
 + Text displayed in preview dialog boxes can now be scrolled horizontally.
 + Added support for building source against later releases of Indy 10 components.
 + Help file and privacy statement updated.
-+ Further updated third aprty GIF image handling code to latest release.
++ Further updated third party GIF image handling code to latest release.
 + Some changes to source code project options.
 
 Version 3.4.2 - 10 October 2009
