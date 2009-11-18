@@ -48,17 +48,9 @@
 DELPHIROOT = $(DELPHI2006)
 !endif
 
-# Define path to DelphiDabbler library code if specified for Delphi 2006
-!ifdef DELPHIDABLIBD2006
-DELPHIDABLIB = $(DELPHIDABLIBD2006)
-!endif
-
 # Check for required macros
 !ifndef DELPHIROOT
 !error DELPHIROOT environment variable required.
-!endif
-!ifndef DELPHIDABLIB
-!error DELPHIDABLIB environment variable required.
 !endif
 !ifndef INDY10
 !error INDY10 environment variable required.
@@ -83,7 +75,7 @@ VIED = VIEd.exe -makerc
 # locations in the project options .cfg file.
 .dpr.exe:
   @echo +++ Compiling Delphi Project $< +++
-  @$(DCC32) $< -B -U"$(DELPHIDABLIB)" -U"$(INDY10)"
+  @$(DCC32) $< -B -U"$(INDY10)"
 
 # Resource files are compiled to the directory specified by BIN macro, which
 # must have been set by the caller.
