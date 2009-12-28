@@ -39,35 +39,26 @@ unit UUserDBBackup;
 interface
 
 
+uses
+  // Project
+  UFolderBackup;
+
+
 type
 
   {
   TUserDBBackup:
-    Class that can create and restore backups of the user database. Backups are
-    single files.
+    Sealed class that can create and restore backups of the user database.
+    Backups are single files. See UFolderBackup for details of file format.
   }
-  TUserDBBackup = class(TObject)
+  TUserDBBackup = class sealed(TFolderBackup)
   strict private
-    var
-      fBackupFile: string;          // Name of backup file
-      fUserDBDir: string;           // User database directory}
-    const
-      cWatermark = SmallInt($FFFF); // File watermark (v2 and later)
-    function UserDBFileSpec(const FileName: string): string;
-      {Builds full path to a file in user database directory.
-        @param FileName [in] Base name of file.
-        @return Fully specified file name.
-      }
+    const cFileID = SmallInt($DBAC);  // User database backup file ID
   public
     constructor Create(const BackupFile: string);
-      {Class constructor. Sets up object to backup to a specified file.
+      {Class constructor. Sets up object to backup user database to a specified
+      file.
         @param BackupFile [in] Name of backup file.
-      }
-    procedure Backup;
-      {Creates a backup of user database in a single file.
-      }
-    procedure Restore;
-      {Restores user database from a backup file.
       }
   end;
 
@@ -76,180 +67,19 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils, Classes,
   // Project
-  UAppInfo, UCheckSum, UDataStreamIO, UDOSDateTime, UExceptions, UUnicodeHelper,
-  UUtils;
-
-{
-  User database backup file format
-  --------------------------------
-
-  File compriises text characters. Numbers are encoded in hex format. There are
-  two formats:
-
-  Version 1 Format
-  ----------------
-
-    FileCount: SmallInt       - number of files encoded in backup file
-
-  followed by FileCount file records of:
-
-    Name: SizedString;        - name of file without path information
-    FileDate: LongInt;        - file's modification date (DOS file stamp as
-                                LongInt).
-    MD5: String[32];          - MD5 checksum of original file on server
-                                (MD5 of Content should match this value)
-    Content: SizedString;     - file contents
-
-  Version 2 Format
-  ----------------
-
-    $FFFF                     - Indicator of post-v1 file type
-    $0002                     - Indicator for v2 file type
-                                (and later versions will increment this
-    FileCount: SmallInt       - number of files encoded in backup file
-
-  followed by FileCount file records of:
-
-    Name: SizedString;        - name of file without path information
-    FileDate: LongInt;        - file's modification date (DOS file stamp as
-                                LongInt).
-    MD5: String[32];          - MD5 checksum of original file on server
-                                (MD5 of Content should match this value)
-    Content: SizedLongString; - file contents
-
-  Data types
-  ----------
-
-  Data types are those defined in UDataStreamIO.
-}
+  UAppInfo;
 
 
 { TUserDBBackup }
 
-procedure TUserDBBackup.Backup;
-  {Creates a backup of user database in a single file.
-  }
-var
-  Writer: TDataStreamWriter;  // object used to write data to stream
-  Files: TStringList;         // list of files in database directory
-  FileName: string;           // references each file in database
-  Content: string;            // content of each database file
-  DOSDateTime: IDOSDateTime;  // date stamp of each database file
-begin
-  Files := nil;
-  // Create output stream to backup file
-  Writer := TDataStreamWriter.Create(
-    TFileStream.Create(fBackupFile, fmCreate), True
-  );
-  try
-    // Get list of files in database and write number of files to output
-    Files := TStringList.Create;
-    ListFiles(fUserDBDir, '*.*', Files, False);
-    Writer.WriteSmallInt(cWatermark);   // file marker
-    Writer.WriteSmallInt($0002);        // file version
-    Writer.WriteSmallInt(Files.Count);  // number of files
-    // Write details of each file to output: file name, date stamp, checksum and
-    // content
-    for FileName in Files do
-    begin
-      Writer.WriteSizedString(FileName);
-      DOSDateTime := TDOSDateTimeFactory.CreateFromFile(
-        UserDBFileSpec(FileName)
-      );
-      Writer.WriteLongInt(DOSDateTime.DateStamp);
-      Content := FileToString(UserDBFileSpec(FileName));
-      Writer.WriteString(TCheckSum.Calculate(Latin1BytesOf(Content)), 32);
-      Writer.WriteSizedLongString(Content);
-    end;
-  finally
-    FreeAndNil(Files);
-    FreeAndNil(Writer);
-  end;
-end;
-
 constructor TUserDBBackup.Create(const BackupFile: string);
-  {Class constructor. Sets up object to backup to a specified file.
+  {Class constructor. Sets up object to backup user database to a specified
+  file.
     @param BackupFile [in] Name of backup file.
   }
 begin
-  inherited Create;
-  fBackupFile := BackupFile;
-  fUserDBDir := ExcludeTrailingPathDelimiter(TAppInfo.UserDataDir);
-end;
-
-procedure TUserDBBackup.Restore;
-  {Restores user database from a backup file.
-  }
-var
-  Reader: TDataStreamReader;  // object used to read data from file
-  FileCount: Integer;         // number of files to restore
-  Idx: Integer;               // loops through all files in backup
-  FileName: string;           // name of file to restore
-  MD5: Latin1String;          // checksum of file to restore
-  Content: Latin1String;      // content of file to restore
-  DOSDateTime: IDOSDateTime;  // date stamp of file to restore
-  HeaderWord: SmallInt;       // first word value in file
-  Version: SmallInt;          // file version
-resourcestring
-  // Error message
-  sBadFileContent = 'Invalid content for file "%s"';
-begin
-  // Make sure database folder exists
-  EnsureFolders(fUserDBDir);
-  // Create reader to access data in backup file
-  Reader := TDataStreamReader.Create(
-    TFileStream.Create(fBackupFile, fmOpenRead or fmShareDenyNone), True
-  );
-  try
-    // Get number of files stored in backup file and process each one
-    // Read 1st word of file. If it is $FFFF we have v2 or later file, otherwise
-    // it's v1
-    HeaderWord := Reader.ReadSmallInt;
-    if HeaderWord = cWatermark then
-    begin
-      // v2 or later: read version then file count
-      Version := Reader.ReadSmallInt;
-      FileCount := Reader.ReadSmallInt;
-    end
-    else
-    begin
-      // v1: file count was first word of file
-      Version := 1;
-      FileCount := HeaderWord;
-    end;
-    for Idx := 1 to FileCount do
-    begin
-      // Get file details: name, date stamp, checksum and content
-      FileName := UserDBFileSpec(string(Reader.ReadSizedString));
-      DOSDateTime := TDOSDateTimeFactory.CreateFromDOSTimeStamp(
-        Reader.ReadLongInt
-      );
-      MD5 := Reader.ReadString(32);
-      if Version = 1 then
-        Content := Reader.ReadSizedString
-      else
-        Content := Reader.ReadSizedLongString;
-      if not TCheckSum.Compare(Content, MD5) then
-        raise ECodeSnip.CreateFmt(sBadFileContent, [FileName]);
-      // Write file and set date stamp
-      StringToFile(string(Content), FileName);
-      DOSDateTime.ApplyToFile(FileName);
-    end;
-  finally
-    FreeAndNil(Reader);
-  end;
-end;
-
-function TUserDBBackup.UserDBFileSpec(const FileName: string): string;
-  {Builds full path to a file in user database directory.
-    @param FileName [in] Base name of file.
-    @return Fully specified file name.
-  }
-begin
-  Result := IncludeTrailingPathDelimiter(fUserDBDir) + FileName;
+  inherited Create(TAppInfo.UserDataDir, BackupFile, cFileID);
 end;
 
 end.

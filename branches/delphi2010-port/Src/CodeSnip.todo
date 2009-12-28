@@ -62,7 +62,7 @@ Could have base class TSingleton = class(TInterfacedObject) that provides defaul
 {TODO -oSelf -cProposal : Consider making TDateTime a record that can use =, < etc and to use TRange in when comparing file differences}
 {TODO -oSelf -cProposal : Add update date to each routine object}
 {TODO -oSelf -cRefactor : Merge the IO and UI manager code into WBController}
-{TODO -oSelf -cBug :Fix bug #2868704
+{DONE -oSelf -cBug :Fix bug #2868704
 Some custom printer properties set in Document Properties dialog box are
 not passed to printer.
 First noticed in v1.7. Still a problem in v3.x}

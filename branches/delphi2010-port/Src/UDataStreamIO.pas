@@ -329,7 +329,7 @@ procedure TDataStreamWriter.WriteSmallInt(const Value: SmallInt);
     @param Value [in] Value to be written.
   }
 begin
-  WriteHex(Value, 4);
+  WriteHex(Word(Value), 4);
 end;
 
 procedure TDataStreamWriter.WriteString(const Str: Latin1String);

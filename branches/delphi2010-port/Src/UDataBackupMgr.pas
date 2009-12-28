@@ -2,7 +2,7 @@
  * UDataBackupMgr.pas
  *
  * Static class that manages backups of data files. It can back up the local
- * data directory, restore the backup and delete it.
+ * database directory, restore the backup and delete it.
  *
  * $Rev$
  * $Date$
@@ -49,28 +49,27 @@ type
 
   {
   TDataBackupMgr:
-    Static class that manages backups of data files. It can back up the local
-    data directory, restore the backup and delete it.
+    Static class that manages backups of main database. The database is backed
+    up into a single file.
   }
   TDataBackupMgr = class(TNoConstructObject)
   strict private
+    const cBakFileID = SmallInt($CBAC); // Main database backup file ID
+    class function BackupFileName: string;
+      {Name of file used to receive database backup.
+        @return Required file name.
+      }
     class function DataDir: string;
-      {Gets name of directory where data files are stored.
+      {Name of directory that contains main database files.
         @return Required directory name.
       }
     class function BackupDir: string;
-      {Gets name of directory where backup files are stored.
+      {Gets name of directory where backup file is stored.
         @return Required directory name.
       }
     class function BackupExists: Boolean;
-      {Checks if a current backup exists.
-        @return True if backup exists, False if not.
-      }
-    class procedure CopyDirFiles(const SourceDir, DestDir: string);
-      {Copies all files from one directory to another. Any sub directories are
-      ignored. Assumes that both directories exist.
-        @param SourceDir [in] Name of directory storing files to be copied.
-        @param DestDir [in] Name of directory to receive copied files.
+      {Checks if a current backup file exists.
+        @return True if backup file exists, False if not.
       }
     class procedure DeleteFilesFromDir(const Dir: string);
       {Deletes all files in a directory. Any sub directories are left untouched.
@@ -79,14 +78,14 @@ type
       }
   public
     class procedure Backup;
-      {Backs up CodeSnip data files.
+      {Backs up CodeSnip data files into a single file.
       }
     class procedure RestoreBackup;
       {Restores back up, replacing current data files. If no backup exists the
-      data directory is cleared.
+      database directory is cleared.
       }
     class procedure DeleteBackup;
-      {Deletes current backup.
+      {Deletes current backup file.
       }
   end;
 
@@ -96,68 +95,54 @@ implementation
 
 uses
   // Delphi
-  Classes,
+  SysUtils, Windows {for inlining},
   // Project
-  UAppInfo, UUtils;
+  UAppInfo, UFolderBackup, UUtils;
 
 
 { TDataBackupMgr }
 
 class procedure TDataBackupMgr.Backup;
-  {Backs up CodeSnip data files.
+  {Backs up CodeSnip data files into a single file.
   }
 begin
   EnsureFolders(BackupDir);
-  DeleteFilesFromDir(BackupDir);
+  SysUtils.DeleteFile(BackupFileName);
   EnsureFolders(DataDir);
-  CopyDirFiles(DataDir, BackupDir);
+  with TFolderBackup.Create(DataDir, BackupFileName, cBakFileID) do
+    try
+      Backup;
+    finally
+      Free;
+    end;
 end;
 
 class function TDataBackupMgr.BackupDir: string;
-  {Gets name of directory where backup files are stored.
+  {Gets name of directory where backup file is stored.
     @return Required directory name.
   }
 begin
-  Result := DataDir + '.bak';
+  Result := ExcludeTrailingPathDelimiter(TAppInfo.UserAppDir);
 end;
 
 class function TDataBackupMgr.BackupExists: Boolean;
-  {Checks if a current backup exists.
-    @return True if backup exists, False if not.
+  {Checks if a current backup file exists.
+    @return True if backup file exists, False if not.
   }
 begin
-  // Backup is deemed to exist if backup directory exists
-  // A backup may be empty
-  Result := IsDirectory(BackupDir);
+  Result := FileExists(BackupFileName);
 end;
 
-class procedure TDataBackupMgr.CopyDirFiles(const SourceDir, DestDir: string);
-  {Copies all files from one directory to another. Any sub directories are
-  ignored. Assumes that both directories exist.
-    @param SourceDir [in] Name of directory storing files to be copied.
-    @param DestDir [in] Name of directory to receive copied files.
+class function TDataBackupMgr.BackupFileName: string;
+  {Name of file used to receive database backup.
+    @return Required file name.
   }
-var
-  DirContents: TStringList; // list of directory contents
-  Idx: Integer;             // loops thru contents of directory
 begin
-  DirContents := TStringList.Create;
-  try
-    ListFiles(SourceDir, '*.*', DirContents);
-    for Idx := 0 to Pred(DirContents.Count) do
-      if not IsDirectory(DirContents[Idx]) then
-        CopyFile(
-          SourceDir + '\' + DirContents[Idx],
-          DestDir + '\' + DirContents[Idx]
-        );
-  finally
-    DirContents.Free;
-  end;
+  Result := IncludeTrailingPathDelimiter(BackupDir) + 'main-db.bak';
 end;
-
 
 class function TDataBackupMgr.DataDir: string;
-  {Gets name of directory where data files are stored.
+  {Name of directory that contains main database files.
     @return Required directory name.
   }
 begin
@@ -165,14 +150,11 @@ begin
 end;
 
 class procedure TDataBackupMgr.DeleteBackup;
-  {Deletes current backup.
+  {Deletes current backup file.
   }
 begin
   if BackupExists then
-  begin
-    DeleteFilesFromDir(BackupDir);
-    RmDir(BackupDir);
-  end;
+    SysUtils.DeleteFile(BackupFileName);
 end;
 
 class procedure TDataBackupMgr.DeleteFilesFromDir(const Dir: string);
@@ -187,13 +169,20 @@ end;
 
 class procedure TDataBackupMgr.RestoreBackup;
   {Restores back up, replacing current data files. If no backup exists the
-  data directory is cleared.
+  database directory is cleared.
   }
 begin
   EnsureFolders(DataDir);
   DeleteFilesFromDir(DataDir);
   if BackupExists then
-    CopyDirFiles(BackupDir, DataDir);
+  begin
+    with TFolderBackup.Create(DataDir, BackupFileName, cBakFileID) do
+      try
+        Restore;
+      finally
+        Free;
+      end;
+  end;
 end;
 
 end.
