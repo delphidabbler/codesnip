@@ -120,7 +120,8 @@ is only sent if the user clicks the wizard's "Submit" button. The data is:
     * The program's id, name and version information.
     * The unique program key (see above for details).
     * The user name or nickname.
-    * A description of the operating system being used.
+    * A description of the operating system and version of Internet Explorer
+      being used. 
     * A flag indicating whether the user wishes to join the CodeSnip mailing
       list.
     * The user's email address (only required if joining the mailing list).
