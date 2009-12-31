@@ -43,13 +43,12 @@ interface
 uses
   // Delphi
   SysUtils, Classes, ActnList, Buttons, StdCtrls, Forms, Controls, CheckLst,
-  ComCtrls, ExtCtrls,
+  ComCtrls, ExtCtrls, StdActns, Menus, ImgList,
   // Project
-  FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
-  IntfCompilers, UActiveText, UBaseObjects, UCategoryListAdapter,
-  UChkListStateMgr, UCompileMgr, UCompileResultsLBMgr, UCSSBuilder,
-  ULEDImageList, USnipKindListAdapter, USnippets, USnippetsChkListMgr,
-  UUnitsChkListMgr, StdActns, Menus, ImgList;
+  FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, IntfCompilers,
+  UActiveText, UBaseObjects, UCategoryListAdapter, UChkListStateMgr,
+  UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, ULEDImageList,
+  USnipKindListAdapter, USnippets, USnippetsChkListMgr, UUnitsChkListMgr;
 
 
 type
@@ -63,9 +62,14 @@ type
     alMain: TActionList;
     actAddUnit: TAction;
     actCompile: TAction;
+    actCopy: TEditCopy;
+    actCut: TEditCut;
     actDependencies: TAction;
+    actPaste: TEditPaste;
+    actSelectAll: TEditSelectAll;
     actSetAllQuery: TAction;
     actSetAllSuccess: TAction;
+    actUndo: TEditUndo;
     actViewErrors: TAction;
     actViewExtra: TAction;
     btnAddUnit: TButton;
@@ -85,6 +89,7 @@ type
     edSourceCode: TMemo;
     edUnit: TEdit;
     frmExtraInstructions: TFixedHTMLDlgFrame;
+    ilMain: TImageList;
     lbCompilers: TListBox;
     lblCategories: TLabel;
     lblCompilers: TLabel;
@@ -101,26 +106,20 @@ type
     lblViewCompErrs: TLabel;
     lblViewCompErrsKey: TLabel;
     lblXRefs: TLabel;
+    miCopy: TMenuItem;
+    miCut: TMenuItem;
+    miPaste: TMenuItem;
+    miSelectAll: TMenuItem;
+    miSpacer1: TMenuItem;
+    miSpacer2: TMenuItem;
+    miUndo: TMenuItem;
+    mnuEditCtrls: TPopupMenu;
     pcMain: TPageControl;
     pnlViewCompErrs: TPanel;
     tsCode: TTabSheet;
     tsComments: TTabSheet;
     tsCompileResults: TTabSheet;
     tsReferences: TTabSheet;
-    mnuEditCtrls: TPopupMenu;
-    miCut: TMenuItem;
-    ilMain: TImageList;
-    miCopy: TMenuItem;
-    miPaste: TMenuItem;
-    miSelectAll: TMenuItem;
-    miUndo: TMenuItem;
-    actCut: TEditCut;
-    actCopy: TEditCopy;
-    actPaste: TEditPaste;
-    miSpacer1: TMenuItem;
-    actSelectAll: TEditSelectAll;
-    miSpacer2: TMenuItem;
-    actUndo: TEditUndo;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -943,7 +942,9 @@ begin
     with CSSBuilder.AddSelector('.elem') do
     begin
       AddProperty(CSSColorProp(clREMLTags));
-      AddProperty(CSSFontFamilyProp('Courier New', cfgMonoSpace));
+      AddProperty(
+        CSSFontFamilyProp(TFontHelper.DefaultMonoFontName, cfgMonoSpace)
+      );
     end;
   finally
     FreeAndNil(DefaultFont);
