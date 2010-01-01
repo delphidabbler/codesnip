@@ -289,7 +289,8 @@ begin
   Report.Values['ProgVer'] := TAppInfo.ProgramReleaseVersion;
   Report.Values['ProgKey'] := TAppInfo.ProgramKey;
   Report.Values['UserName'] := Trim(edName.Text);
-  Report.Values['OSDesc'] := TOSInfo.Description;
+  Report.Values['OSDesc'] :=
+    Format('%0:s. IE Version %1:d.', [TOSInfo.Description, TOSInfo.BrowserVer]);
   Report.Values['MailList'] := IntToStr(Ord(chkMailList.Checked));
   if chkMailList.Checked then
     Report.Values['UserEmail'] := Trim(edEmail.Text)

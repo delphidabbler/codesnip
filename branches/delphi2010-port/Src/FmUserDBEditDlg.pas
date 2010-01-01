@@ -43,13 +43,12 @@ interface
 uses
   // Delphi
   SysUtils, Classes, ActnList, Buttons, StdCtrls, Forms, Controls, CheckLst,
-  ComCtrls, ExtCtrls,
+  ComCtrls, ExtCtrls, StdActns, Menus, ImgList,
   // Project
-  FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
-  IntfCompilers, UActiveText, UBaseObjects, UCategoryListAdapter,
-  UChkListStateMgr, UCompileMgr, UCompileResultsLBMgr, UCSSBuilder,
-  ULEDImageList, USnipKindListAdapter, USnippets, USnippetsChkListMgr,
-  UUnitsChkListMgr;
+  FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, IntfCompilers,
+  UActiveText, UBaseObjects, UCategoryListAdapter, UChkListStateMgr,
+  UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, ULEDImageList,
+  USnipKindListAdapter, USnippets, USnippetsChkListMgr, UUnitsChkListMgr;
 
 
 type
@@ -63,13 +62,24 @@ type
     alMain: TActionList;
     actAddUnit: TAction;
     actCompile: TAction;
+    actCopy: TEditCopy;
+    actCut: TEditCut;
+    actDependencies: TAction;
+    actPaste: TEditPaste;
+    actSelectAll: TEditSelectAll;
     actSetAllQuery: TAction;
     actSetAllSuccess: TAction;
+    actUndo: TEditUndo;
+    actViewErrors: TAction;
+    actViewExtra: TAction;
     btnAddUnit: TButton;
+    btnDependencies: TButton;
     btnCompile: TButton;
     btnSetAllQuery: TBitBtn;
     btnSetAllSuccess: TBitBtn;
+    btnViewExtra: TButton;
     cbCategories: TComboBox;
+    cbKind: TComboBox;
     clbDepends: TCheckListBox;
     clbUnits: TCheckListBox;
     clbXRefs: TCheckListBox;
@@ -79,34 +89,37 @@ type
     edSourceCode: TMemo;
     edUnit: TEdit;
     frmExtraInstructions: TFixedHTMLDlgFrame;
+    ilMain: TImageList;
     lbCompilers: TListBox;
     lblCategories: TLabel;
     lblCompilers: TLabel;
     lblCompileShortcuts: TLabel;
+    lblCompResDesc: TLabel;
     lblDepends: TLabel;
     lblDescription: TLabel;
     lblExtra: TLabel;
     lblName: TLabel;
+    lblKind: TLabel;
     lblSourceCode: TLabel;
     lblSnippetKindHelp: TLabel;
     lblUnits: TLabel;
+    lblViewCompErrs: TLabel;
+    lblViewCompErrsKey: TLabel;
     lblXRefs: TLabel;
+    miCopy: TMenuItem;
+    miCut: TMenuItem;
+    miPaste: TMenuItem;
+    miSelectAll: TMenuItem;
+    miSpacer1: TMenuItem;
+    miSpacer2: TMenuItem;
+    miUndo: TMenuItem;
+    mnuEditCtrls: TPopupMenu;
     pcMain: TPageControl;
+    pnlViewCompErrs: TPanel;
     tsCode: TTabSheet;
     tsComments: TTabSheet;
     tsCompileResults: TTabSheet;
     tsReferences: TTabSheet;
-    actViewErrors: TAction;
-    pnlViewCompErrs: TPanel;
-    lblViewCompErrsKey: TLabel;
-    lblViewCompErrs: TLabel;
-    cbKind: TComboBox;
-    lblKind: TLabel;
-    btnDependencies: TButton;
-    actDependencies: TAction;
-    btnViewExtra: TButton;
-    actViewExtra: TAction;
-    lblCompResDesc: TLabel;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -252,7 +265,7 @@ implementation
 
 uses
   // Delphi
-  StrUtils, Windows {for inlining}, Graphics, Menus,
+  StrUtils, Windows {for inlining}, Graphics, 
   // Project
   FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
   UCtrlArranger, UExceptions, UFontHelper, UReservedCategories,
@@ -929,7 +942,9 @@ begin
     with CSSBuilder.AddSelector('.elem') do
     begin
       AddProperty(CSSColorProp(clREMLTags));
-      AddProperty(CSSFontFamilyProp('Courier New', cfgMonoSpace));
+      AddProperty(
+        CSSFontFamilyProp(TFontHelper.DefaultMonoFontName, cfgMonoSpace)
+      );
     end;
   finally
     FreeAndNil(DefaultFont);

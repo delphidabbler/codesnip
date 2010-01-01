@@ -110,6 +110,33 @@ type
         @return Handle to cloned font. Caller is responsible for releasing the
           handle.
       }
+  public
+    const
+      DefaultMonoFontName = 'Courier New';      // Default mono font name
+  strict private
+    const
+      DefaultFontName = 'MS Sans Serif';        // Default font name
+      DefaultTTFontName = 'Arial';              // Default TT font name
+      DefaultFontSize = 8;                      // Default font size
+
+      DefaultContentFontName = DefaultFontName; // Default content font name
+      DefaultTTContentFontName                  // Default TT content font name
+        = DefaultTTFontName;
+      DefaultContentFontSize = DefaultFontSize; // Default content font size
+
+      VistaFontName = 'Segoe UI';               // Vista default font name
+      VistaFontSize = 9;                        // Vista default font size
+      VistaContentFontName = 'Calibri';         // Vista content font name
+      VistaContentFontSize = 10;                // Vista content font size
+
+      XPFontName = 'Tahoma';                    // XP default font name
+      XPFontSize = DefaultFontSize;             // XP default font size
+      XPContentFontName = 'Verdana';            // XP content font name
+      XPContentFontSize                         // XP content font size
+        = DefaultContentFontSize;
+      DefaultTTMonoFontName                     // Default TT mono font
+        = DefaultMonoFontName;
+      DefaultMonoFontSize = 8;                  // Default mono font size
   end;
 
 
@@ -121,29 +148,6 @@ uses
   SysUtils, Windows, Forms,
   // Project
   UGraphicUtils, USystemInfo;
-
-
-const
-  cDefaultFont = 'MS Sans Serif';               // Default font name
-  cDefaultTTFont = 'Arial';                     // Default TT font name
-  cDefaultFontSize = 8;                         // Default font size
-  cDefaultContentFont = cDefaultFont;           // Default content font name
-  cDefaultTTContentFont = cDefaultTTFont;       // Default TT content font name
-  cDefaultContentFontSize = cDefaultFontSize;   // Default content font size
-
-  cVistaFont = 'Segoe UI';                      // Vista default font name
-  cVistaFontSize = 9;                           // Vista default font size
-  cVistaContentFont = 'Calibri';                // Vista content font name
-  cVistaContentFontSize = 10;                   // Vista content font size
-
-  cXPFont = 'Tahoma';                           // XP default font name
-  cXPFontSize = cDefaultFontSize;               // XP default font size
-  cXPContentFont = 'Verdana';                   // XP content font name
-  cXPContentFontSize = cDefaultContentFontSize; // XP content font size
-
-  cDefaultMonoFont = 'Courier New';             // Default mono font
-  cDefaultTTMonoFont = cDefaultMonoFont;        // Default TT mono font
-  cDefaultMonoFontSize = 8;                     // Default mono font size
 
 
 { TFontHelper }
@@ -247,30 +251,30 @@ class procedure TFontHelper.SetContentFont(const Font: TFont;
 begin
   Assert(TOSInfo.IsWinNT, ClassName + '.SetContentFont: NT platform required');
   // Set default content font, size and style
-  Font.Name := cDefaultContentFont;
-  Font.Size := cDefaultContentFontSize;
+  Font.Name := DefaultContentFontName;
+  Font.Size := DefaultContentFontSize;
   Font.Style := [];
   if TOSInfo.CheckReportedOS(TOSInfo.WinVista) then
   begin
     // We have Vista - use Calibri if installed
-    if FontExists(cVistaContentFont) then
+    if FontExists(VistaContentFontName) then
     begin
-      Font.Name := cVistaContentFont;
-      Font.Size := cVistaContentFontSize;
+      Font.Name := VistaContentFontName;
+      Font.Size := VistaContentFontSize;
     end;
   end
   else if TOSInfo.CheckReportedOS(TOSInfo.Win2K) then
   begin
     // We have Win 2K or XP - use Verdana if installed
-    if FontExists(cXPContentFont) then
+    if FontExists(XPContentFontName) then
     begin
-      Font.Name := cXPContentFont;
-      Font.Size := cXPContentFontSize;
+      Font.Name := XPContentFontName;
+      Font.Size := XPContentFontSize;
     end;
   end;
   // Force font to true type if required and necessary
   if ForceTrueType and not IsTrueTypeFont(Font) then
-    Font.Name := cDefaultTTContentFont;
+    Font.Name := DefaultTTContentFontName;
 end;
 
 class procedure TFontHelper.SetDefaultBaseFont(const BaseFont: TFont;
@@ -291,7 +295,7 @@ begin
     SetDefaultFont(DefaultFont, ForceTrueType);
     // font delta is difference between normal default font size and that used
     // on a specific OS (e.g. Vista uses Segoe UI 9 rather than MS Sans Serif 8)
-    FontDelta := DefaultFont.Size - cDefaultFontSize;
+    FontDelta := DefaultFont.Size - DefaultFontSize;
     // change base font name and size as required
     BaseFont.Name := DefaultFont.Name;
     BaseFont.Size := BaseFont.Size + FontDelta;
@@ -309,30 +313,30 @@ class procedure TFontHelper.SetDefaultFont(const Font: TFont;
 begin
   Assert(TOSInfo.IsWinNT, ClassName + '.SetDefaultFont: NT platform required');
   // Set default font, size and style
-  Font.Name := cDefaultFont;
-  Font.Size := cDefaultFontSize;
+  Font.Name := DefaultFontName;
+  Font.Size := DefaultFontSize;
   Font.Style := [];
   if TOSInfo.CheckReportedOS(TOSInfo.WinVista) then
   begin
     // We have Vista - use Segoe UI if installed
-    if FontExists(cVistaFont) then
+    if FontExists(VistaFontName) then
     begin
-      Font.Name := cVistaFont;
-      Font.Size := cVistaFontSize;
+      Font.Name := VistaFontName;
+      Font.Size := VistaFontSize;
     end;
   end
   else if TOSInfo.CheckReportedOS(TOSInfo.Win2K) then
   begin
     // We have Win 2K or XP - use Tahoma if installed
-    if FontExists(cXPFont) then
+    if FontExists(XPFontName) then
     begin
-      Font.Name := cXPFont;
-      Font.Size := cXPFontSize;
+      Font.Name := XPFontName;
+      Font.Size := XPFontSize;
     end;
   end;
   // Force font to true type if required and necessary
   if ForceTrueType and not IsTrueTypeFont(Font) then
-    Font.Name := cDefaultTTFont;
+    Font.Name := DefaultTTFontName;
 end;
 
 class procedure TFontHelper.SetDefaultMonoFont(const Font: TFont;
@@ -343,10 +347,10 @@ class procedure TFontHelper.SetDefaultMonoFont(const Font: TFont;
   }
 begin
   if ForceTrueType then
-    Font.Name := cDefaultTTMonoFont
+    Font.Name := DefaultTTMonoFontName
   else
-    Font.Name := cDefaultMonoFont;
-  Font.Size := cDefaultMonoFontSize;
+    Font.Name := DefaultMonoFontName;
+  Font.Size := DefaultMonoFontSize;
   Font.Style := [];
 end;
 

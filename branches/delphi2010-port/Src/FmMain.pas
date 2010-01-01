@@ -1425,6 +1425,8 @@ begin
     // Set window caption
     Application.Title := TAppInfo.FullProgramName;
     Caption := Application.Title;
+    if FindCmdLineSwitch('localhost', ['-', '\'], True) then
+      Caption := Caption + ' [localhost]';
 
     // Restore window settings
     fWindowSettings := TWindowSettings.CreateStandAlone(Self);     // auto-freed

@@ -13,8 +13,7 @@ display snippets from the online DelphiDabbler CodeSnip database as well as
 maintain a database of user-defined snippets.
 
 It displays details of each snippet in the database and can test-compile them
-with each installed version of Delphi from 2 to 7, Win32 personalities of Delphi
-2005, 2006 & 2009, Delphi 2007 and Free Pascal.
+with each installed Win32 version of Delphi from v2 to 2010 and Free Pascal.
 
 Compilable Pascal units containing selected snippets can be created.
 
@@ -35,8 +34,7 @@ IMPORTANT NOTES:
 
 CodeSnip's installation program is named codesnip-setup-3.x.x.exe, where x.x
 is the program's minor version number. The install program may be distributed in
-a zip file. If this is the case then extract the install program from the zip
-file.
+a zip file. If this is the case then extract the install program.
 
 Close any running instance of CodeSnip, double click the install program then
 follow the on-screen instructions.
@@ -75,7 +73,7 @@ ________________________________________________________________________________
 The CodeSnip database is not installed with the program. However, a previous
 installation may be present. Setup will try to use an older version of the
 database if present. When setup completes it checks for a database and puts
-up a message if no database is present.
+up a message if none is present.
 
 When CodeSnip is first run it detects if there is no database and displays
 message to that effect in its main window. A link is displayed that can be used
@@ -93,8 +91,8 @@ with any installed Windows 32 version of Delphi (i.e. Delphi 2 to 7 and 2005,
 2006, 2007, 2009 and 2010) and FreePascal. User defined snippets can also be
 test compiled providing some simple rules are followed.
 
-When CodeSnip is first installed it knows nothing about these compilers and so
-test compilations can not be performed. You must tell CodeSnip about the
+When CodeSnip is first installed it knows nothing about the available compilers
+and so test compilations can not be performed. You must tell CodeSnip about the
 available compilers by using the "Tools | Configure Compilers" menu option. The
 resulting dialog can automatically detect all installed versions of supported
 Delphi compilers at the click of a button. Free Pascal, where installed, must be
@@ -154,12 +152,12 @@ ________________________________________________________________________________
    v1.0.3 or earlier will be lost when upgrading to CodeSnip v1.1 or later. This
    is because the storage format for source code formatting changed at v1.1. If
    you experience this problem you need to reset your preferences via the
-   Tools | Preferences menu option.
+   "Tools | Preferences" menu option.
    
 2) When upgrading from v1.x or v2.x to v3.0 and later any custom syntax
    highlighting is ignored and the new default highlighting is restored. This
    can be changed from the Syntax Highlighter tab of the Preferences dialog box,
-   accessed from the Tools | Preferences menu option.
+   accessed from the "Tools | Preferences" menu option.
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
@@ -229,7 +227,7 @@ https://sourceforge.net/projects/codesnip/files/
 Source code older than one year is unlikely to be available.
 
 Available source code is released under the Mozilla Public license (see
-http://www.mozilla.org/MPL/) and other open source licenses.
+http://www.mozilla.org/MPL/MPL-1.1) and other open source licenses.
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
@@ -238,20 +236,17 @@ ________________________________________________________________________________
 
 Please do report any bugs you find. 
 
-From 28th September CodeSnip bugs are recorded in Tracker on SourceForge. View
-the bug list here: https://sourceforge.net/tracker/?group_id=272192&atid=1157220
+Bugs are recorded in Tracker on SourceForge. View the bug via this url
+http://www.delphidabbler.com/url/codesnip-bugs which redirects to SourceForge.
+You can also access the bug tracker from CodeSnip by using the "Tools | Report
+Bug Online" and following the link.
 
 If you wish to report a bug, please check the current reports on Tracker AND
 the historic list of fixed bugs at
 http://www.delphidabbler.com/software/codesnip/bugs
 
-If your bug hasn't been reported on fixed please add a report using the
+If your bug hasn't been reported or fixed please add a report using the
 "Add new" link on tracker.
-
-Bugs can still be reported direct from CodeSnip, but this is no longer the
-preferred option - I just wasn't getting enough info to fix them from the
-reports. If you want to use this route, you'll find the bug report wizard on
-the Tools menu.
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
@@ -261,8 +256,8 @@ ________________________________________________________________________________
 CodeSnip is free to use and there is no requirement to pay anything for it. You
 get a fully working version of the program whether you make a donation or not.
 
-Having said that, it takes time and money to maintain both CodeSnip and the
-online database. So if you wish to make a contribution it will be most welcome.
+Having said that, it takes time and money to maintain CodeSnip and the online
+database. So if you wish to make a contribution it will be most welcome.
 
 Payment in pounds sterling can be made via this address - 
 http://www.delphidabbler.com/url/donate-cs which redirects to a secure PayPal
@@ -285,8 +280,8 @@ ________________________________________________________________________________
 Please do contribute procedures, functions and type or constant definitions to
 the on-line Code Snippets database.
 
-You can submit routines from your user-defined database using the Database |
-Submit Routines menu option. Otherwise please send your code via the
+You can submit routines from your user-defined database using the "Database |
+Submit Routines" menu option. Otherwise please send your code via the
 DelphiDabbler contact page at http://www.delphidabbler.com/contact or by email
 to delphidabber [AT] yahoo [DOT] co [DOT] uk.
 
