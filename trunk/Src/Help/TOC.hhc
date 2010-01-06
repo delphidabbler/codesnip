@@ -100,7 +100,7 @@
 			<param name="Local" value="HTML\task_copysnippet.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Print Routine">
+			<param name="Name" value="Print Snippet">
 			<param name="Local" value="HTML\task_printroutine.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
@@ -116,7 +116,7 @@
 			<param name="Local" value="HTML\task_update.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Test Compile Routine">
+			<param name="Name" value="Test Compile Snippet">
 			<param name="Local" value="HTML\task_testcompile.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
