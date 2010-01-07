@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -38,7 +38,7 @@ program CodeSnip;
 {$ALIGN 8}
 {$APPTYPE GUI}
 {$BOOLEVAL ON}
-{$DESCRIPTION 'Code Snippets Database Viewer'}
+{$DESCRIPTION 'Code Snippets Database Manager and Viewer'}
 {$EXTENDEDSYNTAX ON}
 {$HINTS ON}
 {$IOCHECKS ON}
