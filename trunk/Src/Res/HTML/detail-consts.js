@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -44,7 +44,6 @@ var vDownloadDatabaseHint = "Download the database from the internet";
 var vQuickStartHint       = "Display the QuickStart help topic";
 var vConfigCompilersHint  = "Display the Configure Compilers dialog box";
 var vTaskAddSnippetsHint  = "View more information about the user database";
-var vEditSnippet          = "Edit this snippet";
 var vDonateHint           = "Make a donation";
 var vFreeformHelpHint     = "Display help about freeform snippets";
 var vRoutineHelpHint      = "Display help about routine snippets";
