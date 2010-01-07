@@ -78,6 +78,7 @@ type
     procedure tvSnippetsEnter(Sender: TObject);
     procedure tvSnippetsKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    procedure tvSnippetsKeyPress(Sender: TObject; var Key: Char);
     procedure tvSnippetsKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure tvSnippetsMouseDown(Sender: TObject; Button: TMouseButton;
@@ -739,6 +740,18 @@ begin
     fCanChange := True;
 end;
 
+procedure TOverviewFrame.tvSnippetsKeyPress(Sender: TObject; var Key: Char);
+  {Handles treeview's keypress event. Prevents further processing of return key
+  press to inhibit beep from treeview control.
+    @param Sender [in] Not used.
+    @param Key [in/out] Key pressed. Set to #0 to prevent further processing.
+  }
+begin
+  inherited;
+  if Ord(Key) = VK_RETURN then
+    Key := #0; // don't allow RETURN key
+end;
+
 procedure TOverviewFrame.tvSnippetsKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
   {Handles a key up event on tree view. We allow movement using keys in
@@ -751,6 +764,7 @@ procedure TOverviewFrame.tvSnippetsKeyUp(Sender: TObject; var Key: Word;
 var
   Node: TTreeNode;  // selected tree node
 begin
+  Node := tvSnippets.Selected;
   if (not HasShiftKeys(Shift) and (Key in cPermittedKeys)) or
     (
       (ExtractShiftKeys(Shift) = [ssCtrl]) and
@@ -759,9 +773,20 @@ begin
   begin
     // One of keys triggering selection change was released. We get reference to                          `
     // selected node and trigger notification via SelectionChange method
-    Node := tvSnippets.Selected;
     if Assigned(Node) and (Node is TViewItemTreeNode) then
       SelectionChange(Node);
+  end
+  // Check for RETURN key with no modifiers: toggle node expand / collapse when
+  // a section header has focus
+  else if not HasShiftKeys(Shift) and (Key = VK_RETURN) then
+  begin
+    if Assigned(Node) and (Node.Level = 0) then
+    begin
+      if Node.Expanded then
+        UpdateTreeState(taCollapseNode)
+      else
+        UpdateTreeState(taExpandNode);
+    end;
   end;
   // Prevent further changes
   fCanChange := False;

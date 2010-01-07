@@ -52,6 +52,7 @@ inherited OverviewFrame: TOverviewFrame
       OnDeletion = tvSnippetsDeletion
       OnEnter = tvSnippetsEnter
       OnKeyDown = tvSnippetsKeyDown
+      OnKeyPress = tvSnippetsKeyPress
       OnKeyUp = tvSnippetsKeyUp
       OnMouseDown = tvSnippetsMouseDown
     end
