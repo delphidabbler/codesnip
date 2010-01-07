@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -297,42 +297,29 @@ resourcestring
   // Compiler results strings
   sWarningStatus    = 'warnings';
   sErrorStatus      = 'errors';
-  sWarningLog       = 'Warning(s):';
-  sErrorLog         = 'Error(s):';
-  sWarningHint      = 'Display the compiler warnings';
-  sErrorHInt        = 'Display the compiler errors';
   sViewLinkText     = 'View %s';
+  sHint             = 'View the %0:s compilation %1:s';
 var
   LogStatus: string;  // status text
-  LogHint: string;    // long and short compiler hints
 begin
   // Set up status and hints according to compilation result
   case Compiler.GetLastCompileResult of
     crWarning:
-    begin
       LogStatus := sWarningStatus;
-      LogHint := sWarningLog + EOL + Compiler.Log(cfWarnings) +
-        '|' + sWarningHint;
-    end;
     crError:
-    begin
       LogStatus := sErrorStatus;
-      LogHint := sErrorLog + EOL + Compiler.Log(cfErrors)
-        + '|' + sErrorHint;
-    end;
   end;
   // If we have some log text return HTML for link that accesses it
   if Compiler.HasErrorsOrWarnings then
-    // We have warnings or errors: link causes dialog to be displayed. Mouse
-    // over causes details to popup in hint.
+    // We have warnings or errors: link causes dialog to be displayed
     Result := '&nbsp;&raquo;&nbsp;' + JSLink(
       JSLiteralFunc('viewCompilerLog', [Ord(Compiler.GetID)]),
-      LogHint,
+      '|' + Format(sHint, [Compiler.GetName, LogStatus]),
       TIStringList.Create('command-link'),
       Format(sViewLinkText, [LogStatus])
     )
   else
-    // No warnings or error: nothing to return
+    // No warnings or error: nothing to display
     Result := '&nbsp';
 end;
 
