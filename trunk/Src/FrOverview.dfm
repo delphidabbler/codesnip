@@ -50,11 +50,10 @@ inherited OverviewFrame: TOverviewFrame
       OnChanging = tvSnippetsChanging
       OnCreateNodeClass = tvSnippetsCreateNodeClass
       OnDeletion = tvSnippetsDeletion
+      OnEnter = tvSnippetsEnter
       OnKeyDown = tvSnippetsKeyDown
       OnKeyUp = tvSnippetsKeyUp
       OnMouseDown = tvSnippetsMouseDown
-      ExplicitLeft = 3
-      ExplicitTop = 25
     end
   end
   object mnuOverview: TPopupMenu
