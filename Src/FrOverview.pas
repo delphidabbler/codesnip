@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -617,14 +617,13 @@ procedure TOverviewFrame.tvSnippetsKeyDown(Sender: TObject; var Key: Word;
   cPermittedKeys with no shift keys along with Ctrl+Home and Ctrl+End. We permit
   the selection to change when one of these keys is pressed.
     @param Sender [in] Not used.
-    @param Key [in/out] Key being pressed. Not altered.
+    @param Key [in/out] Key being pressed. Set to 0 when key to be inhibited.
     @param Shift [in] Modifier keys.
   }
 begin
   if HasShiftKeys(Shift) then
   begin
-    // shift keys are pressed: inhibit any default processing and handle just
-    // Ctrl+Home and Ctrl+End specially.
+    // shift keys are pressed: handle just Ctrl+Home and Ctrl+End specially.
     case Key of
       VK_HOME:
         if ExtractShiftKeys(Shift) = [ssCtrl] then
@@ -633,7 +632,9 @@ begin
         if ExtractShiftKeys(Shift) = [ssCtrl] then
           SelectNode(tvSnippets.Items[Pred(tvSnippets.Items.Count)], True);
     end;
-    Key := 0;
+    // permit Alt+F4 and inhibit all other default processing
+    if not IsKeyCombination(VK_F4, [ssAlt], Key, Shift) then
+      Key := 0;
   end
   else if Key in cPermittedKeys then
     // no shift keys and one of permitted keys are pressed: permit default
