@@ -1,3 +1,15 @@
+; ------------------------------------------------------------------------------
+; Change Log for CodeSnip
+; $Rev$
+; $Date$
+; ------------------------------------------------------------------------------
+
+Version 3.4.8 - released 10 January 2010
+CodeSnip 3.4.8 - 10 January 2010
++ Made some changes to key presses responded to by overview pane and fixed bug where Alt+F4 was not closing program when pane had focus.
++ Made some changes to hints displayed when rolling over links in compiler check pane. Also removed pop-up windows describing compiler errors.
++ Updated help file: noted Delphi 2010 compiler support and added new information about overview pane keyboard shortcuts.
+
 Version 3.4.7 - released 31 December 2009
 CodeSnip 3.4.7 - 31 December 2009
 + Added IE version number to OS information submitted when program is registered.
