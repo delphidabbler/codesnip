@@ -62,9 +62,16 @@
 		ol.spaced li {
 			margin-top: 0.5em;
 		}
+		.cmd {
+			margin-left: 2em;
+			margin-right: 2em;
+			background-color: #eef;
+			font-weight: bold;
+			padding: 0.25em;
+			border: 1px solid silver;
+		}
 		.prompt {
 			color: blue;
-			font-weight: bold;
 		}
 	</style>
 </head>
@@ -524,7 +531,7 @@ set PATHSET=1
 	script you have created to set the required environment variables then do:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make config</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make config</pre>
 
 <p>
 	You may need to replace <code>Make</code> with the full path to
@@ -532,13 +539,13 @@ set PATHSET=1
 	runs isn't the Borland / CodeGear version. If this is the case try:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> %DELPHIROOT%\Bin\Make config</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> %DELPHIROOT%\Bin\Make config</pre>
 
 <p>
 	or
 </p>
   
-<pre class="indent"><span class="prompt">&gt;</span> %DELPHI2006%\Bin\Make config</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> %DELPHI2006%\Bin\Make config</pre>
 
 <p>
 	depending on which environment variable you have set.
@@ -579,7 +586,7 @@ set PATHSET=1
 	do:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make resources
+<pre class="cmd"><span class="prompt">&gt;</span> Make resources
 <span class="prompt">&gt;</span> Make typelib
 <span class="prompt">&gt;</span> Make autogen</pre>
 
@@ -665,7 +672,7 @@ set PATHSET=1
 	You must regenerate the associated Pascal file. Do this by running:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make autogen</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make autogen</pre>
 
 <h4>
 	Telling Make to Ignore MIDL
@@ -678,7 +685,7 @@ set PATHSET=1
 	a batch file by doing:
 </p>
 
-<pre class="indent">
+<pre class="cmd">
 <span class="prompt">&gt;</span> set IGNOREMIDL=1</pre>
 
 <p>
@@ -727,13 +734,13 @@ set PATHSET=1
 	This is the most common build and has a simple command:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make codesnip</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make codesnip</pre>
 
 <p>
 	This is the same as doing this sequence of commands:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make typelib
+<pre class="cmd"><span class="prompt">&gt;</span> Make typelib
 <span class="prompt">&gt;</span> Make resources
 <span class="prompt">&gt;</span> Make autogen
 <span class="prompt">&gt;</span> Make pascal</pre>
@@ -750,13 +757,13 @@ set PATHSET=1
 	you must do:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make -DIGNOREMIDL codesnip</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DIGNOREMIDL codesnip</pre>
 
 <p>
 	This is the same as doing:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make -DIGNOREMIDL typelib
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DIGNOREMIDL typelib
 <span class="prompt">&gt;</span> Make resources
 <span class="prompt">&gt;</span> Make autogen
 <span class="prompt">&gt;</span> Make pascal</pre>
@@ -769,7 +776,7 @@ set PATHSET=1
 	To build the help file just do
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make help</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make help</pre>
 
 <h3>
 	Build the Setup Program
@@ -786,13 +793,13 @@ set PATHSET=1
 	<code>CSInstallHelper.exe</code> is built by doing:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make installhelper</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make installhelper</pre>
 
 <p>
 	As an aside, you can make all the required files by doing:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make exes</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make exes</pre>
 
 <p>
 	<code>Make exes</code> will require the use of the <code>-DIGNOREMIDL</code>
@@ -804,7 +811,7 @@ set PATHSET=1
 	doing:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make setup</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make setup</pre>
 
 <p>
 	The setup program is named <code>CodeSnip-Setup-x.x.x.exe</code>, where
@@ -823,7 +830,7 @@ set PATHSET=1
 	doing:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make release</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make release</pre>
 
 <p>
 	By default the release file is called <code>dd-codesnip.zip</code>. You can
@@ -832,7 +839,7 @@ set PATHSET=1
 	<code>MyRelease.zip</code> by doing:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make -DRELEASEFILENAME=MyRelease.zip release</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DRELEASEFILENAME=MyRelease.zip release</pre>
 
 <h3>
 	Build and Release Everything
@@ -843,13 +850,13 @@ set PATHSET=1
 	simply by doing:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make</pre>
 
 <p>
 	without specifying a target. This is the equivalent of:
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make config
+<pre class="cmd"><span class="prompt">&gt;</span> Make config
 <span class="prompt">&gt;</span> Make exes
 <span class="prompt">&gt;</span> Make setup
 <span class="prompt">&gt;</span> Make release</pre>
@@ -869,7 +876,7 @@ set PATHSET=1
 	deleted by running.
 </p>
 
-<pre class="indent"><span class="prompt">&gt;</span> Make clean</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make clean</pre>
 
 <p>
 	Be warned though that this command removes the <code>__history</code>
