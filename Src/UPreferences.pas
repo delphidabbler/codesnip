@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -46,6 +46,12 @@ uses
 
 
 type
+
+  // Possible values for startup state of overview treeview.
+  TOverviewStartState = (
+    ossExpanded,  // start treeview fully expanded
+    ossCollapsed  // start treeview fully collapsed
+  );
 
   {
   IPreferences:
@@ -103,6 +109,18 @@ type
     property MeasurementUnits: TMeasurementUnits
       read GetMeasurementUnits write SetMeasurementUnits;
       {Measurement units used by application}
+
+    function GetOverviewStartState: TOverviewStartState;
+      {Gets startup state of overview tree view.
+        @return Current startup state.
+      }
+    procedure SetOverviewStartState(const Value: TOverviewStartState);
+      {Sets startup state of overview tree view.
+        @param Value [in] Required startup state.
+      }
+    property OverviewStartState: TOverviewStartState
+      read GetOverviewStartState write SetOverviewStartState;
+      {Startup state of overview treeview}
 
     function GetPrinterOptions: TPrintOptions;
       {Gets print options.
@@ -193,6 +211,8 @@ type
       {Indicates whether generated source is highlighted by default}
     fMeasurementUnits: TMeasurementUnits;
       {Measurement unit in use by application}
+    fOverviewStartState: TOverviewStartState;
+      {Startup state of overview treeview}
     fPrinterOptions: TPrintOptions;
       {Default print options}
     fPrinterPageMargins: TPageMargins;
@@ -237,6 +257,14 @@ type
     procedure SetMeasurementUnits(const Value: TMeasurementUnits);
       {Sets measurement units to be used by application.
         @param Value [in] Required measurement units.
+      }
+    function GetOverviewStartState: TOverviewStartState;
+      {Gets startup state of overview tree view.
+        @return Current startup state.
+      }
+    procedure SetOverviewStartState(const Value: TOverviewStartState);
+      {Sets startup state of overview tree view.
+        @param Value [in] Required startup state.
       }
     function GetPrinterOptions: TPrintOptions;
       {Gets print options.
@@ -348,13 +376,14 @@ var
   SrcPref: IPreferences;  // IPreferences interface of Src
 begin
   // Get IPreferences interface of given object
-  if not Supports(Src, IPreferences, SrcPref) then       
+  if not Supports(Src, IPreferences, SrcPref) then
     raise EBug.Create(ClassName + '.Assign: Src is wrong type');
   // Copy the data
   Self.fSourceDefaultFileType := SrcPref.SourceDefaultFileType;
   Self.fSourceCommentStyle := SrcPref.SourceCommentStyle;
   Self.fSourceSyntaxHilited := SrcPref.SourceSyntaxHilited;
   Self.fMeasurementUnits := SrcPref.MeasurementUnits;
+  Self.fOverviewStartState := SrcPref.OverviewStartState;
   Self.fPrinterOptions := SrcPref.PrinterOptions;
   Self.fPrinterPageMargins := SrcPref.PrinterPageMargins;
   Self.SetHiliteAttrs(SrcPref.HiliteAttrs);
@@ -393,6 +422,14 @@ function TPreferences.GetMeasurementUnits: TMeasurementUnits;
   }
 begin
   Result := fMeasurementUnits;
+end;
+
+function TPreferences.GetOverviewStartState: TOverviewStartState;
+  {Gets startup state of overview tree view.
+    @return Current startup state.
+  }
+begin
+  Result := fOverviewStartState;
 end;
 
 function TPreferences.GetPrinterOptions: TPrintOptions;
@@ -460,6 +497,14 @@ begin
   fMeasurementUnits := Value;
 end;
 
+procedure TPreferences.SetOverviewStartState(const Value: TOverviewStartState);
+  {Sets startup state of overview tree view.
+    @param Value [in] Required startup state.
+  }
+begin
+  fOverviewStartState := Value;
+end;
+
 procedure TPreferences.SetPrinterOptions(const Options: TPrintOptions);
   {Sets default print options.
     @param Options [in] New print options.
@@ -518,6 +563,7 @@ begin
   NewPref.SourceCommentStyle := Self.fSourceCommentStyle;
   NewPref.SourceSyntaxHilited := Self.fSourceSyntaxHilited;
   NewPref.MeasurementUnits := Self.fMeasurementUnits;
+  NewPref.OverviewStartState := Self.fOverviewStartState;
   NewPref.PrinterOptions := Self.fPrinterOptions;
   NewPref.PrinterPageMargins := Self.fPrinterPageMargins;
   NewPref.HiliteAttrs := Self.GetHiliteAttrs;
@@ -540,6 +586,9 @@ begin
   Storage := Settings.ReadSection(ssPreferences, cGeneral);
   fMeasurementUnits := TMeasurementUnits(
     StrToIntDef(Storage.ItemValues['Units'], Ord(DefaultMeasurementUnits))
+  );
+  fOverviewStartState := TOverviewStartState(
+    StrToIntDef(Storage.ItemValues['OverviewStartState'], Ord(ossExpanded))
   );
 
   // Read source code section
@@ -588,6 +637,9 @@ begin
   // Write general section
   Storage := Settings.EmptySection(ssPreferences, cGeneral);
   Storage.ItemValues['Units'] := IntToStr(Ord(fMeasurementUnits));
+  Storage.ItemValues['OverviewStartState'] := IntToStr(
+    Ord(fOverviewStartState)
+  );
   Storage.Save;
 
   // Write source code section
