@@ -31,7 +31,7 @@ UView
   - completely overhaul this unit (careful of assignements tho - check if this
     actually happens between different types (may need wrapper for various
     IView implementations?)}
-{TODO -oSelf -cRefactor : Extract common resource strings re comment style from FrSourcePrefs and USaveSourceDlg}
+{DONE -oSelf -cRefactor : Extract common resource strings re comment style from FrSourcePrefs and USaveSourceDlg}
 {TODO -oSelf -cProposal : Consider moving syntax highlighting setting (CSS builder) down into FrInfo from FrDetailView since comp check tab no longer uses highlighting}
 {TODO -oSelf -cProposal : New TSingleton class that prevents an object from being freed (descendants should permit this). 
 To ease freeing when necessary (implementation section, garbage collector etc) make destructors check for support for a do nothing interface (ISingletonDestroy) and only free normally if supported, then support in implementations and not in interface of unit. Eg.
