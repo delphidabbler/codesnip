@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -111,7 +111,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  UColours, UGraphicUtils, UDlgHelper, UStructs, UUtils;
+  UColours, UConsts, UGraphicUtils, UDlgHelper, UStructs, UUtils;
 
 
 {$R *.dfm}
@@ -183,7 +183,7 @@ procedure TEasterEggForm.FormKeyPress(Sender: TObject; var Key: Char);
   }
 begin
   inherited;
-  if Key = #27 then
+  if Key = ESC then
     Close;
 end;
 
