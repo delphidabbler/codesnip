@@ -19,7 +19,7 @@ be fixed until planned reworking of query / database code.}
 + Unit generator must be able to use these units. Emit a comment in unit saying that user defined units have been used and must be on search path.
 + Add search path page to preferences dialog box?}
 {TODO -oSelf -cProposal : Consider what gesture support to add (needs Delphi 2010).}
-{TODO -oSelf -cFeature : Add actions to go to next, previous, first and last category (or alpha or kind)}
+{DONE -oSelf -cFeature : Add actions to go to next, previous, first and last category (or alpha or kind)}
 {TODO -oSelf -cProposal :
 Change the Snippets Editor moving code for each pane into separate frame that can
 (1) validate entered data
@@ -33,7 +33,7 @@ UView
   - completely overhaul this unit (careful of assignements tho - check if this
     actually happens between different types (may need wrapper for various
     IView implementations?)}
-{TODO -oSelf -cRefactor : Extract common resource strings re comment style from FrSourcePrefs and USaveSourceDlg}
+{DONE -oSelf -cRefactor : Extract common resource strings re comment style from FrSourcePrefs and USaveSourceDlg}
 {TODO -oSelf -cProposal : Consider moving syntax highlighting setting (CSS builder) down into FrInfo from FrDetailView since comp check tab no longer uses highlighting}
 {TODO -oSelf -cProposal : New TSingleton class that prevents an object from being freed (descendants should permit this). 
 To ease freeing when necessary (implementation section, garbage collector etc) make destructors check for support for a do nothing interface (ISingletonDestroy) and only free normally if supported, then support in implementations and not in interface of unit. Eg.

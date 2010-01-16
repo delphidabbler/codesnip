@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -141,27 +141,16 @@ resourcestring
   sRTFFileDesc = 'Rich text';
   sPascalFileDesc = 'Pascal';
   sTextFileDesc = 'Plain text';
-  // Comment style descriptions
-  sCSNone = 'No descriptive comments';
-  sCSAfter = 'Comments after snippet header';
-  sCSBefore = 'Comments before snippet';
 
 
 const
-
   // Maps source code file types to descriptions
   cFileDescs: array[TSourceFileType] of string = (
     sTextFileDesc, sPascalFileDesc, sHTMLFileDesc, sRTFFileDesc
   );
 
-  // Maps source code comment style to descriptions
-  cCommentStyles: array[TCommentStyle] of string = (
-    sCSNone, sCSAfter, sCSBefore
-  );
-
 
 type
-
   {
   TSourcePrefsPreview:
     Class used to generate source code preview displayed in source preferences
@@ -258,8 +247,10 @@ begin
   for FileType := Low(TSourceFileType) to High(TSourceFileType) do
     cbSnippetFileType.Items.AddObject(cFileDescs[FileType], TObject(FileType));
   // Populate comment style combo
-  for CSIdx := Low(cCommentStyles) to High(cCommentStyles) do
-    cbCommentStyle.Items.AddObject(cCommentStyles[CSIdx], TObject(CSIdx));
+  for CSIdx := Low(TCommentStyle) to High(TCommentStyle) do
+    cbCommentStyle.Items.AddObject(
+      TSourceComments.CommentStyleDesc(CSIdx), TObject(CSIdx)
+    );
 end;
 
 procedure TSourcePrefsFrame.Deactivate(const Prefs: IPreferences);

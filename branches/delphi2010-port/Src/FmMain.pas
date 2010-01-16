@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -432,14 +432,6 @@ uses
 
 
 {$R *.dfm}
-
-
-const
-  // Minimum sizes of various display parts: used when resizing
-  cMinLeftPanelWidth  = 160;  // min width of left panel
-  cMinRightPanelWidth = 300;  // min width of right panel
-  // Default values of various display parts
-  cDefLeftPanelWidth  = 186;
 
 
 { TMainForm }
@@ -1409,8 +1401,10 @@ procedure TMainForm.FormResize(Sender: TObject);
   }
 begin
   inherited;
-  if pnlLeft.Width > ClientWidth - cMinRightPanelWidth - splitVert.Width then
-    pnlLeft.Width := ClientWidth - cMinRightPanelWidth - splitVert.Width;
+  if pnlLeft.Width > ClientWidth - TWindowSettings.MinRightPanelWidth
+    - splitVert.Width then
+    pnlLeft.Width := ClientWidth - TWindowSettings.MinRightPanelWidth
+      - splitVert.Width;
 end;
 
 procedure TMainForm.InitForm;
@@ -1430,7 +1424,7 @@ begin
 
     // Restore window settings
     fWindowSettings := TWindowSettings.CreateStandAlone(Self);     // auto-freed
-    fWindowSettings.SplitterPos := cDefLeftPanelWidth;       // default position
+//    fWindowSettings.SplitterPos := cDefLeftPanelWidth;       // default position
     fWindowSettings.Restore;                                // sizes main window
     pnlLeft.Width := fWindowSettings.SplitterPos;
 
@@ -1710,8 +1704,8 @@ procedure TMainForm.splitVertCanResize(Sender: TObject;
     @param Accept [in/out] Set false if splitter cannot resize the control.
   }
 begin
-  if (NewSize < cMinLeftPanelWidth)
-    or (NewSize > ClientWidth - cMinRightPanelWidth) then
+  if (NewSize < TWindowSettings.MinLeftPanelWidth)
+    or (NewSize > ClientWidth - TWindowSettings.MinRightPanelWidth) then
     Accept := False;
 end;
 

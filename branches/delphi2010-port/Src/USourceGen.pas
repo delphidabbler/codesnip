@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -46,7 +46,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UIStringList, ULists, USnippets, UStrStreamWriter;
+  UBaseObjects, UIStringList, ULists, USnippets, UStrStreamWriter;
 
 
 type
@@ -60,6 +60,33 @@ type
     csAfter,    // description of snippet between prototype and body
     csBefore    // description of snippet immediatly preceeds code
   );
+
+  {
+  TSourceComments:
+    Static class that provides information about comment styles and formats
+    comments in appropriate style.
+  }
+  TSourceComments = class(TNoConstructObject)
+  public
+    class function CommentStyleDesc(const Style: TCommentStyle): string;
+      {Gets description of a comment style for use in UI elements.
+        @param Style [in] Comment style for which description wanted.
+        @return Required description.
+      }
+    class function FormatSnippetComment(const Style: TCommentStyle;
+      const Text: string): string;
+      {Formats a snippet's comment text as Pascal comment according to
+      commenting style.
+        @param Style [in] Desired commenting style.
+        @param Text [in] Text of comment. Ignored if Style = csNone.
+        @return Formatted comment. Empty string if Style = csNone.
+      }
+    class function FormatHeaderComments(const Comments: IStringList): string;
+      {Formats header comment text as Pascal comments.
+        @param Comments [in] List of comments to format.
+        @return Formatted comments.
+      }
+  end;
 
   {
   TConstAndTypeList:
@@ -101,7 +128,8 @@ type
         property Current: TRoutine read GetCurrent;
           {Current item in enumeration. Error if at end of enumeration}
       end;
-    var fItems: TObjectListEx;  // Records objects in list
+    var
+      fItems: TObjectListEx;  // Records objects in list
     function GetCount: Integer;
       {Read accessor for Count property.
         @return Number of items in list.
@@ -123,7 +151,8 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
-    procedure Add(const ConstOrType: TRoutine; const UnitRecorder: TUnitRecorder);
+    procedure Add(const ConstOrType: TRoutine;
+      const UnitRecorder: TUnitRecorder);
       {Adds a constant or type snippet to the list, ignoring duplicates.
         @param ConstOrType [in] Constant or type snippet to be added.
         @except Exception raised if dependency list is not valid.
@@ -227,8 +256,7 @@ type
   TSourceGen = class(TObject)
   strict private
     var
-      fSourceAnalyser: TSourceAnalyser;
-        {Object used to analyse the snippets and take care of dependencies}
+      fSourceAnalyser: TSourceAnalyser; // Analyses snippets and dependencies
   public
     constructor Create;
       {Class constructor. Sets up the object.
@@ -288,30 +316,15 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UBaseObjects, UConsts, UExceptions, USnippetValidator, UUnicodeHelper, UUtils;
+  UConsts, UExceptions, USnippetValidator, UUnicodeHelper, UUtils;
 
 
 const
   cLineWidth = 80;              // max characters on line
   cIndent = 2;                  // indent size
-  cDoubleIndent = 2 * cIndent;  // double indent size
 
 
 type
-
-  {
-  THeaderCommentFormatter:
-    Static class that can format the comments written at the head of generated
-    source code.
-  }
-  THeaderCommentFormatter = class(TNoConstructObject)
-  public
-    class function FormatComments(const Comments: IStringList): string;
-      {Formats header comment text as Pascal comments/
-        @param Comments [in] List of comments to format.
-        @return Formatted comments.
-      }
-  end;
 
   {
   TRoutineFormatter:
@@ -450,7 +463,7 @@ begin
     Writer := TStrStreamWriter.Create(SS);
 
     // Write header comment
-    Writer.WriteStr(THeaderCommentFormatter.FormatComments(HeaderComments));
+    Writer.WriteStr(TSourceComments.FormatHeaderComments(HeaderComments));
 
     // Write required units, additional routines, types and consts
     if (fSourceAnalyser.Units.Count > 0) or
@@ -582,7 +595,7 @@ begin
     // Write unit
 
     // heading comment
-    Writer.WriteStr(THeaderCommentFormatter.FormatComments(HeaderComments));
+    Writer.WriteStr(TSourceComments.FormatHeaderComments(HeaderComments));
 
     // unit name
     Writer.WriteStrLn('unit %s;', [UnitName]);
@@ -697,7 +710,7 @@ procedure TSourceAnalyser.AddSnippet(const Snippet: TRoutine);
 var
   ErrorMsg: string; // any error message
 begin
-  // NOTE: this method must not be called from any other method
+  // NOTE: this method must not be called from any other method of this class
   // Validate the snippet
   if not TSnippetValidator.Validate(Snippet, ErrorMsg) then
     raise ECodeSnip.Create(ErrorMsg);
@@ -1024,32 +1037,12 @@ class function TRoutineFormatter.RenderDescComment(
     @return Formatted comments.
   }
 begin
-
   Assert(Routine.Kind = skRoutine,
     ClassName + '.RenderDescComment: Routine must have kind skRoutine');
   // Format the output
-  case CommentStyle of
-    csAfter:
-      // Comment after prototype
-      Result := TextWrap(
-        '{' + Trim(Routine.Description) + '}',
-        cLineWidth - cIndent,
-        cIndent
-      );
-    csBefore:
-      // Comment before routine
-      Result := '{' + EOL
-        + '  ' + Routine.Name + EOL
-        + TextWrap(
-            Trim(Routine.Description),
-            cLineWidth - cDoubleIndent,
-            cDoubleIndent
-          ) + EOL
-        + '}';
-    else
-      // No description comment required
-      Result := '';
-  end;
+  Result := TSourceComments.FormatSnippetComment(
+    CommentStyle, Trim(Routine.Description)
+  );
 end;
 
 class procedure TRoutineFormatter.Split(const Routine: TRoutine; out Head,
@@ -1195,20 +1188,9 @@ begin
   Assert(ConstOrType.Kind in [skConstant, skTypeDef],
     ClassName + '.RenderDescComment: ConstOrType must have kind skTypeDef or '
       + 'skConstant');
-  case CommentStyle of
-    csNone:
-      Result := '';
-    csBefore:
-      Result := '{'
-        + EOL
-        + TextWrap(ConstOrType.Description, cLineWidth - cIndent, cIndent)
-        + EOL
-        + '}';
-    csAfter:
-      Result := TextWrap(
-        '{' + ConstOrType.Description + '}', cLineWidth - cIndent, cIndent
-      );
-  end;
+  Result := TSourceComments.FormatSnippetComment(
+    CommentStyle, Trim(ConstOrType.Description)
+  );
 end;
 
 class procedure TConstAndTypeFormatter.Split(const ConstOrType: TRoutine;
@@ -1259,11 +1241,31 @@ begin
     SplitAtKeyword(ConstOrType.SourceCode, 'type', Keyword, Body)
 end;
 
-{ THeaderCommentFormatter }
+{ TSourceComments }
 
-class function THeaderCommentFormatter.FormatComments(
+class function TSourceComments.CommentStyleDesc(
+  const Style: TCommentStyle): string;
+  {Gets description of a comment style for use in UI elements.
+    @param Style [in] Comment style for which description wanted.
+    @return Required description.
+  }
+resourcestring
+  // Comment style descriptions
+  sCSNone = 'No descriptive comments';
+  sCSAfter = 'Comments after snippet header';
+  sCSBefore = 'Comments before snippet';
+const
+  // Map of comment styles to descriptions
+  sDescriptions: array[TCommentStyle] of string = (
+    sCSNone, sCSAfter, sCSBefore
+  );
+begin
+  Result := sDescriptions[Style];
+end;
+
+class function TSourceComments.FormatHeaderComments(
   const Comments: IStringList): string;
-  {Formats header comment text as Pascal comments/
+  {Formats header comment text as Pascal comments.
     @param Comments [in] List of comments to format.
     @return Formatted comments.
   }
@@ -1288,14 +1290,34 @@ begin
     Result := '{';
     // write out each comment line
     for Line in Lines do
-      Result := Result
-        + EOL
-        + cLinePrefix
-        + TextWrap(Line, cLineWidth - Length(cLinePrefix), 0);
+      Result := Result + EOL + cLinePrefix + Line;
     Result := Result + EOL + '}' + EOL2;
   end
   else
     Result := '';
+end;
+
+class function TSourceComments.FormatSnippetComment(const Style: TCommentStyle;
+  const Text: string): string;
+  {Formats a snippet's comment text as Pascal comment according to commenting
+  style.
+    @param Style [in] Desired commenting style.
+    @param Text [in] Text of comment. Ignored if Style = csNone.
+    @return Formatted comment. Empty string if Style = csNone.
+  }
+begin
+  case Style of
+    csNone:
+      Result := '';
+    csBefore:
+      Result := '{'
+        + EOL
+        + TextWrap(Text, cLineWidth - cIndent, cIndent)
+        + EOL
+        + '}';
+    csAfter:
+      Result := TextWrap('{' + Text + '}', cLineWidth - cIndent, cIndent);
+  end;
 end;
 
 end.

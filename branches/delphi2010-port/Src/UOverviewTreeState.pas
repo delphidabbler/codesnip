@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -56,8 +56,9 @@ type
   }
   TOverviewTreeSectionState = class(TObject)
   strict private
-    fExpanded: Boolean;     // Value of Expanded property
-    fViewItem: TViewItem;   // Value of ViewItem property
+    var
+      fExpanded: Boolean;     // Value of Expanded property
+      fViewItem: TViewItem;   // Value of ViewItem property
   public
     constructor Create(const ViewItem: TViewItem; const Expanded: Boolean);
       {Class constructor. Sets up object.
@@ -81,8 +82,17 @@ type
   }
   TOverviewTreeState = class(TObject)
   strict private
-    fTV: TTreeView;           // Reference to treeview
-    fSections: TObjectListEx; // List of section objects
+    type
+      // Enumeration indicating required state of tree at next restoration
+      TResorationState = (
+        rsFullExpand,    // tree must be fully expanded when restored
+        rsFullCollapse,  // tree must be fully collapsed when restored
+        rsAsSaved        // tree must be restored according to saved state
+      );
+    var
+      fTV: TTreeView;                   // Reference to treeview
+      fSections: TObjectListEx;         // List of section objects
+      fRestoreState: TResorationState;  // Current restoration state of tree
     function GetCount: Integer;
       {Number of sections in list.
         @return Section count.
@@ -91,14 +101,6 @@ type
       {Gets a section object by index.
         @param Idx [in] Index of required section.
         @return Reference to required section.
-      }
-    procedure Clear;
-      {Clears all maintained objects.
-      }
-    procedure Add(const Node: TViewItemTreeNode);
-      {Adds reference to a treeview section whose expansion state is to be
-      maintained by the object.
-        @param Node [in] Treeview node whose state is to be maintained.
       }
     function FindSection(const ViewItem: TViewItem;
       out Section: TOverviewTreeSectionState): Boolean;
@@ -124,8 +126,9 @@ type
       {Saves expansion state of all section nodes in treeview.
       }
     procedure RestoreState;
-      {Restores state of all section nodes in overview for which expansion state
-      has been previously recorded.
+      {Restores state of all section nodes in overview. How tree is restored
+      depends on required restoration state and if a previous state has been
+      recorded.
       }
   end;
 
@@ -135,7 +138,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes {for inlining};
+  SysUtils, Classes {for inlining},
+  // Project
+  UPreferences;
 
 
 { TOverviewTreeSectionState }
@@ -162,22 +167,6 @@ end;
 
 { TOverviewTreeState }
 
-procedure TOverviewTreeState.Add(const Node: TViewItemTreeNode);
-  {Adds reference to a treeview section whose expansion state is to be
-  maintained by the object.
-    @param Node [in] Treeview node whose state is to be maintained.
-  }
-begin
-  fSections.Add(TOverviewTreeSectionState.Create(Node.ViewItem, Node.Expanded));
-end;
-
-procedure TOverviewTreeState.Clear;
-  {Clears all maintained objects.
-  }
-begin
-  fSections.Clear;
-end;
-
 constructor TOverviewTreeState.Create(const TV: TTreeView);
   {Class constructor. Sets up object to work with a treeview.
     @param TV [in] Treeview whose state is to be managed.
@@ -186,6 +175,10 @@ begin
   inherited Create;
   fSections := TObjectListEx.Create(True);
   fTV := TV;
+  case Preferences.OverviewStartState of
+    ossExpanded: fRestoreState := rsFullExpand;
+    ossCollapsed: fRestoreState := rsFullCollapse;
+  end;
 end;
 
 destructor TOverviewTreeState.Destroy;
@@ -247,34 +240,56 @@ begin
 end;
 
 procedure TOverviewTreeState.RestoreState;
-  {Restores state of all section nodes in overview for which expansion state has
-  been previously recorded.
+  {Restores state of all section nodes in overview. How tree is restored depends
+  on required restoration state and if a previous state has been recorded.
   }
 var
   Node: TTreeNode;                    // each node in treeview
   Section: TOverviewTreeSectionState; // object describing a section's state
 begin
-  for Node in fTV.Items do
-  begin
-    if IsSectionNode(Node)
-      and FindSection((Node as TViewItemTreeNode).ViewItem, Section) then
-      Node.Expanded := Section.Expanded;
+  case fRestoreState of
+    rsFullExpand: fTV.FullExpand;
+    rsFullCollapse: fTV.FullCollapse;
+    rsAsSaved:
+    begin
+      for Node in fTV.Items do
+      begin
+        if IsSectionNode(Node)
+          and FindSection((Node as TViewItemTreeNode).ViewItem, Section) then
+          Node.Expanded := Section.Expanded;
+      end;
+    end;
   end;
 end;
 
 procedure TOverviewTreeState.SaveState;
   {Saves expansion state of all section nodes in treeview.
   }
+
+  // ---------------------------------------------------------------------------
+  procedure RecordSection(const Node: TViewItemTreeNode);
+    {Records reference to a treeview section whose expansion state is to be
+    maintained by the object.
+      @param Node [in] Treeview node whose state is to be recorded.
+    }
+  begin
+    fSections.Add(
+      TOverviewTreeSectionState.Create(Node.ViewItem, Node.Expanded)
+    );
+  end;
+  // ---------------------------------------------------------------------------
+
 var
   Node: TTreeNode;  // each node in treeview
 begin
-  Clear;
+  fSections.Clear;
   for Node in fTV.Items do
   begin
-    // we record state of each section node in treeview.
     if IsSectionNode(Node) then
-      Add(Node as TViewItemTreeNode);
+      RecordSection(Node as TViewItemTreeNode);
   end;
+  // note that tree must be restored from this saved state
+  fRestoreState := rsAsSaved;
 end;
 
 end.

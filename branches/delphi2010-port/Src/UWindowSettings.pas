@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -58,12 +58,12 @@ type
   }
   TWindowSettings = class(TPJCustomWdwState)
   strict private
-    fSplitterPos: Integer;
-      {Stores value of SplitterPos property}
-    fOverviewTab: Integer;
-      {Stores value of OverviewTab property}
-    fDetailTab: Integer;
-      {Stores value of DetailTab property}
+    var
+      fSplitterPos: Integer;      // Value of SplitterPos property
+      fOverviewTab: Integer;      // Value of OverviewTab property
+      fDetailTab: Integer;        // Value of DetailTab property
+    const
+      cDefLeftPanelWidth  = 186;  // Default width of left hand panel
   strict protected
     procedure ReadWdwState(var Left, Top, Width, Height, State: Integer);
       override;
@@ -101,12 +101,15 @@ type
           used.
       }
   public
+    const
+      MinLeftPanelWidth  = 160; // minimum width of left panel
+      MinRightPanelWidth = 300; // minimum width of right panel
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Sets up object and default property values.
         @param AOwner [in] Owning component (must be a TForm).
       }
     property SplitterPos: Integer
-      read fSplitterPos write fSplitterPos;
+      read fSplitterPos write fSplitterPos default cDefLeftPanelWidth;
       {Position of main window's vertical splitter}
     property OverviewTab: Integer
       read fOverviewTab write fOverviewTab;
@@ -135,8 +138,9 @@ constructor TWindowSettings.Create(AOwner: TComponent);
   }
 begin
   inherited;
-  AutoSaveRestore := False;   // need to call Save and Restore manually
-  Options := [woFitWorkArea]; // keep main window inside work area
+  AutoSaveRestore := False;           // need to call Save and Restore manually
+  Options := [woFitWorkArea];         // keep main window inside work area
+  fSplitterPos := cDefLeftPanelWidth; // default splitter position
 end;
 
 procedure TWindowSettings.ReadWdwState(var Left, Top, Width, Height,
