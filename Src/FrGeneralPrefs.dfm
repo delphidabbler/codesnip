@@ -6,14 +6,14 @@ inherited GeneralPrefsFrame: TGeneralPrefsFrame
   DesignSize = (
     397
     311)
-  object gpMeasurement: TGroupBox
-    Left = 0
-    Top = 0
+  object gbMeasurement: TGroupBox
+    Left = 1
+    Top = 66
     Width = 393
     Height = 57
     Anchors = [akLeft, akTop, akRight]
     Caption = ' Measurement '
-    TabOrder = 0
+    TabOrder = 1
     object lblUnits: TLabel
       Left = 8
       Top = 24
@@ -24,7 +24,32 @@ inherited GeneralPrefsFrame: TGeneralPrefsFrame
     object cbUnits: TComboBox
       Left = 168
       Top = 20
-      Width = 105
+      Width = 113
+      Height = 21
+      Style = csDropDownList
+      ItemHeight = 13
+      TabOrder = 0
+    end
+  end
+  object gbDisplay: TGroupBox
+    Left = 1
+    Top = 3
+    Width = 393
+    Height = 57
+    Anchors = [akLeft, akTop, akRight]
+    Caption = ' Display '
+    TabOrder = 0
+    object lblOverviewTree: TLabel
+      Left = 8
+      Top = 24
+      Width = 161
+      Height = 13
+      Caption = 'Start overview pane treeview as:'
+    end
+    object cbOverviewTree: TComboBox
+      Left = 184
+      Top = 20
+      Width = 113
       Height = 21
       Style = csDropDownList
       ItemHeight = 13
