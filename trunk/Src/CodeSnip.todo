@@ -17,7 +17,7 @@ be fixed until planned reworking of query / database code.}
 + Unit generator must be able to use these units. Emit a comment in unit saying that user defined units have been used and must be on search path.
 + Add search path page to preferences dialog box?}
 {TODO -oSelf -cProposal : Consider what gesture support to add (needs Delphi 2010).}
-{TODO -oSelf -cFeature : Add actions to go to next, previous, first and last category (or alpha or kind)}
+{DONE -oSelf -cFeature : Add actions to go to next, previous, first and last category (or alpha or kind)}
 {TODO -oSelf -cProposal :
 Change the Snippets Editor moving code for each pane into separate frame that can
 (1) validate entered data
