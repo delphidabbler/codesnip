@@ -28,7 +28,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -206,12 +206,8 @@ resourcestring
   sChkSyntaxHilite = 'Use syntax highlighting';
   sBtnPreview = '&Preview...';
   sBtnHelp = '&Help';
-  // Comment style descriptions
-  sCSNone = 'No descriptive comments';
-  sCSAfter = 'Comments after snippet header';
-  sCSBefore = 'Comments before snippet';
 
-
+  
 const
   // Name of dialog box template resource ** do not localise
   cTemplateName = 'SAVESNIPPETEXT';
@@ -370,6 +366,7 @@ var
   ButtonBounds: TRect;        // bounds of one of dlg's buttons
   StaticBounds: TRect;        // bounds of dlg's hidden ctrl (per dlg resource)
   PanelBounds: TRect;         // bounds of panel we add to dlg
+  CSIdx: TCommentStyle;       // loops thru comment styles
 begin
   // Get bounding rectangle of various dialog box controls
   // bounds of hidden static text control per our custom dialog resource
@@ -400,9 +397,11 @@ begin
   // is required and host panel doesn't have one at that point)
   if fCmbCommentStyle.Items.Count = 0 then
   begin
-    fCmbCommentStyle.Items.AddObject(sCSAfter, TObject(csAfter));
-    fCmbCommentStyle.Items.AddObject(sCSBefore, TObject(csBefore));
-    fCmbCommentStyle.Items.AddObject(sCSNone, TObject(csNone));
+    // Populate comment style combo
+    for CSIdx := Low(TCommentStyle) to High(TCommentStyle) do
+      fCmbCommentStyle.Items.AddObject(
+        TSourceComments.CommentStyleDesc(CSIdx), TObject(CSIdx)
+      );
   end;
   UpdateCommentStyle;
 

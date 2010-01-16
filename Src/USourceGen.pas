@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -46,7 +46,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UIStringList, ULists, USnippets, UStrStreamWriter;
+  UBaseObjects, UIStringList, ULists, USnippets, UStrStreamWriter;
 
 
 type
@@ -60,6 +60,19 @@ type
     csAfter,    // description of snippet between prototype and body
     csBefore    // description of snippet immediatly preceeds code
   );
+
+  {
+  TSourceComments:
+    Static class that provides information about comment styles.
+  }
+  TSourceComments = class(TNoConstructObject)
+  public
+    class function CommentStyleDesc(const Style: TCommentStyle): string;
+      {Gets description of a comment style for use in UI elements.
+        @param Style [in] Comment style for which description wanted.
+        @return Required description.
+      }
+  end;
 
   {
   TConstAndTypeList:
@@ -288,7 +301,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UBaseObjects, UConsts, UExceptions, USnippetValidator, UUtils;
+  UConsts, UExceptions, USnippetValidator, UUtils;
 
 
 const
@@ -1296,6 +1309,28 @@ begin
   end
   else
     Result := '';
+end;
+
+{ TSourceComments }
+
+class function TSourceComments.CommentStyleDesc(
+  const Style: TCommentStyle): string;
+  {Gets description of a comment style for use in UI elements.
+    @param Style [in] Comment style for which description wanted.
+    @return Required description.
+  }
+resourcestring
+  // Comment style descriptions
+  sCSNone = 'No descriptive comments';
+  sCSAfter = 'Comments after snippet header';
+  sCSBefore = 'Comments before snippet';
+const
+  // Map of comment styles to descriptions
+  sDescriptions: array[TCommentStyle] of string = (
+    sCSNone, sCSAfter, sCSBefore
+  );
+begin
+  Result := sDescriptions[Style];
 end;
 
 end.
