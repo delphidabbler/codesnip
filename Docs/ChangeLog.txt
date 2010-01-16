@@ -4,6 +4,13 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Version 3.5.0 - released 16 January 2010
+CodeSnip 3.5.0 - 16 January 2010
++ Overview pane can now be configured using Preferences dialog box to start up with all sections collapsed.
++ Reference to ability to donate by credit / debit card removed from Donate dialog box: now PayPal only.
++ Help file updated re above changes.
++ Minor refactoring of code that provides information about and renders source code comments.
+
 Version 3.4.8 - released 10 January 2010
 CodeSnip 3.4.8 - 10 January 2010
 + Made some changes to key presses responded to by overview pane and fixed bug where Alt+F4 was not closing program when pane had focus.
