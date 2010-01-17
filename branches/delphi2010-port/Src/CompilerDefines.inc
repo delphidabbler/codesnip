@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -49,8 +49,9 @@
     variable that is used to enable or disable Vista style common dialogs.
 
   AltBugFixNeeded
-    Defined for compilers that exhibit the Alt Key Bug (see Embarcadero Quality
-    Central as bug report #37403) and need the program to provide a fix.
+    Defined for compilers that exhibit the Alt Key Bug and need the program to
+    provide a fix. (For details of the Alt Key Bug see Embarcadero Quality
+    Central bug report #37403.)
 
   ThreadResumeDeprecated
     Defined for compilers where TThread.Resume is a deprecated method.
@@ -65,15 +66,15 @@
 {$UNDEF SupportsUseLatestCommonDialogs}
 
 {$IFDEF CONDITIONALEXPRESSIONS}
-  {$IF CompilerVersion >= 18.0} // Delphi 2006
+  {$IF CompilerVersion >= 18.0} // Delphi 2006 and later
     {$DEFINE CanCompile}
   {$IFEND}
-  {$IF CompilerVersion >= 18.5} // Delphi 2007
+  {$IF CompilerVersion >= 18.5} // Delphi 2007 and later
     {$DEFINE SupportsMainFormOnTaskBar}
     {$DEFINE SupportsUseLatestCommonDialogs}
     {$UNDEF AltBugFixNeeded}
   {$IFEND}
-  {$IF CompilerVersion >= 21.0} // Delphi 2010
+  {$IF CompilerVersion >= 21.0} // Delphi 2010 and later
     {$DEFINE ThreadResumeDeprecated}
   {$IFEND}
 {$ENDIF}

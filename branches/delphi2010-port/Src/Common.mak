@@ -24,7 +24,7 @@
 # The Initial Developer of the Original Code is Peter Johnson
 # (http://www.delphidabbler.com/).
 #
-# Portions created by the Initial Developer are Copyright (C) 2009 Peter
+# Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
 # Johnson. All Rights Reserved.
 #
 # Contributors:
@@ -34,21 +34,36 @@
 # ------------------------------------------------------------------------------
 
 
-# Requires that the BIN macro is defined to point to directory that is to
-# receive .res and .dcu output.
+# Required macros
+# ---------------
+#
+# Make will fail if any of the following macros is not defined.
+#
+# BIN
+#   Must be defined in the calling script to address the directory that is to
+#   receive .res and .dcu output files
+#
+# DELPHIROOT (or DELPHI2006)
+#   DELPHIROOT must address the installation directory of the required Delphi
+#   compiler. Any compiler from Delphi 2006 onwards can be used. If Delphi 2006
+#   is to be used the DELPHI2006 macro must be defined to address the Delphi
+#   2006 installation directory. When DELPHI2006 is defined any existing value
+#   of DELPHIROOT is ignored and DELPHI2006 is used instead.
+#
+# INDY10
+#   Must be set to the directory where the Indy 10 components are installed. The
+#   components must have been built with the same version of Delphi that is to
+#   be used to compile the program.
 
-# The preferred compiler is Delphi 2006. If the DELPHI2006 evironment variable
-# is set, it will be used and expected to reference the Delphi 2006 install
-# directory.
-# If DELPHI2006 is not set then the DELPHIROOT environment variable is examined.
-# This can be set to any Delphi compiler (should compile if later than Delphi
-# 2006). If neither DELPHI2006 nor DELPHIROOT is set then a Delphi compiler is
-# expected to be present on the system path.
+
+# Check for DELPHI2006 macro and use it for DELPHIROOT if set.
+
 !ifdef DELPHI2006
 DELPHIROOT = $(DELPHI2006)
 !endif
 
 # Check for required macros
+
 !ifndef DELPHIROOT
 !error DELPHIROOT environment variable required.
 !endif
@@ -71,6 +86,7 @@ VIED = VIEd.exe -makerc
 !endif
 
 # Implicit rules
+
 # Delphi projects are assumed to contain required output and search path
 # locations in the project options .cfg file.
 .dpr.exe:
