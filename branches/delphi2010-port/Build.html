@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -41,7 +41,7 @@
 	<title>
 		Building CodeSnip
 	</title>
-	<style>
+	<style type="text/css">
 		body {
 			font-family: sans-serif;
 		}
@@ -104,7 +104,7 @@
 
 <p>
 	Several 3rd party and additional DelphiDabbler libraries and components are
-	required in to compile <em>CodeSnip</em>, most of which are included in the
+	required to compile <em>CodeSnip</em>, most of which are included in the
 	code repository in the <code>Src/3rdParty</code> directory.
 </p>
 
@@ -120,8 +120,8 @@
 <p>
 	Regardless of whether you're using the version of Indy 10 supplied with
 	Delphi or if you've downloaded and compiled your own version, you must set
-	the <code>INDY10</code> environment variable to the folder where you placed
-	the compiled code.
+	the <code>INDY10</code> environment variable to address the directory where
+	you placed the compiled code.
 </p>
 
 <h4 id="indychanges">
@@ -129,9 +129,9 @@
 </h4>
 
 <p>
-	Changes were made to the parameter list of the <var>TWorkBeginEvent</var>
+	Changes were made to the parameter lists of the <var>TWorkBeginEvent</var>
 	and <var>TWorkEvent</var> events between early and later releases of Indy
-	10. Specifically, earlier version use type <var>Integer</var> for the
+	10. Specifically, earlier versions use type <var>Integer</var> for the
 	<var>AWorkCount</var> parameter of <var>TWorkEvent</var> and the
 	<var>AWorkCountMax</var> parameter of <var>TWorkBeginEvent</var>, while
 	later versions use <var>Int64</var>.
@@ -139,9 +139,9 @@
 
 <p>
 	<em>CodeSnip</em>'s source code uses conditional compilation to provide the
-	correct event handlers &ndash; and it makes an intelligent guess at which
-	signature to use depending on the version number provided by the Indy
-	library code. Should the program fail to compile with an error in the
+	correct event handler signatures &ndash; and it makes an intelligent guess
+	at which signature to use depending on the version number provided by the
+	Indy library code. Should the program fail to compile with an error in the
 	<var>UDownloadMonitor</var> unit, you should check the event signatures in
 	your Indy <var>IdComponent</var> unit and then define the
 	<code>INDY_WORKEVENT_INT64</code> environment variable if <var>Int64</var>
@@ -150,12 +150,12 @@
 </p>
 
 <h3>
-	Delphi VCL
+	Delphi RTL &amp; VCL
 </h3>
 
 <p>
-	Goes without saying really, but you need the Delphi VCL in order to compile
-	this code.
+	Goes without saying really, but you need the RTL and VCL that ships with the
+	chosen version of Delphi.
 </p>
 
 <h2>
@@ -225,10 +225,10 @@
 		<code>DELPHI2006</code> - optional
 	</dt>
 	<dd>
-		If you are using Delphi 2006 this environment variable should be set
-		to the Delphi install directory. When specified <code>DELPHIROOT</code>
-		will ignore its own value and use the value of <code>DELPHI2006</code>
-		instead.
+		If you are using Delphi 2006 this environment variable can be set to the
+		Delphi install directory. When <code>DELPHI2006</code> is defined
+		<code>DELPHIROOT</code> will be set to the value of
+		<code>DELPHI2006</code>.
 	</dd>
 	<dt class="spaced">
 		<code>INDY10</code> - required
@@ -244,7 +244,7 @@
 	</dt>
 	<dd>
 		<a href="#indychanges">See above</a> for details. If used, only one of
-		the environment variables may be defined: defining both causes
+		the environment variables may be defined. Defining both causes
 		compilation to fail.
 	</dd>
 </dl>
@@ -258,13 +258,13 @@
 	works.
 </p>
 
-<h3>
+<h3 id="mssdk">
 	Microsoft Software Development Kit
 </h3>
 
 <p>
-	The MS SDK is required for its MIDL IDL compiler. This tool is needed to
-	build <code>ExternalObj.idl</code> into a <code>.tlb</code> file.
+	The MIDL IDL compiler that ships with the MS SDK is required to build
+	<code>ExternalObj.tlb</code> from <code>ExternalObj.idl</code>.
 </p>
 
 <p>
@@ -296,8 +296,9 @@
 </p>
 	
 <p>
-	You can use a batch file with contents similar this to set the path and the
-	<code>MSSDK</code> environment variable before building <em>CodeSnip</em>:
+	You can use a batch file with contents similar to the following to set the
+	path and the <code>MSSDK</code> environment variable before building
+	<em>CodeSnip</em>:
 </p>
 
 <pre class="indent">if not "%PATHSET%" == "" goto end
@@ -307,6 +308,12 @@ set PATH=%PATH%;C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE
 set PATHSET=1
 :end</pre>
 
+<p>
+	<strong>Note:</strong> You do not need a copy of Visual Studio for this
+	&ndash; the required directories and files are created when the SDK is
+	installed.
+</p>
+
 <h4>
 	Build Without MIDL or the MS SDK
 </h4>
@@ -315,7 +322,7 @@ set PATHSET=1
 	If you don't already have the MS SDK it's a big job to download and install
 	it just to compile one <code>.tlb</code> file. (The SDK is huge).
 	Therefore there's an alternative that means you can compile without the SDK.
-	This is decribed in the section 
+	This is described in the section 
 	<a
 		href="#nomidl"
 	>Editing and Compiling Without MIDL</a> below. 
@@ -369,10 +376,9 @@ set PATHSET=1
 </h3>
 
 <p>
-	The Inno setup command line compiler is used to create <em>CodeSnip</em>'s
-	install program. The compiler is supplied with Inno Setup v5.2.3 or later.
-	The ISPP pre-processor v5.2.3 or later is also required. 
-	You can get Inno Setup at <a
+	The Inno setup command line compiler is needed to create <em>CodeSnip</em>'s
+	install program. v5.2.3 or later is required as is a compatible version of
+	the ISPP pre-processor. You can get Inno Setup with ISPP at <a
 		href="http://www.innosetup.com/"
 	>http://www.innosetup.com/</a>.
 </p>
@@ -422,12 +428,23 @@ set PATHSET=1
 </h3>
 
 <p>
-	The first step is to configure the required environment variables.
+	You can configure environment variables either by modifying your system
+	environment variables or by creating a batch file that you run before
+	performing the build.
+</p>
+
+<h4>
+	Step 1
+</h4>
+
+<p>
+	Configure the required environment variables. The program will fail to
+	compile if these environment variables are not set:
 </p>
 
 <ul>
 	<li>
-		<code>DELPHIROOT</code> or <code>DELPHI2006ROOT</code>
+		<code>DELPHIROOT</code> or <code>DELPHI2006</code>
 	</li>
 	<li>
 		<code>INDY10</code>
@@ -437,10 +454,15 @@ set PATHSET=1
 	</li>
 </ul>
 
+<h4>
+	Step 2
+</h4>
+
 <p>
 	Update the <code>PATH</code> environment variable to include the paths that
-	MIDL needs (explained above) along with any other paths needed to access
-	build tools.
+	MIDL needs (explained <a
+		href="#mssdk"
+	>above</a>).
 </p>
 
 <p>
@@ -450,15 +472,40 @@ set PATHSET=1
 	<code>set IGNOREMIDL=1</code>.
 </p>
 
-<p>
-	Set any of the optional environment variables that are needed to specify the
-	path to any tools that are not on the system path.
-</p>
+<h4>
+	Step 3
+</h4>
 
 <p>
-	You can configure environment variables either by modifying your system
-	environment variables or by creating a batch file that you run before
-	performing the build.
+	Set any of the following environment variables that are needed to specify
+	the path to any tools that cannot be found on the path:
+</p>
+
+<ul>
+	<li>
+		<code>VIEDROOT</code>
+	</li>
+	<li>
+		<code>HTMLRESROOT</code>
+	</li>
+	<li>
+		<code>INNOSETUP</code>
+	</li>
+	<li>
+		<code>HHCROOT</code>
+	</li>
+	<li>
+		<code>ZIPROOT</code>
+	</li>
+</ul>
+
+<h4>
+	Step 4
+</h4>
+
+<p>
+	Set <code>INDY_WORKEVENT_INT64</code> or <code>INDY_WORKEVENT_INT32</code>
+	if necessary.
 </p>
 
 <h3>
@@ -466,12 +513,12 @@ set PATHSET=1
 </h3>
 
 <p>
-	If you don't already have it, download the <em>CodeSnip</em> source code. 
-	How to go about that is explained at
+	If you don't already have it, download the <em>CodeSnip</em> source code or
+	check it out or export it from the Subversion repository. How to go about
+	that is explained at
 	<a
 		href="http://www.delphidabbler.com/software/codesnip/download"
-	>http://www.delphidabbler.com/software/codesnip/download</a>. If necessary,
-	extract the source code into a folder, preserving the directory structure.
+	>http://www.delphidabbler.com/software/codesnip/download</a>.
 </p>
 
 <h3>
@@ -520,7 +567,7 @@ set PATHSET=1
 <p>
 	If, by chance you also have a <code>Bin</code>, <code>Exe</code> and
 	<code>Release</code> directory don't worry - all will become clear. 
-	Subversion users will also see the usual <code>.svn</code> hidden
+	Subversion users may also see the usual <code>.svn</code> hidden
 	directories. If you have done some editing you may also see occasional
 	hidden <code>__history</code> folders.
 </p>
@@ -653,7 +700,7 @@ set PATHSET=1
 </h4>
 
 <p>
-	You can edit the type library from the Delphi IDE. Start the IDE select
+	You can edit the type library from the Delphi IDE. Start the IDE, select
 	File | Open, change the file type to Type Library and navigate to
 	<code>ExternalObj.tlb</code>. This opens the type library. Edit as required
 	then save the changes. Delete any <code>*_TLB</code> files that appear.
