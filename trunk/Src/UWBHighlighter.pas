@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes, SHDocVw, MSHTML, Graphics,
   // Project
-  USearch;
+  UIStringList, USearch;
 
 
 type
@@ -64,19 +64,14 @@ type
   }
   TWBHighlighter = class(TObject)
   strict private
-    fWebBrowser: TWebBrowser;
-      {Browser control containing document being highlighted}
-    fSearchSectionIDs: TStrings;
-      {List of IDs of HTML tags enclosing text that is to be highlighted}
-    fHighlightBackColor: TColor;
-      {Background colour of highlighted text}
-    fHighlightTextColor: TColor;
-      {Colour of highlighted text}
-    fHighLightStyle: string;
-      {Current style used to highlight text}
+    fWebBrowser: TWebBrowser;       // Control containing doc to be highlighted
+    fSearchSectionIDs: IStringList; // Ids of HTML search section blocks
+    fHighlightBackColor: TColor;    // Highlighted text background colour
+    fHighlightTextColor: TColor;    // Highlighted text colour
+    fHighLightStyle: string;        // CSS style used to highlight text
     function IsRangeInSearchSection(const Range: IHTMLTxtRange): Boolean;
-      {Checks if an HTML text range is within one of the identifies sections of
-      the document that are to be searched. If no sections are defined then all
+      {Checks if an HTML text range is within one of the sections of the
+      document that are to be searched. If no sections are defined then all
       ranges are searched.
         @param Range [in] Text range to be searched.
         @return True if text range is included in a search section.
@@ -90,7 +85,7 @@ type
         @param FindFlags [in] Flags that customise search.
         @return Number of words highlighted.
       }
-    procedure SetSearchSectionIDs(const Value: TStrings);
+    procedure SetSearchSectionIDs(const Value: IStringList);
       {Write accessor for SearchSectionIDs property. Copies strings from new
       value to property.
         @param Value [in] String list containing IDs. If nil the property is
@@ -121,17 +116,14 @@ type
           highlighted.
         @except EBug raised if browser control does not contain a HTML document.
       }
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
     function HighlightSearchResults(
       const Criteria: ITextSearchCriteria): Integer;
       {Searches for and highlights all text in document within defined search
-      sections that matches search criteria.
+      sections that match search criteria.
         @param Criteria [in] Provides information about a text search.
         @return Number of words highlighted.
       }
-    property SearchSectionIDs: TStrings
+    property SearchSectionIDs: IStringList
       read fSearchSectionIDs write SetSearchSectionIDs;
       {List of IDs of HTML tags that enclose text which is to be highlighted. If
       the list is non-empty only the text enclosed by the identified tags is
@@ -139,7 +131,7 @@ type
       highlighted}
     property HighlightBackColor: TColor
       read fHighlightBackColor write SetHighlightBackColor default clYellow;
-      {Background colour of highlight text}
+      {Background colour of highlighted text}
     property HighlightTextColor: TColor
       read fHighlightTextColor write SetHighlightTextColor default clNone;
       {Colour of highlighted text}
@@ -153,7 +145,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UColours, UCSSUtils, UHTMLDocHelper, UHTMLUtils, UWBHelper;
+  IntfCommon, UColours, UCSSUtils, UHTMLDocHelper, UHTMLUtils, UWBHelper;
 
 
 { TWBHighlighter }
@@ -168,10 +160,9 @@ constructor TWBHighlighter.Create(const WebBrowser: TWebBrowser);
 begin
   Assert(Assigned(WebBrowser), ClassName + '.Create: WebBrowser is nil');
   inherited Create;
-  // Record reference to web browser control
   fWebBrowser := WebBrowser;
   // Set up properties
-  fSearchSectionIDs := TStringList.Create;
+  fSearchSectionIDs := TIStringList.Create;
   fHighlightBackColor := clTextSearchHighlight;
   fHighlightTextColor := clTextSearchText;
   UpdateHighlightStyle;
@@ -179,18 +170,10 @@ begin
   TWBHelper.WaitForValidDocToLoad(fWebBrowser);                // can raise EBug
 end;
 
-destructor TWBHighlighter.Destroy;
-  {Class destructor. Tears down object.
-  }
-begin
-  fSearchSectionIDs.Free;
-  inherited;
-end;
-
 function TWBHighlighter.HighlightSearchResults(
   const Criteria: ITextSearchCriteria): Integer;
   {Searches for and highlights all text in document within defined search
-  sections that matches search criteria.
+  sections that match search criteria.
     @param Criteria [in] Provides information about a text search.
     @return Number of words highlighted.
   }
@@ -198,7 +181,6 @@ var
   Idx: Integer;             // loops thru all words in text search criteria
   FindFlags: Integer;       // flags that control how browser searches for text
 begin
-  // Initialise count
   Result := 0;
   if Assigned(Criteria) then
   begin
@@ -225,8 +207,8 @@ var
   SpanAttrs: IHTMLAttributes; // attributes of generated span tag
 begin
   Range := THTMLDocHelper.CreateBodyTextRange(fWebBrowser.Document);
-  Assert(Assigned(Range), ClassName + '.HighlightWord: Range is nil');
-  // Set up counter of highlighted items
+  Assert(Assigned(Range),
+    ClassName + '.HighlightWord: Can''t create body text range');
   Result := 0;
   // Find each word according to find flags
   while Range.findText(Word, 1, FindFlags) do
@@ -238,7 +220,6 @@ begin
       SpanAttrs := THTMLAttributes.Create;
       SpanAttrs.Add('style', fHighLightStyle);
       Range.pasteHTML(MakeCompoundTag('span', SpanAttrs, Range.htmlText));
-      // Count the found text item
       Inc(Result);
     end
     else
@@ -249,9 +230,9 @@ end;
 
 function TWBHighlighter.IsRangeInSearchSection(
   const Range: IHTMLTxtRange): Boolean;
-  {Checks if an HTML text range is within one of the identifies sections of the
-  document that are to be searched. If no sections are defined then all ranges
-  are searched.
+  {Checks if an HTML text range is within one of the sections of the document
+  that are to be searched. If no sections are defined then all ranges are
+  searched.
     @param Range [in] Text range to be searched.
     @return True if text range is included in a search section.
   }
@@ -263,15 +244,14 @@ begin
   // then we class whole document as a single search section
   if fSearchSectionIDs.Count > 0 then
   begin
-    // Assume failure
     Result := False;
     // Loop thru all HTML elements from current range up to <body> tag, looking
     // for enclosing tag with one of IDs that define a search section. Returns
     // true if element found
     Elem := Range.parentElement;
-    while Assigned(Elem) and not AnsiSameText(Elem.tagName, 'body') do
+    while Assigned(Elem) and not Supports(Elem, IHTMLBodyElement) do
     begin
-      if fSearchSectionIDs.IndexOf(Elem.id) >= 0 then
+      if fSearchSectionIDs.Contains(Elem.id) then
       begin
         Result := True;
         Break;
@@ -329,7 +309,7 @@ begin
   end;
 end;
 
-procedure TWBHighlighter.SetSearchSectionIDs(const Value: TStrings);
+procedure TWBHighlighter.SetSearchSectionIDs(const Value: IStringList);
   {Write accessor for SearchSectionIDs property. Copies strings from new value
     to property.
     @param Value [in] String list containing IDs. If nil the property is
@@ -337,7 +317,7 @@ procedure TWBHighlighter.SetSearchSectionIDs(const Value: TStrings);
   }
 begin
   if Assigned(Value) then
-    fSearchSectionIDs.Assign(Value)
+    (fSearchSectionIDs as IAssignable).Assign(Value)
   else
     fSearchSectionIDs.Clear;
 end;
