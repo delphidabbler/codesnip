@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -87,17 +87,16 @@ type
       {Returns the directory where CodeSnip stores the user's "database" files.
         @return Full path to database sub directory.
       }
+    class function AppExeFilePath: string;
+      {Returns fully specified name of program's executable file.
+        @return Name of file.
+      }
     class function AppExeDir: string;
       {Returns the directory of CodeSnip's executable files.
         @return Full path to executable files directory.
       }
-    class function AppExeFile: string;
-      {Returns name of CodeSnip's executable file. Adapts if file has been
-      renamed since compilation.
-        @return Name of executable file.
-      }
     class function HelpFileName: string;
-      {Returns name of CodeSnip's help file.
+      {Returns fully specified name of CodeSnip's help file.
         @return Name of help file.
       }
     class function ProgramReleaseInfo: string;
@@ -164,16 +163,15 @@ class function TAppInfo.AppExeDir: string;
     @return Full path to executable files directory.
   }
 begin
-  Result := ExtractFileDir(ParamStr(0));
+  Result := ExtractFileDir(AppExeFilePath);
 end;
 
-class function TAppInfo.AppExeFile: string;
-  {Returns name of CodeSnip's executable file. Adapts if file has been renamed
-  since compilation.
-    @return Name of executable file.
+class function TAppInfo.AppExeFilePath: string;
+  {Returns fully specified name of program's executable file.
+    @return Name of file.
   }
 begin
-  Result := ExtractFileName(ParamStr(0));
+  Result := ParamStr(0);
 end;
 
 class function TAppInfo.CommonAppDir: string;
@@ -194,11 +192,11 @@ begin
 end;
 
 class function TAppInfo.HelpFileName: string;
-  {Returns name of CodeSnip's help file.
+  {Returns fully specified name of CodeSnip's help file.
     @return Name of help file.
   }
 begin
-  Result := AppExeDir + '\CodeSnip.chm';                  
+  Result := AppExeDir + '\CodeSnip.chm';
 end;
 
 class function TAppInfo.IsRegistered: Boolean;
