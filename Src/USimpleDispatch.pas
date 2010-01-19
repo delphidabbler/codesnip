@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -162,7 +162,7 @@ type
           exception information. Not used.
         @param AArgErr [in/out] Index within AParams.rgvarg[] array of the first
           argument that has an error.
-        @return Success or failure code. We return E_FAIL.
+        @return Success or failure code.
       }
   end;
 
@@ -311,7 +311,7 @@ function TSimpleDispatch.Invoke(ADispID: Integer; const AIID: TGUID;
       information. Not used.
     @param AArgErr [in/out] Index within AParams.rgvarg[] array of the first
       argument that has an error.
-    @return Success or failure code. We return E_FAIL.
+    @return Success or failure code.
   }
 var
   InvokeInfo: TInvokeInfo;  // information about method invocation
