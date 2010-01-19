@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -55,15 +55,11 @@ type
     Class that provides information about a HTML event.
   }
   THTMLEventInfo = class(TObject)
-  private
-    fCanCancel: Boolean;
-      {Value of CanCancel property}
-    fCancelled: Boolean;
-      {Value of Cancelled property}
-    fArgs: IHTMLEventObj;
-      {Value of Args property}
-    fDispatchId: Integer;
-      {Value of DispatchId property}
+  strict private
+    fCanCancel: Boolean;  // Value of CanCancel property
+    fCancelled: Boolean;  // Value of Cancelled property
+    fArgs: IHTMLEventObj; // Value of Args property
+    fDispatchId: Integer; // Value of DispatchId property
     procedure SetCancelled(const Value: Boolean);
       {Write accessor for Cancelled property. Sets property only if CanCancel
       property is True.
@@ -95,7 +91,7 @@ type
       cancel the event. If CanCancel is false the value of Cancelled cannot be
       changed and is always False}
     property Args: IHTMLEventObj read fArgs;
-      {Object exposing information about the event provided the browser object}
+      {Object exposing information about the event provided by browser object}
   end;
 
   {
@@ -115,26 +111,24 @@ type
   TAbstractHTMLEventSink = class(TSimpleDispatch,
     IUnknown, IDispatch
   )
-  private
-    fSinkIID: TGUID;
-      {Supported event interface}
-    fSource: IDispatch;
-      {Reference to event source object}
-    fConnectionCookie: Integer;
-      {Unique value that identifies connection between event source and sink}
-    fOnEvent: THTMLEvent;
-      {Reference to any OnEvent handler}
-  protected
+  strict private
+    fSinkIID: TGUID;            // Supported event interface
+    fSource: IDispatch;         // Reference to event source object
+    fConnectionCookie: Integer; // Identifies connection between source and sink
+    fOnEvent: THTMLEvent;       // Reference to any OnEvent handler
+  strict protected
     procedure DoInvoke(var InvokeInfo: TInvokeInfo); override;
       {Dispatches events via abstract DispatchEvent method after checking for
       valid context.
         @param InvokeInfo [in/out] Information about method / property
-          invocation. Structure is updated with information event invocation.
+          invocation. Structure is updated with information about invocation.
+        @except EBug exception raised if invoked with an property or named
+          method.
       }
     procedure DispatchEvent(var InvokeInfo: TInvokeInfo); virtual; abstract;
       {Abstract method called when a event is to be dispatched.
         @param InvokeInfo [in/out] Information about event invocation. Structure
-          is to be updated with information result of invocation.
+          is to be updated with information about result of invocation.
       }
     procedure GetEventArgParam(var InvokeInfo: TInvokeInfo;
       out EventArgs: IHTMLEventObj);
@@ -158,18 +152,18 @@ type
       }
     { IUnknown }
     function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
-      {Checks the specified interface is supported by this object. If so
-      reference to interface is passed out. Supported interfaces are IUnknown,
-      IDispatch and interface implemented by event sink.
-        @param [in] IID specifies interface being queried.
-        @param [out] Reference to interface implementation or nil if not
+      {Checks if the specified interface is supported by this object. If so a
+      reference to the interface is passed out. Supported interfaces are
+      IUnknown, IDispatch and the interface implemented by the event sink.
+        @param IID [in] specifies interface being queried.
+        @param Obj [out] Reference to interface implementation or nil if not
           supported.
-        @result S_OK if interface supported or E_NOINTERFACE if not supported.
+        @return S_OK if interface supported or E_NOINTERFACE if not supported.
       }
   public
     constructor Create(const SinkIID: TGUID);
       {Class constructor. Sets up the object.
-        @param SinkIID [in] Interface of events to be sunk by this object.
+        @param SinkIID [in] Interface to events to be sunk by this object.
       }
     destructor Destroy; override;
       {Class destructor. Disconnects the sink from the event source and tears
@@ -227,12 +221,12 @@ type
   THTMLDocEventSink = class(TAbstractHTMLEventSink,
     IUnknown, IDispatch
   )
-  protected
+  strict protected
     procedure DispatchEvent(var InvokeInfo: TInvokeInfo); override;
       {Dispatches HTMLDocumentEvents2 events.
-        @param InvokeInfo [in] Structure containing about event to be
-          dispatched. Fields of this structure are updated to notify result of
-          event invocation.
+        @param InvokeInfo [in] Structure containing information about the event
+          to be dispatched. Fields of this structure are updated to notify
+          result of event invocation.
       }
   public
     constructor Create;
@@ -274,15 +268,15 @@ type
   THTMLWdwEventSink = class(TAbstractHTMLEventSink,
     IUnknown, IDispatch
   )
-  private
+  strict private
     fOnError: THTMLWdwErrorEvent;
       {Reference to any OnError event handler}
-  protected
+  strict protected
     procedure DispatchEvent(var InvokeInfo: TInvokeInfo); override;
       {Dispatches HTMLWindowEvents2 events.
-        @param InvokeInfo [in] Structure containing about event to be
-          dispatched. Fields of this structure are updated to notify result of
-          event invocation.
+        @param InvokeInfo [in] Structure containing information about event to
+          be dispatched. Fields of this structure are updated to notify result
+          of event invocation.
       }
   public
     constructor Create;
@@ -296,8 +290,10 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils, Variants, Windows, ComObj,
   // Project
-  SysUtils, Variants, Windows, ComObj;
+  UExceptions;
 
 
 { THTMLEventInfo }
@@ -350,7 +346,7 @@ end;
 
 constructor TAbstractHTMLEventSink.Create(const SinkIID: TGUID);
   {Class constructor. Sets up the object.
-    @param SinkIID [in] Interface of events to be sunk by this object.
+    @param SinkIID [in] Interface to events to be sunk by this object.
   }
 begin
   inherited Create;
@@ -404,8 +400,8 @@ begin
     // Trigger the event
     if Assigned(fOnEvent) then
       fOnEvent(Self, EventInfo);
-    // Store whether event is cancelled as return value only if event is
-    // cancelable.
+    // Store whether event is cancelled as return value only if event can be
+    // cancelled
     if EventInfo.CanCancel then
       InvokeInfo.FnResult := not EventInfo.Cancelled
   finally
@@ -417,17 +413,18 @@ procedure TAbstractHTMLEventSink.DoInvoke(var InvokeInfo: TInvokeInfo);
   {Dispatches events via abstract DispatchEvent method after checking for valid
   context.
     @param InvokeInfo [in/out] Information about method / property invocation.
-      Structure is updated with information event invocation.
+      Structure is updated with information about invocation.
+    @except EBug exception raised if invoked with an property or named method.
   }
 begin
   // We only accept method calls, not properties
   if InvokeInfo.Flags and DISPATCH_METHOD = 0 then
-    raise Exception.Create(                                // ** do not localise
+    raise EBug.Create(
       'TAbstractHTMLEventSink does not support properties'
     );
   // We don't handle named parameters
   if InvokeInfo.Params.cNamedArgs > 0 then
-    raise Exception.Create(                                // ** do not localise
+    raise EBug.Create(
       'TAbstractHTMLEventSink does not support named methods'
     );
   DispatchEvent(InvokeInfo);
@@ -446,8 +443,8 @@ procedure TAbstractHTMLEventSink.GetEventArgParam(var InvokeInfo: TInvokeInfo;
 begin
   EventArgs := nil;
   if InvokeInfo.Params.cArgs = 1 then
-    // Get interface IHTMLEventObj interface from only param
-    // GetValidParam sets error info in InvokeInfo if param not valid
+    // Get IHTMLEventObj interface from only param. GetValidParam sets error
+    // info in InvokeInfo if param not valid
     GetValidParam(InvokeInfo, 0, varDispatch, IHTMLEventObj, EventArgs)
   else
     // Incorrect number of params: set error code accordingly
@@ -456,11 +453,12 @@ end;
 
 function TAbstractHTMLEventSink.QueryInterface(const IID: TGUID;
   out Obj): HResult;
-  {Checks the specified interface is supported by this object. If so reference
-  to interface is passed out. Supported interfaces are IUnknown, IDispatch and
-  interface implemented by event sink.
-    @param [in] IID specifies interface being queried.
-    @param [out] Reference to interface implementation or nil if not supported.
+  {Checks if the specified interface is supported by this object. If so a
+  reference to the interface is passed out. Supported interfaces are IUnknown,
+  IDispatch and the interface implemented by the event sink.
+    @param IID [in] specifies interface being queried.
+    @param Obj [out] Reference to interface implementation or nil if not
+      supported.
     @return S_OK if interface supported or E_NOINTERFACE if not supported.
   }
 begin
@@ -484,8 +482,9 @@ end;
 
 procedure THTMLDocEventSink.DispatchEvent(var InvokeInfo: TInvokeInfo);
   {Dispatches HTMLDocumentEvents2 events.
-    @param InvokeInfo [in] Structure containing about event to be dispatched.
-      Fields of this structure are updated to notify result of event invocation.
+    @param InvokeInfo [in] Structure containing information about the event to
+      be dispatched. Fields of this structure are updated to notify result of
+      event invocation.
   }
 begin
   inherited;
@@ -536,10 +535,12 @@ end;
 
 procedure THTMLWdwEventSink.DispatchEvent(var InvokeInfo: TInvokeInfo);
   {Dispatches HTMLWindowEvents2 events.
-    @param InvokeInfo [in] Structure containing about event to be dispatched.
-      Fields of this structure are updated to notify result of event invocation.
+    @param InvokeInfo [in] Structure containing information about event to be
+      dispatched. Fields of this structure are updated to notify result of event
+      invocation.
   }
 
+  // ---------------------------------------------------------------------------
   procedure DispatchErrorEvent;
     {Dispatches the OnError event.
     }
@@ -572,6 +573,7 @@ procedure THTMLWdwEventSink.DispatchEvent(var InvokeInfo: TInvokeInfo);
     if Assigned(fOnError) then
       fOnError(Self, Description, URL, Line);
   end;
+  // ---------------------------------------------------------------------------
 
 begin
   inherited;
