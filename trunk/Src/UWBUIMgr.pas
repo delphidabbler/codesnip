@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -143,7 +143,7 @@ type
     IInterface,
     IDocHostUIHandler
   )
-  private
+  strict private
     fWebBrowser: TWebBrowser;
       {Reference to managed web browser control}
     fShow3dBorder: Boolean;
@@ -161,8 +161,8 @@ type
       {Reference to drag drop handler for browser object}
     fScrollbarStyle: TWBScrollbarStyle;
       {Determines style of scroll bars}
-    fUseXPThemes: Boolean;
-      {Determines whether browser uses XP themes}
+    fUseThemes: Boolean;
+      {Determines whether browser uses themes}
     fOnTranslateAccel: TWBTranslateEvent;
       {Handler for OnTranslateAccel event}
     fOnMenuPopup: TWBMenuPopupEvent;
@@ -197,7 +197,7 @@ type
         @param Value [in] Reference to required popup menu or nil if no popup
           menu required.
       }
-  protected
+  protected // do not make strict
     { IDocHostUIHandler overrides }
     function ShowContextMenu(const dwID: DWORD; const ppt: PPOINT;
       const pcmdtReserved: IUnknown; const pdispReserved: IDispatch): HResult;
@@ -318,13 +318,13 @@ type
     property AllowTextSelection: Boolean
       read fAllowTextSelection write fAllowTextSelection default True;
       {Flag that indicates whether user can select text in browser control}
-    property UseXPThemes: Boolean
-      read fUseXPThemes write fUseXPThemes;
-      {Flag that indicates whether browser control should use XP themes when it
+    property UseThemes: Boolean
+      read fUseThemes write fUseThemes;
+      {Flag that indicates whether browser control should use UIthemes when it
       is displaying widgets. This property is ignored if not running on Windows
-      XP or when running on XP in classic style or when running on an IE version
-      earlier earlier than v6. The property defaults to true if themes are
-      enabled and false if they are not available or not enabled}
+      XP or later or when running in classic style or when running on an IE
+      version earlier earlier than v6. The property defaults to true if themes
+      are enabled and false if they are not available or not enabled}
     property CSS: string
       read fCSS write fCSS;
       {The default CSS to apply to documents displayed in browser control}
@@ -365,7 +365,7 @@ type
       OnMenuPopup has no event handler}
     property OnUpdateCSS: TWBUpdateCSSEvent
       read fOnUpdateCSS write fOnUpdateCSS;
-      {Event triggered when browser needs default CSS. Give opportunity to
+      {Event triggered when browser needs default CSS. Provides opportunity to
       modify or replace code per CSS property}
     property OnBrowserActivate: TNotifyEvent
       read fOnBrowserActivate write fOnBrowserActivate;
@@ -389,10 +389,10 @@ uses
 
 
 function TaskAllocWideString(const S: string): PWChar;
-  {Converts an ANSI string to a wide string and stores it in a buffer allocated
-  by the Shell's task allocator. Caller is responsible for freeing the buffer
-  and must use shell's allocator to do this.
-    @param S [in] ANSI string to convert.
+  {Allocates memory for a wide string using the Shell's task allocator and
+  copies a given string into the memory as a wide string. Caller is responsible
+  for freeing the buffer and must use the shell's allocator to do this.
+    @param S [in] String to convert.
     @return Pointer to buffer containing wide string.
   }
 var
@@ -481,7 +481,7 @@ begin
   fScrollbarStyle := sbsNormal;
   fShow3dBorder := True;
   fAllowTextSelection := True;
-  fUseXPThemes := ThemeServicesEx.ThemesEnabled;
+  fUseThemes := ThemeServicesEx.ThemesEnabled;
   // Handler browser ctrl's OnEnter event to focus browser control
   fOldOnEnter := fWebBrowser.OnEnter;
   fWebBrowser.OnEnter := BrowserEnter;
@@ -549,15 +549,15 @@ var
 begin
   // Update flags depending on property values
   pInfo.dwFlags := 0;
-  if fUseXPThemes and ThemeServicesEx.ThemesEnabled then
+  if fUseThemes and ThemeServicesEx.ThemesEnabled then
     pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_THEME
   else if ThemeServicesEx.ThemesAvailable then
     pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_NOTHEME;
   // scroll bar style
   case fScrollbarStyle of
-    sbsHide: pInfo.dwFlags :=
+    sbsHide:
       // hide the scroll bars
-      pInfo.dwFlags or DOCHOSTUIFLAG_SCROLL_NO;
+      pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_SCROLL_NO;
     sbsFlat:
       // use flat scroll bars (has effect in classic UI only)
       pInfo.dwFlags := pInfo.dwFlags or DOCHOSTUIFLAG_FLAT_SCROLLBAR;
@@ -675,7 +675,7 @@ begin
     Result := S_FALSE
   else
   begin
-    // Tell IE we're handling the context menu so that is will not display menu.
+    // Tell IE we're handling the context menu so that it will not display menu.
     // If web browser control has popup menu assigned it is displayed, otherwise
     // no menu shown
     Result := S_OK;
