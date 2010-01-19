@@ -83,7 +83,6 @@ type
   }
   TWebInfo = class(TNoConstructObject)
   strict private
-    const LocalHost = 'localhost';              // local web server (for tests)
     const RemoteHost = 'www.delphidabbler.com'; // remote web server
     const WebsiteURL = 'http://' + RemoteHost;  // delphidabbler website URL
     class function Host: string;
@@ -92,6 +91,8 @@ type
         localhost, otherwise it is the remote server.
       }
   public
+    const LocalHost = 'localhost';
+      {Local web server (for tests)}
     const DelphiDabblerHomeURL = WebsiteURL + '/';
       {DelphiDabbler site home page}
     const ProgramHomeURL = WebsiteURL + '/software/codesnip';
@@ -114,6 +115,10 @@ type
       {Gets information about any web proxy to be used from settings.
         @return Required information.
       }
+    class function UsingLocalHost: Boolean;
+      {Checks if program is using localhost web server.
+        @return True if localhost being used, False if not.
+      }
   end;
 
 
@@ -132,13 +137,22 @@ uses
 class function TWebInfo.Host: string;
   {Determines host server depending on command line switch passed to program.
     @return Required host server. If -localhost switch provided this is
-    localhost, otherwise it is the remote server.
+      localhost, otherwise it is the remote server.
   }
 begin
-  if FindCmdLineSwitch('localhost', ['-', '\'], True) then
+  if UsingLocalHost then
     Result := LocalHost
   else
     Result := RemoteHost;
+end;
+
+class function TWebInfo.UsingLocalHost: Boolean;
+  {Checks if program is using localhost web server.
+    @return True if localhost being used, False if not.
+  }
+begin
+  // We are using local host if -localhost command line switch provided.
+  Result := FindCmdLineSwitch('localhost', ['-', '\'], True);
 end;
 
 class function TWebInfo.WebProxyInfo: TWebProxyInfo;
