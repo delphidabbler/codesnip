@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -71,11 +71,11 @@ type
   protected // do not make strict
     { IWBExternal5: defined in type library }
     procedure UpdateDbase; safecall;
-      {Updates database from internet via notifier.
+      {Updates database from internet.
       }
     procedure DisplaySnippet(const SnippetName: WideString;
       UserDefined: WordBool); safecall;
-      {Displays the named snippet via notifier.
+      {Displays a named snippet.
         @param SnippetName [in] Name of snippet to display.
         @param UserDefined [in] Whether snippet is user defined.
       }
@@ -83,36 +83,35 @@ type
       {Compiles the current snippet via notifier.
       }
     procedure ViewCompilerLog(Ver: SYSINT); safecall;
-      {Displays a compiler log via notifier.
+      {Displays a compiler log.
         @param Ver [in] Version of Delphi for which we need to display log. Ver
           is the ordinal value of the required compiler version enumerated type.
       }
     procedure ShowHint(const Hint: WideString); safecall;
-      {Displays the given hint via notifier.
+      {Displays a hint.
         @param Hint [in] Hint to be displayed.
       }
     procedure ConfigCompilers; safecall;
-      {Displays configure compilers dialog box via notifier.
+      {Displays the Configure Compilers dialog box.
       }
     procedure ShowTestUnit; safecall;
-      {Display the test unit for current snippet.
+      {Displays test unit for current snippet.
       }
     procedure EditSnippet(const SnippetName: WideString); safecall;
-      {Edits the named snippet.
+      {Edits a named snippet.
         @param SnippetName [in] Name of snippet to be edited. Must be a user
           defined snippet.
       }
     procedure Donate; safecall;
-      {Displays the Donate dialog box via notifier.
+      {Displays the Donate dialog box.
       }
     procedure DisplayCategory(const CatID: WideString); safecall;
-      {Displays a category via notifier.
+      {Displays a category.
         @param CatID [in] ID of category to display.
       }
     { ISetNotifier }
     procedure SetNotifier(const Notifier: INotifier);
-      {Sets the object's notifier object that is called in response to user
-      input.
+      {Records the notifier object that is called in response to user input.
         @param Notifier [in] Notifier object.
       }
   public
@@ -135,7 +134,7 @@ uses
 { TWBExternal }
 
 procedure TWBExternal.CompileSnippet;
-  {Compiles the current snippet via notifier.
+  {Compiles the current snippet.
   }
 begin
   try
@@ -147,7 +146,7 @@ begin
 end;
 
 procedure TWBExternal.ConfigCompilers;
-  {Displays configure compilers dialog box via notifier.
+  {Displays the Configure Compilers dialog box.
   }
 begin
   try
@@ -166,15 +165,14 @@ var
   ExeName: WideString;  // name of this executable file
 begin
   // Get type library info from exe file
-  ExeName := IncludeTrailingPathDelimiter(TAppInfo.AppExeDir)
-    + TAppInfo.AppExeFile;
+  ExeName := TAppInfo.AppExeFilePath;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
   inherited Create(TypeLib, IWBExternal6);
 end;
 
 procedure TWBExternal.DisplayCategory(const CatID: WideString);
-  {Displays a category via notifier.
+  {Displays a category.
     @param CatID [in] ID of category to display.
   }
 begin
@@ -188,7 +186,7 @@ end;
 
 procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
   UserDefined: WordBool);
-  {Displays the named snippet via notifier.
+  {Displays a named snippet.
     @param SnippetName [in] Name of snippet to display.
     @param UserDefined [in] Whether snippet is user defined.
   }
@@ -202,7 +200,7 @@ begin
 end;
 
 procedure TWBExternal.Donate;
-  {Displays the Donate dialog box via notifier.
+  {Displays the Donate dialog box.
   }
 begin
   try
@@ -214,7 +212,7 @@ begin
 end;
 
 procedure TWBExternal.EditSnippet(const SnippetName: WideString);
-  {Edits the named snippet.
+  {Edits a named snippet.
     @param SnippetName [in] Name of snippet to be edited. Must be a user defined
       snippet.
   }
@@ -235,7 +233,7 @@ begin
 end;
 
 procedure TWBExternal.SetNotifier(const Notifier: INotifier);
-  {Sets the object's notifier object that is called in response to user input.
+  {Records the notifier object that is called in response to user input.
     @param Notifier [in] Notifier object.
   }
 begin
@@ -243,7 +241,7 @@ begin
 end;
 
 procedure TWBExternal.ShowHint(const Hint: WideString);
-  {Displays the given hint via notifier.
+  {Displays a hint.
     @param Hint [in] Hint to be displayed.
   }
 begin
@@ -256,7 +254,7 @@ begin
 end;
 
 procedure TWBExternal.ShowTestUnit;
-  {Display the test unit for current snippet.
+  {Displays test unit for current snippet.
   }
 begin
   try
@@ -268,7 +266,7 @@ begin
 end;
 
 procedure TWBExternal.UpdateDbase;
-  {Updates database from internet via notifier.
+  {Updates database from internet.
   }
 begin
   try
@@ -280,7 +278,7 @@ begin
 end;
 
 procedure TWBExternal.ViewCompilerLog(Ver: SYSINT);
-  {Displays a compiler log via notifier.
+  {Displays a compiler log.
     @param Ver [in] Version of Delphi for which we need to display log. Ver is
       the ordinal value of the required compiler version enumerated type.
   }
