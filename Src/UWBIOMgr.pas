@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -174,7 +174,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils, ActiveX,
+  SysUtils, ActiveX,
   // Project
   UHTMLDocHelper, UHTMLUtils, UWBHelper;
 
@@ -195,7 +195,6 @@ begin
   fDocEvents.OnEvent := HTMLEventHandler;
   fWdwEvents := THTMLWdwEventSink.Create;
   fWdwEvents.OnEvent := HTMLEventHandler;
-//  fWdwEvents.OnError := HTMLErrorHandler;
 end;
 
 destructor TWBIOMgr.Destroy;
@@ -216,7 +215,7 @@ procedure TWBIOMgr.EmptyDocument;
   }
 begin
   // Load the special blank document
-  NavigateToURL('about:blank');                            // ** do not localise
+  NavigateToURL('about:blank');
 end;
 
 function TWBIOMgr.HTMLDocumentExists: Boolean;
@@ -224,8 +223,7 @@ function TWBIOMgr.HTMLDocumentExists: Boolean;
     @return True if valid HTML document is loaded, False if not.
   }
 begin
-  Result := Assigned(fWB.Document) and
-    THTMLDocHelper.IsValidDocument(fWB.Document);
+  Result := THTMLDocHelper.IsValidDocument(fWB.Document);
 end;
 
 procedure TWBIOMgr.HTMLEventHandler(Sender: TObject;
@@ -273,9 +271,9 @@ procedure TWBIOMgr.LoadFromStream(const Stream: TStream);
     @except EBug raised if document is not valid.
   }
 begin
-  // Must read into existing document: so load about:blank and ensure loaded
+  // We must read into an existing document: so we first load an empty document
+  // then load document from stream into it.
   EmptyDocument;
-  // Now do the loading and wait to complete
   InternalLoadDocumentFromStream(Stream);
 end;
 
@@ -330,7 +328,6 @@ procedure TWBIOMgr.NavigateToResource(const Module: HMODULE; const ResName,
     @except EBug raised if document is not valid.
   }
 begin
-  // Create res:// protocol for given module name and navigate to it
   NavigateToURL(MakeResourceURL(Module, ResName, ResType));
 end;
 
@@ -339,19 +336,11 @@ procedure TWBIOMgr.NavigateToURL(const URL: string);
     @param URL [in] Full URL of the document.
     @except EBug raised if new document is not valid.
   }
-var
-  Flags: OleVariant;    // flags that determine action
 begin
-  // ** do not localise string literals in this method
-  // Don't record in history
-  Flags := navNoHistory;
-  if AnsiStartsText('res://', URL) or AnsiStartsText('file://', URL)
-    or AnsiStartsText('about:', URL) or AnsiStartsText('javascript:', URL)
-    or AnsiStartsText('mailto:', URL) then
-    // don't use cache for local files
-    Flags := Flags or navNoReadFromCache or navNoWriteToCache;
-  // Do the navigation and wait for it to complete loading
-  fWB.Navigate(WideString(URL), Flags);
+  // Do the navigation, don't use cache or history and wait for document to load
+  fWB.Navigate(
+    WideString(URL), navNoHistory or navNoReadFromCache or navNoWriteToCache
+  );
   WaitForDocToLoad;
 end;
 
@@ -370,7 +359,7 @@ procedure TWBIOMgr.SetBodyHTML(const HTML: string);
     @param HTML [in] Required inner HTML for <body> tag.
   }
 begin
-  Assert(THTMLDocHelper.IsValidDocument(fWB.Document),     // ** do not localise
+  Assert(THTMLDocHelper.IsValidDocument(fWB.Document),
     ClassName + '.SetBodyHTML: Invalid or no document loaded in browser control'
   );
   THTMLDocHelper.SetInnerHTML(THTMLDocHelper.GetBodyElem(fWB.Document), HTML);
