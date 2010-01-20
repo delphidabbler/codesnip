@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -62,10 +62,9 @@ type
   }
   TContributorsEnum = class(TObject)
   strict private
-    fContribs: TContributors;
-      {Reference to object being enumerated}
-    fIndex: Integer;
-      {Index of current object in enumeration}
+    var
+      fContribs: TContributors; // Reference to object being enumerated
+      fIndex: Integer;          // Index of current object in enumeration
   public
     constructor Create(AContributors: TContributors);
       {Class constructor. Initialises enumeration.
@@ -85,16 +84,14 @@ type
 
   {
   TContributors:
-    Base class for classes that loads and encapsulates a list of database
-    contributors. Must not be instantiated directly, only via descendant
-    classes.
+    Abstract base class for classes that load and encapsulate a list of database
+    contributors.
   }
-  TContributors = class(TObject)
+  TContributors = class abstract(TObject)
   strict private
-    fContributors: TStringList;
-      {Stores list of contributors}
-    fIsError: Boolean;
-      {Value of IsError property}
+    var
+      fContributors: TStringList;   // Stores list of contributors
+      fIsError: Boolean;            // Value of IsError property
     function GetCount: Integer;
       {Read accessor for Count property.
         @return Number of contributors.
@@ -105,14 +102,13 @@ type
         @return Details of requested contributor.
       }
   strict protected
-    procedure LoadData(const FileName: string);
-      {Loads contributor data from a file, noting any error.
-        @param FileName [in] Name of file containing contributors.
+    function GetFileName: string; virtual; abstract;
+      {Gets base name of file containing details of contributors.
+        @return Required file base name.
       }
   public
     constructor Create; virtual;
       {Class constructor. Sets up object and loads contributor information.
-      Must only be called from descendant classes.
       }
     destructor Destroy; override;
       {Class destructor. Tears down object.
@@ -122,14 +118,11 @@ type
         @return Reference to new enumerator. Caller is repsonsible for freeing
           this object.
       }
-    property Items[const Idx: Integer]: string
-      read GetItem; default;
+    property Items[const Idx: Integer]: string read GetItem; default;
       {List of contributors}
-    property Count: Integer
-      read GetCount;
+    property Count: Integer read GetCount;
       {Number of contributors}
-    property IsError: Boolean
-      read fIsError;
+    property IsError: Boolean read fIsError;
       {Flag set true when contributors could not be loaded}
   end;
 
@@ -139,9 +132,10 @@ type
     database.
   }
   TCodeContributors = class sealed(TContributors)
-  public
-    constructor Create; override;
-      {Class constructor. Sets up object and reads contributors from a file.
+  strict protected
+    function GetFileName: string; override;
+      {Gets base name of file containing details of code contributors.
+        @return Required file base name.
       }
   end;
 
@@ -151,9 +145,10 @@ type
     database.
   }
   TTesters = class sealed(TContributors)
-  public
-    constructor Create; override;
-      {Class constructor. Sets up object and reads testers from a file.
+  strict protected
+    function GetFileName: string; override;
+      {Gets base name of file containing details of testers.
+        @return Required file base name.
       }
   end;
 
@@ -171,14 +166,26 @@ uses
 { TContributors }
 
 constructor TContributors.Create;
-  {Class constructor. Sets up object and loads contributor information. Must
-  only be called from descendant classes.
+  {Class constructor. Sets up object and loads contributor information.
   }
+var
+  ContribFile: string;  // name of file containing contributor information
 begin
-  Assert(ClassType <> TContributors,                       // ** do not localise
-    'TContributors.Create: must only be called from descendants.');
+  Assert(ClassType <> TContributors,
+    ClassName + '.Create: must only be called from descendants.');
   inherited;
   fContributors := TStringList.Create;
+  // Load contributor file
+  ContribFile := IncludeTrailingPathDelimiter(TAppInfo.AppDataDir)
+    + GetFileName;
+  if FileExists(ContribFile) then
+    try
+      fContributors.LoadFromFile(ContribFile);
+    except
+      // swallow any exception: treat as empty contributor list
+    end;
+  // Error if list is empty: flag error
+  fIsError := Count = 0;
 end;
 
 destructor TContributors.Destroy;
@@ -198,6 +205,10 @@ begin
 end;
 
 function TContributors.GetEnumerator: TContributorsEnum;
+  {Creates an enumerator for this object.
+    @return Reference to new enumerator. Caller is repsonsible for freeing this
+      object.
+  }
 begin
   Result := TContributorsEnum.Create(Self);
 end;
@@ -211,41 +222,24 @@ begin
   Result := fContributors[Idx];
 end;
 
-procedure TContributors.LoadData(const FileName: string);
-  {Loads contributor data from a file, noting any error.
-    @param FileName [in] Name of file containing contributors.
-  }
-begin
-  fContributors.Clear;
-  // Try to load file
-  if FileExists(FileName) then
-    try
-      fContributors.LoadFromFile(FileName);
-    except
-      // swallow exception: we just don't get contributor list
-    end;
-  // Error if list is empty: flag error
-  fIsError := Count = 0;
-end;
-
 { TCodeContributors }
 
-constructor TCodeContributors.Create;
-  {Class constructor. Sets up object and reads contributors from a file.
+function TCodeContributors.GetFileName: string;
+  {Gets base name of file containing details of code contributors.
+    @return Required file base name.
   }
 begin
-  inherited;
-  LoadData(IncludeTrailingPathDelimiter(TAppInfo.AppDataDir) + 'contrib.txt');
+  Result := 'contrib.txt'
 end;
 
 { TTesters }
 
-constructor TTesters.Create;
-  {Class constructor. Sets up object and reads testers from a file.
+function TTesters.GetFileName: string;
+  {Gets base name of file containing details of testers.
+    @return Required file base name.
   }
 begin
-  inherited;
-  LoadData(IncludeTrailingPathDelimiter(TAppInfo.AppDataDir) + 'testers.txt');
+  Result := 'testers.txt';
 end;
 
 { TContributorsEnum }
