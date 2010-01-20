@@ -1,13 +1,8 @@
 inherited TrappedBugReportDlg: TTrappedBugReportDlg
   Caption = 'Unexpected Error'
-  ClientWidth = 574
-  ExplicitWidth = 580
-  ExplicitHeight = 354
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Left = 8
-    ExplicitLeft = 8
     object lblIntro: TLabel [0]
       Left = 4
       Top = 4
