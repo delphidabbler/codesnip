@@ -1,13 +1,13 @@
 inherited BugReportBaseDlg: TBugReportBaseDlg
   Caption = 'BugReportBaseDlg'
+  ExplicitWidth = 474
+  ExplicitHeight = 354
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Left = 11
     Width = 449
     Color = clWindow
     ParentBackground = False
-    ExplicitLeft = 11
     ExplicitWidth = 449
     object lblBugTracker: TLabel
       AlignWithMargins = True
