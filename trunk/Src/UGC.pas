@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -58,13 +58,13 @@ type
     class procedure GetGC(var GC: IInterface);
       {Ensures that a local garbage collector is instantiated.
         @param GC [in/out] Garbage collector. If nil a new garbage collector
-          will be created and stored in GC. If GC is not nil it must be a valid
-          garbage collector and is left unchanged.
+          will be created and stored in GC. If GC is not nil it is checked for
+          validity and left unchanged.
       }
   public
     class procedure GCLocalObj(var LocalGC: IInterface; const Obj: TObject);
-      {Adds an object to a local garbage collector to be freed when garbage
-      collector goes out of scope.
+      {Adds an object to a local garbage collector instance so that the object
+      is freed when the garbage collector goes out of scope.
         @param LocalGC [in/out] Valid garbage collector to use, or nil. If nil a
           new garbage collector is created and stored in LocalGC.
         @param Obj [in] Object to place under garbage collection. Obj is added
@@ -91,6 +91,7 @@ type
     function AddObject(const Obj: TObject): TObject;
       {Adds an object to a garbage collector.
         @param Obj [in] Object to be garbage collected.
+        @return Obj unchanged.
       }
     // Add futher AddXXX methods for each required resource types
   end;
@@ -116,6 +117,7 @@ type
       {Adds an object to the list of managed resources. Object will be freed
       when garbage collector goes out of scope.
         @param Obj [in] Object to be garbage collected.
+        @return Obj unchanged.
       }
   end;
 
@@ -126,10 +128,10 @@ type
   }
   TGCObjectWrapper = class(TInterfacedObject, IInterface)
   strict private
-    fObject: TObject; // wrapped object
+    fObject: TObject; // Wrapped object
   public
     constructor Create(Obj: TObject); overload;
-      {Class constructor. Sets up object to auto-free another object.
+      {Class constructor. Sets up object wrapper to auto-free another object.
         @param Obj [in] Wrapped object.
       }
     destructor Destroy; override;
@@ -141,7 +143,7 @@ type
 { TGCObjectWrapper }
 
 constructor TGCObjectWrapper.Create(Obj: TObject);
-  {Class constructor. Sets up object to auto-free another object.
+  {Class constructor. Sets up object wrapper to auto-free another object.
     @param Obj [in] Wrapped object.
   }
 begin
@@ -164,6 +166,7 @@ function TGarbageCollector.AddObject(const Obj: TObject): TObject;
   {Adds an object to the list of managed resources. Object will be freed when
   garbage collector goes out of scope.
     @param Obj [in] Object to be garbage collected.
+    @return Obj unchanged.
   }
 begin
   Assert(Assigned(Obj), ClassName + '.AddObject: Obj is nil');
@@ -190,12 +193,24 @@ end;
 { TGC }
 
 class procedure TGC.GCLocalObj(var LocalGC: IInterface; const Obj: TObject);
+  {Adds an object to a local garbage collector instance so that the object
+  is freed when the garbage collector goes out of scope.
+    @param LocalGC [in/out] Valid garbage collector to use, or nil. If nil a
+      new garbage collector is created and stored in LocalGC.
+    @param Obj [in] Object to place under garbage collection. Obj is added
+      to LocalGC and freed when LocalGC goes out of scope.
+  }
 begin
   GetGC(LocalGC);
   (LocalGC as IGC).AddObject(Obj);
 end;
 
 class procedure TGC.GetGC(var GC: IInterface);
+  {Ensures that a local garbage collector is instantiated.
+    @param GC [in/out] Garbage collector. If nil a new garbage collector will be
+      created and stored in GC. If GC is not nil it is checked for validity and
+      left unchanged.
+  }
 begin
   Assert(not Assigned(GC) or Supports(GC, IGC),
     ClassName + '.GetGC: GC is not valid - must support IGC');
