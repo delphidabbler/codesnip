@@ -22,7 +22,7 @@
 ; The Initial Developer of the Original Code is Peter Johnson
 ; (http://www.delphidabbler.com/).
 ;
-; Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+; Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
 ; Johnson. All Rights Reserved.
 ;
 ; Contributors:
@@ -30,18 +30,17 @@
 ;
 ; ***** END LICENSE BLOCK *****
 
+; The following defines use these macros that are predefined by ISPP:
+;   SourcePath - path where this script is located
+;   GetStringFileInfo - gets requested version info string from an executable
+;   GetFileProductVersion - gets product version info string from an executable
 
 ; Deletes "Release " from beginning of S
 #define DeleteToVerStart(str S) \
   /* assumes S begins with "Release " followed by version as x.x.x */ \
   Local[0] = Copy(S, Len("Release ") + 1, 99), \
   Local[0]
-
-; The following defines use these macros that are predefined by ISPP:
-;   SourcePath - path where this script is located
-;   GetStringFileInfo - gets requested version info string from an executable
-;   GetFileProductVersion - gets product version info string from an executable
-
+  
 #define AppPublisher "DelphiDabbler"
 #define AppName "CodeSnip"
 #define ExeFile AppName + ".exe"
@@ -63,6 +62,13 @@
 #define InstUninstDir "Uninst"
 #define SetupHelper "CSSetupHelper.exe"
 
+; Creates name of setup file from app name, version and any special build string
+#define CreateSetupName(str fn) \
+  Local[0] = GetStringFileInfo(fn, "SpecialBuild"), \
+  Local[1] = (Local[0] == "") ? "" : "-" + Local[0], \
+  AppName + "-Setup-" + AppVersion + Local[1]
+
+#define SetupName CreateSetupName(ExeProg)
 
 [Setup]
 AppID={{B4BF7490-25F0-4CB1-A2D5-9E006D9FF05F}
@@ -85,13 +91,13 @@ Compression=lzma/ultra
 SolidCompression=true
 InternalCompressLevel=ultra
 OutputDir={#OutDir}
-OutputBaseFilename={#AppName}-Setup-{#AppVersion}
+OutputBaseFilename={#SetupName}
 VersionInfoVersion={#AppVersion}
 VersionInfoCompany={#Company}
 VersionInfoDescription=Installer for {#AppName}
 VersionInfoTextVersion=Release {#AppVersion}
 VersionInfoCopyright={#Copyright}
-MinVersion=0,4.0.1381sp6
+MinVersion=0,5.0.2195
 TimeStampsInUTC=true
 ShowLanguageDialog=yes
 UninstallFilesDir={app}\{#InstUninstDir}

@@ -164,7 +164,7 @@ begin
     );
   // Populate measurement unit combo
   for UnitsIdx := Low(TMeasurementUnits) to High(TMeasurementUnits) do
-    cbUnits.Items.AddObject(UnitName(UnitsIdx), TObject(UnitsIdx));
+    cbUnits.Items.AddObject(UMeasurement.UnitName(UnitsIdx), TObject(UnitsIdx));
 end;
 
 procedure TGeneralPrefsFrame.Deactivate(const Prefs: IPreferences);

@@ -253,7 +253,7 @@ uses
   // Delphi
   SysUtils, StrUtils, Windows,
   // Project
-  UCSSUtils, UExceptions;
+  UCSSUtils, UExceptions, UUnicodeHelper;
 
 
 function IsValidHTMLCode(const Content: string): Boolean;
@@ -338,11 +338,11 @@ function MakeSafeHTMLText(TheText: string): string;
     @return Encoded text.
   }
 var
-  Idx: Integer; // loops thru characters of TheText
+  Ch: Char;     // each character in TheText
 begin
   Result := '';
-  for Idx := 1 to Length(TheText) do
-    case TheText[Idx] of
+  for Ch in TheText do
+    case Ch of
       '<':
         Result := Result + '&lt;';
       '>':
@@ -351,10 +351,13 @@ begin
         Result := Result + '&amp;';
       '"':
         Result := Result + '&quot;';
-      #0..#31, #127..#255:  // control and special chars
-        Result := Result + '&#' + IntToStr(Ord(TheText[Idx])) + ';';
-      else  // compatible text: pass thru
-        Result := Result + TheText[Idx];
+      else
+      begin
+        if (Ch < #32) or (Ch >= #127) then
+          Result := Result + '&#' + IntToStr(Ord(Ch)) + ';'
+        else
+          Result := Result + Ch;
+      end;
     end;
 end;
 
@@ -368,21 +371,23 @@ function URLEncode(const S: string; const InQueryString: Boolean): string;
     @return Encoded string.
   }
 var
-  Idx: Integer; // loops thru characters of S
+  URL: Latin1String;  // latin-1 encoding of S
+  Ch: AnsiChar;       // each character in URL
 begin
+  URL := StringToLatin1String(S);
   Result := '';
-  for Idx := 1 to Length(S) do
+  for Ch in URL do
   begin
-    case S[Idx] of
+    case Ch of
       'A'..'Z', 'a'..'z', '0'..'9', '-', '_', '.':
-        Result := Result + S[Idx];
+        Result := Result + Char(Ch);
       ' ':
         if InQueryString then
           Result := Result + '+'
         else
           Result := Result + '%20';
       else
-        Result := Result + '%' + IntToHex(Ord(S[Idx]), 2);
+        Result := Result + '%' + IntToHex(Ord(Ch), 2);
     end;
   end;
 end;
@@ -419,7 +424,7 @@ begin
         HexStr := '$' + S[Idx + 1] + S[Idx + 2];
         if not TryStrToInt(HexStr, Hex) then
           raise EBug.Create(sInvalidAttr);
-        Result := Result + Chr(Hex);
+        Result := Result + Char(Hex);
         Inc(Idx, 2);
       end;
       '+':

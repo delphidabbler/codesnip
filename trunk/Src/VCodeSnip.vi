@@ -46,7 +46,7 @@ File OS=4
 File Type=1
 File Sub-Type=0
 File Flags Mask=63
-File Flags= 0
+File Flags=33
 
 [Variable File Info]
 Language=2057
@@ -64,7 +64,7 @@ Original File Name=CodeSnip.exe
 Private Build=
 Product Name=DelphiDabbler CodeSnip
 Product Version=Release <#P1>.<#P2>.<#P3>
-Special Build=
+Special Build=D2010-port
 
 [Configuration Details]
 Identifier=

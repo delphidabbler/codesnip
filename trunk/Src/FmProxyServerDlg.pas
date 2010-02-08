@@ -42,7 +42,7 @@ interface
 
 uses
   // Delphi
-  StdCtrls, Controls, ExtCtrls, Classes,
+  StdCtrls, Controls, ExtCtrls, Classes, StdActns, ActnList,
   // Project
   FmGenericOKDlg;
 
@@ -71,6 +71,11 @@ type
     edPassword2: TEdit;
     edPort: TEdit;
     edUserName: TEdit;
+    alMain: TActionList;
+    actCut: TEditCut;
+    actCopy: TEditCopy;
+    actPaste: TEditPaste;
+    actSelectAll: TEditSelectAll;
     procedure btnOKClick(Sender: TObject);
     procedure edIPAddressKeyPress(Sender: TObject; var Key: Char);
     procedure edPortKeyPress(Sender: TObject; var Key: Char);
@@ -111,7 +116,7 @@ uses
   SysUtils, Windows,
   // Project
   UConsts, UExceptions, UFontHelper, UMessageBox, USettings, UStructs,
-  USystemInfo, UUtils;
+  USystemInfo, UUnicodeHelper, UUtils;
 
 
 {$R *.dfm}
@@ -161,8 +166,8 @@ begin
   TFontHelper.SetDefaultBaseFont(lblReqSymbol.Font, False);
   if TOSInfo.IsVistaOrLater then
   begin
-    edPassword1.PasswordChar := #149;
-    edPassword2.PasswordChar := #149;
+    edPassword1.PasswordChar := '•';
+    edPassword2.PasswordChar := '•';
   end
   else
   begin
@@ -177,13 +182,17 @@ procedure TProxyServerDlg.edIPAddressKeyPress(Sender: TObject; var Key: Char);
     @param Sender [in] Not used.
     @param Key [in/out] Key pressed. Set to #0 if key is not permitted.
   }
+const
+  cDot = '.';   // dot separator (not decimal point)
 begin
-  if not (Key in ['0'..'9', '.', BACKSPACE]) then
-    Key := #0;
-  if (Key = '.') and (CountDelims(edIPAddress.Text, '.') = 3) then
+  if not IsDigit(Key) and (Key <> cDot) and (Key <> BACKSPACE) then
+    Key := #0
+  else if (Key = cDot) and (
+    (edIPAddress.SelStart = 0) or (CountDelims(edIPAddress.Text, cDot) = 3)
+  ) then
     Key := #0;
   if Key = #0 then
-    MessageBeep(Cardinal(-1));
+    KeyErrorBeep;
 end;
 
 procedure TProxyServerDlg.edPortKeyPress(Sender: TObject; var Key: Char);
@@ -192,10 +201,10 @@ procedure TProxyServerDlg.edPortKeyPress(Sender: TObject; var Key: Char);
     @param Key [in/out] Key pressed. Set to #0 if key is not permitted.
   }
 begin
-  if not (Key in ['0'..'9', BACKSPACE]) then
+  if not IsDigit(Key) and (Key <> BACKSPACE) then
     Key := #0;
   if Key = #0 then
-    MessageBeep(Cardinal(-1));
+    KeyErrorBeep;
 end;
 
 class function TProxyServerDlg.Execute(const AOwner: TComponent): Boolean;

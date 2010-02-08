@@ -99,17 +99,27 @@ class procedure TCopyViewMgr.Execute(const View: TViewItem);
     @param View [in] View to be copied. Must be supported by concrete subclass.
   }
 var
-  Clip: TClipboardHelper; // object used to update clipboard
+  Clip: TClipboardHelper;   // object used to update clipboard
+  PlainText: string;        // plain text representation of snippet
+  RTF: string;              // rich text representation of snippet
 begin
   Assert(Assigned(View), ClassName + '.Execute: View is nil');
   Assert(CanHandleView(View), ClassName + '.Execute: View not supported');
-  // Open clipboard and add both plain and RTF representations of snippet
+  // Generate plain text and rich text representation of snipper
+  PlainText := GeneratePlainText(View);
+  RTF := GenerateRichText(View);
+  // Open clipboard and add both plain and rich text representations of snippet
   Clip := TClipboardHelper.Create;
   try
-    Clip.Open;
+    Clip.Open;                                 
     try
-      Clip.Add(CF_TEXT, GeneratePlainText(View));
-      Clip.Add(CF_RTF, GenerateRichText(View));
+      {$IFDEF UNICODE}
+      Clip.Add(CF_UNICODETEXT, PlainText);
+      Clip.Add(CF_RTF, BytesOf(RTF));         // convert RTF to default encoding
+      {$ELSE}
+      Clip.Add(CF_TEXT, PlainText);
+      Clip.Add(CF_RTF, RTF);
+      {$ENDIF}
     finally
       Clip.Close;
     end;
@@ -119,3 +129,4 @@ begin
 end;
 
 end.
+

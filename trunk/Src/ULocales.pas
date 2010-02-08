@@ -362,16 +362,45 @@ function GetLocaleInfo(const LocaleID: LCID; const InfoType: LCTYPE): string;
     @except EOSError raised if locale information can't be found.
   }
 
+function DefaultAnsiCodePage: Cardinal;
+  {Gets the default Ansi code page of the system.
+    @return Required code page.
+  }
+
+function DefaultLanguageID: Cardinal;
+  {Gets the id of default language for the current user.
+    @return Required language id.
+  }
+
 
 implementation
 
 
 uses
   // Delphi
-  SysUtils, 
+  SysUtils,
   // Project
   USystemInfo;
 
+
+function DefaultAnsiCodePage: Cardinal;
+  {Gets the default Ansi code page of the system.
+    @return Required code page.
+  }
+begin
+  Result := Windows.GetACP;
+end;
+
+function DefaultLanguageID: Cardinal;
+  {Gets the id of default language for the current user.
+    @return Required language id.
+  }
+var
+  LangId: string; // language ID as string
+begin
+  LangId := GetLocaleInfo(LOCALE_USER_DEFAULT, LOCALE_ILANGUAGE);
+  Result := StrToInt('$' + LangId);
+end;
 
 type
   {
@@ -416,7 +445,7 @@ begin
     LocaleID, InfoType, Buffer, SizeOf(Buffer) div SizeOf(WideChar)
   ) = 0 then
     RaiseLastOSError;
-  Result := Buffer; // silently converts to string
+  Result := Buffer;
 end;
 
 function GetLocaleInfoEx(const LocaleID: LCID; const InfoType: LCTYPE): string;

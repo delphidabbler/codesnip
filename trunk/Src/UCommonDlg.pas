@@ -36,6 +36,7 @@
 
 unit UCommonDlg;
 
+{$INCLUDE CompilerDefines.inc}
 
 interface
 
@@ -387,6 +388,12 @@ class function TColorDlgHook.RecoverInstance(P: PChooseColor): TColorDlgHook;
 begin
   Result := TColorDlgHook(P^.lCustData)
 end;
+
+initialization
+
+{$IFDEF SupportsUseLatestCommonDialogs}
+Dialogs.UseLatestCommonDialogs := False;
+{$ENDIF}
 
 end.
 

@@ -58,9 +58,9 @@ type
     V2: Word;   // Minor version number
     V3: Word;   // Revision version number
     V4: Word;   // Build number
-    constructor Nul;
-      {Record constructor that creates a nul version number with all fields set
-      to zero.
+    class function Nul: TVersionNumber; static;
+      {Creates a nul version number with all fields set to zero.
+        @return Required nul record.
       }
     class operator LessThanOrEqual(Ver1, Ver2: TVersionNumber): Boolean;
       {Operator overload that compares two version numbers to check if first is
@@ -380,15 +380,15 @@ begin
   Result := not (Ver1 = Ver2);
 end;
 
-constructor TVersionNumber.Nul;
-  {Record constructor that creates a nul version number with all fields set to
-  zero.
+class function TVersionNumber.Nul: TVersionNumber;
+  {Creates a nul version number with all fields set to zero.
+    @return Required nul record.
   }
 begin
-  V1 := 0;
-  V2 := 0;
-  V3 := 0;
-  V4 := 0;
+  Result.V1 := 0;
+  Result.V2 := 0;
+  Result.V3 := 0;
+  Result.V4 := 0;
 end;
 
 end.

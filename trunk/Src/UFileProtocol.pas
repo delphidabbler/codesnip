@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -47,7 +47,7 @@ uses
   // Delphi
   SysUtils, StrUtils, ExtActns,
   // Project
-  UBrowseProtocol, UProtocols, UUtils;
+  UBrowseProtocol, UProtocols, UUnicodeHelper, UUtils;
 
 
 {
@@ -188,31 +188,6 @@ class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
     @param URL [in] URL whose protocol is to be checked.
     @return True if URL's protocol is file:, False if not.
   }
-
-  // ---------------------------------------------------------------------------
-  function IsValidAbsoluteFileName(const FileName: string): Boolean;
-    {Checks if a filename is a valid, complete, absolute local file path.
-      @param FileName [in] File name to be checked.
-      @return True if file name is valid absolute file path, false if not.
-    }
-  begin
-    Result := (Length(FileName) > 3) and
-      (UpCase(FileName[1]) in ['A'..'Z']) and
-      (FileName[2] = ':') and (FileName[3] = '\');
-  end;
-
-  function IsValidUNCFileName(const FileName: string): Boolean;
-    {Checks if a filename is a valid, complete, UNC file name.
-      @param FileName [in] File name to be checked.
-      @return True if file name is valid UNC name, false if not.
-    }
-  begin
-    Result := (Length(FileName) > 5) and
-      AnsiStartsStr('\\', FileName) and
-      (PosEx('\', FileName, 4) >= 4);
-  end;
-  // ---------------------------------------------------------------------------
-
 var
   FileName: string; // filename part of URL
 begin

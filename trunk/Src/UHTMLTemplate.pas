@@ -98,7 +98,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UHTMLUtils;
+  UHTMLUtils, UUnicodeHelper;
 
 
 { THTMLTemplate }
@@ -113,13 +113,23 @@ constructor THTMLTemplate.Create(const Inst: THandle; const ResName: string;
   }
 var
   RS: TResourceStream;  // stream used to access HTML template resource
+  SS: TStringStream;    // string stream used to get string from resource stream
 begin
   inherited Create;
+  SS := nil;
+  // NOTE: Resource stream is not unicode: all template files were written using
+  // the Latin1 code page.
   RS := TResourceStream.Create(Inst, ResName, ResType);
   try
-    SetLength(fHTML, RS.Size);
-    RS.ReadBuffer(PChar(fHTML)^, RS.Size);
+    {$IFDEF UNICODE}
+    SS := TStringStream.Create('', Latin1CodePage);
+    {$ELSE}
+    SS := TStringStream.Create('');
+    {$ENDIF}
+    SS.CopyFrom(RS, 0);
+    fHTML := SS.DataString;
   finally
+    SS.Free;
     RS.Free;
   end;
 end;

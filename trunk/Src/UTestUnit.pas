@@ -109,7 +109,9 @@ begin
   with TSourceGen.Create do
     try
       IncludeSnippet(fSnippet);
-      Result := UnitAsString(UnitName);
+      // Must use Self.UnitName below for Delphis that defined TObject.UnitName
+      // otherwise the TObject version is used.
+      Result := UnitAsString(Self.UnitName);
     finally
       Free;
     end;

@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UDataStreamIO, UExceptions;
+  UDataStreamIO, UExceptions, UUnicodeHelper;
 
 
 type
@@ -65,7 +65,7 @@ type
       {Creates a file from data stream.
         @except Raises EFileList if file checksum is incorrect.
       }
-    procedure ValidateFile(const Name, Content, MD5: string);
+    procedure ValidateFile(const Name, Content, MD5: Latin1String);
       {Validates checksum of a file.
         @param Name [in] Name of file
         @param File [in] Content from data stream.
@@ -73,7 +73,8 @@ type
         @except Raises EFileList if check sum of file content doesn't
           match expected checksum.
       }
-    procedure WriteFile(const Name, Content: string; const UnixDate: Int64);
+    procedure WriteFile(const Name, Content: Latin1String;
+      const UnixDate: Int64);
       {Writes local database file.
         @param Name [in] Name of file.
         @param Content [in] File content.
@@ -213,10 +214,10 @@ procedure TFileUpdater.UpdateFile;
     @except Raises EFileList if file checksum is incorrect.
   }
 var
-  Name: string;       // name of file
-  UnixDate: Int64;    // update date of file (per server - Unix format & GMT)
-  MD5: string;        // MD5 checksum of file on server
-  Content: string;    // file content
+  Name: Latin1String;     // name of file
+  UnixDate: Int64;        // update date of file (per server: Unix format & GMT)
+  MD5: Latin1String;      // MD5 checksum of file on server
+  Content: Latin1String;  // file content
 begin
   // Get info about file from data stream
   Name := fReader.ReadSizedString;
@@ -228,7 +229,7 @@ begin
   WriteFile(Name, Content, UnixDate);
 end;
 
-procedure TFileUpdater.ValidateFile(const Name, Content, MD5: string);
+procedure TFileUpdater.ValidateFile(const Name, Content, MD5: Latin1String);
   {Validates checksum of a file.
     @param Name [in] Name of file
     @param File [in] Content from data stream.
@@ -237,11 +238,11 @@ procedure TFileUpdater.ValidateFile(const Name, Content, MD5: string);
       match expected checksum.
   }
 begin
-  if TCheckSum.Calculate(Content) <> MD5 then
+  if not TCheckSum.Compare(Content, MD5) then
     raise EFileUpdater.CreateFmt(sChecksumError, [Name]);
 end;
 
-procedure TFileUpdater.WriteFile(const Name, Content: string;
+procedure TFileUpdater.WriteFile(const Name, Content: Latin1String;
   const UnixDate: Int64);
   {Writes local database file.
     @param Name [in] Name of file.
@@ -251,10 +252,10 @@ procedure TFileUpdater.WriteFile(const Name, Content: string;
   }
 var
   FilePath: string;   // full path to local file
-  Date: IDOSDateTime; // Object that encapsulates DOS date time value
+  Date: IDOSDateTime; // object that encapsulates DOS date time value
 begin
-  FilePath := IncludeTrailingPathDelimiter(fLocalDir) + Name;
-  UUtils.StringToFile(Content, FilePath);
+  FilePath := IncludeTrailingPathDelimiter(fLocalDir) + string(Name);
+  UUtils.StringToFile(string(Content), FilePath);
   Date := TDOSDateTimeFactory.CreateFromUnixTimeStamp(UnixDate);
   Date.ApplyToFile(FilePath);
 end;

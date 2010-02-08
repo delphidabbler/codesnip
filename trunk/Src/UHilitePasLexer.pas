@@ -88,7 +88,7 @@ type
     procedure UpdateTokenStr; overload;
       {Appends current character in input to token string. Ignores EOF.
       }
-    procedure UpdateTokenStr(const Ch: AnsiChar); overload;
+    procedure UpdateTokenStr(const Ch: Char); overload;
       {Appends a character to token string. Ignores EOF.
         @param Ch [in] Character to append.
       }
@@ -178,37 +178,18 @@ uses
   // Delphi
   SysUtils, Windows {for inlining},
   // Project
-  UConsts, UExceptions;
+  UConsts, UExceptions, UUnicodeHelper;
 
 
 const
 
   // Character constants
-  cSpace            = ' ';
-  cHexSymbol        = '$';
-  cCharSymbol       = '#';
   cDecimalPoint     = '.';
   cCompilerDirChar  = '$';
   cStringDelim      = '''';
   cCloseParen       = ')';
-
-  // Character sets
-  cDigits           = ['0'..'9'];                                // valid digits
-  cIdentStartChars  = ['A'..'Z', 'a'..'z', '_']; // chars that start identifiers
-  cIdentChars       = cIdentStartChars + cDigits;   // interior identifier chars
-  cHexDigits        = cDigits + ['A'..'F', 'a'..'f'];        // valid hex digits
-  cExponents        = ['E', 'e'];                    // exponents used in floats
-  cUnaryPlusMinus   = ['+', '-'];                                 // unary signs
-  cWhiteSpace       = [#0..#32] - [CR, LF, #0];     // whitespace read as spaces
-  cSingleSyms       = ['#', '$', '&', '''', '(',    // valid single char symbols
-                       ')', '*', '+', ',', '-',
-                       '.', '/', ':', ';', '<',
-                       '=', '>', '@', '[', ']',
-                       '^', '{', '}'];
-  cDoubleSymOpeners = ['(', '*', '.', '/',     // start chars for double symbols
-                       ':', '<', '>'];
-  cSeparators       = cWhiteSpace + cSingleSyms    // chars that separate tokens
-                      + [TTextStreamReader.EOL];
+  cEOL = TTextStreamReader.EOL;
+  cEOF = TTextStreamReader.EOF;
 
   // String tables
   cDoubleSyms: array[0..9] of string = (         // list of valid double symbols
@@ -219,9 +200,7 @@ const
   );
   cCommentClosers: array[0..2] of string = (      // symbols that close comments
     // item at given index matches openers at same index
-    '}',
-    '*)',
-    TTextStreamReader.EOL
+    '}', '*)', cEOL
   );
   cCompilerDirOpeners: array[0..1] of string = (    // comment symbols that open
     '{', '(*'                                             // compiler directives
@@ -305,39 +284,39 @@ const
     Symbol: string;           // symbol strings
     Token: THilitePasToken;   // related token
   end = (
-    ( Symbol: cHexSymbol;   Token: tkHex;     ),
-    ( Symbol: cCharSymbol;  Token: tkChar;    ),
-    ( Symbol: '&';          Token: tkSymbol;  ),
-    ( Symbol: '''';         Token: tkString;  ),
-    ( Symbol: '(';          Token: tkSymbol;  ),
-    ( Symbol: ')';          Token: tkSymbol;  ),
-    ( Symbol: '*';          Token: tkSymbol;  ),
-    ( Symbol: '+';          Token: tkSymbol;  ),
-    ( Symbol: ',';          Token: tkSymbol;  ),
-    ( Symbol: '-';          Token: tkSymbol;  ),
-    ( Symbol: '.';          Token: tkSymbol;  ),
-    ( Symbol: '/';          Token: tkSymbol;  ),
-    ( Symbol: ':';          Token: tkSymbol;  ),
-    ( Symbol: ';';          Token: tkSymbol;  ),
-    ( Symbol: '<';          Token: tkSymbol;  ),
-    ( Symbol: '=';          Token: tkSymbol;  ),
-    ( Symbol: '>';          Token: tkSymbol;  ),
-    ( Symbol: '@';          Token: tkSymbol;  ),
-    ( Symbol: '[';          Token: tkSymbol;  ),
-    ( Symbol: ']';          Token: tkSymbol;  ),
-    ( Symbol: '^';          Token: tkSymbol;  ),
-    ( Symbol: '{';          Token: tkComment; ),
-    ( Symbol: '}';          Token: tkError;   ),
-    ( Symbol: '(*';         Token: tkComment; ),
-    ( Symbol: '*)';         Token: tkError;   ),
-    ( Symbol: '(.';         Token: tkSymbol;  ),
-    ( Symbol: '.)';         Token: tkSymbol;  ),
-    ( Symbol: '..';         Token: tkSymbol;  ),
-    ( Symbol: '//';         Token: tkComment; ),
-    ( Symbol: ':=';         Token: tkSymbol;  ),
-    ( Symbol: '<=';         Token: tkSymbol;  ),
-    ( Symbol: '>=';         Token: tkSymbol;  ),
-    ( Symbol: '<>';         Token: tkSymbol;  )
+    ( Symbol: '$';  Token: tkHex;     ),
+    ( Symbol: '#';  Token: tkChar;    ),
+    ( Symbol: '&';  Token: tkSymbol;  ),
+    ( Symbol: ''''; Token: tkString;  ),
+    ( Symbol: '(';  Token: tkSymbol;  ),
+    ( Symbol: ')';  Token: tkSymbol;  ),
+    ( Symbol: '*';  Token: tkSymbol;  ),
+    ( Symbol: '+';  Token: tkSymbol;  ),
+    ( Symbol: ',';  Token: tkSymbol;  ),
+    ( Symbol: '-';  Token: tkSymbol;  ),
+    ( Symbol: '.';  Token: tkSymbol;  ),
+    ( Symbol: '/';  Token: tkSymbol;  ),
+    ( Symbol: ':';  Token: tkSymbol;  ),
+    ( Symbol: ';';  Token: tkSymbol;  ),
+    ( Symbol: '<';  Token: tkSymbol;  ),
+    ( Symbol: '=';  Token: tkSymbol;  ),
+    ( Symbol: '>';  Token: tkSymbol;  ),
+    ( Symbol: '@';  Token: tkSymbol;  ),
+    ( Symbol: '[';  Token: tkSymbol;  ),
+    ( Symbol: ']';  Token: tkSymbol;  ),
+    ( Symbol: '^';  Token: tkSymbol;  ),
+    ( Symbol: '{';  Token: tkComment; ),
+    ( Symbol: '}';  Token: tkError;   ),
+    ( Symbol: '(*'; Token: tkComment; ),
+    ( Symbol: '*)'; Token: tkError;   ),
+    ( Symbol: '(.'; Token: tkSymbol;  ),
+    ( Symbol: '.)'; Token: tkSymbol;  ),
+    ( Symbol: '..'; Token: tkSymbol;  ),
+    ( Symbol: '//'; Token: tkComment; ),
+    ( Symbol: ':='; Token: tkSymbol;  ),
+    ( Symbol: '<='; Token: tkSymbol;  ),
+    ( Symbol: '>='; Token: tkSymbol;  ),
+    ( Symbol: '<>'; Token: tkSymbol;  )
   );
 
 
@@ -350,6 +329,74 @@ var
 
 
 { Helper routines }
+
+function IsValidIdentBodyChar(const C: Char): Boolean; inline;
+  {Checks if a character is valid for inclusion in the body of a Delphi
+  identifier, after the first character.
+    @param C [in] Character to be tested.
+    @return True if C is valid, False otherwise.
+  }
+begin
+  Result := IsAlphaNumeric(C) or (C = '_');
+end;
+
+function IsValidIdentStartChar(const C: Char): Boolean; inline;
+  {Checks if a character is a valid first character of a Delphi identifier.
+    @param C [in] Character to be tested.
+    @return True if C is valid, False otherwise.
+  }
+begin
+  Result := IsLetter(C) or (C = '_');
+end;
+
+function IsWhiteSpaceChar(const C: Char): Boolean; inline;
+  {Checks if a character is a whitespace character but not end of line or end
+  of file character}
+begin
+  Result := IsWhiteSpace(C) and not IsCharInSet(C, [CR, LF, cEOF]);
+end;
+
+function IsSymbolChar(const C: Char): Boolean; inline;
+  {Checks if a character is a symbol.
+    @param C [in] Character to check.
+    @return True if C is a symbol, False if not.
+  }
+const
+  // valid symbols
+  cSymbols = [
+    '#', '$', '&', '''', '(', ')', '*', '+', ',', '-', '.',
+    '/', ':', ';', '<', '=', '>', '@', '[', ']', '^', '{', '}'
+  ];
+begin
+  Result := IsCharInSet(C, cSymbols);
+end;
+
+function IsExponentChar(const C: Char): Boolean; inline;
+  {Checks if a character is an exponent.
+    @param C [in] Character to check.
+    @return True if C is an exponent, False if not.
+  }
+begin
+  Result := IsCharInSet(C, ['E', 'e']);
+end;
+
+function IsUnaryPlusMinusChar(const C: Char): Boolean; inline;
+  {Checks if a character is a unary plus or minus operator.
+    @param C [in] Character to check.
+    @return True if C is a unary plus or minus, False if not.
+  }
+begin
+  Result := IsCharInSet(C, ['+', '-']);
+end;
+
+function IsSeparatorChar(const C: Char): Boolean; inline;
+  {Checks if a character is a separator character.
+    @param C [in] Character to check.
+    @return True if C is a separator, False if not.
+  }
+begin
+  Result := IsWhiteSpaceChar(C) or IsSymbolChar(C) or (C = cEOL);
+end;
 
 function IndexInTable(const Str: string; const Table: array of string): Integer;
   {Gets the index of a string in a table.
@@ -508,17 +555,17 @@ begin
   if not fCommentState.InComment then
   begin
     // We are not in a multi-line comment: process normally
-    if fReader.Ch in cWhiteSpace then
+    if IsWhiteSpaceChar(fReader.Ch) then
       Result := ParseWhiteSpace
-    else if fReader.Ch in cIdentStartChars then
+    else if IsValidIdentStartChar(fReader.Ch) then
       Result := ParseIdent
-    else if fReader.Ch in cSingleSyms then
+    else if IsSymbolChar(fReader.Ch) then
       Result := ParseSymbol
-    else if fReader.Ch in cDigits then
+    else if IsDigit(fReader.Ch) then
       Result := ParseNumber
-    else if fReader.Ch = TTextStreamReader.EOL then
+    else if fReader.Ch = cEOL then
       Result := ParseEOL
-    else if fReader.Ch = TTextStreamReader.EOF then
+    else if fReader.Ch = cEOF then
       Result := tkEOF
     else
       Result := ParseUnknown;
@@ -526,7 +573,7 @@ begin
   else
   begin
     // We're in a multiline comment: char is either from inside comment or EOL
-    if fReader.Ch <> TTextStreamReader.EOL then
+    if fReader.Ch <> cEOL then
       Result := ParseCommentInterior
     else
       Result := ParseEOL;
@@ -554,7 +601,7 @@ begin
     // now read hex digits
     ParseHex;
   end
-  else if fReader.Ch in cDigits then
+  else if IsDigit(fReader.Ch) then
     // This is whole number: parse it
     ParseWholeNumber
   else
@@ -606,7 +653,7 @@ begin
 
   // Loop thru all comment, looking for closing comment symbol
   Done := False;
-  while (fReader.Ch <> TTextStreamReader.EOF) and not Done do
+  while (fReader.Ch <> cEOF) and not Done do
   begin
     if fReader.Ch = fCommentState.CommentCloser[1] then
     begin
@@ -616,7 +663,7 @@ begin
         // Our closer is a single char: comment is closed
         Done := True;
         fCommentState.InComment := False;
-        if fCommentState.CommentCloser = TTextStreamReader.EOL then
+        if fCommentState.CommentCloser[1] = cEOL then
           // closer is EOL: put it back to be read later
           fReader.PutBackChar
         else
@@ -645,7 +692,7 @@ begin
     else
     begin
       // Ordinary comment text
-      if fReader.Ch = TTextStreamReader.EOL then
+      if fReader.Ch = cEOL then
       begin
         // EOL: put it back and stop parsing
         // the comment stays open: we will continue processing after EOL handled
@@ -659,7 +706,7 @@ begin
     fReader.NextChar;
   end;
   // If at EOF ensure that comment is closed
-  if fReader.Ch = TTextStreamReader.EOF then
+  if fReader.Ch = cEOF then
     fCommentState.InComment := False;
 end;
 
@@ -668,7 +715,7 @@ function THilitePasLexer.ParseEOL: THilitePasToken;
     @return End of line token (tkEOL).
   }
 begin
-  UpdateTokenStr(TTextStreamReader.EOL);
+  UpdateTokenStr(cEOL);
   Result := tkEOL;
   fReader.NextChar;
 end;
@@ -680,13 +727,13 @@ function THilitePasLexer.ParseHex: THilitePasToken;
 begin
   // Called with fTokenStr = '$' and fReader.Ch with char after '$'
   // Build string of hex digits
-  while fReader.Ch in cHexDigits do
+  while IsHexDigit(fReader.Ch) do
   begin
     UpdateTokenStr;
     fReader.NextChar;
   end;
   // Check that we ended in a valid way: error if not
-  if not (fReader.Ch in cSeparators) then
+  if not IsSeparatorChar(fReader.Ch) then
     Result := tkError
   else
     Result := tkHex;
@@ -699,10 +746,10 @@ function THilitePasLexer.ParseIdent: THilitePasToken;
       tkIdentifier.
   }
 begin
-  Assert(fReader.Ch in cIdentStartChars,
+  Assert(IsValidIdentStartChar(fReader.Ch),
     ClassName + '.ParseIdent: identifier starting character expected');
   // Build identifier in token string
-  while fReader.Ch in cIdentChars do
+  while IsValidIdentBodyChar(fReader.Ch) do
   begin
     UpdateTokenStr;
     fReader.NextChar;
@@ -722,9 +769,9 @@ function THilitePasLexer.ParseNumber: THilitePasToken;
     @return Appropriate token for number (tkNumber or tkFloat).
   }
 var
-  TempCh: AnsiChar; // temporary storage for a character read from input
+  TempCh: Char; // temporary storage for a character read from input
 begin
-  Assert(fReader.Ch in cDigits, ClassName + '.ParseNumber: digit expected');
+  Assert(IsDigit(fReader.Ch), ClassName + '.ParseNumber: digit expected');
   // All numbers start with a whole number: read it
   ParseWholeNumber; // leaves current char as one immediately after number
   // Assume we have whole number and see if we can disprove it
@@ -736,7 +783,7 @@ begin
     // Store the decimal point then read ahead to see what next char is
     TempCh := fReader.Ch;
     fReader.NextChar;
-    if fReader.Ch in [cDecimalPoint, cCloseParen] then
+    if IsCharInSet(fReader.Ch, [cDecimalPoint, cCloseParen]) then
     begin
       // decimal point was followed by '.' or ')' making valid two char symbols
       // .. and .) => we put back the read character and get out, leaving first
@@ -749,11 +796,11 @@ begin
     // If we have digits after decimal point read them into token str
     // Note: there may not necessarily be digits after '.' (e.g. 2. is a valid
     // Delphi float)
-    if fReader.Ch in cDigits then
+    if IsDigit(fReader.Ch) then
       ParseWholeNumber;
     Result := tkFloat;
   end;
-  if fReader.Ch in cExponents then
+  if IsExponentChar(fReader.Ch) then
   begin
     // Next char is an exponent (e or E) that is present in numbers in
     // "scientific" notation. This can either follow whole number, follow
@@ -763,7 +810,7 @@ begin
     UpdateTokenStr;
     // Read chars after exponent (first may be unary + or -)
     fReader.NextChar;
-    if fReader.Ch in cUnaryPlusMinus then
+    if IsUnaryPlusMinusChar(fReader.Ch) then
     begin
       UpdateTokenStr;
       fReader.NextChar;
@@ -785,7 +832,7 @@ begin
   // character of the string after the quote
   Done := False;
   // Loop thru characters until end of string found
-  while (fReader.Ch <> TTextStreamReader.EOF) and not Done do
+  while (fReader.Ch <> cEOF) and not Done do
   begin
     UpdateTokenStr;
     if fReader.Ch = cStringDelim then
@@ -819,13 +866,12 @@ function THilitePasLexer.ParseSymbol: THilitePasToken;
 var
   AToken: THilitePasToken; // token represented by the symbol
 begin
-  Assert(fReader.Ch in cSingleSyms,
-    ClassName + '.ParseSymbol: symbol expected');
+  Assert(IsSymbolChar(fReader.Ch), ClassName + '.ParseSymbol: symbol expected');
   // Add character that starts symbol to token string and read next char
   UpdateTokenStr;
   fReader.NextChar;
   // Check if char read is second char of a two char symbol and process if so
-  if fReader.Ch in cSingleSyms then
+  if IsSymbolChar(fReader.Ch) then
   begin
     if IsDoubleSym(fTokenStr + fReader.Ch) then
     begin
@@ -867,9 +913,9 @@ function THilitePasLexer.ParseWhiteSpace: THilitePasToken;
     @return White space token (tkWhiteSpace).
   }
 begin
-  Assert(fReader.Ch in cWhiteSpace,
+  Assert(IsWhiteSpaceChar(fReader.Ch),
     ClassName + '.ParseWhiteSpace: current char not white space');
-  while fReader.Ch in cWhiteSpace do
+  while IsWhiteSpaceChar(fReader.Ch) do
   begin
     UpdateTokenStr;
     fReader.NextChar;
@@ -882,9 +928,9 @@ function THilitePasLexer.ParseWholeNumber: THilitePasToken;
     @return Whole number token (tkNumber).
   }
 begin
-  Assert(fReader.Ch in cDigits,
+  Assert(IsDigit(fReader.Ch),
     ClassName + '.ParseWholeNumber: current char not a digit');
-  while fReader.Ch in cDigits do
+  while IsDigit(fReader.Ch) do
   begin
     UpdateTokenStr;
     fReader.NextChar;
@@ -899,13 +945,12 @@ begin
   UpdateTokenStr(fReader.Ch);
 end;
 
-procedure THilitePasLexer.UpdateTokenStr(const Ch: AnsiChar);
+procedure THilitePasLexer.UpdateTokenStr(const Ch: Char);
   {Appends a character to token string. Ignores EOF.
     @param Ch [in] Character to append.
   }
 begin
-  // We don't store EOF character in token string
-  if Ch <> TTextStreamReader.EOF then
+  if Ch <> cEOF then
     fTokenStr := fTokenStr + Ch;
 end;
 

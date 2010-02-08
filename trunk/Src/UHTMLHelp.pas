@@ -242,17 +242,21 @@ end;
 procedure LoadHtmlHelp;
   {Attempt to load HtmlHelpA function from hhctrl.ocx.
   }
+const
+  {$IFDEF UNICODE}
+  cHTMLHelp = 'HtmlHelpW';
+  {$ELSE}
+  cHTMLHelp = 'HtmlHelpA';
+  {$ENDIF}
 begin
   pvtHHCtrl := SafeLoadLibrary('hhctrl.ocx');
   if pvtHHCtrl <> 0 then
-    pvtHtmlHelp := GetProcAddress(pvtHHCtrl, 'HtmlHelpA');
+    pvtHtmlHelp := GetProcAddress(pvtHHCtrl, cHTMLHelp);
 end;
-
 
 initialization
 
 LoadHtmlHelp;
-
 
 finalization
 

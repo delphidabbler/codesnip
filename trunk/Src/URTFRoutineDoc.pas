@@ -141,7 +141,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UColours, UConsts, URTFMerger, USyntaxHiliters, UUtils;
+  UColours, UConsts, URTFMerger, USyntaxHiliters, UUnicodeHelper, UUtils;
 
 
 { TRTFRoutineDoc }
@@ -168,7 +168,9 @@ begin
   // simply added to document using RTF builder - it has to be merged in.
   with TRTFMerger.Create(fBuilder.AsString) do
     try
-      ReplacePlaceholder(cSourceCodePlaceholder, HiliteSource);
+      ReplacePlaceholder(
+        cSourceCodePlaceholder, StringToASCIIString(HiliteSource)
+      );
       SaveToStream(DocStream);
     finally
       Free;

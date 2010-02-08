@@ -98,7 +98,7 @@ procedure TStrStreamWriter.WriteStr(const Msg: string);
   }
 begin
   if (Msg <> '') then
-    Self.BaseStream.WriteBuffer(PChar(Msg)^, Length(Msg));
+    Self.BaseStream.WriteBuffer(Pointer(Msg)^, Length(Msg) * SizeOf(Char));
 end;
 
 procedure TStrStreamWriter.WriteStr(const Fmt: string;
