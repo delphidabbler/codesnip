@@ -42,7 +42,7 @@ interface
 
 uses
   // Delphi
-  StdCtrls, Controls, ExtCtrls, Classes,
+  StdCtrls, Controls, ExtCtrls, Classes, StdActns, ActnList,
   // Project
   FmGenericOKDlg;
 
@@ -71,6 +71,11 @@ type
     edPassword2: TEdit;
     edPort: TEdit;
     edUserName: TEdit;
+    alMain: TActionList;
+    actCut: TEditCut;
+    actCopy: TEditCopy;
+    actPaste: TEditPaste;
+    actSelectAll: TEditSelectAll;
     procedure btnOKClick(Sender: TObject);
     procedure edIPAddressKeyPress(Sender: TObject; var Key: Char);
     procedure edPortKeyPress(Sender: TObject; var Key: Char);
@@ -180,10 +185,11 @@ procedure TProxyServerDlg.edIPAddressKeyPress(Sender: TObject; var Key: Char);
 const
   cDot = '.';   // dot separator (not decimal point)
 begin
-  { TODO -cImprovement : Disallow dot at first position in text box }
   if not IsDigit(Key) and (Key <> cDot) and (Key <> BACKSPACE) then
-    Key := #0;
-  if (Key = cDot) and (CountDelims(edIPAddress.Text, cDot) = 3) then
+    Key := #0
+  else if (Key = cDot) and (
+    (edIPAddress.SelStart = 0) or (CountDelims(edIPAddress.Text, cDot) = 3)
+  ) then
     Key := #0;
   if Key = #0 then
     KeyErrorBeep;

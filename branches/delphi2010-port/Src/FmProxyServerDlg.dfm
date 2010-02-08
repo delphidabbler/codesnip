@@ -113,7 +113,7 @@ inherited ProxyServerDlg: TProxyServerDlg
       end
       object edIPAddress: TEdit
         Left = 131
-        Top = 27
+        Top = 29
         Width = 105
         Height = 21
         MaxLength = 15
@@ -156,5 +156,36 @@ inherited ProxyServerDlg: TProxyServerDlg
   end
   inherited btnOK: TButton
     OnClick = btnOKClick
+  end
+  object alMain: TActionList
+    Left = 320
+    Top = 32
+    object actCut: TEditCut
+      Category = 'Edit'
+      Caption = 'Cu&t'
+      Hint = 'Cut|Cuts the selection and puts it on the Clipboard'
+      ImageIndex = 0
+      ShortCut = 16472
+    end
+    object actCopy: TEditCopy
+      Category = 'Edit'
+      Caption = '&Copy'
+      Hint = 'Copy|Copies the selection and puts it on the Clipboard'
+      ImageIndex = 1
+      ShortCut = 16451
+    end
+    object actPaste: TEditPaste
+      Category = 'Edit'
+      Caption = '&Paste'
+      Hint = 'Paste|Inserts Clipboard contents'
+      ImageIndex = 2
+      ShortCut = 16470
+    end
+    object actSelectAll: TEditSelectAll
+      Category = 'Edit'
+      Caption = 'Select &All'
+      Hint = 'Select All|Selects the entire document'
+      ShortCut = 16449
+    end
   end
 end
