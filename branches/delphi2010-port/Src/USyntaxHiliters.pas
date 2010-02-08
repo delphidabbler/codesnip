@@ -99,7 +99,7 @@ uses
   SysUtils, Classes, Graphics,
   // Project
   IntfCommon, UCSSBuilder, UHiliteAttrs, UHiliterCSS, UHilitePasParser,
-  UHTMLBuilder, URTFBuilder, UStrStreamWriter, UUnicodeHelper;
+  UHTMLBuilder, URTFBuilder, UStrStreamWriter;
 
 
 type
@@ -618,9 +618,17 @@ begin
   DestStm := nil;
   // Create a string stream containing raw source code and another to receive
   // highlighted output. Uses unicode string streams if supported.
-  SrcStm := TStringStreamEx.Create(RawCode);
+  {$IFDEF UNICODE}
+  SrcStm := TStringStream.Create(RawCode, TEncoding.Unicode);
+  {$ELSE}
+  SrcStm := TStringStream.Create(RawCode);
+  {$ENDIF}
   try
-    DestStm := TStringStreamEx.Create;
+    {$IFDEF UNICODE}
+    DestStm := TStringStream.Create('', TEncoding.Unicode);
+    {$ELSE}
+    DestStm := TStringStream.Create('');
+    {$ENDIF}
     // Use stream version of method to perform highlighting
     Hilite(SrcStm, DestStm, Attrs, Title);
     // Return string stored in destination stream

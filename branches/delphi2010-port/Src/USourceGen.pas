@@ -316,7 +316,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UConsts, UExceptions, USnippetValidator, UUnicodeHelper, UUtils;
+  UConsts, UExceptions, USnippetValidator, UUtils;
 
 
 const
@@ -458,7 +458,11 @@ begin
 
   // Create writer onto string stream to receive source code
   Writer := nil;
-  SS := TStringStreamEx.Create;
+  {$IFDEF UNICODE}
+  SS := TStringStream.Create('', TEncoding.Unicode);
+  {$ELSE}
+  SS := TStringStream.Create('');
+  {$ENDIF}
   try
     Writer := TStrStreamWriter.Create(SS);
 
@@ -588,7 +592,11 @@ begin
   fSourceAnalyser.Generate;
   // Create writer object onto string stream that receives output
   Writer := nil;
-  SS := TStringStreamEx.Create;
+  {$IFDEF UNICODE}
+  SS := TStringStream.Create('', TEncoding.Unicode);
+  {$ELSE}
+  SS := TStringStream.Create('');
+  {$ENDIF}
   try
     Writer := TStrStreamWriter.Create(SS);
 

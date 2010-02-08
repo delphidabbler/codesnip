@@ -98,7 +98,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UHTMLUtils;
+  UHTMLUtils, UUnicodeHelper;
 
 
 { THTMLTemplate }
@@ -117,13 +117,15 @@ var
 begin
   inherited Create;
   SS := nil;
-  { TODO -cProposal : Use another custom TStringStream to specify non-unicode
-    stream? Rename TStringStreamEx as TUnicodeStringSteam? }
-  // NOTE: Resource stream is not unicode: therefore standard TStringStream that
-  // uses default encoding on Unicode Delphis is required
+  // NOTE: Resource stream is not unicode: all template files were written using
+  // the Latin1 code page.
   RS := TResourceStream.Create(Inst, ResName, ResType);
   try
+    {$IFDEF UNICODE}
+    SS := TStringStream.Create('', Latin1CodePage);
+    {$ELSE}
     SS := TStringStream.Create('');
+    {$ENDIF}
     SS.CopyFrom(RS, 0);
     fHTML := SS.DataString;
   finally

@@ -67,22 +67,6 @@ type
   ASCIIString = type AnsiString;
   {$ENDIF}
 
-  {
-  TStringStreamEx:
-    Extension of TStringStream that uses the Unicode encoding on Unicode
-    versions of Delphi.
-  }
-  TStringStreamEx = class(TStringStream)
-  public
-    constructor Create; overload;
-      {Class constructor. Creates an empty string string.
-      }
-    constructor Create(const AString: string); overload;
-      {Class constructor. Creates a string stream containing a string.
-        @param AString [in] String to be stored in string stream.
-      }
-  end;
-
   {$IF not Declared(TBytes)}
   {
   TBytes:
@@ -116,35 +100,6 @@ function StringToASCIIString(const S: string): ASCIIString;
     @param S [in] String to be converted.
     @return Converted string.
   }
-
-
-{$IFDEF UNICODE}
-type
-  {
-  TLatin1Encoding:
-    Provides encoding support for the Latin-1 character set.
-  }
-  TLatin1Encoding = class(TMBCSEncoding)
-  strict private
-    class var fGC: IInterface;      // garbage collector: auto-frees fInstance
-    class var fInstance: TEncoding; // stores singleton object of this class
-    class function GetInstance: TEncoding; static;
-      {Gets reference to singleton instance of this class.
-        @return Reference to singleton object.
-      }
-  public
-    constructor Create; override;
-      {Class constructor. Sets up object for latin-1 code page.
-      }
-    class property Instance: TEncoding read GetInstance;
-      {Singleton instance of class. Must not be freed}
-  end;
-
-function Latin1Encoding: TEncoding;
-  {Returns singleton instance of TLatin1Encoding.
-    @return Required instance.
-  }
-{$ENDIF}
 
 function IsLetter(C: Char): Boolean;
   {Checks whether a character is defined as a letter.
@@ -203,6 +158,30 @@ uses
   {$ELSE}
   UConsts;
   {$ENDIF}
+
+
+{$IFDEF UNICODE}
+type
+  {
+  TLatin1Encoding:
+    Provides encoding support for the Latin-1 character set.
+  }
+  TLatin1Encoding = class(TMBCSEncoding)
+  strict private
+    class var fGC: IInterface;      // garbage collector: auto-frees fInstance
+    class var fInstance: TEncoding; // stores singleton object of this class
+    class function GetInstance: TEncoding; static;
+      {Gets reference to singleton instance of this class.
+        @return Reference to singleton object.
+      }
+  public
+    constructor Create; override;
+      {Class constructor. Sets up object for latin-1 code page.
+      }
+    class property Instance: TEncoding read GetInstance;
+      {Singleton instance of class. Must not be freed}
+  end;
+{$ENDIF}
 
 
 function IsLetter(C: Char): Boolean;
@@ -335,7 +314,7 @@ end;
 
 function ASCIIBytesOf(const AString: string): TBytes;
   {Converts a string into an array of bytes from the ASCII character set.
-    @param AString [in] String to be converted.
+    @param AString [inString to be converted.
     @return Required array of bytes.
   }
 {$IFDEF UNICODE}
@@ -403,27 +382,6 @@ begin
   Result := BytesToASCIIString(ASCIIBytesOf(S));
 end;
 
-
-{ TStringStreamEx }
-
-constructor TStringStreamEx.Create;
-  {Class constructor. Creates an empty string string.
-  }
-begin
-  Create('');
-end;
-
-constructor TStringStreamEx.Create(const AString: string);
-  {Class constructor. Creates a string stream containing a string.
-    @param AString [in] String to be stored in string stream.
-  }
-begin
-  {$IFDEF UNICODE}
-  inherited Create(AString, TEncoding.Unicode);
-  {$ELSE}
-  inherited Create(AString);
-  {$ENDIF}
-end;
 
 {$IFDEF UNICODE}
 { TLatin1Encoding }

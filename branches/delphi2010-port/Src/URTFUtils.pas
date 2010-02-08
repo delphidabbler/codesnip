@@ -319,7 +319,7 @@ procedure RTFInsertString(const RE: TRichEdit; const RTF: ASCIIString);
 var
   Stm: TStringStream; // stream onto RTF code string
 begin
-  Stm := TStringStream.Create(string(RTF));
+  Stm := TStringStream.Create(AnsiString(RTF));
   try
     RTFInsertStream(RE, Stm);
   finally
@@ -349,7 +349,7 @@ var
   Stm: TStringStream; // stream onto RTF code
 begin
   // Load stream containing RTF code into control
-  Stm := TStringStream.Create(string(RTF));
+  Stm := TStringStream.Create(AnsiString(RTF));
   try
     RTFLoadFromStream(RE, Stm);
   finally
