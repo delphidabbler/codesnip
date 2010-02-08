@@ -1419,12 +1419,11 @@ begin
     // Set window caption
     Application.Title := TAppInfo.FullProgramName;
     Caption := Application.Title;
-    if FindCmdLineSwitch('localhost', ['-', '\'], True) then
-      Caption := Caption + ' [localhost]';
+    if TWebInfo.UsingLocalHost then
+      Caption := Caption + ' [' + TWebInfo.LocalHost + ']';
 
     // Restore window settings
     fWindowSettings := TWindowSettings.CreateStandAlone(Self);     // auto-freed
-//    fWindowSettings.SplitterPos := cDefLeftPanelWidth;       // default position
     fWindowSettings.Restore;                                // sizes main window
     pnlLeft.Width := fWindowSettings.SplitterPos;
 
