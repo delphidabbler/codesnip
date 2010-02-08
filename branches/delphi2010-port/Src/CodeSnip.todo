@@ -1,3 +1,5 @@
+{TODO -oSelf -cBug : Fix bug #2947794: unexpected behaviour in snippets editor's view link dialog box (when links clicked in test rendering of extra information)}
+{TODO -oSelf -cImprovement : Rationalise error handling in UTaggedTextLexer - use exception rather than LastError properties. Also check how they bubble up the chain to snippets editor.}
 {TODO -oSelf -cDocs : Document the fact that only Latin1 characters are permitted in passwords.}
 {TODO -oSelf -cProposal : Change TTaggedTextEntityHandler to handle entities with value greater than 255?}
 {TODO -oSelf -cBug :
@@ -9,7 +11,7 @@ selection when the snippets editor is closed.
 Snippet selection query uses object reference, but editing snippet
 recreates the object, changing references. This is a deep problem and won't
 be fixed until planned reworking of query / database code.}
-{TODO -oSelf -cInstaller : Change to require Windows 2K as minimum version once project moved to Delphi 2010 }
+{DONE -oSelf -cInstaller : Change to require Windows 2K as minimum version once project moved to Delphi 2010 }
 {TODO -oSelf -cRefactor : Extract common code in UDropDownButtons and UTVCheckBoxes into common base class.}
 {TODO -oSelf -cFeature : Add support for external user defined units.
 + Split list boxes on references page of snippets editor into Delphi and user defined sections.
