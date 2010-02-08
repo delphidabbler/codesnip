@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -129,7 +129,6 @@ begin
   end;
 end;
 
-// todo -cRefactor: remove this and replace by calls to a new TBytes version.
 class function TCheckSum.Calculate(const S: AnsiString): AnsiString;
   {Calculates MD5 checksum of an Ansi string.
     @param S [in] String to check.
@@ -154,7 +153,6 @@ begin
   Result := MD5Print(Digest);
 end;
 
-// todo -cRefactor: remove this and replace by a new TBytes version.
 class function TCheckSum.Compare(const S, CheckSum: AnsiString): Boolean;
   {Compares MD5 checksum of an Ansi string against a known checksum.
     @param S [in] String whose checksum is to be compared.

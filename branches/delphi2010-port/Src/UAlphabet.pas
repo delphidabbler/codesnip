@@ -37,7 +37,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -251,8 +251,6 @@ function TAlphabet.GetLetter(Ch: Char): TLetter;
 begin
   Assert(IsCharInSet(ToUpperCase(Ch), ['_', 'A'..'Z']),
     ClassName + '.GetLetter: Ch must be A..Z or underscore');
-  { TODO -cProposal : Check if this should be a search for Ord(ToUpperCase(Ch))
-    rather than Ord(Ch) }
   Result := fLetters.FindObject(Ord(Ch)) as TLetter;
 end;
 
