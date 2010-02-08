@@ -90,7 +90,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  URTFUtils;
+  URTFUtils, UUnicodeHelper;
 
 
 {$R *.dfm}
@@ -132,7 +132,7 @@ procedure TRTFPreviewFrame.LoadContent(const DocContent: string);
     @param DocContent [in] Valid RTF document to be displayed.
   }
 begin
-  RTFLoadFromString(reView, DocContent);
+  RTFLoadFromString(reView, StringToASCIIString(DocContent));
 end;
 
 procedure TRTFPreviewFrame.SetPopupMenu(const Menu: TPopupMenu);

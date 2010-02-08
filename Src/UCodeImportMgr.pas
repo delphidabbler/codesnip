@@ -451,7 +451,7 @@ begin
     // More that one snippet: display bullet list of names
     RoutineList := '';
     for Idx := Low(Routines) to High(Routines) do
-      RoutineList := RoutineList + '  '#$bb' ' + Routines[Idx].Name + EOL;
+      RoutineList := RoutineList + '  » ' + Routines[Idx].Name + EOL;
     TMessageBox.Information(nil, Format(sMultiple, [TrimRight(RoutineList)]));
   end;
 end;

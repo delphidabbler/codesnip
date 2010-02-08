@@ -122,7 +122,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Classes {for inlining},
   // Project
   UExceptions;
 

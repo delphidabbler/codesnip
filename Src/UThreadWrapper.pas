@@ -36,6 +36,7 @@
 
 unit UThreadWrapper;
 
+{$INCLUDE CompilerDefines.inc}
 
 interface
 
@@ -145,7 +146,11 @@ procedure TThreadWrapper.DoExecute;
   }
 begin
   // Wake up thread
+  {$IFDEF ThreadResumeDeprecated}
+  fThread.Start;
+  {$ELSE}
   fThread.Resume;
+  {$ENDIF}
   try
     // Loop while thread executes, enabling application to breath
     while not fThread.Completed do

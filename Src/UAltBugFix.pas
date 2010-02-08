@@ -1,7 +1,7 @@
 {
  * UAltBugFix.pas
  *
- * Implements a fix for Delphi's Alt key bug (reported on CodeGear Quality
+ * Implements a fix for Delphi's Alt key bug (reported on Embarcadero Quality
  * Central as bug report #37403):
  *
  *   "There seems to be a problem with THEMES support in Delphi, in which
@@ -18,6 +18,11 @@
  *   issue there is no way to set a flag to do the repaint op only once. In MDI
  *   applications, an ALT key press has the same affect on all child forms at
  *   the same time.
+ *
+ * Quality Central reports that the bug was fixed at Delphi build
+ * 11.0.2594.4328. This implies the bug was fixed in Delphi 2007. We link in
+ * this unit's substantial code if the AltBugFixNeeded symbol is defined by
+ * Defines.inc, i.e. when the compiler preceeds Delphi 2007.
  *
  * Portions of this code are based on a component created by Per-Erik Andersson,
  * inspired by J Hamblin of Qtools Software. The code was extensively modified
@@ -56,6 +61,7 @@
 
 unit UAltBugFix;
 
+{$INCLUDE CompilerDefines.inc}
 
 interface
 
@@ -489,6 +495,7 @@ begin
   if not Assigned(fInstance) then
   begin
     // This is first call to this method and singleton object not yet created.
+    {$IF Defined(AltBugFixNeeded)}
     // Implementation depends on underlying OS: there are implementations that
     // handle different bug fix requirements on XP and Vista and a nul
     // implementation for earlier OSs for which no bug fix is required.
@@ -498,6 +505,10 @@ begin
       fInstance := TAltBugFixXP.Create
     else
       fInstance := TNulAltBugFix.Create;
+    {$ELSE}
+    // Bug fix not required: always create a nul object.
+    fInstance := TNulAltBugFix.Create;
+    {$IFEND}
   end;
   Result := fInstance;
 end;

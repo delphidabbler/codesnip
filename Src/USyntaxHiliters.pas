@@ -293,8 +293,7 @@ type
       {Called just before document is parsed. Used to emit RTF header.
       }
     procedure EndDoc; override;
-      {Called after parsing complete. Writes closing brace that terminates RTF
-      document.
+      {Called after parsing complete. Outputs whole of RTF code.
       }
     procedure BeginLine; override;
       {Called when a new line in output is started. Used to initialise a line in
@@ -390,7 +389,7 @@ type
       {Called just before document is parsed. Used to write opening pre tag.
       }
     procedure EndDoc; override;
-      {Called after parsing complete. Writes closing pre tag.
+      {Called after parsing complete. Writes out HTML.
       }
   end;
 
@@ -617,11 +616,19 @@ var
   DestStm: TStringStream; // stream used to receive output
 begin
   DestStm := nil;
-  // Create string stream containing raw source code
+  // Create a string stream containing raw source code and another to receive
+  // highlighted output. Uses unicode string streams if supported.
+  {$IFDEF UNICODE}
+  SrcStm := TStringStream.Create(RawCode, TEncoding.Unicode);
+  {$ELSE}
   SrcStm := TStringStream.Create(RawCode);
+  {$ENDIF}
   try
-    // Create string stream to received formatted / highlighted output
+    {$IFDEF UNICODE}
+    DestStm := TStringStream.Create('', TEncoding.Unicode);
+    {$ELSE}
     DestStm := TStringStream.Create('');
+    {$ENDIF}
     // Use stream version of method to perform highlighting
     Hilite(SrcStm, DestStm, Attrs, Title);
     // Return string stored in destination stream
@@ -723,11 +730,10 @@ begin
 end;
 
 procedure TRTFHiliter.EndDoc;
-  {Called after parsing complete. Writes closing brace that terminates RTF
-  document.
+  {Called after parsing complete. Outputs whole of RTF code.
   }
 begin
-  Writer.WriteStrLn(fRTFBuilder.AsString);
+  Writer.WriteStrLn(string(fRTFBuilder.AsString));
 end;
 
 procedure TRTFHiliter.EndLine;
@@ -824,7 +830,7 @@ begin
 end;
 
 procedure TDetailHTMLHiliter.EndDoc;
-  {Called after parsing complete. Writes closing pre tag.
+  {Called after parsing complete. Writes out HTML.
   }
 begin
   inherited;

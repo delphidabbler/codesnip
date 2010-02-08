@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -41,7 +41,7 @@
 	<title>
 		Building CodeSnip
 	</title>
-	<style>
+	<style type="text/css">
 		body {
 			font-family: sans-serif;
 		}
@@ -62,6 +62,17 @@
 		ol.spaced li {
 			margin-top: 0.5em;
 		}
+		.cmd {
+			margin-left: 2em;
+			margin-right: 2em;
+			background-color: #eef;
+			font-weight: bold;
+			padding: 0.25em;
+			border: 1px solid silver;
+		}
+		.prompt {
+			color: blue;
+		}
 	</style>
 </head>
 
@@ -77,7 +88,12 @@
 
 <p>
 	<em>CodeSnip</em> is written in Object Pascal and is targeted at Delphi
-	2006. The Delphi IDE can be used to modify the source and to perform test
+	2006, but can be compiled with later versions and works with either Ansi or
+	Unicode string support.
+</p>
+
+<p>
+	The Delphi IDE can be used to modify the source and to perform test
 	builds. Final builds should be built using the provided makefile, but you
 	can get away with using the IDE if you don't change any resources.
 </p>
@@ -88,7 +104,7 @@
 
 <p>
 	Several 3rd party and additional DelphiDabbler libraries and components are
-	required in to compile <em>CodeSnip</em>, most of which are included in the
+	required to compile <em>CodeSnip</em>, most of which are included in the
 	code repository in the <code>Src/3rdParty</code> directory.
 </p>
 
@@ -97,20 +113,15 @@
 </h3>
 
 <p>
-	The <em>Indy Internet Components</em> are not included in the code
-	repository. These components are supplied with Delphi 2006. v10 is required.
-	You need to configure Delphi 2006 to use Indy 10 rather than Indy 9. If you
-	haven't got Indy 10 you can download the source code from <a
-		href="http://www.indyproject.org"
-	>http://www.indyproject.org</a>, in which case you should compile the source
-	code and create the necessary packages.
+	If you download a copy of Indy 10 you should compile the source code and
+	create the necessary package(s).
 </p>
 
 <p>
 	Regardless of whether you're using the version of Indy 10 supplied with
 	Delphi or if you've downloaded and compiled your own version, you must set
-	the <code>INDY10</code> environment variable to the folder where you placed
-	the compiled code.
+	the <code>INDY10</code> environment variable to address the directory where
+	you placed the compiled code.
 </p>
 
 <h4 id="indychanges">
@@ -118,9 +129,9 @@
 </h4>
 
 <p>
-	Changes were made to the parameter list of the <var>TWorkBeginEvent</var>
+	Changes were made to the parameter lists of the <var>TWorkBeginEvent</var>
 	and <var>TWorkEvent</var> events between early and later releases of Indy
-	10. Specifically, earlier version use type <var>Integer</var> for the
+	10. Specifically, earlier versions use type <var>Integer</var> for the
 	<var>AWorkCount</var> parameter of <var>TWorkEvent</var> and the
 	<var>AWorkCountMax</var> parameter of <var>TWorkBeginEvent</var>, while
 	later versions use <var>Int64</var>.
@@ -128,9 +139,9 @@
 
 <p>
 	<em>CodeSnip</em>'s source code uses conditional compilation to provide the
-	correct event handlers &ndash; and it makes an intelligent guess at which
-	signature to use depending on the version number provided by the Indy
-	library code. Should the program fail to compile with an error in the
+	correct event handler signatures &ndash; and it makes an intelligent guess
+	at which signature to use depending on the version number provided by the
+	Indy library code. Should the program fail to compile with an error in the
 	<var>UDownloadMonitor</var> unit, you should check the event signatures in
 	your Indy <var>IdComponent</var> unit and then define the
 	<code>INDY_WORKEVENT_INT64</code> environment variable if <var>Int64</var>
@@ -139,12 +150,12 @@
 </p>
 
 <h3>
-	Delphi VCL
+	Delphi RTL &amp; VCL
 </h3>
 
 <p>
-	Goes without saying really, but you need the Delphi VCL in order to compile
-	this code.
+	Goes without saying really, but you need the RTL and VCL that ships with the
+	chosen version of Delphi.
 </p>
 
 <h2>
@@ -161,16 +172,9 @@
 
 <p>
 	A copy of Delphi is required to build the object Pascal code. Delphi 2006 is
-	the preferred, and minimum, compiler.
-</p>
-
-<p>
-	Delphi 2007 should be able to compile the source. The code will not compile
-	on Delphi 2009 or Delphi 2010. <strong>Note:</strong> Support for the
-	&quot;Unicode Delphis&quot; is planned and when complete the targetted
-	compiler will change to Delphi 2010. You can view the work in progress at <a
-		href="http://codesnip.svn.sourceforge.net/viewvc/codesnip/branches/delphi2010-port/"
-	>http://codesnip.svn.sourceforge.net/viewvc/codesnip/branches/delphi2010-port/</a>.
+	the preferred, and minimum, compiler. Delphi 2007 to 2010 should also be
+	able to compile the source. It has been tested only with Delphi 2006 and
+	2010.
 </p>
 
 <p>
@@ -221,10 +225,10 @@
 		<code>DELPHI2006</code> - optional
 	</dt>
 	<dd>
-		If you are using Delphi 2006 this environment variable should be set
-		to the Delphi install directory. When specified <code>DELPHIROOT</code>
-		will ignore its own value and use the value of <code>DELPHI2006</code>
-		instead.
+		If you are using Delphi 2006 this environment variable can be set to the
+		Delphi install directory. When <code>DELPHI2006</code> is defined
+		<code>DELPHIROOT</code> will be set to the value of
+		<code>DELPHI2006</code>.
 	</dd>
 	<dt class="spaced">
 		<code>INDY10</code> - required
@@ -240,7 +244,7 @@
 	</dt>
 	<dd>
 		<a href="#indychanges">See above</a> for details. If used, only one of
-		the environment variables may be defined: defining both causes
+		the environment variables may be defined. Defining both causes
 		compilation to fail.
 	</dd>
 </dl>
@@ -251,16 +255,16 @@
 
 <p>
 	This is the make tool that ships with Delphi. You can use any version that
-	works. I've tested the version that ships with Delphi 2006.
+	works.
 </p>
 
-<h3>
+<h3 id="mssdk">
 	Microsoft Software Development Kit
 </h3>
 
 <p>
-	The MS SDK is required for its MIDL IDL compiler. This tool is needed to
-	build <code>ExternalObj.idl</code> into a <code>.tlb</code> file.
+	The MIDL IDL compiler that ships with the MS SDK is required to build
+	<code>ExternalObj.tlb</code> from <code>ExternalObj.idl</code>.
 </p>
 
 <p>
@@ -275,11 +279,11 @@
 	<li>
 		The path to <code>CL.exe</code>. This will probably be in a sub folder
 		of a MS Visual Studio installation folder. For example
-		<code>C:\Program Files\Microsoft Visual Studio 9.0\VC\bin</code>
+		<code>C:\Program Files\Microsoft Visual Studio 9.0\VC\bin</code>.
 	</li>
 	<li>
 		The Common Visual studio binary directory where <code>mspdb**.dll</code>
-		is located. For example:
+		is located. For example
 		<code>C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE</code>.
 	</li>
 </ul>
@@ -292,8 +296,9 @@
 </p>
 	
 <p>
-	You can use a batch file with contents similar this to set the path and the
-	<code>MSSDK</code> environment variable before building <em>CodeSnip</em>:
+	You can use a batch file with contents similar to the following to set the
+	path and the <code>MSSDK</code> environment variable before building
+	<em>CodeSnip</em>:
 </p>
 
 <pre class="indent">if not "%PATHSET%" == "" goto end
@@ -303,6 +308,12 @@ set PATH=%PATH%;C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE
 set PATHSET=1
 :end</pre>
 
+<p>
+	<strong>Note:</strong> You do not need a copy of Visual Studio for this
+	&ndash; the required directories and files are created when the SDK is
+	installed.
+</p>
+
 <h4>
 	Build Without MIDL or the MS SDK
 </h4>
@@ -311,7 +322,7 @@ set PATHSET=1
 	If you don't already have the MS SDK it's a big job to download and install
 	it just to compile one <code>.tlb</code> file. (The SDK is huge).
 	Therefore there's an alternative that means you can compile without the SDK.
-	This is decribed in the section 
+	This is described in the section 
 	<a
 		href="#nomidl"
 	>Editing and Compiling Without MIDL</a> below. 
@@ -365,10 +376,9 @@ set PATHSET=1
 </h3>
 
 <p>
-	The Inno setup command line compiler is used to create <em>CodeSnip</em>'s
-	install program. The compiler is supplied with Inno Setup v5.2.3 or later.
-	The ISPP pre-processor v5.2.3 or later is also required. 
-	You can get Inno Setup at <a
+	The Inno setup command line compiler is needed to create <em>CodeSnip</em>'s
+	install program. v5.2.3 or later is required as is a compatible version of
+	the ISPP pre-processor. You can get Inno Setup with ISPP at <a
 		href="http://www.innosetup.com/"
 	>http://www.innosetup.com/</a>.
 </p>
@@ -418,12 +428,23 @@ set PATHSET=1
 </h3>
 
 <p>
-	The first step is to configure the required environment variables.
+	You can configure environment variables either by modifying your system
+	environment variables or by creating a batch file that you run before
+	performing the build.
+</p>
+
+<h4>
+	Step 1
+</h4>
+
+<p>
+	Configure the required environment variables. The program will fail to
+	compile if these environment variables are not set:
 </p>
 
 <ul>
 	<li>
-		<code>DELPHIROOT</code> or <code>DELPHI2006ROOT</code>
+		<code>DELPHIROOT</code> or <code>DELPHI2006</code>
 	</li>
 	<li>
 		<code>INDY10</code>
@@ -433,10 +454,15 @@ set PATHSET=1
 	</li>
 </ul>
 
+<h4>
+	Step 2
+</h4>
+
 <p>
 	Update the <code>PATH</code> environment variable to include the paths that
-	MIDL needs (explained above) along with any other paths needed to access
-	build tools.
+	MIDL needs (explained <a
+		href="#mssdk"
+	>above</a>).
 </p>
 
 <p>
@@ -446,15 +472,40 @@ set PATHSET=1
 	<code>set IGNOREMIDL=1</code>.
 </p>
 
-<p>
-	Set any of the optional environment variables that are needed to specify the
-	path to any tools that are not on the system path.
-</p>
+<h4>
+	Step 3
+</h4>
 
 <p>
-	You can configure environment variables either by modifying your system
-	environment variables or by creating a batch file that you run before
-	performing the build.
+	Set any of the following environment variables that are needed to specify
+	the path to any tools that cannot be found on the path:
+</p>
+
+<ul>
+	<li>
+		<code>VIEDROOT</code>
+	</li>
+	<li>
+		<code>HTMLRESROOT</code>
+	</li>
+	<li>
+		<code>INNOSETUP</code>
+	</li>
+	<li>
+		<code>HHCROOT</code>
+	</li>
+	<li>
+		<code>ZIPROOT</code>
+	</li>
+</ul>
+
+<h4>
+	Step 4
+</h4>
+
+<p>
+	Set <code>INDY_WORKEVENT_INT64</code> or <code>INDY_WORKEVENT_INT32</code>
+	if necessary.
 </p>
 
 <h3>
@@ -462,12 +513,12 @@ set PATHSET=1
 </h3>
 
 <p>
-	If you don't already have it, download the <em>CodeSnip</em> source code. 
-	How to go about that is explained at
+	If you don't already have it, download the <em>CodeSnip</em> source code or
+	check it out or export it from the Subversion repository. How to go about
+	that is explained at
 	<a
 		href="http://www.delphidabbler.com/software/codesnip/download"
-	>http://www.delphidabbler.com/software/codesnip/download</a>. If necessary,
-	extract the source code into a folder, preserving the directory structure.
+	>http://www.delphidabbler.com/software/codesnip/download</a>.
 </p>
 
 <h3>
@@ -516,7 +567,7 @@ set PATHSET=1
 <p>
 	If, by chance you also have a <code>Bin</code>, <code>Exe</code> and
 	<code>Release</code> directory don't worry - all will become clear. 
-	Subversion users will also see the usual <code>.svn</code> hidden
+	Subversion users may also see the usual <code>.svn</code> hidden
 	directories. If you have done some editing you may also see occasional
 	hidden <code>__history</code> folders.
 </p>
@@ -527,7 +578,7 @@ set PATHSET=1
 	script you have created to set the required environment variables then do:
 </p>
 
-<pre class="indent">&gt; Make config</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make config</pre>
 
 <p>
 	You may need to replace <code>Make</code> with the full path to
@@ -535,13 +586,13 @@ set PATHSET=1
 	runs isn't the Borland / CodeGear version. If this is the case try:
 </p>
 
-<pre class="indent">&gt; %DELPHIROOT%\Bin\Make config</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> %DELPHIROOT%\Bin\Make config</pre>
 
 <p>
 	or
 </p>
   
-<pre class="indent">&gt; %DELPHI2006%\Bin\Make config</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> %DELPHI2006%\Bin\Make config</pre>
 
 <p>
 	depending on which environment variable you have set.
@@ -554,9 +605,10 @@ set PATHSET=1
 
 <pre>./
   |
-  +-- Bin                   - receives object files for CodeSnip 
+  +-- Bin                   - receives object files for CodeSnip
   |   |
-  |   +-- InstallHelper     - receives object files for CSSetupHelper 
+  |   +-- InstallHelper     - receives object files for CSSetupHelper
+  |
   ...
   |
   +-- Exe                   - receives executable code and compiled help file
@@ -581,9 +633,9 @@ set PATHSET=1
 	do:
 </p>
 
-<pre class="indent">&gt; Make resources
-&gt; Make typelib
-&gt; Make autogen</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make resources
+<span class="prompt">&gt;</span> Make typelib
+<span class="prompt">&gt;</span> Make autogen</pre>
 
 <p>
 	This compiles the resource files that the IDE needs to link into compiled
@@ -592,7 +644,8 @@ set PATHSET=1
 </p>
 
 <p>
-	You are now ready to modify the code if required and to build the source.
+	You are now ready to build the source. If you want to modify the source
+	now's the time to do it.
 </p>
 
 <h3 id="nomidl">
@@ -620,16 +673,16 @@ set PATHSET=1
 	<li>
 		Get a suitable copy of the <em>CodeSnip</em> executable. This must have
 		been compiled from the same version of <code>ExternalObj.idl</code> as
-		that included in the source tree. (Use File | Open in XN Resource
-		Editor).
+		that included in the source tree.
 	</li>
 	<li>
-		Open <code>CodeSnip.exe</code> in the resource file editor. You need to
+		Open <code>CodeSnip.exe</code> in the resource file editor (Use
+		<em>File | Open</em> in XN Resource Editor). You need to
 		find the TYPELIB resource type. There should only be one, language
 		neutral, TYPELIB resource. Select this and export it as
 		<code>ExternalObj.tlb</code> in the <code>Bin</code> folder in your
-		configured source tree. (Use Resource | Export Resource in XN Resource
-		Editor).
+		configured source tree. (Use <em>Resource | Export</em> Resource in XN
+		Resource Editor).
 	</li>
 </ol>
 
@@ -647,7 +700,7 @@ set PATHSET=1
 </h4>
 
 <p>
-	You can edit the type library from the Delphi IDE. Start the IDE select
+	You can edit the type library from the Delphi IDE. Start the IDE, select
 	File | Open, change the file type to Type Library and navigate to
 	<code>ExternalObj.tlb</code>. This opens the type library. Edit as required
 	then save the changes. Delete any <code>*_TLB</code> files that appear.
@@ -666,7 +719,7 @@ set PATHSET=1
 	You must regenerate the associated Pascal file. Do this by running:
 </p>
 
-<pre class="indent">&gt; Make autogen</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make autogen</pre>
 
 <h4>
 	Telling Make to Ignore MIDL
@@ -679,8 +732,8 @@ set PATHSET=1
 	a batch file by doing:
 </p>
 
-<pre class="indent">
-&gt; set IGNOREMIDL=1</pre>
+<pre class="cmd">
+<span class="prompt">&gt;</span> set IGNOREMIDL=1</pre>
 
 <p>
 	Alternatively, call Make with the <code>-DIGNOREMIDL</code> switch.
@@ -728,16 +781,16 @@ set PATHSET=1
 	This is the most common build and has a simple command:
 </p>
 
-<pre class="indent">&gt; Make codesnip</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make codesnip</pre>
 
 <p>
 	This is the same as doing this sequence of commands:
 </p>
 
-<pre class="indent">&gt; Make typelib
-&gt; Make resources
-&gt; Make autogen
-&gt; Make pascal</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make typelib
+<span class="prompt">&gt;</span> Make resources
+<span class="prompt">&gt;</span> Make autogen
+<span class="prompt">&gt;</span> Make pascal</pre>
  
 <p>
 	The <em>CodeSnip</em> executable will be placed in the <code>Exe</code>
@@ -751,16 +804,16 @@ set PATHSET=1
 	you must do:
 </p>
 
-<pre class="indent">&gt; Make -DIGNOREMIDL codesnip</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DIGNOREMIDL codesnip</pre>
 
 <p>
 	This is the same as doing:
 </p>
 
-<pre class="indent">&gt; Make -DIGNOREMIDL typelib
-&gt; Make resources
-&gt; Make autogen
-&gt; Make pascal</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DIGNOREMIDL typelib
+<span class="prompt">&gt;</span> Make resources
+<span class="prompt">&gt;</span> Make autogen
+<span class="prompt">&gt;</span> Make pascal</pre>
 
 <h3>
 	Build the Help File
@@ -770,7 +823,7 @@ set PATHSET=1
 	To build the help file just do
 </p>
 
-<pre class="indent">&gt; Make help</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make help</pre>
 
 <h3>
 	Build the Setup Program
@@ -787,13 +840,13 @@ set PATHSET=1
 	<code>CSInstallHelper.exe</code> is built by doing:
 </p>
 
-<pre class="indent">&gt; Make installhelper</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make installhelper</pre>
 
 <p>
 	As an aside, you can make all the required files by doing:
 </p>
 
-<pre class="indent">&gt; Make exes</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make exes</pre>
 
 <p>
 	<code>Make exes</code> will require the use of the <code>-DIGNOREMIDL</code>
@@ -805,7 +858,7 @@ set PATHSET=1
 	doing:
 </p>
 
-<pre class="indent">&gt; Make setup</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make setup</pre>
 
 <p>
 	The setup program is named <code>CodeSnip-Setup-x.x.x.exe</code>, where
@@ -824,7 +877,7 @@ set PATHSET=1
 	doing:
 </p>
 
-<pre class="indent">&gt; Make release</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make release</pre>
 
 <p>
 	By default the release file is called <code>dd-codesnip.zip</code>. You can
@@ -833,7 +886,7 @@ set PATHSET=1
 	<code>MyRelease.zip</code> by doing:
 </p>
 
-<pre class="indent">&gt; Make -DRELEASEFILENAME=MyRelease.zip release</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DRELEASEFILENAME=MyRelease.zip release</pre>
 
 <h3>
 	Build and Release Everything
@@ -844,16 +897,16 @@ set PATHSET=1
 	simply by doing:
 </p>
 
-<pre class="indent">&gt; Make</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make</pre>
 
 <p>
 	without specifying a target. This is the equivalent of:
 </p>
 
-<pre class="indent">&gt; Make config
-&gt; Make exes
-&gt; Make setup
-&gt; Make release</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make config
+<span class="prompt">&gt;</span> Make exes
+<span class="prompt">&gt;</span> Make setup
+<span class="prompt">&gt;</span> Make release</pre>
 
 <p>
 	<strong>Warning:</strong> You should not run this command if MIDL is not
@@ -870,7 +923,7 @@ set PATHSET=1
 	deleted by running.
 </p>
 
-<pre class="indent">&gt; Make clean</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> Make clean</pre>
 
 <p>
 	Be warned though that this command removes the <code>__history</code>

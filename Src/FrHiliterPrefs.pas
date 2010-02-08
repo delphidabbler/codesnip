@@ -45,7 +45,7 @@ uses
   StdCtrls, Forms, Controls, Classes, Menus, Buttons,
   // Project
   IntfHiliter, FrPrefsBase, FrRTFShowCase, UColorBoxEx, UColorDialogEx, UConsts,
-  UPreferences;
+  UPreferences, UUnicodeHelper;
 
 
 type
@@ -120,7 +120,7 @@ type
     procedure UpdatePreview;
       {Updates preview of highlighting of current highlighter element.
       }
-    function GenerateRTF: string;
+    function GenerateRTF: ASCIIString;
       {Generates RTF of example of current highlighter element.
         @return Required RTF code.
       }
@@ -474,7 +474,7 @@ begin
   Result := sDisplayName;
 end;
 
-function THiliterPrefsFrame.GenerateRTF: string;
+function THiliterPrefsFrame.GenerateRTF: ASCIIString;
   {Generates RTF of example of current highlighter element.
     @return Required RTF code.
   }

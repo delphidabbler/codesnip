@@ -41,14 +41,14 @@ interface
 
 uses
   // Delphi
-  Classes, ComCtrls;
+  Classes, ComCtrls,
+  // Project
+  UUnicodeHelper;
 
 
 const
   // Constants relating to RTF
   cRTFVersion = 1;          // RTF version
-  cDefCodePage = 1252;      // default code paeg
-  cDefLanguage = 1033;      // default language
 
 
 type
@@ -89,7 +89,8 @@ type
     rcUnderline,            // sets or toggles underline style
     rcFontSize,             // font size in 1/2 points
     rcSpaceBefore,          // space before paragraphs in twips
-    rcSpaceAfter            // space after paragraph in twips
+    rcSpaceAfter,           // space after paragraph in twips
+    rcUnicodeChar           // defines a Unicode character as 16bit value
   );
 
 
@@ -99,40 +100,40 @@ function IsValidRTFCode(const Content: string): Boolean;
     @return True if valid rich text.
   }
 
-function RTFControl(const Ctrl: TRTFControl): string; overload;
+function RTFControl(const Ctrl: TRTFControl): ASCIIString; overload;
   {Creates a parameterless RTF control word.
     @param Ctrl [in] Id of required control word.
     @return RTF control.
   }
 
-function RTFControl(const Ctrl: TRTFControl; const Param: Integer): string;
-  overload;
+function RTFControl(const Ctrl: TRTFControl;
+  const Param: SmallInt): ASCIIString; overload;
   {Creates an RTF control word with parameter.
     @param Ctrl [in] Id of required control word.
     @param Param [in] Required parameter.
     @return RTF control.
   }
 
-function RTFEscape(const Ch: AnsiChar): string;
+function RTFEscape(const Ch: AnsiChar): ASCIIString;
   {Creates RTF escape sequence for a character.
     @param Ch [in] Character to escape.
     @return Escape sequence.
   }
 
-function RTFHexEscape(const Ch: AnsiChar): string;
+function RTFHexEscape(const Ch: AnsiChar): ASCIIString;
   {Creates RTF hexadecimal escape sequence for a character.
     @param Ch [in] Character to escape.
     @return Escape sequence.
   }
 
-function RTFMakeSafeText(const TheText: string): string;
+function RTFMakeSafeText(const TheText: string): ASCIIString;
   {Encodes text so that any RTF-incompatible characters are replaced with
   suitable control words.
     @param TheText [in] Text to be encoded.
     @return Encoded text.
   }
 
-procedure RTFInsertString(const RE: TRichEdit; const RTF: string);
+procedure RTFInsertString(const RE: TRichEdit; const RTF: ASCIIString);
   {Inserts rich text code to current selection position in a rich edit control.
   If text is selected in the control the selection is first deleted.
     @param RE [in] Rich edit control in which RTF code is to be inserted.
@@ -146,7 +147,7 @@ procedure RTFLoadFromStream(const RE: TRichEdit; const Stream: TStream);
     @param RTF [in] Stream containing valid rich text code.
   }
 
-procedure RTFLoadFromString(const RE: TRichEdit; const RTF: string);
+procedure RTFLoadFromString(const RE: TRichEdit; const RTF: ASCIIString);
   {Loads RTF code into an RTF control, replacing all the control's current
   content.
     @param RE [in] Rich edit control to receive RTF code.
@@ -172,13 +173,12 @@ uses
 
 const
   // Map of RTF control ids to control word
-  cControls: array[TRTFControl] of string = (
+  cControls: array[TRTFControl] of ASCIIString = (
     'rtf', 'ansi', 'ansicpg', 'deff', 'deflang', 'fonttbl', 'fprq', 'fcharset',
     'fnil', 'froman', 'fswiss', 'fmodern', 'fscript', 'fdecor', 'ftech',
     'colortbl', 'red', 'green', 'blue', 'info', 'title', 'pard', 'par', 'plain',
-    'f', 'cf', 'b', 'i', 'ul', 'fs', 'sb', 'sa'
+    'f', 'cf', 'b', 'i', 'ul', 'fs', 'sb', 'sa', 'u'
   );
-
 
 function IsValidRTFCode(const Content: string): Boolean;
   {Checks if document content is valid rich text code.
@@ -186,10 +186,10 @@ function IsValidRTFCode(const Content: string): Boolean;
     @return True if valid rich text.
   }
 begin
-  Result := AnsiStartsText('{' + RTFControl(rcRTF, 1), Content);
+  Result := AnsiStartsText('{' + string(RTFControl(rcRTF, 1)), Content);
 end;
 
-function RTFControl(const Ctrl: TRTFControl): string;
+function RTFControl(const Ctrl: TRTFControl): ASCIIString;
   {Creates a parameterless RTF control word.
     @param Ctrl [in] Id of required control word.
     @return RTF control.
@@ -198,59 +198,57 @@ begin
   Result := '\' + cControls[Ctrl];
 end;
 
-function RTFControl(const Ctrl: TRTFControl; const Param: Integer): string;
+function RTFControl(const Ctrl: TRTFControl;
+  const Param: SmallInt): ASCIIString;
   {Creates an RTF control word with parameter.
     @param Ctrl [in] Id of required control word.
     @param Param [in] Required parameter.
     @return RTF control.
   }
 begin
-  Result := RTFControl(Ctrl) + IntToStr(Param);
+  Result := RTFControl(Ctrl) + StringToASCIIString(IntToStr(Param));
 end;
 
-function RTFEscape(const Ch: AnsiChar): string;
+function RTFEscape(const Ch: AnsiChar): ASCIIString;
   {Creates RTF escape sequence for a character.
     @param Ch [in] Character to escape.
     @return Escape sequence.
   }
 begin
-  Result := '\' + Ch;
+  Result := AnsiChar('\') + Ch;
 end;
 
-function RTFHexEscape(const Ch: AnsiChar): string;
+function RTFHexEscape(const Ch: AnsiChar): ASCIIString;
   {Creates RTF hexadecimal escape sequence for a character.
     @param Ch [in] Character to escape.
     @return Escape sequence.
   }
 begin
-  Result := '\''' + IntToHex(Ord(Ch), 2);
+  Result := StringToASCIIString('\''' + IntToHex(Ord(Ch), 2));
 end;
 
-function RTFMakeSafeText(const TheText: string): string;
+function RTFMakeSafeText(const TheText: string): ASCIIString;
   {Encodes text so that any RTF-incompatible characters are replaced with
   suitable control words.
     @param TheText [in] Text to be encoded.
     @return Encoded text.
   }
 var
-  I: Integer;     // loops thru characters in string
-  Ch: AnsiChar;   // character being processed
+  Ch: Char; // each character in text
 begin
   Result := '';
-  for I := 1 to Length(TheText) do
+  for Ch in TheText do
   begin
-    Ch := TheText[I];
-    case Ch of
-      #0..#$19, #$80..#$FF:
-        // Replace these chars by hex control word
-        Result := Result + RTFHexEscape(Ch);
-      '{', '\', '}':
-        // Escape these reserved chars
-        Result := Result + RTFEscape(Ch);
-      else
-        // Pass remaining chars thru unchanged
-        Result := Result + Ch;
-    end;
+    if (Ch < #$20) or ((Ch >= #$7F) and (Ch <= #$FF)) then
+      Result := Result + RTFHexEscape(AnsiChar(Ch))
+    else if (Ch = '{') or (Ch = '\') or (Ch = '}') then
+      Result := Result + RTFEscape(AnsiChar(Ch))
+    {$IFDEF UNICODE}
+    else if Ord(Ch) > $FF then  // Unicode char
+      Result := RTFControl(rcUnicodeChar, SmallInt(Ord(Ch))) + '?'
+    {$ENDIF}
+    else
+      Result := Result + ASCIIString(AnsiChar(Ch));
   end;
 end;
 
@@ -312,7 +310,7 @@ begin
   end;
 end;
 
-procedure RTFInsertString(const RE: TRichEdit; const RTF: string);
+procedure RTFInsertString(const RE: TRichEdit; const RTF: ASCIIString);
   {Inserts rich text code to current selection position in a rich edit control.
   If text is selected in the control the selection is first deleted.
     @param RE [in] Rich edit control in which RTF code is to be inserted.
@@ -321,7 +319,7 @@ procedure RTFInsertString(const RE: TRichEdit; const RTF: string);
 var
   Stm: TStringStream; // stream onto RTF code string
 begin
-  Stm := TStringStream.Create(RTF);
+  Stm := TStringStream.Create(AnsiString(RTF));
   try
     RTFInsertStream(RE, Stm);
   finally
@@ -341,7 +339,7 @@ begin
   RE.Lines.LoadFromStream(Stream);
 end;
 
-procedure RTFLoadFromString(const RE: TRichEdit; const RTF: string);
+procedure RTFLoadFromString(const RE: TRichEdit; const RTF: ASCIIString);
   {Loads RTF code into an RTF control, replacing all the control's current
   content.
     @param RE [in] Rich edit control to receive RTF code.
@@ -351,7 +349,7 @@ var
   Stm: TStringStream; // stream onto RTF code
 begin
   // Load stream containing RTF code into control
-  Stm := TStringStream.Create(RTF);
+  Stm := TStringStream.Create(AnsiString(RTF));
   try
     RTFLoadFromStream(RE, Stm);
   finally

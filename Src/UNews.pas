@@ -278,8 +278,8 @@ begin
   inherited Create;
   // Get property values from stream. Order is important
   fId := Reader.ReadSmallInt;
-  fDate := MySQLDateToDateTime(Reader.ReadSizedString);
-  fHTML := Reader.ReadSizedString;
+  fDate := MySQLDateToDateTime(string(Reader.ReadSizedString));
+  fHTML := string(Reader.ReadSizedString);
 end;
 
 end.

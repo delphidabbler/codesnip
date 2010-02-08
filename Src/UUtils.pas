@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -240,6 +240,28 @@ function TextWrap(const Text: string; const Width, Margin: Integer): string;
     @return Word wrapped text.
   }
 
+function IsValidDriveLetter(const C: Char): Boolean;
+  {Checks if a character is a valid Windows drive letter.
+    @param C [in] Character to be tested.
+    @return True if C is a valid drive letter, False otherwise.
+  }
+
+function IsValidAbsoluteFileName(const FileName: string): Boolean;
+  {Checks if a filename is a valid, complete, absolute local file path.
+    @param FileName [in] File name to be checked.
+    @return True if file name is valid absolute file path, false if not.
+  }
+
+function IsValidUNCFileName(const FileName: string): Boolean;
+  {Checks if a filename is a valid, complete, UNC file name.
+    @param FileName [in] File name to be checked.
+    @return True if file name is valid UNC name, false if not.
+  }
+
+procedure KeyErrorBeep;
+  {Emits a sound indicating a keypress error.
+  }
+
 
 implementation
 
@@ -248,12 +270,7 @@ uses
   // Delphi
   SysUtils, StrUtils, Windows, ShlObj, ActiveX, Messages,
   // Project
-  UConsts;
-
-
-const
-  // String of white space characters
-  cWhiteSpaceChars = TAB + LF + VTAB + FF + CR + ' ';
+  UConsts, UUnicodeHelper;
 
 
 procedure CopyFile(const Source, Dest: string);
@@ -407,15 +424,6 @@ begin
   end;
 end;
 
-function IsWhiteSpace(const Ch: AnsiChar): Boolean;
-  {Checks if a character is white space.
-    @param Ch [in] Character to be checked.
-    @return True if character is white space, False if not.
-  }
-begin
-  Result := AnsiPos(Ch, cWhiteSpaceChars) > 0;
-end;
-
 function CapitaliseWords(const S: string): string;
   {Capitalises each word in a string, leaving case of other characters
   unchanged.
@@ -430,11 +438,11 @@ begin
   WantCapital := True;
   for Idx := 1 to Length(S) do
   begin
-    if Result[Idx] in ['a'..'z', 'A'..'Z'] then
+    if IsLetter(Result[Idx]) then
     begin
       if WantCapital then
-        Result[Idx] := UpCase(Result[Idx]); // capital letter required
-      WantCapital := False;                 // following chars lower case
+        Result[Idx] := ToUpperCase(Result[Idx]);  // capital letter reequired
+      WantCapital := False;                       // following chars lower case
     end
     else
       WantCapital := IsWhiteSpace(Result[Idx]); // space: next char is capital
@@ -722,8 +730,18 @@ function ContainsWhiteSpace(const S: string): Boolean;
     @param S [in] string to be checked.
     @return True if string contains spaces.
   }
+var
+  Ch: Char;   // scans through string S
 begin
-  Result := ContainsDelims(S, cWhiteSpaceChars);
+  Result := False;
+  for Ch in S do
+  begin
+    if IsWhiteSpace(Ch) then
+    begin
+      Result := True;
+      Break;
+    end;
+  end;
 end;
 
 function QuoteSpacedString(const S: string; const Quote: Char = '"'): string;
@@ -1003,6 +1021,44 @@ begin
   finally
     FreeAndNil(Words);
   end;
+end;
+
+function IsValidDriveLetter(const C: Char): Boolean;
+  {Checks if a character is a valid Windows drive letter.
+    @param C [in] Character to be tested.
+    @return True if C is a valid drive letter, False otherwise.
+  }
+begin
+  Result := IsCharInSet(C, ['A'..'Z', 'a'..'z']);
+end;
+
+function IsValidAbsoluteFileName(const FileName: string): Boolean;
+  {Checks if a filename is a valid, complete, absolute local file path.
+    @param FileName [in] File name to be checked.
+    @return True if file name is valid absolute file path, false if not.
+  }
+begin
+  Result := (Length(FileName) > 3)
+    and IsValidDriveLetter(FileName[1])
+    and (FileName[2] = ':') and (FileName[3] = '\');
+end;
+
+function IsValidUNCFileName(const FileName: string): Boolean;
+  {Checks if a filename is a valid, complete, UNC file name.
+    @param FileName [in] File name to be checked.
+    @return True if file name is valid UNC name, false if not.
+  }
+begin
+  Result := (Length(FileName) > 5)
+    and AnsiStartsStr('\\', FileName)
+    and (PosEx('\', FileName, 4) >= 4);
+end;
+
+procedure KeyErrorBeep;
+  {Emits a sound indicating a keypress error.
+  }
+begin
+  MessageBeep(UINT(-1));
 end;
 
 end.

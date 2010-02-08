@@ -76,7 +76,7 @@ type
           more tags.
       }
     function EntityInfo(const EntityIdx: Integer; out EntityName: string;
-      out EntityChar: AnsiChar): Boolean;
+      out EntityChar: Char): Boolean;
       {Callback that provides lexer with information about supported character
       entities. Lexer calls continually until False is returned.
         @param EntityIdx [in] Index of entity for which information is
@@ -442,7 +442,7 @@ begin
 end;
 
 function TREMLReader.EntityInfo(const EntityIdx: Integer;
-  out EntityName: string; out EntityChar: AnsiChar): Boolean;
+  out EntityName: string; out EntityChar: Char): Boolean;
   {Callback that provides lexer with information about supported character
   entities. Lexer calls continually until False is returned.
     @param EntityIdx [in] Index of entity for which information is requested.
@@ -894,7 +894,7 @@ begin
   fEntityMap[1] := TREMLEntity.Create('quot', '"',  1);
   fEntityMap[2] := TREMLEntity.Create('gt',   '>',  1);
   fEntityMap[3] := TREMLEntity.Create('lt',   '<',  1);
-  fEntityMap[4] := TREMLEntity.Create('copy', #$A9, 2);
+  fEntityMap[4] := TREMLEntity.Create('copy', '©', 2);
 end;
 
 destructor TREMLEntities.Destroy;

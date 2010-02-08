@@ -146,6 +146,9 @@ unit GIFImage;
 // Changed 2009.10.14 by Finn Tolderlund:                                     //
 // Simplified the list of defines and remove a few warnings in Delphi 2006.   //
 //                                                                            //
+// Changed 2009.10.24 by Peter Johnson (delphidabbler)                        //
+// Switched explicit string cast with loss warning for Delphi 2009 and later  //
+//                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
 // Please read the "Conditions of use" in the release notes.                  //
@@ -457,6 +460,9 @@ interface
    {$IFEND}
    {$IF CompilerVersion >= 20.0}   // >= Delphi 2009
      {$DEFINE VER20_PLUS}
+     // 2009.10.24 delphidabbler ->
+     {$WARN EXPLICIT_STRING_CAST_LOSS OFF}
+     // 2009.10.24 delphidabbler <-
    {$IFEND}
    {$IF CompilerVersion >= 21.0}   // >= Delphi 2010
      {$DEFINE VER21_PLUS}

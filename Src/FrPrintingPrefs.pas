@@ -116,7 +116,7 @@ uses
   SysUtils, StrUtils, Windows, Graphics, Math, ComCtrls,
   // Project
   FmPreferencesDlg, IntfCommon, UConsts, UHiliteAttrs, UPrintInfo, URTFBuilder,
-  URTFUtils, USyntaxHiliters;
+  URTFUtils, USyntaxHiliters, UUnicodeHelper, UUtils;
 
 
 {$R *.dfm}
@@ -171,7 +171,7 @@ begin
   // Update the caption to show current units
   gpMargins.Caption := Format(
     ' ' + sMarginCaption + ' ',
-    [AnsiLowerCase(UnitName(Prefs.MeasurementUnits))]
+    [AnsiLowerCase(UMeasurement.UnitName(Prefs.MeasurementUnits))]
   );
 
   // Update entries in margins edit boxes
@@ -327,12 +327,11 @@ begin
     if AnsiContainsStr((Sender as TEdit).Text, DecimalSeparator) then
       Key := #0;
   end
-  else if not (Key in [#8, '0'..'9']) then
+  else if not IsDigit(Key) and (Key <> BACKSPACE) then
     // Disallow any other characters other than backspace or digits
     Key := #0;
   if Key = #0 then
-    // Beep because we disallowed key press
-    MessageBeep(MB_ICONHAND);
+    KeyErrorBeep;
 end;
 
 { TPrintingPrefsPreview }
@@ -393,7 +392,9 @@ begin
   // Merge in source code
   fRE.SelStart := fRE.FindText(cPlaceholder, 0, MaxInt, []);
   fRE.SelLength := Length(cPlaceholder);
-  RTFInsertString(fRE, HiliteSource(UseColor, SyntaxPrint));
+  RTFInsertString(
+    fRE, StringToASCIIString(HiliteSource(UseColor, SyntaxPrint))
+  );
 end;
 
 function TPrintingPrefsPreview.HiliteSource(const UseColor,

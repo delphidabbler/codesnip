@@ -48,7 +48,7 @@ uses
   // Delphi
   Windows,
   // Project
-  UAppInfo, UHTMLHelp, UHelpMgr;
+  UAppInfo, UHTMLHelp, UHelpMgr, UUnicodeHelper;
 
 
 type
@@ -111,11 +111,16 @@ procedure THTMLHelpMgr.ShowHelp(const AKeyword: string);
 var
   ALink: THHAKLink; // structure containing details of A-Link
 begin
+  ZeroMemory(@ALink, SizeOf(THHAKLink));
   // Fill in A link structure
-  ZeroMemory(@ALink, SizeOf(ALink));
-  ALink.cbStruct := SizeOf(ALink);      // size of structure
-  ALink.pszKeywords := PChar(AKeyword); // required keyword
-  ALink.fIndexOnFail := True;           // display index page if kwd not found
+  ALink.cbStruct := SizeOf(THHAKLink);
+  // *** NOTE:
+  // This one is weird: when using the unicode API just casting the keyword to
+  // PChar causes HTML Help to see only the first character of the keyword. We
+  // have to cast to ASCII string and then to a pointer to get this to work,
+  // even though pszKeywords is declared as PWideChar
+  ALink.pszKeywords := Pointer(StringToASCIIString(AKeyword));
+  ALink.fIndexOnFail := True;
   // Display help
   DoAppHelp(HH_ALINK_LOOKUP, '', LongWord(@ALink));
 end;

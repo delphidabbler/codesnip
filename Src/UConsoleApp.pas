@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -367,7 +367,9 @@ const
   // Maps Visible property to required wondows flags
   cShowFlags: array[Boolean] of Integer = (SW_HIDE, SW_SHOW);
 var
-  StartInfo: TStartupInfo;  // Information about process from OS
+  StartInfo: TStartupInfo;  // information about process from OS
+  SafeCmdLine: string;      // command line: safe for CreateProcessW
+  CreateFlags: DWORD;       // process creation flags
 begin
   // Set up startup information structure
   FillChar(StartInfo, Sizeof(StartInfo),#0);
@@ -382,14 +384,34 @@ begin
     hStdError := fStdErr;
     wShowWindow := cShowFlags[fVisible];  // show or hide window
   end;
+  // Make CmdLine parameter safe for passing to CreateProcess (Delphi 2009
+  // and later). Need to ensure memory space is writeable because of issue with
+  // CreateProcessW. Problem does not exist with CreateProcessA.
+  // Without the following code this problem would arise if this method was
+  // called with a constant or string with -1 reference count as the CmdLine
+  // parameter.
+  // See http://msdn.microsoft.com/en-us/library/ms682425.aspx for an
+  // explanation of the problem: look under the lpCommandLine parameter section.
+  // Remy Lebeau suggested the workaround used below in his post to
+  // https://forums.codegear.com/thread.jspa?threadID=12826
+  SafeCmdLine := CmdLine;
+  UniqueString(SafeCmdLine);
+  // Set up creation flags: special flag required for unicode environments,
+  // which is want when unicode support is enabled. Used to determine type of
+  // environment block is passed to app: unicode or ansi
+  {$IFDEF UNICODE}
+  CreateFlags := CREATE_UNICODE_ENVIRONMENT;
+  {$ELSE}
+  CreateFlags := 0;
+  {$ENDIF}  
   // Try to create the process
   Result := CreateProcess(
     nil,
-    PChar(CmdLine),
+    PChar(SafeCmdLine),
     nil,
     nil,
     True,
-    0,
+    CreateFlags,
     nil,
     PChar(CurrentDir),
     StartInfo,

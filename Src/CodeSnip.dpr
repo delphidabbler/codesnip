@@ -51,11 +51,14 @@ program CodeSnip;
 {$WARNINGS ON}
 {$WRITEABLECONST OFF}
 
+{$INCLUDE CompilerDefines.inc}
+
 {%ToDo 'CodeSnip.todo'}
 
 
 uses
   Forms,
+  Windows,
   GIFImage in '3rdParty\GIFImage.pas',
   MD5 in '3rdParty\MD5.pas',
   PJStreamWrapper in '3rdParty\PJStreamWrapper.pas',
@@ -325,6 +328,7 @@ uses
   UThreadWrapper in 'UThreadWrapper.pas',
   UToolButtonEx in 'UToolButtonEx.pas',
   UTVCheckBoxes in 'UTVCheckBoxes.pas',
+  UUnicodeHelper in 'UUnicodeHelper.pas',
   UUniqueID in 'UUniqueID.pas',
   UUnitsChkListMgr in 'UUnitsChkListMgr.pas',
   UUpdateMgr in 'UUpdateMgr.pas',
@@ -362,6 +366,20 @@ uses
 
 begin
   Application.Initialize;
+  {$IF Defined(SupportsMainFormOnTaskBar)}
+  Application.MainFormOnTaskBar := True;
+  {$ELSE}
+  // Remove hidden application window from task bar: main form is placed on task
+  // bar instead: see TMainForm.CreateParams
+  ShowWindow(Application.Handle, SW_HIDE);
+  SetWindowLong(
+    Application.Handle,
+    GWL_EXSTYLE,
+    GetWindowLong(Application.Handle, GWL_EXSTYLE)
+      and not WS_EX_APPWINDOW or WS_EX_TOOLWINDOW
+  );
+  ShowWindow(Application.Handle, SW_SHOW);
+  {$IFEND}
   SplashForm := TSplashForm.Create(Application);
   SplashForm.Show;
   Application.ModalPopupMode := pmAuto;

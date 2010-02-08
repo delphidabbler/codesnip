@@ -62,7 +62,7 @@ type
         {Stores all data read from stream}
       fIdx: Integer;
         {Cursor into buffer that indexes next character to be read}
-    function GetCh: AnsiChar;
+    function GetCh: Char;
       {Read accessor for Ch property.
         @return Last character read, or EOF at end of file.
       }
@@ -74,20 +74,25 @@ type
       {Class constructor. Creates reader for a stream and reads first character.
         @param Stm [in] Stream to be read.
       }
-    function NextChar: AnsiChar;
+    function NextChar: Char;
       {Fetches next character from buffer.
         @return Character read (EOF at end of buffer and LF at end of line).
       }
     procedure PutBackChar;
       {Puts last read character back on the stream.
       }
-    property Ch: AnsiChar read GetCh;
+    property Ch: Char read GetCh;
       {Last character read from stream (EOF if at end of stream and LF at end
       of line}
   end;
 
 
 implementation
+
+
+uses
+  // Project
+  UUnicodeHelper;
 
 
 { TTextStreamReader }
@@ -99,14 +104,14 @@ constructor TTextStreamReader.Create(const Stm: TStream);
 begin
   inherited Create;
   // Read stream into buffer
-  SetLength(fBuffer, Stm.Size);
-  Stm.ReadBuffer(fBuffer[1], Stm.Size);
+  SetLength(fBuffer, Stm.Size div SizeOf(Char));
+  Stm.ReadBuffer(Pointer(fBuffer)^, Stm.Size);
   // Set cursor to just before start of buffer then read first char
   fIdx := 0;
   NextChar;
 end;
 
-function TTextStreamReader.GetCh: AnsiChar;
+function TTextStreamReader.GetCh: Char;
   {Read accessor for Ch property.
     @return Last character read, or EOF at end of file.
   }
@@ -115,7 +120,7 @@ begin
   begin
     // We are within buffer: get char at current position
     Result := fBuffer[fIdx];
-    if Result in [CR, LF] then
+    if IsCharInSet(Result, [CR, LF]) then
       // Char is one of EOL chars => return EOL
       Result := EOL;
   end
@@ -124,7 +129,7 @@ begin
     Result := EOF;
 end;
 
-function TTextStreamReader.NextChar: AnsiChar;
+function TTextStreamReader.NextChar: Char;
   {Fetches next character from buffer.
     @return Character read (EOF at end of buffer and EOL at end of line).
   }

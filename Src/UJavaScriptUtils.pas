@@ -47,8 +47,9 @@ function JSLiteralFunc(const FnName: string;
     @param Params [in] Dynamic array of literal parameter values. [] indicates a
       parameterless function.
     @except EBug raised if type of any value in Params has an unsupported type.
-      Valid types are Integer, Boolean, Extended, ShortString, AnsiString,
-      AnsiChar and PAnsiChar.
+      Valid types are Integer, Boolean, Extended and either AnsiString and
+      PAnsiChar or UnicodeString and WideChar, depending on if compiled with
+      Unicode support.
   }
 
 
@@ -124,7 +125,7 @@ begin
   Result := IntToStr(I);
 end;
 
-function LiteralParam(const S: AnsiString): string; overload;
+function LiteralParam(const S: string): string; overload;
   {Converts a string into a literal string parameter suitable for passing to a
   JavaScript function.
     @param S [in] Value of parameter.
@@ -177,8 +178,9 @@ function JSLiteralFunc(const FnName: string;
     @param Params [in] Dynamic array of literal parameter values. [] indicates a
       parameterless function.
     @except EBug raised if type of any value in Params has an unsupported type.
-      Valid types are Integer, Boolean, Extended, ShortString, AnsiString,
-      AnsiChar and PAnsiChar.
+      Valid types are Integer, Boolean, Extended and either AnsiString and
+      PAnsiChar or UnicodeString and WideChar, depending on if compiled with
+      Unicode support.
   }
 var
   Idx: Integer;           // loops thru all provided parameters
@@ -200,13 +202,15 @@ begin
           Param := LiteralParam(ParamVar.VInteger);
         vtExtended:
           Param := LiteralParam(ParamVar.VExtended^);
-        vtString:
-          Param := LiteralParam(ParamVar.VString^);
-        vtAnsiString:
-          Param := LiteralParam(PAnsiChar(ParamVar.VAnsiString));        vtChar:
+        {$IFDEF UNICODE}
+        vtUnicodeString:
+          Param := LiteralParam(PWideChar(ParamVar.VUnicodeString));
+        vtWideChar:
+          Param := LiteralParam(ParamVar.VWideChar);
+        {$ELSE}
+        vtAnsiString:          Param := LiteralParam(PAnsiChar(ParamVar.VAnsiString));        vtChar:
           Param := LiteralParam(ParamVar.VChar);
-        vtPChar:
-          Param := LiteralParam(ParamVar.VPChar);
+        {$ENDIF}
         else
           // ** do not localise
           raise EBug.Create(            'JSLiteralFunc(): Unsupported parameter type'          );      end;

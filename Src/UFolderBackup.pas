@@ -89,7 +89,8 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UCheckSum, UDataStreamIO, UDOSDateTime, UExceptions, UUtils;
+  UCheckSum, UDataStreamIO, UDOSDateTime, UExceptions, UUnicodeHelper, UUtils;
+
 
 {
   Backup file format
@@ -116,8 +117,8 @@ uses
   Version 2 Format
   ----------------
 
-    $FFFF                     - Indicator of post-v1 file type
-    $0002                     - Indicator for v2 file type
+    $FFFF                     - indicator of post-v1 file type
+    $0002                     - indicator for v2 file type
     FileCount: SmallInt       - number of files encoded in backup file
 
   followed by FileCount file records of:
@@ -132,8 +133,8 @@ uses
   Version 3 Format
   ----------------
 
-    $FFFF                     - Indicator of post-v1 file type
-    $0003                     - Indicator for v3 file type
+    $FFFF                     - indicator of post-v1 file type
+    $0003                     - indicator for v3 file type
     FileID: SmallInt          - indicator for file type (user defined)
     FileCount: SmallInt       - number of files encoded in backup file
 
@@ -195,7 +196,7 @@ begin
       );
       Writer.WriteLongInt(DOSDateTime.DateStamp);
       Content := FileToString(SourceFileSpec(FileName));
-      Writer.WriteString(TCheckSum.Calculate(Content), 32);
+      Writer.WriteString(TCheckSum.Calculate(Latin1BytesOf(Content)), 32);
       Writer.WriteSizedLongString(Content);
     end;
   finally
@@ -230,8 +231,8 @@ var
   FileCount: Integer;         // number of files to restore
   Idx: Integer;               // loops through all files in backup
   FileName: string;           // name of file to restore
-  MD5: string;                // checksum of file to restore
-  Content: string;            // content of file to restore
+  MD5: Latin1String;          // checksum of file to restore
+  Content: Latin1String;      // content of file to restore
   DOSDateTime: IDOSDateTime;  // date stamp of file to restore
   HeaderWord: SmallInt;       // first word value in file
   Version: SmallInt;          // file version
@@ -272,7 +273,7 @@ begin
     for Idx := 1 to FileCount do
     begin
       // Get file details: name, date stamp, checksum and content
-      FileName := SourceFileSpec(Reader.ReadSizedString);
+      FileName := SourceFileSpec(string(Reader.ReadSizedString));
       DOSDateTime := TDOSDateTimeFactory.CreateFromDOSTimeStamp(
         Reader.ReadLongInt
       );
@@ -284,7 +285,7 @@ begin
       if not TCheckSum.Compare(Content, MD5) then
         raise ECodeSnip.CreateFmt(sBadFileContent, [FileName]);
       // Write file and set date stamp
-      StringToFile(Content, FileName);
+      StringToFile(string(Content), FileName);
       DOSDateTime.ApplyToFile(FileName);
     end;
   finally
