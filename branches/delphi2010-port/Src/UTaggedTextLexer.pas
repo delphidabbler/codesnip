@@ -56,7 +56,7 @@ const
   cDoubleQuote = '"';
   cWhiteSpace = [' ', TAB, LF, VTAB, FF, CR];
   cQuotes = [cSingleQuote, cDoubleQuote];
-  { TODO -oSelf -cProposal : Add a new const for '=' symbol }
+  cEquals = '=';
 
 
 type
@@ -819,7 +819,8 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
     // We have attribute: get name
     StartPos := NextChPos;
     while (NextChPos <= Len)
-      and not IsWhiteSpace(TagStr[NextChPos]) and (TagStr[NextChPos] <> '=') do
+      and not IsWhiteSpace(TagStr[NextChPos])
+      and (TagStr[NextChPos] <> cEquals) do
       Inc(NextChPos);
     Name := MidStr(TagStr, StartPos, NextChPos - StartPos);
     // skip any white space following name
@@ -828,7 +829,7 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
 
     // Check for value
     // if current character is '=' we have a value (else no value)
-    if TagStr[NextChPos] = '=' then
+    if TagStr[NextChPos] = cEquals then
     begin
       // skip '=' symbol
       Inc(NextChPos);
