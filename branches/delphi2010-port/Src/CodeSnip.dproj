@@ -32,6 +32,10 @@
 			</DelphiCompile>
 			<DCCReference Include="3rdParty\GIFImage.pas"/>
 			<DCCReference Include="3rdParty\MD5.pas"/>
+			<DCCReference Include="3rdParty\PJStreamWrapper.pas"/>
+			<DCCReference Include="3rdParty\PJSysInfo.pas"/>
+			<DCCReference Include="3rdParty\PJVersionInfo.pas"/>
+			<DCCReference Include="3rdParty\PJWdwState.pas"/>
 			<DCCReference Include="3rdParty\UEncrypt.pas"/>
 			<DCCReference Include="AutoGen\IntfExternalObj.pas"/>
 			<DCCReference Include="FmAboutDlg.pas">
@@ -339,6 +343,7 @@
 			<DCCReference Include="UFileHiliter.pas"/>
 			<DCCReference Include="UFileProtocol.pas"/>
 			<DCCReference Include="UFileUpdater.pas"/>
+			<DCCReference Include="UFolderBackup.pas"/>
 			<DCCReference Include="UFontHelper.pas"/>
 			<DCCReference Include="UFormAligner.pas"/>
 			<DCCReference Include="UFreePascalCompiler.pas"/>
@@ -371,6 +376,7 @@
 			<DCCReference Include="UIniDataReader.pas"/>
 			<DCCReference Include="UIStringList.pas"/>
 			<DCCReference Include="UJavaScriptUtils.pas"/>
+			<DCCReference Include="UKeysHelper.pas"/>
 			<DCCReference Include="ULEDImageList.pas"/>
 			<DCCReference Include="ULinkAction.pas"/>
 			<DCCReference Include="ULists.pas"/>
