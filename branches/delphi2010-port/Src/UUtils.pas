@@ -246,6 +246,10 @@ function IsValidDriveLetter(const C: Char): Boolean;
     @return True if C is a valid drive letter, False otherwise.
   }
 
+procedure KeyErrorBeep;
+  {Emits a sound indicating a keypress error.
+  }
+
 
 implementation
 
@@ -1014,6 +1018,13 @@ function IsValidDriveLetter(const C: Char): Boolean;
   }
 begin
   Result := IsCharInSet(C, ['A'..'Z', 'a'..'z']);
+end;
+
+procedure KeyErrorBeep;
+  {Emits a sound indicating a keypress error.
+  }
+begin
+  MessageBeep(UINT(-1));
 end;
 
 end.

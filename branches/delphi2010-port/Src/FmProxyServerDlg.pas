@@ -186,9 +186,7 @@ begin
   if (Key = cDot) and (CountDelims(edIPAddress.Text, cDot) = 3) then
     Key := #0;
   if Key = #0 then
-    { TODO -cImprovement : Standardise this with other beeps - create UUtils
-      procedure? See also FrPrintingPrefs }
-    MessageBeep(Cardinal(-1));
+    KeyErrorBeep;
 end;
 
 procedure TProxyServerDlg.edPortKeyPress(Sender: TObject; var Key: Char);
@@ -200,9 +198,7 @@ begin
   if not IsDigit(Key) and (Key <> BACKSPACE) then
     Key := #0;
   if Key = #0 then
-    { TODO -cImprovement : Standardise this with other beeps - create UUtils
-      procedure? See also FrPrintingPrefs }
-    MessageBeep(Cardinal(-1));
+    KeyErrorBeep;
 end;
 
 class function TProxyServerDlg.Execute(const AOwner: TComponent): Boolean;

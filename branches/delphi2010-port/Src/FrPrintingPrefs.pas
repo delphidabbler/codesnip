@@ -116,7 +116,7 @@ uses
   SysUtils, StrUtils, Windows, Graphics, Math, ComCtrls,
   // Project
   FmPreferencesDlg, IntfCommon, UConsts, UHiliteAttrs, UPrintInfo, URTFBuilder,
-  URTFUtils, USyntaxHiliters, UUnicodeHelper;
+  URTFUtils, USyntaxHiliters, UUnicodeHelper, UUtils;
 
 
 {$R *.dfm}
@@ -331,10 +331,7 @@ begin
     // Disallow any other characters other than backspace or digits
     Key := #0;
   if Key = #0 then
-    // Beep because we disallowed key press
-    { TODO -cImprovement : Standardise this with other beeps - create UUtils
-      procedure? See also FmProxyServerDlg }
-    MessageBeep(MB_ICONHAND);
+    KeyErrorBeep;
 end;
 
 { TPrintingPrefsPreview }
