@@ -62,7 +62,7 @@ ________________________________________________________________________________
 All third party and DelphiDabbler library code is stored in the "Src\3rdParty"
 directory. There are several such files:
 
-+ GIFImage.pas 
++ GIFImage.pas
   See below for license information
 + MD5.pas
   See below for license information
@@ -141,7 +141,7 @@ License, Copyright and Disclaimer
 
 TGIFImage is Copyright © 1997-99 Anders Melander. All rights reserved.
 
-Please see copyright.txt for additional copyrights. [Note copyright.txt was not
+Please see copyright.txt for additional copyrights. [Note: copyright.txt was not
 included in the distribution].
 
 Before proceeding with the installation and/or use of this software, carefully
@@ -188,7 +188,7 @@ Without the expressed, written consent of the Author, you may NOT:
 *  sell any portion of TGIFImage on its own, without integrating it into your
    Applications as Executable Code.
 *  bundle TGIFImage with commercial development libraries.
-*  Charge for the value TGIFImage adds to your Applications.
+*  charge for the value TGIFImage adds to your Applications.
 
 Limited warranty
 ----------------
@@ -225,9 +225,9 @@ Credit of work
 If you redistribute TGIFImage in binary form (i.e. as a library or linked into
 an application), the accompanying documentation (e.g. readme file, help file or
 about-box) should state that This software is based, in part, on the work of
-Anders Melander or words to that effect. 
+Anders Melander or words to that effect.
 
-  
+
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Image Files (.ico, .bmp, .gif, .png)
 ________________________________________________________________________________
@@ -243,15 +243,15 @@ domain and can be re-used without restriction:
 Exceptions
 
 + Res\Img\symbol-information.png and Res\Img\symbol-exclamation.png are adapted
-  from the Vista Aero Pack 3 by VistaICO. see below for license terms and
-  conditions. 
+  from the Vista Aero Pack 3 by VistaICO. See below for license terms and
+  conditions.
 
 + The image list defined in FmMain.dfm contains original and modified images
   extracted from Mark James' Silk Icon set 1.3, and converted from .png to
   .bmp formats. The Silk Icon Set images are located at indexes 32, 33, 34 and
   35 in the image list. File copies of these images are not provided. See below
   for license terms and condtions.
-  
+
 + Res\Img\cancel.png is taken from the Led Icon Set from
   http://led24.de/iconset/ and Res\Img\cancel-glow.png is based on it. See below
   for license terms and conditions.
@@ -264,6 +264,16 @@ Exceptions
   of the images must contain a statement somewhere in the distribution's
   document that contains the above copyright statement and that refers to the
   correct Creative Commons license.
+
++ Res\Img\CodeSnip.ico is the program's icon. This file is copyright (C) 2009
+  Peter Johnson (www.delphidabbler.com). The file may not be altered in any way
+  and may not be used in any other programs, included programs derived from the
+  CodeSnip source code, unless explicit permission is given by the author. This
+  means that if you modify CodeSnip and publish your changes then you must
+  remove the icon or repace it with you own.
+
+  Bill Miller's Code Snippets Demonstrator program reuses the icon with
+  permission.
 
 --------------------------------------------------------------------------------
 Vista Aero Pack 3 by VistaICO
@@ -337,3 +347,6 @@ led24.de
 31/05/2009
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+$Rev$
+$Date$
+________________________________________________________________________________
