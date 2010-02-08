@@ -4,6 +4,15 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.5.1 of 09 February 2010
++ New Unicode build of the program compiled with Delphi 2010. File I/O remains ANSI.
++ Windows NT is no longer supported. Windows 2000 is now the minimum OS. Setup program changed to enforce this.
++ More rigorous enforcement of rules for REML tag attributes used in a snippet's Extra information.
++ Fixed a couple of minor UI problems in the Proxy Server and Trapped Bug Report dialog boxes.
++ Minor changes to HTML and embedded browser code.
++ Some refactoring.
++ Updated documentation.
+
 Release v3.5.0 of 16 January 2010
 + Overview pane can now be configured using Preferences dialog box to start up with all sections collapsed.
 + Reference to ability to donate by credit / debit card removed from Donate dialog box: now PayPal only.
@@ -18,7 +27,7 @@ Release v3.4.8 of 10 January 2010
 Release v3.4.7 of 31 December 2009
 + Added IE version number to OS information submitted when program is registered.
 + Program now displays "[localhost]" in main window caption when started with -localhost switch.
-+ All text edit controls in snippets editor now have custom popup menus and shortcuts for "cut", "copy", "paste", "select all" and "undo" now work.
++ All text edit controls in snippets editor now have custom Poppy menus and shortcuts for "cut", "copy", "paste", "select all" and "undo" now work.
 + Refactored code that supports use of fonts.
 + Updated privacy statement re registration changes.
 
@@ -37,7 +46,7 @@ Release v3.4.5 of 09 November 2009
 + Fixed un-reported makefile bug.
 
 Release v3.4.4 of 21 October 2009
-+ Changed bug reporting mechanism. Bugs are now reported via the online bug tracker. Bug report dialogs changed accordingly. Access to the old bug report web service was removed.
++ Changed bug reporting mechanism. Bugs are now reported via the on-line bug tracker. Bug report dialogs changed accordingly. Access to the old bug report web service was removed.
 + Added two new default syntax highlighter styles: "Visual Studio" and "No Highlighter". The latter switches off syntax highlighting.
 + Fixed bug no. 2882331 (see http://www.delphidabbler.com/url/codesnip-bugs). This was a bug in the syntax highlighter that occurred when an unexpected character was encountered.
 + Updated help file re changes.
@@ -95,7 +104,7 @@ Release v3.2.3 of 14 September 2009
 Release v3.2.2 of 08 September 2009
 + Fixed bug in check list boxes where moving selection using keyboard causes check state to be toggled.
 + Custom colours used in colour dialog, on syntax highlighter page of preferences dialog box, are now persistent.
-+ Re-implemented code that displays popup menus in detail pane, and fixed a minor glitch as a side effect.
++ Re-implemented code that displays pop-up menus in detail pane, and fixed a minor glitch as a side effect.
 + Simplified code that manages help system.
 + Refactored code that manages and customises common dialogs.
 
@@ -109,7 +118,7 @@ Release v3.2.1 of 24 August 2009
 + Numerous refactorings.
 
 Release v3.2 of 17 August 2009
-+ Added facility for CodeSnip to use a proxy server when accessing the internet.
++ Added facility for CodeSnip to use a proxy server when accessing the Internet.
 + Provided a new dialog box to configure any proxy server.
 + Updated help file re proxy server support and configuration.
 + UI is no longer frozen while web services are executing requests. "Update from Web" dialog box changed to indicate if cancel button pressed when a web request is executing.
@@ -143,7 +152,7 @@ Un-released v3.0.3 of 12 Jul 2009
 + Fixed an obscure bug in category code snippet generation as a side effect of refactoring.
 
 Release v3.0.2 of 08 Jul 2009
-+ Fixed broken link to CodeSnip databsse in welcome page.
++ Fixed broken link to CodeSnip database in welcome page.
 + Fixed bug in selection search that was selecting both user defined and main database snippets with same name if only one was selected.
 + Fixed bug where units required by constants and type definitions were not being added to generated units.
 
@@ -153,14 +162,14 @@ Release v3.0.1 of 06 July 2009
 + Updated exported code and user database file formats to v4 to accommodate revised extra information, although we now save data in v3 format if possible.
   
 Release v3.0 of 29 June 2009
-+ Added support for constants and type definition snippets: there are now four types of snippets - routines, constants, types and freeform (which don't conform to any format). Freeform snippets cannot be included in generated units.
++ Added support for constants and type definition snippets: there are now four types of snippets - routines, constants, types and free-form (which don't conform to any format). Free-form snippets cannot be included in generated units.
 + Further formatting instructions added to the active text used in database's Extra information field. Also added a contributors field to database.
 + Three predefined syntax highlighters are now provided, with default changing to Delphi 2006 default style. Syntax highlighting used in main display is now customisable. Highlighter keyword list updated.
 + Main display changed:
   - Test unit is no longer displayed in compiler check pane: it's now displayed in a dialog box.
   - Compiler check pane's font changed to true type, with face depending on OS.
-  - Information pane now hides compiler table when a freeform snippet is displayed.
-  - Compiler check pane now displays special "not available" pages when no compilers installed or a freeform snippet or a section header is selected.
+  - Information pane now hides compiler table when a free-form snippet is displayed.
+  - Compiler check pane now displays special "not available" pages when no compilers installed or a free-form snippet or a section header is selected.
   - "Uncategorised" tab removed from overview pane and replaced with new "Alphabetical" tab that groups snippets by initial letter and "Snippet Kind" tab that groups snippets by kind.
   - "Section" nodes in overview pane can now be expanded and collapsed: pane now has toolbar to perform these actions.
   - "Edit snippet" links displayed in information pane are now also displayed in compiler check pane.
@@ -169,7 +178,7 @@ Release v3.0 of 29 June 2009
   - Some changes to menu glyphs and shortcut keys.
   - Welcome display modified and now has a link to the donate dialog box.
 + Added option to copy an snippet's source code to clipboard in text and RTF formats.
-+ Exporting and copying of snippets complete with descriptions and cross references is restricted to routines: not supported for freeform, types and constants.
++ Exporting and copying of snippets complete with descriptions and cross references is restricted to routines: not supported for free-form, types and constants.
 + Improved detection of invalid dependencies in snippets, including circular dependencies, and provided option to view all dependencies for any snippet from main window and snippets editor.
 + Revised content of many dialog boxes etc to refer to "snippets" instead of "routines" where necessary.
 + Changed format and location of user-defined database and format of exported and submitted files.
@@ -181,7 +190,7 @@ Release v3.0 of 29 June 2009
 + Changed size of preferences dialog box and revised syntax highlighter tab.
 + Changed captions in preview dialog box.
 + Changed appearance of splash screen.
-+ Modified snippets editor to work with new snippet types, improved error checking code and prevented test compilation of freeform snippets.
++ Modified snippets editor to work with new snippet types, improved error checking code and prevented test compilation of free-form snippets.
 + Speeded up loading of main database.
 + Added an easter egg!
 + A few refactorings.
@@ -198,7 +207,7 @@ Un-released v2.4.1 of 13 May 2009
 + Changed URL accessed by donations dialog box.
 
 Release v2.4 of 11 May 2009
-+ Added donate menu option and dialog that accesses a Paypal donation web page.
++ Added donate menu option and dialog that accesses a PayPal donation web page.
 + Removed support for the Windows 9x platform since CodeSnip now generates fatal errors on that platform:
   - Removed Windows 9x specific code.
   - Changed installer to prevent installation on Windows 9x.
@@ -269,7 +278,7 @@ Release v2.2.4 of 19 December 2008
 + Fixed bug in text and RTF preview dialog boxes that was setting margins incorrectly and clipping displayed text.
 
 Un-released v2.2.3 of 17 December 2008
-+ Refactored code that handles XML files (user database and import / export). Pulled out common code and further extended xml document object.
++ Refactored code that handles XML files (user database and import / export). Pulled out common code and further extended XML document object.
 
 Un-released v2.2.2 of 16 December 2008
 + Added glyphs to printers in print dialog box.
@@ -290,7 +299,7 @@ Un-released v2.2.1 of 16 December 2008
 + Fixed minor bug in open and save dialogs that occasionally failed to detect existence of a file.
 
 Un-released v2.2 of 15 December 2008
-+ Added facility to submit user defined snippets via internet for inclusion in main database.
++ Added facility to submit user defined snippets via Internet for inclusion in main database.
 + Added facility to export user defined routines to file and to import exported files.
 + Made minor changes to wizard dialog boxes.
 + Rewrote message dialog box code.
@@ -331,7 +340,7 @@ Un-released v2.0.2 of 19 September 2008
 + Corrected reference in installer to menu item used to update database (this changed from v2).
 
 Release v2.0.1 of 18 September 2008
-+ Fixed bug that fails to load user database and deletes it if a category is added to main database during online update.
++ Fixed bug that fails to load user database and deletes it if a category is added to main database during on-line update.
 + Fixed bug that ignores any user defined snippets that have same name as snippets in main database.
 + Ensured main form is disabled when database is loading.
 + Ensured splash form is hidden if an exception occurs while splash form is displayed.
@@ -346,7 +355,7 @@ Release v2.0 of 15 September 2008
 + Modified extended external object that communicates between browser controls and application.
 + Main database engine heavily modified.
 + Greater use of DHTML to manipulate main display.
-+ Made browser popup menu display glyphs for items menu items that replicate links in browser control.
++ Made browser pop-up menu display glyphs for items menu items that replicate links in browser control.
 + Modified welcome page to appear differently depending on state of main and user defined databases.
 + Disclaimers, copyright and other headers of saved, printed and copied documents changed.
 + Commenting of exported code changed slightly to allow for user snippets that may not support all commenting styles.
@@ -433,7 +442,7 @@ Release v1.8.1 of 04 November 2007
 + Made changes to browser control and URL handling.
 
 Un-released v1.8 of 04 November 2007
-+ Added popup context menus to main display's detail pane.
++ Added pop-up context menus to main display's detail pane.
 
 Un-released v1.7.7 of 29 October 2007
 + Modified code of compiler wait dialog box and splash screen to try to prevent bug that occasionally prevent the dialog from closing, locking up application.
@@ -595,7 +604,7 @@ Un-released v1.4 of 03 December 2006
 + Fixed a typo and index error in help file.
 
 Un-released v1.3.5 of 01 December 2006
-+ Changed to display a borderless message dialog during long test compilations. The dialog is not displayed for shorter compilations.
++ Changed to display a border-less message dialog during long test compilations. The dialog is not displayed for shorter compilations.
 + Updated help file re above and fixed an error in the search menu topic.
 
 Un-released v1.3.4 of 26 November 2006
@@ -614,7 +623,7 @@ Un-released v1.3.1 of 21 November 2006
 + Made minor modification to appearance of Configure Compilers dialog box.
 
 Un-released v1.3 of 18 November 2006
-+ Added facility to sign up to CodeSnip mailing list online.
++ Added facility to sign up to CodeSnip mailing list on-line.
 + Corrected further typos in registration wizard.  
 + Updated help file re mailing list sign-up, changed privacy statement and added license to contents page.
 
@@ -684,7 +693,7 @@ Un-released v1.0.3 of 26 October 2006
 Release v1.0.2 of 25 October 2006
 + Changed so that links from program to external web pages display in default browser rather than IE.
 + Refactored code that displays license text file in external application.
-+ Reworded some of welcome screen and added links to online database.
++ Reworded some of welcome screen and added links to on-line database.
 + Refactored some JavaScript code that works with main display HTML and web browser code.
 + Made minor changes to hints displayed in status bar when cursor is over links.
 
@@ -785,7 +794,7 @@ Un-released v0.10.2 Beta of 10 January 2006
 + Reverted to Delphi 7 to avoid Delphi 2006 bug that was enabling dialogs to be minimized and maximized.
 + Reordered controls in Find Compiler dialogs.
 + Restored title bar close button to web update dialog.
-+ Reverted to Indy 9 internet controls (from Indy 10) and made relevant adjustments to code.
++ Reverted to Indy 9 Internet controls (from Indy 10) and made relevant adjustments to code.
 + Completed help topics for Find Text and Find Compiler dialogs.
 
 Release v0.10.1 Beta of 09 January 2006
@@ -832,7 +841,7 @@ Release v0.7.6 Beta of 04 June 2005
 + Occasional failure to create compiler log files now reported as error rather than bug.
 
 Release v0.7.5 Beta of 03 June 2005
-+ Fixes bugs that surface when user has disabled scripts in IE's internet zone. Program no longer runs in internet zone.
++ Fixes bugs that surface when user has disabled scripts in IE's Internet zone. Program no longer runs in Internet zone.
 
 Release v0.7.4 Beta of 09 May 2005
 + Made user defined settings in Save Snippets dialog box persistent.
@@ -852,7 +861,7 @@ Un-released v0.7.2 Beta of 21 April 2005
 
 Un-released v0.7.1 Beta of 20 April 2005
 + Disabled F1 key press handling in dialogs with no help button. Was triggering bad topic errors in WinHelp.
-+ Added "Compile" prefix to compiler check pages's "Test Compile" button.
++ Added "Compile" prefix to compiler check page's "Test Compile" button.
 + Fixed errors in "do nothing" doc host handler used by web browser control.
 
 Release v0.7.0 Beta of 17 March 2005
