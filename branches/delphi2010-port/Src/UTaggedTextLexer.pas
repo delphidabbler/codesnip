@@ -27,7 +27,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -52,21 +52,25 @@ uses
 
 const
   // Character constants made public
+  cEquals = '=';
   cSingleQuote = '''';
   cDoubleQuote = '"';
-  cWhiteSpace = [' ', TAB, LF, VTAB, FF, CR];
   cQuotes = [cSingleQuote, cDoubleQuote];
-  cEquals = '=';
 
 
 type
 
   {
   ETaggedTextLexer:
-    Class of exception raised when errors reported by the lexer and its
-    supporting classes.
+    Class of exception raised when errors reported by the lexer.
   }
   ETaggedTextLexer = class(ECodeSnip);
+
+  {
+  ETaggedTextTagHandler:
+    Class of exception raised by tagged text tag handler.
+  }
+  ETaggedTextTagHandler = class(ECodeSnip);
 
   {
   TTaggedTextKind:
@@ -432,6 +436,8 @@ resourcestring
     'End tag "%0:s" does not match opening tag "%1:s"';
   sErrorReadingEntities = 'Error reading entities in text. %s';
   sUnexpectedEOF = 'End of file found before all tags closed';
+  sBadAttribute = 'malformed attribute';
+  sBadTagAttribute = 'Tag "%0:s": %1:s';
 
 
 { TTaggedTextEntityHandler }
@@ -500,7 +506,7 @@ begin
       fLastErrorMessage := sEntityHasNoValue;
       Exit;
     end;
-    Assert(Length(Entity) >= 2,                            // ** do not localise
+    Assert(Length(Entity) >= 2,
       ClassName + '.TranslateEntity: entity too short');
     // parse out the digits: only 0..9 accepted
     // we reject -ve numbers: use default of -1 so all conversion errors give
@@ -650,8 +656,7 @@ constructor TTaggedTextTagHandler.Create(const EH: TTaggedTextEntityHandler);
     @param EH [in] Method to call to translate entities.
   }
 begin
-  Assert(Assigned(EH),                                     // ** do not localise
-    ClassName + '.Create: EH is not assigned');
+  Assert(Assigned(EH), ClassName + '.Create: EH is not assigned');
   inherited Create;
   fTagList := TStringList.Create;
   fTagList.Sorted := True;
@@ -694,10 +699,8 @@ var
   Len: Integer; // length of tag
 begin
   Len := Length(WorkTag);
-  Assert(WorkTag[1] = '<',                                 // ** do not localise
-    ClassName + '.GetKind: Tag must begin with "<"');
-  Assert(WorkTag[Len] = '>',                               // ** do not localise
-    ClassName + '.GetKind: Tag must end with ">"');
+  Assert(WorkTag[1] = '<', ClassName + '.GetKind: Tag must begin with "<"');
+  Assert(WorkTag[Len] = '>', ClassName + '.GetKind: Tag must end with ">"');
   if (WorkTag = '<>') or (WorkTag = '</>') then
   begin
     // we have <> or </> => empty tag: delete all tag
@@ -706,8 +709,7 @@ begin
     WorkTag := '';
     Exit;
   end;
-  Assert(Len >= 3,                                         // ** do not localise
-    ClassName + '.GetKind: Tag too short');
+  Assert(Len >= 3, ClassName + '.GetKind: Tag too short');
   if (Len >= 4) and (WorkTag[Len-1] = '/') then
   begin
     // tag of form <tag> => simple: we delete the / char
@@ -755,8 +757,7 @@ function TTaggedTextTagHandler.GetTagName(const TagStr: string;
 var
   StartPos: Integer;  // start position of tag in TagStr
 begin
-  Assert(Length(TagStr) >= 1,                              // ** do not localise
-    ClassName + '.GetTagName: Tag name too short');
+  Assert(Length(TagStr) >= 1, ClassName + '.GetTagName: Tag name too short');
   // Start at the beginning of the tag string
   NextChPos := 1;
   // Skip any white space before tag
@@ -793,19 +794,18 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
     }
   var
     StartPos: Integer;        // start position of name or value in tag string
-    ValDelims: TSysCharSet;   // characters used to delimit values (e.g. quotes)
+    AttrQuote: Char;          // kind of quote surroundin attribute values
     Len: Integer;             // length of whole tag
+    EscapedValue: string;     // value before entities are translated
   begin
-    { TODO -cRefactor: Change implementation and try to loose ValDelims (and
-      then cWhiteSpace). Consider insisting that params are quoted (think they
-      are in this program }
     // Set name & value to '' in case not found
     Name := '';
     Value := '';
+
     // Record length of whole tag
     Len := Length(TagStr);
 
-    // Check to see if we have any params
+    // Check to see if we have any attributes
     // skip white space
     while (NextChPos <= Len) and IsWhiteSpace(TagStr[NextChPos]) do
       Inc(NextChPos);
@@ -816,59 +816,52 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
       Exit;
     end;
 
-    // We have attribute: get name
+    // We have attribute: get it.
+    // Must be in format name="value" or name='value'. "value" may contain
+    // single quotes and 'value' may contain double quotes.
+
+    // get attribute name
     StartPos := NextChPos;
     while (NextChPos <= Len)
       and not IsWhiteSpace(TagStr[NextChPos])
       and (TagStr[NextChPos] <> cEquals) do
       Inc(NextChPos);
     Name := MidStr(TagStr, StartPos, NextChPos - StartPos);
+
     // skip any white space following name
     while (NextChPos <= Len) and IsWhiteSpace(TagStr[NextChPos]) do
       Inc(NextChPos);
 
-    // Check for value
-    // if current character is '=' we have a value (else no value)
-    if TagStr[NextChPos] = cEquals then
-    begin
-      // skip '=' symbol
+    // MUST now have '=' character: skip over it if so, error if not
+    if (NextChPos > Len) or (TagStr[NextChPos] <> cEquals) then
+      raise ETaggedTextTagHandler.Create(sBadAttribute);
+    Inc(NextChPos);
+
+    // skip white space between '=' and value
+    while (NextChPos <= Len) and IsWhiteSpace(TagStr[NextChPos]) do
       Inc(NextChPos);
-      // skip white space between '=' and value
-      while (NextChPos <= Len) and IsWhiteSpace(TagStr[NextChPos]) do
-        Inc(NextChPos);
-      // if NextChPos > Len the there is no value: do nothing
-      if NextChPos <= Len then
-      begin
-        // check to see if we have quoted param or not
-        if IsCharInSet(TagStr[NextChPos], cQuotes) then
-        begin
-          // value is quoted: record quote as delimter and skip it
-          ValDelims := [TagStr[NextChPos]];
-          Inc(NextChPos);
-        end
-        else
-          // value is not quoted: single word expected: white space delimits
-          ValDelims := cWhiteSpace;
-        // now get the value: it is between current pos and a delimter
-        StartPos := NextChPos;
-        while (NextChPos <= Len)
-          and not IsCharInSet(TagStr[NextChPos], ValDelims) do
-          Inc(NextChPos);
-        // get the value: allows for closing quotes being missing
-        Value := MidStr(TagStr, StartPos, NextChPos - StartPos);
-        // translate any entities in value: we ignore any errors here
-        fEntityHandler.TranslateTextEntities(
-          MidStr(TagStr, StartPos, NextChPos - StartPos),
-          Value
-        );
-        // if value was quoted, skip over any quote
-        if (cQuotes * ValDelims <> [])
-          and (NextChPos <= Len)
-          and IsCharInSet(TagStr[NextChPos], cQuotes) then
-          Inc(NextChPos);
-      end;
-    end;
-    // Record that we found at least a name
+
+    // MUST now have a quote: record it and skip over
+    if (NextChPos > Len) or not IsCharInSet(TagStr[NextChPos], cQuotes) then
+      raise ETaggedTextTagHandler.Create(sBadAttribute);
+    AttrQuote := TagStr[NextChPos];
+    Inc(NextChPos);
+
+    // record attribute value
+    StartPos := NextChPos;
+    while (NextChPos <= Len) and (TagStr[NextChPos] <> AttrQuote) do
+      Inc(NextChPos);
+    if (NextChPos > Len) then
+      raise ETaggedTextTagHandler.Create(sBadAttribute);
+    EscapedValue := MidStr(TagStr, StartPos, NextChPos - StartPos);
+    // translate any entities in value: they MUST be valid
+    if not fEntityHandler.TranslateTextEntities(EscapedValue, Value) then
+      raise ETaggedTextTagHandler.Create(fEntityHandler.LastErrorMessage);
+
+    // skip over closing quote
+    Inc(NextChPos);
+
+    // Record that we found parameter
     Result := True;
   end;
   // ---------------------------------------------------------------------------
@@ -876,7 +869,7 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
 var
   Name, Value: string;  // name and value of parameter
 begin
-  Assert(Length(TagStr) >= 1,                              // ** do not localise
+  Assert(Length(TagStr) >= 1,
     ClassName + '.GetTagParams: Tag string too short');
   // Set param count to zero
   Result := 0;
@@ -943,14 +936,15 @@ begin
   // Store tag in working storage and record its length
   WorkingTag := Tag;
   Len := Length(WorkingTag);
-  Assert(WorkingTag[1] = '<',                              // ** do not localise
+  Assert(WorkingTag[1] = '<',
     ClassName + '.ProcessTag: Tag must begin with "<"');
-  Assert(WorkingTag[Len] = '>',                            // ** do not localise
+  Assert(WorkingTag[Len] = '>',
     ClassName + '.ProcessTag: Tag must end with ">"');
   // Get kind of tag, stripping out all tag delimiting info leavig just tag name
   // and contents/parameters
   Kind := GetKind(WorkingTag);
   // Process tag content, depending on kind of tag
+  try
   case Kind of
     ttsNull:
       // Error condition: error message set in GetKind
@@ -1035,6 +1029,14 @@ begin
       Result := True;
     end;
   end;
+  except
+    on E: ETaggedTextTagHandler do
+    begin
+      // Error in a tag's parameters
+      Error(sBadTagAttribute, [Text, E.Message]);
+      Exit;
+    end;
+  end;
 end;
 
 { TTaggedTextLexer }
@@ -1051,9 +1053,9 @@ constructor TTaggedTextLexer.Create(
   }
 begin
   // Pre-conditions:
-  Assert(Assigned(TagInfoCallback),                        // ** do not localise
+  Assert(Assigned(TagInfoCallback),
     ClassName + '.Create: TagInfoCallback is nil');
-  Assert(Assigned(EntityInfoCallback),                     // ** do not localise
+  Assert(Assigned(EntityInfoCallback),
     ClassName + '.Create: EntityInfoCallback is nil');
   inherited Create;
   // Create entity and tag handler objects used to parse tags and char entities
@@ -1217,7 +1219,7 @@ begin
       // check if we have found end of tag: error if not
       if fNextCharPos > Length(fTaggedText) then
         raise ETaggedTextLexer.CreateFmt(sNoMatchingEndTag, [StartPos]);
-      Assert(fTaggedText[fNextCharPos] = '>',              // ** do not localise
+      Assert(fTaggedText[fNextCharPos] = '>',
         ClassName + 'NextItem: ">" expected');
       // skip over tag close
       Inc(fNextCharPos);
@@ -1264,9 +1266,9 @@ begin
     begin
       // We have plain text - process it
       fKind := ttsText;
-      Assert(fNextCharPos <= Length(fTaggedText),          // ** do not localise
+      Assert(fNextCharPos <= Length(fTaggedText),
         ClassName + '.NextItem: Beyond end of tagged text');
-      Assert(fTaggedText[fNextCharPos] <> '<',             // ** do not localise
+      Assert(fTaggedText[fNextCharPos] <> '<',
         ClassName + '.NextItem: "<" character expected');
       // get extent of text before ext tag or end of tagged text
       StartPos := fNextCharPos;
