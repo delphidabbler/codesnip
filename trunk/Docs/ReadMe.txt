@@ -23,14 +23,15 @@ ________________________________________________________________________________
 
 IMPORTANT NOTES: 
 
-1) CodeSnip can only be run on the Windows NT platform. It cannot be installed
-   on Windows 95, 98 or Me. It also requires MS Internet Explorer V6 or later.
+1) CodeSnip Windows 2000 or later. It cannot be installed on Windows 95, 98, Me,
+   NT3.51 or NT4. It also requires MS Internet Explorer V6 or later, but IE 7 or
+   8 are recommended.
 
 2) You will need administrator privileges to run the setup program. If you are
-   using a non-admin user account on Windows NT, 2000 or XP you should run setup
-   as administrator. By default Windows Vista will require an admin password if
-   running as a standard user and it will attempt to elevate the process. If UAC
-   prompts are disabled you must run setup as administrator.
+   using a non-admin user account on Windows 2000 or XP you should run setup as
+   administrator. By default Windows Vista and Windows 7 will require an admin
+   password if running as a standard user and setup will attempt to elevate the
+   process. If UAC prompts are disabled you must run setup as administrator.
 
 CodeSnip's installation program is named codesnip-setup-3.x.x.exe, where x.x
 is the program's minor version number. The install program may be distributed in
@@ -128,7 +129,8 @@ Panel or by choosing "Uninstall DelphiDabbler CodeSnip" from the program's start
 menu group.
 
 Administrator privileges will be required to Uninstall CodeSnip. Windows Vista
-with UAC prompts enabled will prompt for an admin password if necessary.
+and Windows 7 with UAC prompts enabled will prompt for an admin password if
+necessary.
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
@@ -145,17 +147,15 @@ Updates will apply to all users of the computer.
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
-Known Installation Issues
+Known Installation and Upgrading Issues
 ________________________________________________________________________________
 
-1) Any source code formatting preferences you may have set when using CodeSnip
-   v1.0.3 or earlier will be lost when upgrading to CodeSnip v1.1 or later. This
-   is because the storage format for source code formatting changed at v1.1. If
-   you experience this problem you need to reset your preferences via the
-   "Tools | Preferences" menu option.
+1) Users of v1.0.3 or earlier will loose any source code formatting preferences
+   when upgrading to the latest version. If you experience this problem you need
+   to reset your preferences via the "Tools | Preferences" menu option.
    
-2) When upgrading from v1.x or v2.x to v3.0 and later any custom syntax
-   highlighting is ignored and the new default highlighting is restored. This
+2) Syntax highlighting preferences will be lost when upgrading from any v1.x or
+   v2.x release and the new v3 default highlighting style will be used. This
    can be changed from the Syntax Highlighter tab of the Preferences dialog box,
    accessed from the "Tools | Preferences" menu option.
 
@@ -236,7 +236,7 @@ ________________________________________________________________________________
 
 Please do report any bugs you find. 
 
-Bugs are recorded in Tracker on SourceForge. View the bug via this url
+Bugs are recorded in Tracker on SourceForge. View the bug via 
 http://www.delphidabbler.com/url/codesnip-bugs which redirects to SourceForge.
 You can also access the bug tracker from CodeSnip by using the "Tools | Report
 Bug Online" and following the link.
@@ -247,6 +247,9 @@ http://www.delphidabbler.com/software/codesnip/bugs
 
 If your bug hasn't been reported or fixed please add a report using the
 "Add new" link on tracker.
+
+To request a new feature please go to the Feature Requests tracker at
+http://www.delphidabbler.com/url/codesnip-featurereq
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
@@ -268,9 +271,11 @@ page.
 Feedback
 ________________________________________________________________________________
 
-If you want to suggest new features or comment on the program please contact the
-author using the contact page at http://www.delphidabbler.com/contact or email
-delphidabber [AT] yahoo [DOT] co [DOT] uk.
+If you want to suggest new features please use the feature request tracker at
+http://www.delphidabbler.com/url/codesnip-featurereq
+
+Any other comments can be sent using the contact page at
+http://www.delphidabbler.com/contact
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
@@ -282,8 +287,7 @@ the on-line Code Snippets database.
 
 You can submit routines from your user-defined database using the "Database |
 Submit Routines" menu option. Otherwise please send your code via the
-DelphiDabbler contact page at http://www.delphidabbler.com/contact or by email
-to delphidabber [AT] yahoo [DOT] co [DOT] uk.
+DelphiDabbler contact page at http://www.delphidabbler.com/contact
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
@@ -306,3 +310,6 @@ Thanks to:
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+$Rev$
+$Date$
+________________________________________________________________________________
