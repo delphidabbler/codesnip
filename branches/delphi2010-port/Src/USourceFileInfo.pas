@@ -224,9 +224,8 @@ begin
   for Idx := 2 to Length(fFileName) do
     if not IsAlphaNumeric(fFileName[Idx]) and (fFileName[Idx] <> '_') then
       fFileName[Idx] := '_';
-  { TODO -cRefactor : Update this Assert statement }
-  Assert((fFileName <> '') and IsValidIdent(fFileName),    // ** do not localise
-    'TSourceFileInfo.SetFileName: Not a valid identifier');
+  Assert((fFileName <> '') and IsValidIdent(fFileName),
+    ClassName + '.SetFileName: Not a valid identifier');
 end;
 
 end.
