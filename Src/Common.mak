@@ -43,12 +43,13 @@
 #   Must be defined in the calling script to address the directory that is to
 #   receive .res and .dcu output files
 #
-# DELPHIROOT (or DELPHI2006)
+# DELPHIROOT (or DELPHI2010)
 #   DELPHIROOT must address the installation directory of the required Delphi
-#   compiler. Any compiler from Delphi 2006 onwards can be used. If Delphi 2006
-#   is to be used the DELPHI2006 macro must be defined to address the Delphi
-#   2006 installation directory. When DELPHI2006 is defined any existing value
-#   of DELPHIROOT is ignored and DELPHI2006 is used instead.
+#   compiler. Any compiler from Delphi 2006 onwards can be used, but the
+#   preferred compiler is Delphi 2010. If Delphi 2010 is to be used the
+#   DELPHI2010 macro can be defined to address the Delphi 2010 installation
+#   directory. When DELPHI2010 is defined any existing value of DELPHIROOT is
+#   ignored and DELPHI2010 is used instead.
 #
 # INDY10
 #   Must be set to the directory where the Indy 10 components are installed. The
@@ -56,10 +57,10 @@
 #   be used to compile the program.
 
 
-# Check for DELPHI2006 macro and use it for DELPHIROOT if set.
+# Check for DELPHI2010 macro and use it for DELPHIROOT if set.
 
-!ifdef DELPHI2006
-DELPHIROOT = $(DELPHI2006)
+!ifdef DELPHI2010
+DELPHIROOT = $(DELPHI2010)
 !endif
 
 # Check for required macros
