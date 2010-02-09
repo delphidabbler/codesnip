@@ -62,13 +62,19 @@
 		ol.spaced li {
 			margin-top: 0.5em;
 		}
+		p, div.spaced {
+			padding: 0;
+			margin: 0.5em 0;
+		}
+		.box, .cmd {
+			padding: 0.25em;
+			background-color: #eef;
+			border: 1px solid silver;
+		}
 		.cmd {
 			margin-left: 2em;
 			margin-right: 2em;
-			background-color: #eef;
 			font-weight: bold;
-			padding: 0.25em;
-			border: 1px solid silver;
 		}
 		.prompt {
 			color: blue;
@@ -88,14 +94,15 @@
 
 <p>
 	<em>CodeSnip</em> is written in Object Pascal and is targeted at Delphi
-	2006, but can be compiled with later versions and works with either Ansi or
-	Unicode string support.
+	2010, but can be compiled with versions back to Delphi 2006. It works with
+	either Ansi or Unicode string support, although Unicode is recommended.
 </p>
 
 <p>
 	The Delphi IDE can be used to modify the source and to perform test
 	builds. Final builds should be built using the provided makefile, but you
-	can get away with using the IDE if you don't change any resources.
+	can get away with using the IDE if you don't change any resources or the
+	type library.
 </p>
 
 <h2>
@@ -103,9 +110,10 @@
 </h2>
 
 <p>
-	Several 3rd party and additional DelphiDabbler libraries and components are
-	required to compile <em>CodeSnip</em>, most of which are included in the
-	code repository in the <code>Src/3rdParty</code> directory.
+	Several DelphiDabbler and other 3rd party libraries and components are
+    required to compile <em>CodeSnip</em>, most of which are included in the
+	code repository in the <code>Src/3rdParty</code> directory. Code not
+	included in the repository is noted below.
 </p>
 
 <h3>
@@ -113,13 +121,17 @@
 </h3>
 
 <p>
-	If you download a copy of Indy 10 you should compile the source code and
-	create the necessary package(s).
+	The Indy 10 Internet components ship with all supported versions of Delphi.
+	If you prefer to work with the latest release you can download it from <a
+		href="http://www.indyproject.org/"
+	>http://www.indyproject.org/</a>. If you download a copy of Indy 10 you
+	should compile the source code with the same version of Delphi as that being
+	used to compile <em>CodeSnip</em>.
 </p>
-
+    
 <p>
-	Regardless of whether you're using the version of Indy 10 supplied with
-	Delphi or if you've downloaded and compiled your own version, you must set
+	Regardless of whether you are using the version of Indy 10 supplied with
+	Delphi or if you have downloaded and compiled your own version, you must set
 	the <code>INDY10</code> environment variable to address the directory where
 	you placed the compiled code.
 </p>
@@ -171,15 +183,15 @@
 </h3>
 
 <p>
-	A copy of Delphi is required to build the object Pascal code. Delphi 2006 is
-	the preferred, and minimum, compiler. Delphi 2007 to 2010 should also be
-	able to compile the source. It has been tested only with Delphi 2006 and
-	2010.
+	A copy of Delphi is required to build the object Pascal code. Delphi 2010 is
+	the preferred compiler. Delphi 2006 to 2009 should also be able to compile
+    the source. Compilation has been tested only with Delphi 2006 and 2010.
 </p>
 
 <p>
 	You can use the Delphi IDE to edit the code and test compile it. The
-	makefile requires the following command line tools:
+	makefile requires the following command line tools that are supplied with
+	Delphi:
 </p>
 
 <dl>
@@ -211,9 +223,8 @@
 
 <dl>
 	<dt class="spaced">
-		<code>DELPHIROOT</code>
-		- required unless <code>DELPHI2006</code> is
-		set.
+		<code>DELPHIROOT</code> - required unless <code>DELPHI2010</code> is
+        set.
 	</dt>
 	<dd>
 		Should be set to the install directory of the version of Delphi being
@@ -222,13 +233,13 @@
 		<code>DELPHIROOT</code>.
 	</dd>
 	<dt class="spaced">
-		<code>DELPHI2006</code> - optional
+		<code>DELPHI2010</code> - optional
 	</dt>
 	<dd>
-		If you are using Delphi 2006 this environment variable can be set to the
-		Delphi install directory. When <code>DELPHI2006</code> is defined
+		If you are using Delphi 2010 this environment variable can be set to the
+		Delphi install directory. When <code>DELPHI2010</code> is defined
 		<code>DELPHIROOT</code> will be set to the value of
-		<code>DELPHI2006</code>.
+		<code>DELPHI2010</code>.
 	</dd>
 	<dt class="spaced">
 		<code>INDY10</code> - required
@@ -270,9 +281,9 @@
 <p>
 	MIDL requires the use of Microsoft's <code>CL.exe</code> C Pre-processor
 	which in turn requires <code>mspdb**.dll</code>, where ** is a number that
-	depend version of Visual Studio used. I use MIDL v7 and mspdb80.dll from the
-	Windows 2008 (v6.1) platform SDK. So that MIDL can find these files you
-	need to update your system PATH to include:
+	depends on the version of Visual Studio used. I use MIDL v7 and
+	<code>mspdb80.dll</code> from the Windows 2008 (v6.1) platform SDK. So that
+	MIDL can find these files you need to update your system PATH to include:
 </p>
 
 <ul class="spaced">
@@ -438,13 +449,13 @@ set PATHSET=1
 </h4>
 
 <p>
-	Configure the required environment variables. The program will fail to
-	compile if these environment variables are not set:
+	Configure the required environment variables. Compilation will fail if these
+	environment variables are not set:
 </p>
 
 <ul>
 	<li>
-		<code>DELPHIROOT</code> or <code>DELPHI2006</code>
+		<code>DELPHIROOT</code> or <code>DELPHI2010</code>
 	</li>
 	<li>
 		<code>INDY10</code>
@@ -505,7 +516,9 @@ set PATHSET=1
 
 <p>
 	Set <code>INDY_WORKEVENT_INT64</code> or <code>INDY_WORKEVENT_INT32</code>
-	if necessary.
+	if necessary (explained <a
+		href="#indychanges"
+	>above</a>).
 </p>
 
 <h3>
@@ -513,13 +526,65 @@ set PATHSET=1
 </h3>
 
 <p>
-	If you don't already have it, download the <em>CodeSnip</em> source code or
-	check it out or export it from the Subversion repository. How to go about
-	that is explained at
-	<a
-		href="http://www.delphidabbler.com/software/codesnip/download"
-	>http://www.delphidabbler.com/software/codesnip/download</a>.
+	If you don't already have it, download or checkout the <em>CodeSnip</em>
+	source code. There are several options:
 </p>
+
+<ol class="spaced">
+	<li>
+		<div>
+			If you are a Subversion user you can:
+		</div>
+		<ul class="spaced">
+			<li>
+				<div>
+					Check out the source using the following command:
+				</div>
+				<pre class="cmd"><span class="prompt">&gt;</span> svn co https://codesnip.svn.sourceforge.net/svnroot/codesnip/trunk PATH</pre>
+				<div>
+					Where <code>PATH</code> is the directory where you want to
+					place the working copy. You will not be able to commit
+					changes unless you join the project as a contributor.
+				</div>
+			</li>
+			<li>
+				<div>
+					Export the code using this command:
+				</div>
+				<pre class="cmd"><span class="prompt">&gt;</span>svn export https://codesnip.svn.sourceforge.net/svnroot/codesnip/trunk PATH</pre>
+				<div>
+					where <code>PATH</code> is the directory where you wish to
+					store the code.
+				</div>
+			</li>
+
+		</ul>
+		<div class="spaced">
+			These commands get code from the current development tree. To get
+			the code of a suitable stable release replace <code>trunk</code>
+			with <code>tags/XXXX</code> where <code>XXX</code> specifies the
+			version.
+		</div>
+
+	</li>
+	<li>
+		Download a suitable source tarball from the SourceForge repo. To get the
+		current development tree go to <a
+			href="http://codesnip.svn.sourceforge.net/viewvc/codesnip/trunk/"
+		>http://codesnip.svn.sourceforge.net/viewvc/codesnip/trunk/</a> and
+		click the <em>Download GNU tarball</em> link.
+	</li> 
+	<li>
+		Download source files for many older releases from the <a
+			href="https://sourceforge.net/projects/codesnip/files/"
+		>CodeSnip SourceForge Files Page</a>.
+	</li>
+	<li>
+		Grab the source code of the latest release from <a
+			href="http://www.delphidabbler.com/software/codesnip/download"
+		>DelphiDabbler.com</a>.
+	</li>
+</ol>
 
 <h3>
 	Configure the Source Tree
@@ -540,7 +605,7 @@ set PATHSET=1
       |
       +-- 3rdParty          - third party &amp; DelphiDabbler library source code
       |
-      +-- AutoGen           - automatically generated code
+      +-- AutoGen           - receives automatically generated code
       |
       +-- Help              - help source files
       |   |
@@ -592,7 +657,7 @@ set PATHSET=1
 	or
 </p>
   
-<pre class="cmd"><span class="prompt">&gt;</span> %DELPHI2006%\Bin\Make config</pre>
+<pre class="cmd"><span class="prompt">&gt;</span> %DELPHI2010%\Bin\Make config</pre>
 
 <p>
 	depending on which environment variable you have set.
@@ -676,7 +741,7 @@ set PATHSET=1
 		that included in the source tree.
 	</li>
 	<li>
-		Open <code>CodeSnip.exe</code> in the resource file editor (Use
+		Load <code>CodeSnip.exe</code> into the resource file editor (Use
 		<em>File | Open</em> in XN Resource Editor). You need to
 		find the TYPELIB resource type. There should only be one, language
 		neutral, TYPELIB resource. Select this and export it as
@@ -690,9 +755,9 @@ set PATHSET=1
 	If you are working on the latest development tree from the code repository
 	you should get <code>ExternalObj.tlb</code> from the latest release of
 	<em>CodeSnip</em>, <strong>unless</strong> <code>ExternalObj.idl</code>
-	has been changed since the last release. In this case when you must use MIDL
-	to build the <code>.idl</code> file, because a suitable <code>.tlb</code>
-	file won't be available.
+	has been changed since the last release. In this case you
+	<strong>must</strong> use MIDL to build the <code>.idl</code> file, because
+	a suitable <code>.tlb</code> file won't be available.
 </p>
 
 <h4>
@@ -830,8 +895,8 @@ set PATHSET=1
 </h3>
 
 <p>
-	The setup program requires that the <em>CodeSnip</em> and the compiled help
-	file are present in the <code>Exe</code> directory.
+	The setup program requires that the <em>CodeSnip</em> excutable and the
+	compiled help file are already present in the <code>Exe</code> directory.
 	<code>CSInstallHelper.exe</code> must also be present in the same folder.
 </p>
 
@@ -866,12 +931,18 @@ set PATHSET=1
 	information. It is placed in the <code>Exe</code> directory.
 </p>
 
+<p>
+	If the <em>SpecialBuild</em> string is defined in <em>CodeSnip</em>'s
+	version information the string will be appended to the setup file name like
+	this <code>CodeSnip-Setup-x.x.x-SPECIALBUILD</code>.
+</p>
+
 <h3>
 	Build the Release Zip File
 </h3>
 
 <p>
-	Once the setup file has been created you can create a zip file containing
+	Once the setup file has been compiled you can create a zip file containing
 	the setup file along with <code>ReadMe.txt</code> from the <code>Docs</code>
 	directory. If either file is missing the build fails. Build the release by
 	doing:
@@ -911,7 +982,7 @@ set PATHSET=1
 <p>
 	<strong>Warning:</strong> You should not run this command if MIDL is not
 	available since <code>Make config</code> will delete any <code>.tlb</code>
-	file you have placed manually in the <code>Bin</code> directory.
+	file you may have placed in the <code>Bin</code> directory.
 </p>
 
 <h3>
@@ -937,8 +1008,19 @@ set PATHSET=1
 <p>
 	If you are planning to re-use or modify any of the code, please see the file
 	<code>SourceCodeLicenses.txt</code> in the <code>Docs</code> directory for
-	an overview of the various open source licenses that apply to the
-	<em>CodeSnip</em> source code.
+	an overview of the various licenses that apply to the <em>CodeSnip</em>
+	source code.
+</p>
+
+<p>
+	It is intended to change the licensing for the majority of the code base
+	from the Mozilla Public License to the <a
+		href="http://www.mozilla.org/MPL/"
+	>MPL / GPL / LGPL disjunctive tri-license</a>. This could take some time.
+	In the meantime if you would like to use parts of the code under the
+	tri-license, <a
+		href="http://www.delphidabbler.com/contact"
+	>please ask</a>.
 </p>
 
 </body>
