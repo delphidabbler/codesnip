@@ -23,9 +23,9 @@ ________________________________________________________________________________
 
 IMPORTANT NOTES: 
 
-1) CodeSnip Windows 2000 or later. It cannot be installed on Windows 95, 98, Me,
-   NT3.51 or NT4. It also requires MS Internet Explorer V6 or later, but IE 7 or
-   8 are recommended.
+1) CodeSnip requires Windows 2000 or later. It cannot be installed on Windows
+   95, 98, Me, NT3.51 or NT4. It also requires MS Internet Explorer V6 or later,
+   but IE 7 or 8 are recommended.
 
 2) You will need administrator privileges to run the setup program. If you are
    using a non-admin user account on Windows 2000 or XP you should run setup as
