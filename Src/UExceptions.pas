@@ -126,49 +126,14 @@ type
       {Reference to control to which exception relates}
   end;
 
-  {
-  TExceptionHandler:
-    Static class providing exception handling support method.
-  }
-  TExceptionHandler = class(TNoConstructObject)
-  public
-    class procedure Handler(Sender: TObject; E: Exception);
-      {An event handler for the Application.OnException event. Provides custom
-      handling for un-trapped exceptions. A message box is displayed for an
-      expected exception while an unexpected exception cause a bug report dialog
-      to be displayed.
-        @param Sender [in] Not used.
-        @param E [in] Exception to be handled.
-      }
-  end;
-
 
 implementation
 
 
 uses
   // Delphi
-  Classes,
-  // Project
-  UMessageBox, FmTrappedBugReportDlg;
+  Classes;
 
-
-{ TExceptionHandler }
-
-class procedure TExceptionHandler.Handler(Sender: TObject; E: Exception);
-  {An event handler for the Application.OnException event. Provides custom
-  handling for un-trapped exceptions. A message box is displayed for an expected
-  exception while an unexpected exception cause a bug report dialog to be
-  displayed.
-    @param Sender [in] Not used.
-    @param E [in] Exception to be handled.
-  }
-begin
-  if (E is ECodeSnip) or (E is EFileStreamError) then
-    TMessageBox.Error(nil, E.Message)
-  else
-    TTrappedBugReportDlg.Execute(nil, E);
-end;
 
 { ECodeSnip }
 
@@ -199,8 +164,7 @@ procedure EDataEntry.Assign(const E: Exception);
       EDataEntry.
   }
 begin
-  Assert(E is EDataEntry,                                  // ** do not localise
-    ClassName + '.Assign: E must be a EDataEntry');
+  Assert(E is EDataEntry, ClassName + '.Assign: E must be a EDataEntry');
   inherited;
   fCtrl := (E as EDataEntry).Ctrl;
 end;
