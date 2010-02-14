@@ -251,7 +251,6 @@ inherited MainForm: TMainForm
             Top = 42
             Width = 175
             Height = 234
-            ExplicitLeft = 4
             ExplicitTop = 42
             ExplicitWidth = 175
             ExplicitHeight = 234

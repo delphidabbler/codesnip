@@ -43,8 +43,8 @@ interface
 
 uses
   // Delphi
-  Menus, ExtActns, StdActns, Classes, ActnList, ImgList, Controls, Forms,
-  ExtCtrls, ComCtrls, ToolWin, Messages, AppEvnts,
+  SysUtils, Menus, ExtActns, StdActns, Classes, ActnList, ImgList, Controls,
+  Forms, ExtCtrls, ComCtrls, ToolWin, Messages, AppEvnts,
   // Project
   FmHelpAware, FrDetail, FrOverview, FrTitled, IntfNotifier, UCompileMgr,
   UDialogMgr, UHistory, UMainDisplayMgr, USearch, UStatusBarMgr,
@@ -385,6 +385,11 @@ type
       {Displays hint in status bar using status bar manager.
         @param Hint [in] Hint to be displayed.
       }
+    procedure HandleExceptions(Sender: TObject; E: Exception);
+      {Handles untrapped application-level exceptions.
+        @param Sender [in] Not used.
+        @param E [in] Exception to be handled.
+      }
     procedure LoadSnippets;
       {Loads Snippets object from database and re-intitialises display.
       }
@@ -421,13 +426,13 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows,
+  Windows,
   // Project
-  FmSplash, FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo, UCodeShareMgr,
-  UCommandBars, UCompLogAction, UConsts, UCopyInfoMgr, UCopySourceMgr,
-  UDatabaseLoader, UEditRoutineAction, UExceptions, UHelpMgr, UHistoryMenus,
-  UMessageBox, UNotifier, UPrintMgr, UQuery, USaveSnippetMgr, USaveUnitMgr,
-  USnippets, UThreadWrapper, UUserDBMgr, UView, UViewItemAction,
+  FmSplash, FmTrappedBugReportDlg, FmWaitDlg, IntfFrameMgrs, UActionFactory,
+  UAppInfo, UCodeShareMgr, UCommandBars, UCompLogAction, UConsts, UCopyInfoMgr,
+  UCopySourceMgr, UDatabaseLoader, UEditRoutineAction, UExceptions, UHelpMgr,
+  UHistoryMenus, UMessageBox, UNotifier, UPrintMgr, UQuery, USaveSnippetMgr,
+  USaveUnitMgr, USnippets, UThreadWrapper, UUserDBMgr, UView, UViewItemAction,
   UWaitForActionUI, UWBExternal, UWBNulDropTarget, UWebInfo;
 
 
@@ -1361,7 +1366,7 @@ begin
     // Disable form
     Enabled := False;
     // Set up application events
-    appEvents.OnException := TExceptionHandler.Handler;
+    appEvents.OnException := HandleExceptions;
   except
     // Make sure form is enabled and splash form hidden on exception
     Enabled := True;
@@ -1405,6 +1410,18 @@ begin
     - splitVert.Width then
     pnlLeft.Width := ClientWidth - TWindowSettings.MinRightPanelWidth
       - splitVert.Width;
+end;
+
+procedure TMainForm.HandleExceptions(Sender: TObject; E: Exception);
+  {Handles untrapped application-level exceptions.
+    @param Sender [in] Not used.
+    @param E [in] Exception to be handled.
+  }
+begin
+  if (E is ECodeSnip) or (E is EFileStreamError) then
+    TMessageBox.Error(nil, E.Message)
+  else
+    TTrappedBugReportDlg.Execute(nil, E);
 end;
 
 procedure TMainForm.InitForm;
