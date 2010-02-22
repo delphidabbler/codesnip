@@ -63,15 +63,6 @@ type
       }
     procedure UpdateFile;
       {Creates a file from data stream.
-        @except Raises EFileList if file checksum is incorrect.
-      }
-    procedure ValidateFile(const Name, Content, MD5: Latin1String);
-      {Validates checksum of a file.
-        @param Name [in] Name of file
-        @param File [in] Content from data stream.
-        @param MD5 [in] Checksum of file on webserver.
-        @except Raises EFileList if check sum of file content doesn't
-          match expected checksum.
       }
     procedure WriteFile(const Name, Content: Latin1String;
       const UnixDate: Int64);
@@ -115,9 +106,8 @@ uses
 
 
 resourcestring
-  // Exception message template
-  sCheckSumError = 'The file "%0:s" downloaded from the web service was '
-    + 'corrupt';
+  // Exception messages
+  cDataCorruptError = 'The data is corrupt.';
 
 
 {
@@ -128,7 +118,8 @@ resourcestring
 
   Format is:
 
-    FileCount: SmallInt       - number of files encoded in datastream
+    MD5: String[32];          - MD5 hash of remaining data
+    FileCount: SmallInt;      - number of files encoded in datastream
 
   followed by FileCount file records of:
 
@@ -136,8 +127,6 @@ resourcestring
     UnixDate: Int64;          - file's modification date (GMT) in Unix format
                                 (must be converted to local time and DOS date
                                 stamp format)
-    MD5: String[32];          - MD5 checksum of original file on server
-                                (MD5 of Content should match this value)
     Content: SizedString;     - file contents
 
   Data types are:
@@ -148,6 +137,7 @@ resourcestring
                     number of characters
     String[32]    - 32 character fixed length string
 
+  All strings are single byte Latin-1
 }
 
 
@@ -159,10 +149,16 @@ constructor TFileUpdater.Create(const LocalDir: string;
     @param LocalDir [in] Directory storing local data files.
     @param UpdateData [in] Stream containing details of files to be updated.
   }
+var
+  MD5: Latin1String;  // md5 hash of stream
 begin
   inherited Create;
   fLocalDir := LocalDir;
   fReader := TDataStreamReader.Create(UpdateData);
+  // check data stream against its MD5 checksum
+  MD5 := fReader.ReadString(32);
+  if not TCheckSum.Compare(UpdateData, MD5) then
+    raise EFileUpdater.Create(cDataCorruptError);
 end;
 
 destructor TFileUpdater.Destroy;
@@ -211,35 +207,18 @@ end;
 
 procedure TFileUpdater.UpdateFile;
   {Creates a file from data stream.
-    @except Raises EFileList if file checksum is incorrect.
   }
 var
   Name: Latin1String;     // name of file
   UnixDate: Int64;        // update date of file (per server: Unix format & GMT)
-  MD5: Latin1String;      // MD5 checksum of file on server
   Content: Latin1String;  // file content
 begin
   // Get info about file from data stream
   Name := fReader.ReadSizedString;
   UnixDate := fReader.ReadInt64;
-  MD5 := fReader.ReadString(32);
   Content := fReader.ReadSizedString;
-  // Validate and create file
-  ValidateFile(Name, Content, MD5);
+  // and create file
   WriteFile(Name, Content, UnixDate);
-end;
-
-procedure TFileUpdater.ValidateFile(const Name, Content, MD5: Latin1String);
-  {Validates checksum of a file.
-    @param Name [in] Name of file
-    @param File [in] Content from data stream.
-    @param MD5 [in] Checksum of file on webserver.
-    @except Raises EFileList if check sum of file content doesn't
-      match expected checksum.
-  }
-begin
-  if not TCheckSum.Compare(Content, MD5) then
-    raise EFileUpdater.CreateFmt(sChecksumError, [Name]);
 end;
 
 procedure TFileUpdater.WriteFile(const Name, Content: Latin1String;
