@@ -4,6 +4,14 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.5.2 of 22 February 2010
++ Changed database downloader to:
+  - Use web servce's revised download file format
+  - Validate download data before updating local database.
+  - Provide better download error messages.
++ Fixed bug #2947794 in view link dialog box (see http://bit.ly/beiZZ8).
++ Refactored some exception handling code.
+
 Release v3.5.1 of 09 February 2010
 + New Unicode build of the program compiled with Delphi 2010. File I/O remains ANSI.
 + Windows NT is no longer supported. Windows 2000 is now the minimum OS. Setup program changed to enforce this.
