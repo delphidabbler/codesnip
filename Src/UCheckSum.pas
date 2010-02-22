@@ -57,9 +57,9 @@ type
   TCheckSum = class(TNoConstructObject)
   public
     class function Calculate(const Stm: TStream): AnsiString; overload;
-      {Calculates MD5 checksum of whole contents of a stream. Position in stream
-      is preserved.
-        @param Stm [in] Stream to check.
+      {Calculates MD5 checksum of a stream.
+        @param Stm [in] Stream to whose checksum to be calculated. Read from
+          current position. Position preserved.
         @return Checksum as Ansi string.
       }
     class function Calculate(const S: AnsiString): AnsiString; overload;
@@ -75,7 +75,8 @@ type
     class function Compare(const Stm: TStream;
       const CheckSum: AnsiString): Boolean; overload;
       {Compares MD5 checksum of content of a stream against a known checksum.
-        @param Stm [in] Stream whose checksum is to be compared.
+        @param Stm [in] Stream whose checksum is to be compared. Read from
+          current position. Position preserved.
         @param CheckSum [in] Known checksum string to compare to stream's
           checksum.
         @return True if stream's checksum is same as CheckSum, False otherwise.
@@ -101,11 +102,11 @@ uses
 { TCheckSum }
 
 class function TCheckSum.Calculate(const Stm: TStream): AnsiString;
-  {Calculates MD5 checksum of whole contents of a stream. Position in stream is
-  preserved.
-    @param Stm [in] Stream to check.
-    @return Checksum as Ansi string.
-  }
+    {Calculates MD5 checksum of a stream.
+      @param Stm [in] Stream to whose checksum to be calculated. Read from
+        current position. Position preserved.
+      @return Checksum as Ansi string.
+    }
 var
   StmCopy: TMemoryStream;     // copy of stream in memory
   StmPos: Int64;              // preserves stream position
@@ -114,10 +115,9 @@ var
 begin
   StmCopy := TMemoryStream.Create;
   try
-    // Copy stream to memory stream preserving position
+    // Copy remainder of stream to memory stream preserving position
     StmPos := Stm.Position;
-    Stm.Position := 0;
-    StmCopy.CopyFrom(Stm, 0);
+    StmCopy.CopyFrom(Stm, Stm.Size - Stm.Position);
     Stm.Position := StmPos;
     // Calculate MD5 checksum of copied stream as string
     MD5Init(Context);
@@ -166,7 +166,8 @@ end;
 class function TCheckSum.Compare(const Stm: TStream;
   const CheckSum: AnsiString): Boolean;
   {Compares MD5 checksum of content of a stream against a known checksum.
-    @param Stm [in] Stream whose checksum is to be compared.
+    @param Stm [in] Stream whose checksum is to be compared. Read from current
+      position. Position preserved.
     @param CheckSum [in] Known checksum string to compare to stream's checksum.
     @return True if stream's checksum is same as CheckSum, False otherwise.
   }
