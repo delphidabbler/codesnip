@@ -207,13 +207,17 @@ implementation
 
 uses
   // Project
-  IntfCommon, UFileUpdater, UUtils, UExceptions;
+  IntfCommon, UConsts, UFileUpdater, UUtils, UExceptions;
 
 
 resourcestring
   // Error messages
   sGeneralUpdateError = 'Update Error';
-  sChecksumError = 'Corrupt File Error';
+  sChecksumShortError = 'Corrupt File Error';
+  sChecksumLongError = '%s'
+    + EOL2
+    + 'This is probably caused by an internet transmisson error. Please try '
+    + 'downloading again. If the problem persists please report it.';
 
 
 { TUpdateMgr }
@@ -333,8 +337,8 @@ begin
   else if E is EFileUpdater then
   begin
     // File updater exception represent checksum errors
-    fLongError := E.Message;
-    fShortError := sChecksumError;
+    fLongError := Format(sChecksumLongError, [E.Message]);
+    fShortError := sChecksumShortError;
     Result := True;
   end
   else if E is ECodeSnip then
