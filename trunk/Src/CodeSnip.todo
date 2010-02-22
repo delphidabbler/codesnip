@@ -1,4 +1,4 @@
-{TODO -oSelf -cBug : Fix bug #2947794: unexpected behaviour in snippets editor's view link dialog box (when links clicked in test rendering of extra information)}
+{DONE -oSelf -cBug : Fix bug #2947794: unexpected behaviour in snippets editor's view link dialog box (when links clicked in test rendering of extra information)}
 {TODO -oSelf -cImprovement : Rationalise error handling in UTaggedTextLexer - use exception rather than LastError properties. Also check how they bubble up the chain to snippets editor.}
 {TODO -oSelf -cDocs : Document the fact that only Latin1 characters are permitted in passwords.}
 {TODO -oSelf -cProposal : Change TTaggedTextEntityHandler to handle entities with value greater than 255?}
@@ -37,25 +37,8 @@ UView
     IView implementations?)}
 {DONE -oSelf -cRefactor : Extract common resource strings re comment style from FrSourcePrefs and USaveSourceDlg}
 {TODO -oSelf -cProposal : Consider moving syntax highlighting setting (CSS builder) down into FrInfo from FrDetailView since comp check tab no longer uses highlighting}
-{TODO -oSelf -cProposal : New TSingleton class that prevents an object from being freed (descendants should permit this). 
-To ease freeing when necessary (implementation section, garbage collector etc) make destructors check for support for a do nothing interface (ISingletonDestroy) and only free normally if supported, then support in implementations and not in interface of unit. Eg.
-TMySingleton = class(TInterfacedObject)
-...
-end;
-
-TMySingletonImpl = class(TMySingleton, ISingletonDestroyable)
-...
-end;
-
-TMySingleton.Destroy;
-begin
-  if Supports(Self, ISingletonDestroy) then
-   // prermit destruction
- else
-  // don't permit destruction
- end;
-
-Could have base class TSingleton = class(TInterfacedObject) that provides default destruction and virtual method called to do tidy up only if can destroy.}
+{DONE -oSelf -cProposal :New TSingleton class that prevents an object from being freed.
+See New Database backend branch for implementation.}
 {DONE -oSelf -cProposal : Share email and user name persistence used by code submission to bug reports, mailing list etc.}
 {TODO -oSelf -cProposal : Move Compile, View compile errors and configure compilers menu options to a new Compile menu?}
 {TODO -oSelf -cRefactor : See if we can pull out common HTML and REML code into SGML unit}
