@@ -168,8 +168,8 @@ resourcestring
   // Text to display in choice dialog box
   sDlgText = 'Link URL:' + EOL2 + '%s';
 const
-  cCloseRes = 1;      // modal result of choice dialog's close button
-  cViewLinkRes = 2;   // modal result of choice dialog's view button
+  cCloseRes = mrCancel; // modal result of choice dialog's close button
+  cViewLinkRes = $FF;   // modal result of choice dialog's view button
 begin
   case EventInfo.DispatchId of
     cDocEventOnClick:
