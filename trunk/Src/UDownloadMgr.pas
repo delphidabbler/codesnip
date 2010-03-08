@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -171,7 +171,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UConsts, UWebInfo;
+  UAppInfo, UConsts, UUnicodeHelper, UWebInfo;
 
 
 {
@@ -309,12 +309,14 @@ procedure TDownloadMgr.GetDatabase(const Stream: TStream;
   }
 var
   Response: TStringList;  // response from server
+  ResBytes: TBytes;       // response as latin-1 byte stream
 begin
   fWantProgressReport := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('getdatabase', Response);
-    Response.SaveToStream(Stream);
+    ResBytes := Latin1BytesOf(Response.Text);
+    Stream.WriteBuffer(ResBytes[0], Length(ResBytes));
   finally
     FreeAndNil(Response);
   end;
