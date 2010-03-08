@@ -4,6 +4,10 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.5.3 of 08 March 2010
++ Fixed database download error checking bug #2964767 (see http://bit.ly/90vFfp). 
++ Updated PayPal donations narrative on welcome page.
+
 Release v3.5.2 of 22 February 2010
 + Changed database downloader to:
   - Use web servce's revised download file format
