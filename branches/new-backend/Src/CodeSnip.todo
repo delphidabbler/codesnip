@@ -1,4 +1,4 @@
-{DONE -oSelf -cBug : Fix bug #2947794: unexpected behaviour in snippets editor's view link dialog box (when links clicked in test rendering of extra information)}
+
 {TODO -oSelf -cImprovement : Rationalise error handling in UTaggedTextLexer - use exception rather than LastError properties. Also check how they bubble up the chain to snippets editor.}
 {TODO -oSelf -cDocs : Document the fact that only Latin1 characters are permitted in passwords.}
 {TODO -oSelf -cProposal : Change TTaggedTextEntityHandler to handle entities with value greater than 255?}
@@ -11,7 +11,7 @@ selection when the snippets editor is closed.
 Snippet selection query uses object reference, but editing snippet
 recreates the object, changing references. This is a deep problem and won't
 be fixed until planned reworking of query / database code.}
-{DONE -oSelf -cInstaller : Change to require Windows 2K as minimum version once project moved to Delphi 2010 }
+
 {TODO -oSelf -cRefactor : Extract common code in UDropDownButtons and UTVCheckBoxes into common base class.}
 {TODO -oSelf -cFeature : Add support for external user defined units.
 + Split list boxes on references page of snippets editor into Delphi and user defined sections.
@@ -21,25 +21,22 @@ be fixed until planned reworking of query / database code.}
 + Unit generator must be able to use these units. Emit a comment in unit saying that user defined units have been used and must be on search path.
 + Add search path page to preferences dialog box?}
 {TODO -oSelf -cProposal : Consider what gesture support to add (needs Delphi 2010).}
-{DONE -oSelf -cFeature : Add actions to go to next, previous, first and last category (or alpha or kind)}
+
 {TODO -oSelf -cProposal :
 Change the Snippets Editor moving code for each pane into separate frame that can
 (1) validate entered data
 (2) calculate required size for controls}
-{DONE -oSelf -cBug : Fix bug #2868706
-Selecting a new printer in print dialog and clicking properties can give an exception or properties dialog has wrong title.
-Selecting some printers in print dialog and clicking OK can give an exception.}
+
 {TODO -oSelf -cRefactor : Rename identifiers that refer to "routine" with "snippet".}
 {TODO -oSelf -cProposal :
 UView
   - completely overhaul this unit (careful of assignements tho - check if this
     actually happens between different types (may need wrapper for various
     IView implementations?)}
-{DONE -oSelf -cRefactor : Extract common resource strings re comment style from FrSourcePrefs and USaveSourceDlg}
+
 {TODO -oSelf -cProposal : Consider moving syntax highlighting setting (CSS builder) down into FrInfo from FrDetailView since comp check tab no longer uses highlighting}
-{DONE -oSelf -cProposal :New TSingleton class that prevents an object from being freed.
-See New Database backend branch for implementation.}
-{DONE -oSelf -cProposal : Share email and user name persistence used by code submission to bug reports, mailing list etc.}
+
+
 {TODO -oSelf -cProposal : Move Compile, View compile errors and configure compilers menu options to a new Compile menu?}
 {TODO -oSelf -cRefactor : See if we can pull out common HTML and REML code into SGML unit}
 {TODO -oSelf -cRefactor : Create StringToOrd and OrdToString dictionaries and use to create two way char entity object to replace one in UTaggedTextLexer and UREMLDataIO etc. Also use for tag lookup in TTaggedTextLexer}
@@ -47,10 +44,7 @@ See New Database backend branch for implementation.}
 {TODO -oSelf -cProposal : Consider making TDateTime a record that can use =, < etc and to use TRange in when comparing file differences}
 {TODO -oSelf -cProposal : Add update date to each routine object}
 {TODO -oSelf -cRefactor : Merge the IO and UI manager code into WBController}
-{DONE -oSelf -cBug :Fix bug #2868704
-Some custom printer properties set in Document Properties dialog box are
-not passed to printer.
-First noticed in v1.7. Still a problem in v3.x}
+
 {TODO  -oSelf -cRefactor : Try to decouple UPageSetup, UPrintMgr and source code manager objects from associated dialog boxes}
 {TODO -cProposal -oSelf :Terminate application when unexpected (non-CodeSnip) error trapped.}
 {TODO -oSelf -cFeature : Add code to THilitePasParser to detect location of directives and decide if they should be classed as reserved words or not}

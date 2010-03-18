@@ -147,7 +147,10 @@ unit GIFImage;
 // Simplified the list of defines and remove a few warnings in Delphi 2006.   //
 //                                                                            //
 // Changed 2009.10.24 by Peter Johnson (delphidabbler)                        //
-// Switched explicit string cast with loss warning for Delphi 2009 and later  //
+// Switched explicit string cast with loss warning for Delphi 2009 and later. //
+//                                                                            //
+// Changed 2010.03.18 by Peter Johnson (delphidabbler)                        //
+// Comment out all TODOs.                                                         //
 //                                                                            //
 ////////////////////////////////////////////////////////////////////////////////
 //                                                                            //
@@ -172,15 +175,15 @@ unit GIFImage;
 //
 ////////////////////////////////////////////////////////////////////////////////
 // To do (in rough order of priority):
-// { TODO -oanme -cFeature : TImage hook for destroy notification. }
-// { TODO -oanme -cFeature : TBitmap pool to limit resource consumption on Win95/98. }
-// { TODO -oanme -cImprovement : Make BitsPerPixel property writable. }
-// { TODO -oanme -cFeature : Visual GIF component. }
-// { TODO -oanme -cImprovement : Easier method to determine DrawPainter status. }
-// { TODO -oanme -cFeature : Import to 256+ color GIF. }
-// { TODO -oanme -cFeature : Make some of TGIFImage's properties persistent (DrawOptions etc). }
-// { TODO -oanme -cFeature : Add TGIFImage.Persistent property. Should save published properties in application extension when this options is set. }
-// { TODO -oanme -cBugFix : Solution for background buffering in scrollbox. }
+// {.TODO -oanme -cFeature : TImage hook for destroy notification. }
+// {.TODO -oanme -cFeature : TBitmap pool to limit resource consumption on Win95/98. }
+// {.TODO -oanme -cImprovement : Make BitsPerPixel property writable. }
+// {.TODO -oanme -cFeature : Visual GIF component. }
+// {.TODO -oanme -cImprovement : Easier method to determine DrawPainter status. }
+// {.TODO -oanme -cFeature : Import to 256+ color GIF. }
+// {.TODO -oanme -cFeature : Make some of TGIFImage's properties persistent (DrawOptions etc). }
+// {.TODO -oanme -cFeature : Add TGIFImage.Persistent property. Should save published properties in application extension when this options is set. }
+// {.TODO -oanme -cBugFix : Solution for background buffering in scrollbox. }
 //
 //////////////////////////////////////////////////////////////////////////////////
 {$ifdef BCB}
@@ -1945,7 +1948,7 @@ end;
 **  Read a string list from a stream as multiple blocks
 **  of max 255 characters in each.
 *)
-{ TODO -oanme -cImprovement : Replace ReadStrings with TGIFReader. }
+{.TODO -oanme -cImprovement : Replace ReadStrings with TGIFReader. }
 procedure ReadStrings(Stream: TStream; Text: TStrings);
 var
   size			: BYTE;
@@ -4947,7 +4950,7 @@ begin
         exit;
       end;
 
-      { TODO -oanme -cImprovement : Gray scale conversion should be done prior to dithering/mapping. Otherwise corrected values will be converted multiple times. }
+      {.TODO -oanme -cImprovement : Gray scale conversion should be done prior to dithering/mapping. Otherwise corrected values will be converted multiple times. }
 
       // Create a color mapper based on current options
       case (ColorReduction) of
@@ -5279,7 +5282,7 @@ begin
       peRed := Red;
       peGreen := Green;
       peBlue := Blue;
-      peFlags := PC_NOCOLLAPSE; { TODO -oanme -cImprovement : Verify that PC_NOCOLLAPSE is the correct value to use. }
+      peFlags := PC_NOCOLLAPSE; {.TODO -oanme -cImprovement : Verify that PC_NOCOLLAPSE is the correct value to use. }
     end;
   Result := CreatePalette(PLogPalette(@Pal)^);
 end;
@@ -6617,7 +6620,7 @@ begin
     if (FBufferCount <= 0) then
     begin
       FStream.Read(size, 1);
-      { TODO -oanme -cImprovement : Should be handled as a warning instead of an error. }
+      {.TODO -oanme -cImprovement : Should be handled as a warning instead of an error. }
       if (size >= 255) then
         Error('GIF block too large');
       FBufferCount := size;
@@ -9907,7 +9910,7 @@ begin
   // Some old Adobe export filters mistakenly uses a value of 10
   if (Size = 10) then
   begin
-    { TODO -oanme -cImprovement : replace with seek or read and check contents = 'Adobe' }
+    {.TODO -oanme -cImprovement : replace with seek or read and check contents = 'Adobe' }
     if (Stream.Read(eIdent, 10) <> 10) then
       exit;
     Result := TGIFUnknownAppExtension;
@@ -11879,7 +11882,7 @@ begin
       begin
         if (ColorReduction = rmPalette) then
           Error(sInvalidReduction);
-        { TODO -oanme -cFeature : Implement ooReduceColors option. }
+        {.TODO -oanme -cFeature : Implement ooReduceColors option. }
         // Not implemented!
       end;
     finally
@@ -12249,7 +12252,7 @@ begin
     inherited AssignTo(Dest);
 end;
 
-{ TODO 1 -oanme -cImprovement : Better handling of TGIFImage.Assign(Empty TBitmap). }
+{.TODO 1 -oanme -cImprovement : Better handling of TGIFImage.Assign(Empty TBitmap). }
 procedure TGIFImage.Assign(Source: TPersistent);
 var
   i			: integer;
