@@ -1,8 +1,8 @@
 {
  * UHTTPProtocol.pas
  *
- * Implements a handler for the "http" URL protocol that displays the URL in the
- * default browser.
+ * Implements a handlers for the "http" and "https:" URL protocols that displays
+ * the URL in the default browser.
  *
  * $Rev$
  * $Date$
@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -69,6 +69,22 @@ type
       }
   end;
 
+  {
+  THTTPSProtocol:
+    Implements a handler for the "HTTPS" protocol that causes URL to be
+    displayed in the default web browser.
+  }
+  THTTPSProtocol = class sealed(TBrowseProtocol)
+  strict private
+    const
+      cHTTPSProtocol = 'https://';  // URL prefix identifying http: protocol
+  public
+    class function SupportsProtocol(const URL: string): Boolean; override;
+      {Checks if a URL uses the http: protocol.
+        @param URL [in] URL whose protocol is to be checked.
+        @return True if URL's protocol is http:, False if not.
+      }
+  end;
 
 { THTTPProtocol }
 
@@ -81,11 +97,18 @@ begin
   Result := AnsiStartsStr(cHTTPProtocol, URL);
 end;
 
+{ THTTPSProtocol }
+
+class function THTTPSProtocol.SupportsProtocol(const URL: string): Boolean;
+begin
+  Result := AnsiStartsStr(cHTTPSProtocol, URL);
+end;
 
 initialization
 
-// Register the protocol with the protocol factory
+// Register the protocols with the protocol factory
 TProtocolFactory.RegisterProtocol(THTTPProtocol);
+TProtocolFactory.RegisterProtocol(THTTPSProtocol);
 
 end.
 
