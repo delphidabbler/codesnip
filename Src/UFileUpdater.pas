@@ -149,8 +149,12 @@ constructor TFileUpdater.Create(const LocalDir: string;
     @param LocalDir [in] Directory storing local data files.
     @param UpdateData [in] Stream containing details of files to be updated.
   }
+{TODO -odelphidabbler -cBugFix: Reinstate download error checking once main
+  cause of download error bug is properly fixed }
+(* *** Following code removed as part of temporary fix for Bug #2970055 ***
 var
   MD5: Latin1String;  // md5 hash of stream
+*)
 begin
   inherited Create;
   fLocalDir := LocalDir;
@@ -161,8 +165,6 @@ begin
   if not TCheckSum.Compare(UpdateData, MD5) then
     raise EFileUpdater.Create(cDataCorruptError);
   *** END *)
-  {TODO -odelphidabbler -cBugFix: Reinstate download error checking once main
-    cause of download error bug is properly fixed }
 end;
 
 destructor TFileUpdater.Destroy;
