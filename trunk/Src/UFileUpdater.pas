@@ -155,10 +155,14 @@ begin
   inherited Create;
   fLocalDir := LocalDir;
   fReader := TDataStreamReader.Create(UpdateData);
+  (* *** Following code removed as a temporary fix for Bug #2970055 ***
   // check data stream against its MD5 checksum
   MD5 := fReader.ReadString(32);
   if not TCheckSum.Compare(UpdateData, MD5) then
     raise EFileUpdater.Create(cDataCorruptError);
+  *** END *)
+  {TODO -odelphidabbler -cBugFix: Reinstate download error checking once main
+    cause of download error bug is properly fixed }
 end;
 
 destructor TFileUpdater.Destroy;
