@@ -36,7 +36,6 @@
 
 unit FmMain;
 
-{$INCLUDE CompilerDefines.inc}
 
 interface
 
@@ -337,15 +336,6 @@ type
     fStatusBarMgr: TStatusBarMgr;     // Manages status bar display
     fDialogMgr: TDialogMgr;           // Manages display of dialog boxes
     fCompileMgr: TMainCompileMgr;     // Manage test compilations
-    {$IF not Defined(SupportsMainFormOnTaskBar)}
-    procedure WMSyscommand(var Msg: TWMSysCommand); message WM_SYSCOMMAND;
-      {Handles system command messages. Overrides default processing of
-      minimizing and restoration of main window. This is required since
-      application object's default processing of these messages is inhibited.
-        @param Msg [in/out] Details of system command. Result field set to 0 if
-          we handle message to prevent default processing.
-      }
-    {$IFEND}
     procedure ActViewItemExecute(Sender: TObject);
       {Displays a requested view item and records in history.
         @param Sender [in] Action triggering this event. Must be a
@@ -401,15 +391,6 @@ type
       snippets found.
         @param Search [in] Search object to filter by.
       }
-  strict protected
-    {$IF not Defined(SupportsMainFormOnTaskBar)}
-    procedure CreateParams(var Params: TCreateParams); override;
-      {Updates style of window to ensure this main window appears on task bar.
-        @params Params [in/out] In: current parameters. Out: adjusted
-          parameters: we update ExStyle field with new window styles; if no
-          change needed, unused.
-      }
-    {$IFEND}
     procedure InitForm; override;
       {Initialises form and creates and configures owned objects. Once
       initialisation is complete splash window is canclled and form enabled.
@@ -1302,18 +1283,6 @@ begin
   DisplayHint(Application.Hint);
 end;
 
-{$IF not Defined(SupportsMainFormOnTaskBar)}
-procedure TMainForm.CreateParams(var Params: TCreateParams);
-  {Updates style of window to ensure this main window appears on task bar.
-    @params Params [in/out] In: current parameters. Out: adjusted parameters: we
-      update ExStyle field with new window styles; if no change needed, unused.
-  }
-begin
-  inherited;
-  Params.ExStyle := Params.ExStyle and not WS_EX_TOOLWINDOW or WS_EX_APPWINDOW;
-end;
-{$IFEND}
-
 procedure TMainForm.DisplayHint(const Hint: string);
   {Displays hint in status bar using status bar manager.
     @param Hint [in] Hint to be displayed.
@@ -1724,34 +1693,6 @@ begin
     or (NewSize > ClientWidth - TWindowSettings.MinRightPanelWidth) then
     Accept := False;
 end;
-
-{$IF not Defined(SupportsMainFormOnTaskBar)}
-procedure TMainForm.WMSyscommand(var Msg: TWMSysCommand);
-  {Handles system command messages. Overrides default processing of minimizing
-  and restoration of main window. This is required since application object's
-  default processing of these messages is inhibited.
-    @param Msg [in/out] Details of system command. Result field set to 0 if we
-      handle message to prevent default processing.
-  }
-begin
-  // Note: according to Win API low order four bits of Msg.CmdType are reserved
-  // for use by windows. We therefore mask out those bits before processing.
-  case (Msg.CmdType and $FFF0) of
-    SC_MINIMIZE:
-    begin
-      ShowWindow(Handle, SW_MINIMIZE);
-      Msg.Result := 0;
-    end;
-    SC_RESTORE:
-    begin
-      ShowWindow(Handle, SW_RESTORE);
-      Msg.Result := 0;
-    end;
-    else
-      inherited;
-  end;
-end;
-{$IFEND}
 
 end.
 
