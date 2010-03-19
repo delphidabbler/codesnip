@@ -59,5 +59,11 @@
 {$ENDIF}
 
 {$IFNDEF CanCompile}
-  {$MESSAGE FATAL 'CodeSnip requires Delphi 2006 or later to compile'}
+  {$MESSAGE FATAL 'CodeSnip requires Delphi 2009 or later to compile'}
+{$ENDIF}
+
+// Unlikely this test will fail since required compilers support: just here for
+// completeness and ultimate safety!
+{$IFNDEF UNICODE}
+ {$MESSAGE FATAL 'CodeSnip requires Unicode support'}
 {$ENDIF}
