@@ -15,18 +15,27 @@
  *   3) TNoPublicConstructIntfObject:
  *      Same as 2) except class descends from TInterfacedObject instead of
  *      TObject.
- *   4) TNonRefCountedObject implements a non reference counted implementation
- *      of IInterface.
- *   5) TAggregatedOrLoneObject is a base class for objects that can either
- *      exist as aggregated objects or as stand-alone reference counted objects.
- *      This implementation is based on code suggested by Hallvard VossBotn, as
- *      presented in Eric Harmon's book "Delphi COM programming".
+ *   4) TNonRefCountedObject:
+ *      Implements a non reference counted implementation of IInterface.
+ *   5) TAggregatedOrLoneObject:
+ *      Base class for objects that can either exist as aggregated objects or as
+ *      stand-alone reference counted objects. This implementation is based on
+ *      code suggested by Hallvard VossBotn, as presented in Eric Harmon's book
+ *      "Delphi COM programming".
+ *   6) TConditionalFreeObject:
+ *      An abstract base class for objects that cannot be destroyed unless some
+ *      condition is met.
+ *   7) TDelegatedConditionalFreeObject:
+ *      Concreate descendant of TConditionalFreeObject that delegates the
+ *      decision about whether the object can be freed to a callback method
+ *      passed to the constructor.
  *
  * Also provides an interface - INoPublicConstruct - that can be supported by
- * objects that don't allow public construction but cannot inherited from
+ * objects that don't allow public construction but cannot inherit from
  * TNoPublicConstructObject, for example forms.
  *
- * Unit originally named UIntfObjects.pas. Changed to UBaseObjects.pas at v2.0.
+ * Unit originally named UIntfObjects.pas. Changed to UBaseObjects.pas at v2.0,
+ * 5th October 2008.
  *
  * $Rev$
  * $Date$
@@ -48,7 +57,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -62,6 +71,11 @@ unit UBaseObjects;
 
 
 interface
+
+
+uses
+  // Delphi
+  SysUtils;
 
 
 type
@@ -226,6 +240,58 @@ type
       nil if stand-alone}
   end;
 
+  {
+  TConditionalFreeObject:
+    Abstract base class for objects that cannot be destroyed unless some
+    condition is met. Descendants must override CanDestroy which must return
+    True if the object can be freed. Attempts to free the object when CanDestroy
+    returns False fail and the object remains in existance.
+  }
+  TConditionalFreeObject = class abstract(TObject)
+  strict protected
+    procedure Finalize; virtual;
+      {Tidies up object. Descendants should override this method instead of
+      destructor.
+      }
+    function CanDestroy: Boolean; virtual; abstract;
+      {Determines if the object can be destroyed.
+        @return True if object can be destroyed.
+      }
+  public
+    destructor Destroy; override;
+      {Class destructor tidies up and tears down object only if object can be
+      freed.
+      }
+    procedure FreeInstance; override;
+      {Frees instance data only if object can be destroyed.
+      }
+  end;
+
+  {
+  TDelegatedConditionalFreeObject:
+    Class that delegates the decision as to whether it can be destroyed to a
+    callback function passed to the constructor. The object is only destroyed if
+    the callback function returns True.
+  }
+  TDelegatedConditionalFreeObject = class(TConditionalFreeObject)
+  strict private
+    fCanDestroy: TFunc<TObject,Boolean>;
+      {Reference callback function that determines if the object can be
+      destroyed}
+  strict protected
+    function CanDestroy: Boolean; override;
+      {Determines if this instance can be destroyed. Calls function stored in
+      fCanDestroy.
+        @return True if instance can be destroyed, False if not.
+      }
+  public
+    constructor Create(const CanFreeFn: TFunc<TObject,Boolean>);
+      {Class constructor.
+        @param CanFreeFn [in] Reference to function to call to determine if
+          the instance can be destroyed.
+      }
+  end;
+
 
 implementation
 
@@ -388,6 +454,62 @@ begin
     Result := IInterface(fController)._Release
   else
     Result := inherited _Release;
+end;
+
+{ TConditionalFreeObject }
+
+destructor TConditionalFreeObject.Destroy;
+  {Class destructor tidies up and tears down object only if object can be freed.
+  }
+begin
+  // Do not override to tidy up unless you first check CanDestroy and only tidy
+  // up if it returns true. Override Finalize instead.
+  if CanDestroy then
+  begin
+    Finalize;
+    inherited;
+  end;
+end;
+
+procedure TConditionalFreeObject.Finalize;
+  {Tidies up object. Descendants should override this method instead of
+  destructor.
+  }
+begin
+  // Override this to tidy up the object instead of overriding the destructor
+end;
+
+procedure TConditionalFreeObject.FreeInstance;
+  {Frees instance data only if object can be destroyed.
+  }
+begin
+  // Check if object can be destroyed
+  if CanDestroy then
+    inherited;
+end;
+
+{ TDelegatedConditionalFreeObject }
+
+function TDelegatedConditionalFreeObject.CanDestroy: Boolean;
+  {Determines if this instance can be destroyed. Calls function stored in
+  fCanDestroy.
+    @return True if instance can be destroyed, False if not.
+  }
+begin
+  if not Assigned(fCanDestroy) then
+    Exit(False);
+  Result := fCanDestroy(Self);
+end;
+
+constructor TDelegatedConditionalFreeObject.Create(
+  const CanFreeFn: TFunc<TObject,Boolean>);
+  {Class constructor.
+    @param CanFreeFn [in] Reference to function to call to determine if the
+      instance can be destroyed.
+  }
+begin
+  inherited Create;
+  fCanDestroy := CanFreeFn;
 end;
 
 end.
