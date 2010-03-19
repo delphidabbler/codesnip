@@ -396,14 +396,9 @@ begin
   // https://forums.codegear.com/thread.jspa?threadID=12826
   SafeCmdLine := CmdLine;
   UniqueString(SafeCmdLine);
-  // Set up creation flags: special flag required for unicode environments,
-  // which is want when unicode support is enabled. Used to determine type of
-  // environment block is passed to app: unicode or ansi
-  {$IFDEF UNICODE}
+  // Set up creation flags: special flag used to determine type of environment
+  // block passed to app: Unicode or ANSI.
   CreateFlags := CREATE_UNICODE_ENVIRONMENT;
-  {$ELSE}
-  CreateFlags := 0;
-  {$ENDIF}  
   // Try to create the process
   Result := CreateProcess(
     nil,

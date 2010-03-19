@@ -202,18 +202,13 @@ begin
           Param := LiteralParam(ParamVar.VInteger);
         vtExtended:
           Param := LiteralParam(ParamVar.VExtended^);
-        {$IFDEF UNICODE}
         vtUnicodeString:
           Param := LiteralParam(PWideChar(ParamVar.VUnicodeString));
         vtWideChar:
           Param := LiteralParam(ParamVar.VWideChar);
-        {$ELSE}
-        vtAnsiString:          Param := LiteralParam(PAnsiChar(ParamVar.VAnsiString));        vtChar:
-          Param := LiteralParam(ParamVar.VChar);
-        {$ENDIF}
         else
-          // ** do not localise
-          raise EBug.Create(            'JSLiteralFunc(): Unsupported parameter type'          );      end;
+          raise EBug.Create('JSLiteralFunc(): Unsupported parameter type');
+      end;
       // Store param in list
       ParamList.Add(Param);
     end;

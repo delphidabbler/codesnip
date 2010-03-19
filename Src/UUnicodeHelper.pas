@@ -46,11 +46,9 @@ uses
   SysUtils, Classes;
 
 
-{$IFDEF UNICODE}
 const
   Latin1CodePage = 1252;    // Code page for the Latin-1 character set
   ASCIICodePage = 20127;    // Code page for the ASCII character set
-{$ENDIF}
 
 type
 
@@ -59,21 +57,8 @@ type
     String in the Latin-1 encoding. Encoding is implement only on Unicode
     versions of Delphi. Ansi version simply use AnsiString.
   }
-  {$IFDEF UNICODE}
   Latin1String = type AnsiString(Latin1CodePage);
   ASCIIString = type AnsiString(ASCIICodePage);
-  {$ELSE}
-  Latin1String = type AnsiString;
-  ASCIIString = type AnsiString;
-  {$ENDIF}
-
-  {$IF not Declared(TBytes)}
-  {
-  TBytes:
-    Array of bytes.
-  }
-  TBytes = array of Byte;
-  {$IFEND}
 
 
 function Latin1BytesOf(const AString: string): TBytes;
@@ -150,17 +135,12 @@ implementation
 
 
 uses
-  {$IFDEF UNICODE}
   // Delphi
   Character,
   // Project
   UGC;
-  {$ELSE}
-  UConsts;
-  {$ENDIF}
 
 
-{$IFDEF UNICODE}
 type
   {
   TLatin1Encoding:
@@ -181,7 +161,6 @@ type
     class property Instance: TEncoding read GetInstance;
       {Singleton instance of class. Must not be freed}
   end;
-{$ENDIF}
 
 
 function IsLetter(C: Char): Boolean;
@@ -190,11 +169,7 @@ function IsLetter(C: Char): Boolean;
     @return True if character is a letter, False if not.
   }
 begin
-  {$IFDEF UNICODE}
   Result := TCharacter.IsLetter(C);
-  {$ELSE}
-  Result := C in ['A'..'Z', 'a'..'z'];
-  {$ENDIF}
 end;
 
 function IsDigit(C: Char): Boolean;
@@ -203,11 +178,7 @@ function IsDigit(C: Char): Boolean;
     @return True if character is a digit, False if not.
   }
 begin
-  {$IFDEF UNICODE}
   Result := TCharacter.IsDigit(C);
-  {$ELSE}
-  Result := C in ['0'..'9'];
-  {$ENDIF}
 end;
 
 function IsHexDigit(C: Char): Boolean;
@@ -225,11 +196,7 @@ function IsAlphaNumeric(C: Char): Boolean;
     @return True if character is alphanumeric, False if not.
   }
 begin
-  {$IFDEF UNICODE}
   Result := TCharacter.IsLetterOrDigit(C);
-  {$ELSE}
-  Result := IsLetter(C) or IsDigit(C);
-  {$ENDIF}
 end;
 
 function IsWhiteSpace(C: Char): Boolean;
@@ -238,11 +205,7 @@ function IsWhiteSpace(C: Char): Boolean;
     @return True if character is whitespace, False if not.
   }
 begin
-  {$IFDEF UNICODE}
   Result := TCharacter.IsWhiteSpace(C);
-  {$ELSE}
-  Result := IsCharInSet(C, [TAB, LF, VTAB, FF, CR, ' ']);
-  {$ENDIF}
 end;
 
 function IsCharInSet(C: Char; const CharSet: TSysCharSet): Boolean;
@@ -252,11 +215,7 @@ function IsCharInSet(C: Char; const CharSet: TSysCharSet): Boolean;
     @return True if character is a letter, False if not.
   }
 begin
-  {$IFDEF UNICODE}
   Result := CharInSet(C, CharSet);
-  {$ELSE}
-  Result := C in CharSet;
-  {$ENDIF}
 end;
 
 function ToUpperCase(C: Char): Char;
@@ -266,30 +225,9 @@ function ToUpperCase(C: Char): Char;
       unchanged.
   }
 begin
-  {$IFDEF UNICODE}
   Result := TCharacter.ToUpper(C);
-  {$ELSE}
-  Result := UpCase(C);
-  {$ENDIF}
 end;
 
-{$IFNDEF UNICODE}
-function AnsiStringBytesOf(const AString: string): TBytes;
-  {Converts an ansi string to an array of bytes representing the content of the
-  string.
-    @param AString [in] String to be converted.
-    @return Array containing bytes of string.
-  }
-var
-  Len: Integer; // length of string
-begin
-  Len := Length(AString);
-  SetLength(Result, Len);
-  Move(AString[1], Result[0], Len);
-end;
-{$ENDIF}
-
-{$IFDEF UNICODE}
 function Latin1Encoding: TEncoding;
   {Returns singleton instance of TLatin1Encoding.
     @return Required instance.
@@ -297,7 +235,6 @@ function Latin1Encoding: TEncoding;
 begin
   Result := TLatin1Encoding.Instance;
 end;
-{$ENDIF}
 
 function Latin1BytesOf(const AString: string): TBytes;
   {Converts a string into an array of bytes from the latin-1 character set.
@@ -305,11 +242,7 @@ function Latin1BytesOf(const AString: string): TBytes;
     @return Required array of bytes.
   }
 begin
-  {$IFDEF UNICODE}
   Result := Latin1Encoding.GetBytes(AString);
-  {$ELSE}
-  Result := AnsiStringBytesOf(AString);
-  {$ENDIF}
 end;
 
 function ASCIIBytesOf(const AString: string): TBytes;
@@ -317,21 +250,9 @@ function ASCIIBytesOf(const AString: string): TBytes;
     @param AString [inString to be converted.
     @return Required array of bytes.
   }
-{$IFDEF UNICODE}
 begin
   Result := TEncoding.ASCII.GetBytes(AString);
 end;
-{$ELSE}
-var
-  Idx: Integer; // loops thru bytes of Result
-begin
-  Result := AnsiStringBytesOf(AString);
-  // flag invalid bytes with '?'
-  for Idx := Low(Result) to High(Result) do
-    if Result[Idx] > $7F  then
-      Result[Idx] := Ord('?');
-end;
-{$ENDIF}
 
 function BytesToASCIIString(const Bytes: TBytes): ASCIIString;
   {Creates an ansi string from an array of bytes.
@@ -366,11 +287,7 @@ function StringToLatin1String(const S: string): Latin1String;
     @return Converted string.
   }
 begin
-  {$IFDEF UNICODE}
   Result := BytesToAnsiString(Latin1BytesOf(S));
-  {$ELSE}
-  Result := S;
-  {$ENDIF}
 end;
 
 function StringToASCIIString(const S: string): ASCIIString;
@@ -382,8 +299,6 @@ begin
   Result := BytesToASCIIString(ASCIIBytesOf(S));
 end;
 
-
-{$IFDEF UNICODE}
 { TLatin1Encoding }
 
 constructor TLatin1Encoding.Create;
@@ -405,7 +320,6 @@ begin
   end;
   Result := fInstance;
 end;
-{$ENDIF}
 
 end.
 

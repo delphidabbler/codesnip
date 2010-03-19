@@ -122,48 +122,40 @@ type
         @param Str [in] String to be written.
         @param Length [in] Number of characters from string to write.
       }
-    {$IFDEF UNICODE}
     procedure WriteString(const Str: UnicodeString; const Length: Integer);
       overload;
       {Writes a fixed number of characters from a unicode string to the stream.
         @param Str [in] String to be written.
         @param Length [in] Number of characters from string to write.
       }
-    {$ENDIF}
     procedure WriteString(const Str: Latin1String); overload;
       {Writes a latin-1 string to stream.
         @param Str [in] String to be written.
       }
-    {$IFDEF UNICODE}
     procedure WriteString(const Str: UnicodeString); overload;
       {Writes a unicode string to stream.
         @param Str [in] String to be written.
       }
-    {$ENDIF}
     procedure WriteSizedString(const Str: Latin1String); overload;
       {Writes a latin-1 string to stream preceded by a 16 bit length as hex
       digits.
         @param Str [in] String to be written.
       }
-    {$IFDEF UNICODE}
     procedure WriteSizedString(const Str: UnicodeString); overload;
       {Writes a unicode string to stream preceded by a 16 bit length as hex
       digits.
         @param Str [in] String to be written.
       }
-    {$ENDIF}
     procedure WriteSizedLongString(const Str: Latin1String); overload;
       {Writes a latin-1 string to stream preceded by a 32 bit length as hex
       digits.
         @param Str [in] String to be written.
       }
-    {$IFDEF UNICODE}
     procedure WriteSizedLongString(const Str: UnicodeString); overload;
       {Writes a unicode string to stream preceded by a 32 bit length as hex
       digits.
         @param Str [in] String to be written.
       }
-    {$ENDIF}
   end;
 
 
@@ -293,7 +285,6 @@ begin
   WriteString(Str, Length(Str));
 end;
 
-{$IFDEF UNICODE}
 procedure TDataStreamWriter.WriteSizedLongString(const Str: UnicodeString);
   {Writes a unicode string to stream preceded by a 32 bit length as hex digits.
     @param Str [in] String to be written.
@@ -302,7 +293,6 @@ begin
   WriteLongInt(Length(Str));
   WriteString(Str, Length(Str));
 end;
-{$ENDIF}
 
 procedure TDataStreamWriter.WriteSizedString(const Str: Latin1String);
   {Writes a latin-1 string to stream preceded by a 16 bit length as hex digits.
@@ -313,7 +303,6 @@ begin
   WriteString(Str, Length(Str));
 end;
 
-{$IFDEF UNICODE}
 procedure TDataStreamWriter.WriteSizedString(const Str: UnicodeString);
   {Writes a unicode string to stream preceded by a 16 bit length as hex digits.
     @param Str [in] String to be written.
@@ -322,7 +311,6 @@ begin
   WriteSmallInt(Length(Str));
   WriteString(Str, Length(Str));
 end;
-{$ENDIF}
 
 procedure TDataStreamWriter.WriteSmallInt(const Value: SmallInt);
   {Writes a 16 bit integer to the stream as hex digits.
@@ -340,7 +328,6 @@ begin
   WriteString(Str, Length(Str));
 end;
 
-{$IFDEF UNICODE}
 procedure TDataStreamWriter.WriteString(const Str: UnicodeString);
   {Writes a unicode string to stream.
     @param Str [in] String to be written.
@@ -348,7 +335,6 @@ procedure TDataStreamWriter.WriteString(const Str: UnicodeString);
 begin
   WriteString(Str, Length(Str));
 end;
-{$ENDIF}
 
 procedure TDataStreamWriter.WriteString(const Str: Latin1String;
   const Length: Integer);
@@ -360,7 +346,6 @@ begin
   BaseStream.WriteBuffer(Pointer(Str)^, Length);
 end;
 
-{$IFDEF UNICODE}
 procedure TDataStreamWriter.WriteString(const Str: UnicodeString;
   const Length: Integer);
   {Writes a fixed number of characters from a unicode string to the stream.
@@ -373,7 +358,6 @@ begin
   Bytes := Latin1BytesOf(Str);
   BaseStream.WriteBuffer(Pointer(Bytes)^, Length);
 end;
-{$ENDIF}
 
 end.
 
