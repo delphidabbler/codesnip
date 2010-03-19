@@ -51,10 +51,7 @@ program CodeSnip;
 {$WARNINGS ON}
 {$WRITEABLECONST OFF}
 
-{$INCLUDE CompilerDefines.inc}
-
 {%ToDo 'CodeSnip.todo'}
-
 
 uses
   Forms,
@@ -148,7 +145,6 @@ uses
   UActiveText in 'UActiveText.pas',
   UActiveTextHTML in 'UActiveTextHTML.pas',
   UAlphabet in 'UAlphabet.pas',
-  UAltBugFix in 'UAltBugFix.pas',
   UAnchors in 'UAnchors.pas',
   UAppInfo in 'UAppInfo.pas',
   UBaseObjects in 'UBaseObjects.pas',
@@ -366,20 +362,7 @@ uses
 
 begin
   Application.Initialize;
-  {$IF Defined(SupportsMainFormOnTaskBar)}
   Application.MainFormOnTaskBar := True;
-  {$ELSE}
-  // Remove hidden application window from task bar: main form is placed on task
-  // bar instead: see TMainForm.CreateParams
-  ShowWindow(Application.Handle, SW_HIDE);
-  SetWindowLong(
-    Application.Handle,
-    GWL_EXSTYLE,
-    GetWindowLong(Application.Handle, GWL_EXSTYLE)
-      and not WS_EX_APPWINDOW or WS_EX_TOOLWINDOW
-  );
-  ShowWindow(Application.Handle, SW_SHOW);
-  {$IFEND}
   SplashForm := TSplashForm.Create(Application);
   SplashForm.Show;
   Application.ModalPopupMode := pmAuto;

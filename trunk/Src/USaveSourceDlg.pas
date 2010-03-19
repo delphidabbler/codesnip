@@ -197,7 +197,7 @@ uses
   // Delphi
   SysUtils, Forms, Dialogs, Dlgs, Controls, Windows,
   // Project
-  UAltBugFix, UConsts, UMessageBox, UOpenDialogHelper, UStructs;
+  UConsts, UMessageBox, UOpenDialogHelper, UStructs;
 
 
 resourcestring
@@ -336,8 +336,6 @@ procedure TSaveSourceDlg.DoClose;
 begin
   // Update value of SyntaxHiliting property
   UpdateSyntaxHiliting;
-  // Unregister custom panel from Alt bug fix handler
-  AltBugFix.UnRegisterCtrl(fPanel);
   inherited DoClose;
   // Hide any hint left on screen
   Application.HideHint;
@@ -423,9 +421,6 @@ begin
 
   // Call this to ensure we trigger type change event for default file type
   DoTypeChange;
-
-  // Register custom panel with alt bug fix code
-  AltBugFix.RegisterCtrl(fPanel, False);
 
   inherited;
 end;
