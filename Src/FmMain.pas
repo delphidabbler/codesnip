@@ -391,6 +391,7 @@ type
       snippets found.
         @param Search [in] Search object to filter by.
       }
+  strict protected
     procedure InitForm; override;
       {Initialises form and creates and configures owned objects. Once
       initialisation is complete splash window is canclled and form enabled.
