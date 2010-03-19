@@ -56,7 +56,6 @@ type
   }
   TCopyInfoMgr = class sealed(TCopyViewMgr)
   strict private
-    {$IFDEF UNICODE}
     class function GenerateDoc(const View: TViewItem; const Doc: TRoutineDoc;
       const Encoding: TEncoding): string;
       {Generates a document that describes a snippet.
@@ -66,15 +65,6 @@ type
           generated document.
         @return Generated document as a string.
       }
-    {$ELSE}
-    class function GenerateDoc(const View: TViewItem;
-      const Doc: TRoutineDoc): string;
-      {Generates a document that describes a snippet.
-        @param View [in] View that defines snippet to be generated.
-        @param Doc [in] Object used to render document in required format.
-        @return Generated document as a string.
-      }
-    {$ENDIF}
   strict protected
     class function GeneratePlainText(const View: TViewItem): string; override;
       {Generates a plain text document providing information about a snippet.
@@ -116,7 +106,6 @@ begin
   Result := View.Kind = vkRoutine;
 end;
 
-{$IFDEF UNICODE}
 class function TCopyInfoMgr.GenerateDoc(const View: TViewItem;
   const Doc: TRoutineDoc; const Encoding: TEncoding): string;
   {Generates a document that describes a snippet.
@@ -126,23 +115,10 @@ class function TCopyInfoMgr.GenerateDoc(const View: TViewItem;
       generated document.
     @return Generated document as a string.
   }
-{$ELSE}
-class function TCopyInfoMgr.GenerateDoc(const View: TViewItem;
-  const Doc: TRoutineDoc): string;
-  {Generates a document that describes a snippet.
-    @param View [in] View that defines snippet to be generated.
-    @param Doc [in] Object used to render document in required format.
-    @return Generated document as a string.
-  }
-{$ENDIF}
 var
   SS: TStringStream;  // stream that receives document
 begin
-  {$IFDEF UNICODE}
   SS := TStringStream.Create('', Encoding);
-  {$ELSE}
-  SS := TStringStream.Create('');
-  {$ENDIF}
   try
     Doc.Generate(View.Routine, SS);
     Result := SS.DataString;
@@ -161,11 +137,7 @@ var
 begin
   Doc := TTextRoutineDoc.Create;
   try
-    {$IFDEF UNICODE}
     Result := GenerateDoc(View, Doc, TEncoding.Unicode);
-    {$ELSE}
-    Result := GenerateDoc(View, Doc);
-    {$ENDIF}
   finally
     FreeAndNil(Doc);
   end;
@@ -181,11 +153,7 @@ var
 begin
   Doc := TRTFRoutineDoc.Create(THiliteAttrsFactory.CreateUserAttrs);
   try
-    {$IFDEF UNICODE}
     Result := GenerateDoc(View, Doc, TEncoding.Default);
-    {$ELSE}
-    Result := GenerateDoc(View, Doc);
-    {$ENDIF}
   finally
     FreeAndNil(Doc);
   end;

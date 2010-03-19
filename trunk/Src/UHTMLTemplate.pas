@@ -121,11 +121,7 @@ begin
   // the Latin1 code page.
   RS := TResourceStream.Create(Inst, ResName, ResType);
   try
-    {$IFDEF UNICODE}
     SS := TStringStream.Create('', Latin1CodePage);
-    {$ELSE}
-    SS := TStringStream.Create('');
-    {$ENDIF}
     SS.CopyFrom(RS, 0);
     fHTML := SS.DataString;
   finally
