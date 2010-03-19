@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes, Forms, Controls, Messages,
   // Project
-  IntfAligner, UAltBugFix, UControlStateMgr;
+  IntfAligner, UControlStateMgr;
 
 
 type
@@ -211,10 +211,6 @@ procedure TBaseForm.FormDestroy(Sender: TObject);
   }
 begin
   FreeAndNil(fCtrlStateMgr);
-  // NOTE: We can't use OnHide since that is not always called, causing form to
-  // remain registered and therefore any later form with same object address not
-  // to be handled correctly
-  AltBugFix.UnRegisterCtrl(Self);
 end;
 
 procedure TBaseForm.FormShow(Sender: TObject);
@@ -226,8 +222,6 @@ procedure TBaseForm.FormShow(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  // Register form with Alt Key bug fixer to be updated in idle state
-  AltBugFix.RegisterCtrl(Self, True);
   // Call virtual methods
   CustomiseForm;  // customise form: override if form size needs to be changed
   AlignForm;      // optionally align form using provided IAligner object

@@ -113,13 +113,8 @@ begin
   try
     Clip.Open;                                 
     try
-      {$IFDEF UNICODE}
       Clip.Add(CF_UNICODETEXT, PlainText);
       Clip.Add(CF_RTF, BytesOf(RTF));         // convert RTF to default encoding
-      {$ELSE}
-      Clip.Add(CF_TEXT, PlainText);
-      Clip.Add(CF_RTF, RTF);
-      {$ENDIF}
     finally
       Clip.Close;
     end;

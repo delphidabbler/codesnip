@@ -36,7 +36,6 @@
 
 unit UCommonDlg;
 
-{$INCLUDE CompilerDefines.inc}
 
 interface
 
@@ -391,9 +390,7 @@ end;
 
 initialization
 
-{$IFDEF SupportsUseLatestCommonDialogs}
 Dialogs.UseLatestCommonDialogs := False;
-{$ENDIF}
 
 end.
 

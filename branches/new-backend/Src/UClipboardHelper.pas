@@ -76,13 +76,11 @@ type
         @param Fmt [in] Clipboard format.
         @param Str [in] String to be added to clipboard.
       }
-    {$IFDEF UNICODE}
     procedure Add(const Fmt: Word; const Bytes: TBytes); overload;
       {Adds an array of bytes to the clipboard in a specified format.
         @param Fmt [in] Clipboard format.
         @param Bytes [in] Array of bytes to be added to clipboard.
       }
-    {$ENDIF}
   end;
 
   {
@@ -156,7 +154,6 @@ begin
   Add(Fmt, Pointer(Str)^, SizeOf(Char) * (Length(Str) + 1));
 end;
 
-{$IFDEF UNICODE}
 procedure TClipboardHelper.Add(const Fmt: Word; const Bytes: TBytes);
   {Adds an array of bytes to the clipboard in a specified format.
     @param Fmt [in] Clipboard format.
@@ -165,7 +162,6 @@ procedure TClipboardHelper.Add(const Fmt: Word; const Bytes: TBytes);
 begin
   Add(Fmt, Pointer(Bytes)^, Length(Bytes));
 end;
-{$ENDIF}
 
 procedure TClipboardHelper.Close;
   {Closes clipboard. Calls must be matched with calls to Open.

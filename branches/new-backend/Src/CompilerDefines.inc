@@ -39,20 +39,6 @@
   CanCompile
     Defined if compiler can be used to compile CodeSnip.
 
-  SupportsMainFormOnTaskBar
-    Defined for compilers that have the TApplication.MainFormOnTaskBar property.
-    When not defined the program needs to provide the correct Vista
-    compatibility.
-
-  SupportsUseLatestCommonDialogs
-    Defined for compilers that support the UseLatestCommonDialogs global
-    variable that is used to enable or disable Vista style common dialogs.
-
-  AltBugFixNeeded
-    Defined for compilers that exhibit the Alt Key Bug and need the program to
-    provide a fix. (For details of the Alt Key Bug see Embarcadero Quality
-    Central bug report #37403.)
-
   ThreadResumeDeprecated
     Defined for compilers where TThread.Resume is a deprecated method.
  }
@@ -60,19 +46,12 @@
 
 {$UNDEF CanCompile}
 
-{$UNDEF SupportsMainFormOnTaskBar}
-{$DEFINE AltBugFixNeeded}
 {$UNDEF ThreadResumeDeprecated}
-{$UNDEF SupportsUseLatestCommonDialogs}
 
 {$IFDEF CONDITIONALEXPRESSIONS}
-  {$IF CompilerVersion >= 18.0} // Delphi 2006 and later
+  {$IF CompilerVersion >= 20.0} // Delphi 2009 and later
+    // assuming that CodeSnip will compile with Delphi 2009: not tested
     {$DEFINE CanCompile}
-  {$IFEND}
-  {$IF CompilerVersion >= 18.5} // Delphi 2007 and later
-    {$DEFINE SupportsMainFormOnTaskBar}
-    {$DEFINE SupportsUseLatestCommonDialogs}
-    {$UNDEF AltBugFixNeeded}
   {$IFEND}
   {$IF CompilerVersion >= 21.0} // Delphi 2010 and later
     {$DEFINE ThreadResumeDeprecated}
@@ -80,5 +59,11 @@
 {$ENDIF}
 
 {$IFNDEF CanCompile}
-  {$MESSAGE FATAL 'CodeSnip requires Delphi 2006 or later to compile'}
+  {$MESSAGE FATAL 'CodeSnip requires Delphi 2009 or later to compile'}
+{$ENDIF}
+
+// Unlikely this test will fail since required compilers support: just here for
+// completeness and ultimate safety!
+{$IFNDEF UNICODE}
+ {$MESSAGE FATAL 'CodeSnip requires Unicode support'}
 {$ENDIF}

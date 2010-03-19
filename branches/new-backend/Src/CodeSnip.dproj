@@ -284,7 +284,6 @@
 			<DCCReference Include="UActiveText.pas"/>
 			<DCCReference Include="UActiveTextHTML.pas"/>
 			<DCCReference Include="UAlphabet.pas"/>
-			<DCCReference Include="UAltBugFix.pas"/>
 			<DCCReference Include="UAnchors.pas"/>
 			<DCCReference Include="UAppInfo.pas"/>
 			<DCCReference Include="UBaseObjects.pas"/>

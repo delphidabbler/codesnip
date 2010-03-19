@@ -458,11 +458,7 @@ begin
 
   // Create writer onto string stream to receive source code
   Writer := nil;
-  {$IFDEF UNICODE}
   SS := TStringStream.Create('', TEncoding.Unicode);
-  {$ELSE}
-  SS := TStringStream.Create('');
-  {$ENDIF}
   try
     Writer := TStrStreamWriter.Create(SS);
 
@@ -592,11 +588,7 @@ begin
   fSourceAnalyser.Generate;
   // Create writer object onto string stream that receives output
   Writer := nil;
-  {$IFDEF UNICODE}
   SS := TStringStream.Create('', TEncoding.Unicode);
-  {$ELSE}
-  SS := TStringStream.Create('');
-  {$ENDIF}
   try
     Writer := TStrStreamWriter.Create(SS);
 

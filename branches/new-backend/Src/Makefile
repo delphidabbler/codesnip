@@ -91,9 +91,8 @@ codesnip: typelib resources autogen pascal
 # Configure source folders
 config:
   @echo Configuring CodeSnip
-  # Create .cfg and .bdsproj files from templates 
+  # Create .cfg file from template
   @copy /Y CodeSnip.cfg.tplt CodeSnip.cfg
-  @copy /Y CodeSnip.bdsproj.tplt CodeSnip.bdsproj
   # Create build folders
   @cd ..
   @if exist Bin rmdir /S /Q Bin

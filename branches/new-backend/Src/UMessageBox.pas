@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -169,7 +169,7 @@ uses
   // Delphi
   SysUtils, Windows, Forms, StdCtrls, ExtCtrls, Consts, Math,
   // Project
-  UAltBugFix, UConsts, UDlgHelper, UFontHelper, UGraphicUtils, UStructs, UUtils;
+  UConsts, UDlgHelper, UFontHelper, UGraphicUtils, UStructs, UUtils;
 
 
 type
@@ -341,13 +341,11 @@ begin
   // Create a dialog box of required type
   Dlg := TMessageBoxForm.Create(Parent, MsgLines, Buttons, DlgType);
   try
-    AltBugFix.RegisterCtrl(Dlg, True);
     // Make sure "Parent" control is parent of dialog and align over it
     TDlgHelper.SetDlgParent(Dlg, Parent);
     TDlgAligner.Align(Dlg, Parent);
     // Display the dialog and return result
     Result := Dlg.ShowModal;
-    AltBugFix.UnRegisterCtrl(Dlg);
   finally
     FreeAndNil(Dlg);
   end;
