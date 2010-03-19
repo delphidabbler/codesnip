@@ -26,6 +26,8 @@
 			<DelphiCompile Include="CSUnitTests.dpr">
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
+			<DCCReference Include="..\..\..\UBaseObjects.pas"/>
+			<DCCReference Include="TestUBaseObjects.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

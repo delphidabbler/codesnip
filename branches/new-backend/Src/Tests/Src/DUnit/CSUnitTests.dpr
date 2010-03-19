@@ -21,7 +21,9 @@ uses
   Forms,
   TestFramework,
   GUITestRunner,
-  TextTestRunner;
+  TextTestRunner,
+  UBaseObjects in '..\..\..\UBaseObjects.pas',
+  TestUBaseObjects in 'TestUBaseObjects.pas';
 
 {$R *.RES}
 
