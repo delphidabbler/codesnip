@@ -55,6 +55,5 @@ pascal: CSSetupHelper.exe
 # Configure source folder
 config:
   @echo Configuring InstallHelper
-  # Create .cfg and .bdsproj files from templates 
+  # Create .cfg file from template
   @copy /Y CSSetupHelper.cfg.tplt CSSetupHelper.cfg
-  @copy /Y CSSetupHelper.bdsproj.tplt CSSetupHelper.bdsproj
