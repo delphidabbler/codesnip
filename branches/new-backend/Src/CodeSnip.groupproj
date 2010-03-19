@@ -9,6 +9,9 @@
 			<Projects Include="InstallHelper\CSSetupHelper.dproj">
 				<Dependencies/>
 			</Projects>
+			<Projects Include="Tests\Src\DUnit\CSUnitTests.dproj">
+				<Dependencies/>
+			</Projects>
 		</ItemGroup>
 		<ProjectExtensions>
 			<Borland.Personality>Default.Personality.12</Borland.Personality>
@@ -35,14 +38,23 @@
 		<Target Name="CSSetupHelper:Make">
 			<MSBuild Targets="Make" Projects="InstallHelper\CSSetupHelper.dproj"/>
 		</Target>
+		<Target Name="CSUnitTests">
+			<MSBuild Projects="Tests\Src\DUnit\CSUnitTests.dproj"/>
+		</Target>
+		<Target Name="CSUnitTests:Clean">
+			<MSBuild Targets="Clean" Projects="Tests\Src\DUnit\CSUnitTests.dproj"/>
+		</Target>
+		<Target Name="CSUnitTests:Make">
+			<MSBuild Targets="Make" Projects="Tests\Src\DUnit\CSUnitTests.dproj"/>
+		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="CodeSnip;CSSetupHelper"/>
+			<CallTarget Targets="CodeSnip;CSSetupHelper;CSUnitTests"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="CodeSnip:Clean;CSSetupHelper:Clean"/>
+			<CallTarget Targets="CodeSnip:Clean;CSSetupHelper:Clean;CSUnitTests:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="CodeSnip:Make;CSSetupHelper:Make"/>
+			<CallTarget Targets="CodeSnip:Make;CSSetupHelper:Make;CSUnitTests:Make"/>
 		</Target>
 		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 	</Project>
