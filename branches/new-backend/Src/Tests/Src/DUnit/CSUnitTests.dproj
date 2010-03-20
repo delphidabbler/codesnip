@@ -11,7 +11,7 @@
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
 			<DCC_DependencyCheckOutputName>..\..\Exe\CSUnitTests.exe</DCC_DependencyCheckOutputName>
-			<DCC_Define>DEBUG;_CONSOLE_TESTRUNNER;$(DCC_Define)</DCC_Define>
+			<DCC_Define>TESTING;_CONSOLE_TESTRUNNER;$(DCC_Define)</DCC_Define>
 			<DCC_UnitSearchPath>$(BDS)\Source\DUnit\src;..\..\Bin\DUnit;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_ExeOutput>..\..\Exe</DCC_ExeOutput>
 			<DCC_ImageBase>00400000</DCC_ImageBase>
