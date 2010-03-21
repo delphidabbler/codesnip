@@ -33,6 +33,7 @@
 			<DCCReference Include="..\..\..\NsDatabase.UDataItem.pas"/>
 			<DCCReference Include="..\..\..\NsDatabase.UCookies.pas"/>
 			<DCCReference Include="TestNsDatabaseUCookies.pas"/>
+			<DCCReference Include="..\..\..\NsDatabase.UDataPool.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

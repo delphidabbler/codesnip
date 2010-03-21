@@ -50,7 +50,8 @@ uses
   TestUSingleton in 'TestUSingleton.pas',
   NsDatabase.UDataItem in '..\..\..\NsDatabase.UDataItem.pas',
   NsDatabase.UCookies in '..\..\..\NsDatabase.UCookies.pas',
-  TestNsDatabaseUCookies in 'TestNsDatabaseUCookies.pas';
+  TestNsDatabaseUCookies in 'TestNsDatabaseUCookies.pas',
+  NsDatabase.UDataPool in '..\..\..\NsDatabase.UDataPool.pas';
 
 {$R *.RES}
 
