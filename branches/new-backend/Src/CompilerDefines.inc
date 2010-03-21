@@ -1,8 +1,7 @@
 {
  * CompilerDefines.inc
  *
- * Include file that defines various symbols used for conditional compilation
- * depending on which compiler is being used.
+ * Include file that defines various symbols used for conditional compilation.
  *
  * $Rev$
  * $Date$
@@ -38,28 +37,19 @@
 
   CanCompile
     Defined if compiler can be used to compile CodeSnip.
-
-  ThreadResumeDeprecated
-    Defined for compilers where TThread.Resume is a deprecated method.
  }
 
 
 {$UNDEF CanCompile}
 
-{$UNDEF ThreadResumeDeprecated}
-
 {$IFDEF CONDITIONALEXPRESSIONS}
-  {$IF CompilerVersion >= 20.0} // Delphi 2009 and later
-    // assuming that CodeSnip will compile with Delphi 2009: not tested
-    {$DEFINE CanCompile}
-  {$IFEND}
   {$IF CompilerVersion >= 21.0} // Delphi 2010 and later
-    {$DEFINE ThreadResumeDeprecated}
+    {$DEFINE CanCompile}        // Minimum compiler is Delphi 2010.
   {$IFEND}
 {$ENDIF}
 
 {$IFNDEF CanCompile}
-  {$MESSAGE FATAL 'CodeSnip requires Delphi 2009 or later to compile'}
+  {$MESSAGE FATAL 'CodeSnip requires Delphi 2010 or later to compile'}
 {$ENDIF}
 
 // Unlikely this test will fail since required compilers support: just here for

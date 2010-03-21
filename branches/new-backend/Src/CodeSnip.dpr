@@ -361,6 +361,9 @@ uses
 {$Resource VCodeSnip.res}   // Version information resource
 {$Resource Resources.res}   // All other resources.
 
+// Include compiler defines: checks compiler is supported
+{$Include CompilerDefines.inc}
+
 begin
   Application.Initialize;
   Application.MainFormOnTaskBar := True;
