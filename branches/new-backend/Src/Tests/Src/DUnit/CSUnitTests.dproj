@@ -30,6 +30,9 @@
 			<DCCReference Include="TestUBaseObjects.pas"/>
 			<DCCReference Include="..\..\..\USingleton.pas"/>
 			<DCCReference Include="TestUSingleton.pas"/>
+			<DCCReference Include="..\..\..\NsDatabase.UDataItem.pas"/>
+			<DCCReference Include="..\..\..\NsDatabase.UCookies.pas"/>
+			<DCCReference Include="TestNsDatabaseUCookies.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

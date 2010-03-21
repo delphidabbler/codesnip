@@ -47,7 +47,10 @@ uses
   UBaseObjects in '..\..\..\UBaseObjects.pas',
   TestUBaseObjects in 'TestUBaseObjects.pas',
   USingleton in '..\..\..\USingleton.pas',
-  TestUSingleton in 'TestUSingleton.pas';
+  TestUSingleton in 'TestUSingleton.pas',
+  NsDatabase.UDataItem in '..\..\..\NsDatabase.UDataItem.pas',
+  NsDatabase.UCookies in '..\..\..\NsDatabase.UCookies.pas',
+  TestNsDatabaseUCookies in 'TestNsDatabaseUCookies.pas';
 
 {$R *.RES}
 
