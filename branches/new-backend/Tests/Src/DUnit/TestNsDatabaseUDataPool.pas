@@ -11,7 +11,7 @@ unit TestNsDatabaseUDataPool;
 interface
 
 uses
-  SysUtils, TestFramework,
+  SysUtils, TestFramework, Generics.Collections,
   NsDatabase.UCookies, NsDatabase.UDataItem, NsDatabase.UDataPool;
 
 type
@@ -38,6 +38,7 @@ type
     procedure ErrorAdd;
     procedure ErrorRemove;
     procedure ErrorItemsProp;
+    function CheckOffFromList<T>(const List: TList<T>; const Item: T): Boolean;
   published
     procedure TestAddCountAndFree;
     procedure TestIsInPool;
@@ -47,6 +48,7 @@ type
     procedure TestEnumerator;
     procedure TestCookiesEnumerator;
   end;
+
 
 implementation
 
@@ -72,6 +74,14 @@ begin
 end;
 
 { TestTDBDataPool }
+
+function TestTDBDataPool.CheckOffFromList<T>(const List: TList<T>;
+  const Item: T): Boolean;
+begin
+  Result := List.Contains(Item);
+  if Result then
+    List.Remove(Item);
+end;
 
 procedure TestTDBDataPool.ErrorAdd;
 begin
@@ -151,38 +161,38 @@ end;
 procedure TestTDBDataPool.TestCookiesEnumerator;
 var
   Cookie: TDBCookie;
-  Idx: Integer;
-  Objs: array[1..4] of TTestObject;
+  List: TList<TDBCookie>;
 begin
-  Objs[1] := O1;
-  Objs[2] := O2;
-  Objs[3] := O3;
-  Objs[4] := O4;
-  Idx := 0;
-  for Cookie in Pool.Cookies do
-  begin
-    Inc(Idx);
-    Check(Cookie = Objs[Idx].Cookie,
-      Format('Expected cookie of %s, got $s', [Objs[Idx].ToString]));
+  List := TList<TDBCookie>.Create;
+  try
+    List.AddRange([O1.Cookie, O2.Cookie, O3.Cookie, O4.Cookie]);
+    for Cookie in Pool.Cookies do
+    begin
+      if not CheckOffFromList<TDBCookie>(List, Cookie) then
+        Fail('Cookie unexpected');
+    end;
+    Check(List.Count = 0, 'Enumeration was incomplete');
+  finally
+    List.Free;
   end;
 end;
 
 procedure TestTDBDataPool.TestEnumerator;
 var
   DataItem: TTestObject;
-  Idx: Integer;
-  Objs: array[1..4] of TTestObject;
+  List: TList<TTestObject>;
 begin
-  Objs[1] := O1;
-  Objs[2] := O2;
-  Objs[3] := O3;
-  Objs[4] := O4;
-  Idx := 0;
-  for DataItem in Pool do
-  begin
-    Inc(Idx);
-    Check(DataItem = Objs[Idx],
-      Format('Expected %s, got $s', [Objs[Idx].ToString, DataItem.ToString]));
+  List := TList<TTestObject>.Create;
+  try
+    List.AddRange([O1, O2, O3, O4]);
+    for DataItem in Pool do
+    begin
+      if not CheckOffFromList<TTestObject>(List, DataItem) then
+        Fail(Format('DataItem %s unexpected', [DataItem.ToString]));
+    end;
+    Check(List.Count = 0, 'Enumeration was incomplete');
+  finally
+    List.Free;
   end;
 end;
 
@@ -246,3 +256,4 @@ initialization
   RegisterTest(TestTDBDataPool.Suite);
 
 end.
+
