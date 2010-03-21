@@ -52,7 +52,9 @@ uses
   NsDatabase.UCookies in '..\..\..\NsDatabase.UCookies.pas',
   TestNsDatabaseUCookies in 'TestNsDatabaseUCookies.pas',
   NsDatabase.UDataPool in '..\..\..\NsDatabase.UDataPool.pas',
-  UExceptions in '..\..\..\UExceptions.pas';
+  UExceptions in '..\..\..\UExceptions.pas',
+  TestNsDatabaseUDataItem in 'TestNsDatabaseUDataItem.pas',
+  TestNsDatabaseUDataPool in 'TestNsDatabaseUDataPool.pas';
 
 {$R *.RES}
 
