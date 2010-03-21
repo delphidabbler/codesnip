@@ -94,14 +94,8 @@
 
 <p>
 	<em>CodeSnip</em> is written in Object Pascal and is targeted at Delphi
-	2010. It requires Unicode string support and therefore cannot be compiled
-	with Delphi 2007 and earlier. It may compile with Delphi 2009 but this is
-	not guaranteed and has not been tested.
-</p>
-
-<p>
-	If you want to compile with an earlier Delphi <em>CodeSnip</em> was
-	compatible with Delphi 2006 and later up to and including v3.5.4.
+	2010. It requires some language features introduced in this version so will
+	not compile with any earlier compilers.
 </p>
 
 <p>
@@ -109,6 +103,14 @@
 	builds. Final builds should be built using the provided makefile, but you
 	can get away with using the IDE if you don't change any resources or the
 	type library.
+</p>
+
+<p>
+	<em>If you want to compile with an earlier Delphi, </em>CodeSnip<em> was
+	compatible with Delphi 2006 and later up to and including v3.5.4. You could
+	fetch the source for an earlier version from the repository. If you do this
+	you should refer to the version of this file that accompanied the chosen
+	version.</em>
 </p>
 
 <h2>
@@ -138,8 +140,8 @@
 <p>
 	Regardless of whether you are using the version of Indy 10 supplied with
 	Delphi or if you have downloaded and compiled your own version, you must set
-	the <code>INDY10</code> environment variable to address the directory where
-	you placed the compiled code.
+	the <code>INDY10</code> environment variable to the directory where you
+	placed the compiled code.
 </p>
 
 <h4 id="indychanges">
@@ -172,8 +174,8 @@
 </h3>
 
 <p>
-	Goes without saying really, but you need the RTL and VCL that ships with the
-	chosen version of Delphi.
+	Goes without saying really, but you need the RTL and VCL that ships with
+	Delphi.
 </p>
 
 <h2>
@@ -190,8 +192,7 @@
 
 <p>
 	A copy of the Delphi 2010 command line compiler is required to build the
-	object Pascal code from the provided makefile. As noted above, Delphi 2009
-	may work, but has not been tested.
+	object Pascal code from the provided makefile.
 </p>
 
 <p>
@@ -242,8 +243,8 @@
 		<code>DELPHI2010</code> - optional
 	</dt>
 	<dd>
-		If you are using Delphi 2010 this environment variable can be set to the
-		Delphi install directory. When <code>DELPHI2010</code> is defined
+		This environment variable can be set to the Delphi 2010 install
+		directory. When <code>DELPHI2010</code> is defined
 		<code>DELPHIROOT</code> will be set to the value of
 		<code>DELPHI2010</code>.
 	</dd>
