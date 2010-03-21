@@ -9,7 +9,7 @@
 			<Projects Include="InstallHelper\CSSetupHelper.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="Tests\Src\DUnit\CSUnitTests.dproj">
+			<Projects Include="..\Tests\Src\DUnit\CSUnitTests.dproj">
 				<Dependencies/>
 			</Projects>
 		</ItemGroup>
@@ -39,13 +39,13 @@
 			<MSBuild Targets="Make" Projects="InstallHelper\CSSetupHelper.dproj"/>
 		</Target>
 		<Target Name="CSUnitTests">
-			<MSBuild Projects="Tests\Src\DUnit\CSUnitTests.dproj"/>
+			<MSBuild Projects="..\Tests\Src\DUnit\CSUnitTests.dproj"/>
 		</Target>
 		<Target Name="CSUnitTests:Clean">
-			<MSBuild Targets="Clean" Projects="Tests\Src\DUnit\CSUnitTests.dproj"/>
+			<MSBuild Targets="Clean" Projects="..\Tests\Src\DUnit\CSUnitTests.dproj"/>
 		</Target>
 		<Target Name="CSUnitTests:Make">
-			<MSBuild Targets="Make" Projects="Tests\Src\DUnit\CSUnitTests.dproj"/>
+			<MSBuild Targets="Make" Projects="..\Tests\Src\DUnit\CSUnitTests.dproj"/>
 		</Target>
 		<Target Name="Build">
 			<CallTarget Targets="CodeSnip;CSSetupHelper;CSUnitTests"/>
