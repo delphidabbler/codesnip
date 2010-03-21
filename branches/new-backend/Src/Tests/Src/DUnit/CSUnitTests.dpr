@@ -46,7 +46,8 @@ uses
   TextTestRunner,
   UBaseObjects in '..\..\..\UBaseObjects.pas',
   TestUBaseObjects in 'TestUBaseObjects.pas',
-  USingleton in '..\..\..\USingleton.pas';
+  USingleton in '..\..\..\USingleton.pas',
+  TestUSingleton in 'TestUSingleton.pas';
 
 {$R *.RES}
 
