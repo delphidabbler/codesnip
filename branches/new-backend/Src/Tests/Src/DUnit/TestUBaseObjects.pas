@@ -99,6 +99,21 @@ type
     procedure TestAggregated;
   end;
 
+  // Test methods for class TOwnedConditionalFreeObject
+  TestTOwnedConditionalFreeObject = class(TTestCase)
+    type
+      TTestObject = class(TOwnedConditionalFreeObject)
+      strict protected
+        procedure Finalize; override;
+      public
+        constructor Create(const AOwner: TObject);
+        class var InstanceCount: Integer;
+        class function Details: string;
+      end;
+  published
+    procedure TestFree;
+  end;
+
   // Test methods for class TDelegatedConditionalFreeObject
   TestTDelegatedConditionalFreeObject = class(TTestCase)
   strict private
@@ -316,6 +331,46 @@ begin
   Result := RefCount;
 end;
 
+{ TestTOwnedConditionalFreeObject }
+
+procedure TestTOwnedConditionalFreeObject.TestFree;
+var
+  Obj: TTestObject;
+begin
+  Obj := TTestObject.Create(Self);
+  Check(TTestObject.InstanceCount = 1,
+    Format('Expected Instance Count, got %d', [TTestObject.InstanceCount]));
+  Obj.Free; // should not have been allowed
+  Check(TTestObject.InstanceCount = 1,
+    Format('Expected Instance Count of 1, got %d',
+      [TTestObject.InstanceCount]));
+
+  Obj.Owner := nil;
+  Obj.Free; // should have been allowed
+  Check(TTestObject.InstanceCount = 0,
+    Format('Expected Instance Count of 0, got %d',
+      [TTestObject.InstanceCount]));
+end;
+
+{ TestTOwnedConditionalFreeObject.TTestObject }
+
+constructor TestTOwnedConditionalFreeObject.TTestObject.Create(
+  const AOwner: TObject);
+begin
+  inherited;
+  Inc(InstanceCount);
+end;
+
+class function TestTOwnedConditionalFreeObject.TTestObject.Details: string;
+begin
+  Result := Format('%s: instances = %d', [ClassName, InstanceCount]);
+end;
+
+procedure TestTOwnedConditionalFreeObject.TTestObject.Finalize;
+begin
+  Dec(InstanceCount);
+end;
+
 { TestTDelegatedConditionalFreeObject }
 
 procedure TestTDelegatedConditionalFreeObject.TestFree;
@@ -370,6 +425,7 @@ initialization
   RegisterTest(TestTNoPublicConstructIntfObject.Suite);
   RegisterTest(TestTNonRefCountedObject.Suite);
   RegisterTest(TestTAggregatedOrLoneObject.Suite);
+  RegisterTest(TestTOwnedConditionalFreeObject.Suite);
   RegisterTest(TestTDelegatedConditionalFreeObject.Suite);
 end.
 

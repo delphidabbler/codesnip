@@ -25,8 +25,11 @@
  *   6) TConditionalFreeObject:
  *      An abstract base class for objects that cannot be destroyed unless some
  *      condition is met.
- *   7) TDelegatedConditionalFreeObject:
- *      Concreate descendant of TConditionalFreeObject that delegates the
+ *   7) TOwnedConditionalFreeObject:
+ *      Class that cannot be destroyed for as long as it has an owner object.
+ *      Attempts to free succeed only if Owner property is nil.
+ *   8) TDelegatedConditionalFreeObject:
+ *      Concrete descendant of TConditionalFreeObject that delegates the
  *      decision about whether the object can be freed to a callback method
  *      passed to the constructor.
  *
@@ -268,6 +271,29 @@ type
   end;
 
   {
+  TOwnedConditionalFreeObject:
+    Class that can only be freed when it is not owned, i.e. Owner property is
+    nil.
+  }
+  TOwnedConditionalFreeObject = class(TConditionalFreeObject)
+  strict private
+    fOwner: TObject;  // Value of Owner property
+  strict protected
+    function CanDestroy: Boolean; override;
+      {Determines if this instance can be destroyed. It can only if the object
+      is not owned.
+        @return True if instance can be destroyed, False if not.
+      }
+  public
+    constructor Create(const AOwner: TObject = nil);
+      {Constructor that create object with optional owner object.
+        @param AOwner [in] Optional owner object.
+      }
+    property Owner: TObject read fOwner write fOwner;
+      {Reference to owning object}
+  end;
+
+  {
   TDelegatedConditionalFreeObject:
     Class that delegates the decision as to whether it can be destroyed to a
     callback function passed to the constructor. The object is only destroyed if
@@ -486,6 +512,19 @@ begin
   // Check if object can be destroyed
   if CanDestroy then
     inherited;
+end;
+
+{ TOwnedConditionalFreeObject }
+
+function TOwnedConditionalFreeObject.CanDestroy: Boolean;
+begin
+  Result := not Assigned(fOwner);
+end;
+
+constructor TOwnedConditionalFreeObject.Create(const AOwner: TObject);
+begin
+  inherited Create;
+  fOwner := AOwner;
 end;
 
 { TDelegatedConditionalFreeObject }
