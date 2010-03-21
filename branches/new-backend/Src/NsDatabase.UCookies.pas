@@ -1,8 +1,8 @@
 {
  * NsDatabase.UCookies.pas
  *
- * Defines cookie type used throughout database along with a class that
- * generates unique cookies.
+ * Defines cookie type used throughout database along operations to generate
+ * unique and nul cookies, compare cookies and test for nul cookies.
  *
  * $Rev$
  * $Date$
@@ -46,32 +46,89 @@ uses
 
 
 type
-  TDBCookie = UInt64;
-
-  TDBCookieGenerator = class(TNoConstructObject)
-  strict private
-    class var fCookie: TDBCookie;
+  TDBCookie = record
+  private
+    Value: UInt64;
   public
-    const NulCookie = TDBCookie(0);
-    class function GetCookie: TDBCookie;
-    class procedure Reset;
+    class function CreateNul: TDBCookie; static;
+    class function Create: TDBCookie; static;
+    class operator Equal(const C1, C2: TDBCookie): Boolean;
+    class operator NotEqual(const C1, C2: TDBCookie): Boolean;
+    function Hash: Integer;
+    function IsNul: Boolean;
+    class procedure Reset; static;
   end;
 
 
 implementation
 
+type
+  TDBCookieValueGenerator = class(TNoConstructObject)
+  strict private
+    class var fCookieValue: UInt64;
+  public
+    const NulCookieValue = UInt64(0);
+    class function GetCookieValue: UInt64;
+    class procedure Reset;
+  end;
 
-{ TDBCookieGenerator }
 
-class function TDBCookieGenerator.GetCookie: TDBCookie;
+{ TDBCookieValueGenerator }
+
+class function TDBCookieValueGenerator.GetCookieValue: UInt64;
 begin
-  Inc(fCookie);
-  Result := fCookie;
+  Inc(fCookieValue);
+  Result := fCookieValue;
 end;
 
-class procedure TDBCookieGenerator.Reset;
+class procedure TDBCookieValueGenerator.Reset;
 begin
-  fCookie := 0;
+  fCookieValue := 0;
+end;
+
+{ TDBCookie }
+
+class function TDBCookie.Create: TDBCookie;
+begin
+  Result.Value := TDBCookieValueGenerator.GetCookieValue;
+  Assert(Result.Value <> 0);
+end;
+
+class function TDBCookie.CreateNul: TDBCookie;
+begin
+  Result.Value := TDBCookieValueGenerator.NulCookieValue;
+end;
+
+class operator TDBCookie.Equal(const C1, C2: TDBCookie): Boolean;
+begin
+  Result := C1.Value = C2.Value;
+end;
+
+function TDBCookie.Hash: Integer;
+  {Gets hash of cookie. Hash of nul cookie guaranteed to be zero and of non-nul
+  cookie to be non-zero.
+  }
+begin
+  if not IsNul then
+    Result := Integer(Value)
+  else
+    Result := 0;
+end;
+
+function TDBCookie.IsNul: Boolean;
+begin
+  Result := Value = TDBCookieValueGenerator.NulCookieValue;
+end;
+
+class operator TDBCookie.NotEqual(const C1, C2: TDBCookie): Boolean;
+begin
+  Result := C1.Value <> C2.Value;
+end;
+
+class procedure TDBCookie.Reset;
+begin
+  TDBCookieValueGenerator.Reset;
 end;
 
 end.
+
