@@ -28,6 +28,7 @@
 			</DelphiCompile>
 			<DCCReference Include="..\..\..\UBaseObjects.pas"/>
 			<DCCReference Include="TestUBaseObjects.pas"/>
+			<DCCReference Include="..\..\..\USingleton.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

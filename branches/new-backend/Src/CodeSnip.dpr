@@ -292,6 +292,7 @@ uses
   USettings in 'USettings.pas',
   UShowCaseCtrl in 'UShowCaseCtrl.pas',
   USimpleDispatch in 'USimpleDispatch.pas',
+  USingleton in 'USingleton.pas',
   USnipData in 'USnipData.pas',
   USnipKindListAdapter in 'USnipKindListAdapter.pas',
   USnippetIDs in 'USnippetIDs.pas',
