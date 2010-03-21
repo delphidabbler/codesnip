@@ -48,6 +48,7 @@ type
 
   EDBDataPoolError = class(EBug);
 
+
   {
   TDBDataPool:
     Generic object that implements a pool of data item objects. Designed for use
@@ -58,6 +59,17 @@ type
   TDBDataPool<T: TDBDataItem> = class(TOwnedConditionalFreeObject)
   strict private
     fMap: TDictionary<TDBCookie,T>; // maps cookies to data item object
+    function GetItem(const Cookie: TDBCookie): T;
+      {Gets reference to object associated with a cookie in the pool.
+        @param Cookie [in] Cookie to search for.
+        @return Required object reference.
+        @except Raises EDBDataPoolError if cookie is not in pool.
+      }
+    function GetCookies: TEnumerable<TDBCookie>;
+      {Gets reference to cookies collection from pool. Collection will be freed
+      when pool object is freed.
+        @return Required collection.
+      }
   public
     constructor Create(const Capacity: Integer = 0);
       {Constructor. Optionally sets pool's capacity.
@@ -84,12 +96,6 @@ type
     procedure Clear;
       {Clears pool and frees contained objects.
       }
-    function GetObject(const Cookie: TDBCookie): T;
-      {Gets reference to object associated with a cookie in the pool.
-        @param Cookie [in] Cookie to search for.
-        @return Required object reference.
-        @except Raises EDBDataPoolError if cookie is not in pool.
-      }
     function Count: Integer;
       {Gets number of objects in pool.
         @return Required number of objects.
@@ -99,6 +105,10 @@ type
       enumerated but can be retrieved from value's Cookie property.
         @return Required enumerator.
       }
+    property Items[const Cookie: TDBCookie]: T read GetItem; default;
+      {Gets object associated with a cookie from pool}
+    property Cookies: TEnumerable<TDBCookie> read GetCookies;
+      {Gets an enumerable collection of cookies from pool}
   end;
 
 resourcestring  // must be declared in interface: used in parameterised type
@@ -169,12 +179,17 @@ begin
   inherited;
 end;
 
+function TDBDataPool<T>.GetCookies: TEnumerable<TDBCookie>;
+begin
+  Result := fMap.Keys;
+end;
+
 function TDBDataPool<T>.GetEnumerator: TEnumerator<T>;
 begin
   Result := TDictionary<TDBCookie,T>.TValueEnumerator.Create(fMap);
 end;
 
-function TDBDataPool<T>.GetObject(const Cookie: TDBCookie): T;
+function TDBDataPool<T>.GetItem(const Cookie: TDBCookie): T;
 begin
   if not fMap.TryGetValue(Cookie, Result) then
     raise EDBDataPoolError.Create(sObjectPoolCookieMissing);
@@ -189,7 +204,7 @@ procedure TDBDataPool<T>.Remove(const Cookie: TDBCookie);
 var
   Obj: T;
 begin
-  Obj := GetObject(Cookie);
+  Obj := GetItem(Cookie);
   fMap.Remove(Cookie);
   Obj.Owner := nil;
   Obj.Free;
