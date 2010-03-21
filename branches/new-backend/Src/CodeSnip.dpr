@@ -51,8 +51,6 @@ program CodeSnip;
 {$WARNINGS ON}
 {$WRITEABLECONST OFF}
 
-{%ToDo 'CodeSnip.todo'}
-
 uses
   Forms,
   Windows,
