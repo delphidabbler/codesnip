@@ -12,9 +12,16 @@
  * The CONSOLE_TESTRUNNER symbol must be defined to create a console
  * application. From the IDE define the symbol in the conditional defines entry
  * in project options. To compile from the command line pass the -D switch to
- * the compiler:
+ * the compiler to define the symbole. The command line compiler also need to be
+ * told the location of DUnit's .dfm file. (usually $(BDS)\lib). Use the
+ * following command line:
  *
- *   DCC32 -DCONSOLE_TESTRUNNER -B CSUnitTests
+ *   DCC32 -DCONSOLE_TESTRUNNER -B -R<path-to-dunit-binaries> CSUnitTests
+ *
+ * For example (all on one line):
+ *
+ *   DCC32 -DCONSOLE_TESTRUNNER -B
+ *     -R"C:\Program Files\Embarcadero\RAD Studio\7.0\lib" CSUnitTests
  *
  * GUI Application
  * ~~~~~~~~~~~~~~~
@@ -24,7 +31,9 @@
  * conditional defines entry in project options if necessary. To compile from
  * the command line do this:
  *
- *   DCC32 -B CSUnitTests
+ *   DCC32 -B -R<path-to-dunit-binaries> CSUnitTests
+ *
+ * Note that once again the path to the DUnit binaries is required.
  *
  * -----------------------------------------------------------------------------
  * $Rev$
