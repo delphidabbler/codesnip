@@ -44,17 +44,17 @@ uses
   TestFramework,
   GUITestRunner,
   TextTestRunner,
-  UBaseObjects in '..\..\..\UBaseObjects.pas',
   TestUBaseObjects in 'TestUBaseObjects.pas',
-  USingleton in '..\..\..\USingleton.pas',
   TestUSingleton in 'TestUSingleton.pas',
-  NsDatabase.UDataItem in '..\..\..\NsDatabase.UDataItem.pas',
-  NsDatabase.UCookies in '..\..\..\NsDatabase.UCookies.pas',
   TestNsDatabaseUCookies in 'TestNsDatabaseUCookies.pas',
-  NsDatabase.UDataPool in '..\..\..\NsDatabase.UDataPool.pas',
-  UExceptions in '..\..\..\UExceptions.pas',
   TestNsDatabaseUDataItem in 'TestNsDatabaseUDataItem.pas',
-  TestNsDatabaseUDataPool in 'TestNsDatabaseUDataPool.pas';
+  TestNsDatabaseUDataPool in 'TestNsDatabaseUDataPool.pas',
+  NsDatabase.UCookies in '..\..\..\Src\Experimental\NsDatabase.UCookies.pas',
+  NsDatabase.UDataItem in '..\..\..\Src\Experimental\NsDatabase.UDataItem.pas',
+  NsDatabase.UDataPool in '..\..\..\Src\Experimental\NsDatabase.UDataPool.pas',
+  UBaseObjects in '..\..\..\Src\UBaseObjects.pas',
+  UExceptions in '..\..\..\Src\UExceptions.pas',
+  USingleton in '..\..\..\Src\Experimental\USingleton.pas';
 
 {$R *.RES}
 
