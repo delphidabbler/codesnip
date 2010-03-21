@@ -63,7 +63,9 @@ uses
   NsDatabase.UDataPool in '..\..\..\Src\Experimental\NsDatabase.UDataPool.pas',
   UBaseObjects in '..\..\..\Src\UBaseObjects.pas',
   UExceptions in '..\..\..\Src\UExceptions.pas',
-  USingleton in '..\..\..\Src\Experimental\USingleton.pas';
+  USingleton in '..\..\..\Src\Experimental\USingleton.pas',
+  NSDatabase.UDatabase in '..\..\..\Src\Experimental\NSDatabase.UDatabase.pas',
+  TestNSDatabaseUDatabase in 'TestNSDatabaseUDatabase.pas';
 
 {$R *.RES}
 
