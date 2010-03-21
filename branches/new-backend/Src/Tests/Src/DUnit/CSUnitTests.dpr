@@ -51,7 +51,8 @@ uses
   NsDatabase.UDataItem in '..\..\..\NsDatabase.UDataItem.pas',
   NsDatabase.UCookies in '..\..\..\NsDatabase.UCookies.pas',
   TestNsDatabaseUCookies in 'TestNsDatabaseUCookies.pas',
-  NsDatabase.UDataPool in '..\..\..\NsDatabase.UDataPool.pas';
+  NsDatabase.UDataPool in '..\..\..\NsDatabase.UDataPool.pas',
+  UExceptions in '..\..\..\UExceptions.pas';
 
 {$R *.RES}
 
