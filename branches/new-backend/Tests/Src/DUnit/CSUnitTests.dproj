@@ -39,6 +39,8 @@
 			<DCCReference Include="..\..\..\Src\Experimental\USingleton.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\NSDatabase.UDatabase.pas"/>
 			<DCCReference Include="TestNSDatabaseUDatabase.pas"/>
+			<DCCReference Include="..\..\..\Src\Experimental\UOrderedList.pas"/>
+			<DCCReference Include="TestUOrderedList.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
