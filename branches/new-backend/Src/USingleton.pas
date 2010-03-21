@@ -97,7 +97,7 @@ implementation
 
 uses
   // Delphi
-  Generics.Collections;
+  SysUtils, Generics.Collections;
 
 
 type
@@ -115,11 +115,18 @@ type
       {Flag that indicates if manager is destroying singletons}
     class var fMap: TDictionary<string,TSingleton>;
       {Map of class names to singleton instances}
-    class function Map: TDictionary<string,TSingleton>;
-      {Returns class name => singleton map. Creates an empty map if necessary.
-        @return Required map object.
+  {$IFNDEF TESTING}strict{$ENDIF}
+  protected
+    class procedure FreeAll;
+      {Frees all registered singletons.
+      }
+    class procedure CreateMap;
+      {Create Map object if doesn't exist.
       }
   public
+    class constructor Create;
+      {Class constructor. Sets up required class vars.
+      }
     class destructor Destroy;
       {Class destructor. Frees all singletons.
       }
@@ -139,9 +146,6 @@ type
         @except EListError raised if there is no singleton instance with the
           requested class name.
       }
-    class procedure FreeAll;
-      {Frees all registered singletons.
-      }
     class property Destroying: Boolean read fDestroying write fDestroying;
       {Indicates if the this class is destroying singletons. Singleton instances
       use this property to allow themselves to be destroyed}
@@ -152,7 +156,10 @@ procedure FreeAllSingletons;
   {Frees all singleton instances. Used when testing only.
   }
 begin
+  // Can't call class constructor directly so we use following methods.
+  // These methods are normally *strict* protected, but relaxed for testing.
   TSingletonManager.FreeAll;
+  TSingletonManager.CreateMap;
 end;
 {$ENDIF}
 
@@ -206,6 +213,21 @@ end;
 
 { TSingletonManager }
 
+class constructor TSingletonManager.Create;
+  {Class constructor. Sets up required class vars.
+  }
+begin
+  CreateMap;
+end;
+
+class procedure TSingletonManager.CreateMap;
+  {Create Map object if doesn't exist.
+  }
+begin
+  if not Assigned(fMap) then
+    fMap := TDictionary<string,TSingleton>.Create;
+end;
+
 class destructor TSingletonManager.Destroy;
   {Class destructor. Frees all singletons.
   }
@@ -222,12 +244,12 @@ begin
   // indicate to singletons they can destroy
   Destroying := True;
   // free the singletons in the map, then the map itself
-  for SPair in Map do
+  for SPair in fMap do
     SPair.Value.Free;
-  Map.Free;
-  // following two lines make it safe to re-create map when unit testing
-  fMap := nil;
+  FreeAndNil(fMap);
   Destroying := False;
+  // setting fMap nil and Destroying false make it safe to re-create map when
+  // testing
 end;
 
 class function TSingletonManager.Lookup(const ClsName: string): TSingleton;
@@ -238,19 +260,7 @@ class function TSingletonManager.Lookup(const ClsName: string): TSingleton;
       requested class name.
   }
 begin
-  Result := Map[ClsName];
-end;
-
-class function TSingletonManager.Map: TDictionary<string, TSingleton>;
-  {Returns class name => singleton map. Creates an empty map if necessary.
-    @return Required map object.
-  }
-begin
-  // We don't create Map in a class constructor because that would make testing
-  // of FreeAll method more difficult. Easier to create on demand as here
-  if not Assigned(fMap) then
-    fMap := TDictionary<string,TSingleton>.Create;
-  Result := fMap;
+  Result := fMap[ClsName];
 end;
 
 class procedure TSingletonManager.RegisterSingleton(const S: TSingleton);
@@ -259,7 +269,7 @@ class procedure TSingletonManager.RegisterSingleton(const S: TSingleton);
   }
 begin
   if not SingletonExists(S.ClassName) then
-    Map.Add(S.ClassName, S);
+    fMap.Add(S.ClassName, S);
 end;
 
 class function TSingletonManager.SingletonExists(
@@ -269,7 +279,8 @@ class function TSingletonManager.SingletonExists(
     @return True if an instance of this class already exists, False if not.
   }
 begin
-  Result := Map.ContainsKey(ClsName);
+  Result := fMap.ContainsKey(ClsName);
 end;
 
 end.
+
