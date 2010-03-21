@@ -52,6 +52,7 @@ type
   strict private
     class var fCookie: TDBCookie;
   public
+    const NulCookie = TDBCookie(0);
     class function GetCookie: TDBCookie;
     class procedure Reset;
   end;
