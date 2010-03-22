@@ -33,6 +33,9 @@ type
     procedure TestCount;
     procedure TestClear;
     procedure TestFind;
+    procedure TestIndexOf;
+    procedure TestContains;
+    procedure TestIsEmpty;
     procedure TestGetEnumerator;
     procedure TestItemsProp;
     procedure TestContainsDuplicates;
@@ -172,6 +175,21 @@ begin
     Format('fList.Count: Expected 0, got %d', [fList.Count]));
 end;
 
+procedure TestTOrderedList.TestContains;
+var
+  Item: string;
+begin
+  ClearAll;
+  Check(not fList.Contains(cItems[0]),
+    Format('fList.Contains(%s): Expected False, got True', [cItems[0]]));
+  Populate;
+  Check(fList.Contains(cItems[0]),
+    Format('fList.Contains(%s): Expected True, got False', [cItems[0]]));
+  Item := cMissingItem;
+  Check(not fList.Contains(Item),
+    Format('fList.Contains(%s): Expected False, got True', [Item]));
+end;
+
 procedure TestTOrderedList.TestContainsDuplicates;
 begin
   ClearAll;
@@ -190,10 +208,10 @@ begin
   TearDown;
   SetUp;
   CheckEquals(0, fList.Count,
-    Format('fDict.Count: Expected 0, got %d', [fList.Count]));
+    Format('fList.Count: Expected 0, got %d', [fList.Count]));
   Populate;
   CheckEquals(cNumEntries, fList.Count,
-    Format('fDict.Count: Expected %d, got %d', [cNumEntries, fList.Count]));
+    Format('fList.Count: Expected %d, got %d', [cNumEntries, fList.Count]));
 end;
 
 procedure TestTOrderedList.TestCreateNoParams;
@@ -261,6 +279,36 @@ begin
         [cSortedItems[Idx], Item]));
     Inc(Idx);
   end;
+end;
+
+procedure TestTOrderedList.TestIndexOf;
+var
+  ReturnValue: Integer;
+  Item: string;
+  Idx: Integer;
+begin
+  ClearAll;
+  Populate;
+  for Idx := 0 to Pred(cNumEntries) do
+  begin
+    Item := cItems[Idx];
+    ReturnValue := fList.IndexOf(Item);
+    CheckEquals(cIndexInList[Idx], ReturnValue,
+      Format('fList.IndexOf(%s): Expected %d, got %d',
+        [Item, cIndexInList[Idx], ReturnValue]));
+  end;
+  Item := cMissingItem;
+  ReturnValue := fList.IndexOf(Item);
+  CheckEquals(-1, ReturnValue,
+    Format('fList.IndexOf(%s): Expected -1, got %d', [Item, ReturnValue]));
+end;
+
+procedure TestTOrderedList.TestIsEmpty;
+begin
+  ClearAll;
+  Check(fList.IsEmpty, 'fList.IsEmpty: Expected True, got False');
+  Populate;
+  Check(not fList.IsEmpty, 'fList.IsEmpty: Expected False, got True');
 end;
 
 procedure TestTOrderedList.TestItemsProp;

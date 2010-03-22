@@ -58,17 +58,17 @@ type
     function Add(const Item: T): Integer;
     procedure Clear;
     function Find(const Item: T; out Index: Integer): Boolean;
-    // TODO: IndexOf
-    // TODO: Contains
-    // TODO: IsEmpty
+    function IndexOf(const Item: T): Integer;
+    function Contains(const Item: T): Boolean;
+    function IsEmpty: Boolean;
     // TODO: Delete
     // TODO: Remove
     // TODO: Notification stuff: hand off to fList
     function ContainsDuplicates: Boolean;
     function GetEnumerator: TEnumerator<T>;
     property Count: Integer read GetCount;
-    property PermitDuplicates: Boolean
-      read fPermitDuplicates write SetPermitDuplicates;
+    property PermitDuplicates: Boolean read fPermitDuplicates write
+      SetPermitDuplicates;
     property Items[Idx: Integer]: T read GetItem; default;
   end;
 
@@ -93,6 +93,13 @@ end;
 procedure TOrderedList<T>.Clear;
 begin
   fList.Clear;
+end;
+
+function TOrderedList<T>.Contains(const Item: T): Boolean;
+var
+  Dummy: Integer;
+begin
+  Result := Find(Item, Dummy);
 end;
 
 function TOrderedList<T>.ContainsDuplicates: Boolean;
@@ -146,6 +153,17 @@ begin
   Result := fList[Idx];
 end;
 
+function TOrderedList<T>.IndexOf(const Item: T): Integer;
+begin
+  if not Find(Item, Result) then
+    Result := -1;
+end;
+
+function TOrderedList<T>.IsEmpty: Boolean;
+begin
+  Result := Count = 0;
+end;
+
 procedure TOrderedList<T>.SetPermitDuplicates(const Value: Boolean);
 begin
   if not Value and ContainsDuplicates then
@@ -154,4 +172,3 @@ begin
 end;
 
 end.
-
