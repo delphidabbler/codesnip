@@ -17,15 +17,6 @@ uses
 
 type
 
-  TTestObject = class(TObject)
-  public
-    constructor Create(const S: string);
-    function Compare(Other: TTestObject): Integer;
-    var Str: string;
-  end;
-
-  TTestPair = TPair<string,Integer>;
-
   // Test methods for class TOrderedList
   TestTOrderedList = class(TTestCase)
   strict private
@@ -33,6 +24,7 @@ type
     procedure ClearAll;
     procedure Populate;
     procedure ErrorAddDuplicate;
+    procedure ErrorPermitDuplicates;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -43,14 +35,15 @@ type
     procedure TestFind;
     procedure TestGetEnumerator;
     procedure TestItemsProp;
+    procedure TestContainsDuplicates;
     procedure TestPermitDuplicates;
+    procedure TestAddDuplicates;
     procedure TestCreateNoParams;
   end;
 
 implementation
 
 uses
-  WINDOWS,
   SysUtils, Classes, Generics.Defaults;
 
 const
@@ -96,6 +89,13 @@ begin
   fList.Add(cDupItem);
 end;
 
+procedure TestTOrderedList.ErrorPermitDuplicates;
+begin
+  // should be called with fList.PermitDuplicates = True and duplicates in list.
+  Assert(fList.PermitDuplicates);
+  fList.PermitDuplicates := False;
+end;
+
 procedure TestTOrderedList.Populate;
 var
   Idx: Integer;
@@ -137,8 +137,26 @@ begin
       Format('fList.Add(%s): Expected return value %d, got %d',
         [cItems[Idx], cSortMapAsEntered[Idx], ReturnValue]));
   end;
+end;
 
-  Assert(not fList.PermitDuplicates);
+procedure TestTOrderedList.TestAddDuplicates;
+var
+  ReturnValue: Integer;
+begin
+  // check adding duplicate to list with no dups where dups are permitted:
+  // check index where item added in list
+  ClearAll;
+  Populate;
+  fList.PermitDuplicates := True;
+  ReturnValue := fList.Add(cDupItem);
+  Check(ReturnValue in [cDupItemIndexInList1, cDupItemIndexInList2],
+    Format('fList.Add(dup of %s): Expected return of %d or %d, got %d',
+      [cDupItem, cDupItemIndexInList1, cDupItemIndexInList2, ReturnValue]));
+
+  // check adding dup to list with no dups where dups are not permitted
+  ClearAll;
+  Populate;
+  fList.PermitDuplicates := False;
   CheckException(ErrorAddDuplicate, EListError);
 end;
 
@@ -152,6 +170,18 @@ begin
   fList.Clear;
   CheckEquals(0, fList.Count,
     Format('fList.Count: Expected 0, got %d', [fList.Count]));
+end;
+
+procedure TestTOrderedList.TestContainsDuplicates;
+begin
+  ClearAll;
+  fList.PermitDuplicates := True;
+  Populate; // no dupes
+  Check(not fList.ContainsDuplicates,
+    'fList.ContainsDuplicates: Expected False, got True');
+  fList.Add(cDupItem);
+  Check(fList.ContainsDuplicates,
+    'fList.ContainsDuplicates: Expected True, got False');
 end;
 
 procedure TestTOrderedList.TestCount;
@@ -248,38 +278,25 @@ begin
 end;
 
 procedure TestTOrderedList.TestPermitDuplicates;
-var
-  Idx: string;
 begin
-  // TODO: Check that setting PermitDuplicates False with duplicates in list raises exception
+  // check setting false and true both work with empty list
   ClearAll;
   fList.PermitDuplicates := False;
   Check(not fList.PermitDuplicates, 'Expected fList.PermitDuplicates = False');
-  Populate;
-  CheckException(ErrorAddDuplicate, EListError);
-
-  ClearAll;
   fList.PermitDuplicates := True;
   Check(fList.PermitDuplicates, 'Expected fList.PermitDuplicates = True');
+
+  // check setting false and true both work with populated list with no dups
   Populate;
-  try
-    fList.Add(cDupItem);
-  except
-    Fail('No exception expected adding duplicate entry');
-  end;
-end;
+  fList.PermitDuplicates := False;
+  Check(not fList.PermitDuplicates, 'Expected fList.PermitDuplicates = False');
+  fList.PermitDuplicates := True;
+  Check(fList.PermitDuplicates, 'Expected fList.PermitDuplicates = True');
 
-{ TTestObject }
-
-function TTestObject.Compare(Other: TTestObject): Integer;
-begin
-  Result := AnsiCompareText(Str, Other.Str);
-end;
-
-constructor TTestObject.Create(const S: string);
-begin
-  inherited Create;
-  Str := S;
+  // check setting false triggers exception with populated list with dups
+  Assert(fList.PermitDuplicates);
+  fList.Add(cDupItem);
+  CheckException(ErrorPermitDuplicates, EListError);
 end;
 
 initialization

@@ -47,10 +47,10 @@ type
   strict private
     fList: TList<T>;
     fComparer: IComparer<T>;
-  private
     fPermitDuplicates: Boolean;
     function GetCount: Integer;
     function GetItem(Idx: Integer): T;
+    procedure SetPermitDuplicates(const Value: Boolean);
   public
     constructor Create; overload;
     constructor Create(const AComparer: IComparer<T>); overload;
@@ -64,15 +64,17 @@ type
     // TODO: Delete
     // TODO: Remove
     // TODO: Notification stuff: hand off to fList
+    function ContainsDuplicates: Boolean;
     function GetEnumerator: TEnumerator<T>;
     property Count: Integer read GetCount;
     property PermitDuplicates: Boolean
-      read fPermitDuplicates write fPermitDuplicates;
+      read fPermitDuplicates write SetPermitDuplicates;
     property Items[Idx: Integer]: T read GetItem; default;
   end;
 
 resourcestring // must be in interface for parametised types
   sOrderedListDuplicateErr = 'Duplicate item not permitted';
+  sOrderedListPermitDuplicatesError = 'List contains duplicates';
 
 implementation
 
@@ -91,6 +93,16 @@ end;
 procedure TOrderedList<T>.Clear;
 begin
   fList.Clear;
+end;
+
+function TOrderedList<T>.ContainsDuplicates: Boolean;
+var
+  Idx: Integer;
+begin
+  Result := False;
+  for Idx := 1 to Pred(fList.Count) do
+    if fComparer.Compare(fList[Idx], fList[Idx - 1]) = 0 then
+      Exit(True);
 end;
 
 constructor TOrderedList<T>.Create;
@@ -132,6 +144,13 @@ end;
 function TOrderedList<T>.GetItem(Idx: Integer): T;
 begin
   Result := fList[Idx];
+end;
+
+procedure TOrderedList<T>.SetPermitDuplicates(const Value: Boolean);
+begin
+  if not Value and ContainsDuplicates then
+    raise EListError.Create(sOrderedListPermitDuplicatesError);
+  fPermitDuplicates := Value;
 end;
 
 end.
