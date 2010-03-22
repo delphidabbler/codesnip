@@ -219,7 +219,7 @@ begin
   Populate;
   Check(fDict.Contains(cKeys[0]),
     Format('fDict.Contains(%s): Expected True, got False', [cKeys[0]]));
-  Key := 'missing';
+  Key := cMissingKey;
   Check(not fDict.Contains(Key),
     Format('fDict.Contains(%s): Expected False, got True', [Key]));
 end;
@@ -321,7 +321,7 @@ begin
       Format('fDict.IndexOf(%s): Expected %d, got %d',
         [Key, cIndexInDict[Idx], ReturnValue]));
   end;
-  Key := 'missing';
+  Key := cMissingKey;
   ReturnValue := fDict.IndexOf(Key);
   CheckEquals(-1, ReturnValue,
     Format('fDict.IndexOf(%s): Expected -1, got %d', [Key, ReturnValue]));
