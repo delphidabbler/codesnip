@@ -279,7 +279,7 @@ begin
       Format('fDict.Find(%s,Index): Expected Index = %d, got %d',
         [Key, cIndexInDict[Idx], Index]));
   end;
-  Key := 'missing';
+  Key := cMissingKey;
   ReturnValue := fDict.Find(Key, Index);
   Check(not ReturnValue,
     Format('fDict.Find(%s,Index): Expected return of False, got True', [Key]));
