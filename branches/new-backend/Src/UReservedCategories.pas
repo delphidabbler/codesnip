@@ -48,14 +48,15 @@ uses
 type
 
   {
-  TCategoryInfo:
+  TReservedCategoryInfo:
     Record that fully describes a category, i.e. contains all the required data.
   }
-  TCategoryInfo = record
+  TReservedCategoryInfo = record
     Name: string;         // Name (unique id) of category
     Data: TCategoryData;  // Category's properties
-    procedure Assign(const Src: TCategoryInfo);
-      {Sets this record's fields to be same as another TCategoryInfo record.
+    procedure Assign(const Src: TReservedCategoryInfo);
+      {Sets this record's fields to be same as another TReservedCategoryInfo
+      record.
         @param Src [in] Record containing fields to be copied.
       }
     procedure Init;
@@ -83,7 +84,7 @@ type
         @param Cat [in] Category to be checked.
         @return True if category is reserved, False if not.
       }
-    class function Info(Idx: Integer): TCategoryInfo;
+    class function Info(Idx: Integer): TReservedCategoryInfo;
       {Gets information about a reserved category.
         @param Idx [in] Index of required category.
         @return Record containing information about category.
@@ -110,7 +111,7 @@ resourcestring
 
 const
   // Maps reserved category ids onto info that describes category
-  cReservedCats: array[0..1] of TCategoryInfo = (
+  cReservedCats: array[0..1] of TReservedCategoryInfo = (
     (Name: TReservedCategories.UserCatName;     Data: (Desc: sUserDesc)),
     (Name: TReservedCategories.ImportsCatName;  Data: (Desc: sImportsDesc))
   );
@@ -125,7 +126,7 @@ begin
   Result := Length(cReservedCats);
 end;
 
-class function TReservedCategories.Info(Idx: Integer): TCategoryInfo;
+class function TReservedCategories.Info(Idx: Integer): TReservedCategoryInfo;
   {Gets information about a reserved category.
     @param Idx [in] Index of required category.
     @return Record containing information about category.
@@ -161,10 +162,10 @@ begin
     end;
 end;
 
-{ TCategoryInfo }
+{ TReservedCategoryInfo }
 
-procedure TCategoryInfo.Assign(const Src: TCategoryInfo);
-  {Sets this record's fields to be same as another TCategoryInfo record.
+procedure TReservedCategoryInfo.Assign(const Src: TReservedCategoryInfo);
+  {Sets this record's fields to be same as another TReservedCategoryInfo record.
     @param Src [in] Record containing fields to be copied.
   }
 begin
@@ -172,7 +173,7 @@ begin
   Data.Assign(Src.Data);
 end;
 
-procedure TCategoryInfo.Init;
+procedure TReservedCategoryInfo.Init;
   {Initialises record to nul values.
   }
 begin
