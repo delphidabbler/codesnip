@@ -3,6 +3,10 @@
 ; $Rev$
 ; $Date$
 ; ------------------------------------------------------------------------------
+
+Release v3.5.5 of 24 March 2010
++ Fixes download stream read bug #2976048 (see http://bit.ly/ds6mBr).
+
 Release v3.5.4 of 18 March 2010
 + Temporary fix for download error checking bug #2970055 (see http://bit.ly/cvf9Mm).
 + Fixed https protocol bug #2970896 (see http://bit.ly/bCIx38).
