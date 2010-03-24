@@ -43,6 +43,8 @@ uses
 
 type
 
+  // TODO: make TOrderedDictionary<TKey,TValue> descend from TEnumerable<T>
+  // TODO: Notification stuff: hand off to fList
   TOrderedDictionary<TKey,TValue> = class(TObject)
   private
     fList: TOrderedList<TPair<TKey,TValue>>;
@@ -62,9 +64,8 @@ type
     function IndexOf(const Key: TKey): Integer;
     function Contains(const Key: TKey): Boolean;
     function IsEmpty: Boolean;
-    // TODO: Delete
-    // TODO: Remove
-    // TODO: Notification stuff: hand off to fList
+    function Remove(const Key: TKey): Integer;
+    procedure Delete(Index: Integer);
     function GetEnumerator: TEnumerator<TPair<TKey,TValue>>;
     property Count: Integer read GetCount;
 // TODO:   property Items[Idx: Integer]: <TPair<TKey,TValue>> read GetItem;
@@ -134,6 +135,11 @@ begin
   Create(nil);
 end;
 
+procedure TOrderedDictionary<TKey, TValue>.Delete(Index: Integer);
+begin
+  fList.Delete(Index);
+end;
+
 destructor TOrderedDictionary<TKey, TValue>.Destroy;
 begin
   fList.Free;
@@ -188,4 +194,10 @@ begin
   Result := Count = 0;
 end;
 
+function TOrderedDictionary<TKey, TValue>.Remove(const Key: TKey): Integer;
+begin
+  Result := fList.Remove(TPair<TKey,TValue>.Create(Key, Default(TValue)));
+end;
+
 end.
+

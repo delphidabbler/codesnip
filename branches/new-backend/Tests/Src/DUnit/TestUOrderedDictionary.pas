@@ -49,6 +49,8 @@ type
       TestKeysProp          | Populate, ClearAll
       TestValuesByIndexProp | Populate, ClearAll
       TestValuesProp        | Populate, ClearAll
+      TestDelete;           | Populate, ClearAll, Keys[] (indirectly)
+      TestRemove;           | Populate, ClearAll, Keys[] (indirectly)
       TestCreateNoParams    | Count, Keys[]
     }
     // Test the Adds first: no dependencies, but required by everything else
@@ -65,6 +67,8 @@ type
     procedure TestIsEmpty;
     procedure TestGetEnumerator;
     procedure TestKeysProp;
+    procedure TestDelete; // indirectly uses Keys[]
+    procedure TestRemove; // indirectly uses Keys[]
     procedure TestValuesByIndexProp;
     procedure TestValuesProp;
     // CreateNoParams requires Count and Keys[] properties
@@ -74,7 +78,7 @@ type
 implementation
 
 uses
-  SysUtils, Classes;
+  SysUtils, Types, Classes;
 
 const
   // number of entries in list (count)
@@ -111,6 +115,62 @@ const
   cDupKey = 'donna';
   // key not in dictionary
   cMissingKey = 'gwen';
+
+  cDeleteOrder: array[0..Pred(cNumEntries)] of string = (
+    'wendy', 'ann', 'glo', 'peter', 'donna', 'keith'
+  );
+
+function IndexOf(const S: string; const Items: array of string): Integer;
+var
+  Idx: Integer;
+begin
+  for Idx := 0 to Pred(Length(Items)) do
+  begin
+    if S = Items[Idx] then
+      Exit(Idx);
+  end;
+  Result := -1;
+end;
+
+function RemoveItem(const S: string;
+  const Items: array of string): TStringDynArray;
+var
+  Idx1: Integer;
+  Idx2: Integer;
+begin
+  SetLength(Result, Length(Items) - 1);
+  Idx2 := 0;
+  for Idx1 := 0 to Pred(Length(Items)) do
+  begin
+    if Items[Idx1] <> S then
+    begin
+      Result[Idx2] := Items[Idx1];
+      Inc(Idx2);
+    end;
+  end;
+end;
+
+function CopyArray(const Items: array of string): TStringDynArray;
+var
+  Idx: Integer;
+begin
+  SetLength(Result, Length(Items));
+  for Idx := 0 to Pred(Length(Items)) do
+    Result[Idx] := Items[Idx];
+end;
+
+function SameDictAndArray(const D: TOrderedDictionary<string,Integer>;
+  const A: array of string): Boolean;
+var
+  Idx: Integer;
+begin
+  for Idx := 0 to Pred(D.Count) do
+  begin
+    if D.Keys[Idx] <> A[Idx] then
+      Exit(False);
+  end;
+  Result := True;
+end;
 
 procedure TestTOrderedDictionary.ClearAll;
 begin
@@ -259,6 +319,27 @@ begin
   end;
 end;
 
+procedure TestTOrderedDictionary.TestDelete;
+var
+  Remaining: TStringDynArray;
+  RemoveStr: string;
+  Idx: Integer;
+begin
+  ClearAll;
+  Populate;
+  Remaining := CopyArray(cSortedKeys);
+  Assert(SameDictAndArray(fDict, Remaining), 'Initial result in error');
+  for RemoveStr in cSortedKeys do
+  begin
+    Idx := IndexOf(RemoveStr, Remaining);
+    fDict.Delete(Idx);
+    Remaining := RemoveItem(RemoveStr, Remaining);
+    Check(SameDictAndArray(fDict, Remaining),
+      Format('fDict.Delete(%1:d): Error removing %0:s from index %1:d',
+        [RemoveStr, Idx]));
+  end;
+end;
+
 procedure TestTOrderedDictionary.TestFind;
 var
   ReturnValue: Boolean;
@@ -346,6 +427,30 @@ begin
     CheckEqualsString(cSortedKeys[Idx], fDict.Keys[Idx],
     Format('fDict.Keys[%d]: Expected %s, got %s',
       [Idx, cSortedKeys[Idx], fDict.Keys[Idx]]));
+  end;
+end;
+
+procedure TestTOrderedDictionary.TestRemove;
+var
+  Remaining: TStringDynArray;
+  RemoveStr: string;
+  ExpectedIdx: Integer;
+  Idx: Integer;
+begin
+  ClearAll;
+  Populate;
+  Remaining := CopyArray(cSortedKeys);
+  Assert(SameDictAndArray(fDict, Remaining), 'Initial result in error');
+  for RemoveStr in cSortedKeys do
+  begin
+    ExpectedIdx := Indexof(RemoveStr, Remaining);
+    Idx := fDict.Remove(RemoveStr);
+    CheckEquals(ExpectedIdx, Idx,
+      Format('fDict.Remove(%s): Expected return value %d, got %d',
+        [RemoveStr, ExpectedIdx, Idx]));
+    Remaining := RemoveItem(RemoveStr, Remaining);
+    Check(SameDictAndArray(fDict, Remaining),
+      Format('fDict.Remove(%0:s): Error removing %0:s', [RemoveStr]));
   end;
 end;
 

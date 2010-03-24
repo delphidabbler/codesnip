@@ -43,6 +43,7 @@ uses
 type
 
   // TODO: make TOrderedList<T> descend from TEnumerable<T> like TList<T>
+  // TODO: Notification stuff: hand off to fList
   TOrderedList<T> = class(TObject)
   strict private
     fList: TList<T>;
@@ -61,9 +62,8 @@ type
     function IndexOf(const Item: T): Integer;
     function Contains(const Item: T): Boolean;
     function IsEmpty: Boolean;
-    // TODO: Delete
-    // TODO: Remove
-    // TODO: Notification stuff: hand off to fList
+    function Remove(const Item: T): Integer;
+    procedure Delete(Index: Integer);
     function ContainsDuplicates: Boolean;
     function GetEnumerator: TEnumerator<T>;
     property Count: Integer read GetCount;
@@ -127,6 +127,11 @@ begin
   fList := TList<T>.Create(fComparer);
 end;
 
+procedure TOrderedList<T>.Delete(Index: Integer);
+begin
+  fList.Delete(Index);
+end;
+
 destructor TOrderedList<T>.Destroy;
 begin
   fList.Free;
@@ -162,6 +167,11 @@ end;
 function TOrderedList<T>.IsEmpty: Boolean;
 begin
   Result := Count = 0;
+end;
+
+function TOrderedList<T>.Remove(const Item: T): Integer;
+begin
+  Result := fList.Remove(Item);
 end;
 
 procedure TOrderedList<T>.SetPermitDuplicates(const Value: Boolean);

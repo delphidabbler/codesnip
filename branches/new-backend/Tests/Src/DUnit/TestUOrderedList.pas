@@ -38,6 +38,8 @@ type
     procedure TestIsEmpty;
     procedure TestGetEnumerator;
     procedure TestItemsProp;
+    procedure TestDelete; // indirectly uses Items[]
+    procedure TestRemove; // indirectly uses Items[]
     procedure TestContainsDuplicates;
     procedure TestPermitDuplicates;
     procedure TestAddDuplicates;
@@ -47,7 +49,7 @@ type
 implementation
 
 uses
-  SysUtils, Classes, Generics.Defaults;
+  SysUtils, Classes, Types, Generics.Defaults;
 
 const
   // number of entries in list (count)
@@ -81,6 +83,62 @@ const
   // item not in list
   cMissingItem = 'gwen';
 
+  // order of deletion in delete test
+  cDeleteOrder: array[0..Pred(cNumEntries)] of string = (
+    'wendy', 'ann', 'glo', 'peter', 'donna', 'keith'
+  );
+
+function IndexOf(const S: string; const Items: array of string): Integer;
+var
+  Idx: Integer;
+begin
+  for Idx := 0 to Pred(Length(Items)) do
+  begin
+    if S = Items[Idx] then
+      Exit(Idx);
+  end;
+  Result := -1;
+end;
+
+function RemoveItem(const S: string;
+  const Items: array of string): TStringDynArray;
+var
+  Idx1: Integer;
+  Idx2: Integer;
+begin
+  SetLength(Result, Length(Items) - 1);
+  Idx2 := 0;
+  for Idx1 := 0 to Pred(Length(Items)) do
+  begin
+    if Items[Idx1] <> S then
+    begin
+      Result[Idx2] := Items[Idx1];
+      Inc(Idx2);
+    end;
+  end;
+end;
+
+function CopyArray(const Items: array of string): TStringDynArray;
+var
+  Idx: Integer;
+begin
+  SetLength(Result, Length(Items));
+  for Idx := 0 to Pred(Length(Items)) do
+    Result[Idx] := Items[Idx];
+end;
+
+function SameListAndArray(const L: TOrderedList<string>;
+  const A: array of string): Boolean;
+var
+  Idx: Integer;
+begin
+  for Idx := 0 to Pred(L.Count) do
+  begin
+    if L[Idx] <> A[Idx] then
+      Exit(False);
+  end;
+  Result := True;
+end;
 
 procedure TestTOrderedList.ClearAll;
 begin
@@ -238,6 +296,26 @@ begin
   end;
 end;
 
+procedure TestTOrderedList.TestDelete;
+var
+  Remaining: TStringDynArray;
+  RemoveStr: string;
+  Idx: Integer;
+begin
+  ClearAll;
+  Populate;
+  Remaining := CopyArray(cSortedItems);
+  Assert(SameListAndArray(fList, Remaining), 'Initial result in error');
+  for RemoveStr in cSortedItems do
+  begin
+    Idx := IndexOf(RemoveStr, Remaining);
+    fList.Delete(Idx);
+    Remaining := RemoveItem(RemoveStr, Remaining);
+    Check(SameListAndArray(fList, Remaining),
+      Format('fList.Delete: Error removing %s, index %d', [RemoveStr, Idx]));
+  end;
+end;
+
 procedure TestTOrderedList.TestFind;
 var
   ReturnValue: Boolean;
@@ -345,6 +423,30 @@ begin
   Assert(fList.PermitDuplicates);
   fList.Add(cDupItem);
   CheckException(ErrorPermitDuplicates, EListError);
+end;
+
+procedure TestTOrderedList.TestRemove;
+var
+  Remaining: TStringDynArray;
+  RemoveStr: string;
+  ExpectedIdx: Integer;
+  Idx: Integer;
+begin
+  ClearAll;
+  Populate;
+  Remaining := CopyArray(cSortedItems);
+  Assert(SameListAndArray(fList, Remaining), 'Initial result in error');
+  for RemoveStr in cSortedItems do
+  begin
+    ExpectedIdx := Indexof(RemoveStr, Remaining);
+    Idx := fList.Remove(RemoveStr);
+    CheckEquals(ExpectedIdx, Idx,
+      Format('fList.Remove: Expected return value %d, got %d',
+        [ExpectedIdx, Idx]));
+    Remaining := RemoveItem(RemoveStr, Remaining);
+    Check(SameListAndArray(fList, Remaining),
+      Format('fList.Remove: Error removing %s', [RemoveStr]));
+  end;
 end;
 
 initialization
