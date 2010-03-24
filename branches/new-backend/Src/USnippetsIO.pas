@@ -483,7 +483,7 @@ procedure TSnippetsLoader.LoadRoutines(const Cat: TCategory);
   }
 var
   RoutineNames: IStringList;    // list of names of snippets in category
-  RoutineProps: TRoutineData;   // properties of a snippet
+  RoutineProps: TSnippetData;   // properties of a snippet
   RoutineName: string;          // each name in name list
   Routine: TRoutine;            // references a snippet object
 begin
@@ -707,8 +707,8 @@ procedure TSnippetsWriter.WriteRoutines;
 
 var
   Routine: TRoutine;        // loops through each snippet in list
-  Props: TRoutineData;      // snippet properties
-  Refs: TRoutineReferences; // snippet references
+  Props: TSnippetData;      // snippet properties
+  Refs: TSnippetReferences; // snippet references
 begin
   for Routine in fRoutines do
   begin

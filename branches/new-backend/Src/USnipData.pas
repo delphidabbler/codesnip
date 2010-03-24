@@ -144,7 +144,7 @@ type
         @param Cat [in] Name of category containing routines.
         @return List of routines names.
       }
-    procedure GetRoutineProps(const Routine: string; var Props: TRoutineData);
+    procedure GetRoutineProps(const Routine: string; var Props: TSnippetData);
       {Get properties of a routine. These are the fields of the routine's
       record in the routines "table".
         @param Routine [in] Name of required routine.
@@ -193,7 +193,7 @@ type
         @param Routines [in] List of name of routines.
       }
     procedure WriteRoutineProps(const RoutineName: string;
-      const Props: TRoutineData);
+      const Props: TSnippetData);
       {Write the properties of a routine. Always called after all categories are
       written and before WriteRoutineUnits, so can be used to perform any per-
       routine intialisation.

@@ -57,7 +57,7 @@ type
   }
   TRoutineInfo = record
     Name: string;           // Snippet name
-    Data: TRoutineEditData; // Describes a snippet
+    Data: TSnippetEditData; // Describes a snippet
     procedure Assign(const Src: TRoutineInfo);
       {Sets this record's fields to be same as another TRoutineInfo record.
       Object fields are copied appropriately.

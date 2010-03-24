@@ -73,10 +73,10 @@ type
   TSnippetKinds = set of TSnippetKind;
 
   {
-  TRoutineData:
+  TSnippetData:
     Record that provides information about a snippet's properties.
   }
-  TRoutineData = record
+  TSnippetData = record
     Kind: TSnippetKind;               // Kind of snippet
     Cat: string;                      // Category containing snippet
     Desc: string;                     // Description of snippet
@@ -86,40 +86,40 @@ type
     procedure Init;
       {Initialises record by setting default values for fields.
       }
-    procedure Assign(const Src: TRoutineData);
+    procedure Assign(const Src: TSnippetData);
       {Sets this record to be a copy of another record.
         @param Src [in] Record to be copied.
       }
   end;
 
   {
-  TRoutineReferences:
+  TSnippetReferences:
     Record that details a snippet's references
   }
-  TRoutineReferences = record
+  TSnippetReferences = record
     Units: IStringList;         // List of required units
     Depends: ISnippetIDList;    // List of IDs of required snippets
     XRef: ISnippetIDList;       // List of IDs of cross referenced snippets
     procedure Init;
       {Initialises record by creating objects stored in fields.
       }
-    procedure Assign(const Src: TRoutineReferences);
+    procedure Assign(const Src: TSnippetReferences);
       {Sets this record to be a copy of another record.
         @param Src [in] Record to be copied.
       }
   end;
 
   {
-  TRoutineEditData:
+  TSnippetEditData:
     Provides deatils of a snippet's data that can be edited.
   }
-  TRoutineEditData = record
-    Props: TRoutineData;        // Snippet's editable properties
-    Refs: TRoutineReferences;   // Snippet's editable referfences
+  TSnippetEditData = record
+    Props: TSnippetData;        // Snippet's editable properties
+    Refs: TSnippetReferences;   // Snippet's editable referfences
     procedure Init;
       {Initialises record by creating default values and field objects.
       }
-    procedure Assign(const Src: TRoutineEditData);
+    procedure Assign(const Src: TSnippetEditData);
       {Sets this record to be a copy of another record.
         @param Src [in] Record to be copied.
       }
@@ -177,12 +177,12 @@ type
         @param Cat [in] Category for which snippet names are requested.
         @return Required list of snippet names.
       }
-    function GetRoutineProps(const Routine: TRoutine): TRoutineData;
+    function GetRoutineProps(const Routine: TRoutine): TSnippetData;
       {Retrieves all the properties of a snippet.
         @param Routine [in] Snippet for which data is requested.
         @return Record containing property data.
       }
-    function GetRoutineRefs(const Routine: TRoutine): TRoutineReferences;
+    function GetRoutineRefs(const Routine: TRoutine): TSnippetReferences;
       {Retrieves information about all the references of a snippet.
         @param Routine [in] Snippet for which information is requested.
         @return Record containing references.
@@ -228,7 +228,7 @@ type
         @return Instance of new category object.
       }
     function CreateRoutine(const Name: string; const UserDefined: Boolean;
-      const Props: TRoutineData): TRoutine;
+      const Props: TSnippetData): TRoutine;
       {Creates a new snippet object.
         @param Name [in] Name of new snippet. Must not exist in database
           specified by UserDefined parameter.
@@ -265,13 +265,13 @@ type
       {Sets Name property.
         @param Name [in] New name.
       }
-    procedure SetProps(const Data: TRoutineData);
+    procedure SetProps(const Data: TSnippetData);
       {Sets snippet's properties.
         @param Data [in] Record containing property values.
       }
   public
     constructor Create(const Name: string; const UserDefined: Boolean;
-      const Props: TRoutineData);
+      const Props: TSnippetData);
       {Class contructor. Sets up snippet object with given property values.
         @param Name [in] Name of snippet.
         @param UserDefined [in] Indicates if this is a user defined snippet.
@@ -600,7 +600,7 @@ type
   ISnippetsEdit = interface(IInterface)
     ['{CBF6FBB0-4C18-481F-A378-84BB09E5ECF4}']
     function GetEditableRoutineInfo(
-      const Routine: TRoutine = nil): TRoutineEditData;
+      const Routine: TRoutine = nil): TSnippetEditData;
       {Provides details of all a snippet's data (properties and references) that
       may be edited.
         @param Routine [in] Snippet for which data is required. May be nil in
@@ -619,7 +619,7 @@ type
         @return List of IDs of referring snippets.
       }
     function UpdateRoutine(const Routine: TRoutine;
-      const Data: TRoutineEditData; const NewName: string = ''): TRoutine;
+      const Data: TSnippetEditData; const NewName: string = ''): TRoutine;
       {Updates a user defined snippet's properties and references using provided
       data.
         @param Routine [in] Snippet to be updated. Must be user-defined.
@@ -629,14 +629,14 @@ type
         @return Reference to updated snippet. Will have changed.
       }
     function AddRoutine(const RoutineName: string;
-      const Data: TRoutineEditData): TRoutine;
+      const Data: TSnippetEditData): TRoutine;
       {Adds a new snippet to the user database.
         @param RoutineName [in] Name of new snippet.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
     function CreateTempRoutine(const RoutineName: string;
-      const Data: TRoutineEditData): TRoutine; overload;
+      const Data: TSnippetEditData): TRoutine; overload;
       {Creates a new temporary snippet without adding it to the Snippets
       object's snippets list. The new instance may not be added to the
       Snippets object.
@@ -729,7 +729,7 @@ type
         @return Instance of new category object.
       }
     function CreateRoutine(const Name: string; const UserDefined: Boolean;
-      const Props: TRoutineData): TRoutine;
+      const Props: TSnippetData): TRoutine;
       {Creates a new snippet object.
         @param Name [in] Name of new snippet. Must not exist in database
           specified by UserDefined parameter.
@@ -745,28 +745,28 @@ type
   }
   TRoutineEx = class(TRoutine)
   public
-    procedure UpdateRefs(const Refs: TRoutineReferences;
+    procedure UpdateRefs(const Refs: TSnippetReferences;
       const AllRoutines: TRoutineList);
       {Updates a snippet's references.
         @param Refs [in] Stores all snippet's references (XRef, Depends and
           Units).
         @param AllRoutines [in] List of all snippets in database.
       }
-    procedure Update(const Data: TRoutineEditData;
+    procedure Update(const Data: TSnippetEditData;
       const AllRoutines: TRoutineList);
       {Updates snippet's properties and references.
         @param Data [in] New property values and references.
         @param AllRoutines [in] List of all snippets in database.
       }
-    function GetEditData: TRoutineEditData;
+    function GetEditData: TSnippetEditData;
       {Gets details of all editable data of snippet.
         @return Required editable properties and references.
       }
-    function GetProps: TRoutineData;
+    function GetProps: TSnippetData;
       {Gets details of snippet's properties.
         @return Record containing property values.
       }
-    function GetReferences: TRoutineReferences;
+    function GetReferences: TSnippetReferences;
       {Gets details of snippet's references.
         @return Information sufficient to define references.
       }
@@ -875,7 +875,7 @@ type
           nil.
       }
     function InternalAddRoutine(const RoutineName: string;
-      const Data: TRoutineEditData): TRoutine;
+      const Data: TSnippetEditData): TRoutine;
       {Adds a new snippet to the user database. Assumes snippet not already in
       user database.
         @param RoutineName [in] Name of new snippet.
@@ -937,7 +937,7 @@ type
       }
     { ISnippetsEdit methods }
     function GetEditableRoutineInfo(
-      const Routine: TRoutine = nil): TRoutineEditData;
+      const Routine: TRoutine = nil): TSnippetEditData;
       {Provides details of all a snippet's data (properties and references) that
       may be edited.
         @param Routine [in] Snippet for which data is required. May be nil in
@@ -956,7 +956,7 @@ type
         @return List of IDs of referring snippets.
       }
     function UpdateRoutine(const Routine: TRoutine;
-      const Data: TRoutineEditData; const NewName: string = ''): TRoutine;
+      const Data: TSnippetEditData; const NewName: string = ''): TRoutine;
       {Updates a user defined snippet's properties and references using provided
       data.
         @param Routine [in] Snippet to be updated. Must be user-defined.
@@ -966,14 +966,14 @@ type
         @return Reference to updated snippet. Will have changed.
       }
     function AddRoutine(const RoutineName: string;
-      const Data: TRoutineEditData): TRoutine;
+      const Data: TSnippetEditData): TRoutine;
       {Adds a new snippet to the user database.
         @param RoutineName [in] Name of new snippet.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
     function CreateTempRoutine(const RoutineName: string;
-      const Data: TRoutineEditData): TRoutine; overload;
+      const Data: TSnippetEditData): TRoutine; overload;
       {Creates a new temporary user defined snippet without adding it to the
       Snippets object's snippets list. The new instance may not be added to the
       Snippets object.
@@ -1061,12 +1061,12 @@ type
         @param Cat [in] Category for which snippet names are requested.
         @return Required list of snippet names.
       }
-    function GetRoutineProps(const Routine: TRoutine): TRoutineData;
+    function GetRoutineProps(const Routine: TRoutine): TSnippetData;
       {Retrieves all the properties of a snippet.
         @param Routine [in] Snippet for which data is requested.
         @return Record containing property data.
       }
-    function GetRoutineRefs(const Routine: TRoutine): TRoutineReferences;
+    function GetRoutineRefs(const Routine: TRoutine): TSnippetReferences;
       {Retrieves information about all the references of a snippet.
         @param Routine [in] Snippet for which information is requested.
         @return Record containing references.
@@ -1135,7 +1135,7 @@ begin
 end;
 
 function TSnippets.AddRoutine(const RoutineName: string;
-  const Data: TRoutineEditData): TRoutine;
+  const Data: TSnippetEditData): TRoutine;
   {Adds a new snippet to the user database.
     @param RoutineName [in] Name of new snippet.
     @param Data [in] Record storing new snippet's properties and references.
@@ -1185,7 +1185,7 @@ function TSnippets.CreateTempRoutine(const Routine: TRoutine): TRoutine;
     @return Reference to new snippet.
   }
 var
-  Data: TRoutineEditData; // data describing snippet's properties and references
+  Data: TSnippetEditData; // data describing snippet's properties and references
 begin
   Assert(Assigned(Routine), ClassName + '.CreateTempRoutine: Routine is nil');
   Assert(Routine is TRoutineEx,
@@ -1199,7 +1199,7 @@ begin
 end;
 
 function TSnippets.CreateTempRoutine(const RoutineName: string;
-  const Data: TRoutineEditData): TRoutine;
+  const Data: TSnippetEditData): TRoutine;
   {Creates a new temporary user defined snippet without adding it to the
   Snippets object's snippets list. The new instance may not be added to the
   Snippets object.
@@ -1342,7 +1342,7 @@ begin
 end;
 
 function TSnippets.GetEditableRoutineInfo(
-  const Routine: TRoutine): TRoutineEditData;
+  const Routine: TRoutine): TSnippetEditData;
   {Provides details of all a snippet's data (properties and references) that may
   be edited.
     @param Routine [in] Snippet for which data is required. May be nil in which
@@ -1413,7 +1413,7 @@ begin
 end;
 
 function TSnippets.InternalAddRoutine(const RoutineName: string;
-  const Data: TRoutineEditData): TRoutine;
+  const Data: TSnippetEditData): TRoutine;
   {Adds a new snippet to the user database. Assumes snippet not already in user
   database.
     @param RoutineName [in] Name of new snippet.
@@ -1567,7 +1567,7 @@ begin
 end;
 
 function TSnippets.UpdateRoutine(const Routine: TRoutine;
-  const Data: TRoutineEditData; const NewName: string): TRoutine;
+  const Data: TSnippetEditData; const NewName: string): TRoutine;
   {Updates a user defined snippet's properties and references using provided
   data.
     @param Routine [in] Snippet to be updated. Must be user-defined.
@@ -1670,7 +1670,7 @@ begin
 end;
 
 constructor TRoutine.Create(const Name: string; const UserDefined: Boolean;
-  const Props: TRoutineData);
+  const Props: TSnippetData);
   {Class contructor. Sets up snippet object with given property values.
     @param Name [in] Name of snippet.
     @param UserDefined [in] Indicates if this is a user defined snippet.
@@ -1729,7 +1729,7 @@ begin
   fName := Name;
 end;
 
-procedure TRoutine.SetProps(const Data: TRoutineData);
+procedure TRoutine.SetProps(const Data: TSnippetData);
   {Sets snippet's properties.
     @param Data [in] Record containing property values.
   }
@@ -1744,7 +1744,7 @@ end;
 
 { TRoutineEx }
 
-function TRoutineEx.GetEditData: TRoutineEditData;
+function TRoutineEx.GetEditData: TSnippetEditData;
   {Gets details of all editable data of snippet.
     @return Required editable properties and references.
   }
@@ -1753,7 +1753,7 @@ begin
   Result.Refs := GetReferences;
 end;
 
-function TRoutineEx.GetProps: TRoutineData;
+function TRoutineEx.GetProps: TSnippetData;
   {Gets details of snippet's properties.
     @return Record containing property values.
   }
@@ -1766,7 +1766,7 @@ begin
   Result.CompilerResults := Compatibility;
 end;
 
-function TRoutineEx.GetReferences: TRoutineReferences;
+function TRoutineEx.GetReferences: TSnippetReferences;
   {Gets details of snippet's references.
     @return Information sufficient to define references.
   }
@@ -1776,7 +1776,7 @@ begin
   Result.XRef := TSnippetIDListEx.Create(XRef);
 end;
 
-procedure TRoutineEx.Update(const Data: TRoutineEditData;
+procedure TRoutineEx.Update(const Data: TSnippetEditData;
   const AllRoutines: TRoutineList);
   {Updates snippet's properties and references.
     @param Data [in] New property values and references.
@@ -1787,7 +1787,7 @@ begin
   UpdateRefs(Data.Refs, AllRoutines);
 end;
 
-procedure TRoutineEx.UpdateRefs(const Refs: TRoutineReferences;
+procedure TRoutineEx.UpdateRefs(const Refs: TSnippetReferences;
   const AllRoutines: TRoutineList);
   {Updates a snippet's references.
     @param Refs [in] Stores all snippet's references (XRef, Depends and
@@ -2335,7 +2335,7 @@ begin
 end;
 
 function TSnippetsFactory.CreateRoutine(const Name: string;
-  const UserDefined: Boolean; const Props: TRoutineData): TRoutine;
+  const UserDefined: Boolean; const Props: TSnippetData): TRoutine;
   {Creates a new snippet object.
     @param Name [in] Name of new snippet. Must not exist in database specified
       by UserDefined parameter.
@@ -2388,7 +2388,7 @@ begin
 end;
 
 function TUserDataProvider.GetRoutineProps(
-  const Routine: TRoutine): TRoutineData;
+  const Routine: TRoutine): TSnippetData;
   {Retrieves all the properties of a snippet.
     @param Routine [in] Snippet for which data is requested.
     @return Record containing property data.
@@ -2398,7 +2398,7 @@ begin
 end;
 
 function TUserDataProvider.GetRoutineRefs(
-  const Routine: TRoutine): TRoutineReferences;
+  const Routine: TRoutine): TSnippetReferences;
   {Retrieves information about all the references of a snippet.
     @param Routine [in] Snippet for which information is requested.
     @return Record containing references.
@@ -2407,9 +2407,9 @@ begin
   Result := (Routine as TRoutineEx).GetReferences;
 end;
 
-{ TRoutineData }
+{ TSnippetData }
 
-procedure TRoutineData.Assign(const Src: TRoutineData);
+procedure TSnippetData.Assign(const Src: TSnippetData);
   {Sets this record to be a copy of another record.
     @param Src [in] Record to be copied.
   }
@@ -2424,7 +2424,7 @@ begin
   CompilerResults := Src.CompilerResults;
 end;
 
-procedure TRoutineData.Init;
+procedure TSnippetData.Init;
   {Initialises record by setting default values for fields.
   }
 var
@@ -2439,9 +2439,9 @@ begin
     CompilerResults[CompID] := crQuery;
 end;
 
-{ TRoutineReferences }
+{ TSnippetReferences }
 
-procedure TRoutineReferences.Assign(const Src: TRoutineReferences);
+procedure TSnippetReferences.Assign(const Src: TSnippetReferences);
   {Sets this record to be a copy of another record.
     @param Src [in] Record to be copied.
   }
@@ -2452,7 +2452,7 @@ begin
   (XRef as IAssignable).Assign(Src.XRef);
 end;
 
-procedure TRoutineReferences.Init;
+procedure TSnippetReferences.Init;
   {Initialises record by creating objects stored in fields.
   }
 begin
@@ -2461,9 +2461,9 @@ begin
   XRef := TSnippetIDList.Create;
 end;
 
-{ TRoutineEditData }
+{ TSnippetEditData }
 
-procedure TRoutineEditData.Assign(const Src: TRoutineEditData);
+procedure TSnippetEditData.Assign(const Src: TSnippetEditData);
   {Sets this record to be a copy of another record.
     @param Src [in] Record to be copied.
   }
@@ -2472,7 +2472,7 @@ begin
   Refs.Assign(Src.Refs);
 end;
 
-procedure TRoutineEditData.Init;
+procedure TSnippetEditData.Init;
   {Initialises record by creating default values and field objects.
   }
 begin

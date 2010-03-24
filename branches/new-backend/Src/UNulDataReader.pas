@@ -74,7 +74,7 @@ type
         @param Cat [in] Name of category containing routines.
         @return Empty list.
       }
-    procedure GetRoutineProps(const Routine: string; var Props: TRoutineData);
+    procedure GetRoutineProps(const Routine: string; var Props: TSnippetData);
       {Gets properties of a routine. These are the fields of the routine's
       record in the routines "table".
         @param Routine [in] Name of required routine.
@@ -149,7 +149,7 @@ begin
 end;
 
 procedure TNulDataReader.GetRoutineProps(const Routine: string;
-  var Props: TRoutineData);
+  var Props: TSnippetData);
   {Gets properties of a routine. These are the fields of the routine's record in
   the routines "table".
     @param Routine [in] Name of required routine.
