@@ -159,8 +159,10 @@ begin
   inherited Create;
   fLocalDir := LocalDir;
   fReader := TDataStreamReader.Create(UpdateData);
-  (* *** Following code removed as a temporary fix for Bug #2970055 ***
+  // skip over MD5 checksum: not used at present
+  fReader.ReadString(32);
   // check data stream against its MD5 checksum
+  (* *** Following code removed as a temporary fix for Bug #2970055 ***
   MD5 := fReader.ReadString(32);
   if not TCheckSum.Compare(UpdateData, MD5) then
     raise EFileUpdater.Create(cDataCorruptError);
