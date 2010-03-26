@@ -1,9 +1,8 @@
 {
  * UWebService.pas
  *
- * A class that provides basic interaction with web services via HTTP, a
- * subclass that interacts with standard DelphiDabbler web services and some
- * exception classes raised by various kinds of web server error.
+ * Implements a class that provides basic interaction with DelphiDabbler
+ * standard web services via HTTP.
  *
  * $Rev$
  * $Date$
@@ -62,54 +61,41 @@ type
   }
   TDDabStdWebService = class(TBaseWebService)
   strict protected
-    function StringsToParams(const Strings: TStrings): TURIParams;
-      // todo: comment this and note user must free returned object
-    function CreateQueryStrings(const Cmd: string;
-      const Params: array of string): TStrings;
-      {Creates a string list containing query strings to be sent to server. Note
-      that this TStrings object must be freed by caller.
-        @param Cmd [in] Command to be executed. Passed to server as Cmd=CmdName
-          parameter.
-        @param Params [in] List of parameters in form ParamName=ParamValue. []
-          if no parameters.
-        @return String list containing query strings to be sent to server.
-      }
     procedure ProcessResponse(const Response: TStrings);
       {Analyses lines of text returned from from web service and extracts data
       from successful responses. Raises exceptions based on error messages from
       error responses.
-        @param Response [in] Receives lines of text received as response from
-          web service. After processing error code is removed from top of list,
-          leaving only returned data.
+        @param Response [in] Lines of text from response from web service. After
+          processing status code is removed from top of list, leaving only
+          returned data.
+        @except Raises EWebServiceError on receipt of valid error response.
         @except Raises [in] EWebServiceFailure if response from web service has
           invalid format.
-        @except Raises EWebServiceError on receipt of valid error response.
       }
-    procedure PostCommand(const Cmd: string; const Params: array of string;
+    procedure PostCommand(const Cmd: string; const Params: TURIParams;
       const Response: TStrings);
       {Sends command to server and returns data component of response in a
       string list.
         @param Cmd [in] Command to be executed. Passed to server as Cmd=CmdName
           parameter.
-        @param Params [in] List of parameters in form ParamName=ParamValue. []
-          if no parameters.
+        @param Params [in] Query string parameters.
         @param Response [in] Server's response as string list where each line of
           response is a line of string list.
         @except EWebServiceError raised on receipt of valid error response.
         @except EWebServiceFailure raised if web service sends invalid response.
-        @except EWebConnectionError raised EIdSocketError encoutered.
+        @except EWebConnectionError raised if EIdSocketError encoutered.
         @except EHTTPError raised if EIdHTTPProtocolException encountered.
         @except EIdException or descendant re-raised for other exception types.
       }
-    procedure PostQuery(const QS: TStrings; const Response: TStrings);
+    procedure PostQuery(const Query: TURIParams; const Response: TStrings);
       {Sends a query string to server and returns data component of response in
       a string list.
-        @param QS [in] List of parameters in Name=Value format.
+        @param Query [in] Query string parameters.
         @param Response [in] Server's response as string list where each line of
           response is a line of string list.
         @except EWebServiceError raised on receipt of valid error response.
         @except EWebServiceFailure raised if web service sends invalid response.
-        @except EWebConnectionError raised EIdSocketError encoutered.
+        @except EWebConnectionError raised if EIdSocketError encoutered.
         @except EHTTPError raised if EIdHTTPProtocolException encountered.
         @except EIdException or descendant re-raised for other exception types.
       }
@@ -121,7 +107,7 @@ type
           response is a line of string list.
         @except EWebServiceError raised on receipt of valid error response.
         @except EWebServiceFailure raised if web service sends invalid response.
-        @except EWebConnectionError raised EIdSocketError encoutered.
+        @except EWebConnectionError raised if EIdSocketError encoutered.
         @except EHTTPError raised if EIdHTTPProtocolException encountered.
         @except EIdException or descendant re-raised for other exception types.
       }
@@ -144,42 +130,24 @@ resourcestring
   sBadStatusCode = 'Web service returned response with bad status code';
   sUnrecognizedError = 'Unrecognized error notified by web service';
 
-function TDDabStdWebService.CreateQueryStrings(const Cmd: string;
-  const Params: array of string): TStrings;
-var
-  I: Integer; // loops through parameters
-begin
-  Result := TStringList.Create;
-  Result.Add('cmd=' + Cmd);
-  for I := Low(Params) to High(Params) do
-    Result.Add(Params[I]);
-end;
-
 procedure TDDabStdWebService.PostCommand(const Cmd: string;
-  const Params: array of string; const Response: TStrings);
+  const Params: TURIParams; const Response: TStrings);
   {Sends command to server and returns data component of response in a string
   list.
     @param Cmd [in] Command to be executed. Passed to server as Cmd=CmdName
       parameter.
-    @param Params [in] List of parameters in form ParamName=ParamValue. [] if no
-      parameters.
+    @param Params [in] Query string parameters.
     @param Response [in] Server's response as string list where each line of
       response is a line of string list.
     @except EWebServiceError raised on receipt of valid error response.
     @except EWebServiceFailure raised if web service sends invalid response.
-    @except EWebConnectionError raised EIdSocketError encoutered.
+    @except EWebConnectionError raised if EIdSocketError encoutered.
     @except EHTTPError raised if EIdHTTPProtocolException encountered.
     @except EIdException or descendant re-raised for other exception types.
   }
-var
-  QS: TStrings; // list of query strings
 begin
-  QS := CreateQueryStrings(Cmd, Params);
-  try
-    PostQuery(QS, Response);
-  finally
-    FreeAndNil(QS);
-  end;
+  Params.Add('cmd', Cmd);
+  PostQuery(Params, Response);
 end;
 
 procedure TDDabStdWebService.PostData(const Data: TStream;
@@ -191,36 +159,30 @@ procedure TDDabStdWebService.PostData(const Data: TStream;
       response is a line of string list.
     @except EWebServiceError raised on receipt of valid error response.
     @except EWebServiceFailure raised if web service sends invalid response.
-    @except EWebConnectionError raised EIdSocketError encoutered.
+    @except EWebConnectionError raised if EIdSocketError encoutered.
     @except EHTTPError raised if EIdHTTPProtocolException encountered.
     @except EIdException or descendant re-raised for other exception types.
   }
 begin
-  inherited PostStrings(Data, Response);
+  PostStrings(Data, Response);
   ProcessResponse(Response);
 end;
 
-procedure TDDabStdWebService.PostQuery(const QS, Response: TStrings);
+procedure TDDabStdWebService.PostQuery(const Query: TURIParams;
+  const Response: TStrings);
   {Sends a query string to server and returns data component of response in a
   string list.
-    @param QS [in] List of parameters in Name=Value format.
+    @param Query [in] Query string parameters.
     @param Response [in] Server's response as string list where each line of
       response is a line of string list.
     @except EWebServiceError raised on receipt of valid error response.
     @except EWebServiceFailure raised if web service sends invalid response.
-    @except EWebConnectionError raised EIdSocketError encoutered.
+    @except EWebConnectionError raised if EIdSocketError encoutered.
     @except EHTTPError raised if EIdHTTPProtocolException encountered.
     @except EIdException or descendant re-raised for other exception types.
   }
-var
-  Params: TURIParams;
 begin
-  Params := StringsToParams(QS);
-  try
-    inherited PostStrings(Params, Response);
-  finally
-    Params.Free;
-  end;
+  PostStrings(Query, Response);
   ProcessResponse(Response);
 end;
 
@@ -228,12 +190,12 @@ procedure TDDabStdWebService.ProcessResponse(const Response: TStrings);
   {Analyses lines of text returned from from web service and extracts data from
   successful responses. Raises exceptions based on error messages from error
   responses.
-    @param Response [in] Receives lines of text received as response from web
-      service. After processing error code is removed from top of list, leaving
-      only returned data.
+    @param Response [in] Lines of text from response from web service. After
+      processing status code is removed from top of list, leaving only returned
+      data.
+    @except Raises EWebServiceError on receipt of valid error response.
     @except Raises [in] EWebServiceFailure if response from web service has
       invalid format.
-    @except Raises EWebServiceError on receipt of valid error response.
   }
 var
   StatusCode: Integer; // status code from response
@@ -249,24 +211,12 @@ begin
   // Check status code in first line: 0 => OK, otherwise error
   if StatusCode <> 0 then
   begin
-    // Error response
-    // data should contain error message
+    // Error response: raise web service error exception unless data doesn't
+    // contain expected error message when failure exception is raised
     if Trim(Response.Text) = '' then
-      // no error message
       raise EWebServiceFailure.Create(sUnrecognizedError);
-    // valid error message: raise exception using it
     raise EWebServiceError.Create(Trim(Response.Text), StatusCode);
   end
-end;
-
-function TDDabStdWebService.StringsToParams(
-  const Strings: TStrings): TURIParams;
-var
-  Idx: Integer;
-begin
-  Result := TURIParams.Create;
-  for Idx := 0 to Pred(Strings.Count) do
-    Result.Add(Strings.Names[Idx], Strings.ValueFromIndex[Idx]);
 end;
 
 end.
