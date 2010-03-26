@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -74,7 +74,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UWebInfo;
+  UURIParams, UWebInfo;
 
 
 {
@@ -143,12 +143,16 @@ function TRegistrar.Submit(const Data: TStrings): string;
   }
 var
   Response: TStringList;  // response from server
+  Query: TURIParams;
 begin
+  Query := nil;
   Response := TStringList.Create;
   try
-    PostQuery(Data, Response);
+    Query := TURIParams.Create(Data);
+    PostQuery(Query, Response);
     Result := Trim(Response.Text);  // registration key
   finally
+    Query.Free;
     Response.Free;
   end;
 end;

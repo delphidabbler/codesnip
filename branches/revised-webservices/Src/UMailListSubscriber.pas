@@ -83,7 +83,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UWebInfo;
+  UURIParams, UWebInfo;
 
 
 const
@@ -119,16 +119,18 @@ function TMailListSubscriber.Subscribe(const Email, Name: string): string;
   }
 var
   Response: TStringList;  // valid response from web service
+  Query: TURIParams;      // parameters for query string
 begin
   Assert(Email <> '', ClassName + '.Subscribe: Email required');
   // Send subscribe command to web service and gather response
+  Query := nil;
   Response := TStringList.Create;
   try
-    PostCommand(
-      'subscribe',
-      ['listid=codesnip', 'name=' + Name, 'email=' + Email],
-      Response
-    );
+    Query := TURIParams.Create;
+    Query.Add('listid', 'codesnip');
+    Query.Add('name', Name);
+    Query.Add('email', Email);
+    PostCommand('subscribe', Query, Response);
     // Response must be at least two lines: 1st line is success status code. 2nd
     // and subsequent lines are response message
     if Response.Count < 2 then
@@ -138,7 +140,8 @@ begin
     // Return message that follows success status code
     Result := Trim(Response.Text);
   finally
-    FreeAndNil(Response);
+    Query.Free;
+    Response.Free;
   end;
 end;
 
