@@ -43,7 +43,7 @@ interface
 
 uses
   // Project
-  NsWebServices.UExceptions, UWebService;
+  NsWebServices.UDDabStandard, NsWebServices.UExceptions;
 
 
 type

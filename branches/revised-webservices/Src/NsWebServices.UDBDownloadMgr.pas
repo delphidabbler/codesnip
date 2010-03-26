@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes,
   // Project
-  NsWebServices.UExceptions, UURIParams, UWebService;
+  NsWebServices.UDDabStandard, NsWebServices.UExceptions, UURIParams;
 
 
 type

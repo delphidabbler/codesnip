@@ -35,17 +35,18 @@
 
 unit NsWebServices.UBase;
 
+
 interface
 
+
 uses
+  // Delphi
   SysUtils, Classes,
-
+  // Indy
   IdHTTP, IdAntiFreeze, IdException,
-
-  NsWebServices.UCharEncodings,
-  UDownloadMonitor, // rename this into NsWebServices namespace
-  UURIParams,
-  UWebInfo;   // MAYBE rename this into NsWebWervices namespace
+  // Projects
+  NsWebServices.UCharEncodings, NsWebServices.UDownloadMonitor, UURIParams,
+  UWebInfo;
 
 type
 

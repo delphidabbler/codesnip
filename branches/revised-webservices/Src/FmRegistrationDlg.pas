@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -152,8 +152,8 @@ uses
   // Delphi
   SysUtils, Graphics, Math,
   // Project
-  UAppInfo, UCSSUtils, UEmailHelper, UFontHelper, UCtrlArranger, UMessageBox,
-  URegistrar, USystemInfo, UUserDetails;
+  NsWebServices.URegistrar, UAppInfo, UCSSUtils, UEmailHelper, UFontHelper,
+  UCtrlArranger, UMessageBox, USystemInfo, UUserDetails;
 
 
 {$R *.dfm}

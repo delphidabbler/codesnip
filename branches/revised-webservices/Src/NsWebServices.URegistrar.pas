@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UWebService;
+  NsWebServices.UDDabStandard;
 
 
 type
