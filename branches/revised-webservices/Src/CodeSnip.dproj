@@ -492,6 +492,12 @@
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
+			<DCCReference Include="NsWebServices.UCharEncodings.pas"/>
+			<DCCReference Include="NsWebServices.UBase.pas"/>
+			<DCCReference Include="UURIParams.pas"/>
+			<DCCReference Include="UURIEncode.pas"/>
+			<DCCReference Include="NsWebServices.UExceptions.pas"/>
+			<DCCReference Include="3rdParty\PJMD5.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

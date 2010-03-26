@@ -51,7 +51,7 @@ program CodeSnip;
 {$WARNINGS ON}
 {$WRITEABLECONST OFF}
 
-{%ToDo 'CodeSnip.todo'}
+
 
 uses
   Forms,
@@ -352,7 +352,13 @@ uses
   UXMLDataIO in 'UXMLDataIO.pas',
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
-  UXMLDocumentEx in 'UXMLDocumentEx.pas';
+  UXMLDocumentEx in 'UXMLDocumentEx.pas',
+  NsWebServices.UCharEncodings in 'NsWebServices.UCharEncodings.pas',
+  NsWebServices.UBase in 'NsWebServices.UBase.pas',
+  UURIParams in 'UURIParams.pas',
+  UURIEncode in 'UURIEncode.pas',
+  NsWebServices.UExceptions in 'NsWebServices.UExceptions.pas',
+  PJMD5 in '3rdParty\PJMD5.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb} // Type library file
