@@ -1,8 +1,8 @@
 {
- * UMailListSubscriber.pas
+ * NsWebServices.UMailListSubs.pas
  *
- * Implements class that interacts with mailing list subscription web service to
- * subscribe user to CodeSnip mailing list.
+ * Implements class that interacts with the mailing list subscription web
+ * service to subscribe a user to the CodeSnip mailing list.
  *
  * $Rev$
  * $Date$
@@ -19,7 +19,8 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UMailListSubscriber.pas
+ * The Original Code is NsWebServices.UMailListSubs.pas, formerly
+ * UMailListSubscriber.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +35,7 @@
 }
 
 
-unit UMailListSubscriber;
+unit NsWebServices.UMailListSubs;
 
 
 interface

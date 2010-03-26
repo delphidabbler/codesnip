@@ -1,7 +1,7 @@
 {
- * UDownloadMgr.pas
+ * NsWebServices.UDBDownloadMgr.pas (originally UDownloadMgr.pas)
  *
- * Implements a class that updates database from webservice.
+ * Implements a class that interfaces with a web service to update the database.
  *
  * $Rev$
  * $Date$
@@ -18,7 +18,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UDownloadMgr.pas
+ * The Original Code is NsWebServices.UDBDownloadMgr.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -33,7 +33,7 @@
 }
 
 
-unit UDownloadMgr;
+unit NsWebServices.UDBDownloadMgr;
 
 
 interface

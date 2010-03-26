@@ -1,5 +1,5 @@
 {
- * UWebService.pas
+ * NsWebServices.UDDabStandard.pas
  *
  * Implements a class that provides basic interaction with DelphiDabbler
  * standard web services via HTTP.
@@ -19,7 +19,8 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UWebService.pas
+ * The Original Code is NsWebServices.UDDabStandard.pas, formerly
+ * UWebService.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +35,7 @@
 }
 
 
-unit UWebService;
+unit NsWebServices.UDDabStandard;
 
 
 interface

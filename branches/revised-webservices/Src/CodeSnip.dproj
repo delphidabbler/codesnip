@@ -32,6 +32,7 @@
 			</DelphiCompile>
 			<DCCReference Include="3rdParty\GIFImage.pas"/>
 			<DCCReference Include="3rdParty\MD5.pas"/>
+			<DCCReference Include="3rdParty\PJMD5.pas"/>
 			<DCCReference Include="3rdParty\PJStreamWrapper.pas"/>
 			<DCCReference Include="3rdParty\PJSysInfo.pas"/>
 			<DCCReference Include="3rdParty\PJVersionInfo.pas"/>
@@ -280,6 +281,15 @@
 			<DCCReference Include="IntfNotifier.pas"/>
 			<DCCReference Include="IntfPreview.pas"/>
 			<DCCReference Include="IntfUIHandlers.pas"/>
+			<DCCReference Include="NsWebServices.UBase.pas"/>
+			<DCCReference Include="NsWebServices.UCharEncodings.pas"/>
+			<DCCReference Include="NsWebServices.UCodeSubmitter.pas"/>
+			<DCCReference Include="NsWebServices.UDBDownloadMgr.pas"/>
+			<DCCReference Include="NsWebServices.UDDabStandard.pas"/>
+			<DCCReference Include="NsWebServices.UDownloadMonitor.pas"/>
+			<DCCReference Include="NsWebServices.UExceptions.pas"/>
+			<DCCReference Include="NsWebServices.UMailListSubs.pas"/>
+			<DCCReference Include="NsWebServices.URegistrar.pas"/>
 			<DCCReference Include="UActionFactory.pas"/>
 			<DCCReference Include="UActiveText.pas"/>
 			<DCCReference Include="UActiveTextHTML.pas"/>
@@ -298,7 +308,6 @@
 			<DCCReference Include="UCodeImportExport.pas"/>
 			<DCCReference Include="UCodeImportMgr.pas"/>
 			<DCCReference Include="UCodeShareMgr.pas"/>
-			<DCCReference Include="UCodeSubmitter.pas"/>
 			<DCCReference Include="UColorBoxEx.pas"/>
 			<DCCReference Include="UColorDialogEx.pas"/>
 			<DCCReference Include="UColours.pas"/>
@@ -332,8 +341,6 @@
 			<DCCReference Include="UDispatchList.pas"/>
 			<DCCReference Include="UDlgHelper.pas"/>
 			<DCCReference Include="UDOSDateTime.pas"/>
-			<DCCReference Include="UDownloadMgr.pas"/>
-			<DCCReference Include="UDownloadMonitor.pas"/>
 			<DCCReference Include="UDropDownButtons.pas"/>
 			<DCCReference Include="UEditRoutineAction.pas"/>
 			<DCCReference Include="UEmailHelper.pas"/>
@@ -380,7 +387,6 @@
 			<DCCReference Include="ULinkAction.pas"/>
 			<DCCReference Include="ULists.pas"/>
 			<DCCReference Include="ULocales.pas"/>
-			<DCCReference Include="UMailListSubscriber.pas"/>
 			<DCCReference Include="UMainDisplayMgr.pas"/>
 			<DCCReference Include="UMarquee.pas"/>
 			<DCCReference Include="UMeasurement.pas"/>
@@ -411,7 +417,6 @@
 			<DCCReference Include="UPrintMgr.pas"/>
 			<DCCReference Include="UProtocols.pas"/>
 			<DCCReference Include="UQuery.pas"/>
-			<DCCReference Include="URegistrar.pas"/>
 			<DCCReference Include="UREMLDataIO.pas"/>
 			<DCCReference Include="UReservedCategories.pas"/>
 			<DCCReference Include="URoutineAction.pas"/>
@@ -467,6 +472,8 @@
 			<DCCReference Include="UUniqueID.pas"/>
 			<DCCReference Include="UUnitsChkListMgr.pas"/>
 			<DCCReference Include="UUpdateMgr.pas"/>
+			<DCCReference Include="UURIEncode.pas"/>
+			<DCCReference Include="UURIParams.pas"/>
 			<DCCReference Include="UUserDBBackup.pas"/>
 			<DCCReference Include="UUserDBMgr.pas"/>
 			<DCCReference Include="UUserDetails.pas"/>
@@ -486,18 +493,11 @@
 			<DCCReference Include="UWBPopupMenus.pas"/>
 			<DCCReference Include="UWBUIMgr.pas"/>
 			<DCCReference Include="UWebInfo.pas"/>
-			<DCCReference Include="UWebService.pas"/>
 			<DCCReference Include="UWindowSettings.pas"/>
 			<DCCReference Include="UXMLDataIO.pas"/>
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
-			<DCCReference Include="NsWebServices.UCharEncodings.pas"/>
-			<DCCReference Include="NsWebServices.UBase.pas"/>
-			<DCCReference Include="UURIParams.pas"/>
-			<DCCReference Include="UURIEncode.pas"/>
-			<DCCReference Include="NsWebServices.UExceptions.pas"/>
-			<DCCReference Include="3rdParty\PJMD5.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

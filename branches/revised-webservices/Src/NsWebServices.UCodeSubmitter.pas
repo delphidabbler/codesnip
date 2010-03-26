@@ -1,8 +1,8 @@
 {
- * UCodeSubmitter.pas
+ * NsWebServices.UCodeSubmitter.pas
  *
  * Implements a class that submits code snippets database contributions via a
- * webservice.
+ * web service.
  *
  * $Rev$
  * $Date$
@@ -19,12 +19,13 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UCodeSubmitter.pas
+ * The Original Code is NsWebServices.UCodeSubmitter.pas, formerly
+ * UCodeSubmitter.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -34,7 +35,7 @@
 }
 
 
-unit UCodeSubmitter;
+unit NsWebServices.UCodeSubmitter;
 
 
 interface
