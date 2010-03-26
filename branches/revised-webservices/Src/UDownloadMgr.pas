@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UWebService;
+  NsWebServices.UExceptions, UWebService;
 
 
 type
@@ -54,10 +54,10 @@ type
   }
   TDownloadMgr = class sealed(TDDabStdWebService)
   strict private
-    fWantProgressReport: Boolean;
-      {Flag true if OnProgress event to be triggered, false otherwise. Flag set
-      by each server command method to determine if OnProgress wanted for that
-      command}
+//    fWantProgressReport: Boolean;
+//      {Flag true if OnProgress event to be triggered, false otherwise. Flag set
+//      by each server command method to determine if OnProgress wanted for that
+//      command}
     function ProductVersion: string;
       {Gets program's product version.
         @return String representation of product version number.
@@ -93,10 +93,10 @@ type
         @except EDownloadMgr Raised if EWebService exception or sub class
           detected.
       }
-  strict protected
-    procedure DoProgress; override;
-      {Triggers OnProgress event if fWantProgress flag is true.
-      }
+//  strict protected
+//    procedure DoProgress; override;
+//      {Triggers OnProgress event if fWantProgress flag is true.
+//      }
   public
     procedure LogOn(const Stream: TStream; const WantProgress: Boolean = False);
       {Logs on to web service and retrieves news items.
@@ -271,13 +271,13 @@ begin
   inherited Create(TWebServiceInfo.Create(cScriptName, cUserAgent));
 end;
 
-procedure TDownloadMgr.DoProgress;
-  {Triggers OnProgress event if fWantProgress flag is true.
-  }
-begin
-  if fWantProgressReport then
-    TriggerProgressEvent;
-end;
+//procedure TDownloadMgr.DoProgress;
+//  {Triggers OnProgress event if fWantProgress flag is true.
+//  }
+//begin
+//  if fWantProgressReport then
+//    TriggerProgressEvent;
+//end;
 
 function TDownloadMgr.FileCount(const WantProgress: Boolean): Integer;
   {Gets count of files in code snippets database on web server.
@@ -288,7 +288,7 @@ function TDownloadMgr.FileCount(const WantProgress: Boolean): Integer;
 var
   Response: TStringList;  // response from server
 begin
-  fWantProgressReport := WantProgress;
+  Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('filecount', Response);
@@ -311,7 +311,7 @@ var
   Response: TStringList;  // response from server
   ResBytes: TBytes;       // response as latin-1 byte stream
 begin
-  fWantProgressReport := WantProgress;
+  Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('getdatabase', Response);
@@ -360,7 +360,7 @@ function TDownloadMgr.LastUpdate(const WantProgress: Boolean): string;
 var
   Response: TStringList;  // response from server
 begin
-  fWantProgressReport := WantProgress;
+  Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('lastupdate', Response);
@@ -378,7 +378,7 @@ procedure TDownloadMgr.LogOff(const WantProgress: Boolean);
 var
   Response: TStringList;  // response from server
 begin
-  fWantProgressReport := WantProgress;
+  Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('logoff', Response);   // No response data expected
@@ -397,7 +397,7 @@ procedure TDownloadMgr.LogOn(const Stream: TStream;
 var
   Response: TStringList;  // response from server
 begin
-  fWantProgressReport := WantProgress;
+  Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('logon', Response);
