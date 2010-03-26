@@ -66,13 +66,17 @@ type
     function BuildQueryString(const Encode: TFunc<string,string>): string;
   public
     constructor Create; overload;
-    constructor Create(const Params: array of TURIParam); overload;
     constructor Create(const Name, Value: string); overload;
     constructor Create(const Param: TURIParam); overload;
+    constructor Create(const Params: array of TURIParam); overload;
+    constructor Create(const Params: TStrings); overload;
+    constructor Create(const Params: array of string); overload;
     destructor Destroy; override;
     procedure Add(const Name, Value: string); overload;
     procedure Add(const Param: TURIParam); overload;
     procedure Add(const Params: array of TURIParam); overload;
+    procedure Add(const Params: TStrings); overload;
+    procedure Add(const Params: array of string); overload;
     function Exists(const Name: string): Boolean; overload;
     function Exists(const Param: TURIParam): Boolean; overload;
     procedure Update(const Name, Value: string); overload;
@@ -125,6 +129,30 @@ begin
     Add(Param);
 end;
 
+procedure TURIParams.Add(const Params: TStrings);
+var
+  Idx: Integer;
+begin
+  Assert(Assigned(Params), ClassName + '.Add(TStrings): Params is nil');
+  for Idx := 0 to Pred(Params.Count) do
+    Add(Params.Names[Idx], Params.ValueFromIndex[Idx]);
+end;
+
+procedure TURIParams.Add(const Params: array of string);
+var
+  Param: string;
+  ParamList: TStrings;
+begin
+  ParamList := TStringList.Create;
+  try
+    for Param in Params do
+      ParamList.Add(Param);
+    Add(ParamList);
+  finally
+    ParamList.Free;
+  end;
+end;
+
 function TURIParams.BuildQueryString(
   const Encode: TFunc<string, string>): string;
 var
@@ -147,6 +175,14 @@ begin
   end;
 end;
 
+constructor TURIParams.Create;
+begin
+  inherited Create;
+  fDict := TDictionary<string,string>.Create(
+    24, TSameStringEqualityComparer.Create
+  );
+end;
+
 constructor TURIParams.Create(const Name, Value: string);
 begin
   Create;
@@ -159,18 +195,22 @@ begin
   Add(Param);
 end;
 
+constructor TURIParams.Create(const Params: array of string);
+begin
+  Create;
+  Add(Params);
+end;
+
 constructor TURIParams.Create(const Params: array of TURIParam);
 begin
   Create;
   Add(Params);
 end;
 
-constructor TURIParams.Create;
+constructor TURIParams.Create(const Params: TStrings);
 begin
-  inherited Create;
-  fDict := TDictionary<string,string>.Create(
-    24, TSameStringEqualityComparer.Create
-  );
+  Create;
+  Add(Params);
 end;
 
 destructor TURIParams.Destroy;
@@ -248,3 +288,4 @@ begin
 end;
 
 end.
+
