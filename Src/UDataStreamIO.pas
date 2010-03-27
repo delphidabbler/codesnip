@@ -78,17 +78,17 @@ type
       {Reads an Int64 value from stream, encoded as 16 char hex digit.
         @return Value read from stream.
       }
-    function ReadString(const Length: Integer): Latin1String;
+    function ReadString(const Length: Integer): Windows1252String;
       {Reads a string of specified size from stream.
         @param Length [in] Length of string to be read.
         @return String read from stream.
       }
-    function ReadSizedString: Latin1String;
+    function ReadSizedString: Windows1252String;
       {Reads string from stream that is preceded by a small int length
       descriptor.
         @return String read from stream.
       }
-    function ReadSizedLongString: Latin1String;
+    function ReadSizedLongString: Windows1252String;
       {Reads string from stream that is preceded by a long int length
       descriptor.
         @return String read from stream.
@@ -116,9 +116,10 @@ type
       {Writes a 32 bit integer to the stream as hex digits.
         @param Value [in] Value to be written.
       }
-    procedure WriteString(const Str: Latin1String; const Length: Integer);
+    procedure WriteString(const Str: Windows1252String; const Length: Integer);
       overload;
-      {Writes a fixed number of characters from a latin-1 string to the stream.
+      {Writes a fixed number of characters from a Windows-1252 string to the
+      stream.
         @param Str [in] String to be written.
         @param Length [in] Number of characters from string to write.
       }
@@ -128,16 +129,16 @@ type
         @param Str [in] String to be written.
         @param Length [in] Number of characters from string to write.
       }
-    procedure WriteString(const Str: Latin1String); overload;
-      {Writes a latin-1 string to stream.
+    procedure WriteString(const Str: Windows1252String); overload;
+      {Writes a Windows-1252 string to stream.
         @param Str [in] String to be written.
       }
     procedure WriteString(const Str: UnicodeString); overload;
       {Writes a unicode string to stream.
         @param Str [in] String to be written.
       }
-    procedure WriteSizedString(const Str: Latin1String); overload;
-      {Writes a latin-1 string to stream preceded by a 16 bit length as hex
+    procedure WriteSizedString(const Str: Windows1252String); overload;
+      {Writes a Windows-1252 string to stream preceded by a 16 bit length as hex
       digits.
         @param Str [in] String to be written.
       }
@@ -146,8 +147,8 @@ type
       digits.
         @param Str [in] String to be written.
       }
-    procedure WriteSizedLongString(const Str: Latin1String); overload;
-      {Writes a latin-1 string to stream preceded by a 32 bit length as hex
+    procedure WriteSizedLongString(const Str: Windows1252String); overload;
+      {Writes a Windows-1252 string to stream preceded by a 32 bit length as hex
       digits.
         @param Str [in] String to be written.
       }
@@ -166,7 +167,7 @@ implementation
 
   Data streams are always composed of text strings. Numbers are encoded as
   strings of hex digits.
-  Text contained in the streams should be encoded in the Latin-1 code page.
+  Text contained in the streams should be encoded in the Windows-1252 code page.
   Characters occupy 1 byte.
 
   There are several "data types":
@@ -216,7 +217,7 @@ begin
   Result := ReadHexDigits(8);
 end;
 
-function TDataStreamReader.ReadSizedLongString: Latin1String;
+function TDataStreamReader.ReadSizedLongString: Windows1252String;
   {Reads string from stream that is preceded by a long int length descriptor.
     @return String read from stream.
   }
@@ -227,7 +228,7 @@ begin
   Result := ReadString(Length);
 end;
 
-function TDataStreamReader.ReadSizedString: Latin1String;
+function TDataStreamReader.ReadSizedString: Windows1252String;
   {Reads string from stream that is preceded by a small int length descriptor.
     @return String read from stream.
   }
@@ -246,7 +247,7 @@ begin
   Result := ReadHexDigits(4);
 end;
 
-function TDataStreamReader.ReadString(const Length: Integer): Latin1String;
+function TDataStreamReader.ReadString(const Length: Integer): Windows1252String;
   {Reads a string of specified size from stream.
     @param Length [in] length of string to be read.
     @return String read from stream.
@@ -276,8 +277,9 @@ begin
   WriteHex(Value, 8);
 end;
 
-procedure TDataStreamWriter.WriteSizedLongString(const Str: Latin1String);
-  {Writes a latin-1 string to stream preceded by a 32 bit length as hex digits.
+procedure TDataStreamWriter.WriteSizedLongString(const Str: Windows1252String);
+  {Writes a Windows-1252 string to stream preceded by a 32 bit length as hex
+  digits.
     @param Str [in] String to be written.
   }
 begin
@@ -294,8 +296,9 @@ begin
   WriteString(Str, Length(Str));
 end;
 
-procedure TDataStreamWriter.WriteSizedString(const Str: Latin1String);
-  {Writes a latin-1 string to stream preceded by a 16 bit length as hex digits.
+procedure TDataStreamWriter.WriteSizedString(const Str: Windows1252String);
+  {Writes a Windows-1252 string to stream preceded by a 16 bit length as hex
+  digits.
     @param Str [in] String to be written.
   }
 begin
@@ -320,8 +323,8 @@ begin
   WriteHex(Word(Value), 4);
 end;
 
-procedure TDataStreamWriter.WriteString(const Str: Latin1String);
-  {Writes a latin-1 string to stream.
+procedure TDataStreamWriter.WriteString(const Str: Windows1252String);
+  {Writes a Windows-1252 string to stream.
     @param Str [in] String to be written.
   }
 begin
@@ -336,9 +339,9 @@ begin
   WriteString(Str, Length(Str));
 end;
 
-procedure TDataStreamWriter.WriteString(const Str: Latin1String;
+procedure TDataStreamWriter.WriteString(const Str: Windows1252String;
   const Length: Integer);
-  {Writes a fixed number of characters from a latin-1 string to the stream.
+  {Writes a fixed number of characters from a Windows-1252 string to the stream.
     @param Str [in] String to be written.
     @param Length [in] Number of characters from string to write.
   }
@@ -355,7 +358,7 @@ procedure TDataStreamWriter.WriteString(const Str: UnicodeString;
 var
   Bytes: TBytes;
 begin
-  Bytes := Latin1BytesOf(Str);
+  Bytes := Windows1252BytesOf(Str);
   BaseStream.WriteBuffer(Pointer(Bytes)^, Length);
 end;
 

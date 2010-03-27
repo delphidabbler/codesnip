@@ -47,22 +47,25 @@ uses
 
 
 const
-  Latin1CodePage = 1252;    // Code page for the Latin-1 character set
-  ASCIICodePage = 20127;    // Code page for the ASCII character set
+  Windows1252CodePage = 1252; // Code page for the Windows-1252 character set
+  ASCIICodePage = 20127;      // Code page for the ASCII character set
 
 type
 
   {
-  Latin1String:
-    String in the Latin-1 encoding. Encoding is implement only on Unicode
-    versions of Delphi. Ansi version simply use AnsiString.
+  Windows1252String:
+    String using the Windows-1252 code page
   }
-  Latin1String = type AnsiString(Latin1CodePage);
+  Windows1252String = type AnsiString(Windows1252CodePage);
+  {
+  ASCIIString:
+    String using the ASCII code page.
+  }
   ASCIIString = type AnsiString(ASCIICodePage);
 
 
-function Latin1BytesOf(const AString: string): TBytes;
-  {Converts a string into an array of bytes from the latin-1 character set.
+function Windows1252BytesOf(const AString: string): TBytes;
+  {Converts a string into an array of bytes from the Windows-1252 character set.
     @param AString [in] String to be converted.
     @return Required array of bytes.
   }
@@ -73,9 +76,8 @@ function ASCIIBytesOf(const AString: string): TBytes;
     @return Required array of bytes.
   }
 
-function StringToLatin1String(const S: string): Latin1String;
-  {Converts a string to a latin 1 string. On Ansi Delphi versions string is
-  unchanged.
+function StringToWindows1252String(const S: string): Windows1252String;
+  {Converts a string to a Windows-1252 string.
     @param S [in] String to be converted.
     @return Converted string.
   }
@@ -143,10 +145,10 @@ uses
 
 type
   {
-  TLatin1Encoding:
-    Provides encoding support for the Latin-1 character set.
+  TWindows1252Encoding:
+    Provides encoding support for the Windows-1252 character set.
   }
-  TLatin1Encoding = class(TMBCSEncoding)
+  TWindows1252Encoding = class(TMBCSEncoding)
   strict private
     class var fGC: IInterface;      // garbage collector: auto-frees fInstance
     class var fInstance: TEncoding; // stores singleton object of this class
@@ -156,7 +158,7 @@ type
       }
   public
     constructor Create; override;
-      {Class constructor. Sets up object for latin-1 code page.
+      {Class constructor. Sets up object for Windows-1252 code page.
       }
     class property Instance: TEncoding read GetInstance;
       {Singleton instance of class. Must not be freed}
@@ -228,21 +230,21 @@ begin
   Result := TCharacter.ToUpper(C);
 end;
 
-function Latin1Encoding: TEncoding;
-  {Returns singleton instance of TLatin1Encoding.
+function Windows1252Encoding: TEncoding;
+  {Returns singleton instance of TWindows1252Encoding.
     @return Required instance.
   }
 begin
-  Result := TLatin1Encoding.Instance;
+  Result := TWindows1252Encoding.Instance;
 end;
 
-function Latin1BytesOf(const AString: string): TBytes;
-  {Converts a string into an array of bytes from the latin-1 character set.
+function Windows1252BytesOf(const AString: string): TBytes;
+  {Converts a string into an array of bytes from the Windows-1252 character set.
     @param AString [in] String to be converted.
     @return Required array of bytes.
   }
 begin
-  Result := Latin1Encoding.GetBytes(AString);
+  Result := Windows1252Encoding.GetBytes(AString);
 end;
 
 function ASCIIBytesOf(const AString: string): TBytes;
@@ -280,14 +282,13 @@ begin
   Move(Bytes[0], Result[1], Len);
 end;
 
-function StringToLatin1String(const S: string): Latin1String;
-  {Converts a string to a latin 1 string. On Ansi Delphi versions string is
-  unchanged.
+function StringToWindows1252String(const S: string): Windows1252String;
+  {Converts a string to a Windows-1252 string.
     @param S [in] String to be converted.
     @return Converted string.
   }
 begin
-  Result := BytesToAnsiString(Latin1BytesOf(S));
+  Result := BytesToAnsiString(Windows1252BytesOf(S));
 end;
 
 function StringToASCIIString(const S: string): ASCIIString;
@@ -299,23 +300,23 @@ begin
   Result := BytesToASCIIString(ASCIIBytesOf(S));
 end;
 
-{ TLatin1Encoding }
+{ TWindows1252Encoding }
 
-constructor TLatin1Encoding.Create;
-  {Class constructor. Sets up object for latin-1 code page.
+constructor TWindows1252Encoding.Create;
+  {Class constructor. Sets up object for Windows-1252 code page.
   }
 begin
-  inherited Create(Latin1CodePage);
+  inherited Create(Windows1252CodePage);
 end;
 
-class function TLatin1Encoding.GetInstance: TEncoding;
+class function TWindows1252Encoding.GetInstance: TEncoding;
   {Gets reference to singleton instance of this class.
     @return Reference to singleton object.
   }
 begin
   if not Assigned(fInstance) then
   begin
-    fInstance := TLatin1Encoding.Create;
+    fInstance := TWindows1252Encoding.Create;
     TGC.GCLocalObj(fGC, fInstance); // add fInstance to GC to be auto-freed
   end;
   Result := fInstance;
