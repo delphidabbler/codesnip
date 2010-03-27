@@ -371,10 +371,10 @@ function URLEncode(const S: string; const InQueryString: Boolean): string;
     @return Encoded string.
   }
 var
-  URL: Latin1String;  // latin-1 encoding of S
-  Ch: AnsiChar;       // each character in URL
+  URL: Windows1252String;  // Windows-1252 encoding of S
+  Ch: AnsiChar;            // each character in URL
 begin
-  URL := StringToLatin1String(S);
+  URL := StringToWindows1252String(S);
   Result := '';
   for Ch in URL do
   begin
