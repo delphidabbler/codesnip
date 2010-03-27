@@ -36,24 +36,16 @@
 
 unit UURIParams;
 
+
 interface
 
+
 uses
-  SysUtils, Classes, Generics.Collections, Generics.Defaults;
+  // Delphi
+  SysUtils, Classes, Generics.Collections;
+
 
 type
-
-  // todo: Move this to own unit [UComparers] (with ElfHash function below)
-  {
-  TSameStringEqualityComparer:
-    Case insensitive string comparer.
-  }
-  TSameStringEqualityComparer = class(TEqualityComparer<string>,
-    IEqualityComparer<string>
-  )
-    function Equals(const Left, Right: string): Boolean; override;
-    function GetHashCode(const Value: string): Integer; override;
-  end;
 
   TURIParam = record
     Name, Value: string;
@@ -86,28 +78,14 @@ type
     function IsEmpty: Boolean;
   end;
 
+
 implementation
 
-uses
-WINDOWS,
-  UURIEncode;
 
-// Source: http://www.scalabium.com/faq/dct0136.htm
-// TODO: Move to UUtils or UComparers or somewhere like that or to hashes unit
-function ElfHash(const Value: string): Integer;
-var
-  i, x: Integer;
-begin
-  Result := 0;
-  for i := 1 to Length(Value) do
-  begin
-    Result := (Result shl 4) + Ord(Value[i]);
-    x := Result and $F0000000;
-    if (x <> 0) then
-      Result := Result xor (x shr 24);
-    Result := Result and (not x);
-  end;
-end;
+uses
+  // Project
+  UComparers, UURIEncode;
+
 
 { TURIParams }
 
@@ -270,21 +248,6 @@ constructor TURIParam.Create(const AName, AValue: string);
 begin
   Name := AName;
   Value := AValue;
-end;
-
-{ TSameStringEqualityComparer }
-
-function TSameStringEqualityComparer.Equals(const Left, Right: string): Boolean;
-begin
-  Result := AnsiSameText(Left, Right);
-end;
-
-function TSameStringEqualityComparer.GetHashCode(const Value: string): Integer;
-begin
-  // Comparison takes place only done if hashes are same => must ignore case in
-  // hash if two strings in different case are to be considered same => hash of
-  // 'aaaa' = hash of 'AAAA' => Equals gets called and returns true
-  Result := ElfHash(AnsiLowerCase(Value));
 end;
 
 end.
