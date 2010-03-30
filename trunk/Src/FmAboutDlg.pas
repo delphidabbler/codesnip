@@ -133,11 +133,6 @@ type
       {Initialises HTML frame to use required template document with
       placeholders replaced by required values.
       }
-    function GetBodyPanelHeight: Integer; override;
-      {Calculates required height of dialog's body panel. Not required in this
-      class.
-        @return 0.
-      }
     procedure ArrangeForm; override;
       {Adjusts position of registration button on bottom button line. Called
       from ancestor class.
@@ -301,16 +296,6 @@ begin
   frmTitle.OnBuildCSS := UpdateTitleCSS;
   frmProgram.OnBuildCSS := UpdateDetailCSS;
   frmDatabase.OnBuildCSS := UpdateDetailCSS;
-end;
-
-function TAboutDlg.GetBodyPanelHeight: Integer;
-  {Calculates required height of dialog's body panel. Not required in this
-  class.
-    @return 0.
-  }
-begin
-  // todo: remove this method from base class - use ArrangeForm instead
-  Result := 0;
 end;
 
 procedure TAboutDlg.HTMLEventHandler(Sender: TObject;

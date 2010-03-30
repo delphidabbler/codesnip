@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -167,6 +167,9 @@ type
         @except EBug raised if compiler result is not a warning or an error.
       }
   strict protected
+    procedure ArrangeForm; override;
+      {Arranges controls in form.
+      }
     procedure ConfigForm; override;
       {Sets UI font for tab set control tabs.
       }
@@ -175,10 +178,6 @@ type
       }
     procedure InitHTMLFrame; override;
       {Initialises HTML frame to display error log for first (or only) compiler.
-      }
-    function GetBodyPanelHeight: Integer; override;
-      {Calculates required height of dialog's body panel.
-        @return Required height.
       }
   public
     class procedure Execute(const AOwner: TComponent; const ARoutine: TRoutine;
@@ -239,6 +238,15 @@ resourcestring
 
 
 { TCompErrorDlg }
+
+procedure TCompErrorDlg.ArrangeForm;
+  {Arranges controls in form.
+  }
+begin
+  pnlBody.Height := GetHTMLHeight + GetTabsetHeight;
+  // set size of dialog
+  inherited;
+end;
 
 procedure TCompErrorDlg.ConfigForm;
   {Sets UI font for tab set control tabs.
@@ -316,14 +324,6 @@ procedure TCompErrorDlg.FormDestroy(Sender: TObject);
 begin
   FreeAndNil(fRequiredCompilers);
   inherited;
-end;
-
-function TCompErrorDlg.GetBodyPanelHeight: Integer;
-  {Calculates required height of dialog's body panel.
-    @return Required height.
-  }
-begin
-  Result := GetHTMLHeight + GetTabsetHeight;
 end;
 
 function TCompErrorDlg.GetHTMLHeight: Integer;
