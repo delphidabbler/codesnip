@@ -26,36 +26,34 @@ inherited AboutDlg: TAboutDlg
       Left = 0
       Top = 47
       Width = 409
-      Height = 161
-      ActivePage = tsProgram
+      Height = 218
+      ActivePage = tsPaths
       Align = alTop
       TabOrder = 0
-      ExplicitWidth = 377
       object tsProgram: TTabSheet
         Caption = 'About The Program'
-        ExplicitWidth = 369
         inline frmProgram: THTMLTpltDlgFrame
           Left = 0
           Top = 0
           Width = 401
-          Height = 133
+          Height = 190
           Align = alClient
           TabOrder = 0
           TabStop = True
-          ExplicitWidth = 369
-          ExplicitHeight = 133
+          ExplicitWidth = 401
+          ExplicitHeight = 190
           inherited pnlBrowser: TPanel
             Width = 401
-            Height = 133
-            ExplicitWidth = 369
-            ExplicitHeight = 133
+            Height = 190
+            ExplicitWidth = 401
+            ExplicitHeight = 190
             inherited wbBrowser: TWebBrowser
               Width = 401
-              Height = 133
+              Height = 190
               ExplicitWidth = 345
               ExplicitHeight = 133
               ControlData = {
-                4C00000072290000BF0D00000000000000000000000000000000000000000000
+                4C00000072290000A31300000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
                 2B2E126208000000000000004C0000000114020000000000C000000000000046
                 8000000000000000000000000000000000000000000000000000000000000000
@@ -67,32 +65,28 @@ inherited AboutDlg: TAboutDlg
       object tsDatabase: TTabSheet
         Caption = 'About The Database'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         inline frmDatabase: THTMLTpltDlgFrame
           Left = 0
           Top = 0
-          Width = 345
-          Height = 133
+          Width = 401
+          Height = 190
           Align = alClient
           TabOrder = 0
           TabStop = True
-          ExplicitWidth = 345
-          ExplicitHeight = 133
+          ExplicitWidth = 401
+          ExplicitHeight = 190
           inherited pnlBrowser: TPanel
-            Width = 345
-            Height = 133
-            ExplicitWidth = 345
-            ExplicitHeight = 133
+            Width = 401
+            Height = 190
+            ExplicitWidth = 401
+            ExplicitHeight = 190
             inherited wbBrowser: TWebBrowser
-              Width = 345
-              Height = 133
+              Width = 401
+              Height = 190
               ExplicitWidth = 345
               ExplicitHeight = 133
               ControlData = {
-                4C000000A8230000BF0D00000000000000000000000000000000000000000000
+                4C00000072290000A31300000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
                 2B2E126208000000000000004C0000000114020000000000C000000000000046
                 8000000000000000000000000000000000000000000000000000000000000000
@@ -100,6 +94,10 @@ inherited AboutDlg: TAboutDlg
             end
           end
         end
+      end
+      object tsPaths: TTabSheet
+        Caption = 'Paths'
+        ImageIndex = 2
       end
     end
     object pnlTitle: TPanel
@@ -112,7 +110,6 @@ inherited AboutDlg: TAboutDlg
       BorderWidth = 1
       Color = clBtnShadow
       TabOrder = 1
-      ExplicitWidth = 377
       inline frmTitle: THTMLTpltDlgFrame
         Left = 1
         Top = 1
@@ -123,12 +120,12 @@ inherited AboutDlg: TAboutDlg
         TabStop = True
         ExplicitLeft = 1
         ExplicitTop = 1
-        ExplicitWidth = 375
+        ExplicitWidth = 407
         ExplicitHeight = 39
         inherited pnlBrowser: TPanel
           Width = 407
           Height = 39
-          ExplicitWidth = 375
+          ExplicitWidth = 407
           ExplicitHeight = 39
           inherited wbBrowser: TWebBrowser
             Width = 407

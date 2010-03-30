@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -41,13 +41,55 @@ interface
 
 uses
   // Delphi
-  Forms, ComCtrls, StdCtrls, Controls, ExtCtrls, Classes,
+  Forms, ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Messages,
   // Project
   FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, UCSSBuilder,
   UHTMLEvents;
 
 
 type
+
+  {
+  TPathInfoBox:
+    Component that displays a path in a group box with an associated button that
+    displays the path in Windows Explorer.
+  }
+  TPathInfoBox = class(TCustomGroupBox)
+  strict private
+    fPathLbl: TLabel;   // Label that displays path
+    fViewBtn: TButton;  // Button that displays path in explorer
+    function GetPath: string;
+      {Read accessor for Path property. Gets value from label.
+        @return Property value.
+      }
+    procedure SetPath(const Value: string);
+      {Write accessor for Path property. Stores value in label.
+        @param Value [in] New property value.
+      }
+    procedure BtnClick(Sender: TObject);
+      {Button click event handler. Displays folder stored in Path property in
+      Windows Explorer.
+        @param Sender [in] Not used.
+      }
+    procedure FontChange(var Msg: TMessage); message CM_FONTCHANGED;
+      {Handles font changes by resizing control to allow for new font size.
+        @param Msg [in/out] Not used.
+      }
+    procedure ReArrange;
+      {Resizes and re-arranges control and its sub-components.
+      }
+  strict protected
+    procedure Resize; override;
+      {Handles control resizing. Re-arranges control's sub-components.
+      }
+  public
+    constructor Create(AOwner: TComponent); override;
+      {Component constructor. Creates sub-components and arranges them.
+        @param AOwner [in] Owning component.
+      }
+    property Path: string read GetPath write SetPath;
+      {Path displayed in group box and displayed by view button}
+  end;
 
   {
   TAboutDlg:
@@ -66,9 +108,13 @@ type
     tsProgram: TTabSheet;
     pnlTitle: TPanel;
     frmTitle: THTMLTpltDlgFrame;
+    tsPaths: TTabSheet;
     procedure btnRegisterClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   strict private
+    fMainDBPathGp: TPathInfoBox;  // control that displays main database folder
+    fUserDBPathGp: TPathInfoBox;  // control that displays user database folder
+    fInstallPathGp: TPathInfoBox; // control that displays program install path
     procedure HTMLEventHandler(Sender: TObject;
       const EventInfo: THTMLEventInfo);
       {Handles title frame's OnHTMLEvent event. Checks for easter-egg related
@@ -77,6 +123,9 @@ type
         @param EventInfo [in] Object providing information about the event.
       }
   strict protected
+    procedure ConfigForm; override;
+      {Configures form by creating custom controls.
+      }
     procedure InitForm; override;
       {Initialises form's controls.
       }
@@ -85,9 +134,9 @@ type
       placeholders replaced by required values.
       }
     function GetBodyPanelHeight: Integer; override;
-      {Calculates required height of dialog's body panel from height of various
-      HTML frames.
-        @return Required height.
+      {Calculates required height of dialog's body panel. Not required in this
+      class.
+        @return 0.
       }
     procedure ArrangeForm; override;
       {Adjusts position of registration button on bottom button line. Called
@@ -115,12 +164,12 @@ type
 implementation
 
 
-uses   
+uses
   // Delphi
-  SysUtils, Graphics, Math, Windows {for inlining},
+  SysUtils, Graphics, Math, Windows {for inlining}, ShellAPI,
   // Project
   FmEasterEgg, FmRegistrationDlg, UAppInfo, UColours, UConsts, UContributors,
-  UCSSUtils, UFontHelper, UHTMLUtils, UThemesEx;
+  UCSSUtils, UCtrlArranger, UFontHelper, UHTMLUtils, UThemesEx, UUtils;
 
 
 {
@@ -144,6 +193,19 @@ uses
 
 {$R *.dfm}
 
+function ExploreFolder(const Folder: string): Boolean;
+  {Displays Windows Explorer showing a specified folder.
+    @param Folder [in] Folder to explore.
+    @return True if explorer displayed, False if not.
+  }
+begin
+  if IsDirectory(Folder) then
+    Result := ShellExecute(
+      0, 'explore', PChar(Folder), nil, nil, SW_SHOWNORMAL
+    ) > 32
+  else
+    Result := False;
+end;
 
 { TAboutDlg }
 
@@ -151,7 +213,22 @@ procedure TAboutDlg.ArrangeForm;
   {Adjusts position of registration button on bottom button line. Called from
   ancestor class.
   }
+var
+  PathTabHeight: Integer;
 begin
+  fMainDBPathGp.Top := TCtrlArranger.BottomOf(fInstallPathGp, 8);
+  fUserDBPathGp.Top := TCtrlArranger.BottomOf(fMainDBPathGp, 8);
+  PathTabHeight := TCtrlArranger.BottomOf(fUserDBPathGp);
+  // Set height of title frame and page control
+  pnlTitle.Height := frmTitle.DocHeight;
+  pcDetail.ClientHeight :=
+    pcDetail.Height - tsProgram.ClientHeight +
+    Max(
+      PathTabHeight,
+      Max(frmProgram.DocHeight, frmDatabase.DocHeight)
+    ) + 8;
+  pnlBody.ClientHeight := pnlTitle.Height + bvlSeparator.Height +
+    pcDetail.Height;
   inherited;
   btnRegister.Left := pnlBody.Left;
   btnRegister.Top := btnHelp.Top;
@@ -164,6 +241,42 @@ procedure TAboutDlg.btnRegisterClick(Sender: TObject);
 begin
   if TRegistrationDlg.Execute(Self) then
     btnRegister.Hide; // hide registration button now that program registered OK
+end;
+
+procedure TAboutDlg.ConfigForm;
+  {Configures form by creating custom controls.
+  }
+
+  function CreatePathInfoBox(const Caption, Path: string): TPathInfoBox;
+    {Creates and initialises a custom path information control.
+      @param Caption [in] Group box caption.
+      @param Path [in] Path to be displayed.
+      @return New control.
+    }
+  begin
+    Result := TPathInfoBox.CreateParented(tsPaths.Handle);
+    Result.SetBounds(8, 8, tsPaths.ClientWidth - 16, 0);
+    Result.Caption := Caption;
+    Result.Path := Path;
+  end;
+
+resourcestring
+  // Captions for custom controls
+  sInstallPathGpCaption = 'Install Directory';
+  sMainDBPathGpCaption = 'Main Database Directory';
+  sUserDBPathGpCaption = 'User Database Directory';
+begin
+  inherited;
+  // Creates required custom controls
+  fInstallPathGp := CreatePathInfoBox(
+    sInstallPathGpCaption, TAppInfo.AppExeDir
+  );
+  fMainDBPathGp := CreatePathInfoBox(
+    sMainDBPathGpCaption, TAppInfo.AppDataDir
+  );
+  fUserDBPathGp := CreatePathInfoBox(
+    sUserDBPathGpCaption, TAppInfo.UserDataDir
+  );
 end;
 
 class procedure TAboutDlg.Execute(AOwner: TComponent);
@@ -191,17 +304,13 @@ begin
 end;
 
 function TAboutDlg.GetBodyPanelHeight: Integer;
-  {Calculates required height of dialog's body panel from height of various HTML
-  frames.
-    @return Required height.
+  {Calculates required height of dialog's body panel. Not required in this
+  class.
+    @return 0.
   }
 begin
-  // Set height of title frame and page control
-  pnlTitle.Height := frmTitle.DocHeight;
-  pcDetail.ClientHeight := pcDetail.Height - tsProgram.ClientHeight
-    + Max(frmProgram.DocHeight, frmDatabase.DocHeight) + 8;
-  // Calculate body panel height
-  Result := pnlTitle.Height + bvlSeparator.Height + pcDetail.Height;
+  // todo: remove this method from base class - use ArrangeForm instead
+  Result := 0;
 end;
 
 procedure TAboutDlg.HTMLEventHandler(Sender: TObject;
@@ -385,6 +494,101 @@ begin
     AddProperty(CSSBackgroundColorProp(clWindow));
     AddProperty(CSSPaddingProp(4));
   end;
+end;
+
+{ TPathInfoBox }
+
+procedure TPathInfoBox.BtnClick(Sender: TObject);
+  {Button click event handler. Displays folder stored in Path property in
+  Windows Explorer.
+    @param Sender [in] Not used.
+  }
+begin
+  if Assigned(fPathLbl) and (fPathLbl.Caption <> '') then
+    ExploreFolder(fPathLbl.Caption);
+end;
+
+constructor TPathInfoBox.Create(AOwner: TComponent);
+  {Component constructor. Creates sub-components and arranges them.
+    @param AOwner [in] Owning component.
+  }
+resourcestring
+  // Hint attached to view button
+  sViewBtnHint = 'Explore...|Display the path in Windows Explorer';
+begin
+  inherited;
+  // Create and setup path label
+  fPathLbl := TLabel.Create(Self);
+  fPathLbl.Parent := Self;
+  fPathLbl.Left := 8;
+  fPathLbl.Top := 8;
+  fPathLbl.Width := 120;
+  fPathLbl.AutoSize := False;
+  fPathLbl.EllipsisPosition := epPathEllipsis;
+  fPathLbl.Width := Self.Width - 16;
+  fPathLbl.Caption := ' ';
+  fPathLbl.Transparent := False;
+  // Create and setup view button
+  fViewBtn := TButton.Create(Self);
+  fViewBtn.Parent := Self;
+  fViewBtn.OnClick := BtnClick;
+  fViewBtn.Height := 19;
+  fViewBtn.Width := 26;
+  fViewBtn.Caption := '...';
+  fViewBtn.Hint := sViewBtnHint;
+  fViewBtn.ShowHint := True;
+  // Ensure correct default font is used
+  TFontHelper.SetDefaultBaseFont(Font, True);
+  // Size and arrange controls
+  ReArrange;
+end;
+
+procedure TPathInfoBox.FontChange(var Msg: TMessage);
+  {Handles font changes by resizing control to allow for new font size.
+    @param Msg [in/out] Not used.
+  }
+begin
+  inherited;
+  ReArrange;
+end;
+
+function TPathInfoBox.GetPath: string;
+  {Read accessor for Path property. Gets value from label.
+    @return Property value.
+  }
+begin
+  Result := fPathLbl.Caption;
+end;
+
+procedure TPathInfoBox.ReArrange;
+  {Resizes and re-arranges control and its sub-components.
+  }
+begin
+  TCtrlArranger.SetLabelHeight(fPathLbl);
+  Height := Max(fPathLbl.Height, fViewBtn.Height) + 24;
+  TCtrlArranger.AlignVCentres(
+    (ClientHeight - Max(fPathLbl.Height, fViewBtn.Height)) div 3 * 2,
+    [fPathLbl, fViewBtn]
+  );
+  fViewBtn.Left := ClientWidth - fViewBtn.Width - 8;
+  fPathLbl.Left := 8;
+  fPathLbl.Width := fViewBtn.Left - fPathLbl.Left - 8;
+end;
+
+procedure TPathInfoBox.Resize;
+  {Handles control resizing. Re-arranges control's sub-components.
+  }
+begin
+  inherited;
+  ReArrange;
+end;
+
+procedure TPathInfoBox.SetPath(const Value: string);
+  {Write accessor for Path property. Stores value in label.
+    @param Value [in] New property value.
+  }
+begin
+  fPathLbl.Caption := Value;
 end;
 
 end.
