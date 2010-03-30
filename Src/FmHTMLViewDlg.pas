@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -59,16 +59,8 @@ type
     procedure InitHTMLFrame; virtual; abstract;
       {Initialises HTML frame by loading required HTML in browser control.
       }
-    function GetBodyPanelHeight: Integer; virtual; abstract;
-      {Gets height of body panel.
-        @return Required body panel height.
-      }
-    procedure SizeBodyPanel;
-      {Sets size of body panel to value provided by descendant class.
-      }
     procedure ConfigForm; override;
-      {Initialises dialog's HTML content and sizes body panel to fit HTML
-      content.
+      {Initialises dialog's HTML content.
       }
   end;
 
@@ -82,19 +74,11 @@ implementation
 { THTMLViewDlg }
 
 procedure THTMLViewDlg.ConfigForm;
-  {Initialises dialog's HTML content and sizes body panel to fit HTML content.
+  {Initialises dialog's HTML content.
   }
 begin
   inherited;
   InitHTMLFrame;
-  SizeBodyPanel;
-end;
-
-procedure THTMLViewDlg.SizeBodyPanel;
-  {Sets size of body panel to value provided by descendant class.
-  }
-begin
-  pnlBody.ClientHeight := GetBodyPanelHeight;
 end;
 
 end.

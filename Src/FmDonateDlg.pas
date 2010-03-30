@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -70,15 +70,11 @@ type
       {Sets UI font for emboldened Donate button.
       }
     procedure ArrangeForm; override;
-      {Adjusts position of donation on bottom button line. Called from ancestor
-      class.
+      {Sizes dialog to fit content and adjusts position of donation button on
+      bottom line. Called from ancestor class.
       }
     procedure InitHTMLFrame; override;
       {Initialises HTML frame.
-      }
-    function GetBodyPanelHeight: Integer; override;
-      {Gets height of body panel.
-        @return Required body panel height.
       }
   public
     class procedure Execute(const AOwner: TComponent);
@@ -102,10 +98,13 @@ uses
 { TDonateDlg }
 
 procedure TDonateDlg.ArrangeForm;
-  {Adjusts position of donation on bottom button line. Called from ancestor
-  class.
+  {Sizes dialog to fit content and adjusts position of donation button on bottom
+  line. Called from ancestor class.
   }
 begin
+  // set body panel height from size of content
+  pnlBody.Height := frmContent.DocHeight;
+  // size dialog box
   inherited;
   btnDoDonate.Left := pnlBody.Left;
   btnDoDonate.Top := btnClose.Top;
@@ -138,14 +137,6 @@ procedure TDonateDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   btnDoDonate.Action := TPaypalDonateAction.Create(Self);
-end;
-
-function TDonateDlg.GetBodyPanelHeight: Integer;
-  {Gets height of body panel.
-    @return Required body panel height.
-  }
-begin
-  Result := frmContent.DocHeight;
 end;
 
 procedure TDonateDlg.InitHTMLFrame;
