@@ -111,6 +111,7 @@ type
     tsPaths: TTabSheet;
     procedure btnRegisterClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   strict private
     fMainDBPathGp: TPathInfoBox;  // control that displays main database folder
     fUserDBPathGp: TPathInfoBox;  // control that displays user database folder
@@ -296,6 +297,17 @@ begin
   frmTitle.OnBuildCSS := UpdateTitleCSS;
   frmProgram.OnBuildCSS := UpdateDetailCSS;
   frmDatabase.OnBuildCSS := UpdateDetailCSS;
+end;
+
+procedure TAboutDlg.FormDestroy(Sender: TObject);
+  {Form destruction event handler. Frees non-owned controls.
+    @param Sender [in] Not used.
+  }
+begin
+  inherited;
+  fInstallPathGp.Free;
+  fMainDBPathGp.Free;
+  fUserDBPathGp.Free;
 end;
 
 procedure TAboutDlg.HTMLEventHandler(Sender: TObject;

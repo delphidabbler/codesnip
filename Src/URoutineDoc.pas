@@ -105,7 +105,7 @@ type
       {Outputs snippet's source code.
         @param SourceCode [in] Source code to be written.
       }
-    procedure RenderTitledList(const Title: string; const List: IStringList);
+    procedure RenderTitledList(const Title: string; List: IStringList);
       virtual; abstract;
       {Outputs a list preceded by a title.
         @param Title [in] List title.

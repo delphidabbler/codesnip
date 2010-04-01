@@ -132,7 +132,7 @@ type
         @return Required string list.
       }
     procedure SetStrings(const CountName, ItemFmt: string;
-      const Value: IStringList);
+      Value: IStringList);
       {Stores a string list in storage.
         @param CountName [in] Name of value that stores number of elements in
           string list.
@@ -401,7 +401,7 @@ type
         @return Required string list.
       }
     procedure SetStrings(const CountName, ItemFmt: string;
-      const Value: IStringList);
+      Value: IStringList);
       {Stores a string list in storage.
         @param CountName [in] Name of value that stores number of elements in
           string list.
@@ -769,7 +769,7 @@ begin
 end;
 
 procedure TIniSettingsSection.SetStrings(const CountName, ItemFmt: string;
-  const Value: IStringList);
+  Value: IStringList);
   {Stores a string list in storage.
     @param CountName [in] Name of value that stores number of elements in string
       list.

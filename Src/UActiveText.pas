@@ -252,7 +252,7 @@ type
         @return Empty object.
       }
     class function CreateActiveText(const Markup: string;
-      const Parser: IActiveTextParser): IActiveText; overload;
+      Parser: IActiveTextParser): IActiveText; overload;
       {Create an active text object with contents obtained from parsing some
       markup.
         @param Markup [in] Markup that defines active text. "Language" used must
@@ -507,7 +507,7 @@ begin
 end;
 
 class function TActiveTextFactory.CreateActiveText(const Markup: string;
-  const Parser: IActiveTextParser): IActiveText;
+  Parser: IActiveTextParser): IActiveText;
   {Create an active text object with contents obtained from parsing some
   markup.
     @param Markup [in] Markup that defines active text. "Language" used must be
