@@ -1630,6 +1630,8 @@ begin
   Result := Routine;      // keeps compiler happy
   Assert(Routine.UserDefined,
     ClassName + '.UpdateRoutine: Routine is not user-defined');
+  Referrers := nil;
+  Dependents := nil;
   TriggerEvent(evChangeBegin);
   try
     // Calculate new name
@@ -1664,6 +1666,8 @@ begin
     TriggerEvent(evRoutineChanged, Result);
   finally
     fUpdated := True;
+    Referrers.Free;
+    Dependents.Free;
     TriggerEvent(evChangeEnd);
   end;
 end;

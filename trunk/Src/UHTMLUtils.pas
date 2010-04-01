@@ -72,7 +72,7 @@ type
         @param Name [in] Name of attribute.
         @param Value [in] Value of attribute. If '' attribute is not added.
       }
-    procedure Add(const Name: string; const Values: IStringList); overload;
+    procedure Add(const Name: string; Values: IStringList); overload;
       {Adds a named attribute and spaced separated list of values.
         @param Name [in] Name of attribute.
         @param Values [in] String list of attribute values. If not assigned or
@@ -113,7 +113,7 @@ type
         @param Name [in] Name of attribute.
         @param Value [in] Value of attribute. If '' attribute is not added.
       }
-    procedure Add(const Name: string; const Values: IStringList); overload;
+    procedure Add(const Name: string; Values: IStringList); overload;
       {Adds a named attribute and spaced separated list of values.
         @param Name [in] Name of attribute.
         @param Values [in] String list of attribute values. If not assigned or
@@ -556,7 +556,7 @@ begin
   fAttrs.Values[Name] := Value; // this deletes entry if Value is ''
 end;
 
-procedure THTMLAttributes.Add(const Name: string; const Values: IStringList);
+procedure THTMLAttributes.Add(const Name: string; Values: IStringList);
   {Adds a named attribute and spaced separated list of values.
     @param Name [in] Name of attribute.
     @param Values [in] String list of attribute values. If not assigned or

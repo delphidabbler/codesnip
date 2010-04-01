@@ -301,7 +301,7 @@ type
     class function ProcessToEndIf(const Lines: IStringList;
       var LineIdx: Integer; const RecordLines: Boolean): IStringList;
   public
-    class function PreProcess(const Lines: IStringList): IStringList;
+    class function PreProcess(Lines: IStringList): IStringList;
       {Performs pre-processing.
         @param Lines [in] Lines of text to be pre-processed.
         @return Lines after preprocessing.
@@ -549,8 +549,8 @@ begin
   Result := Ver1 <> Ver2;
 end;
 
-class function TDatabasePreprocessor.PreProcess(
-  const Lines: IStringList): IStringList;
+class function TDatabasePreprocessor.PreProcess(Lines: IStringList):
+  IStringList;
   {Performs pre-processing.
     @param Lines [in] Lines of text to be pre-processed.
     @return Lines after preprocessing.
