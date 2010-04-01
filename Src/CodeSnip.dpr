@@ -51,6 +51,8 @@ program CodeSnip;
 {$WARNINGS ON}
 {$WRITEABLECONST OFF}
 
+{$WARN SYMBOL_PLATFORM OFF}
+
 {%ToDo 'CodeSnip.todo'}
 
 uses
@@ -361,6 +363,7 @@ uses
 {$Resource Resources.res}   // All other resources.
 
 begin
+  ReportMemoryLeaksOnShutdown := DebugHook <> 0;
   Application.Initialize;
   Application.MainFormOnTaskBar := True;
   SplashForm := TSplashForm.Create(Application);
