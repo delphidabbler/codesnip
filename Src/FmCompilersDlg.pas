@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -678,8 +678,7 @@ procedure TCompilersDlg.pbCompilerPaint(Sender: TObject);
     CompilerName := fCurCompiler.GetName;
     CompilerLogo := fCurCompiler.GetGlyph;
 
-    // Set up colors and font style to use in title: depends on compiler
-    // availability
+    // Set up colors and font style for title: depends on compiler availability
     if fCurCompiler.IsAvailable then
     begin
       GradColor1 := clActiveCaption;
@@ -696,13 +695,7 @@ procedure TCompilersDlg.pbCompilerPaint(Sender: TObject);
     end;
 
     // Draw gradient filled background rectangle
-    Canvas.Brush.Color := GradColor1; // required by GradientFill() below
-    UGraphicUtils.GradientFill(
-      Canvas,
-      Rect,
-      GradColor2,
-      gdHorizontal
-    );
+    GradientFillCanvas(Canvas, GradColor1, GradColor2, Rect, gdHorizontal);
 
     // Ensure that all further drawing on background is transparent
     Canvas.Brush.Style := bsClear;
