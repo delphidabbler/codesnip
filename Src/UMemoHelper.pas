@@ -110,6 +110,10 @@ type
       {Sets memo's margin.
         @param Margin [in] Required width of margin.
       }
+    function CaretPos: TPoint;
+      {Gets caret position in memo control in character co-ordinates.
+        @return Required cursor position.
+      }
   end;
 
 
@@ -124,6 +128,15 @@ uses
 
 
 { TMemoHelper }
+
+function TMemoHelper.CaretPos: TPoint;
+  {Gets caret position in memo control in character co-ordinates.
+    @return Required cursor position.
+  }
+begin
+  Result.X := fMemo.SelStart - fMemo.Perform(EM_LINEINDEX, -1, 0);
+  Result.Y := fMemo.Perform(EM_LINEFROMCHAR, -1, 0);
+end;
 
 constructor TMemoHelper.Create(const AMemo: TCustomMemo);
   {Class constructor. Creates info object for a specified memo.
