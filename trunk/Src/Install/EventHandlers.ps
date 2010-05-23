@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -220,10 +220,6 @@ begin
       end;
     end;
 
-    // Ensure ini files have correct ini file and program version information
-    // This creates ini files if they don't exist
-    StampIniFiles;
-
     // Check if old data should be deleted
     if gDeleteOldDataRequested then
     begin
@@ -237,6 +233,10 @@ begin
         DelTree(AddBackslash(gUserAppDataDir) + 'UserData', True, True, True);
     end;
   end;
+
+  // Ensure ini files have correct ini file and program version information
+  // This creates ini files if they don't exist
+  StampIniFiles;
 
   // Display message if no database is installed
   if not MainDatabaseExists then
