@@ -167,6 +167,10 @@
 				<Form>CategoryListFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
+			<DCCReference Include="FrCodeGenPrefs.pas">
+				<Form>CodeGenPrefsFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
 			<DCCReference Include="FrCompCheck.pas">
 				<Form>CompCheckFrame</Form>
 				<DesignClass>TFrame</DesignClass>
@@ -476,6 +480,7 @@
 			<DCCReference Include="UViewItemAction.pas"/>
 			<DCCReference Include="UViewItemTreeNode.pas"/>
 			<DCCReference Include="UWaitForActionUI.pas"/>
+			<DCCReference Include="UWarnings.pas"/>
 			<DCCReference Include="UWBCommandBars.pas"/>
 			<DCCReference Include="UWBController.pas"/>
 			<DCCReference Include="UWBExternal.pas"/>
@@ -492,11 +497,6 @@
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
-			<DCCReference Include="UWarnings.pas"/>
-			<DCCReference Include="FrCodeGenPrefs.pas">
-				<Form>CodeGenPrefsFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
