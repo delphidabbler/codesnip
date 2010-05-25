@@ -36,6 +36,11 @@
 		<param name="Local" value="HTML\dlg_elementcolour.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="code generation preferences">
+		<param name="Name" value="Code Generations Preferences">
+		<param name="Local" value="HTML\dlg_prefs_codegen.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="code submission dialog">
 		<param name="Name" value="Code Submission Dialog Box">
 		<param name="Local" value="HTML\dlg_submit.htm">
