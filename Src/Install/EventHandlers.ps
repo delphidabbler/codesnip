@@ -176,6 +176,14 @@ begin
   end;
 end;
 
+function UserIniFileVer: Integer;
+  {Gets version number of existing user ini file. Must be in expected location.
+    @return Required version number. 1 if file doesn't exist or is not stamped.
+  }
+begin
+  Result := GetIniInt('IniFile', 'Version', 1, 0, 0, UserIniFileName);
+end;
+
 procedure CurStepChanged(CurStep: TSetupStep);
   {Called to perform pre-install and post-install taks. We performs any required
   data conversion at the post-install stage.
@@ -233,6 +241,12 @@ begin
         DelTree(AddBackslash(gUserAppDataDir) + 'UserData', True, True, True);
     end;
   end;
+
+  // Check if any additional default data needs to be added to older ini files
+  if UserIniFileVer < 6 then
+    // user ini file versions before 6 don't have the Prefs:CodeGen section and
+    // default entries for predefined warnings
+    CreateDefaultCodeGenEntries;
 
   // Ensure ini files have correct ini file and program version information
   // This creates ini files if they don't exist

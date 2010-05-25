@@ -76,8 +76,8 @@ procedure StampIniFiles;
   file versions and version number of program being installed.
   }
 begin
-  // Flag ini file version as version 5
-  SetIniInt('IniFile', 'Version', 5, UserIniFileName);
+  // Flag ini file versions
+  SetIniInt('IniFile', 'Version', 6, UserIniFileName);
   SetIniInt('IniFile', 'Version', 5, CommonIniFileName);
   // Record application version in common ini file
   SetIniString(
@@ -155,5 +155,61 @@ begin
   DeleteIniSection('Prefs:Hiliter', UserIniFileName);
   // Main window's overview tabs have changed in v3: so we reset to 0 (default)
   SetIniInt('MainWindow', 'OverviewTab', 0, UserIniFileName);
+end;
+
+procedure CreateDefaultCodeGenEntries;
+  {Adds Prefs:CodeGen section along with default data.
+  }
+begin
+  SetIniInt('Prefs:CodeGen', 'SwitchOffWarnings', 0, UserIniFileName);
+  SetIniInt('Prefs:CodeGen', 'WarningCount', 8, UserIniFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning0.Symbol', 'UNSAFE_TYPE', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning0.MinCompiler', '15.00', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning1.Symbol', 'UNSAFE_CAST', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning1.MinCompiler', '15.00', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning2.Symbol', 'UNSAFE_CODE', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning2.MinCompiler', '15.00', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning3.Symbol', 'SYMBOL_PLATFORM', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning3.MinCompiler', '14.00', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning4.Symbol', 'SYMBOL_DEPRECATED', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning4.MinCompiler', '14.00', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning5.Symbol', 'SYMBOL_LIBRARY', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning5.MinCompiler', '14.00', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning6.Symbol', 'IMPLICIT_STRING_CAST', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning6.MinCompiler', '20.00', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning7.Symbol', 'EXPLICIT_STRING_CAST', UserIniFileName
+  );
+  SetIniString(
+    'Prefs:CodeGen', 'Warning7.MinCompiler', '20.00', UserIniFileName
+  );
 end;
 
