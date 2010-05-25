@@ -355,7 +355,8 @@ uses
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
   UXMLDocumentEx in 'UXMLDocumentEx.pas',
-  UWarnings in 'UWarnings.pas';
+  UWarnings in 'UWarnings.pas',
+  FrCodeGenPrefs in 'FrCodeGenPrefs.pas' {CodeGenPrefsFrame: TFrame};
 
 // Include resources
 {$Resource ExternalObj.tlb} // Type library file
