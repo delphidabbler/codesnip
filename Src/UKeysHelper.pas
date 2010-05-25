@@ -68,8 +68,23 @@ function HasShiftKeys(const Shift: TShiftState): Boolean;
     @return True if Shift contains shift keys, False if not.
   }
 
+function IsValidDecimalNumberKey(const Text: string; var Key: Char): Boolean;
+  {Checks if a key is permitted within a partially completed decimal number.
+    @param Text [in] Text of partially completed decimal number. Used to test if
+      for duplicate decimal points.
+    @param Key [in/out] Key to test. Set to #0 if not valid.
+    @return True if key is permitted, False if not.
+  }
+
 
 implementation
+
+
+uses
+  // Delphi
+  SysUtils, StrUtils,
+  // Project
+  UConsts, UUnicodeHelper;
 
 
 function ExtractShiftKeys(const Shift: TShiftState): TShiftState;
@@ -104,6 +119,28 @@ function IsKeyCombination(const RequiredKey: Word;
 begin
   Result := (ActualKey = RequiredKey) and
     (ExtractShiftKeys(ActualShift) = ExtractShiftKeys(RequiredShift));
+end;
+
+function IsValidDecimalNumberKey(const Text: string; var Key: Char): Boolean;
+  {Checks if a key is permitted within a partially completed decimal number.
+    @param Text [in] Text of partially completed decimal number. Used to test if
+      for duplicate decimal points.
+    @param Key [in/out] Key to test. Set to #0 if not valid.
+    @return True if key is permitted, False if not.
+  }
+begin
+  Result := True;
+  if (Key = DecimalSeparator) then
+  begin
+    // Only allow decimal point if not already entered: can't have more than one
+    if AnsiContainsStr(Text, DecimalSeparator) then
+      Result := False;
+  end
+  else if not IsDigit(Key) and (Key <> BACKSPACE) then
+    // Disallow any other characters other than backspace or digits
+    Result := False;
+  if not Result then
+    Key := #0;
 end;
 
 end.
