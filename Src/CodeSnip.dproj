@@ -493,6 +493,10 @@
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
 			<DCCReference Include="UWarnings.pas"/>
+			<DCCReference Include="FrCodeGenPrefs.pas">
+				<Form>CodeGenPrefsFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
