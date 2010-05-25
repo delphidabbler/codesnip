@@ -159,10 +159,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils, Types,
+  SysUtils, Types,
   // Project
-  FmPreferencesDlg, FmPreviewDlg, IntfCommon, UConsts, UCtrlArranger,
-  UUnicodeHelper, UUtils;
+  FmPreferencesDlg, FmPreviewDlg, IntfCommon, UCtrlArranger, UKeysHelper,
+  UUtils;
 
 {$R *.dfm}
 
@@ -465,18 +465,7 @@ procedure TCodeGenPrefsFrame.edMinCompilerKeyPress(Sender: TObject;
     @param Key [in/out] Key that was pressed. Set to #0 to inhibit if not valid.
   }
 begin
-  { TODO: Extract common code from here and FrPrintingPrefs.NumEditKeyPress
-          and move into suitable routine in UKeysHelper }
-  if Key = DecimalSeparator then
-  begin
-    // Only allow decimal point if not already entered (can't have > 1)
-    if AnsiContainsStr((Sender as TEdit).Text, DecimalSeparator) then
-      Key := #0;
-  end
-  else if not IsDigit(Key) and (Key <> BACKSPACE) then
-    // Disallow any other characters other than backspace or digits
-    Key := #0;
-  if Key = #0 then
+  if not IsValidDecimalNumberKey((Sender as TEdit).Text, Key) then
     KeyErrorBeep;
 end;
 
