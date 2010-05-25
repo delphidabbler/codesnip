@@ -158,6 +158,8 @@ begin
   W := TWarning.Create(Symbol, CompilerVer);
   fWarnings.Add(W);
   AddWarningToLV(W);
+  lvWarnings.Selected := lvWarnings.Items[IndexOfSymbolInLV(Symbol)];
+  lvWarnings.Selected.MakeVisible(False);
 end;
 
 procedure TCodeGenPrefsFrame.actAddUpdate(Sender: TObject);
@@ -193,6 +195,9 @@ begin
   Symbol := Trim(lvWarnings.Selected.Caption);
   lvWarnings.Selected.Delete;
   fWarnings.Delete(Symbol);
+  lvWarnings.Selected := nil;
+  edSymbol.Text := '';
+  edMinCompiler.Text := '';
 end;
 
 procedure TCodeGenPrefsFrame.actDeleteUpdate(Sender: TObject);
@@ -236,6 +241,7 @@ begin
   fWarnings.Delete(OldSymbol);
   fWarnings.Add(TWarning.Create(NewSymbol, NewCompilerVer));
   lvWarnings.Selected := SelItem;
+  SelItem.MakeVisible(False);
 end;
 
 procedure TCodeGenPrefsFrame.actUpdateUpdate(Sender: TObject);
