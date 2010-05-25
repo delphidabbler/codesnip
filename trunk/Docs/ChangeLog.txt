@@ -4,6 +4,22 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.6.0 of 26 May 2010
++ Added support for emitting compiler directives to switch off specified warnings. This implement feature request #2994485 (see http://bit.ly/cxDJG4).
++ Preferences dialog box updated:
+  - New "Code Generation" tab used to configure which if any warnings are to be inhibited.
+  - Renamed "Source Code" tab to "Code Formatting".
++ Added new tab to About Box that displays and enables exploration of some key directories used by CodeSnip.
++ Snippets editor now displays row and column occupied by text cursor.
++ Per user ini file format changed. It now supports code generation preferences. Ini file version updated to v6.
++ Installer updated:
+  - Ini files are stamped with correct program and ini file version information.
+  - Older versions (v1..v5) of per-user ini file are updated with default code generation preferences.
++ Fixed numerous memory leaks.
++ Fixed some other potential and unreported minor bugs.
++ Some refactoring.
++ Updated help file re changes.
+
 Release v3.5.5 of 24 March 2010
 + Fixes download stream read bug #2976048 (see http://bit.ly/ds6mBr).
 
@@ -12,12 +28,12 @@ Release v3.5.4 of 18 March 2010
 + Fixed https protocol bug #2970896 (see http://bit.ly/bCIx38).
 
 Release v3.5.3 of 08 March 2010
-+ Fixed database download error checking bug #2964767 (see http://bit.ly/90vFfp). 
++ Fixed database download error checking bug #2964767 (see http://bit.ly/90vFfp).
 + Updated PayPal donations narrative on welcome page.
 
 Release v3.5.2 of 22 February 2010
 + Changed database downloader to:
-  - Use web servce's revised download file format
+  - Use web service's revised download file format
   - Validate download data before updating local database.
   - Provide better download error messages.
 + Fixed bug #2947794 in view link dialog box (see http://bit.ly/beiZZ8).
@@ -46,12 +62,12 @@ Release v3.4.8 of 10 January 2010
 Release v3.4.7 of 31 December 2009
 + Added IE version number to OS information submitted when program is registered.
 + Program now displays "[localhost]" in main window caption when started with -localhost switch.
-+ All text edit controls in snippets editor now have custom Poppy menus and shortcuts for "cut", "copy", "paste", "select all" and "undo" now work.
++ All text edit controls in snippets editor now have custom pop-up menus and shortcuts for "cut", "copy", "paste", "select all" and "undo" now work.
 + Refactored code that supports use of fonts.
 + Updated privacy statement re registration changes.
 
 Release v3.4.6 of 18 November 2009
-+ Changed code that takes a security backup of main database during updates to store backup in a single file rather as separate files in a temporary folder. This should fix bug #2898687 (see http://www.delphidabbler.com/url/codesnip-bugs).
++ Changed code that takes a security backup of main database during updates to store backup in a single file rather as separate files in a temporary folder. This should fix bug #2898687 (see http://bit.ly/bKg6oH).
 + Slightly modified user database backup file format to match that now used for main database backup.
 + Fixed potential bugs:
   - Code that performs busy waits could have caused program to freeze.
@@ -59,15 +75,15 @@ Release v3.4.6 of 18 November 2009
   - A garbled error message was corrected.
 
 Release v3.4.5 of 09 November 2009
-+ Home, Ctrl+Home, End and Ctrl+End keys now work in overview pane and go to first and last item in treeview respectively (feature request #2888880 - see http://www.delphidabbler.com/url/codesnip-featurereq).
++ Home, Ctrl+Home, End and Ctrl+End keys now work in overview pane and go to first and last item in tree view respectively per feature request #2888880 - see http://bit.ly/bgJCVU).
 + State of tree view in overview pane is now maintained after editing the user database: the tree is no longer always fully expanded after each edit.
-+ Removed "Properties" button from print dialog box along with associated dialog boxes. This option has always been buggy. This "fixes" bug #2868706 (see http://www.delphidabbler.com/url/codesnip-bugs).
++ Removed "Properties" button from print dialog box along with associated dialog boxes. This option has always been buggy. This "fixes" bug #2868706 (see http://bit.ly/9LArqI).
 + Fixed un-reported makefile bug.
 
 Release v3.4.4 of 21 October 2009
 + Changed bug reporting mechanism. Bugs are now reported via the on-line bug tracker. Bug report dialogs changed accordingly. Access to the old bug report web service was removed.
 + Added two new default syntax highlighter styles: "Visual Studio" and "No Highlighter". The latter switches off syntax highlighting.
-+ Fixed bug no. 2882331 (see http://www.delphidabbler.com/url/codesnip-bugs). This was a bug in the syntax highlighter that occurred when an unexpected character was encountered.
++ Fixed bug no. 2882331 (see http://bit.ly/beArcC). This was a bug in the syntax highlighter that occurred when an unexpected character was encountered.
 + Updated help file re changes.
 + Some minor source code corrections.
 
@@ -80,7 +96,7 @@ Release v3.4.3 of 19 October 2009
 + Some changes to source code project options.
 
 Release v3.4.2 of 10 October 2009
-+ Fixed bug nos. 2868706 and 2875857 (see http://www.delphidabbler.com/url/codesnip-bugs)
++ Fixed bugs #2868706 (see http://bit.ly/9LArqI) and #2875857 (see http://bit.ly/bN4xqE)
 + Updated GIF image handling code.
 
 Release v3.4.1 of 29 September 2009
@@ -179,7 +195,7 @@ Release v3.0.1 of 06 July 2009
 + Added support for file:// protocol in links in a snippet's extra information.
 + Updated help file re changes to extra info.
 + Updated exported code and user database file formats to v4 to accommodate revised extra information, although we now save data in v3 format if possible.
-  
+
 Release v3.0 of 29 June 2009
 + Added support for constants and type definition snippets: there are now four types of snippets - routines, constants, types and free-form (which don't conform to any format). Free-form snippets cannot be included in generated units.
 + Further formatting instructions added to the active text used in database's Extra information field. Also added a contributors field to database.
@@ -307,7 +323,7 @@ Un-released v2.2.2 of 16 December 2008
   - Help button now displays in page setup dialog on Vista.
   - Page setup dialog now makes use of custom margin settings.
 
-Un-released v2.2.1 of 16 December 2008 
+Un-released v2.2.1 of 16 December 2008
 + Several refactorings:
   - Rationalised email validation code.
   - Rationalised exceptions raised when validating entry into dialog box.
@@ -324,7 +340,7 @@ Un-released v2.2 of 15 December 2008
 + Rewrote message dialog box code.
 + Made minor changes to open and save dialog boxes.
 + Updated help file for the new code import, export and submission features.
-  
+
 Release v2.1 of 11 October 2008
 + Added support for Delphi 2009 Win 32 personality.
 + Added a button to set all compiler results to success to snippets edit dialog box.
@@ -347,7 +363,7 @@ Un-released v2.0.5 of 03 October 2008
 
 Release v2.0.4 of 21 September 2008
 + Improved speed of looking up routines in database.
-+ Prevented any user defined routine from referencing itself. 
++ Prevented any user defined routine from referencing itself.
 + User defined routines now always reference routines from user database in preference to main database when there is a name conflict.
 
 Un-released v2.0.3 of 20 September 2008
@@ -455,7 +471,7 @@ Un-released v1.8.3 of 05 November 2007
 + Refactored dynamic CSS generation code.
 
 Un-released v1.8.2 of 04 November 2007
-+ Refactored assignable interfaced objects. 
++ Refactored assignable interfaced objects.
 
 Release v1.8.1 of 04 November 2007
 + Made changes to browser control and URL handling.
@@ -643,7 +659,7 @@ Un-released v1.3.1 of 21 November 2006
 
 Un-released v1.3 of 18 November 2006
 + Added facility to sign up to CodeSnip mailing list on-line.
-+ Corrected further typos in registration wizard.  
++ Corrected further typos in registration wizard.
 + Updated help file re mailing list sign-up, changed privacy statement and added license to contents page.
 
 Release v1.2.5 of 16 November 2006
@@ -683,9 +699,9 @@ Un-released v1.1.1 of 31 October 2006
 + Changed Select Routines dialog to use XP style check boxes when XP themes active and custom check boxes when XP themes inactive.
 
 Release v1.1 of 30 October 2006
-+ Added ability to generate and save whole Pascal unit containing currently selected routines. 
++ Added ability to generate and save whole Pascal unit containing currently selected routines.
 + Added new search that can find all routines cross-referenced by a given routine.
-+ Added ability to manually select routines that are displayed in overview pane. 
++ Added ability to manually select routines that are displayed in overview pane.
 + Added shortcut key and changed glyph for File | Save Snippet option / tool button.
 + Updated way source code preferences are stored. Broke backwards compatibility with previous storage method, so upgraders may loose settings.
 + Made minor changes to preferences dialog box.
