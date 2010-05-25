@@ -291,8 +291,7 @@ procedure TCodeGenPrefsFrame.actPreviewExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 resourcestring
-  // TODO: Change this caption to something like "Compiler Directives"
-  sCaption = 'Conditional compilation code';
+  sCaption = 'Compiler Directives Preview';
 begin
   TPreviewDlg.Execute(Self.Owner, fWarnings.Render, sCaption);
 end;
