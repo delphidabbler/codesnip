@@ -53,7 +53,7 @@ program CodeSnip;
 
 {$WARN SYMBOL_PLATFORM OFF}
 
-{%ToDo 'CodeSnip.todo'}
+
 
 uses
   Forms,
