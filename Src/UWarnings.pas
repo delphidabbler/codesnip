@@ -211,11 +211,9 @@ type
     Class that encapsulates information about warnings and whether code can be
     generated to supress them. Implements IWarnings interface.
   }
-  // TODO: Make this private and provide factory class
   TWarnings = class(TInterfacedObject, IWarnings, IAssignable)
   strict private
-    // TODO: Rename fWarnings as fItems
-    fWarnings: TList<TWarning>; // List of warning records
+    fItems: TList<TWarning>;    // List of warning records
     fSwitchOff: Boolean;        // Value of SwitchOff property
     type
       // Enumerator for TWarnings
@@ -394,11 +392,11 @@ procedure TWarnings.Add(const AWarning: TWarning);
   }
 begin
   Assert(AWarning.IsValid, ClassName + '.Add: AWarning not valid');
-  if fWarnings.Contains(AWarning) then
+  if fItems.Contains(AWarning) then
     raise EBug.CreateFmt(
       '%s.Add: AWarning %s already in list', [ClassName, AWarning.Symbol]
     );
-  fWarnings.Add(AWarning);
+  fItems.Add(AWarning);
 end;
 
 procedure TWarnings.Assign(const Src: IInterface);
@@ -406,12 +404,11 @@ procedure TWarnings.Assign(const Src: IInterface);
     @param Src [in] Reference to object to be assigned. Must support IWarnings.
   }
 var
-  // TODO: Replace with enumeration
-  Idx: Integer;   // loops through Src's warnings
+  W: TWarning;  // references each in warning in Src.
 begin
   Clear;
-  for Idx := 0 to Pred((Src as IWarnings).Count) do
-    Add((Src as IWarnings)[Idx]);
+  for W in (Src as IWarnings) do
+    Add(W);
   fSwitchOff := (Src as IWarnings).SwitchOff;
 end;
 
@@ -419,7 +416,7 @@ procedure TWarnings.Clear;
   {Clears list of warnings.
   }
 begin
-  fWarnings.Clear;
+  fItems.Clear;
 end;
 
 function TWarnings.Contains(const ASymbol: string): Boolean;
@@ -428,7 +425,7 @@ function TWarnings.Contains(const ASymbol: string): Boolean;
     @return True if warning with symbol is in list, False if not.
   }
 begin
-  Result := fWarnings.Contains(TWarning.Create(ASymbol));
+  Result := fItems.Contains(TWarning.Create(ASymbol));
 end;
 
 function TWarnings.Count: Integer;
@@ -436,7 +433,7 @@ function TWarnings.Count: Integer;
     @return Number of warnings.
   }
 begin
-  Result := fWarnings.Count;
+  Result := fItems.Count;
 end;
 
 constructor TWarnings.Create;
@@ -445,7 +442,7 @@ constructor TWarnings.Create;
 begin
   inherited Create;
   // use generic list that sorts on warning's symbol to store warnings
-  fWarnings := TList<TWarning>.Create(
+  fItems := TList<TWarning>.Create(
     TDelegatedComparer<TWarning>.Create(
       function(const Left, Right: TWarning): Integer
       begin
@@ -460,7 +457,7 @@ procedure TWarnings.Delete(const AWarning: TWarning);
     @param AWarning [in] Warning to be removed.
   }
 begin
-  fWarnings.Remove(AWarning);
+  fItems.Remove(AWarning);
 end;
 
 procedure TWarnings.Delete(const ASymbol: string);
@@ -475,7 +472,7 @@ destructor TWarnings.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  fWarnings.Free;
+  fItems.Free;
   inherited;
 end;
 
@@ -494,7 +491,7 @@ function TWarnings.GetItem(const Idx: Integer): TWarning;
     @return Warning at specified index.
   }
 begin
-  Result := fWarnings[Idx];
+  Result := fItems[Idx];
 end;
 
 function TWarnings.GetSwitchOff: Boolean;
@@ -541,7 +538,7 @@ begin
     )
   );
   try
-    for W in fWarnings do
+    for W in fItems do
       SortedList.Add(W);
     SortedList.Sort;
 
@@ -606,7 +603,7 @@ constructor TWarnings.TEnumerator.Create(Warnings: TWarnings);
 begin
   inherited Create;
   // we just use enuerator for owned list of warnings records
-  fEnum := Warnings.fWarnings.GetEnumerator;
+  fEnum := Warnings.fItems.GetEnumerator;
 end;
 
 destructor TWarnings.TEnumerator.Destroy;
