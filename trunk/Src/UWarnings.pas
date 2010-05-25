@@ -36,113 +36,302 @@
 
 unit UWarnings;
 
+
 interface
 
+
 uses
+  // Delphi
   Generics.Collections,
+  // Project
   IntfCommon, UBaseObjects, USettings;
+
 
 type
 
+  {
+  TWarning:
+    Record that encapsulates information needed to generate a $WARN compiler
+    directive.
+  }
   TWarning = record
   strict private
     var fSymbol: string;        // Value of Symbol property
     var fMinCompiler: Single;   // Value of MinCompiler property
     function GetMinCompiler: Single;
+      {Read accessor for MinCompiler property.
+        @return Version number of earliest compiler to support Symbol.
+      }
     procedure SetMinCompiler(const Value: Single);
+      {Write accessor for MinCompiler property.
+        @param Value [in] New compiler version to be assigned to property.
+      }
     function GetSymbol: string;
+      {Read accessor for Symbol property.
+        @return Symbol used in $WARN directive.
+      }
   public
-    const MinSupportedCompiler = 14.0;  // Delphi 6
-    property Symbol: string read GetSymbol;
-    property MinCompiler: Single read GetMinCompiler write SetMinCompiler;
-    function IsValid: Boolean;
+    const MinSupportedCompiler = 14.0;
+      {Version number of earliest compiler that supports any $WARN directive.
+      (Delphi 6)}
     constructor Create(const ASymbol: string; const AMinCompiler: Single);
       overload;
+      {Constructor that provides values for both Symbol and MinCompiler
+      properties.
+        @param ASymbol [in] Warning symbol.
+        @param AMinCompiler [in] Earliest compiler that supports ASymbol.
+      }
     constructor Create(const ASymbol: string); overload;
+      {Constructor that provides a value for Symbol property and uses default
+      value for MinCompiler property.
+        @param ASymbol [in] Warning symbol.
+      }
+    function IsValid: Boolean;
+      {Checks if properties of this warning are valid.
+        @return True if warning is valid, False if not.
+      }
+    property Symbol: string read GetSymbol;
+      {Symbol used to specify this warning in $WARN compiler directives}
+    property MinCompiler: Single read GetMinCompiler write SetMinCompiler;
+      {Version number of earliest compiler that supports this warning}
   end;
 
+  {
+  IWarningsEnum:
+    Interface to enumerator of an IWarnings object.
+  }
   IWarningsEnum = interface(IInterface)
     ['{0662984F-8FEC-45FF-9855-9F1E2D6FAC59}']
     function GetCurrent: TWarning;
+      {Gets current warning in enumeration.
+        @return Required warning record.
+      }
     property Current: TWarning read GetCurrent;
+      {Current warning in enumeration}
     function MoveNext: Boolean;
+      {Moves to next warning in enumeration. Does nothing if at end of
+      enumeration.
+        @return True if successfully moved to next warning or False if at end
+          of enumeration.
+      }
   end;
 
+  {
+  IWarnings:
+    Interface to class that encapsulates information about warnings and whether
+    code can be generated to supress them.
+  }
   IWarnings = interface(IInterface)
     ['{EBE8C8BD-535D-4B4B-A6D4-1AFC02E1C5B7}']
-    procedure Clear;
-    function Count: Integer;
-    function Contains(const ASymbol: string): Boolean;
     procedure Add(const AWarning: TWarning);
-    function GetItem(const Idx: Integer): TWarning;
-    property Items[const Idx: Integer]: TWarning read GetItem; default;
-    function GetSwitchOff: Boolean;
-    procedure SetSwitchOff(const Value: Boolean);
-    property SwitchOff: Boolean read GetSwitchOff write SetSwitchOff;
-    function GetEnumerator: IWarningsEnum;
-//    procedure Delete(const AWarning: TWarning); overload;
-    procedure Delete(const ASymbol: string);
-    function Render: string;
+      {Adds a warning to list.
+        @param AWarning [in] Warning to be added. Must be unique.
+      }
+    procedure Clear;
+      {Clears list of warnings.
+      }
+    function Count: Integer;
+      {Gets number of warnings in list.
+        @return Number of warnings.
+      }
     function IsEmpty: Boolean;
+      {Checks whether warnings list is empty.
+        @return True if warnings list empty, False if not.
+      }
+    function Contains(const ASymbol: string): Boolean;
+      {Checks if a warning with a specified symbol is present in the warnings
+      list.
+        @param ASymbol [in] Symbol to be checked.
+        @return True if warning with symbol is in list, False if not.
+      }
+    procedure Delete(const ASymbol: string); overload;
+      {Deletes warning containing specified symbol from list.
+        @param ASymbol [in] Symbol of warning to be deleted.
+      }
+    function Render: string;
+      {Generates source code for compiler directives that switch off all
+      warnings in list for supporting compilers.
+        @return String containing required source code.
+      }
+    function GetItem(const Idx: Integer): TWarning;
+      {Read accessor for Items[] property. Gets warning at specified index in
+      warnings list.
+        @param Idx [in] Index of required warning.
+        @return Warning at specified index.
+      }
+    property Items[const Idx: Integer]: TWarning read GetItem; default;
+      {Array of warnings}
+    function GetSwitchOff: Boolean;
+      {Read accessor for SwitchOff property.
+        @return Value of SwitchOff property.
+      }
+    procedure SetSwitchOff(const Value: Boolean);
+      {Write accessor for SwitchOff property. Sets property to specified value.
+        @param Value [in] New property value.
+      }
+    property SwitchOff: Boolean read GetSwitchOff write SetSwitchOff;
+      {Property that indicates whether code should be emitted to switch off
+      listed warnings}
+    function GetEnumerator: IWarningsEnum;
+      {Creates an enumerator for all the warnings in the warnings list.
+        @return Instance of enumerator.
+      }
   end;
 
+  {
+  TWarningsPersist:
+    Static class that can save and load an IWarnings object to and from
+    persistent storage.
+  }
   TWarningsPersist = class(TNoConstructObject)
   strict private
     class function WarningCompoundName(const Idx: Integer; const Prop: string):
       string;
+      {Constructs the name of a warning value in storage. Name comprises an
+      index number and a property name.
+        @param Idx [in] Index component of name.
+        @param Prop [in] Property component of name.
+      }
   public
     class procedure Load(Storage: ISettingsSection; Warnings: IWarnings);
+      {Loads data from persistent storage into a warnings object.
+        @param Storage [in] Reference to storage containing needed data.
+        @param Warnings [in] Warnings object to be updated with data from
+          storage.
+      }
     class procedure Save(Storage: ISettingsSection; Warnings: IWarnings);
+      {Saves data from a warnings object to persistent storage.
+        @param Storage [in] Reference to storage object to receive data.
+        @param Warnings [in] Reference to warnings object to be persisted.
+      }
   end;
 
+  {
+  TWarnings:
+    Class that encapsulates information about warnings and whether code can be
+    generated to supress them. Implements IWarnings interface.
+  }
+  // TODO: Make this private and provide factory class
   TWarnings = class(TInterfacedObject, IWarnings, IAssignable)
   strict private
-    fWarnings: TList<TWarning>;
-    fSwitchOff: Boolean;
+    // TODO: Rename fWarnings as fItems
+    fWarnings: TList<TWarning>; // List of warning records
+    fSwitchOff: Boolean;        // Value of SwitchOff property
     type
+      // Enumerator for TWarnings
       TEnumerator = class(TInterfacedObject, IWarningsEnum)
       strict private
-        fEnum: TEnumerator<TWarning>;
+        fEnum: TEnumerator<TWarning>; // Reference to TList<TWarning> enumerator
       public
         constructor Create(Warnings: TWarnings);
+          {Constructor. Create new enumerator for this warnings object.
+            @param Warnings [in] Reference to object to be enumerated.
+          }
         destructor Destroy; override;
+          {Destructor. Frees owned list enumerator object.
+          }
         function GetCurrent: TWarning;
+          {Gets current warning in enumeration.
+            @return Required warning record.
+          }
         property Current: TWarning read GetCurrent;
+          {Current warning in enumeration}
         function MoveNext: Boolean;
+          {Moves to next warning in enumeration. Does nothing if at end of
+          enumeration.
+            @return True if successfully moved to next warning or False if at
+              end of enumeration.
+          }
       end;
-    procedure Delete(const ASymbol: string); overload;
+    procedure Delete(const AWarning: TWarning); overload;
+      {Removes a warning from the list based on its symbol.
+        @param AWarning [in] Warning to be removed.
+      }
   public
     constructor Create;
+      {Constructor. Sets up object.
+      }
     destructor Destroy; override;
-    procedure Clear;
-    function Count: Integer;
-    function Contains(const ASymbol: string): Boolean;
+      {Destructor. Tears down object.
+      }
+    { IWarnings methods }
     procedure Add(const AWarning: TWarning);
-    function GetItem(const Idx: Integer): TWarning;
-    property Items[const Idx: Integer]: TWarning read GetItem; default;
-    function GetSwitchOff: Boolean;
-    procedure SetSwitchOff(const Value: Boolean);
-    property SwitchOff: Boolean read GetSwitchOff write SetSwitchOff;
-    procedure Assign(const Src: IInterface);
-    function GetEnumerator: IWarningsEnum;
-    procedure Delete(const AWarning: TWarning); overload;
-    function Render: string;
+      {Adds a warning to list.
+        @param AWarning [in] Warning to be added. Must be unique.
+      }
+    procedure Clear;
+      {Clears list of warnings.
+      }
+    function Count: Integer;
+      {Gets number of warnings in list.
+        @return Number of warnings.
+      }
     function IsEmpty: Boolean;
-//    function Find(const ASymbol: string): TWarning; overload;
-//    function Find(const ASymbol: string; out Warning: TWarning): Boolean;
-//      overload;
+      {Checks whether warnings list is empty.
+        @return True if warnings list empty, False if not.
+      }
+    function Contains(const ASymbol: string): Boolean;
+      {Checks if a warning with a specified symbol is present in the warnings
+      list.
+        @param ASymbol [in] Symbol to be checked.
+        @return True if warning with symbol is in list, False if not.
+      }
+    procedure Delete(const ASymbol: string); overload;
+      {Deletes warning containing specified symbol from list.
+        @param ASymbol [in] Symbol of warning to be deleted.
+      }
+    function Render: string;
+      {Generates source code for compiler directives that switch off all
+      warnings in list for supporting compilers.
+        @return String containing required source code.
+      }
+    function GetItem(const Idx: Integer): TWarning;
+      {Read accessor for Items[] property. Gets warning at specified index in
+      warnings list.
+        @param Idx [in] Index of required warning.
+        @return Warning at specified index.
+      }
+    property Items[const Idx: Integer]: TWarning read GetItem; default;
+      {Array of warnings}
+    function GetSwitchOff: Boolean;
+      {Read accessor for SwitchOff property.
+        @return Value of SwitchOff property.
+      }
+    procedure SetSwitchOff(const Value: Boolean);
+      {Write accessor for SwitchOff property. Sets property to specified value.
+        @param Value [in] New property value.
+      }
+    property SwitchOff: Boolean read GetSwitchOff write SetSwitchOff;
+      {Property that indicates whether code should be emitted to switch off
+      listed warnings}
+    function GetEnumerator: IWarningsEnum;
+      {Creates an enumerator for all the warnings in the warnings list.
+        @return Instance of enumerator.
+      }
+    { IAssignable methods }
+    procedure Assign(const Src: IInterface);
+      {Assigns properties of another IWarnings instance to this object.
+        @param Src [in] Reference to object to be assigned. Must support
+        IWarnings.
+      }
   end;
 
 
 implementation
 
 uses
+  // Delphi
   SysUtils, Generics.Defaults, Math,
+  // Project
   UConsts, UExceptions;
 
 { TWarning }
 
 constructor TWarning.Create(const ASymbol: string; const AMinCompiler: Single);
+  {Constructor that provides values for both Symbol and MinCompiler properties.
+    @param ASymbol [in] Warning symbol.
+    @param AMinCompiler [in] Earliest compiler that supports ASymbol.
+  }
 begin
   Assert(ASymbol <> '', 'TWarning.Create: ASymbol is empty string');
   fSymbol := ASymbol;
@@ -150,11 +339,19 @@ begin
 end;
 
 constructor TWarning.Create(const ASymbol: string);
+  {Constructor that provides a value for Symbol property and uses default
+  value for MinCompiler property.
+    @param ASymbol [in] Warning symbol.
+  }
 begin
+  // we use earliest compiler to support any $WARN directive as MinCompiler
   Create(ASymbol, MinSupportedCompiler);
 end;
 
 function TWarning.GetMinCompiler: Single;
+  {Read accessor for MinCompiler property.
+    @return Version number of earliest compiler to support Symbol.
+  }
 begin
   Assert(fMinCompiler >= MinSupportedCompiler,
     'TWarning.GetMinCompiler: fMinCompiler too small');
@@ -162,17 +359,26 @@ begin
 end;
 
 function TWarning.GetSymbol: string;
+  {Read accessor for Symbol property.
+    @return Symbol used in $WARN directive.
+  }
 begin
   Assert(fSymbol <> '', 'TWarning.GetSymbol: fSymbol is empty string');
   Result := fSymbol;
 end;
 
 function TWarning.IsValid: Boolean;
+  {Checks if properties of this warning are valid.
+    @return True if warning is valid, False if not.
+  }
 begin
   Result := (fMinCompiler >= MinSupportedCompiler) and (fSymbol <> '');
 end;
 
 procedure TWarning.SetMinCompiler(const Value: Single);
+  {Write accessor for MinCompiler property.
+    @param Value [in] New compiler version to be assigned to property.
+  }
 begin
   Assert(Value >= MinSupportedCompiler,
     'TWarning.SetMinCompiler: AValue too small');
@@ -182,6 +388,10 @@ end;
 { TWarnings }
 
 procedure TWarnings.Add(const AWarning: TWarning);
+  {Adds a warning to list.
+    @param AWarning [in] Warning to be added.
+    @except EBug raised in warning with same symbol is already in list.
+  }
 begin
   Assert(AWarning.IsValid, ClassName + '.Add: AWarning not valid');
   if fWarnings.Contains(AWarning) then
@@ -192,8 +402,12 @@ begin
 end;
 
 procedure TWarnings.Assign(const Src: IInterface);
+  {Assigns properties of another IWarnings instance to this object.
+    @param Src [in] Reference to object to be assigned. Must support IWarnings.
+  }
 var
-  Idx: Integer; // todo: replace with enumeration
+  // TODO: Replace with enumeration
+  Idx: Integer;   // loops through Src's warnings
 begin
   Clear;
   for Idx := 0 to Pred((Src as IWarnings).Count) do
@@ -202,23 +416,35 @@ begin
 end;
 
 procedure TWarnings.Clear;
+  {Clears list of warnings.
+  }
 begin
   fWarnings.Clear;
 end;
 
 function TWarnings.Contains(const ASymbol: string): Boolean;
+  {Checks if a warning with a specified symbol is present in the warnings list.
+    @param ASymbol [in] Symbol to be checked.
+    @return True if warning with symbol is in list, False if not.
+  }
 begin
   Result := fWarnings.Contains(TWarning.Create(ASymbol));
 end;
 
 function TWarnings.Count: Integer;
+  {Gets number of warnings in list.
+    @return Number of warnings.
+  }
 begin
   Result := fWarnings.Count;
 end;
 
 constructor TWarnings.Create;
+  {Constructor. Sets up object.
+  }
 begin
   inherited Create;
+  // use generic list that sorts on warning's symbol to store warnings
   fWarnings := TList<TWarning>.Create(
     TDelegatedComparer<TWarning>.Create(
       function(const Left, Right: TWarning): Integer
@@ -230,65 +456,74 @@ begin
 end;
 
 procedure TWarnings.Delete(const AWarning: TWarning);
+  {Removes a warning from the list based on its symbol.
+    @param AWarning [in] Warning to be removed.
+  }
 begin
   fWarnings.Remove(AWarning);
 end;
 
 procedure TWarnings.Delete(const ASymbol: string);
+  {Deletes warning containing specified symbol from list.
+    @param ASymbol [in] Symbol of warning to be deleted.
+  }
 begin
   Delete(TWarning.Create(ASymbol));
 end;
 
 destructor TWarnings.Destroy;
+  {Destructor. Tears down object.
+  }
 begin
   fWarnings.Free;
   inherited;
 end;
 
-//function TWarnings.Find(const ASymbol: string): TWarning;
-//begin
-//  if not Find(ASymbol, Result) then
-//    raise EBug.CreateFmt('%s.Find: WARNING %s not found', [ClassName, ASymbol]);
-//end;
-//
-//function TWarnings.Find(const ASymbol: string; out Warning: TWarning): Boolean;
-//var
-//  Idx: Integer;
-//begin
-//  // we only need ASymbol for comparison. Other fields ignored
-//  Idx := fWarnings.IndexOf(TWarning.Create(ASymbol));
-//  Result := Idx >= 0;
-//  if Result then
-//    Warning := fWarnings[Idx];
-//end;
-//
 function TWarnings.GetEnumerator: IWarningsEnum;
+  {Creates an enumerator for all the warnings in the warnings list.
+    @return Instance of enumerator.
+  }
 begin
   Result := TEnumerator.Create(Self);
 end;
 
 function TWarnings.GetItem(const Idx: Integer): TWarning;
+  {Read accessor for Items[] property. Gets warning at specified index in
+  warnings list.
+    @param Idx [in] Index of required warning.
+    @return Warning at specified index.
+  }
 begin
   Result := fWarnings[Idx];
 end;
 
 function TWarnings.GetSwitchOff: Boolean;
+  {Read accessor for SwitchOff property.
+    @return Value of SwitchOff property.
+  }
 begin
   Result := fSwitchOff;
 end;
 
 function TWarnings.IsEmpty: Boolean;
+  {Checks whether warnings list is empty.
+    @return True if warnings list empty, False if not.
+  }
 begin
   Result := Count = 0;
 end;
 
 function TWarnings.Render: string;
+  {Generates source code for compiler directives that switch off all warnings in
+  list for supporting compilers.
+    @return String containing required source code.
+  }
 var
-  SB: TStringBuilder;
-  W: TWarning;
-  SortedList: TList<TWarning>;
-  CurrentVer: Single;
-  InsideVer: Boolean;
+  SB: TStringBuilder;           // used to construct source code string
+  W: TWarning;                  // each warning in list
+  SortedList: TList<TWarning>;  // list of warnings sorted by compiler version
+  CurrentVer: Single;           // compiler version currently being processed
+  InsideVer: Boolean;           // true if rendering warnings for a compiler ver
 begin
   if IsEmpty then
     Exit('');
@@ -355,6 +590,9 @@ begin
 end;
 
 procedure TWarnings.SetSwitchOff(const Value: Boolean);
+  {Write accessor for SwitchOff property. Sets property to specified value.
+    @param Value [in] New property value.
+  }
 begin
   fSwitchOff := Value;
 end;
@@ -362,23 +600,36 @@ end;
 { TWarnings.TEnumerator }
 
 constructor TWarnings.TEnumerator.Create(Warnings: TWarnings);
+  {Constructor. Create new enumerator for this warnings object.
+    @param Warnings [in] Reference to object to be enumerated.
+  }
 begin
   inherited Create;
+  // we just use enuerator for owned list of warnings records
   fEnum := Warnings.fWarnings.GetEnumerator;
 end;
 
 destructor TWarnings.TEnumerator.Destroy;
+  {Destructor. Frees owned list enumerator object.
+  }
 begin
   fEnum.Free;
   inherited;
 end;
 
 function TWarnings.TEnumerator.GetCurrent: TWarning;
+  {Gets current warning in enumeration.
+    @return Required warning record.
+  }
 begin
   Result := fEnum.Current;
 end;
 
 function TWarnings.TEnumerator.MoveNext: Boolean;
+  {Moves to next warning in enumeration. Does nothing if at end of enumeration.
+    @return True if successfully moved to next warning or False if at end of
+      enumeration.
+  }
 begin
   Result := fEnum.MoveNext;
 end;
@@ -386,18 +637,24 @@ end;
 { TWarningsPersist }
 
 const
+  // Names of values stored in persistent storage
   cInhibitedName = 'SwitchOffWarnings';
   cWarningCountName = 'WarningCount';
   cWarningCompoundName = 'Warning%d.%s';
+  // Names of properties used in compound value names
   cWarningSymbolProp = 'Symbol';
   cWarningSupportProp = 'MinCompiler';
 
 class procedure TWarningsPersist.Load(Storage: ISettingsSection;
   Warnings: IWarnings);
+  {Loads data from persistent storage into a warnings object.
+    @param Storage [in] Reference to storage containing needed data.
+    @param Warnings [in] Warnings object to be updated with data from storage.
+  }
 var
-  Idx: Integer;
-  CompilerVer: Double;
-  Symbol: string;
+  Idx: Integer;         // loops thru all warnings in storage
+  CompilerVer: Double;  // min compiler version for a warning read from storage
+  Symbol: string;       // symbol of a warning read from storage
 begin
   Warnings.Clear;
   Warnings.SwitchOff := Boolean(
@@ -420,8 +677,12 @@ end;
 
 class procedure TWarningsPersist.Save(Storage: ISettingsSection;
   Warnings: IWarnings);
+  {Saves data from a warnings object to persistent storage.
+    @param Storage [in] Reference to storage object to receive data.
+    @param Warnings [in] Reference to warnings object to be persisted.
+  }
 var
-  Idx: Integer;
+  Idx: Integer; // loops through all warnings
 begin
   Storage.ItemValues[cInhibitedName] := IntToStr(Ord(Warnings.SwitchOff));
   Storage.ItemValues[cWarningCountName] := IntToStr(Warnings.Count);
@@ -437,8 +698,14 @@ end;
 
 class function TWarningsPersist.WarningCompoundName(const Idx: Integer;
   const Prop: string): string;
+  {Constructs the name of a warning value in storage. Name comprises an index
+  number and a property name.
+    @param Idx [in] Index component of name.
+    @param Prop [in] Property component of name.
+  }
 begin
   Result := Format(cWarningCompoundName, [Idx, Prop]);
 end;
 
 end.
+
