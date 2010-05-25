@@ -36,6 +36,11 @@
 		<param name="Local" value="HTML\dlg_elementcolour.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="code formatting preferences">
+		<param name="Name" value="Code Formatting Preferences">
+		<param name="Local" value="HTML\dlg_prefs_sourcecode.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="code generation preferences">
 		<param name="Name" value="Code Generations Preferences">
 		<param name="Local" value="HTML\dlg_prefs_codegen.htm">
@@ -393,11 +398,6 @@
 		<param name="Name" value="snippet kinds">
 		<param name="Name" value="Snippet Kinds">
 		<param name="Local" value="HTML\snippet_kinds.htm">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="source code preferences">
-		<param name="Name" value="Source Code Preferences">
-		<param name="Local" value="HTML\dlg_prefs_sourcecode.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="submit code to the database">
