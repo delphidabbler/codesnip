@@ -269,7 +269,7 @@ function TSourcePrefsFrame.DisplayName: string;
     @return Required display name.
   }
 resourcestring
-  sDisplayName = 'Source Code'; // display name
+  sDisplayName = 'Code Formatting'; // display name
 begin
   Result := sDisplayName;
 end;
