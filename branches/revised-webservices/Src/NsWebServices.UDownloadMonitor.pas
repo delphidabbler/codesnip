@@ -44,7 +44,7 @@ interface
 
 uses
   // Indy
-  IdHTTP, IdComponent;
+  IdHTTP, IdComponent, IdGlobal {needed for conditional defines below};
 
 
 // TWorkEvent and TWorkBeginEvent have different signatures between Indy v10.1.x
@@ -92,8 +92,8 @@ type
       {Number of bytes received to date in curent download}
     procedure HTTPWorkHandler(Sender: TObject; AWorkMode: TWorkMode;
       AWorkCount:
-        {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
-        {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
+      {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
+      {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
       {Handles Indy HTTP client's OnWork event. We process only download events.
       Upload events are ignored. Updates record of bytes received.
         @param Sender [in] Not used.
@@ -102,8 +102,8 @@ type
       }
     procedure HTTPWorkBeginHandler(Sender: TObject; AWorkMode: TWorkMode;
       AWorkCountMax:
-        {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
-        {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
+      {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
+      {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
       {Handles Indy HTTP client's OnWorkBegin event. We process only download
       events. Upload events are ignored. Records number of expected bytes in
       download.
@@ -190,8 +190,8 @@ end;
 procedure TDownloadMonitor.HTTPWorkBeginHandler(Sender: TObject;
   AWorkMode: TWorkMode;
   AWorkCountMax:
-    {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
-    {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
+  {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
+  {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
   {Handles Indy HTTP client's OnWorkBegin event. We process only download
   events. Upload events are ignored. Records number of expected bytes in
   download.
@@ -219,8 +219,8 @@ end;
 procedure TDownloadMonitor.HTTPWorkHandler(Sender: TObject;
   AWorkMode: TWorkMode;
   AWorkCount:
-    {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
-    {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
+  {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
+  {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
   {Handles Indy HTTP client's OnWork event. We process only download events.
   Upload events are ignored. Updates record of bytes received.
     @param Sender [in] Not used.
