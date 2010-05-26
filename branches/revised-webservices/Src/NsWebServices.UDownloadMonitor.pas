@@ -153,11 +153,6 @@ type
 implementation
 
 
-uses
-  // Indy
-  IdGlobal;
-
-
 { TDownloadMonitor }
 
 constructor TDownloadMonitor.Create(const HTTP: TIdHTTP;
