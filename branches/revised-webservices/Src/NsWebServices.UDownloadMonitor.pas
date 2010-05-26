@@ -44,7 +44,7 @@ interface
 
 uses
   // Indy
-  IdHTTP, IdComponent, IdGlobal;
+  IdHTTP, IdComponent;
 
 
 // TWorkEvent and TWorkBeginEvent have different signatures between Indy v10.1.x
@@ -151,6 +151,11 @@ type
 
 
 implementation
+
+
+uses
+  // Indy
+  IdGlobal;
 
 
 { TDownloadMonitor }
