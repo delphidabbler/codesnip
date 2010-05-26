@@ -72,7 +72,7 @@ type
         @param Name [in] Name of attribute.
         @param Value [in] Value of attribute. If '' attribute is not added.
       }
-    procedure Add(const Name: string; const Values: IStringList); overload;
+    procedure Add(const Name: string; Values: IStringList); overload;
       {Adds a named attribute and spaced separated list of values.
         @param Name [in] Name of attribute.
         @param Values [in] String list of attribute values. If not assigned or
@@ -113,7 +113,7 @@ type
         @param Name [in] Name of attribute.
         @param Value [in] Value of attribute. If '' attribute is not added.
       }
-    procedure Add(const Name: string; const Values: IStringList); overload;
+    procedure Add(const Name: string; Values: IStringList); overload;
       {Adds a named attribute and spaced separated list of values.
         @param Name [in] Name of attribute.
         @param Values [in] String list of attribute values. If not assigned or
@@ -371,10 +371,10 @@ function URLEncode(const S: string; const InQueryString: Boolean): string;
     @return Encoded string.
   }
 var
-  URL: Latin1String;  // latin-1 encoding of S
-  Ch: AnsiChar;       // each character in URL
+  URL: Windows1252String;  // Windows-1252 encoding of S
+  Ch: AnsiChar;            // each character in URL
 begin
-  URL := StringToLatin1String(S);
+  URL := StringToWindows1252String(S);
   Result := '';
   for Ch in URL do
   begin
@@ -556,7 +556,7 @@ begin
   fAttrs.Values[Name] := Value; // this deletes entry if Value is ''
 end;
 
-procedure THTMLAttributes.Add(const Name: string; const Values: IStringList);
+procedure THTMLAttributes.Add(const Name: string; Values: IStringList);
   {Adds a named attribute and spaced separated list of values.
     @param Name [in] Name of attribute.
     @param Values [in] String list of attribute values. If not assigned or

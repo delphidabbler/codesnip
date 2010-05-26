@@ -45,7 +45,7 @@ uses
   UIStringList;
 
 
-function TextLink(const URL, JSFn, Hint: string; const Classes: IStringList;
+function TextLink(const URL, JSFn, Hint: string; Classes: IStringList;
   const Text: string): string;
   {Creates an <a>..</a> link surrounding some text.
     @param URL [in] URL accessed by link. Should be url encoded. Setting URL to
@@ -64,7 +64,7 @@ function TextLink(const URL, JSFn, Hint: string; const Classes: IStringList;
     @return Complete <a> tag.
   }
 
-function JSLink(const JSFn, Hint: string; const Classes: IStringList;
+function JSLink(const JSFn, Hint: string; Classes: IStringList;
    const Text: string): string;
   {Creates an <a>..</a> link surrounding some text. The link triggers JavaScript
   code and does not access a URL.
@@ -107,7 +107,7 @@ function CategoryALink(const CatID, CatDesc: string): string;
   }
 
 function AOpenTag(const URL, JSFn, Hint: string;
-  const Classes: IStringList): string;
+  Classes: IStringList): string;
   {Creates an opening <a> tag with specified properties.
     @param URL [in] URL accessed by link. Should be url encoded. Setting URL to
       '' creates a link to "javascript:void(0);".
@@ -134,7 +134,7 @@ uses
 
 
 function AOpenTag(const URL, JSFn, Hint: string;
-  const Classes: IStringList): string;
+  Classes: IStringList): string;
   {Creates an opening <a> tag with specified properties.
     @param URL [in] URL accessed by link. Should be url encoded. Setting URL to
       '' creates a link to "javascript:void(0);".
@@ -187,7 +187,7 @@ begin
   Result := MakeTag('a', ttOpen, Attrs);
 end;
 
-function ALink(const URL, JSFn, Hint: string; const Classes: IStringList;
+function ALink(const URL, JSFn, Hint: string; Classes: IStringList;
   const InnerHTML: string): string;
   {Creates a hyper-link compound tag surrounding some inner HTML.
     @param URL [in] URL accessed by link. Should be url encoded. Setting URL to
@@ -211,7 +211,7 @@ begin
     + MakeTag('a', ttClose)
 end;
 
-function TextLink(const URL, JSFn, Hint: string; const Classes: IStringList;
+function TextLink(const URL, JSFn, Hint: string; Classes: IStringList;
   const Text: string): string;
   {Creates an <a>..</a> link surrounding some text.
     @param URL [in] URL accessed by link. Should be url encoded. Setting URL to
@@ -233,7 +233,7 @@ begin
   Result := ALink(URL, JSFn, Hint, Classes, MakeSafeHTMLText(Text));
 end;
 
-function JSLink(const JSFn, Hint: string; const Classes: IStringList;
+function JSLink(const JSFn, Hint: string; Classes: IStringList;
    const Text: string): string;
   {Creates an <a>..</a> link surrounding some text. The link triggers JavaScript
   code and does not access a URL.

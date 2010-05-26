@@ -433,7 +433,6 @@ begin
     Category := fCategories.Find(CatName);
     if not Assigned(Category) then
     begin
-      FillChar(CatData, SizeOf(CatData), 0);
       fReader.GetCatProps(CatName, CatData);
       CreateCategory(CatName, CatData);
     end;

@@ -118,10 +118,10 @@ begin
   inherited Create;
   SS := nil;
   // NOTE: Resource stream is not unicode: all template files were written using
-  // the Latin1 code page.
+  // the Windows-1252 code page.
   RS := TResourceStream.Create(Inst, ResName, ResType);
   try
-    SS := TStringStream.Create('', Latin1CodePage);
+    SS := TStringStream.Create('', Windows1252CodePage);
     SS.CopyFrom(RS, 0);
     fHTML := SS.DataString;
   finally

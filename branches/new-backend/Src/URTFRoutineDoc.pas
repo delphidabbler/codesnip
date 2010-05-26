@@ -99,7 +99,7 @@ type
         @param Title [in] Text title.
         @param Text [in] Text to be written.
       }
-    procedure RenderTitledList(const Title: string; const List: IStringList);
+    procedure RenderTitledList(const Title: string; List: IStringList);
       override;
       {Adds a comma-separated list preceded by a title to rich text document.
         @param Title [in] List title.
@@ -441,7 +441,7 @@ begin
 end;
 
 procedure TRTFRoutineDoc.RenderTitledList(const Title: string;
-  const List: IStringList);
+  List: IStringList);
   {Adds a comma-separated list preceded by a title to rich text document.
     @param Title [in] List title.
     @param List [in] List of text to be written.

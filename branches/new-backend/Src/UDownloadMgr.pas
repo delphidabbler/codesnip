@@ -309,13 +309,13 @@ procedure TDownloadMgr.GetDatabase(const Stream: TStream;
   }
 var
   Response: TStringList;  // response from server
-  ResBytes: TBytes;       // response as latin-1 byte stream
+  ResBytes: TBytes;       // response as Windows-1252 byte stream
 begin
   fWantProgressReport := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('getdatabase', Response);
-    ResBytes := Latin1BytesOf(Response.Text);
+    ResBytes := Windows1252BytesOf(Response.Text);
     Stream.WriteBuffer(ResBytes[0], Length(ResBytes));
   finally
     FreeAndNil(Response);

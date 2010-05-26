@@ -316,7 +316,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UConsts, UExceptions, USnippetValidator, UUtils;
+  UConsts, UExceptions, UPreferences, USnippetValidator, UUtils, UWarnings;
 
 
 const
@@ -583,6 +583,7 @@ var
   SS: TStringStream;        // string stream used to build unit output
   Writer: TStrStreamWriter; // helper object used to write text to stream
   Snippet: TRoutine;        // reference to a snippet object
+  Warnings: IWarnings;      // object giving info about any inhibited warnings
 begin
   // Generate the unit data
   fSourceAnalyser.Generate;
@@ -600,6 +601,14 @@ begin
     // unit name
     Writer.WriteStrLn('unit %s;', [UnitName]);
     Writer.WriteStrLn;
+
+    // any conditional compilation symbols
+    Warnings := Preferences.Warnings;
+    if Warnings.SwitchOff and not Warnings.IsEmpty then
+    begin
+      Writer.WriteStr(Warnings.Render);
+      Writer.WriteStrLn;
+    end;
 
     // open interface section
     Writer.WriteStrLn('interface');

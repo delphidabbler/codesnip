@@ -85,7 +85,7 @@ type
   TMessageBox = class sealed(TNoConstructObject)
   strict private
     class function Display(const Parent: TComponent;
-      const MsgLines: IStringList; const DlgType: TMsgDlgType;
+      MsgLines: IStringList; const DlgType: TMsgDlgType;
       const Buttons: array of TMessageBoxButton): Word; overload;
       {Displays a message in a customised dialog box located over the calling
       form.
@@ -321,7 +321,7 @@ begin
 end;
 
 class function TMessageBox.Display(const Parent: TComponent;
-  const MsgLines: IStringList; const DlgType: TMsgDlgType;
+  MsgLines: IStringList; const DlgType: TMsgDlgType;
   const Buttons: array of TMessageBoxButton): Word;
   {Displays a message in a customised dialog box located over the calling form.
     @param Parent [in] Component that dialog box is aligned over and that

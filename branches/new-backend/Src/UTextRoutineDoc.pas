@@ -78,7 +78,7 @@ type
         @param Title [in] Text title.
         @param Text [in] Text to be written.
       }
-    procedure RenderTitledList(const Title: string; const List: IStringList);
+    procedure RenderTitledList(const Title: string; List: IStringList);
       override;
       {Writes a comma-separated list preceded by a title to output stream.
         @param Title [in] List title.
@@ -249,7 +249,7 @@ begin
 end;
 
 procedure TTextRoutineDoc.RenderTitledList(const Title: string;
-  const List: IStringList);
+  List: IStringList);
   {Writes a comma-separated list preceded by a title to output stream.
     @param Title [in] List title.
     @param List [in] List of text to be written.

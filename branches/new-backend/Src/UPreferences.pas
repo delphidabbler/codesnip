@@ -42,7 +42,7 @@ interface
 uses
   // Project
   IntfHiliter, UIStringList, UMeasurement, UPrintInfo, USourceFileInfo,
-  USourceGen;
+  USourceGen, UWarnings;
 
 
 type
@@ -169,6 +169,19 @@ type
     property CustomHiliteColours: IStringList
       read GetCustomHiliteColours write SetCustomHiliteColours;
       {Custom syntax highlighter colours}
+
+    function GetWarnings: IWarnings;
+      {Gets information about warnings to be inhibited by code generator.
+        @return Interface to object containing information.
+      }
+    procedure SetWarnings(Warnings: IWarnings);
+      {Updates object that provides information about warnings to be inhibited
+      by code generator.
+        @param New warnings object.
+    }
+    property Warnings: IWarnings
+      read GetWarnings write SetWarnings;
+      {Information about warnings to be inhibited by code generator}
   end;
 
 
@@ -221,6 +234,8 @@ type
       {User defined syntax highlighter}
     fHiliteCustomColours: IStringList;
       {Custom highlighter colours}
+    fWarnings: IWarnings;
+      {Information about warnings to be inhibited by code generator}
   protected // do not make strict
     { IPreferences methods }
     function GetSourceCommentStyle: TCommentStyle;
@@ -298,6 +313,15 @@ type
       {Sets new custom syntax highlighter colours.
         @param Colours [in] String list defining new colours.
       }
+    function GetWarnings: IWarnings;
+      {Gets information about warnings to be inhibited by code generator.
+        @return Interface to object containing information.
+      }
+    procedure SetWarnings(Warnings: IWarnings);
+      {Updates object that provides information about warnings to be inhibited
+      by code generator.
+        @param New warnings object.
+    }
     { IAssignable method }
     procedure Assign(const Src: IInterface);
       {Assigns properties of a given object to this object.
@@ -328,6 +352,7 @@ type
       cSourceCode = 'SourceCode';
       cPrinting = 'Printing';
       cHiliter = 'Hiliter';
+      cCodeGenerator = 'CodeGen';
     class var fInstance: IPreferences;
       {Stores reference to singleton instance of this class}
     class function GetInstance: IPreferences; static;
@@ -364,7 +389,6 @@ begin
   Result := TPreferencesPersist.Instance;
 end;
 
-
 { TPreferences }
 
 procedure TPreferences.Assign(const Src: IInterface);
@@ -388,6 +412,7 @@ begin
   Self.fPrinterPageMargins := SrcPref.PrinterPageMargins;
   Self.SetHiliteAttrs(SrcPref.HiliteAttrs);
   Self.SetCustomHiliteColours(SrcPref.CustomHiliteColours);
+  Self.SetWarnings(SrcPref.Warnings);
 end;
 
 constructor TPreferences.Create;
@@ -398,6 +423,7 @@ begin
   // Create object to record syntax highlighter
   fHiliteAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
   fHiliteCustomColours := TIStringList.Create;
+  fWarnings := TWarnings.Create;
 end;
 
 function TPreferences.GetCustomHiliteColours: IStringList;
@@ -473,6 +499,11 @@ begin
   Result := fSourceSyntaxHilited;
 end;
 
+function TPreferences.GetWarnings: IWarnings;
+begin
+  Result := fWarnings;
+end;
+
 procedure TPreferences.SetCustomHiliteColours(const Colours: IStringList);
   {Sets new custom syntax highlighter colours.
     @param Colours [in] String list defining new colours.
@@ -546,6 +577,11 @@ begin
   fSourceSyntaxHilited := Value;
 end;
 
+procedure TPreferences.SetWarnings(Warnings: IWarnings);
+begin
+  (fWarnings as IAssignable).Assign(Warnings);
+end;
+
 { TPreferencesPersist }
 
 function TPreferencesPersist.Clone: IInterface;
@@ -568,6 +604,7 @@ begin
   NewPref.PrinterPageMargins := Self.fPrinterPageMargins;
   NewPref.HiliteAttrs := Self.GetHiliteAttrs;
   NewPref.CustomHiliteColours := Self.GetCustomHiliteColours;
+  NewPref.Warnings := Self.GetWarnings;
 end;
 
 constructor TPreferencesPersist.Create;
@@ -625,6 +662,10 @@ begin
   fHiliteCustomColours := Storage.GetStrings(
     'CustomColourCount', 'CustomColour%d'
   );
+
+  // Read code generator section
+  Storage := Settings.ReadSection(ssPreferences, cCodeGenerator);
+  TWarningsPersist.Load(Storage, fWarnings);
 end;
 
 destructor TPreferencesPersist.Destroy;
@@ -674,6 +715,11 @@ begin
     'CustomColourCount', 'CustomColour%d', fHiliteCustomColours
   );
   Storage.Save;
+
+  // Write code generation section
+  Storage := Settings.EmptySection(ssPreferences, cCodeGenerator);
+  TWarningsPersist.Save(Storage, fWarnings);
+
   inherited;
 end;
 

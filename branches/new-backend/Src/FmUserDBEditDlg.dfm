@@ -80,6 +80,15 @@ inherited UserDBEditDlg: TUserDBEditDlg
           Caption = '&Kind:'
           FocusControl = cbKind
         end
+        object lblSourceCaretPos: TLabel
+          Left = 543
+          Top = 3
+          Width = 91
+          Height = 13
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'lblSourceCaretPos'
+        end
         object edSourceCode: TMemo
           Left = 3
           Top = 22
@@ -94,6 +103,9 @@ inherited UserDBEditDlg: TUserDBEditDlg
           PopupMenu = mnuEditCtrls
           ScrollBars = ssBoth
           TabOrder = 0
+          OnEnter = edSourceCodeEnter
+          OnKeyUp = edSourceCodeKeyUp
+          OnMouseUp = edSourceCodeMouseUp
         end
         object edDescription: TEdit
           Left = 80
@@ -117,7 +129,6 @@ inherited UserDBEditDlg: TUserDBEditDlg
           Width = 177
           Height = 21
           Style = csDropDownList
-          ItemHeight = 13
           TabOrder = 4
         end
         object cbKind: TComboBox
@@ -126,7 +137,6 @@ inherited UserDBEditDlg: TUserDBEditDlg
           Width = 145
           Height = 21
           Style = csDropDownList
-          ItemHeight = 13
           TabOrder = 1
           OnChange = cbKindChange
         end
@@ -329,6 +339,8 @@ inherited UserDBEditDlg: TUserDBEditDlg
           Width = 141
           Height = 25
           Caption = 'btnSetAllSuccess'
+          DoubleBuffered = True
+          ParentDoubleBuffered = False
           TabOrder = 1
           OnClick = actSetAllSuccessExecute
         end
@@ -347,6 +359,8 @@ inherited UserDBEditDlg: TUserDBEditDlg
           Height = 25
           Action = actSetAllQuery
           Caption = 'Set All To &Query'
+          DoubleBuffered = True
+          ParentDoubleBuffered = False
           TabOrder = 2
         end
         object pnlViewCompErrs: TPanel
@@ -504,7 +518,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
     Left = 112
     Top = 488
     Bitmap = {
-      494C010104000500040010001000FFFFFFFFFF00FFFFFFFFFFFFFFFF424D3600
+      494C010104000500040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020
       0000000000000000000000000000000000000000000000000000000000000000
       0000000000000000000000000000000000000000000000000000000000000000
@@ -772,6 +786,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
       F6CFFE008000FFFFF6B7FE000000FFFFF6B7FE000000FFFFF8B780000000FFFF
       FE8F80000001C1FBFE3F80000003C3FBFF7F80000003C3FBFE3F80010003C1F3
       FEBF80030003D863FC9F80070FC3FE07FDDF807F0003FFFFFDDF80FF8007FFFF
-      FDDF81FFF87FFFFFFFFFFFFFFFFFFFFF}
+      FDDF81FFF87FFFFFFFFFFFFFFFFFFFFF00000000000000000000000000000000
+      000000000000}
   end
 end

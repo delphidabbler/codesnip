@@ -51,6 +51,10 @@ program CodeSnip;
 {$WARNINGS ON}
 {$WRITEABLECONST OFF}
 
+{$WARN SYMBOL_PLATFORM OFF}
+
+
+
 uses
   Forms,
   Windows,
@@ -104,6 +108,7 @@ uses
   FrBrowserBase in 'FrBrowserBase.pas' {BrowserBaseFrame: TFrame},
   FrCategoryDescEdit in 'FrCategoryDescEdit.pas' {CategoryDescEditFrame: TFrame},
   FrCategoryList in 'FrCategoryList.pas' {CategoryListFrame: TFrame},
+  FrCodeGenPrefs in 'FrCodeGenPrefs.pas' {CodeGenPrefsFrame: TFrame},
   FrCompCheck in 'FrCompCheck.pas' {CompCheckFrame: TFrame},
   FrDetail in 'FrDetail.pas' {DetailFrame: TFrame},
   FrDetailView in 'FrDetailView.pas' {DetailViewFrame: TFrame},
@@ -335,6 +340,7 @@ uses
   UViewItemAction in 'UViewItemAction.pas',
   UViewItemTreeNode in 'UViewItemTreeNode.pas',
   UWaitForActionUI in 'UWaitForActionUI.pas',
+  UWarnings in 'UWarnings.pas',
   UWBCommandBars in 'UWBCommandBars.pas',
   UWBController in 'UWBController.pas',
   UWBExternal in 'UWBExternal.pas',
@@ -362,6 +368,7 @@ uses
 {$Include CompilerDefines.inc}
 
 begin
+  ReportMemoryLeaksOnShutdown := DebugHook <> 0;
   Application.Initialize;
   Application.MainFormOnTaskBar := True;
   SplashForm := TSplashForm.Create(Application);

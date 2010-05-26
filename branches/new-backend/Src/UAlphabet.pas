@@ -226,6 +226,7 @@ begin
     (Obj as TLetterImpl).CanDestroy := True;
     Obj.Free;
   end;
+  fLetters.Free;
   fInstance := nil;
   inherited;
 end;
