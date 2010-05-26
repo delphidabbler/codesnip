@@ -43,7 +43,7 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes,
+  Classes,
   // Project
   NsWebServices.UBase, UURIParams;
 
@@ -119,6 +119,8 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   NsWebServices.UExceptions;
 
