@@ -115,8 +115,8 @@ uses
   // Delphi
   SysUtils, StrUtils, Windows, Graphics, Math, ComCtrls,
   // Project
-  FmPreferencesDlg, IntfCommon, UConsts, UHiliteAttrs, UPrintInfo, URTFBuilder,
-  URTFUtils, USyntaxHiliters, UUnicodeHelper, UUtils;
+  FmPreferencesDlg, IntfCommon, UConsts, UHiliteAttrs, UKeysHelper, UPrintInfo,
+  URTFBuilder, URTFUtils, USyntaxHiliters, UUnicodeHelper, UUtils;
 
 
 {$R *.dfm}
@@ -321,16 +321,7 @@ procedure TPrintingPrefsFrame.NumEditKeyPress(Sender: TObject;
     @param Key [in/out] Key that was pressed. Set to #0 to inhibit if not valid.
   }
 begin
-  if Key = DecimalSeparator then
-  begin
-    // Only allow decimal point if not already entered (can't have > 1)
-    if AnsiContainsStr((Sender as TEdit).Text, DecimalSeparator) then
-      Key := #0;
-  end
-  else if not IsDigit(Key) and (Key <> BACKSPACE) then
-    // Disallow any other characters other than backspace or digits
-    Key := #0;
-  if Key = #0 then
+  if not IsValidDecimalNumberKey((Sender as TEdit).Text, Key) then
     KeyErrorBeep;
 end;
 

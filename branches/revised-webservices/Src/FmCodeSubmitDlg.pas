@@ -301,9 +301,9 @@ var
 begin
   try
     // Do the submission
-    Screen.Cursor := crHourglass;
     WebSvc := TCodeSubmitter.Create;
     try
+      Screen.Cursor := crHourglass;
       Enabled := False;
       // POST the data
       fData.Position := 0;

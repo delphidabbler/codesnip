@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -78,13 +78,12 @@ type
         @return True if links found, False if not.
       }
   strict protected
+    procedure ArrangeForm; override;
+      {Sizes dialog box to fit content.
+      }
     procedure InitHTMLFrame; override;
       {Initialises HTML frame, loads HTML template and inserts HTML
       representation of Extra Text REML.
-      }
-    function GetBodyPanelHeight: Integer; override;
-      {Gets height of body panel.
-        @return Required body panel height.
       }
   public
     class procedure Execute(const AOwner: TComponent;
@@ -110,22 +109,12 @@ uses
 
 { TViewExtraDlg }
 
-function TViewExtraDlg.ExtraContainsLinks: Boolean;
-  {Checks if the "extra" active text contains any link (<a>) tags.
-    @return True if links found, False if not.
+procedure TViewExtraDlg.ArrangeForm;
+  {Sizes dialog box to fit content.
   }
-var
-  Elem: IActiveTextElem;              // each element in active text
-  ActionElem: IActiveTextActionElem;  // ref to am action element
 begin
-  Result := False;
-  for Elem in fActiveText do
-    if Supports(Elem, IActiveTextActionElem, ActionElem) and
-      (ActionElem.Kind = ekLink) then
-    begin
-      Result := True;
-      Exit;
-    end;
+  pnlBody.Height := frmExtraInfo.DocHeight;
+  inherited;
 end;
 
 class procedure TViewExtraDlg.Execute(const AOwner: TComponent;
@@ -144,12 +133,22 @@ begin
     end;
 end;
 
-function TViewExtraDlg.GetBodyPanelHeight: Integer;
-  {Gets height of body panel.
-    @return Required body panel height.
+function TViewExtraDlg.ExtraContainsLinks: Boolean;
+  {Checks if the "extra" active text contains any link (<a>) tags.
+    @return True if links found, False if not.
   }
+var
+  Elem: IActiveTextElem;              // each element in active text
+  ActionElem: IActiveTextActionElem;  // ref to am action element
 begin
-  Result := frmExtraInfo.DocHeight;
+  Result := False;
+  for Elem in fActiveText do
+    if Supports(Elem, IActiveTextActionElem, ActionElem) and
+      (ActionElem.Kind = ekLink) then
+    begin
+      Result := True;
+      Exit;
+    end;
 end;
 
 procedure TViewExtraDlg.HTMLEventHandler(Sender: TObject;

@@ -133,13 +133,13 @@ function LongToShortFilePath(const LongName: string): string;
   }
 
 function FileToString(const FileName: string): string;
-  {Stores content of a file in an ANSI string.
+  {Stores content of a file in a string.
     @param FileName [in] Name of file to be read.
     @return String containing file contents.
   }
 
 procedure StringToFile(const Str, FileName: string);
-  {Writes an ANSI string to a text file.
+  {Writes a string to a text file.
     @param Str [in] String to be written to file.
     @param FileName [in] Name of file to receive string.
   }
@@ -641,7 +641,7 @@ begin
 end;
 
 function StreamToString(const Stm: TStream): string;
-  {Reads content of a stream into an ansi string. Stream is read from current
+  {Reads content of a stream into a string. Stream is read from current
   position.
     @param Stm [in] Stream to be read.
     @return String containing stream contents.
@@ -659,7 +659,7 @@ begin
 end;
 
 function FileToString(const FileName: string): string;
-  {Stores content of a file in an ANSI string.
+  {Stores content of a file in a string.
     @param FileName [in] Name of file to be read.
     @return String containing file contents.
   }
@@ -675,7 +675,7 @@ begin
 end;
 
 procedure StringToStream(const Str: string; const Stm: TStream);
-  {Writes an ansi string into a stream. The string is written at the current
+  {Writes a string into a stream. The string is written at the current
   stream position.
     @param Str [in] String to be written to stream.
     @param Stm [in] Stream to receive string.
@@ -685,14 +685,14 @@ var
 begin
   SS := TStringStream.Create(Str);
   try
-    Stm.CopyFrom(SS, Length(Str));
+    Stm.CopyFrom(SS, SS.Size);
   finally
     FreeAndNil(SS);
   end;
 end;
 
 procedure StringToFile(const Str, FileName: string);
-  {Writes an ANSI string to a text file.
+  {Writes a string to a text file.
     @param Str [in] String to be written to file.
     @param FileName [in] Name of file to receive string.
   }

@@ -47,7 +47,7 @@ uses
   // Project
   FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, IntfCompilers,
   UActiveText, UBaseObjects, UCategoryListAdapter, UChkListStateMgr,
-  UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, ULEDImageList,
+  UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, ULEDImageList, UMemoHelper,
   USnipKindListAdapter, USnippets, USnippetsChkListMgr, UUnitsChkListMgr;
 
 
@@ -100,6 +100,7 @@ type
     lblExtra: TLabel;
     lblName: TLabel;
     lblKind: TLabel;
+    lblSourceCaretPos: TLabel;
     lblSourceCode: TLabel;
     lblSnippetKindHelp: TLabel;
     lblUnits: TLabel;
@@ -133,6 +134,11 @@ type
     procedure actViewExtraUpdate(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure cbKindChange(Sender: TObject);
+    procedure edSourceCodeEnter(Sender: TObject);
+    procedure edSourceCodeKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure edSourceCodeMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lblSnippetKindHelpClick(Sender: TObject);
@@ -156,6 +162,7 @@ type
     fCompilersLBMgr:
       TCompileResultsLBMgr;         // Manages compilers list box
     fImages: TLEDImageList;         // Image list containing LEDs
+    fSourceMemoHelper: TMemoHelper; // Helper for working with source code memo
     procedure UpdateTabSheetCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
       {Updates CSS used for HTML displayed in frames on tab sheets.
         @param Sender [in] Not used.
@@ -200,6 +207,9 @@ type
     procedure UpdateReferences;
       {Updates dependencies and cross-references check lists for snippet being
       edited, depending on kind.
+      }
+    procedure UpdateMemoPosInfo;
+      {Updates display of source code memo control cursor position.
       }
     function CreateTempSnippet: TRoutine;
       {Creates a temporary snippet from data entered in dialog box.
@@ -448,6 +458,8 @@ procedure TUserDBEditDlg.ArrangeForm;
   }
 begin
   // tsCode
+  lblSourceCaretPos.Top := lblSourceCode.Top;
+  edSourceCode.Top := TCtrlArranger.BottomOf(lblSourceCode, 4);
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(edSourceCode, 8),
     [cbKind, lblKind, lblSnippetKindHelp]
@@ -629,6 +641,35 @@ begin
     end;
 end;
 
+procedure TUserDBEditDlg.edSourceCodeEnter(Sender: TObject);
+  {Handles source code memo control's enter event. Updates display of cursor
+  position.
+    @param Sender [in] Not used.
+  }
+begin
+  UpdateMemoPosInfo;
+end;
+
+procedure TUserDBEditDlg.edSourceCodeKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+  {Handles source code memo control's key up event. Updates display of cursor
+  position.
+    @param Sender [in] Not used.
+  }
+begin
+  UpdateMemoPosInfo;
+end;
+
+procedure TUserDBEditDlg.edSourceCodeMouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+  {Handles source code memo control's mouse up event. Updates display of cursor
+  position.
+    @param Sender [in] Not used.
+  }
+begin
+  UpdateMemoPosInfo;
+end;
+
 procedure TUserDBEditDlg.Error(const Msg: string; const Ctrl: TWinControl);
   {Raises EDataEntry exception with a specified message and control where
   error occured.
@@ -694,6 +735,7 @@ begin
     lbCompilers, fCompileMgr.Compilers
   );
   fImages := TLEDImageList.Create(Self);
+  fSourceMemoHelper := TMemoHelper.Create(edSourceCode);
   alMain.Images := fImages;
   btnSetAllSuccess.Action := actSetAllSuccess;
   btnSetAllQuery.Action := actSetAllQuery;
@@ -707,6 +749,7 @@ var
   Idx: Integer; // loops through items in compiler list box
 begin
   inherited;
+  FreeAndNil(fSourceMemoHelper);
   FreeAndNil(fCompilersLBMgr);
   for Idx := Low(fCLBMgrs) to High(fCLBMgrs) do
     FreeAndNil(fCLBMgrs[Idx]);
@@ -768,6 +811,8 @@ begin
     edExtra.Clear;
     UpdateReferences;
   end;
+  // Source code memo control co-ordinate display
+  UpdateMemoPosInfo;
   // Display all compiler results
   fCompilersLBMgr.SetCompileResults(fEditData.Props.CompilerResults);
   Assert(cbKind.ItemIndex >= 0,
@@ -875,6 +920,16 @@ begin
     fDependsCLBMgr.GetCheckedSnippets(Refs.Depends);
     fXRefsCLBMgr.GetCheckedSnippets(Refs.XRef);
   end;
+end;
+
+procedure TUserDBEditDlg.UpdateMemoPosInfo;
+  {Updates display of source code memo control cursor position.
+  }
+begin
+  lblSourceCaretPos.Caption := Format(
+    '%d: %d',
+    [fSourceMemoHelper.CaretPos.Y, fSourceMemoHelper.CaretPos.X]
+  );
 end;
 
 procedure TUserDBEditDlg.UpdateReferences;

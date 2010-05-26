@@ -132,7 +132,7 @@ type
         @return Required string list.
       }
     procedure SetStrings(const CountName, ItemFmt: string;
-      const Value: IStringList);
+      Value: IStringList);
       {Stores a string list in storage.
         @param CountName [in] Name of value that stores number of elements in
           string list.
@@ -401,7 +401,7 @@ type
         @return Required string list.
       }
     procedure SetStrings(const CountName, ItemFmt: string;
-      const Value: IStringList);
+      Value: IStringList);
       {Stores a string list in storage.
         @param CountName [in] Name of value that stores number of elements in
           string list.
@@ -612,7 +612,7 @@ function TIniSettingsSection.GetEncryptedItemValue(const Name: string): string;
   }
 begin
   Result := string(
-    Decrypt(StringToLatin1String(GetItemValue(Name)), cEncryptKey)
+    Decrypt(StringToWindows1252String(GetItemValue(Name)), cEncryptKey)
   );
 end;
 
@@ -623,7 +623,7 @@ function TIniSettingsSection.GetEncryptedItemValue(const Idx: Integer): string;
   }
 begin
   Result := string(
-    Decrypt(StringToLatin1String(GetItemValueByIdx(Idx)), cEncryptKey)
+    Decrypt(StringToWindows1252String(GetItemValueByIdx(Idx)), cEncryptKey)
   );
 end;
 
@@ -741,7 +741,9 @@ procedure TIniSettingsSection.SetEncryptedItemValue(const Name, Value: string);
     @param Value [in] Unencryped value to be encrypted.
   }
 begin
-  SetItemValue(Name, string(Encrypt(StringToLatin1String(Value), cEncryptKey)));
+  SetItemValue(
+    Name, string(Encrypt(StringToWindows1252String(Value), cEncryptKey))
+  );
 end;
 
 procedure TIniSettingsSection.SetItemValue(const Name, Value: string);
@@ -767,7 +769,7 @@ begin
 end;
 
 procedure TIniSettingsSection.SetStrings(const CountName, ItemFmt: string;
-  const Value: IStringList);
+  Value: IStringList);
   {Stores a string list in storage.
     @param CountName [in] Name of value that stores number of elements in string
       list.

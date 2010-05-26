@@ -1,6 +1,6 @@
 
 {TODO -oSelf -cImprovement : Rationalise error handling in UTaggedTextLexer - use exception rather than LastError properties. Also check how they bubble up the chain to snippets editor.}
-{TODO -oSelf -cDocs : Document the fact that only Latin1 characters are permitted in passwords.}
+{TODO -oSelf -cDocs : Document the fact that only Windows-1252 characters are permitted in passwords.}
 {TODO -oSelf -cProposal : Change TTaggedTextEntityHandler to handle entities with value greater than 255?}
 {TODO -oSelf -cBug :
 Fix bug #2868707

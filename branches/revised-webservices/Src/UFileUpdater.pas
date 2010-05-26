@@ -64,7 +64,7 @@ type
     procedure UpdateFile;
       {Creates a file from data stream.
       }
-    procedure WriteFile(const Name, Content: Latin1String;
+    procedure WriteFile(const Name, Content: Windows1252String;
       const UnixDate: Int64);
       {Writes local database file.
         @param Name [in] Name of file.
@@ -137,7 +137,7 @@ resourcestring
                     number of characters
     String[32]    - 32 character fixed length string
 
-  All strings are single byte Latin-1
+  All strings are single byte Windows-1252
 }
 
 
@@ -153,7 +153,7 @@ constructor TFileUpdater.Create(const LocalDir: string;
   cause of download error bug is properly fixed }
 (* *** Following code removed as part of temporary fix for Bug #2970055 ***
 var
-  MD5: Latin1String;  // md5 hash of stream
+  MD5: Windows1252String;  // md5 hash of stream
 *)
 begin
   inherited Create;
@@ -217,9 +217,9 @@ procedure TFileUpdater.UpdateFile;
   {Creates a file from data stream.
   }
 var
-  Name: Latin1String;     // name of file
-  UnixDate: Int64;        // update date of file (per server: Unix format & GMT)
-  Content: Latin1String;  // file content
+  Name: Windows1252String;    // name of file
+  UnixDate: Int64;            // file update date per server: Unix format & GMT
+  Content: Windows1252String; // file content
 begin
   // Get info about file from data stream
   Name := fReader.ReadSizedString;
@@ -229,7 +229,7 @@ begin
   WriteFile(Name, Content, UnixDate);
 end;
 
-procedure TFileUpdater.WriteFile(const Name, Content: Latin1String;
+procedure TFileUpdater.WriteFile(const Name, Content: Windows1252String;
   const UnixDate: Int64);
   {Writes local database file.
     @param Name [in] Name of file.

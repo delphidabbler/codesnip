@@ -323,6 +323,7 @@ begin
   FreeAndNil(fPrevSelectedItem);
   FreeAndNil(fSelectedItem);
   FreeAndNil(fRoutineList); // does not free referenced snippets
+  fCommandBars.Free;
   inherited;
 end;
 

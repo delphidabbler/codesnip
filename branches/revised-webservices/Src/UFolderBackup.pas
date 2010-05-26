@@ -196,7 +196,7 @@ begin
       );
       Writer.WriteLongInt(DOSDateTime.DateStamp);
       Content := FileToString(SourceFileSpec(FileName));
-      Writer.WriteString(TCheckSum.Calculate(Latin1BytesOf(Content)), 32);
+      Writer.WriteString(TCheckSum.Calculate(Windows1252BytesOf(Content)), 32);
       Writer.WriteSizedLongString(Content);
     end;
   finally
@@ -231,8 +231,8 @@ var
   FileCount: Integer;         // number of files to restore
   Idx: Integer;               // loops through all files in backup
   FileName: string;           // name of file to restore
-  MD5: Latin1String;          // checksum of file to restore
-  Content: Latin1String;      // content of file to restore
+  MD5: Windows1252String;     // checksum of file to restore
+  Content: Windows1252String; // content of file to restore
   DOSDateTime: IDOSDateTime;  // date stamp of file to restore
   HeaderWord: SmallInt;       // first word value in file
   Version: SmallInt;          // file version

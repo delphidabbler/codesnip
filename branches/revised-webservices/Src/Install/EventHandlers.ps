@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -176,6 +176,14 @@ begin
   end;
 end;
 
+function UserIniFileVer: Integer;
+  {Gets version number of existing user ini file. Must be in expected location.
+    @return Required version number. 1 if file doesn't exist or is not stamped.
+  }
+begin
+  Result := GetIniInt('IniFile', 'Version', 1, 0, 0, UserIniFileName);
+end;
+
 procedure CurStepChanged(CurStep: TSetupStep);
   {Called to perform pre-install and post-install taks. We performs any required
   data conversion at the post-install stage.
@@ -220,10 +228,6 @@ begin
       end;
     end;
 
-    // Ensure ini files have correct ini file and program version information
-    // This creates ini files if they don't exist
-    StampIniFiles;
-
     // Check if old data should be deleted
     if gDeleteOldDataRequested then
     begin
@@ -237,6 +241,16 @@ begin
         DelTree(AddBackslash(gUserAppDataDir) + 'UserData', True, True, True);
     end;
   end;
+
+  // Check if any additional default data needs to be added to older ini files
+  if UserIniFileVer < 6 then
+    // user ini file versions before 6 don't have the Prefs:CodeGen section and
+    // default entries for predefined warnings
+    CreateDefaultCodeGenEntries;
+
+  // Ensure ini files have correct ini file and program version information
+  // This creates ini files if they don't exist
+  StampIniFiles;
 
   // Display message if no database is installed
   if not MainDatabaseExists then
