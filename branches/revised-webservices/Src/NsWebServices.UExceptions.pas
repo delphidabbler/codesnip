@@ -35,12 +35,18 @@
 
 unit NsWebServices.UExceptions;
 
+
 interface
 
+
 uses
+  // Delphi
   SysUtils,
-  IdException, IdHTTP,
+  // Indy
+  IdHTTP,
+  // Project
   UExceptions;
+
 
 type
 
@@ -53,7 +59,7 @@ type
 
   {
   EHTTPError:
-    Exception raised when web server HTTP error is detected. Note these errors
+    Exception raised when web server HTTP error is detected. Note: these errors
     relate to the web server, not the web service.
   }
   EHTTPError = class(EWebService)
@@ -61,7 +67,7 @@ type
     fHTTPErrorCode: Integer;  // HTTPErrorCode property value
   public
     constructor Create(const E: EIdHTTPProtocolException); overload;
-      {Class constructor. Creates object from properties of given exception.
+      {Constructor. Creates object from properties of given exception.
         @param E [in] Instance of exception from which to create this exception.
           E.ReplyErrorCode is stored in HTTPErrorCode property and E.Message is
           stored in Message property.
@@ -99,15 +105,15 @@ type
   public
     constructor Create(const Msg: string; const ErrorCode: Integer = -1);
       overload;
-      {Class constructor. Constructs exception object with an error code in
-      addition to standard error message.
+      {Constructor. Constructs exception object with an error code in addition
+      to standard error message.
         @param Message [in] Error message.
         @param ErrorCode [in] Optional non-zero error code (defaults to -1).
       }
     constructor CreateFmt(const Fmt: string; const Args: array of const;
       const ErrorCode: Integer = -1); overload;
-      {Class constructor. Constructs exception object with an error code in
-      addition to message built from format string and arguments.
+      {Constructor. Constructs exception object with an error code in addition
+      to message built from format string and arguments.
         @param Fmt [in] Format for message string.
         @param Args [in] Arguments to be included in formatted message string.
         @param ErrorCode [in] Optional non-zero error code (defaults to -1).
@@ -121,7 +127,9 @@ type
       {Non-zero error code}
   end;
 
+
 implementation
+
 
 { EHTTPError }
 
@@ -141,7 +149,7 @@ begin
 end;
 
 constructor EHTTPError.Create(const E: EIdHTTPProtocolException);
-  {Class constructor. Creates object from properties of given exception.
+  {Constructor. Creates object from properties of given exception.
     @param E [in] Instance of exception from which to create this exception.
       E.ReplyErrorCode is stored in HTTPErrorCode property and E.Message is
       stored in Message property.
@@ -167,7 +175,7 @@ end;
 
 constructor EWebServiceError.Create(const Msg: string;
   const ErrorCode: Integer);
-  {Class constructor. Constructs exception object with an error code in addition
+  {Constructor. Constructs exception object with an error code in addition
   to standard error message.
     @param Message [in] Error message.
     @param ErrorCode [in] Optional non-zero error code (defaults to -1).
@@ -180,8 +188,8 @@ end;
 
 constructor EWebServiceError.CreateFmt(const Fmt: string;
   const Args: array of const; const ErrorCode: Integer);
-  {Class constructor. Constructs exception object with an error code in addition
-  to message built from format string and arguments.
+  {Constructor. Constructs exception object with an error code in addition to
+  message built from format string and arguments.
     @param Fmt [in] Format for message string.
     @param Args [in] Arguments to be included in formatted message string.
     @param ErrorCode [in] Optional non-zero error code (defaults to -1).
@@ -192,3 +200,4 @@ begin
 end;
 
 end.
+
