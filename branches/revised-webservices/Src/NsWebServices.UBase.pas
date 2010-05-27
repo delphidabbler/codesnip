@@ -218,9 +218,10 @@ resourcestring
     + 'If you are using a proxy server please check its configuration.'
     + EOL2
     + 'The error reported by Windows was: %0:s.';
-  sWebValidationError = 'Validation error: checksum failed. The may have been '
-    + 'a transmission error';
-  sWebTextContentTypeError = 'Text content expected';
+  sWebValidationError = 'Validation error: checksum failed. This may have been '
+    + 'a transmission error.';
+  sWebBase64Error = 'Validation error: checksum not transmitted correctly.';
+  sWebTextContentTypeError = 'Text content expected from web service.';
 
 
 function Base64Decode(const EncodedText: string): TBytes;
@@ -574,7 +575,11 @@ var
 begin
   // get MD5 from header
   HeaderMD5Encoded := fHTTP.Response.RawHeaders.Values['Content-MD5'];
-  HeaderMD5 := Base64Decode(HeaderMD5Encoded);
+  try
+    HeaderMD5 := Base64Decode(HeaderMD5Encoded);
+  except
+    raise EWebServiceFailure.Create(sWebBase64Error);
+  end;
   // calculate MD5 of received content
   ContentMD5 := TPJMD5.Calculate(Content);
   // check that both MD5s are same and raise exception if not
