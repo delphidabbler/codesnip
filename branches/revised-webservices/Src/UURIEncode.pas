@@ -41,6 +41,7 @@ unit UURIEncode;
 
 interface
 
+
 const
   // Chars reserved for URIs: see RFC 3986 section 2.2
   // generic: reserved by generic URI syntax
@@ -67,33 +68,73 @@ const
   // Special reserved char used to encode spaces in query string encoding
   cPlus = '+';
 
-{
-  NOTE:
-    URIEncode should be applied to the component parts of the URI before they
-    are combined, not to the whole URI. See RFC 3986 section 2.4
-}
 
 function URIEncode(const S: UTF8String): string; overload;
+  {URI encodes a string.
+    @param S [in] String of UTF-8 characters to be encoded.
+    @return Encoded string. Contains only ASCII unreserved characters and "%".
+  }
 function URIEncode(const S: UnicodeString): string; overload;
+  {URI encodes a string.
+    @param S [in] String of Unicode characters to be encoded.
+    @return Encoded string. Contains only ASCII unreserved characters and "%".
+  }
 function URIEncode(const S: AnsiString): string; overload;
+  {URI encodes a string.
+    @param S [in] String of Unicode characters to be encoded.
+    @return Encoded string. Contains only ASCII unreserved characters and "%".
+  }
 
 function URIEncodeQueryString(const S: UTF8String): string; overload;
+  {URI encodes a query string component. Spaces in original string are encoded
+  as "+".
+    @param S [in] String of UTF-8 characters to be encoded.
+    @return Encoded string. Contains only ASCII unreserved characters and "%".
+  }
 function URIEncodeQueryString(const S: UnicodeString): string; overload;
+  {URI encodes a query string component. Spaces in original string are encoded
+  as "+".
+    @param S [in] String of Unicode characters to be encoded.
+    @return Encoded string. Contains only ASCII unreserved characters and "%".
+  }
 function URIEncodeQueryString(const S: AnsiString): string; overload;
+  {URI encodes a query string component. Spaces in original string are encoded
+  as "+".
+    @param S [in] String of ANSI characters to be encoded.
+    @return Encoded string. Contains only ASCII unreserved characters and "%".
+  }
 
 function URIDecode(const Str: string): string;
+  {Decodes a URI encoded string.
+    @param Str [in] String to be decoded. *May* but should not contain
+      characters outside the unreserved character set per RFC 3986.
+    @return Decoded string.
+    @except EConvertError raised if Str contains malformed % escape sequences.
+  }
+
 function URIDecodeQueryString(const Str: string): string;
+  {Decodes a URI encoded query string where spaces have been encoded as '+'.
+    @param Str [in] String to be decoded. *May* but should not contain
+      characters outside the unreserved character set per RFC 3986.
+    @return Decoded string.
+    @except EConvertError raised if Str contains malformed % escape sequences.
+  }
+
 
 implementation
 
 
 uses
+  // Delphi
   SysUtils, StrUtils;
 
+
 resourcestring
+  // Error messages
   rsEscapeError = 'String to be decoded contains invalid % escape sequence';
 
 const
+  // Percent encoding of space character
   cPercentEncodedSpace = '%20';
 
 {
@@ -119,9 +160,19 @@ const
 }
 
 function URIDecode(const Str: string): string;
+  {Decodes a URI encoded string.
+    @param Str [in] String to be decoded. *May* but should not contain
+      characters outside the unreserved character set per RFC 3986.
+    @return Decoded string.
+    @except EConvertError raised if Str contains malformed % escape sequences.
+  }
 
-  // Counts number of '%' characters in a UTF8 string
+  // ---------------------------------------------------------------------------
   function CountPercent(const S: UTF8String): Integer;
+    {Counts number of '%' characters in a UTF8 string.
+      @param S [in] String for which '%' characters to be counted.
+      @return Number of '%' characters in S.
+    }
   var
     Idx: Integer; // loops thru all octets of S
   begin
@@ -130,6 +181,7 @@ function URIDecode(const Str: string): string;
       if S[Idx] = cPercent then
         Inc(Result);
   end;
+  // ---------------------------------------------------------------------------
 
 var
   SrcUTF8: UTF8String;  // input string as UTF-8
@@ -173,11 +225,17 @@ begin
 end;
 
 function URIDecodeQueryString(const Str: string): string;
+  {Decodes a URI encoded query string where spaces have been encoded as '+'.
+    @param Str [in] String to be decoded. *May* but should not contain
+      characters outside the unreserved character set per RFC 3986.
+    @return Decoded string.
+    @except EConvertError raised if Str contains malformed % escape sequences.
+  }
 begin
-  // First replace plus signs with spaces (use percent-encoded spaces here
+  // First replace plus signs with spaces. We use percent-encoded spaces here
   // because string is still URI encoded and space is not one of unreserved
-  // chars and therefor should be percent-encoded.
-  // Next decode the percent-encoded string.
+  // chars and therefor should be percent-encoded. Finally we decode the
+  // percent-encoded string.
   Result := URIDecode(ReplaceStr(Str, cPlus, cPercentEncodedSpace));
 end;
 
@@ -195,12 +253,19 @@ end;
   continuation bytes.
 
   For details of the UTF-8 encoding see http://en.wikipedia.org/wiki/UTF-8
+
+  NOTE:
+    URIEncode should be applied to the component parts of the URI before they
+    are combined, not to the whole URI. See RFC 3986 section 2.4
 }
 
-// Assumes Defined(UNICODE)
 function URIEncode(const S: UTF8String): string; overload;
+  {URI encodes a string.
+    @param S [in] String of UTF-8 characters to be encoded.
+    @return Encoded string. Contains only ASCII unreserved characters and "%".
+  }
 var
-  Ch: AnsiChar;
+  Ch: AnsiChar; // each character in S
 begin
   // Just scan the string an octet at a time looking for chars to encode
   Result := '';
@@ -212,16 +277,29 @@ begin
 end;
 
 function URIEncode(const S: UnicodeString): string; overload;
+  {URI encodes a string.
+    @param S [in] String of Unicode characters to be encoded.
+    @return Encoded string. Contains only ASCII unreserved characters and "%".
+  }
 begin
   Result := URIEncode(UTF8Encode(S));
 end;
 
 function URIEncode(const S: AnsiString): string; overload;
+  {URI encodes a string.
+    @param S [in] String of ANSI characters to be encoded.
+    @return Encoded string. Contains only ASCII unreserved characters and "%".
+  }
 begin
   Result := URIEncode(UTF8Encode(S));
 end;
 
 function URIEncodeQueryString(const S: UTF8String): string; overload;
+  {URI encodes a query string component. Spaces in original string are encoded
+  as "+".
+    @param S [in] String of UTF-8 characters to be encoded.
+    @return Encoded string. Contains only ASCII unreserved characters and "%".
+  }
 begin
   // First we URI encode the string. This so any existing '+' symbols get
   // encoded because we use them to replace spaces and we can't confuse '+'
@@ -231,11 +309,21 @@ begin
 end;
 
 function URIEncodeQueryString(const S: UnicodeString): string; overload;
+  {URI encodes a query string component. Spaces in original string are encoded
+  as "+".
+    @param S [in] String of Unicode characters to be encoded.
+    @return Encoded string. Contains only ASCII unreserved characters and "%".
+  }
 begin
   Result := URIEncodeQueryString(UTF8Encode(S));
 end;
 
 function URIEncodeQueryString(const S: AnsiString): string; overload;
+  {URI encodes a query string component. Spaces in original string are encoded
+  as "+".
+    @param S [in] String of ANSI characters to be encoded.
+    @return Encoded string. Contains only ASCII unreserved characters and "%".
+  }
 begin
   Result := URIEncodeQueryString(UTF8Encode(S));
 end;
