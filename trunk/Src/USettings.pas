@@ -611,8 +611,8 @@ function TIniSettingsSection.GetEncryptedItemValue(const Name: string): string;
     @return Required unencrypted value.
   }
 begin
-  Result := string(
-    Decrypt(StringToWindows1252String(GetItemValue(Name)), cEncryptKey)
+  Result := UTF8ToUnicodeString(
+    Decrypt(UTF8Encode(GetItemValue(Name)), cEncryptKey)
   );
 end;
 
@@ -622,8 +622,8 @@ function TIniSettingsSection.GetEncryptedItemValue(const Idx: Integer): string;
     @return Required unencrypted value.
   }
 begin
-  Result := string(
-    Decrypt(StringToWindows1252String(GetItemValueByIdx(Idx)), cEncryptKey)
+  Result := UTF8ToUnicodeString(
+    Decrypt(UTF8Encode(GetItemValueByIdx(Idx)), cEncryptKey)
   );
 end;
 
@@ -742,7 +742,7 @@ procedure TIniSettingsSection.SetEncryptedItemValue(const Name, Value: string);
   }
 begin
   SetItemValue(
-    Name, string(Encrypt(StringToWindows1252String(Value), cEncryptKey))
+    Name, UTF8ToUnicodeString(Encrypt(UTF8Encode(Value), cEncryptKey))
   );
 end;
 
