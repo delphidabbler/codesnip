@@ -356,6 +356,7 @@
 			<DCCReference Include="UGroups.pas"/>
 			<DCCReference Include="UHelpMgr.pas"/>
 			<DCCReference Include="UHelpProtocol.pas"/>
+			<DCCReference Include="UHexUtils.pas"/>
 			<DCCReference Include="UHiddenRichEdit.pas"/>
 			<DCCReference Include="UHiddenWindow.pas"/>
 			<DCCReference Include="UHiliteAttrs.pas"/>

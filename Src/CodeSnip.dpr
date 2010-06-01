@@ -216,6 +216,7 @@ uses
   UGroups in 'UGroups.pas',
   UHelpMgr in 'UHelpMgr.pas',
   UHelpProtocol in 'UHelpProtocol.pas',
+  UHexUtils in 'UHexUtils.pas',
   UHiddenRichEdit in 'UHiddenRichEdit.pas',
   UHiddenWindow in 'UHiddenWindow.pas',
   UHiliteAttrs in 'UHiliteAttrs.pas',
