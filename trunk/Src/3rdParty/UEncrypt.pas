@@ -20,8 +20,8 @@ unit UEncrypt;
 
 interface
 
-function Decrypt(const S: UTF8String; Key: Word): UTF8String;
-function Encrypt(const S: UTF8String; Key: Word): UTF8String;
+function Decrypt(const S: RawByteString; Key: Word): RawByteString;
+function Encrypt(const S: RawByteString; Key: Word): RawByteString;
 
 implementation
 
@@ -29,7 +29,7 @@ const
   C1 = 52845;
   C2 = 22719;
 
-function Decode(const S: UTF8String): UTF8String;
+function Decode(const S: RawByteString): RawByteString;
 const
   Map: array[AnsiChar] of Byte = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
@@ -72,9 +72,9 @@ begin
   end
 end;
 
-function PreProcess(const S: UTF8String): UTF8String;
+function PreProcess(const S: RawByteString): RawByteString;
 var
-  SS: UTF8String;
+  SS: RawByteString;
 begin
   SS := S;
   Result := '';
@@ -85,7 +85,7 @@ begin
   end
 end;
 
-function InternalDecrypt(const S: UTF8String; Key: Word): UTF8String;
+function InternalDecrypt(const S: RawByteString; Key: Word): RawByteString;
 var
   I: Word;
   Seed: Word;
@@ -99,12 +99,12 @@ begin
   end
 end;
 
-function Decrypt(const S: UTF8String; Key: Word): UTF8String;
+function Decrypt(const S: RawByteString; Key: Word): RawByteString;
 begin
   Result := InternalDecrypt(PreProcess(S), Key)
 end;
 
-function Encode(const S: UTF8String): UTF8String;
+function Encode(const S: RawByteString): RawByteString;
 const
   Map: array[0..63] of AnsiChar = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
     'abcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -125,9 +125,9 @@ begin
   end
 end;
 
-function PostProcess(const S: UTF8String): UTF8String;
+function PostProcess(const S: RawByteString): RawByteString;
 var
-  SS: UTF8String;
+  SS: RawByteString;
 begin
   SS := S;
   Result := '';
@@ -138,7 +138,7 @@ begin
   end
 end;
 
-function InternalEncrypt(const S: UTF8String; Key: Word): UTF8String;
+function InternalEncrypt(const S: RawByteString; Key: Word): RawByteString;
 var
   I: Word;
   Seed: Word;
@@ -152,7 +152,7 @@ begin
   end
 end;
 
-function Encrypt(const S: UTF8String; Key: Word): UTF8String;
+function Encrypt(const S: RawByteString; Key: Word): RawByteString;
 begin
   Result := PostProcess(InternalEncrypt(S, Key))
 end;
