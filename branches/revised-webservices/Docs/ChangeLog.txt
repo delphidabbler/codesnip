@@ -4,6 +4,15 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.6.1 of 01 Jun 2010
++ Proxy server passwords can now contain any Unicode character, not just those included in the Windows-1252 code page.
++ Password format in per user ini file changed. Existing passwords have to be re-entered. Ini file format updated to v7.
++ Installer updated:
+  - It deletes any passwords from v6 and earlier per user ini files.
+  - Per-user ini file now stamped as v7.
++ Some potential Unicode-ANSI string conversion problems fixed.
++ Updated documentation.
+
 Release v3.6.0 of 26 May 2010
 + Added support for emitting compiler directives to switch off specified warnings. This implement feature request #2994485 (see http://bit.ly/cxDJG4).
 + Preferences dialog box updated:
@@ -15,6 +24,7 @@ Release v3.6.0 of 26 May 2010
 + Installer updated:
   - Ini files are stamped with correct program and ini file version information.
   - Older versions (v1..v5) of per-user ini file are updated with default code generation preferences.
+  - Per-user ini file now stamped as v6.
 + Fixed numerous memory leaks.
 + Fixed some other potential and unreported minor bugs.
 + Some refactoring.

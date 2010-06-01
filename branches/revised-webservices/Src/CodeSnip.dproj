@@ -349,6 +349,7 @@
 			<DCCReference Include="UDropDownButtons.pas"/>
 			<DCCReference Include="UEditRoutineAction.pas"/>
 			<DCCReference Include="UEmailHelper.pas"/>
+			<DCCReference Include="UEncryptor.pas"/>
 			<DCCReference Include="UExceptions.pas"/>
 			<DCCReference Include="UExeFileType.pas"/>
 			<DCCReference Include="UFileHiliter.pas"/>
@@ -364,6 +365,7 @@
 			<DCCReference Include="UGroups.pas"/>
 			<DCCReference Include="UHelpMgr.pas"/>
 			<DCCReference Include="UHelpProtocol.pas"/>
+			<DCCReference Include="UHexUtils.pas"/>
 			<DCCReference Include="UHiddenRichEdit.pas"/>
 			<DCCReference Include="UHiddenWindow.pas"/>
 			<DCCReference Include="UHiliteAttrs.pas"/>

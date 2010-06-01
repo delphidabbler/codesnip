@@ -4,14 +4,24 @@
 
   Author: Steve Schafer
   Homepage: http://www.teamb.com
+
+  ------------------------------------------------------------------------------
+
+  Added to CodeSnip project SVN Repo on 11 Aug 2009 at r165.
+
+  $Rev$
+  $Date$
+
+  Unit has been modified by DelphiDabbler: see logs in SVN repository for
+  details.
 }
 
 unit UEncrypt;
 
 interface
 
-function Decrypt(const S: AnsiString; Key: Word): AnsiString;
-function Encrypt(const S: AnsiString; Key: Word): AnsiString;
+function Decrypt(const S: RawByteString; Key: Word): RawByteString;
+function Encrypt(const S: RawByteString; Key: Word): RawByteString;
 
 implementation
 
@@ -19,9 +29,8 @@ const
   C1 = 52845;
   C2 = 22719;
 
-function Decode(const S: AnsiString): AnsiString;
+function Decode(const S: RawByteString): RawByteString;
 const
-  // PJ: Changed from array[Char] to array[AnsiChar]
   Map: array[AnsiChar] of Byte = (0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 62, 0, 0, 0, 63, 52, 53,
@@ -63,9 +72,9 @@ begin
   end
 end;
 
-function PreProcess(const S: AnsiString): AnsiString;
+function PreProcess(const S: RawByteString): RawByteString;
 var
-  SS: AnsiString;
+  SS: RawByteString;
 begin
   SS := S;
   Result := '';
@@ -76,7 +85,7 @@ begin
   end
 end;
 
-function InternalDecrypt(const S: AnsiString; Key: Word): AnsiString;
+function InternalDecrypt(const S: RawByteString; Key: Word): RawByteString;
 var
   I: Word;
   Seed: Word;
@@ -85,20 +94,18 @@ begin
   Seed := Key;
   for I := 1 to Length(Result) do
   begin
-    // PJ: Changed cast from Char to AnsiChar
     Result[I] := AnsiChar(Byte(Result[I]) xor (Seed shr 8));
     Seed := (Byte(S[I]) + Seed) * Word(C1) + Word(C2)
   end
 end;
 
-function Decrypt(const S: AnsiString; Key: Word): AnsiString;
+function Decrypt(const S: RawByteString; Key: Word): RawByteString;
 begin
   Result := InternalDecrypt(PreProcess(S), Key)
 end;
 
-function Encode(const S: AnsiString): AnsiString;
+function Encode(const S: RawByteString): RawByteString;
 const
-  // PJ: Changed Map from array of Char to array of AnsiChar
   Map: array[0..63] of AnsiChar = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
     'abcdefghijklmnopqrstuvwxyz0123456789+/';
 var
@@ -118,9 +125,9 @@ begin
   end
 end;
 
-function PostProcess(const S: AnsiString): AnsiString;
+function PostProcess(const S: RawByteString): RawByteString;
 var
-  SS: AnsiString;
+  SS: RawByteString;
 begin
   SS := S;
   Result := '';
@@ -131,7 +138,7 @@ begin
   end
 end;
 
-function InternalEncrypt(const S: AnsiString; Key: Word): AnsiString;
+function InternalEncrypt(const S: RawByteString; Key: Word): RawByteString;
 var
   I: Word;
   Seed: Word;
@@ -140,13 +147,12 @@ begin
   Seed := Key;
   for I := 1 to Length(Result) do
   begin
-    // PJ: Changed cast from Char to AnsiChar
     Result[I] := AnsiChar(Byte(Result[I]) xor (Seed shr 8));
     Seed := (Byte(Result[I]) + Seed) * Word(C1) + Word(C2)
   end
 end;
 
-function Encrypt(const S: AnsiString; Key: Word): AnsiString;
+function Encrypt(const S: RawByteString; Key: Word): RawByteString;
 begin
   Result := PostProcess(InternalEncrypt(S, Key))
 end;
