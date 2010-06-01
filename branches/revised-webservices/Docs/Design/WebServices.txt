@@ -1,4 +1,8 @@
+================================================================================
+
 Documentation of classes that access web-services on behalf of CodeSnip.
+
+================================================================================
 
 
 DelphiDabbler Standard Web Service
@@ -12,8 +16,8 @@ the web service to be used.
 
 It submits data to the using HTTP Post.
 
-Information is POSTed to the web service  in the form of URL encoded query
-strings.
+Information is POSTed to the web service either in the form of URL encoded query
+strings or as raw post data. Which format is used depends on web service.
 
 Web services respond with text data. The text is encoded as the default for the
 server which is taken to be ISO-8859-1 (Latin 1).
@@ -31,8 +35,8 @@ starting from the second line of the text. The meaning of this text depends on
 the web service. Consult the documentation for the service for details.
 
 An error response should include an error message starting from the second line
-of the text. Error nessages are often take up just a single line, but make have
-more than one line.
+of the text. Error messages often take up just a single line, but may have more
+than one line.
 
 The response format, after trimming, in ABNF is:
 
