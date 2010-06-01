@@ -341,6 +341,7 @@
 			<DCCReference Include="UDropDownButtons.pas"/>
 			<DCCReference Include="UEditRoutineAction.pas"/>
 			<DCCReference Include="UEmailHelper.pas"/>
+			<DCCReference Include="UEncryptor.pas"/>
 			<DCCReference Include="UExceptions.pas"/>
 			<DCCReference Include="UExeFileType.pas"/>
 			<DCCReference Include="UFileHiliter.pas"/>

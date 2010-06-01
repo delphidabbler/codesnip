@@ -201,6 +201,7 @@ uses
   UDropDownButtons in 'UDropDownButtons.pas',
   UEditRoutineAction in 'UEditRoutineAction.pas',
   UEmailHelper in 'UEmailHelper.pas',
+  UEncryptor in 'UEncryptor.pas',
   UExceptions in 'UExceptions.pas',
   UExeFileType in 'UExeFileType.pas',
   UFileHiliter in 'UFileHiliter.pas',
