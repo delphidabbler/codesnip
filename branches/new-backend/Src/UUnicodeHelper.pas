@@ -83,7 +83,7 @@ function StringToWindows1252String(const S: string): Windows1252String;
   }
 
 function StringToASCIIString(const S: string): ASCIIString;
-  {Converts a string to a ASCII string.
+  {Converts a string to an ASCII string.
     @param S [in] String to be converted.
     @return Converted string.
   }
@@ -256,30 +256,21 @@ begin
   Result := TEncoding.ASCII.GetBytes(AString);
 end;
 
-function BytesToASCIIString(const Bytes: TBytes): ASCIIString;
-  {Creates an ansi string from an array of bytes.
-    @param Bytes [in] Array to be converted to string.
-    @return Required string.
+function BytesToAnsiString(const Bytes: TBytes; const CP: Word): RawByteString;
+  {Converts an array of bytes to an ANSI raw byte string.
+  NOTE: Based on Stack Overflow posting at <URL:http://bit.ly/bAvtGd>.
+    @param Bytes [in] Array of bytes to be converted to ANSI string.
+    @param CP [in] Code page of required ANSI string. Bytes must contain valid
+      bytes for this code page.
+    @return Required string with specified code page.
   }
-var
-  Len: Integer; // length of byte array
 begin
-  Len := Length(Bytes);
-  SetLength(Result, Len);
-  Move(Bytes[0], Result[1], Len);
-end;
-
-function BytesToAnsiString(const Bytes: TBytes): AnsiString;
-  {Creates an ansi string from an array of bytes.
-    @param Bytes [in] Array to be converted to string.
-    @return Required string.
-  }
-var
-  Len: Integer; // length of byte array
-begin
-  Len := Length(Bytes);
-  SetLength(Result, Len);
-  Move(Bytes[0], Result[1], Len);
+  SetLength(Result, Length(Bytes));
+  if Length(Bytes) > 0 then
+  begin
+    Move(Bytes[0], Result[1], Length(Bytes));
+    SetCodePage(Result, CP, False);
+  end;
 end;
 
 function StringToWindows1252String(const S: string): Windows1252String;
@@ -288,16 +279,16 @@ function StringToWindows1252String(const S: string): Windows1252String;
     @return Converted string.
   }
 begin
-  Result := BytesToAnsiString(Windows1252BytesOf(S));
+  Result := BytesToAnsiString(Windows1252BytesOf(S), Windows1252CodePage);
 end;
 
 function StringToASCIIString(const S: string): ASCIIString;
-  {Converts a string to a ASCII string.
+  {Converts a string to an ASCII string.
     @param S [in] String to be converted.
     @return Converted string.
   }
 begin
-  Result := BytesToASCIIString(ASCIIBytesOf(S));
+  Result := BytesToAnsiString(ASCIIBytesOf(S), ASCIICodePage);
 end;
 
 { TWindows1252Encoding }

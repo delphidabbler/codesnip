@@ -77,7 +77,7 @@ procedure StampIniFiles;
   }
 begin
   // Flag ini file versions
-  SetIniInt('IniFile', 'Version', 6, UserIniFileName);
+  SetIniInt('IniFile', 'Version', 7, UserIniFileName);
   SetIniInt('IniFile', 'Version', 5, CommonIniFileName);
   // Record application version in common ini file
   SetIniString(
@@ -213,3 +213,9 @@ begin
   );
 end;
 
+procedure DeleteProxyPassword;
+  {Deletes proxy password entry.
+  }
+begin
+  SetIniString('ProxyServer', 'Password', '', UserIniFileName);
+end;

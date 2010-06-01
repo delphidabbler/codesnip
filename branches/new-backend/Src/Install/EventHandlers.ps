@@ -248,6 +248,24 @@ begin
     // default entries for predefined warnings
     CreateDefaultCodeGenEntries;
 
+  // Check if there's a proxy server password in incompatible format and delete
+  // it if so. Inform user
+  if (UserIniFileVer < 7) and
+    (GetIniString('ProxyServer', 'Password', '', UserIniFileName) <> '' ) then
+  begin
+    DeleteProxyPassword;
+    MsgBox(
+      'Your existing proxy server password has been deleted. This is because '
+       + 'the format for storing the password has been changed to permit '
+       + 'non European characters to be used.'#13#10#13#10
+       + 'When you start CodeSnip please select the Tools | Proxy Server '
+       + 'menu option and re-enter your password in the dialog box.'#13#10#13#10
+       + 'Sorry for the inconvenience.',
+      mbInformation,
+      MB_OK
+    );
+  end;
+
   // Ensure ini files have correct ini file and program version information
   // This creates ini files if they don't exist
   StampIniFiles;
