@@ -218,9 +218,7 @@ uses
   // Delphi
   SysUtils, Classes, IniFiles,
   // 3rd party
-  UEncrypt,
-  // Project
-  UAppInfo, UExceptions, UUnicodeHelper, UUtils;
+  UAppInfo, UEncryptor, UExceptions, UHexUtils, UUtils;
 
 
 var
@@ -321,7 +319,6 @@ type
     fSectionName: string;         // Name of section
     fStorage: TSettingsStorageId; // Id of storage to be used
     fValues: TStringList;         // Stores section's data as name=value pairs
-    const cEncryptKey = 46723;    // Key used for encryption / decryption
   protected
     { ISettingsSection methods }
     function GetSectionName: string;
@@ -610,10 +607,14 @@ function TIniSettingsSection.GetEncryptedItemValue(const Name: string): string;
     @param Name [in] Name of value.
     @return Required unencrypted value.
   }
+var
+  EncryptedBytes: TBytes; // encrypted value as array of bytes
 begin
-  Result := UTF8ToUnicodeString(
-    Decrypt(UTF8Encode(GetItemValue(Name)), cEncryptKey)
-  );
+  // NOTE:
+  // See SetEncryptedItemValue for details of how encrypted values are stored.
+  if not TryHexToBytes(GetItemValue(Name), EncryptedBytes) then
+    Exit('');
+  Result := TEncoding.UTF8.GetString(TEncryptor.Decrypt(EncryptedBytes));
 end;
 
 function TIniSettingsSection.GetEncryptedItemValue(const Idx: Integer): string;
@@ -622,9 +623,9 @@ function TIniSettingsSection.GetEncryptedItemValue(const Idx: Integer): string;
     @return Required unencrypted value.
   }
 begin
-  Result := UTF8ToUnicodeString(
-    Decrypt(UTF8Encode(GetItemValueByIdx(Idx)), cEncryptKey)
-  );
+  // NOTE:
+  // See SetEncryptedItemValue for details of how encrypted values are stored.
+  Result := GetEncryptedItemValue(GetItemName(Idx));
 end;
 
 function TIniSettingsSection.GetItemCount: Integer;
@@ -741,8 +742,14 @@ procedure TIniSettingsSection.SetEncryptedItemValue(const Name, Value: string);
     @param Value [in] Unencryped value to be encrypted.
   }
 begin
+  // NOTE:
+  // Encrypted values are stored as follows:
+  // 1: Unicode Value is converted to an array of UTF-8 encoded bytes
+  // 2: The UTF-8 byte array is encrypted as another array bytes
+  // 3: The encrypted byte array is converted to hexadecimal
+  // 4: The hexadecimal character string is stored in storage
   SetItemValue(
-    Name, UTF8ToUnicodeString(Encrypt(UTF8Encode(Value), cEncryptKey))
+    Name, BytesToHex(TEncryptor.Encrypt(TEncoding.UTF8.GetBytes(Value)))
   );
 end;
 
