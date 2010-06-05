@@ -973,6 +973,7 @@ var
   DummyBody: string;  // stores unused routine body retrieved from Split
 begin
   Split(Routine, Result, DummyBody);
+  Result := Trim(Result);
 end;
 
 class function TRoutineFormatter.FormatRoutine(
@@ -1026,15 +1027,15 @@ begin
   case CommentStyle of
     csAfter:
       // comments follow prototype
-      Result := Trim(Prototype) + EOL +
+      Result := Prototype + EOL +
         RenderDescComment(CommentStyle, Routine);
     csBefore:
       // comments preceed prototype
       Result := RenderDescComment(CommentStyle, Routine) + EOL +
-        Trim(Prototype);
+        Prototype;
     else
       // no comments: just return prototype
-      Result := Trim(Prototype);
+      Result := Prototype;
   end;
 end;
 
