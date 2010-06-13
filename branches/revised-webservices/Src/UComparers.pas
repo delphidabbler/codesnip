@@ -47,10 +47,10 @@ uses
 type
 
   {
-  TSameStringEqualityComparer:
+  TSameTextEqualityComparer:
     Case insensitive string comparer.
   }
-  TSameStringEqualityComparer = class(TEqualityComparer<string>,
+  TSameTextEqualityComparer = class(TEqualityComparer<string>,
     IEqualityComparer<string>
   )
   public
@@ -96,9 +96,9 @@ begin
   end;
 end;
 
-{ TSameStringEqualityComparer }
+{ TSameTextEqualityComparer }
 
-function TSameStringEqualityComparer.Equals(const Left, Right: string): Boolean;
+function TSameTextEqualityComparer.Equals(const Left, Right: string): Boolean;
   {Checks if two strings are equal.
     @param Left [in] First string to compare.
     @param Right [in] Second string to compare.
@@ -108,7 +108,7 @@ begin
   Result := AnsiSameText(Left, Right);
 end;
 
-function TSameStringEqualityComparer.GetHashCode(const Value: string): Integer;
+function TSameTextEqualityComparer.GetHashCode(const Value: string): Integer;
   {Gets hash of a lower case version of a string.
     @param Value [in] String for which hash is needed.
     @return Required hash.
