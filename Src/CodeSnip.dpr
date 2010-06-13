@@ -168,6 +168,7 @@ uses
   UColours in 'UColours.pas',
   UCommandBars in 'UCommandBars.pas',
   UCommonDlg in 'UCommonDlg.pas',
+  UComparers in 'UComparers.pas',
   UCompileMgr in 'UCompileMgr.pas',
   UCompilerBase in 'UCompilerBase.pas',
   UCompileResultsLBMgr in 'UCompileResultsLBMgr.pas',
