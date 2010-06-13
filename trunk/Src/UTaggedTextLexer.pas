@@ -46,9 +46,9 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes, Generics.Collections,
+  Classes, Generics.Collections,
   // Project
-  UExceptions, UStacks, UUnicodeHelper;
+  UExceptions;
 
 
 const
@@ -292,7 +292,7 @@ type
       their character values}
     fTagHandler: TTaggedTextTagHandler;
       {Object that parses tags, returning their type, id code and parameters}
-    fTagStack: TStringStack;
+    fTagStack: TStack<string>;
       {Stack of nested active compound tags}
     fNextCharPos: Integer;
       {The position of the next character to process in the tagged text}
@@ -409,9 +409,9 @@ implementation
 
 uses
   // Delphi
-  StrUtils, Windows {for inlining},
+  SysUtils, StrUtils,
   // Project
-  UComparers, UUtils;
+  UComparers, UUnicodeHelper, UUtils;
 
 
 resourcestring
@@ -1074,7 +1074,7 @@ begin
   fEntityHandler := TTaggedTextEntityHandler.Create;
   fTagHandler := TTaggedTextTagHandler.Create(fEntityHandler);
   // Create stack object to track nested compound tags
-  fTagStack := TStringStack.Create;
+  fTagStack := TStack<string>.Create;
   // Create object to store a tag's parameters
   fParams := TStringList.Create;
   // Initialise ready to read tagged text
@@ -1252,7 +1252,7 @@ begin
         ttsCompoundEndTag:
         begin
           // we have compound end tag: check validity
-          if fTagStack.IsEmpty then
+          if fTagStack.Count = 0 then
             // .. tag stack empty => no matching opening tag
             raise ETaggedTextLexer.CreateFmt(sNoMatchingStartTag, [fCurText]);
           // .. tag we expect closes the one at top of stack
@@ -1303,7 +1303,7 @@ begin
   else
   begin
     // We're at end of tagged text it's an error if we still have unclosed tags
-    if not fTagStack.IsEmpty then
+    if not fTagStack.Count = 0 then
       raise ETaggedTextLexer.Create(sUnexpectedEOF);
     fKind := ttsEOF;
   end;

@@ -311,7 +311,6 @@ uses
   USourceFileInfo in 'USourceFileInfo.pas',
   USourceFileOutputMgr in 'USourceFileOutputMgr.pas',
   USourceGen in 'USourceGen.pas',
-  UStacks in 'UStacks.pas',
   UStatusBarMgr in 'UStatusBarMgr.pas',
   UStrStreamWriter in 'UStrStreamWriter.pas',
   UStructs in 'UStructs.pas',
