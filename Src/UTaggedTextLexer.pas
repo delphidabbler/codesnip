@@ -5,7 +5,8 @@
  * code in a SGML like format. The lexer is customisable, the user providing the
  * valid tags and character entities. It checks the code for correctly nested
  * tags. Simple (<tag/>) and compound (<tag>..</tag>) tags are supported, as are
- * comments and script tags.
+ * comments and script tags. Tags are not case sensitive. Symbolic character
+ * entities are case sensitive.
  *
  * $Rev$
  * $Date$
@@ -45,9 +46,9 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes,
+  SysUtils, Classes, Generics.Collections,
   // Project
-  UConsts, UExceptions, UStacks, UUnicodeHelper;
+  UExceptions, UStacks, UUnicodeHelper;
 
 
 const
@@ -91,33 +92,31 @@ type
   TTaggedTextEntityHandler:
     Processes and translates character entities into the corresponding
     characters. Two types of entity are supported:
-      1) Numeric entities of the form &#99; where 99 is a decimal number
-         representing the ASCII or Unicode character code. These entities are
-         supported by default.
+      1) Numeric entities of the form &#999; where 99 is a decimal number
+         representing the ASCII or Unicode character code.
       2) Symbolic entities of form &entity_name;. The user specifies the names
-         and character values of these entities. No entities are supported by
-         default.
-    Errors are reported via the LastErrorMessage property. The case of entities
-    is significant, so that &AMP; is *not* the same as &amp;
+         and character values of these entities. No symbolic entities are
+         supported by default. The case of symbolic entities is significant, so
+         that &AMP; is *not* the same as &amp;
+    Errors are reported via the LastErrorMessage property.
   }
   TTaggedTextEntityHandler = class(TObject)
   strict private
-    fLastErrorMessage: string;
-      {Value of LastErrorMessage property}
-    fSymbolicEntities: TStringList;
-      {String list storing entities with entity name stored as string item and
-      the code of the represented character stored in Objects[]}
+    var
+      fLastErrorMessage: string;
+        {Value of LastErrorMessage property}
+      fSymbolicEntities: TDictionary<string, Char>;
+        {Map of entity names to the represented character code}
   public
     constructor Create;
-      {Class constructor. Creates empty entity list.
+      {Constructor. Creates empty entity map.
       }
     destructor Destroy; override;
-      {Class destructor. Frees owned entity list.
+      {Destructor. Tears down object.
       }
     function AddEntity(const Entity: string; const Ch: Char): Boolean;
-      {Adds a symbolic entity and its corresponding character to the
-      list of symbolic entities. Set up the list of entities before attempting
-      to translate an entity.
+      {Adds a symbolic entity and its corresponding character to the map.
+      Set up this map before attempting to translate an entity.
         @param Entity [in] Character entity.
         @param Ch [in] Character corresponding to entity.
         @return True if entity added successfully, False if not.
@@ -126,8 +125,7 @@ type
       {Translates entity into the character it represents.
         @param Entity [in] Entity to be translated (without leading '&' and
           trailing ';' characters).
-        @param Ch [out] Character corresponding to Entity. and returns it via
-          Ch.
+        @param Ch [out] Character corresponding to Entity.
         @return True if entity is translated or False if not.
       }
     function TranslateTextEntities(const Text: string;
@@ -147,23 +145,34 @@ type
     Processes tags and translates them into the corresponding tag codes. Also
     maintains a list of supported tags as supplied by user: no tags are
     supported by default. Errors are reported via the LastErrorMessage property.
+    The case of tags is ignored so <TAG> and <tag> are taken to be the same tag.
   }
   TTaggedTextTagHandler = class(TObject)
   strict private
-    fLastErrorMessage: string;
-      {Value of LastErrorMessage property}
-    fTagList: TStringList;
-      {Stores details of the supported tags. The tag name is stored as a string
-      item and the tag code and whether tag is compound are merged into a long
-      word that is stored in Objects[]}
-    fEntityHandler: TTaggedTextEntityHandler;
-      {Reference to entity handler object used to translate entities appearing
-      in tag values}
+    type
+      // Records information about a tag
+      TTagInfo = record
+        Code: Word;           // Unique code associated with the tag
+        IsCompound: Boolean;  // Flags whether tag is compound
+        constructor Create(const ACode: Word; const AIsCompound: Boolean);
+          {Create record with specified field values.
+            @param ACode [in] Unique tag code.
+            @param AIsCompound [in] Whether tag is compound.
+          }
+      end;
+    var
+      fLastErrorMessage: string;
+        {Value of LastErrorMessage property}
+      fTags: TDictionary<string,TTagInfo>;
+        {Maps the supported tags to information about the tag. Ignores tag case}
+      fEntityHandler: TTaggedTextEntityHandler;
+        {Reference to entity handler object used to translate entities appearing
+        in tag values}
     function GetKind(var WorkTag: string): TTaggedTextKind;
       {Gets kind of a tag.
         @param WorkTag [in] Tag to be processed. [out] Tag stripped of
           characters that indicate tag kind, such as '/', '!' and '?'.
-        @return Tag kind (ttsNull if kind is not recognised.
+        @return Tag kind (ttsNull if kind is not recognised).
       }
     function GetTagName(const TagStr: string; out NextChPos: Integer): string;
       {Extracts the name of a tag
@@ -173,7 +182,7 @@ type
       }
     function LookupTagInfo(const TagName: string; out TagCode: Word;
       out IsCompound: WordBool): Boolean;
-      {Looks up the tag in the table of supported tags.
+      {Looks up the tag in the map of supported tags.
         @param TagName [in] Name of tag for which information is required.
         @param TagCode [out] Unique code representing tag.
         @param IsCompound [out] True if tag is compound, False if simple.
@@ -200,18 +209,17 @@ type
       }
   public
     constructor Create(const EH: TTaggedTextEntityHandler);
-      {Class constructor. Sets up object.
+      {Constructor. Sets up object.
         @param EH [in] Method to call to translate entities.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     function AddTag(const Tag: string; const Code: Word;
       const IsCompound: WordBool): Boolean;
-      {Adds information about a tag to the list of tags recognised by the
-      handler. A list of supported tags must be set up using this method before
-      attempting to process them since the handler recognises no tags by
-      default.
+      {Adds information about a tag to the map of tags recognised by the
+      handler. Supported tags must be set up using this method before attempting
+      to process them since the handler recognises no tags by default.
         @param Tag [in] Name of the tag without enclosing angle brackets.
         @param Code [in] Unique code associated with the tag - must not be
           $FFFF.
@@ -349,15 +357,15 @@ type
   public
     constructor Create(const TagInfoCallback: TTaggedTextTagInfoProc;
       const EntityInfoCallback: TTaggedTextEntityInfoProc);
-      {Class contructor. Sets up object and gets information about supported
-      tags and character entities.
+      {Contructor. Sets up object and gets information about supported tags and
+      character entities.
         @param TagInfoCallback [in] Method to call to get information about
           supported tags.
         @param EntityInfoCallback [in] Method to call to get information about
           supported character entities.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     procedure Reset;
       {Resets the lexer ready to restart the analysis of the TaggedText code.
@@ -403,7 +411,7 @@ uses
   // Delphi
   StrUtils, Windows {for inlining},
   // Project
-  UUtils;
+  UComparers, UUtils;
 
 
 resourcestring
@@ -444,32 +452,32 @@ resourcestring
 
 function TTaggedTextEntityHandler.AddEntity(const Entity: string;
   const Ch: Char): Boolean;
-  {Adds a symbolic entity and its corresponding character to the list of
-  symbolic entities. Set up the list of entities before attempting to translate
-  an entity.
+  {Adds a symbolic entity and its corresponding character to the map. Set up
+  this map before attempting to translate an entity.
     @param Entity [in] Character entity.
     @param Ch [in] Character corresponding to entity.
     @return True if entity added successfully, False if not.
   }
 begin
-  Result := fSymbolicEntities.IndexOf(Entity) = -1;
+  Result := not fSymbolicEntities.ContainsKey(Entity);
   if Result then
-    fSymbolicEntities.AddObject(LowerCase(Entity), Pointer(Ch))
+    fSymbolicEntities.Add(Entity, Ch)
   else
     fLastErrorMessage := Format(sEntityAlreadyReg, [Entity]);
 end;
 
 constructor TTaggedTextEntityHandler.Create;
-  {Class constructor. Creates empty entity list.
+  {Constructor. Creates empty entity map.
   }
 begin
   inherited;
-  fSymbolicEntities := TStringList.Create;
-  fSymbolicEntities.CaseSensitive := True;
+  fSymbolicEntities := TDictionary<string, Char>.Create(
+    TSameStringEqualityComparer.Create
+  );
 end;
 
 destructor TTaggedTextEntityHandler.Destroy;
-  {Class destructor. Frees owned entity list.
+  {Destructor. Tears down object.
   }
 begin
   fSymbolicEntities.Free;
@@ -481,12 +489,11 @@ function TTaggedTextEntityHandler.TranslateEntity(
   {Translates entity into the character it represents.
     @param Entity [in] Entity to be translated (without leading '&' and trailing
       ';' characters).
-    @param Ch [out] Character corresponding to Entity. and returns it via Ch.
+    @param Ch [out] Character corresponding to Entity.
     @return True if entity is translated or False if not.
   }
 var
   EntityVal: Integer;   // value of a numeric entity
-  SymbolIdx: Integer;   // index of symbolic entities in symbol list
 begin
   // Assume failure
   Result := False;
@@ -530,15 +537,14 @@ begin
   else
   begin
     // Symbolic entity
-    // check if entity in list of supported entities
-    SymbolIdx := fSymbolicEntities.IndexOf(Entity);
-    if SymbolIdx = -1 then
+    // check if entity is supported
+    if not fSymbolicEntities.ContainsKey(Entity) then
     begin
       fLastErrorMessage := Format(sEntityNotRecognised, [Entity]);
       Exit;
     end;
-    // entity is supported: record it's character value and return true
-    Ch := Char(fSymbolicEntities.Objects[SymbolIdx]);
+    // entity is supported: record its character value and return true
+    Ch := fSymbolicEntities[Entity];
     Result := True;
   end;
 end;
@@ -574,7 +580,7 @@ begin
       '&':
       begin
         // We have start of entity
-        // skip past opening '&' and record positiin as start of entity
+        // skip past opening '&' and record position as start of entity
         Inc(Idx);
         EntityStart := Idx;
         // scan through string looking for ';' that ends entity
@@ -582,12 +588,12 @@ begin
           Inc(Idx);
         if Idx > Length(Text) then
         begin
-          // didn't find terminating ';': report errro
+          // didn't find terminating ';': report error
           fLastErrorMessage := sEntityUnterminated;
           Exit;
         end;
-        // record entity excluding opening '&' and closing ';' in lower case
-        Entity := LowerCase(MidStr(Text, EntityStart, Idx - EntityStart));
+        // record entity excluding opening '&' and closing ';'
+        Entity := MidStr(Text, EntityStart, Idx - EntityStart);
         // skip over ending ';' in input
         Inc(Idx);
         // try to translate entity: exit on error (LastErrorMessage set by
@@ -607,7 +613,7 @@ begin
       end;
     end;
   end;
-  // If we have translated entities TransStr will be shorter than input string@
+  // If we have translated entities TransStr will be shorter than input string
   // so we reduce TransStr length accodingly
   if Idx <> InsPos then
     SetLength(TransStr, InsPos - 1);
@@ -618,17 +624,15 @@ end;
 
 function TTaggedTextTagHandler.AddTag(const Tag: string;
   const Code: Word; const IsCompound: WordBool): Boolean;
-  {Adds information about a tag to the list of tags recognised by the handler.
-  A list of supported tags must be set up using this method before attempting to
-  process them since the handler recognises no tags by default.
+  {Adds information about a tag to the map of tags recognised by the handler.
+  Supported tags must be set up using this method before attempting to process
+  them since the handler recognises no tags by default.
     @param Tag [in] Name of the tag without enclosing angle brackets.
     @param Code [in] Unique code associated with the tag - must not be $FFFF.
     @param IsCompound [in] True if the tag is compound (i.e. can contain other
       tags or text) or False if the tag stands on its own.
     @return True if tag is added successfully or False on error.
   }
-var
-  Data: LongWord; // stores both the tag code and the IsCompound flag
 begin
   // Check that code is not reserved value $FFFF: error if so
   if Code = $FFFF then
@@ -638,36 +642,34 @@ begin
     Exit;
   end;
   // Check if tag already recorded: error if so
-  Result := fTagList.IndexOf(Tag) = -1;
+  Result := not fTags.ContainsKey(Tag);
   if Result then
   begin
-    // encode Code and a IsCompound into long word
-    LongRec(Data).Lo := Code;
-    LongRec(Data).Hi := Word(IsCompound);
-    // add the tag and the data to the list
-    fTagList.AddObject(LowerCase(Tag), Pointer(Data));
+    // add the tag and the data to the map
+    fTags.Add(AnsiLowerCase(Tag), TTagInfo.Create(Code, IsCompound));
   end
   else
     Error(sTagAlreadyRegistered, [Tag]);
 end;
 
 constructor TTaggedTextTagHandler.Create(const EH: TTaggedTextEntityHandler);
-  {Class constructor. Sets up object.
+  {Constructor. Sets up object.
     @param EH [in] Method to call to translate entities.
   }
 begin
   Assert(Assigned(EH), ClassName + '.Create: EH is not assigned');
   inherited Create;
-  fTagList := TStringList.Create;
-  fTagList.Sorted := True;
+  fTags := TDictionary<string, TTagInfo>.Create(
+    TSameTextEqualityComparer.Create
+  );
   fEntityHandler := EH;
 end;
 
 destructor TTaggedTextTagHandler.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  fTagList.Free;
+  fTags.Free;
   inherited;
 end;
 
@@ -693,7 +695,7 @@ function TTaggedTextTagHandler.GetKind(var WorkTag: string): TTaggedTextKind;
   {Gets kind of a tag.
     @param WorkTag [in] Tag to be processed. [out] Tag stripped of characters
       that indicate tag kind, such as '/', '!' and '?'.
-    @return Tag kind (ttsNull if kind is not recognised.
+    @return Tag kind (ttsNull if kind is not recognised).
   }
 var
   Len: Integer; // length of tag
@@ -712,7 +714,7 @@ begin
   Assert(Len >= 3, ClassName + '.GetKind: Tag too short');
   if (Len >= 4) and (WorkTag[Len-1] = '/') then
   begin
-    // tag of form <tag> => simple: we delete the / char
+    // tag of form <tag> => simple: we delete the / char at end of tag name
     Result := ttsSimpleTag;
     Delete(WorkTag, Len-1, 1);
   end
@@ -764,7 +766,7 @@ begin
   while (NextChPos <= Length(TagStr))
     and IsWhiteSpace(TagStr[NextChPos]) do
     Inc(NextChPos);
-  // Now at start of tag name: read it up to next space or end of tag str
+  // Now at start of tag name: read it up to next space or end of TagStr
   StartPos := NextChPos;
   while (NextChPos <= Length(TagStr))
     and not IsWhiteSpace(TagStr[NextChPos]) do
@@ -886,25 +888,22 @@ end;
 
 function TTaggedTextTagHandler.LookupTagInfo(const TagName: string;
   out TagCode: Word; out IsCompound: WordBool): Boolean;
-  {Looks up the tag in the table of supported tags.
+  {Looks up the tag in the map of supported tags.
     @param TagName [in] Name of tag for which information is required.
     @param TagCode [out] Unique code representing tag.
     @param IsCompound [out] True if tag is compound, False if simple.
     @return True if tag was found, False if not.
   }
 var
-  TagIdx: Integer;  // index of tag in table
-  Data: LongWord;   // stores tag code and flag noting if tag is compound
+  Data: TTagInfo;   // information about tag
 begin
-  // Lookup tag in table and record if found
-  TagIdx := fTagList.IndexOf(TagName);
-  Result := TagIdx >= 0;
+  Result := fTags.ContainsKey(TagName);
   if Result then
   begin
-    // Found tag: extract Code and IsCompound from string list's Objects[]
-    Data := LongWord(fTagList.Objects[TagIdx]);
-    TagCode := LongRec(Data).Lo;
-    IsCompound := WordBool(LongRec(Data).Hi);
+    // Found tag: extract Code and IsCompound from map
+    Data := fTags[TagName];
+    TagCode := Data.Code;
+    IsCompound := Data.IsCompound;
   end;
 end;
 
@@ -940,8 +939,8 @@ begin
     ClassName + '.ProcessTag: Tag must begin with "<"');
   Assert(WorkingTag[Len] = '>',
     ClassName + '.ProcessTag: Tag must end with ">"');
-  // Get kind of tag, stripping out all tag delimiting info leavig just tag name
-  // and contents/parameters
+  // Get kind of tag, stripping out all tag delimiting info leaving just tag
+  // name and contents/parameters
   Kind := GetKind(WorkingTag);
   // Process tag content, depending on kind of tag
   try
@@ -952,14 +951,14 @@ begin
     ttsSimpleTag:
     begin
       // Simple tag
-      // get tag's name: must always call this method before others than extract
+      // get tag's name: must always call this method before others then extract
       // information from a tag since this method sets the character position
       // ChPos ready to extract information following tag name
       Text := GetTagName(WorkingTag, ChPos);
-      // get information about the tag from table of supported tags
+      // get information about the tag from map
       if not LookupTagInfo(Text, Code, IsCompound) then
       begin
-        // tag is not in lookup table
+        // tag is not in map
         Error(sTagNotRecognised, [Text]);
         Exit;
       end;
@@ -978,10 +977,10 @@ begin
       // Compound start tag
       // get tag's name
       Text := GetTagName(WorkingTag, ChPos);
-      // get information about tag from lookup table
+      // get information about tag from map
       if not LookupTagInfo(Text, Code, IsCompound) then
       begin
-        // tag is not in lookup table
+        // tag is not in map
         Error(sTagNotRecognised, [Text]);
         Exit;
       end;
@@ -1000,10 +999,10 @@ begin
       // Compound end tag
       // get tag's name
       Text := GetTagName(WorkingTag, ChPos);
-      // get information about tag from lookup table
+      // get information about tag from map
       if not LookupTagInfo(Text, Code, IsCompound) then
       begin
-        // tag is not in lookup table
+        // tag is not in map
         Error(sTagNotRecognised, [Text]);
         Exit;
       end;
@@ -1024,7 +1023,7 @@ begin
     ttsComment, ttsScript:
     begin
       // Comment or Script tag
-      Code := $FFFF;      // not a tag in lookup table
+      Code := $FFFF;      // not a tag in map
       Text := WorkingTag; // text to return is all that is left of tag
       Result := True;
     end;
@@ -1039,13 +1038,26 @@ begin
   end;
 end;
 
+{ TTaggedTextTagHandler.TTagInfo }
+
+constructor TTaggedTextTagHandler.TTagInfo.Create(const ACode: Word;
+  const AIsCompound: Boolean);
+  {Create record with specified field values.
+    @param ACode [in] Unique tag code.
+    @param AIsCompound [in] Whether tag is compound.
+  }
+begin
+  Code := ACode;
+  IsCompound := AIsCompound;
+end;
+
 { TTaggedTextLexer }
 
 constructor TTaggedTextLexer.Create(
   const TagInfoCallback: TTaggedTextTagInfoProc;
   const EntityInfoCallback: TTaggedTextEntityInfoProc);
-  {Class contructor. Sets up object and gets information about supported tags
-  and character entities.
+  {Contructor. Sets up object and gets information about supported tags and
+  character entities.
     @param TagInfoCallback [in] Method to call to get information about
       supported tags.
     @param EntityInfoCallback [in] Method to call to get information about
@@ -1073,7 +1085,7 @@ begin
 end;
 
 destructor TTaggedTextLexer.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
   fParams.Free;
@@ -1102,9 +1114,9 @@ procedure TTaggedTextLexer.GetEntityInfo(
     @param Callback [in] Callback function to call to get entity information.
   }
 var
-  Idx: Integer;           // inrementing index number for each callback call
-  Name: string;           // name of character entity
-  Ch: Char;               // character associated with entity
+  Idx: Integer;   // incrementing index number for each callback call
+  Name: string;   // name of character entity
+  Ch: Char;       // character associated with entity
 begin
   Idx := 0;
   while Callback(Idx, Name, Ch) do
@@ -1221,7 +1233,7 @@ begin
         raise ETaggedTextLexer.CreateFmt(sNoMatchingEndTag, [StartPos]);
       Assert(fTaggedText[fNextCharPos] = '>',
         ClassName + 'NextItem: ">" expected');
-      // skip over tag close
+      // skip over tag closer
       Inc(fNextCharPos);
       // record tag
       Tag := MidStr(fTaggedText, StartPos, fNextCharPos - StartPos);
@@ -1270,7 +1282,7 @@ begin
         ClassName + '.NextItem: Beyond end of tagged text');
       Assert(fTaggedText[fNextCharPos] <> '<',
         ClassName + '.NextItem: "<" character expected');
-      // get extent of text before ext tag or end of tagged text
+      // get extent of text before next tag or end of tagged text
       StartPos := fNextCharPos;
       Inc(fNextCharPos);
       while (fNextCharPos <= Length(fTaggedText))
