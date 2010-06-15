@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -41,7 +41,7 @@ interface
 
 uses
   // Delphi
-  Classes,
+  Generics.Collections,
   // Project
   UIStringList;
 
@@ -54,13 +54,12 @@ type
   }
   TCSSSelector = class(TObject)
   strict private
-    fProperties: IStringList;
-      {Value of Properties property}
-    fSelector: string;
-      {Name of selector}
+    var
+      fProperties: IStringList; // List of properties for this selector
+      fSelector: string;        // Name of selector
   public
     constructor Create(const Selector: string);
-      {Class constructor. Creates a CSS selector object with given name.
+      {Constructor. Creates a CSS selector object with given name.
         @param Selector [in] Name of selector.
       }
     function AsString: string;
@@ -85,8 +84,11 @@ type
   }
   TCSSBuilder = class(TObject)
   strict private
-    fSelectors: TStringList;
-      {Stores map of selector names to selector objects}
+    type
+      // Class that maps CSS selector names to selector objects
+      TCSSSelectorMap = TObjectDictionary<string,TCSSSelector>;
+    var
+      fSelectors: TCSSSelectorMap;  // Maps selector names to selector objects
     function GetSelector(const Selector: string): TCSSSelector;
       {Read access method for Selectors property. Returns selector object with
       given name.
@@ -95,10 +97,10 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up object.
+      {Constructor. Sets up object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     function AddSelector(const Selector: string): TCSSSelector;
       {Adds a new empty selector with given name to style sheet.
@@ -123,7 +125,7 @@ implementation
 
 uses
   // Project
-  UConsts;
+  UComparers, UConsts;
 
 
 { TCSSSelector }
@@ -154,12 +156,11 @@ begin
 end;
 
 constructor TCSSSelector.Create(const Selector: string);
-  {Class constructor. Creates a CSS selector object with given name.
+  {Constructor. Creates a CSS selector object with given name.
     @param Selector [in] Name of selector.
   }
 begin
-  Assert(Selector <> '',                                   // ** do not localise
-    ClassName + '.Create: selector is empty string');
+  Assert(Selector <> '', ClassName + '.Create: selector is empty string');
   inherited Create;
   fSelector := Selector;
   fProperties := TIStringList.Create;
@@ -179,12 +180,12 @@ end;
 
 function TCSSBuilder.AddSelector(const Selector: string): TCSSSelector;
   {Adds a new empty selector with given name to style sheet.
-    @param Selector Name of new selector.
+    @param Selector [in] Name of new selector.
     @return New empty selector object.
   }
 begin
   Result := TCSSSelector.Create(Selector);
-  fSelectors.AddObject(Selector, Result);
+  fSelectors.Add(Selector, Result);
 end;
 
 function TCSSBuilder.AsString: string;
@@ -192,59 +193,50 @@ function TCSSBuilder.AsString: string;
     @return Required CSS code.
   }
 var
-  Idx: Integer;       // loops thru all selectors in style sheet
-  Sel: TCSSSelector;  // reference to a selector
+  Selector: TCSSSelector; // reference to each selector in map
 begin
   Result := '';
-  for Idx := 0 to Pred(fSelectors.Count) do
-  begin
-    // Add selector to code if selector not empty
-    Sel := fSelectors.Objects[Idx] as TCSSSelector;
-    if not Sel.IsEmpty then
-      Result := Result + Sel.AsString;
-  end;
+  for Selector in fSelectors.Values do
+    if not Selector.IsEmpty then
+      Result := Result + Selector.AsString;
 end;
 
 procedure TCSSBuilder.Clear;
   {Clears all selectors from style sheet and frees selector objects.
   }
-var
-  Idx: Integer; // loops thru selectors in style sheet
 begin
-  for Idx := Pred(fSelectors.Count) downto 0 do
-    fSelectors.Objects[Idx].Free;
-  fSelectors.Clear;
+  fSelectors.Clear; // frees selector objects in .Values[]
 end;
 
 constructor TCSSBuilder.Create;
-  {Class constructor. Sets up object.
+  {Constructor. Sets up object.
   }
 begin
   inherited;
-  fSelectors := TStringList.Create;
+  // fSelectors treats selector names are not case sensitive
+  // fSelectors owns value objects and frees them when they are removed from map
+  fSelectors := TCSSSelectorMap.Create(
+    [doOwnsValues], TSameTextEqualityComparer.Create
+  );
 end;
 
 destructor TCSSBuilder.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  Clear;              // frees selector objects in fSelectors
-  fSelectors.Free;
+  fSelectors.Free;    // frees selector objects in fSelectors.Values[]
   inherited;
 end;
 
 function TCSSBuilder.GetSelector(const Selector: string): TCSSSelector;
   {Read access method for Selectors property. Returns selector object with given
   name.
-    @param Selector Name of required selector.
+    @param Selector [in] Name of required selector.
     @return Selector object with given name or nil if not found.
   }
-var
-  Idx: Integer; // index of selector in list
 begin
-  Idx := fSelectors.IndexOf(Selector);
-  if Idx >= 0 then
-    Result := fSelectors.Objects[Idx] as TCSSSelector
+  if fSelectors.ContainsKey(Selector) then
+    Result := fSelectors[Selector]
   else
     Result := nil;
 end;
