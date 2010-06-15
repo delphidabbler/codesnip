@@ -41,9 +41,9 @@ interface
 
 uses
   // Delphi
-  Graphics,
+  Generics.Collections, Graphics,
   // Project
-  UConsts, ULists, UUnicodeHelper;
+  UUnicodeHelper;
 
 
 type
@@ -54,32 +54,20 @@ type
   }
   TRTFColourTable = class(TObject)
   strict private
-    var fColours: TIntegerList; // List of colours in table
-    function GetColour(const Idx: Integer): TColor;
-      {Gets colour from table.
-        @param Idx [in] Index of colour in table.
-        @return Colour at specified index.
-      }
-    function ColourCount: Integer;
-      {Gets number of colours in table.
-        @return Number of colours.
-      }
-    function FindColour(const Colour: TColor): Integer;
-      {Finds a colour in table.
-        @param Colour [in] Colour to be found.
-        @return Index of colour in table or -1 if not present.
-      }
+    type
+      // Implements a list of colours
+      TColourList = TList<TColor>;
+    var fColours: TColourList; // List of colours in table
   public
     constructor Create;
-      {Class constructor. Sets up table.
+      {Constructor. Sets up table.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
-    function Add(const Colour: TColor): Integer;
+    procedure Add(const Colour: TColor);
       {Adds colour to table if it is not already present.
         @param Colour [in] Colour to add to table.
-        @return Index of colour in table (either existing or new index).
       }
     function ColourRef(const Colour: TColor): Integer;
       {Gets index of a colour in table.
@@ -111,25 +99,27 @@ type
   TRTFFont:
     Representation of a font in font table.
   }
-  TRTFFont = class(TObject)
+  TRTFFont = record
   strict private
     var
       fName: string;              // Value of Name property
       fCharset: TFontCharset;     // Value of Charset property
       fGeneric: TRTFGenericFont;  // Value of Generic property
   public
-    constructor Create(const Name: string; const Generic: TRTFGenericFont;
-      const Charset: TFontCharset);
-      {Class constructor. Sets up object.
+    constructor Create(const Name: string;
+      const Generic: TRTFGenericFont = rgfDontCare;
+      const Charset: TFontCharset = 0);
+      {Constructor. Initialises record's properties.
         @param Name [in] Name of font.
         @param Generic [in] Generic font family to be used if font not
           available.
         @param Charset [in] Font's character set.
       }
-    function IsEqual(const FontName: string): Boolean;
-      {Checks if font's name is equal to another.
-        @param FontName [in] Name of font to be compared.
-        @return True if font name's equal.
+    function Compare(const RTFFont: TRTFFont): Integer;
+      {Compares this font to another.
+        @param RTFFont [in] Other font to be compared.
+        @return -ve if this font is less than RTFFont, 0 if same and +ve if
+          RTFFont is less than this one.
       }
     property Name: string read fName write fName;
       {Name of font}
@@ -141,20 +131,15 @@ type
 
   {
   TRTFFontTable:
-    Class that builds, interogates and renders an RTF font table.
+    Class that builds, interogates and renders an RTF font table. Only one font
+    of each font name is permitted, e.g. "Arial" may only be present once.
   }
   TRTFFontTable = class(TObject)
   strict private
-    var fFonts: TObjectListEx;  // List of fonts in table
-    function GetFont(const Idx: Integer): TRTFFont;
-      {Gets reference to font in table.
-        @param Idx [in] Index of font in table.
-        @return Required font.
-      }
-    function FontCount: Integer;
-      {Number of fonts in table.
-        @return Number of fonts.
-      }
+    type
+      // Implements a list of RTF fonts
+      TRTFFontList = TList<TRTFFont>;
+    var fFonts: TRTFFontList; // List of fonts in table
     function FindFont(const FontName: string): Integer;
       {Finds index of a named font in font table.
         @param FontName [in] Name of font to be found.
@@ -162,10 +147,10 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up object.
+      {Constructor. Sets up object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     function Add(const FontName: string; const Generic: TRTFGenericFont;
       const Charset: TFontCharset): Integer;
@@ -235,10 +220,10 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up object.
+      {Constructor. Sets up object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     procedure EndPara;
       {Ends a paragraph.
@@ -306,9 +291,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes {for inlining}, Windows,
+  SysUtils, Generics.Defaults, Windows,
   // Project
-  UExceptions, ULocales, URTFUtils, UUtils;
+  UConsts, UExceptions, ULocales, URTFUtils, UUtils;
 
 
 { TRTFBuilder }
@@ -371,7 +356,7 @@ begin
 end;
 
 constructor TRTFBuilder.Create;
-  {Class constructor. Sets up object.
+  {Constructor. Sets up object.
   }
 begin
   inherited;
@@ -383,12 +368,12 @@ begin
 end;
 
 destructor TRTFBuilder.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fDocProperties);
-  FreeAndNil(fFontTable);
-  FreeAndNil(fColourTable);
+  fDocProperties.Free;
+  fFontTable.Free;
+  fColourTable.Free;
   inherited;
 end;
 
@@ -489,27 +474,27 @@ end;
 
 { TRTFFont }
 
+function TRTFFont.Compare(const RTFFont: TRTFFont): Integer;
+  {Compares this font to another.
+    @param RTFFont [in] Other font to be compared.
+    @return -ve if this font is less than RTFFont, 0 if same and +ve if
+      RTFFont is less than this one.
+  }
+begin
+  Result := AnsiCompareText(Self.Name, RTFFont.Name);
+end;
+
 constructor TRTFFont.Create(const Name: string;
   const Generic: TRTFGenericFont; const Charset: TFontCharset);
-  {Class constructor. Sets up object.
+  {Constructor. Initialises record's properties.
     @param Name [in] Name of font.
     @param Generic [in] Generic font family to be used if font not available.
     @param Charset [in] Font's character set.
   }
 begin
-  inherited Create;
   fName := Name;
   fGeneric := Generic;
   fCharset := Charset;
-end;
-
-function TRTFFont.IsEqual(const FontName: string): Boolean;
-  {Checks if font's name is equal to another.
-    @param FontName [in] Name of font to be compared.
-    @return True if font name's equal.
-  }
-begin
-  Result := AnsiSameText(Self.fName, FontName);
 end;
 
 { TRTFFontTable }
@@ -543,9 +528,9 @@ var
   Font: TRTFFont;   // reference to a font in table
 begin
   Result := '{' + RTFControl(rcFontTable);
-  for Idx := 0 to Pred(FontCount) do
+  for Idx := 0 to Pred(fFonts.Count) do
   begin
-    Font := GetFont(Idx);
+    Font := fFonts[Idx];
     Result := Result + '{'
       + RTFControl(rcFontNum, Idx)
       + RTFControl(rcFontPitch, 1)
@@ -559,18 +544,25 @@ begin
 end;
 
 constructor TRTFFontTable.Create;
-  {Class constructor. Sets up object.
+  {Constructor. Sets up object.
   }
 begin
   inherited;
-  fFonts := TObjectListEx.Create(True);
+  fFonts := TRTFFontList.Create(
+    TDelegatedComparer<TRTFFont>.Create(
+      function(const Left, Right: TRTFFont): Integer
+      begin
+        Result := Left.Compare(Right);
+      end
+    )
+  );
 end;
 
 destructor TRTFFontTable.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fFonts);   // frees owned objects
+  fFonts.Free;
   inherited;
 end;
 
@@ -579,26 +571,8 @@ function TRTFFontTable.FindFont(const FontName: string): Integer;
     @param FontName [in] Name of font to be found.
     @return Index of font in table or -1 if not present.
   }
-var
-  Idx: Integer;   // loops through fonts in table
 begin
-  Result := -1;
-  for Idx := 0 to Pred(FontCount) do
-  begin
-    if GetFont(Idx).IsEqual(FontName) then
-    begin
-      Result := Idx;
-      Break;
-    end;
-  end;
-end;
-
-function TRTFFontTable.FontCount: Integer;
-  {Number of fonts in table.
-    @return Number of fonts.
-  }
-begin
-  Result := fFonts.Count;
+  Result := fFonts.IndexOf(TRTFFont.Create(FontName));
 end;
 
 function TRTFFontTable.FontRef(const FontName: string): Integer;
@@ -613,26 +587,15 @@ begin
     raise EBug.Create(ClassName + '.FontRef: Font not found');
 end;
 
-function TRTFFontTable.GetFont(const Idx: Integer): TRTFFont;
-  {Gets reference to font in table.
-    @param Idx [in] Index of font in table.
-    @return Required font.
-  }
-begin
-  Result := fFonts[Idx] as TRTFFont;
-end;
-
 { TRTFColourTable }
 
-function TRTFColourTable.Add(const Colour: TColor): Integer;
+procedure TRTFColourTable.Add(const Colour: TColor);
   {Adds colour to table if it is not already present.
     @param Colour [in] Colour to add to table.
-    @return Index of colour in table (either existing or new index).
   }
 begin
-  Result := FindColour(Colour);
-  if Result = -1 then
-    Result := fColours.Add(Colour);
+  if not fColours.Contains(Colour) then
+    fColours.Add(Colour);
 end;
 
 function TRTFColourTable.AsString: ASCIIString;
@@ -640,7 +603,7 @@ function TRTFColourTable.AsString: ASCIIString;
     @return Required RTF code.
   }
 var
-  ColourIdx: Integer; // loops through colours in table
+  Colour: TColor;     // each colour in table
   RGB: Cardinal;      // RGB representation of a colour
 begin
   // Begin table
@@ -648,11 +611,11 @@ begin
     + RTFControl(rcColorTable)
     + ' ';
   // Add entry for each colour
-  for ColourIdx := 0 to Pred(ColourCount) do
+  for Colour in fColours do
   begin
-    if GetColour(ColourIdx) <> clNone then
+    if Colour <> clNone then
     begin
-      RGB := ColorToRGB(GetColour(ColourIdx));
+      RGB := ColorToRGB(Colour);
       Result := Result
         + RTFControl(rcRed, GetRValue(RGB))
         + RTFControl(rcGreen, GetGValue(RGB))
@@ -666,14 +629,6 @@ begin
   Result := Result + '}';
 end;
 
-function TRTFColourTable.ColourCount: Integer;
-  {Gets number of colours in table.
-    @return Number of colours.
-  }
-begin
-  Result := fColours.Count;
-end;
-
 function TRTFColourTable.ColourRef(const Colour: TColor): Integer;
   {Gets index of a colour in table.
     @param Colour [in] Colour whose index is required.
@@ -681,54 +636,26 @@ function TRTFColourTable.ColourRef(const Colour: TColor): Integer;
     @except EBug raised if colour not in table.
   }
 begin
-  Result := FindColour(Colour);
+  Result := fColours.IndexOf(Colour);
   if Result = -1 then
     raise EBug.Create(ClassName + '.ColourRef: Unknown colour');
 end;
 
 constructor TRTFColourTable.Create;
-  {Class constructor. Sets up table.
+  {Constructor. Sets up table.
   }
 begin
   inherited;
-  fColours := TIntegerList.Create;
+  fColours := TColourList.Create; // use default integer comparer
   Add(clNone);
 end;
 
 destructor TRTFColourTable.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fColours);
+  fColours.Free;
   inherited;
-end;
-
-function TRTFColourTable.FindColour(const Colour: TColor): Integer;
-  {Finds a colour in table.
-    @param Colour [in] Colour to be found.
-    @return Index of colour in table or -1 if not present.
-  }
-var
-  Idx: Integer; // loops through all colours in table
-begin
-  Result := -1;
-  for Idx := 0 to Pred(ColourCount) do
-  begin
-    if GetColour(Idx) = Colour then
-    begin
-      Result := Idx;
-      Break;
-    end;
-  end;
-end;
-
-function TRTFColourTable.GetColour(const Idx: Integer): TColor;
-  {Gets colour from table.
-    @param Idx [in] Index of colour in table.
-    @return Colour at specified index.
-  }
-begin
-  Result := fColours[Idx];
 end;
 
 { TRTFDocProperties }
