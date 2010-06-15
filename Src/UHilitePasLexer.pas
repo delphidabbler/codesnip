@@ -153,11 +153,11 @@ type
       }
   public
     constructor Create(const Stm: TStream);
-      {Class constructor. Sets up object to analyse code on a stream.
+      {Constructor. Sets up object to analyse code on a stream.
         @param Stm [in] Stream containing Pascal source.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     function NextToken: THilitePasToken;
       {Gets and analyses next pascal token from input and stores details in
@@ -176,9 +176,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining},
+  SysUtils, Generics.Collections,
   // Project
-  UConsts, UExceptions, UUnicodeHelper;
+  UComparers, UConsts, UUnicodeHelper;
 
 
 const
@@ -320,12 +320,16 @@ const
   );
 
 
+type
+  // Class that maps symbols to tokens
+  TSymbolMap = TDictionary<string,THilitePasToken>;
+
 var
   // Private objects used to store and search lists of symbols and keywords
   pvtKeywords: TStringList = nil;   // keywords list
   pvtDirectives: TStringList = nil; // directives list
   pvtDoubleSyms: TStringList = nil; // list of double symbols
-  pvtSymMap: TStringList = nil;     // map of symbols to tokens
+  pvtSymMap: TSymbolMap;            // map of symbols to tokens
 
 
 { Helper routines }
@@ -400,7 +404,7 @@ end;
 
 function IndexInTable(const Str: string; const Table: array of string): Integer;
   {Gets the index of a string in a table.
-    @param Str [in] String to search for.
+    @param Str [in] String to search for. Case is ignored.
     @param Table [in] Table of strings to search.
     @return Index of string in table or -1 if string not in table.
   }
@@ -433,19 +437,18 @@ begin
   Strings.CaseSensitive := False;
 end;
 
-procedure InitSymbolMap(out Strings: TStringList);
-  {Initialises string list object used to map valid symbols to tokens.
-    @param Strings [out] String list we create and initialises.
+procedure InitSymbolMap(out Map: TSymbolMap);
+  {Initialises object used to map valid symbols to tokens.
+    @param Map [out] Map object we create and initialise.
   }
 var
   I: Integer; // loops thru entries in symbol map constant table.
 begin
-  Strings := TStringList.Create;
-  // Use Objects[] property to store tokens with related string
+  // Map contains only symbols, therefore it doesn't matter if searching is
+  // case sensitive. We use case insensitive since it is probably quicker
+  Map := TSymbolMap.Create(TSameStringEqualityComparer.Create);
   for I := Low(cSymToTokenMap) to High(cSymToTokenMap) do
-    Strings.AddObject(
-      cSymToTokenMap[I].Symbol, TObject(cSymToTokenMap[I].Token)
-    );
+    Map.Add(cSymToTokenMap[I].Symbol, cSymToTokenMap[I].Token);
 end;
 
 function IsDoubleSym(const Symbol: string): Boolean;
@@ -486,15 +489,11 @@ function SymbolToToken(const Symbol: string): THilitePasToken;
     @param Symbol [in] Symbol to check
     @return Token associated with symbol.
   }
-var
-  Idx: Integer;   // index of symbol in map table
 begin
-  // Assumes Str is a symbol (single or double)
   if not Assigned(pvtSymMap) then
     InitSymbolMap(pvtSymMap);
-  Idx := pvtSymMap.IndexOf(Symbol);
-  if Idx >= 0 then
-    Result := THilitePasToken(pvtSymMap.Objects[Idx])
+  if pvtSymMap.ContainsKey(Symbol) then
+    Result := pvtSymMap[Symbol]
   else
     Result := tkError;
 end;
@@ -527,7 +526,7 @@ end;
 { THilitePasLexer }
 
 constructor THilitePasLexer.Create(const Stm: TStream);
-  {Class constructor. Sets up object to analyse code on a stream.
+  {Constructor. Sets up object to analyse code on a stream.
     @param Stm [in] Stream containing Pascal source.
   }
 begin
@@ -536,7 +535,7 @@ begin
 end;
 
 destructor THilitePasLexer.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
   fReader.Free;
