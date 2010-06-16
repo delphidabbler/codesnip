@@ -41,8 +41,10 @@ interface
 
 
 uses
+  // Delphi
+  Generics.Collections,
   // Project
-  IntfCommon, ULists;
+  IntfCommon;
 
 
 type
@@ -61,7 +63,7 @@ type
         @paran AUserDefined [in] Indicates if snippet is user defined.
       }
     constructor Clone(const Src: TSnippetID);
-      {Clone constructor. Creates a snippet that is a copy of another record.
+      {Clone constructor. Sets this snippet ID to be a copy of another record.
         @param Src [in] Record to copy.
       }
     function Compare(const SID: TSnippetID): Integer;
@@ -147,24 +149,8 @@ type
   TSnippetIDList = class(TInterfacedObject, ISnippetIDList, IAssignable)
   strict private
     var
-      fList: TObjectListEx; // List of objects that wrap the routine ID records
+      fList: TList<TSnippetID>; // Internal list of snippet ID records
     type
-      {
-      TSnippetIDWrapper:
-        Provides a wrapper around TSnipperID records.
-      }
-      TSnippetIDWrapper = class(TObject)
-      strict private
-        var
-          fSnippetID: TSnippetID; // Wrapped record
-      public
-        constructor Create(const SnippetID: TSnippetID);
-          {Class constructor. Sets up the object to wrap a snippet ID record.
-            @param SnippetID [in] Record to be wrapped.
-          }
-        property SnippetID: TSnippetID read fSnippetID write fSnippetID;
-          {The wrapped snippet ID}
-      end;
       {
       TEnumerator:
         Implements an enumerater for the snippet ID list.
@@ -176,7 +162,7 @@ type
           fList: ISnippetIDList;  // Reference to object being enumerated
       public
         constructor Create(const List: ISnippetIDList);
-          {Class constructor. Sets up and initialises enumeration.
+          {Constructor. Sets up and initialises enumeration.
             @param List [in] Reference to object to be enumerated.
           }
         function GetCurrent: TSnippetID;
@@ -225,10 +211,10 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up empty list object.
+      {Constructor. Sets up empty list object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
   end;
 
@@ -237,13 +223,14 @@ implementation
 
 
 uses
-  SysUtils, Classes {for inlining}, Windows {for inlining};
+  // Delphi
+  SysUtils, Generics.Defaults;
 
 
 { TSnippetID }
 
 constructor TSnippetID.Clone(const Src: TSnippetID);
-  {Clone constructor. Creates a snippet that is a copy of another record.
+  {Clone constructor. Sets this snippet ID to be a copy of another record.
     @param Src [in] Record to copy.
   }
 begin
@@ -300,7 +287,7 @@ function TSnippetIDList.Add(const SnippetID: TSnippetID): Integer;
     @return Index of added ID in list.
   }
 begin
-  Result := fList.Add(TSnippetIDWrapper.Create(SnippetID));
+  Result := fList.Add(SnippetID);
 end;
 
 procedure TSnippetIDList.Assign(const Src: IInterface);
@@ -334,18 +321,25 @@ begin
 end;
 
 constructor TSnippetIDList.Create;
-  {Class constructor. Sets up empty list object.
+  {Constructor. Sets up empty list object.
   }
 begin
   inherited;
-  fList := TObjectListEx.Create(True);
+  fList := TList<TSnippetID>.Create(
+    TDelegatedComparer<TSnippetID>.Create(
+      function(const Left, Right: TSnippetID): Integer
+      begin
+        Result := Left.Compare(Right);
+      end
+    )
+  );
 end;
 
 destructor TSnippetIDList.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fList);  // destroys contained objects
+  fList.Free;
   inherited;
 end;
 
@@ -363,7 +357,7 @@ function TSnippetIDList.GetItem(Idx: Integer): TSnippetID;
     @return Required item.
   }
 begin
-  Result := (fList[Idx] as TSnippetIDWrapper).SnippetID;
+  Result := fList[Idx];
 end;
 
 procedure TSnippetIDList.SetItem(Idx: Integer; const Value: TSnippetID);
@@ -372,25 +366,13 @@ procedure TSnippetIDList.SetItem(Idx: Integer; const Value: TSnippetID);
     @param Value [in] Snippet ID to be stored.
   }
 begin
-  (fList[Idx] as TSnippetIDWrapper).SnippetID := Value;
-end;
-
-{ TSnippetIDList.TSnippetIDWrapper }
-
-constructor TSnippetIDList.TSnippetIDWrapper.Create(
-  const SnippetID: TSnippetID);
-  {Class constructor. Sets up the object to wrap a snippet ID record.
-    @param SnippetID [in] Record to be wrapped.
-  }
-begin
-  inherited Create;
-  fSnippetID := SnippetID;
+  fList[Idx] := Value;
 end;
 
 { TSnippetIDList.TEnumerator }
 
 constructor TSnippetIDList.TEnumerator.Create(const List: ISnippetIDList);
-  {Class constructor. Sets up and initialises enumeration.
+  {Constructor. Sets up and initialises enumeration.
     @param List [in] Reference to object to be enumerated.
   }
 begin
@@ -418,3 +400,4 @@ begin
 end;
 
 end.
+
