@@ -42,9 +42,9 @@ interface
 
 uses
   // Delphi
-  Classes,
+  Classes, Generics.Collections,
   // Project
-  UDataStreamIO, ULists;
+  UDataStreamIO;
 
 
 type
@@ -62,7 +62,7 @@ type
       fHTML: string;    // Value of HTML property
   public
     constructor Create(const Reader: TDataStreamReader);
-      {Class constructor. Creates news item object from a data stream.
+      {Constructor. Creates news item object from a data stream.
         @param Reader [in] Object used to read/parse data stream.
       }
     property Id: SmallInt read fId;
@@ -81,29 +81,10 @@ type
   TNews = class(TObject)
   strict private
     type
-      TEnumerator = class(TObject)
-      strict private
-        var
-          fNews: TNews;     // Reference to object being enumerated
-          fIndex: Integer;  // Index of current object in enumeration
-      public
-        constructor Create(const News: TNews);
-          {Class constructor. Initialises enumeration.
-            @param News [in] Object to be enurmerated.
-          }
-        function GetCurrent: TNewsItem;
-          {Gets current news item.
-            @return Required name.
-          }
-        function MoveNext: Boolean;
-          {Moves to next item in enumeration.
-            @return True if there is a next item, False if beyond last item.
-          }
-        property Current: TNewsItem read GetCurrent;
-          {Current news item}
-      end;
+      // Implements list of news items
+      TNewsList = TObjectList<TNewsItem>;
     var
-      fNewsItems: TObjectListEx;  // Stores list of news items
+      fNewsItems: TNewsList;  // Stores list of news items
     procedure Parse(const NewsData: TStream);
       {Creates list of news items from a data stream.
         @param NewsData [in] Data stream containing news items.
@@ -119,13 +100,13 @@ type
       }
   public
     constructor Create(const NewsData: TStream);
-      {Class constructor. Creates list of news items described by a data stream.
+      {Constructor. Creates list of news items described by a data stream.
         @param NewsData [in] Stream containing news items.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
-    function GetEnumerator: TEnumerator;
+    function GetEnumerator: TEnumerator<TNewsItem>;
       {Creates an enumerator for this object.
         @return Reference to new enumerator. Caller is repsonsible for freeing
           this object.
@@ -141,8 +122,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   UUtils;
 
@@ -151,7 +130,7 @@ uses
   News data stream format
   -----------------------
 
-  Stream compriises text characters. Numbers are encoded in hex format.
+  Stream comprises text characters. Numbers are encoded in hex format.
 
   File format is:
 
@@ -174,20 +153,20 @@ uses
 { TNews }
 
 constructor TNews.Create(const NewsData: TStream);
-  {Class constructor. Creates list of news items described by a data stream.
+  {Constructor. Creates list of news items described by a data stream.
     @param NewsData [in] Stream containing news items.
   }
 begin
   inherited Create;
-  fNewsItems := TObjectListEx.Create(True);
+  fNewsItems := TNewsList.Create(True);
   Parse(NewsData);
 end;
 
 destructor TNews.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fNewsItems);   // frees news items in list
+  fNewsItems.Free;  // frees news items in list
   inherited;
 end;
 
@@ -199,13 +178,13 @@ begin
   Result := fNewsItems.Count;
 end;
 
-function TNews.GetEnumerator: TEnumerator;
+function TNews.GetEnumerator: TEnumerator<TNewsItem>;
   {Creates an enumerator for this object.
     @return Reference to new enumerator. Caller is repsonsible for freeing this
       object.
   }
 begin
-  Result := TEnumerator.Create(Self);
+  Result := fNewsItems.GetEnumerator;
 end;
 
 function TNews.GetItem(Idx: Integer): TNewsItem;
@@ -214,7 +193,7 @@ function TNews.GetItem(Idx: Integer): TNewsItem;
     @return Requested news item.
   }
 begin
-  Result := fNewsItems[Idx] as TNewsItem;
+  Result := fNewsItems[Idx];
 end;
 
 procedure TNews.Parse(const NewsData: TStream);
@@ -234,44 +213,14 @@ begin
     for Idx := 1 to NumItems do
       fNewsItems.Add(TNewsItem.Create(Reader))
   finally
-    FreeAndNil(Reader);
+    Reader.Free;
   end;
-end;
-
-{ TNews.TEnumerator }
-
-constructor TNews.TEnumerator.Create(const News: TNews);
-  {Class constructor. Initialises enumeration.
-    @param News [in] Object to be enurmerated.
-  }
-begin
-  inherited Create;
-  fIndex := -1;
-  fNews := News;
-end;
-
-function TNews.TEnumerator.GetCurrent: TNewsItem;
-  {Gets current news item.
-    @return Required name.
-  }
-begin
-  Result := fNews[fIndex];
-end;
-
-function TNews.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, False if beyond last item.
-  }
-begin
-  Result := fIndex < Pred(fNews.Count);
-  if Result then
-    Inc(fIndex);
 end;
 
 { TNewsItem }
 
 constructor TNewsItem.Create(const Reader: TDataStreamReader);
-  {Class constructor. Creates news item object from a data stream.
+  {Constructor. Creates news item object from a data stream.
     @param Reader [in] Object used to read/parse data stream.
   }
 begin
