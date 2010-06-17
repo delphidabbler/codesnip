@@ -42,7 +42,7 @@ interface
 
 uses
   // Delphi
-  Classes,
+  Classes, Generics.Collections,
   // Project
   IntfCompilers, UActiveText, UIStringList, ULists, UMultiCastEvents,
   USnippetIDs;
@@ -318,7 +318,7 @@ type
         @param Props [in] Values of various snippet properties.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     function IsEqual(const Routine: TRoutine): Boolean;
       {Checks if this snippet is same as another snippet. Snippets are
@@ -385,42 +385,15 @@ type
           SID1 > SID2.
       }
   strict protected
-    var fList: TObjectListEx; // Stores list of snippets
-  public
-    type
-      {
-      TEnumerator:
-        Implements enumerator for TRoutineList.
-      }
-      TEnumerator = class(TObject)
-      private
-        fRoutineList: TRoutineList; // Reference to object being enumerated
-        fIndex: Integer;            // Index of current item in enumeration
-        function GetCurrent: TRoutine;
-          {Gets current snippet in enumeration. Error if at end of enumeration.
-            @return Current snippet.
-          }
-      public
-        constructor Create(const RL: TRoutineList);
-          {Class constructor. Sets up and initialises enumeration.
-            @param RL [in] Reference to snippet list object to be enumerated.
-          }
-        function MoveNext: Boolean;
-          {Moves to next item in enumeration.
-            @return True if there is a next item, False if enumeration
-              completed.
-          }
-        property Current: TRoutine read GetCurrent;
-          {Current item in enumeration. Error if at end of enumeration}
-      end;
+    var fList: TObjectList<TRoutine>; // Stores list of snippets
   public
     constructor Create(const OwnsObjects: Boolean = False);
-      {Class constructor. Creates a new empty list.
+      {Constructor. Creates a new empty list.
         @param OwnsObjects [in] Specifies whether list owns the snippet objects
           it contains. If True the snippets are freed when deleted from list.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     procedure Assign(const SrcList: TRoutineList);
       {Sets this list to be same as another list. List items are referenced, not
@@ -461,7 +434,7 @@ type
     procedure Clear;
       {Clears the list.
       }
-    function GetEnumerator: TEnumerator;
+    function GetEnumerator: TEnumerator<TRoutine>;
       {Gets an intialised snippet list enumerator.
         @return Required enumerator.
       }
@@ -498,7 +471,7 @@ type
         @param Data [in] Contains required property values.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     function IsEqual(const Cat: TCategory): Boolean;
       {Checks if this category is same as another category. Categories are
@@ -532,42 +505,15 @@ type
         @return Category at specified index in list.
       }
   strict protected
-    var fList: TObjectListEx; // Stores list of categories
-  public
-    type
-      {
-      TEnumerator:
-        Implements enumerator for TCategoryList.
-      }
-      TEnumerator = class(TObject)
-      private
-        fCategoryList: TCategoryList;   // Category list being enumerated
-        fIndex: Integer;                // Index of current item in enumeration
-        function GetCurrent: TCategory;
-          {Gets current category in enumeration. Error if at end of enumeration.
-            @return Current category.
-          }
-      public
-        constructor Create(const CL: TCategoryList);
-          {Class constructor. Sets up and initialises enumeration.
-            @param CL [in] Reference to object to be enumerated.
-          }
-        function MoveNext: Boolean;
-          {Moves to next item in enumeration.
-            @return True if there is a next item, False if enumeration
-              completed.
-          }
-        property Current: TCategory read GetCurrent;
-          {Current item in enumeration. Error if at end of enumeration}
-      end;
+    var fList: TObjectList<TCategory>;  // Stores list of categories
   public
     constructor Create(const OwnsObjects: Boolean = False);
-      {Class constructor. Creates a new empty list.
+      {Constructor. Creates a new empty list.
         @param OwnsObjects [in] Specifies whether list owns the category objects
           it contains. If True the categories are freed when deleted from list.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     procedure Clear;
       {Clears the list.
@@ -588,7 +534,7 @@ type
         @param Category [in] Category to be checked.
         @return True if category object is in list.
       }
-    function GetEnumerator: TEnumerator;
+    function GetEnumerator: TEnumerator<TCategory>;
       {Gets an intialised category list enumerator.
         @return Required enumerator.
       }
@@ -901,7 +847,7 @@ type
       public
         constructor Create(const Kind: TSnippetChangeEventKind;
           const Info: TObject = nil);
-          {Class constructor. Creates an event information object.
+          {Constructor. Creates an event information object.
             @param Kind [in] Kind of event.
             @param Info [in] Reference to further information about the event.
                May be nil if event doesn't have additional information.
@@ -1066,10 +1012,10 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up new empty object.
+      {Constructor. Sets up new empty object.
       }
     destructor Destroy; override;
-      {Class destructor. Tidies up and tears down object.
+      {Destructor. Tidies up and tears down object.
       }
   end;
 
@@ -1085,7 +1031,7 @@ type
   public
     constructor Create(const Routines: TRoutineList;
       const Categories: TCategoryList);
-      {Class constructor. Records list of all snippets and categories in both
+      {Constructor. Records list of all snippets and categories in both
       databases.
         @param Routines [in] List of all snippets in whole database.
         @param Categories [in] List of all categories in whole database.
@@ -1121,7 +1067,7 @@ type
   TSnippetIDListEx = class(TSnippetIDList)
   public
     constructor Create(const Routines: TRoutineList); overload;
-      {Class constructor overload that creates a snippets ID list from a
+      {Constructor overload that creates a snippets ID list from a
       TRoutineList object.
         @param Routines [in] List of snippets objects for which ID list is
           required.
@@ -1208,7 +1154,7 @@ begin
 end;
 
 constructor TSnippets.Create;
-  {Class constructor. Sets up new empty object.
+  {Constructor. Sets up new empty object.
   }
 begin
   inherited Create;
@@ -1317,7 +1263,7 @@ begin
 end;
 
 destructor TSnippets.Destroy;
-  {Class destructor. Tidies up and tears down object.
+  {Destructor. Tidies up and tears down object.
   }
 begin
   FreeAndNil(fChangeEvents);
@@ -1676,7 +1622,7 @@ end;
 
 constructor TSnippets.TEventInfo.Create(const Kind: TSnippetChangeEventKind;
   const Info: TObject);
-  {Class constructor. Creates an event information object.
+  {Constructor. Creates an event information object.
     @param Kind [in] Kind of event.
     @param Routine [in] Reference to any snippet affected by event. May be nil
       if event does not affect a snippet.
@@ -1737,7 +1683,7 @@ begin
 end;
 
 destructor TRoutine.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
   FreeAndNil(fXRef);
@@ -1993,17 +1939,17 @@ begin
 end;
 
 constructor TRoutineList.Create(const OwnsObjects: Boolean = False);
-  {Class constructor. Creates a new empty list.
+  {Constructor. Creates a new empty list.
     @param OwnsObjects [in] Specifies whether list owns the snippet objects it
       contains. If True the snippets are freed when deleted from list.
   }
 begin
   inherited Create;
-  fList := TObjectListEx.Create(OwnsObjects);
+  fList := TObjectList<TRoutine>.Create(OwnsObjects);
 end;
 
 destructor TRoutineList.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
   FreeAndNil(fList);  // destroys owned snippets if OwnsObjects=True
@@ -2026,7 +1972,9 @@ var
   Cmp: Integer;         // result of comparing two items
   SearchID: TSnippetID; // ID of snippet being search for
 begin
-  // Uses binary search: based on TStringList.Find from Delphi Classes unit
+  // Uses binary search: based on TStringList.Find from Delphi Classes unit.
+  // We can't use TObjectList<>'s built in binary search since that requires a
+  // TRoutine object and we don't have one to search on.
   // Initialise
   Result := False;
   Low := 0;
@@ -2076,12 +2024,12 @@ begin
     Result := nil;
 end;
 
-function TRoutineList.GetEnumerator: TEnumerator;
+function TRoutineList.GetEnumerator: TEnumerator<TRoutine>;
   {Gets an intialised snippet list enumerator.
     @return Required enumerator.
   }
 begin
-  Result := TEnumerator.Create(Self);
+  Result := fList.GetEnumerator;
 end;
 
 function TRoutineList.GetItem(Idx: Integer): TRoutine;
@@ -2090,7 +2038,7 @@ function TRoutineList.GetItem(Idx: Integer): TRoutine;
     @return Snippet at specified index in list.
   }
 begin
-  Result := fList[Idx] as TRoutine;
+  Result := fList[Idx];
 end;
 
 function TRoutineList.IsEqual(const AList: TRoutineList): Boolean;
@@ -2116,37 +2064,6 @@ begin
       end;
     end;
   end;
-end;
-
-{ TRoutineList.TEnumerator }
-
-constructor TRoutineList.TEnumerator.Create(const RL: TRoutineList);
-  {Class constructor. Sets up and initialises enumeration.
-    @param RL [in] Reference to snippet list object to be enumerated.
-  }
-begin
-  inherited Create;
-  fRoutineList := RL;
-  fIndex := -1;
-end;
-
-function TRoutineList.TEnumerator.GetCurrent: TRoutine;
-  {Gets current snippet in enumeration. Error if at end of enumeration.
-    @return Current snippet.
-  }
-begin
-  Result := fRoutineList[fIndex];
-end;
-
-function TRoutineList.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, False if enumeration
-      completed.
-  }
-begin
-  Result := fIndex < Pred(fRoutineList.Count);
-  if Result then
-    Inc(fIndex);
 end;
 
 { TRoutineListEx }
@@ -2200,7 +2117,7 @@ begin
 end;
 
 destructor TCategory.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
   FreeAndNil(fRoutines);
@@ -2257,17 +2174,17 @@ begin
 end;
 
 constructor TCategoryList.Create(const OwnsObjects: Boolean);
-  {Class constructor. Creates a new empty list.
+  {Constructor. Creates a new empty list.
     @param OwnsObjects [in] Specifies whether list owns the category objects it
       contains. If True the categories are freed when deleted from list.
   }
 begin
   inherited Create;
-  fList := TObjectListEx.Create(OwnsObjects);
+  fList := TObjectList<TCategory>.Create(OwnsObjects);
 end;
 
 destructor TCategoryList.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
   FreeAndNil(fList);
@@ -2302,12 +2219,12 @@ begin
   Result := fList.Count;
 end;
 
-function TCategoryList.GetEnumerator: TEnumerator;
+function TCategoryList.GetEnumerator: TEnumerator<TCategory>;
   {Gets an intialised category list enumerator.
     @return Required enumerator.
   }
 begin
-  Result := TEnumerator.Create(Self);
+  Result := fList.GetEnumerator;
 end;
 
 function TCategoryList.GetItem(Idx: Integer): TCategory;
@@ -2316,37 +2233,7 @@ function TCategoryList.GetItem(Idx: Integer): TCategory;
     @return Category at specified index in list.
   }
 begin
-  Result := fList[Idx] as TCategory;
-end;
-
-{ TCategoryList.TEnumerator }
-
-constructor TCategoryList.TEnumerator.Create(const CL: TCategoryList);
-  {Class constructor. Sets up and initialises enumeration.
-    @param CL [in] Reference to object to be enumerated.
-  }
-begin
-  inherited Create;
-  fCategoryList := CL;
-  fIndex := -1;
-end;
-
-function TCategoryList.TEnumerator.GetCurrent: TCategory;
-  {Gets current category in enumeration. Error if at end of enumeration.
-    @return Current category.
-  }
-begin
-  Result := fCategoryList[fIndex];
-end;
-
-function TCategoryList.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, False if enumeration completed.
-  }
-begin
-  Result := fIndex < Pred(fCategoryList.Count);
-  if Result then
-    Inc(fIndex);
+  Result := fList[Idx];
 end;
 
 { TCategoryListEx }
@@ -2395,8 +2282,7 @@ end;
 
 constructor TUserDataProvider.Create(const Routines: TRoutineList;
   const Categories: TCategoryList);
-  {Class constructor. Records list of all snippets and categories in both
-  databases.
+  {Constructor. Records list of all snippets and categories in both databases.
     @param Routines [in] List of all snippets in whole database.
     @param Categories [in] List of all categories in whole database.
   }
@@ -2583,8 +2469,8 @@ end;
 { TSnippetIDListEx }
 
 constructor TSnippetIDListEx.Create(const Routines: TRoutineList);
-  {Class constructor overload that creates a snippets ID list from a
-  TRoutineList object.
+  {Constructor overload that creates a snippets ID list from a TRoutineList
+  object.
     @param Routines [in] List of snippets objects for which ID list is
       required.
   }
