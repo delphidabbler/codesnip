@@ -41,9 +41,7 @@ interface
 
 uses
   // Delphi
-  Classes, Generics.Collections,
-  // Project
-  ULists;
+  Classes, Generics.Collections;
 
 
 type

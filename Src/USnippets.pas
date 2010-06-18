@@ -44,8 +44,7 @@ uses
   // Delphi
   Classes, Generics.Collections,
   // Project
-  IntfCompilers, UActiveText, UIStringList, ULists, UMultiCastEvents,
-  USnippetIDs;
+  IntfCompilers, UActiveText, UIStringList, UMultiCastEvents, USnippetIDs;
 
 
 type
@@ -688,7 +687,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining},
+  SysUtils,
   // Project
   IntfCommon, UExceptions, USnippetsIO;
 
