@@ -41,57 +41,10 @@ interface
 
 uses
   // Delphi
-  Contnrs;
+  Generics.Collections;
 
 
 type
-
-  {
-  TObjectListEnum:
-    Enumerator for object lists.
-  }
-  TObjectListEnum = class(TObject)
-  strict private
-    var
-      fList: TObjectList; // Reference to object list being enumerated
-      fIndex: Integer;    // Index of current object in enumeration
-  public
-    constructor Create(const List: TObjectList);
-      {Constructor. Initialises enumeration.
-        @param List [in] Object to be enurmerated.
-      }
-    function GetCurrent: TObject;
-      {Gets current object in enumeration.
-        @return Required object.
-      }
-    function MoveNext: Boolean;
-      {Moves to next item in enumeration.
-        @return True if there is a next item, False if beyond last item.
-      }
-    property Current: TObject read GetCurrent;
-      {Current object in enumeration}
-  end;
-
-  {
-  TObjectListEx:
-    Extended version of TObjectList that adds extra features.
-  }
-  TObjectListEx = class(TObjectList)
-  public
-    function IsEmpty: Boolean;
-      {Checks if list is empty.
-        @return True if empty, False otherwise.
-      }
-    function Contains(const Obj: TObject): Boolean;
-      {Checks if the list contains an object.
-        @param Obj [in] Object being checked for.
-        @return True if list contains Obj, False otherwise.
-      }
-    function GetEnumerator: TObjectListEnum;
-      {Gets an enumerator for the list.
-        @return Required enumerator.
-      }
-  end;
 
   {
   TObjectCompare:
@@ -114,8 +67,8 @@ type
   TSortedObjectList = class(TObject)
   strict private
     var
-      fItems: TObjectListEx;    // Maintains list of objects
-      fCompare: TObjectCompare; // Comparison method.
+      fItems: TObjectList<TObject>; // Maintains list of objects
+      fCompare: TObjectCompare;     // Comparison method.
     function GetItem(Idx: Integer): TObject;
       {Read accessor for Items property.
         @param Idx [in] Index of required item.
@@ -173,7 +126,7 @@ type
         @param SearchObj [in] Object to be searched for.
         @return Index of matching object in list or -1 if not in list.
       }
-    function GetEnumerator: TObjectListEnum;
+    function GetEnumerator: TEnumerator<TObject>;
       {Creates an enumerator for this object.
         @return Reference to new enumerator. Caller is repsonsible for freeing
           this object.
@@ -194,8 +147,8 @@ type
   TSortedObjectDictionary = class(TObject)
   strict private
     var
-      fKeys: TSortedObjectList; // list of key objects
-      fValues: TObjectListEx;   // list of value objects
+      fKeys: TSortedObjectList;       // List of key objects
+      fValues: TObjectList<TObject>;  // List of value objects
     function GetKey(Idx: Integer): TObject;
       {Read accessor for Keys[] property.
         @param Idx [in] Index of required key.
@@ -241,7 +194,7 @@ type
         @param Key [in] Key to be checked.
         @return True if a matching key is present in dictionary, False if not.
       }
-    function GetEnumerator: TObjectListEnum;
+    function GetEnumerator: TEnumerator<TObject>;
       {Gets enumerator for dictionary keys.
         @return Required enumerator.
       }
@@ -261,63 +214,6 @@ uses
   // Project
   UExceptions;
 
-
-{ TObjectListEnum }
-
-constructor TObjectListEnum.Create(const List: TObjectList);
-  {Constructor. Initialises enumeration.
-    @param List [in] Object to be enurmerated.
-  }
-begin
-  inherited Create;
-  fList := List;
-  fIndex := -1;
-end;
-
-function TObjectListEnum.GetCurrent: TObject;
-  {Gets current object in enumeration.
-    @return Required object.
-  }
-begin
-  Result := fList[fIndex];
-end;
-
-function TObjectListEnum.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, False if beyond last item.
-  }
-begin
-  Result := fIndex < Pred(fList.Count);
-  if Result then
-    Inc(fIndex);
-end;
-
-{ TObjectListEx }
-
-function TObjectListEx.Contains(const Obj: TObject): Boolean;
-  {Checks if the list contains an object.
-    @param Obj [in] Object being checked for.
-    @return True if list contains Obj, False otherwise.
-  }
-begin
-  Result := IndexOf(Obj) >= 0;
-end;
-
-function TObjectListEx.GetEnumerator: TObjectListEnum;
-  {Gets an enumerator for the list.
-    @return Required enumerator.
-  }
-begin
-  Result := TObjectListEnum.Create(Self);
-end;
-
-function TObjectListEx.IsEmpty: Boolean;
-  {Checks if list is empty.
-    @return True if empty, False otherwise.
-  }
-begin
-  Result := Count = 0;
-end;
 
 { TSortedObjectList }
 
@@ -374,7 +270,7 @@ constructor TSortedObjectList.Create(const OwnsObjects: Boolean;
 begin
   Assert(Assigned(CompareFn), ClassName + '.Create: CompareFn not assigned');
   inherited Create;
-  fItems := TObjectListEx.Create(OwnsObjects);
+  fItems := TObjectList<TObject>.Create(OwnsObjects);
   fCompare := CompareFn;
 end;
 
@@ -453,7 +349,7 @@ begin
   Result := fItems.Count;
 end;
 
-function TSortedObjectList.GetEnumerator: TObjectListEnum;
+function TSortedObjectList.GetEnumerator: TEnumerator<TObject>;
   {Creates an enumerator for this object.
     @return Reference to new enumerator. Caller is repsonsible for freeing
       this object.
@@ -515,7 +411,7 @@ constructor TSortedObjectDictionary.Create(const KeyCompare: TObjectCompare;
 begin
   inherited Create;
   fKeys := TSortedObjectList.Create(OwnsKeys, KeyCompare);
-  fValues := TObjectListEx.Create(OwnsValues);
+  fValues := TObjectList<TObject>.Create(OwnsValues);
 end;
 
 destructor TSortedObjectDictionary.Destroy;
@@ -535,7 +431,7 @@ begin
   Result := fKeys.Count;
 end;
 
-function TSortedObjectDictionary.GetEnumerator: TObjectListEnum;
+function TSortedObjectDictionary.GetEnumerator: TEnumerator<TObject>;
   {Gets enumerator for dictionary keys.
     @return Required enumerator.
   }
