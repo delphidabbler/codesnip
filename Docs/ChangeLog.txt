@@ -4,6 +4,13 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.6.2 of 18 Jun 2010
++ Fixed source code formatting problem in code generator where "forward" declarations were sometimes preceded with an unwanted blank line.
++ Fixed potential bug in code that parses markup used for a snippet's Extra information. Symbolic entities were not case sensitive.
++ Fixed a memory leak.
++ Some refactorings that increase use of generics and some others.
++ Readme file updated re v3.6.1 password changes.
+
 Release v3.6.1 of 01 Jun 2010
 + Proxy server passwords can now contain any Unicode character, not just those included in the Windows-1252 code page.
 + Password format in per user ini file changed. Existing passwords have to be re-entered. Ini file format updated to v7.
