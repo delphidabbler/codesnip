@@ -68,7 +68,6 @@ uses
   TestNSDatabaseUDatabase in 'TestNSDatabaseUDatabase.pas',
   UContainers in '..\..\..\Src\UContainers.pas',
   TestUOrderedList in 'TestUOrderedList.pas',
-  UOrderedDictionary in '..\..\..\Src\Experimental\UOrderedDictionary.pas',
   TestUOrderedDictionary in 'TestUOrderedDictionary.pas';
 
 {$R *.RES}
