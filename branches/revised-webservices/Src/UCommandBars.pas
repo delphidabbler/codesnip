@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -43,9 +43,7 @@ interface
 
 uses
   // Delphi
-  Classes, ActnList, Menus, ComCtrls, ImgList,
-  // Project
-  ULists;
+  Classes, Generics.Collections, ActnList, Menus, ComCtrls, ImgList;
 
 
 type
@@ -113,7 +111,7 @@ type
   }
   TPopupMenuWrapper = class(TCommandBarWrapper)
   strict private
-    fMenu: TPopupMenu;    // Value of Menu property
+    var fMenu: TPopupMenu;    // Value of Menu property
     procedure MenuPopupHandler(Sender: TObject);
       {Handles popup menu's OnPopup event by initialising menu and hiding
       disabled menu items. Assumes menu items are not nested.
@@ -132,7 +130,7 @@ type
       {Reference to wrapped popup menu}
   public
     constructor Create(const Menu: TPopupMenu); reintroduce; virtual;
-      {Class constructor. Sets up wrapper for a popup menu.
+      {Constructor. Sets up wrapper for a popup menu.
         @param Menu [in] Popup menu to be wrapped.
       }
     procedure AddAction(const Action: TCustomAction); override;
@@ -155,10 +153,10 @@ type
   }
   TToolBarWrapper = class(TCommandBarWrapper)
   strict private
-    fToolBar: TToolBar; // wrapped toolbar
+    var fToolBar: TToolBar; // wrapped toolbar
   public
     constructor Create(const Toolbar: TToolBar); reintroduce;
-      {Class constructor. Sets up wrapper for a toobar.
+      {Constructor. Sets up wrapper for a toobar.
         @param Menu [in] Toolbar to be wrapped.
       }
     procedure AddAction(const Action: TCustomAction); override;
@@ -181,8 +179,12 @@ type
   }
   TCommandBarMgr = class(TContainedObject, ICommandBarConfig)
   strict private
-    fCommandBars: TIntegerList;   // Map of command bar IDs to command bars
-    fImageList: TCustomImageList; // Images list used by all command bars
+    type
+      // Class that maps command bar ids to command bar wrapper objects
+      TCommandBarMap = TDictionary<TCommandBarID,TCommandBarWrapper>;
+    var
+      fCommandBars: TCommandBarMap; // Map of command bar IDs to command bars
+      fImageList: TCustomImageList; // Images list used by all command bars
     procedure UpdateImageLists;
       {Updates image list used by with all managed command bars.
       }
@@ -204,11 +206,11 @@ type
       }
   public
     constructor Create(const Controller: IInterface);
-      {Class constructor. Creates contained object.
+      {Constructor. Creates contained object.
         @param Controller [in] IInterface reference to containing object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     procedure AddCommandBar(const ID: TCommandBarID;
       const CommandBar: TCommandBarWrapper);
@@ -223,8 +225,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   UMenuHelper, UToolButtonEx;
 
@@ -237,12 +237,9 @@ procedure TCommandBarMgr.AddAction(const Action: TCustomAction;
     @param Action [in] Action to be added.
     @param Kind [in] Id of command bar to receive command bar item.
   }
-var
-  CmdBar: TCommandBarWrapper; // required command bar
 begin
-  CmdBar := fCommandBars.FindObject(ID) as TCommandBarWrapper;
-  Assert(Assigned(CmdBar), ClassName + '.AddAction: ID not found');
-  (fCommandBars.FindObject(ID) as TCommandBarWrapper).AddAction(Action);
+  Assert(fCommandBars.ContainsKey(ID), ClassName + '.AddAction: ID not found');
+  fCommandBars[ID].AddAction(Action);
 end;
 
 procedure TCommandBarMgr.AddCommandBar(const ID: TCommandBarID;
@@ -260,28 +257,26 @@ procedure TCommandBarMgr.AddSpacer(const ID: TCommandBarID);
   {Adds a spacer to a command bar.
     @param Kind [in] Id of command bar to receive spacer.
   }
-var
-  CmdBar: TCommandBarWrapper; // required command bar
 begin
-  CmdBar := fCommandBars.FindObject(ID) as TCommandBarWrapper;
-  Assert(Assigned(CmdBar), ClassName + '.AddSpacer: ID not found');
-  (fCommandBars.FindObject(ID) as TCommandBarWrapper).AddSpacer;
+  Assert(fCommandBars.ContainsKey(ID), ClassName + '.AddSpacer: ID not found');
+  fCommandBars[ID].AddSpacer;
 end;
 
 constructor TCommandBarMgr.Create(const Controller: IInterface);
-  {Class constructor. Creates contained object.
+  {Constructor. Creates contained object.
     @param Controller [in] IInterface reference to containing object.
   }
 begin
   inherited Create(Controller);
-  fCommandBars := TIntegerList.Create;
+  // Use default integer comparer and hash for TCommandBarID
+  fCommandBars := TCommandBarMap.Create;
 end;
 
 destructor TCommandBarMgr.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fCommandBars);
+  fCommandBars.Free;
   inherited;
 end;
 
@@ -298,10 +293,10 @@ procedure TCommandBarMgr.UpdateImageLists;
   {Updates image list used by with all managed command bars.
   }
 var
-  Idx: Integer; // loops through all managed command bars
+  CmdBar: TCommandBarWrapper; // each command bar in map
 begin
-  for Idx := 0 to Pred(fCommandBars.Count) do
-    (fCommandBars.Objects[Idx] as TCommandBarWrapper).SetImages(fImageList);
+  for CmdBar in fCommandBars.Values do
+    CmdBar.SetImages(fImageList);
 end;
 
 { TPopupMenuWrapper }
@@ -322,7 +317,7 @@ begin
 end;
 
 constructor TPopupMenuWrapper.Create(const Menu: TPopupMenu);
-  {Class constructor. Sets up wrapper for a popup menu.
+  {Constructor. Sets up wrapper for a popup menu.
     @param Menu [in] Popup menu to be wrapped.
   }
 begin
@@ -392,7 +387,7 @@ begin
 end;
 
 constructor TToolBarWrapper.Create(const Toolbar: TToolBar);
-  {Class constructor. Sets up wrapper for a toobar.
+  {Constructor. Sets up wrapper for a toobar.
     @param Menu [in] Toolbar to be wrapped.
   }
 begin

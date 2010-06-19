@@ -456,7 +456,6 @@
 			<DCCReference Include="USourceFileInfo.pas"/>
 			<DCCReference Include="USourceFileOutputMgr.pas"/>
 			<DCCReference Include="USourceGen.pas"/>
-			<DCCReference Include="UStacks.pas"/>
 			<DCCReference Include="UStatusBarMgr.pas"/>
 			<DCCReference Include="UStrStreamWriter.pas"/>
 			<DCCReference Include="UStructs.pas"/>

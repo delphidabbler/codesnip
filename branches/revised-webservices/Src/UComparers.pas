@@ -67,6 +67,27 @@ type
       }
   end;
 
+  {
+  TSameSttringEqualityComparer:
+    Case sensitive string comparer.
+  }
+  TSameStringEqualityComparer = class(TEqualityComparer<string>,
+    IEqualityComparer<string>
+  )
+  public
+    function Equals(const Left, Right: string): Boolean; override;
+      {Checks if two strings are equal.
+        @param Left [in] First string to compare.
+        @param Right [in] Second string to compare.
+        @return True if both strings are the same, taking case into account.
+      }
+    function GetHashCode(const Value: string): Integer; override;
+      {Gets hash of a string.
+        @param Value [in] String for which hash is needed.
+        @return Required hash.
+      }
+  end;
+
 
 implementation
 
@@ -120,4 +141,26 @@ begin
   Result := ElfHash(AnsiLowerCase(Value));
 end;
 
+{ TSameStringEqualityComparer }
+
+function TSameStringEqualityComparer.Equals(const Left, Right: string): Boolean;
+  {Checks if two strings are equal.
+    @param Left [in] First string to compare.
+    @param Right [in] Second string to compare.
+    @return True if both strings are the same, taking case into account.
+  }
+begin
+  Result := AnsiSameStr(Left, Right);
+end;
+
+function TSameStringEqualityComparer.GetHashCode(const Value: string): Integer;
+  {Gets hash of a string.
+    @param Value [in] String for which hash is needed.
+    @return Required hash.
+  }
+begin
+  Result := ElfHash(Value);
+end;
+
 end.
+

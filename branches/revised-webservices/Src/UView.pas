@@ -43,7 +43,9 @@ interface
 
 uses
   // Delphi
-  UAlphabet, ULists, USnippetKindInfo, USnippets;
+  Generics.Collections,
+  // Project
+  UAlphabet, USnippetKindInfo, USnippets;
 
 
 type
@@ -92,8 +94,8 @@ type
         @return Data object describing snippet kind section.
       }
     constructor InternalCreate(const Kind: TViewKind; const Data: TObject);
-      {Private class constructor. Creates a view item of a specified kind with
-      extra information.
+      {Private constructor. Creates a view item of a specified kind with extra
+      information.
         @param Kind [in] Kind of view item to create.
         @param Data [in] Object providing extra information. Object type depends
           on Kind and must be as follows:
@@ -105,33 +107,32 @@ type
       }
   public
     constructor Create; overload;
-      {Class constructor. Creates a view item of kind vkNone.
+      {Constructor. Creates a view item of kind vkNone.
       }
     constructor Create(const Kind: TViewKind); overload;
-      {Class constructor. Creates a view item of a kind that has no associaed
-      object to store as extra information.
+      {Constructor. Creates a view item of a kind that has no associated object
+      to store as extra information.
         @param Kind [in] Kind of view item to create. Must be vkNone or
           vkWelcome
       }
     constructor Create(const ViewItem: TViewItem); overload;
-      {Class constructor. Creates a view item that is a clone of another view
-      item.
+      {Constructor. Creates a view item that is a clone of another view item.
         @param ViewItem [in] View item to be cloned.
       }
     constructor Create(const Routine: TRoutine); overload;
-      {Class constructor. Creates a view item representing a routine.
+      {Constructor. Creates a view item representing a routine.
         @param Routine [in] Routine to be represented.
       }
     constructor Create(const Category: TCategory); overload;
-      {Class constructor. Creates a view item representing a category.
+      {Constructor. Creates a view item representing a category.
         @param Category [in] Category to be represented.
       }
     constructor Create(const SnippetKind: TSnippetKindInfo); overload;
-      {Class constructor. Creates a view item representing a snippet kind.
+      {Constructor. Creates a view item representing a snippet kind.
         @param SnippetKind [in] Snippet kind to be represented.
       }
     constructor Create(const Letter: TLetter); overload;
-      {Class constructor. Creates a view item representing a alphabetic letter.
+      {Constructor. Creates a view item representing a alphabetic letter.
         @param Letter [in] Letter to be represented.
       }
     procedure Assign(const ViewItem: TViewItem);
@@ -166,46 +167,15 @@ type
   TViewItemList:
     Implements a list of TViewItem objects.
   }
-  TViewItemList = class(TObject)
-  strict private
-    var fList: TObjectListEx; // List of view items
-    function GetCount: Integer;
-      {Read accessor for Count property.
-        @return Number of items in list.
-      }
-    function GetItem(Idx: Integer): TViewItem;
-      {Read accessor for Items[] property.
-        @param Idx [in] Index of desired view item in list.
-        @return View item at given index in list.
-      }
+  TViewItemList = class(TObjectList<TViewItem>)
   public
-    constructor Create;
-      {Class constructor. Sets up list.
+    constructor Create; reintroduce;
+      {Constructor. Sets up list.
       }
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
-    procedure Clear;
-      {Clears the list without freeing items in it.
-      }
-    function Add(const ViewItem: TViewItem): Integer;
-      {Adds new view item to list.
-        @param ViewItem [in] View item to add to list.
-        @return Index of new item in list.
-      }
-    property Items[Idx: Integer]: TViewItem read GetItem; default;
-      {List of view items}
-    property Count: Integer read GetCount;
-      {Number of view items in list}
   end;
 
 
 implementation
-
-
-uses
-  // Delphi
-  SysUtils, Classes {for inlining};
 
 
 { TViewItem }
@@ -231,7 +201,7 @@ begin
 end;
 
 constructor TViewItem.Create;
-  {Class constructor. Creates a view item of kind vkNone.
+  {Constructor. Creates a view item of kind vkNone.
   }
 begin
   inherited Create;
@@ -240,7 +210,7 @@ begin
 end;
 
 constructor TViewItem.Create(const ViewItem: TViewItem);
-  {Class constructor. Creates a view item that is a clone of another view item.
+  {Constructor. Creates a view item that is a clone of another view item.
     @param ViewItem [in] View item to be cloned.
   }
 begin
@@ -249,7 +219,7 @@ begin
 end;
 
 constructor TViewItem.Create(const SnippetKind: TSnippetKindInfo);
-  {Class constructor. Creates a view item representing a snippet kind.
+  {Constructor. Creates a view item representing a snippet kind.
     @param SnippetKind [in] Snippet kind to be represented.
   }
 begin
@@ -257,7 +227,7 @@ begin
 end;
 
 constructor TViewItem.Create(const Routine: TRoutine);
-  {Class constructor. Creates a view item representing a routine.
+  {Constructor. Creates a view item representing a routine.
     @param Routine [in] Routine to be represented.
   }
 begin
@@ -265,7 +235,7 @@ begin
 end;
 
 constructor TViewItem.Create(const Letter: TLetter);
-  {Class constructor. Creates a view item representing a alphabetic letter.
+  {Constructor. Creates a view item representing a alphabetic letter.
     @param Letter [in] Letter to be represented.
   }
 begin
@@ -273,8 +243,8 @@ begin
 end;
 
 constructor TViewItem.Create(const Kind: TViewKind);
-  {Class constructor. Creates a view item of a kind that has no associaed
-  object to store as extra information.
+  {Constructor. Creates a view item of a kind that has no associated object to
+  store as extra information.
     @param Kind [in] Kind of view item to create. Must be vkNone or vkWelcome
   }
 begin
@@ -284,7 +254,7 @@ begin
 end;
 
 constructor TViewItem.Create(const Category: TCategory);
-  {Class constructor. Creates a view item representing a category.
+  {Constructor. Creates a view item representing a category.
     @param Category [in] Category to be represented.
   }
 begin
@@ -354,7 +324,7 @@ end;
 
 constructor TViewItem.InternalCreate(const Kind: TViewKind;
   const Data: TObject);
-  {Private class constructor. Creates a view item of a specified kind with extra
+  {Private constructor. Creates a view item of a specified kind with extra
   information.
     @param Kind [in] Kind of view item to create.
     @param Data [in] Object providing extra information. Object type depends on
@@ -400,54 +370,12 @@ end;
 
 { TViewItemList }
 
-function TViewItemList.Add(const ViewItem: TViewItem): Integer;
-  {Adds new view item to list.
-    @param ViewItem [in] View item to add to list.
-    @return Index of new item in list.
-  }
-begin
-  Result := fList.Add(ViewItem);
-end;
-
-procedure TViewItemList.Clear;
-  {Clears the list without freeing items in it.
-  }
-begin
-  fList.Clear;
-end;
-
 constructor TViewItemList.Create;
-  {Class constructor. Sets up list.
+  {Constructor. Sets up list.
   }
 begin
-  inherited;
-  // Create list that doesn't own the objects in it
-  fList := TObjectListEx.Create(False);
-end;
-
-destructor TViewItemList.Destroy;
-  {Class destructor. Tears down object.
-  }
-begin
-  FreeAndNil(fList);  // does not free the objects in the list
-  inherited;
-end;
-
-function TViewItemList.GetCount: Integer;
-  {Read accessor for Count property.
-    @return Number of items in list.
-  }
-begin
-  Result := fList.Count;
-end;
-
-function TViewItemList.GetItem(Idx: Integer): TViewItem;
-  {Read accessor for Items[] property.
-    @param Idx [in] Index of desired view item in list.
-    @return View item at given index in list.
-  }
-begin
-  Result := fList[Idx] as TViewItem;
+  // List does not own the objects stored in it
+  inherited Create(False);
 end;
 
 end.

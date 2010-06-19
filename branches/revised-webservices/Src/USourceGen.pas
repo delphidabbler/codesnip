@@ -44,9 +44,9 @@ interface
 
 uses
   // Delphi
-  Classes,
+  Classes, Generics.Collections,
   // Project
-  UBaseObjects, UIStringList, ULists, USnippets, UStrStreamWriter;
+  UBaseObjects, UIStringList, USnippets;
 
 
 type
@@ -103,33 +103,8 @@ type
           @param Units [in] String list containing list of units.
       }
       TUnitRecorder = procedure(const Units: TStringList) of object;
-      {
-      TEnumerator:
-        Enumerator for snippets in TConstAndTypeList.
-      }
-      TEnumerator = class(TObject)
-      strict private
-        fList: TConstAndTypeList; // Reference to object being enumerated
-        fIndex: Integer;          // Index of current item in enumeration
-        function GetCurrent: TRoutine;
-          {Gets current snippet in enumeration. Error if at end of enumeration.
-            @return Current snippet.
-          }
-      public
-        constructor Create(const CTL: TConstAndTypeList);
-          {Class constructor. Sets up and initialises enumeration.
-            @param CTL [in] Reference to object to be enumerated.
-          }
-        function MoveNext: Boolean;
-          {Moves to next item in enumeration.
-            @return True if there is a next item, False if enumeration
-              completed.
-          }
-        property Current: TRoutine read GetCurrent;
-          {Current item in enumeration. Error if at end of enumeration}
-      end;
     var
-      fItems: TObjectListEx;  // Records objects in list
+      fItems: TObjectList<TRoutine>;  // List of consts or types
     function GetCount: Integer;
       {Read accessor for Count property.
         @return Number of items in list.
@@ -146,18 +121,20 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up list.
+      {Constructor. Sets up list.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     procedure Add(const ConstOrType: TRoutine;
       const UnitRecorder: TUnitRecorder);
       {Adds a constant or type snippet to the list, ignoring duplicates.
         @param ConstOrType [in] Constant or type snippet to be added.
+        @param UnitRecorder [in] Method that records units required by
+          ConstOrType.
         @except Exception raised if dependency list is not valid.
       }
-    function GetEnumerator: TEnumerator;
+    function GetEnumerator: TEnumerator<TRoutine>;
       {Gets an intialised const and type list enumerator.
         @return Required enumerator.
       }
@@ -216,10 +193,10 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up object.
+      {Constructor. Sets up object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     procedure AddSnippet(const Snippet: TRoutine);
       {Adds a user-specified snippet to the analysis. Freeform snippets are
@@ -259,10 +236,10 @@ type
       fSourceAnalyser: TSourceAnalyser; // Analyses snippets and dependencies
   public
     constructor Create;
-      {Class constructor. Sets up the object.
+      {Constructor. Sets up the object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     procedure IncludeSnippet(const Snippet: TRoutine);
       {Includes a snippet in the source code.
@@ -316,12 +293,13 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UConsts, UExceptions, UPreferences, USnippetValidator, UUtils, UWarnings;
+  UConsts, UExceptions, UPreferences, USnippetValidator, UStrStreamWriter,
+  UUtils, UWarnings;
 
 
 const
-  cLineWidth = 80;              // max characters on line
-  cIndent = 2;                  // indent size
+  cLineWidth = 80;  // max characters on line
+  cIndent = 2;      // indent size
 
 
 type
@@ -412,7 +390,7 @@ type
 { TSourceGen }
 
 constructor TSourceGen.Create;
-  {Class constructor. Sets up the object.
+  {Constructor. Sets up the object.
   }
 begin
   inherited;
@@ -420,10 +398,10 @@ begin
 end;
 
 destructor TSourceGen.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fSourceAnalyser);
+  fSourceAnalyser.Free;
   inherited;
 end;
 
@@ -535,8 +513,8 @@ begin
     // Return string containing source code
     Result := SS.DataString;
   finally
-    FreeAndNil(Writer);
-    FreeAndNil(SS);
+    Writer.Free;
+    SS.Free;
   end;
 end;
 
@@ -674,8 +652,8 @@ begin
     // Return string built in string stream
     Result := SS.DataString;
   finally
-    FreeAndNil(Writer);
-    FreeAndNil(SS);
+    Writer.Free;
+    SS.Free;
   end;
 end;
 
@@ -743,7 +721,7 @@ begin
 end;
 
 constructor TSourceAnalyser.Create;
-  {Class constructor. Sets up object.
+  {Constructor. Sets up object.
   }
 begin
   inherited;
@@ -756,15 +734,15 @@ begin
 end;
 
 destructor TSourceAnalyser.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fTypesAndConsts);
-  FreeAndNil(fIntfRoutines);
-  FreeAndNil(fAllRoutines);
-  FreeAndNil(fForwardRoutines);
-  FreeAndNil(fRequiredRoutines);
-  FreeAndNil(fUnits);
+  fTypesAndConsts.Free;
+  fIntfRoutines.Free;
+  fAllRoutines.Free;
+  fForwardRoutines.Free;
+  fRequiredRoutines.Free;
+  fUnits.Free;
   inherited;
 end;
 
@@ -857,6 +835,7 @@ procedure TConstAndTypeList.Add(const ConstOrType: TRoutine;
   const UnitRecorder: TUnitRecorder);
   {Adds a constant or type snippet to the list, ignoring duplicates.
     @param ConstOrType [in] Constant or type snippet to be added.
+    @param UnitRecorder [in] Method that records units required by ConstOrType.
     @except Exception raised if dependency list is not valid.
   }
 var
@@ -890,18 +869,18 @@ begin
 end;
 
 constructor TConstAndTypeList.Create;
-  {Class constructor. Sets up list.
+  {Constructor. Sets up list.
   }
 begin
   inherited;
-  fItems := TObjectListEx.Create(False);
+  fItems := TObjectList<TRoutine>.Create(False);
 end;
 
 destructor TConstAndTypeList.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fItems);
+  fItems.Free;
   inherited;
 end;
 
@@ -913,12 +892,12 @@ begin
   Result := fItems.Count;
 end;
 
-function TConstAndTypeList.GetEnumerator: TEnumerator;
+function TConstAndTypeList.GetEnumerator: TEnumerator<TRoutine>;
   {Gets an intialised const and type list enumerator.
     @return Required enumerator.
   }
 begin
-  Result := TEnumerator.Create(Self);
+  Result := fItems.GetEnumerator;
 end;
 
 function TConstAndTypeList.GetItem(Idx: Integer): TRoutine;
@@ -927,38 +906,7 @@ function TConstAndTypeList.GetItem(Idx: Integer): TRoutine;
     @return Indexed snippet.
   }
 begin
-  Result := fItems[Idx] as TRoutine;
-end;
-
-{ TConstAndTypeList.TEnumerator }
-
-constructor TConstAndTypeList.TEnumerator.Create(const CTL: TConstAndTypeList);
-  {Class constructor. Sets up and initialises enumeration.
-    @param CTL [in] Reference to object to be enumerated.
-  }
-begin
-  inherited Create;
-  fList := CTL;
-  fIndex := -1;
-end;
-
-function TConstAndTypeList.TEnumerator.GetCurrent: TRoutine;
-  {Gets current snippet in enumeration. Error if at end of enumeration.
-    @return Current snippet.
-  }
-begin
-  Result := fList[fIndex];
-end;
-
-function TConstAndTypeList.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, False if enumeration
-      completed.
-  }
-begin
-  Result := fIndex < Pred(fList.Count);
-  if Result then
-    Inc(fIndex);
+  Result := fItems[Idx];
 end;
 
 { TRoutineFormatter }
@@ -973,6 +921,7 @@ var
   DummyBody: string;  // stores unused routine body retrieved from Split
 begin
   Split(Routine, Result, DummyBody);
+  Result := Trim(Result);
 end;
 
 class function TRoutineFormatter.FormatRoutine(
@@ -1026,15 +975,15 @@ begin
   case CommentStyle of
     csAfter:
       // comments follow prototype
-      Result := Trim(Prototype) + EOL +
+      Result := Prototype + EOL +
         RenderDescComment(CommentStyle, Routine);
     csBefore:
       // comments preceed prototype
       Result := RenderDescComment(CommentStyle, Routine) + EOL +
-        Trim(Prototype);
+        Prototype;
     else
       // no comments: just return prototype
-      Result := Trim(Prototype);
+      Result := Prototype;
   end;
 end;
 

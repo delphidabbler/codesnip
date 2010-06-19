@@ -43,9 +43,9 @@ interface
 
 uses
   // Delphi
-  ComCtrls,
+  ComCtrls, Generics.Collections,
   // Project
-  ULists, UView, UViewItemTreeNode;
+  UView;
 
 
 type
@@ -61,12 +61,12 @@ type
       fViewItem: TViewItem;   // Value of ViewItem property
   public
     constructor Create(const ViewItem: TViewItem; const Expanded: Boolean);
-      {Class constructor. Sets up object.
+      {Constructor. Sets up object.
         @param ViewItem [in] View item represented by section node.
         @param Expended [in] True if node is expanded, False if not.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     property Expanded: Boolean read fExpanded;
       {Whether section node is expanded}
@@ -89,24 +89,17 @@ type
         rsFullCollapse,  // tree must be fully collapsed when restored
         rsAsSaved        // tree must be restored according to saved state
       );
+      // Class that maintains a list of section state objects
+      TSectionStates = TObjectList<TOverviewTreeSectionState>;
     var
       fTV: TTreeView;                   // Reference to treeview
-      fSections: TObjectListEx;         // List of section objects
+      fSections: TSectionStates;        // List of section state objects
       fRestoreState: TResorationState;  // Current restoration state of tree
-    function GetCount: Integer;
-      {Number of sections in list.
-        @return Section count.
-      }
-    function GetSection(Idx: Integer): TOverviewTreeSectionState;
-      {Gets a section object by index.
-        @param Idx [in] Index of required section.
-        @return Reference to required section.
-      }
     function FindSection(const ViewItem: TViewItem;
-      out Section: TOverviewTreeSectionState): Boolean;
+      out FoundSection: TOverviewTreeSectionState): Boolean;
       {Finds a section object that references a specified view item.
         @param ViewItem [in] View item being searched for.
-        @param Section [in] Section object or nil if view item not found.
+        @param FoundSection [in] Section object or nil if view item not found.
         @return True if view item found, False if not.
       }
     function IsSectionNode(const Node: TTreeNode): Boolean;
@@ -116,11 +109,11 @@ type
       }
   public
     constructor Create(const TV: TTreeView);
-      {Class constructor. Sets up object to work with a treeview.
+      {Constructor. Sets up object to work with a treeview.
         @param TV [in] Treeview whose state is to be managed.
       }
     destructor Destroy; override;
-      {Class desctuctor. Tears down object.
+      {Destructor. Tears down object.
       }
     procedure SaveState;
       {Saves expansion state of all section nodes in treeview.
@@ -137,17 +130,15 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils, Classes {for inlining},
   // Project
-  UPreferences;
+  UPreferences, UViewItemTreeNode;
 
 
 { TOverviewTreeSectionState }
 
 constructor TOverviewTreeSectionState.Create(const ViewItem: TViewItem;
   const Expanded: Boolean);
-  {Class constructor. Sets up object.
+  {Constructor. Sets up object.
     @param ViewItem [in] View item represented by section node.
     @param Expended [in] True if node is expanded, False if not.
   }
@@ -158,22 +149,22 @@ begin
 end;
 
 destructor TOverviewTreeSectionState.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fViewItem);
+  fViewItem.Free;
   inherited;
 end;
 
 { TOverviewTreeState }
 
 constructor TOverviewTreeState.Create(const TV: TTreeView);
-  {Class constructor. Sets up object to work with a treeview.
+  {Constructor. Sets up object to work with a treeview.
     @param TV [in] Treeview whose state is to be managed.
   }
 begin
   inherited Create;
-  fSections := TObjectListEx.Create(True);
+  fSections := TSectionStates.Create(True);
   fTV := TV;
   case Preferences.OverviewStartState of
     ossExpanded: fRestoreState := rsFullExpand;
@@ -182,51 +173,33 @@ begin
 end;
 
 destructor TOverviewTreeState.Destroy;
-  {Class desctuctor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fSections);
+  fSections.Free;
   inherited;
 end;
 
 function TOverviewTreeState.FindSection(const ViewItem: TViewItem;
-  out Section: TOverviewTreeSectionState): Boolean;
+  out FoundSection: TOverviewTreeSectionState): Boolean;
   {Finds a section object that references a specified view item.
     @param ViewItem [in] View item being searched for.
-    @param Section [in] Section object or nil if view item not found.
+    @param FoundSection [in] Section object or nil if view item not found.
     @return True if view item found, False if not.
   }
 var
-  Idx: Integer; // loops through all recorded section objects
+  Section: TOverviewTreeSectionState;  // each section state in list
 begin
   Result := False;
-  Section := nil;
-  for Idx := 0 to Pred(GetCount) do
+  FoundSection := nil;
+  for Section in fSections do
   begin
-    if GetSection(Idx).ViewItem.IsEqual(ViewItem) then
+    if Section.ViewItem.IsEqual(ViewItem) then
     begin
-      Section := GetSection(Idx);
-      Result := True;
-      Break;
+      FoundSection := Section;
+      Exit(True);
     end;
   end;
-end;
-
-function TOverviewTreeState.GetCount: Integer;
-  {Number of sections in list.
-    @return Section count.
-  }
-begin
-  Result := fSections.Count;
-end;
-
-function TOverviewTreeState.GetSection(Idx: Integer): TOverviewTreeSectionState;
-  {Gets a section object by index.
-    @param Idx [in] Index of required section.
-    @return Reference to required section.
-  }
-begin
-  Result := fSections[Idx] as TOverviewTreeSectionState;
 end;
 
 function TOverviewTreeState.IsSectionNode(const Node: TTreeNode): Boolean;

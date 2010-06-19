@@ -41,9 +41,7 @@ interface
 
 uses
   // Delphi
-  Classes,
-  // Project
-  ULists;
+  Classes, Generics.Collections;
 
 
 type
@@ -58,14 +56,45 @@ type
     of object;
 
   {
+  TEventWrapper:
+    Abstract base class for classes that wrap event handler methods in order to
+    be able to store them in an object list.
+  }
+  TEventWrapper = class abstract(TObject)
+  strict private
+    fOwner: TObject;
+      {Owner of event handler. Used as Sender parameter when calling event
+      handler}
+    fHandler: TMethod;
+      {Reference to event handler}
+  public
+    constructor Create(const Owner: TObject; const Handler: TMethod);
+      {Constructor. Sets up wrapper object for an event handler method.
+        @param Owner [in] Reference to object that is to passed as Sender
+          parameter of triggered event.
+        @param Handler [in] Reference to event handler to be wrapped.
+      }
+    procedure Trigger(const EvtInfo: IInterface); virtual; abstract;
+      {Triggers event.
+        @param EvtInfo [in] Interface to object that provides information about
+          the event. May be nil.
+      }
+    property Handler: TMethod read fHandler;
+      {Reference to wrapped event handler}
+    property Owner: TObject read fOwner;
+      {Owner of event handler. Used as Sender parameter when calling event
+      handler}
+  end;
+
+  {
   TMultiCastEvents:
     Class that maintains, and can trigger, a list of event handlers.
   }
   TMultiCastEvents = class(TObject)
   strict private
     var
-      fOwner: TObject;          // Owner object that triggers events
-      fHandlers: TObjectListEx; // Stores list of event handlers
+      fOwner: TObject;                        // Object that triggers events
+      fHandlers: TObjectList<TEventWrapper>;  // Stores list of event handlers
     function IndexOfHandler(const Handler: TMethod): Integer;
       {Finds index of a registered event handler in list of handlers.
         @param Handler [in] Reference to event handler to find.
@@ -73,12 +102,12 @@ type
       }
   public
     constructor Create(AOwner: TObject = nil);
-      {Class constructor. Sets up object.
+      {Constructor. Sets up object.
         @param AOwner [in] Object that owns this object and that triggers
           events. Passed as Sender param to event handlers. May by nil.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     procedure AddHandler(const Handler: TNotifyEvent); overload;
       {Adds a TNotifyEvent event handler to end of event handler list.
@@ -120,37 +149,6 @@ uses
 
 
 type
-
-  {
-  TEventWrapper:
-    Abstract base class for classes that wrap event handler methods in order to
-    be able to store them in an object list.
-  }
-  TEventWrapper = class abstract(TObject)
-  strict private
-    fOwner: TObject;
-      {Owner of event handler. Used as Sender parameter when calling event
-      handler}
-    fHandler: TMethod;
-      {Reference to event handler}
-  public
-    constructor Create(const Owner: TObject; const Handler: TMethod);
-      {Class constructor. Sets up wrapper object for an event handler method.
-        @param Owner [in] Reference to object that is to passed as Sender
-          parameter of triggered event.
-        @param Handler [in] Reference to event handler to be wrapped.
-      }
-    procedure Trigger(const EvtInfo: IInterface); virtual; abstract;
-      {Triggers event.
-        @param EvtInfo [in] Interface to object that provides information about
-          the event. May be nil.
-      }
-    property Handler: TMethod read fHandler;
-      {Reference to wrapped event handler}
-    property Owner: TObject read fOwner;
-      {Owner of event handler. Used as Sender parameter when calling event
-      handler}
-  end;
 
   {
   TNotifyEventWrapper:
@@ -219,18 +217,18 @@ begin
 end;
 
 constructor TMultiCastEvents.Create(AOwner: TObject);
-  {Class constructor. Sets up object.
+  {Constructor. Sets up object.
     @param AOwner [in] Object that owns this object and that triggers events.
     Passed as Sender param to event handlers. May by nil.
   }
 begin
   inherited Create;
   fOwner := AOwner;
-  fHandlers := TObjectListEx.Create(True);
+  fHandlers := TObjectList<TEventWrapper>.Create(True);
 end;
 
 destructor TMultiCastEvents.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
   FreeAndNil(fHandlers);  // frees contained objects
@@ -248,7 +246,7 @@ begin
   Result := -1;
   for Idx := 0 to Pred(fHandlers.Count) do
   begin
-    if IsEqualMethod((fHandlers[Idx] as TEventWrapper).Handler, Handler) then
+    if IsEqualMethod(fHandlers[Idx].Handler, Handler) then
     begin
       Result := Idx;
       Break;
@@ -289,16 +287,16 @@ procedure TMultiCastEvents.TriggerEvents(const EvtInfo: IInterface = nil);
       TNotifyEventInfo.
   }
 var
-  HandlerWrapper: TObject;  // enumerates event handler wrappers
+  HandlerWrapper: TEventWrapper;  // enumerates event handler wrappers
 begin
   for HandlerWrapper in fHandlers do
-    (HandlerWrapper as TEventWrapper).Trigger(EvtInfo);
+    HandlerWrapper.Trigger(EvtInfo);
 end;
 
 { TEventWrapper }
 
 constructor TEventWrapper.Create(const Owner: TObject; const Handler: TMethod);
-  {Class constructor. Sets up wrapper object for an event handler method.
+  {Constructor. Sets up wrapper object for an event handler method.
     @param Owner [in] Reference to object that is to passed as Sender parameter
       of triggered event.
     @param Handler [in] Reference to event handler to be wrapped.

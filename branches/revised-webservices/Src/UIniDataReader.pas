@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -41,7 +41,7 @@ interface
 
 uses
   // Delphi
-  Classes, IniFiles,
+  Classes, Generics.Collections, IniFiles,
   // Project
   UIStringList, USnipData, USnippets;
 
@@ -61,13 +61,16 @@ type
       }
       TIniFileCache = class(TObject)
       strict private
-        fCache: TStringList;  // cache of ini objects indexed by file names
+        type
+          // Class that maps ini file names to related ini file objects
+          TIniFileMap = TObjectDictionary<string,TCustomIniFile>;
+        var fCache: TIniFileMap;  // Maps file names to related ini file objects
       public
         constructor Create;
-          {Class constructor. Sets up empty cache.
+          {Constructor. Sets up empty cache.
           }
         destructor Destroy; override;
-          {Class destructor. Releases cache.
+          {Destructor. Releases cache.
           }
         function GetIniFile(const PathToFile: string): TCustomIniFile;
           {Gets reference to ini file object. Creates it if it doesn't exist.
@@ -75,12 +78,15 @@ type
             @return Required ini file reference.
           }
       end;
+    type
+      // Class that maps snippet names to category ids
+      TSnippetCatMap = TDictionary<string,Integer>;
     var
-      fDBDir: string;               // Database directory
-      fMasterIni: TCustomIniFile;   // Reference to master ini file
-      fCatNames: TStringList;       // List of category ids in database
-      fRoutineNames: TStringList;   // List of all snippet names in database
-      fIniCache: TIniFileCache;     // Cache of category ini file objects
+      fDBDir: string;                 // Database directory
+      fMasterIni: TCustomIniFile;     // Reference to master ini file
+      fCatNames: TStringList;         // List of category ids in database
+      fSnippetCatMap: TSnippetCatMap; // Map of snippet names to category ids
+      fIniCache: TIniFileCache;       // Cache of category ini file objects
     function MasterFileName: string;
       {Gets fully specified name of master file depending on which database is
       being accessed.
@@ -176,13 +182,14 @@ type
       }
   public
     constructor Create(const DBDir: string);
-      {Class constructor. Sets up data reader object.
+      {Constructor. Sets up data reader object.
         @param DBDir [in] Directory where database is stored.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
   end;
+
 
 {*******************************************************************************
 *                                                                              *
@@ -258,10 +265,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining},
+  SysUtils,
   // Project
-  IntfCompilers, UActiveText, UConsts, UIniDataLoader, URoutineExtraHelper,
-  UUtils;
+  IntfCompilers, UActiveText, UComparers, UConsts, UIniDataLoader,
+  URoutineExtraHelper, UUtils;
 
 
 const
@@ -314,7 +321,7 @@ begin
 end;
 
 constructor TIniDataReader.Create(const DBDir: string);
-  {Class constructor. Sets up data reader object.
+  {Constructor. Sets up data reader object.
     @param DBDir [in] Directory where database is stored.
   }
 begin
@@ -327,7 +334,7 @@ begin
     try
       fMasterIni := TDatabaseIniFile.Create(MasterFileName);
       fCatNames := TStringList.Create;
-      fRoutineNames := TStringList.Create;
+      fSnippetCatMap := TSnippetCatMap.Create(TSameTextEqualityComparer.Create);
       // Load required indexes
       LoadIndices;
     except
@@ -364,13 +371,13 @@ begin
 end;
 
 destructor TIniDataReader.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fIniCache);
-  FreeAndNil(fRoutineNames);
-  FreeAndNil(fCatNames);
-  FreeAndNil(fMasterIni);
+  fIniCache.Free;
+  fSnippetCatMap.Free;
+  fCatNames.Free;
+  fMasterIni.Free;
   inherited;
 end;
 
@@ -414,7 +421,7 @@ begin
       CatIni.ReadSections(Routines);
       Result := TIStringList.Create(Routines);
     finally
-      FreeAndNil(Routines);
+      Routines.Free;
     end;
   except
     HandleCorruptDatabase(ExceptObject);
@@ -625,31 +632,21 @@ procedure TIniDataReader.LoadIndices;
   these "indexes" available speeds up several of the key methods.
   }
 var
-  RoutineIdx: Integer;        // loops thru all snippets in a category
+  SnippetName: string;        // each snippet name in a category
   CatIdx: Integer;            // loops thru all categories
-  CatRoutines: TStringList;   // list of snippets in a single category
+  CatRoutines: IStringList;   // list of snippets in a single category
 begin
   // Read in list of category names
   fMasterIni.ReadSections(fCatNames);
-  // We build list of snippets by concatenating the lists of snippets in each
-  // category. List of snippets in a category are section names in category's
-  // .ini file
-  CatRoutines := TStringList.Create;
-  try
-    for CatIdx := 0 to Pred(fCatNames.Count) do
-    begin
-      // Get list of snippets in category ...
-      GetCatRoutines(fCatNames[CatIdx]).CopyTo(CatRoutines, True);
-      for RoutineIdx := 0 to Pred(CatRoutines.Count) do
-        // ... and record category index in Objects[] property
-        CatRoutines.Objects[RoutineIdx] := TObject(CatIdx);
-      // Append just-read strings to list of all snippets
-      fRoutineNames.AddStrings(CatRoutines);
-      // Clear list ready for next read
-      CatRoutines.Clear;
-    end;
-  finally
-    FreeAndNil(CatRoutines);
+  // We build map of snippet names to categories by reading snippets in each
+  // category and referencing that category's id with the snippet name.
+  CatRoutines := TIStringList.Create;
+  for CatIdx := 0 to Pred(fCatNames.Count) do
+  begin
+    // Get list of snippets in category ...
+    CatRoutines := GetCatRoutines(fCatNames[CatIdx]);
+    for SnippetName in CatRoutines do
+      fSnippetCatMap.Add(SnippetName, CatIdx);
   end;
 end;
 
@@ -668,41 +665,36 @@ function TIniDataReader.RoutineToCat(const Routine: string): string;
     @return ID of snippet's category.
   }
 var
-  RoutineIdx: Integer;  // index of snippet name in snippet list
-  CatIdx: Integer;      // index of category in category list
+  CatIdx: Integer;  // index of category in category list for this snippet
 resourcestring
   // Error message
   sMissingRoutine = 'Snippet "%s" not found in database.';
 begin
-  // Look up snippet in snippets list
-  RoutineIdx := fRoutineNames.IndexOf(Routine);
-  if RoutineIdx = -1 then
+  if not fSnippetCatMap.ContainsKey(Routine) then
     raise EDataIO.CreateFmt(sMissingRoutine, [Routine]);
-  // Index of category is stored in snippet list's Objects[] property
-  CatIdx := Integer(fRoutineNames.Objects[RoutineIdx]);
+  CatIdx := fSnippetCatMap[Routine];
   Result := fCatNames[CatIdx];
 end;
 
 { TIniDataReader.TIniFileCache }
 
 constructor TIniDataReader.TIniFileCache.Create;
-  {Class constructor. Sets up empty cache.
+  {Constructor. Sets up empty cache.
   }
 begin
   inherited Create;
-  fCache := TStringList.Create;
-  fCache.Sorted := True;
+  // fCache owns the ini file objects it stores in .Values[] and frees the
+  // objects when they are deleted from .Values[] of when fCache is freed.
+  fCache := TIniFileMap.Create(
+    [doOwnsValues], TSameTextEqualityComparer.Create
+  );
 end;
 
 destructor TIniDataReader.TIniFileCache.Destroy;
-  {Class destructor. Releases cache.
+  {Destructor. Releases cache.
   }
-var
-  Idx: Integer; // loops through entries in cache
 begin
-  for Idx := Pred(fCache.Count) downto 0 do
-    fCache.Objects[Idx].Free;
-  FreeAndNil(fCache);
+  fCache.Free;  // frees owned .Values[] objects
   inherited;
 end;
 
@@ -712,13 +704,10 @@ function TIniDataReader.TIniFileCache.GetIniFile(
     @param PathToFile [in] Path to ini file.
     @return Required ini file reference.
   }
-var
-  Idx: Integer; // index of ini file in cache
 begin
-  Idx := fCache.IndexOf(PathToFile);
-  if Idx = -1 then
-    Idx := fCache.AddObject(PathToFile, TDatabaseIniFile.Create(PathToFile));
-  Result := fCache.Objects[Idx] as TCustomIniFile;
+  if not fCache.ContainsKey(PathToFile) then
+    fCache.Add(PathToFile, TDatabaseIniFile.Create(PathToFile));
+  Result := fCache[PathToFile];
 end;
 
 end.

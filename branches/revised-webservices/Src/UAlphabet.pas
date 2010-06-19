@@ -54,8 +54,10 @@ interface
 
 
 uses
+  // Delphi
+  Generics.Collections,
   // Project
-  UBaseObjects, ULists;
+  UBaseObjects;
 
 
 type
@@ -83,10 +85,15 @@ type
   }
   TAlphabet = class(TNoPublicConstructObject)
   strict private
+    type
+      // Type of dictionary used to map letter characters to letter objects
+      TAlphaDictionary = TDictionary<Char,TLetter>;
+      // Type of enumerator for TAlphabet
+      TEnumerator = TAlphaDictionary.TValueEnumerator;
     var
-      fLetters: TIntegerList;       // object that maps letters to letter objects
-      fEnumIdx: Integer;            // index into current enumeration
-    class var fInstance: TAlphabet; // stores singleton instance
+      fLetters: TAlphaDictionary;   // Maps letters to associated letter objects
+      fEnum: TEnumerator;           // Enumerates all letter objects
+    class var fInstance: TAlphabet; // Stores singleton instance
     class function GetInstance: TAlphabet; static;
       {Gets an instance of the object. When first first called the object is
       created. Subsequent calls return the same instance.
@@ -99,13 +106,13 @@ type
       }
   strict protected
     constructor InternalCreate;
-      {Class constructor Called by GetInstance. Sets up object and creates all
+      {Constructor called by GetInstance. Sets up object and creates all
       required TLetter objects.
       }
   public
     destructor Destroy; override;
-      {Class destructor. Tears down object. Frees all letter instances by
-      setting their CanDestroy flag before freeing.
+      {Destructor. Tears down object. Frees all letter instances by setting
+      their CanDestroy flag before freeing.
       }
     procedure InitEnum;
       {Initialises enumeration of all contained letters.
@@ -126,8 +133,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   UUnicodeHelper;
 
@@ -140,16 +145,16 @@ type
   }
   TLetterImpl = class(TLetter)
   strict private
-    var fLetter: Char;  // value of Letter property
+    var fLetter: Char;  // Value of Letter property
   strict protected
     function GetLetter: Char; override;
       {Read accessor for Letter property.
         @return Required letter.
       }
   public
-    var CanDestroy: Boolean;  // flag indicating if object can be freed
+    var CanDestroy: Boolean;  // Flag indicating if object can be freed
     constructor Create(const Ch: Char);
-      {Class constructor. Creates a non-destructable object.
+      {Constructor. Creates a non-destructable object.
         @param Ch [in] Letter to be encapsulated. Must be A..Z or underscore.
       }
     procedure FreeInstance; override;
@@ -168,8 +173,8 @@ type
   public
     class var CanDestroy: Boolean;  // flag the permits object to be freed
     destructor Destroy; override;
-      {Class destructor. Only calls inherited destructor to destroy Letters
-      object if CanDestroy is True.
+      {Destructor. Only calls inherited destructor to destroy Letters object if
+      CanDestroy is True.
       }
     procedure FreeInstance; override;
       {Override of method that releases object's memory on destruction that
@@ -181,7 +186,7 @@ type
 { TLetterImpl }
 
 constructor TLetterImpl.Create(const Ch: Char);
-  {Class constructor. Creates a non-destructable object.
+  {Constructor. Creates a non-destructable object.
     @param Ch [in] Letter to be encapsulated. Must be A..Z or underscore.
   }
 begin
@@ -213,19 +218,18 @@ end;
 { TAlphabet }
 
 destructor TAlphabet.Destroy;
-  {Class destructor. Tears down object. Frees all letter instances by
-  setting their CanDestroy flag before freeing.
+  {Destructor. Tears down object. Frees all letter instances by setting their
+  CanDestroy flag before freeing.
   }
 var
-  Obj: TObject;   // each object in letters list
-  Idx: Integer;   // loops through items in letters list
+  Letter: TLetter;  // each letter object in map
 begin
-  for Idx := Pred(fLetters.Count) downto 0 do
+  for Letter in fLetters.Values do
   begin
-    Obj := fLetters.Objects[Idx];
-    (Obj as TLetterImpl).CanDestroy := True;
-    Obj.Free;
+    (Letter as TLetterImpl).CanDestroy := True;
+    Letter.Free;
   end;
+  fEnum.Free;
   fLetters.Free;
   fInstance := nil;
   inherited;
@@ -252,28 +256,30 @@ function TAlphabet.GetLetter(Ch: Char): TLetter;
 begin
   Assert(IsCharInSet(ToUpperCase(Ch), ['_', 'A'..'Z']),
     ClassName + '.GetLetter: Ch must be A..Z or underscore');
-  Result := fLetters.FindObject(Ord(Ch)) as TLetter;
+  Result := fLetters[Ch];
 end;
 
 procedure TAlphabet.InitEnum;
   {Initialises enumeration of all contained letters.
   }
 begin
-  fEnumIdx := -1;
+  fEnum.Free;
+  fEnum := fLetters.Values.GetEnumerator;
 end;
 
 constructor TAlphabet.InternalCreate;
-  {Class constructor Called by GetInstance. Sets up object and creates all
-  required TLetter objects.
+  {Constructor called by GetInstance. Sets up object and creates all required
+  TLetter objects.
   }
 var
   Ch: Char; // letters in alphabet
 begin
   inherited InternalCreate;
-  fLetters := TIntegerList.Create;
-  fLetters.Add(Ord('_'), TLetterImpl.Create('_'));    // add underscore
+  // use native default ordering for characters
+  fLetters := TAlphaDictionary.Create;
+  fLetters.Add('_', TLetterImpl.Create('_'));         // add underscore
   for Ch := 'A' to 'Z' do                             // add A..Z
-    fLetters.Add(Ord(Ch), TLetterImpl.Create(Ch));
+    fLetters.Add(Ch, TLetterImpl.Create(Ch));
 end;
 
 function TAlphabet.NextLetter(out Letter: TLetter): Boolean;
@@ -282,17 +288,16 @@ function TAlphabet.NextLetter(out Letter: TLetter): Boolean;
     @return True if enumeration contains more letter, false if not.
   }
 begin
-  Inc(fEnumIdx);
-  Result := fEnumIdx <= Pred(fLetters.Count);
+  Result := fEnum.MoveNext;
   if Result then
-    Letter := fLetters.Objects[fEnumIdx] as TLetter;
+    Letter := fEnum.Current;
 end;
 
 { TAlphabetImpl }
 
 destructor TAlphabetImpl.Destroy;
-  {Class destructor. Only calls inherited destructor to destroy Letters object
-  if CanDestroy is True.
+  {Destructor. Only calls inherited destructor to destroy Letters object if
+  CanDestroy is True.
   }
 begin
   if CanDestroy then

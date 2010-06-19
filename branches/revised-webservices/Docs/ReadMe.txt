@@ -21,7 +21,7 @@ Compilable Pascal units containing selected snippets can be created.
 Installation
 ________________________________________________________________________________
 
-IMPORTANT NOTES: 
+IMPORTANT NOTES:
 
 1) CodeSnip requires Windows 2000 or later. It cannot be installed on Windows
    95, 98, Me, NT3.51 or NT4. It also requires MS Internet Explorer V6 or later,
@@ -44,25 +44,25 @@ The installer makes the following changes to your system:
 
 + The main program's executable file and documentation are installed into the
   chosen install folder (\Progam Files\DelphiDabbler\CodeSnip by default).
-  
+
 + Files required by the uninstaller are stored in the main installation's Uninst
   sub-folder.
-  
+
 + The program's uninstall information is registered with the Add / Remove
   Programs control panel applet.
-  
+
 + A program group may be created in the start menu (optional).
 
 + A CodeSnip folder is created inside the DelphiDabbler sub-folder of the
   common application data folder. A configuration file is stored in the
   folder. Once the database is downloaded, it will be stored in a Data
-  subfolder (see below). 
-  
+  subfolder (see below).
+
 + Another CodeSnip folder is created in the DelphiDabbler sub-folder of the
   user's application data folder. This is used to hold a file that stores per-
   user configuration data. A UserData.3 sub folder of this folder is used to
   store any user defined snippets.
-  
+
 + Setup offers to copy any relevant files from installations earlier than v3.0
   into the correct locations for v3.
 
@@ -79,7 +79,7 @@ up a message if none is present.
 When CodeSnip is first run it detects if there is no database and displays
 message to that effect in its main window. A link is displayed that can be used
 to download the database from the DelphiDabbler website. Once this is done the
-required files are stored in the DelphiDabbler\CodeSnip\Data sub folder of the 
+required files are stored in the DelphiDabbler\CodeSnip\Data sub folder of the
 common application data folder.
 
 
@@ -138,7 +138,7 @@ Updating the Database
 ________________________________________________________________________________
 
 From time to time you should check for updates to the CodeSnip database. This is
-done by selecting the program's "Database | Update From Web" menu option. 
+done by selecting the program's "Database | Update From Web" menu option.
 
 It should be sufficient to check for updates about once per month. Mailing list
 members are notified of updates (see below).
@@ -153,11 +153,16 @@ ________________________________________________________________________________
 1) Users of v1.0.3 or earlier will loose any source code formatting preferences
    when upgrading to the latest version. If you experience this problem you need
    to reset your preferences via the "Tools | Preferences" menu option.
-   
+
 2) Syntax highlighting preferences will be lost when upgrading from any v1.x or
    v2.x release and the new v3 default highlighting style will be used. This
    can be changed from the Syntax Highlighter tab of the Preferences dialog box,
    accessed from the "Tools | Preferences" menu option.
+
+3) Users who have configured CodeSnip to access the internet via a proxy server
+   will loose any stored passwords required by the proxy server when updgrading
+   to v3.6.1. The installer will warn of this. Passwords have to be re-entered
+   using the Tools | Proxy Server menu option.
 
 
 ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
@@ -170,7 +175,7 @@ members of the CodeSnip mailing list.
 You can subscribe to the list in several ways:
 
 + By visiting http://www.delphidabbler.com/subsid/maillist?list=codesnip,
-  entering your email address and clicking the subscribe button. 
+  entering your email address and clicking the subscribe button.
 + By providing the relevant information when you register CodeSnip,
 + By selecting CodeSnip's "Tools | Join Mailing List" menu option and filling
   your details in the dialog box.
@@ -234,9 +239,9 @@ http://www.mozilla.org/MPL/MPL-1.1) and other open source licenses.
 Bugs
 ________________________________________________________________________________
 
-Please do report any bugs you find. 
+Please do report any bugs you find.
 
-Bugs are recorded in Tracker on SourceForge. View the bug via 
+Bugs are recorded in Tracker on SourceForge. View the bug via
 http://www.delphidabbler.com/url/codesnip-bugs which redirects to SourceForge.
 You can also access the bug tracker from CodeSnip by using the "Tools | Report
 Bug Online" and following the link.
@@ -262,7 +267,7 @@ get a fully working version of the program whether you make a donation or not.
 Having said that, it takes time and money to maintain CodeSnip and the online
 database. So if you wish to make a contribution it will be most welcome.
 
-Payment in pounds sterling can be made via this address - 
+Payment in pounds sterling can be made via this address -
 http://www.delphidabbler.com/url/donate-cs which redirects to a secure PayPal
 page.
 
@@ -298,7 +303,7 @@ Thanks to:
 
 + David Mustard and Bill Miller for providing information that enabled me to add
   Delphi 2007 and Delphi 2009 support respectively to the program.
-  
+
 + The authors of various pieces of source code and images used by the program.
   See the program's about box (use the "Help | About" menu option and see the
   "About the Program" tab) for details.
