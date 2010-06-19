@@ -12,7 +12,7 @@ unit TestUOrderedDictionary;
 interface
 
 uses
-  TestFramework, Generics.Defaults, Generics.Collections, UOrderedList,
+  TestFramework, Generics.Defaults, Generics.Collections, UContainers,
   UOrderedDictionary;
 
 type

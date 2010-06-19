@@ -13,7 +13,7 @@ interface
 
 uses
   Generics.Collections,
-  TestFramework, UOrderedList;
+  TestFramework, UContainers;
 
 type
 

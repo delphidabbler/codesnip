@@ -1,5 +1,5 @@
 {
- * UOrderedList.pas
+ * UContainers.pas
  *
  * Provides a generic ordered list class.
  *
@@ -18,7 +18,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UOrderedList.pas
+ * The Original Code is UContainers.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -33,7 +33,7 @@
 }
 
 
-unit UOrderedList;
+unit UContainers;
 
 interface
 

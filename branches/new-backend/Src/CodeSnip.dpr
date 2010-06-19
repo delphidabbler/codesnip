@@ -178,6 +178,7 @@ uses
   UCompResHTML in 'UCompResHTML.pas',
   UConsoleApp in 'UConsoleApp.pas',
   UConsts in 'UConsts.pas',
+  UContainers in 'UContainers.pas',
   UContributors in 'UContributors.pas',
   UControlStateMgr in 'UControlStateMgr.pas',
   UCopyInfoMgr in 'UCopyInfoMgr.pas',

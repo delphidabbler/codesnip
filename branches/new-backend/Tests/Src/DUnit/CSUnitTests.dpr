@@ -66,7 +66,7 @@ uses
   USingleton in '..\..\..\Src\Experimental\USingleton.pas',
   NSDatabase.UDatabase in '..\..\..\Src\Experimental\NSDatabase.UDatabase.pas',
   TestNSDatabaseUDatabase in 'TestNSDatabaseUDatabase.pas',
-  UOrderedList in '..\..\..\Src\Experimental\UOrderedList.pas',
+  UContainers in '..\..\..\Src\UContainers.pas',
   TestUOrderedList in 'TestUOrderedList.pas',
   UOrderedDictionary in '..\..\..\Src\Experimental\UOrderedDictionary.pas',
   TestUOrderedDictionary in 'TestUOrderedDictionary.pas';

@@ -39,7 +39,7 @@
 			<DCCReference Include="..\..\..\Src\Experimental\USingleton.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\NSDatabase.UDatabase.pas"/>
 			<DCCReference Include="TestNSDatabaseUDatabase.pas"/>
-			<DCCReference Include="..\..\..\Src\Experimental\UOrderedList.pas"/>
+			<DCCReference Include="..\..\..\Src\UContainers.pas"/>
 			<DCCReference Include="TestUOrderedList.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\UOrderedDictionary.pas"/>
 			<DCCReference Include="TestUOrderedDictionary.pas"/>
