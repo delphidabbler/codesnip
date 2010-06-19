@@ -40,8 +40,10 @@ interface
 
 
 uses
+  // Delphi
+  Generics.Collections,
   // Project
-  ULists, UView;
+  UView;
 
 
 type
@@ -55,9 +57,12 @@ type
   }
   THistory = class(TObject)
   strict private
+    type
+      // Implements list of view items in history
+      THistoryList = TObjectList<TViewItem>;
     var
-      fItems: TObjectListEx;  // Stores items in history list
-      fCursor: Integer;       // Index of current history item in list
+      fItems: THistoryList;     // History list
+      fCursor: Integer;         // Index of current history item in list
     const
       cMaxHistoryItems = 50;  // Max items stored in history
     function GetCurrent: TViewItem;
@@ -67,10 +72,10 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up and initialises object.
+      {Constructor. Sets up and initialises object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     procedure Clear;
       {Clears history list.
@@ -121,8 +126,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils, Classes {for inlining},
   // Project
   UExceptions;
 
@@ -140,7 +143,7 @@ begin
   // Loop backward thru history list from just before current position, adding
   // each item to given list
   for Idx := Pred(fCursor) downto 0 do
-    List.Add(fItems[Idx] as TViewItem);
+    List.Add(fItems[Idx]);
 end;
 
 function THistory.BackListCount: Integer;
@@ -164,19 +167,19 @@ begin
 end;
 
 constructor THistory.Create;
-  {Class constructor. Sets up and initialises object.
+  {Constructor. Sets up and initialises object.
   }
 begin
   inherited;
-  fItems := TObjectListEx.Create(True);
+  fItems := THistoryList.Create(True);
   Clear;
 end;
 
 destructor THistory.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fItems); // frees objects in list
+  fItems.Free;  // frees all owned objects
   inherited;
 end;
 
@@ -191,7 +194,7 @@ begin
   // Loop forward thru history list from just after current position, adding
   // each item to given list
   for Idx := Succ(fCursor) to Pred(fItems.Count) do
-    List.Add(fItems[Idx] as TViewItem);
+    List.Add(fItems[Idx]);
 end;
 
 function THistory.ForwardListCount: Integer;
@@ -211,7 +214,7 @@ function THistory.GetCurrent: TViewItem;
   }
 begin
   if (fCursor >= 0) and (fCursor < fItems.Count) then
-    Result := fItems[fCursor] as TViewItem
+    Result := fItems[fCursor]
   else
     Result := nil;
 end;

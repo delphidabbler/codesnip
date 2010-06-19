@@ -1,3 +1,5 @@
+{TODO -oSelf -cImprovement : Redo enumerator in TWarings (UWarnings.pas) - can probably simplify greatly.}
+{TODO -oSelf -cImprovement : Replace custom enumerator in TAlphabet (UAlphabet) with standard one}
 {TODO -oSelf -cImprovement :
 Change TTaggedTextEntityHandler to be case sensitive - some entities can differ only by case.
 Also change to use TDictionary to store map of entities to characters.}

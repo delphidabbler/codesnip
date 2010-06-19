@@ -42,8 +42,10 @@ interface
 
 
 uses
+  // Delphi
+  Generics.Collections,
   // Project
-  UActiveText, UBaseObjects, UStacks, UTaggedTextLexer;
+  UActiveText, UBaseObjects, UTaggedTextLexer;
 
 
 type
@@ -62,8 +64,8 @@ type
   }
   TREMLReader = class(TInterfacedObject, IActiveTextParser)
   strict private
-    fLexer: TTaggedTextLexer;   // Analysis REML markup
-    fParamStack: TStringStack;  // Stack of REML tag parameters for closing tags
+    fLexer: TTaggedTextLexer;     // Analysis REML markup
+    fParamStack: TStack<string>;  // Stack of REML tag params for closing tags
     function TagInfo(const TagIdx: Integer; out TagName: string;
       out TagCode: Word; out IsContainer: WordBool): Boolean;
       {Callback that provides lexer with information about supported tags. Lexer
@@ -429,7 +431,7 @@ constructor TREMLReader.Create;
 begin
   inherited Create;
   fLexer := TTaggedTextLexer.Create(TagInfo, EntityInfo);
-  fParamStack := TStringStack.Create;
+  fParamStack := TStack<string>.Create;
 end;
 
 destructor TREMLReader.Destroy;

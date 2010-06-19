@@ -308,6 +308,7 @@
 			<DCCReference Include="UColours.pas"/>
 			<DCCReference Include="UCommandBars.pas"/>
 			<DCCReference Include="UCommonDlg.pas"/>
+			<DCCReference Include="UComparers.pas"/>
 			<DCCReference Include="UCompileMgr.pas"/>
 			<DCCReference Include="UCompilerBase.pas"/>
 			<DCCReference Include="UCompileResultsLBMgr.pas"/>
@@ -450,7 +451,6 @@
 			<DCCReference Include="USourceFileInfo.pas"/>
 			<DCCReference Include="USourceFileOutputMgr.pas"/>
 			<DCCReference Include="USourceGen.pas"/>
-			<DCCReference Include="UStacks.pas"/>
 			<DCCReference Include="UStatusBarMgr.pas"/>
 			<DCCReference Include="UStrStreamWriter.pas"/>
 			<DCCReference Include="UStructs.pas"/>

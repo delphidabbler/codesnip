@@ -27,7 +27,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,7 +45,7 @@ interface
 
 uses
   // Delphi
-  Classes, Windows, Graphics, ImgList;
+  Classes, Generics.Collections, Windows, Graphics, ImgList;
 
 
 type
@@ -57,8 +57,12 @@ type
   }
   TGIFImageList = class(TCustomImageList)
   strict private
-    fGIFResNames: TStringList;
-      {Map of GIF resource names to index of matching image in image list}
+    type
+      // Class that maps GIF resource name to index of image in image list
+      TResNamesMap = TDictionary<string,Integer>;
+    var
+      fGIFResNames: TResNamesMap;
+        {Map of GIF resource names to index of matching image in image list}
     function CreateBMPFromGIFRes(const GIFResName: string): TBitmap;
       {Creates bitmap that is a copy of a GIF stored in HTML resources.
         @param GIFResName [in] Name of resource containing GIF.
@@ -66,11 +70,11 @@ type
       }
   public
     constructor Create(AOwner: TComponent); override;
-      {Class constructor. Sets up object.
+      {Constructor. Sets up object.
         @param AOwner [in] Reference to any component that owns image list.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     function ImageIndex(const GIFResName: string): Integer;
       {Gets image of representation of a GIF resource in image list.
@@ -92,12 +96,10 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // 3rd party
   GIFImage,
   // Project
-  UConsts;
+  UComparers;
 
 
 { TGIFImageList }
@@ -119,10 +121,10 @@ begin
   try
     Result := Self.AddMasked(Bmp, Bmp.TransparentColor);
   finally
-    FreeAndNil(Bmp);
+    Bmp.Free;
   end;
   // Record resource name and index of associated image in image list
-  fGIFResNames.AddObject(GIFResName, TObject(Result));
+  fGIFResNames.Add(GIFResName, Result);
 end;
 
 procedure TGIFImageList.Clear;
@@ -134,13 +136,13 @@ begin
 end;
 
 constructor TGIFImageList.Create(AOwner: TComponent);
-  {Class constructor. Sets up object.
+  {Constructor. Sets up object.
     @param AOwner [in] Reference to any component that owns image list.
   }
 begin
   inherited Create(AOwner);
-  fGIFResNames := TStringList.Create;
-  fGIFResNames.CaseSensitive := False;
+  // Set up map: we ignore case of resource names
+  fGIFResNames := TResNamesMap.Create(TSameTextEqualityComparer.Create);
 end;
 
 function TGIFImageList.CreateBMPFromGIFRes(const GIFResName: string): TBitmap;
@@ -163,16 +165,16 @@ begin
     Result.Assign(GIF);
     Result.TransparentColor := Result.Canvas.Pixels[0, 0];
   finally
-    FreeAndNil(GIFStm);
-    FreeAndNil(GIF);
+    GIFStm.Free;
+    GIF.Free;
   end;
 end;
 
 destructor TGIFImageList.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fGIFResNames);
+  fGIFResNames.Free;
   inherited;
 end;
 
@@ -181,16 +183,11 @@ function TGIFImageList.ImageIndex(const GIFResName: string): Integer;
     @param GIFResName [in] Name of GIF resource.
     @return Index of image in image list or -1 if no such image.
   }
-var
-  NameIdx: Integer; // index of resource name in list of names
 begin
-  NameIdx := fGIFResNames.IndexOf(GIFResName);
-  if NameIdx = -1 then
-    // Resource not in list => no matching image in image list
+  if not fGIFResNames.ContainsKey(GIFResName) then
     Result := -1
   else
-    // Found resource name => image index stored in Objects[] property
-    Result := Integer(fGIFResNames.Objects[NameIdx]);
+    Result := fGIFResNames[GIFResName];
 end;
 
 end.

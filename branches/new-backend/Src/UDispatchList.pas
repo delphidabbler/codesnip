@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -102,8 +102,8 @@ type
     IDispatchList
   )
   strict private
-    fList: TInterfaceList;
-      {Object list}
+    var
+      fList: TInterfaceList;  // Dispatch object list
     type
       {
       TEnumerator:
@@ -127,7 +127,7 @@ type
           }
       public
         constructor Create(const List: IDispatchList);
-          {Class constructor. Sets up and initialises enumeration.
+          {Constructor. Sets up and initialises enumeration.
             @param List [in] Reference to object to be enumerated.
           }
       end;
@@ -153,7 +153,10 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up object.
+      {Constructor. Sets up object.
+      }
+    destructor Destroy; override;
+      {Destructor. Tears down object.
       }
   end;
 
@@ -181,11 +184,19 @@ begin
 end;
 
 constructor TDispatchList.Create;
-  {Class constructor. Sets up object.
+  {Constructor. Sets up object.
   }
 begin
   inherited;
   fList := TInterfaceList.Create;
+end;
+
+destructor TDispatchList.Destroy;
+  {Destructor. Tears down object.
+  }
+begin
+  fList.Free;
+  inherited;
 end;
 
 function TDispatchList.GetEnumerator: IDispatchListEnum;
@@ -208,7 +219,7 @@ end;
 { TDispatchList.TEnumerator }
 
 constructor TDispatchList.TEnumerator.Create(const List: IDispatchList);
-  {Class constructor. Sets up and initialises enumeration.
+  {Constructor. Sets up and initialises enumeration.
     @param List [in] Reference to object to be enumerated.
   }
 begin

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -42,9 +42,9 @@ interface
 
 uses
   // Delphi
-  Classes, Windows, Menus,
+  Classes, Generics.Collections, Types, Menus,
   // Project
-  UCommandBars, ULists;
+  UCommandBars;
 
 
 type
@@ -60,7 +60,7 @@ type
 
   {
   TWBPopupMenu:
-    Class that overrides popup menu. Designed for triggering from an browser
+    Class that overrides popup menu. Designed for triggering from a web browser
     control. Records HTML element under mouse cursor when menu triggered. Also
     provides an event that enables popup to be cancelled.
   }
@@ -79,7 +79,7 @@ type
       {HTML element under mouse cursor when menu activated}
     property OnQueryPopup: TWBPopupMenuQueryPopupEvent
       read fOnQueryPopup write fOnQueryPopup;
-      {Event trigerred before menu pops up. Handler can prevent display of menu
+      {Event triggered before menu pops up. Handler can prevent display of menu
       by setting event handler's Cancel parameter to true}
   end;
 
@@ -91,7 +91,10 @@ type
   }
   TWBPopupMenuMgr = class(TComponent)
   strict private
-    fMenus: TIntegerList; // Maps menu ids to menu objects
+    type
+      // Map of command bar ids to popup menu components
+      TMenuMap = TDictionary<TCommandBarID, TWBPopupMenu>;
+    var fMenus: TMenuMap; // Maps menu ids to popup menu objects
     function GetMenu(const ID: TCommandBarID): TWBPopupMenu;
       {Gets reference to menu associated with a command ID.
         @param ID [in] ID of required menu.
@@ -99,11 +102,11 @@ type
       }
   public
     constructor Create(AOwner: TComponent); override;
-      {Class constructor. Sets up object.
+      {Constructor. Sets up object.
         @param AOwner [in] Component that owns this object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
     function AddMenu(const ID: TCommandBarID): TWBPopupMenu;
       {Creates a new menu, identifies it with an ID and adds it to the menu
@@ -130,17 +133,12 @@ type
   TWBTempMenuItem = class(TMenuItem)
   public
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Destructor. Tears down object.
       }
   end;
 
 
 implementation
-
-
-uses
-  // Delphi
-  SysUtils;
 
 
 { TWBPopupMenu }
@@ -169,25 +167,27 @@ function TWBPopupMenuMgr.AddMenu(const ID: TCommandBarID): TWBPopupMenu;
     @return Reference to new menu.
   }
 begin
-  Assert(fMenus.IndexOf(ID) = -1, ClassName + '.AddMenu: ID already exists');
+  Assert(not fMenus.ContainsKey(ID), ClassName + '.AddMenu: ID already exists');
+  // new menu item created here gets freed automatically when menu is destoyed
   Result := TWBPopupMenu.Create(Self);
   fMenus.Add(ID, Result);
 end;
 
 constructor TWBPopupMenuMgr.Create(AOwner: TComponent);
-  {Class constructor. Sets up object.
+  {Constructor. Sets up object.
     @param AOwner [in] Component that owns this object.
   }
 begin
   inherited;
-  fMenus := TIntegerList.Create;
+  // use default integer comparison and hash for TCommandBarID key in map
+  fMenus := TMenuMap.Create;
 end;
 
 destructor TWBPopupMenuMgr.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fMenus);
+  fMenus.Free;
   inherited;
 end;
 
@@ -197,7 +197,7 @@ function TWBPopupMenuMgr.GetMenu(const ID: TCommandBarID): TWBPopupMenu;
     @return Reference to required menu or nil if ID is not found.
   }
 begin
-  Result := fMenus.FindObject(ID) as TWBPopupMenu;
+  Result := fMenus[ID];
 end;
 
 procedure TWBPopupMenuMgr.Popup(const ID: TCommandBarID; const Pt: TPoint;
@@ -222,7 +222,7 @@ end;
 { TWBTempMenuItem }
 
 destructor TWBTempMenuItem.Destroy;
-  {Class destructor. Tears down object.
+  {Destructor. Tears down object.
   }
 begin
   Action.Free;    // free the associated action
