@@ -21,7 +21,7 @@ type
   // Test methods for class TOrderedDictionary
   TestTOrderedDictionary = class(TTestCase)
   strict private
-    fDict: TOrderedDictionary<string,Integer>;  // constructor with comparer
+    fDict: TSortedDictionary<string,Integer>;  // constructor with comparer
     fLastKeyNotification: TPair<string,TCollectionNotification>;
     fLastValueNotification: TPair<Integer,TCollectionNotification>;
   public
@@ -201,7 +201,7 @@ begin
     Result[Idx] := Items[Idx];
 end;
 
-function SameDictAndArray(const D: TOrderedDictionary<string,Integer>;
+function SameDictAndArray(const D: TSortedDictionary<string,Integer>;
   const A: array of string): Boolean;
 var
   Idx: Integer;
@@ -268,7 +268,7 @@ end;
 
 procedure TestTOrderedDictionary.SetUp;
 begin
-  fDict := TOrderedDictionary<string,Integer>.Create(
+  fDict := TSortedDictionary<string,Integer>.Create(
     TComparer<string>.Construct(
       function(const Left, Right: string): Integer
       begin
@@ -364,12 +364,12 @@ end;
 
 procedure TestTOrderedDictionary.TestCreateNoParams;
 var
-  D: TOrderedDictionary<Integer,Integer>;
+  D: TSortedDictionary<Integer,Integer>;
   Idx: Integer;
 begin
   // Testing constructor with parameters => use default ordering, so we keep
   // type simple so that ordering is likely to be as expected.
-  D := TOrderedDictionary<Integer,Integer>.Create;
+  D := TSortedDictionary<Integer,Integer>.Create;
   try
     // here key is expected position in dictionary, value is order added
     D.Add(4, 1);
@@ -578,7 +578,7 @@ begin
     Check(CheckNotification('one', 1, cnRemoved),
       'Expected "one" => 1 with cnRemoved');
     // we don't check for cnExtract since extraction is not supported by
-    // TOrderedDictionary at present
+    // TSortedDictionary at present
   finally
     fDict.OnKeyNotify := nil;
     fDict.OnValueNotify := nil;

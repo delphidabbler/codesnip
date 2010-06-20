@@ -21,7 +21,7 @@ type
   // Test methods for class TOrderedList
   TestTOrderedList = class(TTestCase)
   strict private
-    fList: TOrderedList<string>;
+    fList: TSortedList<string>;
     fNotifyList: TList<TPair<string,TCollectionNotification>>;
     procedure ClearAll;
     procedure Populate;
@@ -132,7 +132,7 @@ begin
     Result[Idx] := Items[Idx];
 end;
 
-function SameListAndArray(const L: TOrderedList<string>;
+function SameListAndArray(const L: TSortedList<string>;
   const A: array of string): Boolean;
 var
   Idx: Integer;
@@ -178,7 +178,7 @@ end;
 
 procedure TestTOrderedList.SetUp;
 begin
-  fList :=  TOrderedList<string>.Create(
+  fList :=  TSortedList<string>.Create(
     TComparer<string>.Construct(
       function(const Left, Right: string): Integer
       begin
@@ -285,12 +285,12 @@ end;
 
 procedure TestTOrderedList.TestCreateNoParams;
 var
-  L: TOrderedList<Integer>;
+  L: TSortedList<Integer>;
   Idx: Integer;
 begin
   // Testing constructor with parameters => use default ordering, so we keep
   // type simple so that ordering is likely to be as expected.
-  L := TOrderedList<Integer>.Create;
+  L := TSortedList<Integer>.Create;
   try
     // here item is expected position in list
     // (we add 0..6 out of order and expect it to be sorted)

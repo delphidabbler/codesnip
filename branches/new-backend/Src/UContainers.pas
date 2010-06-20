@@ -47,11 +47,11 @@ uses
 type
 
   {
-  TOrderedList:
+  TSortedList:
     Represents an enumerable sorted list, with sorting defined by user. List
     items are accessible by index.
   }
-  TOrderedList<T> = class(TEnumerable<T>)
+  TSortedList<T> = class(TEnumerable<T>)
   strict private
     fList: TList<T>;                      // Maintains list
     fComparer: IComparer<T>;              // Object that compares list items
@@ -159,12 +159,12 @@ type
   end;
 
   {
-  TOrderedDictionary:
+  TSortedDictionary:
     Represents an enumerable dictionary that is sorted on the key according to a
     user defined sorting. Keys, values and key/value pairs are also accessible
     by index.
   }
-  TOrderedDictionary<TKey,TValue> = class(TEnumerable<TPair<TKey,TValue>>)
+  TSortedDictionary<TKey,TValue> = class(TEnumerable<TPair<TKey,TValue>>)
   public
     type
       {
@@ -184,7 +184,7 @@ type
             @return True if there is a next key, False if at end of enumeration.
           }
       public
-        constructor Create(AItems: TOrderedList<TPair<TKey,TValue>>);
+        constructor Create(AItems: TSortedList<TPair<TKey,TValue>>);
           {Constructs a new keys enumerator.
             @param AItems [in] Ordered list of key / value pairs in dictionary.
           }
@@ -199,7 +199,7 @@ type
       }
       TKeyCollection = class(TEnumerable<TKey>)
       strict private
-        fItems: TOrderedList<TPair<TKey,TValue>>; // List of key/value pairs
+        fItems: TSortedList<TPair<TKey,TValue>>; // List of key/value pairs
         function GetCount: Integer;
           {Read accessor for Count property.
             @return Number of keys in collection.
@@ -215,7 +215,7 @@ type
             @return Enumerator instance.
           }
       public
-        constructor Create(AItems: TOrderedList<TPair<TKey,TValue>>);
+        constructor Create(AItems: TSortedList<TPair<TKey,TValue>>);
           {Constructs a new collection object for a given list of keys.
             @param AItems [in] List of key / value pairs.
           }
@@ -246,7 +246,7 @@ type
               enumeration.
           }
       public
-        constructor Create(AItems: TOrderedList<TPair<TKey,TValue>>);
+        constructor Create(AItems: TSortedList<TPair<TKey,TValue>>);
           {Constructs a new values enumerator.
             @param AItems [in] Ordered list of key / value pairs in dictionary.
           }
@@ -261,7 +261,7 @@ type
       }
       TValueCollection = class(TEnumerable<TValue>)
       strict private
-        fItems: TOrderedList<TPair<TKey,TValue>>; // List of key/value pairs
+        fItems: TSortedList<TPair<TKey,TValue>>; // List of key/value pairs
         function GetCount: Integer;
           {Read accessor for Count property.
             @return Number of values in collection.
@@ -277,7 +277,7 @@ type
             @return Enumerator instance.
           }
       public
-        constructor Create(AItems: TOrderedList<TPair<TKey,TValue>>);
+        constructor Create(AItems: TSortedList<TPair<TKey,TValue>>);
           {Constructs a new collection object for a given list of values.
             @param AItems [in] List of key / value pairs.
           }
@@ -296,7 +296,7 @@ type
       }
       TPairEnumerator = TEnumerator<TPair<TKey,TValue>>;
   strict private
-    fList: TOrderedList<TPair<TKey,TValue>>;  // Maintains dictionary's entries
+    fList: TSortedList<TPair<TKey,TValue>>;  // Maintains dictionary's entries
     fKeysCollection: TKeyCollection;          // Dictionary's Keys collection
     fValuesCollection: TValueCollection;      // Dictionary's Values collection
     fComparer: IComparer<TKey>;               // Compares dictionary keys
@@ -442,9 +442,9 @@ resourcestring // must be in interface for parametised types
 implementation
 
 
-{ TOrderedList<T> }
+{ TSortedList<T> }
 
-function TOrderedList<T>.Add(const Item: T): Integer;
+function TSortedList<T>.Add(const Item: T): Integer;
   {Adds a new item to the list.
     @param Item [in] Item to be added.
     @return Index of new item in list.
@@ -457,14 +457,14 @@ begin
   fList.Insert(Result, Item);
 end;
 
-procedure TOrderedList<T>.Clear;
+procedure TSortedList<T>.Clear;
   {Clears all items from list.
   }
 begin
   fList.Clear;
 end;
 
-function TOrderedList<T>.Contains(const Item: T): Boolean;
+function TSortedList<T>.Contains(const Item: T): Boolean;
   {Checks if an item is in the list.
     @param Item [in] Item to be checked.
     @return True if at least one copy of Item is in list, False if not.
@@ -475,7 +475,7 @@ begin
   Result := Find(Item, Dummy);
 end;
 
-function TOrderedList<T>.ContainsDuplicates: Boolean;
+function TSortedList<T>.ContainsDuplicates: Boolean;
   {Checks if list contains any duplicate items.
     @return True if list contains duplicates, False if not.
   }
@@ -488,14 +488,14 @@ begin
       Exit(True);
 end;
 
-constructor TOrderedList<T>.Create;
+constructor TSortedList<T>.Create;
   {Constructs new list object that uses default comparer.
   }
 begin
   Create(nil);
 end;
 
-constructor TOrderedList<T>.Create(const AComparer: IComparer<T>);
+constructor TSortedList<T>.Create(const AComparer: IComparer<T>);
   {Constructs new list object that uses a specified comparer.
     @param AComparer [in] Object used to compare list items. If nil, default
       comparer is used.
@@ -510,7 +510,7 @@ begin
   fList.OnNotify := NotificationHandler;
 end;
 
-procedure TOrderedList<T>.Delete(Index: Integer);
+procedure TSortedList<T>.Delete(Index: Integer);
   {Deletes item at a specified index from list.
     @param Index [in] Index of item to be deleted.
   }
@@ -518,7 +518,7 @@ begin
   fList.Delete(Index);
 end;
 
-destructor TOrderedList<T>.Destroy;
+destructor TSortedList<T>.Destroy;
   {Destroys list object.
   }
 begin
@@ -526,7 +526,7 @@ begin
   inherited;
 end;
 
-function TOrderedList<T>.DoGetEnumerator: TEnumerator<T>;
+function TSortedList<T>.DoGetEnumerator: TEnumerator<T>;
   {Gets a new instance of list's enumerator object.
     @return Enumerator instance.
   }
@@ -534,7 +534,7 @@ begin
   Result := fList.GetEnumerator;
 end;
 
-function TOrderedList<T>.Find(const Item: T; out Index: Integer): Boolean;
+function TSortedList<T>.Find(const Item: T; out Index: Integer): Boolean;
   {Finds an item in list.
     @param Item [in] Item to find.
     @param Index [out] Index of Item in list if present.
@@ -544,7 +544,7 @@ begin
   Result := fList.BinarySearch(Item, Index);
 end;
 
-function TOrderedList<T>.GetCount: Integer;
+function TSortedList<T>.GetCount: Integer;
   {Read accessor for Count property. Gets number of items in list.
     @return Number of items in list.
   }
@@ -552,7 +552,7 @@ begin
   Result := fList.Count;
 end;
 
-function TOrderedList<T>.GetItem(Idx: Integer): T;
+function TSortedList<T>.GetItem(Idx: Integer): T;
   {Read accessor for Items[] property. Gets list item at a specified index in
   list.
     @param Idx [in] Index of required item.
@@ -562,7 +562,7 @@ begin
   Result := fList[Idx];
 end;
 
-function TOrderedList<T>.IndexOf(const Item: T): Integer;
+function TSortedList<T>.IndexOf(const Item: T): Integer;
   {Gets index of an item in list.
     @param Item [in] List item to find.
     @return Index of first occurence of Item in list or -1 if Item not in list.
@@ -572,7 +572,7 @@ begin
     Result := -1;
 end;
 
-function TOrderedList<T>.IsEmpty: Boolean;
+function TSortedList<T>.IsEmpty: Boolean;
   {Checks if list is empty.
     @return True if list is empty, False if not.
   }
@@ -580,7 +580,7 @@ begin
   Result := Count = 0;
 end;
 
-procedure TOrderedList<T>.NotificationHandler(Sender: TObject; const Item: T;
+procedure TSortedList<T>.NotificationHandler(Sender: TObject; const Item: T;
   Action: TCollectionNotification);
   {Handles underlying list's OnNotify event. Triggered when something in list
   changes. Passes event on to this class' own notification system.
@@ -592,7 +592,7 @@ begin
   Notify(Item, Action);
 end;
 
-procedure TOrderedList<T>.Notify(const Item: T;
+procedure TSortedList<T>.Notify(const Item: T;
   Action: TCollectionNotification);
   {Triggers list's OnNotify event.
     @param Item [in] List item for which notification triggered.
@@ -603,7 +603,7 @@ begin
     fOnNotify(Self, Item, Action);
 end;
 
-function TOrderedList<T>.Remove(const Item: T): Integer;
+function TSortedList<T>.Remove(const Item: T): Integer;
   {Removes an item from list.
     @param Item [in] Item to be removed from list.
     @return Former index of removed item.
@@ -612,7 +612,7 @@ begin
   Result := fList.Remove(Item);
 end;
 
-procedure TOrderedList<T>.SetPermitDuplicates(const Value: Boolean);
+procedure TSortedList<T>.SetPermitDuplicates(const Value: Boolean);
   {Write accessor for PermitDuplicates property.
     @param Value [in] New property value.
     @except EListError raised if new value is False and list contains
@@ -624,9 +624,9 @@ begin
   fPermitDuplicates := Value;
 end;
 
-{ TOrderedDictionary<TKey, TValue> }
+{ TSortedDictionary<TKey, TValue> }
 
-function TOrderedDictionary<TKey, TValue>.Add(const Key: TKey;
+function TSortedDictionary<TKey, TValue>.Add(const Key: TKey;
   const Value: TValue): Integer;
   {Adds a new key and value to dictionary.
     @param Key [in] New key.
@@ -637,7 +637,7 @@ begin
   Result := Add(TPair<TKey,TValue>.Create(Key, Value));
 end;
 
-function TOrderedDictionary<TKey, TValue>.Add(
+function TSortedDictionary<TKey, TValue>.Add(
   const Item: TPair<TKey, TValue>): Integer;
   {Added a new key/value pair to dictionary.
     @return Index at which new entry added to dictionary.
@@ -646,14 +646,14 @@ begin
   Result := fList.Add(Item);
 end;
 
-procedure TOrderedDictionary<TKey, TValue>.Clear;
+procedure TSortedDictionary<TKey, TValue>.Clear;
   {Clears all entries from dictionary.
   }
 begin
   fList.Clear;
 end;
 
-function TOrderedDictionary<TKey, TValue>.Contains(const Key: TKey): Boolean;
+function TSortedDictionary<TKey, TValue>.Contains(const Key: TKey): Boolean;
   {Checks if dictionary contains a key.
     @param Key [in] Key to be checked.
     @return True if Key is in dictionary, False if not.
@@ -664,7 +664,7 @@ begin
   Result := Find(Key, Dummy);
 end;
 
-constructor TOrderedDictionary<TKey, TValue>.Create(
+constructor TSortedDictionary<TKey, TValue>.Create(
   const AComparer: IComparer<TKey>);
   {Constructs new dictionary instance that uses a specified comparer.
     @param AComparer [in] Object to use to compare dictionary keys. If nil
@@ -678,7 +678,7 @@ begin
   else
     fComparer := TComparer<TKey>.Default;
   // created ordered list for key value pair that compares only on key
-  fList := TOrderedList<TPair<TKey,TValue>>.Create(
+  fList := TSortedList<TPair<TKey,TValue>>.Create(
     TComparer<TPair<TKey,TValue>>.Construct(
       function(const Left, Right: TPair<TKey,TValue>): Integer
       begin
@@ -691,14 +691,14 @@ begin
   fList.OnNotify := NotificationHandler;
 end;
 
-constructor TOrderedDictionary<TKey, TValue>.Create;
+constructor TSortedDictionary<TKey, TValue>.Create;
   {Constructs new dictionary instance that uses default key comparisons.
   }
 begin
   Create(nil);
 end;
 
-procedure TOrderedDictionary<TKey, TValue>.Delete(Index: Integer);
+procedure TSortedDictionary<TKey, TValue>.Delete(Index: Integer);
   {Deletes dictionary entry at a specified index.
     @param Index [in] Index of item to be deleted.
   }
@@ -706,7 +706,7 @@ begin
   fList.Delete(Index);
 end;
 
-destructor TOrderedDictionary<TKey, TValue>.Destroy;
+destructor TSortedDictionary<TKey, TValue>.Destroy;
   {Destroys dictionary object.
   }
 begin
@@ -716,7 +716,7 @@ begin
   inherited;
 end;
 
-function TOrderedDictionary<TKey, TValue>.DoGetEnumerator:
+function TSortedDictionary<TKey, TValue>.DoGetEnumerator:
   TEnumerator<TPair<TKey,TValue>>;
   {Gets a new instance of dictionary's enumerator object.
     @return Enumerator instance.
@@ -725,7 +725,7 @@ begin
   Result := GetEnumerator;
 end;
 
-function TOrderedDictionary<TKey, TValue>.Find(const Key: TKey;
+function TSortedDictionary<TKey, TValue>.Find(const Key: TKey;
   out Index: Integer): Boolean;
   {Finds index of a key in dictionary.
     @param Key [in] Key to find.
@@ -736,7 +736,7 @@ begin
   Result := fList.Find(TPair<TKey,TValue>.Create(Key, Default(TValue)), Index);
 end;
 
-function TOrderedDictionary<TKey, TValue>.GetCount: Integer;
+function TSortedDictionary<TKey, TValue>.GetCount: Integer;
   {Read accessor for Count property.
     @return Number of items in dictionary.
   }
@@ -744,7 +744,7 @@ begin
   Result := fList.Count;
 end;
 
-function TOrderedDictionary<TKey, TValue>.GetEnumerator: TPairEnumerator;
+function TSortedDictionary<TKey, TValue>.GetEnumerator: TPairEnumerator;
   {Gets a new instance of dictionary's enumerator.
     @return Enumerator instance.
   }
@@ -752,7 +752,7 @@ begin
   Result := fList.GetEnumerator;
 end;
 
-function TOrderedDictionary<TKey, TValue>.GetItem(const Key: TKey): TValue;
+function TSortedDictionary<TKey, TValue>.GetItem(const Key: TKey): TValue;
   {Read accessor for Items[] property.
     @param Key [in] Key for which value is required.
     @return Required value.
@@ -766,7 +766,7 @@ begin
   Result := fList[Index].Value;
 end;
 
-function TOrderedDictionary<TKey, TValue>.GetItemByIndex(
+function TSortedDictionary<TKey, TValue>.GetItemByIndex(
   const Idx: Integer): TPair<TKey, TValue>;
   {Read accessor for ItemsByIndex[] property.
     @param Idx [in] Index of required key/value pair in dictionary.
@@ -776,7 +776,7 @@ begin
   Result := fList[Idx];
 end;
 
-function TOrderedDictionary<TKey, TValue>.GetKeys: TKeyCollection;
+function TSortedDictionary<TKey, TValue>.GetKeys: TKeyCollection;
   {Read accessor for Keys collection property. Creates collection if necessary.
     @return Keys collection object.
   }
@@ -786,7 +786,7 @@ begin
   Result := fKeysCollection;
 end;
 
-function TOrderedDictionary<TKey, TValue>.GetValues: TValueCollection;
+function TSortedDictionary<TKey, TValue>.GetValues: TValueCollection;
   {Read accessor for Values collection property. Creates collection if
   necessary.
     @return Values collection object.
@@ -797,7 +797,7 @@ begin
   Result := fValuesCollection;
 end;
 
-function TOrderedDictionary<TKey, TValue>.IndexOf(const Key: TKey): Integer;
+function TSortedDictionary<TKey, TValue>.IndexOf(const Key: TKey): Integer;
   {Gets index of a key in dictionary.
     @param Key [in] Key to be found.
     @return Index of Key in dictionary or -1 if Key not in dictionary.
@@ -807,7 +807,7 @@ begin
     Exit(-1);
 end;
 
-function TOrderedDictionary<TKey, TValue>.IsEmpty: Boolean;
+function TSortedDictionary<TKey, TValue>.IsEmpty: Boolean;
   {Checks if dictionary is empty.
     @return True if dictionary is empty, False if not.
   }
@@ -815,7 +815,7 @@ begin
   Result := Count = 0;
 end;
 
-procedure TOrderedDictionary<TKey, TValue>.KeyNotify(const Key: TKey;
+procedure TSortedDictionary<TKey, TValue>.KeyNotify(const Key: TKey;
   Action: TCollectionNotification);
   {Triggers OnKeyNotify event.
     @param Item [in] Item for which notification triggered.
@@ -826,7 +826,7 @@ begin
     fOnKeyNotify(Self, Key, Action);
 end;
 
-procedure TOrderedDictionary<TKey, TValue>.NotificationHandler(Sender: TObject;
+procedure TSortedDictionary<TKey, TValue>.NotificationHandler(Sender: TObject;
   const Item: TPair<TKey,TValue>; Action: TCollectionNotification);
   {Handles underlying list's OnNotify event. Triggered when something in list
   changes. Passes event on to this class' own notification system.
@@ -839,7 +839,7 @@ begin
   ValueNotify(Item.Value, Action);
 end;
 
-function TOrderedDictionary<TKey, TValue>.Remove(const Key: TKey): Integer;
+function TSortedDictionary<TKey, TValue>.Remove(const Key: TKey): Integer;
   {Removes entry with a specified key from dictionary.
     @param Key [in] Key of entry to be removed.
     @return Index of item removed.
@@ -848,7 +848,7 @@ begin
   Result := fList.Remove(TPair<TKey,TValue>.Create(Key, Default(TValue)));
 end;
 
-procedure TOrderedDictionary<TKey, TValue>.ValueNotify(const Value: TValue;
+procedure TSortedDictionary<TKey, TValue>.ValueNotify(const Value: TValue;
   Action: TCollectionNotification);
   {Triggers OnValueNotify event.
     @param Item [in] Item for which notification triggered.
@@ -859,10 +859,10 @@ begin
     fOnValueNotify(Self, Value, Action);
 end;
 
-{ TOrderedDictionary<TKey, TValue>.TKeyEnumerator }
+{ TSortedDictionary<TKey, TValue>.TKeyEnumerator }
 
-constructor TOrderedDictionary<TKey, TValue>.TKeyEnumerator.Create(
-  AItems: TOrderedList<TPair<TKey, TValue>>);
+constructor TSortedDictionary<TKey, TValue>.TKeyEnumerator.Create(
+  AItems: TSortedList<TPair<TKey, TValue>>);
   {Constructs a new keys enumerator.
     @param AItems [in] Ordered list of key / value pairs in dictionary.
   }
@@ -873,7 +873,7 @@ begin
   fEnum := AItems.GetEnumerator;
 end;
 
-destructor TOrderedDictionary<TKey, TValue>.TKeyEnumerator.Destroy;
+destructor TSortedDictionary<TKey, TValue>.TKeyEnumerator.Destroy;
   {Destroys enumerator object.
   }
 begin
@@ -881,7 +881,7 @@ begin
   inherited;
 end;
 
-function TOrderedDictionary<TKey, TValue>.TKeyEnumerator.DoGetCurrent: TKey;
+function TSortedDictionary<TKey, TValue>.TKeyEnumerator.DoGetCurrent: TKey;
   {Gets current key in enumeration.
     @return Current key.
   }
@@ -889,7 +889,7 @@ begin
   Result := fEnum.Current.Key;
 end;
 
-function TOrderedDictionary<TKey, TValue>.TKeyEnumerator.DoMoveNext: Boolean;
+function TSortedDictionary<TKey, TValue>.TKeyEnumerator.DoMoveNext: Boolean;
   {Moves to next key in enumeration.
     @return True if there is a next key, False if at end of enumeration.
   }
@@ -897,10 +897,10 @@ begin
   Result := fEnum.MoveNext;
 end;
 
-{ TOrderedDictionary<TKey, TValue>.TKeyCollection }
+{ TSortedDictionary<TKey, TValue>.TKeyCollection }
 
-constructor TOrderedDictionary<TKey, TValue>.TKeyCollection.Create(
-  AItems: TOrderedList<TPair<TKey, TValue>>);
+constructor TSortedDictionary<TKey, TValue>.TKeyCollection.Create(
+  AItems: TSortedList<TPair<TKey, TValue>>);
   {Constructs a new collection object for a given list of keys.
     @param AItems [in] List of key / value pairs.
   }
@@ -910,7 +910,7 @@ begin
   fItems := AItems;
 end;
 
-function TOrderedDictionary<TKey, TValue>.TKeyCollection.DoGetEnumerator:
+function TSortedDictionary<TKey, TValue>.TKeyCollection.DoGetEnumerator:
   TEnumerator<TKey>;
   {Gets a new instance of the collection's enumerator.
     @return Enumerator instance.
@@ -919,7 +919,7 @@ begin
   Result := GetEnumerator;
 end;
 
-function TOrderedDictionary<TKey, TValue>.TKeyCollection.GetCount: Integer;
+function TSortedDictionary<TKey, TValue>.TKeyCollection.GetCount: Integer;
   {Read accessor for Count property.
     @return Number of keys in collection.
   }
@@ -927,7 +927,7 @@ begin
   Result := fItems.Count;
 end;
 
-function TOrderedDictionary<TKey, TValue>.TKeyCollection.GetEnumerator:
+function TSortedDictionary<TKey, TValue>.TKeyCollection.GetEnumerator:
   TKeyEnumerator;
   {Gets a new instance of the collection's enumerator.
     @return Enumerator instance.
@@ -936,7 +936,7 @@ begin
   Result := TKeyEnumerator.Create(fItems);
 end;
 
-function TOrderedDictionary<TKey, TValue>.TKeyCollection.GetItem(
+function TSortedDictionary<TKey, TValue>.TKeyCollection.GetItem(
   Idx: Integer): TKey;
   {Read accessor for Items[] property.
     @param Idx [in] Index of required key.
@@ -946,10 +946,10 @@ begin
   Result := fItems[Idx].Key;
 end;
 
-{ TOrderedDictionary<TKey, TValue>.TValueEnumerator }
+{ TSortedDictionary<TKey, TValue>.TValueEnumerator }
 
-constructor TOrderedDictionary<TKey, TValue>.TValueEnumerator.Create(
-  AItems: TOrderedList<TPair<TKey, TValue>>);
+constructor TSortedDictionary<TKey, TValue>.TValueEnumerator.Create(
+  AItems: TSortedList<TPair<TKey, TValue>>);
   {Constructs a new values enumerator.
     @param AItems [in] Ordered list of key / value pairs in dictionary.
   }
@@ -960,7 +960,7 @@ begin
   fEnum := AItems.GetEnumerator;
 end;
 
-destructor TOrderedDictionary<TKey, TValue>.TValueEnumerator.Destroy;
+destructor TSortedDictionary<TKey, TValue>.TValueEnumerator.Destroy;
   {Destroys enumerator object.
   }
 begin
@@ -968,7 +968,7 @@ begin
   inherited;
 end;
 
-function TOrderedDictionary<TKey, TValue>.TValueEnumerator.DoGetCurrent: TValue;
+function TSortedDictionary<TKey, TValue>.TValueEnumerator.DoGetCurrent: TValue;
   {Gets current value in enumeration.
     @return Current value.
   }
@@ -976,7 +976,7 @@ begin
   Result := fEnum.Current.Value;
 end;
 
-function TOrderedDictionary<TKey, TValue>.TValueEnumerator.DoMoveNext: Boolean;
+function TSortedDictionary<TKey, TValue>.TValueEnumerator.DoMoveNext: Boolean;
   {Moves to next value in enumeration.
     @return True if there is a next value, False if at end of enumeration.
   }
@@ -984,10 +984,10 @@ begin
   Result := fEnum.MoveNext;
 end;
 
-{ TOrderedDictionary<TKey, TValue>.TValueCollection }
+{ TSortedDictionary<TKey, TValue>.TValueCollection }
 
-constructor TOrderedDictionary<TKey, TValue>.TValueCollection.Create(
-  AItems: TOrderedList<TPair<TKey, TValue>>);
+constructor TSortedDictionary<TKey, TValue>.TValueCollection.Create(
+  AItems: TSortedList<TPair<TKey, TValue>>);
   {Constructs a new collection object for a given list of values.
     @param AItems [in] List of key / value pairs.
   }
@@ -997,7 +997,7 @@ begin
   fItems := AItems;
 end;
 
-function TOrderedDictionary<TKey, TValue>.TValueCollection.DoGetEnumerator:
+function TSortedDictionary<TKey, TValue>.TValueCollection.DoGetEnumerator:
   TEnumerator<TValue>;
   {Gets a new instance of the collection's enumerator.
     @return Enumerator instance.
@@ -1006,7 +1006,7 @@ begin
   Result := GetEnumerator;
 end;
 
-function TOrderedDictionary<TKey, TValue>.TValueCollection.GetCount: Integer;
+function TSortedDictionary<TKey, TValue>.TValueCollection.GetCount: Integer;
   {Read accessor for Count property.
     @return Number of values in collection.
   }
@@ -1014,7 +1014,7 @@ begin
   Result := fItems.Count;
 end;
 
-function TOrderedDictionary<TKey, TValue>.TValueCollection.GetEnumerator:
+function TSortedDictionary<TKey, TValue>.TValueCollection.GetEnumerator:
   TValueEnumerator;
   {Gets a new instance of the collection's enumerator.
     @return Enumerator instance.
@@ -1023,7 +1023,7 @@ begin
   Result := TValueEnumerator.Create(fItems);
 end;
 
-function TOrderedDictionary<TKey, TValue>.TValueCollection.GetItem(
+function TSortedDictionary<TKey, TValue>.TValueCollection.GetItem(
   Idx: Integer): TValue;
   {Read accessor for Items[] property.
     @param Idx [in] Index of required value.
