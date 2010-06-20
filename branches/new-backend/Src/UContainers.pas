@@ -38,6 +38,8 @@ unit UContainers;
 interface
 
 uses
+  // Delphi
+  Classes,  // declare before Generics.Collections
   Generics.Defaults, Generics.Collections;
 
 type
@@ -49,9 +51,14 @@ type
     fList: TList<T>;
     fComparer: IComparer<T>;
     fPermitDuplicates: Boolean;
+    fOnNotify: TCollectionNotifyEvent<T>;
     function GetCount: Integer;
     function GetItem(Idx: Integer): T;
     procedure SetPermitDuplicates(const Value: Boolean);
+    procedure NotificationHandler(Sender: TObject; const Item: T;
+      Action: TCollectionNotification);
+  strict protected
+    procedure Notify(const Item: T; Action: TCollectionNotification); virtual;
   public
     constructor Create; overload;
     constructor Create(const AComparer: IComparer<T>); overload;
@@ -70,6 +77,7 @@ type
     property PermitDuplicates: Boolean read fPermitDuplicates write
       SetPermitDuplicates;
     property Items[Idx: Integer]: T read GetItem; default;
+    property OnNotify: TCollectionNotifyEvent<T> read fOnNotify write fOnNotify;
   end;
 
   // TODO: make TOrderedDictionary<TKey,TValue> descend from TEnumerable<T>
@@ -78,10 +86,19 @@ type
   private
     fList: TOrderedList<TPair<TKey,TValue>>;
     fComparer: IComparer<TKey>;
+    fOnKeyNotify: TCollectionNotifyEvent<TKey>;
+    fOnValueNotify: TCollectionNotifyEvent<TValue>;
     function GetValue(const Key: TKey): TValue;
     function GetCount: Integer;
     function GetKey(const Idx: Integer): TKey;
     function GetValueByIndex(const Idx: Integer): TValue;
+    procedure NotificationHandler(Sender: TObject;
+      const Item: TPair<TKey,TValue>; Action: TCollectionNotification);
+  strict protected
+    procedure KeyNotify(const Key: TKey;
+       Action: TCollectionNotification); virtual;
+    procedure ValueNotify(const Value: TValue;
+      Action: TCollectionNotification); virtual;
   public
     constructor Create; overload;
     constructor Create(const AComparer: IComparer<TKey>); overload;
@@ -101,6 +118,10 @@ type
     property Keys[const Idx: Integer]: TKey read GetKey;
     property Values[const Key: TKey]: TValue read GetValue; default;
     property ValuesByIndex[const Idx: Integer]: TValue read GetValueByIndex;
+    property OnKeyNotify: TCollectionNotifyEvent<TKey> read fOnKeyNotify
+      write fOnKeyNotify;
+    property OnValueNotify: TCollectionNotifyEvent<TValue> read fOnValueNotify
+      write fOnValueNotify;
   end;
 
 resourcestring // must be in interface for parametised types
@@ -109,9 +130,6 @@ resourcestring // must be in interface for parametised types
   sKeyNotFound = 'Key not found';
 
 implementation
-
-uses
-  Classes;
 
 { TOrderedList<T> }
 
@@ -157,6 +175,7 @@ begin
   else
     fComparer := TComparer<T>.Default;
   fList := TList<T>.Create(fComparer);
+  fList.OnNotify := NotificationHandler;
 end;
 
 procedure TOrderedList<T>.Delete(Index: Integer);
@@ -199,6 +218,19 @@ end;
 function TOrderedList<T>.IsEmpty: Boolean;
 begin
   Result := Count = 0;
+end;
+
+procedure TOrderedList<T>.NotificationHandler(Sender: TObject; const Item: T;
+  Action: TCollectionNotification);
+begin
+  Notify(Item, Action);
+end;
+
+procedure TOrderedList<T>.Notify(const Item: T;
+  Action: TCollectionNotification);
+begin
+  if Assigned(fOnNotify) then
+    fOnNotify(Self, Item, Action);
 end;
 
 function TOrderedList<T>.Remove(const Item: T): Integer;
@@ -259,6 +291,7 @@ begin
   );
   // initialize properties
   fList.PermitDuplicates := False;
+  fList.OnNotify := NotificationHandler;
 end;
 
 constructor TOrderedDictionary<TKey, TValue>.Create;
@@ -325,9 +358,30 @@ begin
   Result := Count = 0;
 end;
 
+procedure TOrderedDictionary<TKey, TValue>.KeyNotify(const Key: TKey;
+  Action: TCollectionNotification);
+begin
+  if Assigned(fOnKeyNotify) then
+    fOnKeyNotify(Self, Key, Action);
+end;
+
+procedure TOrderedDictionary<TKey, TValue>.NotificationHandler(Sender: TObject;
+  const Item: TPair<TKey,TValue>; Action: TCollectionNotification);
+begin
+  KeyNotify(Item.Key, Action);
+  ValueNotify(Item.Value, Action);
+end;
+
 function TOrderedDictionary<TKey, TValue>.Remove(const Key: TKey): Integer;
 begin
   Result := fList.Remove(TPair<TKey,TValue>.Create(Key, Default(TValue)));
+end;
+
+procedure TOrderedDictionary<TKey, TValue>.ValueNotify(const Value: TValue;
+  Action: TCollectionNotification);
+begin
+  if Assigned(fOnValueNotify) then
+    fOnValueNotify(Self, Value, Action);
 end;
 
 end.

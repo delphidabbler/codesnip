@@ -12,14 +12,18 @@ unit TestUOrderedDictionary;
 interface
 
 uses
-  TestFramework, Generics.Defaults, Generics.Collections, UContainers;
+  TestFramework,
+  Classes,  // must come before Generics.Collections
+  Generics.Defaults, Generics.Collections, UContainers;
 
 type
 
   // Test methods for class TOrderedDictionary
   TestTOrderedDictionary = class(TTestCase)
   strict private
-    fDict: TOrderedDictionary<string,Integer>; // constructor with comparer
+    fDict: TOrderedDictionary<string,Integer>;  // constructor with comparer
+    fLastKeyNotification: TPair<string,TCollectionNotification>;
+    fLastValueNotification: TPair<Integer,TCollectionNotification>;
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -28,6 +32,10 @@ type
     procedure ErrorAdd;
     procedure ErrorAddPair;
     procedure ErrorValues;
+    procedure OnKeyNotifyHandler(Sender: TObject; const Key: string;
+      Action: TCollectionNotification);
+    procedure OnValueNotifyHandler(Sender: TObject; const Value: Integer;
+      Action: TCollectionNotification);
   published
     {Order of calling is important due to dependencies:
       Test/Method           Dependencies
@@ -72,12 +80,13 @@ type
     procedure TestValuesProp;
     // CreateNoParams requires Count and Keys[] properties
     procedure TestCreateNoParams;
+    procedure TestNotifications;
   end;
 
 implementation
 
 uses
-  SysUtils, Types, Classes;
+  SysUtils, Types;
 
 const
   // number of entries in list (count)
@@ -189,6 +198,20 @@ end;
 procedure TestTOrderedDictionary.ErrorValues;
 begin
   fDict[cMissingKey];
+end;
+
+procedure TestTOrderedDictionary.OnKeyNotifyHandler(Sender: TObject;
+  const Key: string; Action: TCollectionNotification);
+begin
+  fLastKeyNotification.Key := Key;
+  fLastKeyNotification.Value := Action;
+end;
+
+procedure TestTOrderedDictionary.OnValueNotifyHandler(Sender: TObject;
+  const Value: Integer; Action: TCollectionNotification);
+begin
+  fLastValueNotification.Key := Value;
+  fLastValueNotification.Value := Action;
 end;
 
 procedure TestTOrderedDictionary.Populate;
@@ -426,6 +449,43 @@ begin
     CheckEqualsString(cSortedKeys[Idx], fDict.Keys[Idx],
     Format('fDict.Keys[%d]: Expected %s, got %s',
       [Idx, cSortedKeys[Idx], fDict.Keys[Idx]]));
+  end;
+end;
+
+procedure TestTOrderedDictionary.TestNotifications;
+
+  function CheckNotification(const S: string; const I: Integer;
+    const A: TCollectionNotification): Boolean;
+  begin
+    Result := (fLastKeyNotification.Key = S) and
+      (fLastKeyNotification.Value = A) and
+      (fLastValueNotification.Key = I) and
+      (fLastValueNotification.Value = A);
+  end;
+
+begin
+  ClearAll;
+  try
+    fDict.OnKeyNotify := OnKeyNotifyHandler;
+    fDict.OnValueNotify := OnValueNotifyHandler;
+    fDict.Add('one', 1);
+    Check(CheckNotification('one', 1, cnAdded),
+      'Expected "one" => 1 with cnAdded');
+    fDict.Add('two', 2);
+    Check(CheckNotification('two', 2, cnAdded),
+      'Expected "two" => 2 with cnAdded');
+    fDict.Remove('two');
+    Check(CheckNotification('two', 2, cnRemoved),
+      'Expected "two" => 2 with cnRemoved');
+    fDict.Delete(0);
+    Check(CheckNotification('one', 1, cnRemoved),
+      'Expected "one" => 1 with cnRemoved');
+    // we don't check for cnExtract since extraction is not supported by
+    // TOrderedDictionary at present
+  finally
+    fDict.OnKeyNotify := nil;
+    fDict.OnValueNotify := nil;
+    ClearAll;
   end;
 end;
 

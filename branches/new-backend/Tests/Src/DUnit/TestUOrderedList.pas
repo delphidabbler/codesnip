@@ -12,6 +12,7 @@ unit TestUOrderedList;
 interface
 
 uses
+  Classes, // must come before Generics.Collections
   Generics.Collections,
   TestFramework, UContainers;
 
@@ -21,10 +22,13 @@ type
   TestTOrderedList = class(TTestCase)
   strict private
     fList: TOrderedList<string>;
+    fNotifyList: TList<TPair<string,TCollectionNotification>>;
     procedure ClearAll;
     procedure Populate;
     procedure ErrorAddDuplicate;
     procedure ErrorPermitDuplicates;
+    procedure OnNotifyHandler(Sender: TObject; const Item: string;
+      Action: TCollectionNotification);
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -44,12 +48,13 @@ type
     procedure TestPermitDuplicates;
     procedure TestAddDuplicates;
     procedure TestCreateNoParams;
+    procedure TestOnNotify;
   end;
 
 implementation
 
 uses
-  SysUtils, Classes, Types, Generics.Defaults;
+  SysUtils, Types, Generics.Defaults;
 
 const
   // number of entries in list (count)
@@ -155,6 +160,12 @@ begin
   // should be called with fList.PermitDuplicates = True and duplicates in list.
   Assert(fList.PermitDuplicates);
   fList.PermitDuplicates := False;
+end;
+
+procedure TestTOrderedList.OnNotifyHandler(Sender: TObject; const Item: string;
+  Action: TCollectionNotification);
+begin
+  fNotifyList.Add(TPair<string,TCollectionNotification>.Create(Item, Action));
 end;
 
 procedure TestTOrderedList.Populate;
@@ -400,6 +411,37 @@ begin
     CheckEqualsString(cSortedItems[Idx], fList[Idx],
       Format('fList[%d]: Expected %s, got %s',
         [Idx, cSortedItems[Idx], fList[Idx]]));
+  end;
+end;
+
+procedure TestTOrderedList.TestOnNotify;
+
+  function CheckNotifyListItem(const Idx: Integer; const S: string;
+    A: TCollectionNotification): Boolean;
+  begin
+    Result := (fNotifyList[Idx].Key = S) and (fNotifyList[Idx].Value = A);
+  end;
+
+var
+  Idx: Integer;
+begin
+  fNotifyList := TList<TPair<string,TCollectionNotification>>.Create;
+  try
+    ClearAll;
+    fList.OnNotify := OnNotifyHandler;
+    Populate;
+    for Idx := Low(cItems) to High(cItems) do
+      Check(CheckNotifyListItem(Idx - Low(cItems), cItems[Idx], cnAdded),
+        Format('Expected "%s" and cnAdded', [cItems[Idx]]));
+    fNotifyList.Clear;
+    fList.Delete(0);
+    Check(CheckNotifyListItem(0, cSortedItems[0], cnRemoved),
+      Format('Expected "%s" and cnRemoved', [cSortedItems[0]]));
+    // we don't check for cnExtract since extraction is not supported by
+    // TOrderedList at present
+  finally
+    fList.OnNotify := nil;
+    FreeAndNil(fNotifyList);
   end;
 end;
 
