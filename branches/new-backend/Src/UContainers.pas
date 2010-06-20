@@ -45,8 +45,8 @@ uses
 type
 
   // TODO: make TOrderedList<T> descend from TEnumerable<T> like TList<T>
-  // TODO: Notification stuff: hand off to fList
-  TOrderedList<T> = class(TObject)
+  // Note: uses GetEnumerator from TEnumerable<T>
+  TOrderedList<T> = class(TEnumerable<T>)
   strict private
     fList: TList<T>;
     fComparer: IComparer<T>;
@@ -59,6 +59,7 @@ type
       Action: TCollectionNotification);
   strict protected
     procedure Notify(const Item: T; Action: TCollectionNotification); virtual;
+    function DoGetEnumerator: TEnumerator<T>; override;
   public
     constructor Create; overload;
     constructor Create(const AComparer: IComparer<T>); overload;
@@ -72,7 +73,7 @@ type
     function Remove(const Item: T): Integer;
     procedure Delete(Index: Integer);
     function ContainsDuplicates: Boolean;
-    function GetEnumerator: TEnumerator<T>;
+//    function GetEnumerator: TEnumerator<T>;
     property Count: Integer read GetCount;
     property PermitDuplicates: Boolean read fPermitDuplicates write
       SetPermitDuplicates;
@@ -81,8 +82,7 @@ type
   end;
 
   // TODO: make TOrderedDictionary<TKey,TValue> descend from TEnumerable<T>
-  // TODO: Notification stuff: hand off to fList
-  TOrderedDictionary<TKey,TValue> = class(TObject)
+  TOrderedDictionary<TKey,TValue> = class(TEnumerable<TPair<TKey,TValue>>)
   private
     fList: TOrderedList<TPair<TKey,TValue>>;
     fComparer: IComparer<TKey>;
@@ -99,6 +99,7 @@ type
        Action: TCollectionNotification); virtual;
     procedure ValueNotify(const Value: TValue;
       Action: TCollectionNotification); virtual;
+    function DoGetEnumerator: TEnumerator<TPair<TKey,TValue>>; override;
   public
     type
       TPairEnumerator = TEnumerator<TPair<TKey,TValue>>;
@@ -114,7 +115,7 @@ type
     function IsEmpty: Boolean;
     function Remove(const Key: TKey): Integer;
     procedure Delete(Index: Integer);
-    function GetEnumerator: TPairEnumerator;
+    function GetEnumerator: TPairEnumerator; reintroduce;
     property Count: Integer read GetCount;
 // TODO:   property Items[Idx: Integer]: <TPair<TKey,TValue>> read GetItem;
     property Keys[const Idx: Integer]: TKey read GetKey;
@@ -191,6 +192,11 @@ begin
   inherited;
 end;
 
+function TOrderedList<T>.DoGetEnumerator: TEnumerator<T>;
+begin
+  Result := fList.GetEnumerator;
+end;
+
 function TOrderedList<T>.Find(const Item: T; out Index: Integer): Boolean;
 begin
   Result := fList.BinarySearch(Item, Index);
@@ -201,11 +207,11 @@ begin
   Result := fList.Count;
 end;
 
-function TOrderedList<T>.GetEnumerator: TEnumerator<T>;
-begin
-  Result := fList.GetEnumerator;
-end;
-
+//function TOrderedList<T>.GetEnumerator: TEnumerator<T>;
+//begin
+//  Result := fList.GetEnumerator;
+//end;
+//
 function TOrderedList<T>.GetItem(Idx: Integer): T;
 begin
   Result := fList[Idx];
@@ -310,6 +316,12 @@ destructor TOrderedDictionary<TKey, TValue>.Destroy;
 begin
   fList.Free;
   inherited;
+end;
+
+function TOrderedDictionary<TKey, TValue>.DoGetEnumerator:
+  TEnumerator<TPair<TKey,TValue>>;
+begin
+  Result := GetEnumerator;
 end;
 
 function TOrderedDictionary<TKey, TValue>.Find(const Key: TKey;
