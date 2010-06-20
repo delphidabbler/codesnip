@@ -32,6 +32,8 @@ type
     procedure ErrorAdd;
     procedure ErrorAddPair;
     procedure ErrorValues;
+    procedure ErrorKeys;
+    procedure ErrorItems;
     procedure OnKeyNotifyHandler(Sender: TObject; const Key: string;
       Action: TCollectionNotification);
     procedure OnValueNotifyHandler(Sender: TObject; const Value: Integer;
@@ -54,7 +56,6 @@ type
       TestIsEmpty           | Populate, ClearAll
       TestGetEnumerator     | Populate, ClearAll
       TestKeysProp          | Populate, ClearAll
-      TestValuesByIndexProp | Populate, ClearAll
       TestValuesProp        | Populate, ClearAll
       TestDelete;           | Populate, ClearAll, Keys[] (indirectly)
       TestRemove;           | Populate, ClearAll, Keys[] (indirectly)
@@ -76,8 +77,9 @@ type
     procedure TestKeysProp;
     procedure TestDelete; // indirectly uses Keys[]
     procedure TestRemove; // indirectly uses Keys[]
-    procedure TestValuesByIndexProp;
     procedure TestValuesProp;
+    procedure TestItemsProp;  // indirectly uses GetEnumerator
+    procedure TestItemsByIndexProp;
     // CreateNoParams requires Count and Keys[] properties
     procedure TestCreateNoParams;
     procedure TestNotifications;
@@ -129,6 +131,7 @@ const
   );
 
 function IndexOf(const S: string; const Items: array of string): Integer;
+  overload;
 var
   Idx: Integer;
 begin
@@ -140,8 +143,21 @@ begin
   Result := -1;
 end;
 
+function IndexOf(const I: Integer; const Items: array of Integer): Integer;
+  overload;
+var
+  Idx: Integer;
+begin
+  for Idx := 0 to Pred(Length(Items)) do
+  begin
+    if I = Items[Idx] then
+      Exit(Idx);
+  end;
+  Result := -1;
+end;
+
 function RemoveItem(const S: string;
-  const Items: array of string): TStringDynArray;
+  const Items: array of string): TStringDynArray; overload;
 var
   Idx1: Integer;
   Idx2: Integer;
@@ -151,6 +167,24 @@ begin
   for Idx1 := 0 to Pred(Length(Items)) do
   begin
     if Items[Idx1] <> S then
+    begin
+      Result[Idx2] := Items[Idx1];
+      Inc(Idx2);
+    end;
+  end;
+end;
+
+function RemoveItem(const I: Integer;
+  const Items: array of Integer): TIntegerDynArray; overload;
+var
+  Idx1: Integer;
+  Idx2: Integer;
+begin
+  SetLength(Result, Length(Items) - 1);
+  Idx2 := 0;
+  for Idx1 := 0 to Pred(Length(Items)) do
+  begin
+    if Items[Idx1] <> I then
     begin
       Result[Idx2] := Items[Idx1];
       Inc(Idx2);
@@ -195,9 +229,19 @@ begin
   fDict.Add(TPair<string,Integer>.Create(cDupKey, 3)); // duplicate key
 end;
 
+procedure TestTOrderedDictionary.ErrorItems;
+begin
+  fDict['xxx'];
+end;
+
+procedure TestTOrderedDictionary.ErrorKeys;
+begin
+  fDict.Keys[23];
+end;
+
 procedure TestTOrderedDictionary.ErrorValues;
 begin
-  fDict[cMissingKey];
+  fDict.Values[23];
 end;
 
 procedure TestTOrderedDictionary.OnKeyNotifyHandler(Sender: TObject;
@@ -438,10 +482,48 @@ begin
   Check(not fDict.IsEmpty, 'fDict.IsEmpty: Expected False, got True');
 end;
 
+procedure TestTOrderedDictionary.TestItemsByIndexProp;
+var
+  Pair: TPair<string,Integer>;
+  Idx: Integer;
+begin
+  ClearAll;
+  Populate;
+  for Idx := 0 to Pred(fDict.Count) do
+  begin
+    Pair := fDict.ItemsByIndex[Idx];
+    Check(Pair.Key = cSortedKeys[Idx],
+      Format('Expected key %s, got %s', [cSortedKeys[Idx], Pair.Key]));
+    Check(Pair.Value = cSortedValues[Idx],
+      Format('Expected value %d, got %d', [cSortedValues[Idx], Pair.Value]));
+  end;
+end;
+
+procedure TestTOrderedDictionary.TestItemsProp;
+var
+  Value: Integer;
+  Pair: TPair<string,Integer>;
+begin
+  ClearAll;
+  Populate;
+  for Pair in fDict do
+  begin
+    Value := fDict[Pair.Key];
+    Check(Value = Pair.Value,
+      Format('Value %d expected for key %s but got %d',
+        [Pair.Value, Pair.Key, Value]));
+  end;
+  // unknown key
+  CheckException(ErrorItems, EListError);
+end;
+
 procedure TestTOrderedDictionary.TestKeysProp;
 var
   Idx: Integer;
+  TestValues: TStringDynArray;
+  Value: string;
 begin
+  // First test accessing by index
   ClearAll;
   Populate;
   for Idx := 0 to Pred(cNumEntries) do
@@ -450,6 +532,21 @@ begin
     Format('fDict.Keys[%d]: Expected %s, got %s',
       [Idx, cSortedKeys[Idx], fDict.Keys[Idx]]));
   end;
+  // index out of bounds
+  CheckException(ErrorKeys, EArgumentOutOfRangeException);
+
+  // Second test access by enumerator
+  SetLength(TestValues, Length(cKeys));
+  for Idx := Low(cKeys) to High(cKeys) do
+    TestValues[Idx - Low(cKeys)] := cKeys[Idx];
+  for Value in fDict.Keys do
+  begin
+    Check(IndexOf(Value, TestValues) >= 0,
+      Format('Keys enumeration contains unexpected value %s', [Value]));
+    TestValues := RemoveItem(Value, TestValues);
+  end;
+  Check(Length(TestValues) = 0,
+    'Keys enumeration failed: not all values were enumerated');
 end;
 
 procedure TestTOrderedDictionary.TestNotifications;
@@ -513,37 +610,37 @@ begin
   end;
 end;
 
-procedure TestTOrderedDictionary.TestValuesByIndexProp;
-var
-  Idx: Integer;
-begin
-  ClearAll;
-  Populate;
-  for Idx := 0 to Pred(cNumEntries) do
-  begin
-    CheckEquals(cSortedValues[Idx], fDict.ValuesByIndex[Idx],
-    Format('fDict.ValuesByIndex[%d]: Expected %d, got %d',
-      [Idx, cSortedValues[Idx], fDict.ValuesByIndex[Idx]]));
-  end;
-end;
-
 procedure TestTOrderedDictionary.TestValuesProp;
 var
   Idx: Integer;
-  Key: string;
   Value: Integer;
+  TestValues: TIntegerDynArray;
 begin
+  // First test accessing by index
   ClearAll;
   Populate;
   for Idx := 0 to Pred(cNumEntries) do
   begin
-    Key := cKeys[Idx];
-    Value := fDict[Key];
-    CheckEquals(cValues[Idx], Value,
-      Format('fDict[%d]: Expected %d, got %d', [Idx, cValues[Idx], Value]));
+    Value := fDict.Values[Idx];
+    CheckEquals(cSortedValues[Idx], Value,
+      Format('fDict[%d]: Expected %d, got %d',
+        [Idx, cSortedValues[Idx], Value]));
   end;
+  // index out of bounds
+  CheckException(ErrorValues, EArgumentOutOfRangeException);
 
-  CheckException(ErrorValues, EListError);
+  // Second test access by enumerator
+  SetLength(TestValues, Length(cValues));
+  for Idx := Low(cValues) to High(cValues) do
+    TestValues[Idx - Low(cValues)] := cValues[Idx];
+  for Value in fDict.Values do
+  begin
+    Check(IndexOf(Value, TestValues) >= 0,
+      Format('Values enumeration contains unexpected value %d', [Value]));
+    TestValues := RemoveItem(Value, TestValues);
+  end;
+  Check(Length(TestValues) = 0,
+    'Values enumeration failed: not all values were enumerated');
 end;
 
 initialization
