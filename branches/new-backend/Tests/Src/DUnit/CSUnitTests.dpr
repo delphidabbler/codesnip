@@ -67,8 +67,7 @@ uses
   NSDatabase.UDatabase in '..\..\..\Src\Experimental\NSDatabase.UDatabase.pas',
   TestNSDatabaseUDatabase in 'TestNSDatabaseUDatabase.pas',
   UContainers in '..\..\..\Src\UContainers.pas',
-  TestUOrderedList in 'TestUOrderedList.pas',
-  TestUOrderedDictionary in 'TestUOrderedDictionary.pas';
+  TestUContainers in 'TestUContainers.pas';
 
 {$R *.RES}
 

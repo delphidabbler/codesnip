@@ -1,25 +1,58 @@
 {
-  Delphi DUnit Test Case for the UOrderedDictionary Unit
-  ------------------------------------------------------
+  Delphi DUnit Test Case for the UContainers Unit
+  -----------------------------------------------
 
   $Rev$
   $Date$
 }
 
 
-unit TestUOrderedDictionary;
+unit TestUContainers;
 
 interface
 
 uses
-  TestFramework,
-  Classes,  // must come before Generics.Collections
-  Generics.Defaults, Generics.Collections, UContainers;
+  Classes, // must come before Generics.Collections
+  Generics.Collections,
+  TestFramework, UContainers;
 
 type
 
-  // Test methods for class TOrderedDictionary
-  TestTOrderedDictionary = class(TTestCase)
+  // Test methods for class TSortedList
+  TestTSortedList = class(TTestCase)
+  strict private
+    fList: TSortedList<string>;
+    fNotifyList: TList<TPair<string,TCollectionNotification>>;
+    procedure ClearAll;
+    procedure Populate;
+    procedure ErrorAddDuplicate;
+    procedure ErrorPermitDuplicates;
+    procedure OnNotifyHandler(Sender: TObject; const Item: string;
+      Action: TCollectionNotification);
+  public
+    procedure SetUp; override;
+    procedure TearDown; override;
+  published
+    procedure TestAdd;
+    procedure TestCount;
+    procedure TestClear;
+    procedure TestFind;
+    procedure TestIndexOf;
+    procedure TestContains;
+    procedure TestIsEmpty;
+    procedure TestGetEnumerator;
+    procedure TestItemsProp;
+    procedure TestDelete; // indirectly uses Items[]
+    procedure TestRemove; // indirectly uses Items[]
+    procedure TestContainsDuplicates;
+    procedure TestPermitDuplicates;
+    procedure TestAddDuplicates;
+    procedure TestCreateNoParams;
+    procedure TestOnNotify;
+  end;
+
+  // Test methods for class TSortedDictionary
+  TestTSortedDictionary = class(TTestCase)
   strict private
     fDict: TSortedDictionary<string,Integer>;  // constructor with comparer
     fLastKeyNotification: TPair<string,TCollectionNotification>;
@@ -88,11 +121,15 @@ type
 implementation
 
 uses
-  SysUtils, Types;
+  SysUtils, Types, Generics.Defaults;
 
 const
   // number of entries in list (count)
   cNumEntries = 6;
+  // list items
+  cItems: array[0..Pred(cNumEntries)] of string = (
+    'glo', 'peter', 'donna', 'keith', 'wendy', 'ann'
+  );
   // dictionary keys
   cKeys: array[0..Pred(cNumEntries)] of string = (
     'glo', 'peter', 'donna', 'keith', 'wendy', 'ann'
@@ -102,6 +139,10 @@ const
     60, 51, 32, 30, 40, 67
   );
 
+  // items in list order
+  cSortedItems: array[0..Pred(cNumEntries)] of string = (
+    'ann', 'donna', 'glo', 'keith', 'peter', 'wendy'
+  );
   // keys and values in dictionary order
   cSortedKeys: array[0..Pred(cNumEntries)] of string = (
     'ann', 'donna', 'glo', 'keith', 'peter', 'wendy'
@@ -110,22 +151,35 @@ const
     67, 32, 60, 30, 51, 40
   );
 
+  // maps index into cItems to index in list
+  cIndexInList: array[0..Pred(cNumEntries)] of Integer = (
+    2, 4, 1, 3, 5, 0
+  );
   // maps index into cKeys to index in dictionary
   cIndexInDict: array[0..Pred(cNumEntries)] of Integer = (
     2, 4, 1, 3, 5, 0
   );
-  // list of indexes of keys from cKeys as they are entered into dictionay: i.e.
-  // index returned by Add method: assumes keys are entered in order from index
-  // 0 to cNumEntries - 1
+  // list of indexes of items / keys from cItems / cKeys as they are entered
+  // into list / dictionary : i.e. index returned by Add method: assumes items
+  // are entered in order from index 0 to cNumEntries - 1
   cSortMapAsEntered: array[0..Pred(cNumEntries)] of Integer = (
     0, 1, 0, 2, 4, 0
   );
+
+  // duplicate item: item value followed by expected position(s) in list if
+  // added last: could be one of two positions: before or after existing item
+  cDupItem = 'donna';
+  cDupItemIndexInList1 = 1;
+  cDupItemIndexInList2 = 2;
+  // item not in list
+  cMissingItem = 'gwen';
 
   // duplicate key
   cDupKey = 'donna';
   // key not in dictionary
   cMissingKey = 'gwen';
 
+  // order of deletion in delete test
   cDeleteOrder: array[0..Pred(cNumEntries)] of string = (
     'wendy', 'ann', 'glo', 'peter', 'donna', 'keith'
   );
@@ -201,6 +255,19 @@ begin
     Result[Idx] := Items[Idx];
 end;
 
+function SameListAndArray(const L: TSortedList<string>;
+  const A: array of string): Boolean;
+var
+  Idx: Integer;
+begin
+  for Idx := 0 to Pred(L.Count) do
+  begin
+    if L[Idx] <> A[Idx] then
+      Exit(False);
+  end;
+  Result := True;
+end;
+
 function SameDictAndArray(const D: TSortedDictionary<string,Integer>;
   const A: array of string): Boolean;
 var
@@ -214,51 +281,401 @@ begin
   Result := True;
 end;
 
-procedure TestTOrderedDictionary.ClearAll;
+{ TestTSortedList }
+
+procedure TestTSortedList.ClearAll;
+begin
+  fList.Clear;
+end;
+
+procedure TestTSortedList.ErrorAddDuplicate;
+begin
+  fList.Add(cDupItem);
+end;
+
+procedure TestTSortedList.ErrorPermitDuplicates;
+begin
+  // should be called with fList.PermitDuplicates = True and duplicates in list.
+  Assert(fList.PermitDuplicates);
+  fList.PermitDuplicates := False;
+end;
+
+procedure TestTSortedList.OnNotifyHandler(Sender: TObject; const Item: string;
+  Action: TCollectionNotification);
+begin
+  fNotifyList.Add(TPair<string,TCollectionNotification>.Create(Item, Action));
+end;
+
+procedure TestTSortedList.Populate;
+var
+  Idx: Integer;
+begin
+  for Idx := 0 to Pred(cNumEntries) do
+    fList.Add(cItems[Idx]);
+end;
+
+procedure TestTSortedList.SetUp;
+begin
+  fList :=  TSortedList<string>.Create(
+    TComparer<string>.Construct(
+      function(const Left, Right: string): Integer
+      begin
+        Result := AnsiCompareText(Left, Right);
+      end
+    )
+  );
+  fList.PermitDuplicates := False;
+end;
+
+procedure TestTSortedList.TearDown;
+begin
+  FreeAndNil(fList);
+end;
+
+procedure TestTSortedList.TestAdd;
+var
+  ReturnValue: Integer;
+  Idx: Integer;
+begin
+  // Get fresh, empty list without using Populate
+  TearDown;
+  SetUp;
+  for Idx := 0 to Pred(cNumEntries) do
+  begin
+    ReturnValue := fList.Add(cItems[Idx]);
+    Check(ReturnValue = cSortMapAsEntered[Idx],
+      Format('fList.Add(%s): Expected return value %d, got %d',
+        [cItems[Idx], cSortMapAsEntered[Idx], ReturnValue]));
+  end;
+end;
+
+procedure TestTSortedList.TestAddDuplicates;
+var
+  ReturnValue: Integer;
+begin
+  // check adding duplicate to list with no dups where dups are permitted:
+  // check index where item added in list
+  ClearAll;
+  Populate;
+  fList.PermitDuplicates := True;
+  ReturnValue := fList.Add(cDupItem);
+  Check(ReturnValue in [cDupItemIndexInList1, cDupItemIndexInList2],
+    Format('fList.Add(dup of %s): Expected return of %d or %d, got %d',
+      [cDupItem, cDupItemIndexInList1, cDupItemIndexInList2, ReturnValue]));
+
+  // check adding dup to list with no dups where dups are not permitted
+  ClearAll;
+  Populate;
+  fList.PermitDuplicates := False;
+  CheckException(ErrorAddDuplicate, EListError);
+end;
+
+procedure TestTSortedList.TestClear;
+begin
+  // Create fresh, empty dictionary without using ClearAll
+  TearDown;
+  SetUp;
+  Populate;
+  Assert(fList.Count > 0);
+  fList.Clear;
+  CheckEquals(0, fList.Count,
+    Format('fList.Count: Expected 0, got %d', [fList.Count]));
+end;
+
+procedure TestTSortedList.TestContains;
+var
+  Item: string;
+begin
+  ClearAll;
+  Check(not fList.Contains(cItems[0]),
+    Format('fList.Contains(%s): Expected False, got True', [cItems[0]]));
+  Populate;
+  Check(fList.Contains(cItems[0]),
+    Format('fList.Contains(%s): Expected True, got False', [cItems[0]]));
+  Item := cMissingItem;
+  Check(not fList.Contains(Item),
+    Format('fList.Contains(%s): Expected False, got True', [Item]));
+end;
+
+procedure TestTSortedList.TestContainsDuplicates;
+begin
+  ClearAll;
+  fList.PermitDuplicates := True;
+  Populate; // no dupes
+  Check(not fList.ContainsDuplicates,
+    'fList.ContainsDuplicates: Expected False, got True');
+  fList.Add(cDupItem);
+  Check(fList.ContainsDuplicates,
+    'fList.ContainsDuplicates: Expected True, got False');
+end;
+
+procedure TestTSortedList.TestCount;
+begin
+  // Create fresh, empty dictionary without using ClearAll
+  TearDown;
+  SetUp;
+  CheckEquals(0, fList.Count,
+    Format('fList.Count: Expected 0, got %d', [fList.Count]));
+  Populate;
+  CheckEquals(cNumEntries, fList.Count,
+    Format('fList.Count: Expected %d, got %d', [cNumEntries, fList.Count]));
+end;
+
+procedure TestTSortedList.TestCreateNoParams;
+var
+  L: TSortedList<Integer>;
+  Idx: Integer;
+begin
+  // Testing constructor with parameters => use default ordering, so we keep
+  // type simple so that ordering is likely to be as expected.
+  L := TSortedList<Integer>.Create;
+  try
+    // here item is expected position in list
+    // (we add 0..6 out of order and expect it to be sorted)
+    L.Add(4);
+    L.Add(2);
+    L.Add(1);
+    L.Add(3);
+    L.Add(5);
+    L.Add(0);
+    for Idx := 0 to Pred(L.Count) do
+      CheckEquals(Idx, L[Idx]);
+  finally
+    L.Free;
+  end;
+end;
+
+procedure TestTSortedList.TestDelete;
+var
+  Remaining: TStringDynArray;
+  RemoveStr: string;
+  Idx: Integer;
+begin
+  ClearAll;
+  Populate;
+  Remaining := CopyArray(cSortedItems);
+  Assert(SameListAndArray(fList, Remaining), 'Initial result in error');
+  for RemoveStr in cSortedItems do
+  begin
+    Idx := IndexOf(RemoveStr, Remaining);
+    fList.Delete(Idx);
+    Remaining := RemoveItem(RemoveStr, Remaining);
+    Check(SameListAndArray(fList, Remaining),
+      Format('fList.Delete: Error removing %s, index %d', [RemoveStr, Idx]));
+  end;
+end;
+
+procedure TestTSortedList.TestFind;
+var
+  ReturnValue: Boolean;
+  Index: Integer;
+  Item: string;
+  Idx: Integer;
+begin
+  ClearAll;
+  Populate;
+  for Idx := 0 to Pred(cNumEntries) do
+  begin
+    Item := cItems[Idx];
+    ReturnValue := fList.Find(Item, Index);
+    Check(ReturnValue,
+      Format('fList.Find(%s,Index): Expected return of True, got False',
+        [Item]));
+    CheckEquals(cIndexInList[Idx], Index,
+      Format('fList.Find(%s,Index): Expected Index = %d, got %d',
+        [Item, cIndexInList[Idx], Index]));
+  end;
+  Item := cMissingItem;
+  ReturnValue := fList.Find(Item, Index);
+  Check(not ReturnValue,
+    Format('fList.Find(%s,Index): Expected return of False, got True', [Item]));
+end;
+
+procedure TestTSortedList.TestGetEnumerator;
+var
+  Idx: Integer;
+  Item: string;
+begin
+  ClearAll;
+  Populate;
+  Idx := 0;
+  for Item in fList do
+  begin
+    CheckEquals(cSortedItems[Idx], Item,
+      Format('fList.GetEnumerator: Expected item %s, got %s',
+        [cSortedItems[Idx], Item]));
+    Inc(Idx);
+  end;
+end;
+
+procedure TestTSortedList.TestIndexOf;
+var
+  ReturnValue: Integer;
+  Item: string;
+  Idx: Integer;
+begin
+  ClearAll;
+  Populate;
+  for Idx := 0 to Pred(cNumEntries) do
+  begin
+    Item := cItems[Idx];
+    ReturnValue := fList.IndexOf(Item);
+    CheckEquals(cIndexInList[Idx], ReturnValue,
+      Format('fList.IndexOf(%s): Expected %d, got %d',
+        [Item, cIndexInList[Idx], ReturnValue]));
+  end;
+  Item := cMissingItem;
+  ReturnValue := fList.IndexOf(Item);
+  CheckEquals(-1, ReturnValue,
+    Format('fList.IndexOf(%s): Expected -1, got %d', [Item, ReturnValue]));
+end;
+
+procedure TestTSortedList.TestIsEmpty;
+begin
+  ClearAll;
+  Check(fList.IsEmpty, 'fList.IsEmpty: Expected True, got False');
+  Populate;
+  Check(not fList.IsEmpty, 'fList.IsEmpty: Expected False, got True');
+end;
+
+procedure TestTSortedList.TestItemsProp;
+var
+  Idx: Integer;
+begin
+  ClearAll;
+  Populate;
+  for Idx := 0 to Pred(cNumEntries) do
+  begin
+    CheckEqualsString(cSortedItems[Idx], fList[Idx],
+      Format('fList[%d]: Expected %s, got %s',
+        [Idx, cSortedItems[Idx], fList[Idx]]));
+  end;
+end;
+
+procedure TestTSortedList.TestOnNotify;
+
+  function CheckNotifyListItem(const Idx: Integer; const S: string;
+    A: TCollectionNotification): Boolean;
+  begin
+    Result := (fNotifyList[Idx].Key = S) and (fNotifyList[Idx].Value = A);
+  end;
+
+var
+  Idx: Integer;
+begin
+  fNotifyList := TList<TPair<string,TCollectionNotification>>.Create;
+  try
+    ClearAll;
+    fList.OnNotify := OnNotifyHandler;
+    Populate;
+    for Idx := Low(cItems) to High(cItems) do
+      Check(CheckNotifyListItem(Idx - Low(cItems), cItems[Idx], cnAdded),
+        Format('Expected "%s" and cnAdded', [cItems[Idx]]));
+    fNotifyList.Clear;
+    fList.Delete(0);
+    Check(CheckNotifyListItem(0, cSortedItems[0], cnRemoved),
+      Format('Expected "%s" and cnRemoved', [cSortedItems[0]]));
+    // we don't check for cnExtract since extraction is not supported by
+    // TSortedList at present
+  finally
+    fList.OnNotify := nil;
+    FreeAndNil(fNotifyList);
+  end;
+end;
+
+procedure TestTSortedList.TestPermitDuplicates;
+begin
+  // check setting false and true both work with empty list
+  ClearAll;
+  fList.PermitDuplicates := False;
+  Check(not fList.PermitDuplicates, 'Expected fList.PermitDuplicates = False');
+  fList.PermitDuplicates := True;
+  Check(fList.PermitDuplicates, 'Expected fList.PermitDuplicates = True');
+
+  // check setting false and true both work with populated list with no dups
+  Populate;
+  fList.PermitDuplicates := False;
+  Check(not fList.PermitDuplicates, 'Expected fList.PermitDuplicates = False');
+  fList.PermitDuplicates := True;
+  Check(fList.PermitDuplicates, 'Expected fList.PermitDuplicates = True');
+
+  // check setting false triggers exception with populated list with dups
+  Assert(fList.PermitDuplicates);
+  fList.Add(cDupItem);
+  CheckException(ErrorPermitDuplicates, EListError);
+end;
+
+procedure TestTSortedList.TestRemove;
+var
+  Remaining: TStringDynArray;
+  RemoveStr: string;
+  ExpectedIdx: Integer;
+  Idx: Integer;
+begin
+  ClearAll;
+  Populate;
+  Remaining := CopyArray(cSortedItems);
+  Assert(SameListAndArray(fList, Remaining), 'Initial result in error');
+  for RemoveStr in cSortedItems do
+  begin
+    ExpectedIdx := Indexof(RemoveStr, Remaining);
+    Idx := fList.Remove(RemoveStr);
+    CheckEquals(ExpectedIdx, Idx,
+      Format('fList.Remove: Expected return value %d, got %d',
+        [ExpectedIdx, Idx]));
+    Remaining := RemoveItem(RemoveStr, Remaining);
+    Check(SameListAndArray(fList, Remaining),
+      Format('fList.Remove: Error removing %s', [RemoveStr]));
+  end;
+end;
+
+{ TestTSortedDictionary }
+
+procedure TestTSortedDictionary.ClearAll;
 begin
   fDict.Clear;
 end;
 
-procedure TestTOrderedDictionary.ErrorAdd;
+procedure TestTSortedDictionary.ErrorAdd;
 begin
   fDict.Add(cDupKey, 3); // duplicate key, value irrelevant
 end;
 
-procedure TestTOrderedDictionary.ErrorAddPair;
+procedure TestTSortedDictionary.ErrorAddPair;
 begin
   fDict.Add(TPair<string,Integer>.Create(cDupKey, 3)); // duplicate key
 end;
 
-procedure TestTOrderedDictionary.ErrorItems;
+procedure TestTSortedDictionary.ErrorItems;
 begin
   fDict['xxx'];
 end;
 
-procedure TestTOrderedDictionary.ErrorKeys;
+procedure TestTSortedDictionary.ErrorKeys;
 begin
   fDict.Keys[23];
 end;
 
-procedure TestTOrderedDictionary.ErrorValues;
+procedure TestTSortedDictionary.ErrorValues;
 begin
   fDict.Values[23];
 end;
 
-procedure TestTOrderedDictionary.OnKeyNotifyHandler(Sender: TObject;
+procedure TestTSortedDictionary.OnKeyNotifyHandler(Sender: TObject;
   const Key: string; Action: TCollectionNotification);
 begin
   fLastKeyNotification.Key := Key;
   fLastKeyNotification.Value := Action;
 end;
 
-procedure TestTOrderedDictionary.OnValueNotifyHandler(Sender: TObject;
+procedure TestTSortedDictionary.OnValueNotifyHandler(Sender: TObject;
   const Value: Integer; Action: TCollectionNotification);
 begin
   fLastValueNotification.Key := Value;
   fLastValueNotification.Value := Action;
 end;
 
-procedure TestTOrderedDictionary.Populate;
+procedure TestTSortedDictionary.Populate;
 var
   Idx: Integer;
 begin
@@ -266,7 +683,7 @@ begin
     fDict.Add(cKeys[Idx], cValues[Idx]);
 end;
 
-procedure TestTOrderedDictionary.SetUp;
+procedure TestTSortedDictionary.SetUp;
 begin
   fDict := TSortedDictionary<string,Integer>.Create(
     TComparer<string>.Construct(
@@ -278,12 +695,12 @@ begin
   );
 end;
 
-procedure TestTOrderedDictionary.TearDown;
+procedure TestTSortedDictionary.TearDown;
 begin
   FreeAndNil(fDict);
 end;
 
-procedure TestTOrderedDictionary.TestAdd;
+procedure TestTSortedDictionary.TestAdd;
 var
   ReturnValue: Integer;
   Idx: Integer;
@@ -302,7 +719,7 @@ begin
   CheckException(ErrorAdd, EListError);
 end;
 
-procedure TestTOrderedDictionary.TestAddPair;
+procedure TestTSortedDictionary.TestAddPair;
 var
   ReturnValue: Integer;
   Idx: Integer;
@@ -323,7 +740,7 @@ begin
   CheckException(ErrorAddPair, EListError);
 end;
 
-procedure TestTOrderedDictionary.TestClear;
+procedure TestTSortedDictionary.TestClear;
 begin
   // Create fresh, empty dictionary without using ClearAll
   TearDown;
@@ -335,7 +752,7 @@ begin
     Format('fDict.Count: Expected 0, got %d', [fDict.Count]));
 end;
 
-procedure TestTOrderedDictionary.TestContains;
+procedure TestTSortedDictionary.TestContains;
 var
   Key: string;
 begin
@@ -350,7 +767,7 @@ begin
     Format('fDict.Contains(%s): Expected False, got True', [Key]));
 end;
 
-procedure TestTOrderedDictionary.TestCount;
+procedure TestTSortedDictionary.TestCount;
 begin
   // Create fresh, empty dictionary without using ClearAll
   TearDown;
@@ -362,7 +779,7 @@ begin
     Format('fDict.Count: Expected %d, got %d', [cNumEntries, fDict.Count]));
 end;
 
-procedure TestTOrderedDictionary.TestCreateNoParams;
+procedure TestTSortedDictionary.TestCreateNoParams;
 var
   D: TSortedDictionary<Integer,Integer>;
   Idx: Integer;
@@ -385,7 +802,7 @@ begin
   end;
 end;
 
-procedure TestTOrderedDictionary.TestDelete;
+procedure TestTSortedDictionary.TestDelete;
 var
   Remaining: TStringDynArray;
   RemoveStr: string;
@@ -406,7 +823,7 @@ begin
   end;
 end;
 
-procedure TestTOrderedDictionary.TestFind;
+procedure TestTSortedDictionary.TestFind;
 var
   ReturnValue: Boolean;
   Index: Integer;
@@ -432,7 +849,7 @@ begin
     Format('fDict.Find(%s,Index): Expected return of False, got True', [Key]));
 end;
 
-procedure TestTOrderedDictionary.TestGetEnumerator;
+procedure TestTSortedDictionary.TestGetEnumerator;
 var
   Idx: Integer;
   Pair: TPair<string,Integer>;
@@ -452,7 +869,7 @@ begin
   end;
 end;
 
-procedure TestTOrderedDictionary.TestIndexOf;
+procedure TestTSortedDictionary.TestIndexOf;
 var
   ReturnValue: Integer;
   Key: string;
@@ -474,7 +891,7 @@ begin
     Format('fDict.IndexOf(%s): Expected -1, got %d', [Key, ReturnValue]));
 end;
 
-procedure TestTOrderedDictionary.TestIsEmpty;
+procedure TestTSortedDictionary.TestIsEmpty;
 begin
   ClearAll;
   Check(fDict.IsEmpty, 'fDict.IsEmpty: Expected True, got False');
@@ -482,7 +899,7 @@ begin
   Check(not fDict.IsEmpty, 'fDict.IsEmpty: Expected False, got True');
 end;
 
-procedure TestTOrderedDictionary.TestItemsByIndexProp;
+procedure TestTSortedDictionary.TestItemsByIndexProp;
 var
   Pair: TPair<string,Integer>;
   Idx: Integer;
@@ -499,7 +916,7 @@ begin
   end;
 end;
 
-procedure TestTOrderedDictionary.TestItemsProp;
+procedure TestTSortedDictionary.TestItemsProp;
 var
   Value: Integer;
   Pair: TPair<string,Integer>;
@@ -517,7 +934,7 @@ begin
   CheckException(ErrorItems, EListError);
 end;
 
-procedure TestTOrderedDictionary.TestKeysProp;
+procedure TestTSortedDictionary.TestKeysProp;
 var
   Idx: Integer;
   TestValues: TStringDynArray;
@@ -549,7 +966,7 @@ begin
     'Keys enumeration failed: not all values were enumerated');
 end;
 
-procedure TestTOrderedDictionary.TestNotifications;
+procedure TestTSortedDictionary.TestNotifications;
 
   function CheckNotification(const S: string; const I: Integer;
     const A: TCollectionNotification): Boolean;
@@ -586,7 +1003,7 @@ begin
   end;
 end;
 
-procedure TestTOrderedDictionary.TestRemove;
+procedure TestTSortedDictionary.TestRemove;
 var
   Remaining: TStringDynArray;
   RemoveStr: string;
@@ -610,7 +1027,7 @@ begin
   end;
 end;
 
-procedure TestTOrderedDictionary.TestValuesProp;
+procedure TestTSortedDictionary.TestValuesProp;
 var
   Idx: Integer;
   Value: Integer;
@@ -645,6 +1062,7 @@ end;
 
 initialization
   // Register any test cases with the test runner
-  RegisterTest(TestTOrderedDictionary.Suite);
+  RegisterTest(TestTSortedList.Suite);
+  RegisterTest(TestTSortedDictionary.Suite);
 end.
 
