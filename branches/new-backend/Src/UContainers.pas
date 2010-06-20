@@ -100,6 +100,8 @@ type
     procedure ValueNotify(const Value: TValue;
       Action: TCollectionNotification); virtual;
   public
+    type
+      TPairEnumerator = TEnumerator<TPair<TKey,TValue>>;
     constructor Create; overload;
     constructor Create(const AComparer: IComparer<TKey>); overload;
     destructor Destroy; override;
@@ -112,7 +114,7 @@ type
     function IsEmpty: Boolean;
     function Remove(const Key: TKey): Integer;
     procedure Delete(Index: Integer);
-    function GetEnumerator: TEnumerator<TPair<TKey,TValue>>;
+    function GetEnumerator: TPairEnumerator;
     property Count: Integer read GetCount;
 // TODO:   property Items[Idx: Integer]: <TPair<TKey,TValue>> read GetItem;
     property Keys[const Idx: Integer]: TKey read GetKey;
@@ -321,8 +323,7 @@ begin
   Result := fList.Count;
 end;
 
-function TOrderedDictionary<TKey, TValue>.GetEnumerator:
-  TEnumerator<TPair<TKey, TValue>>;
+function TOrderedDictionary<TKey, TValue>.GetEnumerator: TPairEnumerator;
 begin
   Result := fList.GetEnumerator;
 end;
