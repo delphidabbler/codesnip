@@ -48,6 +48,8 @@ program CSUnitTests;
 {$APPTYPE CONSOLE}
 {$ENDIF}
 
+{$WARN SYMBOL_PLATFORM OFF}
+
 uses
   Forms,
   TestFramework,
@@ -72,6 +74,7 @@ uses
 {$R *.RES}
 
 begin
+  ReportMemoryLeaksOnShutdown := DebugHook <> 0;
   Application.Initialize;
   if IsConsole then
     with TextTestRunner.RunRegisteredTests do
