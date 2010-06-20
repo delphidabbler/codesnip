@@ -176,6 +176,7 @@ end;
 destructor TDBDataPool<T>.Destroy;
 begin
   Clear;
+  fMap.Free;
   inherited;
 end;
 
