@@ -193,82 +193,7 @@ const
     'wendy', 'ann', 'glo', 'peter', 'donna', 'keith'
   );
 
-//function IndexOf(const S: string; const Items: array of string): Integer;
-//  overload;
-//var
-//  Idx: Integer;
-//begin
-//  for Idx := 0 to Pred(Length(Items)) do
-//  begin
-//    if S = Items[Idx] then
-//      Exit(Idx);
-//  end;
-//  Result := -1;
-//end;
-//
-//function IndexOf(const I: Integer; const Items: array of Integer): Integer;
-//  overload;
-//var
-//  Idx: Integer;
-//begin
-//  for Idx := 0 to Pred(Length(Items)) do
-//  begin
-//    if I = Items[Idx] then
-//      Exit(Idx);
-//  end;
-//  Result := -1;
-//end;
-
-//function RemoveItem(const S: string;
-//  const Items: array of string): TArray<string>; overload;
-////  const Items: array of string): TStringDynArray; overload;
-//var
-//  Idx1: Integer;
-//  Idx2: Integer;
-//begin
-//  SetLength(Result, Length(Items) - 1);
-//  Idx2 := 0;
-//  for Idx1 := 0 to Pred(Length(Items)) do
-//  begin
-//    if Items[Idx1] <> S then
-//    begin
-//      Result[Idx2] := Items[Idx1];
-//      Inc(Idx2);
-//    end;
-//  end;
-//end;
-//
-//function RemoveItem(const I: Integer;
-////  const Items: array of Integer): TIntegerDynArray; overload;
-//  const Items: array of Integer): TArray<Integer>; overload;
-//var
-//  Idx1: Integer;
-//  Idx2: Integer;
-//begin
-//  SetLength(Result, Length(Items) - 1);
-//  Idx2 := 0;
-//  for Idx1 := 0 to Pred(Length(Items)) do
-//  begin
-//    if Items[Idx1] <> I then
-//    begin
-//      Result[Idx2] := Items[Idx1];
-//      Inc(Idx2);
-//    end;
-//  end;
-//end;
-
-//function CopyArray(const Items: array of string): TStringDynArray;
-//var
-//  Idx: Integer;
-//begin
-//  SetLength(Result, Length(Items));
-//  for Idx := 0 to Pred(Length(Items)) do
-//    Result[Idx] := Items[Idx];
-//end;
-//
 type
-//  TDynArray<T> = array of T;
-//
   TArrayEx = class(TArray)
   public
     class function CloneArray<T>(const A: array of T): TArray<T>;
@@ -303,8 +228,8 @@ begin
   Result := True;
 end;
 
-
 type
+  // Used for testing automatic freeing of owned objects
   TRefCountedStringObject = class(TObject)
   strict private
     fValue: string;
@@ -497,21 +422,17 @@ end;
 procedure TestTSortedList.TestDelete;
 var
   Remaining: TArray<string>;
-//  Remaining: TStringDynArray;
   RemoveStr: string;
   Idx: Integer;
 begin
   ClearAll;
   Populate;
-//  Remaining := CopyArray(cSortedItems);
   Remaining := TArrayEx.CloneArray<string>(cSortedItems);
   Assert(SameListAndArray(fList, Remaining), 'Initial result in error');
   for RemoveStr in cSortedItems do
   begin
     Idx := TArrayEx.IndexOf<string>(RemoveStr, Remaining);
-//    Idx := IndexOf(RemoveStr, Remaining);
     fList.Delete(Idx);
-//    Remaining := RemoveItem(RemoveStr, Remaining);
     Remaining := TArrayEx.RemoveItem<string>(RemoveStr, Remaining);
     Check(SameListAndArray(fList, Remaining),
       Format('fList.Delete: Error removing %s, index %d', [RemoveStr, Idx]));
@@ -660,7 +581,6 @@ end;
 
 procedure TestTSortedList.TestRemove;
 var
-//  Remaining: TStringDynArray;
   Remaining: TArray<string>;
   RemoveStr: string;
   ExpectedIdx: Integer;
@@ -668,18 +588,15 @@ var
 begin
   ClearAll;
   Populate;
-//  Remaining := CopyArray(cSortedItems);
   Remaining := TArrayEx.CloneArray<string>(cSortedItems);
   Assert(SameListAndArray(fList, Remaining), 'Initial result in error');
   for RemoveStr in cSortedItems do
   begin
     ExpectedIdx := TArrayEx.IndexOf<string>(RemoveStr, Remaining);
-//    ExpectedIdx := Indexof(RemoveStr, Remaining);
     Idx := fList.Remove(RemoveStr);
     CheckEquals(ExpectedIdx, Idx,
       Format('fList.Remove: Expected return value %d, got %d',
         [ExpectedIdx, Idx]));
-//    Remaining := RemoveItem(RemoveStr, Remaining);
     Remaining := TArrayEx.RemoveItem<string>(RemoveStr, Remaining);
     Check(SameListAndArray(fList, Remaining),
       Format('fList.Remove: Error removing %s', [RemoveStr]));
@@ -944,22 +861,18 @@ end;
 procedure TestTSortedDictionary.TestDelete;
 var
   Remaining: TArray<string>;
-//  Remaining: TStringDynArray;
   RemoveStr: string;
   Idx: Integer;
 begin
   ClearAll;
   Populate;
-//  Remaining := CopyArray(cSortedKeys);
   Remaining := TArrayEx.CloneArray<string>(cSortedKeys);
   Assert(SameDictAndArray(fDict, Remaining), 'Initial result in error');
   for RemoveStr in cSortedKeys do
   begin
     Idx := TArrayEx.IndexOf<string>(RemoveStr, Remaining);
-//    Idx := IndexOf(RemoveStr, Remaining);
     fDict.Delete(Idx);
     Remaining := TArrayEx.RemoveItem<string>(RemoveStr, Remaining);
-//    Remaining := RemoveItem(RemoveStr, Remaining);
     Check(SameDictAndArray(fDict, Remaining),
       Format('fDict.Delete(%1:d): Error removing %0:s from index %1:d',
         [RemoveStr, Idx]));
@@ -1081,7 +994,6 @@ procedure TestTSortedDictionary.TestKeysProp;
 var
   Idx: Integer;
   TestValues: TArray<string>;
-//  TestValues: TStringDynArray;
   Value: string;
 begin
   // First test accessing by index
@@ -1103,10 +1015,8 @@ begin
   for Value in fDict.Keys do
   begin
     Check(TArrayEx.IndexOf<string>(Value, TestValues) >= 0,
-//    Check(IndexOf(Value, TestValues) >= 0,
       Format('Keys enumeration contains unexpected value %s', [Value]));
     TestValues := TArrayEx.RemoveItem<string>(Value, TestValues);
-//    TestValues := RemoveItem(Value, TestValues);
   end;
   Check(Length(TestValues) = 0,
     'Keys enumeration failed: not all values were enumerated');
@@ -1152,7 +1062,6 @@ end;
 procedure TestTSortedDictionary.TestRemove;
 var
   Remaining: TArray<string>;
-//  Remaining: TStringDynArray;
   RemoveStr: string;
   ExpectedIdx: Integer;
   Idx: Integer;
@@ -1160,18 +1069,15 @@ begin
   ClearAll;
   Populate;
   Remaining := TArrayEx.CloneArray<string>(cSortedKeys);
-//  Remaining := CopyArray(cSortedKeys);
   Assert(SameDictAndArray(fDict, Remaining), 'Initial result in error');
   for RemoveStr in cSortedKeys do
   begin
-//    ExpectedIdx := Indexof(RemoveStr, Remaining);
     ExpectedIdx := TArrayEx.IndexOf<string>(RemoveStr, Remaining);
     Idx := fDict.Remove(RemoveStr);
     CheckEquals(ExpectedIdx, Idx,
       Format('fDict.Remove(%s): Expected return value %d, got %d',
         [RemoveStr, ExpectedIdx, Idx]));
     Remaining := TArrayEx.RemoveItem<string>(RemoveStr, Remaining);
-//    Remaining := RemoveItem(RemoveStr, Remaining);
     Check(SameDictAndArray(fDict, Remaining),
       Format('fDict.Remove(%0:s): Error removing %0:s', [RemoveStr]));
   end;
@@ -1182,7 +1088,6 @@ var
   Idx: Integer;
   Value: Integer;
   TestValues: TArray<Integer>;
-//  TestValues: TIntegerDynArray;
 begin
   // First test accessing by index
   ClearAll;
@@ -1199,16 +1104,11 @@ begin
 
   // Second test access by enumerator
   TestValues := TArrayEx.CloneArray<Integer>(cValues);
-//  SetLength(TestValues, Length(cValues));
-//  for Idx := Low(cValues) to High(cValues) do
-//    TestValues[Idx - Low(cValues)] := cValues[Idx];
   for Value in fDict.Values do
   begin
-//    Check(IndexOf(Value, TestValues) >= 0,
     Check(TArrayEx.IndexOf<Integer>(Value, TestValues) >= 0,
       Format('Values enumeration contains unexpected value %d', [Value]));
     TestValues := TArrayEx.RemoveItem<Integer>(Value, TestValues);
-//    TestValues := RemoveItem(Value, TestValues);
   end;
   Check(Length(TestValues) = 0,
     'Values enumeration failed: not all values were enumerated');
@@ -1249,7 +1149,6 @@ begin
   for Idx1 := 0 to Pred(Length(Items)) do
   begin
     if TComparer<T>.Default.Compare(Items[Idx1], Elem) <> 0 then
-//    if Items[Idx1] <> S then
     begin
       Result[Idx2] := Items[Idx1];
       Inc(Idx2);
