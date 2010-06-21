@@ -159,6 +159,39 @@ type
   end;
 
   {
+  TSortedObjectList:
+    Represents an enumerable sorted list of objects, with sorting defined by
+    user. List can own the objects it contains, in which case it frees objects
+    removed from the list.
+  }
+  TSortedObjectList<T: class> = class(TSortedList<T>)
+  strict private
+    fOwnsObjects: Boolean;  // Value of OwnsObjects property
+  strict protected
+    procedure Notify(const Item: T; Action: TCollectionNotification); override;
+      {Triggers OnNotify event for item and frees item if OwnsObjects is true
+      and item is being removed from list.
+        @param Item [in] Object affected by notification.
+        @param Action [in] Action that applies to Object.
+      }
+  public
+    constructor Create(AOwnsObjects: Boolean); overload;
+      {Constructs object list that owns objects in list and uses default
+      comparer.
+        @param AOwnsObjects [in] Whether list owns contained objects.
+      }
+    constructor Create(const AComparer: IComparer<T>;
+      AOwnsObjects: Boolean); overload;
+      {Constructs object list that owns objects in list and has user-specified
+      comparer.
+        @param AComparer [in] Object used to compare objects in list.
+        @param AOwnsObjects [in] Whether list owns contained objects.
+      }
+    property OwnsObjects: Boolean read fOwnsObjects;
+      {Specifies whether the list owns the objects it contains or not}
+  end;
+
+  {
   TSortedDictionary:
     Represents an enumerable dictionary that is sorted on the key according to a
     user defined sorting. Keys, values and key/value pairs are also accessible
@@ -296,13 +329,13 @@ type
       }
       TPairEnumerator = TEnumerator<TPair<TKey,TValue>>;
   strict private
-    fList: TSortedList<TPair<TKey,TValue>>;  // Maintains dictionary's entries
-    fKeysCollection: TKeyCollection;          // Dictionary's Keys collection
-    fValuesCollection: TValueCollection;      // Dictionary's Values collection
-    fComparer: IComparer<TKey>;               // Compares dictionary keys
-    fOnKeyNotify:                             // OnKeyNotify event handler
+    fList: TSortedList<TPair<TKey,TValue>>; // Maintains dictionary's entries
+    fKeysCollection: TKeyCollection;        // Dictionary's Keys collection
+    fValuesCollection: TValueCollection;    // Dictionary's Values collection
+    fComparer: IComparer<TKey>;             // Compares dictionary keys
+    fOnKeyNotify:                           // OnKeyNotify event handler
       TCollectionNotifyEvent<TKey>;
-    fOnValueNotify:                           // OnValueNotify event handler
+    fOnValueNotify:                         // OnValueNotify event handler
       TCollectionNotifyEvent<TValue>;
     function GetKeys: TKeyCollection;
       {Read accessor for Keys collection property. Creates collection if
@@ -622,6 +655,41 @@ begin
   if not Value and ContainsDuplicates then
     raise EListError.Create(sOrderedListPermitDuplicatesError);
   fPermitDuplicates := Value;
+end;
+
+{ TSortedObjectList<T> }
+
+constructor TSortedObjectList<T>.Create(AOwnsObjects: Boolean);
+  {Constructs object list that owns objects in list and uses default comparer.
+    @param AOwnsObjects [in] Whether list owns contained objects.
+  }
+begin
+  Create(nil, AOwnsObjects);
+end;
+
+constructor TSortedObjectList<T>.Create(const AComparer: IComparer<T>;
+  AOwnsObjects: Boolean);
+  {Constructs object list that owns objects in list and has user-specified
+  comparer.
+    @param AComparer [in] Object used to compare objects in list.
+    @param AOwnsObjects [in] Whether list owns contained objects.
+  }
+begin
+  fOwnsObjects := AOwnsObjects;
+  Create(AComparer);
+end;
+
+procedure TSortedObjectList<T>.Notify(const Item: T;
+  Action: TCollectionNotification);
+  {Triggers OnNotify event for item and frees item if OwnsObjects is true and
+  item is being removed from list.
+    @param Item [in] Object affected by notification.
+    @param Action [in] Action that applies to Object.
+  }
+begin
+  inherited;
+  if OwnsObjects and (Action = cnRemoved) then
+    Item.Free;
 end;
 
 { TSortedDictionary<TKey, TValue> }

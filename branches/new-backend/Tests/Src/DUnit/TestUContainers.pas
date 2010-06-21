@@ -51,6 +51,15 @@ type
     procedure TestOnNotify;
   end;
 
+  // Test methods for class TSortedObjectList
+  // We only test new properties over and above parent TSortedList class.
+  // We assume that any inherited methods called in test have already been
+  // tested, so run this test *after* TestTSortedList tests
+  TestTSortedObjectList = class(TTestCase)
+  published
+    procedure TestOwnsObjects;
+  end;
+
   // Test methods for class TSortedDictionary
   TestTSortedDictionary = class(TTestCase)
   strict private
@@ -279,6 +288,33 @@ begin
       Exit(False);
   end;
   Result := True;
+end;
+
+
+type
+  TRefCountedStringObject = class(TObject)
+  strict private
+    fValue: string;
+  public
+    class var Instances: Integer;
+    constructor Create(const AValue: string = '');
+    destructor Destroy; override;
+    property Value: string read fValue write fValue;
+  end;
+
+{ TRefCountedStringObject }
+
+constructor TRefCountedStringObject.Create(const AValue: string);
+begin
+  inherited Create;
+  fValue := AValue;
+  Inc(Instances);
+end;
+
+destructor TRefCountedStringObject.Destroy;
+begin
+  Dec(Instances);
+  inherited;
 end;
 
 { TestTSortedList }
@@ -626,6 +662,86 @@ begin
     Remaining := RemoveItem(RemoveStr, Remaining);
     Check(SameListAndArray(fList, Remaining),
       Format('fList.Remove: Error removing %s', [RemoveStr]));
+  end;
+end;
+
+procedure TestTSortedObjectList.TestOwnsObjects;
+var
+  L: TSortedObjectList<TRefCountedStringObject>;
+  O1, O2, O3: TRefCountedStringObject;
+begin
+  // Check OwnsObjects = True
+  L := TSortedObjectList<TRefCountedStringObject>.Create(
+    TDelegatedComparer<TRefCountedStringObject>.Create(
+      function(const Left, Right: TRefCountedStringObject): Integer
+      begin
+        Result := AnsiCompareText(Left.Value, Right.Value);
+      end
+    ),
+    True
+  );
+  try
+    CheckEquals(True, L.OwnsObjects);
+    L.Add(TRefCountedStringObject.Create('one'));
+    L.Add(TRefCountedStringObject.Create('two'));
+    L.Add(TRefCountedStringObject.Create('three'));
+    CheckEquals(3, TRefCountedStringObject.Instances);
+  finally
+    L.Free;
+    CheckEquals(0, TRefCountedStringObject.Instances);
+  end;
+
+  // Check OwnsObjects = False
+  O1 := nil;
+  O2 := nil;
+  O3 := nil;
+  L := TSortedObjectList<TRefCountedStringObject>.Create(
+    TDelegatedComparer<TRefCountedStringObject>.Create(
+      function(const Left, Right: TRefCountedStringObject): Integer
+      begin
+        Result := AnsiCompareText(Left.Value, Right.Value);
+      end
+    ),
+    False
+  );
+  try
+    CheckEquals(False, L.OwnsObjects);
+    O1 := TRefCountedStringObject.Create('one');
+    O2 := TRefCountedStringObject.Create('two');
+    O3 := TRefCountedStringObject.Create('three');
+    L.Add(O1);
+    L.Add(O2);
+    L.Add(O3);
+    CheckEquals(3, TRefCountedStringObject.Instances);
+  finally
+    L.Free;
+    CheckEquals(3, TRefCountedStringObject.Instances);
+    O3.Free;
+    O2.Free;
+    O1.Free;
+    CheckEquals(0, TRefCountedStringObject.Instances);
+  end;
+
+  // Check that OwnsObjects defaults to False when constructors that don't take
+  // AOwnsObject parameter are called
+  L := TSortedObjectList<TRefCountedStringObject>.Create(
+    TDelegatedComparer<TRefCountedStringObject>.Create(
+      function(const Left, Right: TRefCountedStringObject): Integer
+      begin
+        Result := AnsiCompareText(Left.Value, Right.Value);
+      end
+    )
+  );
+  try
+    CheckEquals(False, L.OwnsObjects);
+  finally
+    L.Free;
+  end;
+  L := TSortedObjectList<TRefCountedStringObject>.Create;
+  try
+    CheckEquals(False, L.OwnsObjects);
+  finally
+    L.Free;
   end;
 end;
 
@@ -1060,9 +1176,12 @@ begin
     'Values enumeration failed: not all values were enumerated');
 end;
 
+{ TestTSortedObjectList }
+
 initialization
   // Register any test cases with the test runner
   RegisterTest(TestTSortedList.Suite);
+  RegisterTest(TestTSortedObjectList.Suite);
   RegisterTest(TestTSortedDictionary.Suite);
 end.
 
