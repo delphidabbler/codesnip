@@ -239,16 +239,16 @@ class procedure TSingletonManager.FreeAll;
   {Frees all registered singletons.
   }
 var
-  SPair: TPair<string, TSingleton>; // classname, singleton instance pair
+  Singleton: TSingleton;  // each singleton in map
 begin
   // indicate to singletons they can destroy
   Destroying := True;
   // free the singletons in the map, then the map itself
-  for SPair in fMap do
-    SPair.Value.Free;
+  for Singleton in fMap.Values do
+    Singleton.Free;
   FreeAndNil(fMap);
   Destroying := False;
-  // setting fMap nil and Destroying false make it safe to re-create map when
+  // setting fMap nil and Destroying False make it safe to re-create map when
   // testing
 end;
 

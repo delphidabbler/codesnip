@@ -138,12 +138,12 @@ end;
 
 procedure TDBDataPool<T>.Clear;
 var
-  Pair: TPair<TDBCookie, T>;
+  Value: T;
 begin
-  for Pair in fMap do
+  for Value in fMap.Values do
   begin
-    Pair.Value.Owner := nil;
-    Pair.Value.Free;
+    Value.Owner := nil;
+    Value.Free;
   end;
   fMap.Clear;
 end;
