@@ -280,8 +280,7 @@ type
     fOwner: TObject;  // Value of Owner property
   strict protected
     function CanDestroy: Boolean; override;
-      {Determines if this instance can be destroyed. It can only if the object
-      is not owned.
+      {Determines if this instance can be destroyed.
         @return True if instance can be destroyed, False if not.
       }
   public
@@ -517,11 +516,18 @@ end;
 { TOwnedConditionalFreeObject }
 
 function TOwnedConditionalFreeObject.CanDestroy: Boolean;
+  {Determines if this instance can be destroyed.
+    @return True if instance can be destroyed, False if not.
+  }
 begin
+  // Instance can only be destroyed if it has no owner
   Result := not Assigned(fOwner);
 end;
 
 constructor TOwnedConditionalFreeObject.Create(const AOwner: TObject);
+  {Constructor that create objects with optional owner object.
+    @param AOwner [in] Optional owner object.
+  }
 begin
   inherited Create;
   fOwner := AOwner;
