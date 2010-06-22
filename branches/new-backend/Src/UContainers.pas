@@ -373,14 +373,14 @@ type
   strict protected
     procedure KeyNotify(const Key: TKey;
        Action: TCollectionNotification); virtual;
-      {Triggers OnKeyNotify event.
-        @param Item [in] Item for which notification triggered.
+      {Triggers OnKeyNotify event for key.
+        @param Key [in] Key for which notification triggered.
         @param Action [in] Kind of notification: add, remove or extract.
       }
     procedure ValueNotify(const Value: TValue;
       Action: TCollectionNotification); virtual;
-      {Triggers OnValueNotify event.
-        @param Item [in] Item for which notification triggered.
+      {Triggers OnValueNotify event for value.
+        @param Value [in] Value for which notification triggered.
         @param Action [in] Kind of notification: add, remove or extract.
       }
     function DoGetEnumerator: TEnumerator<TPair<TKey,TValue>>; override;
@@ -466,13 +466,72 @@ type
       item that changed along with details of change}
   end;
 
-resourcestring // must be in interface for parametised types
+  {
+  TSortedObjectDictionary:
+    Represents an enumerable dictionary that is sorted on the key according to a
+    user defined sorting. Keys, values and key/value pairs are also accessible
+    by index. If keys and / or values are objects they may optionally be owned
+    by the dictionary and freed when removed.
+    NOTE: If this class is instantiated with Ownerships = [] then its
+    functionality is identical to TSortedDictionary. In particular the class
+    can be instantiated with both TKey and TValue as non-objects.
+  }
+  TSortedObjectDictionary<TKey,TValue> = class(TSortedDictionary<TKey,TValue>)
+  strict private
+    fOwnerships: TDictionaryOwnerships; // Value of Ownerships property
+  strict protected
+    procedure KeyNotify(const Key: TKey;
+       Action: TCollectionNotification); override;
+      {Triggers OnKeyNotify event for key and frees key if Ownerships property
+      specifies it and key is being removed from list.
+        @param Key [in] Key for which notification triggered.
+        @param Action [in] Kind of notification: add, remove or extract.
+      }
+    procedure ValueNotify(const Value: TValue;
+      Action: TCollectionNotification); override;
+      {Triggers OnValueNotify event for value and frees value if Ownerships
+      property specifies it and value is being removed from list.
+        @param Value [in] Value for which notification triggered.
+        @param Action [in] Kind of notification: add, remove or extract.
+      }
+  public
+    constructor Create(AOwnerships: TDictionaryOwnerships); overload;
+      {Constructs dictionary where either keys or values or both are objects
+      that are optionally owned by dictionary and uses default comparer.
+        @param AOwnerships [in] Whether keys or values are owned by dictionary.
+        @except Raises EInvalidCast if ownership is specified for a key or value
+          that is not an object.
+      }
+    constructor Create(const AComparer: IComparer<TKey>;
+      AOwnerships: TDictionaryOwnerships); overload;
+      {Constructs dictionary where either keys or values or both are objects
+      that are optionally owned by dictionary and has user-specified comparer.
+        @param AComparer [in] Object used to compare objects in list.
+        @param AOwnerships [in] Whether keys or values are owned by dictionary.
+        @except Raises EInvalidCast if ownership is specified for a key or value
+          that is not an object.
+      }
+    property Ownerships: TDictionaryOwnerships read fOwnerships;
+      {Specifies whether the dictionary owns the keys and/or values if they are
+      objects}
+  end;
+
+
+resourcestring
+  // Error messages: must be in interface for parametised types
   sOrderedListDuplicateErr = 'Duplicate item not permitted';
   sOrderedListPermitDuplicatesError = 'List contains duplicates';
   sKeyNotFound = 'Key not found';
+  sKeyNotObject = 'Key must be a TObject to be owned';
+  sValueNotObject = 'Value must be a TObject to be owned';
 
 
 implementation
+
+
+uses
+  // Project
+  SysUtils, RTTI, TypInfo;
 
 
 { TSortedList<T> }
@@ -885,8 +944,8 @@ end;
 
 procedure TSortedDictionary<TKey, TValue>.KeyNotify(const Key: TKey;
   Action: TCollectionNotification);
-  {Triggers OnKeyNotify event.
-    @param Item [in] Item for which notification triggered.
+  {Triggers OnKeyNotify event for key.
+    @param Key [in] Key for which notification triggered.
     @param Action [in] Kind of notification: add, remove or extract.
   }
 begin
@@ -918,8 +977,8 @@ end;
 
 procedure TSortedDictionary<TKey, TValue>.ValueNotify(const Value: TValue;
   Action: TCollectionNotification);
-  {Triggers OnValueNotify event.
-    @param Item [in] Item for which notification triggered.
+  {Triggers OnValueNotify event for value.
+    @param Value [in] Value for which notification triggered.
     @param Action [in] Kind of notification: add, remove or extract.
   }
 begin
@@ -1099,6 +1158,76 @@ function TSortedDictionary<TKey, TValue>.TValueCollection.GetItem(
   }
 begin
   Result := fItems[Idx].Value;
+end;
+
+{ TSortedObjectDictionary<TKey, TValue> }
+
+constructor TSortedObjectDictionary<TKey, TValue>.Create(
+  AOwnerships: TDictionaryOwnerships);
+  {Constructs dictionary where either keys or values or both are objects that
+  are optionally owned by dictionary and uses default comparer.
+    @param AOwnerships [in] Whether keys or values are owned by dictionary.
+    @except Raises EInvalidCast if ownership is specified for a key or value
+      that is not an object.
+  }
+begin
+  Create(nil, AOwnerships);
+end;
+
+constructor TSortedObjectDictionary<TKey, TValue>.Create(
+  const AComparer: IComparer<TKey>; AOwnerships: TDictionaryOwnerships);
+  {Constructs dictionary where either keys or values or both are objects that
+  are optionally owned by dictionary and has user-specified comparer.
+    @param AComparer [in] Object used to compare objects in list.
+    @param AOwnerships [in] Whether keys or values are owned by dictionary.
+    @except Raises EInvalidCast if ownership is specified for a key or value
+      that is not an object.
+  }
+var
+  RTTICtx: TRTTIContext;  // context for accessing RTTI
+begin
+  Create(AComparer);
+  // Check that any key or value specified in AOwnership is actually a class
+  // type
+  RTTICtx := TRttiContext.Create;
+  try
+    if (doOwnsKeys in AOwnerships) and
+      (RTTICtx.GetType(TypeInfo(TKey)).TypeKind <> tkClass) then
+      raise EInvalidCast.Create(sKeyNotObject);
+    if (doOwnsValues in AOwnerships) and
+      (RTTICtx.GetType(TypeInfo(TValue)).TypeKind <> tkClass) then
+      raise EInvalidCast.Create(sValueNotObject);
+  finally
+    RTTICtx.Free;
+  end;
+  // Ownerships validated: record in property
+  fOwnerships := AOwnerships;
+end;
+
+procedure TSortedObjectDictionary<TKey, TValue>.KeyNotify(const Key: TKey;
+  Action: TCollectionNotification);
+  {Triggers OnKeyNotify event for key and frees key if Ownerships property
+  specifies it and key is being removed from list.
+    @param Key [in] Key for which notification triggered.
+    @param Action [in] Kind of notification: add, remove or extract.
+  }
+begin
+  inherited;
+  if (Action = cnRemoved) and (doOwnsKeys in fOwnerships) then
+    TObject(Key).Free;
+end;
+
+procedure TSortedObjectDictionary<TKey, TValue>.ValueNotify(const Value: TValue;
+  Action: TCollectionNotification);
+  {Triggers OnValueNotify event for value and frees value if Ownerships property
+  specifies it and value is being removed from list.
+    @param Value [in] Value for which notification triggered.
+    @param Action [in] Kind of notification: add, remove or extract.
+  }
+begin
+  inherited;
+  if (Action = cnRemoved) and (doOwnsValues in fOwnerships) then
+    TObject(Value).Free;
 end;
 
 end.

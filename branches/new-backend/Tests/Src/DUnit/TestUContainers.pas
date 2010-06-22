@@ -127,6 +127,21 @@ type
     procedure TestNotifications;
   end;
 
+  // Test methods for class TSortedObjectDictionary
+  // We only test new properties and constructors over and above parent
+  // TSortedDictionary class. We assume that any inherited methods called in
+  // test have already been tested, so run this test *after*
+  // TestTSortedDictionary tests
+  TestTSortedObjectDictionary = class(TTestCase)
+  published
+    procedure TestCreate1;
+    procedure TestCreate2;
+    procedure TestCreate3;
+    procedure TestCreate4;
+    procedure TestOwnerships;
+
+  end;
+
 implementation
 
 uses
@@ -201,6 +216,49 @@ type
     class function RemoveItem<T>(const Elem: T; const Items: array of T):
       TArray<T>;
   end;
+
+{ TArrayEx<T> }
+
+class function TArrayEx.CloneArray<T>(const A: array of T): TArray<T>;
+var
+  Idx: Integer;
+begin
+  SetLength(Result, Length(A));
+  for Idx := Low(A) to High(A) do
+    Result[Idx - Low(A)] := A[Idx];
+end;
+
+class function TArrayEx.IndexOf<T>(const Elem: T;
+  const Items: array of T): Integer;
+var
+  Idx: Integer;
+begin
+  for Idx := Low(Items) to High(Items) do
+  begin
+    if TComparer<T>.Default.Compare(Elem, Items[Idx]) = 0 then
+      Exit(Idx);
+  end;
+  Result := -1;
+end;
+
+class function TArrayEx.RemoveItem<T>(const Elem: T;
+  const Items: array of T): TArray<T>;
+var
+  Idx1: Integer;
+  Idx2: Integer;
+begin
+  SetLength(Result, Length(Items) - 1);
+  Idx2 := 0;
+  for Idx1 := 0 to Pred(Length(Items)) do
+  begin
+    if TComparer<T>.Default.Compare(Items[Idx1], Elem) <> 0 then
+    begin
+      Result[Idx2] := Items[Idx1];
+      Inc(Idx2);
+    end;
+  end;
+end;
+
 
 function SameListAndArray(const L: TSortedList<string>;
   const A: array of string): Boolean;
@@ -1114,45 +1172,483 @@ begin
     'Values enumeration failed: not all values were enumerated');
 end;
 
-{ TArrayEx<T> }
+{ TestTSortedObjectDictionary }
 
-class function TArrayEx.CloneArray<T>(const A: array of T): TArray<T>;
+procedure TestTSortedObjectDictionary.TestCreate1;
 var
-  Idx: Integer;
+  D: TSortedObjectDictionary<string,Integer>;
 begin
-  SetLength(Result, Length(A));
-  for Idx := Low(A) to High(A) do
-    Result[Idx - Low(A)] := A[Idx];
-end;
-
-class function TArrayEx.IndexOf<T>(const Elem: T;
-  const Items: array of T): Integer;
-var
-  Idx: Integer;
-begin
-  for Idx := Low(Items) to High(Items) do
-  begin
-    if TComparer<T>.Default.Compare(Elem, Items[Idx]) = 0 then
-      Exit(Idx);
+  D := TSortedObjectDictionary<string,Integer>.Create;
+  try
+    Check(D.Ownerships = [], 'Ownerships expected to be []');
+  finally
+    D.Free;
   end;
-  Result := -1;
 end;
 
-class function TArrayEx.RemoveItem<T>(const Elem: T;
-  const Items: array of T): TArray<T>;
+procedure TestTSortedObjectDictionary.TestCreate2;
 var
-  Idx1: Integer;
-  Idx2: Integer;
+  D: TSortedObjectDictionary<TRefCountedStringObject,Integer>;
 begin
-  SetLength(Result, Length(Items) - 1);
-  Idx2 := 0;
-  for Idx1 := 0 to Pred(Length(Items)) do
-  begin
-    if TComparer<T>.Default.Compare(Items[Idx1], Elem) <> 0 then
-    begin
-      Result[Idx2] := Items[Idx1];
-      Inc(Idx2);
+  D := TSortedObjectDictionary<TRefCountedStringObject,Integer>.Create(
+    TDelegatedComparer<TRefCountedStringObject>.Create(
+      function(const Left, Right: TRefCountedStringObject): Integer
+      begin
+        Result := AnsiCompareText(Left.Value, Right.Value);
+      end
+    )
+  );
+  try
+    Check(D.Ownerships = [], 'Ownerships expected to be []');
+  finally
+    D.Free;
+  end;
+end;
+
+procedure TestTSortedObjectDictionary.TestCreate3;
+var
+  D1: TSortedObjectDictionary<TObject,TObject>;
+  D2: TSortedObjectDictionary<TObject,string>;
+  D3: TSortedObjectDictionary<string,TObject>;
+  D4: TSortedObjectDictionary<string,string>;
+begin
+  D1 := TSortedObjectDictionary<TObject,TObject>.Create([]);
+  try
+    Check(D1.Ownerships = [],
+      'Ownerships expected to be []');
+  finally
+    D1.Free;
+  end;
+  D1 := TSortedObjectDictionary<TObject,TObject>.Create([doOwnsKeys]);
+  try
+    Check(D1.Ownerships = [doOwnsKeys],
+      'Ownerships expected to be [doOwnsKeys]');
+  finally
+    D1.Free;
+  end;
+  D1 := TSortedObjectDictionary<TObject,TObject>.Create([doOwnsValues]);
+  try
+    Check(D1.Ownerships = [doOwnsValues],
+      'Ownerships expected to be [doOwnsValues]');
+  finally
+    D1.Free;
+  end;
+  D1 := TSortedObjectDictionary<TObject,TObject>.Create(
+    [doOwnsKeys,doOwnsValues]
+  );
+  try
+    Check(D1.Ownerships = [doOwnsKeys,doOwnsValues],
+      'Ownerships expected to be [doOwnsKeys,doOwnsValues]');
+  finally
+    D1.Free;
+  end;
+
+  D2 := TSortedObjectDictionary<TObject,string>.Create([]);
+  try
+    Check(D2.Ownerships = [],
+      'Ownerships expected to be []');
+  finally
+    D2.Free;
+  end;
+  D2 := TSortedObjectDictionary<TObject,string>.Create([doOwnsKeys]);
+  try
+    Check(D2.Ownerships = [doOwnsKeys],
+      'Ownerships expected to be [doOwnsKeys]');
+  finally
+    D2.Free;
+  end;
+  try
+    D2 := nil;
+    try
+      D2 := TSortedObjectDictionary<TObject,string>.Create([doOwnsValues]);
+      Fail('EInvalidCast Exception expected for [doOwnsValues]');
+    finally
+      D2.Free;
     end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+  try
+    D2 := nil;
+    try
+      D2 := TSortedObjectDictionary<TObject,string>.Create(
+        [doOwnsKeys,doOwnsValues]
+      );
+      Fail('EInvalidCast Exception expected for [doOwnsKeys,doOwnsValues]');
+    finally
+      D2.Free;
+    end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+
+  D3 := TSortedObjectDictionary<string,TObject>.Create([]);
+  try
+    Check(D3.Ownerships = [],
+      'Ownerships expected to be []');
+  finally
+    D3.Free;
+  end;
+  try
+    D3 := nil;
+    try
+      D3 := TSortedObjectDictionary<string,TObject>.Create([doOwnsKeys]);
+      Fail('EInvalidCast Exception expected for [doOwnsKeys]');
+    finally
+      D3.Free;
+    end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+  D3 := TSortedObjectDictionary<string,TObject>.Create([doOwnsValues]);
+  try
+    Check(D3.Ownerships = [doOwnsValues],
+      'Ownerships expected to be [doOwnsValues]');
+  finally
+    D3.Free;
+  end;
+  try
+    D3 := nil;
+    try
+      D3 := TSortedObjectDictionary<string,TObject>.Create(
+        [doOwnsKeys,doOwnsValues]
+      );
+      Fail('EInvalidCast Exception expected for [doOwnsKeys,doOwnsValues]');
+    finally
+      D3.Free;
+    end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+
+  D4 := TSortedObjectDictionary<string,string>.Create([]);
+  try
+    Check(D4.Ownerships = [],
+      'Ownerships expected to be []');
+  finally
+    D4.Free;
+  end;
+  try
+    D4 := nil;
+    try
+      D4 := TSortedObjectDictionary<string,string>.Create([doOwnsKeys]);
+      Fail('EInvalidCast Exception expected for [doOwnsKeys]');
+    finally
+      D4.Free;
+    end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+  try
+    D4 := nil;
+    try
+      D4 := TSortedObjectDictionary<string,string>.Create([doOwnsValues]);
+      Fail('EInvalidCast Exception expected for [doOwnsValues]');
+    finally
+      D4.Free;
+    end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+  try
+    D4 := nil;
+    try
+      D4 := TSortedObjectDictionary<string,string>.Create(
+        [doOwnsKeys,doOwnsValues]
+      );
+      Fail('EInvalidCast Exception expected for [doOwnsKeys,doOwnsValues]');
+    finally
+      D4.Free;
+    end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+end;
+
+procedure TestTSortedObjectDictionary.TestCreate4;
+var
+  D1: TSortedObjectDictionary<TObject,TObject>;
+  D2: TSortedObjectDictionary<TObject,string>;
+  D3: TSortedObjectDictionary<string,TObject>;
+  D4: TSortedObjectDictionary<string,string>;
+begin
+  D1 := TSortedObjectDictionary<TObject,TObject>.Create(
+    TComparer<TObject>.Default, []
+  );
+  try
+    Check(D1.Ownerships = [],
+      'Ownerships expected to be []');
+  finally
+    D1.Free;
+  end;
+  D1 := TSortedObjectDictionary<TObject,TObject>.Create(
+    TComparer<TObject>.Default, [doOwnsKeys]
+  );
+  try
+    Check(D1.Ownerships = [doOwnsKeys],
+      'Ownerships expected to be [doOwnsKeys]');
+  finally
+    D1.Free;
+  end;
+  D1 := TSortedObjectDictionary<TObject,TObject>.Create(
+    TComparer<TObject>.Default, [doOwnsValues]
+  );
+  try
+    Check(D1.Ownerships = [doOwnsValues],
+      'Ownerships expected to be [doOwnsValues]');
+  finally
+    D1.Free;
+  end;
+  D1 := TSortedObjectDictionary<TObject,TObject>.Create(
+    TComparer<TObject>.Default, [doOwnsKeys,doOwnsValues]
+  );
+  try
+    Check(D1.Ownerships = [doOwnsKeys,doOwnsValues],
+      'Ownerships expected to be [doOwnsKeys,doOwnsValues]');
+  finally
+    D1.Free;
+  end;
+
+  D2 := TSortedObjectDictionary<TObject,string>.Create(
+    TComparer<TObject>.Default, []
+  );
+  try
+    Check(D2.Ownerships = [],
+      'Ownerships expected to be []');
+  finally
+    D2.Free;
+  end;
+  D2 := TSortedObjectDictionary<TObject,string>.Create(
+    TComparer<TObject>.Default, [doOwnsKeys])
+  ;
+  try
+    Check(D2.Ownerships = [doOwnsKeys],
+      'Ownerships expected to be [doOwnsKeys]');
+  finally
+    D2.Free;
+  end;
+  try
+    D2 := nil;
+    try
+      D2 := TSortedObjectDictionary<TObject,string>.Create(
+        TComparer<TObject>.Default, [doOwnsValues]
+      );
+      Fail('EInvalidCast Exception expected for [doOwnsValues]');
+    finally
+      D2.Free;
+    end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+  try
+    D2 := nil;
+    try
+      D2 := TSortedObjectDictionary<TObject,string>.Create(
+        TComparer<TObject>.Default, [doOwnsKeys,doOwnsValues]
+      );
+      Fail('EInvalidCast Exception expected for [doOwnsKeys,doOwnsValues]');
+    finally
+      D2.Free;
+    end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+
+  D3 := TSortedObjectDictionary<string,TObject>.Create(
+    TComparer<string>.Default, []
+  );
+  try
+    Check(D3.Ownerships = [],
+      'Ownerships expected to be []');
+  finally
+    D3.Free;
+  end;
+  try
+    D3 := nil;
+    try
+      D3 := TSortedObjectDictionary<string,TObject>.Create(
+        TComparer<string>.Default, [doOwnsKeys]
+      );
+      Fail('EInvalidCast Exception expected for [doOwnsKeys]');
+    finally
+      D3.Free;
+    end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+  D3 := TSortedObjectDictionary<string,TObject>.Create(
+    TComparer<string>.Default, [doOwnsValues]
+  );
+  try
+    Check(D3.Ownerships = [doOwnsValues],
+      'Ownerships expected to be [doOwnsValues]');
+  finally
+    D3.Free;
+  end;
+  try
+    D3 := nil;
+    try
+      D3 := TSortedObjectDictionary<string,TObject>.Create(
+        TComparer<string>.Default, [doOwnsKeys,doOwnsValues]
+      );
+      Fail('EInvalidCast Exception expected for [doOwnsKeys,doOwnsValues]');
+    finally
+      D3.Free;
+    end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+
+  D4 := TSortedObjectDictionary<string,string>.Create(
+    TComparer<string>.Default, []
+  );
+  try
+    Check(D4.Ownerships = [],
+      'Ownerships expected to be []');
+  finally
+    D4.Free;
+  end;
+  try
+    D4 := nil;
+    try
+      D4 := TSortedObjectDictionary<string,string>.Create(
+        TComparer<string>.Default, [doOwnsKeys]
+      );
+      Fail('EInvalidCast Exception expected for [doOwnsKeys]');
+    finally
+      D4.Free;
+    end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+  try
+    D4 := nil;
+    try
+      D4 := TSortedObjectDictionary<string,string>.Create(
+        TComparer<string>.Default, [doOwnsValues]
+      );
+      Fail('EInvalidCast Exception expected for [doOwnsValues]');
+    finally
+      D4.Free;
+    end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+  try
+    D4 := nil;
+    try
+      D4 := TSortedObjectDictionary<string,string>.Create(
+        TComparer<string>.Default, [doOwnsKeys,doOwnsValues]
+      );
+      Fail('EInvalidCast Exception expected for [doOwnsKeys,doOwnsValues]');
+    finally
+      D4.Free;
+    end;
+  except
+    on E: Exception do
+      Check(E is EInvalidCast, 'EInvalid cast exception expected');
+  end;
+end;
+
+procedure TestTSortedObjectDictionary.TestOwnerships;
+var
+  K1, K2: TRefCountedStringObject;
+  V1, V2: TRefCountedStringObject;
+  D1: TSortedObjectDictionary<TRefCountedStringObject,TRefCountedStringObject>;
+
+  procedure CreateObjs;
+  begin
+    K1 := TRefCountedStringObject.Create('K1');
+    K2 := TRefCountedStringObject.Create('K2');
+    V1 := TRefCountedStringObject.Create('V1');
+    V2 := TRefCountedStringObject.Create('V2');
+  end;
+
+begin
+  CreateObjs;
+  try
+    Check(TRefCountedStringObject.Instances = 4, 'Expected 4 objects');
+    D1 := TSortedObjectDictionary<
+      TRefCountedStringObject,TRefCountedStringObject
+    >.Create([]);
+    try
+      D1.Add(K1, V1);
+      D1.Add(K2, V2);
+    finally
+      D1.Free;
+    end;
+    Check(TRefCountedStringObject.Instances = 4, 'Expected 4 objects');
+  finally
+    K1.Free;
+    K2.Free;
+    V1.Free;
+    V2.Free;
+  end;
+
+  CreateObjs;
+  try
+    Check(TRefCountedStringObject.Instances = 4, 'Expected 4 objects');
+    D1 := TSortedObjectDictionary<
+      TRefCountedStringObject,TRefCountedStringObject
+    >.Create([doOwnsKeys]);
+    try
+      D1.Add(K1, V1);
+      D1.Add(K2, V2);
+    finally
+      D1.Free;
+    end;
+    Check(TRefCountedStringObject.Instances = 2, 'Expected 2 objects');
+  finally
+    V1.Free;
+    V2.Free;
+  end;
+
+  CreateObjs;
+  try
+    Check(TRefCountedStringObject.Instances = 4, 'Expected 4 objects');
+    D1 := TSortedObjectDictionary<
+      TRefCountedStringObject,TRefCountedStringObject
+    >.Create([doOwnsValues]);
+    try
+      D1.Add(K1, V1);
+      D1.Add(K2, V2);
+    finally
+      D1.Free;
+    end;
+    Check(TRefCountedStringObject.Instances = 2, 'Expected 2 objects');
+  finally
+    K1.Free;
+    K2.Free;
+  end;
+
+  CreateObjs;
+  try
+    Check(TRefCountedStringObject.Instances = 4, 'Expected 4 objects');
+    D1 := TSortedObjectDictionary<
+      TRefCountedStringObject,TRefCountedStringObject
+    >.Create([doOwnsKeys, doOwnsValues]);
+    try
+      D1.Add(K1, V1);
+      D1.Add(K2, V2);
+    finally
+      D1.Free;
+    end;
+    Check(TRefCountedStringObject.Instances = 0, 'Expected 0 objects');
+  finally
+    // do nothing - all of K1, K2, V1 and V2 already freed
   end;
 end;
 
@@ -1161,5 +1657,6 @@ initialization
   RegisterTest(TestTSortedList.Suite);
   RegisterTest(TestTSortedObjectList.Suite);
   RegisterTest(TestTSortedDictionary.Suite);
+  RegisterTest(TestTSortedObjectDictionary.Suite);
 end.
 
