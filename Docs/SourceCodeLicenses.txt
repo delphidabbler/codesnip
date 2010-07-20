@@ -137,7 +137,7 @@ http://www.tolderlund.eu/delphi/
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 License, Copyright and Disclaimer
 
-TGIFImage is Copyright © 1997-99 Anders Melander. All rights reserved.
+TGIFImage is Copyright (C) 1997-99 Anders Melander. All rights reserved.
 
 Please see copyright.txt for additional copyrights. [Note: copyright.txt was not
 included in the distribution].
@@ -158,7 +158,7 @@ additional materials (TGIFImage) is owned by Anders Melander (the Author).
 
 This License does not provide you with title or ownership of TGIFImage, but only
 a right of limited use as outlined in this License agreement. The Author hereby
-grant you a non-exclusive, royalty free license to use TGIFImage as set forth
+grants you a non-exclusive, royalty free license to use TGIFImage as set forth
 below:
 
 *  integrate TGIFImage with your Applications, subject to the redistribution
@@ -269,8 +269,8 @@ Exceptions
   means that if you modify CodeSnip and publish your changes then you must
   remove the icon or repace it with you own.
 
-  Bill Miller's Code Snippets Demonstrator program reuses the icon with
-  permission.
+  Bill Miller's Code Snippets Demonstrator program
+  (http://www.delphidabbler.com/software/cs-demo) uses the icon with permission.
 
 
 Vista Aero Pack 3 by VistaICO
@@ -291,7 +291,7 @@ IMPORTANT!
   http://www.vistaico.com/contact.htm
 - The readme.txt and license.pdf files must accompany the pack at all times.
 
-Copyright © VistaICO.com
+Copyright (C) VistaICO.com
 
 
 Mark James' Silk Icon set 1.3
@@ -321,11 +321,11 @@ require linking to our web site.
 
 http://creativecommons.org/licenses/by-sa/3.0/
 
-You are free to Share — to copy, distribute and transmit the work
+You are free to Share - to copy, distribute and transmit the work
 
 Under the following conditions:
 
-Attribution — You must attribute the work in the manner specified by the author
+Attribution - You must attribute the work in the manner specified by the author
 or licensor (but not in any way that suggests that they endorse you or your use
 of the work).
 
@@ -336,7 +336,7 @@ creator wishes to be attributed for re-use. You can use the HTML here to cite
 the work. Doing so will also include metadata on your page so that others can
 find the original work as well.
 
-Share Alike — If you alter, transform, or build upon this work, you may
+Share Alike - If you alter, transform, or build upon this work, you may
 distribute the resulting work only under the same, similar or a compatible
 license.
 
