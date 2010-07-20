@@ -45,25 +45,15 @@
 
 
 {$UNDEF CanCompile}
-
 {$UNDEF ThreadResumeDeprecated}
 
 {$IFDEF CONDITIONALEXPRESSIONS}
-  {$IF CompilerVersion >= 20.0} // Delphi 2009 and later
-    // assuming that CodeSnip will compile with Delphi 2009: not tested
-    {$DEFINE CanCompile}
-  {$IFEND}
   {$IF CompilerVersion >= 21.0} // Delphi 2010 and later
+    {$DEFINE CanCompile}
     {$DEFINE ThreadResumeDeprecated}
   {$IFEND}
 {$ENDIF}
 
 {$IFNDEF CanCompile}
-  {$MESSAGE FATAL 'CodeSnip requires Delphi 2009 or later to compile'}
-{$ENDIF}
-
-// Unlikely this test will fail since required compilers support: just here for
-// completeness and ultimate safety!
-{$IFNDEF UNICODE}
- {$MESSAGE FATAL 'CodeSnip requires Unicode support'}
+  {$MESSAGE FATAL 'CodeSnip requires Delphi 2010 or later to compile'}
 {$ENDIF}
