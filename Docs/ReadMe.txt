@@ -43,24 +43,25 @@ follow the on-screen instructions.
 The installer makes the following changes to your system:
 
 + The main program's executable file and documentation are installed into the
-  chosen install folder (\Progam Files\DelphiDabbler\CodeSnip by default).
+  chosen install folder (the "DelphiDabbler\CodeSnip" sub-folder of your Program
+  Files directory by default).
 
 + Files required by the uninstaller are stored in the main installation's Uninst
   sub-folder.
 
-+ The program's uninstall information is registered with the Add / Remove
-  Programs control panel applet.
++ The program's uninstall information is registered with the "Add / Remove
+  Programs" (a.k.a "Programs and Features") control panel applet.
 
 + A program group may be created in the start menu (optional).
 
-+ A CodeSnip folder is created inside the DelphiDabbler sub-folder of the
++ A "CodeSnip" folder is created inside the "DelphiDabbler" sub-folder of the
   common application data folder. A configuration file is stored in the
-  folder. Once the database is downloaded, it will be stored in a Data
+  folder. Once the database is downloaded, it will be stored in a "Data"
   subfolder (see below).
 
-+ Another CodeSnip folder is created in the DelphiDabbler sub-folder of the
++ Another "CodeSnip" folder is created in the "DelphiDabbler" sub-folder of the
   user's application data folder. This is used to hold a file that stores per-
-  user configuration data. A UserData.3 sub folder of this folder is used to
+  user configuration data. A "UserData.3" sub folder of this folder is used to
   store any user defined snippets.
 
 + Setup offers to copy any relevant files from installations earlier than v3.0
@@ -78,14 +79,14 @@ up a message if none is present.
 When CodeSnip is first run it detects if there is no database and displays
 message to that effect in its main window. A link is displayed that can be used
 to download the database from the DelphiDabbler website. Once this is done the
-required files are stored in the DelphiDabbler\CodeSnip\Data sub folder of the
+required files are stored in the "DelphiDabbler\CodeSnip\Data" sub folder of the
 common application data folder.
 
 
 Configuring CodeSnip to Work With Your Compilers
 ================================================================================
 
-A feature of CodeSnip is the ability to test compile routines in its database
+A feature of CodeSnip is the ability to test compile snippets in its database
 with any installed Windows 32 version of Delphi (i.e. Delphi 2 to 7 and 2005,
 2006, 2007, 2009 and 2010) and FreePascal. User defined snippets can also be
 test compiled providing some simple rules are followed.
@@ -120,11 +121,11 @@ registered regardless of which user is logged on.
 Uninstallation
 ================================================================================
 
-CodeSnip can be uninstalled via Add/Remove Programs from the Windows Control
-Panel or by choosing "Uninstall DelphiDabbler CodeSnip" from the program's start
-menu group.
+CodeSnip can be uninstalled via "Add/Remove Programs" (a.k.a "Programs and
+Features") from the Windows Control Panel or by choosing "Uninstall
+DelphiDabbler CodeSnip" from the program's start menu group.
 
-Administrator privileges will be required to Uninstall CodeSnip. Windows Vista
+Administrator privileges will be required to uninstall CodeSnip. Windows Vista
 and Windows 7 with UAC prompts enabled will prompt for an admin password if
 necessary.
 
@@ -136,7 +137,8 @@ From time to time you should check for updates to the CodeSnip database. This is
 done by selecting the program's "Database | Update From Web" menu option.
 
 It should be sufficient to check for updates about once per month. Mailing list
-members are notified of updates (see below).
+members are notified of updates (see below). You can also get to know about
+updates by subscribing to the CodeSnip RSS feed (see below).
 
 Updates will apply to all users of the computer.
 
@@ -155,8 +157,16 @@ Known Installation and Upgrading Issues
 
 3) Users who have configured CodeSnip to access the internet via a proxy server
    will loose any stored passwords required by the proxy server when updgrading
-   to v3.6.1. The installer will warn of this. Passwords have to be re-entered
-   using the Tools | Proxy Server menu option.
+   from v3.6.0 and earlier to v3.6.1 and later. The installer will warn of this.
+   Passwords have to be re-entered using the "Tools | Proxy Server" menu option.
+
+
+RSS News Feed
+================================================================================
+
+You can get notified of all updates to the CodeSnip program and to the database
+by subscribing to the Code Snippets RSS Feed at
+http://www.delphidabbler.com/feeds/site-news-feed?id=codesnip.
 
 
 Mailing List
@@ -184,6 +194,7 @@ folder or the program's help file for details (look up "privacy statement" in
 the help file index).
 
 
+
 License & Disclaimer
 ================================================================================
 
@@ -194,7 +205,7 @@ viewed from the "Help | License" menu option or from the About Box by clicking
 the "End User License Agreement" link.
 
 CodeSnip is supplied on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-express or implied. See "License.txt" for details.
+express or implied. See License.txt for details.
 
 The source code contained in the database, or in any units or snippets generated
 by this program, is made available on an "AS IS" basis, WITHOUT WARRANTY OF ANY
@@ -223,7 +234,9 @@ https://sourceforge.net/projects/codesnip/files/
 Source code older than one year is unlikely to be available.
 
 Available source code is released under the Mozilla Public license (see
-http://www.mozilla.org/MPL/MPL-1.1) and other open source licenses.
+http://www.mozilla.org/MPL/MPL-1.1) and other open source licenses. See the file
+SourceCodeLicenses.txt in the "Docs" directory of the repository for full
+source code licensing information.
 
 
 Bugs
@@ -231,20 +244,18 @@ Bugs
 
 Please do report any bugs you find.
 
-Bugs are recorded in Tracker on SourceForge. View the bug via
-http://www.delphidabbler.com/url/codesnip-bugs which redirects to SourceForge.
-You can also access the bug tracker from CodeSnip by using the "Tools | Report
-Bug Online" and following the link.
+Bugs are recorded in Tracker on SourceForge. View the reported and fixed bugs
+via http://www.delphidabbler.com/url/codesnip-bugs which redirects to
+SourceForge. You can also access the bug tracker from CodeSnip by using the
+"Tools | Report Bug Online" menu option then following the link that appears in
+the resulting dialog box.
 
 If you wish to report a bug, please check the current reports on Tracker AND
 the historic list of fixed bugs at
-http://www.delphidabbler.com/software/codesnip/bugs
+http://www.delphidabbler.com/software/codesnip/bugs.
 
 If your bug hasn't been reported or fixed please add a report using the
-"Add new" link on tracker.
-
-To request a new feature please go to the Feature Requests tracker at
-http://www.delphidabbler.com/url/codesnip-featurereq
+"Add new" link on Tracker.
 
 
 Make a Donation
