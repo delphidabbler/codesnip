@@ -360,6 +360,9 @@ uses
   UXMLDocHelper in 'UXMLDocHelper.pas',
   UXMLDocumentEx in 'UXMLDocumentEx.pas';
 
+// Include compiler defines: checks if compiler supported
+{$Include CompilerDefines.inc}
+
 // Include resources
 {$Resource ExternalObj.tlb} // Type library file
 {$Resource HTML.res}        // HTML resources
