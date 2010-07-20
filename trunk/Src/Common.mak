@@ -45,8 +45,7 @@
 #
 # DELPHIROOT (or DELPHI2010)
 #   DELPHIROOT must address the installation directory of the required Delphi
-#   compiler. Any compiler from Delphi 2006 onwards can be used, but the
-#   preferred compiler is Delphi 2010. If Delphi 2010 is to be used the
+#   compiler (Delphi 2010 as a minimum). If Delphi 2010 is to be used the
 #   DELPHI2010 macro can be defined to address the Delphi 2010 installation
 #   directory. When DELPHI2010 is defined any existing value of DELPHIROOT is
 #   ignored and DELPHI2010 is used instead.
