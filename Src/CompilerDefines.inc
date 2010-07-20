@@ -37,20 +37,17 @@
   Supported symbols are:
 
   CanCompile
-    Defined if compiler can be used to compile CodeSnip.
-
-  ThreadResumeDeprecated
-    Defined for compilers where TThread.Resume is a deprecated method.
+    Defined if compiler can be used to compile CodeSnip. Compilation halts with
+    a fatal error if this symbol is not defined.
+    
+  *** No other symbols are supported in the version of the file ***
  }
 
-
 {$UNDEF CanCompile}
-{$UNDEF ThreadResumeDeprecated}
 
 {$IFDEF CONDITIONALEXPRESSIONS}
   {$IF CompilerVersion >= 21.0} // Delphi 2010 and later
     {$DEFINE CanCompile}
-    {$DEFINE ThreadResumeDeprecated}
   {$IFEND}
 {$ENDIF}
 
