@@ -1,12 +1,12 @@
+================================================================================
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 DELPHIDABBLER CODESNIP README
-________________________________________________________________________________
+
+================================================================================
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 What is CodeSnip?
-________________________________________________________________________________
+================================================================================
 
 DelphiDabbler CodeSnip is a Delphi code snippets repository. It can download and
 display snippets from the online DelphiDabbler CodeSnip database as well as
@@ -17,9 +17,9 @@ with each installed Win32 version of Delphi from v2 to 2010 and Free Pascal.
 
 Compilable Pascal units containing selected snippets can be created.
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+
 Installation
-________________________________________________________________________________
+================================================================================
 
 IMPORTANT NOTES:
 
@@ -67,9 +67,8 @@ The installer makes the following changes to your system:
   into the correct locations for v3.
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Downloading the Database
-________________________________________________________________________________
+================================================================================
 
 The CodeSnip database is not installed with the program. However, a previous
 installation may be present. Setup will try to use an older version of the
@@ -83,9 +82,8 @@ required files are stored in the DelphiDabbler\CodeSnip\Data sub folder of the
 common application data folder.
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Configuring CodeSnip to Work With Your Compilers
-________________________________________________________________________________
+================================================================================
 
 A feature of CodeSnip is the ability to test compile routines in its database
 with any installed Windows 32 version of Delphi (i.e. Delphi 2 to 7 and 2005,
@@ -106,9 +104,8 @@ dialog" in the help file index).
 Each user can configure compilers differently.
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Registration
-________________________________________________________________________________
+================================================================================
 
 Registration of CodeSnip is not required, but the author would be grateful if
 you do register the program, just so he knows it is being used.
@@ -120,9 +117,8 @@ Only one user needs to register. Once this is done the program will show as
 registered regardless of which user is logged on.
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Uninstallation
-________________________________________________________________________________
+================================================================================
 
 CodeSnip can be uninstalled via Add/Remove Programs from the Windows Control
 Panel or by choosing "Uninstall DelphiDabbler CodeSnip" from the program's start
@@ -133,9 +129,8 @@ and Windows 7 with UAC prompts enabled will prompt for an admin password if
 necessary.
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Updating the Database
-________________________________________________________________________________
+================================================================================
 
 From time to time you should check for updates to the CodeSnip database. This is
 done by selecting the program's "Database | Update From Web" menu option.
@@ -146,9 +141,8 @@ members are notified of updates (see below).
 Updates will apply to all users of the computer.
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Known Installation and Upgrading Issues
-________________________________________________________________________________
+================================================================================
 
 1) Users of v1.0.3 or earlier will loose any source code formatting preferences
    when upgrading to the latest version. If you experience this problem you need
@@ -165,9 +159,8 @@ ________________________________________________________________________________
    using the Tools | Proxy Server menu option.
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Mailing List
-________________________________________________________________________________
+================================================================================
 
 Information about updates to CodeSnip or to the database is sent by email to
 members of the CodeSnip mailing list.
@@ -191,9 +184,8 @@ folder or the program's help file for details (look up "privacy statement" in
 the help file index).
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 License & Disclaimer
-________________________________________________________________________________
+================================================================================
 
 The executable program's End User License Agreement is displayed by the install
 program and must be accepted in order to proceed with installation. A copy of
@@ -209,9 +201,8 @@ by this program, is made available on an "AS IS" basis, WITHOUT WARRANTY OF ANY
 KIND, either express or implied. The code is used entirely at you own risk.
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Source Code
-________________________________________________________________________________
+================================================================================
 
 The source code of the latest version of CodeSnip can be downloaded from
 http://www.delphidabbler.com/software/codesnip/download.
@@ -235,9 +226,8 @@ Available source code is released under the Mozilla Public license (see
 http://www.mozilla.org/MPL/MPL-1.1) and other open source licenses.
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Bugs
-________________________________________________________________________________
+================================================================================
 
 Please do report any bugs you find.
 
@@ -257,9 +247,8 @@ To request a new feature please go to the Feature Requests tracker at
 http://www.delphidabbler.com/url/codesnip-featurereq
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Make a Donation
-________________________________________________________________________________
+================================================================================
 
 CodeSnip is free to use and there is no requirement to pay anything for it. You
 get a fully working version of the program whether you make a donation or not.
@@ -272,9 +261,8 @@ http://www.delphidabbler.com/url/donate-cs which redirects to a secure PayPal
 page.
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Feedback
-________________________________________________________________________________
+================================================================================
 
 If you want to suggest new features please use the feature request tracker at
 http://www.delphidabbler.com/url/codesnip-featurereq
@@ -283,9 +271,8 @@ Any other comments can be sent using the contact page at
 http://www.delphidabbler.com/contact
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Contribute to the Database
-________________________________________________________________________________
+================================================================================
 
 Please do contribute procedures, functions and type or constant definitions to
 the on-line Code Snippets database.
@@ -295,9 +282,8 @@ Submit Routines" menu option. Otherwise please send your code via the
 DelphiDabbler contact page at http://www.delphidabbler.com/contact
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
 Thanks
-________________________________________________________________________________
+================================================================================
 
 Thanks to:
 
@@ -314,7 +300,8 @@ Thanks to:
   database.
 
 
-¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+================================================================================
 $Rev$
 $Date$
-________________________________________________________________________________
+================================================================================
+
