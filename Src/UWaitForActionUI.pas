@@ -36,7 +36,6 @@
 
 unit UWaitForActionUI;
 
-{$INCLUDE CompilerDefines.inc}
 
 interface
 
@@ -236,11 +235,7 @@ begin
   Thread := TActionThread.Create(fAction);
   try
     Thread.OnTerminate := ActionTerminated;
-    {$IFDEF ThreadResumeDeprecated}
     Thread.Start;
-    {$ELSE}
-    Thread.Resume;
-    {$ENDIF}
     // Pause before displayng dialog by PauseBeforeDisplay ms
     Pause;
     if not Thread.Completed then
