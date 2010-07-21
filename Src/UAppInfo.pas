@@ -147,7 +147,7 @@ uses
   // DelphiDabbler library
   PJMD5,
   // Project
-  USettings, USystemID, USystemInfo, UUnicodeHelper, UVersionInfo;
+  USettings, USystemID, USystemInfo, UVersionInfo;
 
 
 { TAppInfo }
