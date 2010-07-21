@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -175,8 +175,8 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  FmPreviewDlg, UCodeImportExport, UCodeSubmitter, UCtrlArranger, UEmailHelper,
-  UMessageBox, UUserDetails, UWebService;
+  FmPreviewDlg, NsWebServices.UCodeSubmitter, NsWebServices.UExceptions,
+  UCodeImportExport, UCtrlArranger, UEmailHelper, UMessageBox, UUserDetails;
 
 
 {$R *.dfm}
