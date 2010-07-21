@@ -144,8 +144,10 @@ implementation
 uses
   // Delphi
   SysUtils,
+  // DelphiDabbler library
+  PJMD5,
   // Project
-  UCheckSum, USettings, USystemID, USystemInfo, UUnicodeHelper, UVersionInfo;
+  USettings, USystemID, USystemInfo, UUnicodeHelper, UVersionInfo;
 
 
 { TAppInfo }
@@ -187,11 +189,12 @@ class function TAppInfo.GenerateKey: string;
   {Generates unique program key for application in deterministic way.
     @return Required key.
   }
-var
-  SysID: TBytes;  // byte array containing system id string
 begin
-  SysID := ASCIIBytesOf(USystemID.SystemIDStr);
-  Result := UpperCase(string(TCheckSum.Calculate(SysID)));
+  Result := UpperCase(
+    TPJMD5.Calculate(
+      USystemID.SystemIDStr, TEncoding.ASCII
+    )
+  );
 end;
 
 class function TAppInfo.HelpFileName: string;

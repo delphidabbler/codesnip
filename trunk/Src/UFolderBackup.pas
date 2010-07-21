@@ -88,8 +88,10 @@ implementation
 uses
   // Delphi
   SysUtils, Classes,
+  // DelphiDabbler library
+  PJMD5,
   // Project
-  UCheckSum, UDataStreamIO, UDOSDateTime, UExceptions, UUnicodeHelper, UUtils;
+  UDataStreamIO, UDOSDateTime, UExceptions, UUnicodeHelper, UUtils;
 
 
 {
@@ -196,7 +198,7 @@ begin
       );
       Writer.WriteLongInt(DOSDateTime.DateStamp);
       Content := FileToString(SourceFileSpec(FileName));
-      Writer.WriteString(TCheckSum.Calculate(Windows1252BytesOf(Content)), 32);
+      Writer.WriteString(TPJMD5.Calculate(Windows1252BytesOf(Content)), 32);
       Writer.WriteSizedLongString(Content);
     end;
   finally
@@ -231,7 +233,7 @@ var
   FileCount: Integer;         // number of files to restore
   Idx: Integer;               // loops through all files in backup
   FileName: string;           // name of file to restore
-  MD5: Windows1252String;     // checksum of file to restore
+  MD5: TPJMD5Digest;          // checksum of file to restore
   Content: Windows1252String; // content of file to restore
   DOSDateTime: IDOSDateTime;  // date stamp of file to restore
   HeaderWord: SmallInt;       // first word value in file
@@ -277,12 +279,12 @@ begin
       DOSDateTime := TDOSDateTimeFactory.CreateFromDOSTimeStamp(
         Reader.ReadLongInt
       );
-      MD5 := Reader.ReadString(32);
+      MD5 := string(Reader.ReadString(32)); // string cast to TPJMD5Digest
       if Version = 1 then
         Content := Reader.ReadSizedString
       else
         Content := Reader.ReadSizedLongString;
-      if not TCheckSum.Compare(Content, MD5) then
+      if TPJMD5.Calculate(Content) <> MD5 then
         raise ECodeSnip.CreateFmt(sBadFileContent, [FileName]);
       // Write file and set date stamp
       StringToFile(string(Content), FileName);
