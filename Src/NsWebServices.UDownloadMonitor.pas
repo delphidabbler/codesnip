@@ -1,7 +1,8 @@
 {
- * UDownloadMonitor.pas
+ * NsWebServices.UDownloadMonitor.pas
  *
- * Manages download progress reporting for web service object.
+ * Manages download progress reporting for objects that interact with web
+ * service.
  *
  * $Rev$
  * $Date$
@@ -18,7 +19,8 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UDownloadMonitor.pas
+ * The Original Code is NsWebServices.UDownloadMonitor.pas, formerly
+ * UDownloadMonitor.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +36,7 @@
 
 
 
-unit UDownloadMonitor;
+unit NsWebServices.UDownloadMonitor;
 
 
 interface
@@ -42,7 +44,7 @@ interface
 
 uses
   // Indy
-  IdHTTP, IdComponent, IdGlobal;
+  IdHTTP, IdComponent, IdGlobal {needed for conditional defines below};
 
 
 // TWorkEvent and TWorkBeginEvent have different signatures between Indy v10.1.x
@@ -90,8 +92,8 @@ type
       {Number of bytes received to date in curent download}
     procedure HTTPWorkHandler(Sender: TObject; AWorkMode: TWorkMode;
       AWorkCount:
-        {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
-        {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
+      {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
+      {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
       {Handles Indy HTTP client's OnWork event. We process only download events.
       Upload events are ignored. Updates record of bytes received.
         @param Sender [in] Not used.
@@ -100,8 +102,8 @@ type
       }
     procedure HTTPWorkBeginHandler(Sender: TObject; AWorkMode: TWorkMode;
       AWorkCountMax:
-        {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
-        {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
+      {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
+      {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
       {Handles Indy HTTP client's OnWorkBegin event. We process only download
       events. Upload events are ignored. Records number of expected bytes in
       download.
@@ -183,8 +185,8 @@ end;
 procedure TDownloadMonitor.HTTPWorkBeginHandler(Sender: TObject;
   AWorkMode: TWorkMode;
   AWorkCountMax:
-    {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
-    {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
+  {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
+  {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
   {Handles Indy HTTP client's OnWorkBegin event. We process only download
   events. Upload events are ignored. Records number of expected bytes in
   download.
@@ -212,8 +214,8 @@ end;
 procedure TDownloadMonitor.HTTPWorkHandler(Sender: TObject;
   AWorkMode: TWorkMode;
   AWorkCount:
-    {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
-    {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
+  {$IFDEF INDY_WORKEVENT_INT64}Int64{$ENDIF}
+  {$IFDEF INDY_WORKEVENT_INT32}Integer{$ENDIF});
   {Handles Indy HTTP client's OnWork event. We process only download events.
   Upload events are ignored. Updates record of bytes received.
     @param Sender [in] Not used.

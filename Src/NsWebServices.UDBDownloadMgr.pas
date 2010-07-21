@@ -1,7 +1,7 @@
 {
- * UDownloadMgr.pas
+ * NsWebServices.UDBDownloadMgr.pas (originally UDownloadMgr.pas)
  *
- * Implements a class that updates database from webservice.
+ * Implements a class that interfaces with a web service to update the database.
  *
  * $Rev$
  * $Date$
@@ -18,7 +18,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UDownloadMgr.pas
+ * The Original Code is NsWebServices.UDBDownloadMgr.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -33,7 +33,7 @@
 }
 
 
-unit UDownloadMgr;
+unit NsWebServices.UDBDownloadMgr;
 
 
 interface
@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UWebService;
+  NsWebServices.UDDabStandard, NsWebServices.UExceptions, UURIParams;
 
 
 type
@@ -54,10 +54,6 @@ type
   }
   TDownloadMgr = class sealed(TDDabStdWebService)
   strict private
-    fWantProgressReport: Boolean;
-      {Flag true if OnProgress event to be triggered, false otherwise. Flag set
-      by each server command method to determine if OnProgress wanted for that
-      command}
     function ProductVersion: string;
       {Gets program's product version.
         @return String representation of product version number.
@@ -80,7 +76,7 @@ type
         @except EDownloadMgr Raised if EWebService exception or sub class
           detected.
       }
-    procedure SafePostCommand(const Cmd: string; const Params: array of string;
+    procedure SafePostCommand(const Cmd: string; const Params: TURIParams;
       const Response: TStrings);
       {Sends a command to server and returns data component of response in a
       string list. Converts recognised exceptions to EDownloadMgr.
@@ -92,10 +88,6 @@ type
           response is a line of string list.
         @except EDownloadMgr Raised if EWebService exception or sub class
           detected.
-      }
-  strict protected
-    procedure DoProgress; override;
-      {Triggers OnProgress event if fWantProgress flag is true.
       }
   public
     procedure LogOn(const Stream: TStream; const WantProgress: Boolean = False);
@@ -271,14 +263,6 @@ begin
   inherited Create(TWebServiceInfo.Create(cScriptName, cUserAgent));
 end;
 
-procedure TDownloadMgr.DoProgress;
-  {Triggers OnProgress event if fWantProgress flag is true.
-  }
-begin
-  if fWantProgressReport then
-    TriggerProgressEvent;
-end;
-
 function TDownloadMgr.FileCount(const WantProgress: Boolean): Integer;
   {Gets count of files in code snippets database on web server.
     @param WantProgresss [in] Flag true if OnProgress event to be triggered for
@@ -288,7 +272,7 @@ function TDownloadMgr.FileCount(const WantProgress: Boolean): Integer;
 var
   Response: TStringList;  // response from server
 begin
-  fWantProgressReport := WantProgress;
+  Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('filecount', Response);
@@ -311,7 +295,7 @@ var
   Response: TStringList;  // response from server
   ResBytes: TBytes;       // response as Windows-1252 byte stream
 begin
-  fWantProgressReport := WantProgress;
+  Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('getdatabase', Response);
@@ -360,7 +344,7 @@ function TDownloadMgr.LastUpdate(const WantProgress: Boolean): string;
 var
   Response: TStringList;  // response from server
 begin
-  fWantProgressReport := WantProgress;
+  Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('lastupdate', Response);
@@ -378,7 +362,7 @@ procedure TDownloadMgr.LogOff(const WantProgress: Boolean);
 var
   Response: TStringList;  // response from server
 begin
-  fWantProgressReport := WantProgress;
+  Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('logoff', Response);   // No response data expected
@@ -397,7 +381,7 @@ procedure TDownloadMgr.LogOn(const Stream: TStream;
 var
   Response: TStringList;  // response from server
 begin
-  fWantProgressReport := WantProgress;
+  Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('logon', Response);
@@ -416,12 +400,16 @@ procedure TDownloadMgr.PostStdCommand(const Cmd: string;
     @except EDownloadMgr Raised if EWebService exception or sub class detected.
   }
 var
-  StdParams: array of string; // array to receive standard parameters
+  StdParams: TURIParams;
 begin
-  SetLength(StdParams, 2);
-  StdParams[0] := 'progid=' + ProgId;
-  StdParams[1] := 'version=' + ProductVersion;
-  SafePostCommand(Cmd, StdParams, Response);
+  StdParams := TURIParams.Create;
+  try
+    StdParams.Add('progid', ProgId);
+    StdParams.Add('version', ProductVersion);
+    SafePostCommand(Cmd, StdParams, Response);
+  finally
+    StdParams.Free;
+  end;
 end;
 
 function TDownloadMgr.ProductVersion: string;
@@ -441,7 +429,7 @@ begin
 end;
 
 procedure TDownloadMgr.SafePostCommand(const Cmd: string;
-  const Params: array of string; const Response: TStrings);
+  const Params: TURIParams; const Response: TStrings);
   {Sends a command to server and returns data component of response in a
   string list. Converts recognised exceptions to EDownloadMgr.
     @param Cmd [in] Command to be executed. Passed to server as Cmd=CmdName
@@ -460,7 +448,6 @@ begin
       HandleException(E);
   end;
 end;
-
 
 { EDownloadMgr }
 
