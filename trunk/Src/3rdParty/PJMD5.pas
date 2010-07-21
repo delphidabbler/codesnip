@@ -112,15 +112,16 @@ type
     class operator NotEqual(const B: TBytes; const D: TPJMD5Digest): Boolean;
     class operator NotEqual(const D: TPJMD5Digest; const S: string): Boolean;
     class operator NotEqual(const S: string; const D: TPJMD5Digest): Boolean;
-    // Converts a TPJMD5Digest record to a string.
+    // Converts a TPJMD5Digest record to a (hexadecimal) string.
     class operator Implicit(const D: TPJMD5Digest): string;
-    // Creates a TPJMD5Digest record by decoding string string, which must
-    // have length 32 and contain only hex digits.
+    // Creates a TPJMD5Digest record by decoding a string, which must have 32
+    // characters and contain only hex digits.
     class operator Implicit(const S: string): TPJMD5Digest;
-    // Creates a byte array containing the digest
+    // Creates a byte array containing the digest.
     class operator Implicit(const D: TPJMD5Digest): TBytes;
     // Creates a TPJMD5Digest record from Byte array B, which must have at
-    // least 16 elements.
+    // least 16 elements. If B has more than 16 elements, elements from B[16]
+    // are ignored.
     class operator Implicit(const B: TBytes): TPJMD5Digest;
 
     ///  <summary>
@@ -133,6 +134,10 @@ type
     ///  TPJMD5Digest.
     ///  </remarks>
     property Parts[Idx: Integer]: LongWord read GetLongWord; default;
+    ///  <summary>
+    ///  Variant record that provides access to digest as array of bytes, array
+    ///  of LongWords or as LongWord fields named A..D.
+    ///  </summary>
     case Integer of
       0: (Bytes: packed array[0..15] of Byte);
       1: (LongWords: packed array[0..3] of LongWord);
@@ -253,9 +258,9 @@ type
     class function Calculate(const Buf; const Count: Cardinal): TPJMD5Digest;
       overload;
     ///  <summary>
-    ///  Calculates a digest from the characters of AnsiString S.
+    ///  Calculates a digest from the characters of RawByteString S.
     ///  </summary>
-    class function Calculate(const S: AnsiString): TPJMD5Digest; overload;
+    class function Calculate(const S: RawByteString): TPJMD5Digest; overload;
     ///  <summary>
     ///  Calculates a digest from the bytes of UnicodeString S returned by the
     ///  given encoding.
@@ -306,9 +311,9 @@ type
     ///  </summary>
     procedure Process(const Buf; const Count: Cardinal); overload;
     ///  <summary>
-    ///  Adds all the characters from AnsiString S as bytes to the digest.
+    ///  Adds all the characters from RawByteString S as bytes to the digest.
     ///  </summary>
-    procedure Process(const S: AnsiString); overload;
+    procedure Process(const S: RawByteString); overload;
     ///  <summary>
     ///  Adds bytes from UnicodeString S as returned by the given Encoding to
     ///  the digest.
@@ -515,7 +520,7 @@ begin
     end;
 end;
 
-class function TPJMD5.Calculate(const S: AnsiString): TPJMD5Digest;
+class function TPJMD5.Calculate(const S: RawByteString): TPJMD5Digest;
 begin
   Result := DoCalculate(
     procedure(Instance: TPJMD5) begin Instance.Process(S); end
@@ -668,7 +673,7 @@ begin
   Process(TBytes(@Buf), Count);
 end;
 
-procedure TPJMD5.Process(const S: AnsiString);
+procedure TPJMD5.Process(const S: RawByteString);
 begin
   Process(Pointer(S)^, Length(S));
 end;
