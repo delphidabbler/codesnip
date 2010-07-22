@@ -54,12 +54,11 @@ program CodeSnip;
 {$WARN SYMBOL_PLATFORM OFF}
 
 
-
 uses
   Forms,
   Windows,
   GIFImage in '3rdParty\GIFImage.pas',
-  MD5 in '3rdParty\MD5.pas',
+  PJMD5 in '3rdParty\PJMD5.pas',
   PJStreamWrapper in '3rdParty\PJStreamWrapper.pas',
   PJSysInfo in '3rdParty\PJSysInfo.pas',
   PJVersionInfo in '3rdParty\PJVersionInfo.pas',
@@ -144,6 +143,15 @@ uses
   IntfNotifier in 'IntfNotifier.pas',
   IntfPreview in 'IntfPreview.pas',
   IntfUIHandlers in 'IntfUIHandlers.pas',
+  NsWebServices.UBase in 'NsWebServices.UBase.pas',
+  NsWebServices.UCharEncodings in 'NsWebServices.UCharEncodings.pas',
+  NsWebServices.UCodeSubmitter in 'NsWebServices.UCodeSubmitter.pas',
+  NsWebServices.UDBDownloadMgr in 'NsWebServices.UDBDownloadMgr.pas',
+  NsWebServices.UDDabStandard in 'NsWebServices.UDDabStandard.pas',
+  NsWebServices.UDownloadMonitor in 'NsWebServices.UDownloadMonitor.pas',
+  NsWebServices.UExceptions in 'NsWebServices.UExceptions.pas',
+  NsWebServices.UMailListSubs in 'NsWebServices.UMailListSubs.pas',
+  NsWebServices.URegistrar in 'NsWebServices.URegistrar.pas',
   UActionFactory in 'UActionFactory.pas',
   UActiveText in 'UActiveText.pas',
   UActiveTextHTML in 'UActiveTextHTML.pas',
@@ -156,13 +164,11 @@ uses
   UBrowseProtocol in 'UBrowseProtocol.pas',
   UCategoryAction in 'UCategoryAction.pas',
   UCategoryListAdapter in 'UCategoryListAdapter.pas',
-  UCheckSum in 'UCheckSum.pas',
   UChkListStateMgr in 'UChkListStateMgr.pas',
   UClipboardHelper in 'UClipboardHelper.pas',
   UCodeImportExport in 'UCodeImportExport.pas',
   UCodeImportMgr in 'UCodeImportMgr.pas',
   UCodeShareMgr in 'UCodeShareMgr.pas',
-  UCodeSubmitter in 'UCodeSubmitter.pas',
   UColorBoxEx in 'UColorBoxEx.pas',
   UColorDialogEx in 'UColorDialogEx.pas',
   UColours in 'UColours.pas',
@@ -198,8 +204,6 @@ uses
   UDispatchList in 'UDispatchList.pas',
   UDlgHelper in 'UDlgHelper.pas',
   UDOSDateTime in 'UDOSDateTime.pas',
-  UDownloadMgr in 'UDownloadMgr.pas',
-  UDownloadMonitor in 'UDownloadMonitor.pas',
   UDropDownButtons in 'UDropDownButtons.pas',
   UEditRoutineAction in 'UEditRoutineAction.pas',
   UEmailHelper in 'UEmailHelper.pas',
@@ -248,7 +252,6 @@ uses
   ULinkAction in 'ULinkAction.pas',
   ULists in 'ULists.pas',
   ULocales in 'ULocales.pas',
-  UMailListSubscriber in 'UMailListSubscriber.pas',
   UMainDisplayMgr in 'UMainDisplayMgr.pas',
   UMarquee in 'UMarquee.pas',
   UMeasurement in 'UMeasurement.pas',
@@ -279,7 +282,6 @@ uses
   UPrintMgr in 'UPrintMgr.pas',
   UProtocols in 'UProtocols.pas',
   UQuery in 'UQuery.pas',
-  URegistrar in 'URegistrar.pas',
   UREMLDataIO in 'UREMLDataIO.pas',
   UReservedCategories in 'UReservedCategories.pas',
   URoutineAction in 'URoutineAction.pas',
@@ -334,6 +336,8 @@ uses
   UUniqueID in 'UUniqueID.pas',
   UUnitsChkListMgr in 'UUnitsChkListMgr.pas',
   UUpdateMgr in 'UUpdateMgr.pas',
+  UURIEncode in 'UURIEncode.pas',
+  UURIParams in 'UURIParams.pas',
   UUserDBBackup in 'UUserDBBackup.pas',
   UUserDBMgr in 'UUserDBMgr.pas',
   UUserDetails in 'UUserDetails.pas',
@@ -354,12 +358,14 @@ uses
   UWBPopupMenus in 'UWBPopupMenus.pas',
   UWBUIMgr in 'UWBUIMgr.pas',
   UWebInfo in 'UWebInfo.pas',
-  UWebService in 'UWebService.pas',
   UWindowSettings in 'UWindowSettings.pas',
   UXMLDataIO in 'UXMLDataIO.pas',
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
   UXMLDocumentEx in 'UXMLDocumentEx.pas';
+
+// Include compiler defines: checks if compiler supported
+{$Include CompilerDefines.inc}
 
 // Include resources
 {$Resource ExternalObj.tlb} // Type library file

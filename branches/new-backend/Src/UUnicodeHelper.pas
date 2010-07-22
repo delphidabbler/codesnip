@@ -70,12 +70,6 @@ function Windows1252BytesOf(const AString: string): TBytes;
     @return Required array of bytes.
   }
 
-function ASCIIBytesOf(const AString: string): TBytes;
-  {Converts a string into an array of bytes from the ASCII character set.
-    @param AString [in] String to be converted.
-    @return Required array of bytes.
-  }
-
 function StringToWindows1252String(const S: string): Windows1252String;
   {Converts a string to a Windows-1252 string.
     @param S [in] String to be converted.
@@ -247,15 +241,6 @@ begin
   Result := Windows1252Encoding.GetBytes(AString);
 end;
 
-function ASCIIBytesOf(const AString: string): TBytes;
-  {Converts a string into an array of bytes from the ASCII character set.
-    @param AString [inString to be converted.
-    @return Required array of bytes.
-  }
-begin
-  Result := TEncoding.ASCII.GetBytes(AString);
-end;
-
 function BytesToAnsiString(const Bytes: TBytes; const CP: Word): RawByteString;
   {Converts an array of bytes to an ANSI raw byte string.
   NOTE: Based on Stack Overflow posting at <URL:http://bit.ly/bAvtGd>.
@@ -288,7 +273,7 @@ function StringToASCIIString(const S: string): ASCIIString;
     @return Converted string.
   }
 begin
-  Result := BytesToAnsiString(ASCIIBytesOf(S), ASCIICodePage);
+  Result := BytesToAnsiString(TEncoding.ASCII.GetBytes(S), ASCIICodePage);
 end;
 
 { TWindows1252Encoding }

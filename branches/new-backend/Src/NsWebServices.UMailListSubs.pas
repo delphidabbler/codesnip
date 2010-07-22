@@ -1,8 +1,8 @@
 {
- * UMailListSubscriber.pas
+ * NsWebServices.UMailListSubs.pas
  *
- * Implements class that interacts with mailing list subscription web service to
- * subscribe user to CodeSnip mailing list.
+ * Implements class that interacts with the mailing list subscription web
+ * service to subscribe a user to the CodeSnip mailing list.
  *
  * $Rev$
  * $Date$
@@ -19,12 +19,13 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UMailListSubscriber.pas
+ * The Original Code is NsWebServices.UMailListSubs.pas, formerly
+ * UMailListSubscriber.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -34,7 +35,7 @@
 }
 
 
-unit UMailListSubscriber;
+unit NsWebServices.UMailListSubs;
 
 
 interface
@@ -42,7 +43,7 @@ interface
 
 uses
   // Project
-  UWebService;
+  NsWebServices.UDDabStandard, NsWebServices.UExceptions;
 
 
 type
@@ -83,7 +84,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UWebInfo;
+  UURIParams, UWebInfo;
 
 
 const
@@ -119,16 +120,18 @@ function TMailListSubscriber.Subscribe(const Email, Name: string): string;
   }
 var
   Response: TStringList;  // valid response from web service
+  Query: TURIParams;      // parameters for query string
 begin
   Assert(Email <> '', ClassName + '.Subscribe: Email required');
   // Send subscribe command to web service and gather response
+  Query := nil;
   Response := TStringList.Create;
   try
-    PostCommand(
-      'subscribe',
-      ['listid=codesnip', 'name=' + Name, 'email=' + Email],
-      Response
-    );
+    Query := TURIParams.Create;
+    Query.Add('listid', 'codesnip');
+    Query.Add('name', Name);
+    Query.Add('email', Email);
+    PostCommand('subscribe', Query, Response);
     // Response must be at least two lines: 1st line is success status code. 2nd
     // and subsequent lines are response message
     if Response.Count < 2 then
@@ -138,7 +141,8 @@ begin
     // Return message that follows success status code
     Result := Trim(Response.Text);
   finally
-    FreeAndNil(Response);
+    Query.Free;
+    Response.Free;
   end;
 end;
 

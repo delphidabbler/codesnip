@@ -1,7 +1,8 @@
 {
- * URegistrar.pas
+ * NsWebServices.URegistrar.pas
  *
- * Class that registers the application online.
+ * Implements a class that interfaces with a web service to register the
+ * application online.
  *
  * $Rev$
  * $Date$
@@ -18,12 +19,12 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is URegistrar.pas
+ * The Original Code is NsWebServices.URegistrar.pas, formerly URegistrar.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -33,7 +34,7 @@
 }
 
 
-unit URegistrar;
+unit NsWebServices.URegistrar;
 
 
 interface
@@ -43,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UWebService;
+  NsWebServices.UDDabStandard;
 
 
 type
@@ -74,7 +75,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UWebInfo;
+  UURIParams, UWebInfo;
 
 
 {
@@ -143,12 +144,16 @@ function TRegistrar.Submit(const Data: TStrings): string;
   }
 var
   Response: TStringList;  // response from server
+  Query: TURIParams;
 begin
+  Query := nil;
   Response := TStringList.Create;
   try
-    PostQuery(Data, Response);
+    Query := TURIParams.Create(Data);
+    PostQuery(Query, Response);
     Result := Trim(Response.Text);  // registration key
   finally
+    Query.Free;
     Response.Free;
   end;
 end;

@@ -36,24 +36,20 @@
   Supported symbols are:
 
   CanCompile
-    Defined if compiler can be used to compile CodeSnip.
+    Defined if compiler can be used to compile CodeSnip. Compilation halts with
+    a fatal error if this symbol is not defined.
+    
+  *** No other symbols are supported in the version of the file ***
  }
-
 
 {$UNDEF CanCompile}
 
 {$IFDEF CONDITIONALEXPRESSIONS}
   {$IF CompilerVersion >= 21.0} // Delphi 2010 and later
-    {$DEFINE CanCompile}        // Minimum compiler is Delphi 2010.
+    {$DEFINE CanCompile}
   {$IFEND}
 {$ENDIF}
 
 {$IFNDEF CanCompile}
   {$MESSAGE FATAL 'CodeSnip requires Delphi 2010 or later to compile'}
-{$ENDIF}
-
-// Unlikely this test will fail since required compilers support: just here for
-// completeness and ultimate safety!
-{$IFNDEF UNICODE}
- {$MESSAGE FATAL 'CodeSnip requires Unicode support'}
 {$ENDIF}

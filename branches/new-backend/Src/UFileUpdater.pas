@@ -102,7 +102,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UCheckSum, UDataBackupMgr, UDOSDateTime, UUtils;
+  UDataBackupMgr, UDOSDateTime, UUtils;
 
 
 resourcestring
@@ -149,24 +149,12 @@ constructor TFileUpdater.Create(const LocalDir: string;
     @param LocalDir [in] Directory storing local data files.
     @param UpdateData [in] Stream containing details of files to be updated.
   }
-{TODO -odelphidabbler -cBugFix: Reinstate download error checking once main
-  cause of download error bug is properly fixed }
-(* *** Following code removed as part of temporary fix for Bug #2970055 ***
-var
-  MD5: Windows1252String;  // md5 hash of stream
-*)
 begin
   inherited Create;
   fLocalDir := LocalDir;
   fReader := TDataStreamReader.Create(UpdateData);
-  // skip over MD5 checksum: not used at present
+  // skip over MD5 checksum: not used in this version of CodeSnip
   fReader.ReadString(32);
-  // check data stream against its MD5 checksum
-  (* *** Following code removed as a temporary fix for Bug #2970055 ***
-  MD5 := fReader.ReadString(32);
-  if not TCheckSum.Compare(UpdateData, MD5) then
-    raise EFileUpdater.Create(cDataCorruptError);
-  *** END *)
 end;
 
 destructor TFileUpdater.Destroy;
