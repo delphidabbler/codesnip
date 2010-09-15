@@ -242,18 +242,9 @@
 		<param name="Local" value="HTML\task_export.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="join mailing list dialog">
-		<param name="Name" value="Join Mailing List Dialog Box">
-		<param name="Local" value="HTML\dlg_maillist.htm">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="license">
 		<param name="Name" value="License">
 		<param name="Local" value="HTML\license.htm">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="mailing list">
-		<param name="Local" value="HTML\mailing_list.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="menus">

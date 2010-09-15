@@ -20,7 +20,6 @@ HTML\dlg_register.htm
 HTML\dlg_savesnippet.htm
 HTML\dlg_selectroutines.htm
 HTML\dlg_update.htm
-HTML\mailing_list.htm
 HTML\main_menu.htm
 HTML\menu_database.htm
 HTML\menu_edit.htm
@@ -48,7 +47,6 @@ HTML\task_search.htm
 HTML\task_testcompile.htm
 HTML\task_update.htm
 HTML\license.htm
-HTML\dlg_maillist.htm
 HTML\dlg_print.htm
 HTML\dlg_pagesetup.htm
 HTML\dlg_prefs_general.htm
