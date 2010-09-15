@@ -23,7 +23,7 @@
 # The Initial Developer of the Original Code is Peter Johnson
 # (http://www.delphidabbler.com/).
 #
-# Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+# Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
 # Johnson. All Rights Reserved.
 #
 # Contributors:
@@ -61,9 +61,6 @@ Res\HTML\dlg-userdb-extra.html
 
 # donate dialog
 Res\HTML\dlg-donate.html
-
-# registration dialog box
-Res\HTML\dlg-registration-maillist.html
 
 # email privacy information for display in frames
 Res\HTML\frm-emailprivacy.html
