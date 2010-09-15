@@ -20,7 +20,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s):
@@ -150,9 +150,6 @@
         Registering the program.
       </li>
       <li>
-        Subscribing to the mailing list.
-      </li>
-      <li>
         Submitting code for inclusion in the main database.
       </li>
       <li>
@@ -163,10 +160,10 @@
       </li>
     </ol>
     <p>
-      The first four actions are performed directly by <em>CodeSnip</em>,
+      The first three actions are performed directly by <em>CodeSnip</em>,
       which communicates with web services located at www.delphidabbler.com
-      using HTTP on port 80. The fifth action simply displays web pages in a
-      browser. The sixth passes user information to the proxy server.
+      using HTTP on port 80. The fourth action simply displays web pages in a
+      browser. The fifth passes user information to the proxy server.
     </p>
     <p>
       Personal data will neither be published on the DelphiDabbler website nor
@@ -224,14 +221,6 @@
         A description of the operating system and version of Internet Explorer
         being used.
       </li>
-      <li>
-        A flag indicating whether the user wishes to join the <em>CodeSnip</em>
-        mailing list.
-      </li>
-      <li>
-        The user&#39;s email address (only required if joining the mailing
-        list).
-      </li>
     </ul>
     <p>
       The registration data is recorded in a database on the DelphiDabbler web
@@ -241,50 +230,11 @@
       program. <em>CodeSnip</em> records this code, with the user name, in
       <code>Common.ini</code>.
     </p>
-    <p>
-      Should the user elect to join the mailing list, the supplied email
-      address and user name will be stored in a further database. See
-      <em>Subscribing to the mailing list</em> below for details of how mailing
-      list membership is managed.
-    </p>
-    <h3>
-      Subscribing to the mailing list
-    </h3>
-    <p>
-      When you choose to subscribe to the <em>CodeSnip</em> mailing list a
-      dialog box is used to gather subscription information. By connecting to
-      the internet and clicking a &quot;Subscribe&quot; button you cause the
-      following information to be sent to the <em>DelphiDabbler</em> mailing
-      list web service:
-    </p>
-    <ul class="unspaced">
-      <li>
-        The id of the mailing list being subscribed to.
-      </li>
-      <li>
-        Your email address, as entered in the dialog box.
-      </li>
-      <li>
-        Your name or nickname (if provided).
-      </li>
-    </ul>
-    <p>
-      The above data will be recorded in a database on the DelphiDabbler web
-      server.
-    </p>
-    <p>
-      Mailing list membership requires activation by the subscriber in response
-      to an email sent from the web service. Subscribers can cancel their
-      subscription at any time. The email address and user name are deleted from
-      the database when the subscription is cancelled or if it is not activated
-      in a reasonable time. Supplied email addresses are used only to send
-      relevant mail shots and will not be knowingly released to third parties.
-    </p>
     <h3>
       Submitting code to the main database
     </h3>
     <p>
-      This activity is started from the <em>Database | Submit Routines</em> menu
+      This activity is started from the <em>Database | Submit Snippets</em> menu
       option and data is collected using the resulting wizard. Clicking the
       <em>Submit</em> button in the wizard sends the following information to
       the <em>DelphiDabbler</em> code submission web service:
