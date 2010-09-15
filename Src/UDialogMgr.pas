@@ -78,9 +78,6 @@ type
         @param ASearch [out] Set to object recording search details if user OKs.
         @return True if user OKs or false if user cancels.
       }
-    procedure ShowMailingListDlg;
-      {Displays mailing list dialog box.
-      }
     function ExecPreferencesDlg: Boolean;
       {Display Preferences dialog box.
         @return True if user OKs and preferences are updated or False if
@@ -135,7 +132,7 @@ implementation
 uses
   // Project
   FmAboutDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg, FmFindTextDlg,
-  FmFindXRefsDlg, FmMailingListDlg, FmPreferencesDlg, FmPrintDlg,
+  FmFindXRefsDlg, FmPreferencesDlg, FmPrintDlg,
   FmProxyServerDlg, FmRegistrationDlg, FmSelectionSearchDlg, FmUpdateDlg,
   FmUserBugReportDlg, UPageSetupDlgMgr, UTestUnitDlgMgr;
 
@@ -259,13 +256,6 @@ procedure TDialogMgr.ShowDonateDlg;
   }
 begin
   TDonateDlg.Execute(Owner);
-end;
-
-procedure TDialogMgr.ShowMailingListDlg;
-  {Displays mailing list dialog box.
-  }
-begin
-  TMailingListDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowTestUnit(const Snippet: TRoutine);

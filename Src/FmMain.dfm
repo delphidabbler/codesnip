@@ -1911,13 +1911,6 @@ inherited MainForm: TMainForm
       ImageIndex = 16
       OnExecute = actPreferencesExecute
     end
-    object actMailingList: TAction
-      Category = 'Tools'
-      Caption = 'Join CodeSnip Mailing List...'
-      Hint = 'Mailing List|Subscribe to the CodeSnip mailing list'
-      ImageIndex = 21
-      OnExecute = actMailingListExecute
-    end
     object actRegister: TAction
       Category = 'Tools'
       Caption = '&Register CodeSnip...'
@@ -2413,11 +2406,6 @@ inherited MainForm: TMainForm
       end
       object miReportBug: TMenuItem
         Action = actBugReport
-      end
-      object miMailingList: TMenuItem
-        Action = actMailingList
-        Caption = 'Join Mailing List...'
-        Hint = 'Join Mailing List|Subscribe to the CodeSnip mailing list'
       end
       object miSpacer9: TMenuItem
         Caption = '-'

@@ -91,7 +91,6 @@ type
     actImportCode: TAction;
     actLicense: TAction;
     actLoadDatabase: TAction;
-    actMailingList: TAction;
     actNextTab: TAction;
     actPageSetup: TAction;
     actPreferences: TAction;
@@ -160,7 +159,6 @@ type
     miHomePage: TMenuItem;
     miImportCode: TMenuItem;
     miLicense: TMenuItem;
-    miMailingList: TMenuItem;
     miPageSetup: TMenuItem;
     miPreferences: TMenuItem;
     miPrint: TMenuItem;
@@ -281,7 +279,6 @@ type
     procedure actImportCodeExecute(Sender: TObject);
     procedure actLicenseExecute(Sender: TObject);
     procedure actLoadDatabaseExecute(Sender: TObject);
-    procedure actMailingListExecute(Sender: TObject);
     procedure actNextTabExecute(Sender: TObject);
     procedure ActNonEmptyDBUpdate(Sender: TObject);
     procedure ActOverviewTabExecute(Sender: TObject);
@@ -829,14 +826,6 @@ procedure TMainForm.actLoadDatabaseExecute(Sender: TObject);
   }
 begin
   LoadSnippets;
-end;
-
-procedure TMainForm.actMailingListExecute(Sender: TObject);
-  {Displays mailing list wizard.
-    @param Sender [in] Not used.
-  }
-begin
-  fDialogMgr.ShowMailingListDlg;
 end;
 
 procedure TMainForm.actNextTabExecute(Sender: TObject);

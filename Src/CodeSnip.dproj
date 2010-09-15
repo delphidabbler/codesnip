@@ -104,9 +104,6 @@
 			<DCCReference Include="FmHTMLViewDlg.pas">
 				<Form>HTMLViewDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmMailingListDlg.pas">
-				<Form>MailingListDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmMain.pas">
 				<Form>MainForm</Form>
 			</DCCReference>
@@ -291,7 +288,6 @@
 			<DCCReference Include="NsWebServices.UDDabStandard.pas"/>
 			<DCCReference Include="NsWebServices.UDownloadMonitor.pas"/>
 			<DCCReference Include="NsWebServices.UExceptions.pas"/>
-			<DCCReference Include="NsWebServices.UMailListSubs.pas"/>
 			<DCCReference Include="NsWebServices.URegistrar.pas"/>
 			<DCCReference Include="UActionFactory.pas"/>
 			<DCCReference Include="UActiveText.pas"/>
