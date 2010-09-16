@@ -147,7 +147,6 @@ uses
   NsWebServices.UCodeSubmitter in 'NsWebServices.UCodeSubmitter.pas',
   NsWebServices.UDBDownloadMgr in 'NsWebServices.UDBDownloadMgr.pas',
   NsWebServices.UDDabStandard in 'NsWebServices.UDDabStandard.pas',
-  NsWebServices.UDownloadMonitor in 'NsWebServices.UDownloadMonitor.pas',
   NsWebServices.URegistrar in 'NsWebServices.URegistrar.pas',
   UActionFactory in 'UActionFactory.pas',
   UActiveText in 'UActiveText.pas',
@@ -359,6 +358,7 @@ uses
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
   UXMLDocumentEx in 'UXMLDocumentEx.pas',
+  Web.UDownloadMonitor in 'Web.UDownloadMonitor.pas',
   Web.UExceptions in 'Web.UExceptions.pas',
   Web.UHTTPEx in 'Web.UHTTPEx.pas';
 
