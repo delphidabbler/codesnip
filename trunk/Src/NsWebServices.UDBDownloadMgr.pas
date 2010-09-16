@@ -62,10 +62,10 @@ type
       {Gets program's id code.
         @return Program id.
       }
-    procedure HandleException(const E: EWebService);
-      {Converts EWebService exceptions into EDownloadMgr exceptions with both
+    procedure HandleException(const E: EWebError);
+      {Converts EWebError exceptions into EDownloadMgr exceptions with both
       a long and a short description.
-        @param E [in] EWebService or descendant exception to be converted.
+        @param E [in] EWebError or descendant exception to be converted.
         @except Raises EDownloadMgr exceptions based on given exception.
       }
     procedure PostStdCommand(const Cmd: string; const Response: TStrings);
@@ -73,7 +73,7 @@ type
       with all commands, i.e. "progid" and "version".
         @param Cmd [in] Command to be sent.
         @param Response [in] String list to receive web server response.
-        @except EDownloadMgr Raised if EWebService exception or sub class
+        @except EDownloadMgr Raised if EWebError exception or sub class
           detected.
       }
     procedure SafePostCommand(const Cmd: string; const Params: TURIParams;
@@ -86,7 +86,7 @@ type
           if no parameters.
         @param Response [in] Server's response as string list where each line of
           response is a line of string list.
-        @except EDownloadMgr Raised if EWebService exception or sub class
+        @except EDownloadMgr Raised if EWebError exception or sub class
           detected.
       }
   public
@@ -129,7 +129,7 @@ type
   {
   EDownloadMgr:
     Class of exception raised by TDownloadMgr. Contains standard full
-    description of exception and adds an abreviated description in ShortMsg
+    description of exception and adds an abbreviated description in ShortMsg
     property.
   }
   EDownloadMgr = class(EWebService)
@@ -244,6 +244,7 @@ resourcestring
   sShortHTTPError = 'HTTP Error';
   sLongHTTPError = 'The web server returned the following error: "%0:s"';
   sShortConnectionError = 'Connection Error';
+  sShortTransmissionError = 'Transmission Error';
   sShortWebSvcFailure = 'Web Service Failure';
   sLongWebSvcFailure =  'The database update web service failed with the '
     + 'following error:' + EOL + '%0:s';
@@ -306,23 +307,22 @@ begin
   end;
 end;
 
-procedure TDownloadMgr.HandleException(const E: EWebService);
-  {Converts EWebService exceptions into EDownloadMgr exceptions with both
+procedure TDownloadMgr.HandleException(const E: EWebError);
+  {Converts EWebError exceptions into EDownloadMgr exceptions with both
   a long and a short description.
-    @param E [in] EWebService or descendant exception to be converted.
+    @param E [in] EWebError or descendant exception to be converted.
     @except Raises EDownloadMgr exceptions based on given exception.
   }
 begin
   if E is EHTTPError then
-    // Use HTTP error code and error description in long description
     raise EDownloadMgr.CreateFmt(
       sShortHTTPError, sLongHTTPError, [E.Message]
     );
   if E is EWebConnectionError then
-    // Copy exception message to long description
     raise EDownloadMgr.Create(sShortConnectionError, E.Message);
+  if E is EWebTransmissionError then
+    raise EDownloadMgr.Create(sShortTransmissionError, E.Message);
   if E is EWebServiceFailure then
-    // Insert exception's original message to long description
     raise EDownloadMgr.CreateFmt(
       sShortWebSvcFailure, sLongWebSvcFailure, [E.Message]
     );
@@ -397,7 +397,7 @@ procedure TDownloadMgr.PostStdCommand(const Cmd: string;
   all commands, i.e. "progid" and "version".
     @param Cmd [in] Command to be sent.
     @param Response [in] String list to receive web server response.
-    @except EDownloadMgr Raised if EWebService exception or sub class detected.
+    @except EDownloadMgr Raised if EWebError exception or sub class detected.
   }
 var
   StdParams: TURIParams;
@@ -438,13 +438,13 @@ procedure TDownloadMgr.SafePostCommand(const Cmd: string;
       parameters.
     @param Response [in] Server's response as string list where each line of
       response is a line of string list.
-    @except EDownloadMgr Raised if EWebService exception or sub class detected.
+    @except EDownloadMgr Raised if EWebError exception or sub class detected.
   }
 begin
   try
     PostCommand(Cmd, Params, Response);
   except
-    on E: EWebService do
+    on E: EWebError do
       HandleException(E);
   end;
 end;
