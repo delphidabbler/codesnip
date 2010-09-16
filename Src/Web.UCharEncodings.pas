@@ -1,5 +1,5 @@
 {
- * NsWebServices.UCharEncodings.pas
+ * Web.UCharEncodings.pas
  *
  * Implements a class that defines and provides access to character sets and
  * encodings supported when accessing web services.
@@ -19,7 +19,8 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is NsWebServices.UCharEncodings.pas
+ * The Original Code is Web.UCharEncodings.pas, formerly
+ * NsWebServices.UCharEncodings.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +35,7 @@
 }
 
 
-unit NsWebServices.UCharEncodings;
+unit Web.UCharEncodings;
 
 
 interface
