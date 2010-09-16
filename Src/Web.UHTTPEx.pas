@@ -48,7 +48,7 @@ uses
   // Indy
   IdHTTP, IdAntiFreeze, IdException,
   // Project
-  NsWebServices.UDownloadMonitor, UURIParams;
+  UURIParams, Web.UDownloadMonitor;
 
 
 type
