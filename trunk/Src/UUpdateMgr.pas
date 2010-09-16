@@ -43,7 +43,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  NsWebServices.UDBDownloadMgr, UDOSDateTime, UNews;
+  UDOSDateTime, UNews, Web.UDBDownloadMgr;
 
 
 type
@@ -107,7 +107,7 @@ type
       {List of news items}
     fCancelled: Boolean;
       {Flag true if update is cancelled}
-    fDownloadMgr: TDownloadMgr;
+    fDownloadMgr: TDBDownloadMgr;
       {Object used to interact with web service}
     fLocalDir: string;
       {Directory where CodeSnip "database" files are stored on local machine}
@@ -229,7 +229,7 @@ constructor TUpdateMgr.Create(const LocalDir: string);
 begin
   inherited Create;
   // Create download manager to download from remote web server
-  fDownloadMgr := TDownloadMgr.Create;
+  fDownloadMgr := TDBDownloadMgr.Create;
   fDownloadMgr.OnProgress := DownloadProgressHandler;
   // Record local data directory
   fLocalDir := LocalDir;
@@ -327,11 +327,11 @@ function TUpdateMgr.HandleException(const E: Exception): Boolean;
     @return True if exception handled and false if not handled.
   }
 begin
-  if E is EDownloadMgr then
+  if E is EDBDownloadMgr then
   begin
     // Download manager exceptions provide both long and short error messages
     fLongError := E.Message;
-    fShortError := (E as EDownloadMgr).ShortMsg;
+    fShortError := (E as EDBDownloadMgr).ShortMsg;
     Result := True;
   end
   else if E is EFileUpdater then
