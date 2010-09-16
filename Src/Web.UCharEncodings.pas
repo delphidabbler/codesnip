@@ -51,17 +51,17 @@ uses
 type
 
   {
-  EWSCharEncodings:
-    Class of exception raised by TWSCharEncodings.
+  EWebCharEncodings:
+    Class of exception raised by TWebCharEncodings.
   }
-  EWSCharEncodings = class(Exception);
+  EWebCharEncodings = class(Exception);
 
   {
-  TWSCharEncodings:
+  TWebCharEncodings:
     Static class that defines and provides access to character sets and
     encodings supported when accessing web services.
   }
-  TWSCharEncodings = class(TNoConstructObject)
+  TWebCharEncodings = class(TNoConstructObject)
   strict private
     type
       {
@@ -115,7 +115,7 @@ type
         @param CharSet [in] String specifying character set. '' is interpreted
           as DefaultEncoding.
         @return Appropriate encoding instance.
-        @except Raises EWSCharEncodings if CharSet is not supported.
+        @except Raises EWebCharEncodings if CharSet is not supported.
       }
     class function AcceptCharSet: string;
       {Returns comma separated list of accepted character sets suitable for
@@ -128,9 +128,9 @@ type
 implementation
 
 
-{ TWSCharEncodings }
+{ TWebCharEncodings }
 
-class function TWSCharEncodings.AcceptCharSet: string;
+class function TWebCharEncodings.AcceptCharSet: string;
   {Returns comma separated list of accepted character sets suitable for
   inclusion in http headers.
     @return Required list.
@@ -147,7 +147,7 @@ begin
   end;
 end;
 
-class function TWSCharEncodings.CharCode(CharSet: string): Word;
+class function TWebCharEncodings.CharCode(CharSet: string): Word;
   {Gets character code associated with a character set.
     @param CharSet [in] String indentifying Character set to look up. '' is
       interpreted as DefaultEncoding.
@@ -165,7 +165,7 @@ begin
     Result := ErrorCodePage;
 end;
 
-class constructor TWSCharEncodings.Create;
+class constructor TWebCharEncodings.Create;
   {Class constructor. Initialises array of supported encodings.
   }
 begin
@@ -181,13 +181,13 @@ begin
   // accept this encoding
 end;
 
-class function TWSCharEncodings.GetEncoding(const CharSet: string): TEncoding;
+class function TWebCharEncodings.GetEncoding(const CharSet: string): TEncoding;
   {Creates an encoding for a character set. Caller must free the encoding if it
   is not a default encoding.
     @param CharSet [in] String specifying character set. '' is interpreted
       as DefaultEncoding.
     @return Appropriate encoding instance.
-    @except Raises EWSCharEncodings if CharSet is not supported.
+    @except Raises EWebCharEncodings if CharSet is not supported.
   }
 resourcestring
   // error message
@@ -197,7 +197,7 @@ var
 begin
   Code := CharCode(CharSet);
   case Code of
-    ErrorCodePage: raise EWSCharEncodings.CreateFmt(sErrorMsg, [CharSet]);
+    ErrorCodePage: raise EWebCharEncodings.CreateFmt(sErrorMsg, [CharSet]);
     UTF8CodePage: Exit(TEncoding.UTF8);
     UTF16LECodePage: Exit(TEncoding.Unicode);
     UTF16BECodePage: Exit(TEncoding.BigEndianUnicode);
@@ -206,7 +206,7 @@ begin
   end;
 end;
 
-class function TWSCharEncodings.IndexOf(const CharSet: string): Integer;
+class function TWebCharEncodings.IndexOf(const CharSet: string): Integer;
   {Looks up index of a character set in list of supported encodings.
     @param CharSet [in] String indentifying Character set to look up.
 S    @return Index of CharSet in list of encodings or -1 if not found.
@@ -222,7 +222,7 @@ begin
   Exit(-1);
 end;
 
-class function TWSCharEncodings.Supported(const CharSet: string): Boolean;
+class function TWebCharEncodings.Supported(const CharSet: string): Boolean;
   {Checks if a character set is supported.
     @param CharSet [in] String specifying character set. '' is interpreted as
       DefaultEncoding.
@@ -232,9 +232,9 @@ begin
   Result := CharCode(CharSet) = ErrorCodePage;
 end;
 
-{ TWSCharEncodings.TCharEncoding }
+{ TWebCharEncodings.TCharEncoding }
 
-constructor TWSCharEncodings.TCharEncoding.Create(const AName: string;
+constructor TWebCharEncodings.TCharEncoding.Create(const AName: string;
   const ACode: Word);
   {Constructor. Initialises record's fields.
     @param AName [in] Value for Name field.
