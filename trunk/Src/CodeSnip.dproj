@@ -282,7 +282,6 @@
 			<DCCReference Include="IntfPreview.pas"/>
 			<DCCReference Include="IntfUIHandlers.pas"/>
 			<DCCReference Include="NsWebServices.UBase.pas"/>
-			<DCCReference Include="NsWebServices.UCharEncodings.pas"/>
 			<DCCReference Include="NsWebServices.UCodeSubmitter.pas"/>
 			<DCCReference Include="NsWebServices.UDBDownloadMgr.pas"/>
 			<DCCReference Include="NsWebServices.UDDabStandard.pas"/>
@@ -497,6 +496,7 @@
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
+			<DCCReference Include="Web.UCharEncodings.pas"/>
 			<DCCReference Include="Web.UDownloadMonitor.pas"/>
 			<DCCReference Include="Web.UExceptions.pas"/>
 			<DCCReference Include="Web.UHTTPEx.pas"/>

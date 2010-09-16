@@ -143,7 +143,6 @@ uses
   IntfPreview in 'IntfPreview.pas',
   IntfUIHandlers in 'IntfUIHandlers.pas',
   NsWebServices.UBase in 'NsWebServices.UBase.pas',
-  NsWebServices.UCharEncodings in 'NsWebServices.UCharEncodings.pas',
   NsWebServices.UCodeSubmitter in 'NsWebServices.UCodeSubmitter.pas',
   NsWebServices.UDBDownloadMgr in 'NsWebServices.UDBDownloadMgr.pas',
   NsWebServices.UDDabStandard in 'NsWebServices.UDDabStandard.pas',
@@ -358,6 +357,7 @@ uses
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
   UXMLDocumentEx in 'UXMLDocumentEx.pas',
+  Web.UCharEncodings in 'Web.UCharEncodings.pas',
   Web.UDownloadMonitor in 'Web.UDownloadMonitor.pas',
   Web.UExceptions in 'Web.UExceptions.pas',
   Web.UHTTPEx in 'Web.UHTTPEx.pas';

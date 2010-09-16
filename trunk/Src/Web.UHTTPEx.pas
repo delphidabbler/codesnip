@@ -183,7 +183,7 @@ uses
   // 3rd party
   PJMD5,
   // Project
-  NsWebServices.UCharEncodings, UConsts, UWebInfo, Web.UExceptions;
+  UConsts, UWebInfo, Web.UCharEncodings, Web.UExceptions;
 
 
 resourcestring
