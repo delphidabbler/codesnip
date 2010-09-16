@@ -148,7 +148,6 @@ uses
   NsWebServices.UDBDownloadMgr in 'NsWebServices.UDBDownloadMgr.pas',
   NsWebServices.UDDabStandard in 'NsWebServices.UDDabStandard.pas',
   NsWebServices.UDownloadMonitor in 'NsWebServices.UDownloadMonitor.pas',
-  NsWebServices.UExceptions in 'NsWebServices.UExceptions.pas',
   NsWebServices.URegistrar in 'NsWebServices.URegistrar.pas',
   UActionFactory in 'UActionFactory.pas',
   UActiveText in 'UActiveText.pas',
@@ -360,6 +359,7 @@ uses
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
   UXMLDocumentEx in 'UXMLDocumentEx.pas',
+  Web.UExceptions in 'Web.UExceptions.pas',
   Web.UHTTPEx in 'Web.UHTTPEx.pas';
 
 // Include compiler defines: checks if compiler supported

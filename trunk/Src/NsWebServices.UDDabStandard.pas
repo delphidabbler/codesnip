@@ -125,7 +125,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  NsWebServices.UExceptions;
+  Web.UExceptions;
 
 
 { TDDabStdWebService }
