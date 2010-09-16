@@ -83,8 +83,8 @@ type
       {Gathers required registration data, sends to web server and gets
       registration code from it.
         @return Registration code.
-        @except EWebService exception raised if there is a failure in
-          interaction with web service.
+        @except EWebError exception raised if there is a failure in interaction
+          with web service.
       }
     function ValidateUserInfo: Boolean;
       {Validates data entered by user. Displays any error messages.
@@ -317,7 +317,7 @@ function TRegistrationDlg.RegisterWithWebServer: string;
   {Gathers required registration data, sends to web server and gets registration
   code from it.
     @return Registration code.
-    @except EWebService exception raised if there is a failure in interaction
+    @except EWebError exception raised if there is a failure in interaction
       with web service.
   }
 var

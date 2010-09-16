@@ -85,6 +85,7 @@ type
         @except EWebServiceError raised on receipt of valid error response.
         @except EWebServiceFailure raised if web service sends invalid response.
         @except EWebConnectionError raised if EIdSocketError encoutered.
+        @except EWebTransmissionError raised if data is garbled in transmission.
         @except EHTTPError raised if EIdHTTPProtocolException encountered.
         @except EIdException or descendant re-raised for other exception types.
       }
@@ -97,6 +98,7 @@ type
         @except EWebServiceError raised on receipt of valid error response.
         @except EWebServiceFailure raised if web service sends invalid response.
         @except EWebConnectionError raised if EIdSocketError encoutered.
+        @except EWebTransmissionError raised if data is garbled in transmission.
         @except EHTTPError raised if EIdHTTPProtocolException encountered.
         @except EIdException or descendant re-raised for other exception types.
       }
@@ -109,6 +111,7 @@ type
         @except EWebServiceError raised on receipt of valid error response.
         @except EWebServiceFailure raised if web service sends invalid response.
         @except EWebConnectionError raised if EIdSocketError encoutered.
+        @except EWebTransmissionError raised if data is garbled in transmission.
         @except EHTTPError raised if EIdHTTPProtocolException encountered.
         @except EIdException or descendant re-raised for other exception types.
       }
@@ -145,6 +148,7 @@ procedure TDDabStdWebService.PostCommand(const Cmd: string;
     @except EWebServiceError raised on receipt of valid error response.
     @except EWebServiceFailure raised if web service sends invalid response.
     @except EWebConnectionError raised if EIdSocketError encoutered.
+    @except EWebTransmissionError raised if data is garbled in transmission.
     @except EHTTPError raised if EIdHTTPProtocolException encountered.
     @except EIdException or descendant re-raised for other exception types.
   }
@@ -163,6 +167,7 @@ procedure TDDabStdWebService.PostData(const Data: TStream;
     @except EWebServiceError raised on receipt of valid error response.
     @except EWebServiceFailure raised if web service sends invalid response.
     @except EWebConnectionError raised if EIdSocketError encoutered.
+    @except EWebTransmissionError raised if data is garbled in transmission.
     @except EHTTPError raised if EIdHTTPProtocolException encountered.
     @except EIdException or descendant re-raised for other exception types.
   }
@@ -181,6 +186,7 @@ procedure TDDabStdWebService.PostQuery(const Query: TURIParams;
     @except EWebServiceError raised on receipt of valid error response.
     @except EWebServiceFailure raised if web service sends invalid response.
     @except EWebConnectionError raised if EIdSocketError encoutered.
+    @except EWebTransmissionError raised if data is garbled in transmission.
     @except EHTTPError raised if EIdHTTPProtocolException encountered.
     @except EIdException or descendant re-raised for other exception types.
   }
