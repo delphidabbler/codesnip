@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes,
   // Project
-  NsWebServices.UDDabStandard, UURIParams, Web.UExceptions;
+  UURIParams, Web.UExceptions, Web.UStdWebService;
 
 
 type
@@ -52,7 +52,7 @@ type
   TDownloadMgr:
     Manages downloads of updates to database from web service via HTTP.
   }
-  TDownloadMgr = class sealed(TDDabStdWebService)
+  TDownloadMgr = class sealed(TStdWebService)
   strict private
     function ProductVersion: string;
       {Gets program's product version.

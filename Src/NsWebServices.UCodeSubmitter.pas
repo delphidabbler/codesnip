@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes,
   // Project
-  NsWebServices.UDDabStandard;
+  Web.UStdWebService;
 
 
 type
@@ -54,7 +54,7 @@ type
   TCodeSubmitter:
     Submits code to the Code Snippets Database using a web service via HTTP.
   }
-  TCodeSubmitter = class sealed(TDDabStdWebService)
+  TCodeSubmitter = class sealed(TStdWebService)
   public
     constructor Create;
       {Class constructor. Initialises service.
