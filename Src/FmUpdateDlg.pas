@@ -98,7 +98,7 @@ type
         @param Cancel [in/out] Flag that cancels update when set true.
       }
     procedure DownloadProgressHandler(Sender: TObject; const BytesReceived,
-      BytesExpected: Integer; var Cancel: Boolean);
+      BytesExpected: Int64; var Cancel: Boolean);
       {OnProgress event handler for update manager object. Displays download
       progress using a progress bar.
         @param Sender [in] Not used.
@@ -277,7 +277,7 @@ begin
 end;
 
 procedure TUpdateDlg.DownloadProgressHandler(Sender: TObject;
-  const BytesReceived, BytesExpected: Integer; var Cancel: Boolean);
+  const BytesReceived, BytesExpected: Int64; var Cancel: Boolean);
   {OnProgress event handler for update manager object. Displays download
   progress using a progress bar.
     @param Sender [in] Not used.
