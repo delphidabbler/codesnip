@@ -244,7 +244,7 @@ begin
   fAntiFreeze := TIdAntiFreeze.Create(nil);
   fHTTP := TIdHTTP.Create(nil);
   fHTTP.HTTPOptions := fHTTP.HTTPOptions - [hoForceEncodeParams];
-  fHTTP.Request.AcceptCharSet := TWSCharEncodings.AcceptCharSet;
+  fHTTP.Request.AcceptCharSet := TWebCharEncodings.AcceptCharSet;
   fHTTP.Request.AcceptLanguage := 'en-gb, en;q=0.8';
   // Get proxy info
   ProxyInfo := TWebInfo.WebProxyInfo;
@@ -322,7 +322,7 @@ begin
   // Perform request, getting raw content
   Content := DoRequestRaw(Requestor);
   // Get text from raw data, decoded according to HTTP response header
-  Encoding := TWSCharEncodings.GetEncoding(fHTTP.Response.CharSet);
+  Encoding := TWebCharEncodings.GetEncoding(fHTTP.Response.CharSet);
   try
     Result := Encoding.GetString(Content);
   finally
