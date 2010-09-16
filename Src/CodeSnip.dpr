@@ -359,7 +359,8 @@ uses
   UXMLDataIO in 'UXMLDataIO.pas',
   UXMLDocConsts in 'UXMLDocConsts.pas',
   UXMLDocHelper in 'UXMLDocHelper.pas',
-  UXMLDocumentEx in 'UXMLDocumentEx.pas';
+  UXMLDocumentEx in 'UXMLDocumentEx.pas',
+  Web.UHTTPEx in 'Web.UHTTPEx.pas';
 
 // Include compiler defines: checks if compiler supported
 {$Include CompilerDefines.inc}
