@@ -281,7 +281,6 @@
 			<DCCReference Include="IntfNotifier.pas"/>
 			<DCCReference Include="IntfPreview.pas"/>
 			<DCCReference Include="IntfUIHandlers.pas"/>
-			<DCCReference Include="NsWebServices.UDBDownloadMgr.pas"/>
 			<DCCReference Include="NsWebServices.URegistrar.pas"/>
 			<DCCReference Include="UActionFactory.pas"/>
 			<DCCReference Include="UActiveText.pas"/>
@@ -496,6 +495,7 @@
 			<DCCReference Include="Web.UBaseWebService.pas"/>
 			<DCCReference Include="Web.UCharEncodings.pas"/>
 			<DCCReference Include="Web.UCodeSubmitter.pas"/>
+			<DCCReference Include="Web.UDBDownloadMgr.pas"/>
 			<DCCReference Include="Web.UDownloadMonitor.pas"/>
 			<DCCReference Include="Web.UExceptions.pas"/>
 			<DCCReference Include="Web.UHTTPEx.pas"/>
