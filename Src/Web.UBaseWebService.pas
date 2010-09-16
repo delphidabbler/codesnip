@@ -1,5 +1,5 @@
 {
- * NsWebServices.UBase.pas
+ * Web.UBaseWebService.pas
  *
  * Provides a base class for all classes that access web services.
  *
@@ -18,7 +18,8 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is NsWebServices.UBase.pas
+ * The Original Code is Web.UBaseWebService.pas. formerly
+ * NsWebServices.UBase.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -33,7 +34,7 @@
 }
 
 
-unit NsWebServices.UBase;
+unit Web.UBaseWebService;
 
 
 interface
