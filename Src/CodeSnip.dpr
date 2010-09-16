@@ -142,7 +142,6 @@ uses
   IntfNotifier in 'IntfNotifier.pas',
   IntfPreview in 'IntfPreview.pas',
   IntfUIHandlers in 'IntfUIHandlers.pas',
-  NsWebServices.URegistrar in 'NsWebServices.URegistrar.pas',
   UActionFactory in 'UActionFactory.pas',
   UActiveText in 'UActiveText.pas',
   UActiveTextHTML in 'UActiveTextHTML.pas',
@@ -360,6 +359,7 @@ uses
   Web.UDownloadMonitor in 'Web.UDownloadMonitor.pas',
   Web.UExceptions in 'Web.UExceptions.pas',
   Web.UHTTPEx in 'Web.UHTTPEx.pas',
+  Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas';
 
 // Include compiler defines: checks if compiler supported

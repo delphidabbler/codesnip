@@ -137,8 +137,8 @@ uses
   // Delphi
   SysUtils, Forms,
   // Project
-  NsWebServices.URegistrar, UAppInfo, UFontHelper, UCtrlArranger, UMessageBox,
-  USystemInfo, UUserDetails;
+  UAppInfo, UFontHelper, UCtrlArranger, UMessageBox, USystemInfo, UUserDetails,
+  Web.URegistrar;
 
 
 {$R *.dfm}
