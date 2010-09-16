@@ -58,7 +58,7 @@ type
       @param BytesExpected [in] Total number of bytes to be downloaded.
   }
   TWebServiceProgressEvent = procedure(Sender: TObject; const BytesToDate,
-    BytesExpected: Integer) of object;
+    BytesExpected: Int64) of object;
 
   {
   TBaseWebService:

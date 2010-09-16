@@ -95,7 +95,7 @@ type
       @param Cancel [in/out] Flag that handler can set true to abort the update.
   }
   TUpdateDownloadEvent = procedure(Sender: TObject; const BytesHandled,
-    TotalBytes: Integer; var Cancel: Boolean) of object;
+    TotalBytes: Int64; var Cancel: Boolean) of object;
 
   {
   TUpdateMgr:
@@ -120,7 +120,7 @@ type
     fOnDownloadProgress: TUpdateDownloadEvent;
       {Event handler for OnDownloadProgress event}
     procedure DownloadProgresshandler(Sender: TObject; const BytesToDate,
-      ExpectedBytes: Integer);
+      ExpectedBytes: Int64);
       {Handles download manager's OnProgress event by passing values to own
       OnDownloadProgress event.
         @param Sender [in] Not used.
@@ -261,7 +261,7 @@ begin
 end;
 
 procedure TUpdateMgr.DownloadProgresshandler(Sender: TObject;
-  const BytesToDate, ExpectedBytes: Integer);
+  const BytesToDate, ExpectedBytes: Int64);
   {Handles download manager's OnProgress event by passing values to own
   OnDownloadProgress event.
     @param Sender [in] Not used.
