@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes,
   // Project
-  NsWebServices.UBase, UURIParams;
+  UURIParams, Web.UBaseWebService;
 
 
 type
