@@ -283,7 +283,6 @@
 			<DCCReference Include="IntfUIHandlers.pas"/>
 			<DCCReference Include="NsWebServices.UCodeSubmitter.pas"/>
 			<DCCReference Include="NsWebServices.UDBDownloadMgr.pas"/>
-			<DCCReference Include="NsWebServices.UDDabStandard.pas"/>
 			<DCCReference Include="NsWebServices.URegistrar.pas"/>
 			<DCCReference Include="UActionFactory.pas"/>
 			<DCCReference Include="UActiveText.pas"/>
@@ -500,6 +499,7 @@
 			<DCCReference Include="Web.UDownloadMonitor.pas"/>
 			<DCCReference Include="Web.UExceptions.pas"/>
 			<DCCReference Include="Web.UHTTPEx.pas"/>
+			<DCCReference Include="Web.UStdWebService.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

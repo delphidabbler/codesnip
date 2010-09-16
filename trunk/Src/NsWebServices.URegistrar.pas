@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  NsWebServices.UDDabStandard;
+  Web.UStdWebService;
 
 
 type
@@ -53,7 +53,7 @@ type
   TRegistrar
     Class that registers the application online.
   }
-  TRegistrar = class(TDDabStdWebService)
+  TRegistrar = class(TStdWebService)
   public
     constructor Create;
       {Class constructor. Initialises service.

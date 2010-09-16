@@ -144,7 +144,6 @@ uses
   IntfUIHandlers in 'IntfUIHandlers.pas',
   NsWebServices.UCodeSubmitter in 'NsWebServices.UCodeSubmitter.pas',
   NsWebServices.UDBDownloadMgr in 'NsWebServices.UDBDownloadMgr.pas',
-  NsWebServices.UDDabStandard in 'NsWebServices.UDDabStandard.pas',
   NsWebServices.URegistrar in 'NsWebServices.URegistrar.pas',
   UActionFactory in 'UActionFactory.pas',
   UActiveText in 'UActiveText.pas',
@@ -360,7 +359,8 @@ uses
   Web.UCharEncodings in 'Web.UCharEncodings.pas',
   Web.UDownloadMonitor in 'Web.UDownloadMonitor.pas',
   Web.UExceptions in 'Web.UExceptions.pas',
-  Web.UHTTPEx in 'Web.UHTTPEx.pas';
+  Web.UHTTPEx in 'Web.UHTTPEx.pas',
+  Web.UStdWebService in 'Web.UStdWebService.pas';
 
 // Include compiler defines: checks if compiler supported
 {$Include CompilerDefines.inc}
