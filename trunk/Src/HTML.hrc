@@ -52,10 +52,6 @@ Res\HTML\dlg-comperror-tplt.html
 # update dialog news pane
 Res\HTML\dlg-updt-news-tplt.html
 
-# mailing list dialog
-Res\HTML\dlg-mlist-result-tplt.html
-Res\HTML\dlg-mlist-maillist.html
-
 # user db edit dialog
 Res\HTML\dlg-userdb-extra.html
 
