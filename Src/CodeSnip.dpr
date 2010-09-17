@@ -361,7 +361,8 @@ uses
   Web.UExceptions in 'Web.UExceptions.pas',
   Web.UHTTPEx in 'Web.UHTTPEx.pas',
   Web.URegistrar in 'Web.URegistrar.pas',
-  Web.UStdWebService in 'Web.UStdWebService.pas';
+  Web.UStdWebService in 'Web.UStdWebService.pas',
+  Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
 
 // Include compiler defines: checks if compiler supported
 {$Include CompilerDefines.inc}
