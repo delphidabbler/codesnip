@@ -177,6 +177,12 @@ type
         @param Overwrite [in] Flag indicating whether to clear this object
           before copying (True) or to append the strings to this object (False).
       }
+    function IsValidIndex(const Idx: Integer): Boolean;
+      {Checks if an index into the string list is valid, i.e. it is in range and
+      can be used as an index into the Items[] property without error.
+        @param Idx [in] Index to check.
+        @return True if index is valid and False if invalid.
+      }
   end;
 
   {
@@ -318,6 +324,12 @@ type
         @param SL [in] String list containing strings to be copies.
         @param Overwrite [in] Flag indicating whether to clear this object
           before copying (True) or to append the strings to this object (False).
+      }
+    function IsValidIndex(const Idx: Integer): Boolean;
+      {Checks if an index into the string list is valid, i.e. it is in range and
+      can be used as an index into the Items[] property without error.
+        @param Idx [in] Index to check.
+        @return True if index is valid and False if invalid.
       }
     { IAssignable methods }
     procedure Assign(const Src: IInterface);
@@ -627,6 +639,16 @@ function TIStringList.IndexOf(const Str: string): Integer;
   }
 begin
   Result := fStrings.IndexOf(Str);
+end;
+
+function TIStringList.IsValidIndex(const Idx: Integer): Boolean;
+  {Checks if an index into the string list is valid, i.e. it is in range and can
+  be used as an index into the Items[] property without error.
+    @param Idx [in] Index to check.
+    @return True if index is valid and False if invalid.
+  }
+begin
+  Result := (Idx >= 0) and (Idx <= Pred(Count));
 end;
 
 procedure TIStringList.SetCaseSensitive(const Flag: Boolean);
