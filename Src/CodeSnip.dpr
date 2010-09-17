@@ -273,6 +273,7 @@ uses
   UQuery in 'UQuery.pas',
   UREMLDataIO in 'UREMLDataIO.pas',
   UReservedCategories in 'UReservedCategories.pas',
+  URFC2822Date in 'URFC2822Date.pas',
   URoutineAction in 'URoutineAction.pas',
   URoutineCreditsParser in 'URoutineCreditsParser.pas',
   URoutineDoc in 'URoutineDoc.pas',

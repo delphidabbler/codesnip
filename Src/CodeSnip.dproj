@@ -412,6 +412,7 @@
 			<DCCReference Include="UQuery.pas"/>
 			<DCCReference Include="UREMLDataIO.pas"/>
 			<DCCReference Include="UReservedCategories.pas"/>
+			<DCCReference Include="URFC2822Date.pas"/>
 			<DCCReference Include="URoutineAction.pas"/>
 			<DCCReference Include="URoutineCreditsParser.pas"/>
 			<DCCReference Include="URoutineDoc.pas"/>
