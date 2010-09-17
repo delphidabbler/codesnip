@@ -279,6 +279,7 @@ uses
   URoutineDoc in 'URoutineDoc.pas',
   URoutineExtraHelper in 'URoutineExtraHelper.pas',
   URoutineHTML in 'URoutineHTML.pas',
+  URSS20 in 'URSS20.pas',
   URTFBuilder in 'URTFBuilder.pas',
   URTFMerger in 'URTFMerger.pas',
   URTFRoutineDoc in 'URTFRoutineDoc.pas',
