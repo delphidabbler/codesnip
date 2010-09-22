@@ -2170,6 +2170,14 @@ inherited MainForm: TMainForm
       OnExecute = actDeleteCategoryExecute
       OnUpdate = actDeleteCategoryUpdate
     end
+    object actNews: TAction
+      Category = 'Help'
+      Caption = 'CodeSnip News...'
+      Hint = 
+        'CodeSnip News|News about updates to CodeSnip and the online data' +
+        'base'
+      OnExecute = actNewsExecute
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -2447,6 +2455,9 @@ inherited MainForm: TMainForm
       end
       object miSpacer5: TMenuItem
         Caption = '-'
+      end
+      object miNews: TMenuItem
+        Action = actNews
       end
       object miDonate: TMenuItem
         Action = actDonate

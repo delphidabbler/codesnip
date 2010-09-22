@@ -92,6 +92,7 @@ type
     actLicense: TAction;
     actLoadDatabase: TAction;
     actNextTab: TAction;
+    actNews: TAction;
     actPageSetup: TAction;
     actPreferences: TAction;
     actPreviousTab: TAction;
@@ -159,6 +160,7 @@ type
     miHomePage: TMenuItem;
     miImportCode: TMenuItem;
     miLicense: TMenuItem;
+    miNews: TMenuItem;
     miPageSetup: TMenuItem;
     miPreferences: TMenuItem;
     miPrint: TMenuItem;
@@ -279,6 +281,7 @@ type
     procedure actImportCodeExecute(Sender: TObject);
     procedure actLicenseExecute(Sender: TObject);
     procedure actLoadDatabaseExecute(Sender: TObject);
+    procedure actNewsExecute(Sender: TObject);
     procedure actNextTabExecute(Sender: TObject);
     procedure ActNonEmptyDBUpdate(Sender: TObject);
     procedure ActOverviewTabExecute(Sender: TObject);
@@ -817,7 +820,7 @@ procedure TMainForm.actLicenseExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  DisplayHelp('License');                                  
+  DisplayHelp('License');
 end;
 
 procedure TMainForm.actLoadDatabaseExecute(Sender: TObject);
@@ -826,6 +829,14 @@ procedure TMainForm.actLoadDatabaseExecute(Sender: TObject);
   }
 begin
   LoadSnippets;
+end;
+
+procedure TMainForm.actNewsExecute(Sender: TObject);
+  {Displays latest news about CodeSnip and database.
+    @param Sender [in] Not used.
+  }
+begin
+  fDialogMgr.ShowNewsDlg;
 end;
 
 procedure TMainForm.actNextTabExecute(Sender: TObject);
