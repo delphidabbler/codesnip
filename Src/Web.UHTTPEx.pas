@@ -481,10 +481,6 @@ var
   HeaderMD5: TPJMD5Digest;    // decoded md5 from Content-MD5 header
   ContentMD5: TPJMD5Digest;   // md5 of Content stream
 begin
-  { TODO: change EHHTPError here for new exception and update web services,
-    e.g. download manager, to handle / convert this accordingly.
-    Maybe call new exception EWebTransmissionError or maybe use existing
-    EWebConnectionError}
   Assert(ResponseHasChecksum,
     ClassName + '.ValidateContent: No Content-MD5 header present in response');
   // get MD5 from header
