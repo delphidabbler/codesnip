@@ -64,6 +64,9 @@ Res\HTML\frm-emailprivacy.html
 # view extra dialog
 Res\HTML\dlg-viewextra-tplt.html
 
+# news dialog
+Res\HTML\dlg-rssnews.html
+
 
 # Detail pane pages, scripts and CSS
 # ==================================
