@@ -107,6 +107,9 @@
 			<DCCReference Include="FmMain.pas">
 				<Form>MainForm</Form>
 			</DCCReference>
+			<DCCReference Include="FmNewsDlg.pas">
+				<Form>NewsDlg</Form>
+			</DCCReference>
 			<DCCReference Include="FmPreferencesDlg.pas">
 				<Form>PreferencesDlg</Form>
 			</DCCReference>
@@ -234,6 +237,10 @@
 			</DCCReference>
 			<DCCReference Include="FrPrintingPrefs.pas">
 				<Form>PrintingPrefsFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
+			<DCCReference Include="FrRSSNews.pas">
+				<Form>RSSNewsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="FrRTFPreview.pas">
