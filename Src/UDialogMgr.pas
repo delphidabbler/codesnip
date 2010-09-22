@@ -123,6 +123,9 @@ type
       {Displays Proxy Server configuration dialog box.
         @return True if user OKs or False if user cancels.
       }
+    procedure ShowNewsDlg;
+      {Displays latest news about CodeSnip and database in a dialog box.
+      }
   end;
 
 
@@ -132,9 +135,9 @@ implementation
 uses
   // Project
   FmAboutDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg, FmFindTextDlg,
-  FmFindXRefsDlg, FmPreferencesDlg, FmPrintDlg,
-  FmProxyServerDlg, FmRegistrationDlg, FmSelectionSearchDlg, FmUpdateDlg,
-  FmUserBugReportDlg, UPageSetupDlgMgr, UTestUnitDlgMgr;
+  FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg, FmProxyServerDlg,
+  FmRegistrationDlg, FmSelectionSearchDlg, FmUpdateDlg, FmUserBugReportDlg,
+  UPageSetupDlgMgr, UTestUnitDlgMgr;
 
 
 { TDialogMgr }
@@ -256,6 +259,13 @@ procedure TDialogMgr.ShowDonateDlg;
   }
 begin
   TDonateDlg.Execute(Owner);
+end;
+
+procedure TDialogMgr.ShowNewsDlg;
+  {Displays latest news about CodeSnip and database in a dialog box.
+  }
+begin
+  TNewsDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowTestUnit(const Snippet: TRoutine);
