@@ -85,6 +85,8 @@ type
   strict private
     const RemoteHost = 'www.delphidabbler.com'; // remote web server
     const WebsiteURL = 'http://' + RemoteHost;  // delphidabbler website URL
+    const NewsFeedTplt = WebSiteURL +           // news feed url template
+      '/feeds/site-news-feed?id=codesnip&days=%d';
     class function Host: string;
       {Determines host server depending on command line switch passed to program.
         @return Required host server. If -localhost switch provided this is
@@ -106,6 +108,11 @@ type
       without modifying this code}
     const BugTrackerURL = WebsiteURL + '/url/codesnip-bugs';
       {Bug tracker page}
+    class function NewsFeedURL(const Age: Word): string;
+      {Gets the URL of the CodeSnip news feed .
+        @param Age [in] Maximum age of included news items in days.
+        @return Required URL.
+      }
     class function WebServiceURL(const Script: string): string;
       {Builds the URL of a webservice.
         @param Script [in] Base name of web service script.
@@ -144,6 +151,15 @@ begin
     Result := LocalHost
   else
     Result := RemoteHost;
+end;
+
+class function TWebInfo.NewsFeedURL(const Age: Word): string;
+  {Gets the URL of the CodeSnip news feed .
+    @param Age [in] Maximum age of included news items in days.
+    @return Required URL.
+  }
+begin
+  Result := Format(NewsFeedTplt, [Age]);
 end;
 
 class function TWebInfo.UsingLocalHost: Boolean;
