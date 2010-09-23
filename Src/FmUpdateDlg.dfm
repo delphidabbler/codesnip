@@ -74,6 +74,12 @@ inherited UpdateDlg: TUpdateDlg
       OnClick = btnDoUpdateClick
     end
   end
+  inherited btnHelp: TButton
+    TabOrder = 4
+  end
+  inherited btnClose: TButton
+    TabOrder = 2
+  end
   object btnCancel: TButton
     Left = 120
     Top = 304
@@ -83,5 +89,14 @@ inherited UpdateDlg: TUpdateDlg
     Caption = 'Cancel Update'
     TabOrder = 3
     OnClick = btnCancelClick
+  end
+  object btnNews: TButton
+    Left = 8
+    Top = 304
+    Width = 91
+    Height = 25
+    Caption = 'Latest News...'
+    TabOrder = 1
+    OnClick = btnNewsClick
   end
 end
