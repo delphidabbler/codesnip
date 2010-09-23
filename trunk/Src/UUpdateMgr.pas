@@ -43,7 +43,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UDOSDateTime, UNews, Web.UDBDownloadMgr;
+  UDOSDateTime, Web.UDBDownloadMgr;
 
 
 type
@@ -65,7 +65,6 @@ type
   }
   TUpdateStatus = (
     usLogOn,            // logging on to web service
-    usNews,             // displaying news
     usCheckForUpdates,  // checking for updates
     usDownloadStart,    // starting to download database
     usDownloadEnd,      // finished downloading database
@@ -103,8 +102,6 @@ type
   }
   TUpdateMgr = class(TObject)
   strict private
-    fNews: TNews;
-      {List of news items}
     fCancelled: Boolean;
       {Flag true if update is cancelled}
     fDownloadMgr: TDBDownloadMgr;
@@ -144,8 +141,8 @@ type
       {Updates local files from remote database.
         @return True if update succeeded or false if update was cancelled.
       }
-    function LogOnAndGetNews: Boolean;
-      {Logs on to web server and downloads any news items.
+    function LogOn: Boolean;
+      {Logs on to web server.
         @return True if log on successful or false if user cancelled.
       }
     function DownloadDatabase(const Data: TStream): Boolean;
@@ -186,8 +183,6 @@ type
         @return Value indicating whether successfully updated, no update needed,
           user cancelled or error.
       }
-    property News: TNews read fNews;
-      {Downloaded news items}
     property LongError: string read fLongError;
       {Full description of last update error}
     property ShortError: string read fShortError;
@@ -239,7 +234,6 @@ destructor TUpdateMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fNews);
   FreeAndNil(fDownloadMgr);
   inherited;
 end;
@@ -284,7 +278,7 @@ begin
   try
     try
       // Log on to web server
-      if not LogOnAndGetNews then
+      if not LogOn then
         Exit;
       // Check if we need an update
       if UpdateNeeded then
@@ -369,7 +363,7 @@ begin
   end;
 end;
 
-function TUpdateMgr.LogOnAndGetNews: Boolean;
+function TUpdateMgr.LogOn: Boolean;
   {Logs on to web server and downloads any news items.
     @return True if log on successful or false if user cancelled.
   }
@@ -383,9 +377,6 @@ begin
   try
     fDownloadMgr.LogOn(NewsData);
     NewsData.Position := 0;
-    fNews := TNews.Create(NewsData);
-    if not NotifyStatus(usNews) then
-      Exit;
     Result := True;
   finally
     FreeAndNil(NewsData);
