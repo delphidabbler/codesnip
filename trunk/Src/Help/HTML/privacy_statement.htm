@@ -153,6 +153,9 @@
         Submitting code for inclusion in the main database.
       </li>
       <li>
+        Displaying the latest news in the &quot;CodeSnip News&quot; dialog box.
+      </li>
+      <li>
         Accessing various websites via hyperlinks and menu options.
       </li>
       <li>
@@ -160,10 +163,10 @@
       </li>
     </ol>
     <p>
-      The first three actions are performed directly by <em>CodeSnip</em>,
+      The first four actions are performed directly by <em>CodeSnip</em>,
       which communicates with web services located at www.delphidabbler.com
-      using HTTP on port 80. The fourth action simply displays web pages in a
-      browser. The fifth passes user information to the proxy server.
+      using HTTP on port 80. The fifth action simply displays web pages in a
+      browser. The sixth passes user information to the proxy server.
     </p>
     <p>
       Personal data will neither be published on the DelphiDabbler website nor
@@ -261,6 +264,19 @@
       database and distributed to <em>CodeSnip</em> users. Your name may be used
       to credit the routines. Your email address will not be published and is
       used only to contact you with any queries about the submitted code.
+    </p>
+    <h3>
+      Displaying the latest news
+    </h3>
+    <p>
+      This action is performed by selecting the <em>Help | CodeSnip News</em>
+      menu option or by clicking the &quot;Latest News&quot; button in the 
+      &quot;Update from Web&quot; dialog box.
+    </p>
+    <p>
+      <em>CodeSnip</em> simply requests an XML document containing an RSS 2.0 
+      news feed from the DelphiDabbler website using HTTP on port 80. No
+      personal information is included in the request.
     </p>
     <h3>
       Accessing Websites via Links and Menu Options
