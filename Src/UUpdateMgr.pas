@@ -364,23 +364,15 @@ begin
 end;
 
 function TUpdateMgr.LogOn: Boolean;
-  {Logs on to web server and downloads any news items.
+  {Logs on to web server.
     @return True if log on successful or false if user cancelled.
   }
-var
-  NewsData: TMemoryStream;  // stream containing news data
 begin
   Result := False;
   if not NotifyStatus(usLogOn) then
     Exit;
-  NewsData := TMemoryStream.Create;
-  try
-    fDownloadMgr.LogOn(NewsData);
-    NewsData.Position := 0;
-    Result := True;
-  finally
-    FreeAndNil(NewsData);
-  end;
+  fDownloadMgr.LogOn;
+  Result := True;
 end;
 
 function TUpdateMgr.NewestLocalFileDate: IDOSDateTime;
