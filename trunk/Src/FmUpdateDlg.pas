@@ -70,11 +70,13 @@ type
     lblError: TLabel;
     edProgress: TMemo;
     lblHeadline: TLabel;
+    btnNews: TButton;
     procedure btnCancelClick(Sender: TObject);
     procedure btnDoUpdateClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormDestroy(Sender: TObject);
+    procedure btnNewsClick(Sender: TObject);
   private
     fProgressBarMgr: TMemoProgBarMgr; // Displays progress bar in progress memo
     fDataUpdated: Boolean;            // Flag true if any data was updated
@@ -143,7 +145,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UColours, UConsts, UCtrlArranger, UUtils;
+  FmNewsDlg, UAppInfo, UColours, UConsts, UCtrlArranger, UUtils;
 
 
 {$R *.dfm}
@@ -186,6 +188,9 @@ begin
   // Arrange additonal cancel button
   btnCancel.Left := btnClose.Left + btnClose.Width - btnCancel.Width;
   btnCancel.Top := btnClose.Top;
+  // Arrange "latest news" button
+  btnNews.Left := 8;
+  btnNews.Top := btnClose.Top;
   // Align error label
   lblError.Left := (pnlBody.Width - lblError.Width) div 2;
 end;
@@ -259,6 +264,14 @@ begin
     btnCancel.Visible := False;
     btnClose.Visible := True;
   end;
+end;
+
+procedure TUpdateDlg.btnNewsClick(Sender: TObject);
+  {Displays latest CodeSnip news in dialog box.
+    @param Sender [in] Not used.
+  }
+begin
+  TNewsDlg.Execute(Self);
 end;
 
 procedure TUpdateDlg.DownloadProgressHandler(Sender: TObject;
