@@ -91,9 +91,8 @@ type
           detected.
       }
   public
-    procedure LogOn(const Stream: TStream; const WantProgress: Boolean = False);
-      {Logs on to web service and retrieves news items.
-        @param Stream [in] Stream that receives news items.
+    procedure LogOn(const WantProgress: Boolean = False);
+      {Logs on to web service.
         @param WantProgresss [in] Flag true if OnProgress event to be triggered
           for download.
       }
@@ -191,9 +190,10 @@ uses
   +----------------------------------------------------------------------------+
   |Command    |Queries|Values                |Response                         |
   +-----------+-------|----------------------+---------------------------------|
-  |logon      |cmd    |"logon"               |OK: Stream of news items         |
-  |           |progid |unique id of program  |ERROR: CSUPDT_ERR_STDPARAMS if   |
-  |           |version|program version number|required params not provided     |
+  |logon      |cmd    |"logon"               |OK: Stream of news items which   |
+  |           |progid |unique id of program  |is ignored                       |
+  |           |version|program version number|ERROR: CSUPDT_ERR_STDPARAMS if   |
+  |           |       |                      |required params not provided     |
   +-----------+-------+----------------------+---------------------------------+
   |filecount  |cmd    |"filecount"           |OK: Integer indication number of |
   |           |progid |unique id of program  |files in remote database         |
@@ -372,10 +372,8 @@ begin
   end;
 end;
 
-procedure TDBDownloadMgr.LogOn(const Stream: TStream;
-  const WantProgress: Boolean);
-  {Logs on to web service and retrieves news items.
-    @param Stream [in] Stream that receives news items.
+procedure TDBDownloadMgr.LogOn(const WantProgress: Boolean);
+  {Logs on to web service.
     @param WantProgresss [in] Flag true if OnProgress event to be triggered for
       download.
   }
@@ -385,8 +383,8 @@ begin
   Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
+    // NOTE: Response may still include some news data, but this is ignored
     PostStdCommand('logon', Response);
-    Response.SaveToStream(Stream);
   finally
     FreeAndNil(Response);
   end;
