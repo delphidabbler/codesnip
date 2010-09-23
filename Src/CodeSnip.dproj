@@ -219,14 +219,6 @@
 				<Form>MemoPreviewFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="FrNews.pas">
-				<Form>NewsFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
-			<DCCReference Include="FrNewsHTML.pas">
-				<Form>NewsHTMLFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
 			<DCCReference Include="FrOverview.pas">
 				<Form>OverviewFrame</Form>
 				<DesignClass>TFrame</DesignClass>
@@ -396,7 +388,6 @@
 			<DCCReference Include="UMessageBox.pas"/>
 			<DCCReference Include="UMessageWindow.pas"/>
 			<DCCReference Include="UMultiCastEvents.pas"/>
-			<DCCReference Include="UNews.pas"/>
 			<DCCReference Include="UNotifier.pas"/>
 			<DCCReference Include="UNulDataReader.pas"/>
 			<DCCReference Include="UNulFormAligner.pas"/>

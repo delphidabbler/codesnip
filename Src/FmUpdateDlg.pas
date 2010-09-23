@@ -43,7 +43,7 @@ uses
   // Project
   Forms, StdCtrls, Controls, ExtCtrls, Classes, Messages,
   // Delphi
-  FmGenericViewDlg, FrNews, UBaseObjects, UMemoProgBarMgr, UUpdateMgr;
+  FmGenericViewDlg, UBaseObjects, UMemoProgBarMgr, UUpdateMgr;
 
 
 
@@ -70,7 +70,6 @@ type
     lblError: TLabel;
     edProgress: TMemo;
     lblHeadline: TLabel;
-    frmNews: TNewsFrame;
     procedure btnCancelClick(Sender: TObject);
     procedure btnDoUpdateClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -118,9 +117,6 @@ type
         @param Msg [in] Message to be displayed
         @param Kind [in] Style of message to be displayed.
       }
-    procedure DisplayNews;
-      {Displays any news items.
-      }
   protected
     procedure ArrangeForm; override;
       {Positions additional controls added to inherited form.
@@ -147,7 +143,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UColours, UConsts, UCtrlArranger, UNews, UUtils;
+  UAppInfo, UColours, UConsts, UCtrlArranger, UUtils;
 
 
 {$R *.dfm}
@@ -263,17 +259,6 @@ begin
     btnCancel.Visible := False;
     btnClose.Visible := True;
   end;
-end;
-
-procedure TUpdateDlg.DisplayNews;
-  {Displays any news items.
-  }
-var
-  NewsItem: TNewsItem;  // references each news item
-begin
-  for NewsItem in fUpdateMgr.News do
-    frmNews.AddPage(NewsItem.HTML, NewsItem.Date);
-  frmNews.ShowNews;
 end;
 
 procedure TUpdateDlg.DownloadProgressHandler(Sender: TObject;
@@ -407,7 +392,7 @@ begin
   btnCancel.Visible := False;
   btnClose.Visible := True;
   // Initialise news frame
-  frmNews.Initialize;
+//  frmNews.Initialize;
 end;
 
 procedure TUpdateDlg.ProgressMsg(const Msg: string);
@@ -431,8 +416,6 @@ begin
   case Status of
     usLogOn:
       ProgressMsg(sLoggingOn);
-    usNews:
-      DisplayNews;
     usCheckForUpdates:
       ProgressMsg(sCheckForUpdates);
     usDownloadStart:
