@@ -72,11 +72,13 @@ type
   }
   THTTPEx = class(TObject)
   strict private
-    fHTTP: TIdHTTP;                         // Component used for HTTP requests
-    fAntiFreeze: TIdAntiFreeze;             // Prevents HTTP requests blocking
-    fDownloadMonitor: TDownloadMonitor;     // Monitors download progress
-    fProgress: THTTPDownloadProgressProc;   // Closure used to report progress
-    fMediaType: string;                     // Value of MediaType property
+    var
+      fHTTP: TIdHTTP;                       // Component used for HTTP requests
+      fDownloadMonitor: TDownloadMonitor;   // Monitors download progress
+      fProgress: THTTPDownloadProgressProc; // Closure used to report progress
+      fMediaType: string;                   // Value of MediaType property
+    class var
+      fAntiFreeze: TIdAntiFreeze;           // Prevents HTTP requests blocking
     function GetUserAgent: string;
       {Read accessor for UserAgent property.
         @return String describing user agent.
@@ -131,15 +133,23 @@ type
         @return True if there is a checsum, False if not.
       }
   public
+    class constructor Create;
+      {Class constructor. Creates instance of Indy's antifreeze component of
+      which there must only be one per application.
+      }
+    class destructor Destroy;
+      {Class destructor. Frees the Indy antifreeze singleton.
+      }
     constructor Create(Progress: THTTPDownloadProgressProc); overload;
-      {Constructor. Creates object with progress reporting via provided closure.
+      {Object constructor. Creates object with progress reporting via provided
+      closure.
         @param Progress [in] Closure that handles progress report events.
       }
     constructor Create; overload;
-      {Constructor. Creates object with no progress reporting.
+      {Object constructor. Creates object with no progress reporting.
       }
     destructor Destroy; override;
-      {Destructor. Tears down object and frees resources.
+      {Object destructor. Tears down object and frees resources.
       }
     function GetRaw(const URI: string): TBytes;
       {Performs an HTTP GET request returning response as raw data.
@@ -241,7 +251,6 @@ var
   ProxyInfo: TWebProxyInfo; // details of any proxy server
 begin
   inherited Create;
-  fAntiFreeze := TIdAntiFreeze.Create(nil);
   fHTTP := TIdHTTP.Create(nil);
   fHTTP.HTTPOptions := fHTTP.HTTPOptions - [hoForceEncodeParams];
   fHTTP.Request.AcceptCharSet := TWebCharEncodings.AcceptCharSet;
@@ -260,14 +269,28 @@ begin
   fDownloadMonitor := TDownloadMonitor.Create(fHTTP, DoProgress);
 end;
 
+class constructor THTTPEx.Create;
+  {Class constructor. Creates instance of Indy's antifreeze component of which
+  there must only be one per application.
+  }
+begin
+  fAntiFreeze := TIdAntiFreeze.Create(nil);
+end;
+
 destructor THTTPEx.Destroy;
   {Destructor. Tears down object and frees resources.
   }
 begin
   fDownloadMonitor.Free;
   fHTTP.Free;
-  fAntiFreeze.Free;
   inherited;
+end;
+
+class destructor THTTPEx.Destroy;
+  {Class destructor. Frees the Indy antifreeze singleton.
+  }
+begin
+  fAntiFreeze.Free;
 end;
 
 procedure THTTPEx.DoProgress;
