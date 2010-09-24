@@ -488,9 +488,7 @@ begin
     ssCommon:
       Result := TAppInfo.CommonAppDir + '\Common.ini';
     else
-      raise EBug.Create(
-        'TIniSettingsBase.StorageName: unknown storage type'
-      );
+      raise EBug.Create(ClassName + '.StorageName: unknown storage type');
   end;
 end;
 
