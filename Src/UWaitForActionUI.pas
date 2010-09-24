@@ -200,8 +200,7 @@ procedure TWaitForActionUI.CloseForm;
   call ShowOrHideForm(False) instead.
   }
 begin
-  Assert(Assigned(fForm),                                  // ** do not localise
-    ClassName + '.CloseForm: fForm is nil');
+  Assert(Assigned(fForm), ClassName + '.CloseForm: fForm is nil');
   Lock.Acquire;
   try
     fFormCloseRequested := fActionTerminated and fMinTimeElapsed;
@@ -317,8 +316,7 @@ class procedure TWaitForActionUI.Run(const AAction: TBasicAction;
     @param AMinDisplayTime [in] Minimum time to display form (optional).
   }
 begin
-  Assert(Assigned(AAction),                                // ** do not localise
-    ClassName + '.Run: AAction is nil');
+  Assert(Assigned(AAction), ClassName + '.Run: AAction is nil');
   with InternalCreate(AAction, AForm, APauseBeforeDisplay, AMinDisplayTime) do
     try
       Execute;
@@ -332,8 +330,7 @@ procedure TWaitForActionUI.ShowForm;
   always call ShowOrHideForm(True) instead.
   }
 begin
-  Assert(Assigned(fForm),                                  // ** do not localise
-    ClassName + '.ShowForm: fForm is nil');
+  Assert(Assigned(fForm), ClassName + '.ShowForm: fForm is nil');
   // Start timer that triggers when form is allowed to close after minimum
   // display time. If time is zero we need to trigger ourselves, because
   // timer won't fire.

@@ -167,7 +167,7 @@ begin
     LinkText := MidStr(
       Markup, OpenBracketPos + 1, CloseBracketPos - OpenBracketPos - 1
     );
-    Assert(LinkText <> '',                                 // ** do not localise
+    Assert(LinkText <> '',
       ClassName + '.Parse: Link text is '' but has passed check');
     Prefix := LeftStr(Markup, OpenBracketPos - 1);
     Postfix := RightStr(Markup, Length(Markup) - CloseBracketPos);

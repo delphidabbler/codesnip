@@ -334,7 +334,7 @@ constructor TPrintingPrefsPreview.Create(const RE: TRichEdit;
     @param HiliteAttrs [in] Current user defined highlighting.
   }
 begin
-  Assert(Assigned(RE),    // ** do not localise
+  Assert(Assigned(RE),
     ClassName + '.Create: RE is nil');
   inherited Create;
   fRE := RE;

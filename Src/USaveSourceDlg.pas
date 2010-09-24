@@ -209,7 +209,7 @@ resourcestring
 
   
 const
-  // Name of dialog box template resource ** do not localise
+  // Name of dialog box template resource
   cTemplateName = 'SAVESNIPPETEXT';
 
 

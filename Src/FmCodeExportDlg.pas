@@ -135,7 +135,7 @@ begin
     Dlg.Options := [ofShowHelp, ofNoTestFileCreate, ofEnableSizing];
     Dlg.Filter := sFilter;
     Dlg.FilterIndex := 1;
-    Dlg.HelpKeyword := 'ExportFileDlg';                    // ** do not localise
+    Dlg.HelpKeyword := 'ExportFileDlg';
     if Dlg.Execute then
       // user selected file name: copy to edit control
       edFile.Text := FileOpenFileNameWithExt(Dlg);

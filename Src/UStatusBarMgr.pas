@@ -158,7 +158,7 @@ resourcestring
   // Message displayed when user database has been modified
   sModified = 'Modified';
 begin
-  Assert(Assigned(SB), ClassName + '.Create: SB is nil');  // ** do not localise
+  Assert(Assigned(SB), ClassName + '.Create: SB is nil');
   inherited Create;
   fSearchInfoVisible := False;  // we don't display search info by default
   fUserDBInfoVisible := False;  // we don't display modified flag by default

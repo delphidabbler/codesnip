@@ -93,7 +93,7 @@ class function TPageSetupDlgMgr.DlgUnitsToMM(const Value: Integer): Double;
     @return Converted value in millimeters.
   }
 const
-  // Bug error message ** do not localise
+  // Bug error message
   cBadValueBug = '.DlgUnitsToMM: Unexpected TMeasurementUnits value';
 begin
   // See comments in MMToDlgUnits for details of how dialog stores values
@@ -151,7 +151,7 @@ begin
     end;
     // Show Help button to access specified topic and disable Printers button
     Dlg.Options := [psoShowHelp, psoDisablePrinter, psoMargins];
-    Dlg.HelpKeyword := 'PageSetupDlg';  // ** do not localise
+    Dlg.HelpKeyword := 'PageSetupDlg';
     // Display dialog box
     Result := Dlg.Execute;
     if Result then
@@ -171,7 +171,7 @@ class function TPageSetupDlgMgr.MMToDlgUnits(const Value: Double): Integer;
     @return Converted value in dialog box units.
   }
 const
-  // Bug error message ** do not localise
+  // Bug error message
   cBadValueBug = '.MMToDlgUnits: Unexpected TMeasurementUnits value';
 begin
   // Page Setup dialog stores different values depending on units of

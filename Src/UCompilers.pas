@@ -385,7 +385,6 @@ var
   Storage: ISettingsSection;  // object used to access persistent storage
   ExePath: string;            // value of ExePath value in storage file
 begin
-  // ** do not localise string literals in this method
   // Loop thru each supported compiler
   for Compiler in Compilers do
   begin

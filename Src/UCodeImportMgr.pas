@@ -312,7 +312,7 @@ begin
     OpenDlg.Options := [ofHideReadOnly, ofEnableSizing];
     OpenDlg.OptionsEx := [];
     OpenDlg.Title := sTitle;
-    OpenDlg.HelpKeyword := 'ImportFileDlg';                // ** do not localise
+    OpenDlg.HelpKeyword := 'ImportFileDlg';
     if OpenDlg.Execute then
       // User OKd: return entered file name
       Result := OpenDlg.FileName
@@ -440,7 +440,7 @@ var
   Idx: Integer;         // loops through list of snippets
   RoutineList: string;  // display list of snippet names
 begin
-  Assert(Length(Routines) > 0,                             // ** do not localise
+  Assert(Length(Routines) > 0,
     ClassName + '.ReportImportedRoutines: No snippets to report.');
   if Length(Routines) = 1 then
     // Only one snippet: just report the name

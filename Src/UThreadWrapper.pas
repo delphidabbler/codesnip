@@ -115,7 +115,7 @@ function TThreadWrapper.CloneException(const ExceptObj: TObject): Exception;
     @return Exception object of same type and with same message as ExceptObj.
   }
 begin
-  Assert(ExceptObj is Exception,                           // ** do not localise
+  Assert(ExceptObj is Exception,
     ClassName + '.CloneException: ExceptObj is not Exception');
   if ExceptObj is ECodeSnip then
   begin
@@ -184,9 +184,8 @@ constructor TThreadWrapper.InternalCreate(const AThread: TThreadEx;
       of, and ultimately free, thread.
   }
 begin
-  Assert(Assigned(AThread),                                // ** do not localise
-    ClassName + '.InternalCreate: AThread is nil');
-  Assert(AThread.Suspended,                                // ** do not localise
+  Assert(Assigned(AThread), ClassName + '.InternalCreate: AThread is nil');
+  Assert(AThread.Suspended,
     ClassName + '.InternalCreate: AThread is not suspended');
   inherited InternalCreate;
   fThread := AThread;

@@ -129,8 +129,7 @@ constructor TControlStateMgr.Create(const Form: TCustomForm);
       disabled.
   }
 begin
-  Assert(Assigned(Form),                                   // ** do not localise
-    ClassName + '.Create: Form is nil');
+  Assert(Assigned(Form), ClassName + '.Create: Form is nil');
   inherited Create;
   fForm := Form;
 end;

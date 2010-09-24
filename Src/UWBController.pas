@@ -115,8 +115,7 @@ constructor TWBController.Create(const WebBrowser: TWebBrowser);
     @param WebBrowser Contained browser control.
   }
 begin
-  Assert(Assigned(WebBrowser),                             // ** do not localise
-    ClassName + '.Create: WebBrowser is nil');
+  Assert(Assigned(WebBrowser), ClassName + '.Create: WebBrowser is nil');
   inherited Create;
   fWebBrowser := WebBrowser;
   fIOMgr := TWBIOMgr.Create(WebBrowser);

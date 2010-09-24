@@ -183,7 +183,7 @@ const
 
   // Table of compiler result images and associated titles
   cLEDInfo: array[TCompileResult] of record
-    LED: string;    // name of LED image "file" resource: ** do not localise
+    LED: string;    // name of LED image "file" resource
     Title: string;  // value of image tag title attribute
   end =(
     (LED: 'led-green.png';  Title: sCompImgTitleOK),    // dcOK

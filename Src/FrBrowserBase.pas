@@ -267,8 +267,7 @@ constructor TBrowserBaseFrame.Create(AOwner: TComponent);
   }
 begin
   inherited;
-  Assert(AOwner is TWinControl,                            // ** do not localise
-    ClassName + '.Create: AOwner not a TForm');
+  Assert(AOwner is TWinControl, ClassName + '.Create: AOwner not a TForm');
   // Create web browser controller object and set defaults and event handlers
   fWBController := TWBController.Create(wbBrowser);
   fWBController.UIMgr.Show3dBorder := False;
