@@ -404,7 +404,7 @@ begin
   Result := CoTaskMemAlloc(StrLen * SizeOf(WideChar));
   if not Assigned(Result) then
     raise EOutOfMemory.Create(    // ** do not localise
-      'TaskAllocWideString(): can''t allocate buffer.'
+      'TaskAllocWideString: can''t allocate buffer.'
     );
   // Convert string to wide string and store in buffer
   StringToWideChar(S, Result, StrLen);
