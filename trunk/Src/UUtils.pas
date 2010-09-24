@@ -395,7 +395,7 @@ var
 const
   faVolumeId = $00000008; // redefined from SysUtils to avoid deprecated warning
 begin
-  Assert(Assigned(List), 'ListFiles(): List is nil');
+  Assert(Assigned(List), 'ListFiles: List is nil');
   // Check if true directory and exit if not
   Result := IsDirectory(Dir);
   if not Result then

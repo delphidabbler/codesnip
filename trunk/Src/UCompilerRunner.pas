@@ -164,7 +164,7 @@ procedure ECompilerRunner.Assign(const E: Exception);
   }
 begin
   Assert(E is ECompilerRunner,                             // ** do not localise
-    'ECompilerRunner.Assign: E is not a ECompilerRunner instance.'
+    ClassName + '.Assign: E is not a ECompilerRunner instance.'
   );
   inherited;
   fErrorCode := (E as ECompilerRunner).fErrorCode;
@@ -177,9 +177,9 @@ constructor ECompilerRunner.Create(const CompilerApp: TConsoleApp);
   }
 begin
   Assert(Assigned(CompilerApp),                            // ** do not localise
-    'ECompilerRunner.Create: App is nil');
+    ClassName + '.Create: App is nil');
   Assert(CompilerApp.ErrorCode <> 0,                               // ** do not localise
-    'ECompilerRunner.Create: App has no errors');
+    ClassName + '.Create: App has no errors');
   inherited Create(CompilerApp.ErrorMessage);
   fErrorCode := CompilerApp.ErrorCode;
 end;

@@ -95,7 +95,7 @@ function CreateDisplayCanvas(const Font: TFont): TCanvas;
     @return Required canvas. Should be freed using FreeDisplayCanvas.
   }
 begin
-  Assert(Assigned(Font));
+  Assert(Assigned(Font), 'CreateDisplayCanvas: Font is nil');
   Result := TCanvas.Create;
   Result.Handle := CreateDisplayDC;
   Result.Font := Font;

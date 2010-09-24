@@ -223,7 +223,7 @@ function CallHookFunc(Fn: TCommonDlgHookFn; Wnd: HWnd; Msg: UINT;
     @return Value returned from Fn.
   }
 begin
-  Assert(Assigned(Fn), 'CallHookFn: Fn is nil');
+  Assert(Assigned(Fn), 'CallHookFunc: Fn is nil');
   Result := Fn(Wnd, Msg, LParam, WParam)
 end;
 

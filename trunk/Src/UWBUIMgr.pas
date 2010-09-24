@@ -474,7 +474,7 @@ constructor TWBUIMgr.Create(const WebBrowser: TWebBrowser;
       be aggregated or nil if to be stand alone.
   }
 begin
-  Assert(Assigned(WebBrowser), 'TWBUIMgr.Create: WebBrowser is nil');
+  Assert(Assigned(WebBrowser), ClassName + '.Create: WebBrowser is nil');
   inherited Create(Controller);
   fWebBrowser := WebBrowser;
   fUseDefaultContextMenu := True;

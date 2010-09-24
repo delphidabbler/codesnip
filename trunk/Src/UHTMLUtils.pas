@@ -297,8 +297,8 @@ function MakeResourceURL(const ModuleName: string; const ResName: PChar;
   // ---------------------------------------------------------------------------
 
 begin
-  Assert(ModuleName <> '');
-  Assert(Assigned(ResName));
+  Assert(ModuleName <> '', 'MakeResourceURL: ModuleName is ''''');
+  Assert(Assigned(ResName), 'MakeResourceURL: ResName is nil');
   // Resource starts with module name
   Result := 'res://' + URLEncode(ModuleName, False);
   // Resource type follows if specified
