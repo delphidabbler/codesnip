@@ -1,5 +1,5 @@
 {
- * NsWebServices.UDDabStandard.pas
+ * Web.UStdWebService.pas
  *
  * Implements a class that provides basic interaction with DelphiDabbler
  * standard web services via HTTP.
@@ -19,8 +19,9 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is NsWebServices.UDDabStandard.pas, formerly
- * UWebService.pas.
+ * The Original Code is Web.UStdWebService.pas, formerly UWebService.pas then
+ * NsWebServices.UDDabStandard.pas.
+ * .
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -35,7 +36,7 @@
 }
 
 
-unit NsWebServices.UDDabStandard;
+unit Web.UStdWebService;
 
 
 interface
@@ -45,22 +46,23 @@ uses
   // Delphi
   Classes,
   // Project
-  NsWebServices.UBase, UURIParams;
+  UURIParams, Web.UBaseWebService;
 
 
 type
 
   {
-  TDDabStdWebService:
-    Web service class that interacts with standard DelphiDabbler web services.
-    These services always place a numeric status code in first line of response
-    followed by any resulting data. Status code is zero for normal responses and
-    non-zero when an error response is returned. This class outputs data for
-    normal responses and generates EWebServiceError exceptions for error
-    responses, using the response data as the error message. Malformed responses
-    generate EWebServiceFailure exceptions.
+  TStdWebService:
+    Base class for web services that interact with standard DelphiDabbler web
+    services.
+    These web services always place a numeric status code in first line of the
+    response followed by any resulting data. The status code is zero for normal
+    responses and non-zero when an error response is returned. This class
+    outputs data for normal responses and generates EWebServiceError exceptions
+    for error responses, using the response data as the error message. Malformed
+    responses generate EWebServiceFailure exceptions.
   }
-  TDDabStdWebService = class(TBaseWebService)
+  TStdWebService = class(TBaseWebService)
   strict protected
     procedure ProcessResponse(const Response: TStrings);
       {Analyses lines of text returned from from web service and extracts data
@@ -85,6 +87,7 @@ type
         @except EWebServiceError raised on receipt of valid error response.
         @except EWebServiceFailure raised if web service sends invalid response.
         @except EWebConnectionError raised if EIdSocketError encoutered.
+        @except EWebTransmissionError raised if data is garbled in transmission.
         @except EHTTPError raised if EIdHTTPProtocolException encountered.
         @except EIdException or descendant re-raised for other exception types.
       }
@@ -97,6 +100,7 @@ type
         @except EWebServiceError raised on receipt of valid error response.
         @except EWebServiceFailure raised if web service sends invalid response.
         @except EWebConnectionError raised if EIdSocketError encoutered.
+        @except EWebTransmissionError raised if data is garbled in transmission.
         @except EHTTPError raised if EIdHTTPProtocolException encountered.
         @except EIdException or descendant re-raised for other exception types.
       }
@@ -109,6 +113,7 @@ type
         @except EWebServiceError raised on receipt of valid error response.
         @except EWebServiceFailure raised if web service sends invalid response.
         @except EWebConnectionError raised if EIdSocketError encoutered.
+        @except EWebTransmissionError raised if data is garbled in transmission.
         @except EHTTPError raised if EIdHTTPProtocolException encountered.
         @except EIdException or descendant re-raised for other exception types.
       }
@@ -122,10 +127,10 @@ uses
   // Delphi
   SysUtils,
   // Project
-  NsWebServices.UExceptions;
+  Web.UExceptions;
 
 
-{ TDDabStdWebService }
+{ TStdWebService }
 
 resourcestring
   // Error messages
@@ -133,7 +138,7 @@ resourcestring
   sBadStatusCode = 'Web service returned response with bad status code';
   sUnrecognizedError = 'Unrecognized error notified by web service';
 
-procedure TDDabStdWebService.PostCommand(const Cmd: string;
+procedure TStdWebService.PostCommand(const Cmd: string;
   const Params: TURIParams; const Response: TStrings);
   {Sends command to server and returns data component of response in a string
   list.
@@ -145,6 +150,7 @@ procedure TDDabStdWebService.PostCommand(const Cmd: string;
     @except EWebServiceError raised on receipt of valid error response.
     @except EWebServiceFailure raised if web service sends invalid response.
     @except EWebConnectionError raised if EIdSocketError encoutered.
+    @except EWebTransmissionError raised if data is garbled in transmission.
     @except EHTTPError raised if EIdHTTPProtocolException encountered.
     @except EIdException or descendant re-raised for other exception types.
   }
@@ -153,7 +159,7 @@ begin
   PostQuery(Params, Response);
 end;
 
-procedure TDDabStdWebService.PostData(const Data: TStream;
+procedure TStdWebService.PostData(const Data: TStream;
   const Response: TStrings);
   {Posts raw data to server and returns data component of response in a string
   list.
@@ -163,6 +169,7 @@ procedure TDDabStdWebService.PostData(const Data: TStream;
     @except EWebServiceError raised on receipt of valid error response.
     @except EWebServiceFailure raised if web service sends invalid response.
     @except EWebConnectionError raised if EIdSocketError encoutered.
+    @except EWebTransmissionError raised if data is garbled in transmission.
     @except EHTTPError raised if EIdHTTPProtocolException encountered.
     @except EIdException or descendant re-raised for other exception types.
   }
@@ -171,7 +178,7 @@ begin
   ProcessResponse(Response);
 end;
 
-procedure TDDabStdWebService.PostQuery(const Query: TURIParams;
+procedure TStdWebService.PostQuery(const Query: TURIParams;
   const Response: TStrings);
   {Sends a query string to server and returns data component of response in a
   string list.
@@ -181,6 +188,7 @@ procedure TDDabStdWebService.PostQuery(const Query: TURIParams;
     @except EWebServiceError raised on receipt of valid error response.
     @except EWebServiceFailure raised if web service sends invalid response.
     @except EWebConnectionError raised if EIdSocketError encoutered.
+    @except EWebTransmissionError raised if data is garbled in transmission.
     @except EHTTPError raised if EIdHTTPProtocolException encountered.
     @except EIdException or descendant re-raised for other exception types.
   }
@@ -189,7 +197,7 @@ begin
   ProcessResponse(Response);
 end;
 
-procedure TDDabStdWebService.ProcessResponse(const Response: TStrings);
+procedure TStdWebService.ProcessResponse(const Response: TStrings);
   {Analyses lines of text returned from from web service and extracts data from
   successful responses. Raises exceptions based on error messages from error
   responses.

@@ -76,10 +76,10 @@ Various user-initiated actions cause CodeSnip to go online. They are:
 
    1. Updating the database.
    2. Registering the program.
-   3. Subscribing to the mailing list.
-   4. Submitting code for inclusion in the main database.
-   5. Accessing various websites via hyperlinks and menu options.
-   6. Accessing the internet using a proxy server.
+   3. Submitting code for inclusion in the main database.
+   4. Displaying the latest news in the "CodeSnip News" dialog box.
+   4. Accessing various websites via hyperlinks and menu options.
+   5. Accessing the internet using a proxy server.
 
 The first four actions are performed directly by CodeSnip, which communicates
 with web services located at www.delphidabbler.com using HTTP on port 80. The
@@ -122,9 +122,6 @@ is only sent if the user clicks the wizard's "Submit" button. The data is:
     * The user name or nickname.
     * A description of the operating system and version of Internet Explorer
       being used. 
-    * A flag indicating whether the user wishes to join the CodeSnip mailing
-      list.
-    * The user's email address (only required if joining the mailing list).
 
 The registration data is recorded in a database on the DelphiDabbler web server.
 The data is only used to keep track of the number of people using the different
@@ -132,37 +129,11 @@ versions of the program and what operating systems are being used. The
 registration web service returns a registration code to the program. CodeSnip
 records this code, with the user name, in Common.ini.
 
-Should the user elect to join the mailing list, the supplied email address and
-user name will be stored in a further database. See "Subscribing to the mailing
-list" below for details of how mailing list membership is managed.
-
-
-Subscribing to the mailing list
---------------------------------------------------------------------------------
-
-When you choose to subscribe to the CodeSnip mailing list a dialog box is used
-to gather subscription information. By connecting to the internet and clicking a
-"Subscribe" button you cause the following information to be sent to the
-DelphiDabbler mailing list web service:
-
-    * The id of the mailing list being subscribed to.
-    * Your email address, as entered in the dialog box.
-    * Your name or nickname (if provided).
-
-The above data will be recorded in a database on the DelphiDabbler web server.
-
-Mailing list membership requires activation by the subscriber in response to an
-email sent from the web service. Subscribers can cancel their subscription at
-any time. The email address and user name are deleted from the database when the
-subscription is cancelled or if it is not activated in a reasonable time.
-Supplied email addresses are used only to send relevant mail shots and will not
-be knowingly released to third parties.
-
 
 Submitting code to the main database
 --------------------------------------------------------------------------------
 
-This activity is started from the Database | Submit Routines menu option and
+This activity is started from the "Database | Submit Snippets" menu option and
 data is collected using the resulting wizard. Clicking the Submit button in the
 wizard sends the following information to the DelphiDabbler code submission web
 service:
@@ -181,10 +152,21 @@ Your email address will not be published and is used only to contact you with
 any queries about the submitted code.
 
 
+Displaying the latest news
+--------------------------------------------------------------------------------
+
+This action is performed by selecting the "Help | CodeSnip News" menu option or
+by clicking the "Latest News" button in the "Update from Web" dialog box.
+
+CodeSnip simply requests an XML document containing an RSS 2.0 news feed from
+the DelphiDabbler website using HTTP on port 80. No personal information is
+included in the request.
+
+
 Accessing Websites via Links and Menu Options
 --------------------------------------------------------------------------------
 
-CodeSnip's Help | On The Web menu option leads to sub menu items that cause
+CodeSnip's "Help | On The Web" menu option leads to sub menu items that cause
 various pages from DelphiDabbler.com to be displayed in the user's default
 browser.
 

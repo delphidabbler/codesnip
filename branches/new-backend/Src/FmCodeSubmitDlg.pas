@@ -175,8 +175,8 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  FmPreviewDlg, NsWebServices.UCodeSubmitter, NsWebServices.UExceptions,
-  UCodeImportExport, UCtrlArranger, UEmailHelper, UMessageBox, UUserDetails;
+  FmPreviewDlg, UCodeImportExport, UCtrlArranger,
+  UEmailHelper, UMessageBox, UUserDetails, Web.UCodeSubmitter, Web.UExceptions;
 
 
 {$R *.dfm}

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -173,7 +173,7 @@ type
         @return List containing names of all snippets names.
       }
     procedure WriteReferenceList(const ParentNode: IXMLNode;
-      const ListNodeName: string; const PasNames: IStringList);
+      const ListNodeName: string; PasNames: IStringList);
       {Writes a XML node that contains a list of pascal names.
         @param ParentNode [in] Node under which this list node is to be created.
         @param ListNodeName [in] Tag name of list node.
@@ -337,7 +337,7 @@ procedure TCodeExporter.Execute;
     end;
     // Minimum export file version number is at least 3, and 4 if extra property
     // contains data that requires later version of REML
-    if MinREMLVer < 3 then
+    if MinREMLVer < cMinOutputVersion then
       Result := cMinOutputVersion
     else
       Result := cVersion4;
@@ -443,7 +443,7 @@ begin
 end;
 
 procedure TCodeExporter.WriteReferenceList(const ParentNode: IXMLNode;
-  const ListNodeName: string; const PasNames: IStringList);
+  const ListNodeName: string; PasNames: IStringList);
   {Writes a XML node that contains a list of pascal names.
     @param ParentNode [in] Node under which this list node is to be created.
     @param ListNodeName [in] Tag name of list node.
@@ -546,7 +546,7 @@ procedure TCodeImporter.Execute;
   }
 
   // ---------------------------------------------------------------------------
-  procedure GetUnits(const RoutineNode: IXMLNode; const Units: IStringList);
+  procedure GetUnits(const RoutineNode: IXMLNode; Units: IStringList);
     {Gets a list of units required by a snippet.
       @param RoutineNode [in] Node of snippet for which units are required.
       @param Units [in] Receives list of unit names. Cleared if there are no

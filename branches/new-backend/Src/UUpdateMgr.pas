@@ -43,7 +43,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  NsWebServices.UDBDownloadMgr, UDOSDateTime, UNews;
+  UDOSDateTime, Web.UDBDownloadMgr;
 
 
 type
@@ -65,7 +65,6 @@ type
   }
   TUpdateStatus = (
     usLogOn,            // logging on to web service
-    usNews,             // displaying news
     usCheckForUpdates,  // checking for updates
     usDownloadStart,    // starting to download database
     usDownloadEnd,      // finished downloading database
@@ -95,7 +94,7 @@ type
       @param Cancel [in/out] Flag that handler can set true to abort the update.
   }
   TUpdateDownloadEvent = procedure(Sender: TObject; const BytesHandled,
-    TotalBytes: Integer; var Cancel: Boolean) of object;
+    TotalBytes: Int64; var Cancel: Boolean) of object;
 
   {
   TUpdateMgr:
@@ -103,11 +102,9 @@ type
   }
   TUpdateMgr = class(TObject)
   strict private
-    fNews: TNews;
-      {List of news items}
     fCancelled: Boolean;
       {Flag true if update is cancelled}
-    fDownloadMgr: TDownloadMgr;
+    fDownloadMgr: TDBDownloadMgr;
       {Object used to interact with web service}
     fLocalDir: string;
       {Directory where CodeSnip "database" files are stored on local machine}
@@ -120,7 +117,7 @@ type
     fOnDownloadProgress: TUpdateDownloadEvent;
       {Event handler for OnDownloadProgress event}
     procedure DownloadProgresshandler(Sender: TObject; const BytesToDate,
-      ExpectedBytes: Integer);
+      ExpectedBytes: Int64);
       {Handles download manager's OnProgress event by passing values to own
       OnDownloadProgress event.
         @param Sender [in] Not used.
@@ -144,8 +141,8 @@ type
       {Updates local files from remote database.
         @return True if update succeeded or false if update was cancelled.
       }
-    function LogOnAndGetNews: Boolean;
-      {Logs on to web server and downloads any news items.
+    function LogOn: Boolean;
+      {Logs on to web server.
         @return True if log on successful or false if user cancelled.
       }
     function DownloadDatabase(const Data: TStream): Boolean;
@@ -186,8 +183,6 @@ type
         @return Value indicating whether successfully updated, no update needed,
           user cancelled or error.
       }
-    property News: TNews read fNews;
-      {Downloaded news items}
     property LongError: string read fLongError;
       {Full description of last update error}
     property ShortError: string read fShortError;
@@ -229,7 +224,7 @@ constructor TUpdateMgr.Create(const LocalDir: string);
 begin
   inherited Create;
   // Create download manager to download from remote web server
-  fDownloadMgr := TDownloadMgr.Create;
+  fDownloadMgr := TDBDownloadMgr.Create;
   fDownloadMgr.OnProgress := DownloadProgressHandler;
   // Record local data directory
   fLocalDir := LocalDir;
@@ -239,7 +234,6 @@ destructor TUpdateMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fNews);
   FreeAndNil(fDownloadMgr);
   inherited;
 end;
@@ -261,7 +255,7 @@ begin
 end;
 
 procedure TUpdateMgr.DownloadProgresshandler(Sender: TObject;
-  const BytesToDate, ExpectedBytes: Integer);
+  const BytesToDate, ExpectedBytes: Int64);
   {Handles download manager's OnProgress event by passing values to own
   OnDownloadProgress event.
     @param Sender [in] Not used.
@@ -284,7 +278,7 @@ begin
   try
     try
       // Log on to web server
-      if not LogOnAndGetNews then
+      if not LogOn then
         Exit;
       // Check if we need an update
       if UpdateNeeded then
@@ -327,11 +321,11 @@ function TUpdateMgr.HandleException(const E: Exception): Boolean;
     @return True if exception handled and false if not handled.
   }
 begin
-  if E is EDownloadMgr then
+  if E is EDBDownloadMgr then
   begin
     // Download manager exceptions provide both long and short error messages
     fLongError := E.Message;
-    fShortError := (E as EDownloadMgr).ShortMsg;
+    fShortError := (E as EDBDownloadMgr).ShortMsg;
     Result := True;
   end
   else if E is EFileUpdater then
@@ -369,27 +363,16 @@ begin
   end;
 end;
 
-function TUpdateMgr.LogOnAndGetNews: Boolean;
-  {Logs on to web server and downloads any news items.
+function TUpdateMgr.LogOn: Boolean;
+  {Logs on to web server.
     @return True if log on successful or false if user cancelled.
   }
-var
-  NewsData: TMemoryStream;  // stream containing news data
 begin
   Result := False;
   if not NotifyStatus(usLogOn) then
     Exit;
-  NewsData := TMemoryStream.Create;
-  try
-    fDownloadMgr.LogOn(NewsData);
-    NewsData.Position := 0;
-    fNews := TNews.Create(NewsData);
-    if not NotifyStatus(usNews) then
-      Exit;
-    Result := True;
-  finally
-    FreeAndNil(NewsData);
-  end;
+  fDownloadMgr.LogOn;
+  Result := True;
 end;
 
 function TUpdateMgr.NewestLocalFileDate: IDOSDateTime;

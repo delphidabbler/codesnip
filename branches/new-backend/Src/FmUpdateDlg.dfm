@@ -5,13 +5,15 @@ inherited UpdateDlg: TUpdateDlg
   Caption = 'Update From Web'
   ClientHeight = 344
   OnCloseQuery = FormCloseQuery
+  ExplicitWidth = 474
+  ExplicitHeight = 370
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
     Width = 329
-    Height = 273
+    Height = 137
     ExplicitWidth = 329
-    ExplicitHeight = 273
+    ExplicitHeight = 137
     object lblUpdateFromWeb: TLabel
       Left = 0
       Top = 0
@@ -71,51 +73,12 @@ inherited UpdateDlg: TUpdateDlg
       TabOrder = 0
       OnClick = btnDoUpdateClick
     end
-    inline frmNews: TNewsFrame
-      Left = 0
-      Top = 136
-      Width = 329
-      Height = 137
-      TabOrder = 2
-      TabStop = True
-      ExplicitTop = 136
-      ExplicitWidth = 329
-      ExplicitHeight = 137
-      inherited sbPrev: TSpeedButton
-        Top = 115
-        ExplicitTop = 115
-      end
-      inherited sbNext: TSpeedButton
-        Left = 306
-        Top = 115
-        ExplicitLeft = 306
-        ExplicitTop = 115
-      end
-      inherited frmDisplay: TNewsHTMLFrame
-        Width = 329
-        Height = 114
-        ExplicitWidth = 329
-        ExplicitHeight = 114
-        inherited pnlBrowser: TPanel
-          Width = 329
-          Height = 114
-          ExplicitWidth = 329
-          ExplicitHeight = 114
-          inherited wbBrowser: TWebBrowser
-            Width = 327
-            Height = 112
-            ExplicitWidth = 327
-            ExplicitHeight = 112
-            ControlData = {
-              4C000000CC210000930B00000000000000000000000000000000000000000000
-              000000004C000000000000000000000001000000E0D057007335CF11AE690800
-              2B2E126208000000000000004C0000000114020000000000C000000000000046
-              8000000000000000000000000000000000000000000000000000000000000000
-              00000000000000000100000000000000000000000000000000000000}
-          end
-        end
-      end
-    end
+  end
+  inherited btnHelp: TButton
+    TabOrder = 4
+  end
+  inherited btnClose: TButton
+    TabOrder = 2
   end
   object btnCancel: TButton
     Left = 120
@@ -126,5 +89,14 @@ inherited UpdateDlg: TUpdateDlg
     Caption = 'Cancel Update'
     TabOrder = 3
     OnClick = btnCancelClick
+  end
+  object btnNews: TButton
+    Left = 8
+    Top = 304
+    Width = 91
+    Height = 25
+    Caption = 'Latest News...'
+    TabOrder = 1
+    OnClick = btnNewsClick
   end
 end

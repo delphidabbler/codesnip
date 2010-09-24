@@ -1,5 +1,5 @@
 {
- * NsWebServices.UDBDownloadMgr.pas (originally UDownloadMgr.pas)
+ * Web.UDBDownloadMgr.pas
  *
  * Implements a class that interfaces with a web service to update the database.
  *
@@ -18,7 +18,8 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is NsWebServices.UDBDownloadMgr.pas
+ * The Original Code is Web.UDBDownloadMgr.pas, formerly UDownloadMgr.pas then
+ * NsWebServices.UDBDownloadMgr.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -33,7 +34,7 @@
 }
 
 
-unit NsWebServices.UDBDownloadMgr;
+unit Web.UDBDownloadMgr;
 
 
 interface
@@ -43,16 +44,16 @@ uses
   // Delphi
   Classes,
   // Project
-  NsWebServices.UDDabStandard, NsWebServices.UExceptions, UURIParams;
+  UURIParams, Web.UExceptions, Web.UStdWebService;
 
 
 type
 
   {
-  TDownloadMgr:
+  TDBDownloadMgr:
     Manages downloads of updates to database from web service via HTTP.
   }
-  TDownloadMgr = class sealed(TDDabStdWebService)
+  TDBDownloadMgr = class sealed(TStdWebService)
   strict private
     function ProductVersion: string;
       {Gets program's product version.
@@ -62,37 +63,36 @@ type
       {Gets program's id code.
         @return Program id.
       }
-    procedure HandleException(const E: EWebService);
-      {Converts EWebService exceptions into EDownloadMgr exceptions with both
+    procedure HandleException(const E: EWebError);
+      {Converts EWebError exceptions into EDBDownloadMgr exceptions with both
       a long and a short description.
-        @param E [in] EWebService or descendant exception to be converted.
-        @except Raises EDownloadMgr exceptions based on given exception.
+        @param E [in] EWebError or descendant exception to be converted.
+        @except Raises EDBDownloadMgr exceptions based on given exception.
       }
     procedure PostStdCommand(const Cmd: string; const Response: TStrings);
       {Sends command to server that includes standard parameters that are sent
       with all commands, i.e. "progid" and "version".
         @param Cmd [in] Command to be sent.
         @param Response [in] String list to receive web server response.
-        @except EDownloadMgr Raised if EWebService exception or sub class
+        @except EDBDownloadMgr Raised if EWebError exception or sub class
           detected.
       }
     procedure SafePostCommand(const Cmd: string; const Params: TURIParams;
       const Response: TStrings);
       {Sends a command to server and returns data component of response in a
-      string list. Converts recognised exceptions to EDownloadMgr.
+      string list. Converts recognised exceptions to EDBDownloadMgr.
         @param Cmd [in] Command to be executed. Passed to server as Cmd=CmdName
           parameter.
         @param Params [in] List of parameters in form ParamName=ParamValue. []
           if no parameters.
         @param Response [in] Server's response as string list where each line of
           response is a line of string list.
-        @except EDownloadMgr Raised if EWebService exception or sub class
+        @except EDBDownloadMgr Raised if EWebError exception or sub class
           detected.
       }
   public
-    procedure LogOn(const Stream: TStream; const WantProgress: Boolean = False);
-      {Logs on to web service and retrieves news items.
-        @param Stream [in] Stream that receives news items.
+    procedure LogOn(const WantProgress: Boolean = False);
+      {Logs on to web service.
         @param WantProgresss [in] Flag true if OnProgress event to be triggered
           for download.
       }
@@ -127,12 +127,12 @@ type
   end;
 
   {
-  EDownloadMgr:
-    Class of exception raised by TDownloadMgr. Contains standard full
-    description of exception and adds an abreviated description in ShortMsg
+  EDBDownloadMgr:
+    Class of exception raised by TDBDownloadMgr. Contains standard full
+    description of exception and adds an abbreviated description in ShortMsg
     property.
   }
-  EDownloadMgr = class(EWebService)
+  EDBDownloadMgr = class(EWebService)
   strict private
     fShortMsg: string;
       {Value of ShortMsg property}
@@ -190,9 +190,10 @@ uses
   +----------------------------------------------------------------------------+
   |Command    |Queries|Values                |Response                         |
   +-----------+-------|----------------------+---------------------------------|
-  |logon      |cmd    |"logon"               |OK: Stream of news items         |
-  |           |progid |unique id of program  |ERROR: CSUPDT_ERR_STDPARAMS if   |
-  |           |version|program version number|required params not provided     |
+  |logon      |cmd    |"logon"               |OK: Stream of news items which   |
+  |           |progid |unique id of program  |is ignored                       |
+  |           |version|program version number|ERROR: CSUPDT_ERR_STDPARAMS if   |
+  |           |       |                      |required params not provided     |
   +-----------+-------+----------------------+---------------------------------+
   |filecount  |cmd    |"filecount"           |OK: Integer indication number of |
   |           |progid |unique id of program  |files in remote database         |
@@ -244,6 +245,7 @@ resourcestring
   sShortHTTPError = 'HTTP Error';
   sLongHTTPError = 'The web server returned the following error: "%0:s"';
   sShortConnectionError = 'Connection Error';
+  sShortTransmissionError = 'Transmission Error';
   sShortWebSvcFailure = 'Web Service Failure';
   sLongWebSvcFailure =  'The database update web service failed with the '
     + 'following error:' + EOL + '%0:s';
@@ -254,16 +256,16 @@ resourcestring
     + 'command';
 
 
-{ TDownloadMgr }
+{ TDBDownloadMgr }
 
-constructor TDownloadMgr.Create;
+constructor TDBDownloadMgr.Create;
   {Class constructor. Initialises service.
   }
 begin
   inherited Create(TWebServiceInfo.Create(cScriptName, cUserAgent));
 end;
 
-function TDownloadMgr.FileCount(const WantProgress: Boolean): Integer;
+function TDBDownloadMgr.FileCount(const WantProgress: Boolean): Integer;
   {Gets count of files in code snippets database on web server.
     @param WantProgresss [in] Flag true if OnProgress event to be triggered for
       download.
@@ -283,7 +285,7 @@ begin
   end;
 end;
 
-procedure TDownloadMgr.GetDatabase(const Stream: TStream;
+procedure TDBDownloadMgr.GetDatabase(const Stream: TStream;
   const WantProgress: Boolean);
   {Gets whole code snippets database from web server.
     @param Stream [in] Stream to receive downloaded database. Database files are
@@ -306,36 +308,35 @@ begin
   end;
 end;
 
-procedure TDownloadMgr.HandleException(const E: EWebService);
-  {Converts EWebService exceptions into EDownloadMgr exceptions with both
+procedure TDBDownloadMgr.HandleException(const E: EWebError);
+  {Converts EWebError exceptions into EDBDownloadMgr exceptions with both
   a long and a short description.
-    @param E [in] EWebService or descendant exception to be converted.
-    @except Raises EDownloadMgr exceptions based on given exception.
+    @param E [in] EWebError or descendant exception to be converted.
+    @except Raises EDBDownloadMgr exceptions based on given exception.
   }
 begin
   if E is EHTTPError then
-    // Use HTTP error code and error description in long description
-    raise EDownloadMgr.CreateFmt(
+    raise EDBDownloadMgr.CreateFmt(
       sShortHTTPError, sLongHTTPError, [E.Message]
     );
   if E is EWebConnectionError then
-    // Copy exception message to long description
-    raise EDownloadMgr.Create(sShortConnectionError, E.Message);
+    raise EDBDownloadMgr.Create(sShortConnectionError, E.Message);
+  if E is EWebTransmissionError then
+    raise EDBDownloadMgr.Create(sShortTransmissionError, E.Message);
   if E is EWebServiceFailure then
-    // Insert exception's original message to long description
-    raise EDownloadMgr.CreateFmt(
+    raise EDBDownloadMgr.CreateFmt(
       sShortWebSvcFailure, sLongWebSvcFailure, [E.Message]
     );
   if E is EWebServiceError then
     // Include web service error code in long description
-    raise EDownloadMgr.CreateFmt(
+    raise EDBDownloadMgr.CreateFmt(
       sShortWebSvcError,
       sLongWebSvcError,
       [(E as EWebServiceError).ErrorCode, E.Message]
     );
 end;
 
-function TDownloadMgr.LastUpdate(const WantProgress: Boolean): string;
+function TDBDownloadMgr.LastUpdate(const WantProgress: Boolean): string;
   {Gets date of last update to code snippets database on web server.
     @param WantProgresss [in] Flag true if OnProgress event to be triggered for
       download.
@@ -354,7 +355,7 @@ begin
   end;
 end;
 
-procedure TDownloadMgr.LogOff(const WantProgress: Boolean);
+procedure TDBDownloadMgr.LogOff(const WantProgress: Boolean);
   {Logs off from web server.
     @param WantProgresss [in] Flag true if OnProgress event to be triggered for
       download.
@@ -371,10 +372,8 @@ begin
   end;
 end;
 
-procedure TDownloadMgr.LogOn(const Stream: TStream;
-  const WantProgress: Boolean);
-  {Logs on to web service and retrieves news items.
-    @param Stream [in] Stream that receives news items.
+procedure TDBDownloadMgr.LogOn(const WantProgress: Boolean);
+  {Logs on to web service.
     @param WantProgresss [in] Flag true if OnProgress event to be triggered for
       download.
   }
@@ -384,20 +383,20 @@ begin
   Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
+    // NOTE: Response may still include some news data, but this is ignored
     PostStdCommand('logon', Response);
-    Response.SaveToStream(Stream);
   finally
     FreeAndNil(Response);
   end;
 end;
 
-procedure TDownloadMgr.PostStdCommand(const Cmd: string;
+procedure TDBDownloadMgr.PostStdCommand(const Cmd: string;
   const Response: TStrings);
   {Sends command to server that includes standard parameters that are sent with
   all commands, i.e. "progid" and "version".
     @param Cmd [in] Command to be sent.
     @param Response [in] String list to receive web server response.
-    @except EDownloadMgr Raised if EWebService exception or sub class detected.
+    @except EDBDownloadMgr Raised if EWebError exception or sub class detected.
   }
 var
   StdParams: TURIParams;
@@ -412,7 +411,7 @@ begin
   end;
 end;
 
-function TDownloadMgr.ProductVersion: string;
+function TDBDownloadMgr.ProductVersion: string;
   {Gets program's product version.
     @return String representation of product version number.
   }
@@ -420,7 +419,7 @@ begin
   Result := TAppInfo.ProgramReleaseVersion;
 end;
 
-function TDownloadMgr.ProgId: string;
+function TDBDownloadMgr.ProgId: string;
   {Gets program's id code.
     @return Program id.
   }
@@ -428,30 +427,30 @@ begin
   Result := TAppInfo.ProgramKey;
 end;
 
-procedure TDownloadMgr.SafePostCommand(const Cmd: string;
+procedure TDBDownloadMgr.SafePostCommand(const Cmd: string;
   const Params: TURIParams; const Response: TStrings);
   {Sends a command to server and returns data component of response in a
-  string list. Converts recognised exceptions to EDownloadMgr.
+  string list. Converts recognised exceptions to EDBDownloadMgr.
     @param Cmd [in] Command to be executed. Passed to server as Cmd=CmdName
       parameter.
     @param Params [in] List of parameters in form ParamName=ParamValue. [] if no
       parameters.
     @param Response [in] Server's response as string list where each line of
       response is a line of string list.
-    @except EDownloadMgr Raised if EWebService exception or sub class detected.
+    @except EDBDownloadMgr Raised if EWebError exception or sub class detected.
   }
 begin
   try
     PostCommand(Cmd, Params, Response);
   except
-    on E: EWebService do
+    on E: EWebError do
       HandleException(E);
   end;
 end;
 
-{ EDownloadMgr }
+{ EDBDownloadMgr }
 
-constructor EDownloadMgr.Create(const ShortMsg, Msg: string);
+constructor EDBDownloadMgr.Create(const ShortMsg, Msg: string);
   {Class constructor. Creates exception that records abbreviated and full
   descriptions.
     @param ShortMsg [in] Abbreviated message for ShortMsg property.
@@ -462,7 +461,7 @@ begin
   fShortMsg := ShortMsg;
 end;
 
-constructor EDownloadMgr.CreateFmt(const ShortMsg, Fmt: string;
+constructor EDBDownloadMgr.CreateFmt(const ShortMsg, Fmt: string;
   const Args: array of const);
   {Class constructor: creates exception that records abbreviated and full
   descriptions. Builds full description from format string and parameters.

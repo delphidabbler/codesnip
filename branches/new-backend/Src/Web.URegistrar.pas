@@ -1,5 +1,5 @@
 {
- * NsWebServices.URegistrar.pas
+ * Web.URegistrar.pas
  *
  * Implements a class that interfaces with a web service to register the
  * application online.
@@ -19,7 +19,8 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is NsWebServices.URegistrar.pas, formerly URegistrar.pas.
+ * The Original Code is Web.URegistrar.pas, formerly URegistrar.pas then
+ * NsWebServices.URegistrar.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +35,7 @@
 }
 
 
-unit NsWebServices.URegistrar;
+unit Web.URegistrar;
 
 
 interface
@@ -44,16 +45,17 @@ uses
   // Delphi
   Classes,
   // Project
-  NsWebServices.UDDabStandard;
+  Web.UStdWebService;
 
 
 type
 
   {
   TRegistrar
-    Class that registers the application online.
+    Class that registers the application online by using the registration web
+    service.
   }
-  TRegistrar = class(TDDabStdWebService)
+  TRegistrar = class(TStdWebService)
   public
     constructor Create;
       {Class constructor. Initialises service.

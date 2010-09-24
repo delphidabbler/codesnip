@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -43,7 +43,7 @@ uses
   // Project
   Forms, StdCtrls, Controls, ExtCtrls, Classes, Messages,
   // Delphi
-  FmGenericViewDlg, FrNews, UBaseObjects, UMemoProgBarMgr, UUpdateMgr;
+  FmGenericViewDlg, UBaseObjects, UMemoProgBarMgr, UUpdateMgr;
 
 
 
@@ -70,12 +70,13 @@ type
     lblError: TLabel;
     edProgress: TMemo;
     lblHeadline: TLabel;
-    frmNews: TNewsFrame;
+    btnNews: TButton;
     procedure btnCancelClick(Sender: TObject);
     procedure btnDoUpdateClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormDestroy(Sender: TObject);
+    procedure btnNewsClick(Sender: TObject);
   private
     fProgressBarMgr: TMemoProgBarMgr; // Displays progress bar in progress memo
     fDataUpdated: Boolean;            // Flag true if any data was updated
@@ -98,7 +99,7 @@ type
         @param Cancel [in/out] Flag that cancels update when set true.
       }
     procedure DownloadProgressHandler(Sender: TObject; const BytesReceived,
-      BytesExpected: Integer; var Cancel: Boolean);
+      BytesExpected: Int64; var Cancel: Boolean);
       {OnProgress event handler for update manager object. Displays download
       progress using a progress bar.
         @param Sender [in] Not used.
@@ -117,9 +118,6 @@ type
       headline display required.
         @param Msg [in] Message to be displayed
         @param Kind [in] Style of message to be displayed.
-      }
-    procedure DisplayNews;
-      {Displays any news items.
       }
   protected
     procedure ArrangeForm; override;
@@ -147,7 +145,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UColours, UConsts, UCtrlArranger, UNews, UUtils;
+  FmNewsDlg, UAppInfo, UColours, UConsts, UCtrlArranger, UUtils;
 
 
 {$R *.dfm}
@@ -190,6 +188,9 @@ begin
   // Arrange additonal cancel button
   btnCancel.Left := btnClose.Left + btnClose.Width - btnCancel.Width;
   btnCancel.Top := btnClose.Top;
+  // Arrange "latest news" button
+  btnNews.Left := 8;
+  btnNews.Top := btnClose.Top;
   // Align error label
   lblError.Left := (pnlBody.Width - lblError.Width) div 2;
 end;
@@ -265,19 +266,16 @@ begin
   end;
 end;
 
-procedure TUpdateDlg.DisplayNews;
-  {Displays any news items.
+procedure TUpdateDlg.btnNewsClick(Sender: TObject);
+  {Displays latest CodeSnip news in dialog box.
+    @param Sender [in] Not used.
   }
-var
-  NewsItem: TNewsItem;  // references each news item
 begin
-  for NewsItem in fUpdateMgr.News do
-    frmNews.AddPage(NewsItem.HTML, NewsItem.Date);
-  frmNews.ShowNews;
+  TNewsDlg.Execute(Self);
 end;
 
 procedure TUpdateDlg.DownloadProgressHandler(Sender: TObject;
-  const BytesReceived, BytesExpected: Integer; var Cancel: Boolean);
+  const BytesReceived, BytesExpected: Int64; var Cancel: Boolean);
   {OnProgress event handler for update manager object. Displays download
   progress using a progress bar.
     @param Sender [in] Not used.
@@ -407,7 +405,7 @@ begin
   btnCancel.Visible := False;
   btnClose.Visible := True;
   // Initialise news frame
-  frmNews.Initialize;
+//  frmNews.Initialize;
 end;
 
 procedure TUpdateDlg.ProgressMsg(const Msg: string);
@@ -431,8 +429,6 @@ begin
   case Status of
     usLogOn:
       ProgressMsg(sLoggingOn);
-    usNews:
-      DisplayNews;
     usCheckForUpdates:
       ProgressMsg(sCheckForUpdates);
     usDownloadStart:

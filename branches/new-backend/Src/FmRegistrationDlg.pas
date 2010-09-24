@@ -42,10 +42,9 @@ interface
 
 uses
   // Delphi
-  StdCtrls, ComCtrls, Controls, ExtCtrls, Classes, Forms,
+  StdCtrls, ComCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmWizardDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UBaseObjects,
-  UCSSBuilder;
+  FmWizardDlg, UBaseObjects;
 
 
 type
@@ -56,20 +55,12 @@ type
     registration to web server.
   }
   TRegistrationDlg = class(TWizardDlg, INoPublicConstruct)
-    chkMailList: TCheckBox;
-    edEmail: TEdit;
     edName: TEdit;
     edRegCode: TEdit;
     edReport: TMemo;
-    frmMailListIntro: TFixedHTMLDlgFrame;
-    frmPrivacy: TFixedHTMLDlgFrame;
-    gbRequired: TGroupBox;
-    gbMailList: TGroupBox;
-    lblEmail: TLabel;
     lblInstructions: TLabel;
     lblIntro: TLabel;
     lblIntroExplain: TLabel;
-    lblMailListConfirm: TLabel;
     lblName: TLabel;
     lblRegCode: TLabel;
     lblReport: TLabel;
@@ -79,14 +70,8 @@ type
     tsFinish: TTabSheet;
     tsIntro: TTabSheet;
     tsSubmit: TTabSheet;
-    procedure chkMailListClick(Sender: TObject);
   strict private
     fRegistered: Boolean; // Flag indicating whether program was registered
-    procedure BuildCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
-      {Sets CSS for required font for use in HTML frames.
-        @param Sender [in] Not used.
-        @param CSSBuilder [in] Object used to create CSS.
-      }
     procedure BuildSubmission(const Report: TStrings);
       {Builds registration submission as list of values in name=value format.
         @param Report [in] Stores submission on completion.
@@ -98,8 +83,8 @@ type
       {Gathers required registration data, sends to web server and gets
       registration code from it.
         @return Registration code.
-        @except EWebService exception raised if there is a failure in
-          interaction with web service.
+        @except EWebError exception raised if there is a failure in interaction
+          with web service.
       }
     function ValidateUserInfo: Boolean;
       {Validates data entered by user. Displays any error messages.
@@ -150,10 +135,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics, Math,
+  SysUtils, Forms,
   // Project
-  NsWebServices.URegistrar, UAppInfo, UCSSUtils, UEmailHelper, UFontHelper,
-  UCtrlArranger, UMessageBox, USystemInfo, UUserDetails;
+  UAppInfo, UFontHelper, UCtrlArranger, UMessageBox, USystemInfo, UUserDetails,
+  Web.URegistrar;
 
 
 {$R *.dfm}
@@ -173,15 +158,8 @@ resourcestring
   sFinishHeading = 'Registration complete';
   // Submit button caption
   sSubmitBtnCaption = '&Submit';
-  // Mailing list confirmation message
-  sMailListConfirm = 'You chose to subscribe the the CodeSnip mailing list. '
-    + 'For your own protection you need to confirm your subscription. '
-    + 'An email has been sent to %s that explains how to do this.';
   // Error messages
   sErrNameRequired = 'You need to provide your name or a nickname.';
-  sErrEmailRequired = 'Your email address is needed to subscribe to the '
-    + 'mailing list.';
-  sErrEmailInvalid = 'Your email address does not appear to be valid.';
 
 
 { TRegistrationDlg }
@@ -200,17 +178,6 @@ begin
 
   // tsAboutUser tabsheet
   edName.Top := TCtrlArranger.BottomOf(lblName, 8);
-  gbRequired.ClientHeight := TCtrlArranger.BottomOf(edName, 12);
-  gbMailList.Top := TCtrlArranger.BottomOf(gbRequired, 8);
-  frmMailListIntro.Height := frmMailListIntro.DocHeight;
-  chkMailList.Top := TCtrlArranger.BottomOf(frmMailListIntro, 8);
-  TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf(chkMailList, 8),
-    [lblEmail, edEmail]
-  );
-  frmPrivacy.Top := TCtrlArranger.BottomOf([lblEmail, edEmail], 8);
-  frmPrivacy.Height := frmPrivacy.DocHeight;
-  gbMailList.ClientHeight := TCtrlArranger.BottomOf(frmPrivacy, 12);
 
   // tsSubmit tabsheet
   edReport.Top := TCtrlArranger.BottomOf(lblReport, 8);
@@ -219,7 +186,6 @@ begin
   // tsFinish tabsheet
   lblRegCode.Top := TCtrlArranger.BottomOf(lblThanks, 8);
   edRegCode.Top := TCtrlArranger.BottomOf(lblRegCode, 4);
-  lblMailListConfirm.Top := TCtrlArranger.BottomOf(edRegCode, 8);
 
   // set required height
   pnlBody.ClientHeight := TCtrlArranger.MaxContainerHeight(
@@ -243,38 +209,6 @@ begin
     cAboutUserPageIdx:
       // Focus first control on page
       edName.SetFocus;
-    cFinishPageIdx:
-    begin
-      // Set up confirmation messages
-      if chkMailList.Checked then
-      begin
-        lblMailListConfirm.Caption := Format(
-          sMailListConfirm, [Trim(edEmail.Text)]
-        );
-        lblMailListConfirm.Visible := True;
-      end
-      else
-        lblMailListConfirm.Visible := False;
-    end;
-  end;
-end;
-
-procedure TRegistrationDlg.BuildCSS(Sender: TObject;
-  const CSSBuilder: TCSSBuilder);
-  {Sets CSS for required font for use in HTML frames.
-    @param Sender [in] Not used.
-    @param CSSBuilder [in] Object used to create CSS.
-  }
-var
-  DefaultFont: TFont; // default font for OS
-begin
-  DefaultFont := TFont.Create;
-  try
-    TFontHelper.SetDefaultFont(DefaultFont, False);
-    with CSSBuilder.Selectors['body'] do
-      AddProperty(CSSFontProps(DefaultFont));
-  finally
-    FreeAndNil(DefaultFont);
   end;
 end;
 
@@ -291,69 +225,14 @@ begin
   Report.Values['UserName'] := Trim(edName.Text);
   Report.Values['OSDesc'] :=
     Format('%0:s. IE Version %1:d.', [TOSInfo.Description, TOSInfo.BrowserVer]);
-  Report.Values['MailList'] := IntToStr(Ord(chkMailList.Checked));
-  if chkMailList.Checked then
-    Report.Values['UserEmail'] := Trim(edEmail.Text)
-  else
-    Report.Values['UserEmail'] := '';
-end;
-
-procedure TRegistrationDlg.chkMailListClick(Sender: TObject);
-  {Updates state and focus of email address edit box as check box is checked and
-  cleared.
-    @param Sender [in] Not used.
-  }
-begin
-  if chkMailList.Checked then
-  begin
-    edEmail.Enabled := True;
-    edEmail.Color := clWindow;
-    edEmail.SetFocus;
-  end
-  else
-  begin
-    edEmail.Enabled := False;
-    edEmail.ParentColor := True;
-  end;
 end;
 
 procedure TRegistrationDlg.ConfigForm;
   {Sets font styles where necessary and initialises HTML frames.
   }
-
-  procedure LoadHTMLFrame(const Frm: TFixedHTMLDlgFrame; const ResName: string);
-    {Safely loads HTML into an HTML frame. To do this requires the tab sheet
-    containing the frame to be active, so we find and activate the required tab
-    before loading the HTML into the frame.
-      @param Frm [in] HTML frame to be initialised with loaded HTML.
-      @param ResName [in] Name of resource containing HTML.
-    }
-  var
-    Ctrl: TWinControl;  // Scans through frame's parents looking for tab sheet
-  begin
-    Ctrl := Frm.Parent;
-    while Assigned(Ctrl) and not (Ctrl is TTabSheet) do
-      Ctrl := Ctrl.Parent;
-    Assert(Assigned(Ctrl),
-      ClassName + '.ConfigForm:LoadHTMLFrame: HTML Frame not on a tab sheet');
-    pcWizard.ActivePage := Ctrl as TTabSheet;
-    Frm.Initialise(ResName);
-  end;
-
 begin
   inherited;
-  gbRequired.Font.Style := [fsBold];
-  gbMailList.Font.Style := [fsBold];
-  edName.Font.Style := [];
-  lblName.Font.Style := [];
-  chkMailList.Font.Style := [];
-  edEMail.Font.Style := [];
-  lblEmail.Font.Style := [];
   TFontHelper.SetDefaultMonoFont(edRegCode.Font, False);
-  frmMailListIntro.OnBuildCSS := BuildCSS;
-  frmPrivacy.OnBuildCSS := BuildCSS;
-  LoadHTMLFrame(frmMailListIntro, 'dlg-registration-maillist.html');
-  LoadHTMLFrame(frmPrivacy, 'frm-emailprivacy.html');
 end;
 
 procedure TRegistrationDlg.DoRegistration;
@@ -367,7 +246,7 @@ begin
     // register with server
     edRegCode.Text := RegisterWithWebServer;
     // record registration & user details
-    UserDetails := TUserDetails.Create(Trim(edName.Text), Trim(edEmail.Text));
+    UserDetails := TUserDetails.Create(Trim(edName.Text), '');
     TAppInfo.RegisterProgram(edRegCode.Text, UserDetails.Name);
     TUserDetailsPersist.Update(UserDetails);
     fRegistered := True;
@@ -415,7 +294,6 @@ begin
   // Use user name if known
   UserDetails := TUserDetailsPersist.Load;
   edName.Text := UserDetails.Name;
-  edEmail.Text := UserDetails.Email;
 end;
 
 procedure TRegistrationDlg.MoveForward(const PageIdx: Integer;
@@ -439,7 +317,7 @@ function TRegistrationDlg.RegisterWithWebServer: string;
   {Gathers required registration data, sends to web server and gets registration
   code from it.
     @return Registration code.
-    @except EWebService exception raised if there is a failure in interaction
+    @except EWebError exception raised if there is a failure in interaction
       with web service.
   }
 var
@@ -473,38 +351,13 @@ function TRegistrationDlg.ValidateUserInfo: Boolean;
   {Validates data entered by user. Displays any error messages.
     @return True if data valid, false if not.
   }
-
-  // ---------------------------------------------------------------------------
-  function ValidateEmailAddress(const Email: string): Boolean;
-    {Checks that email address is valid by doing some basic checks on it.
-    Displays any error messages.
-      @param Email [in] Email address to check.
-      @return True if address if OK, false if not.
-    }
-  begin
-    Result := True;
-    if Email = '' then
-    begin
-      Result := False;
-      TMessageBox.Error(Self, sErrEmailRequired);
-    end
-    else if not IsValidEmailAddress(Email) then
-    begin
-      Result := False;
-      TMessageBox.Error(Self, sErrEmailInvalid);
-    end;
-  end;
-  // ---------------------------------------------------------------------------
-
 begin
   Result := True;
   if Trim(edName.Text) = '' then
   begin
     Result := False;
     TMessageBox.Error(Self, sErrNameRequired);
-  end
-  else if chkMailList.Checked then
-    Result := ValidateEmailAddress(Trim(edEmail.Text));
+  end;
 end;
 
 end.

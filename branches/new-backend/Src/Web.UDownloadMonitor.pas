@@ -1,5 +1,5 @@
 {
- * NsWebServices.UDownloadMonitor.pas
+ * Web.UDownloadMonitor.pas
  *
  * Manages download progress reporting for objects that interact with web
  * service.
@@ -19,8 +19,8 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is NsWebServices.UDownloadMonitor.pas, formerly
- * UDownloadMonitor.pas
+ * The Original Code is Web.UDownloadMonitor.pas, formerly UDownloadMonitor.pas
+ * then NsWebServices.UDownloadMonitor.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -36,7 +36,7 @@
 
 
 
-unit NsWebServices.UDownloadMonitor;
+unit Web.UDownloadMonitor;
 
 
 interface

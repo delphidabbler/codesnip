@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -78,9 +78,6 @@ type
         @param ASearch [out] Set to object recording search details if user OKs.
         @return True if user OKs or false if user cancels.
       }
-    procedure ShowMailingListDlg;
-      {Displays mailing list dialog box.
-      }
     function ExecPreferencesDlg: Boolean;
       {Display Preferences dialog box.
         @return True if user OKs and preferences are updated or False if
@@ -126,6 +123,9 @@ type
       {Displays Proxy Server configuration dialog box.
         @return True if user OKs or False if user cancels.
       }
+    procedure ShowNewsDlg;
+      {Displays latest news about CodeSnip and database in a dialog box.
+      }
   end;
 
 
@@ -135,9 +135,9 @@ implementation
 uses
   // Project
   FmAboutDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg, FmFindTextDlg,
-  FmFindXRefsDlg, FmMailingListDlg, FmPreferencesDlg, FmPrintDlg,
-  FmProxyServerDlg, FmRegistrationDlg, FmSelectionSearchDlg, FmUpdateDlg,
-  FmUserBugReportDlg, UPageSetupDlgMgr, UTestUnitDlgMgr;
+  FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg, FmProxyServerDlg,
+  FmRegistrationDlg, FmSelectionSearchDlg, FmUpdateDlg, FmUserBugReportDlg,
+  UPageSetupDlgMgr, UTestUnitDlgMgr;
 
 
 { TDialogMgr }
@@ -261,11 +261,11 @@ begin
   TDonateDlg.Execute(Owner);
 end;
 
-procedure TDialogMgr.ShowMailingListDlg;
-  {Displays mailing list dialog box.
+procedure TDialogMgr.ShowNewsDlg;
+  {Displays latest news about CodeSnip and database in a dialog box.
   }
 begin
-  TMailingListDlg.Execute(Owner);
+  TNewsDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowTestUnit(const Snippet: TRoutine);

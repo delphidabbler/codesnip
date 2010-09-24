@@ -61,7 +61,10 @@ type
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
   strict private
-    fCtrlStateMgr: TControlStateMgr;  // Enables / disables all controls on form
+    var
+      fCtrlStateMgr: TControlStateMgr;  // Enables/disables all form's controls
+    const
+      WM_AFTERSHOW = WM_USER + 1; // Custom message used to call AfterShow
     procedure AlignForm;
       {Optionally aligns form to a "parent" window, using an IAligner instance.
       Called from Form's OnShow event after form is customised and before it is
@@ -69,6 +72,11 @@ type
       }
     procedure CMEnabledChanged(var Msg: TMessage); message CM_ENABLEDCHANGED;
       {Called when enabled state of form changes. Updates state of all controls.
+        @param Msg [in/out] Unused.
+      }
+    procedure WMAfterShow(var Msg: TMessage); message WM_AFTERSHOW;
+      {Handles custom method that is posted just before form is shown and
+      handled just after form is shown.
         @param Msg [in/out] Unused.
       }
   strict protected
@@ -100,6 +108,11 @@ type
       Subclasses should override to initialise the form rather than handling the
       OnShow event. Form size must not be changed in this method.
       }
+    procedure AfterShowForm; virtual;
+      {Used to perform any actions that need to occur after the form has been
+      shown and is visible on-screen. This implementation does nothing.
+      Subclasses that need this functionality should override this method.
+      }
     constructor InternalCreate(AOwner: TComponent); virtual;
       {Protected constructor. Does nothing but call inherited constructor.
       Must be called by class methods of derived classes instead of inherited
@@ -122,7 +135,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils,
+  SysUtils, StrUtils, Windows,
   // Project
   UAppInfo, UBaseObjects, UFontHelper, UNulFormAligner;
 
@@ -131,6 +144,15 @@ uses
 
 
 { TBaseForm }
+
+procedure TBaseForm.AfterShowForm;
+  {Used to perform any actions that need to occur after the form has been shown
+  and is visible on-screen. This implementation does nothing. Subclasses that
+  need this functionality should override this method.
+  }
+begin
+  // Do nothing
+end;
 
 procedure TBaseForm.AlignForm;
   {Optionally aligns form to a "parent" window, using an IAligner instance.
@@ -216,9 +238,10 @@ end;
 procedure TBaseForm.FormShow(Sender: TObject);
   {Handles form's OnShow event. Calls a virtual method to customise form before
   aligning it. A further virtual method is then called to initialise the form.
-  Subclasses should override the CustomiseForm and InitForm methods rather than
-  handling this event. Also registers form with object that works around
-  Delphi's Alt Key bug.
+  Finally a message is posted to the form that results in the AfterShowForm
+  method being called after the form has been displayed. Subclasses should
+  override the CustomiseForm, AlignForm and InitForm methods rather than
+  handling this event.
     @param Sender [in] Not used.
   }
 begin
@@ -226,6 +249,9 @@ begin
   CustomiseForm;  // customise form: override if form size needs to be changed
   AlignForm;      // optionally align form using provided IAligner object
   InitForm;       // initialise form: do not change size of form in overrides
+  // Post message that causes AfterShowForm to be called after form has appeared
+  // on screen
+  PostMessage(Handle, WM_AFTERSHOW, 0, 0);
 end;
 
 function TBaseForm.GetAligner: IFormAligner;
@@ -277,6 +303,15 @@ begin
   Result := TAppInfo.CompanyName
     + '.' + TAppInfo.ProgramName
     + '.' + PostfixName;
+end;
+
+procedure TBaseForm.WMAfterShow(var Msg: TMessage);
+  {Handles custom method that is posted just before form is shown and handled
+  just after form is shown.
+    @param Msg [in/out] Unused.
+  }
+begin
+  AfterShowForm;
 end;
 
 end.

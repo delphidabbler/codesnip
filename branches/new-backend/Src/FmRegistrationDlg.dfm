@@ -6,7 +6,7 @@ inherited RegistrationDlg: TRegistrationDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     inherited pcWizard: TPageControl
-      ActivePage = tsIntro
+      ActivePage = tsSubmit
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
@@ -43,138 +43,30 @@ inherited RegistrationDlg: TRegistrationDlg
         Caption = 'tsAboutUser'
         ImageIndex = 1
         TabVisible = False
-        object gbRequired: TGroupBox
+        ExplicitLeft = 8
+        object lblName: TLabel
           Left = 0
           Top = 8
           Width = 369
-          Height = 81
-          Caption = ' Required information '
-          TabOrder = 0
-          object lblName: TLabel
-            Left = 8
-            Top = 20
-            Width = 353
-            Height = 30
-            AutoSize = False
-            Caption = 
-              'The only information about you that is required to complete regs' +
-              'tration is your &name. You can use a nickname if your prefer. Pl' +
-              'ease enter it below:'
-            FocusControl = edName
-            WordWrap = True
-          end
-          object edName: TEdit
-            Left = 8
-            Top = 48
-            Width = 353
-            Height = 21
-            BevelInner = bvSpace
-            BevelKind = bkFlat
-            BevelOuter = bvRaised
-            BorderStyle = bsNone
-            TabOrder = 0
-          end
+          Height = 30
+          AutoSize = False
+          Caption = 
+            'The only information about you that is required to complete regs' +
+            'tration is your &name. You can use a nickname if your prefer. Pl' +
+            'ease enter it below:'
+          FocusControl = edName
+          WordWrap = True
         end
-        object gbMailList: TGroupBox
+        object edName: TEdit
           Left = 0
-          Top = 95
+          Top = 36
           Width = 369
-          Height = 137
-          Caption = ' CodeSnip mailing list '
-          TabOrder = 1
-          object lblEmail: TLabel
-            Left = 24
-            Top = 78
-            Width = 68
-            Height = 13
-            Caption = '&Email address:'
-            FocusControl = edEmail
-          end
-          object chkMailList: TCheckBox
-            Left = 8
-            Top = 55
-            Width = 353
-            Height = 17
-            Caption = 'I would like to join the CodeSnip &mailing list'
-            TabOrder = 1
-            OnClick = chkMailListClick
-          end
-          object edEmail: TEdit
-            Left = 128
-            Top = 74
-            Width = 233
-            Height = 21
-            BevelInner = bvSpace
-            BevelKind = bkFlat
-            BevelOuter = bvRaised
-            BorderStyle = bsNone
-            Enabled = False
-            ParentColor = True
-            TabOrder = 2
-          end
-          inline frmMailListIntro: TFixedHTMLDlgFrame
-            Left = 8
-            Top = 24
-            Width = 353
-            Height = 26
-            TabOrder = 0
-            TabStop = True
-            ExplicitLeft = 8
-            ExplicitTop = 24
-            ExplicitWidth = 353
-            ExplicitHeight = 26
-            inherited pnlBrowser: TPanel
-              Width = 353
-              Height = 26
-              ExplicitWidth = 353
-              ExplicitHeight = 26
-              inherited wbBrowser: TWebBrowser
-                Width = 353
-                Height = 26
-                TabStop = False
-                ExplicitTop = -1
-                ExplicitWidth = 353
-                ExplicitHeight = 26
-                ControlData = {
-                  4C0000007C240000B00200000000000000000000000000000000000000000000
-                  000000004C000000000000000000000001000000E0D057007335CF11AE690800
-                  2B2E126208000000000000004C0000000114020000000000C000000000000046
-                  8000000000000000000000000000000000000000000000000000000000000000
-                  00000000000000000100000000000000000000000000000000000000}
-              end
-            end
-          end
-          inline frmPrivacy: TFixedHTMLDlgFrame
-            Left = 8
-            Top = 102
-            Width = 353
-            Height = 26
-            TabOrder = 3
-            TabStop = True
-            ExplicitLeft = 8
-            ExplicitTop = 102
-            ExplicitWidth = 353
-            ExplicitHeight = 26
-            inherited pnlBrowser: TPanel
-              Width = 353
-              Height = 26
-              ExplicitWidth = 353
-              ExplicitHeight = 26
-              inherited wbBrowser: TWebBrowser
-                Width = 353
-                Height = 26
-                TabStop = False
-                ExplicitWidth = 353
-                ExplicitHeight = 26
-                ControlData = {
-                  4C0000007C240000B00200000000000000000000000000000000000000000000
-                  000000004C000000000000000000000001000000E0D057007335CF11AE690800
-                  2B2E126208000000000000004C0000000114020000000000C000000000000046
-                  8000000000000000000000000000000000000000000000000000000000000000
-                  00000000000000000100000000000000000000000000000000000000}
-              end
-            end
-          end
+          Height = 21
+          BevelInner = bvSpace
+          BevelKind = bkFlat
+          BevelOuter = bvRaised
+          BorderStyle = bsNone
+          TabOrder = 0
         end
       end
       object tsSubmit: TTabSheet
@@ -194,7 +86,7 @@ inherited RegistrationDlg: TRegistrationDlg
         end
         object lblSubmit: TLabel
           Left = 0
-          Top = 200
+          Top = 162
           Width = 369
           Height = 26
           AutoSize = False
@@ -207,7 +99,7 @@ inherited RegistrationDlg: TRegistrationDlg
           Left = 0
           Top = 40
           Width = 369
-          Height = 153
+          Height = 113
           TabStop = False
           BevelInner = bvSpace
           BevelKind = bkFlat
@@ -238,19 +130,6 @@ inherited RegistrationDlg: TRegistrationDlg
           Width = 119
           Height = 13
           Caption = 'Your registration code is: '
-        end
-        object lblMailListConfirm: TLabel
-          Left = 0
-          Top = 105
-          Width = 369
-          Height = 48
-          AutoSize = False
-          Caption = 
-            'You chose to subscribe the the CodeSnip mailing list. For your o' +
-            'wn protection you need to confirm your subscription. An email ha' +
-            's been sent to the address you provided that explains how to do ' +
-            'this.'
-          WordWrap = True
         end
         object edRegCode: TEdit
           Left = 0

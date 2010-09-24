@@ -104,11 +104,11 @@
 			<DCCReference Include="FmHTMLViewDlg.pas">
 				<Form>HTMLViewDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmMailingListDlg.pas">
-				<Form>MailingListDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmMain.pas">
 				<Form>MainForm</Form>
+			</DCCReference>
+			<DCCReference Include="FmNewsDlg.pas">
+				<Form>NewsDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FmPreferencesDlg.pas">
 				<Form>PreferencesDlg</Form>
@@ -219,14 +219,6 @@
 				<Form>MemoPreviewFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="FrNews.pas">
-				<Form>NewsFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
-			<DCCReference Include="FrNewsHTML.pas">
-				<Form>NewsHTMLFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
 			<DCCReference Include="FrOverview.pas">
 				<Form>OverviewFrame</Form>
 				<DesignClass>TFrame</DesignClass>
@@ -237,6 +229,10 @@
 			</DCCReference>
 			<DCCReference Include="FrPrintingPrefs.pas">
 				<Form>PrintingPrefsFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
+			<DCCReference Include="FrRSSNews.pas">
+				<Form>RSSNewsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="FrRTFPreview.pas">
@@ -284,15 +280,6 @@
 			<DCCReference Include="IntfNotifier.pas"/>
 			<DCCReference Include="IntfPreview.pas"/>
 			<DCCReference Include="IntfUIHandlers.pas"/>
-			<DCCReference Include="NsWebServices.UBase.pas"/>
-			<DCCReference Include="NsWebServices.UCharEncodings.pas"/>
-			<DCCReference Include="NsWebServices.UCodeSubmitter.pas"/>
-			<DCCReference Include="NsWebServices.UDBDownloadMgr.pas"/>
-			<DCCReference Include="NsWebServices.UDDabStandard.pas"/>
-			<DCCReference Include="NsWebServices.UDownloadMonitor.pas"/>
-			<DCCReference Include="NsWebServices.UExceptions.pas"/>
-			<DCCReference Include="NsWebServices.UMailListSubs.pas"/>
-			<DCCReference Include="NsWebServices.URegistrar.pas"/>
 			<DCCReference Include="UActionFactory.pas"/>
 			<DCCReference Include="UActiveText.pas"/>
 			<DCCReference Include="UActiveTextHTML.pas"/>
@@ -402,7 +389,6 @@
 			<DCCReference Include="UMessageBox.pas"/>
 			<DCCReference Include="UMessageWindow.pas"/>
 			<DCCReference Include="UMultiCastEvents.pas"/>
-			<DCCReference Include="UNews.pas"/>
 			<DCCReference Include="UNotifier.pas"/>
 			<DCCReference Include="UNulDataReader.pas"/>
 			<DCCReference Include="UNulFormAligner.pas"/>
@@ -425,11 +411,13 @@
 			<DCCReference Include="UQuery.pas"/>
 			<DCCReference Include="UREMLDataIO.pas"/>
 			<DCCReference Include="UReservedCategories.pas"/>
+			<DCCReference Include="URFC2822Date.pas"/>
 			<DCCReference Include="URoutineAction.pas"/>
 			<DCCReference Include="URoutineCreditsParser.pas"/>
 			<DCCReference Include="URoutineDoc.pas"/>
 			<DCCReference Include="URoutineExtraHelper.pas"/>
 			<DCCReference Include="URoutineHTML.pas"/>
+			<DCCReference Include="URSS20.pas"/>
 			<DCCReference Include="URTFBuilder.pas"/>
 			<DCCReference Include="URTFMerger.pas"/>
 			<DCCReference Include="URTFRoutineDoc.pas"/>
@@ -504,6 +492,16 @@
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
+			<DCCReference Include="Web.UBaseWebService.pas"/>
+			<DCCReference Include="Web.UCharEncodings.pas"/>
+			<DCCReference Include="Web.UCodeSubmitter.pas"/>
+			<DCCReference Include="Web.UDBDownloadMgr.pas"/>
+			<DCCReference Include="Web.UDownloadMonitor.pas"/>
+			<DCCReference Include="Web.UExceptions.pas"/>
+			<DCCReference Include="Web.UHTTPEx.pas"/>
+			<DCCReference Include="Web.URegistrar.pas"/>
+			<DCCReference Include="Web.UStdWebService.pas"/>
+			<DCCReference Include="Web.UXMLRequestor.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

@@ -4,6 +4,20 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.7.0 of 23 September 2010
++ Added new "Help | CodeSnip News" menu option that displays latest news about CodeSnip and the online database in a dialog box. The news comes from the CodeSnip RSS news feed.
++ Removed news pane from "Update from Web" dialog box and replaced with button that displays new "CodeSnip News" dialog box.
++ Removed mailing list subscription facility:
+  - Removed subscription dialog box and associated menu option.
+  - Removed code that accessed mailing list web service.
+  - Removed subscription option from program registration dialog box.
++ Fixed a memory leak.
++ Added code that downloads XML document and reads and parses RSS feeds.
++ Refactored and improved HTTP request handling code.
++ Some further refactoring.
++ Updated help file re changes in this release.
++ Updated privacy statement.
+
 Release v3.6.3 of 22 July 2010
 + Completely overhauled code that interacts with web services.
   - Character encodings are now correctly handled per information in HTTP header and several different encodings are supported.
