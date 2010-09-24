@@ -466,8 +466,7 @@ procedure TCheckedTVFrame.ToggleNode(const Node: TCheckedTreeNode);
     @param Node [in] Node whose check state is to be toggled.
   }
 begin
-  Assert(Assigned(Node),                                   // ** do not localise
-    ClassName + '.ToggleNode: Node is nil');
+  Assert(Assigned(Node), ClassName + '.ToggleNode: Node is nil');
   Node.ToggleCheck;
   if Node.HasChildren then
     CopyParentStateToChildren(Node);

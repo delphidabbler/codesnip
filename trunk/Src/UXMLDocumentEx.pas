@@ -326,7 +326,7 @@ var
   Node: IXMLNode;         // a node from NodeList
   Idx: Integer;           // loops thru nodes of NodeList.
 begin
-  Assert(Assigned(ParentNode),                             // ** do not localise
+  Assert(Assigned(ParentNode),
     ClassName + '.FindChildNodes: ParentNode is nil');
   Result := TXMLSimpleNodeList.Create;
   NodeList := ParentNode.ChildNodes;

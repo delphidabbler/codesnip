@@ -107,15 +107,11 @@ class procedure TWBHelper.CheckValidDoc(const WB: TWebBrowser);
     @raise EBug if document is not valid.
   }
 begin
-  // ** do not localise string literals in this method
-  Assert(Assigned(WB),                                     // ** do not localise
-    ClassName + '.CheckValidDoc: WB is nil');
+  Assert(Assigned(WB), ClassName + '.CheckValidDoc: WB is nil');
   if not Assigned(WB.Document) then
-    raise EBug.Create(                                     // ** do not localise
-      ClassName + '.CheckValidDoc: Document not assigned'
-    );
+    raise EBug.Create(ClassName + '.CheckValidDoc: Document not assigned');
   if not THTMLDocHelper.IsValidDocument(WB.Document) then
-    raise EBug.Create(                                     // ** do not localise
+    raise EBug.Create(
       ClassName + '.CheckValidDoc: Document is not a valid HTML document'
     );
 end;
@@ -127,8 +123,7 @@ class procedure TWBHelper.ExecCommand(const WB: TWebBrowser;
     @param CmdId [in] Id of OLE command.
   }
 begin
-  Assert(Assigned(WB),                                     // ** do not localise
-    ClassName + '.ExecCommand: WB is nil');
+  Assert(Assigned(WB), ClassName + '.ExecCommand: WB is nil');
   WB.ExecWB(CmdId, OLECMDEXECOPT_DONTPROMPTUSER);
 end;
 
@@ -140,8 +135,7 @@ class function TWBHelper.IsCommandEnabled(const WB: TWebBrowser;
     @return True if command is enabled or False if not.
   }
 begin
-  Assert(Assigned(WB),                                     // ** do not localise
-    ClassName + '.IsCommandEnabled: WB is nil');
+  Assert(Assigned(WB), ClassName + '.IsCommandEnabled: WB is nil');
   Result := (WB.QueryStatusWB(CmdId) and OLECMDF_ENABLED) <> 0;
 end;
 
@@ -150,8 +144,7 @@ class procedure TWBHelper.WaitForDocToLoad(const WB: TWebBrowser);
     @param WB [in] Browser control whose document we are waiting for.
   }
 begin
-  Assert(Assigned(WB),                                     // ** do not localise
-    ClassName + '.WaitForDocToLoad: WB is nil');
+  Assert(Assigned(WB), ClassName + '.WaitForDocToLoad: WB is nil');
   while WB.ReadyState <> READYSTATE_COMPLETE do
     UUtils.Pause(5);
 end;

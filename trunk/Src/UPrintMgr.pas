@@ -145,9 +145,8 @@ constructor TPrintMgr.InternalCreate(const ViewItem: TViewItem);
     @param ViewItem [in] View item to be printed. Must be a routine.
   }
 begin
-  Assert(Assigned(ViewItem),                               // ** do not localise
-    ClassName + '.InternalCreate: ViewItem is nil');
-  Assert(ViewItem.Kind = vkRoutine,                        // ** do not localise
+  Assert(Assigned(ViewItem), ClassName + '.InternalCreate: ViewItem is nil');
+  Assert(ViewItem.Kind = vkRoutine,
     ClassName + '.InternalCreate: ViewItem is not a routine');
   inherited InternalCreate;
   fRoutine := ViewItem.Routine;

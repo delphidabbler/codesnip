@@ -210,8 +210,7 @@ constructor TTVCheckBoxes.Create(const ImgList: TImageList);
     @param ImgList [in] Image list to receive check box images.
   }
 begin
-  Assert(Assigned(ImgList),                                // ** do not localise
-    ClassName + '.Create: ImgList is nil');
+  Assert(Assigned(ImgList), ClassName + '.Create: ImgList is nil');
   inherited Create;
   fImgList := ImgList;
   fLock := TSimpleEvent.Create; // lock for protected sections: needed by Update

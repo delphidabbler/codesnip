@@ -286,7 +286,7 @@ procedure RTFInsertStream(const RE: TRichEdit; const Stream: TStream);
 const
   // Flags used in EM_STREAMIN message call
   cFlags = SFF_SELECTION or SF_RTF or SFF_PLAINRTF;
-  // Bug error message ** do not localise
+  // Bug error message
   cStreamErrMsg = 'RTFInsertStream: Error inserting stream';
 var
   EditStream: TEditStream;  // defines callback used to read inserted RTF
