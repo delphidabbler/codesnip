@@ -148,7 +148,7 @@ constructor THiliterCSS.Create(const HiliteAttrs: IHiliteAttrs);
 begin
   inherited Create;
   Assert(Assigned(HiliteAttrs),                            // ** do not localise
-    'THiliterCSS.Create: HiliteAttrs is nil');
+    ClassName + '.Create: HiliteAttrs is nil');
   fHiliteAttrs := HiliteAttrs;
 end;
 

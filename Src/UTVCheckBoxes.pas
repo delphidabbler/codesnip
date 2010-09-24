@@ -211,7 +211,7 @@ constructor TTVCheckBoxes.Create(const ImgList: TImageList);
   }
 begin
   Assert(Assigned(ImgList),                                // ** do not localise
-    'TTVCheckBoxes.Create: ImgList is nil');
+    ClassName + '.Create: ImgList is nil');
   inherited Create;
   fImgList := ImgList;
   fLock := TSimpleEvent.Create; // lock for protected sections: needed by Update

@@ -120,7 +120,7 @@ constructor TMemoProgBarMgr.Create(const Memo: TMemo);
   }
 begin
   Assert(Assigned(Memo),    // ** do not localise
-    'TMemoProgBarMgr.Create: Memo is nil');
+    ClassName + '.Create: Memo is nil');
   inherited Create;
   fMemo := Memo;
 end;
@@ -153,7 +153,7 @@ var
   Height: Integer;          // height of progress bar
 begin
   Assert(Assigned(fProgressBar),  // ** do not localise
-    'TMemoProgBarMgr.SetBounds: fProgressBar is nil');
+    ClassName + '.SetBounds: fProgressBar is nil');
   MemoHelper := TMemoHelper.Create(fMemo);
   try
     // Progress bar is placed after end of text on memo line and sized to fit

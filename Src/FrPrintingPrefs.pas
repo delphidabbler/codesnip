@@ -335,7 +335,7 @@ constructor TPrintingPrefsPreview.Create(const RE: TRichEdit;
   }
 begin
   Assert(Assigned(RE),    // ** do not localise
-    'TPrintingPrefsPreview.Create: RE is nil');
+    ClassName + '.Create: RE is nil');
   inherited Create;
   fRE := RE;
   fHiliteAttrs := HiliteAttrs;

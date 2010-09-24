@@ -327,7 +327,7 @@ var
   Idx: Integer;           // loops thru nodes of NodeList.
 begin
   Assert(Assigned(ParentNode),                             // ** do not localise
-    'TXMLDocumentEx.FindChildNodes: ParentNode is nil');
+    ClassName + '.FindChildNodes: ParentNode is nil');
   Result := TXMLSimpleNodeList.Create;
   NodeList := ParentNode.ChildNodes;
   for Idx := 0 to Pred(NodeList.Count) do
@@ -377,7 +377,7 @@ var
   Node: IXMLNode;         // a node from NodeList
   Idx: Integer;           // loops thru nodes of NodeList.
 begin
-  Assert(Assigned(ParentNode));
+  Assert(Assigned(ParentNode), ClassName + 'FindChildNodes: ParentNode is nil');
   Result := TXMLSimpleNodeList.Create;
   NodeList := ParentNode.ChildNodes;
   for Idx := 0 to Pred(NodeList.Count) do

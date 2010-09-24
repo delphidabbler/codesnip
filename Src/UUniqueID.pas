@@ -81,7 +81,8 @@ var
   GUID: TGUID;    // generated GUID
   Idx: Integer;   // loops through parts of GUID as an array
 begin
-  Assert(SizeOf(TGUID) = SizeOf(TGUIDFragments));
+  Assert(SizeOf(TGUID) = SizeOf(TGUIDFragments),
+    ClassName + '.Generate: Size of TGUID <> size of TGUIDFragments');
   // get a GUID
   CreateGUID(GUID);
   Result := '';

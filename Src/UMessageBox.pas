@@ -513,8 +513,7 @@ constructor TMessageBoxForm.Create(const Owner: TComponent;
       depends on DlgType is used if no title is specified.
   }
 begin
-  Assert(Length(Buttons) > 0,
-    ClassName + '.Create: Buttons array is empty');
+  Assert(Length(Buttons) > 0, ClassName + '.Create: Buttons array is empty');
   Assert(Assigned(Text) and (Text.Count > 0),
     ClassName + '.Ctreate: No message text provided');
   inherited CreateNew(Owner);

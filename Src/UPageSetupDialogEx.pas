@@ -208,9 +208,9 @@ const
     RPrinterBtn: TRectEx; // printers button's bounding rectangle
   begin
     Assert(HPrinterBtn <> 0,
-      ClassName + '.RealignCtrls.ReplacePrinterBtnWithHelp: HPrinterBtn = 0');
+      ClassName + '.RealignCtrls:ReplacePrinterBtnWithHelp: HPrinterBtn = 0');
     Assert(HHelpBtn <> 0,
-      ClassName + '.RealignCtrls.ReplacePrinterBtnWithHelp: HHelpBtn = 0');
+      ClassName + '.RealignCtrls:ReplacePrinterBtnWithHelp: HHelpBtn = 0');
     // Get bounds of printer button
     RPrinterBtn := GetWindowClientRect(HPrinterBtn);
     // Hide the printers button
