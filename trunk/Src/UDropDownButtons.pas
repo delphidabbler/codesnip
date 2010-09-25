@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -42,7 +42,9 @@ interface
 
 uses
   // Delphi
-  Classes, SyncObjs, Controls, Types, Windows, Graphics;
+  Classes, Controls, Windows, Graphics,
+  // Project
+  UUIWidgetImages;
 
 
 type
@@ -54,44 +56,29 @@ type
     themes are active. Update is called to change bitmaps when themes are
     changed.
   }
-  TDropDownButtons = class(TObject)
+  TDropDownButtons = class(TUIWidgetImages)
   strict private
-    const
-      cLockTimeout = 10000; {10 secs} // Event signalling timeout
-    var
-      fLock: TSimpleEvent;      // Signal locks access to Update event
-      fImages: TImageList;      // Image list that stores drop down button images
-      fOnChange: TNotifyEvent;  // OnChange event handler
-    function ButtonSize: TSize;
-      {Gets size of drop down button images.
-        @return Size of button in pixels.
-      }
-    procedure SetImgListSize;
-      {Sets size of bitmaps expected by image list per dimensions of buttons
-      used.
-      }
-    procedure Update;
-      {Updates button images in image list. Buttons used depend on whether
-      themes are active.
-      }
-    procedure ThemeChangeListener(Sender: TObject);
-      {Handles theme services change event. Updates button images according to
-      whether themes are in use or not.
-        @param Sender [in] Not used.
-      }
     class function ButtonImageIdx(const Hot, Focussed: Boolean): Integer;
       {Gets index of a drop down button in image list.
         @param Hot [in] Flag indicating whether button is to be hot or normal.
         @param Focussed [in] Flag indicating whether button is focussed.
         @return Required image index.
       }
+  strict protected
+    procedure RecreateImages; override;
+      {Recreates image list containing appropriate drop-down buttons images.
+      Images depend on whether themes are active.
+      }
+    function GetImageSize: TSize; override;
+      {Gets size of drop down button images. Size of image may differ depending
+      on whether themes are active.
+        @return Size of button in pixels.
+      }
   public
     constructor Create(AOwner: TComponent);
-      {Class constructor. Sets up object and loads button images into image
+      {Object constructor. Sets up object and loads button images into image
       list.
-      }
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
+        @param AOwner [in] Component that owns this object.
       }
     procedure Draw(const Canvas: TCanvas; const TopLeft: TPoint;
       const Hot, Focussed: Boolean);
@@ -101,11 +88,9 @@ type
         @param Hot [in] Whether button to be drawn in hot state.
         @param Focussed [in] Whether button is to display a focus rectangle.
       }
-    property Images: TImageList read fImages;
-      {Image list containing drop down buttons}
-    property OnChange: TNotifyEvent
-      read fOnChange write fOnChange;
-      {Event triggered when image list changes, i.e. when themes change}
+    property Images;
+      {Image list containing drop down buttons. Inherited protected property
+      made public}
   end;
 
 
@@ -114,7 +99,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Themes,
+  Themes,
   // Project
   UStructs, UThemesEx;
 
@@ -132,8 +117,34 @@ begin
   Result := Ord(Hot) + Ord(Focussed) shl 1;
 end;
 
-function TDropDownButtons.ButtonSize: TSize;
-  {Gets size of drop down button images.
+constructor TDropDownButtons.Create(AOwner: TComponent);
+  {Object constructor. Sets up object and loads button images into image list.
+    @param AOwner [in] Component that owns this object.
+  }
+begin
+  inherited Create(TImageList.Create(AOwner), True);
+end;
+
+procedure TDropDownButtons.Draw(const Canvas: TCanvas; const TopLeft: TPoint;
+  const Hot, Focussed: Boolean);
+  {Draws the required drop down button on a canvas.
+    @param Canvas [in] Canvas where button is to be drawn.
+    @param TopLeft [in] Top left corner of button in canvas.
+    @param Hot [in] Whether button to be drawn in hot state.
+    @param Focussed [in] Whether button is to display a focus rectangle.
+  }
+begin
+  Images.Draw(
+    Canvas,
+    TopLeft.X,
+    TopLeft.Y,
+    ButtonImageIdx(Hot, Focussed)
+  );
+end;
+
+function TDropDownButtons.GetImageSize: TSize;
+  {Gets size of drop down button images. Size of image may differ depending on
+  whether themes are active.
     @return Size of button in pixels.
   }
 var
@@ -148,75 +159,13 @@ begin
     Result.cx := BtnBmp.Width;
     Result.cy := BtnBmp.Height;
   finally
-    FreeAndNil(BtnBmp);
+    BtnBmp.Free;
   end;
 end;
 
-constructor TDropDownButtons.Create(AOwner: TComponent);
-  {Class constructor. Sets up object and loads button images into image
-  list.
-  }
-begin
-  inherited Create;
-  fImages := TImageList.Create(AOwner);
-  fImages.Width := 16;
-  fImages.Height := 16;
-  fLock := TSimpleEvent.Create; // lock for protected sections: needed by Update
-  fLock.SetEvent;
-  Update;   // loads check boxes into image list
-  ThemeServicesEx.AddChangeEventHandler(ThemeChangeListener);
-end;
-
-destructor TDropDownButtons.Destroy;
-  {Class destructor. Tears down object.
-  }
-begin
-  ThemeServicesEx.RemoveChangeEventHandler(ThemeChangeListener);
-  FreeAndNil(fLock);
-  FreeAndNil(fImages);
-  inherited;
-end;
-
-procedure TDropDownButtons.Draw(const Canvas: TCanvas; const TopLeft: TPoint;
-  const Hot, Focussed: Boolean);
-  {Draws the required drop down button on a canvas.
-    @param Canvas [in] Canvas where button is to be drawn.
-    @param TopLeft [in] Top left corner of button in canvas.
-    @param Hot [in] Whether button to be drawn in hot state.
-    @param Focussed [in] Whether button is to display a focus rectangle.
-  }
-begin
-  fImages.Draw(
-    Canvas,
-    TopLeft.X,
-    TopLeft.Y,
-    ButtonImageIdx(Hot, Focussed)
-  );
-end;
-
-procedure TDropDownButtons.SetImgListSize;
-  {Sets size of bitmaps expected by image list per dimensions of buttons used.
-  }
-var
-  Size: TSize;  // required size
-begin
-  Size := ButtonSize;
-  fImages.Width := Size.cx;
-  fImages.Height := Size.cy;
-end;
-
-procedure TDropDownButtons.ThemeChangeListener(Sender: TObject);
-  {Handles theme services change event. Updates button images according to
-  whether themes are in use or not.
-    @param Sender [in] Not used.
-  }
-begin
-  Update;
-end;
-
-procedure TDropDownButtons.Update;
-  {Updates button images in image list. Buttons used depend on whether
-  themes are active.
+procedure TDropDownButtons.RecreateImages;
+  {Recreates image list containing appropriate drop-down buttons images. Images
+  depend on whether themes are active.
   }
 
   // ---------------------------------------------------------------------------
@@ -265,54 +214,38 @@ var
   Hot: Boolean;                     // loops thru not-hot / hot
   Focussed: Boolean;                // loops thru not-focussed / focussed
 begin
-  // Wait for any lock to be opened
-  fLock.WaitFor(cLockTimeout);
-  // Close lock: this is used to prevent image list from being modified
-  // asynchronously
-  fLock.ResetEvent;
+  // Load check boxes into image list
+  // We load standard combo box buttons into a bitmap which is then added to
+  // image list.
+  BtnBmp := TBitmap.Create;
   try
-    // Initialise image list
-    fImages.Clear;
-    SetImgListSize;
-    // Load check boxes into image list
-    // We load standard combo box buttons into a bitmap which is then added to
-    // image list.
-    BtnBmp := TBitmap.Create;
-    try
-      // Prepare bitmap
-      BtnBmp.Width := fImages.Width;
-      BtnBmp.Height := fImages.Height;
-      BtnBmp.Canvas.Brush.Color := cMaskColour;
-      // Load normal then hot bitmaps
-      for Focussed := Low(Boolean) to High(Boolean) do
+    // Prepare bitmap
+    BtnBmp.Width := Images.Width;
+    BtnBmp.Height := Images.Height;
+    BtnBmp.Canvas.Brush.Color := cMaskColour;
+    // Load normal then hot bitmaps
+    for Focussed := Low(Boolean) to High(Boolean) do
+    begin
+      for Hot := Low(Boolean) to High(Boolean) do
       begin
-        for Hot := Low(Boolean) to High(Boolean) do
+        if ThemeServicesEx.ThemesEnabled then
+          GetThemedButton(BtnBmp, Hot)
+        else
+          GetNonThemedButton(BtnBmp, Hot);
+        if Focussed then
         begin
-          if ThemeServicesEx.ThemesEnabled then
-            GetThemedButton(BtnBmp, Hot)
-          else
-            GetNonThemedButton(BtnBmp, Hot);
-          if Focussed then
-          begin
-            FocusRect := TRectEx.CreateBounds(
-              0, 0, BtnBmp.Width, BtnBmp.Height
-            );
-            FocusRect.InflateBy(-2, -2);
-            BtnBmp.Canvas.DrawFocusRect(FocusRect);
-          end;
-          fImages.AddMasked(BtnBmp, cMaskColour);
+          FocusRect := TRectEx.CreateBounds(
+            0, 0, BtnBmp.Width, BtnBmp.Height
+          );
+          FocusRect.InflateBy(-2, -2);
+          BtnBmp.Canvas.DrawFocusRect(FocusRect);
         end;
+        Images.AddMasked(BtnBmp, cMaskColour);
       end;
-    finally
-      FreeAndNil(BtnBmp);
     end;
   finally
-    // Open lock: this permits modification of image list
-    fLock.SetEvent;
+    BtnBmp.Free;
   end;
-  // Trigger event notifying that check boxes have changed
-  if Assigned(fOnChange) then
-    fOnChange(Self);
 end;
 
 end.
