@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -92,6 +92,7 @@ const
   cCompilerIDs: array[TCompilerID] of string = (
     'd2', 'd3', 'd4', 'd5', 'd6', 'd7',
     'd2005', 'd2006', 'd2007', 'd2009', 'd2010',
+    'dXE',
     'fpc'
   );
 

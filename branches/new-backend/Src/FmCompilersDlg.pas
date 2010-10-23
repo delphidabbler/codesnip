@@ -289,7 +289,8 @@ procedure TCompilersDlg.btnDeleteClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  Assert(lbSwitches.ItemIndex >= 0);
+  Assert(lbSwitches.ItemIndex >= 0,
+    ClassName + '.btnDeleteClick: lbSwitches.ItemIndex < 0');
   lbSwitches.Items.Delete(lbSwitches.ItemIndex);
   UpdateSwitchButtons;
 end;
@@ -351,7 +352,8 @@ procedure TCompilersDlg.btnReplaceClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  Assert(lbSwitches.ItemIndex >= 0);
+  Assert(lbSwitches.ItemIndex >= 0,
+    ClassName + '.btnReplaceClick: lbSwitches.ItemIndex < 0');
   lbSwitches.Items[lbSwitches.ItemIndex] := Trim(edSwitch.Text);
   edSwitch.Text := '';
   UpdateSwitchButtons;

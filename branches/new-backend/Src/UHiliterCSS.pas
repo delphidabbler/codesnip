@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -147,8 +147,7 @@ constructor THiliterCSS.Create(const HiliteAttrs: IHiliteAttrs);
   }
 begin
   inherited Create;
-  Assert(Assigned(HiliteAttrs),                            // ** do not localise
-    'THiliterCSS.Create: HiliteAttrs is nil');
+  Assert(Assigned(HiliteAttrs), ClassName + '.Create: HiliteAttrs is nil');
   fHiliteAttrs := HiliteAttrs;
 end;
 
@@ -160,7 +159,7 @@ class function THiliterCSS.GetElemCSSClassName(
   }
 const
   // Map of highlight element kinds onto CSS class used to format it
-  cClassMap: array[THiliteElement] of string = (  // ** do not localise
+  cClassMap: array[THiliteElement] of string = (
     'pas-whitespace', // heWhitespace
     'pas-comment',    // heComment
     'pas-reserved',   // heReserved
@@ -183,7 +182,7 @@ class function THiliterCSS.GetMainCSSClassName: string;
     @return Required class name.
   }
 begin
-  Result := 'pas-source';                                  // ** do not localise
+  Result := 'pas-source';
 end;
 
 end.

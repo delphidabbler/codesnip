@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -163,8 +163,8 @@ procedure ECompilerRunner.Assign(const E: Exception);
       ECompilerRunner instance.
   }
 begin
-  Assert(E is ECompilerRunner,                             // ** do not localise
-    'ECompilerRunner.Assign: E is not a ECompilerRunner instance.'
+  Assert(E is ECompilerRunner,
+    ClassName + '.Assign: E is not a ECompilerRunner instance.'
   );
   inherited;
   fErrorCode := (E as ECompilerRunner).fErrorCode;
@@ -176,10 +176,8 @@ constructor ECompilerRunner.Create(const CompilerApp: TConsoleApp);
       why compiler failed to run.
   }
 begin
-  Assert(Assigned(CompilerApp),                            // ** do not localise
-    'ECompilerRunner.Create: App is nil');
-  Assert(CompilerApp.ErrorCode <> 0,                               // ** do not localise
-    'ECompilerRunner.Create: App has no errors');
+  Assert(Assigned(CompilerApp), ClassName + '.Create: App is nil');
+  Assert(CompilerApp.ErrorCode <> 0, ClassName + '.Create: App has no errors');
   inherited Create(CompilerApp.ErrorMessage);
   fErrorCode := CompilerApp.ErrorCode;
 end;

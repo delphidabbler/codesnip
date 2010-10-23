@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -208,9 +208,9 @@ const
     RPrinterBtn: TRectEx; // printers button's bounding rectangle
   begin
     Assert(HPrinterBtn <> 0,
-      ClassName + '.RealignCtrls.ReplacePrinterBtnWithHelp: HPrinterBtn = 0');
+      ClassName + '.RealignCtrls:ReplacePrinterBtnWithHelp: HPrinterBtn = 0');
     Assert(HHelpBtn <> 0,
-      ClassName + '.RealignCtrls.ReplacePrinterBtnWithHelp: HHelpBtn = 0');
+      ClassName + '.RealignCtrls:ReplacePrinterBtnWithHelp: HHelpBtn = 0');
     // Get bounds of printer button
     RPrinterBtn := GetWindowClientRect(HPrinterBtn);
     // Hide the printers button

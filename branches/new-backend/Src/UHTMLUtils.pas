@@ -297,8 +297,8 @@ function MakeResourceURL(const ModuleName: string; const ResName: PChar;
   // ---------------------------------------------------------------------------
 
 begin
-  Assert(ModuleName <> '');
-  Assert(Assigned(ResName));
+  Assert(ModuleName <> '', 'MakeResourceURL: ModuleName is ''''');
+  Assert(Assigned(ResName), 'MakeResourceURL: ResName is nil');
   // Resource starts with module name
   Result := 'res://' + URLEncode(ModuleName, False);
   // Resource type follows if specified
@@ -406,10 +406,10 @@ var
   Idx: Integer;     // loops through characters of S
   HexStr: string;   // hex digits from HTML attribute
   Hex: Integer;     // value of hex digits from HTML attribute
-resourcestring
+const
   // Error messages
-  sIncompleteAttr = 'URL attribute incomplete';
-  sInvalidAttr = 'Invalid hex digits in URL attribute';
+  cIncompleteAttr = 'URLDecode: URL attribute incomplete';
+  cInvalidAttr = 'URLDecode: Invalid hex digits in URL attribute';
 begin
   Result := '';
   Idx := 1;
@@ -420,10 +420,10 @@ begin
       begin
         // Decode hex attribute in form %XX where X is a valid hex digit
         if Idx > Length(S) - 2 then
-          raise EBug.Create(sIncompleteAttr);
+          raise EBug.Create(cIncompleteAttr);
         HexStr := '$' + S[Idx + 1] + S[Idx + 2];
         if not TryStrToInt(HexStr, Hex) then
-          raise EBug.Create(sInvalidAttr);
+          raise EBug.Create(cInvalidAttr);
         Result := Result + Char(Hex);
         Inc(Idx, 2);
       end;

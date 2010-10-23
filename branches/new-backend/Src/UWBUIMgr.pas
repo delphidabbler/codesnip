@@ -403,9 +403,7 @@ begin
   // Allocate buffer for wide string using task allocator
   Result := CoTaskMemAlloc(StrLen * SizeOf(WideChar));
   if not Assigned(Result) then
-    raise EOutOfMemory.Create(    // ** do not localise
-      'TaskAllocWideString(): can''t allocate buffer.'
-    );
+    raise EOutOfMemory.Create('TaskAllocWideString: can''t allocate buffer.');
   // Convert string to wide string and store in buffer
   StringToWideChar(S, Result, StrLen);
 end;
@@ -474,7 +472,7 @@ constructor TWBUIMgr.Create(const WebBrowser: TWebBrowser;
       be aggregated or nil if to be stand alone.
   }
 begin
-  Assert(Assigned(WebBrowser), 'TWBUIMgr.Create: WebBrowser is nil');
+  Assert(Assigned(WebBrowser), ClassName + '.Create: WebBrowser is nil');
   inherited Create(Controller);
   fWebBrowser := WebBrowser;
   fUseDefaultContextMenu := True;

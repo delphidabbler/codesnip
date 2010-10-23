@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -129,8 +129,7 @@ constructor TControlStateMgr.Create(const Form: TCustomForm);
       disabled.
   }
 begin
-  Assert(Assigned(Form),                                   // ** do not localise
-    ClassName + '.Create: Form is nil');
+  Assert(Assigned(Form), ClassName + '.Create: Form is nil');
   inherited Create;
   fForm := Form;
 end;

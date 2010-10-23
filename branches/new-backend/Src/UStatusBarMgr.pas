@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -158,7 +158,7 @@ resourcestring
   // Message displayed when user database has been modified
   sModified = 'Modified';
 begin
-  Assert(Assigned(SB), ClassName + '.Create: SB is nil');  // ** do not localise
+  Assert(Assigned(SB), ClassName + '.Create: SB is nil');
   inherited Create;
   fSearchInfoVisible := False;  // we don't display search info by default
   fUserDBInfoVisible := False;  // we don't display modified flag by default

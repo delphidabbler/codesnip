@@ -1,8 +1,8 @@
 {
  * UWarnings.pas
  *
- * Classes an interfaces that encapsulate Delphi $WARN directives used to switch
- * off unwanted compiler warnings.
+ * Classes and interfaces that encapsulate Delphi $WARN directives used to
+ * switch off unwanted compiler warnings.
  *
  * $Rev$
  * $Date$
@@ -97,26 +97,6 @@ type
   end;
 
   {
-  IWarningsEnum:
-    Interface to enumerator of an IWarnings object.
-  }
-  IWarningsEnum = interface(IInterface)
-    ['{0662984F-8FEC-45FF-9855-9F1E2D6FAC59}']
-    function GetCurrent: TWarning;
-      {Gets current warning in enumeration.
-        @return Required warning record.
-      }
-    property Current: TWarning read GetCurrent;
-      {Current warning in enumeration}
-    function MoveNext: Boolean;
-      {Moves to next warning in enumeration. Does nothing if at end of
-      enumeration.
-        @return True if successfully moved to next warning or False if at end
-          of enumeration.
-      }
-  end;
-
-  {
   IWarnings:
     Interface to class that encapsulates information about warnings and whether
     code can be generated to supress them.
@@ -172,7 +152,7 @@ type
     property SwitchOff: Boolean read GetSwitchOff write SetSwitchOff;
       {Property that indicates whether code should be emitted to switch off
       listed warnings}
-    function GetEnumerator: IWarningsEnum;
+    function GetEnumerator: TEnumerator<TWarning>;
       {Creates an enumerator for all the warnings in the warnings list.
         @return Instance of enumerator.
       }
@@ -215,32 +195,6 @@ type
   strict private
     fItems: TList<TWarning>;    // List of warning records
     fSwitchOff: Boolean;        // Value of SwitchOff property
-    type
-      // Enumerator for TWarnings
-      TEnumerator = class(TInterfacedObject, IWarningsEnum)
-      strict private
-        fEnum: TEnumerator<TWarning>; // Reference to TList<TWarning> enumerator
-      public
-        constructor Create(Warnings: TWarnings);
-          {Constructor. Create new enumerator for this warnings object.
-            @param Warnings [in] Reference to object to be enumerated.
-          }
-        destructor Destroy; override;
-          {Destructor. Frees owned list enumerator object.
-          }
-        function GetCurrent: TWarning;
-          {Gets current warning in enumeration.
-            @return Required warning record.
-          }
-        property Current: TWarning read GetCurrent;
-          {Current warning in enumeration}
-        function MoveNext: Boolean;
-          {Moves to next warning in enumeration. Does nothing if at end of
-          enumeration.
-            @return True if successfully moved to next warning or False if at
-              end of enumeration.
-          }
-      end;
     procedure Delete(const AWarning: TWarning); overload;
       {Removes a warning from the list based on its symbol.
         @param AWarning [in] Warning to be removed.
@@ -302,7 +256,7 @@ type
     property SwitchOff: Boolean read GetSwitchOff write SetSwitchOff;
       {Property that indicates whether code should be emitted to switch off
       listed warnings}
-    function GetEnumerator: IWarningsEnum;
+    function GetEnumerator: TEnumerator<TWarning>;
       {Creates an enumerator for all the warnings in the warnings list.
         @return Instance of enumerator.
       }
@@ -476,12 +430,12 @@ begin
   inherited;
 end;
 
-function TWarnings.GetEnumerator: IWarningsEnum;
+function TWarnings.GetEnumerator: TEnumerator<TWarning>;
   {Creates an enumerator for all the warnings in the warnings list.
     @return Instance of enumerator.
   }
 begin
-  Result := TEnumerator.Create(Self);
+  Result := fItems.GetEnumerator;
 end;
 
 function TWarnings.GetItem(const Idx: Integer): TWarning;
@@ -592,43 +546,6 @@ procedure TWarnings.SetSwitchOff(const Value: Boolean);
   }
 begin
   fSwitchOff := Value;
-end;
-
-{ TWarnings.TEnumerator }
-
-constructor TWarnings.TEnumerator.Create(Warnings: TWarnings);
-  {Constructor. Create new enumerator for this warnings object.
-    @param Warnings [in] Reference to object to be enumerated.
-  }
-begin
-  inherited Create;
-  // we just use enuerator for owned list of warnings records
-  fEnum := Warnings.fItems.GetEnumerator;
-end;
-
-destructor TWarnings.TEnumerator.Destroy;
-  {Destructor. Frees owned list enumerator object.
-  }
-begin
-  fEnum.Free;
-  inherited;
-end;
-
-function TWarnings.TEnumerator.GetCurrent: TWarning;
-  {Gets current warning in enumeration.
-    @return Required warning record.
-  }
-begin
-  Result := fEnum.Current;
-end;
-
-function TWarnings.TEnumerator.MoveNext: Boolean;
-  {Moves to next warning in enumeration. Does nothing if at end of enumeration.
-    @return True if successfully moved to next warning or False if at end of
-      enumeration.
-  }
-begin
-  Result := fEnum.MoveNext;
 end;
 
 { TWarningsPersist }

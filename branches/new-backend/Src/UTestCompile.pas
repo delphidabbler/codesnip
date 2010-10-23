@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -180,9 +180,8 @@ constructor TTestCompile.InternalCreate(const ACompilers: ICompilers;
     @param ARoutine [in] Routine to be test compiled.
   }
 begin
-  Assert(Assigned(ARoutine),                               // ** do not localise
-    ClassName + '.InternalCreate: ARoutine is nil');
-  Assert(Assigned(ACompilers),                             // ** do not localise
+  Assert(Assigned(ARoutine), ClassName + '.InternalCreate: ARoutine is nil');
+  Assert(Assigned(ACompilers),
     ClassName + '.InternalCreate: ACompilers is nil');
   inherited InternalCreate;
   fRoutine := ARoutine;

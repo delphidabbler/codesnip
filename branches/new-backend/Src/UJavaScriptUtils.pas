@@ -207,7 +207,7 @@ begin
         vtWideChar:
           Param := LiteralParam(ParamVar.VWideChar);
         else
-          raise EBug.Create('JSLiteralFunc(): Unsupported parameter type');
+          raise EBug.Create('JSLiteralFunc: Unsupported parameter type');
       end;
       // Store param in list
       ParamList.Add(Param);

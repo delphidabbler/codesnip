@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -115,8 +115,7 @@ constructor TWBController.Create(const WebBrowser: TWebBrowser);
     @param WebBrowser Contained browser control.
   }
 begin
-  Assert(Assigned(WebBrowser),                             // ** do not localise
-    ClassName + '.Create: WebBrowser is nil');
+  Assert(Assigned(WebBrowser), ClassName + '.Create: WebBrowser is nil');
   inherited Create;
   fWebBrowser := WebBrowser;
   fIOMgr := TWBIOMgr.Create(WebBrowser);
@@ -151,7 +150,8 @@ begin
     fWebBrowser.DefaultInterface, IOleObject, OleObj
   ) then
     raise EBug.Create(
-      'Browser''s Default interface does not support IOleObject'
+      ClassName + '.SetBrowserOleClientSite: '
+      + 'Browser''s Default interface does not support IOleObject'
     );
   // Register's given client site as web browser's OLE container
   OleObj.SetClientSite(Site);

@@ -312,7 +312,7 @@ begin
     OpenDlg.Options := [ofHideReadOnly, ofEnableSizing];
     OpenDlg.OptionsEx := [];
     OpenDlg.Title := sTitle;
-    OpenDlg.HelpKeyword := 'ImportFileDlg';                // ** do not localise
+    OpenDlg.HelpKeyword := 'ImportFileDlg';
     if OpenDlg.Execute then
       // User OKd: return entered file name
       Result := OpenDlg.FileName
@@ -365,8 +365,7 @@ class procedure TCodeImportMgr.ReadImportFile(const FileName: string;
 var
   InStream: TStream;  // stream onto import file
 begin
-  Assert(FileName <> '',
-    ClassName + '.ReadImportFile: No file name provided');
+  Assert(FileName <> '', ClassName + '.ReadImportFile: No file name provided');
   try
     InStream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
     try
@@ -441,7 +440,7 @@ var
   Idx: Integer;         // loops through list of snippets
   RoutineList: string;  // display list of snippet names
 begin
-  Assert(Length(Routines) > 0,                             // ** do not localise
+  Assert(Length(Routines) > 0,
     ClassName + '.ReportImportedRoutines: No snippets to report.');
   if Length(Routines) = 1 then
     // Only one snippet: just report the name
@@ -496,7 +495,7 @@ class procedure TCodeImportMgr.UpdateUserDatabase(const UserInfo: TUserInfo;
     sContributorText = 'Contributed by: %0:s <%1:s>';
   begin
     Assert(not UserInfo.IsNul, ClassName +
-      '.UpdateUserDatabase:CreateUserInfoActiveText: UserInfo is nul');
+      '.UpdateUserDatabase:UserInfoActiveText: UserInfo is nul');
     Result := TActiveTextFactory.CreateActiveText;
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
     Result.AddElem(

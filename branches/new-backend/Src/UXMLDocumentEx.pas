@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -326,8 +326,8 @@ var
   Node: IXMLNode;         // a node from NodeList
   Idx: Integer;           // loops thru nodes of NodeList.
 begin
-  Assert(Assigned(ParentNode),                             // ** do not localise
-    'TXMLDocumentEx.FindChildNodes: ParentNode is nil');
+  Assert(Assigned(ParentNode),
+    ClassName + '.FindChildNodes: ParentNode is nil');
   Result := TXMLSimpleNodeList.Create;
   NodeList := ParentNode.ChildNodes;
   for Idx := 0 to Pred(NodeList.Count) do
@@ -377,7 +377,7 @@ var
   Node: IXMLNode;         // a node from NodeList
   Idx: Integer;           // loops thru nodes of NodeList.
 begin
-  Assert(Assigned(ParentNode));
+  Assert(Assigned(ParentNode), ClassName + 'FindChildNodes: ParentNode is nil');
   Result := TXMLSimpleNodeList.Create;
   NodeList := ParentNode.ChildNodes;
   for Idx := 0 to Pred(NodeList.Count) do

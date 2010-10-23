@@ -419,14 +419,10 @@ procedure TAbstractHTMLEventSink.DoInvoke(var InvokeInfo: TInvokeInfo);
 begin
   // We only accept method calls, not properties
   if InvokeInfo.Flags and DISPATCH_METHOD = 0 then
-    raise EBug.Create(
-      'TAbstractHTMLEventSink does not support properties'
-    );
+    raise EBug.Create(ClassName + ' does not support properties');
   // We don't handle named parameters
   if InvokeInfo.Params.cNamedArgs > 0 then
-    raise EBug.Create(
-      'TAbstractHTMLEventSink does not support named methods'
-    );
+    raise EBug.Create(ClassName + ' does not support named methods');
   DispatchEvent(InvokeInfo);
 end;
 

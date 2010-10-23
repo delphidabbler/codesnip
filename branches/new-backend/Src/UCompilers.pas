@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -385,7 +385,6 @@ var
   Storage: ISettingsSection;  // object used to access persistent storage
   ExePath: string;            // value of ExePath value in storage file
 begin
-  // ** do not localise string literals in this method
   // Loop thru each supported compiler
   for Compiler in Compilers do
   begin

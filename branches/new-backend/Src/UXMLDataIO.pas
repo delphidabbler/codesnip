@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -853,7 +853,7 @@ begin
       Exit;
     // Find required category node
     CatNode := FindCategoryNode(CatName);
-    Assert(Assigned(CatNode),                              // ** do not localise
+    Assert(Assigned(CatNode),
       ClassName + '.WriteCatRoutines: Can''t find category node');
     // Write the list
     WriteNameList(CatNode, cCatRoutinesNode, cPascalNameNode, Routines);
@@ -896,7 +896,7 @@ begin
       Exit;
     // Find <routine name='RoutineName'> tag
     RoutineNode := FindRoutineNode(RoutineName);
-    Assert(Assigned(RoutineNode),                          // ** do not localise
+    Assert(Assigned(RoutineNode),
       ClassName + '.WriteReferenceList: Can''t find routine node');
     // Write the list
     TXMLDocHelper.WritePascalNameList(

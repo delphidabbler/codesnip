@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -81,7 +81,8 @@ var
   GUID: TGUID;    // generated GUID
   Idx: Integer;   // loops through parts of GUID as an array
 begin
-  Assert(SizeOf(TGUID) = SizeOf(TGUIDFragments));
+  Assert(SizeOf(TGUID) = SizeOf(TGUIDFragments),
+    ClassName + '.Generate: Size of TGUID <> size of TGUIDFragments');
   // get a GUID
   CreateGUID(GUID);
   Result := '';
