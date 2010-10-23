@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -128,15 +128,16 @@ function TBDSCompiler.GetIDString: string;
   {Provides a non-localisable string that identifies the compiler.
     @return Compiler id string.
   }
-var
-  FmtStr: string; // format for ID string
 begin
   case GetID of        
-    ciD2005w32, ciD2006w32, ciD2009w32: FmtStr := 'D%dw32';
-    ciD2007, ciD2010: FmtStr := 'D%d';
+    ciD2005w32, ciD2006w32, ciD2009w32:
+      Result := Format('D%dw32', [ProductVersion]);
+    ciD2007, ciD2010:
+      Result := Format('D%d', [ProductVersion]);
+    ciDXE:
+      Result := 'DXE';
     else raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
   end;
-  Result := Format(FmtStr, [ProductVersion]);
 end;
 
 function TBDSCompiler.GetName: string;
@@ -145,8 +146,12 @@ function TBDSCompiler.GetName: string;
   }
 resourcestring
   sCompilerName = 'Delphi %d';  // template for name of compiler
+  sDelphiXE = 'Delphi XE';      // name of Delphi XE compiler
 begin
-  Result := Format(sCompilerName, [ProductVersion]);
+  if GetID = ciDXE then
+    Result := sDelphiXE
+  else
+    Result := Format(sCompilerName, [ProductVersion]);
 end;
 
 function TBDSCompiler.GlyphResourceName: string;
@@ -156,7 +161,7 @@ function TBDSCompiler.GlyphResourceName: string;
 begin
   case GetID of
     ciD2005w32, ciD2006w32, ciD2007, ciD2009w32: Result := 'BDS';
-    ciD2010: Result := 'Delphi2010';
+    ciD2010, ciDXE: Result := 'EMBARCADERO';
     else raise EBug.Create(ClassName + '.GlyphResourceName: Invalid ID');
   end;
 end;
@@ -173,6 +178,7 @@ begin
     ciD2007   : Result := '\SOFTWARE\Borland\BDS\5.0';
     ciD2009w32: Result := '\SOFTWARE\CodeGear\BDS\6.0';
     ciD2010   : Result := '\SOFTWARE\CodeGear\BDS\7.0';
+    ciDXE     : Result := '\Software\Embarcadero\BDS\8.0';
     else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;
@@ -188,6 +194,7 @@ begin
     ciD2007:    Result := 2007;
     ciD2009w32: Result := 2009;
     ciD2010:    Result := 2010;
+    ciDXE:      Result := 2011;
     else raise EBug.Create(ClassName + '.ProductVersion: Invalid ID');
   end;
 end;

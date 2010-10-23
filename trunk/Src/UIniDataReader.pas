@@ -234,7 +234,9 @@ type
 *         or                                                                   *
 *       DelphiXXXXWin32 (where XXXX is 2005, 2006 or 2009)                     *
 *         or                                                                   *
-*       Delphi2007                                                             *
+*       DelphiXXXX (where XXXX is 2007 or 2010)                                *
+*         or                                                                   *
+*       DelphiXE                                                               *
 *         or                                                                   *
 *       FPC (Free Pascal) - one entry for each supported compiler that         *
 *       indicates compatibility of the snippet with given compiler. Values are *
@@ -293,7 +295,7 @@ const
     array[TCompilerID] of string = (
     'Delphi2', 'Delphi3', 'Delphi4', 'Delphi5', 'Delphi6', 'Delphi7',
     'Delphi2005Win32', 'Delphi2006Win32', 'Delphi2007', 'Delphi2009Win32',
-    'Delphi2010',
+    'Delphi2010', 'DelphiXE',
     'FPC'
   );
 
