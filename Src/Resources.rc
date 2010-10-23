@@ -27,7 +27,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -46,7 +46,7 @@ DELPHI5 BITMAP "Res/Img/Delphi5.bmp"
 DELPHI6 BITMAP "Res/Img/Delphi6.bmp"
 DELPHI7 BITMAP "Res/Img/Delphi7.bmp"
 BDS BITMAP "Res/Img/BDS.bmp"
-DELPHI2010 BITMAP "Res/Img/Delphi2010.bmp"
+EMBARCADERO BITMAP "Res/Img/Embarcadero.bmp"
 
 
 /*
