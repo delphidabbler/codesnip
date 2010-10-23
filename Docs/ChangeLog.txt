@@ -4,6 +4,10 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.8.0 of 23 October 2010
++ Added support for Delphi XE to program. Can now test compile and display results with Delphi XE.
++ Updated help file re Delphi XE support.
+
 Release v3.7.0 of 23 September 2010
 + Added new "Help | CodeSnip News" menu option that displays latest news about CodeSnip and the online database in a dialog box. The news comes from the CodeSnip RSS news feed.
 + Removed news pane from "Update from Web" dialog box and replaced with button that displays new "CodeSnip News" dialog box.
