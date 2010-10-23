@@ -1,21 +1,14 @@
-{TODO -oSelf -cImprovement : Redo enumerator in TWarings (UWarnings.pas) - can probably simplify greatly.}
-{TODO -oSelf -cImprovement : Replace custom enumerator in TAlphabet (UAlphabet) with standard one}
+{DONE -oSelf -cRefactor : Replace literal class names in EBug and Assert statements with ClassName method calls.}
+{DONE -oSelf -cImprovement : Redo enumerator in TWarings (UWarnings.pas) - can probably simplify greatly.}
+
 
 
 {TODO -oSelf -cImprovement : Rationalise error handling in UTaggedTextLexer - use exception rather than LastError properties. Also check how they bubble up the chain to snippets editor.}
 
 
-{TODO -oSelf -cBug :
-Fix bug #2868707
-Selecting snippets using the Search | Select Snippets menu item and then
-editing a selected snippet can cause the snippet to disappear from the
-selection when the snippets editor is closed. 
------------------------------
-Snippet selection query uses object reference, but editing snippet
-recreates the object, changing references. This is a deep problem and won't
-be fixed until planned reworking of query / database code.}
 
-{TODO -oSelf -cRefactor : Extract common code in UDropDownButtons and UTVCheckBoxes into common base class.}
+
+{DONE -oSelf -cRefactor : Extract common code in UDropDownButtons and UTVCheckBoxes into common base class.}
 
 {TODO -oSelf -cProposal : Consider what gesture support to add (needs Delphi 2010).}
 
