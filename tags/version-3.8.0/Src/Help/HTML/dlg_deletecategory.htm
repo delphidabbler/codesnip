@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg_deletecategory.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+<html>
+  <head>
+    <meta
+     http-equiv="Content-Type"
+     content="text-html; charset=Windows-1252">
+    <title>
+      Delete Category Dialog Box
+    </title>
+    <link
+     rel="stylesheet"
+     href="../css/codesnip.css"
+     type="text/css">
+  </head>
+  <body>
+    <object
+     type="application/x-oleobject"
+     classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+      <param
+       name="ALink Name"
+       value="DeleteCategoryDlg">
+    </object>
+    <h1>
+      <a
+       name="dlg_deletecategory"></a>Delete Category Dialog Box
+    </h1>
+    <p>
+      This dialog is used to delete a user-defined category from the database.
+      It is accessed from the <em>Database | Delete Category</em> menu option.
+    </p>
+    <p>
+      <span class="warning">Warning:</span> Deleting a category that contains
+      snippets also deletes all those snippets from the database. The dialog box
+      will warn you if this is about to happen.
+    </p>
+    <p>
+      Select the category to be deleted from the list box. then click
+      <em>Delete</em> to delete it. If the category contains any snippets a
+      dialog box will be displayed that asks you to confirm you wish to delete
+      the category and all its snippets. Click <em>Yes</em> to confirm.
+    </p>
+    <p>
+      The <em>Delete</em> button will be disabled if you haven't selected a
+      category from the list box.
+    </p>
+    <p>
+      You may have noticed that some user defined categories do not appear in
+      the list of categories to be deleted. This is because some categories are
+      required by <em>CodeSnip</em> and cannot be deleted, although they can be
+      renamed.
+    </p>
+  </body>
+</html>
+
