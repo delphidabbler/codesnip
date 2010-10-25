@@ -5,8 +5,10 @@
  * records instances of each type of singleton.
  *
  * Based on by code by Yoav Abrahami see <URL:http://bit.ly/cAH0HO>, updated to
- * take advantage of modern Delphi features: generics, class vars,
- * class destructor etc.
+ * take advantage of modern Delphi features: generics, class vars, class
+ * constructor and destructor etc. Further updated to use class types instead of
+ * class names as dictionary keys following suggestions made in comments on my
+ * blog post at <URL:http://bit.ly/d8n9Hq>.
  *
  * $Rev$
  * $Date$
@@ -113,7 +115,7 @@ type
   strict private
     class var fDestroying: Boolean;
       {Flag that indicates if manager is destroying singletons}
-    class var fMap: TDictionary<string,TSingleton>;
+    class var fMap: TDictionary<TClass,TSingleton>;
       {Map of class names to singleton instances}
   {$IFNDEF TESTING}strict{$ENDIF}
   protected
@@ -134,12 +136,12 @@ type
       {Registers a new singleton object providing it is not already registered.
         @param S [in] Singleton to register.
       }
-    class function SingletonExists(const ClsName: string): Boolean;
+    class function SingletonExists(const Cls: TClass): Boolean;
       {Checks if a singleton of a certain class already exists.
         @param Name of singleton class.
         @return True if an instance of this class already exists, False if not.
       }
-    class function Lookup(const ClsName: string): TSingleton;
+    class function Lookup(const Cls: TClass): TSingleton;
       {Looks up a singleton class name in the map.
         @param ClsName [in] Name of requested singleton class.
         @return Required singleton instance.
@@ -197,7 +199,7 @@ class function TSingleton.NewInstance: TObject;
 var
   S: TSingleton;  // reference to a new singleton
 begin
-  if not TSingletonManager.SingletonExists(Self.ClassName) then
+  if not TSingletonManager.SingletonExists(Self) then
   begin
     S := TSingleton(inherited NewInstance);
     try
@@ -208,7 +210,7 @@ begin
       raise;
     end;
   end;
-  Result := TSingletonManager.Lookup(Self.ClassName);
+  Result := TSingletonManager.Lookup(Self);
 end;
 
 { TSingletonManager }
@@ -225,7 +227,7 @@ class procedure TSingletonManager.CreateMap;
   }
 begin
   if not Assigned(fMap) then
-    fMap := TDictionary<string,TSingleton>.Create;
+    fMap := TDictionary<TClass,TSingleton>.Create;
 end;
 
 class destructor TSingletonManager.Destroy;
@@ -252,7 +254,7 @@ begin
   // testing
 end;
 
-class function TSingletonManager.Lookup(const ClsName: string): TSingleton;
+class function TSingletonManager.Lookup(const Cls: TClass): TSingleton;
   {Looks up a singleton class name in the map.
     @param ClsName [in] Name of requested singleton class.
     @return Required singleton instance.
@@ -260,7 +262,7 @@ class function TSingletonManager.Lookup(const ClsName: string): TSingleton;
       requested class name.
   }
 begin
-  Result := fMap[ClsName];
+  Result := fMap[Cls];
 end;
 
 class procedure TSingletonManager.RegisterSingleton(const S: TSingleton);
@@ -268,18 +270,18 @@ class procedure TSingletonManager.RegisterSingleton(const S: TSingleton);
     @param S [in] Singleton to register.
   }
 begin
-  if not SingletonExists(S.ClassName) then
-    fMap.Add(S.ClassName, S);
+  if not SingletonExists(S.ClassType) then
+    fMap.Add(S.ClassType, S);
 end;
 
 class function TSingletonManager.SingletonExists(
-  const ClsName: string): Boolean;
+  const Cls: TClass): Boolean;
   {Checks if a singleton of a certain class already exists.
     @param Name of singleton class.
     @return True if an instance of this class already exists, False if not.
   }
 begin
-  Result := fMap.ContainsKey(ClsName);
+  Result := fMap.ContainsKey(Cls);
 end;
 
 end.
