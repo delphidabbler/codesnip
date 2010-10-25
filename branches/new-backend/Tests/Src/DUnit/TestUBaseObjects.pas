@@ -130,6 +130,31 @@ type
     procedure TestFree;
   end;
 
+  // Test methods for class TControlledConditionalFreeObject
+  TestTControlledConditionalFreeObject = class(TTestCase)
+  public
+    type
+      TController = class(TNonRefCountedObject, IConditionalFreeController)
+      private
+        fObjectToFree: TObject;
+      public
+        constructor Create(AObjectToFree: TObject = nil);
+        function PermitDestruction(const Obj: TObject): Boolean;
+        property ObjectToFree: TObject read fObjectToFree write fObjectToFree;
+      end;
+      TTestObject = class(TControlledConditionalFreeObject)
+      strict protected
+        procedure Finalize; override;
+      public
+        constructor Create(AController: IConditionalFreeController = nil);
+        class var InstanceCount: Integer;
+        class function Details: string;
+      end;
+  published
+    procedure TestFreeObject;
+    procedure TestControllerChange;
+  end;
+
 implementation
 
 uses
@@ -418,6 +443,150 @@ begin
   Dec(InstanceCount);
 end;
 
+{ TControlledConditionalFreeObject }
+
+procedure TestTControlledConditionalFreeObject.TestControllerChange;
+var
+  Controller1, Controller2: IConditionalFreeController;
+  Obj: TTestObject;
+begin
+  Obj := TTestObject.Create(nil);   // create Obj with no controller
+  Check(Obj.FreeController = nil, 'Obj.FreeController <> nil');
+
+  Controller1 := nil;
+  Controller2 := nil;
+  try
+    Controller1 := TController.Create;
+    Controller2 := TController.Create(Obj);
+
+    // In this test Obj should not be freed since it has no controller
+    Check(TTestObject.InstanceCount = 1,
+      Format('1: Expected Instance Count of 1, got %d',
+        [TTestObject.InstanceCount]));
+    Obj.Free;
+    Check(TTestObject.InstanceCount = 1,
+      Format('2: Expected Instance Count of 1, got %d',
+        [TTestObject.InstanceCount]));
+
+    // In this test Obj should not be freed since Controller1.ObjectToFree = nil
+    Obj.FreeController := Controller1;
+    Check(Obj.FreeController = Controller1,
+      'Obj.FreeController <> Controller1');
+    Check(TTestObject.InstanceCount = 1,
+      Format('3: Expected Instance Count of 1, got %d',
+        [TTestObject.InstanceCount]));
+    Obj.Free;
+    Check(TTestObject.InstanceCount = 1,
+      Format('4: Expected Instance Count of 1, got %d',
+        [TTestObject.InstanceCount]));
+
+    // In this test Obj should be freed since Controller2.ObjectToFree = nil
+    Obj.FreeController := Controller2;
+    Check(Obj.FreeController = Controller2,
+      'Obj.FreeController <> Controller2');
+    Check(TTestObject.InstanceCount = 1,
+      Format('5: Expected Instance Count of 1, got %d',
+        [TTestObject.InstanceCount]));
+    Obj.Free;
+    Check(TTestObject.InstanceCount = 0,
+      Format('6: Expected Instance Count of 0, got %d',
+        [TTestObject.InstanceCount]));
+
+  finally
+    if Assigned(Controller1) then (Controller1 as TController).Free;
+    if Assigned(Controller2) then (Controller2 as TController).Free;
+  end;
+
+end;
+
+procedure TestTControlledConditionalFreeObject.TestFreeObject;
+var
+  ControllerObj: TController;
+  Controller: IConditionalFreeController;
+  Obj: TTestObject;
+  AnotherObj: TObject;
+begin
+  AnotherObj := nil;
+  ControllerObj := TController.Create;
+  try
+    Controller := ControllerObj as IConditionalFreeController;
+    Check(ControllerObj.ObjectToFree = nil,
+      'ControllerObj.ObjectToFree <> nil');
+
+    Obj := TTestObject.Create(Controller);
+    AnotherObj := TObject.Create;
+
+    // In this test ControllerObj.ObjectToFree = nil, so Obj should not be freed
+    Check(TTestObject.InstanceCount = 1,
+      Format('1: Expected Instance Count of 1, got %d',
+        [TTestObject.InstanceCount]));
+    Obj.Free;
+    Check(TTestObject.InstanceCount = 1,
+      Format('2: Expected Instance Count of 1, got %d',
+        [TTestObject.InstanceCount]));
+
+    // In this test ControllerObj.ObjectToFree = AnotherObj, which is not the
+    // same as Obj, so Obj should not be freed
+    ControllerObj.ObjectToFree := AnotherObj;
+    Check(TTestObject.InstanceCount = 1,
+      Format('3: Expected Instance Count of 1, got %d',
+        [TTestObject.InstanceCount]));
+    Obj.Free;
+    Check(TTestObject.InstanceCount = 1,
+      Format('4: Expected Instance Count of 1, got %d',
+        [TTestObject.InstanceCount]));
+
+    // In this check Obj should be freed since ControllerObj.ObjectToFree = Obj
+    ControllerObj.ObjectToFree := Obj;
+    Check(TTestObject.InstanceCount = 1,
+      Format('5: Expected Instance Count of 1, got %d',
+        [TTestObject.InstanceCount]));
+    Obj.Free;
+    Check(TTestObject.InstanceCount = 0,
+      Format('6: Expected Instance Count of 0, got %d',
+        [TTestObject.InstanceCount]));
+
+  finally
+    AnotherObj.Free;
+    ControllerObj.Free;
+  end;
+end;
+
+{ TestTControlledConditionalFreeObject.TController }
+
+constructor TestTControlledConditionalFreeObject.TController.Create(
+  AObjectToFree: TObject);
+begin
+  inherited Create;
+  fObjectToFree := AObjectToFree;
+end;
+
+function TestTControlledConditionalFreeObject.TController.PermitDestruction(
+  const Obj: TObject): Boolean;
+begin
+  Result := Obj = fObjectToFree;
+end;
+
+{ TestTControlledConditionalFreeObject.TTestObject }
+
+constructor TestTControlledConditionalFreeObject.TTestObject.Create(
+  AController: IConditionalFreeController);
+begin
+  inherited Create(AController);
+  Inc(InstanceCount);
+end;
+
+class function TestTControlledConditionalFreeObject.TTestObject.Details: string;
+begin
+  Result := Format('%s: instances = %d', [ClassName, InstanceCount]);
+end;
+
+procedure TestTControlledConditionalFreeObject.TTestObject.Finalize;
+begin
+  inherited;
+  Dec(InstanceCount);
+end;
+
 initialization
   // Register any test cases with the test runner
   RegisterTest(TestTNoConstructObject.Suite);
@@ -427,5 +596,6 @@ initialization
   RegisterTest(TestTAggregatedOrLoneObject.Suite);
   RegisterTest(TestTOwnedConditionalFreeObject.Suite);
   RegisterTest(TestTDelegatedConditionalFreeObject.Suite);
+  RegisterTest(TestTControlledConditionalFreeObject.Suite);
 end.
 

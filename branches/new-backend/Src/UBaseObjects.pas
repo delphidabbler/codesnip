@@ -32,10 +32,18 @@
  *      Concrete descendant of TConditionalFreeObject that delegates the
  *      decision about whether the object can be freed to a callback method
  *      passed to the constructor.
+ *   9) TControlledConditionalFreeObject:
+ *      Concrete descendant of TConditionalFreeObject that defers decision about
+ *      whether the object can be freed to an associated controller object.
  *
- * Also provides an interface - INoPublicConstruct - that can be supported by
- * objects that don't allow public construction but cannot inherit from
- * TNoPublicConstructObject, for example forms.
+ * Interfaces:
+ *   1) INoPublicConstruct:
+ *      A "do nothing" interface that can be supported by objects that don't
+ *      allow public construction but cannot inherit from
+ *      TNoPublicConstructObject, for example forms.
+ *   2) IConditionalFreeController:
+ *      Interface supported by objects that control whether an object can be
+ *      freed. Used with TControlledConditionalFreeObject.
  *
  * Unit originally named UIntfObjects.pas. Changed to UBaseObjects.pas at v2.0,
  * 5th October 2008.
@@ -317,6 +325,49 @@ type
       }
   end;
 
+  {
+  IConditionalFreeController:
+    Interface supported by objects that control whether an object can be freed
+    (destroyed). Used with TControlledConditionalFreeObject.
+  }
+  IConditionalFreeController = interface(IInterface)
+    ['{8B929FBE-F305-432F-A7CD-FE69ED8A685B}']
+    function PermitDestruction(const Obj: TObject): Boolean;
+      {Checks if an object can be destroyed.
+        @param Obj [in] Object to be checked.
+        @return True if object canbe destroyed, False if not.
+      }
+  end;
+
+  {
+  TControlledConditionalFreeObject:
+    Class that can only be freed if an associated controller class permits it.
+    If no controller object is associated then objects of this class can not be
+    freed.
+  }
+  TControlledConditionalFreeObject = class(TConditionalFreeObject)
+  strict private
+    fFreeController: IConditionalFreeController;  // controller object
+  strict protected
+    function CanDestroy: Boolean; override;
+      {Determines if the object can be destroyed. Calls method of any assigned
+      controller object to get decision.
+        @return True if object can be destroyed.
+      }
+  public
+    constructor Create(AFreeController: IConditionalFreeController = nil);
+      {Object constructor.
+        @param AFreeController [in] Reference to an object that controls whether
+          this object can be destroyed. This value can be changed via the
+          FreeController property.
+      }
+    property FreeController: IConditionalFreeController
+      read fFreeController write fFreeController;
+      {Reference to object that controls whether this object can be freed. This
+      property enables the controller to be changed over the lifetime of
+      instances of this class}
+  end;
+
 
 implementation
 
@@ -555,6 +606,31 @@ constructor TDelegatedConditionalFreeObject.Create(
 begin
   inherited Create;
   fCanDestroy := CanFreeFn;
+end;
+
+{ TControlledConditionalFreeObject }
+
+function TControlledConditionalFreeObject.CanDestroy: Boolean;
+  {Determines if the object can be destroyed. Calls method of any assigned
+  controller object to get decision.
+    @return True if object can be destroyed.
+  }
+begin
+  if not Assigned(fFreeController) then
+    Exit(False);
+  Result := fFreeController.PermitDestruction(Self);
+end;
+
+constructor TControlledConditionalFreeObject.Create(
+  AFreeController: IConditionalFreeController);
+  {Object constructor.
+    @param AFreeController [in] Reference to an object that controls whether
+      this object can be destroyed. This value can be changed via the
+      FreeController property.
+  }
+begin
+  inherited Create;
+  fFreeController := AFreeController;
 end;
 
 end.
