@@ -114,10 +114,12 @@ type
       Subclasses that need this functionality should override this method.
       }
     constructor InternalCreate(AOwner: TComponent); virtual;
-      {Protected constructor. Does nothing but call inherited constructor.
-      Must be called by class methods of derived classes instead of inherited
-      Create if and only if the form supports the INoPublicConstruct interface.
+      {Protected constructor. Does nothing but call inherited constructor. Must
+      be called by class methods of derived classes instead of inherited Create
+      if and only if the form supports the INoPublicConstruct interface.
         @param AOwner [in] Component that owns form. May be nil.
+        @except ENoConstructException raised if constructor is called and form
+          does not support INoPublicConstruct.
       }
   public
     constructor Create(AOwner: TComponent); override;
@@ -126,6 +128,8 @@ type
       Must not be called, directly or indirectly if the descendant form supports
       the INoPublicConstruct interface.
         @param AOwner [in] Component that owns form. May be nil.
+        @except ENoConstructException raised if constructor is called and form
+          supports INoPublicConstruct.
       }
   end;
 
@@ -182,10 +186,14 @@ constructor TBaseForm.Create(AOwner: TComponent);
   not be called, directly or indirectly if the descendant form supports the
   INoPublicConstruct interface.
     @param AOwner [in] Component that owns form. May be nil.
+    @except ENoConstructException raised if constructor is called and form
+      supports INoPublicConstruct.
   }
 begin
-  Assert(not Supports(Self, INoPublicConstruct),
-    ClassName + '.Create: Form''s public constructor can''t be called');
+  if Supports(Self, INoPublicConstruct) then
+    raise ENoConstructException.Create(
+      ClassName + '.Create: Form''s public constructor can''t be called'
+    );
   inherited;
 end;
 
@@ -278,10 +286,15 @@ constructor TBaseForm.InternalCreate(AOwner: TComponent);
   called by class methods of derived classes instead of inherited Create if and
   only if the form supports the INoPublicConstruct interface.
     @param AOwner [in] Component that owns form. May be nil.
+    @except ENoConstructException raised if constructor is called and form does
+      not support INoPublicConstruct.
   }
 begin
-  Assert(Supports(Self, INoPublicConstruct), ClassName + '.InternalCreate: '
-    + 'Form''s protected constructor can''t be called');
+  if not Supports(Self, INoPublicConstruct) then
+    raise ENoConstructException.Create(
+      ClassName
+      + '.InternalCreate: Form''s protected constructor can''t be called'
+    );
   inherited Create(AOwner);
 end;
 

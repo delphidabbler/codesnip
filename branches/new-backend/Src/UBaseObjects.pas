@@ -99,8 +99,8 @@ type
   TNoConstructObject = class(TObject)
   public
     constructor Create;
-      {Class constructor. Causes an assertion failure if called. The object is
-      never constructed.
+      {Object constructor. Fails if called. The object is never constructed.
+        @except ENoConstructException raised if constructor is called.
       }
   end;
 
@@ -113,14 +113,14 @@ type
   TNoPublicConstructObject = class(TObject)
   strict protected
     constructor InternalCreate;
-      {Protected class constructor. Does nothing but call inherited constructor.
-      Should be called by class methods of derived classes instead of inherited
-      Create.
+      {Protected object constructor. Does nothing but call inherited
+      constructor. Should be called by class methods of derived classes instead
+      of inherited Create.
       }
   public
     constructor Create;
-      {Class constructor. Causes an assertion failure if called. The object is
-      never constructed.
+      {Object constructor. Fails if called. The object is never constructed.
+        @except ENoConstructException raised if constructor is called.
       }
   end;
 
@@ -140,8 +140,8 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Causes an assertion failure if called. The object is
-      never constructed.
+      {Object constructor. Fails if called. The object is never constructed.
+        @except ENoConstructException raised if constructor is called.
       }
   end;
 
@@ -375,21 +375,25 @@ implementation
 { TNoConstructObject }
 
 constructor TNoConstructObject.Create;
-  {Class constructor. Causes an assertion failure if called. The object is never
-  constructed.
+  {Object constructor. Fails if called. The object is never constructed.
+    @except ENoConstructException raised if constructor is called.
   }
 begin
-  Assert(False, ClassName + '.Create: Constructor can''t be called');
+  raise ENoConstructException.Create(
+    ClassName + '.Create: Constructor can''t be called'
+  );
 end;
 
 { TNoPublicConstructObject }
 
 constructor TNoPublicConstructObject.Create;
-  {Class constructor. Causes an assertion failure if called. The object is
-  never constructed.
+  {Object constructor. Fails if called. The object is never constructed.
+    @except ENoConstructException raised if constructor is called.
   }
 begin
-  Assert(False, ClassName + '.Create: Public constructor can''t be called');
+  raise ENoConstructException.Create(
+    ClassName + '.Create: Public constructor can''t be called'
+  );
 end;
 
 constructor TNoPublicConstructObject.InternalCreate;
@@ -404,11 +408,13 @@ end;
 { TNoPublicConstructIntfObject }
 
 constructor TNoPublicConstructIntfObject.Create;
-  {Class constructor. Causes an assertion failure if called. The object is never
-  constructed.
+  {Object constructor. Fails if called. The object is never constructed.
+    @except ENoConstructException raised if constructor is called.
   }
 begin
-  Assert(False, ClassName + '.Create: Public constructor can''t be called');
+  raise ENoConstructException.Create(
+    ClassName + '.Create: Public constructor can''t be called'
+  );
 end;
 
 constructor TNoPublicConstructIntfObject.InternalCreate;
