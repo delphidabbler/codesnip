@@ -44,6 +44,8 @@ begin
   Check(Assigned(FCSDatabase), 'Instance did not create database in SetUp');
   Check(FCSDatabase = TCSDatabase.Instance,
     'Instance did not return same value for database after first call');
+  Check(Database = FCSDatabase,
+    '"Database" function did not return expected instance');
 end;
 
 initialization
