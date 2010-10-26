@@ -36,6 +36,7 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
     procedure ErrorAdd;
+    procedure ErrorAddNulCookie;
     procedure ErrorRemove;
     procedure ErrorItemsProp;
     function CheckOffFromList<T>(const List: TList<T>; const Item: T): Boolean;
@@ -86,6 +87,18 @@ end;
 procedure TestTDBDataPool.ErrorAdd;
 begin
   Pool.Add(O3); // O3 is already in pool
+end;
+
+procedure TestTDBDataPool.ErrorAddNulCookie;
+var
+  ONul: TTestObject;
+begin
+  ONul := TTestObject.Create(999, TDBCookie.CreateNul);
+  try
+    Pool.Add(ONul);   // can't add date item with nul cookie
+  finally
+    ONul.Free;
+  end;
 end;
 
 procedure TestTDBDataPool.ErrorItemsProp;
@@ -145,7 +158,10 @@ begin
   Check(TTestObject.InstanceCount = SavedInstCount,
     Format('Expected %d TTestObject instances, got %d',
       [SavedInstCount, TTestObject.InstanceCount]));
-  CheckException(ErrorAdd, EDBDataPoolError);
+  CheckException(ErrorAdd, EDBDataPoolError,
+    'Added duplicate object');
+  CheckException(ErrorAddNulCookie, EDBDataPoolError,
+    'Added object with nul cookie');
 end;
 
 procedure TestTDBDataPool.TestClear;

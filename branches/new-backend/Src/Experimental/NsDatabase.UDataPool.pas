@@ -114,6 +114,7 @@ type
 resourcestring  // must be declared in interface: used in parameterised type
   sObjectPoolCookieExists = 'Object with same cookie already exists';
   sObjectPoolCookieMissing = 'No object with given cookie found';
+  sObjectPoolCookieIsNul = 'Attempt to add data item with nul cookie to pool';
 
 
 implementation
@@ -130,6 +131,8 @@ procedure TDBDataPool<T>.Add(const Obj: T);
     @except Raises EDBDataPoolError if object's cookie is already in pool.
   }
 begin
+  if Obj.Cookie.IsNul then
+    raise EDBDataPoolError.Create(sObjectPoolCookieIsNul);
   if IsInPool(Obj.Cookie) then
     raise EDBDataPoolError.Create(sObjectPoolCookieExists);
   fMap.Add(Obj.Cookie, Obj);
@@ -212,3 +215,4 @@ begin
 end;
 
 end.
+
