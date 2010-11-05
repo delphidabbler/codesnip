@@ -166,7 +166,7 @@ var
   Hiliter: ISyntaxHiliter;  // highlighter object
 begin
   Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkDetailHTML);
-  Result := Hiliter.Hilite(SourceCode, THiliteAttrsFactory.CreateDefaultAttrs);
+  Result := Hiliter.Hilite(SourceCode, THiliteAttrsFactory.CreateDisplayAttrs);
 end;
 
 function TRoutineHTML.RoutineName: string;
