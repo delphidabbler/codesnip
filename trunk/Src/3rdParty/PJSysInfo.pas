@@ -38,6 +38,7 @@
  *   Guillermo Fazzolari (bug fix in v2.0.1)
  *   Laurent Pierre (PRODUCT_* constants and suggested GetProductInfo API code
  *     used in v3.0)
+ *   Rich Habedank (bug fix in revision 228)
  *
  * ***** END LICENSE BLOCK *****
 }
@@ -58,7 +59,7 @@ unit PJSysInfo;
 {$DEFINE REGISTRYEX}        // extra TRegistry methods available
 {$DEFINE WARNDIRS}          // $WARN compiler directives available
 {$DEFINE DEPRECATED}        // deprecated directive available
-{$DEFINE EXCLUDETRAILING}   // ExcludeTrailing... SysUtils functions valid
+{$DEFINE EXCLUDETRAILING}   // SysUtils.ExcludeTrailingPathDelimiter available
 {$DEFINE MESSAGEDIRS}       // $MESSAGE compiler directives available
 {$DEFINE HASLONGWORD}       // LongWord type defined
 
@@ -81,6 +82,7 @@ unit PJSysInfo;
 {$IFDEF VER130} // Delphi 5
   {$UNDEF WARNDIRS}
   {$UNDEF DEPRECATED}
+  {$UNDEF EXCLUDETRAILING}  // ** fix by Rich Habedank
   {$UNDEF MESSAGEDIRS}
 {$ENDIF}
 {$IFDEF VER140} // Delphi 6
@@ -259,10 +261,11 @@ const
   // if the associated edition is present.
   // Obtained from http://msdn.microsoft.com/en-us/library/ms724385
   //
-  SM_TABLETPC     = 86;   // Detects XP Tablet Edition
-  SM_MEDIACENTER  = 87;   // Detects XP Media Center Edition
-  SM_STARTER      = 88;   // Detects Vista Starter Edition
-  SM_SERVERR2     = 89;   // Detects Windows Server 2003 R2
+  SM_TABLETPC       = 86;     // Detects XP Tablet Edition
+  SM_MEDIACENTER    = 87;     // Detects XP Media Center Edition
+  SM_STARTER        = 88;     // Detects Vista Starter Edition
+  SM_SERVERR2       = 89;     // Detects Windows Server 2003 R2
+  SM_REMOTESESSION  = $1000;  // Detects a remote terminal server session
 
   //
   // These constants are required when examining the
@@ -442,6 +445,11 @@ type
     class function IsTabletPC: Boolean;
       {Checks if this is Tablet PC operating system.
         @return True if Tablet PC, False otherwise.
+      }
+    class function IsRemoteSession: Boolean;
+      {Checks if the program is running under a Windows Terminal Server as a
+      remote client session.
+        @return True if running on terminal server as a client session.
       }
     class function HasPenExtensions: Boolean;
       {Checks if system has Pen Extensions installed.
@@ -1709,6 +1717,15 @@ begin
   else
     // System not reporting NT4 SP6, so not SP6a!
     Result := False;
+end;
+
+class function TPJOSInfo.IsRemoteSession: Boolean;
+  {Checks if the program is running under a Windows Terminal Server as a remote
+  client session.
+    @return True if running on terminal server as a client session.
+  }
+begin
+  Result := GetSystemMetrics(SM_REMOTESESSION) <> 0;
 end;
 
 class function TPJOSInfo.IsServer: Boolean;
