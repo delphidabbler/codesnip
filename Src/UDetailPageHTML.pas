@@ -28,7 +28,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -66,7 +66,7 @@ type
       {Reference to object providing information about item to be viewed}
   public
     constructor Create(const View: TViewItem); virtual;
-      {Class constructor. Sets up object for a view item.
+      {Object constructor. Sets up object for a view item.
         @param View [in] Provides information about item to be displayed.
       }
     procedure Generate(const Stm: TStream); virtual; abstract;
@@ -155,7 +155,7 @@ type
       {Provides information to sub classes about compilers}
   public
     constructor Create(const View: TViewItem); override;
-      {Class constructor. Sets up object for a view item.
+      {Object constructor. Sets up object for a view item.
         @param View [in] Provides information about snippet to be displayed.
       }
   end;
@@ -237,11 +237,11 @@ type
       }
   public
     constructor Create(const View: TViewItem); override;
-      {Class constructor. Sets up object for a view item.
+      {Object constructor. Sets up object for a view item.
         @param View [in] Provides information about item to be displayed.
       }
     destructor Destroy; override;
-      {Class destructor. Tidies up object.
+      {Object destructor. Tidies up object.
       }
   end;
 
@@ -324,7 +324,7 @@ uses
 { TDetailPageHTML }
 
 constructor TDetailPageHTML.Create(const View: TViewItem);
-  {Class constructor. Sets up object for a view item.
+  {Object constructor. Sets up object for a view item.
     @param View [in] Provides information about item to be displayed.
   }
 begin
@@ -407,7 +407,7 @@ end;
 { TRoutinePageHTML }
 
 constructor TRoutinePageHTML.Create(const View: TViewItem);
-  {Class constructor. Sets up object for a view item.
+  {Object constructor. Sets up object for a view item.
     @param View [in] Provides information about snippet to be displayed.
   }
 begin
@@ -441,7 +441,7 @@ begin
     Tplt.ResolvePlaceholderHTML('RoutineCSSClass', 'maindb');
   RoutineHTML := TRoutineHTML.Create(GetRoutine);
   try
-    Tplt.ResolvePlaceholderHTML('RoutineName', RoutineHTML.RoutineName);
+    Tplt.ResolvePlaceholderHTML('RoutineName', RoutineHTML.SnippetName);
   finally
     FreeAndNil(RoutineHTML);
   end;
@@ -512,7 +512,7 @@ begin
   try
     Tplt.ResolvePlaceholderHTML('Kind', InfoHTML.SnippetKind);
     Tplt.ResolvePlaceholderHTML('Category', InfoHTML.Category);
-    Tplt.ResolvePlaceholderHTML('Description', InfoHTML.RoutineDesc);
+    Tplt.ResolvePlaceholderHTML('Description', InfoHTML.Description);
     Tplt.ResolvePlaceholderHTML('SourceCode', InfoHTML.SourceCode);
     Tplt.ResolvePlaceholderHTML('Units', InfoHTML.Units);
     Tplt.ResolvePlaceholderHTML('Depends', InfoHTML.Depends);
@@ -590,7 +590,7 @@ end;
 { TRoutineListPageHTML }
 
 constructor TRoutineListPageHTML.Create(const View: TViewItem);
-  {Class constructor. Sets up object for a view item.
+  {Object constructor. Sets up object for a view item.
     @param View [in] Provides information about item to be displayed.
   }
 begin
@@ -601,7 +601,7 @@ begin
 end;
 
 destructor TRoutineListPageHTML.Destroy;
-  {Class destructor. Tidies up object.
+  {Object destructor. Tidies up object.
   }
 begin
   FreeAndNil(fRoutines);
