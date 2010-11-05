@@ -110,6 +110,12 @@ type
         @param Ver [in] Version number to be converted.
         @return Converted version number.
       }
+    class operator Explicit(Ver: TVersionNumber): TPJVersionNumber;
+      {Operator overload that performs an explicit conversion of a
+      TVersionNumber to a TPJVersionNumber (from PJVersionInfo unit).
+        @param Ver [in] Version number to be converted.
+        @return Converted version number.
+      }
     class operator Implicit(Str: string): TVersionNumber;
       {Operator overload that performs implicit conversion of a dotted quad
       string to a TVersionNumber.
@@ -117,18 +123,12 @@ type
         @return Converted version number.
         @except EConvertError. raised if string in wrong format.
       }
-    class operator Implicit(Ver: TVersionNumber): string;
-      {Operator overload that performs implicit conversion of TVersionNumber to
-      string as dotted quad.
-        @param Ver [in] Version number to be converted.
-        @return Version number as dotted quad.
-      }
   end;
 
   {
   TVersionInfo:
-    Extracts version information from version resources. Extends TPJVersionInfo
-    component by providing some convenience class methods.
+    Extracts version information from version resources. Uses TPJVersionInfo to
+    perform the actual work.
   }
   TVersionInfo = class(TNoConstructObject)
   public
@@ -182,8 +182,8 @@ class function TVersionInfo.FileVersionNumberStr: string;
 begin
   with TPJVersionInfo.Create(nil) do
     try
-      // casts TPJVersionNumber to TVersionNumber & TVersionNumber to string
-      Result := TVersionNumber(FileVersionNumber);
+      // casts TPJVersionNumber directly to string
+      Result := FileVersionNumber;
     finally
       Free;
     end;
@@ -209,7 +209,7 @@ class function TVersionInfo.ProductVerNum: TVersionNumber;
 begin
   with TPJVersionInfo.Create(nil) do
     try
-      Result := ProductVersionNumber;   // implicit typecast
+      Result := ProductVersionNumber; // implicit type cast
     finally
       Free;
     end;
@@ -221,7 +221,13 @@ class function TVersionInfo.ProductVersionNumberStr: string;
     @return Version number string in form 9.9.9.9.
   }
 begin
-  Result := ProductVerNum;  // uses implicit typecast
+  with TPJVersionInfo.Create(nil) do
+    try
+      // casts TPJVersionNumber directly to string
+      Result := ProductVersionNumber;
+    finally
+      Free;
+    end;
 end;
 
 class function TVersionInfo.ProductVersionStr: string;
@@ -260,8 +266,20 @@ class operator TVersionNumber.Equal(Ver1, Ver2: TVersionNumber): Boolean;
     @return True if Ver1 = Ver2, False otherwise.
   }
 begin
-  Result := (Ver1.V1 = Ver2.V1) and (Ver1.V2 = Ver2.V2) and
-    (Ver1.V3 = Ver2.V3) and (Ver1.V4 = Ver2.V4);
+  Result := TPJVersionNumber(Ver1) = TPJVersionNumber(Ver2);
+end;
+
+class operator TVersionNumber.Explicit(Ver: TVersionNumber): TPJVersionNumber;
+  {Operator overload that performs an explicit conversion of a
+  TVersionNumber to a TPJVersionNumber (from PJVersionInfo unit).
+    @param Ver [in] Version number to be converted.
+    @return Converted version number.
+  }
+begin
+  Result.V1 := Ver.V1;
+  Result.V2 := Ver.V2;
+  Result.V3 := Ver.V3;
+  Result.V4 := Ver.V4;
 end;
 
 class operator TVersionNumber.GreaterThan(Ver1, Ver2: TVersionNumber): Boolean;
@@ -272,25 +290,7 @@ class operator TVersionNumber.GreaterThan(Ver1, Ver2: TVersionNumber): Boolean;
     @return True if Ver1 > Ver2, False otherwise.
   }
 begin
-  Result := True;
-  if (Ver1.V1 > Ver2.V1) then
-    Exit;
-  if (Ver1.V1 = Ver2.V1) then
-  begin
-    if (Ver1.V2 > Ver2.V2) then
-      Exit;
-    if (Ver1.V2 = Ver2.V2) then
-    begin
-      if (Ver1.V3 > Ver2.V3) then
-        Exit;
-      if (Ver1.V3 = Ver2.V3) then
-      begin
-        if (Ver1.V4 > Ver2.V4) then
-          Exit;
-      end;
-    end;
-  end;
-  Result := False;
+  Result := TPJVersionNumber(Ver1) > TPJVersionNumber(Ver2);
 end;
 
 class operator TVersionNumber.GreaterThanOrEqual(Ver1,
@@ -302,17 +302,7 @@ class operator TVersionNumber.GreaterThanOrEqual(Ver1,
     @return True if Ver1 >= Ver2, False otherwise.
   }
 begin
-  Result := (Ver1 = Ver2) or (Ver1 > Ver2);
-end;
-
-class operator TVersionNumber.Implicit(Ver: TVersionNumber): string;
-  {Operator overload that performs implicit conversion of TVersionNumber to
-  string as dotted quad.
-    @param Ver [in] Version number to be converted.
-    @return Version number as dotted quad.
-  }
-begin
-  Result := Format('%d.%d.%d.%d', [Ver.V1, Ver.V2, Ver.V3, Ver.V4]);
+  Result := TPJVersionNumber(Ver1) >= TPJVersionNumber(Ver2);
 end;
 
 class operator TVersionNumber.Implicit(Str: string): TVersionNumber;
@@ -355,7 +345,7 @@ class operator TVersionNumber.LessThan(Ver1, Ver2: TVersionNumber): Boolean;
     @return True if Ver1 < Ver2, False otherwise.
   }
 begin
-  Result := not (Ver1 >= Ver2);
+  Result := TPJVersionNumber(Ver1) < TPJVersionNumber(Ver2);
 end;
 
 class operator TVersionNumber.LessThanOrEqual(Ver1,
@@ -367,7 +357,7 @@ class operator TVersionNumber.LessThanOrEqual(Ver1,
     @return True if Ver1 <= Ver2, False otherwise.
   }
 begin
-  Result := not (Ver1 > Ver2);
+  Result := TPJVersionNumber(Ver1) <= TPJVersionNumber(Ver2);
 end;
 
 class operator TVersionNumber.NotEqual(Ver1, Ver2: TVersionNumber): Boolean;
@@ -377,7 +367,7 @@ class operator TVersionNumber.NotEqual(Ver1, Ver2: TVersionNumber): Boolean;
     @return True if Ver1 <> Ver2, False otherwise.
   }
 begin
-  Result := not (Ver1 = Ver2);
+  Result := TPJVersionNumber(Ver1) <> TPJVersionNumber(Ver2);
 end;
 
 class function TVersionNumber.Nul: TVersionNumber;
