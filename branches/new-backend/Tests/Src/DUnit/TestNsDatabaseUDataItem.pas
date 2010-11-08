@@ -11,7 +11,8 @@ unit TestNsDatabaseUDataItem;
 interface
 
 uses
-  TestFramework, NsDatabase.UCookies, NsDatabase.UDataItem, SysUtils;
+  TestFramework, NsDatabase.UCookies, NsDatabase.UDataItem, SysUtils,
+  UBaseObjects;
 
 type
 
@@ -21,18 +22,23 @@ type
   strict protected
     procedure Finalize; override;
   public
-    constructor Create(ID: Integer; Cookie: TDBCookie);
+    constructor Create(ID: Integer; Cookie: TDBCookie;
+      Controller: IConditionalFreeController = nil);
     property ID: Integer read fID;
     class var InstanceCount: Integer;
     function ToString: string; override;
   end;
 
-  // Not testing ownership / freeing since that tested for parent object
+  // Free controller for TDBDataItem objects - always permits freeing
+  TTestFreeController = class(TInterfacedObject, IConditionalFreeController)
+  public
+    function PermitDestruction(const Obj: TObject): Boolean;
+  end;
+
   TestTDBDataItem = class(TTestCase)
   public
     procedure SetUp; override;
     procedure TearDown; override;
-    procedure FreeAndNil(var O: TTestObject);
   published
     procedure TestFree;
     procedure TestCookieProp;
@@ -44,11 +50,13 @@ implementation
 
 { TTestObject }
 
-constructor TTestObject.Create(ID: Integer; Cookie: TDBCookie);
+constructor TTestObject.Create(ID: Integer; Cookie: TDBCookie;
+  Controller: IConditionalFreeController = nil);
 begin
   inherited Create(Cookie);
   fID := ID;
   Inc(InstanceCount);
+  FreeController := Controller;
 end;
 
 procedure TTestObject.Finalize;
@@ -63,16 +71,6 @@ begin
 end;
 
 { TestTDBDataItem }
-
-procedure TestTDBDataItem.FreeAndNil(var O: TTestObject);
-begin
-  if Assigned(O) then
-  begin
-    O.Owner := nil;
-    O.Free;
-    O := nil;
-  end;
-end;
 
 procedure TestTDBDataItem.SetUp;
 begin
@@ -90,73 +88,73 @@ var
   Cookie2: TDBCookie;
 begin
   Assert(TTestObject.InstanceCount = 0,
-    'TestTDBDataItem.TestFree: TTestObject.InstanceCount <> 0');
+    'TestTDBDataItem.TestFree: TTestObject.InstanceCount <> 0 '
+    + 'at start of TestCookieProp');
 
   O1 := nil; O2 := nil; O0 := nil;
   try
-    O1 := TTestObject.Create(100, TDBCookie.Create);
-    O2 := TTestObject.Create(200, TDBCookie.Create);
+    O1 := TTestObject.Create(100, TDBCookie.Create, TTestFreeController.Create);
+    O2 := TTestObject.Create(200, TDBCookie.Create, TTestFreeController.Create);
 
     Check(O1.Cookie <> O2.Cookie,
       Format('Expected %s cookie <> %s cookie', [O1.ToString, O2.ToString]));
     Cookie2 := O2.Cookie;
-    O2.Free;  // can do because not owned
+    O2.Free;  // can do because of controller
     O2 := nil;
 
-    O2 := TTestObject.Create(200, TDBCookie.Create);
+    O2 := TTestObject.Create(200, TDBCookie.Create, TTestFreeController.Create);
     Check(O2.Cookie <> Cookie2,
       Format('Expected %s cookie to have changed', [O2.ToString]));
 
-    O0 := TTestObject.Create(0, TDBCookie.CreateNul);
+    O0 := TTestObject.Create(
+      0, TDBCookie.CreateNul, TTestFreeController.Create
+    );
     Check(O0.Cookie.IsNul,
       Format('Expected %s cookie to be nul', [O0.ToString]));
   finally
-    FreeAndNil(O1);
-    FreeAndNil(O2);
-    FreeAndNil(O0);
+    O1.Free;
+    O2.Free;
+    O0.Free;
   end;
 
   Assert(TTestObject.InstanceCount = 0,
-    'TestTDBDataItem.TestCookieProp: TTestObject.InstanceCount <> 0');
+    'TestTDBDataItem.TestCookieProp: 2: TTestObject.InstanceCount <> 0 '
+    + 'at end of TestCookieProp');
 end;
 
 procedure TestTDBDataItem.TestFree;
 var
   Obj: TTestObject;
+  Controller: IConditionalFreeController;
 begin
   Assert(TTestObject.InstanceCount = 0,
     'TestTDBDataItem.TestFree: TTestObject.InstanceCount <> 0');
 
-  // Check owned object
+  // Check no controller: shouldn't free
   Obj := TTestObject.Create(100, TDBCookie.Create);
-  Obj.Owner := Self;
+  Check(Obj.FreeController = nil, 'Expected Obj.FreeController = nil');
   Check(TTestObject.InstanceCount = 1,
-    Format('Expected Instance Count of 1, got %d',
+    Format('1: Expected Instance Count of 1, got %d',
       [TTestObject.InstanceCount]));
-  Obj.Free; // should not have been allowed
+  Obj.Free;
   Check(TTestObject.InstanceCount = 1,
-    Format('Expected Instance Count of 1, got %d',
+    Format('2: Expected Instance Count of 1, got %d',
       [TTestObject.InstanceCount]));
 
-  // Check object after removing owner
-  Obj.Owner := nil;
-  Obj.Free; // should have been allowed
+  // Add controller: should not allow free
+  Controller := TTestFreeController.Create;
+  Obj.FreeController := Controller;
+  Obj.Free;
   Check(TTestObject.InstanceCount = 0,
-    Format('Expected Instance Count of 0, got %d',
+    Format('3: Expected Instance Count of 0, got %d',
       [TTestObject.InstanceCount]));
+end;
 
-  // Checking object is not owned when created
-  Obj := TTestObject.Create(100, TDBCookie.Create);
-  Check(TTestObject.InstanceCount = 1,
-    Format('Expected Instance Count of 1, got %d',
-      [TTestObject.InstanceCount]));
-  Obj.Free; // should have been allowed
-  Check(TTestObject.InstanceCount = 0,
-    Format('Expected Instance Count of 0, got %d',
-      [TTestObject.InstanceCount]));
+{ TTestFreeController }
 
-  Assert(TTestObject.InstanceCount = 0,
-    'TestTDBDataItem.TestFree: TTestObject.InstanceCount <> 0');
+function TTestFreeController.PermitDestruction(const Obj: TObject): Boolean;
+begin
+  Result := True;
 end;
 
 initialization

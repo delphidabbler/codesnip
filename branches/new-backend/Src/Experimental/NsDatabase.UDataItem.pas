@@ -43,7 +43,7 @@ uses
 
 type
 
-  TDBDataItem = class(TOwnedConditionalFreeObject)
+  TDBDataItem = class(TControlledConditionalFreeObject)
   private
     fCookie: TDBCookie;
   public
