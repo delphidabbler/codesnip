@@ -11,7 +11,7 @@ unit TestNsDatabaseUDataPool;
 interface
 
 uses
-  SysUtils, TestFramework, Generics.Collections,
+  SysUtils, TestFramework, Generics.Collections, UBaseObjects,
   NsDatabase.UCookies, NsDatabase.UDataItem, NsDatabase.UDataPool;
 
 type
@@ -28,10 +28,20 @@ type
     function ToString: string; override;
   end;
 
+  // Object free controller for use with test objects not added to pool to allow
+  // them to be freed
+  TOutsidePoolFreeController = class(TInterfacedObject,
+    IConditionalFreeController
+  )
+  public
+    function PermitDestruction(const Obj: TObject): Boolean;
+  end;
+
   TestTDBDataPool = class(TTestCase)
   strict private
     O1, O2, O3, O4, ONotInPool: TTestObject;
     Pool: TDBDataPool<TTestObject>;
+    procedure ForceFree(const Obj: TTestObject);
   public
     procedure SetUp; override;
     procedure TearDown; override;
@@ -97,7 +107,7 @@ begin
   try
     Pool.Add(ONul);   // can't add date item with nul cookie
   finally
-    ONul.Free;
+    ForceFree(ONul);
   end;
 end;
 
@@ -109,6 +119,12 @@ end;
 procedure TestTDBDataPool.ErrorRemove;
 begin
   Pool.Remove(ONotInPool.Cookie);
+end;
+
+procedure TestTDBDataPool.ForceFree(const Obj: TTestObject);
+begin
+  Obj.FreeController := TOutsidePoolFreeController.Create;
+  Obj.Free;
 end;
 
 procedure TestTDBDataPool.SetUp;
@@ -129,7 +145,7 @@ end;
 procedure TestTDBDataPool.TearDown;
 begin
   inherited;
-  ONotInPool.Free;
+  ForceFree(ONotInPool);
   Pool.Free;
 end;
 
@@ -265,6 +281,14 @@ begin
   finally
     APool.Free;
   end;
+end;
+
+{ TOutsidePoolFreeController }
+
+function TOutsidePoolFreeController.PermitDestruction(
+  const Obj: TObject): Boolean;
+begin
+  Result := True;
 end;
 
 initialization

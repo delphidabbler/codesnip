@@ -53,12 +53,23 @@ type
   TDBDataPool:
     Generic object that implements a pool of data item objects. Designed for use
     in storing database objects that are identified by a cookie and cannot be
-    freed by users of the objects. Objects placed in the pool are owned by it
-    and are freed when removed or when the pool is cleared or destroyed.
+    freed by users of the objects. Objects placed in the pool can only be freed
+    when the pool permits it.
   }
   TDBDataPool<T: TDBDataItem> = class(TOwnedConditionalFreeObject)
   strict private
-    fMap: TDictionary<TDBCookie,T>; // maps cookies to data item object
+    type
+      // Object that controls whether a data item can be freed
+      TFreeController = class(TNonRefCountedObject, IConditionalFreeController)
+      strict private
+        fObjectToFree: TObject;
+      public
+        function PermitDestruction(const Obj: TObject): Boolean;
+        property ObjectToFree: TObject read fObjectToFree write fObjectToFree;
+      end;
+  strict private
+    fFreeController: TFreeController; // Controls freeing of data items
+    fMap: TDictionary<TDBCookie,T>;   // Maps cookies to data item object
     function GetItem(const Cookie: TDBCookie): T;
       {Gets reference to object associated with a cookie in the pool.
         @param Cookie [in] Cookie to search for.
@@ -69,6 +80,10 @@ type
       {Gets reference to cookies collection from pool. Collection will be freed
       when pool object is freed.
         @return Required collection.
+      }
+    procedure FreeObject(Obj: T);
+      {Frees a data item.
+        @param Obj [in] Data item object to be freed.
       }
   public
     constructor Create(const Capacity: Integer = 0);
@@ -136,7 +151,7 @@ begin
   if IsInPool(Obj.Cookie) then
     raise EDBDataPoolError.Create(sObjectPoolCookieExists);
   fMap.Add(Obj.Cookie, Obj);
-  Obj.Owner := Self;
+  Obj.FreeController := fFreeController;
 end;
 
 procedure TDBDataPool<T>.Clear;
@@ -144,10 +159,7 @@ var
   Value: T;
 begin
   for Value in fMap.Values do
-  begin
-    Value.Owner := nil;
-    Value.Free;
-  end;
+    FreeObject(Value);
   fMap.Clear;
 end;
 
@@ -174,13 +186,25 @@ begin
       end
     )
   );
+  fFreeController := TFreeController.Create;
 end;
 
 destructor TDBDataPool<T>.Destroy;
 begin
   Clear;
   fMap.Free;
+  fFreeController.Free;
   inherited;
+end;
+
+procedure TDBDataPool<T>.FreeObject(Obj: T);
+begin
+  fFreeController.ObjectToFree := Obj;
+  try
+    Obj.Free;
+  finally
+    fFreeController.ObjectToFree := nil;
+  end;
 end;
 
 function TDBDataPool<T>.GetCookies: TEnumerable<TDBCookie>;
@@ -210,8 +234,15 @@ var
 begin
   Obj := GetItem(Cookie);
   fMap.Remove(Cookie);
-  Obj.Owner := nil;
-  Obj.Free;
+  FreeObject(Obj);
+end;
+
+{ TDBDataPool<T>.TFreeController }
+
+function TDBDataPool<T>.TFreeController.PermitDestruction(
+  const Obj: TObject): Boolean;
+begin
+  Result := Assigned(fObjectToFree) and (Obj = fObjectToFree);
 end;
 
 end.
