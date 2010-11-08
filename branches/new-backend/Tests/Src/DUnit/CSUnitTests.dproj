@@ -10,6 +10,7 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
 			<DCC_DependencyCheckOutputName>..\..\Exe\CSUnitTests.exe</DCC_DependencyCheckOutputName>
 			<DCC_Define>TESTING;_CONSOLE_TESTRUNNER;$(DCC_Define)</DCC_Define>
 			<DCC_UnitSearchPath>$(BDS)\Source\DUnit\src;..\..\Bin\DUnit;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
