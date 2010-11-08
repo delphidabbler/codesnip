@@ -10,6 +10,7 @@
 			<Base>true</Base>
 		</PropertyGroup>
 		<PropertyGroup Condition="'$(Base)'!=''">
+			<DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
 			<DCC_ExeOutput>..\Exe</DCC_ExeOutput>
 			<DCC_UnitSearchPath>..\Bin;3rdParty;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
 			<DCC_DependencyCheckOutputName>..\Exe\CodeSnip.exe</DCC_DependencyCheckOutputName>
