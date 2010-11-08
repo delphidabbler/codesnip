@@ -51,34 +51,14 @@ uses
   UExceptions;
 
 
-const
-  // Character constants made public
-  cEquals = '=';
-  cSingleQuote = '''';
-  cDoubleQuote = '"';
-  cQuotes = [cSingleQuote, cDoubleQuote];
-
-
 type
-
-  {
-  ETaggedTextLexer:
-    Class of exception raised when errors reported by the lexer.
-  }
-  ETaggedTextLexer = class(ECodeSnip);
-
-  {
-  ETaggedTextTagHandler:
-    Class of exception raised by tagged text tag handler.
-  }
-  ETaggedTextTagHandler = class(ECodeSnip);
 
   {
   TTaggedTextKind:
     Different kinds of tokens recognised and reported by the lexer.
   }
   TTaggedTextKind = (
-    ttsNull,              // used internally to flag errors
+    ttsNone,              // used internally to flag no token read
     ttsText,              // plain text
     ttsSimpleTag,         // a simple tag (form <tag />
     ttsCompoundStartTag,  // start of a compound tag (<tag>)
@@ -98,15 +78,19 @@ type
          and character values of these entities. No symbolic entities are
          supported by default. The case of symbolic entities is significant, so
          that &AMP; is *not* the same as &amp;
-    Errors are reported via the LastErrorMessage property.
   }
   TTaggedTextEntityHandler = class(TObject)
   strict private
     var
-      fLastErrorMessage: string;
-        {Value of LastErrorMessage property}
       fSymbolicEntities: TDictionary<string, Char>;
         {Map of entity names to the represented character code}
+    procedure TranslateEntity(const Entity: string; out Ch: Char);
+      {Translates an entity into the character it represents.
+        @param Entity [in] Entity to be translated (without leading '&' and
+          trailing ';' characters).
+        @param Ch [out] Character corresponding to Entity.
+        @except ETaggedTextEntityHandler raised if entity cannot be translated.
+      }
   public
     constructor Create;
       {Constructor. Creates empty entity map.
@@ -114,43 +98,38 @@ type
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
-    function AddEntity(const Entity: string; const Ch: Char): Boolean;
-      {Adds a symbolic entity and its corresponding character to the map.
-      Set up this map before attempting to translate an entity.
+    procedure AddEntity(const Entity: string; const Ch: Char);
+      {Adds a symbolic entity and its corresponding character to the map. Set up
+      this map before attempting to translate a symbolic entity.
         @param Entity [in] Character entity.
         @param Ch [in] Character corresponding to entity.
-        @return True if entity added successfully, False if not.
       }
-    function TranslateEntity(const Entity: string; out Ch: Char): Boolean;
-      {Translates entity into the character it represents.
-        @param Entity [in] Entity to be translated (without leading '&' and
-          trailing ';' characters).
-        @param Ch [out] Character corresponding to Entity.
-        @return True if entity is translated or False if not.
-      }
-    function TranslateTextEntities(const Text: string;
-      out TransStr: string): Boolean;
+    procedure TranslateTextEntities(const Text: string; out TransStr: string);
       {Finds and translates all entities in a string.
         @param Text [in] Text to be translated.
         @param TransStr [out] Translated text.
-        @return True on success or False on error.
+        @except ETaggedTextEntityHandler raised if entities cannot be
+          translated.
       }
-    property LastErrorMessage: string read fLastErrorMessage;
-      {Stores a description of the last reported error. The error message is
-      *not* reset when methods execute successfully}
   end;
 
   {
-  TTaggedTextEntityHandler:
+  ETaggedTextEntityHandler:
+    Class of exception raised by the TTaggedTextEntityHandler class.
+  }
+  ETaggedTextEntityHandler = class(ECodeSnip);
+
+  {
+  TTaggedTextTagHandler:
     Processes tags and translates them into the corresponding tag codes. Also
     maintains a list of supported tags as supplied by user: no tags are
-    supported by default. Errors are reported via the LastErrorMessage property.
-    The case of tags is ignored so <TAG> and <tag> are taken to be the same tag.
+    supported by default. The case of tags is ignored so <TAG> and <tag> are
+    taken to be the same tag.
   }
   TTaggedTextTagHandler = class(TObject)
   strict private
     type
-      // Records information about a tag
+      // Records information about a tag.
       TTagInfo = record
         Code: Word;           // Unique code associated with the tag
         IsCompound: Boolean;  // Flags whether tag is compound
@@ -160,9 +139,9 @@ type
             @param AIsCompound [in] Whether tag is compound.
           }
       end;
+      // Class of exception raised when errors found in GetTagParams method.
+      EAttrError = class(ECodeSnip);
     var
-      fLastErrorMessage: string;
-        {Value of LastErrorMessage property}
       fTags: TDictionary<string,TTagInfo>;
         {Maps the supported tags to information about the tag. Ignores tag case}
       fEntityHandler: TTaggedTextEntityHandler;
@@ -172,7 +151,8 @@ type
       {Gets kind of a tag.
         @param WorkTag [in] Tag to be processed. [out] Tag stripped of
           characters that indicate tag kind, such as '/', '!' and '?'.
-        @return Tag kind (ttsNull if kind is not recognised).
+        @return Tag kind.
+        @except ETaggedTextTagHandler raised if tag is empty
       }
     function GetTagName(const TagStr: string; out NextChPos: Integer): string;
       {Extracts the name of a tag
@@ -197,15 +177,7 @@ type
         @param Params [in] Receives parameter information as name=value pairs.
           May be nul in which case parameter information is simply skipped.
         @return Number of parameters (attributes).
-      }
-    procedure Error(const Msg: string); overload;
-      {Records an error message in the LastErrorMessage property.
-        @param Msg [in] Message to be recorded.
-      }
-    procedure Error(const Fmt: string; const Args: array of const); overload;
-      {Records an error message in the LastErrorMessage property.
-        @param Fmt [in] Message template.
-        @param Args [in] Arguments inserted in message template.
+        @except Raises EAttrError if any attribute is malformed.
       }
   public
     constructor Create(const EH: TTaggedTextEntityHandler);
@@ -215,8 +187,8 @@ type
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
-    function AddTag(const Tag: string; const Code: Word;
-      const IsCompound: WordBool): Boolean;
+    procedure AddTag(const Tag: string; const Code: Word;
+      const IsCompound: WordBool);
       {Adds information about a tag to the map of tags recognised by the
       handler. Supported tags must be set up using this method before attempting
       to process them since the handler recognises no tags by default.
@@ -225,11 +197,9 @@ type
           $FFFF.
         @param IsCompound [in] True if the tag is compound (i.e. can contain
           other tags or text) or False if the tag stands on its own.
-        @return True if tag is added successfully or False on error.
       }
-    function ProcessTag(const Tag: string; out Text: string;
-      out Kind: TTaggedTextKind; out Code: Word;
-      const Params: TStrings): Boolean;
+    procedure ProcessTag(const Tag: string; out Text: string;
+      out Kind: TTaggedTextKind; out Code: Word; const Params: TStrings);
       {Parses and extracts information from tag text.
         @param Tag [in] String containing tag information, delimited by '<' and
           '>'.
@@ -240,12 +210,16 @@ type
           comments and scripts).
         @param Params [in] List of parameters to (attributes of) tag in
           name=value format. If nil then no parameter information is returned.
-        @return True if the tag is processed successfully, False otherwise.
+        @except Raises ETaggedTextTagHandler when errors in tag or its
+          attributes encountered.
       }
-    property LastErrorMessage: string read fLastErrorMessage;
-      {Stores a description of the last reported error. The error message is
-      *not* reset when methods execute successfully}
   end;
+
+  {
+  ETaggedTextTagHandler:
+    Class of exception raised by tagged text tag handler.
+  }
+  ETaggedTextTagHandler = class(ECodeSnip);
 
   {
   TTaggedTextTagInfoProc:
@@ -403,6 +377,12 @@ type
       converted to LF. Only valid when Kind is ttsText}
   end;
 
+  {
+  ETaggedTextLexer:
+    Class of exception raised when errors reported by the lexer.
+  }
+  ETaggedTextLexer = class(ECodeSnip);
+
 
 implementation
 
@@ -414,17 +394,22 @@ uses
   UComparers, UUnicodeHelper, UUtils;
 
 
+const
+  // Character constants
+  cEquals = '=';
+  cSingleQuote = '''';
+  cDoubleQuote = '"';
+  cQuotes = [cSingleQuote, cDoubleQuote];
+
+
 resourcestring
   // Error messages
-  sEntityAlreadyReg = 'Entity "%s" already registered';
   sEntityEmpty = 'Empty entity';
   sEntityHasNoValue = 'Entity "#" has no numeric value';
   sEntityValueNotValid = 'Entity "%s" is not a valid non-negative number';
   sEntityOutOfRange = 'Numeric entity "%s" out of range';
   sEntityNotRecognised = 'Entity "%s" not recognised';
   sEntityUnterminated = 'Unterminated entity';
-  sTagCodeInvalid = 'Tag "%s" cannot have code $FFFF';
-  sTagAlreadyRegistered = 'Tag "%s" already registered';
   sTagEmpty = 'Tag is empty';
   sTagNotRecognised = 'Tag "%s" not recognised';
   sSimpleTagInvalid = 'Tag "%s" is not a valid simple tag';
@@ -450,20 +435,19 @@ resourcestring
 
 { TTaggedTextEntityHandler }
 
-function TTaggedTextEntityHandler.AddEntity(const Entity: string;
-  const Ch: Char): Boolean;
+procedure TTaggedTextEntityHandler.AddEntity(const Entity: string;
+  const Ch: Char);
   {Adds a symbolic entity and its corresponding character to the map. Set up
-  this map before attempting to translate an entity.
+  this map before attempting to translate a symbolic entity.
     @param Entity [in] Character entity.
     @param Ch [in] Character corresponding to entity.
-    @return True if entity added successfully, False if not.
   }
 begin
-  Result := not fSymbolicEntities.ContainsKey(Entity);
-  if Result then
-    fSymbolicEntities.Add(Entity, Ch)
-  else
-    fLastErrorMessage := Format(sEntityAlreadyReg, [Entity]);
+  if fSymbolicEntities.ContainsKey(Entity) then
+    raise EBug.CreateFmt(
+      '%0:s.AddEntity: Entity "%1:s" already registered', [ClassName, Entity]
+    );
+  fSymbolicEntities.Add(Entity, Ch)
 end;
 
 constructor TTaggedTextEntityHandler.Create;
@@ -484,35 +468,25 @@ begin
   inherited;
 end;
 
-function TTaggedTextEntityHandler.TranslateEntity(
-  const Entity: string; out Ch: Char): Boolean;
-  {Translates entity into the character it represents.
+procedure TTaggedTextEntityHandler.TranslateEntity(const Entity: string;
+  out Ch: Char);
+  {Translates an entity into the character it represents.
     @param Entity [in] Entity to be translated (without leading '&' and trailing
       ';' characters).
     @param Ch [out] Character corresponding to Entity.
-    @return True if entity is translated or False if not.
+    @except ETaggedTextEntityHandler raised if entity cannot be translated.
   }
 var
   EntityVal: Integer;   // value of a numeric entity
 begin
-  // Assume failure
-  Result := False;
-  // Error if entity is empty string
   if Entity = '' then
-  begin
-    fLastErrorMessage := sEntityEmpty;
-    Exit;
-  end;
+    raise ETaggedTextEntityHandler.Create(sEntityEmpty);
   // Check entity type
   if Entity[1] = '#' then
   begin
     // We have numeric entity: try to extract value
     if Entity = '#' then
-    begin
-      // entity has no associated value
-      fLastErrorMessage := sEntityHasNoValue;
-      Exit;
-    end;
+      raise ETaggedTextEntityHandler.Create(sEntityHasNoValue);
     Assert(Length(Entity) >= 2,
       ClassName + '.TranslateEntity: entity too short');
     // parse out the digits: only 0..9 accepted
@@ -520,41 +494,30 @@ begin
     // -ve number to indicate error
     EntityVal := StrToIntDef(MidStr(Entity, 2, MaxInt), -1);
     if EntityVal < 0 then
-    begin
-      fLastErrorMessage := Format(sEntityValueNotValid, [Entity]);
-      Exit;
-    end;
+      raise ETaggedTextEntityHandler.CreateFmt(sEntityValueNotValid, [Entity]);
     // check if value is in range (already know >=0)
     if EntityVal > Ord(High(Char)) then
-    begin
-      fLastErrorMessage := Format(sEntityOutOfRange, [Entity]);
-      Exit;
-    end;
+      raise ETaggedTextEntityHandler.CreateFmt(sEntityOutOfRange, [Entity]);
     // we have valid value: record it and return true
     Ch := Char(EntityVal);
-    Result := True;
   end
   else
   begin
     // Symbolic entity
     // check if entity is supported
     if not fSymbolicEntities.ContainsKey(Entity) then
-    begin
-      fLastErrorMessage := Format(sEntityNotRecognised, [Entity]);
-      Exit;
-    end;
+      raise ETaggedTextEntityHandler.CreateFmt(sEntityNotRecognised, [Entity]);
     // entity is supported: record its character value and return true
     Ch := fSymbolicEntities[Entity];
-    Result := True;
   end;
 end;
 
-function TTaggedTextEntityHandler.TranslateTextEntities(
-  const Text: string; out TransStr: string): Boolean;
+procedure TTaggedTextEntityHandler.TranslateTextEntities(const Text: string;
+  out TransStr: string);
   {Finds and translates all entities in a string.
     @param Text [in] Text to be translated.
     @param TransStr [out] Translated text.
-    @return True on success or False on error.
+    @except ETaggedTextEntityHandler raised if entities cannot be translated.
   }
 var
   Idx: Integer;         // index used to scan text
@@ -564,8 +527,6 @@ var
   Entity: string;       // stores any found entity
   EntityCh: Char;       // stores character represented by entity
 begin
-  // Assume failure
-  Result := False;
   // Set up cursors into input and ouput strings
   Idx := 1;
   InsPos := 1;
@@ -587,19 +548,14 @@ begin
         while (Idx <= Length(Text)) and (Text[Idx] <> ';') do
           Inc(Idx);
         if Idx > Length(Text) then
-        begin
-          // didn't find terminating ';': report error
-          fLastErrorMessage := sEntityUnterminated;
-          Exit;
-        end;
+          raise ETaggedTextEntityHandler.Create(sEntityUnterminated);
         // record entity excluding opening '&' and closing ';'
         Entity := MidStr(Text, EntityStart, Idx - EntityStart);
         // skip over ending ';' in input
         Inc(Idx);
         // try to translate entity: exit on error (LastErrorMessage set by
         // TranslateEntity)
-        if not TranslateEntity(Entity, EntityCh) then
-          Exit;
+        TranslateEntity(Entity, EntityCh);
         // insert translated character in TransStr, and update its cursor
         TransStr[InsPos] := EntityCh;
         Inc(InsPos);
@@ -617,13 +573,12 @@ begin
   // so we reduce TransStr length accodingly
   if Idx <> InsPos then
     SetLength(TransStr, InsPos - 1);
-  Result := True;
 end;
 
 { TTaggedTextTagHandler }
 
-function TTaggedTextTagHandler.AddTag(const Tag: string;
-  const Code: Word; const IsCompound: WordBool): Boolean;
+procedure TTaggedTextTagHandler.AddTag(const Tag: string; const Code: Word;
+  const IsCompound: WordBool);
   {Adds information about a tag to the map of tags recognised by the handler.
   Supported tags must be set up using this method before attempting to process
   them since the handler recognises no tags by default.
@@ -631,25 +586,15 @@ function TTaggedTextTagHandler.AddTag(const Tag: string;
     @param Code [in] Unique code associated with the tag - must not be $FFFF.
     @param IsCompound [in] True if the tag is compound (i.e. can contain other
       tags or text) or False if the tag stands on its own.
-    @return True if tag is added successfully or False on error.
   }
 begin
-  // Check that code is not reserved value $FFFF: error if so
-  if Code = $FFFF then
-  begin
-    Result := False;
-    Error(sTagCodeInvalid, [Tag]);
-    Exit;
-  end;
+  Assert(Code <> $FFFF, ClassName + '.AddTag: Code is reserved value $FFFF');
   // Check if tag already recorded: error if so
-  Result := not fTags.ContainsKey(Tag);
-  if Result then
-  begin
-    // add the tag and the data to the map
-    fTags.Add(AnsiLowerCase(Tag), TTagInfo.Create(Code, IsCompound));
-  end
-  else
-    Error(sTagAlreadyRegistered, [Tag]);
+  if fTags.ContainsKey(Tag) then
+    raise EBug.CreateFmt(
+      '%0:s.AddTag: Tag "%s" already registered', [ClassName, Tag]
+    );
+  fTags.Add(AnsiLowerCase(Tag), TTagInfo.Create(Code, IsCompound));
 end;
 
 constructor TTaggedTextTagHandler.Create(const EH: TTaggedTextEntityHandler);
@@ -673,29 +618,12 @@ begin
   inherited;
 end;
 
-procedure TTaggedTextTagHandler.Error(const Msg: string);
-  {Records an error message in the LastErrorMessage property.
-    @param Msg [in] Message to be recorded.
-  }
-begin
-  fLastErrorMessage := Msg;
-end;
-
-procedure TTaggedTextTagHandler.Error(const Fmt: string;
-  const Args: array of const);
-  {Records an error message in the LastErrorMessage property.
-    @param Fmt [in] Message template.
-    @param Args [in] Arguments inserted in message template.
-  }
-begin
-  Error(Format(Fmt, Args));
-end;
-
 function TTaggedTextTagHandler.GetKind(var WorkTag: string): TTaggedTextKind;
   {Gets kind of a tag.
     @param WorkTag [in] Tag to be processed. [out] Tag stripped of characters
       that indicate tag kind, such as '/', '!' and '?'.
-    @return Tag kind (ttsNull if kind is not recognised).
+    @return Tag kind.
+    @except ETaggedTextTagHandler raised if tag is empty
   }
 var
   Len: Integer; // length of tag
@@ -704,13 +632,7 @@ begin
   Assert(WorkTag[1] = '<', ClassName + '.GetKind: Tag must begin with "<"');
   Assert(WorkTag[Len] = '>', ClassName + '.GetKind: Tag must end with ">"');
   if (WorkTag = '<>') or (WorkTag = '</>') then
-  begin
-    // we have <> or </> => empty tag: delete all tag
-    Result := ttsNull;
-    Error(sTagEmpty);
-    WorkTag := '';
-    Exit;
-  end;
+    raise ETaggedTextTagHandler.Create(sTagEmpty);
   Assert(Len >= 3, ClassName + '.GetKind: Tag too short');
   if (Len >= 4) and (WorkTag[Len-1] = '/') then
   begin
@@ -784,6 +706,7 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
     @param Params [in] Receives parameter information as name=value pairs. May
       be nul in which case parameter information is simply skipped.
     @return Number of parameters (attributes).
+    @except Raises EAttrError if any attribute is malformed.
   }
 
   // ---------------------------------------------------------------------------
@@ -793,6 +716,7 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
       @param Value [out] Receives parameter value.
       @return True if a parameter was read, False if there are no more
         parameters.
+      @except Raises EAttrError if the attribute is malformed.
     }
   var
     StartPos: Integer;        // start position of name or value in tag string
@@ -836,7 +760,7 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
 
     // MUST now have '=' character: skip over it if so, error if not
     if (NextChPos > Len) or (TagStr[NextChPos] <> cEquals) then
-      raise ETaggedTextTagHandler.Create(sBadAttribute);
+      raise EAttrError.Create(sBadAttribute);
     Inc(NextChPos);
 
     // skip white space between '=' and value
@@ -845,7 +769,7 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
 
     // MUST now have a quote: record it and skip over
     if (NextChPos > Len) or not IsCharInSet(TagStr[NextChPos], cQuotes) then
-      raise ETaggedTextTagHandler.Create(sBadAttribute);
+      raise EAttrError.Create(sBadAttribute);
     AttrQuote := TagStr[NextChPos];
     Inc(NextChPos);
 
@@ -854,11 +778,15 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
     while (NextChPos <= Len) and (TagStr[NextChPos] <> AttrQuote) do
       Inc(NextChPos);
     if (NextChPos > Len) then
-      raise ETaggedTextTagHandler.Create(sBadAttribute);
+      raise EAttrError.Create(sBadAttribute);
     EscapedValue := MidStr(TagStr, StartPos, NextChPos - StartPos);
-    // translate any entities in value: they MUST be valid
-    if not fEntityHandler.TranslateTextEntities(EscapedValue, Value) then
-      raise ETaggedTextTagHandler.Create(fEntityHandler.LastErrorMessage);
+    // translate any entities in value
+    try
+      fEntityHandler.TranslateTextEntities(EscapedValue, Value);
+    except
+      on E: ETaggedTextEntityHandler do
+        raise EAttrError.Create(E);
+    end;
 
     // skip over closing quote
     Inc(NextChPos);
@@ -907,9 +835,8 @@ begin
   end;
 end;
 
-function TTaggedTextTagHandler.ProcessTag(const Tag: string;
-  out Text: string; out Kind: TTaggedTextKind; out Code: Word;
-  const Params: TStrings): Boolean;
+procedure TTaggedTextTagHandler.ProcessTag(const Tag: string; out Text: string;
+  out Kind: TTaggedTextKind; out Code: Word; const Params: TStrings);
   {Parses and extracts information from tag text.
     @param Tag [in] String containing tag information, delimited by '<' and '>'.
     @param Text [out] For start, end and simple tags this is name of tag, for
@@ -919,7 +846,8 @@ function TTaggedTextTagHandler.ProcessTag(const Tag: string;
       and scripts).
     @param Params [in] List of parameters to (attributes of) tag in name=value
       format. If nil then no parameter information is returned.
-    @return True if the tag is processed successfully, False otherwise.
+    @except Raises ETaggedTextTagHandler when errors in tag or its attributes
+      encountered.
   }
 var
   Len: Integer;         // length of the tag
@@ -927,8 +855,6 @@ var
   IsCompound: WordBool; // true if tag is compound, false otherwise
   ChPos: Integer;       // indicates position of character to process in tag
 begin
-  // Assume failure
-  Result := False;
   // Clear any parameters list
   if Assigned(Params) then
     Params.Clear;
@@ -944,97 +870,61 @@ begin
   Kind := GetKind(WorkingTag);
   // Process tag content, depending on kind of tag
   try
-  case Kind of
-    ttsNull:
-      // Error condition: error message set in GetKind
-      Exit;
-    ttsSimpleTag:
-    begin
-      // Simple tag
-      // get tag's name: must always call this method before others then extract
-      // information from a tag since this method sets the character position
-      // ChPos ready to extract information following tag name
-      Text := GetTagName(WorkingTag, ChPos);
-      // get information about the tag from map
-      if not LookupTagInfo(Text, Code, IsCompound) then
+    case Kind of
+      ttsSimpleTag:
       begin
-        // tag is not in map
-        Error(sTagNotRecognised, [Text]);
-        Exit;
+        // Simple tag
+        // get tag's name: must always call this method before others then
+        // extract information from a tag since this method sets the character
+        // position ChPos ready to extract information following tag name
+        Text := GetTagName(WorkingTag, ChPos);
+        // get information about the tag from map
+        if not LookupTagInfo(Text, Code, IsCompound) then
+          raise ETaggedTextTagHandler.CreateFmt(sTagNotRecognised, [Text]);
+        if IsCompound then
+          raise ETaggedTextTagHandler.CreateFmt(sSimpleTagInvalid, [Text]);
+        // get parameters for the tag
+        GetTagParams(WorkingTag, ChPos, Params);
       end;
-      if IsCompound then
+      ttsCompoundStartTag:
       begin
-        // tag recognised but is a compound tag => not valid as simple tag
-        Error(sSimpleTagInvalid, [Text]);
-        Exit;
+        // Compound start tag
+        // get tag's name
+        Text := GetTagName(WorkingTag, ChPos);
+        // get information about tag from map
+        if not LookupTagInfo(Text, Code, IsCompound) then
+          raise ETaggedTextTagHandler.CreateFmt(sTagNotRecognised, [Text]);
+        if not IsCompound then
+          raise ETaggedTextTagHandler.CreateFmt(sCompoundTagInvalid, [Text]);
+        // get parameters for the tag
+        GetTagParams(WorkingTag, ChPos, Params);
       end;
-      // get parameters for the tag
-      GetTagParams(WorkingTag, ChPos, Params);
-      Result := True;
+      ttsCompoundEndTag:
+      begin
+        // Compound end tag
+        // get tag's name
+        Text := GetTagName(WorkingTag, ChPos);
+        // get information about tag from map
+        if not LookupTagInfo(Text, Code, IsCompound) then
+          raise ETaggedTextTagHandler.CreateFmt(sTagNotRecognised, [Text]);
+        if not IsCompound then
+          raise ETaggedTextTagHandler.CreateFmt(sTagNotCompound, [Text]);
+        // check if has params: not valid for end tags
+        if GetTagParams(WorkingTag, ChPos, nil) > 0 then
+          raise ETaggedTextTagHandler.CreateFmt(sEndTagHasParams, [Text]);
+      end;
+      ttsComment, ttsScript:
+      begin
+        // Comment or Script tag
+        Code := $FFFF;      // not a tag in map
+        Text := WorkingTag; // text to return is all that is left of tag
+      end;
     end;
-    ttsCompoundStartTag:
-    begin
-      // Compound start tag
-      // get tag's name
-      Text := GetTagName(WorkingTag, ChPos);
-      // get information about tag from map
-      if not LookupTagInfo(Text, Code, IsCompound) then
-      begin
-        // tag is not in map
-        Error(sTagNotRecognised, [Text]);
-        Exit;
-      end;
-      if not IsCompound then
-      begin
-        // tag not compound type: not valid here
-        Error(sCompoundTagInvalid, [Text]);
-        Exit;
-      end;
-      // get parameters for the tag
-      GetTagParams(WorkingTag, ChPos, Params);
-      Result := True;
-    end;
-    ttsCompoundEndTag:
-    begin
-      // Compound end tag
-      // get tag's name
-      Text := GetTagName(WorkingTag, ChPos);
-      // get information about tag from map
-      if not LookupTagInfo(Text, Code, IsCompound) then
-      begin
-        // tag is not in map
-        Error(sTagNotRecognised, [Text]);
-        Exit;
-      end;
-      if not IsCompound then
-      begin
-        // tag not compound type: not valid here
-        Error(sTagNotCompound, [Text]);
-        Exit;
-      end;
-      // check if has params: not valid for end tags
-      if GetTagParams(WorkingTag, ChPos, nil) > 0 then
-      begin
-        Error(sEndTagHasParams, [Text]);
-        Exit;
-      end;
-      Result := True;
-    end;
-    ttsComment, ttsScript:
-    begin
-      // Comment or Script tag
-      Code := $FFFF;      // not a tag in map
-      Text := WorkingTag; // text to return is all that is left of tag
-      Result := True;
-    end;
-  end;
   except
-    on E: ETaggedTextTagHandler do
-    begin
-      // Error in a tag's parameters
-      Error(sBadTagAttribute, [Text, E.Message]);
-      Exit;
-    end;
+    on E: EAttrError do
+      raise ETaggedTextTagHandler.CreateFmt(
+        sBadTagAttribute, [Text, E.Message]
+      );
   end;
 end;
 
@@ -1238,12 +1128,14 @@ begin
       // record tag
       Tag := MidStr(fTaggedText, StartPos, fNextCharPos - StartPos);
       // Process the tag raising exception on error
-      if not fTagHandler.ProcessTag(
-        Tag, fCurText, fKind, fTagCode, fParams
-      ) then
-        raise ETaggedTextLexer.CreateFmt(
-          sErrorReadingTag, [StartPos, fTagHandler.LastErrorMessage]
-        );
+      try
+        fTagHandler.ProcessTag(Tag, fCurText, fKind, fTagCode, fParams);
+      except
+        on E: ETaggedTextTagHandler do
+          raise ETaggedTextLexer.CreateFmt(
+            sErrorReadingTag, [StartPos, E.Message]
+          );
+      end;
       // Now act on kind of tag read
       case fKind of
         ttsCompoundStartTag:
@@ -1289,13 +1181,14 @@ begin
         and (fTaggedText[fNextCharPos] <> '<') do
         Inc(fNextCharPos);
       // check the plain text for entities, replacing them with values
-      if not fEntityHandler.TranslateTextEntities(
-        MidStr(fTaggedText, StartPos, fNextCharPos - StartPos),
-        fCurText
-      ) then
-        raise ETaggedTextLexer.CreateFmt(
-          sErrorReadingEntities, [fEntityHandler.LastErrorMessage]
+      try
+        fEntityHandler.TranslateTextEntities(
+          MidStr(fTaggedText, StartPos, fNextCharPos - StartPos), fCurText
         );
+      except
+        on E: ETaggedTextEntityHandler do
+          raise ETaggedTextLexer.CreateFmt(sErrorReadingEntities, [E.Message]);
+      end;
       // replace all CR LF pairs with LF
       fCurText := UnixLineBreaks(fCurText);
     end;
@@ -1317,7 +1210,7 @@ procedure TTaggedTextLexer.Reset;
 begin
   fNextCharPos := 1;
   fTagStack.Clear;
-  fKind := ttsNull;
+  fKind := ttsNone;
 end;
 
 procedure TTaggedTextLexer.SetTaggedText(const Value: string);
