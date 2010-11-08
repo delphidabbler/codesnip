@@ -169,7 +169,7 @@ end;
 
 procedure TestTNoConstructObject.TestConstruct;
 begin
-  CheckException(ConstructError, EAssertionFailed,
+  CheckException(ConstructError, ENoConstructException,
     'Expected assertion failure');
 end;
 
@@ -184,7 +184,7 @@ procedure TestTNoPublicConstructObject.TestContruct;
 var
   Obj: TTestObject;
 begin
-  CheckException(ConstructError, EAssertionFailed,
+  CheckException(ConstructError, ENoConstructException,
     'Expected assertion failure calling constructor');
   Obj := nil;
   try
@@ -216,7 +216,7 @@ procedure TestTNoPublicConstructIntfObject.TestContruct;
 var
   Obj: IInterface;
 begin
-  CheckException(ConstructError, EAssertionFailed,
+  CheckException(ConstructError, ENoConstructException,
     'Expected assertion failure calling constructor');
   try
     Obj := TTestObject.Instance;
