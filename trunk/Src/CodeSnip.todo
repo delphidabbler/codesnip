@@ -3,7 +3,7 @@
 
 
 
-{TODO -oSelf -cImprovement : Rationalise error handling in UTaggedTextLexer - use exception rather than LastError properties. Also check how they bubble up the chain to snippets editor.}
+{DONE -oSelf -cImprovement : Rationalise error handling in UTaggedTextLexer - use exception rather than LastError properties. Also check how they bubble up the chain to snippets editor.}
 
 
 
