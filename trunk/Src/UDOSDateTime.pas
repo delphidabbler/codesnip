@@ -37,7 +37,6 @@
 
 unit UDOSDateTime;
 
-{$WARN SYMBOL_PLATFORM OFF}
 
 interface
 
