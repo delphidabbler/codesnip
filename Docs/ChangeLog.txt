@@ -4,6 +4,16 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.8.1 of 08 November 2010
++ Fixed bug #3015589 (http://bit.ly/cdPedH) where some user syntax highlighter settings were being ignored in main display.
++ Changed Test Unit view dialog box to use user syntax highlighter settings.
++ Revised credits in About Box program tab.
++ Updated third party units: PJMD5 to v0.3, PJSysInfo to v3.3, PJVersionInfo to v3.3.
++ Modified version info code to use new features of new PJVersionInfo 3rd party unit.
++ Refactored code that parses XHTML-style code.
++ Updated compiler warnings used in project and made command line and IDE options the same.
++ Updated documentation.
+
 Release v3.8.0 of 23 October 2010
 + Added support for Delphi XE to program. Can now test compile and display results with Delphi XE.
 + Updated help file re Delphi XE support.
