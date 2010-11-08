@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -54,22 +54,21 @@ type
   }
   TRoutineHTML = class(TObject)
   strict private
-    fRoutine: TRoutine; // Value of Routine property
+    fSnippet: TRoutine; // Value of Snippet property
   strict protected
     function HiliteSource(const SourceCode: string): string;
       {Highlights source code in a style suitable for display in UI.
         @param SourceCode [in] Source code to be highlighted.
         @return Highlighted source code.
       }
-    property Routine: TRoutine
-      read fRoutine;
+    property Snippet: TRoutine read fSnippet;
       {Reference to snippet for which we're generating HTML}
   public
-    constructor Create(const Routine: TRoutine);
-      {Class constructor. Sets up object to provide HTML for a snippet.
-        @param Routine [in] Snippet for which to generate HTML.
+    constructor Create(const Snippet: TRoutine);
+      {Object constructor. Sets up object to provide HTML for a snippet.
+        @param Snippet [in] Snippet for which to generate HTML.
       }
-    function RoutineName: string;
+    function SnippetName: string;
       {Provides snippet name as valid HTML text.
         @return Required HTML.
       }
@@ -82,10 +81,10 @@ type
   }
   TInfoHTML = class(TRoutineHTML)
   strict private
-    function RoutineList(const Routines: TRoutineList): string;
+    function SnippetList(const Snippets: TRoutineList): string;
       {Generates HTML of a comma separated list of snippets, where each snippet
       name is a link to the snippet.
-        @param Routines [in] List of snippets in list.
+        @param Snippets [in] List of snippets in list.
         @return HTML of snippet list or 'None' if list empty.
       }
     function EmptyListSentence: string;
@@ -93,30 +92,30 @@ type
         @return Required sentenct.
       }
   public
-    function RoutineDesc: string;
+    function Description: string;
       {Provides description of snippet as valid HTML text.
         @return Required HTML.
       }
     function SnippetKind: string;
-      {Provides HTML containing a description of snippet kind.
+      {Provides HTML containing a description of snippet's kind.
         @return Required HTML.
       }
     function Category: string;
-      {Provides HTML containing the category that a snippet belongs to.
+      {Provides HTML containing the category that the snippet belongs to.
         @return Required HTML.
       }
     function SourceCode: string;
       {Provides HTML containing snippet's source code, syntax highlighted in a
-      style suitable for display in UI.
+      style suitable for display in the UI.
         @return Required HTML.
       }
     function Depends: string;
-      {Provides list of links to snippets on which snippet depends.
+      {Provides list of links to snippets on which the snippet depends.
         @return Required HTML containing either a list of links to snippets or
           text informing there are no dependencies.
       }
     function XRefs: string;
-      {Provides list of links to snippets with which snippet is cross-
+      {Provides list of links to the snippets with which this snippet is cross-
       referenced.
         @return Required HTML containing either a list of links to snippets or
           text informing there are no cross references.
@@ -148,13 +147,13 @@ uses
 
 { TRoutineHTML }
 
-constructor TRoutineHTML.Create(const Routine: TRoutine);
-  {Class constructor. Sets up object to provide HTML for a snippet.
-    @param Routine [in] Snippet for which to generate HTML.
+constructor TRoutineHTML.Create(const Snippet: TRoutine);
+  {Object constructor. Sets up object to provide HTML for a snippet.
+    @param Snippet [in] Snippet for which to generate HTML.
   }
 begin
   inherited Create;
-  fRoutine := Routine;
+  fSnippet := Snippet;
 end;
 
 function TRoutineHTML.HiliteSource(const SourceCode: string): string;
@@ -166,27 +165,27 @@ var
   Hiliter: ISyntaxHiliter;  // highlighter object
 begin
   Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkDetailHTML);
-  Result := Hiliter.Hilite(SourceCode, THiliteAttrsFactory.CreateDefaultAttrs);
+  Result := Hiliter.Hilite(SourceCode, THiliteAttrsFactory.CreateDisplayAttrs);
 end;
 
-function TRoutineHTML.RoutineName: string;
+function TRoutineHTML.SnippetName: string;
   {Provides snippet name as valid HTML text.
     @return Required HTML.
   }
 begin
-  Result := MakeSafeHTMLText(Routine.Name);
+  Result := MakeSafeHTMLText(Snippet.Name);
 end;
 
 { TInfoHTML }
 
 function TInfoHTML.Category: string;
-  {Provides HTML containing the category that a snippet belongs to.
+  {Provides HTML containing the category that the snippet belongs to.
     @return Required HTML.
   }
 var
   Cat: TCategory; // category that snippet belongs to
 begin
-  Cat := Snippets.Categories.Find(Routine.Category);
+  Cat := Snippets.Categories.Find(Snippet.Category);
   Assert(Assigned(Cat), ClassName + '.Category: Category not found');
   Result := MakeSentence(
     CategoryALink(Cat.Category, Cat.Description)
@@ -194,12 +193,20 @@ begin
 end;
 
 function TInfoHTML.Depends: string;
-  {Provides list of links to snippets on which snippet depends.
+  {Provides list of links to snippets on which the snippet depends.
     @return Required HTML containing either a list of links to snippets or text
       informing there are no dependencies.
   }
 begin
-  Result := RoutineList(Routine.Depends);
+  Result := SnippetList(Snippet.Depends);
+end;
+
+function TInfoHTML.Description: string;
+  {Provides description of snippet as valid HTML text.
+    @return Required HTML.
+  }
+begin
+  Result := MakeSafeHTMLText(MakeSentence(Snippet.Description));
 end;
 
 function TInfoHTML.EmptyListSentence: string;
@@ -218,60 +225,52 @@ function TInfoHTML.Extra: string;
     @return Required HTML.
   }
 begin
-  Result := TActiveTextHTML.Render(Routine.Extra);
+  Result := TActiveTextHTML.Render(Snippet.Extra);
 end;
 
-function TInfoHTML.RoutineDesc: string;
-  {Provides description of snippet as valid HTML text.
-    @return Required HTML.
-  }
-begin
-  Result := MakeSafeHTMLText(MakeSentence(Routine.Description));
-end;
-
-function TInfoHTML.RoutineList(const Routines: TRoutineList): string;
+function TInfoHTML.SnippetList(const Snippets: TRoutineList): string;
   {Generates HTML of a comma separated list of snippets, where each snippet name
   is a link to the snippet.
-    @param Routines [in] List of snippets in list.
+    @param Snippets [in] List of snippets in list.
     @return HTML of snippet list or 'None' if list empty.
   }
 var
-  Routine: TRoutine;  // refers to each snippet in list
+  Snippet: TRoutine;  // refers to each snippet in list
 begin
-  if Routines.Count = 0 then
+  if Snippets.Count = 0 then
     // There are no snippets: say so
     Result := EmptyListSentence
   else
   begin
     // Build comma separated list of snippet links
     Result := '';
-    for Routine in Routines do
+    for Snippet in Snippets do
     begin
       if Result <> '' then
         Result := Result + ', ';
-      Result := Result + RoutineALink(Routine.Name, Routine.UserDefined);
+      Result := Result + RoutineALink(Snippet.Name, Snippet.UserDefined);
     end;
     Result := MakeSentence(Result);
   end;
 end;
 
 function TInfoHTML.SnippetKind: string;
-  {Provides HTML containing a description of snippet kind.
+  {Provides HTML containing a description of snippet's kind.
     @return Required HTML.
   }
 begin
   Result := MakeSafeHTMLText(
-    MakeSentence(TSnippetKindInfoList.Instance[Routine.Kind].Description)
+    MakeSentence(TSnippetKindInfoList.Instance[Snippet.Kind].Description)
   );
 end;
 
 function TInfoHTML.SourceCode: string;
   {Provides HTML containing snippet's source code, syntax highlighted in a style
-  suitable for display in UI.
+  suitable for display in the UI.
     @return Required HTML.
   }
 begin
-  Result := HiliteSource(Routine.SourceCode);
+  Result := HiliteSource(Snippet.SourceCode);
 end;
 
 function TInfoHTML.Units: string;
@@ -281,19 +280,20 @@ function TInfoHTML.Units: string;
       required.
   }
 begin
-  if Routine.Units.Count = 0 then
+  if Snippet.Units.Count = 0 then
     Result := EmptyListSentence
   else
-    Result := MakeSafeHTMLText(JoinStr(Routine.Units, ', ', False) + '.');
+    Result := MakeSafeHTMLText(JoinStr(Snippet.Units, ', ', False) + '.');
 end;
 
 function TInfoHTML.XRefs: string;
-  {Provides list of links to snippets with which snippet is cross-referenced.
+  {Provides list of links to the snippets with which this snippet is cross
+  referenced.
     @return Required HTML containing either a list of links to snippets or text
       informing there are no cross references.
   }
 begin
-  Result := RoutineList(Routine.XRef);
+  Result := SnippetList(Snippet.XRef);
 end;
 
 end.

@@ -95,7 +95,8 @@
 <p>
 	<em>CodeSnip</em> is written in Object Pascal and is targeted at Delphi
 	2010. It requires some language features introduced in this version so will
-	not compile with any earlier compilers.
+	not compile with any earlier compilers. The code <em>may</em> compile with
+	Delphi XE but this has not been tested.
 </p>
 
 <p>
@@ -136,7 +137,7 @@
 	should compile the source code separately with the same version of Delphi
 	that is being used to compile <em>CodeSnip</em>.
 </p>
-    
+
 <p>
 	Regardless of whether you are using the version of Indy 10 supplied with
 	Delphi or if you have downloaded and compiled your own version, you must set
@@ -197,7 +198,7 @@
 
 <p>
 	You can use the Delphi IDE to edit the code and test compile it, but final
-	builds should be created using the makefile, which requires the following 
+	builds should be created using the makefile, which requires the following
 	tools that are supplied with Delphi:
 </p>
 
@@ -312,7 +313,7 @@
 	<code>Bin</code> sub-directory of <code>MSSDK</code> and the required
 	include files must be in the <code>Include</code> sub-directory.
 </p>
-	
+
 <p>
 	You can use a batch file with contents similar to the following to set the
 	path and the <code>MSSDK</code> environment variable before building
@@ -340,10 +341,10 @@ set PATHSET=1
 	If you don't already have the MS SDK it's a big job to download and install
 	it just to compile one <code>.tlb</code> file. Therefore there's an
 	alternative that means you can compile without the SDK. This is described
-	in the section 
+	in the section
 	<a
 		href="#nomidl"
-	>Editing and Compiling Without MIDL</a> below. 
+	>Editing and Compiling Without MIDL</a> below.
 </p>
 
 <p>
@@ -397,8 +398,8 @@ set PATHSET=1
 	The Inno setup command line compiler is needed to create <em>CodeSnip</em>'s
 	install program. v5.2.3 or later is required as is a compatible version of
 	the ISPP pre-processor. You can get Inno Setup with ISPP at <a
-		href="http://www.innosetup.com/"
-	>http://www.innosetup.com/</a>.
+		href="http://www.jrsoftware.org/isinfo.php"
+	>http://www.jrsoftware.org/isinfo.php</a>.
 </p>
 
 <p>
@@ -425,7 +426,7 @@ set PATHSET=1
 </h3>
 
 <p>
-	This program is used to create <em>CodeSnip</em>'s release file. 
+	This program is used to create <em>CodeSnip</em>'s release file.
 	You can get a Windows command line version at
 	<a
 		href="http://stahlforce.com/dev/index.php?tool=zipunzip"
@@ -580,7 +581,7 @@ set PATHSET=1
 			href="http://codesnip.svn.sourceforge.net/viewvc/codesnip/trunk/"
 		>http://codesnip.svn.sourceforge.net/viewvc/codesnip/trunk/</a> and
 		click the <em>Download GNU tarball</em> link.
-	</li> 
+	</li>
 	<li>
 		Download source files for the current many older releases from the <a
 			href="https://sourceforge.net/projects/codesnip/files/"
@@ -635,10 +636,10 @@ set PATHSET=1
           +-- Img           - images included in resources
           |
           +-- Misc          - other resources</pre>
-          
+
 <p>
 	If, by chance you also have a <code>Bin</code>, <code>Exe</code> and
-	<code>Release</code> directory don't worry - all will become clear. 
+	<code>Release</code> directory don't worry - all will become clear.
 	Subversion users may also see the usual <code>.svn</code> hidden
 	directories. If you have done some editing you may also see occasional
 	hidden <code>__history</code> folders.
@@ -663,7 +664,7 @@ set PATHSET=1
 <p>
 	or
 </p>
-  
+
 <pre class="cmd"><span class="prompt">&gt;</span> %DELPHI2010%\Bin\Make config</pre>
 
 <p>
@@ -690,16 +691,16 @@ set PATHSET=1
   ...</pre>
 
 <p>
-	If the <code>Bin</code>, <code>Exe</code> and <code>Release</code> folders 
-	already existed they will have been emptied. 
+	If the <code>Bin</code>, <code>Exe</code> and <code>Release</code> folders
+	already existed they will have been emptied.
 	In addition, <code>Make</code> will have created <code>.cfg</code> and
 	<code>.bdsproj</code> files from templates in the <code>Src</code> and
 	<code>Src\InstallHelper</code> folders.
-	<code>.cfg</code> files are needed for DCC32 to run correctly and 
+	<code>.cfg</code> files are needed for DCC32 to run correctly and
 	<code>.bdsproj</code> files provide the Delphi IDE project options. These
 	files will be ignored by Subversion.
 </p>
-  
+
 <p>
 	If you are intending to use the Delphi IDE to compile code, you should also
 	do:
@@ -738,7 +739,7 @@ set PATHSET=1
 	<li>
 		If necessary download a resource file editor. XN Resource Editor will
 		do the job. You can get that from
-		<a 
+		<a
 			href="http://www.wilsonc.demon.co.uk/d10resourceeditor.htm"
 		>http://www.wilsonc.demon.co.uk/d10resourceeditor.htm</a>.
 	</li>
@@ -863,7 +864,7 @@ set PATHSET=1
 <span class="prompt">&gt;</span> Make resources
 <span class="prompt">&gt;</span> Make autogen
 <span class="prompt">&gt;</span> Make pascal</pre>
- 
+
 <p>
 	The <em>CodeSnip</em> executable will be placed in the <code>Exe</code>
 	folder.
@@ -908,7 +909,7 @@ set PATHSET=1
 </p>
 
 <p>
-	We've already shown how to build <em>CodeSnip</em> and the help file. 
+	We've already shown how to build <em>CodeSnip</em> and the help file.
 	<code>CSInstallHelper.exe</code> is built by doing:
 </p>
 
@@ -1005,7 +1006,7 @@ set PATHSET=1
 
 <p>
 	Be warned though that this command removes the <code>__history</code>
-	folders that Delphi uses to maintain earlier versions of files. 
+	folders that Delphi uses to maintain earlier versions of files.
 </p>
 
 <h2>

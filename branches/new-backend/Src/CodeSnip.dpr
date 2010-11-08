@@ -51,8 +51,6 @@ program CodeSnip;
 {$WARNINGS ON}
 {$WRITEABLECONST OFF}
 
-{$WARN SYMBOL_PLATFORM OFF}
-
 
 uses
   Forms,

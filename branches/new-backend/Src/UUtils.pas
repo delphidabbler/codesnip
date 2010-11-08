@@ -35,7 +35,6 @@
 
 unit UUtils;
 
-{$WARN SYMBOL_PLATFORM OFF}
 
 interface
 
