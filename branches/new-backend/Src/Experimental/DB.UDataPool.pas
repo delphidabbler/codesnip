@@ -39,13 +39,17 @@ interface
 
 uses
   // Delphi
-  SysUtils, Generics.Collections,
+  Generics.Collections,
   // Project
-  DB.UCookies, DB.UDataItem,
+  DB.UCookies, DB.UDataItem, DB.UObjectDestructionMgr,
   UBaseObjects, UExceptions;
 
 type
 
+  {
+  EDBDataPoolError:
+    Class of exception raised by TDBDataPool methods.
+  }
   EDBDataPoolError = class(EBug);
 
 
@@ -58,17 +62,7 @@ type
   }
   TDBDataPool<T: TDBDataItem> = class(TOwnedConditionalFreeObject)
   strict private
-    type
-      // Object that controls whether a data item can be freed
-      TFreeController = class(TNonRefCountedObject, IConditionalFreeController)
-      strict private
-        fObjectToFree: TObject;
-      public
-        function PermitDestruction(const Obj: TObject): Boolean;
-        property ObjectToFree: TObject read fObjectToFree write fObjectToFree;
-      end;
-  strict private
-    fFreeController: TFreeController; // Controls freeing of data items
+    fFreeController: TObjectDestructionMgr; // Controls freeing of data items
     fMap: TDictionary<TDBCookie,T>;   // Maps cookies to data item object
     function GetItem(const Cookie: TDBCookie): T;
       {Gets reference to object associated with a cookie in the pool.
@@ -80,10 +74,6 @@ type
       {Gets reference to cookies collection from pool. Collection will be freed
       when pool object is freed.
         @return Required collection.
-      }
-    procedure FreeObject(Obj: T);
-      {Frees a data item.
-        @param Obj [in] Data item object to be freed.
       }
   public
     constructor Create(const Capacity: Integer = 0);
@@ -127,6 +117,7 @@ type
   end;
 
 resourcestring  // must be declared in interface: used in parameterised type
+  // TDBDataPool<T> Error messages
   sObjectPoolCookieExists = 'Object with same cookie already exists';
   sObjectPoolCookieMissing = 'No object with given cookie found';
   sObjectPoolCookieIsNul = 'Attempt to add data item with nul cookie to pool';
@@ -134,7 +125,9 @@ resourcestring  // must be declared in interface: used in parameterised type
 
 implementation
 
+
 uses
+  // Delphi
   Generics.Defaults;
 
 
@@ -151,15 +144,20 @@ begin
   if IsInPool(Obj.Cookie) then
     raise EDBDataPoolError.Create(sObjectPoolCookieExists);
   fMap.Add(Obj.Cookie, Obj);
-  Obj.FreeController := fFreeController;
+  fFreeController.HookController(Obj, True);
 end;
 
 procedure TDBDataPool<T>.Clear;
 var
   Value: T;
 begin
-  for Value in fMap.Values do
-    FreeObject(Value);
+  fFreeController.AllowDestroyAll;
+  try
+    for Value in fMap.Values do
+      Value.Free;
+  finally
+    fFreeController.AllowDestroyNone;
+  end;
   fMap.Clear;
 end;
 
@@ -186,7 +184,8 @@ begin
       end
     )
   );
-  fFreeController := TFreeController.Create;
+  fFreeController := TObjectDestructionMgr.Create;
+  fFreeController.AllowDestroyNone;
 end;
 
 destructor TDBDataPool<T>.Destroy;
@@ -195,16 +194,6 @@ begin
   fMap.Free;
   fFreeController.Free;
   inherited;
-end;
-
-procedure TDBDataPool<T>.FreeObject(Obj: T);
-begin
-  fFreeController.ObjectToFree := Obj;
-  try
-    Obj.Free;
-  finally
-    fFreeController.ObjectToFree := nil;
-  end;
 end;
 
 function TDBDataPool<T>.GetCookies: TEnumerable<TDBCookie>;
@@ -234,15 +223,12 @@ var
 begin
   Obj := GetItem(Cookie);
   fMap.Remove(Cookie);
-  FreeObject(Obj);
-end;
-
-{ TDBDataPool<T>.TFreeController }
-
-function TDBDataPool<T>.TFreeController.PermitDestruction(
-  const Obj: TObject): Boolean;
-begin
-  Result := Assigned(fObjectToFree) and (Obj = fObjectToFree);
+  fFreeController.AllowDestroyCookie(Obj.Cookie);
+  try
+    Obj.Free;
+  finally
+    fFreeController.AllowDestroyNone;
+  end;
 end;
 
 end.
