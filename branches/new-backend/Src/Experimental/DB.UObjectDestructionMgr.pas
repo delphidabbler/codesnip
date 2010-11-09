@@ -1,5 +1,5 @@
 {
- * Database.UObjectDestructionMgr.pas
+ * DB.UObjectDestructionMgr.pas
  *
  * Implements a helper class that manages destruction of controlled conditional-
  * free objects.
@@ -19,7 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is Database.UObjectDestructionMgr.pas
+ * The Original Code is DB.UObjectDestructionMgr.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,13 +34,13 @@
 }
 
 
-unit Database.UObjectDestructionMgr;
+unit DB.UObjectDestructionMgr;
 
 interface
 
 uses
   SysUtils,
-  UBaseObjects, Database.UCookies, Database.UDataItem;
+  UBaseObjects, DB.UCookies, DB.UDataItem;
 
 type
   TObjectDestructionMgr = class(TObject)

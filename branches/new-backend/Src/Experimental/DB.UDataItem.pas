@@ -1,5 +1,5 @@
 {
- * Database.UDataItem.pas
+ * DB.UDataItem.pas
  *
  * Implements a base class for all database data items that can be stored in a
  * data pool.
@@ -19,8 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is Database.UDataItem.pas, formerly
- * NsDatabase.UDataItem.pas.
+ * The Original Code is DB.UDataItem.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -35,12 +34,12 @@
 }
 
 
-unit Database.UDataItem;
+unit DB.UDataItem;
 
 interface
 
 uses
-  UBaseObjects, Database.UCookies;
+  UBaseObjects, DB.UCookies;
 
 type
 

@@ -1,20 +1,20 @@
 {
-  Delphi DUnit Test Case for the Database.UObjectDestructionMgr Unit
-  ------------------------------------------------------------------
+  Delphi DUnit Test Case for the DB.UObjectDestructionMgr Unit
+  ------------------------------------------------------------
 
   $Rev$
   $Date$
 }
 
-unit TestDatabaseUObjectDestructionMgr;
+unit TestDBUObjectDestructionMgr;
 
 
 interface
 
 
 uses
-  TestFramework, UBaseObjects, Database.UObjectDestructionMgr, SysUtils,
-  Database.UCookies, Database.UDataItem;
+  TestFramework, UBaseObjects, DB.UObjectDestructionMgr, SysUtils,
+  DB.UCookies, DB.UDataItem;
 
 type
   // Test methods for class TObjectDestructionMgr

@@ -1,5 +1,5 @@
 {
- * Database.UDataPool.pas
+ * DB.UDataPool.pas
  *
  * Implements a generic data pool object used to store various database objects.
  *
@@ -18,8 +18,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is Database.UDataPool.pas, formerly
- * NsDatabase.UDataPool.pas.
+ * The Original Code is DB.UDataPool.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +33,7 @@
 }
 
 
-unit Database.UDataPool;
+unit DB.UDataPool;
 
 interface
 
@@ -42,7 +41,7 @@ uses
   // Delphi
   SysUtils, Generics.Collections,
   // Project
-  Database.UCookies, Database.UDataItem,
+  DB.UCookies, DB.UDataItem,
   UBaseObjects, UExceptions;
 
 type

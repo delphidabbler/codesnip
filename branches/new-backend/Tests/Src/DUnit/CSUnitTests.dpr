@@ -57,21 +57,21 @@ uses
   TextTestRunner,
   TestUBaseObjects in 'TestUBaseObjects.pas',
   TestUSingleton in 'TestUSingleton.pas',
-  TestDatabaseUCookies in 'TestDatabaseUCookies.pas',
-  TestDatabaseUDataItem in 'TestDatabaseUDataItem.pas',
-  TestDatabaseUDataPool in 'TestDatabaseUDataPool.pas',
-  Database.UCookies in '..\..\..\Src\Experimental\Database.UCookies.pas',
-  Database.UDataItem in '..\..\..\Src\Experimental\Database.UDataItem.pas',
-  Database.UDataPool in '..\..\..\Src\Experimental\Database.UDataPool.pas',
+  TestDBUCookies in 'TestDBUCookies.pas',
+  TestDBUDataItem in 'TestDBUDataItem.pas',
+  TestDBUDataPool in 'TestDBUDataPool.pas',
+  DB.UCookies in '..\..\..\Src\Experimental\DB.UCookies.pas',
+  DB.UDataItem in '..\..\..\Src\Experimental\DB.UDataItem.pas',
+  DB.UDataPool in '..\..\..\Src\Experimental\DB.UDataPool.pas',
   UBaseObjects in '..\..\..\Src\UBaseObjects.pas',
   UExceptions in '..\..\..\Src\UExceptions.pas',
   USingleton in '..\..\..\Src\Experimental\USingleton.pas',
-  Database.UDatabase in '..\..\..\Src\Experimental\Database.UDatabase.pas',
-  TestDatabaseUDatabase in 'TestDatabaseUDatabase.pas',
+  DB.UDatabase in '..\..\..\Src\Experimental\DB.UDatabase.pas',
+  TestDBUDatabase in 'TestDBUDatabase.pas',
   UContainers in '..\..\..\Src\UContainers.pas',
   TestUContainers in 'TestUContainers.pas',
-  Database.UObjectDestructionMgr in '..\..\..\Src\Experimental\Database.UObjectDestructionMgr.pas',
-  TestDatabaseUObjectDestructionMgr in 'TestDatabaseUObjectDestructionMgr.pas';
+  DB.UObjectDestructionMgr in '..\..\..\Src\Experimental\DB.UObjectDestructionMgr.pas',
+  TestDBUObjectDestructionMgr in 'TestDBUObjectDestructionMgr.pas';
 
 {$R *.RES}
 

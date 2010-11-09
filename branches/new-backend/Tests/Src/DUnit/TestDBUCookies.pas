@@ -1,17 +1,17 @@
 {
-  Delphi DUnit Test Case for the Database.UCookies Unit
-  -----------------------------------------------------
+  Delphi DUnit Test Case for the DB.UCookies Unit
+  -----------------------------------------------
 
   $Rev$
   $Date$
 }
 
-unit TestDatabaseUCookies;
+unit TestDBUCookies;
 
 interface
 
 uses
-  TestFramework, Database.UCookies, SysUtils;
+  TestFramework, DB.UCookies, SysUtils;
 
 type
 

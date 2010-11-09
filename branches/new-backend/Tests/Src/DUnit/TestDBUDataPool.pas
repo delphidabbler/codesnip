@@ -1,18 +1,18 @@
 {
-  Delphi DUnit Test Case for the Database.UDataPool Unit
-  ------------------------------------------------------
+  Delphi DUnit Test Case for the DB.UDataPool Unit
+  ------------------------------------------------
 
   $Rev$
   $Date$
 }
 
-unit TestDatabaseUDataPool;
+unit TestDBUDataPool;
 
 interface
 
 uses
   SysUtils, TestFramework, Generics.Collections, UBaseObjects,
-  Database.UCookies, Database.UDataItem, Database.UDataPool;
+  DB.UCookies, DB.UDataItem, DB.UDataPool;
 
 type
 
