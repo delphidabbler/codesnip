@@ -46,6 +46,8 @@ type
     procedure SetUp; override;
     procedure TearDown; override;
   published
+    procedure TestCreate;
+    procedure TestHookController;   // must before TestAllowXXXX tests
     procedure TestAllowDestroyNone;
     procedure TestAllowDestroyAll;
     procedure TestAllowDestroyCookie;
@@ -75,9 +77,9 @@ var
   Item1, Item2: TDBDataItem;
 begin
   Item1 := TTestDataItem.Create(100, TDBCookie.Create);
-  Item1.FreeController := fObjectDestructionMgr.Controller;
+  fObjectDestructionMgr.HookController(Item1);
   Item2 := TTestDataItem.Create(200, TDBCookie.Create);
-  Item2.FreeController := fObjectDestructionMgr.Controller;
+  fObjectDestructionMgr.HookController(Item2);
   Check(TTestDataItem.InstanceCount = 2,
     Format('<TEST CHECK 1>: Expected TTestDateItem.InstanceCount = 2, got %d',
       [TTestDataItem.InstanceCount]));
@@ -96,14 +98,54 @@ begin
       [TTestDataItem.InstanceCount]));
 end;
 
+procedure TestTObjectDestructionMgr.TestCreate;
+var
+  Item: TDBDataItem;
+begin
+  Item := TTestDataItem.Create(100, TDBCookie.Create);
+  Check(TTestDataItem.InstanceCount = 1,
+    Format('<TEST CHECK 1>: Expected TTestDateItem.InstanceCount = 1, got %d',
+      [TTestDataItem.InstanceCount]));
+
+  Check(Item.FreeController = nil, 'Expected Item.FreeController = nil');
+
+  Item.Free;    // should fail - no controller
+  Check(TTestDataItem.InstanceCount = 1,
+    Format('Expected TTestDateItem.InstanceCount = 1, got %d',
+      [TTestDataItem.InstanceCount]));
+
+  ForceFree(Item);
+  Check(TTestDataItem.InstanceCount = 0,
+    Format('<TEST CHECK 2>: Expected TTestDateItem.InstanceCount = 0, got %d',
+      [TTestDataItem.InstanceCount]));
+end;
+
+procedure TestTObjectDestructionMgr.TestHookController;
+var
+  Item: TDBDataItem;
+begin
+  Item := TTestDataItem.Create(100, TDBCookie.Create);
+  Check(TTestDataItem.InstanceCount = 1,
+    Format('<TEST CHECK 1>: Expected TTestDateItem.InstanceCount = 1, got %d',
+      [TTestDataItem.InstanceCount]));
+
+  fObjectDestructionMgr.HookController(Item);
+  Check(Item.FreeController <> nil, 'Expected Item.FreeController <> nil');
+
+  ForceFree(Item);
+  Check(TTestDataItem.InstanceCount = 0,
+    Format('<TEST CHECK 2>: Expected TTestDateItem.InstanceCount = 0, got %d',
+      [TTestDataItem.InstanceCount]));
+end;
+
 procedure TestTObjectDestructionMgr.TestAllowDestroyAll;
 var
   Item1, Item2: TDBDataItem;
 begin
   Item1 := TTestDataItem.Create(100, TDBCookie.Create);
-  Item1.FreeController := fObjectDestructionMgr.Controller;
+  fObjectDestructionMgr.HookController(Item1);
   Item2 := TTestDataItem.Create(200, TDBCookie.Create);
-  Item2.FreeController := fObjectDestructionMgr.Controller;
+  fObjectDestructionMgr.HookController(Item2);
   Check(TTestDataItem.InstanceCount = 2,
     Format('<TEST CHECK>: Expected TTestDateItem.InstanceCount = 2, got %d',
       [TTestDataItem.InstanceCount]));
@@ -121,9 +163,9 @@ var
   Item1, Item2: TDBDataItem;
 begin
   Item1 := TTestDataItem.Create(100, TDBCookie.Create);
-  Item1.FreeController := fObjectDestructionMgr.Controller;
+  fObjectDestructionMgr.HookController(Item1);
   Item2 := TTestDataItem.Create(200, TDBCookie.Create);
-  Item2.FreeController := fObjectDestructionMgr.Controller;
+  fObjectDestructionMgr.HookController(Item2);
   Check(TTestDataItem.InstanceCount = 2,
     Format('<TEST CHECK 1>: Expected TTestDateItem.InstanceCount = 2, got %d',
       [TTestDataItem.InstanceCount]));
