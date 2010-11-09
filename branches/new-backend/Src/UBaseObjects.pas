@@ -37,6 +37,7 @@
  *      whether the object can be freed to an associated controller object.
  *
  * Interfaces:
+ *
  *   1) INoPublicConstruct:
  *      A "do nothing" interface that can be supported by objects that don't
  *      allow public construction but cannot inherit from
@@ -44,6 +45,12 @@
  *   2) IConditionalFreeController:
  *      Interface supported by objects that control whether an object can be
  *      freed. Used with TControlledConditionalFreeObject.
+ *
+ * Exceptions:
+ *
+ *   ELocked:
+ *      Class of exception raised when an attempt is made to write to a locked
+ *      resource.
  *
  * Unit originally named UIntfObjects.pas. Changed to UBaseObjects.pas at v2.0,
  * 5th October 2008.
@@ -340,6 +347,13 @@ type
   end;
 
   {
+  ELocked:
+    Class of exception raised when an attempt is made to write to a locked
+    resource.
+  }
+  ELocked = class(Exception);
+
+  {
   TControlledConditionalFreeObject:
     Class that can only be freed if an associated controller class permits it.
     If no controller object is associated then objects of this class can not be
@@ -347,7 +361,17 @@ type
   }
   TControlledConditionalFreeObject = class(TConditionalFreeObject)
   strict private
-    fFreeController: IConditionalFreeController;  // controller object
+    fFreeController: IConditionalFreeController;
+      {Value of FreeControlle property}
+    fLocked: Boolean;
+      {Value of Locked property}
+    procedure SetFreeController(const Value: IConditionalFreeController);
+      {Write accessor for FreeController property.
+        @param Value [in] New property value.
+        @except ELocked raised when an attempt is made to set the property value
+          after it has been locked by the Lock method, unless the property is
+          nil.
+      }
   strict protected
     function CanDestroy: Boolean; override;
       {Determines if the object can be destroyed. Calls method of any assigned
@@ -361,11 +385,22 @@ type
           this object can be destroyed. This value can be changed via the
           FreeController property.
       }
+    procedure Lock;
+      {Locks the object so that the FreeController property cannot be updated if
+      it has already been set. If FreeController is nil when Lock is called it
+      can still be set to a non-nil value. Lock sets the Locked property to
+      true. Once locked the object cannot be unlocked.
+      }
     property FreeController: IConditionalFreeController
-      read fFreeController write fFreeController;
+      read fFreeController write SetFreeController;
       {Reference to object that controls whether this object can be freed. This
       property enables the controller to be changed over the lifetime of
-      instances of this class}
+      instances of this class. If the property is nil the object cannot be
+      freed. An ELocked exception is raised if an attempt is made to set this
+      property when the Locked property is True unless FreeController is nil}
+    property Locked: Boolean read fLocked default False;
+      {Flag indicating if the object is locked against setting a new value for
+      a non-nil FreeController property}
   end;
 
 
@@ -637,6 +672,32 @@ constructor TControlledConditionalFreeObject.Create(
 begin
   inherited Create;
   fFreeController := AFreeController;
+end;
+
+procedure TControlledConditionalFreeObject.Lock;
+  {Locks the object so that the FreeController property cannot be updated if it
+  has already been set. If FreeController is nil when Lock is called it can
+  still be set to a non-nil value. Lock sets the Locked property to true. Once
+  locked the object cannot be unlocked.
+  }
+begin
+  fLocked := True;
+end;
+
+procedure TControlledConditionalFreeObject.SetFreeController(
+  const Value: IConditionalFreeController);
+  {Write accessor for FreeController property.
+    @param Value [in] New property value.
+    @except ELocked raised when an attempt is made to set the property value
+    after it has been locked by the Lock method, unless the property is nil.
+  }
+resourcestring
+  // Exception error message
+  sLockError = 'Can''t set FreeController: object is locked';
+begin
+  if Locked and Assigned(fFreeController) then
+    raise ELocked.Create(sLockError);
+  fFreeController := Value;
 end;
 
 end.

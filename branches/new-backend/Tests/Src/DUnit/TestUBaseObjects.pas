@@ -153,6 +153,7 @@ type
   published
     procedure TestFreeObject;
     procedure TestControllerChange;
+    procedure TestLock;
   end;
 
 implementation
@@ -550,6 +551,72 @@ begin
     AnotherObj.Free;
     ControllerObj.Free;
   end;
+end;
+
+procedure TestTControlledConditionalFreeObject.TestLock;
+var
+  Controller1a, Controller1b,
+  Controller2a, Controller2b: IConditionalFreeController;
+  Obj1, Obj2: TTestObject;
+begin
+  Obj1 := TTestObject.Create(nil);   // create Obj with no controller
+  Check(Obj1.FreeController = nil, 'Obj.FreeController <> nil');
+  Obj2 := TTestObject.Create(nil);   // create Obj with no controller
+  Check(Obj2.FreeController = nil, 'Obj.FreeController <> nil');
+
+  Controller1a := nil;
+  Controller1b := nil;
+  Controller2a := nil;
+  Controller2b := nil;
+  try
+    Controller1a := TController.Create(Obj1);
+    Controller1b := TController.Create(Obj1);
+    Controller2a := TController.Create(Obj2);
+    Controller2b := TController.Create(Obj2);
+
+    Obj1.FreeController := Controller1a;
+    Check(not Obj1.Locked, 'Expected Obj1.Locked = False');
+    Obj1.Lock;
+    Check(Obj1.Locked, 'Expected Obj1.Locked = True');
+    try
+      Obj1.FreeController := Controller1b;
+      Fail('Exception expected on assignment '
+        + 'Obj1.FreeController := Controller1b');
+    except
+      on E: Exception do
+        Check(E is ELocked, 'ELocked exception expected');
+    end;
+    Check(Obj1.FreeController = Controller1a,
+      'Expected Obj1.FreeController = Controller1a');
+    Obj1.Free;
+
+    Assert(Obj2.FreeController = nil, 'Expected Obj2.FreeController = nil');
+    Obj2.Lock;
+    try
+      Obj2.FreeController := Controller2a;
+    except
+      Fail('Unexpected exception on assigment '
+         + 'Obj2.FreeController := Controller2a');
+    end;
+    try
+      Obj2.FreeController := Controller2b;
+      Fail('Exception expected on assignment '
+        + 'Obj2.FreeController := Controller2b');
+    except
+      on E: Exception do
+        Check(E is ELocked, 'ELocked exception expected');
+    end;
+    Check(Obj2.FreeController = Controller2a,
+      'Expected Obj2.FreeController = Controller2a');
+    Obj2.Free;
+
+  finally
+    if Assigned(Controller1a) then (Controller1a as TController).Free;
+    if Assigned(Controller1b) then (Controller1b as TController).Free;
+    if Assigned(Controller2a) then (Controller2a as TController).Free;
+    if Assigned(Controller2b) then (Controller2b as TController).Free;
+  end;
+
 end;
 
 { TestTControlledConditionalFreeObject.TController }
