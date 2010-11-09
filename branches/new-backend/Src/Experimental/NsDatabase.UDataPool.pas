@@ -41,7 +41,7 @@ uses
   // Delphi
   SysUtils, Generics.Collections,
   // Project
-  NsDatabase.UCookies, NsDatabase.UDataItem,
+  Database.UCookies, NsDatabase.UDataItem,
   UBaseObjects, UExceptions;
 
 type

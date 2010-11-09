@@ -29,10 +29,10 @@
 			</DelphiCompile>
 			<DCCReference Include="TestUBaseObjects.pas"/>
 			<DCCReference Include="TestUSingleton.pas"/>
-			<DCCReference Include="TestNsDatabaseUCookies.pas"/>
+			<DCCReference Include="TestDatabaseUCookies.pas"/>
 			<DCCReference Include="TestNsDatabaseUDataItem.pas"/>
 			<DCCReference Include="TestNsDatabaseUDataPool.pas"/>
-			<DCCReference Include="..\..\..\Src\Experimental\NsDatabase.UCookies.pas"/>
+			<DCCReference Include="..\..\..\Src\Experimental\Database.UCookies.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\NsDatabase.UDataItem.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\NsDatabase.UDataPool.pas"/>
 			<DCCReference Include="..\..\..\Src\UBaseObjects.pas"/>

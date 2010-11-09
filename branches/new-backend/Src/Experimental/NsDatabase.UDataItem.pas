@@ -39,7 +39,7 @@ unit NsDatabase.UDataItem;
 interface
 
 uses
-  UBaseObjects, NsDatabase.UCookies;
+  UBaseObjects, Database.UCookies;
 
 type
 

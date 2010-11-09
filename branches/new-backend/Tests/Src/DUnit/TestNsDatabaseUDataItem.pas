@@ -11,7 +11,7 @@ unit TestNsDatabaseUDataItem;
 interface
 
 uses
-  TestFramework, NsDatabase.UCookies, NsDatabase.UDataItem, SysUtils,
+  TestFramework, Database.UCookies, NsDatabase.UDataItem, SysUtils,
   UBaseObjects;
 
 type
