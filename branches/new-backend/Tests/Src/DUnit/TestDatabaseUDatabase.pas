@@ -1,17 +1,17 @@
 {
-  Delphi DUnit Test Case for the NSDatabase.UDatabase Unit
-  --------------------------------------------------------
+  Delphi DUnit Test Case for the Database.UDatabase Unit
+  ------------------------------------------------------
 
   $Rev$
   $Date$
 }
 
-unit TestNSDatabaseUDatabase;
+unit TestDatabaseUDatabase;
 
 interface
 
 uses
-  TestFramework, NSDatabase.UDatabase;
+  TestFramework, Database.UDatabase;
 
 type
   // Test methods for class TCSDatabase
@@ -44,7 +44,7 @@ begin
   Check(Assigned(FCSDatabase), 'Instance did not create database in SetUp');
   Check(FCSDatabase = TCSDatabase.Instance,
     'Instance did not return same value for database after first call');
-  Check(Database = FCSDatabase,
+  Check(Database.UDatabase.Database = FCSDatabase,
     '"Database" function did not return expected instance');
 end;
 

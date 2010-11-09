@@ -1,5 +1,5 @@
 {
- * NsDatabase.UDatabase.pas
+ * Database.UDatabase.pas
  *
  * Implements top level interface to Code Snippets database backend.
  *
@@ -18,7 +18,8 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is NsDatabase.UDatabase.pas
+ * The Original Code is Database.UDatabase.pas, formerly
+ * NsDatabase.UDatabase.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -33,7 +34,7 @@
 }
 
 
-unit NSDatabase.UDatabase;
+unit Database.UDatabase;
 
 interface
 

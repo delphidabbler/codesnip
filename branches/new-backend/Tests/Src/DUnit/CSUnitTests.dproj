@@ -38,8 +38,8 @@
 			<DCCReference Include="..\..\..\Src\UBaseObjects.pas"/>
 			<DCCReference Include="..\..\..\Src\UExceptions.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\USingleton.pas"/>
-			<DCCReference Include="..\..\..\Src\Experimental\NSDatabase.UDatabase.pas"/>
-			<DCCReference Include="TestNSDatabaseUDatabase.pas"/>
+			<DCCReference Include="..\..\..\Src\Experimental\Database.UDatabase.pas"/>
+			<DCCReference Include="TestDatabaseUDatabase.pas"/>
 			<DCCReference Include="..\..\..\Src\UContainers.pas"/>
 			<DCCReference Include="TestUContainers.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\Database.UObjectDestructionMgr.pas"/>
