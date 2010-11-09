@@ -47,10 +47,11 @@ type
     procedure TearDown; override;
   published
     procedure TestCreate;
-    procedure TestHookController;   // must before TestAllowXXXX tests
+    procedure TestHookController;       // must before TestAllowXXXX tests
     procedure TestAllowDestroyNone;
     procedure TestAllowDestroyAll;
     procedure TestAllowDestroyCookie;
+    procedure TestHookControllerLock;   // must be after TestAllowDerstroyAll
   end;
 
 implementation
@@ -133,6 +134,34 @@ begin
   Check(Item.FreeController <> nil, 'Expected Item.FreeController <> nil');
 
   ForceFree(Item);
+  Check(TTestDataItem.InstanceCount = 0,
+    Format('<TEST CHECK 2>: Expected TTestDateItem.InstanceCount = 0, got %d',
+      [TTestDataItem.InstanceCount]));
+end;
+
+procedure TestTObjectDestructionMgr.TestHookControllerLock;
+var
+  Item: TDBDataItem;
+begin
+  fObjectDestructionMgr.AllowDestroyAll;
+
+  Item := TTestDataItem.Create(100, TDBCookie.Create);
+  Check(TTestDataItem.InstanceCount = 1,
+    Format('<TEST CHECK 1>: Expected TTestDateItem.InstanceCount = 1, got %d',
+      [TTestDataItem.InstanceCount]));
+  try
+    fObjectDestructionMgr.HookController(Item, True);
+  except
+    Fail('Unexpected exception first time calling HookController(Item, True)');
+  end;
+  try
+    fObjectDestructionMgr.HookController(Item);
+    Fail('Expected exception second time calling HookController(Item)');
+  except
+    on E: Exception do
+      Check(E is ELocked, 'ELocked exception expected');
+  end;
+  Item.Free;
   Check(TTestDataItem.InstanceCount = 0,
     Format('<TEST CHECK 2>: Expected TTestDateItem.InstanceCount = 0, got %d',
       [TTestDataItem.InstanceCount]));

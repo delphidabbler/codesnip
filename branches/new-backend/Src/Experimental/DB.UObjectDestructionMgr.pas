@@ -72,10 +72,14 @@ type
     procedure AllowDestroyNone;
     procedure AllowDestroyAll;
     procedure AllowDestroyCookie(const Cookie: TDBCookie);
-    procedure HookController(const Obj: TControlledConditionalFreeObject);
+    procedure HookController(const Obj: TControlledConditionalFreeObject;
+      const Lock: Boolean = False);
   end;
 
 implementation
+
+uses
+  UExceptions;
 
 { TObjectDestructionMgr }
 
@@ -104,7 +108,6 @@ begin
   PermissionFn :=
     function(Obj: TDBDataItem): Boolean
     begin
-      Result := False;  // keeps compiler quiet
       case fState of
         dpFreeAll:
           Result := True;
@@ -112,15 +115,21 @@ begin
           Result := Obj.Cookie = fCookie;
         dpFreeNone:
           Result := False;
+        else
+          raise EBug.CreateFmt(
+            '%s.Create (AnonMethod): unknown fState', [ClassName]
+          );
       end;
     end;
     fController := TController.Create(PermissionFn);
 end;
 
 procedure TObjectDestructionMgr.HookController(
-  const Obj: TControlledConditionalFreeObject);
+  const Obj: TControlledConditionalFreeObject; const Lock: Boolean = False);
 begin
-  Obj.FreeController := fController;
+  Obj.FreeController := fController;  // will raise exception if Obj locked
+  if Lock then
+    Obj.Lock;
 end;
 
 { TObjectDestructionMgr.TController }
