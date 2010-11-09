@@ -72,9 +72,7 @@ type
     procedure AllowDestroyNone;
     procedure AllowDestroyAll;
     procedure AllowDestroyCookie(const Cookie: TDBCookie);
-    // todo: replace property with method that hooks controller to an object
-    // todo: name such method HookController or *Register* or some such
-    property Controller: IConditionalFreeController read fController;
+    procedure HookController(const Obj: TControlledConditionalFreeObject);
   end;
 
 implementation
@@ -117,6 +115,12 @@ begin
       end;
     end;
     fController := TController.Create(PermissionFn);
+end;
+
+procedure TObjectDestructionMgr.HookController(
+  const Obj: TControlledConditionalFreeObject);
+begin
+  Obj.FreeController := fController;
 end;
 
 { TObjectDestructionMgr.TController }
