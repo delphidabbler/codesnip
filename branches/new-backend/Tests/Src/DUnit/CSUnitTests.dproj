@@ -42,6 +42,8 @@
 			<DCCReference Include="TestNSDatabaseUDatabase.pas"/>
 			<DCCReference Include="..\..\..\Src\UContainers.pas"/>
 			<DCCReference Include="TestUContainers.pas"/>
+			<DCCReference Include="..\..\..\Src\Experimental\Database.UObjectDestructionMgr.pas"/>
+			<DCCReference Include="TestDatabaseUObjectDestructionMgr.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

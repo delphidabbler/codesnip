@@ -69,7 +69,9 @@ uses
   NSDatabase.UDatabase in '..\..\..\Src\Experimental\NSDatabase.UDatabase.pas',
   TestNSDatabaseUDatabase in 'TestNSDatabaseUDatabase.pas',
   UContainers in '..\..\..\Src\UContainers.pas',
-  TestUContainers in 'TestUContainers.pas';
+  TestUContainers in 'TestUContainers.pas',
+  Database.UObjectDestructionMgr in '..\..\..\Src\Experimental\Database.UObjectDestructionMgr.pas',
+  TestDatabaseUObjectDestructionMgr in 'TestDatabaseUObjectDestructionMgr.pas';
 
 {$R *.RES}
 
