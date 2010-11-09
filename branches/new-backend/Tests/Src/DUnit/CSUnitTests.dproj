@@ -31,10 +31,10 @@
 			<DCCReference Include="TestUSingleton.pas"/>
 			<DCCReference Include="TestDatabaseUCookies.pas"/>
 			<DCCReference Include="TestDatabaseUDataItem.pas"/>
-			<DCCReference Include="TestNsDatabaseUDataPool.pas"/>
+			<DCCReference Include="TestDatabaseUDataPool.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\Database.UCookies.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\Database.UDataItem.pas"/>
-			<DCCReference Include="..\..\..\Src\Experimental\NsDatabase.UDataPool.pas"/>
+			<DCCReference Include="..\..\..\Src\Experimental\Database.UDataPool.pas"/>
 			<DCCReference Include="..\..\..\Src\UBaseObjects.pas"/>
 			<DCCReference Include="..\..\..\Src\UExceptions.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\USingleton.pas"/>
