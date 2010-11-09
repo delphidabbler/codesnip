@@ -18,22 +18,17 @@ uses
 
 type
   // Test methods for class TObjectDestructionMgr
-
   TestTObjectDestructionMgr = class(TTestCase)
   strict private
     var
       fObjectDestructionMgr: TObjectDestructionMgr;
     type
       TTestDataItem = class(TDBDataItem)
-      strict private
-        fID: Integer;
       strict protected
         procedure Finalize; override;
       public
-        constructor Create(ID: Integer; Cookie: TDBCookie);
-        property ID: Integer read fID;
+        constructor Create(Cookie: TDBCookie);
         class var InstanceCount: Integer;
-        function ToString: string; override;
       end;
       TAlwaysFreeController = class(TInterfacedObject,
         IConditionalFreeController
@@ -77,9 +72,9 @@ procedure TestTObjectDestructionMgr.TestAllowDestroyNone;
 var
   Item1, Item2: TDBDataItem;
 begin
-  Item1 := TTestDataItem.Create(100, TDBCookie.Create);
+  Item1 := TTestDataItem.Create(TDBCookie.Create);
   fObjectDestructionMgr.HookController(Item1);
-  Item2 := TTestDataItem.Create(200, TDBCookie.Create);
+  Item2 := TTestDataItem.Create(TDBCookie.Create);
   fObjectDestructionMgr.HookController(Item2);
   Check(TTestDataItem.InstanceCount = 2,
     Format('<TEST CHECK 1>: Expected TTestDateItem.InstanceCount = 2, got %d',
@@ -103,7 +98,7 @@ procedure TestTObjectDestructionMgr.TestCreate;
 var
   Item: TDBDataItem;
 begin
-  Item := TTestDataItem.Create(100, TDBCookie.Create);
+  Item := TTestDataItem.Create(TDBCookie.Create);
   Check(TTestDataItem.InstanceCount = 1,
     Format('<TEST CHECK 1>: Expected TTestDateItem.InstanceCount = 1, got %d',
       [TTestDataItem.InstanceCount]));
@@ -125,7 +120,7 @@ procedure TestTObjectDestructionMgr.TestHookController;
 var
   Item: TDBDataItem;
 begin
-  Item := TTestDataItem.Create(100, TDBCookie.Create);
+  Item := TTestDataItem.Create(TDBCookie.Create);
   Check(TTestDataItem.InstanceCount = 1,
     Format('<TEST CHECK 1>: Expected TTestDateItem.InstanceCount = 1, got %d',
       [TTestDataItem.InstanceCount]));
@@ -145,7 +140,7 @@ var
 begin
   fObjectDestructionMgr.AllowDestroyAll;
 
-  Item := TTestDataItem.Create(100, TDBCookie.Create);
+  Item := TTestDataItem.Create(TDBCookie.Create);
   Check(TTestDataItem.InstanceCount = 1,
     Format('<TEST CHECK 1>: Expected TTestDateItem.InstanceCount = 1, got %d',
       [TTestDataItem.InstanceCount]));
@@ -171,9 +166,9 @@ procedure TestTObjectDestructionMgr.TestAllowDestroyAll;
 var
   Item1, Item2: TDBDataItem;
 begin
-  Item1 := TTestDataItem.Create(100, TDBCookie.Create);
+  Item1 := TTestDataItem.Create(TDBCookie.Create);
   fObjectDestructionMgr.HookController(Item1);
-  Item2 := TTestDataItem.Create(200, TDBCookie.Create);
+  Item2 := TTestDataItem.Create(TDBCookie.Create);
   fObjectDestructionMgr.HookController(Item2);
   Check(TTestDataItem.InstanceCount = 2,
     Format('<TEST CHECK>: Expected TTestDateItem.InstanceCount = 2, got %d',
@@ -191,9 +186,9 @@ procedure TestTObjectDestructionMgr.TestAllowDestroyCookie;
 var
   Item1, Item2: TDBDataItem;
 begin
-  Item1 := TTestDataItem.Create(100, TDBCookie.Create);
+  Item1 := TTestDataItem.Create(TDBCookie.Create);
   fObjectDestructionMgr.HookController(Item1);
-  Item2 := TTestDataItem.Create(200, TDBCookie.Create);
+  Item2 := TTestDataItem.Create(TDBCookie.Create);
   fObjectDestructionMgr.HookController(Item2);
   Check(TTestDataItem.InstanceCount = 2,
     Format('<TEST CHECK 1>: Expected TTestDateItem.InstanceCount = 2, got %d',
@@ -215,11 +210,9 @@ end;
 
 { TestTObjectDestructionMgr.TTestDataItem }
 
-constructor TestTObjectDestructionMgr.TTestDataItem.Create(ID: Integer;
-  Cookie: TDBCookie);
+constructor TestTObjectDestructionMgr.TTestDataItem.Create(Cookie: TDBCookie);
 begin
   inherited Create(Cookie);
-  fID := ID;
   Inc(InstanceCount);
 end;
 
@@ -227,11 +220,6 @@ procedure TestTObjectDestructionMgr.TTestDataItem.Finalize;
 begin
   inherited;
   Dec(InstanceCount);
-end;
-
-function TestTObjectDestructionMgr.TTestDataItem.ToString: string;
-begin
-  Result := Format('%s %d', [ClassName, ID]);
 end;
 
 { TestTObjectDestructionMgr.TAlwaysFreeController }
