@@ -40,7 +40,7 @@ interface
 
 uses
   SysUtils,
-  UBaseObjects, Database.UCookies, NsDatabase.UDataItem;
+  UBaseObjects, Database.UCookies, Database.UDataItem;
 
 type
   TObjectDestructionMgr = class(TObject)

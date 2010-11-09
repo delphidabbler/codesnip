@@ -14,7 +14,7 @@ interface
 
 uses
   TestFramework, UBaseObjects, Database.UObjectDestructionMgr, SysUtils,
-  Database.UCookies, NsDatabase.UDataItem;
+  Database.UCookies, Database.UDataItem;
 
 type
   // Test methods for class TObjectDestructionMgr

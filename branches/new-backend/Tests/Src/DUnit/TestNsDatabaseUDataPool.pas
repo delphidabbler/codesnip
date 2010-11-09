@@ -12,7 +12,7 @@ interface
 
 uses
   SysUtils, TestFramework, Generics.Collections, UBaseObjects,
-  Database.UCookies, NsDatabase.UDataItem, NsDatabase.UDataPool;
+  Database.UCookies, Database.UDataItem, NsDatabase.UDataPool;
 
 type
 
