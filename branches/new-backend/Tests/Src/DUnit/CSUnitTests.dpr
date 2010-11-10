@@ -74,7 +74,8 @@ uses
   TestDBUObjectDestructionMgr in 'TestDBUObjectDestructionMgr.pas',
   DB.USnippet in '..\..\..\Src\Experimental\DB.USnippet.pas',
   DB.UConsts in '..\..\..\Src\Experimental\DB.UConsts.pas',
-  TestDBUSnippet in 'TestDBUSnippet.pas';
+  TestDBUSnippet in 'TestDBUSnippet.pas',
+  DB.UBaseGroup in '..\..\..\Src\Experimental\DB.UBaseGroup.pas';
 
 {$R *.RES}
 

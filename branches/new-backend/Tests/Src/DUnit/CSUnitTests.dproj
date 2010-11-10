@@ -47,6 +47,7 @@
 			<DCCReference Include="..\..\..\Src\Experimental\DB.USnippet.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\DB.UConsts.pas"/>
 			<DCCReference Include="TestDBUSnippet.pas"/>
+			<DCCReference Include="..\..\..\Src\Experimental\DB.UBaseGroup.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
