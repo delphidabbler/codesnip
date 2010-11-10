@@ -80,7 +80,9 @@ uses
   TestDBUCategoryGroup in 'TestDBUCategoryGroup.pas',
   UTestHelpers in 'UTestHelpers.pas',
   TestDBUInitialLetterGroup in 'TestDBUInitialLetterGroup.pas',
-  DB.UInitialLetterGroup in '..\..\..\Src\Experimental\DB.UInitialLetterGroup.pas';
+  DB.UInitialLetterGroup in '..\..\..\Src\Experimental\DB.UInitialLetterGroup.pas',
+  DB.USnippetKindGroup in '..\..\..\Src\Experimental\DB.USnippetKindGroup.pas',
+  TestDBUSnippetKindGroup in 'TestDBUSnippetKindGroup.pas';
 
 {$R *.RES}
 
