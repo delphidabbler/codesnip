@@ -71,7 +71,10 @@ uses
   UContainers in '..\..\..\Src\UContainers.pas',
   TestUContainers in 'TestUContainers.pas',
   DB.UObjectDestructionMgr in '..\..\..\Src\Experimental\DB.UObjectDestructionMgr.pas',
-  TestDBUObjectDestructionMgr in 'TestDBUObjectDestructionMgr.pas';
+  TestDBUObjectDestructionMgr in 'TestDBUObjectDestructionMgr.pas',
+  DB.USnippet in '..\..\..\Src\Experimental\DB.USnippet.pas',
+  DB.UConsts in '..\..\..\Src\Experimental\DB.UConsts.pas',
+  TestDBUSnippet in 'TestDBUSnippet.pas';
 
 {$R *.RES}
 
