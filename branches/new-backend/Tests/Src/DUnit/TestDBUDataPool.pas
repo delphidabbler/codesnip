@@ -28,15 +28,6 @@ type
     function ToString: string; override;
   end;
 
-  // Object free controller for use with test objects not added to pool to allow
-  // them to be freed
-  TOutsidePoolFreeController = class(TInterfacedObject,
-    IConditionalFreeController
-  )
-  public
-    function PermitDestruction(const Obj: TObject): Boolean;
-  end;
-
   TestTDBDataPool = class(TTestCase)
   strict private
     O1, O2, O3, O4, ONotInPool: TTestObject;
@@ -62,6 +53,9 @@ type
 
 
 implementation
+
+uses
+  UTestHelpers;
 
 
 { TTestObject }
@@ -123,7 +117,7 @@ end;
 
 procedure TestTDBDataPool.ForceFree(const Obj: TTestObject);
 begin
-  Obj.FreeController := TOutsidePoolFreeController.Create;
+  Obj.FreeController := TAlwaysFreeController.Create;
   Obj.Free;
 end;
 
@@ -281,14 +275,6 @@ begin
   finally
     APool.Free;
   end;
-end;
-
-{ TOutsidePoolFreeController }
-
-function TOutsidePoolFreeController.PermitDestruction(
-  const Obj: TObject): Boolean;
-begin
-  Result := True;
 end;
 
 initialization

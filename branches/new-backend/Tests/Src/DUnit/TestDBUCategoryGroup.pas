@@ -11,7 +11,7 @@ unit TestDBUCategoryGroup;
 interface
 
 uses
-  TestFramework, DB.UBaseGroup, DB.UCategoryGroup, UBaseObjects;
+  TestFramework, DB.UBaseGroup, DB.UCategoryGroup;
 
 type
 
@@ -32,14 +32,6 @@ type
   // Test methods for class TDBCategoryGroup
   TestTDBCategoryGroup = class(TTestCase)
   strict private
-    type
-      // Free controller for TDBCategoryGroup objects - always permits freeing
-      TAlwaysFreeController = class(TInterfacedObject,
-        IConditionalFreeController
-      )
-      public
-        function PermitDestruction(const Obj: TObject): Boolean;
-      end;
     function CreateObject(const Data: TDBCategoryGroupData): TDBCategoryGroup;
   public
     procedure SetUp; override;
@@ -49,6 +41,9 @@ type
   end;
 
 implementation
+
+uses
+  UTestHelpers;
 
 { TestTDBCategoryGroupKey }
 
@@ -179,14 +174,6 @@ begin
   finally
     Obj.Free;
   end;
-end;
-
-{ TestTDBCategoryGroup.TAlwaysFreeController }
-
-function TestTDBCategoryGroup.TAlwaysFreeController.PermitDestruction(
-  const Obj: TObject): Boolean;
-begin
-  Result := True;
 end;
 
 initialization

@@ -34,15 +34,6 @@ type
   // Test methods for class TDBSnippet
   TestTDBSnippet = class(TTestCase)
   strict private
-    type
-      // Free controller for TDBInitialLetterGroup objects - always permits
-      // freeing
-      TAlwaysFreeController = class(TInterfacedObject,
-        IConditionalFreeController
-      )
-      public
-        function PermitDestruction(const Obj: TObject): Boolean;
-      end;
     function CreateObject(const Data: TDBSnippetData): TDBSnippet;
   public
     procedure SetUp; override;
@@ -54,7 +45,7 @@ type
 implementation
 
 uses
-  SysUtils;
+  SysUtils, UTestHelpers;
 
 { TestTDBSnippetKey }
 
@@ -174,14 +165,6 @@ begin
     Obj.Free;
   end;
 
-end;
-
-{ TestTDBSnippet.TAlwaysFreeController }
-
-function TestTDBSnippet.TAlwaysFreeController.PermitDestruction(
-  const Obj: TObject): Boolean;
-begin
-  Result := True;
 end;
 
 { TestTDBSnippetData }

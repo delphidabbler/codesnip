@@ -77,7 +77,8 @@ uses
   TestDBUSnippet in 'TestDBUSnippet.pas',
   DB.UBaseGroup in '..\..\..\Src\Experimental\DB.UBaseGroup.pas',
   DB.UCategoryGroup in '..\..\..\Src\Experimental\DB.UCategoryGroup.pas',
-  TestDBUCategoryGroup in 'TestDBUCategoryGroup.pas';
+  TestDBUCategoryGroup in 'TestDBUCategoryGroup.pas',
+  UTestHelpers in 'UTestHelpers.pas';
 
 {$R *.RES}
 

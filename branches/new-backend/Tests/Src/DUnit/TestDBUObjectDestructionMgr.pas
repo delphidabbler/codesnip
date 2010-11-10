@@ -30,12 +30,6 @@ type
         constructor Create(Cookie: TDBCookie);
         class var InstanceCount: Integer;
       end;
-      TAlwaysFreeController = class(TInterfacedObject,
-        IConditionalFreeController
-      )
-      public
-        function PermitDestruction(const Obj: TObject): Boolean;
-      end;
     procedure ForceFree(Obj: TDBDataItem);
   public
     procedure SetUp; override;
@@ -50,6 +44,9 @@ type
   end;
 
 implementation
+
+uses
+  UTestHelpers;
 
 procedure TestTObjectDestructionMgr.ForceFree(Obj: TDBDataItem);
 begin
@@ -220,14 +217,6 @@ procedure TestTObjectDestructionMgr.TTestDataItem.Finalize;
 begin
   inherited;
   Dec(InstanceCount);
-end;
-
-{ TestTObjectDestructionMgr.TAlwaysFreeController }
-
-function TestTObjectDestructionMgr.TAlwaysFreeController.PermitDestruction(
-  const Obj: TObject): Boolean;
-begin
-  Result := True;
 end;
 
 initialization

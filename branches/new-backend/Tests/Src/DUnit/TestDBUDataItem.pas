@@ -11,8 +11,8 @@ unit TestDBUDataItem;
 interface
 
 uses
-  TestFramework, DB.UCookies, DB.UDataItem, SysUtils,
-  UBaseObjects;
+  SysUtils,
+  TestFramework, DB.UCookies, DB.UDataItem, UBaseObjects;
 
 type
 
@@ -29,12 +29,6 @@ type
     function ToString: string; override;
   end;
 
-  // Free controller for TDBDataItem objects - always permits freeing
-  TTestFreeController = class(TInterfacedObject, IConditionalFreeController)
-  public
-    function PermitDestruction(const Obj: TObject): Boolean;
-  end;
-
   TestTDBDataItem = class(TTestCase)
   public
     procedure SetUp; override;
@@ -47,6 +41,8 @@ type
 
 implementation
 
+uses
+  UTestHelpers;
 
 { TTestObject }
 
@@ -93,8 +89,12 @@ begin
 
   O1 := nil; O2 := nil; O0 := nil;
   try
-    O1 := TTestObject.Create(100, TDBCookie.Create, TTestFreeController.Create);
-    O2 := TTestObject.Create(200, TDBCookie.Create, TTestFreeController.Create);
+    O1 := TTestObject.Create(
+      100, TDBCookie.Create, TAlwaysFreeController.Create
+    );
+    O2 := TTestObject.Create(
+      200, TDBCookie.Create, TAlwaysFreeController.Create
+    );
 
     Check(O1.Cookie <> O2.Cookie,
       Format('Expected %s cookie <> %s cookie', [O1.ToString, O2.ToString]));
@@ -102,12 +102,14 @@ begin
     O2.Free;  // can do because of controller
     O2 := nil;
 
-    O2 := TTestObject.Create(200, TDBCookie.Create, TTestFreeController.Create);
+    O2 := TTestObject.Create(
+      200, TDBCookie.Create, TAlwaysFreeController.Create
+    );
     Check(O2.Cookie <> Cookie2,
       Format('Expected %s cookie to have changed', [O2.ToString]));
 
     O0 := TTestObject.Create(
-      0, TDBCookie.CreateNul, TTestFreeController.Create
+      0, TDBCookie.CreateNul, TAlwaysFreeController.Create
     );
     Check(O0.Cookie.IsNul,
       Format('Expected %s cookie to be nul', [O0.ToString]));
@@ -142,19 +144,12 @@ begin
       [TTestObject.InstanceCount]));
 
   // Add controller: should not allow free
-  Controller := TTestFreeController.Create;
+  Controller := TAlwaysFreeController.Create;
   Obj.FreeController := Controller;
   Obj.Free;
   Check(TTestObject.InstanceCount = 0,
     Format('3: Expected Instance Count of 0, got %d',
       [TTestObject.InstanceCount]));
-end;
-
-{ TTestFreeController }
-
-function TTestFreeController.PermitDestruction(const Obj: TObject): Boolean;
-begin
-  Result := True;
 end;
 
 initialization
