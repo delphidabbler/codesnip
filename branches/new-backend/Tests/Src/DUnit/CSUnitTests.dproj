@@ -51,6 +51,8 @@
 			<DCCReference Include="..\..\..\Src\Experimental\DB.UCategoryGroup.pas"/>
 			<DCCReference Include="TestDBUCategoryGroup.pas"/>
 			<DCCReference Include="UTestHelpers.pas"/>
+			<DCCReference Include="TestDBUInitialLetterGroup.pas"/>
+			<DCCReference Include="..\..\..\Src\Experimental\DB.UInitialLetterGroup.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

@@ -78,7 +78,9 @@ uses
   DB.UBaseGroup in '..\..\..\Src\Experimental\DB.UBaseGroup.pas',
   DB.UCategoryGroup in '..\..\..\Src\Experimental\DB.UCategoryGroup.pas',
   TestDBUCategoryGroup in 'TestDBUCategoryGroup.pas',
-  UTestHelpers in 'UTestHelpers.pas';
+  UTestHelpers in 'UTestHelpers.pas',
+  TestDBUInitialLetterGroup in 'TestDBUInitialLetterGroup.pas',
+  DB.UInitialLetterGroup in '..\..\..\Src\Experimental\DB.UInitialLetterGroup.pas';
 
 {$R *.RES}
 
