@@ -19,7 +19,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
       Top = 0
       Width = 646
       Height = 465
-      ActivePage = tsCode
+      ActivePage = tsComments
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
@@ -103,9 +103,6 @@ inherited UserDBEditDlg: TUserDBEditDlg
           PopupMenu = mnuEditCtrls
           ScrollBars = ssBoth
           TabOrder = 0
-          OnEnter = edSourceCodeEnter
-          OnKeyUp = edSourceCodeKeyUp
-          OnMouseUp = edSourceCodeMouseUp
         end
         object edDescription: TEdit
           Left = 80
@@ -239,6 +236,15 @@ inherited UserDBEditDlg: TUserDBEditDlg
           Height = 13
           Caption = 'E&xtra information:'
           FocusControl = edExtra
+        end
+        object lblExtraCaretPos: TLabel
+          Left = 544
+          Top = 3
+          Width = 91
+          Height = 13
+          Alignment = taRightJustify
+          AutoSize = False
+          Caption = 'lblExtraCaretPos'
         end
         object edExtra: TMemo
           Left = 3
