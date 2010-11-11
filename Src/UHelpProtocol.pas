@@ -47,7 +47,7 @@ uses
   // Delphi
   StrUtils,
   // Project
-  UHelpMgr, UHTMLUtils, UProtocols;
+  UHelpMgr, UURIEncode, UProtocols;
 
 
 type
@@ -85,9 +85,7 @@ function THelpProtocol.Execute: Boolean;
 var
   ALink: string;  // a-link help keyword
 begin
-  ALink := URLDecode(
-    AnsiRightStr(URL, Length(URL) - Length(cHelpProtocol)), False
-  );
+  ALink := URIDecode(AnsiRightStr(URL, Length(URL) - Length(cHelpProtocol)));
   HelpMgr.ShowHelp(ALink);
   Result := True;
 end;

@@ -132,7 +132,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UHTMLUtils, USnippetKindInfo;
+  USnippetKindInfo, UURIEncode;
 
 
 { TSnippetValidator }
@@ -319,7 +319,7 @@ class function TSnippetValidator.ValidateExtra(const Extra: IActiveText;
     sURLLengthErr = 'Hyperlink URL "%s" in extra information is badly formed';
   begin
     Result := True;
-    URL := URLDecode(URL, False);
+    URL := URIDecode(URL);
     if AnsiStartsText(cHTTPProtocol, URL) then
     begin
       // http protocol: check length

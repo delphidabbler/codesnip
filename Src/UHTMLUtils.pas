@@ -155,27 +155,6 @@ function MakeSafeHTMLText(TheText: string): string;
     @return Encoded text.
   }
 
-function URLEncode(const S: string; const InQueryString: Boolean): string;
-  {Encodes a string, making it suitable for use in a URL. The function can
-  encode strings for use in the main part of a URL (where spaces are encoded as
-  '%20') or in URL query strings (where spaces are encoded as '+' characters).
-    @param S [in] String to be encoded.
-    @param InQueryString [in] Flag true if S is to be encoded for use in a query
-      string or false if to be used in main body of URL.
-    @return Encoded string.
-  }
-
-function URLDecode(const S: string; const FromQueryString: Boolean): string;
-  {Decodes a URL-encoded string into plain text. The function can decode URLs
-  from the main part of a URL (where spaces are encoded as '%20') or from URL
-  query strings (where spaces are encoded as '+' characters).
-    @param S [in] String to be decoded.
-    @param FromQueryString [in] Flag true if S originates from a query string or
-      false if it originates in the main body of URL.
-    @return Decoded string.
-    @except EBug raised if any URL attribute is invalid.
-  }
-
 type
   {
   THTMLTagType:
@@ -253,7 +232,7 @@ uses
   // Delphi
   SysUtils, StrUtils, Windows,
   // Project
-  UCSSUtils, UExceptions, UUnicodeHelper;
+  UCSSUtils, UExceptions, UUnicodeHelper, UURIEncode;
 
 
 function IsValidHTMLCode(const Content: string): Boolean;
@@ -300,12 +279,12 @@ begin
   Assert(ModuleName <> '', 'MakeResourceURL: ModuleName is ''''');
   Assert(Assigned(ResName), 'MakeResourceURL: ResName is nil');
   // Resource starts with module name
-  Result := 'res://' + URLEncode(ModuleName, False);
+  Result := 'res://' + URIEncode(ModuleName);
   // Resource type follows if specified
   if Assigned(ResType) then
-    Result := Result + '/' + URLEncode(ResNameOrTypeToString(ResType), False);
+    Result := Result + '/' + URIEncode(ResNameOrTypeToString(ResType));
   // Resource name is last in URL
-  Result := Result + '/' + URLEncode(ResNameOrTypeToString(ResName), False);
+  Result := Result + '/' + URIEncode(ResNameOrTypeToString(ResName));
 end;
 
 function MakeResourceURL(const Module: HMODULE; const ResName: PChar;
@@ -359,89 +338,6 @@ begin
           Result := Result + Ch;
       end;
     end;
-end;
-
-function URLEncode(const S: string; const InQueryString: Boolean): string;
-  {Encodes a string, making it suitable for use in a URL. The function can
-  encode strings for use in the main part of a URL (where spaces are encoded as
-  '%20') or in URL query strings (where spaces are encoded as '+' characters).
-    @param S [in] String to be encoded.
-    @param InQueryString [in] Flag true if S is to be encoded for use in a query
-      string or false if to be used in main body of URL.
-    @return Encoded string.
-  }
-var
-  URL: Windows1252String;  // Windows-1252 encoding of S
-  Ch: AnsiChar;            // each character in URL
-begin
-  URL := StringToWindows1252String(S);
-  Result := '';
-  for Ch in URL do
-  begin
-    case Ch of
-      'A'..'Z', 'a'..'z', '0'..'9', '-', '_', '.':
-        Result := Result + Char(Ch);
-      ' ':
-        if InQueryString then
-          Result := Result + '+'
-        else
-          Result := Result + '%20';
-      else
-        Result := Result + '%' + IntToHex(Ord(Ch), 2);
-    end;
-  end;
-end;
-
-function URLDecode(const S: string; const FromQueryString: Boolean): string;
-  {Decodes a URL-encoded string into plain text. The function can decode URLs
-  from the main part of a URL (where spaces are encoded as '%20') or from URL
-  query strings (where spaces are encoded as '+' characters).
-    @param S [in] String to be decoded.
-    @param FromQueryString [in] Flag true if S originates from a query string or
-      false if it originates in the main body of URL.
-    @return Decoded string.
-    @except EBug raised if any URL attribute is invalid.
-  }
-var
-  Idx: Integer;     // loops through characters of S
-  HexStr: string;   // hex digits from HTML attribute
-  Hex: Integer;     // value of hex digits from HTML attribute
-const
-  // Error messages
-  cIncompleteAttr = 'URLDecode: URL attribute incomplete';
-  cInvalidAttr = 'URLDecode: Invalid hex digits in URL attribute';
-begin
-  Result := '';
-  Idx := 1;
-  while Idx <= Length(S) do
-  begin
-    case S[Idx] of
-      '%':
-      begin
-        // Decode hex attribute in form %XX where X is a valid hex digit
-        if Idx > Length(S) - 2 then
-          raise EBug.Create(cIncompleteAttr);
-        HexStr := '$' + S[Idx + 1] + S[Idx + 2];
-        if not TryStrToInt(HexStr, Hex) then
-          raise EBug.Create(cInvalidAttr);
-        Result := Result + Char(Hex);
-        Inc(Idx, 2);
-      end;
-      '+':
-      begin
-        // Decode '+' only if from a query string
-        if FromQueryString then
-          Result := Result + ' '
-        else
-          Result := Result + '+';
-      end;
-      else
-        // Pass other characters through unchanged
-        Result := Result + S[Idx];
-      // Next character
-    end;
-    Inc(Idx);
-  end;
 end;
 
 function MakeTag(const TagName: string; const TagType: THTMLTagType;
