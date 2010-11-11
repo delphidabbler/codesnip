@@ -242,6 +242,7 @@ uses
   UMainDisplayMgr in 'UMainDisplayMgr.pas',
   UMarquee in 'UMarquee.pas',
   UMeasurement in 'UMeasurement.pas',
+  UMemoCaretPosDisplayMgr in 'UMemoCaretPosDisplayMgr.pas',
   UMemoHelper in 'UMemoHelper.pas',
   UMemoProgBarMgr in 'UMemoProgBarMgr.pas',
   UMenuHelper in 'UMenuHelper.pas',
