@@ -417,8 +417,13 @@ procedure TUserDBEditDlg.actViewExtraExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  CheckExtra;
-  TViewExtraDlg.Execute(Self, BuildExtraActiveText);
+  try
+    CheckExtra;
+    TViewExtraDlg.Execute(Self, BuildExtraActiveText);
+  except
+    on E: Exception do
+      HandleException(E);
+  end;
 end;
 
 procedure TUserDBEditDlg.actViewExtraUpdate(Sender: TObject);
