@@ -394,12 +394,6 @@ type
   end;
 
   {
-  EREMLEntities:
-    Class of exception raised when error encountered in TREMLEntities.
-  }
-  EREMLEntities = class(ECodeSnip);
-
-  {
   TREMLInfo:
     Static helper class that provides information about REML tags and converts
     standard text to REML text and vice versa. This class simply maintains and
@@ -556,8 +550,6 @@ begin
   except
     // Handle exceptions: convert expected exceptions to EActiveTextParserError
     on E: ETaggedTextLexer do
-      raise EActiveTextParserError.Create(E.Message);
-    on E: EREMLEntities do
       raise EActiveTextParserError.Create(E.Message);
     else
       raise;
