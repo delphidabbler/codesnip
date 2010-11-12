@@ -217,25 +217,9 @@ type
       compile manager.
         @param Compilers [in] Object containing compilation results.
       }
-    procedure Error(const Msg: string; const Ctrl: TWinControl); overload;
-      {Raises EDataEntry exception with a specified message and control where
-      error occured.
-        @param Msg [in] Exception message.
-        @param Ctrl [in] Control to which exception relates.
-        @except EDataEntry always raised.
-      }
-    procedure Error(const FmtStr: string; const Args: array of const;
-      const Ctrl: TWinControl); overload;
-      {Raises EDataEntry exception with a message built from a format string and
-      parameters, until with a reference to the control where the error occured.
-        @param FmtStr [in] Message's format string.
-        @param Args [in] Array of data displayed in format string.
-        @param Ctrl [in] Control to which exception relates.
-        @except EDataEntry always raised.
-      }
     procedure CheckExtra;
       {Checks the REML text entered in the extra information memo control.
-        @except EDataEntry on error.
+        @except EDataEntry raised on error.
       }
   strict protected
     procedure ArrangeForm; override;
@@ -275,8 +259,8 @@ uses
   // Project
   FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
   UCtrlArranger, UExceptions, UFontHelper, UReservedCategories,
-  URoutineExtraHelper, USnippetValidator, UMessageBox, USnippetIDs, UThemesEx,
-  UUtils;
+  URoutineExtraHelper, USnippetValidator, UMessageBox, USnippetIDs, UStructs,
+  UThemesEx, UUtils;
 
 
 {$R *.dfm}
@@ -298,12 +282,21 @@ begin
   UnitName := Trim(edUnit.Text);
   Assert(UnitName <> '',
     ClassName + '.actAddUnitExecute: UnitName is empty string');
-  if not fUnitsCLBMgr.IsValidUnitName(UnitName) then
-    raise ECodeSnip.Create(sBadUnitName);
-  if fUnitsCLBMgr.ContainsUnit(UnitName) then
-    raise ECodeSnip.Create(sUnitNameExists);
-  fUnitsCLBMgr.IncludeUnit(UnitName, True);
-  edUnit.Text := '';
+  try
+    if not fUnitsCLBMgr.IsValidUnitName(UnitName) then
+      raise EDataEntry.Create(
+        sBadUnitName, edUnit, TSelection.Create(0, Length(UnitName))
+      );
+    if fUnitsCLBMgr.ContainsUnit(UnitName) then
+      raise EDataEntry.Create(
+        sUnitNameExists, edUnit, TSelection.Create(0, Length(UnitName))
+      );
+    fUnitsCLBMgr.IncludeUnit(UnitName, True);
+    edUnit.Text := '';
+  except
+    on E: Exception do
+      HandleException(E);
+  end;
 end;
 
 procedure TUserDBEditDlg.actAddUnitUpdate(Sender: TObject);
@@ -549,7 +542,7 @@ end;
 
 procedure TUserDBEditDlg.CheckExtra;
   {Checks the REML text entered in the extra information memo control.
-    @except EDataEntry on error.
+    @except EDataEntry raised on error.
   }
 var
   ActiveText: IActiveText;  // active text created from text
@@ -565,13 +558,15 @@ begin
   except
     // Convert active text parser to data exception
     on E: EActiveTextParserError do
-      Error(sActiveTextErr, [E.Message], edExtra);
+      raise EDataEntry.CreateFmt(
+        sActiveTextErr, [E.Message], edExtra, E.Selection
+      );
     else
       raise;
   end;
   // Validate the active text
   if not TSnippetValidator.ValidateExtra(ActiveText, ErrorMsg) then
-    Error(ErrorMsg, edExtra);
+    raise EDataEntry.Create(ErrorMsg, edExtra); // no selection info available
 end;
 
 procedure TUserDBEditDlg.ConfigForm;
@@ -641,30 +636,6 @@ begin
     finally
       Free;
     end;
-end;
-
-procedure TUserDBEditDlg.Error(const Msg: string; const Ctrl: TWinControl);
-  {Raises EDataEntry exception with a specified message and control where
-  error occured.
-    @param Msg [in] Exception message.
-    @param Ctrl [in] Control to which exception relates.
-    @except EDataEntry always raised.
-  }
-begin
-  raise EDataEntry.Create(Msg, Ctrl);
-end;
-
-procedure TUserDBEditDlg.Error(const FmtStr: string; const Args: array of const;
-  const Ctrl: TWinControl);
-  {Raises EDataEntry exception with a message built from a format string and
-  parameters, until with a reference to the control where the error occured.
-    @param FmtStr [in] Message's format string.
-    @param Args [in] Array of data displayed in format string.
-    @param Ctrl [in] Control to which exception relates.
-    @except EDataEntry always raised.
-  }
-begin
-  raise EDataEntry.CreateFmt(FmtStr, Args, Ctrl);
 end;
 
 procedure TUserDBEditDlg.FocusCtrl(const Ctrl: TWinControl);
@@ -744,11 +715,19 @@ procedure TUserDBEditDlg.HandleException(const E: Exception);
     @param E [in] Exception to be handled.
     @except Exceptions re-raised if not EDataEntry.
   }
+var
+  Error: EDataEntry;
 begin
   if E is EDataEntry then
   begin
-    TMessageBox.Error(Self, E.Message);
-    FocusCtrl((E as EDataEntry).Ctrl);
+    Error := E as EDataEntry;
+    TMessageBox.Error(Self, Error.Message);
+    FocusCtrl(Error.Ctrl);
+    if Error.HasSelection and (Error.Ctrl is TCustomEdit) then
+    begin
+      (Error.Ctrl as TCustomEdit).SelStart := Error.Selection.StartPos;
+      (Error.Ctrl as TCustomEdit).SelLength := Error.Selection.Length;
+    end;
     ModalResult := mrNone;
   end
   else
@@ -980,27 +959,31 @@ resourcestring
   sDependencyPrompt = 'See the dependencies by clicking the View Dependencies '
     + 'button on the References tab.';
 var
-  ErrorMessage: string; // receives validation error messages
+  ErrorMessage: string;       // receives validation error messages
+  ErrorSelection: TSelection; // receives selection containing errors
 begin
   if not TSnippetValidator.ValidateSourceCode(
-    edSourceCode.Text, ErrorMessage
+    edSourceCode.Text, ErrorMessage, ErrorSelection
   ) then
-    Error(ErrorMessage, edSourceCode);
+    raise EDataEntry.Create(ErrorMessage, edSourceCode, ErrorSelection);
   if not TSnippetValidator.ValidateDescription(
-    edDescription.Text, ErrorMessage
+    edDescription.Text, ErrorMessage, ErrorSelection
   ) then
-    Error(ErrorMessage, edDescription);
+    raise EDataEntry.Create(ErrorMessage, edDescription, ErrorSelection);
   if not TSnippetValidator.ValidateName(
-    Trim(edName.Text),
+    edName.Text,
     not AnsiSameText(Trim(edName.Text), fOrigName),
-    ErrorMessage
+    ErrorMessage,
+    ErrorSelection
   ) then
-    Error(ErrorMessage, edName);
+    raise EDataEntry.Create(ErrorMessage, edName, ErrorSelection);
   CheckExtra;
   if not TSnippetValidator.ValidateDependsList(
     Trim(edName.Text), UpdateData, ErrorMessage
   ) then
-    Error(MakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends);
+    raise EDataEntry.Create(  // selection not applicable to list boxes
+      MakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
+    );
 end;
 
 end.
