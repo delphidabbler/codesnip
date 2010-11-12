@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -53,8 +53,8 @@ type
     manipulate and cast rectangle.
   }
   TRectEx = packed record
-    Left, Top,              // coordinates of top left corner of rectangle
-    Right, Bottom: Longint; // coordinates of bottom right corner of rectangle
+    Left, Top,              // Coordinates of top left corner of rectangle
+    Right, Bottom: Longint; // Coordinates of bottom right corner of rectangle
     constructor Create(ALeft, ATop, ARight, ABottom: Longint);
       {Record constructor. Sets initial field values.
         @param ALeft [in] Left position of rectangle.
@@ -162,7 +162,7 @@ type
     within the range.
   }
   TRange = record
-    Min, Max: Integer;  // minimum and maximum bounds of range
+    Min, Max: Integer;  // Minimum and maximum bounds of range
     constructor Create(AMin, AMax: Integer);
       {Record constructor. Initialises range bounds.
         @param AMin [in] Minimum value that falls in range.
@@ -172,6 +172,22 @@ type
       {Checks if a value is contained in range.
         @param Value [in] Value to be tested.
         @return True if Value is in range, False otherwise.
+      }
+  end;
+
+  {
+  TSelection:
+    Encapsulates a selection defined by its starting position and its length.
+    An empty selection has length 0.
+  }
+  TSelection = record
+  public
+    StartPos: Cardinal; // Start of selection
+    Length: Cardinal;   // Length of selection
+    constructor Create(AStartPos: Cardinal; ALength: Cardinal = 0);
+      {Record constructor. Initialises start position and length.
+        @param AStartPos [in] Start of selection.
+        @param Length [in] Length of selection. Optional.
       }
   end;
 
@@ -400,6 +416,18 @@ constructor TRange.Create(AMin, AMax: Integer);
 begin
   Min := AMin;
   Max := AMax;
+end;
+
+{ TSelection }
+
+constructor TSelection.Create(AStartPos, ALength: Cardinal);
+  {Record constructor. Initialises start position and length.
+    @param AStartPos [in] Start of selection.
+    @param Length [in] Length of selection. Optional.
+  }
+begin
+  StartPos := AStartPos;
+  Length := ALength;
 end;
 
 end.
