@@ -375,7 +375,7 @@ type
   ETaggedTextLexer:
     Class of exception raised when errors reported by the lexer.
   }
-  ETaggedTextLexer = class(ECodeSnip);
+  ETaggedTextLexer = class(EValidation);
 
 
 implementation
@@ -385,7 +385,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UComparers, UUnicodeHelper, UUtils;
+  UComparers, UStructs, UUnicodeHelper, UUtils;
 
 
 const
@@ -1095,13 +1095,16 @@ begin
       // We have start of a tag: get hold it and process it
       // record start of tag
       StartPos := fNextCharPos;
+      Assert(StartPos >= 1, ClassName + '.NextItem: StartPos < 1');
       // skip thru text until tag closer found
       while (fNextCharPos <= Length(fTaggedText))
         and (fTaggedText[fNextCharPos] <> '>') do
         Inc(fNextCharPos);
       // check if we have found end of tag: error if not
       if fNextCharPos > Length(fTaggedText) then
-        raise ETaggedTextLexer.CreateFmt(sNoMatchingEndTag, [StartPos]);
+        raise ETaggedTextLexer.CreateFmt(
+          sNoMatchingEndTag, [StartPos - 1], TSelection.Create(StartPos - 1)
+        );
       Assert(fTaggedText[fNextCharPos] = '>',
         ClassName + 'NextItem: ">" expected');
       // skip over tag closer
@@ -1114,7 +1117,9 @@ begin
       except
         on E: ETaggedTextTagHandler do
           raise ETaggedTextLexer.CreateFmt(
-            sErrorReadingTag, [StartPos, E.Message]
+            sErrorReadingTag,
+            [StartPos - 1, E.Message],
+            TSelection.Create(StartPos - 1)
           );
       end;
       // Now act on kind of tag read
@@ -1127,15 +1132,18 @@ begin
           // we have compound end tag: check validity
           if fTagStack.Count = 0 then
             // .. tag stack empty => no matching opening tag
-            raise ETaggedTextLexer.CreateFmt(sNoMatchingStartTag, [fCurText]);
+            raise ETaggedTextLexer.CreateFmt(
+              sNoMatchingStartTag, [fCurText], TSelection.Create(StartPos - 1)
+            );
           // .. tag we expect closes the one at top of stack
           //    pop stack to close tag
           ExpectedTag := fTagStack.Pop;
           if AnsiCompareText(fCurText, ExpectedTag) <> 0 then
             // .. error if tag is not the expected one
             raise ETaggedTextLexer.CreateFmt(
-              sStartAndEndTagMismatched, [fCurText, ExpectedTag]
-          );
+              sStartAndEndTagMismatched, [fCurText, ExpectedTag],
+              TSelection.Create(StartPos - 1)
+            );
         end;
         ttsSimpleTag:
         begin
@@ -1168,7 +1176,9 @@ begin
         );
       except
         on E: ETaggedTextEntityHandler do
-          raise ETaggedTextLexer.CreateFmt(sErrorReadingEntities, [E.Message]);
+          raise ETaggedTextLexer.CreateFmt(
+            sErrorReadingEntities, [E.Message], TSelection.Create(StartPos - 1)
+          );
       end;
       // replace all CR LF pairs with LF
       fCurText := UnixLineBreaks(fCurText);
@@ -1178,7 +1188,9 @@ begin
   begin
     // We're at end of tagged text it's an error if we still have unclosed tags
     if not fTagStack.Count = 0 then
-      raise ETaggedTextLexer.Create(sUnexpectedEOF);
+      raise ETaggedTextLexer.Create(
+        sUnexpectedEOF, TSelection.Create(Length(fTaggedText))
+      );
     fKind := ttsEOF;
   end;
   // Return the kind of item just analysed
