@@ -550,7 +550,7 @@ begin
   except
     // Handle exceptions: convert expected exceptions to EActiveTextParserError
     on E: ETaggedTextLexer do
-      raise EActiveTextParserError.Create(E.Message);
+      raise EActiveTextParserError.Create(E);
     else
       raise;
   end;
