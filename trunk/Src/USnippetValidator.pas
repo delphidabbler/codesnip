@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  UActiveText, UBaseObjects, USnippets;
+  UActiveText, UBaseObjects, USnippets, UStructs;
 
 
 type
@@ -75,29 +75,33 @@ type
         @return True if dependency list is valid or False if not.
       }
     class function ValidateSourceCode(const Source: string;
-      out ErrorMsg: string): Boolean;
+      out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
       {Validates a source code from a snippet.
         @param Source [in] Source code to be checked.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
+        @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if source code is valid or False if not.
       }
-    class function ValidateDescription(const Desc: string;
-      out ErrorMsg: string): Boolean;
+    class function ValidateDescription(const Desc: string; out ErrorMsg: string;
+      out ErrorSel: TSelection): Boolean;
       {Validates a description code from a snippet.
         @param Desc [in] Description to be checked.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
+        @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if description is valid or False if not.
       }
     class function ValidateName(const Name: string;
-      const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
+      const CheckForUniqueness: Boolean; out ErrorMsg: string;
+      out ErrorSel: TSelection): Boolean;
       {Validates a snippet's name.
         @param Name [in] Snippet name to be checked.
         @param CheckForUniqueness [in] Flag indicating whether a check should
           be made to see if snippet name is already in user database.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
+        @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if name is valid or False if not.
       }
     class function ValidateExtra(const Extra: IActiveText;
@@ -108,12 +112,13 @@ type
           returned.
         @return True if extra information is valid, False if not.
       }
-    class function Validate(const Snippet: TRoutine;
-      out ErrorMsg: string): Boolean;
+    class function Validate(const Snippet: TRoutine; out ErrorMsg: string;
+      out ErrorSel: TSelection): Boolean;
       {Checks a snippet for validity.
         @param Snippet [in] Snippet to be checked.
         @param ErrorMsg [out] Message that describes error. Undefined if True
           returned.
+        @param ErrorSel [out] Selection that can be used to highlight error.
         @return True if snippet valid or False if not.
       }
     class function ValidDependsKinds(const Kind: TSnippetKind): TSnippetKinds;
@@ -138,17 +143,18 @@ uses
 { TSnippetValidator }
 
 class function TSnippetValidator.Validate(const Snippet: TRoutine;
-  out ErrorMsg: string): Boolean;
+  out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
   {Checks a snippet for validity.
     @param Snippet [in] Snippet to be checked.
     @param ErrorMsg [out] Message that describes error. Undefined if True
       returned.
+    @param ErrorSel [out] Selection that can be used to highlight error.
     @return True if snippet valid or False if not.
   }
 begin
-  Result := ValidateName(Snippet.Name, False, ErrorMsg)
-    and ValidateDescription(Snippet.Description, ErrorMsg)
-    and ValidateSourceCode(Snippet.SourceCode, ErrorMsg)
+  Result := ValidateName(Snippet.Name, False, ErrorMsg, ErrorSel)
+    and ValidateDescription(Snippet.Description, ErrorMsg, ErrorSel)
+    and ValidateSourceCode(Snippet.SourceCode, ErrorMsg, ErrorSel)
     and ValidateDependsList(Snippet, ErrorMsg)
     and ValidateExtra(Snippet.Extra, ErrorMsg);
 end;
@@ -273,23 +279,34 @@ begin
 end;
 
 class function TSnippetValidator.ValidateDescription(const Desc: string;
-  out ErrorMsg: string): Boolean;
+  out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
   {Validates a description code from a snippet.
     @param Desc [in] Description to be checked.
     @param ErrorMsg [out] Message that describes error. Undefined if True
       returned.
+    @param ErrorSel [out] Selection that can be used to highlight error.
     @return True if description is valid or False if not.
   }
 resourcestring
   // Error messages
   sErrNoDesc = 'A description must be provided';
   sErrDescHasClosingBrace = 'Description must not contain a ''}'' character';
+const
+  ClosingBrace = '}';
 begin
   Result := False;
   if Trim(Desc) = '' then
-    ErrorMsg := sErrNoDesc
-  else if AnsiContainsText(Desc, '}') then
-    ErrorMsg := sErrDescHasClosingBrace
+  begin
+    ErrorMsg := sErrNoDesc;
+    ErrorSel := TSelection.Create(0, Length(Desc));
+  end
+  else if AnsiContainsText(Desc, ClosingBrace) then
+  begin
+    ErrorMsg := sErrDescHasClosingBrace;
+    ErrorSel := TSelection.Create(
+      AnsiPos(ClosingBrace, Desc) - 1, Length(ClosingBrace)
+    );
+  end
   else
     Result := True;
 end;
@@ -369,39 +386,47 @@ begin
 end;
 
 class function TSnippetValidator.ValidateName(const Name: string;
-  const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
+  const CheckForUniqueness: Boolean; out ErrorMsg: string;
+  out ErrorSel: TSelection): Boolean;
   {Validates a snippet's name.
     @param Name [in] Snippet name to be checked.
     @param CheckForUniqueness [in] Flag indicating whether a check should be
       made to see if snippet name is already in user database.
     @param ErrorMsg [out] Message that describes error. Undefined if True
       returned.
+    @param ErrorSel [out] Selection that can be used to highlight error.
     @return True if name is valid or False if not.
   }
 resourcestring
   // Error messages
   sErrNoName = 'A name must be provided';
-  sErrDupName = '%s is already in the database. Please choose another name';
-  sErrBadName = '%s is not a valid Pascal identifier';
+  sErrDupName = '"%s" is already in the database. Please choose another name';
+  sErrBadName = '"%s" is not a valid Pascal identifier';
+var
+  TrimmedName: string;  // Name param trimmed of leading trailing spaces
 begin
   Result := False;
-  if Trim(Name) = '' then
+  TrimmedName := Trim(Name);
+  if TrimmedName = '' then
     ErrorMsg := sErrNoName
-  else if not IsValidIdent(Name) then
-    ErrorMsg := Format(sErrBadName, [Name])
+  else if not IsValidIdent(TrimmedName) then
+    ErrorMsg := Format(sErrBadName, [TrimmedName])
   else if CheckForUniqueness and
-    (Snippets.Routines.Find(Name, True) <> nil) then
-    ErrorMsg := Format(sErrDupName, [Name])
+    (Snippets.Routines.Find(TrimmedName, True) <> nil) then
+    ErrorMsg := Format(sErrDupName, [TrimmedName])
   else
     Result := True;
+  if not Result then
+    ErrorSel := TSelection.Create(0, Length(Name));
 end;
 
 class function TSnippetValidator.ValidateSourceCode(const Source: string;
-  out ErrorMsg: string): Boolean;
+  out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
   {Validates a source code from a snippet.
     @param Source [in] Source code to be checked.
     @param ErrorMsg [out] Message that describes error. Undefined if True
       returned.
+    @param ErrorSel [out] Selection that can be used to highlight error.
     @return True if source code is valid or False if not.
   }
 resourcestring
@@ -411,7 +436,10 @@ begin
   // Source code must be provided
   Result := Trim(Source) <> '';
   if not Result then
+  begin
     ErrorMsg := sErrNoSource;
+    ErrorSel := TSelection.Create(0, Length(Source));
+  end;
 end;
 
 class function TSnippetValidator.ValidDependsKinds(
