@@ -294,7 +294,7 @@ uses
   SysUtils, StrUtils,
   // Project
   UConsts, UExceptions, UPreferences, USnippetValidator, UStrStreamWriter,
-  UUtils, UWarnings;
+  UStructs, UUtils, UWarnings;
 
 
 const
@@ -695,11 +695,12 @@ procedure TSourceAnalyser.AddSnippet(const Snippet: TRoutine);
     @param Snippet [in] Snippet to be added.
   }
 var
-  ErrorMsg: string; // any error message
+  ErrorMsg: string;       // any error message
+  DummySel: TSelection;   // selection containing any error: not used
 begin
   // NOTE: this method must not be called from any other method of this class
   // Validate the snippet
-  if not TSnippetValidator.Validate(Snippet, ErrorMsg) then
+  if not TSnippetValidator.Validate(Snippet, ErrorMsg, DummySel) then
     raise ECodeSnip.Create(ErrorMsg);
   // Process the snippet
   case Snippet.Kind of
