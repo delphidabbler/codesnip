@@ -307,7 +307,6 @@ class function TSnippetValidator.ValidateExtra(const Extra: IActiveText;
   function ValidateURL(URL: string; out ErrorMsg: string): Boolean;
     {Validates a-link href URLs.
       @param URL [in] URL to validate.
-      @except EDataEntry raised if validation fails.
     }
   const
     cHTTPProtocol = 'http://';  // http protocol prefix
