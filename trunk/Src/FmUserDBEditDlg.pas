@@ -670,8 +670,6 @@ begin
   fSnipKindList := TSnipKindListAdapter.Create;
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
   fMemoCaretPosDisplayMgr := TMemoCaretPosDisplayMgr.Create;
-  fMemoCaretPosDisplayMgr.Manage(edSourceCode, lblSourceCaretPos);
-  fMemoCaretPosDisplayMgr.Manage(edExtra, lblExtraCaretPos);
   fDependsCLBMgr := TSnippetsChkListMgr.Create(clbDepends);
   fXRefsCLBMgr := TSnippetsChkListMgr.Create(clbXRefs);
   fUnitsCLBMgr := TUnitsChkListMgr.Create(clbUnits);
@@ -773,6 +771,9 @@ begin
     ClassName + '.InitControls: no selection in cbKind');
   Assert(cbCategories.ItemIndex >= 0,
     ClassName + '.InitControls: no selection in cbCategories');
+  // Auto-update caret position display for source and extra info memos
+  fMemoCaretPosDisplayMgr.Manage(edSourceCode, lblSourceCaretPos);
+  fMemoCaretPosDisplayMgr.Manage(edExtra, lblExtraCaretPos);
 end;
 
 procedure TUserDBEditDlg.InitForm;
