@@ -286,34 +286,28 @@ type
         @param Value [in] New tagged text.
       }
     function GetTagName: string;
-      {Getter for TagName property.
+      {Getter for TagName property. Kind must be a tag.
         @return Name of current tag as string.
-        @except Raises exception if current tagged text item is not a tag.
       }
     function GetPlainText: string;
-      {Getter for PlainText property.
+      {Getter for PlainText property. Kind must be ttsText.
         @return Current text of a plain text token.
-        @except Raises exception if current tagged text item is not plain text.
       }
     function GetTagParams: TStrings;
-      {Getter for TagParams property.
+      {Getter for TagParams property. Kind must be start tag or simple tag.
         @return Reference to string list storing parameters for current tag.
-        @except Raises exception if current tagged text item is not a tag.
       }
     function GetCommentText: string;
-      {Getter for CommentText property.
+      {Getter for CommentText property. Kind must be ttsComment.
         @return Text of comment.
-        @except Raises exception if current tagged text item is not a comment.
       }
     function GetScriptText: string;
-      {Getter for ScriptText property.
+      {Getter for ScriptText property. Kind must be ttsScript.
         @return Current script text.
-        @except Raises exception if current tagged text item is not a script.
       }
     function GetTagCode: Integer;
-      {Getter for TagCode property.
+      {Getter for TagCode property. Kind must be a tag.
         @return Code of the current tag.
-        @except Raises exception if Kind of current item is not a tag.
       }
     procedure GetTagInfo(const Callback: TTaggedTextTagInfoProc);
       {Gets information about valid tags by repeatedly calling a callback method
@@ -416,12 +410,6 @@ resourcestring
   sCompoundTagInvalid = 'Tag "%s" is not a valid compound tag';
   sTagNotCompound = 'Tag "%s" is not a compound tag';
   sEndTagHasParams = 'End tag "%s" should not have parameters';
-  sItemNotComment = 'Can''t read comment: current item not comment';
-  sItemNotText = 'Can''t read text: current item not text';
-  sItemNotScript = 'Can''t read script: current item not a script';
-  sItemNotTagCode = 'Can''t read tag code: current item not tag';
-  sItemNotTag = 'Can''t read tag name: current item not tag';
-  sCantReadParams = 'Can''t read tag params: current item not a suitable tag';
   sNoMatchingStartTag = 'End tag "%s" encountered with no matching start tag';
   sNoMatchingEndTag = 'No end of tag marker found for tag beginning at %d';
   sErrorReadingTag = 'Error reading tag at character %0:d. %1:s';
@@ -986,13 +974,12 @@ begin
 end;
 
 function TTaggedTextLexer.GetCommentText: string;
-  {Getter for CommentText property.
+  {Getter for CommentText property. Kind must be ttsComment.
     @return Text of comment.
-    @except Raises exception if current tagged text item is not a comment.
   }
 begin
-  if fKind <> ttsComment then
-    raise ETaggedTextLexer.Create(sItemNotComment);
+  Assert(fKind = ttsComment,
+    ClassName + '.GetCommentText: current item not comment');
   Result := fCurText;
 end;
 
@@ -1017,35 +1004,31 @@ begin
 end;
 
 function TTaggedTextLexer.GetPlainText: string;
-  {Getter for PlainText property.
+  {Getter for PlainText property. Kind must be ttsText.
     @return Current text of a plain text token.
-    @except Raises exception if current tagged text item is not plain text.
   }
 begin
-  if fKind <> ttsText then
-    raise ETaggedTextLexer.Create(sItemNotText);
+  Assert(fKind = ttsText, ClassName + '.GetPlainText: current item not text');
   Result := fCurText;
 end;
 
 function TTaggedTextLexer.GetScriptText: string;
-  {Getter for ScriptText property.
+  {Getter for ScriptText property. Kind must be ttsScript.
     @return Current script text.
-    @except Raises exception if current tagged text item is not a script.
   }
 begin
-  if fKind <> ttsScript then
-    raise ETaggedTextLexer.Create(sItemNotScript);
+  Assert(fKind = ttsScript,
+    ClassName + '.GetScriptText: current item not a script');
   Result := fCurText;
 end;
 
 function TTaggedTextLexer.GetTagCode: Integer;
-  {Getter for TagCode property.
+  {Getter for TagCode property. Kind must be a tag.
     @return Code of the current tag.
-    @except Raises exception if Kind of current item is not a tag.
   }
 begin
-  if not (fKind in [ttsCompoundStartTag, ttsCompoundEndTag, ttsSimpleTag]) then
-    raise ETaggedTextLexer.Create(sItemNotTagCode);
+  Assert(fKind in [ttsCompoundStartTag, ttsCompoundEndTag, ttsSimpleTag],
+    ClassName + '.GetTagCode: current item not tag');
   Result := fTagCode;
 end;
 
@@ -1070,24 +1053,22 @@ begin
 end;
 
 function TTaggedTextLexer.GetTagName: string;
-  {Getter for TagName property.
+  {Getter for TagName property. Kind must be a tag.
     @return Name of current tag as string.
-    @except Raises exception if current tagged text item is not a tag.
   }
 begin
-  if not (fKind in [ttsCompoundStartTag, ttsCompoundEndTag, ttsSimpleTag]) then
-    raise ETaggedTextLexer.Create(sItemNotTag);
+  Assert(fKind in [ttsCompoundStartTag, ttsCompoundEndTag, ttsSimpleTag],
+    ClassName + '.GetTagName: current item not tag');
   Result := fCurText;
 end;
 
 function TTaggedTextLexer.GetTagParams: TStrings;
-  {Getter for TagParams property.
+  {Getter for TagParams property. Kind must be start tag or simple tag.
     @return Reference to string list storing parameters for current tag.
-    @except Raises exception if current tagged text item is not a tag.
   }
 begin
-  if not (fKind in [ttsCompoundStartTag, ttsSimpleTag]) then
-    raise ETaggedTextLexer.Create(sCantReadParams);
+  Assert(fKind in [ttsCompoundStartTag, ttsSimpleTag],
+    ClassName + '.GetTagParams: current item not a suitable tag');
   Result := fParams;
 end;
 
