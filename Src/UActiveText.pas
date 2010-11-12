@@ -233,7 +233,7 @@ type
   EActiveTextParserError:
     Class of exception raised when parsing active text markup.
   }
-  EActiveTextParserError = class(ECodeSnip);
+  EActiveTextParserError = class(EValidation);
 
   {
   TActiveTextFactory:
