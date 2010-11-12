@@ -43,7 +43,7 @@ interface
 
 uses
   // Delphi
-  Generics.Collections, Classes, Controls, StdCtrls;
+  Generics.Collections, Classes, Controls, StdCtrls, Messages;
 
 type
 
@@ -56,16 +56,52 @@ type
   TMemoCaretPosDisplayMgr = class(TObject)
   strict private
     type
+      {
+      TMemoHook:
+        Class used to hook into a memo control's message loop and detect
+        selection changes, triggering an event when detected.
+      }
+      TMemoHook = class(TObject)
+      strict private
+        var
+          fMemo: TMemo;               // Memo control to be hooked
+          fMemoWndProc: Pointer;      // Memo's original
+          fWndProcHook: Pointer;      // New hook window procedure
+          fOnSelChange: TNotifyEvent; // OnSelChange event handler
+        procedure WndProcHook(var Msg: TMessage);
+          {Window procedure that replaces and calls into memo control's own
+          window procedure. Detects selection changes and triggers OnSelChange
+          event.
+            @param Msg [in/out] Contains information about message. Result field
+              updated with message return value.
+          }
+        function SetWndProc(WndProc: Pointer): Pointer;
+          {Assigns a new window procedure to memo control.
+            @param WndProc [in] Pointer to new window procedure.
+            @return Pointer to old window procedure.
+          }
+      public
+        constructor Create(const AMemo: TMemo);
+          {Object constructor. Creates hook object for a specified memo.
+            @param AMemo [in] Memo control to be hooked.
+          }
+        destructor Destroy; override;
+          {Object destructor. Restores memo's original window procedure.
+          }
+        property OnSelChange: TNotifyEvent read fOnSelChange write fOnSelChange;
+          {Event triggered when a selection change in memo control is detected}
+      end;
+    type
       // Record of values associated with memo control
       TAssociations = record
-        OnKeyUp: TKeyEvent;     // original OnKeyUp event handler
-        OnMouseUp: TMouseEvent; // original OnMouseUp event handler
-        OnEnter: TNotifyEvent;  // original OnEnter event handler
-        DisplayCtrl: TLabel;    // label in which to display caret info
+        OnKeyUp: TKeyEvent;     // Original OnKeyUp event handler
+        OnMouseUp: TMouseEvent; // Original OnMouseUp event handler
+        OnEnter: TNotifyEvent;  // Original OnEnter event handler
+        Hook: TMemoHook;        // Object that hooks memo's window proc
+        DisplayCtrl: TLabel;    // Label in which to display caret info
       end;
-    var
-      // Maps memo to associated display label and saved event handlers
-      fMap: TDictionary<TMemo,TAssociations>;
+    var fMap: TDictionary<TMemo,TAssociations>;
+      {Maps memo to associated display label and saved event handlers}
     procedure OnKeyUpHandler(Sender: TObject; var Key: Word;
       Shift: TShiftState);
       {OnKeyUp event handler for managed memo controls. Calls any original event
@@ -89,6 +125,11 @@ type
       handler then updates caret position display.
         @param Sender [in] Memo control that triggered event.
       }
+    procedure OnSelChangeHandler(Sender: TObject);
+      {Handles events triggered when selection changes are reported be memo
+      hook. Updates caret position display.
+        @param Sender [in] Memo control that triggered event.
+      }
     procedure UpdateCaretPos(const SourceCtrl: TMemo);
       {Updates display of a memo control's caret position.
         @param SourceCtrl [in] Memo whose caret position to be displayed.
@@ -103,7 +144,9 @@ type
       }
     procedure Manage(const SourceCtrl: TMemo; const DisplayCtrl: TLabel);
       {Registers a memo control to have caret position displayed in an
-      associated label.
+      associated label. NOTE: This method must only be called once the memo
+      control has initialised otherwise selection change events will not be
+      detected. Calling during a form's OnShow event is recommended.
         @param SourceCtrl [in] Memo control whose caret position is to be
           displayed.
         @param DisplayCtrl [in] Label used to display caret position.
@@ -116,7 +159,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils;
+  SysUtils, Windows;
 
 
 { TMemoCaretPosDisplayMgr }
@@ -146,6 +189,7 @@ begin
     SourceCtrl.OnKeyUp := Associations.OnKeyUp;
     SourceCtrl.OnMouseUp := Associations.OnMouseUp;
     SourceCtrl.OnEnter := Associations.OnEnter;
+    Associations.Hook.Free;
   end;
   fMap.Free;
   inherited;
@@ -169,6 +213,9 @@ begin
   Associations.OnEnter := SourceCtrl.OnEnter;
   // record display label
   Associations.DisplayCtrl := DisplayCtrl;
+  // add menu hook object
+  Associations.Hook := TMemoHook.Create(SourceCtrl);
+  Associations.Hook.OnSelChange := OnSelChangeHandler;
   // hook required event handlers (each of these calls any saved handler)
   SourceCtrl.OnKeyUp := OnKeyUpHandler;
   SourceCtrl.OnMouseUp := OnMouseUpHandler;
@@ -223,12 +270,21 @@ procedure TMemoCaretPosDisplayMgr.OnMouseUpHandler(Sender: TObject;
     @param Y [in] Not used. Passed to any original event handler.
   }
 var
-  SavedOnMouseUp: TMouseEvent;// original event handler
+  SavedOnMouseUp: TMouseEvent;  // original event handler
 begin
   // call any original event hander
   SavedOnMouseUp := fMap[Sender as TMemo].OnMouseUp;
   if Assigned(SavedOnMouseUp) then
     SavedOnMouseUp(Sender, Button, Shift, X, Y);
+  UpdateCaretPos(Sender as TMemo);
+end;
+
+procedure TMemoCaretPosDisplayMgr.OnSelChangeHandler(Sender: TObject);
+  {Handles events triggered when selection changes are reported be memo hook.
+  Updates caret position display.
+    @param Sender [in] Memo control that triggered event.
+  }
+begin
   UpdateCaretPos(Sender as TMemo);
 end;
 
@@ -245,4 +301,59 @@ begin
   );
 end;
 
+{ TMemoCaretPosDisplayMgr.TMemoHook }
+
+constructor TMemoCaretPosDisplayMgr.TMemoHook.Create(const AMemo: TMemo);
+  {Object constructor. Creates hook object for a specified memo.
+    @param AMemo [in] Memo control to be hooked.
+  }
+begin
+  inherited Create;
+  fMemo := AMemo;
+  // hook memo's window procedure
+  fWndProcHook := Classes.MakeObjectInstance(WndProcHook);
+  fMemoWndProc := SetWndProc(fWndProcHook);
+end;
+
+destructor TMemoCaretPosDisplayMgr.TMemoHook.Destroy;
+  {Object destructor. Restores memo's original window procedure.
+  }
+begin
+  fOnSelChange := nil;
+  if Assigned(fWndProcHook) then
+  begin
+    // restore original window procedure
+    SetWndProc(fMemoWndProc);
+    Classes.FreeObjectInstance(fWndProcHook);
+  end;
+  inherited;
+end;
+
+function TMemoCaretPosDisplayMgr.TMemoHook.SetWndProc(
+  WndProc: Pointer): Pointer;
+  {Assigns a new window procedure to memo control.
+    @param WndProc [in] Pointer to new window procedure.
+    @return Pointer to old window procedure.
+  }
+begin
+  Result := Pointer(
+    SetWindowLong(fMemo.Handle, GWL_WNDPROC, Integer(WndProc))
+  );
+end;
+
+procedure TMemoCaretPosDisplayMgr.TMemoHook.WndProcHook(var Msg: TMessage);
+  {Window procedure that replaces and calls into memo control's own window
+  procedure. Detects selection changes and triggers OnSelChange event.
+    @param Msg [in/out] Contains information about message. Result field updated
+      with message return value.
+  }
+begin
+  Msg.Result := CallWindowProc(
+    fMemoWndProc, fMemo.Handle, Msg.Msg, Msg.WParam, Msg.LParam
+  );
+  if (Msg.Msg = EM_SETSEL) and Assigned(fOnSelChange) then
+    fOnSelChange(fMemo);
+end;
+
 end.
+
