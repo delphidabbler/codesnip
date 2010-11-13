@@ -683,6 +683,8 @@ begin
     Inc(NextChPos);
   // Copy the name from the string
   Result := MidStr(TagStr, StartPos, NextChPos - StartPos);
+  if Trim(Result) = '' then
+    raise ETaggedTextTagHandler.Create(sTagEmpty);
 end;
 
 function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
@@ -1187,7 +1189,7 @@ begin
   else
   begin
     // We're at end of tagged text it's an error if we still have unclosed tags
-    if not fTagStack.Count = 0 then
+    if fTagStack.Count <> 0 then
       raise ETaggedTextLexer.Create(
         sUnexpectedEOF, TSelection.Create(Length(fTaggedText))
       );
