@@ -14,9 +14,7 @@ CodeSnip stores some personal information in two configuration files:
 Common.ini
 --------------------------------------------------------------------------------
 
-Common.ini is located in the in the DelphiDabbler\CodeSnip sub-folder of your
-system's common application data folder. The location of this folder varies
-depending on the OS. On Vista it is usually at C:\ProgramData.
+Common.ini is located in the %ProgramData%\DelphiDabbler\CodeSnip folder.
 
 The data that is stored in Common.ini is:
 
@@ -31,10 +29,8 @@ the keys.
 User.3.ini
 --------------------------------------------------------------------------------
 
-User.3.ini is found in the DelphiDabbler\CodeSnip sub-folder of your system's
-per-user application data folder. Again this varies by OS. On Vista it is
-somewhere like C:\Users\[UserName]\AppData\Roaming, where [UserName] is the ID
-of the currently logged on user.
+User.3.ini is found in the current user's %AppData%\DelphiDabbler\CodeSnip
+folder.
 
 The file stores several user-specific application data settings such as your
 preferences. The only personal information is as follows:
@@ -51,7 +47,7 @@ preferences. The only personal information is as follows:
 
 If you have upgraded from CodeSnip v2 there may also be a file named User.ini.
 This contains pretty much the same information as User.3.ini. The file is
-ignored by CodeSnip v3. 
+ignored by CodeSnip v3.
 
 
 Spyware
@@ -121,7 +117,7 @@ is only sent if the user clicks the wizard's "Submit" button. The data is:
     * The unique program key (see above for details).
     * The user name or nickname.
     * A description of the operating system and version of Internet Explorer
-      being used. 
+      being used.
 
 The registration data is recorded in a database on the DelphiDabbler web server.
 The data is only used to keep track of the number of people using the different
@@ -176,7 +172,7 @@ default browser while links from the help file use Internet Explorer. You should
 refer to the relevant website's privacy policies to learn how they use any data
 you supply when visiting their pages. DelphiDabbler has no control over the
 content of linked third party websites and you follow these links at your own
-risk. 
+risk.
 
 
 Accessing the internet using a proxy server
