@@ -203,7 +203,7 @@ implementation
   <               &lt;
   "               &quot;
   &               &amp;
-  (C)             &copy;
+  ©               &copy;
 
   No other entities are supported. Any other character can be encoded using its
   unicode or ascii value. For example, the @ symbol (ascii 64) is encoded as
@@ -224,7 +224,7 @@ implementation
      - supported entities: &gt;, &lt, &quot;, &amp;.
   v2 - added tags: <em>, <var>, <warning>, <mono>, <p> and <heading>.
      - added entity: &copy;.
-  v3 - changed <a> tag to accept file:// protocol in additions to http://
+  v3 - changed <a> tag to accept file:// protocol in addition to http://
        protocol in href attribute.
 }
 
@@ -233,7 +233,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UGC, UExceptions;
+  UExceptions;
 
 
 type
@@ -242,7 +242,7 @@ type
   TREMLTags:
     Class that provides information about REML tags.
   }
-  TREMLTags = class(TObject)
+  TREMLTags = class(TNoConstructObject)
   strict private
     type
       {
@@ -264,42 +264,42 @@ type
             @param AParamName [in] Optional name of parameter.
           }
       end;
-    var
-      fTagMap: array of TREMLTag; // Details of all supported tags
-    function IndexOfTagId(const Id: TActiveTextElemKind): Integer;
+    class var fTagMap: array of TREMLTag;
+      {Details of all supported tags}
+    class function IndexOfTagId(const Id: TActiveTextElemKind): Integer;
       {Finds index of a tag id in tag map.
         @param Id [in] Tag id to be found.
         @return Index of tag id or -1 if tag id not found.
       }
-    function GetCount: Integer;
+    class function GetCount: Integer; static;
       {Read accessor for Count property.
         @return Number of supported tags.
       }
-    function GetId(Idx: Integer): TActiveTextElemKind;
+    class function GetId(Idx: Integer): TActiveTextElemKind; static;
       {Read accessor for Ids[] property.
         @param Idx [in] Zero based index of required id.
         @return Required id.
       }
-    function GetName(Idx: Integer): string;
+    class function GetName(Idx: Integer): string; static;
       {Read accessor for Names[] property,
         @param Idx [in] Zero based index of required tag name.
         @return Required tag name.
       }
   public
-    constructor Create;
+    class constructor Create;
       {Class constructor. Sets up map of REML tags.
       }
-    destructor Destroy; override;
+    class destructor Destroy;
       {Class destructor. Clears tag map.
       }
-    function LookupTagName(const Id: TActiveTextElemKind;
+    class function LookupTagName(const Id: TActiveTextElemKind;
       out TagName: string): Boolean;
       {Looks up name of a tag.
         @param Id [in] Id of tag.
         @param TagName [out] Name of tag or '' if unknown id.
         @return True if tag id is valid, False if not.
       }
-    function LookupParamName(const Id: TActiveTextElemKind;
+    class function LookupParamName(const Id: TActiveTextElemKind;
       out ParamName: string): Boolean;
       {Looks up a parameter name of an identified REML tag.
         @param Id [in] Id of required tag.
@@ -307,26 +307,26 @@ type
           parameter or if tag id is not valid.
         @return True if tag is valid, False if not.
       }
-    function LookupTagVersion(const Id: TActiveTextElemKInd;
+    class function LookupTagVersion(const Id: TActiveTextElemKInd;
       out Version: TREMLVersion): Boolean;
       {Looks up REML version when tag was introduced.
         @param Id [in] Id of tag.
         @param Version [out] REML version when tag was introduced.
         @return True if tag id is valid, False if not.
       }
-    property Count: Integer read GetCount;
+    class property Count: Integer read GetCount;
       {Number of supported tags}
-    property Ids[Idx: Integer]: TActiveTextElemKind read GetId;
+    class property Ids[Idx: Integer]: TActiveTextElemKind read GetId;
       {List of tag ids}
-    property Names[Idx: Integer]: string read GetName;
+    class property Names[Idx: Integer]: string read GetName;
       {List of tag names}
   end;
 
   {
   TREMLEntities:
-    Class provides information about character entities.
+    Static class that provides information about character entities.
   }
-  TREMLEntities = class(TObject)
+  TREMLEntities = class(TNoConstructObject)
   strict private
     type
       {
@@ -345,9 +345,8 @@ type
             @param AVersion [in] REML version where entity introduced.
           }
       end;
-    var
-      fEntityMap: array of TREMLEntity; // Entities mapped to equivalent chars
-    function CharToMnemonicEntity(const Ch: Char;
+    class var fEntityMap: array of TREMLEntity; // Entity <=> character map
+    class function CharToMnemonicEntity(const Ch: Char;
       const Ver: TREMLVersion): string;
       {Gets the mnemonic character entity that represents a character.
         @param Entity [in] Character for which equivalent entity is required.
@@ -355,29 +354,29 @@ type
         @return Required entity or '' if character has no matching mnemonic
           entity.
       }
-    function GetCount: Integer;
+    class function GetCount: Integer; static;
       {Read accessor for Count property.
         @return Number of supported tags.
       }
-    function GetEntity(Idx: Integer): string;
+    class function GetEntity(Idx: Integer): string; static;
       {Read accessor for Entities[] property.
         @param Idx [in] Zero based index of required entity.
         @return Required entity.
       }
-    function GetChar(Idx: Integer): Char;
+    class function GetChar(Idx: Integer): Char; static;
       {Read accessor for Chars[] property.
         @param Idx [in] Zero based index of required character.
         @return Required character.
       }
   public
-    constructor Create;
+    class constructor Create;
       {Class constructor. Creates map of mnemonic entities to equivalent
       characters.
       }
-    destructor Destroy; override;
-      {Class destructor. Tidies up object.
+    class destructor Destroy;
+      {Class destructor. Clears entity map
       }
-    function MapToEntity(const Ch: Char; const Ver: TREMLVersion): string;
+    class function MapToEntity(const Ch: Char; const Ver: TREMLVersion): string;
       {Maps a character to a character entity if appropriate.
         @param Ch [in] Character to be mapped.
         @param Ver [in] Version of REML for which entity is required.
@@ -385,36 +384,12 @@ type
           printable and has ascii value less than 127, or a numeric character
           otherwise.
       }
-    property Count: Integer read GetCount;
+    class property Count: Integer read GetCount;
       {Number of supported tags}
-    property Entities[Idx: Integer]: string read GetEntity;
+    class property Entities[Idx: Integer]: string read GetEntity;
       {List of character entities}
-    property Chars[Idx: Integer]: Char read GetChar;
+    class property Chars[Idx: Integer]: Char read GetChar;
       {List of characters that match entities}
-  end;
-
-  {
-  TREMLInfo:
-    Static helper class that provides information about REML tags and converts
-    standard text to REML text and vice versa. This class simply maintains and
-    provides easy access to TREMLTags and TREMLEntities.
-  }
-  TREMLInfo = class(TNoConstructObject)
-  strict private
-    class var fGC: IInterface;          // Garbage collector for class vars
-    class var fTags: TREMLTags;         // Provides information about tags
-    class var fEntities: TREMLEntities; // Converts REML char entities <=> chars
-  public
-    class function TagInfo: TREMLTags;
-      {Provides a reference to object that provides information about a REML
-      tag.
-        @return Required object reference.
-      }
-    class function EntityInfo: TREMLEntities;
-      {Provides a reference to object that provides information about REML
-      character entities.
-        @return Required object reference.
-      }
   end;
 
 { TREMLReader }
@@ -448,11 +423,11 @@ function TREMLReader.EntityInfo(const EntityIdx: Integer;
       more entities.
   }
 begin
-  Result := EntityIdx < TREMLInfo.EntityInfo.Count;
+  Result := EntityIdx < TREMLEntities.Count;
   if not Result then
     Exit;
-  EntityName := TREMLInfo.EntityInfo.Entities[EntityIdx];
-  EntityChar := TREMLInfo.EntityInfo.Chars[EntityIdx];
+  EntityName := TREMLEntities.Entities[EntityIdx];
+  EntityChar := TREMLEntities.Chars[EntityIdx];
 end;
 
 procedure TREMLReader.Parse(const Markup: string;
@@ -494,7 +469,7 @@ begin
           // Start of an action element
           // Get tag id and any parameter
           TagId := TActiveTextElemKind(fLexer.TagCode);
-          TREMLInfo.TagInfo.LookupParamName(TagId, ParamName);
+          TREMLTags.LookupParamName(TagId, ParamName);
           if ParamName <> '' then
           begin
             // We have a parameter: must not be empty
@@ -523,7 +498,7 @@ begin
           // End of an action element
           // Get tag id and note if tag should have a parameter
           TagId := TActiveTextElemKind(fLexer.TagCode);
-          TREMLInfo.TagInfo.LookupParamName(TagId, ParamName);
+          TREMLTags.LookupParamName(TagId, ParamName);
           if ParamName <> '' then
           begin
             // We should have a param which must be stored in closing action
@@ -568,11 +543,11 @@ function TREMLReader.TagInfo(const TagIdx: Integer; out TagName: string;
       tags.
   }
 begin
-  Result := TagIdx < TREMLInfo.TagInfo.Count;
+  Result := TagIdx < TREMLTags.Count;
   if Result then
   begin
-    TagName := TREMLInfo.TagInfo.Names[TagIdx];
-    TagCode := Ord(TREMLInfo.TagInfo.Ids[TagIdx]);
+    TagName := TREMLTags.Names[TagIdx];
+    TagCode := Ord(TREMLTags.Ids[TagIdx]);
     IsContainer := True;
   end;
 end;
@@ -626,10 +601,10 @@ var
   TagName: string;    // name of tag
   ParamName: string;  // name of any parameter
 begin
-  if not TREMLInfo.TagInfo.LookupTagName(TagElem.Kind, TagName) then
+  if not TREMLTags.LookupTagName(TagElem.Kind, TagName) then
     raise EBug.CreateFmt('%s.RenderTag: Invalid REML tag id', [ClassName]);
   Result := '';
-  TREMLInfo.TagInfo.LookupParamName(TagElem.Kind, ParamName);
+  TREMLTags.LookupParamName(TagElem.Kind, ParamName);
   case TagElem.State of
     fsClose:
       // closing tag
@@ -673,7 +648,7 @@ begin
   Result := '';
   for Ch in Text do
   begin
-    Entity := TREMLInfo.EntityInfo.MapToEntity(Ch, fVersion);
+    Entity := TREMLEntities.MapToEntity(Ch, fVersion);
     if Entity = '' then
       Result := Result + Ch
     else
@@ -681,42 +656,12 @@ begin
   end;
 end;
 
-{ TREMLInfo }
-
-class function TREMLInfo.EntityInfo: TREMLEntities;
-  {Provides a reference to object that provides information about REML character
-  entities.
-    @return Required object reference.
-  }
-begin
-  if not Assigned(fEntities) then
-  begin
-    fEntities := TREMLEntities.Create;
-    TGC.GCLocalObj(fGC, fEntities);
-  end;
-  Result := fEntities;
-end;
-
-class function TREMLInfo.TagInfo: TREMLTags;
-  {Provides a reference to object that provides information about a REML tag.
-    @return Required object reference.
-  }
-begin
-  if not Assigned(fTags) then
-  begin
-    fTags := TREMLTags.Create;
-    TGC.GCLocalObj(fGC, fTags);
-  end;
-  Result := fTags;
-end;
-
 { TREMLTags }
 
-constructor TREMLTags.Create;
+class constructor TREMLTags.Create;
   {Class constructor. Sets up map of REML tags.
   }
 begin
-  inherited Create;
   // Record all supported tags
   SetLength(fTagMap, 8);
   fTagMap[0] := TREMLTag.Create(ekLink,     1, 'a', 'href');
@@ -729,15 +674,14 @@ begin
   fTagMap[7] := TREMLTag.Create(ekMono,     2, 'mono');
 end;
 
-destructor TREMLTags.Destroy;
+class destructor TREMLTags.Destroy;
   {Class destructor. Clears tag map.
   }
 begin
   SetLength(fTagMap, 0);
-  inherited;
 end;
 
-function TREMLTags.GetCount: Integer;
+class function TREMLTags.GetCount: Integer;
   {Read accessor for Count property.
     @return Number of supported tags.
   }
@@ -745,7 +689,7 @@ begin
   Result := Length(fTagMap);
 end;
 
-function TREMLTags.GetId(Idx: Integer): TActiveTextElemKind;
+class function TREMLTags.GetId(Idx: Integer): TActiveTextElemKind;
   {Read accessor for Ids[] property.
     @param Idx [in] Zero based index of required id.
     @return Required id.
@@ -754,7 +698,7 @@ begin
   Result := fTagMap[Idx].Id;
 end;
 
-function TREMLTags.GetName(Idx: Integer): string;
+class function TREMLTags.GetName(Idx: Integer): string;
   {Read accessor for Names[] property,
     @param Idx [in] Zero based index of required tag name.
     @return Required tag name.
@@ -763,7 +707,7 @@ begin
   Result := fTagMap[Idx].TagName;
 end;
 
-function TREMLTags.IndexOfTagId(const Id: TActiveTextElemKind): Integer;
+class function TREMLTags.IndexOfTagId(const Id: TActiveTextElemKind): Integer;
   {Finds index of a tag id in tag map.
     @param Id [in] Tag id to be found.
     @return Index of tag id or -1 if tag id not found.
@@ -782,7 +726,7 @@ begin
   end;
 end;
 
-function TREMLTags.LookupParamName(const Id: TActiveTextElemKind;
+class function TREMLTags.LookupParamName(const Id: TActiveTextElemKind;
   out ParamName: string): Boolean;
   {Looks up a parameter name of an identified REML tag.
     @param Id [in] Id of required tag.
@@ -801,7 +745,7 @@ begin
     ParamName := '';
 end;
 
-function TREMLTags.LookupTagName(const Id: TActiveTextElemKind;
+class function TREMLTags.LookupTagName(const Id: TActiveTextElemKind;
   out TagName: string): Boolean;
   {Looks up name of a tag.
     @param Id [in] Id of tag.
@@ -819,7 +763,7 @@ begin
     TagName := '';
 end;
 
-function TREMLTags.LookupTagVersion(const Id: TActiveTextElemKInd;
+class function TREMLTags.LookupTagVersion(const Id: TActiveTextElemKInd;
   out Version: TREMLVersion): Boolean;
   {Looks up REML version when tag was introduced.
     @param Id [in] Id of tag.
@@ -856,7 +800,7 @@ end;
 
 { TREMLEntities }
 
-function TREMLEntities.CharToMnemonicEntity(const Ch: Char;
+class function TREMLEntities.CharToMnemonicEntity(const Ch: Char;
   const Ver: TREMLVersion): string;
   {Gets the mnemonic character entity that represents a character.
     @param Entity [in] Character for which equivalent entity is required.
@@ -877,11 +821,10 @@ begin
   end;
 end;
 
-constructor TREMLEntities.Create;
+class constructor TREMLEntities.Create;
   {Class constructor. Creates map of mnemonic entities to equivalent characters.
   }
 begin
-  inherited Create;
   SetLength(fEntityMap, 5);
   // Record all supported character entities
   fEntityMap[0] := TREMLEntity.Create('amp',  '&',  1);
@@ -891,15 +834,14 @@ begin
   fEntityMap[4] := TREMLEntity.Create('copy', '©', 2);
 end;
 
-destructor TREMLEntities.Destroy;
-  {Class destructor. Tidies up object.
+class destructor TREMLEntities.Destroy;
+  {Class destructor. Clears entity map.
   }
 begin
   SetLength(fEntityMap, 0);
-  inherited;
 end;
 
-function TREMLEntities.GetChar(Idx: Integer): Char;
+class function TREMLEntities.GetChar(Idx: Integer): Char;
   {Read accessor for Chars[] property.
     @param Idx [in] Zero based index of required character.
     @return Required character.
@@ -908,7 +850,7 @@ begin
   Result := fEntityMap[Idx].Ch;
 end;
 
-function TREMLEntities.GetCount: Integer;
+class function TREMLEntities.GetCount: Integer;
   {Read accessor for Count property.
     @return Number of supported tags.
   }
@@ -916,7 +858,7 @@ begin
   Result := Length(fEntityMap);
 end;
 
-function TREMLEntities.GetEntity(Idx: Integer): string;
+class function TREMLEntities.GetEntity(Idx: Integer): string;
   {Read accessor for Entities[] property.
     @param Idx [in] Zero based index of required entity.
     @return Required entity.
@@ -925,7 +867,7 @@ begin
   Result := fEntityMap[Idx].Entity;
 end;
 
-function TREMLEntities.MapToEntity(const Ch: Char;
+class function TREMLEntities.MapToEntity(const Ch: Char;
   const Ver: TREMLVersion): string;
   {Maps a character to a character entity if appropriate.
     @param Ch [in] Character to be mapped.
@@ -977,7 +919,7 @@ begin
     if Supports(Elem, IActiveTextActionElem, TagElem) and
       (TagElem.State = fsOpen) then
     begin
-      if not TREMLInfo.TagInfo.LookupTagVersion(Elem.Kind, TagVer) then
+      if not TREMLTags.LookupTagVersion(Elem.Kind, TagVer) then
         raise EBug.Create(ClassName + '.LowestWriterVersion: TagVer not found');
       if TagVer > Result then
         Result := TagVer;
