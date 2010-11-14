@@ -547,6 +547,7 @@ procedure TUserDBEditDlg.CheckExtra;
 var
   ActiveText: IActiveText;  // active text created from text
   ErrorMsg: string;         // error message from validator
+  DataError: EDataEntry;    // data entry error exception raised on error
 resourcestring
   // parse error message
   sActiveTextErr = 'Error parsing extra information markup:' + EOL2 + '%s';
@@ -558,9 +559,14 @@ begin
   except
     // Convert active text parser to data exception
     on E: EActiveTextParserError do
-      raise EDataEntry.CreateFmt(
-        sActiveTextErr, [E.Message], edExtra, E.Selection
+    begin
+      DataError := EDataEntry.CreateFmt(
+        sActiveTextErr, [E.Message], edExtra
       );
+      if E.HasSelection then
+        DataError.Selection := E.Selection;
+      raise DataError;
+    end
     else
       raise;
   end;
