@@ -43,8 +43,8 @@ follow the on-screen instructions.
 The installer makes the following changes to your system:
 
 + The main program's executable file and documentation are installed into the
-  chosen install folder (the "DelphiDabbler\CodeSnip" sub-folder of your Program
-  Files directory by default).
+  chosen install folder (the %ProgramFiles%\DelphiDabbler\CodeSnip folder by
+  default).
 
 + Files required by the uninstaller are stored in the main installation's Uninst
   sub-folder.
@@ -54,15 +54,13 @@ The installer makes the following changes to your system:
 
 + A program group may be created in the start menu (optional).
 
-+ A "CodeSnip" folder is created inside the "DelphiDabbler" sub-folder of the
-  common application data folder. A configuration file is stored in the
-  folder. Once the database is downloaded, it will be stored in a "Data"
-  subfolder (see below).
++ A %ProgramData%\DelphiDabbler\CodeSnip folder is created. A configuration
+  file is stored in the folder. Once the database is downloaded, it will be
+  stored in a "Data" sub-folder (see below).
 
-+ Another "CodeSnip" folder is created in the "DelphiDabbler" sub-folder of the
-  user's application data folder. This is used to hold a file that stores per-
-  user configuration data. A "UserData.3" sub folder of this folder is used to
-  store any user defined snippets.
++ A %AppData%\DelphiDabbler\CodeSnip is also created. This is used to hold a
+  file that stores per-user configuration data. A "UserData.3" sub-folder is
+  used to store any user defined snippets.
 
 + Setup offers to copy any relevant files from installations earlier than v3.0
   into the correct locations for v3.
@@ -79,8 +77,8 @@ up a message if none is present.
 When CodeSnip is first run it detects if there is no database and displays
 message to that effect in its main window. A link is displayed that can be used
 to download the database from the DelphiDabbler website. Once this is done the
-required files are stored in the "DelphiDabbler\CodeSnip\Data" sub folder of the
-common application data folder.
+required files are stored in the %ProgramData%\DelphiDabbler\CodeSnip\Data
+folder.
 
 
 Configuring CodeSnip to Work With Your Compilers
@@ -136,9 +134,8 @@ Updating the Database
 From time to time you should check for updates to the CodeSnip database. This is
 done by selecting the program's "Database | Update From Web" menu option.
 
-It should be sufficient to check for updates about once per month. Mailing list
-members are notified of updates (see below). You can also get to know about
-updates by subscribing to the CodeSnip RSS feed (see below).
+It should be sufficient to check for updates about once per month. You can get
+to know about updates by subscribing to the CodeSnip RSS feed (see below).
 
 Updates will apply to all users of the computer.
 
@@ -167,32 +164,6 @@ RSS News Feed
 You can get notified of all updates to the CodeSnip program and to the database
 by subscribing to the Code Snippets RSS Feed at
 http://www.delphidabbler.com/feeds/site-news-feed?id=codesnip.
-
-
-Mailing List
-================================================================================
-
-Information about updates to CodeSnip or to the database is sent by email to
-members of the CodeSnip mailing list.
-
-You can subscribe to the list in several ways:
-
-+ By visiting http://www.delphidabbler.com/subsid/maillist?list=codesnip,
-  entering your email address and clicking the subscribe button.
-+ By providing the relevant information when you register CodeSnip,
-+ By selecting CodeSnip's "Tools | Join Mailing List" menu option and filling
-  your details in the dialog box.
-
-In all cases you will need to respond to a confirmation email to confirm your
-membership of the list.
-
-Unsubscribing is easy. Each mailing contains a link that can be visited to
-unsubscribe from the mailing list.
-
-Your privacy is protected. See the Privacy.txt file in the program's install
-folder or the program's help file for details (look up "privacy statement" in
-the help file index).
-
 
 
 License & Disclaimer
@@ -230,8 +201,6 @@ the "tags" branch.
 Ready zipped source code archives of the current release and earlier versions
 can be downloaded from the CodeSnip Files page on SourceForge.net at:
 https://sourceforge.net/projects/codesnip/files/
-
-Source code older than one year is unlikely to be available.
 
 Available source code is released under the Mozilla Public license (see
 http://www.mozilla.org/MPL/MPL-1.1) and other open source licenses. See the file
