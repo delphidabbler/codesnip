@@ -161,7 +161,7 @@ type
         @return Tag name.
       }
     function LookupTagInfo(const TagName: string; out TagCode: Word;
-      out IsCompound: WordBool): Boolean;
+      out IsCompound: Boolean): Boolean;
       {Looks up the tag in the map of supported tags.
         @param TagName [in] Name of tag for which information is required.
         @param TagCode [out] Unique code representing tag.
@@ -188,7 +188,7 @@ type
       {Destructor. Tears down object.
       }
     procedure AddTag(const Tag: string; const Code: Word;
-      const IsCompound: WordBool);
+      const IsCompound: Boolean);
       {Adds information about a tag to the map of tags recognised by the
       handler. Supported tags must be set up using this method before attempting
       to process them since the handler recognises no tags by default.
@@ -235,7 +235,7 @@ type
       @return True to make lexer call this method again, False to terminate.
   }
   TTaggedTextTagInfoProc = function(const TagIdx: Integer; out TagName: string;
-    out TagCode: Word; out IsContainer: WordBool): Boolean of object;
+    out TagCode: Word; out IsContainer: Boolean): Boolean of object;
 
   {
   TTaggedTextEntityInfoProc:
@@ -566,7 +566,7 @@ end;
 { TTaggedTextTagHandler }
 
 procedure TTaggedTextTagHandler.AddTag(const Tag: string; const Code: Word;
-  const IsCompound: WordBool);
+  const IsCompound: Boolean);
   {Adds information about a tag to the map of tags recognised by the handler.
   Supported tags must be set up using this method before attempting to process
   them since the handler recognises no tags by default.
@@ -805,7 +805,7 @@ begin
 end;
 
 function TTaggedTextTagHandler.LookupTagInfo(const TagName: string;
-  out TagCode: Word; out IsCompound: WordBool): Boolean;
+  out TagCode: Word; out IsCompound: Boolean): Boolean;
   {Looks up the tag in the map of supported tags.
     @param TagName [in] Name of tag for which information is required.
     @param TagCode [out] Unique code representing tag.
@@ -842,7 +842,7 @@ procedure TTaggedTextTagHandler.ProcessTag(const Tag: string; out Text: string;
 var
   Len: Integer;         // length of the tag
   WorkingTag: string;   // string used to manipulate the given tag
-  IsCompound: WordBool; // true if tag is compound, false otherwise
+  IsCompound: Boolean;  // true if tag is compound, false otherwise
   ChPos: Integer;       // indicates position of character to process in tag
 begin
   // Clear any parameters list
@@ -1044,7 +1044,7 @@ var
   Idx: Integer;           // incrementing index number for each callback call
   Tag: string;            // name of supported tag
   Code: Word;             // unique code number associated with tag
-  IsContainer: WordBool;  // whether the tag can contain text and/or other tags
+  IsContainer: Boolean;   // whether the tag can contain text and/or other tags
 begin
   Idx := 0;
   while Callback(Idx, Tag, Code, IsContainer) do
