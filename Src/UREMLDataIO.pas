@@ -67,7 +67,7 @@ type
     fLexer: TTaggedTextLexer;     // Analysis REML markup
     fParamStack: TStack<string>;  // Stack of REML tag params for closing tags
     function TagInfo(const TagIdx: Integer; out TagName: string;
-      out TagCode: Word; out IsContainer: WordBool): Boolean;
+      out TagCode: Word; out IsContainer: Boolean): Boolean;
       {Callback that provides lexer with information about supported tags. Lexer
       calls continually until False is returned.
         @param TagIdx [in] Index of tag for which information is requested.
@@ -532,7 +532,7 @@ begin
 end;
 
 function TREMLReader.TagInfo(const TagIdx: Integer; out TagName: string;
-  out TagCode: Word; out IsContainer: WordBool): Boolean;
+  out TagCode: Word; out IsContainer: Boolean): Boolean;
   {Callback that provides lexer with information about supported tags. Lexer
   calls continually until False is returned.
     @param TagIdx [in] Index of tag for which information is requested.
