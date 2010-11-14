@@ -58,9 +58,7 @@
     </h3>
     <p>
       <code>Common.ini</code> is located in the in the
-      <code>DelphiDabbler\CodeSnip</code> sub-folder of your system&#39;s common 
-      application data folder. The location of this folder varies depending on
-      the OS. On <em>Vista</em> it is usually at <code>C:\ProgramData</code>.
+      <code>%ProgramData%\DelphiDabbler\CodeSnip</code> folder.
     </p>
     <p>
       The data that is stored in <code>Common.ini</code> is:
@@ -84,18 +82,14 @@
       <code>User.3.ini</code>
     </h3>
     <p>
-      <code>User.3.ini</code> is found in the
-      <code>DelphiDabbler\CodeSnip</code> sub-folder of your system&#39;s
-      per-user application data folder. Again this varies by OS. On
-      <em>Vista</em> it is somewhere like
-      <code>C:\Users\[UserName]\AppData\Roaming</code>, where
-      <code>[UserName]</code> is the ID of the currently logged on user.
+      <code>User.3.ini</code> is found in the current user's
+      <code>%AppData%\DelphiDabbler\CodeSnip</code> folder.
     </p>
     <p>
       The file stores several user-specific application data
       settings such as your preferences. The only personal information is as
       follows:
-    </p>  
+    </p>
     <ul>
       <li>
         Any user name or email address you provided if you ever entered the
@@ -109,7 +103,7 @@
         access the internet using a proxy server. The information is used only
         to access the proxy. Passwords and encrypted.
       </li>
-    </ul>  
+    </ul>
     <p>
       If you have upgraded from CodeSnip v2 there may also be a file named
       <code>User.ini</code>. This contains pretty much the same information as
@@ -270,11 +264,11 @@
     </h3>
     <p>
       This action is performed by selecting the <em>Help | CodeSnip News</em>
-      menu option or by clicking the &quot;Latest News&quot; button in the 
+      menu option or by clicking the &quot;Latest News&quot; button in the
       &quot;Update from Web&quot; dialog box.
     </p>
     <p>
-      <em>CodeSnip</em> simply requests an XML document containing an RSS 2.0 
+      <em>CodeSnip</em> simply requests an XML document containing an RSS 2.0
       news feed from the DelphiDabbler website using HTTP on port 80. No
       personal information is included in the request.
     </p>
