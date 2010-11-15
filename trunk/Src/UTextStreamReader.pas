@@ -91,8 +91,8 @@ implementation
 
 
 uses
-  // Project
-  UUnicodeHelper;
+  // Delphi
+  SysUtils;
 
 
 { TTextStreamReader }
@@ -120,7 +120,7 @@ begin
   begin
     // We are within buffer: get char at current position
     Result := fBuffer[fIdx];
-    if IsCharInSet(Result, [CR, LF]) then
+    if CharInSet(Result, [CR, LF]) then
       // Char is one of EOL chars => return EOL
       Result := EOL;
   end

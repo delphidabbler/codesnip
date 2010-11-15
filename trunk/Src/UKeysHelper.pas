@@ -82,9 +82,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils,
+  SysUtils, StrUtils, Character,
   // Project
-  UConsts, UUnicodeHelper;
+  UConsts;
 
 
 function ExtractShiftKeys(const Shift: TShiftState): TShiftState;
@@ -136,7 +136,7 @@ begin
     if AnsiContainsStr(Text, DecimalSeparator) then
       Result := False;
   end
-  else if not IsDigit(Key) and (Key <> BACKSPACE) then
+  else if not TCharacter.IsDigit(Key) and (Key <> BACKSPACE) then
     // Disallow any other characters other than backspace or digits
     Result := False;
   if not Result then

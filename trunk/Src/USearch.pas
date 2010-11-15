@@ -352,9 +352,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Character,
   // Project
-  UActiveText, UUnicodeHelper, UUtils;
+  UActiveText, UUtils;
 
 
 type
@@ -944,7 +944,7 @@ function TTextSearch.Match(const Routine: TRoutine): Boolean;
       // Convert all white space characters to spaces
       for SrcIdx := 1 to Length(RawText) do
       begin
-        if IsWhiteSpace(RawText[SrcIdx]) then
+        if TCharacter.IsWhiteSpace(RawText[SrcIdx]) then
           SpacedText[SrcIdx] := ' '
         else
           SpacedText[SrcIdx] := RawText[SrcIdx]
@@ -963,7 +963,7 @@ function TTextSearch.Match(const Routine: TRoutine): Boolean;
           Delete(Word, Length(Word), 1);
         Words[WordIdx] := Word;
         // add any word ending in punctuation in non-punctuated state
-        while (Word <> '') and IsCharInSet(Word[Length(Word)], cWordEnders) do
+        while (Word <> '') and CharInSet(Word[Length(Word)], cWordEnders) do
         begin
           // we add any variations to Extra words list
           Delete(Word, Length(Word), 1);
