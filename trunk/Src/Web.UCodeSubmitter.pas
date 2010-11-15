@@ -73,7 +73,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UWebInfo;
+  Web.UInfo;
 
 
 const

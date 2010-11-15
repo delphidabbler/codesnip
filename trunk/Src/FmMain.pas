@@ -415,7 +415,7 @@ uses
   UCopySourceMgr, UDatabaseLoader, UEditRoutineAction, UExceptions, UHelpMgr,
   UHistoryMenus, UMessageBox, UNotifier, UPrintMgr, UQuery, USaveSnippetMgr,
   USaveUnitMgr, USnippets, UThreadWrapper, UUserDBMgr, UView, UViewItemAction,
-  UWaitForActionUI, UWBExternal, UNulDropTarget, UWebInfo;
+  UWaitForActionUI, UWBExternal, UNulDropTarget, Web.UInfo;
 
 
 {$R *.dfm}

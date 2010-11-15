@@ -488,7 +488,6 @@
 			<DCCReference Include="UWBIOMgr.pas"/>
 			<DCCReference Include="UWBPopupMenus.pas"/>
 			<DCCReference Include="UWBUIMgr.pas"/>
-			<DCCReference Include="UWebInfo.pas"/>
 			<DCCReference Include="UWindowSettings.pas"/>
 			<DCCReference Include="UXMLDataIO.pas"/>
 			<DCCReference Include="UXMLDocConsts.pas"/>
@@ -501,6 +500,7 @@
 			<DCCReference Include="Web.UDownloadMonitor.pas"/>
 			<DCCReference Include="Web.UExceptions.pas"/>
 			<DCCReference Include="Web.UHTTPEx.pas"/>
+			<DCCReference Include="Web.UInfo.pas"/>
 			<DCCReference Include="Web.URegistrar.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas"/>

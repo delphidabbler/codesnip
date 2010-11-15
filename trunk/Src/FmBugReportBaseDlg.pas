@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -79,7 +79,7 @@ uses
   // Delphi
   ExtActns,
   // Project
-  UColours, UCtrlArranger, UFontHelper, UWebInfo;
+  UColours, UCtrlArranger, UFontHelper, Web.UInfo;
 
 
 {$R *.dfm}

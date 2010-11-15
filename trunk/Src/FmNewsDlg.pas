@@ -117,7 +117,7 @@ uses
   // Delphi
   SysUtils, ExtActns,
   // Project
-  UCtrlArranger, UHTMLDetailUtils, UHTMLUtils, UWebInfo, Web.UXMLRequestor;
+  UCtrlArranger, UHTMLDetailUtils, UHTMLUtils, Web.UInfo, Web.UXMLRequestor;
 
 {$R *.dfm}
 

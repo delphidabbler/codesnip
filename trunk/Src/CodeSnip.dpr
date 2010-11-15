@@ -347,7 +347,6 @@ uses
   UWBIOMgr in 'UWBIOMgr.pas',
   UWBPopupMenus in 'UWBPopupMenus.pas',
   UWBUIMgr in 'UWBUIMgr.pas',
-  UWebInfo in 'UWebInfo.pas',
   UWindowSettings in 'UWindowSettings.pas',
   UXMLDataIO in 'UXMLDataIO.pas',
   UXMLDocConsts in 'UXMLDocConsts.pas',
@@ -360,6 +359,7 @@ uses
   Web.UDownloadMonitor in 'Web.UDownloadMonitor.pas',
   Web.UExceptions in 'Web.UExceptions.pas',
   Web.UHTTPEx in 'Web.UHTTPEx.pas',
+  Web.UInfo in 'Web.UInfo.pas',
   Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
   Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
