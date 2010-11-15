@@ -232,7 +232,7 @@ uses
   // Delphi
   SysUtils, StrUtils, Windows,
   // Project
-  UCSSUtils, UExceptions, UUnicodeHelper, UURIEncode;
+  UCSSUtils, UExceptions, UURIEncode;
 
 
 function IsValidHTMLCode(const Content: string): Boolean;
