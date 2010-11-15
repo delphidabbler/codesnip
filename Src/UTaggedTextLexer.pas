@@ -84,11 +84,27 @@ type
     var
       fSymbolicEntities: TDictionary<string, Char>;
         {Map of entity names to the represented character code}
-    procedure TranslateEntity(const Entity: string; out Ch: Char);
+      fCurrentIdx: Integer;
+        {Index in text of item (char or entity) currently being processed}
+    function TranslateNumericEntity(const Entity: string): Char;
+      {Translates a numeric entity into its corresponding character.
+        @param Entity [in] Entity to be translated (without leading '&' and
+          trailing ';' characters).
+        @return Character corresponding to Entity.
+        @except ETaggedTextEntityHandler raised if entity cannot be translated.
+      }
+    function TranslateSymbolicEntity(const Entity: string): Char;
+      {Translates a symbolic entity into its corresponding character.
+        @param Entity [in] Entity to be translated (without leading '&' and
+          trailing ';' characters).
+        @return Character corresponding to Entity.
+        @except ETaggedTextEntityHandler raised if entity cannot be translated.
+      }
+    function TranslateEntity(const Entity: string): Char;
       {Translates an entity into the character it represents.
         @param Entity [in] Entity to be translated (without leading '&' and
           trailing ';' characters).
-        @param Ch [out] Character corresponding to Entity.
+        @return Character corresponding to Entity.
         @except ETaggedTextEntityHandler raised if entity cannot be translated.
       }
   public
@@ -117,7 +133,7 @@ type
   ETaggedTextEntityHandler:
     Class of exception raised by the TTaggedTextEntityHandler class.
   }
-  ETaggedTextEntityHandler = class(ECodeSnip);
+  ETaggedTextEntityHandler = class(EValidation);
 
   {
   TTaggedTextTagHandler:
@@ -160,13 +176,13 @@ type
         @param NextChPos [out] Character position following end of tag name.
         @return Tag name.
       }
-    function LookupTagInfo(const TagName: string; out TagCode: Word;
-      out IsCompound: Boolean): Boolean;
+    procedure LookupTagInfo(const TagName: string; out TagCode: Word;
+      out IsCompound: Boolean);
       {Looks up the tag in the map of supported tags.
         @param TagName [in] Name of tag for which information is required.
         @param TagCode [out] Unique code representing tag.
         @param IsCompound [out] True if tag is compound, False if simple.
-        @return True if tag was found, False if not.
+        @except Raises ETaggedTextTagHandler if tag not found.
       }
     function GetTagParams(const TagStr: string; var NextChPos: Integer;
       const Params: TStrings): Integer;
@@ -322,6 +338,12 @@ type
         @param Callback [in] Callback function to call to get entity
           information.
       }
+    procedure ProcessTag;
+      {Gets and processes the next tag contained in the tagged text.
+      }
+    procedure ProcessPlainText;
+      {Processes a sequence of characters comprising plain text.
+      }
   public
     constructor Create(const TagInfoCallback: TTaggedTextTagInfoProc;
       const EntityInfoCallback: TTaggedTextEntityInfoProc);
@@ -400,7 +422,7 @@ resourcestring
   // Error messages
   sEntityEmpty = 'Empty entity';
   sEntityHasNoValue = 'Entity "#" has no numeric value';
-  sEntityValueNotValid = 'Entity "%s" is not a valid non-negative number';
+  sEntityValueNotValid = 'Entity "%s" is not a valid numeric entity';
   sEntityOutOfRange = 'Numeric entity "%s" out of range';
   sEntityNotRecognised = 'Entity "%s" not recognised';
   sEntityUnterminated = 'Unterminated entity';
@@ -456,48 +478,72 @@ begin
   inherited;
 end;
 
-procedure TTaggedTextEntityHandler.TranslateEntity(const Entity: string;
-  out Ch: Char);
+function TTaggedTextEntityHandler.TranslateEntity(const Entity: string): Char;
   {Translates an entity into the character it represents.
     @param Entity [in] Entity to be translated (without leading '&' and trailing
       ';' characters).
-    @param Ch [out] Character corresponding to Entity.
+    @return Character corresponding to Entity.
+    @except ETaggedTextEntityHandler raised if entity cannot be translated.
+  }
+begin
+  if Entity = '' then
+    raise ETaggedTextEntityHandler.Create(
+      sEntityEmpty, TSelection.Create(fCurrentIdx - 1)
+    );
+  if Entity[1] = '#' then
+    Result := TranslateNumericEntity(Entity)
+  else
+    Result := TranslateSymbolicEntity(Entity);
+end;
+
+function TTaggedTextEntityHandler.TranslateNumericEntity(const Entity: string):
+  Char;
+  {Translates a numeric entity into its corresponding character.
+    @param Entity [in] Entity to be translated (without leading '&' and trailing
+      ';' characters).
+    @return Character corresponding to Entity.
     @except ETaggedTextEntityHandler raised if entity cannot be translated.
   }
 var
-  EntityVal: Integer;   // value of a numeric entity
+  EntityVal: Int64;     // value of a numeric entity
+  EntityValStr: string; // value of a numeric entity as a string
 begin
-  if Entity = '' then
-    raise ETaggedTextEntityHandler.Create(sEntityEmpty);
-  // Check entity type
-  if Entity[1] = '#' then
-  begin
-    // We have numeric entity: try to extract value
-    if Entity = '#' then
-      raise ETaggedTextEntityHandler.Create(sEntityHasNoValue);
-    Assert(Length(Entity) >= 2,
-      ClassName + '.TranslateEntity: entity too short');
-    // parse out the digits: only 0..9 accepted
-    // we reject -ve numbers: use default of -1 so all conversion errors give
-    // -ve number to indicate error
-    EntityVal := StrToIntDef(MidStr(Entity, 2, MaxInt), -1);
-    if EntityVal < 0 then
-      raise ETaggedTextEntityHandler.CreateFmt(sEntityValueNotValid, [Entity]);
-    // check if value is in range (already know >=0)
-    if EntityVal > Ord(High(Char)) then
-      raise ETaggedTextEntityHandler.CreateFmt(sEntityOutOfRange, [Entity]);
-    // we have valid value: record it and return true
-    Ch := Char(EntityVal);
-  end
-  else
-  begin
-    // Symbolic entity
-    // check if entity is supported
-    if not fSymbolicEntities.ContainsKey(Entity) then
-      raise ETaggedTextEntityHandler.CreateFmt(sEntityNotRecognised, [Entity]);
-    // entity is supported: record its character value and return true
-    Ch := fSymbolicEntities[Entity];
-  end;
+  Assert(Entity <> '', ClassName + '.TranslateNumericEntity: Entity = ''''');
+  Assert(Entity[1] = '#',
+    ClassName + '.TranslateNumericEntity: Entity[1] <> ''#''');
+  if Entity = '#' then
+    raise ETaggedTextEntityHandler.Create(
+      sEntityHasNoValue, TSelection.Create(fCurrentIdx - 1)
+    );
+  // check for valid entity format
+  EntityValStr := RightStr(Entity, Length(Entity) - 1);
+  if not TryStrToInt64(EntityValStr, EntityVal) or (EntityVal < 0) then
+    raise ETaggedTextEntityHandler.CreateFmt(
+      sEntityValueNotValid, [Entity], TSelection.Create(fCurrentIdx - 1)
+    );
+  // check if value is in range (already know >=0)
+  if EntityVal > Ord(High(Char)) then
+    raise ETaggedTextEntityHandler.CreateFmt(
+      sEntityOutOfRange, [Entity], TSelection.Create(fCurrentIdx - 1)
+    );
+  // we have valid value
+  Result := Char(EntityVal);
+end;
+
+function TTaggedTextEntityHandler.TranslateSymbolicEntity(
+  const Entity: string): Char;
+  {Translates a symbolic entity into its corresponding character.
+    @param Entity [in] Entity to be translated (without leading '&' and trailing
+      ';' characters).
+    @return Character corresponding to Entity.
+    @except ETaggedTextEntityHandler raised if entity cannot be translated.
+  }
+begin
+  if not fSymbolicEntities.ContainsKey(Entity) then
+    raise ETaggedTextEntityHandler.CreateFmt(
+      sEntityNotRecognised, [Entity], TSelection.Create(fCurrentIdx - 1)
+    );
+  Result := fSymbolicEntities[Entity];
 end;
 
 procedure TTaggedTextEntityHandler.TranslateTextEntities(const Text: string;
@@ -513,7 +559,6 @@ var
   Ch: Char;             // current char in text: used to check for entities
   EntityStart: Integer; // records start of entity in text
   Entity: string;       // stores any found entity
-  EntityCh: Char;       // stores character represented by entity
 begin
   // Set up cursors into input and ouput strings
   Idx := 1;
@@ -523,38 +568,36 @@ begin
   // Scan thru each character of text to be translated
   while Idx <= Length(Text) do
   begin
-    // Record current character in input for processing
+    // Record current character in input for processing along with its index
     Ch := Text[Idx];
-    case Ch of
-      '&':
-      begin
-        // We have start of entity
-        // skip past opening '&' and record position as start of entity
+    fCurrentIdx := Idx;
+    if Ch = '&' then
+    begin
+      // Entity
+      // skip past opening '&' and record position as start of entity
+      Inc(Idx);
+      EntityStart := Idx;
+      // scan through string looking for ';' that ends entity
+      while (Idx <= Length(Text)) and (Text[Idx] <> ';') do
         Inc(Idx);
-        EntityStart := Idx;
-        // scan through string looking for ';' that ends entity
-        while (Idx <= Length(Text)) and (Text[Idx] <> ';') do
-          Inc(Idx);
-        if Idx > Length(Text) then
-          raise ETaggedTextEntityHandler.Create(sEntityUnterminated);
-        // record entity excluding opening '&' and closing ';'
-        Entity := MidStr(Text, EntityStart, Idx - EntityStart);
-        // skip over ending ';' in input
-        Inc(Idx);
-        // try to translate entity: exit on error (LastErrorMessage set by
-        // TranslateEntity)
-        TranslateEntity(Entity, EntityCh);
-        // insert translated character in TransStr, and update its cursor
-        TransStr[InsPos] := EntityCh;
-        Inc(InsPos);
-      end;
-      else
-      begin
-        // We have ordinary character: copy into TransStr and move cursors on
-        TransStr[InsPos] := Ch;
-        Inc(InsPos);
-        Inc(Idx);
-      end;
+      if Idx > Length(Text) then
+        raise ETaggedTextEntityHandler.Create(
+          sEntityUnterminated, TSelection.Create(fCurrentIdx - 1)
+        );
+      // record entity excluding opening '&' and closing ';'
+      Entity := MidStr(Text, EntityStart, Idx - EntityStart);
+      // skip over ending ';' in input
+      Inc(Idx);
+      // insert translated character in TransStr, and update its cursor
+      TransStr[InsPos] := TranslateEntity(Entity);
+      Inc(InsPos);
+    end
+    else
+    begin
+      // Ordinary character
+      TransStr[InsPos] := Ch;
+      Inc(InsPos);
+      Inc(Idx);
     end;
   end;
   // If we have translated entities TransStr will be shorter than input string
@@ -804,25 +847,22 @@ begin
   end;
 end;
 
-function TTaggedTextTagHandler.LookupTagInfo(const TagName: string;
-  out TagCode: Word; out IsCompound: Boolean): Boolean;
+procedure TTaggedTextTagHandler.LookupTagInfo(const TagName: string;
+  out TagCode: Word; out IsCompound: Boolean);
   {Looks up the tag in the map of supported tags.
     @param TagName [in] Name of tag for which information is required.
     @param TagCode [out] Unique code representing tag.
     @param IsCompound [out] True if tag is compound, False if simple.
-    @return True if tag was found, False if not.
+    @except Raises ETaggedTextTagHandler if tag not found.
   }
 var
   Data: TTagInfo;   // information about tag
 begin
-  Result := fTags.ContainsKey(TagName);
-  if Result then
-  begin
-    // Found tag: extract Code and IsCompound from map
-    Data := fTags[TagName];
-    TagCode := Data.Code;
-    IsCompound := Data.IsCompound;
-  end;
+  if not fTags.ContainsKey(TagName) then
+    raise ETaggedTextTagHandler.CreateFmt(sTagNotRecognised, [TagName]);
+  Data := fTags[TagName];
+  TagCode := Data.Code;
+  IsCompound := Data.IsCompound;
 end;
 
 procedure TTaggedTextTagHandler.ProcessTag(const Tag: string; out Text: string;
@@ -869,8 +909,7 @@ begin
         // position ChPos ready to extract information following tag name
         Text := GetTagName(WorkingTag, ChPos);
         // get information about the tag from map
-        if not LookupTagInfo(Text, Code, IsCompound) then
-          raise ETaggedTextTagHandler.CreateFmt(sTagNotRecognised, [Text]);
+        LookupTagInfo(Text, Code, IsCompound);
         if IsCompound then
           raise ETaggedTextTagHandler.CreateFmt(sSimpleTagInvalid, [Text]);
         // get parameters for the tag
@@ -882,8 +921,7 @@ begin
         // get tag's name
         Text := GetTagName(WorkingTag, ChPos);
         // get information about tag from map
-        if not LookupTagInfo(Text, Code, IsCompound) then
-          raise ETaggedTextTagHandler.CreateFmt(sTagNotRecognised, [Text]);
+        LookupTagInfo(Text, Code, IsCompound);
         if not IsCompound then
           raise ETaggedTextTagHandler.CreateFmt(sCompoundTagInvalid, [Text]);
         // get parameters for the tag
@@ -895,8 +933,7 @@ begin
         // get tag's name
         Text := GetTagName(WorkingTag, ChPos);
         // get information about tag from map
-        if not LookupTagInfo(Text, Code, IsCompound) then
-          raise ETaggedTextTagHandler.CreateFmt(sTagNotRecognised, [Text]);
+        LookupTagInfo(Text, Code, IsCompound);
         if not IsCompound then
           raise ETaggedTextTagHandler.CreateFmt(sTagNotCompound, [Text]);
         // check if has params: not valid for end tags
@@ -1079,116 +1116,20 @@ function TTaggedTextLexer.NextItem: TTaggedTextKind;
   TagParams, CommentText, ScriptCode and PlainText properties are updated.
     @return Kind of next token or ttsEOF if at end of code.
   }
-var
-  StartCh: Char;          // starting character of a string within tagged text
-  StartPos: Integer;      // starting position of a string within tagged text
-  Tag: string;            // name of tag read by lexer
-  ExpectedTag: string;    // name of a tag expected by lexer
 begin
-  // Clear any existing parameters from param list
+  // Clear any existing parameters
   fParams.Clear;
-  // Scan through tagged text recognising various elements
+  // Scan through tagged text
   if fNextCharPos <= Length(fTaggedText) then
   begin
-    // Record character starting this scan and check to see what next item is
-    StartCh := fTaggedText[fNextCharPos];
-    if StartCh = '<' then
-    begin
-      // We have start of a tag: get hold it and process it
-      // record start of tag
-      StartPos := fNextCharPos;
-      Assert(StartPos >= 1, ClassName + '.NextItem: StartPos < 1');
-      // skip thru text until tag closer found
-      while (fNextCharPos <= Length(fTaggedText))
-        and (fTaggedText[fNextCharPos] <> '>') do
-        Inc(fNextCharPos);
-      // check if we have found end of tag: error if not
-      if fNextCharPos > Length(fTaggedText) then
-        raise ETaggedTextLexer.CreateFmt(
-          sNoMatchingEndTag, [StartPos - 1], TSelection.Create(StartPos - 1)
-        );
-      Assert(fTaggedText[fNextCharPos] = '>',
-        ClassName + 'NextItem: ">" expected');
-      // skip over tag closer
-      Inc(fNextCharPos);
-      // record tag
-      Tag := MidStr(fTaggedText, StartPos, fNextCharPos - StartPos);
-      // Process the tag raising exception on error
-      try
-        fTagHandler.ProcessTag(Tag, fCurText, fKind, fTagCode, fParams);
-      except
-        on E: ETaggedTextTagHandler do
-          raise ETaggedTextLexer.CreateFmt(
-            sErrorReadingTag,
-            [StartPos - 1, E.Message],
-            TSelection.Create(StartPos - 1)
-          );
-      end;
-      // Now act on kind of tag read
-      case fKind of
-        ttsCompoundStartTag:
-          // we have compound start tag: push onto stack of currently open tags
-          fTagStack.Push(fCurText);
-        ttsCompoundEndTag:
-        begin
-          // we have compound end tag: check validity
-          if fTagStack.Count = 0 then
-            // .. tag stack empty => no matching opening tag
-            raise ETaggedTextLexer.CreateFmt(
-              sNoMatchingStartTag, [fCurText], TSelection.Create(StartPos - 1)
-            );
-          // .. tag we expect closes the one at top of stack
-          //    pop stack to close tag
-          ExpectedTag := fTagStack.Pop;
-          if AnsiCompareText(fCurText, ExpectedTag) <> 0 then
-            // .. error if tag is not the expected one
-            raise ETaggedTextLexer.CreateFmt(
-              sStartAndEndTagMismatched, [fCurText, ExpectedTag],
-              TSelection.Create(StartPos - 1)
-            );
-        end;
-        ttsSimpleTag:
-        begin
-          // we have a simple tag
-          {No special processing for these tags};
-        end;
-        ttsComment, ttsScript:
-          // we have script or comment
-          {No special processing for these tags};
-      end;
-    end
+    if fTaggedText[fNextCharPos] = '<' then
+      ProcessTag
     else
-    begin
-      // We have plain text - process it
-      fKind := ttsText;
-      Assert(fNextCharPos <= Length(fTaggedText),
-        ClassName + '.NextItem: Beyond end of tagged text');
-      Assert(fTaggedText[fNextCharPos] <> '<',
-        ClassName + '.NextItem: "<" character expected');
-      // get extent of text before next tag or end of tagged text
-      StartPos := fNextCharPos;
-      Inc(fNextCharPos);
-      while (fNextCharPos <= Length(fTaggedText))
-        and (fTaggedText[fNextCharPos] <> '<') do
-        Inc(fNextCharPos);
-      // check the plain text for entities, replacing them with values
-      try
-        fEntityHandler.TranslateTextEntities(
-          MidStr(fTaggedText, StartPos, fNextCharPos - StartPos), fCurText
-        );
-      except
-        on E: ETaggedTextEntityHandler do
-          raise ETaggedTextLexer.CreateFmt(
-            sErrorReadingEntities, [E.Message], TSelection.Create(StartPos - 1)
-          );
-      end;
-      // replace all CR LF pairs with LF
-      fCurText := UnixLineBreaks(fCurText);
-    end;
+      ProcessPlainText;
   end
   else
   begin
-    // We're at end of tagged text it's an error if we still have unclosed tags
+    // At end of tagged text: it's an error if we still have unclosed tags
     if fTagStack.Count <> 0 then
       raise ETaggedTextLexer.Create(
         sUnexpectedEOF, TSelection.Create(Length(fTaggedText))
@@ -1197,6 +1138,104 @@ begin
   end;
   // Return the kind of item just analysed
   Result := fKind;
+end;
+
+procedure TTaggedTextLexer.ProcessPlainText;
+  {Processes a sequence of characters comprising plain text.
+  }
+var
+  StartPos: Integer;  // index in tagged text of start of plain text
+begin
+  // We have plain text - process it
+  fKind := ttsText;
+  Assert(fNextCharPos <= Length(fTaggedText),
+    ClassName + '.NextItem: Beyond end of tagged text');
+  Assert(fTaggedText[fNextCharPos] <> '<',
+    ClassName + '.NextItem: "<" character expected');
+  // get extent of text before next tag or end of tagged text
+  StartPos := fNextCharPos;
+  Inc(fNextCharPos);
+  while (fNextCharPos <= Length(fTaggedText))
+    and (fTaggedText[fNextCharPos] <> '<') do
+    Inc(fNextCharPos);
+  // check the plain text for entities, replacing them with values
+  try
+    fEntityHandler.TranslateTextEntities(
+      MidStr(fTaggedText, StartPos, fNextCharPos - StartPos), fCurText
+    );
+  except
+    on E: ETaggedTextEntityHandler do
+    begin
+      Assert(StartPos >= 0, ClassName + '.NextItem: StartPos < 0');
+      raise ETaggedTextLexer.CreateFmt(
+        sErrorReadingEntities,
+        [E.Message],
+        TSelection.Create(Cardinal(StartPos) - 1 + E.Selection.StartPos));
+    end;
+  end;
+  // replace all CR LF pairs with LF
+  fCurText := UnixLineBreaks(fCurText);
+end;
+
+procedure TTaggedTextLexer.ProcessTag;
+  {Gets and processes the next tag contained in the tagged text.
+  }
+var
+  StartPos: Integer;          // index in tagged text of start of tag
+  Tag: string;                // tag to be processed
+  ExpectedClosingTag: string; // tag expected to close a compound tag
+begin
+  // get tag name from text
+  StartPos := fNextCharPos;
+  Assert(StartPos >= 1, ClassName + '.NextItem: StartPos < 1');
+  while (fNextCharPos <= Length(fTaggedText))
+    and (fTaggedText[fNextCharPos] <> '>') do
+    Inc(fNextCharPos);
+  if fNextCharPos > Length(fTaggedText) then
+    raise ETaggedTextLexer.CreateFmt(
+      sNoMatchingEndTag, [StartPos - 1], TSelection.Create(StartPos - 1)
+    );
+  Assert(fTaggedText[fNextCharPos] = '>', ClassName + 'NextTag: ">" expected');
+  // skip over tag closer
+  Inc(fNextCharPos);
+  // get info about tag
+  Tag := MidStr(fTaggedText, StartPos, fNextCharPos - StartPos);
+  try
+    fTagHandler.ProcessTag(Tag, fCurText, fKind, fTagCode, fParams);
+  except
+    on E: ETaggedTextTagHandler do
+      raise ETaggedTextLexer.CreateFmt(
+        sErrorReadingTag,
+        [StartPos - 1, E.Message],
+        TSelection.Create(StartPos - 1)
+      );
+  end;
+  // do any special processing relating to different types of tags
+  case fKind of
+    ttsCompoundStartTag:
+      // compound start tag: push onto stack of open tags
+      fTagStack.Push(fCurText);
+    ttsCompoundEndTag:
+    begin
+      // compound end tag: check validity
+      if fTagStack.Count = 0 then
+        // tag stack empty => no matching opening tag
+        raise ETaggedTextLexer.CreateFmt(
+          sNoMatchingStartTag, [fCurText], TSelection.Create(StartPos - 1)
+        );
+      // check tag matches opening tag at top of stack
+      ExpectedClosingTag := fTagStack.Pop;
+      if not AnsiSameText(fCurText, ExpectedClosingTag) then
+        raise ETaggedTextLexer.CreateFmt(
+          sStartAndEndTagMismatched,
+          [fCurText, ExpectedClosingTag],
+          TSelection.Create(StartPos - 1)
+        );
+    end;
+    ttsSimpleTag, ttsComment, ttsScript:
+      // no special processing for these kinds
+      ;
+  end;
 end;
 
 procedure TTaggedTextLexer.Reset;
