@@ -128,8 +128,8 @@ uses
   // Delphi
   SysUtils, Math,
   // Project
-  FmPreferencesDlg, IntfCommon, UConsts, UFileHiliter, UGraphicUtils,
-  UHiliteAttrs, URTFUtils, USyntaxHiliters, UUnicodeHelper;
+  FmPreferencesDlg, IntfCommon, UConsts, UEncodings, UFileHiliter,
+  UGraphicUtils, UHiliteAttrs, URTFUtils, USyntaxHiliters;
 
 
 {$R *.dfm}

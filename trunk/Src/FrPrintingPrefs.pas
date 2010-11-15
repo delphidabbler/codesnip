@@ -115,8 +115,8 @@ uses
   // Delphi
   SysUtils, StrUtils, Windows, Graphics, Math, ComCtrls,
   // Project
-  FmPreferencesDlg, IntfCommon, UConsts, UHiliteAttrs, UKeysHelper, UPrintInfo,
-  URTFBuilder, URTFUtils, USyntaxHiliters, UUnicodeHelper, UUtils;
+  FmPreferencesDlg, IntfCommon, UConsts, UEncodings, UHiliteAttrs, UKeysHelper,
+  UPrintInfo, URTFBuilder, URTFUtils, USyntaxHiliters, UUtils;
 
 
 {$R *.dfm}

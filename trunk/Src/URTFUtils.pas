@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes, ComCtrls,
   // Project
-  UUnicodeHelper;
+  UEncodings;
 
 
 const

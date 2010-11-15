@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UDataStreamIO, UExceptions, UUnicodeHelper;
+  UDataStreamIO, UEncodings, UExceptions;
 
 
 type

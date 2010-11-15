@@ -43,7 +43,7 @@ uses
   // Delphi
   Generics.Collections, Graphics,
   // Project
-  UUnicodeHelper;
+  UEncodings;
 
 
 type
