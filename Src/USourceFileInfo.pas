@@ -121,9 +121,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining},
+  SysUtils, Windows {for inlining}, Character,
   // Project
-  UUnicodeHelper, UUtils;
+  UUtils;
 
 
 { TSourceFileInfo }
@@ -219,10 +219,11 @@ begin
   fFileName := StripWhiteSpace(CapitaliseWords(Value));
   // replaces invalid Pascal identifier characters with underscore
   if (fFileName <> '')
-    and not IsLetter(fFileName[1]) and (fFileName[1] <> '_') then
+    and not TCharacter.IsLetter(fFileName[1]) and (fFileName[1] <> '_') then
     fFileName[1] := '_';
   for Idx := 2 to Length(fFileName) do
-    if not IsAlphaNumeric(fFileName[Idx]) and (fFileName[Idx] <> '_') then
+    if not TCharacter.IsLetterOrDigit(fFileName[Idx])
+      and (fFileName[Idx] <> '_') then
       fFileName[Idx] := '_';
   Assert((fFileName <> '') and IsValidIdent(fFileName),
     ClassName + '.SetFileName: Not a valid identifier');

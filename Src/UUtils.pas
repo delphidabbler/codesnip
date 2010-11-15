@@ -261,15 +261,21 @@ procedure KeyErrorBeep;
   {Emits a sound indicating a keypress error.
   }
 
+function IsHexDigit(C: Char): Boolean;
+  {Checks whether a character is defined as a hex digit.
+    @param C [in] Character to be tested.
+    @return True if character is a hex digit, False if not.
+  }
+
 
 implementation
 
 
 uses
   // Delphi
-  SysUtils, StrUtils, Windows, ShlObj, ActiveX, Messages,
+  SysUtils, StrUtils, Windows, ShlObj, ActiveX, Messages, Character,
   // Project
-  UConsts, UUnicodeHelper;
+  UConsts;
 
 
 procedure CopyFile(const Source, Dest: string);
@@ -437,14 +443,14 @@ begin
   WantCapital := True;
   for Idx := 1 to Length(S) do
   begin
-    if IsLetter(Result[Idx]) then
+    if TCharacter.IsLetter(Result[Idx]) then
     begin
       if WantCapital then
-        Result[Idx] := ToUpperCase(Result[Idx]);  // capital letter reequired
-      WantCapital := False;                       // following chars lower case
+        Result[Idx] := TCharacter.ToUpper(Result[Idx]);
+      WantCapital := False;
     end
     else
-      WantCapital := IsWhiteSpace(Result[Idx]); // space: next char is capital
+      WantCapital := TCharacter.IsWhiteSpace(Result[Idx]);
   end;
 end;
 
@@ -468,7 +474,7 @@ begin
   Idx := 1;
   while Idx <= Length(S) do
   begin
-    if IsWhiteSpace(S[Idx]) then
+    if TCharacter.IsWhiteSpace(S[Idx]) then
     begin
       // Current char is white space: replace by space char and count it
       PRes^ := ' ';
@@ -476,7 +482,7 @@ begin
       Inc(ResCount);
       // Skip past any following white space
       Inc(Idx);
-      while IsWhiteSpace(S[Idx]) do
+      while TCharacter.IsWhiteSpace(S[Idx]) do
         Inc(Idx);
     end
     else
@@ -512,7 +518,7 @@ begin
   Idx := 1;
   while Idx <= Length(S) do
   begin
-    if not IsWhiteSpace(S[Idx]) then
+    if not TCharacter.IsWhiteSpace(S[Idx]) then
     begin
       // Character is not white space: copy to result string
       PRes^ := S[Idx];
@@ -735,7 +741,7 @@ begin
   Result := False;
   for Ch in S do
   begin
-    if IsWhiteSpace(Ch) then
+    if TCharacter.IsWhiteSpace(Ch) then
     begin
       Result := True;
       Break;
@@ -1028,7 +1034,7 @@ function IsValidDriveLetter(const C: Char): Boolean;
     @return True if C is a valid drive letter, False otherwise.
   }
 begin
-  Result := IsCharInSet(C, ['A'..'Z', 'a'..'z']);
+  Result := CharInSet(C, ['A'..'Z', 'a'..'z']);
 end;
 
 function IsValidAbsoluteFileName(const FileName: string): Boolean;
@@ -1058,6 +1064,15 @@ procedure KeyErrorBeep;
   }
 begin
   MessageBeep(UINT(-1));
+end;
+
+function IsHexDigit(C: Char): Boolean;
+  {Checks whether a character is defined as a hex digit.
+    @param C [in] Character to be tested.
+    @return True if character is a hex digit, False if not.
+  }
+begin
+  Result := CharInSet(C, ['A'..'F', 'a'..'f', '0'..'9']);
 end;
 
 end.

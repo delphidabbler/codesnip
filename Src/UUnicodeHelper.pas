@@ -82,50 +82,6 @@ function StringToASCIIString(const S: string): ASCIIString;
     @return Converted string.
   }
 
-function IsLetter(C: Char): Boolean;
-  {Checks whether a character is defined as a letter.
-    @param C [in] Character to be tested.
-    @return True if character is a letter, False if not.
-  }
-
-function IsDigit(C: Char): Boolean;
-  {Checks whether a character is defined as a digit.
-    @param C [in] Character to be tested.
-    @return True if character is a digit, False if not.
-  }
-
-function IsHexDigit(C: Char): Boolean;
-  {Checks whether a character is defined as a hex digit.
-    @param C [in] Character to be tested.
-    @return True if character is a hex digit, False if not.
-  }
-
-function IsAlphaNumeric(C: Char): Boolean;
-  {Checks whether a character is defined as a letter or digit.
-    @param C [in] Character to be tested.
-    @return True if character is alphanumeric, False if not.
-  }
-
-function IsWhiteSpace(C: Char): Boolean;
-  {Checks whether a character is defined as whitespace.
-    @param C [in] Character to be tested.
-    @return True if character is whitespace, False if not.
-  }
-
-function IsCharInSet(C: Char; const CharSet: TSysCharSet): Boolean;
-  {Checks whether a character is a member of a character set.
-    @param C [in] Character to be tested.
-    @param CharSet [in] Required character set.
-    @return True if character is a letter, False if not.
-  }
-
-function ToUpperCase(C: Char): Char;
-  {Converts a character to upper case.
-    @param C [in] Character to be converted.
-    @return Upper cased character. Characters other than lower case letters are
-      unchanged.
-  }
-
 
 implementation
 
@@ -152,77 +108,11 @@ type
       }
   public
     constructor Create; override;
-      {Class constructor. Sets up object for Windows-1252 code page.
+      {Object constructor. Sets up object for Windows-1252 code page.
       }
     class property Instance: TEncoding read GetInstance;
       {Singleton instance of class. Must not be freed}
   end;
-
-
-function IsLetter(C: Char): Boolean;
-  {Checks whether a character is defined as a letter.
-    @param C [in] Character to be tested.
-    @return True if character is a letter, False if not.
-  }
-begin
-  Result := TCharacter.IsLetter(C);
-end;
-
-function IsDigit(C: Char): Boolean;
-  {Checks whether a character is defined as a digit.
-    @param C [in] Character to be tested.
-    @return True if character is a digit, False if not.
-  }
-begin
-  Result := TCharacter.IsDigit(C);
-end;
-
-function IsHexDigit(C: Char): Boolean;
-  {Checks whether a character is defined as a hex digit.
-    @param C [in] Character to be tested.
-    @return True if character is a hex digit, False if not.
-  }
-begin
-  Result := IsCharInSet(C, ['A'..'F', 'a'..'f', '0'..'9']);
-end;
-
-function IsAlphaNumeric(C: Char): Boolean;
-  {Checks whether a character is defined as a letter or digit.
-    @param C [in] Character to be tested.
-    @return True if character is alphanumeric, False if not.
-  }
-begin
-  Result := TCharacter.IsLetterOrDigit(C);
-end;
-
-function IsWhiteSpace(C: Char): Boolean;
-  {Checks whether a character is defined as whitespace.
-    @param C [in] Character to be tested.
-    @return True if character is whitespace, False if not.
-  }
-begin
-  Result := TCharacter.IsWhiteSpace(C);
-end;
-
-function IsCharInSet(C: Char; const CharSet: TSysCharSet): Boolean;
-  {Checks whether a character is a member of a character set.
-    @param C [in] Character to be tested.
-    @param CharSet [in] Required character set.
-    @return True if character is a letter, False if not.
-  }
-begin
-  Result := CharInSet(C, CharSet);
-end;
-
-function ToUpperCase(C: Char): Char;
-  {Converts a character to upper case.
-    @param C [in] Character to be converted.
-    @return Upper cased character. Characters other than lower case letters are
-      unchanged.
-  }
-begin
-  Result := TCharacter.ToUpper(C);
-end;
 
 function Windows1252Encoding: TEncoding;
   {Returns singleton instance of TWindows1252Encoding.
@@ -279,7 +169,7 @@ end;
 { TWindows1252Encoding }
 
 constructor TWindows1252Encoding.Create;
-  {Class constructor. Sets up object for Windows-1252 code page.
+  {Object constructor. Sets up object for Windows-1252 code page.
   }
 begin
   inherited Create(Windows1252CodePage);

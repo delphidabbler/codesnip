@@ -405,9 +405,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils,
+  SysUtils, StrUtils, Character,
   // Project
-  UComparers, UStructs, UUnicodeHelper, UUtils;
+  UComparers, UStructs, UUtils;
 
 
 const
@@ -717,12 +717,12 @@ begin
   NextChPos := 1;
   // Skip any white space before tag
   while (NextChPos <= Length(TagStr))
-    and IsWhiteSpace(TagStr[NextChPos]) do
+    and TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
     Inc(NextChPos);
   // Now at start of tag name: read it up to next space or end of TagStr
   StartPos := NextChPos;
   while (NextChPos <= Length(TagStr))
-    and not IsWhiteSpace(TagStr[NextChPos]) do
+    and not TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
     Inc(NextChPos);
   // Copy the name from the string
   Result := MidStr(TagStr, StartPos, NextChPos - StartPos);
@@ -766,7 +766,7 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
 
     // Check to see if we have any attributes
     // skip white space
-    while (NextChPos <= Len) and IsWhiteSpace(TagStr[NextChPos]) do
+    while (NextChPos <= Len) and TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
       Inc(NextChPos);
     // check if we've reached end of tag and get out if so: no params
     if NextChPos > Len then
@@ -782,13 +782,13 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
     // get attribute name
     StartPos := NextChPos;
     while (NextChPos <= Len)
-      and not IsWhiteSpace(TagStr[NextChPos])
+      and not TCharacter.IsWhiteSpace(TagStr[NextChPos])
       and (TagStr[NextChPos] <> cEquals) do
       Inc(NextChPos);
     Name := MidStr(TagStr, StartPos, NextChPos - StartPos);
 
     // skip any white space following name
-    while (NextChPos <= Len) and IsWhiteSpace(TagStr[NextChPos]) do
+    while (NextChPos <= Len) and TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
       Inc(NextChPos);
 
     // MUST now have '=' character: skip over it if so, error if not
@@ -797,11 +797,11 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
     Inc(NextChPos);
 
     // skip white space between '=' and value
-    while (NextChPos <= Len) and IsWhiteSpace(TagStr[NextChPos]) do
+    while (NextChPos <= Len) and TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
       Inc(NextChPos);
 
     // MUST now have a quote: record it and skip over
-    if (NextChPos > Len) or not IsCharInSet(TagStr[NextChPos], cQuotes) then
+    if (NextChPos > Len) or not CharInSet(TagStr[NextChPos], cQuotes) then
       raise EAttrError.Create(sBadAttribute);
     AttrQuote := TagStr[NextChPos];
     Inc(NextChPos);
