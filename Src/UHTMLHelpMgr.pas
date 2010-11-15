@@ -48,7 +48,7 @@ uses
   // Delphi
   Windows,
   // Project
-  UAppInfo, UHTMLHelp, UHelpMgr, UUnicodeHelper;
+  UAppInfo, UEncodings, UHTMLHelp, UHelpMgr;
 
 
 type

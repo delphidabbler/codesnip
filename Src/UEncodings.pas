@@ -1,9 +1,7 @@
 {
- * UUnicodeHelper.pas
+ * UEncodings.pas
  *
- * Classes and functions that assist with handling Unicode in compilers that
- * natively support it while maintaining compatibility with non-Uncode versions
- * of the compiler.
+ * Provides support for certain character encodings used by the program.
  *
  * $Rev$
  * $Date$
@@ -20,7 +18,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UUnicodeHelper.pas
+ * The Original Code is UEncodings.pas, formerly UUnicodeHelper.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -35,7 +33,7 @@
 }
 
 
-unit UUnicodeHelper;
+unit UEncodings;
 
 
 interface
@@ -43,7 +41,7 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes;
+  SysUtils;
 
 
 const
@@ -87,8 +85,6 @@ implementation
 
 
 uses
-  // Delphi
-  Character,
   // Project
   UGC;
 

@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UHiddenRichEdit, UUnicodeHelper;
+  UEncodings, UHiddenRichEdit;
 
 
 type

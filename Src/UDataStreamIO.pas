@@ -48,7 +48,7 @@ uses
   // DelphiDabbler library
   PJStreamWrapper,
   // Project
-  UUnicodeHelper;
+  UEncodings;
 
 
 type

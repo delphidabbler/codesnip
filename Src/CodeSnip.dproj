@@ -335,6 +335,7 @@
 			<DCCReference Include="UDropDownButtons.pas"/>
 			<DCCReference Include="UEditRoutineAction.pas"/>
 			<DCCReference Include="UEmailHelper.pas"/>
+			<DCCReference Include="UEncodings.pas"/>
 			<DCCReference Include="UEncryptor.pas"/>
 			<DCCReference Include="UExceptions.pas"/>
 			<DCCReference Include="UExeFileType.pas"/>
@@ -463,7 +464,6 @@
 			<DCCReference Include="UToolButtonEx.pas"/>
 			<DCCReference Include="UTVCheckBoxes.pas"/>
 			<DCCReference Include="UUIWidgetImages.pas"/>
-			<DCCReference Include="UUnicodeHelper.pas"/>
 			<DCCReference Include="UUniqueID.pas"/>
 			<DCCReference Include="UUnitsChkListMgr.pas"/>
 			<DCCReference Include="UUpdateMgr.pas"/>

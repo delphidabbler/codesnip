@@ -98,7 +98,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UHTMLUtils, UUnicodeHelper;
+  UEncodings, UHTMLUtils;
 
 
 { THTMLTemplate }
