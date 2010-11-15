@@ -393,6 +393,7 @@
 			<DCCReference Include="UMultiCastEvents.pas"/>
 			<DCCReference Include="UNotifier.pas"/>
 			<DCCReference Include="UNulDataReader.pas"/>
+			<DCCReference Include="UNulDropTarget.pas"/>
 			<DCCReference Include="UNulFormAligner.pas"/>
 			<DCCReference Include="UNulUIHandler.pas"/>
 			<DCCReference Include="UOleClientSite.pas"/>
@@ -485,7 +486,6 @@
 			<DCCReference Include="UWBHelper.pas"/>
 			<DCCReference Include="UWBHighlighter.pas"/>
 			<DCCReference Include="UWBIOMgr.pas"/>
-			<DCCReference Include="UWBNulDropTarget.pas"/>
 			<DCCReference Include="UWBPopupMenus.pas"/>
 			<DCCReference Include="UWBUIMgr.pas"/>
 			<DCCReference Include="UWebInfo.pas"/>
