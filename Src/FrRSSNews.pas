@@ -83,7 +83,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  UColours, UCSSUtils, UFontHelper, UWBUIMgr, UWBNulDropTarget;
+  UColours, UCSSUtils, UFontHelper, UWBUIMgr, UNulDropTarget;
 
 {$R *.dfm}
 
@@ -154,7 +154,7 @@ begin
   WBController.UIMgr.Show3dBorder := False;       // we'll handle border
   WBController.UIMgr.AllowTextSelection := False; // can't select text
   WBController.UIMgr.DropTarget :=                // inhibit drag drop in dialog
-    TWBNulDropTarget.Create;
+    TNulDropTarget.Create;
 end;
 
 procedure TRSSNewsFrame.DisplayContent(const HTML: string);
