@@ -44,7 +44,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Projects
-  UURIParams, UWebInfo, Web.UHTTPEx;
+  UURIParams, Web.UHTTPEx, Web.UInfo;
 
 
 type

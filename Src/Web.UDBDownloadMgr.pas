@@ -163,7 +163,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UConsts, UEncodings, UWebInfo;
+  UAppInfo, UConsts, UEncodings, Web.UInfo;
 
 
 {
