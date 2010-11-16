@@ -41,7 +41,7 @@ interface
 
 uses
   // Delphi
-  Classes,
+  SysUtils, Classes,
   // Project
   UTextStreamReader;
 
@@ -176,9 +176,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Collections,
+  Generics.Collections, Character,
   // Project
-  UComparers, UConsts, UUnicodeHelper;
+  UComparers, UConsts, UUtils;
 
 
 const
@@ -341,7 +341,7 @@ function IsValidIdentBodyChar(const C: Char): Boolean; inline;
     @return True if C is valid, False otherwise.
   }
 begin
-  Result := IsAlphaNumeric(C) or (C = '_');
+  Result := TCharacter.IsLetterOrDigit(C) or (C = '_');
 end;
 
 function IsValidIdentStartChar(const C: Char): Boolean; inline;
@@ -350,14 +350,14 @@ function IsValidIdentStartChar(const C: Char): Boolean; inline;
     @return True if C is valid, False otherwise.
   }
 begin
-  Result := IsLetter(C) or (C = '_');
+  Result := TCharacter.IsLetter(C) or (C = '_');
 end;
 
 function IsWhiteSpaceChar(const C: Char): Boolean; inline;
   {Checks if a character is a whitespace character but not end of line or end
   of file character}
 begin
-  Result := IsWhiteSpace(C) and not IsCharInSet(C, [CR, LF, cEOF]);
+  Result := TCharacter.IsWhiteSpace(C) and not CharInSet(C, [CR, LF, cEOF]);
 end;
 
 function IsSymbolChar(const C: Char): Boolean; inline;
@@ -372,7 +372,7 @@ const
     '/', ':', ';', '<', '=', '>', '@', '[', ']', '^', '{', '}'
   ];
 begin
-  Result := IsCharInSet(C, cSymbols);
+  Result := CharInSet(C, cSymbols);
 end;
 
 function IsExponentChar(const C: Char): Boolean; inline;
@@ -381,7 +381,7 @@ function IsExponentChar(const C: Char): Boolean; inline;
     @return True if C is an exponent, False if not.
   }
 begin
-  Result := IsCharInSet(C, ['E', 'e']);
+  Result := CharInSet(C, ['E', 'e']);
 end;
 
 function IsUnaryPlusMinusChar(const C: Char): Boolean; inline;
@@ -390,7 +390,7 @@ function IsUnaryPlusMinusChar(const C: Char): Boolean; inline;
     @return True if C is a unary plus or minus, False if not.
   }
 begin
-  Result := IsCharInSet(C, ['+', '-']);
+  Result := CharInSet(C, ['+', '-']);
 end;
 
 function IsSeparatorChar(const C: Char): Boolean; inline;
@@ -560,7 +560,7 @@ begin
       Result := ParseIdent
     else if IsSymbolChar(fReader.Ch) then
       Result := ParseSymbol
-    else if IsDigit(fReader.Ch) then
+    else if TCharacter.IsDigit(fReader.Ch) then
       Result := ParseNumber
     else if fReader.Ch = cEOL then
       Result := ParseEOL
@@ -600,7 +600,7 @@ begin
     // now read hex digits
     ParseHex;
   end
-  else if IsDigit(fReader.Ch) then
+  else if TCharacter.IsDigit(fReader.Ch) then
     // This is whole number: parse it
     ParseWholeNumber
   else
@@ -770,7 +770,8 @@ function THilitePasLexer.ParseNumber: THilitePasToken;
 var
   TempCh: Char; // temporary storage for a character read from input
 begin
-  Assert(IsDigit(fReader.Ch), ClassName + '.ParseNumber: digit expected');
+  Assert(TCharacter.IsDigit(fReader.Ch),
+    ClassName + '.ParseNumber: digit expected');
   // All numbers start with a whole number: read it
   ParseWholeNumber; // leaves current char as one immediately after number
   // Assume we have whole number and see if we can disprove it
@@ -782,7 +783,7 @@ begin
     // Store the decimal point then read ahead to see what next char is
     TempCh := fReader.Ch;
     fReader.NextChar;
-    if IsCharInSet(fReader.Ch, [cDecimalPoint, cCloseParen]) then
+    if CharInSet(fReader.Ch, [cDecimalPoint, cCloseParen]) then
     begin
       // decimal point was followed by '.' or ')' making valid two char symbols
       // .. and .) => we put back the read character and get out, leaving first
@@ -795,7 +796,7 @@ begin
     // If we have digits after decimal point read them into token str
     // Note: there may not necessarily be digits after '.' (e.g. 2. is a valid
     // Delphi float)
-    if IsDigit(fReader.Ch) then
+    if TCharacter.IsDigit(fReader.Ch) then
       ParseWholeNumber;
     Result := tkFloat;
   end;
@@ -927,9 +928,9 @@ function THilitePasLexer.ParseWholeNumber: THilitePasToken;
     @return Whole number token (tkNumber).
   }
 begin
-  Assert(IsDigit(fReader.Ch),
+  Assert(TCharacter.IsDigit(fReader.Ch),
     ClassName + '.ParseWholeNumber: current char not a digit');
-  while IsDigit(fReader.Ch) do
+  while TCharacter.IsDigit(fReader.Ch) do
   begin
     UpdateTokenStr;
     fReader.NextChar;

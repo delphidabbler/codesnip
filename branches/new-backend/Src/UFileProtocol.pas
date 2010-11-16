@@ -47,7 +47,7 @@ uses
   // Delphi
   SysUtils, StrUtils, ExtActns,
   // Project
-  UBrowseProtocol, UProtocols, UUnicodeHelper, UUtils;
+  UBrowseProtocol, UProtocols, UUtils;
 
 
 {

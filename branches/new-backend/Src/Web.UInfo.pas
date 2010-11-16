@@ -1,8 +1,8 @@
 {
- * UWebInfo.pas
+ * Web.UInfo.pas
  *
- * Static class that provides information about various web used by CodeSnip,
- * along with a record that defines a web service.
+ * Static class that provides information about URLs, web services and proxy
+ * servers.
  *
  * $Rev$
  * $Date$
@@ -19,7 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UWebInfo.pas
+ * The Original Code is Web.UInfo.pas, formerly UWebInfo.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +34,7 @@
 }
 
 
-unit UWebInfo;
+unit Web.UInfo;
 
 
 interface
@@ -79,7 +79,8 @@ type
 
   {
   TWebInfo:
-    Static class that provides information about various web used by CodeSnip.
+    Static class that provides information about URLs and any proxy server used
+    by CodeSnip.
   }
   TWebInfo = class(TNoConstructObject)
   strict private
@@ -88,9 +89,9 @@ type
     const NewsFeedTplt = WebSiteURL +           // news feed url template
       '/feeds/site-news-feed?id=codesnip&days=%d';
     class function Host: string;
-      {Determines host server depending on command line switch passed to program.
-        @return Required host server. If -localhost switch provided this is
-        localhost, otherwise it is the remote server.
+      {Determines the host server. The server depends on whether the -localhost
+      switch was passed on the command line.
+        @return Required host server, either localhost or the remote server.
       }
   public
     const LocalHost = 'localhost';
@@ -142,9 +143,9 @@ uses
 { TWebInfo }
 
 class function TWebInfo.Host: string;
-  {Determines host server depending on command line switch passed to program.
-    @return Required host server. If -localhost switch provided this is
-      localhost, otherwise it is the remote server.
+  {Determines the host server. The server depends on whether the -localhost
+  switch was passed on the command line.
+    @return Required host server, either localhost or the remote server.
   }
 begin
   if UsingLocalHost then

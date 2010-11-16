@@ -91,7 +91,7 @@ uses
   // DelphiDabbler library
   PJMD5,
   // Project
-  UDataStreamIO, UDOSDateTime, UExceptions, UUnicodeHelper, UUtils;
+  UDataStreamIO, UDOSDateTime, UEncodings, UExceptions, UUtils;
 
 
 {

@@ -90,7 +90,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  URTFUtils, UUnicodeHelper;
+  UEncodings, URTFUtils;
 
 
 {$R *.dfm}

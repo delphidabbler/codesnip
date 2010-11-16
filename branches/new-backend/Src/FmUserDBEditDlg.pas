@@ -47,8 +47,9 @@ uses
   // Project
   FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, IntfCompilers,
   UActiveText, UBaseObjects, UCategoryListAdapter, UChkListStateMgr,
-  UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, ULEDImageList, UMemoHelper,
-  USnipKindListAdapter, USnippets, USnippetsChkListMgr, UUnitsChkListMgr;
+  UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, ULEDImageList,
+  UMemoCaretPosDisplayMgr, UMemoHelper, USnipKindListAdapter, USnippets,
+  USnippetsChkListMgr, UUnitsChkListMgr;
 
 
 type
@@ -98,6 +99,7 @@ type
     lblDepends: TLabel;
     lblDescription: TLabel;
     lblExtra: TLabel;
+    lblExtraCaretPos: TLabel;
     lblName: TLabel;
     lblKind: TLabel;
     lblSourceCaretPos: TLabel;
@@ -134,11 +136,6 @@ type
     procedure actViewExtraUpdate(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure cbKindChange(Sender: TObject);
-    procedure edSourceCodeEnter(Sender: TObject);
-    procedure edSourceCodeKeyUp(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
-    procedure edSourceCodeMouseUp(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure lblSnippetKindHelpClick(Sender: TObject);
@@ -163,6 +160,8 @@ type
       TCompileResultsLBMgr;         // Manages compilers list box
     fImages: TLEDImageList;         // Image list containing LEDs
     fSourceMemoHelper: TMemoHelper; // Helper for working with source code memo
+    fMemoCaretPosDisplayMgr: TMemoCaretPosDisplayMgr;
+                                    // Manages display of memo caret positions
     procedure UpdateTabSheetCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
       {Updates CSS used for HTML displayed in frames on tab sheets.
         @param Sender [in] Not used.
@@ -208,9 +207,6 @@ type
       {Updates dependencies and cross-references check lists for snippet being
       edited, depending on kind.
       }
-    procedure UpdateMemoPosInfo;
-      {Updates display of source code memo control cursor position.
-      }
     function CreateTempSnippet: TRoutine;
       {Creates a temporary snippet from data entered in dialog box.
         @return Required snippet instance.
@@ -221,25 +217,9 @@ type
       compile manager.
         @param Compilers [in] Object containing compilation results.
       }
-    procedure Error(const Msg: string; const Ctrl: TWinControl); overload;
-      {Raises EDataEntry exception with a specified message and control where
-      error occured.
-        @param Msg [in] Exception message.
-        @param Ctrl [in] Control to which exception relates.
-        @except EDataEntry always raised.
-      }
-    procedure Error(const FmtStr: string; const Args: array of const;
-      const Ctrl: TWinControl); overload;
-      {Raises EDataEntry exception with a message built from a format string and
-      parameters, until with a reference to the control where the error occured.
-        @param FmtStr [in] Message's format string.
-        @param Args [in] Array of data displayed in format string.
-        @param Ctrl [in] Control to which exception relates.
-        @except EDataEntry always raised.
-      }
     procedure CheckExtra;
       {Checks the REML text entered in the extra information memo control.
-        @except EDataEntry on error.
+        @except EDataEntry raised on error.
       }
   strict protected
     procedure ArrangeForm; override;
@@ -275,12 +255,12 @@ implementation
 
 uses
   // Delphi
-  StrUtils, Windows {for inlining}, Graphics, 
+  StrUtils, Windows {for inlining}, Graphics,
   // Project
   FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
   UCtrlArranger, UExceptions, UFontHelper, UReservedCategories,
-  URoutineExtraHelper, USnippetValidator, UMessageBox, USnippetIDs, UThemesEx,
-  UUtils;
+  URoutineExtraHelper, USnippetValidator, UMessageBox, USnippetIDs, UStructs,
+  UThemesEx, UUtils;
 
 
 {$R *.dfm}
@@ -302,12 +282,21 @@ begin
   UnitName := Trim(edUnit.Text);
   Assert(UnitName <> '',
     ClassName + '.actAddUnitExecute: UnitName is empty string');
-  if not fUnitsCLBMgr.IsValidUnitName(UnitName) then
-    raise ECodeSnip.Create(sBadUnitName);
-  if fUnitsCLBMgr.ContainsUnit(UnitName) then
-    raise ECodeSnip.Create(sUnitNameExists);
-  fUnitsCLBMgr.IncludeUnit(UnitName, True);
-  edUnit.Text := '';
+  try
+    if not fUnitsCLBMgr.IsValidUnitName(UnitName) then
+      raise EDataEntry.Create(
+        sBadUnitName, edUnit, TSelection.Create(0, Length(UnitName))
+      );
+    if fUnitsCLBMgr.ContainsUnit(UnitName) then
+      raise EDataEntry.Create(
+        sUnitNameExists, edUnit, TSelection.Create(0, Length(UnitName))
+      );
+    fUnitsCLBMgr.IncludeUnit(UnitName, True);
+    edUnit.Text := '';
+  except
+    on E: Exception do
+      HandleException(E);
+  end;
 end;
 
 procedure TUserDBEditDlg.actAddUnitUpdate(Sender: TObject);
@@ -421,8 +410,13 @@ procedure TUserDBEditDlg.actViewExtraExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  CheckExtra;
-  TViewExtraDlg.Execute(Self, BuildExtraActiveText);
+  try
+    CheckExtra;
+    TViewExtraDlg.Execute(Self, BuildExtraActiveText);
+  except
+    on E: Exception do
+      HandleException(E);
+  end;
 end;
 
 procedure TUserDBEditDlg.actViewExtraUpdate(Sender: TObject);
@@ -481,6 +475,7 @@ begin
     TCtrlArranger.BottomOf(clbXRefs, 6), [btnDependencies, edUnit, btnAddUnit]
   );
   // tsComments
+  lblExtraCaretPos.Top := lblExtra.Top;
   frmExtraInstructions.Top := TCtrlArranger.BottomOf(edExtra, 4);
   btnViewExtra.Top := TCtrlArranger.BottomOf(frmExtraInstructions);
   // tsCompileResults
@@ -547,11 +542,12 @@ end;
 
 procedure TUserDBEditDlg.CheckExtra;
   {Checks the REML text entered in the extra information memo control.
-    @except EDataEntry on error.
+    @except EDataEntry raised on error.
   }
 var
   ActiveText: IActiveText;  // active text created from text
   ErrorMsg: string;         // error message from validator
+  DataError: EDataEntry;    // data entry error exception raised on error
 resourcestring
   // parse error message
   sActiveTextErr = 'Error parsing extra information markup:' + EOL2 + '%s';
@@ -563,13 +559,20 @@ begin
   except
     // Convert active text parser to data exception
     on E: EActiveTextParserError do
-      Error(sActiveTextErr, [E.Message], edExtra);
+    begin
+      DataError := EDataEntry.CreateFmt(
+        sActiveTextErr, [E.Message], edExtra
+      );
+      if E.HasSelection then
+        DataError.Selection := E.Selection;
+      raise DataError;
+    end
     else
       raise;
   end;
   // Validate the active text
   if not TSnippetValidator.ValidateExtra(ActiveText, ErrorMsg) then
-    Error(ErrorMsg, edExtra);
+    raise EDataEntry.Create(ErrorMsg, edExtra); // no selection info available
 end;
 
 procedure TUserDBEditDlg.ConfigForm;
@@ -641,59 +644,6 @@ begin
     end;
 end;
 
-procedure TUserDBEditDlg.edSourceCodeEnter(Sender: TObject);
-  {Handles source code memo control's enter event. Updates display of cursor
-  position.
-    @param Sender [in] Not used.
-  }
-begin
-  UpdateMemoPosInfo;
-end;
-
-procedure TUserDBEditDlg.edSourceCodeKeyUp(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-  {Handles source code memo control's key up event. Updates display of cursor
-  position.
-    @param Sender [in] Not used.
-  }
-begin
-  UpdateMemoPosInfo;
-end;
-
-procedure TUserDBEditDlg.edSourceCodeMouseUp(Sender: TObject;
-  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-  {Handles source code memo control's mouse up event. Updates display of cursor
-  position.
-    @param Sender [in] Not used.
-  }
-begin
-  UpdateMemoPosInfo;
-end;
-
-procedure TUserDBEditDlg.Error(const Msg: string; const Ctrl: TWinControl);
-  {Raises EDataEntry exception with a specified message and control where
-  error occured.
-    @param Msg [in] Exception message.
-    @param Ctrl [in] Control to which exception relates.
-    @except EDataEntry always raised.
-  }
-begin
-  raise EDataEntry.Create(Msg, Ctrl);
-end;
-
-procedure TUserDBEditDlg.Error(const FmtStr: string; const Args: array of const;
-  const Ctrl: TWinControl);
-  {Raises EDataEntry exception with a message built from a format string and
-  parameters, until with a reference to the control where the error occured.
-    @param FmtStr [in] Message's format string.
-    @param Args [in] Array of data displayed in format string.
-    @param Ctrl [in] Control to which exception relates.
-    @except EDataEntry always raised.
-  }
-begin
-  raise EDataEntry.CreateFmt(FmtStr, Args, Ctrl);
-end;
-
 procedure TUserDBEditDlg.FocusCtrl(const Ctrl: TWinControl);
   {Displays and focusses a control, selecting its parent tab sheet if necessary.
     @param Ctrl [in] Control to be focussed.
@@ -725,6 +675,7 @@ begin
   fCatList := TCategoryListAdapter.Create(Snippets.Categories);
   fSnipKindList := TSnipKindListAdapter.Create;
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
+  fMemoCaretPosDisplayMgr := TMemoCaretPosDisplayMgr.Create;
   fDependsCLBMgr := TSnippetsChkListMgr.Create(clbDepends);
   fXRefsCLBMgr := TSnippetsChkListMgr.Create(clbXRefs);
   fUnitsCLBMgr := TUnitsChkListMgr.Create(clbUnits);
@@ -758,6 +709,7 @@ begin
   FreeAndNil(fDependsCLBMgr);
   FreeAndNil(fSnipKindList);
   FreeAndNil(fCatList);
+  fMemoCaretPosDisplayMgr.Free;
 end;
 
 procedure TUserDBEditDlg.HandleException(const E: Exception);
@@ -767,11 +719,19 @@ procedure TUserDBEditDlg.HandleException(const E: Exception);
     @param E [in] Exception to be handled.
     @except Exceptions re-raised if not EDataEntry.
   }
+var
+  Error: EDataEntry;
 begin
   if E is EDataEntry then
   begin
-    TMessageBox.Error(Self, E.Message);
-    FocusCtrl((E as EDataEntry).Ctrl);
+    Error := E as EDataEntry;
+    TMessageBox.Error(Self, Error.Message);
+    FocusCtrl(Error.Ctrl);
+    if Error.HasSelection and (Error.Ctrl is TCustomEdit) then
+    begin
+      (Error.Ctrl as TCustomEdit).SelStart := Error.Selection.StartPos;
+      (Error.Ctrl as TCustomEdit).SelLength := Error.Selection.Length;
+    end;
     ModalResult := mrNone;
   end
   else
@@ -811,14 +771,15 @@ begin
     edExtra.Clear;
     UpdateReferences;
   end;
-  // Source code memo control co-ordinate display
-  UpdateMemoPosInfo;
   // Display all compiler results
   fCompilersLBMgr.SetCompileResults(fEditData.Props.CompilerResults);
   Assert(cbKind.ItemIndex >= 0,
     ClassName + '.InitControls: no selection in cbKind');
   Assert(cbCategories.ItemIndex >= 0,
     ClassName + '.InitControls: no selection in cbCategories');
+  // Auto-update caret position display for source and extra info memos
+  fMemoCaretPosDisplayMgr.Manage(edSourceCode, lblSourceCaretPos);
+  fMemoCaretPosDisplayMgr.Manage(edExtra, lblExtraCaretPos);
 end;
 
 procedure TUserDBEditDlg.InitForm;
@@ -922,16 +883,6 @@ begin
   end;
 end;
 
-procedure TUserDBEditDlg.UpdateMemoPosInfo;
-  {Updates display of source code memo control cursor position.
-  }
-begin
-  lblSourceCaretPos.Caption := Format(
-    '%d: %d',
-    [fSourceMemoHelper.CaretPos.Y, fSourceMemoHelper.CaretPos.X]
-  );
-end;
-
 procedure TUserDBEditDlg.UpdateReferences;
   {Updates dependencies and cross-references check lists for snippet being
   edited, depending on kind.
@@ -1015,27 +966,31 @@ resourcestring
   sDependencyPrompt = 'See the dependencies by clicking the View Dependencies '
     + 'button on the References tab.';
 var
-  ErrorMessage: string; // receives validation error messages
+  ErrorMessage: string;       // receives validation error messages
+  ErrorSelection: TSelection; // receives selection containing errors
 begin
   if not TSnippetValidator.ValidateSourceCode(
-    edSourceCode.Text, ErrorMessage
+    edSourceCode.Text, ErrorMessage, ErrorSelection
   ) then
-    Error(ErrorMessage, edSourceCode);
+    raise EDataEntry.Create(ErrorMessage, edSourceCode, ErrorSelection);
   if not TSnippetValidator.ValidateDescription(
-    edDescription.Text, ErrorMessage
+    edDescription.Text, ErrorMessage, ErrorSelection
   ) then
-    Error(ErrorMessage, edDescription);
+    raise EDataEntry.Create(ErrorMessage, edDescription, ErrorSelection);
   if not TSnippetValidator.ValidateName(
-    Trim(edName.Text),
+    edName.Text,
     not AnsiSameText(Trim(edName.Text), fOrigName),
-    ErrorMessage
+    ErrorMessage,
+    ErrorSelection
   ) then
-    Error(ErrorMessage, edName);
+    raise EDataEntry.Create(ErrorMessage, edName, ErrorSelection);
   CheckExtra;
   if not TSnippetValidator.ValidateDependsList(
     Trim(edName.Text), UpdateData, ErrorMessage
   ) then
-    Error(MakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends);
+    raise EDataEntry.Create(  // selection not applicable to list boxes
+      MakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
+    );
 end;
 
 end.

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -84,7 +84,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UCSSUtils, UWBNulDropTarget, UWBUIMgr;
+  UCSSUtils, UNulDropTarget, UWBUIMgr;
 
 
 {$R *.dfm}
@@ -147,7 +147,7 @@ begin
   WBController.UIMgr.ScrollbarStyle := sbsHide;   // no scroll bars
   WBController.UIMgr.AllowTextSelection := False; // can't select text
   WBController.UIMgr.DropTarget :=                // inhibit drag drop in dialog
-    TWBNulDropTarget.Create;
+    TNulDropTarget.Create;
 end;
 
 function THTMLDlgFrame.DocHeight: Integer;

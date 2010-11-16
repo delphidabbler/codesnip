@@ -415,7 +415,7 @@ uses
   UCopySourceMgr, UDatabaseLoader, UEditRoutineAction, UExceptions, UHelpMgr,
   UHistoryMenus, UMessageBox, UNotifier, UPrintMgr, UQuery, USaveSnippetMgr,
   USaveUnitMgr, USnippets, UThreadWrapper, UUserDBMgr, UView, UViewItemAction,
-  UWaitForActionUI, UWBExternal, UWBNulDropTarget, UWebInfo;
+  UWaitForActionUI, UWBExternal, UNulDropTarget, Web.UInfo;
 
 
 {$R *.dfm}
@@ -1470,7 +1470,7 @@ begin
     with frmDetail as IWBCustomiser do
     begin
       SetExternalObj(WBExternal);
-      SetDragDropHandler(TWBNulDropTarget.Create);
+      SetDragDropHandler(TNulDropTarget.Create);
     end;
 
     // Set notifier for objects that trigger notifications

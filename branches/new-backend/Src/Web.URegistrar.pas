@@ -77,7 +77,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UURIParams, UWebInfo;
+  UURIParams, Web.UInfo;
 
 
 {

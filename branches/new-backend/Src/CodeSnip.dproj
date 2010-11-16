@@ -336,6 +336,7 @@
 			<DCCReference Include="UDropDownButtons.pas"/>
 			<DCCReference Include="UEditRoutineAction.pas"/>
 			<DCCReference Include="UEmailHelper.pas"/>
+			<DCCReference Include="UEncodings.pas"/>
 			<DCCReference Include="UEncryptor.pas"/>
 			<DCCReference Include="UExceptions.pas"/>
 			<DCCReference Include="UExeFileType.pas"/>
@@ -384,6 +385,7 @@
 			<DCCReference Include="UMainDisplayMgr.pas"/>
 			<DCCReference Include="UMarquee.pas"/>
 			<DCCReference Include="UMeasurement.pas"/>
+			<DCCReference Include="UMemoCaretPosDisplayMgr.pas"/>
 			<DCCReference Include="UMemoHelper.pas"/>
 			<DCCReference Include="UMemoProgBarMgr.pas"/>
 			<DCCReference Include="UMenuHelper.pas"/>
@@ -392,6 +394,7 @@
 			<DCCReference Include="UMultiCastEvents.pas"/>
 			<DCCReference Include="UNotifier.pas"/>
 			<DCCReference Include="UNulDataReader.pas"/>
+			<DCCReference Include="UNulDropTarget.pas"/>
 			<DCCReference Include="UNulFormAligner.pas"/>
 			<DCCReference Include="UNulUIHandler.pas"/>
 			<DCCReference Include="UOleClientSite.pas"/>
@@ -463,7 +466,6 @@
 			<DCCReference Include="UToolButtonEx.pas"/>
 			<DCCReference Include="UTVCheckBoxes.pas"/>
 			<DCCReference Include="UUIWidgetImages.pas"/>
-			<DCCReference Include="UUnicodeHelper.pas"/>
 			<DCCReference Include="UUniqueID.pas"/>
 			<DCCReference Include="UUnitsChkListMgr.pas"/>
 			<DCCReference Include="UUpdateMgr.pas"/>
@@ -485,10 +487,8 @@
 			<DCCReference Include="UWBHelper.pas"/>
 			<DCCReference Include="UWBHighlighter.pas"/>
 			<DCCReference Include="UWBIOMgr.pas"/>
-			<DCCReference Include="UWBNulDropTarget.pas"/>
 			<DCCReference Include="UWBPopupMenus.pas"/>
 			<DCCReference Include="UWBUIMgr.pas"/>
-			<DCCReference Include="UWebInfo.pas"/>
 			<DCCReference Include="UWindowSettings.pas"/>
 			<DCCReference Include="UXMLDataIO.pas"/>
 			<DCCReference Include="UXMLDocConsts.pas"/>
@@ -501,6 +501,7 @@
 			<DCCReference Include="Web.UDownloadMonitor.pas"/>
 			<DCCReference Include="Web.UExceptions.pas"/>
 			<DCCReference Include="Web.UHTTPEx.pas"/>
+			<DCCReference Include="Web.UInfo.pas"/>
 			<DCCReference Include="Web.URegistrar.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas"/>

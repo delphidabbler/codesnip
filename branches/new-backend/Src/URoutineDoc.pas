@@ -158,7 +158,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UCompilers, UUtils, USnippetKindInfo, UWebInfo;
+  UCompilers, UUtils, USnippetKindInfo, Web.UInfo;
 
 
 { TRoutineDoc }

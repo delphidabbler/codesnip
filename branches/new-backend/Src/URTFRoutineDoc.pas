@@ -141,7 +141,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UColours, UConsts, URTFMerger, USyntaxHiliters, UUnicodeHelper, UUtils;
+  UColours, UConsts, UEncodings, URTFMerger, USyntaxHiliters, UUtils;
 
 
 { TRTFRoutineDoc }

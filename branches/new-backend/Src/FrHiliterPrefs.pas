@@ -45,7 +45,7 @@ uses
   StdCtrls, Forms, Controls, Classes, Menus, Buttons,
   // Project
   IntfHiliter, FrPrefsBase, FrRTFShowCase, UColorBoxEx, UColorDialogEx, UConsts,
-  UPreferences, UUnicodeHelper;
+  UEncodings, UPreferences;
 
 
 type

@@ -113,10 +113,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows,
+  SysUtils, Windows, Character,
   // Project
   UConsts, UExceptions, UFontHelper, UMessageBox, USettings, UStructs,
-  USystemInfo, UUnicodeHelper, UUtils;
+  USystemInfo, UUtils;
 
 
 {$R *.dfm}
@@ -185,7 +185,7 @@ procedure TProxyServerDlg.edIPAddressKeyPress(Sender: TObject; var Key: Char);
 const
   cDot = '.';   // dot separator (not decimal point)
 begin
-  if not IsDigit(Key) and (Key <> cDot) and (Key <> BACKSPACE) then
+  if not TCharacter.IsDigit(Key) and (Key <> cDot) and (Key <> BACKSPACE) then
     Key := #0
   else if (Key = cDot) and (
     (edIPAddress.SelStart = 0) or (CountDelims(edIPAddress.Text, cDot) = 3)
@@ -201,7 +201,7 @@ procedure TProxyServerDlg.edPortKeyPress(Sender: TObject; var Key: Char);
     @param Key [in/out] Key pressed. Set to #0 if key is not permitted.
   }
 begin
-  if not IsDigit(Key) and (Key <> BACKSPACE) then
+  if not TCharacter.IsDigit(Key) and (Key <> BACKSPACE) then
     Key := #0;
   if Key = #0 then
     KeyErrorBeep;

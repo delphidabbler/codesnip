@@ -43,7 +43,7 @@ uses
   // Delphi
   Generics.Collections, Graphics,
   // Project
-  UUnicodeHelper;
+  UEncodings;
 
 
 type
@@ -291,7 +291,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults, Windows,
+  SysUtils, Generics.Defaults, Windows, Character,
   // Project
   UConsts, UExceptions, ULocales, URTFUtils, UUtils;
 
@@ -303,7 +303,7 @@ procedure TRTFBuilder.AddControl(const Ctrl: ASCIIString);
     @param Ctrl [in] Text representation of control to be added.
   }
 begin
-  Assert((Ctrl <> '') and not IsWhiteSpace(Char(Ctrl[Length(Ctrl)])),
+  Assert((Ctrl <> '') and not TCharacter.IsWhiteSpace(Char(Ctrl[Length(Ctrl)])),
     ClassName + '.AddControls: Ctrls ends in whitespace');
   AppendBody(Ctrl);
   fInControls := True;
