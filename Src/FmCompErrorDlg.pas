@@ -51,45 +51,6 @@ uses
 type
 
   {
-  TRequiredCompilers:
-    Helper object that stores references to compilers whose compile errors and
-    warnings are to be displayed in dialog box.
-  }
-  TRequiredCompilers = class(TObject)
-  strict private
-    var fCompilers: TList<ICompiler>; // List of required compilers
-    function GetCompiler(Idx: Integer): ICompiler;
-      {Read accessor for Compilers[] property.
-        @param Idx [in] Index of required compiler in Compilers[].
-        @return Reference to indexed compiler.
-      }
-    function GetCount: Integer;
-      {Read accessor for Count property.
-        @return Number of compilers in Compilers[] property.
-      }
-  public
-    constructor Create;
-      {Object constructor. Sets up object.
-      }
-    destructor Destroy; override;
-      {Object destructor. Tears down object.
-      }
-    procedure Add(Compiler: ICompiler);
-      {Adds a compiler to list.
-        @param Compiler [in] Reference to compiler to be added.
-      }
-    function GetEnumerator: TEnumerator<ICompiler>;
-      {Gets reference to object's enumerator. For use only by compiler to
-      provide for..in functionality.
-        @return Required enumerastor.
-      }
-    property Compilers[Idx: Integer]: ICompiler read GetCompiler; default;
-      {List of required compilers}
-    property Count: Integer read GetCount;
-      {Number of compilers in Compilers[] property}
-  end;
-
-  {
   TCompErrorDlg:
     Implements a dialog box that displays error or warning logs from last
     compilation on one or more compilers for a specified routine. It is an
@@ -116,11 +77,11 @@ type
       box}
     fRoutine: TRoutine;
       {Routine for which last compilation took place}
-    fRequiredCompilers: TRequiredCompilers;
+    fRequiredCompilers: TList<ICompiler>;
       {Object that maintains a list of compilers for which errors or warnings
       are to be displayed}
     fCompGlyphIndexes: array[TCompilerId] of Integer;
-      {Maps compiler compiler ids to index of compiler image in image list}
+      {Maps compiler compiler ids to index of compiler images in image list}
     function GetHTMLHeight: Integer;
       {Gets height of rendered HTML required to display warnings or error
       messages. Calculates maximum height of logs of each required compiler.
@@ -284,7 +245,7 @@ procedure TCompErrorDlg.FormCreate(Sender: TObject);
   }
 begin
   inherited;
-  fRequiredCompilers := TRequiredCompilers.Create;
+  fRequiredCompilers := TList<ICompiler>.Create;
 end;
 
 procedure TCompErrorDlg.FormDestroy(Sender: TObject);
@@ -506,58 +467,6 @@ procedure TCompErrorDlg.tsCompilersGetImageIndex(Sender: TObject;
   }
 begin
   ImageIndex := fCompGlyphIndexes[fRequiredCompilers[TabIndex].GetID];
-end;
-
-{ TRequiredCompilers }
-
-procedure TRequiredCompilers.Add(Compiler: ICompiler);
-  {Adds a compiler to list.
-    @param Compiler [in] Reference to compiler to be added.
-  }
-begin
-  fCompilers.Add(Compiler);
-end;
-
-constructor TRequiredCompilers.Create;
-  {Object constructor. Sets up object.
-  }
-begin
-  inherited Create;
-  fCompilers := TList<ICompiler>.Create;
-end;
-
-destructor TRequiredCompilers.Destroy;
-  {Object destructor. Tears down object.
-  }
-begin
-  fCompilers.Free;
-  inherited;
-end;
-
-function TRequiredCompilers.GetCompiler(Idx: Integer): ICompiler;
-  {Read accessor for Compilers[] property.
-    @param Idx [in] Index of required compiler in Compilers[].
-    @return Reference to indexed compiler.
-  }
-begin
-  Result := fCompilers[Idx];
-end;
-
-function TRequiredCompilers.GetCount: Integer;
-  {Read accessor for Count property.
-    @return Number of compilers in Compilers[] property.
-  }
-begin
-  Result := fCompilers.Count;
-end;
-
-function TRequiredCompilers.GetEnumerator: TEnumerator<ICompiler>;
-  {Gets reference to object's enumerator. For use only by compiler to
-  provide for..in functionality.
-    @return Required enumerastor.
-  }
-begin
-  Result := fCompilers.GetEnumerator;
 end;
 
 end.
