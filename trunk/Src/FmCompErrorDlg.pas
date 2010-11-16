@@ -42,6 +42,7 @@ interface
 uses
   // Delphi
   Forms, StdCtrls, Controls, ExtCtrls, Classes, Tabs, ActnList, ImgList,
+  Generics.Collections,
   // Project
   FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, IntfCompilers,
   UBaseObjects, USnippets;
@@ -56,38 +57,7 @@ type
   }
   TRequiredCompilers = class(TObject)
   strict private
-    type
-      {
-      TEnumerator:
-        Private enumerator object. Designed for use only by compiler, not by
-        users.
-      }
-      TEnumerator = class(TObject)
-      strict private
-        fList: TRequiredCompilers;
-          {Object being enumerated}
-        fIndex: Integer;
-          {Index of current item in enumeration}
-      public
-        constructor Create(const List: TRequiredCompilers);
-          {Class constructor. Sets up and initialises enumeration.
-            @param List [in] Reference to object to be enumerated.
-          }
-        function GetCurrent: ICompiler;
-          {Gets current compiler in enumeration.
-            @return Current string.
-          }
-        function MoveNext: Boolean;
-          {Moves to next item in enumeration.
-            @return True if there is a next item, false if enumeration
-              completed.
-          }
-        property Current: ICompiler read GetCurrent;
-          {Current item in enumeration}
-      end;
-    var
-      fCompilers: TInterfaceList;
-        {List of required compilers}
+    var fCompilers: TList<ICompiler>; // List of required compilers
     function GetCompiler(Idx: Integer): ICompiler;
       {Read accessor for Compilers[] property.
         @param Idx [in] Index of required compiler in Compilers[].
@@ -99,16 +69,16 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up object.
+      {Object constructor. Sets up object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Object destructor. Tears down object.
       }
     procedure Add(Compiler: ICompiler);
       {Adds a compiler to list.
         @param Compiler [in] Reference to compiler to be added.
       }
-    function GetEnumerator: TEnumerator;
+    function GetEnumerator: TEnumerator<ICompiler>;
       {Gets reference to object's enumerator. For use only by compiler to
       provide for..in functionality.
         @return Required enumerastor.
@@ -205,9 +175,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics,
+  Graphics,
   // Project
-  UConsts, UExceptions, UHTMLUtils, FmGenericViewDlg;
+  UConsts, UExceptions, UHTMLUtils;
 
 
 {$R *.dfm}
@@ -322,7 +292,7 @@ procedure TCompErrorDlg.FormDestroy(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  FreeAndNil(fRequiredCompilers);
+  fRequiredCompilers.Free;
   inherited;
 end;
 
@@ -549,18 +519,18 @@ begin
 end;
 
 constructor TRequiredCompilers.Create;
-  {Class constructor. Sets up object.
+  {Object constructor. Sets up object.
   }
 begin
   inherited Create;
-  fCompilers := TInterfaceList.Create;
+  fCompilers := TList<ICompiler>.Create;
 end;
 
 destructor TRequiredCompilers.Destroy;
-  {Class destructor. Tears down object.
+  {Object destructor. Tears down object.
   }
 begin
-  FreeAndNil(fCompilers);
+  fCompilers.Free;
   inherited;
 end;
 
@@ -570,7 +540,7 @@ function TRequiredCompilers.GetCompiler(Idx: Integer): ICompiler;
     @return Reference to indexed compiler.
   }
 begin
-  Result := fCompilers[Idx] as ICompiler;
+  Result := fCompilers[Idx];
 end;
 
 function TRequiredCompilers.GetCount: Integer;
@@ -581,45 +551,13 @@ begin
   Result := fCompilers.Count;
 end;
 
-function TRequiredCompilers.GetEnumerator: TEnumerator;
+function TRequiredCompilers.GetEnumerator: TEnumerator<ICompiler>;
   {Gets reference to object's enumerator. For use only by compiler to
   provide for..in functionality.
     @return Required enumerastor.
   }
 begin
-  Result := TEnumerator.Create(Self);
-end;
-
-{ TRequiredCompilers.TEnumerator }
-
-constructor TRequiredCompilers.TEnumerator.Create(
-  const List: TRequiredCompilers);
-  {Class constructor. Sets up and initialises enumeration.
-    @param List [in] Reference to object to be enumerated.
-  }
-begin
-  inherited Create;
-  fList := List;
-  fIndex := -1;
-end;
-
-function TRequiredCompilers.TEnumerator.GetCurrent: ICompiler;
-  {Gets current compiler in enumeration.
-    @return Current string.
-  }
-begin
-  Result := fList[fIndex];
-end;
-
-function TRequiredCompilers.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, false if enumeration
-      completed.
-  }
-begin
-  Result := fIndex < Pred(fList.Count);
-  if Result then
-    Inc(fIndex);
+  Result := fCompilers.GetEnumerator;
 end;
 
 end.

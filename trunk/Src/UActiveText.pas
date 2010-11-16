@@ -57,7 +57,7 @@ interface
 
 uses
   // Delphi
-  SysUtils,
+  Generics.Collections,
   // Project
   UBaseObjects, UExceptions;
 
@@ -159,31 +159,12 @@ type
   end;
 
   {
-  IActiveTextEnum:
-    Defines an enumerator that can enumerate all the elements of an active text
-    object.
-  }
-  IActiveTextEnum = interface(IInterface)
-    ['{08223D0F-1F4B-4F71-B115-C0613FFF47C5}']
-    function GetCurrent: IActiveTextElem;
-      {Gets current element in enumeration.
-        @return Current string.
-      }
-    function MoveNext: Boolean;
-      {Moves to next item in enumeration.
-        @return True if there is a next item, False if enumeration completed.
-      }
-    property Current: IActiveTextElem read GetCurrent;
-      {Current element in enumeration}
-  end;
-
-  {
   IActiveText:
     Defines operations of active text objects.
   }
   IActiveText = interface(IInterface)
     ['{230228FB-355F-4EC9-9EA9-F8A6DE628972}']
-    function GetEnumerator: IActiveTextEnum;
+    function GetEnumerator: TEnumerator<IActiveTextElem>;
       {Gets object that can enumerate object's elements.
         @return Required enumerator object.
       }
@@ -290,7 +271,7 @@ implementation
 
 uses
   // Delphi
-  Classes,
+  SysUtils,
   // Project
   IntfCommon;
 
@@ -306,34 +287,10 @@ type
     IActiveText, IAssignable, IClonable
   )
   strict private
-    fElems: TInterfaceList;
-      {List of object's active text elements}
-    type
-      TEnumerator = class(TInterfacedObject, IActiveTextEnum)
-      private
-        fActiveText: IActiveText;
-          {Reference to object being implemented}
-        fIndex: Integer;
-          {Index of current object in enumeration}
-      public
-        constructor Create(const ActiveText: IActiveText);
-          {Class constructor. Initialises enumeration.
-            @param ActiveText [in] Object to be enumerated.
-          }
-        { IActiveTextEnum methods }
-        function GetCurrent: IActiveTextElem;
-          {Gets current element in enumeration.
-            @return Current string.
-          }
-        function MoveNext: Boolean;
-          {Moves to next item in enumeration.
-            @return True if there is a next item, False if enumeration
-              completed.
-          }
-      end;
+    fElems: TList<IActiveTextElem>; // List of active text child elements
   protected // do not make strict
     { IActiveText methods }
-    function GetEnumerator: IActiveTextEnum;
+    function GetEnumerator: TEnumerator<IActiveTextElem>;
       {Gets object that can enumerate object's elements.
         @return Required enumerator object.
       }
@@ -373,10 +330,10 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up object.
+      {Object constructor. Sets up object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Object destructor. Tears down object.
       }
   end;
 
@@ -388,8 +345,7 @@ type
     IActiveTextElem
   )
   strict private
-    fKind: TActiveTextElemKind;
-      {Kind of element}
+    fKind: TActiveTextElemKind; // Kind of element
   protected // do not make strict
     { IActiveTextElem method }
     function GetKind: TActiveTextElemKind;
@@ -398,7 +354,7 @@ type
       }
   public
     constructor Create(const Kind: TActiveTextElemKind);
-      {Class constructor. Sets up object of correct kind.
+      {Object constructor. Sets up object of correct kind.
         @param Kind [in] Element kind.
       }
   end;
@@ -411,8 +367,7 @@ type
     IActiveTextTextElem
   )
   strict private
-    fText: string;
-      {Text of element}
+    fText: string;  // Text of element
   protected // do not make strict
     function GetText: string;
       {Gets element's text.
@@ -420,7 +375,7 @@ type
       }
   public
     constructor Create(const Text: string);
-      {Class constructor. Records element's text and specifies correct kind.
+      {Object constructor. Records element's text and specifies correct kind.
         @param Text [in] Element's text.
       }
   end;
@@ -433,10 +388,8 @@ type
     IActiveTextActionElem
   )
   strict private
-    fState: TActiveTextElemState;
-      {State of element: opening or closing}
-    fParam: string;
-      {Any parameter associated with element}
+    fState: TActiveTextElemState; // State of element: opening or closing
+    fParam: string;               // Any parameter associated with element
   protected // do not make strict
     function GetState: TActiveTextElemState;
       {Gets element state.
@@ -453,7 +406,7 @@ type
   public
     constructor Create(const Kind: TActiveTextElemKind;
       const Param: string; const State: TActiveTextElemState);
-      {Class constructor. Creates required action element.
+      {Object constructor. Creates required action element.
         @param Kind [in] Element kind.
         @param Param [in] Any parameter associated with element. May be ''.
         @param State [in] Element state: opening or closing.
@@ -577,18 +530,18 @@ begin
 end;
 
 constructor TActiveText.Create;
-  {Class constructor. Sets up object.
+  {Object constructor. Sets up object.
   }
 begin
   inherited Create;
-  fElems := TInterfaceList.Create;
+  fElems := TList<IActiveTextElem>.Create;
 end;
 
 destructor TActiveText.Destroy;
-  {Class destructor. Tears down object.
+  {Object destructor. Tears down object.
   }
 begin
-  FreeAndNil(fElems);
+  fElems.Free;
   inherited;
 end;
 
@@ -606,15 +559,15 @@ function TActiveText.GetElem(Idx: Integer): IActiveTextElem;
     @return Required element.
   }
 begin
-  Result := fElems[Idx] as IActiveTextElem;
+  Result := fElems[Idx];
 end;
 
-function TActiveText.GetEnumerator: IActiveTextEnum;
+function TActiveText.GetEnumerator: TEnumerator<IActiveTextElem>;
   {Gets object that can enumerate object's elements.
     @return Required enumerator object.
   }
 begin
-  Result := TEnumerator.Create(Self);
+  Result := fElems.GetEnumerator;
 end;
 
 function TActiveText.IsEmpty: Boolean;
@@ -625,41 +578,10 @@ begin
   Result := fElems.Count = 0;
 end;
 
-{ TActiveText.TEnumerator }
-
-constructor TActiveText.TEnumerator.Create(const ActiveText: IActiveText);
-  {Class constructor. Initialises enumeration.
-    @param ActiveText [in] Object to be enumerated.
-  }
-begin
-  inherited Create;
-  fActiveText := ActiveText;
-  fIndex := -1;
-end;
-
-function TActiveText.TEnumerator.GetCurrent: IActiveTextElem;
-  {Gets current element in enumeration.
-    @return Current string.
-  }
-begin
-  Result := fActiveText[fIndex];
-end;
-
-function TActiveText.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, False if enumeration
-      completed.
-  }
-begin
-  Result := fIndex < Pred(fActiveText.Count);
-  if Result then
-    Inc(fIndex);
-end;
-
 { TActiveTextElem }
 
 constructor TActiveTextElem.Create(const Kind: TActiveTextElemKind);
-  {Class constructor. Sets up object of correct kind.
+  {Object constructor. Sets up object of correct kind.
     @param Kind [in] Element kind.
   }
 begin
@@ -678,7 +600,7 @@ end;
 { TActiveTextTextElem }
 
 constructor TActiveTextTextElem.Create(const Text: string);
-  {Class constructor. Records element's text and specifies correct kind.
+  {Object constructor. Records element's text and specifies correct kind.
     @param Text [in] Element's text.
   }
 begin
@@ -698,7 +620,7 @@ end;
 
 constructor TActiveTextActionElem.Create(const Kind: TActiveTextElemKind;
   const Param: string; const State: TActiveTextElemState);
-  {Class constructor. Creates required action element.
+  {Object constructor. Creates required action element.
     @param Kind [in] Element kind.
     @param Param [in] Any parameter associated with element. May be ''.
     @param State [in] Element state: opening or closing.
