@@ -42,28 +42,10 @@ interface
 
 uses
   // Delphi
-  Classes;
+  Generics.Collections;
 
 
 type
-
-  {
-  IDispatchListEnum:
-    Enumerator for IDispatchList objects.
-  }
-  IDispatchListEnum = interface(IInterface)
-    ['{EA5F537F-3FEE-46ED-9569-97178446AC07}']
-    function GetCurrent: IDispatch;
-      {Gets current string in enumeration.
-        @return Current string.
-      }
-    function MoveNext: Boolean;
-      {Moves to next item in enumeration.
-        @return True if there is a next item, False if enumeration completed.
-      }
-    property Current: IDispatch read GetCurrent;
-      {Current item in enumeration}
-  end;
 
   {
   IDispatchList:
@@ -85,7 +67,7 @@ type
         @param Idx [in] Index of required element.
         @return IDispatch of element at Idx.
       }
-    function GetEnumerator: IDispatchListEnum;
+    function GetEnumerator: TEnumerator<IDispatch>;
       {Creates an enumerator for the dispatch list.
         @return Enumerator instance.
       }
@@ -102,35 +84,7 @@ type
     IDispatchList
   )
   strict private
-    var
-      fList: TInterfaceList;  // Dispatch object list
-    type
-      {
-      TEnumerator:
-        Implements enumerator for IDispatchList.
-      }
-      TEnumerator = class(TInterfacedObject, IDispatchListEnum)
-      strict private
-        fList: IDispatchList;
-          {Reference to object being enumerated}
-        fIndex: Integer;
-          {Index of current item in enumeration}
-      protected
-        function GetCurrent: IDispatch;
-          {Gets current string in enumeration.
-            @return Current string.
-          }
-        function MoveNext: Boolean;
-          {Moves to next item in enumeration.
-            @return True if there is a next item, False if enumeration
-              completed.
-          }
-      public
-        constructor Create(const List: IDispatchList);
-          {Constructor. Sets up and initialises enumeration.
-            @param List [in] Reference to object to be enumerated.
-          }
-      end;
+    var fList: TList<IDispatch>;  // Dispatch object list
   protected
     { IDispatchList methods }
     function Add(const Obj: IDispatch): Integer;
@@ -147,16 +101,16 @@ type
         @param Idx [in] Index of required element.
         @return IDispatch of element at Idx.
       }
-    function GetEnumerator: IDispatchListEnum;
+    function GetEnumerator: TEnumerator<IDispatch>;
       {Creates an enumerator for the dispatch list.
         @return Enumerator instance.
       }
   public
     constructor Create;
-      {Constructor. Sets up object.
+      {Object constructor. Sets up object.
       }
     destructor Destroy; override;
-      {Destructor. Tears down object.
+      {Object destructor. Tears down object.
       }
   end;
 
@@ -184,27 +138,27 @@ begin
 end;
 
 constructor TDispatchList.Create;
-  {Constructor. Sets up object.
+  {Object constructor. Sets up object.
   }
 begin
   inherited;
-  fList := TInterfaceList.Create;
+  fList := TList<IDispatch>.Create;
 end;
 
 destructor TDispatchList.Destroy;
-  {Destructor. Tears down object.
+  {Object destructor. Tears down object.
   }
 begin
   fList.Free;
   inherited;
 end;
 
-function TDispatchList.GetEnumerator: IDispatchListEnum;
+function TDispatchList.GetEnumerator: TEnumerator<IDispatch>;
   {Creates an enumerator for the dispatch list.
     @return Enumerator instance.
   }
 begin
-  Result := TEnumerator.Create(Self);
+  Result := fList.GetEnumerator;
 end;
 
 function TDispatchList.GetItem(const Idx: Integer): IDispatch;
@@ -213,37 +167,7 @@ function TDispatchList.GetItem(const Idx: Integer): IDispatch;
     @return IDispatch of element at Idx.
   }
 begin
-  Result := fList[Idx] as IDispatch;
-end;
-
-{ TDispatchList.TEnumerator }
-
-constructor TDispatchList.TEnumerator.Create(const List: IDispatchList);
-  {Constructor. Sets up and initialises enumeration.
-    @param List [in] Reference to object to be enumerated.
-  }
-begin
-  inherited Create;
-  fIndex := -1;
-  fList := List;
-end;
-
-function TDispatchList.TEnumerator.GetCurrent: IDispatch;
-  {Gets current string in enumeration.
-    @return Current string.
-  }
-begin
-  Result := fList[fIndex];
-end;
-
-function TDispatchList.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, False if enumeration completed.
-  }
-begin
-  Result := fIndex < Pred(fList.Count);
-  if Result then
-    Inc(fIndex);
+  Result := fList[Idx];
 end;
 
 end.

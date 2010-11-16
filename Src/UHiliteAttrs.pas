@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -57,10 +57,8 @@ interface
 
 
 uses
-  // Delphi
-  Classes, Graphics,
   // Project
-  IntfCommon, IntfHiliter, UBaseObjects;
+  IntfHiliter, UBaseObjects;
 
 
 type
@@ -115,9 +113,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  Generics.Collections, SysUtils, Graphics,
   // Project
-  UExceptions, UFontHelper, UPreferences;
+  IntfCommon, UExceptions, UFontHelper, UPreferences;
 
 
 type
@@ -132,12 +130,9 @@ type
     IAssignable   // defines object assignment
   )
   strict private
-    fElemAttrs: TInterfaceList;
-      {List of objects storing attributes of highlighter elements}
-    fFontSize: Integer;
-      {Size of font in points}
-    fFontName: string;
-      {Name of font}
+    var fElemAttrs: TList<IHiliteElemAttrs>;  // List of element attributes
+    var fFontSize: Integer;                   // Size of font in points
+    var fFontName: string;                    // Name of font
   protected // do not make strict
     { IHiliteAttrs methods }
     function GetFontName: string;
@@ -169,16 +164,13 @@ type
         @except EBug raised if Src is incompatible with this object.
       }
   public
-    const
-      cDefFontName = 'Courier New';
-        {Default font name}
-      cDefFontSize = 9;
-        {Default font size}
+    const cDefFontName = 'Courier New'; // Default font name
+    const cDefFontSize = 9;             // Default font size
     constructor Create;
-      {Class constructor. Sets up and intialises object.
+      {Object constructor. Sets up and intialises object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Object destructor. Tears down object.
       }
   end;
 
@@ -192,10 +184,8 @@ type
     IAssignable       // defines object assignment
   )
   strict private
-    fForeColor: TColor;
-      {Foreground (text) colour}
-    fFontStyle: TFontStyles;
-      {Font styles}
+    var fForeColor: TColor;       // Foreground (text) colour
+    var fFontStyle: TFontStyles;  // Font styles
   protected // do not make strict
     { IHiliteElemAttrs methods }
     function IsNul: Boolean;
@@ -229,7 +219,7 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up and initialises object.
+      {Object constructor. Sets up and initialises object.
       }
   end;
 
@@ -272,7 +262,7 @@ begin
 end;
 
 constructor THiliteAttrs.Create;
-  {Class constructor. Sets up and intialises object.
+  {Object constructor. Sets up and intialises object.
   }
 var
   Elem: THiliteElement; // loops thru all highlight elements
@@ -283,13 +273,13 @@ begin
   fFontSize := cDefFontSize;
   // Create list that holds an nul object for each highlight element
   // Low(THiliteElement) is at index 0 in list
-  fElemAttrs := TInterfaceList.Create;
+  fElemAttrs := TList<IHiliteElemAttrs>.Create;
   for Elem := Low(THiliteElement) to High(THiliteElement) do
     fElemAttrs.Add(THiliteElemAttrs.Create);
 end;
 
 destructor THiliteAttrs.Destroy;
-  {Class destructor. Tears down object.
+  {Object destructor. Tears down object.
   }
 begin
   fElemAttrs.Free;  // releases each object in list
@@ -305,8 +295,7 @@ function THiliteAttrs.GetElement(
 begin
   // Note: Low(THiliteElement) is at index 0 in list. Following code does *not*
   // assume that Ord(Low(THiliteElement)) = 0.
-  Result := fElemAttrs[Ord(Elem) - Ord(Low(THiliteElement))]
-    as IHiliteElemAttrs;
+  Result := fElemAttrs[Ord(Elem) - Ord(Low(THiliteElement))];
 end;
 
 function THiliteAttrs.GetFontName: string;
@@ -372,7 +361,7 @@ begin
 end;
 
 constructor THiliteElemAttrs.Create;
-  {Class constructor. Sets up and initialises object.
+  {Object constructor. Sets up and initialises object.
   }
 begin
   inherited;
@@ -450,7 +439,7 @@ begin
     Result.FontName := Font.Name;
     Result.FontSize := Font.Size;
   finally
-    FreeAndNil(Font);
+    Font.Free;
   end;
 end;
 
