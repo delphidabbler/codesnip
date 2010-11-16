@@ -87,31 +87,12 @@ type
   end;
 
   {
-  ISnippetIDListEnum:
-    Interface supported by enumerator for ISnippetIDList.
-  }
-  ISnippetIDListEnum = interface(IInterface)
-    ['{46B9CBA9-47BA-4A4C-8FAC-A5C56DA1EFE5}']
-    function GetCurrent: TSnippetID;
-      {Retrieves current snippet ID in the enumeration. Error if at end of
-      enumeration.
-        @return Current snippet ID.
-      }
-    function MoveNext: Boolean;
-      {Moves to next item in enumeration if available.
-        @return True if a next item is available, False if at end of enueration.
-      }
-    property Current: TSnippetID read GetCurrent;
-      {Current snippet ID in the enumeration. Error if at end of enumeration}
-  end;
-
-  {
   ISnippetIDList:
     Interface supported by objects that implement a list of TSnippetID records.
   }
   ISnippetIDList = interface(IInterface)
     ['{238CFDCC-E84E-4D29-9BC6-10FBCECBC4FA}']
-    function GetEnumerator: ISnippetIDListEnum;
+    function GetEnumerator: TEnumerator<TSnippetID>;
       {Gets a new enumerator for the list.
         @return Reference to initialised enumerator.
       }
@@ -150,34 +131,9 @@ type
   strict private
     var
       fList: TList<TSnippetID>; // Internal list of snippet ID records
-    type
-      {
-      TEnumerator:
-        Implements an enumerater for the snippet ID list.
-      }
-      TEnumerator = class(TInterfacedObject, ISnippetIDListEnum)
-      strict private
-        var
-          fIndex: Integer;        // Index of current item in enumeration
-          fList: ISnippetIDList;  // Reference to object being enumerated
-      public
-        constructor Create(const List: ISnippetIDList);
-          {Constructor. Sets up and initialises enumeration.
-            @param List [in] Reference to object to be enumerated.
-          }
-        function GetCurrent: TSnippetID;
-          {Gets current snippet ID in enumeration.
-            @return Current ID.
-          }
-        function MoveNext: Boolean;
-          {Moves to next item in enumeration.
-            @return True if there is a next item, false if enumeration
-              completed.
-          }
-      end;
   protected
     { ISnippetIDList methods }
-    function GetEnumerator: ISnippetIDListEnum;
+    function GetEnumerator: TEnumerator<TSnippetID>;
       {Gets a new enumerator for the list.
         @return Reference to initialised enumerator.
       }
@@ -343,12 +299,12 @@ begin
   inherited;
 end;
 
-function TSnippetIDList.GetEnumerator: ISnippetIDListEnum;
+function TSnippetIDList.GetEnumerator: TEnumerator<TSnippetID>;
   {Gets a new enumerator for the list.
     @return Reference to initialised enumerator.
   }
 begin
-  Result := TEnumerator.Create(Self);
+  Result := fList.GetEnumerator;
 end;
 
 function TSnippetIDList.GetItem(Idx: Integer): TSnippetID;
@@ -367,36 +323,6 @@ procedure TSnippetIDList.SetItem(Idx: Integer; const Value: TSnippetID);
   }
 begin
   fList[Idx] := Value;
-end;
-
-{ TSnippetIDList.TEnumerator }
-
-constructor TSnippetIDList.TEnumerator.Create(const List: ISnippetIDList);
-  {Constructor. Sets up and initialises enumeration.
-    @param List [in] Reference to object to be enumerated.
-  }
-begin
-  inherited Create;
-  fIndex := -1;
-  fList := List;
-end;
-
-function TSnippetIDList.TEnumerator.GetCurrent: TSnippetID;
-  {Gets current snippet ID in enumeration.
-    @return Current ID.
-  }
-begin
-  Result := fList[fIndex];
-end;
-
-function TSnippetIDList.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, false if enumeration completed.
-  }
-begin
-  Result := fIndex < Pred(fList.Count);
-  if Result then
-    Inc(fIndex);
 end;
 
 end.
