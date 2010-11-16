@@ -4,6 +4,20 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.8.2 of 16 November 2010
++ The position of the caret in the Snippets Editor's Extra Information control is now displayed. Implements feature request #3105288 (http://bit.ly/bRV86Z).
++ Code that displays caret positions was refactored and improved.
++ Display of errors in the Snippets Editor's text edit controls has been improved in most cases either by positioning the caret near the error or selecting the erroneous text. This implements feature request #3107042 (http://bit.ly/cKx5YQ).
++ Made significant changes to code that parses REML markup:
+  - Rationalised error reporting and added support for reporting the position of errors.
+  - Fixed unreported bug that produced wrong error message when empty tags are encountered.
+  - Fixed bug #3107982 (http://bit.ly/cp9Cff) that failed to report some unclosed tags as errors.
+  - Refactored and reorganised much of the code.
++ All encoding and decoding of URIs is now RFC 3986 compliant.
++ Refactored character detection and string encoding support code.
++ Renamed some units and classes.
++ Updated documentation.
+
 Release v3.8.1 of 08 November 2010
 + Fixed bug #3015589 (http://bit.ly/cdPedH) where some user syntax highlighter settings were being ignored in main display.
 + Changed Test Unit view dialog box to use user syntax highlighter settings.
