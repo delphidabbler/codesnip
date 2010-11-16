@@ -118,10 +118,10 @@ type
   {
   TCompilers:
     Implements a list of objects representing all supported compilers. The class
-    supprts cloning and assignment.
+    supports assignment.
   }
   TCompilers = class(TInterfacedObject,
-    ICompilers, IClonable, IAssignable
+    ICompilers, IAssignable
   )
   strict private
     var fCompilers: TList<ICompiler>; // List of compiler objects
@@ -131,12 +131,6 @@ type
       {Assigns properties of a given object to this object.
         @param Src [in] Object whose properties are to be copied.
         @except EBug raised if Src is incompatible with this object.
-      }
-    { IClonable method }
-    function Clone: IInterface;
-      {Creates a new instance of the object that is an extact copy and returns
-      it.
-        @return Cloned object.
       }
     { ICompilers methods }
     function GetCompiler(CompID: TCompilerID): ICompiler;
@@ -230,24 +224,6 @@ begin
   fCompilers.Clear;
   for SrcCompiler in SrcCompilers do
     fCompilers.Add((SrcCompiler as IClonable).Clone as ICompiler);
-end;
-
-function TCompilers.Clone: IInterface;
-  {Creates a new instance of the object that is an extact copy and returns it.
-    @return Cloned object.
-  }
-var
-  Obj: TCompilers;      // cloned object
-  Compiler: ICompiler;  // loops thru all compilers
-begin
-  // Create cloned object
-  Obj := TCompilers.Create;
-  // Clear any previous entries
-  Obj.fCompilers.Clear;
-  // Store a cloned copies of all compilers in list
-  for Compiler in (Self as ICompilers) do
-    Obj.fCompilers.Add((Compiler as IClonable).Clone as ICompiler);
-  Result := Obj;
 end;
 
 constructor TCompilers.Create;
