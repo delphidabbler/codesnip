@@ -1,5 +1,5 @@
 {
- * UNulUIHandler.pas
+ * Browser.UNulUIHandler.pas
  *
  * Defines a class that provides a "do-nothing" implementation of the
  * IDocHostUIHandler interface. All methods are "stubbed out" to return values
@@ -21,7 +21,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UNulUIHandler.pas
+ * The Original Code is Browser.UNulUIHandler.pas, formerly UNulUIHandler.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -36,7 +36,7 @@
 }
 
 
-unit UNulUIHandler;
+unit Browser.UNulUIHandler;
 
 
 interface

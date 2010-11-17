@@ -44,6 +44,7 @@
 			<DCCReference Include="Browser.UController.pas"/>
 			<DCCReference Include="Browser.UHighlighter.pas"/>
 			<DCCReference Include="Browser.UIOMgr.pas"/>
+			<DCCReference Include="Browser.UNulUIHandler.pas"/>
 			<DCCReference Include="Browser.UUIMgr.pas"/>
 			<DCCReference Include="FmAboutDlg.pas">
 				<Form>AboutDlg</Form>
@@ -400,7 +401,6 @@
 			<DCCReference Include="UNulDataReader.pas"/>
 			<DCCReference Include="UNulDropTarget.pas"/>
 			<DCCReference Include="UNulFormAligner.pas"/>
-			<DCCReference Include="UNulUIHandler.pas"/>
 			<DCCReference Include="UOleClientSite.pas"/>
 			<DCCReference Include="UOpenDialogHelper.pas"/>
 			<DCCReference Include="UOpenDialogEx.pas"/>
