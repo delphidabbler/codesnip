@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -105,7 +105,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UColours, UCSSUtils, UFontHelper, UQuery, UWBHighlighter, UView;
+  Browser.UHighlighter, UColours, UCSSUtils, UFontHelper, UQuery, UView;
 
 
 {$R *.dfm}

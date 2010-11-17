@@ -1,5 +1,5 @@
 {
- * UWBHighlighter.pas
+ * Browser.UHighlighter.pas
  *
  * Class that highlights text in web browser that match a search criteria.
  *
@@ -18,7 +18,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UWBHighlighter.pas
+ * The Original Code is Browser.UHighlighter.pas, formerly UWBHighlighter.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -33,7 +33,7 @@
 }
 
 
-unit UWBHighlighter;
+unit Browser.UHighlighter;
 
 
 interface
@@ -111,7 +111,7 @@ type
       }
   public
     constructor Create(const WebBrowser: TWebBrowser);
-      {Class constructor. Sets up the object.
+      {Object constructor. Sets up the object.
         @param WebBrowser [in] Browser control containing document to be
           highlighted.
         @except EBug raised if browser control does not contain a HTML document.
@@ -151,7 +151,7 @@ uses
 { TWBHighlighter }
 
 constructor TWBHighlighter.Create(const WebBrowser: TWebBrowser);
-  {Class constructor. Sets up the object.
+  {Object constructor. Sets up the object.
     @param WebBrowser [in] Browser control containing document to be
       highlighted.
     @except EBug raised if browser control does not contain a valid HTML
