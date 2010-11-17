@@ -45,7 +45,7 @@ uses
   // Delphi
   SHDocVw, ActiveX,
   // Project
-  Browser.UIOMgr, IntfUIHandlers, UBaseObjects, UOleClientSite, UWBUIMgr;
+  Browser.UIOMgr, Browser.UUIMgr, IntfUIHandlers, UBaseObjects, UOleClientSite;
 
 
 type

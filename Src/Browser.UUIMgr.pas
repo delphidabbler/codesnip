@@ -1,5 +1,5 @@
 {
- * UWBUIMgr.pas
+ * Browser.UUIMgr.pas
  *
  * Contains class that implements IDocHostUIHandler interface and allows
  * customisation of IE web browser control's user interface, message
@@ -20,7 +20,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UWBUIMgr.pas
+ * The Original Code is Browser.UUIMgr.pas, formerly UWBUIMgr.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -35,7 +35,7 @@
 }
 
 
-unit UWBUIMgr;
+unit Browser.UUIMgr;
 
 
 interface
@@ -269,7 +269,7 @@ type
   public
     constructor Create(const WebBrowser: TWebBrowser;
       const Controller: IInterface = nil);
-      {Class constructor. Sets up the object (optionally as an aggregated
+      {Object constructor. Sets up the object (optionally as an aggregated
       object).
         @param WebBrowser [in] Reference to managed browser control. Must not be
           nil.
@@ -465,7 +465,7 @@ end;
 
 constructor TWBUIMgr.Create(const WebBrowser: TWebBrowser;
   const Controller: IInterface = nil);
-  {Class constructor. Sets up the object (optionally as an aggregated object).
+  {Object constructor. Sets up the object (optionally as an aggregated object).
     @param WebBrowser [in] Reference to managed browser control. Must not be
       nil.
     @param Controller [in] IInterface of containing object if this object is to
