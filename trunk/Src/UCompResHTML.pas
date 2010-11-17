@@ -166,7 +166,8 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UConsts, UHTMLUtils, UHTMLDetailUtils, UIStringList, UJavaScriptUtils;
+  UConsts, UHTMLUtils, UHTMLDetailUtils, UIStringList, UJavaScriptUtils,
+  UResourceUtils;
 
 
 resourcestring

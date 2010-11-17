@@ -121,33 +121,6 @@ type
       }
   end;
 
-function MakeResourceURL(const ModuleName: string; const ResName: PChar;
-  const ResType: PChar = nil): string; overload;
-  {Returns a res:// protocol URL that references a resource in a module.
-    @param ModuleName [in] Name of module containing the resource.
-    @param ResName [in] Name of resource.
-    @param ResType [in] Type of resource (omitted from URL if nil or not
-      specified).
-    @return Required res:// protocol URL.
-  }
-
-function MakeResourceURL(const Module: HMODULE; const ResName: PChar;
-  const ResType: PChar = nil): string; overload;
-  {Returns a res:// protocol URL that references a resource a module.
-    @param Module [in] Handle of module containing resource.
-    @param ResName [in] Name of resource.
-    @param ResType [in] Type of resource (omitted from URL if nil or not
-      specified).
-    @return Required res:// protocol URL.
-  }
-
-function MakeResourceURL(const ResName: string): string; overload;
-  {Returns a res:// protocol URL that references a resource in a program's own
-  RT_HTML resources.
-    @param ResName [in] Name of resource.
-    @return Required res:// protocol URL.
-  }
-
 function MakeSafeHTMLText(TheText: string): string;
   {Encodes a string so that any HTML-incompatible characters are replaced with
   suitable character entities.
@@ -243,71 +216,6 @@ function IsValidHTMLCode(const Content: string): Boolean;
 begin
   Result := AnsiContainsText(Content, '<html') and
     AnsiContainsText(Content, '</html>');
-end;
-
-function MakeResourceURL(const ModuleName: string; const ResName: PChar;
-  const ResType: PChar = nil): string; overload;
-  {Returns a res:// protocol URL that references a resource in a module.
-    @param ModuleName [in] Name of module containing the resource.
-    @param ResName [in] Name of resource.
-    @param ResType [in] Type of resource (omitted from URL if nil or not
-      specified).
-    @return Required res:// protocol URL.
-  }
-
-  // ---------------------------------------------------------------------------
-  function ResNameOrTypeToString(R: PChar): string;
-    {Returns string representation of a resource name or type. If name or type
-    is already a string it is returned unchanged. If it is a numeric value it's
-    value is returned as a string, preceeded by '#'.
-      @param R [in] Resource name or type.
-      @return String representation of the resource name or type.
-    }
-  begin
-    if HiWord(LongWord(R)) = 0 then
-      // high word = 0 => numeric resource id
-      // numeric value is stored in low word
-      Result := Format('#%d', [LoWord(LongWord(R))])
-    else
-      // high word <> 0 => string value
-      // PChar is implicitly converted to string
-      Result := R;
-  end;
-  // ---------------------------------------------------------------------------
-
-begin
-  Assert(ModuleName <> '', 'MakeResourceURL: ModuleName is ''''');
-  Assert(Assigned(ResName), 'MakeResourceURL: ResName is nil');
-  // Resource starts with module name
-  Result := 'res://' + URIEncode(ModuleName);
-  // Resource type follows if specified
-  if Assigned(ResType) then
-    Result := Result + '/' + URIEncode(ResNameOrTypeToString(ResType));
-  // Resource name is last in URL
-  Result := Result + '/' + URIEncode(ResNameOrTypeToString(ResName));
-end;
-
-function MakeResourceURL(const Module: HMODULE; const ResName: PChar;
-  const ResType: PChar = nil): string; overload;
-  {Returns a res:// protocol URL that references a resource a module.
-    @param Module [in] Handle of module containing resource.
-    @param ResName [in] Name of resource.
-    @param ResType [in] Type of resource (omitted from URL if nil or not
-      specified).
-    @return Required res:// protocol URL.
-  }
-begin
-  Result := MakeResourceURL(GetModuleName(Module), ResName, ResType);
-end;
-
-function MakeResourceURL(const ResName: string): string; overload;
-  {Returns a res:// protocol URL that references a resource in a program's own
-  RT_HTML resources.
-    @param ResName [in] Name of resource.
-    @return Required res:// protocol URL.
-  }
-begin
-  Result := MakeResourceURL(HInstance, PChar(ResName));
 end;
 
 function MakeSafeHTMLText(TheText: string): string;
