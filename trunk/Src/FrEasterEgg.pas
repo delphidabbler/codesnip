@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -62,7 +62,7 @@ type
       }
   public
     constructor Create(AOwner: TComponent); override;
-      {Class constructor. Sets up frame and initialises web browser.
+      {Object constructor. Sets up frame and initialises web browser.
         @param AOwner [in] Component that owns the frame (must be a form).
       }
     procedure Initialise;
@@ -78,7 +78,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UColours, UCSSUtils, UFontHelper, UWBUIMgr;
+  Browser.UUIMgr, UColours, UCSSUtils, UFontHelper;
 
 {$R *.dfm}
 
@@ -141,7 +141,7 @@ begin
 end;
 
 constructor TEasterEggFrame.Create(AOwner: TComponent);
-  {Class constructor. Sets up frame and initialises web browser.
+  {Object constructor. Sets up frame and initialises web browser.
     @param AOwner [in] Component that owns the frame (must be a form).
   }
 begin

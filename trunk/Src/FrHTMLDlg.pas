@@ -67,7 +67,7 @@ type
       }
   public
     constructor Create(AOwner: TComponent); override;
-      {Class constructor. Sets up frame and initialises web browser.
+      {Object constructor. Sets up frame and initialises web browser.
         @param AOwner [in] Component that owns the frame (must be a form).
       }
     function DocHeight: Integer;
@@ -84,7 +84,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UCSSUtils, UNulDropTarget, UWBUIMgr;
+  Browser.UUIMgr, UCSSUtils, UNulDropTarget;
 
 
 {$R *.dfm}
@@ -136,7 +136,7 @@ begin
 end;
 
 constructor THTMLDlgFrame.Create(AOwner: TComponent);
-  {Class constructor. Sets up frame and initialises web browser.
+  {Object constructor. Sets up frame and initialises web browser.
     @param AOwner [in] Component that owns the frame (must be a form).
   }
 begin

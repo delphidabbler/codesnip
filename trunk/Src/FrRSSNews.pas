@@ -83,7 +83,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  UColours, UCSSUtils, UFontHelper, UWBUIMgr, UNulDropTarget;
+  Browser.UUIMgr, UColours, UCSSUtils, UFontHelper, UNulDropTarget;
 
 {$R *.dfm}
 

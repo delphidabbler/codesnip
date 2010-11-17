@@ -346,7 +346,7 @@ uses
   UWBHelper in 'UWBHelper.pas',
   UWBHighlighter in 'UWBHighlighter.pas',
   UWBPopupMenus in 'UWBPopupMenus.pas',
-  UWBUIMgr in 'UWBUIMgr.pas',
+  Browser.UUIMgr in 'Browser.UUIMgr.pas',
   UWindowSettings in 'UWindowSettings.pas',
   UXMLDataIO in 'UXMLDataIO.pas',
   UXMLDocConsts in 'UXMLDocConsts.pas',
