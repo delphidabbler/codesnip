@@ -40,6 +40,7 @@
 			<DCCReference Include="3rdParty\UEncrypt.pas"/>
 			<DCCReference Include="AutoGen\IntfExternalObj.pas"/>
 			<DCCReference Include="Browser.UController.pas"/>
+			<DCCReference Include="Browser.UIOMgr.pas"/>
 			<DCCReference Include="FmAboutDlg.pas">
 				<Form>AboutDlg</Form>
 			</DCCReference>
@@ -485,7 +486,6 @@
 			<DCCReference Include="UWBExternal.pas"/>
 			<DCCReference Include="UWBHelper.pas"/>
 			<DCCReference Include="UWBHighlighter.pas"/>
-			<DCCReference Include="UWBIOMgr.pas"/>
 			<DCCReference Include="UWBPopupMenus.pas"/>
 			<DCCReference Include="UWBUIMgr.pas"/>
 			<DCCReference Include="UWindowSettings.pas"/>
