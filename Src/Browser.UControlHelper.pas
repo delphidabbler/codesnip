@@ -1,5 +1,5 @@
 {
- * UWBHelper.pas
+ * Browser.UControlHelper.pas
  *
  * Defines a static class that provides helper methods for manipulating and
  * interogating web browser controls.
@@ -19,7 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UWBHelper.pas
+ * The Original Code is Browser.UControlHelper.pas, formerly UWBHelper.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +34,7 @@
 }
 
 
-unit UWBHelper;
+unit Browser.UControlHelper;
 
 
 interface
@@ -50,11 +50,11 @@ uses
 type
 
   {
-  TWBHelper:
+  TWBControlHelper:
     Static class that provides helper methods for manipulating and interogating
     web browser controls.
   }
-  TWBHelper = class(TNoConstructObject)
+  TWBControlHelper = class(TNoConstructObject)
   strict private
     class procedure WaitForDocToLoad(const WB: TWebBrowser);
       {Pauses until a browser control's document has fully loaded.
@@ -98,9 +98,9 @@ uses
   UExceptions, UHTMLDocHelper, UUtils;
 
 
-{ TWBHelper }
+{ TWBControlHelper }
 
-class procedure TWBHelper.CheckValidDoc(const WB: TWebBrowser);
+class procedure TWBControlHelper.CheckValidDoc(const WB: TWebBrowser);
   {Checks that the current document in a web browser control is a valid HTML
   document.
     @param WB [in] Browser control whose document is to be checked.
@@ -116,7 +116,7 @@ begin
     );
 end;
 
-class procedure TWBHelper.ExecCommand(const WB: TWebBrowser;
+class procedure TWBControlHelper.ExecCommand(const WB: TWebBrowser;
   const CmdId: OLECMDID);
   {Executes an OLE command on a browser control.
     @param WB [in] Browser control on which command is to be tested.
@@ -127,7 +127,7 @@ begin
   WB.ExecWB(CmdId, OLECMDEXECOPT_DONTPROMPTUSER);
 end;
 
-class function TWBHelper.IsCommandEnabled(const WB: TWebBrowser;
+class function TWBControlHelper.IsCommandEnabled(const WB: TWebBrowser;
   const CmdId: OLECMDID): Boolean;
   {Checks if a OLE command is enabled on a browser control.
     @param WB [in] Browser control on which command is to be tested.
@@ -139,7 +139,7 @@ begin
   Result := (WB.QueryStatusWB(CmdId) and OLECMDF_ENABLED) <> 0;
 end;
 
-class procedure TWBHelper.WaitForDocToLoad(const WB: TWebBrowser);
+class procedure TWBControlHelper.WaitForDocToLoad(const WB: TWebBrowser);
   {Pauses until a browser control's document has fully loaded.
     @param WB [in] Browser control whose document we are waiting for.
   }
@@ -149,7 +149,7 @@ begin
     UUtils.Pause(5);
 end;
 
-class procedure TWBHelper.WaitForValidDocToLoad(const WB: TWebBrowser);
+class procedure TWBControlHelper.WaitForValidDocToLoad(const WB: TWebBrowser);
   {Pauses until a browser control's document has fully loaded then checks that
   the document is a valid HTML document.
     @param WB [in] Browser control whose document we are waiting for.

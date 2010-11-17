@@ -145,7 +145,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  IntfCommon, UColours, UCSSUtils, UHTMLDocHelper, UHTMLUtils, UWBHelper;
+  Browser.UControlHelper, IntfCommon, UColours, UCSSUtils, UHTMLDocHelper,
+  UHTMLUtils;
 
 
 { TWBHighlighter }
@@ -167,7 +168,7 @@ begin
   fHighlightTextColor := clTextSearchText;
   UpdateHighlightStyle;
   // Ensure browser has loaded document before continuing
-  TWBHelper.WaitForValidDocToLoad(fWebBrowser);                // can raise EBug
+  TWBControlHelper.WaitForValidDocToLoad(fWebBrowser);         // can raise EBug
 end;
 
 function TWBHighlighter.HighlightSearchResults(

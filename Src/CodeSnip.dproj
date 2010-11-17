@@ -39,6 +39,7 @@
 			<DCCReference Include="3rdParty\PJWdwState.pas"/>
 			<DCCReference Include="3rdParty\UEncrypt.pas"/>
 			<DCCReference Include="AutoGen\IntfExternalObj.pas"/>
+			<DCCReference Include="Browser.UControlHelper.pas"/>
 			<DCCReference Include="Browser.UController.pas"/>
 			<DCCReference Include="Browser.UHighlighter.pas"/>
 			<DCCReference Include="Browser.UIOMgr.pas"/>
@@ -486,7 +487,6 @@
 			<DCCReference Include="UWarnings.pas"/>
 			<DCCReference Include="UWBCommandBars.pas"/>
 			<DCCReference Include="UWBExternal.pas"/>
-			<DCCReference Include="UWBHelper.pas"/>
 			<DCCReference Include="UWBPopupMenus.pas"/>
 			<DCCReference Include="UWindowSettings.pas"/>
 			<DCCReference Include="UXMLDataIO.pas"/>
