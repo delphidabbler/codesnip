@@ -176,7 +176,7 @@ uses
   // Delphi
   SysUtils, ActiveX,
   // Project
-  UHTMLDocHelper, UHTMLUtils, UWBHelper;
+  Browser.UControlHelper, UHTMLDocHelper, UHTMLUtils;
 
 
 { TWBIOMgr }
@@ -373,7 +373,7 @@ procedure TWBIOMgr.WaitForDocToLoad;
 begin
   // NOTE: do not call this method in a FormCreate event handler since the
   // browser will never reach this state - use a FormShow event handler instead
-  TWBHelper.WaitForValidDocToLoad(fWB);                        // can raise EBug
+  TWBControlHelper.WaitForValidDocToLoad(fWB);                 // can raise EBug
   // connect event sinks to browser document and window
   fDocEvents.Connect(fWB.Document);
   fWdwEvents.Connect(THTMLDocHelper.ParentWindow(fWB.Document));
