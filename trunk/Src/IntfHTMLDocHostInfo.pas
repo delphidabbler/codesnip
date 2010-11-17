@@ -1,9 +1,9 @@
 {
  * IntfHTMLDocHostInfo.pas
  *
- * Interfacecs that provide information about an HTML contained in a document
- * host. Used by HTML generators and dynamic HTML manipulators to get reference
- * to HTML document and to get information about what should be displayed.
+ * Interface that provide information about an HTML document contained in a
+ * document host. Used by HTML generators and dynamic HTML manipulators to get
+ * a reference to an HTML document.
  *
  * $Rev$
  * $Date$
@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
