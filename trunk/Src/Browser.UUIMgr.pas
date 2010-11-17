@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes, Windows, ActiveX, SHDocVw, Menus,
   // Project
-  IntfUIHandlers, UNulUIHandler;
+  Browser.IntfDocHostUI, UNulUIHandler;
 
 
 type
