@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  IntfCompilers, UBaseObjects, USnippets;
+  Compilers.UGlobals, UBaseObjects, USnippets;
 
 
 type
@@ -82,7 +82,7 @@ uses
   // Delphi
   Windows,
   // Project
-  FmWaitDlg, UCompilerBase, UConsts, UExceptions, UTestCompile,
+  Compilers.UCompilerBase, FmWaitDlg, UConsts, UExceptions, UTestCompile,
   UWaitForActionUI;
 
 

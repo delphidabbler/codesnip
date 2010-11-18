@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  IntfCompilers, UBaseObjects;
+  Compilers.UGlobals, UBaseObjects;
 
 
 type

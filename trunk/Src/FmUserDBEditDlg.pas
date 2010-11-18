@@ -1,8 +1,8 @@
 {
  * FmUserDBEditDlg.pas
  *
- * Implements a dialog box that enables the user to create or edit a user-
- * defined routine.
+ * Implements a dialog box that enables the user to create or edit a user
+ * defined snippet.
  *
  * $Rev$
  * $Date$
@@ -45,7 +45,7 @@ uses
   SysUtils, Classes, ActnList, Buttons, StdCtrls, Forms, Controls, CheckLst,
   ComCtrls, ExtCtrls, StdActns, Menus, ImgList,
   // Project
-  FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, IntfCompilers,
+  Compilers.UGlobals, FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
   UActiveText, UBaseObjects, UCategoryListAdapter, UChkListStateMgr,
   UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, ULEDImageList,
   UMemoCaretPosDisplayMgr, UMemoHelper, USnipKindListAdapter, USnippets,
@@ -56,7 +56,7 @@ type
 
   {
   TUserDBEditDlg:
-    Dialog box class that enables the user to create or edit a user-defined
+    Dialog box class that enables the user to create or edit a user defined
     snippet.
   }
   TUserDBEditDlg = class(TGenericOKDlg, INoPublicConstruct)

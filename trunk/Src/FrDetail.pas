@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,8 +45,8 @@ uses
   Forms, ComCtrls, ExtCtrls, Controls, StdCtrls, Classes, ActiveX, ActnList,
   ImgList,
   // Project
-  FrTitled, FrCompCheck, FrBrowserBase, FrDetailView, FrInfo, IntfCompilers,
-  IntfFrameMgrs, IntfNotifier, UCommandBars, UView;
+  Compilers.UGlobals, FrTitled, FrCompCheck, FrBrowserBase, FrDetailView,
+  FrInfo, IntfFrameMgrs, IntfNotifier, UCommandBars, UView;
 
 
 type

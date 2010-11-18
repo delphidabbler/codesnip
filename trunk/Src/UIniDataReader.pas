@@ -269,7 +269,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  IntfCompilers, UActiveText, UComparers, UConsts, UIniDataLoader,
+  Compilers.UGlobals, UActiveText, UComparers, UConsts, UIniDataLoader,
   URoutineExtraHelper, UUtils;
 
 

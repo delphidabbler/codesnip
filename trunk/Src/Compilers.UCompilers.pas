@@ -1,5 +1,5 @@
 {
- * UCompilers.pas
+ * Compilers.UCompilers.pas
  *
  * Provides a class that maintains a list of all supported compilers and creates
  * a global singleton instance of the list. Also provides a class that can
@@ -21,7 +21,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UCompilers.pas
+ * The Original Code is Compilers.UCompilers.pas, formerly UCompilers.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -36,7 +36,7 @@
 }
 
 
-unit UCompilers;
+unit Compilers.UCompilers;
 
 
 interface
@@ -44,7 +44,7 @@ interface
 
 uses
   // Project
-  IntfCompilers, UBaseObjects;
+  Compilers.UGlobals, UBaseObjects;
 
 
 type
@@ -95,8 +95,8 @@ uses
   // Delphi
   Generics.Collections, SysUtils,
   // Project
-  IntfCommon, UBDSCompiler, UExceptions, UDelphiCompiler, UFreePascalCompiler,
-  USettings;
+  Compilers.UBDS, Compilers.UDelphi, Compilers.UFreePascal, IntfCommon,
+  UExceptions, USettings;
 
 
 type
