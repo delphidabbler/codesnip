@@ -46,6 +46,14 @@
 			<DCCReference Include="Browser.UIOMgr.pas"/>
 			<DCCReference Include="Browser.UNulUIHandler.pas"/>
 			<DCCReference Include="Browser.UUIMgr.pas"/>
+			<DCCReference Include="Compilers.UBDS.pas"/>
+			<DCCReference Include="Compilers.UBorland.pas"/>
+			<DCCReference Include="Compilers.UCompilerBase.pas"/>
+			<DCCReference Include="Compilers.UCompilers.pas"/>
+			<DCCReference Include="Compilers.UDelphi.pas"/>
+			<DCCReference Include="Compilers.UFreePascal.pas"/>
+			<DCCReference Include="Compilers.UGlobals.pas"/>
+			<DCCReference Include="Compilers.URunner.pas"/>
 			<DCCReference Include="FmAboutDlg.pas">
 				<Form>AboutDlg</Form>
 			</DCCReference>
@@ -281,7 +289,6 @@
 			</DCCReference>
 			<DCCReference Include="IntfAligner.pas"/>
 			<DCCReference Include="IntfCommon.pas"/>
-			<DCCReference Include="IntfCompilers.pas"/>
 			<DCCReference Include="IntfFrameMgrs.pas"/>
 			<DCCReference Include="IntfHiliter.pas"/>
 			<DCCReference Include="IntfHTMLDocHostInfo.pas"/>
@@ -294,8 +301,6 @@
 			<DCCReference Include="UAnchors.pas"/>
 			<DCCReference Include="UAppInfo.pas"/>
 			<DCCReference Include="UBaseObjects.pas"/>
-			<DCCReference Include="UBDSCompiler.pas"/>
-			<DCCReference Include="UBorlandCompiler.pas"/>
 			<DCCReference Include="UBrowseProtocol.pas"/>
 			<DCCReference Include="UCategoryAction.pas"/>
 			<DCCReference Include="UCategoryListAdapter.pas"/>
@@ -311,10 +316,7 @@
 			<DCCReference Include="UCommonDlg.pas"/>
 			<DCCReference Include="UComparers.pas"/>
 			<DCCReference Include="UCompileMgr.pas"/>
-			<DCCReference Include="UCompilerBase.pas"/>
 			<DCCReference Include="UCompileResultsLBMgr.pas"/>
-			<DCCReference Include="UCompilerRunner.pas"/>
-			<DCCReference Include="UCompilers.pas"/>
 			<DCCReference Include="UCompLogAction.pas"/>
 			<DCCReference Include="UCompResHTML.pas"/>
 			<DCCReference Include="UConsoleApp.pas"/>
@@ -330,7 +332,6 @@
 			<DCCReference Include="UDataBackupMgr.pas"/>
 			<DCCReference Include="UDatabaseLoader.pas"/>
 			<DCCReference Include="UDataStreamIO.pas"/>
-			<DCCReference Include="UDelphiCompiler.pas"/>
 			<DCCReference Include="UDetailPageHTML.pas"/>
 			<DCCReference Include="UDetailPageLoader.pas"/>
 			<DCCReference Include="UDHTML.pas"/>
@@ -351,7 +352,6 @@
 			<DCCReference Include="UFolderBackup.pas"/>
 			<DCCReference Include="UFontHelper.pas"/>
 			<DCCReference Include="UFormAligner.pas"/>
-			<DCCReference Include="UFreePascalCompiler.pas"/>
 			<DCCReference Include="UGC.pas"/>
 			<DCCReference Include="UGIFImageList.pas"/>
 			<DCCReference Include="UGraphicUtils.pas"/>

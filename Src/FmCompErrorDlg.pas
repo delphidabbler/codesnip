@@ -44,7 +44,7 @@ uses
   Forms, StdCtrls, Controls, ExtCtrls, Classes, Tabs, ActnList, ImgList,
   Generics.Collections,
   // Project
-  FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, IntfCompilers,
+  Compilers.UGlobals, FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg,
   UBaseObjects, USnippets;
 
 

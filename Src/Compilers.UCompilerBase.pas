@@ -1,5 +1,5 @@
 {
- * UCompilerBase.pas
+ * Compilers.UCompilerBase.pas
  *
  * Abstract base class for classes that control and provide information about
  * compilers. Provides common functionality and specialised exception.
@@ -19,12 +19,12 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UCompilerBase.pas
+ * The Original Code is Compilers.UCompilerBase.pas, formerly UCompilerBase.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -34,7 +34,7 @@
 }
 
 
-unit UCompilerBase;
+unit Compilers.UCompilerBase;
 
 
 interface
@@ -44,7 +44,7 @@ uses
   // Delphi
   SysUtils, Classes, Graphics,
   // Project
-  IntfCompilers, UCompilerRunner, UExceptions;
+  Compilers.UGlobals, Compilers.URunner, UExceptions;
 
 
 type

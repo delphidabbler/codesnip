@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  IntfCompilers;
+  Compilers.UGlobals;
 
 
 const

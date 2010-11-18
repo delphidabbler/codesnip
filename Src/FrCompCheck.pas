@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,8 +44,8 @@ uses
   // Delphi
   OleCtrls, SHDocVw, Classes, Controls, ExtCtrls,
   // Project
-  FrDetailView, IntfFrameMgrs, IntfCompilers, IntfHTMLDocHostInfo, UCSSBuilder,
-  UDetailPageLoader;
+  Compilers.UGlobals, FrDetailView,IntfFrameMgrs, IntfHTMLDocHostInfo,
+  UCSSBuilder, UDetailPageLoader;
 
 
 type

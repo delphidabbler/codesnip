@@ -1,5 +1,5 @@
 {
- * UBorlandCompiler.pas
+ * Compilers.UBorland.pas
  *
  * Abstract base class for classes that control and provide information about
  * Borland compilers.
@@ -19,12 +19,12 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UBorlandCompiler.pas
+ * The Original Code is Compilers.UBorland.pas, formerly UBorlandCompiler.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -34,7 +34,7 @@
 }
 
 
-unit UBorlandCompiler;
+unit Compilers.UBorland;
 
 
 interface
@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  IntfCompilers, UCompilerBase;
+  Compilers.UCompilerBase, Compilers.UGlobals;
 
 
 type

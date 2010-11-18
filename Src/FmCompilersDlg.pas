@@ -44,7 +44,7 @@ uses
   // Delphi
   Grids, ValEdit, StdCtrls, ComCtrls, Controls, ExtCtrls, Classes, Windows,
   // Project
-  FmGenericOKDlg, IntfCompilers, UBaseObjects;
+  Compilers.UGlobals, FmGenericOKDlg, UBaseObjects;
 
 
 type
@@ -157,7 +157,7 @@ uses
   // Delphi
   SysUtils, Graphics, GraphUtil, Dialogs,
   // Project
-  IntfCommon, UCompilers, UCtrlArranger, UExeFileType, UGraphicUtils,
+  Compilers.UCompilers, IntfCommon, UCtrlArranger, UExeFileType, UGraphicUtils,
   UMessageBox, UOpenDialogEx, UOpenDialogHelper, UStructs, UThemesEx, UUtils;
 
 

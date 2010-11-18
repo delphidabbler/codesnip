@@ -1,5 +1,5 @@
 {
- * IntfCompilers.pas
+ * Compilers.UGlobals.pas
  *
  * Declares various types that describe the compiler and compilation results and
  * defines interfaces to compiler objects.
@@ -19,7 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is IntfCompilers.pas
+ * The Original Code is Compilers.UGlobals.pas, formerly IntfCompilers.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +34,7 @@
 }
 
 
-unit IntfCompilers;
+unit Compilers.UGlobals;
 
 
 interface
