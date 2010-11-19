@@ -44,7 +44,7 @@ uses
   // Delphi
   StdCtrls, Controls, Forms, Classes,
   // Project
-  FrPrefsBase, FrRTFShowCase, IntfHiliter, UMeasurement, UPreferences;
+  FrPrefsBase, FrRTFShowCase, Hiliter.UGlobals, UMeasurement, UPreferences;
 
 
 type
@@ -115,8 +115,8 @@ uses
   // Delphi
   SysUtils, StrUtils, Windows, Graphics, Math, ComCtrls,
   // Project
-  FmPreferencesDlg, IntfCommon, UConsts, UEncodings, UHiliteAttrs, UKeysHelper,
-  UPrintInfo, URTFBuilder, URTFUtils, USyntaxHiliters, UUtils;
+  FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UHiliters, IntfCommon, UConsts,
+  UEncodings, UKeysHelper, UPrintInfo, URTFBuilder, URTFUtils, UUtils;
 
 
 {$R *.dfm}

@@ -1,7 +1,7 @@
 {
- * UFileHiliter.pas
+ * Hiliter.UFileHiliter.pas
  *
- * Implements class that generates hilighted and formatted source code for a
+ * Implements a class that generates hilighted and formatted source code for a
  * specified file type.
  *
  * $Rev$
@@ -19,12 +19,12 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UFileHiliter.pas
+ * The Original Code is Hiliter.UFileHiliter.pas, formerly UFileHiliter.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -34,7 +34,7 @@
 }
 
 
-unit UFileHiliter;
+unit Hiliter.UFileHiliter;
 
 
 interface
@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  IntfHiliter, USourceFileInfo;
+  Hiliter.UGlobals, USourceFileInfo;
 
 
 type
@@ -99,7 +99,7 @@ implementation
 
 uses
   // Project
-  UHiliteAttrs, USyntaxHiliters;
+  Hiliter.UAttrs, Hiliter.UHiliters;
 
 
 { TFileHiliter }
