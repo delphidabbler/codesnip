@@ -92,7 +92,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UHiliteAttrs, URTFRoutineDoc, UTextRoutineDoc;
+  Hiliter.UAttrs, URTFRoutineDoc, UTextRoutineDoc;
 
 
 { TCopyInfoMgr }

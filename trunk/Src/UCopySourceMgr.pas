@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -130,7 +130,8 @@ implementation
 
 uses
   // Project
-  IntfHiliter, UHiliteAttrs, UPreferences, USnippetSourceGen, USyntaxHiliters;
+  Hiliter.UAttrs, Hiliter.UGlobals, Hiliter.UHiliters, UPreferences,
+  USnippetSourceGen;
 
 
 { TCopySourceCodeBase }

@@ -287,10 +287,17 @@
 				<Form>TitledFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
+			<DCCReference Include="Hiliter.UAttrs.pas"/>
+			<DCCReference Include="Hiliter.UCSS.pas"/>
+			<DCCReference Include="Hiliter.UFileHiliter.pas"/>
+			<DCCReference Include="Hiliter.UGlobals.pas"/>
+			<DCCReference Include="Hiliter.UHiliters.pas"/>
+			<DCCReference Include="Hiliter.UPasLexer.pas"/>
+			<DCCReference Include="Hiliter.UPasParser.pas"/>
+			<DCCReference Include="Hiliter.UPersist.pas"/>
 			<DCCReference Include="IntfAligner.pas"/>
 			<DCCReference Include="IntfCommon.pas"/>
 			<DCCReference Include="IntfFrameMgrs.pas"/>
-			<DCCReference Include="IntfHiliter.pas"/>
 			<DCCReference Include="IntfHTMLDocHostInfo.pas"/>
 			<DCCReference Include="IntfNotifier.pas"/>
 			<DCCReference Include="IntfPreview.pas"/>
@@ -346,7 +353,6 @@
 			<DCCReference Include="UEncryptor.pas"/>
 			<DCCReference Include="UExceptions.pas"/>
 			<DCCReference Include="UExeFileType.pas"/>
-			<DCCReference Include="UFileHiliter.pas"/>
 			<DCCReference Include="UFileProtocol.pas"/>
 			<DCCReference Include="UFileUpdater.pas"/>
 			<DCCReference Include="UFolderBackup.pas"/>
@@ -361,11 +367,6 @@
 			<DCCReference Include="UHexUtils.pas"/>
 			<DCCReference Include="UHiddenRichEdit.pas"/>
 			<DCCReference Include="UHiddenWindow.pas"/>
-			<DCCReference Include="UHiliteAttrs.pas"/>
-			<DCCReference Include="UHilitePasLexer.pas"/>
-			<DCCReference Include="UHilitePasParser.pas"/>
-			<DCCReference Include="UHiliterCSS.pas"/>
-			<DCCReference Include="UHiliterPersist.pas"/>
 			<DCCReference Include="UHistory.pas"/>
 			<DCCReference Include="UHistoryMenus.pas"/>
 			<DCCReference Include="UHTMLBuilder.pas"/>
@@ -455,7 +456,6 @@
 			<DCCReference Include="UStatusBarMgr.pas"/>
 			<DCCReference Include="UStrStreamWriter.pas"/>
 			<DCCReference Include="UStructs.pas"/>
-			<DCCReference Include="USyntaxHiliters.pas"/>
 			<DCCReference Include="USystemID.pas"/>
 			<DCCReference Include="USystemInfo.pas"/>
 			<DCCReference Include="UTaggedTextLexer.pas"/>

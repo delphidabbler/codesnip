@@ -141,8 +141,8 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  IntfHiliter, UActiveTextHTML, UHiliteAttrs, UHTMLDetailUtils, UHTMLUtils,
-  USnippetKindInfo, USyntaxHiliters, UUtils;
+  Hiliter.UAttrs, Hiliter.UGlobals, Hiliter.UHiliters, UActiveTextHTML,
+  UHTMLDetailUtils, UHTMLUtils, USnippetKindInfo, UUtils;
 
 
 { TRoutineHTML }

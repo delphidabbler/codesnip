@@ -1,9 +1,9 @@
 {
- * UHiliterCSS.pas
+ * Hiliter.UCSS.pas
  *
- * Defines class that generates CSS code to enable syntax highlighted source to
- * be displayed in HTML. CSS code uses a highlighter's attributes. Access to CSS
- * class names is also provided.
+ * Defines a class that generates CSS code to enable syntax highlighted source
+ * to be displayed in HTML. CSS code uses a highlighter's attributes. Access to
+ * CSS class names is also provided.
  *
  * $Rev$
  * $Date$
@@ -20,7 +20,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UHiliterCSS.pas
+ * The Original Code is Hiliter.UCSS.pas, formerly UHiliterCSS.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -35,7 +35,7 @@
 }
 
 
-unit UHiliterCSS;
+unit Hiliter.UCSS;
 
 
 interface
@@ -43,7 +43,7 @@ interface
 
 uses
   // Project
-  IntfHiliter, UCSSBuilder;
+  Hiliter.UGlobals, UCSSBuilder;
 
 
 type

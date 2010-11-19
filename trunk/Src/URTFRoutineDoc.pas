@@ -44,7 +44,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  IntfHiliter, UActiveText, UIStringList, URoutineDoc, URTFBuilder;
+  Hiliter.UGlobals, UActiveText, UIStringList, URoutineDoc, URTFBuilder;
 
 
 type
@@ -141,7 +141,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UColours, UConsts, UEncodings, URTFMerger, USyntaxHiliters, UUtils;
+  Hiliter.UHiliters, UColours, UConsts, UEncodings, URTFMerger, UUtils;
 
 
 { TRTFRoutineDoc }
