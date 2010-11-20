@@ -1,7 +1,7 @@
-inherited UserDBEditDlg: TUserDBEditDlg
+inherited SnippetsEditorDlg: TSnippetsEditorDlg
   Left = 1097
   Top = 525
-  Caption = 'UserDBEditDlg'
+  Caption = 'SnippetsEditorDlg'
   ClientHeight = 578
   ClientWidth = 738
   Position = poDesigned
