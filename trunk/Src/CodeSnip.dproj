@@ -147,6 +147,9 @@
 			<DCCReference Include="FmSelectionSearchDlg.pas">
 				<Form>SelectionSearchDlg</Form>
 			</DCCReference>
+			<DCCReference Include="FmSnippetsEditorDlg.pas">
+				<Form>SnippetsEditorDlg</Form>
+			</DCCReference>
 			<DCCReference Include="FmSplash.pas">
 				<Form>SplashForm</Form>
 			</DCCReference>
@@ -158,9 +161,6 @@
 			</DCCReference>
 			<DCCReference Include="FmUserBugReportDlg.pas">
 				<Form>UserBugReportDlg</Form>
-			</DCCReference>
-			<DCCReference Include="FmUserDBEditDlg.pas">
-				<Form>UserDBEditDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FmViewExtraDlg.pas">
 				<Form>ViewExtraDlg</Form>
