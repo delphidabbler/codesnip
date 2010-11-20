@@ -58,9 +58,9 @@ type
   }
   TColorDialogEx = class(TColorDialog)
   strict private
-    fTitle: TCaption;           // Value of Title property
-    fHelpKeyword: string;       // Value of HelpKeyword property
-    fHook: TColorDlgHook;       // Object that wraps dialog and hook function
+    var fTitle: TCaption;     // Value of Title property
+    var fHelpKeyword: string; // Value of HelpKeyword property
+    var fHook: TColorDlgHook; // Object that wraps dialog and hook function
   strict protected
     function TaskModalDialog(DialogFunc: Pointer; var DialogData): Bool;
       override;
@@ -86,12 +86,12 @@ type
       }
   public
     constructor Create(AOwner: TComponent); override;
-      {Class constructor. Creates dialog box.
+      {Object constructor. Creates dialog box.
         @param AOwner [in] Owning component. Dialog box will be aligned over
           AOwner.
       }
     destructor Destroy; override;
-      {Class desctructor. Tears down object.
+      {Object desctructor. Tears down object.
       }
     function Execute: Boolean; override;
       {Displays dialog box. Ensures help button is displayed if HelpKeyword
@@ -112,8 +112,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   UDlgHelper;
 
@@ -121,7 +119,7 @@ uses
 { TColorDialogEx }
 
 constructor TColorDialogEx.Create(AOwner: TComponent);
-  {Class constructor. Creates dialog box.
+  {Object constructor. Creates dialog box.
     @param AOwner [in] Owning component. Dialog box will be aligned over AOwner.
   }
 begin
@@ -130,29 +128,16 @@ begin
 end;
 
 destructor TColorDialogEx.Destroy;
-  {Class desctructor. Tears down object.
+  {Object desctructor. Tears down object.
   }
 begin
-  FreeAndNil(fHook);
+  fHook.Free;
   inherited;
 end;
 
 procedure TColorDialogEx.DoShow;
   {Sets up dialog just before it is displayed.
   }
-
-  // ---------------------------------------------------------------------------
-  function PrimaryLangID(LangID: Word): Word;
-    {Gets primary language from a language ID. Based on Windows SDK macro in
-    WinNT.h.
-      @param LangID [in] Language ID.
-      @return Primary language ID.
-    }
-  begin
-    Result := LangID and $3FF;
-  end;
-  // ---------------------------------------------------------------------------
-
 const
   // Identifiers of controls using American spelling of "colour" (per ColorDlg.h
   // from Windows SDK).
