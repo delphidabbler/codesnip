@@ -1,10 +1,9 @@
 {
  * UColorBoxEx.pas
  *
- * Implements a subclass of TColorBox that modifies the colour dialog box
- * displayed when "Custom Colour" is chosen from the drop down list. This
- * subclass works around a Delphi / Vista display bug. Also the colour dialog
- * is displayed expanded with a custom title.
+ * Implements a subclass of TColorBox that enables an alternative colour dialog
+ * box to be displayed when "Custom Colour" is chosen from the combo box's drop
+ * down list.
  *
  * $Rev$
  * $Date$
@@ -26,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -51,33 +50,34 @@ type
 
   {
   TColorBoxEx:
-    Subclass of TColorBox that modifies the colour dialog box displayed when
-    "Custom Colour" is chosen from the drop down list. This subclass works
-    around a Delphi / Vista display bug. Also the colour dialog is displayed
-    expanded with a custom title.
+    Subclass of TColorBox that enables an alternative colour dialog box to be
+    displayed when "Custom Colour" is chosen from the combo box's drop down
+    list.
   }
   TColorBoxEx = class(TColorBox)
-  private
-    fColorDialog: TColorDialog;
-      {Value of ColorDialog property}
+  strict private
+    var fColorDialog: TColorDialog; // Value of ColorDialog property
     procedure SetColorDialog(const Value: TColorDialog);
-      {Write accessor for ColorDialog property. If new value is assigned then
-      cbCustomColor is included in Style property.
-        @param Value [in] Reference to colour dialog box or nil.
+      {Write accessor for ColorDialog property. If a non-nil new value is assigned
+      then cbCustomColor is included in the Style property.
+        @param Value [in] Reference to a colour dialog box or nil.
       }
-  protected
+  strict protected
     procedure Notification(AComponent: TComponent; Operation: TOperation);
       override;
       {Responds to notifications that components are being created or destroyed.
-      Sets ColorDialog property to nil if assigned dialog box component is
-      freed.
+      Sets ColorDialog property to nil if any assigned dialog box component is
+      being destroyed.
         @param AComponent [in] Reference to component being created or
           destroyed.
-        @param Operation [in] Whether component being created or destroyed.
+        @param Operation [in] Indicates whether component is being created or
+          destroyed.
       }
     function PickCustomColor: Boolean; override;
-      {Called when user selects the custom colour item. Overridden to use a
-      custom colour dialog box and to create dialog with owner of TColorBoxEx.
+      {Called when user selects the custom colour item. Overridden to get the
+      custom colour from the colour dialog referenced the the ColorDialog
+      property if set. If ColorDialog is not set then TColorBox's default dialog
+      is used.
         @return True if user OKs colour dialog box, False if user cancels.
       }
   published
@@ -101,9 +101,11 @@ uses
 procedure TColorBoxEx.Notification(AComponent: TComponent;
   Operation: TOperation);
   {Responds to notifications that components are being created or destroyed.
-  Sets ColorDialog property to nil if assigned dialog box component is freed.
+  Sets ColorDialog property to nil if any assigned dialog box component is being
+  destroyed.
     @param AComponent [in] Reference to component being created or destroyed.
-    @param Operation [in] Whether component being created or destroyed.
+    @param Operation [in] Indicates whether component is being created or
+      destroyed.
   }
 begin
   inherited;
@@ -112,19 +114,17 @@ begin
 end;
 
 function TColorBoxEx.PickCustomColor: Boolean;
-  {Called when user selects the custom colour item. Overridden to use a custom
-  colour dialog box and to create dialog with owner of TColorBoxEx.
+  {Called when user selects the custom colour item. Overridden to get the custom
+  colour from the colour dialog referenced the the ColorDialog property if set.
+  If ColorDialog is not set then TColorBox's default dialog is used.
     @return True if user OKs colour dialog box, False if user cancels.
   }
 var
   CustomColor: TColor;  // current custom colour from colour combo box
 begin
-  // Changes from Delphi's TColorBox are that we use color referenced by
-  // ColorDialog property if set instead of built in dialog box.
-  // If ColorDialog property is not set we use default processing and internal
-  // dialog box.
   if Assigned(fColorDialog) then
   begin
+    // custom colour stored as first element of combo's Items.Objects[] property
     CustomColor := ColorToRGB(TColor(Self.Items.Objects[0]));
     fColorDialog.Color := CustomColor;
     Result := fColorDialog.Execute;
@@ -139,9 +139,9 @@ begin
 end;
 
 procedure TColorBoxEx.SetColorDialog(const Value: TColorDialog);
-  {Write accessor for ColorDialog property. If new value is assigned then
-  cbCustomColor is included in Style property.
-    @param Value [in] Reference to colour dialog box or nil.
+  {Write accessor for ColorDialog property. If a non-nil new value is assigned
+  then cbCustomColor is included in the Style property.
+    @param Value [in] Reference to a colour dialog box or nil.
   }
 begin
   fColorDialog := Value;
