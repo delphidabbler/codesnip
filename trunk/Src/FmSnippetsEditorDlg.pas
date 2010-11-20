@@ -73,12 +73,14 @@ type
     actUndo: TEditUndo;
     actViewErrors: TAction;
     actViewExtra: TAction;
+    actViewTestUnit: TAction;
     btnAddUnit: TButton;
     btnDependencies: TButton;
     btnCompile: TButton;
     btnSetAllQuery: TBitBtn;
     btnSetAllSuccess: TBitBtn;
     btnViewExtra: TButton;
+    btnViewTestUnit: TButton;
     cbCategories: TComboBox;
     cbKind: TComboBox;
     clbDepends: TCheckListBox;
@@ -134,6 +136,8 @@ type
     procedure actViewErrorsUpdate(Sender: TObject);
     procedure actViewExtraExecute(Sender: TObject);
     procedure actViewExtraUpdate(Sender: TObject);
+    procedure actViewTestUnitExecute(Sender: TObject);
+    procedure actViewTestUnitUpdate(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure cbKindChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -260,7 +264,7 @@ uses
   FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
   UCtrlArranger, UExceptions, UFontHelper, UReservedCategories,
   URoutineExtraHelper, USnippetValidator, UMessageBox, USnippetIDs, UStructs,
-  UThemesEx, UUtils;
+  UTestUnitDlgMgr, UThemesEx, UUtils;
 
 
 {$R *.dfm}
@@ -426,6 +430,41 @@ procedure TSnippetsEditorDlg.actViewExtraUpdate(Sender: TObject);
   }
 begin
   (Sender as TAction).Enabled := Trim(edExtra.Text) <> '';
+end;
+
+procedure TSnippetsEditorDlg.actViewTestUnitExecute(Sender: TObject);
+  {Displays test unit for current snippet. Error message displayed if snippet
+  is not valid.
+    @param Sender [in] Not used.
+  }
+var
+  TempSnippet: TRoutine;  // temp snippet object for compilation
+begin
+  try
+    TempSnippet := CreateTempSnippet;
+  except
+    on E: Exception do
+    begin
+      // TempSnippet not created if there is an exception here
+      HandleException(E);
+      Exit;
+    end;
+  end;
+  try
+    TTestUnitDlgMgr.DisplayTestUnit(Self, TempSnippet);
+  finally
+    TempSnippet.Free;
+  end;
+end;
+
+procedure TSnippetsEditorDlg.actViewTestUnitUpdate(Sender: TObject);
+  {Updates View Test Unit action according to whether a compilable snippet is
+  selected.
+    @param Sender [in] Action triggering this event.
+  }
+begin
+  (Sender as TAction).Enabled :=
+    fSnipKindList.SnippetKind(cbKind.ItemIndex) <> skFreeform;
 end;
 
 class function TSnippetsEditorDlg.AddNewRoutine(AOwner: TComponent): Boolean;
@@ -688,8 +727,6 @@ begin
   fImages := TLEDImageList.Create(Self);
   fSourceMemoHelper := TMemoHelper.Create(edSourceCode);
   alMain.Images := fImages;
-  btnSetAllSuccess.Action := actSetAllSuccess;
-  btnSetAllQuery.Action := actSetAllQuery;
 end;
 
 procedure TSnippetsEditorDlg.FormDestroy(Sender: TObject);
