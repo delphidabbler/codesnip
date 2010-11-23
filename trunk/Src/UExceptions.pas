@@ -59,16 +59,48 @@ uses
   // Delphi
   SysUtils, Controls,
   // Project
-  UStructs;
+  UBaseObjects, UStructs;
 
 
 type
+
+  TExceptionHelper = class(TNoConstructObject)
+  public
+    class function Clone(const ExObj: Exception): Exception;
+      {Creates a new exception that is an approximate copy of a given exception.
+      Any inner exception information is lost. Only the message is copied if the
+      exception is not an EAssignable descendant.
+        @param ExObj [in] Exception to be cloned. Must be an Exception
+          descendant.
+        @return New cloned exception.
+      }
+  end;
+
+  {
+  EAssignable:
+    Base class for exceptions that can be assigned the properties of another
+    exception. Descendants that add extra properties should override Assign to
+    copy the extra properties. Descendants may limit the exception classes that
+    they accept for assignment.
+  }
+  EAssignable = class(Exception)
+  public
+    constructor Create(const E: Exception); overload;
+      {Create the exception object with same properties as a given exception.
+        @param E [in] Exception to copy.
+      }
+    procedure Assign(const E: Exception); virtual;
+      {Sets this exception object's properties to be the same as another
+      exception. Any inner exception information is lost.
+        @param E [in] Exception whose properties are to be copied.
+      }
+  end;
 
   {
   EBug:
     Base class for exceptions that are treated as bugs.
   }
-  EBug = class(Exception);
+  EBug = class(EAssignable);
 
   {
   ECodeSnip:
@@ -78,18 +110,7 @@ type
     properties should extend Assign to copy the extra properties. Descendants
     may limit the exception classes that they accept.
   }
-  ECodeSnip = class(Exception)
-  public
-    constructor Create(const E: Exception); overload;
-      {Create the exception object with same properties as a given exception.
-        @param E [in] Exception to copy.
-      }
-    procedure Assign(const E: Exception); virtual;
-      {Sets this exception object's properties to be the same as another
-      exception.
-        @param E [in] Exception whose properties are to be copied.
-      }
-  end;
+  ECodeSnip = class(EAssignable);
 
   {
   EValidation:
@@ -199,18 +220,18 @@ uses
   Classes;
 
 
-{ ECodeSnip }
+{ EAssignable }
 
-procedure ECodeSnip.Assign(const E: Exception);
-  {Sets this exception object's properties to be the same as another
-  exception.
+procedure EAssignable.Assign(const E: Exception);
+  {Sets this exception object's properties to be the same as another exception.
+  Any inner exception information is lost.
     @param E [in] Exception whose properties are to be copied.
   }
 begin
   Self.Message := E.Message;
 end;
 
-constructor ECodeSnip.Create(const E: Exception);
+constructor EAssignable.Create(const E: Exception);
   {Create the exception object with same properties as a given exception.
     @param E [in] Exception to copy.
   }
@@ -338,6 +359,29 @@ constructor EDataEntry.CreateFmt(const Msg: string; const Args: array of const;
 begin
   inherited CreateFmt(Msg, Args);
   fCtrl := Ctrl;
+end;
+
+{ TExceptionHelper }
+
+class function TExceptionHelper.Clone(const ExObj: Exception): Exception;
+  {Creates a new exception that is an approximate copy of a given exception. Any
+  inner exception information is lost. Only the message is copied if the
+  exception is not an EAssignable descendant.
+    @param ExObj [in] Exception to be cloned. Must be an Exception
+      descendant.
+    @return New cloned exception.
+  }
+begin
+  if ExObj is EAssignable then
+  begin
+    Result := ExObj.ClassType.Create as EAssignable;
+    (Result as EAssignable).Assign(ExObj as EAssignable);
+  end
+  else
+  begin
+    Result := ExObj.ClassType.Create as Exception;
+    Result.Message := ExObj.Message;
+  end;
 end;
 
 end.
