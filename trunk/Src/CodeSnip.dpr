@@ -197,6 +197,7 @@ uses
   UCtrlArranger in 'UCtrlArranger.pas',
   UDataBackupMgr in 'UDataBackupMgr.pas',
   UDatabaseLoader in 'UDatabaseLoader.pas',
+  UDatabaseLoaderUI in 'UDatabaseLoaderUI.pas',
   UDataStreamIO in 'UDataStreamIO.pas',
   UDetailPageHTML in 'UDetailPageHTML.pas',
   UDetailPageLoader in 'UDetailPageLoader.pas',
