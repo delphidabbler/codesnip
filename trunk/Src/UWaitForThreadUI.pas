@@ -42,7 +42,7 @@ interface
 
 uses
   // Delphi
-  Classes, ExtCtrls, Forms,
+  Classes, ExtCtrls, Forms, SyncObjs,
   // Project
   UBaseObjects, UThreadEx;
 
@@ -65,6 +65,7 @@ type
     var fPauseBeforeDisplay: Cardinal;  // Time before fForm is displayed
     var fThreadTerminated: Boolean;     // Indicates if fThread has terminated
     var fMinTimeElapsed: Boolean;       // True when form displayed long enough
+    class var fLock: TCriticalSection;  // Protects form opening / closing
     procedure ThreadTerminated(Sender: TObject);
       {Handles thread's OnTerminate event. Flags thread has terminated and
       requests closure of any displayed form.
@@ -74,20 +75,14 @@ type
       {Timer event handler called once, when minimum execution time has elapsed.
         @param Sender [in] Not used.
       }
-    procedure ShowOrHideForm(const Show: Boolean);
-      {Attempts to show or hide fForm. This method should be called instead of
-      ShowForm or CloseForm. The method is run inside a critical section.
-        @param Show [in] Flag that indicates whether form is to be shown (True)
-          or hidden (False).
-      }
     procedure ShowForm;
-      {Displays required form. Should not be called directly. Always call
-      ShowOrHideForm(True) instead.
+      {Displays required form. A critical section ensures that only one thread
+      at a time can attempt to show the form.
       }
     procedure CloseForm;
       {Closes any displayed form if thread has terminated and minimum display
-      time has elapsed. Should not be called directly. Always call
-      ShowOrHideForm(False) instead.
+      time has elapsed. A critical section ensures that only one thread at a
+      time can attempt to close the form.
       }
     procedure FormShowHandler(Sender: TObject);
       {Event handler for fForm.OnShow event. Checks if form can open.
@@ -110,6 +105,12 @@ type
       {Executes thread and displays dialog box if necessary.
       }
   public
+    class constructor Create;
+      {Class constructor. Initialises critical section.
+      }
+    class destructor Destroy;
+      {Class destructor. Destroys critical section.
+      }
     destructor Destroy; override;
       {Object destructor. Tears down object.
       }
@@ -132,33 +133,36 @@ implementation
 
 uses
   // Delphi
-  SysUtils, SyncObjs,
+  SysUtils,
   // Project
   UExceptions, UUtils;
 
-
-var
-  // Critical section that ensures form opening / closing in TWaitForThreadUI
-  // can only be run by one thread at a time
-  Lock: TCriticalSection;
 
 { TWaitForThreadUI }
 
 procedure TWaitForThreadUI.CloseForm;
   {Closes any displayed form if thread has terminated and minimum display time
-  has elapsed. Should not be called directly. Always call ShowOrHideForm(False)
-  instead.
+  has elapsed. A critical section ensures that only one thread at a time can
+  attempt to close the form.
   }
 begin
-  Assert(Assigned(fForm), ClassName + '.CloseForm: fForm is nil');
-  Lock.Acquire;
+  fLock.Acquire;
   try
+    if not Assigned(fForm) then
+      Exit;
     fFormCloseRequested := fThreadTerminated and fMinTimeElapsed;
     if fFormCloseRequested and fForm.Visible then
       fForm.Close;
   finally
-    Lock.Release;
+    fLock.Release;
   end;
+end;
+
+class constructor TWaitForThreadUI.Create;
+  {Class constructor. Initialises critical section.
+  }
+begin
+  fLock := TCriticalSection.Create;
 end;
 
 destructor TWaitForThreadUI.Destroy;
@@ -168,6 +172,13 @@ begin
   fMinDisplayTimer.Free;
   fThread.OnTerminate := fSaveOnTerminate;
   inherited;
+end;
+
+class destructor TWaitForThreadUI.Destroy;
+  {Class destructor. Destroys critical section.
+  }
+begin
+  fLock.Free;
 end;
 
 procedure TWaitForThreadUI.Execute;
@@ -186,8 +197,8 @@ begin
   Pause;
   if not fThread.Completed then
     // Show dialog if thread not completed. Dialog blocks until thread
-    // terminates. This call is protected by a critical section.
-    ShowOrHideForm(True);
+    // terminates.
+    ShowForm;
   // Re-raise any exception that was raised by thread: must be a clone and not
   // the original exception.
   if Assigned(fThread.FatalException)
@@ -240,7 +251,8 @@ begin
   fMinDisplayTimer.OnTimer := nil;
   fMinDisplayTimer.Enabled := False;
   fMinTimeElapsed := True;
-  ShowOrHideForm(False);  // close form (thread safe call)
+  // Close form
+  CloseForm;
 end;
 
 procedure TWaitForThreadUI.Pause;
@@ -274,48 +286,33 @@ begin
 end;
 
 procedure TWaitForThreadUI.ShowForm;
-  {Displays required form. Should not be called directly. Always call
-  ShowOrHideForm(True) instead.
+  {Displays required form. A critical section ensures that only one thread at a
+  time can attempt to show the form.
   }
 begin
-  Assert(Assigned(fForm), ClassName + '.ShowForm: fForm is nil');
-  // Start timer that triggers when form is allowed to close after minimum
-  // display time. If time is zero we need to trigger ourselves, because
-  // timer won't fire.
-  fMinDisplayTimer.Enabled := True;
-  if fMinDisplayTimer.Interval = 0 then
-    MinTimeElapsed(fMinDisplayTimer);
-  // Store any existing OnShow event of form
-  fSaveFormShow := fForm.OnShow;
-  fForm.OnShow := FormShowHandler;
+  fLock.Acquire;
   try
-    // Show form modally if not already requested to close
-    if not (fFormCloseRequested) then
-      fForm.ShowModal;
-  finally
-    // Restore any previous OnShow event handler
-    fForm.OnShow := fSaveFormShow;
-  end;
-end;
-
-procedure TWaitForThreadUI.ShowOrHideForm(const Show: Boolean);
-  {Attempts to show or hide fForm. This method should be called instead of
-  ShowForm or CloseForm. The method is run inside a critical section.
-    @param Show [in] Flag that indicates whether form is to be shown (True) or
-      hidden (False).
-  }
-begin
-  Lock.Acquire;
-  try
-    if Assigned(fForm) then
-    begin
-      if Show then
-        ShowForm
-      else
-        CloseForm;
+    if not Assigned(fForm) then
+      Exit;
+    // Start timer that triggers when form is allowed to close after minimum
+    // display time. If time is zero we need to trigger ourselves, because
+    // timer won't fire.
+    fMinDisplayTimer.Enabled := True;
+    if fMinDisplayTimer.Interval = 0 then
+      MinTimeElapsed(fMinDisplayTimer);
+    // Store any existing OnShow event of form and replace with our handler
+    fSaveFormShow := fForm.OnShow;
+    fForm.OnShow := FormShowHandler;
+    try
+      // Show form modally if not already requested to close
+      if not fFormCloseRequested then
+        fForm.ShowModal;
+    finally
+      // Restore any previous OnShow event handler
+      fForm.OnShow := fSaveFormShow;
     end;
   finally
-    Lock.Release;
+    fLock.Release;
   end;
 end;
 
@@ -326,20 +323,10 @@ procedure TWaitForThreadUI.ThreadTerminated(Sender: TObject);
   }
 begin
   fThreadTerminated := True;
-  ShowOrHideForm(False);  // close form (thread safe call)
+  CloseForm;
   if Assigned(fSaveOnTerminate) then
     fSaveOnTerminate(fThread);
 end;
-
-initialization
-
-// create critical section
-Lock := TCriticalSection.Create;
-
-finalization
-
-// disposes of critical section
-Lock.Free;
 
 end.
 
