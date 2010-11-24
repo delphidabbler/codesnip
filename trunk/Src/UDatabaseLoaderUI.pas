@@ -87,8 +87,8 @@ class procedure TDatabaseLoaderUI.Execute(AOwner: TComponent);
 resourcestring
   sLoadingDatabase  = 'Loading database...';  // wait dialog caption
 var
-  WaitDlg: TWaitDlg;            // dialog box to display while compiling
-  LoadThread: TDatabaseLoader;  // thread that loads database
+  WaitDlg: TWaitDlg;                  // dialog box to display while compiling
+  LoadThread: TDatabaseLoaderThread;  // thread that loads database
 begin
   LoadThread := nil;
   // Set up dialog that may be displayed while compiling
@@ -96,7 +96,7 @@ begin
   try
     WaitDlg.Caption := sLoadingDatabase;
     // Load the database
-    LoadThread := TDatabaseLoader.Create;
+    LoadThread := TDatabaseLoaderThread.Create;
     TWaitForThreadUI.Run( // this blocks until thread completes
       LoadThread, WaitDlg, PauseBeforeDisplay, MinDisplayTime
     );

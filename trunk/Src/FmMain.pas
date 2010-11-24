@@ -412,9 +412,9 @@ uses
   FmSplash, FmTrappedBugReportDlg, FmWaitDlg, IntfFrameMgrs, UActionFactory,
   UAppInfo, UCodeShareMgr, UCommandBars, UCompLogAction, UConsts, UCopyInfoMgr,
   UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UEditRoutineAction,
-  UExceptions, UHelpMgr, UHistoryMenus, UMessageBox, UNotifier, UPrintMgr,
-  UQuery, USaveSnippetMgr, USaveUnitMgr, USnippets, UThreadWrapper, UUserDBMgr,
-  UView, UViewItemAction, UWBExternal, UNulDropTarget, Web.UInfo;
+  UExceptions, UHelpMgr, UHistoryMenus, UMessageBox, UNotifier, UNulDropTarget,
+  UPrintMgr, UQuery, USaveSnippetMgr, USaveUnitMgr, USnippets, UUserDBMgr,
+  UView, UViewItemAction, UWBExternal, Web.UInfo;
 
 
 {$R *.dfm}
@@ -1557,13 +1557,12 @@ begin
     // Set event handler for snippets database
     Snippets.AddChangeEventHandler(SnippetsChangeHandler);
 
-    // Load snippets database(s) and re-initialise display
+    // Load snippets database
     LoadSnippets(
       procedure
       begin
-        // Load the database in a separate thread
         try
-          TThreadWrapper.Execute(TDatabaseLoader.Create, True);
+          TDatabaseLoader.Load;
         except
           on E: ECodeSnip do
             Application.HandleException(E);

@@ -327,7 +327,6 @@ uses
   UTextStreamReader in 'UTextStreamReader.pas',
   UThemesEx in 'UThemesEx.pas',
   UThreadEx in 'UThreadEx.pas',
-  UThreadWrapper in 'UThreadWrapper.pas',
   UToolButtonEx in 'UToolButtonEx.pas',
   UTVCheckBoxes in 'UTVCheckBoxes.pas',
   UUIWidgetImages in 'UUIWidgetImages.pas',
