@@ -90,7 +90,6 @@ type
     actHomePage: TBrowseURL;
     actImportCode: TAction;
     actLicense: TAction;
-    actLoadDatabase: TAction;
     actNextTab: TAction;
     actNews: TAction;
     actPageSetup: TAction;
@@ -280,7 +279,6 @@ type
     procedure actHelpQuickStartExecute(Sender: TObject);
     procedure actImportCodeExecute(Sender: TObject);
     procedure actLicenseExecute(Sender: TObject);
-    procedure actLoadDatabaseExecute(Sender: TObject);
     procedure actNewsExecute(Sender: TObject);
     procedure actNextTabExecute(Sender: TObject);
     procedure ActNonEmptyDBUpdate(Sender: TObject);
@@ -380,8 +378,9 @@ type
         @param Sender [in] Not used.
         @param E [in] Exception to be handled.
       }
-    procedure LoadSnippets;
+    procedure LoadSnippets(const Loader: TProc);
       {Loads Snippets object from database and re-intitialises display.
+        @param Loader [in] Closure that performs actual loading of database.
       }
     procedure ReloadDatabase;
       {Reloads the whole database in a thread.
@@ -412,10 +411,10 @@ uses
   // Project
   FmSplash, FmTrappedBugReportDlg, FmWaitDlg, IntfFrameMgrs, UActionFactory,
   UAppInfo, UCodeShareMgr, UCommandBars, UCompLogAction, UConsts, UCopyInfoMgr,
-  UCopySourceMgr, UDatabaseLoader, UEditRoutineAction, UExceptions, UHelpMgr,
-  UHistoryMenus, UMessageBox, UNotifier, UPrintMgr, UQuery, USaveSnippetMgr,
-  USaveUnitMgr, USnippets, UThreadWrapper, UUserDBMgr, UView, UViewItemAction,
-  UWaitForActionUI, UWBExternal, UNulDropTarget, Web.UInfo;
+  UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UEditRoutineAction,
+  UExceptions, UHelpMgr, UHistoryMenus, UMessageBox, UNotifier, UPrintMgr,
+  UQuery, USaveSnippetMgr, USaveUnitMgr, USnippets, UThreadWrapper, UUserDBMgr,
+  UView, UViewItemAction, UWBExternal, UNulDropTarget, Web.UInfo;
 
 
 {$R *.dfm}
@@ -578,7 +577,7 @@ begin
   Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actDeleteSnippetExecute: Can''t delete current view item');
   TUserDBMgr.DeleteSnippet(fMainDisplayMgr.CurrentView);
-  // display updated is handled by snippets change event handler
+  // display update is handled by snippets change event handler
 end;
 
 procedure TMainForm.ActDetailTabExecute(Sender: TObject);
@@ -821,14 +820,6 @@ procedure TMainForm.actLicenseExecute(Sender: TObject);
   }
 begin
   DisplayHelp('License');
-end;
-
-procedure TMainForm.actLoadDatabaseExecute(Sender: TObject);
-  {Loads snippets database.
-    @param Sender [in] Not used.
-  }
-begin
-  LoadSnippets;
 end;
 
 procedure TMainForm.actNewsExecute(Sender: TObject);
@@ -1567,7 +1558,18 @@ begin
     Snippets.AddChangeEventHandler(SnippetsChangeHandler);
 
     // Load snippets database(s) and re-initialise display
-    LoadSnippets;
+    LoadSnippets(
+      procedure
+      begin
+        // Load the database in a separate thread
+        try
+          TThreadWrapper.Execute(TDatabaseLoader.Create, True);
+        except
+          on E: ECodeSnip do
+            Application.HandleException(E);
+        end;
+      end
+    );
   finally
     // Ready to start using app: request splash form closes and enable form
     SplashForm.RequestClose;
@@ -1575,8 +1577,9 @@ begin
   end;
 end;
 
-procedure TMainForm.LoadSnippets;
+procedure TMainForm.LoadSnippets(const Loader: TProc);
   {Loads Snippets object from database and re-intitialises display.
+    @param Loader [in] Closure that performs actual loading of database.
   }
 resourcestring
   sLoadingDatabase  = 'Loading database...';  // status bar message
@@ -1585,9 +1588,9 @@ begin
   fStatusBarMgr.ShowSimpleMessage(sLoadingDatabase);
   fHistory.Clear;
   fMainDisplayMgr.Clear;
-  // Load the database in a separate thread
+  // Load the database
   try
-    TThreadWrapper.Execute(TDatabaseLoader.Create, True);
+    Loader;
   except
     on E: ECodeSnip do
       Application.HandleException(E);
@@ -1602,20 +1605,13 @@ end;
 procedure TMainForm.ReloadDatabase;
   {Reloads the whole database in a thread.
   }
-var
-  WaitDlg: TWaitDlg;  // dialog to be displayed while database loading
-resourcestring
-  sWaitMsg = 'Loading database...'; // caption displayed in wait form
 begin
-  // Load database, displaying a dialog box while it's loading
-  WaitDlg := TWaitDlg.Create(Self);
-  try
-    WaitDlg.Caption := sWaitMsg;
-    // always display wait dialog, for no longer than necessary
-    TWaitForActionUI.Run(actLoadDatabase, WaitDlg, 0, 0);
-  finally
-    FreeAndNil(WaitDlg);
-  end;
+  LoadSnippets(
+    procedure
+    begin
+      TDatabaseLoaderUI.Execute(Self);
+    end
+  );
 end;
 
 procedure TMainForm.SnippetsChangeHandler(Sender: TObject;
@@ -1628,7 +1624,7 @@ procedure TMainForm.SnippetsChangeHandler(Sender: TObject;
 
   // ---------------------------------------------------------------------------
   procedure ReInitialise;
-    {Re-initialises display, resetting any queries if necessary.
+    {Re-initialises display, reseting any queries if necessary.
     }
   begin
     if not Query.Refresh then
