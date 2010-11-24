@@ -82,7 +82,8 @@ uses
   TestDBUInitialLetterGroup in 'TestDBUInitialLetterGroup.pas',
   DB.UInitialLetterGroup in '..\..\..\Src\Experimental\DB.UInitialLetterGroup.pas',
   DB.USnippetKindGroup in '..\..\..\Src\Experimental\DB.USnippetKindGroup.pas',
-  TestDBUSnippetKindGroup in 'TestDBUSnippetKindGroup.pas';
+  TestDBUSnippetKindGroup in 'TestDBUSnippetKindGroup.pas',
+  UStructs in '..\..\..\Src\UStructs.pas';
 
 {$R *.RES}
 

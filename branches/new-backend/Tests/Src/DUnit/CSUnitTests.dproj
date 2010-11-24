@@ -55,6 +55,7 @@
 			<DCCReference Include="..\..\..\Src\Experimental\DB.UInitialLetterGroup.pas"/>
 			<DCCReference Include="..\..\..\Src\Experimental\DB.USnippetKindGroup.pas"/>
 			<DCCReference Include="TestDBUSnippetKindGroup.pas"/>
+			<DCCReference Include="..\..\..\Src\UStructs.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
