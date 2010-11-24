@@ -4,6 +4,17 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.8.3 of 24 November 2010
++ Added button to "Compile" tab of Snippets Editor to display unit used to test compile snippets. This implements feature request #3108008 (http://bit.ly/elBZnn).
++ Fixed unreported bugs in handling of exceptions raised in threads.
++ Simplified method used to load database on start up. No longer uses a separate thread.
++ Overhauled and simplified code used to display "wait" dialogs during test compilations and database reloading.
++ Refactorings:
+  - Increased use of generics in lists and enumerators.
+  - Reorganised source code tree by moving some code to more relevant units, renaming some units and increasing use of namespaces.
+  - Removed some redundant code.
++ Updated help file re changes to snippets editor.
+
 Release v3.8.2 of 16 November 2010
 + The position of the caret in the Snippets Editor's Extra Information control is now displayed. Implements feature request #3105288 (http://bit.ly/bRV86Z).
 + Code that displays caret positions was refactored and improved.
