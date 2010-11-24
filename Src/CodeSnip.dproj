@@ -338,6 +338,7 @@
 			<DCCReference Include="UCtrlArranger.pas"/>
 			<DCCReference Include="UDataBackupMgr.pas"/>
 			<DCCReference Include="UDatabaseLoader.pas"/>
+			<DCCReference Include="UDatabaseLoaderUI.pas"/>
 			<DCCReference Include="UDataStreamIO.pas"/>
 			<DCCReference Include="UDetailPageHTML.pas"/>
 			<DCCReference Include="UDetailPageLoader.pas"/>
