@@ -151,7 +151,7 @@ type
     fSnipKindList:
       TSnipKindListAdapter;         // Accesses sorted list of snippet kinds
     fOrigName: string;              // Original name of snippet ('' for new)
-    fEditData: TRoutineEditData;    // Record storing a snippet's editable data
+    fEditData: TSnippetEditData;    // Record storing a snippet's editable data
     fCompileMgr: TCompileMgr;       // Manages compilation and results display
     fCLBMgrs: array[0..2] of
       TChkListStateMgr;             // Manages check list box clicks
@@ -202,7 +202,7 @@ type
       {Checks all user-entered data in all tabs of the form.
         @except EDataEntry raised if data is not valid.
       }
-    function UpdateData: TRoutineEditData;
+    function UpdateData: TSnippetEditData;
       {Updates snippet's data from user entries. Assumes data has been
       validated.
         @return Record containing snippet's data.
@@ -636,7 +636,7 @@ function TSnippetsEditorDlg.CreateTempSnippet: TRoutine;
     @except EDataEntry raised if any of entered data is invalid.
   }
 var
-  EditData: TRoutineEditData; // stores snippet's properties and references
+  EditData: TSnippetEditData; // stores snippet's properties and references
 begin
   ValidateData;
   // Create snippet object from entered data
@@ -901,7 +901,7 @@ begin
   fCompilersLBMgr.SetCompileResults(CompRes);
 end;
 
-function TSnippetsEditorDlg.UpdateData: TRoutineEditData;
+function TSnippetsEditorDlg.UpdateData: TSnippetEditData;
   {Updates snippet's data from user entries. Assumes data has been validated.
     @return Record containing snippet's data.
   }
