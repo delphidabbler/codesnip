@@ -1,8 +1,9 @@
 {
  * UTestCompileUI.pas
  *
- * Defines a static class that test compiles a routine in a thread and displays
- * a wait dialog if the compilation is taking a significant of time.
+ * Defines a static class that test compiles a snippet in a thread and displays
+ * a wait dialog if the compilation is taking more than a specified amount of
+ * time.
  *
  * $Rev$
  * $Date$
@@ -51,11 +52,13 @@ type
 
   {
   TTestCompileUI:
-    Class that test compiles a snippet in a thread and displays a wait dialog if
-    the compilation is taking a significant of time.
+    Static class that test compiles a snippet in a thread and displays a wait
+    dialog if the compilation is taking more than a specified amount of time.
   }
   TTestCompileUI = class(TNoConstructObject)
   strict private
+    const PauseBeforeDisplay = 500; // time elapsed before dialog is displayed
+    const MinDisplayTime = 1000;    // minimum time that dialog is displayed
     class procedure HandleException(const E: Exception);
       {Handles exception thrown during compilation. Re-raises exception with
       message that depends on an analysis of the exception. Compiler generated
@@ -83,31 +86,8 @@ uses
   Windows,
   // Project
   Compilers.UCompilerBase, FmWaitDlg, UConsts, UExceptions, UTestCompile,
-  UWaitForActionUI;
+  UWaitForThreadUI;
 
-
-type
-
-  {
-  TestCompileAction:
-    Action that performs a test compilation of a snippet.
-  }
-  TTestCompileAction = class(TBasicAction)
-  strict private
-    fRoutine: TRoutine;     // Snippet to be compiled}
-    fCompilers: ICompilers; // Object that performs test compilation
-  public
-    constructor Create(const ARoutine: TRoutine;
-      const ACompilers: ICompilers); reintroduce;
-      {Class constructor. Sets up object to perform a test compilation.
-        @param Routine [in] Snippet to be compiled.
-        @param ACompilers [in] Compilers object used to perform compilation.
-      }
-    function Execute: Boolean; override;
-      {Executes test compilation.
-        @return False since OnExecute is not called.
-      }
-  end;
 
 { TTestCompileUI }
 
@@ -125,25 +105,25 @@ resourcestring
   sWaitCaption = 'Compiling...';
 var
   WaitDlg: TWaitDlg;                // dialog box to display while compiling
-  CompAction: TTestCompileAction;   // action that performs test compilation
+  CompThread: TTestCompileThread;   // thread that performs test compilation
 begin
-  CompAction := nil;
+  CompThread := nil;
   // Set up dialog that may be displayed while compiling
   WaitDlg := TWaitDlg.Create(AOwner);
   try
     WaitDlg.Caption := sWaitCaption;
-    CompAction := TTestCompileAction.Create(ARoutine, ACompilers);
-    // Use action handler to execute test compile action. This handler
-    // displays a dialog if compilation takes longer than 0.5 sec. If shown,
-    // dialog is displayed for a minimum of 1 sec.
+    // Do the compilation
+    CompThread := TTestCompileThread.Create(ACompilers, ARoutine);
     try
-      TWaitForActionUI.Run(CompAction, WaitDlg, 500, 1000);
+      TWaitForThreadUI.Run( // this blocks until thread completes
+        CompThread, WaitDlg, PauseBeforeDisplay, MinDisplayTime
+      );
     except
       HandleException(ExceptObject as Exception);
     end;
   finally
-    FreeAndNil(CompAction);
-    FreeAndNil(WaitDlg);
+    CompThread.Free;
+    WaitDlg.Free;
   end;
 end;
 
@@ -177,32 +157,7 @@ begin
   end
   else
     // Other kind of exception: pass it along
-    raise E;
-end;
-
-{ TTestCompileAction }
-
-constructor TTestCompileAction.Create(const ARoutine: TRoutine;
-  const ACompilers: ICompilers);
-  {Class constructor. Sets up object to perform a test compilation.
-    @param Routine [in] Snippet to be compiled.
-    @param ACompilers [in] Compilers object used to perform compilation.
-  }
-begin
-  Assert(Assigned(ARoutine), ClassName + '.Create: ARoutine is nil');
-  Assert(Assigned(ACompilers), ClassName + '.Create: ACompilers is nil');
-  inherited Create(nil);
-  fRoutine := ARoutine;
-  fCompilers := ACompilers;
-end;
-
-function TTestCompileAction.Execute: Boolean;
-  {Executes test compilation.
-    @return False since OnExecute is not called.
-  }
-begin
-  TTestCompile.Compile(fCompilers, fRoutine);
-  Result := False;
+    raise TExceptionHelper.Clone(E);
 end;
 
 end.
