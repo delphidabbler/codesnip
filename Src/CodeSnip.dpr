@@ -343,7 +343,7 @@ uses
   UView in 'UView.pas',
   UViewItemAction in 'UViewItemAction.pas',
   UViewItemTreeNode in 'UViewItemTreeNode.pas',
-  UWaitForActionUI in 'UWaitForActionUI.pas',
+  UWaitForThreadUI in 'UWaitForThreadUI.pas',
   UWarnings in 'UWarnings.pas',
   UWBCommandBars in 'UWBCommandBars.pas',
   UWBExternal in 'UWBExternal.pas',
