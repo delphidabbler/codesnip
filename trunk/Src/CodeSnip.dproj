@@ -484,7 +484,7 @@
 			<DCCReference Include="UView.pas"/>
 			<DCCReference Include="UViewItemAction.pas"/>
 			<DCCReference Include="UViewItemTreeNode.pas"/>
-			<DCCReference Include="UWaitForActionUI.pas"/>
+			<DCCReference Include="UWaitForThreadUI.pas"/>
 			<DCCReference Include="UWarnings.pas"/>
 			<DCCReference Include="UWBCommandBars.pas"/>
 			<DCCReference Include="UWBExternal.pas"/>
