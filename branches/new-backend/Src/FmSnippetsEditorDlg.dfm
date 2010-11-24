@@ -1,7 +1,7 @@
-inherited UserDBEditDlg: TUserDBEditDlg
+inherited SnippetsEditorDlg: TSnippetsEditorDlg
   Left = 1097
   Top = 525
-  Caption = 'UserDBEditDlg'
+  Caption = 'SnippetsEditorDlg'
   ClientHeight = 578
   ClientWidth = 738
   Position = poDesigned
@@ -19,7 +19,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
       Top = 0
       Width = 646
       Height = 465
-      ActivePage = tsComments
+      ActivePage = tsCompileResults
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
@@ -304,6 +304,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
       object tsCompileResults: TTabSheet
         Caption = 'Compile Results'
         ImageIndex = 3
+        ExplicitLeft = 0
         object lblCompilers: TLabel
           Left = 3
           Top = 3
@@ -344,11 +345,11 @@ inherited UserDBEditDlg: TUserDBEditDlg
           Top = 22
           Width = 141
           Height = 25
-          Caption = 'btnSetAllSuccess'
+          Action = actSetAllSuccess
+          Caption = 'Set All To &Success'
           DoubleBuffered = True
           ParentDoubleBuffered = False
           TabOrder = 1
-          OnClick = actSetAllSuccessExecute
         end
         object btnCompile: TButton
           Left = 203
@@ -375,7 +376,7 @@ inherited UserDBEditDlg: TUserDBEditDlg
           Width = 238
           Height = 72
           BevelOuter = bvNone
-          TabOrder = 4
+          TabOrder = 5
           object lblViewCompErrsKey: TLabel
             Left = 0
             Top = 27
@@ -398,6 +399,14 @@ inherited UserDBEditDlg: TUserDBEditDlg
             ParentFont = False
             OnClick = lblViewCompErrsClick
           end
+        end
+        object btnViewTestUnit: TButton
+          Left = 350
+          Top = 84
+          Width = 140
+          Height = 25
+          Action = actViewTestUnit
+          TabOrder = 4
         end
       end
     end
@@ -492,6 +501,11 @@ inherited UserDBEditDlg: TUserDBEditDlg
       Hint = 'Undo|Reverts the last action'
       ImageIndex = 3
       ShortCut = 16474
+    end
+    object actViewTestUnit: TAction
+      Caption = 'View Test &Unit...'
+      OnExecute = actViewTestUnitExecute
+      OnUpdate = actViewTestUnitUpdate
     end
   end
   object mnuEditCtrls: TPopupMenu

@@ -1,5 +1,5 @@
 {
- * UCompilers.pas
+ * Compilers.UCompilers.pas
  *
  * Provides a class that maintains a list of all supported compilers and creates
  * a global singleton instance of the list. Also provides a class that can
@@ -21,7 +21,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UCompilers.pas
+ * The Original Code is Compilers.UCompilers.pas, formerly UCompilers.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -36,7 +36,7 @@
 }
 
 
-unit UCompilers;
+unit Compilers.UCompilers;
 
 
 interface
@@ -44,7 +44,7 @@ interface
 
 uses
   // Project
-  IntfCompilers, UBaseObjects;
+  Compilers.UGlobals, UBaseObjects;
 
 
 type
@@ -93,17 +93,17 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes,
+  Generics.Collections, SysUtils,
   // Project
-  IntfCommon, UBDSCompiler, UExceptions, UDelphiCompiler,
-  UFreePascalCompiler, USettings;
+  Compilers.UBDS, Compilers.UDelphi, Compilers.UFreePascal, IntfCommon,
+  UExceptions, USettings;
 
 
 type
 
   {
   TCompilerFactory:
-    Factory class that create ICompiler instances for a supported compiler.
+    Factory class that creates ICompiler instances for a supported compiler.
   }
   TCompilerFactory = class(TNoConstructObject)
   public
@@ -118,58 +118,19 @@ type
   {
   TCompilers:
     Implements a list of objects representing all supported compilers. The class
-    supprts cloning and assignment.
+    supports assignment.
   }
   TCompilers = class(TInterfacedObject,
-    ICompilers, IClonable, IAssignable
+    ICompilers, IAssignable
   )
   strict private
-    var
-      fCompilers: TInterfaceList;
-        {List of compiler objects}
-    type
-      {
-      TEnumerator:
-        Implements enumerator for ICompilers object.
-      }
-      TEnumerator = class(TInterfacedObject,
-        ICompilersEnum
-      )
-      strict private
-        fCompilers: TInterfaceList;
-          {List of compilers to be enumerated}
-        fIndex: Integer;
-          {Index of current item in enumeration}
-      public
-        constructor Create(const Compilers: TInterfaceList);
-          {Class constructor. Initialises enumeration.
-            @param Compilers [in] List of compilers to be enumerated.
-          }
-        { ICompilersEnum methods }
-        function GetCurrent: ICompiler;
-          {Gets reference to current compiler.
-            @return Reference to compiler.
-          }
-        function MoveNext: Boolean;
-          {Moves to next item in enumeration.
-            @return True if there is a next item, False if beyond last item.
-          }
-        property Current: ICompiler
-          read GetCurrent;
-          {Reference to current compiler}
-      end;
+    var fCompilers: TList<ICompiler>; // List of compiler objects
   protected // do not make strict
     { IAssignable method }
     procedure Assign(const Src: IInterface);
       {Assigns properties of a given object to this object.
         @param Src [in] Object whose properties are to be copied.
         @except EBug raised if Src is incompatible with this object.
-      }
-    { IClonable method }
-    function Clone: IInterface;
-      {Creates a new instance of the object that is an extact copy and returns
-      it.
-        @return Cloned object.
       }
     { ICompilers methods }
     function GetCompiler(CompID: TCompilerID): ICompiler;
@@ -186,17 +147,17 @@ type
       {Read access method for AvailableCount property
         @return Number of installed compilers available to program.
       }
-    function GetEnumerator: ICompilersEnum;
+    function GetEnumerator: TEnumerator<ICompiler>;
       {Creates an enumerator for this object.
         @return Reference to new enumerator.
       }
   public
     constructor Create;
-      {Class constructor. Creates object containing compiler instances for all
+      {Object constructor. Creates object containing compiler instances for all
       supported compilers.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Object destructor. Tears down object.
       }
   end;
 
@@ -262,29 +223,11 @@ begin
   // Make a copy (clone) of each compiler in list
   fCompilers.Clear;
   for SrcCompiler in SrcCompilers do
-    fCompilers.Add((SrcCompiler as IClonable).Clone);
-end;
-
-function TCompilers.Clone: IInterface;
-  {Creates a new instance of the object that is an extact copy and returns it.
-    @return Cloned object.
-  }
-var
-  Obj: TCompilers;      // cloned object
-  Compiler: ICompiler;  // loops thru all compilers
-begin
-  // Create cloned object
-  Obj := TCompilers.Create;
-  // Clear any previous entries
-  Obj.fCompilers.Clear;
-  // Store a cloned copies of all compilers in list
-  for Compiler in (Self as ICompilers) do
-    Obj.fCompilers.Add((Compiler as IClonable).Clone);
-  Result := Obj;
+    fCompilers.Add((SrcCompiler as IClonable).Clone as ICompiler);
 end;
 
 constructor TCompilers.Create;
-  {Class constructor. Creates object containing compiler instances for all
+  {Object constructor. Creates object containing compiler instances for all
   supported compilers.
   }
 var
@@ -292,16 +235,16 @@ var
 begin
   inherited;
   // Create list to store compilers and create and store each compiler in it
-  fCompilers := TInterfaceList.Create;
+  fCompilers := TList<ICompiler>.Create;
   for CompID := Low(TCompilerID) to High(TCompilerID) do
     fCompilers.Add(TCompilerFactory.CreateCompiler(CompID));
 end;
 
 destructor TCompilers.Destroy;
-  {Class destructor. Tears down object.
+  {Object destructor. Tears down object.
   }
 begin
-  FreeAndNil(fCompilers);
+  fCompilers.Free;
   inherited;
 end;
 
@@ -325,7 +268,7 @@ function TCompilers.GetCompiler(CompID: TCompilerID): ICompiler;
     @return Selected compiler object.
   }
 begin
-  Result := fCompilers[Ord(CompID)] as ICompiler;
+  Result := fCompilers[Ord(CompID)];
 end;
 
 function TCompilers.GetCount: Integer;
@@ -336,40 +279,12 @@ begin
   Result := fCompilers.Count;
 end;
 
-function TCompilers.GetEnumerator: ICompilersEnum;
+function TCompilers.GetEnumerator: TEnumerator<ICompiler>;
   {Creates an enumerator for this object.
     @return Reference to new enumerator.
   }
 begin
-  Result := TEnumerator.Create(fCompilers);
-end;
-
-constructor TCompilers.TEnumerator.Create(const Compilers: TInterfaceList);
-  {Class constructor. Initialises enumeration.
-    @param Compilers [in] List of compilers to be enumerated.
-  }
-begin
-  inherited Create;
-  fCompilers := Compilers;
-  fIndex := -1;
-end;
-
-function TCompilers.TEnumerator.GetCurrent: ICompiler;
-  {Gets reference to current compiler.
-    @return Reference to compiler.
-  }
-begin
-  Result := fCompilers[fIndex] as ICompiler;
-end;
-
-function TCompilers.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, False if beyond last item.
-  }
-begin
-  Result := fIndex < Pred(fCompilers.Count);
-  if Result then
-    Inc(fIndex);
+  Result := fCompilers.GetEnumerator;
 end;
 
 { TPersistCompilers }

@@ -71,7 +71,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  IntfHiliter, FmPreviewDlg, UHiliteAttrs, USyntaxHiliters, UTestUnit;
+  FmPreviewDlg, Hiliter.UAttrs, Hiliter.UGlobals, Hiliter.UHiliters, UTestUnit;
 
 
 { TTestUnitDlgMgr }

@@ -1,8 +1,8 @@
 {
- * FmUserDBEditDlg.pas
+ * FmSnippetsEditorDlg.pas
  *
- * Implements a dialog box that enables the user to create or edit a user-
- * defined routine.
+ * Implements a dialog box that enables the user to create or edit a user
+ * defined snippet.
  *
  * $Rev$
  * $Date$
@@ -19,7 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is FmUserDBEditDlg.pas
+ * The Original Code is FmSnippetsEditorDlg, formerly FmUserDBEditDlg.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +34,7 @@
 }
 
 
-unit FmUserDBEditDlg;
+unit FmSnippetsEditorDlg;
 
 
 interface
@@ -45,7 +45,7 @@ uses
   SysUtils, Classes, ActnList, Buttons, StdCtrls, Forms, Controls, CheckLst,
   ComCtrls, ExtCtrls, StdActns, Menus, ImgList,
   // Project
-  FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, IntfCompilers,
+  Compilers.UGlobals, FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
   UActiveText, UBaseObjects, UCategoryListAdapter, UChkListStateMgr,
   UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, ULEDImageList,
   UMemoCaretPosDisplayMgr, UMemoHelper, USnipKindListAdapter, USnippets,
@@ -55,11 +55,11 @@ uses
 type
 
   {
-  TUserDBEditDlg:
-    Dialog box class that enables the user to create or edit a user-defined
+  TSnippetsEditorDlg:
+    Dialog box class that enables the user to create or edit a user defined
     snippet.
   }
-  TUserDBEditDlg = class(TGenericOKDlg, INoPublicConstruct)
+  TSnippetsEditorDlg = class(TGenericOKDlg, INoPublicConstruct)
     alMain: TActionList;
     actAddUnit: TAction;
     actCompile: TAction;
@@ -73,12 +73,14 @@ type
     actUndo: TEditUndo;
     actViewErrors: TAction;
     actViewExtra: TAction;
+    actViewTestUnit: TAction;
     btnAddUnit: TButton;
     btnDependencies: TButton;
     btnCompile: TButton;
     btnSetAllQuery: TBitBtn;
     btnSetAllSuccess: TBitBtn;
     btnViewExtra: TButton;
+    btnViewTestUnit: TButton;
     cbCategories: TComboBox;
     cbKind: TComboBox;
     clbDepends: TCheckListBox;
@@ -134,6 +136,8 @@ type
     procedure actViewErrorsUpdate(Sender: TObject);
     procedure actViewExtraExecute(Sender: TObject);
     procedure actViewExtraUpdate(Sender: TObject);
+    procedure actViewTestUnitExecute(Sender: TObject);
+    procedure actViewTestUnitUpdate(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure cbKindChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -147,7 +151,7 @@ type
     fSnipKindList:
       TSnipKindListAdapter;         // Accesses sorted list of snippet kinds
     fOrigName: string;              // Original name of snippet ('' for new)
-    fEditData: TSnippetEditData;    // Record storing a snippet's editable data
+    fEditData: TRoutineEditData;    // Record storing a snippet's editable data
     fCompileMgr: TCompileMgr;       // Manages compilation and results display
     fCLBMgrs: array[0..2] of
       TChkListStateMgr;             // Manages check list box clicks
@@ -198,7 +202,7 @@ type
       {Checks all user-entered data in all tabs of the form.
         @except EDataEntry raised if data is not valid.
       }
-    function UpdateData: TSnippetEditData;
+    function UpdateData: TRoutineEditData;
       {Updates snippet's data from user entries. Assumes data has been
       validated.
         @return Record containing snippet's data.
@@ -260,15 +264,15 @@ uses
   FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
   UCtrlArranger, UExceptions, UFontHelper, UReservedCategories,
   URoutineExtraHelper, USnippetValidator, UMessageBox, USnippetIDs, UStructs,
-  UThemesEx, UUtils;
+  UTestUnitDlgMgr, UThemesEx, UUtils;
 
 
 {$R *.dfm}
 
 
-{ TUserDBEditDlg }
+{ TSnippetsEditorDlg }
 
-procedure TUserDBEditDlg.actAddUnitExecute(Sender: TObject);
+procedure TSnippetsEditorDlg.actAddUnitExecute(Sender: TObject);
   {Adds a unit to the list of required units and selects it.
     @param Sender [in] Not used.
   }
@@ -299,7 +303,7 @@ begin
   end;
 end;
 
-procedure TUserDBEditDlg.actAddUnitUpdate(Sender: TObject);
+procedure TSnippetsEditorDlg.actAddUnitUpdate(Sender: TObject);
   {Updates Add Unit action according to whether any unit name is entered in
   associated edit control.
     @param Sender [in] Action triggering this event.
@@ -308,7 +312,7 @@ begin
   (Sender as TAction).Enabled := Trim(edUnit.Text) <> '';
 end;
 
-procedure TUserDBEditDlg.actCompileExecute(Sender: TObject);
+procedure TSnippetsEditorDlg.actCompileExecute(Sender: TObject);
   {Test compiles edited snippet and updates compilers from test result.
     @param Sender [in] Not used.
   }
@@ -342,7 +346,7 @@ begin
   end;
 end;
 
-procedure TUserDBEditDlg.actCompileUpdate(Sender: TObject);
+procedure TSnippetsEditorDlg.actCompileUpdate(Sender: TObject);
   {Updates Test Compile action according to whether any compilers are available
   and if a snippet kind is selected that is not freeform.
     @param Sender [in] Action triggering this event.
@@ -352,7 +356,7 @@ begin
     and (fSnipKindList.SnippetKind(cbKind.ItemIndex) <> skFreeform);
 end;
 
-procedure TUserDBEditDlg.actDependenciesExecute(Sender: TObject);
+procedure TSnippetsEditorDlg.actDependenciesExecute(Sender: TObject);
   {Displays dependencies for currently edited snippet, per entries in
   "Dependencies" check list box.
     @param Sender [in] Not used.
@@ -371,7 +375,7 @@ begin
   end;
 end;
 
-procedure TUserDBEditDlg.actSetAllQueryExecute(Sender: TObject);
+procedure TSnippetsEditorDlg.actSetAllQueryExecute(Sender: TObject);
   {Sets all compiler results to "query".
     @param Sender [in] Not used.
   }
@@ -379,7 +383,7 @@ begin
   SetAllCompilerResults(crQuery);
 end;
 
-procedure TUserDBEditDlg.actSetAllSuccessExecute(Sender: TObject);
+procedure TSnippetsEditorDlg.actSetAllSuccessExecute(Sender: TObject);
   {Sets all compiler results to "success".
     @param Sender [in] Not used.
   }
@@ -387,7 +391,7 @@ begin
   SetAllCompilerResults(crSuccess);
 end;
 
-procedure TUserDBEditDlg.actViewErrorsExecute(Sender: TObject);
+procedure TSnippetsEditorDlg.actViewErrorsExecute(Sender: TObject);
   {Displays compiler errors.
     @param Sender [in] Not used.
   }
@@ -395,7 +399,7 @@ begin
   fCompileMgr.ShowErrors;
 end;
 
-procedure TUserDBEditDlg.actViewErrorsUpdate(Sender: TObject);
+procedure TSnippetsEditorDlg.actViewErrorsUpdate(Sender: TObject);
   {Disables view compiler errors action if panel containing link is not
   displayed.
     @param Sender [in] Reference to action to be updated.
@@ -404,7 +408,7 @@ begin
   (Sender as TAction).Enabled := pnlViewCompErrs.Visible;
 end;
 
-procedure TUserDBEditDlg.actViewExtraExecute(Sender: TObject);
+procedure TSnippetsEditorDlg.actViewExtraExecute(Sender: TObject);
   {Validates REML entered in the extra information memo control then displays it
   as it will appear in the main form.
     @param Sender [in] Not used.
@@ -419,7 +423,7 @@ begin
   end;
 end;
 
-procedure TUserDBEditDlg.actViewExtraUpdate(Sender: TObject);
+procedure TSnippetsEditorDlg.actViewExtraUpdate(Sender: TObject);
   {Disables view extra information action if no markup is entered in Extra
   Information tab.
     @param Sender [in] Reference to action to be updated.
@@ -428,7 +432,42 @@ begin
   (Sender as TAction).Enabled := Trim(edExtra.Text) <> '';
 end;
 
-class function TUserDBEditDlg.AddNewRoutine(AOwner: TComponent): Boolean;
+procedure TSnippetsEditorDlg.actViewTestUnitExecute(Sender: TObject);
+  {Displays test unit for current snippet. Error message displayed if snippet
+  is not valid.
+    @param Sender [in] Not used.
+  }
+var
+  TempSnippet: TRoutine;  // temp snippet object for compilation
+begin
+  try
+    TempSnippet := CreateTempSnippet;
+  except
+    on E: Exception do
+    begin
+      // TempSnippet not created if there is an exception here
+      HandleException(E);
+      Exit;
+    end;
+  end;
+  try
+    TTestUnitDlgMgr.DisplayTestUnit(Self, TempSnippet);
+  finally
+    TempSnippet.Free;
+  end;
+end;
+
+procedure TSnippetsEditorDlg.actViewTestUnitUpdate(Sender: TObject);
+  {Updates View Test Unit action according to whether a compilable snippet is
+  selected.
+    @param Sender [in] Action triggering this event.
+  }
+begin
+  (Sender as TAction).Enabled :=
+    fSnipKindList.SnippetKind(cbKind.ItemIndex) <> skFreeform;
+end;
+
+class function TSnippetsEditorDlg.AddNewRoutine(AOwner: TComponent): Boolean;
   {Displays dialog box to enable user to enter a new snippet.
     @param AOwner [in] Control that owns the dialog box, over which the dialog
       is aligned. May be nil.
@@ -447,7 +486,7 @@ begin
     end;
 end;
 
-procedure TUserDBEditDlg.ArrangeForm;
+procedure TSnippetsEditorDlg.ArrangeForm;
   {Arranges controls on form and sizes it.
   }
 begin
@@ -489,7 +528,7 @@ begin
   inherited;
 end;
 
-procedure TUserDBEditDlg.btnOKClick(Sender: TObject);
+procedure TSnippetsEditorDlg.btnOKClick(Sender: TObject);
   {OnClick event handler for OK button. Validates entries and updates / adds
   snippet if all is well.
     @param Sender [in] Not used.
@@ -520,7 +559,7 @@ begin
   end;
 end;
 
-function TUserDBEditDlg.BuildExtraActiveText: IActiveText;
+function TSnippetsEditorDlg.BuildExtraActiveText: IActiveText;
   {Creates an active text object from the REML text entered in the extra
   information memo control.
     @return Required active text object.
@@ -531,7 +570,7 @@ begin
   );
 end;
 
-procedure TUserDBEditDlg.cbKindChange(Sender: TObject);
+procedure TSnippetsEditorDlg.cbKindChange(Sender: TObject);
   {Handles change events on snippet kind drop down list. Updates list of
   references depending on new kind.
     @param Sender [in] Not used.
@@ -540,7 +579,7 @@ begin
   UpdateReferences;
 end;
 
-procedure TUserDBEditDlg.CheckExtra;
+procedure TSnippetsEditorDlg.CheckExtra;
   {Checks the REML text entered in the extra information memo control.
     @except EDataEntry raised on error.
   }
@@ -575,7 +614,7 @@ begin
     raise EDataEntry.Create(ErrorMsg, edExtra); // no selection info available
 end;
 
-procedure TUserDBEditDlg.ConfigForm;
+procedure TSnippetsEditorDlg.ConfigForm;
   {Configures form's controls. Sets font and colors of "link" labels. Also sets
   item height of owner draw check list boxes.
   }
@@ -591,13 +630,13 @@ begin
     '(' + ShortcutToText(actViewErrors.ShortCut) + ')';
 end;
 
-function TUserDBEditDlg.CreateTempSnippet: TRoutine;
+function TSnippetsEditorDlg.CreateTempSnippet: TRoutine;
   {Creates a temporary snippet from data entered in dialog box.
     @return Required snippet instance.
     @except EDataEntry raised if any of entered data is invalid.
   }
 var
-  EditData: TSnippetEditData; // stores snippet's properties and references
+  EditData: TRoutineEditData; // stores snippet's properties and references
 begin
   ValidateData;
   // Create snippet object from entered data
@@ -607,7 +646,7 @@ begin
   );
 end;
 
-procedure TUserDBEditDlg.DisplayCompileResults(const Compilers: ICompilers);
+procedure TSnippetsEditorDlg.DisplayCompileResults(const Compilers: ICompilers);
   {Displays results of a test compilation. Used as callback method for compile
   manager.
     @param Compilers [in] Object containing compilation results.
@@ -623,7 +662,7 @@ begin
   pnlViewCompErrs.Visible := fCompileMgr.HaveErrors;
 end;
 
-class function TUserDBEditDlg.EditRoutine(AOwner: TComponent;
+class function TSnippetsEditorDlg.EditRoutine(AOwner: TComponent;
   const Routine: TRoutine): Boolean;
   {Displays dialog box to enable user to edit a snippet.
     @param AOwner [in] Control that owns the dialog box, over which the dialog
@@ -644,7 +683,7 @@ begin
     end;
 end;
 
-procedure TUserDBEditDlg.FocusCtrl(const Ctrl: TWinControl);
+procedure TSnippetsEditorDlg.FocusCtrl(const Ctrl: TWinControl);
   {Displays and focusses a control, selecting its parent tab sheet if necessary.
     @param Ctrl [in] Control to be focussed.
   }
@@ -666,7 +705,7 @@ begin
     Ctrl.SetFocus;
 end;
 
-procedure TUserDBEditDlg.FormCreate(Sender: TObject);
+procedure TSnippetsEditorDlg.FormCreate(Sender: TObject);
   {Form creation event handler. Creates owned objects.
     @param Sender [in] Not used.
   }
@@ -688,11 +727,9 @@ begin
   fImages := TLEDImageList.Create(Self);
   fSourceMemoHelper := TMemoHelper.Create(edSourceCode);
   alMain.Images := fImages;
-  btnSetAllSuccess.Action := actSetAllSuccess;
-  btnSetAllQuery.Action := actSetAllQuery;
 end;
 
-procedure TUserDBEditDlg.FormDestroy(Sender: TObject);
+procedure TSnippetsEditorDlg.FormDestroy(Sender: TObject);
   {Form destruction event handler. Frees owned objects.
     @param Sender [in] Not used.
   }
@@ -712,7 +749,7 @@ begin
   fMemoCaretPosDisplayMgr.Free;
 end;
 
-procedure TUserDBEditDlg.HandleException(const E: Exception);
+procedure TSnippetsEditorDlg.HandleException(const E: Exception);
   {Handles trapped exceptions. EDataEntry exceptions are caught, an error
   message is displayed and the control causing the exception is focussed. Other
   exceptions are re-raised.
@@ -738,7 +775,7 @@ begin
     raise E;
 end;
 
-procedure TUserDBEditDlg.InitControls;
+procedure TSnippetsEditorDlg.InitControls;
   {Initialises controls to default values.
   }
 begin
@@ -782,7 +819,7 @@ begin
   fMemoCaretPosDisplayMgr.Manage(edExtra, lblExtraCaretPos);
 end;
 
-procedure TUserDBEditDlg.InitForm;
+procedure TSnippetsEditorDlg.InitForm;
   {Performs initialisation of form fields and controls.
   }
 begin
@@ -806,7 +843,7 @@ begin
   pcMain.ActivePageIndex := 0;
 end;
 
-procedure TUserDBEditDlg.lblSnippetKindHelpClick(Sender: TObject);
+procedure TSnippetsEditorDlg.lblSnippetKindHelpClick(Sender: TObject);
   {OnClick event handler for Snippet Kind help link label. Displays help topic
   that informs what a Snippet Kind is.
     @param Sender [in] Not used.
@@ -815,7 +852,7 @@ begin
   DisplayHelp('SnippetKinds');
 end;
 
-procedure TUserDBEditDlg.lblViewCompErrsClick(Sender: TObject);
+procedure TSnippetsEditorDlg.lblViewCompErrsClick(Sender: TObject);
   {OnClick event handler for compiler errors link label. Displays compiler
   warnings and errors in a dialog box.
     @param Sender [in] Not used.
@@ -824,7 +861,7 @@ begin
   actViewErrors.Execute;
 end;
 
-procedure TUserDBEditDlg.pcMainChange(Sender: TObject);
+procedure TSnippetsEditorDlg.pcMainChange(Sender: TObject);
   {Handler for OnChange event for page control. Used to load content into
   instructions HTML frame for comments tab.
     @param Sender [in] Not used.
@@ -845,7 +882,7 @@ begin
   pnlViewCompErrs.Hide;
 end;
 
-procedure TUserDBEditDlg.PopulateControls;
+procedure TSnippetsEditorDlg.PopulateControls;
   {Populates controls with dynamic data.
   }
 begin
@@ -855,7 +892,8 @@ begin
   fCatList.ToStrings(cbCategories.Items);
 end;
 
-procedure TUserDBEditDlg.SetAllCompilerResults(const CompRes: TCompileResult);
+procedure TSnippetsEditorDlg.SetAllCompilerResults(
+  const CompRes: TCompileResult);
   {Sets all compiler results to same value.
     @param CompRes [in] Required compiler result.
   }
@@ -863,7 +901,7 @@ begin
   fCompilersLBMgr.SetCompileResults(CompRes);
 end;
 
-function TUserDBEditDlg.UpdateData: TSnippetEditData;
+function TSnippetsEditorDlg.UpdateData: TRoutineEditData;
   {Updates snippet's data from user entries. Assumes data has been validated.
     @return Record containing snippet's data.
   }
@@ -883,7 +921,7 @@ begin
   end;
 end;
 
-procedure TUserDBEditDlg.UpdateReferences;
+procedure TSnippetsEditorDlg.UpdateReferences;
   {Updates dependencies and cross-references check lists for snippet being
   edited, depending on kind.
   }
@@ -922,7 +960,7 @@ begin
   fXRefsCLBMgr.Restore;
 end;
 
-procedure TUserDBEditDlg.UpdateTabSheetCSS(Sender: TObject;
+procedure TSnippetsEditorDlg.UpdateTabSheetCSS(Sender: TObject;
   const CSSBuilder: TCSSBuilder);
   {Updates CSS used for HTML displayed in frames on tab sheets.
     @param Sender [in] Not used.
@@ -957,7 +995,7 @@ begin
   end;
 end;
 
-procedure TUserDBEditDlg.ValidateData;
+procedure TSnippetsEditorDlg.ValidateData;
   {Checks all user-entered data in all tabs of the form.
     @except EDataEntry raised if data is not valid.
   }

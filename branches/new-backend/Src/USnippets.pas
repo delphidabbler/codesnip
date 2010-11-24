@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes, Generics.Collections,
   // Project
-  IntfCompilers, UActiveText, UIStringList, UMultiCastEvents, USnippetIDs;
+  Compilers.UGlobals, UActiveText, UIStringList, UMultiCastEvents, USnippetIDs;
 
 
 type

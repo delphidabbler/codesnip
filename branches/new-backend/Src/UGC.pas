@@ -50,8 +50,7 @@ type
   {
   TGC:
     Static garbage collector class. Used to manage lifetimes of various
-    resources. Most useful for handling the lifetime of class fields that store
-    object references - saves explicitly freeing them in finalization sections.
+    resources.
   }
   TGC = class(TNoConstructObject)
   strict private
@@ -78,7 +77,7 @@ implementation
 
 uses
   // Project
-  SysUtils, Classes;
+  SysUtils, Generics.Collections;
 
 
 type
@@ -104,13 +103,13 @@ type
   }
   TGarbageCollector = class(TInterfacedObject, IInterface, IGC)
   strict private
-    fList: TInterfaceList;  // List of managed resources
+    var fList: TList<IInterface>; // List of managed resources
   public
     constructor Create;
-      {Class constructor. Sets up object.
+      {Object constructor. Sets up object.
       }
     destructor Destroy; override;
-      {Class destructor. Releases all resources and tears down object.
+      {Object destructor. Releases all resources and tears down object.
       }
     { IGC methods }
     function AddObject(const Obj: TObject): TObject;
@@ -124,18 +123,18 @@ type
   {
   TGCObjectWrapper:
     Interfaced class that wraps another object and automatically frees it when
-    it goes out of scope.
+    this object goes out of scope.
   }
   TGCObjectWrapper = class(TInterfacedObject, IInterface)
   strict private
     fObject: TObject; // Wrapped object
   public
     constructor Create(Obj: TObject); overload;
-      {Class constructor. Sets up object wrapper to auto-free another object.
+      {Object constructor. Sets up object wrapper to auto-free another object.
         @param Obj [in] Wrapped object.
       }
     destructor Destroy; override;
-      {Class destructor. Frees wrapped object.
+      {Object destructor. Frees wrapped object.
       }
   end;
 
@@ -143,7 +142,7 @@ type
 { TGCObjectWrapper }
 
 constructor TGCObjectWrapper.Create(Obj: TObject);
-  {Class constructor. Sets up object wrapper to auto-free another object.
+  {Object constructor. Sets up object wrapper to auto-free another object.
     @param Obj [in] Wrapped object.
   }
 begin
@@ -153,7 +152,7 @@ begin
 end;
 
 destructor TGCObjectWrapper.Destroy;
-  {Class destructor. Frees wrapped object.
+  {Object destructor. Frees wrapped object.
   }
 begin
   fObject.Free;
@@ -175,18 +174,18 @@ begin
 end;
 
 constructor TGarbageCollector.Create;
-  {Class constructor. Sets up object.
+  {Object constructor. Sets up object.
   }
 begin
   inherited Create;
-  fList := TInterfaceList.Create;
+  fList := TList<IInterface>.Create;
 end;
 
 destructor TGarbageCollector.Destroy;
-  {Class destructor. Releases all resources and tears down object.
+  {Object destructor. Releases all resources and tears down object.
   }
 begin
-  FreeAndNil(fList);  // releases contained interfaced objects
+  fList.Free; // releases contained interfaced objects
   inherited;
 end;
 

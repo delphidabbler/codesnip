@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  IntfCompilers, UBaseObjects;
+  Compilers.UGlobals, UBaseObjects;
 
 
 type
@@ -166,7 +166,8 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UConsts, UHTMLUtils, UHTMLDetailUtils, UIStringList, UJavaScriptUtils;
+  UConsts, UHTMLUtils, UHTMLDetailUtils, UIStringList, UJavaScriptUtils,
+  UResourceUtils;
 
 
 resourcestring

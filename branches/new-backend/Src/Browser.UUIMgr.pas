@@ -1,5 +1,5 @@
 {
- * UWBUIMgr.pas
+ * Browser.UUIMgr.pas
  *
  * Contains class that implements IDocHostUIHandler interface and allows
  * customisation of IE web browser control's user interface, message
@@ -20,7 +20,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UWBUIMgr.pas
+ * The Original Code is Browser.UUIMgr.pas, formerly UWBUIMgr.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -35,7 +35,7 @@
 }
 
 
-unit UWBUIMgr;
+unit Browser.UUIMgr;
 
 
 interface
@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes, Windows, ActiveX, SHDocVw, Menus,
   // Project
-  IntfUIHandlers, UNulUIHandler;
+  Browser.IntfDocHostUI, Browser.UNulUIHandler;
 
 
 type
@@ -269,7 +269,7 @@ type
   public
     constructor Create(const WebBrowser: TWebBrowser;
       const Controller: IInterface = nil);
-      {Class constructor. Sets up the object (optionally as an aggregated
+      {Object constructor. Sets up the object (optionally as an aggregated
       object).
         @param WebBrowser [in] Reference to managed browser control. Must not be
           nil.
@@ -385,7 +385,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UHTMLDocHelper, UThemesEx, UWBHelper;
+  Browser.UControlHelper, UHTMLDocHelper, UThemesEx;
 
 
 function TaskAllocWideString(const S: string): PWChar;
@@ -430,7 +430,7 @@ function TWBUIMgr.CanCopy: Boolean;
   }
 begin
   // Check that browser control supports copying and that some text is selected
-  Result := TWBHelper.IsCommandEnabled(fWebBrowser, OLECMDID_COPY)
+  Result := TWBControlHelper.IsCommandEnabled(fWebBrowser, OLECMDID_COPY)
     and (SelectedText <> '');
 end;
 
@@ -440,7 +440,7 @@ function TWBUIMgr.CanSelectAll: Boolean;
   }
 begin
   // Check if browser supports text selection and text selection allowed
-  Result := TWBHelper.IsCommandEnabled(fWebBrowser, OLECMDID_SELECTALL)
+  Result := TWBControlHelper.IsCommandEnabled(fWebBrowser, OLECMDID_SELECTALL)
     and AllowTextSelection;
 end;
 
@@ -449,8 +449,10 @@ procedure TWBUIMgr.ClearSelection;
   }
 begin
   // Check if browser supports clearing selection and clear it if so
-  if TWBHelper.IsCommandEnabled(fWebBrowser, OLECMDID_CLEARSELECTION) then
-    TWBHelper.ExecCommand(fWebBrowser, OLECMDID_CLEARSELECTION);
+  if TWBControlHelper.IsCommandEnabled(
+    fWebBrowser, OLECMDID_CLEARSELECTION
+  ) then
+    TWBControlHelper.ExecCommand(fWebBrowser, OLECMDID_CLEARSELECTION);
 end;
 
 procedure TWBUIMgr.CopyToClipboard;
@@ -460,12 +462,12 @@ procedure TWBUIMgr.CopyToClipboard;
 begin
   if CanCopy then
     // Get browser control to copy its content to clipboard
-    TWBHelper.ExecCommand(fWebBrowser, OLECMDID_COPY);
+    TWBControlHelper.ExecCommand(fWebBrowser, OLECMDID_COPY);
 end;
 
 constructor TWBUIMgr.Create(const WebBrowser: TWebBrowser;
   const Controller: IInterface = nil);
-  {Class constructor. Sets up the object (optionally as an aggregated object).
+  {Object constructor. Sets up the object (optionally as an aggregated object).
     @param WebBrowser [in] Reference to managed browser control. Must not be
       nil.
     @param Controller [in] IInterface of containing object if this object is to
@@ -623,7 +625,7 @@ procedure TWBUIMgr.SelectAll;
 begin
   if CanSelectAll then
     // Get web browser to select all its text
-    TWBHelper.ExecCommand(fWebBrowser, OLECMDID_SELECTALL);
+    TWBControlHelper.ExecCommand(fWebBrowser, OLECMDID_SELECTALL);
 end;
 
 procedure TWBUIMgr.SetPopupMenu(const Value: TPopupMenu);

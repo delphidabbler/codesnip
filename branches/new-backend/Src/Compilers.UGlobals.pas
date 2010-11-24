@@ -1,5 +1,5 @@
 {
- * IntfCompilers.pas
+ * Compilers.UGlobals.pas
  *
  * Declares various types that describe the compiler and compilation results and
  * defines interfaces to compiler objects.
@@ -19,7 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is IntfCompilers.pas
+ * The Original Code is Compilers.UGlobals.pas, formerly IntfCompilers.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +34,7 @@
 }
 
 
-unit IntfCompilers;
+unit Compilers.UGlobals;
 
 
 interface
@@ -42,7 +42,7 @@ interface
 
 uses
   // Delphi
-  Classes, Graphics;
+  Generics.Collections, Classes, Graphics;
 
 
 type
@@ -219,24 +219,6 @@ type
   end;
 
   {
-  ICompilersEnum:
-    Interface to object that enumerates compilers.
-  }
-  ICompilersEnum = interface(IInterface)
-    ['{C0B3DA8E-38BB-49E9-9F25-0AA5BC494B6E}']
-    function GetCurrent: ICompiler;
-      {Gets reference to current compiler.
-        @return Reference to compiler.
-      }
-    function MoveNext: Boolean;
-      {Moves to next item in enumeration.
-        @return True if there is a next item, False if beyond last item.
-      }
-    property Current: ICompiler read GetCurrent;
-      {Reference to current compiler}
-  end;
-
-  {
   ICompilers:
     Interface implemented by an object tha maintans a list of all compilers
     supported by the program.
@@ -256,7 +238,7 @@ type
       {Read access method for AvailableCount property
         @return Number of installed compilers available to program.
       }
-    function GetEnumerator: ICompilersEnum;
+    function GetEnumerator: TEnumerator<ICompiler>;
       {Gets an enumerator that enumerates all compilers in this object.
         @return Required enumerator.
       }

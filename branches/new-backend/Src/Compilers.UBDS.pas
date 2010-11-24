@@ -1,5 +1,5 @@
 {
- * UBDSCompiler.pas
+ * Compilers.UBDS.pas
  *
  * Class that controls and provides information about Borland CodeGear and
  * Embarcadero "BDS" Win32 compilers.
@@ -19,7 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UBDSCompiler.pas
+ * The Original Code is Compilers.UBDS.pas, formerly UBDSCompiler.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +34,7 @@
 }
 
 
-unit UBDSCompiler;
+unit Compilers.UBDS;
 
 
 interface
@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  IntfCommon, IntfCompilers, UBorlandCompiler;
+  Compilers.UBorland, Compilers.UGlobals, IntfCommon;
 
 
 type

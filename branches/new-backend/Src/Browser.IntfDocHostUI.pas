@@ -1,5 +1,5 @@
 {
- * IntfUIHandlers.pas
+ * Browser.IntfDocHostUI.pas
  *
  * Interfaces, records and constants used when hosting the IE WebBrowser Control
  * or automating IE to replace the menus, toolbars, and context menus. The
@@ -21,12 +21,12 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is IntfUIHandlers.pas
+ * The Original Code is Browser.IntfDocHostUI.pas, formerly IntfUIHandlers.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -36,7 +36,7 @@
 }
 
 
-unit IntfUIHandlers;
+unit Browser.IntfDocHostUI;
 
 
 interface

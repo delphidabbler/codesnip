@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  IntfCompilers, UBaseObjects, USnippets;
+  Compilers.UGlobals, UBaseObjects, USnippets, UThreadEx;
 
 
 type
@@ -90,6 +90,26 @@ type
         @param ARoutine [in] Routine to be compiled.
         @return Compilation results for each supported compiler (crQuery is
           returned for each supported compiler that is not installed).
+      }
+  end;
+
+  {
+  TTestCompileThread:
+    Thread that performs a test compilation of a snippet.
+  }
+  TTestCompileThread = class(TThreadEx)
+  strict private
+    var fCompilers: ICompilers; // Compilers used for test compilation
+    var fSnippet: TRoutine;     // Snippet to be compiled
+  strict protected
+    procedure Execute; override;
+      {Performs test compilation in a thread.
+      }
+  public
+    constructor Create(ACompilers: ICompilers; ASnippet: TRoutine);
+      {Object constructor. Sets up suspended thread.
+        @param ACompilers [in] Compilers to be used for test compilation.
+        @param ASnippet [in] Snippet to be compiled.
       }
   end;
 
@@ -186,6 +206,27 @@ begin
   inherited InternalCreate;
   fRoutine := ARoutine;
   fCompilers := ACompilers;
+end;
+
+{ TTestCompileThread }
+
+constructor TTestCompileThread.Create(ACompilers: ICompilers;
+  ASnippet: TRoutine);
+  {Object constructor. Sets up suspended thread.
+    @param ACompilers [in] Compilers to be used for test compilation.
+    @param ASnippet [in] Snippet to be compiled.
+  }
+begin
+  inherited Create(True);
+  fCompilers := ACompilers;
+  fSnippet := ASnippet;
+end;
+
+procedure TTestCompileThread.Execute;
+  {Performs test compilation in a thread.
+  }
+begin
+  TTestCompile.Compile(fCompilers, fSnippet);
 end;
 
 end.

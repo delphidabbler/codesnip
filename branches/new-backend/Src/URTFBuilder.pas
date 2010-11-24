@@ -54,10 +54,7 @@ type
   }
   TRTFColourTable = class(TObject)
   strict private
-    type
-      // Implements a list of colours
-      TColourList = TList<TColor>;
-    var fColours: TColourList; // List of colours in table
+    var fColours: TList<TColor>;  // List of colours in table
   public
     constructor Create;
       {Constructor. Sets up table.
@@ -136,10 +133,7 @@ type
   }
   TRTFFontTable = class(TObject)
   strict private
-    type
-      // Implements a list of RTF fonts
-      TRTFFontList = TList<TRTFFont>;
-    var fFonts: TRTFFontList; // List of fonts in table
+    var fFonts: TList<TRTFFont>;  // List of fonts in table
     function FindFont(const FontName: string): Integer;
       {Finds index of a named font in font table.
         @param FontName [in] Name of font to be found.
@@ -548,7 +542,7 @@ constructor TRTFFontTable.Create;
   }
 begin
   inherited;
-  fFonts := TRTFFontList.Create(
+  fFonts := TList<TRTFFont>.Create(
     TDelegatedComparer<TRTFFont>.Create(
       function(const Left, Right: TRTFFont): Integer
       begin
@@ -646,7 +640,7 @@ constructor TRTFColourTable.Create;
   }
 begin
   inherited;
-  fColours := TColourList.Create; // use default integer comparer
+  fColours := TList<TColor>.Create; // use default integer comparer
   Add(clNone);
 end;
 

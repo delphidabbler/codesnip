@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -135,10 +135,10 @@ uses
   // Delphi
   SysUtils, Dialogs, Windows {for inlining},
   // Project
-  FmAddCategoryDlg, FmDeleteCategoryDlg, FmRenameCategoryDlg, FmUserDBEditDlg,
-  UConsts, UExceptions, UIStringList, UMessageBox, UOpenDialogEx,
-  UOpenDialogHelper, UReservedCategories, USaveDialogEx, USnippetIDs,
-  UUserDBBackup;
+  FmAddCategoryDlg, FmDeleteCategoryDlg, FmRenameCategoryDlg,
+  FmSnippetsEditorDlg, UConsts, UExceptions, UIStringList, UMessageBox,
+  UOpenDialogEx, UOpenDialogHelper, UReservedCategories, USaveDialogEx,
+  USnippetIDs, UUserDBBackup;
 
 
 { TUserDBMgr }
@@ -156,7 +156,7 @@ class procedure TUserDBMgr.AddSnippet;
   }
 begin
   // Display Add Snippet dialog box which performs update of database.
-  TUserDBEditDlg.AddNewRoutine(nil);
+  TSnippetsEditorDlg.AddNewRoutine(nil);
 end;
 
 class procedure TUserDBMgr.BackupDatabase;
@@ -406,7 +406,7 @@ begin
   Snippet := Snippets.Routines.Find(SnippetName, True);
   if not Assigned(Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not in user database');
-  TUserDBEditDlg.EditRoutine(nil, Snippet);
+  TSnippetsEditorDlg.EditRoutine(nil, Snippet);
 end;
 
 class procedure TUserDBMgr.RenameACategory;

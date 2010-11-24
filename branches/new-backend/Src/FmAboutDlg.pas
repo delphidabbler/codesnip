@@ -165,7 +165,8 @@ uses
   SysUtils, Graphics, Math, Windows {for inlining}, ShellAPI,
   // Project
   FmEasterEgg, FmRegistrationDlg, UAppInfo, UColours, UConsts, UContributors,
-  UCSSUtils, UCtrlArranger, UFontHelper, UHTMLUtils, UThemesEx, UUtils;
+  UCSSUtils, UCtrlArranger, UFontHelper, UHTMLUtils, UResourceUtils, UThemesEx,
+  UUtils;
 
 
 {

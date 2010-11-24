@@ -1,5 +1,5 @@
 {
- * UHiliterPersist.pas
+ * Hiliter.UPersist.pas
  *
  * Implements a static class that can persist syntax highlighter attributes
  * to/from a given storage.
@@ -19,12 +19,12 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UHiliterPersist.pas
+ * The Original Code is Hiliter.UPersist.pas, formerly UHiliterPersist.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -34,7 +34,7 @@
 }
 
 
-unit UHiliterPersist;
+unit Hiliter.UPersist;
 
 
 interface
@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  IntfHiliter, UBaseObjects, USettings;
+  Hiliter.UGlobals, UBaseObjects, USettings;
 
 
 type
@@ -76,7 +76,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UHiliteAttrs;
+  Hiliter.UAttrs;
 
 
 const

@@ -1,4 +1,11 @@
 /*
+ * codesnip.css
+ *
+ * CSS for the CodeSnip HTML help file.
+ *
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -16,10 +23,11 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2006 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
- * Contributor(s): None
+ * Contributor(s):
+ *   NONE
  *
  * ***** END LICENSE BLOCK *****
  */
@@ -80,11 +88,8 @@ ul {
 ul li,
 ol li,
 ul.spaced li,
-ol.spaced li {
-	margin-top: 0.5em;
-}
-ul.spaced li,
-ol.spaced li {
+ol.spaced li,
+li div {
 	margin-top: 0.5em;
 }
 ul.unspaced li,
@@ -185,3 +190,4 @@ table.menu td.desc {
 .todo {
 	background-color: yellow;
 }
+

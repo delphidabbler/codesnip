@@ -43,29 +43,10 @@ interface
 
 uses
   // Project
-  Classes, XMLIntf, XMLDoc, XMLDom;
+  Generics.Collections, XMLIntf, XMLDoc, XMLDom;
 
 
 type
-
-  {
-  IXMLSimpleNodeListEnum:
-    Interface supported by enumerator of IXMLSimpleNodeList.
-  }
-  IXMLSimpleNodeListEnum = interface(IInterface)
-    ['{2AC5D463-5E6F-4C80-8FCA-1BF46F3C6592}']
-    function GetCurrent: IXMLNode;
-      {Gets reference to current node in enumeration.
-        @return Reference to current node.
-      }
-    function MoveNext: Boolean;
-      {Moves to next item in enumeration.
-        @return True if there is a valid next item, False if at end of
-          enumeration.
-      }
-    property Current: IXMLNode read GetCurrent;
-      {Reference to current node in enumeration}
-  end;
 
   {
   IXMLSimpleNodeList:
@@ -89,7 +70,7 @@ type
       {Gets number of items in list.
         @return Number of items.
       }
-    function GetEnumerator: IXMLSimpleNodeListEnum;
+    function GetEnumerator: TEnumerator<IXMLNode>;
       {Creates list enumerator.
         @return Enumerator instance.
       }
@@ -175,37 +156,13 @@ type
     IXMLSimpleNodeList
   )
   strict private
-    fList: TInterfaceList;
-      {Stores objects in list}
-    type
-      TEnumerator = class(TInterfacedObject, IXMLSimpleNodeListEnum)
-      private
-        fList: IXMLSimpleNodeList;
-          {Reference to object being enumerated}
-        fIndex: Integer;
-          {Index of current item in enumeration}
-      protected
-        function GetCurrent: IXMLNode;
-          {Gets reference to current node in enumeration.
-            @return Reference to current node.
-          }
-        function MoveNext: Boolean;
-          {Moves to next item in enumeration.
-            @return True if there is a valid next item, False if at end of
-              enumeration.
-          }
-      public
-        constructor Create(const List: IXMLSimpleNodeList);
-          {Class constructor. Creates and initialises enumerator.
-            @param List [in] Reference to list being enumerated.
-          }
-      end;
+    var fList: TList<IXMLNode>;   // List of nodes
   public
     constructor Create;
-      {Class constructor. Sets up object.
+      {Object constructor. Sets up object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Object destructor. Tears down object.
       }
     { IXMLSimpleNodeList }
     function GetItem(Idx: Integer): IXMLNode;
@@ -222,7 +179,7 @@ type
       {Gets number of items in list.
         @return Number of items.
       }
-    function GetEnumerator: IXMLSimpleNodeListEnum;
+    function GetEnumerator: TEnumerator<IXMLNode>;
       {Creates list enumerator.
         @return Enumerator instance.
       }
@@ -305,8 +262,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   UIStringList;
 
@@ -465,27 +420,27 @@ begin
 end;
 
 constructor TXMLSimpleNodeList.Create;
-  {Class constructor. Sets up object.
+  {Object constructor. Sets up object.
   }
 begin
   inherited;
-  fList := TInterfaceList.Create;
+  fList := TList<IXMLNode>.Create;
 end;
 
 destructor TXMLSimpleNodeList.Destroy;
-  {Class destructor. Tears down object.
+  {Object destructor. Tears down object.
   }
 begin
-  FreeAndNil(fList);
+  fList.Free;
   inherited;
 end;
 
-function TXMLSimpleNodeList.GetEnumerator: IXMLSimpleNodeListEnum;
+function TXMLSimpleNodeList.GetEnumerator: TEnumerator<IXMLNode>;
   {Creates list enumerator.
     @return Enumerator instance.
   }
 begin
-  Result := TEnumerator.Create(Self);
+  Result := fList.GetEnumerator;
 end;
 
 function TXMLSimpleNodeList.GetItem(Idx: Integer): IXMLNode;
@@ -494,39 +449,7 @@ function TXMLSimpleNodeList.GetItem(Idx: Integer): IXMLNode;
     @return Reference to node at specified index.
   }
 begin
-  Result := fList[Idx] as IXMLNode;
-end;
-
-{ TXMLSimpleNodeList.TEnumerator }
-
-constructor TXMLSimpleNodeList.TEnumerator.Create(
-  const List: IXMLSimpleNodeList);
-  {Class constructor. Creates and initialises enumerator.
-    @param List [in] Reference to list being enumerated.
-  }
-begin
-  inherited Create;
-  fList := List;
-  fIndex := -1
-end;
-
-function TXMLSimpleNodeList.TEnumerator.GetCurrent: IXMLNode;
-  {Gets reference to current node in enumeration.
-    @return Reference to current node.
-  }
-begin
-  Result := fList[fIndex];
-end;
-
-function TXMLSimpleNodeList.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a valid next item, False if at end of
-      enumeration.
-  }
-begin
-  Result := fIndex < Pred(fList.Count);
-  if Result then
-    Inc(fIndex);
+  Result := fList[Idx];
 end;
 
 end.

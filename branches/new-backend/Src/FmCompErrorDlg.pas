@@ -42,82 +42,13 @@ interface
 uses
   // Delphi
   Forms, StdCtrls, Controls, ExtCtrls, Classes, Tabs, ActnList, ImgList,
+  Generics.Collections,
   // Project
-  FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, IntfCompilers,
+  Compilers.UGlobals, FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg,
   UBaseObjects, USnippetIDs;
 
 
 type
-
-  {
-  TRequiredCompilers:
-    Helper object that stores references to compilers whose compile errors and
-    warnings are to be displayed in dialog box.
-  }
-  TRequiredCompilers = class(TObject)
-  strict private
-    type
-      {
-      TEnumerator:
-        Private enumerator object. Designed for use only by compiler, not by
-        users.
-      }
-      TEnumerator = class(TObject)
-      strict private
-        fList: TRequiredCompilers;
-          {Object being enumerated}
-        fIndex: Integer;
-          {Index of current item in enumeration}
-      public
-        constructor Create(const List: TRequiredCompilers);
-          {Class constructor. Sets up and initialises enumeration.
-            @param List [in] Reference to object to be enumerated.
-          }
-        function GetCurrent: ICompiler;
-          {Gets current compiler in enumeration.
-            @return Current string.
-          }
-        function MoveNext: Boolean;
-          {Moves to next item in enumeration.
-            @return True if there is a next item, false if enumeration
-              completed.
-          }
-        property Current: ICompiler read GetCurrent;
-          {Current item in enumeration}
-      end;
-    var
-      fCompilers: TInterfaceList;
-        {List of required compilers}
-    function GetCompiler(Idx: Integer): ICompiler;
-      {Read accessor for Compilers[] property.
-        @param Idx [in] Index of required compiler in Compilers[].
-        @return Reference to indexed compiler.
-      }
-    function GetCount: Integer;
-      {Read accessor for Count property.
-        @return Number of compilers in Compilers[] property.
-      }
-  public
-    constructor Create;
-      {Class constructor. Sets up object.
-      }
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
-    procedure Add(Compiler: ICompiler);
-      {Adds a compiler to list.
-        @param Compiler [in] Reference to compiler to be added.
-      }
-    function GetEnumerator: TEnumerator;
-      {Gets reference to object's enumerator. For use only by compiler to
-      provide for..in functionality.
-        @return Required enumerastor.
-      }
-    property Compilers[Idx: Integer]: ICompiler read GetCompiler; default;
-      {List of required compilers}
-    property Count: Integer read GetCount;
-      {Number of compilers in Compilers[] property}
-  end;
 
   {
   TCompErrorDlg:
@@ -146,11 +77,11 @@ type
       box}
     fSnippet: TSnippetID;
       {Snippet for which last compilation took place}
-    fRequiredCompilers: TRequiredCompilers;
+    fRequiredCompilers: TList<ICompiler>;
       {Object that maintains a list of compilers for which errors or warnings
       are to be displayed}
     fCompGlyphIndexes: array[TCompilerId] of Integer;
-      {Maps compiler compiler ids to index of compiler image in image list}
+      {Maps compiler compiler ids to index of compiler images in image list}
     function GetHTMLHeight: Integer;
       {Gets height of rendered HTML required to display warnings or error
       messages. Calculates maximum height of logs of each required compiler.
@@ -205,9 +136,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics,
+  Graphics,
   // Project
-  UConsts, UExceptions, UHTMLUtils, FmGenericViewDlg;
+  UConsts, UExceptions, UHTMLUtils;
 
 
 {$R *.dfm}
@@ -312,7 +243,7 @@ procedure TCompErrorDlg.FormCreate(Sender: TObject);
   }
 begin
   inherited;
-  fRequiredCompilers := TRequiredCompilers.Create;
+  fRequiredCompilers := TList<ICompiler>.Create;
 end;
 
 procedure TCompErrorDlg.FormDestroy(Sender: TObject);
@@ -320,7 +251,7 @@ procedure TCompErrorDlg.FormDestroy(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  FreeAndNil(fRequiredCompilers);
+  fRequiredCompilers.Free;
   inherited;
 end;
 
@@ -534,90 +465,6 @@ procedure TCompErrorDlg.tsCompilersGetImageIndex(Sender: TObject;
   }
 begin
   ImageIndex := fCompGlyphIndexes[fRequiredCompilers[TabIndex].GetID];
-end;
-
-{ TRequiredCompilers }
-
-procedure TRequiredCompilers.Add(Compiler: ICompiler);
-  {Adds a compiler to list.
-    @param Compiler [in] Reference to compiler to be added.
-  }
-begin
-  fCompilers.Add(Compiler);
-end;
-
-constructor TRequiredCompilers.Create;
-  {Class constructor. Sets up object.
-  }
-begin
-  inherited Create;
-  fCompilers := TInterfaceList.Create;
-end;
-
-destructor TRequiredCompilers.Destroy;
-  {Class destructor. Tears down object.
-  }
-begin
-  FreeAndNil(fCompilers);
-  inherited;
-end;
-
-function TRequiredCompilers.GetCompiler(Idx: Integer): ICompiler;
-  {Read accessor for Compilers[] property.
-    @param Idx [in] Index of required compiler in Compilers[].
-    @return Reference to indexed compiler.
-  }
-begin
-  Result := fCompilers[Idx] as ICompiler;
-end;
-
-function TRequiredCompilers.GetCount: Integer;
-  {Read accessor for Count property.
-    @return Number of compilers in Compilers[] property.
-  }
-begin
-  Result := fCompilers.Count;
-end;
-
-function TRequiredCompilers.GetEnumerator: TEnumerator;
-  {Gets reference to object's enumerator. For use only by compiler to
-  provide for..in functionality.
-    @return Required enumerastor.
-  }
-begin
-  Result := TEnumerator.Create(Self);
-end;
-
-{ TRequiredCompilers.TEnumerator }
-
-constructor TRequiredCompilers.TEnumerator.Create(
-  const List: TRequiredCompilers);
-  {Class constructor. Sets up and initialises enumeration.
-    @param List [in] Reference to object to be enumerated.
-  }
-begin
-  inherited Create;
-  fList := List;
-  fIndex := -1;
-end;
-
-function TRequiredCompilers.TEnumerator.GetCurrent: ICompiler;
-  {Gets current compiler in enumeration.
-    @return Current string.
-  }
-begin
-  Result := fList[fIndex];
-end;
-
-function TRequiredCompilers.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, false if enumeration
-      completed.
-  }
-begin
-  Result := fIndex < Pred(fList.Count);
-  if Result then
-    Inc(fIndex);
 end;
 
 end.

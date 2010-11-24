@@ -1,5 +1,5 @@
 {
- * UWBIOMgr.pas
+ * Browser.UIOMgr.pas
  *
  * Class that wraps the IE web browser control and provides ability to load and
  * save HTML from files, streams or strings. Also simplifies navigation to
@@ -20,7 +20,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UWBIOMgr.pas
+ * The Original Code is Browser.UIOMgr.pas, formerly UWBIOMgr.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -35,7 +35,7 @@
 }
 
 
-unit UWBIOMgr;
+unit Browser.UIOMgr;
 
 
 interface
@@ -130,11 +130,11 @@ type
       }
   public
     constructor Create(const WB: TWebBrowser);
-      {Class constructor. Sets up object.
+      {Object constructor. Sets up object.
         @param WB [in] Managed webbrowser control. Must not be nil.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object and disconnects event sinks.
+      {Object destructor. Tears down object and disconnects event sinks.
       }
     procedure LoadFromString(const HTML: string);
       {Loads and displays valid HTML source from a string.
@@ -176,13 +176,13 @@ uses
   // Delphi
   SysUtils, ActiveX,
   // Project
-  UHTMLDocHelper, UHTMLUtils, UWBHelper;
+  Browser.UControlHelper, UHTMLDocHelper, UResourceUtils;
 
 
 { TWBIOMgr }
 
 constructor TWBIOMgr.Create(const WB: TWebBrowser);
-  {Class constructor. Sets up object.
+  {Object constructor. Sets up object.
     @param WB [in] Managed webbrowser control. Must not be nil.
   }
 begin
@@ -198,7 +198,7 @@ begin
 end;
 
 destructor TWBIOMgr.Destroy;
-  {Class destructor. Tears down object and disconnects event sinks.
+  {Object destructor. Tears down object and disconnects event sinks.
   }
 begin
   fWdwEvents.Disconnect;
@@ -373,7 +373,7 @@ procedure TWBIOMgr.WaitForDocToLoad;
 begin
   // NOTE: do not call this method in a FormCreate event handler since the
   // browser will never reach this state - use a FormShow event handler instead
-  TWBHelper.WaitForValidDocToLoad(fWB);                        // can raise EBug
+  TWBControlHelper.WaitForValidDocToLoad(fWB);                 // can raise EBug
   // connect event sinks to browser document and window
   fDocEvents.Connect(fWB.Document);
   fWdwEvents.Connect(THTMLDocHelper.ParentWindow(fWB.Document));

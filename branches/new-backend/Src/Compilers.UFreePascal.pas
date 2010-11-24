@@ -1,5 +1,5 @@
 {
- * UFreePascalCompiler.pas
+ * Compilers.UFreePascal.pas
  *
  * Implements class that wraps the Free Pascal compiler. Controls compilation,
  * processes compiler output and provides information about the compiler.
@@ -19,12 +19,13 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UFreePascalCompiler.pas
+ * The Original Code is Compilers.UFreePascal.pas, formerly
+ * UFreePascalCompiler.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -34,7 +35,7 @@
 }
 
 
-unit UFreePascalCompiler;
+unit Compilers.UFreePascal;
 
 
 interface
@@ -42,7 +43,7 @@ interface
 
 uses
   // Project
-  IntfCommon, IntfCompilers, UCompilerBase;
+  Compilers.UCompilerBase, Compilers.UGlobals, IntfCommon;
 
 
 type

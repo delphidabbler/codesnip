@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes,
   // Project
-  IntfCompilers, UActiveText, UIStringList, USnippets;
+  Compilers.UGlobals, UActiveText, UIStringList, USnippets;
 
 
 type
@@ -158,7 +158,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UCompilers, UUtils, USnippetKindInfo, Web.UInfo;
+  Compilers.UCompilers, UUtils, USnippetKindInfo, Web.UInfo;
 
 
 { TRoutineDoc }

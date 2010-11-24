@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  IntfHiliter, UIStringList, UMeasurement, UPrintInfo, USourceFileInfo,
+  Hiliter.UGlobals, UIStringList, UMeasurement, UPrintInfo, USourceFileInfo,
   USourceGen, UWarnings;
 
 
@@ -199,7 +199,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  IntfCommon, UExceptions, UHiliteAttrs, UHiliterPersist, USettings;
+  Hiliter.UAttrs, Hiliter.UPersist, IntfCommon, UExceptions, USettings;
 
 
 type

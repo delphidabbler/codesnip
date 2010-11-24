@@ -44,8 +44,8 @@ uses
   // Delphi
   StdCtrls, Forms, Controls, Classes, Menus, Buttons,
   // Project
-  IntfHiliter, FrPrefsBase, FrRTFShowCase, UColorBoxEx, UColorDialogEx, UConsts,
-  UEncodings, UPreferences;
+  FrPrefsBase, FrRTFShowCase, Hiliter.UGlobals, UColorBoxEx, UColorDialogEx,
+  UConsts, UEncodings, UPreferences;
 
 
 type
@@ -168,7 +168,7 @@ uses
   // Delphi
   SysUtils, ExtCtrls, Windows, Graphics, Dialogs,
   // Project
-  FmPreferencesDlg, IntfCommon, UCtrlArranger, UFontHelper, UHiliteAttrs,
+  FmPreferencesDlg, Hiliter.UAttrs, IntfCommon, UCtrlArranger, UFontHelper,
   UMessageBox, URTFBuilder, URTFUtils, UUtils;
 
 

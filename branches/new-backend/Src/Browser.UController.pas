@@ -1,5 +1,5 @@
 {
- * UWBController.pas
+ * Browser.UController.pas
  *
  * Class that hosts the IE web browser control and enables both direct loading
  * and saving of browser's HTML and customisation of the user interface. Much of
@@ -20,7 +20,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UWBController.pas
+ * The Original Code is Browser.UController.pas, formerly UWBController.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -35,7 +35,7 @@
 }
 
 
-unit UWBController;
+unit Browser.UController;
 
 
 interface
@@ -45,7 +45,8 @@ uses
   // Delphi
   SHDocVw, ActiveX,
   // Project
-  IntfUIHandlers, UBaseObjects, UOleClientSite, UWBIOMgr, UWBUIMgr;
+  Browser.IntfDocHostUI, Browser.UIOMgr, Browser.UUIMgr, UBaseObjects,
+  UOleClientSite;
 
 
 type
@@ -81,11 +82,11 @@ type
       {References aggregated object implementing IOleClientSite interface}
   public
     constructor Create(const WebBrowser: TWebBrowser);
-      {Class constructor. Sets up object as container for a browser control.
+      {Object constructor. Sets up object as container for a browser control.
         @param WebBrowser Contained browser control.
       }
     destructor Destroy; override;
-      {Class destructor. Unregisters browser control container and tears down
+      {Object destructor. Unregisters browser control container and tears down
       object.
       }
     property IOMgr: TWBIOMgr
@@ -111,7 +112,7 @@ uses
 { TWBController }
 
 constructor TWBController.Create(const WebBrowser: TWebBrowser);
-  {Class constructor. Sets up object as container for a browser control.
+  {Object constructor. Sets up object as container for a browser control.
     @param WebBrowser Contained browser control.
   }
 begin
@@ -125,7 +126,7 @@ begin
 end;
 
 destructor TWBController.Destroy;
-  {Class destructor. Unregisters browser control container and tears down
+  {Object destructor. Unregisters browser control container and tears down
   object.
   }
 begin
@@ -163,12 +164,10 @@ initialization
 // Set up OLE
 OleInitialize(nil);
 
-
 finalization
 
 // Finalise OLE
 OleUninitialize;
-
 
 end.
 
