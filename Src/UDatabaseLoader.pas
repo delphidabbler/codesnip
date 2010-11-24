@@ -1,7 +1,8 @@
 {
  * UDatabaseLoader.pas
  *
- * Implements a class that loads and resets database in a thread.
+ * Implements a static class that load and reset the database along with a
+ * thread class that performs the same actions in a thread.
  *
  * $Rev$
  * $Date$
@@ -23,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -41,16 +42,27 @@ interface
 
 uses
   // Project
-  UThreadEx;
+  UBaseObjects, UThreadEx;
 
 
 type
 
   {
   TDatabaseLoader:
+    Static class that loads or reloads the database.
+  }
+  TDatabaseLoader = class(TNoConstructObject)
+  public
+    class procedure Load;
+      {Loads the database.
+      }
+  end;
+
+  {
+  TDatabaseLoaderThread:
     Class that loads and resets database in a thread.
   }
-  TDatabaseLoader = class(TThreadEx)
+  TDatabaseLoaderThread = class(TThreadEx)
   protected
     procedure Execute; override;
       {Loads database in thread and selects all records.
@@ -72,19 +84,28 @@ uses
 
 { TDatabaseLoader }
 
-constructor TDatabaseLoader.Create;
+class procedure TDatabaseLoader.Load;
+  {Loads the database.
+  }
+begin
+  Snippets.Load;
+  Query.Reset;
+end;
+
+{ TDatabaseLoaderThread }
+
+constructor TDatabaseLoaderThread.Create;
   {Class constructor. Sets up suspended thread ready to load database.
   }
 begin
   inherited Create(True);
 end;
 
-procedure TDatabaseLoader.Execute;
+procedure TDatabaseLoaderThread.Execute;
   {Loads database in thread and selects all records.
   }
 begin
-  Snippets.Load;
-  Query.Reset;
+  TDatabaseLoader.Load;
 end;
 
 end.

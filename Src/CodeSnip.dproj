@@ -468,7 +468,6 @@
 			<DCCReference Include="UTextStreamReader.pas"/>
 			<DCCReference Include="UThemesEx.pas"/>
 			<DCCReference Include="UThreadEx.pas"/>
-			<DCCReference Include="UThreadWrapper.pas"/>
 			<DCCReference Include="UToolButtonEx.pas"/>
 			<DCCReference Include="UTVCheckBoxes.pas"/>
 			<DCCReference Include="UUIWidgetImages.pas"/>
