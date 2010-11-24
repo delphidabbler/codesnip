@@ -1979,10 +1979,6 @@ inherited MainForm: TMainForm
       ShortCut = 24585
       OnExecute = actPreviousTabExecute
     end
-    object actLoadDatabase: TAction
-      Caption = 'actLoadDatabase'
-      OnExecute = actLoadDatabaseExecute
-    end
     object actPrint: TAction
       Category = 'File'
       Caption = '&Print...'
