@@ -125,30 +125,6 @@ type
   end;
 
   {
-  TRoutineInfo:
-    Record that encapsulates data read from an import file that describes a
-    snippet.
-  }
-  TRoutineInfo = record
-    Name: string;           // Snippet name
-    Data: TRoutineEditData; // Describes a snippet
-    procedure Assign(const Src: TRoutineInfo);
-      {Sets this record's fields to be same as another TRoutineInfo record.
-      Object fields are copied appropriately.
-        @param Src [in] Record containing fields to be copied.
-      }
-    procedure Init;
-      {Initialises record to nul values.
-      }
-  end;
-
-  {
-  TRoutineInfoList:
-    Dynamic array of TRoutineInfo records.
-  }
-  TRoutineInfoList = array of TRoutineInfo;
-
-  {
   TCategoryData:
     Provides information about a category's properties.
   }
@@ -2407,26 +2383,6 @@ procedure TRoutineEditData.Init;
 begin
   Props.Init;
   Refs.Init;
-end;
-
-{ TRoutineInfo }
-
-procedure TRoutineInfo.Assign(const Src: TRoutineInfo);
-  {Sets this record's fields to be same as another TRoutineInfo record.
-  Object fields are copied appropriately.
-    @param Src [in] Record containing fields to be copied.
-  }
-begin
-  Name := Src.Name;
-  Data.Assign(Src.Data);
-end;
-
-procedure TRoutineInfo.Init;
-  {Initialises record to nul values.
-  }
-begin
-  Name := '';
-  Data.Init;
 end;
 
 { TCategoryData }

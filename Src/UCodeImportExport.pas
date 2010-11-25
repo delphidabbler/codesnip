@@ -51,6 +51,30 @@ uses
 type
 
   {
+  TRoutineInfo:
+    Record that encapsulates data read from an import file that describes a
+    snippet.
+  }
+  TRoutineInfo = record
+    Name: string;           // Snippet name
+    Data: TRoutineEditData; // Describes a snippet
+    procedure Assign(const Src: TRoutineInfo);
+      {Sets this record's fields to be same as another TRoutineInfo record.
+      Object fields are copied appropriately.
+        @param Src [in] Record containing fields to be copied.
+      }
+    procedure Init;
+      {Initialises record to nul values.
+      }
+  end;
+
+  {
+  TRoutineInfoList:
+    Dynamic array of TRoutineInfo records.
+  }
+  TRoutineInfoList = array of TRoutineInfo;
+
+  {
   TUserInfo:
     Record that encapsulates user info optionally stored in export files.
   }
@@ -734,6 +758,26 @@ begin
   RoutineNodes := fXMLDoc.FindChildNodes(RoutinesNode, cRoutineNode);
   if RoutineNodes.Count = 0 then
     raise ECodeImporter.CreateFmt(sMissingNode, [cRoutineNode]);
+end;
+
+{ TRoutineInfo }
+
+procedure TRoutineInfo.Assign(const Src: TRoutineInfo);
+  {Sets this record's fields to be same as another TRoutineInfo record.
+  Object fields are copied appropriately.
+    @param Src [in] Record containing fields to be copied.
+  }
+begin
+  Name := Src.Name;
+  Data.Assign(Src.Data);
+end;
+
+procedure TRoutineInfo.Init;
+  {Initialises record to nul values.
+  }
+begin
+  Name := '';
+  Data.Init;
 end;
 
 end.
