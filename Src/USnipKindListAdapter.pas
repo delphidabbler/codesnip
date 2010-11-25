@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes,
   // Project
-  ULists, USnippets;
+  UContainers, USnippetKindInfo, USnippets;
 
 
 type
@@ -56,21 +56,15 @@ type
     controls.
  }
   TSnipKindListAdapter = class(TObject)
-  private
-    fSnipKindList: TSortedObjectList;  // Sorted list of snippet kinds
-    function CompareSnipKinds(const Obj1, Obj2: TObject): Integer;
-      {Callback comparison method for passing to sorted list object. Compares
-      two snippet kind objects.
-        @param Obj1 [in] First snippet kind object to be compared.
-        @param Obj2 [in] Second snippet kind object to be compared.
-        @return -ve if Obj1 < Obj2, 0 if Obj1 = Obj2 or +ve if Obj1 > Obj2.
-      }
+  strict private
+    var fSnipKindList:    // Sorted list of snippet kinds
+      TSortedObjectList<TSnippetKindInfo>;
   public
     constructor Create;
-      {Class constructor. Sets up object with sorted list of all snippet kinds.
+      {Object constructor. Sets up object with sorted list of all snippet kinds.
       }
     destructor Destroy; override;
-      {Class desctrutor. Tears down object.
+      {Object destructor. Tears down object.
       }
     function IndexOf(const SnipKind: TSnippetKind): Integer;
       {Gets index of a snippet kind in sorted list.
@@ -93,46 +87,36 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows, {for inlining}
-  // Project
-  USnippetKindInfo;
+  SysUtils, Windows {for inlining}, Generics.Defaults;
 
 
 { TSnipKindListAdapter }
 
-function TSnipKindListAdapter.CompareSnipKinds(const Obj1,
-  Obj2: TObject): Integer;
-  {Callback comparison method for passing to sorted list object. Compares two
-  snippet kind objects.
-    @param Obj1 [in] First snippet kind object to be compared.
-    @param Obj2 [in] Second snippet kind object to be compared.
-    @return -ve if Obj1 < Obj2, 0 if Obj1 = Obj2 or +ve if Obj1 > Obj2.
-  }
-var
-  Kind1, Kind2: TSnippetKindInfo; // snippet kinds to be compared
-begin
-  Kind1 := Obj1 as TSnippetKindInfo;
-  Kind2 := Obj2 as TSnippetKindInfo;
-  Result := AnsiCompareText(Kind1.Description, Kind2.Description);
-end;
-
 constructor TSnipKindListAdapter.Create;
-  {Class constructor. Sets up object with sorted list of all snippet kinds.
+  {Object constructor. Sets up object with sorted list of all snippet kinds.
   }
 var
   SnipKind: TSnippetKind; // loops thru all snippet kinds
 begin
   inherited Create;
-  fSnipKindList := TSortedObjectList.Create(False, CompareSnipKinds);
+  fSnipKindList := TSortedObjectList<TSnippetKindInfo>.Create(
+    TDelegatedComparer<TSnippetKindInfo>.Create(
+      function (const Left, Right: TSnippetKindInfo): Integer
+      begin
+        Result := AnsiCompareText(Left.Description, Right.Description);
+      end
+    ),
+    False
+  );
   for SnipKind := Low(TSnippetKind) to High(TSnippetKind) do
     fSnipKindList.Add(TSnippetKindInfoList.Instance[SnipKind])
 end;
 
 destructor TSnipKindListAdapter.Destroy;
-  {Class desctrutor. Tears down object.
+  {Object destructor. Tears down object.
   }
 begin
-  FreeAndNil(fSnipKindList);
+  fSnipKindList.Free;
   inherited;
 end;
 
@@ -146,7 +130,7 @@ var
 begin
   Result := -1;
   for Idx := 0 to Pred(fSnipKindList.Count) do
-    if (fSnipKindList[Idx] as TSnippetKindInfo).Kind = SnipKind then
+    if fSnipKindList[Idx].Kind = SnipKind then
     begin
       Result := Idx;
       Break;
@@ -158,7 +142,7 @@ function TSnipKindListAdapter.SnippetKind(const Index: Integer): TSnippetKind;
     @param Index [in] Index of snippet kind required.
   }
 begin
-  Result := (fSnipKindList[Index] as TSnippetKindInfo).Kind;
+  Result := fSnipKindList[Index].Kind;
 end;
 
 procedure TSnipKindListAdapter.ToStrings(const Strings: TStrings);
@@ -166,10 +150,10 @@ procedure TSnipKindListAdapter.ToStrings(const Strings: TStrings);
     @param Strings [in] String list to receive information.
   }
 var
-  Elem: TObject; // each snippet kind in sorted list
+  Elem: TSnippetKindInfo; // each snippet kind in sorted list
 begin
   for Elem in fSnipKindList do
-    Strings.AddObject((Elem as TSnippetKindInfo).Description, Elem);
+    Strings.AddObject(Elem.Description, Elem);
 end;
 
 end.
