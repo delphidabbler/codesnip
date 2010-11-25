@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  UAlphabet, UContainers, USnippetKindInfo, USnippets;
+  UAlphabet, UContainers, USnippetKindInfo, USnippets, Generics.Collections;
 
 
 type
@@ -198,33 +198,6 @@ type
       {Read accessor for Count property.
         @return Number of group items in grouping.
       }
-    type
-      {
-      TEnumerator:
-        Enumerates a group items in a grouping. Group items are sorted per the
-        specified compare method.
-      }
-      TEnumerator = class(TObject)
-      strict private
-        var
-          fGrouping: TGrouping; // Reference to object being enumerated
-          fIndex: Integer;      // Index of current object in enumeration
-      public
-        constructor Create(const Grouping: TGrouping);
-          {Object constructor. Initialises enumeration.
-            @param Grouping [in] Object to be enumerated.
-          }
-        function GetCurrent: TGroupItem;
-          {Gets current group item.
-            @return Required group item.
-          }
-        function MoveNext: Boolean;
-          {Moves to next item in enumeration.
-            @return True if there is a next item, False if beyond last item.
-          }
-        property Current: TGroupItem read GetCurrent;
-          {Current group item}
-      end;
   strict protected
     procedure AddItem(const Item: TGroupItem);
       {Adds a group item to grouping.
@@ -243,7 +216,7 @@ type
     destructor Destroy; override;
       {Object destructor. Tears down object.
       }
-    function GetEnumerator: TEnumerator;
+    function GetEnumerator: TEnumerator<TGroupItem>;
       {Creates an enumerator for this object.
         @return Reference to new enumerator. Caller is responsible for freeing
           this object.
@@ -303,8 +276,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining}, Character, Generics.Defaults,
-  Generics.Collections;
+  SysUtils, Windows {for inlining}, Character, Generics.Defaults;
 
 
 { TGrouping }
@@ -352,13 +324,13 @@ begin
   Result := fItems.Count;
 end;
 
-function TGrouping.GetEnumerator: TEnumerator;
+function TGrouping.GetEnumerator: TEnumerator<TGroupItem>;
   {Creates an enumerator for this object.
     @return Reference to new enumerator. Caller is responsible for freeing this
       object.
   }
 begin
-  Result := TEnumerator.Create(Self);
+  Result := fItems.GetEnumerator;
 end;
 
 function TGrouping.GetItem(Idx: Integer): TGroupItem;
@@ -368,36 +340,6 @@ function TGrouping.GetItem(Idx: Integer): TGroupItem;
   }
 begin
   Result := fItems[Idx];
-end;
-
-{ TGrouping.TEnumerator }
-
-constructor TGrouping.TEnumerator.Create(const Grouping: TGrouping);
-  {Object constructor. Initialises enumeration.
-    @param Grouping [in] Object to be enumerated.
-  }
-begin
-  inherited Create;
-  fGrouping := Grouping;
-  fIndex := -1;
-end;
-
-function TGrouping.TEnumerator.GetCurrent: TGroupItem;
-  {Gets current group item.
-    @return Required group item.
-  }
-begin
-  Result := fGrouping.GetItem(fIndex);
-end;
-
-function TGrouping.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, False if beyond last item.
-  }
-begin
-  Result := fIndex < Pred(fGrouping.Count);
-  if Result then
-    Inc(fIndex);
 end;
 
 { TGroupItem }
