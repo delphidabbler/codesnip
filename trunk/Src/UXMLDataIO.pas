@@ -150,7 +150,7 @@ type
         @param Cat [in] Name of category containing snippets.
         @return List of snippet names.
       }
-    procedure GetRoutineProps(const Routine: string; var Props: TRoutineData);
+    procedure GetRoutineProps(const Routine: string; var Props: TSnippetData);
       {Get properties of a snippet.
         @param Routine [in] Name of required snippet.
         @param Props [in/out] Empty properties passed in. Record fields set to
@@ -228,7 +228,7 @@ type
         @param Routines [in] List of names of snippets.
       }
     procedure WriteRoutineProps(const RoutineName: string;
-      const Props: TRoutineData);
+      const Props: TSnippetData);
       {Write the properties of a snippet. Always called after all categories are
       written and before WriteRoutineUnits, so can be used to perform any per-
       routine intialisation.
@@ -533,7 +533,7 @@ begin
 end;
 
 procedure TXMLDataReader.GetRoutineProps(const Routine: string;
-  var Props: TRoutineData);
+  var Props: TSnippetData);
   {Get properties of a snippet.
     @param Routine [in] Name of required snippet.
     @param Props [in/out] Empty properties passed in. Record fields set to
@@ -918,7 +918,7 @@ begin
 end;
 
 procedure TXMLDataWriter.WriteRoutineProps(const RoutineName: string;
-  const Props: TRoutineData);
+  const Props: TSnippetData);
   {Write the properties of a snippet. Always called after all categories are
   written and before WriteRoutineUnits, so can be used to perform any per-
   routine intialisation.

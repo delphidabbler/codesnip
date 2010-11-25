@@ -64,7 +64,7 @@ type
         @return True if dependency list is valid or False if not.
       }
     class function ValidateDependsList(const SnippetName: string;
-      const Data: TRoutineEditData; out ErrorMsg: string): Boolean; overload;
+      const Data: TSnippetEditData; out ErrorMsg: string): Boolean; overload;
       {Recursively checks dependency list of a snippet for validity.
         @param SnippetName [in] Name of snippet for which dependencies are to be
           checked.
@@ -255,7 +255,7 @@ begin
 end;
 
 class function TSnippetValidator.ValidateDependsList(const SnippetName: string;
-  const Data: TRoutineEditData; out ErrorMsg: string): Boolean;
+  const Data: TSnippetEditData; out ErrorMsg: string): Boolean;
   {Recursively checks dependency list of a snippet for validity.
     @param SnippetName [in] Name of snippet for which dependencies are to be
       checked.
