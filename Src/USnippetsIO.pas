@@ -622,8 +622,8 @@ procedure TUserSnippetsLoader.LoadCategories;
   present.
   }
 var
-  ResCatIdx: Integer;         // loops thru all reserved categories
-  ResCatInfo: TCategoryInfo;  // info about a reserved category
+  ResCatIdx: Integer;                 // loops thru all reserved categories
+  ResCatInfo: TReservedCategoryInfo;  // info about a reserved category
 begin
   // Get all categories from storage
   inherited;
