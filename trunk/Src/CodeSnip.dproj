@@ -328,6 +328,7 @@
 			<DCCReference Include="UCompResHTML.pas"/>
 			<DCCReference Include="UConsoleApp.pas"/>
 			<DCCReference Include="UConsts.pas"/>
+			<DCCReference Include="UContainers.pas"/>
 			<DCCReference Include="UContributors.pas"/>
 			<DCCReference Include="UControlStateMgr.pas"/>
 			<DCCReference Include="UCopyInfoMgr.pas"/>
