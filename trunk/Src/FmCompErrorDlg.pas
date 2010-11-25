@@ -45,7 +45,7 @@ uses
   Generics.Collections,
   // Project
   Compilers.UGlobals, FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg,
-  UBaseObjects, USnippets;
+  UBaseObjects, USnippetIDs;
 
 
 type
@@ -53,7 +53,7 @@ type
   {
   TCompErrorDlg:
     Implements a dialog box that displays error or warning logs from last
-    compilation on one or more compilers for a specified routine. It is an
+    compilation on one or more compilers for a specified snippet. It is an
     error if there are no compiler warnings or errors.
   }
   TCompErrorDlg = class(THTMLViewDlg, INoPublicConstruct)
@@ -75,8 +75,8 @@ type
     fWantTabs: Boolean;
       {Flag indicating whether compilers tabset is to be displayed in dialog
       box}
-    fRoutine: TRoutine;
-      {Routine for which last compilation took place}
+    fSnippet: TSnippetID;
+      {Snippet for which last compilation took place}
     fRequiredCompilers: TList<ICompiler>;
       {Object that maintains a list of compilers for which errors or warnings
       are to be displayed}
@@ -111,21 +111,21 @@ type
       {Initialises HTML frame to display error log for first (or only) compiler.
       }
   public
-    class procedure Execute(const AOwner: TComponent; const ARoutine: TRoutine;
-      const ACompiler: ICompiler); overload;
+    class procedure Execute(const AOwner: TComponent;
+      const ASnippet: TSnippetID; const ACompiler: ICompiler); overload;
       {Shows a dialog box that displays error or warning log for a specified
-      compiler as a result of test compiling a routine.
+      compiler as a result of test compiling a snippet.
         @param AOwner [in] Component that owns this form.
-        @param ARoutine [in] Routine that was compiled.
+        @param ASnippet [in] ID of snippet that was compiled.
         @param ACompiler [in] Id of compiler that created log.
       }
-    class procedure Execute(const AOwner: TComponent; const ARoutine: TRoutine;
-      const ACompilers: ICompilers); overload;
+    class procedure Execute(const AOwner: TComponent;
+      const ASnippet: TSnippetID; const ACompilers: ICompilers); overload;
       {Shows a dialog box that displays error and warning logs for each compiler
-      that reported warnings or errors when test compiling a routine. There is a
+      that reported warnings or errors when test compiling a snippet. There is a
       tab for each compiler.
         @param AOwner [in] Component that owns this form.
-        @param ARoutines [in] Routine that was compiled.
+        @param ASnippet [in] ID of snippet that was compiled.
         @param ACompilers [in] Object that lists all supported compilers.
       }
   end;
@@ -151,7 +151,7 @@ uses
   by values in this code:
 
   <%Status%>        log status - Error(s) or Warning(s)
-  <%Routine%>       name of routine being compiled
+  <%Routine%>       name of snippet being compiled
   <%CompilerID%>    if of compiler that caused warning/error
   <%ErrorList%>     a CRLF delimited list of the errors/warnings from the log as
                     HTML list items in form <li>log-line</li>
@@ -189,22 +189,21 @@ begin
 end;
 
 class procedure TCompErrorDlg.Execute(const AOwner: TComponent;
-  const ARoutine: TRoutine; const ACompilers: ICompilers);
+  const ASnippet: TSnippetID; const ACompilers: ICompilers);
   {Shows a dialog box that displays error and warning logs for each compiler
-  that reported warnings or errors when test compiling a routine. There is a
+  that reported warnings or errors when test compiling a snippet. There is a
   tab for each compiler.
     @param AOwner [in] Component that owns this form.
-    @param ARoutines [in] Routine that was compiled.
+    @param ASnippet [in] ID of snippet that was compiled.
     @param ACompilers [in] Object that lists all supported compilers.
   }
 var
   Compiler: ICompiler;  // each supported compiler
 begin
-  Assert(Assigned(ARoutine), ClassName + '.Execute: ARoutine is nil');
   Assert(Assigned(ACompilers), ClassName + '.Execute: ACompilers is nil');
   with InternalCreate(AOwner) do
     try
-      fRoutine := ARoutine;
+      fSnippet := ASnippet;
       for Compiler in ACompilers do
         if Compiler.HasErrorsOrWarnings then
           fRequiredCompilers.Add(Compiler);
@@ -216,20 +215,19 @@ begin
 end;
 
 class procedure TCompErrorDlg.Execute(const AOwner: TComponent;
-  const ARoutine: TRoutine; const ACompiler: ICompiler);
+  const ASnippet: TSnippetID; const ACompiler: ICompiler);
   {Shows a dialog box that displays error or warning log for a specified
-  compiler as a result of test compiling a routine.
+  compiler as a result of test compiling a snippet.
     @param AOwner [in] Component that owns this form.
-    @param ARoutine [in] Routine that was compiled.
+    @param ASnippet [in] ID of snippet that was compiled.
     @param ACompiler [in] Id of compiler that created log.
   }
 begin
-  Assert(Assigned(ARoutine), ClassName + '.Execute: ARoutine is nil');
   Assert(Assigned(ACompiler), ClassName + '.Execute: ACompiler is nil');
   with InternalCreate(AOwner) do
     try
-      // Record selected compiler and currently selected routine
-      fRoutine := ARoutine;
+      // Record selected compiler and currently selected snippet
+      fSnippet := ASnippet;
       fRequiredCompilers.Add(ACompiler);
       fWantTabs := False;
       // Display dialog
@@ -408,7 +406,7 @@ begin
     // Build log report and load into browser control
     Values.Values['Status']     := Status;
     Values.Values['ErrorList']  := BuildLogListHTML(Log);
-    Values.Values['Routine']    := MakeSafeHTMLText(fRoutine.Name);
+    Values.Values['Routine']    := MakeSafeHTMLText(fSnippet.Name);
     Values.Values['CompilerID'] := MakeSafeHTMLText(Compiler.GetName);
     frmHTML.Initialise('dlg-comperror-tplt.html', Values);
   finally

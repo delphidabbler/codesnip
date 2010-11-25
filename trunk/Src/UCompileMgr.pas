@@ -229,7 +229,7 @@ begin
     ClassName + '.ShowError: Compiler has no errors or warnings');
   Assert(Assigned(fLastCompiledRoutine),
     ClassName + '.ShowError: LastCompiledRoutine is nil');
-  TCompErrorDlg.Execute(Owner, fLastCompiledRoutine, Compiler);
+  TCompErrorDlg.Execute(Owner, fLastCompiledRoutine.ID, Compiler);
 end;
 
 procedure TCompileMgr.ShowErrors;
@@ -241,7 +241,7 @@ begin
     ClassName + '.ShowErrors: No compilers have errors or warnings');
   Assert(Assigned(fLastCompiledRoutine),
     ClassName + '.ShowErrors: LastCompiledRoutine is nil');
-  TCompErrorDlg.Execute(Owner, fLastCompiledRoutine, fCompilers);
+  TCompErrorDlg.Execute(Owner, fLastCompiledRoutine.ID, fCompilers);
 end;
 
 { TMainCompileMgr }
