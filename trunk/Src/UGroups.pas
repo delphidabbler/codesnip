@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  UAlphabet, ULists, USnippetKindInfo, USnippets;
+  UAlphabet, UContainers, USnippetKindInfo, USnippets;
 
 
 type
@@ -61,10 +61,10 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up object.
+      {Object constructor. Sets up object.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Object destructor. Tears down object.
       }
     procedure AddSnippet(const Snippet: TRoutine);
       {Adds a snippet to the group's list.
@@ -81,7 +81,7 @@ type
           item sorts after Item.
       }
     property SnippetList: TRoutineList read fSnippetList;
-      {List of snippets associated in this group}
+      {List of snippets associated with this group}
     property Title: string read GetTitle;
       {Title of group. Used for display}
   end;
@@ -101,7 +101,7 @@ type
       }
   public
     constructor Create(const Category: TCategory);
-      {Class constructor. Sets up group for a category.
+      {Object constructor. Sets up group for a category.
         @param Category [in] Category represented by the group.
       }
     function CompareTo(const Item: TGroupItem): Integer; override;
@@ -132,7 +132,7 @@ type
       }
   public
     constructor Create(const Letter: TLetter);
-      {Class constructor. Sets up group for an initial letter of a snippet.
+      {Object constructor. Sets up group for an initial letter of a snippet.
         @param Letter [in] Initial letter represented by the group.
       }
     function CompareTo(const Item: TGroupItem): Integer; override;
@@ -161,7 +161,7 @@ type
       }
   public
     constructor Create(const SnipKindInfo: TSnippetKindInfo);
-      {Class constructor. Sets up group for a kind of snippet.
+      {Object constructor. Sets up group for a kind of snippet.
         @param SnippetKindInfo [in] Information about snippet kind represented
           by the group.
       }
@@ -184,9 +184,11 @@ type
   }
   TGrouping = class abstract(TObject)
   strict private
-    var
-      fItems: TSortedObjectList;  // List of items
-      fSnippetList: TRoutineList; // List of snippets to be grouped
+    type
+      // Sorted list of group item objects
+      TGroupItemList = TSortedObjectList<TGroupItem>;
+    var fItems: TGroupItemList;     // List of items
+    var fSnippetList: TRoutineList; // List of snippets to be grouped
     function GetItem(Idx: Integer): TGroupItem;
       {Read accessor for Items[] property.
         @param Idx [in] Index of required object in list.
@@ -195,12 +197,6 @@ type
     function GetCount: Integer;
       {Read accessor for Count property.
         @return Number of group items in grouping.
-      }
-    function CompareItems(const Obj1, Obj2: TObject): Integer;
-      {Compares two group item objects.
-        @param Obj1 [in] First TGroupItem object to be compared.
-        @param Obj2 [in] Second TGroupItem object to be compared.
-        @return -ve if Obj1 < Obj2, 0 if Obj1 = Obj2 or +ve if Obj1 > Obj2.
       }
     type
       {
@@ -215,7 +211,7 @@ type
           fIndex: Integer;      // Index of current object in enumeration
       public
         constructor Create(const Grouping: TGrouping);
-          {Class constructor. Initialises enumeration.
+          {Object constructor. Initialises enumeration.
             @param Grouping [in] Object to be enumerated.
           }
         function GetCurrent: TGroupItem;
@@ -241,11 +237,11 @@ type
       {List of snippets to be grouped}
   public
     constructor Create(const SnippetList: TRoutineList);
-      {Class constructor. Sets up grouping object for a snippet list.
+      {Object constructor. Sets up grouping object for a snippet list.
         @param SnippetList [in] List of snippets to be grouped.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Object destructor. Tears down object.
       }
     function GetEnumerator: TEnumerator;
       {Creates an enumerator for this object.
@@ -278,13 +274,9 @@ type
   }
   TAlphaGrouping = class(TGrouping)
   strict private
-    function LetterCompare(const Letter1, Letter2: TObject): Integer;
-      {Compares two letter objects.
-        @param Letter1 [in] First TLetter object to be compared.
-        @param Letter2 [in] Second TLetter object to be compared.
-        @return -ve if Letter1 < Letter2, 0 if Letter1 = Letter2 or +ve if
-          Letter1 > Letter2.
-      }
+    type
+      // Sorted map of letter objects onto group items
+      TLetterGroupMap = TSortedObjectDictionary<TLetter,TGroupItem>;
   strict protected
     procedure Populate; override;
       {Populates grouping with sorted alphabetic group items and associated
@@ -311,7 +303,8 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining}, Character;
+  SysUtils, Windows {for inlining}, Character, Generics.Defaults,
+  Generics.Collections;
 
 
 { TGrouping }
@@ -324,29 +317,27 @@ begin
   fItems.Add(Item);
 end;
 
-function TGrouping.CompareItems(const Obj1, Obj2: TObject): Integer;
-  {Compares two group item objects.
-    @param Obj1 [in] First TGroupItem object to be compared.
-    @param Obj2 [in] Second TGroupItem object to be compared.
-    @return -ve if Obj1 < Obj2, 0 if Obj1 = Obj2 or +ve if Obj1 > Obj2.
-  }
-begin
-  Result := (Obj1 as TGroupItem).CompareTo(Obj2 as TGroupItem);
-end;
-
 constructor TGrouping.Create(const SnippetList: TRoutineList);
-  {Class constructor. Sets up grouping object for a snippet list.
+  {Object constructor. Sets up grouping object for a snippet list.
     @param SnippetList [in] List of snippets to be grouped.
   }
 begin
   inherited Create;
   fSnippetList := SnippetList;
-  fItems := TSortedObjectList.Create(True, CompareItems);
+  fItems := TGroupItemList.Create(
+    TDelegatedComparer<TGroupItem>.Create(
+      function (const Left, Right: TGroupItem): Integer
+      begin
+        Result := Left.CompareTo(Right);
+      end
+    ),
+    True
+  );
   Populate;
 end;
 
 destructor TGrouping.Destroy;
-  {Class destructor. Tears down object.
+  {Object destructor. Tears down object.
   }
 begin
   FreeAndNil(fItems);   // frees owned objects
@@ -376,13 +367,13 @@ function TGrouping.GetItem(Idx: Integer): TGroupItem;
     @return Required object.
   }
 begin
-  Result := fItems[Idx] as TGroupItem;
+  Result := fItems[Idx];
 end;
 
 { TGrouping.TEnumerator }
 
 constructor TGrouping.TEnumerator.Create(const Grouping: TGrouping);
-  {Class constructor. Initialises enumeration.
+  {Object constructor. Initialises enumeration.
     @param Grouping [in] Object to be enumerated.
   }
 begin
@@ -421,7 +412,7 @@ begin
 end;
 
 constructor TGroupItem.Create;
-  {Class constructor. Sets up object.
+  {Object constructor. Sets up object.
   }
 begin
   inherited Create;
@@ -429,7 +420,7 @@ begin
 end;
 
 destructor TGroupItem.Destroy;
-  {Class destructor. Tears down object.
+  {Object destructor. Tears down object.
   }
 begin
   FreeAndNil(fSnippetList);
@@ -484,7 +475,7 @@ begin
 end;
 
 constructor TCategoryGroupItem.Create(const Category: TCategory);
-  {Class constructor. Sets up group for a category.
+  {Object constructor. Sets up group for a category.
     @param Category [in] Category represented by the group.
   }
 begin
@@ -501,17 +492,6 @@ begin
 end;
 
 { TAlphaGrouping }
-
-function TAlphaGrouping.LetterCompare(const Letter1, Letter2: TObject): Integer;
-  {Compares two letter objects.
-    @param Letter1 [in] First TLetter object to be compared.
-    @param Letter2 [in] Second TLetter object to be compared.
-    @return -ve if Letter1 < Letter2, 0 if Letter1 = Letter2 or +ve if
-      Letter1 > Letter2.
-  }
-begin
-  Result := Ord((Letter1 as TLetter).Letter) - Ord((Letter2 as TLetter).Letter);
-end;
 
 procedure TAlphaGrouping.Populate;
   {Populates grouping with sorted alphabetic group items and associated
@@ -536,9 +516,17 @@ var
   LetterObj: TLetter;               // each letter object in alphabet object
   Item: TGroupItem;                 // found group item
   Snippet: TRoutine;                // each snippet to be grouped
-  Lookup: TSortedObjectDictionary;  // lookup table of letters => group items
+  Lookup: TLetterGroupMap;  // lookup table of letters => group items
 begin
-  Lookup := TSortedObjectDictionary.Create(LetterCompare, False, False);
+  Lookup := TLetterGroupMap.Create(
+    TDelegatedComparer<TLetter>.Create(
+      function (const Left, Right: TLetter): Integer
+      begin
+        Result := Ord(Left.Letter) - Ord(Right.Letter);
+      end
+    ),
+    []
+  );
   try
     // Create all group items, one for each possible initial letter along with a
     // lookup table to ease finding the required group item from a snippet's
@@ -554,9 +542,9 @@ begin
     for Snippet in SnippetList do
     begin
       // find group item from lookup
-      Item := Lookup.Values[
+      Item := Lookup[
         TAlphabet.Instance.Letters[FirstCharOfName(Snippet.Name)]
-      ] as TGroupItem;
+      ];
       Assert(Assigned(Item), ClassName + '.Populate: Item not found');
       // add snippet to it
       Item.AddSnippet(Snippet);
@@ -580,7 +568,7 @@ begin
 end;
 
 constructor TAlphaGroupItem.Create(const Letter: TLetter);
-  {Class constructor. Sets up group for an initial letter of a snippet.
+  {Object constructor. Sets up group for an initial letter of a snippet.
     @param Letter [in] Initial letter represented by the group.
   }
 begin
@@ -641,7 +629,7 @@ begin
 end;
 
 constructor TSnipKindGroupItem.Create(const SnipKindInfo: TSnippetKindInfo);
-  {Class constructor. Sets up group for a kind of snippet.
+  {Object constructor. Sets up group for a kind of snippet.
     @param SnippetKindInfo [in] Information about snippet kind represented by
       the group.
   }
