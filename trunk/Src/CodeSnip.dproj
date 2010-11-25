@@ -388,7 +388,6 @@
 			<DCCReference Include="UKeysHelper.pas"/>
 			<DCCReference Include="ULEDImageList.pas"/>
 			<DCCReference Include="ULinkAction.pas"/>
-			<DCCReference Include="ULists.pas"/>
 			<DCCReference Include="ULocales.pas"/>
 			<DCCReference Include="UMainDisplayMgr.pas"/>
 			<DCCReference Include="UMarquee.pas"/>
