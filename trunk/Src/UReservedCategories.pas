@@ -48,6 +48,22 @@ uses
 type
 
   {
+  TCategoryInfo:
+    Record that fully describes a category, i.e. contains all the required data.
+  }
+  TCategoryInfo = record
+    Name: string;         // Name (unique id) of category
+    Data: TCategoryData;  // Category's properties
+    procedure Assign(const Src: TCategoryInfo);
+      {Sets this record's fields to be same as another TCategoryInfo record.
+        @param Src [in] Record containing fields to be copied.
+      }
+    procedure Init;
+      {Initialises record to nul values.
+      }
+  end;
+
+  {
   TReservedCategories:
     Static class that provides information about reserved user defined
     categories.
@@ -143,6 +159,25 @@ begin
       Result := True;
       Exit;
     end;
+end;
+
+{ TCategoryInfo }
+
+procedure TCategoryInfo.Assign(const Src: TCategoryInfo);
+  {Sets this record's fields to be same as another TCategoryInfo record.
+    @param Src [in] Record containing fields to be copied.
+  }
+begin
+  Name := Src.Name;
+  Data.Assign(Src.Data);
+end;
+
+procedure TCategoryInfo.Init;
+  {Initialises record to nul values.
+  }
+begin
+  Name := '';
+  Data.Init;
 end;
 
 end.
