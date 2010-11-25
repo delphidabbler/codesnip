@@ -153,7 +153,7 @@ type
         @param Cat [in] Name of category containing snippets.
         @return List of snippets names.
       }
-    procedure GetRoutineProps(const Routine: string; var Props: TRoutineData);
+    procedure GetRoutineProps(const Routine: string; var Props: TSnippetData);
       {Get properties of a snippet. These are the fields of the snippet's
       record in the snippets "table".
         @param Routine [in] Name of required snippet.
@@ -440,7 +440,7 @@ begin
 end;
 
 procedure TIniDataReader.GetRoutineProps(const Routine: string;
-  var Props: TRoutineData);
+  var Props: TSnippetData);
   {Get properties of a snippet. These are the fields of the snippet's record in
   the snippets "table".
     @param Routine [in] Name of required snippet.
