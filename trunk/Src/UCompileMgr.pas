@@ -65,6 +65,9 @@ type
   strict private
     fLastCompiledRoutine: TRoutine; // Value of LastCompiledRoutine property
     fCompilers: ICompilers;         // Value of Compilers property
+  strict protected
+    property LastCompiledRoutine: TRoutine read fLastCompiledRoutine;
+      {Last compiled routine. May not be added to Snippets object}
   public
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Sets up object.
@@ -102,8 +105,6 @@ type
       compiler.
         @param CompilerID [in] Id of compiler whose errors are to be displayed.
       }
-    property LastCompiledRoutine: TRoutine read fLastCompiledRoutine;
-      {Last compiled routine. May not be added to Snippets object}
     property Compilers: ICompilers read fCompilers;
       {Compilers object to be used to perform compilation}
   end;
