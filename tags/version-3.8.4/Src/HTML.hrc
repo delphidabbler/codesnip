@@ -1,0 +1,185 @@
+# ------------------------------------------------------------------------------
+# HTML.hrc
+#
+# Manifest file used to build HTML.res resource file.
+#
+# $Rev$
+# $Date$
+#
+# ***** BEGIN LICENSE BLOCK *****
+#
+# Version: MPL 1.1
+#
+# The contents of this file are subject to the Mozilla Public License Version
+# 1.1 (the "License"); you may not use this file except in compliance with the
+# License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+# the specific language governing rights and limitations under the License.
+#
+# The Original Code is HTML.hrc.
+#
+# The Initial Developer of the Original Code is Peter Johnson
+# (http://www.delphidabbler.com/).
+#
+# Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+# Johnson. All Rights Reserved.
+#
+# Contributors:
+#   NONE
+#
+# ***** END LICENSE BLOCK *****
+# ------------------------------------------------------------------------------
+
+
+# Dialog box templates and fixed code
+# ===================================
+
+# about box
+Res\HTML\dlg-about-head-tplt.html
+Res\HTML\dlg-about-program-tplt.html
+Res\HTML\dlg-about-database-tplt.html
+
+# easter egg
+Res\HTML\dlg-easter-egg.html
+Res\HTML\easteregg.css
+Res\HTML\easteregg.js
+
+# compiler error log
+Res\HTML\dlg-comperror-tplt.html
+
+# update dialog news pane
+Res\HTML\dlg-updt-news-tplt.html
+
+# user db edit dialog
+Res\HTML\dlg-userdb-extra.html
+
+# donate dialog
+Res\HTML\dlg-donate.html
+
+# email privacy information for display in frames
+Res\HTML\frm-emailprivacy.html
+
+# view extra dialog
+Res\HTML\dlg-viewextra-tplt.html
+
+# news dialog
+Res\HTML\dlg-rssnews.html
+
+
+# Detail pane pages, scripts and CSS
+# ==================================
+
+# common
+# ------
+
+# style sheet
+Res\HTML\detail.css
+
+# javascript "constants"
+Res\HTML\detail-consts.js
+
+# general routines for use in any detail pane
+Res\HTML\detail.js
+
+# routines that call external object
+Res\HTML\external.js
+
+# information pane
+# ----------------
+
+# Container document for all HTML displayed in info pane
+Res\HTML\detail-info.html
+
+# lists of snippets
+Res\HTML\info-snippet-list-tplt.html
+
+# empty snippet list
+Res\HTML\info-empty-selection-tplt.html
+
+# snippet information
+Res\HTML\info-snippet-tplt.html
+
+# compiler check pane
+# -------------------          
+
+# Container document for all HTML displayed in comp check pane
+Res\HTML\detail-compcheck.html
+
+# snippet compiler results
+Res\HTML\comp-snippet-tplt.html
+Res\HTML\comp-freeform-tplt.html
+Res\HTML\comp-nocompilers-tplt.html
+
+# compiler check not applicable
+Res\HTML\nocompcheck-body.html
+
+# welcome page
+# -------------
+
+Res\HTML\welcome-tplt.html
+
+
+# Images
+# ======
+
+# action links
+# ------------
+
+# download / update database
+Res\Img\download.gif
+
+# display quick start help
+Res\Img\help.gif
+
+# show test unit
+Res\Img\viewunit.gif
+
+# comfigure compilers
+Res\Img\configcomp.gif
+
+# test compile
+Res\Img\compile.gif
+
+# edit snippet
+Res\Img\editsnippet.gif
+
+# donate button
+Res\Img\donate-btn.gif
+
+                                        
+# compiler compatibility / compilation results
+# --------------------------------------------
+    
+Res\Img\led-green.png
+Res\Img\led-off.png                                            
+Res\Img\led-red.png
+Res\Img\led-yellow.png
+
+
+# warning and information "icons"
+# -------------------------------
+
+Res\Img\symbol-information.png
+Res\Img\symbol-exclamation.png
+
+
+# dialog box images
+# -----------------
+
+# about box - CodeSnip icon
+Res\Img\icon.gif
+
+# easter egg
+Res\Img\tvr.jpg
+Res\Img\pj.jpg
+Res\Img\easter-egg-top.png
+Res\Img\easter-egg-bottom.png
+Res\Img\click-me.png
+Res\Img\cancel.png
+Res\Img\cancel-glow.png
+
+# donate dialog - £ sign image
+Res\Img\pound-sign.png
+
