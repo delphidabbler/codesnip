@@ -94,8 +94,8 @@ type
         @return Data object describing snippet kind section.
       }
     constructor InternalCreate(const Kind: TViewKind; const Data: TObject);
-      {Private constructor. Creates a view item of a specified kind with extra
-      information.
+      {Private object constructor. Creates a view item of a specified kind with
+      extra information.
         @param Kind [in] Kind of view item to create.
         @param Data [in] Object providing extra information. Object type depends
           on Kind and must be as follows:
@@ -107,32 +107,33 @@ type
       }
   public
     constructor Create; overload;
-      {Constructor. Creates a view item of kind vkNone.
+      {Object constructor. Creates a view item of kind vkNone.
       }
     constructor Create(const Kind: TViewKind); overload;
-      {Constructor. Creates a view item of a kind that has no associated object
-      to store as extra information.
+      {Object constructor. Creates a view item of a kind that has no associated
+      object to store as extra information.
         @param Kind [in] Kind of view item to create. Must be vkNone or
           vkWelcome
       }
     constructor Create(const ViewItem: TViewItem); overload;
-      {Constructor. Creates a view item that is a clone of another view item.
+      {Object constructor. Creates a view item that is a clone of another view
+      item.
         @param ViewItem [in] View item to be cloned.
       }
     constructor Create(const Routine: TRoutine); overload;
-      {Constructor. Creates a view item representing a routine.
+      {Object constructor. Creates a view item representing a routine.
         @param Routine [in] Routine to be represented.
       }
     constructor Create(const Category: TCategory); overload;
-      {Constructor. Creates a view item representing a category.
+      {Object constructor. Creates a view item representing a category.
         @param Category [in] Category to be represented.
       }
     constructor Create(const SnippetKind: TSnippetKindInfo); overload;
-      {Constructor. Creates a view item representing a snippet kind.
+      {Object constructor. Creates a view item representing a snippet kind.
         @param SnippetKind [in] Snippet kind to be represented.
       }
     constructor Create(const Letter: TLetter); overload;
-      {Constructor. Creates a view item representing a alphabetic letter.
+      {Object constructor. Creates a view item representing a alphabetic letter.
         @param Letter [in] Letter to be represented.
       }
     procedure Assign(const ViewItem: TViewItem);
@@ -169,8 +170,8 @@ type
   }
   TViewItemList = class(TObjectList<TViewItem>)
   public
-    constructor Create; reintroduce;
-      {Constructor. Sets up list.
+    constructor Create;
+      {Object constructor. Sets up list.
       }
   end;
 
@@ -201,7 +202,7 @@ begin
 end;
 
 constructor TViewItem.Create;
-  {Constructor. Creates a view item of kind vkNone.
+  {Object constructor. Creates a view item of kind vkNone.
   }
 begin
   inherited Create;
@@ -210,7 +211,7 @@ begin
 end;
 
 constructor TViewItem.Create(const ViewItem: TViewItem);
-  {Constructor. Creates a view item that is a clone of another view item.
+  {Object constructor. Creates a view item that is a clone of another view item.
     @param ViewItem [in] View item to be cloned.
   }
 begin
@@ -219,7 +220,7 @@ begin
 end;
 
 constructor TViewItem.Create(const SnippetKind: TSnippetKindInfo);
-  {Constructor. Creates a view item representing a snippet kind.
+  {Object constructor. Creates a view item representing a snippet kind.
     @param SnippetKind [in] Snippet kind to be represented.
   }
 begin
@@ -227,7 +228,7 @@ begin
 end;
 
 constructor TViewItem.Create(const Routine: TRoutine);
-  {Constructor. Creates a view item representing a routine.
+  {Object constructor. Creates a view item representing a routine.
     @param Routine [in] Routine to be represented.
   }
 begin
@@ -235,7 +236,7 @@ begin
 end;
 
 constructor TViewItem.Create(const Letter: TLetter);
-  {Constructor. Creates a view item representing a alphabetic letter.
+  {Object constructor. Creates a view item representing a alphabetic letter.
     @param Letter [in] Letter to be represented.
   }
 begin
@@ -243,8 +244,8 @@ begin
 end;
 
 constructor TViewItem.Create(const Kind: TViewKind);
-  {Constructor. Creates a view item of a kind that has no associated object to
-  store as extra information.
+  {Object constructor. Creates a view item of a kind that has no associated
+  object to store as extra information.
     @param Kind [in] Kind of view item to create. Must be vkNone or vkWelcome
   }
 begin
@@ -254,7 +255,7 @@ begin
 end;
 
 constructor TViewItem.Create(const Category: TCategory);
-  {Constructor. Creates a view item representing a category.
+  {Object constructor. Creates a view item representing a category.
     @param Category [in] Category to be represented.
   }
 begin
@@ -324,8 +325,8 @@ end;
 
 constructor TViewItem.InternalCreate(const Kind: TViewKind;
   const Data: TObject);
-  {Private constructor. Creates a view item of a specified kind with extra
-  information.
+  {Private object constructor. Creates a view item of a specified kind with
+  extra information.
     @param Kind [in] Kind of view item to create.
     @param Data [in] Object providing extra information. Object type depends on
       Kind and must be as follows:
@@ -371,7 +372,7 @@ end;
 { TViewItemList }
 
 constructor TViewItemList.Create;
-  {Constructor. Sets up list.
+  {Object constructor. Sets up list.
   }
 begin
   // List does not own the objects stored in it
