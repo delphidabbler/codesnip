@@ -91,6 +91,9 @@ type
       {Initialises form. Disables User Defined button if there are no user
       defined snippets in database.
       }
+    procedure AfterShowForm; override;
+      {Restores default cursor after form shown.
+      }
   public
     class function Execute(const AOwner: TComponent;
       const SelectedRoutines: TRoutineList; out ASearch: ISearch): Boolean;
@@ -117,6 +120,14 @@ uses
 
 
 { TSelectionSearchDlg }
+
+procedure TSelectionSearchDlg.AfterShowForm;
+  {Restores default cursor after form shown.
+  }
+begin
+  inherited;
+  Screen.Cursor := crDefault;
+end;
 
 procedure TSelectionSearchDlg.btnClearAllClick(Sender: TObject);
   {Clear All button click handler. Deselects all snippets.
@@ -193,12 +204,14 @@ begin
 end;
 
 procedure TSelectionSearchDlg.FormCreate(Sender: TObject);
-  {Form creation event handler. Sets up contained snippet selection frame.
+  {Form creation event handler. Sets up form and displays hourglass cursor while
+  dialog box loads.
     @param Sender [in] Not used.
   }
 begin
   inherited;
   frmSelect.OnChange := SelectionChanged;
+  Screen.Cursor := crHourGlass;
 end;
 
 procedure TSelectionSearchDlg.InitForm;
