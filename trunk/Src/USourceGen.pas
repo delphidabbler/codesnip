@@ -417,10 +417,10 @@ function TSourceGen.IncFileAsString(const CommentStyle: TCommentStyle;
     @return Source code of include file.
   }
 resourcestring
-  // Body comment text
-  sReqUnits           = 'Required units(s):';
-  sReqRoutines        = 'Additional required routine(s) from the database:';
-  sReqConstsAndTypes  = 'Required consts / types';
+  // Comment text
+  sReqUnits           = 'Required unit(s):';
+  sReqRoutines        = 'Additional required routine(s):';
+  sReqConstsAndTypes  = 'Required constant(s) and / or type(s):';
   sXRefRoutines       = 'Cross referenced routine(s):';
 var
   Idx: Integer;             // loops thru snippets list
