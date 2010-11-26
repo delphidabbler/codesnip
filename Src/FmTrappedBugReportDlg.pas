@@ -59,7 +59,11 @@ type
     lblInstruct1: TLabel;
     lblInstruct2: TLabel;
     lblInstruct3: TLabel;
+    lblInstruct4: TLabel;
     lblIntro: TLabel;
+    btnTerminate: TButton;
+    actTerminate: TAction;
+    procedure actTerminateExecute(Sender: TObject);
   strict private
     fErrorObj: Exception; // Reference to exception being reported.
     procedure CopyBugInfoToClipboard;
@@ -93,14 +97,40 @@ implementation
 
 uses
   // Delphi
-  Clipbrd,
+  Clipbrd, Forms, Windows,
   // Project
-  UAppInfo, UConsts, UCtrlArranger, UFontHelper, USystemInfo;
+  UAppInfo, UConsts, UCtrlArranger, UFontHelper, UMessageBox, USystemInfo;
 
 {$R *.dfm}
 
 
 { TTrappedBugReportDlg }
+
+procedure TTrappedBugReportDlg.actTerminateExecute(Sender: TObject);
+  {Terminates application only if user confirms.
+    @param Sender [in] Not used.
+  }
+resourcestring
+  // Text for custom confirmation dialog box
+  sTitle = 'Confirm';
+  sConfirmMsg = 'Please confirm that you want to terminate the application.'
+    + EOL2
+    + 'CodeSnip will attempt to save any unsaved changes to the database.';
+  sOKText = 'Terminate';
+  sCancelText = 'Cancel';
+begin
+  if TMessageBox.Custom(
+    Self,
+    sConfirmMsg,
+    [
+      TMessageBoxButton.Create(sOKText, mrOK),
+      TMessageBoxButton.Create(sCancelText, mrCancel, True, True)
+    ],
+    sTitle,
+    IDI_QUESTION
+  ) = mrOK then
+    Application.Terminate;
+end;
 
 procedure TTrappedBugReportDlg.ArrangeForm;
   {Aligns and sizes of controls depending on text sizes.
@@ -113,8 +143,11 @@ begin
   lblInstruct1.Top := TCtrlArranger.BottomOf(bvlBugDesc, 8);
   lblInstruct2.Top := TCtrlArranger.BottomOf(lblInstruct1, 6);
   lblInstruct3.Top := TCtrlArranger.BottomOf(lblInstruct2, 6);
-  lblBugTracker.Top := TCtrlArranger.BottomOf(lblInstruct3, 8);
+  lblBugTracker.Top := TCtrlArranger.BottomOf(lblInstruct3, 6);
+  lblInstruct4.Top := TCtrlArranger.BottomOf(lblBugTracker, 12);
   inherited;
+  btnTerminate.Top := btnClose.Top;
+  btnTerminate.Left := btnClose.Left - btnTerminate.Width - 4;
 end;
 
 procedure TTrappedBugReportDlg.ConfigForm;
@@ -126,6 +159,7 @@ begin
   // set required label fonts
   TFontHelper.SetDefaultBaseFont(lblIntro.Font, False);
   TFontHelper.SetDefaultBaseFont(lblBugInfo.Font, False);
+  TFontHelper.SetDefaultBaseFont(btnTerminate.Font, False);
   // display the exception's message
   lblBugInfo.Caption := fErrorObj.Message;
 end;
