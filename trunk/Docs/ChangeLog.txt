@@ -4,6 +4,16 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.8.4 of 26 November 2010
++ User can now opt to terminate the application when an unexpected exception is trapped. This implements feature request #3074914 (http://bit.ly/hUyEAw).
++ Wording of bug report dialog boxes changed.
++ Snippets selection dialog box now displays wait cursor while waiting for it to be displayed.
++ Some corrections and clarifications made to comments that appear in generated "include" files.
++ Custom message boxes can now display custom title and icon.
++ Imported some updates from "new-backend" develoment tree:
+  - Some source code re-organisation and renaming.
+  - Updated some sorted list management code.
+
 Release v3.8.3 of 24 November 2010
 + Added button to "Compile" tab of Snippets Editor to display unit used to test compile snippets. This implements feature request #3108008 (http://bit.ly/elBZnn).
 + Fixed unreported bugs in handling of exceptions raised in threads.
