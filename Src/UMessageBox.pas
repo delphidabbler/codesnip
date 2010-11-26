@@ -83,10 +83,16 @@ type
     appropriate position on screen.
   }
   TMessageBox = class sealed(TNoConstructObject)
+  public
+    // Constants to pass to methods that require Title or IconRes parameters to
+    // indicate default value is to be used.
+    const DefaultTitle = '';  // Indicates default title required
+    const DefaultIcon = nil;  // Indicates default icon required
   strict private
     class function Display(const Parent: TComponent;
       MsgLines: IStringList; const DlgType: TMsgDlgType;
-      const Buttons: array of TMessageBoxButton): Word; overload;
+      const Buttons: array of TMessageBoxButton; const Title: string;
+      const IconRes: PChar): Word; overload;
       {Displays a message in a customised dialog box located over the calling
       form.
         @param Parent [in] Component that dialog box is aligned over and that
@@ -96,13 +102,17 @@ type
           lines. Use empty lines to insert space between paragraphs.
         @param DlgType [in] Type of dialog box.
         @param Buttons [in] Array of records decribing buttons to be displayed.
+        @param Title [in] Title of dialog box. If '' title used depends on
+          DlgType.
+        @param IconRes [in] Icon resource identifier. If nil icon used depends
+          on DlgType.
         @return Value indicating which button was pressed to close dialog box.
           This will be value of ModalResult field of one of the buttons
           specified in Buttons.
       }
     class function Display(const Parent: TComponent; const Msg: string;
-      const DlgType: TMsgDlgType;
-      const Buttons: array of TMessageBoxButton): Word; overload;
+      const DlgType: TMsgDlgType; const Buttons: array of TMessageBoxButton;
+      const Title: string; const IconRes: PChar): Word; overload;
       {Displays a message in a customised dialog box located over the calling
       form.
         @param Parent [in] Component that dialog box is aligned over and that
@@ -112,6 +122,10 @@ type
           CRLF. Separate paragraphs with two line breaks.
         @param DlgType [in] Type of dialog box.
         @param Buttons [in] Array of records decribing buttons to be displayed.
+        @param Title [in] Title of dialog box. If '' title used depends on
+          DlgType.
+        @param IconRes [in] Icon resource identifier. If nil icon used depends
+          on DlgType.
         @return Value indicating which button was pressed to close dialog box.
           This will be value of ModalResult field of one of the buttons
           specified in Buttons.
@@ -146,7 +160,9 @@ type
         @return True if user clicks Yes and false otherwise.
       }
     class function Custom(const Parent: TComponent; const Msg: string;
-      const Buttons: array of TMessageBoxButton): Word;
+      const Buttons: array of TMessageBoxButton;
+      const Title: string = DefaultTitle; const IconRes: PChar = DefaultIcon):
+      Word;
       {Displays a message in a dialog box with custom buttons and no icon that
       is located relative to owner form.
         @param Parent [in] Component that dialog box is aligned over and that
@@ -155,6 +171,10 @@ type
         @param Msg [in] Message displayed in dialog. Multi-line messages should
           be separated by LF or CRLF.
         @param Buttons [in] Array of records decribing buttons to be displayed.
+        @param Title [in] Optional title of dialog box. If Title='' then
+          application title is used.
+        @param IconRes [in] Optional icon resource. No icon is displayed if not
+          provided.
         @return Value indicating which button was pressed to close dialog box.
           This will be value of ModalResult field of one of the buttons
           specified in the Buttons array.
@@ -191,6 +211,7 @@ type
       cParaSpacing = 8;           // Spacing between paragraphs
       cBtnSpacing = 8;            // Spacing between buttons
       cBtnStripTopMargin = 24;    // Margin above button strip
+      cMaxTextWidth = 512;        // Maximum width of text in dialog box
     function MaxTextWidth: Integer;
       {Calculates maximum horizontal space that can be occupied by the dialog's
       text.
@@ -237,11 +258,13 @@ type
         @param DlgType [in] Type of dialog box. Used to determine default
           caption if Title is ''.
       }
-    procedure InitImage(const DlgType: TMsgDlgType);
+    procedure InitImage(const IconRes: PChar; const DlgType: TMsgDlgType);
       {Creates and initialises and locates image control required to display any
       icon. No image control is created if no icon is required.
-        @param DlgType [in] Type of dialog to be displayed. Determines if icon
-          is required.
+        @param IconRes [in] Icon resource. If nil then icon is determined by
+          DlgType.
+        @param DlgType [in] Type of dialog to be displayed. Determines which, if
+          any icon is required when IconRes is nil.
       }
     procedure InitButtons(const Buttons: array of TMessageBoxButton);
       {Creates and sizes dialog's buttons.
@@ -263,8 +286,9 @@ type
       const Text: IStringList;
       const Buttons: array of TMessageBoxButton;
       const DlgType: TMsgDlgType;
-      const Title: string = ''); reintroduce;
-      {Class constructor. Reintroduced constructor that creates dialog box form
+      const Title: string;
+      const IconRes: PChar); reintroduce;
+      {Object constructor. Reintroduced constructor that creates dialog box form
       with components required to display text, buttons and optional icon.
         @param Owner [in] Control that owns this dialog box.
         @param Text [in] List of lines of text to display. Blank lines indicate
@@ -272,8 +296,10 @@ type
         @param Buttons [in] Array of records that define buttons to be
           displayed.
         @param DlgType [in] Type of dialog box to be displayed.
-        @param Title [in] Optional dialog box caption text. Default text that
-          depends on DlgType is used if no title is specified.
+        @param Title [in] Optional dialog box caption text. If Title='' caption
+          depends on DlgType.
+        @param IconRes [in] Resource to be used for icon displayed. If nil then
+          any icon displayed depends on DlgType.
       }
   end;
 
@@ -298,12 +324,15 @@ begin
     [
       TMessageBoxButton.Create(sBtnYes, mrYes, True),
       TMessageBoxButton.Create(sBtnNo, mrNo, False, True)
-    ]
+    ],
+    DefaultTitle,
+    DefaultIcon
   ) = mrYes;
 end;
 
 class function TMessageBox.Custom(const Parent: TComponent; const Msg: string;
-  const Buttons: array of TMessageBoxButton): Word;
+  const Buttons: array of TMessageBoxButton; const Title: string;
+  const IconRes: PChar): Word;
   {Displays a message in a dialog box with custom buttons and no icon that is
   located relative to owner form.
     @param Parent [in] Component that dialog box is aligned over and that
@@ -312,17 +341,22 @@ class function TMessageBox.Custom(const Parent: TComponent; const Msg: string;
     @param Msg [in] Message displayed in dialog. Multi-line messages should be
       separated by LF or CRLF.
     @param Buttons [in] Array of records decribing buttons to be displayed.
+    @param Title [in] Optional title of dialog box. If Title='' then application
+      title is used.
+    @param IconRes [in] Optional icon resource. No icon is displayed if not
+      provided.
     @return Value indicating which button was pressed to close dialog box. This
       will be value of ModalResult field of one of the buttons specified in the
       Buttons array.
   }
 begin
-  Result := Display(Parent, Msg, mtCustom, Buttons);
+  Result := Display(Parent, Msg, mtCustom, Buttons, Title, IconRes);
 end;
 
 class function TMessageBox.Display(const Parent: TComponent;
   MsgLines: IStringList; const DlgType: TMsgDlgType;
-  const Buttons: array of TMessageBoxButton): Word;
+  const Buttons: array of TMessageBoxButton; const Title: string;
+  const IconRes: PChar): Word;
   {Displays a message in a customised dialog box located over the calling form.
     @param Parent [in] Component that dialog box is aligned over and that
       becomes parent of dialog box. If Parent is nil then current active form is
@@ -331,15 +365,20 @@ class function TMessageBox.Display(const Parent: TComponent;
       Use empty lines to insert space between paragraphs.
     @param DlgType [in] Type of dialog box.
     @param Buttons [in] Array of records decribing buttons to be displayed.
+    @param Title [in] Title of dialog box. If '' title used depends on DlgType.
+    @param IconRes [in] Icon resource identifier. If nil icon used depends on
+      DlgType.
     @return Value indicating which button was pressed to close dialog box. This
-      will be value of ModalResult field of one of the buttons specified in the
-      Buttons array.
+      will be value of ModalResult field of one of the buttons specified in
+      Buttons.
   }
 var
   Dlg: TForm; // dialog box instance
 begin
   // Create a dialog box of required type
-  Dlg := TMessageBoxForm.Create(Parent, MsgLines, Buttons, DlgType);
+  Dlg := TMessageBoxForm.Create(
+    Parent, MsgLines, Buttons, DlgType, Title, IconRes
+  );
   try
     // Make sure "Parent" control is parent of dialog and align over it
     TDlgHelper.SetDlgParent(Dlg, Parent);
@@ -352,7 +391,8 @@ begin
 end;
 
 class function TMessageBox.Display(const Parent: TComponent; const Msg: string;
-  const DlgType: TMsgDlgType; const Buttons: array of TMessageBoxButton): Word;
+  const DlgType: TMsgDlgType; const Buttons: array of TMessageBoxButton;
+  const Title: string; const IconRes: PChar): Word;
   {Displays a message in a customised dialog box located over the calling form.
     @param Parent [in] Component that dialog box is aligned over and that
       becomes parent of dialog box. If Parent is nil then current active form is
@@ -361,6 +401,9 @@ class function TMessageBox.Display(const Parent: TComponent; const Msg: string;
       Separate paragraphs with two line breaks.
     @param DlgType [in] Type of dialog box.
     @param Buttons [in] Array of records decribing buttons to be displayed.
+    @param Title [in] Title of dialog box. If '' title used depends on DlgType.
+    @param IconRes [in] Icon resource identifier. If nil icon used depends on
+      DlgType.
     @return Value indicating which button was pressed to close dialog box. This
       will be value of ModalResult field of one of the buttons specified in
       Buttons.
@@ -376,7 +419,9 @@ begin
       True
     ),
     DlgType,
-    Buttons
+    Buttons,
+    Title,
+    IconRes
   );
 end;
 
@@ -391,7 +436,12 @@ class procedure TMessageBox.Error(const Parent: TComponent; const Msg: string);
 begin
   MessageBeep(MB_ICONERROR);
   Display(
-    Parent, Msg, mtError, [TMessageBoxButton.Create(sBtnOK, mrOK, True, True)]
+    Parent,
+    Msg,
+    mtError,
+    [TMessageBoxButton.Create(sBtnOK, mrOK, True, True)],
+    DefaultTitle,
+    DefaultIcon
   );
 end;
 
@@ -410,7 +460,9 @@ begin
     Parent,
     Msg,
     mtInformation,
-    [TMessageBoxButton.Create(sBtnOK, mrOK, True, True)]
+    [TMessageBoxButton.Create(sBtnOK, mrOK, True, True)],
+    DefaultTitle,
+    DefaultIcon
   );
 end;
 
@@ -501,16 +553,18 @@ end;
 
 constructor TMessageBoxForm.Create(const Owner: TComponent;
   const Text: IStringList; const Buttons: array of TMessageBoxButton;
-  const DlgType: TMsgDlgType; const Title: string);
-  {Class constructor. Reintroduced constructor that creates dialog box form with
-  components required to display text, buttons and optional icon.
+  const DlgType: TMsgDlgType; const Title: string; const IconRes: PChar);
+  {Object constructor. Reintroduced constructor that creates dialog box form
+  with components required to display text, buttons and optional icon.
     @param Owner [in] Control that owns this dialog box.
-    @param Text [in] List of lines of text to display. Blank lines indicate
-      a paragraph spacer.
+    @param Text [in] List of lines of text to display. Blank lines indicate a
+      paragraph spacer.
     @param Buttons [in] Array of records that define buttons to be displayed.
     @param DlgType [in] Type of dialog box to be displayed.
-    @param Title [in] Optional dialog box caption text. Default text that
-      depends on DlgType is used if no title is specified.
+    @param Title [in] Optional dialog box caption text. If Title='' caption
+      depends on DlgType.
+    @param IconRes [in] Resource to be used for icon displayed. If nil then any
+      icon displayed depends on DlgType.
   }
 begin
   Assert(Length(Buttons) > 0, ClassName + '.Create: Buttons array is empty');
@@ -523,7 +577,7 @@ begin
   TFontHelper.SetDefaultFont(Font, False);
   // Initialise controls
   InitCaption(Title, DlgType);
-  InitImage(DlgType);
+  InitImage(IconRes, DlgType);
   InitButtons(Buttons);
   InitLabels(Text);
   // Size the dialog box
@@ -633,7 +687,7 @@ const
     @SMsgDlgWarning, @SMsgDlgError, @SMsgDlgInformation, @SMsgDlgConfirm, nil
   );
 begin
-  if Title <> '' then
+  if Title <> TMessageBox.DefaultTitle then
     // Caller specified a title: use it
     Caption := Title
   else
@@ -648,12 +702,39 @@ begin
   end;
 end;
 
-procedure TMessageBoxForm.InitImage(const DlgType: TMsgDlgType);
+procedure TMessageBoxForm.InitImage(const IconRes: PChar;
+  const DlgType: TMsgDlgType);
   {Creates and initialises and locates image control required to display any
   icon. No image control is created if no icon is required.
-    @param DlgType [in] Type of dialog to be displayed. Determines if icon is
-      required.
+    @param IconRes [in] Icon resource. If nil then icon is determined by
+      DlgType.
+    @param DlgType [in] Type of dialog to be displayed. Determines which, if any
+      icon is required when IconRes is nil.
   }
+  // ---------------------------------------------------------------------------
+  function ResourceInstance(const IconId: PChar): THandle;
+    {Returns instance handle for specified icon resource. If resource is a
+    recognised system icon then instance is 0, otherwise resource is assumed to
+    be in application's resources.
+      @param IconId [in] Icon resource identifier.
+      @return Required instance handle.
+    }
+  var
+    ID: PChar;
+  const
+    cSystemIcons: array[1..7] of PChar = (
+      IDI_APPLICATION, IDI_HAND, IDI_QUESTION, IDI_EXCLAMATION, IDI_ASTERISK,
+      IDI_WINLOGO, IDI_SHIELD
+      // IDI_WARNING, IDI_ERROR & IDI_INFORMATION excluded because they are
+      // alternates for above values
+    );
+  begin
+    for ID in cSystemIcons do
+      if Assigned(ID) and (IconID = ID) then
+        Exit(0);
+    Result := HInstance;
+  end;
+  // ---------------------------------------------------------------------------
 const
   // Map of dialog types onto icon resources
   cIconIDs: array[TMsgDlgType] of PChar = (
@@ -662,13 +743,16 @@ const
 var
   IconId: PChar;  // resource id of icon (nil if no icon required)
 begin
-  IconId := cIconIDs[DlgType];
+  if IconRes <> TMessageBox.DefaultIcon then
+    IconId := IconRes
+  else
+    IconId := cIconIDs[DlgType];
   if Assigned(IconId) then
   begin
     fImage := TImage.Create(Self);
     fImage.Parent := Self;
     fImage.Name := 'Image';
-    fImage.Picture.Icon.Handle := LoadIcon(0, IconID);
+    fImage.Picture.Icon.Handle := LoadIcon(ResourceInstance(IconID), IconID);
     // icon is positioned at top left of dialog box, inside dialog's margins
     fImage.BoundsRect := TRectEx.CreateBounds(
       cXPadding, cYPadding,
@@ -788,8 +872,8 @@ function TMessageBoxForm.MaxTextWidth: Integer;
   }
 begin
   // For smaller screens, max space is half of screen width. For larger screens
-  // max space is 512 pixels.
-  Result := Min(512, Screen.Width div 2);
+  // max space is cMaxDlgWidth pixels.
+  Result := Min(cMaxTextWidth, Screen.Width div 2);
 end;
 
 procedure TMessageBoxForm.SizeDialogBox;
