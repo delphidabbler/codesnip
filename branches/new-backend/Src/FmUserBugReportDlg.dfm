@@ -26,15 +26,6 @@ inherited UserBugReportDlg: TUserBugReportDlg
         'ar has been reported already, or maybe even fixed.'
       WordWrap = True
     end
-    object lblInstruct4: TLabel [3]
-      Left = 4
-      Top = 111
-      Width = 441
-      Height = 38
-      AutoSize = False
-      Caption = 'Thanks.'
-      WordWrap = True
-    end
     object lblInstruct3: TLabel
       Left = 4
       Top = 72

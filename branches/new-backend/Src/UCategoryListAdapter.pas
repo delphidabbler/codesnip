@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes,
   // Project
-  ULists, USnippets;
+  UContainers, USnippets;
 
 
 type
@@ -57,21 +57,14 @@ type
   }
   TCategoryListAdapter = class(TObject)
   strict private
-    fCatList: TSortedObjectList;  // sorted list of categories
-    function CompareCategories(const Obj1, Obj2: TObject): Integer;
-      {Callback comparison method for passing to sorted list object. Compares
-      two category objects.
-        @param Obj1 [in] First category object to be compared.
-        @param Obj2 [in] Second category object to be compared.
-        @return -ve if Obj1 < Obj2, 0 if Obj1 = Obj2 or +ve if Obj1 > Obj2.
-      }
+    fCatList: TSortedObjectList<TCategory>; // Sorted list of categories
   public
     constructor Create(const CatList: TCategoryList);
-      {Class constructor. Sets up object with sorted list of categories.
+      {Object constructor. Sets up object with sorted list of categories.
         @param CatList [in] List of categories.
       }
     destructor Destroy; override;
-      {Class desctrutor. Tears down object.
+      {Object destructor. Tears down object.
       }
     procedure ToStrings(const Strings: TStrings);
       {Copies category description and related object to a string list.
@@ -94,7 +87,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining};
+  SysUtils, Windows {for inlining}, Generics.Defaults;
 
 
 { TCategoryListAdapter }
@@ -104,47 +97,38 @@ function TCategoryListAdapter.CatName(const Index: Integer): string;
     @param Index [in] Index of category for which name (id) is required.
   }
 begin
-  Result := (fCatList[Index] as TCategory).Category;
-end;
-
-function TCategoryListAdapter.CompareCategories(const Obj1, Obj2: TObject): Integer;
-  {Callback comparison method for passing to sorted list object. Compares two
-  category objects.
-    @param Obj1 [in] First category object to be compared.
-    @param Obj2 [in] Second category object to be compared.
-    @return -ve if Obj1 < Obj2, 0 if Obj1 = Obj2 or +ve if Obj1 > Obj2.
-  }
-var
-  Cat1, Cat2: TCategory;  // categoryies to be compared
-begin
-  Cat1 := Obj1 as TCategory;
-  Cat2 := Obj2 as TCategory;
-  // sort by description first
-  Result := AnsiCompareText(Cat1.Description, Cat2.Description);
-  if Result = 0 then
-    // two descriptions are same: sort user-defined after main database versions
-    Result := Ord(Cat1.UserDefined) - Ord(Cat2.UserDefined);
+  Result := fCatList[Index].Category;
 end;
 
 constructor TCategoryListAdapter.Create(const CatList: TCategoryList);
-  {Class constructor. Sets up object with sorted list of categories.
+  {Object constructor. Sets up object with sorted list of categories.
     @param CatList [in] List of categories.
   }
 var
   Cat: TCategory; // each category in CatList
 begin
   inherited Create;
-  // make a sorted reference to CatList, sorted by description
-  fCatList := TSortedObjectList.Create(False, CompareCategories);
+  // create list of categories, sorted by description
+  fCatList := TSortedObjectList<TCategory>.Create(
+    TDelegatedComparer<TCategory>.Create(
+      function (const Left, Right: TCategory): Integer
+      begin
+        Result := AnsiCompareText(Left.Description, Right.Description);
+        if Result = 0 then
+          Result := Ord(Left.UserDefined) - Ord(Right.UserDefined);
+      end
+    ),
+    False
+  );
   for Cat in CatList do
     fCatList.Add(Cat);
 end;
 
 destructor TCategoryListAdapter.Destroy;
-  {Class desctrutor. Tears down object.
+  {Object destructor. Tears down object.
   }
 begin
-  FreeAndNil(fCatList); // does not free list items
+  fCatList.Free;  // does not free list items
   inherited;
 end;
 
@@ -159,7 +143,7 @@ begin
   Result := -1;
   for Idx := 0 to Pred(fCatList.Count) do
   begin
-    if AnsiSameText((fCatList[Idx] as TCategory).Category, CatName) then
+    if AnsiSameText(fCatList[Idx].Category, CatName) then
     begin
       Result := Idx;
       Break;
@@ -172,10 +156,11 @@ procedure TCategoryListAdapter.ToStrings(const Strings: TStrings);
     @param Strings [in] String list to receive information.
   }
 var
-  Cat: TObject; // each category in sorted list
+  Cat: TCategory; // each category in sorted list
 begin
   for Cat in fCatList do
-    Strings.AddObject((Cat as TCategory).Description, Cat);
+    Strings.AddObject(Cat.Description, Cat);
 end;
 
 end.
+

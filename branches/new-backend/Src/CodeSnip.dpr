@@ -247,7 +247,6 @@ uses
   UKeysHelper in 'UKeysHelper.pas',
   ULEDImageList in 'ULEDImageList.pas',
   ULinkAction in 'ULinkAction.pas',
-  ULists in 'ULists.pas',
   ULocales in 'ULocales.pas',
   UMainDisplayMgr in 'UMainDisplayMgr.pas',
   UMarquee in 'UMarquee.pas',

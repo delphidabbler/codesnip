@@ -44,7 +44,8 @@ uses
   // Delphi
   Classes, Generics.Collections,
   // Project
-  Compilers.UGlobals, UActiveText, UIStringList, UMultiCastEvents, USnippetIDs;
+  Compilers.UGlobals, UActiveText, UContainers, UIStringList, UMultiCastEvents,
+  USnippetIDs;
 
 
 type
@@ -336,7 +337,7 @@ type
           method returns True.
         @return True if snippet found, False if not.
       }
-    function CompareIDs(const SID1, SID2: TSnippetID): Integer;
+    class function CompareIDs(const SID1, SID2: TSnippetID): Integer;
       {Compares IDS of two snippets.
         @param SID1 [in] First ID to be compared.
         @param SID2 [in] Second ID to be compared.
@@ -344,7 +345,7 @@ type
           SID1 > SID2.
       }
   strict protected
-    var fList: TObjectList<TRoutine>; // Stores list of snippets
+    var fList: TSortedObjectList<TRoutine>; // Sorted list of snippets
   public
     constructor Create(const OwnsObjects: Boolean = False);
       {Constructor. Creates a new empty list.
@@ -647,7 +648,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Generics.Defaults,
   // Project
   IntfCommon, UExceptions, USnippetsIO;
 
@@ -1782,32 +1783,8 @@ function TRoutineList.Add(const Routine: TRoutine): Integer;
     @return Index where item was inserted in list
     @except Raised if duplicate snippet added to list.
   }
-var
-  Idx: Integer; // loops thru list
-  Cmp: Integer; // result of comparison of snippet names
 begin
-  // Assume adding to end of list
-  Result := Count;
-  // Loop thru existing items searching for location to insert
-  for Idx := 0 to Pred(Count) do
-  begin
-    // compare new item to current item
-    Cmp := CompareIDs(Routine.ID, Items[Idx].ID);
-    if Cmp = 0 then
-      // don't allow duplicates
-      raise EBug.CreateFmt(
-        ClassName + '.Add: Duplicate snippet name (%s) in same database',
-        [Routine.Name]
-      );
-    if Cmp < 0 then
-    begin
-      // current item is greater than new one: insert before it
-      Result := Idx;
-      Break;
-    end;
-  end;
-  // add the new item
-  fList.Insert(Result, Routine);
+  Result := fList.Add(Routine);
 end;
 
 procedure TRoutineList.Assign(const SrcList: TRoutineList);
@@ -1835,7 +1812,7 @@ begin
   fList.Clear;
 end;
 
-function TRoutineList.CompareIDs(const SID1, SID2: TSnippetID): Integer;
+class function TRoutineList.CompareIDs(const SID1, SID2: TSnippetID): Integer;
   {Compares IDS of two snippets.
     @param SID1 [in] First ID to be compared.
     @param SID2 [in] Second ID to be compared.
@@ -1904,14 +1881,23 @@ constructor TRoutineList.Create(const OwnsObjects: Boolean = False);
   }
 begin
   inherited Create;
-  fList := TObjectList<TRoutine>.Create(OwnsObjects);
+  fList := TSortedObjectList<TRoutine>.Create(
+    TDelegatedComparer<TRoutine>.Create(
+      function (const Left, Right: TRoutine): Integer
+      begin
+        Result := CompareIDs(Left.ID, Right.ID);
+      end
+    ),
+    OwnsObjects
+  );
+  fList.PermitDuplicates := False;
 end;
 
 destructor TRoutineList.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fList);  // destroys owned snippets if OwnsObjects=True
+  fList.Free; // destroys owned snippets if OwnsObjects=True
   inherited;
 end;
 
@@ -1926,43 +1912,18 @@ function TRoutineList.Find(const RoutineName: string;
     @return True if snippet found, False if not.
   }
 var
-  Low, High: Integer;   // low and high bounds of search
-  Cur: Integer;         // current item to be tested
-  Cmp: Integer;         // result of comparing two items
-  SearchID: TSnippetID; // ID of snippet being search for
+  TempSnippet: TRoutine;  // temp snippet used to perform search
+  NulData: TSnippetData;  // nul data used to create snippet
 begin
-  // Uses binary search: based on TStringList.Find from Delphi Classes unit.
-  // We can't use TObjectList<>'s built in binary search since that requires a
-  // TRoutine object and we don't have one to search on.
-  // Initialise
-  Result := False;
-  Low := 0;
-  High := Count - 1;
-  SearchID := TSnippetID.Create(RoutineName, UserDefined);
-  // Perform binary search
-  while Low <= High do
-  begin
-    // Choose item to be compared: mid point of range
-    Cur := (Low + High) shr 1;
-    // Compare chosen
-    Cmp := CompareIDs(Items[Cur].ID, SearchID);
-    if Cmp < 0 then
-      // Current item < required: search above current item
-      Low := Cur + 1
-    else
-    begin
-      // Current item >= required: search below current item
-      High := Cur - 1;
-      if Cmp = 0 then
-      begin
-        // We found it: set Low to Cur because Cur > High => loop will terminate
-        Result := True;
-        Low := Cur;
-      end;
-    end;
+  // We need a temporary snippet object in order to perform binary search using
+  // object list's built in search
+  NulData.Init;
+  TempSnippet := TTempRoutine.Create(RoutineName, UserDefined, NulData);
+  try
+    Result := fList.Find(TempSnippet, Index);
+  finally
+    TempSnippet.Free;
   end;
-  // Set index (Low = Cur if found)
-  Index := Low;
 end;
 
 function TRoutineList.Find(const RoutineName: string;
