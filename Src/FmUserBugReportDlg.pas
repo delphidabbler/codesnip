@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -56,7 +56,6 @@ type
     lblInstruct1: TLabel;
     lblInstruct2: TLabel;
     lblInstruct3: TLabel;
-    lblInstruct4: TLabel;
   strict protected
     procedure ArrangeForm; override;
       {Arranges labels on form.
@@ -90,8 +89,7 @@ begin
   TCtrlArranger.SetLabelHeights(Self);
   lblInstruct2.Top := TCtrlArranger.BottomOf(lblInstruct1, 6);
   lblInstruct3.Top := TCtrlArranger.BottomOf(lblInstruct2, 6);
-  lblInstruct4.Top := TCtrlArranger.BottomOf(lblInstruct3, 6);
-  lblBugTracker.Top := TCtrlArranger.BottomOf(lblInstruct4, 8);
+  lblBugTracker.Top := TCtrlArranger.BottomOf(lblInstruct3, 6);
   inherited;
 end;
 
