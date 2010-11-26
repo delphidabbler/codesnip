@@ -63,7 +63,7 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
     end
     object lblInstruct3: TLabel [5]
       Left = 4
-      Top = 175
+      Top = 143
       Width = 441
       Height = 38
       AutoSize = False
@@ -76,6 +76,49 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
     inherited lblBugTrackerKey: TLabel
       Left = 116
       ExplicitLeft = 116
+    end
+    object lblInstruct4: TLabel
+      Left = 4
+      Top = 187
+      Width = 441
+      Height = 38
+      AutoSize = False
+      Caption = 
+        'This bug may have left the program in an unstable state. You are' +
+        ' advised to terminate the application and restart it. Click "Ter' +
+        'minate CodeSnip" to close the program now. CodeSnip will attempt' +
+        ' to save any database changes before closing. If you prefer to l' +
+        'eave the application open click "Continue".'
+      WordWrap = True
+    end
+  end
+  inherited btnHelp: TButton
+    TabOrder = 3
+  end
+  inherited btnClose: TButton
+    Caption = 'Continue'
+    Default = False
+    TabOrder = 2
+  end
+  object btnTerminate: TButton [4]
+    Left = 64
+    Top = 304
+    Width = 135
+    Height = 25
+    Action = actTerminate
+    Default = True
+    Font.Charset = DEFAULT_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -11
+    Font.Name = 'MS Sans Serif'
+    Font.Style = [fsBold]
+    ParentFont = False
+    TabOrder = 1
+  end
+  inherited alMain: TActionList
+    object actTerminate: TAction
+      Caption = '&Terminate CodeSnip'
+      OnExecute = actTerminateExecute
     end
   end
 end
