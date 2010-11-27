@@ -58,9 +58,9 @@ type
   strict private
     var
       fExpanded: Boolean;     // Value of Expanded property
-      fViewItem: TViewItem;   // Value of ViewItem property
+      fViewItem: IView;       // Value of ViewItem property
   public
-    constructor Create(const ViewItem: TViewItem; const Expanded: Boolean);
+    constructor Create(ViewItem: IView; const Expanded: Boolean);
       {Constructor. Sets up object.
         @param ViewItem [in] View item represented by section node.
         @param Expended [in] True if node is expanded, False if not.
@@ -70,7 +70,7 @@ type
       }
     property Expanded: Boolean read fExpanded;
       {Whether section node is expanded}
-    property ViewItem: TViewItem read fViewItem;
+    property ViewItem: IView read fViewItem;
       {View item displayed by section node}
   end;
 
@@ -95,7 +95,7 @@ type
       fTV: TTreeView;                   // Reference to treeview
       fSections: TSectionStates;        // List of section state objects
       fRestoreState: TResorationState;  // Current restoration state of tree
-    function FindSection(const ViewItem: TViewItem;
+    function FindSection(ViewItem: IView;
       out FoundSection: TOverviewTreeSectionState): Boolean;
       {Finds a section object that references a specified view item.
         @param ViewItem [in] View item being searched for.
@@ -136,7 +136,7 @@ uses
 
 { TOverviewTreeSectionState }
 
-constructor TOverviewTreeSectionState.Create(const ViewItem: TViewItem;
+constructor TOverviewTreeSectionState.Create(ViewItem: IView;
   const Expanded: Boolean);
   {Constructor. Sets up object.
     @param ViewItem [in] View item represented by section node.
@@ -144,7 +144,7 @@ constructor TOverviewTreeSectionState.Create(const ViewItem: TViewItem;
   }
 begin
   inherited Create;
-  fViewItem := TViewItemFactory.CreateCopy(ViewItem);
+  fViewItem := TViewItemFactory.Clone(ViewItem);
   fExpanded := Expanded;
 end;
 
@@ -152,7 +152,7 @@ destructor TOverviewTreeSectionState.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  fViewItem.Free;
+  fViewItem := nil;
   inherited;
 end;
 
@@ -180,7 +180,7 @@ begin
   inherited;
 end;
 
-function TOverviewTreeState.FindSection(const ViewItem: TViewItem;
+function TOverviewTreeState.FindSection(ViewItem: IView;
   out FoundSection: TOverviewTreeSectionState): Boolean;
   {Finds a section object that references a specified view item.
     @param ViewItem [in] View item being searched for.

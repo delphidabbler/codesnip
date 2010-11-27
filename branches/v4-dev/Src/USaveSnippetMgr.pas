@@ -56,7 +56,7 @@ type
   }
   TSaveSnippetMgr = class(TNoPublicConstructObject)
   strict private
-    fView: TViewItem;                 // View to be output
+    fView: IView;                     // View to be output
     fDocTitle: string;                // Title of saved documents
     fOutputMgr: TSourceFileOutputMgr; // Gets save info and manages output
     procedure SourceGenHandler(Sender: TObject;
@@ -69,7 +69,7 @@ type
         @param DocTitle [out] Receives document title.
       }
   strict protected
-    constructor InternalCreate(const View: TViewItem);
+    constructor InternalCreate(View: IView);
       {Class constructor. Sets up object for view.
         @param View [in] View to be output.
       }
@@ -81,12 +81,12 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
-    class procedure Execute(const View: TViewItem);
+    class procedure Execute(View: IView);
       {Creates and outputs a compilable include file generated from a view item.
         @param View [in] View from which source code is generated. CanHandleView
           must return True for this view.
       }
-    class function CanHandleView(const View: TViewItem): Boolean;
+    class function CanHandleView(View: IView): Boolean;
       {Checks whether a snippet include file can be created from a view.
         @param View [in] View to be checked.
         @return True if view contains code that can be output as a compilable
@@ -123,7 +123,7 @@ resourcestring
 
 { TSaveSnippetMgr }
 
-class function TSaveSnippetMgr.CanHandleView(const View: TViewItem): Boolean;
+class function TSaveSnippetMgr.CanHandleView(View: IView): Boolean;
   {Checks whether a snippet include file can be created from a view.
     @param View [in] View to be checked.
     @return True if view contains code that can be output as a compilable
@@ -137,7 +137,7 @@ destructor TSaveSnippetMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fOutputMgr);
+  fOutputMgr.Free;
   inherited;
 end;
 
@@ -150,7 +150,7 @@ begin
   fOutputMgr.Execute;
 end;
 
-class procedure TSaveSnippetMgr.Execute(const View: TViewItem);
+class procedure TSaveSnippetMgr.Execute(View: IView);
   {Creates and outputs a compilable include file generated from a view item.
     @param View [in] View from which source code is generated. CanHandleView
       must return True for this view.
@@ -164,7 +164,7 @@ begin
     end;
 end;
 
-constructor TSaveSnippetMgr.InternalCreate(const View: TViewItem);
+constructor TSaveSnippetMgr.InternalCreate(View: IView);
   {Class constructor. Sets up object for view.
     @param View [in] View to be output.
   }
@@ -190,9 +190,9 @@ begin
     FileName := View.Description;
   end;
   // Record document title
-  if View is TCategoryViewItem then
+  if Supports(View, ICategoryView) then
     fDocTitle := Format(sDocTitle, [View.Description, sCategory])
-  else if View is TSnippetViewItem then
+  else if Supports(View, ISnippetView) then
     fDocTitle := Format(sDocTitle, [View.Description, sRoutine]);
 end;
 

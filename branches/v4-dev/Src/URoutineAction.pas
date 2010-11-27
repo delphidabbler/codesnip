@@ -94,19 +94,13 @@ function TRoutineAction.Execute: Boolean;
   }
 var
   Snippet: TRoutine;    // snippet to be displayed
-  ViewItem: TViewItem;  // view item for snippet
 begin
   Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
   Assert(RoutineName <> '', ClassName + '.Execute: RoutineName not provided');
   Snippet := Snippets.Routines.Find(RoutineName, UserDefined);
   Assert(Assigned(Snippet), ClassName + '.Execute: RoutineName not valid');
-  // Create a view item for category and get notifier to display it
-  ViewItem := TViewItemFactory.CreateSnippetView(Snippet);
-  try
-    fNotifier.ShowViewItem(ViewItem);
-  finally
-    ViewItem.Free;
-  end;
+  // Create a view item for snippet and get notifier to display it
+  fNotifier.ShowViewItem(TViewItemFactory.CreateSnippetView(Snippet));
   Result := False;
 end;
 

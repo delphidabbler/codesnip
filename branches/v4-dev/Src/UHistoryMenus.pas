@@ -141,16 +141,14 @@ type
   }
   THistoryMenuItem = class sealed(TMenuItem)
   strict private
-    fViewItem: TViewItem;
-      {View item associated with menu item}
-    procedure SetViewItem(const Value: TViewItem);
+    var fViewItem: IView; // View item associated with menu item
+    procedure SetViewItem(Value: IView);
       {Write accessor for ViewItem property. Sets menu item Caption property
       to represent view item.
         @param Value [in] View item associated with menu.
       }
   public
-    property ViewItem: TViewItem
-      read fViewItem write SetViewItem;
+    property ViewItem: IView read fViewItem write SetViewItem;
       {View item associated with this menu item. Setting this property also
       stores a description in menu item Caption}
   end;
@@ -221,7 +219,7 @@ begin
       Items.Add(MI);
     end;
   finally
-    FreeAndNil(ViewList);
+    ViewList.Free;
   end;
 end;
 
@@ -247,7 +245,7 @@ end;
 
 { THistoryMenuItem }
 
-procedure THistoryMenuItem.SetViewItem(const Value: TViewItem);
+procedure THistoryMenuItem.SetViewItem(Value: IView);
   {Write accessor for ViewItem property. Sets menu item Caption property to
   represent view item.
     @param Value [in] View item associated with menu.
@@ -265,15 +263,15 @@ begin
   // Record view item
   fViewItem := Value;
   // Set menu item caption to describe view item
-  if fViewItem is TStartPageViewItem then
+  if Supports(fViewItem, IStartPageView) then
     Caption := ViewItem.Description
-  else if fViewItem is TSnippetViewItem then
+  else if Supports(fViewItem, ISnippetView) then
     Caption := Format(sRoutineDesc, [ViewItem.Description])
-  else if fViewItem is TCategoryViewItem then
+  else if Supports(fViewItem, ICategoryView) then
     Caption := Format(sCategoryDesc, [ViewItem.Description])
-  else if fViewItem is TSnippetKindViewItem then
+  else if Supports(fViewItem, ISnippetKindView) then
     Caption := Format(sSnipKindDesc, [ViewItem.Description])
-  else if fViewItem is TInitialLetterViewItem then
+  else if Supports(fViewItem, IInitialLetterView) then
     Caption := Format(sAlphabetDesc, [ViewItem.Description])
   else
     raise EBug.CreateFmt(cBadViewItem, [ClassName]);

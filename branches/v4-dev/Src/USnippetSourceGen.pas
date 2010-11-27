@@ -59,7 +59,7 @@ type
       database, False only if source code is completely user defined}
     fGenerator: TSourceGen;
       {Object used to generate the source code}
-    procedure Initialize(const View: TViewItem);
+    procedure Initialize(View: IView);
       {Initializes source code generator using information from a snippet or
       category view.
         @param View [in] View from which to retrieve source code.
@@ -74,7 +74,7 @@ type
         @return Required source code.
       }
   strict protected
-    constructor InternalCreate(const View: TViewItem);
+    constructor InternalCreate(View: IView);
       {Class constructor. Sets up object to record and generate source code for
       a view.
         @param View [in] View for which we are generating source code.
@@ -83,14 +83,14 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
-    class function CanGenerate(const View: TViewItem): Boolean;
+    class function CanGenerate(View: IView): Boolean;
       {Checks if a valid source code snippet can be generated from a view.
         @param View [in] View to be checked.
         @return True if View is a routine snippet or a category that contains
           routine snippets for current query.
       }
-    class function Generate(const View: TViewItem;
-      const CommentStyle: TCommentStyle): string;
+    class function Generate(View: IView; const CommentStyle: TCommentStyle):
+      string;
       {Generates source code of all routine snippets in a view.
         @param View [in] View containing required snippet(s).
         @param CommentStyle [in] Style of commenting to use in source code.
@@ -143,7 +143,7 @@ begin
   );
 end;
 
-class function TSnippetSourceGen.CanGenerate(const View: TViewItem): Boolean;
+class function TSnippetSourceGen.CanGenerate(View: IView): Boolean;
   {Checks if a valid source code snippet can be generated from a view.
     @param View [in] View to be checked.
     @return True if View is a routine snippet or a category that contains
@@ -151,18 +151,20 @@ class function TSnippetSourceGen.CanGenerate(const View: TViewItem): Boolean;
   }
 var
   CatSnippets: TRoutineList;  // list of snippets in a category
+  CatView: ICategoryView;     // category view if supported
+  SnipView: ISnippetView;     // snippets view if supported
 begin
   Result := False;
-  if View is TSnippetViewItem then
-    Result := (View as TSnippetViewItem).Snippet.Kind = skRoutine
-  else if View is TCategoryViewItem then
+  if Supports(View, ISnippetView, SnipView) then
+    Result := SnipView.Snippet.Kind = skRoutine
+  else if Supports(View, ICategoryView, CatView) then
   begin
     CatSnippets := TRoutineList.Create;
     try
-      Query.GetCatSelection((View as TCategoryViewItem).Category, CatSnippets);
+      Query.GetCatSelection(CatView.Category, CatSnippets);
       Result := CatSnippets.ContainsKinds([skRoutine]);
     finally
-      FreeAndNil(CatSnippets);
+      CatSnippets.Free;
     end;
   end;
 end;
@@ -171,7 +173,7 @@ destructor TSnippetSourceGen.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fGenerator);
+  fGenerator.Free;
   inherited;
 end;
 
@@ -185,7 +187,7 @@ begin
   Result := fGenerator.IncFileAsString(CommentStyle, BuildHeaderComments);
 end;
 
-class function TSnippetSourceGen.Generate(const View: TViewItem;
+class function TSnippetSourceGen.Generate(View: IView;
   const CommentStyle: TCommentStyle): string;
   {Generates source code of all routine snippets in a view.
     @param View [in] View containing required snippet(s).
@@ -201,21 +203,21 @@ begin
     end;
 end;
 
-procedure TSnippetSourceGen.Initialize(const View: TViewItem);
+procedure TSnippetSourceGen.Initialize(View: IView);
   {Initializes source code generator using information from a snippet or
   category view.
     @param View [in] View from which to retrieve source code.
   }
 var
-  Snips: TRoutineList; // list of snippets in a category to display
-  Snippet: TRoutine;   // a snippet in Snips list
+  Snips: TRoutineList;  // list of snippets in a category to display
+  Snippet: TRoutine;    // a snippet in Snips list
 begin
   fContainsMainDBSnippets := False;
   // Record required snippet(s)
-  if View is TSnippetViewItem then
+  if Supports(View, ISnippetView) then
   begin
     // view is single snippet: just record that
-    Snippet := (View as TSnippetViewItem).Snippet;
+    Snippet := (View as ISnippetView).Snippet;
     fGenerator.IncludeSnippet(Snippet);
     fContainsMainDBSnippets := not Snippet.UserDefined;
   end
@@ -224,7 +226,7 @@ begin
     // view is category: record all selected snippets in category
     Snips := TRoutineList.Create;
     try
-      Query.GetCatSelection((View as TCategoryViewItem).Category, Snips);
+      Query.GetCatSelection((View as ICategoryView).Category, Snips);
       fGenerator.IncludeSnippets(Snips);  // ignores freeform snippets
       for Snippet in Snips do
       begin
@@ -235,12 +237,12 @@ begin
         end;
       end;
     finally
-      FreeAndNil(Snips);
+      Snips.Free;
     end;
   end;
 end;
 
-constructor TSnippetSourceGen.InternalCreate(const View: TViewItem);
+constructor TSnippetSourceGen.InternalCreate(View: IView);
   {Class constructor. Sets up object to record and generate source code for a
   view.
     @param View [in] View for which we are generating source code.

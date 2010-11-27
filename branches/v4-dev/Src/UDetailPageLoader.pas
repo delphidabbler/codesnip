@@ -66,7 +66,7 @@ type
   TDetailPageLoader = class(TNoConstructObject)
   strict private
     class function CreateGenerator(const PageKind: TDetailPageKind;
-      const View: TViewItem): TDetailPageHTML;
+      View: IView): TDetailPageHTML;
       {Creates correct HTML generator object for specified display pane and
       view.
         @param PageKind [in] Kind of page required: information or compiler
@@ -89,8 +89,8 @@ type
         @param WBController [in] Controller object that loads HTML document.
       }
   public
-    class procedure LoadPage(const PageKind: TDetailPageKind;
-      const View: TViewItem; const WBController: TWBController);
+    class procedure LoadPage(const PageKind: TDetailPageKind; View: IView;
+      const WBController: TWBController);
       {Loads required HTML into body of a suitable host document.
         @param PageKind [in] Kind of page required: information or compiler
           check.
@@ -111,7 +111,7 @@ uses
 { TDetailPageLoader }
 
 class function TDetailPageLoader.CreateGenerator(
-  const PageKind: TDetailPageKind; const View: TViewItem): TDetailPageHTML;
+  const PageKind: TDetailPageKind; View: IView): TDetailPageHTML;
   {Creates correct HTML generator object for specified display pane and view.
     @param PageKind [in] Kind of page required: information or compiler check.
     @param View [in] View to be displayed.
@@ -120,28 +120,26 @@ class function TDetailPageLoader.CreateGenerator(
 begin
   // Create required generator
   Result := nil;
-  if View.ClassType = TViewItem then
-    Assert(False, 'TViewItem class type');
-  if View is TNulViewItem then
+  if Supports(View, INulView) then
     Result := TNulPageHTML.Create(View)
-  else if View is TStartPageViewItem then
+  else if Supports(View, IStartPageView) then
     Result := TWelcomePageHTML.Create(View)
-  else if View is TSnippetViewItem then
+  else if Supports(View, ISnippetView) then
     case PageKind of
       pkInfo: Result := TRoutineInfoPageHTML.Create(View);
       pkComp: Result := TRoutineCompCheckPageHTML.Create(View);
     end
-  else if View is TCategoryViewItem then
+  else if Supports(View, ICategoryView) then
     case PageKind of
       pkInfo: Result := TCategoryPageHTML.Create(View);
       pkComp: Result := TNoCompCheckPageHTML.Create(View);
     end
-  else if View is TSnippetKindViewItem then
+  else if Supports(View, ISnippetKindView) then
     case PageKind of
       pkInfo: Result := TSnipKindPageHTML.Create(View);
       pkComp: Result := TNoCompCheckPageHTML.Create(View);
     end
-  else if View is TInitialLetterViewItem then
+  else if Supports(View, IInitialLetterView) then
     case PageKind of
       pkInfo: Result := TAlphaListPageHTML.Create(View);
       pkComp: Result := TNoCompCheckPageHTML.Create(View);
@@ -163,7 +161,7 @@ begin
     Generator.Generate(Stm);
     WBController.IOMgr.ReplaceExistingBodyHTML(Stm.DataString);
   finally
-    FreeAndNil(Stm);
+    Stm.Free;
   end;
 end;
 
@@ -189,7 +187,7 @@ begin
 end;
 
 class procedure TDetailPageLoader.LoadPage(const PageKind: TDetailPageKind;
-  const View: TViewItem; const WBController: TWBController);
+  View: IView; const WBController: TWBController);
   {Loads required HTML into body of a suitable host document.
     @param PageKind [in] Kind of page required: information or compiler check.
     @param View [in] View to be displayed.
@@ -205,7 +203,7 @@ begin
   try
     DisplayHTML(Generator, WBController);
   finally
-    FreeAndNil(Generator);
+    Generator.Free;
   end;
 end;
 

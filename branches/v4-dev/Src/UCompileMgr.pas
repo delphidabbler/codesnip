@@ -116,12 +116,12 @@ type
   }
   TMainCompileMgr = class(TCompileMgr)
   public
-    function CanCompile(const View: TViewItem): Boolean;
+    function CanCompile(View: IView): Boolean;
       {Checks if the object represented by a view item can be test compiled.
         @param View [in] View item to test.
         @return True if view can be compiled, False otherwise.
       }
-    function IsLastCompiledView(const View: TViewItem): Boolean;
+    function IsLastCompiledView(View: IView): Boolean;
       {Checks if the object represented by a view item is the last one that was
       test compiled.
         @param View [in] View item to test.
@@ -166,7 +166,7 @@ begin
   if Assigned(DisplayProc) then
     DisplayProc(fCompilers);
   // Copy routine to LastCompiledRoutine property
-  FreeAndNil(fLastCompiledRoutine);
+  fLastCompiledRoutine.Free;
   fLastCompiledRoutine := (Snippets as ISnippetsEdit).CreateTempRoutine(
     Routine
   );
@@ -185,8 +185,8 @@ destructor TCompileMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fLastCompiledRoutine);
-  fCompilers := nil;  // release compilers object
+  fLastCompiledRoutine.Free;
+  fCompilers := nil;
   inherited;
 end;
 
@@ -246,16 +246,18 @@ end;
 
 { TMainCompileMgr }
 
-function TMainCompileMgr.CanCompile(const View: TViewItem): Boolean;
+function TMainCompileMgr.CanCompile(View: IView): Boolean;
   {Checks if the object represented by a view item can be test compiled.
     @param View [in] View item to test.
     @return True if view can be compiled, False otherwise.
   }
+var
+  SnippetView: ISnippetView;  // view as snippet view if supported
 begin
   Result := Assigned(View)
     and HaveCompilers
-    and (View is TSnippetViewItem)
-    and (View as TSnippetViewItem).Snippet.CanCompile;
+    and Supports(View, ISnippetView, SnippetView)
+    and SnippetView.Snippet.CanCompile;
 end;
 
 function TMainCompileMgr.ConfigCompilers: Boolean;
@@ -267,17 +269,19 @@ begin
   Result := TCompilersDlg.Execute(Owner, Compilers);
 end;
 
-function TMainCompileMgr.IsLastCompiledView(const View: TViewItem): Boolean;
+function TMainCompileMgr.IsLastCompiledView(View: IView): Boolean;
   {Checks if the object represented by a view item is the last one that was test
   compiled.
     @param View [in] View item to test.
     @return True if view represents last object to be compiled, False otherwise.
   }
+var
+  SnippetView: ISnippetView;  // view as snippet view if supported
 begin
   Result := Assigned(View)
-    and (View is TSnippetViewItem)
     and Assigned(LastCompiledRoutine)
-    and (View as TSnippetViewItem).Snippet.IsEqual(LastCompiledRoutine);
+    and Supports(View, ISnippetView, SnippetView)
+    and SnippetView.Snippet.IsEqual(LastCompiledRoutine);
 end;
 
 end.

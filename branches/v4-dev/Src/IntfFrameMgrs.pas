@@ -156,7 +156,7 @@ type
     procedure Clear;
       {Clears the display.
       }
-    procedure SelectItem(const ViewItem: TViewItem);
+    procedure SelectItem(ViewItem: IView);
       {Select a view item in the overview pane.
         @param ViewItem [in] Item to be selected. Pass nil to deselect current
           item.
@@ -198,7 +198,7 @@ type
   }
   IViewItemDisplayMgr = interface(IInterface)
     ['{1FE68233-1AD7-44C3-A6C0-3974E0C0455E}']
-    procedure Display(const View: TViewItem; const Force: Boolean = False);
+    procedure Display(View: IView; const Force: Boolean = False);
       {Displays detailed information for a view. Pass nil to clear.
         @param View [in] Information about item to view.
         @param Force [in] Forces view item to be re-displayed even if not

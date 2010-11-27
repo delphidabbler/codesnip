@@ -64,7 +64,7 @@ type
     property SnippetList: TRoutineList read fSnippetList;
       {List of snippets to be displayed in treeview}
     function AddViewItemNode(const ParentNode: TViewItemTreeNode;
-      const ViewItem: TViewItem): TViewItemTreeNode;
+      ViewItem: IView): TViewItemTreeNode;
       {Adds a new node to the tree view that represents a view item.
         @param ParentNode [in] Node that is parent of new node.
         @param ViewItem [in] View item for which we are adding node.
@@ -74,7 +74,7 @@ type
       {Creates a grouping object of the required type.
         @return Required grouping object.
       }
-    function CreateViewItemForGroup(const Group: TGroupItem): TViewItem;
+    function CreateViewItemForGroup(const Group: TGroupItem): IView;
       virtual; abstract;
       {Creates a view item of a type that matches the type of a group item.
         @param Group [in] Group item for which view item is required.
@@ -109,7 +109,7 @@ type
       {Creates a categorised grouping object.
         @return Required grouping object.
       }
-    function CreateViewItemForGroup(const Group: TGroupItem): TViewItem;
+    function CreateViewItemForGroup(const Group: TGroupItem): IView;
       override;
       {Creates a category view item from group item.
         @param Group [in] Group item containing category data.
@@ -128,7 +128,7 @@ type
       {Creates an alphabetic grouping object.
         @return Required grouping object.
       }
-    function CreateViewItemForGroup(const Group: TGroupItem): TViewItem;
+    function CreateViewItemForGroup(const Group: TGroupItem): IView;
       override;
       {Creates an alpha view item from group item.
         @param Group [in] Group item containing alpha data.
@@ -147,7 +147,7 @@ type
       {Creates a snippet kind grouping object.
         @return Required grouping object.
       }
-    function CreateViewItemForGroup(const Group: TGroupItem): TViewItem;
+    function CreateViewItemForGroup(const Group: TGroupItem): IView;
       override;
       {Creates a snippet kind view item from group item.
         @param Group [in] Group item containing snippet kind data.
@@ -181,8 +181,7 @@ uses
 { TOverviewTreeBuilder }
 
 function TOverviewTreeBuilder.AddViewItemNode(
-  const ParentNode: TViewItemTreeNode;
-  const ViewItem: TViewItem): TViewItemTreeNode;
+  const ParentNode: TViewItemTreeNode; ViewItem: IView): TViewItemTreeNode;
   {Adds a new node to the tree view that represents a view item.
     @param ParentNode [in] Node that is parent of new node.
     @param ViewItem [in] View item for which we are adding node.
@@ -219,7 +218,7 @@ begin
       end;
     end;
   finally
-    FreeAndNil(Grouping);
+    Grouping.Free;
   end;
 end;
 
@@ -247,7 +246,7 @@ begin
 end;
 
 function TOverviewCategorisedTreeBuilder.CreateViewItemForGroup(
-  const Group: TGroupItem): TViewItem;
+  const Group: TGroupItem): IView;
   {Creates a category view item from group item.
     @param Group [in] Group item containing category data.
     @return Required category view item for group.
@@ -269,7 +268,7 @@ begin
 end;
 
 function TOverviewAlphabeticTreeBuilder.CreateViewItemForGroup(
-  const Group: TGroupItem): TViewItem;
+  const Group: TGroupItem): IView;
   {Creates an alpha view item from group item.
     @param Group [in] Group item containing alpha data.
     @return Required alpha view item for group.
@@ -291,7 +290,7 @@ begin
 end;
 
 function TOverviewSnipKindTreeBuilder.CreateViewItemForGroup(
-  const Group: TGroupItem): TViewItem;
+  const Group: TGroupItem): IView;
   {Creates a snippet kind view item from group item.
     @param Group [in] Group item containing snippet kind data.
     @return Required snippet kind view item for group.

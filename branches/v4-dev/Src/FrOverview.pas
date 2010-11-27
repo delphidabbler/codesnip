@@ -107,8 +107,8 @@ type
       fTVDraw: TTVDraw;             // Object that renders tree view nodes
       fNotifier: INotifier;         // Notifies app of user initiated events
       fCanChange: Boolean;          // Whether selected node allowed to change
-      fSelectedItem: TViewItem;     // Current selected view item in tree view
-      fPrevSelectedItem: TViewItem; // Previous selected view item in tree view
+      fSelectedItem: IView;         // Current selected view item in tree view
+      fPrevSelectedItem: IView;     // Previous selected view item in tree view
       fRoutineList: TRoutineList;   // List of currently displayed snippets
       fTreeStates: array of TOverviewTreeState;
                                     // Array of tree state objects: one per tab
@@ -128,7 +128,7 @@ type
       changed, triggers action to notify program of selection change.
         @param Node [in] Selected node.
       }
-    procedure SelectionChange(const Item: TViewItem); overload;
+    procedure SelectionChange(Item: IView); overload;
       {Records new selected view item and, if item has changed, triggers action
       to notify program of selection change.
         @param Item [in] Selected item.
@@ -136,12 +136,12 @@ type
     procedure Redisplay;
       {Redisplays all snippets within current snippet list in required style.
       }
-    procedure InternalSelectItem(const Item: TViewItem);
+    procedure InternalSelectItem(Item: IView);
       {Selects the tree node associated with a view item in the tree view if
       view item is in the tree view, otherwise deselects current item.
         @param Item [in] View item to be selected.
       }
-    function FindItemNode(const Item: TViewItem): TViewItemTreeNode;
+    function FindItemNode(Item: IView): TViewItemTreeNode;
       {Finds node representing a view item in the tree view.
         @param Item [in] View item to be found (may be nil).
         @return Tree node associated with view item or nil if no match or if
@@ -191,7 +191,7 @@ type
     procedure Clear;
       {Clears the display.
       }
-    procedure SelectItem(const ViewItem: TViewItem);
+    procedure SelectItem(ViewItem: IView);
       {Selects a view item in the overview pane.
         @param ViewItem [in] Item to be selected.
       }
@@ -318,11 +318,11 @@ var
   TabIdx: Integer;  // loops through tabs
 begin
   for TabIdx := Pred(tcDisplayStyle.Tabs.Count) downto 0 do
-    FreeAndNil(fTreeStates[TabIdx]);
-  FreeAndNil(fTVDraw);
-  FreeAndNil(fPrevSelectedItem);
-  FreeAndNil(fSelectedItem);
-  FreeAndNil(fRoutineList); // does not free referenced snippets
+    fTreeStates[TabIdx].Free;
+  fTVDraw.Free;
+  fPrevSelectedItem := nil;
+  fSelectedItem := nil;
+  fRoutineList.Free;  // does not free referenced snippets
   fCommandBars.Free;
   inherited;
 end;
@@ -342,7 +342,7 @@ begin
   end;
 end;
 
-function TOverviewFrame.FindItemNode(const Item: TViewItem): TViewItemTreeNode;
+function TOverviewFrame.FindItemNode(Item: IView): TViewItemTreeNode;
   {Finds node representing a view item in the tree view.
     @param Item [in] View item to be found (may be nil).
     @return Tree node associated with view item or nil if no match or if Item is
@@ -429,7 +429,7 @@ begin
   Result := CurrentNode as TViewItemTreeNode;
 end;
 
-procedure TOverviewFrame.InternalSelectItem(const Item: TViewItem);
+procedure TOverviewFrame.InternalSelectItem(Item: IView);
   {Selects the tree node associated with a view item in the tree view if view
   item is in the tree view, otherwise deselects current item.
     @param Item [in] View item to be selected.
@@ -523,7 +523,7 @@ begin
     tvSnippets.FullExpand;
     RestoreTreeState;
   finally
-    FreeAndNil(Builder);
+    Builder.Free;
     fCanChange := True;
     tvSnippets.Items.EndUpdate;
   end;
@@ -563,29 +563,25 @@ begin
     SelectionChange((Node as TViewItemTreeNode).ViewItem);
 end;
 
-procedure TOverviewFrame.SelectionChange(const Item: TViewItem);
+procedure TOverviewFrame.SelectionChange(Item: IView);
   {Records new selected view item and, if item has changed, triggers action to
   notify program of selection change.
     @param Item [in] Selected item.
   }
 begin
   // Record new selected item
-  TViewItemFactory.ReplaceView(
-    fSelectedItem, TViewItemFactory.CreateCopy(Item)
-  );
+  fSelectedItem := TViewItemFactory.Clone(Item);
   if not fSelectedItem.IsEqual(fPrevSelectedItem) then
   begin
     // Item has actually changed: store as previously selected item
-    TViewItemFactory.ReplaceView(
-      fPrevSelectedItem, TViewItemFactory.CreateCopy(fSelectedItem)
-    );
+    fPrevSelectedItem := TViewItemFactory.Clone(fSelectedItem);
     // Notify application of change
     if Assigned(fNotifier) then
       fNotifier.ShowViewItem(fSelectedItem);
   end;
 end;
 
-procedure TOverviewFrame.SelectItem(const ViewItem: TViewItem);
+procedure TOverviewFrame.SelectItem(ViewItem: IView);
   {Selects a view item in the overview pane.
     @param ViewItem [in] Item to be selected.
   }
@@ -593,12 +589,8 @@ begin
   // Select in tree view
   InternalSelectItem(ViewItem);
   // Record view item as selected one
-  TViewItemFactory.ReplaceView(
-    fSelectedItem, TViewItemFactory.CreateCopy(ViewItem)
-  );
-  TViewItemFactory.ReplaceView(
-    fPrevSelectedItem, TViewItemFactory.CreateCopy(fSelectedItem)
-  );
+  fSelectedItem := TViewItemFactory.Clone(ViewItem);
+  fPrevSelectedItem := TViewItemFactory.Clone(fSelectedItem);
 end;
 
 procedure TOverviewFrame.SelectNode(const Node: TTreeNode;
@@ -691,7 +683,7 @@ procedure TOverviewFrame.tvSnippetsDeletion(Sender: TObject;
   }
 begin
   if Assigned(Node) then
-    (Node as TViewItemTreeNode).ViewItem.Free;
+    (Node as TViewItemTreeNode).ViewItem := nil;
 end;
 
 procedure TOverviewFrame.tvSnippetsEnter(Sender: TObject);
@@ -896,12 +888,12 @@ function TOverviewFrame.TTVDraw.IsSectionHeadNode(
     @return True if node is a section header, False if not.
   }
 var
-  ViewItem: TViewItem;
+  ViewItem: IView;
 begin
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
-  Result := (ViewItem is TCategoryViewItem)
-    or (ViewItem is TInitialLetterViewItem)
-    or (ViewItem is TSnippetKindViewItem);
+  Result := Supports(ViewItem, ICategoryView)
+    or Supports(ViewItem, IInitialLetterView)
+    or Supports(ViewItem, ISnippetKindView);
 end;
 
 function TOverviewFrame.TTVDraw.IsUserDefinedNode(
@@ -911,15 +903,17 @@ function TOverviewFrame.TTVDraw.IsUserDefinedNode(
     @return True if node represents user defined object, False if not.
   }
 var
-  ViewItem: TViewItem;  // view item represented by node
+  ViewItem: IView;              // view item represented by node
+  SnipViewItem: ISnippetView;   // view item as snippet view if supported
+  CatViewItem: ICategoryView;   // view item as category view if supported
 begin
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
   Result := (
-    (ViewItem is TSnippetViewItem)
-      and (ViewItem as TSnippetViewItem).Snippet.UserDefined
+    Supports(ViewItem, ISnippetView, SnipViewItem)
+      and SnipViewItem.Snippet.UserDefined
   ) or (
-    (ViewItem is TCategoryViewItem)
-      and (ViewItem as TCategoryViewItem).Category.UserDefined
+    Supports(ViewItem, ICategoryView, CatViewItem)
+      and CatViewItem.Category.UserDefined
   );
 end;
 

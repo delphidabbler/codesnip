@@ -56,7 +56,7 @@ type
   }
   TCopyInfoMgr = class sealed(TCopyViewMgr)
   strict private
-    class function GenerateDoc(const View: TViewItem; const Doc: TRoutineDoc;
+    class function GenerateDoc(View: IView; const Doc: TRoutineDoc;
       const Encoding: TEncoding): string;
       {Generates a document that describes a snippet.
         @param View [in] View that defines snippet to be generated.
@@ -66,18 +66,18 @@ type
         @return Generated document as a string.
       }
   strict protected
-    class function GeneratePlainText(const View: TViewItem): string; override;
+    class function GeneratePlainText(View: IView): string; override;
       {Generates a plain text document providing information about a snippet.
         @param View [in] View representing snippet.
         @return Plain text document as a string.
       }
-    class function GenerateRichText(const View: TViewItem): string; override;
+    class function GenerateRichText(View: IView): string; override;
       {Generates a RTF document providing information about snippet.
         @param View [in] View representing snippet.
         @return RTF document as a string.
       }
   public
-    class function CanHandleView(const View: TViewItem): Boolean; override;
+    class function CanHandleView(View: IView): Boolean; override;
       {Checks if snippet can be copied to clipboard.
         @param View [in] View to be checked.
         @return True if view is a snippet, False otherwise.
@@ -97,17 +97,17 @@ uses
 
 { TCopyInfoMgr }
 
-class function TCopyInfoMgr.CanHandleView(const View: TViewItem): Boolean;
+class function TCopyInfoMgr.CanHandleView(View: IView): Boolean;
   {Checks if snippet can be copied to clipboard.
     @param View [in] View to be checked.
     @return True if view is a snippet, False otherwise.
   }
 begin
-  Result := View is TSnippetViewItem;
+  Result := Supports(View, ISnippetView);
 end;
 
-class function TCopyInfoMgr.GenerateDoc(const View: TViewItem;
-  const Doc: TRoutineDoc; const Encoding: TEncoding): string;
+class function TCopyInfoMgr.GenerateDoc(View: IView; const Doc: TRoutineDoc;
+  const Encoding: TEncoding): string;
   {Generates a document that describes a snippet.
     @param View [in] View that defines snippet to be generated.
     @param Doc [in] Object used to render document in required format.
@@ -120,14 +120,14 @@ var
 begin
   SS := TStringStream.Create('', Encoding);
   try
-    Doc.Generate((View as TSnippetViewItem).Snippet, SS);
+    Doc.Generate((View as ISnippetView).Snippet, SS);
     Result := SS.DataString;
   finally
-    FreeAndNil(SS);
+    SS.Free;
   end;
 end;
 
-class function TCopyInfoMgr.GeneratePlainText(const View: TViewItem): string;
+class function TCopyInfoMgr.GeneratePlainText(View: IView): string;
   {Generates a plain text document providing information about a snippet.
     @param View [in] View representing snippet.
     @return Plain text document as a string.
@@ -139,11 +139,11 @@ begin
   try
     Result := GenerateDoc(View, Doc, TEncoding.Unicode);
   finally
-    FreeAndNil(Doc);
+    Doc.Free;
   end;
 end;
 
-class function TCopyInfoMgr.GenerateRichText(const View: TViewItem): string;
+class function TCopyInfoMgr.GenerateRichText(View: IView): string;
   {Generates a RTF document providing information about snippet.
     @param View [in] View representing snippet.
     @return RTF document as a string.
@@ -155,7 +155,7 @@ begin
   try
     Result := GenerateDoc(View, Doc, TEncoding.Default);
   finally
-    FreeAndNil(Doc);
+    Doc.Free;
   end;
 end;
 

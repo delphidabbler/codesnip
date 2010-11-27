@@ -63,7 +63,7 @@ type
     ICommandBarConfig                               // command bar configuration
   )
   strict private
-    fCurrentView: TViewItem;        // Value of CurrentView property
+    fCurrentView: IView;            // Value of CurrentView property
     fIsActivated: Boolean;          // Value of Active property
     fPopupMenuMgr: TWBPopupMenuMgr; // Managed browser related popup menus
     fCommandBars: TCommandBarMgr;   // Configures command bars (browser popups)
@@ -98,7 +98,7 @@ type
       {Deactivates the frame (when it is hidden).
       }
     { IViewItemDisplayMgr }
-    procedure Display(const View: TViewItem; const Force: Boolean = False);
+    procedure Display(View: IView; const Force: Boolean = False);
       {Displays compiler support information for a view item.
         @param View [in] Information about view item to be displayed.
         @param Force [in] Forces view item to be re-displayed even if not
@@ -142,7 +142,7 @@ type
       CSS is added to that provided by parent class.
         @param CSSBuilder [in] Object used to build the CSS code.
       }
-    property CurrentView: TViewItem
+    property CurrentView: IView
       read fCurrentView;
       {Information about currently displayed view item}
   public
@@ -251,7 +251,7 @@ begin
     with CSSBuilder.Selectors['.' + THiliterCSS.GetMainCSSClassName] do
       AddProperty(CSSBackgroundColorProp(clSourceBg));
   finally
-    FreeAndNil(CSSFont);
+    CSSFont.Free;
   end;
 end;
 
@@ -312,13 +312,12 @@ destructor TDetailViewFrame.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fCurrentView);
-  FreeAndNil(fCommandBars);
+  fCurrentView := nil;
+  fCommandBars.Free;
   inherited;
 end;
 
-procedure TDetailViewFrame.Display(const View: TViewItem;
-  const Force: Boolean);
+procedure TDetailViewFrame.Display(View: IView; const Force: Boolean);
   {Displays compiler support information for a view item.
     @param View [in] Information about view item to be displayed.
     @param Force [in] Forces view item to be re-displayed even if not
@@ -328,9 +327,7 @@ begin
   if not CurrentView.IsEqual(View) or Force then
   begin
     // Record view item and display style
-    TViewItemFactory.ReplaceView(
-      fCurrentView, TViewItemFactory.CreateCopy(View)
-    );
+    fCurrentView := TViewItemFactory.Clone(View);
     // Redraw the display
     UpdateDisplay;
   end;

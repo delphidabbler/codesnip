@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -84,7 +84,7 @@ type
     procedure ConfigCompilers;
       {Displays configure compilers dialog box.
       }
-    procedure ShowViewItem(const ViewItem: TViewItem);
+    procedure ShowViewItem(View: IView);
       {Displays a view item.
         @param ViewItem [in] View item to display.
       }

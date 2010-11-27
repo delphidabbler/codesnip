@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -57,9 +57,9 @@ type
   }
   TViewItemTreeNode = class(TTreeNode)
   strict private
-    fViewItem: TViewItem; // Value of ViewItem property
+    var fViewItem: IView; // Value of ViewItem property
   public
-    property ViewItem: TViewItem read fViewItem write fViewItem;
+    property ViewItem: IView read fViewItem write fViewItem;
       {View item associated with tree node}
   end;
 

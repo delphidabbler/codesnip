@@ -54,26 +54,26 @@ type
   }
   TCopyViewMgr = class abstract(TNoConstructObject)
   strict protected
-    class function GeneratePlainText(const View: TViewItem): string;
+    class function GeneratePlainText(View: IView): string;
       virtual; abstract;
       {Generates rich text representation of a view that is to be copied to
       clipboard.
         @param View [in] View to be represented in plain text.
       }
-    class function GenerateRichText(const View: TViewItem): string;
+    class function GenerateRichText(View: IView): string;
       virtual; abstract;
       {Generates rich text representation of a view that is to be copied to
       clipboard.
         @param View [in] View to be represented in rich text.
       }
   public
-    class function CanHandleView(const View: TViewItem): Boolean;
+    class function CanHandleView(View: IView): Boolean;
       virtual; abstract;
       {Checks if view can be copied to clipboard.
         @param View [in] View to be checked.
         @return True if view can be copied, False otherwise.
       }
-    class procedure Execute(const View: TViewItem);
+    class procedure Execute(View: IView);
       {Copies the information about the view to the clipboard. Information is
       copied in both plain text and rich text formats.
         @param View [in] View to be copied. Must be supported by concrete
@@ -94,7 +94,7 @@ uses
 
 { TCopyViewMgr }
 
-class procedure TCopyViewMgr.Execute(const View: TViewItem);
+class procedure TCopyViewMgr.Execute(View: IView);
   {Copies the information about the view to the clipboard.
     @param View [in] View to be copied. Must be supported by concrete subclass.
   }
@@ -111,7 +111,7 @@ begin
   // Open clipboard and add both plain and rich text representations of snippet
   Clip := TClipboardHelper.Create;
   try
-    Clip.Open;                                 
+    Clip.Open;
     try
       Clip.Add(CF_UNICODETEXT, PlainText);
       Clip.Add(CF_RTF, BytesOf(RTF));         // convert RTF to default encoding
@@ -119,7 +119,7 @@ begin
       Clip.Close;
     end;
   finally
-    FreeAndNil(Clip);
+    Clip.Free;
   end;
 end;
 

@@ -64,7 +64,7 @@ type
         @param Stm [in] Stream to receive generated document.
       }
   strict protected
-    constructor InternalCreate(const ViewItem: TViewItem);
+    constructor InternalCreate(ViewItem: IView);
       {Class constructor. Sets up object to print a view item.
         @param ViewItem [in] View item to be printed. Must be a routine.
       }
@@ -73,11 +73,11 @@ type
       engine.
       }
   public
-    class procedure Print(const ViewItem: TViewItem);
+    class procedure Print(ViewItem: IView);
       {Prints details of a view item using print engine.
         @param ViewItem [in] View item to be printed. Must be a routine.
       }
-    class function CanPrint(const ViewItem: TViewItem): Boolean;
+    class function CanPrint(ViewItem: IView): Boolean;
       {Checks if a view item can be printed.
         @param ViewItem [in] View item to be checked.
         @return True if view item can be printed, False if not.
@@ -97,13 +97,13 @@ uses
 
 { TPrintMgr }
 
-class function TPrintMgr.CanPrint(const ViewItem: TViewItem): Boolean;
+class function TPrintMgr.CanPrint(ViewItem: IView): Boolean;
   {Checks if a view item can be printed.
     @param ViewItem [in] View item to be checked.
     @return True if view item can be printed, False if not.
   }
 begin
-  Result := ViewItem is TSnippetViewItem;
+  Result := Supports(ViewItem, ISnippetView);
 end;
 
 procedure TPrintMgr.DoPrint;
@@ -121,10 +121,10 @@ begin
       GeneratePrintDocument(DocStm);
       PrintEngine.Print(DocStm);
     finally
-      FreeAndNil(DocStm);
+      DocStm.Free;
     end;
   finally
-    FreeAndNil(PrintEngine);
+    PrintEngine.Free;
   end;
 end;
 
@@ -140,19 +140,19 @@ begin
   Stm.Position := 0;
 end;
 
-constructor TPrintMgr.InternalCreate(const ViewItem: TViewItem);
+constructor TPrintMgr.InternalCreate(ViewItem: IView);
   {Class constructor. Sets up object to print a view item.
     @param ViewItem [in] View item to be printed. Must be a routine.
   }
 begin
   Assert(Assigned(ViewItem), ClassName + '.InternalCreate: ViewItem is nil');
-  Assert(ViewItem is TSnippetViewItem,
+  Assert(Supports(ViewItem, ISnippetView),
     ClassName + '.InternalCreate: ViewItem is not a snippet');
   inherited InternalCreate;
-  fRoutine := (ViewItem as TSnippetViewItem).Snippet;
+  fRoutine := (ViewItem as ISnippetView).Snippet;
 end;
 
-class procedure TPrintMgr.Print(const ViewItem: TViewItem);
+class procedure TPrintMgr.Print(ViewItem: IView);
   {Prints details of a view item using print engine.
     @param ViewItem [in] View item to be printed. Must be a routine.
   }

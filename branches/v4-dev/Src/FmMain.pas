@@ -639,7 +639,7 @@ begin
   Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actEditSnippetExecute: Can''t edit current view item');
   fNotifier.EditRoutine(
-    (fMainDisplayMgr.CurrentView as TSnippetViewItem).Snippet.Name
+    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet.Name
   );
   // display of updated snippet is handled by snippets change event handler
 end;
@@ -707,12 +707,12 @@ procedure TMainForm.actFindXRefsExecute(Sender: TObject);
 var
   Search: USearch.ISearch;  // cross reference search object
 begin
-  Assert(fMainDisplayMgr.CurrentView is TSnippetViewItem,
+  Assert(Supports(fMainDisplayMgr.CurrentView, ISnippetView),
     ClassName + '.actFindXRefsExecute: Current view is not a snippet');
   // Display Find Cross Refs dialog box to enable user to enter search criteria
   // (dialog box creates and returns search object from entered criteria)
   if fDialogMgr.ExecFindXRefsDlg(
-    (fMainDisplayMgr.CurrentView as TSnippetViewItem).Snippet, Search
+    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet, Search
   ) then
     DoSearchFilter(Search);
 end;
@@ -724,7 +724,7 @@ procedure TMainForm.actFindXRefsUpdate(Sender: TObject);
   }
 begin
   (Sender as TAction).Enabled :=
-    (fMainDisplayMgr.CurrentView is TSnippetViewItem);
+    Supports(fMainDisplayMgr.CurrentView, ISnippetView);
 end;
 
 procedure TMainForm.actGoBackExecute(Sender: TObject);
@@ -732,7 +732,7 @@ procedure TMainForm.actGoBackExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  ViewItem: TViewItem;  // previous view item in history list
+  ViewItem: IView;  // previous view item in history list
 const
   // Bug error message
   cHistoryError = '%s.actGoBackExecute: '
@@ -760,7 +760,7 @@ procedure TMainForm.actGoForwardExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  ViewItem: TViewItem;  // next view item in history list
+  ViewItem: IView;  // next view item in history list
 const
   // Bug error message
   cHistoryError = '%s.actGoForwardExecute: '
@@ -1106,7 +1106,7 @@ begin
     // Do test compile, show a window if it takes a long time, and show results
     fCompileMgr.Compile(
       frmDetail,
-      (fMainDisplayMgr.CurrentView as TSnippetViewItem).Snippet,
+      (fMainDisplayMgr.CurrentView as ISnippetView).Snippet,
       fMainDisplayMgr.DisplayCompileResults
     );
   finally
@@ -1207,10 +1207,10 @@ procedure TMainForm.actViewDependenciesExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  Assert(fMainDisplayMgr.CurrentView is TSnippetViewItem,
+  Assert(Supports(fMainDisplayMgr.CurrentView, ISnippetView),
     ClassName + '.actViewDependenciesExecute: Snippet view expected');
   fDialogMgr.ShowDependencyTree(
-    (fMainDisplayMgr.CurrentView as TSnippetViewItem).Snippet
+    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet
   );
 end;
 
@@ -1221,7 +1221,7 @@ procedure TMainForm.actViewDependenciesUpdate(Sender: TObject);
   }
 begin
   (Sender as TAction).Enabled :=
-    (fMainDisplayMgr.CurrentView is TSnippetViewItem);
+    Supports(fMainDisplayMgr.CurrentView, ISnippetView);
 end;
 
 procedure TMainForm.ActViewHistoryItemExecute(Sender: TObject);
@@ -1249,9 +1249,9 @@ procedure TMainForm.actViewTestUnitExecute(Sender: TObject);
 var
   SelectedSnippet: TRoutine;  // currently selected snippet
 begin
-  Assert(fMainDisplayMgr.CurrentView is TSnippetViewItem,
+  Assert(Supports(fMainDisplayMgr.CurrentView, ISnippetView),
     ClassName + '.actViewTestUnitExecute: Snippet view expected');
-  SelectedSnippet := (fMainDisplayMgr.CurrentView as TSnippetViewItem).Snippet;
+  SelectedSnippet := (fMainDisplayMgr.CurrentView as ISnippetView).Snippet;
   Assert(SelectedSnippet.CanCompile,
     ClassName + '.actViewTestUnitExecute: Snippet is not compilable');
   fDialogMgr.ShowTestUnit(SelectedSnippet);
@@ -1262,10 +1262,12 @@ procedure TMainForm.actViewTestUnitUpdate(Sender: TObject);
   snippet.
     @param Sender [in] Action triggering this event.
   }
+var
+  SnippetView: ISnippetView;  // current view as snippet view if supported
 begin
   (Sender as TAction).Enabled :=
-    (fMainDisplayMgr.CurrentView is TSnippetViewItem)
-    and (fMainDisplayMgr.CurrentView as TSnippetViewItem).Snippet.CanCompile;
+    Supports(fMainDisplayMgr.CurrentView, ISnippetView, SnippetView)
+    and SnippetView.Snippet.CanCompile;
 end;
 
 procedure TMainForm.actWelcomeExecute(Sender: TObject);
@@ -1297,16 +1299,9 @@ end;
 procedure TMainForm.DisplayWelcomePage;
   {Displays welcome page in currently active detail pane.
   }
-var
-  Welcome: TViewItem; // welcome page view item
 begin
   // Get notifier to display welcome page
-  Welcome := TViewItemFactory.CreateStartPageView;
-  try
-    fNotifier.ShowViewItem(Welcome);
-  finally
-    FreeAndNil(Welcome);
-  end;
+  fNotifier.ShowViewItem(TViewItemFactory.CreateStartPageView);
 end;
 
 procedure TMainForm.DoSearchFilter(const Search: USearch.ISearch);
@@ -1366,9 +1361,9 @@ begin
   fWindowSettings.DetailTab := fMainDisplayMgr.SelectedDetailTab;
   fWindowSettings.Save;
   // Free owned objects
-  FreeAndNil(fHistory);
-  FreeAndNil(fMainDisplayMgr);
-  FreeAndNil(fStatusBarMgr);
+  fHistory.Free;
+  fMainDisplayMgr.Free;
+  fStatusBarMgr.Free;
 end;
 
 procedure TMainForm.FormResize(Sender: TObject);

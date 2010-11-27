@@ -56,14 +56,14 @@ type
   }
   TCodeShareMgr = class sealed(TNoConstructObject)
   strict private
-    class function GetRoutineFromView(const ViewItem: TViewItem): TRoutine;
+    class function GetRoutineFromView(ViewItem: IView): TRoutine;
       {Gets reference to any user defined routine represented by a view item.
         @param ViewItem [in] View item for which routine is required.
         @return Reference to required routine or nil if view item does not
           represent a routine or if routine is not user defined.
       }
   public
-    class procedure Submit(const ViewItem: TViewItem);
+    class procedure Submit(ViewItem: IView);
       {Submits code for consideration to be included in main database.
         @param ViewItem [in] View item that may contain a user defined routine.
           If so the routine is included in code for submission by default.
@@ -73,12 +73,14 @@ type
       exported or submitted.
         @return True if user defined routines exist in database.
       }
-    class procedure ExportCode(const ViewItem: TViewItem);
+    class procedure ExportCode(ViewItem: IView);
       {Exports user defined code to an export file.
         @param ViewItem [in] View item that may contain a user defined routine.
           If so the routine is included in the export file by default.
       }
     class procedure ImportCode;
+      {Imports user defined code from an export file.
+      }
   end;
 
 
@@ -86,6 +88,8 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   FmCodeExportDlg, FmCodeSubmitDlg, UCodeImportMgr;
 
@@ -101,7 +105,7 @@ begin
   Result := Snippets.Routines.Count(True) > 0;
 end;
 
-class procedure TCodeShareMgr.ExportCode(const ViewItem: TViewItem);
+class procedure TCodeShareMgr.ExportCode(ViewItem: IView);
   {Exports user defined code to an export file.
     @param ViewItem [in] View item that may contain a user defined routine. If
       so the routine is included in the export file by default.
@@ -111,16 +115,18 @@ begin
 end;
 
 class function TCodeShareMgr.GetRoutineFromView(
-  const ViewItem: TViewItem): TRoutine;
+  ViewItem: IView): TRoutine;
   {Gets reference to any user defined routine represented by a view item.
     @param ViewItem [in] View item for which routine is required.
     @return Reference to required routine or nil if view item does not represent
       a routine or if routine is not user defined.
   }
+var
+  SnippetView: ISnippetView;  // ViewItem as snippet view if supported
 begin
-  if (ViewItem is TSnippetViewItem)
-    and ((ViewItem as TSnippetViewItem).Snippet.UserDefined) then
-    Result := (ViewItem as TSnippetViewItem).Snippet
+  if Supports(ViewItem, ISnippetView, SnippetView)
+    and (SnippetView.Snippet.UserDefined) then
+    Result := SnippetView.Snippet
   else
     Result := nil;
 end;
@@ -132,7 +138,7 @@ begin
   TCodeImportMgr.Execute;
 end;
 
-class procedure TCodeShareMgr.Submit(const ViewItem: TViewItem);
+class procedure TCodeShareMgr.Submit(ViewItem: IView);
   {Submits code for consideration to be included in main database.
     @param ViewItem [in] View item that may contain a user defined routine. If
       so the routine is included in code for submission by default.

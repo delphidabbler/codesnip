@@ -90,20 +90,14 @@ function TCategoryAction.Execute: Boolean;
     @return False to indicate OnExecute event handler not called.
   }
 var
-  Cat: TCategory;       // category to be displayed
-  ViewItem: TViewItem;  // view item for category
+  Cat: TCategory;   // category to be displayed
 begin
   Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
   Assert(CatID <> '', ClassName + '.Execute: CatID not provided');
   Cat := Snippets.Categories.Find(CatID);
   Assert(Assigned(Cat), ClassName + '.Execute: CatID not valid');
   // Create a view item for category and get notifier to display it
-  ViewItem := TViewItemFactory.CreateCategoryView(Cat);
-  try
-    fNotifier.ShowViewItem(ViewItem);
-  finally
-    ViewItem.Free;
-  end;
+  fNotifier.ShowViewItem(TViewItemFactory.CreateCategoryView(Cat));
   Result := False;
 end;
 
@@ -116,3 +110,4 @@ begin
 end;
 
 end.
+

@@ -107,7 +107,7 @@ type
       {Switches to previous tab, or return to last tab if current tab is first.
       }
     { IViewItemDisplayMgr }
-    procedure Display(const View: TViewItem; const Force: Boolean = False);
+    procedure Display(View: IView; const Force: Boolean = False);
       {Displays compiler support information for a view item in all child panes.
         @param View [in] Information about view item to be displayed.
         @param Force [in] Forces view item to be re-displayed even if not
@@ -259,8 +259,7 @@ begin
       (TabToPane(Idx) as IWBDisplayMgr).Deactivate;
 end;
 
-procedure TDetailFrame.Display(const View: TViewItem;
-  const Force: Boolean);
+procedure TDetailFrame.Display(View: IView; const Force: Boolean);
   {Displays compiler support information for a view item in all child panes.
     @param View [in] Information about view item to be displayed.
     @param Force [in] Forces view item to be re-displayed even if not changed.

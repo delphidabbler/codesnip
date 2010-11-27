@@ -118,7 +118,7 @@ type
     procedure ConfigCompilers;
       {Displays configure compilers dialog box.
       }
-    procedure ShowViewItem(const ViewItem: TViewItem);
+    procedure ShowViewItem(ViewItem: IView);
       {Displays a view item.
         @param ViewItem [in] View item to display.
       }
@@ -462,7 +462,7 @@ begin
     fShowTestUnitAction.Execute;
 end;
 
-procedure TNotifier.ShowViewItem(const ViewItem: TViewItem);
+procedure TNotifier.ShowViewItem(ViewItem: IView);
   {Displays a view item.
     @param ViewItem [in] View item to display.
   }

@@ -60,12 +60,12 @@ type
   }
   TDetailPageHTML = class abstract(TObject)
   strict private
-    fView: TViewItem; // Value of View property
+    var fView: IView; // Value of View property
   strict protected
-    property View: TViewItem read fView;
+    property View: IView read fView;
       {Reference to object providing information about item to be viewed}
   public
-    constructor Create(const View: TViewItem); virtual;
+    constructor Create(View: IView); virtual;
       {Object constructor. Sets up object for a view item.
         @param View [in] Provides information about item to be displayed.
       }
@@ -154,7 +154,7 @@ type
     property CompilersInfo: ICompilers read fCompilersInfo;
       {Provides information to sub classes about compilers}
   public
-    constructor Create(const View: TViewItem); override;
+    constructor Create(View: IView); override;
       {Object constructor. Sets up object for a view item.
         @param View [in] Provides information about snippet to be displayed.
       }
@@ -236,7 +236,7 @@ type
         @return True if there are snippets in list, False if not.
       }
   public
-    constructor Create(const View: TViewItem); override;
+    constructor Create(View: IView); override;
       {Object constructor. Sets up object for a view item.
         @param View [in] Provides information about item to be displayed.
       }
@@ -323,7 +323,7 @@ uses
 
 { TDetailPageHTML }
 
-constructor TDetailPageHTML.Create(const View: TViewItem);
+constructor TDetailPageHTML.Create(View: IView);
   {Object constructor. Sets up object for a view item.
     @param View [in] Provides information about item to be displayed.
   }
@@ -406,7 +406,7 @@ end;
 
 { TRoutinePageHTML }
 
-constructor TRoutinePageHTML.Create(const View: TViewItem);
+constructor TRoutinePageHTML.Create(View: IView);
   {Object constructor. Sets up object for a view item.
     @param View [in] Provides information about snippet to be displayed.
   }
@@ -421,9 +421,9 @@ function TRoutinePageHTML.GetRoutine: TRoutine;
     @return Required snippet reference.
   }
 begin
-  Assert(View is TSnippetViewItem,
+  Assert(Supports(View, ISnippetView),
     ClassName + '.GetRoutine: View is not snippet');
-  Result := (View as TSnippetViewItem).Snippet;
+  Result := (View as ISnippetView).Snippet;
 end;
 
 procedure TRoutinePageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
@@ -444,7 +444,7 @@ begin
   try
     Tplt.ResolvePlaceholderHTML('RoutineName', RoutineHTML.SnippetName);
   finally
-    FreeAndNil(RoutineHTML);
+    RoutineHTML.Free;
   end;
   // "edit snippet" link for user-defined snippets
   Tplt.ResolvePlaceholderHTML(
@@ -524,7 +524,7 @@ begin
       'ShowCompilations', CSSBlockDisplayProp(GetRoutine.CanCompile)
     );
   finally
-    FreeAndNil(InfoHTML);
+    InfoHTML.Free;
   end;
 end;
 
@@ -590,7 +590,7 @@ end;
 
 { TRoutineListPageHTML }
 
-constructor TRoutineListPageHTML.Create(const View: TViewItem);
+constructor TRoutineListPageHTML.Create(View: IView);
   {Object constructor. Sets up object for a view item.
     @param View [in] Provides information about item to be displayed.
   }
@@ -605,7 +605,7 @@ destructor TRoutineListPageHTML.Destroy;
   {Object destructor. Tidies up object.
   }
 begin
-  FreeAndNil(fRoutines);
+  fRoutines.Free;
   inherited;
 end;
 
@@ -662,7 +662,7 @@ procedure TCategoryPageHTML.BuildRoutineList;
   {Stores all snippets to be displayed in Routines property.
   }
 begin
-  Query.GetCatSelection((View as TCategoryViewItem).Category, Routines);
+  Query.GetCatSelection((View as ICategoryView).Category, Routines);
 end;
 
 procedure TCategoryPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
@@ -677,7 +677,7 @@ procedure TCategoryPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
       @return Required name. Depends on whether category is user defined.
     }
   begin
-    if (View as TCategoryViewItem).Category.UserDefined then
+    if (View as ICategoryView).Category.UserDefined then
       Result := 'userdb'
     else
       Result := 'maindb';
@@ -710,7 +710,7 @@ begin
   Routines.Clear;
   for Snippet in Query.Selection do
   begin
-    if Snippet.Name[1] = (View as TInitialLetterViewItem).Letter.Letter then
+    if Snippet.Name[1] = (View as IInitialLetterView).InitialLetter.Letter then
       Routines.Add(Snippet);
   end;
 end;
@@ -731,13 +731,13 @@ begin
   begin
     Tplt.ResolvePlaceholderText(
       'Narrative',
-      Format(sNarrative, [(View as TInitialLetterViewItem).Letter.Letter])
+      Format(sNarrative, [(View as IInitialLetterView).InitialLetter.Letter])
     );
     Tplt.ResolvePlaceholderHTML('Routines', RoutineTableInner);
   end
   else
     Tplt.ResolvePlaceholderText(
-      'Note', Format(sNote, [(View as TInitialLetterViewItem).Letter.Letter])
+      'Note', Format(sNote, [(View as IInitialLetterView).InitialLetter.Letter])
     );
 end;
 
@@ -752,7 +752,7 @@ begin
   Routines.Clear;
   for Snippet in Query.Selection do
   begin
-    if Snippet.Kind = (View as TSnippetKindViewItem).KindInfo.Kind then
+    if Snippet.Kind = (View as ISnippetKindView).KindInfo.Kind then
       Routines.Add(Snippet);
   end;
 end;

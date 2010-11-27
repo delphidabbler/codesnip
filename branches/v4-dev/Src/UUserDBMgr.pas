@@ -82,12 +82,12 @@ type
         @param SnippetName [in] Name of snippet to be edited. Must be user
           defined.
       }
-    class procedure DeleteSnippet(const ViewItem: TViewItem);
+    class procedure DeleteSnippet(ViewItem: IView);
       {Deletes a snippet from the database if possible.
         @param ViewItem [in] View item containing snippet to be deleted. Must be
           a user defined snippet.
       }
-    class function CanEdit(const ViewItem: TViewItem): Boolean;
+    class function CanEdit(ViewItem: IView): Boolean;
       {Checks if a view item can be edited.
         @param ViewItem [in] View item to check.
         @return True if view item can be edited, i.e. if ViewItem is a snippet
@@ -186,11 +186,11 @@ begin
       try
         UserDBBackup.Backup;
       finally
-        FreeAndNil(UserDBBackup);
+        UserDBBackup.Free;
       end;
     end;
   finally
-    FreeAndNil(SaveDlg);
+    SaveDlg.Free;
   end;
 end;
 
@@ -206,21 +206,23 @@ begin
   try
     Result := CatList.Count > 0;
   finally
-    FreeAndNil(CatList);
+    CatList.Free;
   end;
 end;
 
-class function TUserDBMgr.CanEdit(const ViewItem: TViewItem): Boolean;
+class function TUserDBMgr.CanEdit(ViewItem: IView): Boolean;
   {Checks if a view item can be edited.
     @param ViewItem [in] View item to check.
     @return True if view item can be edited, i.e. if ViewItem is a snippet and
       is user defined.
   }
+var
+  SnippetView: ISnippetView;  // ViewItem as snippet view if supported
 begin
   Assert(Assigned(ViewItem), ClassName + '.CanEdit: ViewItem is nil');
   Result := Assigned(ViewItem)
-    and (ViewItem is TSnippetViewItem)
-    and (ViewItem as TSnippetViewItem).Snippet.UserDefined;
+    and Supports(ViewItem, ISnippetView, SnippetView)
+    and SnippetView.Snippet.UserDefined;
 end;
 
 class procedure TUserDBMgr.CanOpenDialogClose(Sender: TObject;
@@ -262,7 +264,7 @@ begin
   try
     Result := CatList.Count > 0;
   finally
-    FreeAndNil(CatList);
+    CatList.Free;
   end;
 end;
 
@@ -325,11 +327,11 @@ begin
     // all work takes place in dialog box
     TDeleteCategoryDlg.Execute(nil, CatList)
   finally
-    FreeAndNil(CatList);
+    CatList.Free;
   end;
 end;
 
-class procedure TUserDBMgr.DeleteSnippet(const ViewItem: TViewItem);
+class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
   {Deletes a snippet from the database if possible.
     @param ViewItem [in] View item containing snippet to be deleted. Must be a
       user defined snippet.
@@ -364,9 +366,9 @@ resourcestring
   sHasDependents = 'Sorry, this snippet can''t be deleted. It is required by '
     + 'the following snippets:' + EOL + '    %s';
 begin
-  Assert(ViewItem is TSnippetViewItem,
+  Assert(Supports(ViewItem, ISnippetView),
     ClassName + '.Delete: Current view is not a snippet');
-  Snippet := (ViewItem as TSnippetViewItem).Snippet;
+  Snippet := (ViewItem as ISnippetView).Snippet;
   Assert(Snippet.UserDefined,
     ClassName + '.Delete: Snippet must be user defined');
   // Check if snippet has dependents: don't allow deletion if so
@@ -422,7 +424,7 @@ begin
     // all work takes place in dialog box
     TRenameCategoryDlg.Execute(nil, CatList)
   finally
-    FreeAndNil(CatList);
+    CatList.Free;
   end;
 end;
 
@@ -454,11 +456,11 @@ begin
       try
         UserDBBackup.Restore;
       finally
-        FreeAndNil(UserDBBackup);
+        UserDBBackup.Free;
       end;
     end;
   finally
-    FreeAndNil(Dlg);
+    Dlg.Free;
   end;
 end;
 

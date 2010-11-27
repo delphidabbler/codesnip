@@ -56,9 +56,8 @@ type
   strict private
     fOverviewMgr: IInterface; // Manager object for overview pane
     fDetailsMgr: IInterface;  // Manager object for details pane
-    fCurrentView: TViewItem;  // Value of CurrentView property
-    procedure InternalDisplayViewItem(const ViewItem: TViewItem;
-      const Force: Boolean);
+    fCurrentView: IView;      // Value of CurrentView property
+    procedure InternalDisplayViewItem(ViewItem: IView; const Force: Boolean);
       {Displays a view item. Updates current view item, selects item in overview
       if possible and displays full details in detail pane. Optionally forces
       redisplay of compiler pane.
@@ -104,7 +103,7 @@ type
     procedure Clear;
       {Clears the main display, i.e. overview and detail panes.
       }
-    procedure DisplayViewItem(const ViewItem: TViewItem);
+    procedure DisplayViewItem(ViewItem: IView);
       {Displays a view item. Updates current view item, selects item in overview
       if possible and displays full details in detail pane.
         @param ViewItem [in] Item to be displayed (may be nil).
@@ -161,7 +160,7 @@ type
     procedure FinalizeChange;
       {Updates display following a change in the database.
       }
-    property CurrentView: TViewItem
+    property CurrentView: IView
       read fCurrentView;
       {Information about currently displayed view}
     property SelectedOverviewTab: Integer
@@ -217,7 +216,7 @@ procedure TMainDisplayMgr.Clear;
   {Clears the main display, i.e. overview and detail panes.
   }
 begin
-  TViewItemFactory.ReplaceView(fCurrentView, TViewItemFactory.CreateNulView);
+  fCurrentView := TViewItemFactory.CreateNulView;
   (fOverviewMgr as IOverviewDisplayMgr).Clear;
   (fDetailsMgr as IViewItemDisplayMgr).Display(fCurrentView, False);
 end;
@@ -249,7 +248,7 @@ destructor TMainDisplayMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fCurrentView);
+  fCurrentView := nil;
   inherited;
 end;
 
@@ -261,7 +260,7 @@ begin
  (fDetailsMgr as ICompCheckDisplayMgr).DisplayCompileResults(ACompilers);
 end;
 
-procedure TMainDisplayMgr.DisplayViewItem(const ViewItem: TViewItem);
+procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView);
   {Displays a view item. Updates current view item, selects item in overview if
   possible and displays full details in detail pane.
     @param ViewItem [in] Item to be displayed (may be nil).
@@ -319,7 +318,7 @@ begin
   QueryUpdated;
 end;
 
-procedure TMainDisplayMgr.InternalDisplayViewItem(const ViewItem: TViewItem;
+procedure TMainDisplayMgr.InternalDisplayViewItem(ViewItem: IView;
   const Force: Boolean);
   {Displays a view item. Updates current view item, selects item in overview
   if possible and displays full details in detail pane. Optionally forces
@@ -328,11 +327,8 @@ procedure TMainDisplayMgr.InternalDisplayViewItem(const ViewItem: TViewItem;
     @param Force True [in] if compiler pane redisplay is to be forced.
   }
 begin
-  Assert(ViewItem.ClassType <> TViewItem, 'ViewItem is TViewItem');
   // Record view item
-  TViewItemFactory.ReplaceView(
-    fCurrentView, TViewItemFactory.CreateCopy(ViewItem)
-  );
+  fCurrentView := TViewItemFactory.Clone(ViewItem);
   // Select item in overview pane and display in detail pane
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(fCurrentView);
   (fDetailsMgr as IViewItemDisplayMgr).Display(fCurrentView, Force);
