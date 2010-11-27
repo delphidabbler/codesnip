@@ -159,7 +159,7 @@ var
   Cat: TCategory; // each category in sorted list
 begin
   for Cat in fCatList do
-    Strings.AddObject(Cat.Description, Cat);
+    Strings.Add(Cat.Description);
 end;
 
 end.
