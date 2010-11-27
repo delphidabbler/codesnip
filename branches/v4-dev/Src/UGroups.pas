@@ -276,7 +276,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining}, Character, Generics.Defaults;
+  SysUtils, Windows {for inlining}, Generics.Defaults;
 
 
 { TGrouping }
@@ -447,58 +447,40 @@ procedure TAlphaGrouping.Populate;
     }
   begin
     Assert(Name <> '', ClassName + '.Populate:FirstCharOfName: Name is empty');
-    Result := TCharacter.ToUpper(Name[1]);
+    Result := Name[1];
   end;
   // ---------------------------------------------------------------------------
 var
-  Letter: TInitialLetter;           // each letter
-  Item: TGroupItem;                 // found group item
-  Snippet: TRoutine;                // each snippet to be grouped
-  Lookup: TLetterGroupMap;          // lookup table of letters => group items
-  Letters: TInitialLetterList;      // list of initial letters
+  Letter: TInitialLetter;   // upper case initial letter of snippet name
+  GroupItem: TGroupItem;    // a group item
+  Snippet: TRoutine;        // each snippet in snippet list
+  Map: TLetterGroupMap;     // map of initial letters to group items
 begin
-  // Build list of uninue initial letters of snippets in list
-  Letters := TInitialLetterList.Create;
+  Map := TLetterGroupMap.Create(
+    TDelegatedComparer<TInitialLetter>.Create(
+      function (const Left, Right: TInitialLetter): Integer
+      begin
+        Result := TInitialLetter.Compare(Left, Right);
+      end
+    ),
+    []
+  );
   try
     for Snippet in SnippetList do
     begin
       Letter := TInitialLetter.Create(FirstCharOfName(Snippet.Name));
-      if not Letters.Contains(Letter) then
-        Letters.Add(Letter);
-    end;
-
-    // Create a group item for each initial letter, mapping letter to group item
-    Lookup := TLetterGroupMap.Create(
-      TDelegatedComparer<TInitialLetter>.Create(
-        function (const Left, Right: TInitialLetter): Integer
-        begin
-          Result := TInitialLetter.Compare(Left, Right);
-        end
-      ),
-      []
-    );
-    try
-      for Letter in Letters do
+      if Map.Contains(Letter) then
+        GroupItem := Map[Letter]
+      else
       begin
-        Item := TAlphaGroupItem.Create(Letter);
-        AddItem(Item);
-        Lookup.Add(Letter, Item);
+        GroupItem := TAlphaGroupItem.Create(Letter);
+        AddItem(GroupItem);
+        Map.Add(Letter, GroupItem);
       end;
-
-      // Add each snippet to appropriate group
-      for Snippet in SnippetList do
-      begin
-        // find group item from lookup
-        Item := Lookup[TInitialLetter.Create(FirstCharOfName(Snippet.Name))];
-        Assert(Assigned(Item), ClassName + '.Populate: Item not found');
-        // add snippet to it
-        Item.AddSnippet(Snippet);
-      end;
-    finally
-      Lookup.Free;
+      GroupItem.AddSnippet(Snippet);
     end;
   finally
-    Letters.Free;
+    Map.Free;
   end;
 end;
 
