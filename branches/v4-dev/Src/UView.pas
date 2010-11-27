@@ -335,7 +335,7 @@ end;
 
 function TSnippetKindViewItem.GetDescription: string;
 begin
-  Result := fKindInfo.Description;
+  Result := fKindInfo.DisplayName;
 end;
 
 function TSnippetKindViewItem.GetKindInfo: TSnippetKindInfo;

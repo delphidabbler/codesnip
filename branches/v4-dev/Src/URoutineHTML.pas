@@ -260,7 +260,7 @@ function TInfoHTML.SnippetKind: string;
   }
 begin
   Result := MakeSafeHTMLText(
-    MakeSentence(TSnippetKindInfoList.Instance[Snippet.Kind].Description)
+    MakeSentence(TSnippetKindInfoList.Items[Snippet.Kind].DisplayName)
   );
 end;
 

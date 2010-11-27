@@ -312,7 +312,7 @@ destructor TGrouping.Destroy;
   {Object destructor. Tears down object.
   }
 begin
-  FreeAndNil(fItems);   // frees owned objects
+  fItems.Free;  // frees owned objects
   inherited;
 end;
 
@@ -365,7 +365,7 @@ destructor TGroupItem.Destroy;
   {Object destructor. Tears down object.
   }
 begin
-  FreeAndNil(fSnippetList);
+  fSnippetList.Free;
   inherited;
 end;
 
@@ -492,7 +492,7 @@ begin
       Item.AddSnippet(Snippet);
     end;
   finally
-    FreeAndNil(Lookup);
+    Lookup.Free;
   end;
 end;
 
@@ -543,7 +543,7 @@ begin
   // to ease finding the required group item from a snippet's kind
   for SnipKind := Low(TSnippetKind) to High(TSnippetKind) do
   begin
-    Item := TSnipKindGroupItem.Create(TSnippetKindInfoList.Instance[SnipKind]);
+    Item := TSnipKindGroupItem.Create(TSnippetKindInfoList.Items[SnipKind]);
     AddItem(Item);
     Lookup[SnipKind] := Item;
   end;
@@ -585,7 +585,7 @@ function TSnipKindGroupItem.GetTitle: string;
     @return Required title.
   }
 begin
-  Result := fSnipKindInfo.Description;
+  Result := fSnipKindInfo.DisplayName;
 end;
 
 end.

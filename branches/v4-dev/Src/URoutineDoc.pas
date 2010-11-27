@@ -235,7 +235,7 @@ begin
   RenderDescription(Routine.Description);
   RenderSourceCode(Routine.SourceCode);
   RenderTitledText(
-    sKindTitle, TSnippetKindInfoList.Instance[Routine.Kind].Description
+    sKindTitle, TSnippetKindInfoList.Items[Routine.Kind].DisplayName
   );
   RenderTitledText(
     sCategoryTitle, Snippets.Categories.Find(Routine.Category).Description

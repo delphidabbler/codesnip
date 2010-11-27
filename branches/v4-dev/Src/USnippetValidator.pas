@@ -233,7 +233,7 @@ begin
   begin
     ErrorMsg := Format(
       sCircular, [
-        TSnippetKindInfoList.Instance[Snippet.Kind].Description,
+        TSnippetKindInfoList.Items[Snippet.Kind].DisplayName,
         Snippet.Name
       ]
     );
@@ -248,7 +248,7 @@ begin
     ErrorMsg := Format(
       sInvalidKind,
       [
-        TSnippetKindInfoList.Instance[Snippet.Kind].Description,
+        TSnippetKindInfoList.Items[Snippet.Kind].DisplayName,
         Snippet.Name
       ]
     );
@@ -274,7 +274,7 @@ begin
   try
     Result := ValidateDependsList(TempSnippet, ErrorMsg);
   finally
-    FreeAndNil(TempSnippet);
+    TempSnippet.Free;
   end;
 end;
 
