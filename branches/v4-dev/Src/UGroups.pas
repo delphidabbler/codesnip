@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  UAlphabet, UContainers, USnippetKindInfo, USnippets, Generics.Collections;
+  UContainers, UInitialLetter, USnippetKindInfo, USnippets, Generics.Collections;
 
 
 type
@@ -124,14 +124,14 @@ type
   }
   TAlphaGroupItem = class(TGroupItem)
   strict private
-    var fLetter: TLetter; // Letter associated with group
+    var fLetter: TInitialLetter; // Letter associated with group
   strict protected
     function GetTitle: string; override;
       {Gets group title as a letter.
         @return Required title.
       }
   public
-    constructor Create(const Letter: TLetter);
+    constructor Create(const Letter: TInitialLetter);
       {Object constructor. Sets up group for an initial letter of a snippet.
         @param Letter [in] Initial letter represented by the group.
       }
@@ -142,7 +142,7 @@ type
         @return -ve if this item sorts before Item, 0 if same and +ve if this
           item sorts after Item.
       }
-    property Letter: TLetter read fLetter;
+    property Letter: TInitialLetter read fLetter;
       {Initial letter of snippet represented by this group}
   end;
 
@@ -249,7 +249,7 @@ type
   strict private
     type
       // Sorted map of letter objects onto group items
-      TLetterGroupMap = TSortedObjectDictionary<TLetter,TGroupItem>;
+      TLetterGroupMap = TSortedObjectDictionary<TInitialLetter,TGroupItem>;
   strict protected
     procedure Populate; override;
       {Populates grouping with sorted alphabetic group items and associated
@@ -448,51 +448,57 @@ procedure TAlphaGrouping.Populate;
   begin
     Assert(Name <> '', ClassName + '.Populate:FirstCharOfName: Name is empty');
     Result := TCharacter.ToUpper(Name[1]);
-    // must be 'A'..'Z' (not just any letter) or '_'
-    Assert(CharInSet(Result, ['A'..'Z', '_']),
-      ClassName +
-        '.Populate:FirstCharOfName: Name must begin with A..Z or underscore');
   end;
   // ---------------------------------------------------------------------------
 var
-  LetterObj: TLetter;               // each letter object in alphabet object
+  Letter: TInitialLetter;           // each letter
   Item: TGroupItem;                 // found group item
   Snippet: TRoutine;                // each snippet to be grouped
-  Lookup: TLetterGroupMap;  // lookup table of letters => group items
+  Lookup: TLetterGroupMap;          // lookup table of letters => group items
+  Letters: TInitialLetterList;      // list of initial letters
 begin
-  Lookup := TLetterGroupMap.Create(
-    TDelegatedComparer<TLetter>.Create(
-      function (const Left, Right: TLetter): Integer
-      begin
-        Result := Ord(Left.Letter) - Ord(Right.Letter);
-      end
-    ),
-    []
-  );
+  // Build list of uninue initial letters of snippets in list
+  Letters := TInitialLetterList.Create;
   try
-    // Create all group items, one for each possible initial letter along with a
-    // lookup table to ease finding the required group item from a snippet's
-    // initial letter
-    TAlphabet.Instance.InitEnum;
-    while TAlphabet.Instance.NextLetter(LetterObj) do
-    begin
-      Item := TAlphaGroupItem.Create(LetterObj);
-      AddItem(Item);
-      Lookup.Add(LetterObj, Item);
-    end;
-    // Add each snippet to appropriate group
     for Snippet in SnippetList do
     begin
-      // find group item from lookup
-      Item := Lookup[
-        TAlphabet.Instance.Letters[FirstCharOfName(Snippet.Name)]
-      ];
-      Assert(Assigned(Item), ClassName + '.Populate: Item not found');
-      // add snippet to it
-      Item.AddSnippet(Snippet);
+      Letter := TInitialLetter.Create(FirstCharOfName(Snippet.Name));
+      if not Letters.Contains(Letter) then
+        Letters.Add(Letter);
+    end;
+
+    // Create a group item for each initial letter, mapping letter to group item
+    Lookup := TLetterGroupMap.Create(
+      TDelegatedComparer<TInitialLetter>.Create(
+        function (const Left, Right: TInitialLetter): Integer
+        begin
+          Result := TInitialLetter.Compare(Left, Right);
+        end
+      ),
+      []
+    );
+    try
+      for Letter in Letters do
+      begin
+        Item := TAlphaGroupItem.Create(Letter);
+        AddItem(Item);
+        Lookup.Add(Letter, Item);
+      end;
+
+      // Add each snippet to appropriate group
+      for Snippet in SnippetList do
+      begin
+        // find group item from lookup
+        Item := Lookup[TInitialLetter.Create(FirstCharOfName(Snippet.Name))];
+        Assert(Assigned(Item), ClassName + '.Populate: Item not found');
+        // add snippet to it
+        Item.AddSnippet(Snippet);
+      end;
+    finally
+      Lookup.Free;
     end;
   finally
-    Lookup.Free;
+    Letters.Free;
   end;
 end;
 
@@ -506,10 +512,10 @@ function TAlphaGroupItem.CompareTo(const Item: TGroupItem): Integer;
       item sorts after Item.
   }
 begin
-  Result := Ord(fLetter.Letter) - Ord((Item as TAlphaGroupItem).fLetter.Letter);
+  Result := TInitialLetter.Compare(fLetter, (Item as TAlphaGroupItem).fLetter);
 end;
 
-constructor TAlphaGroupItem.Create(const Letter: TLetter);
+constructor TAlphaGroupItem.Create(const Letter: TInitialLetter);
   {Object constructor. Sets up group for an initial letter of a snippet.
     @param Letter [in] Initial letter represented by the group.
   }

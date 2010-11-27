@@ -45,7 +45,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  UAlphabet, UBaseObjects, USnippetKindInfo, USnippets;
+  UBaseObjects, UInitialLetter, USnippetKindInfo, USnippets;
 
 
 type
@@ -113,8 +113,8 @@ type
   IInitialLetterView = interface(IView)
     ['{E589E3E9-7178-4FF8-BDEF-D6F7DC9FEB85}']
     ///  Info about initial letter associated with view
-    function GetInitialLetter: TLetter;
-    property InitialLetter: TLetter read GetInitialLetter;
+    function GetInitialLetter: TInitialLetter;
+    property InitialLetter: TInitialLetter read GetInitialLetter;
   end;
 
   ///  <summary>
@@ -142,7 +142,7 @@ type
     class function CreateSnippetKindView(const KindInfo: TSnippetKindInfo):
       IView;
     ///  Creates an initial letter view instance associated with a given letter.
-    class function CreateInitialLetterView(const Letter: TLetter): IView;
+    class function CreateInitialLetterView(const Letter: TInitialLetter): IView;
   end;
 
 
@@ -150,7 +150,9 @@ implementation
 
 
 uses
+  // Delphi
   SysUtils,
+  // Project
   UExceptions;
 
 
@@ -233,15 +235,15 @@ type
   )
   strict private
     ///  Associated initial letter.
-    var fLetter: TLetter;
+    var fLetter: TInitialLetter;
   public
     ///  Constructs view for a specified initial letter.
-    constructor Create(const Letter: TLetter);
+    constructor Create(const Letter: TInitialLetter);
     { IView methods }
     function GetDescription: string;
     function IsEqual(View: IView): Boolean;
     { IInitialLetterView methods }
-    function GetInitialLetter: TLetter;
+    function GetInitialLetter: TInitialLetter;
   end;
 
 
@@ -354,7 +356,7 @@ end;
 
 { TInitialLetterViewItem }
 
-constructor TInitialLetterViewItem.Create(const Letter: TLetter);
+constructor TInitialLetterViewItem.Create(const Letter: TInitialLetter);
 begin
   inherited Create;
   fLetter := Letter;
@@ -365,7 +367,7 @@ begin
   Result := fLetter.Letter;
 end;
 
-function TInitialLetterViewItem.GetInitialLetter: TLetter;
+function TInitialLetterViewItem.GetInitialLetter: TInitialLetter;
 begin
   Result := fLetter;
 end;
@@ -411,7 +413,7 @@ begin
 end;
 
 class function TViewItemFactory.CreateInitialLetterView(
-  const Letter: TLetter): IView;
+  const Letter: TInitialLetter): IView;
 begin
   Result := TInitialLetterViewItem.Create(Letter);
 end;

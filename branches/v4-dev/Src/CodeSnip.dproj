@@ -304,7 +304,6 @@
 			<DCCReference Include="UActionFactory.pas"/>
 			<DCCReference Include="UActiveText.pas"/>
 			<DCCReference Include="UActiveTextHTML.pas"/>
-			<DCCReference Include="UAlphabet.pas"/>
 			<DCCReference Include="UAnchors.pas"/>
 			<DCCReference Include="UAppInfo.pas"/>
 			<DCCReference Include="UBaseObjects.pas"/>
@@ -383,6 +382,7 @@
 			<DCCReference Include="UImageTags.pas"/>
 			<DCCReference Include="UIniDataLoader.pas"/>
 			<DCCReference Include="UIniDataReader.pas"/>
+			<DCCReference Include="UInitialLetter.pas"/>
 			<DCCReference Include="UIStringList.pas"/>
 			<DCCReference Include="UJavaScriptUtils.pas"/>
 			<DCCReference Include="UKeysHelper.pas"/>
