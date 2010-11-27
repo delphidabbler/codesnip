@@ -1,8 +1,7 @@
 {
  * UInitialLetter.pas
  *
- * Defines a record that encapsulates an upper case character along with an
- * enumerable list of the records.
+ * Defines a record that encapsulates an upper case Unicode character.
  *
  * $Rev$
  * $Date$
@@ -42,17 +41,10 @@ unit UInitialLetter;
 interface
 
 
-uses
-  // Delphi
-  Generics.Collections,
-  // Project
-  UContainers;
-
-
 type
 
   ///  <summary>
-  ///  Record that encapsulates an upper case Unicode letter.
+  ///  Record that encapsulates an upper case Unicode character.
   ///  </summary>
   TInitialLetter = record
   strict private
@@ -69,32 +61,12 @@ type
     class operator Implicit(const R: TInitialLetter): Char;
   end;
 
-  ///  <summary>
-  ///  Maintains a sorted list of TInitialLetter records
-  ///  </summary>
-  TInitialLetterList = class(TObject)
-  strict private
-    var fList: TSortedList<TInitialLetter>; // Sorted list
-  public
-    ///  Object constructor. Creates list.
-    constructor Create;
-    ///  Object destructor. Tears down object.
-    destructor Destroy; override;
-    ///  Creates list enumerator.
-    function GetEnumerator: TEnumerator<TInitialLetter>;
-    ///  Checks if list contains the upper case version of a given letter.
-    function Contains(const Letter: TInitialLetter): Boolean;
-    ///  Adds a letter to the list.
-    procedure Add(const Letter: TInitialLetter);
-  end;
-
-
 implementation
 
 
 uses
   // Delphi
-  SysUtils, Character, Generics.Defaults;
+  SysUtils, Character;
 
 
 { TInitialLetter }
@@ -107,49 +79,12 @@ end;
 
 constructor TInitialLetter.Create(ALetter: Char);
 begin
-  fLetter := Character.ToUpper(ALetter);
+  fLetter := TCharacter.ToUpper(ALetter);
 end;
 
 class operator TInitialLetter.Implicit(const R: TInitialLetter): Char;
 begin
   Result := R.Letter;
-end;
-
-{ TInitialLetterList }
-
-procedure TInitialLetterList.Add(const Letter: TInitialLetter);
-begin
-  fList.Add(Letter);
-end;
-
-function TInitialLetterList.Contains(const Letter: TInitialLetter): Boolean;
-begin
-  Result := fList.Contains(Letter);
-end;
-
-constructor TInitialLetterList.Create;
-begin
-  inherited Create;
-  fList := TSortedList<TInitialLetter>.Create(
-    TDelegatedComparer<TInitialLetter>.Create(
-      function (const Left, Right: TInitialLetter): Integer
-      begin
-        Result := TInitialLetter.Compare(Left, Right);
-      end
-    )
-  );
-  fList.PermitDuplicates := False;
-end;
-
-destructor TInitialLetterList.Destroy;
-begin
-  fList.Free;
-  inherited;
-end;
-
-function TInitialLetterList.GetEnumerator: TEnumerator<TInitialLetter>;
-begin
-  Result := fList.GetEnumerator;
 end;
 
 end.
