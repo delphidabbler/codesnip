@@ -297,7 +297,7 @@ begin
   // Set pop-up menu handler for browser control
   WBController.UIMgr.OnMenuPopupEx := PopupMenuHandler;
   // Create object to store detailed info about current view item
-  fCurrentView := TViewItem.Create;
+  fCurrentView := TViewItemFactory.CreateNulView;
 end;
 
 procedure TDetailViewFrame.Deactivate;
@@ -328,7 +328,9 @@ begin
   if not CurrentView.IsEqual(View) or Force then
   begin
     // Record view item and display style
-    CurrentView.Assign(View);
+    TViewItemFactory.ReplaceView(
+      fCurrentView, TViewItemFactory.CreateCopy(View)
+    );
     // Redraw the display
     UpdateDisplay;
   end;

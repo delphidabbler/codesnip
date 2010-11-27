@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -98,7 +98,7 @@ begin
   Cat := Snippets.Categories.Find(CatID);
   Assert(Assigned(Cat), ClassName + '.Execute: CatID not valid');
   // Create a view item for category and get notifier to display it
-  ViewItem := TViewItem.Create(Cat);
+  ViewItem := TViewItemFactory.CreateCategoryView(Cat);
   try
     fNotifier.ShowViewItem(ViewItem);
   finally

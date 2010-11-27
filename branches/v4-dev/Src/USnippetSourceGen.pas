@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -153,18 +153,16 @@ var
   CatSnippets: TRoutineList;  // list of snippets in a category
 begin
   Result := False;
-  case View.Kind of
-    vkRoutine:
-      Result := View.Routine.Kind = skRoutine;
-    vkCategory:
-    begin
-      CatSnippets := TRoutineList.Create;
-      try
-        Query.GetCatSelection(View.Category, CatSnippets);
-        Result := CatSnippets.ContainsKinds([skRoutine]);
-      finally
-        FreeAndNil(CatSnippets);
-      end;
+  if View is TSnippetViewItem then
+    Result := (View as TSnippetViewItem).Snippet.Kind = skRoutine
+  else if View is TCategoryViewItem then
+  begin
+    CatSnippets := TRoutineList.Create;
+    try
+      Query.GetCatSelection((View as TCategoryViewItem).Category, CatSnippets);
+      Result := CatSnippets.ContainsKinds([skRoutine]);
+    finally
+      FreeAndNil(CatSnippets);
     end;
   end;
 end;
@@ -214,18 +212,19 @@ var
 begin
   fContainsMainDBSnippets := False;
   // Record required snippet(s)
-  if View.Kind = vkRoutine then
+  if View is TSnippetViewItem then
   begin
     // view is single snippet: just record that
-    fGenerator.IncludeSnippet(View.Routine);
-    fContainsMainDBSnippets := not View.Routine.UserDefined;
+    Snippet := (View as TSnippetViewItem).Snippet;
+    fGenerator.IncludeSnippet(Snippet);
+    fContainsMainDBSnippets := not Snippet.UserDefined;
   end
   else
   begin
     // view is category: record all selected snippets in category
     Snips := TRoutineList.Create;
     try
-      Query.GetCatSelection(View.Category, Snips);
+      Query.GetCatSelection((View as TCategoryViewItem).Category, Snips);
       fGenerator.IncludeSnippets(Snips);  // ignores freeform snippets
       for Snippet in Snips do
       begin

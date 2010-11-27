@@ -254,8 +254,8 @@ function TMainCompileMgr.CanCompile(const View: TViewItem): Boolean;
 begin
   Result := Assigned(View)
     and HaveCompilers
-    and (View.Kind = vkRoutine)
-    and View.Routine.CanCompile;
+    and (View is TSnippetViewItem)
+    and (View as TSnippetViewItem).Snippet.CanCompile;
 end;
 
 function TMainCompileMgr.ConfigCompilers: Boolean;
@@ -274,8 +274,10 @@ function TMainCompileMgr.IsLastCompiledView(const View: TViewItem): Boolean;
     @return True if view represents last object to be compiled, False otherwise.
   }
 begin
-  Result := Assigned(View) and (View.Kind = vkRoutine) and
-    Assigned(LastCompiledRoutine) and View.Routine.IsEqual(LastCompiledRoutine);
+  Result := Assigned(View)
+    and (View is TSnippetViewItem)
+    and Assigned(LastCompiledRoutine)
+    and (View as TSnippetViewItem).Snippet.IsEqual(LastCompiledRoutine);
 end;
 
 end.

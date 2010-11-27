@@ -298,8 +298,8 @@ begin
     cOverviewPopupMenu, TPopupMenuWrapper.Create(mnuOverview)
   );
   // Create new empty objects to store current and previous selected view items
-  fSelectedItem := TViewItem.Create;
-  fPrevSelectedItem := TViewItem.Create;
+  fSelectedItem := TViewItemFactory.CreateNulView;
+  fPrevSelectedItem := TViewItemFactory.CreateNulView;
   // Create treeview draw object
   fTVDraw := TTVDraw.Create;
   tvSnippets.OnCustomDrawItem := fTVDraw.CustomDrawItem;
@@ -570,11 +570,15 @@ procedure TOverviewFrame.SelectionChange(const Item: TViewItem);
   }
 begin
   // Record new selected item
-  fSelectedItem.Assign(Item);
+  TViewItemFactory.ReplaceView(
+    fSelectedItem, TViewItemFactory.CreateCopy(Item)
+  );
   if not fSelectedItem.IsEqual(fPrevSelectedItem) then
   begin
     // Item has actually changed: store as previously selected item
-    fPrevSelectedItem.Assign(fSelectedItem);
+    TViewItemFactory.ReplaceView(
+      fPrevSelectedItem, TViewItemFactory.CreateCopy(fSelectedItem)
+    );
     // Notify application of change
     if Assigned(fNotifier) then
       fNotifier.ShowViewItem(fSelectedItem);
@@ -589,8 +593,12 @@ begin
   // Select in tree view
   InternalSelectItem(ViewItem);
   // Record view item as selected one
-  fSelectedItem.Assign(ViewItem);
-  fPrevSelectedItem.Assign(fSelectedItem);
+  TViewItemFactory.ReplaceView(
+    fSelectedItem, TViewItemFactory.CreateCopy(ViewItem)
+  );
+  TViewItemFactory.ReplaceView(
+    fPrevSelectedItem, TViewItemFactory.CreateCopy(fSelectedItem)
+  );
 end;
 
 procedure TOverviewFrame.SelectNode(const Node: TTreeNode;
@@ -887,9 +895,13 @@ function TOverviewFrame.TTVDraw.IsSectionHeadNode(
     @param Node [in] Node to be checked.
     @return True if node is a section header, False if not.
   }
+var
+  ViewItem: TViewItem;
 begin
-  Result := (Node as TViewItemTreeNode).ViewItem.Kind
-    in [vkCategory, vkAlphabet, vkSnipKind];
+  ViewItem := (Node as TViewItemTreeNode).ViewItem;
+  Result := (ViewItem is TCategoryViewItem)
+    or (ViewItem is TInitialLetterViewItem)
+    or (ViewItem is TSnippetKindViewItem);
 end;
 
 function TOverviewFrame.TTVDraw.IsUserDefinedNode(
@@ -902,8 +914,13 @@ var
   ViewItem: TViewItem;  // view item represented by node
 begin
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
-  Result := ((ViewItem.Kind = vkRoutine) and ViewItem.Routine.UserDefined)
-    or ((ViewItem.Kind = vkCategory) and ViewItem.Category.UserDefined);
+  Result := (
+    (ViewItem is TSnippetViewItem)
+      and (ViewItem as TSnippetViewItem).Snippet.UserDefined
+  ) or (
+    (ViewItem is TCategoryViewItem)
+      and (ViewItem as TCategoryViewItem).Category.UserDefined
+  );
 end;
 
 end.

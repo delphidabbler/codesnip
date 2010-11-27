@@ -170,7 +170,7 @@ class function TCopySourceMgr.CanHandleView(const View: TViewItem): Boolean;
     @return True if view is a snippet, False otherwise.
   }
 begin
-  Result := View.Kind = vkRoutine;
+  Result := View is TSnippetViewItem;
 end;
 
 class function TCopySourceMgr.GenerateSourceCode(const View: TViewItem): string;
@@ -179,7 +179,7 @@ class function TCopySourceMgr.GenerateSourceCode(const View: TViewItem): string;
     @return Snippet's source code as string.
   }
 begin
-  Result := View.Routine.SourceCode;
+  Result := (View as TSnippetViewItem).Snippet.SourceCode;
 end;
 
 { TCopySnippetMgr }

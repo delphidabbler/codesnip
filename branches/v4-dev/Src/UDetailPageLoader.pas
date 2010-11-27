@@ -120,32 +120,32 @@ class function TDetailPageLoader.CreateGenerator(
 begin
   // Create required generator
   Result := nil;
-  case View.Kind of
-    vkNone:
-      Result := TNulPageHTML.Create(View);
-    vkWelcome:
-      Result := TWelcomePageHTML.Create(View);
-    vkRoutine:
-      case PageKind of
-        pkInfo: Result := TRoutineInfoPageHTML.Create(View);
-        pkComp: Result := TRoutineCompCheckPageHTML.Create(View);
-      end;
-    vkCategory:
-      case PageKind of
-        pkInfo: Result := TCategoryPageHTML.Create(View);
-        pkComp: Result := TNoCompCheckPageHTML.Create(View);
-      end;
-    vkSnipKind:
-      case PageKind of
-        pkInfo: Result := TSnipKindPageHTML.Create(View);
-        pkComp: Result := TNoCompCheckPageHTML.Create(View);
-      end;
-    vkAlphabet:
-      case PageKind of
-        pkInfo: Result := TAlphaListPageHTML.Create(View);
-        pkComp: Result := TNoCompCheckPageHTML.Create(View);
-      end;
-  end;
+  if View.ClassType = TViewItem then
+    Assert(False, 'TViewItem class type');
+  if View is TNulViewItem then
+    Result := TNulPageHTML.Create(View)
+  else if View is TStartPageViewItem then
+    Result := TWelcomePageHTML.Create(View)
+  else if View is TSnippetViewItem then
+    case PageKind of
+      pkInfo: Result := TRoutineInfoPageHTML.Create(View);
+      pkComp: Result := TRoutineCompCheckPageHTML.Create(View);
+    end
+  else if View is TCategoryViewItem then
+    case PageKind of
+      pkInfo: Result := TCategoryPageHTML.Create(View);
+      pkComp: Result := TNoCompCheckPageHTML.Create(View);
+    end
+  else if View is TSnippetKindViewItem then
+    case PageKind of
+      pkInfo: Result := TSnipKindPageHTML.Create(View);
+      pkComp: Result := TNoCompCheckPageHTML.Create(View);
+    end
+  else if View is TInitialLetterViewItem then
+    case PageKind of
+      pkInfo: Result := TAlphaListPageHTML.Create(View);
+      pkComp: Result := TNoCompCheckPageHTML.Create(View);
+    end;
   Assert(Assigned(Result), ClassName + '.CreateGenerator: No HTML generator');
 end;
 

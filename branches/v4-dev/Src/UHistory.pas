@@ -252,7 +252,7 @@ begin
   Assert(fCursor <= fItems.Count, ClassName + '.NewItem: fCursor too large');
   Assert(fCursor >= -1, ClassName + '.NewItem: fCursor too small');
   // Create copy of given view item
-  ClonedItem := TViewItem.Create(ViewItem);
+  ClonedItem := TViewItemFactory.CreateCopy(ViewItem);
   // Increment cursor if possible - it will reference new item
   if fCursor < fItems.Count then
     Inc(fCursor);

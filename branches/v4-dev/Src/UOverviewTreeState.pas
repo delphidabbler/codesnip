@@ -144,7 +144,7 @@ constructor TOverviewTreeSectionState.Create(const ViewItem: TViewItem;
   }
 begin
   inherited Create;
-  fViewItem := TViewItem.Create(ViewItem);
+  fViewItem := TViewItemFactory.CreateCopy(ViewItem);
   fExpanded := Expanded;
 end;
 

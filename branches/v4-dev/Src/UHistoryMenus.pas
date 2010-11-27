@@ -254,30 +254,29 @@ procedure THistoryMenuItem.SetViewItem(const Value: TViewItem);
   }
 resourcestring
   // Menu caption templates
+  // TODO: change sRoutineDesc text to "Snippet" from "Routine"
   sRoutineDesc = 'Routine: %s';
   sCategoryDesc = 'Category: %s';
   sSnipKindDesc = 'Snippets type: %s';
   sAlphabetDesc = 'Alphabetic section: %s';
 const
-  cBadViewItem = '%s.SetViewItem: unknown view item kind';
+  cBadViewItem = '%s.SetViewItem: unknown or unsupported view item';
 begin
   // Record view item
   fViewItem := Value;
   // Set menu item caption to describe view item
-  case fViewItem.Kind of
-    vkWelcome:
-      Caption := ViewItem.Description;
-    vkRoutine:
-      Caption := Format(sRoutineDesc, [ViewItem.Description]);
-    vkCategory:
-      Caption := Format(sCategoryDesc, [ViewItem.Description]);
-    vkSnipKind:
-      Caption := Format(sSnipKindDesc, [ViewItem.Description]);
-    vkAlphabet:
-      Caption := Format(sAlphabetDesc, [ViewItem.Description]);
-    else
-      raise EBug.CreateFmt(cBadViewItem, [ClassName]);
-  end;
+  if fViewItem is TStartPageViewItem then
+    Caption := ViewItem.Description
+  else if fViewItem is TSnippetViewItem then
+    Caption := Format(sRoutineDesc, [ViewItem.Description])
+  else if fViewItem is TCategoryViewItem then
+    Caption := Format(sCategoryDesc, [ViewItem.Description])
+  else if fViewItem is TSnippetKindViewItem then
+    Caption := Format(sSnipKindDesc, [ViewItem.Description])
+  else if fViewItem is TInitialLetterViewItem then
+    Caption := Format(sAlphabetDesc, [ViewItem.Description])
+  else
+    raise EBug.CreateFmt(cBadViewItem, [ClassName]);
 end;
 
 end.

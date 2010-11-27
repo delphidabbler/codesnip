@@ -218,9 +218,9 @@ class function TUserDBMgr.CanEdit(const ViewItem: TViewItem): Boolean;
   }
 begin
   Assert(Assigned(ViewItem), ClassName + '.CanEdit: ViewItem is nil');
-  Result := Assigned(ViewItem) and
-    (ViewItem.Kind = vkRoutine) and
-    ViewItem.Routine.UserDefined;
+  Result := Assigned(ViewItem)
+    and (ViewItem is TSnippetViewItem)
+    and (ViewItem as TSnippetViewItem).Snippet.UserDefined;
 end;
 
 class procedure TUserDBMgr.CanOpenDialogClose(Sender: TObject;
@@ -354,6 +354,7 @@ var
   Dependents: ISnippetIDList; // list of dependent snippet IDs
   Referrers: ISnippetIDList;  // list referring snippet IDs
   ConfirmMsg: string;         // message displayed to confirm deletion
+  Snippet: TRoutine;          // snippet being deleted
 resourcestring
   // Prompts & error messages
   sConfirmDelete = 'Please confirm you wish to delete %s';
@@ -363,12 +364,13 @@ resourcestring
   sHasDependents = 'Sorry, this snippet can''t be deleted. It is required by '
     + 'the following snippets:' + EOL + '    %s';
 begin
-  Assert(ViewItem.Kind = vkRoutine,
-    ClassName + '.Delete: Current view kind is not vkRoutine');
-  Assert(ViewItem.Routine.UserDefined,
+  Assert(ViewItem is TSnippetViewItem,
+    ClassName + '.Delete: Current view is not a snippet');
+  Snippet := (ViewItem as TSnippetViewItem).Snippet;
+  Assert(Snippet.UserDefined,
     ClassName + '.Delete: Snippet must be user defined');
   // Check if snippet has dependents: don't allow deletion if so
-  Dependents := (Snippets as ISnippetsEdit).GetDependents(ViewItem.Routine);
+  Dependents := (Snippets as ISnippetsEdit).GetDependents(Snippet);
   if Dependents.Count > 0 then
   begin
     TMessageBox.Error(
@@ -381,19 +383,19 @@ begin
     Exit;
   end;
   // Get permission to delete. If snippet has dependents list them in prompt
-  Referrers := (Snippets as ISnippetsEdit).GetReferrers(ViewItem.Routine);
+  Referrers := (Snippets as ISnippetsEdit).GetReferrers(Snippet);
   if Referrers.Count = 0 then
-    ConfirmMsg := Format(sConfirmDelete, [ViewItem.Routine.Name])
+    ConfirmMsg := Format(sConfirmDelete, [Snippet.Name])
   else
     ConfirmMsg := Format(
       sConfirmDeleteEx,
       [
-        ViewItem.Routine.Name,
+        Snippet.Name,
         SnippetNames(Referrers).GetText(',' + EOL + '    ', False)
       ]
     );
   if TMessageBox.Confirm(nil, ConfirmMsg) then
-    (Snippets as ISnippetsEdit).DeleteRoutine(ViewItem.Routine);
+    (Snippets as ISnippetsEdit).DeleteRoutine(Snippet);
 end;
 
 class procedure TUserDBMgr.EditSnippet(const SnippetName: string);

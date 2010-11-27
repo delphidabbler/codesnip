@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -190,9 +190,9 @@ begin
     FileName := View.Description;
   end;
   // Record document title
-  if View.Kind = vkCategory then
+  if View is TCategoryViewItem then
     fDocTitle := Format(sDocTitle, [View.Description, sCategory])
-  else if View.Kind = vkRoutine then
+  else if View is TSnippetViewItem then
     fDocTitle := Format(sDocTitle, [View.Description, sRoutine]);
 end;
 

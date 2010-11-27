@@ -153,7 +153,7 @@ begin
   inherited;  // Load page and update dynamically as required
   // If we're viewing a snippet and there's an active text search, highlight
   // text that matches search
-  if (CurrentView.Kind = vkRoutine) and
+  if (CurrentView is TSnippetViewItem) and
     Supports(
       Query.CurrentSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
     ) then
@@ -180,7 +180,7 @@ begin
     ClassName + '.HighlightSearchResults: Criteria is nil');
   Assert(Supports(Criteria, ITextSearchCriteria),
     ClassName + '.HighlightSearchResults: There is no current text search');
-  Assert(CurrentView.Kind = vkRoutine,
+  Assert(CurrentView is TSnippetViewItem,
     ClassName + '.HighlightSearchResults: View item is not a snippet');
   // Create and configure highlighter object
   Highlighter := TWBHighlighter.Create(wbBrowser);

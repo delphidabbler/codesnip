@@ -421,8 +421,9 @@ function TRoutinePageHTML.GetRoutine: TRoutine;
     @return Required snippet reference.
   }
 begin
-  Assert(View.Kind = vkRoutine, ClassName + '.GetRoutine: View is not snippet');
-  Result := View.Routine;
+  Assert(View is TSnippetViewItem,
+    ClassName + '.GetRoutine: View is not snippet');
+  Result := (View as TSnippetViewItem).Snippet;
 end;
 
 procedure TRoutinePageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
@@ -661,7 +662,7 @@ procedure TCategoryPageHTML.BuildRoutineList;
   {Stores all snippets to be displayed in Routines property.
   }
 begin
-  Query.GetCatSelection(View.Category, Routines);
+  Query.GetCatSelection((View as TCategoryViewItem).Category, Routines);
 end;
 
 procedure TCategoryPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
@@ -676,7 +677,7 @@ procedure TCategoryPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
       @return Required name. Depends on whether category is user defined.
     }
   begin
-    if View.Category.UserDefined then
+    if (View as TCategoryViewItem).Category.UserDefined then
       Result := 'userdb'
     else
       Result := 'maindb';
@@ -688,7 +689,7 @@ resourcestring
   sNote = 'The current selection contains no snippets in this category.';
 begin
   Tplt.ResolvePlaceholderHTML('H1Class', H1ClassName);
-  Tplt.ResolvePlaceholderText('Heading', View.Category.Description);
+  Tplt.ResolvePlaceholderText('Heading', View.Description);
   if HaveSnippets then
   begin
     Tplt.ResolvePlaceholderText('Narrative', sNarrative);
@@ -709,7 +710,7 @@ begin
   Routines.Clear;
   for Snippet in Query.Selection do
   begin
-    if Snippet.Name[1] = View.AlphaChar.Letter then
+    if Snippet.Name[1] = (View as TInitialLetterViewItem).Letter.Letter then
       Routines.Add(Snippet);
   end;
 end;
@@ -725,16 +726,19 @@ resourcestring
     + 'letter %s.';
 begin
   Tplt.ResolvePlaceholderHTML('H1Class', 'maindb');
-  Tplt.ResolvePlaceholderText('Heading', View.AlphaChar.Letter);
+  Tplt.ResolvePlaceholderText('Heading', View.Description);
   if HaveSnippets then
   begin
     Tplt.ResolvePlaceholderText(
-      'Narrative', Format(sNarrative, [View.AlphaChar.Letter])
+      'Narrative',
+      Format(sNarrative, [(View as TInitialLetterViewItem).Letter.Letter])
     );
     Tplt.ResolvePlaceholderHTML('Routines', RoutineTableInner);
   end
   else
-    Tplt.ResolvePlaceholderText('Note', Format(sNote, [View.AlphaChar.Letter]));
+    Tplt.ResolvePlaceholderText(
+      'Note', Format(sNote, [(View as TInitialLetterViewItem).Letter.Letter])
+    );
 end;
 
 { TSnipKindPageHTML }
@@ -748,7 +752,7 @@ begin
   Routines.Clear;
   for Snippet in Query.Selection do
   begin
-    if Snippet.Kind = View.SnippetKind.Kind then
+    if Snippet.Kind = (View as TSnippetKindViewItem).KindInfo.Kind then
       Routines.Add(Snippet);
   end;
 end;
@@ -765,19 +769,19 @@ resourcestring
 begin
   Tplt.ResolvePlaceholderHTML('H1Class', 'maindb');
   Tplt.ResolvePlaceholderText(
-    'Heading', Format(sHeading, [View.SnippetKind.Description])
+    'Heading', Format(sHeading, [View .Description])
   );
   if HaveSnippets then
   begin
     Tplt.ResolvePlaceholderText(
       'Narrative',
-      Format(sNarrative, [AnsiLowerCase(View.SnippetKind.Description)])
+      Format(sNarrative, [AnsiLowerCase(View.Description)])
     );
     Tplt.ResolvePlaceholderHTML('Routines', RoutineTableInner);
   end
   else
     Tplt.ResolvePlaceholderText(
-      'Note', Format(sNote, [AnsiLowerCase(View.SnippetKind.Description)])
+      'Note', Format(sNote, [AnsiLowerCase(View.Description)])
     );
 end;
 

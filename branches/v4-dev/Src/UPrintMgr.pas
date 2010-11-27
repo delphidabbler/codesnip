@@ -103,7 +103,7 @@ class function TPrintMgr.CanPrint(const ViewItem: TViewItem): Boolean;
     @return True if view item can be printed, False if not.
   }
 begin
-  Result := ViewItem.Kind = vkRoutine;
+  Result := ViewItem is TSnippetViewItem;
 end;
 
 procedure TPrintMgr.DoPrint;
@@ -146,10 +146,10 @@ constructor TPrintMgr.InternalCreate(const ViewItem: TViewItem);
   }
 begin
   Assert(Assigned(ViewItem), ClassName + '.InternalCreate: ViewItem is nil');
-  Assert(ViewItem.Kind = vkRoutine,
-    ClassName + '.InternalCreate: ViewItem is not a routine');
+  Assert(ViewItem is TSnippetViewItem,
+    ClassName + '.InternalCreate: ViewItem is not a snippet');
   inherited InternalCreate;
-  fRoutine := ViewItem.Routine;
+  fRoutine := (ViewItem as TSnippetViewItem).Snippet;
 end;
 
 class procedure TPrintMgr.Print(const ViewItem: TViewItem);

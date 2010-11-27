@@ -638,7 +638,9 @@ procedure TMainForm.actEditSnippetExecute(Sender: TObject);
 begin
   Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actEditSnippetExecute: Can''t edit current view item');
-  fNotifier.EditRoutine(fMainDisplayMgr.CurrentView.Routine.Name);
+  fNotifier.EditRoutine(
+    (fMainDisplayMgr.CurrentView as TSnippetViewItem).Snippet.Name
+  );
   // display of updated snippet is handled by snippets change event handler
 end;
 
@@ -705,12 +707,12 @@ procedure TMainForm.actFindXRefsExecute(Sender: TObject);
 var
   Search: USearch.ISearch;  // cross reference search object
 begin
-  Assert(fMainDisplayMgr.CurrentView.Kind = vkRoutine,
-    ClassName + '.actFindXRefsExecute: Current view kind is not vkRoutine');
+  Assert(fMainDisplayMgr.CurrentView is TSnippetViewItem,
+    ClassName + '.actFindXRefsExecute: Current view is not a snippet');
   // Display Find Cross Refs dialog box to enable user to enter search criteria
   // (dialog box creates and returns search object from entered criteria)
   if fDialogMgr.ExecFindXRefsDlg(
-    fMainDisplayMgr.CurrentView.Routine, Search
+    (fMainDisplayMgr.CurrentView as TSnippetViewItem).Snippet, Search
   ) then
     DoSearchFilter(Search);
 end;
@@ -721,7 +723,8 @@ procedure TMainForm.actFindXRefsUpdate(Sender: TObject);
     @param Sender [in] Action triggering the event.
   }
 begin
-  (Sender as TAction).Enabled := fMainDisplayMgr.CurrentView.Kind = vkRoutine;
+  (Sender as TAction).Enabled :=
+    (fMainDisplayMgr.CurrentView is TSnippetViewItem);
 end;
 
 procedure TMainForm.actGoBackExecute(Sender: TObject);
@@ -1103,7 +1106,7 @@ begin
     // Do test compile, show a window if it takes a long time, and show results
     fCompileMgr.Compile(
       frmDetail,
-      fMainDisplayMgr.CurrentView.Routine,
+      (fMainDisplayMgr.CurrentView as TSnippetViewItem).Snippet,
       fMainDisplayMgr.DisplayCompileResults
     );
   finally
@@ -1204,9 +1207,11 @@ procedure TMainForm.actViewDependenciesExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  Assert(fMainDisplayMgr.CurrentView.Kind = vkRoutine,
-    ClassName + '.actViewDependenciesExecute: View kind vkRoutine expected');
-  fDialogMgr.ShowDependencyTree(fMainDisplayMgr.CurrentView.Routine);
+  Assert(fMainDisplayMgr.CurrentView is TSnippetViewItem,
+    ClassName + '.actViewDependenciesExecute: Snippet view expected');
+  fDialogMgr.ShowDependencyTree(
+    (fMainDisplayMgr.CurrentView as TSnippetViewItem).Snippet
+  );
 end;
 
 procedure TMainForm.actViewDependenciesUpdate(Sender: TObject);
@@ -1215,7 +1220,8 @@ procedure TMainForm.actViewDependenciesUpdate(Sender: TObject);
     @param Sender [in] Action triggering this event.
   }
 begin
-  (Sender as TAction).Enabled := fMainDisplayMgr.CurrentView.Kind = vkRoutine;
+  (Sender as TAction).Enabled :=
+    (fMainDisplayMgr.CurrentView is TSnippetViewItem);
 end;
 
 procedure TMainForm.ActViewHistoryItemExecute(Sender: TObject);
@@ -1240,12 +1246,15 @@ procedure TMainForm.actViewTestUnitExecute(Sender: TObject);
   {Displays test unit for currently selected snippet in a dialog box.
     @param Sender [in] Not used.
   }
+var
+  SelectedSnippet: TRoutine;  // currently selected snippet
 begin
-  Assert(fMainDisplayMgr.CurrentView.Kind = vkRoutine,
-    ClassName + '.actViewTestUnitExecute: View kind vkRoutine expected');
-  Assert(fMainDisplayMgr.CurrentView.Routine.CanCompile,
+  Assert(fMainDisplayMgr.CurrentView is TSnippetViewItem,
+    ClassName + '.actViewTestUnitExecute: Snippet view expected');
+  SelectedSnippet := (fMainDisplayMgr.CurrentView as TSnippetViewItem).Snippet;
+  Assert(SelectedSnippet.CanCompile,
     ClassName + '.actViewTestUnitExecute: Snippet is not compilable');
-  fDialogMgr.ShowTestUnit(fMainDisplayMgr.CurrentView.Routine);
+  fDialogMgr.ShowTestUnit(SelectedSnippet);
 end;
 
 procedure TMainForm.actViewTestUnitUpdate(Sender: TObject);
@@ -1254,8 +1263,9 @@ procedure TMainForm.actViewTestUnitUpdate(Sender: TObject);
     @param Sender [in] Action triggering this event.
   }
 begin
-  (Sender as TAction).Enabled := (fMainDisplayMgr.CurrentView.Kind = vkRoutine)
-    and fMainDisplayMgr.CurrentView.Routine.CanCompile;
+  (Sender as TAction).Enabled :=
+    (fMainDisplayMgr.CurrentView is TSnippetViewItem)
+    and (fMainDisplayMgr.CurrentView as TSnippetViewItem).Snippet.CanCompile;
 end;
 
 procedure TMainForm.actWelcomeExecute(Sender: TObject);
@@ -1291,7 +1301,7 @@ var
   Welcome: TViewItem; // welcome page view item
 begin
   // Get notifier to display welcome page
-  Welcome := TViewItem.Create(vkWelcome);
+  Welcome := TViewItemFactory.CreateStartPageView;
   try
     fNotifier.ShowViewItem(Welcome);
   finally

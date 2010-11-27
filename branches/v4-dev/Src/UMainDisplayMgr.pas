@@ -217,7 +217,7 @@ procedure TMainDisplayMgr.Clear;
   {Clears the main display, i.e. overview and detail panes.
   }
 begin
-  fCurrentView.Assign(nil);
+  TViewItemFactory.ReplaceView(fCurrentView, TViewItemFactory.CreateNulView);
   (fOverviewMgr as IOverviewDisplayMgr).Clear;
   (fDetailsMgr as IViewItemDisplayMgr).Display(fCurrentView, False);
 end;
@@ -242,7 +242,7 @@ begin
   fOverviewMgr := OverviewMgr;
   fDetailsMgr := DetailsMgr;
   // Create owned view object: stores current view
-  fCurrentView := TViewItem.Create;
+  fCurrentView := TViewItemFactory.CreateNulView;
 end;
 
 destructor TMainDisplayMgr.Destroy;
@@ -328,8 +328,11 @@ procedure TMainDisplayMgr.InternalDisplayViewItem(const ViewItem: TViewItem;
     @param Force True [in] if compiler pane redisplay is to be forced.
   }
 begin
+  Assert(ViewItem.ClassType <> TViewItem, 'ViewItem is TViewItem');
   // Record view item
-  fCurrentView.Assign(ViewItem);
+  TViewItemFactory.ReplaceView(
+    fCurrentView, TViewItemFactory.CreateCopy(ViewItem)
+  );
   // Select item in overview pane and display in detail pane
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(fCurrentView);
   (fDetailsMgr as IViewItemDisplayMgr).Display(fCurrentView, Force);

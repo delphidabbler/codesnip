@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -101,7 +101,7 @@ begin
   Snippet := Snippets.Routines.Find(RoutineName, UserDefined);
   Assert(Assigned(Snippet), ClassName + '.Execute: RoutineName not valid');
   // Create a view item for category and get notifier to display it
-  ViewItem := TViewItem.Create(Snippet);
+  ViewItem := TViewItemFactory.CreateSnippetView(Snippet);
   try
     fNotifier.ShowViewItem(ViewItem);
   finally

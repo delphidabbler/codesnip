@@ -103,7 +103,7 @@ class function TCopyInfoMgr.CanHandleView(const View: TViewItem): Boolean;
     @return True if view is a snippet, False otherwise.
   }
 begin
-  Result := View.Kind = vkRoutine;
+  Result := View is TSnippetViewItem;
 end;
 
 class function TCopyInfoMgr.GenerateDoc(const View: TViewItem;
@@ -120,7 +120,7 @@ var
 begin
   SS := TStringStream.Create('', Encoding);
   try
-    Doc.Generate(View.Routine, SS);
+    Doc.Generate((View as TSnippetViewItem).Snippet, SS);
     Result := SS.DataString;
   finally
     FreeAndNil(SS);

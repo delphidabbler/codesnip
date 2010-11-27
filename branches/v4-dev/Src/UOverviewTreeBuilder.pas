@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -213,7 +213,9 @@ begin
       begin
         ParentNode := AddViewItemNode(nil, CreateViewItemForGroup(Group));
         for Snippet in Group.SnippetList do
-          AddViewItemNode(ParentNode, TViewItem.Create(Snippet));
+          AddViewItemNode(
+            ParentNode, TViewItemFactory.CreateSnippetView(Snippet)
+          );
       end;
     end;
   finally
@@ -251,7 +253,9 @@ function TOverviewCategorisedTreeBuilder.CreateViewItemForGroup(
     @return Required category view item for group.
   }
 begin
-  Result := TViewItem.Create((Group as TCategoryGroupItem).Category);
+  Result := TViewItemFactory.CreateCategoryView(
+    (Group as TCategoryGroupItem).Category
+  );
 end;
 
 { TOverviewAlphabeticTreeBuilder }
@@ -271,7 +275,9 @@ function TOverviewAlphabeticTreeBuilder.CreateViewItemForGroup(
     @return Required alpha view item for group.
   }
 begin
-  Result := TViewItem.Create((Group as TAlphaGroupItem).Letter);
+  Result := TViewItemFactory.CreateInitialLetterView(
+    (Group as TAlphaGroupItem).Letter
+  );
 end;
 
 { TOverviewSnipKindTreeBuilder }
@@ -291,7 +297,9 @@ function TOverviewSnipKindTreeBuilder.CreateViewItemForGroup(
     @return Required snippet kind view item for group.
   }
 begin
-  Result := TViewItem.Create((Group as TSnipKindGroupItem).SnipKindInfo);
+  Result := TViewItemFactory.CreateSnippetKindView(
+    (Group as TSnipKindGroupItem).SnipKindInfo
+  );
 end;
 
 end.

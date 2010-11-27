@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -118,8 +118,9 @@ class function TCodeShareMgr.GetRoutineFromView(
       a routine or if routine is not user defined.
   }
 begin
-  if (ViewItem.Kind = vkRoutine) and (ViewItem.Routine.UserDefined) then
-    Result := ViewItem.Routine
+  if (ViewItem is TSnippetViewItem)
+    and ((ViewItem as TSnippetViewItem).Snippet.UserDefined) then
+    Result := (ViewItem as TSnippetViewItem).Snippet
   else
     Result := nil;
 end;
