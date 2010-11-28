@@ -315,7 +315,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Character,
   // Project
   Compilers.UCompilers, UCompResHTML, UConsts, UCSSUtils, UHTMLUtils,
   UHTMLDetailUtils, UJavaScriptUtils, UQuery, URoutineHTML, UUtils;
