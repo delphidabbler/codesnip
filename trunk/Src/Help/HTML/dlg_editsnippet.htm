@@ -23,6 +23,9 @@
  * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
+ * Contributor(s):
+ *   NONE
+ *
  * ***** END LICENSE BLOCK *****
 -->
 <html>
@@ -77,30 +80,58 @@
     </p>
     <ul>
       <li>
-        <em>Source code</em> text box. <em>Required</em>. Enter the snippet's
-        source code here. The format of the code is important unless you are
-        using the freeform snippet kind.
+        <div>
+          <em>Source code</em> text box.
+        </div>
+        <div>
+          Enter the snippet's source code here. The format of the code is
+          important unless you are using the freeform snippet kind.
+        </div>
       </li>
       <li>
-        <em>Kind</em> drop down list. <em>Required</em>. Select the
-        <a href="snippet_kinds.htm">kind of snippet</a> you are editing.
+        <div>
+          <em>Kind</em> drop down list.
+        </div>
+        <div>
+          Select the <a href="snippet_kinds.htm">kind of snippet</a> you are
+          editing.
+        </div>
       </li>
       <li>
-        <em>Description</em> edit box. <em>Required</em>. Enter a description of
-        the code snippet here. This field should not contain &quot;}&quot;
-        characters since the field's text is used in comments in exported Pascal
-        code and the &quot;}&quot; character will terminate the comment early.
+        <div>
+          <em>Description</em> edit box.
+        </div>
+        <div>
+          Enter a description of the code snippet here. This field should not
+          contain &quot;}&quot; characters since the field's text is used in
+          comments in exported Pascal code and the &quot;}&quot; character will
+          terminate the comment early.
+        </div>
       </li>
       <li>
-        <em>Name</em> edit box. <em>Required</em>. Give the code snippet a name
-        here. Names must be valid Pascal identifiers and must be unique within
-        the user database. Names may duplicate names in the main database. If
-        the snippet is a function or procedure it is customary to use the name
-        of the routine.
+        <div>
+          <em>Name</em> edit box.
+        </div>
+        <div>
+          Give the code snippet a name here. Names must be valid Pascal
+          identifiers with the added restriction that they must start with one
+          of the English letters 'A'..'Z', 'a'..'z' or the underscore character.
+          Names must also be unique within the user database, although they may
+          duplicate names in the main database.
+        </div>
+        <div>
+          It is customary to name functions or procedures using the routine's
+          name. Overloaded routines are often named by suffixing the routine
+          name with '_A', '_B' etc.
+        </div>
       </li>
       <li>
-        <em>Category</em> drop down list. <em>Required</em>. Select the category
-        to which the snippet belongs.
+        <div>
+          <em>Category</em> drop down list.
+        </div>
+        <div>
+          Select the category to which the snippet belongs.
+        </div>
       </li>
     </ul>
     <h3>
@@ -109,52 +140,87 @@
     <p>
       Use this tab to specify the snippets and units that are associated with
       the snippet being edited. If it is intended to test compile the snippet
-      then the <em>Dependencies</em> and <em>Units</em> list boxes must be 
+      then the <em>Dependencies</em> and <em>Units</em> list boxes must be
       completed if the snippet depends on a Delphi unit or if it uses another
       snippet from the database.
     </p>
     <ul>
       <li>
-        <em>Cross-references</em> check list box. Use this list to specify any
-        other snippets to be cross-referenced from this snippet. Check the boxes
-        next to desired snippets. Cross references are for information only.
-        All snippets are listed. User defined snippets are displayed in blue.
+        <div>
+          <em>Cross-references</em> check list box.
+        </div>
+        <div>
+          Use this list to specify any other snippets to be cross-referenced
+          from this snippet. Check the boxes next to desired snippets. Cross
+          references are for information only. All snippets are listed.
+        </div>
+        <div>
+          User defined snippets are displayed in blue.
+        </div>
       </li>
       <li>
-        <em>Dependencies</em> check list box. Specify any other snippets that
-        this snippet depends upon by checking the boxes next to the desired
-        snippets. If this snippet is to be test compiled then any other snippets
-        it requires must be specified here or the test compile will fail. The
-        available entries in this list box will be vary according to the
-        <a href="snippet_kinds.htm">snippet kind</a>. Routine snippets are not
-        included in this list for constants or type definitions.
-        <a href="snippet_freeform.htm">Freeform</a> snippets are never included
-        in this list. User defined snippets are displayed in blue.
+        <div>
+          <em>Dependencies</em> check list box.
+        </div>
+        <div>
+          Specify any other snippets that this snippet depends upon by checking
+          the boxes next to the desired snippets. If this snippet is to be test
+          compiled then any other snippets it requires must be specified here or
+          the test compile will fail. The available entries in this list box
+          will vary according to the <a href="snippet_kinds.htm">snippet
+          kind</a>.
+        </div>
+        <div>
+          Routine snippets are not included in this list if the snippet being
+          edited is a constant or type definition.
+          <a href="snippet_freeform.htm">Freeform</a> snippets are never
+          included in this list.
+        </div>
+        <div>
+          User defined snippets are displayed in blue.
+        </div>
       </li>
       <li>
-        <em>View Dependencies</em> button. Click this button to see all
-        dependencies for the snippet being edited in the
-        <a href="dlg_dependencies.htm">Dependencies dialog box</a>. All entries
-        checked in the <em>Dependencies</em> list box are included, along with
-        all their dependencies, and so on. You must not create a circular
-        dependency; the <em>Dependencies</em> dialog box will help you detect
-        them.
+        <div>
+          <em>View Dependencies</em> button.
+        </div>
+        <div>
+          Click this button to see all dependencies for the snippet being edited
+          in the <a href="dlg_dependencies.htm">Dependencies dialog box</a>. All
+          entries checked in the <em>Dependencies</em> list box are included,
+          along with all their dependencies, and so on. You must not create a
+          circular dependency; the <em>Dependencies</em> dialog box will help
+          you detect them.
+        </div>
       </li>
       <li>
-        <em>Units</em> check list box. Select any units that this snippet
-        requires in order to compile. Required units must be specified if test
-        compilation is to be attempted. A selection of common units is provided,
-        along with any units already associated with the snippet. More units can
-        be added to the list &ndash; see below. Units are &quot;used&quot; in
-        the order they appear in the list. If this order causes namespace
-        clashes you should prefix ambiguous identifiers in the source code with
-        the unit name, e.g. <code>Graphics.TBitmap</code>.
+        <div>
+          <em>Units</em> check list box.
+        </div>
+        <div>
+          Select any units that this snippet requires in order to compile.
+          Required units must be specified if test compilation is to be
+          attempted. A selection of common units is provided, along with any
+          units already associated with the snippet. More units can be added to
+          the list &ndash; see below.
+        </div>
+        <div>
+          Units are &quot;used&quot; in the order they appear in the list. If
+          this order causes namespace clashes you should prefix ambiguous
+          identifiers in the source code with the unit name, e.g.
+          <code>Graphics.TBitmap</code>.
+        </div>
       </li>
       <li>
-        <em>Add Unit</em> edit box and button. If additional units are required
-        in the <em>Units</em> check list box type the name of the unit in the
-        edit box and click the <em>Add Unit</em> button. The unit will be added
-        to the <em>Units</em> check list box and its check box will be checked.
+        <div>
+          <em>Add Unit</em> edit box and button.
+        </div>
+        <div>
+          If additional units are required in the <em>Units</em> check list box
+          type the name of the unit in the edit box and click the <em>Add
+          Unit</em> button. The unit will be added to the <em>Units</em> check
+          list box and its check box will be checked.
+        </div>
       </li>
     </ul>
     <h3>
