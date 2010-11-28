@@ -63,25 +63,19 @@ directory. There are several such files:
 
 + GIFImage.pas
   See below for license information
-+ MD5.pas
-  See below for license information
++ PJMD5.pas
+  This is a DelphiDabbler library. The MPL 1.1 / GPL 2.0 / LGPL 2.1 tri license
+  applies. It derives from the RSA Data Security, Inc. MD5 Message-Digest
+  Algorithm. See below for the MD5 copyright notice.
 + PJStreamWrapper.pas, PJSysInfo.pas, PJVersionInfo.pas, PJWdwState.pas
   These are DelphiDabbler libraries: the Mozilla Public License applies.
 + UEncrypt.pas
   Public domain.
 
 
-MD5.pas
+MD5 Copyright Statement
 --------------------------------------------------------------------------------
 
-The MD5 unit was written by Matthias Fichtner and updated to compile without
-warnings on Delphi by Peter Johnson.
-
-This Pascal code was based on the RSA Data Security, Inc. MD5 Message-Digest
-Algorithm and reference code written in C (taken from RFC 1321) and released
-under the following license:
-
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 Copyright (C) 1991-2, RSA Data Security, Inc. Created 1991. All rights reserved.
 
 License to copy and use this software is granted provided that it is identified
@@ -238,6 +232,7 @@ sources. With the exception of the following, all images are in the public
 domain and can be re-used without restriction:
 
 Exceptions
+----------
 
 + Res\Img\symbol-information.png and Res\Img\symbol-exclamation.png are adapted
   from the Vista Aero Pack 3 by VistaICO. See below for license terms and
