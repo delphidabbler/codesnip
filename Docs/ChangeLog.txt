@@ -4,6 +4,11 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.8.5 of 28 November 2010
++ Fixed bug where user was able to create snippets with valid names that would crash the alphabetic overview. Snippet names are now limited to letters from English alphabet and the underscore. Fixes bug #3120958 (http://bit.ly/fDAswL).
++ Fixed bug where snippets that have names beginning with a lower case letter were being omitted from from the associated list of snippets shown in the detail pane. Fixes bug #3120962 (http://bit.ly/eGhQvc).
++ Updated Snippets Editor topic in help file.
+
 Release v3.8.4 of 26 November 2010
 + User can now opt to terminate the application when an unexpected exception is trapped. This implements feature request #3074914 (http://bit.ly/hUyEAw).
 + Wording of bug report dialog boxes changed.
