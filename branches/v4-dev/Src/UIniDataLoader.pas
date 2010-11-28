@@ -119,18 +119,20 @@ type
   }
   TDatabaseFileMapper = class(TNoConstructObject)
   strict private
-    class function AlternateFileName(const FileName: string): string;
-      {Creates an alternate file name for a specified file that will be
-      recognised by v3 of CodeSnip or later.
-        @param FileName [in] Base file name.
+    class function AlternateFileName(const FileName, InnerExt: string): string;
+      {Creates an alternate file name for a specified file and an "inner"
+      extension that is inserted before the file's current extension.
+        @param FileName [in] File name to form basis of alternate name.
+        @param InnerExt [in] "Inner" extension that comes between file name and
+          its last extension.
         @return Alternate file name.
       }
   public
     class function GetRelatedFiles(const FileName: string): IStringList;
-      {Builds a list of file names associated with a base file name.
-        @param FileName [in] Base file name.
-        @return List of associated files, all of which exist. List may not
-          include base file name if it doesn't exist.
+      {Builds a list of file names associated with a file name.
+        @param FileName [in] Original file name.
+        @return List of associated files, all of which exist. Original file name
+          may be omitted from the list if it doesn't exist.
       }
   end;
 
@@ -442,41 +444,46 @@ begin
 end;
 
 class function TDatabaseFileMapper.AlternateFileName(
-  const FileName: string): string;
-  {Creates an alternate file name for a specified file that will be recognised
-  by v3 of CodeSnip or later.
-    @param FileName [in] Base file name.
+  const FileName, InnerExt: string): string;
+  {Creates an alternate file name for a specified file and an "inner" extension
+  that is inserted before the file's current extension.
+    @param FileName [in] File name to form basis of alternate name.
+    @param InnerExt [in] "Inner" extension that comes between file name and its
+      last extension.
     @return Alternate file name.
   }
 var
   BaseName: string;   // base of file name without extension
   Extension: string;  // extension common to all names
-const
-  cV3Ext = '.3';  // first extension for v3 database files
 begin
-  // Get base file name without extension
   Extension := ExtractFileExt(FileName);
   BaseName := RemoveFileExt(ExtractFileName(FileName));
-  // Build alternate file name
-  Result := ExtractFilePath(FileName) + BaseName + cV3Ext + Extension;
+  Result := ExtractFilePath(FileName) + BaseName + InnerExt + Extension;
 end;
 
 class function TDatabaseFileMapper.GetRelatedFiles(
   const FileName: string): IStringList;
-  {Builds a list of file names associated with a base file name.
-    @param FileName [in] Base file name.
-    @return List of associated files, all of which exist. List may not include
-      base file name if it doesn't exist.
+  {Builds a list of file names associated with a file name.
+    @param FileName [in] Original file name.
+    @return List of associated files, all of which exist. Original file name may
+      be omitted from the list if it doesn't exist.
   }
 var
   AltFileName: string;  // an alternate file name
+  InnerExt: string;     // each inner extension
+const
+  // "Inner" extensions to be interposed between filename and its extension
+  InnerExts: array[0..1] of string = ('.3', '.4');
 begin
   Result := TIStringList.Create;
   if FileExists(FileName) then
     Result.Add(FileName);
-  AltFileName := AlternateFileName(FileName);
-  if (AltFileName <> '') and FileExists(AltFileName) then
-    Result.Add(AltFileName);
+  for InnerExt in InnerExts do
+  begin
+    AltFileName := AlternateFileName(FileName, InnerExt);
+    if (AltFileName <> '') and FileExists(AltFileName) then
+      Result.Add(AltFileName);
+  end;
 end;
 
 { TDatabasePreprocessor }
