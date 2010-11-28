@@ -157,10 +157,10 @@ type
   }
   TCodeExporter = class(TNoPublicConstructObject)
   strict private
-    fUserInfo: TUserInfo;     // User information to be written to XML
-    fStream: TStream;         // Stream that receives XML
-    fRoutines: TRoutineList;  // List of snippets to be exported
-    fXMLDoc: IXMLDocumentEx;  // Extended XML document object
+    var fUserInfo: TUserInfo;     // User information to be written to XML
+    var fStream: TStream;         // Stream that receives XML
+    var fRoutines: TRoutineList;  // List of snippets to be exported
+    var fXMLDoc: IXMLDocumentEx;  // Extended XML document object
     procedure HandleException(const EObj: TObject);
       {Handles exceptions by converting expected exceptions into ECodeExporter.
       Unexpected exceptions are re-raised.
@@ -246,14 +246,9 @@ const
   // XML file markers: attributes of root node
   // watermark (never changes for all versions)
   cWatermark        = 'B46969D4-D367-4F5F-833E-F165FBA78631';
-  // file format versions
-  cVersion1         = 1;
-  cVersion2         = 2;
-  cVersion3         = 3;
-  cVersion4         = 4;
-  cEarliestVersion  = cVersion1;
-  cMinOutputVersion = cVersion3;
-  cLatestVersion    = cVersion4;
+  // file version numbers
+  cEarliestVersion  = 1;  // earliest file version supported by importer
+  cLatestVersion    = 5;  // current file version written by exporter
 
 
 { TUserInfo }
@@ -316,34 +311,6 @@ procedure TCodeExporter.Execute;
   {Performs the export.
     @except ECodeExporter raised if a known error is encountered.
   }
-
-  // ---------------------------------------------------------------------------
-  function MinVersion: Integer;
-    {Determines the minimum version number of the export file. This depends on
-    attributes of the exported snippets.
-      @return Required version number.
-    }
-  var
-    Snippet: TRoutine;        // each exported snippet
-    MinREMLVer: TREMLVersion; // lowest version no. of REML code in extra prop
-    AREMLVer: TREMLVersion;   // required REML version for a snippet
-  begin
-    MinREMLVer := TREMLAnalyser.FIRST_VERSION;
-    for Snippet in fRoutines do
-    begin
-      AREMLVer := TREMLAnalyser.LowestWriterVersion(Snippet.Extra);
-      if AREMLVer > MinREMLVer then
-        MinREMLVer := AREMLVer;
-    end;
-    // Minimum export file version number is at least 3, and 4 if extra property
-    // contains data that requires later version of REML
-    if MinREMLVer < cMinOutputVersion then
-      Result := cMinOutputVersion
-    else
-      Result := cVersion4;
-  end;
-  // ---------------------------------------------------------------------------
-
 var
   RootNode: IXMLNode;   // document root node
 resourcestring
@@ -359,7 +326,7 @@ begin
     TXMLDocHelper.CreateXMLProcInst(fXMLDoc);
     TXMLDocHelper.CreateComment(fXMLDoc, sFileComment);
     RootNode := TXMLDocHelper.CreateRootNode(
-      fXMLDoc, cExportRootNode, cWatermark, MinVersion
+      fXMLDoc, cExportRootNode, cWatermark, cLatestVersion
     );
 
     // Write document content
@@ -368,7 +335,8 @@ begin
       WriteUserInfo(RootNode);
     WriteRoutines(RootNode);
 
-    // Save XML to stream
+    // Save XML to stream as UTF-8 with no BOM
+    fXMLDoc.Encoding := 'UTF-8';
     fXMLDoc.SaveToStream(fStream);
 
   except
@@ -637,7 +605,7 @@ begin
           );
         // how we read extra property depends on version of file
         case fVersion of
-          cVersion1:
+          1:
             Props.Extra := TRoutineExtraHelper.BuildActiveText(
               TXMLDocHelper.GetSubTagText(fXMLDoc, RoutineNode, cCommentsNode),
               TXMLDocHelper.GetSubTagText(fXMLDoc, RoutineNode, cCreditsNode),
@@ -650,7 +618,7 @@ begin
         end;
         // how we read kind property depends on version of file
         case fVersion of
-          cVersion1, cVersion2:
+          1, 2:
             // for version 1 and 2, we have StandardFormat instead of Kind:
             // map standard format value onto a kind
             if TXMLDocHelper.GetStandardFormat(fXMLDoc, RoutineNode, False) then
