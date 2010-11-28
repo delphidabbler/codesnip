@@ -71,7 +71,7 @@
 #define SetupName CreateSetupName(ExeProg)
 
 [Setup]
-AppID={{B4BF7490-25F0-4CB1-A2D5-9E006D9FF05F}
+AppID={{578D0FFE-5873-4457-95F2-AAB38F52B622}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppPublisher} {#AppName} {#AppVersion}
@@ -83,8 +83,8 @@ AppReadMeFile={app}\{#ReadMeFile}
 AppCopyright={#Copyright} ({#WebAddress})
 AppComments=
 AppContact=
-DefaultDirName={pf}\{#AppPublisher}\{#AppName}
-DefaultGroupName={#AppPublisher} {#AppName}
+DefaultDirName={pf}\{#AppPublisher}\{#AppName}-4
+DefaultGroupName={#AppPublisher} {#AppName} v4
 AllowNoIcons=true
 LicenseFile={#SrcDocsPath}{#LicenseFile}
 Compression=lzma/ultra
