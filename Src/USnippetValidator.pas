@@ -401,7 +401,8 @@ resourcestring
   // Error messages
   sErrNoName = 'A name must be provided';
   sErrDupName = '"%s" is already in the database. Please choose another name';
-  sErrBadName = '"%s" is not a valid Pascal identifier';
+  sErrBadName = 'Name must begin with ''A''..''Z'', ''a''..''z'' or ''_''';
+  sErrBadIdent = '"%s" is not a valid Pascal identifier';
 var
   TrimmedName: string;  // Name param trimmed of leading trailing spaces
 begin
@@ -409,8 +410,10 @@ begin
   TrimmedName := Trim(Name);
   if TrimmedName = '' then
     ErrorMsg := sErrNoName
+  else if not CharInSet(TrimmedName[1], ['A'..'Z', 'a'..'z', '_']) then
+    ErrorMsg := sErrBadName
   else if not IsValidIdent(TrimmedName) then
-    ErrorMsg := Format(sErrBadName, [TrimmedName])
+    ErrorMsg := Format(sErrBadIdent, [TrimmedName])
   else if CheckForUniqueness and
     (Snippets.Routines.Find(TrimmedName, True) <> nil) then
     ErrorMsg := Format(sErrDupName, [TrimmedName])
