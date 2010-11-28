@@ -26,10 +26,10 @@ The data that is used to create the hexidecimal keys cannot be recovered from
 the keys.
 
 
-User.3.ini
+User.4.ini
 --------------------------------------------------------------------------------
 
-User.3.ini is found in the current user's %AppData%\DelphiDabbler\CodeSnip
+User.4.ini is found in the current user's %AppData%\DelphiDabbler\CodeSnip
 folder.
 
 The file stores several user-specific application data settings such as your
@@ -45,9 +45,9 @@ preferences. The only personal information is as follows:
       internet using a proxy server. The information is used only to access the
       proxy. Passwords and encrypted.
 
-If you have upgraded from CodeSnip v2 there may also be a file named User.ini.
-This contains pretty much the same information as User.3.ini. The file is
-ignored by CodeSnip v3.
+If you have upgraded from CodeSnip v2 or v3 there may also be a files named
+User.ini and / or User.3.ini. These contain pretty much the same information as
+User.4.ini. These older files are ignored by CodeSnip v4.
 
 
 Spyware
