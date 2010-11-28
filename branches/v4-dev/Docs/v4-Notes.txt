@@ -1,0 +1,64 @@
+================================================================================
+
+CodeSnip v4 Development Notes
+
+$Rev$
+$Date$
+================================================================================
+
+This document contains general notes about the development of CodeSnip v4 along
+with details of changes made. The document's purpose is to provide a source for
+other documentation, including writing the release 4 change log.
+
+
+--------------------------------------------------------------------------------
+Notes
+--------------------------------------------------------------------------------
+
+* Development started 26 Nov 2010.
+
+* Version numbers set to 3.99.0.0 - will bump third number by one for each
+  released alpha or beta version and fourth number will be set to an appropriate
+  build number at the time of release.
+
+* Periodic merging of chnages from v3 development tree (trunk).
+
+
+--------------------------------------------------------------------------------
+Changes
+--------------------------------------------------------------------------------
+
+* Added a "Tests" directory and project for unit tests.
+
+* Refactorings:
+  o View unit - complete rewrite
+  o Snippet Kind Info and Initial Letter code - complete rewrite
+  o Alpha grouping code
+
+* Bug fixes:
+  o #3120962. This was a separate fix to that created for v3 - the two were
+    incompatible.
+
+* Help file:
+  o Privacy statement topic updated.
+  o Snippets Editor topic updated re change in snippet name rules.
+
+* Documentation:
+  o Privacy statement updated re config file name change.
+  o Readme updated re v4 changes.
+
+* Added support for full Unicode Pascal identifiers to be used as snippet names.
+  Modified alpha grouping to handle this.
+
+* Revised splash screen to include version number 4.
+
+* Changed user database dir name to UserData.4.
+
+* Changed per-user config file name to User.4.ini.
+
+* Installer:
+  o Updated installer scripts to recognise and copy config files and databases
+    from former locations to work with new v4 user config file and database
+    directory names.
+  o Installer changed so that v4 installs can co-exist - new app id, install
+    folder and program group.
