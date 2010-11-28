@@ -710,7 +710,7 @@ begin
   Routines.Clear;
   for Snippet in Query.Selection do
   begin
-    if Snippet.Name[1] = (View as IInitialLetterView).InitialLetter.Letter then
+    if Snippet.Name[1] = (View as IInitialLetterView).InitialLetter then
       Routines.Add(Snippet);
   end;
 end;

@@ -59,6 +59,12 @@ type
     class function Compare(const Left, Right: TInitialLetter): Integer; static;
     ///  Casts a TInitialLetter to a character.
     class operator Implicit(const R: TInitialLetter): Char;
+    ///  Test for equality of two records
+    class operator Equal(const L1, L2: TInitialLetter): Boolean;
+    ///  Test for equality of a record and a char. Case of char is ignored.
+    class operator Equal(const L: TInitialLetter; const C: Char): Boolean;
+    ///  Test for equality of a char and a record. Case of char is ignored.
+    class operator Equal(const C: Char; const L: TInitialLetter): Boolean;
   end;
 
 implementation
@@ -80,6 +86,23 @@ end;
 constructor TInitialLetter.Create(ALetter: Char);
 begin
   fLetter := TCharacter.ToUpper(ALetter);
+end;
+
+class operator TInitialLetter.Equal(const L1, L2: TInitialLetter): Boolean;
+begin
+  Result := Compare(L1, L2) = 0;
+end;
+
+class operator TInitialLetter.Equal(const L: TInitialLetter;
+  const C: Char): Boolean;
+begin
+  Result := L = TInitialLetter.Create(C);
+end;
+
+class operator TInitialLetter.Equal(const C: Char;
+  const L: TInitialLetter): Boolean;
+begin
+  Result := TInitialLetter.Create(C) = L;
 end;
 
 class operator TInitialLetter.Implicit(const R: TInitialLetter): Char;
