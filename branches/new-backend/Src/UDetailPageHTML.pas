@@ -315,7 +315,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Character,
   // Project
   Compilers.UCompilers, UCompResHTML, UConsts, UCSSUtils, UHTMLUtils,
   UHTMLDetailUtils, UJavaScriptUtils, UQuery, URoutineHTML, UUtils;
@@ -709,7 +709,8 @@ begin
   Routines.Clear;
   for Snippet in Query.Selection do
   begin
-    if Snippet.Name[1] = View.AlphaChar.Letter then
+    if TCharacter.ToUpper(Snippet.Name[1])
+      = TCharacter.ToUpper(View.AlphaChar.Letter) then
       Routines.Add(Snippet);
   end;
 end;
