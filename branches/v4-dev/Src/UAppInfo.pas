@@ -319,7 +319,7 @@ class function TAppInfo.UserDataDir: string;
     @return Full path to database sub directory.
   }
 begin
-  Result := UserAppDir + '\UserData.3';
+  Result := UserAppDir + '\UserData.4';
 end;
 
 end.

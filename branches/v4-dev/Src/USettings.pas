@@ -484,7 +484,7 @@ begin
   // We only support one storage: ssUser
   case Storage of
     ssUser:
-      Result := TAppInfo.UserAppDir + '\User.3.ini';
+      Result := TAppInfo.UserAppDir + '\User.4.ini';
     ssCommon:
       Result := TAppInfo.CommonAppDir + '\Common.ini';
     else
