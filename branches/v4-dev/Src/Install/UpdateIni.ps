@@ -38,8 +38,7 @@
 
 
 function OriginalIniFileName: string;
-  {Gets fully specified file name of original style, solitary, config file
-  (CodeSnip.ini).
+  {Gets fully specified file name of original style, solitary, config file.
     @return Ini file name.
   }
 begin
@@ -47,8 +46,7 @@ begin
 end;
 
 function CommonIniFileName: string;
-  {Gets fully specified file name of current application wide config file
-  (Common.ini).
+  {Gets fully specified file name of current application wide config file.
     @return Ini file name.
   }
 begin
@@ -56,19 +54,27 @@ begin
 end;
 
 function OldUserIniFileName: string;
-  {Gets fully specified file name of original per user config file (User.ini).
+  {Gets fully specified file name of original per user config file.
     @return Ini file name.
   }
 begin
   Result := AddBackslash(gUserAppDataDir) + 'User.ini';
 end;
 
-function UserIniFileName: string;
-  {Gets fully specified file name of current per user config file (User.3.ini).
+function V3UserIniFileName: string;
+  {Gets fully specified file name of version 3's per user config file.
     @return Ini file name.
   }
 begin
   Result := AddBackslash(gUserAppDataDir) + 'User.3.ini';
+end;
+
+function UserIniFileName: string;
+  {Gets fully specified file name of current per user config file.
+    @return Ini file name.
+  }
+begin
+  Result := AddBackslash(gUserAppDataDir) + 'User.4.ini';
 end;
 
 procedure StampIniFiles;
@@ -157,6 +163,14 @@ begin
   SetIniInt('MainWindow', 'OverviewTab', 0, UserIniFileName);
 end;
 
+procedure CopyV3UserIniFile;
+  {Copies version 3's per user config file to current location.
+  }
+begin
+  // Copy the file
+  FileCopy(V3UserIniFileName, UserIniFileName, False);
+end;
+
 procedure CreateDefaultCodeGenEntries;
   {Adds Prefs:CodeGen section along with default data.
   }
@@ -219,3 +233,4 @@ procedure DeleteProxyPassword;
 begin
   SetIniString('ProxyServer', 'Password', '', UserIniFileName);
 end;
+

@@ -212,18 +212,26 @@ begin
         end;
         flV1_9:
         begin
-          // Data created by v1.9 or later. Database already in correct place.
-          // User.ini is copied to User.3.ini and hilite info is removed. There
-          // is no user database.
+          // Data created by v1.9 or later. Main database already in correct
+          // place. User.ini is copied to User.4.ini and hilite info is removed.
+          // There is no user database to copy.
           CopyOldUserIniFile;
         end;
         flV2:
         begin
-          // All v2 versions. Database is already in correct place. User.ini is
-          // copied to User.3.ini and hilite info is removed. Any use database
-          // is copied to new location.
+          // All v2 versions. Main database is already in correct place.
+          // User.ini is copied to User.4.ini and hilite info is removed. Any
+          // user database is copied to new location.
           CopyV2UserDatabase;
           CopyOldUserIniFile;
+        end;
+        flV3:
+        begin
+          // All v3 versions. Main database is already in correct place.
+          // User3.ini is copied to User.4.ini. Any user database is copied to
+          // new location.
+          CopyV3UserDatabase;
+          CopyV3UserIniFile;
         end;
       end;
     end;
@@ -235,10 +243,14 @@ begin
         DeleteFile(AddBackslash(gUserAppDataDir) + 'CodeSnip.ini');
       if FileExists(AddBackslash(gUserAppDataDir) + 'User.ini') then
         DeleteFile(AddBackslash(gUserAppDataDir) + 'User.ini');
+      if FileExists(AddBackslash(gUserAppDataDir) + 'User.3.ini') then
+        DeleteFile(AddBackslash(gUserAppDataDir) + 'User.3.ini');
       if DirExists(AddBackslash(gUserAppDataDir) + 'Data') then
         DelTree(AddBackslash(gUserAppDataDir) + 'Data', True, True, True);
       if DirExists(AddBackslash(gUserAppDataDir) + 'UserData') then
         DelTree(AddBackslash(gUserAppDataDir) + 'UserData', True, True, True);
+      if DirExists(AddBackslash(gUserAppDataDir) + 'UserData.3') then
+        DelTree(AddBackslash(gUserAppDataDir) + 'UserData.3', True, True, True);
     end;
   end;
 
@@ -249,7 +261,7 @@ begin
     CreateDefaultCodeGenEntries;
 
   // Check if there's a proxy server password in incompatible format and delete
-  // it if so. Inform user
+  // it if so. Inform user.
   if (UserIniFileVer < 7) and
     (GetIniString('ProxyServer', 'Password', '', UserIniFileName) <> '' ) then
   begin
@@ -274,7 +286,7 @@ begin
   if not MainDatabaseExists then
     MsgBox(
       'The Code Snippets database is not currently installed. '
-        + 'Therefore when you first start CodeSnip no routines will be '
+        + 'Therefore when you first start CodeSnip no snippets will be '
         + 'displayed.'#10#10
         + 'You can download the database using the program''s "Database | '
         + 'Update From Web" menu option.',

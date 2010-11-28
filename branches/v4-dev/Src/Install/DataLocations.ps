@@ -28,7 +28,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -38,46 +38,51 @@
 }
 
 {
-  File locations in CodeSnip versions:
+  File locations in different CodeSnip versions
+  ---------------------------------------------
+
+  Note that the location of %AppData% varies according to the current user.
+  Version numbers refer to the CodeSnip release.
 
   + Versions up to v1.8.11:
-    - Config file is CodeSnip.ini and is stored in DelphiDabbler\CodeSnip sub-
-      directory of the per-user application data folder.
-    - Main database is in DelphiDabbler\CodeSnip\Data sub-directory of the
-      per-user application data folder.
+    - Config file: %AppData%\DelphiDabbler\CodeSnip\CodeSnip.ini
+    - Main database directory: %AppData%\DelphiDabbler\CodeSnip\Data
     - No user defined database.
 
   + From v1.9 to v1.9.4:
     - Two config files:
-      o Common.ini in DelphiDabbler\CodeSnip sub-directory of common application
-        data foler.
-      o User.ini in DelphiDabbler\CodeSnip sub-directory of per user application
-        data foler.
-    - Main database moved to the DelphiDabbler\CodeSnip\Data sub-directory of
-      the common application data folder.
+      o %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
+      o %AppData%\DelphiDabbler\CodeSnip\User.ini
+    - Main database directory:
+        %ProgramData%\DelphiDabbler\CodeSnip\Data
     - No user defined database.
 
   + All v2 versions:
     - Two config files:
-      o Common.ini in DelphiDabbler\CodeSnip sub-directory of common application
-        data foler.
-      o User.ini in DelphiDabbler\CodeSnip sub-directory of per user application
-        data foler.
-    - Main database moved to the DelphiDabbler\CodeSnip\Data sub-directory of
-      the common application data folder.
-    - User defined database in the DelphiDabbler\CodeSnip\UserData sub-directory
-      of the per user application data folder.
+      o %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
+      o %AppData%\DelphiDabbler\CodeSnip\User.ini
+    - Main database directory:
+        %ProgramData%\DelphiDabbler\CodeSnip\Data
+    - User defined database directory:
+        %AppData%\DelphiDabbler\CodeSnip\UserData
 
-  + From v3.0:
+  + All v3 versions:
     - Two config files:
-      o Common.ini in DelphiDabbler\CodeSnip sub-directory of common application
-        data foler.
-      o User.3.ini in DelphiDabbler\CodeSnip sub-directory of per user
-        application data foler.
-    - Main database remains in the DelphiDabbler\CodeSnip\Data sub-directory of
-      the common application data folder.
-    - User defined database moves to the DelphiDabbler\CodeSnip\UserData.3 sub-
-      directory of the per user application data folder.
+      o %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
+      o %AppData%\DelphiDabbler\CodeSnip\User.3.ini
+    - Main database directory:
+        %ProgramData%\DelphiDabbler\CodeSnip\Data
+    - User defined database directory:
+        %AppData%\DelphiDabbler\CodeSnip\UserData.3
+
+  + From v4.0:
+    - Two config files:
+      o %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
+      o %AppData%\DelphiDabbler\CodeSnip\User.4.ini
+    - Main database directory:
+        %ProgramData%\DelphiDabbler\CodeSnip\Data
+    - User defined database directory:
+        %AppData%\DelphiDabbler\CodeSnip\UserData.4
 }
 
 type
@@ -88,7 +93,8 @@ type
     flOriginal,   // original locations
     flV1_9,       // v1.9 to v1.9.4
     flV2,         // all v2 versions
-    flV3          // v3.0 and later
+    flV3,         // all v3 versions
+    flV4          // from v4.0
   );
 
 var
@@ -120,7 +126,7 @@ function DataConversionRequired: Boolean;
   }
 begin
   Result := (gFileLocation = flOriginal) or (gFileLocation = flV1_9) or
-    (gFileLocation = flV2);
+    (gFileLocation = flV2) or (gFileLocation = flV3);
 end;
 
 procedure InitAppDataFolders;
@@ -176,7 +182,9 @@ begin
   if FileExists(AddBackslash(gCommonAppDataDir) + 'Common.ini') then
   begin
     // We have CodeSnip v1.9 or later
-    if FileExists(AddBackslash(gUserAppDataDir) + 'User.3.ini') then
+    if FileExists(AddBackslash(gUserAppDataDir) + 'User.4.ini') then
+      gFileLocation := flV4
+    else if FileExists(AddBackslash(gUserAppDataDir) + 'User.3.ini') then
       // We have CodeSnip v3 or later
       gFileLocation := flV3
     else
