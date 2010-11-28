@@ -2,6 +2,8 @@ inherited CompilersDlg: TCompilersDlg
   Caption = 'Configure Compilers'
   ClientHeight = 362
   ClientWidth = 471
+  ExplicitWidth = 477
+  ExplicitHeight = 388
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -47,10 +49,6 @@ inherited CompilersDlg: TCompilersDlg
       TabOrder = 1
       object tsExecFile: TTabSheet
         Caption = '&Compiler'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 136
         object lblCompilerPath: TLabel
           Left = 4
           Top = 4
@@ -180,10 +178,6 @@ inherited CompilersDlg: TCompilersDlg
       object tsOutputLog: TTabSheet
         Caption = 'Output &Log'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 136
         object lblLogPrefixes: TLabel
           Left = 4
           Top = 4
@@ -237,9 +231,9 @@ inherited CompilersDlg: TCompilersDlg
   object btnDetect: TButton
     Left = 8
     Top = 304
-    Width = 145
+    Width = 153
     Height = 25
-    Caption = '&Auto Detect Compilers'
+    Caption = '&Detect Delphi Compilers'
     TabOrder = 1
     OnClick = btnDetectClick
   end
