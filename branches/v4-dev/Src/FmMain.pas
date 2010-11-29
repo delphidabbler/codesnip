@@ -1363,7 +1363,9 @@ begin
   // Free owned objects
   fHistory.Free;
   fMainDisplayMgr.Free;
-  fStatusBarMgr.Free;
+  // fStatusBarMgr MUST be nilled: otherwise it can be called after status bar
+  // control has been freed and so cause AV when trying to use the control
+  FreeAndNil(fStatusBarMgr);
 end;
 
 procedure TMainForm.FormResize(Sender: TObject);
