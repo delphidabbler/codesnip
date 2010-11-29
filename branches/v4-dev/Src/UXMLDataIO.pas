@@ -185,7 +185,7 @@ type
     fFileNum: Integer;          // Number of next available unused data file
     fRoutinesNode: IXMLNode;    // Reference to <routines> node in document
     fCategoriesNode: IXMLNode;  // Reference to <categories> node in document
-    fMinREMLVer: TREMLVersion;  // Minimum REML version needed for Extra props
+//    fMinREMLVer: TREMLVersion;  // Minimum REML version needed for Extra props
     procedure WriteNameList(const Parent: IXMLNode;
       const ListName, ItemName: string; const Items: IStringList);
       {Writes a list of names to XML.
@@ -277,13 +277,8 @@ const
   // watermark (never changes for all versions)
   cWatermark            = '531257EA-1EE3-4B0F-8E46-C6E7F7140106';
   // supported file format versions
-  cVersion1             = 1;
-  cVersion2             = 2;
-  cVersion3             = 3;
-  cVersion4             = 4;
-  cEarliestVersion      = cVersion1;
-  cMinOutputVersion     = cVersion3;
-  cLatestVersion        = cVersion4;
+  cEarliestVersion      = 1;
+  cLatestVersion        = 5;
 
 
 { Support routines }
@@ -424,7 +419,7 @@ begin
   if DatabaseExists then
   begin
     // Database exists: load it
-    fXMLDoc.LoadFromFile(WideString(PathToXMLFile));
+    fXMLDoc.LoadFromFile(PathToXMLFile);
     fXMLDoc.Active := True;
     try
       fVersion := ValidateDoc;
@@ -563,7 +558,12 @@ var
     if DataFileName = '' then
       Error(sMissingSource, [Routine]);
     try
-      Result := FileToString(DataFile(DataFileName));
+      // load the file: before file v5 files used default encoding, from v5
+      // UTF-8 with no BOM was used
+      if fVersion < 5 then
+        Result := FileToString(DataFile(DataFileName), TEncoding.Default)
+      else
+        Result := FileToString(DataFile(DataFileName), TEncoding.UTF8);
     except
       // convert file errors to EDataIO
       on E: EFOpenError do
@@ -608,7 +608,7 @@ var
   begin
     // We get extra data from different nodes depending on file version
     try
-      if fVersion = cVersion1 then
+      if fVersion = 1 then
         // version 1: build extra data from comments, credits and credits URL
         // nodes
         Result := TRoutineExtraHelper.BuildActiveText(
@@ -740,14 +740,8 @@ procedure TXMLDataWriter.Finalise;
   }
 var
   FS: TFileStream;      // stream onto output file
-  RequiredVer: Integer; // required file version number
 begin
-  // Set required database file version
-  if fMinREMLVer < 3 then
-    RequiredVer := cVersion3
-  else
-    RequiredVer := cVersion4;
-  fXMLDoc.DocumentElement.SetAttribute(cRootVersionAttr, RequiredVer);
+  fXMLDoc.DocumentElement.SetAttribute(cRootVersionAttr, cLatestVersion);
   // We use a TFileStream and TXMLDocument.SaveToStream rather than calling
   // TXMLDocument.SaveToFile so that any problem creating file is reported via
   // a known Delphi exception that can be handled.
@@ -755,6 +749,7 @@ begin
   try
     FS := TFileStream.Create(PathToXMLFile, fmCreate);
     try
+      fXMLDoc.Encoding := 'UTF-8';
       fXMLDoc.SaveToStream(FS);
     finally
       FreeAndNil(FS);
@@ -794,9 +789,6 @@ begin
 
     // Initialise file count
     fFileNum := 0;
-
-    // Assume lowest version of REML is required
-    fMinREMLVer := TREMLAnalyser.FIRST_VERSION;
 
     // Create minimal document containing tags required to be present by other
     // methods
@@ -928,7 +920,6 @@ procedure TXMLDataWriter.WriteRoutineProps(const RoutineName: string;
 var
   RoutineNode: IXMLNode;        // routine's node
   FileName: string;             // name of file where source code stored
-  AREMLVer: TREMLVersion;       // version of REML required for a snippet
 const
   // mask used to format source code file name
   cFileNameMask = '%d.dat';
@@ -940,10 +931,11 @@ begin
     // Add properties
     fXMLDoc.CreateElement(RoutineNode, cCatIdNode, Props.Cat);
     fXMLDoc.CreateElement(RoutineNode, cDescriptionNode, Props.Desc);
-    // source code is written to file and filename stored in XML
+    // source code is written to a UTF-8 encoded file with no BOM and filename
+    // is stored in XML
     Inc(fFileNum);
     FileName := Format(cFileNameMask, [fFileNum]);
-    StringToFile(Props.SourceCode, DataFile(FileName));
+    StringToFile(Props.SourceCode, DataFile(FileName), TEncoding.UTF8);
     fXMLDoc.CreateElement(RoutineNode, cSourceCodeFileNode, FileName);
     // extra property is only written if value exists
     if not Props.Extra.IsEmpty then
@@ -953,10 +945,6 @@ begin
         cExtraNode,
         TRoutineExtraHelper.BuildREMLMarkupLowestVer(Props.Extra)
       );
-      // note if a later REML version is required
-      AREMLVer := TREMLAnalyser.LowestWriterVersion(Props.Extra);
-      if AREMLVer > fMinREMLVer then
-        fMinREMLVer := AREMLVer;
     end;
     // Kind property replaces StandardFormat
     TXMLDocHelper.WriteSnippetKind(fXMLDoc, RoutineNode, Props.Kind);
