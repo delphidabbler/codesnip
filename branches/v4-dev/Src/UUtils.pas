@@ -41,7 +41,7 @@ interface
 
 uses
   // Delphi
-  Classes;
+  SysUtils, Classes;
 
 
 procedure CopyFile(const Source, Dest: string);
@@ -131,17 +131,27 @@ function LongToShortFilePath(const LongName: string): string;
     @return Short file name.
   }
 
-function FileToString(const FileName: string): string;
+function FileToString(const FileName: string): string; overload;
+  // TODO: Change all calls to this routine to use encoding then remove this
   {Stores content of a file in a string.
     @param FileName [in] Name of file to be read.
     @return String containing file contents.
   }
 
-procedure StringToFile(const Str, FileName: string);
+function FileToString(const FileName: string; const Encoding: TEncoding):
+  string; overload;
+  // TODO: Comment this routine
+
+procedure StringToFile(const Str, FileName: string); overload;
+  // TODO: Change all calls to this routine to use encoding then remove this
   {Writes a string to a text file.
     @param Str [in] String to be written to file.
     @param FileName [in] Name of file to receive string.
   }
+
+procedure StringToFile(const Str, FileName: string; const Encoding: TEncoding);
+  overload;
+  // TODO: Comment this routine.
 
 function IsDirectory(const DirName: string): Boolean;
   {Checks if a directory exists.
@@ -273,7 +283,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils, Windows, ShlObj, ActiveX, Messages, Character,
+  StrUtils, Windows, ShlObj, ActiveX, Messages, Character,
   // Project
   UConsts;
 
@@ -645,7 +655,8 @@ begin
   SetLength(Result, GetShortPathName(PChar(LongName), PChar(Result), MAX_PATH));
 end;
 
-function StreamToString(const Stm: TStream): string;
+function StreamToString(const Stm: TStream): string; overload;
+  // TODO: Delete this once all code is converted to use Encoding version
   {Reads content of a stream into a string. Stream is read from current
   position.
     @param Stm [in] Stream to be read.
@@ -655,6 +666,25 @@ var
   SS: TStringStream;  // used to copy stream to string
 begin
   SS := TStringStream.Create('');
+  try
+    SS.CopyFrom(Stm, 0);
+    Result := SS.DataString;
+  finally
+    SS.Free;
+  end;
+end;
+
+function StreamToString(const Stm: TStream; const Encoding: TEncoding): string;
+  overload;
+  // TODO: Recomment this routine
+  {Reads content of a stream into a string. The whole of the stream is read.
+    @param Stm [in] Stream to be read.
+    @return String containing stream contents.
+  }
+var
+  SS: TStringStream;  // used to copy stream to string
+begin
+  SS := TStringStream.Create('', Encoding);
   try
     SS.CopyFrom(Stm, 0);
     Result := SS.DataString;
@@ -679,7 +709,21 @@ begin
   end;
 end;
 
-procedure StringToStream(const Str: string; const Stm: TStream);
+function FileToString(const FileName: string; const Encoding: TEncoding):
+  string;
+var
+  FS: TFileStream;  // stream used to read file
+begin
+  FS := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+  try
+    Result := StreamToString(FS, Encoding);
+  finally
+    FS.Free;
+  end;
+end;
+
+procedure StringToStream(const Str: string; const Stm: TStream); overload;
+  // TODO: Delete this once all code is converted to use Encoding version
   {Writes a string into a stream. The string is written at the current
   stream position.
     @param Str [in] String to be written to stream.
@@ -689,6 +733,25 @@ var
   SS: TStringStream;  // used to copy string to stream
 begin
   SS := TStringStream.Create(Str);
+  try
+    Stm.CopyFrom(SS, SS.Size);
+  finally
+    FreeAndNil(SS);
+  end;
+end;
+
+procedure StringToStream(const Str: string; const Stm: TStream;
+  const Encoding: TEncoding); overload;
+  // TODO: Recomment this routine
+  {Writes a string into a stream. The string is written at the current
+  stream position.
+    @param Str [in] String to be written to stream.
+    @param Stm [in] Stream to receive string.
+  }
+var
+  SS: TStringStream;  // used to copy string to stream
+begin
+  SS := TStringStream.Create(Str, Encoding);
   try
     Stm.CopyFrom(SS, SS.Size);
   finally
@@ -707,6 +770,18 @@ begin
   FS := TFileStream.Create(FileName, fmCreate);
   try
     StringToStream(Str, FS);
+  finally
+    FreeAndNil(FS);
+  end;
+end;
+
+procedure StringToFile(const Str, FileName: string; const Encoding: TEncoding);
+var
+  FS: TFileStream;  // stream used to write file
+begin
+  FS := TFileStream.Create(FileName, fmCreate);
+  try
+    StringToStream(Str, FS, Encoding);
   finally
     FreeAndNil(FS);
   end;
