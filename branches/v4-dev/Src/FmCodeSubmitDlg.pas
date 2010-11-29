@@ -78,7 +78,7 @@ type
     frmPrivacy: TFixedHTMLDlgFrame;
     procedure btnPreviewClick(Sender: TObject);
   strict private
-    fData: TStream; // Stream containing XML document describing submission
+    var fData: TStream; // Contains submission as XML document in UTF-8 format
     procedure SelectRoutine(const Routine: TRoutine);
       {Selects the specified snippet in the check list of snippets or clears
       selections.
@@ -238,13 +238,13 @@ procedure TCodeSubmitDlg.btnPreviewClick(Sender: TObject);
 var
   SS: TStringStream;  // stream used to pass XML data to preview dialog
 begin
-  SS := TStringStream.Create('');
+  SS := TStringStream.Create('', TEncoding.UTF8);
   try
     SS.CopyFrom(fData, 0);
     TPreviewDlg.Execute(Self, SS.DataString);
     fData.Position := 0;
   finally
-    FreeAndNil(SS);
+    SS.Free;
   end;
 end;
 
@@ -284,7 +284,7 @@ destructor TCodeSubmitDlg.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fData);
+  fData.Free;
   inherited;
 end;
 
@@ -309,7 +309,7 @@ begin
       fData.Position := 0;
       WebSvc.SubmitData(fData);
     finally
-      FreeAndNil(WebSvc);
+      WebSvc.Free;
       Enabled := True;
       Screen.Cursor := crDefault;
     end;
@@ -460,7 +460,7 @@ begin
       List.Add(Routine);
       frmRoutines.SelectedRoutines := List;
     finally
-      FreeAndNil(List);
+      List.Free;
     end;
   end;
 end;
