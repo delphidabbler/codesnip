@@ -118,7 +118,6 @@ resourcestring
 
   Format is:
 
-    MD5: String[32];          - MD5 hash of remaining data
     FileCount: SmallInt;      - number of files encoded in datastream
 
   followed by FileCount file records of:
@@ -153,8 +152,6 @@ begin
   inherited Create;
   fLocalDir := LocalDir;
   fReader := TDataStreamReader.Create(UpdateData);
-  // skip over MD5 checksum: not used in this version of CodeSnip
-  fReader.ReadString(32);
 end;
 
 destructor TFileUpdater.Destroy;

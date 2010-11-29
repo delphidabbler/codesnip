@@ -237,7 +237,7 @@ uses
 const
   // Web service info
   cScriptName = 'codesnip-updt.php';                  // script name
-  cUserAgent = 'DelphiDabbler-CodeSnip-Updater-v4';  // user agent string
+  cUserAgent = 'DelphiDabbler-CodeSnip-Updater-v5';  // user agent string
 
 
 resourcestring
@@ -383,7 +383,6 @@ begin
   Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
-    // NOTE: Response may still include some news data, but this is ignored
     PostStdCommand('logon', Response);
   finally
     FreeAndNil(Response);
