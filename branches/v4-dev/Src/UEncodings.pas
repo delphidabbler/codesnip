@@ -296,10 +296,12 @@ begin
   fCodePageNameMap.Add(Windows1252CharSetName, Windows1252CodePage);
 
   // Create & populate reverse map of char set names to code pages
-  // values are same as added to fCodePageNameMap, with key and value reversed
+  // values are same as added to fCodePageNameMap with key and value reversed
+  // (except we ignore default code page)
   fCodePageValueMap := TCodePageValueMap.Create;
   for CodePagePair in fCodePageNameMap do
-    fCodePageValueMap.Add(CodePagePair.Value, CodePagePair.Key);
+    if CodePagePair.Key <> DefaultCharSetName then
+      fCodePageValueMap.Add(CodePagePair.Value, CodePagePair.Key);
 
 end;
 
