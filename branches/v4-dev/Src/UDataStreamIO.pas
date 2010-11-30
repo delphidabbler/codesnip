@@ -44,7 +44,7 @@ interface
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Classes,
   // DelphiDabbler library
   PJStreamWrapper,
   // Project
@@ -60,12 +60,19 @@ type
   }
   TDataStreamReader = class(TPJStreamWrapper)
   strict private
+    var fEncoding: TEncoding;
+    var fOwnsEncoding: Boolean;
     function ReadHexDigits(const Count: Integer): LongInt;
       {Reads hex digits from stream.
         @param Count [in] Number of hex digits to read.
         @return Value read from stream.
       }
   public
+    constructor Create(const Stream: TStream;
+      const OwnsStream: Boolean = False); overload; override;
+    constructor Create(const Stream: TStream; const Encoding: TEncoding;
+      const OwnsStream, OwnsEncoding: Boolean); reintroduce; overload;
+    destructor Destroy; override;
     function ReadSmallInt: SmallInt;
       {Reads small integer from stream, encoded as 4 hex digits.
         @return Value read from stream.
@@ -78,17 +85,32 @@ type
       {Reads an Int64 value from stream, encoded as 16 char hex digit.
         @return Value read from stream.
       }
-    function ReadString(const Length: Integer): Windows1252String;
+    function ReadAnsiString(const Length: Integer): RawByteString;
       {Reads a string of specified size from stream.
         @param Length [in] Length of string to be read.
         @return String read from stream.
       }
-    function ReadSizedString: Windows1252String;
+    function ReadSizedAnsiString: RawByteString;
       {Reads string from stream that is preceded by a small int length
       descriptor.
         @return String read from stream.
       }
-    function ReadSizedLongString: Windows1252String;
+    function ReadSizedLongAnsiString: RawByteString;
+      {Reads string from stream that is preceded by a long int length
+      descriptor.
+        @return String read from stream.
+      }
+    function ReadString(const Length: Integer): UnicodeString;
+      {Reads a string of specified size from stream.
+        @param Length [in] Length of string to be read.
+        @return String read from stream.
+      }
+    function ReadSizedString: UnicodeString;
+      {Reads string from stream that is preceded by a small int length
+      descriptor.
+        @return String read from stream.
+      }
+    function ReadSizedLongString: UnicodeString;
       {Reads string from stream that is preceded by a long int length
       descriptor.
         @return String read from stream.
@@ -116,7 +138,7 @@ type
       {Writes a 32 bit integer to the stream as hex digits.
         @param Value [in] Value to be written.
       }
-    procedure WriteString(const Str: Windows1252String; const Length: Integer);
+    procedure WriteString(const Str: RawByteString; const Length: Integer);
       overload;
       {Writes a fixed number of characters from a Windows-1252 string to the
       stream.
@@ -129,7 +151,7 @@ type
         @param Str [in] String to be written.
         @param Length [in] Number of characters from string to write.
       }
-    procedure WriteString(const Str: Windows1252String); overload;
+    procedure WriteString(const Str: RawByteString); overload;
       {Writes a Windows-1252 string to stream.
         @param Str [in] String to be written.
       }
@@ -137,7 +159,7 @@ type
       {Writes a unicode string to stream.
         @param Str [in] String to be written.
       }
-    procedure WriteSizedString(const Str: Windows1252String); overload;
+    procedure WriteSizedString(const Str: RawByteString); overload;
       {Writes a Windows-1252 string to stream preceded by a 16 bit length as hex
       digits.
         @param Str [in] String to be written.
@@ -147,7 +169,7 @@ type
       digits.
         @param Str [in] String to be written.
       }
-    procedure WriteSizedLongString(const Str: Windows1252String); overload;
+    procedure WriteSizedLongString(const Str: RawByteString); overload;
       {Writes a Windows-1252 string to stream preceded by a 32 bit length as hex
       digits.
         @param Str [in] String to be written.
@@ -191,13 +213,52 @@ implementation
 
 { TDataStreamReader }
 
+constructor TDataStreamReader.Create(const Stream: TStream;
+  const OwnsStream: Boolean);
+begin
+  Create(Stream, nil, True, True);
+end;
+
+constructor TDataStreamReader.Create(const Stream: TStream;
+  const Encoding: TEncoding; const OwnsStream, OwnsEncoding: Boolean);
+begin
+  inherited Create(Stream, OwnsStream);
+  if Assigned(Encoding) then
+  begin
+    fEncoding := Encoding;
+    fOwnsEncoding := OwnsEncoding;
+  end
+  else
+  begin
+    fEncoding := TMBCSEncoding.Create(Windows1252CodePage);
+    fOwnsEncoding := True;
+  end;
+end;
+
+destructor TDataStreamReader.Destroy;
+begin
+  if fOwnsEncoding then
+    TEncodingHelper.FreeEncoding(fEncoding);
+  inherited;
+end;
+
+function TDataStreamReader.ReadAnsiString(const Length: Integer): RawByteString;
+  {Reads a string of specified size from stream.
+    @param Length [in] length of string to be read.
+    @return String read from stream.
+  }
+begin
+  SetLength(Result, Length);
+  BaseStream.ReadBuffer(Result[1], Length);
+end;
+
 function TDataStreamReader.ReadHexDigits(const Count: Integer): LongInt;
   {Reads hex digits from stream.
     @param Count [in] Number of hex digits to read.
     @return Value read from stream.
   }
 begin
-  Result := StrToInt('$' + string(ReadString(Count)));
+  Result := StrToInt('$' + string(ReadAnsiString(Count)));
 end;
 
 function TDataStreamReader.ReadInt64: Int64;
@@ -217,7 +278,18 @@ begin
   Result := ReadHexDigits(8);
 end;
 
-function TDataStreamReader.ReadSizedLongString: Windows1252String;
+function TDataStreamReader.ReadSizedAnsiString: RawByteString;
+  {Reads string from stream that is preceded by a small int length descriptor.
+    @return String read from stream.
+  }
+var
+  Length: SmallInt; // length of string
+begin
+  Length := ReadSmallInt;
+  Result := ReadAnsiString(Length);
+end;
+
+function TDataStreamReader.ReadSizedLongAnsiString: RawByteString;
   {Reads string from stream that is preceded by a long int length descriptor.
     @return String read from stream.
   }
@@ -225,13 +297,18 @@ var
   Length: LongInt; // length of string
 begin
   Length := ReadLongInt;
+  Result := ReadAnsiString(Length);
+end;
+
+function TDataStreamReader.ReadSizedLongString: UnicodeString;
+var
+  Length: LongInt; // length of string
+begin
+  Length := ReadLongInt;
   Result := ReadString(Length);
 end;
 
-function TDataStreamReader.ReadSizedString: Windows1252String;
-  {Reads string from stream that is preceded by a small int length descriptor.
-    @return String read from stream.
-  }
+function TDataStreamReader.ReadSizedString: UnicodeString;
 var
   Length: SmallInt; // length of string
 begin
@@ -247,14 +324,13 @@ begin
   Result := ReadHexDigits(4);
 end;
 
-function TDataStreamReader.ReadString(const Length: Integer): Windows1252String;
-  {Reads a string of specified size from stream.
-    @param Length [in] length of string to be read.
-    @return String read from stream.
-  }
+function TDataStreamReader.ReadString(const Length: Integer): UnicodeString;
+var
+  Bytes: TBytes;
 begin
-  SetLength(Result, Length);
-  BaseStream.ReadBuffer(Result[1], Length);
+  SetLength(Bytes, Length);
+  BaseStream.ReadBuffer(Pointer(Bytes)^, Length);
+  Result := fEncoding.GetString(Bytes);
 end;
 
 { TDataStreamWriter }
@@ -277,7 +353,7 @@ begin
   WriteHex(Value, 8);
 end;
 
-procedure TDataStreamWriter.WriteSizedLongString(const Str: Windows1252String);
+procedure TDataStreamWriter.WriteSizedLongString(const Str: RawByteString);
   {Writes a Windows-1252 string to stream preceded by a 32 bit length as hex
   digits.
     @param Str [in] String to be written.
@@ -296,7 +372,7 @@ begin
   WriteString(Str, Length(Str));
 end;
 
-procedure TDataStreamWriter.WriteSizedString(const Str: Windows1252String);
+procedure TDataStreamWriter.WriteSizedString(const Str: RawByteString);
   {Writes a Windows-1252 string to stream preceded by a 16 bit length as hex
   digits.
     @param Str [in] String to be written.
@@ -323,7 +399,7 @@ begin
   WriteHex(Word(Value), 4);
 end;
 
-procedure TDataStreamWriter.WriteString(const Str: Windows1252String);
+procedure TDataStreamWriter.WriteString(const Str: RawByteString);
   {Writes a Windows-1252 string to stream.
     @param Str [in] String to be written.
   }
@@ -339,7 +415,7 @@ begin
   WriteString(Str, Length(Str));
 end;
 
-procedure TDataStreamWriter.WriteString(const Str: Windows1252String;
+procedure TDataStreamWriter.WriteString(const Str: RawByteString;
   const Length: Integer);
   {Writes a fixed number of characters from a Windows-1252 string to the stream.
     @param Str [in] String to be written.

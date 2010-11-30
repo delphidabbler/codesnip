@@ -275,15 +275,15 @@ begin
     for Idx := 1 to FileCount do
     begin
       // Get file details: name, date stamp, checksum and content
-      FileName := SourceFileSpec(string(Reader.ReadSizedString));
+      FileName := SourceFileSpec(string(Reader.ReadSizedAnsiString));
       DOSDateTime := TDOSDateTimeFactory.CreateFromDOSTimeStamp(
         Reader.ReadLongInt
       );
-      MD5 := string(Reader.ReadString(32)); // string cast to TPJMD5Digest
+      MD5 := string(Reader.ReadAnsiString(32)); // string cast to TPJMD5Digest
       if Version = 1 then
-        Content := Reader.ReadSizedString
+        Content := Reader.ReadSizedAnsiString
       else
-        Content := Reader.ReadSizedLongString;
+        Content := Reader.ReadSizedLongAnsiString;
       if TPJMD5.Calculate(Content) <> MD5 then
         raise ECodeSnip.CreateFmt(sBadFileContent, [FileName]);
       // Write file and set date stamp

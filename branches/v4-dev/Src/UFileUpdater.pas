@@ -207,9 +207,9 @@ var
   Content: Windows1252String; // file content
 begin
   // Get info about file from data stream
-  Name := fReader.ReadSizedString;
+  Name := fReader.ReadSizedAnsiString;
   UnixDate := fReader.ReadInt64;
-  Content := fReader.ReadSizedString;
+  Content := fReader.ReadSizedAnsiString;
   // and create file
   WriteFile(Name, Content, UnixDate);
 end;
