@@ -168,7 +168,7 @@ procedure TSplashForm.pbMainPaint(Sender: TObject);
 var
   GIF: TGIFImage; // main splash image
 const
-  cVerPos: TPoint = (X: 46; Y: 113);  // position of version info text
+  cVerPos: TPoint = (X: 34; Y: 113);  // position of version info text
 begin
   // Load and display splash screen image
   GIF := TGIFImage.Create;
