@@ -285,29 +285,37 @@ var
   FileSpec: string;                       // name & path of each file to restore
   DOSDateTime: IDOSDateTime;              // date stamp of each file to restore
   FileInfo: TBackupFileLoader.TFileInfo;  // info about each file to restore
+  FileEncoding: TEncoding;                // encoding of each file to restore
 resourcestring
   // Error message
   sBadFileID = 'Invalid file ID for file "%s"';
 begin
   // Make sure restore folder exists
   EnsureFolders(fSrcFolder);
-  // Load backup file contents into appropriate reader object
+  // Load backup file contents
   BakFileLoader := nil;
   BakFileStream := TFileStream.Create(fBakFile, fmOpenRead or fmShareDenyNone);
   try
     BakFileLoader := TBackupFileLoaderFactory.Create(BakFileStream);
     BakFileLoader.Load;
+    // Test for correct file ID if present (NulFileID indicates not present)
     if (BakFileLoader.FileID <> TBackupFileLoader.NulFileID)
       and (BakFileLoader.FileID <> fFileID) then
       raise EBackupFileLoader.CreateFmt(sBadFileID, [FileSpec]);
+    // Restore each file
     for FileInfo in BakFileLoader do
     begin
       FileSpec := SourceFileSpec(FileInfo.Name);
       DOSDateTime := TDOSDateTimeFactory.CreateFromDOSTimeStamp(
         FileInfo.TimeStamp
       );
-      // TODO: use FileInfo.CharSet to write file in required encoding
-      StringToFile(FileInfo.Content, FileSpec);
+      // restore file using required encoding
+      FileEncoding := TEncodingHelper.GetEncoding(FileInfo.CharSet);
+      try
+        StringToFile(FileInfo.Content, FileSpec, FileEncoding);
+      finally
+        TEncodingHelper.FreeEncoding(FileEncoding);
+      end;
       DOSDateTime.ApplyToFile(FileSpec);
     end;
   finally
