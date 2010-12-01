@@ -87,80 +87,131 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes,
+  SysUtils, Classes, Generics.Collections,
   // DelphiDabbler library
   PJMD5,
   // Project
-  UDataStreamIO, UDOSDateTime, UEncodings, UExceptions, UUtils;
+  UBaseObjects, UDataStreamIO, UDOSDateTime, UEncodings, UExceptions, UUtils;
 
 
-{
-  Backup file format
-  ------------------
+type
 
-  File comprises ASCII text characters. Numbers are encoded in hex format. Only
-  text files can be backed up. There are three supported file formats. All three
-  formats can be read while only v3 files are written.
+  ///  <summary>
+  ///  Abstract base class for classes that load backup files. There is a
+  ///  different sub class for each supported version of the backup file format.
+  ///  </summary>
+  TBackupFileLoader = class abstract(TObject)
+  public
+    type
+      ///  Provides information about a file to be restored from backup
+      TFileInfo = record
+        ///  File name without path
+        Name: string;
+        ///  File's timestamp
+        TimeStamp: LongInt;
+        ///  Character set used to encode the file
+        CharSet: string;
+        ///  Content of file as Unicode
+        Content: string;
+      end;
+    ///  Value used for FileID in file formats that do not support it
+    const NulFileID = 0;
+  strict private
+    var fFileID: SmallInt;          // Value of FileID property
+    var fFiles: TList<TFileInfo>;   // List of file info records
+    var fReader: TDataStreamReader; // Value of Reader object
+  strict protected
+    ///  Checks that two checksums that relate to a specified file and the same.
+    ///  Raises an exception if checksums are different.
+    procedure TestChecksums(const FileName: string;
+      const Required, Actual: TPJMD5Digest);
+    ///  Gets the encoding used for the backup file.
+    function GetFileEncoding: TEncoding; virtual; abstract;
+    ///  Reads header information from the backup file.
+    procedure ReadHeader(out FileID, FileCount: SmallInt); virtual; abstract;
+    ///  Reads information about a file to be restored from the backup file.
+    procedure ReadFileInfo(out FileInfo: TFileInfo); virtual; abstract;
+    ///  Reference to object used to read data from the backup file stream.
+    property Reader: TDataStreamReader read fReader;
+  public
+    ///  Object constructor. Sets up object to get data from a given stream.
+    constructor Create(const Stream: TStream);
+    ///  Object destructor. Tears down object.
+    destructor Destroy; override;
+    ///  Loads the backup file from the stream storing required information in
+    ///  the properties and file list.
+    procedure Load;
+    ///  Backup file identifier.
+    property FileID: SmallInt read fFileID;
+    ///  Gets enumerator for file list.
+    function GetEnumerator: TEnumerator<TFileInfo>;
+  end;
 
-  Version 1 Format
-  ----------------
+  TBackupFileLoaderClass = class of TBackupFileLoader;
 
-    FileCount: SmallInt       - number of files encoded in backup file
+  ///  <summary>
+  ///  Factory class that creates the required TBackupFileLoader object to load
+  ///  different backup file formats.
+  ///  </summary>
+  TBackupFileLoaderFactory = class sealed(TNoConstructObject)
+  strict private
+    ///  Latest supported file format version.
+    const LastSupportedVersion = 3;
+    ///  Gets file format version from backup file stream.
+    class function GetFileVersion(const Stream: TStream): SmallInt;
+  public
+    ///  Creates an instance of the correct backup file loader required to load
+    ///  the backup file from the given stream.
+    class function Create(const Stream: TStream): TBackupFileLoader;
+  end;
 
-  followed by FileCount file records of:
+  ///  <summary>
+  ///  Loads and provides access to data from a backup file that has the version
+  ///  1 file format.
+  ///  </summary>
+  TV1BackupFileLoader = class(TBackupFileLoader)
+  strict protected
+    ///  Returns the backup file's text encoding
+    function GetFileEncoding: TEncoding; override;
+    ///  Reads header information from the backup file.
+    procedure ReadHeader(out FileID, FileCount: SmallInt); override;
+    ///  Reads information about a file to be restored from the backup file.
+    ///  Validates the file's content against a recorded checksum.
+    procedure ReadFileInfo(out FileInfo: TBackupFileLoader.TFileInfo); override;
+  end;
 
-    Name: SizedString;        - name of file without path information
-    FileDate: LongInt;        - file's modification date (DOS file stamp as
-                                LongInt).
-    MD5: String[32];          - MD5 checksum of original file on server
-                                (MD5 of Content should match this value)
-    Content: SizedString;     - file contents
+  ///  <summary>
+  ///  Loads and provides access to data from a backup file that has the version
+  ///  2 file format.
+  ///  </summary>
+  TV2BackupFileLoader = class(TBackupFileLoader)
+  strict protected
+    ///  Returns the backup file's text encoding
+    function GetFileEncoding: TEncoding; override;
+    ///  Reads header information from the backup file.
+    procedure ReadHeader(out FileID, FileCount: SmallInt); override;
+    ///  Reads information about a file to be restored from the backup file.
+    ///  Validates the file's content against a recorded checksum.
+    procedure ReadFileInfo(out FileInfo: TBackupFileLoader.TFileInfo); override;
+  end;
 
-  Version 2 Format
-  ----------------
+  ///  <summary>
+  ///  Loads and provides access to data from a backup file that has the version
+  ///  3 file format.
+  ///  </summary>
+  TV3BackupFileLoader = class(TBackupFileLoader)
+  strict protected
+    ///  Returns the backup file's text encoding
+    function GetFileEncoding: TEncoding; override;
+    ///  Reads header information from the backup file.
+    procedure ReadHeader(out FileID, FileCount: SmallInt); override;
+    ///  Reads information about a file to be restored from the backup file.
+    ///  Validates the file's content against a recorded checksum.
+    procedure ReadFileInfo(out FileInfo: TBackupFileLoader.TFileInfo); override;
+  end;
 
-    $FFFF                     - indicator of post-v1 file type
-    $0002                     - indicator for v2 file type
-    FileCount: SmallInt       - number of files encoded in backup file
-
-  followed by FileCount file records of:
-
-    Name: SizedString;        - name of file without path information
-    FileDate: LongInt;        - file's modification date (DOS file stamp as
-                                LongInt).
-    MD5: String[32];          - MD5 checksum of original file on server
-                                (MD5 of Content should match this value)
-    Content: SizedLongString; - file contents
-
-  Version 3 Format
-  ----------------
-
-    $FFFF                     - indicator of post-v1 file type
-    $0003                     - indicator for v3 file type
-    FileID: SmallInt          - indicator for file type (user defined)
-    FileCount: SmallInt       - number of files encoded in backup file
-
-  followed by FileCount file records of:
-
-    Name: SizedString;        - name of file without path information
-    FileDate: LongInt;        - file's modification date (DOS file stamp as
-                                LongInt).
-    MD5: String[32];          - MD5 checksum of original file on server
-                                (MD5 of Content should match this value)
-    Content: SizedLongString; - file contents
-
-  Data types
-  ----------
-
-    SmallInt        - 16 bit integer encoded as 4 hex digits
-    LongInt         - 32 bit integer encoded as 8 hex digits
-    SizedString     - SmallInt specifying string length followed by specified
-                      number of characters
-    SizedLongString - LongInt specifying string length followed by specified
-                      number of characters
-    String[32]      - 32 character fixed length string
-}
-
+  ///  Type of exception raised by backup file loader objects.
+  EBackupFileLoader = class(ECodeSnip);
 
 { TFolderBackup }
 
@@ -229,69 +280,39 @@ procedure TFolderBackup.Restore;
       later format files, if file type id is incorrect.
   }
 var
-  Reader: TDataStreamReader;  // object used to read data from file
-  FileCount: Integer;         // number of files to restore
-  Idx: Integer;               // loops through all files in backup
-  FileName: string;           // name of file to restore
-  MD5: TPJMD5Digest;          // checksum of file to restore
-  Content: Windows1252String; // content of file to restore
-  DOSDateTime: IDOSDateTime;  // date stamp of file to restore
-  HeaderWord: SmallInt;       // first word value in file
-  Version: SmallInt;          // file version
+  BakFileStream: TStream;                 // stream onto backup file
+  BakFileLoader: TBackupFileLoader;       // loads & analyses backup file
+  FileSpec: string;                       // name & path of each file to restore
+  DOSDateTime: IDOSDateTime;              // date stamp of each file to restore
+  FileInfo: TBackupFileLoader.TFileInfo;  // info about each file to restore
 resourcestring
   // Error message
-  sBadFileContent = 'Invalid content for file "%s"';
   sBadFileID = 'Invalid file ID for file "%s"';
 begin
   // Make sure restore folder exists
   EnsureFolders(fSrcFolder);
-  // Create reader to access data in backup file
-  Reader := TDataStreamReader.Create(
-    TFileStream.Create(fBakFile, fmOpenRead or fmShareDenyNone), True
-  );
+  // Load backup file contents into appropriate reader object
+  BakFileLoader := nil;
+  BakFileStream := TFileStream.Create(fBakFile, fmOpenRead or fmShareDenyNone);
   try
-    // Get number of files stored in backup file and process each one
-    // Read 1st word of file. If it is $FFFF we have v2 or later file, otherwise
-    // it's v1
-    HeaderWord := Reader.ReadSmallInt;
-    if HeaderWord = cWatermark then
+    BakFileLoader := TBackupFileLoaderFactory.Create(BakFileStream);
+    BakFileLoader.Load;
+    if (BakFileLoader.FileID <> TBackupFileLoader.NulFileID)
+      and (BakFileLoader.FileID <> fFileID) then
+      raise EBackupFileLoader.CreateFmt(sBadFileID, [FileSpec]);
+    for FileInfo in BakFileLoader do
     begin
-      // v2 or later: read version then file count
-      Version := Reader.ReadSmallInt;
-      if Version >= 3 then
-      begin
-        // version 3 of later: read file id
-        if Reader.ReadSmallInt <> fFileID then
-          raise ECodeSnip.CreateFmt(sBadFileID, [FileName]);
-      end;
-      FileCount := Reader.ReadSmallInt;
-    end
-    else
-    begin
-      // v1: file count was first word of file
-      Version := 1;
-      FileCount := HeaderWord;
-    end;
-    for Idx := 1 to FileCount do
-    begin
-      // Get file details: name, date stamp, checksum and content
-      FileName := SourceFileSpec(string(Reader.ReadSizedAnsiString));
+      FileSpec := SourceFileSpec(FileInfo.Name);
       DOSDateTime := TDOSDateTimeFactory.CreateFromDOSTimeStamp(
-        Reader.ReadLongInt
+        FileInfo.TimeStamp
       );
-      MD5 := string(Reader.ReadAnsiString(32)); // string cast to TPJMD5Digest
-      if Version = 1 then
-        Content := Reader.ReadSizedAnsiString
-      else
-        Content := Reader.ReadSizedLongAnsiString;
-      if TPJMD5.Calculate(Content) <> MD5 then
-        raise ECodeSnip.CreateFmt(sBadFileContent, [FileName]);
-      // Write file and set date stamp
-      StringToFile(string(Content), FileName);
-      DOSDateTime.ApplyToFile(FileName);
+      // TODO: use FileInfo.CharSet to write file in required encoding
+      StringToFile(FileInfo.Content, FileSpec);
+      DOSDateTime.ApplyToFile(FileSpec);
     end;
   finally
-    FreeAndNil(Reader);
+    BakFileLoader.Free;
+    BakFileStream.Free;
   end;
 end;
 
@@ -302,6 +323,217 @@ function TFolderBackup.SourceFileSpec(const FileName: string): string;
   }
 begin
   Result := IncludeTrailingPathDelimiter(fSrcFolder) + FileName;
+end;
+
+{ TBackupFileLoader }
+
+constructor TBackupFileLoader.Create(const Stream: TStream);
+begin
+  inherited Create;
+  fFiles := TList<TFileInfo>.Create;
+  fReader := TDataStreamReader.Create(Stream, GetFileEncoding, False, True);
+end;
+
+destructor TBackupFileLoader.Destroy;
+begin
+  fReader.Free;
+  fFiles.Free;
+  inherited;
+end;
+
+function TBackupFileLoader.GetEnumerator: TEnumerator<TFileInfo>;
+begin
+  Result := fFiles.GetEnumerator;
+end;
+
+procedure TBackupFileLoader.Load;
+resourcestring
+  // Error message
+  sReadError = 'Error reading backup file: %s';
+var
+  FileCount: SmallInt;  // number of files in backup
+  I: Integer;           // loops through all files in backup
+  FI: TFileInfo;        // stores information about each file
+begin
+  try
+    ReadHeader(fFileID, FileCount);
+    for I := 1 to FileCount do
+    begin
+      ReadFileInfo(FI);
+      fFiles.Add(FI);
+    end;
+  except
+    on E: EStreamError do
+      raise EBackupFileLoader.CreateFmt(sReadError, [E.Message]);
+    else
+      raise;
+  end;
+end;
+
+procedure TBackupFileLoader.TestChecksums(const FileName: string;
+  const Required, Actual: TPJMD5Digest);
+resourcestring
+  // Error message
+  sCorruptFile = 'Backup file is corrupt. Checksum error in file %s';
+begin
+  if Required <> Actual then
+    raise EBackupFileLoader.CreateFmt(sCorruptFile, [FileName]);
+end;
+
+{ TBackupFileLoaderFactory }
+
+class function TBackupFileLoaderFactory.Create(
+  const Stream: TStream): TBackupFileLoader;
+resourcestring
+  // Error messages
+  sUnknownVersion = 'Unsupported backup file version: %d';
+  sBadFormat = 'Backup file is not in required format';
+var
+  Version: SmallInt;  // backup file version
+const
+  Map: array[1..3] of TBackupFileLoaderClass = (
+    TV1BackupFileLoader,
+    TV2BackupFileLoader,
+    TV3BackupFileLoader
+  );
+begin
+  try
+    Version := GetFileVersion(Stream);
+    if Version > LastSupportedVersion then
+      raise EBackupFileLoader.CreateFmt(sUnknownVersion, [Version]);
+    Result := Map[Version].Create(Stream);
+  except
+    on E: EStreamError do
+      raise EBackupFileLoader.Create(sBadFormat);
+    else
+      raise;
+  end;
+end;
+
+class function TBackupFileLoaderFactory.GetFileVersion(
+  const Stream: TStream): SmallInt;
+var
+  Reader: TDataStreamReader;  // reads formatted data from stream
+  FirstWord: SmallInt;        // first 16 bit word in stream
+begin
+  Reader := TDataStreamReader.Create(Stream, TEncoding.ASCII, False, False);
+  try
+    FirstWord := Reader.ReadSmallInt;
+    if FirstWord <> SmallInt($FFFF) then
+      Result := 1 // file doesn't begin with watermark -> version 1 file
+    else
+      Result := Reader.ReadSmallInt;  // file version stored at file offset 4
+    Stream.Position := 0;
+  finally
+    Reader.Free;
+  end;
+end;
+
+{ TV1BackupFileLoader }
+
+function TV1BackupFileLoader.GetFileEncoding: TEncoding;
+begin
+  Result := TEncoding.Default;
+end;
+
+procedure TV1BackupFileLoader.ReadFileInfo(
+  out FileInfo: TBackupFileLoader.TFileInfo);
+var
+  Content: AnsiString;    // content of file being restored
+  Checksum: TPJMD5Digest; // file checksum recorded in backup
+begin
+  FileInfo.Name := Reader.ReadSizedString;
+  FileInfo.TimeStamp := Reader.ReadLongInt;
+  Checksum := Reader.ReadString(32);
+  // checksum was made of content as ANSI string so we load it as such, test
+  // checksum and only then convert to Unicode
+  Content := Reader.ReadSizedAnsiString;
+  TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(Content));
+  FileInfo.Content := string(Content);
+  // All files were assumed by earlier readers as having system default encoding
+  // even though some files would not (e.g. .xml files). We make same assumption
+  // here for compatibility reasons.
+  FileInfo.CharSet := TEncodingHelper.DefaultCharSetName;
+end;
+
+procedure TV1BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
+begin
+  FileID := NulFileID;
+  FileCount := Reader.ReadSmallInt;
+end;
+
+{ TV2BackupFileLoader }
+
+function TV2BackupFileLoader.GetFileEncoding: TEncoding;
+begin
+  Result := TEncoding.Default;
+end;
+
+procedure TV2BackupFileLoader.ReadFileInfo(
+  out FileInfo: TBackupFileLoader.TFileInfo);
+var
+  Content: AnsiString;    // content of file being restored
+  Checksum: TPJMD5Digest; // file checksum recorded in backup
+begin
+  FileInfo.Name := Reader.ReadSizedString;
+  FileInfo.TimeStamp := Reader.ReadLongInt;
+  Checksum := Reader.ReadString(32);
+  // Checksum was made of content as ANSI string so we load it as such, test
+  // checksum and only then convert to Unicode
+  Content := Reader.ReadSizedLongAnsiString;
+  TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(Content));
+  FileInfo.Content := string(Content);
+  // All files were assumed by earlier readers as having system default encoding
+  // even though some files would not (e.g. .xml files). We make same assumption
+  // here for compatibility reasons.
+  FileInfo.CharSet := TEncodingHelper.DefaultCharSetName;
+end;
+
+procedure TV2BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
+begin
+  FileID := NulFileID;
+  Reader.ReadSmallInt;  // skip over watermark 'FFFF'
+  Reader.ReadSmallInt;  // skip over version number '0002'
+  FileCount := Reader.ReadSmallInt;
+end;
+
+{ TV3BackupFileLoader }
+
+function TV3BackupFileLoader.GetFileEncoding: TEncoding;
+begin
+  // Earlier version of CodeSnip that supported file format v3 wrote the backup
+  // file using the system default encoding while later versions of CodeSnip
+  // used Windows-1252. Windows-1252 is used here for greater compatibility with
+  // files written by later program versions.
+  Result := TEncodingHelper.GetEncoding(TEncodingHelper.Windows1252CharSetName);
+end;
+
+procedure TV3BackupFileLoader.ReadFileInfo(
+  out FileInfo: TBackupFileLoader.TFileInfo);
+var
+  Content: Windows1252String; // content of file being restored
+  Checksum: TPJMD5Digest;     // file checksum recorded in backup
+begin
+  FileInfo.Name := Reader.ReadSizedString;
+  FileInfo.TimeStamp := Reader.ReadLongInt;
+  Checksum := Reader.ReadString(32);
+  // checksum was made of content as ANSI string so we load it as such, test
+  // checksum and only then convert to Unicode
+  Content := Reader.ReadSizedLongAnsiString;
+  TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(Content));
+  FileInfo.Content := string(Content);
+  // All files were assumed by earlier readers as having Windows-1252 encoding
+  // even though some files would not (e.g. .xml files). We make same assumption
+  // here for compatibility reasons.
+  FileInfo.CharSet := TEncodingHelper.Windows1252CharSetName;
+end;
+
+procedure TV3BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
+begin
+  Reader.ReadSmallInt;  // skip over watermark 'FFFF'
+  Reader.ReadSmallInt;  // skip over version number '0003'
+  FileID := Reader.ReadSmallInt;
+  FileCount := Reader.ReadSmallInt;
 end;
 
 end.
