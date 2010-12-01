@@ -124,12 +124,19 @@ type
   }
   TDataStreamWriter = class(TPJStreamWrapper)
   strict private
+    var fEncoding: TEncoding;
+    var fOwnsEncoding: Boolean;
     procedure WriteHex(const Value: LongInt; const Count: Integer);
       {Writes a hex representation of a number to stream.
         @param Value [in] Value to be written.
         @param Count [in] Number of hex digits required.
       }
   public
+    constructor Create(const Stream: TStream;
+      const OwnsStream: Boolean = False); overload; override;
+    constructor Create(const Stream: TStream; const Encoding: TEncoding;
+      const OwnsStream, OwnsEncoding: Boolean); reintroduce; overload;
+    destructor Destroy; override;
     procedure WriteSmallInt(const Value: SmallInt);
       {Writes a 16 bit integer to the stream as hex digits.
         @param Value [in] Value to be written.
@@ -326,6 +333,35 @@ end;
 
 { TDataStreamWriter }
 
+constructor TDataStreamWriter.Create(const Stream: TStream;
+  const OwnsStream: Boolean);
+begin
+  Create(Stream, nil, True, True);
+end;
+
+constructor TDataStreamWriter.Create(const Stream: TStream;
+  const Encoding: TEncoding; const OwnsStream, OwnsEncoding: Boolean);
+begin
+  inherited Create(Stream, OwnsStream);
+  if Assigned(Encoding) then
+  begin
+    fEncoding := Encoding;
+    fOwnsEncoding := OwnsEncoding;
+  end
+  else
+  begin
+    fEncoding := TMBCSEncoding.Create(Windows1252CodePage);
+    fOwnsEncoding := True;
+  end;
+end;
+
+destructor TDataStreamWriter.Destroy;
+begin
+  if fOwnsEncoding then
+    TEncodingHelper.FreeEncoding(fEncoding);
+  inherited;
+end;
+
 procedure TDataStreamWriter.WriteHex(const Value: LongInt;
   const Count: Integer);
   {Writes a hex representation of a number to stream.
@@ -403,9 +439,9 @@ procedure TDataStreamWriter.WriteString(const Str: UnicodeString);
     @param Str [in] String to be written.
   }
 var
-  Bytes: TBytes;
+  Bytes: TBytes;  // bytes of encoded string
 begin
-  Bytes := Windows1252BytesOf(Str);
+  Bytes := fEncoding.GetBytes(Str);
   BaseStream.WriteBuffer(Pointer(Bytes)^, Length(Bytes));
 end;
 
