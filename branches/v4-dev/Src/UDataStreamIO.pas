@@ -53,6 +53,8 @@ uses
 
 type
 
+  TDataStreamOwnerships = set of (dsOwnsStream, dsOwnsEncoding);
+
   { TODO: Revise unit's documentation. }
 
   TDataStreamIOBase = class(TPJStreamWrapper)
@@ -65,7 +67,7 @@ type
     constructor Create(const Stream: TStream;
       const OwnsStream: Boolean = False); overload; override;
     constructor Create(const Stream: TStream; const Encoding: TEncoding;
-      const OwnsStream, OwnsEncoding: Boolean); reintroduce; overload;
+      const OwnerShips: TDataStreamOwnerships); reintroduce; overload;
     destructor Destroy; override;
   end;
 
@@ -211,18 +213,23 @@ implementation
 
 constructor TDataStreamIOBase.Create(const Stream: TStream;
   const OwnsStream: Boolean);
+var
+  Ownerships: TDataStreamOwnerships;
 begin
-  Create(Stream, nil, True, True);
+  Ownerships := [];
+  if OwnsStream then
+    Include(Ownerships, dsOwnsStream);
+  Create(Stream, nil, Ownerships);
 end;
 
 constructor TDataStreamIOBase.Create(const Stream: TStream;
-  const Encoding: TEncoding; const OwnsStream, OwnsEncoding: Boolean);
+  const Encoding: TEncoding; const Ownerships: TDataStreamOwnerships);
 begin
-  inherited Create(Stream, OwnsStream);
+  inherited Create(Stream, dsOwnsStream in  Ownerships);
   if Assigned(Encoding) then
   begin
     fEncoding := Encoding;
-    fOwnsEncoding := OwnsEncoding;
+    fOwnsEncoding := (dsOwnsEncoding in OwnerShips);
   end
   else
   begin

@@ -229,7 +229,9 @@ begin
   Files := nil;
   // Create output stream to backup file
   Writer := TDataStreamWriter.Create(
-    TFileStream.Create(fBakFile, fmCreate), True
+    TFileStream.Create(fBakFile, fmCreate),
+    TMBCSEncoding.Create(Windows1252CodePage),
+    [dsOwnsStream, dsOwnsEncoding]
   );
   try
     // Get list of files in database
@@ -339,7 +341,9 @@ constructor TBackupFileLoader.Create(const Stream: TStream);
 begin
   inherited Create;
   fFiles := TList<TFileInfo>.Create;
-  fReader := TDataStreamReader.Create(Stream, GetFileEncoding, False, True);
+  fReader := TDataStreamReader.Create(
+    Stream, GetFileEncoding, [dsOwnsEncoding]
+  );
 end;
 
 destructor TBackupFileLoader.Destroy;
@@ -424,7 +428,7 @@ var
   Reader: TDataStreamReader;  // reads formatted data from stream
   FirstWord: SmallInt;        // first 16 bit word in stream
 begin
-  Reader := TDataStreamReader.Create(Stream, TEncoding.ASCII, False, False);
+  Reader := TDataStreamReader.Create(Stream, TEncoding.ASCII, []);
   try
     FirstWord := Reader.ReadSmallInt;
     if FirstWord <> SmallInt($FFFF) then
