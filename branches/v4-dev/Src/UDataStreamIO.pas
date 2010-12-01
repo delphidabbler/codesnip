@@ -138,19 +138,6 @@ type
       {Writes a 32 bit integer to the stream as hex digits.
         @param Value [in] Value to be written.
       }
-    procedure WriteString(const Str: RawByteString; const Length: Integer);
-      overload;
-      {Writes a fixed number of characters from a Windows-1252 string to the
-      stream.
-        @param Str [in] String to be written.
-        @param Length [in] Number of characters from string to write.
-      }
-    procedure WriteString(const Str: UnicodeString; const Length: Integer);
-      overload;
-      {Writes a fixed number of characters from a unicode string to the stream.
-        @param Str [in] String to be written.
-        @param Length [in] Number of characters from string to write.
-      }
     procedure WriteString(const Str: RawByteString); overload;
       {Writes a Windows-1252 string to stream.
         @param Str [in] String to be written.
@@ -346,7 +333,7 @@ procedure TDataStreamWriter.WriteHex(const Value: LongInt;
     @param Count [in] Number of hex digits required.
   }
 begin
-  WriteString(IntToHex(Value, Count), Count);
+  WriteString(IntToHex(Value, Count));
 end;
 
 procedure TDataStreamWriter.WriteLongInt(const Value: Integer);
@@ -364,7 +351,7 @@ procedure TDataStreamWriter.WriteSizedLongString(const Str: RawByteString);
   }
 begin
   WriteLongInt(Length(Str));
-  WriteString(Str, Length(Str));
+  WriteString(Str);
 end;
 
 procedure TDataStreamWriter.WriteSizedLongString(const Str: UnicodeString);
@@ -373,7 +360,7 @@ procedure TDataStreamWriter.WriteSizedLongString(const Str: UnicodeString);
   }
 begin
   WriteLongInt(Length(Str));
-  WriteString(Str, Length(Str));
+  WriteString(Str);
 end;
 
 procedure TDataStreamWriter.WriteSizedString(const Str: RawByteString);
@@ -383,7 +370,7 @@ procedure TDataStreamWriter.WriteSizedString(const Str: RawByteString);
   }
 begin
   WriteSmallInt(Length(Str));
-  WriteString(Str, Length(Str));
+  WriteString(Str);
 end;
 
 procedure TDataStreamWriter.WriteSizedString(const Str: UnicodeString);
@@ -392,7 +379,7 @@ procedure TDataStreamWriter.WriteSizedString(const Str: UnicodeString);
   }
 begin
   WriteSmallInt(Length(Str));
-  WriteString(Str, Length(Str));
+  WriteString(Str);
 end;
 
 procedure TDataStreamWriter.WriteSmallInt(const Value: SmallInt);
@@ -408,38 +395,18 @@ procedure TDataStreamWriter.WriteString(const Str: RawByteString);
     @param Str [in] String to be written.
   }
 begin
-  WriteString(Str, Length(Str));
+  BaseStream.WriteBuffer(Pointer(Str), Length(Str));
 end;
 
 procedure TDataStreamWriter.WriteString(const Str: UnicodeString);
   {Writes a unicode string to stream.
     @param Str [in] String to be written.
   }
-begin
-  WriteString(Str, Length(Str));
-end;
-
-procedure TDataStreamWriter.WriteString(const Str: RawByteString;
-  const Length: Integer);
-  {Writes a fixed number of characters from a Windows-1252 string to the stream.
-    @param Str [in] String to be written.
-    @param Length [in] Number of characters from string to write.
-  }
-begin
-  BaseStream.WriteBuffer(Pointer(Str)^, Length);
-end;
-
-procedure TDataStreamWriter.WriteString(const Str: UnicodeString;
-  const Length: Integer);
-  {Writes a fixed number of characters from a unicode string to the stream.
-    @param Str [in] String to be written.
-    @param Length [in] Number of characters from string to write.
-  }
 var
   Bytes: TBytes;
 begin
   Bytes := Windows1252BytesOf(Str);
-  BaseStream.WriteBuffer(Pointer(Bytes)^, Length);
+  BaseStream.WriteBuffer(Pointer(Bytes)^, Length(Bytes));
 end;
 
 end.

@@ -225,6 +225,7 @@ var
   FileName: string;           // references each file in database
   Content: string;            // content of each database file
   DOSDateTime: IDOSDateTime;  // date stamp of each database file
+  Checksum: string;
 begin
   Files := nil;
   // Create output stream to backup file
@@ -249,7 +250,8 @@ begin
       );
       Writer.WriteLongInt(DOSDateTime.DateStamp);
       Content := FileToString(SourceFileSpec(FileName));
-      Writer.WriteString(TPJMD5.Calculate(Windows1252BytesOf(Content)), 32);
+      Checksum := TPJMD5.Calculate(Windows1252BytesOf(Content));
+      Writer.WriteString(TPJMD5.Calculate(Windows1252BytesOf(Content)));
       Writer.WriteSizedLongString(Content);
     end;
   finally
