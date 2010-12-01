@@ -293,8 +293,8 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UConsts, UExceptions, UPreferences, USnippetValidator, UStrStreamWriter,
-  UStructs, UUtils, UWarnings;
+  UConsts, UExceptions, UPreferences, USnippetValidator, UStructs, UUtils,
+  UWarnings;
 
 
 const
@@ -424,8 +424,7 @@ resourcestring
   sXRefRoutines       = 'Cross referenced routine(s):';
 var
   Idx: Integer;             // loops thru snippets list
-  SS: TStringStream;        // string stream used to build unit output
-  Writer: TStrStreamWriter; // helper object used to write text to stream
+  Writer: TStringBuilder;   // used to build source code string
   ForwardWritten: Boolean;  // flag true if forward decls have been written
   FirstForward: Boolean;    // flag true when first forward decl to be written
   Snippet: TRoutine;        // accesses various snippet objects
@@ -434,49 +433,47 @@ begin
   // Generate the unit data
   fSourceAnalyser.Generate;
 
-  // Create writer onto string stream to receive source code
-  Writer := nil;
-  SS := TStringStream.Create('', TEncoding.Unicode);
+  // Create writer used to build source code
+  Writer := TStringBuilder.Create;
   try
-    Writer := TStrStreamWriter.Create(SS);
 
     // Write header comment
-    Writer.WriteStr(TSourceComments.FormatHeaderComments(HeaderComments));
+    Writer.Append(TSourceComments.FormatHeaderComments(HeaderComments));
 
     // Write required units, additional routines, types and consts
     if (fSourceAnalyser.Units.Count > 0) or
       (fSourceAnalyser.ForwardRoutines.Count > 0) or
       (fSourceAnalyser.TypesAndConsts.Count > 0) then
     begin
-      Writer.WriteStrLn('{');
+      Writer.AppendLine('{');
       if fSourceAnalyser.Units.Count > 0 then
       begin
         // list of required units
-        Writer.WriteStrLn('  ' + sReqUnits);
+        Writer.AppendLine('  ' + sReqUnits);
         for UnitName in fSourceAnalyser.Units do
-          Writer.WriteStrLn('    ' + UnitName);
+          Writer.AppendLine('    ' + UnitName);
       end;
       if fSourceAnalyser.TypesAndConsts.Count > 0 then
       begin
         // list of types and consts
         if (fSourceAnalyser.Units.Count > 0) then
-          Writer.WriteStrLn;
-        Writer.WriteStrLn('  ' + sReqConstsAndTypes);
+          Writer.AppendLine;
+        Writer.AppendLine('  ' + sReqConstsAndTypes);
         for Snippet in fSourceAnalyser.TypesAndConsts do
-          Writer.WriteStrLn('    ' + Snippet.Name);
+          Writer.AppendLine('    ' + Snippet.Name);
       end;
       if fSourceAnalyser.ForwardRoutines.Count > 0 then
       begin
         // list of other routines required to compile
         if (fSourceAnalyser.Units.Count > 0) or
           (fSourceAnalyser.TypesAndConsts.Count > 0) then
-          Writer.WriteStrLn;
-        Writer.WriteStrLn('  ' + sReqRoutines);
+          Writer.AppendLine;
+        Writer.AppendLine('  ' + sReqRoutines);
         for Snippet in fSourceAnalyser.ForwardRoutines do
-          Writer.WriteStrLn('    ' + Snippet.Name);
+          Writer.AppendLine('    ' + Snippet.Name);
       end;
-      Writer.WriteStrLn('}');
-      Writer.WriteStrLn;
+      Writer.AppendLine('}');
+      Writer.AppendLine;
     end;
 
     // Write out forward declarations for included routines required by others
@@ -488,33 +485,32 @@ begin
       begin
         if FirstForward then
         begin
-          Writer.WriteStrLn('// ' + sXRefRoutines);
+          Writer.AppendLine('// ' + sXRefRoutines);
           FirstForward := False;
         end;
-        Writer.WriteStrLn(TRoutineFormatter.FormatRoutinePrototype(Snippet));
-        Writer.WriteStrLn('  forward;');
+        Writer.AppendLine(TRoutineFormatter.FormatRoutinePrototype(Snippet));
+        Writer.AppendLine('  forward;');
         ForwardWritten := True;
       end;
     end;
     if ForwardWritten then
-      Writer.WriteStrLn;
+      Writer.AppendLine;
 
     // Write routines
     for Idx := 0 to Pred(fSourceAnalyser.IntfRoutines.Count) do
     begin
       Snippet := fSourceAnalyser.IntfRoutines[Idx];
-      Writer.WriteStrLn(
+      Writer.AppendLine(
         TRoutineFormatter.FormatRoutine(CommentStyle, Snippet)
       );
       if Idx < Pred(fSourceAnalyser.IntfRoutines.Count) then
-        Writer.WriteStrLn;
+        Writer.AppendLine;
     end;
 
     // Return string containing source code
-    Result := SS.DataString;
+    Result := Writer.ToString;
   finally
     Writer.Free;
-    SS.Free;
   end;
 end;
 
@@ -558,102 +554,97 @@ function TSourceGen.UnitAsString(const UnitName: string;
     @return Unit source code.
   }
 var
-  SS: TStringStream;        // string stream used to build unit output
-  Writer: TStrStreamWriter; // helper object used to write text to stream
+  Writer: TStringBuilder;   // used to build source code string
   Snippet: TRoutine;        // reference to a snippet object
   Warnings: IWarnings;      // object giving info about any inhibited warnings
 begin
   // Generate the unit data
   fSourceAnalyser.Generate;
   // Create writer object onto string stream that receives output
-  Writer := nil;
-  SS := TStringStream.Create('', TEncoding.Unicode);
+  Writer := TStringBuilder.Create;
   try
-    Writer := TStrStreamWriter.Create(SS);
-
     // Write unit
 
     // heading comment
-    Writer.WriteStr(TSourceComments.FormatHeaderComments(HeaderComments));
+    Writer.Append(TSourceComments.FormatHeaderComments(HeaderComments));
 
     // unit name
-    Writer.WriteStrLn('unit %s;', [UnitName]);
-    Writer.WriteStrLn;
+    Writer.AppendFormat('unit %s;', [UnitName]).AppendLine;
+    Writer.AppendLine;
 
     // any conditional compilation symbols
     Warnings := Preferences.Warnings;
     if Warnings.SwitchOff and not Warnings.IsEmpty then
     begin
-      Writer.WriteStr(Warnings.Render);
-      Writer.WriteStrLn;
+      Writer.Append(Warnings.Render);
+      Writer.AppendLine;
     end;
 
     // open interface section
-    Writer.WriteStrLn('interface');
-    Writer.WriteStrLn;
+    Writer.AppendLine('interface');
+    Writer.AppendLine;
 
     // uses statement
     if fSourceAnalyser.Units.Count > 0 then
     begin
-      Writer.WriteStrLn('uses');
-      Writer.WriteStrLn(
+      Writer.AppendLine('uses');
+      Writer.AppendLine(
         TextWrap(
           JoinStr(fSourceAnalyser.Units, ', ') + ';',
           cLineWidth - cIndent,
           cIndent
         )
       );
-      Writer.WriteStrLn;
+      Writer.AppendLine;
     end;
 
     // consts and types
     for Snippet in fSourceAnalyser.TypesAndConsts do
     begin
-      Writer.WriteStrLn(
+      Writer.AppendLine(
         TConstAndTypeFormatter.FormatConstOrType(CommentStyle, Snippet)
       );
-      Writer.WriteStrLn;
+      Writer.AppendLine;
     end;
 
     // routine prototypes
     for Snippet in fSourceAnalyser.IntfRoutines do
     begin
-      Writer.WriteStrLn(
+      Writer.AppendLine(
         TRoutineFormatter.FormatRoutinePrototype(Snippet, CommentStyle)
       );
-      Writer.WriteStrLn;
+      Writer.AppendLine;
     end;
 
     // open implementation section
-    Writer.WriteStrLn('implementation');
-    Writer.WriteStrLn;
+    Writer.AppendLine('implementation');
+    Writer.AppendLine;
 
     // forward declarations
     if fSourceAnalyser.ForwardRoutines.Count > 0 then
     begin
       for Snippet in fSourceAnalyser.ForwardRoutines do
       begin
-        Writer.WriteStrLn(TRoutineFormatter.ExtractPrototype(Snippet));
-        Writer.WriteStrLn('  forward;');
+        Writer.AppendLine(TRoutineFormatter.ExtractPrototype(Snippet));
+        Writer.AppendLine('  forward;');
       end;
-      Writer.WriteStrLn;
+      Writer.AppendLine;
     end;
 
     // routine source code
     for Snippet in fSourceAnalyser.AllRoutines do
     begin
-      Writer.WriteStrLn(TRoutineFormatter.FormatRoutine(CommentStyle, Snippet));
-      Writer.WriteStrLn;
+      Writer.AppendLine(TRoutineFormatter.FormatRoutine(CommentStyle, Snippet));
+      Writer.AppendLine;
     end;
 
     // close unit
-    Writer.WriteStrLn('end.');
+    Writer.AppendLine('end.');
 
     // Return string built in string stream
-    Result := SS.DataString;
+    Result := Writer.ToString;
   finally
     Writer.Free;
-    SS.Free;
   end;
 end;
 
