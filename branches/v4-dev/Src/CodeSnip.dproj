@@ -455,6 +455,7 @@
 			<DCCReference Include="USourceFileOutputMgr.pas"/>
 			<DCCReference Include="USourceGen.pas"/>
 			<DCCReference Include="UStatusBarMgr.pas"/>
+			<DCCReference Include="UStringReader.pas"/>
 			<DCCReference Include="UStrStreamWriter.pas"/>
 			<DCCReference Include="UStructs.pas"/>
 			<DCCReference Include="USystemID.pas"/>
@@ -465,7 +466,6 @@
 			<DCCReference Include="UTestUnit.pas"/>
 			<DCCReference Include="UTestUnitDlgMgr.pas"/>
 			<DCCReference Include="UTextRoutineDoc.pas"/>
-			<DCCReference Include="UTextStreamReader.pas"/>
 			<DCCReference Include="UThemesEx.pas"/>
 			<DCCReference Include="UThreadEx.pas"/>
 			<DCCReference Include="UToolButtonEx.pas"/>

@@ -1,10 +1,12 @@
 {
- * UTextStreamReader.pas
+ * UStringReader.pas
  *
  * Defines class that performs character based access to a stream.
  *
  * $Rev$
  * $Date$
+ *
+ * Originally named UTextStreamReader.pas.
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -18,7 +20,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UTextStreamReader.pas
+ * The Original Code is UStringReader.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -33,57 +35,44 @@
 }
 
 
-unit UTextStreamReader;
+unit UStringReader;
 
 
 interface
 
 
 uses
-  // Delphi
-  Classes,
   // Project
   UConsts;
 
 
 type
-
-  {
-  TTextStreamReader:
-    Class that performs character based access to a stream. Copies entire stream
-    into an internal buffer and then reads data from that buffer one character
-    at a time. Characters can be put back on the stream. CRLF pairs are
-    converted on the fly to single EOL character.
-  }
-  TTextStreamReader = class(TObject)
+  ///  <summary>
+  ///  Class that performs character based access to a string. Reads data from
+  ///  the string one character, treating CRLF pairs as a single EOL character.
+  ///  Characters can be put back onto the string.
+  ///  </summary>
+  TStringReader = class(TObject)
   strict private
-    var
-      fBuffer: string;
-        {Stores all data read from stream}
-      fIdx: Integer;
-        {Cursor into buffer that indexes next character to be read}
+    var fBuffer: string;  // String being read
+    var fIdx: Integer;    // Cursor that indexes next character to be read
+    /// Read accessor for Ch property. Returns last character read or EOF.
     function GetCh: Char;
-      {Read accessor for Ch property.
-        @return Last character read, or EOF at end of file.
-      }
   public
-    const
-      EOF = #0;   // character indicating end of file
-      EOL = LF;   // character indicating end of line
-    constructor Create(const Stm: TStream);
-      {Class constructor. Creates reader for a stream and reads first character.
-        @param Stm [in] Stream to be read.
-      }
+    ///  Character indicating end of file
+    const EOF = #0;
+    ///  Character indicating end of line
+    const EOL = LF;
+    ///  Object constructor. Records string to be read & reads first character.
+    constructor Create(const Str: string);
+    ///  Fetches next character from string and returns it. Returns EOL at end
+    ///  of line and EOF at end of file.
     function NextChar: Char;
-      {Fetches next character from buffer.
-        @return Character read (EOF at end of buffer and LF at end of line).
-      }
+    ///  Put last read character back on the end of the string.
     procedure PutBackChar;
-      {Puts last read character back on the stream.
-      }
+    ///  Last character read from stream (EOL at end of line and EOF at end of
+    ///  file.
     property Ch: Char read GetCh;
-      {Last character read from stream (EOF if at end of stream and LF at end
-      of line}
   end;
 
 
@@ -95,26 +84,18 @@ uses
   SysUtils;
 
 
-{ TTextStreamReader }
+{ TStringReader }
 
-constructor TTextStreamReader.Create(const Stm: TStream);
-  {Class constructor. Creates reader for a stream and reads first character.
-    @param Stm [in] Stream to be read.
-  }
+constructor TStringReader.Create(const Str: string);
 begin
   inherited Create;
-  // Read stream into buffer
-  SetLength(fBuffer, Stm.Size div SizeOf(Char));
-  Stm.ReadBuffer(Pointer(fBuffer)^, Stm.Size);
+  fBuffer := Str;
   // Set cursor to just before start of buffer then read first char
   fIdx := 0;
   NextChar;
 end;
 
-function TTextStreamReader.GetCh: Char;
-  {Read accessor for Ch property.
-    @return Last character read, or EOF at end of file.
-  }
+function TStringReader.GetCh: Char;
 begin
   if fIdx <= Length(fBuffer) then
   begin
@@ -129,10 +110,7 @@ begin
     Result := EOF;
 end;
 
-function TTextStreamReader.NextChar: Char;
-  {Fetches next character from buffer.
-    @return Character read (EOF at end of buffer and EOL at end of line).
-  }
+function TStringReader.NextChar: Char;
 begin
   if fIdx < Length(fBuffer) then
   begin
@@ -148,13 +126,11 @@ begin
   else
     // No remaining chars: place cursor beyond end of buffer => EOF
     fIdx := Length(fBuffer) + 1;
-  // Return chracter just read or EOF
+  // Return character just read or EOF
   Result := GetCh;
 end;
 
-procedure TTextStreamReader.PutBackChar;
-  {Puts last read character back on the stream.
-  }
+procedure TStringReader.PutBackChar;
 begin
   if fIdx > 1 then
   begin
@@ -164,7 +140,7 @@ begin
     if fBuffer[fIdx] = LF then
     begin
       // New current char is LF. If preceeded by CR we will have skipped over CR
-      // when read, so go back two chars in buffer if so
+      // when read so we go back two chars in buffer
       if (fIdx > 1) and (fBuffer[fIdx - 1] = CR) then
         Dec(fIdx);
     end;

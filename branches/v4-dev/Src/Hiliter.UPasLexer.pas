@@ -43,7 +43,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UTextStreamReader;
+  UStringReader;
 
 
 type
@@ -84,7 +84,7 @@ type
       CommentType: THilitePasToken; // indicates comment or compiler directive
       CommentCloser: string;        // closing comment symbol ( *), } or EOL )
     end;
-    fReader: TTextStreamReader;   // Object that reads characters from input
+    fReader: TStringReader;       // Object that reads characters from input
     procedure UpdateTokenStr; overload;
       {Appends current character in input to token string. Ignores EOF.
       }
@@ -152,9 +152,9 @@ type
         @return Whole number token (tkNumber).
       }
   public
-    constructor Create(const Stm: TStream);
-      {Constructor. Sets up object to analyse code on a stream.
-        @param Stm [in] Stream containing Pascal source.
+    constructor Create(const Source: string);
+      {Constructor. Sets up object to analyse code in a string.
+        @param Source [in] String containing Pascal source.
       }
     destructor Destroy; override;
       {Destructor. Tears down object.
@@ -188,8 +188,8 @@ const
   cCompilerDirChar  = '$';
   cStringDelim      = '''';
   cCloseParen       = ')';
-  cEOL = TTextStreamReader.EOL;
-  cEOF = TTextStreamReader.EOF;
+  cEOL = TStringReader.EOL;
+  cEOF = TStringReader.EOF;
 
   // String tables
   cDoubleSyms: array[0..9] of string = (         // list of valid double symbols
@@ -525,13 +525,13 @@ end;
 
 { THilitePasLexer }
 
-constructor THilitePasLexer.Create(const Stm: TStream);
-  {Constructor. Sets up object to analyse code on a stream.
-    @param Stm [in] Stream containing Pascal source.
+constructor THilitePasLexer.Create(const Source: string);
+  {Constructor. Sets up object to analyse code in a string.
+    @param Source [in] String containing Pascal source.
   }
 begin
   inherited Create;
-  fReader := TTextStreamReader.Create(Stm);
+  fReader := TStringReader.Create(Source);
 end;
 
 destructor THilitePasLexer.Destroy;

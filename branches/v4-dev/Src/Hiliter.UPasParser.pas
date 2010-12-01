@@ -98,10 +98,10 @@ type
       {Triggers OnLineEnd event.
       }
   public
-    procedure Parse(const SrcStm: TStream);
-      {Parses the Pascal source on a stream, triggering events as each line and
-      token is parsed.
-        @param SrcStm [in] Stream containing Pascal source.
+    procedure Parse(const Source: string);
+      {Parses Pascal source code, triggering events as each line and token is
+      parsed.
+        @param Source [in] String containing Pascal source.
       }
     property OnElement: TParseElementEvent
       read fOnElement write fOnElement;
@@ -157,10 +157,10 @@ begin
     fOnLineEnd(Self);
 end;
 
-procedure THilitePasParser.Parse(const SrcStm: TStream);
-  {Parses the Pascal source on a stream, triggering events as each line and
-  token is parsed.
-    @param SrcStm [in] Stream containing Pascal source.
+procedure THilitePasParser.Parse(const Source: string);
+  {Parses Pascal source code, triggering events as each line and token is
+  parsed.
+    @param Source [in] String containing Pascal source.
   }
 var
   Lexer: THilitePasLexer;   // object that tokenises Pascal source
@@ -169,7 +169,7 @@ var
   BetweenLines: Boolean;    // flag true after EOL before new line starts
 begin
   // Create lexical analyser that tokenises source code
-  Lexer := THilitePasLexer.Create(SrcStm);
+  Lexer := THilitePasLexer.Create(Source);
   try
     // Intialise state: not in assembler and line not started
     InASM := False;

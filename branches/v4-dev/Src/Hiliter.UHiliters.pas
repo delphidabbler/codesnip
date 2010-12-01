@@ -533,7 +533,6 @@ function TParsedHiliter.Hilite(const RawCode: string; const Attrs: IHiliteAttrs;
     @return Formatted / highlighted source code.
   }
 var
-  SrcStm: TStringStream;  // stream used to store raw source code
   DestStm: TStringStream; // stream used to receive output
   Parser: THilitePasParser;   // object used to parse source
 begin
@@ -542,9 +541,6 @@ begin
   DestStm := nil;
   fWriter := nil;
   Parser := nil;
-  // Create a string stream containing raw source code and another to receive
-  // highlighted output. Uses unicode string streams if supported.
-  SrcStm := TStringStream.Create(RawCode, TEncoding.Unicode);
   try
     DestStm := TStringStream.Create('', TEncoding.Unicode);
     // Use stream version of method to perform highlighting
@@ -556,7 +552,7 @@ begin
     Parser.OnLineEnd := LineEndHandler;
     // Parse the document:
     BeginDoc;   // overridden in descendants to initialise document
-    Parser.Parse(SrcStm);
+    Parser.Parse(RawCode);
     EndDoc;     // overridden in descendants to finalise document
     // Return string stored in destination stream
     Result := DestStm.DataString;
@@ -564,7 +560,6 @@ begin
     Parser.Free;
     fWriter.Free;
     DestStm.Free;
-    SrcStm.Free;
   end;
 end;
 
