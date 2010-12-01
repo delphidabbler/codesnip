@@ -248,6 +248,8 @@ function TDataStreamReader.ReadAnsiString(const Length: Integer): RawByteString;
     @return String read from stream.
   }
 begin
+  if Length <= 0 then
+    Exit('');
   SetLength(Result, Length);
   BaseStream.ReadBuffer(Result[1], Length);
 end;
@@ -328,6 +330,8 @@ function TDataStreamReader.ReadString(const Length: Integer): UnicodeString;
 var
   Bytes: TBytes;
 begin
+  if Length <= 0 then
+    Exit('');
   SetLength(Bytes, Length);
   BaseStream.ReadBuffer(Pointer(Bytes)^, Length);
   Result := fEncoding.GetString(Bytes);
