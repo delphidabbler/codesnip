@@ -118,7 +118,7 @@ class function TCopyInfoMgr.GenerateDoc(View: IView; const Doc: TRoutineDoc;
 var
   SS: TStringStream;  // stream that receives document
 begin
-  SS := TStringStream.Create('', Encoding);
+  SS := TStringStream.Create('', Encoding, False);
   try
     Doc.Generate((View as ISnippetView).Snippet, SS);
     Result := SS.DataString;
