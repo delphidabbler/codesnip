@@ -53,26 +53,35 @@ uses
 
 type
 
-  {
-  TDataStreamReader:
-    Stream wrapper that can read numeric and string data from a stream. Assumes
-    integers of various sizes are encoded as ASCII hex digits in stream.
-  }
-  TDataStreamReader = class(TPJStreamWrapper)
+  { TODO: Revise unit's documentation. }
+
+  TDataStreamIOBase = class(TPJStreamWrapper)
   strict private
     var fEncoding: TEncoding;
     var fOwnsEncoding: Boolean;
-    function ReadHexDigits(const Count: Integer): LongInt;
-      {Reads hex digits from stream.
-        @param Count [in] Number of hex digits to read.
-        @return Value read from stream.
-      }
+  strict protected
+    property Encoding: TEncoding read fEncoding;
   public
     constructor Create(const Stream: TStream;
       const OwnsStream: Boolean = False); overload; override;
     constructor Create(const Stream: TStream; const Encoding: TEncoding;
       const OwnsStream, OwnsEncoding: Boolean); reintroduce; overload;
     destructor Destroy; override;
+  end;
+
+  {
+  TDataStreamReader:
+    Stream wrapper that can read numeric and string data from a stream. Assumes
+    integers of various sizes are encoded as ASCII hex digits in stream.
+  }
+  TDataStreamReader = class(TDataStreamIOBase)
+  strict private
+    function ReadHexDigits(const Count: Integer): LongInt;
+      {Reads hex digits from stream.
+        @param Count [in] Number of hex digits to read.
+        @return Value read from stream.
+      }
+  public
     function ReadSmallInt: SmallInt;
       {Reads small integer from stream, encoded as 4 hex digits.
         @return Value read from stream.
@@ -122,21 +131,14 @@ type
     Stream wrapper that can write numeric and string data to a stream. Integers
     of various sizes are encoded as ASCII hex digits in stream.
   }
-  TDataStreamWriter = class(TPJStreamWrapper)
+  TDataStreamWriter = class(TDataStreamIOBase)
   strict private
-    var fEncoding: TEncoding;
-    var fOwnsEncoding: Boolean;
     procedure WriteHex(const Value: LongInt; const Count: Integer);
       {Writes a hex representation of a number to stream.
         @param Value [in] Value to be written.
         @param Count [in] Number of hex digits required.
       }
   public
-    constructor Create(const Stream: TStream;
-      const OwnsStream: Boolean = False); overload; override;
-    constructor Create(const Stream: TStream; const Encoding: TEncoding;
-      const OwnsStream, OwnsEncoding: Boolean); reintroduce; overload;
-    destructor Destroy; override;
     procedure WriteSmallInt(const Value: SmallInt);
       {Writes a 16 bit integer to the stream as hex digits.
         @param Value [in] Value to be written.
@@ -205,15 +207,15 @@ implementation
 }
 
 
-{ TDataStreamReader }
+{ TDataStreamIOBase }
 
-constructor TDataStreamReader.Create(const Stream: TStream;
+constructor TDataStreamIOBase.Create(const Stream: TStream;
   const OwnsStream: Boolean);
 begin
   Create(Stream, nil, True, True);
 end;
 
-constructor TDataStreamReader.Create(const Stream: TStream;
+constructor TDataStreamIOBase.Create(const Stream: TStream;
   const Encoding: TEncoding; const OwnsStream, OwnsEncoding: Boolean);
 begin
   inherited Create(Stream, OwnsStream);
@@ -229,12 +231,14 @@ begin
   end;
 end;
 
-destructor TDataStreamReader.Destroy;
+destructor TDataStreamIOBase.Destroy;
 begin
+  inherited;
   if fOwnsEncoding then
     TEncodingHelper.FreeEncoding(fEncoding);
-  inherited;
 end;
+
+{ TDataStreamReader }
 
 function TDataStreamReader.ReadAnsiString(const Length: Integer): RawByteString;
   {Reads a string of specified size from stream.
@@ -254,7 +258,7 @@ function TDataStreamReader.ReadHexDigits(const Count: Integer): LongInt;
     @return Value read from stream.
   }
 begin
-  Result := StrToInt('$' + string(ReadAnsiString(Count)));
+  Result := StrToInt('$' + ReadString(Count));
 end;
 
 function TDataStreamReader.ReadInt64: Int64;
@@ -328,39 +332,10 @@ begin
     Exit('');
   SetLength(Bytes, Length);
   BaseStream.ReadBuffer(Pointer(Bytes)^, Length);
-  Result := fEncoding.GetString(Bytes);
+  Result := Encoding.GetString(Bytes);
 end;
 
 { TDataStreamWriter }
-
-constructor TDataStreamWriter.Create(const Stream: TStream;
-  const OwnsStream: Boolean);
-begin
-  Create(Stream, nil, True, True);
-end;
-
-constructor TDataStreamWriter.Create(const Stream: TStream;
-  const Encoding: TEncoding; const OwnsStream, OwnsEncoding: Boolean);
-begin
-  inherited Create(Stream, OwnsStream);
-  if Assigned(Encoding) then
-  begin
-    fEncoding := Encoding;
-    fOwnsEncoding := OwnsEncoding;
-  end
-  else
-  begin
-    fEncoding := TMBCSEncoding.Create(Windows1252CodePage);
-    fOwnsEncoding := True;
-  end;
-end;
-
-destructor TDataStreamWriter.Destroy;
-begin
-  if fOwnsEncoding then
-    TEncodingHelper.FreeEncoding(fEncoding);
-  inherited;
-end;
 
 procedure TDataStreamWriter.WriteHex(const Value: LongInt;
   const Count: Integer);
@@ -441,7 +416,7 @@ procedure TDataStreamWriter.WriteString(const Str: UnicodeString);
 var
   Bytes: TBytes;  // bytes of encoded string
 begin
-  Bytes := fEncoding.GetBytes(Str);
+  Bytes := Encoding.GetBytes(Str);
   BaseStream.WriteBuffer(Pointer(Bytes)^, Length(Bytes));
 end;
 
