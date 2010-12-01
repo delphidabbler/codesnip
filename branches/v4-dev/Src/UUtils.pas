@@ -684,7 +684,7 @@ function StreamToString(const Stm: TStream; const Encoding: TEncoding): string;
 var
   SS: TStringStream;  // used to copy stream to string
 begin
-  SS := TStringStream.Create('', Encoding);
+  SS := TStringStream.Create('', Encoding, False);
   try
     SS.CopyFrom(Stm, 0);
     Result := SS.DataString;
@@ -751,7 +751,7 @@ procedure StringToStream(const Str: string; const Stm: TStream;
 var
   SS: TStringStream;  // used to copy string to stream
 begin
-  SS := TStringStream.Create(Str, Encoding);
+  SS := TStringStream.Create(Str, Encoding, False);
   try
     Stm.CopyFrom(SS, SS.Size);
   finally
