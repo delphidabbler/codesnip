@@ -153,21 +153,11 @@ type
 
   {
   ISyntaxHiliter:
-    Interface implemented by all highlighter classes. Provides overloaded
-    methods used to highlight a document.
+    Interface implemented by all highlighter classes. Provides a method used to
+    highlight a document.
   }
   ISyntaxHiliter = interface(IInterface)
     ['{8FDE87E5-66AD-49AD-BDA8-2110F47C0F6C}']
-    procedure Hilite(const Src, Dest: TStream; const Attrs: IHiliteAttrs = nil;
-      const Title: string = ''); overload;
-      {Highlights source code on an input stream and writes to output stream.
-        @param Src [in] Stream containing source code to be highlighted.
-        @param Dest [in] Stream that receives formatted / highlighted document.
-        @param Attrs [in] Attributes to be used by highlighter. Nil value causes
-          a nul highlighter to be used.
-        @param Title [in] Optional title to be used as meta data in output
-          document. Will be ignored if document type does not support title.
-      }
     function Hilite(const RawCode: string; const Attrs: IHiliteAttrs = nil;
       const Title: string = ''): string; overload;
       {Highlights source code and writes to a string.

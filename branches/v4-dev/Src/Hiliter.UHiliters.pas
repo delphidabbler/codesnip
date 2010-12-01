@@ -121,16 +121,6 @@ type
   TSyntaxHiliter = class(TInterfacedObject)
   protected
     { ISyntaxHiliter methods }
-    procedure Hilite(const Src, Dest: TStream; const Attrs: IHiliteAttrs = nil;
-      const Title: string = ''); overload; virtual; abstract;
-      {Highlights source code on an input stream and writes to output stream.
-        @param Src [in] Stream containing source code to be highlighted.
-        @param Dest [in] Stream that receives formatted / highlighted document.
-        @param Attrs [in] Attributes to be used by highlighter. Nil value causes
-          a nul highlighter to be used.
-        @param Title [in] Optional title to be used as meta data in output
-          document. Will be ignored if document type does not support title.
-      }
     function Hilite(const RawCode: string; const Attrs: IHiliteAttrs = nil;
       const Title: string = ''): string; overload; virtual; abstract;
       {Creates string containing highlighted source code.
@@ -157,15 +147,6 @@ type
   )
   protected
     { ISyntaxHiliter methods }
-    procedure Hilite(const Src, Dest: TStream; const Attrs: IHiliteAttrs = nil;
-      const Title: string = ''); overload; override;
-      {Copies source code on an input stream to output stream unchanged.
-        @param Src [in] Stream containing source code.
-        @param Dest [in] Stream that receives unchanged copy of source code from
-          Src.
-        @param Attrs [in] Attributes to be used by highlighter. Ignored.
-        @param Title [in] Title of output document. Ignored.
-      }
     function Hilite(const RawCode: string; const Attrs: IHiliteAttrs = nil;
       const Title: string = ''): string; overload; override;
       {Returns provided source code unchanged.
@@ -180,8 +161,8 @@ type
   TParsedHiliter:
     Abstract base class for all highlighter classes that parse source code using
     Pascal parser object. Handles parser events and calls virtual methods to
-    write the various document parts. Also provides a helper object to simplify
-    output of formatted code.
+    write the various document parts. Also provides a helper writer object to
+    simplify output of formatted code.
   }
   TParsedHiliter = class(TSyntaxHiliter)
   strict private
@@ -212,16 +193,6 @@ type
       }
   protected
     { ISyntaxHiliter methods }
-    procedure Hilite(const Src, Dest: TStream; const Attrs: IHiliteAttrs = nil;
-      const Title: string = ''); overload; override;
-      {Highlights source code on an input stream and writes to output stream.
-        @param Src [in] Stream containing source code to be highlighted.
-        @param Dest [in] Stream that receives formatted / highlighted document.
-        @param Attrs [in] Attributes to be used by highlighter. Nil value causes
-          a nul highlighter to be used.
-        @param Title [in] Optional title to be used as meta data in output
-          document. Will be ignored if document type does not support title.
-      }
     function Hilite(const RawCode: string; const Attrs: IHiliteAttrs = nil;
       const Title: string = ''): string; overload; override;
       {Creates string containing highlighted source code.
@@ -457,21 +428,6 @@ end;
 
 { TNulHiliter }
 
-procedure TNulHiliter.Hilite(const Src, Dest: TStream;
-  const Attrs: IHiliteAttrs; const Title: string);
-  {Copies source code on an input stream to output stream unchanged.
-    @param Src [in] Stream containing source code.
-    @param Dest [in] Stream that receives unchanged copy of source code from
-      Src.
-    @param Attrs [in] Attributes to be used by highlighter. Ignored.
-    @param Title [in] Title of output document. Ignored.
-  }
-begin
-  // Copy source from current location in input stream to end of stream into
-  // destination stream
-  Dest.CopyFrom(Src, Src.Size - Src.Position);
-end;
-
 function TNulHiliter.Hilite(const RawCode: string; const Attrs: IHiliteAttrs;
   const Title: string): string;
   {Returns provided source code unchanged.
@@ -566,41 +522,6 @@ begin
   // Do nothing: descendants override
 end;
 
-procedure TParsedHiliter.Hilite(const Src, Dest: TStream;
-  const Attrs: IHiliteAttrs; const Title: string);
-  {Highlights source code on an input stream and writes to output stream.
-    @param Src [in] Stream containing source code to be highlighted.
-    @param Dest [in] Stream that receives formatted / highlighted document.
-    @param Attrs [in] Attributes to be used by highlighter. Nil value causes a
-      nul highlighter to be used.
-    @param Title [in] Optional title to be used as meta data in output document.
-      Will be ignored if document type does not support title.
-  }
-var
-  Parser: THilitePasParser;   // object used to parse source
-begin
-  (fAttrs as IAssignable).Assign(Attrs);  // Attrs may be nil
-  fTitle := Title;
-  fWriter := TStrStreamWriter.Create(Dest);
-  try
-    // Create parser
-    Parser := THilitePasParser.Create;
-    try
-      Parser.OnElement := ElementHandler;
-      Parser.OnLineBegin := LineBeginHandler;
-      Parser.OnLineEnd := LineEndHandler;
-      // Parse the document:
-      BeginDoc;   // overridden in descendants to initialise document
-      Parser.Parse(Src);
-      EndDoc;     // overridden in descendants to finalise document
-    finally
-      Parser.Free;
-    end;
-  finally
-    fWriter.Free;
-  end;
-end;
-
 function TParsedHiliter.Hilite(const RawCode: string; const Attrs: IHiliteAttrs;
   const Title: string): string;
   {Creates string containing highlighted source code.
@@ -614,18 +535,34 @@ function TParsedHiliter.Hilite(const RawCode: string; const Attrs: IHiliteAttrs;
 var
   SrcStm: TStringStream;  // stream used to store raw source code
   DestStm: TStringStream; // stream used to receive output
+  Parser: THilitePasParser;   // object used to parse source
 begin
+  (fAttrs as IAssignable).Assign(Attrs);  // Attrs may be nil
+  fTitle := Title;
   DestStm := nil;
+  fWriter := nil;
+  Parser := nil;
   // Create a string stream containing raw source code and another to receive
   // highlighted output. Uses unicode string streams if supported.
   SrcStm := TStringStream.Create(RawCode, TEncoding.Unicode);
   try
     DestStm := TStringStream.Create('', TEncoding.Unicode);
     // Use stream version of method to perform highlighting
-    Hilite(SrcStm, DestStm, Attrs, Title);
+    fWriter := TStrStreamWriter.Create(DestStm);
+    // Create parser
+    Parser := THilitePasParser.Create;
+    Parser.OnElement := ElementHandler;
+    Parser.OnLineBegin := LineBeginHandler;
+    Parser.OnLineEnd := LineEndHandler;
+    // Parse the document:
+    BeginDoc;   // overridden in descendants to initialise document
+    Parser.Parse(SrcStm);
+    EndDoc;     // overridden in descendants to finalise document
     // Return string stored in destination stream
     Result := DestStm.DataString;
   finally
+    Parser.Free;
+    fWriter.Free;
     DestStm.Free;
     SrcStm.Free;
   end;
