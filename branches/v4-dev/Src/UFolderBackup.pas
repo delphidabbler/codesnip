@@ -109,10 +109,8 @@ type
         Name: string;
         ///  File's timestamp
         TimeStamp: LongInt;
-        ///  Character set used to encode the file
-        CharSet: string;
-        ///  Content of file as Unicode
-        Content: string;
+        ///  Content of file as bytes to be written to file
+        Content: TBytes;
       end;
     ///  Value used for FileID in file formats that do not support it
     const NulFileID = 0;
@@ -287,7 +285,20 @@ var
   FileSpec: string;                       // name & path of each file to restore
   DOSDateTime: IDOSDateTime;              // date stamp of each file to restore
   FileInfo: TBackupFileLoader.TFileInfo;  // info about each file to restore
-  FileEncoding: TEncoding;                // encoding of each file to restore
+//  FileEncoding: TEncoding;                // encoding of each file to restore
+
+  procedure RestoreFile(const FileSpec: string; const Content: TBytes);
+  var
+    FS: TFileStream;
+  begin
+    FS := TFileStream.Create(FileSpec, fmCreate);
+    try
+      FS.WriteBuffer(Pointer(Content)^, Length(Content));
+    finally
+      FS.Free;
+    end;
+  end;
+
 resourcestring
   // Error message
   sBadFileID = 'Invalid file ID for file "%s"';
@@ -311,13 +322,8 @@ begin
       DOSDateTime := TDOSDateTimeFactory.CreateFromDOSTimeStamp(
         FileInfo.TimeStamp
       );
-      // restore file using required encoding
-      FileEncoding := TEncodingHelper.GetEncoding(FileInfo.CharSet);
-      try
-        StringToFile(FileInfo.Content, FileSpec, FileEncoding);
-      finally
-        TEncodingHelper.FreeEncoding(FileEncoding);
-      end;
+      // restore file
+      RestoreFile(FileSpec, FileInfo.Content);
       DOSDateTime.ApplyToFile(FileSpec);
     end;
   finally
@@ -461,11 +467,9 @@ begin
   // checksum and only then convert to Unicode
   Content := Reader.ReadSizedAnsiString;
   TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(Content));
-  FileInfo.Content := string(Content);
-  // All files were assumed by earlier readers as having system default encoding
-  // even though some files would not (e.g. .xml files). We make same assumption
-  // here for compatibility reasons.
-  FileInfo.CharSet := TEncodingHelper.DefaultCharSetName;
+  SetLength(FileInfo.Content, Length(Content));
+  if Length(Content) > 0 then
+    Move(Content[1], FileInfo.Content[0], Length(Content));
 end;
 
 procedure TV1BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
@@ -494,11 +498,9 @@ begin
   // checksum and only then convert to Unicode
   Content := Reader.ReadSizedLongAnsiString;
   TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(Content));
-  FileInfo.Content := string(Content);
-  // All files were assumed by earlier readers as having system default encoding
-  // even though some files would not (e.g. .xml files). We make same assumption
-  // here for compatibility reasons.
-  FileInfo.CharSet := TEncodingHelper.DefaultCharSetName;
+  SetLength(FileInfo.Content, Length(Content));
+  if Length(Content) > 0 then
+    Move(Content[1], FileInfo.Content[0], Length(Content));
 end;
 
 procedure TV2BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
@@ -533,11 +535,9 @@ begin
   // checksum and only then convert to Unicode
   Content := Reader.ReadSizedLongAnsiString;
   TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(Content));
-  FileInfo.Content := string(Content);
-  // All files were assumed by earlier readers as having Windows-1252 encoding
-  // even though some files would not (e.g. .xml files). We make same assumption
-  // here for compatibility reasons.
-  FileInfo.CharSet := TEncodingHelper.Windows1252CharSetName;
+  SetLength(FileInfo.Content, Length(Content));
+  if Length(Content) > 0 then
+    Move(Content[1], FileInfo.Content[0], Length(Content));
 end;
 
 procedure TV3BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
