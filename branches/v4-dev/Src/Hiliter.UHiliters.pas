@@ -96,10 +96,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes, Graphics,
+  SysUtils, Graphics,
   // Project
   Hiliter.UAttrs, Hiliter.UCSS, Hiliter.UPasParser, IntfCommon, UCSSBuilder,
-  UHTMLBuilder, URTFBuilder, UStrStreamWriter;
+  UHTMLBuilder, URTFBuilder;
 
 
 type
@@ -166,8 +166,8 @@ type
   }
   TParsedHiliter = class(TSyntaxHiliter)
   strict private
-    fWriter: TStrStreamWriter;
-      {Helper object used to emit formatted source code}
+    fWriter: TStringBuilder;
+      {Helper object used to emit build up highlighted source code}
     fAttrs: IHiliteAttrs;
       {Reference to highlighter attributes}
     fTitle: string;
@@ -232,7 +232,7 @@ type
       finalise element formatting.
         @param Elem [in] Kind of highlight element.
       }
-    property Writer: TStrStreamWriter read fWriter;
+    property Writer: TStringBuilder read fWriter;
       {Helper object used to write formatted code to output}
     property Attrs: IHiliteAttrs read fAttrs;
       {Object storing attributes of highlighter. Defines appearance of document
@@ -413,7 +413,6 @@ begin
   Result := Obj as ISyntaxHiliter;  // return ISyntaxHiliter interface to object
 end;
 
-
 { TSyntaxHiliter }
 
 constructor TSyntaxHiliter.Create;
@@ -424,7 +423,6 @@ begin
   inherited;
   // Do nothing ** Do not remove - required for polymorphism to work **
 end;
-
 
 { TNulHiliter }
 
@@ -439,7 +437,6 @@ function TNulHiliter.Hilite(const RawCode: string; const Attrs: IHiliteAttrs;
 begin
   Result := RawCode;
 end;
-
 
 { TParsedHiliter }
 
@@ -533,18 +530,16 @@ function TParsedHiliter.Hilite(const RawCode: string; const Attrs: IHiliteAttrs;
     @return Formatted / highlighted source code.
   }
 var
-  DestStm: TStringStream; // stream used to receive output
   Parser: THilitePasParser;   // object used to parse source
 begin
-  (fAttrs as IAssignable).Assign(Attrs);  // Attrs may be nil
+  // Record copy of highlighter attributes and title
+  (fAttrs as IAssignable).Assign(Attrs);
   fTitle := Title;
-  DestStm := nil;
   fWriter := nil;
   Parser := nil;
   try
-    DestStm := TStringStream.Create('', TEncoding.Unicode);
-    // Use stream version of method to perform highlighting
-    fWriter := TStrStreamWriter.Create(DestStm);
+    // String builder used to build up highlighted source code
+    fWriter := TStringBuilder.Create;
     // Create parser
     Parser := THilitePasParser.Create;
     Parser.OnElement := ElementHandler;
@@ -555,11 +550,10 @@ begin
     Parser.Parse(RawCode);
     EndDoc;     // overridden in descendants to finalise document
     // Return string stored in destination stream
-    Result := DestStm.DataString;
+    Result := fWriter.ToString;
   finally
     Parser.Free;
     fWriter.Free;
-    DestStm.Free;
   end;
 end;
 
@@ -580,7 +574,6 @@ procedure TParsedHiliter.LineEndHandler(Parser: THilitePasParser);
 begin
   EndLine;
 end;
-
 
 { TRTFHiliter }
 
@@ -657,7 +650,7 @@ procedure TRTFHiliter.EndDoc;
   {Called after parsing complete. Outputs whole of RTF code.
   }
 begin
-  Writer.WriteStrLn(string(fRTFBuilder.AsString));
+  Writer.AppendLine(string(fRTFBuilder.AsString));
 end;
 
 procedure TRTFHiliter.EndLine;
@@ -674,7 +667,6 @@ procedure TRTFHiliter.WriteElem(const ElemText: string);
 begin
   fRTFBuilder.AddText(ElemText);
 end;
-
 
 { TBaseHTMLHiliter }
 
@@ -742,7 +734,6 @@ begin
   HTMLBuilder.AddText(ElemText);
 end;
 
-
 { TDetailHTMLHiliter }
 
 procedure TDetailHTMLHiliter.BeginDoc;
@@ -759,9 +750,8 @@ procedure TDetailHTMLHiliter.EndDoc;
 begin
   inherited;
   HTMLBuilder.ClosePre;
-  Writer.WriteStr(HTMLBuilder.HTMLFragment);
+  Writer.Append(HTMLBuilder.HTMLFragment);
 end;
-
 
 { TXHTMLHiliter }
 
@@ -788,7 +778,7 @@ procedure TXHTMLHiliter.EndDoc;
 begin
   inherited;
   HTMLBuilder.ClosePre;
-  Writer.WriteStr(HTMLBuilder.HTMLDocument);
+  Writer.Append(HTMLBuilder.HTMLDocument);
 end;
 
 function TXHTMLHiliter.GenerateCSSRules: string;
