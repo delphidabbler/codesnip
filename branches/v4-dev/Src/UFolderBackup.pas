@@ -593,7 +593,7 @@ var
 begin
   FileInfo.Name := Reader.ReadSmallSizedString;
   FileInfo.TimeStamp := Reader.ReadLongInt;
-  CheckSum := Reader.ReadSmallSizedBytes;
+  CheckSum := Reader.ReadBytes(SizeOf(Checksum));
   FileInfo.Content := Reader.ReadLongSizedBytes;
   TestCheckSums(FileInfo.Name, Checksum, TPJMD5.Calculate(FileInfo.Content));
 end;
@@ -638,7 +638,7 @@ begin
   try
     BinWriter.WriteSmallSizedString(ExtractFileName(FileName));
     BinWriter.WriteLongInt(DOSDateTime.DateStamp);
-    BinWriter.WriteSmallSizedBytes(TPJMD5.Calculate(FileBytes));
+    BinWriter.WriteBytes(TPJMD5.Calculate(FileBytes));
     BinWriter.WriteLongSizedBytes(FileBytes);
   finally
     BinWriter.Free;
