@@ -455,7 +455,7 @@ procedure TBinDataStreamWriter.WriteBytes(const B: TBytes);
 begin
   if Length(B) = 0 then
     Exit;
-  BaseStream.WriteBuffer(Pointer(B), Length(B));
+  BaseStream.WriteBuffer(Pointer(B)^, Length(B));
 end;
 
 procedure TBinDataStreamWriter.WriteLongInt(const I: LongInt);
