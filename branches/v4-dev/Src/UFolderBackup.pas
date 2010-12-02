@@ -36,6 +36,7 @@
 
 unit UFolderBackup;
 
+// TODO: Tidy up and re comment this unit.
 
 interface
 
@@ -87,7 +88,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes, Generics.Collections,
+  SysUtils, Classes, Generics.Collections, IOUtils,
   // DelphiDabbler library
   PJMD5,
   // Project
@@ -95,6 +96,20 @@ uses
 
 
 type
+
+  TBackupFileWriter = class(TObject)
+  strict private
+    var fFiles: TStrings;
+    var fStream: TStream;
+    var fFileID: SmallInt;
+    procedure WriteHeader;
+    procedure WriteFileInfo(const FileName: string);
+  public
+    constructor Create(const Files: TStrings; const Stream: TStream;
+      const FileID: SmallInt);
+    destructor Destroy; override;
+    procedure Save;
+  end;
 
   ///  <summary>
   ///  Abstract base class for classes that load backup files. There is a
@@ -115,9 +130,11 @@ type
     ///  Value used for FileID in file formats that do not support it
     const NulFileID = 0;
   strict private
-    var fFileID: SmallInt;          // Value of FileID property
-    var fFiles: TList<TFileInfo>;   // List of file info records
-    var fReader: TDataStreamReader; // Value of Reader object
+    var fFileID: SmallInt;                  // Value of FileID property
+    var fFiles: TList<TFileInfo>;           // List of file info records
+    var fReader: TDataStreamReader;         // Value of Reader property
+    var fBinReader: TBinDataStreamReader;
+    var fEncoding: TEncoding;
   strict protected
     ///  Checks that two checksums that relate to a specified file and the same.
     ///  Raises an exception if checksums are different.
@@ -131,6 +148,7 @@ type
     procedure ReadFileInfo(out FileInfo: TFileInfo); virtual; abstract;
     ///  Reference to object used to read data from the backup file stream.
     property Reader: TDataStreamReader read fReader;
+    property BinReader: TBinDataStreamReader read fBinReader;
   public
     ///  Object constructor. Sets up object to get data from a given stream.
     constructor Create(const Stream: TStream);
@@ -154,7 +172,7 @@ type
   TBackupFileLoaderFactory = class sealed(TNoConstructObject)
   strict private
     ///  Latest supported file format version.
-    const LastSupportedVersion = 3;
+    const LastSupportedVersion = 4;
     ///  Gets file format version from backup file stream.
     class function GetFileVersion(const Stream: TStream): SmallInt;
   public
@@ -208,6 +226,17 @@ type
     procedure ReadFileInfo(out FileInfo: TBackupFileLoader.TFileInfo); override;
   end;
 
+  TV4BackupFileLoader = class(TBackupFileLoader)
+  strict protected
+    ///  Returns the backup file's text encoding
+    function GetFileEncoding: TEncoding; override;
+    ///  Reads header information from the backup file.
+    procedure ReadHeader(out FileID, FileCount: SmallInt); override;
+    ///  Reads information about a file to be restored from the backup file.
+    ///  Validates the file's content against a recorded checksum.
+    procedure ReadFileInfo(out FileInfo: TBackupFileLoader.TFileInfo); override;
+  end;
+
   ///  Type of exception raised by backup file loader objects.
   EBackupFileLoader = class(ECodeSnip);
 
@@ -223,36 +252,27 @@ var
   FileName: string;           // references each file in database
   Content: string;            // content of each database file
   DOSDateTime: IDOSDateTime;  // date stamp of each database file
+
+  FS: TFileStream;
+  FileWriter: TBackupFileWriter;
 begin
-  Files := nil;
-  // Create output stream to backup file
-  Writer := TDataStreamWriter.Create(
-    TFileStream.Create(fBakFile, fmCreate),
-    TMBCSEncoding.Create(Windows1252CodePage),
-    [dsOwnsStream, dsOwnsEncoding]
-  );
+  // Get list of files in database
+  Files := TStringList.Create;
   try
-    // Get list of files in database
-    Files := TStringList.Create;
     ListFiles(fSrcFolder, '*.*', Files, False);
-    // Write file header, including number of files
-    Writer.WriteSmallInt(cWatermark);   // file marker
-    Writer.WriteSmallInt($0003);        // file version
-    Writer.WriteSmallInt(fFileID);      // file ID
-    Writer.WriteSmallInt(Files.Count);  // number of files
-    // Write details of each file
-    for FileName in Files do
-    begin
-      Writer.WriteSizedString(ExtractFileName(FileName));
-      DOSDateTime := TDOSDateTimeFactory.CreateFromFile(FileName);
-      Writer.WriteLongInt(DOSDateTime.DateStamp);
-      Content := FileToString(FileName);
-      Writer.WriteString(TPJMD5.Calculate(Windows1252BytesOf(Content)));
-      Writer.WriteSizedLongString(Content);
+    FS := TFileStream.Create(fBakFile, fmCreate);
+    try
+      FileWriter := TBackupFileWriter.Create(Files, FS, fFileID);
+      try
+        FileWriter.Save;
+      finally
+        FileWriter.Free;
+      end;
+    finally
+      FS.Free;
     end;
   finally
-    FreeAndNil(Files);
-    FreeAndNil(Writer);
+    Files.Free;
   end;
 end;
 
@@ -283,20 +303,6 @@ var
   FileSpec: string;                       // name & path of each file to restore
   DOSDateTime: IDOSDateTime;              // date stamp of each file to restore
   FileInfo: TBackupFileLoader.TFileInfo;  // info about each file to restore
-//  FileEncoding: TEncoding;                // encoding of each file to restore
-
-  procedure RestoreFile(const FileSpec: string; const Content: TBytes);
-  var
-    FS: TFileStream;
-  begin
-    FS := TFileStream.Create(FileSpec, fmCreate);
-    try
-      FS.WriteBuffer(Pointer(Content)^, Length(Content));
-    finally
-      FS.Free;
-    end;
-  end;
-
 resourcestring
   // Error message
   sBadFileID = 'Invalid file ID for file "%s"';
@@ -321,7 +327,7 @@ begin
         FileInfo.TimeStamp
       );
       // restore file
-      RestoreFile(FileSpec, FileInfo.Content);
+      TFile.WriteAllBytes(FileSpec, FileInfo.Content);
       DOSDateTime.ApplyToFile(FileSpec);
     end;
   finally
@@ -345,14 +351,16 @@ constructor TBackupFileLoader.Create(const Stream: TStream);
 begin
   inherited Create;
   fFiles := TList<TFileInfo>.Create;
-  fReader := TDataStreamReader.Create(
-    Stream, GetFileEncoding, [dsOwnsEncoding]
-  );
+  fEncoding := GetFileEncoding;
+  fReader := TDataStreamReader.Create(Stream, fEncoding, []);
+  fBinReader := TBinDataStreamReader.Create(Stream, fEncoding, []);
 end;
 
 destructor TBackupFileLoader.Destroy;
 begin
+  fBinReader.Free;
   fReader.Free;
+  TEncodingHelper.FreeEncoding(fEncoding);
   fFiles.Free;
   inherited;
 end;
@@ -407,10 +415,11 @@ resourcestring
 var
   Version: SmallInt;  // backup file version
 const
-  Map: array[1..3] of TBackupFileLoaderClass = (
+  Map: array[1..4] of TBackupFileLoaderClass = (
     TV1BackupFileLoader,
     TV2BackupFileLoader,
-    TV3BackupFileLoader
+    TV3BackupFileLoader,
+    TV4BackupFileLoader
   );
 begin
   try
@@ -544,6 +553,100 @@ begin
   Reader.ReadSmallInt;  // skip over version number '0003'
   FileID := Reader.ReadSmallInt;
   FileCount := Reader.ReadSmallInt;
+end;
+
+{ TV4BackupFileLoader }
+
+function TV4BackupFileLoader.GetFileEncoding: TEncoding;
+begin
+  Result := TEncoding.UTF8;
+end;
+
+procedure TV4BackupFileLoader.ReadFileInfo(
+  out FileInfo: TBackupFileLoader.TFileInfo);
+var
+  Checksum: TPJMD5Digest;
+begin
+  FileInfo.Name := BinReader.ReadSmallSizedString;
+  FileInfo.TimeStamp := BinReader.ReadLongInt;
+  CheckSum := BinReader.ReadSmallSizedBytes;
+  FileInfo.Content := BinReader.ReadLongSizedBytes;
+  TestCheckSums(FileInfo.Name, Checksum, TPJMD5.Calculate(FileInfo.Content));
+end;
+
+procedure TV4BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
+begin
+  Reader.ReadSmallInt;  // skip over watermark 'FFFF'
+  Reader.ReadSmallInt;  // skip over version number '0004'
+  Reader.ReadSmallInt;  // skip over padding '0000'
+  Reader.ReadSmallInt;  // skip over padding '0000'
+  FileID := Reader.ReadSmallInt;
+  FileCount := Reader.ReadSmallInt;
+end;
+
+{ TBackupFileWriter }
+
+constructor TBackupFileWriter.Create(const Files: TStrings;
+  const Stream: TStream; const FileID: SmallInt);
+begin
+  inherited Create;
+  fFiles := Files;
+  fStream := Stream;
+  fFileID := FileID;
+end;
+
+destructor TBackupFileWriter.Destroy;
+begin
+
+  inherited;
+end;
+
+procedure TBackupFileWriter.Save;
+var
+  FileName: string;
+begin
+  WriteHeader;
+  for FileName in fFiles do
+    WriteFileInfo(FileName);
+end;
+
+procedure TBackupFileWriter.WriteFileInfo(const FileName: string);
+var
+  DOSDateTime: IDOSDateTime;
+  FileBytes: TBytes;
+  BinWriter: TBinDataStreamWriter;
+begin
+  // Get content and date stamp of file
+  FileBytes := TFile.ReadAllBytes(FileName);
+  DOSDateTime := TDOSDateTimeFactory.CreateFromFile(FileName);
+  // Write the data
+  BinWriter := TBinDataStreamWriter.Create(fStream, TEncoding.UTF8, []);
+  try
+    BinWriter.WriteSmallSizedString(ExtractFileName(FileName));
+    BinWriter.WriteLongInt(DOSDateTime.DateStamp);
+    BinWriter.WriteSmallSizedBytes(TPJMD5.Calculate(FileBytes));
+    BinWriter.WriteLongSizedBytes(FileBytes);
+  finally
+    BinWriter.Free;
+  end;
+end;
+
+procedure TBackupFileWriter.WriteHeader;
+var
+  TextWriter: TDataStreamWriter;
+begin
+  // Header is written in formatted text for backwards compatibilty
+  TextWriter := TDataStreamWriter.Create(fStream, TEncoding.ASCII, []);
+  try
+    TextWriter.WriteSmallInt(SmallInt($FFFF));
+    TextWriter.WriteSmallInt(4);
+    TextWriter.WriteSmallInt(0);
+    TextWriter.WriteSmallInt(0);
+    TextWriter.WriteSmallInt(fFileID);
+    TextWriter.WriteSmallInt(fFiles.Count);
+  finally
+    TextWriter.Free;
+  end;
 end;
 
 end.
