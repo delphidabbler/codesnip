@@ -646,8 +646,8 @@ begin
   Reader.ReadSmallInt;  // skip over version number '0004'
   Reader.ReadSmallInt;  // skip over padding '0000'
   Reader.ReadSmallInt;  // skip over padding '0000'
-  FileID := Reader.ReadSmallInt;
-  FileCount := Reader.ReadSmallInt;
+  FileID := BinReader.ReadSmallInt;
+  FileCount := BinReader.ReadSmallInt;
 end;
 
 { TBackupFileWriter }
@@ -700,6 +700,7 @@ end;
 procedure TBackupFileWriter.WriteHeader;
 var
   TextWriter: TDataStreamWriter;
+  BinWriter: TBinDataStreamWriter;
 begin
   // Header is written in formatted text for backwards compatibilty
   TextWriter := TDataStreamWriter.Create(fStream, TEncoding.ASCII, []);
@@ -708,10 +709,15 @@ begin
     TextWriter.WriteSmallInt(4);
     TextWriter.WriteSmallInt(0);
     TextWriter.WriteSmallInt(0);
-    TextWriter.WriteSmallInt(fFileID);
-    TextWriter.WriteSmallInt(fFiles.Count);
   finally
     TextWriter.Free;
+  end;
+  BinWriter := TBinDataStreamWriter.Create(fStream, False);
+  try
+    BinWriter.WriteSmallInt(fFileID);
+    BinWriter.WriteSmallInt(fFiles.Count);
+  finally
+    BinWriter.Free;
   end;
 end;
 
