@@ -71,6 +71,28 @@ type
     destructor Destroy; override;
   end;
 
+  TBinDataStreamWriter = class(TDataStreamIOBase)
+  public
+    procedure WriteSmallInt(const I: SmallInt);
+    procedure WriteLongInt(const I: LongInt);
+    procedure WriteSmallSizedBytes(const B: TBytes);
+    procedure WriteLongSizedBytes(const B: TBytes);
+    procedure WriteBytes(const B: TBytes);
+    procedure WriteSmallSizedString(const Str: UnicodeString);
+    procedure WriteLongSizedString(const Str: UnicodeString);
+  end;
+
+  TBinDataStreamReader = class(TDataStreamIOBase)
+  public
+    function ReadSmallInt: SmallInt;
+    function ReadLongInt: LongInt;
+    function ReadBytes(Count: Integer): TBytes;
+    function ReadSmallSizedBytes: TBytes;
+    function ReadLongSizedBytes: TBytes;
+    function ReadSmallSizedString: UnicodeString;
+    function ReadLongSizedString: UnicodeString;
+  end;
+
   {
   TDataStreamReader:
     Stream wrapper that can read numeric and string data from a stream. Assumes
@@ -425,6 +447,101 @@ var
 begin
   Bytes := Encoding.GetBytes(Str);
   BaseStream.WriteBuffer(Pointer(Bytes)^, Length(Bytes));
+end;
+
+{ TBinDataStreamWriter }
+
+procedure TBinDataStreamWriter.WriteBytes(const B: TBytes);
+begin
+  if Length(B) = 0 then
+    Exit;
+  BaseStream.WriteBuffer(Pointer(B), Length(B));
+end;
+
+procedure TBinDataStreamWriter.WriteLongInt(const I: LongInt);
+begin
+  BaseStream.WriteBuffer(I, SizeOf(I));
+end;
+
+procedure TBinDataStreamWriter.WriteLongSizedBytes(const B: TBytes);
+begin
+  WriteLongInt(Length(B));
+  WriteBytes(B);
+end;
+
+procedure TBinDataStreamWriter.WriteLongSizedString(const Str: UnicodeString);
+begin
+  WriteLongSizedBytes(Encoding.GetBytes(Str));
+end;
+
+procedure TBinDataStreamWriter.WriteSmallInt(const I: SmallInt);
+begin
+  BaseStream.WriteBuffer(I, SizeOf(I));
+end;
+
+procedure TBinDataStreamWriter.WriteSmallSizedBytes(const B: TBytes);
+begin
+  WriteSmallInt(Length(B));
+  WriteBytes(B);
+end;
+
+procedure TBinDataStreamWriter.WriteSmallSizedString(const Str: UnicodeString);
+begin
+  WriteSmallSizedBytes(Encoding.GetBytes(Str));
+end;
+
+{ TBinDataStreamReader }
+
+function TBinDataStreamReader.ReadBytes(Count: Integer): TBytes;
+begin
+  if (Count < 0) then
+    Count := 0;
+  SetLength(Result, Count);
+  if Count = 0 then
+    Exit;
+  BaseStream.ReadBuffer(Pointer(Result)^, Count);
+end;
+
+function TBinDataStreamReader.ReadLongInt: LongInt;
+begin
+  BaseStream.ReadBuffer(Result, SizeOf(Result));
+end;
+
+function TBinDataStreamReader.ReadLongSizedBytes: TBytes;
+var
+  Count: Integer;
+begin
+  Count := ReadLongInt;
+  Result := ReadBytes(Count);
+end;
+
+function TBinDataStreamReader.ReadLongSizedString: UnicodeString;
+var
+  Bytes: TBytes;
+begin
+  Bytes := ReadLongSizedBytes;
+  Result := Encoding.GetString(Bytes);
+end;
+
+function TBinDataStreamReader.ReadSmallInt: SmallInt;
+begin
+  BaseStream.ReadBuffer(Result, SizeOf(Result));
+end;
+
+function TBinDataStreamReader.ReadSmallSizedBytes: TBytes;
+var
+  Count: Integer;
+begin
+  Count := ReadSmallInt;
+  Result := ReadBytes(Count);
+end;
+
+function TBinDataStreamReader.ReadSmallSizedString: UnicodeString;
+var
+  Bytes: TBytes;
+begin
+  Bytes := ReadSmallSizedBytes;
+  Result := Encoding.GetString(Bytes);
 end;
 
 end.
