@@ -161,6 +161,8 @@ type
     property FileID: SmallInt read fFileID;
     ///  Gets enumerator for file list.
     function GetEnumerator: TEnumerator<TFileInfo>;
+    ///  Gets file's unique watermark
+    class function GetWatermark: TBytes; virtual; abstract;
   end;
 
   TBackupFileLoaderClass = class of TBackupFileLoader;
@@ -171,11 +173,14 @@ type
   ///  </summary>
   TBackupFileLoaderFactory = class sealed(TNoConstructObject)
   strict private
+    class var fClassMap: TArray<TBackupFileLoaderClass>;
     ///  Latest supported file format version.
     const LastSupportedVersion = 4;
     ///  Gets file format version from backup file stream.
-    class function GetFileVersion(const Stream: TStream): SmallInt;
+    class function GetLoaderClass(const Stream: TStream):
+      TBackupFileLoaderClass;
   public
+    class constructor Create;
     ///  Creates an instance of the correct backup file loader required to load
     ///  the backup file from the given stream.
     class function Create(const Stream: TStream): TBackupFileLoader;
@@ -194,6 +199,7 @@ type
     ///  Reads information about a file to be restored from the backup file.
     ///  Validates the file's content against a recorded checksum.
     procedure ReadFileInfo(out FileInfo: TBackupFileLoader.TFileInfo); override;
+    class function GetWatermark: TBytes; override;
   end;
 
   ///  <summary>
@@ -209,6 +215,7 @@ type
     ///  Reads information about a file to be restored from the backup file.
     ///  Validates the file's content against a recorded checksum.
     procedure ReadFileInfo(out FileInfo: TBackupFileLoader.TFileInfo); override;
+    class function GetWatermark: TBytes; override;
   end;
 
   ///  <summary>
@@ -224,6 +231,7 @@ type
     ///  Reads information about a file to be restored from the backup file.
     ///  Validates the file's content against a recorded checksum.
     procedure ReadFileInfo(out FileInfo: TBackupFileLoader.TFileInfo); override;
+    class function GetWatermark: TBytes; override;
   end;
 
   TV4BackupFileLoader = class(TBackupFileLoader)
@@ -235,6 +243,7 @@ type
     ///  Reads information about a file to be restored from the backup file.
     ///  Validates the file's content against a recorded checksum.
     procedure ReadFileInfo(out FileInfo: TBackupFileLoader.TFileInfo); override;
+    class function GetWatermark: TBytes; override;
   end;
 
   ///  Type of exception raised by backup file loader objects.
@@ -247,14 +256,9 @@ procedure TFolderBackup.Backup;
   the file ID passed to constructor.
   }
 var
-  Writer: TDataStreamWriter;  // object used to write data to stream
-  Files: TStringList;         // list of files in database directory
-  FileName: string;           // references each file in database
-  Content: string;            // content of each database file
-  DOSDateTime: IDOSDateTime;  // date stamp of each database file
-
-  FS: TFileStream;
-  FileWriter: TBackupFileWriter;
+  Files: TStringList;             // list of files to back up
+  FS: TFileStream;                // stream onto backup file
+  FileWriter: TBackupFileWriter;  // writes backup file
 begin
   // Get list of files in database
   Files := TStringList.Create;
@@ -410,23 +414,17 @@ class function TBackupFileLoaderFactory.Create(
   const Stream: TStream): TBackupFileLoader;
 resourcestring
   // Error messages
-  sUnknownVersion = 'Unsupported backup file version: %d';
+  sUnknownFormat = 'Unsupported backup file format';
   sBadFormat = 'Backup file is not in required format';
 var
-  Version: SmallInt;  // backup file version
-const
-  Map: array[1..4] of TBackupFileLoaderClass = (
-    TV1BackupFileLoader,
-    TV2BackupFileLoader,
-    TV3BackupFileLoader,
-    TV4BackupFileLoader
-  );
+  LoaderCls: TBackupFileLoaderClass;
 begin
   try
-    Version := GetFileVersion(Stream);
-    if Version > LastSupportedVersion then
-      raise EBackupFileLoader.CreateFmt(sUnknownVersion, [Version]);
-    Result := Map[Version].Create(Stream);
+    LoaderCls := GetLoaderClass(Stream);
+    Stream.Position := 0;
+    if not Assigned(LoaderCls) then
+      raise EBackupFileLoader.Create(sUnknownFormat);
+    Result := LoaderCls.Create(Stream);
   except
     on E: EStreamError do
       raise EBackupFileLoader.Create(sBadFormat);
@@ -435,23 +433,71 @@ begin
   end;
 end;
 
-class function TBackupFileLoaderFactory.GetFileVersion(
-  const Stream: TStream): SmallInt;
-var
-  Reader: TDataStreamReader;  // reads formatted data from stream
-  FirstWord: SmallInt;        // first 16 bit word in stream
+class constructor TBackupFileLoaderFactory.Create;
 begin
-  Reader := TDataStreamReader.Create(Stream, TEncoding.ASCII, []);
-  try
-    FirstWord := Reader.ReadSmallInt;
-    if FirstWord <> SmallInt($FFFF) then
-      Result := 1 // file doesn't begin with watermark -> version 1 file
-    else
-      Result := Reader.ReadSmallInt;  // file version stored at file offset 4
-    Stream.Position := 0;
-  finally
-    Reader.Free;
+  fClassMap := TArray<TBackupFileLoaderClass>.Create(
+    TV1BackupFileLoader, TV2BackupFileLoader,
+    TV3BackupFileLoader, TV4BackupFileLoader
+  );
+end;
+
+class function TBackupFileLoaderFactory.GetLoaderClass(
+  const Stream: TStream): TBackupFileLoaderClass;
+
+  function MaxWatermarkSize: Integer;
+  var
+    LoaderCls: TBackupFileLoaderClass;
+    Size: Integer;
+  begin
+    Result := 0;
+    for LoaderCls in fClassMap do
+    begin
+      Size := Length(LoaderCls.GetWatermark);
+      if Size > Result then
+        Result := Size;
+    end;
   end;
+
+  function LoadFirstFewBytes(Count: Integer): TBytes;
+  begin
+    SetLength(Result, Count);
+    FillChar(Pointer(Result)^, Count, 0);
+    Stream.Read(Pointer(Result)^, Length(Result));
+  end;
+
+  function FirstBytesMatch(const Buf, Test: TBytes): Boolean;
+  var
+    I: Integer;
+  begin
+    Assert(Length(Buf) >= Length(Test), ClassName
+      + '.GetLoaderClass:LoadFirstFewBytes: Buf shorter than Test');
+    if Length(Test) = 0 then
+      Exit(False);
+    Result := True;
+    for I := 0 to Pred(Length(Test)) do
+    begin
+      if Buf[I] <> Test[I] then
+        Exit(False);
+    end;
+  end;
+
+var
+  Buffer: TBytes;
+  LoaderCls: TBackupFileLoaderClass;
+  Watermark: TBytes;
+begin
+  Buffer := LoadFirstFewBytes(MaxWatermarkSize);
+  Result := TV1BackupFileLoader;
+  for LoaderCls in fClassMap do
+  begin
+    Watermark := LoaderCls.GetWatermark;
+    if FirstBytesMatch(Buffer, Watermark) then
+      Exit(LoaderCls);
+  end;
+  if FirstBytesMatch(
+    Buffer, TEncoding.ASCII.GetBytes('FFFF')
+  ) then
+    Exit(nil);
 end;
 
 { TV1BackupFileLoader }
@@ -459,6 +505,11 @@ end;
 function TV1BackupFileLoader.GetFileEncoding: TEncoding;
 begin
   Result := TEncoding.Default;
+end;
+
+class function TV1BackupFileLoader.GetWatermark: TBytes;
+begin
+  SetLength(Result, 0);
 end;
 
 procedure TV1BackupFileLoader.ReadFileInfo(
@@ -490,6 +541,11 @@ end;
 function TV2BackupFileLoader.GetFileEncoding: TEncoding;
 begin
   Result := TEncoding.Default;
+end;
+
+class function TV2BackupFileLoader.GetWatermark: TBytes;
+begin
+  Result := TEncoding.ASCII.GetBytes('FFFF0002');
 end;
 
 procedure TV2BackupFileLoader.ReadFileInfo(
@@ -529,6 +585,11 @@ begin
   Result := TEncodingHelper.GetEncoding(TEncodingHelper.Windows1252CharSetName);
 end;
 
+class function TV3BackupFileLoader.GetWatermark: TBytes;
+begin
+  Result := TEncoding.ASCII.GetBytes('FFFF0003');
+end;
+
 procedure TV3BackupFileLoader.ReadFileInfo(
   out FileInfo: TBackupFileLoader.TFileInfo);
 var
@@ -560,6 +621,11 @@ end;
 function TV4BackupFileLoader.GetFileEncoding: TEncoding;
 begin
   Result := TEncoding.UTF8;
+end;
+
+class function TV4BackupFileLoader.GetWatermark: TBytes;
+begin
+  Result := TEncoding.ASCII.GetBytes('FFFF000400000000');
 end;
 
 procedure TV4BackupFileLoader.ReadFileInfo(
