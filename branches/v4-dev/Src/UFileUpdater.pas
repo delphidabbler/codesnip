@@ -64,8 +64,7 @@ type
     procedure UpdateFile;
       {Creates a file from data stream.
       }
-    procedure WriteFile(const Name, Content: Windows1252String;
-      const UnixDate: Int64);
+    procedure WriteFile(const Name, Content: string; const UnixDate: Int64);
       {Writes local database file.
         @param Name [in] Name of file.
         @param Content [in] File content.
@@ -202,19 +201,19 @@ procedure TFileUpdater.UpdateFile;
   {Creates a file from data stream.
   }
 var
-  Name: Windows1252String;    // name of file
-  UnixDate: Int64;            // file update date per server: Unix format & GMT
-  Content: Windows1252String; // file content
+  Name: string;       // name of file
+  UnixDate: Int64;    // file update date per server: Unix format & GMT
+  Content: string;    // file content
 begin
   // Get info about file from data stream
-  Name := fReader.ReadSizedAnsiString;
+  Name := fReader.ReadSizedString;
   UnixDate := fReader.ReadInt64;
-  Content := fReader.ReadSizedAnsiString;
+  Content := fReader.ReadSizedString;
   // and create file
   WriteFile(Name, Content, UnixDate);
 end;
 
-procedure TFileUpdater.WriteFile(const Name, Content: Windows1252String;
+procedure TFileUpdater.WriteFile(const Name, Content: string;
   const UnixDate: Int64);
   {Writes local database file.
     @param Name [in] Name of file.
@@ -226,8 +225,8 @@ var
   FilePath: string;   // full path to local file
   Date: IDOSDateTime; // object that encapsulates DOS date time value
 begin
-  FilePath := IncludeTrailingPathDelimiter(fLocalDir) + string(Name);
-  UUtils.StringToFile(string(Content), FilePath);
+  FilePath := IncludeTrailingPathDelimiter(fLocalDir) + Name;
+  UUtils.StringToFile(Content, FilePath);
   Date := TDOSDateTimeFactory.CreateFromUnixTimeStamp(UnixDate);
   Date.ApplyToFile(FilePath);
 end;
