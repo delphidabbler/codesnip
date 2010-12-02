@@ -73,7 +73,7 @@ procedure EnsureFolders(const Folder: string);
 function ListFiles(const Dir, Wildcard: string; const List: TStrings;
   IncludeDirs: Boolean = True): Boolean;
   {Gets a list of the files and sub-directories of a directory that match a
-  wild card.
+  wild card. The file names included in the list include the full file path
     @param Dir [in] Directory to be listed.
     @param Wildcard [in] Wildcard of files to be listed.
     @param List [in] Receives directory listing.
@@ -342,7 +342,6 @@ var
   Files: TStringList; // stores files to be deleted
   I: Integer;         // loops thru files in folder
   AFile: string;      // a file to be deleted
-  Path: string;       // path to directory
   Attr: Integer;      // attributes of a file
 begin
   Result := 0;
@@ -351,10 +350,9 @@ begin
     // Get matching list of files / folders in directory
     if not ListFiles(Dir, Wildcard, Files) then
       Exit;
-    Path := IncludeTrailingPathDelimiter(Dir);
     for I := 0 to Pred(Files.Count) do
     begin
-      AFile := Path + Files[I];
+      AFile := Files[I];
       Attr := FileGetAttr(AFile);
       // Delete file if it is not a directory
       if (Attr and faDirectory = 0) then
@@ -394,7 +392,7 @@ end;
 function ListFiles(const Dir, Wildcard: string; const List: TStrings;
   IncludeDirs: Boolean = True): Boolean;
   {Gets a list of the files and sub-directories of a directory that match a
-  wild card.
+  wild card. The file names included in the list include the full file path
     @param Dir [in] Directory to be listed.
     @param Wildcard [in] Wildcard of files to be listed.
     @param List [in] Receives directory listing.
@@ -431,7 +429,7 @@ begin
       if (SR.Name <> '.') and (SR.Name <> '..')
         and (SR.Attr and faVolumeId = 0)
         and (IncludeDirs or not IsDirectory(Path + SR.Name)) then
-        List.Add(SR.Name);
+        List.Add(Path + SR.Name);
       Success := FindNext(SR);
     end;
   finally

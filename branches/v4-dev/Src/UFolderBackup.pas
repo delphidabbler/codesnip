@@ -243,12 +243,10 @@ begin
     // Write details of each file
     for FileName in Files do
     begin
-      Writer.WriteSizedString(FileName);
-      DOSDateTime := TDOSDateTimeFactory.CreateFromFile(
-        SourceFileSpec(FileName)
-      );
+      Writer.WriteSizedString(ExtractFileName(FileName));
+      DOSDateTime := TDOSDateTimeFactory.CreateFromFile(FileName);
       Writer.WriteLongInt(DOSDateTime.DateStamp);
-      Content := FileToString(SourceFileSpec(FileName));
+      Content := FileToString(FileName);
       Writer.WriteString(TPJMD5.Calculate(Windows1252BytesOf(Content)));
       Writer.WriteSizedLongString(Content);
     end;

@@ -393,9 +393,7 @@ begin
     begin
       for FileName in LocalFiles do
       begin
-        FileDate  := TDOSDateTimeFactory.CreateFromFile(
-          IncludeTrailingPathDelimiter(fLocalDir) + FileName
-        );
+        FileDate  := TDOSDateTimeFactory.CreateFromFile(FileName);
         if Result.Compare(FileDate) < 0 then
           (Result as IAssignable).Assign(FileDate);
       end;
