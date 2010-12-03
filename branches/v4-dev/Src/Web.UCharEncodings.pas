@@ -74,6 +74,11 @@ type
     ///  for inclusion in HTTP headers.
     ///  </summary>
     class function AcceptCharSet: string;
+    ///  <summary>
+    ///  Returns name of character set to use by default when empty string is
+    ///  specified as a character set name.
+    ///  </summary>
+    ///  <returns>Required default character set name.</returns>
     class function DefaultCharSet: string; override;
   end;
 

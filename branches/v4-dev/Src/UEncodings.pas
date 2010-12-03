@@ -221,6 +221,7 @@ type
     ///  <summary>
     ///  Returns an array names of supported character sets.
     ///  </summary>
+    ///  <returns>String array of required character set names.</returns>
     class function CharSets: TStringDynArray;
   end;
 
