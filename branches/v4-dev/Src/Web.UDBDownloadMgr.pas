@@ -296,12 +296,20 @@ procedure TDBDownloadMgr.GetDatabase(const Stream: TStream;
 var
   Response: TStringList;  // response from server
   ResBytes: TBytes;       // response as Windows-1252 byte stream
+  Encoding: TEncoding;    // Windows 1252 encoding
 begin
   Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('getdatabase', Response);
-    ResBytes := Windows1252BytesOf(Response.Text);
+    Encoding := TEncodingHelper.GetEncoding(
+      TEncodingHelper.Windows1252CodePage
+    );
+    try
+      ResBytes := Encoding.GetBytes(Response.Text);
+    finally
+      TEncodingHelper.FreeEncoding(Encoding);
+    end;
     Stream.WriteBuffer(ResBytes[0], Length(ResBytes));
   finally
     FreeAndNil(Response);
