@@ -107,6 +107,9 @@ type
     ///  Frees an given encoding providing it is not a standard encoding.
     ///  </summary>
     ///  <param name="Encoding">Encoding to be freed if necessary.</param>
+    ///  <remarks>Use this method to free any encoding created by this class,
+    ///  or an encoding created elsewhere to avoid the overhead of testing
+    ///  for a standard encoding before freeing.</remarks>
     class procedure FreeEncoding(const Encoding: TEncoding);
     ///  <summary>
     ///  Checks if a character set name is supported.
@@ -167,7 +170,7 @@ type
     class function GetCodePageName(const CodePage: Integer): string;
   end;
 
-  ///  Ansi string using the ASCII code page
+  ///  Ansi string using the ASCII code page.
   ASCIIString = type AnsiString(20127);
 
 
