@@ -349,8 +349,7 @@ begin
   try
     Result := Encoding.GetString(Content);
   finally
-    if not TEncoding.IsStandardEncoding(Encoding) then
-      Encoding.Free;
+    TWebCharEncodings.FreeEncoding(Encoding);
   end;
 end;
 
