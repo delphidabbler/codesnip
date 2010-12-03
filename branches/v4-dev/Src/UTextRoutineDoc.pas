@@ -41,8 +41,10 @@ interface
 
 
 uses
+  // Delphi
+  Classes,
   // Project
-  UActiveText, UIStringList, URoutineDoc, UStrStreamWriter;
+  UActiveText, UIStringList, URoutineDoc;
 
 
 type
@@ -52,11 +54,9 @@ type
   }
   TTextRoutineDoc = class(TRoutineDoc)
   strict private
-    var
-      fWriter: TStrStreamWriter;  // Object used to write plain text to stream
-    const
-      cPageWidth = 80;    // width of output in characters
-      cIndent = 2;        // size of indentation in characters
+    var fWriter: TStringWriter;   // Used to write plain text to stream
+    const cPageWidth = 80;        // Width of output in characters
+    const cIndent = 2;            // Size of indentation in characters
   strict protected
     procedure InitialiseDoc; override;
       {Create writer object for output stream.
@@ -119,15 +119,19 @@ uses
 procedure TTextRoutineDoc.FinaliseDoc;
   {Releases stream writer object.
   }
+var
+  Bytes: TBytes;  // bytes from writer object in Unicode
 begin
-  FreeAndNil(fWriter);
+  Bytes := TEncoding.Unicode.GetBytes(fWriter.ToString);
+  DocStream.WriteBuffer(Pointer(Bytes)^, Length(Bytes));
+  fWriter.Free;
 end;
 
 procedure TTextRoutineDoc.InitialiseDoc;
   {Create writer object for output stream.
   }
 begin
-  fWriter := TStrStreamWriter.Create(DocStream);
+  fWriter := TStringWriter.Create;
 end;
 
 procedure TTextRoutineDoc.RenderCompilerInfo(const Heading: string;
@@ -139,10 +143,10 @@ procedure TTextRoutineDoc.RenderCompilerInfo(const Heading: string;
 var
   Idx: Integer; // loops compiler information table
 begin
-  fWriter.WriteStrLn;
-  fWriter.WriteStrLn(Heading);
+  fWriter.WriteLine;
+  fWriter.WriteLine(Heading);
   for Idx := Low(Info) to High(Info) do
-    fWriter.WriteStrLn('%-20s%s', [Info[Idx].Compiler, Info[Idx].Result]);
+    fWriter.WriteLine('%-20s%s', [Info[Idx].Compiler, Info[Idx].Result]);
 end;
 
 procedure TTextRoutineDoc.RenderDBInfo(const Text: string);
@@ -150,8 +154,8 @@ procedure TTextRoutineDoc.RenderDBInfo(const Text: string);
     @param Text [in] Text to be written.
   }
 begin
-  fWriter.WriteStrLn;
-  fWriter.WriteStrLn(TextWrap(Text, cPageWidth, 0));
+  fWriter.WriteLine;
+  fWriter.WriteLine(TextWrap(Text, cPageWidth, 0));
 end;
 
 procedure TTextRoutineDoc.RenderDescription(const Desc: string);
@@ -159,8 +163,8 @@ procedure TTextRoutineDoc.RenderDescription(const Desc: string);
     @param Desc [in] Description to be written.
   }
 begin
-  fWriter.WriteStrLn;
-  fWriter.WriteStrLn(TextWrap(Desc, cPageWidth, 0));
+  fWriter.WriteLine;
+  fWriter.WriteLine(TextWrap(Desc, cPageWidth, 0));
 end;
 
 procedure TTextRoutineDoc.RenderExtra(const ExtraText: IActiveText);
@@ -211,8 +215,8 @@ begin
             // in active text, so all text will be flushed
             if Text <> '' then
             begin
-              fWriter.WriteStrLn;
-              fWriter.WriteStrLn(TextWrap(Text, cPageWidth, 0));
+              fWriter.WriteLine;
+              fWriter.WriteLine(TextWrap(Text, cPageWidth, 0));
               Text := '';
               InBlock := False;
             end;
@@ -235,7 +239,7 @@ procedure TTextRoutineDoc.RenderHeading(const Heading: string);
     @param Heading [in] Heading to be written.
   }
 begin
-  fWriter.WriteStrLn(Heading);
+  fWriter.WriteLine(Heading);
 end;
 
 procedure TTextRoutineDoc.RenderSourceCode(const SourceCode: string);
@@ -243,9 +247,9 @@ procedure TTextRoutineDoc.RenderSourceCode(const SourceCode: string);
     @param SourceCode [in] Source code to be written.
   }
 begin
-  fWriter.WriteStrLn;
-  fWriter.WriteStrLn(SourceCode);
-  fWriter.WriteStrLn;
+  fWriter.WriteLine;
+  fWriter.WriteLine(SourceCode);
+  fWriter.WriteLine;
 end;
 
 procedure TTextRoutineDoc.RenderTitledList(const Title: string;
@@ -264,8 +268,8 @@ procedure TTextRoutineDoc.RenderTitledText(const Title, Text: string);
     @param Text [in] Text to be written.
   }
 begin
-  fWriter.WriteStrLn(Title);
-  fWriter.WriteStrLn(TextWrap(Text, cPageWidth - cIndent, cIndent));
+  fWriter.WriteLine(Title);
+  fWriter.WriteLine(TextWrap(Text, cPageWidth - cIndent, cIndent));
 end;
 
 end.

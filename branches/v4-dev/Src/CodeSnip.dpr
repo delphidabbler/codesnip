@@ -315,7 +315,6 @@ uses
   USourceGen in 'USourceGen.pas',
   UStatusBarMgr in 'UStatusBarMgr.pas',
   UStringReader in 'UStringReader.pas',
-  UStrStreamWriter in 'UStrStreamWriter.pas',
   UStructs in 'UStructs.pas',
   USystemID in 'USystemID.pas',
   USystemInfo in 'USystemInfo.pas',
