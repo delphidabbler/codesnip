@@ -150,7 +150,11 @@ constructor TFileUpdater.Create(const LocalDir: string;
 begin
   inherited Create;
   fLocalDir := LocalDir;
-  fReader := TTextStreamReader.Create(UpdateData);
+  fReader := TTextStreamReader.Create(
+    UpdateData,
+    TEncodingHelper.GetEncoding(TEncodingHelper.Windows1252CodePage),
+    [dsOwnsEncoding]
+  );
 end;
 
 destructor TFileUpdater.Destroy;
