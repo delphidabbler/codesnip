@@ -49,29 +49,32 @@ uses
 type
   ///  <summary>
   ///  Class that performs character based access to a string. Reads data from
-  ///  the string one character, treating CRLF pairs as a single EOL character.
-  ///  Characters can be put back onto the string.
+  ///  the string one character at a time, treating CRLF pairs as a single EOL
+  ///  character. Characters can be put back onto the string.
   ///  </summary>
   TStringReader = class(TObject)
   strict private
-    var fBuffer: string;  // String being read
-    var fIdx: Integer;    // Cursor that indexes next character to be read
+    ///  String being read.
+    var fBuffer: string;
+    ///  Cursor that indexes next character to be read.
+    var fIdx: Integer;
     /// Read accessor for Ch property. Returns last character read or EOF.
     function GetCh: Char;
   public
-    ///  Character indicating end of file
+    ///  Character indicating end of file.
     const EOF = #0;
-    ///  Character indicating end of line
+    ///  Character indicating end of line.
     const EOL = LF;
-    ///  Object constructor. Records string to be read & reads first character.
+    ///  Object constructor. Records string to be read. Initialises Ch property
+    ///  by reading first character.
     constructor Create(const Str: string);
     ///  Fetches next character from string and returns it. Returns EOL at end
     ///  of line and EOF at end of file.
     function NextChar: Char;
-    ///  Put last read character back on the end of the string.
+    ///  Puts last character read back on end of string.
     procedure PutBackChar;
     ///  Last character read from stream (EOL at end of line and EOF at end of
-    ///  file.
+    ///  file).
     property Ch: Char read GetCh;
   end;
 
@@ -90,7 +93,7 @@ constructor TStringReader.Create(const Str: string);
 begin
   inherited Create;
   fBuffer := Str;
-  // Set cursor to just before start of buffer then read first char
+  // set cursor to just before start of buffer then read first char
   fIdx := 0;
   NextChar;
 end;
@@ -99,14 +102,13 @@ function TStringReader.GetCh: Char;
 begin
   if fIdx <= Length(fBuffer) then
   begin
-    // We are within buffer: get char at current position
+    // within buffer: get char at current position
     Result := fBuffer[fIdx];
     if CharInSet(Result, [CR, LF]) then
-      // Char is one of EOL chars => return EOL
+      // char is one of EOL chars => return EOL
       Result := EOL;
   end
   else
-    // Beyond end of buffer => say so
     Result := EOF;
 end;
 
@@ -114,19 +116,19 @@ function TStringReader.NextChar: Char;
 begin
   if fIdx < Length(fBuffer) then
   begin
-    // We have remaining chars: increment cursor to next char position in buffer
+    // there are more chars: increment cursor to next char position
     Inc(fIdx);
     if fBuffer[fIdx] = CR then
     begin
-      // New char is CR: check to see if followed by LF and skip over CR if so
+      // new char is CR: skip it if followed by LF
       if (fIdx < Length(fBuffer)) and (fBuffer[fIdx + 1] = LF) then
         Inc(fIdx);
     end;
   end
   else
-    // No remaining chars: place cursor beyond end of buffer => EOF
+    // no remaining chars: place cursor beyond end of buffer => EOF
     fIdx := Length(fBuffer) + 1;
-  // Return character just read or EOF
+  // return character just read or EOF
   Result := GetCh;
 end;
 
@@ -135,11 +137,11 @@ begin
   if fIdx > 1 then
   begin
     // fIdx in [2..Length(fBuffer) + 1] => we can move back in buffer
-    // this means that putting back char at EOF points to last character
+    // this permits putting back char at EOF
     Dec(fIdx);
     if fBuffer[fIdx] = LF then
     begin
-      // New current char is LF. If preceeded by CR we will have skipped over CR
+      // new current char is LF: if preceeded by CR we will have skipped over CR
       // when read so we go back two chars in buffer
       if (fIdx > 1) and (fBuffer[fIdx - 1] = CR) then
         Dec(fIdx);
