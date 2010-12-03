@@ -1,8 +1,9 @@
 {
  * UFolderBackup.pas
  *
- * Class that can back up all the files in a folder into a single file. All
- * files to be backed up must be text files.
+ * Code that that can back up and restore all the files in a folder to or from a
+ * single file. Legacy support for restoring data from legacy backup file
+ * formats is provided.
  *
  * $Rev$
  * $Date$
@@ -36,50 +37,49 @@
 
 unit UFolderBackup;
 
-// TODO: Tidy up and re comment this unit.
 
 interface
 
 
 type
 
-  {
-  TFolderBackup:
-    Class that can back up and restore all the files in a folder to or from a
-    single file. All files to be backed up must be text files.
-  }
+  ///  <summary>
+  ///  Class that can back up and restore all the files in a folder to or from
+  ///  a single file.
+  ///  </summary>
   TFolderBackup = class(TObject)
   strict private
-    var
-      fSrcFolder: string;   // Folder to be backed up or restored
-      fBakFile: string;     // Full path to backup file
-      fFileID: SmallInt;    // Identifies the type of file
-    const
-      cWatermark = SmallInt($FFFF); // File watermark (v2 and later)
-    function SourceFileSpec(const FileName: string): string;
-      {Full path to a file in backed up folder.
-        @param FileName [in] Base name of file.
-        @return Full file spec of FileName in source folder.
-      }
+    var fSrcFolder: string;   // Folder to be backed up or restored
+    var fBakFile: string;     // Full path to backup file
+    var fFileID: SmallInt;    // Identifies the type of file
   public
+    ///  <summary>
+    ///  Creates object for a specific folder and backup file type.
+    ///  </summary>
+    ///  <param name="SrcFolder">Folder containing files to be backed up.
+    ///  Sub-directories are ignored.</param>
+    ///  <param name="BakFile">Name of backup file.</param>
+    ///  <param name="FileID">Backup file type identifier. Specified backup file
+    ///  must have this identifier.</param>
     constructor Create(const SrcFolder, BakFile: string;
       const FileID: SmallInt);
-      {Class constructor. Creates backup object for specified folder and backup
-      file.
-        @param SrcFolder [in] Folder to be backed up / restored. Must contain
-          only text files. Sub folders are ignored.
-        @param BakFile [in] Name of backup file.
-        @param FileID [in] File type identifier.
-      }
+    ///  <summary>
+    ///  Backs up the files from the source folder passed to constructor into a
+    ///  single backup file.
+    ///  </summary>
+    ///  <remarks>
+    ///  Backup file is marked with the file ID passed to constructor.
+    ///  </remarks>
     procedure Backup;
-      {Backs up source folder into single backup file. Backup file is marked
-      with the file ID passed to constructor.
-      }
+    ///  <summary>
+    ///  Restores files from backup file into source folder passed to
+    ///  constructor
+    ///  </summary>
+    ///  <remarks>
+    ///  An exception is raised if file type id is not the one passed to the
+    ///  constructor or if any checksum errors are detected.
+    ///  </remarks>
     procedure Restore;
-      {Restores folder from backup file.
-        @except ECodeSnip raised if any checksum errors are found or, for v3 and
-          later format files, if file type id is incorrect.
-      }
   end;
 
 
@@ -97,58 +97,65 @@ uses
 
 type
 
+  ///  Reference to TBackupFileLoader classes
   TBackupFileLoaderClass = class of TBackupFileLoader;
 
+  ///  Static class that provides information about backup files that is of use
+  ///  to other classes.
   TBackupFileInfo = class(TNoConstructObject)
   public
+    ///  Returns a reference to the class used to load files saved in the latest
+    ///  backup file format.
     class function CurrentLoader: TBackupFileLoaderClass;
+    ///  Coverts a string containing a file watermark into a byte array.
     class function WatermarkBytes(const Watermark: string): TBytes;
   end;
 
+  ///  Class that writes files to a backup file using the latest file format.
   TBackupFileWriter = class(TObject)
   strict private
-    var fFiles: TStrings;
-    var fStream: TStream;
-    var fFileID: SmallInt;
+    var fFiles: TStrings;   // Files to be backed up
+    var fStream: TStream;   // Stream to receive backed up files
+    var fFileID: SmallInt;  // ID of backup file
+    ///  Writes file header
     procedure WriteHeader;
+    ///  Writes meta information and contents of a specified file.
     procedure WriteFileInfo(const FileName: string);
   public
+    ///  Sets up object to write specified files to a given stream marked with
+    ///  given file ID.
     constructor Create(const Files: TStrings; const Stream: TStream;
       const FileID: SmallInt);
-    procedure Save;
+    ///  Generates backup file and writes it to stream passed to constructor.
+    procedure Generate;
   end;
 
-  ///  <summary>
   ///  Abstract base class for classes that load backup files. There is a
   ///  different sub class for each supported version of the backup file format.
-  ///  </summary>
   TBackupFileLoader = class abstract(TObject)
   public
     type
       ///  Provides information about a file to be restored from backup
       TFileInfo = record
-        ///  File name without path
-        Name: string;
-        ///  File's timestamp
-        TimeStamp: LongInt;
-        ///  Content of file as bytes to be written to file
-        Content: TBytes;
+        Name: string;           // File name without path
+        TimeStamp: LongInt;     // File's timestamp
+        Content: TBytes;        // Content of file as bytes
+        Checksum: TPJMD5Digest; // Checksum recorded in backup file
       end;
-    ///  Value used for FileID in file formats that do not support it
-    const NulFileID = 0;
+    const NulFileID = 0;  // Used for File ID is formats that don't support it
   strict private
-    var fFileID: SmallInt;                  // Value of FileID property
-    var fFiles: TList<TFileInfo>;           // List of file info records
-    var fEncoding: TEncoding;
-    var fStream: TStream;
-    var fReader: TDataStreamReader;
+    var fFileID: SmallInt;          // Value of FileID property
+    var fFiles: TList<TFileInfo>;   // List of file info records
+    var fEncoding: TEncoding;       // Text encoding used in backup file
+    var fStream: TStream;           // Stream containing backup data being read
+    var fReader: TDataStreamReader; // Object used to read data from stream
+    ///  Checks that a specified file checksum matches that recorded in backup
+    ///  file. Raises an exception if checksums are different.
+    procedure TestChecksums(const FileInfo: TFileInfo);
   strict protected
-    ///  Checks that two checksums that relate to a specified file and the same.
-    ///  Raises an exception if checksums are different.
-    procedure TestChecksums(const FileName: string;
-      const Required, Actual: TPJMD5Digest);
-    ///  Gets the encoding used for the backup file.
+    ///  Gets an instance of the encoding used for the backup file.
     function GetFileEncoding: TEncoding; virtual; abstract;
+    ///  Creates a new data reader to read data from backup file stream.
     function CreateReader(const Stream: TStream): TDataStreamReader; virtual;
       abstract;
     ///  Skips over watermark at start of file.
@@ -157,16 +164,17 @@ type
     procedure ReadHeader(out FileID, FileCount: SmallInt); virtual; abstract;
     ///  Reads information about a file to be restored from the backup file.
     procedure ReadFileInfo(out FileInfo: TFileInfo); virtual; abstract;
-    ///  Reference to object used to read data from the backup file stream.
+    ///  Reference to encoding used to read text from the backup file stream.
     property Encoding: TEncoding read fEncoding;
+    ///  Reference to object used to read data from the backup file stream.
     property Reader: TDataStreamReader read fReader;
   public
-    ///  Object constructor. Sets up object to get data from a given stream.
+    ///  Sets up object to get data from a given stream.
     constructor Create(const Stream: TStream); virtual;
-    ///  Object destructor. Tears down object.
+    ///  Tears down object.
     destructor Destroy; override;
     ///  Loads the backup file from the stream storing required information in
-    ///  the properties and file list.
+    ///  this object's properties and file list.
     procedure Load;
     ///  Backup file identifier.
     property FileID: SmallInt read fFileID;
@@ -176,20 +184,24 @@ type
     class function GetWatermark: TBytes; virtual; abstract;
   end;
 
+  ///  Base class for loaders that read data as formatted text.
   TTextBackupFileLoader = class abstract(TBackupFileLoader)
   strict protected
+    ///  Creates a new formatted text reader object to read data from backup
+    ///  file stream.
     function CreateReader(const Stream: TStream): TDataStreamReader; override;
   end;
 
+  ///  Base class for loaders that read data as formatted binary.
   TBinaryBackupFileLoader = class abstract(TBackupFileLoader)
   strict protected
+    ///  Creates a new binary data reader object to read data from backup file
+    ///  stream.
     function CreateReader(const Stream: TStream): TDataStreamReader; override;
   end;
 
-  ///  <summary>
   ///  Loads and provides access to data from a backup file that has the version
   ///  1 file format.
-  ///  </summary>
   TV1BackupFileLoader = class(TTextBackupFileLoader)
   strict protected
     ///  Returns the backup file's text encoding
@@ -197,15 +209,14 @@ type
     ///  Reads header information from the backup file.
     procedure ReadHeader(out FileID, FileCount: SmallInt); override;
     ///  Reads information about a file to be restored from the backup file.
-    ///  Validates the file's content against a recorded checksum.
     procedure ReadFileInfo(out FileInfo: TBackupFileLoader.TFileInfo); override;
+    ///  Returns the watermark that identifies the file format. In the v1 file
+    ///  format there is no watermark so an empty byte array is returned.
     class function GetWatermark: TBytes; override;
   end;
 
-  ///  <summary>
   ///  Loads and provides access to data from a backup file that has the version
   ///  2 file format.
-  ///  </summary>
   TV2BackupFileLoader = class(TTextBackupFileLoader)
   strict protected
     ///  Returns the backup file's text encoding
@@ -213,15 +224,13 @@ type
     ///  Reads header information from the backup file.
     procedure ReadHeader(out FileID, FileCount: SmallInt); override;
     ///  Reads information about a file to be restored from the backup file.
-    ///  Validates the file's content against a recorded checksum.
     procedure ReadFileInfo(out FileInfo: TBackupFileLoader.TFileInfo); override;
+    ///  Returns the watermark that identifies the file format.
     class function GetWatermark: TBytes; override;
   end;
 
-  ///  <summary>
   ///  Loads and provides access to data from a backup file that has the version
   ///  3 file format.
-  ///  </summary>
   TV3BackupFileLoader = class(TTextBackupFileLoader)
   strict protected
     ///  Returns the backup file's text encoding
@@ -229,11 +238,13 @@ type
     ///  Reads header information from the backup file.
     procedure ReadHeader(out FileID, FileCount: SmallInt); override;
     ///  Reads information about a file to be restored from the backup file.
-    ///  Validates the file's content against a recorded checksum.
     procedure ReadFileInfo(out FileInfo: TBackupFileLoader.TFileInfo); override;
+    ///  Returns the watermark that identifies the file format.
     class function GetWatermark: TBytes; override;
   end;
 
+  ///  Loads and provides access to data from a backup file that has the version
+  ///  4 file format.
   TV4BackupFileLoader = class(TBinaryBackupFileLoader)
   strict protected
     ///  Returns the backup file's text encoding
@@ -241,25 +252,28 @@ type
     ///  Reads header information from the backup file.
     procedure ReadHeader(out FileID, FileCount: SmallInt); override;
     ///  Reads information about a file to be restored from the backup file.
-    ///  Validates the file's content against a recorded checksum.
     procedure ReadFileInfo(out FileInfo: TBackupFileLoader.TFileInfo); override;
+    ///  Returns the watermark that identifies the file format.
     class function GetWatermark: TBytes; override;
   end;
 
-  ///  <summary>
   ///  Factory class that creates the required TBackupFileLoader object to load
-  ///  different backup file formats.
-  ///  </summary>
+  ///  different backup file formats. Determines required class by examining
+  ///  watermarks.
   TBackupFileLoaderFactory = class sealed(TNoConstructObject)
   strict private
-    class var fClassMap: TArray<TBackupFileLoaderClass>;
-    ///  Gets file format version from backup file stream.
+    ///  List of backup file loader classes: one for each file format.
+    class var fClassList: TArray<TBackupFileLoaderClass>;
+    ///  Gets file loader class from watermark contained at start of given
+    ///  stream.
     class function GetLoaderClass(const Stream: TStream):
       TBackupFileLoaderClass;
   public
+    ///  Populates list of loader classes.
     class constructor Create;
-    ///  Creates an instance of the correct backup file loader required to load
-    ///  the backup file from the given stream.
+    ///  Creates an instance of the correct backup file loader to load the
+    ///  backup file from the given stream. Loader type depends on file format
+    ///  used for backup file.
     class function Create(const Stream: TStream): TBackupFileLoader;
   end;
 
@@ -269,15 +283,11 @@ type
 { TFolderBackup }
 
 procedure TFolderBackup.Backup;
-  {Backs up source folder into single backup file. Backup file is marked with
-  the file ID passed to constructor.
-  }
 var
   Files: TStringList;             // list of files to back up
   FS: TFileStream;                // stream onto backup file
   FileWriter: TBackupFileWriter;  // writes backup file
 begin
-  // Get list of files in database
   Files := TStringList.Create;
   try
     ListFiles(fSrcFolder, '*.*', Files, False);
@@ -285,7 +295,7 @@ begin
     try
       FileWriter := TBackupFileWriter.Create(Files, FS, fFileID);
       try
-        FileWriter.Save;
+        FileWriter.Generate;
       finally
         FileWriter.Free;
       end;
@@ -299,13 +309,6 @@ end;
 
 constructor TFolderBackup.Create(const SrcFolder, BakFile: string;
   const FileID: SmallInt);
-  {Class constructor. Creates backup object for specified folder and backup
-  file.
-    @param SrcFolder [in] Folder to be backed up / restored. Must contain only
-      text files. Sub folders are ignored.
-    @param BakFile [in] Name of backup file.
-    @param FileID [in] File type identifier.
-  }
 begin
   inherited Create;
   fSrcFolder := ExcludeTrailingPathDelimiter(SrcFolder);
@@ -314,10 +317,6 @@ begin
 end;
 
 procedure TFolderBackup.Restore;
-  {Restores folder from backup file.
-    @except ECodeSnip raised if any checksum errors are found or, for v3 and
-      later format files, if file type id is incorrect.
-  }
 var
   BakFileStream: TStream;                 // stream onto backup file
   BakFileLoader: TBackupFileLoader;       // loads & analyses backup file
@@ -343,11 +342,10 @@ begin
     // Restore each file
     for FileInfo in BakFileLoader do
     begin
-      FileSpec := SourceFileSpec(FileInfo.Name);
+      FileSpec := IncludeTrailingPathDelimiter(fSrcFolder) + FileInfo.Name;
       DOSDateTime := TDOSDateTimeFactory.CreateFromDOSTimeStamp(
         FileInfo.TimeStamp
       );
-      // restore file
       TFile.WriteAllBytes(FileSpec, FileInfo.Content);
       DOSDateTime.ApplyToFile(FileSpec);
     end;
@@ -355,15 +353,6 @@ begin
     BakFileLoader.Free;
     BakFileStream.Free;
   end;
-end;
-
-function TFolderBackup.SourceFileSpec(const FileName: string): string;
-  {Full path to a file in backed up folder.
-    @param FileName [in] Base name of file.
-    @return Full file spec of FileName in source folder.
-  }
-begin
-  Result := IncludeTrailingPathDelimiter(fSrcFolder) + FileName;
 end;
 
 { TBackupFileLoader }
@@ -405,6 +394,7 @@ begin
     for I := 1 to FileCount do
     begin
       ReadFileInfo(FI);
+      TestChecksums(FI);
       fFiles.Add(FI);
     end;
   except
@@ -420,14 +410,13 @@ begin
   fStream.Position := Length(GetWatermark);
 end;
 
-procedure TBackupFileLoader.TestChecksums(const FileName: string;
-  const Required, Actual: TPJMD5Digest);
+procedure TBackupFileLoader.TestChecksums(const FileInfo: TFileInfo);
 resourcestring
   // Error message
   sCorruptFile = 'Backup file is corrupt. Checksum error in file %s';
 begin
-  if Required <> Actual then
-    raise EBackupFileLoader.CreateFmt(sCorruptFile, [FileName]);
+  if TPJMD5.Calculate(FileInfo.Content) <> FileInfo.Checksum then
+    raise EBackupFileLoader.CreateFmt(sCorruptFile, [FileInfo.Name]);
 end;
 
 { TTextBackupFileLoader }
@@ -460,15 +449,13 @@ end;
 
 procedure TV1BackupFileLoader.ReadFileInfo(
   out FileInfo: TBackupFileLoader.TFileInfo);
-var
-  Checksum: TPJMD5Digest; // file checksum recorded in backup
 begin
   FileInfo.Name := Reader.ReadSizedString16;
   FileInfo.TimeStamp := Reader.ReadInt32;
-  Checksum := Reader.ReadBytes(SizeOf(Checksum));
-  // checksum was made of content as ANSI string so we load it as raw data
+  FileInfo.Checksum := Reader.ReadBytes(SizeOf(FileInfo.Checksum));
+  // checksum was made of content as ANSI string so we load it as raw data, not
+  // as a string which would perform a coversion and change the checksum
   FileInfo.Content := Reader.ReadSizedRawData16;
-  TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(FileInfo.Content));
 end;
 
 procedure TV1BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
@@ -491,15 +478,13 @@ end;
 
 procedure TV2BackupFileLoader.ReadFileInfo(
   out FileInfo: TBackupFileLoader.TFileInfo);
-var
-  Checksum: TPJMD5Digest; // file checksum recorded in backup
 begin
   FileInfo.Name := Reader.ReadSizedString16;
   FileInfo.TimeStamp := Reader.ReadInt32;
-  Checksum := Reader.ReadBytes(SizeOf(Checksum));
-  // checksum was made of content as ANSI string so we load it as raw data
+  FileInfo.Checksum := Reader.ReadBytes(SizeOf(FileInfo.Checksum));
+  // checksum was made of content as ANSI string so we load it as raw data, not
+  // as a string which would perform a coversion and change the checksum
   FileInfo.Content := Reader.ReadSizedRawData32;
-  TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(FileInfo.Content));
 end;
 
 procedure TV2BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
@@ -516,7 +501,7 @@ begin
   // file using the system default encoding while later versions of CodeSnip
   // used Windows-1252. Windows-1252 is used here for greater compatibility with
   // files written by later program versions.
-  Result := TEncodingHelper.GetEncoding(TEncodingHelper.Windows1252CharSetName);
+  Result := TEncodingHelper.GetEncoding(TEncodingHelper.Windows1252CodePage);
 end;
 
 class function TV3BackupFileLoader.GetWatermark: TBytes;
@@ -526,15 +511,13 @@ end;
 
 procedure TV3BackupFileLoader.ReadFileInfo(
   out FileInfo: TBackupFileLoader.TFileInfo);
-var
-  Checksum: TPJMD5Digest;     // file checksum recorded in backup
 begin
   FileInfo.Name := Reader.ReadSizedString16;
   FileInfo.TimeStamp := Reader.ReadInt32;
-  Checksum := Reader.ReadBytes(SizeOf(Checksum));
-  // checksum was made of content as ANSI string so we load it as raw data
+  FileInfo.Checksum := Reader.ReadBytes(SizeOf(FileInfo.Checksum));
+  // checksum was made of content as ANSI string so we load it as raw data, not
+  // as a string which would perform a coversion and change the checksum
   FileInfo.Content := Reader.ReadSizedRawData32;
-  TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(FileInfo.Content));
 end;
 
 procedure TV3BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
@@ -557,14 +540,11 @@ end;
 
 procedure TV4BackupFileLoader.ReadFileInfo(
   out FileInfo: TBackupFileLoader.TFileInfo);
-var
-  Checksum: TPJMD5Digest;
 begin
   FileInfo.Name := Reader.ReadSizedString16;
   FileInfo.TimeStamp := Reader.ReadInt32;
-  CheckSum := Reader.ReadBytes(SizeOf(Checksum));
+  FileInfo.Checksum := Reader.ReadBytes(SizeOf(FileInfo.Checksum));
   FileInfo.Content := Reader.ReadSizedRawData32;
-  TestCheckSums(FileInfo.Name, Checksum, TPJMD5.Calculate(FileInfo.Content));
 end;
 
 procedure TV4BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
@@ -584,7 +564,7 @@ begin
   fFileID := FileID;
 end;
 
-procedure TBackupFileWriter.Save;
+procedure TBackupFileWriter.Generate;
 var
   FileName: string;
 begin
@@ -657,7 +637,7 @@ end;
 
 class constructor TBackupFileLoaderFactory.Create;
 begin
-  fClassMap := TArray<TBackupFileLoaderClass>.Create(
+  fClassList := TArray<TBackupFileLoaderClass>.Create(
     TV1BackupFileLoader, TV2BackupFileLoader,
     TV3BackupFileLoader, TV4BackupFileLoader
   );
@@ -666,13 +646,14 @@ end;
 class function TBackupFileLoaderFactory.GetLoaderClass(
   const Stream: TStream): TBackupFileLoaderClass;
 
+  // Gets size in bytes of largest watermark of any file format
   function MaxWatermarkSize: Integer;
   var
     LoaderCls: TBackupFileLoaderClass;
     Size: Integer;
   begin
     Result := 0;
-    for LoaderCls in fClassMap do
+    for LoaderCls in fClassList do
     begin
       Size := Length(LoaderCls.GetWatermark);
       if Size > Result then
@@ -680,6 +661,8 @@ class function TBackupFileLoaderFactory.GetLoaderClass(
     end;
   end;
 
+  // Loads and returns given number of bytes from start of stream. If stream has
+  // less than Count bytes returned byte array is padded to size with 0 bytes.
   function LoadFirstFewBytes(Count: Integer): TBytes;
   begin
     SetLength(Result, Count);
@@ -687,12 +670,14 @@ class function TBackupFileLoaderFactory.GetLoaderClass(
     Stream.Read(Pointer(Result)^, Length(Result));
   end;
 
+  // Checks if Buf begin with the bytes of the Test byte array. The size of Buf
+  // must be at least as great as the size of Test.
   function FirstBytesMatch(const Buf, Test: TBytes): Boolean;
   var
     I: Integer;
   begin
     Assert(Length(Buf) >= Length(Test), ClassName
-      + '.GetLoaderClass:LoadFirstFewBytes: Buf shorter than Test');
+      + '.GetLoaderClass:FirstBytesMatch: Buf shorter than Test');
     if Length(Test) = 0 then
       Exit(False);
     Result := True;
@@ -704,18 +689,24 @@ class function TBackupFileLoaderFactory.GetLoaderClass(
   end;
 
 var
-  Buffer: TBytes;
-  LoaderCls: TBackupFileLoaderClass;
-  Watermark: TBytes;
+  Buffer: TBytes;                     // first few bytes of stream
+  LoaderCls: TBackupFileLoaderClass;  // class of each supported loader
+  Watermark: TBytes;                  // watermark of each file format
 begin
+  // load sufficient bytes from stream to compare with watermark
   Buffer := LoadFirstFewBytes(MaxWatermarkSize);
+  // assume v1 format
   Result := TV1BackupFileLoader;
-  for LoaderCls in fClassMap do
+  // scan all loader classes check to see if their watermark matches first few
+  // bytes of stream (doesn't work for v1 which has no watermark)
+  for LoaderCls in fClassList do
   begin
     Watermark := LoaderCls.GetWatermark;
     if FirstBytesMatch(Buffer, Watermark) then
       Exit(LoaderCls);
   end;
+  // if we get here we have either v1 or unsupported file format: if stream
+  // starts with 'FFFF' it's not v1
   if FirstBytesMatch(
     Buffer, TEncoding.ASCII.GetBytes('FFFF')
   ) then
