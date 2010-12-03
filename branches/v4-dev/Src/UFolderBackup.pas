@@ -141,6 +141,7 @@ type
     var fFiles: TList<TFileInfo>;           // List of file info records
     var fEncoding: TEncoding;
     var fStream: TStream;
+    var fReader: TDataStreamReader;
   strict protected
     ///  Checks that two checksums that relate to a specified file and the same.
     ///  Raises an exception if checksums are different.
@@ -148,6 +149,8 @@ type
       const Required, Actual: TPJMD5Digest);
     ///  Gets the encoding used for the backup file.
     function GetFileEncoding: TEncoding; virtual; abstract;
+    function CreateReader(const Stream: TStream): TDataStreamReader; virtual;
+      abstract;
     ///  Skips over watermark at start of file.
     procedure SkipWatermark;
     ///  Reads header information from the backup file.
@@ -156,6 +159,7 @@ type
     procedure ReadFileInfo(out FileInfo: TFileInfo); virtual; abstract;
     ///  Reference to object used to read data from the backup file stream.
     property Encoding: TEncoding read fEncoding;
+    property Reader: TDataStreamReader read fReader;
   public
     ///  Object constructor. Sets up object to get data from a given stream.
     constructor Create(const Stream: TStream); virtual;
@@ -173,23 +177,13 @@ type
   end;
 
   TTextBackupFileLoader = class abstract(TBackupFileLoader)
-  strict private
-    fReader: TDataStreamReader;
   strict protected
-    property Reader: TDataStreamReader read fReader;
-  public
-    constructor Create(const Stream: TStream); override;
-    destructor Destroy; override;
+    function CreateReader(const Stream: TStream): TDataStreamReader; override;
   end;
 
   TBinaryBackupFileLoader = class abstract(TBackupFileLoader)
-  strict private
-    fReader: TBinDataStreamReader;
   strict protected
-    property Reader: TBinDataStreamReader read fReader;
-  public
-    constructor Create(const Stream: TStream); override;
-    destructor Destroy; override;
+    function CreateReader(const Stream: TStream): TDataStreamReader; override;
   end;
 
   ///  <summary>
@@ -380,11 +374,13 @@ begin
   fFiles := TList<TFileInfo>.Create;
   fEncoding := GetFileEncoding;
   fStream := Stream;
+  fReader := CreateReader(Stream);
 end;
 
 destructor TBackupFileLoader.Destroy;
 begin
   TEncodingHelper.FreeEncoding(fEncoding);
+  fReader.Free;
   fFiles.Free;
   inherited;
 end;
@@ -436,30 +432,18 @@ end;
 
 { TTextBackupFileLoader }
 
-constructor TTextBackupFileLoader.Create(const Stream: TStream);
+function TTextBackupFileLoader.CreateReader(
+  const Stream: TStream): TDataStreamReader;
 begin
-  inherited Create(Stream);
-  fReader := TDataStreamReader.Create(Stream, Encoding, []);
-end;
-
-destructor TTextBackupFileLoader.Destroy;
-begin
-  fReader.Free;
-  inherited;
+  Result := TTextStreamReader.Create(Stream, Encoding, []);
 end;
 
 { TBinaryBackupFileLoader }
 
-constructor TBinaryBackupFileLoader.Create(const Stream: TStream);
+function TBinaryBackupFileLoader.CreateReader(
+  const Stream: TStream): TDataStreamReader;
 begin
-  inherited Create(Stream);
-  fReader := TBinDataStreamReader.Create(Stream, Encoding, []);
-end;
-
-destructor TBinaryBackupFileLoader.Destroy;
-begin
-  fReader.Free;
-  inherited;
+  Result := TBinaryStreamReader.Create(Stream, Encoding, []);
 end;
 
 { TV1BackupFileLoader }
@@ -477,25 +461,20 @@ end;
 procedure TV1BackupFileLoader.ReadFileInfo(
   out FileInfo: TBackupFileLoader.TFileInfo);
 var
-  Content: AnsiString;    // content of file being restored
   Checksum: TPJMD5Digest; // file checksum recorded in backup
 begin
-  FileInfo.Name := Reader.ReadSizedString;
-  FileInfo.TimeStamp := Reader.ReadLongInt;
-  Checksum := Reader.ReadString(32);
-  // checksum was made of content as ANSI string so we load it as such, test
-  // checksum and only then convert to Unicode
-  Content := Reader.ReadSizedAnsiString;
-  TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(Content));
-  SetLength(FileInfo.Content, Length(Content));
-  if Length(Content) > 0 then
-    Move(Content[1], FileInfo.Content[0], Length(Content));
+  FileInfo.Name := Reader.ReadSizedString16;
+  FileInfo.TimeStamp := Reader.ReadInt32;
+  Checksum := Reader.ReadBytes(SizeOf(Checksum));
+  // checksum was made of content as ANSI string so we load it as raw data
+  FileInfo.Content := Reader.ReadSizedRawData16;
+  TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(FileInfo.Content));
 end;
 
 procedure TV1BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
 begin
   FileID := NulFileID;
-  FileCount := Reader.ReadSmallInt;
+  FileCount := Reader.ReadInt16;
 end;
 
 { TV2BackupFileLoader }
@@ -513,25 +492,20 @@ end;
 procedure TV2BackupFileLoader.ReadFileInfo(
   out FileInfo: TBackupFileLoader.TFileInfo);
 var
-  Content: AnsiString;    // content of file being restored
   Checksum: TPJMD5Digest; // file checksum recorded in backup
 begin
-  FileInfo.Name := Reader.ReadSizedString;
-  FileInfo.TimeStamp := Reader.ReadLongInt;
-  Checksum := Reader.ReadString(32);
-  // Checksum was made of content as ANSI string so we load it as such, test
-  // checksum and only then convert to Unicode
-  Content := Reader.ReadSizedLongAnsiString;
-  TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(Content));
-  SetLength(FileInfo.Content, Length(Content));
-  if Length(Content) > 0 then
-    Move(Content[1], FileInfo.Content[0], Length(Content));
+  FileInfo.Name := Reader.ReadSizedString16;
+  FileInfo.TimeStamp := Reader.ReadInt32;
+  Checksum := Reader.ReadBytes(SizeOf(Checksum));
+  // checksum was made of content as ANSI string so we load it as raw data
+  FileInfo.Content := Reader.ReadSizedRawData32;
+  TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(FileInfo.Content));
 end;
 
 procedure TV2BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
 begin
   FileID := NulFileID;
-  FileCount := Reader.ReadSmallInt;
+  FileCount := Reader.ReadInt16;
 end;
 
 { TV3BackupFileLoader }
@@ -553,25 +527,20 @@ end;
 procedure TV3BackupFileLoader.ReadFileInfo(
   out FileInfo: TBackupFileLoader.TFileInfo);
 var
-  Content: Windows1252String; // content of file being restored
   Checksum: TPJMD5Digest;     // file checksum recorded in backup
 begin
-  FileInfo.Name := Reader.ReadSizedString;
-  FileInfo.TimeStamp := Reader.ReadLongInt;
-  Checksum := Reader.ReadString(32);
-  // checksum was made of content as ANSI string so we load it as such, test
-  // checksum and only then convert to Unicode
-  Content := Reader.ReadSizedLongAnsiString;
-  TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(Content));
-  SetLength(FileInfo.Content, Length(Content));
-  if Length(Content) > 0 then
-    Move(Content[1], FileInfo.Content[0], Length(Content));
+  FileInfo.Name := Reader.ReadSizedString16;
+  FileInfo.TimeStamp := Reader.ReadInt32;
+  Checksum := Reader.ReadBytes(SizeOf(Checksum));
+  // checksum was made of content as ANSI string so we load it as raw data
+  FileInfo.Content := Reader.ReadSizedRawData32;
+  TestChecksums(FileInfo.Name, Checksum, TPJMD5.Calculate(FileInfo.Content));
 end;
 
 procedure TV3BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
 begin
-  FileID := Reader.ReadSmallInt;
-  FileCount := Reader.ReadSmallInt;
+  FileID := Reader.ReadInt16;
+  FileCount := Reader.ReadInt16;
 end;
 
 { TV4BackupFileLoader }
@@ -591,17 +560,17 @@ procedure TV4BackupFileLoader.ReadFileInfo(
 var
   Checksum: TPJMD5Digest;
 begin
-  FileInfo.Name := Reader.ReadSmallSizedString;
-  FileInfo.TimeStamp := Reader.ReadLongInt;
+  FileInfo.Name := Reader.ReadSizedString16;
+  FileInfo.TimeStamp := Reader.ReadInt32;
   CheckSum := Reader.ReadBytes(SizeOf(Checksum));
-  FileInfo.Content := Reader.ReadLongSizedBytes;
+  FileInfo.Content := Reader.ReadSizedRawData32;
   TestCheckSums(FileInfo.Name, Checksum, TPJMD5.Calculate(FileInfo.Content));
 end;
 
 procedure TV4BackupFileLoader.ReadHeader(out FileID, FileCount: SmallInt);
 begin
-  FileID := Reader.ReadSmallInt;
-  FileCount := Reader.ReadSmallInt;
+  FileID := Reader.ReadInt16;
+  FileCount := Reader.ReadInt16;
 end;
 
 { TBackupFileWriter }
@@ -628,18 +597,18 @@ procedure TBackupFileWriter.WriteFileInfo(const FileName: string);
 var
   DOSDateTime: IDOSDateTime;
   FileBytes: TBytes;
-  BinWriter: TBinDataStreamWriter;
+  BinWriter: TBinaryStreamWriter;
 begin
   // Get content and date stamp of file
   FileBytes := TFile.ReadAllBytes(FileName);
   DOSDateTime := TDOSDateTimeFactory.CreateFromFile(FileName);
   // Write the data
-  BinWriter := TBinDataStreamWriter.Create(fStream, TEncoding.UTF8, []);
+  BinWriter := TBinaryStreamWriter.Create(fStream, TEncoding.UTF8, []);
   try
-    BinWriter.WriteSmallSizedString(ExtractFileName(FileName));
-    BinWriter.WriteLongInt(DOSDateTime.DateStamp);
+    BinWriter.WriteSizedString16(ExtractFileName(FileName));
+    BinWriter.WriteInt32(DOSDateTime.DateStamp);
     BinWriter.WriteBytes(TPJMD5.Calculate(FileBytes));
-    BinWriter.WriteLongSizedBytes(FileBytes);
+    BinWriter.WriteSizedBytes32(FileBytes);
   finally
     BinWriter.Free;
   end;
@@ -647,15 +616,15 @@ end;
 
 procedure TBackupFileWriter.WriteHeader;
 var
-  BinWriter: TBinDataStreamWriter;
+  BinWriter: TBinaryStreamWriter;
 begin
-  BinWriter := TBinDataStreamWriter.Create(fStream, False);
+  BinWriter := TBinaryStreamWriter.Create(fStream, False);
   try
     BinWriter.WriteBytes(
       TBackupFileInfo.CurrentLoader.GetWatermark
     );
-    BinWriter.WriteSmallInt(fFileID);
-    BinWriter.WriteSmallInt(fFiles.Count);
+    BinWriter.WriteInt16(fFileID);
+    BinWriter.WriteInt16(fFiles.Count);
   finally
     BinWriter.Free;
   end;

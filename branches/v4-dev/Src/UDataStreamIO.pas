@@ -1,13 +1,14 @@
 {
  * UDataStreamIO.pas
  *
- * Stream wrapper that can read numeric and string data from a stream. Assumes
- * integers of various sizes are encoded as ASCII hex digits in stream.
- *
- * Originally named UDataStreamReader.pas. Renamed as UDataStreamIO.pas at v2.0.
+ * Stream wrappers read / write data from / to a formatted stream. Classes are
+ * provided to read from text or binary streams that conform to the data
+ * formatting rules. Another class writes data to formatted binary streams.
  *
  * $Rev$
  * $Date$
+ *
+ * Originally named UDataStreamReader.pas.
  *
  * ***** BEGIN LICENSE BLOCK *****
  *
@@ -53,11 +54,13 @@ uses
 
 type
 
+  ///  Set of values indicating whether a stream wrapper object owns, and hence
+  ///  frees, its stream and encoding objects
   TDataStreamOwnerships = set of (dsOwnsStream, dsOwnsEncoding);
 
   { TODO: Revise unit's documentation. }
 
-  TDataStreamIOBase = class(TPJStreamWrapper)
+  TDataStreamIO = class(TPJStreamWrapper)
   strict private
     var fEncoding: TEncoding;
     var fOwnsEncoding: Boolean;
@@ -67,173 +70,69 @@ type
     constructor Create(const Stream: TStream;
       const OwnsStream: Boolean = False); overload; override;
     constructor Create(const Stream: TStream; const Encoding: TEncoding;
-      const OwnerShips: TDataStreamOwnerships); reintroduce; overload;
+      const OwnerShips: TDataStreamOwnerships); reintroduce; overload; virtual;
     destructor Destroy; override;
   end;
 
-  TBinDataStreamWriter = class(TDataStreamIOBase)
+  TDataStreamReader = class(TDataStreamIO)
+  strict protected
+    function ReadString(CharCount: Integer): UnicodeString;
   public
-    procedure WriteSmallInt(const I: SmallInt);
-    procedure WriteLongInt(const I: LongInt);
-    procedure WriteSmallSizedBytes(const B: TBytes);
-    procedure WriteLongSizedBytes(const B: TBytes);
-    procedure WriteBytes(const B: TBytes);
-    procedure WriteSmallSizedString(const Str: UnicodeString);
-    procedure WriteLongSizedString(const Str: UnicodeString);
+    function ReadByte: Byte; virtual; abstract;
+    function ReadInt16: SmallInt; virtual; abstract;
+    function ReadInt32: LongInt; virtual; abstract;
+    function ReadInt64: Int64; virtual; abstract;
+
+    function ReadRawData(ByteCount: Integer): TBytes;
+    function ReadSizedRawData16: TBytes;
+    function ReadSizedRawData32: TBytes;
+
+    function ReadBytes(ByteCount: Integer): TBytes; virtual; abstract;
+    function ReadSizedBytes16: TBytes;
+    function ReadSizedBytes32: TBytes;
+
+    function ReadSizedString16: UnicodeString;
+    function ReadSizedString32: UnicodeString;
   end;
 
-  TBinDataStreamReader = class(TDataStreamIOBase)
+  TBinaryStreamReader = class(TDataStreamReader)
   public
-    function ReadSmallInt: SmallInt;
-    function ReadLongInt: LongInt;
-    function ReadBytes(Count: Integer): TBytes;
-    function ReadSmallSizedBytes: TBytes;
-    function ReadLongSizedBytes: TBytes;
-    function ReadSmallSizedString: UnicodeString;
-    function ReadLongSizedString: UnicodeString;
+    function ReadByte: Byte; override;
+    function ReadInt16: SmallInt; override;
+    function ReadInt32: LongInt; override;
+    function ReadInt64: Int64; override;
+    function ReadBytes(ByteCount: Integer): TBytes; override;
   end;
 
-  {
-  TDataStreamReader:
-    Stream wrapper that can read numeric and string data from a stream. Assumes
-    integers of various sizes are encoded as ASCII hex digits in stream.
-  }
-  TDataStreamReader = class(TDataStreamIOBase)
+  TTextStreamReader = class(TDataStreamReader)
   strict private
     function ReadHexDigits(const Count: Integer): LongInt;
-      {Reads hex digits from stream.
-        @param Count [in] Number of hex digits to read.
-        @return Value read from stream.
-      }
   public
-    function ReadSmallInt: SmallInt;
-      {Reads small integer from stream, encoded as 4 hex digits.
-        @return Value read from stream.
-      }
-    function ReadLongInt: LongInt;
-      {Reads long integer from stream, encoded as 8 char hex digits.
-        @return Value read from stream.
-      }
-    function ReadInt64: Int64;
-      {Reads an Int64 value from stream, encoded as 16 char hex digit.
-        @return Value read from stream.
-      }
-    function ReadAnsiString(const Length: Integer): RawByteString;
-      {Reads a string of specified size from stream.
-        @param Length [in] Length of string to be read.
-        @return String read from stream.
-      }
-    function ReadSizedAnsiString: RawByteString;
-      {Reads string from stream that is preceded by a small int length
-      descriptor.
-        @return String read from stream.
-      }
-    function ReadSizedLongAnsiString: RawByteString;
-      {Reads string from stream that is preceded by a long int length
-      descriptor.
-        @return String read from stream.
-      }
-    function ReadString(const Length: Integer): UnicodeString;
-      {Reads a string of specified size from stream.
-        @param Length [in] Length of string to be read.
-        @return String read from stream.
-      }
-    function ReadSizedString: UnicodeString;
-      {Reads string from stream that is preceded by a small int length
-      descriptor.
-        @return String read from stream.
-      }
-    function ReadSizedLongString: UnicodeString;
-      {Reads string from stream that is preceded by a long int length
-      descriptor.
-        @return String read from stream.
-      }
+    constructor Create(const Stream: TStream; const Encoding: TEncoding;
+      const OwnerShips: TDataStreamOwnerships); overload; override;
+    function ReadByte: Byte; override;
+    function ReadInt16: SmallInt; override;
+    function ReadInt32: LongInt; override;
+    function ReadInt64: Int64; override;
+    function ReadBytes(ByteCount: Integer): TBytes; override;
   end;
 
-  {
-  TDataStreamWriter:
-    Stream wrapper that can write numeric and string data to a stream. Integers
-    of various sizes are encoded as ASCII hex digits in stream.
-  }
-  TDataStreamWriter = class(TDataStreamIOBase)
-  strict private
-    procedure WriteHex(const Value: LongInt; const Count: Integer);
-      {Writes a hex representation of a number to stream.
-        @param Value [in] Value to be written.
-        @param Count [in] Number of hex digits required.
-      }
+  TBinaryStreamWriter = class(TDataStreamIO)
   public
-    procedure WriteSmallInt(const Value: SmallInt);
-      {Writes a 16 bit integer to the stream as hex digits.
-        @param Value [in] Value to be written.
-      }
-    procedure WriteLongInt(const Value: LongInt);
-      {Writes a 32 bit integer to the stream as hex digits.
-        @param Value [in] Value to be written.
-      }
-    procedure WriteString(const Str: RawByteString); overload;
-      {Writes a Windows-1252 string to stream.
-        @param Str [in] String to be written.
-      }
-    procedure WriteString(const Str: UnicodeString); overload;
-      {Writes a unicode string to stream.
-        @param Str [in] String to be written.
-      }
-    procedure WriteSizedString(const Str: RawByteString); overload;
-      {Writes a Windows-1252 string to stream preceded by a 16 bit length as hex
-      digits.
-        @param Str [in] String to be written.
-      }
-    procedure WriteSizedString(const Str: UnicodeString); overload;
-      {Writes a unicode string to stream preceded by a 16 bit length as hex
-      digits.
-        @param Str [in] String to be written.
-      }
-    procedure WriteSizedLongString(const Str: RawByteString); overload;
-      {Writes a Windows-1252 string to stream preceded by a 32 bit length as hex
-      digits.
-        @param Str [in] String to be written.
-      }
-    procedure WriteSizedLongString(const Str: UnicodeString); overload;
-      {Writes a unicode string to stream preceded by a 32 bit length as hex
-      digits.
-        @param Str [in] String to be written.
-      }
+    procedure WriteInt16(const I: SmallInt);
+    procedure WriteInt32(const I: LongInt);
+    procedure WriteBytes(const B: TBytes);
+    procedure WriteSizedBytes16(const B: TBytes);
+    procedure WriteSizedBytes32(const B: TBytes);
+    procedure WriteSizedString16(const Str: UnicodeString);
+    procedure WriteSizedString32(const Str: UnicodeString);
   end;
-
 
 implementation
 
-{
-  About data streams
+{ TDataStreamIO }
 
-  Data streams are always composed of text strings. Numbers are encoded as
-  strings of hex digits.
-  Text contained in the streams should be encoded in the Windows-1252 code page.
-  Characters occupy 1 byte.
-
-  There are several "data types":
-  + SmallInt          = 16 bit integer encoded as 4 hex digits
-  + LongInt           = 32 bit integer encoded as 8 hex digits
-  + Int64             = 64 bit integer encoded as 16 hex digits
-  + SizedString       = variable length string of 1 byte chars preceeded by
-                        a SmallInt that gives the number of characters
-  + SizedLongString   = variable length string of 1 byte chars preceeded by
-                        a LongInt that gives the number of characters
-  + Character         = a single 1 byte character
-
-  There is a pseudo-data type - the fixed size string that is composed of a
-  known number of Characters.
-
-  There is no meta-data in the stream to describe the data type of an element of
-  the file. The reader / writer must have knowledge of the file format being
-  read / written.
-}
-
-
-{ TDataStreamIOBase }
-
-constructor TDataStreamIOBase.Create(const Stream: TStream;
+constructor TDataStreamIO.Create(const Stream: TStream;
   const OwnsStream: Boolean);
 var
   Ownerships: TDataStreamOwnerships;
@@ -244,7 +143,7 @@ begin
   Create(Stream, nil, Ownerships);
 end;
 
-constructor TDataStreamIOBase.Create(const Stream: TStream;
+constructor TDataStreamIO.Create(const Stream: TStream;
   const Encoding: TEncoding; const Ownerships: TDataStreamOwnerships);
 begin
   inherited Create(Stream, dsOwnsStream in  Ownerships);
@@ -260,7 +159,7 @@ begin
   end;
 end;
 
-destructor TDataStreamIOBase.Destroy;
+destructor TDataStreamIO.Destroy;
 begin
   inherited;
   if fOwnsEncoding then
@@ -269,279 +168,171 @@ end;
 
 { TDataStreamReader }
 
-function TDataStreamReader.ReadAnsiString(const Length: Integer): RawByteString;
-  {Reads a string of specified size from stream.
-    @param Length [in] length of string to be read.
-    @return String read from stream.
-  }
+function TDataStreamReader.ReadRawData(ByteCount: Integer): TBytes;
 begin
-  if Length <= 0 then
-    Exit('');
-  SetLength(Result, Length);
-  BaseStream.ReadBuffer(Result[1], Length);
+  if (ByteCount < 0) then
+    ByteCount := 0;
+  SetLength(Result, ByteCount);
+  if ByteCount = 0 then
+    Exit;
+  BaseStream.ReadBuffer(Pointer(Result)^, ByteCount);
 end;
 
-function TDataStreamReader.ReadHexDigits(const Count: Integer): LongInt;
-  {Reads hex digits from stream.
-    @param Count [in] Number of hex digits to read.
-    @return Value read from stream.
-  }
+function TDataStreamReader.ReadSizedBytes16: TBytes;
+begin
+  Result := ReadBytes(ReadInt16);
+end;
+
+function TDataStreamReader.ReadSizedBytes32: TBytes;
+begin
+  Result := ReadBytes(ReadInt32);
+end;
+
+function TDataStreamReader.ReadSizedRawData16: TBytes;
+begin
+  Result := ReadRawData(ReadInt16);
+end;
+
+function TDataStreamReader.ReadSizedRawData32: TBytes;
+begin
+  Result := ReadRawData(ReadInt32);
+end;
+
+function TDataStreamReader.ReadSizedString16: UnicodeString;
+begin
+  Result := ReadString(ReadInt16);
+end;
+
+function TDataStreamReader.ReadSizedString32: UnicodeString;
+begin
+  Result := ReadString(ReadInt32);
+end;
+
+function TDataStreamReader.ReadString(CharCount: Integer): UnicodeString;
+var
+  Bytes: TBytes;
+begin
+  if CharCount <= 0 then
+    Exit('');
+  Bytes := ReadRawData(CharCount);
+  Result := Encoding.GetString(Bytes);
+end;
+
+{ TTextStreamReader }
+
+constructor TTextStreamReader.Create(const Stream: TStream;
+  const Encoding: TEncoding; const OwnerShips: TDataStreamOwnerships);
+begin
+  Assert(not Assigned(Encoding) or (Encoding is TMBCSEncoding),
+    ClassName + '.Create: Encoding must be TMBCSEncoding descendant');
+  inherited Create(Stream, Encoding, OwnerShips);
+end;
+
+function TTextStreamReader.ReadByte: Byte;
+begin
+  Result := ReadHexDigits(2);
+end;
+
+function TTextStreamReader.ReadBytes(ByteCount: Integer): TBytes;
+var
+  I: Integer;
+begin
+  if ByteCount < 0 then
+    ByteCount := 0;
+  SetLength(Result, ByteCount);
+  if ByteCount = 0 then
+    Exit;
+  for I := 0 to Pred(ByteCount) do
+    Result[I] := ReadByte;
+end;
+
+function TTextStreamReader.ReadHexDigits(const Count: Integer): LongInt;
 begin
   Result := StrToInt('$' + ReadString(Count));
 end;
 
-function TDataStreamReader.ReadInt64: Int64;
-  {Reads an Int64 value from stream, encoded as 16 char hex digit.
-    @return Value read from stream.
-  }
-begin
-  Int64Rec(Result).Hi := ReadLongInt;
-  Int64Rec(Result).Lo := ReadLongInt;
-end;
-
-function TDataStreamReader.ReadLongInt: LongInt;
-  {Reads long integer from stream, encoded as 8 char hex digits.
-    @return Value read from stream.
-  }
-begin
-  Result := ReadHexDigits(8);
-end;
-
-function TDataStreamReader.ReadSizedAnsiString: RawByteString;
-  {Reads string from stream that is preceded by a small int length descriptor.
-    @return String read from stream.
-  }
-var
-  Length: SmallInt; // length of string
-begin
-  Length := ReadSmallInt;
-  Result := ReadAnsiString(Length);
-end;
-
-function TDataStreamReader.ReadSizedLongAnsiString: RawByteString;
-  {Reads string from stream that is preceded by a long int length descriptor.
-    @return String read from stream.
-  }
-var
-  Length: LongInt; // length of string
-begin
-  Length := ReadLongInt;
-  Result := ReadAnsiString(Length);
-end;
-
-function TDataStreamReader.ReadSizedLongString: UnicodeString;
-var
-  Length: LongInt; // length of string
-begin
-  Length := ReadLongInt;
-  Result := ReadString(Length);
-end;
-
-function TDataStreamReader.ReadSizedString: UnicodeString;
-var
-  Length: SmallInt; // length of string
-begin
-  Length := ReadSmallInt;
-  Result := ReadString(Length);
-end;
-
-function TDataStreamReader.ReadSmallInt: SmallInt;
-  {Reads small integer from stream, encoded as 4 hex digits.
-    @return Value read from stream.
-  }
+function TTextStreamReader.ReadInt16: SmallInt;
 begin
   Result := ReadHexDigits(4);
 end;
 
-function TDataStreamReader.ReadString(const Length: Integer): UnicodeString;
-var
-  Bytes: TBytes;
+function TTextStreamReader.ReadInt32: LongInt;
 begin
-  if Length <= 0 then
-    Exit('');
-  SetLength(Bytes, Length);
-  BaseStream.ReadBuffer(Pointer(Bytes)^, Length);
-  Result := Encoding.GetString(Bytes);
+  Result := ReadHexDigits(8);
 end;
 
-{ TDataStreamWriter }
-
-procedure TDataStreamWriter.WriteHex(const Value: LongInt;
-  const Count: Integer);
-  {Writes a hex representation of a number to stream.
-    @param Value [in] Value to be written.
-    @param Count [in] Number of hex digits required.
-  }
+function TTextStreamReader.ReadInt64: Int64;
 begin
-  WriteString(IntToHex(Value, Count));
+  Int64Rec(Result).Hi := ReadInt32;
+  Int64Rec(Result).Lo := ReadInt32;
 end;
 
-procedure TDataStreamWriter.WriteLongInt(const Value: Integer);
-  {Writes a 32 bit integer to the stream as hex digits.
-    @param Value [in] Value to be written.
-  }
+{ TBinaryStreamReader }
+
+function TBinaryStreamReader.ReadByte: Byte;
 begin
-  WriteHex(Value, 8);
+  BaseStream.ReadBuffer(Result, SizeOf(Result));
 end;
 
-procedure TDataStreamWriter.WriteSizedLongString(const Str: RawByteString);
-  {Writes a Windows-1252 string to stream preceded by a 32 bit length as hex
-  digits.
-    @param Str [in] String to be written.
-  }
+function TBinaryStreamReader.ReadBytes(ByteCount: Integer): TBytes;
 begin
-  WriteLongInt(Length(Str));
-  WriteString(Str);
+  Result := ReadRawData(ByteCount);
 end;
 
-procedure TDataStreamWriter.WriteSizedLongString(const Str: UnicodeString);
-  {Writes a unicode string to stream preceded by a 32 bit length as hex digits.
-    @param Str [in] String to be written.
-  }
+function TBinaryStreamReader.ReadInt16: SmallInt;
 begin
-  WriteLongInt(Length(Str));
-  WriteString(Str);
+  BaseStream.ReadBuffer(Result, SizeOf(Result));
 end;
 
-procedure TDataStreamWriter.WriteSizedString(const Str: RawByteString);
-  {Writes a Windows-1252 string to stream preceded by a 16 bit length as hex
-  digits.
-    @param Str [in] String to be written.
-  }
+function TBinaryStreamReader.ReadInt32: LongInt;
 begin
-  WriteSmallInt(Length(Str));
-  WriteString(Str);
+  BaseStream.ReadBuffer(Result, SizeOf(Result));
 end;
 
-procedure TDataStreamWriter.WriteSizedString(const Str: UnicodeString);
-  {Writes a unicode string to stream preceded by a 16 bit length as hex digits.
-    @param Str [in] String to be written.
-  }
+function TBinaryStreamReader.ReadInt64: Int64;
 begin
-  WriteSmallInt(Length(Str));
-  WriteString(Str);
+  BaseStream.ReadBuffer(Result, SizeOf(Result));
 end;
 
-procedure TDataStreamWriter.WriteSmallInt(const Value: SmallInt);
-  {Writes a 16 bit integer to the stream as hex digits.
-    @param Value [in] Value to be written.
-  }
-begin
-  WriteHex(Word(Value), 4);
-end;
+{ TBinaryStreamWriter }
 
-procedure TDataStreamWriter.WriteString(const Str: RawByteString);
-  {Writes a Windows-1252 string to stream.
-    @param Str [in] String to be written.
-  }
-begin
-  BaseStream.WriteBuffer(Pointer(Str), Length(Str));
-end;
-
-procedure TDataStreamWriter.WriteString(const Str: UnicodeString);
-  {Writes a unicode string to stream.
-    @param Str [in] String to be written.
-  }
-var
-  Bytes: TBytes;  // bytes of encoded string
-begin
-  Bytes := Encoding.GetBytes(Str);
-  BaseStream.WriteBuffer(Pointer(Bytes)^, Length(Bytes));
-end;
-
-{ TBinDataStreamWriter }
-
-procedure TBinDataStreamWriter.WriteBytes(const B: TBytes);
+procedure TBinaryStreamWriter.WriteBytes(const B: TBytes);
 begin
   if Length(B) = 0 then
     Exit;
   BaseStream.WriteBuffer(Pointer(B)^, Length(B));
 end;
 
-procedure TBinDataStreamWriter.WriteLongInt(const I: LongInt);
+procedure TBinaryStreamWriter.WriteInt16(const I: SmallInt);
 begin
   BaseStream.WriteBuffer(I, SizeOf(I));
 end;
 
-procedure TBinDataStreamWriter.WriteLongSizedBytes(const B: TBytes);
-begin
-  WriteLongInt(Length(B));
-  WriteBytes(B);
-end;
-
-procedure TBinDataStreamWriter.WriteLongSizedString(const Str: UnicodeString);
-begin
-  WriteLongSizedBytes(Encoding.GetBytes(Str));
-end;
-
-procedure TBinDataStreamWriter.WriteSmallInt(const I: SmallInt);
+procedure TBinaryStreamWriter.WriteInt32(const I: Integer);
 begin
   BaseStream.WriteBuffer(I, SizeOf(I));
 end;
 
-procedure TBinDataStreamWriter.WriteSmallSizedBytes(const B: TBytes);
+procedure TBinaryStreamWriter.WriteSizedBytes16(const B: TBytes);
 begin
-  WriteSmallInt(Length(B));
+  WriteInt16(Length(B));
   WriteBytes(B);
 end;
 
-procedure TBinDataStreamWriter.WriteSmallSizedString(const Str: UnicodeString);
+procedure TBinaryStreamWriter.WriteSizedBytes32(const B: TBytes);
 begin
-  WriteSmallSizedBytes(Encoding.GetBytes(Str));
+  WriteInt32(Length(B));
+  WriteBytes(B);
 end;
 
-{ TBinDataStreamReader }
-
-function TBinDataStreamReader.ReadBytes(Count: Integer): TBytes;
+procedure TBinaryStreamWriter.WriteSizedString16(const Str: UnicodeString);
 begin
-  if (Count < 0) then
-    Count := 0;
-  SetLength(Result, Count);
-  if Count = 0 then
-    Exit;
-  BaseStream.ReadBuffer(Pointer(Result)^, Count);
+  WriteSizedBytes16(Encoding.GetBytes(Str));
 end;
 
-function TBinDataStreamReader.ReadLongInt: LongInt;
+procedure TBinaryStreamWriter.WriteSizedString32(const Str: UnicodeString);
 begin
-  BaseStream.ReadBuffer(Result, SizeOf(Result));
-end;
-
-function TBinDataStreamReader.ReadLongSizedBytes: TBytes;
-var
-  Count: Integer;
-begin
-  Count := ReadLongInt;
-  Result := ReadBytes(Count);
-end;
-
-function TBinDataStreamReader.ReadLongSizedString: UnicodeString;
-var
-  Bytes: TBytes;
-begin
-  Bytes := ReadLongSizedBytes;
-  Result := Encoding.GetString(Bytes);
-end;
-
-function TBinDataStreamReader.ReadSmallInt: SmallInt;
-begin
-  BaseStream.ReadBuffer(Result, SizeOf(Result));
-end;
-
-function TBinDataStreamReader.ReadSmallSizedBytes: TBytes;
-var
-  Count: Integer;
-begin
-  Count := ReadSmallInt;
-  Result := ReadBytes(Count);
-end;
-
-function TBinDataStreamReader.ReadSmallSizedString: UnicodeString;
-var
-  Bytes: TBytes;
-begin
-  Bytes := ReadSmallSizedBytes;
-  Result := Encoding.GetString(Bytes);
+  WriteSizedBytes32(Encoding.GetBytes(Str));
 end;
 
 end.

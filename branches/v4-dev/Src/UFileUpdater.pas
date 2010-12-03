@@ -56,7 +56,7 @@ type
   }
   TFileUpdater = class(TObject)
   strict private
-    fReader: TDataStreamReader; // Provides methods to read data stream
+    fReader: TTextStreamReader; // Provides methods to read data stream
     fLocalDir: string;          // Local data directory
     procedure UndoUpdate;
       {Reverts data files to state they were in before update.
@@ -150,7 +150,7 @@ constructor TFileUpdater.Create(const LocalDir: string;
 begin
   inherited Create;
   fLocalDir := LocalDir;
-  fReader := TDataStreamReader.Create(UpdateData);
+  fReader := TTextStreamReader.Create(UpdateData);
 end;
 
 destructor TFileUpdater.Destroy;
@@ -174,7 +174,7 @@ begin
     // Clear local data directory
     UUtils.DeleteFiles(fLocalDir, '*.*');
     // Copy in new files
-    FileCount := fReader.ReadSmallInt;
+    FileCount := fReader.ReadInt16;
     while FileCount > 0 do
     begin
       UpdateFile;
@@ -206,9 +206,9 @@ var
   Content: string;    // file content
 begin
   // Get info about file from data stream
-  Name := fReader.ReadSizedString;
+  Name := fReader.ReadSizedString16;
   UnixDate := fReader.ReadInt64;
-  Content := fReader.ReadSizedString;
+  Content := fReader.ReadSizedString16;
   // and create file
   WriteFile(Name, Content, UnixDate);
 end;
