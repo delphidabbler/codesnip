@@ -46,32 +46,6 @@ uses
   UBaseObjects;
 
 
-const
-  { TODO: change code that uses these to use TCharEncodings consts the remove }
-  Windows1252CodePage = 1252; // Code page for the Windows-1252 character set
-  ASCIICodePage = 20127;      // Code page for the ASCII character set
-
-type
-
-  ///  Ansi string using the Windows-1252 code page
-  Windows1252String = type AnsiString(Windows1252CodePage);
-
-  ///  Ansi string using the ASCII code page
-  ASCIIString = type AnsiString(ASCIICodePage);
-
-
-///  Encodes a Unicode string into an array of bytes using the Windows-1252
-///  code page.
-function Windows1252BytesOf(const AString: string): TBytes;
-
-///  Converts a Unicode string into an ANSI string using the Windows-1252 code
-///  page.
-function StringToWindows1252String(const S: string): Windows1252String;
-
-///  Converts a Unicode string into an ANSI string using the ASCII code page.
-function StringToASCIIString(const S: string): ASCIIString;
-
-
 type
   ///  <summary>
   ///  Static class that maintains a list of named character sets and enables
@@ -99,7 +73,7 @@ type
     class var fCodePageValueMap: TCodePageValueMap;
   public
     // Constants storing names of recognised character sets
-    ///  Default character set name: empty string
+    ///  <summary>Default character set name: empty string</summary>
     const DefaultCharSetName = '';
     ///  ASCII character set
     const ASCIICharSetName = 'ASCII';
@@ -125,27 +99,100 @@ type
     ///  Windows-1252 code page
     const Windows1252CodePage = 1252;
   public
-    ///  Initialises maps
+    ///  <summary>Initialises encoding maps.</summary>
     class constructor Create;
-    ///  Frees maps
+    ///  <summary>Frees encoding maps.</summary>
     class destructor Destroy;
-    ///  Frees the given encoding providing it is not a standard encoding.
+    ///  <summary>
+    ///  Frees an given encoding providing it is not a standard encoding.
+    ///  </summary>
+    ///  <param name="Encoding">Encoding to be freed if necessary.</param>
     class procedure FreeEncoding(const Encoding: TEncoding);
-    ///  Checks if a given char set name is supported.
+    ///  <summary>
+    ///  Checks if a character set name is supported.
+    ///  </summary>
+    ///  <param name="Name">Character set name to test.</param>
+    ///  <returns>True if character set supported, False if not.</returns>
     class function IsSupported(const Name: string): Boolean;
-    ///  Gets an encoding instance that is associated with a char set name.
+    ///  <summary>
+    ///  Creates an encoding instance that is associated with a character set
+    ///  name.
+    ///  </summary>
+    ///  <param name="Name">Name of character set.</param>
+    ///  <returns>New encoding instance for the character set.</returns>
+    ///  <remarks>
+    ///  <para>Caller is responsible for freeing the encoding if it is not a
+    ///  standard encoding.</para>
+    ///  <para>Exception raised if character set not supported.</para>
+    ///  </remarks>
     class function GetEncoding(const Name: string): TEncoding; overload;
+    ///  <summary>
     ///  Gets an encoding that is associated with a code page.
+    ///  </summary>
+    ///  <param name="CodePage">Code page of required encoding.</param>
+    ///  <returns>New encoding instance for the code page.</returns>
+    ///  <remarks>
+    ///  <para>Caller is responsible for freeing the encoding if it is not a
+    ///  standard encoding.</para>
+    ///  <para>Exception raised if code page not supported.</para>
+    ///  </remarks>
     class function GetEncoding(const CodePage: Integer): TEncoding; overload;
-    ///  Checks if there is a code page associated with a char set name.
+    ///  <summary>
+    ///  Checks if there is a code page associated with a character set name.
+    ///  </summary>
+    ///  <param name="Name">Name of character set.</param>
+    ///  <returns>True if there is an associated code page, False if not.
+    ///  </returns>
     class function HasCodePage(const Name: string): Boolean;
-    ///  Checks if a specified code page is supported.
+    ///  <summary>
+    ///  Checks if a code page is supported.
+    ///  </summary>
+    ///  <param name="CodePage">Code page to be checked.</param>
+    ///  <returns>True if the code page is supported, False if not.</returns>
     class function IsCodePageSupported(const CodePage: Integer): Boolean;
-    ///  Gets the code page associated with a char set name.
+    ///  <summary>
+    ///  Gets the code page associated with a character set name.
+    ///  </summary>
+    ///  <param name="Name">Name of character set to check.</param>
+    ///  <returns>Code page associated with character set.</returns>
+    ///  <remarks>Exception raised if character set is not supported.</remarks>
     class function GetCodePage(const Name: string): Integer;
-    ///  Gets the char set name associated with a code page
+    ///  <summary>
+    ///  Gets the character set name associated with a code page
+    ///  </summary>
+    ///  <param name="CodePage">Code page for which character set name required.
+    ///  </param>
+    ///  <returns>Required character set name.</returns>
+    ///  <remarks>Exception raised if code page not supported.</remarks>
     class function GetCodePageName(const CodePage: Integer): string;
   end;
+
+type
+
+  ///  Ansi string using the Windows-1252 code page
+  Windows1252String = type AnsiString(TEncodingHelper.Windows1252CodePage);
+
+  ///  Ansi string using the ASCII code page
+  ASCIIString = type AnsiString(TEncodingHelper.ASCIICodePage);
+
+
+///  <summary>
+///  Encodes a Unicode string into an array of bytes using the Windows-1252 code
+///  page.
+///  </summary>
+function Windows1252BytesOf(const AString: string): TBytes;
+
+///  <summary>
+///  Converts a Unicode string into an ANSI string using the Windows-1252 code
+///  page.
+///  </summary>
+function StringToWindows1252String(const S: string): Windows1252String;
+
+///  <summary>
+///  Converts a Unicode string into an ANSI string using the ASCII code page.
+///  </summary>
+function StringToASCIIString(const S: string): ASCIIString;
+
 
 implementation
 
@@ -190,14 +237,18 @@ begin
   Result := Windows1252Encoding.GetBytes(AString);
 end;
 
+///  <summary>
+///  Converts as array of bytes to an ANSI raw byte string.
+///  </summary>
+///  <param name="Bytes">Byte array to convert.</param>
+///  <param name="CP">Code page of returned ANSI string.</param>
+///  <returns>ANSI string with requested code page.</returns>
+///  <remarks>
+///  <para>Caller must ensure that the byte array has the correct format for
+///  the requested code page.</para>
+///  <para>Based on Stack Overflow posting at http://bit.ly/bAvtGd.</para>
+///  </remarks>
 function BytesToAnsiString(const Bytes: TBytes; const CP: Word): RawByteString;
-  {Converts an array of bytes to an ANSI raw byte string.
-  NOTE: Based on Stack Overflow posting at <URL:http://bit.ly/bAvtGd>.
-    @param Bytes [in] Array of bytes to be converted to ANSI string.
-    @param CP [in] Code page of required ANSI string. Bytes must contain valid
-      bytes for this code page.
-    @return Required string with specified code page.
-  }
 begin
   SetLength(Result, Length(Bytes));
   if Length(Bytes) > 0 then
@@ -209,12 +260,16 @@ end;
 
 function StringToWindows1252String(const S: string): Windows1252String;
 begin
-  Result := BytesToAnsiString(Windows1252BytesOf(S), Windows1252CodePage);
+  Result := BytesToAnsiString(
+    Windows1252BytesOf(S), TEncodingHelper.Windows1252CodePage
+  );
 end;
 
 function StringToASCIIString(const S: string): ASCIIString;
 begin
-  Result := BytesToAnsiString(TEncoding.ASCII.GetBytes(S), ASCIICodePage);
+  Result := BytesToAnsiString(
+    TEncoding.ASCII.GetBytes(S), TEncodingHelper.ASCIICodePage
+  );
 end;
 
 { TWindows1252Encoding }
@@ -223,7 +278,7 @@ constructor TWindows1252Encoding.Create;
   {Object constructor. Sets up object for Windows-1252 code page.
   }
 begin
-  inherited Create(Windows1252CodePage);
+  inherited Create(TEncodingHelper.Windows1252CodePage);
 end;
 
 class function TWindows1252Encoding.GetInstance: TEncoding;
@@ -243,7 +298,6 @@ end;
 
 class constructor TEncodingHelper.Create;
 
-  // ---------------------------------------------------------------------------
   // Returns a closure that can create a multibyte encoding for a given code
   // page.
   function MBCSFactoryFn(CodePage: Integer): TEncodingFactoryFn;
@@ -253,7 +307,6 @@ class constructor TEncodingHelper.Create;
       Result := TMBCSEncoding.Create(CodePage);
     end;
   end;
-  // ---------------------------------------------------------------------------
 
 var
   // References to various encoding factory functions

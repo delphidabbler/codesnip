@@ -121,7 +121,7 @@ begin
   // the Windows-1252 code page.
   RS := TResourceStream.Create(Inst, ResName, ResType);
   try
-    SS := TStringStream.Create('', Windows1252CodePage);
+    SS := TStringStream.Create('', TEncodingHelper.Windows1252CodePage);
     SS.CopyFrom(RS, 0);
     fHTML := SS.DataString;
   finally
