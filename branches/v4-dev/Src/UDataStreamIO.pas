@@ -139,7 +139,7 @@ type
   ///  the length of the following data. String data is converted from its
   ///  binary representation using the encoding specified by the Encoding
   ///  property.
-  ///  </summary>
+  ///  </remarks>
   TBinaryStreamReader = class(TDataStreamReader)
   public
     ///  Reads a single byte from its raw binary representation
