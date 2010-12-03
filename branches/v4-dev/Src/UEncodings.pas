@@ -167,26 +167,9 @@ type
     class function GetCodePageName(const CodePage: Integer): string;
   end;
 
-type
-
-  ///  Ansi string using the Windows-1252 code page
-  Windows1252String = type AnsiString(TEncodingHelper.Windows1252CodePage);
-
   ///  Ansi string using the ASCII code page
-  ASCIIString = type AnsiString(TEncodingHelper.ASCIICodePage);
+  ASCIIString = type AnsiString(20127);
 
-
-///  <summary>
-///  Encodes a Unicode string into an array of bytes using the Windows-1252 code
-///  page.
-///  </summary>
-function Windows1252BytesOf(const AString: string): TBytes;
-
-///  <summary>
-///  Converts a Unicode string into an ANSI string using the Windows-1252 code
-///  page.
-///  </summary>
-function StringToWindows1252String(const S: string): Windows1252String;
 
 ///  <summary>
 ///  Converts a Unicode string into an ANSI string using the ASCII code page.
@@ -201,41 +184,6 @@ uses
   // Project
   UGC, ULocales;
 
-
-type
-  // TODO: remove this class when all code changed to use TEncodingHelper
-  {
-  TWindows1252Encoding:
-    Provides encoding support for the Windows-1252 character set.
-  }
-  TWindows1252Encoding = class(TMBCSEncoding)
-  strict private
-    class var fGC: IInterface;      // garbage collector: auto-frees fInstance
-    class var fInstance: TEncoding; // stores singleton object of this class
-    class function GetInstance: TEncoding; static;
-      {Gets reference to singleton instance of this class.
-        @return Reference to singleton object.
-      }
-  public
-    constructor Create; override;
-      {Object constructor. Sets up object for Windows-1252 code page.
-      }
-    class property Instance: TEncoding read GetInstance;
-      {Singleton instance of class. Must not be freed}
-  end;
-
-function Windows1252Encoding: TEncoding;
-  {Returns singleton instance of TWindows1252Encoding.
-    @return Required instance.
-  }
-begin
-  Result := TWindows1252Encoding.Instance;
-end;
-
-function Windows1252BytesOf(const AString: string): TBytes;
-begin
-  Result := Windows1252Encoding.GetBytes(AString);
-end;
 
 ///  <summary>
 ///  Converts as array of bytes to an ANSI raw byte string.
@@ -258,40 +206,11 @@ begin
   end;
 end;
 
-function StringToWindows1252String(const S: string): Windows1252String;
-begin
-  Result := BytesToAnsiString(
-    Windows1252BytesOf(S), TEncodingHelper.Windows1252CodePage
-  );
-end;
-
 function StringToASCIIString(const S: string): ASCIIString;
 begin
   Result := BytesToAnsiString(
     TEncoding.ASCII.GetBytes(S), TEncodingHelper.ASCIICodePage
   );
-end;
-
-{ TWindows1252Encoding }
-
-constructor TWindows1252Encoding.Create;
-  {Object constructor. Sets up object for Windows-1252 code page.
-  }
-begin
-  inherited Create(TEncodingHelper.Windows1252CodePage);
-end;
-
-class function TWindows1252Encoding.GetInstance: TEncoding;
-  {Gets reference to singleton instance of this class.
-    @return Reference to singleton object.
-  }
-begin
-  if not Assigned(fInstance) then
-  begin
-    fInstance := TWindows1252Encoding.Create;
-    TGC.GCLocalObj(fGC, fInstance); // add fInstance to GC to be auto-freed
-  end;
-  Result := fInstance;
 end;
 
 { TEncodingHelper }
