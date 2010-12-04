@@ -383,6 +383,7 @@
 			<DCCReference Include="UIniDataLoader.pas"/>
 			<DCCReference Include="UIniDataReader.pas"/>
 			<DCCReference Include="UInitialLetter.pas"/>
+			<DCCReference Include="UIOUtils.pas"/>
 			<DCCReference Include="UIStringList.pas"/>
 			<DCCReference Include="UJavaScriptUtils.pas"/>
 			<DCCReference Include="UKeysHelper.pas"/>

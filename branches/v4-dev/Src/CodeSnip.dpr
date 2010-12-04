@@ -242,6 +242,7 @@ uses
   UIniDataLoader in 'UIniDataLoader.pas',
   UIniDataReader in 'UIniDataReader.pas',
   UInitialLetter in 'UInitialLetter.pas',
+  UIOUtils in 'UIOUtils.pas',
   UIStringList in 'UIStringList.pas',
   UJavaScriptUtils in 'UJavaScriptUtils.pas',
   UKeysHelper in 'UKeysHelper.pas',
