@@ -56,6 +56,9 @@ type
   strict private
     class function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding):
       Boolean; static;
+    class procedure BytesToStream(const Bytes: TBytes; const Stream: TStream);
+      static;
+    class function StreamToBytes(const Stream: TStream): TBytes; static;
   public
     ///  <summary>
     ///  Writes all the bytes from a byte array to a file.
@@ -65,6 +68,19 @@ type
     ///  </param>
     class procedure WriteAllBytes(const FileName: string; const Bytes: TBytes);
       static;
+
+    ///  <summary>
+    ///  Writes text to a file.
+    ///  </summary>
+    ///  <param name="FileName">string [in] Name of file.</param>
+    ///  <param name="Content">string [in] Text to be written to file.</param>
+    ///  <param name="Encoding">TEncoding [in] Encoding to be used for text in
+    ///  file.</param>
+    ///  <param name="UseBOM">Boolean [in] Flag indicating whether BOM to be
+    ///  written to file. If Encoding has no BOM then UseBOM has no effect.
+    ///  </param>
+    class procedure WriteAllText(const FileName, Content: string;
+      const Encoding: TEncoding; const UseBOM: Boolean = False); static;
 
     ///  <summary>
     ///  Reads all bytes from a file into a byte array.
@@ -112,16 +128,21 @@ type
 implementation
 
 
-uses
-  // Delphi
-  IOUtils;
-
 resourcestring
   // Error messages
   sBadBOM = 'Preamble of file %s does not match expected encoding';
 
 
 { TFileIO }
+
+class procedure TFileIO.BytesToStream(const Bytes: TBytes;
+  const Stream: TStream);
+begin
+  Stream.Size := Length(Bytes);
+  Stream.Position := 0;
+  if Length(Bytes) > 0 then
+    Stream.WriteBuffer(Pointer(Bytes)^, Length(Bytes));
+end;
 
 class function TFileIO.CheckBOM(const Bytes: TBytes; const Encoding: TEncoding):
   Boolean;
@@ -141,9 +162,15 @@ begin
 end;
 
 class function TFileIO.ReadAllBytes(const FileName: string): TBytes;
+var
+  FS: TFileStream;
 begin
-  // using TFile is OK here: no encodings involved
-  Result := TFile.ReadAllBytes(FileName);
+  FS := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
+  try
+    Result := StreamToBytes(FS);
+  finally
+    FS.Free;
+  end;
 end;
 
 class function TFileIO.ReadAllLines(const FileName: string;
@@ -183,11 +210,41 @@ begin
   Result := Encoding.GetString(Content, SizeOfBOM, Length(Content) - SizeOfBOM);
 end;
 
+class function TFileIO.StreamToBytes(const Stream: TStream): TBytes;
+begin
+  Stream.Position := 0;
+  SetLength(Result, Stream.Size);
+  if Stream.Size > 0 then
+    Stream.ReadBuffer(Pointer(Result)^, Length(Result));
+end;
+
 class procedure TFileIO.WriteAllBytes(const FileName: string;
   const Bytes: TBytes);
+var
+  FS: TFileStream;
 begin
-  // using TFile is OK here: no encodings involved
-  TFile.WriteAllBytes(FileName, Bytes);
+  FS := TFileStream.Create(FileName, fmCreate);
+  try
+    BytesToStream(Bytes, FS);
+  finally
+    FS.Free;
+  end;
+end;
+
+class procedure TFileIO.WriteAllText(const FileName, Content: string;
+  const Encoding: TEncoding; const UseBOM: Boolean);
+var
+  FS: TFileStream;
+begin
+  FS := TFileStream.Create(FileName, fmCreate);
+  try
+    if UseBOM then
+      BytesToStream(Encoding.GetPreamble, FS);
+    BytesToStream(Encoding.GetBytes(Content), FS);
+  finally
+    FS.Free;
+  end;
 end;
 
 end.
+
