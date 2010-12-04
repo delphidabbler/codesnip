@@ -99,6 +99,10 @@ type
       {Write accessor for ContentType property.
         @param Value [in] New property value.
       }
+    function GetResponseCharSet: string;
+      {Read accessor for ResponseCharSet property.
+        @return String containing character set.
+      }
   strict protected
     function DoRequestText(const Requestor: TProc<TBytesStream>): string;
       {Performs an HTTP request returning response as text decoded according to
@@ -181,6 +185,8 @@ type
       {Media type specified when making HTTP requests}
     property ContentType: string read GetContentType write SetContentTtype;
       {Content type specified when making HTTP requests}
+    property ResponseCharSet: string read GetResponseCharSet;
+      {Character set used for HTTP response}
   end;
 
 
@@ -345,7 +351,7 @@ begin
   // Perform request, getting raw content
   Content := DoRequestRaw(Requestor);
   // Get text from raw data, decoded according to HTTP response header
-  Encoding := TWebCharEncodings.GetEncoding(fHTTP.Response.CharSet);
+  Encoding := TWebCharEncodings.GetEncoding(GetResponseCharSet);
   try
     Result := Encoding.GetString(Content);
   finally
@@ -373,6 +379,14 @@ begin
       fHTTP.Get(URI, ResponseStream)
     end
   );
+end;
+
+function THTTPEx.GetResponseCharSet: string;
+  {Read accessor for ResponseCharSet property.
+    @return String containing character set.
+  }
+begin
+  Result := fHTTP.Response.CharSet;
 end;
 
 function THTTPEx.GetText(const URI: string): string;

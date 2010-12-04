@@ -87,6 +87,10 @@ type
           empty or nil.
         @return Required URI.
       }
+    function GetResponseCharSet: string;
+      {Read accessor for ResponseCharSet property.
+        @return Character set used by last HTTP response.
+      }
   strict protected
     property WantProgress: Boolean read fWantProgress write fWantProgress;
       {Flag that indicates if progress reporting is required. When True the
@@ -165,6 +169,8 @@ type
       read fOnProgress write fOnProgress;
       {Event that can be triggered to monitor progress of downloads. Event is
       only triggered when WantProgress property is true}
+    property ResponseCharSet: string read GetResponseCharSet;
+      {Character set used for last response from web server}
   end;
 
 
@@ -253,6 +259,14 @@ function TBaseWebService.GetRaw(const Params: TURIParams = nil): TBytes;
   }
 begin
   Result := fHTTP.GetRaw(BuildURI(Params));
+end;
+
+function TBaseWebService.GetResponseCharSet: string;
+  {Read accessor for ResponseCharSet property.
+    @return Character set used by last HTTP response.
+  }
+begin
+  Result := fHTTP.ResponseCharSet;
 end;
 
 procedure TBaseWebService.GetStrings(const Strings: TStrings);
