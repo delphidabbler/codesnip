@@ -98,7 +98,9 @@ implementation
 
 uses
   // Delphi
-  Classes, IOUtils;
+  Classes,
+  // Project
+  UIOUtils;
 
 
 { TMainDBFileReader }
@@ -156,12 +158,14 @@ end;
 
 function TMainDBFileReader.ReadAllStrings(const FileName: string): IStringList;
 begin
-  Result := TIStringList.Create(TFile.ReadAllLines(FileName, fEncoding));
+  Result := TIStringList.Create(
+    TFileIO.ReadAllLines(FileName, fEncoding, True)
+  );
 end;
 
 function TMainDBFileReader.ReadAllText(const FileName: string): string;
 begin
-  Result := TFile.ReadAllText(FileName, fEncoding);
+  Result := TFileIO.ReadAllText(FileName, fEncoding, True);
 end;
 
 end.

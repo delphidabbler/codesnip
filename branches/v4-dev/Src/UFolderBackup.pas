@@ -88,11 +88,12 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes, Generics.Collections, IOUtils,
+  SysUtils, Classes, Generics.Collections,
   // DelphiDabbler library
   PJMD5,
   // Project
-  UBaseObjects, UDataStreamIO, UDOSDateTime, UEncodings, UExceptions, UUtils;
+  UBaseObjects, UDataStreamIO, UDOSDateTime, UEncodings, UExceptions, UIOUtils,
+  UUtils;
 
 
 type
@@ -346,7 +347,7 @@ begin
       DOSDateTime := TDOSDateTimeFactory.CreateFromDOSTimeStamp(
         FileInfo.TimeStamp
       );
-      TFile.WriteAllBytes(FileSpec, FileInfo.Content);
+      TFileIO.WriteAllBytes(FileSpec, FileInfo.Content);
       DOSDateTime.ApplyToFile(FileSpec);
     end;
   finally
@@ -580,7 +581,7 @@ var
   BinWriter: TBinaryStreamWriter;
 begin
   // Get content and date stamp of file
-  FileBytes := TFile.ReadAllBytes(FileName);
+  FileBytes := TFileIO.ReadAllBytes(FileName);
   DOSDateTime := TDOSDateTimeFactory.CreateFromFile(FileName);
   // Write the data
   BinWriter := TBinaryStreamWriter.Create(fStream, TEncoding.UTF8, []);
