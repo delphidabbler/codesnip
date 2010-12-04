@@ -386,7 +386,10 @@ function THTTPEx.GetResponseCharSet: string;
     @return String containing character set.
   }
 begin
-  Result := fHTTP.Response.CharSet;
+  if fHTTP.Response.CharSet <> '' then
+    Result := fHTTP.Response.CharSet
+  else
+    Result := TWebCharEncodings.DefaultCharSet;
 end;
 
 function THTTPEx.GetText(const URI: string): string;
