@@ -101,7 +101,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UDataBackupMgr, UDOSDateTime, UUtils;
+  UDataBackupMgr, UDOSDateTime, UIOUtils, UUtils;
 
 
 resourcestring
@@ -213,8 +213,7 @@ var
   Date: IDOSDateTime; // object that encapsulates DOS date time value
 begin
   FilePath := IncludeTrailingPathDelimiter(fLocalDir) + Name;
-  // TODO: Decide on string encoding to use for local files: currently Default
-  UUtils.StringToFile(Content, FilePath);
+  TFileIO.WriteAllText(FilePath, Content, TEncoding.UTF8, True);
   Date := TDOSDateTimeFactory.CreateFromUnixTimeStamp(UnixDate);
   Date.ApplyToFile(FilePath);
 end;
