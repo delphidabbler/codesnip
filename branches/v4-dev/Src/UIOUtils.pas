@@ -56,8 +56,14 @@ type
   strict private
     class function CheckBOM(const Bytes: TBytes; const Encoding: TEncoding):
       Boolean; static;
+    ///  <summary>
+    ///  Appends whole contents of a byte array to a stream.
+    ///  </summary>
     class procedure BytesToStream(const Bytes: TBytes; const Stream: TStream);
       static;
+    ///  <summary>
+    ///  Copies content of a whole stream into a byte array.
+    ///  </summary>
     class function StreamToBytes(const Stream: TStream): TBytes; static;
   public
     ///  <summary>
@@ -138,8 +144,6 @@ resourcestring
 class procedure TFileIO.BytesToStream(const Bytes: TBytes;
   const Stream: TStream);
 begin
-  Stream.Size := Length(Bytes);
-  Stream.Position := 0;
   if Length(Bytes) > 0 then
     Stream.WriteBuffer(Pointer(Bytes)^, Length(Bytes));
 end;
