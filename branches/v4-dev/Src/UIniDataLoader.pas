@@ -44,59 +44,66 @@ uses
   // Delphi
   Classes, IniFiles,
   // Project
-  UBaseObjects, UExceptions, UIStringList;
+  UBaseObjects, UExceptions, UIStringList, UMainDBFileReader;
 
 
 type
-  {
-  TDatabaseIniFile:
-    Extension of TMemIniFile that loads the ini data from a set of associated
-    files. Any quotes enclosing values read from ini file are stripped. Files
-    are pre-processed, and modified according to any pre-processing directives.
-  }
+  ///  <summary>
+  ///  Extension of TMemIniFile that loads the ini data from a set of associated
+  ///  files. Any quotes enclosing values read from ini file are stripped. Files
+  ///  are pre-processed, and modified according to any pre-processing
+  ///  directives.
+  ///  </summary>
   TDatabaseIniFile = class(TMemIniFile)
   strict private
-    procedure CopyFileToStream(const FileName: string; const Stream: TStream);
-      {Appends a file's contents to a stream.
-        @param FileName [in] Name of file to copy.
-        @param Stream [in] Stream that receives file's content.
-      }
-    procedure CopyFilesToStream(const FileNames: IStringList;
-      const Stream: TStream);
-      {Copies content of a list of file to a stream.
-        @param FileNames [in] List of name of files to be copied
-        @param Stream [in] Stream that receives files' contents.
-      }
-    procedure LoadFromStream(const Stream: TStream);
-      {Load ini data from a stream.
-        @param Stream [in] Stream containing ini data.
-      }
+    var
+      ///  <summary>Loads database files using correct encoding.</summary>
+      fFileReader: TMainDBFileReader;
+    ///  <summary>
+    ///  Concatenates the content of a list of text files.
+    ///  </summary>
+    ///  <param name="FileNames">IStringList [in] List of text files.</param>
+    ///  <returns>IStringList containing concatenation of lines read from the
+    ///  files.</returns>
+    function LoadFiles(const FileNames: IStringList): IStringList;
   public
-    constructor Create(const FileName: string);
-      {Class constructor. Sets up object and loads its data from a set of
-      associated files.
-        @param FileName [in] Base file name for associated files containing
-          data.
-      }
+    ///  <summary>
+    ///  Object constructor. Sets up ini file object and loads data into it from
+    ///  a set of associated files.
+    ///  </summary>
+    ///  <param name="FileReader">TMainDBFileReader [in] Object used to read
+    ///  database text files using correct encoding.</param>
+    ///  <param name="FileName">string [in] Base name of associated files
+    ///  containing data.</param>
+    constructor Create(const FileReader: TMainDBFileReader;
+      const FileName: string);
+    ///  <summary>
+    ///  Retrieves a string value from an ini file.
+    ///  </summary>
+    ///  <param name="Section">string [in] Section containing value.</param>
+    ///  <param name="Ident">string [in] Identifier of value.</param>
+    ///  <param name="Default">string [in] Default value used if ident is not
+    ///  present or not assigned.</param>
+    ///  <returns>string containing required value, with any enclosing quotes
+    ///  removed.</returns>
+    ///  <remarks>
+    ///  Overrides method in base class to strip enclosing quotes.
+    ///  </remarks>
     function ReadString(const Section, Ident, Default: string): string;
       override;
-      {Retrieves a string value from an ini file.
-        @param Section [in] Section containing desired value.
-        @param Ident [in] Identifier of desired value.
-        @param Default [in] Default value used if Ident is not present or not
-          assigned.
-        @return Required value, with any enclosing quotes removed.
-      }
+    ///  <summary>
+    ///  Loads ini object's data from a string list.
+    ///  </summary>
+    ///  <param name="Strings">IStringList [in] Strings to be loaded.</param>
+    ///  <remarks>
+    ///  Overloads inherited SetStrings to load data from IStringList as well
+    ///  as TStringList.
+    ///  </remarks>
     procedure SetStrings(const Strings: IStringList); overload;
-      {Adapts inherited SetStrings to load data from IStringList instead of
-      TStringList.
-        @param Strings [in] Strings to be loaded.
-      }
   end;
 
-  {
-  EDatabaseIniFile:
-  }
+type
+  ///  <summary>Type of exception raised by TDatabaseIniFile.</summary>
   EDatabaseIniFile = class(ECodeSnip);
 
 
@@ -136,6 +143,7 @@ type
       }
   end;
 
+type
   {
   TDatabasePreprocessor:
     Static class used to pre-process ini file, acting on pre-processor
@@ -312,95 +320,42 @@ type
 
 { TDatabaseIniFile }
 
-procedure TDatabaseIniFile.CopyFilesToStream(const FileNames: IStringList;
-  const Stream: TStream);
-  {Copies content of a list of file to a stream.
-    @param FileNames [in] List of name of files to be copied
-    @param Stream [in] Stream that receives files' contents.
-  }
+constructor TDatabaseIniFile.Create(const FileReader: TMainDBFileReader;
+  const FileName: string);
 var
-  FileName: string; // each file name in list
-begin
-  for FileName in FileNames do
-    CopyFileToStream(FileName, Stream);
-end;
-
-procedure TDatabaseIniFile.CopyFileToStream(const FileName: string;
-  const Stream: TStream);
-  {Appends a file's contents to a stream.
-    @param FileName [in] Name of file to copy.
-    @param Stream [in] Stream that receives file's content.
-  }
-var
-  FS: TFileStream;  // stream onto file
-begin
-  FS := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
-  try
-    Stream.CopyFrom(FS, FS.Size);
-  finally
-    FreeAndNil(FS);
-  end;
-end;
-
-constructor TDatabaseIniFile.Create(const FileName: string);
-  {Class constructor. Sets up object and loads its data from a set of associated
-  files.
-    @param FileName [in] Base file name for associated files containing data.
-  }
-var
-  Stream: TStream;    // Stream that receives data from files
   Files: IStringList; // List of associated file names
 resourcestring
   // Error message
   sMissingCatFile = 'Neither category file "%s" nor its alternate exists.';
 begin
   inherited Create(FileName);
-  Stream := TMemoryStream.Create;
-  try
-    // Get list of file names containing data
-    Files := TDatabaseFileMapper.GetRelatedFiles(FileName);
-    if Files.Count = 0 then
-      raise EDatabaseIniFile.CreateFmt(
-        sMissingCatFile, [ExtractFileName(FileName)]
-      );
-    // Load ini data via intermediate streams
-    CopyFilesToStream(TDatabaseFileMapper.GetRelatedFiles(FileName), Stream);
-    Stream.Position := 0;
-    LoadFromStream(Stream);
-  finally
-    FreeAndNil(Stream);
-  end;
+  fFileReader := FileReader;
+  // get list of associated files
+  Files := TDatabaseFileMapper.GetRelatedFiles(FileName);
+  if Files.Count = 0 then
+    raise EDatabaseIniFile.CreateFmt(
+      sMissingCatFile, [ExtractFileName(FileName)]
+    );
+  // load ini file from concatenated contents of Files after running through
+  // pre-processor
+  SetStrings(
+    TDatabasePreprocessor.PreProcess(
+      LoadFiles(Files)
+    )
+  );
 end;
 
-procedure TDatabaseIniFile.LoadFromStream(const Stream: TStream);
-  {Load ini data from a stream.
-    @param Stream [in] Stream containing ini data.
-  }
+function TDatabaseIniFile.LoadFiles(const FileNames: IStringList): IStringList;
 var
-  Strings: TStringList;         // string list that contains ini data as text
-  PreProcStrings: IStringList;  // string list of data after pre-processing
+  FileName: string; // each file name is list
 begin
-  Strings := TStringList.Create;
-  try
-    Strings.LoadFromStream(Stream);
-    PreProcStrings := TDatabasePreprocessor.PreProcess(
-      TIStringList.Create(Strings)
-    );
-    SetStrings(PreProcStrings);
-  finally
-    FreeAndNil(Strings);
-  end;
+  Result := TIStringList.Create;
+  for FileName in FileNames do
+    Result.Add(fFileReader.ReadAllStrings(FileName));
 end;
 
 function TDatabaseIniFile.ReadString(const Section, Ident,
   Default: string): string;
-  {Retrieves a string value from an ini file.
-    @param Section [in] Section containing desired value.
-    @param Ident [in] Identifier of desired value.
-    @param Default [in] Default value used if Ident is not present or not
-      assigned.
-    @return Required value, with any enclosing quotes removed.
-  }
 const
   cQuote = '"';   // quote character
 begin
@@ -413,10 +368,6 @@ begin
 end;
 
 procedure TDatabaseIniFile.SetStrings(const Strings: IStringList);
-  {Adapts inherited SetStrings to load data from IStringList instead of
-  TStringList.
-    @param Strings [in] Strings to be loaded.
-  }
 var
   SL: TStringList;  // string list use to call inherited method
 begin

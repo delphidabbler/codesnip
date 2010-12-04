@@ -43,151 +43,181 @@ uses
   // Delphi
   Classes, Generics.Collections, IniFiles,
   // Project
-  UIStringList, USnipData, USnippets;
+  UIStringList, UMainDBFileReader, USnipData, USnippets;
 
 
 type
 
-  {
-  TIniDataReader:
-    Reads codesnip data from .ini and .dat files.
-  }
+  ///  <summary>
+  ///  Reads main CodeSnip database data from .ini and .dat files.
+  ///  </summary>
   TIniDataReader = class sealed(TInterfacedObject, IDataReader)
   strict private
     type
-      {
-      TIniFileCache:
-        Implements a cache of ini file objects, indexed by ini file name.
-      }
+      ///  <summary>
+      ///  Class that implements a cache of ini file objects, indexed by ini
+      ///  file name.
+      ///  </summary>
       TIniFileCache = class(TObject)
       strict private
         type
-          // Class that maps ini file names to related ini file objects
+          ///  <summary>
+          ///  Class that maps ini file names to related ini file objects.
+          ///  </summary>
           TIniFileMap = TObjectDictionary<string,TCustomIniFile>;
-        var fCache: TIniFileMap;  // Maps file names to related ini file objects
+        var
+          ///  <summary>Maps file names to related ini file objects.</summary>
+          fCache: TIniFileMap;
+          ///  <summary>Loads database files using correct encoding.</summary>
+          fFileReader: TMainDBFileReader;
       public
-        constructor Create;
-          {Constructor. Sets up empty cache.
-          }
+        ///  <summary>Object constructor. Sets up empty cache.</summary>
+        constructor Create(const FileReader: TMainDBFileReader);
+        ///  <summary>Object destructor. Frees cache.</summary>
         destructor Destroy; override;
-          {Destructor. Releases cache.
-          }
+        ///  <summary>
+        ///  Gets reference to ini file object. Creates it if it doesn't extist.
+        ///  </summary>
+        ///  <param name="PathToFile">string [in] Fully specified path to ini
+        ///  file.</param>
+        ///  <returns>TCustomIniFile instance for reading ini file.</returns>
+        ///  <remarks>Caller must not free the returned TCustomIniFile instance.
+        ///  </remarks>
         function GetIniFile(const PathToFile: string): TCustomIniFile;
-          {Gets reference to ini file object. Creates it if it doesn't exist.
-            @param PathToFile [in] Path to ini file.
-            @return Required ini file reference.
-          }
       end;
     type
-      // Class that maps snippet names to category ids
+      ///  <summary>Class that maps snippet names to category ids.</summary>
       TSnippetCatMap = TDictionary<string,Integer>;
     var
-      fDBDir: string;                 // Database directory
-      fMasterIni: TCustomIniFile;     // Reference to master ini file
-      fCatNames: TStringList;         // List of category ids in database
-      fSnippetCatMap: TSnippetCatMap; // Map of snippet names to category ids
-      fIniCache: TIniFileCache;       // Cache of category ini file objects
+      ///  <summary>Database directory.</summary>
+      fDBDir: string;
+      ///  <summary>Reference to master ini file.</summary>
+      fMasterIni: TCustomIniFile;
+      ///  <summary>List of category ids in database.</summary>
+      fCatNames: TStringList;
+      ///  <summary>Map of snippet names to category ids.</summary>
+      fSnippetCatMap: TSnippetCatMap;
+      ///  <summary>Cache of category ini file objects.</summary>
+      fIniCache: TIniFileCache;
+      ///  <summary>Reads DB files using correct encoding.</summary>
+      fFileReader: TMainDBFileReader;
+    ///  <summary>
+    ///  Returns fully specified name of database master file.
+    ///  </summary>
     function MasterFileName: string;
-      {Gets fully specified name of master file depending on which database is
-      being accessed.
-        @return Required file name.
-      }
+    ///  <summary>
+    ///  Returns ID of category associated with a snippet.
+    ///  </summary>
+    ///  <param name="Routine">string [in] Name of snippet.</param>
+    ///  <returns>string containing category ID</returns>
     function RoutineToCat(const Routine: string): string;
-      {Returns name (id) of category associated with a snippet.
-        @param Routine [in] Name of snippet.
-        @return ID of snippet's category.
-      }
+    ///  <summary>
+    ///  Returns name of ini file containing details of a category.
+    ///  </summary>
+    ///  <param name="Cat">string [in] ID of category.</param>
+    ///  <returns>string containing bame of category's ini file</returns>
     function CatToCatIni(const Cat: string): string;
-      {Returns name of ini file associated with a category name (id).
-        @param Cat [in] Category ID.
-        @return Name of ini file.
-      }
+    ///  <summary>
+    ///  Loads indices of all names of categories and snippets in database.
+    ///  </summary>
+    ///  <remarks>
+    ///  Having these indices available speeds up several of the main methods.
+    ///  </remarks>
     procedure LoadIndices;
-      {Loads "indexes" of all names of categories and snippets in database.
-      Having these "indexes" available speeds up several of the key methods.
-      }
+    ///  <summary>
+    ///  Handles exceptions raised when a corrupt database is encountered.
+    ///  Deletes all files and re-raises exception.
+    ///  </summary>
+    ///  <param name="EObj">Exception object to be handled.</param>
     procedure HandleCorruptDatabase(const EObj: TObject);
-      {Called when a corrupt database is encountered. Deletes all files and
-      raises exception.
-        @param EObj [in] Reference to exception that caused this method to be
-          called.
-        @except ECodeSnip always raised.
-      }
+    ///  <summary>
+    ///  Returns name of directory where the database is stored.
+    ///  </summary>
     function DataDir: string;
-      {Gets name of directory storing the database being read. Path varies
-      according to which database is being read.
-        @return Name of directory.
-      }
+    ///  <summary>
+    ///  Returns fully specified path to given file name.
+    ///  </summary>
     function DataFile(const FileName: string): string;
-      {Gets full path to a file name. Path depends on which database is being
-      read.
-        @param FileName [in] File name for which path is required.
-        @return Required full path to file.
-      }
+    ///  <summary>
+    ///  Gets a list from ini file of all of items of a specified kind that are
+    ///  referenced by a snippet.
+    ///  </summary>
+    ///  <param name="Routine">string [in] Name of snippet.</param>
+    ///  <param name="RefName">string [in] Name of a key in ini file storing
+    ///  comma separated list of references.</param>
+    ///  <returns>IStringList containing names of referenced items.</returns>
     function GetRoutineReferences(const Routine, RefName: string): IStringList;
-      {Get list of all specified references made by a snippet.
-        @param Routine [in] Name of required snippet.
-        @param RefName [in] Name of value containing comma separated list of
-          references in ini file.
-        @return List of names of references.
-      }
   protected // do not make strict
-    { IDataReader }
+    { IDataReader methods }
+    ///  <summary>
+    ///  Checks if the database exists.
+    ///  </summary>
+    ///  <remarks>
+    ///  This method is always called before any other IDataReader methods. The
+    ///  other methods are not called if this method returns False.
+    ///  </remarks>
     function DatabaseExists: Boolean;
-      {Check if the database exists. This method is always called first. No
-      other methods are called if this method returns false.
-        @return True if database exists, False if not.
-      }
+    ///  <summary>
+    ///  Gets name of all categories in the database.
+    ///  </summary>
+    ///  <returns>IStringList containing names.</returns>
     function GetAllCatNames: IStringList;
-      {Get names of all categories in database.
-        @return List of category names.
-      }
+    ///  <summary>
+    ///  Gets properties of a category.
+    ///  </summary>
+    ///  <param name="Cat">string [in] ID of category.</param>
+    ///  <param name="Props">TCategoryData [in/out] Receives empty property
+    ///  record and updates relevant property fields.</param>
     procedure GetCatProps(const Cat: string; var Props: TCategoryData);
-      {Get properties of a category.
-        @param Cat [in] Name of required category.
-        @param Props [in/out] Empty properties passed in. Record fields set to
-          values of category properties by implementor.
-      }
+    ///  <summary>
+    ///  Gets names of all snippets in a category.
+    ///  </summary>
+    ///  <param name="Cat">string [in] ID of category.</param>
+    ///  <returns>IStringList containing names of snippets.</returns>
     function GetCatRoutines(const Cat: string): IStringList;
-      {Get names of all snippets in a category.
-        @param Cat [in] Name of category containing snippets.
-        @return List of snippets names.
-      }
+    ///  <summary>
+    ///  Gets propertyies of a snippet.
+    ///  </summary>
+    ///  <param name="Routine">string [in] Name of snippet.</param>
+    ///  <param name="Props">TSnippetData [in/out] Receives empty property
+    ///  record and updates relevant property fields.</param>
     procedure GetRoutineProps(const Routine: string; var Props: TSnippetData);
-      {Get properties of a snippet. These are the fields of the snippet's
-      record in the snippets "table".
-        @param Routine [in] Name of required snippet.
-        @param Props [in/out] Empty properties passed in. Record fields set to
-          values of snippet properties by implementor.
-      }
+    ///  <summary>
+    ///  Gets list of all snippets that are cross referenced by a specified
+    ///  snippet.
+    ///  </summary>
+    ///  <param name="Routine">string [in] Name of snippet.</param>
+    ///  <returns>IStringList containing snippet names.</returns>
     function GetRoutineXRefs(const Routine: string): IStringList;
-      {Get list of all snippets that are cross referenced by a snippet.
-        @param Routine [in] Name of snippet we need cross references for.
-        @return List of snippet names.
-      }
+    ///  <summary>
+    ///  Gets list of all snippets on which a specified snippet depends.
+    ///  </summary>
+    ///  <param name="Routine">string [in] Name of snippet.</param>
+    ///  <returns>IStringList containing snippet names.</returns>
     function GetRoutineDepends(const Routine: string): IStringList;
-      {Get list of all snippets on which a given snippet depends.
-        @param Routine [in] Name of required snippet.
-        @return List of snippet names.
-      }
+    ///  <summary>
+    ///  Gets list of all units referenced by a snippet.
+    ///  </summary>
+    ///  <param name="Routine">string [in] Name of snippet.</param>
+    ///  <returns>IStringList containing unit names.</returns>
     function GetRoutineUnits(const Routine: string): IStringList;
-      {Get list of all units referenced by a snippet.
-        @param Routine [in] Name of required snippet.
-        @return List of unit names.
-      }
+  strict protected
+    ///  <summary>
+    ///  Extracts comma delimited text fields into a string list.
+    ///  </summary>
+    ///  <param name="CommaStr">string [in] Comma delimited text.</param>
+    ///  <returns>IStringList containing fields.</returns>
     class function CommaStrToStrings(const CommaStr: string): IStringList;
-      {Extracts command delimited text fields into a string list.
-        @param CommaStr [in] String of comma delimited fields.
-        @return String list containing fields.
-      }
   public
+    ///  <summary>
+    ///  Object constructor. Checks if database exists and sets up indices.
+    ///  </summary>
+    ///  <param name="DBDir">string [in] Directory containing database.</param>
     constructor Create(const DBDir: string);
-      {Constructor. Sets up data reader object.
-        @param DBDir [in] Directory where database is stored.
-      }
+    ///  <summary>
+    ///  Object destructor. Tears down object.
+    ///  </summary>
     destructor Destroy; override;
-      {Destructor. Tears down object.
-      }
   end;
 
 
@@ -302,39 +332,27 @@ const
 { TIniDataReader }
 
 function TIniDataReader.CatToCatIni(const Cat: string): string;
-  {Returns name of ini file associated with a category name (id).
-    @param Cat [in] Category ID.
-    @return Name of ini file.
-  }
 begin
-  // Ini files are all in application's data directory and names of .ini files
-  // are in master .ini file under category's section, in a value named 'Ini'.
   Result := DataFile(fMasterIni.ReadString(Cat, cMasterIniName, ''));
 end;
 
 class function TIniDataReader.CommaStrToStrings(
   const CommaStr: string): IStringList;
-  {Extracts command delimited text fields into a string list.
-    @param CommaStr [in] String of comma delimited fields.
-    @return String list containing fields.
-  }
 begin
   Result := TIStringList.Create(CommaStr, ',', False, True);
 end;
 
 constructor TIniDataReader.Create(const DBDir: string);
-  {Constructor. Sets up data reader object.
-    @param DBDir [in] Directory where database is stored.
-  }
 begin
   inherited Create;
   fDBDir := DBDir;
   // Create helper objects used to speed up access to ini files
   if DatabaseExists then
   begin
-    fIniCache := TIniFileCache.Create;
+    fFileReader := TMainDBFileReader.Create(MasterFileName);
+    fIniCache := TIniFileCache.Create(fFileReader);
     try
-      fMasterIni := TDatabaseIniFile.Create(MasterFileName);
+      fMasterIni := TDatabaseIniFile.Create(fFileReader, MasterFileName);
       fCatNames := TStringList.Create;
       fSnippetCatMap := TSnippetCatMap.Create(TSameTextEqualityComparer.Create);
       // Load required indexes
@@ -346,36 +364,23 @@ begin
 end;
 
 function TIniDataReader.DatabaseExists: Boolean;
-  {Check if the database exists. This method is always called first. No other
-  methods are called if this method returns false.
-    @return True if database exists, False if not.
-  }
 begin
   Result := FileExists(MasterFileName);
 end;
 
 function TIniDataReader.DataDir: string;
-  {Gets name of directory storing the database being read. Path varies according
-  to which database is being read.
-    @return Name of directory.
-  }
 begin
   Result := ExcludeTrailingPathDelimiter(fDBDir)
 end;
 
 function TIniDataReader.DataFile(const FileName: string): string;
-  {Gets full path to a file name. Path depends on which database is being read.
-    @param FileName [in] File name for which path is required.
-    @return Required full path to file.
-  }
 begin
   Result := IncludeTrailingPathDelimiter(DataDir) + FileName;
 end;
 
 destructor TIniDataReader.Destroy;
-  {Destructor. Tears down object.
-  }
 begin
+  fFileReader.Free;
   fIniCache.Free;
   fSnippetCatMap.Free;
   fCatNames.Free;
@@ -384,20 +389,12 @@ begin
 end;
 
 function TIniDataReader.GetAllCatNames: IStringList;
-  {Get names of all categories in database.
-    @return List of category names.
-  }
 begin
   Result := TIStringList.Create(fCatNames);
 end;
 
 procedure TIniDataReader.GetCatProps(const Cat: string;
   var Props: TCategoryData);
-  {Get properties of a category.
-    @param Cat [in] Name of required category.
-    @param Props [in/out] Empty properties passed in. Record fields set to
-      values of category properties by implementor.
-  }
 begin
   try
     Props.Desc := fMasterIni.ReadString(Cat, cMasterDescName, '');
@@ -407,10 +404,6 @@ begin
 end;
 
 function TIniDataReader.GetCatRoutines(const Cat: string): IStringList;
-  {Get names of all snippets in a category.
-    @param Cat [in] Name of category containing snippets.
-    @return List of snippets names.
-  }
 var
   CatIni: TCustomIniFile; // accesses .ini file associated with category
   Routines: TStringList;  // list of snippets in category
@@ -431,40 +424,25 @@ begin
 end;
 
 function TIniDataReader.GetRoutineDepends(const Routine: string): IStringList;
-  {Get list of all snippets on which a given snippet depends.
-    @param Routine [in] Name of required snippet.
-    @return List of snippet names.
-  }
 begin
   Result := GetRoutineReferences(Routine, cDependsName);
 end;
 
 procedure TIniDataReader.GetRoutineProps(const Routine: string;
   var Props: TSnippetData);
-  {Get properties of a snippet. These are the fields of the snippet's record in
-  the snippets "table".
-    @param Routine [in] Name of required snippet.
-    @param Props [in/out] Empty properties passed in. Record fields set to
-      values of snippet properties by implementor.
-  }
 var
   CatIni: TCustomIniFile; // .ini file associated with snippet's category
   Cat: string;            // snippet's category
 
   // ---------------------------------------------------------------------------
+  /// <summary>Reads "StandardFormat" value from ini file.</summary>
   function GetStdFormatProperty: Boolean;
-    {Reads StandardFormat value from ini file.
-      @return Value of property or a default if property not present.
-    }
   begin
     Result := CatIni.ReadBool(Routine, cStdFormatName, True);
   end;
 
+  ///  <summary>Reads "Kind" value from ini file.</summary>
   function GetKindProperty: TSnippetKind;
-    {Reads Kind property from ini file.
-      @return Value of property or a calculated value based on StandardFormat if
-        Kind property not present.
-    }
   var
     KindStr: string;  // string value read from ini file
   begin
@@ -484,10 +462,9 @@ var
       Result := skFreeform;
   end;
 
+  ///  <summary>Reads "Extra" value from ini file and converts to active text.
+  ///  </summary>
   function GetExtraProperty: IActiveText;
-    {Builds Extra active text object from file data.
-      @return Required active text.
-    }
   var
     Extra: string;  // extra value from ini file if present
   begin
@@ -511,16 +488,15 @@ var
     end;
   end;
 
+  ///  <summary>Reads "Snip" value from ini value and loads source code from the
+  ///  referenced file.</summary>
   function GetSourceCodeProperty: string;
-    {Gets source code from file referenced in ini file.
-      @return Required source code.
-    }
   var
     SnipFileName: string; // name of file containing source code
   begin
     SnipFileName := CatIni.ReadString(Routine, cSnipFileName, '');
     try
-      Result := FileToString(DataFile(SnipFileName));
+      Result := fFileReader.ReadAllText(DataFile(SnipFileName));
     except
       // if error loading file then database is corrupt
       on E: EFOpenError do
@@ -530,10 +506,9 @@ var
     end;
   end;
 
+  ///  <summary>Reads all compiler ID values from ini file and builds list of
+  ///  compiler results.</summary>
   function GetCompilerResultsProperty: TCompileResults;
-    {Builds compiler results from data in ini file.
-      @return Required compiler results.
-    }
   var
     CompID: TCompilerID;    // loops thru supported compilers
     CompRes: string;        // character indicating compiler result
@@ -573,12 +548,6 @@ end;
 
 function TIniDataReader.GetRoutineReferences(const Routine,
   RefName: string): IStringList;
-  {Get list of all specified references made by a snippet.
-    @param Routine [in] Name of required snippet.
-    @param RefName [in] Name of value containing comma separated list of
-      references in ini file.
-    @return List of names of references.
-  }
 var
   CatIni: TCustomIniFile; // accesses snippet's category's .ini
 begin
@@ -593,27 +562,16 @@ begin
 end;
 
 function TIniDataReader.GetRoutineUnits(const Routine: string): IStringList;
-  {Get list of all units referenced by a snippet.
-    @param Routine [in] Name of required snippet.
-    @return List of unit names.
-  }
 begin
   Result := GetRoutineReferences(Routine, cUnitsName);
 end;
 
 function TIniDataReader.GetRoutineXRefs(const Routine: string): IStringList;
-  {Get list of all snippets that are cross referenced by a snippet.
-    @param Routine [in] Name of snippet we need cross references for.
-    @return List of snippet names.
-  }
 begin
   Result := GetRoutineReferences(Routine, cXRefName);
 end;
 
 procedure TIniDataReader.HandleCorruptDatabase(const EObj: TObject);
-  {Deletes a corrupt database and raises an exception.
-    @except ECodeSnip always raised.
-  }
 resourcestring
   // Error message
   sDBError = 'The database is corrupt and had been deleted.' + EOL2 + '%s';
@@ -630,9 +588,6 @@ begin
 end;
 
 procedure TIniDataReader.LoadIndices;
-  {Loads "indexes" of all names of categories and snippets in database. Having
-  these "indexes" available speeds up several of the key methods.
-  }
 var
   SnippetName: string;        // each snippet name in a category
   CatIdx: Integer;            // loops thru all categories
@@ -653,19 +608,11 @@ begin
 end;
 
 function TIniDataReader.MasterFileName: string;
-  {Gets fully specified name of master file depending on which database is being
-  accessed.
-    @return Required file name.
-  }
 begin
   Result := DataFile(cMasterFileName);
 end;
 
 function TIniDataReader.RoutineToCat(const Routine: string): string;
-  {Returns name (id) of category associated with a snippet.
-    @param Routine [in] Name of snippet.
-    @return ID of snippet's category.
-  }
 var
   CatIdx: Integer;  // index of category in category list for this snippet
 resourcestring
@@ -680,21 +627,18 @@ end;
 
 { TIniDataReader.TIniFileCache }
 
-constructor TIniDataReader.TIniFileCache.Create;
-  {Constructor. Sets up empty cache.
-  }
+constructor TIniDataReader.TIniFileCache.Create(
+  const FileReader: TMainDBFileReader);
 begin
   inherited Create;
-  // fCache owns the ini file objects it stores in .Values[] and frees the
-  // objects when they are deleted from .Values[] of when fCache is freed.
+  fFileReader := FileReader;
+  // fCache owns and frees the ini file objects
   fCache := TIniFileMap.Create(
     [doOwnsValues], TSameTextEqualityComparer.Create
   );
 end;
 
 destructor TIniDataReader.TIniFileCache.Destroy;
-  {Destructor. Releases cache.
-  }
 begin
   fCache.Free;  // frees owned .Values[] objects
   inherited;
@@ -702,13 +646,9 @@ end;
 
 function TIniDataReader.TIniFileCache.GetIniFile(
   const PathToFile: string): TCustomIniFile;
-  {Gets reference to ini file object. Creates it if it doesn't exist.
-    @param PathToFile [in] Path to ini file.
-    @return Required ini file reference.
-  }
 begin
   if not fCache.ContainsKey(PathToFile) then
-    fCache.Add(PathToFile, TDatabaseIniFile.Create(PathToFile));
+    fCache.Add(PathToFile, TDatabaseIniFile.Create(fFileReader, PathToFile));
   Result := fCache[PathToFile];
 end;
 
