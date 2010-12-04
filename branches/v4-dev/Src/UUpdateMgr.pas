@@ -145,15 +145,20 @@ type
       {Logs on to web server.
         @return True if log on successful or false if user cancelled.
       }
-    function DownloadDatabase(const Data: TStream): Boolean;
+    function DownloadDatabase(const Data: TStream; out CharSet: string):
+      Boolean;
       {Downloads database from web server.
         @param Data [in] Stream that receives downloaded data.
+        @param CharSet [out] Set to name of character sey used to encode data in
+          stream.
         @return True on success or false if cancelled.
       }
-    function UpdateLocalDatabase(const Data: TStream): Boolean;
+    function UpdateLocalDatabase(const Data: TStream; const CharSet: string):
+      Boolean;
       {Udpates files in local database from stream of data that has been
       downloaded from web server.
         @param Data [in] Stream of data containing updates.
+        @param CharSet [in] Name of character set used to encode data in stream.
         @return True if successfully updated, false if cancelled.
       }
     function HandleException(const E: Exception): Boolean;
@@ -238,16 +243,19 @@ begin
   inherited;
 end;
 
-function TUpdateMgr.DownloadDatabase(const Data: TStream): Boolean;
+function TUpdateMgr.DownloadDatabase(const Data: TStream; out CharSet: string):
+  Boolean;
   {Downloads database from web server.
     @param Data [in] Stream that receives downloaded data.
+    @param CharSet [out] Set to name of character sey used to encode data in
+      stream.
     @return True on success or false if cancelled.
   }
 begin
   Result := False;
   if not NotifyStatus(usDownloadStart) then
     Exit;
-  fDownloadMgr.GetDatabase(Data, True);
+  fDownloadMgr.GetDatabase(Data, CharSet, True);
   if not NotifyStatus(usDownloadEnd) then
     Exit;
   Data.Position := 0;
@@ -422,23 +430,26 @@ function TUpdateMgr.PerformUpdate: Boolean;
   }
 var
   Data: TMemoryStream;  // stream to store downloaded data
+  CharSet: string;      // character set used to encode Data stream
 begin
   Result := False;
   if fCancelled then
     Exit;
   Data := TMemoryStream.Create;
   try
-    if DownloadDatabase(Data) then
-      Result := UpdateLocalDatabase(Data);
+    if DownloadDatabase(Data, CharSet) then
+      Result := UpdateLocalDatabase(Data, CharSet);
   finally
     FreeAndNil(Data);
   end;
 end;
 
-function TUpdateMgr.UpdateLocalDatabase(const Data: TStream): Boolean;
+function TUpdateMgr.UpdateLocalDatabase(const Data: TStream;
+  const CharSet: string): Boolean;
   {Udpates files in local database from stream of data that has been downloaded
   from web server.
     @param Data [in] Stream of data containing updates.
+    @param CharSet [in] Name of character set used to encode data in stream.
     @return True if successfully updated, false if cancelled.
   }
 var
@@ -447,7 +458,7 @@ begin
   Result := False;
   if not NotifyStatus(usUpdating) then
     Exit;
-  Updater := TFileUpdater.Create(fLocalDir, Data);
+  Updater := TFileUpdater.Create(fLocalDir, Data, CharSet);
   try
     Updater.Execute;
     Result := True;

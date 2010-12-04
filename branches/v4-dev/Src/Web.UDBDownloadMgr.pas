@@ -113,11 +113,13 @@ type
           for download.
         @return File count.
       }
-    procedure GetDatabase(const Stream: TStream;
+    procedure GetDatabase(const Stream: TStream; out CharSet: string;
       const WantProgress: Boolean = False);
       {Gets whole code snippets database from web server.
         @param Stream [in] Stream to receive downloaded database. Database
           files are encoded into stream.
+        @param CharSet [out] Set to name of character set used to encode data in
+          stream.
         @param WantProgresss [in] Flag true if OnProgress event to be triggered
           for download.
       }
@@ -163,7 +165,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UConsts, UEncodings, Web.UInfo;
+  UAppInfo, UConsts, Web.UCharEncodings, Web.UInfo;
 
 
 {
@@ -285,34 +287,35 @@ begin
   end;
 end;
 
-procedure TDBDownloadMgr.GetDatabase(const Stream: TStream;
+procedure TDBDownloadMgr.GetDatabase(const Stream: TStream; out CharSet: string;
   const WantProgress: Boolean);
   {Gets whole code snippets database from web server.
     @param Stream [in] Stream to receive downloaded database. Database files are
       encoded into stream.
+    @param CharSet [out] Set to name of character set used to encode data in
+      stream.
     @param WantProgresss [in] Flag true if OnProgress event to be triggered for
       download.
   }
 var
   Response: TStringList;  // response from server
-  ResBytes: TBytes;       // response as Windows-1252 byte stream
-  Encoding: TEncoding;    // Windows 1252 encoding
+  Encoding: TEncoding;    // encoding for char set used in HTTP response
+  ResBytes: TBytes;       // encoded response data
 begin
   Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('getdatabase', Response);
-    Encoding := TEncodingHelper.GetEncoding(
-      TEncodingHelper.Windows1252CodePage
-    );
+    CharSet := ResponseCharSet;
+    Encoding := TWebCharEncodings.GetEncoding(CharSet);
     try
       ResBytes := Encoding.GetBytes(Response.Text);
     finally
-      TEncodingHelper.FreeEncoding(Encoding);
+      TWebCharEncodings.FreeEncoding(Encoding);
     end;
     Stream.WriteBuffer(ResBytes[0], Length(ResBytes));
   finally
-    FreeAndNil(Response);
+    Response.Free;
   end;
 end;
 

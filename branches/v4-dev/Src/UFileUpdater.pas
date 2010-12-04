@@ -48,49 +48,49 @@ uses
 
 
 type
-
-  {
-  TFileUpdater:
-    Object that updates local CodeSnip data files using a supplied stream of
-    data.
-  }
+  ///  <summary>
+  ///  Class that updates local CodeSnip data files using a supplied stream of
+  ///  data.
+  ///  </summary>
   TFileUpdater = class(TObject)
   strict private
-    fReader: TTextStreamReader; // Provides methods to read data stream
-    fLocalDir: string;          // Local data directory
+    var fReader: TTextStreamReader; // Provides methods to read data stream
+    var fLocalDir: string;          // Local data directory
+    ///  <summary>
+    ///  Reverts data file to state they were in before update.
+    ///  </summary>
     procedure UndoUpdate;
-      {Reverts data files to state they were in before update.
-      }
+    ///  <summary>
+    ///  Creates a file from information in data stream.
+    ///  </summary>
     procedure UpdateFile;
-      {Creates a file from data stream.
-      }
+    ///  <summary>
+    ///  Writes a local database file.
+    ///  </summary>
+    ///  <param name="Name">Name of file.</param>
+    ///  <param name="Content">Content of file.</param>
+    ///  <param name="UnixDate">Date stamp to be applied to file. In Unix format
+    ///  and is GMT.</param>
     procedure WriteFile(const Name, Content: string; const UnixDate: Int64);
-      {Writes local database file.
-        @param Name [in] Name of file.
-        @param Content [in] File content.
-        @param UnixDate [in] Date date stamp to be applied to file. This is in
-          Unix time stamp format and is GMT.
-      }
   public
-    constructor Create(const LocalDir: string; const UpdateData: TStream);
-      {Class constructor. Sets up object to update local files.
-        @param LocalDir [in] Directory storing local data files.
-        @param UpdateData [in] Stream containing details of files to be updated.
-      }
+    ///  <summary>Object constructor. Initialises object.</summary>
+    ///  <param name="LocalDir">Directory storing local data files. Will receive
+    ///  updated files.</param>
+    ///  <param name="UpdateData">Stream containing update data as encoded text.
+    ///  </param>
+    ///  <param name="CharSet">Character set used to encode stream data.</param>
+    constructor Create(const LocalDir: string; const UpdateData: TStream;
+      const CharSet: string);
+    ///  <summary>Object destructor. Tears down object.</summary>
     destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
+    ///  <summary>Performs file updates.</summary>
     procedure Execute;
-      {Performs file updates.
-        @except Untrapped exception raised if an error is detected in update
-          process.
-      }
   end;
 
-  {
-  EFileUpdater:
-    Class of exception raised by TFileUpdater.
-  }
+type
+  ///  <summary>
+  ///  Class of exception raised by TFileUpdater.
+  ///  </summary>
   EFileUpdater = class(ECodeSnip);
 
 
@@ -113,7 +113,8 @@ resourcestring
   Data stream format
   ------------------
 
-  Stream comproses text characters. Numbers are encoded as hex.
+  Stream comprises text characters from a MBCS encoding. Numbers are encoded as
+  hex, which must be single byte characters.
 
   Format is:
 
@@ -134,42 +135,34 @@ resourcestring
     SizedString   - SmallInt specifying string length followed by specified
                     number of characters
     String[32]    - 32 character fixed length string
-
-  All strings are single byte Windows-1252
 }
 
 
 { TFileUpdater }
 
 constructor TFileUpdater.Create(const LocalDir: string;
-  const UpdateData: TStream);
-  {Class constructor. Sets up object to update local files.
-    @param LocalDir [in] Directory storing local data files.
-    @param UpdateData [in] Stream containing details of files to be updated.
-  }
+  const UpdateData: TStream; const CharSet: string);
 begin
+  // It is important that CharSet is not empty because empty char sets are mean
+  // one thing to web classes and another to TEncodingHelper => could end up
+  // with different encoding.
+  Assert(CharSet <> '', ClassName + '.Create: CharSet = ''''');
   inherited Create;
   fLocalDir := LocalDir;
   fReader := TTextStreamReader.Create(
     UpdateData,
-    TEncodingHelper.GetEncoding(TEncodingHelper.Windows1252CodePage),
+    TEncodingHelper.GetEncoding(CharSet),
     [dsOwnsEncoding]
   );
 end;
 
 destructor TFileUpdater.Destroy;
-  {Class destructor. Tears down object.
-  }
 begin
-  FreeAndNil(fReader);
+  fReader.Free;
   inherited;
 end;
 
 procedure TFileUpdater.Execute;
-  {Performs file updates.
-    @except Untrapped exception raised if an error is detected in update
-      process.
-  }
 var
   FileCount: Integer;   // number of files to copy to local directory
 begin
@@ -194,16 +187,12 @@ begin
 end;
 
 procedure TFileUpdater.UndoUpdate;
-  {Reverts data files to state they were in before update.
-  }
 begin
   TDataBackupMgr.RestoreBackup;
   TDataBackupMgr.DeleteBackup;
 end;
 
 procedure TFileUpdater.UpdateFile;
-  {Creates a file from data stream.
-  }
 var
   Name: string;       // name of file
   UnixDate: Int64;    // file update date per server: Unix format & GMT
@@ -219,17 +208,12 @@ end;
 
 procedure TFileUpdater.WriteFile(const Name, Content: string;
   const UnixDate: Int64);
-  {Writes local database file.
-    @param Name [in] Name of file.
-    @param Content [in] File content.
-    @param UnixDate [in] Date date stamp to be applied to file. This is in Unix
-      time stamp format and is GMT.
-  }
 var
   FilePath: string;   // full path to local file
   Date: IDOSDateTime; // object that encapsulates DOS date time value
 begin
   FilePath := IncludeTrailingPathDelimiter(fLocalDir) + Name;
+  // TODO: Decide on string encoding to use for local files: currently Default
   UUtils.StringToFile(Content, FilePath);
   Date := TDOSDateTimeFactory.CreateFromUnixTimeStamp(UnixDate);
   Date.ApplyToFile(FilePath);
