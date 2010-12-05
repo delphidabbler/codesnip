@@ -147,6 +147,11 @@ span.todo {
   color: red;
 }
 
+acronym {
+  color: purple;
+  border-bottom: 1px dotted purple;
+}
+
 .box {
   border: 1px silver solid;
   padding: 0.5em;
