@@ -4,6 +4,13 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.8.6 of 06 December 2010
++ Bug fix release (none reported in bug tracker):
+  - Corrected XML file validation so that it does not reject XML processing instructions that contain an "encoding" attribute.
+  - Fixed long standing bug that was crashing CodeSnip when the database was updated or
+restored after editing, adding or deleting any user defined snippet.
+  - Attempting to restore a database backup with an unknown (later) file format now raises an exception. Previously CodeSnip tried, unsuccessfully, to read the file.
+
 Release v3.8.5 of 28 November 2010
 + Fixed bug where user was able to create snippets with valid names that would crash the alphabetic overview. Snippet names are now limited to letters from English alphabet and the underscore. Fixes bug #3120958 (http://bit.ly/fDAswL).
 + Fixed bug where snippets that have names beginning with a lower case letter were being omitted from from the associated list of snippets shown in the detail pane. Fixes bug #3120962 (http://bit.ly/eGhQvc).
