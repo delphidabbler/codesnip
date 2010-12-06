@@ -21,7 +21,8 @@ Notes
   released alpha or beta version and fourth number will be set to an appropriate
   build number at the time of release.
 
-* Periodic merging of chnages from v3 development tree (trunk).
+* Periodic merging of changes from v3 development tree (trunk). Some trunk
+  changes ignored where they clash with v4 changes.
 
 
 --------------------------------------------------------------------------------
@@ -34,10 +35,16 @@ Changes
   o View unit - complete rewrite
   o Snippet Kind Info and Initial Letter code - complete rewrite
   o Alpha grouping code
+  o TDOSDateTime class.
 
 * Bug fixes:
   o #3120962. This was a separate fix to that created for v3 - the two were
     incompatible.
+  o Fixed XML validation bug that was rejecting XML processing instructions with
+    "encoding" attributes. This is a copy of v3 fix.
+  o Fixed long standing bug that was crashing when database was updated or
+    restored after editing, adding or deleting any user defined snippet. This is
+    a different fix to that made in v3.
 
 * Help file:
   o Privacy statement topic updated.
@@ -46,15 +53,65 @@ Changes
 * Documentation:
   o Privacy statement updated re config file name change.
   o Readme updated re v4 changes.
+  o Noted new export file version 5.
+  o New documentation for file formats in linked HTML files.
 
 * Added support for full Unicode Pascal identifiers to be used as snippet names.
   Modified alpha grouping to handle this.
 
+* Dialog boxes:
+  o Config Compilers Dialog Box: Changed caption of button that detects
+    compilers to "Detect Delphi Compilers".
+
+* Database:
+  o Changed user database dir name to UserData.4.
+  o Added support for main database files with .4.* extensions.
+  o Main database files now stored in UTF-8 with BOM. Database reader code
+    maintains support for reading files in Default encoding because another
+    version of CodeSnip may update database using that format.
+  o User database file format updated. Now v5.
+
+* Import / Export / Backup
+  o Updated export file version to v5. All files use v5 regardless of REML
+    version used.
+  o Code that reads / writes backups completely overhauled.
+  o Updated backup file format to v4. Reader maintains backward support for v1
+    to v3 and no longer tries to read later formats.
+
+* Encoding:
+  o Added explicit UTF-8 encoding attribute to XML processing instruction of
+    export files.
+  o User database files now all use UTF-8 encoding (from v5 file format).
+    Ability to read earlier formats in default encoding retained.
+  o Code submission dialog now sends data to web service as UTF-8.
+  o New encoding helper class.
+  o Updated data stream reader and writer code to work with specified encodings
+    (now defaults to UTF-8 if no encoding provided).
+  o Removed all explicit use of Windows-1252. (*** check this ***)
+
+* Web Services
+  o Updated database update web service code changed to work with v5 of the
+    codesnip-updt.php web service. Checksums no longer in download but in HTTP
+    header.
+  o Database update code changed to detect actual encoding used to send data
+    from web service and to use that for all encoding / decoding of received
+    data.
+
 * Revised splash screen to include version number 4.
 
-* Changed user database dir name to UserData.4.
+* Changed syntax highlighter code to no longer use streams to pass text data
+  between classes but to use Unicode strings instead.
 
 * Changed per-user config file name to User.4.ini.
+
+* Increased use of TStringBuilder to build strings where string concatenation
+  was used excessively.
+
+* Added support for specifying encoding when writing / reading text files.
+
+* Refactored data stream reading / writing code and added code to read / write
+  binary formatted data streams. Removed code that writes text formatted data
+  streams.
 
 * Installer:
   o Updated installer scripts to recognise and copy config files and databases
