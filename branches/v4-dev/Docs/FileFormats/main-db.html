@@ -50,7 +50,8 @@
 
 <p>
   The Code Snippets database is stored in a set of .ini files with associated
-  data files located in the main database directory.
+  data files located in the main database directory. Two subsidiary text files
+  containing credits are also included.
 </p>
 
 <p>
@@ -65,13 +66,17 @@
   .ini file.
 </p>
 
+<p>
+  The credits text files contain lists of names.
+</p>
+
 <h2>
   Encoding
 </h2>
 
 <p>
-  CodeSnip 4 stores all main database files using UTF-8 encoding. Files are saved
-  with the UTF-8 preamble (BOM).
+  CodeSnip 4 stores all main database files, including the subsidiary text
+  files, using UTF-8 encoding. Files are saved with the UTF-8 preamble (BOM).
 </p>
 
 <p>
@@ -80,9 +85,8 @@
 </p>
 
 <p>
-  CodeSnip v4 must be able to work with both files types because it may inherit
-  or have to use a database downloaded by a v3 or earlier version of the
-  program.
+  CodeSnip v4 must be able to work with both encodings because it may inherit or 
+  have to use a database downloaded by a v3 or earlier version of the program.
 </p>
 
 <h2>
@@ -574,4 +578,23 @@ Snip=044.3.dat
 <p>
   Source code files are referenced by the <em>Snip</em> field in category .ini
   files.
+</p>
+
+<h3>
+  Subsidiary &quot;Credits&quot; Text Files
+</h3>
+
+<p>
+  There are two credits files, <code>contrib.txt</code> and
+  <code>testers.txt</code> that list the people who have contributed code to the
+  main database or helped to test the code, respectively.
+</p>
+
+<p>
+  Each file is simply a list of names, each name on a separate line.
+</p>
+
+<p>
+  The credits file stand alone from the other files in the database in that they
+  are not referenced by, and do not reference, any of the other files.
 </p>
