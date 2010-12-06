@@ -50,17 +50,19 @@ uses
 
 type
 
-  {
-  TOverviewTreeSectionState:
-    Class that records the state of an overview pane section node.
-  }
+  ///  <summary>
+  ///  Class that records state of a section (level 0) node in the overview
+  ///  pane's treeview.
+  ///  </summary>
   TOverviewTreeSectionState = class(TObject)
   strict private
     var
-      fExpanded: Boolean;     // Value of Expanded property
-      fViewItem: IView;       // Value of ViewItem property
+      /// <summary>Value of Expanded property.</summary>
+      fExpanded: Boolean;
+      /// <summary>Value of ViewKey property.</summary>
+      fViewKey: IViewKey;
   public
-    constructor Create(ViewItem: IView; const Expanded: Boolean);
+    constructor Create(ViewKey: IViewKey; const Expanded: Boolean);
       {Constructor. Sets up object.
         @param ViewItem [in] View item represented by section node.
         @param Expended [in] True if node is expanded, False if not.
@@ -70,9 +72,10 @@ type
       }
     property Expanded: Boolean read fExpanded;
       {Whether section node is expanded}
-    property ViewItem: IView read fViewItem;
-      {View item displayed by section node}
+    property ViewKey: IViewKey read fViewKey;
   end;
+
+type
 
   {
   TOverviewTreeState:
@@ -95,7 +98,7 @@ type
       fTV: TTreeView;                   // Reference to treeview
       fSections: TSectionStates;        // List of section state objects
       fRestoreState: TResorationState;  // Current restoration state of tree
-    function FindSection(ViewItem: IView;
+    function FindSection(ViewKey: IViewKey;
       out FoundSection: TOverviewTreeSectionState): Boolean;
       {Finds a section object that references a specified view item.
         @param ViewItem [in] View item being searched for.
@@ -136,7 +139,7 @@ uses
 
 { TOverviewTreeSectionState }
 
-constructor TOverviewTreeSectionState.Create(ViewItem: IView;
+constructor TOverviewTreeSectionState.Create(ViewKey: IViewKey;
   const Expanded: Boolean);
   {Constructor. Sets up object.
     @param ViewItem [in] View item represented by section node.
@@ -144,7 +147,7 @@ constructor TOverviewTreeSectionState.Create(ViewItem: IView;
   }
 begin
   inherited Create;
-  fViewItem := TViewItemFactory.Clone(ViewItem);
+  fViewKey := ViewKey;
   fExpanded := Expanded;
 end;
 
@@ -152,7 +155,7 @@ destructor TOverviewTreeSectionState.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  fViewItem := nil;
+  fViewKey := nil;
   inherited;
 end;
 
@@ -180,7 +183,7 @@ begin
   inherited;
 end;
 
-function TOverviewTreeState.FindSection(ViewItem: IView;
+function TOverviewTreeState.FindSection(ViewKey: IViewKey;
   out FoundSection: TOverviewTreeSectionState): Boolean;
   {Finds a section object that references a specified view item.
     @param ViewItem [in] View item being searched for.
@@ -194,7 +197,7 @@ begin
   FoundSection := nil;
   for Section in fSections do
   begin
-    if Section.ViewItem.IsEqual(ViewItem) then
+    if Section.ViewKey.IsEqual(ViewKey) then
     begin
       FoundSection := Section;
       Exit(True);
@@ -227,8 +230,10 @@ begin
     begin
       for Node in fTV.Items do
       begin
-        if IsSectionNode(Node)
-          and FindSection((Node as TViewItemTreeNode).ViewItem, Section) then
+        if IsSectionNode(Node) and
+          FindSection(
+            (Node as TViewItemTreeNode).ViewItem.GetKey, Section
+          ) then
           Node.Expanded := Section.Expanded;
       end;
     end;
@@ -247,7 +252,7 @@ procedure TOverviewTreeState.SaveState;
     }
   begin
     fSections.Add(
-      TOverviewTreeSectionState.Create(Node.ViewItem, Node.Expanded)
+      TOverviewTreeSectionState.Create(Node.ViewItem.GetKey, Node.Expanded)
     );
   end;
   // ---------------------------------------------------------------------------
