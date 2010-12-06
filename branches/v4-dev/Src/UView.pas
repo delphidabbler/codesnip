@@ -47,8 +47,26 @@ uses
   // Project
   UBaseObjects, UInitialLetter, USnippetKindInfo, USnippets;
 
+{ TODO: see if we can use generics in any way to simplify IViewKey
+        implementations - there's a lot of duplication }
+{ TODO: add key records to all items related to views (categories, snippets,
+        etc) and define equals operator on them }
+{ TODO: see if we can removed duplication between IView.IsEqual and
+        IViewKey.IsEqual implementations. }
 
 type
+
+  { TODO: consider renaming this as IViewPersist }
+  ///  <summary>
+  ///  Interface supported by object that can compare key values associated with
+  ///  a view for equality. The values stored in this object must persist even
+  ///  if any object stored in the related IView object has been destroyed.
+  ///  </summary>
+  IViewKey = interface(IInterface)
+    ['{E6C39F3C-63E3-4A3E-A4E7-B176DA121D9E}']
+    ///  Checks if two view keys are equal.
+    function IsEqual(const Key: IViewKey): Boolean;
+  end;
 
   ///  <summary>
   ///  Interface supported by all view objects.
@@ -61,6 +79,9 @@ type
     ///  View description.
     function GetDescription: string;
     property Description: string read GetDescription;
+    ///  View key. Encapsulates the data that uniquely identifies the view item
+    ///  without having have an instance of any object wrapped by the view item.
+    function GetKey: IViewKey;
   end;
 
   ///  <summary>
@@ -153,7 +174,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UExceptions;
+  UExceptions, USnippetIDs;
 
 
 type
@@ -162,20 +183,34 @@ type
   TNulViewItem = class sealed(TInterfacedObject,
     IView, INulView
   )
+  strict private
+    type
+      TKey = class(TInterfacedObject, IViewKey)
+      public
+        function IsEqual(const Key: IViewKey): Boolean;
+      end;
   public
     { IView methods }
     function GetDescription: string;
     function IsEqual(View: IView): Boolean;
+    function GetKey: IViewKey;
   end;
 
   ///  View associated with start page
   TStartPageViewItem = class sealed(TInterfacedObject,
     IView, IStartPageView
   )
+  strict private
+    type
+      TKey = class(TInterfacedObject, IViewKey)
+      public
+        function IsEqual(const Key: IViewKey): Boolean;
+      end;
   public
     { IView methods }
     function GetDescription: string;
     function IsEqual(View: IView): Boolean;
+    function GetKey: IViewKey;
   end;
 
   ///  View associated with a snippet.
@@ -185,12 +220,21 @@ type
   strict private
     ///  Associated snippet.
     var fSnippet: TRoutine;
+    type
+      TKey = class(TInterfacedObject, IViewKey)
+      strict private
+        fID: TSnippetID;
+      public
+        constructor Create(const ID: TSnippetID);
+        function IsEqual(const Key: IViewKey): Boolean;
+      end;
   public
     ///  Constructs view for a specified snippet.
     constructor Create(const Snippet: TRoutine);
     { IView methods }
     function GetDescription: string;
     function IsEqual(View: IView): Boolean;
+    function GetKey: IViewKey;
     { ISnippetView methods }
     function GetSnippet: TRoutine;
   end;
@@ -202,12 +246,21 @@ type
   strict private
     ///  Associated category.
     var fCategory: TCategory;
+    type
+      TKey = class(TInterfacedObject, IViewKey)
+      strict private
+        fID: string;
+      public
+        constructor Create(const ID: string);
+        function IsEqual(const Key: IViewKey): Boolean;
+      end;
   public
     //  Constructs view for a specified category.
     constructor Create(const Category: TCategory);
     { IView methods }
     function GetDescription: string;
     function IsEqual(View: IView): Boolean;
+    function GetKey: IViewKey;
     { ICategoryView methods }
     function GetCategory: TCategory;
   end;
@@ -219,12 +272,21 @@ type
   strict private
     ///  Associated snippet kind.
     var fKindInfo: TSnippetKindInfo;
+    type
+      TKey = class(TInterfacedObject, IViewKey)
+      strict private
+        var fID: TSnippetKind;
+      public
+        constructor Create(const ID: TSnippetKind);
+        function IsEqual(const Key: IViewKey): Boolean;
+      end;
   public
     ///  Constructs view for a specified snippet kind.
     constructor Create(const KindInfo: TSnippetKindInfo);
     { IView methods }
     function GetDescription: string;
     function IsEqual(View: IView): Boolean;
+    function GetKey: IViewKey;
     { ISnippetKindView methods }
     function GetKindInfo: TSnippetKindInfo;
   end;
@@ -236,12 +298,21 @@ type
   strict private
     ///  Associated initial letter.
     var fLetter: TInitialLetter;
+    type
+      TKey = class(TInterfacedObject, IViewKey)
+      strict private
+        var fID: TInitialLetter;
+      public
+        constructor Create(const ID: TInitialLetter);
+        function IsEqual(const Key: IViewKey): Boolean;
+      end;
   public
     ///  Constructs view for a specified initial letter.
     constructor Create(const Letter: TInitialLetter);
     { IView methods }
     function GetDescription: string;
     function IsEqual(View: IView): Boolean;
+    function GetKey: IViewKey;
     { IInitialLetterView methods }
     function GetInitialLetter: TInitialLetter;
   end;
@@ -254,9 +325,21 @@ begin
   Result := '';
 end;
 
+function TNulViewItem.GetKey: IViewKey;
+begin
+  Result := TKey.Create;
+end;
+
 function TNulViewItem.IsEqual(View: IView): Boolean;
 begin
   Result := Supports(View, INulView);
+end;
+
+{ TNulViewItem.TKey }
+
+function TNulViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
+begin
+  Result := Key is TKey;
 end;
 
 { TStartPageViewItem }
@@ -268,9 +351,21 @@ begin
   Result := sDesc;
 end;
 
+function TStartPageViewItem.GetKey: IViewKey;
+begin
+  Result := TKey.Create;
+end;
+
 function TStartPageViewItem.IsEqual(View: IView): Boolean;
 begin
   Result := Supports(View, IStartPageView);
+end;
+
+{ TStartPageViewItem.TKey }
+
+function TStartPageViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
+begin
+  Result := Key is TKey;
 end;
 
 { TSnippetViewItem }
@@ -286,6 +381,11 @@ begin
   Result := fSnippet.Name;
 end;
 
+function TSnippetViewItem.GetKey: IViewKey;
+begin
+  Result := TKey.Create(fSnippet.ID);
+end;
+
 function TSnippetViewItem.GetSnippet: TRoutine;
 begin
   Result := fSnippet;
@@ -298,6 +398,21 @@ begin
   if not Supports(View, ISnippetView, SnippetView) then
     Exit(False);
   Result := fSnippet.IsEqual(SnippetView.Snippet);
+end;
+
+{ TSnippetViewItem.TKey }
+
+constructor TSnippetViewItem.TKey.Create(const ID: TSnippetID);
+begin
+  inherited Create;
+  fID := ID;
+end;
+
+function TSnippetViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
+begin
+  if not (Key is TSnippetViewItem.TKey) then
+    Exit(False);
+  Result := (Key as TSnippetViewItem.TKey).fID = fID;
 end;
 
 { TCategoryViewItem }
@@ -318,6 +433,11 @@ begin
   Result := fCategory.Description;
 end;
 
+function TCategoryViewItem.GetKey: IViewKey;
+begin
+  Result := TKey.Create(fCategory.Category);
+end;
+
 function TCategoryViewItem.IsEqual(View: IView): Boolean;
 var
   CatView: ICategoryView;
@@ -325,6 +445,21 @@ begin
   if not Supports(View, ICategoryView, CatView) then
     Exit(False);
   Result := fCategory.IsEqual(CatView.Category);
+end;
+
+{ TCategoryViewItem.TKey }
+
+constructor TCategoryViewItem.TKey.Create(const ID: string);
+begin
+  inherited Create;
+  fID := ID;
+end;
+
+function TCategoryViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
+begin
+  if not (Key is TKey) then
+    Exit(False);
+  Result := AnsiSameText((Key as TKey).fID, fID);
 end;
 
 { TSnippetKindViewItem }
@@ -340,6 +475,11 @@ begin
   Result := fKindInfo.DisplayName;
 end;
 
+function TSnippetKindViewItem.GetKey: IViewKey;
+begin
+  Result := TKey.Create(fKindInfo.Kind);
+end;
+
 function TSnippetKindViewItem.GetKindInfo: TSnippetKindInfo;
 begin
   Result := fKindInfo;
@@ -352,6 +492,21 @@ begin
   if not Supports(View, ISnippetKindView, SnipKindView) then
     Exit(False);
   Result := fKindInfo.Kind = SnipKindView.KindInfo.Kind;
+end;
+
+{ TSnippetKindViewItem.TKey }
+
+constructor TSnippetKindViewItem.TKey.Create(const ID: TSnippetKind);
+begin
+  inherited Create;
+  fID := ID;
+end;
+
+function TSnippetKindViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
+begin
+  if not (Key is TKey) then
+    Exit(False);
+  Result := (Key as TKey).fID = fID;
 end;
 
 { TInitialLetterViewItem }
@@ -372,14 +527,35 @@ begin
   Result := fLetter;
 end;
 
+function TInitialLetterViewItem.GetKey: IViewKey;
+begin
+  Result := TKey.Create(fLetter);
+end;
+
 function TInitialLetterViewItem.IsEqual(View: IView): Boolean;
 var
   LetterView: IInitialLetterView;
 begin
   if not Supports(View, IInitialLetterView, LetterView) then
     Exit(False);
+  // todo: change following to do comparison on record rather than char.
   Result := fLetter.Letter =
     LetterView.InitialLetter.Letter;
+end;
+
+{ TInitialLetterViewItem.TKey }
+
+constructor TInitialLetterViewItem.TKey.Create(const ID: TInitialLetter);
+begin
+  inherited Create;
+  fID := ID;
+end;
+
+function TInitialLetterViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
+begin
+  if not (Key is TKey) then
+    Exit(False);
+  Result := (Key as TKey).fID = fID;
 end;
 
 { TViewItemFactory }
