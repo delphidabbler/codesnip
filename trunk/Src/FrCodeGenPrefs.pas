@@ -604,6 +604,7 @@ begin
   AddMenuItem('Delphi 2007 (Win 32)', 18.5);
   AddMenuItem('Delphi 2009', 20.0);
   AddMenuItem('Delphi 2010', 21.0);
+  AddMenuItem('Delphi XE', 22.0);
 end;
 
 procedure TCodeGenPrefsFrame.PreDefCompilerMenuClick(Sender: TObject);
