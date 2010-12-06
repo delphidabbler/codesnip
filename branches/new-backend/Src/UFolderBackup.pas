@@ -241,7 +241,8 @@ var
 resourcestring
   // Error message
   sBadFileContent = 'Invalid content for file "%s"';
-  sBadFileID = 'Invalid file ID for file "%s"';
+  sBadFileID = 'Invalid identifier for backup file "%s"';
+  sUnsupportedVersion = 'Backup file "%s" has an unsupported file format';
 begin
   // Make sure restore folder exists
   EnsureFolders(fSrcFolder);
@@ -258,11 +259,14 @@ begin
     begin
       // v2 or later: read version then file count
       Version := Reader.ReadSmallInt;
-      if Version >= 3 then
+      if Version > 3 then
+        // version 4 or later: we only support up to v3 file format
+        raise ECodeSnip.CreateFmt(sUnsupportedVersion, [fBakFile]);
+      if Version = 3 then
       begin
-        // version 3 of later: read file id
+        // version 3 : read file id
         if Reader.ReadSmallInt <> fFileID then
-          raise ECodeSnip.CreateFmt(sBadFileID, [FileName]);
+          raise ECodeSnip.CreateFmt(sBadFileID, [fBakFile]);
       end;
       FileCount := Reader.ReadSmallInt;
     end

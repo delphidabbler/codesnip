@@ -428,10 +428,10 @@ resourcestring
   sNoXMLProcInst = 'Invalid document: must begin with a valid XML processing '
     + 'instruction';
 begin
-  // Must have correct processing instruction (<?xml version="1.0"?>)
+  // Must have correct processing instruction (<?xml .... ?>)
   XMLNode := FindRootNodeType(XMLDoc, ntProcessingInstr);
   if not Assigned(XMLNode) or (XMLNode.NodeName <> cXMLNode)
-    or (XMLNode.Text <> cXMLNodeText) then
+    or (XMLNode.NodeType <> ntProcessingInstr) then
     raise ECodeSnipXML.Create(sNoXMLProcInst);
 end;
 

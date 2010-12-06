@@ -45,10 +45,39 @@ uses
   // Delphi
   ComCtrls, Generics.Collections,
   // Project
-  UView;
+  UView, USnippetIDs, USnippets;
 
 
 type
+
+  {
+  TViewInfo:
+    Records identifying information about a view item without storing any
+    object contained in the view item. The actual object can be freed between
+    saving and restoring the tree state causing a crash, hence we only store
+    the view item's "key" value.
+    Can't clone the object contained in a view item because TRoutine and
+    TCategory don't permit it.
+    *** NOTE: This is a hack to fix a long standing bug. Not the cleanest fix,
+    but it works and I've found a more elegant solution for v4!
+  }
+  TViewInfo = class(TObject)
+  strict private
+    // Kind of view this info relates to
+    fViewKind: TViewKind;
+    // Fields recording info about view item. Which one is used depends on kind
+    // of view. None are used for vkNone and vkWelcome.
+    fCatID: string;
+    fSnipKindID: TSnippetKind;
+    fAlphaID: Char;
+    fSnippetID: TSnippetID;
+  public
+    // Creates view info object for a view item. Values recorded depend on kind
+    // of view item.
+    constructor Create(View: TViewItem);
+    // Checks if this view info object's key info matches that of a view item.
+    function IsEqual(View: TViewItem): Boolean;
+  end;
 
   {
   TOverviewTreeSectionState:
@@ -58,7 +87,7 @@ type
   strict private
     var
       fExpanded: Boolean;     // Value of Expanded property
-      fViewItem: TViewItem;   // Value of ViewItem property
+      fViewInfo: TViewInfo;   // Value of ViewInfo property
   public
     constructor Create(const ViewItem: TViewItem; const Expanded: Boolean);
       {Constructor. Sets up object.
@@ -70,8 +99,8 @@ type
       }
     property Expanded: Boolean read fExpanded;
       {Whether section node is expanded}
-    property ViewItem: TViewItem read fViewItem;
-      {View item displayed by section node}
+    property ViewInfo: TViewInfo read fViewInfo;
+      {Info about view item displayed by section node}
   end;
 
   {
@@ -130,6 +159,8 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   UPreferences, UViewItemTreeNode;
 
@@ -144,7 +175,7 @@ constructor TOverviewTreeSectionState.Create(const ViewItem: TViewItem;
   }
 begin
   inherited Create;
-  fViewItem := TViewItem.Create(ViewItem);
+  fViewInfo := TViewInfo.Create(ViewItem);
   fExpanded := Expanded;
 end;
 
@@ -152,7 +183,7 @@ destructor TOverviewTreeSectionState.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  fViewItem.Free;
+  fViewInfo.Free;
   inherited;
 end;
 
@@ -194,7 +225,7 @@ begin
   FoundSection := nil;
   for Section in fSections do
   begin
-    if Section.ViewItem.IsEqual(ViewItem) then
+    if Section.ViewInfo.IsEqual(ViewItem) then
     begin
       FoundSection := Section;
       Exit(True);
@@ -263,6 +294,38 @@ begin
   end;
   // note that tree must be restored from this saved state
   fRestoreState := rsAsSaved;
+end;
+
+{ TViewInfo }
+
+constructor TViewInfo.Create(View: TViewItem);
+begin
+  inherited Create;
+  fViewKind := View.Kind;
+  case fViewKind of
+    vkRoutine: fSnippetID := View.Routine.ID;
+    vkCategory: fCatID := View.Category.Category;
+    vkSnipKind: fSnipKindID := View.SnippetKind.Kind;
+    vkAlphabet: fAlphaID := View.AlphaChar.Letter;
+  end;
+end;
+
+function TViewInfo.IsEqual(View: TViewItem): Boolean;
+begin
+  if View.Kind <> fViewKind then
+    Exit(False);
+  case fViewKind of
+    vkRoutine:
+      Result := View.Routine.ID = fSnippetID;
+    vkCategory:
+      Result := AnsiSameText(View.Category.Category, fCatID);
+    vkSnipKind:
+      Result := View.SnippetKind.Kind = fSnipKindID;
+    vkAlphabet:
+      Result := View.AlphaChar.Letter = fAlphaID;
+    else
+      Result := True;
+  end;
 end;
 
 end.
