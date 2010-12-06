@@ -136,14 +136,14 @@
             provided.
           </li>
           <li>
-            <span class="highlight">version 5:</span> Always set to 
+            <span class="highlight">version 5:</span> Always set to
             &quot;UTF-8&quot;.
           </li>
         </ul>
       </dd>
     </dl>
   </dd>
-  
+
   <dt>
     <strong>codesnip-data</strong>
   </dt>
@@ -160,7 +160,7 @@
         &quot;531257EA-1EE3-4B0F-8E46-C6E7F7140106&quot;.
       </dd>
       <dt>
-        <em>version</em> 
+        <em>version</em>
       </dt>
       <dd>
         Identifies version of file. Determines which tags are valid and rules
@@ -168,14 +168,14 @@
       </dd>
     </dl>
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/categories</strong>
   </dt>
   <dd>
     Contains list of all categories.
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/categories/category</strong>
   </dt>
@@ -192,22 +192,22 @@
       </dd>
     </dl>
   <dd>
-  
+
   <dt>
     <strong>codesnip-data/categories/category/description</strong>
   </dt>
   <dd>
     Description of category.
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/categories/category/cat-routines</strong>
   </dt>
   <dd>
-    Contains list of name of all snippets in category. Omitted if there are no 
+    Contains list of name of all snippets in category. Omitted if there are no
     snippets in category.
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/categories/category/cat-routines/pascal-name</strong>
   </dt>
@@ -227,14 +227,14 @@
       </li>
     </ul>
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines</strong>
   </dt>
   <dd>
     Contains a list of all user defined snippets.
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine</strong>
   </dt>
@@ -256,15 +256,15 @@
             an English language letter or the underscore.
           </li>
           <li>
-            <span class="highlight">version 5:</span> Name can begin with any 
-            character that is valid as the first character of a Unicode Pascal 
+            <span class="highlight">version 5:</span> Name can begin with any
+            character that is valid as the first character of a Unicode Pascal
             identifier.
           </li>
         </ul>
       </dd>
     </dl>
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/cat-id</strong>
   </dt>
@@ -278,14 +278,14 @@
   <dd>
     Description of snippet.
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/source-code</strong>
   </dt>
   <dd>
     Name of file containing snippet's source code. No path information included.
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/comments</strong>
   </dt>
@@ -293,7 +293,7 @@
     <div class="half-spaced">
       <ul class="squashed">
         <li>
-          <span class="highlight">version 1:</span> Additional comments about 
+          <span class="highlight">version 1:</span> Additional comments about
           snippets.
         </li>
         <li>
@@ -302,7 +302,7 @@
       </ul>
     </div>
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/credits</strong>
   </dt>
@@ -310,10 +310,10 @@
     <div class="half-spaced">
       <ul class="squashed">
         <li>
-          <span class="highlight">version 1:</span> Credits for snippets. May 
-          contain a single piece of text, delimited by &quot;[&quot; and 
-          &quot;]&quot; that can form a hyperlink. URL for the hyperlink is 
-          provided in <em>codesnip-data/routines/routine/credits-url</em>. 
+          <span class="highlight">version 1:</span> Credits for snippets. May
+          contain a single piece of text, delimited by &quot;[&quot; and
+          &quot;]&quot; that can form a hyperlink. URL for the hyperlink is
+          provided in <em>codesnip-data/routines/routine/credits-url</em>.
         </li>
         <li>
           <span class="highlight">version 2 and later:</span> Not supported.
@@ -321,7 +321,7 @@
       </ul>
     </div>
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/credits-url</strong>
   </dt>
@@ -329,7 +329,7 @@
     <div class="half-spaced">
       <ul class="squashed">
         <li>
-          <span class="highlight">version 1:</span> URL required by 
+          <span class="highlight">version 1:</span> URL required by
           <em>codesnip-data/routines/routine/credits</em> tag. Present only if
           <em>codesnip-data/routines/routine/credits</em> requires a hyperlink.
         </li>
@@ -339,7 +339,7 @@
       </ul>
     </div>
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/extra</strong>
   </dt>
@@ -370,7 +370,7 @@
       </ul>
     </div>
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/standard-format</strong>
   </dt>
@@ -378,9 +378,9 @@
     <div class="half-spaced">
       <ul class="sqashed">
         <li>
-          <span class="highlight">versions 1 and 2:</span> Flag indicating if 
-          snippet is in &quot;standard format&quot;. Value of 1 indicates true 
-          and 0 indicates false. 
+          <span class="highlight">versions 1 and 2:</span> Flag indicating if
+          snippet is in &quot;standard format&quot;. Value of 1 indicates true
+          and 0 indicates false.
         </li>
         <li>
           <span class="highlight">version 3 and later:</span> Not supported.
@@ -388,7 +388,7 @@
       </ul>
     </div>
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/kind</strong>
   </dt>
@@ -399,21 +399,21 @@
           <span class="highlight">versions 1 and 2:</span> Not supported.
         </li>
         <li>
-          <span class="highlight">version 3 and later:</span> Value indicating 
-          kind of snippet. Permissible values are: &quot;freeform&quot;, 
-          &quot;routine&quot;, &quot;type&quot; &amp; &quot;snippet&quot;. 
+          <span class="highlight">version 3 and later:</span> Value indicating
+          kind of snippet. Permissible values are: &quot;freeform&quot;,
+          &quot;routine&quot;, &quot;type&quot; &amp; &quot;snippet&quot;.
         </li>
       </ul>
     </div>
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/compiler-results</strong>
   </dt>
   <dd>
     Contains a list of compile results for the snippet.
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/compiler-results/compiler-result
     </strong>
@@ -491,8 +491,8 @@
         &quot;Q&quot; &ndash; Compile result for this compiler is not known.
       </li>
     </ul>
-    <div class="half-spaced"> 
-      Omitting a tag for a certain compiler is permitted and is equivalent to 
+    <div class="half-spaced">
+      Omitting a tag for a certain compiler is permitted and is equivalent to
       specifying &quot;Q&quot;.
     </div>
   </dd>
@@ -510,14 +510,14 @@
   <dd>
     Name of a unit within unit list.
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/depends</strong>
   </dt>
   <dd>
     List of required snippets.
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/depends/pascal-name</strong>
   </dt>
@@ -527,24 +527,24 @@
     </div>
     <ul class="squashed">
       <li>
-        <span class="highlight">versions 1..4:</span> Name must begin with an 
+        <span class="highlight">versions 1..4:</span> Name must begin with an
         English language letter or the underscore.
       </li>
       <li>
-        <span class="highlight">version 5:</span> Name can begin with any 
-        character that is valid as the first character of a Unicode Pascal 
+        <span class="highlight">version 5:</span> Name can begin with any
+        character that is valid as the first character of a Unicode Pascal
         identifier.
       </li>
     </ul>
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/xref</strong>
   </dt>
   <dd>
     List of cross-referenced snippets.
   </dd>
-  
+
   <dt>
     <strong>codesnip-data/routines/routine/xref/pascal-name</strong>
   </dt>
@@ -554,12 +554,12 @@
     </div>
     <ul class="squashed">
       <li>
-        <span class="highlight">versions 1..4:</span> Name must begin with an 
+        <span class="highlight">versions 1..4:</span> Name must begin with an
         English language letter or the underscore.
       </li>
       <li>
-        <span class="highlight">version 5:</span> Name can begin with any 
-        character that is valid as the first character of a Unicode Pascal 
+        <span class="highlight">version 5:</span> Name can begin with any
+        character that is valid as the first character of a Unicode Pascal
         identifier.
       </li>
     </ul>
@@ -573,7 +573,7 @@
 <p>
   Source code is stored separately from the main XML file. The source code of
   each snippet has its file. Files are numbered sequentially and have a .dat
-  extension, for example <code>6.dat</code>. 
+  extension, for example <code>6.dat</code>.
 </p>
 
 <p>
@@ -621,7 +621,7 @@
     </div>
     <ul class="squashed">
       <li>
-        <em>codesnip-data/routines/routine/extra</em> (uses REML v1 markup). 
+        <em>codesnip-data/routines/routine/extra</em> (uses REML v1 markup).
       </li>
     </ul>
   </dd>
@@ -646,7 +646,7 @@
       </li>
     </ul>
     <div class="half-spaced">
-      The version of REML supported by the 
+      The version of REML supported by the
       <em>codesnip-data/routines/routine/extra</em> tag was updated to v2.
     </div>
   </dd>
@@ -654,7 +654,7 @@
     Version 4
   </dt>
   <dd>
-    The version of REML supported by the 
+    The version of REML supported by the
     <em>codesnip-data/routines/routine/extra</em> tag was updated to v3.
   </dd>
   <dt>
@@ -666,9 +666,9 @@
       the encoding attribute of the XML processing instruction to this value.
     </div>
     <div class="half-spaced">
-      Snippet names, wherever they occur in the XML file, can now begin with 
+      Snippet names, wherever they occur in the XML file, can now begin with
       any character that is a valid first character of a Unicode Pascal
-      identifier. Previously the first character of the attribute had to be one 
+      identifier. Previously the first character of the attribute had to be one
       of 'A'..'Z', 'a'..'z' or '_'.
     </div>
     <div class="half-spaced">
@@ -683,16 +683,20 @@
 </h3>
 
 <p>
-  Readers of version 1 files must generate REML markup from the 
-  <em>codesnip-data/routines/routine/comments</em>, 
-  <em>codesnip-data/routines/routine/credits</em> and 
+  Readers of version 1 files must generate REML markup from the
+  <em>codesnip-data/routines/routine/comments</em>,
+  <em>codesnip-data/routines/routine/credits</em> and
   <em>codesnip-data/routines/routine/credits-url</em> tags to mimic the data
   normally provided by the extra tag.
 </p>
 
 <p>
-  Readers of v1 and v2 files should map a 
+  Readers of v1 and v2 files should map a
   <em>codesnip-data/routines/routine/standard-format</em> value of &quot;0&quot;
   to a <em>codesnip-data/routines/routine/kind</em> value of
   &quot;freeform&quot; and  a value of &quot;1&quot; to &quot;routine&quot;.
 </p>
+
+</body>
+
+</html>
