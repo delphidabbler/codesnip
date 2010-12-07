@@ -77,7 +77,20 @@ var
   NewDatabaseDir: string; // directory where files must be copied
 begin
   OldDatabaseDir := AddBackslash(gUserAppDataDir) + 'Data';
-  NewDatabaseDir := AddBackslash(gCommonAppDataDir) + 'Data';
+  NewDatabaseDir := AddBackslash(gCommonAppDataDir) + 'Data.4';
+  CopyDirectory(OldDatabaseDir, NewDatabaseDir);
+end;
+
+procedure CopyCommonMainDatabase;
+  {Copies any main database from original location in common app data directory
+  to new (for v4) location.
+  }
+var
+  OldDatabaseDir: string; // directory where old database files are stored
+  NewDatabaseDir: string; // directory where files must be copied
+begin
+  OldDatabaseDir := AddBackslash(gCommonAppDataDir) + 'Data';
+  NewDatabaseDir := AddBackslash(gCommonAppDataDir) + 'Data.4';
   CopyDirectory(OldDatabaseDir, NewDatabaseDir);
 end;
 

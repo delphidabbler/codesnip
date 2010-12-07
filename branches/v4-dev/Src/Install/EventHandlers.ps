@@ -212,24 +212,27 @@ begin
         end;
         flV1_9:
         begin
-          // Data created by v1.9 or later. Main database already in correct
-          // place. User.ini is copied to User.4.ini and hilite info is removed.
-          // There is no user database to copy.
+          // Data created by v1.9 or later. Main database needs to be copied
+          // from Data to Data.4 directories. User.ini is copied to User.4.ini
+          // and hilite info is removed. There is no user database to copy.
+          CopyCommonMainDatabase;
           CopyOldUserIniFile;
         end;
         flV2:
         begin
-          // All v2 versions. Main database is already in correct place.
-          // User.ini is copied to User.4.ini and hilite info is removed. Any
-          // user database is copied to new location.
+          // All v2 versions. Main database needs to be copied from Data to
+          // Data.4 directories. User.ini is copied to User.4.ini and hilite
+          // info is removed. Any user database is copied to new location.
+          CopyCommonMainDatabase;
           CopyV2UserDatabase;
           CopyOldUserIniFile;
         end;
         flV3:
         begin
-          // All v3 versions. Main database is already in correct place.
-          // User3.ini is copied to User.4.ini. Any user database is copied to
-          // new location.
+          // All v3 versions. Main database needs to be copied from Data to
+          // Data.4 directories. User3.ini is copied to User.4.ini. Any user
+          // database is copied to new location.
+          CopyCommonMainDatabase;
           CopyV3UserDatabase;
           CopyV3UserIniFile;
         end;
@@ -251,6 +254,8 @@ begin
         DelTree(AddBackslash(gUserAppDataDir) + 'UserData', True, True, True);
       if DirExists(AddBackslash(gUserAppDataDir) + 'UserData.3') then
         DelTree(AddBackslash(gUserAppDataDir) + 'UserData.3', True, True, True);
+      if DirExists(AddBackslash(gCommonAppDataDir) + 'Data') then
+        DelTree(AddBackslash(gCommonAppDataDir) + 'Data', True, True, True);
     end;
   end;
 

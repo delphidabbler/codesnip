@@ -80,7 +80,7 @@
       o %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
       o %AppData%\DelphiDabbler\CodeSnip\User.4.ini
     - Main database directory:
-        %ProgramData%\DelphiDabbler\CodeSnip\Data
+        %ProgramData%\DelphiDabbler\CodeSnip\Data.4
     - User defined database directory:
         %AppData%\DelphiDabbler\CodeSnip\UserData.4
 }
@@ -115,7 +115,7 @@ function MainDatabaseExists: Boolean;
   }
 begin
   Result := FileExists(
-    AddBackslash(gCommonAppDataDir) + 'Data\categories.ini'
+    AddBackslash(gCommonAppDataDir) + 'Data.4\categories.ini'
   );
 end;
 
