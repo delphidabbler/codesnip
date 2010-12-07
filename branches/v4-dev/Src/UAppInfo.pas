@@ -157,7 +157,7 @@ class function TAppInfo.AppDataDir: string;
     @return Full path to database sub directory.
   }
 begin
-  Result := CommonAppDir + '\Data';
+  Result := CommonAppDir + '\Data.4';
 end;
 
 class function TAppInfo.AppExeDir: string;
