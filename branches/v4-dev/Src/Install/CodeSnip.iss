@@ -134,6 +134,7 @@ Type: filesandordirs; Name: "{commonappdata}\{#AppPublisher}\{#AppName}"
 [Code]
 // DataLocations.pas must be declared first
 #include "DataLocations.ps"
+#include "Unicode.ps"
 #include "UpdateIni.ps"
 #include "UpdateDBase.ps"
 #include "EventHandlers.ps"

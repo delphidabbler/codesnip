@@ -77,13 +77,48 @@ begin
   Result := AddBackslash(gUserAppDataDir) + 'User.4.ini';
 end;
 
+procedure CopyAnsiToUnicodeIniFile(OldFileName, NewFileName: string);
+  {Reads an ANSI .ini file, coverts content to Unicode and writes that to a
+  UTF-16LE encoded Unicode .ini file. Requires Unicode Inno Setup.
+    @param OldFileName [in] Name of ANSI .ini file.
+    @param NewFileName [in] Name of Unicode .ini file.
+  }
+var
+  Lines: TArrayOfString;  // lines of text read from ANSI .ini file
+begin
+  // reads an ANSI file and converts contents to Unicode, using system default
+  // encoding
+  LoadStringsFromFile(OldFileName, Lines);
+  // writes string array to UTF-16LE file
+  WriteStringsToUnicodeFile(NewFileName, Lines);
+end;
+
+procedure CreateUnicodeIniFile(FileName: string);
+  {Create a new empty UTF-16LE encoding .ini file. Used to ensure the ini file
+  writing routines write in Unicode. This works because built in Inno Setup
+  ini function call Windows API WritePrivateProfileString which only writes
+  Unicode if the file it is writing to is detected as Unicode. If not it writes
+  ANSI text.
+    @param FileName [in] Name of new .ini file.
+  }
+var
+  NulLines: TArrayOfString;   // dummy empty string array
+begin
+  SetLength(NulLines, 0);
+  WriteStringsToUnicodeFile(FileName, NulLines);
+end;
+
 procedure StampIniFiles;
   {Updates both config files with correct version information. This records ini
   file versions and version number of program being installed.
   }
 begin
   // Flag ini file versions
+  if not FileExists(UserIniFileName) then
+    CreateUnicodeIniFile(UserIniFileName);
   SetIniInt('IniFile', 'Version', 7, UserIniFileName);
+  if not FileExists(CommonIniFileName) then
+    CreateUnicodeIniFile(CommonIniFileName);
   SetIniInt('IniFile', 'Version', 5, CommonIniFileName);
   // Record application version in common ini file
   SetIniString(
@@ -103,7 +138,7 @@ var
 begin
   // Create per-user settings file:
   // Copy file
-  FileCopy(OriginalIniFileName, UserIniFileName, False);
+  CopyAnsiToUnicodeIniFile(OriginalIniFileName, UserIniFileName);
   // Delete unwanted sections:
   // - Application section now in common ini file
   // - Source code output format: format lost when updating from CodeSnip pre
@@ -123,7 +158,7 @@ begin
 
   // Create common (application specific) settings file
   // Copy file
-  FileCopy(OriginalIniFileName, CommonIniFileName, False);
+  CopyAnsiToUnicodeIniFile(OriginalIniFileName, CommonIniFileName);
   // Delete unwanted sections
   // following sections belong in per-user file
   DeleteIniSection('Cmp:D2', CommonIniFileName);
@@ -156,7 +191,7 @@ procedure CopyOldUserIniFile;
   }
 begin
   // Copy the file
-  FileCopy(OldUserIniFileName, UserIniFileName, False);
+  CopyAnsiToUnicodeIniFile(OldUserIniFileName, UserIniFileName);
   // Delete highlighter preferences: not to be brought forward from old versions
   DeleteIniSection('Prefs:Hiliter', UserIniFileName);
   // Main window's overview tabs have changed in v3: so we reset to 0 (default)
@@ -168,13 +203,15 @@ procedure CopyV3UserIniFile;
   }
 begin
   // Copy the file
-  FileCopy(V3UserIniFileName, UserIniFileName, False);
+  CopyAnsiToUnicodeIniFile(V3UserIniFileName, UserIniFileName);
 end;
 
 procedure CreateDefaultCodeGenEntries;
   {Adds Prefs:CodeGen section along with default data.
   }
 begin
+  if not FileExists(UserIniFileName) then
+    CreateUnicodeIniFile(UserIniFileName);
   SetIniInt('Prefs:CodeGen', 'SwitchOffWarnings', 0, UserIniFileName);
   SetIniInt('Prefs:CodeGen', 'WarningCount', 8, UserIniFileName);
   SetIniString(
@@ -231,6 +268,8 @@ procedure DeleteProxyPassword;
   {Deletes proxy password entry.
   }
 begin
+  if not FileExists(UserIniFileName) then
+    CreateUnicodeIniFile(UserIniFileName);
   SetIniString('ProxyServer', 'Password', '', UserIniFileName);
 end;
 
