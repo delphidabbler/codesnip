@@ -72,11 +72,6 @@ type
     class var fCodePageNameMap: TCodePageNameMap;
     ///  Map of code pages to char set names.
     class var fCodePageValueMap: TCodePageValueMap;
-    ///  <summary>
-    ///  Read accessor for CharSets property. Creates list of supported
-    ///  character sets.
-    ///  </summary>
-    class function GetCharSets: TStringDynArray; static;
   public
     // Constants storing names of recognised character sets
     ///  ASCII character set
@@ -371,24 +366,6 @@ class procedure TEncodingHelper.FreeEncoding(const Encoding: TEncoding);
 begin
   if not TEncoding.IsStandardEncoding(Encoding) then
     Encoding.Free;
-end;
-
-class function TEncodingHelper.GetCharSets: TStringDynArray;
-var
-  CharSet: string;
-  I: Integer;
-begin
-  SetLength(Result, fEncodingMap.Count);
-  I := 0;
-  for CharSet in fEncodingMap.Keys do
-  begin
-    if IsWantedCharSet(CharSet) then
-    begin
-      Result[I] := CharSet;
-      Inc(I);
-    end;
-  end;
-  SetLength(Result, I);
 end;
 
 class function TEncodingHelper.GetCodePage(const CharSet: string): Integer;
