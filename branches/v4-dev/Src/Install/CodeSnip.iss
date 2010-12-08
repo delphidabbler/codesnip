@@ -52,6 +52,7 @@
 #define OutDir SourcePath + "..\..\Exe"
 #define SrcDocsPath SourcePath + "..\..\Docs\"
 #define SrcExePath SourcePath + "..\..\Exe\"
+#define ProgDataSubDir AppName + ".4"
 #define ExeProg SrcExePath + ExeFile
 #define AppVersion DeleteToVerStart(GetFileProductVersion(ExeProg))
 #define Copyright GetStringFileInfo(ExeProg, LEGAL_COPYRIGHT)
@@ -105,8 +106,8 @@ UninstallDisplayIcon={app}\{#ExeFile}
 PrivilegesRequired=admin
 
 [Dirs]
-Name: {commonappdata}\{#AppPublisher}\{#AppName}; permissions: everyone-modify;
-Name: {commonappdata}\{#AppPublisher}\{#AppName}\Data; permissions: everyone-modify;
+Name: {commonappdata}\{#AppPublisher}\{#ProgDataSubDir}; permissions: everyone-modify;
+Name: {commonappdata}\{#AppPublisher}\{#ProgDataSubDir}\Database; permissions: everyone-modify;
 
 [Files]
 Source: {#SrcExePath}{#SetupHelper}; Flags: dontcopy
@@ -128,8 +129,8 @@ Filename: {app}\{#ExeFile}; Description: {cm:LaunchProgram,{#AppPublisher} {#App
 BeveledLabel={#Company}
 
 [UninstallDelete]
-; Deletes CodeSnip app config and data files (per-user data file is left in place)
-Type: filesandordirs; Name: "{commonappdata}\{#AppPublisher}\{#AppName}"
+; Deletes CodeSnip common app config and data files (per-user data file is left in place)
+Type: filesandordirs; Name: "{commonappdata}\{#AppPublisher}\{#ProgDataSubDir}"
 
 [Code]
 // DataLocations.pas must be declared first

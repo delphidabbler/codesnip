@@ -1,55 +1,54 @@
 {
- * UpdateDBase.ps
- *
- * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
- *
- * Copies existing CodeSnip main and user databases from an original location
- * to location required by current version of CodeSnip.
- *
- * $Rev$
- * $Date$
- *
- * ***** BEGIN LICENSE BLOCK *****
- *
- * Version: MPL 1.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- *
- * The Original Code is UpdateDBase.ps.
- *
- * The Initial Developer of the Original Code is Peter Johnson
- * (http://www.delphidabbler.com/).
- *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
- * Johnson. All Rights Reserved.
- *
- * Contributors:
- *    NONE
- *
- * ***** END LICENSE BLOCK *****
+  * UpdateDBase.ps
+  *
+  * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
+  *
+  * Copies existing CodeSnip main and user databases from an original location
+  * to location required by current version of CodeSnip.
+  *
+  * $Rev$
+  * $Date$
+  *
+  * ***** BEGIN LICENSE BLOCK *****
+  *
+  * Version: MPL 1.1
+  *
+  * The contents of this file are subject to the Mozilla Public License Version
+  * 1.1 (the "License"); you may not use this file except in compliance with the
+  * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+  *
+  * Software distributed under the License is distributed on an "AS IS" basis,
+  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+  * the specific language governing rights and limitations under the License.
+  *
+  * The Original Code is UpdateDBase.ps.
+  *
+  * The Initial Developer of the Original Code is Peter Johnson
+  * (http://www.delphidabbler.com/).
+  *
+  * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+  * Johnson. All Rights Reserved.
+  *
+  * Contributors:
+  *    NONE
+  *
+  * ***** END LICENSE BLOCK *****
 }
 
-
 procedure CopyDirectory(SourceDir, DestDir: string);
-  {Copies files from one directory to another.
-    @param SourceDir [in] Directory containing files to be copied.
-    @param DestDir [in] Directory to receive files. Created if it doesn't exist.
+{ Copies files from one directory to another.
+  @param SourceDir [in] Directory containing files to be copied.
+  @param DestDir [in] Directory to receive files. Created if it doesn't exist.
   }
 var
   SourcePath: string; // source directory as path
-  DestPath: string;   // destination directory as path
-  FindRec: TFindRec;  // record used by directory search API
+  DestPath: string; // destination directory as path
+  FindRec: TFindRec; // record used by directory search API
 begin
   if not DirExists(SourceDir) then
     Exit;
   if not DirExists(DestDir) then
-    CreateDir(DestDir);
+    ForceDirectories(DestDir);
   SourcePath := AddBackslash(SourceDir);
   DestPath := AddBackslash(DestDir);
   if FindFirst(SourcePath + '*', FindRec) then
@@ -57,60 +56,23 @@ begin
     repeat
       if (FindRec.Attributes and FILE_ATTRIBUTE_DIRECTORY) = 0 then
       begin
-        FileCopy(
-          SourcePath + FindRec.Name,
-          DestPath + FindRec.Name,
-          False
-        );
+        FileCopy(SourcePath + FindRec.Name, DestPath + FindRec.Name, False);
       end;
     until not FindNext(FindRec);
     FindClose(FindRec);
   end;
 end;
 
-procedure CopyOldMainDatabase;
-  {Copies any main database in user's application data folder to common
-  application folder.
-  }
+procedure CopyDatabases(InstallID: Integer);
 var
-  OldDatabaseDir: string; // directory where old database files are stored
-  NewDatabaseDir: string; // directory where files must be copied
+  OldMainDatabase: string;
+  OldUserDatabase: string;
 begin
-  OldDatabaseDir := AddBackslash(gUserAppDataDir) + 'Data';
-  NewDatabaseDir := AddBackslash(gCommonAppDataDir) + 'Data.4';
-  CopyDirectory(OldDatabaseDir, NewDatabaseDir);
-end;
-
-procedure CopyCommonMainDatabase;
-  {Copies any main database from original location in common app data directory
-  to new (for v4) location.
-  }
-var
-  OldDatabaseDir: string; // directory where old database files are stored
-  NewDatabaseDir: string; // directory where files must be copied
-begin
-  OldDatabaseDir := AddBackslash(gCommonAppDataDir) + 'Data';
-  NewDatabaseDir := AddBackslash(gCommonAppDataDir) + 'Data.4';
-  CopyDirectory(OldDatabaseDir, NewDatabaseDir);
-end;
-
-procedure CopyV2UserDatabase;
-var
-  OldDatabaseDir: string; // directory where v2 user database files are stored
-  NewDatabaseDir: string; // directory to where files must be copied
-begin
-  OldDatabaseDir := AddBackslash(gUserAppDataDir) + 'UserData';
-  NewDatabaseDir := AddBackslash(gUserAppDataDir) + 'UserData.4';
-  CopyDirectory(OldDatabaseDir, NewDatabaseDir);
-end;
-
-procedure CopyV3UserDatabase;
-var
-  OldDatabaseDir: string; // directory where v3 user database files are stored
-  NewDatabaseDir: string; // directory to where files must be copied
-begin
-  OldDatabaseDir := AddBackslash(gUserAppDataDir) + 'UserData.3';
-  NewDatabaseDir := AddBackslash(gUserAppDataDir) + 'UserData.4';
-  CopyDirectory(OldDatabaseDir, NewDatabaseDir);
+  OldMainDatabase := gMainDatabaseDirs[InstallID];
+  if OldMainDatabase <> '' then
+    CopyDirectory(OldMainDatabase, gMainDatabaseDirs[flCurrent]);
+  OldUserDatabase := gUserDatabaseDirs[InstallID];
+  if OldUserDatabase <> '' then
+    CopyDirectory(OldUserDatabase, gUserDatabaseDirs[flCurrent]);
 end;
 

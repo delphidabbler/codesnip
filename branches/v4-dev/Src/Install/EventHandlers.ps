@@ -176,19 +176,24 @@ begin
   end;
 end;
 
+// TODO: Move to UpdateIni.ps
 function UserIniFileVer: Integer;
   {Gets version number of existing user ini file. Must be in expected location.
     @return Required version number. 1 if file doesn't exist or is not stamped.
   }
 begin
-  Result := GetIniInt('IniFile', 'Version', 1, 0, 0, UserIniFileName);
+  Result := GetIniInt('IniFile', 'Version', 1, 0, 0, gCurrentUserConfigFile);
 end;
 
 procedure CurStepChanged(CurStep: TSetupStep);
-  {Called to perform pre-install and post-install taks. We performs any required
-  data conversion at the post-install stage.
+  {Called to perform pre-install and post-install tasks. We performs any
+  required data conversion at the post-install stage.
     @param CurStep [in] Current step in installation.
   }
+var
+  PrevInstallID: Integer; // loops through previous installs
+  FileName: string;       // name of a config file
+  DirName: string;        // name of a database directory
 begin
   // We perform ini file post-install
   if CurStep <> ssPostInstall then
@@ -203,38 +208,25 @@ begin
       case gFileLocation of
         flOriginal:
         begin
-          // Data is in earliest format. We copy main database from the per user
-          // application data folder and create new config files from the
-          // original single config file. Data is modified. There is no user
-          // database to copy.
-          CopyOldMainDatabase;
+          CopyDatabases(flOriginal);
           CreateIniFilesFromOldStyle;
         end;
         flV1_9:
         begin
-          // Data created by v1.9 or later. Main database needs to be copied
-          // from Data to Data.4 directories. User.ini is copied to User.4.ini
-          // and hilite info is removed. There is no user database to copy.
-          CopyCommonMainDatabase;
-          CopyOldUserIniFile;
+          CopyDatabases(flV1_9);
+          CopyConfigFiles(flV1_9);
+          DeleteHighligherPrefs;  // default highlighting changes in v3
         end;
         flV2:
         begin
-          // All v2 versions. Main database needs to be copied from Data to
-          // Data.4 directories. User.ini is copied to User.4.ini and hilite
-          // info is removed. Any user database is copied to new location.
-          CopyCommonMainDatabase;
-          CopyV2UserDatabase;
-          CopyOldUserIniFile;
+          CopyDatabases(flV2);
+          CopyConfigFiles(flV2);
+          DeleteHighligherPrefs;  // default highlighting changes in v3
         end;
         flV3:
         begin
-          // All v3 versions. Main database needs to be copied from Data to
-          // Data.4 directories. User3.ini is copied to User.4.ini. Any user
-          // database is copied to new location.
-          CopyCommonMainDatabase;
-          CopyV3UserDatabase;
-          CopyV3UserIniFile;
+          CopyDatabases(flV3);
+          CopyConfigFiles(flV3);
         end;
       end;
     end;
@@ -242,20 +234,28 @@ begin
     // Check if old data should be deleted
     if gDeleteOldDataRequested then
     begin
-      if FileExists(AddBackslash(gUserAppDataDir) + 'CodeSnip.ini') then
-        DeleteFile(AddBackslash(gUserAppDataDir) + 'CodeSnip.ini');
-      if FileExists(AddBackslash(gUserAppDataDir) + 'User.ini') then
-        DeleteFile(AddBackslash(gUserAppDataDir) + 'User.ini');
-      if FileExists(AddBackslash(gUserAppDataDir) + 'User.3.ini') then
-        DeleteFile(AddBackslash(gUserAppDataDir) + 'User.3.ini');
-      if DirExists(AddBackslash(gUserAppDataDir) + 'Data') then
-        DelTree(AddBackslash(gUserAppDataDir) + 'Data', True, True, True);
-      if DirExists(AddBackslash(gUserAppDataDir) + 'UserData') then
-        DelTree(AddBackslash(gUserAppDataDir) + 'UserData', True, True, True);
-      if DirExists(AddBackslash(gUserAppDataDir) + 'UserData.3') then
-        DelTree(AddBackslash(gUserAppDataDir) + 'UserData.3', True, True, True);
-      if DirExists(AddBackslash(gCommonAppDataDir) + 'Data') then
-        DelTree(AddBackslash(gCommonAppDataDir) + 'Data', True, True, True);
+      for PrevInstallID := flOriginal to flCurrent - 1 do
+      begin
+        FileName := gCommonConfigFiles[PrevInstallId];
+        if (FileName <> '') and (FileName <> gCurrentCommonConfigFile)
+          and FileExists(FileName) then
+          DeleteFile(FileName);
+        FileName := gUserConfigFiles[PrevInstallId];
+        if (FileName <> '') and (FileName <> gCurrentUserConfigFile)
+          and FileExists(FileName) then
+          DeleteFile(FileName);
+      end;
+      for PrevInstallID := flOriginal to flCurrent - 1 do
+      begin
+        DirName := gMainDatabaseDirs[PrevInstallID];
+        if (DirName <> '') and (DirName <> gMainDatabaseDirs[flCurrent])
+          and DirExists(DirName) then
+          DelTree(DirName, True, True, True);
+        DirName := gUserDatabaseDirs[PrevInstallID];
+        if (DirName <> '') and (DirName <> gUserDatabaseDirs[flCurrent])
+          and DirExists(DirName) then
+          DelTree(DirName, True, True, True);
+      end;
     end;
   end;
 
@@ -268,7 +268,9 @@ begin
   // Check if there's a proxy server password in incompatible format and delete
   // it if so. Inform user.
   if (UserIniFileVer < 7) and
-    (GetIniString('ProxyServer', 'Password', '', UserIniFileName) <> '' ) then
+    (
+      GetIniString('ProxyServer', 'Password', '', gCurrentUserConfigFile) <> ''
+    ) then
   begin
     DeleteProxyPassword;
     MsgBox(
