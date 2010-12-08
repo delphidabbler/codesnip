@@ -216,9 +216,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes, IniFiles,
-  // 3rd party
-  UAppInfo, UEncryptor, UExceptions, UHexUtils, UUtils;
+  SysUtils, Classes, IniFiles, IOUtils,
+  // Project
+  UAppInfo, UEncryptor, UExceptions, UHexUtils, UIOUtils;
 
 
 var
@@ -460,8 +460,8 @@ constructor TIniSettingsBase.Create;
 begin
   inherited;
   // Ensure storage directories exist
-  EnsureFolders(TAppInfo.UserAppDir);
-  EnsureFolders(TAppInfo.CommonAppDir);
+  TDirectory.CreateDirectory(TAppInfo.UserAppDir);
+  TDirectory.CreateDirectory(TAppInfo.CommonAppDir);
 end;
 
 function TIniSettingsBase.CreateIniFile(
@@ -470,8 +470,14 @@ function TIniSettingsBase.CreateIniFile(
     @param Id [in] Id of storage for which object is required.
     @return TIniFile instance.
   }
+var
+  FileName: string; // name if ini file
 begin
-  Result := TIniFile.Create(StorageName(Storage));
+  FileName := StorageName(Storage);
+  if not TFile.Exists(FileName) then
+    // create empty Unicode text file with BOM to force Win API to write Unicode
+    TFileIO.WriteAllText(FileName, '', TEncoding.Unicode, True);
+  Result := TIniFile.Create(FileName);
 end;
 
 function TIniSettingsBase.StorageName(
