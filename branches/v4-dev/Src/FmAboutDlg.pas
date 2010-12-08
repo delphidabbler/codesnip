@@ -63,7 +63,8 @@ type
         @return Property value.
       }
     procedure SetPath(const Value: string);
-      {Write accessor for Path property. Stores value in label.
+      {Write accessor for Path property. Stores value in label and updates state
+      of button.
         @param Value [in] New property value.
       }
     procedure BtnClick(Sender: TObject);
@@ -162,11 +163,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics, Math, Windows {for inlining}, ShellAPI,
+  SysUtils, Graphics, Math, Windows, ShellAPI, IOUtils,
   // Project
   FmEasterEgg, FmRegistrationDlg, UAppInfo, UColours, UConsts, UContributors,
-  UCSSUtils, UCtrlArranger, UFontHelper, UHTMLUtils, UResourceUtils, UThemesEx,
-  UUtils;
+  UCSSUtils, UCtrlArranger, UFontHelper, UHTMLUtils, UResourceUtils, UThemesEx;
 
 
 {
@@ -196,7 +196,7 @@ function ExploreFolder(const Folder: string): Boolean;
     @return True if explorer displayed, False if not.
   }
 begin
-  if IsDirectory(Folder) then
+  if TDirectory.Exists(Folder) then
     Result := ShellExecute(
       0, 'explore', PChar(Folder), nil, nil, SW_SHOWNORMAL
     ) > 32
@@ -526,6 +526,7 @@ begin
   fPathLbl.Width := Self.Width - 16;
   fPathLbl.Caption := ' ';
   fPathLbl.Transparent := False;
+  fPathLbl.ShowHint := True;
   // Create and setup view button
   fViewBtn := TButton.Create(Self);
   fViewBtn.Parent := Self;
@@ -582,11 +583,24 @@ begin
 end;
 
 procedure TPathInfoBox.SetPath(const Value: string);
-  {Write accessor for Path property. Stores value in label.
+  {Write accessor for Path property. Stores value in label and updates state
+  of button.
     @param Value [in] New property value.
   }
+resourcestring
+  sPathDoesNotExist = '%s (does not exist)';
 begin
   fPathLbl.Caption := Value;
+  if TDirectory.Exists(Value) then
+  begin
+    fPathLbl.Hint := Value;
+    fViewBtn.Enabled := True;
+  end
+  else
+  begin
+    fPathLbl.Hint := Format(sPathDoesNotExist, [Value]);
+    fViewBtn.Enabled :=  False;
+  end;
 end;
 
 end.
