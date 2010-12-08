@@ -481,12 +481,11 @@ function TIniSettingsBase.StorageName(
     @return Required storage name.
   }
 begin
-  // We only support one storage: ssUser
   case Storage of
     ssUser:
-      Result := TAppInfo.UserAppDir + '\User.4.ini';
+      Result := TAppInfo.UserAppDir + '\User.config';
     ssCommon:
-      Result := TAppInfo.CommonAppDir + '\Common.ini';
+      Result := TAppInfo.CommonAppDir + '\Common.config';
     else
       raise EBug.Create(ClassName + '.StorageName: unknown storage type');
   end;

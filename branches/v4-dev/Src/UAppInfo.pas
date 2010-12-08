@@ -157,7 +157,7 @@ class function TAppInfo.AppDataDir: string;
     @return Full path to database sub directory.
   }
 begin
-  Result := CommonAppDir + '\Data.4';
+  Result := CommonAppDir + '\Database';
 end;
 
 class function TAppInfo.AppExeDir: string;
@@ -182,7 +182,7 @@ class function TAppInfo.CommonAppDir: string;
     @return Full path to common application data directory.
   }
 begin
-  Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip';
+  Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.4';
 end;
 
 class function TAppInfo.GenerateKey: string;
@@ -244,7 +244,7 @@ begin
   begin
     // Key not present: create and store it
     Result := GenerateKey;
-    Section.ItemValues['Key'] := Result;                  
+    Section.ItemValues['Key'] := Result;
     Section.Save;
   end;
 end;
@@ -257,7 +257,7 @@ class function TAppInfo.ProgramReleaseInfo: string;
 begin
   Result := Trim(TVersionInfo.ProductVersionStr);
   if Trim(TVersionInfo.SpecialBuildStr) <> '' then
-    Result := Result + '-' + Trim(TVersionInfo.SpecialBuildStr);   
+    Result := Result + '-' + Trim(TVersionInfo.SpecialBuildStr);
 end;
 
 class function TAppInfo.ProgramReleaseVersion: string;
@@ -290,7 +290,7 @@ var
 begin
   Section := Settings.ReadSection(ssApplication);
   Section.ItemValues['RegCode'] := Code;
-  Section.ItemValues['RegName'] := Name;                   
+  Section.ItemValues['RegName'] := Name;
   Section.Save;
 end;
 
@@ -311,7 +311,7 @@ class function TAppInfo.UserAppDir: string;
     @return Full path to per-user application data directory.
   }
 begin
-  Result := TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip';
+  Result := TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip.4';
 end;
 
 class function TAppInfo.UserDataDir: string;
@@ -319,7 +319,7 @@ class function TAppInfo.UserDataDir: string;
     @return Full path to database sub directory.
   }
 begin
-  Result := UserAppDir + '\UserData.4';
+  Result := UserAppDir + '\UserDatabase';
 end;
 
 end.
