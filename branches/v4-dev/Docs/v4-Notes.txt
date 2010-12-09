@@ -36,6 +36,7 @@ Changes
   o Snippet Kind Info and Initial Letter code - complete rewrite
   o Alpha grouping code
   o TDOSDateTime class.
+  o Original installer Pascal Script files.
 
 * Bug fixes:
   o #3120962. This was a separate fix to that created for v3 - the two were
@@ -62,6 +63,9 @@ Changes
 * Dialog boxes:
   o Config Compilers Dialog Box: Changed caption of button that detects
     compilers to "Detect Delphi Compilers".
+  o About Box's Paths tab now disable exlpore buttons if displayed paths don't
+    exist. Also paths now appear in hints and include comment if path doesn't
+    exist.
 
 * Database:
   o Changed user database dir name to UserData.4.
@@ -88,6 +92,8 @@ Changes
   o Updated data stream reader and writer code to work with specified encodings
     (now defaults to UTF-8 if no encoding provided).
   o Removed all explicit use of Windows-1252. (*** check this ***)
+  o Config files now UTF-16LE. TSettings now creates empty blank config files
+    if necessary to force Win API to read / write ini files in Unicode.
 
 * Web Services
   o Updated database update web service code changed to work with v5 of the
@@ -118,4 +124,7 @@ Changes
     from former locations to work with new v4 user config file and database
     directory names.
   o Installer changed so that v4 installs can co-exist - new app id, install
-    folder and program group.
+    folder and program group. New locations for common and user app data
+    directories.
+  o Now uses (and requires) Unicode version of Inno Setup.
+  o User config file now v8 and common config file now v6.
