@@ -111,10 +111,10 @@ begin
   // Flag ini file versions
   if not FileExists(gCurrentUserConfigFile) then
     CreateUnicodeIniFile(gCurrentUserConfigFile);
-  SetIniInt('IniFile', 'Version', 7, gCurrentUserConfigFile);
+  SetIniInt('IniFile', 'Version', 8, gCurrentUserConfigFile);
   if not FileExists(gCurrentCommonConfigFile) then
     CreateUnicodeIniFile(gCurrentCommonConfigFile);
-  SetIniInt('IniFile', 'Version', 5, gCurrentCommonConfigFile);
+  SetIniInt('IniFile', 'Version', 6, gCurrentCommonConfigFile);
   // Record application version in common ini file
   SetIniString(
     'Application',
