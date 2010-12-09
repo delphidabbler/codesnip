@@ -35,16 +35,17 @@
   * ***** END LICENSE BLOCK *****
 }
 
+// Copies all files from one directory for another. Does nothing if SourceDir
+// doesn't exist or if both directories are the same. If DestDir does not exist
+// it is created.
 procedure CopyDirectory(SourceDir, DestDir: string);
-{ Copies files from one directory to another.
-  @param SourceDir [in] Directory containing files to be copied.
-  @param DestDir [in] Directory to receive files. Created if it doesn't exist.
-  }
 var
-  SourcePath: string; // source directory as path
-  DestPath: string; // destination directory as path
-  FindRec: TFindRec; // record used by directory search API
+  SourcePath: string;
+  DestPath: string;
+  FindRec: TFindRec;
 begin
+  if CompareText(SourceDir, DestDir) = 0 then
+    Exit;
   if not DirExists(SourceDir) then
     Exit;
   if not DirExists(DestDir) then
@@ -63,16 +64,26 @@ begin
   end;
 end;
 
-procedure CopyDatabases(InstallID: Integer);
+// Copies both main and (where it exists) user databases from location they are
+// in on installation identified by PrevInstallID to correct location for
+// directory being installed.
+procedure CopyDatabases(PrevInstallID: Integer);
 var
   OldMainDatabase: string;
   OldUserDatabase: string;
 begin
-  OldMainDatabase := gMainDatabaseDirs[InstallID];
+  OldMainDatabase := gMainDatabaseDirs[PrevInstallID];
   if OldMainDatabase <> '' then
-    CopyDirectory(OldMainDatabase, gMainDatabaseDirs[flCurrent]);
-  OldUserDatabase := gUserDatabaseDirs[InstallID];
+    CopyDirectory(OldMainDatabase, gMainDatabaseDirs[piCurrent]);
+  OldUserDatabase := gUserDatabaseDirs[PrevInstallID];
   if OldUserDatabase <> '' then
-    CopyDirectory(OldUserDatabase, gUserDatabaseDirs[flCurrent]);
+    CopyDirectory(OldUserDatabase, gUserDatabaseDirs[piCurrent]);
+end;
+
+// Checks if main database is installed in correct install directory for
+// current version of program.
+function MainDatabaseExists: Boolean;
+begin
+  Result := FileExists(gMainDatabaseDirs[piCurrent] + '\categories.ini');
 end;
 

@@ -36,15 +36,16 @@
  * ***** END LICENSE BLOCK *****
 }
 
-procedure CopyAnsiToUnicodeIniFile(OldFileName, NewFileName: string);
-  {Reads an ANSI .ini file, coverts content to Unicode and writes that to a
-  UTF-16LE encoded Unicode .ini file. Requires Unicode Inno Setup.
-    @param OldFileName [in] Name of ANSI .ini file.
-    @param NewFileName [in] Name of Unicode .ini file.
-  }
+// Reads an ANSI config file, converts content to Unicode and writes that to a
+// UTF-16LE encoded Unicode config file with BOM. Does nothing if old and new
+// file names are the same.
+// *** Requires Unicode Inno Setup. ***
+procedure CopyAnsiToUnicodeConfigFile(OldFileName, NewFileName: string);
 var
   Lines: TArrayOfString;  // lines of text read from ANSI .ini file
 begin
+  if CompareText(OldFileName, NewFileName) = 0 then
+    Exit;
   // reads an ANSI file and converts contents to Unicode, using system default
   // encoding
   LoadStringsFromFile(OldFileName, Lines);
@@ -53,25 +54,35 @@ begin
   WriteStringsToUnicodeFile(NewFileName, Lines);
 end;
 
+// Makes a copy of a Unicode config file with a different name. Does nothing if
+// old and new file names are the same.
 procedure CopyUnicodeConfigFiles(OldFileName, NewFileName: string);
 begin
+  if CompareText(OldFileName, NewFileName) = 0 then
+    Exit;
   ForceDirectories(ExtractFileDir(NewFileName));
   FileCopy(OldFileName, NewFileName, False);
 end;
 
+// Checks if a config file is ANSI. If False is returned the file is assumed to
+// be Unicode.
 function IsAnsiConfigFile(InstallID: Integer): Boolean;
 begin
-  Result := InstallID <= flV3;
+  Result := InstallID <= piV3;
 end;
 
-procedure CreateUnicodeIniFile(FileName: string);
-  {Create a new empty UTF-16LE encoding .ini file. Used to ensure the ini file
-  writing routines write in Unicode. This works because built in Inno Setup
-  ini function call Windows API WritePrivateProfileString which only writes
-  Unicode if the file it is writing to is detected as Unicode. If not it writes
-  ANSI text.
-    @param FileName [in] Name of new .ini file.
-  }
+// Gets version number of new installation's user config file.
+function UserConfigFileVer: Integer;
+begin
+  Result := GetIniInt('IniFile', 'Version', 1, 0, 0, gCurrentUserConfigFile);
+end;
+
+// Create a new empty UTF-16LE encoding config file. Used to ensure the config
+// file writing routines write in Unicode. This works because built in Inno
+// Setup ini functions call Windows API WritePrivateProfileString which only
+// writes Unicode if the file it is writing to is detected as Unicode. If not it
+// writes ANSI text.
+procedure CreateUnicodeConfigFile(FileName: string);
 var
   NulLines: TArrayOfString;   // dummy empty string array
 begin
@@ -80,6 +91,8 @@ begin
   WriteStringsToUnicodeFile(FileName, NulLines);
 end;
 
+// Copies config files of a previous installation to new installation, updating
+// to Unicode format if necessary.
 procedure CopyConfigFiles(InstallID: Integer);
 var
   OldCommonConfigFile: string;
@@ -90,30 +103,30 @@ begin
   if OldCommonConfigFile <> '' then
   begin
     if IsAnsiConfigFile(InstallID) then
-      CopyAnsiToUnicodeIniFile(OldCommonConfigFile, gCurrentCommonConfigFile)
+      CopyAnsiToUnicodeConfigFile(OldCommonConfigFile, gCurrentCommonConfigFile)
     else
       CopyUnicodeConfigFiles(OldCommonConfigFile, gCurrentCommonConfigFile);
   end;
   if OldUserConfigFile <> '' then
   begin
     if IsAnsiConfigFile(InstallID) then
-      CopyAnsiToUnicodeIniFile(OldUserConfigFile, gCurrentUserConfigFile)
+      CopyAnsiToUnicodeConfigFile(OldUserConfigFile, gCurrentUserConfigFile)
     else
       CopyUnicodeConfigFiles(OldUserConfigFile, gCurrentUserConfigFile);
   end;
 end;
 
-procedure StampIniFiles;
-  {Updates both config files with correct version information. This records ini
-  file versions and version number of program being installed.
-  }
+// Updates both common and user config files with correct version information.
+// This records both config file versions and (common config file only) version
+// number of program being installed.
+procedure StampConfigFiles;
 begin
   // Flag ini file versions
   if not FileExists(gCurrentUserConfigFile) then
-    CreateUnicodeIniFile(gCurrentUserConfigFile);
+    CreateUnicodeConfigFile(gCurrentUserConfigFile);
   SetIniInt('IniFile', 'Version', 8, gCurrentUserConfigFile);
   if not FileExists(gCurrentCommonConfigFile) then
-    CreateUnicodeIniFile(gCurrentCommonConfigFile);
+    CreateUnicodeConfigFile(gCurrentCommonConfigFile);
   SetIniInt('IniFile', 'Version', 6, gCurrentCommonConfigFile);
   // Record application version in common ini file
   SetIniString(
@@ -124,25 +137,25 @@ begin
   );
 end;
 
+// Deletes any highlighter preferences from new installation's user config file.
 procedure DeleteHighligherPrefs;
 begin
   DeleteIniSection('Prefs:Hiliter', gCurrentUserConfigFile);
 end;
 
+// Creates new style per user and common config files from content of single,
+// old style config file used before CodeSnip v1.9.
 procedure CreateIniFilesFromOldStyle;
-  {Creates new style per user and common config files from content of single,
-  old style config file used before CodeSnip v1.9.
-  }
 var
   I: Integer; // loops thru all highlight elements
 begin
   // Create per-user settings file:
   // Copy file
-  CopyAnsiToUnicodeIniFile(
-    gUserConfigFiles[flOriginal], gCurrentUserConfigFile
+  CopyAnsiToUnicodeConfigFile(
+    gUserConfigFiles[piOriginal], gCurrentUserConfigFile
   );
   // Delete unwanted sections:
-  // - Application section now in common ini file
+  // - Application section now in common config file
   // - Source code output format: format lost when updating from CodeSnip pre
   //   1.7 since section was SourceOutput, but format preserved from v1.7 since
   //   current Prefs:SourceCode section used
@@ -160,8 +173,8 @@ begin
 
   // Create common (application specific) settings file
   // Copy file
-  CopyAnsiToUnicodeIniFile(
-     gUserConfigFiles[flOriginal], gCurrentCommonConfigFile
+  CopyAnsiToUnicodeConfigFile(
+     gUserConfigFiles[piOriginal], gCurrentCommonConfigFile
   );
   // Delete unwanted sections
   // following sections belong in per-user file
@@ -192,12 +205,12 @@ begin
     );
 end;
 
+// Adds Prefs:CodeGen section along with default data to new installation's user
+// config file.
 procedure CreateDefaultCodeGenEntries;
-  {Adds Prefs:CodeGen section along with default data.
-  }
 begin
   if not FileExists(gCurrentUserConfigFile) then
-    CreateUnicodeIniFile(gCurrentUserConfigFile);
+    CreateUnicodeConfigFile(gCurrentUserConfigFile);
   SetIniInt(
     'Prefs:CodeGen',
     'SwitchOffWarnings',
@@ -308,12 +321,11 @@ begin
   );
 end;
 
+// Deletes proxt password entry from new installation's user config file.
 procedure DeleteProxyPassword;
-  {Deletes proxy password entry.
-  }
 begin
   if not FileExists(gCurrentUserConfigFile) then
-    CreateUnicodeIniFile(gCurrentUserConfigFile);
+    CreateUnicodeConfigFile(gCurrentUserConfigFile);
   SetIniString(
     'ProxyServer',
     'Password',

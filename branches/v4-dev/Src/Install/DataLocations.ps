@@ -86,83 +86,58 @@
 }
 
 const
-  // TODO: rename these identifiers with "pi" (previous install) prefix
-  // Identifiers for different types of existing installations of CodeSnip
-  flNone = 0;           // CodeSnip not installed
-  flOriginal = 1;       // original locations used up to v1.8.11
-  flV1_9 = 2;           // v1.9 to v1.9.4
-  flV2 = 3;             // all v2 versions
-  flV3 = 4;             // all v3 versions
-  flV4 = 5;             // from v4.0 (including alpha and beta code v3.99.x
+  // Identifiers for different types of previous installations of CodeSnip
+  piNone = 0;           // CodeSnip not installed
+  piOriginal = 1;       // original locations used up to v1.8.11
+  piV1_9 = 2;           // v1.9 to v1.9.4
+  piV2 = 3;             // all v2 versions
+  piV3 = 4;             // all v3 versions
+  piV4 = 5;             // from v4.0 (including alpha and beta code v3.99.x
   // Values of first and last indentifiers for different types of CodeSnip
   // installations
-  flFirstVersionID = 1;
-  flLastVersionID = 5;
+  piFirstVersionID = 1;
+  piLastVersionID = 5;
   // Identifiers of type of current installation
-  flCurrent = flV4;
+  piCurrent = piV4;
 
 var
   // Records info about previous install
-  // TODO: Rename as gInstallID
-  gFileLocation: Integer;
+  gPrevInstallID: Integer;
 
   // Arrays of paths to common and per-user config files.
-  gCommonConfigFiles: array[flFirstVersionID..flLastVersionID] of string;
-  gUserConfigFiles: array[flFirstVersionID..flLastVersionID] of string;
+  gCommonConfigFiles: array[piFirstVersionID..piLastVersionID] of string;
+  gUserConfigFiles: array[piFirstVersionID..piLastVersionID] of string;
   // Array of paths to main and user database directories
-  gMainDatabaseDirs: array[flFirstVersionID..flLastVersionID] of string;
-  gUserDatabaseDirs: array[flFirstVersionID..flLastVersionID] of string;
+  gMainDatabaseDirs: array[piFirstVersionID..piLastVersionID] of string;
+  gUserDatabaseDirs: array[piFirstVersionID..piLastVersionID] of string;
 
   // Paths to common and user config files for program being installed
   gCurrentCommonConfigFile: string;
   gCurrentUserConfigFile: string;
 
-// TODO: Move to UpdateDBase.ps
-function MainDatabaseExists: Boolean;
-  {Checks if database is installed in "new" location, i.e. under common app data
-  folder.
-    @return True if database is installed in new location, False if not.
-  }
-begin
-  Result := FileExists(
-    gMainDatabaseDirs[flCurrent] + '\categories.ini'
-  );
-end;
-
+// Checks if database and config files need to be converted and / or copied to
+// new locations for application being installed.
 function DataConversionRequired: Boolean;
-  {Checks if database and config files need to be converted and copied to new
-  location in order for installed application to use them.
-    @return True if data conversion required, False if not.
-  }
 begin
-  Result := (gFileLocation <> flNone) and (gFileLocation < flCurrent);
+  Result := (gPrevInstallID <> piNone) and (gPrevInstallID < piCurrent);
 end;
 
-// TODO: Rename as InitFileAndDirInfo
-// TODO: Split out code that determines install type into separate routine
-procedure InitAppDataFolders;
-  {Records the application data folders: both common and user. The user folder
-  relates to the original user. This is not necessarily the user who is
-  installing the application on Vista.
-  }
+// Gets application data folder of user who started installation by using
+// helper app run as original user.
+function GetAppData: string;
 var
   HelperApp: string;    // name of setup helper app
   TmpDir: string;       // temp dir where helper app writes required info
   TmpFile: string;      // temp file that received helper app's info
   Res: Integer;         // return code from helper app: ignored
-  AppData: string;      // path to user's application data directory
-  ProgramData: string;  // path to common application data directory
 begin
-  // TODO: Pull out code that gets user's appdata directory into new routine
   // Create name of a temporary directory in which helper app can store data
   TmpDir := ExpandConstant('{commonappdata}\DelphiDabbler\~Tmp');
   TmpFile := TmpDir + '\data';
   ForceDirectories(TmpDir);
-
   // Copy helper app into temp directory
   HelperApp := ExpandConstant('{#SetupHelper}');
   ExtractTemporaryFile(HelperApp);
-
   // Run helper app as original user. Helper app writes information relating to
   // original user to a ini file in temp directory created above.
   ExecAsOriginalUser(
@@ -173,87 +148,101 @@ begin
     ewWaitUntilTerminated,
     Res
   );
-
   // Get original user's application data directory from temp file
-  AppData := AddBackSlash(
+  Result := AddBackSlash(
     GetIniString('SpecialFolders', 'CSIDL_APPDATA', '', TmpFile)
   );
   // Delete temporary directory
   DelTree(TmpDir, True, True, True);
+end;
 
-  // Record system's common application data directory
+// Records the application's data directories for each different arrangement
+// used in different versions of CodeSnip.
+procedure InitAppDataFolders;
+var
+  AppData: string;      // path to user's application data directory
+  ProgramData: string;  // path to common application data directory
+begin
+  // Record system's common and user application data directories
   ProgramData := ExpandConstant('{commonappdata}\');
+  AppData := GetAppData;
 
   // Record paths to config files and database for each installation type
-  gCommonConfigFiles[flOriginal] := '';
-  gUserConfigFiles[flOriginal] :=
+  gCommonConfigFiles[piOriginal] := '';
+  gUserConfigFiles[piOriginal] :=
     AppData + 'DelphiDabbler\CodeSnip\CodeSnip.ini';
-  gMainDatabaseDirs[flOriginal] :=
+  gMainDatabaseDirs[piOriginal] :=
     AppData + 'DelphiDabbler\CodeSnip\Data';
-  gUserDatabaseDirs[flOriginal] := '';
+  gUserDatabaseDirs[piOriginal] := '';
 
-  gCommonConfigFiles[flV1_9] :=
+  gCommonConfigFiles[piV1_9] :=
     ProgramData + 'DelphiDabbler\CodeSnip\Common.ini';
-  gUserConfigFiles[flV1_9] :=
+  gUserConfigFiles[piV1_9] :=
     AppData + 'DelphiDabbler\CodeSnip\User.ini';
-  gMainDatabaseDirs[flV1_9] :=
+  gMainDatabaseDirs[piV1_9] :=
     ProgramData + 'DelphiDabbler\CodeSnip\Data';
-  gUserDatabaseDirs[flV1_9] := ''
+  gUserDatabaseDirs[piV1_9] := ''
 
-  gCommonConfigFiles[flV2] :=
+  gCommonConfigFiles[piV2] :=
     ProgramData + 'DelphiDabbler\CodeSnip\Common.ini';
-  gUserConfigFiles[flV2] :=
+  gUserConfigFiles[piV2] :=
     AppData + 'DelphiDabbler\CodeSnip\User.ini';
-  gMainDatabaseDirs[flV2] :=
+  gMainDatabaseDirs[piV2] :=
     ProgramData + 'DelphiDabbler\CodeSnip\Data';
-  gUserDatabaseDirs[flV2] :=
+  gUserDatabaseDirs[piV2] :=
     AppData + 'DelphiDabbler\CodeSnip\UserData';
 
-  gCommonConfigFiles[flV3] :=
+  gCommonConfigFiles[piV3] :=
     ProgramData + 'DelphiDabbler\CodeSnip\Common.ini';
-  gUserConfigFiles[flV3] :=
+  gUserConfigFiles[piV3] :=
     AppData + 'DelphiDabbler\CodeSnip\User.3.ini';
-  gMainDatabaseDirs[flV3] :=
+  gMainDatabaseDirs[piV3] :=
     ProgramData + 'DelphiDabbler\CodeSnip\Data';
-  gUserDatabaseDirs[flV3] :=
+  gUserDatabaseDirs[piV3] :=
     AppData + 'DelphiDabbler\CodeSnip\UserData.3';
 
-  gCommonConfigFiles[flV4] :=
+  gCommonConfigFiles[piV4] :=
     ProgramData + 'DelphiDabbler\CodeSnip.4\Common.config';
-  gUserConfigFiles[flV4] :=
+  gUserConfigFiles[piV4] :=
     AppData + 'DelphiDabbler\CodeSnip.4\User.config';
-  gMainDatabaseDirs[flV4] :=
+  gMainDatabaseDirs[piV4] :=
     ProgramData + 'DelphiDabbler\CodeSnip.4\Database';
-  gUserDatabaseDirs[flV4] :=
+  gUserDatabaseDirs[piV4] :=
     AppData + 'DelphiDabbler\CodeSnip.4\UserDatabase';
 
   // Record installation type current being installed
-  gCurrentCommonConfigFile := gCommonConfigFiles[flCurrent];
-  gCurrentUserConfigFile := gUserConfigFiles[flCurrent];
+  gCurrentCommonConfigFile := gCommonConfigFiles[piCurrent];
+  gCurrentUserConfigFile := gUserConfigFiles[piCurrent];
 
 end;
 
-// TODO: Rename as InitGlobals;
-procedure InitDataLocations;
-  {Initialises global variables that store information about location of config
-  files and database.
-  }
+// Attempts to detect and identify any previous installation by checking for
+// known files and directories.
+procedure DetectPrevInstall;
+begin
+  if FileExists(gCommonConfigFiles[piV4]) or
+    FileExists(gUserConfigFiles[piV4]) then
+    gPrevInstallID := piV4
+  else if FileExists(gCommonConfigFiles[piV3])
+    and FileExists(gUserConfigFiles[piV3]) then
+    gPrevInstallID := piV3
+  else if FileExists(gCommonConfigFiles[piV2])
+    and FileExists(gUserDatabaseDirs[piV2] + '\database.xml') then
+    gPrevInstallID := piV2
+  else if FileExists(gCommonConfigFiles[piV1_9]) then
+    gPrevInstallID := piV1_9
+  else if FileExists(gUserConfigFiles[piOriginal]) then
+    gPrevInstallID := piOriginal
+  else
+    gPrevInstallID := piNone;
+end;
+
+// Initialises global variables that (a) store location of config files and
+// databases used by different versions of CodeSnip and (b) record type of any
+// previous installation that was detected.
+procedure InitGlobals;
 begin
   InitAppDataFolders;
-  if FileExists(gCommonConfigFiles[flV4]) or
-    FileExists(gUserDatabaseDirs[flV4]) then
-    gFileLocation := flV4
-  else if FileExists(gCommonConfigFiles[flV3])
-    and FileExists(gUserConfigFiles[flV3]) then
-    gFileLocation := flV3
-  else if FileExists(gCommonConfigFiles[flV2])
-    and FileExists(gUserDatabaseDirs[flV2] + '\database.xml') then
-    gFileLocation := flV2
-  else if FileExists(gCommonConfigFiles[flV1_9]) then
-    gFileLocation := flV1_9
-  else if FileExists(gUserConfigFiles[flOriginal]) then
-    gFileLocation := flOriginal
-  else
-    gFileLocation := flNone;
+  DetectPrevInstall;
 end;
 
