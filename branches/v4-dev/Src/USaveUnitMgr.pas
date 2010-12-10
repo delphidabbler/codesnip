@@ -126,7 +126,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UUtils, Web.UInfo;
+  UAppInfo, UEncodings, UUtils, Web.UInfo;
 
 
 resourcestring
@@ -140,6 +140,12 @@ resourcestring
   sRTFDesc = 'Rich text file';
   sPascalDesc = 'Pascal unit';
   sTextDesc = 'Plain text file';
+  // encoding display names
+  // TODO: move encoding names to common location - in UEncodings?
+  sANSIDefaultEncoding = 'ANSI (Default)';
+  sUTF8Encoding = 'UTF-8';
+  sUTF16LEEncoding = 'Unicode (Little Endian)';
+  sUTF16BEEncoding = 'Unicode (Big Endian)';
 
   // Error message
   sErrorMsg = 'Filename is not valid for a Pascal unit';
@@ -293,17 +299,37 @@ begin
   with fSourceFileInfo do
   begin
     FileTypeInfo[sfText] := TSourceFileTypeInfo.Create(
-      '.txt', sTextDesc
+      '.txt',
+      sTextDesc,
+      [
+        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
+        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding),
+        TSourceFileEncoding.Create(etUTF16LE, sUTF16LEEncoding),
+        TSourceFileEncoding.Create(etUTF16BE, sUTF16BEEncoding)
+      ]
     );
     FileTypeInfo[sfPascal] := TSourceFileTypeInfo.Create(
-      '.pas', sPascalDesc
+      '.pas',
+      sPascalDesc,
+      [
+        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
+        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
+      ]
     );
     FileTypeInfo[sfHTML] := TSourceFileTypeInfo.Create(
-      '.html', sHTMLDesc
+      '.html',
+      sHTMLDesc,
+      [
+        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
+      ]
     );
     FileTypeInfo[sfRTF] := TSourceFileTypeInfo.Create(
-      '.rtf', sRTFDesc
-    );
+      '.rtf',
+      sRTFDesc,
+      [
+        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding)
+      ]
+   );
     DefaultFileName := sDefUnitName;
   end;
 

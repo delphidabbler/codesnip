@@ -103,7 +103,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  USnippetSourceGen;
+  UEncodings, USnippetSourceGen;
 
 
 resourcestring
@@ -115,6 +115,12 @@ resourcestring
   sRtfExtDesc = 'Rich text file';
   sIncExtDesc = 'Pascal include file';
   sTxtExtDesc = 'Plain text file';
+  // encoding display names
+  // TODO: move encoding names to common location - in UEncodings?
+  sANSIDefaultEncoding = 'ANSI (Default)';
+  sUTF8Encoding = 'UTF-8';
+  sUTF16LEEncoding = 'Unicode (Little Endian)';
+  sUTF16BEEncoding = 'Unicode (Big Endian)';
 
   // Output document title for routines and categories
   sDocTitle = '"%0:s" %1:s';
@@ -180,16 +186,36 @@ begin
   with fSourceFileInfo do
   begin
     FileTypeInfo[sfText] := TSourceFileTypeInfo.Create(
-      '.txt', sTxtExtDesc
+      '.txt',
+      sTxtExtDesc,
+      [
+        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
+        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding),
+        TSourceFileEncoding.Create(etUTF16LE, sUTF16LEEncoding),
+        TSourceFileEncoding.Create(etUTF16BE, sUTF16BEEncoding)
+      ]
     );
     FileTypeInfo[sfPascal] := TSourceFileTypeInfo.Create(
-      '.,inc', sIncExtDesc
+      '.inc',
+      sIncExtDesc,
+      [
+        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
+        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
+      ]
     );
     FileTypeInfo[sfHTML] := TSourceFileTypeInfo.Create(
-      '.html', sHtmExtDesc
+      '.html',
+      sHtmExtDesc,
+      [
+        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
+      ]
     );
     FileTypeInfo[sfRTF] := TSourceFileTypeInfo.Create(
-      '.rtf', sRtfExtDesc
+      '.rtf',
+      sRtfExtDesc,
+      [
+        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding)
+      ]
     );
     DefaultFileName := View.Description;
   end;

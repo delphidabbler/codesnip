@@ -40,6 +40,11 @@ unit USourceFileInfo;
 interface
 
 
+uses
+  // Project
+  UEncodings;
+
+
 type
   ///  <summary>
   ///  Enumeration of file types that can be used for source code output.
@@ -53,21 +58,48 @@ type
 
 type
   ///  <summary>
+  ///  Record that stores information about an encoding for use by save source
+  ///  dialog boxes.
+  ///  </summary>
+  TSourceFileEncoding = record
+  strict private
+    fEncodingType: TEncodingType; // Value of EncodingType property
+    fDisplayName: string;         // Value of DisplayName property
+  public
+    ///  <summary>Sets values of properties.</summary>
+    constructor Create(const AEncodingType: TEncodingType;
+      const ADisplayName: string);
+    ///  <summary>Type of this encoding.</summary>
+    property EncodingType: TEncodingType read fEncodingType;
+    ///  <summary>Description of encoding for display in dialog box.</summary>
+    property DisplayName: string read fDisplayName;
+  end;
+
+type
+  ///  <summary>Array of source file encoding records.</summary>
+  TSourceFileEncodings = array of TSourceFileEncoding;
+
+type
+  ///  <summary>
   ///  Record that stores information about a source file type required by save
   ///  source dialog boxes.
   ///  </summary>
   TSourceFileTypeInfo = record
   strict private
-    fExtension: string;   // Value of Extension property
-    fDisplayName: string; // Value of DisplayName property
+    fExtension: string;               // Value of Extension property
+    fDisplayName: string;             // Value of DisplayName property
+    fEncodings: TSourceFileEncodings; // Value of Encodings property
   public
     ///  <summary>Sets values of properties.</summary>
-    constructor Create(const AExtension, ADisplayName: string);
+    constructor Create(const AExtension, ADisplayName: string;
+      const AEncodings: array of TSourceFileEncoding);
     ///  <summary>File extension associated with this file type.</summary>
     property Extension: string read fExtension;
     ///  <summary>Name of file extension to display in save dialog box.
     ///  </summary>
     property DisplayName: string read fDisplayName;
+    ///  <summary>Encodings supported by this file type.</summary>
+    property Encodings: TSourceFileEncodings read fEncodings;
   end;
 
 type
@@ -190,9 +222,25 @@ end;
 
 { TSourceFileTypeInfo }
 
-constructor TSourceFileTypeInfo.Create(const AExtension, ADisplayName: string);
+constructor TSourceFileTypeInfo.Create(const AExtension, ADisplayName: string;
+  const AEncodings: array of TSourceFileEncoding);
+var
+  I: Integer;
 begin
   fExtension := AExtension;
+  fDisplayName := ADisplayName;
+  // TODO: Create generic static class for copying TArray<T>s to each other
+  SetLength(fEncodings, Length(AEncodings));
+  for I := 0 to Pred(Length(AEncodings)) do
+    fEncodings[I] := AEncodings[I];
+end;
+
+{ TSourceFileEncoding }
+
+constructor TSourceFileEncoding.Create(const AEncodingType: TEncodingType;
+  const ADisplayName: string);
+begin
+  fEncodingType := AEncodingType;
   fDisplayName := ADisplayName;
 end;
 

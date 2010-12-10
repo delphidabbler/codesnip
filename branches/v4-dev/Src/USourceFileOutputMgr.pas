@@ -122,6 +122,14 @@ type
         @param CanHilite [in/out] Set true if syntax highlighting is enabled and
           false (default) if not.
       }
+    procedure EncodingQueryHandler(Sender: TObject; const Ext: string;
+      var Encodings: TSourceFileEncodings);
+      {Handles custom save dialog box's OnEncodingQuery event. Provides array of
+      encoding supported for a file extension.
+        @param Sender [in] Not used.
+        @param Ext [in] Extension of selected file type.
+        @param Encodings [in/out] Receives array of supported encodings.
+      }
     procedure PreviewHandler(Sender: TObject);
       {Handles custom save dialog's OnPreview event. Displays source code
       appropriately formatted in preview dialog box.
@@ -184,8 +192,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  FmPreviewDlg, Hiliter.UFileHiliter, UMessageBox, UOpenDialogHelper,
-  UPreferences, UUtils;
+  FmPreviewDlg, Hiliter.UFileHiliter, UEncodings, UIOUtils, UMessageBox,
+  UOpenDialogHelper, UPreferences, UUtils;
 
 
 { TSourceFileOutputMgr }
@@ -246,6 +254,7 @@ begin
   fSaveDlg.UseSyntaxHiliting := Preferences.SourceSyntaxHilited;
   fSaveDlg.OnPreview := PreviewHandler;
   fSaveDlg.OnHiliteQuery := HiliteQueryHandler;
+  fSaveDlg.OnEncodingQuery := EncodingQueryHandler;
   fSaveDlg.OnCanClose := CanCloseHandler;
 end;
 
@@ -257,10 +266,28 @@ begin
   inherited;
 end;
 
+procedure TSourceFileOutputMgr.EncodingQueryHandler(Sender: TObject;
+  const Ext: string; var Encodings: TSourceFileEncodings);
+  {Handles custom save dialog box's OnEncodingQuery event. Provides array of
+  encoding supported for a file extension.
+    @param Sender [in] Not used.
+    @param Ext [in] Extension of selected file type.
+    @param Encodings [in/out] Receives array of supported encodings.
+  }
+var
+  FileType: TSourceFileType;  // type of file that has given extension
+begin
+  FileType := fSourceFileInfo.FileTypeFromExt(Ext);
+  Encodings := fSourceFileInfo.FileTypeInfo[FileType].Encodings;
+end;
+
 procedure TSourceFileOutputMgr.Execute;
   {Gets information about source file to be generated from user then outputs
   the source file.
   }
+var
+  Encoding: TEncoding;
+  FileContent: string;
 begin
   // Set up dialog box
   fSaveDlg.Filter := fSourceFileInfo.FilterString;
@@ -272,12 +299,17 @@ begin
   fSaveDlg.FileName := fSourceFileInfo.DefaultFileName;
   // Display dialog box and save file if user OKs
   if fSaveDlg.Execute then
-    StringToFile(
-      GenerateOutput(
-        fSourceFileInfo.FileTypeFromExt(ExtractFileExt(fSaveDlg.FileName))
-      ),
-      fSaveDlg.FileName
+  begin
+    FileContent := GenerateOutput(
+      fSourceFileInfo.FileTypeFromExt(ExtractFileExt(fSaveDlg.FileName))
     );
+    Encoding := TEncodingHelper.GetEncoding(fSaveDlg.SelectedEncoding);
+    try
+      TFileIO.WriteAllText(fSaveDlg.FileName, FileContent, Encoding, True);
+    finally
+      TEncodingHelper.FreeEncoding(Encoding);
+    end;
+  end;
 end;
 
 function TSourceFileOutputMgr.GenerateOutput(
