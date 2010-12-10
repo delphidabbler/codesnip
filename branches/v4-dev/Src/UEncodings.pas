@@ -48,6 +48,21 @@ uses
 
 type
   ///  <summary>
+  ///  Enumeration of identifiers of supported encodings.
+  ///  </summary>
+  TEncodingType = (
+    etSysDefault, // default ANSI encoding
+    etASCII,      // ASCII
+    etISO88591,   // ISO-8859-1
+    etUTF8,       // UTF-8
+    etUTF16,      // UTF-16
+    etUTF16BE,    // UTF-16BE
+    etUTF16LE,    // UTF-16LE
+    etWindows1252 // Windows-1252
+  );
+
+type
+  ///  <summary>
   ///  Static class that maintains a list of named character sets and enables
   ///  the associated encoding object to be created. For single byte character
   ///  access is provided to the matching code page, and vice versa. Also
@@ -55,48 +70,32 @@ type
   ///  </summary>
   TEncodingHelper = class(TNoConstructObject)
   strict private
-    ///  <summary>Type of closure used to create a TEncoding instance.</summary>
-    type TEncodingFactoryFn = reference to function: TEncoding;
-    ///  <summary>Class that maps char set names onto encoding factory closures.
-    ///  </summary>
-    type TEncodingMap = class(TDictionary<string,TEncodingFactoryFn>);
-    ///  <summary>Class that maps character set names onto code pages.</summary>
-    type TCodePageNameMap = class(TDictionary<string,Integer>);
-    ///  <summary>Key / value pair in TCodePageNameMap dictionary.</summary>
-    type TCodePageNameMapPair = TPair<string,Integer>;
-    ///  <summary>Class that maps code pages to character set names.</summary>
-    type TCodePageValueMap = class(TDictionary<Integer,string>);
-    ///  Map of char set names onto encoding factory closures.
-    class var fEncodingMap: TEncodingMap;
-    ///  Map of char set names onto single byte char set code pages.
-    class var fCodePageNameMap: TCodePageNameMap;
-    ///  Map of code pages to char set names.
-    class var fCodePageValueMap: TCodePageValueMap;
-  public
-    // Constants storing names of recognised character sets
-    ///  ASCII character set
-    const ASCIICharSetName = 'ASCII';
-    ///  ISO-8859-1 character set
-    const ISO88591CharSetName = 'ISO-8859-1';
-    ///  UTF-8 character set
-    const UTF8CharSetName = 'UTF-8';
-    ///  UTF-16 character set
-    const UTF16CharSetName = 'UTF-16';
-    ///  UTF-16 big endian character set
-    const UTF16BECharSetName = 'UTF-16BE';
-    ///  UTF-16 little endian character set
-    const UTF16LECharSetName = 'UTF-16LE';
-    ///  Windows 1252 character set
-    const Windows1252CharSetName = 'Windows-1252';
-    // Constants storing code pages of recognised single byte character sets
-    ///  ASCII code page
-    const ASCIICodePage = 20127;
-    ///  ISO-8859-1 code page
-    const ISO88591CodePage = 28591;
-    ///  UTF-8 code page
-    const UTF8CodePage = 65001;
-    ///  Windows-1252 code page
-    const Windows1252CodePage = 1252;
+    type
+      ///  <summary>Type of closure used to create a TEncoding instance.
+      ///  </summary>
+      TEncodingFactoryFn = reference to function: TEncoding;
+    type
+      ///  <summary>
+      ///  Record storing required information about an encoding.
+      ///  </summary>
+      TEncodingInfo = record
+        ///  <summary>Character set of encoding.</summary>
+        ///  <remarks>Set to '' for default ANSI encoding.</remarks>
+        CharSet: string;
+        ///  <summary>Flag true if ANSI encoding.</summary>
+        ///  <remarks>When False CodePage field has no meaning.</remarks>
+        IsAnsi: Boolean;
+        ///  <summary>Code page of encoding.</summary>
+        ///  <remarks>Should be ignored when IsAnsi is False.</remarks>
+        CodePage: Integer;
+        ///  <summary>Closure used to create TEncoding instances for the
+        ///  encoding.</summary>
+        FactoryFn: TEncodingFactoryFn;
+      end;
+    class var
+      ///  <summary>Map of encoding types onto related information records.
+      ///  </summary>
+      fMap: array[TEncodingType] of TEncodingInfo;
   strict protected
     ///  <summary>
     ///  Checks if a character set is wanted in the current class.
@@ -114,35 +113,90 @@ type
     ///  </remarks>
     class function IsWantedCharSet(const CharSet: string): Boolean; virtual;
     ///  <summary>
-    ///  Checks if a named character set is known to the class.
+    ///  Looks up a specified character set in fMap.
     ///  </summary>
-    ///  <param name="CharSet">Name of a character set to be tested.</param>
-    ///  <returns>True if character set is known to class, False if not.
-    ///  </returns>
-    ///  <remarks>
-    ///  A known character set is one that is registered in the class
-    ///  constructor.
-    ///  </remarks>
-    class function IsKnownCharSet(const CharSet: string): Boolean;
+    ///  <param name="CharSet">string [in] Character set.</param>
+    ///  <param name="EncodingType">TEncodingType [out] Set to encoding type
+    ///  of character set it is known. Undefined otherwise.</param>
+    ///  <returns>True if character set is known, False if not.</returns>
+    class function LookupCharSet(const CharSet: string;
+      out EncodingType: TEncodingType): Boolean;
     ///  <summary>
-    ///  Checks if a code page is known to the class.
+    ///  Looks up a specified character set in fMap.
     ///  </summary>
-    ///  <param name="CodePage">Code page to be tested.</param>
-    ///  <returns>True if code page is known to this class.</returns>
-    ///  <remarks>
-    ///  A known code page is one that is registered in the class constructor.
-    ///  </remarks>
-    class function IsKnownCodePage(const CodePage: Integer): Boolean;
+    ///  <param name="CharSet">string [in] Character set.</param>
+    ///  <param name="EncodingType">TEncodingType [out] Set to encoding type
+    ///  of character set if it is both known and wanted. Undefined otherwise.
+    ///  </param>
+    ///  <returns>True if character set is both known and wanted, False if
+    ///  not.</returns>
+    class function LookupValidCharSet(const CharSet: string;
+      out EncodingType: TEncodingType): Boolean;
+    ///  <summary>
+    ///  Looks up a specified code page in fMap.
+    ///  </summary>
+    ///  <param name="CodePage">Integer [in] Code page.</param>
+    ///  <param name="EncodingType">TEncodingType [out] Set to encoding type
+    ///  of code page if it is known. Undefined otherwise.</param>
+    ///  <returns>True if code page is known, False if not.</returns>
+    class function LookupCodePage(const CodePage: Integer;
+      out EncodingType: TEncodingType): Boolean;
+    ///  <summary>
+    ///  Looks up a specified code page in fMap.
+    ///  </summary>
+    ///  <param name="CodePage">Integer [in] Code page.</param>
+    ///  <param name="EncodingType">TEncodingType [out] Set to encoding type
+    ///  of code page if it is both known and wanted. Undefined otherwise.
+    ///  </param>
+    ///  <returns>True if code page is both known and wanted, False if not.
+    ///  </returns>
+    class function LookupValidCodePage(const CodePage: Integer;
+      out EncodingType: TEncodingType): Boolean;
+    ///  <summary>
+    ///  Gets the code page of a character set, if any.
+    ///  </summary>
+    ///  <param name="CharSet">string [in] Character set.</param>
+    ///  <param name="CodePage">Integer [out] Set to code page of character set
+    ///  if it is know, wanted and is an ANSI character set. Undefined
+    ///  otherwise.</param>
+    ///  <returns>True if character set known, wanted and is an ANSI character
+    ///  set. False if not.
+    ///  </returns>
+    class function GetValidCodePage(const CharSet: string;
+      out CodePage: Integer): Boolean;
   public
+    // Constants storing names of recognised character sets
+    const
+      ///  <summary>ASCII character set name.</summary>
+      ASCIICharSetName = 'ASCII';
+      ///  <summary>ISO-8859-1 character set name.</summary>
+      ISO88591CharSetName = 'ISO-8859-1';
+      ///  <summary>UTF-8 character set name.</summary>
+      UTF8CharSetName = 'UTF-8';
+      ///  <summary>UTF-16 character set name.</summary>
+      UTF16CharSetName = 'UTF-16';
+      ///  <summary>UTF-16 big endian character set name.</summary>
+      UTF16BECharSetName = 'UTF-16BE';
+      ///  <summary>UTF-16 little endian character set name.</summary>
+      UTF16LECharSetName = 'UTF-16LE';
+      ///  <summary>Windows 1252 character set name.</summary>
+      Windows1252CharSetName = 'Windows-1252';
+      // Constants storing code pages of recognised single byte character sets
+      ///  <summary>ASCII code page.</summary>
+      ASCIICodePage = 20127;
+      ///  <summary>ISO-8859-1 code page.</summary>
+      ISO88591CodePage = 28591;
+      ///  <summary>UTF-8 code page.</summary>
+      UTF8CodePage = 65001;
+      ///  <summary>Windows-1252 code page.</summary>
+      Windows1252CodePage = 1252;
     ///  <summary>Initialises encoding maps.</summary>
     class constructor Create;
-    ///  <summary>Frees encoding maps.</summary>
-    class destructor Destroy;
     ///  <summary>
     ///  Returns name of character set to use by default when empty string is
     ///  specified as a character set name.
     ///  </summary>
-    ///  <returns>Required default character set name.</returns>
+    ///  <returns>string - Required default character set name.</returns>
     ///  <remarks>
     ///  Descendant classes can override to change the default character set.
     ///  </remarks>
@@ -150,7 +204,8 @@ type
     ///  <summary>
     ///  Frees an given encoding providing it is not a standard encoding.
     ///  </summary>
-    ///  <param name="Encoding">Encoding to be freed if necessary.</param>
+    ///  <param name="Encoding">TEncoding [in] Encoding to be freed if
+    ///  necessary.</param>
     ///  <remarks>Use this method to free any encoding created by this class,
     ///  or an encoding created elsewhere to avoid the overhead of testing
     ///  for a standard encoding before freeing.</remarks>
@@ -158,20 +213,31 @@ type
     ///  <summary>
     ///  Checks if a named character set is supported.
     ///  </summary>
-    ///  <param name="Name">Name of character set to test.</param>
+    ///  <param name="Name">string [in] Name of character set to test.</param>
     ///  <returns>True if character set supported, False if not.</returns>
     class function IsSupportedCharSet(const CharSet: string): Boolean;
     ///  <summary>
     ///  Checks if a code page is supported.
     ///  </summary>
-    ///  <param name="CodePage">Code page to be checked.</param>
+    ///  <param name="CodePage">Integer [in] Code page to be checked.</param>
     ///  <returns>True if the code page is supported, False if not.</returns>
     class function IsSupportedCodePage(const CodePage: Integer): Boolean;
+    ///  <summary>
+    ///  Creates an encoding instance for a specified encoding type.
+    ///  </summary>
+    ///  <param name="EncType">TEncodingType [in] Encoding type.</param>
+    ///  <returns>New encoding instance for the type.</returns>
+    ///  <remarks>
+    ///  <para>Caller is responsible for freeing the encoding if it is not a
+    ///  standard encoding.</para>
+    ///  </remarks>
+    class function GetEncoding(const EncType: TEncodingType): TEncoding;
+      overload;
     ///  <summary>
     ///  Creates an encoding instance that is associated with a named character
     ///  set.
     ///  </summary>
-    ///  <param name="CharSet">Name of character set.</param>
+    ///  <param name="CharSet">string [in] Name of character set.</param>
     ///  <returns>New encoding instance for the character set.</returns>
     ///  <remarks>
     ///  <para>Caller is responsible for freeing the encoding if it is not a
@@ -182,7 +248,7 @@ type
     ///  <summary>
     ///  Gets an encoding that is associated with a code page.
     ///  </summary>
-    ///  <param name="CodePage">Code page of required encoding.</param>
+    ///  <param name="CodePage">Integer [in] Code page.</param>
     ///  <returns>New encoding instance for the code page.</returns>
     ///  <remarks>
     ///  <para>Caller is responsible for freeing the encoding if it is not a
@@ -193,7 +259,7 @@ type
     ///  <summary>
     ///  Checks if there is a code page associated with a character set name.
     ///  </summary>
-    ///  <param name="CharSet">Name of character set to check.</param>
+    ///  <param name="CharSet">string [in] Name of character set.</param>
     ///  <returns>True if there is an associated code page, False if not or if
     ///  character set not supported.
     ///  </returns>
@@ -201,15 +267,14 @@ type
     ///  <summary>
     ///  Gets the code page associated with a named character set.
     ///  </summary>
-    ///  <param name="CharSet">Name of character set to check.</param>
+    ///  <param name="CharSet">string [in] Name of character set.</param>
     ///  <returns>Code page associated with character set.</returns>
     ///  <remarks>Exception raised if character set is not supported.</remarks>
     class function GetCodePage(const CharSet: string): Integer;
     ///  <summary>
     ///  Gets the character set name associated with a code page
     ///  </summary>
-    ///  <param name="CodePage">Code page for which character set name required.
-    ///  </param>
+    ///  <param name="CodePage">Integer [in] Code page.</param>
     ///  <returns>Required character set name.</returns>
     ///  <remarks>Exception raised if code page not supported.</remarks>
     class function GetCodePageName(const CodePage: Integer): string;
@@ -241,8 +306,8 @@ uses
 ///  <summary>
 ///  Converts as array of bytes to an ANSI raw byte string.
 ///  </summary>
-///  <param name="Bytes">Byte array to convert.</param>
-///  <param name="CP">Code page of returned ANSI string.</param>
+///  <param name="Bytes">TBytes [in] Byte array to convert.</param>
+///  <param name="CP">Integer [in] Code page of returned ANSI string.</param>
 ///  <returns>ANSI string with requested code page.</returns>
 ///  <remarks>
 ///  <para>Caller must ensure that the byte array has the correct format for
@@ -275,16 +340,16 @@ resourcestring
 
 class function TEncodingHelper.CharSets: TStringDynArray;
 var
-  CharSet: string;
   I: Integer;
+  EncInfo: TEncodingInfo;
 begin
-  SetLength(Result, fEncodingMap.Count);
+  SetLength(Result, Length(fMap));  // overestimate result size
   I := 0;
-  for CharSet in fEncodingMap.Keys do
+  for EncInfo in fMap do
   begin
-    if IsWantedCharSet(CharSet) then
+    if (EncInfo.CharSet <> '') and IsWantedCharSet(EncInfo.CharSet) then
     begin
-      Result[I] := CharSet;
+      Result[I] := EncInfo.CharSet;
       Inc(I);
     end;
   end;
@@ -310,8 +375,6 @@ var
   UTF8FactoryFn: TEncodingFactoryFn;
   UTF16FactoryFn: TEncodingFactoryFn;
   UTF16BEFactoryFn: TEncodingFactoryFn;
-  // CharSet, CodePage pair
-  CodePagePair: TCodePageNameMapPair;
 begin
   // Set references to appropriate encoding factory functions
   DefaultFactoryFn :=
@@ -325,41 +388,68 @@ begin
   UTF16BEFactoryFn :=
     function: TEncoding begin Result := TEncoding.BigEndianUnicode; end;
 
-  // Create & populate map of char set names to encoding factory functions
-  fEncodingMap := TEncodingMap.Create;
-  fEncodingMap.Add(ASCIICharSetName, ASCIIFactoryFn);
-  fEncodingMap.Add(ISO88591CharSetName, MBCSFactoryFn(ISO88591CodePage));
-  fEncodingMap.Add(UTF8CharSetName, UTF8FactoryFn);
-  fEncodingMap.Add(Windows1252CharSetName, MBCSFactoryFn(Windows1252CodePage));
-  fEncodingMap.Add(UTF16LECharSetName, UTF16FactoryFn);
-  fEncodingMap.Add(UTF16BECharSetName, UTF16BEFactoryFn);
-  fEncodingMap.Add(UTF16CharSetName, UTF16FactoryFn);
-
-  // Create & populate map of single byte char set names to code pages
-  fCodePageNameMap := TCodePageNameMap.Create;
-  fCodePageNameMap.Add(ASCIICharSetName, ASCIICodePage);
-  fCodePageNameMap.Add(ISO88591CharSetName, ISO88591CodePage);
-  fCodePageNameMap.Add(UTF8CharSetName, UTF8CodePage);
-  fCodePageNameMap.Add(Windows1252CharSetName, Windows1252CodePage);
-
-  // Create & populate reverse map of char set names to code pages
-  // values are same as added to fCodePageNameMap with key and value reversed
-  // (except we ignore default code page)
-  fCodePageValueMap := TCodePageValueMap.Create;
-  for CodePagePair in fCodePageNameMap do
-    fCodePageValueMap.Add(CodePagePair.Value, CodePagePair.Key);
+  // Populate map for all encodings
+  with fMap[etSysDefault] do
+  begin
+    CharSet := '';
+    IsAnsi := True;
+    CodePage := ULocales.DefaultAnsiCodePage;
+    FactoryFn := DefaultFactoryFn;
+  end;
+  with fMap[etASCII] do
+  begin
+    CharSet := ASCIICharSetName;
+    IsAnsi := True;
+    CodePage := ASCIICodePage;
+    FactoryFn := ASCIIFactoryFn;
+  end;
+  with fMap[etISO88591] do
+  begin
+    CharSet := ISO88591CharSetName;
+    IsAnsi := True;
+    CodePage := ISO88591CodePage;
+    FactoryFn := MBCSFactoryFn(ISO88591CodePage);
+  end;
+  with fMap[etUTF8] do
+  begin
+    CharSet := UTF8CharSetName;
+    IsAnsi := True;
+    CodePage := UTF8CodePage;
+    FactoryFn := UTF8FactoryFn;
+  end;
+  with fMap[etUTF16] do
+  begin
+    CharSet := UTF16CharSetName;
+    IsAnsi := False;
+    CodePage := 0;
+    FactoryFn := UTF16FactoryFn;
+  end;
+  with fMap[etUTF16BE] do
+  begin
+    CharSet := UTF16BECharSetName;
+    IsAnsi := False;
+    CodePage := 0;
+    FactoryFn := UTF16BEFactoryFn;
+  end;
+  with fMap[etUTF16LE] do
+  begin
+    CharSet := UTF16LECharSetName;
+    IsAnsi := False;
+    CodePage := 0;
+    FactoryFn := UTF16FactoryFn;
+  end;
+  with fMap[etWindows1252] do
+  begin
+    CharSet := Windows1252CharSetName;
+    IsAnsi := True;
+    CodePage := Windows1252CodePage;
+    FactoryFn := MBCSFactoryFn(Windows1252CodePage);
+  end;
 end;
 
 class function TEncodingHelper.DefaultCharSet: string;
 begin
   Result := UTF8CharSetName;
-end;
-
-class destructor TEncodingHelper.Destroy;
-begin
-  fCodePageValueMap.Free;
-  fCodePageNameMap.Free;
-  fEncodingMap.Free;
 end;
 
 class procedure TEncodingHelper.FreeEncoding(const Encoding: TEncoding);
@@ -370,71 +460,129 @@ end;
 
 class function TEncodingHelper.GetCodePage(const CharSet: string): Integer;
 begin
-  if CharSet = '' then
-    Result := fCodePageNameMap[DefaultCharSet]
-  else if IsSupportedCharSet(CharSet) then
-    Result := fCodePageNameMap[CharSet]
-  else
+  if not GetValidCodePage(CharSet, Result) then
     raise ENotSupportedException.CreateFmt(sBadCharSet, [CharSet]);
 end;
 
 class function TEncodingHelper.GetCodePageName(const CodePage: Integer): string;
+var
+  EncType: TEncodingType;
 begin
-  if not IsSupportedCodePage(CodePage) then
+  if not LookupValidCodePage(CodePage, EncType) then
     raise ENotSupportedException.CreateFmt(sBadCodePage, [CodePage]);
-  Result := fCodePageValueMap[CodePage];
-end;
-
-class function TEncodingHelper.GetEncoding(const CodePage: Integer): TEncoding;
-begin
-  if not IsSupportedCodePage(CodePage) then
-    raise ENotSupportedException.CreateFmt(sBadCodePage, [CodePage]);
-  Result := GetEncoding(GetCodePageName(CodePage));
+  Result := fMap[EncType].CharSet;
 end;
 
 class function TEncodingHelper.GetEncoding(const CharSet: string): TEncoding;
+var
+  EncType: TEncodingType;
 begin
-  if CharSet = '' then
-    Result := fEncodingMap[DefaultCharSet]()
-  else if IsSupportedCharSet(CharSet) then
-    Result := fEncodingMap[CharSet]()
-  else
+  if not LookupValidCharSet(CharSet, EncType) then
     raise ENotSupportedException.CreateFmt(sBadCharSet, [CharSet]);
+  Result := GetEncoding(EncType);
+end;
+
+class function TEncodingHelper.GetEncoding(const CodePage: Integer): TEncoding;
+var
+  EncType: TEncodingType;
+begin
+  if not LookupValidCodePage(CodePage, EncType) then
+    raise ENotSupportedException.CreateFmt(sBadCodePage, [CodePage]);
+  Result := GetEncoding(EncType);
+end;
+
+class function TEncodingHelper.GetEncoding(
+  const EncType: TEncodingType): TEncoding;
+begin
+  Result := fMap[EncType].FactoryFn();
+end;
+
+class function TEncodingHelper.GetValidCodePage(const CharSet: string;
+  out CodePage: Integer): Boolean;
+var
+  EncType: TEncodingType;
+begin
+  if not LookupValidCharSet(CharSet, EncType) then
+    Exit(False);
+  if not fMap[EncType].IsAnsi then
+    Exit(False);
+  CodePage := fMap[EncType].CodePage;
+  Result := True;
 end;
 
 class function TEncodingHelper.HasCodePage(const CharSet: string): Boolean;
+var
+  Dummy: Integer;
 begin
-  Result := fCodePageNameMap.ContainsKey(CharSet) and IsWantedCharSet(CharSet);
-end;
-
-class function TEncodingHelper.IsKnownCharSet(const CharSet: string): Boolean;
-begin
-  Result := fEncodingMap.ContainsKey(CharSet);
-end;
-
-class function TEncodingHelper.IsKnownCodePage(
-  const CodePage: Integer): Boolean;
-begin
-  Result := fCodePageValueMap.ContainsKey(CodePage);
+  Result := GetValidCodePage(CharSet, Dummy);
 end;
 
 class function TEncodingHelper.IsSupportedCharSet(
   const CharSet: string): Boolean;
+var
+  Dummy: TEncodingType;
 begin
-  Result := IsKnownCharSet(CharSet) and IsWantedCharSet(CharSet);
+  Result := LookupValidCharSet(CharSet, Dummy);
 end;
 
 class function TEncodingHelper.IsSupportedCodePage(
   const CodePage: Integer): Boolean;
+var
+  Dummy: TEncodingType;
 begin
-  if not IsKnownCodePage(CodePage) then
-    Exit(False);
-  Result := IsWantedCharSet(fCodePageValueMap[CodePage]);
+  Result := LookupValidCodePage(CodePage, Dummy);
 end;
 
 class function TEncodingHelper.IsWantedCharSet(const CharSet: string): Boolean;
 begin
   Result := True;
+end;
+
+class function TEncodingHelper.LookupCharSet(const CharSet: string;
+  out EncodingType: TEncodingType): Boolean;
+var
+  EncType: TEncodingType;
+begin
+  if CharSet = '' then  // we never find default char set
+    Exit(False);
+  for EncType := Low(TEncodingType) to High(TEncodingType) do
+  begin
+    if AnsiSameText(CharSet, fMap[EncType].CharSet) then
+    begin
+      EncodingType := EncType;
+      Exit(True);
+    end;
+  end;
+  Result := False;
+end;
+
+class function TEncodingHelper.LookupCodePage(const CodePage: Integer;
+  out EncodingType: TEncodingType): Boolean;
+var
+  EncType: TEncodingType;
+begin
+  for EncType := Low(TEncodingType) to High(TEncodingType) do
+  begin
+    if fMap[EncType].IsAnsi and (fMap[EncType].CodePage = CodePage) then
+    begin
+      EncodingType := EncType;
+      Exit(True);
+    end;
+  end;
+  Result := False;
+end;
+
+class function TEncodingHelper.LookupValidCharSet(const CharSet: string;
+  out EncodingType: TEncodingType): Boolean;
+begin
+  Result := LookupCharSet(CharSet, EncodingType) and IsWantedCharSet(CharSet);
+end;
+
+class function TEncodingHelper.LookupValidCodePage(const CodePage: Integer;
+  out EncodingType: TEncodingType): Boolean;
+begin
+  Result := LookupCodePage(CodePage, EncodingType)
+    and IsWantedCharSet(fMap[EncodingType].CharSet);
 end;
 
 end.
