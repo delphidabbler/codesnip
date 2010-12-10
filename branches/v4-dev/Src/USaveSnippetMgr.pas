@@ -179,15 +179,19 @@ begin
   fSourceFileInfo := TSourceFileInfo.Create;
   with fSourceFileInfo do
   begin
-    Descriptions[sfText] := sTxtExtDesc;
-    FileExtensions[sfText] := '.txt';
-    Descriptions[sfPascal] := sIncExtDesc;
-    FileExtensions[sfPascal] := '.inc';
-    Descriptions[sfHTML] := sHtmExtDesc;
-    FileExtensions[sfHTML] := '.html';
-    Descriptions[sfRTF] := sRtfExtDesc;
-    FileExtensions[sfRTF] := '.rtf';
-    FileName := View.Description;
+    FileTypeInfo[sfText] := TSourceFileTypeInfo.Create(
+      '.txt', sTxtExtDesc
+    );
+    FileTypeInfo[sfPascal] := TSourceFileTypeInfo.Create(
+      '.,inc', sIncExtDesc
+    );
+    FileTypeInfo[sfHTML] := TSourceFileTypeInfo.Create(
+      '.html', sHtmExtDesc
+    );
+    FileTypeInfo[sfRTF] := TSourceFileTypeInfo.Create(
+      '.rtf', sRtfExtDesc
+    );
+    DefaultFileName := View.Description;
   end;
 
   // Create and initialise output manager object

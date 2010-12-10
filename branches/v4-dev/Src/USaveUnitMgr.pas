@@ -292,15 +292,19 @@ begin
   fSourceFileInfo := TSourceFileInfo.Create;
   with fSourceFileInfo do
   begin
-    Descriptions[sfText] := sTextDesc;
-    FileExtensions[sfText] := '.txt';
-    Descriptions[sfPascal] := sPascalDesc;
-    FileExtensions[sfPascal] := '.pas';
-    Descriptions[sfHTML] := sHTMLDesc;
-    FileExtensions[sfHTML] := '.html';
-    Descriptions[sfRTF] := sRTFDesc;
-    FileExtensions[sfRTF] := '.rtf';
-    FileName := sDefUnitName;
+    FileTypeInfo[sfText] := TSourceFileTypeInfo.Create(
+      '.txt', sTextDesc
+    );
+    FileTypeInfo[sfPascal] := TSourceFileTypeInfo.Create(
+      '.pas', sPascalDesc
+    );
+    FileTypeInfo[sfHTML] := TSourceFileTypeInfo.Create(
+      '.html', sHTMLDesc
+    );
+    FileTypeInfo[sfRTF] := TSourceFileTypeInfo.Create(
+      '.rtf', sRTFDesc
+    );
+    DefaultFileName := sDefUnitName;
   end;
 
   // Create and initialise output manager object

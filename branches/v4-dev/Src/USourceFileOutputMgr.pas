@@ -266,10 +266,10 @@ begin
   fSaveDlg.Filter := fSourceFileInfo.FilterString;
   fSaveDlg.FilterIndex := ExtToFilterIndex(
     fSaveDlg.Filter,
-    fSourceFileInfo.FileExtensions[Preferences.SourceDefaultFileType],
+    fSourceFileInfo.FileTypeInfo[Preferences.SourceDefaultFileType].Extension,
     1
   );
-  fSaveDlg.FileName := fSourceFileInfo.FileName;
+  fSaveDlg.FileName := fSourceFileInfo.DefaultFileName;
   // Display dialog box and save file if user OKs
   if fSaveDlg.Execute then
     StringToFile(
