@@ -68,6 +68,7 @@ type
   ///  access is provided to the matching code page, and vice versa. Also
   ///  exposes useful constants.
   ///  </summary>
+  { TODO: Restore or delete commented out methods }
   TEncodingHelper = class(TNoConstructObject)
   strict private
     type
@@ -210,6 +211,7 @@ type
     ///  or an encoding created elsewhere to avoid the overhead of testing
     ///  for a standard encoding before freeing.</remarks>
     class procedure FreeEncoding(const Encoding: TEncoding);
+(*
     ///  <summary>
     ///  Checks if a named character set is supported.
     ///  </summary>
@@ -228,9 +230,10 @@ type
     ///  <param name="EncType">TEncodingType [in] Encoding type.</param>
     ///  <returns>New encoding instance for the type.</returns>
     ///  <remarks>
-    ///  <para>Caller is responsible for freeing the encoding if it is not a
-    ///  standard encoding.</para>
+    ///  Caller is responsible for freeing the encoding if it is not a standard
+    ///  encoding.
     ///  </remarks>
+*)
     class function GetEncoding(const EncType: TEncodingType): TEncoding;
       overload;
     ///  <summary>
@@ -263,6 +266,7 @@ type
     ///  <returns>True if there is an associated code page, False if not or if
     ///  character set not supported.
     ///  </returns>
+(*
     class function HasCodePage(const CharSet: string): Boolean;
     ///  <summary>
     ///  Gets the code page associated with a named character set.
@@ -278,6 +282,7 @@ type
     ///  <returns>Required character set name.</returns>
     ///  <remarks>Exception raised if code page not supported.</remarks>
     class function GetCodePageName(const CodePage: Integer): string;
+*)
     ///  <summary>
     ///  Returns an array names of supported character sets.
     ///  </summary>
@@ -458,6 +463,7 @@ begin
     Encoding.Free;
 end;
 
+(*
 class function TEncodingHelper.GetCodePage(const CharSet: string): Integer;
 begin
   if not GetValidCodePage(CharSet, Result) then
@@ -472,7 +478,7 @@ begin
     raise ENotSupportedException.CreateFmt(sBadCodePage, [CodePage]);
   Result := fMap[EncType].CharSet;
 end;
-
+*)
 class function TEncodingHelper.GetEncoding(const CharSet: string): TEncoding;
 var
   EncType: TEncodingType;
@@ -510,6 +516,7 @@ begin
   Result := True;
 end;
 
+(*
 class function TEncodingHelper.HasCodePage(const CharSet: string): Boolean;
 var
   Dummy: Integer;
@@ -532,6 +539,7 @@ var
 begin
   Result := LookupValidCodePage(CodePage, Dummy);
 end;
+*)
 
 class function TEncodingHelper.IsWantedCharSet(const CharSet: string): Boolean;
 begin
