@@ -42,7 +42,8 @@ interface
 
 uses
   // Project
-  UBaseObjects, UIStringList, USourceFileOutputMgr, USourceGen, USnippets;
+  UBaseObjects, UIStringList, USourceFileInfo, USourceFileOutputMgr, USourceGen,
+  USnippets;
 
 
 type
@@ -66,6 +67,8 @@ type
     fContainsMainDBSnippets: Boolean;
       {Flag true if unit contains at least one snippet from main database, False
       only if unit is completely user defined}
+    fSourceFileInfo: TSourceFileInfo;
+      {Stores info about the types of source file that can be saved}
     procedure SourceGenHandler(Sender: TObject;
       const CommentStyle: TCommentStyle; out RawSourceCode, DocTitle: string);
       {Handles output manager's OnGenerateOutput event by generating source code
@@ -123,7 +126,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, USourceFileInfo, UUtils, Web.UInfo;
+  UAppInfo, UUtils, Web.UInfo;
 
 
 resourcestring
@@ -230,8 +233,9 @@ destructor TSaveUnitMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fOutputMgr);
-  FreeAndNil(fSourceGen);
+  fOutputMgr.Free;
+  fSourceFileInfo.Free;
+  fSourceGen.Free;
   inherited;
 end;
 
@@ -284,13 +288,9 @@ begin
     end;
   end;
 
-  // Create and initialise output manager object
-  fOutputMgr := TSourceFileOutputMgr.Create;
-  fOutputMgr.DlgTitle := sSaveDlgTitle;
-  fOutputMgr.DlgHelpKeyword := 'SaveUnitDlg';
-  fOutputMgr.OnGenerateOutput := SourceGenHandler;
-  fOutputMgr.OnCheckFileName := CheckFileNameHandler;
-  with fOutputMgr.SourceFileInfo do
+  // Record information about kinds of source code file we support
+  fSourceFileInfo := TSourceFileInfo.Create;
+  with fSourceFileInfo do
   begin
     Descriptions[sfText] := sTextDesc;
     FileExtensions[sfText] := '.txt';
@@ -302,6 +302,13 @@ begin
     FileExtensions[sfRTF] := '.rtf';
     FileName := sDefUnitName;
   end;
+
+  // Create and initialise output manager object
+  fOutputMgr := TSourceFileOutputMgr.Create(fSourceFileInfo);
+  fOutputMgr.DlgTitle := sSaveDlgTitle;
+  fOutputMgr.DlgHelpKeyword := 'SaveUnitDlg';
+  fOutputMgr.OnGenerateOutput := SourceGenHandler;
+  fOutputMgr.OnCheckFileName := CheckFileNameHandler;
 end;
 
 procedure TSaveUnitMgr.SourceGenHandler(Sender: TObject;

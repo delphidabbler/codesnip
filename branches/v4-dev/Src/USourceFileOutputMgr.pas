@@ -148,8 +148,10 @@ type
         @return True if filename is OK, false otherwise.
       }
   public
-    constructor Create;
+    constructor Create(const SourceFileInfo: TSourceFileInfo);
       {Class constructor. Sets up object.
+        @param SourceFileInfo [in] Information about types of source file that
+          may be saved.
       }
     destructor Destroy; override;
       {Class destructor. Tears down object.
@@ -158,9 +160,6 @@ type
       {Gets information about source file to be generated from user then outputs
       the source file.
       }
-    property SourceFileInfo: TSourceFileInfo
-      read fSourceFileInfo;
-      {Information about supported source file types}
     property DlgTitle: string
       read GetDlgTile write SetDlgTitle;
       {Title of save dialog box}
@@ -230,13 +229,17 @@ begin
   end;
 end;
 
-constructor TSourceFileOutputMgr.Create;
+constructor TSourceFileOutputMgr.Create(const SourceFileInfo: TSourceFileInfo);
   {Class constructor. Sets up object.
+    @param SourceFileInfo [in] Information about types of source file that may
+      be saved.
   }
 begin
+  Assert(Assigned(SourceFileInfo),
+    ClassName + '.Create: SourceFileInfo is nil');
   inherited Create;
   // Create locally owned source file info object
-  fSourceFileInfo := TSourceFileInfo.Create;
+  fSourceFileInfo := SourceFileInfo;
   // Create and initialize custom save dialog box
   fSaveDlg := TSaveSourceDlg.Create(nil);
   fSaveDlg.CommentStyle := Preferences.SourceCommentStyle;
@@ -250,8 +253,7 @@ destructor TSourceFileOutputMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fSaveDlg);
-  FreeAndNil(fSourceFileInfo);
+  fSaveDlg.Free;
   inherited;
 end;
 

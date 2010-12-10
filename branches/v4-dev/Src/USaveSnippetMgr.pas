@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  UBaseObjects, USourceFileOutputMgr, USourceGen, UView;
+  UBaseObjects, USourceFileInfo, USourceFileOutputMgr, USourceGen, UView;
 
 
 type
@@ -59,6 +59,7 @@ type
     fView: IView;                     // View to be output
     fDocTitle: string;                // Title of saved documents
     fOutputMgr: TSourceFileOutputMgr; // Gets save info and manages output
+    fSourceFileInfo: TSourceFileInfo; // Info about supported source file types
     procedure SourceGenHandler(Sender: TObject;
       const CommentStyle: TCommentStyle; out RawSourceCode, DocTitle: string);
       {Handles output manager's OnGenerateOutput event by generating source code
@@ -102,7 +103,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  USnippetSourceGen, USourceFileInfo;
+  USnippetSourceGen;
 
 
 resourcestring
@@ -138,6 +139,7 @@ destructor TSaveSnippetMgr.Destroy;
   }
 begin
   fOutputMgr.Free;
+  fSourceFileInfo.Free;
   inherited;
 end;
 
@@ -172,12 +174,10 @@ begin
   inherited InternalCreate;
   // Record reference to view object
   fView := View;
-  // Create and initialise output manager object
-  fOutputMgr := TSourceFileOutputMgr.Create;
-  fOutputMgr.DlgTitle := Format(sSaveDlgTitle, [View.Description]);
-  fOutputMgr.DlgHelpKeyword := 'SaveSnippetDlg';
-  fOutputMgr.OnGenerateOutput := SourceGenHandler;
-  with fOutputMgr.SourceFileInfo do
+
+  // Record info about types of source code file supported
+  fSourceFileInfo := TSourceFileInfo.Create;
+  with fSourceFileInfo do
   begin
     Descriptions[sfText] := sTxtExtDesc;
     FileExtensions[sfText] := '.txt';
@@ -189,6 +189,13 @@ begin
     FileExtensions[sfRTF] := '.rtf';
     FileName := View.Description;
   end;
+
+  // Create and initialise output manager object
+  fOutputMgr := TSourceFileOutputMgr.Create(fSourceFileInfo);
+  fOutputMgr.DlgTitle := Format(sSaveDlgTitle, [View.Description]);
+  fOutputMgr.DlgHelpKeyword := 'SaveSnippetDlg';
+  fOutputMgr.OnGenerateOutput := SourceGenHandler;
+
   // Record document title
   if Supports(View, ICategoryView) then
     fDocTitle := Format(sDocTitle, [View.Description, sCategory])
