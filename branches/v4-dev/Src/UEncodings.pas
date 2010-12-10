@@ -50,15 +50,24 @@ type
   ///  <summary>
   ///  Enumeration of identifiers of supported encodings.
   ///  </summary>
+  ///  <remarks>
+  ///  Always ensure that etSysDefault is the last item in the enumeration. This
+  ///  is so that other encodings will always be found before it, in case one of
+  ///  the other encodings has the same code page as the system default. The
+  ///  principle is, if the caller requests an encoding explicitly then they
+  ///  shouldn't be handed the default TEncoding. If we allow this it makes
+  ///  testing Windows-1252 requests hard on systems where the default code page
+  ///  is also Windows-1252.
+  ///  </remarks>
   TEncodingType = (
-    etSysDefault, // default ANSI encoding
-    etASCII,      // ASCII
-    etISO88591,   // ISO-8859-1
-    etUTF8,       // UTF-8
-    etUTF16,      // UTF-16
-    etUTF16BE,    // UTF-16BE
-    etUTF16LE,    // UTF-16LE
-    etWindows1252 // Windows-1252
+    etASCII,        // ASCII
+    etISO88591,     // ISO-8859-1
+    etUTF8,         // UTF-8
+    etUTF16,        // UTF-16
+    etUTF16BE,      // UTF-16BE
+    etUTF16LE,      // UTF-16LE
+    etWindows1252,  // Windows-1252
+    etSysDefault    // default ANSI encoding
   );
 
 type
