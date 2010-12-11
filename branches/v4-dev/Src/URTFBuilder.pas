@@ -681,10 +681,7 @@ begin
   // Start with \info control word in group
   Result := '{' + RTFControl(rcInfo);
   if fTitle <> '' then
-    // Add \title group
-    Result := Result + '{'
-      + RTFControl(rcTitle) + ' ' + RTFMakeSafeText(fTitle, fCodePage)
-      + '}';
+    Result := Result + RTFUnicodeSafeDestination(rcTitle, fTitle, fCodePage);
   // Close \info group
   Result := Result + '}';
 end;

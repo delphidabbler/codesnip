@@ -90,7 +90,10 @@ type
     rcFontSize,             // font size in 1/2 points
     rcSpaceBefore,          // space before paragraphs in twips
     rcSpaceAfter,           // space after paragraph in twips
-    rcUnicodeChar           // defines a Unicode character as 16bit value
+    rcUnicodeChar,          // defines a Unicode character as signed 16bit value
+    rcUnicodePair,          // introduces pair of ANSI and Unicode destinations
+    rcUnicodeDest,          // introduces Unicode destination
+    rcIgnore                // denotes following control can be ignored
   );
 
 
@@ -133,6 +136,19 @@ function RTFMakeSafeText(const TheText: string; const CodePage: Integer):
     @param TheText [in] Text to be encoded.
     @param CodePage [in] Code page to use for encoding.
     @return Encoded text.
+  }
+
+function RTFUnicodeSafeDestination(const DestCtrl: TRTFControl;
+  const DestText: string; const CodePage: Integer): ASCIIString;
+  {Creates a destination in a Unicode safe way. If text contains only
+  characters supported by the given code page a normal destination is written,
+  containing only the given text. If, however, any characters incompatible with
+  the code page are in the text two sub-destinations are written, one ANSI only
+  and the other containing Unicode characters.
+    @param DestCtrl [in] Destination control.
+    @param DestText [in] Text of destination.
+    @param CodePage [in] Code page to use for encoding.
+    @return Destination RTF, with special Unicode sub-destination if needed.
   }
 
 procedure RTFInsertString(const RE: TRichEdit; const RTF: ASCIIString);
@@ -179,7 +195,7 @@ const
     'rtf', 'ansi', 'ansicpg', 'deff', 'deflang', 'fonttbl', 'fprq', 'fcharset',
     'fnil', 'froman', 'fswiss', 'fmodern', 'fscript', 'fdecor', 'ftech',
     'colortbl', 'red', 'green', 'blue', 'info', 'title', 'pard', 'par', 'plain',
-    'f', 'cf', 'b', 'i', 'ul', 'fs', 'sb', 'sa', 'u'
+    'f', 'cf', 'b', 'i', 'ul', 'fs', 'sb', 'sa', 'u', 'upr', 'ud', '*'
   );
 
 function IsValidRTFCode(const Content: string): Boolean;
@@ -259,6 +275,63 @@ begin
     end
     else
       Result := Result + RTFControl(rcUnicodeChar, SmallInt(Ord(Ch))) + ' ?';
+  end;
+end;
+
+function RTFUnicodeSafeDestination(const DestCtrl: TRTFControl;
+  const DestText: string; const CodePage: Integer): ASCIIString;
+  {Creates a destination in a Unicode safe way. If text contains only
+  characters supported by the given code page a normal destination is written,
+  containing only the given text. If, however, any characters incompatible with
+  the code page are in the text two sub-destinations are written, one ANSI only
+  and the other containing Unicode characters.
+    @param DestCtrl [in] Destination control.
+    @param DestText [in] Text of destination.
+    @param CodePage [in] Code page to use for encoding.
+    @return Destination RTF, with special Unicode sub-destination if needed.
+  }
+
+  function MakeDestination(const S: string): ASCIIString;
+    {Makes a detination for control using given text.
+      @param S [in] Text to include in control.
+    }
+  begin
+    Result := '{'
+      + RTFControl(DestCtrl) + ' '
+      + RTFMakeSafeText(S, CodePage)
+      + '}'
+  end;
+
+var
+  Encoding: TEncoding;
+  AnsiStr: string;
+begin
+  if CodePageSupportsString(DestText, CodePage) then
+    // All chars of DestText supported in code page => RTF text won't have any
+    // \u characters => we can just output destination as normal
+    Result := MakeDestination(DestText)
+  else
+  begin
+    // DestText contains characters not supported by code page. We create twin
+    // destinations, one ANSI only and the other that includes Unicode
+    // characters.
+    Encoding := TMBCSEncoding.Create(CodePage);
+    try
+      // Create a Unicode string that contains only characters supported in
+      // given code page (+ some "error" characters (e.g. "?")
+      AnsiStr := Encoding.GetString(Encoding.GetBytes(DestText));
+    finally
+      Encoding.Free;
+    end;
+    Result := '{'
+      + RTFControl(rcUnicodePair)
+      + MakeDestination(AnsiStr)    // ANSI only destination
+      + '{'
+      + RTFControl(rcIgnore)
+      + RTFControl(rcUnicodeDest)
+      + MakeDestination(DestText)   // Unicode destinatation
+      + '}'
+      + '}';
   end;
 end;
 
