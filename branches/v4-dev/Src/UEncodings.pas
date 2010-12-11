@@ -200,6 +200,7 @@ type
       UTF8CodePage = 65001;
       ///  <summary>Windows-1252 code page.</summary>
       Windows1252CodePage = 1252;
+  public
     ///  <summary>Initialises encoding maps.</summary>
     class constructor Create;
     ///  <summary>
@@ -233,6 +234,7 @@ type
     ///  <param name="CodePage">Integer [in] Code page to be checked.</param>
     ///  <returns>True if the code page is supported, False if not.</returns>
     class function IsSupportedCodePage(const CodePage: Integer): Boolean;
+*)
     ///  <summary>
     ///  Creates an encoding instance for a specified encoding type.
     ///  </summary>
@@ -242,7 +244,6 @@ type
     ///  Caller is responsible for freeing the encoding if it is not a standard
     ///  encoding.
     ///  </remarks>
-*)
     class function GetEncoding(const EncType: TEncodingType): TEncoding;
       overload;
     ///  <summary>
@@ -268,6 +269,7 @@ type
     ///  <para>Exception raised if code page not supported.</para>
     ///  </remarks>
     class function GetEncoding(const CodePage: Integer): TEncoding; overload;
+(*
     ///  <summary>
     ///  Checks if there is a code page associated with a character set name.
     ///  </summary>
@@ -275,7 +277,6 @@ type
     ///  <returns>True if there is an associated code page, False if not or if
     ///  character set not supported.
     ///  </returns>
-(*
     class function HasCodePage(const CharSet: string): Boolean;
     ///  <summary>
     ///  Gets the code page associated with a named character set.
@@ -316,11 +317,34 @@ function StringToASCIIString(const S: string): ASCIIString;
 function EncodingSupportsString(const S: UnicodeString;
   const Encoding: SysUtils.TEncoding): Boolean;
 
+///  <summary>
+///  Converts a Unicode wide character into one or more equivalent ANSI
+///  characters from a specified code page.
+///  </summary>
+///  <param name="Source">WideChar [in] Unicode character for conversion.
+///  </param>
+///  <param name="CodePage">Integer [in] Code page to use for conversion.
+///  </param>
+///  <param name="Dest">TArray&lt;AnsiChar&gt; [out] Array of ANSI characters
+///  that result from conversion.</param>
+///  <returns>True if conversion was successful or False if conversion failed.
+///  </returns>
+///  <remarks>
+///  <para>Dest has to be an array of characters because the ANSI character set
+///  may be multi-byte (e.g. UTF-8).</para>
+///  <para>A failure result means that there is no equivalent of the Unicode
+///  character in the specified ANSI code page.</para>
+///  </remarks>
+function WideCharToChar(const Source: WideChar; const CodePage: Integer;
+  out Dest: TArray<AnsiChar>): Boolean;
+
 
 implementation
 
 
 uses
+  // Delphi
+  Windows,
   // Project
   UGC, ULocales;
 
@@ -362,6 +386,24 @@ begin
   ConvertedStr := Encoding.GetString(Encoding.GetBytes(S));
   // If text is valid for given encoding, text and converted text must be same
   Result := S = ConvertedStr;
+end;
+
+function WideCharToChar(const Source: WideChar; const CodePage: Integer;
+  out Dest: TArray<AnsiChar>): Boolean;
+var
+  UsedDefChar: BOOL;
+  BufSize: Integer;
+begin
+  BufSize := WideCharToMultiByte(
+    CodePage, 0, @Source, 1, @Dest[0], 0, nil, nil
+  );
+  SetLength(Dest, BufSize + 1);
+  if WideCharToMultiByte(
+    CodePage, 0, @Source, 1, @Dest[0], Length(Dest), nil, @UsedDefChar
+  ) = 0 then
+    RaiseLastOSError;
+  SetLength(Dest, Length(Dest) - 1);
+  Result := not UsedDefChar;
 end;
 
 { TEncodingHelper }
