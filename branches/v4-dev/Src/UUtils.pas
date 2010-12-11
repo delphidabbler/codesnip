@@ -44,12 +44,6 @@ uses
   SysUtils, Classes;
 
 
-procedure CopyFile(const Source, Dest: string);
-  {Copies a file, preserving modification date.
-    @param Source [in] Name of source file.
-    @param Dest [in] Name of destination file.
-  }
-
 function FileAge(const FileName: string): Integer;
   {Gets the OS time stamp for a file.
     @param FileName [in] Name of file.
@@ -130,28 +124,6 @@ function LongToShortFilePath(const LongName: string): string;
     @param LongName [in] Long file name to be converted.
     @return Short file name.
   }
-
-function FileToString(const FileName: string): string; overload;
-  // TODO: Change all calls to this routine to use encoding then remove this
-  {Stores content of a file in a string.
-    @param FileName [in] Name of file to be read.
-    @return String containing file contents.
-  }
-
-function FileToString(const FileName: string; const Encoding: TEncoding):
-  string; overload;
-  // TODO: Comment this routine
-
-procedure StringToFile(const Str, FileName: string); overload;
-  // TODO: Change all calls to this routine to use encoding then remove this
-  {Writes a string to a text file.
-    @param Str [in] String to be written to file.
-    @param FileName [in] Name of file to receive string.
-  }
-
-procedure StringToFile(const Str, FileName: string; const Encoding: TEncoding);
-  overload;
-  // TODO: Comment this routine.
 
 function IsDirectory(const DirName: string): Boolean;
   {Checks if a directory exists.
@@ -287,27 +259,6 @@ uses
   // Project
   UConsts;
 
-
-procedure CopyFile(const Source, Dest: string);
-  {Copies a file, preserving modification date.
-    @param Source [in] Name of source file.
-    @param Dest [in] Name of destination file.
-  }
-var
-  SourceStream, DestStream: TFileStream;  // source and dest file streams
-begin
-  DestStream := nil;
-  SourceStream := TFileStream.Create(Source, fmOpenRead or fmShareDenyWrite);
-  try
-    DestStream := TFileStream.Create(Dest, fmCreate or fmShareExclusive);
-    DestStream.CopyFrom(SourceStream, SourceStream.Size);
-    // Set dest file's modification date to same as source file
-    FileSetDate(DestStream.Handle, FileGetDate(SourceStream.Handle));
-  finally
-    FreeAndNil(DestStream);
-    FreeAndNil(SourceStream);
-  end;
-end;
 
 function FileAge(const FileName: string): Integer;
   {Gets the OS time stamp for a file.
@@ -653,138 +604,6 @@ begin
   SetLength(Result, GetShortPathName(PChar(LongName), PChar(Result), MAX_PATH));
 end;
 
-function StreamToString(const Stm: TStream): string; overload;
-  // TODO: Delete this once all code is converted to use Encoding version
-  {Reads content of a stream into a string. Stream is read from current
-  position.
-    @param Stm [in] Stream to be read.
-    @return String containing stream contents.
-  }
-var
-  SS: TStringStream;  // used to copy stream to string
-begin
-  SS := TStringStream.Create('');
-  try
-    SS.CopyFrom(Stm, 0);
-    Result := SS.DataString;
-  finally
-    SS.Free;
-  end;
-end;
-
-function StreamToString(const Stm: TStream; const Encoding: TEncoding): string;
-  overload;
-  // TODO: Recomment this routine
-  {Reads content of a stream into a string. The whole of the stream is read.
-    @param Stm [in] Stream to be read.
-    @return String containing stream contents.
-  }
-var
-  SS: TStringStream;  // used to copy stream to string
-begin
-  SS := TStringStream.Create('', Encoding, False);
-  try
-    SS.CopyFrom(Stm, 0);
-    Result := SS.DataString;
-  finally
-    SS.Free;
-  end;
-end;
-
-function FileToString(const FileName: string): string;
-  {Stores content of a file in a string.
-    @param FileName [in] Name of file to be read.
-    @return String containing file contents.
-  }
-var
-  FS: TFileStream;  // stream used to read file
-begin
-  FS := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
-  try
-    Result := StreamToString(FS);
-  finally
-    FS.Free;
-  end;
-end;
-
-function FileToString(const FileName: string; const Encoding: TEncoding):
-  string;
-var
-  FS: TFileStream;  // stream used to read file
-begin
-  FS := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
-  try
-    Result := StreamToString(FS, Encoding);
-  finally
-    FS.Free;
-  end;
-end;
-
-procedure StringToStream(const Str: string; const Stm: TStream); overload;
-  // TODO: Delete this once all code is converted to use Encoding version
-  {Writes a string into a stream. The string is written at the current
-  stream position.
-    @param Str [in] String to be written to stream.
-    @param Stm [in] Stream to receive string.
-  }
-var
-  SS: TStringStream;  // used to copy string to stream
-begin
-  SS := TStringStream.Create(Str);
-  try
-    Stm.CopyFrom(SS, SS.Size);
-  finally
-    FreeAndNil(SS);
-  end;
-end;
-
-procedure StringToStream(const Str: string; const Stm: TStream;
-  const Encoding: TEncoding); overload;
-  // TODO: Recomment this routine
-  {Writes a string into a stream. The string is written at the current
-  stream position.
-    @param Str [in] String to be written to stream.
-    @param Stm [in] Stream to receive string.
-  }
-var
-  SS: TStringStream;  // used to copy string to stream
-begin
-  SS := TStringStream.Create(Str, Encoding, False);
-  try
-    Stm.CopyFrom(SS, SS.Size);
-  finally
-    FreeAndNil(SS);
-  end;
-end;
-
-procedure StringToFile(const Str, FileName: string);
-  {Writes a string to a text file.
-    @param Str [in] String to be written to file.
-    @param FileName [in] Name of file to receive string.
-  }
-var
-  FS: TFileStream;  // stream used to write file
-begin
-  FS := TFileStream.Create(FileName, fmCreate);
-  try
-    StringToStream(Str, FS);
-  finally
-    FreeAndNil(FS);
-  end;
-end;
-
-procedure StringToFile(const Str, FileName: string; const Encoding: TEncoding);
-var
-  FS: TFileStream;  // stream used to write file
-begin
-  FS := TFileStream.Create(FileName, fmCreate);
-  try
-    StringToStream(Str, FS, Encoding);
-  finally
-    FreeAndNil(FS);
-  end;
-end;
-
 function ContainsDelims(const S, Delimiters: string): Boolean;
   {Checks if a string contains any specified delimiter characters.
     @param S [in] String to be checked.
@@ -867,7 +686,7 @@ const
 var
   ST: TSystemTime;  // system time
 begin
-  // This Windows API function gets system time in UTC/GTM
+  // This Windows API function gets system time in UTC/GMT
   // see http://msdn.microsoft.com/en-us/library/ms724390
   GetSystemTime(ST);
   // Format system time in RFC1123 format
