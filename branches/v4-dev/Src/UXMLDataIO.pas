@@ -185,7 +185,6 @@ type
     fFileNum: Integer;          // Number of next available unused data file
     fRoutinesNode: IXMLNode;    // Reference to <routines> node in document
     fCategoriesNode: IXMLNode;  // Reference to <categories> node in document
-//    fMinREMLVer: TREMLVersion;  // Minimum REML version needed for Extra props
     procedure WriteNameList(const Parent: IXMLNode;
       const ListName, ItemName: string; const Items: IStringList);
       {Writes a list of names to XML.
@@ -266,8 +265,8 @@ uses
   // Delphi
   SysUtils, Classes, ActiveX, XMLDom,
   // Project
-  UActiveText, UConsts, UExceptions, URoutineExtraHelper, UStructs, UUtils,
-  UXMLDocConsts, UXMLDocHelper;
+  UActiveText, UConsts, UExceptions, UIOUtils, URoutineExtraHelper, UStructs,
+  UUtils, UXMLDocConsts, UXMLDocHelper;
 
 
 const
@@ -561,9 +560,13 @@ var
       // load the file: before file v5 files used default encoding, from v5
       // UTF-8 with no BOM was used
       if fVersion < 5 then
-        Result := FileToString(DataFile(DataFileName), TEncoding.Default)
+        Result := TFileIO.ReadAllText(
+          DataFile(DataFileName), TEncoding.Default, False
+        )
       else
-        Result := FileToString(DataFile(DataFileName), TEncoding.UTF8);
+        Result := TFileIO.ReadAllText(
+          DataFile(DataFileName), TEncoding.UTF8, False
+        );
     except
       // convert file errors to EDataIO
       on E: EFOpenError do
@@ -935,7 +938,9 @@ begin
     // is stored in XML
     Inc(fFileNum);
     FileName := Format(cFileNameMask, [fFileNum]);
-    StringToFile(Props.SourceCode, DataFile(FileName), TEncoding.UTF8);
+    TFileIO.WriteAllText(
+      DataFile(FileName), Props.SourceCode, TEncoding.UTF8, False
+    );
     fXMLDoc.CreateElement(RoutineNode, cSourceCodeFileNode, FileName);
     // extra property is only written if value exists
     if not Props.Extra.IsEmpty then
