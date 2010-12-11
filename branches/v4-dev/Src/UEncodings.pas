@@ -318,6 +318,14 @@ function EncodingSupportsString(const S: UnicodeString;
   const Encoding: SysUtils.TEncoding): Boolean;
 
 ///  <summary>
+///  Checks if a code page supports all the characters in a given string.
+///  Returns True if all characters of the string convert correctly or False if
+///  not.
+///  </summary>
+function CodePageSupportsString(const S: UnicodeString;
+  const CodePage: Integer): Boolean;
+
+///  <summary>
 ///  Converts a Unicode wide character into one or more equivalent ANSI
 ///  characters from a specified code page.
 ///  </summary>
@@ -386,6 +394,19 @@ begin
   ConvertedStr := Encoding.GetString(Encoding.GetBytes(S));
   // If text is valid for given encoding, text and converted text must be same
   Result := S = ConvertedStr;
+end;
+
+function CodePageSupportsString(const S: UnicodeString;
+  const CodePage: Integer): Boolean;
+var
+  Encoding: TEncoding;
+begin
+  Encoding := TMBCSEncoding.Create(CodePage);
+  try
+    Result := EncodingSupportsString(S, Encoding);
+  finally
+    TEncodingHelper.FreeEncoding(Encoding);
+  end;
 end;
 
 function WideCharToChar(const Source: WideChar; const CodePage: Integer;
