@@ -308,6 +308,14 @@ type
 ///  </summary>
 function StringToASCIIString(const S: string): ASCIIString;
 
+///  <summary>
+///  Checks if an encoding supports all the characters in a given string.
+///  Returns True if all characters of the string convert correctly or False if
+///  not.
+///  </summary>
+function EncodingSupportsString(const S: UnicodeString;
+  const Encoding: SysUtils.TEncoding): Boolean;
+
 
 implementation
 
@@ -343,6 +351,17 @@ begin
   Result := BytesToAnsiString(
     TEncoding.ASCII.GetBytes(S), TEncodingHelper.ASCIICodePage
   );
+end;
+
+function EncodingSupportsString(const S: UnicodeString;
+  const Encoding: SysUtils.TEncoding): Boolean;
+var
+  ConvertedStr: UnicodeString;   // string converted using Encoding
+begin
+  // Convert S to bytes and back to unicode string using Encoding
+  ConvertedStr := Encoding.GetString(Encoding.GetBytes(S));
+  // If text is valid for given encoding, text and converted text must be same
+  Result := S = ConvertedStr;
 end;
 
 { TEncodingHelper }
