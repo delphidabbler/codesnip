@@ -484,7 +484,7 @@ var
   LineIdx: Integer;     // loops thru lines of example
 begin
   // Create builder object to create RTF document
-  RTF := TRTFBuilder.Create;
+  RTF := TRTFBuilder.Create(0); // use default code page
   try
     // Set up font and colour tables
     RTF.DefaultFontIdx := RTF.FontTable.Add(

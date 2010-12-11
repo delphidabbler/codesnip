@@ -356,7 +356,7 @@ resourcestring
 var
   Builder: TRTFBuilder; // object used to assemble required RTF code
 begin
-  Builder := TRTFBuilder.Create;
+  Builder := TRTFBuilder.Create(0); // use default code page
   try
     // Set global document font and paragraph spacing
     Builder.FontTable.Add('Tahoma', rgfSwiss, 0);

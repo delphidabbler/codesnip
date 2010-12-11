@@ -126,10 +126,12 @@ function RTFHexEscape(const Ch: AnsiChar): ASCIIString;
     @return Escape sequence.
   }
 
-function RTFMakeSafeText(const TheText: string): ASCIIString;
+function RTFMakeSafeText(const TheText: string; const CodePage: Integer):
+  ASCIIString;
   {Encodes text so that any RTF-incompatible characters are replaced with
   suitable control words.
     @param TheText [in] Text to be encoded.
+    @param CodePage [in] Code page to use for encoding.
     @return Encoded text.
   }
 
@@ -227,26 +229,36 @@ begin
   Result := StringToASCIIString('\''' + IntToHex(Ord(Ch), 2));
 end;
 
-function RTFMakeSafeText(const TheText: string): ASCIIString;
+function RTFMakeSafeText(const TheText: string; const CodePage: Integer):
+  ASCIIString;
   {Encodes text so that any RTF-incompatible characters are replaced with
   suitable control words.
     @param TheText [in] Text to be encoded.
+    @param CodePage [in] Code page to use for encoding.
     @return Encoded text.
   }
 var
-  Ch: Char; // each character in text
+  Ch: Char;                     // each Unicode character in TheText
+  AnsiChars: TArray<AnsiChar>;  // translation of a Ch into ANSI code page
+  AnsiCh: AnsiChar;             // each ANSI char in AnsiChars
 begin
   Result := '';
   for Ch in TheText do
   begin
-    if (Ch < #$20) or ((Ch >= #$7F) and (Ch <= #$FF)) then
-      Result := Result + RTFHexEscape(AnsiChar(Ch))
-    else if (Ch = '{') or (Ch = '\') or (Ch = '}') then
-      Result := Result + RTFEscape(AnsiChar(Ch))
-    else if Ord(Ch) > $FF then  // Unicode char
-      Result := RTFControl(rcUnicodeChar, SmallInt(Ord(Ch))) + '?'
+    if WideCharToChar(Ch, CodePage, AnsiChars) then
+    begin
+      for AnsiCh in AnsiChars do
+      begin
+        if (AnsiCh < #$20) or ((AnsiCh >= #$7F) and (AnsiCh <= #$FF)) then
+          Result := Result + RTFHexEscape(AnsiCh)
+        else if (Ch = '{') or (Ch = '\') or (Ch = '}') then
+          Result := Result + RTFEscape(AnsiCh)
+        else
+          Result := Result + ASCIIString(AnsiCh);
+      end;
+    end
     else
-      Result := Result + ASCIIString(AnsiChar(Ch));
+      Result := Result + RTFControl(rcUnicodeChar, SmallInt(Ord(Ch))) + ' ?';
   end;
 end;
 

@@ -635,7 +635,7 @@ constructor TRTFHiliter.Create;
   }
 begin
   inherited;
-  fRTFBuilder := TRTFBuilder.Create;
+  fRTFBuilder := TRTFBuilder.Create(0); // uses default code page
 end;
 
 destructor TRTFHiliter.Destroy;

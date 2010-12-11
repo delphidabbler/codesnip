@@ -172,13 +172,19 @@ type
   }
   TRTFDocProperties = class(TObject)
   strict private
-    var fTitle: string; // Value of Title property
+    var
+      fTitle: string;     // Value of Title property
+      fCodePage: Integer; // Code page used by document.
     function IsEmpty: Boolean;
       {Checks if document properties are empty, i.e. non have be defined.
         @return True if no document properties have been defined, False
           otherwise.
       }
   public
+    constructor Create(const CodePage: Integer);
+      {Constructor. Sets up object.
+        @param CodePage [in] Code page to use for RTF document.
+      }
     function AsString: ASCIIString;
       {Builds RTF code representing document properties.
         @return Required RTF code.
@@ -195,6 +201,7 @@ type
   strict private
     var
       fBody: ASCIIString;                 // Accumulates RTF code for doc body
+      fCodePage: Integer;                 // Code page used for RTF
       fInControls: Boolean;               // Tells of emitting RTF ctrls or text
       fColourTable: TRTFColourTable;      // Value of ColourTable property
       fFontTable: TRTFFontTable;          // Value of FontTable property
@@ -213,8 +220,9 @@ type
         @param Ctrl [in] Text representation of control to be added.
       }
   public
-    constructor Create;
+    constructor Create(const CodePage: Integer);
       {Constructor. Sets up object.
+        @param CodePage [in] Code page to use for RTF document.
       }
     destructor Destroy; override;
       {Destructor. Tears down object.
@@ -315,7 +323,7 @@ begin
     fInControls := False;
   end;
   // Add text, escaping disallowed characters
-  AppendBody(RTFMakeSafeText(Text));
+  AppendBody(RTFMakeSafeText(Text, fCodePage));
 end;
 
 procedure TRTFBuilder.AppendBody(const S: ASCIIString);
@@ -349,14 +357,19 @@ begin
   AddControl(RTFControl(rcPard));
 end;
 
-constructor TRTFBuilder.Create;
+constructor TRTFBuilder.Create(const CodePage: Integer);
   {Constructor. Sets up object.
+    @param CodePage [in] Code page to use for RTF document.
   }
 begin
-  inherited;
+  inherited Create;
+  if CodePage = 0 then
+    fCodePage := ULocales.DefaultAnsiCodePage
+  else
+    fCodePage := CodePage;
   fColourTable := TRTFColourTable.Create;
   fFontTable := TRTFFontTable.Create;
-  fDocProperties := TRTFDocProperties.Create;
+  fDocProperties := TRTFDocProperties.Create(fCodePage);
   fBody := '';
   fInControls := False;
 end;
@@ -378,7 +391,7 @@ function TRTFBuilder.DocHeader: ASCIIString;
 begin
   Result := RTFControl(rcRTF, cRTFVersion)
     + RTFControl(rcAnsi)
-    + RTFControl(rcAnsiCodePage, DefaultAnsiCodePage)
+    + RTFControl(rcAnsiCodePage, fCodePage)
     + RTFControl(rcDefFontNum, DefaultFontIdx)
     + RTFControl(rcDefLanguage, DefaultLanguageID)
     + fFontTable.AsString
@@ -670,10 +683,19 @@ begin
   if fTitle <> '' then
     // Add \title group
     Result := Result + '{'
-      + RTFControl(rcTitle) + ' ' + RTFMakeSafeText(fTitle)
+      + RTFControl(rcTitle) + ' ' + RTFMakeSafeText(fTitle, fCodePage)
       + '}';
   // Close \info group
   Result := Result + '}';
+end;
+
+constructor TRTFDocProperties.Create(const CodePage: Integer);
+  {Constructor. Sets up object.
+    @param CodePage [in] Code page to use for RTF document.
+  }
+begin
+  inherited Create;
+  fCodePage := CodePage;
 end;
 
 function TRTFDocProperties.IsEmpty: Boolean;

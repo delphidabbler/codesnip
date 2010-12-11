@@ -195,7 +195,7 @@ procedure TRTFRoutineDoc.InitialiseDoc;
   }
 begin
   // Create object used to build main rich text document
-  fBuilder := TRTFBuilder.Create;
+  fBuilder := TRTFBuilder.Create(0);  // Use default code page
   // Set up font table
   fBuilder.FontTable.Add(cMainFontName, rgfSwiss, 0);
   fBuilder.FontTable.Add(cMonoFontName, rgfModern, 0);
