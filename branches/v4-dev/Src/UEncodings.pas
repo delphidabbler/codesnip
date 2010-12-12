@@ -41,7 +41,7 @@ interface
 
 uses
   // Delphi
-  SysUtils, Types, Generics.Defaults, Generics.Collections,
+  SysUtils, Classes, Types, Generics.Defaults, Generics.Collections,
   // Project
   UBaseObjects, UIStringList;
 
@@ -69,6 +69,61 @@ type
     etWindows1252,  // Windows-1252
     etSysDefault    // default ANSI encoding
   );
+
+type
+  ///  <summary>
+  ///  Encapsulation of binary data containing encoded text.
+  ///  </summary>
+  TEncodedData = record
+  strict private
+    var
+      fData: TBytes;
+      fEncodingType: TEncodingType;
+  public
+    ///  <summary>
+    ///  Constructs encoded data from array of bytes and specified encoding
+    ///  type.
+    ///  <param name="AData">TBytes [in] Source of data.</param>
+    ///  <param name="AEncodingType">TEncodingType [in] Type of encoding that
+    ///  was used to create byte array.</param>
+    ///  </summary>
+    constructor Create(const AData: TBytes; const AEncodingType: TEncodingType);
+      overload;
+    ///  <summary>
+    ///  Constructs encoded data from a Unicode string and specified encoding
+    ///  type.
+    ///  <param name="AStr">string [in] Source of data.</param>
+    ///  <param name="AEncodingType">TEncodingType [in] Type of encoding to be
+    ///  used to encode string.</param>
+    ///  </summary>
+    constructor Create(const AStr: string; const AEncodingType: TEncodingType);
+      overload;
+    ///  <summary>
+    ///  Constructs encoded data from content of a stream and specified
+    ///  encoding type.
+    ///  </summary>
+    ///  <param name="AStream">TStream [in] Stream containing data.</param>
+    ///  <param name="AEncodingType">TEncodingType [in] Type of encoding used
+    ///  for stream data.</param>
+    ///  <param name="AllStream">Boolean [in] Flag that indicates if whole
+    ///  stream is to be copied. If True whole stream is copied. If False stream
+    ///  is copied from current position to end.</param>
+    constructor Create(const AStream: TStream;
+      const AEncodingType: TEncodingType; const AllStream: Boolean = False);
+      overload;
+    ///  <summary>
+    ///  Returns data as a string. Encoding type is used to decode data into
+    ///  string.
+    ///  </summary>
+    function ToString: string;
+    ///  <summary>
+    ///  Binary data.
+    ///  </summary>
+    property Data: TBytes read fData;
+    ///  <summary>
+    ///  Type of encoding that was used to encode binary data.</summary>
+    property EncodingType: TEncodingType read fEncodingType;
+  end;
 
 type
   ///  <summary>
@@ -269,6 +324,13 @@ type
     ///  <para>Exception raised if code page not supported.</para>
     ///  </remarks>
     class function GetEncoding(const CodePage: Integer): TEncoding; overload;
+    ///  <summary>
+    ///  Gets the encoding type that is associated with a named character set.
+    ///  </summary>
+    ///  <param name="CharSet">string [in] Name of character set.</param>
+    ///  <returns>TEncodingType - Required encoding type.</returns>
+    ///  <remarks>Exception raised if character set not supported.</remarks>
+    class function GetEncodingType(const CharSet: string): TEncodingType;
 (*
     ///  <summary>
     ///  Checks if there is a code page associated with a character set name.
@@ -588,6 +650,13 @@ begin
   Result := GetEncoding(EncType);
 end;
 
+class function TEncodingHelper.GetEncodingType(const CharSet: string):
+  TEncodingType;
+begin
+  if not LookupValidCharSet(CharSet, Result) then
+    raise ENotSupportedException.CreateFmt(sBadCharSet, [CharSet]);
+end;
+
 class function TEncodingHelper.GetEncoding(
   const EncType: TEncodingType): TEncoding;
 begin
@@ -682,6 +751,51 @@ class function TEncodingHelper.LookupValidCodePage(const CodePage: Integer;
 begin
   Result := LookupCodePage(CodePage, EncodingType)
     and IsWantedCharSet(fMap[EncodingType].CharSet);
+end;
+
+{ TEncodedData }
+
+constructor TEncodedData.Create(const AData: TBytes;
+  const AEncodingType: TEncodingType);
+begin
+  fData := AData;
+  fEncodingType := AEncodingType;
+end;
+
+constructor TEncodedData.Create(const AStr: string;
+  const AEncodingType: TEncodingType);
+var
+  Encoding: TEncoding;
+begin
+  Encoding := TEncodingHelper.GetEncoding(AEncodingType);
+  try
+    Create(Encoding.GetBytes(AStr), AEncodingType);
+  finally
+    TEncodingHelper.FreeEncoding(Encoding);
+  end;
+end;
+
+constructor TEncodedData.Create(const AStream: TStream;
+  const AEncodingType: TEncodingType; const AllStream: Boolean);
+begin
+  fEncodingType := AEncodingType;
+  if AllStream then
+    AStream.Position := 0;
+  SetLength(fData, AStream.Size - AStream.Position);
+  if Length(fData) > 0 then
+    AStream.ReadBuffer(Pointer(fData)^, Length(fData));
+end;
+
+function TEncodedData.ToString: string;
+var
+  Encoding: TEncoding;
+begin
+  Encoding := TEncodingHelper.GetEncoding(EncodingType);
+  try
+    Result := Encoding.GetString(Data);
+  finally
+    TEncodingHelper.FreeEncoding(Encoding);
+  end;
 end;
 
 end.
