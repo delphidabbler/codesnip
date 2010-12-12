@@ -171,7 +171,7 @@ end;
 
 function TSaveSnippetMgr.GetDlgTitle: string;
 begin
-  Format(sSaveDlgTitle, [fView.Description]);
+  Result := Format(sSaveDlgTitle, [fView.Description]);
 end;
 
 function TSaveSnippetMgr.GetFileTypeDesc(
