@@ -131,6 +131,12 @@ type
         @param Data [in] Data to be posted. Must not be nil.
         @return Response as text, decoded according to response header.
       }
+    function PostText(const Data: TBytes): string; overload;
+      {Performs a POST request on web service sending data from a byte array and
+      returns response as text.
+        @param Data [in] Data to be posted.
+        @return Response as text, decoded according to response header.
+      }
     function PostRaw(const Params: TURIParams): TBytes; overload;
       {Performs a POST request on web service sending query strings and returns
       response as raw data.
@@ -148,6 +154,13 @@ type
       {Performs a POST request on web service sending data from a stream and
       stores response in a string list.
         @param Data [in] Data to be posted. Must not be nil.
+        @param Strings [in] String list that receives response.
+      }
+    procedure PostStrings(const Data: TBytes; const Strings: TStrings);
+      overload;
+      {Performs a POST request on web service sending data from a byte array and
+      stores response in a string list.
+        @param Data [in] Data to be posted.
         @param Strings [in] String list that receives response.
       }
     procedure PostStrings(const Params: TURIParams; const Strings: TStrings);
@@ -343,6 +356,17 @@ begin
   Strings.Text := Trim(PostText(Params));
 end;
 
+procedure TBaseWebService.PostStrings(const Data: TBytes;
+  const Strings: TStrings);
+  {Performs a POST request on web service sending data from a byte array and
+  stores response in a string list.
+    @param Data [in] Data to be posted.
+    @param Strings [in] String list that receives response.
+  }
+begin
+  Strings.Text := Trim(PostText(Data));
+end;
+
 procedure TBaseWebService.PostStrings(const Data: TStream;
   const Strings: TStrings);
   {Performs a POST request on web service sending data from a stream and stores
@@ -373,6 +397,16 @@ begin
   Result := RetVal;
 end;
 
+function TBaseWebService.PostText(const Data: TBytes): string;
+  {Performs a POST request on web service sending data from a byte array and
+  returns response as text.
+    @param Data [in] Data to be posted.
+    @return Response as text, decoded according to response header.
+  }
+begin
+  Result := fHTTP.PostText(fScriptURI, Data);
+end;
+
 function TBaseWebService.PostText(const Data: TStream): string;
   {Performs a POST request on web service sending data from a stream and returns
   response as text.
@@ -385,7 +419,7 @@ begin
   SetLength(RequestData, Data.Size);
   Data.Position := 0;
   Data.ReadBuffer(Pointer(RequestData)^, Data.Size);
-  Result := fHTTP.PostText(fScriptURI, RequestData);
+  Result := PostText(RequestData);
 end;
 
 end.

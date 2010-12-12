@@ -44,7 +44,7 @@ interface
 
 uses
   // Delphi
-  Classes,
+  SysUtils, Classes,
   // Project
   UURIParams, Web.UBaseWebService;
 
@@ -104,10 +104,23 @@ type
         @except EHTTPError raised if EIdHTTPProtocolException encountered.
         @except EIdException or descendant re-raised for other exception types.
       }
-    procedure PostData(const Data: TStream; const Response: TStrings);
+    procedure PostData(const Data: TStream; const Response: TStrings); overload;
       {Posts raw data to server and returns data component of response in a
       string list.
         @param Data [in] Stream containing raw data to be posted.
+        @param Response [in] Server's response as string list where each line of
+          response is a line of string list.
+        @except EWebServiceError raised on receipt of valid error response.
+        @except EWebServiceFailure raised if web service sends invalid response.
+        @except EWebConnectionError raised if EIdSocketError encoutered.
+        @except EWebTransmissionError raised if data is garbled in transmission.
+        @except EHTTPError raised if EIdHTTPProtocolException encountered.
+        @except EIdException or descendant re-raised for other exception types.
+      }
+    procedure PostData(const Data: TBytes; const Response: TStrings); overload;
+      {Posts raw data to server and returns data component of response in a
+      string list.
+        @param Data [in] Byte array containing raw data to be posted.
         @param Response [in] Server's response as string list where each line of
           response is a line of string list.
         @except EWebServiceError raised on receipt of valid error response.
@@ -124,8 +137,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   Web.UExceptions;
 
@@ -157,6 +168,24 @@ procedure TStdWebService.PostCommand(const Cmd: string;
 begin
   Params.Add('cmd', Cmd);
   PostQuery(Params, Response);
+end;
+
+procedure TStdWebService.PostData(const Data: TBytes; const Response: TStrings);
+  {Posts raw data to server and returns data component of response in a string
+  list.
+    @param Data [in] Byte array containing raw data to be posted.
+    @param Response [in] Server's response as string list where each line of
+      response is a line of string list.
+    @except EWebServiceError raised on receipt of valid error response.
+    @except EWebServiceFailure raised if web service sends invalid response.
+    @except EWebConnectionError raised if EIdSocketError encoutered.
+    @except EWebTransmissionError raised if data is garbled in transmission.
+    @except EHTTPError raised if EIdHTTPProtocolException encountered.
+    @except EIdException or descendant re-raised for other exception types.
+  }
+begin
+  PostStrings(Data, Response);
+  ProcessResponse(Response);
 end;
 
 procedure TStdWebService.PostData(const Data: TStream;
