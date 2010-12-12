@@ -60,8 +60,6 @@ type
     ///  <summary>View containing item for which source code to be output.
     ///  </summary>
     fView: IView;
-    ///  <summary>Title of saved document.</summary>
-    fDocTitle: string;
   strict protected
     ///  <summary>Object constructor. Sets up object to save source code
     ///  encapsulated by a view.</summary>
@@ -74,14 +72,14 @@ type
     function GetDlgTitle: string; override;
     ///  <summary>Get dialog box's help keyword.</summary>
     function GetDlgHelpKeyword: string; override;
-    ///  <summary>Generates raw, un-highlighted, source code and gets document's
-    ///  title.</summary>
+    ///  <summary>Gets title to be used for source document.</summary>
+    function GetDocTitle: string; override;
+    ///  <summary>Generates raw, un-highlighted, source code.</summary>
     ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to be
     ///  used in source code.</param>
-    ///  <param name="RawSourceCode">string [out] Generated source code.</param>
-    ///  <param name="DocTitle">string [out] Name of document.</param>
-    procedure GenerateSource(const CommentStyle: TCommentStyle;
-      out RawSourceCode, DocTitle: string); override;
+    ///  <returns>String containing generated source code.</returns>
+    function GenerateSource(const CommentStyle: TCommentStyle): string;
+      override;
     ///  <summary>Checks if a file name is valid for the kind of file being
     ///  saved.</summary>
     ///  <param name="FileName">string [in] Name of file to check.</param>
@@ -150,11 +148,10 @@ begin
     end;
 end;
 
-procedure TSaveSnippetMgr.GenerateSource(const CommentStyle: TCommentStyle;
-  out RawSourceCode, DocTitle: string);
+function TSaveSnippetMgr.GenerateSource(const CommentStyle: TCommentStyle):
+  string;
 begin
-  RawSourceCode := TSnippetSourceGen.Generate(fView, CommentStyle);
-  DocTitle := fDocTitle;
+  Result := TSnippetSourceGen.Generate(fView, CommentStyle);
 end;
 
 function TSaveSnippetMgr.GetDefaultFileName: string;
@@ -172,6 +169,16 @@ begin
   Result := Format(sSaveDlgTitle, [fView.Description]);
 end;
 
+function TSaveSnippetMgr.GetDocTitle: string;
+begin
+  if Supports(fView, ICategoryView) then
+    Result := Format(sDocTitle, [fView.Description, sCategory])
+  else if Supports(fView, ISnippetView) then
+    Result := Format(sDocTitle, [fView.Description, sRoutine])
+  else
+    Result := '';
+end;
+
 function TSaveSnippetMgr.GetFileTypeDesc(
   const FileType: TSourceFileType): string;
 const
@@ -187,14 +194,7 @@ begin
   // Record reference to view object: we do this here because overridden methods
   // calls made in inherited constructor.
   fView := View;
-
   inherited InternalCreate;
-
-  // Record document title
-  if Supports(View, ICategoryView) then
-    fDocTitle := Format(sDocTitle, [View.Description, sCategory])
-  else if Supports(View, ISnippetView) then
-    fDocTitle := Format(sDocTitle, [View.Description, sRoutine]);
 end;
 
 end.

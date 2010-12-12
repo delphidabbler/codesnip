@@ -123,14 +123,14 @@ type
     function GetDlgTitle: string; virtual; abstract;
     ///  <summary>Get dialog box's help keyword.</summary>
     function GetDlgHelpKeyword: string; virtual; abstract;
-    ///  <summary>Generates raw, un-highlighted, source code and gets document's
-    ///  title.</summary>
+    ///  <summary>Gets title to be used for source document.</summary>
+    function GetDocTitle: string; virtual; abstract;
+    ///  <summary>Generates raw, un-highlighted, source code.</summary>
     ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to be
     ///  used in source code.</param>
-    ///  <param name="RawSourceCode">string [out] Generated source code.</param>
-    ///  <param name="DocTitle">string [out] Name of document.</param>
-    procedure GenerateSource(const CommentStyle: TCommentStyle;
-      out RawSourceCode, DocTitle: string); virtual; abstract;
+    ///  <returns>String containing generated source code.</returns>
+    function GenerateSource(const CommentStyle: TCommentStyle): string;
+      virtual; abstract;
     ///  <summary>Checks if a file name is valid for the kind of file being
     ///  saved.</summary>
     ///  <param name="FileName">string [in] Name of file to check.</param>
@@ -232,17 +232,16 @@ end;
 function TSaveSourceMgr.GenerateOutput(const FileType: TSourceFileType): string;
 var
   RawSource: string;      // raw source code
-  DocTitle: string;       // document title
   Hiliter: TFileHiliter;  // object used to highlight source code
 begin
-  GenerateSource(fSaveDlg.CommentStyle, RawSource, DocTitle);
+  RawSource := GenerateSource(fSaveDlg.CommentStyle);
   // Highlight the raw source as required
   Hiliter := TFileHiliter.Create(
     fSaveDlg.UseSyntaxHiliting and IsHilitingSupported(FileType),
     FileType
   );
   try
-    Result := Hiliter.Hilite(RawSource, DocTitle);
+    Result := Hiliter.Hilite(RawSource, GetDocTitle);
   finally
     Hiliter.Free;
   end;
@@ -324,7 +323,8 @@ begin
   // dialog box is aligned over save dialog box
   TPreviewDlg.Execute(
     fSaveDlg,
-    GenerateOutput(fSourceFileInfo.FileTypeFromExt(fSaveDlg.SelectedExt))
+    GenerateOutput(fSourceFileInfo.FileTypeFromExt(fSaveDlg.SelectedExt)),
+    GetDocTitle
   );
 end;
 
