@@ -42,7 +42,7 @@ interface
 
 uses
   // Delphi
-  Classes, XMLIntf,
+  SysUtils, Classes, XMLIntf,
   // Project
   UBaseObjects, UEncodings,  UExceptions, UIStringList, USnippets, UUserDetails,
   UXMLDocHelper, UXMLDocumentEx;
@@ -113,35 +113,34 @@ type
     fVersion: Integer;              // Version of file being imported
     fUserInfo: TUserInfo;           // Information about user who created export
     fRoutineInfo: TRoutineInfoList; // List of snippets read from XML
-    fStream: TStream;               // Stream containing XML data to be imported
     fXMLDoc: IXMLDocumentEx;        // Extended XML document object
     function GetAllRoutineNodes: IXMLSimpleNodeList;
       {Retrieves a list of all "routine" nodes in XML document.
         @return Required node list.
       }
-    procedure Execute;
+    procedure Execute(const Data: TBytes);
       {Performs the import.
+        @param Data [in] Byte array containing XML data.
       }
     function ValidateDoc: Integer;
       {Validates XML document read from stream and gets file version.
         @return XML file version number.
         @except ECodeImporter raised if XML is not valid.
       }
-    constructor InternalCreate(const Stream: TStream);
+    constructor InternalCreate;
       {Private class constructor. Sets up object to import data.
-        @param Stream [in] Stream containing XML data to be imported.
       }
   public
     destructor Destroy; override;
       {Class destructor. Tidies up object.
       }
     class procedure ImportData(out UserInfo: TUserInfo;
-      out RoutineInfo: TRoutineInfoList; const Stream: TStream);
+      out RoutineInfo: TRoutineInfoList; const Data: TBytes);
       {Imports snippets and optional user data from XML.
         @param UserInfo [out] Receives user info. Set to nul if no user info was
           available.
         @param RoutineInfo [out] Receives information about each snippet read.
-        @param Stream [in] Stream containing XML data.
+        @param Data [in] Byte array containing XML data.
       }
   end;
 
@@ -200,29 +199,26 @@ type
         @param Routine [in] Reference to snippet to be described in XML.
       }
     function Execute: TEncodedData;
-      // todo: recomment
       {Performs the export.
+        @return Encoded data containing exported XML.
         @except ECodeExporter raised if a known error is encountered.
       }
     constructor InternalCreate(const UserInfo: TUserInfo;
       const Routines: TRoutineList);
-      // todo: recomment
-      {Private class constructor. Sets up object to export data.
+      {Private object constructor. Sets up object to export data.
         @param UserInfo [in] User information to be exported.
         @param Routines [in] List of snippets to be exported.
-        @param Stm [in] Stream to receive exported XML.
       }
   public
     destructor Destroy; override;
-      {Class destructor: tidies up object.
+      {Object destructor: tidies up object.
       }
     class function ExportRoutines(const UserInfo: TUserInfo;
       const Routines: TRoutineList): TEncodedData;
-      // todo: recomment
       {Exports user information and snippets as XML.
         @param UserInfo [in] User information to be exported. Ignored if nul.
         @param Routines [in] List of snippets to be exported.
-        @param Stream [in] Stream to receive exported XML.
+        @return Encoding data containing exported XML.
       }
   end;
 
@@ -238,7 +234,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, ActiveX, XMLDom,
+  ActiveX, XMLDom,
   // Project
   UAppInfo, UREMLDataIO, UReservedCategories, URoutineExtraHelper, USnippetIDs,
   UStructs, UXMLDocConsts;
@@ -302,7 +298,7 @@ end;
 { TCodeExporter }
 
 destructor TCodeExporter.Destroy;
-  {Class destructor: tidies up object.
+  {Object destructor: tidies up object.
   }
 begin
   fXMLDoc := nil;
@@ -311,6 +307,7 @@ end;
 
 function TCodeExporter.Execute: TEncodedData;
   {Performs the export.
+    @return Encoded data containing exported XML.
     @except ECodeExporter raised if a known error is encountered.
   }
 var
@@ -357,10 +354,10 @@ end;
 
 class function TCodeExporter.ExportRoutines(const UserInfo: TUserInfo;
   const Routines: TRoutineList): TEncodedData;
-  {Exports user information and routines as XML.
+  {Exports user information and snippets as XML.
     @param UserInfo [in] User information to be exported. Ignored if nul.
     @param Routines [in] List of snippets to be exported.
-    @param Stream [in] Stream to receive exported XML.
+    @return Encoding data containing exported XML.
   }
 begin
   with InternalCreate(UserInfo, Routines) do
@@ -385,10 +382,9 @@ end;
 
 constructor TCodeExporter.InternalCreate(const UserInfo: TUserInfo;
   const Routines: TRoutineList);
-  {Private class constructor. Sets up object to export data.
+  {Private object constructor. Sets up object to export data.
     @param UserInfo [in] User information to be exported.
     @param Routines [in] List of snippets to be exported.
-    @param Stm [in] Stream to receive exported XML.
   }
 begin
   inherited InternalCreate;
@@ -519,8 +515,9 @@ begin
   inherited;
 end;
 
-procedure TCodeImporter.Execute;
+procedure TCodeImporter.Execute(const Data: TBytes);
   {Performs the import.
+    @param Data [in] Byte array containing XML data.
   }
 
   // ---------------------------------------------------------------------------
@@ -570,10 +567,18 @@ var
   RoutineNodes: IXMLSimpleNodeList; // list of "routine" nodes
   RoutineNode: IXMLNode;            // each "routine" node in list
   Idx: Integer;                     // loops thru "routines" node list
+  InStream: TStream;                // stream to load data from
 begin
   // Load XML document
+  { todo: replace with call to a new method of TXMLDocHelper that loads from
+          byte array }
   try
-    fXMLDoc.LoadFromStream(fStream);
+    InStream := TBytesStream.Create(Data);
+    try
+      fXMLDoc.LoadFromStream(InStream);
+    finally
+      InStream.Free;
+    end;
     fXMLDoc.Active := True;
 
     // Validate loaded document and get version number
@@ -671,20 +676,19 @@ begin
 end;
 
 class procedure TCodeImporter.ImportData(out UserInfo: TUserInfo;
-  out RoutineInfo: TRoutineInfoList; const Stream: TStream);
+  out RoutineInfo: TRoutineInfoList; const Data: TBytes);
   {Imports snippets and optional user data from XML.
     @param UserInfo [out] Receives user info. Set to nul if no user info was
       available.
     @param RoutineInfo [out] Receives information about each snippet read.
-    @param Stream [in] Stream containing XML data.
-    @except ECodeImporter raised if data is not in valid format.
+    @param Data [in] Byte array containing XML data.
   }
 var
   Idx: Integer; // loops through all imported snippets
 begin
-  with InternalCreate(Stream) do
+  with InternalCreate do
     try
-      Execute;
+      Execute(Data);
       UserInfo.Assign(fUserInfo);
       SetLength(RoutineInfo, Length(fRoutineInfo));
       for Idx := Low(fRoutineInfo) to High(fRoutineInfo) do
@@ -694,13 +698,11 @@ begin
     end;
 end;
 
-constructor TCodeImporter.InternalCreate(const Stream: TStream);
+constructor TCodeImporter.InternalCreate;
   {Private class constructor. Sets up object to import data.
-    @param Stream [in] Stream containing XML data to be imported.
   }
 begin
   inherited InternalCreate;
-  fStream := Stream;
   // Set up XML document that will read data
   OleInitialize(nil);
   fXMLDoc := TXMLDocHelper.CreateXMLDoc;

@@ -138,7 +138,7 @@ uses
   // Delphi
   SysUtils, Classes, Controls, Dialogs,
   // Project
-  FmEditTextDlg, UActiveText, UConsts, UMessageBox, UOpenDialogEx,
+  FmEditTextDlg, UActiveText, UConsts, UIOUtils, UMessageBox, UOpenDialogEx,
   UOpenDialogHelper, USnippetIDs;
 
 
@@ -363,16 +363,12 @@ class procedure TCodeImportMgr.ReadImportFile(const FileName: string;
     @except ECodeImportMgr raised if can't read import file or it is invalid.
   }
 var
-  InStream: TStream;  // stream onto import file
+  ImportData: TBytes; // bytes from import file
 begin
   Assert(FileName <> '', ClassName + '.ReadImportFile: No file name provided');
   try
-    InStream := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
-    try
-      TCodeImporter.ImportData(UserInfo, Routines, InStream);
-    finally
-      FreeAndNil(InStream);
-    end;
+    ImportData := TFileIO.ReadAllBytes(FileName);
+    TCodeImporter.ImportData(UserInfo, Routines, ImportData);
   except
     on E: EStreamError do
       raise ECodeImportMgr.Create(E);
