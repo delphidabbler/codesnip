@@ -1,5 +1,4 @@
-{
- * USaveUnitMgr.pas
+{* USaveUnitMgr.pas
  *
  * Defines a class that manages generation, previewing and saving of a pascal
  * unit.
@@ -42,60 +41,71 @@ interface
 
 uses
   // Project
-  UBaseObjects, UIStringList, USourceFileInfo, USaveSourceMgr, USourceGen,
-  USnippets;
+  UIStringList, USourceFileInfo, USaveSourceMgr, USourceGen, USnippets;
 
 
 type
-
-  {
-  TSaveUnitMgr:
-    Manages generation, previewing and saving of a Pascal unit to disk.
-    Generated file can be a valid Pascal unit, a plain text file, an HTML file
-    or a RTF file. The last two files types can optionally be syntax
-    highlighted.
-  }
+  ///  <summary>
+  ///  Manages generation, previewing and saving of a Pascal unit to disk.
+  ///  </summary>
+  ///  <remarks>
+  ///  Generated file can be a valid Pascal unit, a plain text file, an HTML
+  ///  file or a RTF file. The last two file types can optionally be syntax
+  ///  highlighted.
+  ///  </remarks>
   TSaveUnitMgr = class(TSaveSourceMgr)
   strict private
-    fSourceGen: TSourceGen;
-      {Generates source code unit}
-    fUnitName: string;
-      {Name of generated unit. Name is based on file when saving unit and has a
-      default fixed value when previewing}
-    fContainsMainDBSnippets: Boolean;
-      {Flag true if unit contains at least one snippet from main database, False
-      only if unit is completely user defined}
+    var
+      ///  <summary>Used to generate source code unit.</summary>
+      fSourceGen: TSourceGen;
+      ///  <summary>Name of generated unit.</summary>
+      ///  <remarks>If empty string a default name is used.</remarks>
+      fUnitName: string;
+      ///  <summary>Flag true if unit contains at least one snippet from main
+      ///  database, False only if unit is completely user defined.</summary>
+      fContainsMainDBSnippets: Boolean;
+    ///  <summary>Gets name of unit to be used in generated code.</summary>
     function UnitName: string;
-      {Gets name of unit to be used in generated code.
-        @return Name of unit.
-      }
+    ///  <summary>Creates a string list containing comments to be written to
+    ///  head of unit.</summary>
     function CreateHeaderComments: IStringList;
-      {Creates and stores header comments to be written to head of unit.
-        @return String list containing comments.
-      }
   strict protected
+    ///  <summary>Object constuctor. Sets up object to save a unit containing
+    ///  all snippets in given list.</summary>
     constructor InternalCreate(const Snips: TRoutineList);
-      {Class constructor. Sets up object to save a unit containing all snippets
-      in a list.
-        @param Snips [in] List of snippets to include in unit.
-      }
+    ///  <summary>Gets description of given source code file type.</summary>
     function GetFileTypeDesc(const FileType: TSourceFileType): string; override;
+    ///  <summary>Gets default file name to display in dialog box.</summary>
     function GetDefaultFileName: string; override;
+    ///  <summary>Gets dialog box title.</summary>
     function GetDlgTitle: string; override;
+    ///  <summary>Get dialog box's help keyword.</summary>
     function GetDlgHelpKeyword: string; override;
+    ///  <summary>Generates raw, un-highlighted, source code and gets document's
+    ///  title.</summary>
+    ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to be
+    ///  used in source code.</param>
+    ///  <param name="RawSourceCode">string [out] Generated source code.</param>
+    ///  <param name="DocTitle">string [out] Name of document.</param>
     procedure GenerateSource(const CommentStyle: TCommentStyle;
       out RawSourceCode, DocTitle: string); override;
+    ///  <summary>Checks if a file name is valid for the kind of file being
+    ///  saved.</summary>
+    ///  <param name="FileName">string [in] Name of file to check.</param>
+    ///  <param name="NameOK">Boolean [out] Set True if file name OK, False if
+    ///  not.</param>
+    ///  <param name="ErrorMessage">string [out] Error message describing
+    ///  problem with invalid file name. Undefined if NameOK is True.</param>
     procedure CheckFileName(const FileName: string; out NameOK: Boolean;
       out ErrorMessage: string); override;
   public
+    ///  <summary>Object destructor. Tears down object.</summary>
     destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
+    ///  <summary>Creates and outputs a Pascal unit file containing specified
+    ///  snippets with name and format speficied by user.</summary>
+    ///  <param name="Snips">TRoutineList [in] List of snippets to include in
+    ///  unit.</param>
     class procedure Execute(const Snips: TRoutineList);
-      {Gets information from user about name and format of required file and
-      saves unit containing specified snippets to disk.
-        @param Snips [in] List of snippets to include in unit.
-      }
   end;
 
 
@@ -106,7 +116,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UEncodings, UUtils, Web.UInfo;
+  UAppInfo, UUtils, Web.UInfo;
 
 
 resourcestring
@@ -154,9 +164,6 @@ begin
 end;
 
 function TSaveUnitMgr.CreateHeaderComments: IStringList;
-  {Creates and stores header comments to be written to head of unit.
-    @return String list containing comments.
-  }
 begin
   Result := TIStringList.Create;
   if fContainsMainDBSnippets then
@@ -197,18 +204,12 @@ begin
 end;
 
 destructor TSaveUnitMgr.Destroy;
-  {Class destructor. Tears down object.
-  }
 begin
   fSourceGen.Free;
   inherited;
 end;
 
 class procedure TSaveUnitMgr.Execute(const Snips: TRoutineList);
-  {Gets information from user about name and format of required file and saves
-  unit containing specified snippets to disk.
-    @param Snips [in] List of snippets to include in unit.
-  }
 begin
   with InternalCreate(Snips) do
     try
@@ -252,10 +253,6 @@ begin
 end;
 
 constructor TSaveUnitMgr.InternalCreate(const Snips: TRoutineList);
-  {Class constructor. Sets up object to save a unit containing all snippets in a
-  list.
-    @param Snips [in] List of snippets to include in unit.
-  }
 var
   Snippet: TRoutine;  // references each snippet in list
 begin
@@ -279,9 +276,6 @@ begin
 end;
 
 function TSaveUnitMgr.UnitName: string;
-  {Gets name of unit to be used in generated code.
-    @return Name of unit.
-  }
 begin
   // If we have valid unit name based on file, use it, otherwise use default
   if fUnitName <> '' then
