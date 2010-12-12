@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  USaveSourceDlg, USourceFileInfo, USourceGen;
+  UBaseObjects, USaveSourceDlg, USourceFileInfo, USourceGen;
 
 
 type
@@ -182,6 +182,47 @@ type
     property OnCheckFileName: TSourceFileNameCheckEvent
       read fOnCheckFileName write fOnCheckFileName;
       {Event used to enable caller to check if entered file name is valid}
+  end;
+
+  TSaveSourceMgr = class abstract(TNoPublicConstructObject)
+  strict private
+    var
+      fSourceFileInfo: TSourceFileInfo;
+      fOutputMgr: TSourceFileOutputMgr;
+    procedure SourceGenHandler(Sender: TObject;
+      const CommentStyle: TCommentStyle; out RawSourceCode, DocTitle: string);
+      {Handles output manager's OnGenerateOutput event by generating source code
+      of unit in required comment style.
+      @param Sender [in] Not used.
+      @param CommentStyle [in] Style of commenting to be used in source code.
+      @param SourceCode [out] Receives generated source code.
+      @param DocTitle [out] Receives document title.
+    }
+    procedure CheckFileNameHandler(Sender: TObject; const FileName: string;
+      var NameOK: Boolean; var ErrorMessage: string);
+      {Handler of output manager's OnCheckFileName event. Checks if file name is
+      suitable for use as basis of a unit name. If so unit name is recorded.
+        @param Sender [in] Not used.
+        @param FileName [in] File name to be checked.
+        @param NameOK [in/out] Defaults to true. Set to false if file name fails
+          check, i.e. is not valid as a unit name.
+        @param ErrorMessage [in/out] Default to ''. Set to error message if
+          NameOK is set false.
+      }
+  strict protected
+    constructor InternalCreate;
+    procedure DoExecute;
+    function GetFileTypeDesc(const FileType: TSourceFileType): string;
+      virtual; abstract;
+    function GetDefaultFileName: string; virtual; abstract;
+    function GetDlgTitle: string; virtual; abstract;
+    function GetDlgHelpKeyword: string; virtual; abstract;
+    procedure GenerateSource(const CommentStyle: TCommentStyle;
+      out RawSourceCode, DocTitle: string); virtual; abstract;
+    procedure CheckFileName(const FileName: string; out NameOK: Boolean;
+      out ErrorMessage: string); virtual; abstract;
+  public
+    destructor Destroy; override;
   end;
 
 
@@ -411,6 +452,86 @@ procedure TSourceFileOutputMgr.SetDlgTitle(const Value: string);
   }
 begin
   fSaveDlg.Title := Value;
+end;
+
+{ TSaveSourceMgr }
+
+procedure TSaveSourceMgr.CheckFileNameHandler(Sender: TObject;
+  const FileName: string; var NameOK: Boolean; var ErrorMessage: string);
+begin
+  CheckFileName(FileName, NameOK, ErrorMessage);
+end;
+
+destructor TSaveSourceMgr.Destroy;
+begin
+  fOutputMgr.Free;
+  fSourceFileInfo.Free;
+  inherited;
+end;
+
+procedure TSaveSourceMgr.DoExecute;
+begin
+  fOutputMgr.Execute;
+end;
+
+constructor TSaveSourceMgr.InternalCreate;
+resourcestring
+  // descriptions of supported encodings
+  sANSIDefaultEncoding = 'ANSI (Default)';
+  sUTF8Encoding = 'UTF-8';
+  sUTF16LEEncoding = 'Unicode (Little Endian)';
+  sUTF16BEEncoding = 'Unicode (Big Endian)';
+begin
+  inherited InternalCreate;
+  fSourceFileInfo := TSourceFileInfo.Create;
+  with fSourceFileInfo do
+  begin
+    FileTypeInfo[sfText] := TSourceFileTypeInfo.Create(
+      '.txt',
+      GetFileTypeDesc(sfText),
+      [
+        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
+        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding),
+        TSourceFileEncoding.Create(etUTF16LE, sUTF16LEEncoding),
+        TSourceFileEncoding.Create(etUTF16BE, sUTF16BEEncoding)
+      ]
+    );
+    FileTypeInfo[sfPascal] := TSourceFileTypeInfo.Create(
+      '.pas',
+      GetFileTypeDesc(sfPascal),
+      [
+        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
+        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
+      ]
+    );
+    FileTypeInfo[sfHTML] := TSourceFileTypeInfo.Create(
+      '.html',
+      GetFileTypeDesc(sfHTML),
+      [
+        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
+      ]
+    );
+    FileTypeInfo[sfRTF] := TSourceFileTypeInfo.Create(
+      '.rtf',
+      GetFileTypeDesc(sfRTF),
+      [
+        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding)
+      ]
+   );
+    DefaultFileName := GetDefaultFileName;
+  end;
+
+  fOutputMgr := TSourceFileOutputMgr.Create(fSourceFileInfo);
+  fOutputMgr.OnGenerateOutput := SourceGenHandler;
+  fOutputMgr.OnCheckFileName := CheckFileNameHandler;
+  fOutputMgr.DlgTitle := GetDlgTitle;
+  fOutputMgr.DlgHelpKeyword := GetDlgHelpKeyword;
+end;
+
+procedure TSaveSourceMgr.SourceGenHandler(Sender: TObject;
+  const CommentStyle: TCommentStyle; out RawSourceCode, DocTitle: string);
+begin
+  GenerateSource(CommentStyle, RawSourceCode, DocTitle);
 end;
 
 end.

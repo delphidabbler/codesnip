@@ -54,30 +54,23 @@ type
     file, an HTML file or a RTF file. The last two files types can optionally be
     syntax highlighted.
   }
-  TSaveSnippetMgr = class(TNoPublicConstructObject)
+  TSaveSnippetMgr = class(TSaveSourceMgr)
   strict private
     fView: IView;                     // View to be output
     fDocTitle: string;                // Title of saved documents
-    fOutputMgr: TSourceFileOutputMgr; // Gets save info and manages output
-    fSourceFileInfo: TSourceFileInfo; // Info about supported source file types
-    procedure SourceGenHandler(Sender: TObject;
-      const CommentStyle: TCommentStyle; out RawSourceCode, DocTitle: string);
-      {Handles output manager's OnGenerateOutput event by generating source code
-      for snippet in required comment style.
-        @param Sender [in] Not used.
-        @param CommentStyle [in] Style of commenting to be used in source code.
-        @param SourceCode [out] Receives generated source code.
-        @param DocTitle [out] Receives document title.
-      }
   strict protected
     constructor InternalCreate(View: IView);
       {Class constructor. Sets up object for view.
         @param View [in] View to be output.
       }
-    procedure DoExecute;
-      {Gets information from user about name and format of required file and
-      saves generated source code to disk.
-      }
+    function GetFileTypeDesc(const FileType: TSourceFileType): string; override;
+    function GetDefaultFileName: string; override;
+    function GetDlgTitle: string; override;
+    function GetDlgHelpKeyword: string; override;
+    procedure GenerateSource(const CommentStyle: TCommentStyle;
+      out RawSourceCode, DocTitle: string); override;
+    procedure CheckFileName(const FileName: string; out NameOK: Boolean;
+      out ErrorMessage: string); override;
   public
     destructor Destroy; override;
       {Class destructor. Tears down object.
@@ -107,25 +100,17 @@ uses
 
 
 resourcestring
-  // Dialog box strings
-  // title
+  // Dialog box title
   sSaveDlgTitle = 'Save %0:s Snippet';
-  // file filter strings
-  sHtmExtDesc = 'HTML file';
-  sRtfExtDesc = 'Rich text file';
-  sIncExtDesc = 'Pascal include file';
-  sTxtExtDesc = 'Plain text file';
-  // encoding display names
-  // TODO: move encoding names to common location - in UEncodings?
-  sANSIDefaultEncoding = 'ANSI (Default)';
-  sUTF8Encoding = 'UTF-8';
-  sUTF16LEEncoding = 'Unicode (Little Endian)';
-  sUTF16BEEncoding = 'Unicode (Big Endian)';
-
   // Output document title for routines and categories
   sDocTitle = '"%0:s" %1:s';
   sCategory = 'category';
   sRoutine = 'routine';
+  // File filter strings
+  sHtmExtDesc = 'HTML file';
+  sRtfExtDesc = 'Rich text file';
+  sIncExtDesc = 'Pascal include file';
+  sTxtExtDesc = 'Plain text file';
 
 
 { TSaveSnippetMgr }
@@ -140,22 +125,17 @@ begin
   Result := TSnippetSourceGen.CanGenerate(View);
 end;
 
+procedure TSaveSnippetMgr.CheckFileName(const FileName: string;
+  out NameOK: Boolean; out ErrorMessage: string);
+begin
+  NameOK := True;
+end;
+
 destructor TSaveSnippetMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  fOutputMgr.Free;
-  fSourceFileInfo.Free;
   inherited;
-end;
-
-procedure TSaveSnippetMgr.DoExecute;
-  {Gets information from user about name and format of required file and saves
-  generated source code to disk.
-  }
-begin
-  // Hand off processing to output manager
-  fOutputMgr.Execute;
 end;
 
 class procedure TSaveSnippetMgr.Execute(View: IView);
@@ -172,79 +152,54 @@ begin
     end;
 end;
 
+procedure TSaveSnippetMgr.GenerateSource(const CommentStyle: TCommentStyle;
+  out RawSourceCode, DocTitle: string);
+begin
+  RawSourceCode := TSnippetSourceGen.Generate(fView, CommentStyle);
+  DocTitle := fDocTitle;
+end;
+
+function TSaveSnippetMgr.GetDefaultFileName: string;
+begin
+  Result := fView.Description;
+end;
+
+function TSaveSnippetMgr.GetDlgHelpKeyword: string;
+begin
+  Result := 'SaveSnippetDlg';
+end;
+
+function TSaveSnippetMgr.GetDlgTitle: string;
+begin
+  Format(sSaveDlgTitle, [fView.Description]);
+end;
+
+function TSaveSnippetMgr.GetFileTypeDesc(
+  const FileType: TSourceFileType): string;
+const
+  Descriptions: array[TSourceFileType] of string = (
+    sTxtExtDesc, sIncExtDesc, sHtmExtDesc, sRtfExtDesc
+  );
+begin
+  Result := Descriptions[FileType];
+end;
+
 constructor TSaveSnippetMgr.InternalCreate(View: IView);
   {Class constructor. Sets up object for view.
     @param View [in] View to be output.
   }
 begin
-  inherited InternalCreate;
-  // Record reference to view object
+  // Record reference to view object: we do this here because overridden methods
+  // calls made in inherited constructor.
   fView := View;
 
-  // Record info about types of source code file supported
-  fSourceFileInfo := TSourceFileInfo.Create;
-  with fSourceFileInfo do
-  begin
-    FileTypeInfo[sfText] := TSourceFileTypeInfo.Create(
-      '.txt',
-      sTxtExtDesc,
-      [
-        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
-        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding),
-        TSourceFileEncoding.Create(etUTF16LE, sUTF16LEEncoding),
-        TSourceFileEncoding.Create(etUTF16BE, sUTF16BEEncoding)
-      ]
-    );
-    FileTypeInfo[sfPascal] := TSourceFileTypeInfo.Create(
-      '.inc',
-      sIncExtDesc,
-      [
-        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding),
-        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
-      ]
-    );
-    FileTypeInfo[sfHTML] := TSourceFileTypeInfo.Create(
-      '.html',
-      sHtmExtDesc,
-      [
-        TSourceFileEncoding.Create(etUTF8, sUTF8Encoding)
-      ]
-    );
-    FileTypeInfo[sfRTF] := TSourceFileTypeInfo.Create(
-      '.rtf',
-      sRtfExtDesc,
-      [
-        TSourceFileEncoding.Create(etSysDefault, sANSIDefaultEncoding)
-      ]
-    );
-    DefaultFileName := View.Description;
-  end;
-
-  // Create and initialise output manager object
-  fOutputMgr := TSourceFileOutputMgr.Create(fSourceFileInfo);
-  fOutputMgr.DlgTitle := Format(sSaveDlgTitle, [View.Description]);
-  fOutputMgr.DlgHelpKeyword := 'SaveSnippetDlg';
-  fOutputMgr.OnGenerateOutput := SourceGenHandler;
+  inherited InternalCreate;
 
   // Record document title
   if Supports(View, ICategoryView) then
     fDocTitle := Format(sDocTitle, [View.Description, sCategory])
   else if Supports(View, ISnippetView) then
     fDocTitle := Format(sDocTitle, [View.Description, sRoutine]);
-end;
-
-procedure TSaveSnippetMgr.SourceGenHandler(Sender: TObject;
-  const CommentStyle: TCommentStyle; out RawSourceCode, DocTitle: string);
-  {Handles output manager's OnGenerateOutput event by generating source code for
-  snippet in required comment style.
-    @param Sender [in] Not used.
-    @param CommentStyle [in] Style of commenting to be used in source code.
-    @param SourceCode [out] Receives generated source code.
-    @param DocTitle [out] Receives document title.
-  }
-begin
-  RawSourceCode := TSnippetSourceGen.Generate(fView, CommentStyle);
-  DocTitle := fDocTitle;
 end;
 
 end.
