@@ -54,8 +54,11 @@ type
   ///  </summary>
   TFileUpdater = class(TObject)
   strict private
-    var fReader: TTextStreamReader; // Provides methods to read data stream
-    var fLocalDir: string;          // Local data directory
+    var
+      ///  <summary>Used to read formatted text data stream.</summary>
+      fReader: TTextStreamReader;
+      ///  <summary>Local data directory.</summary>
+      fLocalDir: string;
     ///  <summary>
     ///  Reverts data file to state they were in before update.
     ///  </summary>
@@ -67,20 +70,17 @@ type
     ///  <summary>
     ///  Writes a local database file.
     ///  </summary>
-    ///  <param name="Name">Name of file.</param>
-    ///  <param name="Content">Content of file.</param>
-    ///  <param name="UnixDate">Date stamp to be applied to file. In Unix format
-    ///  and is GMT.</param>
+    ///  <param name="Name">string [in] Name of file.</param>
+    ///  <param name="Content">string [in] Content of file.</param>
+    ///  <param name="UnixDate">Int64 [in] Unix format GMT date stamp to be
+    ///  applied to file.</param>
     procedure WriteFile(const Name, Content: string; const UnixDate: Int64);
   public
     ///  <summary>Object constructor. Initialises object.</summary>
-    ///  <param name="LocalDir">Directory storing local data files. Will receive
-    ///  updated files.</param>
-    ///  <param name="UpdateData">Stream containing update data as encoded text.
-    ///  </param>
-    ///  <param name="CharSet">Character set used to encode stream data.</param>
-    constructor Create(const LocalDir: string; const UpdateData: TStream;
-      const CharSet: string);
+    ///  <param name="LocalDir">string [in] Directory storing local data files
+    ///  that receives updated files.</param>
+    ///  <param name="UpdateData">TEncodedData [in] Update data.</param>
+    constructor Create(const LocalDir: string; const UpdateData: TEncodedData);
     ///  <summary>Object destructor. Tears down object.</summary>
     destructor Destroy; override;
     ///  <summary>Performs file updates.</summary>
@@ -141,18 +141,14 @@ resourcestring
 { TFileUpdater }
 
 constructor TFileUpdater.Create(const LocalDir: string;
-  const UpdateData: TStream; const CharSet: string);
+  const UpdateData: TEncodedData);
 begin
-  // It is important that CharSet is not empty because empty char sets are mean
-  // one thing to web classes and another to TEncodingHelper => could end up
-  // with different encoding.
-  Assert(CharSet <> '', ClassName + '.Create: CharSet = ''''');
   inherited Create;
   fLocalDir := LocalDir;
   fReader := TTextStreamReader.Create(
-    UpdateData,
-    TEncodingHelper.GetEncoding(CharSet),
-    [dsOwnsEncoding]
+    TBytesStream.Create(UpdateData.Data),
+    TEncodingHelper.GetEncoding(UpdateData.EncodingType),
+    [dsOwnsStream, dsOwnsEncoding]
   );
 end;
 

@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UURIParams, Web.UExceptions, Web.UStdWebService;
+  UEncodings, UURIParams, Web.UExceptions, Web.UStdWebService;
 
 
 type
@@ -113,15 +113,11 @@ type
           for download.
         @return File count.
       }
-    procedure GetDatabase(const Stream: TStream; out CharSet: string;
-      const WantProgress: Boolean = False);
+    function GetDatabase(const WantProgress: Boolean = False): TEncodedData;
       {Gets whole code snippets database from web server.
-        @param Stream [in] Stream to receive downloaded database. Database
-          files are encoded into stream.
-        @param CharSet [out] Set to name of character set used to encode data in
-          stream.
         @param WantProgresss [in] Flag true if OnProgress event to be triggered
           for download.
+        @return Downloaded data with encoding info.
       }
     constructor Create;
       {Class constructor. Initialises service.
@@ -169,7 +165,7 @@ uses
 
 
 {
-  Web service notes: codesnip-updt.php v4
+  Web service notes: codesnip-updt.php v5
   =======================================
 
   This web service enables CodeSnip to check if updated files are available in
@@ -239,7 +235,7 @@ uses
 const
   // Web service info
   cScriptName = 'codesnip-updt.php';                  // script name
-  cUserAgent = 'DelphiDabbler-CodeSnip-Updater-v5';  // user agent string
+  cUserAgent = 'DelphiDabbler-CodeSnip-Updater-v5';   // user agent string
 
 
 resourcestring
@@ -283,37 +279,26 @@ begin
     if not TryStrToInt(Trim(Response.Text), Result) then
       raise EWebServiceFailure.Create(sBadFileCount);
   finally
-    FreeAndNil(Response);
+    Response.Free;
   end;
 end;
 
-procedure TDBDownloadMgr.GetDatabase(const Stream: TStream; out CharSet: string;
-  const WantProgress: Boolean);
+function TDBDownloadMgr.GetDatabase(const WantProgress: Boolean): TEncodedData;
   {Gets whole code snippets database from web server.
-    @param Stream [in] Stream to receive downloaded database. Database files are
-      encoded into stream.
-    @param CharSet [out] Set to name of character set used to encode data in
-      stream.
     @param WantProgresss [in] Flag true if OnProgress event to be triggered for
       download.
+    @return Downloaded data with encoding info.
   }
 var
   Response: TStringList;  // response from server
-  Encoding: TEncoding;    // encoding for char set used in HTTP response
-  ResBytes: TBytes;       // encoded response data
 begin
   Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('getdatabase', Response);
-    CharSet := ResponseCharSet;
-    Encoding := TWebCharEncodings.GetEncoding(CharSet);
-    try
-      ResBytes := Encoding.GetBytes(Response.Text);
-    finally
-      TWebCharEncodings.FreeEncoding(Encoding);
-    end;
-    Stream.WriteBuffer(ResBytes[0], Length(ResBytes));
+    Result := TEncodedData.Create(
+      Response.Text, TWebCharEncodings.GetEncodingType(ResponseCharSet)
+    );
   finally
     Response.Free;
   end;
@@ -362,7 +347,7 @@ begin
     PostStdCommand('lastupdate', Response);
     Result := Trim(Response.Text);
   finally
-    FreeAndNil(Response);
+    Response.Free;
   end;
 end;
 
@@ -379,7 +364,7 @@ begin
   try
     PostStdCommand('logoff', Response);   // No response data expected
   finally
-    FreeAndNil(Response);
+    Response.Free;
   end;
 end;
 
@@ -396,7 +381,7 @@ begin
   try
     PostStdCommand('logon', Response);
   finally
-    FreeAndNil(Response);
+    Response.Free;
   end;
 end;
 
