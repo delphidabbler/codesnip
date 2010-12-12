@@ -45,8 +45,8 @@ uses
   StdCtrls, Forms, ComCtrls, Controls, ExtCtrls, Classes,
   // Project
   FmWizardDlg, FrBrowserBase, FrCheckedTV, FrFixedHTMLDlg, FrHTMLDlg,
-  FrSelectSnippetsBase, FrSelectUserSnippets, UBaseObjects, UExceptions,
-  USnippets;
+  FrSelectSnippetsBase, FrSelectUserSnippets, UBaseObjects, UEncodings,
+  UExceptions, USnippets;
 
 
 type
@@ -78,7 +78,8 @@ type
     frmPrivacy: TFixedHTMLDlgFrame;
     procedure btnPreviewClick(Sender: TObject);
   strict private
-    var fData: TStream; // Contains submission as XML document in UTF-8 format
+    var
+      fData: TEncodedData; // Contains submission as XML document
     procedure SelectRoutine(const Routine: TRoutine);
       {Selects the specified snippet in the check list of snippets or clears
       selections.
@@ -149,9 +150,6 @@ type
       {Protected class constructor. Initialise objects required by this wizard.
       }
   public
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
     class procedure Execute(const AOwner: TComponent; const Routine: TRoutine);
       {Excutes code submission dialog box. Submits code snippet to DelphiDabbler
       web service if user OKs.
@@ -235,17 +233,8 @@ procedure TCodeSubmitDlg.btnPreviewClick(Sender: TObject);
   preview dialog box.
     @param Sender [in] Not used.
   }
-var
-  SS: TStringStream;  // stream used to pass XML data to preview dialog
 begin
-  SS := TStringStream.Create('', TEncoding.UTF8);
-  try
-    SS.CopyFrom(fData, 0);
-    TPreviewDlg.Execute(Self, SS.DataString);
-    fData.Position := 0;
-  finally
-    SS.Free;
-  end;
+  TPreviewDlg.Execute(Self, fData.ToString);
 end;
 
 procedure TCodeSubmitDlg.BuildSubmission;
@@ -259,15 +248,12 @@ begin
   Assert(IsValidEmailAddress(Trim(edEmail.Text)),
     ClassName + '.BuildSubmission: Invalid or no email address specified');
   // Build the document
-  fData.Size := 0;
-  TCodeExporter.ExportRoutines(
+  fData := TCodeExporter.ExportRoutines(
     TUserInfo.Create(
       TUserDetails.Create(edName.Text, edEmail.Text), Trim(edComments.Text)
     ),
-    frmRoutines.SelectedRoutines,
-    fData
+    frmRoutines.SelectedRoutines
   );
-  fData.Position := 0;
 end;
 
 procedure TCodeSubmitDlg.ConfigForm;
@@ -278,14 +264,6 @@ begin
   pcWizard.ActivePage := tsUserInfo;  // show page so that HTML can load
   frmPrivacy.Initialise('frm-emailprivacy.html');
   lblRoutinePrompt.Font.Style := [fsBold];
-end;
-
-destructor TCodeSubmitDlg.Destroy;
-  {Class destructor. Tears down object.
-  }
-begin
-  fData.Free;
-  inherited;
 end;
 
 procedure TCodeSubmitDlg.DoSubmit;
@@ -306,8 +284,7 @@ begin
       Screen.Cursor := crHourglass;
       Enabled := False;
       // POST the data
-      fData.Position := 0;
-      WebSvc.SubmitData(fData);
+      WebSvc.SubmitData(fData.Data);
     finally
       WebSvc.Free;
       Enabled := True;
@@ -393,7 +370,6 @@ constructor TCodeSubmitDlg.InternalCreate(AOwner: TComponent);
 begin
   inherited;
   frmRoutines.OnChange := RoutineListChange;
-  fData := TMemoryStream.Create;
 end;
 
 procedure TCodeSubmitDlg.MoveForward(const PageIdx: Integer;

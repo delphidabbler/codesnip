@@ -95,8 +95,8 @@ uses
   // Delphi
   SysUtils, Dialogs,
   // Project
-  UCodeImportExport, UCtrlArranger, UExceptions, UMessageBox, UOpenDialogHelper,
-  USaveDialogEx, UUtils;
+  UCodeImportExport, UCtrlArranger, UEncodings, UExceptions, UIOUtils,
+  UMessageBox, UOpenDialogHelper, USaveDialogEx, UUtils;
 
 
 {$R *.dfm}
@@ -245,16 +245,12 @@ procedure TCodeExportDlg.WriteOutputFile;
   {Writes export file.
   }
 var
-  OutStm: TStream;  // stream that receives export file content
+  OutData: TEncodedData;  // receives export file content
 begin
-  OutStm := TFileStream.Create(Trim(edFile.Text), fmCreate);
-  try
-    TCodeExporter.ExportRoutines(
-      TUserInfo.CreateNul, frmSnippets.SelectedRoutines, OutStm
-    );
-  finally
-    FreeAndNil(OutStm);
-  end;
+  OutData := TCodeExporter.ExportRoutines(
+    TUserInfo.CreateNul, frmSnippets.SelectedRoutines
+  );
+  TFileIO.WriteAllBytes(Trim(edFile.Text), OutData.Data);
 end;
 
 end.
