@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -68,12 +68,6 @@ type
       {Loads document into memo control.
         @param DocContent [in] Plain text document to be displayed.
       }
-
-    function GetTitle(const DocContent: string): string; override;
-      {Extracts a document title from a document if possible.
-        @param DocContent [in] Document content.
-        @return '' (plain text does not support an embedded title).
-      }
   protected
     { IPreview: Partially implemented in base class }
     procedure SetPopupMenu(const Menu: TPopupMenu);
@@ -99,15 +93,6 @@ function TTextPreviewFrame.GetMemoCtrl: TCustomMemo;
   }
 begin
   Result := edDisplay;
-end;
-
-function TTextPreviewFrame.GetTitle(const DocContent: string): string;
-  {Extracts a document title from a document if possible.
-    @param DocContent [in] Document content.
-    @return '' (plain text does not support an embedded title).
-  }
-begin
-  Result := '';   // can't get a title from plain text objects
 end;
 
 procedure TTextPreviewFrame.LoadContent(const DocContent: string);

@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -62,10 +62,9 @@ type
       }
   protected // do not make strict
     { IPreview }
-    procedure Display(const DocContent: string; out Title: string);
+    procedure Display(const DocContent: string);
       {Displays document in preview dialog box.
         @param DocContent [in] Content of document to be displayed.
-        @param Title [out] Title of document, if any.
       }
     procedure SetPopupMenu(const Menu: TPopupMenu);
       {Sets pop up menu to be displayed when browser control is right clicked.
@@ -81,7 +80,7 @@ implementation
 
 uses
   // Project
-  UCSSUtils, UHTMLDocHelper;
+  UCSSUtils;
 
 
 {$R *.dfm}
@@ -99,15 +98,12 @@ begin
     AddProperty(CSSMarginProp(cPreviewMargin));
 end;
 
-procedure THTMLPreviewFrame.Display(const DocContent: string;
-  out Title: string);
+procedure THTMLPreviewFrame.Display(const DocContent: string);
   {Displays document in preview dialog box.
     @param DocContent [in] Content of document to be displayed.
-    @param Title [out] Title of document, if any.
   }
 begin
   WBController.IOMgr.LoadFromString(DocContent);
-  Title := THTMLDocHelper.GetDocTitle(wbBrowser.Document);
 end;
 
 procedure THTMLPreviewFrame.SetPopupMenu(const Menu: TPopupMenu);

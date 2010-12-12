@@ -63,11 +63,6 @@ type
       {Gets reference to rich edit control used to display RTF code.
         @return Required TRichEdit reference.
       }
-    function GetTitle(const DocContent: string): string; override;
-      {Extracts document title from RTF document if possible.
-        @param DocContent [in] Document content as RTF.
-        @return Required tile or '' if no title present in RTF.
-      }
     procedure LoadContent(const DocContent: string); override;
       {Loads document into rich edit control.
         @param DocContent [in] Valid RTF document to be displayed.
@@ -87,8 +82,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils, StrUtils,
   // Project
   UEncodings, URTFUtils;
 
@@ -104,27 +97,6 @@ function TRTFPreviewFrame.GetMemoCtrl: TCustomMemo;
   }
 begin
   Result := reView;
-end;
-
-function TRTFPreviewFrame.GetTitle(const DocContent: string): string;
-  {Extracts document title from RTF document if possible.
-    @param DocContent [in] Document content as RTF.
-    @return Required tile or '' if no title present in RTF.
-  }
-var
-  TitleStart: Integer;        // start of doc title in rtf
-  TitleEnd: Integer;          // end of doc title in rtf
-const
-  cTitleControl = '{\title';  // rtf title control
-begin
-  Result := '';
-  TitleStart := PosEx(cTitleControl, DocContent);
-  if TitleStart > 0 then
-  begin
-    Inc(TitleStart, Length(cTitleControl));
-    TitleEnd := PosEx('}', DocContent, TitleStart + 1);
-    Result := Trim(Copy(DocContent, TitleStart, TitleEnd - TitleStart));
-  end;
 end;
 
 procedure TRTFPreviewFrame.LoadContent(const DocContent: string);

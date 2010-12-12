@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -46,7 +46,7 @@ uses
   ExtCtrls,
   // Project
   FmGenericViewDlg, FrBrowserBase, FrHTMLPreview, FrMemoPreview, FrRTFPreview,
-  FrTextPreview, IntfPreview, UBaseObjects;
+  FrTextPreview, UBaseObjects;
 
 
 type
@@ -76,9 +76,10 @@ type
     procedure actSelectAllUpdate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   strict private
-    fViewer: IInterface;  // Interfaces with viewer frame
-    fDocContent: string;  // Stores content of document we are displaying
-    fDlgTitle: string;    // Dialog box title
+    var
+      fViewer: IInterface;  // Interfaces with viewer frame
+      fDocContent: string;  // Stores content of document we are displaying
+      fDlgTitle: string;    // Dialog box title
     procedure GetViewerInfo(out Viewer: IInterface; out TabSheet: TTabSheet);
       {Gets information about required document viewer and tab sheet that
       contains it.
@@ -111,7 +112,7 @@ type
         @param AOwner [in] Owning component.
         @param ADocContent [in] Content of document to be displayed (HTML, RTF
           or plain text).
-        @param ADlgTitle [in] Title of dialog box. Default is used if ''.
+        @param ADlgTitle [in] Title of dialog box. Default used if ''.
       }
   end;
 
@@ -123,7 +124,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  IntfFrameMgrs, URTFUtils, UHTMLUtils;
+  IntfFrameMgrs, IntfPreview, URTFUtils, UHTMLUtils;
 
 
 {$R *.dfm}
@@ -194,12 +195,12 @@ begin
 end;
 
 class procedure TPreviewDlg.Execute(AOwner: TComponent;
-  const ADocContent: string; const ADlgTitle: string = '');
+  const ADocContent: string; const ADlgTitle: string);
   {Displays a document in the preview dialog.
     @param AOwner [in] Owning component.
     @param ADocContent [in] Content of document to be displayed (HTML, RTF or
       plain text).
-    @param ADlgTitle [in] Title of dialog box. Default is used if ''.
+    @param ADlgTitle [in] Title of dialog box. Default used if ''.
   }
 begin
   with InternalCreate(AOwner) do
@@ -255,7 +256,6 @@ procedure TPreviewDlg.InitForm;
   }
 var
   TabSheet: TTabSheet;  // tab sheet containing preview frame
-  Title: string;        // document title
 begin
   inherited;
   // Display document (select tab, load doc and set submenu on into frame)
@@ -265,11 +265,9 @@ begin
   // update required frame's popup menu and display document in it
   (fViewer as IPreview).SetPopupMenu(mnuPreview);
   // load content into preview and set dialog caption
-  (fViewer as IPreview).Display(fDocContent, Title);
+  (fViewer as IPreview).Display(fDocContent);
   if fDlgTitle <> '' then
     Caption := fDlgTitle                // caller specified title - use it
-  else if Title <> '' then
-    Caption := Caption + ': ' + Title;  // use title extracted from document
 end;
 
 procedure TPreviewDlg.SelectAll;

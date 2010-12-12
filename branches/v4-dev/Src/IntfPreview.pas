@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -53,10 +53,9 @@ type
   }
   IPreview = interface(IInterface)
     ['{85070D46-EB65-4C59-BA60-AE6144037C83}']
-    procedure Display(const DocContent: string; out Title: string);
+    procedure Display(const DocContent: string);
       {Displays document in preview dialog box.
         @param DocContent [in] Content of document to be displayed.
-        @param Title [out] Title of document, if any.
       }
     procedure SetPopupMenu(const Menu: TPopupMenu);
       {Provides a popup menu to be displayed when control that is displaying
