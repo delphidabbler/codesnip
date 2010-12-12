@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  UBaseObjects, UIStringList, USourceFileInfo, USourceFileOutputMgr, USourceGen,
+  UBaseObjects, UIStringList, USourceFileInfo, USaveSourceMgr, USourceGen,
   USnippets;
 
 

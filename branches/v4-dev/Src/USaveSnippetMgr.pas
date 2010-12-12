@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  UBaseObjects, USourceFileInfo, USourceFileOutputMgr, USourceGen, UView;
+  UBaseObjects, USourceFileInfo, USaveSourceMgr, USourceGen, UView;
 
 
 type

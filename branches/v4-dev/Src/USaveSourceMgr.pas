@@ -1,7 +1,10 @@
 {
- * USourceFileOutputMgr.pas
+ * USaveSourceMgr.pas
  *
- * Implements class that manages customisation and output of source files.
+ * Implements abstract base class for classes that manage generation, previewing
+ * and saving to disk of a source code files in various formats and encodings.
+ *
+ * Formerly named USourceFileOutputMgr.pas.
  *
  * $Rev$
  * $Date$
@@ -18,7 +21,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is USourceFileOutputMgr.pas
+ * The Original Code is USaveSourceMgr.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -33,7 +36,7 @@
 }
 
 
-unit USourceFileOutputMgr;
+unit USaveSourceMgr;
 
 
 interface

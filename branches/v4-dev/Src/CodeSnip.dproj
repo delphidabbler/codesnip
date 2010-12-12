@@ -436,8 +436,9 @@
 			<DCCReference Include="URTFRoutineDoc.pas"/>
 			<DCCReference Include="URTFUtils.pas"/>
 			<DCCReference Include="USaveDialogEx.pas"/>
-			<DCCReference Include="USaveSourceDlg.pas"/>
 			<DCCReference Include="USaveSnippetMgr.pas"/>
+			<DCCReference Include="USaveSourceDlg.pas"/>
+			<DCCReference Include="USaveSourceMgr.pas"/>
 			<DCCReference Include="USaveUnitMgr.pas"/>
 			<DCCReference Include="USearch.pas"/>
 			<DCCReference Include="USettings.pas"/>
@@ -454,7 +455,6 @@
 			<DCCReference Include="USnippetsTVDraw.pas"/>
 			<DCCReference Include="USnippetValidator.pas"/>
 			<DCCReference Include="USourceFileInfo.pas"/>
-			<DCCReference Include="USourceFileOutputMgr.pas"/>
 			<DCCReference Include="USourceGen.pas"/>
 			<DCCReference Include="UStatusBarMgr.pas"/>
 			<DCCReference Include="UStringReader.pas"/>
