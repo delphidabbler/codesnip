@@ -48,77 +48,74 @@ uses
 
 
 type
-
-  {
-  THistoryMenu:
-    Abstract base class for popup menu components that display menu items for
-    recent view items in the history.
-  }
+  ///  <summary>
+  ///  Abstract base class for popup menu components that display menu items for
+  ///  recent view items in the history.
+  ///  </summary>
   THistoryMenu = class abstract(TPopupMenu)
   strict private
     var
-      fHistory: THistory;         // Reference to menu's history list
-      fAction: TViewItemAction;   // Action triggered when menu items clicked
+      ///  <summary>Reference to menu's history list.</summary>
+      fHistory: THistory;
+      ///  <summary>Action triggered when menu items clicked.</summary>
+      fAction: TViewItemAction;
     const
-      cMaxHistoryMenuItems = 10;  // max items displayed in a history menu
+      ///  <summary>Max items displayed in a history menu.</summary>
+      cMaxHistoryMenuItems = 10;
   strict protected
+    ///  <summary>Builds menu with a menu item for each view item in history.
+    ///  </summary>
     procedure PopulateMenu;
-      {Builds menu with a menu item for each view item in history.
-      }
+    ///  <summary>Handles OnClick events for all menu items in menu by
+    ///  executing action for view item associated with menu item.</summary>
     procedure MenuItemClick(Sender: TObject);
-      {Handles OnClick events for all menu items by triggering view item action
-      for view item associated with menu item.
-        @param Sender [in] Menu item that was clicked.
-      }
+    ///  <summary>Builds list of view items to be displayed in menu.</summary>
+    ///  <param name="List">TViewItemList [in] List that receives view items.
+    ///  </param>
     procedure GetViewItemList(const List: TViewItemList); virtual; abstract;
-      {Returns list of view items to be displayed in menu, subject to maximum
-      menu size limit. Descendant classes overrride this method to get
-      appropriate view items.
-        @param List [in] Receives view item list.
-      }
+    ///  <summary>Populates menu with required items just before it is
+    ///  displayed.</summary>
     procedure DoPopup(Sender: TObject); override;
-      {Populates menu with required items just before it is displayed.
-        @param Sender [in] Not used.
-      }
+    ///  <summary>Reference to history list associated with menu.</summary>
     property History: THistory read fHistory;
-      {Reference to history list associated with menu}
   public
+    ///  <summary>Object constructor. Sets up menu for a history list.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns this one, or
+    ///  nil if not owned.</param>
+    ///  <param name="History">THistory [in] Reference to history list
+    ///  containing view items displayed in this menu.</param>
+    ///  <param name="Action">TViewItemAction [in] Action to be triggered when a
+    ///  menu item is selected.</param>
     constructor Create(AOwner: TComponent; const History: THistory;
       const Action: TViewItemAction); reintroduce;
-      {Class constructor. Sets up menu for a history list.
-        @param AOwner [in[ Component that owns this menu.
-        @param History [in] Reference to history list that stores view items
-          displayed in this menu.
-        @param Action [in] Action triggered when a menu item is selected.
-      }
   end;
 
-  {
-  TBackHistoryMenu:
-    Popup menu component that displays menu items for recent view items in the
-    "back" history - i.e. view items that preceed the currently selected history
-    item.
-  }
+type
+  ///  <summary>
+  ///  Popup menu component that displays menu items for recent view items in
+  ///  the "back" history - i.e. view items that preceed the currently selected
+  ///  history item.
+  ///  </summary>
   TBackHistoryMenu = class sealed(THistoryMenu)
   strict protected
+    ///  <summary>Builds list of view items in "back" history.</summary>
+    ///  <param name="List">TViewItemList [in] List that receives view items.
+    ///  </param>
     procedure GetViewItemList(const List: TViewItemList); override;
-      {Gets list of view items in "back" history.
-        @param List [in] Receives relevant view items.
-      }
   end;
 
-  {
-  TForwardHistoryMenu:
-    Popup menu component that displays menu items for recent view items in the
-    "forward" history - i.e. view items that follow the currently selected
-    history item.
-  }
+type
+  ///  <summary>
+  ///  Popup menu component that displays menu items for recent view items in
+  ///  the "forward" history - i.e. view items that follow the currently
+  ///  selected history item.
+  ///  </summary>
   TForwardHistoryMenu = class sealed(THistoryMenu)
   strict protected
+    ///  <summary>Builds list of view items in "forward" history.</summary>
+    ///  <param name="List">TViewItemList [in] List that receives view items.
+    ///  </param>
     procedure GetViewItemList(const List: TViewItemList); override;
-      {Gets list of view items in "forward" history.
-        @param List [in] Receives relevant view items.
-      }
   end;
 
 
@@ -133,36 +130,29 @@ uses
 
 
 type
-
-  {
-  THistoryMenuItem:
-    Menu item class that extends TMenuItem by adding a property that references
-    a TViewItem object.
-  }
+  ///  <summary>
+  ///  Extension of TMenuItem that adds a property that references a TViewItem
+  ///  object.
+  ///  </summary>
   THistoryMenuItem = class sealed(TMenuItem)
   strict private
-    var fViewItem: IView; // View item associated with menu item
+    var
+      ///  <summary>View item associated with menu item.</summary>
+      fViewItem: IView;
+    ///  <summary>Write accessor for ViewItem property.</summary>
     procedure SetViewItem(Value: IView);
-      {Write accessor for ViewItem property. Sets menu item Caption property
-      to represent view item.
-        @param Value [in] View item associated with menu.
-      }
   public
+    ///  <summary>View item associated with this menu item.</summary>
+    ///  <remarks>Setting this property also stores a description in menu item
+    ///  Caption.</remarks>
     property ViewItem: IView read fViewItem write SetViewItem;
-      {View item associated with this menu item. Setting this property also
-      stores a description in menu item Caption}
   end;
+
 
 { THistoryMenu }
 
 constructor THistoryMenu.Create(AOwner: TComponent;
   const History: THistory; const Action: TViewItemAction);
-  {Class constructor. Sets up menu for a history list.
-    @param AOwner [in[ Component that owns this menu.
-    @param History [in] Reference to history list that stores view items
-      displayed in this menu.
-    @param Action [in] Action triggered when a menu item is selected.
-  }
 begin
   Assert(Assigned(History), ClassName + '.Create: History is nil');
   Assert(Assigned(Action), ClassName + '.Create: Action is nil');
@@ -173,27 +163,18 @@ begin
 end;
 
 procedure THistoryMenu.DoPopup(Sender: TObject);
-  {Populates menu with required items just before it is displayed.
-    @param Sender [in] Not used.
-  }
 begin
   PopulateMenu;
   inherited;  // triggers menu's OnPopup event
 end;
 
 procedure THistoryMenu.MenuItemClick(Sender: TObject);
-  {Handles OnClick events for all menu items by triggering view item action for
-  view item associated with menu item.
-    @param Sender [in] Menu item that was clicked.
-  }
 begin
   fAction.ViewItem := (Sender as THistoryMenuItem).ViewItem;
   fAction.Execute;
 end;
 
 procedure THistoryMenu.PopulateMenu;
-  {Builds menu with a menu item for each view item in history.
-  }
 var
   ViewList: TViewItemList;  // list of view items in required section of history
   MI: THistoryMenuItem;     // a menu item instance
@@ -226,9 +207,6 @@ end;
 { TBackHistoryMenu }
 
 procedure TBackHistoryMenu.GetViewItemList(const List: TViewItemList);
-  {Gets list of view items in "back" history.
-    @param List [in] Receives relevant view items.
-  }
 begin
   History.BackList(List);
 end;
@@ -236,9 +214,6 @@ end;
 { TForwardHistoryMenu }
 
 procedure TForwardHistoryMenu.GetViewItemList(const List: TViewItemList);
-  {Gets list of view items in "forward" history.
-    @param List [in] Receives relevant view items.
-  }
 begin
   History.ForwardList(List);
 end;
@@ -246,14 +221,9 @@ end;
 { THistoryMenuItem }
 
 procedure THistoryMenuItem.SetViewItem(Value: IView);
-  {Write accessor for ViewItem property. Sets menu item Caption property to
-  represent view item.
-    @param Value [in] View item associated with menu.
-  }
 resourcestring
   // Menu caption templates
-  // TODO: change sRoutineDesc text to "Snippet" from "Routine"
-  sRoutineDesc = 'Routine: %s';
+  sSnippetDesc = 'Snippet: %s';
   sCategoryDesc = 'Category: %s';
   sSnipKindDesc = 'Snippets type: %s';
   sAlphabetDesc = 'Alphabetic section: %s';
@@ -266,7 +236,7 @@ begin
   if Supports(fViewItem, IStartPageView) then
     Caption := ViewItem.Description
   else if Supports(fViewItem, ISnippetView) then
-    Caption := Format(sRoutineDesc, [ViewItem.Description])
+    Caption := Format(sSnippetDesc, [ViewItem.Description])
   else if Supports(fViewItem, ICategoryView) then
     Caption := Format(sCategoryDesc, [ViewItem.Description])
   else if Supports(fViewItem, ISnippetKindView) then
