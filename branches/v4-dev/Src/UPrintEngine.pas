@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UHiddenRichEdit;
+  UHiddenRichEdit, URTFUtils;
 
 
 type
@@ -70,7 +70,7 @@ type
         @return Required margins.
       }
   public
-    procedure Print(const Document: TStream);
+    procedure Print(const Document: TRTF);
       {Prints a document.
         @param Document [in] Stream containing document to be printed, in rich
           text format.
@@ -85,9 +85,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Printers,
+  Printers,
   // Project
-  UMeasurement, UPrintInfo, URTFUtils;
+  UMeasurement, UPrintInfo;
 
 
 { TPrintEngine }
@@ -123,7 +123,7 @@ begin
   Result.Bottom := InchesToPixelsY(MMToInches(PrintInfo.PageMargins.Bottom));
 end;
 
-procedure TPrintEngine.Print(const Document: TStream);
+procedure TPrintEngine.Print(const Document: TRTF);
   // todo: candidate for TEncodedData
   {Prints a document.
     @param Document [in] Stream containing document to be printed, in rich text
@@ -134,9 +134,7 @@ var
 begin
   // Load document into engine
   // todo: check assumed ASCII encoding is correct
-  TRichEditHelper.Load(
-    RichEdit, TRTF.Create(Document, TEncoding.ASCII, True )
-  );
+  TRichEditHelper.Load(RichEdit, Document);
   // Set up page margins
   PrintMargins := GetPrintMargins;
   RichEdit.PageRect := Rect(

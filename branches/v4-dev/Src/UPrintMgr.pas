@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UBaseObjects, UPrintInfo, USnippets, UView;
+  UBaseObjects, UPrintInfo, URTFUtils, USnippets, UView;
 
 
 type
@@ -55,11 +55,13 @@ type
     routine. It generates a RTF formatted document and passes it to the print
     engine for printing.
   }
+  { todo -cFeature: add facility to print list, with descriptions, of all
+          snippets in a grouping (category, alpha, or snippet kind) }
   TPrintMgr = class(TNoPublicConstructObject)
   strict private
     fRoutine: TRoutine;
       {Reference to routine whose information is to be printed}
-    procedure GeneratePrintDocument(const Stm: TStream);
+    function GeneratePrintDocument: TRTF;
       {Generates document suitable for printing by print engine.
         @param Stm [in] Stream to receive generated document.
       }
@@ -111,24 +113,19 @@ procedure TPrintMgr.DoPrint;
   }
 var
   PrintEngine: TPrintEngine;  // object that prints the print document
-  DocStm: TStream;            // stream containing generated print document
+  Document: TRTF;             // generated print document
 begin
   PrintEngine := TPrintEngine.Create;
   try
     PrintEngine.Title := fRoutine.Name;
-    DocStm := TMemoryStream.Create;
-    try
-      GeneratePrintDocument(DocStm);
-      PrintEngine.Print(DocStm);
-    finally
-      DocStm.Free;
-    end;
+    Document := GeneratePrintDocument;
+    PrintEngine.Print(Document);
   finally
     PrintEngine.Free;
   end;
 end;
 
-procedure TPrintMgr.GeneratePrintDocument(const Stm: TStream);
+function TPrintMgr.GeneratePrintDocument: TRTF;
   {Generates document suitable for printing by print engine.
     @param Stm [in] Stream to receive generated document.
   }
@@ -136,8 +133,7 @@ var
   PrintDoc: IPrintDocument;   // generates print document
 begin
   PrintDoc := TRoutinePrintDocument.Create(fRoutine);
-  PrintDoc.Generate(Stm);
-  Stm.Position := 0;
+  Result := PrintDoc.Generate;
 end;
 
 constructor TPrintMgr.InternalCreate(ViewItem: IView);
