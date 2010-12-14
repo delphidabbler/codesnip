@@ -169,7 +169,7 @@ uses
   SysUtils, ExtCtrls, Windows, Graphics, Dialogs,
   // Project
   FmPreferencesDlg, Hiliter.UAttrs, IntfCommon, UCtrlArranger, UFontHelper,
-  UMessageBox, URTFBuilder, UUtils;
+  UIStringList, UMessageBox, URTFBuilder, UUtils;
 
 
 {$R *.dfm}
@@ -479,44 +479,38 @@ function THiliterPrefsFrame.GenerateRTF: TRTF;
     @return Required RTF code.
   }
 var
-  RTF: TRTFBuilder;     // object used to create and render RTF
-  EgLines: TStringList; // list of lines in the example
-  LineIdx: Integer;     // loops thru lines of example
+  RTFBuilder: TRTFBuilder;  // object used to create and render RTFBuilder
+  EgLines: IStringList;     // list of lines in the example
+  EgLine: string;           // each line of example
 begin
-  // Create builder object to create RTF document
-  // todo: change TRTFBuilder to generate TRTF rather than ASCII string
-  RTF := TRTFBuilder.Create(0); // use default code page
+  // Create builder object to create RTFBuilder document
+  RTFBuilder := TRTFBuilder.Create(0); // use default code page
   try
     // Set up font and colour tables
-    RTF.DefaultFontIdx := RTF.FontTable.Add(
+    RTFBuilder.DefaultFontIdx := RTFBuilder.FontTable.Add(
       fAttrs.FontName, rgfModern, DEFAULT_CHARSET
     );
-    RTF.ColourTable.Add(CurrentElement.ForeColor);
+    RTFBuilder.ColourTable.Add(CurrentElement.ForeColor);
 
     // Set character formating
-    RTF.SetFont(fAttrs.FontName);
-    RTF.SetFontSize(fAttrs.FontSize);
-    RTF.SetColour(CurrentElement.ForeColor);
-    RTF.SetFontStyle(CurrentElement.FontStyle);
+    RTFBuilder.SetFont(fAttrs.FontName);
+    RTFBuilder.SetFontSize(fAttrs.FontSize);
+    RTFBuilder.SetColour(CurrentElement.ForeColor);
+    RTFBuilder.SetFontStyle(CurrentElement.FontStyle);
 
     // Write out each line of example
-    EgLines := TStringList.Create;
-    try
-      ExplodeStr(cElementEgs[CurrentElementId], LF, EgLines, False);
-      for LineIdx := 0 to Pred(EgLines.Count) do
-      begin
-        RTF.AddText(EgLines[LineIdx]);
-        RTF.EndPara;
-      end;
-
-      // Create RTF source
-      Result := RTF.Render;
-
-    finally
-      FreeAndNil(EgLines);
+    EgLines := TIStringList.Create(cElementEgs[CurrentElementId], LF, False);
+    for EgLine in EgLines do
+    begin
+      RTFBuilder.AddText(EgLine);
+      RTFBuilder.EndPara;
     end;
+
+    // Create RTFBuilder source
+    Result := RTFBuilder.Render;
+
   finally
-    FreeAndNil(RTF);
+    RTFBuilder.Free;
   end;
 end;
 
