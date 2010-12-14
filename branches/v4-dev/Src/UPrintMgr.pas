@@ -132,7 +132,7 @@ function TPrintMgr.GeneratePrintDocument: TRTF;
 var
   PrintDoc: IPrintDocument;   // generates print document
 begin
-  PrintDoc := TRoutinePrintDocument.Create(fRoutine);
+  PrintDoc := TSnippetPrintDocument.Create(fRoutine);
   Result := PrintDoc.Generate;
 end;
 
