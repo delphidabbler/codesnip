@@ -650,7 +650,7 @@ procedure TRTFHiliter.EndDoc;
   {Called after parsing complete. Outputs whole of RTF code.
   }
 begin
-  Writer.AppendLine(string(fRTFBuilder.AsString));
+  Writer.AppendLine(fRTFBuilder.Render.ToString);
 end;
 
 procedure TRTFHiliter.EndLine;

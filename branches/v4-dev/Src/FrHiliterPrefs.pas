@@ -45,7 +45,7 @@ uses
   StdCtrls, Forms, Controls, Classes, Menus, Buttons,
   // Project
   FrPrefsBase, FrRTFShowCase, Hiliter.UGlobals, UColorBoxEx, UColorDialogEx,
-  UConsts, UEncodings, UPreferences;
+  UConsts, UEncodings, UPreferences, URTFUtils;
 
 
 type
@@ -120,7 +120,7 @@ type
     procedure UpdatePreview;
       {Updates preview of highlighting of current highlighter element.
       }
-    function GenerateRTF: ASCIIString;
+    function GenerateRTF: TRTF;
       {Generates RTF of example of current highlighter element.
         @return Required RTF code.
       }
@@ -169,7 +169,7 @@ uses
   SysUtils, ExtCtrls, Windows, Graphics, Dialogs,
   // Project
   FmPreferencesDlg, Hiliter.UAttrs, IntfCommon, UCtrlArranger, UFontHelper,
-  UMessageBox, URTFBuilder, URTFUtils, UUtils;
+  UMessageBox, URTFBuilder, UUtils;
 
 
 {$R *.dfm}
@@ -474,7 +474,7 @@ begin
   Result := sDisplayName;
 end;
 
-function THiliterPrefsFrame.GenerateRTF: ASCIIString;
+function THiliterPrefsFrame.GenerateRTF: TRTF;
   {Generates RTF of example of current highlighter element.
     @return Required RTF code.
   }
@@ -510,7 +510,7 @@ begin
       end;
 
       // Create RTF source
-      Result := RTF.AsString;
+      Result := RTF.Render;
 
     finally
       FreeAndNil(EgLines);
@@ -616,7 +616,7 @@ procedure THiliterPrefsFrame.UpdatePreview;
   {Updates preview of highlighting of current highlighter element.
   }
 begin
-  TRichEditHelper.Load(frmExample.RichEdit, TRTF.Create(GenerateRTF));
+  TRichEditHelper.Load(frmExample.RichEdit, GenerateRTF);
 end;
 
 initialization

@@ -166,7 +166,7 @@ begin
   // Insert highlighted source code in builder document. We have to do this here
   // since hiliter object generates a complete RTF document which can't be
   // simply added to document using RTF builder - it has to be merged in.
-  with TRTFMerger.Create(fBuilder.AsString) do
+  with TRTFMerger.Create(fBuilder.Render.ToRTFCode) do
     try
       ReplacePlaceholder(
         cSourceCodePlaceholder, StringToASCIIString(HiliteSource)

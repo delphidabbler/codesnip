@@ -376,7 +376,7 @@ begin
     Builder.AddText(cPlaceholder);
     Builder.EndPara;
     // Load document into rich edit
-    TRichEditHelper.Load(fRe, TRTF.Create(Builder.AsString));
+    TRichEditHelper.Load(fRe, Builder.Render);
   finally
     FreeAndNil(Builder);
   end;

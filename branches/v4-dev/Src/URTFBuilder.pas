@@ -43,7 +43,7 @@ uses
   // Delphi
   Generics.Collections, Graphics,
   // Project
-  UEncodings;
+  UEncodings, URTFUtils;
 
 
 type
@@ -197,6 +197,7 @@ type
   TRTFBuilder:
     Class used to create content of a rich text document.
   }
+  // todo: re-implement using underlying byte array and a new byte builder class
   TRTFBuilder = class(TObject)
   strict private
     var
@@ -218,6 +219,10 @@ type
     procedure AddControl(const Ctrl: ASCIIString);
       {Adds an RTF control to document body.
         @param Ctrl [in] Text representation of control to be added.
+      }
+    function AsString: ASCIIString;
+      {Generates RTF code for whole document as string.
+        @return Required RTF as ASCII.
       }
   public
     constructor Create(const CodePage: Integer);
@@ -269,9 +274,9 @@ type
         @param Before [in] Spacing before paragraph in points.
         @param After [in] Spacing after paragraph in points.
       }
-    function AsString: ASCIIString;
+    function Render: TRTF;
       {Generates RTF code for whole document.
-        @return Required RTF as ASCII.
+        @return Required RTF.
       }
     property ColourTable: TRTFColourTable
       read fColourTable write fColourTable;
@@ -295,7 +300,7 @@ uses
   // Delphi
   SysUtils, Generics.Defaults, Windows, Character,
   // Project
-  UConsts, UExceptions, ULocales, URTFUtils, UUtils;
+  UConsts, UExceptions, ULocales, UUtils;
 
 
 { TRTFBuilder }
@@ -306,7 +311,7 @@ procedure TRTFBuilder.AddControl(const Ctrl: ASCIIString);
   }
 begin
   Assert((Ctrl <> '') and not TCharacter.IsWhiteSpace(Char(Ctrl[Length(Ctrl)])),
-    ClassName + '.AddControls: Ctrls ends in whitespace');
+    ClassName + '.AddControls: Ctrl ends in whitespace');
   AppendBody(Ctrl);
   fInControls := True;
 end;
@@ -415,6 +420,14 @@ begin
   AddControl(RTFControl(rcPar));
   AppendBody(EOL);
   fInControls := False;
+end;
+
+function TRTFBuilder.Render: TRTF;
+  {Generates RTF code for whole document.
+    @return Required RTF.
+  }
+begin
+  Result := TRTF.Create(AsString);
 end;
 
 procedure TRTFBuilder.ResetCharStyle;
