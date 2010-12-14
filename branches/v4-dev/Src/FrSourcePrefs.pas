@@ -174,7 +174,7 @@ type
         @param HiliteAttrs [in] Attributes of highlighter used to render
           preview.
       }
-    function Generate: ASCIIString;
+    function Generate: TRTF;
       {Generate RTF code used to render preview.
         @return Required RTF code.
       }
@@ -193,6 +193,7 @@ begin
   SelectCommentStyle(Prefs.SourceCommentStyle);
   chkSyntaxHighlighting.Checked := Prefs.SourceSyntaxHilited;
   (fHiliteAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
+  fHiliteAttrs.ResetDefaultFont;
   // Update state of controls and preview
   UpdateControlState;
   UpdatePreview;
@@ -344,12 +345,9 @@ begin
   Preview := TSourcePrefsPreview.Create(GetCommentStyle, fHiliteAttrs);
   try
     // Display preview
-    // todo: change Preview to generate RTF data
-    TRichEditHelper.Load(
-      frmPreview.RichEdit, TRTF.Create(Preview.Generate)
-    );
+    TRichEditHelper.Load(frmPreview.RichEdit, Preview.Generate);
   finally
-    FreeAndNil(Preview);
+    Preview.Free;
   end;
 end;
 
@@ -388,7 +386,7 @@ begin
   fHiliteAttrs := HiliteAttrs;
 end;
 
-function TSourcePrefsPreview.Generate: ASCIIString;
+function TSourcePrefsPreview.Generate: TRTF;
   {Generate RTF code used to render preview.
     @return Required RTF code.
   }
@@ -396,7 +394,7 @@ var
   Hiliter: ISyntaxHiliter;    // syntax highlighter
 begin
   Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
-  Result := StringToASCIIString(Hiliter.Hilite(SourceCode, fHiliteAttrs));
+  Result := TRTF.Create(Hiliter.Hilite(SourceCode, fHiliteAttrs));
 end;
 
 function TSourcePrefsPreview.SourceCode: string;
