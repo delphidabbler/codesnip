@@ -40,80 +40,51 @@ interface
 
 
 uses
-  // Delphi
-  Classes,
   // Project
-  UEncodings, UHiddenRichEdit;
+  {UHiddenRichEdit, }URTFUtils;
 
 
 type
 
-  {
-  TRTFMerger:
-    Class that can merge RTF documents into a master document.
-  }
+  ///  <summary>
+  ///  Class that can merge the RTF code of complete documents.
+  ///  </summary>
   TRTFMerger = class(THiddenRichEdit)
   public
-    constructor Create(const MasterRTF: ASCIIString);
-      {Class constructor. Sets up object.
-        @param MasterRTF [in] RTF code of document to receive merges.
-      }
+    ///  <summary>Object constructor. Sets up object with master RTF document
+    ///  code into which other document code can be merged.</summary>
+    constructor Create(const MasterRTF: TRTF);
+    ///  <summary>Replaces first occurence of given placeholder text in master
+    ///  document with given RTF code.</summary>
+    ///  <remarks>If placeholder text can't be found no action is taken.
+    ///  </remarks>
     procedure ReplacePlaceholder(const Placeholder: string;
-      const RTF: ASCIIString);
-      {Replaces placeholder text in rich edit with new content.
-        @param Placeholder [in] Place holder text to be replaced.
-        @param RTF [in] RTF code to replace place holder.
-      }
-    procedure SaveToStream(const Stream: TStream);
-      {Saves merged document to stream.
-        @param Stream [in] Stream that receives RTF code of document.
-      }
+      const RTF: TRTF);
+    /// <summary>Renders and returns merged document.</summary>
+    function Render: TRTF;
   end;
 
 
 implementation
 
 
-uses
-  // Delphi
-  SysUtils,
-  // Project
-  URTFUtils;
-
-
 { TRTFMerger }
 
-constructor TRTFMerger.Create(const MasterRTF: ASCIIString);
-  {Class constructor. Sets up object.
-    @param MasterRTF [in] RTF code of document to receive merges.
-  }
+constructor TRTFMerger.Create(const MasterRTF: TRTF);
 begin
   inherited Create;
-  // todo: change constructor to take RTF data parameter
-  TRichEditHelper.Load(RichEdit, TRTF.Create(MasterRTF));
+  TRichEditHelper.Load(RichEdit, MasterRTF);
+end;
+
+function TRTFMerger.Render: TRTF;
+begin
+  Result := TRichEditHelper.Save(RichEdit);
 end;
 
 procedure TRTFMerger.ReplacePlaceholder(const Placeholder: string;
-  const RTF: ASCIIString);
-  {Replaces placeholder text in rich edit with new content.
-    @param Placeholder [in] Place holder text to be replaced.
-    @param RTF [in] RTF code to replace place holder.
-  }
+  const RTF: TRTF);
 begin
-  // todo: change param type to TRTFData
-  TRichEditHelper.Insert(RichEdit, TRTF.Create(RTF), Placeholder);
-end;
-
-procedure TRTFMerger.SaveToStream(const Stream: TStream);
-  {Saves merged document to stream.
-    @param Stream [in] Stream that receives RTF code of document.
-  }
-var
-  RTF: TRTF;  // RTF code saved from rich edit control
-begin
-  // todo: change to function that returns TRTF
-  RTF := TRichEditHelper.Save(RichEdit);
-  RTF.ToStream(Stream);
+  TRichEditHelper.Insert(RichEdit, RTF, Placeholder);
 end;
 
 end.

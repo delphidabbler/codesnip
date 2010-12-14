@@ -141,7 +141,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UHiliters, UColours, UConsts, UEncodings, URTFMerger, UUtils;
+  Hiliter.UHiliters, UColours, UConsts, UEncodings, URTFMerger, URTFUtils,
+  UUtils;
 
 
 { TRTFRoutineDoc }
@@ -166,16 +167,16 @@ begin
   // Insert highlighted source code in builder document. We have to do this here
   // since hiliter object generates a complete RTF document which can't be
   // simply added to document using RTF builder - it has to be merged in.
-  with TRTFMerger.Create(fBuilder.Render.ToRTFCode) do
+  with TRTFMerger.Create(fBuilder.Render) do
     try
       ReplacePlaceholder(
-        cSourceCodePlaceholder, StringToASCIIString(HiliteSource)
+        cSourceCodePlaceholder, TRTF.Create(HiliteSource)
       );
-      SaveToStream(DocStream);
+      Render.ToStream(DocStream);
     finally
       Free;
     end;
-  FreeAndNil(fBuilder);
+  fBuilder.Free;
 end;
 
 function TRTFRoutineDoc.HiliteSource: string;
