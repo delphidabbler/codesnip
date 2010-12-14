@@ -112,6 +112,11 @@ type
       const AEncodingType: TEncodingType; const AllStream: Boolean = False);
       overload;
     ///  <summary>
+    ///  Constructs a copy of another TEncodedData record.
+    ///  </summary>
+    ///  <param name="AData">TEncodedData [in] Record to be copied.</param>
+    constructor Create(const AData: TEncodedData); overload;
+    ///  <summary>
     ///  Returns data as a string. Encoding type is used to decode data into
     ///  string.
     ///  </summary>
@@ -772,7 +777,7 @@ end;
 constructor TEncodedData.Create(const AData: TBytes;
   const AEncodingType: TEncodingType);
 begin
-  fData := AData;
+  fData := Copy(AData);
   fEncodingType := AEncodingType;
 end;
 
@@ -783,21 +788,28 @@ var
 begin
   Encoding := TEncodingHelper.GetEncoding(AEncodingType);
   try
-    Create(Encoding.GetBytes(AStr), AEncodingType);
+    fData := Encoding.GetBytes(AStr);
   finally
     TEncodingHelper.FreeEncoding(Encoding);
   end;
+  fEncodingType := AEncodingType;
 end;
 
 constructor TEncodedData.Create(const AStream: TStream;
   const AEncodingType: TEncodingType; const AllStream: Boolean);
 begin
-  fEncodingType := AEncodingType;
   if AllStream then
     AStream.Position := 0;
   SetLength(fData, AStream.Size - AStream.Position);
   if Length(fData) > 0 then
     AStream.ReadBuffer(Pointer(fData)^, Length(fData));
+  fEncodingType := AEncodingType;
+end;
+
+constructor TEncodedData.Create(const AData: TEncodedData);
+begin
+  fData := Copy(AData.fData);
+  fEncodingType := AData.fEncodingType;
 end;
 
 function TEncodedData.ToString: string;
