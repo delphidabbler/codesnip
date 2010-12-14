@@ -41,11 +41,10 @@ interface
 
 uses
   // Project
-  {UHiddenRichEdit, }URTFUtils;
+  UHiddenRichEdit, URTFUtils;
 
 
 type
-
   ///  <summary>
   ///  Class that can merge the RTF code of complete documents.
   ///  </summary>
@@ -60,7 +59,7 @@ type
     ///  </remarks>
     procedure ReplacePlaceholder(const Placeholder: string;
       const RTF: TRTF);
-    /// <summary>Renders and returns merged document.</summary>
+    ///  <summary>Renders and returns merged document.</summary>
     function Render: TRTF;
   end;
 
