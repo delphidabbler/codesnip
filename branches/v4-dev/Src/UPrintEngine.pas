@@ -48,35 +48,35 @@ uses
 
 
 type
-
-  {
-  TPrintMargins:
-    Defines the page margins on printed output, in pixels.
-  }
+  ///  <summary>
+  ///  Record that defines the page margins on printed output, in pixels.
+  ///  </summary>
   TPrintMargins = record
     Left, Top, Right, Bottom: Integer;  // the four margins
   end;
 
-  {
-  TPrintEngine:
-    Class that uses a rich edit control to print a rich text format document.
-  }
+type
+  ///  <summary>
+  ///  Class that prints suitably formatted documents.
+  ///  </summary>
+  ///  <remarks>
+  ///  "Suitable formatted" documents comprise RTF code. The class uses a
+  ///  hidden rich edit control to these documents.
+  ///  </remarks>
   TPrintEngine = class(THiddenRichEdit)
   private
-    fTitle: string;
-      {Value of Title property}
+    var
+      ///  <summary>Value of Title property</summary>
+      fTitle: string;
+    ///  <summary>Gets print margins from page setup information.</summary>
     function GetPrintMargins: TPrintMargins;
-      {Gets print margins from page setup information.
-        @return Required margins.
-      }
   public
+    ///  <summary>Prints given RTF document.</summary>
     procedure Print(const Document: TRTF);
-      {Prints a document.
-        @param Document [in] Stream containing document to be printed, in rich
-          text format.
-      }
+    ///  <summary>Title of document that appears in print spooler.</summary>
+    ///  <remarks>A default title is used if Title is not set or is set to
+    ///  empty string.</remarks>
     property Title: string read fTitle write fTitle;
-      {Title that appears in print spooler}
   end;
 
 
@@ -93,23 +93,18 @@ uses
 { TPrintEngine }
 
 function TPrintEngine.GetPrintMargins: TPrintMargins;
-  {Gets print margins from page setup information.
-    @return Required margins.
-  }
 
   // ---------------------------------------------------------------------------
+  ///  <summary>Converts inches to horizontal pixels on printer's canvas.
+  ///  </summary>
   function InchesToPixelsX(const Inches: Double): Integer;
-    {Converts inches to horizontal pixels on printer's canvas.
-      @param Inches [in] Measurement to covert.
-    }
   begin
     Result := InchesToPixels(Printer.Handle, Inches, axX);
   end;
 
+  ///  <summary>Converts inches to vertical pixels on printer's canvas.
+  ///  </summary>
   function InchesToPixelsY(const Inches: Double): Integer;
-    {Converts inches to vertical pixels on printer's canvas.
-      @param Inches [in] Measurement to covert.
-    }
   begin
     Result := InchesToPixels(Printer.Handle, Inches, axY);
   end;
@@ -124,16 +119,13 @@ begin
 end;
 
 procedure TPrintEngine.Print(const Document: TRTF);
-  // todo: candidate for TEncodedData
-  {Prints a document.
-    @param Document [in] Stream containing document to be printed, in rich text
-      format.
-  }
 var
-  PrintMargins: TPrintMargins;
+  PrintMargins: TPrintMargins;  // page margins
+  DocTitle: string;             // document title for print spooler
+resourcestring
+  sDefTitle = 'CodeSnip document';  // default document title
 begin
   // Load document into engine
-  // todo: check assumed ASCII encoding is correct
   TRichEditHelper.Load(RichEdit, Document);
   // Set up page margins
   PrintMargins := GetPrintMargins;
@@ -143,8 +135,13 @@ begin
     Printer.PageWidth - PrintMargins.Right,
     Printer.PageHeight - PrintMargins.Bottom
   );
+  // Set title
+  if fTitle = '' then
+    DocTitle := sDefTitle
+  else
+    DocTitle := fTitle;
   // Perform printing
-  RichEdit.Print(fTitle);
+  RichEdit.Print(DocTitle);
 end;
 
 end.
