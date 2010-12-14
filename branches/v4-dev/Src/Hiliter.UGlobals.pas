@@ -126,6 +126,9 @@ type
       {Sets size of font to use for all output.
         @param AFontSize Required font size in points.
       }
+    procedure ResetDefaultFont;
+      {Resets font name and size to default value.
+      }
     function GetElement(const Elem: THiliteElement): IHiliteElemAttrs;
       {Gets the highlight attributes of a highlighter element.
         @param Elem Required element.
