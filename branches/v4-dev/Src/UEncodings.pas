@@ -372,6 +372,15 @@ type
 function StringToASCIIString(const S: string): ASCIIString;
 
 ///  <summary>
+///  Converts an array of bytes into an ANSI string using ASCII code page.
+///  </summary>
+///  <remarks>
+///  Byte array is assumed to contain only valid ASCII characters. It is copied
+///  unprocessed.
+///  </remarks>
+function BytesToASCIIString(const Bytes: TBytes): ASCIIString;
+
+///  <summary>
 ///  Checks if an encoding supports all the characters in a given string.
 ///  Returns True if all characters of the string convert correctly or False if
 ///  not.
@@ -445,6 +454,11 @@ begin
   Result := BytesToAnsiString(
     TEncoding.ASCII.GetBytes(S), TEncodingHelper.ASCIICodePage
   );
+end;
+
+function BytesToASCIIString(const Bytes: TBytes): ASCIIString;
+begin
+  Result := BytesToAnsiString(Bytes, TEncodingHelper.ASCIICodePage);
 end;
 
 function EncodingSupportsString(const S: UnicodeString;
