@@ -344,7 +344,10 @@ begin
   Preview := TSourcePrefsPreview.Create(GetCommentStyle, fHiliteAttrs);
   try
     // Display preview
-    RTFLoadFromString(frmPreview.RichEdit, Preview.Generate);
+    // todo: change Preview to generate RTF data
+    TRichEditHelper.Load(
+      frmPreview.RichEdit, TRTF.Create(Preview.Generate)
+    );
   finally
     FreeAndNil(Preview);
   end;

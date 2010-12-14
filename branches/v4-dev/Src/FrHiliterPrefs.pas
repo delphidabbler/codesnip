@@ -484,6 +484,7 @@ var
   LineIdx: Integer;     // loops thru lines of example
 begin
   // Create builder object to create RTF document
+  // todo: change TRTFBuilder to generate TRTF rather than ASCII string
   RTF := TRTFBuilder.Create(0); // use default code page
   try
     // Set up font and colour tables
@@ -615,7 +616,7 @@ procedure THiliterPrefsFrame.UpdatePreview;
   {Updates preview of highlighting of current highlighter element.
   }
 begin
-  RTFLoadFromString(frmExample.RichEdit, GenerateRTF);
+  TRichEditHelper.Load(frmExample.RichEdit, TRTF.Create(GenerateRTF));
 end;
 
 initialization

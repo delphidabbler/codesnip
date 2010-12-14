@@ -53,16 +53,6 @@ type
     Class that can merge RTF documents into a master document.
   }
   TRTFMerger = class(THiddenRichEdit)
-  private
-    procedure Merge(const RTF: ASCIIString);
-      {Merges RTF code into master document at current position. Any selected
-      text is deleted.
-        @param RTF [in] RTF code to be merged in.
-      }
-    procedure SelectText(const Text: string);
-      {Selects first occurence of text in rich edit control.
-        @param Text [in] Text to be selected.
-      }
   public
     constructor Create(const MasterRTF: ASCIIString);
       {Class constructor. Sets up object.
@@ -85,6 +75,8 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   URTFUtils;
 
@@ -97,16 +89,8 @@ constructor TRTFMerger.Create(const MasterRTF: ASCIIString);
   }
 begin
   inherited Create;
-  RTFLoadFromString(RichEdit, MasterRTF);
-end;
-
-procedure TRTFMerger.Merge(const RTF: ASCIIString);
-  {Merges RTF code into master document at current position. Any selected text
-  is deleted.
-    @param RTF [in] RTF code to be merged in.
-  }
-begin
-  RTFInsertString(RichEdit, RTF);
+  // todo: change constructor to take RTF data parameter
+  TRichEditHelper.Load(RichEdit, TRTF.Create(MasterRTF));
 end;
 
 procedure TRTFMerger.ReplacePlaceholder(const Placeholder: string;
@@ -116,25 +100,20 @@ procedure TRTFMerger.ReplacePlaceholder(const Placeholder: string;
     @param RTF [in] RTF code to replace place holder.
   }
 begin
-  SelectText(Placeholder);
-  Merge(RTF);
+  // todo: change param type to TRTFData
+  TRichEditHelper.Insert(RichEdit, TRTF.Create(RTF), Placeholder);
 end;
 
 procedure TRTFMerger.SaveToStream(const Stream: TStream);
   {Saves merged document to stream.
     @param Stream [in] Stream that receives RTF code of document.
   }
+var
+  RTF: TRTF;  // RTF code saved from rich edit control
 begin
-  RTFSaveToStream(RichEdit, Stream);
-end;
-
-procedure TRTFMerger.SelectText(const Text: string);
-  {Selects first occurence of text in rich edit control.
-    @param Text [in] Text to be selected.
-  }
-begin
-  RichEdit.SelStart := RichEdit.FindText(Text, 0, MaxInt, []);
-  RichEdit.SelLength := Length(Text);
+  // todo: change to function that returns TRTF
+  RTF := TRichEditHelper.Save(RichEdit);
+  RTF.ToStream(Stream);
 end;
 
 end.

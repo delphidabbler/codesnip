@@ -41,7 +41,7 @@ interface
 
 uses
   // Delphi
-  Classes, ComCtrls,
+  SysUtils, Classes, ComCtrls,
   // Project
   UEncodings;
 
@@ -96,6 +96,148 @@ type
     rcIgnore                // denotes following control can be ignored
   );
 
+type
+  ///  <summary>
+  ///  Record that encapsulate rich text markup code.
+  ///  </summary>
+  ///  <remarks>
+  ///  Valid rich text markup contains only ASCII characters.
+  ///  </remarks>
+  TRTF = record
+  strict private
+    ///  <summary>Byte array that stores RTF code as bytes</summary>
+    fData: TBytes;
+  public
+    ///  <summary>Initialises record from raw binary data.</summary>
+    ///  <param name="ABytes">TBytes [in] Array storing RTF code as bytes.
+    ///  </param>
+    constructor Create(const ABytes: TBytes); overload;
+    ///  <summary>Initialises record from a stream of character data.</summary>
+    ///  <param name="AStream">TStream [in] Stream containing RTF code.</param>
+    ///  <param name="AEncoding">TEncoding [in] Encoding to be used to decode
+    ///  characters in stream.</param>
+    ///  <param name="ReadAll">Boolean [in] Flag that indicates if the whole
+    ///  stream is to be read (True) or stream is to be read from current
+    ///  position (False).</param>
+    constructor Create(const AStream: TStream; const AEncoding: TEncoding;
+      const ReadAll: Boolean = False); overload;
+    ///  <summary>Initialises record from ASCII RTF code.</summary>
+    ///  <param name="ARTFCode">ASCIIString [in] ASCII string containing RTF
+    ///  code.</param>
+    constructor Create(const ARTFCode: ASCIIString); overload;
+    ///  <summary>Initialises record from RTF code stored in Unicode string.
+    ///  </summary>
+    ///  <param name="AStr">UnicodeString [in] Unicode string containing ASCII
+    ///  code.</param>
+    ///  <remarks>An exception is raised if AStr contains any non-ASCII
+    ///  characters.</remarks>
+    constructor Create(const AStr: UnicodeString); overload;
+    ///  <summary>Initialises record from encoded data.</summary>
+    ///  <param name="AData">TEncodedData [in] Encoded data record containing
+    ///  RTF code.</param>
+    ///  <remarks>An exception is raised if AData contains any non-ASCII
+    ///  characters.</remarks>
+    constructor Create(const AData: TEncodedData); overload;
+    ///  <summary>Returns RTF code as an array of bytes.</summary>
+    function ToBytes: TBytes;
+    ///  <summary>Returns RTF code as an ASCII string.</summary>
+    function ToRTFCode: ASCIIString;
+    ///  <summary>Returns RTF code as a Unicode string.</summary>
+    ///  <remarks>Returned string contains only ASCII characters.</remarks>
+    function ToString: UnicodeString;
+    ///  <summary>Copies RTF code to a stream, optionally overwriting any
+    ///  existing content in the stream.</summary>
+    procedure ToStream(const Stream: TStream; const Overwrite: Boolean = False);
+    ///  <summary>Checks if a Unicode string contains only valid RTF characters.
+    ///  </summary>
+    function IsValidRTFCode(const AStr: UnicodeString): Boolean;
+  end;
+
+type
+  ///  <summary>Class of exception raised by TRTF</summary>
+  ERTF = class(Exception);
+
+type
+  ///  <summary>
+  ///  Record containing only static methods that assist in working with rich
+  ///  edit controls.
+  ///  </summary>
+  TRichEditHelper = record
+  strict private
+    ///  <summary>
+    ///  Callback routine used to read data from a stream that is being inserted
+    ///  into a rich edit control.
+    ///  </summary>
+    ///  <param name="Stream">TStream [in] Reference to stream being read.
+    ///  (Actual param is documented as a DWORD, but we cast to TStream).
+    ///  </param>
+    ///  <param name="pBuff">Pointer [in] Pointer to buffer to receive data read
+    ///  from stream.</param>
+    ///  <param name="cb">LongInt [in] Number of bytes requested to be read.
+    ///  </param>
+    ///  <param name="pcb">PLongInt [in] Pointer to variable to receive number
+    ///  of bytes actually read from stream.</param>
+    ///  <returns>LongWord - Success / error code. 0 indicates succcess. None
+    ///  zero indicates an error condition.</returns>
+    ///  <remarks>
+    ///  <para>This routine is called by a rich edit control when processing the
+    ///  EM_STREAMIN message.</para>
+    ///  <para>NOTE: we can use this method is a simple callback function
+    ///  because static functions have no additional hidden parameters.</para>
+    ///  </remarks>
+    class function EditStreamReader(Stream: TStream; pBuff: Pointer;
+      cb: LongInt; pcb: PLongInt): LongWord; stdcall; static;
+    ///  <summary>
+    ///  Inserts a stream of rich text code to current selection position in a
+    ///  rich edit control. If text is selected in the control the selection is
+    ///  first deleted.
+    ///  </summary>
+    ///  <param name="RE">TRichEdit [in] Rich edit control in which RTF code is
+    ///  to be inserted.</param>
+    ///  <param name="Stream">TStream [in] Stream containing valid rich text
+    ///  code to be inserted.</param>
+    class procedure InsertStream(const RE: TRichEdit; const Stream: TStream);
+      static;
+  public
+    ///  <summary>
+    ///  Inserts RTF code into rich edit control at current selection position.
+    ///  </summary>
+    ///  <param name="RE">TRichEdit [in] Rich edit control.</param>
+    ///  <param name="RTF">TRTF [in] Contains rich text code to be inserted.
+    ///  </param>
+    ///  <remarks>
+    ///  Any text selected in RE will be deleted before insertion takes place.
+    ///  </remarks>
+    class procedure Insert(const RE: TRichEdit; const RTF: TRTF); overload;
+      static;
+    ///  <summary>
+    ///  Inserts RTF code into rich edit control, replacing first occurence of
+    ///  some given text.
+    ///  </summary>
+    ///  <param name="RE">TRichEdit [in] Rich edit control.</param>
+    ///  <param name="RTF">TRTF [in] Contains rich text code to be inserted.
+    ///  </param>
+    ///  <param name="ReplaceText">string [in] Text to be replaced.</param>
+    ///  <remarks>
+    ///  Only the first occurence of text is replaced. If text is not found then
+    ///  no insertion takes place.
+    ///  </remarks>
+    class procedure Insert(const RE: TRichEdit; const RTF: TRTF;
+      const ReplaceText: string); overload; static;
+    ///  <summary>
+    ///  Loads RTF code into a rich edit control, replacing existing content.
+    ///  </summary>
+    ///  <param name="RE">TRichEdit [in] Rich edit control.</param>
+    ///  <param name="RTF">TRTF [in] Contains rich text code to be loaded.
+    ///  </param>
+    class procedure Load(const RE: TRichEdit; const RTF: TRTF); static;
+    ///  <summary>
+    ///  Saves RTF code from a richedit control.
+    ///  </summary>
+    ///  <param name="RE">TRichEdit [in] Rich edit control.</param>
+    ///  <returns>TRTF containing RTF code.</returns>
+    class function Save(const RE: TRichEdit): TRTF; static;
+  end;
 
 function IsValidRTFCode(const Content: string): Boolean;
   {Checks if document content is valid rich text code.
@@ -151,40 +293,13 @@ function RTFUnicodeSafeDestination(const DestCtrl: TRTFControl;
     @return Destination RTF, with special Unicode sub-destination if needed.
   }
 
-procedure RTFInsertString(const RE: TRichEdit; const RTF: ASCIIString);
-  {Inserts rich text code to current selection position in a rich edit control.
-  If text is selected in the control the selection is first deleted.
-    @param RE [in] Rich edit control in which RTF code is to be inserted.
-    @param RTF [in] String containing valid rich text code to be inserted.
-  }
-
-procedure RTFLoadFromStream(const RE: TRichEdit; const Stream: TStream);
-  {Loads RTF code into an RTF control, replacing all the control's current
-  content.
-    @param RE [in] Rich edit control to receive RTF code.
-    @param RTF [in] Stream containing valid rich text code.
-  }
-
-procedure RTFLoadFromString(const RE: TRichEdit; const RTF: ASCIIString);
-  {Loads RTF code into an RTF control, replacing all the control's current
-  content.
-    @param RE [in] Rich edit control to receive RTF code.
-    @param RTF [in] String containing valid rich text code.
-  }
-
-procedure RTFSaveToStream(const RE: TRichEdit; const Stream: TStream);
-  {Saves RTF code from rich edit control into a stream.
-    @param RE [in] Rich edit control whose content is to be saved.
-    @param Stream [in] Stream that receives rich text code.
-  }
-
 
 implementation
 
 
 uses
   // Delphi
-  SysUtils, StrUtils, Windows, RichEdit,
+  StrUtils, Windows, RichEdit,
   // Project
   UExceptions;
 
@@ -335,20 +450,90 @@ begin
   end;
 end;
 
-function EditStreamReader(Stream: TStream; pBuff: Pointer;
-  cb: LongInt; pcb: PLongInt): DWORD; stdcall;
-  {Callback routine used to read data from stream that is being inserted into a
-  rich edit control. This routine is called by rich edit control when processing
-  EM_STREAMIN message.
-    @param Stream [in] Reference to TStream being read. (Actual param is
-      supposed to be DWORD, but we cast to TStream).
-    @param pBuff [in] Pointer to buffer to receive data read from stream.
-    @param cb [in] Number of bytes requested to be read.
-    @param pcb [in] Pointer to variable to receive number of bytes actually
-      read from stream.
-    @return Success / error code. 0 indicates succcess. None-zero indicates an
-      error condition.
-  }
+{ TRTF }
+
+constructor TRTF.Create(const AStream: TStream; const AEncoding: TEncoding;
+  const ReadAll: Boolean);
+var
+  ByteCount: Integer;
+begin
+  if ReadAll then
+    AStream.Position := 0;
+  ByteCount := AStream.Size - AStream.Position;
+  SetLength(fData, ByteCount);
+  AStream.ReadBuffer(Pointer(fData)^, ByteCount);
+end;
+
+constructor TRTF.Create(const ABytes: TBytes);
+begin
+  fData := Copy(ABytes);
+end;
+
+constructor TRTF.Create(const AData: TEncodedData);
+resourcestring
+  sErrorMsg = 'Encoded data must contain only valid ASCII characters';
+var
+  DataStr: string;
+begin
+  if AData.EncodingType = etASCII then
+    fData := Copy(AData.Data)
+  else
+  begin
+    DataStr := AData.ToString;
+    if not IsValidRTFCode(DataStr) then
+      raise ERTF.Create(sErrorMsg);
+    fData := TEncoding.ASCII.GetBytes(DataStr);
+  end;
+end;
+
+constructor TRTF.Create(const ARTFCode: ASCIIString);
+begin
+  fData := BytesOf(ARTFCode);
+end;
+
+constructor TRTF.Create(const AStr: UnicodeString);
+resourcestring
+  sErrorMsg = 'String "%s" must contain only valid ASCII characters';
+begin
+  if not IsValidRTFCode(AStr) then
+    raise ERTF.CreateFmt(sErrorMsg, [AStr]);
+  fData := TEncoding.ASCII.GetBytes(AStr);
+end;
+
+function TRTF.IsValidRTFCode(const AStr: UnicodeString): Boolean;
+begin
+  Result := EncodingSupportsString(AStr, TEncoding.ASCII);
+end;
+
+function TRTF.ToBytes: TBytes;
+begin
+  Result := Copy(fData);
+end;
+
+function TRTF.ToRTFCode: ASCIIString;
+begin
+  Result := BytesToASCIIString(fData);
+end;
+
+procedure TRTF.ToStream(const Stream: TStream; const Overwrite: Boolean);
+begin
+  if Overwrite then
+  begin
+    Stream.Size := Length(fData);
+    Stream.Position := 0;
+  end;
+  Stream.WriteBuffer(Pointer(fData)^, Length(fData));
+end;
+
+function TRTF.ToString: UnicodeString;
+begin
+  Result := TEncoding.ASCII.GetString(fData);
+end;
+
+{ TRichEditHelper }
+
+class function TRichEditHelper.EditStreamReader(Stream: TStream; pBuff: Pointer;
+  cb: Integer; pcb: PLongInt): LongWord;
 begin
   // Assume no error
   Result := $0000;
@@ -361,18 +546,41 @@ begin
   end;
 end;
 
-procedure RTFInsertStream(const RE: TRichEdit; const Stream: TStream);
-  {Inserts a stream of rich text code to current selection position in a rich
-  edit control. If text is selected in the control the selection is first
-  deleted.
-    @param RE [in] Rich edit control in which RTF code is to be inserted.
-    @param Stream [in] Stream containing valid rich text code to be inserted.
-  }
+class procedure TRichEditHelper.Insert(const RE: TRichEdit;
+  const RTF: TRTF);
+var
+  Stream: TStream;
+begin
+  Stream := TMemoryStream.Create;
+  try
+    RTF.ToStream(Stream);
+    Stream.Position := 0;
+    InsertStream(RE, Stream);
+  finally
+    Stream.Free;
+  end;
+end;
+
+class procedure TRichEditHelper.Insert(const RE: TRichEdit; const RTF: TRTF;
+  const ReplaceText: string);
+var
+  FoundIdx: Integer;  // index of ReplaceText in RE
+begin
+  FoundIdx := RE.FindText(ReplaceText, 0, MaxInt, []);
+  if FoundIdx = -1 then
+    Exit;
+  RE.SelStart := FoundIdx;
+  RE.SelLength := Length(ReplaceText);
+  Insert(RE, RTF);
+end;
+
+class procedure TRichEditHelper.InsertStream(const RE: TRichEdit;
+  const Stream: TStream);
 const
   // Flags used in EM_STREAMIN message call
   cFlags = SFF_SELECTION or SF_RTF or SFF_PLAINRTF;
   // Bug error message
-  cStreamErrMsg = 'RTFInsertStream: Error inserting stream';
+  cStreamErrMsg = 'TRTFCtrlHelper.InsertStream: Error inserting stream';
 var
   EditStream: TEditStream;  // defines callback used to read inserted RTF
 begin
@@ -393,60 +601,35 @@ begin
   end;
 end;
 
-procedure RTFInsertString(const RE: TRichEdit; const RTF: ASCIIString);
-  {Inserts rich text code to current selection position in a rich edit control.
-  If text is selected in the control the selection is first deleted.
-    @param RE [in] Rich edit control in which RTF code is to be inserted.
-    @param RTF [in] String containing valid rich text code to be inserted.
-  }
+class procedure TRichEditHelper.Load(const RE: TRichEdit; const RTF: TRTF);
 var
-  Stm: TStringStream; // stream onto RTF code string
-begin
-  Stm := TStringStream.Create(AnsiString(RTF));
-  try
-    RTFInsertStream(RE, Stm);
-  finally
-    Stm.Free;
-  end;
-end;
-
-procedure RTFLoadFromStream(const RE: TRichEdit; const Stream: TStream);
-  {Loads RTF code into an RTF control, replacing all the control's current
-  content.
-    @param RE [in] Rich edit control to receive RTF code.
-    @param RTF [in] Stream containing valid rich text code.
-  }
+  Stream: TStream;
 begin
   RE.PlainText := False;
-  RE.MaxLength := Stream.Size; // long docs may not display if MaxLength not set
-  RE.Lines.LoadFromStream(Stream);
-end;
-
-procedure RTFLoadFromString(const RE: TRichEdit; const RTF: ASCIIString);
-  {Loads RTF code into an RTF control, replacing all the control's current
-  content.
-    @param RE [in] Rich edit control to receive RTF code.
-    @param RTF [in] String containing valid rich text code.
-  }
-var
-  Stm: TStringStream; // stream onto RTF code
-begin
-  // Load stream containing RTF code into control
-  Stm := TStringStream.Create(AnsiString(RTF));
+  Stream := TMemoryStream.Create;
   try
-    RTFLoadFromStream(RE, Stm);
+    RTF.ToStream(Stream);
+    Stream.Position := 0;
+    // must set MaxLength or long documents may not display
+    RE.MaxLength := Stream.Size;
+    RE.Lines.LoadFromStream(Stream, TEncoding.ASCII);
   finally
-    Stm.Free;
+    Stream.Free;
   end;
 end;
 
-procedure RTFSaveToStream(const RE: TRichEdit; const Stream: TStream);
-  {Saves RTF code from rich edit control into a stream.
-    @param RE [in] Rich edit control whose content is to be saved.
-    @param Stream [in] Stream that receives rich text code.
-  }
+class function TRichEditHelper.Save(const RE: TRichEdit): TRTF;
+var
+  Stream: TStream;
 begin
-  RE.Lines.SaveToStream(Stream);
+  RE.PlainText := False;
+  Stream := TMemoryStream.Create;
+  try
+    RE.Lines.SaveToStream(Stream, TEncoding.ASCII);
+    Result := TRTF.Create(Stream, TEncoding.ASCII, True);
+  finally
+    Stream.Free;
+  end;
 end;
 
 end.

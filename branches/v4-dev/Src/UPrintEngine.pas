@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -85,7 +85,7 @@ implementation
 
 uses
   // Delphi
-  Printers,
+  SysUtils, Printers,
   // Project
   UMeasurement, UPrintInfo, URTFUtils;
 
@@ -124,6 +124,7 @@ begin
 end;
 
 procedure TPrintEngine.Print(const Document: TStream);
+  // todo: candidate for TEncodedData
   {Prints a document.
     @param Document [in] Stream containing document to be printed, in rich text
       format.
@@ -132,7 +133,10 @@ var
   PrintMargins: TPrintMargins;
 begin
   // Load document into engine
-  RTFLoadFromStream(RichEdit, Document);
+  // todo: check assumed ASCII encoding is correct
+  TRichEditHelper.Load(
+    RichEdit, TRTF.Create(Document, TEncoding.ASCII, True )
+  );
   // Set up page margins
   PrintMargins := GetPrintMargins;
   RichEdit.PageRect := Rect(

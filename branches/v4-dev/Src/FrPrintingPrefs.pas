@@ -376,15 +376,13 @@ begin
     Builder.AddText(cPlaceholder);
     Builder.EndPara;
     // Load document into rich edit
-    RTFLoadFromString(fRE, Builder.AsString);
+    TRichEditHelper.Load(fRe, TRTF.Create(Builder.AsString));
   finally
     FreeAndNil(Builder);
   end;
   // Merge in source code
-  fRE.SelStart := fRE.FindText(cPlaceholder, 0, MaxInt, []);
-  fRE.SelLength := Length(cPlaceholder);
-  RTFInsertString(
-    fRE, StringToASCIIString(HiliteSource(UseColor, SyntaxPrint))
+  TRichEditHelper.Insert(
+    fRe, TRTF.Create(HiliteSource(UseColor, SyntaxPrint)), cPlaceholder
   );
 end;
 

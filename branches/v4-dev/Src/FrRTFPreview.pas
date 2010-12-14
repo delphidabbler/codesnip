@@ -104,7 +104,8 @@ procedure TRTFPreviewFrame.LoadContent(const DocContent: string);
     @param DocContent [in] Valid RTF document to be displayed.
   }
 begin
-  RTFLoadFromString(reView, StringToASCIIString(DocContent));
+  // todo: chnage this method to take TRTF parameter
+  TRichEditHelper.Load(reView, TRTF.Create(DocContent));
 end;
 
 procedure TRTFPreviewFrame.SetPopupMenu(const Menu: TPopupMenu);
