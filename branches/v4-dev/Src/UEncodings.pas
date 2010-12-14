@@ -63,7 +63,7 @@ type
     etASCII,        // ASCII
     etISO88591,     // ISO-8859-1
     etUTF8,         // UTF-8
-    etUTF16,        // UTF-16
+    etUnicode,      // Unicode (UTF-16)
     etUTF16BE,      // UTF-16BE
     etUTF16LE,      // UTF-16LE
     etWindows1252,  // Windows-1252
@@ -589,7 +589,7 @@ begin
     CodePage := UTF8CodePage;
     FactoryFn := UTF8FactoryFn;
   end;
-  with fMap[etUTF16] do
+  with fMap[etUnicode] do
   begin
     CharSet := UTF16CharSetName;
     IsAnsi := False;
