@@ -243,7 +243,8 @@ begin
   RenderTitledList(sUnitListTitle, TIStringList.Create(Routine.Units));
   RenderTitledList(sDependListTitle, RoutinesToStrings(Routine.Depends));
   RenderTitledList(sXRefListTitle, RoutinesToStrings(Routine.XRef));
-  RenderCompilerInfo(sCompilers, CompilerInfo(Routine));
+  if Routine.Kind <> skFreeform then
+    RenderCompilerInfo(sCompilers, CompilerInfo(Routine));
   if not Routine.Extra.IsEmpty then
     RenderExtra(Routine.Extra);
   if not Routine.UserDefined then
