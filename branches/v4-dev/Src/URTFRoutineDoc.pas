@@ -188,7 +188,7 @@ var
 begin
   // Determine highlighter style: none, colour (default) or mono
   Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
-  Result := Hiliter.Hilite(fSourceCode, fHiliteAttrs);
+  Result := Hiliter.Hilite(fSourceCode, fHiliteAttrs).ToString;
 end;
 
 procedure TRTFRoutineDoc.InitialiseDoc;

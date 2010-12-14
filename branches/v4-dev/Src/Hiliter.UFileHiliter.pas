@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  Hiliter.UGlobals, USourceFileInfo;
+  Hiliter.UGlobals, UEncodings, USourceFileInfo;
 
 
 type
@@ -78,7 +78,7 @@ type
         @param FileType [in] Specifies kind of file that highlighting is to
           target. This determines format of output.
       }
-    function Hilite(const SourceCode, DocTitle: string): string;
+    function Hilite(const SourceCode, DocTitle: string): TEncodedData;
       {Highlights source code. Output is correctly formatted for file type.
         @param SourceCode [in] Source code to be highlighted.
         @param DocTitle [in] Title of document to be outputted. Ignored if
@@ -132,7 +132,7 @@ begin
     Result := nil;
 end;
 
-function TFileHiliter.Hilite(const SourceCode, DocTitle: string): string;
+function TFileHiliter.Hilite(const SourceCode, DocTitle: string): TEncodedData;
   {Highlights source code. Output is correctly formatted for file type.
     @param SourceCode [in] Source code to be highlighted.
     @param DocTitle [in] Title of document to be outputted. Ignored if file type

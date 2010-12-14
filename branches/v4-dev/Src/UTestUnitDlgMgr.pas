@@ -99,7 +99,9 @@ begin
   Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkXHTML);
   TPreviewDlg.Execute(
     Owner,
-    Hiliter.Hilite(TestUnitSource, THiliteAttrsFactory.CreateUserAttrs),
+    Hiliter.Hilite(
+      TestUnitSource, THiliteAttrsFactory.CreateUserAttrs
+    ).ToString,
     Format(sDlgTitle, [Snippet.Name])
   );
 end;

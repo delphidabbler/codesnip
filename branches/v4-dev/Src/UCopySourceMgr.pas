@@ -155,7 +155,7 @@ begin
   Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
   Result := Hiliter.Hilite(
     GenerateSourceCode(View), THiliteAttrsFactory.CreateUserAttrs, ''
-  );
+  ).ToString;
 end;
 
 { TCopySourceMgr }

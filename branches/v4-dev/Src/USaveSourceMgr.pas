@@ -241,7 +241,7 @@ begin
     FileType
   );
   try
-    Result := Hiliter.Hilite(RawSource, GetDocTitle);
+    Result := Hiliter.Hilite(RawSource, GetDocTitle).ToString;
   finally
     Hiliter.Free;
   end;

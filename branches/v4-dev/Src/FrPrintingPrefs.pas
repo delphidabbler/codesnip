@@ -413,7 +413,7 @@ begin
     Attrs := THiliteAttrsFactory.CreatePrintAttrs(fHiliteAttrs, UseColor);
   // Perform highlighting
   Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
-  Result := Hiliter.Hilite(cSourceCode, Attrs);
+  Result := Hiliter.Hilite(cSourceCode, Attrs).ToString;
 end;
 
 initialization
