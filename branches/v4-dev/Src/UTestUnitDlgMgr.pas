@@ -102,6 +102,7 @@ begin
     Hiliter.Hilite(
       TestUnitSource, THiliteAttrsFactory.CreateUserAttrs
     ),
+    dtHTML,
     Format(sDlgTitle, [Snippet.Name])
   );
 end;

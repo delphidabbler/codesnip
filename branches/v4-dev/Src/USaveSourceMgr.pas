@@ -321,12 +321,21 @@ begin
 end;
 
 procedure TSaveSourceMgr.PreviewHandler(Sender: TObject);
+const
+  // Map of source file type to preview document types
+  PreviewDocTypeMap: array[TSourceFileType] of TPreviewDocType = (
+    dtPlainText, dtPlainText, dtHTML, dtRTF
+  );
+var
+  FileType: TSourceFileType;  // type of source file to preview
 begin
+  FileType := fSourceFileInfo.FileTypeFromExt(fSaveDlg.SelectedExt);
   // Display preview dialog box. We use save dialog as owner to ensure preview
   // dialog box is aligned over save dialog box
   TPreviewDlg.Execute(
     fSaveDlg,
-    GenerateOutput(fSourceFileInfo.FileTypeFromExt(fSaveDlg.SelectedExt)),
+    GenerateOutput(FileType),
+    PreviewDocTypeMap[FileType],
     GetDocTitle
   );
 end;

@@ -294,7 +294,10 @@ resourcestring
   sCaption = 'Compiler Directives Preview';
 begin
   TPreviewDlg.Execute(
-    Self.Owner, TEncodedData.Create(fWarnings.Render, etUnicode), sCaption
+    Self.Owner,
+    TEncodedData.Create(fWarnings.Render, etUnicode),
+    dtPlainText,
+    sCaption
   );
 end;
 
