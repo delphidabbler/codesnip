@@ -191,12 +191,6 @@ function ColorToHTML(const Color: TColor): string;
     @return HTML/CSS code for colour.
   }
 
-function IsValidHTMLCode(const Content: string): Boolean;
-  {Checks if document content is valid HTML.
-    @param Content [in] Document content to be checked.
-    @return True if valid HTML.
-  }
-
 
 implementation
 
@@ -207,16 +201,6 @@ uses
   // Project
   UCSSUtils, UExceptions, UURIEncode;
 
-
-function IsValidHTMLCode(const Content: string): Boolean;
-  {Checks if document content is valid HTML.
-    @param Content [in] Document content to be checked.
-    @return True if valid HTML.
-  }
-begin
-  Result := AnsiContainsText(Content, '<html') and
-    AnsiContainsText(Content, '</html>');
-end;
 
 function MakeSafeHTMLText(TheText: string): string;
   {Encodes a string so that any HTML-incompatible characters are replaced with

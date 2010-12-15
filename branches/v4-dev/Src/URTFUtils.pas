@@ -239,11 +239,6 @@ type
     class function Save(const RE: TRichEdit): TRTF; static;
   end;
 
-function IsValidRTFCode(const Content: string): Boolean;
-  {Checks if document content is valid rich text code.
-    @param Content [in] Document content to be checked.
-    @return True if valid rich text.
-  }
 
 function RTFControl(const Ctrl: TRTFControl): ASCIIString; overload;
   {Creates a parameterless RTF control word.
@@ -312,15 +307,6 @@ const
     'colortbl', 'red', 'green', 'blue', 'info', 'title', 'pard', 'par', 'plain',
     'f', 'cf', 'b', 'i', 'ul', 'fs', 'sb', 'sa', 'u', 'upr', 'ud', '*'
   );
-
-function IsValidRTFCode(const Content: string): Boolean;
-  {Checks if document content is valid rich text code.
-    @param Content [in] Document content to be checked.
-    @return True if valid rich text.
-  }
-begin
-  Result := AnsiStartsText('{' + string(RTFControl(rcRTF, 1)), Content);
-end;
 
 function RTFControl(const Ctrl: TRTFControl): ASCIIString;
   {Creates a parameterless RTF control word.
