@@ -43,7 +43,7 @@ uses
   // Delphi
   OleCtrls, SHDocVw, Classes, Controls, ExtCtrls, Menus,
   // Project
-  FrBrowserBase, IntfFrameMgrs, IntfPreview, UCSSBuilder;
+  FrBrowserBase, IntfFrameMgrs, IntfPreview, UCSSBuilder, UEncodings;
 
 
 type
@@ -62,7 +62,7 @@ type
       }
   protected // do not make strict
     { IPreview }
-    procedure Display(const DocContent: string);
+    procedure Display(const DocContent: TEncodedData);
       {Displays document in preview dialog box.
         @param DocContent [in] Content of document to be displayed.
       }
@@ -98,12 +98,12 @@ begin
     AddProperty(CSSMarginProp(cPreviewMargin));
 end;
 
-procedure THTMLPreviewFrame.Display(const DocContent: string);
+procedure THTMLPreviewFrame.Display(const DocContent: TEncodedData);
   {Displays document in preview dialog box.
     @param DocContent [in] Content of document to be displayed.
   }
 begin
-  WBController.IOMgr.LoadFromString(DocContent);
+  WBController.IOMgr.LoadFromString(DocContent.ToString);
 end;
 
 procedure THTMLPreviewFrame.SetPopupMenu(const Menu: TPopupMenu);

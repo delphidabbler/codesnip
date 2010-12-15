@@ -42,7 +42,9 @@ interface
 
 uses
   // Delphi
-  Menus;
+  Menus,
+  // Project
+  UEncodings;
 
 
 type
@@ -53,7 +55,7 @@ type
   }
   IPreview = interface(IInterface)
     ['{85070D46-EB65-4C59-BA60-AE6144037C83}']
-    procedure Display(const DocContent: string);
+    procedure Display(const DocContent: TEncodedData);
       {Displays document in preview dialog box.
         @param DocContent [in] Content of document to be displayed.
       }

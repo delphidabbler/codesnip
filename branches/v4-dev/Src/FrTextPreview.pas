@@ -44,7 +44,7 @@ uses
   // Delphi
   StdCtrls, Classes, Controls, ExtCtrls, Menus,
   // Project
-  FrMemoPreview, IntfFrameMgrs, IntfPreview;
+  FrMemoPreview, IntfFrameMgrs, IntfPreview, UEncodings;
 
 
 type
@@ -64,7 +64,7 @@ type
       {Gets reference to memo control used to display plain text.
         @return Required TMemo reference.
       }
-    procedure LoadContent(const DocContent: string); override;
+    procedure LoadContent(const DocContent: TEncodedData); override;
       {Loads document into memo control.
         @param DocContent [in] Plain text document to be displayed.
       }
@@ -95,12 +95,12 @@ begin
   Result := edDisplay;
 end;
 
-procedure TTextPreviewFrame.LoadContent(const DocContent: string);
+procedure TTextPreviewFrame.LoadContent(const DocContent: TEncodedData);
   {Loads document into memo control.
     @param DocContent [in] Plain text document to be displayed.
   }
 begin
-  edDisplay.Text := DocContent;
+  edDisplay.Text := DocContent.ToString;
 end;
 
 procedure TTextPreviewFrame.SetPopupMenu(const Menu: TPopupMenu);

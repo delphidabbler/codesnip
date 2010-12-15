@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes, StdCtrls, Controls, ExtCtrls, ComCtrls, Menus,
   // Project
-  FrMemoPreview, IntfFrameMgrs, IntfPreview;
+  FrMemoPreview, IntfFrameMgrs, IntfPreview, UEncodings;
 
 
 
@@ -63,7 +63,7 @@ type
       {Gets reference to rich edit control used to display RTF code.
         @return Required TRichEdit reference.
       }
-    procedure LoadContent(const DocContent: string); override;
+    procedure LoadContent(const DocContent: TEncodedData); override;
       {Loads document into rich edit control.
         @param DocContent [in] Valid RTF document to be displayed.
       }
@@ -83,7 +83,7 @@ implementation
 
 uses
   // Project
-  UEncodings, URTFUtils;
+  URTFUtils;
 
 
 {$R *.dfm}
@@ -99,12 +99,11 @@ begin
   Result := reView;
 end;
 
-procedure TRTFPreviewFrame.LoadContent(const DocContent: string);
+procedure TRTFPreviewFrame.LoadContent(const DocContent: TEncodedData);
   {Loads document into rich edit control.
     @param DocContent [in] Valid RTF document to be displayed.
   }
 begin
-  // todo: chnage this method to take TRTF parameter
   TRichEditHelper.Load(reView, TRTF.Create(DocContent));
 end;
 

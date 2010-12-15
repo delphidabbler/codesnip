@@ -101,7 +101,7 @@ begin
     Owner,
     Hiliter.Hilite(
       TestUnitSource, THiliteAttrsFactory.CreateUserAttrs
-    ).ToString,
+    ),
     Format(sDlgTitle, [Snippet.Name])
   );
 end;

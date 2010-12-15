@@ -42,7 +42,9 @@ interface
 
 uses
   // Delphi
-  Forms, Classes, Controls, ExtCtrls, StdCtrls;
+  Forms, Classes, Controls, ExtCtrls, StdCtrls,
+  // Project
+  UEncodings;
 
 
 type
@@ -63,14 +65,14 @@ type
       {Gets reference to frame's custom memo control.
         @return Required control reference.
       }
-    procedure LoadContent(const DocContent: string); virtual; abstract;
+    procedure LoadContent(const DocContent: TEncodedData); virtual; abstract;
       {Loads content into frame's custom memo control.
         @param DocContent [in] Content to be displayed in control. Must have a
           format that is displayed by the control.
       }
   protected // do not make strict
     { IPreview methods: partial implementation }
-    procedure Display(const DocContent: string);
+    procedure Display(const DocContent: TEncodedData);
       {Displays document in preview dialog box.
         @param DocContent [in] Content of document to be displayed.
       }
@@ -136,7 +138,7 @@ begin
   GetMemoCtrl.CopyToClipboard;
 end;
 
-procedure TMemoPreviewFrame.Display(const DocContent: string);
+procedure TMemoPreviewFrame.Display(const DocContent: TEncodedData);
   {Displays document in preview dialog box.
     @param DocContent [in] Content of document to be displayed.
   }

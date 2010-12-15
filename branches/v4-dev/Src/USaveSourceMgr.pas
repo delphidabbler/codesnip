@@ -44,7 +44,7 @@ interface
 
 uses
   // Project
-  UBaseObjects, USaveSourceDlg, USourceFileInfo, USourceGen;
+  UBaseObjects, UEncodings, USaveSourceDlg, USourceFileInfo, USourceGen;
 
 
 type
@@ -104,9 +104,9 @@ type
     ///  <summary>Generates source code in desired format.</summary>
     ///  <param name="FileType">TSourceFileType [in] Type of file. Determines
     ///  output file format.</param>
-    ///  <returns>Formatted source code, syntax highlighted if required.
-    ///  </returns>
-    function GenerateOutput(const FileType: TSourceFileType): string;
+    ///  <returns>TEncodedData - Formatted source code, syntax highlighted if
+    ///  required.</returns>
+    function GenerateOutput(const FileType: TSourceFileType): TEncodedData;
   strict protected
     ///  <summary>Internal constructor. Initialises managed save source dialog
     ///  box and records information about supported file types.</summary>
@@ -153,8 +153,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  FmPreviewDlg, Hiliter.UFileHiliter, UEncodings, UIOUtils, UMessageBox,
-  UOpenDialogHelper, UPreferences;
+  FmPreviewDlg, Hiliter.UFileHiliter, UIOUtils, UMessageBox, UOpenDialogHelper,
+  UPreferences;
 
 
 { TSaveSourceMgr }
@@ -194,8 +194,9 @@ end;
 
 procedure TSaveSourceMgr.DoExecute;
 var
-  Encoding: TEncoding;
-  FileContent: string;
+  Encoding: TEncoding;        // encoding to use for output file
+  FileContent: string;        // output file content before encoding
+  FileType: TSourceFileType;  // type of source file
 begin
   // Set up dialog box
   fSaveDlg.Filter := fSourceFileInfo.FilterString;
@@ -208,9 +209,10 @@ begin
   // Display dialog box and save file if user OKs
   if fSaveDlg.Execute then
   begin
-    FileContent := GenerateOutput(
-      fSourceFileInfo.FileTypeFromExt(ExtractFileExt(fSaveDlg.FileName))
+    FileType := fSourceFileInfo.FileTypeFromExt(
+      ExtractFileExt(fSaveDlg.FileName)
     );
+    FileContent := GenerateOutput(FileType).ToString;
     Encoding := TEncodingHelper.GetEncoding(fSaveDlg.SelectedEncoding);
     try
       TFileIO.WriteAllText(fSaveDlg.FileName, FileContent, Encoding, True);
@@ -229,7 +231,8 @@ begin
   Encodings := fSourceFileInfo.FileTypeInfo[FileType].Encodings;
 end;
 
-function TSaveSourceMgr.GenerateOutput(const FileType: TSourceFileType): string;
+function TSaveSourceMgr.GenerateOutput(const FileType: TSourceFileType):
+  TEncodedData;
 var
   RawSource: string;      // raw source code
   Hiliter: TFileHiliter;  // object used to highlight source code
@@ -241,7 +244,7 @@ begin
     FileType
   );
   try
-    Result := Hiliter.Hilite(RawSource, GetDocTitle).ToString;
+    Result := Hiliter.Hilite(RawSource, GetDocTitle);
   finally
     Hiliter.Free;
   end;

@@ -161,8 +161,8 @@ uses
   // Delphi
   SysUtils, Types,
   // Project
-  FmPreferencesDlg, FmPreviewDlg, IntfCommon, UCtrlArranger, UKeysHelper,
-  UUtils;
+  FmPreferencesDlg, FmPreviewDlg, IntfCommon, UCtrlArranger, UEncodings,
+  UKeysHelper, UUtils;
 
 {$R *.dfm}
 
@@ -293,7 +293,9 @@ procedure TCodeGenPrefsFrame.actPreviewExecute(Sender: TObject);
 resourcestring
   sCaption = 'Compiler Directives Preview';
 begin
-  TPreviewDlg.Execute(Self.Owner, fWarnings.Render, sCaption);
+  TPreviewDlg.Execute(
+    Self.Owner, TEncodedData.Create(fWarnings.Render, etUnicode), sCaption
+  );
 end;
 
 procedure TCodeGenPrefsFrame.actPreviewUpdate(Sender: TObject);

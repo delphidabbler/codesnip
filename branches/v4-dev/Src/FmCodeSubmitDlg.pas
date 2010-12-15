@@ -234,7 +234,7 @@ procedure TCodeSubmitDlg.btnPreviewClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  TPreviewDlg.Execute(Self, fData.ToString);
+  TPreviewDlg.Execute(Self, fData);
 end;
 
 procedure TCodeSubmitDlg.BuildSubmission;

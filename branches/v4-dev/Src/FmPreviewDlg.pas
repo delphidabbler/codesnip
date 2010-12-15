@@ -46,7 +46,7 @@ uses
   ExtCtrls,
   // Project
   FmGenericViewDlg, FrBrowserBase, FrHTMLPreview, FrMemoPreview, FrRTFPreview,
-  FrTextPreview, UBaseObjects;
+  FrTextPreview, UBaseObjects, UEncodings;
 
 
 type
@@ -77,9 +77,9 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   strict private
     var
-      fViewer: IInterface;  // Interfaces with viewer frame
-      fDocContent: string;  // Stores content of document we are displaying
-      fDlgTitle: string;    // Dialog box title
+      fViewer: IInterface;        // Interfaces with viewer frame
+      fDocContent: TEncodedData;  // Content of document we are displaying
+      fDlgTitle: string;          // Dialog box title
     procedure GetViewerInfo(out Viewer: IInterface; out TabSheet: TTabSheet);
       {Gets information about required document viewer and tab sheet that
       contains it.
@@ -106,7 +106,7 @@ type
       {Loads and displays the document being previewed.
       }
   public
-    class procedure Execute(AOwner: TComponent; const ADocContent: string;
+    class procedure Execute(AOwner: TComponent; const ADocContent: TEncodedData;
       const ADlgTitle: string = '');
       {Displays a document in the preview dialog.
         @param AOwner [in] Owning component.
@@ -195,7 +195,7 @@ begin
 end;
 
 class procedure TPreviewDlg.Execute(AOwner: TComponent;
-  const ADocContent: string; const ADlgTitle: string);
+  const ADocContent: TEncodedData; const ADlgTitle: string);
   {Displays a document in the preview dialog.
     @param AOwner [in] Owning component.
     @param ADocContent [in] Content of document to be displayed (HTML, RTF or
@@ -206,7 +206,7 @@ begin
   with InternalCreate(AOwner) do
     try
       fDlgTitle := ADlgTitle;
-      fDocContent := ADocContent;
+      fDocContent := TEncodedData.Create(ADocContent);
       ShowModal;
     finally
       Free;
@@ -231,13 +231,13 @@ procedure TPreviewDlg.GetViewerInfo(out Viewer: IInterface;
     @param TabSheet [out] Tab sheet containing viewer frame.
   }
 begin
-  if URTFUtils.IsValidRTFCode(fDocContent) then
+  if URTFUtils.IsValidRTFCode(fDocContent.ToString) then
   begin
     // RTF document
     TabSheet := tsRTF;
     Viewer := frRTF;
   end
-  else if UHTMLUtils.IsValidHTMLCode(fDocContent) then
+  else if UHTMLUtils.IsValidHTMLCode(fDocContent.ToString) then
   begin
     // HTML document
     TabSheet := tsHTML;
