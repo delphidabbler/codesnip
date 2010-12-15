@@ -37,6 +37,9 @@ Changes
   o Alpha grouping code
   o TDOSDateTime class.
   o Original installer Pascal Script files.
+  o Code that manages saving of source code files.
+  o Renamed various unit, class, field and other names that referred to Snippets
+    as "routines".
 
 * Bug fixes:
   o #3120962. This was a separate fix to that created for v3 - the two were
@@ -46,6 +49,7 @@ Changes
   o Fixed long standing bug that was crashing when database was updated or
     restored after editing, adding or deleting any user defined snippet. This is
     a different fix to that made in v3.
+  o Various Unicode and code page related problems in RTF code (see below).
 
 * Help file:
   o Privacy statement topic updated.
@@ -57,6 +61,24 @@ Changes
   o Noted new export file version 5.
   o New documentation for file formats in linked HTML files.
 
+* RTF Support - major changes:
+  o Code that makes "safe" RTF modified to write ANSI characters that are
+    correct for specified code page, and to use Unicode only where there is no
+    ANSI support.
+  o Code page of generated RTF now has to be specified.
+  o Fixed bug where title destination did not work correctly with Unicode
+    characters: used Unicode sub-destinations where necessary per RTF 1.9.1
+    spec.
+  o New TRTF record provided to encapsulate RTF code. Much RTF related code now
+    uses this instead of ANSI strings and streams.
+  o Refactored and extended code that load, saves and inserts RTF code to use
+    new static record and to use TRTF for the RTF data.
+
+Printing:
+  o Print engine and print document code updated to used TRTF as document type
+    rather than passing data in streams.
+  o Title used in print spooler now has default if no title specified.
+
 * Added support for full Unicode Pascal identifiers to be used as snippet names.
   Modified alpha grouping to handle this.
 
@@ -66,6 +88,11 @@ Changes
   o About Box's Paths tab now disable exlpore buttons if displayed paths don't
     exist. Also paths now appear in hints and include comment if path doesn't
     exist.
+  o Added encoding drop down to Save source dialog box where user can choose
+    encoding to be used to save files. Provided different choices (or no choice)
+    for each file type.
+  o Simplified handling of captions in preview dialogs. No longer try to extract
+    title from document text.
 
 * Database:
   o Changed user database dir name to UserData.4.
@@ -94,6 +121,23 @@ Changes
   o Removed all explicit use of Windows-1252. (*** check this ***)
   o Config files now UTF-16LE. TSettings now creates empty blank config files
     if necessary to force Win API to read / write ini files in Unicode.
+  o Test units are now saved in UTF-8 if they contain chars that can't be stored
+    in default ANSI code page. ANSI still used if possible. Also, unit names are
+    converted to valid ANSI if necessary to ensure older Delphis (some of which
+    support UTF-8 files) can read the unit. (Some Delphis can't open files with
+    Unicode file names).
+  o New encoded data structure for passing around binary data with info about
+    how it was encoded. Used in the main to replaced strings and streams.
+    * Used for database download processing.
+    * Used for code export (including code submission).
+    * Used for highlighted source code returned from syntax highlighters.
+
+* UI changes:
+  o Snippets now displayed in history menu with "Snippet" instead of "Routine"
+    prefix.
+  o Code Formatting preferences tab now always uses default font name and size
+    and preview window enlarged so that longest example code is no longer
+    truncated.
 
 * Web Services
   o Updated database update web service code changed to work with v5 of the
@@ -102,6 +146,14 @@ Changes
   o Database update code changed to detect actual encoding used to send data
     from web service and to use that for all encoding / decoding of received
     data.
+  o Updated HTTP handling code, and low level web service code, to be able to
+    POST byte arrays and receive text responses. Code submitter web service now
+    uses this facility.
+
+* Code import now uses byte array instead of stream to read input file.
+
+* IXMLDocumentEx had new LoadFromBytes and SaveToBytes methods: used by code
+  import code - see other note re this.
 
 * Revised splash screen to include version number 4.
 
