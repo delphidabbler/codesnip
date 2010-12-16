@@ -4,11 +4,14 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.8.7 of 16 December 2010
++ Delphi XE compiler version 22.0 has been added to the drop down menu in the Code Generation tab of the preference dialog box.
++ Bug fix: compiler results are no longer listed when freeform snippets are printed or copied to the clipboard using the "Edit | Copy Information" menu item.
+
 Release v3.8.6 of 06 December 2010
 + Bug fix release (none reported in bug tracker):
   - Corrected XML file validation so that it does not reject XML processing instructions that contain an "encoding" attribute.
-  - Fixed long standing bug that was crashing CodeSnip when the database was updated or
-restored after editing, adding or deleting any user defined snippet.
+  - Fixed long standing bug that was crashing CodeSnip when the database was updated or restored after editing, adding or deleting any user defined snippet.
   - Attempting to restore a database backup with an unknown (later) file format now raises an exception. Previously CodeSnip tried, unsuccessfully, to read the file.
 
 Release v3.8.5 of 28 November 2010
