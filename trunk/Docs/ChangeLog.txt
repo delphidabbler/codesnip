@@ -4,6 +4,10 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.8.7 of 16 December 2010
++ Delphi XE compiler version 22.0 has been added to the drop down menu in the Code Generation tab of the preference dialog box.
++ Bug fix: compiler results are no longer listed when freeform snippets are printed or copied to the clipboard using the "Edit | Copy Information" menu item.
+
 Release v3.8.6 of 06 December 2010
 + Bug fix release (none reported in bug tracker):
   - Corrected XML file validation so that it does not reject XML processing instructions that contain an "encoding" attribute.
