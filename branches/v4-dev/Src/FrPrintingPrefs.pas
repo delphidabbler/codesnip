@@ -135,7 +135,7 @@ type
       {Reference to richedit control used to render preview}
     fHiliteAttrs: IHiliteAttrs;
       {Attributes of syntax highlighter to use to render preview}
-    function HiliteSource(const UseColor, SyntaxPrint: Boolean): string;
+    function HiliteSource(const UseColor, SyntaxPrint: Boolean): TEncodedData;
       {Generates sample highlighted source code.
         @param UseColor [in] Whether to use colour or mono highlighter.
         @param SyntaxPrint [in] Whether source code to be highlighted.
@@ -387,7 +387,7 @@ begin
 end;
 
 function TPrintingPrefsPreview.HiliteSource(const UseColor,
-  SyntaxPrint: Boolean): string;
+  SyntaxPrint: Boolean): TEncodedData;
   {Generates sample highlighted source code.
     @param UseColor [in] Whether to use colour or mono highlighter.
     @param SyntaxPrint [in] Whether source code to be highlighted.
@@ -413,7 +413,7 @@ begin
     Attrs := THiliteAttrsFactory.CreatePrintAttrs(fHiliteAttrs, UseColor);
   // Perform highlighting
   Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
-  Result := Hiliter.Hilite(cSourceCode, Attrs).ToString;
+  Result := Hiliter.Hilite(cSourceCode, Attrs);
 end;
 
 initialization
