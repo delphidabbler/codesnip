@@ -81,30 +81,29 @@ implementation
 
 uses
   // Project
-  UClipboardHelper;
+  UClipboardHelper, URTFUtils;
 
 
 { TCopyViewMgr }
 
 class procedure TCopyViewMgr.Execute(View: IView);
 var
-  Clip: TClipboardHelper;   // object used to update clipboard
-  PlainText: TEncodedData;  // plain text representation of snippet
-  RTF: TEncodedData;        // rich text representation of snippet
+  Clip: TClipboardHelper;     // object used to update clipboard
+  UnicodeText: UnicodeString; // Unicode plain text representation of view
+  RTF: TRTF;                  // rich text representation of view
 begin
   Assert(Assigned(View), ClassName + '.Execute: View is nil');
   Assert(CanHandleView(View), ClassName + '.Execute: View not supported');
   // Generate plain text and rich text representation of view
-  PlainText := GeneratePlainText(View);
-  RTF := GenerateRichText(View);
+  UnicodeText := GeneratePlainText(View).ToString;
+  RTF := TRTF.Create(GenerateRichText(View));
   // Open clipboard and add both plain and rich text representations of snippet
   Clip := TClipboardHelper.Create;
   try
     Clip.Open;
     try
-      // todo: change these to pass as Unicode & ASCII strings to ensure #0 term
-      Clip.Add(CF_UNICODETEXT, PlainText.Data);
-      Clip.Add(CF_RTF, RTF.Data);
+      Clip.AddUnicodeText(UnicodeText);
+      Clip.AddRTF(RTF.ToRTFCode);
     finally
       Clip.Close;
     end;
