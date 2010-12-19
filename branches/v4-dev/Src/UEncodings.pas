@@ -443,6 +443,9 @@ uses
 ///  <para>Caller must ensure that the byte array has the correct format for
 ///  the requested code page.</para>
 ///  <para>Based on Stack Overflow posting at http://bit.ly/bAvtGd.</para>
+///  <para>Any terminating 0 byte included in Bytes is excluded from the
+///  result because Delphi adds its own terminal #0 character to ANSI strings.
+///  </para>
 ///  </remarks>
 function BytesToAnsiString(const Bytes: TBytes; const CP: Word): RawByteString;
 begin
@@ -450,6 +453,8 @@ begin
   if Length(Bytes) > 0 then
   begin
     Move(Bytes[0], Result[1], Length(Bytes));
+    if Result[Length(Result)] = #0 then
+      SetLength(Result, Length(Result) - 1);
     SetCodePage(Result, CP, False);
   end;
 end;
