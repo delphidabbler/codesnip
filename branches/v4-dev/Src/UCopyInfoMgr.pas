@@ -44,7 +44,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UCopyViewMgr, URoutineDoc, UView;
+  UCopyViewMgr, UEncodings, URoutineDoc, UView;
 
 
 type
@@ -60,9 +60,10 @@ type
     ///  described.</param>
     ///  <param name="Doc">TRoutineDoc [in] Object that renders document. Format
     ///  depends on concrete class of object.</param>
-    ///  <returns>TBytes - Byte array containing document in form suitable for
-    ///  copying to clipboard.</returns>
-    class function GenerateDoc(View: IView; const Doc: TRoutineDoc): TBytes;
+    ///  <returns>TEncodedData - Document in form suitable for copying to
+    ///  clipboard.</returns>
+    class function GenerateDoc(View: IView; const Doc: TRoutineDoc):
+      TEncodedData;
   strict protected
     ///  <summary>Returns a byte array containing a Unicode plain text
     ///  representation of information about the snippet represented by the
@@ -97,28 +98,23 @@ begin
 end;
 
 class function TCopyInfoMgr.GenerateDoc(View: IView; const Doc: TRoutineDoc):
-  TBytes;
-var
-  Stm: TBytesStream;  // stream that receives document
+  TEncodedData;
 begin
-  Stm := TBytesStream.Create;
-  try
-    Doc.Generate((View as ISnippetView).Snippet, Stm);
-    Result := Stm.Bytes;
-    SetLength(Result, Stm.Size);
-  finally
-    Stm.Free;
-  end;
+  Result := Doc.Generate((View as ISnippetView).Snippet);
 end;
 
 class function TCopyInfoMgr.GeneratePlainText(View: IView): TBytes;
 var
   Doc: TTextRoutineDoc; // object that generates plain text document
+  Data: TEncodedData;   // document data
 begin
   Doc := TTextRoutineDoc.Create;
   try
     // TTextRoutineDoc generates stream of Unicode bytes
-    Result := GenerateDoc(View, Doc);
+    Data := GenerateDoc(View, Doc);
+    Assert(Data.EncodingType = etUnicode,
+      ClassName + '.GeneratePlainText: Unicode encoded data expected');
+    Result := Data.Data;
   finally
     Doc.Free;
   end;
@@ -127,11 +123,15 @@ end;
 class function TCopyInfoMgr.GenerateRichText(View: IView): TBytes;
 var
   Doc: TRTFRoutineDoc;  // object that generates RTF document
+  Data: TEncodedData;   // document data
 begin
   Doc := TRTFRoutineDoc.Create(THiliteAttrsFactory.CreateUserAttrs);
   try
     // TRTFRoutineDoc generates stream of ASCII bytes
-    Result := GenerateDoc(View, Doc);
+    Data := GenerateDoc(View, Doc);
+    Assert(Data.EncodingType = etASCII,
+      ClassName + '.GenerateRichText: ASCII encoded data expected');
+    Result := Data.Data;
   finally
     Doc.Free;
   end;

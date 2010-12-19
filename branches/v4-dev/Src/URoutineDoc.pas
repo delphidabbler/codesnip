@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes,
   // Project
-  Compilers.UGlobals, UActiveText, UIStringList, USnippets;
+  Compilers.UGlobals, UActiveText, UEncodings, UIStringList, USnippets;
 
 
 type
@@ -77,7 +77,6 @@ type
   }
   TRoutineDoc = class(TObject)
   strict private
-    fDocStream: TStream;  // Stream that receives rendered document
     function RoutinesToStrings(const RoutineList: TRoutineList): IStringList;
       {Creates a string list containing a list of snippet names.
         @param RoutineList [in] List of snippets.
@@ -130,23 +129,20 @@ type
       {Outputs information about code snippets database.
         @param Text [in] Text to be written.
       }
-    procedure FinaliseDoc; virtual;
-      {Finalises document. Does nothing. Descendant classes should add any
-      required finalisation here.
+    function FinaliseDoc: TEncodedData; virtual; abstract;
+      {Finalises and returns document.
+        @return Document as encoded data.
       }
     function CommaList(const List: IStringList): string;
       {Builds a comma delimited list of names from a string list.
         @param List [in] List of names.
         @return Required comma separated list or "none" if list is empty.
       }
-    property DocStream: TStream read fDocStream;
-      {Reference to stream that receives rendered document. For use by
-      sub-classes}
   public
-    procedure Generate(const Routine: TRoutine; const DocStream: TStream);
+    function Generate(const Routine: TRoutine): TEncodedData;
       {Generates document that describes a snippet.
         @param Routine [in] Snippet for which document is required.
-        @param Stream [in] Stream to which document is written.
+        @return Encoded data containing document in appropriate format.
       }
   end;
 
@@ -201,19 +197,10 @@ begin
   end;
 end;
 
-procedure TRoutineDoc.FinaliseDoc;
-  {Finalises document. Does nothing. Descendant classes should add any required
-  finalisation here.
-  }
-begin
-  // Do nothing
-end;
-
-procedure TRoutineDoc.Generate(const Routine: TRoutine;
-  const DocStream: TStream);
+function TRoutineDoc.Generate(const Routine: TRoutine): TEncodedData;
   {Generates document that describes a snippet.
     @param Routine [in] Snippet for which document is required.
-    @param Stream [in] Stream to which document is written.
+    @return Encoded data containing document in appropriate format.
   }
 resourcestring
   // Literal string required in output
@@ -226,9 +213,6 @@ resourcestring
   sMainDatabaseInfo = 'A snippet from the DelphiDabbler CodeSnip Database (%s)';
 begin
   Assert(Assigned(Routine), ClassName + '.Create: Routine is nil');
-  Assert(Assigned(DocStream), ClassName + '.Create: DocStream is nil');
-  // record output stream
-  fDocStream := DocStream;
   // generate document
   InitialiseDoc;
   RenderHeading(Routine.Name);
@@ -250,7 +234,7 @@ begin
   if not Routine.UserDefined then
     // database info written only if snippet is from main database
     RenderDBInfo(Format(sMainDatabaseInfo, [TWebInfo.DatabaseURL]));
-  FinaliseDoc;
+  Result := FinaliseDoc;
 end;
 
 procedure TRoutineDoc.InitialiseDoc;

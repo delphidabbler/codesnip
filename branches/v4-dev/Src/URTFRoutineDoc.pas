@@ -44,7 +44,8 @@ uses
   // Delphi
   Graphics,
   // Project
-  Hiliter.UGlobals, UActiveText, UIStringList, URoutineDoc, URTFBuilder;
+  Hiliter.UGlobals, UActiveText, UEncodings, UIStringList, URoutineDoc,
+  URTFBuilder, URTFUtils;
 
 
 type
@@ -68,7 +69,7 @@ type
       cParaFontSize = 10;                           // paragraph font size
       cParaSpacing = 12;                            // paragraph spacing
       cDBInfoFontSize = 9;                          // codesnip db font size
-    function HiliteSource: string;
+    function HiliteSource: TRTF;
       {Highlights snippet's source code.
         @return Highlighted source code as a RTF document.
       }
@@ -119,9 +120,10 @@ type
       {Adds information about code snippets database to rich text document.
         @param Text [in] Text to be written.
       }
-    procedure FinaliseDoc; override;
-      {Merges hilited source code document into main document and writes final
-      result to stream.
+    function FinaliseDoc: TEncodedData; override;
+      {Merges hilited source code document into main document and returns final
+      document. Releases RTF builder object.
+        @return ASCII encoded RTF document.
       }
   public
     constructor Create(const HiliteAttrs: IHiliteAttrs;
@@ -141,8 +143,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UHiliters, UColours, UConsts, UEncodings, URTFMerger, URTFUtils,
-  UUtils;
+  Hiliter.UHiliters, UColours, UConsts, URTFMerger, UUtils;
 
 
 { TRTFRoutineDoc }
@@ -159,9 +160,10 @@ begin
   fUseColour := UseColour;
 end;
 
-procedure TRTFRoutineDoc.FinaliseDoc;
-  {Merges hilited source code document into main document and writes final
-  result to stream.
+function TRTFRoutineDoc.FinaliseDoc: TEncodedData;
+  {Merges hilited source code document into main document and returns final
+  document. Releases RTF builder object.
+    @return ASCII encoded RTF document.
   }
 begin
   // Insert highlighted source code in builder document. We have to do this here
@@ -169,26 +171,28 @@ begin
   // simply added to document using RTF builder - it has to be merged in.
   with TRTFMerger.Create(fBuilder.Render) do
     try
-      ReplacePlaceholder(
-        cSourceCodePlaceholder, TRTF.Create(HiliteSource)
-      );
-      Render.ToStream(DocStream);
+      ReplacePlaceholder(cSourceCodePlaceholder, HiliteSource);
+      Result := TEncodedData.Create(Render.ToBytes, etASCII);
     finally
       Free;
     end;
   fBuilder.Free;
 end;
 
-function TRTFRoutineDoc.HiliteSource: string;
+function TRTFRoutineDoc.HiliteSource: TRTF;
   {Highlights snippet's source code.
     @return Highlighted source code as a RTF document.
   }
 var
   Hiliter: ISyntaxHiliter;  // highlighter object
+  HilitedSource: TEncodedData;
 begin
   // Determine highlighter style: none, colour (default) or mono
   Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
-  Result := Hiliter.Hilite(fSourceCode, fHiliteAttrs).ToString;
+  HilitedSource := Hiliter.Hilite(fSourceCode, fHiliteAttrs);
+  Assert(HilitedSource.EncodingType = etASCII,
+    ClassName + '.HiliteSource: Highlighted source is not in ASCII format');
+  Result := TRTF.Create(HilitedSource);
 end;
 
 procedure TRTFRoutineDoc.InitialiseDoc;

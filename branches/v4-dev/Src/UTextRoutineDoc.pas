@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UActiveText, UIStringList, URoutineDoc;
+  UActiveText, UEncodings, UIStringList, URoutineDoc;
 
 
 type
@@ -98,8 +98,9 @@ type
       {Writes information about code snippets database to output stream.
         @param Text [in] Text to be written.
       }
-    procedure FinaliseDoc; override;
-      {Releases stream writer object.
+    function FinaliseDoc: TEncodedData; override;
+      {Renders text document as Unicode encoded data. Releases write object.
+        @return Unicode encoded text document.
       }
   end;
 
@@ -116,19 +117,17 @@ uses
 
 { TTextRoutineDoc }
 
-procedure TTextRoutineDoc.FinaliseDoc;
-  {Releases stream writer object.
+function TTextRoutineDoc.FinaliseDoc: TEncodedData;
+  {Renders text document as Unicode encoded data. Releases write object.
+    @return Unicode encoded text document.
   }
-var
-  Bytes: TBytes;  // bytes from writer object in Unicode
 begin
-  Bytes := TEncoding.Unicode.GetBytes(fWriter.ToString);
-  DocStream.WriteBuffer(Pointer(Bytes)^, Length(Bytes));
+  Result := TEncodedData.Create(fWriter.ToString, etUnicode);
   fWriter.Free;
 end;
 
 procedure TTextRoutineDoc.InitialiseDoc;
-  {Create writer object for output stream.
+  {Create writer object to build up text.
   }
 begin
   fWriter := TStringWriter.Create;
