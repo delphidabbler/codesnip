@@ -41,10 +41,8 @@ interface
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
-  UBaseObjects, UView;
+  UBaseObjects, UEncodings, UView;
 
 
 type
@@ -56,14 +54,14 @@ type
   ///  </summary>
   TCopyViewMgr = class abstract(TNoConstructObject)
   strict protected
-    ///  <summary>Returns a byte array containing a Unicode plain text
+    ///  <summary>Returns encoded data containing a Unicode plain text
     ///  representation of the given view that is to be copied to the clipboard.
     ///  </summary>
-    class function GeneratePlainText(View: IView): TBytes;
+    class function GeneratePlainText(View: IView): TEncodedData;
       virtual; abstract;
-    ///  <summary>Returns a byte array containing a RTF representation of the
+    ///  <summary>Returns encoded data containing a RTF representation of the
     ///  given view that is to be copied to the clipboard.</summary>
-    class function GenerateRichText(View: IView): TBytes;
+    class function GenerateRichText(View: IView): TEncodedData;
       virtual; abstract;
   public
     ///  <summary>Checks if a given view can be copied to the clipboard.
@@ -91,8 +89,8 @@ uses
 class procedure TCopyViewMgr.Execute(View: IView);
 var
   Clip: TClipboardHelper;   // object used to update clipboard
-  PlainText: TBytes;        // plain text representation of snippet
-  RTF: TBytes;              // rich text representation of snippet
+  PlainText: TEncodedData;  // plain text representation of snippet
+  RTF: TEncodedData;        // rich text representation of snippet
 begin
   Assert(Assigned(View), ClassName + '.Execute: View is nil');
   Assert(CanHandleView(View), ClassName + '.Execute: View not supported');
@@ -104,8 +102,9 @@ begin
   try
     Clip.Open;
     try
-      Clip.Add(CF_UNICODETEXT, PlainText);
-      Clip.Add(CF_RTF, RTF);
+      // todo: change these to pass as Unicode & ASCII strings to ensure #0 term
+      Clip.Add(CF_UNICODETEXT, PlainText.Data);
+      Clip.Add(CF_RTF, RTF.Data);
     finally
       Clip.Close;
     end;

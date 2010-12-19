@@ -41,8 +41,6 @@ interface
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   UCopyViewMgr, UEncodings, URoutineDoc, UView;
 
@@ -65,14 +63,14 @@ type
     class function GenerateDoc(View: IView; const Doc: TRoutineDoc):
       TEncodedData;
   strict protected
-    ///  <summary>Returns a byte array containing a Unicode plain text
+    ///  <summary>Returns encoded data containing a Unicode plain text
     ///  representation of information about the snippet represented by the
     ///  given view that is to be copied to the clipboard.</summary>
-    class function GeneratePlainText(View: IView): TBytes; override;
-    ///  <summary>Returns a byte array containing a RTF representation of
+    class function GeneratePlainText(View: IView): TEncodedData; override;
+    ///  <summary>Returns encoded data containing a RTF representation of
     ///  information about the snippet represented by the given view that is to
     ///  be copied to the clipboard.</summary>
-    class function GenerateRichText(View: IView): TBytes; override;
+    class function GenerateRichText(View: IView): TEncodedData; override;
   public
     ///  <summary>Checks if a given view can be copied to the clipboard. Returns
     ///  True only if the view represents a snippet.</summary>
@@ -85,7 +83,7 @@ implementation
 
 uses
   // Delphi
-  Classes,
+  SysUtils,
   // Project
   Hiliter.UAttrs, URTFRoutineDoc, UTextRoutineDoc;
 
@@ -103,35 +101,31 @@ begin
   Result := Doc.Generate((View as ISnippetView).Snippet);
 end;
 
-class function TCopyInfoMgr.GeneratePlainText(View: IView): TBytes;
+class function TCopyInfoMgr.GeneratePlainText(View: IView): TEncodedData;
 var
   Doc: TTextRoutineDoc; // object that generates plain text document
-  Data: TEncodedData;   // document data
 begin
   Doc := TTextRoutineDoc.Create;
   try
     // TTextRoutineDoc generates stream of Unicode bytes
-    Data := GenerateDoc(View, Doc);
-    Assert(Data.EncodingType = etUnicode,
+    Result := GenerateDoc(View, Doc);
+    Assert(Result.EncodingType = etUnicode,
       ClassName + '.GeneratePlainText: Unicode encoded data expected');
-    Result := Data.Data;
   finally
     Doc.Free;
   end;
 end;
 
-class function TCopyInfoMgr.GenerateRichText(View: IView): TBytes;
+class function TCopyInfoMgr.GenerateRichText(View: IView): TEncodedData;
 var
   Doc: TRTFRoutineDoc;  // object that generates RTF document
-  Data: TEncodedData;   // document data
 begin
   Doc := TRTFRoutineDoc.Create(THiliteAttrsFactory.CreateUserAttrs);
   try
     // TRTFRoutineDoc generates stream of ASCII bytes
-    Data := GenerateDoc(View, Doc);
-    Assert(Data.EncodingType = etASCII,
+    Result := GenerateDoc(View, Doc);
+    Assert(Result.EncodingType = etASCII,
       ClassName + '.GenerateRichText: ASCII encoded data expected');
-    Result := Data.Data;
   finally
     Doc.Free;
   end;

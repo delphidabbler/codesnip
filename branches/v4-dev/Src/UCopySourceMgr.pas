@@ -42,10 +42,8 @@ interface
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
-  UCopyViewMgr, UView;
+  UCopyViewMgr, UEncodings, UView;
 
 
 type
@@ -55,14 +53,14 @@ type
   ///  </summary>
   TCopySourceCodeBase = class abstract(TCopyViewMgr)
   strict protected
-    ///  <summary>Generates a byte array containing a Unicode plain text
+    ///  <summary>Generates encoded data containing a Unicode plain text
     ///  document that provides information about the source code of the snippet
     ///  represented by the given view.</summary>
-    class function GeneratePlainText(View: IView): TBytes; override;
-    ///  <summary>Generates a byte array containing a RTF document that provides
+    class function GeneratePlainText(View: IView): TEncodedData; override;
+    ///  <summary>Generates encoded data containing a RTF document that provides
     ///  information about the source code of the snippet represented by the
     ///  given view.</summary>
-    class function GenerateRichText(View: IView): TBytes; override;
+    class function GenerateRichText(View: IView): TEncodedData; override;
     ///  <summary>Generates source code for the snippet represented by the
     ///  given view. Source code is returned as a Unicode string.</summary>
     class function GenerateSourceCode(View: IView): string; virtual; abstract;
@@ -111,6 +109,8 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   Hiliter.UAttrs, Hiliter.UGlobals, Hiliter.UHiliters, UPreferences,
   USnippetSourceGen;
@@ -118,19 +118,19 @@ uses
 
 { TCopySourceCodeBase }
 
-class function TCopySourceCodeBase.GeneratePlainText(View: IView): TBytes;
+class function TCopySourceCodeBase.GeneratePlainText(View: IView): TEncodedData;
 begin
-  Result := TEncoding.Unicode.GetBytes(GenerateSourceCode(View));
+  Result := TEncodedData.Create(GenerateSourceCode(View), etUnicode);
 end;
 
-class function TCopySourceCodeBase.GenerateRichText(View: IView): TBytes;
+class function TCopySourceCodeBase.GenerateRichText(View: IView): TEncodedData;
 var
   Hiliter: ISyntaxHiliter;  // object that performs highlighting
 begin
   Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
   Result := Hiliter.Hilite(
     GenerateSourceCode(View), THiliteAttrsFactory.CreateUserAttrs, ''
-  ).Data;
+  );
 end;
 
 { TCopySourceMgr }
