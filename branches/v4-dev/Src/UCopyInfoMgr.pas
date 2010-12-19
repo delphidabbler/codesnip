@@ -48,40 +48,34 @@ uses
 
 
 type
-
-  {
-  TCopyInfoMgr:
-    Class that copies information about a snippet to clipboard in plain text and
-    rich text format. Only routines are supported.
-  }
+  ///  <summary>
+  ///  Class that copies information about a snippet to clipboard as plain
+  ///  Unicode text and rich text formats. Snippet is obtained from a view.
+  ///  Only snippet views are supported.
+  ///  </summary>
   TCopyInfoMgr = class sealed(TCopyViewMgr)
   strict private
-    class function GenerateDoc(View: IView; const Doc: TRoutineDoc;
-      const Encoding: TEncoding): string;
-      {Generates a document that describes a snippet.
-        @param View [in] View that defines snippet to be generated.
-        @param Doc [in] Object used to render document in required format.
-        @param Encoding [in] Encoding to use on string stream that receives
-          generated document.
-        @return Generated document as a string.
-      }
+    ///  <summary>Generates a document that describes a snippet.</summary>
+    ///  <param name="View">IView [in] View that represents the snippet to be
+    ///  described.</param>
+    ///  <param name="Doc">TRoutineDoc [in] Object that renders document. Format
+    ///  depends on concrete class of object.</param>
+    ///  <returns>TBytes - Byte array containing document in form suitable for
+    ///  copying to clipboard.</returns>
+    class function GenerateDoc(View: IView; const Doc: TRoutineDoc): TBytes;
   strict protected
-    class function GeneratePlainText(View: IView): string; override;
-      {Generates a plain text document providing information about a snippet.
-        @param View [in] View representing snippet.
-        @return Plain text document as a string.
-      }
-    class function GenerateRichText(View: IView): string; override;
-      {Generates a RTF document providing information about snippet.
-        @param View [in] View representing snippet.
-        @return RTF document as a string.
-      }
+    ///  <summary>Returns a byte array containing a Unicode plain text
+    ///  representation of information about the snippet represented by the
+    ///  given view that is to be copied to the clipboard.</summary>
+    class function GeneratePlainText(View: IView): TBytes; override;
+    ///  <summary>Returns a byte array containing a RTF representation of
+    ///  information about the snippet represented by the given view that is to
+    ///  be copied to the clipboard.</summary>
+    class function GenerateRichText(View: IView): TBytes; override;
   public
+    ///  <summary>Checks if a given view can be copied to the clipboard. Returns
+    ///  True only if the view represents a snippet.</summary>
     class function CanHandleView(View: IView): Boolean; override;
-      {Checks if snippet can be copied to clipboard.
-        @param View [in] View to be checked.
-        @return True if view is a snippet, False otherwise.
-      }
   end;
 
 
@@ -98,62 +92,46 @@ uses
 { TCopyInfoMgr }
 
 class function TCopyInfoMgr.CanHandleView(View: IView): Boolean;
-  {Checks if snippet can be copied to clipboard.
-    @param View [in] View to be checked.
-    @return True if view is a snippet, False otherwise.
-  }
 begin
   Result := Supports(View, ISnippetView);
 end;
 
-class function TCopyInfoMgr.GenerateDoc(View: IView; const Doc: TRoutineDoc;
-  const Encoding: TEncoding): string;
-  {Generates a document that describes a snippet.
-    @param View [in] View that defines snippet to be generated.
-    @param Doc [in] Object used to render document in required format.
-    @param Encoding [in] Encoding to use on string stream that receives
-      generated document.
-    @return Generated document as a string.
-  }
+class function TCopyInfoMgr.GenerateDoc(View: IView; const Doc: TRoutineDoc):
+  TBytes;
 var
-  SS: TStringStream;  // stream that receives document
+  Stm: TBytesStream;  // stream that receives document
 begin
-  SS := TStringStream.Create('', Encoding, False);
+  Stm := TBytesStream.Create;
   try
-    Doc.Generate((View as ISnippetView).Snippet, SS);
-    Result := SS.DataString;
+    Doc.Generate((View as ISnippetView).Snippet, Stm);
+    Result := Stm.Bytes;
+    SetLength(Result, Stm.Size);
   finally
-    SS.Free;
+    Stm.Free;
   end;
 end;
 
-class function TCopyInfoMgr.GeneratePlainText(View: IView): string;
-  {Generates a plain text document providing information about a snippet.
-    @param View [in] View representing snippet.
-    @return Plain text document as a string.
-  }
+class function TCopyInfoMgr.GeneratePlainText(View: IView): TBytes;
 var
   Doc: TTextRoutineDoc; // object that generates plain text document
 begin
   Doc := TTextRoutineDoc.Create;
   try
-    Result := GenerateDoc(View, Doc, TEncoding.Unicode);
+    // TTextRoutineDoc generates stream of Unicode bytes
+    Result := GenerateDoc(View, Doc);
   finally
     Doc.Free;
   end;
 end;
 
-class function TCopyInfoMgr.GenerateRichText(View: IView): string;
-  {Generates a RTF document providing information about snippet.
-    @param View [in] View representing snippet.
-    @return RTF document as a string.
-  }
+class function TCopyInfoMgr.GenerateRichText(View: IView): TBytes;
 var
   Doc: TRTFRoutineDoc;  // object that generates RTF document
 begin
   Doc := TRTFRoutineDoc.Create(THiliteAttrsFactory.CreateUserAttrs);
   try
-    Result := GenerateDoc(View, Doc, TEncoding.Default);
+    // TRTFRoutineDoc generates stream of ASCII bytes
+    Result := GenerateDoc(View, Doc);
   finally
     Doc.Free;
   end;

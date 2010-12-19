@@ -42,82 +42,68 @@ interface
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   UCopyViewMgr, UView;
 
 
 type
-
-  {
-  TCopySourceCodeBase:
-    Static abstract base class for objects that copy source code to the
-    clipboard.
-  }
+  ///  <summary>
+  ///  Static abstract base class for objects that copy source code to the
+  ///  clipboard.
+  ///  </summary>
   TCopySourceCodeBase = class abstract(TCopyViewMgr)
   strict protected
-    class function GeneratePlainText(View: IView): string; override;
-      {Generates a plain text document providing information about a snippet's
-      source code.
-        @param View [in] View representing snippet.
-        @return Plain text document as a string.
-      }
-    class function GenerateRichText(View: IView): string; override;
-      {Generates a RTF document providing information about a snippet's source
-      code.
-        @param View [in] View representing snippet.
-        @return RTF document as a string.
-      }
+    ///  <summary>Generates a byte array containing a Unicode plain text
+    ///  document that provides information about the source code of the snippet
+    ///  represented by the given view.</summary>
+    class function GeneratePlainText(View: IView): TBytes; override;
+    ///  <summary>Generates a byte array containing a RTF document that provides
+    ///  information about the source code of the snippet represented by the
+    ///  given view.</summary>
+    class function GenerateRichText(View: IView): TBytes; override;
+    ///  <summary>Generates source code for the snippet represented by the
+    ///  given view. Source code is returned as a Unicode string.</summary>
     class function GenerateSourceCode(View: IView): string; virtual; abstract;
-      {Generates source code in required format.
-        @param View [in] View for which source code is required.
-        @return Source code as string.
-      }
   public
+    ///  <summary>Checks if a given view can be copied to the clipboard.
+    ///  </summary>
     class function CanHandleView(View: IView): Boolean; override; abstract;
-      {Checks if view can be copied to clipboard.
-        @param View [in] View to be checked.
-        @return True if view can be copied, False otherwise.
-      }
   end;
 
-  {
-  TCopySourceMgr:
-    Static class that manages copying of a snippet's source code to clipboard.
-  }
+type
+  ///  <summary>
+  ///  Static class that manages copying of the raw source code of a single
+  ///  snippet to the clipboard.
+  ///  </summary>
   TCopySourceMgr = class sealed(TCopySourceCodeBase)
   strict protected
+    ///  <summary>Returns the source code of the snippet represented by the
+    ///  given view. Source code is returned as a Unicode string.</summary>
     class function GenerateSourceCode(View: IView): string; override;
-      {Generates source code in required format.
-        @param View [in] View for which source code is required.
-        @return Snippet's source code as string.
-      }
   public
+    ///  <summary>Checks if given view can be copied to the clipboard. Returns
+    ///  True only if view represents a snippet.</summary>
     class function CanHandleView(View: IView): Boolean; override;
-      {Checks if a view can be copied to clipboard.
-        @param View [in] View to be checked.
-        @return True if view is a snippet, False otherwise.
-      }
   end;
 
-  {
-  TCopySnippetMgr:
-    Statis class that manages creation and copying of one or more code snippets
-    to the clipboard.
-  }
+type
+  ///  <summary>
+  ///  Static class that manages creation and copying of annotated source code
+  ///  of one or more code snippets to the clipboard.
+  ///  </summary>
   TCopySnippetMgr = class sealed(TCopySourceCodeBase)
   strict protected
+    ///  <summary>Returns an annotated code snippet generated from one or more
+    ///  snippets represented by the given view. Source code is returned as a
+    ///  Unicode string.</summary>
     class function GenerateSourceCode(View: IView): string; override;
-      {Generates source code in required format.
-        @param View [in] View for which source code is required.
-        @return Generated code snippet(s) as string.
-      }
   public
+    ///  <summary>Checks if given view can be copied to the clipboard. Returns
+    ///  True only if view contains one or more snippets that can be output as
+    ///  annotated source code.</summary>
     class function CanHandleView(View: IView): Boolean; override;
-      {Checks if a view can be copied to clipboard.
-        @param View [in] View to be checked.
-        @return True if view contains code that can be output as a compilable
-          snippet, False otherwise.
-      }
   end;
 
 
@@ -125,8 +111,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   Hiliter.UAttrs, Hiliter.UGlobals, Hiliter.UHiliters, UPreferences,
   USnippetSourceGen;
@@ -134,46 +118,29 @@ uses
 
 { TCopySourceCodeBase }
 
-class function TCopySourceCodeBase.GeneratePlainText(View: IView): string;
-  {Generates a plain text document providing information about a snippet's
-  source code.
-    @param View [in] View representing snippet.
-    @return Plain text document as a string.
-  }
+class function TCopySourceCodeBase.GeneratePlainText(View: IView): TBytes;
 begin
-  Result := GenerateSourceCode(View);
+  Result := TEncoding.Unicode.GetBytes(GenerateSourceCode(View));
 end;
 
-class function TCopySourceCodeBase.GenerateRichText(View: IView): string;
-  {Generates a RTF document providing information about a snippet's source code.
-    @param View [in] View representing snippet.
-    @return RTF document as a string.
-  }
+class function TCopySourceCodeBase.GenerateRichText(View: IView): TBytes;
 var
   Hiliter: ISyntaxHiliter;  // object that performs highlighting
 begin
   Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
   Result := Hiliter.Hilite(
     GenerateSourceCode(View), THiliteAttrsFactory.CreateUserAttrs, ''
-  ).ToString;
+  ).Data;
 end;
 
 { TCopySourceMgr }
 
 class function TCopySourceMgr.CanHandleView(View: IView): Boolean;
-  {Checks if a view can be copied to clipboard.
-    @param View [in] View to be checked.
-    @return True if view is a snippet, False otherwise.
-  }
 begin
   Result := Supports(View, ISnippetView);
 end;
 
 class function TCopySourceMgr.GenerateSourceCode(View: IView): string;
-  {Generates source code in required format.
-    @param View [in] View for which source code is required.
-    @return Snippet's source code as string.
-  }
 begin
   Result := (View as ISnippetView).Snippet.SourceCode;
 end;
@@ -181,20 +148,11 @@ end;
 { TCopySnippetMgr }
 
 class function TCopySnippetMgr.CanHandleView(View: IView): Boolean;
-  {Checks if a view can be copied to clipboard.
-    @param View [in] View to be checked.
-    @return True if view contains code that can be output as a compilable
-      snippet, False otherwise.
-  }
 begin
   Result := TSnippetSourceGen.CanGenerate(View);
 end;
 
 class function TCopySnippetMgr.GenerateSourceCode(View: IView): string;
-  {Generates source code in required format.
-    @param View [in] View for which source code is required.
-    @return Generated code snippet(s) as string.
-  }
 begin
   Result := TSnippetSourceGen.Generate(View, Preferences.SourceCommentStyle);
 end;

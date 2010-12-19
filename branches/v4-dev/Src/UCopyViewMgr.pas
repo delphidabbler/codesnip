@@ -41,44 +41,40 @@ interface
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   UBaseObjects, UView;
 
 
 type
 
-  {
-  TCopyViewMgr:
-    Static abstract base class for objects that copy a representation of a view
-    to the clipboard.
-  }
+  ///  <summary>
+  ///  Static abstract base class for objects that copy a representation of a
+  ///  view to the clipboard in both plain (Unicode) text format and rich text
+  ///  format.
+  ///  </summary>
   TCopyViewMgr = class abstract(TNoConstructObject)
   strict protected
-    class function GeneratePlainText(View: IView): string;
+    ///  <summary>Returns a byte array containing a Unicode plain text
+    ///  representation of the given view that is to be copied to the clipboard.
+    ///  </summary>
+    class function GeneratePlainText(View: IView): TBytes;
       virtual; abstract;
-      {Generates rich text representation of a view that is to be copied to
-      clipboard.
-        @param View [in] View to be represented in plain text.
-      }
-    class function GenerateRichText(View: IView): string;
+    ///  <summary>Returns a byte array containing a RTF representation of the
+    ///  given view that is to be copied to the clipboard.</summary>
+    class function GenerateRichText(View: IView): TBytes;
       virtual; abstract;
-      {Generates rich text representation of a view that is to be copied to
-      clipboard.
-        @param View [in] View to be represented in rich text.
-      }
   public
+    ///  <summary>Checks if a given view can be copied to the clipboard.
+    ///  </summary>
     class function CanHandleView(View: IView): Boolean;
       virtual; abstract;
-      {Checks if view can be copied to clipboard.
-        @param View [in] View to be checked.
-        @return True if view can be copied, False otherwise.
-      }
+    ///  <summary>Copies information about a given view to the clipboard in both
+    ///  plain (Unicode) text and rich text formats.</summary>
+    ///  <remarks>The view must be one that is supported by the concrete
+    ///  subclass.</remarks>
     class procedure Execute(View: IView);
-      {Copies the information about the view to the clipboard. Information is
-      copied in both plain text and rich text formats.
-        @param View [in] View to be copied. Must be supported by concrete
-          subclass.
-      }
   end;
 
 
@@ -86,8 +82,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   UClipboardHelper;
 
@@ -95,17 +89,14 @@ uses
 { TCopyViewMgr }
 
 class procedure TCopyViewMgr.Execute(View: IView);
-  {Copies the information about the view to the clipboard.
-    @param View [in] View to be copied. Must be supported by concrete subclass.
-  }
 var
   Clip: TClipboardHelper;   // object used to update clipboard
-  PlainText: string;        // plain text representation of snippet
-  RTF: string;              // rich text representation of snippet
+  PlainText: TBytes;        // plain text representation of snippet
+  RTF: TBytes;              // rich text representation of snippet
 begin
   Assert(Assigned(View), ClassName + '.Execute: View is nil');
   Assert(CanHandleView(View), ClassName + '.Execute: View not supported');
-  // Generate plain text and rich text representation of snipper
+  // Generate plain text and rich text representation of view
   PlainText := GeneratePlainText(View);
   RTF := GenerateRichText(View);
   // Open clipboard and add both plain and rich text representations of snippet
@@ -114,7 +105,7 @@ begin
     Clip.Open;
     try
       Clip.Add(CF_UNICODETEXT, PlainText);
-      Clip.Add(CF_RTF, BytesOf(RTF));         // convert RTF to default encoding
+      Clip.Add(CF_RTF, RTF);
     finally
       Clip.Close;
     end;
