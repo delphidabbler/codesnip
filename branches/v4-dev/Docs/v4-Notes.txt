@@ -74,6 +74,11 @@ Changes
   o Refactored and extended code that load, saves and inserts RTF code to use
     new static record and to use TRTF for the RTF data.
 
+* HTML processing:
+  o HTML builder now uses TStringBuilder to create HTML documents.
+  o HTML builder no longer wraps embedded CSS code (in style tags) in HTML
+    comments.
+
 Printing:
   o Print engine and print document code updated to used TRTF as document type
     rather than passing data in streams.
@@ -81,6 +86,9 @@ Printing:
 
 * Added support for full Unicode Pascal identifiers to be used as snippet names.
   Modified alpha grouping to handle this.
+  
+* Clipboard copying code modified to have a method to add each supported format
+  to clipboard to enable correct encoding to be used for each format.
 
 * Dialog boxes:
   o Config Compilers Dialog Box: Changed caption of button that detects
@@ -91,8 +99,11 @@ Printing:
   o Added encoding drop down to Save source dialog box where user can choose
     encoding to be used to save files. Provided different choices (or no choice)
     for each file type.
-  o Simplified handling of captions in preview dialogs. No longer try to extract
-    title from document text.
+  o Preview dialog box:
+    * Simplified handling of captions in preview dialogs. No longer try to
+      extract title from document text.
+    * Required document type now stated explicitly by calling code. No longer
+      detect doc type from content.
 
 * Database:
   o Changed user database dir name to UserData.4.
@@ -131,6 +142,11 @@ Printing:
     * Used for database download processing.
     * Used for code export (including code submission).
     * Used for highlighted source code returned from syntax highlighters.
+    * Used for documents to be displyed in Preview dialog box.
+    * Used in print previews in preferences dialog box.
+    * Used when generating snippet information using TRoutineDoc and
+      descendants.
+    * Used when copying code to clipboard.
 
 * UI changes:
   o Snippets now displayed in history menu with "Snippet" instead of "Routine"
