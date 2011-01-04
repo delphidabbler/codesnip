@@ -18,7 +18,7 @@
   rel="stylesheet"
   type="text/css"
   media="screen"
-  href="main.css";
+  href="main.css"
 />
 
 </head>
@@ -72,7 +72,7 @@
 
 <p>
   On earlier versions of CodeSnip the config files were ANSI text files using
-  the system's default encoding. The installer takes care of converting the 
+  the system's default encoding. The installer takes care of converting the
   older files to Unicode.
 </p>
 
@@ -123,7 +123,7 @@
     <strong>RegCode</strong> (String)
   </dt>
   <dd>
-    Registration code. String of 32 hex digits. May be empty string or missing 
+    Registration code. String of 32 hex digits. May be empty string or missing
     if application not registered.
   </dd>
   <dt>
@@ -160,8 +160,8 @@
   <dd>
     <div class="half-spaced">
       Version number of file. Incremented whenever the config file format
-      changes. If this section or this value is missing then the default value 
-      is 1. The installer takes care of converting earlier file versions and 
+      changes. If this section or this value is missing then the default value
+      is 1. The installer takes care of converting earlier file versions and
       stamping config file with the correct version number.
     </div>
     <div class="half-spaced">
@@ -260,28 +260,28 @@
     <strong>Prefix0</strong> (String)
   </dt>
   <dd>
-    Double quoted prefix to text output by the compiler to indicate fatal 
+    Double quoted prefix to text output by the compiler to indicate fatal
     compiler errors. If not present the default is &quot;Fatal: &quot;.
   </dd>
   <dt>
     <strong>Prefix1</strong> (String)
   </dt>
   <dd>
-    Double quoted prefix to text output by the compiler to indicate standard 
+    Double quoted prefix to text output by the compiler to indicate standard
     compiler errors. If not present the default is &quot;Error: &quot;.
   </dd>
   <dt>
     <strong>Prefix2</strong> (String)
   </dt>
   <dd>
-    Double quoted prefix to text output by the compiler to indicate warnings. If 
+    Double quoted prefix to text output by the compiler to indicate warnings. If
     not present the default is &quot;Warning: &quot;.
   </dd>
   <dt>
     <strong>Switches</strong> (String)
   </dt>
   <dd>
-    Comma separated list of compiler switches. Empty string value &rArr; use 
+    Comma separated list of compiler switches. Empty string value &rArr; use
     default switches for compiler. A missing value is the same as an empty
     string value.
   </dd>
@@ -397,7 +397,7 @@
   </dt>
   <dd>
     Code that describes search logic to use: 0 &rArr; &quot;and&quot;; 1 &rArr;
-    &quot;or&quot;. 
+    &quot;or&quot;.
   </dd>
 </dl>
 
@@ -406,7 +406,7 @@
 </h4>
 
 <p>
-  Provides information about last the last text search that was run and records 
+  Provides information about last the last text search that was run and records
   a history of search terms.
 </p>
 
@@ -426,7 +426,7 @@
   </dt>
   <dd>
     <div class="half-spaced">
-      One entry for each search term in history where <em>XXX</em> ranges from 0 
+      One entry for each search term in history where <em>XXX</em> ranges from 0
       to <strong>HistoryCount</strong> - 1.
     </div>
     <div class="half-spaced">
@@ -451,7 +451,7 @@
   </dt>
   <dd>
     Code that describes search logic to use: 0 &rArr; &quot;and&quot;; 1 &rArr;
-    &quot;or&quot;. 
+    &quot;or&quot;.
   </dd>
 </dl>
 
@@ -460,7 +460,7 @@
 </h4>
 
 <p>
-  Provides information about the last snippet cross reference search that was 
+  Provides information about the last snippet cross reference search that was
   run.
 </p>
 
@@ -473,7 +473,7 @@
     <strong>IncludeRoutine</strong> (Boolean)
   </dt>
   <dd>
-    Indicates whether to include the snippet for which the search is being 
+    Indicates whether to include the snippet for which the search is being
     performed in the search result.
   </dd>
   <dt>
@@ -487,8 +487,8 @@
     <strong>RequiredRecurse</strong> (Boolean)
   </dt>
   <dd>
-    Indicates whether to recurse required snippets to search for required 
-    snippets of each required snippet and so on. Ignored if 
+    Indicates whether to recurse required snippets to search for required
+    snippets of each required snippet and so on. Ignored if
     <strong>Required</strong> = False.
   </dd>
   <dt>
@@ -526,8 +526,8 @@
   <dd>
     <div class="half-spaced">
       Version number of file. Incremented whenever the config file format
-      changes. If this section or this value is missing then the default value 
-      is 1. The installer takes care of converting earlier file versions and 
+      changes. If this section or this value is missing then the default value
+      is 1. The installer takes care of converting earlier file versions and
       stamping config file with the correct version number.
     </div>
     <div class="half-spaced">
@@ -606,7 +606,7 @@
 </h4>
 
 <p>
-  Stores source code generation preferences. Used in test compilations or when 
+  Stores source code generation preferences. Used in test compilations or when
   generating user defined units.
 </p>
 
@@ -629,11 +629,11 @@
     Number of warnings supported.
   </dd>
   <dt>
-    <strong>Warning<em>XXX</em>.Symbol</strong> (String). 
+    <strong>Warning<em>XXX</em>.Symbol</strong> (String).
   </dt>
   <dd>
     <div class="half-spaced">
-      One entry for each supported warning where <em>XXX</em> ranges from 0 to 
+      One entry for each supported warning where <em>XXX</em> ranges from 0 to
       <strong>WarningCount</strong> - 1.
     </div>
     <div class="half-spaced">
@@ -646,13 +646,13 @@
   </dt>
   <dd>
     <div class="half-spaced">
-      One entry for each supported warning where <em>XXX</em> ranges from 0 to 
-      <strong>WarningCount</strong> - 1. 
+      One entry for each supported warning where <em>XXX</em> ranges from 0 to
+      <strong>WarningCount</strong> - 1.
     </div>
     <div class="half-spaced">
-      Records the earliest version of Delphi that supports the warning. This 
+      Records the earliest version of Delphi that supports the warning. This
       version number is a decimal value containing compiler version number as
-      specified by Delphi's <var>CompilerVersion</var> constant. Must be 14.0 
+      specified by Delphi's <var>CompilerVersion</var> constant. Must be 14.0
       (Delphi 6) or higher.
     </div>
   </dd>
@@ -682,7 +682,7 @@
     <strong>OverviewStartState</strong> (Integer)
   </dt>
   <dd>
-    Code that indicates the desired start state of the overview pane treeview: 
+    Code that indicates the desired start state of the overview pane treeview:
     0 &rArr; fully expanded; 1 &rArr; fully collapsed.
   </dd>
 </dl>
@@ -723,7 +723,7 @@
       highlighter. <em>XXX</em> ranges from 0 to 11.
     </div>
     <div class="half-spaced">
-      Colour of highlight element. Integer representation of a Delphi 
+      Colour of highlight element. Integer representation of a Delphi
       <var>TColor</var> value. If the colour is not specified the value is the
       integer representation of clNone.
     </div>
@@ -755,8 +755,8 @@
       0 to <strong>CustomColourCount</strong> - 1.
     </div>
     <div class="half-spaced">
-      The value is a definition of a custom colour in the format used by the 
-      Color dialog box. This format is <em>ColourID</em>=<em>ColourNum</em> 
+      The value is a definition of a custom colour in the format used by the
+      Color dialog box. This format is <em>ColourID</em>=<em>ColourNum</em>
       where <em>ColourID</em> is a value from &quot;ColorA&quot; to
       &quot;ColorP&quot; and <em>ColourNum</em> is the hex representation of the
       colour.
@@ -834,7 +834,7 @@
     <strong>FileType</strong> (Integer)
   </dt>
   <dd>
-    Code that determines type of exported files: 0 &rArr; plain text; 1 &rArr; 
+    Code that determines type of exported files: 0 &rArr; plain text; 1 &rArr;
     Pascal; 2 &rArr; HTML; 3 &rArr; rich text (RTF).
   </dd>
   <dt>
@@ -898,7 +898,7 @@
   </dt>
   <dd>
     Encrypted form of any password required to access proxy server. Empty if no
-    password is required. This value is a hex representation of the bytes of 
+    password is required. This value is a hex representation of the bytes of
     the encrypted password.
   </dd>
 </dl>

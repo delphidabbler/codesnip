@@ -18,7 +18,7 @@
   rel="stylesheet"
   type="text/css"
   media="screen"
-  href="main.css";
+  href="main.css"
 />
 
 </head>
@@ -494,10 +494,10 @@
       These readers interpret the v1, v2 and v3 file formats correctly.
     </div>
     <div class="half-spaced">
-      Up to, and including, CodeSnip v3.8.5, file reader software designed to 
+      Up to, and including, CodeSnip v3.8.5, file reader software designed to
       work with file format v3 will also try to read later file versions. It
       looks for its file count in a hex encoded SmallInt value at position 12 in
-      the backup file. File format v4 was designed to have a padding value of 
+      the backup file. File format v4 was designed to have a padding value of
       <code>'0000'</code> in this location. Agains this fools the reader software
       into thinking there are no files in the backup.
     </div>
@@ -515,7 +515,7 @@
 
 <p>
   In summary, all future backup files should begin with these ANSI / ASCII
-  characters: <code>'FFFFxxxx00000000'</code> where xxxx is the file version 
+  characters: <code>'FFFFxxxx00000000'</code> where xxxx is the file version
   number as a SmallInt encoded as four hex characters. For example for file
   format v4 we use <code>'FFFF000400000000'</code>.
 </p>

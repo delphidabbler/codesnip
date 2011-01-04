@@ -18,7 +18,7 @@
   rel="stylesheet"
   type="text/css"
   media="screen"
-  href="main.css";
+  href="main.css"
 />
 
 <style type="text/css">
@@ -74,7 +74,7 @@
 </p>
 
 <p>
-  The stream is plain text and consists of a concatenation of text files from 
+  The stream is plain text and consists of a concatenation of text files from
   the online database along with some housekeeping information. The text files
   are recreated in the main database directory.
 </p>
@@ -107,15 +107,15 @@
   to the final database file. See the <a href="#appendix">appendix</a> for
   details.
 </p>
-  
+
 <h2>
   Stream Format
 </h2>
 
 <p>
   The stream contains structured plain text comprising both numeric and string
-  information. Variable length strings are preceded by numeric values that 
-  indicate the length of the following string. Numeric values are encoded as hex 
+  information. Variable length strings are preceded by numeric values that
+  indicate the length of the following string. Numeric values are encoded as hex
   characters. The format is as follows:
 </p>
 
@@ -145,7 +145,7 @@
     <code>UnixDate</code>
   </dt>
   <dd>
-    File's modification date (GMT) in Unix format. Int64 encoded as 16 hex 
+    File's modification date (GMT) in Unix format. Int64 encoded as 16 hex
     digits.
   </dd>
   <dt>
@@ -187,7 +187,7 @@
 
   <div class="box">
     CodeSnip's HTTP handling code automatically converts ANSI text stream into
-    Unicode string using encoding specified in HTTP header.  
+    Unicode string using encoding specified in HTTP header.
   </div>
 
   <div class="label">
@@ -203,7 +203,7 @@
   </div>
 
   <div class="box">
-      Database download manager code converts Unicode string back into ANSI text 
+      Database download manager code converts Unicode string back into ANSI text
       stream with same encoding in which it was sent from web server.
   </div>
 
@@ -255,7 +255,7 @@
   <div class="box">
       UTF-8 text files.
   </div>
-  
+
 </div>
 
 </body>
