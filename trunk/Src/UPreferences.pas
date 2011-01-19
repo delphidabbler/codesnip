@@ -436,6 +436,7 @@ begin
   Self.SetHiliteAttrs(SrcPref.HiliteAttrs);
   Self.SetCustomHiliteColours(SrcPref.CustomHiliteColours);
   Self.SetWarnings(SrcPref.Warnings);
+  Self.SetNewsAge(SrcPref.NewsAge);
 end;
 
 constructor TPreferences.Create;
