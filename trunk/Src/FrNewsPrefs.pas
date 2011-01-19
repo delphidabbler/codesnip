@@ -110,7 +110,7 @@ begin
   lblAgePrefix.Left := 0;
   seAge.Left := lblAgePrefix.Left + lblAgePrefix.Width + 6;
   lblAgeSuffix.Left := seAge.Left + seAge.Width + 6;
-  TCtrlArranger.AlignVCentres(0, [lblAgePrefix, seAge, lblAgeSuffix]);
+  TCtrlArranger.AlignVCentres(8, [lblAgePrefix, seAge, lblAgeSuffix]);
 end;
 
 procedure TNewsPrefsFrame.Deactivate(const Prefs: IPreferences);
