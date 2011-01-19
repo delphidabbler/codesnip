@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -69,10 +69,10 @@ type
           property set to true are sized. When False only labels with AutoSize
           true are sized, otherwise all labels are sized.
       }
-    class function BottomOf(const Ctrl: TControl;
-      const BM: Integer = 0): Integer; overload;
+    class function BottomOf(const Ctrl: TControl; const BM: Integer = 0):
+      Integer; overload;
       {Gets Y coordinate of bottom of a control, leaving space for an optional
-      margin unser the control, relative to its parent controls in pixels.
+      margin under the control, relative to its parent controls in pixels.
         @param Ctl [in] Control to check.
         @param BM [in] Bottom margin to leave under control. Optional.
         @return Required position.
@@ -86,6 +86,24 @@ type
         @return Required position. This is maximum value of bottom of all
           controls.
       }
+    class procedure MoveToLeftOf(const RefCtrl, Ctrl: TControl;
+      const Margin: Integer = 0);
+      {Moves a control to the left of a reference control optionally separated
+      by a margin.
+        @param RefCtrl [in] Control relative to which control is moved.
+        @param Ctrl [in] Control being moved.
+        @param Margin [in] Optional margin, in pixels, required between Ctrl and
+          RefCtrl.
+      }
+    class procedure MoveToRightOf(const RefCtrl, Ctrl: TControl;
+      const Margin: Integer = 0);
+      {Moves a control to the right of a reference control optionally separated
+      by a margin.
+        @param RefCtrl [in] Control relative to which control is moved.
+        @param Ctrl [in] Control being moved.
+        @param Margin [in] Optional margin, in pixels, required between Ctrl and
+          RefCtrl.
+      }
     class function AlignVCentres(const ATop: Integer;
       const Ctrls: array of TControl): Integer;
       {Vertically centres a list of controls.
@@ -93,8 +111,8 @@ type
         @param Ctrls [in] Array of controls to be aligned.
         @return Height occupied by controls (= height of tallest control).
       }
-    class function MaxContainerHeight(
-      const Containers: array of TWinControl): Integer;
+    class function MaxContainerHeight(const Containers: array of TWinControl):
+      Integer;
       {Checks the maximum height of controls parented by a set of controls. Can
       be used to determine the height of a control that has to be able to
       display all the controls from any of the containers.
@@ -189,6 +207,32 @@ begin
   Result := 0;
   for ContainerIdx := Low(Containers) to High(Containers) do
     Result := Max(Result, TotalControlHeight(Containers[ContainerIdx]));
+end;
+
+class procedure TCtrlArranger.MoveToLeftOf(const RefCtrl, Ctrl: TControl;
+  const Margin: Integer);
+  {Moves a control to the left of a reference control optionally separated by a
+  margin.
+    @param RefCtrl [in] Control relative to which control is moved.
+    @param Ctrl [in] Control being moved.
+    @param Margin [in] Optional margin, in pixels, required between Ctrl and
+      RefCtrl.
+  }
+begin
+  Ctrl.Left := RefCtrl.Left - Margin - Ctrl.Width;
+end;
+
+class procedure TCtrlArranger.MoveToRightOf(const RefCtrl, Ctrl: TControl;
+  const Margin: Integer);
+  {Moves a control to the right of a reference control optionally separated by a
+  margin.
+    @param RefCtrl [in] Control relative to which control is moved.
+    @param Ctrl [in] Control being moved.
+    @param Margin [in] Optional margin, in pixels, required between Ctrl and
+      RefCtrl.
+  }
+begin
+  Ctrl.Left := RefCtrl.Left + RefCtrl.Width + Margin;
 end;
 
 class function TCtrlArranger.SetLabelHeight(const Lbl: TLabel): Integer;

@@ -108,8 +108,8 @@ procedure TNewsPrefsFrame.ArrangeControls;
   }
 begin
   lblAgePrefix.Left := 0;
-  seAge.Left := lblAgePrefix.Left + lblAgePrefix.Width + 6;
-  lblAgeSuffix.Left := seAge.Left + seAge.Width + 6;
+  TCtrlArranger.MoveToRightOf(lblAgePrefix, seAge, 6);
+  TCtrlArranger.MoveToRightOf(seAge, lblAgeSuffix, 6);
   TCtrlArranger.AlignVCentres(8, [lblAgePrefix, seAge, lblAgeSuffix]);
 end;
 

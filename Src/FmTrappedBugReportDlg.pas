@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -147,7 +147,7 @@ begin
   lblInstruct4.Top := TCtrlArranger.BottomOf(lblBugTracker, 12);
   inherited;
   btnTerminate.Top := btnClose.Top;
-  btnTerminate.Left := btnClose.Left - btnTerminate.Width - 4;
+  TCtrlArranger.MoveToLeftOf(btnClose, btnTerminate, 4);
 end;
 
 procedure TTrappedBugReportDlg.ConfigForm;
