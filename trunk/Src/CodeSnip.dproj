@@ -235,6 +235,10 @@
 				<Form>MemoPreviewFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
+			<DCCReference Include="FrNewsPrefs.pas">
+				<Form>NewsPrefsFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
 			<DCCReference Include="FrOverview.pas">
 				<Form>OverviewFrame</Form>
 				<DesignClass>TFrame</DesignClass>
