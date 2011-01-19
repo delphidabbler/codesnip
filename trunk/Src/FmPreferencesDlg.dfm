@@ -19,6 +19,7 @@ inherited PreferencesDlg: TPreferencesDlg
       Width = 446
       Height = 377
       Align = alClient
+      MultiLine = True
       TabOrder = 0
       OnChange = pcMainChange
       OnChanging = pcMainChanging
