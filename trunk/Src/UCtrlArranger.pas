@@ -80,7 +80,7 @@ type
     class function BottomOf(const Ctrls: array of TControl;
       const BM: Integer = 0): Integer; overload;
       {Gets Y co-ordinate of bottom of the lowermost of a set of controls,
-      leaving space for an optional under the controls.
+      leaving space for an optional margin under the controls.
         @param Ctrls [in] Controls to be examined.
         @param BM [in] Bottom margin to leave under all controls. Optional.
         @return Required position. This is maximum value of bottom of all
@@ -154,14 +154,13 @@ class function TCtrlArranger.AlignVCentres(const ATop: Integer;
     @return Height occupied by controls (= height of tallest control).
   }
 var
-  I: Integer; // loops thru all controls to be aligned
+  Ctrl: TControl; // references each control in Ctrls array
 begin
   Result := 0;
-  for I := Low(Ctrls) to High(Ctrls) do
-    if Ctrls[I].Height > Result then
-      Result := Ctrls[I].Height;
-  for I := Low(Ctrls) to High(Ctrls) do
-    Ctrls[I].Top := ATop + (Result - Ctrls[I].Height) div 2;
+  for Ctrl in Ctrls do
+    Result := Max(Result, Ctrl.Height);
+  for Ctrl in Ctrls do
+    Ctrl.Top := ATop + (Result - Ctrl.Height) div 2;
 end;
 
 class function TCtrlArranger.BottomOf(const Ctrl: TControl;
@@ -179,17 +178,17 @@ end;
 class function TCtrlArranger.BottomOf(const Ctrls: array of TControl;
   const BM: Integer): Integer;
   {Gets Y co-ordinate of bottom of the lowermost of a set of controls, leaving
-  space for an optional under the controls.
+  space for an optional margin under the controls.
     @param Ctrls [in] Controls to be examined.
     @param BM [in] Bottom margin to leave under all controls. Optional.
     @return Required position. This is maximum value of bottom of all controls.
   }
 var
-  Idx: Integer; // loops thru all controls
+  Ctrl: TControl; // references each control in Ctrls array
 begin
   Result := 0;
-  for Idx := Low(Ctrls) to High(Ctrls) do
-    Result := Max(Result, BottomOf(Ctrls[Idx]));
+  for Ctrl in Ctrls do
+    Result := Max(Result, BottomOf(Ctrl));
   Inc(Result, BM);
 end;
 
@@ -202,11 +201,11 @@ class function TCtrlArranger.MaxContainerHeight(
     @return Required height.
   }
 var
-  ContainerIdx: Integer;    // loops through all containers
+  Container: TWinControl;   // references each container in Containers array
 begin
   Result := 0;
-  for ContainerIdx := Low(Containers) to High(Containers) do
-    Result := Max(Result, TotalControlHeight(Containers[ContainerIdx]));
+  for Container in Containers do
+    Result := Max(Result, TotalControlHeight(Container));
 end;
 
 class procedure TCtrlArranger.MoveToLeftOf(const RefCtrl, Ctrl: TControl;
