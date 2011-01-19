@@ -20,7 +20,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s):
@@ -55,9 +55,19 @@
     <p>
       It shows the latest news about <em>CodeSnip</em> and the online database.
       The news is obtained from <em>CodeSnip</em>'s online RSS news feed. The
-      titles of most items is clickable and will display a web page relevant
-      to the news item when clicked. News items older than 92 days are not
-      displayed.
+      titles of most items are clickable and will display a web page relevant
+      to the news item when clicked.
+    </p>
+    <p>
+      The maximum age of the news items is shown at the top of the window. By
+      default this is 92 days. You can change this by clicking the
+      <em>Change</em> button, which will display the <a
+        href="dlg_prefs_news.htm"
+      >News</a> tab of the <a
+        href="dlg_preferences.htm"
+      >Preferences</a> dialog box. Enter a new value there and click
+      <em>OK</em>. If the value has changed the news will be re-loaded, showing
+      items from the date range specified.
     </p>
     <p>
       If the news feed is not available or there is an error, a message to that
@@ -67,9 +77,6 @@
       You can display the RSS feed in your default web browser by clicking the
       <em>RSS Feed</em> button. Depending on your browser, you may be able to
       subscribe to the feed from there.
-    </p>
-    <p>
-
     </p>
   </body>
 </html>
