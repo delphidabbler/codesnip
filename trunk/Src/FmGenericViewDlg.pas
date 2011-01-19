@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -71,6 +71,11 @@ type
 implementation
 
 
+uses
+  // Project
+  UCtrlArranger;
+
+
 {$R *.DFM}
 
 
@@ -85,7 +90,7 @@ begin
   // Arrange Close button
   btnClose.Top := btnHelp.Top;
   if btnHelp.Visible then
-    btnClose.Left := btnHelp.Left - btnClose.Width - 4
+    TCtrlArranger.MoveToLeftOf(btnHelp, btnClose, 4)
   else
     btnClose.Left := btnHelp.Left;
 end;

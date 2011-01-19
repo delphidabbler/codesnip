@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -149,7 +149,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UColours, USettings;
+  UColours, UCtrlArranger, USettings;
 
 
 {$R *.dfm}
@@ -162,7 +162,7 @@ procedure TFindXRefsDlg.ArrangeForm;
   }
 begin
   // Place snippet name after end of description label
-  lblRoutineName.Left := lblDesc.Left + lblDesc.Width;
+  TCtrlArranger.MoveToRightOf(lblDesc, lblRoutineName);
   // Check if snippet name is clipped at right of dialog box and increase
   // available body panel space if so
   if lblRoutineName.Left + lblRoutineName.Width > pnlBody.ClientWidth then

@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -389,7 +389,7 @@ begin
       // error message
       lblHeadline.Caption := TrimRight(lblHeadline.Caption) + ' ';
       lblHeadline.Font.Color := clWarningText;
-      lblError.Left := lblHeadline.Left + lblHeadline.Width;
+      TCtrlArranger.MoveToRightOf(lblHeadline, lblError);
       lblError.Top := lblHeadline.Top;
       lblError.Visible := True;
     end;
@@ -404,8 +404,6 @@ begin
   // Hide Cancel and show Close buttons
   btnCancel.Visible := False;
   btnClose.Visible := True;
-  // Initialise news frame
-//  frmNews.Initialize;
 end;
 
 procedure TUpdateDlg.ProgressMsg(const Msg: string);
