@@ -59,6 +59,10 @@ type
     lblAgeSuffix: TLabel;
     seAge: TSpinEdit;
   public
+    constructor Create(AOwner: TComponent); override;
+      {Object constructor. Sets up frame.
+        @param AOwner [in] Component that owns frame.
+      }
     procedure Activate(const Prefs: IPreferences); override;
       {Called when page activated. Updates controls.
         @param Prefs [in] Object that provides info used to update controls.
@@ -111,6 +115,15 @@ begin
   TCtrlArranger.MoveToRightOf(lblAgePrefix, seAge, 6);
   TCtrlArranger.MoveToRightOf(seAge, lblAgeSuffix, 6);
   TCtrlArranger.AlignVCentres(8, [lblAgePrefix, seAge, lblAgeSuffix]);
+end;
+
+constructor TNewsPrefsFrame.Create(AOwner: TComponent);
+  {Object constructor. Sets up frame.
+    @param AOwner [in] Component that owns frame.
+  }
+begin
+  inherited;
+  HelpKeyword := 'NewsPrefs';
 end;
 
 procedure TNewsPrefsFrame.Deactivate(const Prefs: IPreferences);
