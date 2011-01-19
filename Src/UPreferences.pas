@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -182,6 +182,18 @@ type
     property Warnings: IWarnings
       read GetWarnings write SetWarnings;
       {Information about warnings to be inhibited by code generator}
+
+    function GetNewsAge: Integer;
+      {Gets maximum age of news items to be displayed.
+        @return Required age in days.
+      }
+    procedure SetNewsAge(const Age: Integer);
+      {Sets maximum age of news items to be displayed.
+        @param Age [in] Required age in days.
+      }
+    property NewsAge: Integer
+      read GetNewsAge write SetNewsAge;
+      {Maximum age of news items to be displayed}
   end;
 
 
@@ -236,6 +248,8 @@ type
       {Custom highlighter colours}
     fWarnings: IWarnings;
       {Information about warnings to be inhibited by code generator}
+    fNewsAge: Integer;
+      {Maximum age of news items in days}
   protected // do not make strict
     { IPreferences methods }
     function GetSourceCommentStyle: TCommentStyle;
@@ -322,6 +336,14 @@ type
       by code generator.
         @param New warnings object.
     }
+    function GetNewsAge: Integer;
+      {Gets maximum age of news items to be displayed.
+        @return Required age in days.
+      }
+    procedure SetNewsAge(const Age: Integer);
+      {Sets maximum age of news items to be displayed.
+        @param Age [in] Required age in days.
+      }
     { IAssignable method }
     procedure Assign(const Src: IInterface);
       {Assigns properties of a given object to this object.
@@ -353,6 +375,7 @@ type
       cPrinting = 'Printing';
       cHiliter = 'Hiliter';
       cCodeGenerator = 'CodeGen';
+      cNews = 'News';
     class var fInstance: IPreferences;
       {Stores reference to singleton instance of this class}
     class function GetInstance: IPreferences; static;
@@ -450,6 +473,14 @@ begin
   Result := fMeasurementUnits;
 end;
 
+function TPreferences.GetNewsAge: Integer;
+  {Gets maximum age of news items to be displayed.
+    @return Required age in days.
+  }
+begin
+  Result := fNewsAge;
+end;
+
 function TPreferences.GetOverviewStartState: TOverviewStartState;
   {Gets startup state of overview tree view.
     @return Current startup state.
@@ -526,6 +557,14 @@ procedure TPreferences.SetMeasurementUnits(const Value: TMeasurementUnits);
   }
 begin
   fMeasurementUnits := Value;
+end;
+
+procedure TPreferences.SetNewsAge(const Age: Integer);
+  {Sets maximum age of news items to be displayed.
+    @param Age [in] Required age in days.
+  }
+begin
+  fNewsAge := Age;
 end;
 
 procedure TPreferences.SetOverviewStartState(const Value: TOverviewStartState);
@@ -605,6 +644,7 @@ begin
   NewPref.HiliteAttrs := Self.GetHiliteAttrs;
   NewPref.CustomHiliteColours := Self.GetCustomHiliteColours;
   NewPref.Warnings := Self.GetWarnings;
+  NewPref.NewsAge := Self.fNewsAge;
 end;
 
 constructor TPreferencesPersist.Create;
@@ -616,6 +656,8 @@ var
 const
   // Default margin size in millimeters
   cPrintPageMarginSizeMM = 25.0;
+  // Default maximum age of news items
+  cDefNewsAge = 92;
 begin
   inherited Create;
 
@@ -666,6 +708,10 @@ begin
   // Read code generator section
   Storage := Settings.ReadSection(ssPreferences, cCodeGenerator);
   TWarningsPersist.Load(Storage, fWarnings);
+
+  // Read news section
+  Storage := Settings.ReadSection(ssPreferences, cNews);
+  fNewsAge := StrToIntDef(Storage.ItemValues['MaxAge'], cDefNewsAge);
 end;
 
 destructor TPreferencesPersist.Destroy;
@@ -719,6 +765,11 @@ begin
   // Write code generation section
   Storage := Settings.EmptySection(ssPreferences, cCodeGenerator);
   TWarningsPersist.Save(Storage, fWarnings);
+
+  // Write news section
+  Storage := Settings.EmptySection(ssPreferences, cNews);
+  Storage.ItemValues['MaxAge'] := IntToStr(fNewsAge);
+  Storage.Save;
 
   inherited;
 end;
