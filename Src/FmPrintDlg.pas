@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -153,7 +153,6 @@ resourcestring
   sMessage = 'Your preferences will take effect the next time you start the '
     + 'application';
 begin
-//  if TPreferencesDlg.Execute(Self, [ppPrinting]) then
   if TPreferencesDlg.Execute(Self, [TPrintingPrefsFrame]) then
   begin
     if TMessageBox.Confirm(Self, sQuery) then
