@@ -21,15 +21,29 @@ inherited NewsDlg: TNewsDlg
       Align = alTop
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitLeft = 96
-      ExplicitTop = 120
-      ExplicitWidth = 185
+      DesignSize = (
+        441
+        41)
       object lblDays: TLabel
         Left = 0
         Top = 0
         Width = 34
         Height = 13
+        Anchors = [akLeft]
         Caption = 'lblDays'
+      end
+      object btnConfig: TButton
+        Left = 366
+        Top = 10
+        Width = 75
+        Height = 25
+        Hint = 'Change number of days'#13#10'of news displayed'
+        Anchors = [akRight]
+        Caption = 'Change...'
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        OnClick = btnConfigClick
       end
     end
     inline frmHTML: TRSSNewsFrame
@@ -40,14 +54,19 @@ inherited NewsDlg: TNewsDlg
       Align = alClient
       TabOrder = 1
       TabStop = True
-      ExplicitLeft = 8
-      ExplicitTop = 8
+      ExplicitTop = 41
+      ExplicitWidth = 441
+      ExplicitHeight = 312
       inherited pnlBrowser: TPanel
         Width = 441
         Height = 312
+        ExplicitWidth = 441
+        ExplicitHeight = 312
         inherited wbBrowser: TWebBrowser
           Width = 439
           Height = 310
+          ExplicitWidth = 439
+          ExplicitHeight = 310
           ControlData = {
             4C0000005F2D00000A2000000000000000000000000000000000000000000000
             000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -66,9 +85,10 @@ inherited NewsDlg: TNewsDlg
   end
   object btnRSSFeed: TBitBtn
     Left = 8
-    Top = 303
+    Top = 304
     Width = 89
     Height = 25
+    Hint = 'Display RSS feed'
     Caption = 'RSS Feed'
     DoubleBuffered = True
     Glyph.Data = {
@@ -89,6 +109,8 @@ inherited NewsDlg: TNewsDlg
       3A9DFB3586E82972D93178E1377EE93983EB3A87EE3B8BF03C8FF23D93F43E96
       F53B95F53587E92972D9}
     ParentDoubleBuffered = False
+    ParentShowHint = False
+    ShowHint = True
     TabOrder = 1
     OnClick = btnRSSFeedClick
   end
