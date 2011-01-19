@@ -5,13 +5,14 @@ inherited NewsPrefsFrame: TNewsPrefsFrame
     Width = 116
     Height = 13
     Caption = '&Display news going back'
+    FocusControl = seAge
   end
   object lblAgeSuffix: TLabel
     Left = 184
     Top = 16
     Width = 121
     Height = 13
-    Caption = 'days. (Min 14, Max 365).'
+    Caption = 'days. (min 14, max 365).'
   end
   object seAge: TSpinEdit
     Left = 128
@@ -23,6 +24,6 @@ inherited NewsPrefsFrame: TNewsPrefsFrame
     ParentShowHint = False
     ShowHint = False
     TabOrder = 0
-    Value = 0
+    Value = 14
   end
 end
