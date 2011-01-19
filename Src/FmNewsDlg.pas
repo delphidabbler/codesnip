@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -59,7 +59,9 @@ type
     frmHTML: TRSSNewsFrame;
     lblDays: TLabel;
     pnlTop: TPanel;
+    btnConfig: TButton;
     procedure btnRSSFeedClick(Sender: TObject);
+    procedure btnConfigClick(Sender: TObject);
   strict private
     procedure LoadNews;
       {Loads news from RSS feed, converts to HTML and displays in browser
@@ -87,6 +89,14 @@ type
       }
     function GetRSSDocument: IXMLDocumentEx;
       {Gets XML document containing details of RSS news feed from web.
+        @return Interface to required XML document.
+      }
+    function GetMaxNewsAge: Integer;
+      {Gets maximum number of days of news to be displayed.
+        @return Required number of days.
+      }
+    procedure UpdateNewsAgeLbl;
+      {Updates maximum news age label with current value.
       }
   strict protected
     procedure ArrangeForm; override;
@@ -117,15 +127,13 @@ uses
   // Delphi
   SysUtils, ExtActns,
   // Project
-  UCtrlArranger, UHTMLDetailUtils, UHTMLUtils, Web.UInfo, Web.UXMLRequestor;
+  FmPreferencesDlg, FrNewsPrefs, UCtrlArranger, UHTMLDetailUtils, UHTMLUtils,
+  UPreferences, Web.UInfo, Web.UXMLRequestor;
 
 {$R *.dfm}
 
 
 { TNewsDlg }
-
-const
-  DefMaxNewsAge = 92; // maximum age in days of any news item included in feed
 
 procedure TNewsDlg.AfterShowForm;
   {Override of method called from ancestor class after form is displayed. Loads
@@ -140,10 +148,22 @@ procedure TNewsDlg.ArrangeForm;
   }
 begin
   inherited;
+  TCtrlArranger.AlignVCentres(2, [lblDays, btnConfig]);
   lblDays.Left := 0;
-  lblDays.Top := 0;
   pnlTop.ClientHeight := TCtrlArranger.TotalControlHeight(pnlTop) + 8;
   btnRSSFeed.Top := btnClose.Top;
+end;
+
+procedure TNewsDlg.btnConfigClick(Sender: TObject);
+var
+  CurrentNewsAge: Integer;
+begin
+  CurrentNewsAge := GetMaxNewsAge;
+  if TPreferencesDlg.Execute(Self, [TNewsPrefsFrame]) then
+  begin
+    if CurrentNewsAge <> GetMaxNewsAge then
+      LoadNews;
+  end;
 end;
 
 procedure TNewsDlg.btnRSSFeedClick(Sender: TObject);
@@ -155,7 +175,7 @@ var
 begin
   BrowseAction := TBrowseURL.Create(nil);
   try
-    BrowseAction.URL := TWebInfo.NewsFeedURL(DefMaxNewsAge);
+    BrowseAction.URL := TWebInfo.NewsFeedURL(GetMaxNewsAge);
     BrowseAction.Execute;
   finally
     BrowseAction.Free;
@@ -299,15 +319,24 @@ begin
     end;
 end;
 
+function TNewsDlg.GetMaxNewsAge: Integer;
+  {Gets maximum number of days of news to be displayed.
+    @return Required number of days.
+  }
+begin
+  Result := Preferences.NewsAge;
+end;
+
 function TNewsDlg.GetRSSDocument: IXMLDocumentEx;
   {Gets XML document containing details of RSS news feed from web.
+    @return Interface to required XML document.
   }
 var
   Requestor: TXMLRequestor; // object that makes XML request
 begin
   Requestor := TXMLRequestor.Create;
   try
-    Result := Requestor.GetDocument(TWebInfo.NewsFeedURL(DefMaxNewsAge));
+    Result := Requestor.GetDocument(TWebInfo.NewsFeedURL(GetMaxNewsAge));
   finally
     Requestor.Free;
   end;
@@ -331,9 +360,6 @@ end;
 procedure TNewsDlg.LoadNews;
   {Loads news from RSS feed, converts to HTML and displays in browser control.
   }
-resourcestring
-  // message displayed in label at
-  sNewsDays = 'CodeSnip news from the last %d days.';
 var
   RSSFeed: TRSS20;  // object used to interpret RSS feed XML
 begin
@@ -348,7 +374,7 @@ begin
           DisplayNews(RSSFeed)
         else
           DisplayNoNewsMsg;
-        lblDays.Caption := Format(sNewsDays, [DefMaxNewsAge]);
+        UpdateNewsAgeLbl;
       finally
         RSSFeed.Free;
       end;
@@ -362,6 +388,14 @@ begin
   finally
     Screen.Cursor := crDefault;
   end;
+end;
+
+procedure TNewsDlg.UpdateNewsAgeLbl;
+resourcestring
+  // message displayed in label at
+  sNewsDays = 'CodeSnip news from the last %d days.';
+begin
+  lblDays.Caption := Format(sNewsDays, [GetMaxNewsAge]);
 end;
 
 end.
