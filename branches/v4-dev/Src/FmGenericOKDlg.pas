@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -74,7 +74,9 @@ implementation
 
 uses
   // Delphi
-  Windows;
+  Windows,
+  // Project
+  UCtrlArranger;
 
 
 {$R *.DFM}
@@ -90,10 +92,10 @@ begin
   btnOK.Top := btnHelp.Top;
   btnCancel.Top := btnOK.Top;
   if btnHelp.Visible then
-    btnCancel.Left := btnHelp.Left - btnCancel.Width - 4
+    TCtrlArranger.MoveToLeftOf(btnHelp, btnCancel, 4)
   else
     btnCancel.Left := btnHelp.Left;
-  btnOK.Left := btnCancel.Left - btnOK.Width - 4;
+  TCtrlArranger.MoveToLeftOf(btnCancel, btnOK, 4);
 end;
 
 function TGenericOKDlg.ModalResultOnEsc: Integer;

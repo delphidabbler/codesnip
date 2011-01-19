@@ -4,6 +4,14 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.8.8 of 19 January 2010
++ Added facility for user to specify maximum age of news items displayed in news dialog box. New preferences tab added where the maximum age can be customised.
++ Preferences dialog box now displays multi-line tabs when necessary.
++ Refactored some code used to align controls on forms.
++ Updated license. License HTML help file is no longer MPLd and may not be altered by thrid parties.
++ Updated help file re changes.
++ Updated documentation.
+
 Release v3.8.7 of 16 December 2010
 + Delphi XE compiler version 22.0 has been added to the drop down menu in the Code Generation tab of the preference dialog box.
 + Bug fix: compiler results are no longer listed when freeform snippets are printed or copied to the clipboard using the "Edit | Copy Information" menu item.

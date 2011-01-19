@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -152,7 +152,7 @@ implementation
 
 uses
   // Project
-  UFontHelper;
+  UCtrlArranger, UFontHelper;
 
 
 {$R *.dfm}
@@ -172,9 +172,9 @@ procedure TWizardDlg.ArrangeForm;
 begin
   inherited;
   // Align Cancel, Back and Next buttons
-  btnCancel.Left := btnHelp.Left - btnCancel.Width - 16;
-  btnNext.Left := btnCancel.Left - btnCancel.Width - 4;
-  btnBack.Left := btnNext.Left - btnNext.Width - 4;
+  TCtrlArranger.MoveToLeftOf(btnHelp, btnCancel, 16);
+  TCtrlArranger.MoveToLeftOf(btnCancel, btnNext, 4);
+  TCtrlArranger.MoveToLeftOf(btnNext, btnBack, 4);
   btnCancel.Top := btnHelp.Top;
   btnNext.Top := btnHelp.Top;
   btnBack.Top := btnHelp.Top;

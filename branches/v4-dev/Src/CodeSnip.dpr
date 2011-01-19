@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -133,6 +133,7 @@ uses
   FrHTMLTpltDlg in 'FrHTMLTpltDlg.pas' {HTMLTpltDlgFrame: TFrame},
   FrInfo in 'FrInfo.pas' {InfoFrame: TFrame},
   FrMemoPreview in 'FrMemoPreview.pas' {MemoPreviewFrame: TFrame},
+  FrNewsPrefs in 'FrNewsPrefs.pas' {NewsPrefsFrame: TFrame},
   FrOverview in 'FrOverview.pas' {OverviewFrame: TFrame},
   FrPrefsBase in 'FrPrefsBase.pas' {PrefsBaseFrame: TFrame},
   FrPrintingPrefs in 'FrPrintingPrefs.pas' {PrintingPrefsFrame: TFrame},

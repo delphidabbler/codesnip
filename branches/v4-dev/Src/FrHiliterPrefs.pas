@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -266,7 +266,7 @@ begin
   AvailWidth := gbElements.Width - lbElements.Left * 2;
   CtrlWidth := lbElements.Width + gbFontStyle.Width + fColorBox.Width;
   Spacing := (AvailWidth - CtrlWidth) div 2;
-  gbFontStyle.Left := lbElements.Left + lbElements.Width + Spacing;
+  TCtrlArranger.MoveToRightOf(lbElements, gbFontStyle, Spacing);
   fColorBox.Left := gbElements.Width - fColorBox.Width - 8;
   lblColour.Left := fColorBox.Left;
   frmExample.Left := gbFontStyle.Left;
