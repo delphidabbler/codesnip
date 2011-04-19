@@ -58,9 +58,9 @@ The installer makes the following changes to your system:
   file is stored in the folder. Once the database is downloaded, it will be
   stored in a "Data" sub-folder (see below).
 
-+ A %AppData%\DelphiDabbler\CodeSnip is also created. This is used to hold a
-  file that stores per-user configuration data. A "UserData.3" sub-folder is
-  used to store any user defined snippets.
++ A %AppData%\DelphiDabbler\CodeSnip folder is also created. This is used to
+  hold a file that stores per-user configuration data. A "UserData.3" sub-folder
+  is used to store any user defined snippets.
 
 + Setup offers to copy any relevant files from installations earlier than v3.0
   into the correct locations for v3.
