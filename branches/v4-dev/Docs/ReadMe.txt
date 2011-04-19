@@ -32,7 +32,7 @@ IMPORTANT NOTES:
    administrator. By default Windows Vista and Windows 7 will require an admin
    password if running as a standard user and setup will attempt to elevate the
    process. If UAC prompts are disabled you must run setup as administrator.
-   
+
 3) CodeSnip v4 will install alongside any v3 or earlier release that may already
    be installed. If you want to replace the earlier version simply uninstall it
    in the usual way. Uninstalling v3 will delete any existing main database so
@@ -63,9 +63,9 @@ The installer makes the following changes to your system:
   file is stored in the folder. Once the database is downloaded, it will be
   stored in a "Data" sub-folder (see below).
 
-+ A %AppData%\DelphiDabbler\CodeSnip is also created. This is used to hold a
-  file that stores per-user configuration data. A "UserData.4" sub-folder is
-  used to store any user defined snippets.
++ A %AppData%\DelphiDabbler\CodeSnip folder is also created. This is used to
+  hold a file that stores per-user configuration data. A "UserData.4" sub-folder
+  is used to store any user defined snippets.
 
 + Setup offers to copy any relevant files from installations earlier than v4.0
   into the correct locations for v4.
