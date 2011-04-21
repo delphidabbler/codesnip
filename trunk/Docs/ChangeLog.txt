@@ -4,7 +4,7 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
-Release v3.8.8 of 19 January 2010
+Release v3.8.8 of 19 January 2011
 + Added facility for user to specify maximum age of news items displayed in news dialog box. New preferences tab added where the maximum age can be customised.
 + Preferences dialog box now displays multi-line tabs when necessary.
 + Refactored some code used to align controls on forms.
