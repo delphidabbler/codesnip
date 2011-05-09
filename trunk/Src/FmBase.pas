@@ -201,7 +201,11 @@ begin
   inherited;
   ClassName := WindowClassName;
   if ClassName <> '' then
-    StrLCopy(Params.WinClassName, PChar(ClassName), 62);
+    StrLCopy(
+      Params.WinClassName,
+      PChar(ClassName),
+      SizeOf(Params.WinClassName) div SizeOf(Char) - 1
+    );
 end;
 
 procedure TBaseForm.CustomiseForm;
