@@ -29,4 +29,7 @@ inherited EditTextDlg: TEditTextDlg
   inherited btnHelp: TButton
     Visible = False
   end
+  inherited btnOK: TButton
+    OnClick = btnOKClick
+  end
 end

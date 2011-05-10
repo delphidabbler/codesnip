@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -139,7 +139,7 @@ uses
   SysUtils, Classes, Controls, Dialogs,
   // Project
   FmEditTextDlg, UActiveText, UConsts, UIOUtils, UMessageBox, UOpenDialogEx,
-  UOpenDialogHelper, USnippetIDs;
+  UOpenDialogHelper, USnippetIDs, USnippetValidator, UStructs;
 
 
 { TCodeImportMgr }
@@ -389,12 +389,9 @@ resourcestring
   // Dialog box title and prompt
   sDlgTitle = 'Rename Snippet';
   sDlgPrompt = 'Enter a new snippet &name (cancel skips the snippet):';
-  // Error message
-  sRoutineExists = 'A user defined snippet name "%s" already exists';
   // Information message
   sSkippingRoutine = 'Skipping "%s"';
 var
-  Done: Boolean;          // flag true if snippet renamed successfully
   NewName: string;        // new snippet name
   NameCounter: Integer;   // counter used to append to snippet name
 begin
@@ -405,22 +402,27 @@ begin
   ) <> nil do
     Inc(NameCounter);
   NewName := Routine.Name + IntToStr(NameCounter);
-  // Get name from user
-  Done := False;
-  repeat
-    Result := TEditTextDlg.Execute(nil, sDlgTitle, sDlgPrompt, NewName);
-    if Result then
+  // Get valid name from user: validation done using anonymous method passed to
+  // TEditTextDlg. Dialog box does not return until valid name entered or user
+  // cancels
+  Result := TEditTextDlg.Execute(
+    nil,
+    sDlgTitle,
+    sDlgPrompt,
+    NewName,
+    function(const Name: string; out ErrMsg: string): Boolean
+    var
+      DummySel: TSelection;
     begin
-      Done := Snippets.Routines.Find(NewName, True) = nil;
-      if not Done then
-        TMessageBox.Error(nil, Format(sRoutineExists, [NewName]));
+      Result := TSnippetValidator.ValidateName(Name, True, ErrMsg, DummySel);
     end
-    else
-      TMessageBox.Information(nil, Format(sSkippingRoutine, [NewName]));
-  until Done or not Result;
+  );
   if Result then
-    // Everything OK: record new name
-    Routine.Name := NewName;
+    // OK: record new name
+    Routine.Name := NewName
+  else
+    // Cancelled: skip routine
+    TMessageBox.Information(nil, Format(sSkippingRoutine, [NewName]));
 end;
 
 class procedure TCodeImportMgr.ReportImportedRoutines(

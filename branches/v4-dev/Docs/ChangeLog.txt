@@ -4,7 +4,14 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
-Release v3.8.8 of 19 January 2010
+Release v3.8.9 of 10 May 2011
++ Fixed bug #3299870 (http://bit.ly/iX8Its) that was allowing imported snippets with duplicate names to be renamed with invalid names.
++ Improved UI used to edit imported snippet names.
++ Any "warning" compile results in main database are now treated and displayed as "success" results per feature request #3290359 (http://bit.ly/mshbRa).
++ Fixed unreported potential bug in code that sets window class names.
++ Updated documentation.
+
+Release v3.8.8 of 19 January 2011
 + Added facility for user to specify maximum age of news items displayed in news dialog box. New preferences tab added where the maximum age can be customised.
 + Preferences dialog box now displays multi-line tabs when necessary.
 + Refactored some code used to align controls on forms.
