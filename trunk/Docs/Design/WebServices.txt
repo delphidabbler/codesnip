@@ -39,9 +39,9 @@ A DelphiDabbler Standard Web Service object has the following attributes:
 * An error response *must* include an error message starting from the second
   line of the text. Error messages *may* have more than one line.
 
-The response format, after trimming, in ABNF is:
+The response format in ABNF is:
 
-  response = status_code CRLF data
+  response = status_code [CRLF data] [CRLF]
   status_code = success_code / error_code
   success_code = "0"
   error_code = ["-"] 1*DIGIT
