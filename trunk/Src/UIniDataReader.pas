@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -240,8 +240,15 @@ type
 *         or                                                                   *
 *       FPC (Free Pascal) - one entry for each supported compiler that         *
 *       indicates compatibility of the snippet with given compiler. Values are *
-*       one of: Y - compiles without warning; N - does not compile; Q or ? -   *
-*       not tested; W - compiles with warnings.                                *
+*       one of:                                                                *
+*         Y - Compiles without warning;                                        *
+*         W - Compiles with warnings. This is now treated the same as "Y".     *
+*             This is because the user can now configure which warnings are    *
+*             displayed, therefore this setting is now meaningless. See        *
+*             feature request #3290359.                                        *
+*         N - Does not compile;                                                *
+*         Q - Not tested;                                                      *
+*         ? - Not tested.                                                      *
 *   11) [StandardFormat] - whether snippet is in standard format. Assumes true *
 *       if not present and there is no Kind value.                             *
 *   12) [Kind] - kind of snippet. One of freeform, snippet, type or const.     *
@@ -544,8 +551,8 @@ var
       if CompRes = '' then
         CompRes := '?';
       case CompRes[1] of
+        'W', // warning result now treated as success: see notes above
         'Y': Result[CompID] := crSuccess;
-        'W': Result[CompID] := crWarning;
         'N': Result[CompID] := crError;
         else Result[CompID] := crQuery;
       end;
