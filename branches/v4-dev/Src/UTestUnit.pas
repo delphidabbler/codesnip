@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -58,8 +58,8 @@ type
       fSnippet: TRoutine;
     ///  <summary>Generates name of test unit, based on snippet being tested.
     ///  </summary>
-    ///  <remarks>Returned unit name contains only valid characters in default
-    ///  ANSI code page. Any invalid characters are replaced with '_'.</remarks>
+    ///  <remarks>Returned unit name contains only valid ASCII characters. Any
+    ///  invalid characters are replaced with '_'.</remarks>
     function UnitName: string;
     ///  <summary>Builds and returns fully specified unit file name.</summary>
     function UnitFileName: string;
@@ -73,8 +73,7 @@ type
     ///  <param name="FileName">string [out] Set to name of unit file. Base name
     ///  is name of unit.</param>
     ///  <remarks>
-    ///  <para>Base file name contains only characters that are valid in default
-    ///  ANSI code page.</para>
+    ///  <para>Base file name contains only valid ASCII characters.</para>
     ///  <para>File is saved in default ANSI encoding unless source code
     ///  contains any characters not valid in default ANSI code page. In this
     ///  case file is saved with UTF-8 encoding.</para>
