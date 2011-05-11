@@ -74,12 +74,9 @@ type
         @param View [in] View to be displayed.
         @return Required generator object.
       }
-    class procedure InitBrowser(const PageKind: TDetailPageKind;
-      const WBController: TWBController);
+    class procedure InitBrowser(const WBController: TWBController);
       {Loads a blank document into browser control if it doesn't contain one
       already.
-        @param PageKind [in] Specifies which page that requires document
-          loading.
         @param WBController [in] Controller object for HTML document.
       }
     class procedure DisplayHTML(const Generator: TDetailPageHTML;
@@ -155,25 +152,15 @@ begin
   WBController.IOMgr.ReplaceExistingBodyHTML(HTML);
 end;
 
-class procedure TDetailPageLoader.InitBrowser(const PageKind: TDetailPageKind;
+class procedure TDetailPageLoader.InitBrowser(
   const WBController: TWBController);
   {Loads a blank document into browser control if it doesn't contain one
   already.
-    @param PageKind [in] Specifies which page that requires document loading.
     @param WBController [in] Controller object for HTML document.
   }
 begin
   if not WBController.IOMgr.HTMLDocumentExists then
-    case PageKind of
-      pkInfo:
-        WBController.IOMgr.NavigateToResource(
-          HInstance, 'detail-info.html'
-        );
-      pkComp:
-        WBController.IOMgr.NavigateToResource(
-          HInstance, 'detail-compcheck.html'
-        );
-    end;
+    WBController.IOMgr.NavigateToResource(HInstance, 'detail.html');
 end;
 
 class procedure TDetailPageLoader.LoadPage(const PageKind: TDetailPageKind;
@@ -188,7 +175,7 @@ var
 begin
   Assert(Assigned(View), ClassName + '.LoadPage: View is nil');
   Assert(Assigned(WBController), ClassName + '.LoadPage: WBController is nil');
-  InitBrowser(PageKind, WBController);
+  InitBrowser(WBController);
   Generator := CreateGenerator(PageKind, View);
   try
     DisplayHTML(Generator, WBController);
