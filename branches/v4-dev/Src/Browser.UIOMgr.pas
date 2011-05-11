@@ -112,12 +112,6 @@ type
       {Sets inner HTML of browser's current document <body>.
         @param HTML [in] Required inner HTML for <body> tag.
       }
-    procedure LoadFromStream(const Stream: TStream);
-      {Loads and displays valid HTML document from the current location in a
-      stream.
-        @param Stream [in] Stream containing the HTML document.
-        @except EBug raised if document is not valid.
-      }
     procedure EmptyDocument;
       {Creates an empty document. This method guarantees that the browser
       contains a valid document object. The browser displays a blank page.
@@ -265,18 +259,6 @@ begin
   end;
 end;
 
-procedure TWBIOMgr.LoadFromStream(const Stream: TStream);
-  {Loads and displays valid HTML document from the current location in a stream.
-    @param Stream [in] Stream containing the HTML document.
-    @except EBug raised if document is not valid.
-  }
-begin
-  // We must read into an existing document: so we first load an empty document
-  // then load document from stream into it.
-  EmptyDocument;
-  InternalLoadDocumentFromStream(Stream);
-end;
-
 procedure TWBIOMgr.LoadFromString(const HTML: string);
   {Loads and displays valid HTML source from a string.
     @param HTML [in] String containing the HTML source.
@@ -287,7 +269,11 @@ var
 begin
   StringStream := TStringStream.Create(HTML);
   try
-    LoadFromStream(StringStream);
+    // We must read into an existing document: so first load an empty document
+    // then load document from stream into it.
+    EmptyDocument;
+    InternalLoadDocumentFromStream(StringStream);
+//    LoadFromStream(StringStream);
   finally
     StringStream.Free;
   end;
