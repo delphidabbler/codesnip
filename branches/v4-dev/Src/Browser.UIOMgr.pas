@@ -247,7 +247,7 @@ begin
     if PersistStreamInit.InitNew = S_OK then
     begin
       // Load data from Stream into WebBrowser
-      StreamAdapter:= TStreamAdapter.Create(Stream);
+      StreamAdapter := TStreamAdapter.Create(Stream);
       PersistStreamInit.Load(StreamAdapter);
       // Wait for document to finish loading
       WaitForDocToLoad;
@@ -261,16 +261,28 @@ procedure TWBIOMgr.LoadFromString(const HTML: string);
     @except EBug raised if document is not valid.
   }
 var
-  StringStream: TStringStream;  // stream onto string
+  Stm: TMemoryStream; // stream that received HTML to be loaded
+
+  // ---------------------------------------------------------------------------
+  // Writes bytes from byte array B to Stm
+  procedure WriteBytes(const B: TBytes);
+  begin
+    if Length(B) > 0 then
+      Stm.WriteBuffer(Pointer(B)^, Length(B));
+  end;
+  // ---------------------------------------------------------------------------
+
 begin
-  StringStream := TStringStream.Create(HTML);
+  Stm := TMemoryStream.Create;
   try
-    // We must read into an existing document: so first load an empty document
-    // then load document from stream into it.
+    // Write HTML in Unicode Little Endian format with BOM
+    WriteBytes(TEncoding.Unicode.GetPreamble);
+    WriteBytes(TEncoding.Unicode.GetBytes(HTML));
+    Stm.Position := 0;
     EmptyDocument;
-    InternalLoadDocumentFromStream(StringStream);
+    InternalLoadDocumentFromStream(Stm);
   finally
-    StringStream.Free;
+    Stm.Free;
   end;
 end;
 
