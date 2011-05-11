@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -107,10 +107,6 @@ type
       {Updates the web browser's current document from HTML read from stream.
         @param Stream [in] Stream containing valid HTML source code.
         @except EBug raised if updated document is not valid.
-      }
-    procedure SetBodyHTML(const HTML: string);
-      {Sets inner HTML of browser's current document <body>.
-        @param HTML [in] Required inner HTML for <body> tag.
       }
     procedure EmptyDocument;
       {Creates an empty document. This method guarantees that the browser
@@ -273,7 +269,6 @@ begin
     // then load document from stream into it.
     EmptyDocument;
     InternalLoadDocumentFromStream(StringStream);
-//    LoadFromStream(StringStream);
   finally
     StringStream.Free;
   end;
@@ -337,17 +332,6 @@ procedure TWBIOMgr.ReplaceExistingBodyHTML(const HTML: string);
 begin
   Assert(Self.HTMLDocumentExists,
     ClassName + '.ReplaceExistingBodyHTML: No HTML document exists');
-  SetBodyHTML(HTML);
-end;
-
-procedure TWBIOMgr.SetBodyHTML(const HTML: string);
-  {Sets inner HTML of browser's current document <body>.
-    @param HTML [in] Required inner HTML for <body> tag.
-  }
-begin
-  Assert(THTMLDocHelper.IsValidDocument(fWB.Document),
-    ClassName + '.SetBodyHTML: Invalid or no document loaded in browser control'
-  );
   THTMLDocHelper.SetInnerHTML(THTMLDocHelper.GetBodyElem(fWB.Document), HTML);
 end;
 
