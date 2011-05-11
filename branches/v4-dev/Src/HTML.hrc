@@ -86,11 +86,11 @@ Res\HTML\detail.js
 # routines that call external object
 Res\HTML\external.js
 
+# Container document for all HTML displayed in detail panes
+Res\HTML\detail.html
+
 # information pane
 # ----------------
-
-# Container document for all HTML displayed in info pane
-Res\HTML\detail-info.html
 
 # lists of snippets
 Res\HTML\info-snippet-list-tplt.html
@@ -102,10 +102,7 @@ Res\HTML\info-empty-selection-tplt.html
 Res\HTML\info-snippet-tplt.html
 
 # compiler check pane
-# -------------------          
-
-# Container document for all HTML displayed in comp check pane
-Res\HTML\detail-compcheck.html
+# -------------------
 
 # snippet compiler results
 Res\HTML\comp-snippet-tplt.html
