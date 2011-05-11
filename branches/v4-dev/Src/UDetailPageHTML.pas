@@ -318,7 +318,8 @@ uses
   SysUtils, Character,
   // Project
   Compilers.UCompilers, UCompResHTML, UConsts, UCSSUtils, UEncodings,
-  UHTMLUtils, UHTMLDetailUtils, UJavaScriptUtils, UQuery, URoutineHTML, UUtils;
+  UHTMLUtils, UHTMLDetailUtils, UJavaScriptUtils, UQuery, UResourceUtils,
+  URoutineHTML, UUtils;
 
 
 { TDetailPageHTML }
@@ -791,22 +792,10 @@ function TNoCompCheckPageHTML.Generate: string;
   {Generates HTML body content for "No compiler check available" pages.
     @return Body HTML.
   }
-var
-  RS: TResourceStream;  // stream used to access HTML template resource
-  SS: TStringStream;    // string stream used to get string from resource stream
 begin
-  SS := nil;
-  // NOTE: Resource stream is not unicode: all HTML files were written using the
-  // Windows-1252 code page.
-  RS := TResourceStream.Create(HInstance, 'nocompcheck-body.html', RT_HTML);
-  try
-    SS := TStringStream.Create('', TEncodingHelper.Windows1252CodePage);
-    SS.CopyFrom(RS, 0);
-    Result := SS.DataString;
-  finally
-    SS.Free;
-    RS.Free;
-  end;
+  Result := LoadResourceAsString(
+    HInstance, 'nocompcheck-body.html', RT_HTML, etWindows1252
+  );
 end;
 
 end.

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -94,7 +94,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UEncodings, UHTMLUtils;
+  UEncodings, UHTMLUtils, UResourceUtils;
 
 
 { THTMLTemplate }
@@ -107,23 +107,9 @@ constructor THTMLTemplate.Create(const Inst: THandle; const ResName: string;
     @param ResType [in] Type of resource containing template - assumes RT_HTML
       if parameter omitted.
   }
-var
-  RS: TResourceStream;  // stream used to access HTML template resource
-  SS: TStringStream;    // string stream used to get string from resource stream
 begin
   inherited Create;
-  SS := nil;
-  // NOTE: Resource stream is not unicode: all template files were written using
-  // the Windows-1252 code page.
-  RS := TResourceStream.Create(Inst, ResName, ResType);
-  try
-    SS := TStringStream.Create('', TEncodingHelper.Windows1252CodePage);
-    SS.CopyFrom(RS, 0);
-    fHTML := SS.DataString;
-  finally
-    SS.Free;
-    RS.Free;
-  end;
+  fHTML := LoadResourceAsString(Inst, ResName, ResType, etWindows1252);
 end;
 
 procedure THTMLTemplate.ResolvePlaceholderHTML(const Placeholder, HTML: string);
