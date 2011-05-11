@@ -28,7 +28,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -69,9 +69,9 @@ type
       {Object constructor. Sets up object for a view item.
         @param View [in] Provides information about item to be displayed.
       }
-    procedure Generate(const Stm: TStream); virtual; abstract;
+    function Generate: string; virtual; abstract;
       {Generates required body HTML and writes to stream.
-        @param Stm [in] Stream that received HTML body.
+        @return Body HTML.
       }
   end;
 
@@ -92,10 +92,10 @@ type
           template.
       }
   public
-    procedure Generate(const Stm: TStream); override;
+    function Generate: string; override;
       {Generates the required body HTML from a HTML template and writes to a
       stream.
-        @param Stm [in] Stream to receive generated HTML.
+        @return Body HTML.
       }
   end;
 
@@ -106,9 +106,9 @@ type
   }
   TNulPageHTML = class sealed(TDetailPageHTML)
   public
-    procedure Generate(const Stm: TStream); override;
-      {Generates body content for nul document. Does nothing.
-        @param Stm [in] Not used.
+    function Generate: string; override;
+      {Generates body content for nul document.
+        @return Empty string.
       }
   end;
 
@@ -303,9 +303,9 @@ type
   }
   TNoCompCheckPageHTML = class sealed(TDetailPageHTML)
   public
-    procedure Generate(const Stm: TStream); override;
+    function Generate: string; override;
       {Generates HTML body content for "No compiler check available" pages.
-        @param Stm [in] Stream that receives body HTML.
+        @return Body HTML.
       }
   end;
 
@@ -317,15 +317,15 @@ uses
   // Delphi
   SysUtils, Character,
   // Project
-  Compilers.UCompilers, UCompResHTML, UConsts, UCSSUtils, UHTMLUtils,
-  UHTMLDetailUtils, UJavaScriptUtils, UQuery, URoutineHTML, UUtils;
+  Compilers.UCompilers, UCompResHTML, UConsts, UCSSUtils, UEncodings,
+  UHTMLUtils, UHTMLDetailUtils, UJavaScriptUtils, UQuery, URoutineHTML, UUtils;
 
 
 { TDetailPageHTML }
 
 constructor TDetailPageHTML.Create(View: IView);
   {Object constructor. Sets up object for a view item.
-    @param View [in] Provides information about item to be displayed.
+    @return Body HTML.
   }
 begin
   Assert(Assigned(View), ClassName + '.Create: View is nil');
@@ -335,9 +335,9 @@ end;
 
 { TDetailPageTpltHTML }
 
-procedure TDetailPageTpltHTML.Generate(const Stm: TStream);
+function TDetailPageTpltHTML.Generate: string;
   {Generates the required body HTML from a HTML template and writes to a stream.
-    @param Stm [in] Stream to receive generated HTML.
+    @return Body HTML.
   }
 var
   Tplt: THTMLTemplate;  // encapsulates HTML template
@@ -347,7 +347,7 @@ begin
   try
     // Resolve all placeholders and write resulting HTML to stream
     ResolvePlaceholders(Tplt);
-    Tplt.SaveToStream(Stm);
+    Result := Tplt.HTML;
   finally
     Tplt.Free;
   end;
@@ -355,12 +355,12 @@ end;
 
 { TNulPageHTML }
 
-procedure TNulPageHTML.Generate(const Stm: TStream);
-  {Generates body content for nul document. Does nothing.
-    @param Stm [in] Not used.
+function TNulPageHTML.Generate: string;
+  {Generates body content for nul document.
+    @return Empty string.
   }
 begin
-  // do nothing
+  Result := '';
 end;
 
 { TWelcomePageHTML }
@@ -787,17 +787,24 @@ end;
 
 { TNoCompCheckPageHTML }
 
-procedure TNoCompCheckPageHTML.Generate(const Stm: TStream);
+function TNoCompCheckPageHTML.Generate: string;
   {Generates HTML body content for "No compiler check available" pages.
-    @param Stm [in] Stream that receives body HTML.
+    @return Body HTML.
   }
 var
   RS: TResourceStream;  // stream used to access HTML template resource
+  SS: TStringStream;    // string stream used to get string from resource stream
 begin
+  SS := nil;
+  // NOTE: Resource stream is not unicode: all HTML files were written using the
+  // Windows-1252 code page.
   RS := TResourceStream.Create(HInstance, 'nocompcheck-body.html', RT_HTML);
   try
-    Stm.CopyFrom(RS, 0);  // copy whole stream
+    SS := TStringStream.Create('', TEncodingHelper.Windows1252CodePage);
+    SS.CopyFrom(RS, 0);
+    Result := SS.DataString;
   finally
+    SS.Free;
     RS.Free;
   end;
 end;

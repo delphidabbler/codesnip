@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -103,11 +103,6 @@ type
 implementation
 
 
-uses
-  // Delphi
-  Classes;
-
-
 { TDetailPageLoader }
 
 class function TDetailPageLoader.CreateGenerator(
@@ -154,15 +149,10 @@ class procedure TDetailPageLoader.DisplayHTML(const Generator: TDetailPageHTML;
     @param WBController [in] Controller object that loads HTML document.
   }
 var
-  Stm: TStringStream; // stream that receives generated HTML
+  HTML: string; // HTML to be displayed
 begin
-  Stm := TStringStream.Create('');
-  try
-    Generator.Generate(Stm);
-    WBController.IOMgr.ReplaceExistingBodyHTML(Stm.DataString);
-  finally
-    Stm.Free;
-  end;
+  HTML := Generator.Generate;
+  WBController.IOMgr.ReplaceExistingBodyHTML(HTML);
 end;
 
 class procedure TDetailPageLoader.InitBrowser(const PageKind: TDetailPageKind;
