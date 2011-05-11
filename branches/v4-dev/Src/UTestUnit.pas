@@ -152,17 +152,19 @@ var
 begin
   // Unit name is same as Snippet being tested, but with prefix to make unique
   Result := cUnitPrefix + fSnippet.Name;
-  // We ensure only characters compatible with default ANSI code page are used
-  // in unit name. Any unsuitable characters are replaced by underscore.
+  // We ensure only ASCII characters are used in unit name. Any unsuitable
+  // characters are replaced by underscore.
   // This is done because unit name is also used as unit file name. If we took
   // no action would could have a Unicode file name. Earlier versions of Delphi
   // can't cope with Unicode file names and claim the file can't be found. Some
   // compilers like Delphi 2006 that can handle non-ANSI characters in source
   // code still cannot handle those characters in the file name.
+  // Some valid ANSI characters are not handled by some compilers, hence we have
+  // fallen back to ASCII.
   for I := 1 to Length(Result) do
   begin
     Ch := Result[I];
-    if not EncodingSupportsString(Ch, TEncoding.Default) then
+    if not EncodingSupportsString(Ch, TEncoding.ASCII) then
       Result[I] := '_';
   end;
 end;
