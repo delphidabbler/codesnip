@@ -28,7 +28,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -239,7 +239,6 @@ resourcestring
   sBtnPreview = '&Preview...';
   sBtnHelp = '&Help';
   // Default encoding name
-  // TODO: move encoding names to common location - in UEncodings?
   sANSIEncoding = 'ANSI (Default)';
 
 
