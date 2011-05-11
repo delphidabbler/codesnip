@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphi
   SysUtils, Classes, Graphics,
   // Project
-  Compilers.UGlobals, Compilers.URunner, UExceptions;
+  Compilers.UGlobals, Compilers.URunner, UExceptions, UEncodings;
 
 
 type
@@ -100,6 +100,10 @@ type
       {Initializes object.
       }
   protected
+    function CompilerOutputEncoding: TEncodingType; virtual;
+      {Encoding used for text output by compiler. Descendants can override.
+        @return System default ANSI encoding type.
+      }
     function GlyphResourceName: string; virtual;
       {Name of any resource containing a "glyph" bitmap for a compiler.
         @return Resource name or '' if the compiler has no glyph.
@@ -262,7 +266,7 @@ begin
   Result := Format(
     '"%0:s" %1:s %2:s',
     [
-      fExecFile,                              // compile exe
+      fExecFile,                              // compiler exe
       LongToShortFilePath(
         IncludeTrailingPathDelimiter(Path)
       ) + Project,                            // path to project
@@ -277,10 +281,18 @@ procedure TCompilerBase.BuildCompileLog(const CompilerOutput: TStream);
     @param CompilerOutput [in] Stream containing compiler output.
   }
 var
-  Index: Integer;   // index into error string list
+  Index: Integer;       // index into error string list
+  Encoding: TEncoding;  // encoding used by compiler for its output
 begin
-  // Load log file into string list
-  fCompileLog.LoadFromStream(CompilerOutput);
+  // Load log file into string list: compiler output is expected to have
+  // encoding of type provided by CompilerOutputEncoding method.
+  CompilerOutput.Position := 0;
+  Encoding := TEncodingHelper.GetEncoding(CompilerOutputEncoding);
+  try
+    fCompileLog.LoadFromStream(CompilerOutput, Encoding);
+  finally
+    TEncodingHelper.FreeEncoding(Encoding);
+  end;
   // Strip out any blank lines
   Index := 0;
   while (Index < fCompileLog.Count) do
@@ -318,7 +330,7 @@ begin
       Result := Result + Param;
     end;
   finally
-    FreeAndNil(Params);
+    Params.Free;
   end;
 end;
 
@@ -350,8 +362,18 @@ begin
   fLastCompileResult := Result;
 end;
 
+function TCompilerBase.CompilerOutputEncoding: TEncodingType;
+  {Encoding used for text output by compiler. Descendants can override.
+    @return System default ANSI encoding type.
+  }
+begin
+  // Best assumption for compiler output is ANSI default code page. Don't know
+  // this for sure, but it seems reasonable.
+  Result := etSysDefault;
+end;
+
 constructor TCompilerBase.Create;
-  {Class constructor. Sets up object.
+  {Object constructor. Sets up object.
   }
 begin
   inherited;
@@ -378,11 +400,11 @@ begin
 end;
 
 destructor TCompilerBase.Destroy;
-  {Class destructor. Tears down object.
+  {Object destructor. Tears down object.
   }
 begin
-  FreeAndNil(fCompileLog);
-  FreeAndNil(fBitmap);
+  fCompileLog.Free;
+  fBitmap.Free;
   inherited;
 end;
 
@@ -396,18 +418,18 @@ function TCompilerBase.ExecuteCompiler(const CommandLine,
   }
 var
   CompilerRunner: TCompilerRunner;  // object that executes compiler
-  OutStm: TStream;                  // stream that captures compiler output
+  CompilerOutput: TStream;          // stream that captures compiler output
 begin
   Result := 0;  // keeps compiler quiet
   CompilerRunner := nil;
   // Create stream to capture compiler output
-  OutStm := TMemoryStream.Create;
+  CompilerOutput := TMemoryStream.Create;
   try
     // Perform compilation
     CompilerRunner := TCompilerRunner.Create;
     try
       Result := CompilerRunner.Execute(
-        CommandLine, ExcludeTrailingPathDelimiter(Path), OutStm
+        CommandLine, ExcludeTrailingPathDelimiter(Path), CompilerOutput
       );
     except
       on E: ECompilerRunner do
@@ -416,11 +438,10 @@ begin
         raise;
     end;
     // Interpret compiler output
-    OutStm.Position := 0;
-    BuildCompileLog(OutStm);
+    BuildCompileLog(CompilerOutput);
   finally
-    FreeAndNil(CompilerRunner);
-    FreeAndNil(OutStm);
+    CompilerRunner.Free;
+    CompilerOutput.Free;
   end;
 end;
 
