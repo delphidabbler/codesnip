@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -137,7 +137,6 @@ type
   ///  access is provided to the matching code page, and vice versa. Also
   ///  exposes useful constants.
   ///  </summary>
-  { TODO: Restore or delete commented out methods }
   TEncodingHelper = class(TNoConstructObject)
   strict private
     type
@@ -281,20 +280,6 @@ type
     ///  or an encoding created elsewhere to avoid the overhead of testing
     ///  for a standard encoding before freeing.</remarks>
     class procedure FreeEncoding(const Encoding: TEncoding);
-(*
-    ///  <summary>
-    ///  Checks if a named character set is supported.
-    ///  </summary>
-    ///  <param name="Name">string [in] Name of character set to test.</param>
-    ///  <returns>True if character set supported, False if not.</returns>
-    class function IsSupportedCharSet(const CharSet: string): Boolean;
-    ///  <summary>
-    ///  Checks if a code page is supported.
-    ///  </summary>
-    ///  <param name="CodePage">Integer [in] Code page to be checked.</param>
-    ///  <returns>True if the code page is supported, False if not.</returns>
-    class function IsSupportedCodePage(const CodePage: Integer): Boolean;
-*)
     ///  <summary>
     ///  Creates an encoding instance for a specified encoding type.
     ///  </summary>
@@ -336,30 +321,6 @@ type
     ///  <returns>TEncodingType - Required encoding type.</returns>
     ///  <remarks>Exception raised if character set not supported.</remarks>
     class function GetEncodingType(const CharSet: string): TEncodingType;
-(*
-    ///  <summary>
-    ///  Checks if there is a code page associated with a character set name.
-    ///  </summary>
-    ///  <param name="CharSet">string [in] Name of character set.</param>
-    ///  <returns>True if there is an associated code page, False if not or if
-    ///  character set not supported.
-    ///  </returns>
-    class function HasCodePage(const CharSet: string): Boolean;
-    ///  <summary>
-    ///  Gets the code page associated with a named character set.
-    ///  </summary>
-    ///  <param name="CharSet">string [in] Name of character set.</param>
-    ///  <returns>Code page associated with character set.</returns>
-    ///  <remarks>Exception raised if character set is not supported.</remarks>
-    class function GetCodePage(const CharSet: string): Integer;
-    ///  <summary>
-    ///  Gets the character set name associated with a code page
-    ///  </summary>
-    ///  <param name="CodePage">Integer [in] Code page.</param>
-    ///  <returns>Required character set name.</returns>
-    ///  <remarks>Exception raised if code page not supported.</remarks>
-    class function GetCodePageName(const CodePage: Integer): string;
-*)
     ///  <summary>
     ///  Returns an array names of supported character sets.
     ///  </summary>
@@ -640,22 +601,6 @@ begin
     Encoding.Free;
 end;
 
-(*
-class function TEncodingHelper.GetCodePage(const CharSet: string): Integer;
-begin
-  if not GetValidCodePage(CharSet, Result) then
-    raise ENotSupportedException.CreateFmt(sBadCharSet, [CharSet]);
-end;
-
-class function TEncodingHelper.GetCodePageName(const CodePage: Integer): string;
-var
-  EncType: TEncodingType;
-begin
-  if not LookupValidCodePage(CodePage, EncType) then
-    raise ENotSupportedException.CreateFmt(sBadCodePage, [CodePage]);
-  Result := fMap[EncType].CharSet;
-end;
-*)
 class function TEncodingHelper.GetEncoding(const CharSet: string): TEncoding;
 var
   EncType: TEncodingType;
@@ -699,31 +644,6 @@ begin
   CodePage := fMap[EncType].CodePage;
   Result := True;
 end;
-
-(*
-class function TEncodingHelper.HasCodePage(const CharSet: string): Boolean;
-var
-  Dummy: Integer;
-begin
-  Result := GetValidCodePage(CharSet, Dummy);
-end;
-
-class function TEncodingHelper.IsSupportedCharSet(
-  const CharSet: string): Boolean;
-var
-  Dummy: TEncodingType;
-begin
-  Result := LookupValidCharSet(CharSet, Dummy);
-end;
-
-class function TEncodingHelper.IsSupportedCodePage(
-  const CodePage: Integer): Boolean;
-var
-  Dummy: TEncodingType;
-begin
-  Result := LookupValidCodePage(CodePage, Dummy);
-end;
-*)
 
 class function TEncodingHelper.IsWantedCharSet(const CharSet: string): Boolean;
 begin
