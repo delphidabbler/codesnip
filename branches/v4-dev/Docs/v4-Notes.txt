@@ -40,6 +40,8 @@ Changes
   o Code that manages saving of source code files.
   o Renamed various unit, class, field and other names that referred to Snippets
     as "routines".
+  o Some streamlining of units, removing / refactoring out some code.
+  o Rationalised HTML resource files.
 
 * Bug fixes:
   o #3120962. This was a separate fix to that created for v3 - the two were
@@ -86,7 +88,7 @@ Printing:
 
 * Added support for full Unicode Pascal identifiers to be used as snippet names.
   Modified alpha grouping to handle this.
-  
+
 * Clipboard copying code modified to have a method to add each supported format
   to clipboard to enable correct encoding to be used for each format.
 
@@ -134,9 +136,9 @@ Printing:
     if necessary to force Win API to read / write ini files in Unicode.
   o Test units are now saved in UTF-8 if they contain chars that can't be stored
     in default ANSI code page. ANSI still used if possible. Also, unit names are
-    converted to valid ANSI if necessary to ensure older Delphis (some of which
+    restricted to ASCII if necessary to ensure older Delphis (some of which
     support UTF-8 files) can read the unit. (Some Delphis can't open files with
-    Unicode file names).
+    Unicode or even some ANSI file names).
   o New encoded data structure for passing around binary data with info about
     how it was encoded. Used in the main to replaced strings and streams.
     * Used for database download processing.
@@ -147,6 +149,7 @@ Printing:
     * Used when generating snippet information using TRoutineDoc and
       descendants.
     * Used when copying code to clipboard.
+    * Replaces must uses of TStringStream.
 
 * UI changes:
   o Snippets now displayed in history menu with "Snippet" instead of "Routine"
@@ -182,6 +185,10 @@ Printing:
   was used excessively.
 
 * Added support for specifying encoding when writing / reading text files.
+
+* Strings containing HTML are now loaded into WebBrowser control as Unicode
+  (with BOM), not ANSI text. Characters above #127 in HTML are no longer
+  converted to entities.
 
 * Refactored data stream reading / writing code and added code to read / write
   binary formatted data streams. Removed code that writes text formatted data
