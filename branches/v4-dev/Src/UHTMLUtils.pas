@@ -124,6 +124,9 @@ type
 function MakeSafeHTMLText(TheText: string): string;
   {Encodes a string so that any HTML-incompatible characters are replaced with
   suitable character entities.
+  NOTE: HTML returned by this method does not have non-ASCII characters from
+  #127 converted to entities, therefore the HTML can only be saved to Unicode or
+  UTF8 format files.
     @param TheText [in] Text to be encoded.
     @return Encoded text.
   }
@@ -205,6 +208,9 @@ uses
 function MakeSafeHTMLText(TheText: string): string;
   {Encodes a string so that any HTML-incompatible characters are replaced with
   suitable character entities.
+  NOTE: HTML returned by this method does not have non-ASCII characters from
+  #127 converted to entities, therefore the HTML can only be saved to Unicode or
+  UTF8 format files.
     @param TheText [in] Text to be encoded.
     @return Encoded text.
   }
@@ -224,7 +230,7 @@ begin
         Result := Result + '&quot;';
       else
       begin
-        if (Ch < #32) or (Ch >= #127) then
+        if (Ch < #32) and not CharInSet(Ch, [#10, #13]) then
           Result := Result + '&#' + IntToStr(Ord(Ch)) + ';'
         else
           Result := Result + Ch;
