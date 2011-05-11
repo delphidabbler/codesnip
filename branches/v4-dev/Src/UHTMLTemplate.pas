@@ -80,10 +80,6 @@ type
           include <% and %> placeholder delimiters.
         @param HTML [in] Valid HTML to replace placeholder.
       }
-    procedure SaveToStream(const Stm: TStream);
-      {Saves HTML code to a stream.
-        @param Stm [in] Stream to receive the HTML.
-      }
     property HTML: string
       read fHTML;
       {HTML loaded from resources and manipulated by object's Resolve***
@@ -150,21 +146,6 @@ procedure THTMLTemplate.ResolvePlaceholderText(const Placeholder, Text: string);
   }
 begin
   ResolvePlaceholderHTML(Placeholder, MakeSafeHTMLText(Text));
-end;
-
-procedure THTMLTemplate.SaveToStream(const Stm: TStream);
-  {Saves HTML code to a stream.
-    @param Stm [in] Stream to receive the HTML.
-  }
-var
-  SS: TStringStream;  // stream onto HTML string
-begin
-  SS := TStringStream.Create(fHTML);
-  try
-    Stm.CopyFrom(SS, 0);
-  finally
-    SS.Free;
-  end;
 end;
 
 end.
