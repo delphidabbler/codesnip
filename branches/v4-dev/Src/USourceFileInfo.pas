@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -229,7 +229,6 @@ var
 begin
   fExtension := AExtension;
   fDisplayName := ADisplayName;
-  // TODO: Create generic static class for copying TArray<T>s to each other
   SetLength(fEncodings, Length(AEncodings));
   for I := 0 to Pred(Length(AEncodings)) do
     fEncodings[I] := AEncodings[I];

@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -197,7 +197,6 @@ type
   TRTFBuilder:
     Class used to create content of a rich text document.
   }
-  // todo: re-implement using underlying byte array and a new byte builder class
   TRTFBuilder = class(TObject)
   strict private
     var
