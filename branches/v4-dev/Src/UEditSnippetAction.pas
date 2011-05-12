@@ -46,20 +46,18 @@ uses
 
 
 type
-
-  {
-  TEditRoutineAction:
-    Custom action used to request editing of a named routine. Stores name of
-    required routine, which must be user defined, in properties.
-  }
-  TEditRoutineAction = class(TBasicAction)
-  private
-    fRoutineName: string;
-      {Name of routine}
+  ///  <summary>
+  ///  Custom action used to request that a named user defined snippet is
+  ///  edited.
+  ///  </summary>
+  TEditSnippetAction = class(TBasicAction)
+  strict private
+    var
+      ///  <summary>Value of SnippetName property.</summary>
+      fSnippetName: string;
   public
-    property RoutineName: string
-      read fRoutineName write fRoutineName;
-      {Name of routine to be displayed}
+    ///  <sumary>Name of snippet to be edited.</summary>
+    property SnippetName: string read fSnippetName write fSnippetName;
   end;
 
 

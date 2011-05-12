@@ -299,7 +299,7 @@ procedure TNotifier.EditRoutine(const RoutineName: WideString);
 begin
   if Assigned(fEditRoutineAction) then
   begin
-    (fEditRoutineAction as TEditRoutineAction).RoutineName := RoutineName;
+    (fEditRoutineAction as TEditSnippetAction).SnippetName := RoutineName;
     fEditRoutineAction.Execute;
   end;
 end;
@@ -379,8 +379,8 @@ procedure TNotifier.SetEditRoutineAction(const Action: TBasicAction);
     @param Action [in] Required action.
   }
 begin
-  Assert(Action is TEditRoutineAction,                     
-    ClassName + '.SetEditRoutineAction: Action is not TEditRoutineAction');
+  Assert(Action is TEditSnippetAction,
+    ClassName + '.SetEditRoutineAction: Action is not TEditSnippetAction');
   fEditRoutineAction := Action;
 end;
 

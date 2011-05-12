@@ -175,7 +175,7 @@ class function TActionFactory.CreateEditRoutineAction(const AOwner: TComponent;
     @return Reference to newly created action.
   }
 begin
-  Result := CreateAction(TEditRoutineAction, AOwner, OnExecHandler);
+  Result := CreateAction(TEditSnippetAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateHintAction(const AOwner: TComponent;

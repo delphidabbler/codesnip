@@ -627,7 +627,7 @@ procedure TMainForm.ActEditRoutineExecute(Sender: TObject);
       TEditRoutineAction.
   }
 begin
-  TUserDBMgr.EditSnippet((Sender as TEditRoutineAction).RoutineName);
+  TUserDBMgr.EditSnippet((Sender as TEditSnippetAction).SnippetName);
 end;
 
 procedure TMainForm.actEditSnippetExecute(Sender: TObject);
