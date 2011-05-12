@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
 
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -41,7 +41,7 @@ interface
 
 uses
   // Delphi
-  Classes, Graphics,
+  Classes, Graphics, Generics.Collections,
   // Project
   UIStringList;
 
@@ -80,6 +80,10 @@ type
       }
   end;
 
+type
+  // Type that stores the name / value pairs of an HTML attribute
+  THTMLAttribute = TPair<string,string>;
+
   {
   THTMLAttributes:
     Class that can build a list of HTML tag attributes and render them.
@@ -90,10 +94,21 @@ type
       {Maintains list of attributes as name=value pairs}
   public
     constructor Create; overload;
-      {Class constructor. Sets up object.
+      {Object constructor. Sets up empty object.
+      }
+    constructor Create(const Name, Value: string); overload;
+      {Object constructor. Sets up object containing a single named attribute.
+        @param Name [in] Name of attribute.
+        @param Value [in] Value of attribute. If '' attribute is not added.
+      }
+    constructor Create(Attrs: array of THTMLAttribute); overload;
+      {Object constructor. Sets up object containing zero or more named
+      attributes.
+        @param Attrs [in] Array of attributes represented by THTMLAttribute
+          records.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Object destructor. Tears down object.
       }
     { IHTMLAttributes methods }
     function IsEmpty: Boolean;
@@ -362,18 +377,40 @@ begin
 end;
 
 constructor THTMLAttributes.Create;
-  {Class constructor. Sets up object.
+  {Object constructor. Sets up empty object.
   }
 begin
   inherited Create;
   fAttrs := TStringList.Create;
 end;
 
-destructor THTMLAttributes.Destroy;
-  {Class destructor. Tears down object.
+constructor THTMLAttributes.Create(const Name, Value: string);
+  {Object constructor. Sets up object containing a single named attribute.
+    @param Name [in] Name of attribute.
+    @param Value [in] Value of attribute. If '' attribute is not added.
   }
 begin
-  FreeAndNil(fAttrs);
+  Create;
+  Add(Name, Value);
+end;
+
+constructor THTMLAttributes.Create(Attrs: array of THTMLAttribute);
+  {Object constructor. Sets up object containing zero or more named attributes.
+    @param Attrs [in] Array of attributes represented by THTMLAttribute records.
+  }
+var
+  Attr: THTMLAttribute; // each attribute
+begin
+  Create;
+  for Attr in Attrs do
+    Add(Attr.Key, Attr.Value);
+end;
+
+destructor THTMLAttributes.Destroy;
+  {Object destructor. Tears down object.
+  }
+begin
+  fAttrs.Free;
   inherited;
 end;
 
@@ -390,7 +427,7 @@ function THTMLAttributes.Render: string;
     @return Text representation of attributes.
   }
 var
-  Idx: Integer;
+  Idx: Integer; // loops thru each attribute
 begin
   Result := '';
   for Idx := 0 to Pred(fAttrs.Count) do

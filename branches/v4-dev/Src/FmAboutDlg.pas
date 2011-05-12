@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -390,8 +390,7 @@ resourcestring
       else
       begin
         // List couldn't be found: display warning message
-        DivAttrs := THTMLAttributes.Create;
-        DivAttrs.Add('class', 'warning');
+        DivAttrs := THTMLAttributes.Create('class', 'warning');
         Result := MakeCompoundTag(
           'div', DivAttrs, MakeSafeHTMLText(sNoContributors)
         );
@@ -418,8 +417,7 @@ begin
         Format(sRegisteredMessage, [TAppInfo.RegisteredUser])
     else
     begin
-      SpanAttrs := THTMLAttributes.Create;
-      SpanAttrs.Add('class', 'warning');
+      SpanAttrs := THTMLAttributes.Create('class', 'warning');
       Values.Values['Registered'] :=
         MakeCompoundTag(
           'span', SpanAttrs, MakeSafeHTMLText(sUnregisteredMessage)

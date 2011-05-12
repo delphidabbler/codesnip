@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -218,8 +218,7 @@ begin
     if IsRangeInSearchSection(Range) then
     begin
       // Apply highlight to found text by spanning it with highlight style
-      SpanAttrs := THTMLAttributes.Create;
-      SpanAttrs.Add('style', fHighLightStyle);
+      SpanAttrs := THTMLAttributes.Create('style', fHighLightStyle);
       Range.pasteHTML(MakeCompoundTag('span', SpanAttrs, Range.htmlText));
       Inc(Result);
     end

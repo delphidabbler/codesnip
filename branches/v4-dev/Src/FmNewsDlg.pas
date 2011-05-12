@@ -193,10 +193,8 @@ var
   ErrHeadingAttrs: IHTMLAttributes; // HTML attributes of heading
   ErrMessageAttrs: IHTMLAttributes; // HTML attributes of error message
 begin
-  ErrHeadingAttrs := THTMLAttributes.Create;
-  ErrHeadingAttrs.Add('class', 'error-heading');
-  ErrMessageAttrs := THTMLAttributes.Create;
-  ErrMessageAttrs.Add('class', 'error-message');
+  ErrHeadingAttrs := THTMLAttributes.Create('class', 'error-heading');
+  ErrMessageAttrs := THTMLAttributes.Create('class', 'error-message');
   frmHTML.DisplayContent(
     MakeCompoundTag('p', ErrHeadingAttrs, MakeSafeHTMLText(sErrorHeading)) +
     MakeCompoundTag('p', ErrMessageAttrs, MakeSafeHTMLText(E.Message))
@@ -219,8 +217,7 @@ procedure TNewsDlg.DisplayMessage(const Msg: string);
 var
   HTMLAttrs: IHTMLAttributes; // HTML attributes
 begin
-  HTMLAttrs := THTMLAttributes.Create;
-  HTMLAttrs.Add('class', 'message');
+  HTMLAttrs := THTMLAttributes.Create('class', 'message');
   frmHTML.DisplayContent(
     MakeCompoundTag('p', HTMLAttrs, MakeSafeHTMLText(Msg))
   );

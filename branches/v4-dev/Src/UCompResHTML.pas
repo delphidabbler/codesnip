@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -281,9 +281,10 @@ class function TCompCheckResHTML.ErrCellPlaceholder(
 var
   TableCellAttrs: IHTMLAttributes;  // attributes of table cell tag
 begin
-  TableCellAttrs := THTMLAttributes.Create;
-  TableCellAttrs.Add('class', 'testerr');
-  TableCellAttrs.Add('id', ErrCellId(Compiler));
+  TableCellAttrs := THTMLAttributes.Create(
+    [THTMLAttribute.Create('class', 'testerr'),
+    THTMLAttribute.Create('id', ErrCellId(Compiler))]
+  );
   Result := MakeCompoundTag('td', TableCellAttrs, '&nbsp;');
 end;
 
@@ -333,11 +334,11 @@ var
   TableCellAttrs: IHTMLAttributes;  // attributes of table cell tag
   SpanAttrs: IHTMLAttributes;       // attributes of span tag
 begin
-  TableCellAttrs := THTMLAttributes.Create;
-  TableCellAttrs.Add('class', 'compiler');
-  SpanAttrs := THTMLAttributes.Create;
-  SpanAttrs.Add('class', NameSpanClass(Compiler));
-  SpanAttrs.Add('title', NameSpanTitle(Compiler));
+  TableCellAttrs := THTMLAttributes.Create('class', 'compiler');
+  SpanAttrs := THTMLAttributes.Create(
+    [THTMLAttribute.Create('class', NameSpanClass(Compiler)),
+    THTMLAttribute.Create('title', NameSpanTitle(Compiler))]
+  );
   Result := MakeCompoundTag(
     'td',
     TableCellAttrs,
@@ -387,8 +388,7 @@ class function TCompCheckResHTML.ResultCell(
 var
   TableCellAttrs: IHTMLAttributes;  // attributes of table cell tag
 begin
-  TableCellAttrs := THTMLAttributes.Create;
-  TableCellAttrs.Add('class', 'dbres');
+  TableCellAttrs := THTMLAttributes.Create('class', 'dbres');
   Result := MakeCompoundTag('td', TableCellAttrs, ImageTag(CompRes));
 end;
 
@@ -403,8 +403,7 @@ class function TCompCheckResHTML.TestCellPlaceholder(
 var
   TableCellAttrs: IHTMLAttributes;  // attributes of table cell tag
 begin
-  TableCellAttrs := THTMLAttributes.Create;
-  TableCellAttrs.Add('class', 'testres');
+  TableCellAttrs := THTMLAttributes.Create('class', 'testres');
   Result := MakeCompoundTag(
     'td', TableCellAttrs, ImageTag(crQuery, TestImgId(Compiler))
   );

@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -237,10 +237,11 @@ function THTMLBuilder.HTMLTag: string;
   ///  </summary>
   function HTMLAttrs: IHTMLAttributes;
   begin
-    Result := THTMLAttributes.Create;
-    Result.Add('xmlns', 'http://www.w3.org/1999/xhtml');
-    Result.Add('xml:lang', 'en');
-    Result.Add('lang', 'en');
+    Result := THTMLAttributes.Create(
+      [THTMLAttribute.Create('xmlns', 'http://www.w3.org/1999/xhtml'),
+      THTMLAttribute.Create('xml:lang', 'en'),
+      THTMLAttribute.Create('lang', 'en')]
+    );
   end;
   // ---------------------------------------------------------------------------
 
@@ -258,8 +259,7 @@ var
 begin
   if fCSS <> '' then
   begin
-    Attrs := THTMLAttributes.Create;
-    Attrs.Add('type', 'text/css');
+    Attrs := THTMLAttributes.Create('type', 'text/css');
     Result := EOL
       + MakeCompoundTag(cStyleTag, Attrs, EOL + fCSS + EOL)
       + EOL;
