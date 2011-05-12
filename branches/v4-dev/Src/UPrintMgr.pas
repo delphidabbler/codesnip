@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -55,8 +55,6 @@ type
     routine. It generates a RTF formatted document and passes it to the print
     engine for printing.
   }
-  { todo -cFeature: add facility to print list, with descriptions, of all
-          snippets in a grouping (category, alpha, or snippet kind) }
   TPrintMgr = class(TNoPublicConstructObject)
   strict private
     fRoutine: TRoutine;
