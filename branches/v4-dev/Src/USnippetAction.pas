@@ -1,8 +1,7 @@
 {
  * USnippetAction.pas
  *
- * Custom action used to request display of a routine by name. Stores name of
- * required routine and its source database in properties.
+ * Custom action used to request display of a snippet by name.
  *
  * $Rev$
  * $Date$
@@ -49,31 +48,39 @@ uses
 
 type
 
-  {
-  TRoutineAction:
-    Custom action used to request display of a named routine. Stores name of
-    required routine, and whether it is user defined, in properties.
-  }
-  TRoutineAction = class(TBasicAction, ISetNotifier)
+  ///  <summary>
+  ///  Custom action used to request display of a snippet.
+  ///  </summary>
+  ///  <remarks>
+  ///  Required snippet is uniquely identified by its name and whether it is
+  ///  user defined or not.
+  ///  </remarks>
+  TSnippetAction = class(TBasicAction, ISetNotifier)
   strict private
-    fRoutineName: string;   // Value of RoutineName property
-    fUserDefined: Boolean;  // Value of UserDefined property
-    fNotifier: INotifier;   // Reference to notifier object
+    var
+      ///  <summary>Value of SnippetName property.</summary>
+      fSnippetName: string;
+      ///  <summary>Value of UserDefined property.</summary>
+      fUserDefined: Boolean;
+      ///  <summary>Reference to Notifier object.</summary>
+      fNotifier: INotifier;
   public
+    ///  <summary>Performs the action by displaying a snippet in the main
+    ///  display.</summary>
+    ///  <remarks>
+    ///  <para>Notifier object is used to cause the snippet to be displayed.
+    ///  </para>
+    ///  <para>Any OnExecute event handler is ignored.</para>
+    ///  </remarks>
     function Execute: Boolean; override;
-      {Executes action by displaying a snippet in the main display via the
-      Notifier object. Any OnExcute event handler is ignored.
-        @return False to indicate OnExecute event handler not called.
-      }
+    ///  <summary>Stores reference to given notifier object.</summary>
+    ///  <remarks>Implements ISetNotifier.SetNotifier</remarks>
     procedure SetNotifier(const Notifier: INotifier);
-      {Stores a reference to the notifier object.
-        @param Notifier [in] Required notifier object.
-      }
-    property RoutineName: string read fRoutineName write fRoutineName;
-      {Name of routine to be displayed}
+    ///  <summary>Name of snippet to be displayed.</summary>
+    property SnippetName: string read fSnippetName write fSnippetName;
+    ///  <summary>Flag indicating whether snippet to be displayed is user
+    ///  defined.</summary>
     property UserDefined: Boolean read fUserDefined write fUserDefined;
-      {Flag indicating whether routine is user defined, i.e. it comes from user
-      database}
   end;
 
 
@@ -85,29 +92,22 @@ uses
   USnippets, UView;
 
 
-{ TRoutineAction }
+{ TSnippetAction }
 
-function TRoutineAction.Execute: Boolean;
-  {Executes action by displaying a snippet in the main display via the Notifier
-  object. Any OnExcute event handler is ignored.
-    @return False to indicate OnExecute event handler not called.
-  }
+function TSnippetAction.Execute: Boolean;
 var
   Snippet: TSnippet;    // snippet to be displayed
 begin
   Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
-  Assert(RoutineName <> '', ClassName + '.Execute: RoutineName not provided');
-  Snippet := Snippets.Routines.Find(RoutineName, UserDefined);
-  Assert(Assigned(Snippet), ClassName + '.Execute: RoutineName not valid');
+  Assert(SnippetName <> '', ClassName + '.Execute: SnippetName not provided');
+  Snippet := Snippets.Routines.Find(SnippetName, UserDefined);
+  Assert(Assigned(Snippet), ClassName + '.Execute: SnippetName not valid');
   // Create a view item for snippet and get notifier to display it
   fNotifier.ShowViewItem(TViewItemFactory.CreateSnippetView(Snippet));
   Result := False;
 end;
 
-procedure TRoutineAction.SetNotifier(const Notifier: INotifier);
-  {Stores a reference to the notifier object.
-    @param Notifier [in] Required notifier object.
-  }
+procedure TSnippetAction.SetNotifier(const Notifier: INotifier);
 begin
   fNotifier := Notifier;
 end;

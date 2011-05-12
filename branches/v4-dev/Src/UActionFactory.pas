@@ -208,7 +208,7 @@ class function TActionFactory.CreateRoutineAction(const AOwner: TComponent;
     @return Reference to newly created action.
   }
 begin
-  Result := CreateAction(TRoutineAction, AOwner, OnExecHandler);
+  Result := CreateAction(TSnippetAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateViewItemAction(

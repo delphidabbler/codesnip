@@ -278,8 +278,8 @@ procedure TNotifier.DisplayRoutine(const RoutineName: WideString;
 begin
   if Assigned(fDisplayRoutineAction) then
   begin
-    (fDisplayRoutineAction as TRoutineAction).RoutineName := RoutineName;
-    (fDisplayRoutineAction as TRoutineAction).UserDefined := UserDefined;
+    (fDisplayRoutineAction as TSnippetAction).SnippetName := RoutineName;
+    (fDisplayRoutineAction as TSnippetAction).UserDefined := UserDefined;
     fDisplayRoutineAction.Execute;
   end;
 end;
@@ -356,8 +356,8 @@ procedure TNotifier.SetDisplayRoutineAction(
     @param Action [in] Required action.
   }
 begin
-  Assert(Action is TRoutineAction,
-    ClassName + '.SetDisplayRoutineAction: Action is not TRoutineAction');
+  Assert(Action is TSnippetAction,
+    ClassName + '.SetDisplayRoutineAction: Action is not TSnippetAction');
   Assert(Supports(Action, ISetNotifier),
     ClassName + '.SetDisplayRoutineAction: Action must support ISetNotifier');
   fDisplayRoutineAction := Action;
