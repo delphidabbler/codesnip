@@ -172,17 +172,17 @@ type
         @param Cat [in] Category for which data is requested.
         @return Record containing property data.
       }
-    function GetCategoryRoutines(const Cat: TCategory): IStringList;
+    function GetCategorySnippets(const Cat: TCategory): IStringList;
       {Retrieves names of all snippets that belong to a category.
         @param Cat [in] Category for which snippet names are requested.
         @return Required list of snippet names.
       }
-    function GetRoutineProps(const Routine: TSnippet): TSnippetData;
+    function GetSnippetProps(const Routine: TSnippet): TSnippetData;
       {Retrieves all the properties of a snippet.
         @param Routine [in] Snippet for which data is requested.
         @return Record containing property data.
       }
-    function GetRoutineRefs(const Routine: TSnippet): TSnippetReferences;
+    function GetSnippetRefs(const Routine: TSnippet): TSnippetReferences;
       {Retrieves information about all the references of a snippet.
         @param Routine [in] Snippet for which information is requested.
         @return Record containing references.
@@ -1002,17 +1002,17 @@ type
         @param Cat [in] Category for which data is requested.
         @return Record containing property data.
       }
-    function GetCategoryRoutines(const Cat: TCategory): IStringList;
+    function GetCategorySnippets(const Cat: TCategory): IStringList;
       {Retrieves names of all user-defined snippets that belong to a category.
         @param Cat [in] Category for which snippet names are requested.
         @return Required list of snippet names.
       }
-    function GetRoutineProps(const Routine: TSnippet): TSnippetData;
+    function GetSnippetProps(const Routine: TSnippet): TSnippetData;
       {Retrieves all the properties of a snippet.
         @param Routine [in] Snippet for which data is requested.
         @return Record containing property data.
       }
-    function GetRoutineRefs(const Routine: TSnippet): TSnippetReferences;
+    function GetSnippetRefs(const Routine: TSnippet): TSnippetReferences;
       {Retrieves information about all the references of a snippet.
         @param Routine [in] Snippet for which information is requested.
         @return Record containing references.
@@ -2222,7 +2222,7 @@ begin
   Result.Desc := Cat.Description;
 end;
 
-function TUserDataProvider.GetCategoryRoutines(
+function TUserDataProvider.GetCategorySnippets(
   const Cat: TCategory): IStringList;
   {Retrieves names of all user-defined snippets that belong to a category.
     @param Cat [in] Category for which snippet names are requested.
@@ -2237,7 +2237,7 @@ begin
       Result.Add(Routine.Name);
 end;
 
-function TUserDataProvider.GetRoutineProps(
+function TUserDataProvider.GetSnippetProps(
   const Routine: TSnippet): TSnippetData;
   {Retrieves all the properties of a snippet.
     @param Routine [in] Snippet for which data is requested.
@@ -2247,7 +2247,7 @@ begin
   Result := (Routine as TSnippetEx).GetProps;
 end;
 
-function TUserDataProvider.GetRoutineRefs(
+function TUserDataProvider.GetSnippetRefs(
   const Routine: TSnippet): TSnippetReferences;
   {Retrieves information about all the references of a snippet.
     @param Routine [in] Snippet for which information is requested.

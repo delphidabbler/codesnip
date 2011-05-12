@@ -680,7 +680,7 @@ begin
   begin
     Props := fProvider.GetCategoryProps(Cat);
     fWriter.WriteCatProps(Cat.Category, Props);
-    Routines := fProvider.GetCategoryRoutines(Cat);
+    Routines := fProvider.GetCategorySnippets(Cat);
     fWriter.WriteCatRoutines(Cat.Category, Routines);
   end;
 end;
@@ -715,10 +715,10 @@ begin
     if Routine.UserDefined then
     begin
       // Get and write a snippet's properties
-      Props := fProvider.GetRoutineProps(Routine);
+      Props := fProvider.GetSnippetProps(Routine);
       fWriter.WriteRoutineProps(Routine.Name, Props);
       // Get and write a snippet's references
-      Refs := fProvider.GetRoutineRefs(Routine);
+      Refs := fProvider.GetSnippetRefs(Routine);
       fWriter.WriteRoutineUnits(Routine.Name, Refs.Units);
       fWriter.WriteRoutineDepends(Routine.Name, IDListToStrings(Refs.Depends));
       fWriter.WriteRoutineXRefs(Routine.Name, IDListToStrings(Refs.XRef));
