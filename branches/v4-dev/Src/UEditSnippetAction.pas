@@ -56,7 +56,7 @@ type
       ///  <summary>Value of SnippetName property.</summary>
       fSnippetName: string;
   public
-    ///  <sumary>Name of snippet to be edited.</summary>
+    ///  <summary>Name of snippet to be edited.</summary>
     property SnippetName: string read fSnippetName write fSnippetName;
   end;
 
