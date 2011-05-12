@@ -498,7 +498,7 @@ begin
     if not Assigned(Routine) then
     begin
       fReader.GetRoutineProps(RoutineName, RoutineProps);
-      Routine := fFactory.CreateRoutine(
+      Routine := fFactory.CreateSnippet(
         RoutineName, IsUserDatabase, RoutineProps
       );
       fRoutines.Add(Routine);

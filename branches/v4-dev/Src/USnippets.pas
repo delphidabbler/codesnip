@@ -227,7 +227,7 @@ type
         @param Data [in] Record describing category's properties.
         @return Instance of new category object.
       }
-    function CreateRoutine(const Name: string; const UserDefined: Boolean;
+    function CreateSnippet(const Name: string; const UserDefined: Boolean;
       const Props: TSnippetData): TSnippet;
       {Creates a new snippet object.
         @param Name [in] Name of new snippet. Must not exist in database
@@ -674,7 +674,7 @@ type
         @param Data [in] Record describing category's properties.
         @return Instance of new category object.
       }
-    function CreateRoutine(const Name: string; const UserDefined: Boolean;
+    function CreateSnippet(const Name: string; const UserDefined: Boolean;
       const Props: TSnippetData): TSnippet;
       {Creates a new snippet object.
         @param Name [in] Name of new snippet. Must not exist in database
@@ -2185,7 +2185,7 @@ begin
   Result := TCategoryEx.Create(CatID, UserDefined, Data);
 end;
 
-function TSnippetsFactory.CreateRoutine(const Name: string;
+function TSnippetsFactory.CreateSnippet(const Name: string;
   const UserDefined: Boolean; const Props: TSnippetData): TSnippet;
   {Creates a new snippet object.
     @param Name [in] Name of new snippet. Must not exist in database specified
