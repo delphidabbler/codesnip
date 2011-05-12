@@ -96,7 +96,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UAttrs, URTFRoutineDoc, UPrintInfo;
+  Hiliter.UAttrs, URTFSnippetDoc, UPrintInfo;
 
 
 { TSnippetPrintDocument }

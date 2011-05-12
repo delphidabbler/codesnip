@@ -1,5 +1,5 @@
 {
- * UTextRoutineDoc.pas
+ * UTextSnippetDoc.pas
  *
  * Implements a class that renders a document that describes a snippet as plain
  * text.
@@ -19,12 +19,12 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UTextRoutineDoc.pas
+ * The Original Code is UTextSnippetDoc.pas, formerly UTextRoutineDoc.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -34,7 +34,7 @@
 }
 
 
-unit UTextRoutineDoc;
+unit UTextSnippetDoc;
 
 
 interface
@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UActiveText, UEncodings, UIStringList, URoutineDoc;
+  UActiveText, UEncodings, UIStringList, USnippetDoc;
 
 
 type

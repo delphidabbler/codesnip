@@ -411,7 +411,7 @@ uses
   // Project
   FmSplash, FmTrappedBugReportDlg, FmWaitDlg, IntfFrameMgrs, UActionFactory,
   UAppInfo, UCodeShareMgr, UCommandBars, UCompLogAction, UConsts, UCopyInfoMgr,
-  UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UEditRoutineAction,
+  UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UEditSnippetAction,
   UExceptions, UHelpMgr, UHistoryMenus, UMessageBox, UNotifier, UNulDropTarget,
   UPrintMgr, UQuery, USaveSnippetMgr, USaveUnitMgr, USnippets, UUserDBMgr,
   UView, UViewItemAction, UWBExternal, Web.UInfo;

@@ -307,7 +307,7 @@ uses
   SysUtils,
   // Project
   Compilers.UGlobals, UActiveText, UComparers, UConsts, UIniDataLoader,
-  URoutineExtraHelper, UUtils;
+  USnippetExtraHelper, UUtils;
 
 
 const

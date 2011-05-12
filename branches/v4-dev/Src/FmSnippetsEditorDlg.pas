@@ -263,7 +263,7 @@ uses
   // Project
   FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
   UCtrlArranger, UExceptions, UFontHelper, UReservedCategories,
-  URoutineExtraHelper, USnippetValidator, UMessageBox, USnippetIDs, UStructs,
+  USnippetExtraHelper, USnippetValidator, UMessageBox, USnippetIDs, UStructs,
   UTestUnitDlgMgr, UThemesEx, UUtils;
 
 

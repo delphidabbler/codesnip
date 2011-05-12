@@ -1,5 +1,5 @@
 {
- * URoutineDoc.pas
+ * USnippetDoc.pas
  *
  * Implements an abstract base class that renders a text document that describes
  * a snippet. Should be overridden by class that generate actual documents in
@@ -20,7 +20,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is URoutineDoc.pas
+ * The Original Code is USnippetDoc.pas, formerly URoutineDoc.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -35,7 +35,7 @@
 }
 
 
-unit URoutineDoc;
+unit USnippetDoc;
 
 
 interface

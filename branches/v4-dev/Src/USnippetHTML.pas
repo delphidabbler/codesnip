@@ -1,5 +1,5 @@
 {
- * URoutineHTML.pas
+ * USnippetHTML.pas
  *
  * Set of classes that generate HTML used to display snippets in information and
  * compiler check panes.
@@ -19,7 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is URoutineHTML.pas
+ * The Original Code is USnippetHTML.pas, formerly URoutineHTML.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +34,7 @@
 }
 
 
-unit URoutineHTML;
+unit USnippetHTML;
 
 
 interface

@@ -1,5 +1,5 @@
 {
- * URoutineAction.pas
+ * USnippetAction.pas
  *
  * Custom action used to request display of a routine by name. Stores name of
  * required routine and its source database in properties.
@@ -19,7 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is URoutineAction.pas
+ * The Original Code is USnippetAction.pas, formerly URoutineAction.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +34,7 @@
 }
 
 
-unit URoutineAction;
+unit USnippetAction;
 
 
 interface

@@ -1,5 +1,5 @@
 {
- * URoutineExtraHelper.pas
+ * USnippetExtraHelper.pas
  *
  * Implements a class that helps with parsing of routine's extra property as
  * active text and generating extra property values from active text.
@@ -19,12 +19,13 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is URoutineExtraHelper.pas
+ * The Original Code is USnippetExtraHelper.pas, formerly
+ * URoutineExtraHelper.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -34,7 +35,7 @@
 }
 
 
-unit URoutineExtraHelper;
+unit USnippetExtraHelper;
 
 
 interface
@@ -96,7 +97,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UREMLDataIO, URoutineCreditsParser, UUtils;
+  UREMLDataIO, USnippetCreditsParser, UUtils;
 
 
 { TRoutineExtraHelper }

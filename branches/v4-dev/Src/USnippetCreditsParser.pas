@@ -1,5 +1,5 @@
 {
- * URoutineCreditsParser.pas
+ * USnippetCreditsParser.pas
  *
  * Provides an implementation of IActiveTextParser that can parse the markup
  * used in Credits elements of data files and convert the markup into an active
@@ -20,12 +20,13 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is URoutineCreditsParser.pas
+ * The Original Code is USnippetCreditsParser.pas, formerly
+ * URoutineCreditsParser.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -35,7 +36,7 @@
 }
 
 
-unit URoutineCreditsParser;
+unit USnippetCreditsParser;
 
 
 interface

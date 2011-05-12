@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -213,8 +213,8 @@ uses
   // Delphi
   SysUtils, StdActns,
   // Project
-  Compilers.UGlobals, UCategoryAction, UCompLogAction, UEditRoutineAction,
-  URoutineAction, UViewItemAction;
+  Compilers.UGlobals, UCategoryAction, UCompLogAction, UEditSnippetAction,
+  USnippetAction, UViewItemAction;
 
 
 { TNotifier }

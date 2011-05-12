@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -125,8 +125,8 @@ uses
   // Delphi
   StdActns,
   // Project
-  UCategoryAction, UCompLogAction, UEditRoutineAction, ULinkAction,
-  URoutineAction, UViewItemAction;
+  UCategoryAction, UCompLogAction, UEditSnippetAction, ULinkAction,
+  USnippetAction, UViewItemAction;
 
 
 { TActionFactory }

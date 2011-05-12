@@ -319,7 +319,7 @@ uses
   // Project
   Compilers.UCompilers, UCompResHTML, UConsts, UCSSUtils, UEncodings,
   UHTMLUtils, UHTMLDetailUtils, UJavaScriptUtils, UQuery, UResourceUtils,
-  URoutineHTML, UUtils;
+  USnippetHTML, UUtils;
 
 
 { TDetailPageHTML }

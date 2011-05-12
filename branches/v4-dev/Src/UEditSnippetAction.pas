@@ -1,5 +1,5 @@
 {
- * UEditRoutineAction.pas
+ * UEditSnippetAction.pas
  *
  * Custom action used to request editing of a named routine. Stores name of
  * required routine, which must be user defined, in properties.
@@ -19,12 +19,12 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UEditRoutineAction.pas
+ * The Original Code is UEditSnippetAction.pas, formerly UEditRoutineAction.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -34,7 +34,7 @@
 }
 
 
-unit UEditRoutineAction;
+unit UEditSnippetAction;
 
 
 interface

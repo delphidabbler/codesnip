@@ -1,5 +1,5 @@
 {
- * URTFRoutineDoc.pas
+ * URTFSnippetDoc.pas
  *
  * Implements a class that renders a document that describes a snippet as rich
  * text. Source code highlighting can be customised.
@@ -19,12 +19,12 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is URTFRoutineDoc.pas
+ * The Original Code is URTFSnippetDoc.pas, formerly URTFRoutineDoc.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -34,7 +34,7 @@
 }
 
 
-unit URTFRoutineDoc;
+unit URTFSnippetDoc;
 
 
 interface
@@ -44,7 +44,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  Hiliter.UGlobals, UActiveText, UEncodings, UIStringList, URoutineDoc,
+  Hiliter.UGlobals, UActiveText, UEncodings, UIStringList, USnippetDoc,
   URTFBuilder, URTFUtils;
 
 
