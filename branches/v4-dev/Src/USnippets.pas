@@ -420,7 +420,7 @@ type
   }
   TCategory = class(TObject)
   strict private
-    fRoutines: TSnippetList;  // List of snippet objects in category
+    fSnippets: TSnippetList;  // List of snippet objects in category
     fCategory: string;        // Category name
     fDescription: string;     // Category description
     fUserDefined: Boolean;    // Whether this is a user-defined snippet
@@ -443,7 +443,7 @@ type
       {Category name. Must be unique}
     property Description: string read fDescription;
       {Description of category}
-    property Routines: TSnippetList read fRoutines;
+    property Snippets: TSnippetList read fSnippets;
       {List of snippets in this category}
     property UserDefined: Boolean read fUserDefined;
       {Flag that indicates if this is a user defined category}
@@ -1173,8 +1173,8 @@ begin
   try
     // all snippets that belong to category are deleted before category itself
     // can't use for..in here since Routines list is modified in loop
-    for SnipIdx := Pred(Category.Routines.Count) downto 0 do
-      InternalDeleteRoutine(Category.Routines[SnipIdx]);
+    for SnipIdx := Pred(Category.Snippets.Count) downto 0 do
+      InternalDeleteRoutine(Category.Snippets[SnipIdx]);
     InternalDeleteCategory(Category);
     TriggerEvent(evCategoryDeleted);
   finally
@@ -1378,7 +1378,7 @@ begin
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
     raise ECodeSnip.CreateFmt(sCatNotFound, [Result.Category, Result.Name]);
-  Cat.Routines.Add(Result);
+  Cat.Snippets.Add(Result);
   fRoutines.Add(Result);
 end;
 
@@ -1402,7 +1402,7 @@ begin
   // Delete from category if found
   Cat := fCategories.Find(Routine.Category);
   if Assigned(Cat) then
-    (Cat.Routines as TSnippetListEx).Delete(Routine);
+    (Cat.Snippets as TSnippetListEx).Delete(Routine);
   // Delete from "master" list: this frees Routine
   TriggerEvent(evBeforeRoutineDelete, Routine);
   (fRoutines as TSnippetListEx).Delete(Routine);
@@ -1487,13 +1487,13 @@ begin
   try
     SnippetList := TSnippetList.Create;
     try
-      for Snippet in Category.Routines do
+      for Snippet in Category.Snippets do
         SnippetList.Add(Snippet);
       CatName := Category.Category;
       InternalDeleteCategory(Category);
       Result := InternalAddCategory(CatName, Data);
       for Snippet in SnippetList do
-        Result.Routines.Add(Snippet);
+        Result.Snippets.Add(Snippet);
     finally
       FreeAndNil(SnippetList);
     end;
@@ -2033,14 +2033,14 @@ begin
   fDescription := Data.Desc;
   fUserDefined := UserDefined;
   // Create list to store snippets in category
-  fRoutines := TSnippetListEx.Create;
+  fSnippets := TSnippetListEx.Create;
 end;
 
 destructor TCategory.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  FreeAndNil(fRoutines);
+  FreeAndNil(fSnippets);
   inherited;
 end;
 
@@ -2232,7 +2232,7 @@ var
   Routine: TSnippet;  // references each snippet in category
 begin
   Result := TIStringList.Create;
-  for Routine in Cat.Routines do
+  for Routine in Cat.Snippets do
     if Routine.UserDefined then
       Result.Add(Routine.Name);
 end;

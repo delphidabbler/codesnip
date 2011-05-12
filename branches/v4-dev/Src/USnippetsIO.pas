@@ -505,7 +505,7 @@ begin
     end;
     // Add snippet to database only if it belongs to this database
     if IsNativeRoutine(Routine) then
-      Cat.Routines.Add(Routine);
+      Cat.Snippets.Add(Routine);
   end;
 end;
 

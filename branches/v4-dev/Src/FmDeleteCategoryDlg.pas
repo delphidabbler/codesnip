@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -128,9 +128,9 @@ begin
   inherited;
   Cat := frmCategories.SelectedCategory;
   Assert(Assigned(Cat), ClassName + '.btnOKClick: No category selected');
-  if (Cat.Routines.Count = 0)
+  if (Cat.Snippets.Count = 0)
     or TMessageBox.Confirm(
-      Self, Format(sConfirmDelete, [Cat.Description, Cat.Routines.Count])
+      Self, Format(sConfirmDelete, [Cat.Description, Cat.Snippets.Count])
     ) then
     DeleteCategory(Cat)
   else

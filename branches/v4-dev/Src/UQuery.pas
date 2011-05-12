@@ -240,7 +240,7 @@ begin
   Routines.Clear;
   for Idx := 0 to Pred(fSelection.Count) do
   begin
-    if Cat.Routines.Contains(fSelection[Idx]) then
+    if Cat.Snippets.Contains(fSelection[Idx]) then
       Routines.Add(fSelection[Idx]);
   end;
 end;

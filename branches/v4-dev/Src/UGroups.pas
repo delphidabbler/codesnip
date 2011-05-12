@@ -392,7 +392,7 @@ begin
   begin
     Item := TCategoryGroupItem.Create(Cat);
     AddItem(Item);
-    for Snippet in Cat.Routines do
+    for Snippet in Cat.Snippets do
       if SnippetList.Contains(Snippet) then
         Item.AddSnippet(Snippet);
   end;
