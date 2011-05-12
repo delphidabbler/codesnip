@@ -1,8 +1,7 @@
 {
  * UEditSnippetAction.pas
  *
- * Custom action used to request editing of a named routine. Stores name of
- * required routine, which must be user defined, in properties.
+ * Custom action used to request editing of a named user-defined snippet.
  *
  * $Rev$
  * $Date$
