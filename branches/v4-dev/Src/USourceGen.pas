@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -155,10 +155,10 @@ type
   strict private
     var
       fTypesAndConsts: TConstAndTypeList; // Value of TypesAndConsts property
-      fIntfRoutines: TRoutineList;        // Value of IntfRoutines property
-      fAllRoutines: TRoutineList;         // Value of AllRoutines property
-      fForwardRoutines: TRoutineList;     // Value of ForwardRoutines property
-      fRequiredRoutines: TRoutineList;    // Value of RequiredRoutines property
+      fIntfRoutines: TSnippetList;        // Value of IntfRoutines property
+      fAllRoutines: TSnippetList;         // Value of AllRoutines property
+      fForwardRoutines: TSnippetList;     // Value of ForwardRoutines property
+      fRequiredRoutines: TSnippetList;    // Value of RequiredRoutines property
       fUnits: TStringList;                // Value of Units property
     procedure AddIntfRoutine(const Routine: TRoutine);
       {Adds a user-specified routine to list of routines specified by user.
@@ -169,7 +169,7 @@ type
       {Adds a user specified or required type or constant to the analysis.
         @param TypeOrConst [in] Type of constant snippet to be added.
       }
-    procedure RequireSnippets(const Snips: TRoutineList);
+    procedure RequireSnippets(const Snips: TSnippetList);
       {Process all snippets in a dependency list.
         @param Snips [in] List of snippets to process.
       }
@@ -208,16 +208,16 @@ type
       }
     property TypesAndConsts: TConstAndTypeList read fTypesAndConsts;
       {List of both added and required Types and constants, in required order}
-    property IntfRoutines: TRoutineList read fIntfRoutines;
+    property IntfRoutines: TSnippetList read fIntfRoutines;
       {List of routines added by user. These routines would appear in a unit's
       interface section}
-    property RequiredRoutines: TRoutineList read fRequiredRoutines;
+    property RequiredRoutines: TSnippetList read fRequiredRoutines;
       {List of routines required by other snippets, i.e. that appear in
       dependency lists}
-    property AllRoutines: TRoutineList read fAllRoutines;
+    property AllRoutines: TSnippetList read fAllRoutines;
       {List of all routines, both added and required. Not valid until Generate
       method called. Invalidated if further snippets added}
-    property ForwardRoutines: TRoutineList read fForwardRoutines;
+    property ForwardRoutines: TSnippetList read fForwardRoutines;
       {List of required routines that are not also specified by user. These
       routines would appear in forward section of a unit. Not valid until
       Generate method called. Invalidated if further snippets added}
@@ -245,8 +245,8 @@ type
       {Includes a snippet in the source code.
         @param Routine [in] Snippet to be included.
       }
-    procedure IncludeSnippets(const Snips: TRoutineList);
-      {Includes a one or more snippes in the source code.
+    procedure IncludeSnippets(const Snips: TSnippetList);
+      {Includes a one or more snippets in the source code.
         @param Routines [in] List of snippets to be included.
       }
     function UnitAsString(const UnitName: string;
@@ -522,8 +522,8 @@ begin
   fSourceAnalyser.AddSnippet(Snippet);
 end;
 
-procedure TSourceGen.IncludeSnippets(const Snips: TRoutineList);
-  {Includes a one or more snippes in the source code.
+procedure TSourceGen.IncludeSnippets(const Snips: TSnippetList);
+  {Includes a one or more snippets in the source code.
     @param Routines [in] List of snippets to be included.
   }
 var
@@ -718,10 +718,10 @@ constructor TSourceAnalyser.Create;
 begin
   inherited;
   fTypesAndConsts := TConstAndTypeList.Create;
-  fIntfRoutines := TRoutineList.Create;
-  fAllRoutines := TRoutineList.Create;
-  fForwardRoutines := TRoutineList.Create;
-  fRequiredRoutines := TRoutineList.Create;
+  fIntfRoutines := TSnippetList.Create;
+  fAllRoutines := TSnippetList.Create;
+  fForwardRoutines := TSnippetList.Create;
+  fRequiredRoutines := TSnippetList.Create;
   fUnits := TStringList.Create;
 end;
 
@@ -790,7 +790,7 @@ begin
   end;
 end;
 
-procedure TSourceAnalyser.RequireSnippets(const Snips: TRoutineList);
+procedure TSourceAnalyser.RequireSnippets(const Snips: TSnippetList);
   {Process all snippets in a dependency list.
     @param Snips [in] List of snippets to process.
   }

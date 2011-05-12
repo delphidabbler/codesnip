@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -157,7 +157,7 @@ type
   TCodeExporter = class(TNoPublicConstructObject)
   strict private
     var fUserInfo: TUserInfo;     // User information to be written to XML
-    var fRoutines: TRoutineList;  // List of snippets to be exported
+    var fRoutines: TSnippetList;  // List of snippets to be exported
     var fXMLDoc: IXMLDocumentEx;  // Extended XML document object
     procedure HandleException(const EObj: TObject);
       {Handles exceptions by converting expected exceptions into ECodeExporter.
@@ -165,7 +165,7 @@ type
         @param EObj [in] Reference to exception to be handled.
         @except Always raise an exception.
       }
-    function RoutineNames(const Routines: TRoutineList): IStringList;
+    function RoutineNames(const Routines: TSnippetList): IStringList;
       {Builds a list of snippet names from a snippet list.
         @param Routines [in] List of snippets.
         @return List containing names of all snippets names.
@@ -204,7 +204,7 @@ type
         @except ECodeExporter raised if a known error is encountered.
       }
     constructor InternalCreate(const UserInfo: TUserInfo;
-      const Routines: TRoutineList);
+      const Routines: TSnippetList);
       {Private object constructor. Sets up object to export data.
         @param UserInfo [in] User information to be exported.
         @param Routines [in] List of snippets to be exported.
@@ -214,7 +214,7 @@ type
       {Object destructor: tidies up object.
       }
     class function ExportRoutines(const UserInfo: TUserInfo;
-      const Routines: TRoutineList): TEncodedData;
+      const Routines: TSnippetList): TEncodedData;
       {Exports user information and snippets as XML.
         @param UserInfo [in] User information to be exported. Ignored if nul.
         @param Routines [in] List of snippets to be exported.
@@ -343,7 +343,7 @@ begin
 end;
 
 class function TCodeExporter.ExportRoutines(const UserInfo: TUserInfo;
-  const Routines: TRoutineList): TEncodedData;
+  const Routines: TSnippetList): TEncodedData;
   {Exports user information and snippets as XML.
     @param UserInfo [in] User information to be exported. Ignored if nul.
     @param Routines [in] List of snippets to be exported.
@@ -371,7 +371,7 @@ begin
 end;
 
 constructor TCodeExporter.InternalCreate(const UserInfo: TUserInfo;
-  const Routines: TRoutineList);
+  const Routines: TSnippetList);
   {Private object constructor. Sets up object to export data.
     @param UserInfo [in] User information to be exported.
     @param Routines [in] List of snippets to be exported.
@@ -383,7 +383,7 @@ begin
 end;
 
 function TCodeExporter.RoutineNames(
-  const Routines: TRoutineList): IStringList;
+  const Routines: TSnippetList): IStringList;
   {Builds a list of snippet names from a snippet list.
     @param Routines [in] List of snippets.
     @return List containing names of all snippet names.

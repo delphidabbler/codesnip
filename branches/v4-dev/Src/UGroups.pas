@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -53,7 +53,7 @@ type
   }
   TGroupItem = class abstract(TObject)
   strict private
-    var fSnippetList: TRoutineList; // List of snippets in group
+    var fSnippetList: TSnippetList; // List of snippets in group
   strict protected
     function GetTitle: string; virtual; abstract;
       {Read accessor for Title property.
@@ -80,7 +80,7 @@ type
         @return -ve if this item sorts before Item, 0 if same and +ve if this
           item sorts after Item.
       }
-    property SnippetList: TRoutineList read fSnippetList;
+    property SnippetList: TSnippetList read fSnippetList;
       {List of snippets associated with this group}
     property Title: string read GetTitle;
       {Title of group. Used for display}
@@ -188,7 +188,7 @@ type
       // Sorted list of group item objects
       TGroupItemList = TSortedObjectList<TGroupItem>;
     var fItems: TGroupItemList;     // List of items
-    var fSnippetList: TRoutineList; // List of snippets to be grouped
+    var fSnippetList: TSnippetList; // List of snippets to be grouped
     function GetItem(Idx: Integer): TGroupItem;
       {Read accessor for Items[] property.
         @param Idx [in] Index of required object in list.
@@ -206,10 +206,10 @@ type
     procedure Populate; virtual; abstract;
       {Populates grouping with group items and associated snippets.
       }
-    property SnippetList: TRoutineList read fSnippetList;
+    property SnippetList: TSnippetList read fSnippetList;
       {List of snippets to be grouped}
   public
-    constructor Create(const SnippetList: TRoutineList);
+    constructor Create(const SnippetList: TSnippetList);
       {Object constructor. Sets up grouping object for a snippet list.
         @param SnippetList [in] List of snippets to be grouped.
       }
@@ -289,7 +289,7 @@ begin
   fItems.Add(Item);
 end;
 
-constructor TGrouping.Create(const SnippetList: TRoutineList);
+constructor TGrouping.Create(const SnippetList: TSnippetList);
   {Object constructor. Sets up grouping object for a snippet list.
     @param SnippetList [in] List of snippets to be grouped.
   }
@@ -358,7 +358,7 @@ constructor TGroupItem.Create;
   }
 begin
   inherited Create;
-  fSnippetList := TRoutineList.Create;
+  fSnippetList := TSnippetList.Create;
 end;
 
 destructor TGroupItem.Destroy;

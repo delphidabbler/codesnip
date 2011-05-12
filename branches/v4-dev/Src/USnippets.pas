@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -51,7 +51,7 @@ uses
 type
 
   TRoutine = class;
-  TRoutineList = class;
+  TSnippetList = class;
   TCategory = class;
   TCategoryList = class;
 
@@ -251,8 +251,8 @@ type
     fSourceCode: string;              // Snippet's source code}
     fName: string;                    // Name of snippet
     fUnits: TStringList;              // List of required units
-    fDepends: TRoutineList;           // List of required snippets
-    fXRef: TRoutineList;              // List of cross-referenced snippets
+    fDepends: TSnippetList;           // List of required snippets
+    fXRef: TSnippetList;              // List of cross-referenced snippets
     fExtra: IActiveText;              // Additional information about snippet
     fCompatibility: TCompileResults;  // Routine's compiler compatibility
     fUserDefined: Boolean;            // Whether this snippet is user-defined
@@ -308,19 +308,19 @@ type
       {Compiler compatibilty of this snippet}
     property Units: TStringList read fUnits;
       {List of units used by snippet}
-    property Depends: TRoutineList read fDepends;
+    property Depends: TSnippetList read fDepends;
       {List of any other snippet in database on which this snippet depends}
-    property XRef: TRoutineList read fXRef;
+    property XRef: TSnippetList read fXRef;
       {List of cross referenced snippets in database}
     property UserDefined: Boolean read fUserDefined;
       {Flag that indicates if this is a user defined snippet}
   end;
 
   {
-  TRoutineList:
+  TSnippetList:
     Class that implements a list of TRoutine objects.
   }
-  TRoutineList = class(TObject)
+  TSnippetList = class(TObject)
   strict private
     function GetItem(Idx: Integer): TRoutine;
       {Read accessor for Items property.
@@ -355,12 +355,12 @@ type
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
-    procedure Assign(const SrcList: TRoutineList);
+    procedure Assign(const SrcList: TSnippetList);
       {Sets this list to be same as another list. List items are referenced, not
       copied.
         @param SrcList [in] List of snippets to be assigned.
       }
-    function IsEqual(const AList: TRoutineList): Boolean;
+    function IsEqual(const AList: TSnippetList): Boolean;
       {Checks if this list contains same snippets as another list.
         @param AList [in] List of snippets to compare.
         @return True if lists are same, False if not.
@@ -420,7 +420,7 @@ type
   }
   TCategory = class(TObject)
   strict private
-    fRoutines: TRoutineList;  // List of snippet objects in category
+    fRoutines: TSnippetList;  // List of snippet objects in category
     fCategory: string;        // Category name
     fDescription: string;     // Category description
     fUserDefined: Boolean;    // Whether this is a user-defined snippet
@@ -443,7 +443,7 @@ type
       {Category name. Must be unique}
     property Description: string read fDescription;
       {Description of category}
-    property Routines: TRoutineList read fRoutines;
+    property Routines: TSnippetList read fRoutines;
       {List of snippets in this category}
     property UserDefined: Boolean read fUserDefined;
       {Flag that indicates if this is a user defined category}
@@ -525,7 +525,7 @@ type
       {Removes a change event handler from list of listeners.
         @param Handler [in] Handler to remove from list.
       }
-    function GetRoutines: TRoutineList;
+    function GetRoutines: TSnippetList;
       {Gets list of snippets in main and user databases.
         @return Required list.
       }
@@ -535,7 +535,7 @@ type
       }
     property Categories: TCategoryList read GetCategories;
       {List of categories in main and user databases}
-    property Routines: TRoutineList read GetRoutines;
+    property Routines: TSnippetList read GetRoutines;
       {List of snippets in main and user databases}
   end;
 
@@ -692,14 +692,14 @@ type
   TRoutineEx = class(TRoutine)
   public
     procedure UpdateRefs(const Refs: TSnippetReferences;
-      const AllRoutines: TRoutineList);
+      const AllRoutines: TSnippetList);
       {Updates a snippet's references.
         @param Refs [in] Stores all snippet's references (XRef, Depends and
           Units).
         @param AllRoutines [in] List of all snippets in database.
       }
     procedure Update(const Data: TSnippetEditData;
-      const AllRoutines: TRoutineList);
+      const AllRoutines: TSnippetList);
       {Updates snippet's properties and references.
         @param Data [in] New property values and references.
         @param AllRoutines [in] List of all snippets in database.
@@ -722,16 +722,16 @@ type
   TTempRoutine:
     Special subclass of TRoutineEx that can't be added to the Snippets object.
     Class does nothing, simply provides a class name for testing when a snippet
-    is added to a TRoutineListEx. TTempRoutine can be added to a normal snippet
+    is added to a TSnippetListEx. TTempRoutine can be added to a normal snippet
     list.
   }
   TTempRoutine = class(TRoutineEx);
 
   {
-  TRoutineListEx:
-    Private extension of TRoutineList for use internally by Snippets object.
+  TSnippetListEx:
+    Private extension of TSnippetList for use internally by Snippets object.
   }
-  TRoutineListEx = class(TRoutineList)
+  TSnippetListEx = class(TSnippetList)
   public
     function Add(const Routine: TRoutine): Integer; override;
       {Adds a snippet to list. Prevents TTempRoutine instances from being added.
@@ -783,7 +783,7 @@ type
   strict private
     fUpdated: Boolean;                // Flags if user database has been updated
     fCategories: TCategoryList;       // List of categories
-    fRoutines: TRoutineList;          // List of snippets
+    fRoutines: TSnippetList;          // List of snippets
     fChangeEvents: TMulticastEvents;  // List of change event handlers
     type
       {
@@ -846,13 +846,13 @@ type
         @param Cat [in] Category to delete from database.
       }
     procedure GetDependentList(const ARoutine: TRoutine;
-      const List: TRoutineList);
+      const List: TSnippetList);
       {Builds a list of all snippets that depend on a specified snippet.
         @param ARoutine [in] Snippet for which dependents are required.
         @param List [in] Receives list of dependent snippets.
       }
     procedure GetReferrerList(const ARoutine: TRoutine;
-      const List: TRoutineList);
+      const List: TSnippetList);
       {Builds list of all snippets that cross reference a specified snippet.
         @param ARoutine [in] The cross referenced snippet.
         @param List [in] Receives list of cross referencing snippets.
@@ -863,7 +863,7 @@ type
       {Gets list of all categories in database.
         @return Required list.
       }
-    function GetRoutines: TRoutineList;
+    function GetRoutines: TSnippetList;
       {Gets list of all snippets in database.
         @return Required list.
       }
@@ -986,10 +986,10 @@ type
   }
   TUserDataProvider = class(TInterfacedObject, ISnippetsDataProvider)
   strict private
-    fRoutines: TRoutineList;    // All snippets in the whole database
+    fRoutines: TSnippetList;    // All snippets in the whole database
     fCategories: TCategoryList; // All categories in the whole database
   public
-    constructor Create(const Routines: TRoutineList;
+    constructor Create(const Routines: TSnippetList;
       const Categories: TCategoryList);
       {Constructor. Records list of all snippets and categories in both
       databases.
@@ -1022,13 +1022,13 @@ type
   {
   TSnippetIDListEx:
     Extension of TSnippetIDList that provides an additional constructor that can
-    create a snippet ID list from a TRoutineList.
+    create a snippet ID list from a TSnippetList.
   }
   TSnippetIDListEx = class(TSnippetIDList)
   public
-    constructor Create(const Routines: TRoutineList); overload;
+    constructor Create(const Routines: TSnippetList); overload;
       {Constructor overload that creates a snippets ID list from a
-      TRoutineList object.
+      TSnippetList object.
         @param Routines [in] List of snippets objects for which ID list is
           required.
       }
@@ -1118,7 +1118,7 @@ constructor TSnippets.Create;
   }
 begin
   inherited Create;
-  fRoutines := TRoutineListEx.Create(True);
+  fRoutines := TSnippetListEx.Create(True);
   fCategories := TCategoryListEx.Create(True);
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
@@ -1189,9 +1189,9 @@ procedure TSnippets.DeleteRoutine(const Routine: TRoutine);
   }
 var
   Dependent: TRoutine;      // loops thru each snippet that depends on Routine
-  Dependents: TRoutineList; // list of dependent snippets
+  Dependents: TSnippetList; // list of dependent snippets
   Referrer: TRoutine;       // loops thru snippets that cross references Routine
-  Referrers: TRoutineList;  // list of referencing snippets
+  Referrers: TSnippetList;  // list of referencing snippets
 begin
   Assert(Routine.UserDefined,
     ClassName + '.DeleteRoutine: Routine is not user-defined');
@@ -1202,15 +1202,15 @@ begin
   Dependents := nil;
   Referrers := nil;
   try
-    Dependents := TRoutineList.Create;
+    Dependents := TSnippetList.Create;
     GetDependentList(Routine, Dependents);
-    Referrers := TRoutineList.Create;
+    Referrers := TSnippetList.Create;
     GetReferrerList(Routine, Referrers);
     // Delete routine for XRef or Depends list of referencing snippets
     for Referrer in Referrers do
-      (Referrer.XRef as TRoutineListEx).Delete(Routine);
+      (Referrer.XRef as TSnippetListEx).Delete(Routine);
     for Dependent in Dependents do
-      (Dependent.Depends as TRoutineListEx).Delete(Routine);
+      (Dependent.Depends as TSnippetListEx).Delete(Routine);
     // Delete routine itself
     InternalDeleteRoutine(Routine);
     TriggerEvent(evRoutineDeleted);
@@ -1241,7 +1241,7 @@ begin
 end;
 
 procedure TSnippets.GetDependentList(const ARoutine: TRoutine;
-  const List: TRoutineList);
+  const List: TSnippetList);
   {Builds a list of all snippets that depend on a specified snippet.
     @param ARoutine [in] Snippet for which dependents are required.
     @param List [in] Receives list of dependent snippets.
@@ -1261,9 +1261,9 @@ function TSnippets.GetDependents(const Routine: TRoutine): ISnippetIDList;
     @return List of IDs of dependent snippets.
   }
 var
-  List: TRoutineList; // list of dependent snippets
+  List: TSnippetList; // list of dependent snippets
 begin
-  List := TRoutineList.Create;
+  List := TSnippetList.Create;
   try
     GetDependentList(Routine, List);
     Result := TSnippetIDListEx.Create(List);
@@ -1311,9 +1311,9 @@ function TSnippets.GetReferrers(const Routine: TRoutine): ISnippetIDList;
     @return List of IDs of referring snippets.
   }
 var
-  List: TRoutineList; // list of referring snippets
+  List: TSnippetList; // list of referring snippets
 begin
-  List := TRoutineList.Create;
+  List := TSnippetList.Create;
   try
     GetReferrerList(Routine, List);
     Result := TSnippetIDListEx.Create(List);
@@ -1323,7 +1323,7 @@ begin
 end;
 
 procedure TSnippets.GetReferrerList(const ARoutine: TRoutine;
-  const List: TRoutineList);
+  const List: TSnippetList);
   {Builds list of all snippets that cross reference a specified snippet.
     @param ARoutine [in] The cross referenced snippet.
     @param List [in] Receives list of cross referencing snippets.
@@ -1337,7 +1337,7 @@ begin
       List.Add(Routine);
 end;
 
-function TSnippets.GetRoutines: TRoutineList;
+function TSnippets.GetRoutines: TSnippetList;
   {Gets list of all snippets in database.
     @return Required list.
   }
@@ -1402,10 +1402,10 @@ begin
   // Delete from category if found
   Cat := fCategories.Find(Routine.Category);
   if Assigned(Cat) then
-    (Cat.Routines as TRoutineListEx).Delete(Routine);
+    (Cat.Routines as TSnippetListEx).Delete(Routine);
   // Delete from "master" list: this frees Routine
   TriggerEvent(evBeforeRoutineDelete, Routine);
-  (fRoutines as TRoutineListEx).Delete(Routine);
+  (fRoutines as TSnippetListEx).Delete(Routine);
   TriggerEvent(evAfterRoutineDelete);
 end;
 
@@ -1479,13 +1479,13 @@ function TSnippets.UpdateCategory(const Category: TCategory;
     @return Reference to updated category. Will have changed.
   }
 var
-  SnippetList: TRoutineList;
+  SnippetList: TSnippetList;
   Snippet: TRoutine;
   CatName: string;
 begin
   TriggerEvent(evChangeBegin);
   try
-    SnippetList := TRoutineList.Create;
+    SnippetList := TSnippetList.Create;
     try
       for Snippet in Category.Routines do
         SnippetList.Add(Snippet);
@@ -1525,9 +1525,9 @@ function TSnippets.UpdateRoutine(const Routine: TRoutine;
 var
   RoutineName: string;      // name of snippet
   Dependent: TRoutine;      // loops thru each snippetthat depends on Routine
-  Dependents: TRoutineList; // list of dependent snippets
+  Dependents: TSnippetList; // list of dependent snippets
   Referrer: TRoutine;       // loops thru snippets that cross references Routine
-  Referrers: TRoutineList;  // list of referencing snippets
+  Referrers: TSnippetList;  // list of referencing snippets
 resourcestring
   // Error message
   sCantRename = 'Can''t rename snippet %0:s to %1:s: Snippet %1:s already '
@@ -1551,15 +1551,15 @@ begin
         raise ECodeSnip.CreateFmt(sCantRename, [Routine.Name, RoutineName]);
     // We update by deleting old snippet and inserting new one
     // get lists of snippets that cross reference or depend on this routine
-    Dependents := TRoutineList.Create;
+    Dependents := TSnippetList.Create;
     GetDependentList(Routine, Dependents);
-    Referrers := TRoutineList.Create;
+    Referrers := TSnippetList.Create;
     GetReferrerList(Routine, Referrers);
     // remove invalid references from referring snippets
     for Referrer in Referrers do
-      (Referrer.XRef as TRoutineListEx).Delete(Routine);
+      (Referrer.XRef as TSnippetListEx).Delete(Routine);
     for Dependent in Dependents do
-      (Dependent.Depends as TRoutineListEx).Delete(Routine);
+      (Dependent.Depends as TSnippetListEx).Delete(Routine);
     // delete the snippet
     InternalDeleteRoutine(Routine);
     // add new routine
@@ -1636,8 +1636,8 @@ begin
   // Create string list to store required units
   fUnits := TStringList.Create;
   // Create routine lists for Depends and XRef properties
-  fDepends := TRoutineListEx.Create;
-  fXRef := TRoutineListEx.Create;
+  fDepends := TSnippetListEx.Create;
+  fXRef := TSnippetListEx.Create;
   // The following properties added to support user defined snippets
   fUserDefined := UserDefined;
 end;
@@ -1727,7 +1727,7 @@ begin
 end;
 
 procedure TRoutineEx.Update(const Data: TSnippetEditData;
-  const AllRoutines: TRoutineList);
+  const AllRoutines: TSnippetList);
   {Updates snippet's properties and references.
     @param Data [in] New property values and references.
     @param AllRoutines [in] List of all snippets in database.
@@ -1738,7 +1738,7 @@ begin
 end;
 
 procedure TRoutineEx.UpdateRefs(const Refs: TSnippetReferences;
-  const AllRoutines: TRoutineList);
+  const AllRoutines: TSnippetList);
   {Updates a snippet's references.
     @param Refs [in] Stores all snippet's references (XRef, Depends and
       Units).
@@ -1746,7 +1746,7 @@ procedure TRoutineEx.UpdateRefs(const Refs: TSnippetReferences;
   }
 
   // ---------------------------------------------------------------------------
-  procedure BuildRoutineList(const SL: TRoutineList;
+  procedure BuildRoutineList(const SL: TSnippetList;
     const IDList: ISnippetIDList);
     {Creates a snippets list from a snippets ID list. Looks up snippets in list
     of all snippets in database. Any snippets in ID list that do not exist in
@@ -1775,9 +1775,9 @@ begin
   BuildRoutineList(Self.XRef, Refs.XRef);         // build XRef list
 end;
 
-{ TRoutineList }
+{ TSnippetList }
 
-function TRoutineList.Add(const Routine: TRoutine): Integer;
+function TSnippetList.Add(const Routine: TRoutine): Integer;
   {Adds new snippet to the list, maintaining list in alphabetical order.
     @param Routine [in] Snippet being added.
     @return Index where item was inserted in list
@@ -1787,7 +1787,7 @@ begin
   Result := fList.Add(Routine);
 end;
 
-procedure TRoutineList.Assign(const SrcList: TRoutineList);
+procedure TSnippetList.Assign(const SrcList: TSnippetList);
   {Sets this list to be same as another list. List items are referenced, not
   copied.
     @param SrcList [in] List of snippets to be assigned.
@@ -1805,14 +1805,14 @@ begin
   end;
 end;
 
-procedure TRoutineList.Clear;
+procedure TSnippetList.Clear;
   {Clears the list.
   }
 begin
   fList.Clear;
 end;
 
-class function TRoutineList.CompareIDs(const SID1, SID2: TSnippetID): Integer;
+class function TSnippetList.CompareIDs(const SID1, SID2: TSnippetID): Integer;
   {Compares IDS of two snippets.
     @param SID1 [in] First ID to be compared.
     @param SID2 [in] Second ID to be compared.
@@ -1823,7 +1823,7 @@ begin
   Result := SID1.Compare(SID2);
 end;
 
-function TRoutineList.Contains(const Routine: TRoutine): Boolean;
+function TSnippetList.Contains(const Routine: TRoutine): Boolean;
   {Checks whether list contains a specified snippet.
     @param Routine [in] Required snippet.
     @return True if snippet is in list, False otherwise.
@@ -1832,7 +1832,7 @@ begin
   Result := fList.Contains(Routine);
 end;
 
-function TRoutineList.ContainsKinds(const Kinds: TSnippetKinds): Boolean;
+function TSnippetList.ContainsKinds(const Kinds: TSnippetKinds): Boolean;
   {Checks if the list contains specified kinds of snippets.
     @param Kinds [in] Set of kinds to test for.
     @return True if list contains at least one snippet of any of the specified
@@ -1850,7 +1850,7 @@ begin
     end;
 end;
 
-function TRoutineList.Count(const UserDefined: Boolean): Integer;
+function TSnippetList.Count(const UserDefined: Boolean): Integer;
   {Counts number of snippets in list that are either from or not from user
   defined database.
     @param UserDefined [in] Flags whether to count snippets in user database
@@ -1866,7 +1866,7 @@ begin
       Inc(Result);
 end;
 
-function TRoutineList.Count: Integer;
+function TSnippetList.Count: Integer;
   {Counts number of snippets in list.
     @return Number of snippets in list.
   }
@@ -1874,7 +1874,7 @@ begin
   Result := fList.Count;
 end;
 
-constructor TRoutineList.Create(const OwnsObjects: Boolean = False);
+constructor TSnippetList.Create(const OwnsObjects: Boolean = False);
   {Constructor. Creates a new empty list.
     @param OwnsObjects [in] Specifies whether list owns the snippet objects it
       contains. If True the snippets are freed when deleted from list.
@@ -1893,7 +1893,7 @@ begin
   fList.PermitDuplicates := False;
 end;
 
-destructor TRoutineList.Destroy;
+destructor TSnippetList.Destroy;
   {Destructor. Tears down object.
   }
 begin
@@ -1901,7 +1901,7 @@ begin
   inherited;
 end;
 
-function TRoutineList.Find(const RoutineName: string;
+function TSnippetList.Find(const RoutineName: string;
   const UserDefined: Boolean; out Index: Integer): Boolean;
   {Finds a snippet in the list that has a specified name and user defined
   property. Uses a binary search.
@@ -1926,7 +1926,7 @@ begin
   end;
 end;
 
-function TRoutineList.Find(const RoutineName: string;
+function TSnippetList.Find(const RoutineName: string;
   const UserDefined: Boolean): TRoutine;
   {Finds a named snippet in list with a matching user defined property.
     @param RoutineName [in] Name of required snippet.
@@ -1944,7 +1944,7 @@ begin
     Result := nil;
 end;
 
-function TRoutineList.GetEnumerator: TEnumerator<TRoutine>;
+function TSnippetList.GetEnumerator: TEnumerator<TRoutine>;
   {Gets an intialised snippet list enumerator.
     @return Required enumerator.
   }
@@ -1952,7 +1952,7 @@ begin
   Result := fList.GetEnumerator;
 end;
 
-function TRoutineList.GetItem(Idx: Integer): TRoutine;
+function TSnippetList.GetItem(Idx: Integer): TRoutine;
   {Read accessor for Items property.
     @param Idx [in] Index of required snippet in list.
     @return Snippet at specified index in list.
@@ -1961,7 +1961,7 @@ begin
   Result := fList[Idx];
 end;
 
-function TRoutineList.IsEqual(const AList: TRoutineList): Boolean;
+function TSnippetList.IsEqual(const AList: TSnippetList): Boolean;
   {Checks if this list contains same snippets as another list.
     @param AList [in] List of snippets to compare.
     @return True if lists are same, False if not.
@@ -1986,9 +1986,9 @@ begin
   end;
 end;
 
-{ TRoutineListEx }
+{ TSnippetListEx }
 
-function TRoutineListEx.Add(const Routine: TRoutine): Integer;
+function TSnippetListEx.Add(const Routine: TRoutine): Integer;
   {Adds a snippet to list. Prevents TTempRoutine instances from being added.
     @param Routine [in] Snippet to be added.
     @return Index where snippet was added to list.
@@ -2004,7 +2004,7 @@ begin
   Result := inherited Add(Routine);
 end;
 
-procedure TRoutineListEx.Delete(const Routine: TRoutine);
+procedure TSnippetListEx.Delete(const Routine: TRoutine);
   {Deletes a snippet from list.
     @param Routine [in] Snippet to be deleted. No action taken if snippet not in
       list.
@@ -2033,7 +2033,7 @@ begin
   fDescription := Data.Desc;
   fUserDefined := UserDefined;
   // Create list to store snippets in category
-  fRoutines := TRoutineListEx.Create;
+  fRoutines := TSnippetListEx.Create;
 end;
 
 destructor TCategory.Destroy;
@@ -2200,7 +2200,7 @@ end;
 
 { TUserDataProvider }
 
-constructor TUserDataProvider.Create(const Routines: TRoutineList;
+constructor TUserDataProvider.Create(const Routines: TSnippetList;
   const Categories: TCategoryList);
   {Constructor. Records list of all snippets and categories in both databases.
     @param Routines [in] List of all snippets in whole database.
@@ -2349,8 +2349,8 @@ end;
 
 { TSnippetIDListEx }
 
-constructor TSnippetIDListEx.Create(const Routines: TRoutineList);
-  {Constructor overload that creates a snippets ID list from a TRoutineList
+constructor TSnippetIDListEx.Create(const Routines: TSnippetList);
+  {Constructor overload that creates a snippets ID list from a TSnippetList
   object.
     @param Routines [in] List of snippets objects for which ID list is
       required.

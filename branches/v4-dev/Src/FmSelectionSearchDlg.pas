@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -71,7 +71,7 @@ type
     procedure FormCreate(Sender: TObject);
   strict private
     fSearch: ISearch; // Search corresponding to snippets selected by the user
-    procedure SetSelectedRoutines(const Value: TRoutineList);
+    procedure SetSelectedRoutines(const Value: TSnippetList);
       {Stores a list of snippets in snippet selection frame. Frame then selects
       all listed snippets in its treeview.
         @param Value [in] List of snippets.
@@ -96,7 +96,7 @@ type
       }
   public
     class function Execute(const AOwner: TComponent;
-      const SelectedRoutines: TRoutineList; out ASearch: ISearch): Boolean;
+      const SelectedRoutines: TSnippetList; out ASearch: ISearch): Boolean;
       {Displays dialog and returns search object based on entered criteria.
         @param AOwner [in] Component that owns this dialog.
         @param SelectedRoutines [in] Default list of selected snippets.
@@ -183,7 +183,7 @@ begin
 end;
 
 class function TSelectionSearchDlg.Execute(const AOwner: TComponent;
-  const SelectedRoutines: TRoutineList; out ASearch: ISearch): Boolean;
+  const SelectedRoutines: TSnippetList; out ASearch: ISearch): Boolean;
   {Displays dialog and returns search object based on entered criteria.
     @param AOwner [in] Component that owns this dialog.
     @param SelectedRoutines [in] Default list of selected snippets.
@@ -230,9 +230,9 @@ procedure TSelectionSearchDlg.SelectDB(const UserDefined: Boolean);
   }
 var
   Routine: TRoutine;          // references each snippet in database
-  RoutineList: TRoutineList;  // list of selected snippets
+  RoutineList: TSnippetList;  // list of selected snippets
 begin
-  RoutineList := TRoutineList.Create;
+  RoutineList := TSnippetList.Create;
   try
     for Routine in Snippets.Routines do
       if Routine.UserDefined = UserDefined then
@@ -252,7 +252,7 @@ begin
   btnOK.Enabled := frmSelect.SelectedRoutines.Count > 0;
 end;
 
-procedure TSelectionSearchDlg.SetSelectedRoutines(const Value: TRoutineList);
+procedure TSelectionSearchDlg.SetSelectedRoutines(const Value: TSnippetList);
   {Stores a list of snippets in snippet selection frame. Frame then selects all
   listed snippets in its treeview.
     @param Value [in] List of snippets.

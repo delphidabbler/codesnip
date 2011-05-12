@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -150,7 +150,7 @@ class function TSnippetSourceGen.CanGenerate(View: IView): Boolean;
       routine snippets for current query.
   }
 var
-  CatSnippets: TRoutineList;  // list of snippets in a category
+  CatSnippets: TSnippetList;  // list of snippets in a category
   CatView: ICategoryView;     // category view if supported
   SnipView: ISnippetView;     // snippets view if supported
 begin
@@ -159,7 +159,7 @@ begin
     Result := SnipView.Snippet.Kind = skRoutine
   else if Supports(View, ICategoryView, CatView) then
   begin
-    CatSnippets := TRoutineList.Create;
+    CatSnippets := TSnippetList.Create;
     try
       Query.GetCatSelection(CatView.Category, CatSnippets);
       Result := CatSnippets.ContainsKinds([skRoutine]);
@@ -209,7 +209,7 @@ procedure TSnippetSourceGen.Initialize(View: IView);
     @param View [in] View from which to retrieve source code.
   }
 var
-  Snips: TRoutineList;  // list of snippets in a category to display
+  Snips: TSnippetList;  // list of snippets in a category to display
   Snippet: TRoutine;    // a snippet in Snips list
 begin
   fContainsMainDBSnippets := False;
@@ -224,7 +224,7 @@ begin
   else
   begin
     // view is category: record all selected snippets in category
-    Snips := TRoutineList.Create;
+    Snips := TSnippetList.Create;
     try
       Query.GetCatSelection((View as ICategoryView).Category, Snips);
       fGenerator.IncludeSnippets(Snips);  // ignores freeform snippets

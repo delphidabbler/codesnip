@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -362,9 +362,9 @@ procedure TSnippetsEditorDlg.actDependenciesExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  DependsList: TRoutineList;  // list of dependencies
+  DependsList: TSnippetList;  // list of dependencies
 begin
-  DependsList := TRoutineList.Create;
+  DependsList := TSnippetList.Create;
   try
     fDependsCLBMgr.GetCheckedSnippets(DependsList);
     TDependenciesDlg.Execute(

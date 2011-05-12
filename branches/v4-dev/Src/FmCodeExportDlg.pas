@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -222,7 +222,7 @@ procedure TCodeExportDlg.SelectRoutine(const Snippet: TRoutine);
       snippet is selected.
   }
 var
-  List: TRoutineList; // list containing only the provided routine
+  List: TSnippetList; // list containing only the provided routine
 begin
   if not Assigned(Snippet) or not Snippet.UserDefined then
     // Snippet is nil or not user-defined: select nothing
@@ -231,7 +231,7 @@ begin
   begin
     // Snippet is user-defined. We make a snippet list containing only this
     // snippet because frmRoutines requires a list of snippets to select.
-    List := TRoutineList.Create;
+    List := TSnippetList.Create;
     try
       List.Add(Snippet);
       frmSnippets.SelectedRoutines := List;

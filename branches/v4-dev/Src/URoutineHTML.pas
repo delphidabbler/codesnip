@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -81,7 +81,7 @@ type
   }
   TInfoHTML = class(TRoutineHTML)
   strict private
-    function SnippetList(const Snippets: TRoutineList): string;
+    function SnippetList(const Snippets: TSnippetList): string;
       {Generates HTML of a comma separated list of snippets, where each snippet
       name is a link to the snippet.
         @param Snippets [in] List of snippets in list.
@@ -230,7 +230,7 @@ begin
   Result := TActiveTextHTML.Render(Snippet.Extra);
 end;
 
-function TInfoHTML.SnippetList(const Snippets: TRoutineList): string;
+function TInfoHTML.SnippetList(const Snippets: TSnippetList): string;
   {Generates HTML of a comma separated list of snippets, where each snippet name
   is a link to the snippet.
     @param Snippets [in] List of snippets in list.

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -425,13 +425,13 @@ procedure TCodeSubmitDlg.SelectRoutine(const Routine: TRoutine);
       then list is cleared of selections.
   }
 var
-  List: TRoutineList; // list containing only one snippet
+  List: TSnippetList; // list containing only one snippet
 begin
   if not Assigned(Routine) or not Routine.UserDefined then
     frmRoutines.SelectedRoutines := nil
   else
   begin
-    List := TRoutineList.Create;
+    List := TSnippetList.Create;
     try
       List.Add(Routine);
       frmRoutines.SelectedRoutines := List;

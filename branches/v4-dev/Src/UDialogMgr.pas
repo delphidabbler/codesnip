@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -87,7 +87,7 @@ type
       {Displays Registration dialog box.
         @return True if program was registered and False if not.
       }
-    function ExecSelectionSearchDlg(const SelectedRoutines: TRoutineList;
+    function ExecSelectionSearchDlg(const SelectedRoutines: TSnippetList;
       out ASearch: ISearch): Boolean;
       {Displays Select Snippets dialog box.
         @param SelectedRoutines [in] Default list of selected snippets.
@@ -213,7 +213,7 @@ begin
 end;
 
 function TDialogMgr.ExecSelectionSearchDlg(
-  const SelectedRoutines: TRoutineList; out ASearch: ISearch): Boolean;
+  const SelectedRoutines: TSnippetList; out ASearch: ISearch): Boolean;
   {Displays Select Snippets dialog box.
     @param SelectedRoutines [in] Default list of selected snippets.
     @param ASearch [out] Search to be performed if user OKs.

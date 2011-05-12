@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -55,7 +55,7 @@ type
   }
   ISnippetsLoader = interface(IInterface)
     ['{C6AF94FC-F56F-44AE-9E79-3B0CD0BB21D4}']
-    procedure Load(const Routines: TRoutineList;
+    procedure Load(const Routines: TSnippetList;
       const Categories: TCategoryList; const SnippetsFactory: ISnippetsFactory);
       {Loads data from storage and updates snippets object.
         @param Routines [in] Receives information about each snippet in the
@@ -74,7 +74,7 @@ type
   }
   ISnippetsWriter = interface(IInterface)
     ['{F46EE2E3-68A7-4877-9E04-192D15D29BB1}']
-    procedure Write(const Routines: TRoutineList;
+    procedure Write(const Routines: TSnippetList;
       const Categories: TCategoryList; const Provider: ISnippetsDataProvider);
       {Writes data from Snippets object to storage.
         @param Routines [in] Contains information about each snippet in the
@@ -142,7 +142,7 @@ type
   TSnippetsLoader = class(TInterfacedObject, ISnippetsLoader)
   strict private
     fReader: IDataReader;       // Object used to read data from storage
-    fRoutines: TRoutineList;    // Receives list of snippets
+    fRoutines: TSnippetList;    // Receives list of snippets
     fCategories: TCategoryList; // Receives list of categories
     fFactory: ISnippetsFactory; // Object creates new categories and snippets
     procedure LoadRoutines(const Cat: TCategory);
@@ -166,7 +166,7 @@ type
         @return Reader object instance.
       }
     function FindRoutine(const RoutineName: string;
-      const Routines: TRoutineList): TRoutine; virtual; abstract;
+      const Routines: TSnippetList): TRoutine; virtual; abstract;
       {Finds the snippet object with a specified name.
         @param RoutineName [in] Name of required snippet.
         @param Routines [in] List of snippets to search.
@@ -200,7 +200,7 @@ type
       {Reference to category list}
   public
     { ISnippetsLoader method }
-    procedure Load(const Routines: TRoutineList;
+    procedure Load(const Routines: TSnippetList;
       const Categories: TCategoryList; const SnippetsFactory: ISnippetsFactory);
       {Loads data from storage and updates snippets object.
         @param Routines [in] Receives information about each snippet in the
@@ -224,7 +224,7 @@ type
         @return Reader object instance.
       }
     function FindRoutine(const RoutineName: string;
-      const Routines: TRoutineList): TRoutine; override;
+      const Routines: TSnippetList): TRoutine; override;
       {Finds the snippet object with a specified name in the main database.
         @param RoutineName [in] Name of required snippet.
         @param Routines [in] List of snippets to search.
@@ -258,7 +258,7 @@ type
         @return Reader object instance.
       }
     function FindRoutine(const RoutineName: string;
-      const Routines: TRoutineList): TRoutine; override;
+      const Routines: TSnippetList): TRoutine; override;
       {Finds the snippet object with a specified name. If snippet is not in this
       (user) database the main database is searched.
         @param RoutineName [in] Name of required snippet.
@@ -293,7 +293,7 @@ type
   )
   strict private
     fWriter: IDataWriter;             // Object used to write to storage
-    fRoutines: TRoutineList;          // List of routines to be written
+    fRoutines: TSnippetList;          // List of routines to be written
     fCategories: TCategoryList;       // List of categories to be written
     fProvider: ISnippetsDataProvider; // Object used to get data to be written
     function CreateWriter: IDataWriter;
@@ -309,7 +309,7 @@ type
       }
   public
     { ISnippetsWriter method }
-    procedure Write(const Routines: TRoutineList;
+    procedure Write(const Routines: TSnippetList;
       const Categories: TCategoryList;
       const Provider: ISnippetsDataProvider);
       {Writes data from Snippets object to storage.
@@ -375,7 +375,7 @@ begin
     raise E;
 end;
 
-procedure TSnippetsLoader.Load(const Routines: TRoutineList;
+procedure TSnippetsLoader.Load(const Routines: TSnippetList;
   const Categories: TCategoryList; const SnippetsFactory: ISnippetsFactory);
   {Loads data from storage and updates snippets object.
     @param Routines [in] Receives information about each snippet in the
@@ -445,7 +445,7 @@ procedure TSnippetsLoader.LoadReferences(const Routine: TRoutine);
   }
 
   // ---------------------------------------------------------------------------
-  procedure LoadRoutineReferences(const RefList: TRoutineList;
+  procedure LoadRoutineReferences(const RefList: TSnippetList;
     const RefNames: IStringList);
     {Creates a snippet list from names of snippets in a string list. If no
     snippet with a given name is found no matching entry is added to snippet
@@ -533,7 +533,7 @@ begin
 end;
 
 function TMainSnippetsLoader.FindRoutine(const RoutineName: string;
-  const Routines: TRoutineList): TRoutine;
+  const Routines: TSnippetList): TRoutine;
   {Finds the snippet object with a specified name in the main database.
     @param RoutineName [in] Name of required snippet.
     @param Routines [in] List of snippets to search.
@@ -585,7 +585,7 @@ begin
 end;
 
 function TUserSnippetsLoader.FindRoutine(const RoutineName: string;
-  const Routines: TRoutineList): TRoutine;
+  const Routines: TSnippetList): TRoutine;
   {Finds the snippet object with a specified name. If snippet is not in this
   (user) database the main database is searched.
     @param RoutineName [in] Name of required snippet.
@@ -647,7 +647,7 @@ begin
   Result := TXMLDataWriter.Create(TAppInfo.UserDataDir);
 end;
 
-procedure TSnippetsWriter.Write(const Routines: TRoutineList;
+procedure TSnippetsWriter.Write(const Routines: TSnippetList;
   const Categories: TCategoryList; const Provider: ISnippetsDataProvider);
   {Writes data from Snippets object to storage.
     @param Routines [in] Contains information about each snippet in the

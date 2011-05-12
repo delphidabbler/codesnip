@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -77,7 +77,7 @@ type
   }
   TRoutineDoc = class(TObject)
   strict private
-    function RoutinesToStrings(const RoutineList: TRoutineList): IStringList;
+    function RoutinesToStrings(const RoutineList: TSnippetList): IStringList;
       {Creates a string list containing a list of snippet names.
         @param RoutineList [in] List of snippets.
         @return String list containing names of snippets from list.
@@ -246,7 +246,7 @@ begin
 end;
 
 function TRoutineDoc.RoutinesToStrings(
-  const RoutineList: TRoutineList): IStringList;
+  const RoutineList: TSnippetList): IStringList;
   {Creates a string list containing a list of snippet names.
     @param RoutineList [in] List of snippets.
     @return String list containing names of snippets from list.

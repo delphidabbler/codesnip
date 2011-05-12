@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -80,8 +80,8 @@ type
       end;
     var
       fTVDraw: TTVDraw;                 // Object that renders tree view nodes
-      fSelectedRoutines: TRoutineList;  // Value of SelectedRoutines property
-    procedure SetSelectedRoutines(const Value: TRoutineList);
+      fSelectedRoutines: TSnippetList;  // Value of SelectedRoutines property
+    procedure SetSelectedRoutines(const Value: TSnippetList);
       {Write access method for SelectedRoutines property. Updates state of items
       in tree view and triggers OnChange event.
         @param Value [in] New list of snippets. If nil list is cleared.
@@ -129,7 +129,7 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
-    property SelectedRoutines: TRoutineList
+    property SelectedRoutines: TSnippetList
       read fSelectedRoutines write SetSelectedRoutines;
       {List of selected snippets. When set all snippets in list are checked in
       tree view. When user toggles checked state of nodes snippet list is
@@ -186,7 +186,7 @@ constructor TSelectSnippetsBaseFrame.Create(AOwner: TComponent);
   }
 begin
   inherited;
-  fSelectedRoutines := TRoutineList.Create;
+  fSelectedRoutines := TSnippetList.Create;
   fTVDraw := TTVDraw.Create;
   tvChecked.OnCustomDrawItem := fTVDraw.CustomDrawItem;
 end;
@@ -256,7 +256,7 @@ begin
 end;
 
 procedure TSelectSnippetsBaseFrame.SetSelectedRoutines(
-  const Value: TRoutineList);
+  const Value: TSnippetList);
   {Write access method for SelectedRoutines property. Updates state of items in
   tree view and triggers OnChange event.
     @param Value [in] New list of snippets. If nil list is cleared.

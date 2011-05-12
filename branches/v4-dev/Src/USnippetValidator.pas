@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -170,7 +170,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TRoutine;
 
   // ---------------------------------------------------------------------------
   function DependsListIsCircular(const Snippet: TRoutine;
-    const DependsList: TRoutineList): Boolean;
+    const DependsList: TSnippetList): Boolean;
     {Checks if dependency list is circular, i.e. a snippet is referenced in own
     chain of dependencies. Recursive function.
       @param Snippet [in] Snippet to be checked.
@@ -192,7 +192,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TRoutine;
     end;
   end;
 
-  function DependsListHasKinds(const DependsList: TRoutineList;
+  function DependsListHasKinds(const DependsList: TSnippetList;
     const Kinds: TSnippetKinds): Boolean;
     {Recursively checks if a dependency list contains snippets of specified
     kinds.

@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -72,7 +72,7 @@ type
   strict protected
     ///  <summary>Object constuctor. Sets up object to save a unit containing
     ///  all snippets in given list.</summary>
-    constructor InternalCreate(const Snips: TRoutineList);
+    constructor InternalCreate(const Snips: TSnippetList);
     ///  <summary>Gets description of given source code file type.</summary>
     function GetFileTypeDesc(const FileType: TSourceFileType): string; override;
     ///  <summary>Gets default file name to display in dialog box.</summary>
@@ -103,9 +103,9 @@ type
     destructor Destroy; override;
     ///  <summary>Creates and outputs a Pascal unit file containing specified
     ///  snippets with name and format speficied by user.</summary>
-    ///  <param name="Snips">TRoutineList [in] List of snippets to include in
+    ///  <param name="Snips">TSnippetList [in] List of snippets to include in
     ///  unit.</param>
-    class procedure Execute(const Snips: TRoutineList);
+    class procedure Execute(const Snips: TSnippetList);
   end;
 
 
@@ -209,7 +209,7 @@ begin
   inherited;
 end;
 
-class procedure TSaveUnitMgr.Execute(const Snips: TRoutineList);
+class procedure TSaveUnitMgr.Execute(const Snips: TSnippetList);
 begin
   with InternalCreate(Snips) do
     try
@@ -255,7 +255,7 @@ begin
   Result := Descriptions[FileType];
 end;
 
-constructor TSaveUnitMgr.InternalCreate(const Snips: TRoutineList);
+constructor TSaveUnitMgr.InternalCreate(const Snips: TSnippetList);
 var
   Snippet: TRoutine;  // references each snippet in list
 begin

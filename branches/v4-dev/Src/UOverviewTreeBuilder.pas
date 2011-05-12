@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -57,11 +57,11 @@ type
   strict private
     var
       fTreeView: TTreeView;       // Value of TreeView property
-      fSnippetList: TRoutineList; // Value of SnippetList property
+      fSnippetList: TSnippetList; // Value of SnippetList property
   strict protected
     property TreeView: TTreeView read fTreeView;
       {Reference to treeview populated by class}
-    property SnippetList: TRoutineList read fSnippetList;
+    property SnippetList: TSnippetList read fSnippetList;
       {List of snippets to be displayed in treeview}
     function AddViewItemNode(const ParentNode: TViewItemTreeNode;
       ViewItem: IView): TViewItemTreeNode;
@@ -81,7 +81,7 @@ type
         @return Required view item object.
       }
   public
-    constructor Create(const TV: TTreeView; const SnippetList: TRoutineList);
+    constructor Create(const TV: TTreeView; const SnippetList: TSnippetList);
       {Class constructor. Sets up object to populate a treeview with a list of
       snippets.
         @param TV [in] Treeview control to be populated.
@@ -223,7 +223,7 @@ begin
 end;
 
 constructor TOverviewTreeBuilder.Create(const TV: TTreeView;
-  const SnippetList: TRoutineList);
+  const SnippetList: TSnippetList);
   {Class constructor. Sets up object to populate a treeview with a list of
   snippets.
     @param TV [in] Treeview control to be populated.

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -58,7 +58,7 @@ type
   TSnippetsChkListMgr = class(TObject)
   strict private
     fCLB: TCheckListBox;      // Reference to check list box being managed
-    fSaveList: TRoutineList;  // Internal snaphot of checked snippets
+    fSaveList: TSnippetList;  // Internal snaphot of checked snippets
     procedure CheckSnippet(const Snippet: TRoutine);
       {Checks entry corresponding to a snippet in check list box. Snippets not
       in check list box are ignored.
@@ -102,12 +102,12 @@ type
       {Adds a snippet to the check box list, unchecked.
         @param Snippet [in] Snippet to be added to list.
       }
-    procedure CheckSnippets(const SnipList: TRoutineList);
+    procedure CheckSnippets(const SnipList: TSnippetList);
       {Checks entries in list corresponding to each snippet in a list.
         @param SnipList [in] List of snippets to check. Snippets not in check
           list box are ignored.
       }
-    procedure GetCheckedSnippets(const SnipList: TRoutineList); overload;
+    procedure GetCheckedSnippets(const SnipList: TSnippetList); overload;
       {Gets all checked snippets in check list box.
         @param SnipList [in] List that receives checked snippets objects.
       }
@@ -151,7 +151,7 @@ begin
     fCLB.Checked[Idx] := True;
 end;
 
-procedure TSnippetsChkListMgr.CheckSnippets(const SnipList: TRoutineList);
+procedure TSnippetsChkListMgr.CheckSnippets(const SnipList: TSnippetList);
   {Checks entries in list corresponding to each snippet in a list.
     @param SnipList [in] List of snippets to check. Snippets not in check list
       box are ignored.
@@ -192,7 +192,7 @@ begin
   fCLB.OnDrawItem := DrawItem;
   fCLB.Style := lbOwnerDrawFixed;
   fCLB.ItemHeight := StringExtent('Xy', fCLB.Font).cy;
-  fSaveList := TRoutineList.Create;
+  fSaveList := TSnippetList.Create;
 end;
 
 destructor TSnippetsChkListMgr.Destroy;
@@ -246,7 +246,7 @@ begin
 end;
 
 procedure TSnippetsChkListMgr.GetCheckedSnippets(
-  const SnipList: TRoutineList);
+  const SnipList: TSnippetList);
   {Gets all checked snippets in check list box.
     @param SnipList [in] List that receives checked snippets objects.
   }

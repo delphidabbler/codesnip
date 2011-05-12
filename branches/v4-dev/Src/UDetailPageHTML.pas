@@ -203,7 +203,7 @@ type
   }
   TRoutineListPageHTML = class abstract(TDetailPageTpltHTML)
   strict private
-    fRoutines: TRoutineList;  // List of snippets to be displayed
+    fRoutines: TSnippetList;  // List of snippets to be displayed
   strict protected
     function RoutineTableInner: string;
       {Builds a sequence of table rows each containing a link to the snippet
@@ -219,7 +219,7 @@ type
     procedure BuildRoutineList; virtual; abstract;
       {Stores all snippets to be displayed in Routines property.
       }
-    property Routines: TRoutineList read fRoutines;
+    property Routines: TSnippetList read fRoutines;
       {List of all snippets to be displayed}
     function GetTemplateResName: string; override;
       {Gets the name of the HTML template resource.
@@ -598,7 +598,7 @@ constructor TRoutineListPageHTML.Create(View: IView);
 begin
   inherited;
   // Create list of all snippets to be displayed
-  fRoutines := TRoutineList.Create;
+  fRoutines := TSnippetList.Create;
   BuildRoutineList;
 end;
 

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -109,7 +109,7 @@ type
       fCanChange: Boolean;          // Whether selected node allowed to change
       fSelectedItem: IView;         // Current selected view item in tree view
       fPrevSelectedItem: IView;     // Previous selected view item in tree view
-      fRoutineList: TRoutineList;   // List of currently displayed snippets
+      fRoutineList: TSnippetList;   // List of currently displayed snippets
       fTreeStates: array of TOverviewTreeState;
                                     // Array of tree state objects: one per tab
       fCommandBars: TCommandBarMgr; // Configures popup menu and toolbar
@@ -183,7 +183,7 @@ type
       {Switches to previous tab, or return to last tab if current tab is first.
       }
     { IOverviewDisplayMgr }
-    procedure Display(const RoutineList: TRoutineList);
+    procedure Display(const RoutineList: TSnippetList);
       {Displays the snippets in the current overview tab.
         @param RoutineList [in] List of snippets to be displayed or nil if
           nothing to be displayed.
@@ -304,7 +304,7 @@ begin
   fTVDraw := TTVDraw.Create;
   tvSnippets.OnCustomDrawItem := fTVDraw.CustomDrawItem;
   // Create list to store displayed snippets
-  fRoutineList := TRoutineList.Create;
+  fRoutineList := TSnippetList.Create;
   // Create objects used to remember state of each tree view
   SetLength(fTreeStates, tcDisplayStyle.Tabs.Count);
   for TabIdx := 0 to Pred(tcDisplayStyle.Tabs.Count) do
@@ -327,7 +327,7 @@ begin
   inherited;
 end;
 
-procedure TOverviewFrame.Display(const RoutineList: TRoutineList);
+procedure TOverviewFrame.Display(const RoutineList: TSnippetList);
   {Displays the snippets in the current overview tab.
     @param RoutineList [in] List of snippets to be displayed or nil if nothing
       to be displayed.

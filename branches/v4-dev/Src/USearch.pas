@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -176,11 +176,11 @@ type
   }
   ISelectionSearchCriteria = interface(ISearchCriteria)
     ['{6FA6AC34-439B-4744-ACBC-1836EE140EB6}']
-    function GetSelectedItems: TRoutineList;
+    function GetSelectedItems: TSnippetList;
       {Read accessor for SelectedItems property.
         @return List of snippets to be selected in search.
       }
-    property SelectedItems: TRoutineList read GetSelectedItems;
+    property SelectedItems: TSnippetList read GetSelectedItems;
       {List of snippets to be selected in search}
   end;
 
@@ -246,7 +246,7 @@ type
       {Read accessor for Criteria property.
         @return Criteria to be applied to search.
       }
-    function Execute(const InList, FoundList: TRoutineList): Boolean;
+    function Execute(const InList, FoundList: TSnippetList): Boolean;
       {Executes the search, determining which of a list of snippets match the
       search criteria.
         @param InList [in] List of snippets that the search is applied to.
@@ -329,7 +329,7 @@ type
         @return ITextSearchCriteria interface to created object.
       }
     class function CreateSelectionSearchCriteria(
-      const SelectedItems: TRoutineList): ISelectionSearchCriteria;
+      const SelectedItems: TSnippetList): ISelectionSearchCriteria;
       {Creates a selection search criteria object with specified property
       values.
         @param SelectedItems [in] List snippets to be included in search.
@@ -374,7 +374,7 @@ type
       }
   protected
     { ISearch methods }
-    function Execute(const InList, FoundList: TRoutineList): Boolean;
+    function Execute(const InList, FoundList: TSnippetList): Boolean;
       {Executes the search, determining which of a list of snippets match the
       search criteria.
         @param InList [in] List of snippets that the search is applied to.
@@ -478,7 +478,7 @@ type
   strict private
     fCriteria: IXRefSearchCriteria;
       {Search criteria}
-    fXRefs: TRoutineList;
+    fXRefs: TSnippetList;
       {List of all cross-referenced snippets per current criteria}
     function AddToXRefs(const Routine: TRoutine): Boolean;
       {Adds snippet to list of cross-references if not already in list.
@@ -539,7 +539,7 @@ type
       {Read accessor for Criteria property.
         @return Criteria to be applied to search.
       }
-    function Execute(const InList, FoundList: TRoutineList): Boolean;
+    function Execute(const InList, FoundList: TSnippetList): Boolean;
       {Executes the search, determining which of a list of snippets match the
       search criteria.
         @param InList [in] List of snippets that the search is applied to.
@@ -689,7 +689,7 @@ type
     ISearchUIInfo
   )
   strict private
-    fSelectedItems: TRoutineList;
+    fSelectedItems: TSnippetList;
       {List snippets to be selected in search}
   strict protected
     function GlyphResourceName: string; override;
@@ -698,12 +698,12 @@ type
       }
   protected
     { ISelectionSearchCriteria methods }
-    function GetSelectedItems: TRoutineList;
+    function GetSelectedItems: TSnippetList;
       {Read accessor for SelectedItems property.
         @return List of snippets to be selected in search.
       }
   public
-    constructor Create(const SelectedItems: TRoutineList);
+    constructor Create(const SelectedItems: TSnippetList);
       {Class constructor. Sets up object with specified property values.
         @param SelectedItems [in] List of snippets to be selected in search.
       }
@@ -772,7 +772,7 @@ type
 
 { TSearch }
 
-function TSearch.Execute(const InList, FoundList: TRoutineList): Boolean;
+function TSearch.Execute(const InList, FoundList: TSnippetList): Boolean;
   {Executes the search, determining which of a list of snippets match the search
   criteria.
     @param InList [in] List of snippets that the search is applied to.
@@ -1112,7 +1112,7 @@ begin
   // Record search criteria
   fCriteria := Criteria;
   // Create and populate list of cross-referenced snippets
-  fXRefs := TRoutineList.Create;
+  fXRefs := TSnippetList.Create;
   // reference required and "see also" snippets
   // these methods do nothing if appropriate search options not set
   ReferenceRequired(fCriteria.BaseRoutine);
@@ -1229,7 +1229,7 @@ begin
   fCriteria := TNulSearchCriteria.Create;
 end;
 
-function TNulSearch.Execute(const InList, FoundList: TRoutineList): Boolean;
+function TNulSearch.Execute(const InList, FoundList: TSnippetList): Boolean;
   {Executes the search, determining which of a list of snippets match the
   search criteria.
     @param InList [in] List of snippets that the search is applied to.
@@ -1375,13 +1375,13 @@ end;
 { TSelectionSearchCriteria }
 
 constructor TSelectionSearchCriteria.Create(
-  const SelectedItems: TRoutineList);
+  const SelectedItems: TSnippetList);
   {Class constructor. Sets up object with specified property values.
     @param SelectedItems [in] List of snippets to be selected in search.
   }
 begin
   inherited Create;
-  fSelectedItems := TRoutineList.Create;
+  fSelectedItems := TSnippetList.Create;
   fSelectedItems.Assign(SelectedItems);
 end;
 
@@ -1393,7 +1393,7 @@ begin
   inherited;
 end;
 
-function TSelectionSearchCriteria.GetSelectedItems: TRoutineList;
+function TSelectionSearchCriteria.GetSelectedItems: TSnippetList;
   {Read accessor for SelectedItems property.
     @return List of snippets to be selected in search.
   }
@@ -1590,7 +1590,7 @@ begin
 end;
 
 class function TSearchCriteriaFactory.CreateSelectionSearchCriteria(
-  const SelectedItems: TRoutineList): ISelectionSearchCriteria;
+  const SelectedItems: TSnippetList): ISelectionSearchCriteria;
   {Creates a selection search criteria object with specified property values.
     @param SelectedItems [in] List of snippets to be included in search.
     @return ISelectionSearchCriteria interface to created object.

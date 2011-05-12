@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -75,12 +75,12 @@ type
       {Gets value of CurrentSearch property.
         @return Search object used to generate current search.
       }
-    function GetSelection: TRoutineList;
+    function GetSelection: TSnippetList;
       {Gets value of Selection property.
         @return List of routines matching current query.
       }
     procedure GetCatSelection(const Cat: TCategory;
-      const Routines: TRoutineList);
+      const Routines: TSnippetList);
       {Provides list of routines selected by last search that are in a specified
       category.
         @param Cat [in] Reference to required category.
@@ -89,7 +89,7 @@ type
       }
     property CurrentSearch: ISearch read GetCurrentSearch;
       {Reference to search object used to generate current query}
-    property Selection: TRoutineList read GetSelection;
+    property Selection: TSnippetList read GetSelection;
       {List of routines that match current query. This records all routines in
       database if there is no search}
   end;
@@ -125,7 +125,7 @@ type
   )
   strict private
     var
-      fSelection: TRoutineList;   // List of routines selected by current query
+      fSelection: TSnippetList;   // List of routines selected by current query
       fSearch: ISearch;           // Search object used by current query
     class var
       fInstance: IQuery;          // Singleton object instance of this class
@@ -155,12 +155,12 @@ type
       {Gets reference to current search object.
         @return Required search object.
       }
-    function GetSelection: TRoutineList;
+    function GetSelection: TSnippetList;
       {Gets reference to list of routines selected by last search.
         @return Reference to required list of routines.
       }
     procedure GetCatSelection(const Cat: TCategory;
-      const Routines: TRoutineList);
+      const Routines: TSnippetList);
       {Provides list of routines selected by last search that are in a specified
       category.
         @param Cat [in] Reference to required category.
@@ -198,10 +198,10 @@ function TQuery.ApplySearch(const Search: ISearch): Boolean;
     @return True if search succeeds and False if it fails.
   }
 var
-  FoundList: TRoutineList;  // list receives found routines
+  FoundList: TSnippetList;  // list receives found routines
 begin
   Assert(Assigned(Search), ClassName + '.ApplySearch: Search is nil');
-  FoundList := TRoutineList.Create;
+  FoundList := TSnippetList.Create;
   try
     // Get list of routines that match search
     // if there are no routines found we leave current selection alone
@@ -227,7 +227,7 @@ begin
 end;
 
 procedure TQuery.GetCatSelection(const Cat: TCategory;
-  const Routines: TRoutineList);
+  const Routines: TSnippetList);
   {Provides list of routines selected by last search that are in a specified
   category.
     @param Cat [in] Reference to required category.
@@ -263,7 +263,7 @@ begin
   Result := fInstance;
 end;
 
-function TQuery.GetSelection: TRoutineList;
+function TQuery.GetSelection: TSnippetList;
   {Gets reference to list of routines selected by last search.
     @return Reference to required list of routines.
   }
@@ -279,7 +279,7 @@ begin
   Assert(not Assigned(fInstance),
     ClassName + '.InternalCreate: Must only call once - singleton object');
   inherited InternalCreate;
-  fSelection := TRoutineList.Create;
+  fSelection := TSnippetList.Create;
   Reset;
 end;
 
