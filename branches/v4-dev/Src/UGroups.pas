@@ -41,7 +41,8 @@ interface
 
 uses
   // Project
-  UContainers, UInitialLetter, USnippetKindInfo, USnippets, Generics.Collections;
+  UContainers, UInitialLetter, USnippetKindInfo, USnippets,
+  Generics.Collections;
 
 
 type
@@ -66,7 +67,7 @@ type
     destructor Destroy; override;
       {Object destructor. Tears down object.
       }
-    procedure AddSnippet(const Snippet: TRoutine);
+    procedure AddSnippet(const Snippet: TSnippet);
       {Adds a snippet to the group's list.
         @param Snippet [in] Snippet to add.
       }
@@ -344,7 +345,7 @@ end;
 
 { TGroupItem }
 
-procedure TGroupItem.AddSnippet(const Snippet: TRoutine);
+procedure TGroupItem.AddSnippet(const Snippet: TSnippet);
   {Adds a snippet to the group's list.
     @param Snippet [in] Snippet to add.
   }
@@ -384,7 +385,7 @@ procedure TCategoryGrouping.Populate;
   }
 var
   Cat: TCategory;           // each category in databases
-  Snippet: TRoutine;        // each snippet in a category
+  Snippet: TSnippet;        // each snippet in a category
   Item: TCategoryGroupItem; // group item for each category
 begin
   for Cat in Snippets.Categories do
@@ -453,7 +454,7 @@ procedure TAlphaGrouping.Populate;
 var
   Letter: TInitialLetter;   // upper case initial letter of snippet name
   GroupItem: TGroupItem;    // a group item
-  Snippet: TRoutine;        // each snippet in snippet list
+  Snippet: TSnippet;        // each snippet in snippet list
   Map: TLetterGroupMap;     // map of initial letters to group items
 begin
   Map := TLetterGroupMap.Create(
@@ -523,7 +524,7 @@ procedure TSnipKindGrouping.Populate;
 var
   SnipKind: TSnippetKind;           // each snippet kind
   Item: TGroupItem;                 // group item for each snippet kind
-  Snippet: TRoutine;                // each snippet to be grouped
+  Snippet: TSnippet;                // each snippet to be grouped
   Lookup: array[TSnippetKind]
     of TGroupItem;                  // lookup table of group kinds for searching
 begin

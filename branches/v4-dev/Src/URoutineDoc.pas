@@ -82,7 +82,7 @@ type
         @param RoutineList [in] List of snippets.
         @return String list containing names of snippets from list.
       }
-    function CompilerInfo(const Routine: TRoutine): TCompileDocInfoArray;
+    function CompilerInfo(const Routine: TSnippet): TCompileDocInfoArray;
       {Gets compiler compatibility information for a snippet.
         @param Routine [in] Snippet for which compiler information is required.
         @return Array of compiler compatibility information.
@@ -139,7 +139,7 @@ type
         @return Required comma separated list or "none" if list is empty.
       }
   public
-    function Generate(const Routine: TRoutine): TEncodedData;
+    function Generate(const Routine: TSnippet): TEncodedData;
       {Generates document that describes a snippet.
         @param Routine [in] Snippet for which document is required.
         @return Encoded data containing document in appropriate format.
@@ -175,7 +175,7 @@ begin
 end;
 
 function TRoutineDoc.CompilerInfo(
-  const Routine: TRoutine): TCompileDocInfoArray;
+  const Routine: TSnippet): TCompileDocInfoArray;
   {Gets compiler compatibility information for a snippet.
     @param Routine [in] Snippet for which compiler information is required.
     @return Array of compiler compatibility information.
@@ -197,7 +197,7 @@ begin
   end;
 end;
 
-function TRoutineDoc.Generate(const Routine: TRoutine): TEncodedData;
+function TRoutineDoc.Generate(const Routine: TSnippet): TEncodedData;
   {Generates document that describes a snippet.
     @param Routine [in] Snippet for which document is required.
     @return Encoded data containing document in appropriate format.
@@ -252,7 +252,7 @@ function TRoutineDoc.RoutinesToStrings(
     @return String list containing names of snippets from list.
   }
 var
-  Routine: TRoutine;  // each snippet in list
+  Routine: TSnippet;  // each snippet in list
 begin
   Result := TIStringList.Create;
   for Routine in RoutineList do

@@ -147,7 +147,7 @@ type
         @param Tplt [in] Reference to HTML template object that encapsulates the
           template.
       }
-    function GetRoutine: TRoutine;
+    function GetRoutine: TSnippet;
       {Gets reference to snippet from View property.
         @return Required snippet reference.
       }
@@ -210,7 +210,7 @@ type
       along with its description.
         @return Required table rows.
       }
-    function RoutineTableRow(const Routine: TRoutine): string;
+    function RoutineTableRow(const Routine: TSnippet): string;
       {Builds a table row containing cells with a link to a snippet and a
       description of the snippet.
         @param Routine [in] Snippet to be included in row.
@@ -417,7 +417,7 @@ begin
   fCompilersInfo := TCompilersFactory.CreateAndLoadCompilers;
 end;
 
-function TRoutinePageHTML.GetRoutine: TRoutine;
+function TRoutinePageHTML.GetRoutine: TSnippet;
   {Gets reference to snippet from View property.
     @return Required snippet reference.
   }
@@ -632,14 +632,14 @@ function TRoutineListPageHTML.RoutineTableInner: string;
     @return Required table rows.
   }
 var
-  Snippet: TRoutine;  // references each snippet in list
+  Snippet: TSnippet;  // references each snippet in list
 begin
   Result := '';
   for Snippet in Routines do
     Result := Result + RoutineTableRow(Snippet);
 end;
 
-function TRoutineListPageHTML.RoutineTableRow(const Routine: TRoutine): string;
+function TRoutineListPageHTML.RoutineTableRow(const Routine: TSnippet): string;
   {Builds a table row containing cells with a link to a snippet and a
   description of the snippet.
     @param Routine [in] Snippet to be included in row.
@@ -706,7 +706,7 @@ procedure TAlphaListPageHTML.BuildRoutineList;
   {Stores all snippets to be displayed in Routines property.
   }
 var
-  Snippet: TRoutine;
+  Snippet: TSnippet;
 begin
   Routines.Clear;
   for Snippet in Query.Selection do
@@ -748,7 +748,7 @@ procedure TSnipKindPageHTML.BuildRoutineList;
   {Stores all snippets to be displayed in Routines property.
   }
 var
-  Snippet: TRoutine;
+  Snippet: TSnippet;
 begin
   Routines.Clear;
   for Snippet in Query.Selection do

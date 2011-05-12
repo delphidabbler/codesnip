@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -93,7 +93,7 @@ function TRoutineAction.Execute: Boolean;
     @return False to indicate OnExecute event handler not called.
   }
 var
-  Snippet: TRoutine;    // snippet to be displayed
+  Snippet: TSnippet;    // snippet to be displayed
 begin
   Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
   Assert(RoutineName <> '', ClassName + '.Execute: RoutineName not provided');

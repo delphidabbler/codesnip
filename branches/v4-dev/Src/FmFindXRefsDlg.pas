@@ -72,7 +72,7 @@ type
   strict private
     fSearchParams: TXRefSearchParams; // Persists XRef search options
     fSearch: ISearch;                 // Search for user's criteria
-    fRoutine: TRoutine;               // Snippet whose x-refs to be found
+    fRoutine: TSnippet;               // Snippet whose x-refs to be found
     procedure UpdateControls;
       {Updates state of controls.
       }
@@ -87,7 +87,7 @@ type
       {Populates and initialises controls.
       }
   public
-    class function Execute(const AOwner: TComponent; const Routine: TRoutine;
+    class function Execute(const AOwner: TComponent; const Routine: TSnippet;
       out ASearch: ISearch): Boolean;
       {Displays dialog and returns search object based on entered criteria.
         @param AOwner [in] Component that owns this dialog.
@@ -226,7 +226,7 @@ begin
 end;
 
 class function TFindXRefsDlg.Execute(const AOwner: TComponent;
-  const Routine: TRoutine; out ASearch: ISearch): Boolean;
+  const Routine: TSnippet; out ASearch: ISearch): Boolean;
   {Displays dialog and returns search object based on entered criteria.
     @param AOwner [in] Component that owns this dialog.
     @param Routine [in] Snippet whose cross references are to be found.

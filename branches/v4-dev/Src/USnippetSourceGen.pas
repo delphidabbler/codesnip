@@ -210,7 +210,7 @@ procedure TSnippetSourceGen.Initialize(View: IView);
   }
 var
   Snips: TSnippetList;  // list of snippets in a category to display
-  Snippet: TRoutine;    // a snippet in Snips list
+  Snippet: TSnippet;    // a snippet in Snips list
 begin
   fContainsMainDBSnippets := False;
   // Record required snippet(s)

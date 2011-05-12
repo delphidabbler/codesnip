@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -54,7 +54,7 @@ type
   }
   TTestCompile = class(TNoPublicConstructObject)
   strict private
-    fRoutine: TRoutine;
+    fRoutine: TSnippet;
       {The routine we are to compile}
     fCompilers: ICompilers;
       {Object used to perform compilation}
@@ -77,14 +77,14 @@ type
       }
   strict protected
     constructor InternalCreate(const ACompilers: ICompilers;
-      const ARoutine: TRoutine);
+      const ARoutine: TSnippet);
       {Class constructor. Sets up object that can test compile a routine.
         @param ACompilers [in] Compilers object used to perform compilation.
         @param ARoutine [in] Routine to be test compiled.
       }
   public
     class function Compile(const ACompilers: ICompilers;
-      const ARoutine: TRoutine): TCompileResults;
+      const ARoutine: TSnippet): TCompileResults;
       {Compiles a specified routine with all installed and supported compilers.
         @param ACompilers [in] Compilers object used to perform compilation.
         @param ARoutine [in] Routine to be compiled.
@@ -100,13 +100,13 @@ type
   TTestCompileThread = class(TThreadEx)
   strict private
     var fCompilers: ICompilers; // Compilers used for test compilation
-    var fSnippet: TRoutine;     // Snippet to be compiled
+    var fSnippet: TSnippet;     // Snippet to be compiled
   strict protected
     procedure Execute; override;
       {Performs test compilation in a thread.
       }
   public
-    constructor Create(ACompilers: ICompilers; ASnippet: TRoutine);
+    constructor Create(ACompilers: ICompilers; ASnippet: TSnippet);
       {Object constructor. Sets up suspended thread.
         @param ACompilers [in] Compilers to be used for test compilation.
         @param ASnippet [in] Snippet to be compiled.
@@ -127,7 +127,7 @@ uses
 { TTestCompile }
 
 class function TTestCompile.Compile(const ACompilers: ICompilers;
-  const ARoutine: TRoutine): TCompileResults;
+  const ARoutine: TSnippet): TCompileResults;
   {Compiles a specified routine with all installed and supported compilers.
     @param ACompilers [in] Compilers object used to perform compilation.
     @param ARoutine [in] Routine to be compiled.
@@ -194,7 +194,7 @@ begin
 end;
 
 constructor TTestCompile.InternalCreate(const ACompilers: ICompilers;
-  const ARoutine: TRoutine);
+  const ARoutine: TSnippet);
   {Class constructor. Sets up object that can test compile a routine.
     @param ACompilers [in] Compilers object used to perform compilation.
     @param ARoutine [in] Routine to be test compiled.
@@ -211,7 +211,7 @@ end;
 { TTestCompileThread }
 
 constructor TTestCompileThread.Create(ACompilers: ICompilers;
-  ASnippet: TRoutine);
+  ASnippet: TSnippet);
   {Object constructor. Sets up suspended thread.
     @param ACompilers [in] Compilers to be used for test compilation.
     @param ASnippet [in] Snippet to be compiled.

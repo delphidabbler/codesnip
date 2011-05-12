@@ -510,7 +510,7 @@ class procedure TCodeImportMgr.UpdateUserDatabase(const UserInfo: TUserInfo;
 var
   Idx: Integer;           // loops through all snippets
   Editor: ISnippetsEdit;  // object used to update user database
-  Routine: TRoutine;      // reference to existing snippets
+  Routine: TSnippet;      // reference to existing snippets
 begin
   Editor := Snippets as ISnippetsEdit;
   for Idx := Low(Routines) to High(Routines) do

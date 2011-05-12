@@ -64,7 +64,7 @@ type
     procedure btnBrowseClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
   strict private
-    procedure SelectRoutine(const Snippet: TRoutine);
+    procedure SelectRoutine(const Snippet: TSnippet);
       {Selects a snippet in the snippets check list.
         @param Snippet [in] Snippet to be selected. If nil, or not user-defined,
           no snippet is selected.
@@ -78,7 +78,7 @@ type
       controls that depend on UI font.
       }
   public
-    class procedure Execute(const AOwner: TComponent; const Snippet: TRoutine);
+    class procedure Execute(const AOwner: TComponent; const Snippet: TSnippet);
       {Displays export dialog box and writes export file if user OKs entries.
         @param AOwner [in] Reference to control that owns the dialog box.
         @param Snippet [in] Reference to a snippet to pre-select in snippets
@@ -200,7 +200,7 @@ begin
 end;
 
 class procedure TCodeExportDlg.Execute(const AOwner: TComponent;
-  const Snippet: TRoutine);
+  const Snippet: TSnippet);
   {Displays export dialog box and writes export file if user OKs entries.
     @param AOwner [in] Reference to control that owns the dialog box.
     @param Snippet [in] Reference to a routine to pre-select in snippets check
@@ -216,7 +216,7 @@ begin
     end;
 end;
 
-procedure TCodeExportDlg.SelectRoutine(const Snippet: TRoutine);
+procedure TCodeExportDlg.SelectRoutine(const Snippet: TSnippet);
   {Selects a snippet in the snippets check list.
     @param Snippet [in] Snippet to be selected. If nil, or not user-defined, no
       snippet is selected.

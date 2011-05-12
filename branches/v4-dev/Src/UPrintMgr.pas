@@ -57,7 +57,7 @@ type
   }
   TPrintMgr = class(TNoPublicConstructObject)
   strict private
-    fRoutine: TRoutine;
+    fRoutine: TSnippet;
       {Reference to routine whose information is to be printed}
     function GeneratePrintDocument: TRTF;
       {Generates document suitable for printing by print engine.

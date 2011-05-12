@@ -109,12 +109,12 @@ type
       {Read accessor for Count property.
         @return Number of items in list.
       }
-    function GetItem(Idx: Integer): TRoutine;
+    function GetItem(Idx: Integer): TSnippet;
       {Read access for Items[] property.
         @param Idx [in] Index of required snippet in list.
         @return Indexed snippet.
       }
-    function Contains(const ConstOrType: TRoutine): Boolean;
+    function Contains(const ConstOrType: TSnippet): Boolean;
       {Checks if the list contains a constant or type snippet.
         @param ConstOrType [in] Constant or type snippet being checked for.
         @return True if snippet in list, False if not.
@@ -126,7 +126,7 @@ type
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
-    procedure Add(const ConstOrType: TRoutine;
+    procedure Add(const ConstOrType: TSnippet;
       const UnitRecorder: TUnitRecorder);
       {Adds a constant or type snippet to the list, ignoring duplicates.
         @param ConstOrType [in] Constant or type snippet to be added.
@@ -138,7 +138,7 @@ type
       {Gets an intialised const and type list enumerator.
         @return Required enumerator.
       }
-    property Items[Idx: Integer]: TRoutine read GetItem; default;
+    property Items[Idx: Integer]: TSnippet read GetItem; default;
       {Array of items in list, in dependency oder}
     property Count: Integer read GetCount;
       {Number of items in list}
@@ -160,12 +160,12 @@ type
       fForwardRoutines: TSnippetList;     // Value of ForwardRoutines property
       fRequiredRoutines: TSnippetList;    // Value of RequiredRoutines property
       fUnits: TStringList;                // Value of Units property
-    procedure AddIntfRoutine(const Routine: TRoutine);
+    procedure AddIntfRoutine(const Routine: TSnippet);
       {Adds a user-specified routine to list of routines specified by user.
       Duplicates ignored.
         @param Routine [in] Routine to be added.
       }
-    procedure AddTypeOrConst(const TypeOrConst: TRoutine);
+    procedure AddTypeOrConst(const TypeOrConst: TSnippet);
       {Adds a user specified or required type or constant to the analysis.
         @param TypeOrConst [in] Type of constant snippet to be added.
       }
@@ -173,7 +173,7 @@ type
       {Process all snippets in a dependency list.
         @param Snips [in] List of snippets to process.
       }
-    procedure RequireSnippet(const Snippet: TRoutine);
+    procedure RequireSnippet(const Snippet: TSnippet);
       {Process a snippet from a dependency list.
         @param Snippet [in] Snippet to be processed.
         @except Exception raised if attempt is made to require freeform snippet
@@ -186,7 +186,7 @@ type
       {Add a unit to list of required units. Duplicates ignored.
         @param UnitName [in] Name of required unit.
       }
-    procedure RequireRoutine(const Routine: TRoutine);
+    procedure RequireRoutine(const Routine: TSnippet);
       {Adds a routine from a dependency list to the analysis. Duplicates
       ignored.
         @param Routine [in] Routine to be added.
@@ -198,7 +198,7 @@ type
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
-    procedure AddSnippet(const Snippet: TRoutine);
+    procedure AddSnippet(const Snippet: TSnippet);
       {Adds a user-specified snippet to the analysis. Freeform snippets are
       ignored.
         @param Snippet [in] Snippet to be added.
@@ -241,7 +241,7 @@ type
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
-    procedure IncludeSnippet(const Snippet: TRoutine);
+    procedure IncludeSnippet(const Snippet: TSnippet);
       {Includes a snippet in the source code.
         @param Routine [in] Snippet to be included.
       }
@@ -311,7 +311,7 @@ type
   }
   TRoutineFormatter = class(TNoConstructObject)
   strict private
-    class procedure Split(const Routine: TRoutine; out Head, Body: string);
+    class procedure Split(const Routine: TSnippet; out Head, Body: string);
       {Splits source code of a routine into the head (routine prototype) and
       body code.
         @param Routine [in] Routine whose source code to be split.
@@ -319,19 +319,19 @@ type
         @param Body [out] Remainder of routine without prototype.
       }
     class function RenderDescComment(CommentStyle: TCommentStyle;
-      const Routine: TRoutine): string;
+      const Routine: TSnippet): string;
       {Creates comment in required style that contains routine's description.
         @param CommentStyle [in] Required commenting style.
         @param Routine [in] Routine for which comments required.
         @return Formatted comments.
       }
   public
-    class function ExtractPrototype(const Routine: TRoutine): string;
+    class function ExtractPrototype(const Routine: TSnippet): string;
       {Extracts a routine's prototype from source code.
         @param Routine [in] Routine whose source code to be processed.
         @return Routine prototype.
       }
-    class function FormatRoutinePrototype(const Routine: TRoutine;
+    class function FormatRoutinePrototype(const Routine: TSnippet;
       CommentStyle: TCommentStyle = csNone): string;
       {Formats a routine's prototype, documented by the routine's description in
       a comment.
@@ -341,7 +341,7 @@ type
         @return Formatted prototype.
       }
     class function FormatRoutine(CommentStyle: TCommentStyle;
-      const Routine: TRoutine): string;
+      const Routine: TSnippet): string;
       {Formats a routine's whole source code, documented by the routine's
       description in a comment.
         @param Routine [in] Routine whose source code is to be formatted.
@@ -358,7 +358,7 @@ type
   }
   TConstAndTypeFormatter = class(TNoConstructObject)
   strict private
-    class procedure Split(const ConstOrType: TRoutine; out Keyword,
+    class procedure Split(const ConstOrType: TSnippet; out Keyword,
       Body: string);
       {Splits source code of a type or constant into the keyword ("const" or
       "type") and definition itself (body code).
@@ -367,7 +367,7 @@ type
         @param Body [out] Remainder of constant or type without keyword.
       }
     class function RenderDescComment(CommentStyle: TCommentStyle;
-      const ConstOrType: TRoutine): string;
+      const ConstOrType: TSnippet): string;
       {Creates comment in required style that contains constant or type's
       description.
         @param CommentStyle [in] Required commenting style.
@@ -376,7 +376,7 @@ type
       }
   public
     class function FormatConstOrType(CommentStyle: TCommentStyle;
-      const ConstOrType: TRoutine): string;
+      const ConstOrType: TSnippet): string;
       {Formats a constant or type's source code, documented by the snippet's
       description in a comment.
         @param ConstOrType [in] Constant or type whose source code is to be
@@ -427,7 +427,7 @@ var
   Writer: TStringBuilder;   // used to build source code string
   ForwardWritten: Boolean;  // flag true if forward decls have been written
   FirstForward: Boolean;    // flag true when first forward decl to be written
-  Snippet: TRoutine;        // accesses various snippet objects
+  Snippet: TSnippet;        // accesses various snippet objects
   UnitName: string;         // accesses unit names from a list
 begin
   // Generate the unit data
@@ -514,7 +514,7 @@ begin
   end;
 end;
 
-procedure TSourceGen.IncludeSnippet(const Snippet: TRoutine);
+procedure TSourceGen.IncludeSnippet(const Snippet: TSnippet);
   {Includes a snippet in the source code.
     @param Snippet [in] Snippet to be included.
   }
@@ -527,7 +527,7 @@ procedure TSourceGen.IncludeSnippets(const Snips: TSnippetList);
     @param Routines [in] List of snippets to be included.
   }
 var
-  Snippet: TRoutine;  // iterates through snippets to be added
+  Snippet: TSnippet;  // iterates through snippets to be added
 begin
   for Snippet in Snips do
     IncludeSnippet(Snippet);
@@ -555,7 +555,7 @@ function TSourceGen.UnitAsString(const UnitName: string;
   }
 var
   Writer: TStringBuilder;   // used to build source code string
-  Snippet: TRoutine;        // reference to a snippet object
+  Snippet: TSnippet;        // reference to a snippet object
   Warnings: IWarnings;      // object giving info about any inhibited warnings
 begin
   // Generate the unit data
@@ -665,7 +665,7 @@ end;
 
 { TSourceAnalyser }
 
-procedure TSourceAnalyser.AddIntfRoutine(const Routine: TRoutine);
+procedure TSourceAnalyser.AddIntfRoutine(const Routine: TSnippet);
   {Adds a user-specified routine to list of routines specified by user.
   Duplicates ignored.
     @param Routine [in] Routine to be added.
@@ -681,7 +681,7 @@ begin
   end;
 end;
 
-procedure TSourceAnalyser.AddSnippet(const Snippet: TRoutine);
+procedure TSourceAnalyser.AddSnippet(const Snippet: TSnippet);
   {Adds a user-specified snippet to the analysis. Freeform snippets are ignored.
     @param Snippet [in] Snippet to be added.
   }
@@ -704,7 +704,7 @@ begin
   end;
 end;
 
-procedure TSourceAnalyser.AddTypeOrConst(const TypeOrConst: TRoutine);
+procedure TSourceAnalyser.AddTypeOrConst(const TypeOrConst: TSnippet);
   {Adds a user specified or required type or constant to the analysis.
     @param TypeOrConst [in] Type of constant snippet to be added.
   }
@@ -742,7 +742,7 @@ procedure TSourceAnalyser.Generate;
   {Generates the analysis.
   }
 var
-  Routine: TRoutine;  // iterates through various routine lists
+  Routine: TSnippet;  // iterates through various routine lists
 begin
   fForwardRoutines.Clear;
   fAllRoutines.Clear;
@@ -758,7 +758,7 @@ begin
     fAllRoutines.Add(Routine);
 end;
 
-procedure TSourceAnalyser.RequireRoutine(const Routine: TRoutine);
+procedure TSourceAnalyser.RequireRoutine(const Routine: TSnippet);
   {Adds a routine from a dependency list to the analysis. Duplicates ignored.
     @param Routine [in] Routine to be added.
   }
@@ -771,7 +771,7 @@ begin
   end;
 end;
 
-procedure TSourceAnalyser.RequireSnippet(const Snippet: TRoutine);
+procedure TSourceAnalyser.RequireSnippet(const Snippet: TSnippet);
   {Process a snippet from a dependency list.
     @param Snippet [in] Snippet to be processed.
     @except Exception raised if attempt is made to require freeform snippet
@@ -795,7 +795,7 @@ procedure TSourceAnalyser.RequireSnippets(const Snips: TSnippetList);
     @param Snips [in] List of snippets to process.
   }
 var
-  Snippet: TRoutine;  // iterates through snippets list
+  Snippet: TSnippet;  // iterates through snippets list
 begin
   for Snippet in Snips do
     RequireSnippet(Snippet);
@@ -823,7 +823,7 @@ end;
 
 { TConstAndTypeList }
 
-procedure TConstAndTypeList.Add(const ConstOrType: TRoutine;
+procedure TConstAndTypeList.Add(const ConstOrType: TSnippet;
   const UnitRecorder: TUnitRecorder);
   {Adds a constant or type snippet to the list, ignoring duplicates.
     @param ConstOrType [in] Constant or type snippet to be added.
@@ -831,7 +831,7 @@ procedure TConstAndTypeList.Add(const ConstOrType: TRoutine;
     @except Exception raised if dependency list is not valid.
   }
 var
-  RequiredSnip: TRoutine; // reference snippets in depends list
+  RequiredSnip: TSnippet; // reference snippets in depends list
   ErrorMsg: string;       // any error message
 begin
   Assert(Assigned(ConstOrType), ClassName + '.Add: ConstOrType in nil');
@@ -851,7 +851,7 @@ begin
   fItems.Add(ConstOrType)
 end;
 
-function TConstAndTypeList.Contains(const ConstOrType: TRoutine): Boolean;
+function TConstAndTypeList.Contains(const ConstOrType: TSnippet): Boolean;
   {Checks if the list contains a constant or type snippet.
     @param ConstOrType [in] Constant or type snippet being checked for.
     @return True if snippet in list, False if not.
@@ -892,7 +892,7 @@ begin
   Result := fItems.GetEnumerator;
 end;
 
-function TConstAndTypeList.GetItem(Idx: Integer): TRoutine;
+function TConstAndTypeList.GetItem(Idx: Integer): TSnippet;
   {Read access for Items[] property.
     @param Idx [in] Index of required snippet in list.
     @return Indexed snippet.
@@ -904,7 +904,7 @@ end;
 { TRoutineFormatter }
 
 class function TRoutineFormatter.ExtractPrototype(const
-  Routine: TRoutine): string;
+  Routine: TSnippet): string;
   {Extracts a routine's prototype from source code.
     @param Routine [in] Routine whose source code to be processed.
     @return Routine prototype.
@@ -917,7 +917,7 @@ begin
 end;
 
 class function TRoutineFormatter.FormatRoutine(
-  CommentStyle: TCommentStyle; const Routine: TRoutine): string;
+  CommentStyle: TCommentStyle; const Routine: TSnippet): string;
   {Formats a routine's whole source code, documented by the routine's
   description in a comment.
     @param Routine [in] Routine whose source code is to be formatted.
@@ -948,7 +948,7 @@ begin
   end;
 end;
 
-class function TRoutineFormatter.FormatRoutinePrototype(const Routine: TRoutine;
+class function TRoutineFormatter.FormatRoutinePrototype(const Routine: TSnippet;
   CommentStyle: TCommentStyle): string;
   {Formats a routine's prototype, documented by the routine's description in a
   comment.
@@ -980,7 +980,7 @@ begin
 end;
 
 class function TRoutineFormatter.RenderDescComment(
-  CommentStyle: TCommentStyle; const Routine: TRoutine): string;
+  CommentStyle: TCommentStyle; const Routine: TSnippet): string;
   {Creates comment in required style that contains routine's description.
     @param CommentStyle [in] Required commenting style.
     @param Routine [in] Routine for which comments required.
@@ -995,7 +995,7 @@ begin
   );
 end;
 
-class procedure TRoutineFormatter.Split(const Routine: TRoutine; out Head,
+class procedure TRoutineFormatter.Split(const Routine: TSnippet; out Head,
   Body: string);
   {Splits source code of a routine into the head (routine prototype) and body
   code.
@@ -1087,7 +1087,7 @@ end;
 { TConstAndTypeFormatter }
 
 class function TConstAndTypeFormatter.FormatConstOrType(
-  CommentStyle: TCommentStyle; const ConstOrType: TRoutine): string;
+  CommentStyle: TCommentStyle; const ConstOrType: TSnippet): string;
   {Formats a constant or type's source code, documented by the snippet's
   description in a comment.
     @param ConstOrType [in] Constant or type whose source code is to be
@@ -1127,7 +1127,7 @@ begin
 end;
 
 class function TConstAndTypeFormatter.RenderDescComment(
-  CommentStyle: TCommentStyle; const ConstOrType: TRoutine): string;
+  CommentStyle: TCommentStyle; const ConstOrType: TSnippet): string;
   {Creates comment in required style that contains constant or type's
   description.
     @param CommentStyle [in] Required commenting style.
@@ -1143,7 +1143,7 @@ begin
   );
 end;
 
-class procedure TConstAndTypeFormatter.Split(const ConstOrType: TRoutine;
+class procedure TConstAndTypeFormatter.Split(const ConstOrType: TSnippet;
   out Keyword, Body: string);
   {Splits source code of a type or constant into the keyword ("const" or
   "type") and definition itself (body code).

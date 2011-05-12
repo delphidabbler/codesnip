@@ -146,7 +146,7 @@ type
     procedure lblViewCompErrsClick(Sender: TObject);
     procedure pcMainChange(Sender: TObject);
   strict private
-    fSnippet: TRoutine;             // Snippet being edited: nil for new snippet
+    fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
     fSnipKindList:
       TSnipKindListAdapter;         // Accesses sorted list of snippet kinds
@@ -211,7 +211,7 @@ type
       {Updates dependencies and cross-references check lists for snippet being
       edited, depending on kind.
       }
-    function CreateTempSnippet: TRoutine;
+    function CreateTempSnippet: TSnippet;
       {Creates a temporary snippet from data entered in dialog box.
         @return Required snippet instance.
         @except EDataEntry raised if any of entered data is invalid.
@@ -244,7 +244,7 @@ type
         @return True if user OKs, False if cancels.
       }
     class function EditRoutine(AOwner: TComponent;
-      const Routine: TRoutine): Boolean;
+      const Routine: TSnippet): Boolean;
       {Displays dialog box to enable user to edit a snippet.
         @param AOwner [in] Control that owns the dialog box, over which the
           dialog is aligned. May be nil.
@@ -317,7 +317,7 @@ procedure TSnippetsEditorDlg.actCompileExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  TempSnippet: TRoutine;  // temp snippet object for compilation
+  TempSnippet: TSnippet;  // temp snippet object for compilation
 begin
   // Hide view compile errors link
   pnlViewCompErrs.Hide;
@@ -438,7 +438,7 @@ procedure TSnippetsEditorDlg.actViewTestUnitExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  TempSnippet: TRoutine;  // temp snippet object for compilation
+  TempSnippet: TSnippet;  // temp snippet object for compilation
 begin
   try
     TempSnippet := CreateTempSnippet;
@@ -630,7 +630,7 @@ begin
     '(' + ShortcutToText(actViewErrors.ShortCut) + ')';
 end;
 
-function TSnippetsEditorDlg.CreateTempSnippet: TRoutine;
+function TSnippetsEditorDlg.CreateTempSnippet: TSnippet;
   {Creates a temporary snippet from data entered in dialog box.
     @return Required snippet instance.
     @except EDataEntry raised if any of entered data is invalid.
@@ -663,7 +663,7 @@ begin
 end;
 
 class function TSnippetsEditorDlg.EditRoutine(AOwner: TComponent;
-  const Routine: TRoutine): Boolean;
+  const Routine: TSnippet): Boolean;
   {Displays dialog box to enable user to edit a snippet.
     @param AOwner [in] Control that owns the dialog box, over which the dialog
       is aligned. May be nil.
@@ -927,7 +927,7 @@ procedure TSnippetsEditorDlg.UpdateReferences;
   }
 var
   EditSnippetID: TSnippetID;      // id of snippet being edited
-  Snippet: TRoutine;              // each snippet in database
+  Snippet: TSnippet;              // each snippet in database
   EditSnippetKind: TSnippetKind;  // kind of snippet being edited
 begin
   // Save state of dependencies and x-ref check list boxes and clear them

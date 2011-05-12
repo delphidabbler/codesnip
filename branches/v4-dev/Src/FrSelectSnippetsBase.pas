@@ -91,7 +91,7 @@ type
         @param Node [in] Node to be checked.
         @return True if node represents a snippet.
       }
-    function SnippetFromNode(const Node: TCheckedTreeNode): TRoutine;
+    function SnippetFromNode(const Node: TCheckedTreeNode): TSnippet;
       {Gets snippet object associated with a node.
         @param Node [in] Node associated with snippet. Must be a valid node.
         @return Reference to snippet.
@@ -115,7 +115,7 @@ type
         @param Cat [in] Category to be checked.
         @return True if category is to be added, False if not.
       }
-    function CanAddSnippetNode(const Snippet: TRoutine): Boolean;
+    function CanAddSnippetNode(const Snippet: TSnippet): Boolean;
       virtual; abstract;
       {Checks if a snippet node should be added to treeview.
         @param Snippet [in] Snippet to be checked.
@@ -158,7 +158,7 @@ procedure TSelectSnippetsBaseFrame.AddNodes;
 var
   Cat: TCategory;               // reference to a category
   CatNode: TCheckedTreeNode;    // tree node representing a category
-  Snippet: TRoutine;            // reference to snippets in a category
+  Snippet: TSnippet;            // reference to snippets in a category
   Grouping: TGrouping;          // groups/sorts snippets by category
   Group: TGroupItem;            // group representing a category
 begin
@@ -208,7 +208,7 @@ function TSelectSnippetsBaseFrame.IsSnippetNode(
   }
 begin
   Result := Assigned(Node) and Assigned(Node.Data) and
-    (TObject(Node.Data) is TRoutine);
+    (TObject(Node.Data) is TSnippet);
 end;
 
 procedure TSelectSnippetsBaseFrame.RecordChanges;
@@ -271,7 +271,7 @@ begin
 end;
 
 function TSelectSnippetsBaseFrame.SnippetFromNode(
-  const Node: TCheckedTreeNode): TRoutine;
+  const Node: TCheckedTreeNode): TSnippet;
   {Gets snippet object associated with a node.
     @param Node [in] Node associated with snippet. Must be a valid node.
     @return Reference to snippet.
@@ -279,7 +279,7 @@ function TSelectSnippetsBaseFrame.SnippetFromNode(
 begin
   Assert(IsSnippetNode(Node),
     ClassName + '.SnippetFromNode: Node is not a snippet node');
-  Result := TRoutine(Node.Data);
+  Result := TSnippet(Node.Data);
 end;
 
 { TSelectSnippetsBaseFrame.TTVDraw }
@@ -306,8 +306,8 @@ var
 begin
   SnipObj := TObject(Node.Data);
   Result := False;
-  if SnipObj is TRoutine then
-    Result := (SnipObj as TRoutine).UserDefined
+  if SnipObj is TSnippet then
+    Result := (SnipObj as TSnippet).UserDefined
   else if SnipObj is TCategory then
     Result := (SnipObj as TCategory).UserDefined;
 end;

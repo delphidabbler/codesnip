@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -63,10 +63,10 @@ type
   }
   TCompileMgr = class(TComponent)
   strict private
-    fLastCompiledRoutine: TRoutine; // Value of LastCompiledRoutine property
+    fLastCompiledRoutine: TSnippet; // Value of LastCompiledRoutine property
     fCompilers: ICompilers;         // Value of Compilers property
   strict protected
-    property LastCompiledRoutine: TRoutine read fLastCompiledRoutine;
+    property LastCompiledRoutine: TSnippet read fLastCompiledRoutine;
       {Last compiled routine. May not be added to Snippets object}
   public
     constructor Create(AOwner: TComponent); override;
@@ -80,7 +80,7 @@ type
       {Checks if any compilers are set up to work with CodeSnip.
         @return True if at least one compiler is available, False otherwise.
       }
-    procedure Compile(const UIParent: TWinControl; const Routine: TRoutine;
+    procedure Compile(const UIParent: TWinControl; const Routine: TSnippet;
       const DisplayProc: TCompileResultDisplay = nil);
       {Test compiles a routine and then displays the compilation results. Shows
       a wait dialog box if compilation takes a long time.
@@ -149,7 +149,7 @@ uses
 { TCompileMgr }
 
 procedure TCompileMgr.Compile(const UIParent: TWinControl;
-  const Routine: TRoutine; const DisplayProc: TCompileResultDisplay);
+  const Routine: TSnippet; const DisplayProc: TCompileResultDisplay);
   {Test compiles a routine and then displays the compilation results. Shows a
   wait dialog box if compilation takes a long time.
     @param UIParent [in] Control that parents any wait window that is displayed.

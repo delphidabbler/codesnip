@@ -127,7 +127,7 @@ type
         @param SnippetID [in] ID of snippet for which dependencies are to be
           displayed.
       }
-    class procedure Execute(const AOwner: TComponent; const Snippet: TRoutine);
+    class procedure Execute(const AOwner: TComponent; const Snippet: TSnippet);
       overload;
       {Displays dialog box containing details of a snippet's dependencies.
         @param AOwner [in] Component that owns the dialog box.
@@ -158,7 +158,7 @@ procedure TDependenciesDlg.AddDependencies(const Parent: TTreeNode;
       treeview.
   }
 var
-  RequiredSnippet: TRoutine;  // iterates through snippets in DependsList
+  RequiredSnippet: TSnippet;  // iterates through snippets in DependsList
   ChildNode: TTreeNode;       // a node added to treeview
 begin
   for RequiredSnippet in DependsList do
@@ -240,7 +240,7 @@ begin
 end;
 
 class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
-  const Snippet: TRoutine);
+  const Snippet: TSnippet);
   {Displays dialog box containing details of a snippet's dependencies.
     @param AOwner [in] Component that owns the dialog box.
     @param Snippet [in] Snippet for which dependencies are to be displayed.
@@ -342,7 +342,7 @@ function TDependenciesDlg.TTVDraw.IsErrorNode(
     @return True if node represents error condition, False if not.
   }
 begin
-  Result := Assigned(Node.Data) and (TRoutine(Node.Data).ID = fRootID);
+  Result := Assigned(Node.Data) and (TSnippet(Node.Data).ID = fRootID);
 end;
 
 function TDependenciesDlg.TTVDraw.IsUserDefinedNode(
@@ -355,7 +355,7 @@ begin
   if not Assigned(Node.Data) then
     Result := True
   else
-    Result := TRoutine(Node.Data).UserDefined;
+    Result := TSnippet(Node.Data).UserDefined;
 end;
 
 end.

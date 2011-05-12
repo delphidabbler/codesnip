@@ -257,7 +257,7 @@ end;
 
 constructor TSaveUnitMgr.InternalCreate(const Snips: TSnippetList);
 var
-  Snippet: TRoutine;  // references each snippet in list
+  Snippet: TSnippet;  // references each snippet in list
 begin
   Assert(Assigned(Snips), ClassName + '.InternalCreate: Snips is nil');
   inherited InternalCreate;

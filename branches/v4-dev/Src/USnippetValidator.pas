@@ -55,7 +55,7 @@ type
       cAllSnippetKinds: TSnippetKinds =   // Set of all possible snippet kinds
         [skFreeform, skRoutine, skConstant, skTypeDef];
   public
-    class function ValidateDependsList(const Snippet: TRoutine;
+    class function ValidateDependsList(const Snippet: TSnippet;
       out ErrorMsg: string): Boolean; overload;
       {Recursively checks dependency list of a snippet for validity.
         @param Snippet [in] Snippet for which dependencies are to be checked.
@@ -112,7 +112,7 @@ type
           returned.
         @return True if extra information is valid, False if not.
       }
-    class function Validate(const Snippet: TRoutine; out ErrorMsg: string;
+    class function Validate(const Snippet: TSnippet; out ErrorMsg: string;
       out ErrorSel: TSelection): Boolean;
       {Checks a snippet for validity.
         @param Snippet [in] Snippet to be checked.
@@ -142,7 +142,7 @@ uses
 
 { TSnippetValidator }
 
-class function TSnippetValidator.Validate(const Snippet: TRoutine;
+class function TSnippetValidator.Validate(const Snippet: TSnippet;
   out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
   {Checks a snippet for validity.
     @param Snippet [in] Snippet to be checked.
@@ -159,7 +159,7 @@ begin
     and ValidateExtra(Snippet.Extra, ErrorMsg);
 end;
 
-class function TSnippetValidator.ValidateDependsList(const Snippet: TRoutine;
+class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
   out ErrorMsg: string): Boolean;
   {Recursively checks dependency list of a snippet for validity.
     @param Snippet [in] Snippet for which dependencies are to be checked.
@@ -169,7 +169,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TRoutine;
   }
 
   // ---------------------------------------------------------------------------
-  function DependsListIsCircular(const Snippet: TRoutine;
+  function DependsListIsCircular(const Snippet: TSnippet;
     const DependsList: TSnippetList): Boolean;
     {Checks if dependency list is circular, i.e. a snippet is referenced in own
     chain of dependencies. Recursive function.
@@ -178,7 +178,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TRoutine;
       @return True if dependency list is circular, false if not.
     }
   var
-    RequiredSnippet: TRoutine;  // iterates through DependsList
+    RequiredSnippet: TSnippet;  // iterates through DependsList
   begin
     Result := False;
     for RequiredSnippet in DependsList do
@@ -201,7 +201,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TRoutine;
       @return True if one or more of specified kinds are found, false if not.
     }
   var
-    RequiredSnippet: TRoutine;  // iterates through depends list
+    RequiredSnippet: TSnippet;  // iterates through depends list
   begin
     Result := False;
     if Kinds = [] then
@@ -266,7 +266,7 @@ class function TSnippetValidator.ValidateDependsList(const SnippetName: string;
     @return True if dependency list is valid or False if not.
   }
 var
-  TempSnippet: TRoutine;  // temporary snippet that is checked for dependencies
+  TempSnippet: TSnippet;  // temporary snippet that is checked for dependencies
 begin
   TempSnippet := (Snippets as ISnippetsEdit).CreateTempRoutine(
     SnippetName, Data

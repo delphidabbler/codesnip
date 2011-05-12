@@ -80,7 +80,7 @@ type
   strict private
     var
       fData: TEncodedData; // Contains submission as XML document
-    procedure SelectRoutine(const Routine: TRoutine);
+    procedure SelectRoutine(const Routine: TSnippet);
       {Selects the specified snippet in the check list of snippets or clears
       selections.
         @param Routine [in] Snippet to be selected in the list. If Routine is
@@ -150,7 +150,7 @@ type
       {Protected class constructor. Initialise objects required by this wizard.
       }
   public
-    class procedure Execute(const AOwner: TComponent; const Routine: TRoutine);
+    class procedure Execute(const AOwner: TComponent; const Routine: TSnippet);
       {Excutes code submission dialog box. Submits code snippet to DelphiDabbler
       web service if user OKs.
         @param AOwner [in] Component that owns and parent's dialog box.
@@ -302,7 +302,7 @@ begin
 end;
 
 class procedure TCodeSubmitDlg.Execute(const AOwner: TComponent;
-  const Routine: TRoutine);
+  const Routine: TSnippet);
   {Excutes code submission dialog box. Submits code snippet to DelphiDabbler
   web service if user OKs.
     @param AOwner [in] Component that owns and parent's dialog box.
@@ -418,7 +418,7 @@ begin
   TUserDetailsPersist.Update(TUserDetails.Create(edName.Text, edEMail.Text));
 end;
 
-procedure TCodeSubmitDlg.SelectRoutine(const Routine: TRoutine);
+procedure TCodeSubmitDlg.SelectRoutine(const Routine: TSnippet);
   {Selects the specified routine in the check list of routines or clears
   selections.
     @param Routine [in] Snippet to be selected in the list. If Snippet is nil

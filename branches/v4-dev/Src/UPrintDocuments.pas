@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -74,14 +74,14 @@ type
   strict private
     var
       ///  <summary>Reference to snippet described by print document.</summary>
-      fSnippet: TRoutine;
+      fSnippet: TSnippet;
     ///  <summary>Gets highlighter attributes required to render source code,
     ///  depending on printer properties.</summary>
     function GetHiliteAttrs: IHiliteAttrs;
   public
     ///  <summary>Object constructor. Sets up object to create print document
     ///  for given snippet.</summary>
-    constructor Create(const Snippet: TRoutine);
+    constructor Create(const Snippet: TSnippet);
 
     { IPrintDocument method }
     ///  <summary>Generates and returns print document.</summary>
@@ -101,7 +101,7 @@ uses
 
 { TSnippetPrintDocument }
 
-constructor TSnippetPrintDocument.Create(const Snippet: TRoutine);
+constructor TSnippetPrintDocument.Create(const Snippet: TSnippet);
 begin
   inherited Create;
   fSnippet := Snippet;

@@ -197,7 +197,7 @@ procedure TOverviewTreeBuilder.Build;
   {Populates the treeview.
   }
 var
-  Snippet: TRoutine;              // each snippet in a list
+  Snippet: TSnippet;              // each snippet in a list
   ParentNode: TViewItemTreeNode;  // each section node in tree
   Grouping: TGrouping;            // groups snippets
   Group: TGroupItem;              // each group of snippets

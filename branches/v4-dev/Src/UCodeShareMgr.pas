@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -56,7 +56,7 @@ type
   }
   TCodeShareMgr = class sealed(TNoConstructObject)
   strict private
-    class function GetRoutineFromView(ViewItem: IView): TRoutine;
+    class function GetRoutineFromView(ViewItem: IView): TSnippet;
       {Gets reference to any user defined routine represented by a view item.
         @param ViewItem [in] View item for which routine is required.
         @return Reference to required routine or nil if view item does not
@@ -115,7 +115,7 @@ begin
 end;
 
 class function TCodeShareMgr.GetRoutineFromView(
-  ViewItem: IView): TRoutine;
+  ViewItem: IView): TSnippet;
   {Gets reference to any user defined routine represented by a view item.
     @param ViewItem [in] View item for which routine is required.
     @return Reference to required routine or nil if view item does not represent

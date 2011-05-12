@@ -71,7 +71,7 @@ type
         @param ASearch [out] Set to object recording search details if user OKs.
         @return True if user OKs or false if user cancels.
       }
-    function ExecFindXRefsDlg(const ARoutine: TRoutine;
+    function ExecFindXRefsDlg(const ARoutine: TSnippet;
       out ASearch: ISearch): Boolean;
       {Displays Find Cross References dialog box.
         @param ARoutine [in] Snippet for which Cross-references are required.
@@ -111,11 +111,11 @@ type
     procedure ShowDonateDlg;
       {Displays Donate dialog box.
       }
-    procedure ShowTestUnit(const Snippet: TRoutine);
+    procedure ShowTestUnit(const Snippet: TSnippet);
       {Displays test unit used to test compile a snippet.
         @param Snippet [in] Snippet to be test compiled.
       }
-    procedure ShowDependencyTree(const Snippet: TRoutine);
+    procedure ShowDependencyTree(const Snippet: TSnippet);
       {Displays dependency tree for a snippet.
         @param Snippet [in] Snippet for which dependency tree is required.
       }
@@ -160,7 +160,7 @@ begin
   Result := TFindTextDlg.Execute(Owner, ASearch);
 end;
 
-function TDialogMgr.ExecFindXRefsDlg(const ARoutine: TRoutine;
+function TDialogMgr.ExecFindXRefsDlg(const ARoutine: TSnippet;
   out ASearch: ISearch): Boolean;
   {Displays Find Cross References dialog box.
     @param ARoutine [in] Snippet for which Cross-references are required.
@@ -246,7 +246,7 @@ begin
   TUserBugReportDlg.Execute(Owner);
 end;
 
-procedure TDialogMgr.ShowDependencyTree(const Snippet: TRoutine);
+procedure TDialogMgr.ShowDependencyTree(const Snippet: TSnippet);
   {Displays dependency tree for a snippet.
     @param Snippet [in] Snippet for which dependency tree is required.
   }
@@ -268,7 +268,7 @@ begin
   TNewsDlg.Execute(Owner);
 end;
 
-procedure TDialogMgr.ShowTestUnit(const Snippet: TRoutine);
+procedure TDialogMgr.ShowTestUnit(const Snippet: TSnippet);
   {Displays test unit used to test compile a snippet.
     @param Snippet [in] Snippet to be test compiled.
   }

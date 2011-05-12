@@ -54,17 +54,17 @@ type
   }
   TRoutineHTML = class(TObject)
   strict private
-    fSnippet: TRoutine; // Value of Snippet property
+    fSnippet: TSnippet; // Value of Snippet property
   strict protected
     function HiliteSource(const SourceCode: string): string;
       {Highlights source code in a style suitable for display in UI.
         @param SourceCode [in] Source code to be highlighted.
         @return Highlighted source code.
       }
-    property Snippet: TRoutine read fSnippet;
+    property Snippet: TSnippet read fSnippet;
       {Reference to snippet for which we're generating HTML}
   public
-    constructor Create(const Snippet: TRoutine);
+    constructor Create(const Snippet: TSnippet);
       {Object constructor. Sets up object to provide HTML for a snippet.
         @param Snippet [in] Snippet for which to generate HTML.
       }
@@ -147,7 +147,7 @@ uses
 
 { TRoutineHTML }
 
-constructor TRoutineHTML.Create(const Snippet: TRoutine);
+constructor TRoutineHTML.Create(const Snippet: TSnippet);
   {Object constructor. Sets up object to provide HTML for a snippet.
     @param Snippet [in] Snippet for which to generate HTML.
   }
@@ -237,7 +237,7 @@ function TInfoHTML.SnippetList(const Snippets: TSnippetList): string;
     @return HTML of snippet list or 'None' if list empty.
   }
 var
-  Snippet: TRoutine;  // refers to each snippet in list
+  Snippet: TSnippet;  // refers to each snippet in list
 begin
   if Snippets.Count = 0 then
     // There are no snippets: say so

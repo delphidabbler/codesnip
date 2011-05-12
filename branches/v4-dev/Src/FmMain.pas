@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -1247,7 +1247,7 @@ procedure TMainForm.actViewTestUnitExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  SelectedSnippet: TRoutine;  // currently selected snippet
+  SelectedSnippet: TSnippet;  // currently selected snippet
 begin
   Assert(Supports(fMainDisplayMgr.CurrentView, ISnippetView),
     ClassName + '.actViewTestUnitExecute: Snippet view expected');
@@ -1657,8 +1657,8 @@ begin
     begin
       ReInitialise;
       fNotifier.DisplayRoutine(
-        (EventInfo.Info as TRoutine).Name,
-        (EventInfo.Info as TRoutine).UserDefined
+        (EventInfo.Info as TSnippet).Name,
+        (EventInfo.Info as TSnippet).UserDefined
       );
     end;
     evBeforeRoutineDelete,  // snippet about to be deleted: clear display

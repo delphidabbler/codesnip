@@ -106,9 +106,9 @@ type
   ISnippetView = interface(IView)
     ['{E0BD3AB7-2CB8-4B07-84D9-D7625DD020B0}']
     ///  <summary>Gets reference to snippet associated with view.</summary>
-    function GetSnippet: TRoutine;
+    function GetSnippet: TSnippet;
     ///  <summary>Snippet associated with view.</summary>
-    property Snippet: TRoutine read GetSnippet;
+    property Snippet: TSnippet read GetSnippet;
   end;
 
 type
@@ -168,7 +168,7 @@ type
     class function CreateStartPageView: IView;
     ///  <summary>Creates a snippet view instance associated with a given
     ///  snippet.</summary>
-    class function CreateSnippetView(const Snippet: TRoutine): IView;
+    class function CreateSnippetView(const Snippet: TSnippet): IView;
     ///  <summary>Creates a category view instance associated with a given
     ///  category.</summary>
     class function CreateCategoryView(const Category: TCategory): IView;
@@ -250,7 +250,7 @@ type
   strict private
     var
       ///  <summary>Snippet associated with view.</summary>
-      fSnippet: TRoutine;
+      fSnippet: TSnippet;
     type
       ///  <summary>Implementation of IViewKey for snippet view.</summary>
       TKey = class(TInterfacedObject, IViewKey)
@@ -267,7 +267,7 @@ type
       end;
   public
     ///  <summary>Constructs view for a specified snippet.</summary>
-    constructor Create(const Snippet: TRoutine);
+    constructor Create(const Snippet: TSnippet);
     { IView methods }
     ///  <summary>Checks if this view item is equal to the one passed as a
     ///  parameter.</summary>
@@ -278,7 +278,7 @@ type
     function GetKey: IViewKey;
     { ISnippetView methods }
     ///  <summary>Gets reference to snippet associated with view.</summary>
-    function GetSnippet: TRoutine;
+    function GetSnippet: TSnippet;
   end;
 
 type
@@ -455,7 +455,7 @@ end;
 
 { TSnippetViewItem }
 
-constructor TSnippetViewItem.Create(const Snippet: TRoutine);
+constructor TSnippetViewItem.Create(const Snippet: TSnippet);
 begin
   inherited Create;
   fSnippet := Snippet;
@@ -471,7 +471,7 @@ begin
   Result := TKey.Create(fSnippet.ID);
 end;
 
-function TSnippetViewItem.GetSnippet: TRoutine;
+function TSnippetViewItem.GetSnippet: TSnippet;
 begin
   Result := fSnippet;
 end;
@@ -689,7 +689,7 @@ begin
 end;
 
 class function TViewItemFactory.CreateSnippetView(
-  const Snippet: TRoutine): IView;
+  const Snippet: TSnippet): IView;
 begin
   Result := TSnippetViewItem.Create(Snippet);
 end;

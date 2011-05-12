@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -356,7 +356,7 @@ var
   Dependents: ISnippetIDList; // list of dependent snippet IDs
   Referrers: ISnippetIDList;  // list referring snippet IDs
   ConfirmMsg: string;         // message displayed to confirm deletion
-  Snippet: TRoutine;          // snippet being deleted
+  Snippet: TSnippet;          // snippet being deleted
 resourcestring
   // Prompts & error messages
   sConfirmDelete = 'Please confirm you wish to delete %s';
@@ -405,7 +405,7 @@ class procedure TUserDBMgr.EditSnippet(const SnippetName: string);
     @param SnippetName [in] Name of snippet to be edited. Must be user defined.
   }
 var
-  Snippet: TRoutine;    // reference to snippet to be edited
+  Snippet: TSnippet;    // reference to snippet to be edited
 begin
   Snippet := Snippets.Routines.Find(SnippetName, True);
   if not Assigned(Snippet) then

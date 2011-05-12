@@ -229,7 +229,7 @@ procedure TSelectionSearchDlg.SelectDB(const UserDefined: Boolean);
       selected, False if main database snippets are to be selected.
   }
 var
-  Routine: TRoutine;          // references each snippet in database
+  Routine: TSnippet;          // references each snippet in database
   RoutineList: TSnippetList;  // list of selected snippets
 begin
   RoutineList := TSnippetList.Create;

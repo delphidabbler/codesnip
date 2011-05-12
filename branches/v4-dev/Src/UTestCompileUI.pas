@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -67,7 +67,7 @@ type
       }
   public
     class procedure Execute(const AOwner: TComponent;
-      const ACompilers: ICompilers; const ARoutine: TRoutine);
+      const ACompilers: ICompilers; const ARoutine: TSnippet);
       {Test compiles a snippet in a thread and displays a wait dialog if
       compilation takes some time.
         @param AOwner [in] Control that owns the wait dialog box. Dialog is
@@ -92,7 +92,7 @@ uses
 { TTestCompileUI }
 
 class procedure TTestCompileUI.Execute(const AOwner: TComponent;
-  const ACompilers: ICompilers; const ARoutine: TRoutine);
+  const ACompilers: ICompilers; const ARoutine: TSnippet);
   {Test compiles a snippet in a thread and displays a wait dialog if compilation
   takes some time.
     @param AOwner [in] Control that owns the wait dialog box. Dialog is aligned

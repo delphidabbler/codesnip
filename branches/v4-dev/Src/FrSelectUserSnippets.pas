@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -64,7 +64,7 @@ type
         @param Cat [in] Category to be checked.
         @return True if category contains any user-defined snippets.
       }
-    function CanAddSnippetNode(const Snippet: TRoutine): Boolean; override;
+    function CanAddSnippetNode(const Snippet: TSnippet): Boolean; override;
       {Checks if a snippet node should be added to treeview.
         @param Snippet [in] Snippet to be checked.
         @return True if snippet is user-defined.
@@ -90,7 +90,7 @@ begin
 end;
 
 function TSelectUserSnippetsFrame.CanAddSnippetNode(
-  const Snippet: TRoutine): Boolean;
+  const Snippet: TSnippet): Boolean;
   {Checks if a snippet node should be added to treeview.
     @param Snippet [in] Snippet to be checked.
     @return True if snippet is user-defined.

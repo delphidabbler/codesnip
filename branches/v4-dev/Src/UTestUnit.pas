@@ -55,7 +55,7 @@ type
     var
       ///  <summary>Reference to snippet for which test unit is required.
       ///  </summary>
-      fSnippet: TRoutine;
+      fSnippet: TSnippet;
     ///  <summary>Generates name of test unit, based on snippet being tested.
     ///  </summary>
     ///  <remarks>Returned unit name contains only valid ASCII characters. Any
@@ -66,7 +66,7 @@ type
   public
     ///  <summary>Sets up object to create test unit for given snippet.
     ///  </summary>
-    constructor Create(const Snippet: TRoutine);
+    constructor Create(const Snippet: TSnippet);
     ///  <summary>Generates source code of test unit.</summary>
     function GenerateUnitSource: string;
     ///  <summary>Saves generated source to file.</summary>
@@ -94,7 +94,7 @@ uses
 
 { TTestUnit }
 
-constructor TTestUnit.Create(const Snippet: TRoutine);
+constructor TTestUnit.Create(const Snippet: TSnippet);
 begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   inherited Create;

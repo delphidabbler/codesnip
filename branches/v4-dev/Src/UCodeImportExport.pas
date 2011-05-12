@@ -193,7 +193,7 @@ type
         @param ParentNode [in] Node under which "routine" list node to be
           created.
       }
-    procedure WriteRoutine(const ParentNode: IXMLNode; const Routine: TRoutine);
+    procedure WriteRoutine(const ParentNode: IXMLNode; const Routine: TSnippet);
       {Writes an XML "routine" node and child nodes that describe a snippet.
         @param ParentNode [in] Node under which "routine" node is to be created.
         @param Routine [in] Reference to snippet to be described in XML.
@@ -389,7 +389,7 @@ function TCodeExporter.RoutineNames(
     @return List containing names of all snippet names.
   }
 var
-  Routine: TRoutine;  // references each snippet in list
+  Routine: TSnippet;  // references each snippet in list
 begin
   Result := TIStringList.Create;
   for Routine in Routines do
@@ -425,7 +425,7 @@ begin
 end;
 
 procedure TCodeExporter.WriteRoutine(const ParentNode: IXMLNode;
-  const Routine: TRoutine);
+  const Routine: TSnippet);
   {Writes an XML "routine" node and child nodes that describe a snippet.
     @param ParentNode [in] Node under which "routine" node is to be created.
     @param Routine [in] Reference to snippet to be described in XML.
@@ -469,7 +469,7 @@ procedure TCodeExporter.WriteRoutines(const ParentNode: IXMLNode);
   }
 var
   Node: IXMLNode;       // new "routines" list node
-  Routine: TRoutine;    // refers to each exported snippet
+  Routine: TSnippet;    // refers to each exported snippet
 begin
   // Add "routines" list node
   Node := fXMLDoc.CreateElement(ParentNode, cRoutinesNode);
