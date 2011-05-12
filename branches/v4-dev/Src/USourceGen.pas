@@ -104,7 +104,7 @@ type
       }
       TUnitRecorder = procedure(const Units: TStringList) of object;
     var
-      fItems: TObjectList<TRoutine>;  // List of consts or types
+      fItems: TObjectList<TSnippet>;  // List of consts or types
     function GetCount: Integer;
       {Read accessor for Count property.
         @return Number of items in list.
@@ -134,7 +134,7 @@ type
           ConstOrType.
         @except Exception raised if dependency list is not valid.
       }
-    function GetEnumerator: TEnumerator<TRoutine>;
+    function GetEnumerator: TEnumerator<TSnippet>;
       {Gets an intialised const and type list enumerator.
         @return Required enumerator.
       }
@@ -865,7 +865,7 @@ constructor TConstAndTypeList.Create;
   }
 begin
   inherited;
-  fItems := TObjectList<TRoutine>.Create(False);
+  fItems := TObjectList<TSnippet>.Create(False);
 end;
 
 destructor TConstAndTypeList.Destroy;
@@ -884,7 +884,7 @@ begin
   Result := fItems.Count;
 end;
 
-function TConstAndTypeList.GetEnumerator: TEnumerator<TRoutine>;
+function TConstAndTypeList.GetEnumerator: TEnumerator<TSnippet>;
   {Gets an intialised const and type list enumerator.
     @return Required enumerator.
   }

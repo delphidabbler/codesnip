@@ -149,7 +149,7 @@ type
       {Loads all snippets in a category.
         @param Cat [in] Category to be loaded.
       }
-    procedure LoadReferences(const Routine: TRoutine);
+    procedure LoadReferences(const Routine: TSnippet);
       {Loads all of a snippet's references.
         @param Routine [in] Snippet for which references are required.
       }
@@ -166,14 +166,14 @@ type
         @return Reader object instance.
       }
     function FindRoutine(const RoutineName: string;
-      const Routines: TSnippetList): TRoutine; virtual; abstract;
+      const Routines: TSnippetList): TSnippet; virtual; abstract;
       {Finds the snippet object with a specified name.
         @param RoutineName [in] Name of required snippet.
         @param Routines [in] List of snippets to search.
         @return Reference to required snippet object or nil if snippet is not
           found.
       }
-    function IsNativeRoutine(const Routine: TRoutine): Boolean;
+    function IsNativeRoutine(const Routine: TSnippet): Boolean;
       virtual; abstract;
       {Checks if a snippet is native (belongs) to the database being read.
         @param Routine [in] Snippet to test.
@@ -224,14 +224,14 @@ type
         @return Reader object instance.
       }
     function FindRoutine(const RoutineName: string;
-      const Routines: TSnippetList): TRoutine; override;
+      const Routines: TSnippetList): TSnippet; override;
       {Finds the snippet object with a specified name in the main database.
         @param RoutineName [in] Name of required snippet.
         @param Routines [in] List of snippets to search.
         @return Reference to required snippet object or nil if snippet is not
           found.
       }
-    function IsNativeRoutine(const Routine: TRoutine): Boolean; override;
+    function IsNativeRoutine(const Routine: TSnippet): Boolean; override;
       {Checks if a snippet is native (belongs) to the main database.
         @param Routine [in] Snippet to test.
         @return True if snippet is native, False if not.
@@ -258,7 +258,7 @@ type
         @return Reader object instance.
       }
     function FindRoutine(const RoutineName: string;
-      const Routines: TSnippetList): TRoutine; override;
+      const Routines: TSnippetList): TSnippet; override;
       {Finds the snippet object with a specified name. If snippet is not in this
       (user) database the main database is searched.
         @param RoutineName [in] Name of required snippet.
@@ -266,7 +266,7 @@ type
         @return Reference to required snippet object or nil if snippet is not
           found.
       }
-    function IsNativeRoutine(const Routine: TRoutine): Boolean; override;
+    function IsNativeRoutine(const Routine: TSnippet): Boolean; override;
       {Checks if a snippet is native (belongs) to the user database.
         @param Routine [in] Snippet to test.
         @return True if snippet is native, False if not.
@@ -387,7 +387,7 @@ procedure TSnippetsLoader.Load(const Routines: TSnippetList;
   }
 var
   Category: TCategory;  // a category
-  Routine: TRoutine;    // a snippet
+  Routine: TSnippet;    // a snippet
 begin
   // Create reader object that can access data storage
   fReader := CreateReader;
@@ -439,7 +439,7 @@ begin
   end;
 end;
 
-procedure TSnippetsLoader.LoadReferences(const Routine: TRoutine);
+procedure TSnippetsLoader.LoadReferences(const Routine: TSnippet);
   {Loads all of a snippet's references.
     @param Routine [in] Snippet for which references are required.
   }
@@ -455,7 +455,7 @@ procedure TSnippetsLoader.LoadReferences(const Routine: TRoutine);
     }
   var
     RefName: string;        // referenced snippet name
-    Reference: TRoutine;    // referenced snippet object
+    Reference: TSnippet;    // referenced snippet object
   begin
     for RefName in RefNames do
     begin
@@ -484,7 +484,7 @@ var
   RoutineNames: IStringList;    // list of names of snippets in category
   RoutineProps: TSnippetData;   // properties of a snippet
   RoutineName: string;          // each name in name list
-  Routine: TRoutine;            // references a snippet object
+  Routine: TSnippet;            // references a snippet object
 begin
   FillChar(RoutineProps, SizeOf(RoutineProps), 0);
   // Get names of all snippets in category
@@ -533,7 +533,7 @@ begin
 end;
 
 function TMainSnippetsLoader.FindRoutine(const RoutineName: string;
-  const Routines: TSnippetList): TRoutine;
+  const Routines: TSnippetList): TSnippet;
   {Finds the snippet object with a specified name in the main database.
     @param RoutineName [in] Name of required snippet.
     @param Routines [in] List of snippets to search.
@@ -544,7 +544,7 @@ begin
   Result := Routines.Find(RoutineName, False);
 end;
 
-function TMainSnippetsLoader.IsNativeRoutine(const Routine: TRoutine): Boolean;
+function TMainSnippetsLoader.IsNativeRoutine(const Routine: TSnippet): Boolean;
   {Checks if a snippet is native (belongs) to the main database.
     @param Routine [in] Snippet to test.
     @return True if snippet is native, False if not.
@@ -585,7 +585,7 @@ begin
 end;
 
 function TUserSnippetsLoader.FindRoutine(const RoutineName: string;
-  const Routines: TSnippetList): TRoutine;
+  const Routines: TSnippetList): TSnippet;
   {Finds the snippet object with a specified name. If snippet is not in this
   (user) database the main database is searched.
     @param RoutineName [in] Name of required snippet.
@@ -600,7 +600,7 @@ begin
     Result := Routines.Find(RoutineName, False);
 end;
 
-function TUserSnippetsLoader.IsNativeRoutine(const Routine: TRoutine): Boolean;
+function TUserSnippetsLoader.IsNativeRoutine(const Routine: TSnippet): Boolean;
   {Checks if a snippet is native (belongs) to the user database.
     @param Routine [in] Snippet to test.
     @return True if snippet is native, False if not.
@@ -705,7 +705,7 @@ procedure TSnippetsWriter.WriteRoutines;
   // ---------------------------------------------------------------------------
 
 var
-  Routine: TRoutine;        // loops through each snippet in list
+  Routine: TSnippet;        // loops through each snippet in list
   Props: TSnippetData;      // snippet properties
   Refs: TSnippetReferences; // snippet references
 begin
