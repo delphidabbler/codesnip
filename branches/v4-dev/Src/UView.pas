@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -47,43 +47,43 @@ uses
   // Project
   UBaseObjects, UInitialLetter, USnippetKindInfo, USnippets;
 
-{ TODO: see if we can use generics in any way to simplify IViewKey
-        implementations - there's a lot of duplication }
-{ TODO: add key records to all items related to views (categories, snippets,
-        etc) and define equals operator on them }
-{ TODO: see if we can removed duplication between IView.IsEqual and
-        IViewKey.IsEqual implementations. }
 
 type
-
-  { TODO: consider renaming this as IViewPersist }
   ///  <summary>
   ///  Interface supported by object that can compare key values associated with
-  ///  a view for equality. The values stored in this object must persist even
-  ///  if any object stored in the related IView object has been destroyed.
+  ///  a view for equality.
   ///  </summary>
+  ///  <remarks>
+  ///  The values stored in this object must persist even if any object stored
+  ///  in the related IView object has been destroyed.
+  ///  </remarks>
   IViewKey = interface(IInterface)
     ['{E6C39F3C-63E3-4A3E-A4E7-B176DA121D9E}']
-    ///  Checks if two view keys are equal.
+    ///  <summary>Checks if two view keys are equal.</summary>
     function IsEqual(const Key: IViewKey): Boolean;
   end;
 
+type
   ///  <summary>
   ///  Interface supported by all view objects.
   ///  </summary>
   IView = interface(IInterface)
     ['{707ED3DC-1738-4B79-B1BE-1C554572097E}']
-    ///  Checks if two view items are equal, i.e. they have the same "type" and
-    ///  any properties have the the same values.
+    ///  <summary>Checks if two view items are equal, i.e. they have the same
+    ///  "type" and any properties have the the same values.</summary>
     function IsEqual(View: IView): Boolean;
-    ///  View description.
+    ///  <summary>Gets description of view.</summary>
     function GetDescription: string;
+    ///  <summary>Description of view.</summary>
     property Description: string read GetDescription;
-    ///  View key. Encapsulates the data that uniquely identifies the view item
+    ///  <summary>Gets object containing view's unique key.</summary>
+    ///  <remarks>Encapsulates the data that uniquely identifies the view item
     ///  without having have an instance of any object wrapped by the view item.
+    ///  </remarks>
     function GetKey: IViewKey;
   end;
 
+type
   ///  <summary>
   ///  Interface supported by nul view.
   ///  </summary>
@@ -91,6 +91,7 @@ type
     ['{18D06867-2E6D-4B62-A0A5-A269C91D18D6}']
   end;
 
+type
   ///  <summary>
   ///  Interface supported by start page view.
   ///  </summary>
@@ -98,71 +99,85 @@ type
     ['{9D2208C4-8FFC-4532-8C3F-07514EDFAB9D}']
   end;
 
+type
   ///  <summary>
   ///  Interface supported by snippet views.
   ///  </summary>
   ISnippetView = interface(IView)
     ['{E0BD3AB7-2CB8-4B07-84D9-D7625DD020B0}']
-    ///  Snippet associated with view.
+    ///  <summary>Gets reference to snippet associated with view.</summary>
     function GetSnippet: TRoutine;
+    ///  <summary>Snippet associated with view.</summary>
     property Snippet: TRoutine read GetSnippet;
   end;
 
+type
   ///  <summary>
   ///  Interface supported by category views.
   ///  </summary>
   ICategoryView = interface(IView)
     ['{C8BB04FD-B0B7-42F9-84AA-2F7FDD3A6FE8}']
-    ///  Category associated with view.
+    ///  <summary>Gets reference to category associated with view.</summary>
     function GetCategory: TCategory;
+    ///  <summary>Category associated with view.</summary>
     property Category: TCategory read GetCategory;
   end;
 
+type
   ///  <summary>
   ///  Interface supported by snippet kind views.
   ///  </summary>
   ISnippetKindView = interface(IView)
     ['{FE074E72-857F-4D43-A17D-A951830B78E4}']
-    ///  Info about snippet kind associated with view
+    ///  <summary>Gets info about snippet kind associated with view.</summary>
     function GetKindInfo: TSnippetKindInfo;
+    ///  <summary>Info about snippet kind associated with view.</summary>
     property KindInfo: TSnippetKindInfo read GetKindInfo;
   end;
 
+type
   ///  <summary>
   ///  Interface supported by initial letter views.
   ///  </summary>
   IInitialLetterView = interface(IView)
     ['{E589E3E9-7178-4FF8-BDEF-D6F7DC9FEB85}']
-    ///  Info about initial letter associated with view
+    ///  <summary>Gets info about initial letter associated with view.</summary>
     function GetInitialLetter: TInitialLetter;
+    ///  <summary>Info about initial letter associated with view.</summary>
     property InitialLetter: TInitialLetter read GetInitialLetter;
   end;
 
+type
   ///  <summary>
   ///  List of view items.
   ///  </summary>
   TViewItemList = class sealed(TList<IView>);
 
+type
   ///  <summary>
   ///  Static factory class used to create view instances of different types.
   ///  </summary>
   TViewItemFactory = class sealed(TNoConstructObject)
   public
-    ///  Creates a copy of the given view. Copy has same type and properties.
+    ///  <summary>Creates a copy of the given view. Copy has same type and
+    ///  properties.</summary>
     class function Clone(View: IView): IView;
-    ///  Creates a nul view instance.
+    ///  <summary>Creates a nul view instance.</summary>
     class function CreateNulView: IView;
-    ///  Creates a start page view instance.
+    ///  <summary>Creates a start page view instance.</summary>
     class function CreateStartPageView: IView;
-    ///  Creates a snippet view instance associated with a given snippet.
+    ///  <summary>Creates a snippet view instance associated with a given
+    ///  snippet.</summary>
     class function CreateSnippetView(const Snippet: TRoutine): IView;
-    ///  Creates a category view instance associated with a given category
+    ///  <summary>Creates a category view instance associated with a given
+    ///  category.</summary>
     class function CreateCategoryView(const Category: TCategory): IView;
-    ///  Creates a snippet kind view instance associated with a given snippet
-    ///  kind.
+    ///  <summary>Creates a snippet kind view instance associated with a given
+    ///  snippet kind.</summary>
     class function CreateSnippetKindView(const KindInfo: TSnippetKindInfo):
       IView;
-    ///  Creates an initial letter view instance associated with a given letter.
+    ///  <summary>Creates an initial letter view instance associated with a
+    ///  given letter.</summary>
     class function CreateInitialLetterView(const Letter: TInitialLetter): IView;
   end;
 
@@ -178,142 +193,212 @@ uses
 
 
 type
-
-  ///  Nul view
+  ///  <summary>Nul view.</summary>
   TNulViewItem = class sealed(TInterfacedObject,
     IView, INulView
   )
   strict private
     type
+      ///  <summary>Implementation of IViewKey for nul view.</summary>
       TKey = class(TInterfacedObject, IViewKey)
       public
+        ///  <summary>Checks if this key is equal to one passed as a parameter.
+        ///  </summary>
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
     { IView methods }
-    function GetDescription: string;
+    ///  <summary>Checks if this view item is equal to the one passed as a
+    ///  parameter.</summary>
     function IsEqual(View: IView): Boolean;
+    ///  <summary>Gets description of view.</summary>
+    function GetDescription: string;
+    ///  <summary>Gets object containing view's unique key.</summary>
     function GetKey: IViewKey;
   end;
 
-  ///  View associated with start page
+type
+  ///  <summary>View associated with start page.</summary>
   TStartPageViewItem = class sealed(TInterfacedObject,
     IView, IStartPageView
   )
   strict private
     type
+      ///  <summary>Implementation of IViewKey for start page view.</summary>
       TKey = class(TInterfacedObject, IViewKey)
       public
+        ///  <summary>Checks if this key is equal to one passed as a parameter.
+        ///  </summary>
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
     { IView methods }
-    function GetDescription: string;
+    ///  <summary>Checks if this view item is equal to the one passed as a
+    ///  parameter.</summary>
     function IsEqual(View: IView): Boolean;
+    ///  <summary>Gets description of view.</summary>
+    function GetDescription: string;
+    ///  <summary>Gets object containing view's unique key.</summary>
     function GetKey: IViewKey;
   end;
 
-  ///  View associated with a snippet.
+type
+  ///  <summary>View associated with a snippet.</summary>
   TSnippetViewItem = class sealed(TInterfacedObject,
     IView, ISnippetView
   )
   strict private
-    ///  Associated snippet.
-    var fSnippet: TRoutine;
+    var
+      ///  <summary>Snippet associated with view.</summary>
+      fSnippet: TRoutine;
     type
+      ///  <summary>Implementation of IViewKey for snippet view.</summary>
       TKey = class(TInterfacedObject, IViewKey)
       strict private
-        fID: TSnippetID;
+        var
+          ///  <summary>Snippet id used as key.</summary>
+          fID: TSnippetID;
       public
+        ///  <summary>Constructs object with given snippet id as key.</summary>
         constructor Create(const ID: TSnippetID);
+        ///  <summary>Checks if this key is equal to one passed as a parameter.
+        ///  </summary>
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
-    ///  Constructs view for a specified snippet.
+    ///  <summary>Constructs view for a specified snippet.</summary>
     constructor Create(const Snippet: TRoutine);
     { IView methods }
-    function GetDescription: string;
+    ///  <summary>Checks if this view item is equal to the one passed as a
+    ///  parameter.</summary>
     function IsEqual(View: IView): Boolean;
+    ///  <summary>Gets description of view.</summary>
+    function GetDescription: string;
+    ///  <summary>Gets object containing view's unique key.</summary>
     function GetKey: IViewKey;
     { ISnippetView methods }
+    ///  <summary>Gets reference to snippet associated with view.</summary>
     function GetSnippet: TRoutine;
   end;
 
-  ///  View associated with a category.
+type
+  ///  <summary>View associated with a category.</summary>
   TCategoryViewItem = class sealed(TInterfacedObject,
     IView, ICategoryView
   )
   strict private
-    ///  Associated category.
-    var fCategory: TCategory;
+    var
+      ///  <summary>Category associated with view.</summary>
+      fCategory: TCategory;
     type
+      ///  <summary>Implementation of IViewKey for category view item.</summary>
       TKey = class(TInterfacedObject, IViewKey)
       strict private
-        fID: string;
+        var
+          ///  <summary>Category id used as key.</summary>
+          fID: string;
       public
+        ///  <summary>Constructs object with given category id as key.</summary>
         constructor Create(const ID: string);
+        ///  <summary>Checks if this key is equal to one passed as a parameter.
+        ///  </summary>
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
-    //  Constructs view for a specified category.
+    ///  <summary>Constructs view for a specified category.</summary>
     constructor Create(const Category: TCategory);
     { IView methods }
-    function GetDescription: string;
+    ///  <summary>Checks if this view item is equal to the one passed as a
+    ///  parameter.</summary>
     function IsEqual(View: IView): Boolean;
+    ///  <summary>Gets description of view.</summary>
+    function GetDescription: string;
+    ///  <summary>Gets object containing view's unique key.</summary>
     function GetKey: IViewKey;
     { ICategoryView methods }
+    ///  <summary>Gets reference to category associated with view.</summary>
     function GetCategory: TCategory;
   end;
 
-  ///  View associated with a snippet kind grouping.
+type
+  ///  <summary>View associated with a snippet kind grouping.</summary>
   TSnippetKindViewItem = class sealed(TInterfacedObject,
     IView, ISnippetKindView
   )
   strict private
-    ///  Associated snippet kind.
-    var fKindInfo: TSnippetKindInfo;
+    var
+      ///  <summary>Snippet kind associated with view.</summary>
+      fKindInfo: TSnippetKindInfo;
     type
+      ///  <summary>Implementation of IViewKey for snippet kind view item.
+      ///  </summary>
       TKey = class(TInterfacedObject, IViewKey)
       strict private
-        var fID: TSnippetKind;
+        var
+          ///  <summary>Snippet kind used as key.</summary>
+          fID: TSnippetKind;
       public
+        ///  <summary>Constructs object with given snippet kind as key.
+        ///  </summary>
         constructor Create(const ID: TSnippetKind);
+        ///  <summary>Checks if this key is equal to one passed as a parameter.
+        ///  </summary>
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
-    ///  Constructs view for a specified snippet kind.
+    ///  <summary>Constructs view for a specified snippet kind.</summary>
     constructor Create(const KindInfo: TSnippetKindInfo);
     { IView methods }
-    function GetDescription: string;
+    ///  <summary>Checks if this view item is equal to the one passed as a
+    ///  parameter.</summary>
     function IsEqual(View: IView): Boolean;
+    ///  <summary>Gets description of view.</summary>
+    function GetDescription: string;
+    ///  <summary>Gets object containing view's unique key.</summary>
     function GetKey: IViewKey;
     { ISnippetKindView methods }
+    ///  <summary>Gets info about snippet kind associated with view.</summary>
     function GetKindInfo: TSnippetKindInfo;
   end;
 
-  ///  View associated with an initial letter grouping.
+type
+  ///  <summary>View associated with an initial letter grouping.</summary>
   TInitialLetterViewItem = class sealed(TInterfacedObject,
     IView, IInitialLetterView
   )
   strict private
-    ///  Associated initial letter.
-    var fLetter: TInitialLetter;
+    var
+      ///  <summary>Initial letter associated with view.</summary>
+      fLetter: TInitialLetter;
     type
+      ///  <summary>Implementation of IViewKey for initial letter view item.
+      ///  </summary>
       TKey = class(TInterfacedObject, IViewKey)
       strict private
-        var fID: TInitialLetter;
+        var
+          ///  <summary>Initial letter used as key.</summary>
+          fID: TInitialLetter;
       public
+        ///  <summary>Constructs object with given initial letter as key.
+        ///  </summary>
         constructor Create(const ID: TInitialLetter);
+        ///  <summary>Checks if this key is equal to one passed as a parameter.
+        ///  </summary>
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
-    ///  Constructs view for a specified initial letter.
+    ///  <summary>Constructs view for a specified initial letter.</summary>
     constructor Create(const Letter: TInitialLetter);
     { IView methods }
-    function GetDescription: string;
+    ///  <summary>Checks if this view item is equal to the one passed as a
+    ///  parameter.</summary>
     function IsEqual(View: IView): Boolean;
+    ///  <summary>Gets description of view.</summary>
+    function GetDescription: string;
+    ///  <summary>Gets object containing view's unique key.</summary>
     function GetKey: IViewKey;
     { IInitialLetterView methods }
+    ///  <summary>Gets unfo about initial letter associated with view.</summary>
     function GetInitialLetter: TInitialLetter;
   end;
 
@@ -538,9 +623,7 @@ var
 begin
   if not Supports(View, IInitialLetterView, LetterView) then
     Exit(False);
-  // todo: change following to do comparison on record rather than char.
-  Result := fLetter.Letter =
-    LetterView.InitialLetter.Letter;
+  Result := fLetter = LetterView.InitialLetter;
 end;
 
 { TInitialLetterViewItem.TKey }
