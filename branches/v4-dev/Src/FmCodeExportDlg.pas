@@ -167,7 +167,7 @@ begin
 
     // Validate entries
     // must have at least one snippet
-    if frmSnippets.SelectedRoutines.Count = 0 then
+    if frmSnippets.SelectedSnippets.Count = 0 then
       raise EDataEntry.Create(sNoSnippets, frmSnippets);
     // must have a file name
     if FileName = '' then
@@ -226,7 +226,7 @@ var
 begin
   if not Assigned(Snippet) or not Snippet.UserDefined then
     // Snippet is nil or not user-defined: select nothing
-    frmSnippets.SelectedRoutines := nil
+    frmSnippets.SelectedSnippets := nil
   else
   begin
     // Snippet is user-defined. We make a snippet list containing only this
@@ -234,7 +234,7 @@ begin
     List := TSnippetList.Create;
     try
       List.Add(Snippet);
-      frmSnippets.SelectedRoutines := List;
+      frmSnippets.SelectedSnippets := List;
     finally
       FreeAndNil(List);
     end;
@@ -248,7 +248,7 @@ var
   OutData: TEncodedData;  // receives export file content
 begin
   OutData := TCodeExporter.ExportRoutines(
-    TUserInfo.CreateNul, frmSnippets.SelectedRoutines
+    TUserInfo.CreateNul, frmSnippets.SelectedSnippets
   );
   TFileIO.WriteAllBytes(Trim(edFile.Text), OutData.Data);
 end;

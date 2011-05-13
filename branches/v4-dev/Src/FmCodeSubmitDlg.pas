@@ -241,7 +241,7 @@ procedure TCodeSubmitDlg.BuildSubmission;
   {Builds XML document containing details of submission and stores in a stream.
   }
 begin
-  Assert(frmSnippets.SelectedRoutines.Count > 0,
+  Assert(frmSnippets.SelectedSnippets.Count > 0,
     ClassName + '.BuildSubmission: No snippets selected');
   Assert(edName.Text <> '',
     ClassName + '.BuildSubmission: No user name provided');
@@ -252,7 +252,7 @@ begin
     TUserInfo.Create(
       TUserDetails.Create(edName.Text, edEmail.Text), Trim(edComments.Text)
     ),
-    frmSnippets.SelectedRoutines
+    frmSnippets.SelectedSnippets
   );
 end;
 
@@ -417,13 +417,13 @@ var
   List: TSnippetList; // list containing only one snippet
 begin
   if not Assigned(Snippet) or not Snippet.UserDefined then
-    frmSnippets.SelectedRoutines := nil
+    frmSnippets.SelectedSnippets := nil
   else
   begin
     List := TSnippetList.Create;
     try
       List.Add(Snippet);
-      frmSnippets.SelectedRoutines := List;
+      frmSnippets.SelectedSnippets := List;
     finally
       List.Free;
     end;
@@ -438,7 +438,7 @@ procedure TCodeSubmitDlg.SnippetListChange(Sender: TObject);
 begin
   if CurrentPage = cSnippetsPageIdx then
     UpdateButtons(CurrentPage);
-  lblSnippetPrompt.Visible := frmSnippets.SelectedRoutines.Count = 0;
+  lblSnippetPrompt.Visible := frmSnippets.SelectedSnippets.Count = 0;
 end;
 
 procedure TCodeSubmitDlg.UpdateButtons(const PageIdx: Integer);
@@ -470,7 +470,7 @@ resourcestring
 begin
   case PageIdx of
     cSnippetsPageIdx:
-      if frmSnippets.SelectedRoutines.Count = 0 then
+      if frmSnippets.SelectedSnippets.Count = 0 then
         raise EDataEntry.Create(sNoSnippets, frmSnippets);
     cUserInfoPageIdx:
     begin

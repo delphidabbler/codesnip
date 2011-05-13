@@ -136,7 +136,7 @@ procedure TSelectionSearchDlg.btnClearAllClick(Sender: TObject);
 begin
   // Assigning nil to snippet selection frame's SelectedRoutines property clears
   // the list.
-  frmSelect.SelectedRoutines := nil;
+  frmSelect.SelectedSnippets := nil;
 end;
 
 procedure TSelectionSearchDlg.btnMainDBClick(Sender: TObject);
@@ -157,7 +157,7 @@ begin
   inherited;
   // Create search criteria for all selected snippets
   SearchCriteria := TSearchCriteriaFactory.CreateSelectionSearchCriteria(
-    frmSelect.SelectedRoutines
+    frmSelect.SelectedSnippets
   );
   // Create search object from the entered criteria
   fSearch := TSearchFactory.CreateSelectionSearch(SearchCriteria);
@@ -170,7 +170,7 @@ procedure TSelectionSearchDlg.btnSelectAllClick(Sender: TObject);
 begin
   // Storing all snippets in database in snippet selection frame's
   // SelectedRoutines property causes all snippets to be selected
-  frmSelect.SelectedRoutines := Snippets.Snippets;
+  frmSelect.SelectedSnippets := Snippets.Snippets;
 end;
 
 procedure TSelectionSearchDlg.btnUserDBClick(Sender: TObject);
@@ -237,7 +237,7 @@ begin
     for Snippet in Snippets.Snippets do
       if Snippet.UserDefined = UserDefined then
         SnippetList.Add(Snippet);
-    frmSelect.SelectedRoutines := SnippetList;
+    frmSelect.SelectedSnippets := SnippetList;
   finally
     FreeAndNil(SnippetList);
   end;
@@ -249,7 +249,7 @@ procedure TSelectionSearchDlg.SelectionChanged(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  btnOK.Enabled := frmSelect.SelectedRoutines.Count > 0;
+  btnOK.Enabled := frmSelect.SelectedSnippets.Count > 0;
 end;
 
 procedure TSelectionSearchDlg.SetSelectedSnippets(const Value: TSnippetList);
@@ -258,7 +258,7 @@ procedure TSelectionSearchDlg.SetSelectedSnippets(const Value: TSnippetList);
     @param Value [in] List of snippets.
   }
 begin
-  frmSelect.SelectedRoutines := Value;
+  frmSelect.SelectedSnippets := Value;
 end;
 
 end.

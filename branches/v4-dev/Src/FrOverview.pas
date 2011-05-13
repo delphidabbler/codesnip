@@ -109,7 +109,7 @@ type
       fCanChange: Boolean;          // Whether selected node allowed to change
       fSelectedItem: IView;         // Current selected view item in tree view
       fPrevSelectedItem: IView;     // Previous selected view item in tree view
-      fRoutineList: TSnippetList;   // List of currently displayed snippets
+      fSnippetList: TSnippetList;   // List of currently displayed snippets
       fTreeStates: array of TOverviewTreeState;
                                     // Array of tree state objects: one per tab
       fCommandBars: TCommandBarMgr; // Configures popup menu and toolbar
@@ -183,9 +183,9 @@ type
       {Switches to previous tab, or return to last tab if current tab is first.
       }
     { IOverviewDisplayMgr }
-    procedure Display(const RoutineList: TSnippetList);
+    procedure Display(const SnippetList: TSnippetList);
       {Displays the snippets in the current overview tab.
-        @param RoutineList [in] List of snippets to be displayed or nil if
+        @param SnippetList [in] List of snippets to be displayed or nil if
           nothing to be displayed.
       }
     procedure Clear;
@@ -304,7 +304,7 @@ begin
   fTVDraw := TTVDraw.Create;
   tvSnippets.OnCustomDrawItem := fTVDraw.CustomDrawItem;
   // Create list to store displayed snippets
-  fRoutineList := TSnippetList.Create;
+  fSnippetList := TSnippetList.Create;
   // Create objects used to remember state of each tree view
   SetLength(fTreeStates, tcDisplayStyle.Tabs.Count);
   for TabIdx := 0 to Pred(tcDisplayStyle.Tabs.Count) do
@@ -322,22 +322,22 @@ begin
   fTVDraw.Free;
   fPrevSelectedItem := nil;
   fSelectedItem := nil;
-  fRoutineList.Free;  // does not free referenced snippets
+  fSnippetList.Free;  // does not free referenced snippets
   fCommandBars.Free;
   inherited;
 end;
 
-procedure TOverviewFrame.Display(const RoutineList: TSnippetList);
+procedure TOverviewFrame.Display(const SnippetList: TSnippetList);
   {Displays the snippets in the current overview tab.
-    @param RoutineList [in] List of snippets to be displayed or nil if nothing
+    @param SnippetList [in] List of snippets to be displayed or nil if nothing
       to be displayed.
   }
 begin
   // Only do update if new snippet list is different to current one
-  if not fRoutineList.IsEqual(RoutineList) then
+  if not fSnippetList.IsEqual(SnippetList) then
   begin
     // Take copy of new list
-    fRoutineList.Assign(RoutineList);
+    fSnippetList.Assign(SnippetList);
     Redisplay;
   end;
 end;
@@ -512,11 +512,11 @@ begin
     // Clear tree view
     fCanChange := False;
     tvSnippets.Items.Clear;
-    if fRoutineList.Count = 0 then
+    if fSnippetList.Count = 0 then
       Exit;
     // Build new treeview using grouping determined by selected tab
     Builder := BuilderClasses[tcDisplayStyle.TabIndex].Create(
-      tvSnippets, fRoutineList
+      tvSnippets, fSnippetList
     );
     Builder.Build;
     // Restore state of treeview based on last time it was displayed

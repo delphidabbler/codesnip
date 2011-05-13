@@ -80,9 +80,9 @@ type
       end;
     var
       fTVDraw: TTVDraw;                 // Object that renders tree view nodes
-      fSelectedRoutines: TSnippetList;  // Value of SelectedRoutines property
-    procedure SetSelectedRoutines(const Value: TSnippetList);
-      {Write access method for SelectedRoutines property. Updates state of items
+      fSelectedSnippets: TSnippetList;  // Value of SelectedSnippets property
+    procedure SetSelectedSnippets(const Value: TSnippetList);
+      {Write access method for SelectedSnippets property. Updates state of items
       in tree view and triggers OnChange event.
         @param Value [in] New list of snippets. If nil list is cleared.
       }
@@ -129,8 +129,8 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
-    property SelectedRoutines: TSnippetList
-      read fSelectedRoutines write SetSelectedRoutines;
+    property SelectedSnippets: TSnippetList
+      read fSelectedSnippets write SetSelectedSnippets;
       {List of selected snippets. When set all snippets in list are checked in
       tree view. When user toggles checked state of nodes snippet list is
       updated to include all checked snippets}
@@ -186,7 +186,7 @@ constructor TSelectSnippetsBaseFrame.Create(AOwner: TComponent);
   }
 begin
   inherited;
-  fSelectedRoutines := TSnippetList.Create;
+  fSelectedSnippets := TSnippetList.Create;
   fTVDraw := TTVDraw.Create;
   tvChecked.OnCustomDrawItem := fTVDraw.CustomDrawItem;
 end;
@@ -196,7 +196,7 @@ destructor TSelectSnippetsBaseFrame.Destroy;
   }
 begin
   FreeAndNil(fTVDraw);
-  FreeAndNil(fSelectedRoutines);
+  FreeAndNil(fSelectedSnippets);
   inherited;
 end;
 
@@ -218,7 +218,7 @@ var
   CatNode: TCheckedTreeNode;     // loops thru all category nodes
   SnippetNode: TCheckedTreeNode; // loops thru all snippet nodes in a category
 begin
-  fSelectedRoutines.Clear;
+  fSelectedSnippets.Clear;
   // Loop through all categories
   CatNode := FirstNode;
   while Assigned(CatNode) do
@@ -232,7 +232,7 @@ begin
       Assert(IsSnippetNode(SnippetNode),
         ClassName + 'RecordChanges: SnippetNode is not a snippet node');
       if SnippetNode.IsChecked then
-        fSelectedRoutines.Add(SnippetFromNode(SnippetNode));
+        fSelectedSnippets.Add(SnippetFromNode(SnippetNode));
       SnippetNode := SnippetNode.GetNextSibling;
     end;
     CatNode := CatNode.GetNextSibling;
@@ -249,23 +249,23 @@ begin
   Assert(IsSnippetNode(Node),
     ClassName + '.SetLeafNodeState: Node is not a snippet node');
   // check the snippet node if its snippet is in currently selected snippets
-  if fSelectedRoutines.Contains(SnippetFromNode(Node)) then
+  if fSelectedSnippets.Contains(SnippetFromNode(Node)) then
     Node.Check := cbChecked
   else
     Node.Check := cbUnchecked;
 end;
 
-procedure TSelectSnippetsBaseFrame.SetSelectedRoutines(
+procedure TSelectSnippetsBaseFrame.SetSelectedSnippets(
   const Value: TSnippetList);
-  {Write access method for SelectedRoutines property. Updates state of items in
+  {Write access method for SelectedSnippets property. Updates state of items in
   tree view and triggers OnChange event.
     @param Value [in] New list of snippets. If nil list is cleared.
   }
 begin
   if Assigned(Value) then
-    fSelectedRoutines.Assign(Value)
+    fSelectedSnippets.Assign(Value)
   else
-    fSelectedRoutines.Clear;
+    fSelectedSnippets.Clear;
   // Refresh tree view state now ata has changed
   DataChanged;
 end;
