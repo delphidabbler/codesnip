@@ -52,7 +52,7 @@ type
   TTextRoutineDoc:
     Class that renders a document that describes a snippet as plain text.
   }
-  TTextRoutineDoc = class(TRoutineDoc)
+  TTextRoutineDoc = class(TSnippetDoc)
   strict private
     var fWriter: TStringWriter;   // Used to write plain text to stream
     const cPageWidth = 80;        // Width of output in characters

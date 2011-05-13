@@ -2,7 +2,7 @@
  * USnippetDoc.pas
  *
  * Implements an abstract base class that renders a text document that describes
- * a snippet. Should be overridden by class that generate actual documents in
+ * a snippet. Should be overridden by classes that generate actual documents in
  * required output format.
  *
  * $Rev$
@@ -72,19 +72,19 @@ type
   TCompileDocInfoArray = array of TCompileDocInfo;
 
   {
-  TRoutineDoc:
+  TSnippetDoc:
     Abstract base class that renders a text document that describes a snippet.
   }
-  TRoutineDoc = class(TObject)
+  TSnippetDoc = class(TObject)
   strict private
-    function RoutinesToStrings(const RoutineList: TSnippetList): IStringList;
+    function SnippetsToStrings(const SnippetList: TSnippetList): IStringList;
       {Creates a string list containing a list of snippet names.
-        @param RoutineList [in] List of snippets.
+        @param SnippetList [in] List of snippets.
         @return String list containing names of snippets from list.
       }
-    function CompilerInfo(const Routine: TSnippet): TCompileDocInfoArray;
+    function CompilerInfo(const Snippet: TSnippet): TCompileDocInfoArray;
       {Gets compiler compatibility information for a snippet.
-        @param Routine [in] Snippet for which compiler information is required.
+        @param Snippet [in] Snippet for which compiler information is required.
         @return Array of compiler compatibility information.
       }
   strict protected
@@ -139,9 +139,9 @@ type
         @return Required comma separated list or "none" if list is empty.
       }
   public
-    function Generate(const Routine: TSnippet): TEncodedData;
+    function Generate(const Snippet: TSnippet): TEncodedData;
       {Generates document that describes a snippet.
-        @param Routine [in] Snippet for which document is required.
+        @param Snippet [in] Snippet for which document is required.
         @return Encoded data containing document in appropriate format.
       }
   end;
@@ -157,9 +157,9 @@ uses
   Compilers.UCompilers, UUtils, USnippetKindInfo, Web.UInfo;
 
 
-{ TRoutineDoc }
+{ TSnippetDoc }
 
-function TRoutineDoc.CommaList(const List: IStringList): string;
+function TSnippetDoc.CommaList(const List: IStringList): string;
   {Builds a comma delimited list of names from a string list.
     @param List [in] List of names.
     @return Required comma separated list or "none" if list is empty.
@@ -174,10 +174,10 @@ begin
     Result := sNone;
 end;
 
-function TRoutineDoc.CompilerInfo(
-  const Routine: TSnippet): TCompileDocInfoArray;
+function TSnippetDoc.CompilerInfo(const Snippet: TSnippet):
+  TCompileDocInfoArray;
   {Gets compiler compatibility information for a snippet.
-    @param Routine [in] Snippet for which compiler information is required.
+    @param Snippet [in] Snippet for which compiler information is required.
     @return Array of compiler compatibility information.
   }
 var
@@ -191,15 +191,15 @@ begin
   for Compiler in Compilers do
   begin
     Result[InfoIdx] := TCompileDocInfo.Create(
-      Compiler.GetName, Routine.Compatibility[Compiler.GetID]
+      Compiler.GetName, Snippet.Compatibility[Compiler.GetID]
     );
     Inc(InfoIdx);
   end;
 end;
 
-function TRoutineDoc.Generate(const Routine: TSnippet): TEncodedData;
+function TSnippetDoc.Generate(const Snippet: TSnippet): TEncodedData;
   {Generates document that describes a snippet.
-    @param Routine [in] Snippet for which document is required.
+    @param Snippet [in] Snippet for which document is required.
     @return Encoded data containing document in appropriate format.
   }
 resourcestring
@@ -212,32 +212,32 @@ resourcestring
   sCompilers = 'Supported compilers:';
   sMainDatabaseInfo = 'A snippet from the DelphiDabbler CodeSnip Database (%s)';
 begin
-  Assert(Assigned(Routine), ClassName + '.Create: Routine is nil');
+  Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   // generate document
   InitialiseDoc;
-  RenderHeading(Routine.Name);
-  RenderDescription(Routine.Description);
-  RenderSourceCode(Routine.SourceCode);
+  RenderHeading(Snippet.Name);
+  RenderDescription(Snippet.Description);
+  RenderSourceCode(Snippet.SourceCode);
   RenderTitledText(
-    sKindTitle, TSnippetKindInfoList.Items[Routine.Kind].DisplayName
+    sKindTitle, TSnippetKindInfoList.Items[Snippet.Kind].DisplayName
   );
   RenderTitledText(
-    sCategoryTitle, Snippets.Categories.Find(Routine.Category).Description
+    sCategoryTitle, Snippets.Categories.Find(Snippet.Category).Description
   );
-  RenderTitledList(sUnitListTitle, TIStringList.Create(Routine.Units));
-  RenderTitledList(sDependListTitle, RoutinesToStrings(Routine.Depends));
-  RenderTitledList(sXRefListTitle, RoutinesToStrings(Routine.XRef));
-  if Routine.Kind <> skFreeform then
-    RenderCompilerInfo(sCompilers, CompilerInfo(Routine));
-  if not Routine.Extra.IsEmpty then
-    RenderExtra(Routine.Extra);
-  if not Routine.UserDefined then
+  RenderTitledList(sUnitListTitle, TIStringList.Create(Snippet.Units));
+  RenderTitledList(sDependListTitle, SnippetsToStrings(Snippet.Depends));
+  RenderTitledList(sXRefListTitle, SnippetsToStrings(Snippet.XRef));
+  if Snippet.Kind <> skFreeform then
+    RenderCompilerInfo(sCompilers, CompilerInfo(Snippet));
+  if not Snippet.Extra.IsEmpty then
+    RenderExtra(Snippet.Extra);
+  if not Snippet.UserDefined then
     // database info written only if snippet is from main database
     RenderDBInfo(Format(sMainDatabaseInfo, [TWebInfo.DatabaseURL]));
   Result := FinaliseDoc;
 end;
 
-procedure TRoutineDoc.InitialiseDoc;
+procedure TSnippetDoc.InitialiseDoc;
   {Initialises document. Does nothing. Descendant classes should add any
   required initialisation here.
   }
@@ -245,18 +245,18 @@ begin
   // Do nothing
 end;
 
-function TRoutineDoc.RoutinesToStrings(
-  const RoutineList: TSnippetList): IStringList;
+function TSnippetDoc.SnippetsToStrings(const SnippetList: TSnippetList):
+  IStringList;
   {Creates a string list containing a list of snippet names.
-    @param RoutineList [in] List of snippets.
+    @param SnippetList [in] List of snippets.
     @return String list containing names of snippets from list.
   }
 var
-  Routine: TSnippet;  // each snippet in list
+  Snippet: TSnippet;  // each snippet in list
 begin
   Result := TIStringList.Create;
-  for Routine in RoutineList do
-    Result.Add(Routine.Name);
+  for Snippet in SnippetList do
+    Result.Add(Snippet.Name);
 end;
 
 { TCompileDocInfo }

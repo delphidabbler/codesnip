@@ -54,7 +54,7 @@ type
   TRTFRoutineDoc:
     Class that renders a document that describes a snippet as rich text.
   }
-  TRTFRoutineDoc = class(TRoutineDoc)
+  TRTFRoutineDoc = class(TSnippetDoc)
   strict private
     var
       fHiliteAttrs: IHiliteAttrs; // Attributes determine source code formatting

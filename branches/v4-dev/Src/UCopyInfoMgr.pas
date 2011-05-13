@@ -60,7 +60,7 @@ type
     ///  depends on concrete class of object.</param>
     ///  <returns>TEncodedData - Document in form suitable for copying to
     ///  clipboard.</returns>
-    class function GenerateDoc(View: IView; const Doc: TRoutineDoc):
+    class function GenerateDoc(View: IView; const Doc: TSnippetDoc):
       TEncodedData;
   strict protected
     ///  <summary>Returns encoded data containing a Unicode plain text
@@ -95,7 +95,7 @@ begin
   Result := Supports(View, ISnippetView);
 end;
 
-class function TCopyInfoMgr.GenerateDoc(View: IView; const Doc: TRoutineDoc):
+class function TCopyInfoMgr.GenerateDoc(View: IView; const Doc: TSnippetDoc):
   TEncodedData;
 begin
   Result := Doc.Generate((View as ISnippetView).Snippet);
