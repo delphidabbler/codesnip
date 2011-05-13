@@ -565,7 +565,7 @@ function TSnippetsEditorDlg.BuildExtraActiveText: IActiveText;
     @return Required active text object.
   }
 begin
-  Result := TRoutineExtraHelper.BuildActiveText(
+  Result := TSnippetExtraHelper.BuildActiveText(
     Trim(CompressWhiteSpace(ReplaceStr(edExtra.Text, EOL, ' ')))
   );
 end;
@@ -786,7 +786,7 @@ begin
     edDescription.Text := fSnippet.Description;
     edName.Text := fSnippet.Name;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
-    edExtra.Text := TRoutineExtraHelper.BuildREMLMarkup(fSnippet.Extra);
+    edExtra.Text := TSnippetExtraHelper.BuildREMLMarkup(fSnippet.Extra);
     cbKind.ItemIndex := fSnipKindList.IndexOf(fSnippet.Kind);
     // check required items in references check list boxes
     UpdateReferences;

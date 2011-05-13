@@ -480,11 +480,11 @@ var
       if Extra <> '' then
         // There is an "extra" value: use it to set Extra property. We ignore
         // any credits, credits url and comments values in this case
-        Result := TRoutineExtraHelper.BuildActiveText(Extra)
+        Result := TSnippetExtraHelper.BuildActiveText(Extra)
       else
         // There is no "extra" value: use any comments, credits and credits URL
         // values to set Extra property
-        Result := TRoutineExtraHelper.BuildActiveText(
+        Result := TSnippetExtraHelper.BuildActiveText(
           CatIni.ReadString(Routine, cCommentsName, ''),
           CatIni.ReadString(Routine, cCreditsName, ''),
           CatIni.ReadString(Routine, cCreditsURLName, '')

@@ -445,7 +445,7 @@ begin
     fXMLDoc.CreateElement(
       RoutineNode,
       cExtraNode,
-      TRoutineExtraHelper.BuildREMLMarkupLowestVer(Routine.Extra)
+      TSnippetExtraHelper.BuildREMLMarkupLowestVer(Routine.Extra)
     );
   // write kind
   TXMLDocHelper.WriteSnippetKind(fXMLDoc, RoutineNode, Routine.Kind);
@@ -603,13 +603,13 @@ begin
         // how we read extra property depends on version of file
         case fVersion of
           1:
-            Props.Extra := TRoutineExtraHelper.BuildActiveText(
+            Props.Extra := TSnippetExtraHelper.BuildActiveText(
               TXMLDocHelper.GetSubTagText(fXMLDoc, RoutineNode, cCommentsNode),
               TXMLDocHelper.GetSubTagText(fXMLDoc, RoutineNode, cCreditsNode),
               TXMLDocHelper.GetSubTagText(fXMLDoc, RoutineNode, cCreditsUrlNode)
             );
           else // later versions
-            Props.Extra := TRoutineExtraHelper.BuildActiveText(
+            Props.Extra := TSnippetExtraHelper.BuildActiveText(
               TXMLDocHelper.GetSubTagText(fXMLDoc, RoutineNode, cExtraNode)
             );
         end;

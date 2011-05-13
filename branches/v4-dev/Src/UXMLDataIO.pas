@@ -614,14 +614,14 @@ var
       if fVersion = 1 then
         // version 1: build extra data from comments, credits and credits URL
         // nodes
-        Result := TRoutineExtraHelper.BuildActiveText(
+        Result := TSnippetExtraHelper.BuildActiveText(
           GetPropertyText(cCommentsNode),
           GetPropertyText(cCreditsNode),
           GetPropertyText(cCreditsUrlNode)
         )
       else
         // version 2: build extra data from extra node
-        Result := TRoutineExtraHelper.BuildActiveText(
+        Result := TSnippetExtraHelper.BuildActiveText(
           GetPropertyText(cExtraNode)
         );
     except
@@ -948,7 +948,7 @@ begin
       fXMLDoc.CreateElement(
         RoutineNode,
         cExtraNode,
-        TRoutineExtraHelper.BuildREMLMarkupLowestVer(Props.Extra)
+        TSnippetExtraHelper.BuildREMLMarkupLowestVer(Props.Extra)
       );
     end;
     // Kind property replaces StandardFormat

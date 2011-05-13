@@ -1,8 +1,8 @@
 {
  * USnippetExtraHelper.pas
  *
- * Implements a class that helps with parsing of routine's extra property as
- * active text and generating extra property values from active text.
+ * Implements a class that helps with parsing of a snippet's extra property as
+ * active text and vice versa.
  *
  * $Rev$
  * $Date$
@@ -49,11 +49,11 @@ uses
 type
 
   {
-  TRoutineExtraHelper:
-    Class that helps with parsing of routine's extra property as active text and
-    generating extra property values from active text.
+  TSnippetExtraHelper:
+    Class that helps with the parsing of a snippet's Extra property as active
+    text and vice versa.
   }
-  TRoutineExtraHelper = class(TNoConstructObject)
+  TSnippetExtraHelper = class(TNoConstructObject)
   public
     class function BuildActiveText(const PrefixText, CreditsMarkup,
       URL: string): IActiveText; overload;
@@ -100,9 +100,9 @@ uses
   UREMLDataIO, USnippetCreditsParser, UUtils;
 
 
-{ TRoutineExtraHelper }
+{ TSnippetExtraHelper }
 
-class function TRoutineExtraHelper.BuildActiveText(const PrefixText,
+class function TSnippetExtraHelper.BuildActiveText(const PrefixText,
   CreditsMarkup, URL: string): IActiveText;
   {Builds an active text object containing some plain followed by active text
   defined by markup in the "Credits" format.
@@ -142,7 +142,7 @@ begin
   end;
 end;
 
-class function TRoutineExtraHelper.BuildActiveText(
+class function TSnippetExtraHelper.BuildActiveText(
   const REML: string): IActiveText;
   {Builds an active text object from a string containing markup in REML format.
     @param REML [in] REML markup language that defines active text.
@@ -177,7 +177,7 @@ begin
     Result := TActiveTextFactory.CreateActiveText;
 end;
 
-class function TRoutineExtraHelper.BuildREMLMarkup(
+class function TSnippetExtraHelper.BuildREMLMarkup(
   const ActiveText: IActiveText): string;
   {Creates REML markup from an active text object using latest version.
     @param ActiveText [in] Active text object used to generate markup.
@@ -187,7 +187,7 @@ begin
   Result := TREMLWriter.Render(ActiveText, TREMLAnalyser.LATEST_VERSION);
 end;
 
-class function TRoutineExtraHelper.BuildREMLMarkupLowestVer(
+class function TSnippetExtraHelper.BuildREMLMarkupLowestVer(
   const ActiveText: IActiveText): string;
   {Creates REML markup from an active text object using lowest possible version.
     @param ActiveText [in] Active text object used to generate markup.
