@@ -135,7 +135,7 @@ begin
     Result.Append(
       TActiveTextFactory.CreateActiveText(
         MakeSentence(CreditsMarkup),
-        TRoutineCreditsParser.Create(URL)
+        TSnippetCreditsParser.Create(URL)
       )
     );
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));

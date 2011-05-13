@@ -49,29 +49,33 @@ uses
 
 type
 
-  {
-  TRoutineCreditsParser:
-    Class that parses markup used in Credits element read from snippets data
-    files. Markup is translated into active text. The Credits element may occur
-    in main database files and v1 of the user database and export files.
-  }
-  TRoutineCreditsParser = class(TInterfacedObject, IActiveTextParser)
+  ///  <summary>
+  ///  Class that parses markup used in Credits element read from snippets data
+  ///  files. Markup is translated into active text.
+  ///  </summary>
+  ///  <remarks>
+  ///  The Credits element may occur in main database files and v1 of the user
+  ///  database and export files.
+  ///  </remarks>
+  TSnippetCreditsParser = class(TInterfacedObject, IActiveTextParser)
   strict private
-    fURL: string;
-      {URL to use in any link contained in markup}
+    var
+      ///  <summary>URL to be used in any link contained in markup.</summary>
+      fURL: string;
   protected // do not make strict
-    { IActiveTextParser method }
+    ///  <summary>Parses markup and updates active text object.
+    ///  </summary>
+    ///  <param name="Markup">string [in] Markup containing definition of active
+    ///  text. Must be valid Credits element markup.</param>
+    ///  <param name="ActiveText">IActiveText [in] Active text object updated by
+    ///  parser.</param>
+    ///  <remarks>Implements IActiveTextParser.Parse.</remarks>
     procedure Parse(const Markup: string; const ActiveText: IActiveText);
-      {Parses markup and updates active text object with details.
-        @param Markup [in] Markup containing definition of active text. Must be
-          in format understood by parser.
-        @param ActiveText [in] Active text object updated by parser.
-      }
   public
+    ///  <summary>Object constructor. Sets up object.</summary>
+    ///  <param name="URL">string [in] URL to be used in any hyperlinks defined
+    ///  by Credit markup.</param>
     constructor Create(const URL: string);
-      {Class constructor. Sets up object.
-        @param URL [in] URL to be used in any hyperlinks.
-      }
   end;
 
 
@@ -99,24 +103,16 @@ uses
   UUtils;
 
 
-{ TRoutineCreditsParser }
+{ TSnippetCreditsParser }
 
-constructor TRoutineCreditsParser.Create(const URL: string);
-  {Class constructor. Sets up object.
-    @param URL [in] URL to be used in any hyperlinks.
-  }
+constructor TSnippetCreditsParser.Create(const URL: string);
 begin
   inherited Create;
   fURL := URL;
 end;
 
-procedure TRoutineCreditsParser.Parse(const Markup: string;
+procedure TSnippetCreditsParser.Parse(const Markup: string;
   const ActiveText: IActiveText);
-  {Parses markup and updates active text object with details.
-    @param Markup [in] Markup containing definition of active text. Must be in
-      format understood by parser.
-    @param ActiveText [in] Active text object updated by parser.
-  }
 const
   cOpenBracket  = '[';  // open bracket character that starts a link
   cCloseBracket = ']';  // close bracket character that ends a link
