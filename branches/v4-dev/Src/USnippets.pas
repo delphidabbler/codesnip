@@ -177,14 +177,14 @@ type
         @param Cat [in] Category for which snippet names are requested.
         @return Required list of snippet names.
       }
-    function GetSnippetProps(const Routine: TSnippet): TSnippetData;
+    function GetSnippetProps(const Snippet: TSnippet): TSnippetData;
       {Retrieves all the properties of a snippet.
-        @param Routine [in] Snippet for which data is requested.
+        @param Snippet [in] Snippet for which data is requested.
         @return Record containing property data.
       }
-    function GetSnippetRefs(const Routine: TSnippet): TSnippetReferences;
+    function GetSnippetRefs(const Snippet: TSnippet): TSnippetReferences;
       {Retrieves information about all the references of a snippet.
-        @param Routine [in] Snippet for which information is requested.
+        @param Snippet [in] Snippet for which information is requested.
         @return Record containing references.
       }
   end;
@@ -280,10 +280,10 @@ type
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
-    function IsEqual(const Routine: TSnippet): Boolean;
+    function IsEqual(const Snippet: TSnippet): Boolean;
       {Checks if this snippet is same as another snippet. Snippets are
       considered equal if they have the same name and come from same database.
-        @param Routine [in] Snippet being compared.
+        @param Snippet [in] Snippet being compared.
         @return True if snippets are equal, False if not.
       }
     function CanCompile: Boolean;
@@ -327,11 +327,11 @@ type
         @param Idx [in] Index of required snippet in list.
         @return Snippet at specified index in list.
       }
-    function Find(const RoutineName: string;
+    function Find(const SnippetName: string;
       const UserDefined: Boolean; out Index: Integer): Boolean; overload;
       {Finds a snippet in the list that has a specified name and user defined
       property. Uses a binary search.
-        @param RoutineName [in] Name of snippet to be found.
+        @param SnippetName [in] Name of snippet to be found.
         @param UserDefined [in] Whether required snippet is user defined or not.
         @param Index [out] Index of required snippet in list. Valid only if
           method returns True.
@@ -365,24 +365,24 @@ type
         @param AList [in] List of snippets to compare.
         @return True if lists are same, False if not.
       }
-    function Add(const Routine: TSnippet): Integer; virtual;
+    function Add(const Snippet: TSnippet): Integer; virtual;
       {Adds new snippet to the list, maintaining list in alphabetical order.
-        @param Routine [in] Snippet being added.
+        @param Snippet [in] Snippet being added.
         @return Index where item was inserted in list
         @except Raised if duplicate snippet added to list.
       }
-    function Find(const RoutineName: string;
+    function Find(const SnippetName: string;
       const UserDefined: Boolean): TSnippet; overload;
       {Finds a named snippet in list with a matching user defined property.
-        @param RoutineName [in] Name of required snippet.
+        @param SnippetName [in] Name of required snippet.
         @param UserDefined [in] Flag that determines if we are looking for a
           user defined snippet or one from main database.
         @return Reference to object representing snippet in list or nil if not
           in list.
       }
-    function Contains(const Routine: TSnippet): Boolean;
+    function Contains(const Snippet: TSnippet): Boolean;
       {Checks whether list contains a specified snippet.
-        @param Routine [in] Required snippet.
+        @param Snippet [in] Required snippet.
         @return True if snippet is in list, False otherwise.
       }
     function ContainsKinds(const Kinds: TSnippetKinds): Boolean;
@@ -545,61 +545,61 @@ type
   }
   ISnippetsEdit = interface(IInterface)
     ['{CBF6FBB0-4C18-481F-A378-84BB09E5ECF4}']
-    function GetEditableSnippetInfo(
-      const Routine: TSnippet = nil): TSnippetEditData;
+    function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
+      TSnippetEditData;
       {Provides details of all a snippet's data (properties and references) that
       may be edited.
-        @param Routine [in] Snippet for which data is required. May be nil in
+        @param Snippet [in] Snippet for which data is required. May be nil in
           which case a blank record is returned.
         @return Required data.
       }
-    function GetDependents(const Routine: TSnippet): ISnippetIDList;
+    function GetDependents(const Snippet: TSnippet): ISnippetIDList;
       {Builds an ID list of all snippets that depend on a specified snippet.
-        @param Routine [in] Snippet for which dependents are required.
+        @param Snippet [in] Snippet for which dependents are required.
         @return List of IDs of dependent snippets.
       }
-    function GetReferrers(const Routine: TSnippet): ISnippetIDList;
+    function GetReferrers(const Snippet: TSnippet): ISnippetIDList;
       {Builds an ID list of all snippets that cross reference a specified
       snippet.
-        @param Routine [in] Snippet for which cross referers are required.
+        @param Snippet [in] Snippet for which cross referers are required.
         @return List of IDs of referring snippets.
       }
-    function UpdateSnippet(const Routine: TSnippet;
+    function UpdateSnippet(const Snippet: TSnippet;
       const Data: TSnippetEditData; const NewName: string = ''): TSnippet;
       {Updates a user defined snippet's properties and references using provided
       data.
-        @param Routine [in] Snippet to be updated. Must be user-defined.
+        @param Snippet [in] Snippet to be updated. Must be user-defined.
         @param Data [in] Record containing revised data.
-        @param NewName [in] New name of snippet. Set to '' or Routine.Name if
+        @param NewName [in] New name of snippet. Set to '' or Snippet.Name if
           name is not to change.
         @return Reference to updated snippet. Will have changed.
       }
-    function AddSnippet(const RoutineName: string;
+    function AddSnippet(const SnippetName: string;
       const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database.
-        @param RoutineName [in] Name of new snippet.
+        @param SnippetName [in] Name of new snippet.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
-    function CreateTempSnippet(const RoutineName: string;
+    function CreateTempSnippet(const SnippetName: string;
       const Data: TSnippetEditData): TSnippet; overload;
       {Creates a new temporary snippet without adding it to the Snippets
       object's snippets list. The new instance may not be added to the
       Snippets object.
-        @param RoutineName [in] Name of new snippet.
+        @param SnippetName [in] Name of new snippet.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
-    function CreateTempSnippet(const Routine: TSnippet): TSnippet; overload;
+    function CreateTempSnippet(const Snippet: TSnippet): TSnippet; overload;
       {Creates a new temporary copy of a snippet without adding it to the
       Snippets object's snippets list. The new instance may not be added to the
       Snippets object.
-        @param Routine [in] Snippet to be copied.
+        @param Snippet [in] Snippet to be copied.
         @return Reference to new copied snippet.
       }
-    procedure DeleteSnippet(const Routine: TSnippet);
+    procedure DeleteSnippet(const Snippet: TSnippet);
       {Deletes a snippet from the user database.
-        @param Routine [in] Snippet to be deleted.
+        @param Snippet [in] Snippet to be deleted.
       }
     function GetEditableCategoryInfo(
       const Category: TCategory = nil): TCategoryData;
@@ -692,17 +692,17 @@ type
   TSnippetEx = class(TSnippet)
   public
     procedure UpdateRefs(const Refs: TSnippetReferences;
-      const AllRoutines: TSnippetList);
+      const AllSnippets: TSnippetList);
       {Updates a snippet's references.
         @param Refs [in] Stores all snippet's references (XRef, Depends and
           Units).
-        @param AllRoutines [in] List of all snippets in database.
+        @param AllSnippets [in] List of all snippets in database.
       }
     procedure Update(const Data: TSnippetEditData;
-      const AllRoutines: TSnippetList);
+      const AllSnippets: TSnippetList);
       {Updates snippet's properties and references.
         @param Data [in] New property values and references.
-        @param AllRoutines [in] List of all snippets in database.
+        @param AllSnippets [in] List of all snippets in database.
       }
     function GetEditData: TSnippetEditData;
       {Gets details of all editable data of snippet.
@@ -733,15 +733,15 @@ type
   }
   TSnippetListEx = class(TSnippetList)
   public
-    function Add(const Routine: TSnippet): Integer; override;
+    function Add(const Snippet: TSnippet): Integer; override;
       {Adds a snippet to list. Prevents TTempSnippet instances from being added.
-        @param Routine [in] Snippet to be added.
+        @param Snippet [in] Snippet to be added.
         @return Index where snippet was added to list.
-        @except EBug raised if Routine is a TTempSnippet instance.
+        @except EBug raised if Snippet is a TTempSnippet instance.
       }
-    procedure Delete(const Routine: TSnippet);
+    procedure Delete(const Snippet: TSnippet);
       {Deletes a snippet from list.
-        @param Routine [in] Snippet to be deleted. No action taken if snippet
+        @param Snippet [in] Snippet to be deleted. No action taken if snippet
           not in list.
       }
   end;
@@ -820,18 +820,18 @@ type
         @param Info [in] Reference to any further information for event. May be
           nil.
       }
-    function InternalAddSnippet(const RoutineName: string;
+    function InternalAddSnippet(const SnippetName: string;
       const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database. Assumes snippet not already in
       user database.
-        @param RoutineName [in] Name of new snippet.
+        @param SnippetName [in] Name of new snippet.
         @param Data [in] Properties and references of new snippet.
         @return Reference to new snippet object.
         @except Exception raised if snippet's category does not exist.
       }
-    procedure InternalDeleteSnippet(const Routine: TSnippet);
+    procedure InternalDeleteSnippet(const Snippet: TSnippet);
       {Deletes a snippet from the user database.
-        @param Routine [in] Snippet to delete from database.
+        @param Snippet [in] Snippet to delete from database.
       }
     function InternalAddCategory(const CatName: string;
       const Data: TCategoryData): TCategory;
@@ -845,16 +845,16 @@ type
       {Deletes a category from the user database.
         @param Cat [in] Category to delete from database.
       }
-    procedure GetDependentList(const ARoutine: TSnippet;
+    procedure GetDependentList(const ASnippet: TSnippet;
       const List: TSnippetList);
       {Builds a list of all snippets that depend on a specified snippet.
-        @param ARoutine [in] Snippet for which dependents are required.
+        @param ASnippet [in] Snippet for which dependents are required.
         @param List [in] Receives list of dependent snippets.
       }
-    procedure GetReferrerList(const ARoutine: TSnippet;
+    procedure GetReferrerList(const ASnippet: TSnippet;
       const List: TSnippetList);
       {Builds list of all snippets that cross reference a specified snippet.
-        @param ARoutine [in] The cross referenced snippet.
+        @param ASnippet [in] The cross referenced snippet.
         @param List [in] Receives list of cross referencing snippets.
       }
   protected
@@ -882,61 +882,61 @@ type
         @param Handler [in] Handler to remove from list.
       }
     { ISnippetsEdit methods }
-    function GetEditableSnippetInfo(
-      const Routine: TSnippet = nil): TSnippetEditData;
+    function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
+      TSnippetEditData;
       {Provides details of all a snippet's data (properties and references) that
       may be edited.
-        @param Routine [in] Snippet for which data is required. May be nil in
+        @param Snippet [in] Snippet for which data is required. May be nil in
           which case a blank record is returned.
         @return Required data.
       }
-    function GetDependents(const Routine: TSnippet): ISnippetIDList;
+    function GetDependents(const Snippet: TSnippet): ISnippetIDList;
       {Builds an ID list of all snippets that depend on a specified snippet.
-        @param Routine [in] Snippet for which dependents are required.
+        @param Snippet [in] Snippet for which dependents are required.
         @return List of IDs of dependent snippets.
       }
-    function GetReferrers(const Routine: TSnippet): ISnippetIDList;
+    function GetReferrers(const Snippet: TSnippet): ISnippetIDList;
       {Builds an ID list of all snippets that cross reference a specified
       snippet.
-        @param Routine [in] Snippet which is cross referenced.
+        @param Snippet [in] Snippet which is cross referenced.
         @return List of IDs of referring snippets.
       }
-    function UpdateSnippet(const Routine: TSnippet;
+    function UpdateSnippet(const Snippet: TSnippet;
       const Data: TSnippetEditData; const NewName: string = ''): TSnippet;
       {Updates a user defined snippet's properties and references using provided
       data.
-        @param Routine [in] Snippet to be updated. Must be user-defined.
+        @param Snippet [in] Snippet to be updated. Must be user-defined.
         @param Data [in] Record containing revised data.
-        @param NewName [in] New name of snippet. Set to '' or Routine.Name if
+        @param NewName [in] New name of snippet. Set to '' or Snippet.Name if
           name is not to change.
         @return Reference to updated snippet. Will have changed.
       }
-    function AddSnippet(const RoutineName: string;
+    function AddSnippet(const SnippetName: string;
       const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database.
-        @param RoutineName [in] Name of new snippet.
+        @param SnippetName [in] Name of new snippet.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
-    function CreateTempSnippet(const RoutineName: string;
+    function CreateTempSnippet(const SnippetName: string;
       const Data: TSnippetEditData): TSnippet; overload;
       {Creates a new temporary user defined snippet without adding it to the
       Snippets object's snippets list. The new instance may not be added to the
       Snippets object.
-        @param RoutineName [in] Name of new snippet.
+        @param SnippetName [in] Name of new snippet.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
-    function CreateTempSnippet(const Routine: TSnippet): TSnippet; overload;
+    function CreateTempSnippet(const Snippet: TSnippet): TSnippet; overload;
       {Creates a new temporary copy of a snippet without adding it to the
       Snippets object's snippets list. The new instance may not be added to the
       Snippets object.
-        @param Routine [in] Snippet to be copied.
+        @param Snippet [in] Snippet to be copied.
         @return Reference to new snippet.
       }
-    procedure DeleteSnippet(const Routine: TSnippet);
+    procedure DeleteSnippet(const Snippet: TSnippet);
       {Deletes a snippet from the user database.
-        @param Routine [in] Snippet to be deleted.
+        @param Snippet [in] Snippet to be deleted.
       }
     function GetEditableCategoryInfo(
       const Category: TCategory = nil): TCategoryData;
@@ -989,11 +989,11 @@ type
     fSnippets: TSnippetList;    // All snippets in the whole database
     fCategories: TCategoryList; // All categories in the whole database
   public
-    constructor Create(const Routines: TSnippetList;
+    constructor Create(const SnipList: TSnippetList;
       const Categories: TCategoryList);
       {Constructor. Records list of all snippets and categories in both
       databases.
-        @param Routines [in] List of all snippets in whole database.
+        @param SnipList [in] List of all snippets in whole database.
         @param Categories [in] List of all categories in whole database.
       }
     { ISnippetsDataProvider methods }
@@ -1007,14 +1007,14 @@ type
         @param Cat [in] Category for which snippet names are requested.
         @return Required list of snippet names.
       }
-    function GetSnippetProps(const Routine: TSnippet): TSnippetData;
+    function GetSnippetProps(const Snippet: TSnippet): TSnippetData;
       {Retrieves all the properties of a snippet.
-        @param Routine [in] Snippet for which data is requested.
+        @param Snippet [in] Snippet for which data is requested.
         @return Record containing property data.
       }
-    function GetSnippetRefs(const Routine: TSnippet): TSnippetReferences;
+    function GetSnippetRefs(const Snippet: TSnippet): TSnippetReferences;
       {Retrieves information about all the references of a snippet.
-        @param Routine [in] Snippet for which information is requested.
+        @param Snippet [in] Snippet for which information is requested.
         @return Record containing references.
       }
   end;
@@ -1026,10 +1026,10 @@ type
   }
   TSnippetIDListEx = class(TSnippetIDList)
   public
-    constructor Create(const Routines: TSnippetList); overload;
+    constructor Create(const SnipList: TSnippetList); overload;
       {Constructor overload that creates a snippets ID list from a
       TSnippetList object.
-        @param Routines [in] List of snippets objects for which ID list is
+        @param SnipList [in] List of snippets objects for which ID list is
           required.
       }
   end;
@@ -1080,10 +1080,10 @@ begin
   fChangeEvents.AddHandler(Handler);
 end;
 
-function TSnippets.AddSnippet(const RoutineName: string;
+function TSnippets.AddSnippet(const SnippetName: string;
   const Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the user database.
-    @param RoutineName [in] Name of new snippet.
+    @param SnippetName [in] Name of new snippet.
     @param Data [in] Record storing new snippet's properties and references.
     @return Reference to new snippet.
   }
@@ -1095,9 +1095,9 @@ begin
   TriggerEvent(evChangeBegin);
   try
     // Check if snippet with same name exists in user database: error if so
-    if fSnippets.Find(RoutineName, True) <> nil then
-      raise ECodeSnip.CreateFmt(sNameExists, [RoutineName]);
-    Result := InternalAddSnippet(RoutineName, Data);
+    if fSnippets.Find(SnippetName, True) <> nil then
+      raise ECodeSnip.CreateFmt(sNameExists, [SnippetName]);
+    Result := InternalAddSnippet(SnippetName, Data);
     TriggerEvent(evSnippetAdded, Result);
   finally
     fUpdated := True;
@@ -1123,38 +1123,38 @@ begin
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
 
-function TSnippets.CreateTempSnippet(const Routine: TSnippet): TSnippet;
+function TSnippets.CreateTempSnippet(const Snippet: TSnippet): TSnippet;
   {Creates a new temporary copy of a snippet without adding it to the
   Snippets object's snippets list. The new instance may not be added to the
   Snippets object.
-    @param Routine [in] Snippet to be copied.
+    @param Snippet [in] Snippet to be copied.
     @return Reference to new snippet.
   }
 var
   Data: TSnippetEditData; // data describing snippet's properties and references
 begin
-  Assert(Assigned(Routine), ClassName + '.CreateTempSnippet: Routine is nil');
-  Assert(Routine is TSnippetEx,
-    ClassName + '.CreateTempSnippet: Routine is not a TSnippetEx');
-  Data := (Routine as TSnippetEx).GetEditData;
+  Assert(Assigned(Snippet), ClassName + '.CreateTempSnippet: Snippet is nil');
+  Assert(Snippet is TSnippetEx,
+    ClassName + '.CreateTempSnippet: Snippet is not a TSnippetEx');
+  Data := (Snippet as TSnippetEx).GetEditData;
   Result := TTempSnippet.Create(
-    Routine.Name, Routine.UserDefined, (Routine as TSnippetEx).GetProps);
+    Snippet.Name, Snippet.UserDefined, (Snippet as TSnippetEx).GetProps);
   (Result as TTempSnippet).UpdateRefs(
-    (Routine as TSnippetEx).GetReferences, fSnippets
+    (Snippet as TSnippetEx).GetReferences, fSnippets
   );
 end;
 
-function TSnippets.CreateTempSnippet(const RoutineName: string;
+function TSnippets.CreateTempSnippet(const SnippetName: string;
   const Data: TSnippetEditData): TSnippet;
   {Creates a new temporary user defined snippet without adding it to the
   Snippets object's snippets list. The new instance may not be added to the
   Snippets object.
-    @param RoutineName [in] Name of new snippet.
+    @param SnippetName [in] Name of new snippet.
     @param Data [in] Record storing new snippet's properties and references.
     @return Reference to new snippet.
   }
 begin
-  Result := TTempSnippet.Create(RoutineName, True, Data.Props);
+  Result := TTempSnippet.Create(SnippetName, True, Data.Props);
   (Result as TTempSnippet).UpdateRefs(Data.Refs, fSnippets);
 end;
 
@@ -1172,7 +1172,7 @@ begin
   TriggerEvent(evChangeBegin);
   try
     // all snippets that belong to category are deleted before category itself
-    // can't use for..in here since Routines list is modified in loop
+    // can't use for..in here since Snippets list is modified in loop
     for SnipIdx := Pred(Category.Snippets.Count) downto 0 do
       InternalDeleteSnippet(Category.Snippets[SnipIdx]);
     InternalDeleteCategory(Category);
@@ -1183,36 +1183,36 @@ begin
   end;
 end;
 
-procedure TSnippets.DeleteSnippet(const Routine: TSnippet);
+procedure TSnippets.DeleteSnippet(const Snippet: TSnippet);
   {Deletes a snippet from the user database.
-    @param Routine [in] Snippet to be deleted.
+    @param Snippet [in] Snippet to be deleted.
   }
 var
-  Dependent: TSnippet;      // loops thru each snippet that depends on Routine
+  Dependent: TSnippet;      // loops thru each snippet that depends on Snippet
   Dependents: TSnippetList; // list of dependent snippets
-  Referrer: TSnippet;       // loops thru snippets that cross references Routine
+  Referrer: TSnippet;       // loops thru snippets that cross references Snippet
   Referrers: TSnippetList;  // list of referencing snippets
 begin
-  Assert(Routine.UserDefined,
-    ClassName + '.DeleteRoutine: Routine is not user-defined');
-  Assert(fSnippets.Contains(Routine),
-    ClassName + '.DeleteRoutine: Routine is not in the database');
+  Assert(Snippet.UserDefined,
+    ClassName + '.DeleteSnippet: Snippet is not user-defined');
+  Assert(fSnippets.Contains(Snippet),
+    ClassName + '.DeleteSnippet: Snippet is not in the database');
   TriggerEvent(evChangeBegin);
-  // Get list of referencing and dependent routines
+  // Get list of referencing and dependent snippets
   Dependents := nil;
   Referrers := nil;
   try
     Dependents := TSnippetList.Create;
-    GetDependentList(Routine, Dependents);
+    GetDependentList(Snippet, Dependents);
     Referrers := TSnippetList.Create;
-    GetReferrerList(Routine, Referrers);
-    // Delete routine for XRef or Depends list of referencing snippets
+    GetReferrerList(Snippet, Referrers);
+    // Delete snippet for XRef or Depends list of referencing snippets
     for Referrer in Referrers do
-      (Referrer.XRef as TSnippetListEx).Delete(Routine);
+      (Referrer.XRef as TSnippetListEx).Delete(Snippet);
     for Dependent in Dependents do
-      (Dependent.Depends as TSnippetListEx).Delete(Routine);
-    // Delete routine itself
-    InternalDeleteSnippet(Routine);
+      (Dependent.Depends as TSnippetListEx).Delete(Snippet);
+    // Delete snippet itself
+    InternalDeleteSnippet(Snippet);
     TriggerEvent(evSnippetDeleted);
   finally
     FreeAndNil(Referrers);
@@ -1240,24 +1240,24 @@ begin
   Result := fCategories;
 end;
 
-procedure TSnippets.GetDependentList(const ARoutine: TSnippet;
+procedure TSnippets.GetDependentList(const ASnippet: TSnippet;
   const List: TSnippetList);
   {Builds a list of all snippets that depend on a specified snippet.
-    @param ARoutine [in] Snippet for which dependents are required.
+    @param ASnippet [in] Snippet for which dependents are required.
     @param List [in] Receives list of dependent snippets.
   }
 var
-  Routine: TSnippet;  // references each snippet in database
+  Snippet: TSnippet;  // references each snippet in database
 begin
   List.Clear;
-  for Routine in fSnippets do
-    if not Routine.IsEqual(ARoutine) and Routine.Depends.Contains(ARoutine) then
-      List.Add(Routine);
+  for Snippet in fSnippets do
+    if not Snippet.IsEqual(ASnippet) and Snippet.Depends.Contains(ASnippet) then
+      List.Add(Snippet);
 end;
 
-function TSnippets.GetDependents(const Routine: TSnippet): ISnippetIDList;
+function TSnippets.GetDependents(const Snippet: TSnippet): ISnippetIDList;
   {Builds an ID list of all snippets that depend on a specified snippet.
-    @param Routine [in] Snippet for which dependents are required.
+    @param Snippet [in] Snippet for which dependents are required.
     @return List of IDs of dependent snippets.
   }
 var
@@ -1265,7 +1265,7 @@ var
 begin
   List := TSnippetList.Create;
   try
-    GetDependentList(Routine, List);
+    GetDependentList(Snippet, List);
     Result := TSnippetIDListEx.Create(List);
   finally
     FreeAndNil(List);
@@ -1288,26 +1288,26 @@ begin
 end;
 
 function TSnippets.GetEditableSnippetInfo(
-  const Routine: TSnippet): TSnippetEditData;
+  const Snippet: TSnippet): TSnippetEditData;
   {Provides details of all a snippet's data (properties and references) that may
   be edited.
-    @param Routine [in] Snippet for which data is required. May be nil in which
+    @param Snippet [in] Snippet for which data is required. May be nil in which
       case a blank record is returned.
     @return Required data.
   }
 begin
-  Assert(not Assigned(Routine) or Routine.UserDefined,
-    ClassName + '.GetEditableSnippetInfo: Routine is not user-defined');
-  if Assigned(Routine) then
-    Result := (Routine as TSnippetEx).GetEditData
+  Assert(not Assigned(Snippet) or Snippet.UserDefined,
+    ClassName + '.GetEditableSnippetInfo: Snippet is not user-defined');
+  if Assigned(Snippet) then
+    Result := (Snippet as TSnippetEx).GetEditData
   else
     Result.Init;
 end;
 
-function TSnippets.GetReferrers(const Routine: TSnippet): ISnippetIDList;
+function TSnippets.GetReferrers(const Snippet: TSnippet): ISnippetIDList;
   {Builds an ID list of all snippets that cross reference a specified
   snippet.
-    @param Routine [in] Snippet which is cross referenced.
+    @param Snippet [in] Snippet which is cross referenced.
     @return List of IDs of referring snippets.
   }
 var
@@ -1315,26 +1315,26 @@ var
 begin
   List := TSnippetList.Create;
   try
-    GetReferrerList(Routine, List);
+    GetReferrerList(Snippet, List);
     Result := TSnippetIDListEx.Create(List);
   finally
     FreeAndNil(List);
   end;
 end;
 
-procedure TSnippets.GetReferrerList(const ARoutine: TSnippet;
+procedure TSnippets.GetReferrerList(const ASnippet: TSnippet;
   const List: TSnippetList);
   {Builds list of all snippets that cross reference a specified snippet.
-    @param ARoutine [in] The cross referenced snippet.
+    @param ASnippet [in] The cross referenced snippet.
     @param List [in] Receives list of cross referencing snippets.
   }
 var
-  Routine: TSnippet;  // references each routine in database
+  Snippet: TSnippet;  // references each snippet in database
 begin
   List.Clear;
-  for Routine in fSnippets do
-    if not Routine.IsEqual(ARoutine) and Routine.XRef.Contains(ARoutine) then
-      List.Add(Routine);
+  for Snippet in fSnippets do
+    if not Snippet.IsEqual(ASnippet) and Snippet.XRef.Contains(ASnippet) then
+      List.Add(Snippet);
 end;
 
 function TSnippets.GetSnippets: TSnippetList;
@@ -1358,11 +1358,11 @@ begin
   fCategories.Add(Result);
 end;
 
-function TSnippets.InternalAddSnippet(const RoutineName: string;
+function TSnippets.InternalAddSnippet(const SnippetName: string;
   const Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the user database. Assumes snippet not already in user
   database.
-    @param RoutineName [in] Name of new snippet.
+    @param SnippetName [in] Name of new snippet.
     @param Data [in] Properties and references of new snippet.
     @return Reference to new snippet object.
     @except Exception raised if snippet's category does not exist.
@@ -1373,7 +1373,7 @@ resourcestring
   // Error message
   sCatNotFound = 'Category "%0:s" for new snippet "%1:s" does not exist';
 begin
-  Result := TSnippetEx.Create(RoutineName, True, Data.Props);
+  Result := TSnippetEx.Create(SnippetName, True, Data.Props);
   (Result as TSnippetEx).UpdateRefs(Data.Refs, fSnippets);
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
@@ -1392,20 +1392,20 @@ begin
   TriggerEvent(evAfterCategoryDelete);
 end;
 
-procedure TSnippets.InternalDeleteSnippet(const Routine: TSnippet);
+procedure TSnippets.InternalDeleteSnippet(const Snippet: TSnippet);
   {Deletes a snippet from the user database.
-    @param Routine [in] Snippet to delete from database.
+    @param Snippet [in] Snippet to delete from database.
   }
 var
   Cat: TCategory; // category containing snippet
 begin
   // Delete from category if found
-  Cat := fCategories.Find(Routine.Category);
+  Cat := fCategories.Find(Snippet.Category);
   if Assigned(Cat) then
-    (Cat.Snippets as TSnippetListEx).Delete(Routine);
-  // Delete from "master" list: this frees Routine
-  TriggerEvent(evBeforeSnippetDelete, Routine);
-  (fSnippets as TSnippetListEx).Delete(Routine);
+    (Cat.Snippets as TSnippetListEx).Delete(Snippet);
+  // Delete from "master" list: this frees Snippet
+  TriggerEvent(evBeforeSnippetDelete, Snippet);
+  (fSnippets as TSnippetListEx).Delete(Snippet);
   TriggerEvent(evAfterSnippetDelete);
 end;
 
@@ -1512,58 +1512,58 @@ begin
   Result := fUpdated;
 end;
 
-function TSnippets.UpdateSnippet(const Routine: TSnippet;
+function TSnippets.UpdateSnippet(const Snippet: TSnippet;
   const Data: TSnippetEditData; const NewName: string): TSnippet;
   {Updates a user defined snippet's properties and references using provided
   data.
-    @param Routine [in] Snippet to be updated. Must be user-defined.
+    @param Snippet [in] Snippet to be updated. Must be user-defined.
     @param Data [in] Record containing revised data.
-    @param NewName [in] New name of snippet. Set to '' or Routine.Name if name
+    @param NewName [in] New name of snippet. Set to '' or Snippet.Name if name
       is not to change.
     @return Reference to updated snippet. Will have changed.
   }
 var
-  RoutineName: string;      // name of snippet
-  Dependent: TSnippet;      // loops thru each snippetthat depends on Routine
+  SnippetName: string;      // name of snippet
+  Dependent: TSnippet;      // loops thru each snippetthat depends on Snippet
   Dependents: TSnippetList; // list of dependent snippets
-  Referrer: TSnippet;       // loops thru snippets that cross references Routine
+  Referrer: TSnippet;       // loops thru snippets that cross references Snippet
   Referrers: TSnippetList;  // list of referencing snippets
 resourcestring
   // Error message
   sCantRename = 'Can''t rename snippet %0:s to %1:s: Snippet %1:s already '
     + 'exists in user database';
 begin
-  Result := Routine;      // keeps compiler happy
-  Assert(Routine.UserDefined,
-    ClassName + '.UpdateSnippet: Routine is not user-defined');
+  Result := Snippet;      // keeps compiler happy
+  Assert(Snippet.UserDefined,
+    ClassName + '.UpdateSnippet: Snippet is not user-defined');
   Referrers := nil;
   Dependents := nil;
   TriggerEvent(evChangeBegin);
   try
     // Calculate new name
     if NewName <> '' then
-      RoutineName := NewName
+      SnippetName := NewName
     else
-      RoutineName := Routine.Name;
+      SnippetName := Snippet.Name;
     // If name has changed then new name musn't exist in user database
-    if not AnsiSameText(RoutineName, Routine.Name) then
-      if fSnippets.Find(RoutineName, True) <> nil then
-        raise ECodeSnip.CreateFmt(sCantRename, [Routine.Name, RoutineName]);
+    if not AnsiSameText(SnippetName, Snippet.Name) then
+      if fSnippets.Find(SnippetName, True) <> nil then
+        raise ECodeSnip.CreateFmt(sCantRename, [Snippet.Name, SnippetName]);
     // We update by deleting old snippet and inserting new one
-    // get lists of snippets that cross reference or depend on this routine
+    // get lists of snippets that cross reference or depend on this snippet
     Dependents := TSnippetList.Create;
-    GetDependentList(Routine, Dependents);
+    GetDependentList(Snippet, Dependents);
     Referrers := TSnippetList.Create;
-    GetReferrerList(Routine, Referrers);
+    GetReferrerList(Snippet, Referrers);
     // remove invalid references from referring snippets
     for Referrer in Referrers do
-      (Referrer.XRef as TSnippetListEx).Delete(Routine);
+      (Referrer.XRef as TSnippetListEx).Delete(Snippet);
     for Dependent in Dependents do
-      (Dependent.Depends as TSnippetListEx).Delete(Routine);
+      (Dependent.Depends as TSnippetListEx).Delete(Snippet);
     // delete the snippet
-    InternalDeleteSnippet(Routine);
-    // add new routine
-    Result := InternalAddSnippet(RoutineName, Data);
+    InternalDeleteSnippet(Snippet);
+    // add new snippet
+    Result := InternalAddSnippet(SnippetName, Data);
     // add new snippet to referrer list of referring snippets
     for Referrer in Referrers do
       Referrer.XRef.Add(Result);
@@ -1661,14 +1661,14 @@ begin
   Result := TSnippetID.Create(fName, fUserDefined);
 end;
 
-function TSnippet.IsEqual(const Routine: TSnippet): Boolean;
+function TSnippet.IsEqual(const Snippet: TSnippet): Boolean;
   {Checks if this snippet is same as another snippet. Snippets are considered
   equal if they have the same name and come from same database.
-    @param Routine [in] Snippet being compared.
+    @param Snippet [in] Snippet being compared.
     @return True if snippets are equal, False if not.
   }
 begin
-  Result := Routine.ID = Self.ID;
+  Result := Snippet.ID = Self.ID;
 end;
 
 procedure TSnippet.SetName(const Name: string);
@@ -1727,22 +1727,22 @@ begin
 end;
 
 procedure TSnippetEx.Update(const Data: TSnippetEditData;
-  const AllRoutines: TSnippetList);
+  const AllSnippets: TSnippetList);
   {Updates snippet's properties and references.
     @param Data [in] New property values and references.
-    @param AllRoutines [in] List of all snippets in database.
+    @param AllSnippets [in] List of all snippets in database.
   }
 begin
   SetProps(Data.Props);
-  UpdateRefs(Data.Refs, AllRoutines);
+  UpdateRefs(Data.Refs, AllSnippets);
 end;
 
 procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
-  const AllRoutines: TSnippetList);
+  const AllSnippets: TSnippetList);
   {Updates a snippet's references.
     @param Refs [in] Stores all snippet's references (XRef, Depends and
       Units).
-    @param AllRoutines [in] List of all snippets in database.
+    @param AllSnippets [in] List of all snippets in database.
   }
 
   // ---------------------------------------------------------------------------
@@ -1757,14 +1757,14 @@ procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
     }
   var
     ID: TSnippetID;     // refers to each ID in ID list
-    Routine: TSnippet;  // references each snippet identified by ID
+    Snippet: TSnippet;  // references each snippet identified by ID
   begin
     SL.Clear;
     for ID in IDList do
     begin
-      Routine := AllRoutines.Find(ID.Name, ID.UserDefined);
-      if Assigned(Routine) then
-        SL.Add(Routine);
+      Snippet := AllSnippets.Find(ID.Name, ID.UserDefined);
+      if Assigned(Snippet) then
+        SL.Add(Snippet);
     end;
   end;
   // ---------------------------------------------------------------------------
@@ -1777,14 +1777,14 @@ end;
 
 { TSnippetList }
 
-function TSnippetList.Add(const Routine: TSnippet): Integer;
+function TSnippetList.Add(const Snippet: TSnippet): Integer;
   {Adds new snippet to the list, maintaining list in alphabetical order.
-    @param Routine [in] Snippet being added.
+    @param Snippet [in] Snippet being added.
     @return Index where item was inserted in list
     @except Raised if duplicate snippet added to list.
   }
 begin
-  Result := fList.Add(Routine);
+  Result := fList.Add(Snippet);
 end;
 
 procedure TSnippetList.Assign(const SrcList: TSnippetList);
@@ -1823,13 +1823,13 @@ begin
   Result := SID1.Compare(SID2);
 end;
 
-function TSnippetList.Contains(const Routine: TSnippet): Boolean;
+function TSnippetList.Contains(const Snippet: TSnippet): Boolean;
   {Checks whether list contains a specified snippet.
-    @param Routine [in] Required snippet.
+    @param Snippet [in] Required snippet.
     @return True if snippet is in list, False otherwise.
   }
 begin
-  Result := fList.Contains(Routine);
+  Result := fList.Contains(Snippet);
 end;
 
 function TSnippetList.ContainsKinds(const Kinds: TSnippetKinds): Boolean;
@@ -1858,11 +1858,11 @@ function TSnippetList.Count(const UserDefined: Boolean): Integer;
     @return Number of snippets in specified database.
   }
 var
-  Routine: TSnippet;  // refers to all snippets in list
+  Snippet: TSnippet;  // refers to all snippets in list
 begin
   Result := 0;
-  for Routine in Self do
-    if Routine.UserDefined = UserDefined then
+  for Snippet in Self do
+    if Snippet.UserDefined = UserDefined then
       Inc(Result);
 end;
 
@@ -1901,11 +1901,11 @@ begin
   inherited;
 end;
 
-function TSnippetList.Find(const RoutineName: string;
+function TSnippetList.Find(const SnippetName: string;
   const UserDefined: Boolean; out Index: Integer): Boolean;
   {Finds a snippet in the list that has a specified name and user defined
   property. Uses a binary search.
-    @param RoutineName [in] Name of snippet to be found.
+    @param SnippetName [in] Name of snippet to be found.
     @param UserDefined [in] Whether required snippet is user defined or not.
     @param Index [out] Index of required snippet in list. Valid only if
       method returns True.
@@ -1918,7 +1918,7 @@ begin
   // We need a temporary snippet object in order to perform binary search using
   // object list's built in search
   NulData.Init;
-  TempSnippet := TTempSnippet.Create(RoutineName, UserDefined, NulData);
+  TempSnippet := TTempSnippet.Create(SnippetName, UserDefined, NulData);
   try
     Result := fList.Find(TempSnippet, Index);
   finally
@@ -1926,10 +1926,10 @@ begin
   end;
 end;
 
-function TSnippetList.Find(const RoutineName: string;
+function TSnippetList.Find(const SnippetName: string;
   const UserDefined: Boolean): TSnippet;
   {Finds a named snippet in list with a matching user defined property.
-    @param RoutineName [in] Name of required snippet.
+    @param SnippetName [in] Name of required snippet.
     @param UserDefined [in] Flag that determines if we are looking for a
       user defined snippet or one from main database.
     @return Reference to object representing snippet in list or nil if not
@@ -1938,7 +1938,7 @@ function TSnippetList.Find(const RoutineName: string;
 var
   Idx: Integer; // index of snippet name in list
 begin
-  if Find(RoutineName, UserDefined, Idx) then
+  if Find(SnippetName, UserDefined, Idx) then
     Result := Items[Idx]
   else
     Result := nil;
@@ -1988,31 +1988,31 @@ end;
 
 { TSnippetListEx }
 
-function TSnippetListEx.Add(const Routine: TSnippet): Integer;
+function TSnippetListEx.Add(const Snippet: TSnippet): Integer;
   {Adds a snippet to list. Prevents TTempSnippet instances from being added.
-    @param Routine [in] Snippet to be added.
+    @param Snippet [in] Snippet to be added.
     @return Index where snippet was added to list.
-    @except EBug raised if Routine is a TTempSnippet instance.
+    @except EBug raised if Snippet is a TTempSnippet instance.
   }
 begin
-  if Routine is TTempSnippet then
+  if Snippet is TTempSnippet then
     // don't allow temp snippets to be added to list
     raise EBug.CreateFmt(
       ClassName + '.Add: Can''t add temporary snippets to database (%s)',
-      [Routine.Name]
+      [Snippet.Name]
     );
-  Result := inherited Add(Routine);
+  Result := inherited Add(Snippet);
 end;
 
-procedure TSnippetListEx.Delete(const Routine: TSnippet);
+procedure TSnippetListEx.Delete(const Snippet: TSnippet);
   {Deletes a snippet from list.
-    @param Routine [in] Snippet to be deleted. No action taken if snippet not in
+    @param Snippet [in] Snippet to be deleted. No action taken if snippet not in
       list.
   }
 var
   Idx: Integer; // index of snippet in list.
 begin
-  Idx := fList.IndexOf(Routine);
+  Idx := fList.IndexOf(Snippet);
   if Idx = -1 then
     Exit;
   fList.Delete(Idx);  // this frees snippet if list owns objects
@@ -2200,15 +2200,15 @@ end;
 
 { TUserDataProvider }
 
-constructor TUserDataProvider.Create(const Routines: TSnippetList;
+constructor TUserDataProvider.Create(const SnipList: TSnippetList;
   const Categories: TCategoryList);
   {Constructor. Records list of all snippets and categories in both databases.
-    @param Routines [in] List of all snippets in whole database.
+    @param SnipList [in] List of all snippets in whole database.
     @param Categories [in] List of all categories in whole database.
   }
 begin
   inherited Create;
-  fSnippets := Routines;
+  fSnippets := SnipList;
   fCategories := Categories;
 end;
 
@@ -2229,32 +2229,32 @@ function TUserDataProvider.GetCategorySnippets(
     @return Required list of snippet names.
   }
 var
-  Routine: TSnippet;  // references each snippet in category
+  Snippet: TSnippet;  // references each snippet in category
 begin
   Result := TIStringList.Create;
-  for Routine in Cat.Snippets do
-    if Routine.UserDefined then
-      Result.Add(Routine.Name);
+  for Snippet in Cat.Snippets do
+    if Snippet.UserDefined then
+      Result.Add(Snippet.Name);
 end;
 
 function TUserDataProvider.GetSnippetProps(
-  const Routine: TSnippet): TSnippetData;
+  const Snippet: TSnippet): TSnippetData;
   {Retrieves all the properties of a snippet.
-    @param Routine [in] Snippet for which data is requested.
+    @param Snippet [in] Snippet for which data is requested.
     @return Record containing property data.
   }
 begin
-  Result := (Routine as TSnippetEx).GetProps;
+  Result := (Snippet as TSnippetEx).GetProps;
 end;
 
 function TUserDataProvider.GetSnippetRefs(
-  const Routine: TSnippet): TSnippetReferences;
+  const Snippet: TSnippet): TSnippetReferences;
   {Retrieves information about all the references of a snippet.
-    @param Routine [in] Snippet for which information is requested.
+    @param Snippet [in] Snippet for which information is requested.
     @return Record containing references.
   }
 begin
-  Result := (Routine as TSnippetEx).GetReferences;
+  Result := (Snippet as TSnippetEx).GetReferences;
 end;
 
 { TSnippetData }
@@ -2349,17 +2349,17 @@ end;
 
 { TSnippetIDListEx }
 
-constructor TSnippetIDListEx.Create(const Routines: TSnippetList);
+constructor TSnippetIDListEx.Create(const SnipList: TSnippetList);
   {Constructor overload that creates a snippets ID list from a TSnippetList
   object.
-    @param Routines [in] List of snippets objects for which ID list is
+    @param SnipList [in] List of snippets objects for which ID list is
       required.
   }
 var
   Snippet: TSnippet;  // references each snippet in list
 begin
   inherited Create;
-  for Snippet in Routines do
+  for Snippet in SnipList do
     Add(Snippet.ID);
 end;
 
