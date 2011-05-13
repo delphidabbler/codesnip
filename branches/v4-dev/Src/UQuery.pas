@@ -205,7 +205,7 @@ begin
   try
     // Get list of routines that match search
     // if there are no routines found we leave current selection alone
-    Result := (Search as ISearch).Execute(Snippets.Routines, FoundList);
+    Result := (Search as ISearch).Execute(Snippets.Snippets, FoundList);
     if Result then
     begin
       // Search succeeded: record search and list of routines
@@ -300,7 +300,7 @@ procedure TQuery.Reset;
   Search property is set to nul search.
   }
 begin
-  fSelection.Assign(Snippets.Routines);
+  fSelection.Assign(Snippets.Snippets);
   fSearch := TSearchFactory.CreateNulSearch;
 end;
 

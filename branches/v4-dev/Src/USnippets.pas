@@ -525,7 +525,7 @@ type
       {Removes a change event handler from list of listeners.
         @param Handler [in] Handler to remove from list.
       }
-    function GetRoutines: TSnippetList;
+    function GetSnippets: TSnippetList;
       {Gets list of snippets in main and user databases.
         @return Required list.
       }
@@ -535,7 +535,7 @@ type
       }
     property Categories: TCategoryList read GetCategories;
       {List of categories in main and user databases}
-    property Routines: TSnippetList read GetRoutines;
+    property Snippets: TSnippetList read GetSnippets;
       {List of snippets in main and user databases}
   end;
 
@@ -863,7 +863,7 @@ type
       {Gets list of all categories in database.
         @return Required list.
       }
-    function GetRoutines: TSnippetList;
+    function GetSnippets: TSnippetList;
       {Gets list of all snippets in database.
         @return Required list.
       }
@@ -1337,7 +1337,7 @@ begin
       List.Add(Routine);
 end;
 
-function TSnippets.GetRoutines: TSnippetList;
+function TSnippets.GetSnippets: TSnippetList;
   {Gets list of all snippets in database.
     @return Required list.
   }

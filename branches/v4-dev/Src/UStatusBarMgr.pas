@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -370,8 +370,8 @@ resourcestring
   sWithUserInfo = '%0:d snippets (%2:d user defined) in %1:d categories';
 begin
   // Calculate database stats
-  TotalSnippets := Snippets.Routines.Count;
-  TotalUserSnippets := Snippets.Routines.Count(True);
+  TotalSnippets := Snippets.Snippets.Count;
+  TotalUserSnippets := Snippets.Snippets.Count(True);
   TotalCategories := Snippets.Categories.Count;
   // Build display text and display it
   if TotalUserSnippets = 0 then

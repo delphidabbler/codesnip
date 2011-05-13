@@ -102,7 +102,7 @@ class function TCodeShareMgr.CanShare: Boolean;
     @return True if user defined routines exist in database.
   }
 begin
-  Result := Snippets.Routines.Count(True) > 0;
+  Result := Snippets.Snippets.Count(True) > 0;
 end;
 
 class procedure TCodeShareMgr.ExportCode(ViewItem: IView);

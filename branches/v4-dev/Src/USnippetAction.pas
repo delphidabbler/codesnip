@@ -100,7 +100,7 @@ var
 begin
   Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
   Assert(SnippetName <> '', ClassName + '.Execute: SnippetName not provided');
-  Snippet := Snippets.Routines.Find(SnippetName, UserDefined);
+  Snippet := Snippets.Snippets.Find(SnippetName, UserDefined);
   Assert(Assigned(Snippet), ClassName + '.Execute: SnippetName not valid');
   // Create a view item for snippet and get notifier to display it
   fNotifier.ShowViewItem(TViewItemFactory.CreateSnippetView(Snippet));

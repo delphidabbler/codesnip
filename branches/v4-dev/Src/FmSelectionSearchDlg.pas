@@ -170,7 +170,7 @@ procedure TSelectionSearchDlg.btnSelectAllClick(Sender: TObject);
 begin
   // Storing all snippets in database in snippet selection frame's
   // SelectedRoutines property causes all snippets to be selected
-  frmSelect.SelectedRoutines := Snippets.Routines;
+  frmSelect.SelectedRoutines := Snippets.Snippets;
 end;
 
 procedure TSelectionSearchDlg.btnUserDBClick(Sender: TObject);
@@ -220,7 +220,7 @@ procedure TSelectionSearchDlg.InitForm;
   }
 begin
   inherited;
-  btnUserDB.Enabled := Snippets.Routines.Count(True) > 0;
+  btnUserDB.Enabled := Snippets.Snippets.Count(True) > 0;
 end;
 
 procedure TSelectionSearchDlg.SelectDB(const UserDefined: Boolean);
@@ -234,7 +234,7 @@ var
 begin
   RoutineList := TSnippetList.Create;
   try
-    for Routine in Snippets.Routines do
+    for Routine in Snippets.Snippets do
       if Routine.UserDefined = UserDefined then
         RoutineList.Add(Routine);
     frmSelect.SelectedRoutines := RoutineList;

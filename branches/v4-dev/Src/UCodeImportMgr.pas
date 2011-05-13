@@ -253,7 +253,7 @@ begin
   // Scan all snippets checking if they already exist in user database
   for RoutineIdx := Low(Routines) to High(Routines) do
   begin
-    if Snippets.Routines.Find(Routines[RoutineIdx].Name, True) = nil then
+    if Snippets.Snippets.Find(Routines[RoutineIdx].Name, True) = nil then
       // snippet doesn't exist: include it in import
       IncludeRoutine(Routines[RoutineIdx])
     else
@@ -397,7 +397,7 @@ var
 begin
   // Create new suggested name
   NameCounter := 2;
-  while Snippets.Routines.Find(
+  while Snippets.Snippets.Find(
     Routine.Name + IntToStr(NameCounter), True
   ) <> nil do
     Inc(NameCounter);
@@ -478,7 +478,7 @@ class procedure TCodeImportMgr.UpdateUserDatabase(const UserInfo: TUserInfo;
     begin
       RoutineID := Depends[Idx];
       RoutineID.UserDefined :=
-        Snippets.Routines.Find(RoutineID.Name, True) <> nil;
+        Snippets.Snippets.Find(RoutineID.Name, True) <> nil;
       Depends[Idx] := RoutineID;
     end;
   end;
@@ -518,7 +518,7 @@ begin
     AdjustDependsList(Routines[Idx].Data.Refs.Depends);
     if not UserInfo.IsNul then
       Routines[Idx].Data.Props.Extra.Append(UserInfoActiveText);
-    Routine := Snippets.Routines.Find(Routines[Idx].Name, True);
+    Routine := Snippets.Snippets.Find(Routines[Idx].Name, True);
     if Assigned(Routine) then
       // snippet already exists: overwrite it
       Editor.UpdateRoutine(Routine, Routines[Idx].Data)

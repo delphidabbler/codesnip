@@ -936,14 +936,14 @@ begin
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
   EditSnippetID := TSnippetID.Create(fOrigName, True);
-  for Snippet in Snippets.Routines do
+  for Snippet in Snippets.Snippets do
   begin
     // We ignore snippet being edited and main database snippets if there is
     // a user-defined one with same name
     if (Snippet.ID <> EditSnippetID) and
       (
         Snippet.UserDefined or
-        not Assigned(Snippets.Routines.Find(Snippet.Name, True))
+        not Assigned(Snippets.Snippets.Find(Snippet.Name, True))
       ) then
     begin
       // Decide if snippet can be added to depends list: must be correct kind

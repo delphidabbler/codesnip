@@ -383,8 +383,8 @@ var
   HaveMainDB: Boolean;  // flag indicating if main database is available
   HaveUserDB: Boolean;  // flag indicating if user database has entries
 begin
-  HaveMainDB := Snippets.Routines.Count(False) > 0;
-  HaveUserDB := Snippets.Routines.Count(True) > 0;
+  HaveMainDB := Snippets.Snippets.Count(False) > 0;
+  HaveUserDB := Snippets.Snippets.Count(True) > 0;
   Tplt.ResolvePlaceholderHTML(
     'NoUserDB', CSSBlockDisplayProp(not HaveUserDB)
   );
