@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -151,7 +151,7 @@ uses
   by values in this code:
 
   <%Status%>        log status - Error(s) or Warning(s)
-  <%Routine%>       name of snippet being compiled
+  <%SnippetName%>   name of snippet being compiled
   <%CompilerID%>    if of compiler that caused warning/error
   <%ErrorList%>     a CRLF delimited list of the errors/warnings from the log as
                     HTML list items in form <li>log-line</li>
@@ -404,10 +404,10 @@ begin
     // Get compiler log and status
     GetLogInfo(Log, Status);
     // Build log report and load into browser control
-    Values.Values['Status']     := Status;
-    Values.Values['ErrorList']  := BuildLogListHTML(Log);
-    Values.Values['Routine']    := MakeSafeHTMLText(fSnippet.Name);
-    Values.Values['CompilerID'] := MakeSafeHTMLText(Compiler.GetName);
+    Values.Values['Status']       := Status;
+    Values.Values['ErrorList']    := BuildLogListHTML(Log);
+    Values.Values['SnippetName']  := MakeSafeHTMLText(fSnippet.Name);
+    Values.Values['CompilerID']   := MakeSafeHTMLText(Compiler.GetName);
     frmHTML.Initialise('dlg-comperror-tplt.html', Values);
   finally
     // Free objects

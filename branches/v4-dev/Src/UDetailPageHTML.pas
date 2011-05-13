@@ -438,12 +438,12 @@ begin
   // Resolve placeholders common to all snippet templates
   // snippet name and class
   if GetSnippet.UserDefined then
-    Tplt.ResolvePlaceholderHTML('RoutineCSSClass', 'userdb')
+    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb')
   else
-    Tplt.ResolvePlaceholderHTML('RoutineCSSClass', 'maindb');
+    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'maindb');
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
-    Tplt.ResolvePlaceholderHTML('RoutineName', SnippetHTML.SnippetName);
+    Tplt.ResolvePlaceholderHTML('SnippetName', SnippetHTML.SnippetName);
   finally
     SnippetHTML.Free;
   end;
@@ -694,7 +694,7 @@ begin
   if HaveSnippets then
   begin
     Tplt.ResolvePlaceholderText('Narrative', sNarrative);
-    Tplt.ResolvePlaceholderHTML('Routines', SnippetTableInner);
+    Tplt.ResolvePlaceholderHTML('SnippetList', SnippetTableInner);
   end
   else
     Tplt.ResolvePlaceholderText('Note', sNote);
@@ -734,7 +734,7 @@ begin
       'Narrative',
       Format(sNarrative, [(View as IInitialLetterView).InitialLetter.Letter])
     );
-    Tplt.ResolvePlaceholderHTML('Routines', SnippetTableInner);
+    Tplt.ResolvePlaceholderHTML('SnippetList', SnippetTableInner);
   end
   else
     Tplt.ResolvePlaceholderText(
@@ -778,7 +778,7 @@ begin
       'Narrative',
       Format(sNarrative, [AnsiLowerCase(View.Description)])
     );
-    Tplt.ResolvePlaceholderHTML('Routines', SnippetTableInner);
+    Tplt.ResolvePlaceholderHTML('SnippetList', SnippetTableInner);
   end
   else
     Tplt.ResolvePlaceholderText(
