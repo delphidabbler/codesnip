@@ -49,10 +49,10 @@ uses
 
 type
   {
-  TTextRoutineDoc:
+  TTextSnippetDoc:
     Class that renders a document that describes a snippet as plain text.
   }
-  TTextRoutineDoc = class(TSnippetDoc)
+  TTextSnippetDoc = class(TSnippetDoc)
   strict private
     var fWriter: TStringWriter;   // Used to write plain text to stream
     const cPageWidth = 80;        // Width of output in characters
@@ -115,9 +115,9 @@ uses
   UUtils;
 
 
-{ TTextRoutineDoc }
+{ TTextSnippetDoc }
 
-function TTextRoutineDoc.FinaliseDoc: TEncodedData;
+function TTextSnippetDoc.FinaliseDoc: TEncodedData;
   {Renders text document as Unicode encoded data. Releases write object.
     @return Unicode encoded text document.
   }
@@ -126,14 +126,14 @@ begin
   fWriter.Free;
 end;
 
-procedure TTextRoutineDoc.InitialiseDoc;
+procedure TTextSnippetDoc.InitialiseDoc;
   {Create writer object to build up text.
   }
 begin
   fWriter := TStringWriter.Create;
 end;
 
-procedure TTextRoutineDoc.RenderCompilerInfo(const Heading: string;
+procedure TTextSnippetDoc.RenderCompilerInfo(const Heading: string;
   const Info: TCompileDocInfoArray);
   {Writes details of compiler information to output stream.
     @param Heading [in] Heading for compiler information.
@@ -148,7 +148,7 @@ begin
     fWriter.WriteLine('%-20s%s', [Info[Idx].Compiler, Info[Idx].Result]);
 end;
 
-procedure TTextRoutineDoc.RenderDBInfo(const Text: string);
+procedure TTextSnippetDoc.RenderDBInfo(const Text: string);
   {Writes information about code snippets database to output stream.
     @param Text [in] Text to be written.
   }
@@ -157,7 +157,7 @@ begin
   fWriter.WriteLine(TextWrap(Text, cPageWidth, 0));
 end;
 
-procedure TTextRoutineDoc.RenderDescription(const Desc: string);
+procedure TTextSnippetDoc.RenderDescription(const Desc: string);
   {Writes snippet description to output stream.
     @param Desc [in] Description to be written.
   }
@@ -166,7 +166,7 @@ begin
   fWriter.WriteLine(TextWrap(Desc, cPageWidth, 0));
 end;
 
-procedure TTextRoutineDoc.RenderExtra(const ExtraText: IActiveText);
+procedure TTextSnippetDoc.RenderExtra(const ExtraText: IActiveText);
   {Writes snippet's extra information to output stream.
     @param ExtraText [in] Text to be written.
   }
@@ -233,7 +233,7 @@ begin
   end;
 end;
 
-procedure TTextRoutineDoc.RenderHeading(const Heading: string);
+procedure TTextSnippetDoc.RenderHeading(const Heading: string);
   {Writes heading (snippet name) to output stream.
     @param Heading [in] Heading to be written.
   }
@@ -241,7 +241,7 @@ begin
   fWriter.WriteLine(Heading);
 end;
 
-procedure TTextRoutineDoc.RenderSourceCode(const SourceCode: string);
+procedure TTextSnippetDoc.RenderSourceCode(const SourceCode: string);
   {Writes snippet's source code to output stream.
     @param SourceCode [in] Source code to be written.
   }
@@ -251,7 +251,7 @@ begin
   fWriter.WriteLine;
 end;
 
-procedure TTextRoutineDoc.RenderTitledList(const Title: string;
+procedure TTextSnippetDoc.RenderTitledList(const Title: string;
   List: IStringList);
   {Writes a comma-separated list preceded by a title to output stream.
     @param Title [in] List title.
@@ -261,7 +261,7 @@ begin
   RenderTitledText(Title, CommaList(List));
 end;
 
-procedure TTextRoutineDoc.RenderTitledText(const Title, Text: string);
+procedure TTextSnippetDoc.RenderTitledText(const Title, Text: string);
   {Outputs text preceded by a title.
     @param Title [in] Text title.
     @param Text [in] Text to be written.

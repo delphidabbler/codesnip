@@ -103,9 +103,9 @@ end;
 
 class function TCopyInfoMgr.GeneratePlainText(View: IView): TEncodedData;
 var
-  Doc: TTextRoutineDoc; // object that generates plain text document
+  Doc: TTextSnippetDoc; // object that generates plain text document
 begin
-  Doc := TTextRoutineDoc.Create;
+  Doc := TTextSnippetDoc.Create;
   try
     // TTextRoutineDoc generates stream of Unicode bytes
     Result := GenerateDoc(View, Doc);
