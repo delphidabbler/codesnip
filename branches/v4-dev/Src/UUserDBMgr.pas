@@ -397,7 +397,7 @@ begin
       ]
     );
   if TMessageBox.Confirm(nil, ConfirmMsg) then
-    (Snippets as ISnippetsEdit).DeleteRoutine(Snippet);
+    (Snippets as ISnippetsEdit).DeleteSnippet(Snippet);
 end;
 
 class procedure TUserDBMgr.EditSnippet(const SnippetName: string);

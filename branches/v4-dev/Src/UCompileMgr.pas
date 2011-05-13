@@ -167,7 +167,7 @@ begin
     DisplayProc(fCompilers);
   // Copy routine to LastCompiledRoutine property
   fLastCompiledRoutine.Free;
-  fLastCompiledRoutine := (Snippets as ISnippetsEdit).CreateTempRoutine(
+  fLastCompiledRoutine := (Snippets as ISnippetsEdit).CreateTempSnippet(
     Routine
   );
 end;

@@ -590,7 +590,7 @@ begin
       RoutineNode := RoutineNodes[Idx];
       fRoutineInfo[Idx].Name := RoutineNode.Attributes[cRoutineNameAttr];
       fRoutineInfo[Idx].Data :=
-        (Snippets as ISnippetsEdit).GetEditableRoutineInfo;
+        (Snippets as ISnippetsEdit).GetEditableSnippetInfo;
       with fRoutineInfo[Idx].Data do
       begin
         Props.Cat := TReservedCategories.ImportsCatName;

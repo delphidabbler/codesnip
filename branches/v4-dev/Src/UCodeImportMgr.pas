@@ -521,10 +521,10 @@ begin
     Routine := Snippets.Snippets.Find(Routines[Idx].Name, True);
     if Assigned(Routine) then
       // snippet already exists: overwrite it
-      Editor.UpdateRoutine(Routine, Routines[Idx].Data)
+      Editor.UpdateSnippet(Routine, Routines[Idx].Data)
     else
       // snippet is new: add to database
-      Editor.AddRoutine(Routines[Idx].Name, Routines[Idx].Data);
+      Editor.AddSnippet(Routines[Idx].Name, Routines[Idx].Data);
   end;
 end;
 

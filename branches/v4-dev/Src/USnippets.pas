@@ -545,7 +545,7 @@ type
   }
   ISnippetsEdit = interface(IInterface)
     ['{CBF6FBB0-4C18-481F-A378-84BB09E5ECF4}']
-    function GetEditableRoutineInfo(
+    function GetEditableSnippetInfo(
       const Routine: TSnippet = nil): TSnippetEditData;
       {Provides details of all a snippet's data (properties and references) that
       may be edited.
@@ -564,7 +564,7 @@ type
         @param Routine [in] Snippet for which cross referers are required.
         @return List of IDs of referring snippets.
       }
-    function UpdateRoutine(const Routine: TSnippet;
+    function UpdateSnippet(const Routine: TSnippet;
       const Data: TSnippetEditData; const NewName: string = ''): TSnippet;
       {Updates a user defined snippet's properties and references using provided
       data.
@@ -574,14 +574,14 @@ type
           name is not to change.
         @return Reference to updated snippet. Will have changed.
       }
-    function AddRoutine(const RoutineName: string;
+    function AddSnippet(const RoutineName: string;
       const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database.
         @param RoutineName [in] Name of new snippet.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
-    function CreateTempRoutine(const RoutineName: string;
+    function CreateTempSnippet(const RoutineName: string;
       const Data: TSnippetEditData): TSnippet; overload;
       {Creates a new temporary snippet without adding it to the Snippets
       object's snippets list. The new instance may not be added to the
@@ -590,14 +590,14 @@ type
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
-    function CreateTempRoutine(const Routine: TSnippet): TSnippet; overload;
+    function CreateTempSnippet(const Routine: TSnippet): TSnippet; overload;
       {Creates a new temporary copy of a snippet without adding it to the
       Snippets object's snippets list. The new instance may not be added to the
       Snippets object.
         @param Routine [in] Snippet to be copied.
         @return Reference to new copied snippet.
       }
-    procedure DeleteRoutine(const Routine: TSnippet);
+    procedure DeleteSnippet(const Routine: TSnippet);
       {Deletes a snippet from the user database.
         @param Routine [in] Snippet to be deleted.
       }
@@ -882,7 +882,7 @@ type
         @param Handler [in] Handler to remove from list.
       }
     { ISnippetsEdit methods }
-    function GetEditableRoutineInfo(
+    function GetEditableSnippetInfo(
       const Routine: TSnippet = nil): TSnippetEditData;
       {Provides details of all a snippet's data (properties and references) that
       may be edited.
@@ -901,7 +901,7 @@ type
         @param Routine [in] Snippet which is cross referenced.
         @return List of IDs of referring snippets.
       }
-    function UpdateRoutine(const Routine: TSnippet;
+    function UpdateSnippet(const Routine: TSnippet;
       const Data: TSnippetEditData; const NewName: string = ''): TSnippet;
       {Updates a user defined snippet's properties and references using provided
       data.
@@ -911,14 +911,14 @@ type
           name is not to change.
         @return Reference to updated snippet. Will have changed.
       }
-    function AddRoutine(const RoutineName: string;
+    function AddSnippet(const RoutineName: string;
       const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database.
         @param RoutineName [in] Name of new snippet.
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
-    function CreateTempRoutine(const RoutineName: string;
+    function CreateTempSnippet(const RoutineName: string;
       const Data: TSnippetEditData): TSnippet; overload;
       {Creates a new temporary user defined snippet without adding it to the
       Snippets object's snippets list. The new instance may not be added to the
@@ -927,14 +927,14 @@ type
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
-    function CreateTempRoutine(const Routine: TSnippet): TSnippet; overload;
+    function CreateTempSnippet(const Routine: TSnippet): TSnippet; overload;
       {Creates a new temporary copy of a snippet without adding it to the
       Snippets object's snippets list. The new instance may not be added to the
       Snippets object.
         @param Routine [in] Snippet to be copied.
         @return Reference to new snippet.
       }
-    procedure DeleteRoutine(const Routine: TSnippet);
+    procedure DeleteSnippet(const Routine: TSnippet);
       {Deletes a snippet from the user database.
         @param Routine [in] Snippet to be deleted.
       }
@@ -1080,7 +1080,7 @@ begin
   fChangeEvents.AddHandler(Handler);
 end;
 
-function TSnippets.AddRoutine(const RoutineName: string;
+function TSnippets.AddSnippet(const RoutineName: string;
   const Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the user database.
     @param RoutineName [in] Name of new snippet.
@@ -1123,7 +1123,7 @@ begin
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
 
-function TSnippets.CreateTempRoutine(const Routine: TSnippet): TSnippet;
+function TSnippets.CreateTempSnippet(const Routine: TSnippet): TSnippet;
   {Creates a new temporary copy of a snippet without adding it to the
   Snippets object's snippets list. The new instance may not be added to the
   Snippets object.
@@ -1144,7 +1144,7 @@ begin
   );
 end;
 
-function TSnippets.CreateTempRoutine(const RoutineName: string;
+function TSnippets.CreateTempSnippet(const RoutineName: string;
   const Data: TSnippetEditData): TSnippet;
   {Creates a new temporary user defined snippet without adding it to the
   Snippets object's snippets list. The new instance may not be added to the
@@ -1183,7 +1183,7 @@ begin
   end;
 end;
 
-procedure TSnippets.DeleteRoutine(const Routine: TSnippet);
+procedure TSnippets.DeleteSnippet(const Routine: TSnippet);
   {Deletes a snippet from the user database.
     @param Routine [in] Snippet to be deleted.
   }
@@ -1287,7 +1287,7 @@ begin
     Result.Init;
 end;
 
-function TSnippets.GetEditableRoutineInfo(
+function TSnippets.GetEditableSnippetInfo(
   const Routine: TSnippet): TSnippetEditData;
   {Provides details of all a snippet's data (properties and references) that may
   be edited.
@@ -1512,7 +1512,7 @@ begin
   Result := fUpdated;
 end;
 
-function TSnippets.UpdateRoutine(const Routine: TSnippet;
+function TSnippets.UpdateSnippet(const Routine: TSnippet;
   const Data: TSnippetEditData; const NewName: string): TSnippet;
   {Updates a user defined snippet's properties and references using provided
   data.

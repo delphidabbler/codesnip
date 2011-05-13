@@ -544,12 +544,12 @@ begin
     RoutineName := Trim(edName.Text);
     // Add or update snippet
     if Assigned(fSnippet) then
-      fSnippet := (Snippets as ISnippetsEdit).UpdateRoutine(
+      fSnippet := (Snippets as ISnippetsEdit).UpdateSnippet(
         fSnippet, fEditData, RoutineName
       )
     else
     begin
-      fSnippet := (Snippets as ISnippetsEdit).AddRoutine(
+      fSnippet := (Snippets as ISnippetsEdit).AddSnippet(
         RoutineName, fEditData
       )
     end;
@@ -641,7 +641,7 @@ begin
   ValidateData;
   // Create snippet object from entered data
   EditData.Assign(UpdateData);
-  Result := (Snippets as ISnippetsEdit).CreateTempRoutine(
+  Result := (Snippets as ISnippetsEdit).CreateTempSnippet(
     Trim(edName.Text), EditData
   );
 end;
@@ -826,7 +826,7 @@ begin
   inherited;
   // Get data associated with snippet, or blank / default data if adding a new
   // snippet
-  fEditData := (Snippets as ISnippetsEdit).GetEditableRoutineInfo(fSnippet);
+  fEditData := (Snippets as ISnippetsEdit).GetEditableSnippetInfo(fSnippet);
   // Record snippet's original name, if any
   if Assigned(fSnippet) then
     fOrigName := fSnippet.Name
