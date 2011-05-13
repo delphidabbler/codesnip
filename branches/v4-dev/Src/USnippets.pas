@@ -148,11 +148,11 @@ type
   TSnippetChangeEventKind = (
     evChangeBegin,          // a change to the database is about to take place
     evChangeEnd,            // a change to the database has completed
-    evRoutineAdded,         // a snippet has been added
-    evBeforeRoutineDelete,  // a snippet is about to be deleted
-    evAfterRoutineDelete,   // a snippet has just been deleted
-    evRoutineDeleted,       // a snippet has been deleted
-    evRoutineChanged,       // a snippet's properties / references have changed
+    evSnippetAdded,         // a snippet has been added
+    evBeforeSnippetDelete,  // a snippet is about to be deleted
+    evAfterSnippetDelete,   // a snippet has just been deleted
+    evSnippetDeleted,       // a snippet has been deleted
+    evSnippetChanged,       // a snippet's properties / references have changed
     evCategoryAdded,        // a category has been added
     evBeforeCategoryDelete, // a category is about to be deleted
     evAfterCategoryDelete,  // a category has just been deleted
@@ -254,7 +254,7 @@ type
     fDepends: TSnippetList;           // List of required snippets
     fXRef: TSnippetList;              // List of cross-referenced snippets
     fExtra: IActiveText;              // Additional information about snippet
-    fCompatibility: TCompileResults;  // Routine's compiler compatibility
+    fCompatibility: TCompileResults;  // Snippet's compiler compatibility
     fUserDefined: Boolean;            // Whether this snippet is user-defined
     function GetID: TSnippetID;
       {Gets snippet's unique ID.
@@ -1098,7 +1098,7 @@ begin
     if fSnippets.Find(RoutineName, True) <> nil then
       raise ECodeSnip.CreateFmt(sNameExists, [RoutineName]);
     Result := InternalAddSnippet(RoutineName, Data);
-    TriggerEvent(evRoutineAdded, Result);
+    TriggerEvent(evSnippetAdded, Result);
   finally
     fUpdated := True;
     TriggerEvent(evChangeEnd);
@@ -1213,7 +1213,7 @@ begin
       (Dependent.Depends as TSnippetListEx).Delete(Routine);
     // Delete routine itself
     InternalDeleteSnippet(Routine);
-    TriggerEvent(evRoutineDeleted);
+    TriggerEvent(evSnippetDeleted);
   finally
     FreeAndNil(Referrers);
     FreeAndNil(Dependents);
@@ -1404,9 +1404,9 @@ begin
   if Assigned(Cat) then
     (Cat.Snippets as TSnippetListEx).Delete(Routine);
   // Delete from "master" list: this frees Routine
-  TriggerEvent(evBeforeRoutineDelete, Routine);
+  TriggerEvent(evBeforeSnippetDelete, Routine);
   (fSnippets as TSnippetListEx).Delete(Routine);
-  TriggerEvent(evAfterRoutineDelete);
+  TriggerEvent(evAfterSnippetDelete);
 end;
 
 procedure TSnippets.Load;
@@ -1569,7 +1569,7 @@ begin
       Referrer.XRef.Add(Result);
     for Dependent in Dependents do
       Dependent.Depends.Add(Result);
-    TriggerEvent(evRoutineChanged, Result);
+    TriggerEvent(evSnippetChanged, Result);
   finally
     fUpdated := True;
     Referrers.Free;

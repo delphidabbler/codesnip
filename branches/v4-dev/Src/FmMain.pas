@@ -1652,8 +1652,8 @@ begin
     end;
     evChangeEnd:            // database change has completed
       Enabled := True;
-    evRoutineAdded,         // snippet added: display new routine
-    evRoutineChanged:       // snippet edited: display changed routine
+    evSnippetAdded,         // snippet added: display new routine
+    evSnippetChanged:       // snippet edited: display changed routine
     begin
       ReInitialise;
       fNotifier.DisplayRoutine(
@@ -1661,13 +1661,13 @@ begin
         (EventInfo.Info as TSnippet).UserDefined
       );
     end;
-    evBeforeRoutineDelete,  // snippet about to be deleted: clear display
+    evBeforeSnippetDelete,  // snippet about to be deleted: clear display
     evBeforeCategoryDelete: // category about to be deleted: clear display
     begin
       fHistory.Clear;
       fMainDisplayMgr.Clear;
     end;
-    evRoutineDeleted,       // snippet deleted: display welcome page
+    evSnippetDeleted,       // snippet deleted: display welcome page
     evCategoryDeleted:      // category deleted: display welcome page
     begin
       ReInitialise;
