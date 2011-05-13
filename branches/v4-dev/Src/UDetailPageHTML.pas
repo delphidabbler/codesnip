@@ -130,11 +130,11 @@ type
   end;
 
   {
-  TRoutinePageHTML:
+  TSnippetPageHTML:
     Abstract base class for classes that generate HTML for pages that describe
     a snippet.
   }
-  TRoutinePageHTML = class abstract(TDetailPageTpltHTML)
+  TSnippetPageHTML = class abstract(TDetailPageTpltHTML)
   strict private
     fCompilersInfo: ICompilers; // Provides information about compilers
   strict protected
@@ -147,7 +147,7 @@ type
         @param Tplt [in] Reference to HTML template object that encapsulates the
           template.
       }
-    function GetRoutine: TSnippet;
+    function GetSnippet: TSnippet;
       {Gets reference to snippet from View property.
         @return Required snippet reference.
       }
@@ -161,11 +161,11 @@ type
   end;
 
   {
-  TRoutineInfoPageHTML:
+  TSnippetInfoPageHTML:
     Class that generates information about a snippet displayed in information
     pane. Uses a template stored in resources.
   }
-  TRoutineInfoPageHTML = class sealed(TRoutinePageHTML)
+  TSnippetInfoPageHTML = class sealed(TSnippetPageHTML)
   strict protected
     function GetTemplateResName: string; override;
       {Gets the name of the HTML template resource.
@@ -179,11 +179,11 @@ type
   end;
 
   {
-  TRoutineCompCheckPageHTML:
+  TSnippetCompCheckPageHTML:
     Class that generates information about a snippet displayed in compiler check
     pane. Uses a template stored in resources.
   }
-  TRoutineCompCheckPageHTML = class sealed(TRoutinePageHTML)
+  TSnippetCompCheckPageHTML = class sealed(TSnippetPageHTML)
   strict protected
     function GetTemplateResName: string; override;
       {Gets the name of the HTML template resource.
@@ -197,29 +197,29 @@ type
   end;
 
   {
-  TRoutinePageHTML:
+  TSnippetPageHTML:
     Abstract base class for classes that generate HTML for pages that display a
     list of snippets.
   }
-  TRoutineListPageHTML = class abstract(TDetailPageTpltHTML)
+  TSnippetListPageHTML = class abstract(TDetailPageTpltHTML)
   strict private
-    fRoutines: TSnippetList;  // List of snippets to be displayed
+    fSnippets: TSnippetList;  // List of snippets to be displayed
   strict protected
-    function RoutineTableInner: string;
+    function SnippetTableInner: string;
       {Builds a sequence of table rows each containing a link to the snippet
       along with its description.
         @return Required table rows.
       }
-    function RoutineTableRow(const Routine: TSnippet): string;
+    function SnippetTableRow(const Snippet: TSnippet): string;
       {Builds a table row containing cells with a link to a snippet and a
       description of the snippet.
-        @param Routine [in] Snippet to be included in row.
+        @param Snippet [in] Snippet to be included in row.
         @return Required table row.
       }
-    procedure BuildRoutineList; virtual; abstract;
-      {Stores all snippets to be displayed in Routines property.
+    procedure BuildSnippetList; virtual; abstract;
+      {Stores all snippets to be displayed in Snippets property.
       }
-    property Routines: TSnippetList read fRoutines;
+    property Snippets: TSnippetList read fSnippets;
       {List of all snippets to be displayed}
     function GetTemplateResName: string; override;
       {Gets the name of the HTML template resource.
@@ -247,18 +247,18 @@ type
 
   {
   TCategoryPageHTML:
-    Class that displays routines contained in a category. Uses a template stored
+    Class that displays snippets contained in a category. Uses a template stored
     in resources.
   }
-  TCategoryPageHTML = class sealed(TRoutineListPageHTML)
+  TCategoryPageHTML = class sealed(TSnippetListPageHTML)
   strict protected
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
       {Resolves the placeholders in the HTML template.
         @param Tplt [in] Reference to HTML template object that encapsulates the
           template.
       }
-    procedure BuildRoutineList; override;
-      {Stores all snippets to be displayed in Routines property.
+    procedure BuildSnippetList; override;
+      {Stores all snippets to be displayed in Snippets property.
       }
   end;
 
@@ -267,15 +267,15 @@ type
     Class that displays all snippets that have same initial letter. Uses a
     template stored in resources.
   }
-  TAlphaListPageHTML = class sealed(TRoutineListPageHTML)
+  TAlphaListPageHTML = class sealed(TSnippetListPageHTML)
   strict protected
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
       {Resolves the placeholders in the HTML template.
         @param Tplt [in] Reference to HTML template object that encapsulates the
           template.
       }
-    procedure BuildRoutineList; override;
-      {Stores all snippets to be displayed in Routines property.
+    procedure BuildSnippetList; override;
+      {Stores all snippets to be displayed in Snippets property.
       }
   end;
 
@@ -284,15 +284,15 @@ type
     Class that displays all snippets that are of same kind. Uses a template
     stored in resources.
   }
-  TSnipKindPageHTML = class sealed(TRoutineListPageHTML)
+  TSnipKindPageHTML = class sealed(TSnippetListPageHTML)
   strict protected
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
       {Resolves the placeholders in the HTML template.
         @param Tplt [in] Reference to HTML template object that encapsulates the
           template.
       }
-    procedure BuildRoutineList; override;
-      {Stores all snippets to be displayed in Routines property.
+    procedure BuildSnippetList; override;
+      {Stores all snippets to be displayed in Snippets property.
       }
   end;
 
@@ -405,9 +405,9 @@ begin
   );
 end;
 
-{ TRoutinePageHTML }
+{ TSnippetPageHTML }
 
-constructor TRoutinePageHTML.Create(View: IView);
+constructor TSnippetPageHTML.Create(View: IView);
   {Object constructor. Sets up object for a view item.
     @param View [in] Provides information about snippet to be displayed.
   }
@@ -417,48 +417,48 @@ begin
   fCompilersInfo := TCompilersFactory.CreateAndLoadCompilers;
 end;
 
-function TRoutinePageHTML.GetRoutine: TSnippet;
+function TSnippetPageHTML.GetSnippet: TSnippet;
   {Gets reference to snippet from View property.
     @return Required snippet reference.
   }
 begin
   Assert(Supports(View, ISnippetView),
-    ClassName + '.GetRoutine: View is not snippet');
+    ClassName + '.GetSnippet: View is not snippet');
   Result := (View as ISnippetView).Snippet;
 end;
 
-procedure TRoutinePageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
+procedure TSnippetPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
   {Resolves the placeholders in the HTML template.
     @param Tplt [in] Reference to HTML template object that encapsulates the
       template.
   }
 var
-  RoutineHTML: TSnippetHTML;  // object used to generate HTML
+  SnippetHTML: TSnippetHTML;  // object used to generate HTML
 begin
   // Resolve placeholders common to all snippet templates
   // snippet name and class
-  if GetRoutine.UserDefined then
+  if GetSnippet.UserDefined then
     Tplt.ResolvePlaceholderHTML('RoutineCSSClass', 'userdb')
   else
     Tplt.ResolvePlaceholderHTML('RoutineCSSClass', 'maindb');
-  RoutineHTML := TSnippetHTML.Create(GetRoutine);
+  SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
-    Tplt.ResolvePlaceholderHTML('RoutineName', RoutineHTML.SnippetName);
+    Tplt.ResolvePlaceholderHTML('RoutineName', SnippetHTML.SnippetName);
   finally
-    RoutineHTML.Free;
+    SnippetHTML.Free;
   end;
   // "edit snippet" link for user-defined snippets
   Tplt.ResolvePlaceholderHTML(
-    'EditLink', CSSBlockDisplayProp(GetRoutine.UserDefined)
+    'EditLink', CSSBlockDisplayProp(GetSnippet.UserDefined)
   );
   Tplt.ResolvePlaceholderText(
-    'EditEventHandler', JSLiteralFunc('editRoutine', [GetRoutine.Name])
+    'EditEventHandler', JSLiteralFunc('editRoutine', [GetSnippet.Name])
   );
 end;
 
-{ TRoutineInfoPageHTML }
+{ TSnippetInfoPageHTML }
 
-function TRoutineInfoPageHTML.GetTemplateResName: string;
+function TSnippetInfoPageHTML.GetTemplateResName: string;
   {Gets the name of the HTML template resource.
     @return Name of template resource.
   }
@@ -466,7 +466,7 @@ begin
   Result := 'info-snippet-tplt.html';
 end;
 
-procedure TRoutineInfoPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
+procedure TSnippetInfoPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
   {Resolves the placeholders in the HTML template.
     @param Tplt [in] Reference to HTML template object that encapsulates the
       template.
@@ -493,7 +493,7 @@ procedure TRoutineInfoPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
       Row1 := Row1 + TInfoCompResHTML.NameCell(Compiler) + EOL;
       // Add table cell containing required LED image to 2nd row of table
       Row2 := Row2
-        + TInfoCompResHTML.ResultCell(GetRoutine.Compatibility[Compiler.GetID])
+        + TInfoCompResHTML.ResultCell(GetSnippet.Compatibility[Compiler.GetID])
         + EOL;
     end;
 
@@ -510,7 +510,7 @@ var
   InfoHTML: TInfoHTML;  // object used to generate HTML
 begin
   inherited;
-  InfoHTML := TInfoHTML.Create(GetRoutine);
+  InfoHTML := TInfoHTML.Create(GetSnippet);
   try
     Tplt.ResolvePlaceholderHTML('Kind', InfoHTML.SnippetKind);
     Tplt.ResolvePlaceholderHTML('Category', InfoHTML.Category);
@@ -522,29 +522,29 @@ begin
     Tplt.ResolvePlaceholderHTML('CompilerTableRows', CompilerTableInner);
     Tplt.ResolvePlaceholderHTML('Extra', InfoHTML.Extra);
     Tplt.ResolvePlaceholderHTML(
-      'ShowCompilations', CSSBlockDisplayProp(GetRoutine.CanCompile)
+      'ShowCompilations', CSSBlockDisplayProp(GetSnippet.CanCompile)
     );
   finally
     InfoHTML.Free;
   end;
 end;
 
-{ TRoutineCompCheckPageHTML }
+{ TSnippetCompCheckPageHTML }
 
-function TRoutineCompCheckPageHTML.GetTemplateResName: string;
+function TSnippetCompCheckPageHTML.GetTemplateResName: string;
   {Gets the name of the HTML template resource.
     @return Name of template resource.
   }
 begin
   if CompilersInfo.AvailableCount = 0 then
     Result := 'comp-nocompilers-tplt.html'
-  else if GetRoutine.CanCompile then
+  else if GetSnippet.CanCompile then
     Result := 'comp-snippet-tplt.html'
   else
     Result := 'comp-freeform-tplt.html';
 end;
 
-procedure TRoutineCompCheckPageHTML.ResolvePlaceholders(
+procedure TSnippetCompCheckPageHTML.ResolvePlaceholders(
   const Tplt: THTMLTemplate);
   {Resolves the placeholders in the HTML template.
     @param Tplt [in] Reference to HTML template object that encapsulates the
@@ -568,7 +568,7 @@ procedure TRoutineCompCheckPageHTML.ResolvePlaceholders(
         + EOL
         + TCompCheckResHTML.NameCell(Compiler)
         + EOL
-        + TCompCheckResHTML.ResultCell(GetRoutine.Compatibility[Compiler.GetID])
+        + TCompCheckResHTML.ResultCell(GetSnippet.Compatibility[Compiler.GetID])
         + EOL
         + TCompCheckResHTML.TestCellPlaceholder(Compiler)
         + EOL
@@ -582,35 +582,35 @@ procedure TRoutineCompCheckPageHTML.ResolvePlaceholders(
 
 begin
   inherited;
-  if GetRoutine.CanCompile and (CompilersInfo.AvailableCount > 0) then
+  if GetSnippet.CanCompile and (CompilersInfo.AvailableCount > 0) then
     // This placeholder occurs only in the template used for compilable snippets
     Tplt.ResolvePlaceholderHTML(
       'CompilerInfo', CompilerTableInner
     );
 end;
 
-{ TRoutineListPageHTML }
+{ TSnippetListPageHTML }
 
-constructor TRoutineListPageHTML.Create(View: IView);
+constructor TSnippetListPageHTML.Create(View: IView);
   {Object constructor. Sets up object for a view item.
     @param View [in] Provides information about item to be displayed.
   }
 begin
   inherited;
   // Create list of all snippets to be displayed
-  fRoutines := TSnippetList.Create;
-  BuildRoutineList;
+  fSnippets := TSnippetList.Create;
+  BuildSnippetList;
 end;
 
-destructor TRoutineListPageHTML.Destroy;
+destructor TSnippetListPageHTML.Destroy;
   {Object destructor. Tidies up object.
   }
 begin
-  fRoutines.Free;
+  fSnippets.Free;
   inherited;
 end;
 
-function TRoutineListPageHTML.GetTemplateResName: string;
+function TSnippetListPageHTML.GetTemplateResName: string;
 begin
   if HaveSnippets then
     Result := 'info-snippet-list-tplt.html'
@@ -618,15 +618,15 @@ begin
     Result := 'info-empty-selection-tplt.html';
 end;
 
-function TRoutineListPageHTML.HaveSnippets: Boolean;
+function TSnippetListPageHTML.HaveSnippets: Boolean;
   {Checks if there are snippets in list.
     @return True if there are snippets in list, False if not.
   }
 begin
-  Result := Routines.Count > 0;
+  Result := Snippets.Count > 0;
 end;
 
-function TRoutineListPageHTML.RoutineTableInner: string;
+function TSnippetListPageHTML.SnippetTableInner: string;
   {Builds a sequence of table rows each containing a link to the snippet
   along with its description.
     @return Required table rows.
@@ -635,35 +635,35 @@ var
   Snippet: TSnippet;  // references each snippet in list
 begin
   Result := '';
-  for Snippet in Routines do
-    Result := Result + RoutineTableRow(Snippet);
+  for Snippet in Snippets do
+    Result := Result + SnippetTableRow(Snippet);
 end;
 
-function TRoutineListPageHTML.RoutineTableRow(const Routine: TSnippet): string;
+function TSnippetListPageHTML.SnippetTableRow(const Snippet: TSnippet): string;
   {Builds a table row containing cells with a link to a snippet and a
   description of the snippet.
-    @param Routine [in] Snippet to be included in row.
+    @param Snippet [in] Snippet to be included in row.
     @return Required table row.
   }
 begin
   Result := MakeCompoundTag(
     'tr',
     MakeCompoundTag(
-      'td', RoutineALink(Routine.Name, Routine.UserDefined)
+      'td', RoutineALink(Snippet.Name, Snippet.UserDefined)
     )
     + MakeCompoundTag(
-      'td', MakeSafeHTMLText(Routine.Description)
+      'td', MakeSafeHTMLText(Snippet.Description)
     )
   )
 end;
 
 { TCategoryPageHTML }
 
-procedure TCategoryPageHTML.BuildRoutineList;
-  {Stores all snippets to be displayed in Routines property.
+procedure TCategoryPageHTML.BuildSnippetList;
+  {Stores all snippets to be displayed in Snippets property.
   }
 begin
-  Query.GetCatSelection((View as ICategoryView).Category, Routines);
+  Query.GetCatSelection((View as ICategoryView).Category, Snippets);
 end;
 
 procedure TCategoryPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
@@ -694,7 +694,7 @@ begin
   if HaveSnippets then
   begin
     Tplt.ResolvePlaceholderText('Narrative', sNarrative);
-    Tplt.ResolvePlaceholderHTML('Routines', RoutineTableInner);
+    Tplt.ResolvePlaceholderHTML('Routines', SnippetTableInner);
   end
   else
     Tplt.ResolvePlaceholderText('Note', sNote);
@@ -702,17 +702,17 @@ end;
 
 { TAlphaListPageHTML }
 
-procedure TAlphaListPageHTML.BuildRoutineList;
-  {Stores all snippets to be displayed in Routines property.
+procedure TAlphaListPageHTML.BuildSnippetList;
+  {Stores all snippets to be displayed in Snippets property.
   }
 var
   Snippet: TSnippet;
 begin
-  Routines.Clear;
+  Snippets.Clear;
   for Snippet in Query.Selection do
   begin
     if Snippet.Name[1] = (View as IInitialLetterView).InitialLetter then
-      Routines.Add(Snippet);
+      Snippets.Add(Snippet);
   end;
 end;
 
@@ -734,7 +734,7 @@ begin
       'Narrative',
       Format(sNarrative, [(View as IInitialLetterView).InitialLetter.Letter])
     );
-    Tplt.ResolvePlaceholderHTML('Routines', RoutineTableInner);
+    Tplt.ResolvePlaceholderHTML('Routines', SnippetTableInner);
   end
   else
     Tplt.ResolvePlaceholderText(
@@ -744,17 +744,17 @@ end;
 
 { TSnipKindPageHTML }
 
-procedure TSnipKindPageHTML.BuildRoutineList;
-  {Stores all snippets to be displayed in Routines property.
+procedure TSnipKindPageHTML.BuildSnippetList;
+  {Stores all snippets to be displayed in Snippets property.
   }
 var
   Snippet: TSnippet;
 begin
-  Routines.Clear;
+  Snippets.Clear;
   for Snippet in Query.Selection do
   begin
     if Snippet.Kind = (View as ISnippetKindView).KindInfo.Kind then
-      Routines.Add(Snippet);
+      Snippets.Add(Snippet);
   end;
 end;
 
@@ -778,7 +778,7 @@ begin
       'Narrative',
       Format(sNarrative, [AnsiLowerCase(View.Description)])
     );
-    Tplt.ResolvePlaceholderHTML('Routines', RoutineTableInner);
+    Tplt.ResolvePlaceholderHTML('Routines', SnippetTableInner);
   end
   else
     Tplt.ResolvePlaceholderText(

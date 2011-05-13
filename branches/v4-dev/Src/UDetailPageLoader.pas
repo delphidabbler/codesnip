@@ -118,8 +118,8 @@ begin
     Result := TWelcomePageHTML.Create(View)
   else if Supports(View, ISnippetView) then
     case PageKind of
-      pkInfo: Result := TRoutineInfoPageHTML.Create(View);
-      pkComp: Result := TRoutineCompCheckPageHTML.Create(View);
+      pkInfo: Result := TSnippetInfoPageHTML.Create(View);
+      pkComp: Result := TSnippetCompCheckPageHTML.Create(View);
     end
   else if Supports(View, ICategoryView) then
     case PageKind of
