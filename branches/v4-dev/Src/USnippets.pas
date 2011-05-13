@@ -783,7 +783,7 @@ type
   strict private
     fUpdated: Boolean;                // Flags if user database has been updated
     fCategories: TCategoryList;       // List of categories
-    fRoutines: TSnippetList;          // List of snippets
+    fSnippets: TSnippetList;          // List of snippets
     fChangeEvents: TMulticastEvents;  // List of change event handlers
     type
       {
@@ -986,7 +986,7 @@ type
   }
   TUserDataProvider = class(TInterfacedObject, ISnippetsDataProvider)
   strict private
-    fRoutines: TSnippetList;    // All snippets in the whole database
+    fSnippets: TSnippetList;    // All snippets in the whole database
     fCategories: TCategoryList; // All categories in the whole database
   public
     constructor Create(const Routines: TSnippetList;
@@ -1095,7 +1095,7 @@ begin
   TriggerEvent(evChangeBegin);
   try
     // Check if snippet with same name exists in user database: error if so
-    if fRoutines.Find(RoutineName, True) <> nil then
+    if fSnippets.Find(RoutineName, True) <> nil then
       raise ECodeSnip.CreateFmt(sNameExists, [RoutineName]);
     Result := InternalAddSnippet(RoutineName, Data);
     TriggerEvent(evRoutineAdded, Result);
@@ -1110,7 +1110,7 @@ procedure TSnippets.Clear;
   }
 begin
   fCategories.Clear;
-  fRoutines.Clear;
+  fSnippets.Clear;
 end;
 
 constructor TSnippets.Create;
@@ -1118,7 +1118,7 @@ constructor TSnippets.Create;
   }
 begin
   inherited Create;
-  fRoutines := TSnippetListEx.Create(True);
+  fSnippets := TSnippetListEx.Create(True);
   fCategories := TCategoryListEx.Create(True);
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
@@ -1140,7 +1140,7 @@ begin
   Result := TTempSnippet.Create(
     Routine.Name, Routine.UserDefined, (Routine as TSnippetEx).GetProps);
   (Result as TTempSnippet).UpdateRefs(
-    (Routine as TSnippetEx).GetReferences, fRoutines
+    (Routine as TSnippetEx).GetReferences, fSnippets
   );
 end;
 
@@ -1155,7 +1155,7 @@ function TSnippets.CreateTempSnippet(const RoutineName: string;
   }
 begin
   Result := TTempSnippet.Create(RoutineName, True, Data.Props);
-  (Result as TTempSnippet).UpdateRefs(Data.Refs, fRoutines);
+  (Result as TTempSnippet).UpdateRefs(Data.Refs, fSnippets);
 end;
 
 procedure TSnippets.DeleteCategory(const Category: TCategory);
@@ -1195,7 +1195,7 @@ var
 begin
   Assert(Routine.UserDefined,
     ClassName + '.DeleteRoutine: Routine is not user-defined');
-  Assert(fRoutines.Contains(Routine),
+  Assert(fSnippets.Contains(Routine),
     ClassName + '.DeleteRoutine: Routine is not in the database');
   TriggerEvent(evChangeBegin);
   // Get list of referencing and dependent routines
@@ -1228,7 +1228,7 @@ destructor TSnippets.Destroy;
 begin
   FreeAndNil(fChangeEvents);
   FreeAndNil(fCategories);
-  FreeAndNil(fRoutines);
+  FreeAndNil(fSnippets);
   inherited;
 end;
 
@@ -1250,7 +1250,7 @@ var
   Routine: TSnippet;  // references each snippet in database
 begin
   List.Clear;
-  for Routine in fRoutines do
+  for Routine in fSnippets do
     if not Routine.IsEqual(ARoutine) and Routine.Depends.Contains(ARoutine) then
       List.Add(Routine);
 end;
@@ -1332,7 +1332,7 @@ var
   Routine: TSnippet;  // references each routine in database
 begin
   List.Clear;
-  for Routine in fRoutines do
+  for Routine in fSnippets do
     if not Routine.IsEqual(ARoutine) and Routine.XRef.Contains(ARoutine) then
       List.Add(Routine);
 end;
@@ -1342,7 +1342,7 @@ function TSnippets.GetSnippets: TSnippetList;
     @return Required list.
   }
 begin
-  Result := fRoutines;
+  Result := fSnippets;
 end;
 
 function TSnippets.InternalAddCategory(const CatName: string;
@@ -1374,12 +1374,12 @@ resourcestring
   sCatNotFound = 'Category "%0:s" for new snippet "%1:s" does not exist';
 begin
   Result := TSnippetEx.Create(RoutineName, True, Data.Props);
-  (Result as TSnippetEx).UpdateRefs(Data.Refs, fRoutines);
+  (Result as TSnippetEx).UpdateRefs(Data.Refs, fSnippets);
   Cat := fCategories.Find(Result.Category);
   if not Assigned(Cat) then
     raise ECodeSnip.CreateFmt(sCatNotFound, [Result.Category, Result.Name]);
   Cat.Snippets.Add(Result);
-  fRoutines.Add(Result);
+  fSnippets.Add(Result);
 end;
 
 procedure TSnippets.InternalDeleteCategory(const Cat: TCategory);
@@ -1405,7 +1405,7 @@ begin
     (Cat.Snippets as TSnippetListEx).Delete(Routine);
   // Delete from "master" list: this frees Routine
   TriggerEvent(evBeforeRoutineDelete, Routine);
-  (fRoutines as TSnippetListEx).Delete(Routine);
+  (fSnippets as TSnippetListEx).Delete(Routine);
   TriggerEvent(evAfterRoutineDelete);
 end;
 
@@ -1424,10 +1424,10 @@ begin
     // Load main database: MUST do this first since user database can
     // reference objects in main database
     with TSnippetsIOFactory.CreateMainDBLoader do
-      Load(fRoutines, fCategories, Factory);
+      Load(fSnippets, fCategories, Factory);
     // Load any user database
     with TSnippetsIOFactory.CreateUserDBLoader do
-      Load(fRoutines, fCategories, Factory);
+      Load(fSnippets, fCategories, Factory);
     fUpdated := False;
   except
     // If an exception occurs clear the database
@@ -1451,10 +1451,10 @@ var
   Provider: ISnippetsDataProvider;  // object that supplies info to writer
 begin
   // Create object that can provide required information about user database
-  Provider := TUserDataProvider.Create(fRoutines, fCategories);
+  Provider := TUserDataProvider.Create(fSnippets, fCategories);
   // Use a writer object to write out the database
   with TSnippetsIOFactory.CreateWriter do
-    Write(fRoutines, fCategories, Provider);
+    Write(fSnippets, fCategories, Provider);
   fUpdated := False;
 end;
 
@@ -1547,7 +1547,7 @@ begin
       RoutineName := Routine.Name;
     // If name has changed then new name musn't exist in user database
     if not AnsiSameText(RoutineName, Routine.Name) then
-      if fRoutines.Find(RoutineName, True) <> nil then
+      if fSnippets.Find(RoutineName, True) <> nil then
         raise ECodeSnip.CreateFmt(sCantRename, [Routine.Name, RoutineName]);
     // We update by deleting old snippet and inserting new one
     // get lists of snippets that cross reference or depend on this routine
@@ -2208,7 +2208,7 @@ constructor TUserDataProvider.Create(const Routines: TSnippetList;
   }
 begin
   inherited Create;
-  fRoutines := Routines;
+  fSnippets := Routines;
   fCategories := Categories;
 end;
 
