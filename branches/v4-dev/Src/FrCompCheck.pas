@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -153,7 +153,7 @@ procedure TCompCheckFrame.DisplayCompileResults(const ACompilers: ICompilers);
     @param ACompilers [in] Compilers object containing required results.
   }
 var
-  CompCheckDHTML: ICompCheckRoutineDHTML; // object manipulates comp check pane
+  CompCheckDHTML: ICompCheckSnippetDHTML; // object manipulates comp check pane
 begin
   CompCheckDHTML := TDHTMLFactory.CreateCompCheckRoutineDHTML(Self);
   CompCheckDHTML.DisplayCompileResults(ACompilers);

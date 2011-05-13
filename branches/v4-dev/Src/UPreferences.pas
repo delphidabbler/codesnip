@@ -60,16 +60,16 @@ type
   IPreferences = interface(IInterface)
     ['{381B9A92-B528-47E1-AC04-90E1FFFDADA7}']
     function GetSourceCommentStyle: TCommentStyle;
-      {Gets style of commenting used to describe routines in generated code.
+      {Gets style of commenting used to describe snippets in generated code.
         @return Current commenting style.
       }
     procedure SetSourceCommentStyle(const Value: TCommentStyle);
-      {Sets style of commenting to be used describe routines in generated code.
+      {Sets style of commenting to be used describe snippets in generated code.
         @param Value [in] Required commenting style.
       }
     property SourceCommentStyle: TCommentStyle
       read GetSourceCommentStyle write SetSourceCommentStyle;
-      {Commenting style used to describe routines in generated source code}
+      {Commenting style used to describe snippets in generated source code}
 
     function GetSourceDefaultFileType: TSourceFileType;
       {Gets current default file extension / type used when writing code

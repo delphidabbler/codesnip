@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -48,11 +48,11 @@ uses
 type
 
   {
-  ICompCheckRoutineDHTML:
+  ICompCheckSnippetDHTML:
     Interface to DHTML object that manipulates snippet display in compiler check
     pane.
   }
-  ICompCheckRoutineDHTML = interface(IInterface)
+  ICompCheckSnippetDHTML = interface(IInterface)
     ['{112DD126-0A16-4F7F-992C-35F94963B52C}']
     procedure DisplayCompileResults(const ACompilers: ICompilers);
       {Updates HTML to display results of last compile.
@@ -67,12 +67,12 @@ type
   TDHTMLFactory = class(TNoConstructObject)
   public
     class function CreateCompCheckRoutineDHTML(
-      const HostInfo: IHTMLDocHostInfo): ICompCheckRoutineDHTML;
-     {Creates instance of ICompCheckRoutineDHTML for use in compiler check
+      const HostInfo: IHTMLDocHostInfo): ICompCheckSnippetDHTML;
+     {Creates instance of ICompCheckSnippetDHTML for use in compiler check
       frames.
         @param HostInfo [in] Provides information about object hosting the HTML
           that is to be manipulated.
-        @return Required ICompCheckRoutineDHTML object.
+        @return Required ICompCheckSnippetDHTML object.
       }
   end;
 
@@ -122,10 +122,10 @@ type
     compiler check pane.
   }
   TCompCheckRoutineDHTML = class(TDHTML,
-    ICompCheckRoutineDHTML
+    ICompCheckSnippetDHTML
   )
   protected
-    { ICompCheckRoutineDHTML methods }
+    { ICompCheckSnippetDHTML methods }
     procedure DisplayCompileResults(const ACompilers: ICompilers);
       {Updates HTML to display results of last compile.
         @param ACompilers [in] Compilers object containing required results.
@@ -136,7 +136,7 @@ type
 { TDHTMLFactory }
 
 class function TDHTMLFactory.CreateCompCheckRoutineDHTML(
-  const HostInfo: IHTMLDocHostInfo): ICompCheckRoutineDHTML;
+  const HostInfo: IHTMLDocHostInfo): ICompCheckSnippetDHTML;
  {Creates instance of ICompCheckRoutineDHTML for use in compiler check frames.
     @param HostInfo [in] Provides information about object hosting the HTML that
       is to be manipulated.
@@ -144,7 +144,7 @@ class function TDHTMLFactory.CreateCompCheckRoutineDHTML(
   }
 begin
   Result := TCompCheckRoutineDHTML.Create(HostInfo)
-    as ICompCheckRoutineDHTML;
+    as ICompCheckSnippetDHTML;
 end;
 
 { TDHTML }

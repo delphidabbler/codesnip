@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,61 +45,61 @@ interface
 * Conceptually we treat the codesnip database as having the following tables:  *
 *                                                                              *
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* Categories - details of each category of routines                            *
+* Categories - details of each category of snippets                            *
 * ---------------------------------------------------------------------------- *
 * Category        | Name or ID of category (primary key)                       *
 * Description     | Description of category                                    *
-* UserDefined     | Indicates if routine is user-defined                       *
+* UserDefined     | Indicates if snippet is user-defined                       *
 * ---------------------------------------------------------------------------- *
-* Note)   Categories has a one-many relationship with Routines                 *
+* Note)   Categories has a one-many relationship with Snippets                 *
 * ============================================================================ *
 *                                                                              *
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* Routines - details of each routine                                           *
+* Snippets - details of each snippet                                           *
 * ---------------------------------------------------------------------------- *
-* Name            | Pascal Name of routine (primary key)                       *
-* Category        | Name of category routine belongs to                        *
-* Description     | Description of purpose of routine                          *
-* SourceCode      | Routine's source code                                      *
-* Comments        | Additional comments about routines                         *
+* Name            | Pascal Name of snippet (primary key)                       *
+* Category        | Name of category snippet belongs to                        *
+* Description     | Description of purpose of snippet                          *
+* SourceCode      | Snippet's source code                                      *
+* Comments        | Additional comments about snippets                         *
 * Credits         | Any credits - any URL link text delimited by [ ]           *
 * CreditsURL      | Any URL associated with credits                            *
 * Compatibility   | String of characters describing compiler compatibility     *
-* UserDefined     | Indicates if routine is user-defined                       *
-* StandardFormat  | Indicates if routine is in standard format                 *
+* UserDefined     | Indicates if snippet is user-defined                       *
+* StandardFormat  | Indicates if snippet is in standard format                 *
 * ---------------------------------------------------------------------------- *
-* Note 1) Routines have a many-many relationship with same table, both for     *
+* Note 1) Snippets have a many-many relationship with same table, both for     *
 *         dependency lists and cross-reference lists.                          *
-* Note 2) Routines have a many-many relationship with units.                   *
+* Note 2) Snippets have a many-many relationship with units.                   *
 * ============================================================================ *
 *                                                                              *
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
 * Units - names of required units                                              *
 * ---------------------------------------------------------------------------- *
-* Unit             | Name of routine (primary key)                             *
+* Unit             | Name of unit (primary key)                             *
 * ---------------------------------------------------------------------------- *
 * Note)   There is no other information in this table - so we may omit it      *
 * ============================================================================ *
 *                                                                              *
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* RoutineUnits - map of routines to units                                      *
+* RoutineUnits - map of snippets to units                                      *
 * ---------------------------------------------------------------------------- *
-* RoutineName      | Name of routine                                           *
+* RoutineName      | Name of snippet                                           *
 * UnitName         | Name of unit                                              *
 * ============================================================================ *
 *                                                                              *
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* RoutineXRef - map of routines to cross-referenced routines                   *
+* RoutineXRef - map of snippets to cross-referenced snippets                   *
 * ---------------------------------------------------------------------------- *
-* RoutineName      | Name of routine                                           *
-* XRefRoutineName  | Name of cross referenced routine                          *
+* RoutineName      | Name of snippet                                           *
+* XRefRoutineName  | Name of cross referenced snippet                          *
 * ============================================================================ *
 *                                                                              *
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* RoutineDepends - map of routines to the routines they depend upon            *
+* RoutineDepends - map of snippets to the snippets they depend upon            *
 * ---------------------------------------------------------------------------- *
-* RoutineName      | Name of routine                                           *
-* RequiredRoutine  | Name of required routine                                  *
+* RoutineName      | Name of snippet                                           *
+* RequiredRoutine  | Name of required snippet                                  *
 * ============================================================================ *
 *                                                                              *
 * Any object that is to be used to read a database must implement the          *
@@ -139,31 +139,31 @@ type
         @param Props [in/out] Empty properties passed in. Record fields set to
           values of category properties by implementor.
       }
-    function GetCatRoutines(const Cat: string): IStringList;
-      {Get names of all routines in a category.
-        @param Cat [in] Name of category containing routines.
-        @return List of routines names.
+    function GetCatSnippets(const Cat: string): IStringList;
+      {Get names of all snippets in a category.
+        @param Cat [in] Name of category containing snippets.
+        @return List of snippet names.
       }
-    procedure GetRoutineProps(const Routine: string; var Props: TSnippetData);
-      {Get properties of a routine. These are the fields of the routine's
-      record in the routines "table".
-        @param Routine [in] Name of required routine.
+    procedure GetSnippetProps(const Snippet: string; var Props: TSnippetData);
+      {Get properties of a snippet. These are the fields of the snippet's
+      record in the snippets "table".
+        @param Snippet [in] Name of snippet.
         @param Props [in/out] Empty properties passed in. Record fields set to
-          values of routine properties by implementor.
+          values of snippet's properties by implementor.
       }
-    function GetRoutineXRefs(const Routine: string): IStringList;
-      {Get list of all routines that are cross referenced by a routine.
-        @param Routine [in] Name of routine we need cross references for.
-        @return List of routine names.
+    function GetSnippetXRefs(const Snippet: string): IStringList;
+      {Get list of all snippets that are cross referenced by a snippet.
+        @param Snippet [in] Name of snippet we need cross references for.
+        @return List of snippet names.
       }
-    function GetRoutineDepends(const Routine: string): IStringList;
-      {Get list of all routines on which a given routine depends.
-        @param Routine [in] Name of required routine.
-        @return List of routine names.
+    function GetSnippetDepends(const Snippet: string): IStringList;
+      {Get list of all snippet on which a given snippet depends.
+        @param Snippet [in] Name of snippet.
+        @return List of snippet names.
       }
-    function GetRoutineUnits(const Routine: string): IStringList;
-      {Get list of all units referenced by a routine.
-        @param Routine [in] Name of required routine.
+    function GetSnippetUnits(const Snippet: string): IStringList;
+      {Get list of all units referenced by a snippet.
+        @param Snippet [in] Name of snippet.
         @return List of unit names.
       }
   end;
@@ -179,44 +179,44 @@ type
       {Initialise the database. Always called before any other methods.
       }
     procedure WriteCatProps(const CatName: string; const Props: TCategoryData);
-      {Write the properties of a category. Always called before WriteCatRoutines
+      {Write the properties of a category. Always called before WriteCatSnippets
       for a given category, so can be used to perform any per-category
       initialisation.
         @param CatName [in] Name of category.
         @param Props [in] Properties of category.
       }
-    procedure WriteCatRoutines(const CatName: string;
-      const Routines: IStringList);
-      {Write the list of routines belonging to a category. Always called after
+    procedure WriteCatSnippets(const CatName: string;
+      const SnipList: IStringList);
+      {Write the list of snippets belonging to a category. Always called after
       WriteCatProps for any given category.
         @param CatName [in] Name of category.
-        @param Routines [in] List of name of routines.
+        @param SnipList [in] List of names of snippets.
       }
-    procedure WriteRoutineProps(const RoutineName: string;
+    procedure WriteSnippetProps(const SnippetName: string;
       const Props: TSnippetData);
-      {Write the properties of a routine. Always called after all categories are
-      written and before WriteRoutineUnits, so can be used to perform any per-
-      routine intialisation.
-        @param RoutineName [in] Name of routine.
-        @param Props [in] Properties of routine.
+      {Write the properties of a snippet. Always called after all categories are
+      written and before WriteSnippetUnits, so can be used to perform any per-
+      snippet intialisation.
+        @param SnippetName [in] Name of snippet.
+        @param Props [in] Properties of snippet.
       }
-    procedure WriteRoutineUnits(const RoutineName: string;
+    procedure WriteSnippetUnits(const SnippetName: string;
       const Units: IStringList);
-      {Write the list of units required by a routine.
-        @param RoutineName [in] Name of routine.
+      {Write the list of units required by a snippet.
+        @param SnippetName [in] Name of snippet.
         @param Units [in] List of names of required units.
       }
-    procedure WriteRoutineDepends(const RoutineName: string;
+    procedure WriteSnippetDepends(const SnippetName: string;
       const Depends: IStringList);
-      {Write the list of routines on which a routine depends.
-        @param RoutineName [in] Name of routine.
-        @param Depends [in] List of routine names.
+      {Write the list of snippets on which a snippet depends.
+        @param SnippetName [in] Name of snippet.
+        @param Depends [in] List of snippet names.
       }
-    procedure WriteRoutineXRefs(const RoutineName: string;
+    procedure WriteSnippetXRefs(const SnippetName: string;
       const XRefs: IStringList);
-      {Write the list of routines that a routine cross-references.
-        @param RoutineName [in] Name of routine.
-        @param XRefs [in] List of routine names.
+      {Write the list of snippets that a snippet cross-references.
+        @param SnippetName [in] Name of snippet.
+        @param XRefs [in] List of snippet names.
       }
     procedure Finalise;
       {Finalises the database. Always called after all other methods.

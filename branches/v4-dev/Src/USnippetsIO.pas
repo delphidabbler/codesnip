@@ -55,10 +55,10 @@ type
   }
   ISnippetsLoader = interface(IInterface)
     ['{C6AF94FC-F56F-44AE-9E79-3B0CD0BB21D4}']
-    procedure Load(const Routines: TSnippetList;
+    procedure Load(const SnipList: TSnippetList;
       const Categories: TCategoryList; const SnippetsFactory: ISnippetsFactory);
       {Loads data from storage and updates snippets object.
-        @param Routines [in] Receives information about each snippet in the
+        @param SnipList [in] Receives information about each snippet in the
           database.
         @param Categories [in] Receives information about each category in the
           database.
@@ -74,10 +74,10 @@ type
   }
   ISnippetsWriter = interface(IInterface)
     ['{F46EE2E3-68A7-4877-9E04-192D15D29BB1}']
-    procedure Write(const Routines: TSnippetList;
+    procedure Write(const SnipList: TSnippetList;
       const Categories: TCategoryList; const Provider: ISnippetsDataProvider);
       {Writes data from Snippets object to storage.
-        @param Routines [in] Contains information about each snippet in the
+        @param SnipList [in] Contains information about each snippet in the
           database.
         @param Categories [in] Contains information about each category in the
           database.
@@ -468,12 +468,12 @@ procedure TSnippetsLoader.LoadReferences(const Routine: TSnippet);
 
 begin
   LoadRoutineReferences(
-    Routine.Depends, fReader.GetRoutineDepends(Routine.Name)
+    Routine.Depends, fReader.GetSnippetDepends(Routine.Name)
   );
   LoadRoutineReferences(
-    Routine.XRef, fReader.GetRoutineXRefs(Routine.Name)
+    Routine.XRef, fReader.GetSnippetXRefs(Routine.Name)
   );
-  fReader.GetRoutineUnits(Routine.Name).CopyTo(Routine.Units);
+  fReader.GetSnippetUnits(Routine.Name).CopyTo(Routine.Units);
 end;
 
 procedure TSnippetsLoader.LoadRoutines(const Cat: TCategory);
@@ -488,7 +488,7 @@ var
 begin
   FillChar(RoutineProps, SizeOf(RoutineProps), 0);
   // Get names of all snippets in category
-  RoutineNames := fReader.GetCatRoutines(Cat.Category);
+  RoutineNames := fReader.GetCatSnippets(Cat.Category);
   // Process each snippet name in list
   for RoutineName in RoutineNames do
   begin
@@ -497,7 +497,7 @@ begin
     Routine := fRoutines.Find(RoutineName, IsUserDatabase);
     if not Assigned(Routine) then
     begin
-      fReader.GetRoutineProps(RoutineName, RoutineProps);
+      fReader.GetSnippetProps(RoutineName, RoutineProps);
       Routine := fFactory.CreateSnippet(
         RoutineName, IsUserDatabase, RoutineProps
       );
@@ -681,7 +681,7 @@ begin
     Props := fProvider.GetCategoryProps(Cat);
     fWriter.WriteCatProps(Cat.Category, Props);
     Routines := fProvider.GetCategorySnippets(Cat);
-    fWriter.WriteCatRoutines(Cat.Category, Routines);
+    fWriter.WriteCatSnippets(Cat.Category, Routines);
   end;
 end;
 
@@ -716,12 +716,12 @@ begin
     begin
       // Get and write a snippet's properties
       Props := fProvider.GetSnippetProps(Routine);
-      fWriter.WriteRoutineProps(Routine.Name, Props);
+      fWriter.WriteSnippetProps(Routine.Name, Props);
       // Get and write a snippet's references
       Refs := fProvider.GetSnippetRefs(Routine);
-      fWriter.WriteRoutineUnits(Routine.Name, Refs.Units);
-      fWriter.WriteRoutineDepends(Routine.Name, IDListToStrings(Refs.Depends));
-      fWriter.WriteRoutineXRefs(Routine.Name, IDListToStrings(Refs.XRef));
+      fWriter.WriteSnippetUnits(Routine.Name, Refs.Units);
+      fWriter.WriteSnippetDepends(Routine.Name, IDListToStrings(Refs.Depends));
+      fWriter.WriteSnippetXRefs(Routine.Name, IDListToStrings(Refs.XRef));
     end;
   end;
 end;

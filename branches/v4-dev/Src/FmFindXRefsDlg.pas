@@ -192,7 +192,7 @@ procedure TFindXRefsDlg.btnOKClick(Sender: TObject);
     if chkSeeAlsoRecurse.Checked then
       Include(Result, soSeeAlsoRecurse);
     if chkIncludeSnippet.Checked then
-      Include(Result, soIncludeRoutine);
+      Include(Result, soIncludeSnippet);
   end;
   // ---------------------------------------------------------------------------
 
@@ -277,7 +277,7 @@ begin
   chkRequiredRecurse.Checked := soRequiredRecurse in fSearchParams.Options;
   chkSeeAlso.Checked := soSeeAlso in fSearchParams.Options;
   chkSeeAlsoRecurse.Checked := soSeeAlsoRecurse in fSearchParams.Options;
-  chkIncludeSnippet.Checked := soIncludeRoutine in fSearchParams.Options;
+  chkIncludeSnippet.Checked := soIncludeSnippet in fSearchParams.Options;
   // Update other controls per state of check boxes
   UpdateControls;
 end;
@@ -331,7 +331,7 @@ begin
   Storage := Settings.ReadSection(ssFindXRefs);
   fOptions := [];
   if Boolean(StrToIntDef(Storage.ItemValues['IncludeRoutine'], 1)) then
-    Include(fOptions, soIncludeRoutine);
+    Include(fOptions, soIncludeSnippet);
   if Boolean(StrToIntDef(Storage.ItemValues['Required'], 1)) then
     Include(fOptions, soRequired);
   if Boolean(StrToIntDef(Storage.ItemValues['RequiredRecurse'], 0)) then
@@ -380,7 +380,7 @@ begin
   // Create blank persistent storage object
   Storage := Settings.EmptySection(ssFindXRefs);
   // Record parameters
-  StoreOption('IncludeRoutine', soIncludeRoutine);
+  StoreOption('IncludeRoutine', soIncludeSnippet);
   StoreOption('Required', soRequired);
   StoreOption('RequiredRecurse', soRequiredRecurse);
   StoreOption('SeeAlso', soSeeAlso);

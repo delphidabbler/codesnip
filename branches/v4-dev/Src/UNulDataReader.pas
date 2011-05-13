@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -69,30 +69,30 @@ type
         @param Cat [in] Name of required category.
         @param Props [in/out] Empty properties passed in. Unchanged.
       }
-    function GetCatRoutines(const Cat: string): IStringList;
+    function GetCatSnippets(const Cat: string): IStringList;
       {Gets names of all routines in a category.
-        @param Cat [in] Name of category containing routines.
+        @param Cat [in] Name of category containing snippets.
         @return Empty list.
       }
-    procedure GetRoutineProps(const Routine: string; var Props: TSnippetData);
-      {Gets properties of a routine. These are the fields of the routine's
-      record in the routines "table".
-        @param Routine [in] Name of required routine.
+    procedure GetSnippetProps(const Snippet: string; var Props: TSnippetData);
+      {Gets properties of a snippet. These are the fields of the snippet's
+      record in the snippets "table".
+        @param Snippet [in] Name of required snippet.
         @param Props [in/out] Empty properties passed in. Unchanged.
       }
-    function GetRoutineXRefs(const Routine: string): IStringList;
-      {Gets list of all routines that are cross referenced by a routine.
-        @param Routine [in] Name of routine we need cross references for.
+    function GetSnippetXRefs(const Snippet: string): IStringList;
+      {Gets list of all snippets that are cross referenced by a snippet.
+        @param Routine [in] Name of snippet we need cross references for.
         @return Empty list.
       }
-    function GetRoutineDepends(const Routine: string): IStringList;
-      {Gets list of all routines on which a given routine depends.
-        @param Routine [in] Name of required routine.
+    function GetSnippetDepends(const Snippet: string): IStringList;
+      {Gets list of all snippets on which a given snippet depends.
+        @param Snippet [in] Name of required snippet.
         @return Empty list.
       }
-    function GetRoutineUnits(const Routine: string): IStringList;
-      {Gets list of all units referenced by a routine.
-        @param Routine [in] Name of required routine.
+    function GetSnippetUnits(const Snippet: string): IStringList;
+      {Gets list of all units referenced by a snippet.
+        @param Snippet [in] Name of required snippet.
         @return Empty list.
       }
   end;
@@ -130,47 +130,47 @@ begin
   // Do nothing
 end;
 
-function TNulDataReader.GetCatRoutines(const Cat: string): IStringList;
-  {Gets names of all routines in a category.
-    @param Cat [in] Name of category containing routines.
+function TNulDataReader.GetCatSnippets(const Cat: string): IStringList;
+  {Gets names of all snippets in a category.
+    @param Cat [in] Name of category containing snippets.
     @return Empty list.
   }
 begin
   Result := TIStringList.Create;
 end;
 
-function TNulDataReader.GetRoutineDepends(const Routine: string): IStringList;
-  {Gets list of all routines on which a given routine depends.
-    @param Routine [in] Name of required routine.
+function TNulDataReader.GetSnippetDepends(const Snippet: string): IStringList;
+  {Gets list of all snippets on which a given snippet depends.
+    @param Snippet [in] Name of required snippet.
     @return Empty list.
   }
 begin
   Result := TIStringList.Create;
 end;
 
-procedure TNulDataReader.GetRoutineProps(const Routine: string;
+procedure TNulDataReader.GetSnippetProps(const Snippet: string;
   var Props: TSnippetData);
-  {Gets properties of a routine. These are the fields of the routine's record in
-  the routines "table".
-    @param Routine [in] Name of required routine.
+  {Gets properties of a snippet. These are the fields of the snippet's record in
+  the snippets "table".
+    @param Snippet [in] Name of required snippet.
     @param Props [in/out] Empty properties passed in. Unchanged.
   }
 begin
   // Do nothing
 end;
 
-function TNulDataReader.GetRoutineUnits(const Routine: string): IStringList;
-  {Gets list of all units referenced by a routine.
-    @param Routine [in] Name of required routine.
+function TNulDataReader.GetSnippetUnits(const Snippet: string): IStringList;
+  {Gets list of all units referenced by a snippet.
+    @param Snippet [in] Name of required snippet.
     @return Empty list.
   }
 begin
   Result := TIStringList.Create;
 end;
 
-function TNulDataReader.GetRoutineXRefs(const Routine: string): IStringList;
-  {Gets list of all routines that are cross referenced by a routine.
-    @param Routine [in] Name of routine we need cross references for.
+function TNulDataReader.GetSnippetXRefs(const Snippet: string): IStringList;
+  {Gets list of all snippets that are cross referenced by a snippet.
+    @param Snippet [in] Name of snippet we need cross references for.
     @return Empty list.
   }
 begin

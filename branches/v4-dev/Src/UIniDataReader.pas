@@ -174,33 +174,33 @@ type
     ///  </summary>
     ///  <param name="Cat">string [in] ID of category.</param>
     ///  <returns>IStringList containing names of snippets.</returns>
-    function GetCatRoutines(const Cat: string): IStringList;
+    function GetCatSnippets(const Cat: string): IStringList;
     ///  <summary>
     ///  Gets propertyies of a snippet.
     ///  </summary>
-    ///  <param name="Routine">string [in] Name of snippet.</param>
+    ///  <param name="Snippet">string [in] Name of snippet.</param>
     ///  <param name="Props">TSnippetData [in/out] Receives empty property
     ///  record and updates relevant property fields.</param>
-    procedure GetRoutineProps(const Routine: string; var Props: TSnippetData);
+    procedure GetSnippetProps(const Snippet: string; var Props: TSnippetData);
     ///  <summary>
     ///  Gets list of all snippets that are cross referenced by a specified
     ///  snippet.
     ///  </summary>
-    ///  <param name="Routine">string [in] Name of snippet.</param>
+    ///  <param name="Snippet">string [in] Name of snippet.</param>
     ///  <returns>IStringList containing snippet names.</returns>
-    function GetRoutineXRefs(const Routine: string): IStringList;
+    function GetSnippetXRefs(const Snippet: string): IStringList;
     ///  <summary>
     ///  Gets list of all snippets on which a specified snippet depends.
     ///  </summary>
-    ///  <param name="Routine">string [in] Name of snippet.</param>
+    ///  <param name="Snippet">string [in] Name of snippet.</param>
     ///  <returns>IStringList containing snippet names.</returns>
-    function GetRoutineDepends(const Routine: string): IStringList;
+    function GetSnippetDepends(const Snippet: string): IStringList;
     ///  <summary>
     ///  Gets list of all units referenced by a snippet.
     ///  </summary>
-    ///  <param name="Routine">string [in] Name of snippet.</param>
+    ///  <param name="Snippet">string [in] Name of snippet.</param>
     ///  <returns>IStringList containing unit names.</returns>
-    function GetRoutineUnits(const Routine: string): IStringList;
+    function GetSnippetUnits(const Snippet: string): IStringList;
   strict protected
     ///  <summary>
     ///  Extracts comma delimited text fields into a string list.
@@ -410,7 +410,7 @@ begin
   end;
 end;
 
-function TIniDataReader.GetCatRoutines(const Cat: string): IStringList;
+function TIniDataReader.GetCatSnippets(const Cat: string): IStringList;
 var
   CatIni: TCustomIniFile; // accesses .ini file associated with category
   Routines: TStringList;  // list of snippets in category
@@ -430,12 +430,12 @@ begin
   end;
 end;
 
-function TIniDataReader.GetRoutineDepends(const Routine: string): IStringList;
+function TIniDataReader.GetSnippetDepends(const Snippet: string): IStringList;
 begin
-  Result := GetRoutineReferences(Routine, cDependsName);
+  Result := GetRoutineReferences(Snippet, cDependsName);
 end;
 
-procedure TIniDataReader.GetRoutineProps(const Routine: string;
+procedure TIniDataReader.GetSnippetProps(const Snippet: string;
   var Props: TSnippetData);
 var
   CatIni: TCustomIniFile; // .ini file associated with snippet's category
@@ -445,7 +445,7 @@ var
   /// <summary>Reads "StandardFormat" value from ini file.</summary>
   function GetStdFormatProperty: Boolean;
   begin
-    Result := CatIni.ReadBool(Routine, cStdFormatName, True);
+    Result := CatIni.ReadBool(Snippet, cStdFormatName, True);
   end;
 
   ///  <summary>Reads "Kind" value from ini file.</summary>
@@ -453,7 +453,7 @@ var
   var
     KindStr: string;  // string value read from ini file
   begin
-    KindStr := CatIni.ReadString(Routine, cKindName, '');
+    KindStr := CatIni.ReadString(Snippet, cKindName, '');
     if AnsiSameText(KindStr, 'freeform') then
       Result := skFreeform
     else if AnsiSameText(KindStr, 'routine') then
@@ -476,7 +476,7 @@ var
     Extra: string;  // extra value from ini file if present
   begin
     try
-      Extra := CatIni.ReadString(Routine, cExtraName, '');
+      Extra := CatIni.ReadString(Snippet, cExtraName, '');
       if Extra <> '' then
         // There is an "extra" value: use it to set Extra property. We ignore
         // any credits, credits url and comments values in this case
@@ -485,9 +485,9 @@ var
         // There is no "extra" value: use any comments, credits and credits URL
         // values to set Extra property
         Result := TSnippetExtraHelper.BuildActiveText(
-          CatIni.ReadString(Routine, cCommentsName, ''),
-          CatIni.ReadString(Routine, cCreditsName, ''),
-          CatIni.ReadString(Routine, cCreditsURLName, '')
+          CatIni.ReadString(Snippet, cCommentsName, ''),
+          CatIni.ReadString(Snippet, cCreditsName, ''),
+          CatIni.ReadString(Snippet, cCreditsURLName, '')
         );
     except
       // There was an error: use an empty property value
@@ -501,7 +501,7 @@ var
   var
     SnipFileName: string; // name of file containing source code
   begin
-    SnipFileName := CatIni.ReadString(Routine, cSnipFileName, '');
+    SnipFileName := CatIni.ReadString(Snippet, cSnipFileName, '');
     try
       Result := fFileReader.ReadAllText(DataFile(SnipFileName));
     except
@@ -522,7 +522,7 @@ var
   begin
     for CompID := Low(TCompilerID) to High(TCompilerID) do
     begin
-      CompRes := CatIni.ReadString(Routine, cCompilerIDNames[CompID], '?');
+      CompRes := CatIni.ReadString(Snippet, cCompilerIDNames[CompID], '?');
       if CompRes = '' then
         CompRes := '?';
       case CompRes[1] of
@@ -538,13 +538,13 @@ var
 begin
   try
     // Get name of category associated with this snippet
-    Cat := RoutineToCat(Routine);
+    Cat := RoutineToCat(Snippet);
     // Get snippet properties from values listed under snippet's section in
     // category's .ini file
     CatIni := fIniCache.GetIniFile(CatToCatIni(Cat));
     Props.Kind := GetKindProperty;
     Props.Cat := Cat;
-    Props.Desc := CatIni.ReadString(Routine, cDescName, '');
+    Props.Desc := CatIni.ReadString(Snippet, cDescName, '');
     Props.Extra := GetExtraProperty;
     Props.SourceCode := GetSourceCodeProperty;
     Props.CompilerResults := GetCompilerResultsProperty;
@@ -568,14 +568,14 @@ begin
   end;
 end;
 
-function TIniDataReader.GetRoutineUnits(const Routine: string): IStringList;
+function TIniDataReader.GetSnippetUnits(const Snippet: string): IStringList;
 begin
-  Result := GetRoutineReferences(Routine, cUnitsName);
+  Result := GetRoutineReferences(Snippet, cUnitsName);
 end;
 
-function TIniDataReader.GetRoutineXRefs(const Routine: string): IStringList;
+function TIniDataReader.GetSnippetXRefs(const Snippet: string): IStringList;
 begin
-  Result := GetRoutineReferences(Routine, cXRefName);
+  Result := GetRoutineReferences(Snippet, cXRefName);
 end;
 
 procedure TIniDataReader.HandleCorruptDatabase(const EObj: TObject);
@@ -608,7 +608,7 @@ begin
   for CatIdx := 0 to Pred(fCatNames.Count) do
   begin
     // Get list of snippets in category ...
-    CatRoutines := GetCatRoutines(fCatNames[CatIdx]);
+    CatRoutines := GetCatSnippets(fCatNames[CatIdx]);
     for SnippetName in CatRoutines do
       fSnippetCatMap.Add(SnippetName, CatIdx);
   end;

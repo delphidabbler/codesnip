@@ -51,19 +51,19 @@ type
   IQuery:
     Interface to object that encapsulates a query on the code snippets database.
     It enables a search to be run against the database and provides access to
-    the selected routines.
+    the selected snippets.
   }
   IQuery = interface(IInterface)
     ['{10998D72-CD5D-482B-9626-D771A50C53BA}']
     function ApplySearch(const Search: ISearch): Boolean;
       {Runs query by applying a search to the whole database. If search succeeds
-      matching routines and search are stored in query's Selection and Search
+      matching snippets and search are stored in query's Selection and Search
       properties. If search fails Selection and Search are left unchanged.
         @param Search [in] Search to apply.
         @return True if search succeeds and False if it fails.
       }
     procedure Reset;
-      {Resets query. Selection property is set to all routines in database and
+      {Resets query. Selection property is set to all snippets in database and
       Search property is set to nul search.
       }
     function Refresh: Boolean;
@@ -77,20 +77,20 @@ type
       }
     function GetSelection: TSnippetList;
       {Gets value of Selection property.
-        @return List of routines matching current query.
+        @return List of snippets matching current query.
       }
     procedure GetCatSelection(const Cat: TCategory;
-      const Routines: TSnippetList);
-      {Provides list of routines selected by last search that are in a specified
+      const Snippets: TSnippetList);
+      {Provides list of snippets selected by last search that are in a specified
       category.
         @param Cat [in] Reference to required category.
-        @param Routines [in] Object to receive routine list. List is emptied
-          before routines are copied in.
+        @param Snippets [in] Object to receive snippet list. List is emptied
+          before snippets are copied in.
       }
     property CurrentSearch: ISearch read GetCurrentSearch;
       {Reference to search object used to generate current query}
     property Selection: TSnippetList read GetSelection;
-      {List of routines that match current query. This records all routines in
+      {List of snippets that match current query. This records all snippets in
       database if there is no search}
   end;
 

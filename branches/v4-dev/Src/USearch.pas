@@ -193,7 +193,7 @@ type
     soRequiredRecurse,  // recursively find required snippets
     soSeeAlso,          // include X-refs ("see also") in search results
     soSeeAlsoRecurse,   // recursively find X-refs
-    soIncludeRoutine    // include original snippet in search results
+    soIncludeSnippet    // include original snippet in search results
   );
 
   {
@@ -209,15 +209,15 @@ type
   }
   IXRefSearchCriteria = interface(ISearchCriteria)
     ['{92277B2B-AB48-4B3B-8C4F-6DCC71716D79}']
-    function GetBaseRoutine: TSnippet;
-      {Read accessor for BaseRoutine property.
+    function GetBaseSnippet: TSnippet;
+      {Read accessor for BaseSnippet property.
         @return Reference to initiating snippet.
       }
     function GetOptions: TXRefSearchOptions;
       {Read accessor for Options property.
         @return Set of options controlling XRef search.
       }
-    property BaseRoutine: TSnippet read GetBaseRoutine;
+    property BaseSnippet: TSnippet read GetBaseSnippet;
       {Initiating snippet for search}
     property Options: TXRefSearchOptions read GetOptions;
       {Options controlling XRef search}
@@ -734,8 +734,8 @@ type
       }
   protected
     { IXRefSearchCriteria methods }
-    function GetBaseRoutine: TSnippet;
-      {Read accessor for BaseRoutine property.
+    function GetBaseSnippet: TSnippet;
+      {Read accessor for BaseSnippet property.
         @return Reference to initiating snippet.
       }
     function GetOptions: TXRefSearchOptions;
@@ -1115,11 +1115,11 @@ begin
   fXRefs := TSnippetList.Create;
   // reference required and "see also" snippets
   // these methods do nothing if appropriate search options not set
-  ReferenceRequired(fCriteria.BaseRoutine);
-  ReferenceSeeAlso(fCriteria.BaseRoutine);
+  ReferenceRequired(fCriteria.BaseSnippet);
+  ReferenceSeeAlso(fCriteria.BaseSnippet);
   // add base snippet if appropriate search option set
-  if soIncludeRoutine in fCriteria.Options then
-    AddToXRefs(fCriteria.BaseRoutine);
+  if soIncludeSnippet in fCriteria.Options then
+    AddToXRefs(fCriteria.BaseSnippet);
 end;
 
 destructor TXRefSearch.Destroy;
@@ -1424,7 +1424,7 @@ begin
   fOptions := Options;
 end;
 
-function TXRefSearchCriteria.GetBaseRoutine: TSnippet;
+function TXRefSearchCriteria.GetBaseSnippet: TSnippet;
   {Read accessor for BaseRoutine property.
     @return Reference to initiating snippet.
   }
@@ -1518,7 +1518,7 @@ begin
     // source is cross-reference search object
     Result := TSearchFactory.CreateXRefSearch(
       TSearchCriteriaFactory.CreateXRefSearchCriteria(
-        XRefCriteria.BaseRoutine,
+        XRefCriteria.BaseSnippet,
         XRefCriteria.Options
       )
     );

@@ -145,30 +145,30 @@ type
         @param Props [in/out] Empty properties passed in. Record fields set to
           values of category properties by implementor.
       }
-    function GetCatRoutines(const Cat: string): IStringList;
+    function GetCatSnippets(const Cat: string): IStringList;
       {Get names of all snippets in a category.
         @param Cat [in] Name of category containing snippets.
         @return List of snippet names.
       }
-    procedure GetRoutineProps(const Routine: string; var Props: TSnippetData);
+    procedure GetSnippetProps(const Snippet: string; var Props: TSnippetData);
       {Get properties of a snippet.
-        @param Routine [in] Name of required snippet.
+        @param Snippet [in] Name of required snippet.
         @param Props [in/out] Empty properties passed in. Record fields set to
           values of routine properties.
       }
-    function GetRoutineXRefs(const Routine: string): IStringList;
+    function GetSnippetXRefs(const Snippet: string): IStringList;
       {Get list of all snippets that are cross referenced by a snippet.
-        @param Routine [in] Name of snippet we need cross references for.
+        @param Snippet [in] Name of snippet we need cross references for.
         @return List of snippet names.
       }
-    function GetRoutineDepends(const Routine: string): IStringList;
+    function GetSnippetDepends(const Snippet: string): IStringList;
       {Get list of all snippets on which a given snippet depends.
-        @param Routine [in] Name of required snippet.
+        @param Snippet [in] Name of required snippet.
         @return List of snippet names.
       }
-    function GetRoutineUnits(const Routine: string): IStringList;
+    function GetSnippetUnits(const Snippet: string): IStringList;
       {Get list of all units referenced by a snippet.
-        @param Routine [in] Name of required snippet.
+        @param Snippet [in] Name of required snippet.
         @return List of unit names.
       }
   end;
@@ -219,37 +219,37 @@ type
         @param CatName [in] Name of category.
         @param Props [in] Properties of category.
       }
-    procedure WriteCatRoutines(const CatName: string;
-      const Routines: IStringList);
+    procedure WriteCatSnippets(const CatName: string;
+      const SnipList: IStringList);
       {Write the list of snippets belonging to a category. Always called after
       WriteCatProps for any given category.
         @param CatName [in] Name of category.
-        @param Routines [in] List of names of snippets.
+        @param SnipList [in] List of names of snippets.
       }
-    procedure WriteRoutineProps(const RoutineName: string;
+    procedure WriteSnippetProps(const SnippetName: string;
       const Props: TSnippetData);
       {Write the properties of a snippet. Always called after all categories are
       written and before WriteRoutineUnits, so can be used to perform any per-
       routine intialisation.
-        @param RoutineName [in] Name of snippet.
+        @param SnippetName [in] Name of snippet.
         @param Props [in] Properties of snippet.
       }
-    procedure WriteRoutineUnits(const RoutineName: string;
+    procedure WriteSnippetUnits(const SnippetName: string;
       const Units: IStringList);
       {Write the list of units required by a snippet.
-        @param RoutineName [in] Name of snippet.
+        @param SnippetName [in] Name of snippet.
         @param Units [in] List of names of required units.
       }
-    procedure WriteRoutineDepends(const RoutineName: string;
+    procedure WriteSnippetDepends(const SnippetName: string;
       const Depends: IStringList);
       {Write the list of snippets on which a snippet depends.
-        @param RoutineName [in] Name of snippet.
+        @param SnippetName [in] Name of snippet.
         @param Depends [in] List of snippet names.
       }
-    procedure WriteRoutineXRefs(const RoutineName: string;
+    procedure WriteSnippetXRefs(const SnippetName: string;
       const XRefs: IStringList);
       {Write the list of snippets that a snippet cross-references.
-        @param RoutineName [in] Name of snippet.
+        @param SnippetName [in] Name of snippet.
         @param XRefs [in] List of routine snippets.
       }
     procedure Finalise;
@@ -494,7 +494,7 @@ begin
   end;
 end;
 
-function TXMLDataReader.GetCatRoutines(const Cat: string): IStringList;
+function TXMLDataReader.GetCatSnippets(const Cat: string): IStringList;
   {Get names of all snippets in a category.
     @param Cat [in] Name of category containing snippets.
     @return List of snippet names.
@@ -517,19 +517,19 @@ begin
   end;
 end;
 
-function TXMLDataReader.GetRoutineDepends(const Routine: string): IStringList;
+function TXMLDataReader.GetSnippetDepends(const Snippet: string): IStringList;
   {Get list of all snippets on which a given snippet depends.
-    @param Routine [in] Name of required snippet.
+    @param Snippet [in] Name of required snippet.
     @return List of snippet names.
   }
 begin
-  Result := GetRoutineReferences(Routine, cDependsNode);
+  Result := GetRoutineReferences(Snippet, cDependsNode);
 end;
 
-procedure TXMLDataReader.GetRoutineProps(const Routine: string;
+procedure TXMLDataReader.GetSnippetProps(const Snippet: string;
   var Props: TSnippetData);
   {Get properties of a snippet.
-    @param Routine [in] Name of required snippet.
+    @param Snippet [in] Name of required snippet.
     @param Props [in/out] Empty properties passed in. Record fields set to
       values of routine properties.
   }
@@ -555,7 +555,7 @@ var
   begin
     DataFileName := GetPropertyText(cSourceCodeFileNode);
     if DataFileName = '' then
-      Error(sMissingSource, [Routine]);
+      Error(sMissingSource, [Snippet]);
     try
       // load the file: before file v5 files used default encoding, from v5
       // UTF-8 with no BOM was used
@@ -634,9 +634,9 @@ var
 begin
   try
     // Find routine node
-    RoutineNode := FindRoutineNode(Routine);
+    RoutineNode := FindRoutineNode(Snippet);
     if not Assigned(RoutineNode) then
-      Error(sSnippetNotFound, [Routine]);
+      Error(sSnippetNotFound, [Snippet]);
     // Routine found: read properties
     Props.Cat := GetPropertyText(cCatIdNode);
     Props.Kind := GetKindProperty;
@@ -675,22 +675,22 @@ begin
   end;
 end;
 
-function TXMLDataReader.GetRoutineUnits(const Routine: string): IStringList;
+function TXMLDataReader.GetSnippetUnits(const Snippet: string): IStringList;
   {Get list of all units referenced by a snippet.
-    @param Routine [in] Name of required snippet.
+    @param Snippet [in] Name of required snippet.
     @return List of unit names.
   }
 begin
-  Result := GetRoutineReferences(Routine, cUnitsNode);
+  Result := GetRoutineReferences(Snippet, cUnitsNode);
 end;
 
-function TXMLDataReader.GetRoutineXRefs(const Routine: string): IStringList;
+function TXMLDataReader.GetSnippetXRefs(const Snippet: string): IStringList;
   {Get list of all snippets that are cross referenced by a snippet.
     @param Routine [in] Name of snippet we need cross references for.
     @return List of snippet names.
   }
 begin
-  Result := GetRoutineReferences(Routine, cXRefNode);
+  Result := GetRoutineReferences(Snippet, cXRefNode);
 end;
 
 procedure TXMLDataReader.HandleCorruptDatabase(const EObj: TObject);
@@ -832,26 +832,26 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.WriteCatRoutines(const CatName: string;
-  const Routines: IStringList);
+procedure TXMLDataWriter.WriteCatSnippets(const CatName: string;
+  const SnipList: IStringList);
   {Write the list of snippets belonging to a category. Always called after
   WriteCatProps for any given category.
     @param CatName [in] Name of category.
-    @param Routines [in] List of names of snippets.
+    @param SnipList [in] List of names of snippets.
   }
 var
   CatNode: IXMLNode;  // reference to required category node
 begin
   try
     // Don't write list if no routines
-    if Routines.Count = 0 then
+    if SnipList.Count = 0 then
       Exit;
     // Find required category node
     CatNode := FindCategoryNode(CatName);
     Assert(Assigned(CatNode),
       ClassName + '.WriteCatRoutines: Can''t find category node');
     // Write the list
-    WriteNameList(CatNode, cCatRoutinesNode, cPascalNameNode, Routines);
+    WriteNameList(CatNode, cCatRoutinesNode, cPascalNameNode, SnipList);
   except
     HandleException(ExceptObject);
   end;
@@ -902,22 +902,22 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.WriteRoutineDepends(const RoutineName: string;
+procedure TXMLDataWriter.WriteSnippetDepends(const SnippetName: string;
   const Depends: IStringList);
   {Write the list of snippets on which a snippet depends.
     @param RoutineName [in] Name of snippet.
     @param Depends [in] List of snippet names.
   }
 begin
-  WriteReferenceList(RoutineName, cDependsNode, Depends);
+  WriteReferenceList(SnippetName, cDependsNode, Depends);
 end;
 
-procedure TXMLDataWriter.WriteRoutineProps(const RoutineName: string;
+procedure TXMLDataWriter.WriteSnippetProps(const SnippetName: string;
   const Props: TSnippetData);
   {Write the properties of a snippet. Always called after all categories are
   written and before WriteRoutineUnits, so can be used to perform any per-
   routine intialisation.
-    @param RoutineName [in] Name of snippet.
+    @param SnippetName [in] Name of snippet.
     @param Props [in] Properties of snippet.
   }
 var
@@ -930,7 +930,7 @@ begin
   try
     // Create <routine id='RoutineName'> node
     RoutineNode := fXMLDoc.CreateElement(fRoutinesNode, cRoutineNode);
-    RoutineNode.Attributes[cRoutineNameAttr] := RoutineName;
+    RoutineNode.Attributes[cRoutineNameAttr] := SnippetName;
     // Add properties
     fXMLDoc.CreateElement(RoutineNode, cCatIdNode, Props.Cat);
     fXMLDoc.CreateElement(RoutineNode, cDescriptionNode, Props.Desc);
@@ -962,24 +962,24 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.WriteRoutineUnits(const RoutineName: string;
+procedure TXMLDataWriter.WriteSnippetUnits(const SnippetName: string;
   const Units: IStringList);
   {Write the list of units required by a snippet.
-    @param RoutineName [in] Name of snippet.
+    @param SnippetName [in] Name of snippet.
     @param Units [in] List of names of required units.
   }
 begin
-  WriteReferenceList(RoutineName, cUnitsNode, Units);
+  WriteReferenceList(SnippetName, cUnitsNode, Units);
 end;
 
-procedure TXMLDataWriter.WriteRoutineXRefs(const RoutineName: string;
+procedure TXMLDataWriter.WriteSnippetXRefs(const SnippetName: string;
   const XRefs: IStringList);
   {Write the list of snippets that a snippet cross-references.
-    @param RoutineName [in] Name of snippet.
+    @param SnippetName [in] Name of snippet.
     @param XRefs [in] List of routine snippets.
   }
 begin
-  WriteReferenceList(RoutineName, cXRefNode, XRefs);
+  WriteReferenceList(SnippetName, cXRefNode, XRefs);
 end;
 
 end.
