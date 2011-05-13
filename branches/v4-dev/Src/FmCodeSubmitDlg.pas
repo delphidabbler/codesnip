@@ -61,18 +61,18 @@ type
     edComments: TMemo;
     edEMail: TEdit;
     edName: TEdit;
-    frmRoutines: TSelectUserSnippetsFrame;
+    frmSnippets: TSelectUserSnippetsFrame;
     lblComments: TLabel;
     lblEmail: TLabel;
     lblFinished: TLabel;
     lblIntro: TLabel;
     lblName: TLabel;
-    lblRoutinePrompt: TLabel;
-    lblRoutines: TLabel;
+    lblSnippetPrompt: TLabel;
+    lblSnippets: TLabel;
     lblSubmit: TLabel;
     tsFinished: TTabSheet;
     tsIntro: TTabSheet;
-    tsRoutines: TTabSheet;
+    tsSnippets: TTabSheet;
     tsUserInfo: TTabSheet;
     tsSubmit: TTabSheet;
     frmPrivacy: TFixedHTMLDlgFrame;
@@ -80,13 +80,13 @@ type
   strict private
     var
       fData: TEncodedData; // Contains submission as XML document
-    procedure SelectRoutine(const Routine: TSnippet);
+    procedure SelectSnippet(const Snippet: TSnippet);
       {Selects the specified snippet in the check list of snippets or clears
       selections.
-        @param Routine [in] Snippet to be selected in the list. If Routine is
+        @param Snippet [in] Snippet to be selected in the list. If Snippet is
           nil then list is cleared of selections.
       }
-    procedure RoutineListChange(Sender: TObject);
+    procedure SnippetListChange(Sender: TObject);
       {Handles change events in list of snippets. Updates state of button on
       snippet page and display of prompt if there is an error.
         @param Sender [in] Not used.
@@ -150,11 +150,11 @@ type
       {Protected class constructor. Initialise objects required by this wizard.
       }
   public
-    class procedure Execute(const AOwner: TComponent; const Routine: TSnippet);
+    class procedure Execute(const AOwner: TComponent; const Snippet: TSnippet);
       {Excutes code submission dialog box. Submits code snippet to DelphiDabbler
       web service if user OKs.
         @param AOwner [in] Component that owns and parent's dialog box.
-        @param Routine [in] Reference to any snippet to be selected in snippets
+        @param Snippet [in] Reference to any snippet to be selected in snippets
           list. If nil nothing is selected.
       }
   end;
@@ -182,7 +182,7 @@ uses
 const
   // Indices of wizard pages
   cIntroPageIdx = 0;
-  cRoutinesPageIdx = 1;
+  cSnippetsPageIdx = 1;
   cUserInfoPageIdx = 2;
   cSubmitPageIdx = 3;
   cFinishPageIdx = 4;
@@ -199,10 +199,10 @@ begin
   TCtrlArranger.SetLabelHeights(Self);
   // tsIntro
   { nothing to do }
-  // tsRoutines
-  lblRoutinePrompt.Top := tsRoutines.Height - lblRoutinePrompt.Height - 0;
-  frmRoutines.Top := TCtrlArranger.BottomOf(lblRoutines, 4);
-  frmRoutines.Height := lblRoutinePrompt.Top - frmRoutines.Top - 8;
+  // tsSnippets
+  lblSnippetPrompt.Top := tsSnippets.Height - lblSnippetPrompt.Height - 0;
+  frmSnippets.Top := TCtrlArranger.BottomOf(lblSnippets, 4);
+  frmSnippets.Height := lblSnippetPrompt.Top - frmSnippets.Top - 8;
   // tsUserInfo
   frmPrivacy.Top := TCtrlArranger.BottomOf(edEmail, 8);
   frmPrivacy.Height := frmPrivacy.DocHeight;
@@ -241,7 +241,7 @@ procedure TCodeSubmitDlg.BuildSubmission;
   {Builds XML document containing details of submission and stores in a stream.
   }
 begin
-  Assert(frmRoutines.SelectedRoutines.Count > 0,
+  Assert(frmSnippets.SelectedRoutines.Count > 0,
     ClassName + '.BuildSubmission: No snippets selected');
   Assert(edName.Text <> '',
     ClassName + '.BuildSubmission: No user name provided');
@@ -252,7 +252,7 @@ begin
     TUserInfo.Create(
       TUserDetails.Create(edName.Text, edEmail.Text), Trim(edComments.Text)
     ),
-    frmRoutines.SelectedRoutines
+    frmSnippets.SelectedRoutines
   );
 end;
 
@@ -263,7 +263,7 @@ begin
   inherited;
   pcWizard.ActivePage := tsUserInfo;  // show page so that HTML can load
   frmPrivacy.Initialise('frm-emailprivacy.html');
-  lblRoutinePrompt.Font.Style := [fsBold];
+  lblSnippetPrompt.Font.Style := [fsBold];
 end;
 
 procedure TCodeSubmitDlg.DoSubmit;
@@ -302,17 +302,17 @@ begin
 end;
 
 class procedure TCodeSubmitDlg.Execute(const AOwner: TComponent;
-  const Routine: TSnippet);
+  const Snippet: TSnippet);
   {Excutes code submission dialog box. Submits code snippet to DelphiDabbler
   web service if user OKs.
     @param AOwner [in] Component that owns and parent's dialog box.
-    @param Routine [in] Reference to any snippet to be selected in snippets
+    @param Snippet [in] Reference to any snippet to be selected in snippets
       list. If nil nothing is selected.
   }
 begin
   with InternalCreate(AOwner) do
     try
-      SelectRoutine(Routine);
+      SelectSnippet(Snippet);
       ShowModal;
     finally
       Free;
@@ -325,8 +325,8 @@ procedure TCodeSubmitDlg.FocusFirstControl(const PageIdx: Integer);
   }
 begin
   case PageIdx of
-    cRoutinesPageIdx:   frmRoutines.SetFocus;
-    cUserInfoPageIdx:   edName.SetFocus;
+    cSnippetsPageIdx: frmSnippets.SetFocus;
+    cUserInfoPageIdx: edName.SetFocus;
   end;
 end;
 
@@ -338,14 +338,14 @@ function TCodeSubmitDlg.HeadingText(const PageIdx: Integer): string;
 resourcestring
   // Pages headings
   sIntroHeading = 'Submit code to the online database';
-  sRoutinesHeading = 'Select snippets';
+  sSnippetsHeading = 'Select snippets';
   sUserInfoHeading = 'About you';
   sSubmitHeading = 'Ready to submit';
   sFinishHeading = 'Submission complete';
 begin
   case PageIdx of
     cIntroPageIdx:      Result := sIntroHeading;
-    cRoutinesPageIdx:   Result := sRoutinesHeading;
+    cSnippetsPageIdx:   Result := sSnippetsHeading;
     cUserInfoPageIdx:   Result := sUserInfoHeading;
     cSubmitPageIdx:     Result := sSubmitHeading;
     cFinishPageIdx:     Result := sFinishHeading;
@@ -369,7 +369,7 @@ constructor TCodeSubmitDlg.InternalCreate(AOwner: TComponent);
   }
 begin
   inherited;
-  frmRoutines.OnChange := RoutineListChange;
+  frmSnippets.OnChange := SnippetListChange;
 end;
 
 procedure TCodeSubmitDlg.MoveForward(const PageIdx: Integer;
@@ -400,17 +400,6 @@ begin
   end;
 end;
 
-procedure TCodeSubmitDlg.RoutineListChange(Sender: TObject);
-  {Handles change events in list of snippets. Updates state of button on snippet
-  page and display of prompt if there is an error.
-    @param Sender [in] Not used.
-  }
-begin
-  if CurrentPage = cRoutinesPageIdx then
-    UpdateButtons(CurrentPage);
-  lblRoutinePrompt.Visible := frmRoutines.SelectedRoutines.Count = 0;
-end;
-
 procedure TCodeSubmitDlg.SaveUserData;
   {Saves content of some wizard controls to persistent storage.
   }
@@ -418,27 +407,38 @@ begin
   TUserDetailsPersist.Update(TUserDetails.Create(edName.Text, edEMail.Text));
 end;
 
-procedure TCodeSubmitDlg.SelectRoutine(const Routine: TSnippet);
-  {Selects the specified routine in the check list of routines or clears
+procedure TCodeSubmitDlg.SelectSnippet(const Snippet: TSnippet);
+  {Selects the specified snippet in the check list of snippets or clears
   selections.
-    @param Routine [in] Snippet to be selected in the list. If Snippet is nil
+    @param Snippet [in] Snippet to be selected in the list. If Snippet is nil
       then list is cleared of selections.
   }
 var
   List: TSnippetList; // list containing only one snippet
 begin
-  if not Assigned(Routine) or not Routine.UserDefined then
-    frmRoutines.SelectedRoutines := nil
+  if not Assigned(Snippet) or not Snippet.UserDefined then
+    frmSnippets.SelectedRoutines := nil
   else
   begin
     List := TSnippetList.Create;
     try
-      List.Add(Routine);
-      frmRoutines.SelectedRoutines := List;
+      List.Add(Snippet);
+      frmSnippets.SelectedRoutines := List;
     finally
       List.Free;
     end;
   end;
+end;
+
+procedure TCodeSubmitDlg.SnippetListChange(Sender: TObject);
+  {Handles change events in list of snippets. Updates state of button on snippet
+  page and display of prompt if there is an error.
+    @param Sender [in] Not used.
+  }
+begin
+  if CurrentPage = cSnippetsPageIdx then
+    UpdateButtons(CurrentPage);
+  lblSnippetPrompt.Visible := frmSnippets.SelectedRoutines.Count = 0;
 end;
 
 procedure TCodeSubmitDlg.UpdateButtons(const PageIdx: Integer);
@@ -463,15 +463,15 @@ procedure TCodeSubmitDlg.ValidatePage(PageIdx: Integer);
   }
 resourcestring
   // Error messages
-  sNoRoutines = 'Please select at least one snippet';
+  sNoSnippets = 'Please select at least one snippet';
   sNoName = 'Please enter your name or nickname';
   sNoEmail = 'Please enter an email address';
   sBadEmail = 'Email address is not valid';
 begin
   case PageIdx of
-    cRoutinesPageIdx:
-      if frmRoutines.SelectedRoutines.Count = 0 then
-        raise EDataEntry.Create(sNoRoutines, frmRoutines);
+    cSnippetsPageIdx:
+      if frmSnippets.SelectedRoutines.Count = 0 then
+        raise EDataEntry.Create(sNoSnippets, frmSnippets);
     cUserInfoPageIdx:
     begin
       if edName.Text = '' then

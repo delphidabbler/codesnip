@@ -94,10 +94,10 @@ inherited MainForm: TMainForm
       Top = 0
       Action = actFindCompiler
     end
-    object tbSelectRoutines: TToolButton
+    object tbSelectSnippets: TToolButton
       Left = 162
       Top = 0
-      Action = actSelectRoutines
+      Action = actSelectSnippets
     end
     object tbFindClear: TToolButton
       Left = 185
@@ -1939,13 +1939,13 @@ inherited MainForm: TMainForm
       OnExecute = actFindXRefsExecute
       OnUpdate = actFindXRefsUpdate
     end
-    object actSelectRoutines: TAction
+    object actSelectSnippets: TAction
       Category = 'Search'
       Caption = 'Select Snippets...'
       Hint = 'Select Snippets|Specify the snippets to be displayed'
       ImageIndex = 19
       ShortCut = 24659
-      OnExecute = actSelectRoutinesExecute
+      OnExecute = actSelectSnippetsExecute
       OnUpdate = ActNonEmptyDBUpdate
     end
     object actFindClear: TAction
@@ -2317,8 +2317,8 @@ inherited MainForm: TMainForm
       object miFindXRefs: TMenuItem
         Action = actFindXRefs
       end
-      object miSelectRoutines: TMenuItem
-        Action = actSelectRoutines
+      object miSelectSnippets: TMenuItem
+        Action = actSelectSnippets
       end
       object miSpacer8: TMenuItem
         Caption = '-'

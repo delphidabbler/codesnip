@@ -237,18 +237,18 @@ type
       {Performs initialisation of form fields and controls.
       }
   public
-    class function AddNewRoutine(AOwner: TComponent): Boolean;
+    class function AddNewSnippet(AOwner: TComponent): Boolean;
       {Displays dialog box to enable user to enter a new snippet.
         @param AOwner [in] Control that owns the dialog box, over which the
           dialog is aligned. May be nil.
         @return True if user OKs, False if cancels.
       }
-    class function EditRoutine(AOwner: TComponent;
-      const Routine: TSnippet): Boolean;
+    class function EditSnippet(AOwner: TComponent;
+      const Snippet: TSnippet): Boolean;
       {Displays dialog box to enable user to edit a snippet.
         @param AOwner [in] Control that owns the dialog box, over which the
           dialog is aligned. May be nil.
-        @param Routine [in] Reference to snippet to be edited.
+        @param Snippet [in] Reference to snippet to be edited.
         @return True if user OKs, False if cancels.
       }
   end;
@@ -467,7 +467,7 @@ begin
     fSnipKindList.SnippetKind(cbKind.ItemIndex) <> skFreeform;
 end;
 
-class function TSnippetsEditorDlg.AddNewRoutine(AOwner: TComponent): Boolean;
+class function TSnippetsEditorDlg.AddNewSnippet(AOwner: TComponent): Boolean;
   {Displays dialog box to enable user to enter a new snippet.
     @param AOwner [in] Control that owns the dialog box, over which the dialog
       is aligned. May be nil.
@@ -534,23 +534,23 @@ procedure TSnippetsEditorDlg.btnOKClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  RoutineName: string;  // name of snippet being edited / added
+  SnippetName: string;  // name of snippet being edited / added
 begin
   inherited;
   try
     // Validate and record entered data
     ValidateData;
     fEditData.Assign(UpdateData);
-    RoutineName := Trim(edName.Text);
+    SnippetName := Trim(edName.Text);
     // Add or update snippet
     if Assigned(fSnippet) then
       fSnippet := (Snippets as ISnippetsEdit).UpdateSnippet(
-        fSnippet, fEditData, RoutineName
+        fSnippet, fEditData, SnippetName
       )
     else
     begin
       fSnippet := (Snippets as ISnippetsEdit).AddSnippet(
-        RoutineName, fEditData
+        SnippetName, fEditData
       )
     end;
   except
@@ -662,12 +662,12 @@ begin
   pnlViewCompErrs.Visible := fCompileMgr.HaveErrors;
 end;
 
-class function TSnippetsEditorDlg.EditRoutine(AOwner: TComponent;
-  const Routine: TSnippet): Boolean;
+class function TSnippetsEditorDlg.EditSnippet(AOwner: TComponent;
+  const Snippet: TSnippet): Boolean;
   {Displays dialog box to enable user to edit a snippet.
     @param AOwner [in] Control that owns the dialog box, over which the dialog
       is aligned. May be nil.
-    @param Routine [in] Reference to snippet to be edited.
+    @param Snippet [in] Reference to snippet to be edited.
     @return True if user OKs, False if cancels.
   }
 resourcestring
@@ -675,8 +675,8 @@ resourcestring
 begin
   with InternalCreate(AOwner) do
     try
-      Caption := Format(sCaption, [Routine.Name]);
-      fSnippet := Routine;
+      Caption := Format(sCaption, [Snippet.Name]);
+      fSnippet := Snippet;
       Result := ShowModal = mrOK;
     finally
       Free;

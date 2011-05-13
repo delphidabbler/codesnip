@@ -60,11 +60,11 @@ type
     edFile: TEdit;
     frmSnippets: TSelectUserSnippetsFrame;
     lblFile: TLabel;
-    lblRoutines: TLabel;
+    lblSnippets: TLabel;
     procedure btnBrowseClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
   strict private
-    procedure SelectRoutine(const Snippet: TSnippet);
+    procedure SelectSnippet(const Snippet: TSnippet);
       {Selects a snippet in the snippets check list.
         @param Snippet [in] Snippet to be selected. If nil, or not user-defined,
           no snippet is selected.
@@ -108,7 +108,7 @@ procedure TCodeExportDlg.ArrangeForm;
   that depend on UI font.
   }
 begin
-  frmSnippets.Top := TCtrlArranger.BottomOf(lblRoutines, 4);
+  frmSnippets.Top := TCtrlArranger.BottomOf(lblSnippets, 4);
   lblFile.Top := TCtrlArranger.BottomOf(frmSnippets, 8);
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(lblFile, 4), [edFile, btnBrowse]
@@ -151,7 +151,7 @@ procedure TCodeExportDlg.btnOKClick(Sender: TObject);
   }
 resourcestring
   // Error messages
-  sNoRoutines = 'Please select one or more snippets';
+  sNoSnippets = 'Please select one or more snippets';
   sNoFileName = 'Please specify a file name';
   sBadPath = 'The specified file path does not exist';
   sFileExists = 'Please specify another file name';
@@ -168,7 +168,7 @@ begin
     // Validate entries
     // must have at least one snippet
     if frmSnippets.SelectedRoutines.Count = 0 then
-      raise EDataEntry.Create(sNoRoutines, frmSnippets);
+      raise EDataEntry.Create(sNoSnippets, frmSnippets);
     // must have a file name
     if FileName = '' then
       raise EDataEntry.Create(sNoFileName, edFile);
@@ -203,26 +203,26 @@ class procedure TCodeExportDlg.Execute(const AOwner: TComponent;
   const Snippet: TSnippet);
   {Displays export dialog box and writes export file if user OKs entries.
     @param AOwner [in] Reference to control that owns the dialog box.
-    @param Snippet [in] Reference to a routine to pre-select in snippets check
+    @param Snippet [in] Reference to a snippet to pre-select in snippets check
       list box. If nil or not user-defined then no snippet is pre-selected.
   }
 begin
   with InternalCreate(AOwner) do
     try
-      SelectRoutine(Snippet);
+      SelectSnippet(Snippet);
       ShowModal;
     finally
       Free;
     end;
 end;
 
-procedure TCodeExportDlg.SelectRoutine(const Snippet: TSnippet);
+procedure TCodeExportDlg.SelectSnippet(const Snippet: TSnippet);
   {Selects a snippet in the snippets check list.
     @param Snippet [in] Snippet to be selected. If nil, or not user-defined, no
       snippet is selected.
   }
 var
-  List: TSnippetList; // list containing only the provided routine
+  List: TSnippetList; // list containing only the provided snippet
 begin
   if not Assigned(Snippet) or not Snippet.UserDefined then
     // Snippet is nil or not user-defined: select nothing
@@ -230,7 +230,7 @@ begin
   else
   begin
     // Snippet is user-defined. We make a snippet list containing only this
-    // snippet because frmRoutines requires a list of snippets to select.
+    // snippet because frmSnippets requires a list of snippets to select.
     List := TSnippetList.Create;
     try
       List.Add(Snippet);

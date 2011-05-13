@@ -105,7 +105,7 @@ type
     actSaveSnippet: TAction;
     actSaveUnit: TAction;
     actSelectAll: TAction;
-    actSelectRoutines: TAction;
+    actSelectSnippets: TAction;
     actSubmit: TAction;
     actTestBug: TAction;
     actTestCompile: TAction;
@@ -173,7 +173,7 @@ type
     miSaveDatabase: TMenuItem;
     miSaveUnit: TMenuItem;
     miSearch: TMenuItem;
-    miSelectRoutines: TMenuItem;
+    miSelectSnippets: TMenuItem;
     miSelectAll: TMenuItem;
     miSourceCode: TMenuItem;
     miSpacer1: TMenuItem;
@@ -230,7 +230,7 @@ type
     tbSaveDatabase: TToolButton;
     tbSaveSnippet: TToolButton;
     tbSaveUnit: TToolButton;
-    tbSelectRoutines: TToolButton;
+    tbSelectSnippets: TToolButton;
     tbSpacer1: TToolButton;
     tbSpacer2: TToolButton;
     tbSpacer3: TToolButton;
@@ -303,7 +303,7 @@ type
     procedure actSaveUnitExecute(Sender: TObject);
     procedure actSelectAllExecute(Sender: TObject);
     procedure actSelectAllUpdate(Sender: TObject);
-    procedure actSelectRoutinesExecute(Sender: TObject);
+    procedure actSelectSnippetsExecute(Sender: TObject);
     procedure actSubmitExecute(Sender: TObject);
     procedure ActSubmitOrExportUpdate(Sender: TObject);
     procedure actTestBugExecute(Sender: TObject);
@@ -344,10 +344,10 @@ type
         @param Sender [in] Action triggering this event. Must be a
           TViewItemAction.
       }
-    procedure ActEditRoutineExecute(Sender: TObject);
+    procedure ActEditSnippetByNameExecute(Sender: TObject);
       {Edits a named user defined snippet.
         @param Sender [in] Action triggering this event. Must be a
-          TEditRoutineAction.
+          TEditSnippetAction.
       }
     procedure ActViewCompLogExecute(Sender: TObject);
       {Displays compiler warning or error log for last compile by a specified
@@ -508,7 +508,7 @@ begin
 end;
 
 procedure TMainForm.actCopySnippetExecute(Sender: TObject);
-  {Copies annotated source of selected routine or category to clipboard.
+  {Copies annotated source of selected snippet or category to clipboard.
     @param Sender [in] Not used.
   }
 begin
@@ -621,10 +621,10 @@ begin
     TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView);
 end;
 
-procedure TMainForm.ActEditRoutineExecute(Sender: TObject);
+procedure TMainForm.ActEditSnippetByNameExecute(Sender: TObject);
   {Edits a named user defined snippet.
     @param Sender [in] Action triggering this event. Must be a
-      TEditRoutineAction.
+      TEditSnippetAction.
   }
 begin
   TUserDBMgr.EditSnippet((Sender as TEditSnippetAction).SnippetName);
@@ -810,7 +810,7 @@ begin
 end;
 
 procedure TMainForm.actImportCodeExecute(Sender: TObject);
-  {Exports one or more user-defined routines from a file.
+  {Exports one or more user-defined snippets from a file.
     @param Sender [in] Not used.
   }
 begin
@@ -843,7 +843,7 @@ begin
 end;
 
 procedure TMainForm.ActNonEmptyDBUpdate(Sender: TObject);
-  {Enables / disables an action according to whether there are routines in
+  {Enables / disables an action according to whether there are snippets in
   database.
     @param Sender [in] Action triggering this event.
   }
@@ -1003,7 +1003,7 @@ begin
 end;
 
 procedure TMainForm.actSaveSnippetExecute(Sender: TObject);
-  {Saves selected routine or category to disk.
+  {Saves selected snippet to disk.
     @param Sender [in] Not used.
   }
 begin
@@ -1011,8 +1011,8 @@ begin
 end;
 
 procedure TMainForm.actSaveSnippetUpdate(Sender: TObject);
-  {Enables / disables Save Snippet action according to whether a routine or
-  category is selected.
+  {Enables / disables Save Snippet action according to whether a summary is
+  selected.
     @param Sender [in] Action triggering the event.
   }
 begin
@@ -1045,7 +1045,7 @@ begin
   (Sender as TAction).Enabled := fMainDisplayMgr.CanSelectAll;
 end;
 
-procedure TMainForm.actSelectRoutinesExecute(Sender: TObject);
+procedure TMainForm.actSelectSnippetsExecute(Sender: TObject);
   {Permits user to select snippets to be displayed. Gets selection from user via
   Select Snippets dialog box then displays all selected snippets.
     @param Sender [in] Not used.
@@ -1310,7 +1310,7 @@ procedure TMainForm.DoSearchFilter(const Search: USearch.ISearch);
     @param Search [in] Search object to filter by.
   }
 resourcestring
-  sNoRoutines = 'No snippets found.'; // dialog box messages
+  sNoSnippets = 'No snippets found.'; // dialog box messages
 begin
   if Query.ApplySearch(Search) then
   begin
@@ -1318,7 +1318,7 @@ begin
     fStatusBarMgr.Update;
   end
   else
-    TMessageBox.Information(Self, sNoRoutines);
+    TMessageBox.Information(Self, sNoSnippets);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -1452,13 +1452,15 @@ begin
       SetShowViewItemAction(
         TActionFactory.CreateViewItemAction(Self, ActViewItemExecute)
       );
-      SetOverviewStyleChangeActions([
-        actViewCategorised, actViewAlphabetical, actViewSnippetKinds
-      ]);
+      SetOverviewStyleChangeActions(
+        [actViewCategorised, actViewAlphabetical, actViewSnippetKinds]
+      );
       SetDetailPaneChangeActions([actViewInfo, actViewCompCheck]);
       SetShowTestUnitAction(actViewTestUnit);
       SetEditRoutineAction(
-        TActionFactory.CreateEditRoutineAction(Self, ActEditRoutineExecute)
+        TActionFactory.CreateEditRoutineAction(
+          Self, ActEditSnippetByNameExecute
+        )
       );
       SetDonateAction(actDonate);
     end;
@@ -1652,8 +1654,8 @@ begin
     end;
     evChangeEnd:            // database change has completed
       Enabled := True;
-    evSnippetAdded,         // snippet added: display new routine
-    evSnippetChanged:       // snippet edited: display changed routine
+    evSnippetAdded,         // snippet added: display new snippet
+    evSnippetChanged:       // snippet edited: display changed snippet
     begin
       ReInitialise;
       fNotifier.DisplayRoutine(

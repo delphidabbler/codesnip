@@ -156,7 +156,7 @@ class procedure TUserDBMgr.AddSnippet;
   }
 begin
   // Display Add Snippet dialog box which performs update of database.
-  TSnippetsEditorDlg.AddNewRoutine(nil);
+  TSnippetsEditorDlg.AddNewSnippet(nil);
 end;
 
 class procedure TUserDBMgr.BackupDatabase;
@@ -410,7 +410,7 @@ begin
   Snippet := Snippets.Snippets.Find(SnippetName, True);
   if not Assigned(Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not in user database');
-  TSnippetsEditorDlg.EditRoutine(nil, Snippet);
+  TSnippetsEditorDlg.EditSnippet(nil, Snippet);
 end;
 
 class procedure TUserDBMgr.RenameACategory;
