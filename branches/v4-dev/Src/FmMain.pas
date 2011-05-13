@@ -638,7 +638,7 @@ procedure TMainForm.actEditSnippetExecute(Sender: TObject);
 begin
   Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actEditSnippetExecute: Can''t edit current view item');
-  fNotifier.EditRoutine(
+  fNotifier.EditSnippet(
     (fMainDisplayMgr.CurrentView as ISnippetView).Snippet.Name
   );
   // display of updated snippet is handled by snippets change event handler
@@ -1439,9 +1439,9 @@ begin
     with fNotifier as ISetActions do
     begin
       SetUpdateDbaseAction(actUpdateDbase);
-      SetDisplayRoutineAction(TActionFactory.CreateRoutineAction(Self));
+      SetDisplaySnippetAction(TActionFactory.CreateRoutineAction(Self));
       SetDisplayCategoryAction(TActionFactory.CreateCategoryAction(Self));
-      SetCompileRoutineAction(actTestCompile);
+      SetCompileSnippetAction(actTestCompile);
       SetViewCompilerLogAction(
         TActionFactory.CreateCompLogAction(Self, ActViewCompLogExecute)
       );
@@ -1457,7 +1457,7 @@ begin
       );
       SetDetailPaneChangeActions([actViewInfo, actViewCompCheck]);
       SetShowTestUnitAction(actViewTestUnit);
-      SetEditRoutineAction(
+      SetEditSnippetAction(
         TActionFactory.CreateEditRoutineAction(
           Self, ActEditSnippetByNameExecute
         )
@@ -1658,7 +1658,7 @@ begin
     evSnippetChanged:       // snippet edited: display changed snippet
     begin
       ReInitialise;
-      fNotifier.DisplayRoutine(
+      fNotifier.DisplaySnippet(
         (EventInfo.Info as TSnippet).Name,
         (EventInfo.Info as TSnippet).UserDefined
       );

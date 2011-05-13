@@ -92,17 +92,17 @@ type
     procedure UpdateDbase;
       {Updates database.
       }
-    procedure DisplayRoutine(const RoutineName: WideString;
+    procedure DisplaySnippet(const SnippetName: WideString;
       UserDefined: WordBool);
       {Displays a named snippet.
-        @param RoutineName [in] Name of snippet to display.
+        @param SnippetName [in] Name of snippet to display.
         @param UserDefined [in] Whether snippet is user defined.
       }
     procedure DisplayCategory(const CatID: WideString);
       {Displays an identified category.
         @param CatID [in] Id of category to display.
       }
-    procedure CompileRoutine;
+    procedure CompileSnippet;
       {Compiles the current snippet.
       }
     procedure ViewCompilerLog(CompID: SYSINT);
@@ -133,9 +133,9 @@ type
     procedure ShowTestUnit;
       {Displays test unit.
       }
-    procedure EditRoutine(const RoutineName: WideString);
+    procedure EditSnippet(const SnippetName: WideString);
       {Edits a snippet.
-        @param RoutineName [in] Name of snippet. Must be user defined.
+        @param SnippetName [in] Name of snippet. Must be user defined.
       }
     procedure Donate;
       {Displays donate dialog box.
@@ -145,11 +145,11 @@ type
       {Sets action triggered when user requests database update.
         @param Action [in] Required action.
       }
-    procedure SetDisplayRoutineAction(const Action: TBasicAction);
+    procedure SetDisplaySnippetAction(const Action: TBasicAction);
       {Sets action triggered when a named snippet is requested to be displayed.
         @param Action [in] Required action.
       }
-    procedure SetCompileRoutineAction(const Action: TBasicAction);
+    procedure SetCompileSnippetAction(const Action: TBasicAction);
       {Sets action triggered when user wants to test-compile the current
       snippet.
         @param Action [in] Required action.
@@ -189,7 +189,7 @@ type
       {Sets action triggered where displays a test unit.
         @param Action [in] Required action.
       }
-    procedure SetEditRoutineAction(const Action: TBasicAction);
+    procedure SetEditSnippetAction(const Action: TBasicAction);
       {Sets action triggered when user requests a user defined snippet is to be
       edited.
         @param Action [in] Required action.
@@ -241,7 +241,7 @@ begin
     fOverviewStyleChangeActions[Style].Execute;
 end;
 
-procedure TNotifier.CompileRoutine;
+procedure TNotifier.CompileSnippet;
   {Compiles the current snippet.
   }
 begin
@@ -269,16 +269,16 @@ begin
   end;
 end;
 
-procedure TNotifier.DisplayRoutine(const RoutineName: WideString;
+procedure TNotifier.DisplaySnippet(const SnippetName: WideString;
   UserDefined: WordBool);
   {Displays a named snippet.
-    @param RoutineName [in] Name of snippet to display.
+    @param SnippetName [in] Name of snippet to display.
     @param UserDefined [in] Whether snippet is user defined.
   }
 begin
   if Assigned(fDisplayRoutineAction) then
   begin
-    (fDisplayRoutineAction as TSnippetAction).SnippetName := RoutineName;
+    (fDisplayRoutineAction as TSnippetAction).SnippetName := SnippetName;
     (fDisplayRoutineAction as TSnippetAction).UserDefined := UserDefined;
     fDisplayRoutineAction.Execute;
   end;
@@ -292,19 +292,19 @@ begin
     fDonateAction.Execute;
 end;
 
-procedure TNotifier.EditRoutine(const RoutineName: WideString);
+procedure TNotifier.EditSnippet(const SnippetName: WideString);
   {Edits a snippet.
     @param RoutineName [in] Name of snippet. Must be user defined.
   }
 begin
   if Assigned(fEditRoutineAction) then
   begin
-    (fEditRoutineAction as TEditSnippetAction).SnippetName := RoutineName;
+    (fEditRoutineAction as TEditSnippetAction).SnippetName := SnippetName;
     fEditRoutineAction.Execute;
   end;
 end;
 
-procedure TNotifier.SetCompileRoutineAction(
+procedure TNotifier.SetCompileSnippetAction(
   const Action: TBasicAction);
   {Sets action triggered when user wants to test-compile the current snippet.
     @param Action [in] Required action.
@@ -350,7 +350,7 @@ begin
   (fDisplayCategoryAction as ISetNotifier).SetNotifier(Self);
 end;
 
-procedure TNotifier.SetDisplayRoutineAction(
+procedure TNotifier.SetDisplaySnippetAction(
   const Action: TBasicAction);
   {Sets action triggered when a named snippet is requested to be displayed.
     @param Action [in] Required action.
@@ -373,7 +373,7 @@ begin
   fDonateAction := Action;
 end;
 
-procedure TNotifier.SetEditRoutineAction(const Action: TBasicAction);
+procedure TNotifier.SetEditSnippetAction(const Action: TBasicAction);
   {Sets action triggered when user requests a user defined snippet is to be
   edited.
     @param Action [in] Required action.

@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -139,7 +139,7 @@ procedure TWBExternal.CompileSnippet;
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.CompileRoutine;
+      fNotifier.CompileSnippet;
   except
     HandleException;
   end;
@@ -193,7 +193,7 @@ procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.DisplayRoutine(SnippetName, UserDefined);
+      fNotifier.DisplaySnippet(SnippetName, UserDefined);
   except
     HandleException;
   end;
@@ -219,7 +219,7 @@ procedure TWBExternal.EditSnippet(const SnippetName: WideString);
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.EditRoutine(SnippetName);
+      fNotifier.EditSnippet(SnippetName);
   except
     HandleException;
   end;
