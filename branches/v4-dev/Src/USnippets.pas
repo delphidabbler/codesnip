@@ -820,7 +820,7 @@ type
         @param Info [in] Reference to any further information for event. May be
           nil.
       }
-    function InternalAddRoutine(const RoutineName: string;
+    function InternalAddSnippet(const RoutineName: string;
       const Data: TSnippetEditData): TSnippet;
       {Adds a new snippet to the user database. Assumes snippet not already in
       user database.
@@ -829,7 +829,7 @@ type
         @return Reference to new snippet object.
         @except Exception raised if snippet's category does not exist.
       }
-    procedure InternalDeleteRoutine(const Routine: TSnippet);
+    procedure InternalDeleteSnippet(const Routine: TSnippet);
       {Deletes a snippet from the user database.
         @param Routine [in] Snippet to delete from database.
       }
@@ -1097,7 +1097,7 @@ begin
     // Check if snippet with same name exists in user database: error if so
     if fRoutines.Find(RoutineName, True) <> nil then
       raise ECodeSnip.CreateFmt(sNameExists, [RoutineName]);
-    Result := InternalAddRoutine(RoutineName, Data);
+    Result := InternalAddSnippet(RoutineName, Data);
     TriggerEvent(evRoutineAdded, Result);
   finally
     fUpdated := True;
@@ -1133,9 +1133,9 @@ function TSnippets.CreateTempSnippet(const Routine: TSnippet): TSnippet;
 var
   Data: TSnippetEditData; // data describing snippet's properties and references
 begin
-  Assert(Assigned(Routine), ClassName + '.CreateTempRoutine: Routine is nil');
+  Assert(Assigned(Routine), ClassName + '.CreateTempSnippet: Routine is nil');
   Assert(Routine is TSnippetEx,
-    ClassName + '.CreateTempRoutine: Routine is not a TSnippetEx');
+    ClassName + '.CreateTempSnippet: Routine is not a TSnippetEx');
   Data := (Routine as TSnippetEx).GetEditData;
   Result := TTempSnippet.Create(
     Routine.Name, Routine.UserDefined, (Routine as TSnippetEx).GetProps);
@@ -1174,7 +1174,7 @@ begin
     // all snippets that belong to category are deleted before category itself
     // can't use for..in here since Routines list is modified in loop
     for SnipIdx := Pred(Category.Snippets.Count) downto 0 do
-      InternalDeleteRoutine(Category.Snippets[SnipIdx]);
+      InternalDeleteSnippet(Category.Snippets[SnipIdx]);
     InternalDeleteCategory(Category);
     TriggerEvent(evCategoryDeleted);
   finally
@@ -1212,7 +1212,7 @@ begin
     for Dependent in Dependents do
       (Dependent.Depends as TSnippetListEx).Delete(Routine);
     // Delete routine itself
-    InternalDeleteRoutine(Routine);
+    InternalDeleteSnippet(Routine);
     TriggerEvent(evRoutineDeleted);
   finally
     FreeAndNil(Referrers);
@@ -1297,7 +1297,7 @@ function TSnippets.GetEditableSnippetInfo(
   }
 begin
   Assert(not Assigned(Routine) or Routine.UserDefined,
-    ClassName + '.GetEditableRoutineInfo: Routine is not user-defined');
+    ClassName + '.GetEditableSnippetInfo: Routine is not user-defined');
   if Assigned(Routine) then
     Result := (Routine as TSnippetEx).GetEditData
   else
@@ -1358,7 +1358,7 @@ begin
   fCategories.Add(Result);
 end;
 
-function TSnippets.InternalAddRoutine(const RoutineName: string;
+function TSnippets.InternalAddSnippet(const RoutineName: string;
   const Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the user database. Assumes snippet not already in user
   database.
@@ -1392,7 +1392,7 @@ begin
   TriggerEvent(evAfterCategoryDelete);
 end;
 
-procedure TSnippets.InternalDeleteRoutine(const Routine: TSnippet);
+procedure TSnippets.InternalDeleteSnippet(const Routine: TSnippet);
   {Deletes a snippet from the user database.
     @param Routine [in] Snippet to delete from database.
   }
@@ -1535,7 +1535,7 @@ resourcestring
 begin
   Result := Routine;      // keeps compiler happy
   Assert(Routine.UserDefined,
-    ClassName + '.UpdateRoutine: Routine is not user-defined');
+    ClassName + '.UpdateSnippet: Routine is not user-defined');
   Referrers := nil;
   Dependents := nil;
   TriggerEvent(evChangeBegin);
@@ -1561,9 +1561,9 @@ begin
     for Dependent in Dependents do
       (Dependent.Depends as TSnippetListEx).Delete(Routine);
     // delete the snippet
-    InternalDeleteRoutine(Routine);
+    InternalDeleteSnippet(Routine);
     // add new routine
-    Result := InternalAddRoutine(RoutineName, Data);
+    Result := InternalAddSnippet(RoutineName, Data);
     // add new snippet to referrer list of referring snippets
     for Referrer in Referrers do
       Referrer.XRef.Add(Result);
@@ -1584,8 +1584,8 @@ constructor TSnippets.TEventInfo.Create(const Kind: TSnippetChangeEventKind;
   const Info: TObject);
   {Constructor. Creates an event information object.
     @param Kind [in] Kind of event.
-    @param Routine [in] Reference to any snippet affected by event. May be nil
-      if event does not affect a snippet.
+    @param Info [in] Reference to further information about the event. May be
+      nil if event doesn't have additional information.
   }
 begin
   inherited Create;
@@ -1635,7 +1635,7 @@ begin
   SetProps(Props);
   // Create string list to store required units
   fUnits := TStringList.Create;
-  // Create routine lists for Depends and XRef properties
+  // Create snippets lists for Depends and XRef properties
   fDepends := TSnippetListEx.Create;
   fXRef := TSnippetListEx.Create;
   // The following properties added to support user defined snippets
@@ -1746,7 +1746,7 @@ procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
   }
 
   // ---------------------------------------------------------------------------
-  procedure BuildRoutineList(const SL: TSnippetList;
+  procedure BuildSnippetList(const SL: TSnippetList;
     const IDList: ISnippetIDList);
     {Creates a snippets list from a snippets ID list. Looks up snippets in list
     of all snippets in database. Any snippets in ID list that do not exist in
@@ -1771,8 +1771,8 @@ procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
 
 begin
   Refs.Units.CopyTo(Self.Units, True);            // copy units
-  BuildRoutineList(Self.Depends, Refs.Depends);   // build Depends list
-  BuildRoutineList(Self.XRef, Refs.XRef);         // build XRef list
+  BuildSnippetList(Self.Depends, Refs.Depends);   // build Depends list
+  BuildSnippetList(Self.XRef, Refs.XRef);         // build XRef list
 end;
 
 { TSnippetList }
@@ -1973,7 +1973,7 @@ begin
   Result := Assigned(AList) and (Self.Count = AList.Count);
   if Result then
   begin
-    // Same number of snippets: scan list checking routine names same. We can
+    // Same number of snippets: scan list checking snippet names same. We can
     // rely on items being in same order since lists are sorted
     for Idx := 0 to Pred(Self.Count) do
     begin
@@ -1996,7 +1996,7 @@ function TSnippetListEx.Add(const Routine: TSnippet): Integer;
   }
 begin
   if Routine is TTempSnippet then
-    // don't allow temp routines to be added to list
+    // don't allow temp snippets to be added to list
     raise EBug.CreateFmt(
       ClassName + '.Add: Can''t add temporary snippets to database (%s)',
       [Routine.Name]
