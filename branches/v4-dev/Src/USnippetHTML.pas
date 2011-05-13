@@ -48,11 +48,11 @@ uses
 type
 
   {
-  TRoutineHTML:
+  TSnippetHTML:
     Base for classes that provide HTML fragments used in pages that describe
     snippets. Provides helper and common methods.
   }
-  TRoutineHTML = class(TObject)
+  TSnippetHTML = class(TObject)
   strict private
     fSnippet: TSnippet; // Value of Snippet property
   strict protected
@@ -79,7 +79,7 @@ type
     Class that provides HTML used to display snippet details in information
     pane.
   }
-  TInfoHTML = class(TRoutineHTML)
+  TInfoHTML = class(TSnippetHTML)
   strict private
     function SnippetList(const Snippets: TSnippetList): string;
       {Generates HTML of a comma separated list of snippets, where each snippet
@@ -145,9 +145,9 @@ uses
   UHTMLDetailUtils, UHTMLUtils, USnippetKindInfo, UUtils;
 
 
-{ TRoutineHTML }
+{ TSnippetHTML }
 
-constructor TRoutineHTML.Create(const Snippet: TSnippet);
+constructor TSnippetHTML.Create(const Snippet: TSnippet);
   {Object constructor. Sets up object to provide HTML for a snippet.
     @param Snippet [in] Snippet for which to generate HTML.
   }
@@ -156,7 +156,7 @@ begin
   fSnippet := Snippet;
 end;
 
-function TRoutineHTML.HiliteSource(const SourceCode: string): string;
+function TSnippetHTML.HiliteSource(const SourceCode: string): string;
   {Highlights source code in a style suitable for display in UI.
     @param SourceCode [in] Source code to be highlighted.
     @return Highlighted source code.
@@ -170,7 +170,7 @@ begin
   ).ToString;
 end;
 
-function TRoutineHTML.SnippetName: string;
+function TSnippetHTML.SnippetName: string;
   {Provides snippet name as valid HTML text.
     @return Required HTML.
   }

@@ -433,7 +433,7 @@ procedure TRoutinePageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
       template.
   }
 var
-  RoutineHTML: TRoutineHTML;  // object used to generate HTML
+  RoutineHTML: TSnippetHTML;  // object used to generate HTML
 begin
   // Resolve placeholders common to all snippet templates
   // snippet name and class
@@ -441,7 +441,7 @@ begin
     Tplt.ResolvePlaceholderHTML('RoutineCSSClass', 'userdb')
   else
     Tplt.ResolvePlaceholderHTML('RoutineCSSClass', 'maindb');
-  RoutineHTML := TRoutineHTML.Create(GetRoutine);
+  RoutineHTML := TSnippetHTML.Create(GetRoutine);
   try
     Tplt.ResolvePlaceholderHTML('RoutineName', RoutineHTML.SnippetName);
   finally
