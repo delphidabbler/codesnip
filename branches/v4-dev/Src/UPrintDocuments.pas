@@ -109,9 +109,9 @@ end;
 
 function TSnippetPrintDocument.Generate: TRTF;
 var
-  Doc: TRTFRoutineDoc;  // object that renders snippet document in RTF
+  Doc: TRTFSnippetDoc;  // object that renders snippet document in RTF
 begin
-  Doc := TRTFRoutineDoc.Create(
+  Doc := TRTFSnippetDoc.Create(
     GetHiliteAttrs, poUseColor in PrintInfo.PrintOptions
   );
   try

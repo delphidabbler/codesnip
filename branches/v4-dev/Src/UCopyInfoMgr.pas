@@ -118,9 +118,9 @@ end;
 
 class function TCopyInfoMgr.GenerateRichText(View: IView): TEncodedData;
 var
-  Doc: TRTFRoutineDoc;  // object that generates RTF document
+  Doc: TRTFSnippetDoc;  // object that generates RTF document
 begin
-  Doc := TRTFRoutineDoc.Create(THiliteAttrsFactory.CreateUserAttrs);
+  Doc := TRTFSnippetDoc.Create(THiliteAttrsFactory.CreateUserAttrs);
   try
     // TRTFRoutineDoc generates stream of ASCII bytes
     Result := GenerateDoc(View, Doc);

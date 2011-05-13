@@ -51,10 +51,10 @@ uses
 type
 
   {
-  TRTFRoutineDoc:
+  TRTFSnippetDoc:
     Class that renders a document that describes a snippet as rich text.
   }
-  TRTFRoutineDoc = class(TSnippetDoc)
+  TRTFSnippetDoc = class(TSnippetDoc)
   strict private
     var
       fHiliteAttrs: IHiliteAttrs; // Attributes determine source code formatting
@@ -146,9 +146,9 @@ uses
   Hiliter.UHiliters, UColours, UConsts, URTFMerger, UUtils;
 
 
-{ TRTFRoutineDoc }
+{ TRTFSnippetDoc }
 
-constructor TRTFRoutineDoc.Create(const HiliteAttrs: IHiliteAttrs;
+constructor TRTFSnippetDoc.Create(const HiliteAttrs: IHiliteAttrs;
   const UseColour: Boolean = True);
   {Class constructor. Sets up object with customised source code highlighting.
     @param HiliteAttrs [in] Defines source code syntax highlighting.
@@ -160,7 +160,7 @@ begin
   fUseColour := UseColour;
 end;
 
-function TRTFRoutineDoc.FinaliseDoc: TEncodedData;
+function TRTFSnippetDoc.FinaliseDoc: TEncodedData;
   {Merges hilited source code document into main document and returns final
   document. Releases RTF builder object.
     @return ASCII encoded RTF document.
@@ -179,7 +179,7 @@ begin
   fBuilder.Free;
 end;
 
-function TRTFRoutineDoc.HiliteSource: TRTF;
+function TRTFSnippetDoc.HiliteSource: TRTF;
   {Highlights snippet's source code.
     @return Highlighted source code as a RTF document.
   }
@@ -195,7 +195,7 @@ begin
   Result := TRTF.Create(HilitedSource);
 end;
 
-procedure TRTFRoutineDoc.InitialiseDoc;
+procedure TRTFSnippetDoc.InitialiseDoc;
   {Initialises rich text document.
   }
 begin
@@ -210,7 +210,7 @@ begin
   fBuilder.ColourTable.Add(clLinkText);
 end;
 
-procedure TRTFRoutineDoc.RenderCompilerInfo(const Heading: string;
+procedure TRTFSnippetDoc.RenderCompilerInfo(const Heading: string;
   const Info: TCompileDocInfoArray);
   {Adds details of compiler information to rich edit document.
     @param Heading [in] Heading for compiler information.
@@ -238,7 +238,7 @@ begin
   end;
 end;
 
-procedure TRTFRoutineDoc.RenderDBInfo(const Text: string);
+procedure TRTFSnippetDoc.RenderDBInfo(const Text: string);
   {Adds information about code snippets database to rich text document.
     @param Text [in] Text to be written.
   }
@@ -252,7 +252,7 @@ begin
   fBuilder.ResetCharStyle;
 end;
 
-procedure TRTFRoutineDoc.RenderDescription(const Desc: string);
+procedure TRTFSnippetDoc.RenderDescription(const Desc: string);
   {Adds snippet's description to rich text document.
     @param Desc [in] Description to be written.
   }
@@ -266,7 +266,7 @@ begin
   fBuilder.EndPara;
 end;
 
-procedure TRTFRoutineDoc.RenderExtra(const ExtraText: IActiveText);
+procedure TRTFSnippetDoc.RenderExtra(const ExtraText: IActiveText);
   {Adds snippet's extra information to rich text document.
     @param ExtraText [in] Text to be written.
   }
@@ -420,7 +420,7 @@ begin
   end;
 end;
 
-procedure TRTFRoutineDoc.RenderHeading(const Heading: string);
+procedure TRTFSnippetDoc.RenderHeading(const Heading: string);
   {Adds heading (snippet name) to rich text document.
     @param Heading [in] Heading to be written.
   }
@@ -431,7 +431,7 @@ begin
   fBuilder.EndPara;
 end;
 
-procedure TRTFRoutineDoc.RenderSourceCode(const SourceCode: string);
+procedure TRTFSnippetDoc.RenderSourceCode(const SourceCode: string);
   {Adds a placeholder for snippet's source code to rich text document.
   Placeholder is replaced later when source code is generated.
     @param SourceCode [in] Source code to be written.
@@ -445,7 +445,7 @@ begin
   fBuilder.EndPara;
 end;
 
-procedure TRTFRoutineDoc.RenderTitledList(const Title: string;
+procedure TRTFSnippetDoc.RenderTitledList(const Title: string;
   List: IStringList);
   {Adds a comma-separated list preceded by a title to rich text document.
     @param Title [in] List title.
@@ -455,7 +455,7 @@ begin
   RenderTitledText(Title, CommaList(List));
 end;
 
-procedure TRTFRoutineDoc.RenderTitledText(const Title, Text: string);
+procedure TRTFSnippetDoc.RenderTitledText(const Title, Text: string);
   {Outputs text preceded by a title.
     @param Title [in] Text title.
     @param Text [in] Text to be written.
@@ -474,7 +474,7 @@ begin
   fBuilder.EndPara;
 end;
 
-procedure TRTFRoutineDoc.SetColour(const Colour: TColor);
+procedure TRTFSnippetDoc.SetColour(const Colour: TColor);
   {Sets specified font colour in RTF, unless user specifies that colour is not
   to be used.
     @param Colour [in] Required colour. Ignored if fUseColour is false.
