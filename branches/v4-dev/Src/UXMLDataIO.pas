@@ -79,9 +79,9 @@ type
         @param Cat [in] Name of required category.
         @return Required node or nil if node doesn't exist.
       }
-    function FindRoutineNode(const RoutineName: string): IXMLNode;
-      {Finds a specified <routine> node for a snippet in the file.
-        @param RoutineName [in] Name of required snippet.
+    function FindSnippetNode(const SnippetName: string): IXMLNode;
+      {Finds a specified snippet node for a snippet in the file.
+        @param SnippetName [in] Name of required snippet.
         @return Required node or nil if node doesn't exist.
       }
   public
@@ -117,9 +117,9 @@ type
           called.
         @except Exception always raised.
       }
-    function GetRoutineReferences(const Routine, RefName: string): IStringList;
+    function GetSnippetReferences(const Snippet, RefName: string): IStringList;
       {Get list of all specified references made by a snippet.
-        @param Routine [in] Name of required snippet.
+        @param Snippet [in] Name of required snippet.
         @param RefName [in] Name of node containing snippet's references.
         @return List of names of references.
       }
@@ -154,7 +154,7 @@ type
       {Get properties of a snippet.
         @param Snippet [in] Name of required snippet.
         @param Props [in/out] Empty properties passed in. Record fields set to
-          values of routine properties.
+          values of snippet properties.
       }
     function GetSnippetXRefs(const Snippet: string): IStringList;
       {Get list of all snippets that are cross referenced by a snippet.
@@ -183,8 +183,8 @@ type
   )
   strict private
     fFileNum: Integer;          // Number of next available unused data file
-    fRoutinesNode: IXMLNode;    // Reference to <routines> node in document
-    fCategoriesNode: IXMLNode;  // Reference to <categories> node in document
+    fSnippetsNode: IXMLNode;    // Reference to snippets node in document
+    fCategoriesNode: IXMLNode;  // Reference to categories node in document
     procedure WriteNameList(const Parent: IXMLNode;
       const ListName, ItemName: string; const Items: IStringList);
       {Writes a list of names to XML.
@@ -193,10 +193,10 @@ type
         @param ItemName [in] Name of each list item tag.
         @param Items [in] List of names in list. One ItemName node per name.
       }
-    procedure WriteReferenceList(const RoutineName, ListName: string;
+    procedure WriteReferenceList(const SnippetName, ListName: string;
       const Items: IStringList);
       {Writes a snippet's reference list to XML.
-        @param RoutineName [in] Name of snippet whose reference list is to be
+        @param SnippetName [in] Name of snippet whose reference list is to be
           written.
         @param ListName [in] Name of tag that encloses list entry.
         @param Items [in] List of items in reference list.
@@ -213,7 +213,7 @@ type
       {Initialise the database. Always called before any other methods.
       }
     procedure WriteCatProps(const CatName: string; const Props: TCategoryData);
-      {Write the properties of a category. Always called before WriteCatRoutines
+      {Write the properties of a category. Always called before WriteCatSnippets
       for a given category, so can be used to perform any per-category
       initialisation.
         @param CatName [in] Name of category.
@@ -229,8 +229,8 @@ type
     procedure WriteSnippetProps(const SnippetName: string;
       const Props: TSnippetData);
       {Write the properties of a snippet. Always called after all categories are
-      written and before WriteRoutineUnits, so can be used to perform any per-
-      routine intialisation.
+      written and before WriteSnippetUnits, so can be used to perform any per-
+      snippet intialisation.
         @param SnippetName [in] Name of snippet.
         @param Props [in] Properties of snippet.
       }
@@ -250,7 +250,7 @@ type
       const XRefs: IStringList);
       {Write the list of snippets that a snippet cross-references.
         @param SnippetName [in] Name of snippet.
-        @param XRefs [in] List of routine snippets.
+        @param XRefs [in] List of cross references snippets.
       }
     procedure Finalise;
       {Finalises the database. Always called after all other methods.
@@ -368,22 +368,22 @@ begin
   )
 end;
 
-function TXMLDataIO.FindRoutineNode(const RoutineName: string): IXMLNode;
-  {Finds a specified <routine> node for a snippet in the file.
-    @param RoutineName [in] Name of required snippet.
+function TXMLDataIO.FindSnippetNode(const SnippetName: string): IXMLNode;
+  {Finds a specified snippet node for a snippet in the file.
+    @param SnippetName [in] Name of required snippet.
     @return Required node or nil if node doesn't exist.
   }
 var
-  RoutineListNode: IXMLNode;  // list node that contains <routine> nodes
+  SnippetListNode: IXMLNode;  // list node that contains snippets nodes
 begin
   Result := nil;
-  // Find <routines> node
-  RoutineListNode := fXMLDoc.FindNode(cUserDataRootNode + '\' + cRoutinesNode);
-  if not Assigned(RoutineListNode) then
-    Error(sMissingNode, [cRoutinesNode]);
-  // Find required <routine> node
+  // Find snippets node
+  SnippetListNode := fXMLDoc.FindNode(cUserDataRootNode + '\' + cSnippetsNode);
+  if not Assigned(SnippetListNode) then
+    Error(sMissingNode, [cSnippetsNode]);
+  // Find required snippet node
   Result := fXMLDoc.FindFirstChildNode(
-    RoutineListNode, cRoutineNode, cRoutineNameAttr, RoutineName
+    SnippetListNode, cSnippetNode, cSnippetNameAttr, SnippetName
   );
 end;
 
@@ -435,7 +435,7 @@ begin
       fXMLDoc, cUserDataRootNode, cWatermark, cLatestVersion
     );
     fXMLDoc.CreateElement(RootNode, cCategoriesNode);
-    fXMLDoc.CreateElement(RootNode, cRoutinesNode);
+    fXMLDoc.CreateElement(RootNode, cSnippetsNode);
   end;
 end;
 
@@ -510,7 +510,7 @@ begin
       // another database and loader will request info from here also
       Exit;
     TXMLDocHelper.GetPascalNameList(
-      fXMLDoc, fXMLDoc.FindFirstChildNode(CatNode, cCatRoutinesNode), Result
+      fXMLDoc, fXMLDoc.FindFirstChildNode(CatNode, cCatSnippetsNode), Result
     );
   except
     HandleCorruptDatabase(ExceptObject);
@@ -523,7 +523,7 @@ function TXMLDataReader.GetSnippetDepends(const Snippet: string): IStringList;
     @return List of snippet names.
   }
 begin
-  Result := GetRoutineReferences(Snippet, cDependsNode);
+  Result := GetSnippetReferences(Snippet, cDependsNode);
 end;
 
 procedure TXMLDataReader.GetSnippetProps(const Snippet: string;
@@ -531,10 +531,10 @@ procedure TXMLDataReader.GetSnippetProps(const Snippet: string;
   {Get properties of a snippet.
     @param Snippet [in] Name of required snippet.
     @param Props [in/out] Empty properties passed in. Record fields set to
-      values of routine properties.
+      values of snippet's properties.
   }
 var
-  RoutineNode: IXMLNode;  // node for required snippet
+  SnippetNode: IXMLNode;  // node for required snippet
 
   // ---------------------------------------------------------------------------
   function GetPropertyText(const PropTagName: string): string;
@@ -543,7 +543,7 @@ var
       @return Property value from tag's text.
     }
   begin
-    Result := TXMLDocHelper.GetSubTagText(fXMLDoc, RoutineNode, PropTagName);
+    Result := TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, PropTagName);
   end;
 
   function GetSourceCodePropertyText: string;
@@ -583,7 +583,7 @@ var
     }
   begin
     Result := TXMLDocHelper.GetStandardFormat(
-      fXMLDoc, RoutineNode, False
+      fXMLDoc, SnippetNode, False
     );
   end;
 
@@ -601,7 +601,7 @@ var
       Default := skRoutine
     else
       Default := skFreeform;
-    Result := TXMLDocHelper.GetSnippetKind(fXMLDoc, RoutineNode, Default);
+    Result := TXMLDocHelper.GetSnippetKind(fXMLDoc, SnippetNode, Default);
   end;
 
   function GetExtraProperty: IActiveText;
@@ -633,42 +633,42 @@ var
 
 begin
   try
-    // Find routine node
-    RoutineNode := FindRoutineNode(Snippet);
-    if not Assigned(RoutineNode) then
+    // Find snippet node
+    SnippetNode := FindSnippetNode(Snippet);
+    if not Assigned(SnippetNode) then
       Error(sSnippetNotFound, [Snippet]);
-    // Routine found: read properties
+    // Snippet found: read properties
     Props.Cat := GetPropertyText(cCatIdNode);
     Props.Kind := GetKindProperty;
     Props.Desc := GetPropertyText(cDescriptionNode);
     Props.Extra := GetExtraProperty;
     Props.SourceCode := GetSourceCodePropertyText;
     Props.CompilerResults := TXMLDocHelper.GetCompilerResults(
-      fXMLDoc, RoutineNode
+      fXMLDoc, SnippetNode
     );
   except
     HandleCorruptDatabase(ExceptObject);
   end;
 end;
 
-function TXMLDataReader.GetRoutineReferences(const Routine,
+function TXMLDataReader.GetSnippetReferences(const Snippet,
   RefName: string): IStringList;
   {Get list of all specified references made by a snippet.
-    @param Routine [in] Name of required snippet.
+    @param Snippet [in] Name of required snippet.
     @param RefName [in] Name of node containing snippet's references.
     @return List of names of references.
   }
 var
-  RoutineNode: IXMLNode;  // node for required routine
+  SnippetNode: IXMLNode;  // node for required snippet
 begin
   try
     Result := TIStringList.Create;
-    RoutineNode := FindRoutineNode(Routine);
-    if not Assigned(RoutineNode) then
-      Error(sSnippetNotFound, [Routine]);
+    SnippetNode := FindSnippetNode(Snippet);
+    if not Assigned(SnippetNode) then
+      Error(sSnippetNotFound, [Snippet]);
     // References are contained in a list of contained <pascal-name> nodes
     TXMLDocHelper.GetPascalNameList(
-      fXMLDoc, fXMLDoc.FindFirstChildNode(RoutineNode, RefName), Result
+      fXMLDoc, fXMLDoc.FindFirstChildNode(SnippetNode, RefName), Result
     );
   except
     HandleCorruptDatabase(ExceptObject);
@@ -681,16 +681,16 @@ function TXMLDataReader.GetSnippetUnits(const Snippet: string): IStringList;
     @return List of unit names.
   }
 begin
-  Result := GetRoutineReferences(Snippet, cUnitsNode);
+  Result := GetSnippetReferences(Snippet, cUnitsNode);
 end;
 
 function TXMLDataReader.GetSnippetXRefs(const Snippet: string): IStringList;
   {Get list of all snippets that are cross referenced by a snippet.
-    @param Routine [in] Name of snippet we need cross references for.
+    @param Snippet [in] Name of snippet we need cross references for.
     @return List of snippet names.
   }
 begin
-  Result := GetRoutineReferences(Snippet, cXRefNode);
+  Result := GetSnippetReferences(Snippet, cXRefNode);
 end;
 
 procedure TXMLDataReader.HandleCorruptDatabase(const EObj: TObject);
@@ -729,11 +729,11 @@ begin
     cWatermark,
     TRange.Create(cEarliestVersion, cLatestVersion)
   );
-  // Both a categories and a routines node must exist
+  // Both a categories and a snippets node must exist
   if fXMLDoc.FindNode(cUserDataRootNode + '\' + cCategoriesNode) = nil then
     Error(sMissingNode, [cCategoriesNode]);
-  if fXMLDoc.FindNode(cUserDataRootNode + '\' + cRoutinesNode) = nil then
-    Error(sMissingNode, [cRoutinesNode]);
+  if fXMLDoc.FindNode(cUserDataRootNode + '\' + cSnippetsNode) = nil then
+    Error(sMissingNode, [cSnippetsNode]);
 end;
 
 { TXMLDataWriter }
@@ -804,9 +804,9 @@ begin
     RootNode := TXMLDocHelper.CreateRootNode(
       fXMLDoc, cUserDataRootNode, cWatermark, cLatestVersion
     );
-    // empty <categories> and <routines> nodes
+    // empty categories and snippets nodes
     fCategoriesNode := fXMLDoc.CreateElement(RootNode, cCategoriesNode);
-    fRoutinesNode := fXMLDoc.CreateElement(RootNode, cRoutinesNode);
+    fSnippetsNode := fXMLDoc.CreateElement(RootNode, cSnippetsNode);
   except
     HandleException(ExceptObject);
   end;
@@ -814,7 +814,7 @@ end;
 
 procedure TXMLDataWriter.WriteCatProps(const CatName: string;
   const Props: TCategoryData);
-  {Write the properties of a category. Always called before WriteCatRoutines for
+  {Write the properties of a category. Always called before WriteCatSnippets for
   a given category, so can be used to perform any per-category initialisation.
     @param CatName [in] Name of category.
     @param Props [in] Properties of category.
@@ -843,15 +843,15 @@ var
   CatNode: IXMLNode;  // reference to required category node
 begin
   try
-    // Don't write list if no routines
+    // Don't write list if no snippets
     if SnipList.Count = 0 then
       Exit;
     // Find required category node
     CatNode := FindCategoryNode(CatName);
     Assert(Assigned(CatNode),
-      ClassName + '.WriteCatRoutines: Can''t find category node');
+      ClassName + '.WriteCatSnippets: Can''t find category node');
     // Write the list
-    WriteNameList(CatNode, cCatRoutinesNode, cPascalNameNode, SnipList);
+    WriteNameList(CatNode, cCatSnippetsNode, cPascalNameNode, SnipList);
   except
     HandleException(ExceptObject);
   end;
@@ -874,28 +874,28 @@ begin
     fXMLDoc.CreateElement(ListNode, ItemName, Item);
 end;
 
-procedure TXMLDataWriter.WriteReferenceList(const RoutineName, ListName: string;
+procedure TXMLDataWriter.WriteReferenceList(const SnippetName, ListName: string;
   const Items: IStringList);
   {Writes a snippet's reference list to XML.
-    @param RoutineName [in] Name of snippet whose reference list is to be
+    @param SnippetName [in] Name of snippet whose reference list is to be
       written.
     @param ListName [in] Name of tag that encloses list entry.
     @param Items [in] List of items in reference list.
   }
 var
-  RoutineNode: IXMLNode;  // reference to routine's node
+  SnippetNode: IXMLNode;  // reference to snippet's node
 begin
   try
     // Don't write list tags if no items
     if Items.Count = 0 then
       Exit;
-    // Find <routine name='RoutineName'> tag
-    RoutineNode := FindRoutineNode(RoutineName);
-    Assert(Assigned(RoutineNode),
-      ClassName + '.WriteReferenceList: Can''t find routine node');
+    // Find snippet node
+    SnippetNode := FindSnippetNode(SnippetName);
+    Assert(Assigned(SnippetNode),
+      ClassName + '.WriteReferenceList: Can''t find snippet node');
     // Write the list
     TXMLDocHelper.WritePascalNameList(
-      fXMLDoc, RoutineNode, ListName, Items
+      fXMLDoc, SnippetNode, ListName, Items
     );
   except
     HandleException(ExceptObject);
@@ -905,7 +905,7 @@ end;
 procedure TXMLDataWriter.WriteSnippetDepends(const SnippetName: string;
   const Depends: IStringList);
   {Write the list of snippets on which a snippet depends.
-    @param RoutineName [in] Name of snippet.
+    @param SnippetName [in] Name of snippet.
     @param Depends [in] List of snippet names.
   }
 begin
@@ -915,25 +915,25 @@ end;
 procedure TXMLDataWriter.WriteSnippetProps(const SnippetName: string;
   const Props: TSnippetData);
   {Write the properties of a snippet. Always called after all categories are
-  written and before WriteRoutineUnits, so can be used to perform any per-
-  routine intialisation.
+  written and before WriteSnippetsUnits, so can be used to perform any per-
+  snippet intialisation.
     @param SnippetName [in] Name of snippet.
     @param Props [in] Properties of snippet.
   }
 var
-  RoutineNode: IXMLNode;        // routine's node
-  FileName: string;             // name of file where source code stored
+  SnippetNode: IXMLNode;  // snippet's node
+  FileName: string;       // name of file where source code stored
 const
   // mask used to format source code file name
   cFileNameMask = '%d.dat';
 begin
   try
-    // Create <routine id='RoutineName'> node
-    RoutineNode := fXMLDoc.CreateElement(fRoutinesNode, cRoutineNode);
-    RoutineNode.Attributes[cRoutineNameAttr] := SnippetName;
+    // Create snippet node
+    SnippetNode := fXMLDoc.CreateElement(fSnippetsNode, cSnippetNode);
+    SnippetNode.Attributes[cSnippetNameAttr] := SnippetName;
     // Add properties
-    fXMLDoc.CreateElement(RoutineNode, cCatIdNode, Props.Cat);
-    fXMLDoc.CreateElement(RoutineNode, cDescriptionNode, Props.Desc);
+    fXMLDoc.CreateElement(SnippetNode, cCatIdNode, Props.Cat);
+    fXMLDoc.CreateElement(SnippetNode, cDescriptionNode, Props.Desc);
     // source code is written to a UTF-8 encoded file with no BOM and filename
     // is stored in XML
     Inc(fFileNum);
@@ -941,21 +941,21 @@ begin
     TFileIO.WriteAllText(
       DataFile(FileName), Props.SourceCode, TEncoding.UTF8, False
     );
-    fXMLDoc.CreateElement(RoutineNode, cSourceCodeFileNode, FileName);
+    fXMLDoc.CreateElement(SnippetNode, cSourceCodeFileNode, FileName);
     // extra property is only written if value exists
     if not Props.Extra.IsEmpty then
     begin
       fXMLDoc.CreateElement(
-        RoutineNode,
+        SnippetNode,
         cExtraNode,
         TSnippetExtraHelper.BuildREMLMarkupLowestVer(Props.Extra)
       );
     end;
     // Kind property replaces StandardFormat
-    TXMLDocHelper.WriteSnippetKind(fXMLDoc, RoutineNode, Props.Kind);
+    TXMLDocHelper.WriteSnippetKind(fXMLDoc, SnippetNode, Props.Kind);
     // compiler results value: only write known results
     TXMLDocHelper.WriteCompilerResults(
-      fXMLDoc, RoutineNode, Props.CompilerResults
+      fXMLDoc, SnippetNode, Props.CompilerResults
     );
   except
     HandleException(ExceptObject);
@@ -976,7 +976,7 @@ procedure TXMLDataWriter.WriteSnippetXRefs(const SnippetName: string;
   const XRefs: IStringList);
   {Write the list of snippets that a snippet cross-references.
     @param SnippetName [in] Name of snippet.
-    @param XRefs [in] List of routine snippets.
+    @param XRefs [in] List of cross references snippets.
   }
 begin
   WriteReferenceList(SnippetName, cXRefNode, XRefs);

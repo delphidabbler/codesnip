@@ -155,7 +155,7 @@ procedure TCompCheckFrame.DisplayCompileResults(const ACompilers: ICompilers);
 var
   CompCheckDHTML: ICompCheckSnippetDHTML; // object manipulates comp check pane
 begin
-  CompCheckDHTML := TDHTMLFactory.CreateCompCheckRoutineDHTML(Self);
+  CompCheckDHTML := TDHTMLFactory.CreateCompCheckSnippetDHTML(Self);
   CompCheckDHTML.DisplayCompileResults(ACompilers);
 end;
 

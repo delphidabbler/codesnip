@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -114,10 +114,10 @@ uses
 resourcestring
   // Dialog box title
   sSaveDlgTitle = 'Save %0:s Snippet';
-  // Output document title for routines and categories
+  // Output document title for snippets and categories
   sDocTitle = '"%0:s" %1:s';
   sCategory = 'category';
-  sRoutine = 'routine';
+  sSnippet = 'routine';
   // File filter strings
   sHtmExtDesc = 'HTML file';
   sRtfExtDesc = 'Rich text file';
@@ -174,7 +174,7 @@ begin
   if Supports(fView, ICategoryView) then
     Result := Format(sDocTitle, [fView.Description, sCategory])
   else if Supports(fView, ISnippetView) then
-    Result := Format(sDocTitle, [fView.Description, sRoutine])
+    Result := Format(sDocTitle, [fView.Description, sSnippet])
   else
     Result := '';
 end;

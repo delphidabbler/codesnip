@@ -63,9 +63,9 @@ type
   strict private
     fUpdateDbaseAction: TBasicAction;
       {Action that triggers database update}
-    fDisplayRoutineAction: TBasicAction;
+    fDisplaySnippetAction: TBasicAction;
       {Action that causes a named snippet to be displayed}
-    fCompileRoutineAction: TBasicAction;
+    fCompileSnippetAction: TBasicAction;
       {Action that causes current snippet to be compiled}
     fViewCompilerLogAction: TBasicAction;
       {Action that causes a compiler log to be displayed}
@@ -81,7 +81,7 @@ type
       {List of actions triggered when current pane in detail view changes}
     fShowTestUnitAction: TBasicAction;
       {Action that causes a test unit to be displayed}
-    fEditRoutineAction: TBasicAction;
+    fEditSnippetAction: TBasicAction;
       {Action that causes a user defined snippet to be edited}
     fDonateAction: TBasicAction;
       {Action that displays donate dialog box}
@@ -245,8 +245,8 @@ procedure TNotifier.CompileSnippet;
   {Compiles the current snippet.
   }
 begin
-  if Assigned(fCompileRoutineAction) then
-    fCompileRoutineAction.Execute;
+  if Assigned(fCompileSnippetAction) then
+    fCompileSnippetAction.Execute;
 end;
 
 procedure TNotifier.ConfigCompilers;
@@ -276,11 +276,11 @@ procedure TNotifier.DisplaySnippet(const SnippetName: WideString;
     @param UserDefined [in] Whether snippet is user defined.
   }
 begin
-  if Assigned(fDisplayRoutineAction) then
+  if Assigned(fDisplaySnippetAction) then
   begin
-    (fDisplayRoutineAction as TSnippetAction).SnippetName := SnippetName;
-    (fDisplayRoutineAction as TSnippetAction).UserDefined := UserDefined;
-    fDisplayRoutineAction.Execute;
+    (fDisplaySnippetAction as TSnippetAction).SnippetName := SnippetName;
+    (fDisplaySnippetAction as TSnippetAction).UserDefined := UserDefined;
+    fDisplaySnippetAction.Execute;
   end;
 end;
 
@@ -294,13 +294,13 @@ end;
 
 procedure TNotifier.EditSnippet(const SnippetName: WideString);
   {Edits a snippet.
-    @param RoutineName [in] Name of snippet. Must be user defined.
+    @param SnippetName [in] Name of snippet. Must be user defined.
   }
 begin
-  if Assigned(fEditRoutineAction) then
+  if Assigned(fEditSnippetAction) then
   begin
-    (fEditRoutineAction as TEditSnippetAction).SnippetName := SnippetName;
-    fEditRoutineAction.Execute;
+    (fEditSnippetAction as TEditSnippetAction).SnippetName := SnippetName;
+    fEditSnippetAction.Execute;
   end;
 end;
 
@@ -310,7 +310,7 @@ procedure TNotifier.SetCompileSnippetAction(
     @param Action [in] Required action.
   }
 begin
-  fCompileRoutineAction := Action;
+  fCompileSnippetAction := Action;
 end;
 
 procedure TNotifier.SetConfigCompilersAction(const Action: TBasicAction);
@@ -357,11 +357,11 @@ procedure TNotifier.SetDisplaySnippetAction(
   }
 begin
   Assert(Action is TSnippetAction,
-    ClassName + '.SetDisplayRoutineAction: Action is not TSnippetAction');
+    ClassName + '.SetDisplaySnippetAction: Action is not TSnippetAction');
   Assert(Supports(Action, ISetNotifier),
-    ClassName + '.SetDisplayRoutineAction: Action must support ISetNotifier');
-  fDisplayRoutineAction := Action;
-  (fDisplayRoutineAction as ISetNotifier).SetNotifier(Self);
+    ClassName + '.SetDisplaySnippetAction: Action must support ISetNotifier');
+  fDisplaySnippetAction := Action;
+  (fDisplaySnippetAction as ISetNotifier).SetNotifier(Self);
 end;
 
 procedure TNotifier.SetDonateAction(const Action: TBasicAction);
@@ -380,8 +380,8 @@ procedure TNotifier.SetEditSnippetAction(const Action: TBasicAction);
   }
 begin
   Assert(Action is TEditSnippetAction,
-    ClassName + '.SetEditRoutineAction: Action is not TEditSnippetAction');
-  fEditRoutineAction := Action;
+    ClassName + '.SetEditSnippetAction: Action is not TEditSnippetAction');
+  fEditSnippetAction := Action;
 end;
 
 procedure TNotifier.SetOverviewStyleChangeActions(

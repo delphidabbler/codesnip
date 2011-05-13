@@ -1,7 +1,7 @@
 {
  * UTestCompile.pas
  *
- * Class that performs a test compilation of a routine using all supported and
+ * Class that performs a test compilation of a snippet using all supported and
  * installed versions of Delphi and returns details of success or failure.
  *
  * $Rev$
@@ -49,17 +49,17 @@ type
 
   {
   TTestCompile:
-    Class that performs a test compilation of a routine using all supported and
+    Class that performs a test compilation of a snippet using all supported and
     installed compilers and returns details of success or failure.
   }
   TTestCompile = class(TNoPublicConstructObject)
   strict private
-    fRoutine: TSnippet;
-      {The routine we are to compile}
+    fSnippet: TSnippet;
+      {The snippet we are to compile}
     fCompilers: ICompilers;
       {Object used to perform compilation}
     procedure GenerateSourceFile(out FileName: string);
-      {Generates a source file for routine under test.
+      {Generates a source file for snippet under test.
         @param FileName [out] Name of the generated file.
       }
     class function CompileSourceFile(const SrcFile: string;
@@ -70,24 +70,24 @@ type
         @return Result of the compilation.
       }
     function DoCompile: TCompileResults;
-      {Compiles routine under test with all installed and supported compiler
+      {Compiles snippet under test with all installed and supported compiler
       versions.
         @return Compilation results for each supported compiler (crQuery is
           returned for each supported compiler that is not installed).
       }
   strict protected
     constructor InternalCreate(const ACompilers: ICompilers;
-      const ARoutine: TSnippet);
-      {Class constructor. Sets up object that can test compile a routine.
+      const ASnippet: TSnippet);
+      {Class constructor. Sets up object that can test compile a snippet.
         @param ACompilers [in] Compilers object used to perform compilation.
-        @param ARoutine [in] Routine to be test compiled.
+        @param ASnippet [in] Snippet to be test compiled.
       }
   public
     class function Compile(const ACompilers: ICompilers;
-      const ARoutine: TSnippet): TCompileResults;
-      {Compiles a specified routine with all installed and supported compilers.
+      const ASnippet: TSnippet): TCompileResults;
+      {Compiles a specified snippet with all installed and supported compilers.
         @param ACompilers [in] Compilers object used to perform compilation.
-        @param ARoutine [in] Routine to be compiled.
+        @param ASnippet [in] Snippet to be compiled.
         @return Compilation results for each supported compiler (crQuery is
           returned for each supported compiler that is not installed).
       }
@@ -127,15 +127,15 @@ uses
 { TTestCompile }
 
 class function TTestCompile.Compile(const ACompilers: ICompilers;
-  const ARoutine: TSnippet): TCompileResults;
-  {Compiles a specified routine with all installed and supported compilers.
+  const ASnippet: TSnippet): TCompileResults;
+  {Compiles a specified snippet with all installed and supported compilers.
     @param ACompilers [in] Compilers object used to perform compilation.
-    @param ARoutine [in] Routine to be compiled.
+    @param ASnippet [in] Snippet to be compiled.
     @return Compilation results for each supported compiler (crQuery is returned
       for each supported compiler that is not installed).
   }
 begin
-  with InternalCreate(ACompilers, ARoutine) do
+  with InternalCreate(ACompilers, ASnippet) do
     try
       Result := DoCompile;
     finally
@@ -159,7 +159,7 @@ begin
 end;
 
 function TTestCompile.DoCompile: TCompileResults;
-  {Compiles routine under test with all installed and supported compiler
+  {Compiles snippet under test with all installed and supported compiler
   versions.
     @return Compilation results for each supported compiler (crQuery is returned
       for each supported compiler that is not installed).
@@ -181,11 +181,11 @@ begin
 end;
 
 procedure TTestCompile.GenerateSourceFile(out FileName: string);
-  {Generates a source file for routine under test.
+  {Generates a source file for snippet under test.
     @param FileName [out] Name of the generated file.
   }
 begin
-  with TTestUnit.Create(fRoutine) do
+  with TTestUnit.Create(fSnippet) do
     try
       SaveUnit(FileName);
     finally
@@ -194,17 +194,17 @@ begin
 end;
 
 constructor TTestCompile.InternalCreate(const ACompilers: ICompilers;
-  const ARoutine: TSnippet);
-  {Class constructor. Sets up object that can test compile a routine.
+  const ASnippet: TSnippet);
+  {Class constructor. Sets up object that can test compile a snippet.
     @param ACompilers [in] Compilers object used to perform compilation.
-    @param ARoutine [in] Routine to be test compiled.
+    @param ASnippet [in] Snippet to be test compiled.
   }
 begin
-  Assert(Assigned(ARoutine), ClassName + '.InternalCreate: ARoutine is nil');
+  Assert(Assigned(ASnippet), ClassName + '.InternalCreate: ASnippet is nil');
   Assert(Assigned(ACompilers),
     ClassName + '.InternalCreate: ACompilers is nil');
   inherited InternalCreate;
-  fRoutine := ARoutine;
+  fSnippet := ASnippet;
   fCompilers := ACompilers;
 end;
 

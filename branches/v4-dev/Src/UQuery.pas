@@ -117,7 +117,7 @@ type
   {
   TQuery:
     Class that encapsulates a query on the code snippets database. It enables a
-    search to be run against the database and makes the found routines
+    search to be run against the database and makes the found snippets
     available. Must only be instantiated once as a singleton.
   }
   TQuery = class(TNoPublicConstructIntfObject,
@@ -125,7 +125,7 @@ type
   )
   strict private
     var
-      fSelection: TSnippetList;   // List of routines selected by current query
+      fSelection: TSnippetList;   // List of snippets selected by current query
       fSearch: ISearch;           // Search object used by current query
     class var
       fInstance: IQuery;          // Singleton object instance of this class
@@ -137,7 +137,7 @@ type
     { IQuery methods }
     function ApplySearch(const Search: ISearch): Boolean;
       {Runs query by applying a search to the whole database. If search succeeds
-      matching routines and search are stored in query's Selection and Search
+      matching snippets and search are stored in query's Selection and Search
       properties. If search fails Selection and Search are left unchanged.
         @param Search [in] Search to apply.
         @return True if search succeeds and False if it fails.
@@ -148,7 +148,7 @@ type
           apply.
       }
     procedure Reset;
-      {Resets query. Selection property is set to all routines in database and
+      {Resets query. Selection property is set to all snippets in database and
       Search property is set to nul search.
       }
     function GetCurrentSearch: ISearch;
@@ -156,20 +156,20 @@ type
         @return Required search object.
       }
     function GetSelection: TSnippetList;
-      {Gets reference to list of routines selected by last search.
-        @return Reference to required list of routines.
+      {Gets reference to list of snippets selected by last search.
+        @return Reference to required list of snippets.
       }
     procedure GetCatSelection(const Cat: TCategory;
-      const Routines: TSnippetList);
-      {Provides list of routines selected by last search that are in a specified
+      const SnipList: TSnippetList);
+      {Provides list of snippets selected by last search that are in a specified
       category.
         @param Cat [in] Reference to required category.
-        @param Routines [in] Object to receive routine list. List is emptied
-          before routines are copied in.
+        @param SnipList [in] Object to receive snippet list. List is emptied
+          before snippets are copied in.
       }
   strict protected
     constructor InternalCreate;
-      {Internal class constructor. Sets up object with all routines in database
+      {Internal class constructor. Sets up object with all snippets in database
       selected.
       }
   public
@@ -192,23 +192,23 @@ end;
 
 function TQuery.ApplySearch(const Search: ISearch): Boolean;
   {Runs query by applying a search to the whole database. If search succeeds
-  matching routines and search are stored in query's Selection and Search
+  matching snippets and search are stored in query's Selection and Search
   properties. If search fails Selection and Search are left unchanged.
     @param Search [in] Search to apply.
     @return True if search succeeds and False if it fails.
   }
 var
-  FoundList: TSnippetList;  // list receives found routines
+  FoundList: TSnippetList;  // list receives found snippets
 begin
   Assert(Assigned(Search), ClassName + '.ApplySearch: Search is nil');
   FoundList := TSnippetList.Create;
   try
-    // Get list of routines that match search
-    // if there are no routines found we leave current selection alone
+    // Get list of snippets that match search
+    // if there are no snippets found we leave current selection alone
     Result := (Search as ISearch).Execute(Snippets.Snippets, FoundList);
     if Result then
     begin
-      // Search succeeded: record search and list of routines
+      // Search succeeded: record search and list of snippets
       fSearch := Search;
       fSelection.Assign(FoundList);
     end;
@@ -227,21 +227,21 @@ begin
 end;
 
 procedure TQuery.GetCatSelection(const Cat: TCategory;
-  const Routines: TSnippetList);
-  {Provides list of routines selected by last search that are in a specified
+  const SnipList: TSnippetList);
+  {Provides list of snippets selected by last search that are in a specified
   category.
     @param Cat [in] Reference to required category.
-    @param Routines [in] Object to receive routine list. List is emptied before
-      routines are copied in.
+    @param SnipList [in] Object to receive snippet list. List is emptied before
+      snippets are copied in.
   }
 var
-  Idx: Integer; // Loops thru all routines in selection
+  Idx: Integer; // Loops thru all snippets in selection
 begin
-  Routines.Clear;
+  SnipList.Clear;
   for Idx := 0 to Pred(fSelection.Count) do
   begin
     if Cat.Snippets.Contains(fSelection[Idx]) then
-      Routines.Add(fSelection[Idx]);
+      SnipList.Add(fSelection[Idx]);
   end;
 end;
 
@@ -264,15 +264,15 @@ begin
 end;
 
 function TQuery.GetSelection: TSnippetList;
-  {Gets reference to list of routines selected by last search.
-    @return Reference to required list of routines.
+  {Gets reference to list of snippets selected by last search.
+    @return Reference to required list of snippets.
   }
 begin
   Result := fSelection;
 end;
 
 constructor TQuery.InternalCreate;
-  {Internal class constructor. Sets up object with all routines in database
+  {Internal class constructor. Sets up object with all snippets in database
   selected. Must only be called once.
   }
 begin
@@ -296,7 +296,7 @@ begin
 end;
 
 procedure TQuery.Reset;
-  {Resets query. Selection property is set to all routines in database and
+  {Resets query. Selection property is set to all snippets in database and
   Search property is set to nul search.
   }
 begin

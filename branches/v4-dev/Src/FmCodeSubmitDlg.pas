@@ -248,7 +248,7 @@ begin
   Assert(IsValidEmailAddress(Trim(edEmail.Text)),
     ClassName + '.BuildSubmission: Invalid or no email address specified');
   // Build the document
-  fData := TCodeExporter.ExportRoutines(
+  fData := TCodeExporter.ExportSnippets(
     TUserInfo.Create(
       TUserDetails.Create(edName.Text, edEmail.Text), Trim(edComments.Text)
     ),

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -54,7 +54,7 @@ type
   }
   TAnchorKind = (
     akExternal,   // external link: class name = 'external-link'
-    akRoutine,    // link to a routine: class name = 'routine-link'
+    akSnippet,    // link to a snippet: class name = 'routine-link'
     akCategory,   // link to a category: class name = 'category-link'
     akCommand,    // link to a JS command: class name = 'command-link'
     akHelp,       // link to help topic: class name = 'help-link'
@@ -141,7 +141,7 @@ begin
     else if ClassNames.Contains('external-link') then
       Result := akExternal
     else if ClassNames.Contains('routine-link') then
-      Result := akRoutine
+      Result := akSnippet
     else if ClassNames.Contains('category-link') then
       Result := akCategory
     else

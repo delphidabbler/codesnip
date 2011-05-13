@@ -74,48 +74,49 @@ type
         @return Name of import file or '' if user cancels.
       }
     class procedure ReadImportFile(const FileName: string;
-      out UserInfo: TUserInfo; out Routines: TRoutineInfoList);
+      out UserInfo: TUserInfo; out SnipList: TSnippetInfoList);
       {Reads and parses import file.
         @param FileName [in] Name of import file.
         @param UserInfo [out] Details of user who created file. May be nul if
           file doesn't contain user information.
-        @param Routines [out] List of snippets specified in import file.
+        @param SnipList [out] List of snippets specified in import file.
         @except ECodeImportMgr raised if can't read import file or it is
           invalid.
       }
-    class function RenameRoutine(var Routine: TRoutineInfo): Boolean;
+    class function RenameSnippet(var Snippet: TSnippetInfo): Boolean;
       {Gets new name for a snippet from user.
-        @param Routine [in] Info about snippet to be renamed. [out] Name field
+        @param Snippet [in] Info about snippet to be renamed. [out] Name field
           updated to receive new name. Unchanged if False returned.
         @return True if user changed name, false if renamed was cancelled.
       }
-    class function FilterRoutines(var Routines: TRoutineInfoList): Boolean;
+    class function FilterSnippets(var SnipList: TSnippetInfoList): Boolean;
       {Checks for duplicate snippets and filters out any that user does not wish
       to import. Duplicates may be renamed.
-        @param Routines [in] List of snippets from import file. [out] List of
+        @param SnipList [in] List of snippets from import file. [out] List of
           filtered snippets (some may be removed or renamed). Undefined if False
           is returned.
         @return True if import to go ahead, False to abort.
       }
-    class function QueryOverwrite(const RoutineName: string): Integer;
+    class function QueryOverwrite(const SnippetName: string): Integer;
       {Displays dialog box that asks user what action to perform if a snippet
       already exists in user database.
+        @param SnippetName [in] Name of snippet to be overwritten.
         @return Code representing required action.
       }
     class procedure UpdateUserDatabase(const UserInfo: TUserInfo;
-      const Routines: TRoutineInfoList);
+      const SnipList: TSnippetInfoList);
       {Updates user database with filtered list of imported snippets.
         @param UserInfo [in] Record containing user information pertaining to
           imported snippets.
-        @param Routines [in] Details of required snippets.
+        @param SnipList [in] Details of required snippets.
       }
     class procedure DisplayUserInfo(const UserInfo: TUserInfo);
       {Displays user information from an import file.
         @param UserInfo [in] Record containing user information.
       }
-    class procedure ReportImportedRoutines(const Routines: TRoutineInfoList);
+    class procedure ReportImportedSnippets(const SnipList: TSnippetInfoList);
       {Reports details of imported snippets to user.
-        @param Routines [in] Details of all imported snippets.
+        @param SnipList [in] Details of all imported snippets.
       }
   public
     class procedure Execute;
@@ -194,56 +195,56 @@ class procedure TCodeImportMgr.Execute;
   }
 var
   UserInfo: TUserInfo;        // any user info from import file
-  Routines: TRoutineInfoList; // list of imported snippets
+  SnipList: TSnippetInfoList; // list of imported snippets
   FileName: string;           // name of import file
 resourcestring
   // Message displayed if no snippets imported
-  sNoRoutines = 'No snippets were imported';
+  sNoSnippets = 'No snippets were imported';
 begin
   // Import user specified file
   FileName := GetImportFileName;
   if FileName = '' then
     Exit;
-  ReadImportFile(FileName, UserInfo, Routines);
+  ReadImportFile(FileName, UserInfo, SnipList);
   // Display user info if there is any
   if not UserInfo.IsNul then
     DisplayUserInfo(UserInfo);
   // Perform import: remove any duplicate snippets that are not to be renamed or
   // overwritten
-  if FilterRoutines(Routines) then
+  if FilterSnippets(SnipList) then
   begin
-    UpdateUserDatabase(UserInfo, Routines);
+    UpdateUserDatabase(UserInfo, SnipList);
     // report import results to user
-    ReportImportedRoutines(Routines);
+    ReportImportedSnippets(SnipList);
   end
   else
     // no snippets imported: inform user
-    TMessageBox.Information(nil, sNoRoutines);
+    TMessageBox.Information(nil, sNoSnippets);
 end;
 
-class function TCodeImportMgr.FilterRoutines(
-  var Routines: TRoutineInfoList): Boolean;
+class function TCodeImportMgr.FilterSnippets(var SnipList: TSnippetInfoList):
+  Boolean;
   {Checks for duplicate snippets and filters out any that user does not wish
   to import. Duplicates may be renamed.
-    @param Routines [in] List of snippets from import file. [out] List of
+    @param SnipList [in] List of snippets from import file. [out] List of
       filtered snippets (some may be removed or renamed). Undefined if False is
       returned.
     @return True if import to go ahead, False to abort.
   }
 var
-  Required: TRoutineInfoList;   // list of required snippets
-  RoutineIdx: Integer;          // loops through all imported snippets
+  Required: TSnippetInfoList;   // list of required snippets
+  SnippetIdx: Integer;          // loops through all imported snippets
   RequiredCount: Integer;       // count of required snippets
 
   // ---------------------------------------------------------------------------
-  procedure IncludeRoutine(const Routine: TRoutineInfo);
+  procedure IncludeSnippet(const Snippet: TSnippetInfo);
     {Includes a snippet in filtered list.
-      @param Routine [in] Info about snippet to be included.
+      @param Snippet [in] Info about snippet to be included.
     }
   begin
     Inc(RequiredCount);
     SetLength(Required, RequiredCount);
-    Required[RequiredCount - 1] := Routine;
+    Required[RequiredCount - 1] := Snippet;
   end;
   // ---------------------------------------------------------------------------
 
@@ -251,18 +252,18 @@ begin
   Result := False;
   RequiredCount := 0;
   // Scan all snippets checking if they already exist in user database
-  for RoutineIdx := Low(Routines) to High(Routines) do
+  for SnippetIdx := Low(SnipList) to High(SnipList) do
   begin
-    if Snippets.Snippets.Find(Routines[RoutineIdx].Name, True) = nil then
+    if Snippets.Snippets.Find(SnipList[SnippetIdx].Name, True) = nil then
       // snippet doesn't exist: include it in import
-      IncludeRoutine(Routines[RoutineIdx])
+      IncludeSnippet(SnipList[SnippetIdx])
     else
     begin
       // snippet exists, get required action from user
-      case QueryOverwrite(Routines[RoutineIdx].Name) of
+      case QueryOverwrite(SnipList[SnippetIdx].Name) of
         mrReplace:
           // overwrite snippet: include in filtered list
-          IncludeRoutine(Routines[RoutineIdx]);
+          IncludeSnippet(SnipList[SnippetIdx]);
         mrSkip:
           // skip snippet: do nothing (i.e. don't place in filtered list)
           ;
@@ -270,8 +271,8 @@ begin
         begin
           // rename snippet: get user to rename and include in filtered list
           // unless user cancels rename
-          if RenameRoutine(Routines[RoutineIdx]) then
-            IncludeRoutine(Routines[RoutineIdx]);
+          if RenameSnippet(SnipList[SnippetIdx]) then
+            IncludeSnippet(SnipList[SnippetIdx]);
         end;
         mrCancel:
           // cancel whole import
@@ -282,10 +283,10 @@ begin
   if RequiredCount = 0 then
     // No snippets required
     Exit;
-  // Copy required snippets into Routines param
-  SetLength(Routines, Length(Required));
-  for RoutineIdx := Low(Required) to High(Required) do
-    Routines[RoutineIdx] := Required[RoutineIdx];
+  // Copy required snippets into SnipList param
+  SetLength(SnipList, Length(Required));
+  for SnippetIdx := Low(Required) to High(Required) do
+    SnipList[SnippetIdx] := Required[SnippetIdx];
   Result := True;
 end;
 
@@ -323,10 +324,11 @@ begin
   end;
 end;
 
-class function TCodeImportMgr.QueryOverwrite(
-  const RoutineName: string): Integer;
+class function TCodeImportMgr.QueryOverwrite(const SnippetName: string):
+  Integer;
   {Displays dialog box that asks user what action to perform if a snippet
   already exists in user database.
+    @param SnippetName [in] Name of snippet to be overwritten.
     @return Code representing required action.
   }
 resourcestring
@@ -343,7 +345,7 @@ resourcestring
 begin
   Result := TMessageBox.Custom(
     nil,
-    Format(sPrompt, [RoutineName]),
+    Format(sPrompt, [SnippetName]),
     [
       TMessageBoxButton.Create(sBtnReplace, mrReplace),
       TMessageBoxButton.Create(sBtnSkip, mrSkip, True),
@@ -354,12 +356,12 @@ begin
 end;
 
 class procedure TCodeImportMgr.ReadImportFile(const FileName: string;
-  out UserInfo: TUserInfo; out Routines: TRoutineInfoList);
+  out UserInfo: TUserInfo; out SnipList: TSnippetInfoList);
   {Reads and parses import file.
     @param FileName [in] Name of import file.
     @param UserInfo [out] Details of user who created file. May be nul if file
       doesn't contain user information.
-    @param Routines [out] List of snippets specified in import file.
+    @param Snips [out] List of snippets specified in import file.
     @except ECodeImportMgr raised if can't read import file or it is invalid.
   }
 var
@@ -368,7 +370,7 @@ begin
   Assert(FileName <> '', ClassName + '.ReadImportFile: No file name provided');
   try
     ImportData := TFileIO.ReadAllBytes(FileName);
-    TCodeImporter.ImportData(UserInfo, Routines, ImportData);
+    TCodeImporter.ImportData(UserInfo, SnipList, ImportData);
   except
     on E: EStreamError do
       raise ECodeImportMgr.Create(E);
@@ -379,9 +381,9 @@ begin
   end;
 end;
 
-class function TCodeImportMgr.RenameRoutine(var Routine: TRoutineInfo): Boolean;
+class function TCodeImportMgr.RenameSnippet(var Snippet: TSnippetInfo): Boolean;
   {Gets new name for a snippet from user.
-    @param Routine [in] Info about snippet to be renamed. [out] Name field
+    @param Snippet [in] Info about snippet to be renamed. [out] Name field
       updated to receive new name. Unchanged if False returned.
     @return True if user changed name, false if renamed was cancelled.
   }
@@ -390,7 +392,7 @@ resourcestring
   sDlgTitle = 'Rename Snippet';
   sDlgPrompt = 'Enter a new snippet &name (cancel skips the snippet):';
   // Information message
-  sSkippingRoutine = 'Skipping "%s"';
+  sSkippingSnippet = 'Skipping "%s"';
 var
   NewName: string;        // new snippet name
   NameCounter: Integer;   // counter used to append to snippet name
@@ -398,10 +400,10 @@ begin
   // Create new suggested name
   NameCounter := 2;
   while Snippets.Snippets.Find(
-    Routine.Name + IntToStr(NameCounter), True
+    Snippet.Name + IntToStr(NameCounter), True
   ) <> nil do
     Inc(NameCounter);
-  NewName := Routine.Name + IntToStr(NameCounter);
+  NewName := Snippet.Name + IntToStr(NameCounter);
   // Get valid name from user: validation done using anonymous method passed to
   // TEditTextDlg. Dialog box does not return until valid name entered or user
   // cancels
@@ -419,16 +421,16 @@ begin
   );
   if Result then
     // OK: record new name
-    Routine.Name := NewName
+    Snippet.Name := NewName
   else
-    // Cancelled: skip routine
-    TMessageBox.Information(nil, Format(sSkippingRoutine, [NewName]));
+    // Cancelled: skip snippet
+    TMessageBox.Information(nil, Format(sSkippingSnippet, [NewName]));
 end;
 
-class procedure TCodeImportMgr.ReportImportedRoutines(
-  const Routines: TRoutineInfoList);
+class procedure TCodeImportMgr.ReportImportedSnippets(
+  const SnipList: TSnippetInfoList);
   {Reports details of imported snippets to user.
-    @param Routines [in] Details of all imported snippets.
+    @param SnipList [in] Details of all imported snippets.
   }
 resourcestring
   // Messages displayed depending on if one or more than one snippets imported
@@ -436,29 +438,29 @@ resourcestring
   sMultiple = 'The following snippets were imported:' + EOL2 + '%s';
 var
   Idx: Integer;         // loops through list of snippets
-  RoutineList: string;  // display list of snippet names
+  SnippetList: string;  // display list of snippet names
 begin
-  Assert(Length(Routines) > 0,
-    ClassName + '.ReportImportedRoutines: No snippets to report.');
-  if Length(Routines) = 1 then
+  Assert(Length(SnipList) > 0,
+    ClassName + '.ReportImportedSnippets: No snippets to report.');
+  if Length(SnipList) = 1 then
     // Only one snippet: just report the name
-    TMessageBox.Information(nil, Format(sSingle, [Routines[0].Name]))
+    TMessageBox.Information(nil, Format(sSingle, [SnipList[0].Name]))
   else
   begin
     // More that one snippet: display bullet list of names
-    RoutineList := '';
-    for Idx := Low(Routines) to High(Routines) do
-      RoutineList := RoutineList + '  » ' + Routines[Idx].Name + EOL;
-    TMessageBox.Information(nil, Format(sMultiple, [TrimRight(RoutineList)]));
+    SnippetList := '';
+    for Idx := Low(SnipList) to High(SnipList) do
+      SnippetList := SnippetList + '  » ' + SnipList[Idx].Name + EOL;
+    TMessageBox.Information(nil, Format(sMultiple, [TrimRight(SnippetList)]));
   end;
 end;
 
 class procedure TCodeImportMgr.UpdateUserDatabase(const UserInfo: TUserInfo;
-  const Routines: TRoutineInfoList);
+  const SnipList: TSnippetInfoList);
   {Updates user database with filtered list of imported snippets.
     @param UserInfo [in] Record containing user information pertaining to
       imported snippets.
-    @param Routines [in] Details of required snippet.
+    @param SnipList [in] Details of required snippet.
   }
 
   // ---------------------------------------------------------------------------
@@ -469,17 +471,17 @@ class procedure TCodeImportMgr.UpdateUserDatabase(const UserInfo: TUserInfo;
     }
   var
     Idx: Integer;           // loops through dependencies
-    RoutineID: TSnippetID;  // each snippet ID in dependency list
+    SnippetID: TSnippetID;  // each snippet ID in dependency list
   begin
     // NOTE: The data file format does not record which database a required
     // snippet belongs to, so we first look in the user database and if it's
     // not there, we assume the main database
     for Idx := 0 to Pred(Depends.Count) do
     begin
-      RoutineID := Depends[Idx];
-      RoutineID.UserDefined :=
-        Snippets.Snippets.Find(RoutineID.Name, True) <> nil;
-      Depends[Idx] := RoutineID;
+      SnippetID := Depends[Idx];
+      SnippetID.UserDefined :=
+        Snippets.Snippets.Find(SnippetID.Name, True) <> nil;
+      Depends[Idx] := SnippetID;
     end;
   end;
 
@@ -510,21 +512,21 @@ class procedure TCodeImportMgr.UpdateUserDatabase(const UserInfo: TUserInfo;
 var
   Idx: Integer;           // loops through all snippets
   Editor: ISnippetsEdit;  // object used to update user database
-  Routine: TSnippet;      // reference to existing snippets
+  Snippet: TSnippet;      // reference to existing snippets
 begin
   Editor := Snippets as ISnippetsEdit;
-  for Idx := Low(Routines) to High(Routines) do
+  for Idx := Low(SnipList) to High(SnipList) do
   begin
-    AdjustDependsList(Routines[Idx].Data.Refs.Depends);
+    AdjustDependsList(SnipList[Idx].Data.Refs.Depends);
     if not UserInfo.IsNul then
-      Routines[Idx].Data.Props.Extra.Append(UserInfoActiveText);
-    Routine := Snippets.Snippets.Find(Routines[Idx].Name, True);
-    if Assigned(Routine) then
+      SnipList[Idx].Data.Props.Extra.Append(UserInfoActiveText);
+    Snippet := Snippets.Snippets.Find(SnipList[Idx].Name, True);
+    if Assigned(Snippet) then
       // snippet already exists: overwrite it
-      Editor.UpdateSnippet(Routine, Routines[Idx].Data)
+      Editor.UpdateSnippet(Snippet, SnipList[Idx].Data)
     else
       // snippet is new: add to database
-      Editor.AddSnippet(Routines[Idx].Name, Routines[Idx].Data);
+      Editor.AddSnippet(SnipList[Idx].Name, SnipList[Idx].Data);
   end;
 end;
 

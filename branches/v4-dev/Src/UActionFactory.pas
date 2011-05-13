@@ -80,16 +80,16 @@ type
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
       }
-    class function CreateRoutineAction(const AOwner: TComponent;
+    class function CreateSnippetAction(const AOwner: TComponent;
       const OnExecHandler: TNotifyEvent = nil): TBasicAction;
-      {Creates a Routine action and sets OnExecute handler if provided.
+      {Creates a Snippet action and sets OnExecute handler if provided.
         @param AOwner [in] Owner of action.
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
       }
-    class function CreateEditRoutineAction(const AOwner: TComponent;
+    class function CreateEditSnippetAction(const AOwner: TComponent;
       const OnExecHandler: TNotifyEvent = nil): TBasicAction;
-      {Creates an Edit Routine actions and sets OnExecute handler if provided.
+      {Creates an Edit Snippet action and sets OnExecute handler if provided.
         @param AOwner [in] Owner of action.
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
@@ -167,9 +167,9 @@ begin
   Result := CreateAction(TCompLogAction, AOwner, OnExecHandler);
 end;
 
-class function TActionFactory.CreateEditRoutineAction(const AOwner: TComponent;
+class function TActionFactory.CreateEditSnippetAction(const AOwner: TComponent;
   const OnExecHandler: TNotifyEvent): TBasicAction;
-  {Creates an Edit Routine actions and sets OnExecute handler if provided.
+  {Creates an Edit Snipper action and sets OnExecute handler if provided.
     @param AOwner [in] Owner of action.
     @param OnExecHandler [in] Handler for action's OnExecute event.
     @return Reference to newly created action.
@@ -200,9 +200,9 @@ begin
   Result := CreateAction(TLinkAction, AOwner, OnExecHandler) as TCustomAction;
 end;
 
-class function TActionFactory.CreateRoutineAction(const AOwner: TComponent;
+class function TActionFactory.CreateSnippetAction(const AOwner: TComponent;
   const OnExecHandler: TNotifyEvent): TBasicAction;
-  {Creates a Routine action and sets OnExecute handler if provided.
+  {Creates a Snippet action and sets OnExecute handler if provided.
     @param AOwner [in] Owner of action.
     @param OnExecHandler [in] Handler for action's OnExecute event.
     @return Reference to newly created action.

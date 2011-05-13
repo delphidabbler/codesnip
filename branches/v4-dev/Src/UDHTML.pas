@@ -66,7 +66,7 @@ type
   }
   TDHTMLFactory = class(TNoConstructObject)
   public
-    class function CreateCompCheckRoutineDHTML(
+    class function CreateCompCheckSnippetDHTML(
       const HostInfo: IHTMLDocHostInfo): ICompCheckSnippetDHTML;
      {Creates instance of ICompCheckSnippetDHTML for use in compiler check
       frames.
@@ -117,11 +117,11 @@ type
   end;
 
   {
-  TCompCheckRoutineDHTML:
+  TCompCheckSnippetDHTML:
     Object that manipulates HTML of compiler results for a snippet displayed in
     compiler check pane.
   }
-  TCompCheckRoutineDHTML = class(TDHTML,
+  TCompCheckSnippetDHTML = class(TDHTML,
     ICompCheckSnippetDHTML
   )
   protected
@@ -135,15 +135,15 @@ type
 
 { TDHTMLFactory }
 
-class function TDHTMLFactory.CreateCompCheckRoutineDHTML(
+class function TDHTMLFactory.CreateCompCheckSnippetDHTML(
   const HostInfo: IHTMLDocHostInfo): ICompCheckSnippetDHTML;
- {Creates instance of ICompCheckRoutineDHTML for use in compiler check frames.
+ {Creates instance of ICompCheckSnippetDHTML for use in compiler check frames.
     @param HostInfo [in] Provides information about object hosting the HTML that
       is to be manipulated.
-    @return Required ICompCheckRoutineDHTML object.
+    @return Required ICompCheckSnippetDHTML object.
   }
 begin
-  Result := TCompCheckRoutineDHTML.Create(HostInfo)
+  Result := TCompCheckSnippetDHTML.Create(HostInfo)
     as ICompCheckSnippetDHTML;
 end;
 
@@ -186,9 +186,9 @@ begin
   );
 end;
 
-{ TCompCheckRoutineDHTML }
+{ TCompCheckSnippetDHTML }
 
-procedure TCompCheckRoutineDHTML.DisplayCompileResults(
+procedure TCompCheckSnippetDHTML.DisplayCompileResults(
   const ACompilers: ICompilers);
   {Updates HTML to display results of last compile.
     @param ACompilers [in] Compilers object containing required results.

@@ -250,7 +250,7 @@ begin
     begin
       if Result <> '' then
         Result := Result + ', ';
-      Result := Result + RoutineALink(Snippet.Name, Snippet.UserDefined);
+      Result := Result + SnippetALink(Snippet.Name, Snippet.UserDefined);
     end;
     Result := MakeSentence(Result);
   end;

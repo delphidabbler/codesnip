@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -106,37 +106,37 @@ type
           list.
       }
     class function GetCompilerResults(const XMLDoc: IXMLDocumentEx;
-      const RoutineNode: IXMLNode): TCompileResults;
+      const SnippetNode: IXMLNode): TCompileResults;
       {Gets compiler results for a snippet in an XML document.
         @param XMLDoc [in] XML document containing snippet.
-        @param RoutineNode [in] Document node that contains compiler results
+        @param SnippetNode [in] Document node that contains compiler results
           tag.
         @return Array of compiler results. Provides defaults for missing
           compilers.
       }
     class function GetStandardFormat(const XMLDoc: IXMLDocumentEx;
-      const RoutineNode: IXMLNode; const Default: Boolean): Boolean;
+      const SnippetNode: IXMLNode; const Default: Boolean): Boolean;
       {Gets value of a <standard-format> node of a snippet in an XML document.
         @param XMLDoc [in] XML document containing snippet.
-        @param RoutineNode [in] Snippet node that contains standard format tag.
+        @param SnippetNode [in] Snippet node that contains standard format tag.
         @param Default [in] Value to use if node doesn't exist or has
           non-standard value.
         @return Value of node, or default value.
       }
     class function GetSnippetKind(const XMLDoc: IXMLDocumentEx;
-      const RoutineNode: IXMLNode; const Default: TSnippetKind): TSnippetKind;
+      const SnippetNode: IXMLNode; const Default: TSnippetKind): TSnippetKind;
       {Gets value of <kind> node of a snippet in an XML document.
         @param XMLDoc [in] XML document containing snippet.
-        @param RoutineNode [in] Snippet node that contains kind tag.
+        @param SnippetNode [in] Snippet node that contains kind tag.
         @param Default [in] Value to use if node doesn't exist or has
           non-standard value.
         @return Required snippet kind.
       }
     class procedure WriteCompilerResults(const XMLDoc: IXMLDocumentEx;
-      const RoutineNode: IXMLNode; const CompRes: TCompileResults);
+      const SnippetNode: IXMLNode; const CompRes: TCompileResults);
       {Writes compile results for a snippet to XML document.
         @param XMLDoc [in] XML document to receive compile results.
-        @param RoutineNode [in] Node containing snippet that received compile
+        @param SnippetNode [in] Node containing snippet that received compile
           results.
         @param CompRes [in] Array of compiler results.
       }
@@ -149,10 +149,10 @@ type
         @param Names [in] List of Pascal names.
       }
     class procedure WriteSnippetKind(const XMLDoc: IXMLDocumentEx;
-      const RoutineNode: IXMLNode; const Value: TSnippetKind);
+      const SnippetNode: IXMLNode; const Value: TSnippetKind);
       {Writes a <kind> node to a an XML document.
         @param XMLDoc [in] XML document to receive the node.
-        @param RoutineNode [in] Node containing snippet that receives kind node.
+        @param SnippetNode [in] Node containing snippet that receives kind node.
         @param Value [in] Value of <kind> node.
       }
     class function ValidateRootNode(const XMLDoc: IXMLDocumentEx;
@@ -260,10 +260,10 @@ begin
 end;
 
 class function TXMLDocHelper.GetCompilerResults(const XMLDoc: IXMLDocumentEx;
-  const RoutineNode: IXMLNode): TCompileResults;
+  const SnippetNode: IXMLNode): TCompileResults;
   {Gets compiler results for a snippet in an XML document.
     @param XMLDoc [in] XML document containing snippet.
-    @param RoutineNode [in] Document node that contains compiler results tag.
+    @param SnippetNode [in] Document node that contains compiler results tag.
     @return Array of compiler results. Provides defaults for missing compilers.
   }
 
@@ -304,7 +304,7 @@ begin
     Result[CompID] := crQuery;
 
   // Find enclosing node: valid if this is not present
-  ListNode := XMLDoc.FindFirstChildNode(RoutineNode, cCompilerResultsNode);
+  ListNode := XMLDoc.FindFirstChildNode(SnippetNode, cCompilerResultsNode);
   if not Assigned(ListNode) then
     Exit;
 
@@ -355,10 +355,10 @@ begin
 end;
 
 class function TXMLDocHelper.GetSnippetKind(const XMLDoc: IXMLDocumentEx;
-  const RoutineNode: IXMLNode; const Default: TSnippetKind): TSnippetKind;
+  const SnippetNode: IXMLNode; const Default: TSnippetKind): TSnippetKind;
   {Gets value of <kind> node of a snippet in an XML document.
     @param XMLDoc [in] XML document containing snippet.
-    @param RoutineNode [in] Snippet node that contains kind tag.
+    @param SnippetNode [in] Snippet node that contains kind tag.
     @param Default [in] Value to use if node doesn't exist or has non-standard
       value.
     @return Required snippet kind.
@@ -366,7 +366,7 @@ class function TXMLDocHelper.GetSnippetKind(const XMLDoc: IXMLDocumentEx;
 var
   Value: string;  // text value of Kind node
 begin
-  Value := GetSubTagText(XMLDoc, RoutineNode, cKindNode);
+  Value := GetSubTagText(XMLDoc, SnippetNode, cKindNode);
   if AnsiSameText(Value, 'freeform') then
     Result := skFreeform
   else if AnsiSameText(Value, 'routine') then
@@ -380,10 +380,10 @@ begin
 end;
 
 class function TXMLDocHelper.GetStandardFormat(const XMLDoc: IXMLDocumentEx;
-  const RoutineNode: IXMLNode; const Default: Boolean): Boolean;
+  const SnippetNode: IXMLNode; const Default: Boolean): Boolean;
   {Gets value of a <standard-format> node of a snippet in an XML document.
     @param XMLDoc [in] XML document containing snippet.
-    @param RoutineNode [in] Snippet node that contains standard format tag.
+    @param SnippetNode [in] Snippet node that contains standard format tag.
     @param Default [in] Value to use if node doesn't exist or has non-standard
       value.
     @return Value of node, or default value.
@@ -391,7 +391,7 @@ class function TXMLDocHelper.GetStandardFormat(const XMLDoc: IXMLDocumentEx;
 var
   Value: string;  // text value of Kind node
 begin
-  Value := GetSubTagText(XMLDoc, RoutineNode, cStandardFormatNode);
+  Value := GetSubTagText(XMLDoc, SnippetNode, cStandardFormatNode);
   if Value <> '' then
     Result := Value <> '0'
   else
@@ -469,10 +469,10 @@ begin
 end;
 
 class procedure TXMLDocHelper.WriteCompilerResults(const XMLDoc: IXMLDocumentEx;
-  const RoutineNode: IXMLNode; const CompRes: TCompileResults);
+  const SnippetNode: IXMLNode; const CompRes: TCompileResults);
   {Writes compile results for a snippet to XML document.
     @param XMLDoc [in] XML document to receive compile results.
-    @param RoutineNode [in] Node containing snippet that received compile
+    @param SnippetNode [in] Node containing snippet that received compile
       results.
     @param CompRes [in] Array of compiler results.
   }
@@ -485,7 +485,7 @@ var
   CompID: TCompilerID;        // loops thru all supported compilers
 begin
   // compiler results value: only write known results
-  CompResultsNode := XMLDoc.CreateElement(RoutineNode, cCompilerResultsNode);
+  CompResultsNode := XMLDoc.CreateElement(SnippetNode, cCompilerResultsNode);
   for CompID := Low(TCompilerID) to High(TCompilerID) do
   begin
     if CompRes[CompID] <> crQuery then
@@ -517,10 +517,10 @@ begin
 end;
 
 class procedure TXMLDocHelper.WriteSnippetKind(const XMLDoc: IXMLDocumentEx;
-  const RoutineNode: IXMLNode; const Value: TSnippetKind);
+  const SnippetNode: IXMLNode; const Value: TSnippetKind);
   {Writes a <kind> node to a an XML document.
     @param XMLDoc [in] XML document to receive the node.
-    @param RoutineNode [in] Node containing snippet that receives kind node.
+    @param SnippetNode [in] Node containing snippet that receives kind node.
     @param Value [in] Value of <kind> node.
   }
 const
@@ -528,7 +528,7 @@ const
     'freeform', 'routine', 'const', 'type'
   );
 begin
-  XMLDoc.CreateElement(RoutineNode, cKindNode, cValues[Value]);
+  XMLDoc.CreateElement(SnippetNode, cKindNode, cValues[Value]);
 end;
 
 end.

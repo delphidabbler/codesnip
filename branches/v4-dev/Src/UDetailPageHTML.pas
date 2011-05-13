@@ -649,7 +649,7 @@ begin
   Result := MakeCompoundTag(
     'tr',
     MakeCompoundTag(
-      'td', RoutineALink(Snippet.Name, Snippet.UserDefined)
+      'td', SnippetALink(Snippet.Name, Snippet.UserDefined)
     )
     + MakeCompoundTag(
       'td', MakeSafeHTMLText(Snippet.Description)

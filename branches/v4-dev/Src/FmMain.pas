@@ -1439,7 +1439,7 @@ begin
     with fNotifier as ISetActions do
     begin
       SetUpdateDbaseAction(actUpdateDbase);
-      SetDisplaySnippetAction(TActionFactory.CreateRoutineAction(Self));
+      SetDisplaySnippetAction(TActionFactory.CreateSnippetAction(Self));
       SetDisplayCategoryAction(TActionFactory.CreateCategoryAction(Self));
       SetCompileSnippetAction(actTestCompile);
       SetViewCompilerLogAction(
@@ -1458,7 +1458,7 @@ begin
       SetDetailPaneChangeActions([actViewInfo, actViewCompCheck]);
       SetShowTestUnitAction(actViewTestUnit);
       SetEditSnippetAction(
-        TActionFactory.CreateEditRoutineAction(
+        TActionFactory.CreateEditSnippetAction(
           Self, ActEditSnippetByNameExecute
         )
       );

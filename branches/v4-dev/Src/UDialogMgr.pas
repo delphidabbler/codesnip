@@ -71,10 +71,10 @@ type
         @param ASearch [out] Set to object recording search details if user OKs.
         @return True if user OKs or false if user cancels.
       }
-    function ExecFindXRefsDlg(const ARoutine: TSnippet;
+    function ExecFindXRefsDlg(const ASnippet: TSnippet;
       out ASearch: ISearch): Boolean;
       {Displays Find Cross References dialog box.
-        @param ARoutine [in] Snippet for which Cross-references are required.
+        @param ASnippet [in] Snippet for which Cross-references are required.
         @param ASearch [out] Set to object recording search details if user OKs.
         @return True if user OKs or false if user cancels.
       }
@@ -87,10 +87,10 @@ type
       {Displays Registration dialog box.
         @return True if program was registered and False if not.
       }
-    function ExecSelectionSearchDlg(const SelectedRoutines: TSnippetList;
+    function ExecSelectionSearchDlg(const SelectedSnippets: TSnippetList;
       out ASearch: ISearch): Boolean;
       {Displays Select Snippets dialog box.
-        @param SelectedRoutines [in] Default list of selected snippets.
+        @param SelectedSnippets [in] Default list of selected snippets.
         @param ASearch [out] Search to be performed if user OKs.
         @return True if user OKs or false if user cancels.
       }
@@ -160,15 +160,15 @@ begin
   Result := TFindTextDlg.Execute(Owner, ASearch);
 end;
 
-function TDialogMgr.ExecFindXRefsDlg(const ARoutine: TSnippet;
+function TDialogMgr.ExecFindXRefsDlg(const ASnippet: TSnippet;
   out ASearch: ISearch): Boolean;
   {Displays Find Cross References dialog box.
-    @param ARoutine [in] Snippet for which Cross-references are required.
+    @param ASnippet [in] Snippet for which Cross-references are required.
     @param ASearch [out] Set to object recording search details if user OKs.
     @return True if user OKs or false if user cancels.
   }
 begin
-  Result := TFindXRefsDlg.Execute(Owner, ARoutine, ASearch);
+  Result := TFindXRefsDlg.Execute(Owner, ASnippet, ASearch);
 end;
 
 function TDialogMgr.ExecPageSetupDlg: Boolean;
@@ -213,14 +213,14 @@ begin
 end;
 
 function TDialogMgr.ExecSelectionSearchDlg(
-  const SelectedRoutines: TSnippetList; out ASearch: ISearch): Boolean;
+  const SelectedSnippets: TSnippetList; out ASearch: ISearch): Boolean;
   {Displays Select Snippets dialog box.
-    @param SelectedRoutines [in] Default list of selected snippets.
+    @param SelectedSnippets [in] Default list of selected snippets.
     @param ASearch [out] Search to be performed if user OKs.
     @return True if user OKs or false if user cancels.
   }
 begin
-  Result := TSelectionSearchDlg.Execute(Owner, SelectedRoutines, ASearch);
+  Result := TSelectionSearchDlg.Execute(Owner, SelectedSnippets, ASearch);
 end;
 
 function TDialogMgr.ExecUpdateDlg: Boolean;

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -56,7 +56,7 @@ const
   cCategoriesNode             = 'categories';
   cCategoryNode               = 'category';
   cCategoryIdAttr             = 'id';
-  cCatRoutinesNode            = 'cat-routines';
+  cCatSnippetsNode            = 'cat-routines';
   cSourceCodeFileNode         = 'source-code';
   cXRefNode                   = 'xref';
   // export XML only
@@ -71,9 +71,9 @@ const
   cRootVersionAttr            = 'version';
   cRootWatermarkAttr          = 'watermark';
   cPascalNameNode             = 'pascal-name';
-  cRoutinesNode               = 'routines';
-  cRoutineNode                = 'routine';
-  cRoutineNameAttr            = 'name';
+  cSnippetsNode               = 'routines';
+  cSnippetNode                = 'routine';
+  cSnippetNameAttr            = 'name';
   cCatIdNode                  = 'cat-id';
   cDescriptionNode            = 'description';
   cUnitsNode                  = 'units';

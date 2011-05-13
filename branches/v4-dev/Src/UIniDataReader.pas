@@ -108,9 +108,9 @@ type
     ///  <summary>
     ///  Returns ID of category associated with a snippet.
     ///  </summary>
-    ///  <param name="Routine">string [in] Name of snippet.</param>
+    ///  <param name="Snippet">string [in] Name of snippet.</param>
     ///  <returns>string containing category ID</returns>
-    function RoutineToCat(const Routine: string): string;
+    function SnippetToCat(const Snippet: string): string;
     ///  <summary>
     ///  Returns name of ini file containing details of a category.
     ///  </summary>
@@ -142,11 +142,11 @@ type
     ///  Gets a list from ini file of all of items of a specified kind that are
     ///  referenced by a snippet.
     ///  </summary>
-    ///  <param name="Routine">string [in] Name of snippet.</param>
+    ///  <param name="Snippet">string [in] Name of snippet.</param>
     ///  <param name="RefName">string [in] Name of a key in ini file storing
     ///  comma separated list of references.</param>
     ///  <returns>IStringList containing names of referenced items.</returns>
-    function GetRoutineReferences(const Routine, RefName: string): IStringList;
+    function GetSnippetReferences(const Snippet, RefName: string): IStringList;
   protected // do not make strict
     { IDataReader methods }
     ///  <summary>
@@ -413,17 +413,17 @@ end;
 function TIniDataReader.GetCatSnippets(const Cat: string): IStringList;
 var
   CatIni: TCustomIniFile; // accesses .ini file associated with category
-  Routines: TStringList;  // list of snippets in category
+  SnipList: TStringList;  // list of snippets in category
 begin
   try
     // Snippet names are names of sections in category's .ini file
     CatIni := fIniCache.GetIniFile(CatToCatIni(Cat));
-    Routines := TStringList.Create;
+    SnipList := TStringList.Create;
     try
-      CatIni.ReadSections(Routines);
-      Result := TIStringList.Create(Routines);
+      CatIni.ReadSections(SnipList);
+      Result := TIStringList.Create(SnipList);
     finally
-      Routines.Free;
+      SnipList.Free;
     end;
   except
     HandleCorruptDatabase(ExceptObject);
@@ -432,7 +432,7 @@ end;
 
 function TIniDataReader.GetSnippetDepends(const Snippet: string): IStringList;
 begin
-  Result := GetRoutineReferences(Snippet, cDependsName);
+  Result := GetSnippetReferences(Snippet, cDependsName);
 end;
 
 procedure TIniDataReader.GetSnippetProps(const Snippet: string;
@@ -538,7 +538,7 @@ var
 begin
   try
     // Get name of category associated with this snippet
-    Cat := RoutineToCat(Snippet);
+    Cat := SnippetToCat(Snippet);
     // Get snippet properties from values listed under snippet's section in
     // category's .ini file
     CatIni := fIniCache.GetIniFile(CatToCatIni(Cat));
@@ -553,7 +553,7 @@ begin
   end;
 end;
 
-function TIniDataReader.GetRoutineReferences(const Routine,
+function TIniDataReader.GetSnippetReferences(const Snippet,
   RefName: string): IStringList;
 var
   CatIni: TCustomIniFile; // accesses snippet's category's .ini
@@ -561,8 +561,8 @@ begin
   try
     // References are contained in comma separated value in category's ini file
     // under snippet's section
-    CatIni := fIniCache.GetIniFile(CatToCatIni(RoutineToCat(Routine)));
-    Result := CommaStrToStrings(CatIni.ReadString(Routine, RefName, ''));
+    CatIni := fIniCache.GetIniFile(CatToCatIni(SnippetToCat(Snippet)));
+    Result := CommaStrToStrings(CatIni.ReadString(Snippet, RefName, ''));
   except
     HandleCorruptDatabase(ExceptObject);
   end;
@@ -570,12 +570,12 @@ end;
 
 function TIniDataReader.GetSnippetUnits(const Snippet: string): IStringList;
 begin
-  Result := GetRoutineReferences(Snippet, cUnitsName);
+  Result := GetSnippetReferences(Snippet, cUnitsName);
 end;
 
 function TIniDataReader.GetSnippetXRefs(const Snippet: string): IStringList;
 begin
-  Result := GetRoutineReferences(Snippet, cXRefName);
+  Result := GetSnippetReferences(Snippet, cXRefName);
 end;
 
 procedure TIniDataReader.HandleCorruptDatabase(const EObj: TObject);
@@ -598,18 +598,18 @@ procedure TIniDataReader.LoadIndices;
 var
   SnippetName: string;        // each snippet name in a category
   CatIdx: Integer;            // loops thru all categories
-  CatRoutines: IStringList;   // list of snippets in a single category
+  CatSnippets: IStringList;   // list of snippets in a single category
 begin
   // Read in list of category names
   fMasterIni.ReadSections(fCatNames);
   // We build map of snippet names to categories by reading snippets in each
   // category and referencing that category's id with the snippet name.
-  CatRoutines := TIStringList.Create;
+  CatSnippets := TIStringList.Create;
   for CatIdx := 0 to Pred(fCatNames.Count) do
   begin
     // Get list of snippets in category ...
-    CatRoutines := GetCatSnippets(fCatNames[CatIdx]);
-    for SnippetName in CatRoutines do
+    CatSnippets := GetCatSnippets(fCatNames[CatIdx]);
+    for SnippetName in CatSnippets do
       fSnippetCatMap.Add(SnippetName, CatIdx);
   end;
 end;
@@ -619,16 +619,16 @@ begin
   Result := DataFile(cMasterFileName);
 end;
 
-function TIniDataReader.RoutineToCat(const Routine: string): string;
+function TIniDataReader.SnippetToCat(const Snippet: string): string;
 var
   CatIdx: Integer;  // index of category in category list for this snippet
 resourcestring
   // Error message
-  sMissingRoutine = 'Snippet "%s" not found in database.';
+  sMissingSnippet = 'Snippet "%s" not found in database.';
 begin
-  if not fSnippetCatMap.ContainsKey(Routine) then
-    raise EDataIO.CreateFmt(sMissingRoutine, [Routine]);
-  CatIdx := fSnippetCatMap[Routine];
+  if not fSnippetCatMap.ContainsKey(Snippet) then
+    raise EDataIO.CreateFmt(sMissingSnippet, [Snippet]);
+  CatIdx := fSnippetCatMap[Snippet];
   Result := fCatNames[CatIdx];
 end;
 
