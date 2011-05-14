@@ -54,7 +54,7 @@ type
   }
   TAnchorKind = (
     akExternal,   // external link: class name = 'external-link'
-    akSnippet,    // link to a snippet: class name = 'routine-link'
+    akSnippet,    // link to a snippet: class name = 'snippet-link'
     akCategory,   // link to a category: class name = 'category-link'
     akCommand,    // link to a JS command: class name = 'command-link'
     akHelp,       // link to help topic: class name = 'help-link'
@@ -140,7 +140,7 @@ begin
       Result := akHelp
     else if ClassNames.Contains('external-link') then
       Result := akExternal
-    else if ClassNames.Contains('routine-link') then
+    else if ClassNames.Contains('snippet-link') then
       Result := akSnippet
     else if ClassNames.Contains('category-link') then
       Result := akCategory

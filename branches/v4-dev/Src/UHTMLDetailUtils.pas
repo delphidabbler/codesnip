@@ -274,7 +274,7 @@ begin
   Result := JSLink(
     JSLiteralFunc('displaySnippet', [SnippetName, UserDefined]),
     '|' + Format(sSnippetHint, [SnippetName]),
-    TIStringList.Create('routine-link'),
+    TIStringList.Create('snippet-link'),
     SnippetName
   );
 end;
