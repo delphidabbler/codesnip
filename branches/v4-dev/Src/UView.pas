@@ -2,8 +2,7 @@
  * UView.pas
  *
  * Classes that encapsulate and provide information about "view items" that are
- * displayed in the user interface, e.g.. routines, categories and the welcome
- * page.
+ * displayed in the user interface.
  *
  * $Rev$
  * $Date$

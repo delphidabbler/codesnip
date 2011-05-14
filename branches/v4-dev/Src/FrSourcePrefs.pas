@@ -354,17 +354,17 @@ end;
 { TSourcePrefsPreview }
 
 resourcestring
-  // Preview routine names and description
-  sPrevProcName = 'Example';              // name of example routine
-  sPrevDesc = 'Description goes here.';   // sample routine description
-  sPrevCalledProc = 'DoSomethingHere';    // name of routine called from example
+  // Localisable source preview text
+  sPrevProcName = 'Example';              // name of example proc
+  sPrevDesc = 'Description goes here.';   // sample proc description
+  sPrevCalledProc = 'DoSomethingHere';    // name of proc called from example
 
 const
-  // Example routine prototype and body
-  cPrevProcProto = 'procedure %0:s;' + EOL;                 // routine prototype
-  cPrevProcBody = 'begin' + EOL +'  %1:s;'+ EOL + 'end;';   // routine body
+  // Example procedure prototype and body
+  cPrevProcProto = 'procedure %0:s;' + EOL;
+  cPrevProcBody = 'begin' + EOL +'  %1:s;'+ EOL + 'end;';
 
-  // Map of comment style to sample routine using the style
+  // Map of comment style to sample code
   cPrevSamples: array[TCommentStyle] of string = (
     // no comments: just prototype followed by body
     cPrevProcProto + cPrevProcBody,
