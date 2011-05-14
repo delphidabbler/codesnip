@@ -121,24 +121,21 @@ class function TAnchors.AnchorKind(const Anchor: IDispatch): TAnchorKind;
 var
   ClassNames: IStringList;  // list of Anchor's CSS classes
 begin
-  if IsAnchor(Anchor) then
-  begin
-    ClassNames := THTMLDocHelper.GetElemClasses(Anchor);
-    if ClassNames.Contains('command-link') then
-      Result := akCommand
-    else if ClassNames.Contains('help-link') then
-      Result := akHelp
-    else if ClassNames.Contains('external-link') then
-      Result := akExternal
-    else if ClassNames.Contains('snippet-link') then
-      Result := akSnippet
-    else if ClassNames.Contains('category-link') then
-      Result := akCategory
-    else
-      Result := akUnknown
-  end
+  if not IsAnchor(Anchor) then
+    Exit(akError);
+  ClassNames := THTMLDocHelper.GetElemClasses(Anchor);
+  if ClassNames.Contains('command-link') then
+    Result := akCommand
+  else if ClassNames.Contains('help-link') then
+    Result := akHelp
+  else if ClassNames.Contains('external-link') then
+    Result := akExternal
+  else if ClassNames.Contains('snippet-link') then
+    Result := akSnippet
+  else if ClassNames.Contains('category-link') then
+    Result := akCategory
   else
-    Result := akError;
+    Result := akUnknown;
 end;
 
 class function TAnchors.Click(const Anchor: IDispatch): Boolean;
@@ -154,9 +151,8 @@ class function TAnchors.FindEnclosingAnchor(const Elem: IDispatch): IDispatch;
 var
   Element: IHTMLElement;  // IHTMLElement interface to Elem
 begin
-  Result := nil;
   if not Supports(Elem, IHTMLElement, Element) then
-    Exit;
+    Exit(nil);
   // Search up tree of elements looking for ALink element
   Result := Element;
   while Assigned(Result) and not Supports(Result, IHTMLAnchorElement) do
@@ -184,19 +180,19 @@ class function TAnchors.GetInnerText(const Anchor: IDispatch): string;
 var
   Elem: IHTMLElement; // IHTMLElement inteface to Anchor
 begin
-  if IsAnchor(Anchor) and Supports(Anchor, IHTMLElement, Elem) then
-    Result := Elem.innerText
-  else
-    Result := '';
+  if not IsAnchor(Anchor) then
+    Exit('');
+  if not Supports(Anchor, IHTMLElement, Elem) then
+    Exit('');
+  Result := Elem.innerText
 end;
 
 class function TAnchors.GetURL(const Anchor: IDispatch): string;
 var
   AnchorElem: IHTMLAnchorElement; // IHTMLAnchorElement interface to Anchor
 begin
-  Result := '';
   if not Supports(Anchor, IHTMLAnchorElement, AnchorElem) then
-    Exit;
+    Exit('');
   Result := AnchorElem.href;
 end;
 
