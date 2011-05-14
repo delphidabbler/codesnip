@@ -60,63 +60,57 @@ type
     lblDays: TLabel;
     pnlTop: TPanel;
     btnConfig: TButton;
+    ///  <summary>RSS Feed button click handler. Displays RSS feed in default
+    ///  web browser.</summary>
     procedure btnRSSFeedClick(Sender: TObject);
+    ///  <summary>Change button click handler. Displays news prefs page of
+    ///  Preferences dialog box to enable number of days to display in news
+    ///  feed to be changed.</summary>
     procedure btnConfigClick(Sender: TObject);
   strict private
+    ///  <summary>Loads news from RSS feed, converts to HTML and displays in
+    ///  browser control.</summary>
     procedure LoadNews;
-      {Loads news from RSS feed, converts to HTML and displays in browser
-      control.
-      }
+    ///  <summary>Displays brief message Msg as an HTML paragraph in browser
+    ///  control.</summary>
     procedure DisplayMessage(const Msg: string);
-      {Displays a brief message as an HTML paragraph in browser control.
-        @param Msg [in] Message to display.
-      }
+    ///  <summary>Displays a message in browser that informs that content is
+    ///  loading.</summary>
     procedure DisplayLoadingMsg;
-      {Displays a message in browser that informs that content is loading.
-      }
+    ///  <summary>Renders RSS news feed in HTML and displays in browser control.
+    ///  </summary>
     procedure DisplayNews(const RSS: TRSS20);
-      {Renders the RSS news feed in HTML and displays in browser control.
-        @param RSS [in] Object that provides access to RSS feed.
-      }
+    ///  <summary>Displays a message in browser control informing that there are
+    ///  no news items in RSS feed.</summary>
     procedure DisplayNoNewsMsg;
-      {Displays a message in browser control informing that there are no news
-      items in RSS feed.
-      }
+    ///  <summary>Renders HTML describing exception E and displays it in browser
+    ///  control.</summary>
     procedure DisplayErrorMsg(E: ECodeSnip);
-      {Renders HTML describing a trapped exception and displays it in browser
-      control.
-        @param E [in] Exception whose message is to be displayed.
-      }
+    ///  <summary>Gets and returns interface to XML document containing details
+    ///  of RSS news feed from web.</summary>
     function GetRSSDocument: IXMLDocumentEx;
-      {Gets XML document containing details of RSS news feed from web.
-        @return Interface to required XML document.
-      }
+    ///  <summary>Gets maximum number of days of news to be displayed.</summary>
     function GetMaxNewsAge: Integer;
-      {Gets maximum number of days of news to be displayed.
-        @return Required number of days.
-      }
+    ///  <summary>Updates label with current maximum news age.</summary>
     procedure UpdateNewsAgeLbl;
-      {Updates maximum news age label with current value.
-      }
   strict protected
+    ///  <summary>Arranges controls on form.</summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure ArrangeForm; override;
-      {Arranges controls on form. Called from ancestor class.
-      }
+    ///  <summary>Initialises HTML frame.</summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure ConfigForm; override;
-      {Initialises HTML frame. Called from ancestor class.
-      }
+    ///  <summary>Initialises form's controls.</summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure InitForm; override;
-      {Initialises form's controls. Called from ancestor class.
-      }
+    ///  <summary>Loads new from RSS feed after form is displayed.</summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure AfterShowForm; override;
-      {Override of method called from ancestor class after form is displayed.
-      Loads news from RSS feed.
-      }
   public
+    ///  <summary>Displays dialog box.</summary>
+    ///  <param name="AOwner">TComponent [in] Control that owns dialog box.
+    ///  </param>
     class procedure Execute(AOwner: TComponent);
-      {Displays dialog box.
-        @param AOwner [in] Component that owns this dialog box.
-      }
   end;
 
 
@@ -136,16 +130,11 @@ uses
 { TNewsDlg }
 
 procedure TNewsDlg.AfterShowForm;
-  {Override of method called from ancestor class after form is displayed. Loads
-  news from RSS feed.
-  }
 begin
   LoadNews;
 end;
 
 procedure TNewsDlg.ArrangeForm;
-  {Arranges controls on form. Called from ancestor class.
-  }
 begin
   inherited;
   TCtrlArranger.AlignVCentres(2, [lblDays, btnConfig]);
@@ -167,9 +156,6 @@ begin
 end;
 
 procedure TNewsDlg.btnRSSFeedClick(Sender: TObject);
-  {Displays RSS feed in default web browser.
-    @param Sender [in] Not used.
-  }
 var
   BrowseAction: TBrowseURL; // action that displays RSS feed URL in browser
 begin
@@ -183,18 +169,12 @@ begin
 end;
 
 procedure TNewsDlg.ConfigForm;
-  {Initialises HTML frame. Called from ancestor class.
-  }
 begin
   inherited;
   frmHTML.Initialise;
 end;
 
 procedure TNewsDlg.DisplayErrorMsg(E: ECodeSnip);
-  {Renders HTML describing a trapped exception and displays it in browser
-  control.
-    @param E [in] Exception whose message is to be displayed.
-  }
 resourcestring
   sErrorHeading = 'Error loading news:';  // fixed heading text
 var
@@ -210,8 +190,6 @@ begin
 end;
 
 procedure TNewsDlg.DisplayLoadingMsg;
-  {Displays a message in browser that informs that content is loading.
-  }
 resourcestring
   sLoadingMsg = 'Loading...'; // message text
 begin
@@ -219,9 +197,6 @@ begin
 end;
 
 procedure TNewsDlg.DisplayMessage(const Msg: string);
-  {Displays a brief message as an HTML paragraph in browser control.
-    @param Msg [in] Message to display.
-  }
 var
   HTMLAttrs: IHTMLAttributes; // HTML attributes
 begin
@@ -232,15 +207,10 @@ begin
 end;
 
 procedure TNewsDlg.DisplayNews(const RSS: TRSS20);
-  {Renders the RSS news feed in HTML and displays in browser control.
-    @param RSS [in] Object that provides access to RSS feed.
-  }
 
+  ///  Renders the given RSS news item title as HTML. Rendered as a link if item
+  ///  specifies a URL.
   function TitleHTML(const Item: TRSS20Item): string;
-    {Renders RSS news item title as HTML. Rendered as a link if item specifies
-    a URL.
-      @param Item [in] RSS item.
-    }
   resourcestring
     sNoTitle = 'Untitled';  // text used when no title
   var
@@ -258,10 +228,8 @@ procedure TNewsDlg.DisplayNews(const RSS: TRSS20);
     Result := MakeCompoundTag('strong', Result);
   end;
 
+  ///  Renders given RSS new item's description as HTML.
   function DescriptionHTML(const Item: TRSS20Item): string;
-    {Renders RSS news item's desciption as HTML.
-      @param Item [in] RSS item.
-    }
   resourcestring
     sNoDescription = 'No description.'; // text used when no description
   var
@@ -286,10 +254,7 @@ begin
       SB.AppendLine(MakeCompoundTag('div', TitleHTML(Item)));
       if Item.PubDateAsText <> '' then
         SB.AppendLine(
-          MakeCompoundTag(
-            'div',
-            MakeSafeHTMLText(DateTimeToStr(Item.PubDate))
-          )
+          MakeCompoundTag('div', MakeSafeHTMLText(DateTimeToStr(Item.PubDate)))
         );
       SB.AppendLine(MakeTag('dt', ttClose));
       SB.AppendLine(MakeCompoundTag('dd', DescriptionHTML(Item)));
@@ -302,9 +267,6 @@ begin
 end;
 
 procedure TNewsDlg.DisplayNoNewsMsg;
-  {Displays a message in browser control informing that there are no news items
-  in RSS feed.
-  }
 resourcestring
   sNoNews = 'There are no news items to display.';  // message text
 begin
@@ -312,9 +274,6 @@ begin
 end;
 
 class procedure TNewsDlg.Execute(AOwner: TComponent);
-  {Displays dialog box.
-    @param AOwner [in] Component that owns this dialog box.
-  }
 begin
   with InternalCreate(AOwner) do
     try
@@ -325,17 +284,11 @@ begin
 end;
 
 function TNewsDlg.GetMaxNewsAge: Integer;
-  {Gets maximum number of days of news to be displayed.
-    @return Required number of days.
-  }
 begin
   Result := Preferences.NewsAge;
 end;
 
 function TNewsDlg.GetRSSDocument: IXMLDocumentEx;
-  {Gets XML document containing details of RSS news feed from web.
-    @return Interface to required XML document.
-  }
 var
   Requestor: TXMLRequestor; // object that makes XML request
 begin
@@ -348,16 +301,12 @@ begin
 end;
 
 procedure TNewsDlg.InitForm;
-  {Initialises form's controls.
-  }
 begin
   inherited;
   lblDays.Caption := '';
 end;
 
 procedure TNewsDlg.LoadNews;
-  {Loads news from RSS feed, converts to HTML and displays in browser control.
-  }
 var
   RSSFeed: TRSS20;  // object used to interpret RSS feed XML
 begin
