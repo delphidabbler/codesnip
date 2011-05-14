@@ -1,7 +1,7 @@
 {
  * FmFindCompilerDlg.pas
  *
- * Dialog box that is used to select criteria for searches for routines that
+ * Dialog box that is used to select criteria for searches for snippets that
  * compile or don't compile with selected compilers. Also defines a class that
  * is used to persist the last chosen search criteria.
  *
@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -55,7 +55,7 @@ type
   {
   TFindCompilerDlg:
     Defines a dialog box that is used to select criteria for searches for
-    routines that compile or don't compile with selected compilers.
+    snippets that compile or don't compile with selected compilers.
   }
   TFindCompilerDlg = class(TGenericOKDlg, INoPublicConstruct)
     btnClearAll: TButton;

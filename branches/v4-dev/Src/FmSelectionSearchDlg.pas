@@ -134,7 +134,7 @@ procedure TSelectionSearchDlg.btnClearAllClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  // Assigning nil to snippet selection frame's SelectedRoutines property clears
+  // Assigning nil to snippet selection frame's SelectedSnippets property clears
   // the list.
   frmSelect.SelectedSnippets := nil;
 end;
@@ -169,7 +169,7 @@ procedure TSelectionSearchDlg.btnSelectAllClick(Sender: TObject);
   }
 begin
   // Storing all snippets in database in snippet selection frame's
-  // SelectedRoutines property causes all snippets to be selected
+  // SelectedSnippets property causes all snippets to be selected
   frmSelect.SelectedSnippets := Snippets.Snippets;
 end;
 

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -191,7 +191,7 @@ type
       }
     function AddNode(const Parent: TCheckedTreeNode; const Text: string;
       const Data: Pointer): TCheckedTreeNode;
-      {Adds new unchecked tree node. This routine can be called from descendant
+      {Adds new unchecked tree node. This method can be called from descendant
       classes to add new nodes to tree from their implementation of the AddNodes
       method.
         @param Parent [in] Parent of new node or nil if new node is top level.
@@ -244,7 +244,7 @@ uses
 
 function TCheckedTVFrame.AddNode(const Parent: TCheckedTreeNode;
   const Text: string; const Data: Pointer): TCheckedTreeNode;
-  {Adds new unchecked tree node. This routine can be called from descendant
+  {Adds new unchecked tree node. This method can be called from descendant
   classes to add new nodes to tree from their implementation of the AddNodes
   method.
     @param Parent [in] Parent of new node or nil if new node is top level.

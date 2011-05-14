@@ -82,24 +82,24 @@ interface
 * ============================================================================ *
 *                                                                              *
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* RoutineUnits - map of snippets to units                                      *
+* SnippetUnits - map of snippets to units                                      *
 * ---------------------------------------------------------------------------- *
-* RoutineName      | Name of snippet                                           *
+* SnippetName      | Name of snippet                                           *
 * UnitName         | Name of unit                                              *
 * ============================================================================ *
 *                                                                              *
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* RoutineXRef - map of snippets to cross-referenced snippets                   *
+* SnippetXRef - map of snippets to cross-referenced snippets                   *
 * ---------------------------------------------------------------------------- *
-* RoutineName      | Name of snippet                                           *
-* XRefRoutineName  | Name of cross referenced snippet                          *
+* SnippetName      | Name of snippet                                           *
+* XRefSnippetName  | Name of cross referenced snippet                          *
 * ============================================================================ *
 *                                                                              *
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
-* RoutineDepends - map of snippets to the snippets they depend upon            *
+* SnippetDepends - map of snippets to the snippets they depend upon            *
 * ---------------------------------------------------------------------------- *
-* RoutineName      | Name of snippet                                           *
-* RequiredRoutine  | Name of required snippet                                  *
+* SnippetName      | Name of snippet                                           *
+* RequiredSnippet  | Name of required snippet                                  *
 * ============================================================================ *
 *                                                                              *
 * Any object that is to be used to read a database must implement the          *

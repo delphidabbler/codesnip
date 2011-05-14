@@ -56,7 +56,7 @@ type
     ///  <summary>Generates a document that describes a snippet.</summary>
     ///  <param name="View">IView [in] View that represents the snippet to be
     ///  described.</param>
-    ///  <param name="Doc">TRoutineDoc [in] Object that renders document. Format
+    ///  <param name="Doc">TSnippetDoc [in] Object that renders document. Format
     ///  depends on concrete class of object.</param>
     ///  <returns>TEncodedData - Document in form suitable for copying to
     ///  clipboard.</returns>
@@ -107,7 +107,7 @@ var
 begin
   Doc := TTextSnippetDoc.Create;
   try
-    // TTextRoutineDoc generates stream of Unicode bytes
+    // TTextSnippetDoc generates stream of Unicode bytes
     Result := GenerateDoc(View, Doc);
     Assert(Result.EncodingType = etUnicode,
       ClassName + '.GeneratePlainText: Unicode encoded data expected');
@@ -122,7 +122,7 @@ var
 begin
   Doc := TRTFSnippetDoc.Create(THiliteAttrsFactory.CreateUserAttrs);
   try
-    // TRTFRoutineDoc generates stream of ASCII bytes
+    // TRTFSnippetDoc generates stream of ASCII bytes
     Result := GenerateDoc(View, Doc);
     Assert(Result.EncodingType = etASCII,
       ClassName + '.GenerateRichText: ASCII encoded data expected');

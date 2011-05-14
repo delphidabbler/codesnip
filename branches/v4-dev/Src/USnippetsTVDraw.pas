@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -76,7 +76,7 @@ type
     procedure CustomDrawItem(Sender: TCustomTreeView; Node: TTreeNode;
       State: TCustomDrawState; var DefaultDraw: Boolean);
       {Handles event triggered when a snippets tree view item is to be
-      displayed. Draws nodes depending on whether category, routine, user
+      displayed. Draws nodes depending on whether group heading, snippet, user
       defined, selected or focussed.
         @param Sender [in] Reference to treeview being drawn.
         @param Node [in] Node to be displayed.
@@ -102,8 +102,8 @@ uses
 procedure TSnippetsTVDraw.CustomDrawItem(Sender: TCustomTreeView;
   Node: TTreeNode; State: TCustomDrawState; var DefaultDraw: Boolean);
   {Handles event triggered when a snippets tree view item is to be displayed.
-  Draws nodes depending on whether category, routine, user defined, selected or
-  focussed.
+  Draws nodes depending on whether group heading, snippet, user defined,
+  selected or focussed.
     @param Sender [in] Reference to treeview being drawn.
     @param Node [in] Node to be displayed.
     @param State [in] State of node.
@@ -147,7 +147,7 @@ begin
       TV.Canvas.Brush.Color := TV.Color;
     end;
     if IsSectionHeadNode(Node) then
-      // make header (category) items bold
+      // make header items bold
       TV.Canvas.Font.Style := [fsBold];
     DefaultDraw := True;
   end;

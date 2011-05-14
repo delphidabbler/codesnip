@@ -76,8 +76,8 @@ type
 
   {
   TInfoCompResHTML:
-    Static class that provides ids and HTML of table cells for the compiler
-    result table displayed in the routine view of the information pane.
+    Static class that provides ids and HTML of table cells for the compilation
+    result table displayed in the information pane.
   }
   TInfoCompResHTML = class(TCompResHTML)
   public
@@ -96,8 +96,7 @@ type
   {
   TCompCheckResHTML:
     Static class that provides ids, classes and HTML of table cells and links
-    for the compiler result table displayed in the routine view of the compiler
-    check pane.
+    for the compilation result table displayed in the compiler check pane.
   }
   TCompCheckResHTML = class(TCompResHTML)
   strict private

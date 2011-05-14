@@ -70,7 +70,7 @@ type
         @param Props [in/out] Empty properties passed in. Unchanged.
       }
     function GetCatSnippets(const Cat: string): IStringList;
-      {Gets names of all routines in a category.
+      {Gets names of all snippets in a category.
         @param Cat [in] Name of category containing snippets.
         @return Empty list.
       }
@@ -82,7 +82,7 @@ type
       }
     function GetSnippetXRefs(const Snippet: string): IStringList;
       {Gets list of all snippets that are cross referenced by a snippet.
-        @param Routine [in] Name of snippet we need cross references for.
+        @param Snippet [in] Name of snippet we need cross references for.
         @return Empty list.
       }
     function GetSnippetDepends(const Snippet: string): IStringList;

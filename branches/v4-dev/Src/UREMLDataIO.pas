@@ -3,7 +3,7 @@
  *
  * Implements classes that render and parse Routine Extra Markup Language (REML)
  * code. This markup is used to read and store active text objects as used by
- * the Extra property of a TRoutine object. Also includes helper classes.
+ * the Extra property of a TSnippet object. Also includes helper classes.
  *
  * $Rev$
  * $Date$
@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
