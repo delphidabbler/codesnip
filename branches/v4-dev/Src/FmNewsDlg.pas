@@ -44,7 +44,7 @@ uses
   // Delphi
   Buttons, StdCtrls, Forms, Controls, ExtCtrls, Classes,
   // Project
-  FmHTMLViewDlg, FrBrowserBase, FrRSSNews, UBaseObjects, UExceptions, URSS20,
+  FmGenericViewDlg, FrBrowserBase, FrRSSNews, UBaseObjects, UExceptions, URSS20,
   UXMLDocumentEx;
 
 
@@ -54,7 +54,7 @@ type
   TNewsDlg:
     Dialog box that displays news items from CodeSnip's RSS news feed.
   }
-  TNewsDlg = class(THTMLViewDlg, INoPublicConstruct)
+  TNewsDlg = class(TGenericViewDlg, INoPublicConstruct)
     btnRSSFeed: TBitBtn;
     frmHTML: TRSSNewsFrame;
     lblDays: TLabel;
@@ -102,11 +102,11 @@ type
     procedure ArrangeForm; override;
       {Arranges controls on form. Called from ancestor class.
       }
-    procedure InitHTMLFrame; override;
+    procedure ConfigForm; override;
       {Initialises HTML frame. Called from ancestor class.
       }
     procedure InitForm; override;
-      {Initialises form's controls.
+      {Initialises form's controls. Called from ancestor class.
       }
     procedure AfterShowForm; override;
       {Override of method called from ancestor class after form is displayed.
@@ -180,6 +180,14 @@ begin
   finally
     BrowseAction.Free;
   end;
+end;
+
+procedure TNewsDlg.ConfigForm;
+  {Initialises HTML frame. Called from ancestor class.
+  }
+begin
+  inherited;
+  frmHTML.Initialise;
 end;
 
 procedure TNewsDlg.DisplayErrorMsg(E: ECodeSnip);
@@ -345,13 +353,6 @@ procedure TNewsDlg.InitForm;
 begin
   inherited;
   lblDays.Caption := '';
-end;
-
-procedure TNewsDlg.InitHTMLFrame;
-  {Initialises HTML frame. Called from ancestor class.
-  }
-begin
-  frmHTML.Initialise;
 end;
 
 procedure TNewsDlg.LoadNews;

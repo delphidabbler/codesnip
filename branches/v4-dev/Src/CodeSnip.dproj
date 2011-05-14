@@ -117,9 +117,6 @@
 			<DCCReference Include="FmHelpAware.pas">
 				<Form>HelpAwareForm</Form>
 			</DCCReference>
-			<DCCReference Include="FmHTMLViewDlg.pas">
-				<Form>HTMLViewDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmMain.pas">
 				<Form>MainForm</Form>
 			</DCCReference>

@@ -44,7 +44,7 @@ uses
   Forms, StdCtrls, Controls, ExtCtrls, Classes, Tabs, ActnList, ImgList,
   Generics.Collections,
   // Project
-  Compilers.UGlobals, FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg,
+  Compilers.UGlobals, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg,
   UBaseObjects, USnippetIDs;
 
 
@@ -57,7 +57,7 @@ type
   ///  <remarks>
   ///  It is an error if there are no compiler warnings or errors.
   ///  </remarks>
-  TCompErrorDlg = class(THTMLViewDlg, INoPublicConstruct)
+  TCompErrorDlg = class(TGenericViewDlg, INoPublicConstruct)
     frmHTML: THTMLTpltDlgFrame;
     tsCompilers: TTabSet;
     ilCompilers: TImageList;
@@ -137,14 +137,15 @@ type
     procedure LoadHTML(const Compiler: ICompiler);
   strict protected
     ///  <summary>Arranges controls on form.</summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure ArrangeForm; override;
-    ///  <summary>Sets UI font for tab set tabs.</summary>
+    ///  <summary>Initialises HTML frame and Sets UI font for tab set tabs.
+    ///  </summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure ConfigForm; override;
     ///  <summary>Configures tab set and sets form's caption.</summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure InitForm; override;
-    ///  <summary>Initialises HTML frame to display error log for first (or
-    ///  only) compiler.</summary>
-    procedure InitHTMLFrame; override;
   public
     ///  <summary>Shows a dialog box that displays error or warning log for a
     ///  specified compiler that results from test compiling a snippet.
@@ -220,7 +221,9 @@ end;
 procedure TCompErrorDlg.ConfigForm;
 begin
   inherited;
-  // required because for some reason tab control sets its font to Tahoma
+  LoadHTML(fRequiredCompilers[0]);
+  // must set tab set font because for some reason tab control sets its font to
+  // Tahoma
   tsCompilers.Font := Self.Font;
 end;
 
@@ -329,11 +332,6 @@ begin
   else
     // No tabs wanted: hide control
     tsCompilers.Hide;
-end;
-
-procedure TCompErrorDlg.InitHTMLFrame;
-begin
-  LoadHTML(fRequiredCompilers[0]);
 end;
 
 procedure TCompErrorDlg.LoadHTML(const Compiler: ICompiler);

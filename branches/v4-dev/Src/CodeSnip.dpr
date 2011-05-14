@@ -99,7 +99,6 @@ uses
   FmGenericOKDlg in 'FmGenericOKDlg.pas' {GenericOKDlg},
   FmGenericViewDlg in 'FmGenericViewDlg.pas' {GenericViewDlg},
   FmHelpAware in 'FmHelpAware.pas' {HelpAwareForm},
-  FmHTMLViewDlg in 'FmHTMLViewDlg.pas' {HTMLViewDlg},
   FmMain in 'FmMain.pas' {MainForm},
   FmNewsDlg in 'FmNewsDlg.pas' {NewsDlg},
   FmPreferencesDlg in 'FmPreferencesDlg.pas' {PreferencesDlg},

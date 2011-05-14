@@ -43,7 +43,7 @@ uses
   // Delphi
   Forms, ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Messages,
   // Project
-  FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, UContributors,
+  FmGenericViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, UContributors,
   UCSSBuilder, UHTMLEvents;
 
 
@@ -99,7 +99,7 @@ type
     the dialog box content are loaded from resources. Also provides access to
     the program's easter egg.
   }
-  TAboutDlg = class(THTMLViewDlg)
+  TAboutDlg = class(TGenericViewDlg)
     btnRegister: TButton;
     bvlSeparator: TBevel;
     frmDatabase: THTMLTpltDlgFrame;
@@ -137,12 +137,13 @@ type
       }
   strict protected
     procedure ConfigForm; override;
-      {Configures form by creating custom controls.
+      {Configures form by creating custom controls and initialising HTML frames.
+      Called from ancestor class.
       }
     procedure InitForm; override;
-      {Initialises form's controls.
+      {Initialises form's controls. Called from ancestor class.
       }
-    procedure InitHTMLFrame; override;
+    procedure InitHTMLFrames;
       {Initialises HTML frames to use required template document with
       placeholders replaced by required values.
       }
@@ -255,7 +256,8 @@ begin
 end;
 
 procedure TAboutDlg.ConfigForm;
-  {Configures form by creating custom controls.
+  {Configures form by creating custom controls and initialising HTML frames.
+  Called from ancestor class.
   }
 
   function CreatePathInfoBox(const Caption, Path: string): TPathInfoBox;
@@ -288,6 +290,8 @@ begin
   fUserDBPathGp := CreatePathInfoBox(
     sUserDBPathGpCaption, TAppInfo.UserDataDir
   );
+  // Load content into HTML frames
+  InitHTMLFrames;
 end;
 
 function TAboutDlg.ContribListHTML(const ContribClass: TContributorsClass):
@@ -405,8 +409,8 @@ begin
   btnRegister.Visible := not TAppInfo.IsRegistered;
 end;
 
-procedure TAboutDlg.InitHTMLFrame;
-  {Initialises HTML frame to use required template document with placeholders
+procedure TAboutDlg.InitHTMLFrames;
+  {Initialises HTML frames to use required template document with placeholders
   replaced by required values.
   }
 

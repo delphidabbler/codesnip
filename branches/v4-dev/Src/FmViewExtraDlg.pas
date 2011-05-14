@@ -44,10 +44,10 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls,
+  Classes, Forms, StdCtrls, Controls, ExtCtrls,
   // Project
-  FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, UActiveText,
-  UBaseObjects, UCSSBuilder, UHTMLEvents, Classes;
+  FmGenericViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, UActiveText,
+  UBaseObjects, UCSSBuilder, UHTMLEvents;
 
 
 type
@@ -56,7 +56,7 @@ type
     Dialog box that displays active text rendered from REML markup entered in
     snippets editor. Active text is rendered as HTML.
   }
-  TViewExtraDlg = class(THTMLViewDlg, INoPublicConstruct)
+  TViewExtraDlg = class(TGenericViewDlg, INoPublicConstruct)
     frmExtraInfo: THTMLTpltDlgFrame;
   strict private
     fActiveText: IActiveText; // Active text to be displayed.
@@ -81,7 +81,7 @@ type
     procedure ArrangeForm; override;
       {Sizes dialog box to fit content.
       }
-    procedure InitHTMLFrame; override;
+    procedure ConfigForm; override;
       {Initialises HTML frame, loads HTML template and inserts HTML
       representation of Extra Text REML.
       }
@@ -115,6 +115,25 @@ procedure TViewExtraDlg.ArrangeForm;
 begin
   pnlBody.Height := frmExtraInfo.DocHeight;
   inherited;
+end;
+
+procedure TViewExtraDlg.ConfigForm;
+  {Initialises HTML frame, loads HTML template and inserts HTML representation
+  of Extra Text REML.
+  }
+begin
+  inherited;
+  frmExtraInfo.OnBuildCSS := UpdateCSS;
+  frmExtraInfo.OnHTMLEvent := HTMLEventHandler;
+  frmExtraInfo.Initialise(
+    'dlg-viewextra-tplt.html',
+    procedure(Tplt: THTMLTemplate)
+    begin
+      Tplt.ResolvePlaceholderHTML(
+        'Content', TActiveTextHTML.Render(fActiveText)
+      );
+    end
+  );
 end;
 
 class procedure TViewExtraDlg.Execute(const AOwner: TComponent;
@@ -199,24 +218,6 @@ begin
       end;
     end;
   end;
-end;
-
-procedure TViewExtraDlg.InitHTMLFrame;
-  {Initialises HTML frame, loads HTML template and inserts HTML representation
-  of Extra Text REML.
-  }
-begin
-  frmExtraInfo.OnBuildCSS := UpdateCSS;
-  frmExtraInfo.OnHTMLEvent := HTMLEventHandler;
-  frmExtraInfo.Initialise(
-    'dlg-viewextra-tplt.html',
-    procedure(Tplt: THTMLTemplate)
-    begin
-      Tplt.ResolvePlaceholderHTML(
-        'Content', TActiveTextHTML.Render(fActiveText)
-      );
-    end
-  );
 end;
 
 procedure TViewExtraDlg.UpdateCSS(Sender: TObject;
