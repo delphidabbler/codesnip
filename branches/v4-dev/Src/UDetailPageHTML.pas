@@ -452,7 +452,7 @@ begin
     'EditLink', CSSBlockDisplayProp(GetSnippet.UserDefined)
   );
   Tplt.ResolvePlaceholderText(
-    'EditEventHandler', JSLiteralFunc('editRoutine', [GetSnippet.Name])
+    'EditEventHandler', JSLiteralFunc('editSnippet', [GetSnippet.Name])
   );
 end;
 

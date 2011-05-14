@@ -84,7 +84,7 @@ function JSLink(const JSFn, Hint: string; Classes: IStringList;
 
 function SnippetALink(const SnippetName: string;
   const UserDefined: Boolean): string;
-  {Creates an <a>..</a> link that triggers external object's DisplayRoutine
+  {Creates an <a>..</a> link that triggers external object's DisplaySnippet
   method when clicked. The link does not access a URL. The link's text is the
   name of the snippet. The external object's ShowHint method is called to
   display a hint containing the snippet's name when the mouse passes over the
@@ -256,7 +256,7 @@ end;
 
 function SnippetALink(const SnippetName: string;
   const UserDefined: Boolean): string;
-  {Creates an <a>..</a> link that triggers external object's DisplayRoutine
+  {Creates an <a>..</a> link that triggers external object's DisplaySnippet
   method when clicked. The link does not access a URL. The link's text is the
   name of the snippet. The external object's ShowHint method is called to
   display a hint containing the snippet's name when the mouse passes over the
@@ -272,7 +272,7 @@ resourcestring
 begin
   // Create javascript link enclosing snippet name
   Result := JSLink(
-    JSLiteralFunc('displayRoutine', [SnippetName, UserDefined]),
+    JSLiteralFunc('displaySnippet', [SnippetName, UserDefined]),
     '|' + Format(sSnippetHint, [SnippetName]),
     TIStringList.Create('routine-link'),
     SnippetName

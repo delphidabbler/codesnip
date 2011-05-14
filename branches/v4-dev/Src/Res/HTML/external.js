@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -77,7 +77,7 @@ function configCompilers() {
  * snippet.
  *  @return False.
  */
-function compileRoutine() {
+function compileSnippet() {
   external.CompileSnippet();
   return false;
 }
@@ -107,7 +107,7 @@ function showTestUnit() {
  *  @param boolean userdefined [in] Whether snippet is user defined.
  *  @return False.
  */
-function displayRoutine(snippet, userdefined) {
+function displaySnippet(snippet, userdefined) {
   external.DisplaySnippet(snippet, userdefined);
   return false;
 }
@@ -128,7 +128,7 @@ function displayCategory(catid) {
  *    defined.
  *  @return False.
  */
-function editRoutine(snippet) {
+function editSnippet(snippet) {
   external.EditSnippet(snippet);
   return false;
 }
