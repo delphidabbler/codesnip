@@ -141,7 +141,7 @@ begin
         TV.Canvas.Font.Color := clWarningText
       else if IsUserDefinedNode(Node) then
         // colour unselected user defined snippets differently
-        TV.Canvas.Font.Color := clUserRoutine
+        TV.Canvas.Font.Color := clUserSnippet
       else
         TV.Canvas.Font.Color := TV.Font.Color;
       TV.Canvas.Brush.Color := TV.Color;

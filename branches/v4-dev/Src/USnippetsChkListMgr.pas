@@ -222,7 +222,7 @@ begin
   Canvas := fCLB.Canvas;
   if not (odSelected in State)
     and (fCLB.Items.Objects[Index] as TSnippet).UserDefined then
-    Canvas.Font.Color := clUserRoutine;
+    Canvas.Font.Color := clUserSnippet;
   Canvas.TextRect(
     Rect,
     Rect.Left + 2,

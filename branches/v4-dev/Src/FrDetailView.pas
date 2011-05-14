@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -236,7 +236,7 @@ begin
     with CSSBuilder.AddSelector('.optionbox') do
       AddProperty(CSSBorderProp(cssAll, 1, cbsSolid, clBorder));
     with CSSBuilder.AddSelector('.userdb') do
-      AddProperty(CSSColorProp(clUserRoutine));
+      AddProperty(CSSColorProp(clUserSnippet));
     with CSSBuilder.AddSelector('.maindb') do
       AddProperty(CSSColorProp(Self.Font.Color));
     // Sets text styles and colours used by syntax highlighter

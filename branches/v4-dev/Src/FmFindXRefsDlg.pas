@@ -217,7 +217,7 @@ begin
   // Set label font styles and colours
   lblSnippetName.Font.Style := [fsBold];
   if fSnippet.UserDefined then
-    lblSnippetName.Font.Color := clUserRoutine;
+    lblSnippetName.Font.Color := clUserSnippet;
   // Display selected snippet name in appropriate controls
   lblSnippetName.Caption := fSnippet.Name;
   chkIncludeSnippet.Caption := Format(
