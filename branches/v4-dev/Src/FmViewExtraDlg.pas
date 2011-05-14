@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -44,10 +44,10 @@ interface
 
 uses
   // Delphi
-  Forms, StdCtrls, Controls, ExtCtrls, Classes,
+  Forms, StdCtrls, Controls, ExtCtrls,
   // Project
   FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, UActiveText,
-  UBaseObjects, UCSSBuilder, UHTMLEvents;
+  UBaseObjects, UCSSBuilder, UHTMLEvents, Classes;
 
 
 type
@@ -102,8 +102,8 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UActiveTextHTML, UAnchors, UColours, UConsts, UCSSUtils, UMessageBox,
-  UProtocols, USystemInfo;
+  UActiveTextHTML, UAnchors, UColours, UConsts, UCSSUtils, UHTMLTemplate,
+  UMessageBox, UProtocols, USystemInfo;
 
 {$R *.dfm}
 
@@ -202,21 +202,21 @@ begin
 end;
 
 procedure TViewExtraDlg.InitHTMLFrame;
-  {Initialises HTML frame, loads HTML template and inserts HTML
-  representation of Extra Text REML.
+  {Initialises HTML frame, loads HTML template and inserts HTML representation
+  of Extra Text REML.
   }
-var
-  Values: TStringList;  // values to insert in HTML template
 begin
-  Values := TStringList.Create;
-  try
-    frmExtraInfo.OnBuildCSS := UpdateCSS;
-    frmExtraInfo.OnHTMLEvent := HTMLEventHandler;
-    Values.Values['Content'] := TActiveTextHTML.Render(fActiveText);
-    frmExtraInfo.Initialise('dlg-viewextra-tplt.html', Values);
-  finally
-    FreeAndNil(Values);
-  end;
+  frmExtraInfo.OnBuildCSS := UpdateCSS;
+  frmExtraInfo.OnHTMLEvent := HTMLEventHandler;
+  frmExtraInfo.Initialise(
+    'dlg-viewextra-tplt.html',
+    procedure(Tplt: THTMLTemplate)
+    begin
+      Tplt.ResolvePlaceholderHTML(
+        'Content', TActiveTextHTML.Render(fActiveText)
+      );
+    end
+  );
 end;
 
 procedure TViewExtraDlg.UpdateCSS(Sender: TObject;

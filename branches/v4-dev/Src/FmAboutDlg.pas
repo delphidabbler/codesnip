@@ -43,8 +43,8 @@ uses
   // Delphi
   Forms, ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Messages,
   // Project
-  FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, UCSSBuilder,
-  UHTMLEvents;
+  FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, UContributors,
+  UCSSBuilder, UHTMLEvents;
 
 
 type
@@ -124,6 +124,17 @@ type
         @param Sender [in] Not used.
         @param EventInfo [in] Object providing information about the event.
       }
+    function RegistrationHTML: string;
+      {Builds HTML used to display registration information.
+        @return Required HTML.
+      }
+    function ContribListHTML(const ContribClass: TContributorsClass): string;
+      {Builds HTML used to display list of contributors or creates an error
+      message if contributor list is not available.
+        @param ContribClass [in] Type of contributor class to use. This
+          determines names that are displayed.
+        @return Required HTML.
+      }
   strict protected
     procedure ConfigForm; override;
       {Configures form by creating custom controls.
@@ -132,7 +143,7 @@ type
       {Initialises form's controls.
       }
     procedure InitHTMLFrame; override;
-      {Initialises HTML frame to use required template document with
+      {Initialises HTML frames to use required template document with
       placeholders replaced by required values.
       }
     procedure ArrangeForm; override;
@@ -165,8 +176,9 @@ uses
   // Delphi
   SysUtils, Graphics, Math, Windows, ShellAPI, IOUtils,
   // Project
-  FmEasterEgg, FmRegistrationDlg, UAppInfo, UColours, UConsts, UContributors,
-  UCSSUtils, UCtrlArranger, UFontHelper, UHTMLUtils, UResourceUtils, UThemesEx;
+  FmEasterEgg, FmRegistrationDlg, UAppInfo, UColours, UConsts, UCSSUtils,
+  UCtrlArranger, UFontHelper, UHTMLUtils, UHTMLTemplate, UResourceUtils,
+  UThemesEx;
 
 
 {
@@ -185,6 +197,8 @@ uses
   <%Copyright%>       copyright info
   <%ResURL%>          url of programs HTML resources
   <%Registered%>      info about whether program is registered
+  <%ContribList%>     list of program contributors
+  <%TesterList%>      list of program testers
 }
 
 
@@ -276,6 +290,46 @@ begin
   );
 end;
 
+function TAboutDlg.ContribListHTML(const ContribClass: TContributorsClass):
+  string;
+  {Builds HTML used to display list of contributors or creates an error
+  message if contributor list is not available.
+    @param ContribClass [in] Type of contributor class to use. This determines
+      names that are displayed.
+    @return Required HTML.
+  }
+resourcestring
+  // Error string used when contributor file not available
+  sNoContributors       = 'List not available, please update database.';
+var
+  Contributors: TContributors;  // contributors to database
+  Contributor: string;          // name of a contributor
+  DivAttrs: IHTMLAttributes;    // attributes of div tag
+begin
+  Result := '';
+  // Get list of contributors
+  Contributors := ContribClass.Create;
+  try
+    if not Contributors.IsError then
+    begin
+      for Contributor in Contributors do
+        Result := Result
+          + MakeCompoundTag('div', MakeSafeHTMLText(Contributor))
+          + EOL;
+    end
+    else
+    begin
+      // List couldn't be found: display warning message
+      DivAttrs := THTMLAttributes.Create('class', 'warning');
+      Result := MakeCompoundTag(
+        'div', DivAttrs, MakeSafeHTMLText(sNoContributors)
+      );
+    end;
+  finally
+    FreeAndNil(Contributors);
+  end;
+end;
+
 class procedure TAboutDlg.Execute(AOwner: TComponent);
   {Displays dialog box.
     @param AOwner [in] Component that owns this dialog box.
@@ -355,89 +409,89 @@ procedure TAboutDlg.InitHTMLFrame;
   {Initialises HTML frame to use required template document with placeholders
   replaced by required values.
   }
-resourcestring
-  // Registration messages
-  sRegisteredMessage    = 'Registered to %0:s.';
-  sUnregisteredMessage  = 'Unregistered copy:';
-  sRegistrationPrompt   = 'Please click the button below to register CodeSnip.';
-  // Error string used when contributor file not available
-  sNoContributors       = 'List not available, please update database.';
 
   // ---------------------------------------------------------------------------
-  function BuildContribList(const ContribClass: TContributorsClass): string;
-    {Builds HTML used to display list of contributors or creates an error
-    message if contributor list is not available.
-      @param ContribClass [in] Type of contributor class to use. This determines
-        names that are displayed.
-      @return Required HTML.
+  procedure InitTitleFrame;
+    {Initialises and loads HTML into title frame.
     }
-  var
-    Contributors: TContributors;  // contributors to database
-    Contributor: string;          // name of a contributor
-    DivAttrs: IHTMLAttributes;    // attributes of div tag
   begin
-    Result := '';
-    // Get list of contributors
-    Contributors := ContribClass.Create;
-    try
-      if not Contributors.IsError then
+    frmTitle.Initialise(
+      'dlg-about-head-tplt.html',
+      procedure(Tplt: THTMLTemplate)
       begin
-        for Contributor in Contributors do
-          Result := Result
-            + MakeCompoundTag('div', MakeSafeHTMLText(Contributor))
-            + EOL;
+        Tplt.ResolvePlaceholderText('Release', TAppInfo.ProgramReleaseInfo);
+        // MakeResourceURL('') provides just URL part before resource name
+        Tplt.ResolvePlaceholderHTML('ResURL', MakeResourceURL(''));
       end
-      else
+    );
+    frmTitle.OnHTMLEvent := HTMLEventHandler;
+  end;
+
+  procedure InitProgramFrame;
+    {Initialises and loads HTML into program frame.
+    }
+  begin
+    pcDetail.ActivePage := tsProgram;   // display page to let browser load OK
+    frmProgram.Initialise(
+      'dlg-about-program-tplt.html',
+      procedure(Tplt: THTMLTemplate)
       begin
-        // List couldn't be found: display warning message
-        DivAttrs := THTMLAttributes.Create('class', 'warning');
-        Result := MakeCompoundTag(
-          'div', DivAttrs, MakeSafeHTMLText(sNoContributors)
+        Tplt.ResolvePlaceholderText('Copyright', TAppInfo.ProgramCopyright);
+        Tplt.ResolvePlaceholderHTML('Registered', RegistrationHTML);
+      end
+    );
+  end;
+
+  procedure InitDatabaseFrame;
+    {Initialises and loads HTML into database frame.
+    }
+  begin
+    pcDetail.ActivePage := tsDatabase;  // display page to let browser load OK
+    frmDatabase.Initialise(
+      'dlg-about-database-tplt.html',
+      procedure(Tplt: THTMLTemplate)
+      begin
+        Tplt.ResolvePlaceholderHTML(
+          'ContribList', ContribListHTML(TCodeContributors)
         );
-      end;
-    finally
-      FreeAndNil(Contributors);
-    end;
+        Tplt.ResolvePlaceholderHTML(
+          'TesterList', ContribListHTML(TTesters)
+        );
+      end
+    );
   end;
   // ---------------------------------------------------------------------------
 
+begin
+  InitTitleFrame;
+  InitDatabaseFrame;
+  InitProgramFrame;
+end;
+
+function TAboutDlg.RegistrationHTML: string;
+  {Builds HTML used to display registration information.
+    @return Required HTML.
+  }
+resourcestring
+  // Registration messages
+  sRegisteredMessage = 'Registered to %0:s.';
+  sUnregisteredMessage  = 'Unregistered copy:';
+  sRegistrationPrompt = 'Please click the button below to register CodeSnip.';
 var
-  Values: TStringList;        // map of HTML placeholders to actual values
   SpanAttrs: IHTMLAttributes; // attributes of span tag
 begin
-  // Build map of placeholders to actual values
-  // the placeholders include all values for all three templates
-  Values := TStringList.Create;
-  try
-    Values.Values['Release'] := TAppInfo.ProgramReleaseInfo;
-    Values.Values['Copyright'] := TAppInfo.ProgramCopyright;
-    Values.Values['ResURL'] := MakeResourceURL('');  // URL part before res name
-    if TAppInfo.IsRegistered then
-      Values.Values['Registered'] :=
-        Format(sRegisteredMessage, [TAppInfo.RegisteredUser])
-    else
-    begin
-      SpanAttrs := THTMLAttributes.Create('class', 'warning');
-      Values.Values['Registered'] :=
-        MakeCompoundTag(
-          'span', SpanAttrs, MakeSafeHTMLText(sUnregisteredMessage)
-        ) +
-        MakeSafeHTMLText(' ' + sRegistrationPrompt);
-    end;
-    Values.Values['ContribList'] := BuildContribList(TCodeContributors);
-    Values.Values['TesterList'] := BuildContribList(TTesters);
-
-    // Initialise the dialog content from HTML templates and replacement values
-    frmTitle.Initialise('dlg-about-head-tplt.html', Values);
-    pcDetail.ActivePage := tsDatabase;  // display page to let browser load OK
-    frmDatabase.Initialise('dlg-about-database-tplt.html', Values);
-    pcDetail.ActivePage := tsProgram;   // display page to let browser load OK
-    frmProgram.Initialise('dlg-about-program-tplt.html', Values);
-
-    // Handle HTML events on title frame
-    frmTitle.OnHTMLEvent := HTMLEventHandler;
-  finally
-    FreeAndNil(Values);
+  if TAppInfo.IsRegistered then
+    Result := MakeSafeHTMLText(
+      Format(sRegisteredMessage, [TAppInfo.RegisteredUser])
+    )
+  else
+  begin
+    SpanAttrs := THTMLAttributes.Create('class', 'warning');
+    Result :=
+      MakeCompoundTag(
+        'span', SpanAttrs, MakeSafeHTMLText(sUnregisteredMessage)
+      ) +
+      MakeSafeHTMLText(' ' + sRegistrationPrompt);
   end;
 end;
 

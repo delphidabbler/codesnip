@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,34 +44,36 @@ uses
   // Delphi
   OleCtrls, SHDocVw, Classes, Controls, ExtCtrls,
   // Project
-  FrHTMLDlg;
+  FrHTMLDlg, UHTMLTemplate;
 
 
 type
-
-  {
-  THTMLTpltDlgFrame:
-    Frame containing a web browser control that displays content generated from
-    a HTML template that also takes on the appearance of a dialog box.
-  }
+  ///  <summary>
+  ///  Frame containing a web browser control that displays content generated
+  ///  from a HTML template. By default the frame takes on the appearance of a
+  ///  dialog box.
+  ///  </summary>
   THTMLTpltDlgFrame = class(THTMLDlgFrame)
   public
-    procedure Initialise(const ResName: string; const Values: TStrings);
-      {Initialises display by loading HTML template and replacing placeholders
-      with given values.
-        @param ResName Name of RT_HTML resource containing HTML template.
-        @param Values List of strings in form Name=Value where Name is
-          placeholder name and Value is the value to be given to placeholder.
-      }
+    type
+      ///  <summary>Type of anonymous method called to resolve placeholders.
+      ///  </summary>
+      ///  <param name="Tplt">THTMLTemplate [in] Template object to be used to
+      ///  resolve placeholders.</param>
+      TResolver = reference to procedure(Tplt: THTMLTemplate);
+  public
+    ///  <summary>Initialises frame. Loads HTML into browser control from a
+    ///  template file after resolving placeholders.
+    ///  </summary>
+    ///  <param name="ResName">string [in] Name of HTML resource containing
+    ///  template file.</param>
+    ///  <param name="Resolver">TResolver [in] Anonymous method that is called
+    ///  to resolve placeholders.</param>
+    procedure Initialise(const ResName: string; Resolver: TResolver);
   end;
 
 
 implementation
-
-
-uses
-  // Project
-  UHTMLTemplate;
 
 
 {$R *.dfm}
@@ -80,29 +82,16 @@ uses
 { THTMLTpltDlgFrame }
 
 procedure THTMLTpltDlgFrame.Initialise(const ResName: string;
-  const Values: TStrings);
-  {Initialises display by loading HTML template and replacing placeholders
-  with given values.
-    @param ResName Name of RT_HTML resource containing HTML template.
-    @param Values List of strings in form Name=Value where Name is placeholder
-      name and Value is the value to be given to placeholder.
-  }
+  Resolver: TResolver);
 var
-  HTMLTplt: THTMLTemplate;  // object used to create HTML from template
-  Idx: Integer;             // loops thru all placeholder values
+  Tplt: THTMLTemplate;  // object used to resolve placeholders
 begin
-  // Creates HTML template object
-  HTMLTplt := THTMLTemplate.Create(HInstance, ResName);
+  Tplt := THTMLTemplate.Create(HInstance, ResName);
   try
-    // Replace all placeholders with values
-    for Idx := 0 to Pred(Values.Count) do
-      HTMLTplt.ResolvePlaceholderHTML(
-        Values.Names[Idx], Values.ValueFromIndex[Idx]
-      );
-    // Load the completed HTML into web browser
-    WBController.IOMgr.LoadFromString(HTMLTplt.HTML);
+    Resolver(Tplt); // user provides method to resolve placeholders
+    WBController.IOMgr.LoadFromString(Tplt.HTML);
   finally
-    HTMLTplt.Free;
+    Tplt.Free;
   end;
 end;
 

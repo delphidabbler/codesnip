@@ -91,6 +91,20 @@ type
       {Gets total height of tabset control.
         @return Height of tabset or 0 if not required.
       }
+    function BuildLogListHTML(const Log: TStrings): string;
+      {Returns each line of a log as a HTML list item.
+        @param Log [in] List of log entries to be converted.
+        @return string containing HTML.
+      }
+    procedure GetLogInfo(const Compiler: ICompiler; const Log: TStrings;
+      out Status: string);
+      {Gets the log information for a given compiler and returns string that
+      describes status of log.
+        @param Compiler [in] Compiler for which information required.
+        @param Log [in] Receives list of compiler log entries.
+        @param Status [out] Set to log type: warning(s) or error(s).
+        @except EBug raised if compiler result is not a warning or an error.
+      }
     procedure LoadHTML(const Compiler: ICompiler);
       {Loads HTML representation of a compiler's error or warning log into
       browser control.
@@ -138,7 +152,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  UConsts, UExceptions, UHTMLUtils;
+  UConsts, UExceptions, UHTMLUtils, UHTMLTemplate;
 
 
 {$R *.dfm}
@@ -177,6 +191,19 @@ begin
   pnlBody.Height := GetHTMLHeight + GetTabsetHeight;
   // set size of dialog
   inherited;
+end;
+
+function TCompErrorDlg.BuildLogListHTML(const Log: TStrings): string;
+  {Returns each line of a log as a HTML list item.
+    @param Log [in] List of log entries to be converted.
+    @return string containing HTML.
+  }
+var
+  Line: string;   // each line of log
+begin
+  Result := '';
+  for Line in Log do
+    Result := Result + MakeCompoundTag('li', MakeSafeHTMLText(Line)) + EOL;
 end;
 
 procedure TCompErrorDlg.ConfigForm;
@@ -273,6 +300,46 @@ begin
   end;
 end;
 
+procedure TCompErrorDlg.GetLogInfo(const Compiler: ICompiler;
+  const Log: TStrings; out Status: string);
+  {Gets the log information for a given compiler and returns string that
+  describes status of log.
+    @param Compiler [in] Compiler for which information required.
+    @param Log [in] Receives list of compiler log entries.
+    @param Status [out] Set to log type: warning(s) or error(s).
+    @except EBug raised if compiler result is not a warning or an error.
+  }
+const
+  // singular & plural warning text
+  cWarnText: array[Boolean] of string = (
+    sLogStatusWarning, sLogStatusWarnings
+  );
+  // singular & plural error text
+  cErrorText: array[Boolean] of string = (
+    sLogStatusError, sLogStatusErrors
+  );
+  // bug error message
+  cBadResult = '%s.GetLogInfo: compile result must be warning or error';
+begin
+  case Compiler.GetLastCompileResult of
+    crWarning:
+    begin
+      // Extract warnings from raw log and note this is warning
+      Compiler.Log(cfWarnings, Log);
+      Status := cWarnText[Log.Count > 1];
+    end;
+    crError:
+    begin
+      // Extract errors from raw log and note this is error
+      Compiler.Log(cfErrors, Log);
+      Status := cErrorText[Log.Count > 1];
+    end;
+    else
+      // Not a warning or error: this is a bug
+      raise EBug.CreateFmt(cBadResult, [ClassName]);
+  end;
+end;
+
 function TCompErrorDlg.GetTabsetHeight: Integer;
   {Gets total height of tabset control.
     @return Height of tabset or 0 if not required.
@@ -337,82 +404,25 @@ procedure TCompErrorDlg.LoadHTML(const Compiler: ICompiler);
     @except EBug raised if compiler result is not a warning or an error.
   }
 var
-  Values: TStringList;  // map of HTML placeholders to actual values
-  Log: TStringList;     // stores compiler log
-  Status: string;       // report status: error(s) or warning(s)
-
-  // ---------------------------------------------------------------------------
-  procedure GetLogInfo(const Log: TStrings; out Status: string);
-    {Gets the required log information and returns string that describes status
-    of log.
-      @param Log [out] Set to list of compiler log entries.
-      @param Status [out] Set to log type: warning(s) or error(s).
-      @except EBug raised if compiler result is not a warning or an error.
-    }
-  const
-    // singular & plural warning text
-    cWarnText: array[Boolean] of string = (
-      sLogStatusWarning, sLogStatusWarnings
-    );
-    // singular & plural error text
-    cErrorText: array[Boolean] of string = (
-      sLogStatusError, sLogStatusErrors
-    );
-    // bug error message
-    cBadResult = '%s.LoadHTML: compile result must be warning or error';
-  begin
-    case Compiler.GetLastCompileResult of
-      crWarning:
-      begin
-        // Extract warnings from raw log and note this is warning
-        Compiler.Log(cfWarnings, Log);
-        Status := cWarnText[Log.Count > 1];
-      end;
-      crError:
-      begin
-        // Extract errors from raw log and note this is error
-        Compiler.Log(cfErrors, Log);
-        Status := cErrorText[Log.Count > 1];
-      end;
-      else
-        // Not a warning or error: this is a bug
-        raise EBug.CreateFmt(cBadResult, [ClassName]);
-    end;
-  end;
-
-  function BuildLogListHTML(const Log: TStrings): string;
-    {Returns each line of a log as a HTML list item.
-      @param Log [in] List of log entries to be converted.
-      @return string containing HTML.
-    }
-  var
-    Line: string;   // each line of log
-  begin
-    Result := '';
-    for Line in Log do
-      Result := Result + MakeCompoundTag('li', MakeSafeHTMLText(Line)) + EOL;
-  end;
-  // ---------------------------------------------------------------------------
-
+  Log: TStringList; // stores compiler log
+  Status: string;   // report status: error(s) or warning(s)
 begin
   inherited;
-  // Create log and placeholder values string lists
-  Log := nil;
-  Values := TStringList.Create;
+  Log := TStringList.Create;
   try
-    Log := TStringList.Create;
-    // Get compiler log and status
-    GetLogInfo(Log, Status);
-    // Build log report and load into browser control
-    Values.Values['Status']       := Status;
-    Values.Values['ErrorList']    := BuildLogListHTML(Log);
-    Values.Values['SnippetName']  := MakeSafeHTMLText(fSnippet.Name);
-    Values.Values['CompilerID']   := MakeSafeHTMLText(Compiler.GetName);
-    frmHTML.Initialise('dlg-comperror-tplt.html', Values);
+    GetLogInfo(Compiler, Log, Status);
+    frmHTML.Initialise(
+      'dlg-comperror-tplt.html',
+      procedure(Tplt: THTMLTemplate)
+      begin
+        Tplt.ResolvePlaceholderText('Status', Status);
+        Tplt.ResolvePlaceholderHTML('ErrorList', BuildLogListHTML(Log));
+        Tplt.ResolvePlaceholderText('SnippetName', fSnippet.Name);
+        Tplt.ResolvePlaceholderText('CompilerID', Compiler.GetName);
+      end
+    );
   finally
-    // Free objects
     Log.Free;
-    Values.Free;
   end;
 end;
 
