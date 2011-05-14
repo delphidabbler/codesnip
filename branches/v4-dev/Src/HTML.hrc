@@ -49,9 +49,6 @@ Res\HTML\easteregg.js
 # compiler error log
 Res\HTML\dlg-comperror-tplt.html
 
-# update dialog news pane
-Res\HTML\dlg-updt-news-tplt.html
-
 # user db edit dialog
 Res\HTML\dlg-userdb-extra.html
 
