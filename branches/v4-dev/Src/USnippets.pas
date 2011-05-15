@@ -1423,10 +1423,10 @@ begin
   try
     // Load main database: MUST do this first since user database can
     // reference objects in main database
-    with TSnippetsIOFactory.CreateMainDBLoader do
+    with TDatabaseIOFactory.CreateMainDBLoader do
       Load(fSnippets, fCategories, Factory);
     // Load any user database
-    with TSnippetsIOFactory.CreateUserDBLoader do
+    with TDatabaseIOFactory.CreateUserDBLoader do
       Load(fSnippets, fCategories, Factory);
     fUpdated := False;
   except
@@ -1453,7 +1453,7 @@ begin
   // Create object that can provide required information about user database
   Provider := TUserDataProvider.Create(fSnippets, fCategories);
   // Use a writer object to write out the database
-  with TSnippetsIOFactory.CreateWriter do
+  with TDatabaseIOFactory.CreateWriter do
     Write(fSnippets, fCategories, Provider);
   fUpdated := False;
 end;
