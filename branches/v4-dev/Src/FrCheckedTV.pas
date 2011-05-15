@@ -334,7 +334,7 @@ begin
   while Assigned(Node) do
   begin
     SetLeafNodeStates(Node);
-    Node := Node.GetNextSibling as TCheckedTreeNode;
+    Node := Node.GetNextSibling;
   end;
   // Set state of parent nodes based on state of leaf node
   SetParentStates;
