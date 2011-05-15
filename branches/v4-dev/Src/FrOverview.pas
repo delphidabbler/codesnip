@@ -888,12 +888,10 @@ function TOverviewFrame.TTVDraw.IsSectionHeadNode(
     @return True if node is a section header, False if not.
   }
 var
-  ViewItem: IView;
+  ViewItem: IView;  // view item represented by node
 begin
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
-  Result := Supports(ViewItem, ICategoryView)
-    or Supports(ViewItem, IInitialLetterView)
-    or Supports(ViewItem, ISnippetKindView);
+  Result := ViewItem.IsGrouping;
 end;
 
 function TOverviewFrame.TTVDraw.IsUserDefinedNode(
@@ -903,18 +901,10 @@ function TOverviewFrame.TTVDraw.IsUserDefinedNode(
     @return True if node represents user defined object, False if not.
   }
 var
-  ViewItem: IView;              // view item represented by node
-  SnipViewItem: ISnippetView;   // view item as snippet view if supported
-  CatViewItem: ICategoryView;   // view item as category view if supported
+  ViewItem: IView;  // view item represented by node
 begin
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
-  Result := (
-    Supports(ViewItem, ISnippetView, SnipViewItem)
-      and SnipViewItem.Snippet.UserDefined
-  ) or (
-    Supports(ViewItem, ICategoryView, CatViewItem)
-      and CatViewItem.Category.UserDefined
-  );
+  Result := ViewItem.IsUserDefined;
 end;
 
 end.
