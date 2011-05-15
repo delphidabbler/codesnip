@@ -82,6 +82,10 @@ type
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
     function IsUserDefined: Boolean;
+    ///  <summary>Checks if view is a grouping.</summary>
+    ///  <remarks>A grouping is an item that groups other items together.
+    ///  </remarks>
+    function IsGrouping: Boolean;
   end;
 
 type
@@ -218,6 +222,8 @@ type
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
     function IsUserDefined: Boolean;
+    ///  <summary>Checks if view is a grouping.</summary>
+    function IsGrouping: Boolean;
   end;
 
 type
@@ -245,6 +251,8 @@ type
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
     function IsUserDefined: Boolean;
+    ///  <summary>Checks if view is a grouping.</summary>
+    function IsGrouping: Boolean;
   end;
 
 type
@@ -283,6 +291,8 @@ type
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
     function IsUserDefined: Boolean;
+    ///  <summary>Checks if view is a grouping.</summary>
+    function IsGrouping: Boolean;
     { ISnippetView methods }
     ///  <summary>Gets reference to snippet associated with view.</summary>
     function GetSnippet: TSnippet;
@@ -324,6 +334,8 @@ type
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
     function IsUserDefined: Boolean;
+    ///  <summary>Checks if view is a grouping.</summary>
+    function IsGrouping: Boolean;
     { ICategoryView methods }
     ///  <summary>Gets reference to category associated with view.</summary>
     function GetCategory: TCategory;
@@ -367,6 +379,8 @@ type
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
     function IsUserDefined: Boolean;
+    ///  <summary>Checks if view is a grouping.</summary>
+    function IsGrouping: Boolean;
     { ISnippetKindView methods }
     ///  <summary>Gets info about snippet kind associated with view.</summary>
     function GetKindInfo: TSnippetKindInfo;
@@ -410,6 +424,8 @@ type
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
     function IsUserDefined: Boolean;
+    ///  <summary>Checks if view is a grouping.</summary>
+    function IsGrouping: Boolean;
     { IInitialLetterView methods }
     ///  <summary>Gets unfo about initial letter associated with view.</summary>
     function GetInitialLetter: TInitialLetter;
@@ -431,6 +447,11 @@ end;
 function TNulViewItem.IsEqual(View: IView): Boolean;
 begin
   Result := Supports(View, INulView);
+end;
+
+function TNulViewItem.IsGrouping: Boolean;
+begin
+  Result := False;
 end;
 
 function TNulViewItem.IsUserDefined: Boolean;
@@ -462,6 +483,11 @@ end;
 function TStartPageViewItem.IsEqual(View: IView): Boolean;
 begin
   Result := Supports(View, IStartPageView);
+end;
+
+function TStartPageViewItem.IsGrouping: Boolean;
+begin
+  Result := False;
 end;
 
 function TStartPageViewItem.IsUserDefined: Boolean;
@@ -506,6 +532,11 @@ begin
   if not Supports(View, ISnippetView, SnippetView) then
     Exit(False);
   Result := GetSnippet.IsEqual(SnippetView.Snippet);
+end;
+
+function TSnippetViewItem.IsGrouping: Boolean;
+begin
+  Result := False;
 end;
 
 function TSnippetViewItem.IsUserDefined: Boolean;
@@ -560,6 +591,11 @@ begin
   Result := GetCategory.IsEqual(CatView.Category);
 end;
 
+function TCategoryViewItem.IsGrouping: Boolean;
+begin
+  Result := True;
+end;
+
 function TCategoryViewItem.IsUserDefined: Boolean;
 begin
   Result := GetCategory.UserDefined;
@@ -612,6 +648,11 @@ begin
   Result := GetKindInfo.Kind = SnipKindView.KindInfo.Kind;
 end;
 
+function TSnippetKindViewItem.IsGrouping: Boolean;
+begin
+  Result := True;
+end;
+
 function TSnippetKindViewItem.IsUserDefined: Boolean;
 begin
   Result := False;
@@ -662,6 +703,11 @@ begin
   if not Supports(View, IInitialLetterView, LetterView) then
     Exit(False);
   Result := GetInitialLetter = LetterView.InitialLetter;
+end;
+
+function TInitialLetterViewItem.IsGrouping: Boolean;
+begin
+  Result := True;
 end;
 
 function TInitialLetterViewItem.IsUserDefined: Boolean;
