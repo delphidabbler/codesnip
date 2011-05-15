@@ -106,7 +106,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.USnippet, UAppInfo, USnippetKindInfo, UQuery, UUtils;
+  DB.USnippet, DB.USnippetKind, UAppInfo, UQuery, UUtils;
 
 
 { TSnippetSourceGen }

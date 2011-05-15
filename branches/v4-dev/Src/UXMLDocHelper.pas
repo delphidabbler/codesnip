@@ -44,7 +44,7 @@ uses
   // Delphi
   XMLIntf,
   // Project
-  Compilers.UGlobals, UExceptions, UIStringList, USnippetKindInfo, UStructs,
+  Compilers.UGlobals, DB.USnippetKind, UExceptions, UIStringList, UStructs,
   UXMLDocumentEx;
 
 

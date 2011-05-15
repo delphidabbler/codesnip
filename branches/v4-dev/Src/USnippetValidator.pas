@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  DB.USnippet, UActiveText, UBaseObjects, USnippetKindInfo, UStructs;
+  DB.USnippet, DB.USnippetKind, UActiveText, UBaseObjects, UStructs;
 
 
 type

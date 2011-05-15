@@ -44,8 +44,8 @@ uses
   // Delphi
   Classes, Generics.Collections,
   // Project
-  Compilers.UGlobals, UActiveText, UContainers, UIStringList, USnippetIDs,
-  USnippetKindInfo;
+  Compilers.UGlobals, DB.USnippetKind, UActiveText, UContainers, UIStringList,
+  USnippetIDs;
 
 type
 

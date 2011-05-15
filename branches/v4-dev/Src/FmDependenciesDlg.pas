@@ -143,7 +143,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UColours, UFontHelper, USnippetKindInfo, FmGenericDlg;
+  DB.USnippetKind, UColours, UFontHelper;
 
 {$R *.dfm}
 

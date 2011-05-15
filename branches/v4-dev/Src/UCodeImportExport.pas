@@ -236,8 +236,8 @@ uses
   // Delphi
   ActiveX, XMLDom,
   // Project
-  DB.UMain, UAppInfo, UREMLDataIO, UReservedCategories, USnippetExtraHelper,
-  USnippetIDs, USnippetKindInfo, UStructs, UXMLDocConsts;
+  DB.UMain, DB.USnippetKind, UAppInfo, UREMLDataIO, UReservedCategories,
+  USnippetExtraHelper, USnippetIDs, UStructs, UXMLDocConsts;
 
 
 const

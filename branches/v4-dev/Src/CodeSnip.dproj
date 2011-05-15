@@ -57,6 +57,7 @@
 			<DCCReference Include="DB.UCategory.pas"/>
 			<DCCReference Include="DB.UMain.pas"/>
 			<DCCReference Include="DB.USnippet.pas"/>
+			<DCCReference Include="DB.USnippetKind.pas"/>
 			<DCCReference Include="FmAboutDlg.pas">
 				<Form>AboutDlg</Form>
 			</DCCReference>
@@ -451,7 +452,6 @@
 			<DCCReference Include="USnippetExtraHelper.pas"/>
 			<DCCReference Include="USnippetHTML.pas"/>
 			<DCCReference Include="USnippetIDs.pas"/>
-			<DCCReference Include="USnippetKindInfo.pas"/>
 			<DCCReference Include="USnippetsChkListMgr.pas"/>
 			<DCCReference Include="USnippetsIO.pas"/>
 			<DCCReference Include="USnippetSourceGen.pas"/>

@@ -261,9 +261,9 @@ uses
   // Delphi
   StrUtils, Windows {for inlining}, Graphics,
   // Project
-  DB.UMain, FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts,
-  UCSSUtils, UCtrlArranger, UExceptions, UFontHelper, UReservedCategories,
-  USnippetExtraHelper, USnippetKindInfo, USnippetValidator, UMessageBox,
+  DB.UMain, DB.USnippetKind, FmDependenciesDlg, FmViewExtraDlg, IntfCommon,
+  UColours, UConsts, UCSSUtils, UCtrlArranger, UExceptions, UFontHelper,
+  UReservedCategories, USnippetExtraHelper, USnippetValidator, UMessageBox,
   USnippetIDs, UStructs, UTestUnitDlgMgr, UThemesEx, UUtils;
 
 

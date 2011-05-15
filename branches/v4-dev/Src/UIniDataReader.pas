@@ -306,8 +306,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UGlobals, UActiveText, UComparers, UConsts, UIniDataLoader,
-  USnippetExtraHelper, USnippetKindInfo, UUtils;
+  Compilers.UGlobals, DB.USnippetKind, UActiveText, UComparers, UConsts,
+  UIniDataLoader, USnippetExtraHelper, UUtils;
 
 
 const

@@ -43,7 +43,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  DB.UCategory, DB.USnippet, UContainers, UInitialLetter, USnippetKindInfo;
+  DB.UCategory, DB.USnippet, DB.USnippetKind, UContainers, UInitialLetter;
 
 
 type

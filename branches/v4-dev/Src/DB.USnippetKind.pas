@@ -1,5 +1,5 @@
 {
- * USnippetKindInfo.pas
+ * DB.USnippetKind.pas
  *
  * Defines a record that provides information about the different snippet kinds
  * enumerated by TSnippetKind along with a static class that provides an
@@ -20,12 +20,12 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is USnippetKindInfo.pas
+ * The Original Code is DB.USnippetKind, formerly USnippetKindInfo.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -35,7 +35,7 @@
 }
 
 
-unit USnippetKindInfo;
+unit DB.USnippetKind;
 
 
 interface

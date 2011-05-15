@@ -293,7 +293,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UConsts, UExceptions, UPreferences, USnippetKindInfo, USnippetValidator,
+  DB.USnippetKind, UConsts, UExceptions, UPreferences, USnippetValidator,
   UStructs, UUtils, UWarnings;
 
 
