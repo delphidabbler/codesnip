@@ -47,11 +47,9 @@ uses
 
 
 type
-
-  {
-  TSnippetKind:
-    Enumeration of various supported kinds of snippets.
-  }
+  ///  <summary>
+  ///  Enumeration of various supported kinds of snippets.
+  ///  </summary>
   TSnippetKind = (
     skFreeform,   // free-form code - not in any of other supported formats
     skRoutine,    // procedure or function in standard format
@@ -59,28 +57,32 @@ type
     skTypeDef     // type definition in standard format
   );
 
-  {
-  TSnippetKinds:
-    Sets of snippet kinds.
-  }
+type
+  ///  <summary>
+  ///  Set of snippet kinds.
+  ///  </summary>
   TSnippetKinds = set of TSnippetKind;
 
+type
   ///  <summary>
   ///  Provides read only information about a snippet kind
   ///  </summary>
   TSnippetKindInfo = record
   strict private
-    fKind: TSnippetKind;    // Value of Kind property
-    fDisplayName: string;   // Value of DisplayName property
+    ///  <summary>Value of Kind property.</summary>
+    fKind: TSnippetKind;
+    ///  <summary>Value of DisplayName property.</summary>
+    fDisplayName: string;
   public
-    ///  Initialises record with required property values.
+    ///  <summary>Initialises record with required property values.</summary>
     constructor Create(AKind: TSnippetKind; const ADisplayName: string);
-    ///  Snippet kind.
+    ///  <summary>Snippet kind.</summary>
     property Kind: TSnippetKind read fKind;
-    ///  Display name (description) of snippet kind
+    ///  <summary>Display name (description) of snippet kind.</summary>
     property DisplayName: string read fDisplayName;
   end;
 
+type
   ///  <summary>
   ///  Static class that provides a read-only, enumerable, list of
   ///  TSnippetKindInfo records, one for each snippet kind.
@@ -88,20 +90,22 @@ type
   TSnippetKindInfoList = class(TNoConstructObject)
   strict private
     type
-      ///  Array of snippet kind information records. Has element for each
-      ///  snippet kind.
+      ///  <summary>Array of snippet kind information records. Has element for
+      ///  each snippet kind.</summary>
       TSnippetKindInfoArray = array[TSnippetKind] of TSnippetKindInfo;
-    ///  Array of snippet kind info records.
-    class var fItems: TSnippetKindInfoArray;
-    ///  Flag indicating if fItems has yet been initialised.
-    class var fInitialised: Boolean;
-    ///  Initialises fItems array.
+    class var
+      ///  <summary>Array of snippet kind info records.</summary>
+      fItems: TSnippetKindInfoArray;
+      ///  <summary>Flag indicating if fItems has been initialised.</summary>
+      fInitialised: Boolean;
+  strict private
+    ///  <summary>Initialises fItems array.</summary>
     class procedure Init;
-    ///  Read accessor for Items property.
+    ///  <summary>Read accessor for Items property.</summary>
     class function GetItems: TSnippetKindInfoArray; static;
   public
-    ///  Enumerable array of snippet kind info records, one element for each
-    ///  snippet kind.
+    ///  <summary>Enumerable array of snippet kind info records, one element for
+    ///  each snippet kind.</summary>
     class property Items: TSnippetKindInfoArray read GetItems;
   end;
 
