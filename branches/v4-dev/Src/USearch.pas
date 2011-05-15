@@ -352,7 +352,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Character,
+  SysUtils, StrUtils, Character,
   // Project
   UActiveText, UUtils;
 
@@ -780,21 +780,16 @@ function TSearch.Execute(const InList, FoundList: TSnippetList): Boolean;
     @return True if some snippets were found or false if search failed.
   }
 var
-  Idx: Integer;         // loops thru snippets in InList
-  Snippet: TSnippet;    // reference to a snippet in InList
+  Snippet: TSnippet;    // each snippet in InList
 begin
   Assert(Assigned(InList), ClassName + '.Execute: InList is nil');
   Assert(Assigned(FoundList), ClassName + '.Execute: FoundList is nil');
   Assert(InList <> FoundList, ClassName + '.Execute: InList = FoundList');
-  // Ensure found list is empty
+
   FoundList.Clear;
-  // We add all snippets from InList to FoundList if they match search criteria
-  for Idx := 0 to Pred(InList.Count) do
-  begin
-    Snippet := InList[Idx];
+  for Snippet in InList do
     if Match(Snippet) then
       FoundList.Add(Snippet);
-  end;
   Result := FoundList.Count > 0;
 end;
 
@@ -842,44 +837,37 @@ const
     [crError],                // soCompileFail,
     [crQuery]                 // soUnkown
   );
+
+  // Checks if a snippet's compiler result for given compiler ID matches
+  // expected results.
+  function CompatibilityMatches(const CompID: TCompilerID): Boolean;
+  begin
+    Result := Snippet.Compatibility[CompID] in cCompatMap[fCriteria.Option];
+  end;
+
 var
   CompID: TCompilerID;  // loops thru supported compilers
 begin
   if fCriteria.Logic = slOr then
   begin
-    // Find any compiler: we set result true as soon as any compiler matches and
-    // stop searching
+    // Find any compiler: we return true as soon as any compiler compatibility
+    // matches
     Result := False;
-    for CompID := Low(TCompilerID) to High(TCompilerID) do
+    for CompID in fCriteria.Compilers do
     begin
-      if CompID in fCriteria.Compilers then
-      begin
-        // this is one of selected compilers: check compile result
-        if (Snippet.Compatibility[CompID] in cCompatMap[fCriteria.Option]) then
-        begin
-          Result := True;
-          Break;
-        end;
-      end;
+      if CompatibilityMatches(CompID) then
+        Exit(True);
     end;
   end
   else {fLogic = slAnd}
   begin
-    // Find all compilers: we set result false as soon as any compiler doesn't
-    // match and stop searching
+    // Find all compilers: we return false as soon as any compiler compatibility
+    // doesn't match
     Result := True;
-    for CompID := Low(TCompilerID) to High(TCompilerID) do
+    for CompID in fCriteria.Compilers do
     begin
-      if CompID in fCriteria.Compilers then
-      begin
-        // this is one of selected compilers: check compile result
-        if not
-          (Snippet.Compatibility[CompID] in cCompatMap[fCriteria.Option]) then
-        begin
-          Result := False;
-          Break;
-        end;
-      end;
+      if not CompatibilityMatches(CompID) then
+        Exit(False);
     end;
   end;
 end;
@@ -919,9 +907,37 @@ function TTextSearch.Match(const Snippet: TSnippet): Boolean;
         punctuation are included in list in punctuated and non-punctuated state
         and all words are separated by a single space.
     }
+
+    // Replace each white space char in string S with single space character.
+    function WhiteSpaceToSpaces(const S: string): string;
+    var
+      Idx: Integer; // loops through chars of S
+    begin
+      // Pre-size spaced text string: same size as raw text input
+      SetLength(Result, Length(S));
+      // Convert all white space characters to spaces
+      for Idx := 1 to Length(S) do
+      begin
+        if TCharacter.IsWhiteSpace(S[Idx]) then
+          Result[Idx] := ' '
+        else
+          Result[Idx] := S[Idx]
+      end;
+    end;
+
+    // Strip single and double quotes from a string S.
+    procedure StripQuotes(var S: string);
+    begin
+      if S = '' then
+        Exit;
+      if (S[1] = '''') or (S[1] = '"') then
+        Delete(S, 1, 1);
+      if (S <> '') and
+        ((S[Length(S)] = '''') or (S[Length(S)] = '"')) then
+        Delete(S, Length(S), 1);
+    end;
+
   var
-    SpacedText: string;         // raw text with all white space as space chars
-    SrcIdx: Integer;            // loops through raw text string
     Words: TStringList;         // list of words from raw text
     Word: string;               // a word from Words list
     WordIdx: Integer;           // index into Words list
@@ -934,35 +950,23 @@ function TTextSearch.Match(const Snippet: TSnippet): Boolean;
       '?', '/', '|', '\', ''''
     ];
   begin
-    // Create word lists
-    Words := TStringList.Create;
     ExtraWords := nil;
+    Words := TStringList.Create;
     try
       ExtraWords := TStringList.Create;
-      // Pre-size spaced text string: same size as raw text input
-      SetLength(SpacedText, Length(RawText));
-      // Convert all white space characters to spaces
-      for SrcIdx := 1 to Length(RawText) do
-      begin
-        if TCharacter.IsWhiteSpace(RawText[SrcIdx]) then
-          SpacedText[SrcIdx] := ' '
-        else
-          SpacedText[SrcIdx] := RawText[SrcIdx]
-      end;
-      // Convert spaced text to word list
-      ExplodeStr(SpacedText, ' ', Words, False);
-      // Scan word list adding any additional derived words to extra list
+      // Convert text to word list and process each word
+      ExplodeStr(WhiteSpaceToSpaces(RawText), ' ', Words, False);
       for WordIdx := 0 to Pred(Words.Count) do
       begin
         Word := Words[WordIdx];
-        // strip quotes from word
-        if (Word[1] = '''') or (Word[1] = '"') then
-          Delete(Word, 1, 1);
-        if (Word <> '') and
-          ((Word[Length(Word)] = '''') or (Word[Length(Word)] = '"')) then
-          Delete(Word, Length(Word), 1);
+        StripQuotes(Word);
         Words[WordIdx] := Word;
-        // add any word ending in punctuation in non-punctuated state
+        // Add any word ending in punctuation in non-punctuated state
+        // (note that any word ending in x punctuation character will be added
+        // several times, once with each of x, x-1, x-2 ... 0 punctuation
+        // characters.
+        // We need to do this in case user searches for a word followed by one
+        // or more punctuation characters.
         while (Word <> '') and CharInSet(Word[Length(Word)], cWordEnders) do
         begin
           // we add any variations to Extra words list
@@ -970,9 +974,10 @@ function TTextSearch.Match(const Snippet: TSnippet): Boolean;
           ExtraWords.Add(Word);
         end;
       end;
-      // Build result string, topping and tailing with spaces
       Result := ' ' + JoinStr(Words, ' ', False) + ' '
         + JoinStr(ExtraWords, ' ', False) + ' ';
+      if not (soMatchCase in fCriteria.Options) then
+        Result := AnsiLowerCase(Result);
     finally
       ExtraWords.Free;
       Words.Free;
@@ -994,9 +999,9 @@ function TTextSearch.Match(const Snippet: TSnippet): Boolean;
       Result := ' ' + Result + ' ';
   end;
 
-  function ExtraText(const Extra: IActiveText): string;
-    {Gets plain text from a snippet's Extra property's active text.
-      @param Extra [in] Active text to process.
+  function ExtraText(const ActiveText: IActiveText): string;
+    {Gets plain text from active text.
+      @param ActiveText [in] Active text to process.
       @return Plain text extracted from active text.
     }
   var
@@ -1004,7 +1009,7 @@ function TTextSearch.Match(const Snippet: TSnippet): Boolean;
     TextElem: IActiveTextTextElem;  // referece to a text active text element
   begin
     Result := '';
-    for Elem in Extra do
+    for Elem in ActiveText do
       if Supports(Elem, IActiveTextTextElem, TextElem) then
         Result := Result + TextElem.Text;
   end;
@@ -1013,49 +1018,30 @@ function TTextSearch.Match(const Snippet: TSnippet): Boolean;
 var
   SearchText: string; // text we're searching in
   SearchWord: string; // a word we're searching for
-  Idx: Integer;       // loops thru words to be found
 begin
-  // Build search text: text begins and ends with a single space, has no
-  // punctuation, and each word is separated by a single space
+  // Build search text
   SearchText := NormaliseSearchText(
     ' ' + MakeSentence(Snippet.Description) +
     ' ' + Snippet.SourceCode +
     ' ' + MakeSentence(ExtraText(Snippet.Extra)) +
     ' '
   );
-  // Set search text to lower case if we're ignoring case: we also convert words
-  // to be found to lower case when case ignored
-  if not (soMatchCase in fCriteria.Options) then
-    SearchText := AnsiLowerCase(SearchText);
   if fCriteria.Logic = slOr then
   begin
-    // Find any of words in search text
-    // we set result true as soon as any word matches and stop searching
+    // Find any of words in search text: return True as soon as any word matches
     Result := False;
-    for Idx := 0 to Pred(fCriteria.Words.Count) do
-    begin
-      SearchWord := NormaliseSearchWord(fCriteria.Words[Idx]);
-      if AnsiPos(SearchWord, SearchText) > 0 then
-      begin
-        Result := True;
-        Break;
-      end;
-    end;
+    for SearchWord in fCriteria.Words do
+      if ContainsStr(SearchText, NormaliseSearchWord(SearchWord)) then
+        Exit(True);
   end
   else {fLogic = slAnd}
   begin
-    // Find all words in search text
-    // we set result false as soon as any word doesn't match and stop searching
+    // Find all words in search text: return False as soon as any word doesn't
+    // match
     Result := True;
-    for Idx := 0 to Pred(fCriteria.Words.Count) do
-    begin
-      SearchWord := NormaliseSearchWord(fCriteria.Words[Idx]);
-      if AnsiPos(SearchWord, SearchText) = 0 then
-      begin
-        Result := False;
-        Break;
-      end;
-    end;
+    for SearchWord in fCriteria.Words do
+      if not ContainsStr(SearchText, NormaliseSearchWord(SearchWord)) then
+        Exit(False);
   end;
 end;
 
