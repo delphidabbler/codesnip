@@ -92,7 +92,7 @@ implementation
 
 uses
   // Project
-  USnippets, UUniqueID;
+  DB.UCategory, USnippets, UUniqueID;
 
 {$R *.dfm}
 

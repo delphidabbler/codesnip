@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  UBaseObjects, USnippets, UView;
+  DB.UCategory, UBaseObjects, UView;
 
 
 type
@@ -138,7 +138,7 @@ uses
   DB.USnippet, FmAddCategoryDlg, FmDeleteCategoryDlg, FmRenameCategoryDlg,
   FmSnippetsEditorDlg, UConsts, UExceptions, UIStringList, UMessageBox,
   UOpenDialogEx, UOpenDialogHelper, UReservedCategories, USaveDialogEx,
-  USnippetIDs, UUserDBBackup;
+  USnippetIDs, USnippets, UUserDBBackup;
 
 
 { TUserDBMgr }

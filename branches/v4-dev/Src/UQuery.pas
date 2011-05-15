@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  DB.USnippet, USearch, USnippets;
+  DB.UCategory, DB.USnippet, USearch;
 
 
 type
@@ -109,7 +109,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UBaseObjects;
+  UBaseObjects, USnippets;
 
 
 type

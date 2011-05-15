@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UContainers, USnippets;
+  DB.UCategory, UContainers;
 
 
 type

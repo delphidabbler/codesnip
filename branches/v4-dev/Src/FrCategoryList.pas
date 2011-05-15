@@ -44,7 +44,7 @@ uses
   // Delphi
   Forms, Controls, StdCtrls, Classes,
   // Project
-  UCategoryListAdapter, USnippets;
+  DB.UCategory, UCategoryListAdapter;
 
 
 type
@@ -113,7 +113,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UCtrlArranger;
+  UCtrlArranger, USnippets;
 
 {$R *.dfm}
 

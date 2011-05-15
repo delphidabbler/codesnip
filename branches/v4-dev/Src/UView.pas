@@ -44,7 +44,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  DB.USnippet, UBaseObjects, UInitialLetter, USnippetKindInfo, USnippets;
+  DB.UCategory, DB.USnippet, UBaseObjects, UInitialLetter, USnippetKindInfo;
 
 
 type

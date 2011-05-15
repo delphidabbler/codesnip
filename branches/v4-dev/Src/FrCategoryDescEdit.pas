@@ -141,7 +141,7 @@ uses
   // Delphi
   SysUtils, Windows {for inlining},
   // Project
-  UColours, UCtrlArranger, USnippets;
+  DB.UCategory, UColours, UCtrlArranger, USnippets;
 
 {$R *.dfm}
 

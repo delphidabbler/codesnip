@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  UBaseObjects, USnippets;
+  DB.UCategory, UBaseObjects;
 
 
 type

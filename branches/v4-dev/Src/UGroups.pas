@@ -43,7 +43,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  DB.USnippet, UContainers, UInitialLetter, USnippetKindInfo, USnippets;
+  DB.UCategory, DB.USnippet, UContainers, UInitialLetter, USnippetKindInfo;
 
 
 type
@@ -278,7 +278,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining}, Generics.Defaults;
+  SysUtils, Windows {for inlining}, Generics.Defaults,
+  // Project
+  USnippets;
 
 
 { TGrouping }

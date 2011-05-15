@@ -44,8 +44,8 @@ uses
   // Delphi
   Forms, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmCategoryEditDlg, FrCategoryList, FrCategoryDescEdit, UBaseObjects,
-  USnippets;
+  DB.UCategory, FmCategoryEditDlg, FrCategoryList, FrCategoryDescEdit,
+  UBaseObjects;
 
 
 type
@@ -116,7 +116,7 @@ uses
   // Delphi
   SysUtils, Windows {for inlining},
   // Project
-  UCtrlArranger;
+  UCtrlArranger, USnippets;
 
 {$R *.dfm}
 

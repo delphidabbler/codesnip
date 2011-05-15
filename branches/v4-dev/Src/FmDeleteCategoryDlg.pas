@@ -44,7 +44,7 @@ uses
   // Delphi
   Forms, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmCategoryEditDlg, FrCategoryList, UBaseObjects, USnippets;
+  DB.UCategory, FmCategoryEditDlg, FrCategoryList, UBaseObjects;
 
 
 type
@@ -95,7 +95,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UConsts, UMessageBox;
+  UConsts, UMessageBox, USnippets;
 
 {$R *.dfm}
 

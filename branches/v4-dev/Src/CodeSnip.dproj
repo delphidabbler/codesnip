@@ -508,6 +508,7 @@
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas"/>
 			<DCCReference Include="DB.USnippet.pas"/>
+			<DCCReference Include="DB.UCategory.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

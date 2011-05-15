@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  DB.USnippet, UIStringList, USnipData, USnippets;
+  DB.UCategory, DB.USnippet, UIStringList, USnipData;
 
 
 type

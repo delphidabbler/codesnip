@@ -44,7 +44,7 @@ uses
   // Delphi
   ImgList, Controls, Classes, ComCtrls,
   // Project
-  DB.USnippet, FrCheckedTV, USnippets, USnippetsTVDraw;
+  DB.UCategory, DB.USnippet, FrCheckedTV, USnippetsTVDraw;
 
 
 type
@@ -144,7 +144,7 @@ uses
   // Delphi
   SysUtils, StdCtrls,
   // Project
-  UGroups;
+  UGroups, USnippets;
 
 
 {$R *.dfm}

@@ -44,7 +44,8 @@ uses
   // Delphi
   XMLIntf,
   // Project
-  DB.USnippet, UIStringList, UREMLDataIO, USnipData, USnippets, UXMLDocumentEx;
+  DB.UCategory, DB.USnippet, UIStringList, UREMLDataIO, USnipData,
+  UXMLDocumentEx;
 
 
 type
