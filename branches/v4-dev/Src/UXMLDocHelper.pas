@@ -44,7 +44,7 @@ uses
   // Delphi
   XMLIntf,
   // Project
-  Compilers.UGlobals, DB.USnippet, UExceptions, UIStringList, UStructs,
+  Compilers.UGlobals, UExceptions, UIStringList, USnippetKindInfo, UStructs,
   UXMLDocumentEx;
 
 
@@ -187,7 +187,7 @@ uses
   // Delphi
   SysUtils, Windows {for inlining},
   // Project
-  USnippetKindInfo, UXMLDocConsts;
+  UXMLDocConsts;
 
 
 { TXMLDocHelper }

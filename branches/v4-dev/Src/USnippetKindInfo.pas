@@ -43,10 +43,27 @@ interface
 
 uses
   // Project
-  DB.USnippet, UBaseObjects;
+  UBaseObjects;
 
 
 type
+
+  {
+  TSnippetKind:
+    Enumeration of various supported kinds of snippets.
+  }
+  TSnippetKind = (
+    skFreeform,   // free-form code - not in any of other supported formats
+    skRoutine,    // procedure or function in standard format
+    skConstant,   // constant definition in standard format
+    skTypeDef     // type definition in standard format
+  );
+
+  {
+  TSnippetKinds:
+    Sets of snippet kinds.
+  }
+  TSnippetKinds = set of TSnippetKind;
 
   ///  <summary>
   ///  Provides read only information about a snippet kind

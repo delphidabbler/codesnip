@@ -263,8 +263,8 @@ uses
   // Project
   DB.UMain, FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts,
   UCSSUtils, UCtrlArranger, UExceptions, UFontHelper, UReservedCategories,
-  USnippetExtraHelper, USnippetValidator, UMessageBox, USnippetIDs,
-  UStructs, UTestUnitDlgMgr, UThemesEx, UUtils;
+  USnippetExtraHelper, USnippetKindInfo, USnippetValidator, UMessageBox,
+  USnippetIDs, UStructs, UTestUnitDlgMgr, UThemesEx, UUtils;
 
 
 {$R *.dfm}

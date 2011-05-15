@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  DB.USnippet, UActiveText, UBaseObjects, UStructs;
+  DB.USnippet, UActiveText, UBaseObjects, USnippetKindInfo, UStructs;
 
 
 type
@@ -137,7 +137,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  DB.UMain, USnippetKindInfo, UURIEncode;
+  DB.UMain, UURIEncode;
 
 
 { TSnippetValidator }

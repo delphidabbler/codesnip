@@ -237,7 +237,7 @@ uses
   ActiveX, XMLDom,
   // Project
   DB.UMain, UAppInfo, UREMLDataIO, UReservedCategories, USnippetExtraHelper,
-  USnippetIDs, UStructs, UXMLDocConsts;
+  USnippetIDs, USnippetKindInfo, UStructs, UXMLDocConsts;
 
 
 const

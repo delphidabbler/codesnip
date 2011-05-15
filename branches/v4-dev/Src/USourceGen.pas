@@ -293,8 +293,8 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UConsts, UExceptions, UPreferences, USnippetValidator, UStructs, UUtils,
-  UWarnings;
+  UConsts, UExceptions, UPreferences, USnippetKindInfo, USnippetValidator,
+  UStructs, UUtils, UWarnings;
 
 
 const

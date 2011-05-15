@@ -266,8 +266,8 @@ uses
   // Delphi
   SysUtils, Classes, ActiveX, XMLDom,
   // Project
-  UActiveText, UConsts, UExceptions, UIOUtils, USnippetExtraHelper, UStructs,
-  UUtils, UXMLDocConsts, UXMLDocHelper;
+  UActiveText, UConsts, UExceptions, UIOUtils, USnippetExtraHelper,
+  USnippetKindInfo, UStructs, UUtils, UXMLDocConsts, UXMLDocHelper;
 
 
 const
