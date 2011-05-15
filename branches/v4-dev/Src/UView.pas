@@ -80,6 +80,8 @@ type
     ///  without having have an instance of any object wrapped by the view item.
     ///  </remarks>
     function GetKey: IViewKey;
+    ///  <summary>Checks if view is user-defined.</summary>
+    function IsUserDefined: Boolean;
   end;
 
 type
@@ -214,6 +216,8 @@ type
     function GetDescription: string;
     ///  <summary>Gets object containing view's unique key.</summary>
     function GetKey: IViewKey;
+    ///  <summary>Checks if view is user-defined.</summary>
+    function IsUserDefined: Boolean;
   end;
 
 type
@@ -239,6 +243,8 @@ type
     function GetDescription: string;
     ///  <summary>Gets object containing view's unique key.</summary>
     function GetKey: IViewKey;
+    ///  <summary>Checks if view is user-defined.</summary>
+    function IsUserDefined: Boolean;
   end;
 
 type
@@ -275,6 +281,8 @@ type
     function GetDescription: string;
     ///  <summary>Gets object containing view's unique key.</summary>
     function GetKey: IViewKey;
+    ///  <summary>Checks if view is user-defined.</summary>
+    function IsUserDefined: Boolean;
     { ISnippetView methods }
     ///  <summary>Gets reference to snippet associated with view.</summary>
     function GetSnippet: TSnippet;
@@ -314,6 +322,8 @@ type
     function GetDescription: string;
     ///  <summary>Gets object containing view's unique key.</summary>
     function GetKey: IViewKey;
+    ///  <summary>Checks if view is user-defined.</summary>
+    function IsUserDefined: Boolean;
     { ICategoryView methods }
     ///  <summary>Gets reference to category associated with view.</summary>
     function GetCategory: TCategory;
@@ -355,6 +365,8 @@ type
     function GetDescription: string;
     ///  <summary>Gets object containing view's unique key.</summary>
     function GetKey: IViewKey;
+    ///  <summary>Checks if view is user-defined.</summary>
+    function IsUserDefined: Boolean;
     { ISnippetKindView methods }
     ///  <summary>Gets info about snippet kind associated with view.</summary>
     function GetKindInfo: TSnippetKindInfo;
@@ -368,7 +380,7 @@ type
   strict private
     var
       ///  <summary>Initial letter associated with view.</summary>
-      fLetter: TInitialLetter;
+      fInitialLetter: TInitialLetter;
     type
       ///  <summary>Implementation of IViewKey for initial letter view item.
       ///  </summary>
@@ -396,6 +408,8 @@ type
     function GetDescription: string;
     ///  <summary>Gets object containing view's unique key.</summary>
     function GetKey: IViewKey;
+    ///  <summary>Checks if view is user-defined.</summary>
+    function IsUserDefined: Boolean;
     { IInitialLetterView methods }
     ///  <summary>Gets unfo about initial letter associated with view.</summary>
     function GetInitialLetter: TInitialLetter;
@@ -417,6 +431,11 @@ end;
 function TNulViewItem.IsEqual(View: IView): Boolean;
 begin
   Result := Supports(View, INulView);
+end;
+
+function TNulViewItem.IsUserDefined: Boolean;
+begin
+  Result := False;
 end;
 
 { TNulViewItem.TKey }
@@ -445,6 +464,11 @@ begin
   Result := Supports(View, IStartPageView);
 end;
 
+function TStartPageViewItem.IsUserDefined: Boolean;
+begin
+  Result := False;
+end;
+
 { TStartPageViewItem.TKey }
 
 function TStartPageViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
@@ -462,12 +486,12 @@ end;
 
 function TSnippetViewItem.GetDescription: string;
 begin
-  Result := fSnippet.Name;
+  Result := GetSnippet.Name;
 end;
 
 function TSnippetViewItem.GetKey: IViewKey;
 begin
-  Result := TKey.Create(fSnippet.ID);
+  Result := TKey.Create(GetSnippet.ID);
 end;
 
 function TSnippetViewItem.GetSnippet: TSnippet;
@@ -481,7 +505,12 @@ var
 begin
   if not Supports(View, ISnippetView, SnippetView) then
     Exit(False);
-  Result := fSnippet.IsEqual(SnippetView.Snippet);
+  Result := GetSnippet.IsEqual(SnippetView.Snippet);
+end;
+
+function TSnippetViewItem.IsUserDefined: Boolean;
+begin
+  Result := GetSnippet.UserDefined;
 end;
 
 { TSnippetViewItem.TKey }
@@ -514,12 +543,12 @@ end;
 
 function TCategoryViewItem.GetDescription: string;
 begin
-  Result := fCategory.Description;
+  Result := GetCategory.Description;
 end;
 
 function TCategoryViewItem.GetKey: IViewKey;
 begin
-  Result := TKey.Create(fCategory.Category);
+  Result := TKey.Create(GetCategory.Category);
 end;
 
 function TCategoryViewItem.IsEqual(View: IView): Boolean;
@@ -528,7 +557,12 @@ var
 begin
   if not Supports(View, ICategoryView, CatView) then
     Exit(False);
-  Result := fCategory.IsEqual(CatView.Category);
+  Result := GetCategory.IsEqual(CatView.Category);
+end;
+
+function TCategoryViewItem.IsUserDefined: Boolean;
+begin
+  Result := GetCategory.UserDefined;
 end;
 
 { TCategoryViewItem.TKey }
@@ -556,12 +590,12 @@ end;
 
 function TSnippetKindViewItem.GetDescription: string;
 begin
-  Result := fKindInfo.DisplayName;
+  Result := GetKindInfo.DisplayName;
 end;
 
 function TSnippetKindViewItem.GetKey: IViewKey;
 begin
-  Result := TKey.Create(fKindInfo.Kind);
+  Result := TKey.Create(GetKindInfo.Kind);
 end;
 
 function TSnippetKindViewItem.GetKindInfo: TSnippetKindInfo;
@@ -575,7 +609,12 @@ var
 begin
   if not Supports(View, ISnippetKindView, SnipKindView) then
     Exit(False);
-  Result := fKindInfo.Kind = SnipKindView.KindInfo.Kind;
+  Result := GetKindInfo.Kind = SnipKindView.KindInfo.Kind;
+end;
+
+function TSnippetKindViewItem.IsUserDefined: Boolean;
+begin
+  Result := False;
 end;
 
 { TSnippetKindViewItem.TKey }
@@ -598,22 +637,22 @@ end;
 constructor TInitialLetterViewItem.Create(const Letter: TInitialLetter);
 begin
   inherited Create;
-  fLetter := Letter;
+  fInitialLetter := Letter;
 end;
 
 function TInitialLetterViewItem.GetDescription: string;
 begin
-  Result := fLetter.Letter;
+  Result := GetInitialLetter.Letter;
 end;
 
 function TInitialLetterViewItem.GetInitialLetter: TInitialLetter;
 begin
-  Result := fLetter;
+  Result := fInitialLetter;
 end;
 
 function TInitialLetterViewItem.GetKey: IViewKey;
 begin
-  Result := TKey.Create(fLetter);
+  Result := TKey.Create(GetInitialLetter);
 end;
 
 function TInitialLetterViewItem.IsEqual(View: IView): Boolean;
@@ -622,7 +661,12 @@ var
 begin
   if not Supports(View, IInitialLetterView, LetterView) then
     Exit(False);
-  Result := fLetter = LetterView.InitialLetter;
+  Result := GetInitialLetter = LetterView.InitialLetter;
+end;
+
+function TInitialLetterViewItem.IsUserDefined: Boolean;
+begin
+  Result := False;
 end;
 
 { TInitialLetterViewItem.TKey }
