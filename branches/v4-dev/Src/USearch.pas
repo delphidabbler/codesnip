@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes, Windows {for inlining}, Graphics,
   // Project
-  Compilers.UGlobals, UBaseObjects, USnippets;
+  Compilers.UGlobals, DB.USnippet, UBaseObjects;
 
 
 type

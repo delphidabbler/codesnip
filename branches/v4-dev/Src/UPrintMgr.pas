@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UBaseObjects, UPrintInfo, URTFUtils, USnippets, UView;
+  DB.USnippet, UBaseObjects, UPrintInfo, URTFUtils, UView;
 
 
 type

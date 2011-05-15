@@ -43,7 +43,7 @@ interface
 
 uses
   // Project
-  UBaseObjects, USnippets;
+  DB.USnippet, UBaseObjects;
 
 
 type

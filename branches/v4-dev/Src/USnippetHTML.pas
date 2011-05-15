@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  USnippets;
+  DB.USnippet;
 
 
 type
@@ -142,7 +142,7 @@ uses
   SysUtils, StrUtils,
   // Project
   Hiliter.UAttrs, Hiliter.UGlobals, Hiliter.UHiliters, UActiveTextHTML,
-  UHTMLDetailUtils, UHTMLUtils, USnippetKindInfo, UUtils;
+  UHTMLDetailUtils, UHTMLUtils, USnippetKindInfo, USnippets, UUtils;
 
 
 { TSnippetHTML }

@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  USnippets;
+  DB.USnippet;
 
 
 type

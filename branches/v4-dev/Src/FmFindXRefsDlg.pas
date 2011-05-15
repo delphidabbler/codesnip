@@ -45,7 +45,7 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericOKDlg, UBaseObjects, USearch, USnippets;
+  DB.USnippet, FmGenericOKDlg, UBaseObjects, USearch;
 
 
 type

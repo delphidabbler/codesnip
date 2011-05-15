@@ -45,10 +45,10 @@ uses
   SysUtils, Classes, ActnList, Buttons, StdCtrls, Forms, Controls, CheckLst,
   ComCtrls, ExtCtrls, StdActns, Menus, ImgList,
   // Project
-  Compilers.UGlobals, FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
-  UActiveText, UBaseObjects, UCategoryListAdapter, UChkListStateMgr,
-  UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, ULEDImageList,
-  UMemoCaretPosDisplayMgr, UMemoHelper, USnipKindListAdapter, USnippets,
+  Compilers.UGlobals, DB.USnippet, FmGenericOKDlg, FrBrowserBase,
+  FrFixedHTMLDlg, FrHTMLDlg, UActiveText, UBaseObjects, UCategoryListAdapter,
+  UChkListStateMgr, UCompileMgr, UCompileResultsLBMgr, UCSSBuilder,
+  ULEDImageList, UMemoCaretPosDisplayMgr, UMemoHelper, USnipKindListAdapter,
   USnippetsChkListMgr, UUnitsChkListMgr;
 
 
@@ -263,8 +263,8 @@ uses
   // Project
   FmDependenciesDlg, FmViewExtraDlg, IntfCommon, UColours, UConsts, UCSSUtils,
   UCtrlArranger, UExceptions, UFontHelper, UReservedCategories,
-  USnippetExtraHelper, USnippetValidator, UMessageBox, USnippetIDs, UStructs,
-  UTestUnitDlgMgr, UThemesEx, UUtils;
+  USnippetExtraHelper, USnippetValidator, UMessageBox, USnippetIDs, USnippets,
+  UStructs, UTestUnitDlgMgr, UThemesEx, UUtils;
 
 
 {$R *.dfm}

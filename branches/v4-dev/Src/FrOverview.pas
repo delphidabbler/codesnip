@@ -44,8 +44,8 @@ uses
   // Delphi
   ComCtrls, Controls, Classes, Windows, ExtCtrls, StdCtrls, ToolWin, Menus,
   // Project
-  FrTitled, IntfFrameMgrs, IntfNotifier, UCommandBars, UOverviewTreeState,
-  USnippets, USnippetsTVDraw, UView, UViewItemTreeNode;
+  DB.USnippet, FrTitled, IntfFrameMgrs, IntfNotifier, UCommandBars,
+  UOverviewTreeState, USnippetsTVDraw, UView, UViewItemTreeNode;
 
 
 type

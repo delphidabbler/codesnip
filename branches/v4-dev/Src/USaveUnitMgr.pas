@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  UIStringList, USourceFileInfo, USaveSourceMgr, USourceGen, USnippets;
+  DB.USnippet, UIStringList, USourceFileInfo, USaveSourceMgr, USourceGen;
 
 
 type

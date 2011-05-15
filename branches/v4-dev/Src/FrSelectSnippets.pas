@@ -44,7 +44,7 @@ uses
   // Delphi
   ImgList, Controls, Classes, ComCtrls,
   // Project
-  FrSelectSnippetsBase, USnippets;
+  DB.USnippet, FrSelectSnippetsBase, USnippets;
 
 
 type

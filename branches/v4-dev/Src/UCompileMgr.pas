@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes, Controls,
   // Project
-  Compilers.UGlobals, USnippets, UView;
+  Compilers.UGlobals, DB.USnippet, UView;
 
 
 type
@@ -143,7 +143,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, FmCompErrorDlg, FmCompilersDlg, UTestCompileUI;
+  Compilers.UCompilers, FmCompErrorDlg, FmCompilersDlg, USnippets,
+  UTestCompileUI;
 
 
 { TCompileMgr }

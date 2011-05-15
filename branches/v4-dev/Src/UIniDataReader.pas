@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes, Generics.Collections, IniFiles,
   // Project
-  UIStringList, UMainDBFileReader, USnipData, USnippets;
+  DB.USnippet, UIStringList, UMainDBFileReader, USnipData, USnippets;
 
 
 type

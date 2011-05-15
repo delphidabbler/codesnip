@@ -45,8 +45,8 @@ uses
   // Delphi
   Forms, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericOKDlg, FrCheckedTV, FrSelectSnippets, FrSelectSnippetsBase,
-  UBaseObjects, USearch, USnippets;
+  DB.USnippet, FmGenericOKDlg, FrCheckedTV, FrSelectSnippets,
+  FrSelectSnippetsBase, UBaseObjects, USearch;
 
 
 type
@@ -113,7 +113,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils;
+  SysUtils,
+  // Project
+  USnippets;
 
 
 {$R *.dfm}

@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  USearch, USnippets;
+  DB.USnippet, USearch, USnippets;
 
 
 type

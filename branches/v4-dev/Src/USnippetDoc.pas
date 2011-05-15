@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes,
   // Project
-  Compilers.UGlobals, UActiveText, UEncodings, UIStringList, USnippets;
+  Compilers.UGlobals, DB.USnippet, UActiveText, UEncodings, UIStringList;
 
 
 type
@@ -154,7 +154,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, UUtils, USnippetKindInfo, Web.UInfo;
+  Compilers.UCompilers, UUtils, USnippetKindInfo, USnippets, Web.UInfo;
 
 
 { TSnippetDoc }

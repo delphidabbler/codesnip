@@ -89,7 +89,7 @@ implementation
 
 uses
   // Project
-  USnippets, UView;
+  DB.USnippet, USnippets, UView;
 
 
 { TSnippetAction }

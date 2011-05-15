@@ -113,7 +113,7 @@ interface
 
 uses
   // Project
-  UExceptions, USnippets, UIStringList;
+  DB.USnippet, UExceptions, USnippets, UIStringList;
 
 
 type

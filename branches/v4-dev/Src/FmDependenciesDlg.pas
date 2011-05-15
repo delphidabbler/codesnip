@@ -44,7 +44,7 @@ uses
   // Delphi
   ComCtrls, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericViewDlg, UBaseObjects, USnippetIDs, USnippets, USnippetsTVDraw;
+  DB.USnippet, FmGenericViewDlg, UBaseObjects, USnippetIDs, USnippetsTVDraw;
 
 
 type

@@ -44,7 +44,7 @@ uses
   // Delphi
   ImgList, Controls, Classes, ComCtrls,
   // Project
-  FrCheckedTV, USnippets, USnippetsTVDraw;
+  DB.USnippet, FrCheckedTV, USnippets, USnippetsTVDraw;
 
 
 type

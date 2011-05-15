@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UBaseObjects, USnippets;
+  DB.USnippet, UBaseObjects;
 
 
 type

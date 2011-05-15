@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  Compilers.UGlobals, UBaseObjects, USnippets, UThreadEx;
+  Compilers.UGlobals, DB.USnippet, UBaseObjects, UThreadEx;
 
 
 type

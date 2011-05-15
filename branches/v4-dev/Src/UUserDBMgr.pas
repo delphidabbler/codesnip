@@ -135,7 +135,7 @@ uses
   // Delphi
   SysUtils, Dialogs, Windows {for inlining},
   // Project
-  FmAddCategoryDlg, FmDeleteCategoryDlg, FmRenameCategoryDlg,
+  DB.USnippet, FmAddCategoryDlg, FmDeleteCategoryDlg, FmRenameCategoryDlg,
   FmSnippetsEditorDlg, UConsts, UExceptions, UIStringList, UMessageBox,
   UOpenDialogEx, UOpenDialogHelper, UReservedCategories, USaveDialogEx,
   USnippetIDs, UUserDBBackup;

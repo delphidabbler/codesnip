@@ -44,7 +44,7 @@ uses
   // Delphi
   Controls, CheckLst, Windows,
   // Project
-  USnippetIDs, USnippets;
+  DB.USnippet, USnippetIDs;
 
 
 type

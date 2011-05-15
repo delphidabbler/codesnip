@@ -43,7 +43,7 @@ interface
 
 uses
   // Project
-  UBaseObjects, USnippets, UView;
+  DB.USnippet, UBaseObjects, UView;
 
 
 type
@@ -91,7 +91,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  FmCodeExportDlg, FmCodeSubmitDlg, UCodeImportMgr;
+  FmCodeExportDlg, FmCodeSubmitDlg, UCodeImportMgr, USnippets;
 
 
 { TCodeShareMgr }

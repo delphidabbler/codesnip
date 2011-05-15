@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  UBaseObjects, UCodeImportExport, UExceptions, USnippets;
+  UBaseObjects, UCodeImportExport, UExceptions;
 
 
 type
@@ -139,8 +139,9 @@ uses
   // Delphi
   SysUtils, Classes, Controls, Dialogs,
   // Project
-  FmEditTextDlg, UActiveText, UConsts, UIOUtils, UMessageBox, UOpenDialogEx,
-  UOpenDialogHelper, USnippetIDs, USnippetValidator, UStructs;
+  DB.USnippet, FmEditTextDlg, UActiveText, UConsts, UIOUtils, UMessageBox,
+  UOpenDialogEx, UOpenDialogHelper, USnippetIDs, USnippets, USnippetValidator,
+  UStructs;
 
 
 { TCodeImportMgr }

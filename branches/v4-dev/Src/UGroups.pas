@@ -40,9 +40,10 @@ interface
 
 
 uses
+  // Delphi
+  Generics.Collections,
   // Project
-  UContainers, UInitialLetter, USnippetKindInfo, USnippets,
-  Generics.Collections;
+  DB.USnippet, UContainers, UInitialLetter, USnippetKindInfo, USnippets;
 
 
 type

@@ -46,7 +46,7 @@ uses
   // Delphi
   Classes, Generics.Collections,
   // Project
-  UBaseObjects, UIStringList, USnippets;
+  DB.USnippet, UBaseObjects, UIStringList;
 
 
 type

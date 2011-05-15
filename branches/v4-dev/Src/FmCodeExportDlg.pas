@@ -44,8 +44,8 @@ uses
   // Delphi
   Classes, StdCtrls, Controls, Forms, ExtCtrls,
   // Project
-  FmGenericOKDlg, FrCheckedTV, FrSelectUserSnippets, FrSelectSnippets,
-  FrSelectSnippetsBase, UBaseObjects, USnippets;
+  DB.USnippet, FmGenericOKDlg, FrCheckedTV, FrSelectUserSnippets,
+  FrSelectSnippets, FrSelectSnippetsBase, UBaseObjects;
 
 
 type

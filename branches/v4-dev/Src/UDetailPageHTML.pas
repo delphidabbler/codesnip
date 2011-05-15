@@ -48,7 +48,7 @@ uses
   // Delphi
   Classes,
   // Project
-  Compilers.UGlobals, UHTMLTemplate, USnippets, UView;
+  Compilers.UGlobals, DB.USnippet, UHTMLTemplate, UView;
 
 
 type
@@ -319,7 +319,7 @@ uses
   // Project
   Compilers.UCompilers, UCompResHTML, UConsts, UCSSUtils, UEncodings,
   UHTMLUtils, UHTMLDetailUtils, UJavaScriptUtils, UQuery, UResourceUtils,
-  USnippetHTML, UUtils;
+  USnippetHTML, USnippets, UUtils;
 
 
 { TDetailPageHTML }

@@ -45,7 +45,7 @@ uses
   // Delphi
   SHDocVw, ActiveX,
   // Project
-  Browser.IntfDocHostUI, Compilers.UGlobals, UCommandBars, USnippets, UView;
+  Browser.IntfDocHostUI, DB.USnippet, Compilers.UGlobals, UCommandBars, UView;
 
 
 const

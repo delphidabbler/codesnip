@@ -44,7 +44,7 @@ uses
   // Delphu
   ComCtrls,
   // Project
-  UGroups, USnippets, UView, UViewItemTreeNode;
+  DB.USnippet, UGroups, UView, UViewItemTreeNode;
 
 
 type

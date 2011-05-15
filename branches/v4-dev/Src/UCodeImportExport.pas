@@ -44,8 +44,8 @@ uses
   // Delphi
   SysUtils, Classes, XMLIntf,
   // Project
-  UBaseObjects, UEncodings,  UExceptions, UIStringList, USnippets, UUserDetails,
-  UXMLDocHelper, UXMLDocumentEx;
+  DB.USnippet, UBaseObjects, UEncodings,  UExceptions, UIStringList,
+  UUserDetails, UXMLDocHelper, UXMLDocumentEx;
 
 
 type
@@ -237,7 +237,7 @@ uses
   ActiveX, XMLDom,
   // Project
   UAppInfo, UREMLDataIO, UReservedCategories, USnippetExtraHelper, USnippetIDs,
-  UStructs, UXMLDocConsts;
+  USnippets, UStructs, UXMLDocConsts;
 
 
 const

@@ -44,9 +44,9 @@ uses
   // Delphi
   StdCtrls, Forms, ComCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmWizardDlg, FrBrowserBase, FrCheckedTV, FrFixedHTMLDlg, FrHTMLDlg,
-  FrSelectSnippetsBase, FrSelectUserSnippets, UBaseObjects, UEncodings,
-  UExceptions, USnippets;
+  DB.USnippet, FmWizardDlg, FrBrowserBase, FrCheckedTV, FrFixedHTMLDlg,
+  FrHTMLDlg, FrSelectSnippetsBase, FrSelectUserSnippets, UBaseObjects,
+  UEncodings, UExceptions;
 
 
 type

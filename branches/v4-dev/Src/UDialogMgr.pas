@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes,
   // Project
-  USearch, USnippets;
+  DB.USnippet, USearch;
 
 
 type
