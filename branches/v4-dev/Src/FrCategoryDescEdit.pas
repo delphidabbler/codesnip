@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -166,7 +166,7 @@ var
   Cat: TCategory; // each category in database
 begin
   Result := False;
-  for Cat in Snippets.Categories do
+  for Cat in Database.Categories do
     if AnsiSameText(Desc, Cat.Description) then
     begin
       Result := True;

@@ -155,7 +155,7 @@ procedure TDeleteCategoryDlg.DeleteCategory(const Cat: TCategory);
     @param Cat [in] Category to be deleted.
   }
 begin
-  (Snippets as ISnippetsEdit).DeleteCategory(Cat);
+  (Database as ISnippetsEdit).DeleteCategory(Cat);
 end;
 
 class function TDeleteCategoryDlg.Execute(AOwner: TComponent;

@@ -590,7 +590,7 @@ begin
       SnippetNode := SnippetNodes[Idx];
       fSnippetInfp[Idx].Name := SnippetNode.Attributes[cSnippetNameAttr];
       fSnippetInfp[Idx].Data :=
-        (Snippets as ISnippetsEdit).GetEditableSnippetInfo;
+        (Database as ISnippetsEdit).GetEditableSnippetInfo;
       with fSnippetInfp[Idx].Data do
       begin
         Props.Cat := TReservedCategories.ImportsCatName;

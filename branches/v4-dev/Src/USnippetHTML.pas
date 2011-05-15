@@ -187,7 +187,7 @@ function TInfoHTML.Category: string;
 var
   Cat: TCategory; // category that snippet belongs to
 begin
-  Cat := Snippets.Categories.Find(Snippet.Category);
+  Cat := Database.Categories.Find(Snippet.Category);
   Assert(Assigned(Cat), ClassName + '.Category: Category not found');
   Result := MakeSentence(
     CategoryALink(Cat.Category, Cat.Description)

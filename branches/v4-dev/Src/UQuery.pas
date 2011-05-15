@@ -205,7 +205,7 @@ begin
   try
     // Get list of snippets that match search
     // if there are no snippets found we leave current selection alone
-    Result := (Search as ISearch).Execute(Snippets.Snippets, FoundList);
+    Result := (Search as ISearch).Execute(Database.Snippets, FoundList);
     if Result then
     begin
       // Search succeeded: record search and list of snippets
@@ -300,7 +300,7 @@ procedure TQuery.Reset;
   Search property is set to nul search.
   }
 begin
-  fSelection.Assign(Snippets.Snippets);
+  fSelection.Assign(Database.Snippets);
   fSearch := TSearchFactory.CreateNulSearch;
 end;
 

@@ -636,7 +636,7 @@ type
   end;
 
 
-function Snippets: ISnippets;
+function Database: ISnippets;
   {Returns singleton instance of object that encapsulates main and user
   databases.
     @return Singleton object.
@@ -1034,7 +1034,7 @@ type
       }
   end;
 
-function Snippets: ISnippets;
+function Database: ISnippets;
   {Returns singleton instance of object that encapsulates main and user
   databases.
     @return Singleton object.

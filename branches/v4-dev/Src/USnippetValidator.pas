@@ -268,7 +268,7 @@ class function TSnippetValidator.ValidateDependsList(const SnippetName: string;
 var
   TempSnippet: TSnippet;  // temporary snippet that is checked for dependencies
 begin
-  TempSnippet := (Snippets as ISnippetsEdit).CreateTempSnippet(
+  TempSnippet := (Database as ISnippetsEdit).CreateTempSnippet(
     SnippetName, Data
   );
   try
@@ -412,7 +412,7 @@ begin
   else if not IsValidIdent(TrimmedName) then
     ErrorMsg := Format(sErrBadName, [TrimmedName])
   else if CheckForUniqueness and
-    (Snippets.Snippets.Find(TrimmedName, True) <> nil) then
+    (Database.Snippets.Find(TrimmedName, True) <> nil) then
     ErrorMsg := Format(sErrDupName, [TrimmedName])
   else
     Result := True;

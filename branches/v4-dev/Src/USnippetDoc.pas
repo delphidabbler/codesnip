@@ -222,7 +222,7 @@ begin
     sKindTitle, TSnippetKindInfoList.Items[Snippet.Kind].DisplayName
   );
   RenderTitledText(
-    sCategoryTitle, Snippets.Categories.Find(Snippet.Category).Description
+    sCategoryTitle, Database.Categories.Find(Snippet.Category).Description
   );
   RenderTitledList(sUnitListTitle, TIStringList.Create(Snippet.Units));
   RenderTitledList(sDependListTitle, SnippetsToStrings(Snippet.Depends));

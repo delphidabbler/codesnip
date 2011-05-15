@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -94,7 +94,7 @@ var
 begin
   Assert(Assigned(fNotifier), ClassName + '.Execute: Notifier not set');
   Assert(CatID <> '', ClassName + '.Execute: CatID not provided');
-  Cat := Snippets.Categories.Find(CatID);
+  Cat := Database.Categories.Find(CatID);
   Assert(Assigned(Cat), ClassName + '.Execute: CatID not valid');
   // Create a view item for category and get notifier to display it
   fNotifier.ShowViewItem(TViewItemFactory.CreateCategoryView(Cat));

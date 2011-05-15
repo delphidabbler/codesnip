@@ -544,12 +544,12 @@ begin
     SnippetName := Trim(edName.Text);
     // Add or update snippet
     if Assigned(fSnippet) then
-      fSnippet := (Snippets as ISnippetsEdit).UpdateSnippet(
+      fSnippet := (Database as ISnippetsEdit).UpdateSnippet(
         fSnippet, fEditData, SnippetName
       )
     else
     begin
-      fSnippet := (Snippets as ISnippetsEdit).AddSnippet(
+      fSnippet := (Database as ISnippetsEdit).AddSnippet(
         SnippetName, fEditData
       )
     end;
@@ -641,7 +641,7 @@ begin
   ValidateData;
   // Create snippet object from entered data
   EditData.Assign(UpdateData);
-  Result := (Snippets as ISnippetsEdit).CreateTempSnippet(
+  Result := (Database as ISnippetsEdit).CreateTempSnippet(
     Trim(edName.Text), EditData
   );
 end;
@@ -711,7 +711,7 @@ procedure TSnippetsEditorDlg.FormCreate(Sender: TObject);
   }
 begin
   inherited;
-  fCatList := TCategoryListAdapter.Create(Snippets.Categories);
+  fCatList := TCategoryListAdapter.Create(Database.Categories);
   fSnipKindList := TSnipKindListAdapter.Create;
   fCompileMgr := TCompileMgr.Create(Self);  // auto-freed
   fMemoCaretPosDisplayMgr := TMemoCaretPosDisplayMgr.Create;
@@ -826,7 +826,7 @@ begin
   inherited;
   // Get data associated with snippet, or blank / default data if adding a new
   // snippet
-  fEditData := (Snippets as ISnippetsEdit).GetEditableSnippetInfo(fSnippet);
+  fEditData := (Database as ISnippetsEdit).GetEditableSnippetInfo(fSnippet);
   // Record snippet's original name, if any
   if Assigned(fSnippet) then
     fOrigName := fSnippet.Name
@@ -936,14 +936,14 @@ begin
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
   EditSnippetID := TSnippetID.Create(fOrigName, True);
-  for Snippet in Snippets.Snippets do
+  for Snippet in Database.Snippets do
   begin
     // We ignore snippet being edited and main database snippets if there is
     // a user-defined one with same name
     if (Snippet.ID <> EditSnippetID) and
       (
         Snippet.UserDefined or
-        not Assigned(Snippets.Snippets.Find(Snippet.Name, True))
+        not Assigned(Database.Snippets.Find(Snippet.Name, True))
       ) then
     begin
       // Decide if snippet can be added to depends list: must be correct kind

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -106,11 +106,11 @@ procedure TAddCategoryDlg.AddCategory(const Desc: string);
 var
   Data: TCategoryData;  // category properties
 begin
-  Data := (Snippets as ISnippetsEdit).GetEditableCategoryInfo;
+  Data := (Database as ISnippetsEdit).GetEditableCategoryInfo;
   Data.Desc := Desc;
   // add category with a unique id string as name (name must be unique and is
   // for internal use only)
-  (Snippets as ISnippetsEdit).AddCategory(TUniqueID.Generate, Data);
+  (Database as ISnippetsEdit).AddCategory(TUniqueID.Generate, Data);
 end;
 
 procedure TAddCategoryDlg.ArrangeForm;

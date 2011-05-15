@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -225,9 +225,9 @@ procedure TRenameCategoryDlg.RenameCategory(const Category: TCategory;
 var
   EditData: TCategoryData;  // category properties
 begin
-  EditData := (Snippets as ISnippetsEdit).GetEditableCategoryInfo(Category);
+  EditData := (Database as ISnippetsEdit).GetEditableCategoryInfo(Category);
   EditData.Desc := NewDesc;
-  (Snippets as ISnippetsEdit).UpdateCategory(Category, EditData);
+  (Database as ISnippetsEdit).UpdateCategory(Category, EditData);
 end;
 
 procedure TRenameCategoryDlg.UpdateOKBtn;

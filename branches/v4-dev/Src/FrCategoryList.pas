@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -178,7 +178,7 @@ begin
   if lbCategories.ItemIndex >= 0 then
   begin
     CatID := fCatList.CatName(lbCategories.ItemIndex);
-    Result := Snippets.Categories.Find(CatID);
+    Result := Database.Categories.Find(CatID);
   end
   else
     Result := nil;

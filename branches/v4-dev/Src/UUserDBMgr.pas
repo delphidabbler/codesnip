@@ -274,7 +274,7 @@ class function TUserDBMgr.CanSave: Boolean;
   }
 begin
   // We can save database if it's been changed
-  Result := (Snippets as ISnippetsEdit).Updated;
+  Result := (Database as ISnippetsEdit).Updated;
 end;
 
 class procedure TUserDBMgr.CanSaveDialogClose(Sender: TObject;
@@ -310,7 +310,7 @@ var
   Cat: TCategory; // references each category in snippets database
 begin
   Result := TCategoryList.Create;
-  for Cat in Snippets.Categories do
+  for Cat in Database.Categories do
     if Cat.UserDefined and
       (IncludeSpecial or not TReservedCategories.IsReserved(Cat)) then
       Result.Add(Cat);
@@ -372,7 +372,7 @@ begin
   Assert(Snippet.UserDefined,
     ClassName + '.Delete: Snippet must be user defined');
   // Check if snippet has dependents: don't allow deletion if so
-  Dependents := (Snippets as ISnippetsEdit).GetDependents(Snippet);
+  Dependents := (Database as ISnippetsEdit).GetDependents(Snippet);
   if Dependents.Count > 0 then
   begin
     TMessageBox.Error(
@@ -385,7 +385,7 @@ begin
     Exit;
   end;
   // Get permission to delete. If snippet has dependents list them in prompt
-  Referrers := (Snippets as ISnippetsEdit).GetReferrers(Snippet);
+  Referrers := (Database as ISnippetsEdit).GetReferrers(Snippet);
   if Referrers.Count = 0 then
     ConfirmMsg := Format(sConfirmDelete, [Snippet.Name])
   else
@@ -397,7 +397,7 @@ begin
       ]
     );
   if TMessageBox.Confirm(nil, ConfirmMsg) then
-    (Snippets as ISnippetsEdit).DeleteSnippet(Snippet);
+    (Database as ISnippetsEdit).DeleteSnippet(Snippet);
 end;
 
 class procedure TUserDBMgr.EditSnippet(const SnippetName: string);
@@ -407,7 +407,7 @@ class procedure TUserDBMgr.EditSnippet(const SnippetName: string);
 var
   Snippet: TSnippet;    // reference to snippet to be edited
 begin
-  Snippet := Snippets.Snippets.Find(SnippetName, True);
+  Snippet := Database.Snippets.Find(SnippetName, True);
   if not Assigned(Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not in user database');
   TSnippetsEditorDlg.EditSnippet(nil, Snippet);
@@ -468,7 +468,7 @@ class procedure TUserDBMgr.Save;
   {Saves user database.
   }
 begin
-  (Snippets as ISnippetsEdit).Save;
+  (Database as ISnippetsEdit).Save;
 end;
 
 end.

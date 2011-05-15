@@ -388,7 +388,7 @@ var
   Snippet: TSnippet;        // each snippet in a category
   Item: TCategoryGroupItem; // group item for each category
 begin
-  for Cat in Snippets.Categories do
+  for Cat in Database.Categories do
   begin
     Item := TCategoryGroupItem.Create(Cat);
     AddItem(Item);

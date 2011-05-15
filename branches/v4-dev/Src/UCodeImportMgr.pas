@@ -254,7 +254,7 @@ begin
   // Scan all snippets checking if they already exist in user database
   for SnippetIdx := Low(SnipList) to High(SnipList) do
   begin
-    if Snippets.Snippets.Find(SnipList[SnippetIdx].Name, True) = nil then
+    if Database.Snippets.Find(SnipList[SnippetIdx].Name, True) = nil then
       // snippet doesn't exist: include it in import
       IncludeSnippet(SnipList[SnippetIdx])
     else
@@ -399,7 +399,7 @@ var
 begin
   // Create new suggested name
   NameCounter := 2;
-  while Snippets.Snippets.Find(
+  while Database.Snippets.Find(
     Snippet.Name + IntToStr(NameCounter), True
   ) <> nil do
     Inc(NameCounter);
@@ -480,7 +480,7 @@ class procedure TCodeImportMgr.UpdateUserDatabase(const UserInfo: TUserInfo;
     begin
       SnippetID := Depends[Idx];
       SnippetID.UserDefined :=
-        Snippets.Snippets.Find(SnippetID.Name, True) <> nil;
+        Database.Snippets.Find(SnippetID.Name, True) <> nil;
       Depends[Idx] := SnippetID;
     end;
   end;
@@ -514,13 +514,13 @@ var
   Editor: ISnippetsEdit;  // object used to update user database
   Snippet: TSnippet;      // reference to existing snippets
 begin
-  Editor := Snippets as ISnippetsEdit;
+  Editor := Database as ISnippetsEdit;
   for Idx := Low(SnipList) to High(SnipList) do
   begin
     AdjustDependsList(SnipList[Idx].Data.Refs.Depends);
     if not UserInfo.IsNul then
       SnipList[Idx].Data.Props.Extra.Append(UserInfoActiveText);
-    Snippet := Snippets.Snippets.Find(SnipList[Idx].Name, True);
+    Snippet := Database.Snippets.Find(SnipList[Idx].Name, True);
     if Assigned(Snippet) then
       // snippet already exists: overwrite it
       Editor.UpdateSnippet(Snippet, SnipList[Idx].Data)

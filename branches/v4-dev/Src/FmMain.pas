@@ -848,7 +848,7 @@ procedure TMainForm.ActNonEmptyDBUpdate(Sender: TObject);
     @param Sender [in] Action triggering this event.
   }
 begin
-  (Sender as TAction).Enabled := Snippets.Snippets.Count > 0;
+  (Sender as TAction).Enabled := Database.Snippets.Count > 0;
 end;
 
 procedure TMainForm.ActOverviewTabExecute(Sender: TObject);
@@ -1164,9 +1164,9 @@ begin
   if fDialogMgr.ExecUpdateDlg then
   begin
     // Database was updated: check if user database needs saving
-    if (Snippets as ISnippetsEdit).Updated
+    if (Database as ISnippetsEdit).Updated
       and TMessageBox.Confirm(Self, sConfirmSave) then
-      (Snippets as ISnippetsEdit).Save;
+      (Database as ISnippetsEdit).Save;
     // Reload the databases
     ReloadDatabase;
   end;
@@ -1348,13 +1348,13 @@ procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   inherited;
   // Save any changes to user database
-  with Snippets as ISnippetsEdit do
+  with Database as ISnippetsEdit do
   begin
     if Updated then
       Save;
   end;
   // Unhook snippets event handler
-  Snippets.RemoveChangeEventHandler(SnippetsChangeHandler);
+  Database.RemoveChangeEventHandler(SnippetsChangeHandler);
   // Save window state
   fWindowSettings.SplitterPos := pnlLeft.Width;
   fWindowSettings.OverviewTab := fMainDisplayMgr.SelectedOverviewTab;
@@ -1564,7 +1564,7 @@ begin
     fIsAppRegistered := TAppInfo.IsRegistered;
 
     // Set event handler for snippets database
-    Snippets.AddChangeEventHandler(SnippetsChangeHandler);
+    Database.AddChangeEventHandler(SnippetsChangeHandler);
 
     // Load snippets database
     LoadSnippets(
