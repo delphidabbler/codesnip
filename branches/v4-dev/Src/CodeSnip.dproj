@@ -54,6 +54,9 @@
 			<DCCReference Include="Compilers.UFreePascal.pas"/>
 			<DCCReference Include="Compilers.UGlobals.pas"/>
 			<DCCReference Include="Compilers.URunner.pas"/>
+			<DCCReference Include="DB.UCategory.pas"/>
+			<DCCReference Include="DB.UMain.pas"/>
+			<DCCReference Include="DB.USnippet.pas"/>
 			<DCCReference Include="FmAboutDlg.pas">
 				<Form>AboutDlg</Form>
 			</DCCReference>
@@ -449,7 +452,6 @@
 			<DCCReference Include="USnippetHTML.pas"/>
 			<DCCReference Include="USnippetIDs.pas"/>
 			<DCCReference Include="USnippetKindInfo.pas"/>
-			<DCCReference Include="USnippets.pas"/>
 			<DCCReference Include="USnippetsChkListMgr.pas"/>
 			<DCCReference Include="USnippetsIO.pas"/>
 			<DCCReference Include="USnippetSourceGen.pas"/>
@@ -507,8 +509,6 @@
 			<DCCReference Include="Web.URegistrar.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas"/>
-			<DCCReference Include="DB.USnippet.pas"/>
-			<DCCReference Include="DB.UCategory.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

@@ -409,13 +409,13 @@ uses
   // Delphi
   Windows,
   // Project
-  DB.UCategory, DB.USnippet, FmSplash, FmTrappedBugReportDlg, FmWaitDlg,
-  IntfFrameMgrs, UActionFactory, UAppInfo, UCodeShareMgr, UCommandBars,
-  UCompLogAction, UConsts, UCopyInfoMgr, UCopySourceMgr, UDatabaseLoader,
-  UDatabaseLoaderUI, UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus,
-  UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr,
-  USaveUnitMgr, USnippets, UUserDBMgr, UView, UViewItemAction, UWBExternal,
-  Web.UInfo;
+  DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
+  FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo, UCodeShareMgr,
+  UCommandBars, UCompLogAction, UConsts, UCopyInfoMgr, UCopySourceMgr,
+  UDatabaseLoader, UDatabaseLoaderUI, UEditSnippetAction, UExceptions, UHelpMgr,
+  UHistoryMenus, UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery,
+  USaveSnippetMgr, USaveUnitMgr, UUserDBMgr, UView, UViewItemAction,
+  UWBExternal, Web.UInfo;
 
 
 {$R *.dfm}

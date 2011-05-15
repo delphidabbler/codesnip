@@ -1,5 +1,5 @@
 {
- * USnippets.pas
+ * DB.UMain.pas
  *
  * Defines a singleton object and subsidiary classes that encapsulate the
  * snippets and categories in the CodeSnip database and user defined databases.
@@ -19,7 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is USnippets.pas
+ * The Original Code is DB.UMain.pas, formerly USnippets.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +34,7 @@
 }
 
 
-unit USnippets;
+unit DB.UMain;
 
 
 interface

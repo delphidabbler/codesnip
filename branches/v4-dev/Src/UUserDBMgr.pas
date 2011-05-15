@@ -135,10 +135,10 @@ uses
   // Delphi
   SysUtils, Dialogs, Windows {for inlining},
   // Project
-  DB.USnippet, FmAddCategoryDlg, FmDeleteCategoryDlg, FmRenameCategoryDlg,
-  FmSnippetsEditorDlg, UConsts, UExceptions, UIStringList, UMessageBox,
-  UOpenDialogEx, UOpenDialogHelper, UReservedCategories, USaveDialogEx,
-  USnippetIDs, USnippets, UUserDBBackup;
+  DB.UMain, DB.USnippet, FmAddCategoryDlg, FmDeleteCategoryDlg,
+  FmRenameCategoryDlg, FmSnippetsEditorDlg, UConsts, UExceptions, UIStringList,
+  UMessageBox, UOpenDialogEx, UOpenDialogHelper, UReservedCategories,
+  USaveDialogEx, USnippetIDs, UUserDBBackup;
 
 
 { TUserDBMgr }

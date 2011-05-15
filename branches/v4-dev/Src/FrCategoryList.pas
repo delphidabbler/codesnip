@@ -113,7 +113,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UCtrlArranger, USnippets;
+  DB.UMain, UCtrlArranger;
 
 {$R *.dfm}
 

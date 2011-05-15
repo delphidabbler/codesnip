@@ -143,7 +143,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, FmCompErrorDlg, FmCompilersDlg, USnippets,
+  Compilers.UCompilers, DB.UMain, FmCompErrorDlg, FmCompilersDlg,
   UTestCompileUI;
 
 

@@ -145,7 +145,7 @@ uses
   // Delphi
   SysUtils, Forms,
   // Project
-  UQuery, USearch, USnippets, UStructs;
+  DB.UMain, UQuery, USearch, UStructs;
 
 
 { TStatusBarMgr }

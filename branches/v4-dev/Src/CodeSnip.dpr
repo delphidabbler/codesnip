@@ -78,6 +78,9 @@ uses
   Compilers.UFreePascal in 'Compilers.UFreePascal.pas',
   Compilers.UGlobals in 'Compilers.UGlobals.pas',
   Compilers.URunner in 'Compilers.URunner.pas',
+  DB.UCategory in 'DB.UCategory.pas',
+  DB.UMain in 'DB.UMain.pas',
+  DB.USnippet in 'DB.USnippet.pas',
   FmAboutDlg in 'FmAboutDlg.pas' {AboutDlg},
   FmAddCategoryDlg in 'FmAddCategoryDlg.pas' {AddCategoryDlg},
   FmBase in 'FmBase.pas' {BaseForm},
@@ -307,7 +310,6 @@ uses
   USnippetHTML in 'USnippetHTML.pas',
   USnippetIDs in 'USnippetIDs.pas',
   USnippetKindInfo in 'USnippetKindInfo.pas',
-  USnippets in 'USnippets.pas',
   USnippetsChkListMgr in 'USnippetsChkListMgr.pas',
   USnippetsIO in 'USnippetsIO.pas',
   USnippetSourceGen in 'USnippetSourceGen.pas',
@@ -364,9 +366,7 @@ uses
   Web.UInfo in 'Web.UInfo.pas',
   Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
-  Web.UXMLRequestor in 'Web.UXMLRequestor.pas',
-  DB.USnippet in 'DB.USnippet.pas',
-  DB.UCategory in 'DB.UCategory.pas';
+  Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
 
 // Include compiler defines: checks if compiler supported
 {$Include CompilerDefines.inc}

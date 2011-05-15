@@ -141,9 +141,8 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  DB.UCategory, Hiliter.UAttrs, Hiliter.UGlobals, Hiliter.UHiliters,
-  UActiveTextHTML, UHTMLDetailUtils, UHTMLUtils, USnippetKindInfo, USnippets,
-  UUtils;
+  DB.UCategory, DB.UMain, Hiliter.UAttrs, Hiliter.UGlobals, Hiliter.UHiliters,
+  UActiveTextHTML, UHTMLDetailUtils, UHTMLUtils, USnippetKindInfo, UUtils;
 
 
 { TSnippetHTML }

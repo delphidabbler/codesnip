@@ -115,7 +115,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  USnippets;
+  DB.UMain;
 
 
 {$R *.dfm}

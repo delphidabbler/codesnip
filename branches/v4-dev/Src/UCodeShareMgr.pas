@@ -91,7 +91,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  FmCodeExportDlg, FmCodeSubmitDlg, UCodeImportMgr, USnippets;
+  DB.UMain, FmCodeExportDlg, FmCodeSubmitDlg, UCodeImportMgr;
 
 
 { TCodeShareMgr }

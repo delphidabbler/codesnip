@@ -317,9 +317,9 @@ uses
   // Delphi
   SysUtils, Character,
   // Project
-  Compilers.UCompilers, UCompResHTML, UConsts, UCSSUtils, UEncodings,
+  Compilers.UCompilers, DB.UMain, UCompResHTML, UConsts, UCSSUtils, UEncodings,
   UHTMLUtils, UHTMLDetailUtils, UJavaScriptUtils, UQuery, UResourceUtils,
-  USnippetHTML, USnippets, UUtils;
+  USnippetHTML, UUtils;
 
 
 { TDetailPageHTML }

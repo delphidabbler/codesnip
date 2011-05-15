@@ -154,7 +154,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, UUtils, USnippetKindInfo, USnippets, Web.UInfo;
+  Compilers.UCompilers, DB.UMain, UUtils, USnippetKindInfo, Web.UInfo;
 
 
 { TSnippetDoc }

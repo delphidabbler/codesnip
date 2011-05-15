@@ -144,7 +144,7 @@ uses
   // Delphi
   SysUtils, StdCtrls,
   // Project
-  UGroups, USnippets;
+  DB.UMain, UGroups;
 
 
 {$R *.dfm}

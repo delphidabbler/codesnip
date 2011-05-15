@@ -79,7 +79,7 @@ implementation
 
 uses
   // Project
-  DB.UCategory, USnippets, UView;
+  DB.UCategory, DB.UMain, UView;
 
 
 { TCategoryAction }

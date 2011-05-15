@@ -116,7 +116,7 @@ uses
   // Delphi
   SysUtils, Windows {for inlining},
   // Project
-  UCtrlArranger, USnippets;
+  UCtrlArranger, DB.UMain;
 
 {$R *.dfm}
 

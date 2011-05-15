@@ -79,7 +79,7 @@ implementation
 
 uses
   // Project
-  UQuery, USnippets;
+  UQuery, DB.UMain;
 
 
 { TDatabaseLoader }

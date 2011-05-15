@@ -137,7 +137,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  USnippetKindInfo, USnippets, UURIEncode;
+  DB.UMain, USnippetKindInfo, UURIEncode;
 
 
 { TSnippetValidator }

@@ -95,7 +95,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UConsts, UMessageBox, USnippets;
+  DB.UMain, UConsts, UMessageBox;
 
 {$R *.dfm}
 

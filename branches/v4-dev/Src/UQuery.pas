@@ -109,7 +109,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UBaseObjects, USnippets;
+  DB.UMain, UBaseObjects;
 
 
 type

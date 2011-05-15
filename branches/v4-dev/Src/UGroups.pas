@@ -280,7 +280,7 @@ uses
   // Delphi
   SysUtils, Windows {for inlining}, Generics.Defaults,
   // Project
-  USnippets;
+  DB.UMain;
 
 
 { TGrouping }

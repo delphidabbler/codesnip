@@ -139,8 +139,8 @@ uses
   // Delphi
   SysUtils, Classes, Controls, Dialogs,
   // Project
-  DB.USnippet, FmEditTextDlg, UActiveText, UConsts, UIOUtils, UMessageBox,
-  UOpenDialogEx, UOpenDialogHelper, USnippetIDs, USnippets, USnippetValidator,
+  DB.UMain, DB.USnippet, FmEditTextDlg, UActiveText, UConsts, UIOUtils,
+  UMessageBox, UOpenDialogEx, UOpenDialogHelper, USnippetIDs, USnippetValidator,
   UStructs;
 
 
