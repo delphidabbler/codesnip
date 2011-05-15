@@ -511,10 +511,10 @@ class procedure TCodeImportMgr.UpdateUserDatabase(const UserInfo: TUserInfo;
 
 var
   Idx: Integer;           // loops through all snippets
-  Editor: ISnippetsEdit;  // object used to update user database
+  Editor: IDatabaseEdit;  // object used to update user database
   Snippet: TSnippet;      // reference to existing snippets
 begin
-  Editor := Database as ISnippetsEdit;
+  Editor := Database as IDatabaseEdit;
   for Idx := Low(SnipList) to High(SnipList) do
   begin
     AdjustDependsList(SnipList[Idx].Data.Refs.Depends);

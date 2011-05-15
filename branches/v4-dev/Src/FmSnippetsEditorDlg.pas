@@ -544,12 +544,12 @@ begin
     SnippetName := Trim(edName.Text);
     // Add or update snippet
     if Assigned(fSnippet) then
-      fSnippet := (Database as ISnippetsEdit).UpdateSnippet(
+      fSnippet := (Database as IDatabaseEdit).UpdateSnippet(
         fSnippet, fEditData, SnippetName
       )
     else
     begin
-      fSnippet := (Database as ISnippetsEdit).AddSnippet(
+      fSnippet := (Database as IDatabaseEdit).AddSnippet(
         SnippetName, fEditData
       )
     end;
@@ -641,7 +641,7 @@ begin
   ValidateData;
   // Create snippet object from entered data
   EditData.Assign(UpdateData);
-  Result := (Database as ISnippetsEdit).CreateTempSnippet(
+  Result := (Database as IDatabaseEdit).CreateTempSnippet(
     Trim(edName.Text), EditData
   );
 end;
@@ -826,7 +826,7 @@ begin
   inherited;
   // Get data associated with snippet, or blank / default data if adding a new
   // snippet
-  fEditData := (Database as ISnippetsEdit).GetEditableSnippetInfo(fSnippet);
+  fEditData := (Database as IDatabaseEdit).GetEditableSnippetInfo(fSnippet);
   // Record snippet's original name, if any
   if Assigned(fSnippet) then
     fOrigName := fSnippet.Name

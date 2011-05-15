@@ -141,11 +141,11 @@ type
   end;
 
   {
-  TSnippetChangeEventKind:
+  TDatabaseChangeEventKind:
     Enumeration that specifies the different kind of change events triggered by
     the user database.
   }
-  TSnippetChangeEventKind = (
+  TDatabaseChangeEventKind = (
     evChangeBegin,          // a change to the database is about to take place
     evChangeEnd,            // a change to the database has completed
     evSnippetAdded,         // a snippet has been added
@@ -161,11 +161,11 @@ type
   );
 
   {
-  ISnippetsDataProvider:
+  IDBDataProvider:
     Interface supported by objects that provides data about the categories and
     snippets in the database.
   }
-  ISnippetsDataProvider = interface(IInterface)
+  IDBDataProvider = interface(IInterface)
     ['{D2D57A0D-DB29-4012-891E-E817E0EED8C8}']
     function GetCategoryProps(const Cat: TCategory): TCategoryData;
       {Retrieves all the properties of a category.
@@ -190,14 +190,14 @@ type
   end;
 
   {
-  ISnippetChangeEventInfo:
-    Interface supported by objects passed to Snippets object's change event
+  IDatabaseChangeEventInfo:
+    Interface supported by objects passed to Database object's change event
     handler that provides information about a change event. Some properites
     are not defined for certain event types. Kind property always defined.
   }
-  ISnippetChangeEventInfo = interface(IInterface)
+  IDatabaseChangeEventInfo = interface(IInterface)
     ['{80DEE62F-DC23-4EE7-A0B1-5DE46F483CE1}']
-    function GetKind: TSnippetChangeEventKind;
+    function GetKind: TDatabaseChangeEventKind;
       {Gets kind (type) of event.
         @return Event kind.
       }
@@ -205,7 +205,7 @@ type
       {Gets additional information about event.
         @return Object that provides required information.
       }
-    property Kind: TSnippetChangeEventKind read GetKind;
+    property Kind: TDatabaseChangeEventKind read GetKind;
       {Identifies kind (type) of an event. Always defined}
     property Info: TObject read GetInfo;
       {Provides additional information about the event. Actual type of object
@@ -213,11 +213,11 @@ type
   end;
 
   {
-  ISnippetsFactory:
+  IDataItemFactory:
     Interface to factory object that creates snippet and category objects. For
     use by database loader objects.
   }
-  ISnippetsFactory = interface(IInterface)
+  IDBDataItemFactory = interface(IInterface)
     ['{C6DD85BD-E649-4A90-961C-4011D2714B3E}']
     function CreateCategory(const CatID: string; const UserDefined: Boolean;
       const Data: TCategoryData): TCategory;
@@ -505,11 +505,11 @@ type
   end;
 
   {
-  ISnippets:
+  IDatabase:
     Interface to object that encapsulates the whole (main and user) databases
     and provides access to all snippets and all categories.
   }
-  ISnippets = interface(IInterface)
+  IDatabase = interface(IInterface)
     ['{A280DEEF-0336-4264-8BD0-7CDFBB207D2E}']
     procedure Load;
       {Loads data from main and user databases.
@@ -540,10 +540,10 @@ type
   end;
 
   {
-  ISnippetsEdit:
+  IDatabaseEdit:
     Interface to object that can be used to edit the user database.
   }
-  ISnippetsEdit = interface(IInterface)
+  IDatabaseEdit = interface(IInterface)
     ['{CBF6FBB0-4C18-481F-A378-84BB09E5ECF4}']
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
       TSnippetEditData;
@@ -636,7 +636,7 @@ type
   end;
 
 
-function Database: ISnippets;
+function Database: IDatabase;
   {Returns singleton instance of object that encapsulates main and user
   databases.
     @return Singleton object.
@@ -655,16 +655,16 @@ uses
 
 var
   // Private global snippets singleton object
-  PvtSnippets: ISnippets = nil;
+  PvtDatabase: IDatabase = nil;
 
 
 type
 
   {
-  TSnippetsFactory:
+  TDBDataItemFactory:
     Class that can create category and snippet objects.
   }
-  TSnippetsFactory = class(TInterfacedObject, ISnippetsFactory)
+  TDBDataItemFactory = class(TInterfacedObject, IDBDataItemFactory)
   public
     function CreateCategory(const CatID: string; const UserDefined: Boolean;
       const Data: TCategoryData): TCategory;
@@ -771,14 +771,14 @@ type
   end;
 
   {
-  TSnippets:
+  TDatabase:
     Class that encapsulates the main and user databases. Provides access to all
-    snippets and all categories via the ISnippets interface. Also enables user
-    defined database to be modified via ISnippetsEdit interface.
+    snippets and all categories via the IDatabase interface. Also enables user
+    defined database to be modified via IDatabaseEdit interface.
   }
-  TSnippets = class(TInterfacedObject,
-    ISnippets,
-    ISnippetsEdit
+  TDatabase = class(TInterfacedObject,
+    IDatabase,
+    IDatabaseEdit
   )
   strict private
     fUpdated: Boolean;                // Flags if user database has been updated
@@ -790,13 +790,13 @@ type
       TEventInfo:
         Class that provides information about a change event.
       }
-      TEventInfo = class(TInterfacedObject, ISnippetChangeEventInfo)
+      TEventInfo = class(TInterfacedObject, IDatabaseChangeEventInfo)
       strict private
-        fKind: TSnippetChangeEventKind; // Kind of event
-        fInfo: TObject;                 // Extra info about event
+        fKind: TDatabaseChangeEventKind;  // Kind of event
+        fInfo: TObject;                   // Extra info about event
       protected // do not make strict
-        { ISnippetChangeEventInfo methods }
-        function GetKind: TSnippetChangeEventKind;
+        { IDatabaseChangeEventInfo methods }
+        function GetKind: TDatabaseChangeEventKind;
           {Gets kind (type) of event.
             @return Event kind.
           }
@@ -805,7 +805,7 @@ type
             @return Object that provides required information.
           }
       public
-        constructor Create(const Kind: TSnippetChangeEventKind;
+        constructor Create(const Kind: TDatabaseChangeEventKind;
           const Info: TObject = nil);
           {Constructor. Creates an event information object.
             @param Kind [in] Kind of event.
@@ -813,7 +813,7 @@ type
                May be nil if event doesn't have additional information.
           }
       end;
-    procedure TriggerEvent(const Kind: TSnippetChangeEventKind;
+    procedure TriggerEvent(const Kind: TDatabaseChangeEventKind;
       const Info: TObject = nil);
       {Triggers a change event. Notifies all registered listeners.
         @param Kind [in] Kind of event.
@@ -858,7 +858,7 @@ type
         @param List [in] Receives list of cross referencing snippets.
       }
   protected
-    { ISnippets methods }
+    { IDatabase methods }
     function GetCategories: TCategoryList;
       {Gets list of all categories in database.
         @return Required list.
@@ -881,7 +881,7 @@ type
       {Removes a change event handler from list of listeners.
         @param Handler [in] Handler to remove from list.
       }
-    { ISnippetsEdit methods }
+    { IDatabaseEdit methods }
     function GetEditableSnippetInfo(const Snippet: TSnippet = nil):
       TSnippetEditData;
       {Provides details of all a snippet's data (properties and references) that
@@ -984,7 +984,7 @@ type
     Class that provides data about the categories and snippets in the user-
     defined database.
   }
-  TUserDataProvider = class(TInterfacedObject, ISnippetsDataProvider)
+  TUserDataProvider = class(TInterfacedObject, IDBDataProvider)
   strict private
     fSnippets: TSnippetList;    // All snippets in the whole database
     fCategories: TCategoryList; // All categories in the whole database
@@ -996,7 +996,7 @@ type
         @param SnipList [in] List of all snippets in whole database.
         @param Categories [in] List of all categories in whole database.
       }
-    { ISnippetsDataProvider methods }
+    { IDBDataProvider methods }
     function GetCategoryProps(const Cat: TCategory): TCategoryData;
       {Retrieves all the properties of a category.
         @param Cat [in] Category for which data is requested.
@@ -1034,20 +1034,20 @@ type
       }
   end;
 
-function Database: ISnippets;
+function Database: IDatabase;
   {Returns singleton instance of object that encapsulates main and user
   databases.
     @return Singleton object.
   }
 begin
-  if not Assigned(PvtSnippets) then
-    PvtSnippets := TSnippets.Create;
-  Result := PvtSnippets;
+  if not Assigned(PvtDatabase) then
+    PvtDatabase := TDatabase.Create;
+  Result := PvtDatabase;
 end;
 
-{ TSnippets }
+{ TDatabase }
 
-function TSnippets.AddCategory(const CatName: string;
+function TDatabase.AddCategory(const CatName: string;
   const Data: TCategoryData): TCategory;
   {Adds a new category to the user database.
     @param CatName [in] Name of new category.
@@ -1072,7 +1072,7 @@ begin
   end;
 end;
 
-procedure TSnippets.AddChangeEventHandler(const Handler: TNotifyEventInfo);
+procedure TDatabase.AddChangeEventHandler(const Handler: TNotifyEventInfo);
   {Adds a change event handler to list of listeners.
     @param Handler [in] Event handler to be added.
   }
@@ -1080,7 +1080,7 @@ begin
   fChangeEvents.AddHandler(Handler);
 end;
 
-function TSnippets.AddSnippet(const SnippetName: string;
+function TDatabase.AddSnippet(const SnippetName: string;
   const Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the user database.
     @param SnippetName [in] Name of new snippet.
@@ -1105,7 +1105,7 @@ begin
   end;
 end;
 
-procedure TSnippets.Clear;
+procedure TDatabase.Clear;
   {Clears the object's data.
   }
 begin
@@ -1113,7 +1113,7 @@ begin
   fSnippets.Clear;
 end;
 
-constructor TSnippets.Create;
+constructor TDatabase.Create;
   {Constructor. Sets up new empty object.
   }
 begin
@@ -1123,7 +1123,7 @@ begin
   fChangeEvents := TMultiCastEvents.Create(Self);
 end;
 
-function TSnippets.CreateTempSnippet(const Snippet: TSnippet): TSnippet;
+function TDatabase.CreateTempSnippet(const Snippet: TSnippet): TSnippet;
   {Creates a new temporary copy of a snippet without adding it to the
   Snippets object's snippets list. The new instance may not be added to the
   Snippets object.
@@ -1144,7 +1144,7 @@ begin
   );
 end;
 
-function TSnippets.CreateTempSnippet(const SnippetName: string;
+function TDatabase.CreateTempSnippet(const SnippetName: string;
   const Data: TSnippetEditData): TSnippet;
   {Creates a new temporary user defined snippet without adding it to the
   Snippets object's snippets list. The new instance may not be added to the
@@ -1158,7 +1158,7 @@ begin
   (Result as TTempSnippet).UpdateRefs(Data.Refs, fSnippets);
 end;
 
-procedure TSnippets.DeleteCategory(const Category: TCategory);
+procedure TDatabase.DeleteCategory(const Category: TCategory);
   {Deletes a category and all its snippets from the user database.
     @param Category [in] Category to be deleted.
   }
@@ -1183,7 +1183,7 @@ begin
   end;
 end;
 
-procedure TSnippets.DeleteSnippet(const Snippet: TSnippet);
+procedure TDatabase.DeleteSnippet(const Snippet: TSnippet);
   {Deletes a snippet from the user database.
     @param Snippet [in] Snippet to be deleted.
   }
@@ -1222,7 +1222,7 @@ begin
   end;
 end;
 
-destructor TSnippets.Destroy;
+destructor TDatabase.Destroy;
   {Destructor. Tidies up and tears down object.
   }
 begin
@@ -1232,7 +1232,7 @@ begin
   inherited;
 end;
 
-function TSnippets.GetCategories: TCategoryList;
+function TDatabase.GetCategories: TCategoryList;
   {Gets list of all categories in database.
     @return Required list.
   }
@@ -1240,7 +1240,7 @@ begin
   Result := fCategories;
 end;
 
-procedure TSnippets.GetDependentList(const ASnippet: TSnippet;
+procedure TDatabase.GetDependentList(const ASnippet: TSnippet;
   const List: TSnippetList);
   {Builds a list of all snippets that depend on a specified snippet.
     @param ASnippet [in] Snippet for which dependents are required.
@@ -1255,7 +1255,7 @@ begin
       List.Add(Snippet);
 end;
 
-function TSnippets.GetDependents(const Snippet: TSnippet): ISnippetIDList;
+function TDatabase.GetDependents(const Snippet: TSnippet): ISnippetIDList;
   {Builds an ID list of all snippets that depend on a specified snippet.
     @param Snippet [in] Snippet for which dependents are required.
     @return List of IDs of dependent snippets.
@@ -1272,7 +1272,7 @@ begin
   end;
 end;
 
-function TSnippets.GetEditableCategoryInfo(
+function TDatabase.GetEditableCategoryInfo(
   const Category: TCategory): TCategoryData;
   {Provides details of all a category's data that may be edited.
     @param Category [in] Category for which data is required. May be nil in
@@ -1287,7 +1287,7 @@ begin
     Result.Init;
 end;
 
-function TSnippets.GetEditableSnippetInfo(
+function TDatabase.GetEditableSnippetInfo(
   const Snippet: TSnippet): TSnippetEditData;
   {Provides details of all a snippet's data (properties and references) that may
   be edited.
@@ -1304,7 +1304,7 @@ begin
     Result.Init;
 end;
 
-function TSnippets.GetReferrers(const Snippet: TSnippet): ISnippetIDList;
+function TDatabase.GetReferrers(const Snippet: TSnippet): ISnippetIDList;
   {Builds an ID list of all snippets that cross reference a specified
   snippet.
     @param Snippet [in] Snippet which is cross referenced.
@@ -1322,7 +1322,7 @@ begin
   end;
 end;
 
-procedure TSnippets.GetReferrerList(const ASnippet: TSnippet;
+procedure TDatabase.GetReferrerList(const ASnippet: TSnippet;
   const List: TSnippetList);
   {Builds list of all snippets that cross reference a specified snippet.
     @param ASnippet [in] The cross referenced snippet.
@@ -1337,7 +1337,7 @@ begin
       List.Add(Snippet);
 end;
 
-function TSnippets.GetSnippets: TSnippetList;
+function TDatabase.GetSnippets: TSnippetList;
   {Gets list of all snippets in database.
     @return Required list.
   }
@@ -1345,7 +1345,7 @@ begin
   Result := fSnippets;
 end;
 
-function TSnippets.InternalAddCategory(const CatName: string;
+function TDatabase.InternalAddCategory(const CatName: string;
   const Data: TCategoryData): TCategory;
   {Adds a new category to the user database. Assumes category not already in
   user database.
@@ -1358,7 +1358,7 @@ begin
   fCategories.Add(Result);
 end;
 
-function TSnippets.InternalAddSnippet(const SnippetName: string;
+function TDatabase.InternalAddSnippet(const SnippetName: string;
   const Data: TSnippetEditData): TSnippet;
   {Adds a new snippet to the user database. Assumes snippet not already in user
   database.
@@ -1382,7 +1382,7 @@ begin
   fSnippets.Add(Result);
 end;
 
-procedure TSnippets.InternalDeleteCategory(const Cat: TCategory);
+procedure TDatabase.InternalDeleteCategory(const Cat: TCategory);
   {Deletes a category from the user database.
     @param Cat [in] Category to delete from database.
   }
@@ -1392,7 +1392,7 @@ begin
   TriggerEvent(evAfterCategoryDelete);
 end;
 
-procedure TSnippets.InternalDeleteSnippet(const Snippet: TSnippet);
+procedure TDatabase.InternalDeleteSnippet(const Snippet: TSnippet);
   {Deletes a snippet from the user database.
     @param Snippet [in] Snippet to delete from database.
   }
@@ -1409,17 +1409,17 @@ begin
   TriggerEvent(evAfterSnippetDelete);
 end;
 
-procedure TSnippets.Load;
+procedure TDatabase.Load;
   {Loads object's data from main and user defined databases.
   }
 var
-  Factory: ISnippetsFactory;  // object reader uses to create snippets objects
+  Factory: IDBDataItemFactory;  // object reader uses to create snippets objects
 begin
   Clear;
   // Create factory that reader calls into to create category and snippet
   // objects. This is done to keep updating of snippet and categories private
   // to this unit
-  Factory := TSnippetsFactory.Create;
+  Factory := TDBDataItemFactory.Create;
   try
     // Load main database: MUST do this first since user database can
     // reference objects in main database
@@ -1436,7 +1436,7 @@ begin
   end;
 end;
 
-procedure TSnippets.RemoveChangeEventHandler(const Handler: TNotifyEventInfo);
+procedure TDatabase.RemoveChangeEventHandler(const Handler: TNotifyEventInfo);
   {Removes a change event handler from list of listeners.
     @param Handler [in] Handler to remove from list.
   }
@@ -1444,11 +1444,11 @@ begin
   fChangeEvents.RemoveHandler(Handler);
 end;
 
-procedure TSnippets.Save;
+procedure TDatabase.Save;
   {Saves user defined snippets and all categories to user database.
   }
 var
-  Provider: ISnippetsDataProvider;  // object that supplies info to writer
+  Provider: IDBDataProvider;  // object that supplies info to writer
 begin
   // Create object that can provide required information about user database
   Provider := TUserDataProvider.Create(fSnippets, fCategories);
@@ -1458,20 +1458,20 @@ begin
   fUpdated := False;
 end;
 
-procedure TSnippets.TriggerEvent(const Kind: TSnippetChangeEventKind;
+procedure TDatabase.TriggerEvent(const Kind: TDatabaseChangeEventKind;
   const Info: TObject);
   {Triggers a change event. Notifies all registered listeners.
     @param Kind [in] Kind of event.
     @param Info [in] Reference to any further information for event. May be nil.
   }
 var
-  EvtInfo: ISnippetChangeEventInfo; // event information object
+  EvtInfo: IDatabaseChangeEventInfo;  // event information object
 begin
   EvtInfo := TEventInfo.Create(Kind, Info);
   fChangeEvents.TriggerEvents(EvtInfo);
 end;
 
-function TSnippets.UpdateCategory(const Category: TCategory;
+function TDatabase.UpdateCategory(const Category: TCategory;
   const Data: TCategoryData): TCategory;
   {Updates a user defined category's properties.
     @param Category [in] Category to be updated. Must be user-defined.
@@ -1504,7 +1504,7 @@ begin
   end;
 end;
 
-function TSnippets.Updated: Boolean;
+function TDatabase.Updated: Boolean;
   {Checks if user database has been updated since last save.
     @return True if database has been updated, False otherwise.
   }
@@ -1512,7 +1512,7 @@ begin
   Result := fUpdated;
 end;
 
-function TSnippets.UpdateSnippet(const Snippet: TSnippet;
+function TDatabase.UpdateSnippet(const Snippet: TSnippet;
   const Data: TSnippetEditData; const NewName: string): TSnippet;
   {Updates a user defined snippet's properties and references using provided
   data.
@@ -1580,7 +1580,7 @@ end;
 
 { TSnippets.TEventInfo }
 
-constructor TSnippets.TEventInfo.Create(const Kind: TSnippetChangeEventKind;
+constructor TDatabase.TEventInfo.Create(const Kind: TDatabaseChangeEventKind;
   const Info: TObject);
   {Constructor. Creates an event information object.
     @param Kind [in] Kind of event.
@@ -1593,7 +1593,7 @@ begin
   fInfo := Info;
 end;
 
-function TSnippets.TEventInfo.GetInfo: TObject;
+function TDatabase.TEventInfo.GetInfo: TObject;
   {Gets additional information about event.
     @return Object that provides required information.
   }
@@ -1601,7 +1601,7 @@ begin
   Result := fInfo;
 end;
 
-function TSnippets.TEventInfo.GetKind: TSnippetChangeEventKind;
+function TDatabase.TEventInfo.GetKind: TDatabaseChangeEventKind;
   {Gets kind (type) of event.
     @return Event kind.
   }
@@ -2171,9 +2171,9 @@ begin
   fList.Delete(Idx);  // this frees category if list owns objects
 end;
 
-{ TSnippetsFactory }
+{ TDBDataItemFactory }
 
-function TSnippetsFactory.CreateCategory(const CatID: string;
+function TDBDataItemFactory.CreateCategory(const CatID: string;
   const UserDefined: Boolean; const Data: TCategoryData): TCategory;
   {Creates a new category object.
     @param CatID [in] ID (name) of new category. Must be unique.
@@ -2185,7 +2185,7 @@ begin
   Result := TCategoryEx.Create(CatID, UserDefined, Data);
 end;
 
-function TSnippetsFactory.CreateSnippet(const Name: string;
+function TDBDataItemFactory.CreateSnippet(const Name: string;
   const UserDefined: Boolean; const Props: TSnippetData): TSnippet;
   {Creates a new snippet object.
     @param Name [in] Name of new snippet. Must not exist in database specified
@@ -2369,7 +2369,7 @@ initialization
 finalization
 
 // Free the singleton
-PvtSnippets := nil;
+PvtDatabase := nil;
 
 end.
 

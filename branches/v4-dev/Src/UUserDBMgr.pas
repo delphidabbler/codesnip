@@ -274,7 +274,7 @@ class function TUserDBMgr.CanSave: Boolean;
   }
 begin
   // We can save database if it's been changed
-  Result := (Database as ISnippetsEdit).Updated;
+  Result := (Database as IDatabaseEdit).Updated;
 end;
 
 class procedure TUserDBMgr.CanSaveDialogClose(Sender: TObject;
@@ -372,7 +372,7 @@ begin
   Assert(Snippet.UserDefined,
     ClassName + '.Delete: Snippet must be user defined');
   // Check if snippet has dependents: don't allow deletion if so
-  Dependents := (Database as ISnippetsEdit).GetDependents(Snippet);
+  Dependents := (Database as IDatabaseEdit).GetDependents(Snippet);
   if Dependents.Count > 0 then
   begin
     TMessageBox.Error(
@@ -385,7 +385,7 @@ begin
     Exit;
   end;
   // Get permission to delete. If snippet has dependents list them in prompt
-  Referrers := (Database as ISnippetsEdit).GetReferrers(Snippet);
+  Referrers := (Database as IDatabaseEdit).GetReferrers(Snippet);
   if Referrers.Count = 0 then
     ConfirmMsg := Format(sConfirmDelete, [Snippet.Name])
   else
@@ -397,7 +397,7 @@ begin
       ]
     );
   if TMessageBox.Confirm(nil, ConfirmMsg) then
-    (Database as ISnippetsEdit).DeleteSnippet(Snippet);
+    (Database as IDatabaseEdit).DeleteSnippet(Snippet);
 end;
 
 class procedure TUserDBMgr.EditSnippet(const SnippetName: string);
@@ -468,7 +468,7 @@ class procedure TUserDBMgr.Save;
   {Saves user database.
   }
 begin
-  (Database as ISnippetsEdit).Save;
+  (Database as IDatabaseEdit).Save;
 end;
 
 end.

@@ -56,7 +56,8 @@ type
   ISnippetsLoader = interface(IInterface)
     ['{C6AF94FC-F56F-44AE-9E79-3B0CD0BB21D4}']
     procedure Load(const SnipList: TSnippetList;
-      const Categories: TCategoryList; const SnippetsFactory: ISnippetsFactory);
+    const Categories: TCategoryList;
+      const SnippetsFactory: IDBDataItemFactory);
       {Loads data from storage and updates snippets object.
         @param SnipList [in] Receives information about each snippet in the
           database.
@@ -75,7 +76,7 @@ type
   ISnippetsWriter = interface(IInterface)
     ['{F46EE2E3-68A7-4877-9E04-192D15D29BB1}']
     procedure Write(const SnipList: TSnippetList;
-      const Categories: TCategoryList; const Provider: ISnippetsDataProvider);
+      const Categories: TCategoryList; const Provider: IDBDataProvider);
       {Writes data from Snippets object to storage.
         @param SnipList [in] Contains information about each snippet in the
           database.
@@ -141,10 +142,10 @@ type
   }
   TSnippetsLoader = class(TInterfacedObject, ISnippetsLoader)
   strict private
-    fReader: IDataReader;       // Object used to read data from storage
-    fSnipList: TSnippetList;    // Receives list of snippets
-    fCategories: TCategoryList; // Receives list of categories
-    fFactory: ISnippetsFactory; // Object creates new categories and snippets
+    fReader: IDataReader;         // Object used to read data from storage
+    fSnipList: TSnippetList;      // Receives list of snippets
+    fCategories: TCategoryList;   // Receives list of categories
+    fFactory: IDBDataItemFactory; // Object creates new categories and snippets
     procedure LoadSnippets(const Cat: TCategory);
       {Loads all snippets in a category.
         @param Cat [in] Category to be loaded.
@@ -201,7 +202,8 @@ type
   public
     { ISnippetsLoader method }
     procedure Load(const SnipList: TSnippetList;
-      const Categories: TCategoryList; const SnippetsFactory: ISnippetsFactory);
+      const Categories: TCategoryList;
+      const SnippetsFactory: IDBDataItemFactory);
       {Loads data from storage and updates snippets object.
         @param SnipList [in] Receives information about each snippet in the
           database.
@@ -295,7 +297,7 @@ type
     fWriter: IDataWriter;             // Object used to write to storage
     fSnipList: TSnippetList;          // List of snippets to be written
     fCategories: TCategoryList;       // List of categories to be written
-    fProvider: ISnippetsDataProvider; // Object used to get data to be written
+    fProvider: IDBDataProvider;       // Object used to get data to be written
     function CreateWriter: IDataWriter;
       {Creates object that can write data for user-defined items from Snippets
       to storage.
@@ -311,7 +313,7 @@ type
     { ISnippetsWriter method }
     procedure Write(const SnipList: TSnippetList;
       const Categories: TCategoryList;
-      const Provider: ISnippetsDataProvider);
+      const Provider: IDBDataProvider);
       {Writes data from Snippets object to storage.
         @param SnipList [in] Contains information about each snippet in the
           database.
@@ -376,7 +378,7 @@ begin
 end;
 
 procedure TSnippetsLoader.Load(const SnipList: TSnippetList;
-  const Categories: TCategoryList; const SnippetsFactory: ISnippetsFactory);
+  const Categories: TCategoryList; const SnippetsFactory: IDBDataItemFactory);
   {Loads data from storage and updates snippets object.
     @param SnipList [in] Receives information about each snippet in the
       database.
@@ -647,7 +649,7 @@ begin
 end;
 
 procedure TSnippetsWriter.Write(const SnipList: TSnippetList;
-  const Categories: TCategoryList; const Provider: ISnippetsDataProvider);
+  const Categories: TCategoryList; const Provider: IDBDataProvider);
   {Writes data from Snippets object to storage.
     @param SnipList [in] Contains information about each snippet in the
       database.

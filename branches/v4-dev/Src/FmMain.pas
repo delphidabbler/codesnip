@@ -1164,9 +1164,9 @@ begin
   if fDialogMgr.ExecUpdateDlg then
   begin
     // Database was updated: check if user database needs saving
-    if (Database as ISnippetsEdit).Updated
+    if (Database as IDatabaseEdit).Updated
       and TMessageBox.Confirm(Self, sConfirmSave) then
-      (Database as ISnippetsEdit).Save;
+      (Database as IDatabaseEdit).Save;
     // Reload the databases
     ReloadDatabase;
   end;
@@ -1348,7 +1348,7 @@ procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   inherited;
   // Save any changes to user database
-  with Database as ISnippetsEdit do
+  with Database as IDatabaseEdit do
   begin
     if Updated then
       Save;
@@ -1643,9 +1643,9 @@ procedure TMainForm.SnippetsChangeHandler(Sender: TObject;
   // ---------------------------------------------------------------------------
 
 var
-  EventInfo: ISnippetChangeEventInfo; // information about the event
+  EventInfo: IDatabaseChangeEventInfo;  // information about the event
 begin
-  EventInfo := EvtInfo as ISnippetChangeEventInfo;
+  EventInfo := EvtInfo as IDatabaseChangeEventInfo;
   case EventInfo.Kind of
     evChangeBegin:          // database about to change
     begin
