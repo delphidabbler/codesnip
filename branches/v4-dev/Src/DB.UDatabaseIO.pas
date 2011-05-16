@@ -1,9 +1,11 @@
 {
- * USnippetsIO.pas
+ * DB.UDatabaseIO.pas
  *
  * Implements objects that can load data into the Database object from both the
  * user and main databases. Also provides a class that can write the user
  * database to storage.
+ *
+ * Uses file I/O interface implementations to read / write the physical files.
  *
  * $Rev$
  * $Date$
@@ -20,7 +22,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is USnippetsIO.pas
+ * The Original Code is DB.UDatabaseIO.pas, formerly USnippetsIO.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -35,7 +37,7 @@
 }
 
 
-unit USnippetsIO;
+unit DB.UDatabaseIO;
 
 
 interface
@@ -123,8 +125,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UConsts, UIniDataReader, UIStringList, UNulDataReader,
-  UReservedCategories, USnipData, USnippetIDs, UXMLDataIO;
+  DB.UFileIOIntf, UAppInfo, UConsts, UIniDataReader, UIStringList,
+  UNulDataReader, UReservedCategories, USnippetIDs, UXMLDataIO;
 
 
 type

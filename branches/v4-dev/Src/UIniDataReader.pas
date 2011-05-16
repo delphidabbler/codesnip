@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes, Generics.Collections, IniFiles,
   // Project
-  DB.UCategory, DB.USnippet, UIStringList, UMainDBFileReader, USnipData;
+  DB.UCategory, DB.UFileIOIntf, DB.USnippet, UIStringList, UMainDBFileReader;
 
 
 type
@@ -293,7 +293,7 @@ type
 * ---------------------------------------------------------------------------- *
 *                                                                              *
 * The database reader object interprets these files and provides the common    *
-* view onto them expected by the program. See the comments in USnipData.pas    *
+* view onto them expected by the program. See the comments in DB.UFileIOIntf   *
 * for details.                                                                 *
 *                                                                              *
 *******************************************************************************}

@@ -1,8 +1,9 @@
 {
- * USnipData.pas
+ * DB.UFileIOIntf.pas
  *
- * Defines interface implemented by classes that read and write back end Code
- * Snippets database. Also provides an exception class for data I/O errors.
+ * Defines interfaces implemented by classes that read and write physical code
+ * snippets database files. Also provides an exception class for data I/O
+ * errors.
  *
  * $Rev$
  * $Date$
@@ -19,7 +20,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is USnipData.pas
+ * The Original Code is DB.UFileIOIntf.pas, formerly USnipData.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +35,7 @@
 }
 
 
-unit USnipData;
+unit DB.UFileIOIntf;
 
 
 interface
@@ -76,7 +77,7 @@ interface
 * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ *
 * Units - names of required units                                              *
 * ---------------------------------------------------------------------------- *
-* Unit             | Name of unit (primary key)                             *
+* Unit             | Name of unit (primary key)                                *
 * ---------------------------------------------------------------------------- *
 * Note)   There is no other information in this table - so we may omit it      *
 * ============================================================================ *

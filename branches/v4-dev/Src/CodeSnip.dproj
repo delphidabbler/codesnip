@@ -55,6 +55,8 @@
 			<DCCReference Include="Compilers.UGlobals.pas"/>
 			<DCCReference Include="Compilers.URunner.pas"/>
 			<DCCReference Include="DB.UCategory.pas"/>
+			<DCCReference Include="DB.UDatabaseIO.pas"/>
+			<DCCReference Include="DB.UFileIOIntf.pas"/>
 			<DCCReference Include="DB.UMain.pas"/>
 			<DCCReference Include="DB.USnippet.pas"/>
 			<DCCReference Include="DB.USnippetKind.pas"/>
@@ -444,7 +446,6 @@
 			<DCCReference Include="USettings.pas"/>
 			<DCCReference Include="UShowCaseCtrl.pas"/>
 			<DCCReference Include="USimpleDispatch.pas"/>
-			<DCCReference Include="USnipData.pas"/>
 			<DCCReference Include="USnipKindListAdapter.pas"/>
 			<DCCReference Include="USnippetAction.pas"/>
 			<DCCReference Include="USnippetCreditsParser.pas"/>
@@ -453,7 +454,6 @@
 			<DCCReference Include="USnippetHTML.pas"/>
 			<DCCReference Include="USnippetIDs.pas"/>
 			<DCCReference Include="USnippetsChkListMgr.pas"/>
-			<DCCReference Include="USnippetsIO.pas"/>
 			<DCCReference Include="USnippetSourceGen.pas"/>
 			<DCCReference Include="USnippetsTVDraw.pas"/>
 			<DCCReference Include="USnippetValidator.pas"/>
