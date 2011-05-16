@@ -1,5 +1,5 @@
 {
- * DB.UXMLDataIO.pas
+ * DBIO.UXMLDataIO.pas
  *
  * Implements classes that can read and write databases stored in XML format
  * with associated source code files.
@@ -19,7 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is DB.UXMLDataIO, formerly UXMLDataIO.pas
+ * The Original Code is DBIO.UXMLDataIO, formerly UXMLDataIO.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +34,7 @@
 }
 
 
-unit DB.UXMLDataIO;
+unit DBIO.UXMLDataIO;
 
 
 interface
@@ -44,7 +44,7 @@ uses
   // Delphi
   XMLIntf,
   // Project
-  DB.UCategory, DB.UFileIOIntf, DB.USnippet, UIStringList, UREMLDataIO,
+  DB.UCategory, DB.USnippet, DBIO.UFileIOIntf, UIStringList, UREMLDataIO,
   UXMLDocumentEx;
 
 

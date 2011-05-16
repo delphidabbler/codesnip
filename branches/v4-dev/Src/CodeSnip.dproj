@@ -56,13 +56,13 @@
 			<DCCReference Include="Compilers.URunner.pas"/>
 			<DCCReference Include="DB.UCategory.pas"/>
 			<DCCReference Include="DB.UDatabaseIO.pas"/>
-			<DCCReference Include="DB.UFileIOIntf.pas"/>
-			<DCCReference Include="DB.UIniDataReader.pas"/>
 			<DCCReference Include="DB.UMain.pas"/>
-			<DCCReference Include="DB.UNulDataReader.pas"/>
 			<DCCReference Include="DB.USnippet.pas"/>
 			<DCCReference Include="DB.USnippetKind.pas"/>
-			<DCCReference Include="DB.UXMLDataIO.pas"/>
+			<DCCReference Include="DBIO.UFileIOIntf.pas"/>
+			<DCCReference Include="DBIO.UIniDataReader.pas"/>
+			<DCCReference Include="DBIO.UNulDataReader.pas"/>
+			<DCCReference Include="DBIO.UXMLDataIO.pas"/>
 			<DCCReference Include="FmAboutDlg.pas">
 				<Form>AboutDlg</Form>
 			</DCCReference>

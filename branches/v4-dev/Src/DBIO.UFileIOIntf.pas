@@ -1,5 +1,5 @@
 {
- * DB.UFileIOIntf.pas
+ * DBIO.UFileIOIntf.pas
  *
  * Defines interfaces implemented by classes that read and write physical code
  * snippets database files. Also provides an exception class for data I/O
@@ -20,7 +20,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is DB.UFileIOIntf.pas, formerly USnipData.pas
+ * The Original Code is DBIO.UFileIOIntf.pas, formerly USnipData.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -35,7 +35,7 @@
 }
 
 
-unit DB.UFileIOIntf;
+unit DBIO.UFileIOIntf;
 
 
 interface
