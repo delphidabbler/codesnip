@@ -1,5 +1,5 @@
 {
- * UIniDataReader.pas
+ * DB.UIniDataReader.pas
  *
  * Implements code that reads code snip database from .ini and .dat files.
  *
@@ -18,7 +18,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UIniDataReader.pas
+ * The Original Code is DB.UIniDataReader.pas, formerly UIniDataReader.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -33,7 +33,7 @@
 }
 
 
-unit UIniDataReader;
+unit DB.UIniDataReader;
 
 
 interface

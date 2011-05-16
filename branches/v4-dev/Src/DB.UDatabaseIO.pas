@@ -125,8 +125,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UFileIOIntf, UAppInfo, UConsts, UIniDataReader, UIStringList,
-  UNulDataReader, UReservedCategories, USnippetIDs, UXMLDataIO;
+  DB.UFileIOIntf, DB.UIniDataReader, DB.UNulDataReader, DB.UXMLDataIO, UAppInfo,
+  UConsts, UIStringList, UReservedCategories, USnippetIDs;
 
 
 type

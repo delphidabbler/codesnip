@@ -57,9 +57,12 @@
 			<DCCReference Include="DB.UCategory.pas"/>
 			<DCCReference Include="DB.UDatabaseIO.pas"/>
 			<DCCReference Include="DB.UFileIOIntf.pas"/>
+			<DCCReference Include="DB.UIniDataReader.pas"/>
 			<DCCReference Include="DB.UMain.pas"/>
+			<DCCReference Include="DB.UNulDataReader.pas"/>
 			<DCCReference Include="DB.USnippet.pas"/>
 			<DCCReference Include="DB.USnippetKind.pas"/>
+			<DCCReference Include="DB.UXMLDataIO.pas"/>
 			<DCCReference Include="FmAboutDlg.pas">
 				<Form>AboutDlg</Form>
 			</DCCReference>
@@ -388,7 +391,6 @@
 			<DCCReference Include="UHTTPProtocol.pas"/>
 			<DCCReference Include="UImageTags.pas"/>
 			<DCCReference Include="UIniDataLoader.pas"/>
-			<DCCReference Include="UIniDataReader.pas"/>
 			<DCCReference Include="UInitialLetter.pas"/>
 			<DCCReference Include="UIOUtils.pas"/>
 			<DCCReference Include="UIStringList.pas"/>
@@ -409,7 +411,6 @@
 			<DCCReference Include="UMessageWindow.pas"/>
 			<DCCReference Include="UMultiCastEvents.pas"/>
 			<DCCReference Include="UNotifier.pas"/>
-			<DCCReference Include="UNulDataReader.pas"/>
 			<DCCReference Include="UNulDropTarget.pas"/>
 			<DCCReference Include="UNulFormAligner.pas"/>
 			<DCCReference Include="UOleClientSite.pas"/>
@@ -494,7 +495,6 @@
 			<DCCReference Include="UWBExternal.pas"/>
 			<DCCReference Include="UWBPopupMenus.pas"/>
 			<DCCReference Include="UWindowSettings.pas"/>
-			<DCCReference Include="UXMLDataIO.pas"/>
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
