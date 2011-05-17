@@ -93,8 +93,19 @@ type
         @return True if description is valid or False if not.
       }
     class function ValidateName(const Name: string;
+      const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
+      overload;
+      {Validates a snippet's name.
+        @param Name [in] Snippet name to be checked.
+        @param CheckForUniqueness [in] Flag indicating whether a check should
+          be made to see if snippet name is already in user database.
+        @param ErrorMsg [out] Message that describes error. Undefined if True
+          returned.
+        @return True if name is valid or False if not.
+      }
+    class function ValidateName(const Name: string;
       const CheckForUniqueness: Boolean; out ErrorMsg: string;
-      out ErrorSel: TSelection): Boolean;
+      out ErrorSel: TSelection): Boolean; overload;
       {Validates a snippet's name.
         @param Name [in] Snippet name to be checked.
         @param CheckForUniqueness [in] Flag indicating whether a check should
@@ -112,8 +123,16 @@ type
           returned.
         @return True if extra information is valid, False if not.
       }
+    class function Validate(const Snippet: TSnippet; out ErrorMsg: string):
+      Boolean; overload;
+      {Checks a snippet for validity.
+        @param Snippet [in] Snippet to be checked.
+        @param ErrorMsg [out] Message that describes error. Undefined if True
+          returned.
+        @return True if snippet valid or False if not.
+      }
     class function Validate(const Snippet: TSnippet; out ErrorMsg: string;
-      out ErrorSel: TSelection): Boolean;
+      out ErrorSel: TSelection): Boolean; overload;
       {Checks a snippet for validity.
         @param Snippet [in] Snippet to be checked.
         @param ErrorMsg [out] Message that describes error. Undefined if True
@@ -141,6 +160,20 @@ uses
 
 
 { TSnippetValidator }
+
+class function TSnippetValidator.Validate(const Snippet: TSnippet;
+  out ErrorMsg: string): Boolean;
+  {Checks a snippet for validity.
+    @param Snippet [in] Snippet to be checked.
+    @param ErrorMsg [out] Message that describes error. Undefined if True
+      returned.
+    @return True if snippet valid or False if not.
+  }
+var
+  DummySel: TSelection; // unused parameter to overloaded Validate call
+begin
+  Result := Validate(Snippet, ErrorMsg, DummySel);
+end;
 
 class function TSnippetValidator.Validate(const Snippet: TSnippet;
   out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
@@ -386,15 +419,13 @@ begin
 end;
 
 class function TSnippetValidator.ValidateName(const Name: string;
-  const CheckForUniqueness: Boolean; out ErrorMsg: string;
-  out ErrorSel: TSelection): Boolean;
+  const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
   {Validates a snippet's name.
     @param Name [in] Snippet name to be checked.
     @param CheckForUniqueness [in] Flag indicating whether a check should be
       made to see if snippet name is already in user database.
     @param ErrorMsg [out] Message that describes error. Undefined if True
       returned.
-    @param ErrorSel [out] Selection that can be used to highlight error.
     @return True if name is valid or False if not.
   }
 resourcestring
@@ -416,6 +447,22 @@ begin
     ErrorMsg := Format(sErrDupName, [TrimmedName])
   else
     Result := True;
+end;
+
+class function TSnippetValidator.ValidateName(const Name: string;
+  const CheckForUniqueness: Boolean; out ErrorMsg: string;
+  out ErrorSel: TSelection): Boolean;
+  {Validates a snippet's name.
+    @param Name [in] Snippet name to be checked.
+    @param CheckForUniqueness [in] Flag indicating whether a check should be
+      made to see if snippet name is already in user database.
+    @param ErrorMsg [out] Message that describes error. Undefined if True
+      returned.
+    @param ErrorSel [out] Selection that can be used to highlight error.
+    @return True if name is valid or False if not.
+  }
+begin
+  Result := ValidateName(Name, CheckForUniqueness, ErrorMsg);
   if not Result then
     ErrorSel := TSelection.Create(0, Length(Name));
 end;

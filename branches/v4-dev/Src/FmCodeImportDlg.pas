@@ -135,7 +135,7 @@ uses
   SysUtils, Dialogs,
   // Project
   UCtrlArranger, UExceptions, UMessageBox, UOpenDialogEx, UOpenDialogHelper,
-  USnippetValidator, UStructs;
+  USnippetValidator;
 
 {$R *.dfm}
 
@@ -533,10 +533,9 @@ function TCodeImportDlg.ValidateSnippetName(const Name: string;
 resourcestring
   sDuplicateName = '"%s" duplicates a name in the import list.';
 var
-  ErrSel: UStructs.TSelection;
   LI: TListItem;
 begin
-  Result := TSnippetValidator.ValidateName(Name, True, ErrMsg, ErrSel);
+  Result := TSnippetValidator.ValidateName(Name, True, ErrMsg);
   if not Result then
     Exit;
   for LI in lvImports.Items do
