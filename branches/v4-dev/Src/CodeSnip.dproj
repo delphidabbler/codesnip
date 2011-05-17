@@ -81,6 +81,9 @@
 			<DCCReference Include="FmCodeExportDlg.pas">
 				<Form>CodeExportDlg</Form>
 			</DCCReference>
+			<DCCReference Include="FmCodeImportDlg.pas">
+				<Form>CodeImportDlg</Form>
+			</DCCReference>
 			<DCCReference Include="FmCodeSubmitDlg.pas">
 				<Form>CodeSubmitDlg</Form>
 			</DCCReference>

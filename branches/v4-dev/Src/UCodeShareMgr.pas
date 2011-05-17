@@ -91,7 +91,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, FmCodeExportDlg, FmCodeSubmitDlg, UCodeImportMgr;
+  DB.UMain, FmCodeExportDlg, FmCodeImportDlg, FmCodeSubmitDlg, UCodeImportMgr;
 
 
 { TCodeShareMgr }
@@ -134,8 +134,15 @@ end;
 class procedure TCodeShareMgr.ImportCode;
   {Imports user defined code from an export file.
   }
+var
+  ImportMgr: TCodeImportMgr;  // manages import of code
 begin
-  TCodeImportMgr.Execute;
+  ImportMgr := TCodeImportMgr.Create;
+  try
+    TCodeImportDlg.Execute(nil, ImportMgr);
+  finally
+    ImportMgr.Free;
+  end;
 end;
 
 class procedure TCodeShareMgr.Submit(ViewItem: IView);

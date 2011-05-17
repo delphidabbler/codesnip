@@ -93,6 +93,7 @@ uses
   FmBugReportBaseDlg in 'FmBugReportBaseDlg.pas' {BugReportBaseDlg},
   FmCategoryEditDlg in 'FmCategoryEditDlg.pas' {CategoryEditDlg},
   FmCodeExportDlg in 'FmCodeExportDlg.pas' {CodeExportDlg},
+  FmCodeImportDlg in 'FmCodeImportDlg.pas' {CodeImportDlg},
   FmCodeSubmitDlg in 'FmCodeSubmitDlg.pas' {CodeSubmitDlg},
   FmCompErrorDlg in 'FmCompErrorDlg.pas' {CompErrorDlg},
   FmCompilersDlg in 'FmCompilersDlg.pas' {CompilersDlg},
