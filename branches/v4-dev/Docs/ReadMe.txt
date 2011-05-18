@@ -59,13 +59,13 @@ The installer makes the following changes to your system:
 
 + A program group may be created in the start menu (optional).
 
-+ A %ProgramData%\DelphiDabbler\CodeSnip folder is created. A configuration
++ A %ProgramData%\DelphiDabbler\CodeSnip.4 folder is created. A configuration
   file is stored in the folder. Once the database is downloaded, it will be
-  stored in a "Data" sub-folder (see below).
+  stored in a "Database" sub-folder (see below).
 
-+ A %AppData%\DelphiDabbler\CodeSnip folder is also created. This is used to
-  hold a file that stores per-user configuration data. A "UserData.4" sub-folder
-  is used to store any user defined snippets.
++ A %AppData%\DelphiDabbler\CodeSnip.4 folder is also created. This is used to
+  hold a file that stores per-user configuration data. A "UserDatabase" sub-
+  folder is used to store any user defined snippets.
 
 + Setup offers to copy any relevant files from installations earlier than v4.0
   into the correct locations for v4.
@@ -82,7 +82,7 @@ up a message if none is present.
 When CodeSnip is first run it detects if there is no database and displays
 message to that effect in its main window. A link is displayed that can be used
 to download the database from the DelphiDabbler website. Once this is done the
-required files are stored in the %ProgramData%\DelphiDabbler\CodeSnip\Data
+required files are stored in the %ProgramData%\DelphiDabbler\CodeSnip.4\Database
 folder.
 
 
