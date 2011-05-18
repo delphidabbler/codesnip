@@ -1,5 +1,7 @@
 inherited CodeImportDlg: TCodeImportDlg
-  Caption = 'CodeImportDlg'
+  Caption = 'Import Wizard'
+  ExplicitWidth = 565
+  ExplicitHeight = 433
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -8,10 +10,13 @@ inherited CodeImportDlg: TCodeImportDlg
     inherited pcWizard: TPageControl
       Height = 288
       ActivePage = tsUpdate
+      ExplicitHeight = 288
       object tsInfo: TTabSheet
         Caption = 'tsInfo'
         TabVisible = False
+        ExplicitLeft = 0
         ExplicitTop = 27
+        ExplicitWidth = 0
         ExplicitHeight = 217
         object lblIntro: TLabel
           Left = 0
@@ -30,6 +35,8 @@ inherited CodeImportDlg: TCodeImportDlg
         ImageIndex = 1
         TabVisible = False
         ExplicitLeft = 8
+        ExplicitTop = 0
+        ExplicitWidth = 0
         ExplicitHeight = 238
         object lblFile: TLabel
           Left = 0
@@ -73,6 +80,8 @@ inherited CodeImportDlg: TCodeImportDlg
         ImageIndex = 2
         TabVisible = False
         ExplicitLeft = 8
+        ExplicitTop = 0
+        ExplicitWidth = 0
         ExplicitHeight = 238
         object lblName: TLabel
           Left = 0
@@ -128,8 +137,6 @@ inherited CodeImportDlg: TCodeImportDlg
         Caption = 'tsUpdate'
         ImageIndex = 3
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitHeight = 238
         object lblImportList: TLabel
           Left = 0
           Top = 53
@@ -207,7 +214,9 @@ inherited CodeImportDlg: TCodeImportDlg
         Caption = 'tsFinish'
         ImageIndex = 5
         TabVisible = False
+        ExplicitLeft = 0
         ExplicitTop = 27
+        ExplicitWidth = 0
         ExplicitHeight = 217
         object lblFinish: TLabel
           Left = 0
