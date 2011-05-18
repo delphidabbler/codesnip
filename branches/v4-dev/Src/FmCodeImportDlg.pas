@@ -1,7 +1,7 @@
 {
  * FmCodeImportDlg.pas
  *
- * Implements a wizrd dialog box that handles the import of user defined
+ * Implements a wizard dialog box that handles the import of user defined
  * snippets into the database. Permits snippets from the import file to be
  * renamed or rejected.
  *
@@ -46,6 +46,11 @@ uses
   FmWizardDlg, UBaseObjects, UCodeImportMgr;
 
 type
+  ///  <summary>
+  ///  Wizard dialog box that handles the import of user defined snippets into
+  ///  the user database. Permits snippets from the import file to be renamed or
+  ///  rejected.
+  ///  </summary>
   TCodeImportDlg = class(TWizardDlg, INoPublicConstruct)
     tsInfo: TTabSheet;
     tsFile: TTabSheet;
@@ -74,11 +79,18 @@ type
     lblModifyInstructions: TLabel;
     lblFinish: TLabel;
     sbFinish: TScrollBox;
+    ///  <summary>Handles clicks on list view check boxes.</summary>
     procedure lvImportsItemChecked(Sender: TObject; Item: TListItem);
+    ///  <summary>Handles selection changes events in list view.</summary>
     procedure lvImportsSelectItem(Sender: TObject; Item: TListItem;
       Selected: Boolean);
+    ///  <summary>Updates enabled state of rename action and associated
+    ///  controls.</summary>
     procedure actRenameUpdate(Sender: TObject);
+    ///  <summary>Handles event that requests renaming of a snippet.</summary>
     procedure actRenameExecute(Sender: TObject);
+    ///  <summary>Handles request to display open file dialog box to get import
+    ///  file name.</summary>
     procedure actBrowseExecute(Sender: TObject);
   strict private
     const
@@ -92,36 +104,91 @@ type
       cLVActionIdx = 1;
       cLVImportName = 0;
     var
+      ///  <summary>Reference to import manager object used to perform import
+      ///  operations.</summary>
       fImportMgr: TCodeImportMgr;
+    ///  <summary>Validates entries on wizard pages indetified by the page
+    ///  index.</summary>
     procedure ValidatePage(const PageIdx: Integer);
+    ///  <summary>Checks validity of a given snippet name that is to be used
+    ///  to replace the name in a given list item. Passes any error message
+    ///  back via parameter list.</summary>
     function ValidateSnippetName(const Name: string; const Item: TListItem;
       out ErrMsg: string): Boolean;
+    ///  <summary>Reads input file from disk.</summary>
     procedure ReadImportFile;
+    ///  <summary>Retrieves import file name from edit control where it is
+    ///  entered.</summary>
     function GetFileNameFromEditCtrl: string;
+    ///  <summary>Checks if an open file open dialog box can close. Displays an
+    ///  error message if not.</summary>
     class procedure CanOpenDialogClose(Sender: TObject;
       var CanClose: Boolean);
+    ///  <summary>Populates controls on user information page.</summary>
     procedure InitUserInfo;
+    ///  <summary>Displays current details of all snippets in import file in
+    ///  list view on update page.</summary>
     procedure InitImportInfo;
+    ///  <summary>Counts snippets that will be / have been added to database.
+    ///  Excludes any snippets skipped by user.</summary>
     function CountImportSnippets: Integer;
+    ///  <summary>Retrieves the name that will be used to add an imported
+    ///  snippet to the database from the given list item.</summary>
     function GetImportAsNameFromLV(const Item: TListItem): string;
+    ///  <summary>Updates given list item with new imported snippet name.
+    ///  </summary>
     procedure SetImportNameInLV(const Item: TListItem; const Value: string);
+    ///  <summary>Updates given list item with description of current import
+    ///  action for the associated snippet.</summary>
     procedure SetActionInLV(const Item: TListItem; const Value: string);
+    ///  <summary>Updates data that describes snippets to import from values
+    ///  stored in given list item.</summary>
     procedure UpdateImportData(const Item: TListItem);
+    ///  <summary>Updates description of import action displayed in given list
+    ///  item depending on state of list item's check box.</summary>
     procedure UpdateActionDisplay(const Item: TListItem);
+    ///  <summary>Updates database with imported snippets.</summary>
+    ///  <remarks>UI is disabled during this process.</remarks>
     procedure UpdateDatabase;
+    ///  <summary>Displays names of imported snippets on finish page.</summary>
     procedure PresentResults;
   strict protected
+    ///  <summary>Protected constructor that sets up object to use given import
+    ///  manager object.</summary>
     constructor InternalCreate(AOwner: TComponent;
       const ImportMgr: TCodeImportMgr); reintroduce;
+    ///  <summary>Aligns and arranges controls in each tab sheet and sizes
+    ///  dialog box to accomodate controls.</summary>
+    ///  <remarks>Overridden method called from ancestor class.</remarks>
     procedure ArrangeForm; override;
+    ///  <summary>Returns text of heading on page indexed by PageIdx.</summary>
+    ///  <remarks>Overridden method called from ancestor class.</remarks>
     function HeadingText(const PageIdx: Integer): string; override;
+    ///  <summary>Updates state and caption of buttons on page index by
+    ///  PageIdx.</summary>
+    ///  <remarks>Implementation of abstract method called from ancestor class.
+    ///  </remarks>
     procedure UpdateButtons(const PageIdx: Integer); override;
+    ///  <summary>Initialises page indexed by PageIdx.</summary>
+    ///  <remarks>Overridden method called from ancestor class.</remarks>
     procedure BeginPage(const PageIdx: Integer); override;
+    ///  <summary>Validates page specified by PageIdx then performs any action
+    ///  required before next page is displayed.</summary>
+    ///  <remarks>Overridden method called from ancestor class.</remarks>
     procedure MoveForward(const PageIdx: Integer; var CanMove: Boolean);
       override;
+    ///  <summary>Determines index of page following page indexed by PageIdx.
+    ///  Skips user info page if there is no user info.</summary>
+    ///  <remarks>Overridden method called from ancestor class.</remarks>
     function NextPage(const PageIdx: Integer): Integer; override;
+    ///  <summary>Determines index of page preceding page indexed by PageIdx.
+    ///  Skips user info page if there is no user info.</summary>
+    ///  <remarks>Overridden method called from ancestor class.</remarks>
     function PrevPage(const PageIdx: Integer): Integer; override;
   public
+    ///  <summary>Displays wizard, passing a reference to import manager object
+    ///  to be used for import operations. Returns True if wizard finishes or
+    ///  False if wizard cancelled.</summary>
     class function Execute(AOwner: TComponent; const ImportMgr: TCodeImportMgr):
       Boolean;
   end;
@@ -139,6 +206,7 @@ uses
 
 {$R *.dfm}
 
+
 { TCodeImportDlg }
 
 procedure TCodeImportDlg.actBrowseExecute(Sender: TObject);
@@ -149,7 +217,6 @@ resourcestring
     + 'All files (*.*)|*.*';
   sTitle = 'Import File';                               // dialog box title
 begin
-  // Create and initialise
   OpenDlg := TOpenDialogEx.Create(nil);
   try
     OpenDlg.OnCanClose := CanOpenDialogClose;
@@ -163,7 +230,6 @@ begin
     OpenDlg.Title := sTitle;
     OpenDlg.HelpKeyword := 'ImportFileDlg';
     if OpenDlg.Execute then
-      // User OKd: record entered file name
       edFile.Text := OpenDlg.FileName;
   finally
     OpenDlg.Free;
@@ -172,7 +238,7 @@ end;
 
 procedure TCodeImportDlg.actRenameExecute(Sender: TObject);
 var
-  ErrMsg: string;
+  ErrMsg: string; // any error message returned from snippets validator
 begin
   if not ValidateSnippetName(edRename.Text, lvImports.Selected, ErrMsg) then
     raise EDataEntry.Create(ErrMsg, edRename);
@@ -250,7 +316,7 @@ end;
 
 function TCodeImportDlg.CountImportSnippets: Integer;
 var
-  DataItem: TImportInfo;
+  DataItem: TImportInfo;  // each item of import information
 begin
   Result := 0;
   for DataItem in fImportMgr.ImportInfo do
@@ -283,6 +349,7 @@ end;
 
 function TCodeImportDlg.HeadingText(const PageIdx: Integer): string;
 resourcestring
+  // Page headings
   sIntroPageheading = 'Import snippets from a file';
   sFilePage = 'Choose import file';
   sUserInfoPage = 'User information';
@@ -300,9 +367,11 @@ end;
 
 procedure TCodeImportDlg.InitImportInfo;
 
+  // ---------------------------------------------------------------------------
+  ///  Creates a new list view items containing given information.
   procedure AddListItem(const Info: TImportInfo);
   var
-    LI: TListItem;
+    LI: TListItem;  // new list item
   begin
     LI := lvImports.Items.Add;
     LI.SubItems.Add('');
@@ -312,9 +381,10 @@ procedure TCodeImportDlg.InitImportInfo;
     LI.Checked := not Info.Skip;
     UpdateActionDisplay(LI);
   end;
+  // ---------------------------------------------------------------------------
 
 var
-  InfoItem: TImportInfo;
+  InfoItem: TImportInfo;  // import info item describing an imported snippet
 begin
   lvImports.Items.BeginUpdate;
   try
@@ -392,6 +462,9 @@ end;
 
 procedure TCodeImportDlg.PresentResults;
 
+  // ---------------------------------------------------------------------------
+  ///  Creates a label containing name of an imported snippet and adds it to
+  ///  scroll box with top at given position.
   procedure AddLabel(var Top: Integer; const SnippetName: string);
   var
     Lbl: TLabel;
@@ -403,10 +476,11 @@ procedure TCodeImportDlg.PresentResults;
     Lbl.Caption := '» ' + SnippetName;
     Top := TCtrlArranger.BottomOf(Lbl, 2);
   end;
+  // ---------------------------------------------------------------------------
 
 var
-  DataItem: TImportInfo;
-  LblTop: Integer;
+  DataItem: TImportInfo;  // description of each snippet from import file
+  LblTop: Integer;        // vertical position of top of next label in scrollbox
 begin
   LblTop := 0;
   for DataItem in fImportMgr.ImportInfo do
@@ -450,6 +524,7 @@ end;
 
 procedure TCodeImportDlg.UpdateActionDisplay(const Item: TListItem);
 resourcestring
+  // description of actions
   sSkip = 'Skip';
   sImport = 'Import';
 begin
@@ -463,6 +538,7 @@ end;
 
 procedure TCodeImportDlg.UpdateButtons(const PageIdx: Integer);
 resourcestring
+  // button caption for update page
   sUpdateCaption = 'Update';
 begin
   inherited;
@@ -487,8 +563,8 @@ end;
 
 procedure TCodeImportDlg.UpdateImportData(const Item: TListItem);
 var
-  DataItem: TImportInfo;
-  Idx: Integer;
+  DataItem: TImportInfo;  // description of each snippet from import file
+  Idx: Integer;           // index of selected snippet name in import info list
 begin
   if not Assigned(Item) then
     Exit;
@@ -505,6 +581,7 @@ end;
 
 procedure TCodeImportDlg.ValidatePage(const PageIdx: Integer);
 resourcestring
+  // Error messages
   sNoFileNameError = 'No file name specified. Please enter one.';
   sBadFileNameError = 'File "%s" does not exist.';
   sNoSnippetsSelected = 'No snippets are selected for import. Either select '
@@ -531,13 +608,16 @@ end;
 function TCodeImportDlg.ValidateSnippetName(const Name: string;
   const Item: TListItem; out ErrMsg: string): Boolean;
 resourcestring
+  // Error message
   sDuplicateName = '"%s" duplicates a name in the import list.';
 var
-  LI: TListItem;
+  LI: TListItem;  // each list item in list view
 begin
+  // Checks snippet name for being well formed and not already in user database
   Result := TSnippetValidator.ValidateName(Name, True, ErrMsg);
   if not Result then
     Exit;
+  // Checks name not already used for other imported snippets
   for LI in lvImports.Items do
   begin
     if LI = Item then
