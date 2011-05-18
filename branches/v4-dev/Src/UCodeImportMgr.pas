@@ -268,21 +268,37 @@ procedure TCodeImportMgr.UpdateDatabase;
     end;
   end;
 
+  ///  Returns a text string containing contributor information, if any.
+  { TODO: -cRefactor: Move this method (in part) to TUserInfo and possibly to
+    TUserDetails (as ToString method?) }
+  function ContributorText: string;
+  resourcestring
+    // user information prefix text
+    sContributorPrefix = 'Contributed by:';
+  begin
+    if UserInfo.IsNul then
+      Exit('');
+    Result := UserInfo.Details.Name;
+    if UserInfo.Details.Email <> '' then
+    begin
+      if Result <> '' then
+        Result := Result + ' ';
+      Result := Result + '<' + UserInfo.Details.Email + '>';
+    end;
+    if Result <> '' then
+      Result := sContributorPrefix + ' ' + Result;
+  end;
+
   ///  Builds an active text representation of the contributing user's name and
   ///  email address.
   function UserInfoActiveText: IActiveText;
-  resourcestring
-    // user information text template
-    sContributorText = 'Contributed by: %0:s <%1:s>';
   begin
-    Assert(not UserInfo.IsNul, ClassName +
-      '.UpdateUserDatabase:UserInfoActiveText: UserInfo is nul');
     Result := TActiveTextFactory.CreateActiveText;
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
     Result.AddElem(
       TActiveTextFactory.CreateTextElem(
         Format(
-          sContributorText, [UserInfo.Details.Name, UserInfo.Details.Email]
+          ContributorText, [UserInfo.Details.Name, UserInfo.Details.Email]
         )
       )
     );
@@ -304,11 +320,13 @@ begin
   begin
     if not fImportInfoList.FindByName(SnippetInfo.Name, ImportInfo) then
       raise EBug.CreateFmt(sBadNameError, [SnippetInfo.Name]);
+
     if ImportInfo.Skip then
       Continue;
 
     AdjustDependsList(SnippetInfo.Data.Refs.Depends);
-    if not UserInfo.IsNul then
+
+    if ContributorText <> '' then
       SnippetInfo.Data.Props.Extra.Append(UserInfoActiveText);
 
     Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, True);
