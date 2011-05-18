@@ -174,7 +174,8 @@ uses
   SysUtils, Graphics,
   // Project
   FmPreviewDlg, UCodeImportExport, UCtrlArranger,
-  UEmailHelper, UMessageBox, UUserDetails, Web.UCodeSubmitter, Web.UExceptions;
+  UEmailHelper, UMessageBox, UUserDetails, UUserDetailsPersist,
+  Web.UCodeSubmitter, Web.UExceptions;
 
 
 {$R *.dfm}
