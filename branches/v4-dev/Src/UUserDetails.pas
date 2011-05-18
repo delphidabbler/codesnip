@@ -40,33 +40,30 @@ interface
 
 
 type
-  {
-  TUserDetails:
-    Record that encapsulates information about a program user.
-  }
+  ///  <summary>
+  ///  Record that encapsulates information about a program user.
+  ///  </summary>
   TUserDetails = record
-    Name: string;       // User name
-    Email: string;      // User's email address
+  strict private
+    // Property values
+    fName: string;
+    fEmail: string;
+  public
+    ///  <summary>User name.</summary>
+    property Name: string read fName write fName;
+    ///  <summary>User email.</summary>
+    property Email: string read fEmail write fEmail;
+    ///  <summary>Constructs record with given field values.</summary>
     constructor Create(const UserName, UserEmail: string);
-      {Initialises all a fields of a record.
-        @param UserName [in] Name of user.
-        @param UserEmail [in] User's email address.
-      }
+    ///  <summary>Creates and returns a new null record.</summary>
     class function CreateNul: TUserDetails; static;
-      {Create a new nul record.
-        @return Required initialised record.
-      }
+    ///  <summary>Assigns the field values of a given record to this record.
+    ///  </summary>
     procedure Assign(const Src: TUserDetails);
-      {Sets this record's fields to be same as another TUserInfo record.
-        @param Src [in] Record containing fields to be copied.
-      }
+    ///  <summary>Initialises the record to null values.</summary>
     procedure Init;
-      {Initialises record to nul values.
-      }
+    ///  <summary>Checks if record is null, i.e. empty.</summary>
     function IsNul: Boolean;
-      {Checks if record is nul (empty).
-        @return True if record is nul, False if not.
-      }
   end;
 
 
@@ -81,44 +78,29 @@ uses
 { TUserDetails }
 
 procedure TUserDetails.Assign(const Src: TUserDetails);
-  {Sets this record's fields to be same as another TUserInfo record.
-    @param Src [in] Record containing fields to be copied.
-  }
 begin
-  Name := Src.Name;
-  Email := Src.Email;
+  fName := Src.Name;
+  fEmail := Src.Email;
 end;
 
 constructor TUserDetails.Create(const UserName, UserEmail: string);
-  {Initialises all a fields of a record.
-    @param UserName [in] Name of user.
-    @param UserEmail [in] User's email address.
-  }
 begin
-  Name := UserName;
-  Email := UserEmail;
+  fName := UserName;
+  fEmail := UserEmail;
 end;
 
 class function TUserDetails.CreateNul: TUserDetails;
-  {Create a new nul record.
-    @return Required initialised record.
-  }
 begin
   Result.Init;
 end;
 
 procedure TUserDetails.Init;
-  {Initialises record to nul values.
-  }
 begin
-  Name := '';
-  Email := '';
+  fName := '';
+  fEmail := '';
 end;
 
 function TUserDetails.IsNul: Boolean;
-  {Checks if record is nul (empty).
-    @return True if record is nul, False if not.
-  }
 begin
   Result := (Trim(Name) = '') and (Trim(Email) = '');
 end;
