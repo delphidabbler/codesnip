@@ -184,7 +184,7 @@
 		<param name="Local" value="HTML\menu_help.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="import routines dialog">
+		<param name="Name" value="import wizard">
 		<param name="Local" value="HTML\dlg_import.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
