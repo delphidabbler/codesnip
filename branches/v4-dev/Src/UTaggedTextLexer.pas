@@ -405,7 +405,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils, Character,
+  SysUtils, Character,
   // Project
   UComparers, UStructs, UStrUtils, UUtils;
 
@@ -516,7 +516,7 @@ begin
       sEntityHasNoValue, TSelection.Create(fCurrentIdx - 1)
     );
   // check for valid entity format
-  EntityValStr := RightStr(Entity, Length(Entity) - 1);
+  EntityValStr := StrSliceRight(Entity, Length(Entity) - 1);
   if not TryStrToInt64(EntityValStr, EntityVal) or (EntityVal < 0) then
     raise ETaggedTextEntityHandler.CreateFmt(
       sEntityValueNotValid, [Entity], TSelection.Create(fCurrentIdx - 1)
@@ -585,7 +585,7 @@ begin
           sEntityUnterminated, TSelection.Create(fCurrentIdx - 1)
         );
       // record entity excluding opening '&' and closing ';'
-      Entity := MidStr(Text, EntityStart, Idx - EntityStart);
+      Entity := StrSlice(Text, EntityStart, Idx - EntityStart);
       // skip over ending ';' in input
       Inc(Idx);
       // insert translated character in TransStr, and update its cursor
@@ -699,7 +699,7 @@ begin
     // tag is of form <tag>: start of compound tag: no changes to text
     Result := ttsCompoundStartTag;
   // Finally strip off delimiting < and > chars
-  WorkTag := MidStr(WorkTag, 2, Length(WorkTag) - 2);
+  WorkTag := StrSlice(WorkTag, 2, Length(WorkTag) - 2);
 end;
 
 function TTaggedTextTagHandler.GetTagName(const TagStr: string;
@@ -725,7 +725,7 @@ begin
     and not TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
     Inc(NextChPos);
   // Copy the name from the string
-  Result := MidStr(TagStr, StartPos, NextChPos - StartPos);
+  Result := StrSlice(TagStr, StartPos, NextChPos - StartPos);
   if Trim(Result) = '' then
     raise ETaggedTextTagHandler.Create(sTagEmpty);
 end;
@@ -785,7 +785,7 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
       and not TCharacter.IsWhiteSpace(TagStr[NextChPos])
       and (TagStr[NextChPos] <> cEquals) do
       Inc(NextChPos);
-    Name := MidStr(TagStr, StartPos, NextChPos - StartPos);
+    Name := StrSlice(TagStr, StartPos, NextChPos - StartPos);
 
     // skip any white space following name
     while (NextChPos <= Len) and TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
@@ -812,7 +812,7 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
       Inc(NextChPos);
     if (NextChPos > Len) then
       raise EAttrError.Create(sBadAttribute);
-    EscapedValue := MidStr(TagStr, StartPos, NextChPos - StartPos);
+    EscapedValue := StrSlice(TagStr, StartPos, NextChPos - StartPos);
     // translate any entities in value
     try
       fEntityHandler.TranslateTextEntities(EscapedValue, Value);
@@ -1161,7 +1161,7 @@ begin
   // check the plain text for entities, replacing them with values
   try
     fEntityHandler.TranslateTextEntities(
-      MidStr(fTaggedText, StartPos, fNextCharPos - StartPos), fCurText
+      StrSlice(fTaggedText, StartPos, fNextCharPos - StartPos), fCurText
     );
   except
     on E: ETaggedTextEntityHandler do
@@ -1199,7 +1199,7 @@ begin
   // skip over tag closer
   Inc(fNextCharPos);
   // get info about tag
-  Tag := MidStr(fTaggedText, StartPos, fNextCharPos - StartPos);
+  Tag := StrSlice(fTaggedText, StartPos, fNextCharPos - StartPos);
   try
     fTagHandler.ProcessTag(Tag, fCurText, fKind, fTagCode, fParams);
   except

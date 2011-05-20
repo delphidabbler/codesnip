@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -142,10 +142,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils,
+  SysUtils,
   // Project
   UAnchors, UGC, UHTMLDocHelper, UImageTags, ULinkAction, UMenuHelper,
-  UWBPopupMenus;
+  UStrUtils, UWBPopupMenus;
 
 
 { TWBCommandBarMgr }
@@ -294,7 +294,7 @@ function TWBDefaultPopupMenuWrapper.GetImageIndex(
   begin
     Pos := LastDelimiter('/', URL);
     if Pos > 0 then
-      Result := AnsiRightStr(URL, Length(URL) - Pos)
+      Result := StrSliceRight(URL, Length(URL) - Pos)
     else
       Result := URL;
   end;

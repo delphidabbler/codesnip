@@ -660,7 +660,7 @@ var
 begin
   BaseFileName := ExtractFileName(FileName);
   Ext := ExtractFileExt(FileName);
-  Result := AnsiLeftStr(BaseFileName, Length(BaseFileName) - Length(Ext));
+  Result := StrSliceLeft(BaseFileName, Length(BaseFileName) - Length(Ext));
 end;
 
 { TSourceAnalyser }

@@ -73,6 +73,29 @@ function StrToUpper(const Str: string): string;
 function StrToLower(const Str: string): string;
 
 
+///  <summary>Returns a substring of Str starting at index StartIdx of length
+///  Count.</summary>
+///  <remarks>
+///  <para>If Count specifies more than the available number of characters, the
+///  substring from StartIdx to the end of the string is returned.</para>
+///  <para>If StartIdx is beyond the end of Str the empty string is returned.
+///  </para>
+///  </remarks>
+function StrSlice(const Str: string; const StartIdx, Count: Integer): string;
+
+///  <summary>Returns the leading characters of Str up to a length of Count
+///  characters.</summary>
+///  <remarks>If Count is greater than the length of Str the whole string is
+///  returned.</remarks>
+function StrSliceLeft(const Str: string; const Count: Integer): string;
+
+///  <summary>Returns the trailing characters of Str up to a length of Count
+///  characters.</summary>
+///  <remarks>If Count is greater than the length of Str the whole string is
+///  returned.</remarks>
+function StrSliceRight(const Str: string; const Count: Integer): string;
+
+
 implementation
 
 
@@ -114,6 +137,21 @@ end;
 function StrPos(const Needle, Haystack: string; const Offset: Integer): Integer;
 begin
   Result := StrUtils.PosEx(Needle, Haystack, Offset);
+end;
+
+function StrSlice(const Str: string; const StartIdx, Count: Integer): string;
+begin
+  Result := StrUtils.AnsiMidStr(Str, StartIdx, Count);
+end;
+
+function StrSliceLeft(const Str: string; const Count: Integer): string;
+begin
+  Result := StrUtils.AnsiLeftStr(Str, Count);
+end;
+
+function StrSliceRight(const Str: string; const Count: Integer): string;
+begin
+  Result := StrUtils.AnsiRightStr(Str, Count);
 end;
 
 function StrToUpper(const Str: string): string;

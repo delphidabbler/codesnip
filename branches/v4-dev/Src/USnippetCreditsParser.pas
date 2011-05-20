@@ -97,8 +97,6 @@ implementation
 
 
 uses
-  // Delphi
-  StrUtils,
   // Project
   UStrUtils, UUtils;
 
@@ -161,13 +159,13 @@ begin
     if fURL = '' then
       raise EActiveTextParserError.Create(sNoURL);
     // get the various components
-    LinkText := MidStr(
+    LinkText := StrSlice(
       Markup, OpenBracketPos + 1, CloseBracketPos - OpenBracketPos - 1
     );
     Assert(LinkText <> '',
       ClassName + '.Parse: Link text is '' but has passed check');
-    Prefix := LeftStr(Markup, OpenBracketPos - 1);
-    Postfix := RightStr(Markup, Length(Markup) - CloseBracketPos);
+    Prefix := StrSliceLeft(Markup, OpenBracketPos - 1);
+    Postfix := StrSliceRight(Markup, Length(Markup) - CloseBracketPos);
     // record the elements
     if Prefix <> '' then
       ActiveText.AddElem(TActiveTextFactory.CreateTextElem(Prefix));
