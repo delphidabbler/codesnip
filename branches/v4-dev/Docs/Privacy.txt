@@ -167,12 +167,11 @@ various pages from DelphiDabbler.com to be displayed in the user's default
 browser.
 
 In addition, various links in the program's main display, some dialog boxes and
-the help file access remote websites. Links from the program will use your
-default browser while links from the help file use Internet Explorer. You should
-refer to the relevant website's privacy policies to learn how they use any data
-you supply when visiting their pages. DelphiDabbler has no control over the
-content of linked third party websites and you follow these links at your own
-risk.
+the help file access remote websites which are displayed in your default
+browser. You should refer to the relevant website's privacy policies to learn
+how they use any data you supply when visiting their pages. DelphiDabbler has no
+control over the content of linked third party websites and you follow such
+links at your own risk.
 
 
 Accessing the internet using a proxy server

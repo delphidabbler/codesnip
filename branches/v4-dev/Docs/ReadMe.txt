@@ -264,6 +264,13 @@ Any other comments can be sent using the contact page at
 http://www.delphidabbler.com/contact
 
 
+FAQs
+================================================================================
+
+There are Frequently Asked Questions pages for CodeSnip on the web, at
+http://www.delphidabbler.com/url/codesnip-faq
+
+
 Contribute to the Database
 ================================================================================
 

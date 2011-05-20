@@ -323,7 +323,6 @@
 			<DCCReference Include="UBrowseProtocol.pas"/>
 			<DCCReference Include="UCategoryAction.pas"/>
 			<DCCReference Include="UCategoryListAdapter.pas"/>
-			<DCCReference Include="UChkListStateMgr.pas"/>
 			<DCCReference Include="UClipboardHelper.pas"/>
 			<DCCReference Include="UCodeImportExport.pas"/>
 			<DCCReference Include="UCodeImportMgr.pas"/>

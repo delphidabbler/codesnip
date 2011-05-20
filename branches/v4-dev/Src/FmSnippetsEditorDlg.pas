@@ -50,6 +50,11 @@ uses
   UChkListStateMgr, UCompileMgr, UCompileResultsLBMgr, UCSSBuilder,
   ULEDImageList, UMemoCaretPosDisplayMgr, UMemoHelper, USnipKindListAdapter,
   USnippetsChkListMgr, UUnitsChkListMgr;
+  Compilers.UGlobals, FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
+  UActiveText, UBaseObjects, UCategoryListAdapter, UCompileMgr,
+  UCompileResultsLBMgr, UCSSBuilder, ULEDImageList, UMemoCaretPosDisplayMgr,
+  UMemoHelper, USnipKindListAdapter, USnippets, USnippetsChkListMgr,
+  UUnitsChkListMgr;
 
 
 type
@@ -153,8 +158,6 @@ type
     fOrigName: string;              // Original name of snippet ('' for new)
     fEditData: TSnippetEditData;    // Record storing a snippet's editable data
     fCompileMgr: TCompileMgr;       // Manages compilation and results display
-    fCLBMgrs: array[0..2] of
-      TChkListStateMgr;             // Manages check list box clicks
     fDependsCLBMgr:
       TSnippetsChkListMgr;          // Manages dependencies check list box
     fXRefsCLBMgr:
@@ -718,9 +721,6 @@ begin
   fDependsCLBMgr := TSnippetsChkListMgr.Create(clbDepends);
   fXRefsCLBMgr := TSnippetsChkListMgr.Create(clbXRefs);
   fUnitsCLBMgr := TUnitsChkListMgr.Create(clbUnits);
-  fCLBMgrs[0] := TChkListStateMgr.Create(clbXRefs);
-  fCLBMgrs[1] := TChkListStateMgr.Create(clbDepends);
-  fCLBMgrs[2] := TChkListStateMgr.Create(clbUnits);
   fCompilersLBMgr := TCompileResultsLBMgr.Create(
     lbCompilers, fCompileMgr.Compilers
   );
@@ -733,14 +733,10 @@ procedure TSnippetsEditorDlg.FormDestroy(Sender: TObject);
   {Form destruction event handler. Frees owned objects.
     @param Sender [in] Not used.
   }
-var
-  Idx: Integer; // loops through items in compiler list box
 begin
   inherited;
   FreeAndNil(fSourceMemoHelper);
   FreeAndNil(fCompilersLBMgr);
-  for Idx := Low(fCLBMgrs) to High(fCLBMgrs) do
-    FreeAndNil(fCLBMgrs[Idx]);
   FreeAndNil(fUnitsCLBMgr);
   FreeAndNil(fXRefsCLBMgr);
   FreeAndNil(fDependsCLBMgr);

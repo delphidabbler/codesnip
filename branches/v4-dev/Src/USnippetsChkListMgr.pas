@@ -199,7 +199,8 @@ destructor TSnippetsChkListMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fSaveList);
+  fCLB.OnDrawItem := nil;
+  fSaveList.Free;
   inherited;
 end;
 

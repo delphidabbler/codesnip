@@ -534,7 +534,7 @@ var
 begin
   SelNode := tvChecked.GetNodeAt(X, Y) as TCheckedTreeNode;
   HitTestInfo := tvChecked.GetHitTestInfoAt(X, Y);
-  if (htOnItem in HitTestInfo) and (Button = mbLeft)
+  if (htOnIcon in HitTestInfo) and (Button = mbLeft)
     and not HasShiftKeys(Shift) and Assigned(SelNode) then
     ToggleNode(SelNode);
 end;
