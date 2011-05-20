@@ -171,7 +171,6 @@ uses
   UBrowseProtocol in 'UBrowseProtocol.pas',
   UCategoryAction in 'UCategoryAction.pas',
   UCategoryListAdapter in 'UCategoryListAdapter.pas',
-  UChkListStateMgr in 'UChkListStateMgr.pas',
   UClipboardHelper in 'UClipboardHelper.pas',
   UCodeImportExport in 'UCodeImportExport.pas',
   UCodeImportMgr in 'UCodeImportMgr.pas',
