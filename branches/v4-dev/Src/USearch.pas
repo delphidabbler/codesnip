@@ -352,9 +352,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils, Character,
+  SysUtils, Character,
   // Project
-  UActiveText, UUtils;
+  UActiveText, UStrUtils, UUtils;
 
 
 type
@@ -1031,7 +1031,7 @@ begin
     // Find any of words in search text: return True as soon as any word matches
     Result := False;
     for SearchWord in fCriteria.Words do
-      if ContainsStr(SearchText, NormaliseSearchWord(SearchWord)) then
+      if StrContainsStr(NormaliseSearchWord(SearchWord), SearchText) then
         Exit(True);
   end
   else {fLogic = slAnd}
@@ -1040,7 +1040,7 @@ begin
     // match
     Result := True;
     for SearchWord in fCriteria.Words do
-      if not ContainsStr(SearchText, NormaliseSearchWord(SearchWord)) then
+      if not StrContainsStr(NormaliseSearchWord(SearchWord), SearchText) then
         Exit(False);
   end;
 end;

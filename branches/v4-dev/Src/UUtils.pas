@@ -607,7 +607,7 @@ var
 begin
   Result := False;
   for DelimIdx := 1 to Length(Delimiters) do
-    if AnsiContainsStr(S, Delimiters[DelimIdx]) then
+    if StrContainsStr(Delimiters[DelimIdx], S) then
     begin
       Result := True;
       Break;
