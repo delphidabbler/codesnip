@@ -1,0 +1,84 @@
+{
+ * UStrUtils.pas
+ *
+ * String utility routines.
+ *
+ * Some of the routines are simply wrappers around SysUtils and StrUtils
+ * routines with the purpose of (a) collecting them together in one place and
+ * (b) providing a standardised parameter order.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UStrUtils.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2011 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
+}
+
+
+unit UStrUtils;
+
+
+interface
+
+
+///  <summary>Checks if string Haystack contains string Needle. Case sensitive.
+///  </summary>
+function StrContainsStr(const Needle, Haystack: string): Boolean;
+
+///  <summary>Returns index of string Needle in string Haystack or 0 if Needle
+///  is not in Haystack. Case sensitive.</summary>
+function StrPos(const Needle, Haystack: string): Integer; overload;
+
+///  <summary>Returns index of string Needle in string Haystack, beginning the
+///  search at Offset. Returns 0 if Haystack is not found or if Offset is less
+///  than 1 or greater than length of Haystack.</summary>
+function StrPos(const Needle, Haystack: string; const Offset: Integer): Integer;
+  overload;
+
+
+implementation
+
+
+uses
+  // Delphi
+  SysUtils, StrUtils;
+
+
+function StrContainsStr(const Needle, Haystack: string): Boolean;
+begin
+  Result := StrUtils.AnsiContainsStr(Haystack, Needle);
+end;
+
+function StrPos(const Needle, Haystack: string): Integer;
+begin
+  Result := SysUtils.AnsiPos(Needle, Haystack);
+end;
+
+function StrPos(const Needle, Haystack: string; const Offset: Integer): Integer;
+begin
+  Result := StrUtils.PosEx(Needle, Haystack, Offset);
+end;
+
+end.

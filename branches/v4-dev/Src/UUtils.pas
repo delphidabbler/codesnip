@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -257,7 +257,7 @@ uses
   // Delphi
   StrUtils, Windows, ShlObj, ActiveX, Messages, Character,
   // Project
-  UConsts;
+  UConsts, UStrUtils;
 
 
 function FileAge(const FileName: string): Integer;
@@ -506,7 +506,7 @@ var
   DelimPos: Integer;  // position of delimiter in source string
 begin
   // Find position of first occurence of delimiter in string
-  DelimPos := AnsiPos(Delim, S);
+  DelimPos := StrPos(Delim, S);
   if DelimPos > 0 then
   begin
     // Delimiter found: split string at delimiter
@@ -730,13 +730,13 @@ var
   Idx: Integer; // an index of SubStr in Str
 begin
   Result := 0;
-  Idx := AnsiPos(SubStr, Str);
+  Idx := StrPos(SubStr, Str);
   if Idx = 0 then
     Exit;
   while Idx > 0 do
   begin
     Result := Idx;
-    Idx := PosEx(SubStr, Str, Idx + 1);
+    Idx := StrPos(SubStr, Str, Idx + 1);
   end;
 end;
 
@@ -948,7 +948,7 @@ function IsValidUNCFileName(const FileName: string): Boolean;
 begin
   Result := (Length(FileName) > 5)
     and AnsiStartsStr('\\', FileName)
-    and (PosEx('\', FileName, 4) >= 4);
+    and (StrPos('\', FileName, 4) >= 4);
 end;
 
 procedure KeyErrorBeep;

@@ -246,7 +246,7 @@ implementation
 
 uses
   // Project
-  UUtils;
+  UStrUtils, UUtils;
 
 
 const
@@ -322,7 +322,7 @@ begin
     for Idx := 0 to Pred(Params.Count) do
     begin
       Param := Params[Idx];
-      if AnsiPos(' ', Param) > 0 then
+      if StrContainsStr(' ', Param) then
         Param := '"' + Param + '"';
       // params are space separated
       if Result <> '' then
@@ -351,7 +351,7 @@ begin
   if Res = 0 then
   begin
     // no error code: could be clear compile or could have warnings
-    if AnsiPos(fPrefixes[cpWarning], fCompileLog.Text) > 0 then
+    if StrContainsStr(fPrefixes[cpWarning], fCompileLog.Text) then
       Result := crWarning
     else
       Result := crSuccess;
@@ -459,7 +459,7 @@ begin
   for Line in fCompileLog do
   begin
     // Check if Msg is in current line
-    Pos := AnsiPos(Msg, Line);
+    Pos := StrPos(Msg, Line);
     if Pos > 0 then
     begin
       // Line required: add line without message to output string list

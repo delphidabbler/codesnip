@@ -321,6 +321,7 @@ uses
   UStatusBarMgr in 'UStatusBarMgr.pas',
   UStringReader in 'UStringReader.pas',
   UStructs in 'UStructs.pas',
+  UStrUtils in 'UStrUtils.pas',
   USystemID in 'USystemID.pas',
   USystemInfo in 'USystemInfo.pas',
   UTaggedTextLexer in 'UTaggedTextLexer.pas',

@@ -156,7 +156,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  DB.UMain, UURIEncode;
+  DB.UMain, UStrUtils, UURIEncode;
 
 
 { TSnippetValidator }
@@ -337,7 +337,7 @@ begin
   begin
     ErrorMsg := sErrDescHasClosingBrace;
     ErrorSel := TSelection.Create(
-      AnsiPos(ClosingBrace, Desc) - 1, Length(ClosingBrace)
+      StrPos(ClosingBrace, Desc) - 1, Length(ClosingBrace)
     );
   end
   else

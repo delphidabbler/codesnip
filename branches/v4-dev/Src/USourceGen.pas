@@ -294,7 +294,7 @@ uses
   SysUtils, StrUtils,
   // Project
   DB.USnippetKind, UConsts, UExceptions, UPreferences, USnippetValidator,
-  UUtils, UWarnings;
+  UStrUtils, UUtils, UWarnings;
 
 
 const
@@ -1037,15 +1037,15 @@ begin
   // Record code without any surrounding white space
   SourceCode := Trim(Routine.SourceCode);
   // Find relative positions of first key characters
-  StartParam := PosEx('(', SourceCode);
-  AfterParams := PosEx(')', SourceCode) + 1;
-  SemiColonPos := PosEx(';', SourceCode);
+  StartParam := StrPos('(', SourceCode);
+  AfterParams := StrPos(')', SourceCode) + 1;
+  SemiColonPos := StrPos(';', SourceCode);
   // Determine end of head section
   if SemiColonPos > StartParam then
   begin
     // semi colon after param => we have params: skip them before looking for
     // ending ';'
-    EndDeclaration := PosEx(
+    EndDeclaration := StrPos(
       ';',
       Copy(SourceCode, AfterParams, Length(SourceCode) - AfterParams + 1)
     ) + AfterParams - 1;
@@ -1057,7 +1057,7 @@ begin
   end;
   // Look for directives that are part of prototype
   // first look for calling conventions
-  SemiColonPos := PosEx(';', SourceCode, EndDeclaration + 1);
+  SemiColonPos := StrPos(';', SourceCode, EndDeclaration + 1);
   if SemiColonPos > 0 then
   begin
     Fragment := Trim(
@@ -1067,7 +1067,7 @@ begin
       EndDeclaration := SemiColonPos + 1;
   end;
   // now look for 'overload' directive
-  SemiColonPos := PosEx(';', SourceCode, EndDeclaration + 1);
+  SemiColonPos := StrPos(';', SourceCode, EndDeclaration + 1);
   if SemiColonPos > 0 then
   begin
     Fragment := Trim(
@@ -1168,7 +1168,7 @@ class procedure TConstAndTypeFormatter.Split(const ConstOrType: TSnippet;
     begin
       // KW starts SourceCode - perform split
       Keyword := KW;
-      EOLPos := PosEx(EOL, SourceCode, Length(KW));
+      EOLPos := StrPos(EOL, SourceCode, Length(KW));
       if EOLPos > 0 then
         Body := Copy(SourceCode, EOLPos + Length(EOL), MaxInt)
       else

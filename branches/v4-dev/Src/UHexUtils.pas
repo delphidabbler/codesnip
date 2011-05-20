@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -62,6 +62,11 @@ function TryHexToBytes(HexStr: string; out Bytes: TBytes): Boolean;
 
 
 implementation
+
+
+uses
+  // Project
+  UStrUtils;
 
 
 function StripHexPrefix(const HexStr: string): string;
@@ -133,9 +138,9 @@ function StripHexPrefix(const HexStr: string): string;
     @return HexStr without any hex prefix. Unchanged if HexStr has no prefix.
   }
 begin
-  if Pos('$', HexStr) = 1 then
+  if StrPos('$', HexStr) = 1 then
     Result := Copy(HexStr, 2, Length(HexStr) - 1)
-  else if Pos('0x', SysUtils.LowerCase(HexStr)) = 1 then
+  else if StrPos('0x', SysUtils.LowerCase(HexStr)) = 1 then
     Result := Copy(HexStr, 3, Length(HexStr) - 2)
   else
     Result := HexStr;

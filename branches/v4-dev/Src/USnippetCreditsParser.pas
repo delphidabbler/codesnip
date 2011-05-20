@@ -100,7 +100,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UUtils;
+  UStrUtils, UUtils;
 
 
 { TSnippetCreditsParser }
@@ -132,8 +132,8 @@ var
   LinkText: string;         // link text
 begin
   // Find open and closing brackets that delimit link text
-  OpenBracketPos := AnsiPos(cOpenBracket, Markup);
-  CloseBracketPos := AnsiPos(cCloseBracket, Markup);
+  OpenBracketPos := StrPos(cOpenBracket, Markup);
+  CloseBracketPos := StrPos(cCloseBracket, Markup);
   if OpenBracketPos = 0 then
   begin
     // No links: plain text only

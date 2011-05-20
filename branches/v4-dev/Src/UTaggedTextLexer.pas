@@ -28,7 +28,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -407,7 +407,7 @@ uses
   // Delphi
   SysUtils, StrUtils, Character,
   // Project
-  UComparers, UStructs, UUtils;
+  UComparers, UStructs, UStrUtils, UUtils;
 
 
 const
@@ -682,9 +682,9 @@ begin
     // tag is of form <!directive> or <!-- comment -->: we delete ! and any --
     Result := ttsComment;
     Delete(WorkTag, 2, 1);
-    if AnsiPos('--', WorkTag) = 2 then
+    if StrPos('--', WorkTag) = 2 then
       Delete(WorkTag, 2, 2);
-    if AnsiPos('--', WorkTag) = Length(WorkTag) - 2 then
+    if StrPos('--', WorkTag) = Length(WorkTag) - 2 then
       Delete(WorkTag, Length(WorkTag) - 2, 2);
   end
   else if WorkTag[2] = '?' then

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -114,7 +114,7 @@ uses
   // Delphi
   SysUtils, StrUtils,
   // Project
-  UVersionInfo;
+  UStrUtils, UVersionInfo;
 
 
 type
@@ -388,7 +388,7 @@ function RemoveFileExt(const FileName: string): string;
     @return File name without extension.
   }
 begin
-  if SysUtils.AnsiPos('.', FileName) > 0 then
+  if StrContainsStr('.', FileName) then
     Result := SysUtils.ChangeFileExt(FileName, '')
   else
     Result := FileName;
