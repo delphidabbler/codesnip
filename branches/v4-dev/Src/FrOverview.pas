@@ -240,8 +240,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   UKeysHelper, UOverviewTreeBuilder;
 

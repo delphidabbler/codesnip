@@ -126,7 +126,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Forms,
+  Forms,
   // Project
   UAppInfo;
 

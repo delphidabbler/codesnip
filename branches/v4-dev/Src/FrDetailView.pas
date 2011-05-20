@@ -161,7 +161,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics, Menus,
+  Graphics, Menus,
   // Project
   Hiliter.UAttrs, Hiliter.UCSS, Hiliter.UGlobals, UColours, UCSSUtils,
   UFontHelper, UUtils, UWBCommandBars;

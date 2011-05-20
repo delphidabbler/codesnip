@@ -93,8 +93,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   Hiliter.UAttrs, URTFSnippetDoc, UPrintInfo;
 

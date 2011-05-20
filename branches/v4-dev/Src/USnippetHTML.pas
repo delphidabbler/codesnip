@@ -138,8 +138,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils, StrUtils,
   // Project
   DB.UCategory, DB.UMain, DB.USnippetKind, Hiliter.UAttrs, Hiliter.UGlobals,
   Hiliter.UHiliters, UActiveTextHTML, UHTMLDetailUtils, UHTMLUtils, UUtils;

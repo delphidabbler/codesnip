@@ -123,7 +123,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics, StdCtrls,
+  Graphics, StdCtrls,
   // Project
   UColours, UGraphicUtils;
 

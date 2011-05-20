@@ -173,11 +173,6 @@ implementation
 }
 
 
-uses
-  // Delphi
-  SysUtils;
-
-
 { TOverviewTreeBuilder }
 
 function TOverviewTreeBuilder.AddViewItemNode(

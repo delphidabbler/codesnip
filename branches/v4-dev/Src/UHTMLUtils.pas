@@ -215,7 +215,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils, Windows,
+  SysUtils, Windows,
   // Project
   UCSSUtils, UExceptions, UURIEncode;
 

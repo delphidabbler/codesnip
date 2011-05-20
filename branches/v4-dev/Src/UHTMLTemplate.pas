@@ -92,7 +92,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils,
+  StrUtils,
   // Project
   UEncodings, UHTMLUtils, UResourceUtils;
 
