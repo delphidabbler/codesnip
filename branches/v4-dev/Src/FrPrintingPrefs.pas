@@ -116,7 +116,8 @@ uses
   SysUtils, Windows, Graphics, Math, ComCtrls,
   // Project
   FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UHiliters, IntfCommon, UConsts,
-  UEncodings, UKeysHelper, UPrintInfo, URTFBuilder, URTFUtils, UUtils;
+  UEncodings, UKeysHelper, UPrintInfo, URTFBuilder, URTFUtils, UStrUtils,
+  UUtils;
 
 
 {$R *.dfm}
@@ -171,7 +172,7 @@ begin
   // Update the caption to show current units
   gpMargins.Caption := Format(
     ' ' + sMarginCaption + ' ',
-    [AnsiLowerCase(UMeasurement.UnitName(Prefs.MeasurementUnits))]
+    [StrToLower(UMeasurement.UnitName(Prefs.MeasurementUnits))]
   );
 
   // Update entries in margins edit boxes

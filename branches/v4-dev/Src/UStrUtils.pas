@@ -66,6 +66,12 @@ function StrLastPos(const Needle, Haystack: string): Integer;
 ///  greater than Right.</summary>
 function StrCompareText(const Left, Right: string): Integer;
 
+///  <summary>Converts a string to upper case.</summary>
+function StrToUpper(const Str: string): string;
+
+///  <summary>Converts a string to lower case.</summary>
+function StrToLower(const Str: string): string;
+
 
 implementation
 
@@ -108,6 +114,16 @@ end;
 function StrPos(const Needle, Haystack: string; const Offset: Integer): Integer;
 begin
   Result := StrUtils.PosEx(Needle, Haystack, Offset);
+end;
+
+function StrToUpper(const Str: string): string;
+begin
+  Result := SysUtils.AnsiUpperCase(Str);
+end;
+
+function StrToLower(const Str: string): string;
+begin
+  Result := SysUtils.AnsiLowerCase(Str);
 end;
 
 end.

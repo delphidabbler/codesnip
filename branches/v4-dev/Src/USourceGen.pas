@@ -1073,7 +1073,7 @@ begin
     Fragment := Trim(
       Copy(SourceCode, EndDeclaration + 1, SemiColonPos - EndDeclaration - 1)
     );
-    if AnsiLowerCase(Fragment) = cOverload then
+    if StrToLower(Fragment) = cOverload then
       EndDeclaration := SemiColonPos + 1;
   end;
   // Record declaration (i.e. prototype)

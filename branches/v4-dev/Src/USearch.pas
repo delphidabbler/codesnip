@@ -977,7 +977,7 @@ function TTextSearch.Match(const Snippet: TSnippet): Boolean;
       Result := ' ' + JoinStr(Words, ' ', False) + ' '
         + JoinStr(ExtraWords, ' ', False) + ' ';
       if not (soMatchCase in fCriteria.Options) then
-        Result := AnsiLowerCase(Result);
+        Result := StrToLower(Result);
     finally
       ExtraWords.Free;
       Words.Free;
@@ -994,7 +994,7 @@ function TTextSearch.Match(const Snippet: TSnippet): Boolean;
   begin
     Result := Word;
     if not (soMatchCase in fCriteria.Options) then
-      Result := AnsiLowerCase(Result);
+      Result := StrToLower(Result);
     if soWholeWord in fCriteria.Options then
       Result := ' ' + Result + ' ';
   end;

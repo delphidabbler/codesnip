@@ -319,7 +319,7 @@ uses
   // Project
   Compilers.UCompilers, DB.UMain, UCompResHTML, UConsts, UCSSUtils, UEncodings,
   UHTMLUtils, UHTMLDetailUtils, UJavaScriptUtils, UQuery, UResourceUtils,
-  USnippetHTML, UUtils;
+  USnippetHTML, UStrUtils, UUtils;
 
 
 { TDetailPageHTML }
@@ -776,13 +776,13 @@ begin
   begin
     Tplt.ResolvePlaceholderText(
       'Narrative',
-      Format(sNarrative, [AnsiLowerCase(View.Description)])
+      Format(sNarrative, [StrToLower(View.Description)])
     );
     Tplt.ResolvePlaceholderHTML('SnippetList', SnippetTableInner);
   end
   else
     Tplt.ResolvePlaceholderText(
-      'Note', Format(sNote, [AnsiLowerCase(View.Description)])
+      'Note', Format(sNote, [StrToLower(View.Description)])
     );
 end;
 

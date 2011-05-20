@@ -217,7 +217,7 @@ uses
   // Delphi
   SysUtils, Windows,
   // Project
-  UCSSUtils, UExceptions, UURIEncode;
+  UCSSUtils, UExceptions, UStrUtils, UURIEncode;
 
 
 function MakeSafeHTMLText(TheText: string): string;
@@ -265,10 +265,10 @@ function MakeTag(const TagName: string; const TagType: THTMLTagType;
   }
 begin
   if TagType = ttClose then
-    Result := '</' + AnsiLowerCase(TagName) + '>'
+    Result := '</' + StrToLower(TagName) + '>'
   else
   begin
-    Result := '<' + AnsiLowerCase(TagName);
+    Result := '<' + StrToLower(TagName);
     if Assigned(Attrs) and (not Attrs.IsEmpty) then
       Result := Result + ' ' + Attrs.RenderSafe;
     if TagType = ttOpen then

@@ -140,7 +140,7 @@ function StripHexPrefix(const HexStr: string): string;
 begin
   if StrPos('$', HexStr) = 1 then
     Result := Copy(HexStr, 2, Length(HexStr) - 1)
-  else if StrPos('0x', SysUtils.LowerCase(HexStr)) = 1 then
+  else if StrPos('0x', StrToLower(HexStr)) = 1 then
     Result := Copy(HexStr, 3, Length(HexStr) - 2)
   else
     Result := HexStr;

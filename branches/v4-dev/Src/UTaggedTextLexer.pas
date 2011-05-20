@@ -625,7 +625,7 @@ begin
     raise EBug.CreateFmt(
       '%0:s.AddTag: Tag "%s" already registered', [ClassName, Tag]
     );
-  fTags.Add(AnsiLowerCase(Tag), TTagInfo.Create(Code, IsCompound));
+  fTags.Add(StrToLower(Tag), TTagInfo.Create(Code, IsCompound));
 end;
 
 constructor TTaggedTextTagHandler.Create(const EH: TTaggedTextEntityHandler);

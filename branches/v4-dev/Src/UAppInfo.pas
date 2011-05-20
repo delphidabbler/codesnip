@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -147,7 +147,7 @@ uses
   // DelphiDabbler library
   PJMD5,
   // Project
-  USettings, USystemID, USystemInfo, UVersionInfo;
+  USettings, UStrUtils, USystemID, USystemInfo, UVersionInfo;
 
 
 { TAppInfo }
@@ -190,7 +190,7 @@ class function TAppInfo.GenerateKey: string;
     @return Required key.
   }
 begin
-  Result := UpperCase(
+  Result := StrToUpper(
     TPJMD5.Calculate(
       USystemID.SystemIDStr, TEncoding.ASCII
     )

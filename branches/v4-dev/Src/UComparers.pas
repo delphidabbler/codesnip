@@ -23,7 +23,8 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2011
+  Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -94,7 +95,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils;
+  SysUtils,
+  // Project
+  UStrUtils;
 
 
 function ElfHash(const Value: string): Integer;
@@ -138,7 +141,7 @@ begin
   // Comparison takes place (i.e. Equals gets called) only if hashes are same.
   // So we must ignore case in hash if two strings that differ only in case are
   // to be considered same.
-  Result := ElfHash(AnsiLowerCase(Value));
+  Result := ElfHash(StrToLower(Value));
 end;
 
 { TSameStringEqualityComparer }
