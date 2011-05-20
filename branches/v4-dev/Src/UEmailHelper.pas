@@ -51,7 +51,7 @@ implementation
 
 uses
   // Project
-  UStrUtils, UUtils;
+  UStrUtils;
 
 
 function IsValidEmailAddress(const EmailAddr: string): Boolean;
@@ -69,7 +69,7 @@ begin
   if AtPos < 2 then
     Exit;
   // Check if there's a '.' after '@' symbol
-  LastDotPos := LastPos('.', EmailAddr);
+  LastDotPos := StrLastPos('.', EmailAddr);
   if (LastDotPos - AtPos < 2) or (LastDotPos > Length(EmailAddr) - 2) then
     Exit;
   Result := True;

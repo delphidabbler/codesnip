@@ -53,9 +53,13 @@ function StrPos(const Needle, Haystack: string): Integer; overload;
 
 ///  <summary>Returns index of string Needle in string Haystack, beginning the
 ///  search at Offset. Returns 0 if Haystack is not found or if Offset is less
-///  than 1 or greater than length of Haystack.</summary>
+///  than 1 or greater than length of Haystack. Case sensitive.</summary>
 function StrPos(const Needle, Haystack: string; const Offset: Integer): Integer;
   overload;
+
+///  <summary>Returns index of last occurence of string Needle in string
+///  Haystack or 0 if Needle is not in Haystack. Case sensitive.</summary>
+function StrLastPos(const Needle, Haystack: string): Integer;
 
 
 implementation
@@ -81,4 +85,20 @@ begin
   Result := StrUtils.PosEx(Needle, Haystack, Offset);
 end;
 
+function StrLastPos(const Needle, Haystack: string): Integer;
+var
+  Idx: Integer; // an index of Needle in Haystack
+begin
+  Result := 0;
+  Idx := StrPos(Needle, Haystack);
+  if Idx = 0 then
+    Exit;
+  while Idx > 0 do
+  begin
+    Result := Idx;
+    Idx := StrPos(Needle, Haystack, Idx + 1);
+  end;
+end;
+
 end.
+

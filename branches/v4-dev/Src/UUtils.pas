@@ -171,14 +171,6 @@ procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
       interface, or nil if interface not supported or Instance is nil.
   }
 
-function LastPos(const SubStr, Str: string): Integer;
-  {Finds position of the last occurence of a sub string in a string.
-    @param SubStr [in] String to search for.
-    @param Str [in] String in which to search.
-    @return Index of last occurence of SubStr in Str or 0 if SubStr is not is
-      Str.
-  }
-
 function TrimChar(const S: string; const C: Char): string;
   {Trims characters from both ends of a string.
     @param S [in] String to be trimmed.
@@ -717,27 +709,6 @@ procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
 begin
   if not Supports(Instance, IID, Intf) then
     Pointer(Intf) := nil;
-end;
-
-function LastPos(const SubStr, Str: string): Integer;
-  {Finds position of the last occurence of a sub string in a string.
-    @param SubStr [in] String to search for.
-    @param Str [in] String in which to search.
-    @return Index of last occurence of SubStr in Str or 0 if SubStr is not is
-      Str.
-  }
-var
-  Idx: Integer; // an index of SubStr in Str
-begin
-  Result := 0;
-  Idx := StrPos(SubStr, Str);
-  if Idx = 0 then
-    Exit;
-  while Idx > 0 do
-  begin
-    Result := Idx;
-    Idx := StrPos(SubStr, Str, Idx + 1);
-  end;
 end;
 
 function TrimLeftChar(const S: string; const C: Char): string;
