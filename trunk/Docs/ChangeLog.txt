@@ -4,6 +4,11 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.8.10 of 19 May 2011
++ Reverted checked tree views and list boxes to standard Windows behaviour. Clicking item text no longer toggles associated check boxes. This behaviour was more problematic then helpful.
++ Updated documentation, including new info about CodeSnip FAQ.
++ Added FAQs topic and TOC entry to help file that links to online FAQ.
+
 Release v3.8.9 of 10 May 2011
 + Fixed bug #3299870 (http://bit.ly/iX8Its) that was allowing imported snippets with duplicate names to be renamed with invalid names.
 + Improved UI used to edit imported snippet names.
