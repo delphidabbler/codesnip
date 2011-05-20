@@ -333,7 +333,7 @@ begin
     ErrorMsg := sErrNoDesc;
     ErrorSel := TSelection.Create(0, Length(Desc));
   end
-  else if AnsiContainsText(Desc, ClosingBrace) then
+  else if StrContainsStr(ClosingBrace, Desc) then
   begin
     ErrorMsg := sErrDescHasClosingBrace;
     ErrorSel := TSelection.Create(
