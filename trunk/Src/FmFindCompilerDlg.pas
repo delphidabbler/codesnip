@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,7 +45,7 @@ uses
   // Delphi
   StdCtrls, ExtCtrls, Controls, CheckLst, Classes,
   // Project
-  Compilers.UGlobals, FmGenericOKDlg, UBaseObjects, UChkListStateMgr, USearch;
+  Compilers.UGlobals, FmGenericOKDlg, UBaseObjects, USearch;
 
 
 type
@@ -71,11 +71,11 @@ type
     procedure cbCriteriaSelect(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    procedure lbCompilerVersClickCheck(Sender: TObject);
   strict private
     fCompilers: ICompilers;               // Provides info about compilers
     fSearchParams: TCompilerSearchParams; // Persistent compiler search options
     fSearch: ISearch;                     // Search entered by user
-    fCheckStateMgr: TChkListStateMgr;     // Modifies chklist box click handling
     procedure UpdateOKBtn;
       {Updates state of OK button according to whether valid entries made in
       dialog.
@@ -83,10 +83,6 @@ type
     function CheckedCompilerCount: Integer;
       {Returns number of compilers selected in check list box.
         @return Number of checked list items.
-      }
-    procedure CompilersListStateChange(Sender: TObject);
-      {Handles state changes in check list box.
-        @param Sender [in] Not used.
       }
   strict protected
     procedure InitForm; override;
@@ -298,14 +294,6 @@ begin
       Inc(Result);
 end;
 
-procedure TFindCompilerDlg.CompilersListStateChange(Sender: TObject);
-  {Handles state changes in check list box.
-    @param Sender [in] Not used.
-  }
-begin
-  UpdateOKBtn;
-end;
-
 class function TFindCompilerDlg.Execute(const AOwner: TComponent;
   out ASearch: ISearch): Boolean;
   {Displays dialog and returns search object based on entered criteria.
@@ -330,9 +318,6 @@ procedure TFindCompilerDlg.FormCreate(Sender: TObject);
   }
 begin
   inherited;
-  // Create and setup owned objects
-  fCheckStateMgr := TChkListStateMgr.Create(lbCompilerVers);
-  fCheckStateMgr.OnStateChange := CompilersListStateChange;
   fCompilers := TCompilersFactory.CreateAndLoadCompilers;
   fSearchParams := TCompilerSearchParams.Create(fCompilers);
 end;
@@ -345,7 +330,6 @@ begin
   inherited;
   FreeAndNil(fSearchParams);
   fCompilers := nil;
-  FreeAndNil(fCheckStateMgr);
 end;
 
 procedure TFindCompilerDlg.InitForm;
@@ -384,6 +368,14 @@ begin
   rgLogic.ItemIndex := Ord(fSearchParams.Logic);
 
   // Update OK button state
+  UpdateOKBtn;
+end;
+
+procedure TFindCompilerDlg.lbCompilerVersClickCheck(Sender: TObject);
+  {Handles click event on list item check box. Updates state of OK button.
+    @param Sender [in] Not used.
+  }
+begin
   UpdateOKBtn;
 end;
 
