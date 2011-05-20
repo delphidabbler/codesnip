@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -534,7 +534,7 @@ var
 begin
   SelNode := tvChecked.GetNodeAt(X, Y) as TCheckedTreeNode;
   HitTestInfo := tvChecked.GetHitTestInfoAt(X, Y);
-  if (htOnItem in HitTestInfo) and (Button = mbLeft)
+  if (htOnIcon in HitTestInfo) and (Button = mbLeft)
     and not HasShiftKeys(Shift) and Assigned(SelNode) then
     ToggleNode(SelNode);
 end;
