@@ -47,8 +47,8 @@ uses
   // Project
   Compilers.UGlobals, DB.USnippet, FmGenericOKDlg, FrBrowserBase,
   FrFixedHTMLDlg, FrHTMLDlg, UActiveText, UBaseObjects, UCategoryListAdapter,
-  UChkListStateMgr, UCompileMgr, UCompileResultsLBMgr, UCSSBuilder,
-  ULEDImageList, UMemoCaretPosDisplayMgr, UMemoHelper, USnipKindListAdapter,
+  UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, ULEDImageList,
+  UMemoCaretPosDisplayMgr, UMemoHelper, USnipKindListAdapter,
   USnippetsChkListMgr, UUnitsChkListMgr;
 
 
