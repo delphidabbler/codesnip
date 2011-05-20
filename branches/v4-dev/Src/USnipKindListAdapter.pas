@@ -87,7 +87,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining}, Generics.Defaults;
+  Generics.Defaults,
+  // Project
+  UStrUtils;
 
 
 { TSnipKindListAdapter }
@@ -103,7 +105,7 @@ begin
     TDelegatedComparer<TSnippetKindInfo>.Create(
       function (const Left, Right: TSnippetKindInfo): Integer
       begin
-        Result := AnsiCompareText(Left.DisplayName, Right.DisplayName);
+        Result := StrCompareText(Left.DisplayName, Right.DisplayName);
       end
     )
   );

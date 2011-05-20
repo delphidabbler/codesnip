@@ -144,7 +144,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults;
+  SysUtils, Generics.Defaults,
+  // Project
+  UStrUtils;
 
 
 { TSnippetID }
@@ -156,7 +158,7 @@ end;
 
 function TSnippetID.Compare(const SID: TSnippetID): Integer;
 begin
-  Result := AnsiCompareText(Name, SID.Name);
+  Result := StrCompareText(Name, SID.Name);
   if Result = 0 then
     Result := Ord(UserDefined) - Ord(SID.UserDefined);
 end;

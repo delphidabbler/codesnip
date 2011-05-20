@@ -278,9 +278,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining}, Generics.Defaults,
+  Generics.Defaults,
   // Project
-  DB.UMain;
+  DB.UMain, UStrUtils;
 
 
 { TGrouping }
@@ -415,7 +415,7 @@ var
   ItemCat: TCategory; // category which Item represents
 begin
   ItemCat := (Item as TCategoryGroupItem).fCategory;
-  Result := AnsiCompareText(fCategory.Description, ItemCat.Description);
+  Result := StrCompareText(fCategory.Description, ItemCat.Description);
   if Result = 0 then
     Result := Ord(fCategory.UserDefined) - Ord(ItemCat.UserDefined);
 end;
@@ -559,7 +559,7 @@ function TSnipKindGroupItem.CompareTo(const Item: TGroupItem): Integer;
       item sorts after Item.
   }
 begin
-  Result := AnsiCompareText(GetTitle, (Item as TSnipKindGroupItem).GetTitle);
+  Result := StrCompareText(GetTitle, (Item as TSnipKindGroupItem).GetTitle);
 end;
 
 constructor TSnipKindGroupItem.Create(const SnipKindInfo: TSnippetKindInfo);

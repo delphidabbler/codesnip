@@ -297,9 +297,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults, Windows, Character,
+  Generics.Defaults, Windows, Character,
   // Project
-  UConsts, UExceptions, ULocales, UUtils;
+  UConsts, UExceptions, ULocales, UStrUtils, UUtils;
 
 
 { TRTFBuilder }
@@ -500,7 +500,7 @@ function TRTFFont.Compare(const RTFFont: TRTFFont): Integer;
       RTFFont is less than this one.
   }
 begin
-  Result := AnsiCompareText(Self.Name, RTFFont.Name);
+  Result := StrCompareText(Self.Name, RTFFont.Name);
 end;
 
 constructor TRTFFont.Create(const Name: string;

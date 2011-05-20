@@ -61,6 +61,11 @@ function StrPos(const Needle, Haystack: string; const Offset: Integer): Integer;
 ///  Haystack or 0 if Needle is not in Haystack. Case sensitive.</summary>
 function StrLastPos(const Needle, Haystack: string): Integer;
 
+///  <summary>Compares Left and Right strings, ignoring case. Returns 0 if both
+///  strings are the same, -ve if Left is less than Right or +ve if Left is
+///  greater than Right.</summary>
+function StrCompareText(const Left, Right: string): Integer;
+
 
 implementation
 
@@ -70,19 +75,14 @@ uses
   SysUtils, StrUtils;
 
 
+function StrCompareText(const Left, Right: string): Integer;
+begin
+  Result := SysUtils.AnsiCompareText(Left, Right);
+end;
+
 function StrContainsStr(const Needle, Haystack: string): Boolean;
 begin
   Result := StrUtils.AnsiContainsStr(Haystack, Needle);
-end;
-
-function StrPos(const Needle, Haystack: string): Integer;
-begin
-  Result := SysUtils.AnsiPos(Needle, Haystack);
-end;
-
-function StrPos(const Needle, Haystack: string; const Offset: Integer): Integer;
-begin
-  Result := StrUtils.PosEx(Needle, Haystack, Offset);
 end;
 
 function StrLastPos(const Needle, Haystack: string): Integer;
@@ -98,6 +98,16 @@ begin
     Result := Idx;
     Idx := StrPos(Needle, Haystack, Idx + 1);
   end;
+end;
+
+function StrPos(const Needle, Haystack: string): Integer;
+begin
+  Result := SysUtils.AnsiPos(Needle, Haystack);
+end;
+
+function StrPos(const Needle, Haystack: string; const Offset: Integer): Integer;
+begin
+  Result := StrUtils.PosEx(Needle, Haystack, Offset);
 end;
 
 end.

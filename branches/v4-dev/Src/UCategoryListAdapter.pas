@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -87,7 +87,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining}, Generics.Defaults;
+  SysUtils, Windows {for inlining}, Generics.Defaults,
+  // Project
+  UStrUtils;
 
 
 { TCategoryListAdapter }
@@ -113,7 +115,7 @@ begin
     TDelegatedComparer<TCategory>.Create(
       function (const Left, Right: TCategory): Integer
       begin
-        Result := AnsiCompareText(Left.Description, Right.Description);
+        Result := StrCompareText(Left.Description, Right.Description);
         if Result = 0 then
           Result := Ord(Left.UserDefined) - Ord(Right.UserDefined);
       end
