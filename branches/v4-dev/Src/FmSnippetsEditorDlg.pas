@@ -50,11 +50,6 @@ uses
   UChkListStateMgr, UCompileMgr, UCompileResultsLBMgr, UCSSBuilder,
   ULEDImageList, UMemoCaretPosDisplayMgr, UMemoHelper, USnipKindListAdapter,
   USnippetsChkListMgr, UUnitsChkListMgr;
-  Compilers.UGlobals, FmGenericOKDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg,
-  UActiveText, UBaseObjects, UCategoryListAdapter, UCompileMgr,
-  UCompileResultsLBMgr, UCSSBuilder, ULEDImageList, UMemoCaretPosDisplayMgr,
-  UMemoHelper, USnipKindListAdapter, USnippets, USnippetsChkListMgr,
-  UUnitsChkListMgr;
 
 
 type
