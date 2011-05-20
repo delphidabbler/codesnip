@@ -4,7 +4,7 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
-Release v3.8.10 of 19 May 2011
+Release v3.8.10 of 20 May 2011
 + Reverted checked tree views and list boxes to standard Windows behaviour. Clicking item text no longer toggles associated check boxes. This behaviour was more problematic then helpful.
 + Updated documentation, including new info about CodeSnip FAQ.
 + Added FAQs topic and TOC entry to help file that links to online FAQ.
