@@ -235,7 +235,7 @@ uses
   // Delphi
   SysUtils, StrUtils, Character,
   // Project
-  UConsts, UUtils;
+  UConsts;
 
 
 function StrCapitaliseWords(const Str: UnicodeString): UnicodeString;
