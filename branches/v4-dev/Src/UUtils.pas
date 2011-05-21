@@ -171,12 +171,6 @@ procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
       interface, or nil if interface not supported or Instance is nil.
   }
 
-function UnixLineBreaks(const S: string): string;
-  {Converts all DOS and Mac line ends to Unix line ends.
-    @param S [in] String to be converted.
-    @return Converted string.
-  }
-
 function IsBaseFileName(const FileName: string): Boolean;
   {Checks if a file name is a base file name (i.e. contains no path
   information).
@@ -702,18 +696,6 @@ procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
 begin
   if not Supports(Instance, IID, Intf) then
     Pointer(Intf) := nil;
-end;
-
-function UnixLineBreaks(const S: string): string;
-  {Converts all DOS and Mac line ends to Unix line ends.
-    @param S [in] String to be converted.
-    @return Converted string.
-  }
-begin
-  // Replace any CRLF (MSDOS/Windows) line ends with LF
-  Result := StrReplace(S, EOL, LF);
-  // Replace any remaining CR (Mac) line ends with LF
-  Result := StrReplace(Result, CR, LF);
 end;
 
 function IsBaseFileName(const FileName: string): Boolean;

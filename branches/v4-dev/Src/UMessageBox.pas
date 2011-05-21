@@ -414,7 +414,7 @@ begin
     // convert line breaks in Msg to LF only, remove leading and trailing LFs,
     // ensure proper sentence and then convert text string list.
     TIStringList.Create(
-      MakeSentence(StrTrimChars(UnixLineBreaks(Msg), LF)),
+      MakeSentence(StrTrimChars(StrUnixLineBreaks(Msg), LF)),
       LF,
       True
     ),

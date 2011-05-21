@@ -407,7 +407,7 @@ uses
   // Delphi
   SysUtils, Character,
   // Project
-  UComparers, UStructs, UStrUtils, UUtils;
+  UComparers, UStructs, UStrUtils;
 
 
 const
@@ -1174,7 +1174,7 @@ begin
     end;
   end;
   // replace all CR LF pairs with LF
-  fCurText := UnixLineBreaks(fCurText);
+  fCurText := StrUnixLineBreaks(fCurText);
 end;
 
 procedure TTaggedTextLexer.ProcessTag;

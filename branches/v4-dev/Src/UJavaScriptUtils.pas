@@ -140,7 +140,7 @@ begin
   Result :=
     cQuote +
     CEscapeStr(
-      UUtils.UnixLineBreaks(S),   // convert CRLF to LF
+      StrUnixLineBreaks(S),   // convert CRLF to LF
       cEscapeChars,
       cEscapableChars
     ) +

@@ -125,13 +125,25 @@ function StrTrimLeftChars(const Str: string; const C: Char): string;
 ///  <summary>Trims trailing characters C from string Str.</summary>
 function StrTrimRightChars(const Str: string; const C: Char): string;
 
+///  <summary>Ensures line breaks in a string are in Windows format (CRLF).
+///  </summary>
+///  <remarks>Converts both Unix (LF) and Macintosh (CR) to CRLF.</remarks>
+function StrWindowsLineBreaks(const Str: string): string;
+
+///  <summary>Ensures line breaks in a string are in Unix format (LF).
+///  </summary>
+///  <remarks>Converts both Windows (CRLF) and Macintosh (CR) to LF.</remarks>
+function StrUnixLineBreaks(const Str: string): string;
+
 
 implementation
 
 
 uses
   // Delphi
-  SysUtils, StrUtils;
+  SysUtils, StrUtils,
+  // Project
+  UConsts;
 
 
 function StrCompareText(const Left, Right: string): Integer;
@@ -253,6 +265,23 @@ end;
 function StrTrimSpaces(const Str: string): string;
 begin
   Result := SysUtils.Trim(Str);
+end;
+
+function StrUnixLineBreaks(const Str: string): string;
+begin
+  // Replace any CRLF (MSDOS/Windows) line ends with LF
+  Result := StrReplace(Str, CRLF, LF);
+  // Replace any remaining CR (Mac) line ends with LF
+  Result := StrReplace(Result, CR, LF);
+end;
+
+function StrWindowsLineBreaks(const Str: string): string;
+begin
+  // First convert to Unix to get rid of all CR characters (CRs could come from
+  // existing Windows CRLF or from Max CR.
+  Result := StrUnixLineBreaks(Str);
+  // Now have only LFs - convert them all to CRLFs
+  Result := StrReplace(Result, LF, CRLF);
 end;
 
 end.

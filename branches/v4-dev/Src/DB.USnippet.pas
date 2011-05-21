@@ -361,7 +361,7 @@ uses
   // Delphi
   SysUtils, Generics.Defaults,
   // Project
-  IntfCommon, UExceptions;
+  IntfCommon, UExceptions, UStrUtils;
 
 { TSnippet }
 
@@ -441,7 +441,7 @@ begin
   fCategory := Data.Cat;
   fKind := Data.Kind;
   fDescription := Data.Desc;
-  fSourceCode := AdjustLineBreaks(Data.SourceCode); // ensure EOLs are CRLF
+  fSourceCode := StrWindowsLineBreaks(Data.SourceCode);
   fExtra := TActiveTextFactory.CloneActiveText(Data.Extra);
   fCompatibility := Data.CompilerResults;
 end;
