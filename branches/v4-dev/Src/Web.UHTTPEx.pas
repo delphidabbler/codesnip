@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -199,7 +199,7 @@ uses
   // 3rd party
   PJMD5,
   // Project
-  UConsts, Web.UCharEncodings, Web.UExceptions, Web.UInfo;
+  UConsts, UStrUtils, Web.UCharEncodings, Web.UExceptions, Web.UInfo;
 
 
 resourcestring
@@ -425,7 +425,9 @@ begin
   if E is EIdHTTPProtocolException then
     raise EHTTPError.Create(E as EIdHTTPProtocolException)
   else if E is EIdSocketError then
-    raise EWebConnectionError.CreateFmt(sWebConnectionError, [Trim(E.Message)])
+    raise EWebConnectionError.CreateFmt(
+      sWebConnectionError, [StrTrimSpaces(E.Message)]
+    )
   else
     raise E;
 end;

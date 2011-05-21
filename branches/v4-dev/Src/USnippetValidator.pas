@@ -328,7 +328,7 @@ const
   ClosingBrace = '}';
 begin
   Result := False;
-  if Trim(Desc) = '' then
+  if StrTrimSpaces(Desc) = '' then
   begin
     ErrorMsg := sErrNoDesc;
     ErrorSel := TSelection.Create(0, Length(Desc));
@@ -437,7 +437,7 @@ var
   TrimmedName: string;  // Name param trimmed of leading trailing spaces
 begin
   Result := False;
-  TrimmedName := Trim(Name);
+  TrimmedName := StrTrimSpaces(Name);
   if TrimmedName = '' then
     ErrorMsg := sErrNoName
   else if not IsValidIdent(TrimmedName) then
@@ -481,7 +481,7 @@ resourcestring
   sErrNoSource = 'Some source code must be provided';
 begin
   // Source code must be provided
-  Result := Trim(Source) <> '';
+  Result := StrTrimSpaces(Source) <> '';
   if not Result then
   begin
     ErrorMsg := sErrNoSource;

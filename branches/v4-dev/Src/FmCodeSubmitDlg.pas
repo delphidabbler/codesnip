@@ -171,10 +171,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics,
+  Graphics,
   // Project
   FmPreviewDlg, UCodeImportExport, UCtrlArranger,
-  UEmailHelper, UMessageBox, UUserDetails, UUserDetailsPersist,
+  UEmailHelper, UMessageBox, UStrUtils, UUserDetails, UUserDetailsPersist,
   Web.UCodeSubmitter, Web.UExceptions;
 
 
@@ -246,12 +246,13 @@ begin
     ClassName + '.BuildSubmission: No snippets selected');
   Assert(edName.Text <> '',
     ClassName + '.BuildSubmission: No user name provided');
-  Assert(IsValidEmailAddress(Trim(edEmail.Text)),
+  Assert(IsValidEmailAddress(StrTrimSpaces(edEmail.Text)),
     ClassName + '.BuildSubmission: Invalid or no email address specified');
   // Build the document
   fData := TCodeExporter.ExportSnippets(
     TUserInfo.Create(
-      TUserDetails.Create(edName.Text, edEmail.Text), Trim(edComments.Text)
+      TUserDetails.Create(edName.Text, edEmail.Text),
+      StrTrimSpaces(edComments.Text)
     ),
     frmSnippets.SelectedSnippets
   );
@@ -297,7 +298,7 @@ begin
     on E: EHTTPError do
       // error on web server: make more friendly
       raise ECodeSubmitDlg.CreateFmt(
-        sWebServerError, [E.HTTPErrorCode, Trim(E.Message)]
+        sWebServerError, [E.HTTPErrorCode, StrTrimSpaces(E.Message)]
       );
   end;
 end;
@@ -479,7 +480,7 @@ begin
         raise EDataEntry.Create(sNoName, edName);
       if edEmail.Text = '' then
         raise EDataEntry.Create(sNoEmail, edEmail);
-      if not IsValidEmailAddress(Trim(edEmail.Text)) then
+      if not IsValidEmailAddress(StrTrimSpaces(edEmail.Text)) then
         raise EDataEntry.Create(sBadEmail, edEmail);
     end;
   end;

@@ -202,7 +202,7 @@ uses
   SysUtils, Dialogs,
   // Project
   UCtrlArranger, UExceptions, UMessageBox, UOpenDialogEx, UOpenDialogHelper,
-  USnippetValidator;
+  USnippetValidator, UStrUtils;
 
 {$R *.dfm}
 
@@ -337,7 +337,7 @@ end;
 
 function TCodeImportDlg.GetFileNameFromEditCtrl: string;
 begin
-  Result := Trim(edFile.Text);
+  Result := StrTrimSpaces(edFile.Text);
 end;
 
 function TCodeImportDlg.GetImportAsNameFromLV(const Item: TListItem): string;

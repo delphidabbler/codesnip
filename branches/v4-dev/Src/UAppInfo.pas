@@ -255,9 +255,9 @@ class function TAppInfo.ProgramReleaseInfo: string;
     @return Release information.
   }
 begin
-  Result := Trim(TVersionInfo.ProductVersionStr);
-  if Trim(TVersionInfo.SpecialBuildStr) <> '' then
-    Result := Result + '-' + Trim(TVersionInfo.SpecialBuildStr);
+  Result := StrTrimSpaces(TVersionInfo.ProductVersionStr);
+  if StrTrimSpaces(TVersionInfo.SpecialBuildStr) <> '' then
+    Result := Result + '-' + StrTrimSpaces(TVersionInfo.SpecialBuildStr);
 end;
 
 class function TAppInfo.ProgramReleaseVersion: string;

@@ -3,7 +3,7 @@
  *
  * String utility routines.
  *
- * Some of the routines are simply wrappers around SysUtils and StrUtils
+ * Some of the routines are simply wrappers around SysUtils and StrUtils string
  * routines with the purpose of (a) collecting them together in one place and
  * (b) providing a standardised parameter order.
  *
@@ -102,10 +102,28 @@ function StrStartsStr(const SubStr, Str: string): Boolean;
 ///  insensitive.</summary>
 function StrStartsText(const SubStr, Str: string): Boolean;
 
-
 ///  <summary>Replaces all occurences of FindStr in Str with ReplaceStr.
 ///  </summary>
 function StrReplace(const Str, FindStr, ReplaceStr: string): string;
+
+///  <summary>Trims leading and trailing space characters from a string.
+///  </summary>
+function StrTrimSpaces(const Str: string): string;
+
+///  <summary>Trims leading space characters from a string.</summary>
+function StrTrimLeftSpaces(const Str: string): string;
+
+///  <summary>Trims trailing space characters from a string.</summary>
+function StrTrimRightSpaces(const Str: string): string;
+
+///  <summary>Trims leading and trailing characters C from string Str.</summary>
+function StrTrimChars(const Str: string; const C: Char): string;
+
+///  <summary>Trims leading characters C from string Str.</summary>
+function StrTrimLeftChars(const Str: string; const C: Char): string;
+
+///  <summary>Trims trailing characters C from string Str.</summary>
+function StrTrimRightChars(const Str: string; const C: Char): string;
 
 
 implementation
@@ -181,14 +199,60 @@ begin
   Result := StrUtils.AnsiStartsText(SubStr, Str);
 end;
 
+function StrToLower(const Str: string): string;
+begin
+  Result := SysUtils.AnsiLowerCase(Str);
+end;
+
 function StrToUpper(const Str: string): string;
 begin
   Result := SysUtils.AnsiUpperCase(Str);
 end;
 
-function StrToLower(const Str: string): string;
+function StrTrimChars(const Str: string; const C: Char): string;
 begin
-  Result := SysUtils.AnsiLowerCase(Str);
+  Result := StrTrimLeftChars(StrTrimRightChars(Str, C), C);
+end;
+
+function StrTrimLeftChars(const Str: string; const C: Char): string;
+var
+  Idx: Integer; // index into string
+begin
+  Idx := 1;
+  while (Idx <= Length(Str)) and (Str[Idx] = C) do
+    Inc(Idx);
+  if Idx > 1 then
+    Result := Copy(Str, Idx, MaxInt)
+  else
+    Result := Str;
+end;
+
+function StrTrimLeftSpaces(const Str: string): string;
+begin
+  Result := SysUtils.TrimLeft(Str);
+end;
+
+function StrTrimRightChars(const Str: string; const C: Char): string; overload;
+var
+  Idx: Integer; // index into string
+begin
+  Idx := Length(Str);
+  while (Idx >= 1) and (Str[Idx] = C) do
+    Dec(Idx);
+  if Idx < Length(Str) then
+    Result := Copy(Str, 1, Idx)
+  else
+    Result := Str;
+end;
+
+function StrTrimRightSpaces(const Str: string): string;
+begin
+  Result := SysUtils.TrimRight(Str);
+end;
+
+function StrTrimSpaces(const Str: string): string;
+begin
+  Result := SysUtils.Trim(Str);
 end;
 
 end.

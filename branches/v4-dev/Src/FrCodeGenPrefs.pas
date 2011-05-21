@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -162,7 +162,7 @@ uses
   SysUtils, Types,
   // Project
   FmPreferencesDlg, FmPreviewDlg, IntfCommon, UCtrlArranger, UEncodings,
-  UKeysHelper, UUtils;
+  UKeysHelper, UStrUtils, UUtils;
 
 {$R *.dfm}
 
@@ -256,7 +256,7 @@ var
   Symbol: string; // symbol of selected warning
 begin
   // Delete selected warning
-  Symbol := Trim(lvWarnings.Selected.Caption);
+  Symbol := StrTrimSpaces(lvWarnings.Selected.Caption);
   lvWarnings.Selected.Delete;
   fWarnings.Delete(Symbol);
   // Ensure nothing selected in list view and clear edit controls
@@ -325,7 +325,7 @@ begin
   GetSymbol(NewSymbol);
   GetCompilerVersion(NewCompilerVer);
   SelItem := lvWarnings.Selected;
-  OldSymbol := Trim(SelItem.Caption);
+  OldSymbol := StrTrimSpaces(SelItem.Caption);
   SelItem.Caption := NewSymbol;
   SelItem.SubItems[0] := FormatCompilerVer(NewCompilerVer);
   // we update warnings by deleting old one and adding updated version
@@ -491,7 +491,7 @@ function TCodeGenPrefsFrame.GetCompilerVersion(out Ver: Single): Boolean;
 var
   ExtVer: Extended;   // version number as Extended float
 begin
-  Result := TryStrToFloat(Trim(edMinCompiler.Text), ExtVer);
+  Result := TryStrToFloat(StrTrimSpaces(edMinCompiler.Text), ExtVer);
   if Result then
     Ver := ExtVer;
 end;
@@ -503,7 +503,7 @@ function TCodeGenPrefsFrame.GetSymbol(out Symbol: string): Boolean;
     @return True if symbol is non-empty string, False if not.
   }
 begin
-  Symbol := Trim(edSymbol.Text);
+  Symbol := StrTrimSpaces(edSymbol.Text);
   Result := Symbol <> '';
 end;
 

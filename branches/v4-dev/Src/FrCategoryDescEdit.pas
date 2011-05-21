@@ -141,7 +141,7 @@ uses
   // Delphi
   SysUtils, Windows {for inlining},
   // Project
-  DB.UCategory, DB.UMain, UColours, UCtrlArranger;
+  DB.UCategory, DB.UMain, UColours, UCtrlArranger, UStrUtils;
 
 {$R *.dfm}
 
@@ -215,7 +215,7 @@ function TCategoryDescEditFrame.GetDescription: string;
     @return Current description from edit control.
   }
 begin
-  Result := Trim(edDescription.Text);
+  Result := StrTrimSpaces(edDescription.Text);
 end;
 
 function TCategoryDescEditFrame.GetPrompt: string;

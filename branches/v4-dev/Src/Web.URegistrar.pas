@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -74,10 +74,8 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
-  UURIParams, Web.UInfo;
+  UStrUtils, UURIParams, Web.UInfo;
 
 
 {
@@ -153,7 +151,7 @@ begin
   try
     Query := TURIParams.Create(Data);
     PostQuery(Query, Response);
-    Result := Trim(Response.Text);  // registration key
+    Result := StrTrimSpaces(Response.Text);  // registration key
   finally
     Query.Free;
     Response.Free;

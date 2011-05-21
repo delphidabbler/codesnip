@@ -69,10 +69,8 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
-  UAppInfo, USettings, USystemInfo;
+  UAppInfo, USettings, UStrUtils, USystemInfo;
 
 
 { TUserDetailsPersist }
@@ -85,12 +83,12 @@ var
 begin
   inherited;
   UserData := Settings.ReadSection(ssUserInfo);
-  Name := Trim(UserData.ItemValues['Name']);
+  Name := StrTrimSpaces(UserData.ItemValues['Name']);
   if Name = '' then
-    Name := Trim(TAppInfo.RegisteredUser);
+    Name := StrTrimSpaces(TAppInfo.RegisteredUser);
   if Name = '' then
-    Name := Trim(TComputerInfo.UserName);
-  Email := Trim(UserData.ItemValues['Email']);
+    Name := StrTrimSpaces(TComputerInfo.UserName);
+  Email := StrTrimSpaces(UserData.ItemValues['Email']);
   Result := TUserDetails.Create(Name, Email);
 end;
 
@@ -99,8 +97,8 @@ var
   UserData: ISettingsSection; // persistent user data settings
 begin
   UserData := Settings.EmptySection(ssUserInfo);
-  UserData.ItemValues['Name'] := Trim(Info.Name);
-  UserData.ItemValues['Email'] := Trim(Info.Email);
+  UserData.ItemValues['Name'] := StrTrimSpaces(Info.Name);
+  UserData.ItemValues['Email'] := StrTrimSpaces(Info.Email);
   UserData.Save;
 end;
 
@@ -115,10 +113,10 @@ begin
   Name := Current.Name;
   Email := Current.Email;
   // only update non-empty values
-  if Trim(Info.Name) <> '' then
-    Name := Trim(Info.Name);
-  if Trim(Info.Email) <> '' then
-    Email := Trim(Info.Email);
+  if StrTrimSpaces(Info.Name) <> '' then
+    Name := StrTrimSpaces(Info.Name);
+  if StrTrimSpaces(Info.Email) <> '' then
+    Email := StrTrimSpaces(Info.Email);
   // store the modified settings
   Save(TUserDetails.Create(Name, Email));
 end;

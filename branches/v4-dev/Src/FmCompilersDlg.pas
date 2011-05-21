@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -158,7 +158,8 @@ uses
   SysUtils, Graphics, GraphUtil, Dialogs,
   // Project
   Compilers.UCompilers, IntfCommon, UCtrlArranger, UExeFileType, UGraphicUtils,
-  UMessageBox, UOpenDialogEx, UOpenDialogHelper, UStructs, UThemesEx, UUtils;
+  UMessageBox, UOpenDialogEx, UOpenDialogHelper, UStructs, UStrUtils, UThemesEx,
+  UUtils;
 
 
 {$R *.dfm}
@@ -218,7 +219,7 @@ procedure TCompilersDlg.btnAddClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  lbSwitches.Items.Add(Trim(edSwitch.Text));
+  lbSwitches.Items.Add(StrTrimSpaces(edSwitch.Text));
   edSwitch.Text := '';
   UpdateSwitchButtons;
 end;
@@ -354,7 +355,7 @@ procedure TCompilersDlg.btnReplaceClick(Sender: TObject);
 begin
   Assert(lbSwitches.ItemIndex >= 0,
     ClassName + '.btnReplaceClick: lbSwitches.ItemIndex < 0');
-  lbSwitches.Items[lbSwitches.ItemIndex] := Trim(edSwitch.Text);
+  lbSwitches.Items[lbSwitches.ItemIndex] := StrTrimSpaces(edSwitch.Text);
   edSwitch.Text := '';
   UpdateSwitchButtons;
 end;
@@ -828,8 +829,8 @@ procedure TCompilersDlg.UpdateSwitchButtons;
   state of switch edit and list boxes.
   }
 begin
-  btnAdd.Enabled := (Trim(edSwitch.Text) <> '') and
-    (lbSwitches.Items.IndexOf(Trim(edSwitch.Text)) = -1);
+  btnAdd.Enabled := (StrTrimSpaces(edSwitch.Text) <> '') and
+    (lbSwitches.Items.IndexOf(StrTrimSpaces(edSwitch.Text)) = -1);
   btnReplace.Enabled := btnAdd.Enabled and
     (lbSwitches.ItemIndex >= 0);
   btnDelete.Enabled := lbSwitches.ItemIndex >= 0;

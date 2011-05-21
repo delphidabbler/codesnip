@@ -281,7 +281,7 @@ resourcestring
   sBadUnitName = 'Unit name is not a valid Pascal identifier';
   sUnitNameExists = 'Unit name already in list';
 begin
-  UnitName := Trim(edUnit.Text);
+  UnitName := StrTrimSpaces(edUnit.Text);
   Assert(UnitName <> '',
     ClassName + '.actAddUnitExecute: UnitName is empty string');
   try
@@ -307,7 +307,7 @@ procedure TSnippetsEditorDlg.actAddUnitUpdate(Sender: TObject);
     @param Sender [in] Action triggering this event.
   }
 begin
-  (Sender as TAction).Enabled := Trim(edUnit.Text) <> '';
+  (Sender as TAction).Enabled := StrTrimSpaces(edUnit.Text) <> '';
 end;
 
 procedure TSnippetsEditorDlg.actCompileExecute(Sender: TObject);
@@ -366,7 +366,7 @@ begin
   try
     fDependsCLBMgr.GetCheckedSnippets(DependsList);
     TDependenciesDlg.Execute(
-      Self, TSnippetID.Create(Trim(edName.Text), True), DependsList
+      Self, TSnippetID.Create(StrTrimSpaces(edName.Text), True), DependsList
     );
   finally
     FreeAndNil(DependsList);
@@ -427,7 +427,7 @@ procedure TSnippetsEditorDlg.actViewExtraUpdate(Sender: TObject);
     @param Sender [in] Reference to action to be updated.
   }
 begin
-  (Sender as TAction).Enabled := Trim(edExtra.Text) <> '';
+  (Sender as TAction).Enabled := StrTrimSpaces(edExtra.Text) <> '';
 end;
 
 procedure TSnippetsEditorDlg.actViewTestUnitExecute(Sender: TObject);
@@ -539,7 +539,7 @@ begin
     // Validate and record entered data
     ValidateData;
     fEditData.Assign(UpdateData);
-    SnippetName := Trim(edName.Text);
+    SnippetName := StrTrimSpaces(edName.Text);
     // Add or update snippet
     if Assigned(fSnippet) then
       fSnippet := (Database as IDatabaseEdit).UpdateSnippet(
@@ -564,7 +564,7 @@ function TSnippetsEditorDlg.BuildExtraActiveText: IActiveText;
   }
 begin
   Result := TSnippetExtraHelper.BuildActiveText(
-    Trim(CompressWhiteSpace(StrReplace(edExtra.Text, EOL, ' ')))
+    StrTrimSpaces(CompressWhiteSpace(StrReplace(edExtra.Text, EOL, ' ')))
   );
 end;
 
@@ -640,7 +640,7 @@ begin
   // Create snippet object from entered data
   EditData.Assign(UpdateData);
   Result := (Database as IDatabaseEdit).CreateTempSnippet(
-    Trim(edName.Text), EditData
+    StrTrimSpaces(edName.Text), EditData
   );
 end;
 
@@ -902,8 +902,8 @@ begin
   begin
     Props.Cat := fCatList.CatName(cbCategories.ItemIndex);
     Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
-    Props.Desc := Trim(edDescription.Text);
-    Props.SourceCode := TrimRight(edSourceCode.Text);
+    Props.Desc := StrTrimSpaces(edDescription.Text);
+    Props.SourceCode := StrTrimRightSpaces(edSourceCode.Text);
     (Props.Extra as IAssignable).Assign(BuildExtraActiveText);
     Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
     fUnitsCLBMgr.GetCheckedUnits(Refs.Units);
@@ -1008,14 +1008,14 @@ begin
     raise EDataEntry.Create(ErrorMessage, edDescription, ErrorSelection);
   if not TSnippetValidator.ValidateName(
     edName.Text,
-    not AnsiSameText(Trim(edName.Text), fOrigName),
+    not AnsiSameText(StrTrimSpaces(edName.Text), fOrigName),
     ErrorMessage,
     ErrorSelection
   ) then
     raise EDataEntry.Create(ErrorMessage, edName, ErrorSelection);
   CheckExtra;
   if not TSnippetValidator.ValidateDependsList(
-    Trim(edName.Text), UpdateData, ErrorMessage
+    StrTrimSpaces(edName.Text), UpdateData, ErrorMessage
   ) then
     raise EDataEntry.Create(  // selection not applicable to list boxes
       MakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends

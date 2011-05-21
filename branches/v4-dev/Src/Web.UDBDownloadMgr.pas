@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -161,7 +161,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UConsts, Web.UCharEncodings, Web.UInfo;
+  UAppInfo, UConsts, UStrUtils, Web.UCharEncodings, Web.UInfo;
 
 
 {
@@ -276,7 +276,7 @@ begin
   Response := TStringList.Create;
   try
     PostStdCommand('filecount', Response);
-    if not TryStrToInt(Trim(Response.Text), Result) then
+    if not TryStrToInt(StrTrimSpaces(Response.Text), Result) then
       raise EWebServiceFailure.Create(sBadFileCount);
   finally
     Response.Free;
@@ -345,7 +345,7 @@ begin
   Response := TStringList.Create;
   try
     PostStdCommand('lastupdate', Response);
-    Result := Trim(Response.Text);
+    Result := StrTrimSpaces(Response.Text);
   finally
     Response.Free;
   end;

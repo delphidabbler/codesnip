@@ -521,7 +521,7 @@ begin
   LineIdx := 0;
   while LineIdx < Lines.Count do
   begin
-    Line := Trim(Lines[LineIdx]);
+    Line := StrTrimSpaces(Lines[LineIdx]);
     // Check for pre-processor instructions
     if StrStartsStr(cIfVerLT, Line) then
       Result.Add(ProcessVerLT(Lines, LineIdx))
@@ -551,7 +551,7 @@ class function TDatabasePreprocessor.ProcessToEndIf(const Lines: IStringList;
 begin
   Inc(LineIdx);
   Result := TIStringList.Create;
-  while (LineIdx < Lines.Count) and (Trim(Lines[LineIdx]) <> cEndIf) do
+  while (LineIdx < Lines.Count) and (StrTrimSpaces(Lines[LineIdx]) <> cEndIf) do
   begin
     if RecordLines then
       Result.Add(Lines[LineIdx]);

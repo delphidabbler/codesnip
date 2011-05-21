@@ -137,8 +137,8 @@ uses
   // Delphi
   SysUtils, Forms,
   // Project
-  UAppInfo, UFontHelper, UCtrlArranger, UMessageBox, USystemInfo, UUserDetails,
-  UUserDetailsPersist, Web.URegistrar;
+  UAppInfo, UFontHelper, UCtrlArranger, UMessageBox, UStrUtils, USystemInfo,
+  UUserDetails, UUserDetailsPersist, Web.URegistrar;
 
 
 {$R *.dfm}
@@ -222,7 +222,7 @@ begin
   Report.Values['ProgName'] := TAppInfo.ProgramName;
   Report.Values['ProgVer'] := TAppInfo.ProgramReleaseVersion;
   Report.Values['ProgKey'] := TAppInfo.ProgramKey;
-  Report.Values['UserName'] := Trim(edName.Text);
+  Report.Values['UserName'] := StrTrimSpaces(edName.Text);
   Report.Values['OSDesc'] :=
     Format('%0:s. IE Version %1:d.', [TOSInfo.Description, TOSInfo.BrowserVer]);
 end;
@@ -246,7 +246,7 @@ begin
     // register with server
     edRegCode.Text := RegisterWithWebServer;
     // record registration & user details
-    UserDetails := TUserDetails.Create(Trim(edName.Text), '');
+    UserDetails := TUserDetails.Create(StrTrimSpaces(edName.Text), '');
     TAppInfo.RegisterProgram(edRegCode.Text, UserDetails.Name);
     TUserDetailsPersist.Update(UserDetails);
     fRegistered := True;
@@ -353,7 +353,7 @@ function TRegistrationDlg.ValidateUserInfo: Boolean;
   }
 begin
   Result := True;
-  if Trim(edName.Text) = '' then
+  if StrTrimSpaces(edName.Text) = '' then
   begin
     Result := False;
     TMessageBox.Error(Self, sErrNameRequired);

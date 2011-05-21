@@ -145,7 +145,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  FmNewsDlg, UAppInfo, UColours, UConsts, UCtrlArranger, UUtils;
+  FmNewsDlg, UAppInfo, UColours, UConsts, UCtrlArranger, UStrUtils, UUtils;
 
 
 {$R *.dfm}
@@ -387,7 +387,7 @@ begin
       // Error message: show in warning text colour followed by extra error
       // info. Make sure headline ends in one space to separate headline from
       // error message
-      lblHeadline.Caption := TrimRight(lblHeadline.Caption) + ' ';
+      lblHeadline.Caption := StrTrimRightSpaces(lblHeadline.Caption) + ' ';
       lblHeadline.Font.Color := clWarningText;
       TCtrlArranger.MoveToRightOf(lblHeadline, lblError);
       lblError.Top := lblHeadline.Top;

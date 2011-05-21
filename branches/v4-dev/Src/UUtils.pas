@@ -171,13 +171,6 @@ procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
       interface, or nil if interface not supported or Instance is nil.
   }
 
-function TrimChar(const S: string; const C: Char): string;
-  {Trims characters from both ends of a string.
-    @param S [in] String to be trimmed.
-    @param C [in] Character to be trimmed from string.
-    @return Trimmed string.
-  }
-
 function UnixLineBreaks(const S: string): string;
   {Converts all DOS and Mac line ends to Unix line ends.
     @param S [in] String to be converted.
@@ -538,7 +531,7 @@ var
     }
   begin
     if TrimStrs then
-      Item := Trim(Item);
+      Item := StrTrimSpaces(Item);
     if (Item <> '') or AllowEmpty then
       List.Add(Item)
   end;
@@ -709,52 +702,6 @@ procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
 begin
   if not Supports(Instance, IID, Intf) then
     Pointer(Intf) := nil;
-end;
-
-function TrimLeftChar(const S: string; const C: Char): string;
-  {Trims characters from the start of a string.
-    @param S [in] String to be trimmed.
-    @param C [in] Character to be trimmed from string.
-    @return Trimmed string.
-  }
-var
-  Idx: Integer; // index into string
-begin
-  Idx := 1;
-  while (Idx <= Length(S)) and (S[Idx] = C) do
-    Inc(Idx);
-  if Idx > 1 then
-    Result := Copy(S, Idx, MaxInt)
-  else
-    Result := S;
-end;
-
-function TrimRightChar(const S: string; const C: Char): string;
-  {Trims characters from the end of string.
-    @param S [in] String to be trimmed.
-    @param C [in] Character to be trimmed from string.
-    @return Trimmed string.
-  }
-var
-  Idx: Integer; // index into string
-begin
-  Idx := Length(S);
-  while (Idx >= 1) and (S[Idx] = C) do
-    Dec(Idx);
-  if Idx < Length(S) then
-    Result := Copy(S, 1, Idx)
-  else
-    Result := S;
-end;
-
-function TrimChar(const S: string; const C: Char): string;
-  {Trims characters from both ends of a string.
-    @param S [in] String to be trimmed.
-    @param C [in] Character to be trimmed from string.
-    @return Trimmed string.
-  }
-begin
-  Result := TrimLeftChar(TrimRightChar(S, C), C);
 end;
 
 function UnixLineBreaks(const S: string): string;

@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -138,7 +138,7 @@ implementation
 
 uses
   // Project
-  Web.UExceptions;
+  UStrUtils, Web.UExceptions;
 
 
 { TStdWebService }
@@ -253,9 +253,9 @@ begin
   begin
     // Error response: raise web service error exception unless data doesn't
     // contain expected error message when failure exception is raised
-    if Trim(Response.Text) = '' then
+    if StrTrimSpaces(Response.Text) = '' then
       raise EWebServiceFailure.Create(sUnrecognizedError);
-    raise EWebServiceError.Create(Trim(Response.Text), StatusCode);
+    raise EWebServiceError.Create(StrTrimSpaces(Response.Text), StatusCode);
   end
 end;
 

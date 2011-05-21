@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -190,6 +190,11 @@ type
 implementation
 
 
+uses
+  // Project
+  UStrUtils;
+
+
 { TBaseWebService }
 
 function TBaseWebService.BuildURI(const Params: TURIParams): string;
@@ -298,7 +303,7 @@ procedure TBaseWebService.GetStrings(const Params: TURIParams;
       nil.
   }
 begin
-  Strings.Text := Trim(GetText(Params));
+  Strings.Text := StrTrimSpaces(GetText(Params));
 end;
 
 function TBaseWebService.GetText(const Params: TURIParams = nil): string;
@@ -353,7 +358,7 @@ procedure TBaseWebService.PostStrings(const Params: TURIParams;
     @param Strings [in] String list that receives response.
   }
 begin
-  Strings.Text := Trim(PostText(Params));
+  Strings.Text := StrTrimSpaces(PostText(Params));
 end;
 
 procedure TBaseWebService.PostStrings(const Data: TBytes;
@@ -364,7 +369,7 @@ procedure TBaseWebService.PostStrings(const Data: TBytes;
     @param Strings [in] String list that receives response.
   }
 begin
-  Strings.Text := Trim(PostText(Data));
+  Strings.Text := StrTrimSpaces(PostText(Data));
 end;
 
 procedure TBaseWebService.PostStrings(const Data: TStream;
@@ -375,7 +380,7 @@ procedure TBaseWebService.PostStrings(const Data: TStream;
     @param Strings [in] String list that receives response.
   }
 begin
-  Strings.Text := Trim(PostText(Data));
+  Strings.Text := StrTrimSpaces(PostText(Data));
 end;
 
 function TBaseWebService.PostText(const Params: TURIParams): string;

@@ -96,7 +96,7 @@ uses
   SysUtils, Dialogs,
   // Project
   UCodeImportExport, UCtrlArranger, UEncodings, UExceptions, UIOUtils,
-  UMessageBox, UOpenDialogHelper, USaveDialogEx, UUtils;
+  UMessageBox, UOpenDialogHelper, USaveDialogEx, UStrUtils, UUtils;
 
 
 {$R *.dfm}
@@ -160,7 +160,7 @@ resourcestring
 var
   FileName: string;   // name of export file
 begin
-  FileName := Trim(edFile.Text);
+  FileName := StrTrimSpaces(edFile.Text);
   // Assume failure
   ModalResult := mrNone;
   try
@@ -250,7 +250,7 @@ begin
   OutData := TCodeExporter.ExportSnippets(
     TUserInfo.CreateNul, frmSnippets.SelectedSnippets
   );
-  TFileIO.WriteAllBytes(Trim(edFile.Text), OutData.Data);
+  TFileIO.WriteAllBytes(StrTrimSpaces(edFile.Text), OutData.Data);
 end;
 
 end.

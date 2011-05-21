@@ -122,7 +122,7 @@ uses
   SysUtils, ExtActns,
   // Project
   FmPreferencesDlg, FrNewsPrefs, UCtrlArranger, UHTMLDetailUtils, UHTMLUtils,
-  UPreferences, Web.UInfo, Web.UXMLRequestor;
+  UPreferences, UStrUtils, Web.UInfo, Web.UXMLRequestor;
 
 {$R *.dfm}
 
@@ -217,10 +217,10 @@ procedure TNewsDlg.DisplayNews(const RSS: TRSS20);
     Title: string;  // title text
     Link: string;   // item's URL used for link
   begin
-    Title := Trim(Item.Title);
+    Title := StrTrimSpaces(Item.Title);
     if Title = '' then
       Title := sNoTitle;
-    Link := Trim(Item.Link);
+    Link := StrTrimSpaces(Item.Link);
     if Link = '' then
       Result := MakeSafeHTMLText(Title)
     else
@@ -235,7 +235,7 @@ procedure TNewsDlg.DisplayNews(const RSS: TRSS20);
   var
     Description: string;  // description text
   begin
-    Description := Trim(Item.Description);
+    Description := StrTrimSpaces(Item.Description);
     if Description = '' then
       Description := sNoDescription;
     Result := MakeSafeHTMLText(Description);

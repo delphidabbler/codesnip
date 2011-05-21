@@ -71,8 +71,8 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils;
+  // Project
+  UStrUtils;
 
 
 { TUserDetails }
@@ -102,7 +102,7 @@ end;
 
 function TUserDetails.IsNul: Boolean;
 begin
-  Result := (Trim(Name) = '') and (Trim(Email) = '');
+  Result := (StrTrimSpaces(Name) = '') and (StrTrimSpaces(Email) = '');
 end;
 
 end.
