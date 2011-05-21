@@ -94,12 +94,6 @@ function FloatToInt(const F: Double): Int64;
     @return Rounded value as integer.
   }
 
-function MySQLDateToDateTime(const MySQLDate: string): TDateTime;
-  {Converts a date in MySQL format into a TDateTime.
-    @param MySQLDate [in] Date string in format YYYY-MM-DD.
-    @return Binary date value.
-  }
-
 function DateStamp: string;
   {Creates a date stamp in RFC1123 format
     @return Current date and time as date stamp in UTC/GMT.
@@ -304,24 +298,6 @@ begin
   SetLength(Result, GetShortPathName(PChar(LongName), PChar(Result), MAX_PATH));
 end;
 
-function ContainsDelims(const S, Delimiters: string): Boolean;
-  {Checks if a string contains any specified delimiter characters.
-    @param S [in] String to be checked.
-    @param Delimiters [in] String of delimiter characters.
-    @return True if string contains any delimiters or false if not.
-  }
-var
-  DelimIdx: Integer;  // loops thru delimiters
-begin
-  Result := False;
-  for DelimIdx := 1 to Length(Delimiters) do
-    if StrContainsStr(Delimiters[DelimIdx], S) then
-    begin
-      Result := True;
-      Break;
-    end;
-end;
-
 function FloatToInt(const F: Double): Int64;
   {Converts a floating point number to an integer, rounding to nearest integer.
     @param F [in] Floating point number to be rounded off.
@@ -329,19 +305,6 @@ function FloatToInt(const F: Double): Int64;
   }
 begin
   Result := Trunc(F + 0.500001);
-end;
-
-function MySQLDateToDateTime(const MySQLDate: string): TDateTime;
-  {Converts a date in MySQL format into a TDateTime.
-    @param MySQLDate [in] Date string in format YYYY-MM-DD.
-    @return Binary date value.
-  }
-begin
-  Result := EncodeDate(
-    StrToInt(Copy(MySQLDate, 1, 4)),
-    StrToInt(Copy(MySQLDate, 6, 2)),
-    StrToInt(Copy(MySQLDate, 9, 2))
-  );
 end;
 
 function DateStamp: string;
