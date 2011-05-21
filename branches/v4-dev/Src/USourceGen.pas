@@ -294,7 +294,7 @@ uses
   SysUtils,
   // Project
   DB.USnippetKind, UConsts, UExceptions, UPreferences, USnippetValidator,
-  UStrUtils, UUtils, UWarnings;
+  UStrUtils, UWarnings;
 
 
 const
@@ -589,8 +589,8 @@ begin
     begin
       Writer.AppendLine('uses');
       Writer.AppendLine(
-        TextWrap(
-          JoinStr(fSourceAnalyser.Units, ', ') + ';',
+        StrWrap(
+          StrJoin(fSourceAnalyser.Units, ', ') + ';',
           cLineWidth - cIndent,
           cIndent
         )
@@ -1232,7 +1232,7 @@ begin
     for Line in Comments do
       if Length(Line) > 0 then
         Lines.Add(
-          TextWrap(Line, cLineWidth - Length(cLinePrefix), 0), EOL, True
+          StrWrap(Line, cLineWidth - Length(cLinePrefix), 0), EOL, True
         )
       else
         Lines.Add('');
@@ -1261,11 +1261,11 @@ begin
     csBefore:
       Result := '{'
         + EOL
-        + TextWrap(Text, cLineWidth - cIndent, cIndent)
+        + StrWrap(Text, cLineWidth - cIndent, cIndent)
         + EOL
         + '}';
     csAfter:
-      Result := TextWrap('{' + Text + '}', cLineWidth - cIndent, cIndent);
+      Result := StrWrap('{' + Text + '}', cLineWidth - cIndent, cIndent);
   end;
 end;
 

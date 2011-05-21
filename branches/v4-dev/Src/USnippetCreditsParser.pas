@@ -98,7 +98,7 @@ implementation
 
 uses
   // Project
-  UStrUtils, UUtils;
+  UStrUtils;
 
 
 { TSnippetCreditsParser }
@@ -151,9 +151,9 @@ begin
       raise EActiveTextParserError.Create(sEmptyLink);
     if CloseBracketPos < OpenBracketPos then
       raise EActiveTextParserError.Create(sWrongBracketOrder);
-    if CountDelims(Markup, cOpenBracket) > 1 then
+    if StrCountDelims(cOpenBracket, Markup) > 1 then
       raise EActiveTextParserError.Create(sMultipleOpeners);
-    if CountDelims(Markup, cCloseBracket) > 1 then
+    if StrCountDelims(cCloseBracket, Markup) > 1 then
       raise EActiveTextParserError.Create(sMultipleClosers);
     // must have a URL
     if fURL = '' then

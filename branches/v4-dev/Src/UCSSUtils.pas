@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s):
@@ -438,7 +438,6 @@ function CSSBlockDisplayProp(const Show: Boolean): string;
   }
 
 
-
 implementation
 
 
@@ -446,7 +445,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UHTMLUtils, UIStringList, UUtils;
+  UHTMLUtils, UIStringList, UStrUtils;
 
 
 { Forward declarations }
@@ -573,7 +572,7 @@ begin
   // Add each font in array to list
   for NameIdx := Low(FontNames) to High(FontNames) do
     // quote any font name containing spaces
-    Names.Add(QuoteSpacedString(FontNames[NameIdx]));
+    Names.Add(StrQuoteSpacedString(FontNames[NameIdx]));
   // Add generic font family if required
   if Generic <> cfgDontCare then
     Names.Add(cGenerics[Generic]);

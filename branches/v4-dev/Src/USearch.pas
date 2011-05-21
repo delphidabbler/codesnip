@@ -354,7 +354,7 @@ uses
   // Delphi
   SysUtils, Character,
   // Project
-  UActiveText, UStrUtils, UUtils;
+  UActiveText, UStrUtils;
 
 
 type
@@ -955,7 +955,7 @@ function TTextSearch.Match(const Snippet: TSnippet): Boolean;
     try
       ExtraWords := TStringList.Create;
       // Convert text to word list and process each word
-      ExplodeStr(WhiteSpaceToSpaces(RawText), ' ', Words, False);
+      StrExplode(WhiteSpaceToSpaces(RawText), ' ', Words, False);
       for WordIdx := 0 to Pred(Words.Count) do
       begin
         Word := Words[WordIdx];
@@ -974,8 +974,8 @@ function TTextSearch.Match(const Snippet: TSnippet): Boolean;
           ExtraWords.Add(Word);
         end;
       end;
-      Result := ' ' + JoinStr(Words, ' ', False) + ' '
-        + JoinStr(ExtraWords, ' ', False) + ' ';
+      Result := ' ' + StrJoin(Words, ' ', False) + ' '
+        + StrJoin(ExtraWords, ' ', False) + ' ';
       if not (soMatchCase in fCriteria.Options) then
         Result := StrToLower(Result);
     finally
@@ -1021,9 +1021,9 @@ var
 begin
   // Build search text
   SearchText := NormaliseSearchText(
-    ' ' + MakeSentence(Snippet.Description) +
+    ' ' + StrMakeSentence(Snippet.Description) +
     ' ' + Snippet.SourceCode +
-    ' ' + MakeSentence(ExtraText(Snippet.Extra)) +
+    ' ' + StrMakeSentence(ExtraText(Snippet.Extra)) +
     ' '
   );
   if fCriteria.Logic = slOr then
@@ -1315,7 +1315,7 @@ begin
   fOptions := Options;
   // store each search word as entry in string list
   fWords := TStringList.Create;
-  ExplodeStr(CompressWhiteSpace(Words), ' ', fWords);
+  StrExplode(StrCompressWhiteSpace(Words), ' ', fWords);
 end;
 
 destructor TTextSearchCriteria.Destroy;
@@ -1470,7 +1470,7 @@ begin
     // source is text search object
     Result := TSearchFactory.CreateTextSearch(
       TSearchCriteriaFactory.CreateTextSearchCriteria(
-        JoinStr(TextCriteria.Words, ' '),
+        StrJoin(TextCriteria.Words, ' '),
         TextCriteria.Logic,
         TextCriteria.Options
       )

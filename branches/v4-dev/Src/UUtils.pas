@@ -76,49 +76,6 @@ function ListFiles(const Dir, Wildcard: string; const List: TStrings;
     @return True if Dir is a valid directory.
   }
 
-function CapitaliseWords(const S: string): string;
-  {Capitalises each word in a string, leaving case of other characters
-  unchanged.
-    @param S [in] String to be converted.
-    @return Capitalised string.
-  }
-
-function CompressWhiteSpace(const S: string): string;
-  {Compresses white space in a string. All sequences of white space are replaced
-  by a single space.
-    @param S [in] String containing uncompressed white space.
-    @return String with whitespace compressed.
-  }
-
-function StripWhiteSpace(const S: string): string;
-  {Removes all white space from a string.
-    @param S [in] String from which white space is to be removed.
-    @return String with whitespace removed.
-  }
-
-function ExplodeStr(S: string; const Delim: string; const List: TStrings;
-  const AllowEmpty: Boolean = True; const TrimStrs: Boolean = False): Integer;
-  {Splits a delimited string into a list of sub-strings separated by a
-  delimiter.
-    @param S [in] String to be split.
-    @param Delim [in] String that delimits sub strings.
-    @param List [in] Receives split strings.
-    @param AllowEmpty [in] True if empty sub strings are to be included in list.
-    @param TrimStrs [in] Determines whether strings are trimmed of trailing and
-      leading spaces before adding to list. Can mean a string of spaces is
-      ignored if AllowEmpty is True.
-    @return Number of strings in List.
-  }
-
-function JoinStr(const SL: TStrings; const Delim: string;
-  const AllowEmpty: Boolean = True): string;
-  {Joins all strings in a string list together into a single delimited string.
-    @param SL [in] List of strings to be joined.
-    @param Delim [in] String to use to delimit strings.
-    @param AllowEmpty [in] True if empty strings are to be included in output.
-    @return Joined string.
-  }
-
 function LongToShortFilePath(const LongName: string): string;
   {Converts a long file name to the equivalent shortened DOS style 8.3 path.
     @param LongName [in] Long file name to be converted.
@@ -129,13 +86,6 @@ function IsDirectory(const DirName: string): Boolean;
   {Checks if a directory exists.
     @param DirName [in] Name of directory to check.
     @return True if DirName is valid directory.
-  }
-
-function QuoteSpacedString(const S: string; const Quote: Char = '"'): string;
-  {Surrounds a string in quotes if it contains spaces.
-    @param S [in] String to be quoted.
-    @param Quote [in] Quote character.
-    @return Original string, surrounded by quotes only if it contains spaces.
   }
 
 function FloatToInt(const F: Double): Int64;
@@ -153,13 +103,6 @@ function MySQLDateToDateTime(const MySQLDate: string): TDateTime;
 function DateStamp: string;
   {Creates a date stamp in RFC1123 format
     @return Current date and time as date stamp in UTC/GMT.
-  }
-
-function MakeSentence(const Txt: string): string;
-  {Checks if text forms a valid sentence, i.e. it ends with a full stop, a
-  question mark or an exclamation mark. If not a full stop is added to the text.
-    @param Txt [in] Text to be made into sentence.
-    @return Valid sentence.
   }
 
 procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
@@ -182,22 +125,6 @@ procedure Pause(const ADelay: Cardinal);
   {Pauses for a specified number of milliseconds before returning. Performs a
   busy wait.
     @param ADelay [in] Number of milliseconds to pause.
-  }
-
-function CountDelims(const S, Delims: string): Integer;
-  {Counts occurences of delimiters in a string.
-    @param S [in] String containing delimiters.
-    @param Delims [in] String containing delimiters to be counted. Delimiters
-      must be single-byte characters.
-  }
-
-function TextWrap(const Text: string; const Width, Margin: Integer): string;
-  {Word wraps text to a specified maximum width and pads left each line with
-  spaces to offset lines to a specified margin.
-    @param Text [in] Text to be word wrapped.
-    @param Width [in] Maximum width of a line of text.
-    @param Margin [in] Left margin for wrapped text.
-    @return Word wrapped text.
   }
 
 function IsValidDriveLetter(const C: Char): Boolean;
@@ -367,212 +294,6 @@ begin
   end;
 end;
 
-function CapitaliseWords(const S: string): string;
-  {Capitalises each word in a string, leaving case of other characters
-  unchanged.
-    @param S [in] String to be converted.
-    @return Capitalised string.
-  }
-var
-  Idx: Integer;           // loops through each character in string
-  WantCapital: Boolean;   // flag indicating whether captial letter required
-begin
-  Result := S;
-  WantCapital := True;
-  for Idx := 1 to Length(S) do
-  begin
-    if TCharacter.IsLetter(Result[Idx]) then
-    begin
-      if WantCapital then
-        Result[Idx] := TCharacter.ToUpper(Result[Idx]);
-      WantCapital := False;
-    end
-    else
-      WantCapital := TCharacter.IsWhiteSpace(Result[Idx]);
-  end;
-end;
-
-function CompressWhiteSpace(const S: string): string;
-  {Compresses white space in a string. All sequences of white space are replaced
-  by a single space.
-    @param S [in] String containing uncompressed white space.
-    @return String with whitespace compressed.
-  }
-var
-  Idx: Integer;       // loops thru all characters in string
-  ResCount: Integer;  // counts number of characters in result string
-  PRes: PChar;        // pointer to characters in result string
-begin
-  // Set length of result to length of source string and set pointer to it
-  SetLength(Result, Length(S));
-  PRes := PChar(Result);
-  // Reset count of characters in result string
-  ResCount := 0;
-  // Loop thru characters of source string
-  Idx := 1;
-  while Idx <= Length(S) do
-  begin
-    if TCharacter.IsWhiteSpace(S[Idx]) then
-    begin
-      // Current char is white space: replace by space char and count it
-      PRes^ := ' ';
-      Inc(PRes);
-      Inc(ResCount);
-      // Skip past any following white space
-      Inc(Idx);
-      while TCharacter.IsWhiteSpace(S[Idx]) do
-        Inc(Idx);
-    end
-    else
-    begin
-      // Current char is not white space: copy it literally and count it
-      PRes^ := S[Idx];
-      Inc(PRes);
-      Inc(ResCount);
-      Inc(Idx);
-    end;
-  end;
-  // Reduce length of result string if it is shorter than source string
-  if ResCount < Length(S) then
-    SetLength(Result, ResCount);
-end;
-
-function StripWhiteSpace(const S: string): string;
-  {Removes all white space from a string.
-    @param S [in] String from which white space is to be removed.
-    @return String with whitespace removed.
-  }
-var
-  Idx: Integer;       // loops thru all characters in string
-  ResCount: Integer;  // counts number of characters in result string
-  PRes: PChar;        // pointer to characters in result string
-begin
-  // Set length of result to length of source string and set pointer to it
-  SetLength(Result, Length(S));
-  PRes := PChar(Result);
-  // Reset count of characters in result string
-  ResCount := 0;
-  // Loop thru characters of source string
-  Idx := 1;
-  while Idx <= Length(S) do
-  begin
-    if not TCharacter.IsWhiteSpace(S[Idx]) then
-    begin
-      // Character is not white space: copy to result string
-      PRes^ := S[Idx];
-      Inc(ResCount);
-      Inc(PRes);
-    end;
-    Inc(Idx);
-  end;
-  // Reduce length of result string if it is shorter than source string
-  if ResCount < Length(S) then
-    SetLength(Result, ResCount);
-end;
-
-function SplitStr(const S: string; const Delim: string;
-  out S1, S2: string): Boolean;
-  {Splits the string S at the first occurence of a delimiter.
-    @param S [in] String to be split.
-    @param Delim [in] Delimiter separating sub strings.
-    @param S1 [out] Sub string preceeding first delimiter or whole string if
-      delimiter not in string.
-    @param S2 [out] Sub string following delimiter or '' if delimiter not in
-      string.
-    @return True if delimiter was found in string, False otherwise.
-  }
-var
-  DelimPos: Integer;  // position of delimiter in source string
-begin
-  // Find position of first occurence of delimiter in string
-  DelimPos := StrPos(Delim, S);
-  if DelimPos > 0 then
-  begin
-    // Delimiter found: split string at delimiter
-    S1 := Copy(S, 1, DelimPos - 1);
-    S2 := Copy(S, DelimPos + Length(Delim), MaxInt);
-    Result := True;
-  end
-  else
-  begin
-    // Delimiter not found: set S1 to whole string
-    S1 := S;
-    S2 := '';
-    Result := False;
-  end;
-end;
-
-function ExplodeStr(S: string; const Delim: string; const List: TStrings;
-  const AllowEmpty: Boolean = True; const TrimStrs: Boolean = False): Integer;
-  {Splits a delimited string into a list of sub-strings separated by a
-  delimiter.
-    @param S [in] String to be split.
-    @param Delim [in] String that delimits sub strings.
-    @param List [in] Receives split strings.
-    @param AllowEmpty [in] True if empty sub strings are to be included in list.
-    @param TrimStrs [in] Determines whether strings are trimmed of trailing and
-      leading spaces before adding to list. Can mean a string of spaces is
-      ignored if AllowEmpty is True.
-    @return Number of strings in List.
-  }
-var
-  Item: string;       // current delimited text
-  Remainder: string;  // remaining unconsumed part of string
-
-  // ---------------------------------------------------------------------------
-  procedure ProcessItem;
-    {Modifies current string as necessary item and adds to list if required.
-    }
-  begin
-    if TrimStrs then
-      Item := StrTrimSpaces(Item);
-    if (Item <> '') or AllowEmpty then
-      List.Add(Item)
-  end;
-  // ---------------------------------------------------------------------------
-
-begin
-  // Clear the list
-  List.Clear;
-  // Check we have some entries in the string
-  if S <> '' then
-  begin
-    // Repeatedly split string until we have no more entries
-    while SplitStr(S, Delim, Item, Remainder) do
-    begin
-      ProcessItem;
-      // Go round again with remainder of string
-      S := Remainder;
-    end;
-    // Deal with item after last delimiter, if any
-    ProcessItem;
-  end;
-  // Return number of items added
-  Result := List.Count;
-end;
-
-function JoinStr(const SL: TStrings; const Delim: string;
-  const AllowEmpty: Boolean = True): string;
-  {Joins all strings in a string list together into a single delimited string.
-    @param SL [in] List of strings to be joined.
-    @param Delim [in] String to use to delimit strings.
-    @param AllowEmpty [in] True if empty strings are to be included in output.
-    @return Joined string.
-  }
-var
-  Idx: Integer; // loops thru all items in string list
-begin
-  Result := '';
-  for Idx := 0 to Pred(SL.Count) do
-  begin
-    if (SL[Idx] <> '') or AllowEmpty then
-      if Result = '' then
-        Result := SL[Idx]
-      else
-        Result := Result + Delim + SL[Idx];
-  end;
-end;
-
 function LongToShortFilePath(const LongName: string): string;
   {Converts a long file name to the equivalent shortened DOS style 8.3 path.
     @param LongName [in] Long file name to be converted.
@@ -599,38 +320,6 @@ begin
       Result := True;
       Break;
     end;
-end;
-
-function ContainsWhiteSpace(const S: string): Boolean;
-  {Checks if a string contains white space.
-    @param S [in] string to be checked.
-    @return True if string contains spaces.
-  }
-var
-  Ch: Char;   // scans through string S
-begin
-  Result := False;
-  for Ch in S do
-  begin
-    if TCharacter.IsWhiteSpace(Ch) then
-    begin
-      Result := True;
-      Break;
-    end;
-  end;
-end;
-
-function QuoteSpacedString(const S: string; const Quote: Char = '"'): string;
-  {Surrounds a string in quotes if it contains spaces.
-    @param S [in] String to be quoted.
-    @param Quote [in] Quote character.
-    @return Original string, surrounded by quotes only if it contains spaces.
-  }
-begin
-  if ContainsWhiteSpace(S) then
-    Result := Quote + S + Quote
-  else
-    Result := S;
 end;
 
 function FloatToInt(const F: Double): Int64;
@@ -670,19 +359,6 @@ begin
   GetSystemTime(ST);
   // Format system time in RFC1123 format
   Result := FormatDateTime(cRFC1123Pattern, SystemTimeToDateTime(ST));
-end;
-
-function MakeSentence(const Txt: string): string;
-  {Checks if text forms a valid sentence, i.e. it ends with a full stop, a
-  question mark or an exclamation mark. If not a full stop is added to the text.
-    @param Txt [in] Text to be made into sentence.
-    @return Valid sentence.
-  }
-begin
-  if StrIsDelimiter('.!?', Txt, Length(Txt)) then
-    Result := Txt
-  else
-    Result := Txt + '.'
 end;
 
 procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
@@ -743,81 +419,6 @@ begin
       // tick count has wrapped around: adjust it
       CurrentTC := CurrentTC + High(DWORD);
   until CurrentTC - StartTC >= ADelay;
-end;
-
-function CountDelims(const S, Delims: string): Integer;
-  {Counts occurences of delimiters in a string.
-    @param S [in] String containing delimiters.
-    @param Delims [in] String containing delimiters to be counted. Delimiters
-      must be single-byte characters.
-  }
-var
-  Idx: Integer; //loops thru all characters in string
-begin
-  Result := 0;
-  for Idx := 1 to Length(S) do
-    if StrIsDelimiter(Delims, S, Idx) then
-      Inc(Result);
-end;
-
-function TextWrap(const Text: string; const Width, Margin: Integer): string;
-  {Word wraps text to a specified maximum width and pads left each line with
-  spaces to offset lines to a specified margin.
-    @param Text [in] Text to be word wrapped.
-    @param Width [in] Maximum width of a line of text.
-    @param Margin [in] Left margin for wrapped text.
-    @return Word wrapped text.
-  }
-var
-  Word: string;         // next word in input text
-  Line: string;         // current output line
-  Words: TStringList;   // list of words in input text
-  I: Integer;           // loops thru all words in input text
-
-  // -------------------------------------------------------------------------
-  procedure AddLine(const Line: string);
-    {Adds a line of text to output, offsetting line by width of margin.
-      @param Line [in] Line being output.
-    }
-  begin
-    if Result <> '' then    // not first line: insert new line
-      Result := Result + EOL;
-    Result := Result + StringOfChar(' ', Margin) + Line;
-  end;
-  // -------------------------------------------------------------------------
-
-begin
-  // Get all words in text
-  Words := TStringList.Create;
-  try
-    ExplodeStr(Text, ' ', Words);
-    Result := '';
-    Line := '';
-    // Loop for each word in text
-    for I := 0 to Pred(Words.Count) do
-    begin
-      Word := Words[I];
-      if Length(Line) + Length(Word) + 1 <= Width then
-      begin
-        // Word fits on current line: add it
-        if Line = '' then
-          Line := Word  // 1st word on line
-        else
-          Line := Line + ' ' + Word;
-      end
-      else
-      begin
-        // Word doesn't fit on line
-        AddLine(Line);  // output line
-        Line := Word;   // store word as first on next line
-      end;
-    end;
-    if Line <> '' then
-      // Residual line after end of loop: add to output
-      AddLine(Line);
-  finally
-    FreeAndNil(Words);
-  end;
 end;
 
 function IsValidDriveLetter(const C: Char): Boolean;

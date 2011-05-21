@@ -43,6 +43,11 @@ unit UStrUtils;
 interface
 
 
+uses
+  // Delphi
+  Classes;
+
+
 ///  <summary>Checks if string Haystack contains string Needle. Case sensitive.
 ///  </summary>
 function StrContainsStr(const Needle, Haystack: UnicodeString): Boolean;
@@ -156,11 +161,71 @@ function StrUnixLineBreaks(const Str: UnicodeString): UnicodeString;
 function StrIsDelimiter(const Delims, Str: UnicodeString; const Idx: Integer):
   Boolean;
 
+///  <summary>Returns total number of occurences of delimieters from Delim in
+///  string Str.</summary>
+///  <remarks>Delims must contain only characters that take just one wide
+///  character, i.e. they are from the basic multiligual plane.</remarks>
+function StrCountDelims(const Delims, Str: UnicodeString): Integer;
+
 ///  <summary>Returns position of last character in Str that matches any
 ///  character from Delims.</summary>
 ///  <remarks>Delims must contain only characters that take just one wide
 ///  character, i.e. they are from the basic multiligual plane.</remarks>
 function StrLastDelimiterPos(const Delims, Str: UnicodeString): Integer;
+
+///  <summary>Capitalises each word in string Str.</summary>
+function StrCapitaliseWords(const Str: UnicodeString): UnicodeString;
+
+///  <summary>Compresses white space in string Str.</summary>
+///  <remarks>All sequences of white space in Str are replaced by a single
+///  space.</remarks>
+function StrCompressWhiteSpace(const Str: UnicodeString): UnicodeString;
+
+///  <summary>Removes all white space from string Str.</summary>
+function StrStripWhiteSpace(const Str: UnicodeString): UnicodeString;
+
+///  <summary>Checks if a stream contains white space.</summary>
+function StrContainsWhiteSpace(const Str: UnicodeString): Boolean;
+
+///  <summary>Encloses string Str in quotes specified by Quote iff Str contains
+///  white space.</summary>
+///  <remarks>Opening and closing quote are the same character.</remarks>
+function StrQuoteSpacedString(const Str: UnicodeString;
+  const Quote: Char = '"'): UnicodeString;
+
+///  <summary>Joins all strings from a string list together into a single string
+///  with each list element being separated by Delim. Empty string list elements
+///  are included in the output string only if AllowEmpty is True.</summary>
+function StrJoin(const SL: TStrings; const Delim: UnicodeString;
+  const AllowEmpty: Boolean = True): UnicodeString;
+
+///  <summary>Splits string Str at delimiter Delim and records the components in
+///  List. If TrimStrs is True spaces are trimmed from each component. If
+///  AllowEmpty is True empty components are added to List.</summary>
+///  <remarks>String components are trimmed before being checked for emptyness.
+///  </remarks>
+function StrExplode(Str: UnicodeString; const Delim: UnicodeString;
+  const List: TStrings; const AllowEmpty: Boolean = True;
+  const TrimStrs: Boolean = False): Integer;
+
+///  <summary>Splits string Str at the first occurence of Delim setting Left to
+///  the string preceeding Delim and Right to the string following Delim.
+///  Returns True if Delim was found in Str, False if not.</summary>
+///  <remarks>Left and Right be empty if Delim is found at the start or end of
+///  Str respectively.</remarks>
+function StrSplit(const Str: UnicodeString; const Delim: UnicodeString;
+  out Left, Right: UnicodeString): Boolean;
+
+///  <summary>Word wraps text Str to form lines of maximum length MaxLen and
+///  offsets each line using spaces to form a left margin of size given by
+///  Margin.</summary>
+///  <remarks>Lines are separated by CRLF.</remarks>
+function StrWrap(const Str: UnicodeString; const MaxLen, Margin: Integer):
+  UnicodeString;
+
+///  <summary>Checks in string Str forms a valid sentence and, if not, adds a
+///  full stop.</summary>
+function StrMakeSentence(const Str: UnicodeString): UnicodeString;
 
 
 implementation
@@ -168,14 +233,74 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils,
+  SysUtils, StrUtils, Character,
   // Project
-  UConsts;
+  UConsts, UUtils;
 
+
+function StrCapitaliseWords(const Str: UnicodeString): UnicodeString;
+var
+  Idx: Integer;           // loops through each character in string
+  WantCapital: Boolean;   // flag indicating whether captial letter required
+begin
+  Result := Str;
+  WantCapital := True;
+  for Idx := 1 to Length(Str) do
+  begin
+    if TCharacter.IsLetter(Result[Idx]) then
+    begin
+      if WantCapital then
+        Result[Idx] := TCharacter.ToUpper(Result[Idx]);
+      WantCapital := False;
+    end
+    else
+      WantCapital := TCharacter.IsWhiteSpace(Result[Idx]);
+  end;
+end;
 
 function StrCompareText(const Left, Right: UnicodeString): Integer;
 begin
   Result := SysUtils.AnsiCompareText(Left, Right);
+end;
+
+function StrCompressWhiteSpace(const Str: UnicodeString): UnicodeString;
+var
+  Idx: Integer;       // loops thru all characters in string
+  ResCount: Integer;  // counts number of characters in result string
+  PRes: PChar;        // pointer to characters in result string
+begin
+  // Set length of result to length of source string and set pointer to it
+  SetLength(Result, Length(Str));
+  PRes := PChar(Result);
+  // Reset count of characters in result string
+  ResCount := 0;
+  // Loop thru characters of source string
+  Idx := 1;
+  while Idx <= Length(Str) do
+  begin
+    if TCharacter.IsWhiteSpace(Str[Idx]) then
+    begin
+      // Current char is white space: replace by space char and count it
+      PRes^ := ' ';
+      Inc(PRes);
+      Inc(ResCount);
+      // Skip past any following white space
+      Inc(Idx);
+      while TCharacter.IsWhiteSpace(Str[Idx]) do
+        Inc(Idx);
+    end
+    else
+    begin
+      // Current char is not white space: copy it literally and count it
+      PRes^ := Str[Idx];
+      Inc(PRes);
+      Inc(ResCount);
+      Inc(Idx);
+    end;
+  end;
+  // Reduce length of result string if it is shorter than source string
+  if ResCount < Length(Str) then
+    SetLength(Result, ResCount);
 end;
 
 function StrContainsStr(const Needle, Haystack: UnicodeString): Boolean;
@@ -183,10 +308,101 @@ begin
   Result := StrUtils.AnsiContainsStr(Haystack, Needle);
 end;
 
+function StrContainsWhiteSpace(const Str: UnicodeString): Boolean;
+var
+  Ch: Char;   // scans through Str
+begin
+  Result := False;
+  for Ch in Str do
+    if TCharacter.IsWhiteSpace(Ch) then
+      Exit(True);
+end;
+
+function StrCountDelims(const Delims, Str: UnicodeString): Integer;
+var
+  Idx: Integer; //loops thru all characters in string
+begin
+  Result := 0;
+  for Idx := 1 to Length(Str) do
+    if StrIsDelimiter(Delims, Str, Idx) then
+      Inc(Result);
+end;
+
+function StrExplode(Str: UnicodeString; const Delim: UnicodeString;
+  const List: TStrings; const AllowEmpty: Boolean = True;
+  const TrimStrs: Boolean = False): Integer;
+  {Splits a delimited string into a list of sub-strings separated by a
+  delimiter.
+    @param Str [in] String to be split.
+    @param Delim [in] String that delimits sub strings.
+    @param List [in] Receives split strings.
+    @param AllowEmpty [in] True if empty sub strings are to be included in list.
+    @param TrimStrs [in] Determines whether strings are trimmed of trailing and
+      leading spaces before adding to list. Can mean a string of spaces is
+      ignored if AllowEmpty is True.
+    @return Number of strings in List.
+  }
+var
+  Head: UnicodeString;      // head of Str before delimiter
+  Remainder: UnicodeString; // remaining unconsumed part of string
+
+  // ---------------------------------------------------------------------------
+  procedure ProcessHead;
+    {Modifies Head string as necessary and adds to list if required.
+    }
+  begin
+    if TrimStrs then
+      Head := StrTrimSpaces(Head);
+    if (Head <> '') or AllowEmpty then
+      List.Add(Head)
+  end;
+  // ---------------------------------------------------------------------------
+
+begin
+  // Clear the list
+  List.Clear;
+  // Check we have some entries in the string
+  if Str <> '' then
+  begin
+    // Repeatedly split string until we have no more entries
+    while StrSplit(Str, Delim, Head, Remainder) do
+    begin
+      ProcessHead;
+      // Go round again with remainder of string
+      Str := Remainder;
+    end;
+    // Deal with Head after last delimiter, if any
+    ProcessHead;
+  end;
+  Result := List.Count;
+end;
+
 function StrIsDelimiter(const Delims, Str: UnicodeString; const Idx: Integer):
   Boolean;
 begin
   Result := SysUtils.IsDelimiter(Delims, Str, Idx);
+end;
+
+function StrJoin(const SL: TStrings; const Delim: UnicodeString;
+  const AllowEmpty: Boolean = True): UnicodeString;
+  {Joins all strings in a string list together into a single delimited string.
+    @param SL [in] List of strings to be joined.
+    @param Delim [in] String to use to delimit strings.
+    @param AllowEmpty [in] True if empty strings are to be included in output.
+    @return Joined string.
+  }
+var
+  Idx: Integer; // loops thru all items in string list
+begin
+  Result := '';
+  for Idx := 0 to Pred(SL.Count) do
+  begin
+    if (SL[Idx] <> '') or AllowEmpty then
+      if Result = '' then
+        Result := SL[Idx]
+      else
+        Result := Result + Delim + SL[Idx];
+  end;
 end;
 
 function StrLastDelimiterPos(const Delims, Str: UnicodeString): Integer;
@@ -209,6 +425,18 @@ begin
   end;
 end;
 
+function StrMakeSentence(const Str: UnicodeString): UnicodeString;
+resourcestring
+  // characters that can close sentence
+  sSentenceClosers = '.!?';
+  sFullStop = '.';
+begin
+  if StrIsDelimiter(sSentenceClosers, Str, Length(Str)) then
+    Result := Str
+  else
+    Result := Str + sFullStop;
+end;
+
 function StrPos(const Needle, Haystack: UnicodeString): Integer;
 begin
   Result := SysUtils.AnsiPos(Needle, Haystack);
@@ -218,6 +446,15 @@ function StrPos(const Needle, Haystack: UnicodeString; const Offset: Integer):
   Integer;
 begin
   Result := StrUtils.PosEx(Needle, Haystack, Offset);
+end;
+
+function StrQuoteSpacedString(const Str: UnicodeString;
+  const Quote: Char = '"'): UnicodeString;
+begin
+  if StrContainsWhiteSpace(Str) then
+    Result := Quote + Str + Quote
+  else
+    Result := Str;
 end;
 
 function StrReplace(const Str, FindStr, ReplaceStr: UnicodeString):
@@ -254,6 +491,38 @@ begin
   Result := StrUtils.AnsiRightStr(Str, Count);
 end;
 
+function StrSplit(const Str: UnicodeString; const Delim: UnicodeString;
+  out Left, Right: UnicodeString): Boolean;
+  {Splits the string Str at the first occurence of a delimiter.
+    @param Str [in] String to be split.
+    @param Delim [in] Delimiter separating sub strings.
+    @param Left [out] Sub string preceeding first delimiter or whole string if
+      delimiter not in string.
+    @param Right [out] Sub string following delimiter or '' if delimiter not in
+      string.
+    @return True if delimiter was found in string, False otherwise.
+  }
+var
+  DelimPos: Integer;  // position of delimiter in source string
+begin
+  // Find position of first occurence of delimiter in string
+  DelimPos := StrPos(Delim, Str);
+  if DelimPos > 0 then
+  begin
+    // Delimiter found: split string at delimiter
+    Left := Copy(Str, 1, DelimPos - 1);
+    Right := Copy(Str, DelimPos + Length(Delim), MaxInt);
+    Result := True;
+  end
+  else
+  begin
+    // Delimiter not found: set Left to whole string
+    Left := Str;
+    Right := '';
+    Result := False;
+  end;
+end;
+
 function StrStartsStr(const SubStr, Str: UnicodeString): Boolean;
 begin
   Result := StrUtils.AnsiStartsStr(SubStr, Str);
@@ -262,6 +531,35 @@ end;
 function StrStartsText(const SubStr, Str: UnicodeString): Boolean;
 begin
   Result := StrUtils.AnsiStartsText(SubStr, Str);
+end;
+
+function StrStripWhiteSpace(const Str: UnicodeString): UnicodeString;
+var
+  Idx: Integer;       // loops thru all characters in string
+  ResCount: Integer;  // counts number of characters in result string
+  PRes: PChar;        // pointer to characters in result string
+begin
+  // Set length of result to length of source string and set pointer to it
+  SetLength(Result, Length(Str));
+  PRes := PChar(Result);
+  // Reset count of characters in result string
+  ResCount := 0;
+  // Loop thru characters of source string
+  Idx := 1;
+  while Idx <= Length(Str) do
+  begin
+    if not TCharacter.IsWhiteSpace(Str[Idx]) then
+    begin
+      // Character is not white space: copy to result string
+      PRes^ := Str[Idx];
+      Inc(ResCount);
+      Inc(PRes);
+    end;
+    Inc(Idx);
+  end;
+  // Reduce length of result string if it is shorter than source string
+  if ResCount < Length(Str) then
+    SetLength(Result, ResCount);
 end;
 
 function StrToLower(const Str: UnicodeString): UnicodeString;
@@ -337,6 +635,58 @@ begin
   Result := StrUnixLineBreaks(Str);
   // Now have only LFs - convert them all to CRLFs
   Result := StrReplace(Result, LF, CRLF);
+end;
+
+function StrWrap(const Str: UnicodeString; const MaxLen, Margin: Integer):
+  UnicodeString;
+var
+  Word: UnicodeString;  // next word in input Str
+  Line: UnicodeString;  // current output line
+  Words: TStringList;   // list of words in input Str
+  I: Integer;           // loops thru all words in input Str
+
+  // -------------------------------------------------------------------------
+  ///  Adds a line of text to output, offseting line by Margin spaces
+  procedure AddLine(const Line: string);
+  begin
+    if Result <> '' then    // not first line: insert new line
+      Result := Result + EOL;
+    Result := Result + StringOfChar(' ', Margin) + Line;
+  end;
+  // -------------------------------------------------------------------------
+
+begin
+  // Get all words in Str
+  Words := TStringList.Create;
+  try
+    StrExplode(Str, ' ', Words);
+    Result := '';
+    Line := '';
+    // Loop for each word in Str
+    for I := 0 to Pred(Words.Count) do
+    begin
+      Word := Words[I];
+      if Length(Line) + Length(Word) + 1 <= MaxLen then
+      begin
+        // Word fits on current line: add it
+        if Line = '' then
+          Line := Word  // 1st word on line
+        else
+          Line := Line + ' ' + Word;
+      end
+      else
+      begin
+        // Word doesn't fit on line
+        AddLine(Line);
+        Line := Word;   // store word as first on next line
+      end;
+    end;
+    if Line <> '' then
+      // Residual line after end of loop: add to output
+      AddLine(Line);
+  finally
+    Words.Free;
+  end;
 end;
 
 end.

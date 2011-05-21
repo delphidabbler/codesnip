@@ -60,7 +60,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UConsts, UExceptions, UHTMLDocHelper, UStrUtils, UUtils;
+  UConsts, UExceptions, UHTMLDocHelper, UStrUtils;
 
 
 function CEscapeStr(const S: string; const EscapeChars,
@@ -213,7 +213,7 @@ begin
       ParamList.Add(Param);
     end;
     // Build function name and parameter list
-    Result := FnName + '(' + JoinStr(ParamList, ', ') + ')';
+    Result := FnName + '(' + StrJoin(ParamList, ', ') + ')';
   finally
     FreeAndNil(ParamList);
   end;

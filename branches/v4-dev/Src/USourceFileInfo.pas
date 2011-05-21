@@ -151,7 +151,7 @@ uses
   // Delphi
   SysUtils, Windows {for inlining}, Character,
   // Project
-  UStrUtils, UUtils;
+  UStrUtils;
 
 
 { TSourceFileInfo }
@@ -200,7 +200,7 @@ var
   Idx: Integer; // loops through characters of filename
 begin
   // convert to "camel" case
-  fDefaultFileName := StripWhiteSpace(CapitaliseWords(Value));
+  fDefaultFileName := StrStripWhiteSpace(StrCapitaliseWords(Value));
   // replaces invalid Pascal identifier characters with underscore
   if (fDefaultFileName <> '')
     and not TCharacter.IsLetter(fDefaultFileName[1])

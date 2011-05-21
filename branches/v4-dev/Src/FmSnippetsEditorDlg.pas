@@ -564,7 +564,7 @@ function TSnippetsEditorDlg.BuildExtraActiveText: IActiveText;
   }
 begin
   Result := TSnippetExtraHelper.BuildActiveText(
-    StrTrimSpaces(CompressWhiteSpace(StrReplace(edExtra.Text, EOL, ' ')))
+    StrTrimSpaces(StrCompressWhiteSpace(StrReplace(edExtra.Text, EOL, ' ')))
   );
 end;
 
@@ -1018,7 +1018,7 @@ begin
     StrTrimSpaces(edName.Text), UpdateData, ErrorMessage
   ) then
     raise EDataEntry.Create(  // selection not applicable to list boxes
-      MakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
+      StrMakeSentence(ErrorMessage) + EOL2 + sDependencyPrompt, clbDepends
     );
 end;
 

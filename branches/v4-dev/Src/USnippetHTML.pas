@@ -140,7 +140,7 @@ implementation
 uses
   // Project
   DB.UCategory, DB.UMain, DB.USnippetKind, Hiliter.UAttrs, Hiliter.UGlobals,
-  Hiliter.UHiliters, UActiveTextHTML, UHTMLDetailUtils, UHTMLUtils, UUtils;
+  Hiliter.UHiliters, UActiveTextHTML, UHTMLDetailUtils, UHTMLUtils, UStrUtils;
 
 
 { TSnippetHTML }
@@ -187,7 +187,7 @@ var
 begin
   Cat := Database.Categories.Find(Snippet.Category);
   Assert(Assigned(Cat), ClassName + '.Category: Category not found');
-  Result := MakeSentence(
+  Result := StrMakeSentence(
     CategoryALink(Cat.Category, Cat.Description)
   );
 end;
@@ -206,7 +206,7 @@ function TInfoHTML.Description: string;
     @return Required HTML.
   }
 begin
-  Result := MakeSafeHTMLText(MakeSentence(Snippet.Description));
+  Result := MakeSafeHTMLText(StrMakeSentence(Snippet.Description));
 end;
 
 function TInfoHTML.EmptyListSentence: string;
@@ -216,7 +216,7 @@ function TInfoHTML.EmptyListSentence: string;
 resourcestring
   sEmpty = 'None';  // word that indicates list is empty
 begin
-  Result := MakeSafeHTMLText(MakeSentence(sEmpty));
+  Result := MakeSafeHTMLText(StrMakeSentence(sEmpty));
 end;
 
 function TInfoHTML.Extra: string;
@@ -250,7 +250,7 @@ begin
         Result := Result + ', ';
       Result := Result + SnippetALink(Snippet.Name, Snippet.UserDefined);
     end;
-    Result := MakeSentence(Result);
+    Result := StrMakeSentence(Result);
   end;
 end;
 
@@ -260,7 +260,7 @@ function TInfoHTML.SnippetKind: string;
   }
 begin
   Result := MakeSafeHTMLText(
-    MakeSentence(TSnippetKindInfoList.Items[Snippet.Kind].DisplayName)
+    StrMakeSentence(TSnippetKindInfoList.Items[Snippet.Kind].DisplayName)
   );
 end;
 
@@ -283,7 +283,7 @@ begin
   if Snippet.Units.Count = 0 then
     Result := EmptyListSentence
   else
-    Result := MakeSafeHTMLText(JoinStr(Snippet.Units, ', ', False) + '.');
+    Result := MakeSafeHTMLText(StrJoin(Snippet.Units, ', ', False) + '.');
 end;
 
 function TInfoHTML.XRefs: string;

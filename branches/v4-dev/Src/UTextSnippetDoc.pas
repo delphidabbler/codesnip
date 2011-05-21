@@ -112,7 +112,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UUtils;
+  UStrUtils, UUtils;
 
 
 { TTextSnippetDoc }
@@ -154,7 +154,7 @@ procedure TTextSnippetDoc.RenderDBInfo(const Text: string);
   }
 begin
   fWriter.WriteLine;
-  fWriter.WriteLine(TextWrap(Text, cPageWidth, 0));
+  fWriter.WriteLine(StrWrap(Text, cPageWidth, 0));
 end;
 
 procedure TTextSnippetDoc.RenderDescription(const Desc: string);
@@ -163,7 +163,7 @@ procedure TTextSnippetDoc.RenderDescription(const Desc: string);
   }
 begin
   fWriter.WriteLine;
-  fWriter.WriteLine(TextWrap(Desc, cPageWidth, 0));
+  fWriter.WriteLine(StrWrap(Desc, cPageWidth, 0));
 end;
 
 procedure TTextSnippetDoc.RenderExtra(const ExtraText: IActiveText);
@@ -215,7 +215,7 @@ begin
             if Text <> '' then
             begin
               fWriter.WriteLine;
-              fWriter.WriteLine(TextWrap(Text, cPageWidth, 0));
+              fWriter.WriteLine(StrWrap(Text, cPageWidth, 0));
               Text := '';
               InBlock := False;
             end;
@@ -268,7 +268,7 @@ procedure TTextSnippetDoc.RenderTitledText(const Title, Text: string);
   }
 begin
   fWriter.WriteLine(Title);
-  fWriter.WriteLine(TextWrap(Text, cPageWidth - cIndent, cIndent));
+  fWriter.WriteLine(StrWrap(Text, cPageWidth - cIndent, cIndent));
 end;
 
 end.

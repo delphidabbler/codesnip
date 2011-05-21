@@ -70,7 +70,7 @@ uses
   // Delphi
   SysUtils, DateUtils,
   // Project
-  UIStringList, UStructs, UUtils;
+  UIStringList, UStructs, UStrUtils;
 
 
 function StrToWordInRange(const S: string; const Range: TRange;
@@ -343,7 +343,7 @@ const
 begin
   // Sun, 29 Aug 2010 13:06:03 +0000
   // Newlines allowed between fields: we compress to single white spaces
-  DateStr := UUtils.CompressWhiteSpace(DateStr);
+  DateStr := StrCompressWhiteSpace(DateStr);
   // Split date into constituent parts
   Parts := TIStringList.Create(DateStr, ' ', False, True);
   if Parts.Count <> 6 then

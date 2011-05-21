@@ -106,7 +106,7 @@ begin
   try
     // Split filter string into parts (divided by | chars):
     // even number indexes are descriptions and odd indexes are extensions
-    ExplodeStr(Dlg.Filter, '|', FilterParts);
+    StrExplode(Dlg.Filter, '|', FilterParts);
     Result := ExtractFileExt(FilterParts[2 * (Dlg.FilterIndex - 1) + 1]);
   finally
     FreeAndNil(FilterParts);
@@ -135,7 +135,7 @@ begin
   try
     // Split filter string into parts (divided by | chars):
     // even number indexes are descriptions and odd indexes are extensions
-    ExplodeStr(FilterStr, '|', FilterParts);
+    StrExplode(FilterStr, '|', FilterParts);
     // Record only extensions (every 2nd entry starting at index 1)
     Extensions := TStringList.Create;
     Idx := 1;

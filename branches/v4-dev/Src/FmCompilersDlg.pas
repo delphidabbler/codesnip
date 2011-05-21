@@ -158,8 +158,7 @@ uses
   SysUtils, Graphics, GraphUtil, Dialogs,
   // Project
   Compilers.UCompilers, IntfCommon, UCtrlArranger, UExeFileType, UGraphicUtils,
-  UMessageBox, UOpenDialogEx, UOpenDialogHelper, UStructs, UStrUtils, UThemesEx,
-  UUtils;
+  UMessageBox, UOpenDialogEx, UOpenDialogHelper, UStructs, UStrUtils, UThemesEx;
 
 
 {$R *.dfm}
@@ -759,7 +758,7 @@ procedure TCompilersDlg.PopulateSwitchList(const Switches: string);
     @param Switches [in] Comma separated list of required switches.
   }
 begin
-  ExplodeStr(Switches, ',', lbSwitches.Items, False);
+  StrExplode(Switches, ',', lbSwitches.Items, False);
 end;
 
 procedure TCompilersDlg.SelectCompiler;
@@ -811,7 +810,7 @@ begin
     fCurCompiler.SetLogFilePrefixes(Prefixes);
 
     // Store user defined prefixes
-    fCurCompiler.SetSwitches(JoinStr(lbSwitches.Items, ',', False));
+    fCurCompiler.SetSwitches(StrJoin(lbSwitches.Items, ',', False));
 
     // If availability has changed redraw selected list item and compiler title
     // to give visual feedback of changed state

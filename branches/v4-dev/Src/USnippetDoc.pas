@@ -154,7 +154,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, DB.UMain, DB.USnippetKind, UUtils, Web.UInfo;
+  Compilers.UCompilers, DB.UMain, DB.USnippetKind, UStrUtils, Web.UInfo;
 
 
 { TSnippetDoc }
@@ -169,7 +169,7 @@ resourcestring
 begin
   Assert(Assigned(List), ClassName + '.CommaList: List is nil');
   if List.Count > 0 then
-    Result := MakeSentence(List.GetText(', ', False))
+    Result := StrMakeSentence(List.GetText(', ', False))
   else
     Result := sNone;
 end;

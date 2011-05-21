@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -388,7 +388,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UExceptions, UUtils;
+  UExceptions, UStrUtils;
 
 
 { TIStringList }
@@ -438,7 +438,7 @@ begin
   // Explode string an store in string list
   SL := TStringList.Create;
   try
-    ExplodeStr(Str, Delim, SL, AllowEmpty, Trim);
+    StrExplode(Str, Delim, SL, AllowEmpty, Trim);
     // Add strings to this list
     Add(SL);
   finally
@@ -629,7 +629,7 @@ function TIStringList.GetText(const Glue: string;
     @return Required text string.
   }
 begin
-  Result := JoinStr(fStrings, Glue, AllowEmpty);
+  Result := StrJoin(fStrings, Glue, AllowEmpty);
 end;
 
 function TIStringList.IndexOf(const Str: string): Integer;

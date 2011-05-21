@@ -317,7 +317,7 @@ begin
   // Get list of params from string
   Params := TStringList.Create;
   try
-    ExplodeStr(GetSwitches, ',', Params, False);
+    StrExplode(GetSwitches, ',', Params, False);
     // Process each param: any containing spaces get quoted
     for Idx := 0 to Pred(Params.Count) do
     begin

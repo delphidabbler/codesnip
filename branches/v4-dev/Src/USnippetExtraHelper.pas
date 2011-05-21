@@ -97,7 +97,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UREMLDataIO, USnippetCreditsParser, UUtils;
+  UREMLDataIO, USnippetCreditsParser, UStrUtils;
 
 
 { TSnippetExtraHelper }
@@ -124,7 +124,7 @@ begin
     // text element
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
     Result.AddElem(
-      TActiveTextFactory.CreateTextElem(MakeSentence(PrefixText))
+      TActiveTextFactory.CreateTextElem(StrMakeSentence(PrefixText))
     );
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
   end;
@@ -134,7 +134,7 @@ begin
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
     Result.Append(
       TActiveTextFactory.CreateActiveText(
-        MakeSentence(CreditsMarkup),
+        StrMakeSentence(CreditsMarkup),
         TSnippetCreditsParser.Create(URL)
       )
     );

@@ -189,7 +189,7 @@ uses
   // Delphi
   SysUtils, Windows, Forms, StdCtrls, ExtCtrls, Consts, Math,
   // Project
-  UConsts, UDlgHelper, UFontHelper, UGraphicUtils, UStructs, UStrUtils, UUtils;
+  UConsts, UDlgHelper, UFontHelper, UGraphicUtils, UStructs, UStrUtils;
 
 
 type
@@ -414,7 +414,7 @@ begin
     // convert line breaks in Msg to LF only, remove leading and trailing LFs,
     // ensure proper sentence and then convert text string list.
     TIStringList.Create(
-      MakeSentence(StrTrimChars(StrUnixLineBreaks(Msg), LF)),
+      StrMakeSentence(StrTrimChars(StrUnixLineBreaks(Msg), LF)),
       LF,
       True
     ),
