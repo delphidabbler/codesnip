@@ -45,40 +45,40 @@ interface
 
 ///  <summary>Checks if string Haystack contains string Needle. Case sensitive.
 ///  </summary>
-function StrContainsStr(const Needle, Haystack: string): Boolean;
+function StrContainsStr(const Needle, Haystack: UnicodeString): Boolean;
 
 ///  <summary>Returns index of string Needle in string Haystack or 0 if Needle
 ///  is not in Haystack. Case sensitive.</summary>
-function StrPos(const Needle, Haystack: string): Integer; overload;
+function StrPos(const Needle, Haystack: UnicodeString): Integer; overload;
 
 ///  <summary>Returns index of string Needle in string Haystack, beginning the
 ///  search at Offset. Returns 0 if Haystack is not found or if Offset is less
 ///  than 1 or greater than length of Haystack. Case sensitive.</summary>
-function StrPos(const Needle, Haystack: string; const Offset: Integer): Integer;
-  overload;
+function StrPos(const Needle, Haystack: UnicodeString; const Offset: Integer):
+  Integer; overload;
 
 ///  <summary>Returns index of last occurence of string Needle in string
 ///  Haystack or 0 if Needle is not in Haystack. Case sensitive.</summary>
-function StrLastPos(const Needle, Haystack: string): Integer;
+function StrLastPos(const Needle, Haystack: UnicodeString): Integer;
 
 ///  <summary>Compares Left and Right strings, ignoring case. Returns 0 if both
 ///  strings are the same, -ve if Left is less than Right or +ve if Left is
 ///  greater than Right.</summary>
-function StrCompareText(const Left, Right: string): Integer;
+function StrCompareText(const Left, Right: UnicodeString): Integer;
 
 ///  <summary>Checks if Left and Right strings are equal. Case sensitive.
 ///  </summary>
-function StrSameStr(const Left, Right: string): Boolean;
+function StrSameStr(const Left, Right: UnicodeString): Boolean;
 
 ///  <summary>Checks if Left and Right strings are equivalent when case is
 ///  ignored.</summary>
-function StrSameText(const Left, Right: string): Boolean;
+function StrSameText(const Left, Right: UnicodeString): Boolean;
 
 ///  <summary>Converts a string to upper case.</summary>
-function StrToUpper(const Str: string): string;
+function StrToUpper(const Str: UnicodeString): UnicodeString;
 
 ///  <summary>Converts a string to lower case.</summary>
-function StrToLower(const Str: string): string;
+function StrToLower(const Str: UnicodeString): UnicodeString;
 
 ///  <summary>Returns a substring of Str starting at index StartIdx of length
 ///  Count.</summary>
@@ -88,72 +88,79 @@ function StrToLower(const Str: string): string;
 ///  <para>If StartIdx is beyond the end of Str the empty string is returned.
 ///  </para>
 ///  </remarks>
-function StrSlice(const Str: string; const StartIdx, Count: Integer): string;
+function StrSlice(const Str: UnicodeString; const StartIdx, Count: Integer):
+  UnicodeString;
 
 ///  <summary>Returns the leading characters of Str up to a length of Count
 ///  characters.</summary>
 ///  <remarks>If Count is greater than the length of Str the whole string is
 ///  returned.</remarks>
-function StrSliceLeft(const Str: string; const Count: Integer): string;
+function StrSliceLeft(const Str: UnicodeString; const Count: Integer):
+  UnicodeString;
 
 ///  <summary>Returns the trailing characters of Str up to a length of Count
 ///  characters.</summary>
 ///  <remarks>If Count is greater than the length of Str the whole string is
 ///  returned.</remarks>
-function StrSliceRight(const Str: string; const Count: Integer): string;
+function StrSliceRight(const Str: UnicodeString; const Count: Integer):
+  UnicodeString;
 
 ///  <summary>Checks if string Str begins with sub string SubStr. Case
 ///  sensitive.</summary>
-function StrStartsStr(const SubStr, Str: string): Boolean;
+function StrStartsStr(const SubStr, Str: UnicodeString): Boolean;
 
 ///  <summary>Checks if string Str begins with sub string SubStr. Case
 ///  insensitive.</summary>
-function StrStartsText(const SubStr, Str: string): Boolean;
+function StrStartsText(const SubStr, Str: UnicodeString): Boolean;
 
 ///  <summary>Replaces all occurences of FindStr in Str with ReplaceStr.
 ///  </summary>
-function StrReplace(const Str, FindStr, ReplaceStr: string): string;
+function StrReplace(const Str, FindStr, ReplaceStr: UnicodeString):
+  UnicodeString;
 
 ///  <summary>Trims leading and trailing space characters from a string.
 ///  </summary>
-function StrTrimSpaces(const Str: string): string;
+function StrTrimSpaces(const Str: UnicodeString): UnicodeString;
 
 ///  <summary>Trims leading space characters from a string.</summary>
-function StrTrimLeftSpaces(const Str: string): string;
+function StrTrimLeftSpaces(const Str: UnicodeString): UnicodeString;
 
 ///  <summary>Trims trailing space characters from a string.</summary>
-function StrTrimRightSpaces(const Str: string): string;
+function StrTrimRightSpaces(const Str: UnicodeString): UnicodeString;
 
 ///  <summary>Trims leading and trailing characters C from string Str.</summary>
-function StrTrimChars(const Str: string; const C: Char): string;
+function StrTrimChars(const Str: UnicodeString; const C: Char): UnicodeString;
 
 ///  <summary>Trims leading characters C from string Str.</summary>
-function StrTrimLeftChars(const Str: string; const C: Char): string;
+function StrTrimLeftChars(const Str: UnicodeString; const C: Char):
+  UnicodeString;
 
 ///  <summary>Trims trailing characters C from string Str.</summary>
-function StrTrimRightChars(const Str: string; const C: Char): string;
+function StrTrimRightChars(const Str: UnicodeString; const C: Char):
+  UnicodeString;
 
 ///  <summary>Ensures line breaks in a string are in Windows format (CRLF).
 ///  </summary>
 ///  <remarks>Converts both Unix (LF) and Macintosh (CR) to CRLF.</remarks>
-function StrWindowsLineBreaks(const Str: string): string;
+function StrWindowsLineBreaks(const Str: UnicodeString): UnicodeString;
 
 ///  <summary>Ensures line breaks in a string are in Unix format (LF).
 ///  </summary>
 ///  <remarks>Converts both Windows (CRLF) and Macintosh (CR) to LF.</remarks>
-function StrUnixLineBreaks(const Str: string): string;
+function StrUnixLineBreaks(const Str: UnicodeString): UnicodeString;
 
 ///  <summary>Checks if the character at index Idx in Str is one of the
 ///  delimter characters stored in Delims.</summary>
 ///  <remarks>Delims must contain only characters that take just one wide
 ///  character, i.e. they are from the basic multiligual plane.</remarks>
-function StrIsDelimiter(const Delims, Str: string; const Idx: Integer): Boolean;
+function StrIsDelimiter(const Delims, Str: UnicodeString; const Idx: Integer):
+  Boolean;
 
 ///  <summary>Returns position of last character in Str that matches any
 ///  character from Delims.</summary>
 ///  <remarks>Delims must contain only characters that take just one wide
 ///  character, i.e. they are from the basic multiligual plane.</remarks>
-function StrLastDelimiterPos(const Delims, Str: string): Integer;
+function StrLastDelimiterPos(const Delims, Str: UnicodeString): Integer;
 
 
 implementation
@@ -166,27 +173,28 @@ uses
   UConsts;
 
 
-function StrCompareText(const Left, Right: string): Integer;
+function StrCompareText(const Left, Right: UnicodeString): Integer;
 begin
   Result := SysUtils.AnsiCompareText(Left, Right);
 end;
 
-function StrContainsStr(const Needle, Haystack: string): Boolean;
+function StrContainsStr(const Needle, Haystack: UnicodeString): Boolean;
 begin
   Result := StrUtils.AnsiContainsStr(Haystack, Needle);
 end;
 
-function StrIsDelimiter(const Delims, Str: string; const Idx: Integer): Boolean;
+function StrIsDelimiter(const Delims, Str: UnicodeString; const Idx: Integer):
+  Boolean;
 begin
   Result := SysUtils.IsDelimiter(Delims, Str, Idx);
 end;
 
-function StrLastDelimiterPos(const Delims, Str: string): Integer;
+function StrLastDelimiterPos(const Delims, Str: UnicodeString): Integer;
 begin
   Result := SysUtils.LastDelimiter(Delims, Str);
 end;
 
-function StrLastPos(const Needle, Haystack: string): Integer;
+function StrLastPos(const Needle, Haystack: UnicodeString): Integer;
 var
   Idx: Integer; // an index of Needle in Haystack
 begin
@@ -201,72 +209,78 @@ begin
   end;
 end;
 
-function StrPos(const Needle, Haystack: string): Integer;
+function StrPos(const Needle, Haystack: UnicodeString): Integer;
 begin
   Result := SysUtils.AnsiPos(Needle, Haystack);
 end;
 
-function StrPos(const Needle, Haystack: string; const Offset: Integer): Integer;
+function StrPos(const Needle, Haystack: UnicodeString; const Offset: Integer):
+  Integer;
 begin
   Result := StrUtils.PosEx(Needle, Haystack, Offset);
 end;
 
-function StrReplace(const Str, FindStr, ReplaceStr: string): string;
+function StrReplace(const Str, FindStr, ReplaceStr: UnicodeString):
+  UnicodeString;
 begin
   Result := StrUtils.AnsiReplaceStr(Str, FindStr, ReplaceStr);
 end;
 
-function StrSameStr(const Left, Right: string): Boolean;
+function StrSameStr(const Left, Right: UnicodeString): Boolean;
 begin
   Result := SysUtils.AnsiSameStr(Left, Right);
 end;
 
-function StrSameText(const Left, Right: string): Boolean;
+function StrSameText(const Left, Right: UnicodeString): Boolean;
 begin
   Result := SysUtils.AnsiSameText(Left, Right);
 end;
 
-function StrSlice(const Str: string; const StartIdx, Count: Integer): string;
+function StrSlice(const Str: UnicodeString; const StartIdx, Count: Integer):
+  UnicodeString;
 begin
   Result := StrUtils.AnsiMidStr(Str, StartIdx, Count);
 end;
 
-function StrSliceLeft(const Str: string; const Count: Integer): string;
+function StrSliceLeft(const Str: UnicodeString; const Count: Integer):
+  UnicodeString;
 begin
   Result := StrUtils.AnsiLeftStr(Str, Count);
 end;
 
-function StrSliceRight(const Str: string; const Count: Integer): string;
+function StrSliceRight(const Str: UnicodeString; const Count: Integer):
+  UnicodeString;
 begin
   Result := StrUtils.AnsiRightStr(Str, Count);
 end;
 
-function StrStartsStr(const SubStr, Str: string): Boolean;
+function StrStartsStr(const SubStr, Str: UnicodeString): Boolean;
 begin
   Result := StrUtils.AnsiStartsStr(SubStr, Str);
 end;
 
-function StrStartsText(const SubStr, Str: string): Boolean;
+function StrStartsText(const SubStr, Str: UnicodeString): Boolean;
 begin
   Result := StrUtils.AnsiStartsText(SubStr, Str);
 end;
 
-function StrToLower(const Str: string): string;
+function StrToLower(const Str: UnicodeString): UnicodeString;
 begin
   Result := SysUtils.AnsiLowerCase(Str);
 end;
 
-function StrToUpper(const Str: string): string;
+function StrToUpper(const Str: UnicodeString): UnicodeString;
 begin
   Result := SysUtils.AnsiUpperCase(Str);
 end;
 
-function StrTrimChars(const Str: string; const C: Char): string;
+function StrTrimChars(const Str: UnicodeString; const C: Char): UnicodeString;
 begin
   Result := StrTrimLeftChars(StrTrimRightChars(Str, C), C);
 end;
 
-function StrTrimLeftChars(const Str: string; const C: Char): string;
+function StrTrimLeftChars(const Str: UnicodeString; const C: Char):
+  UnicodeString;
 var
   Idx: Integer; // index into string
 begin
@@ -279,12 +293,13 @@ begin
     Result := Str;
 end;
 
-function StrTrimLeftSpaces(const Str: string): string;
+function StrTrimLeftSpaces(const Str: UnicodeString): UnicodeString;
 begin
   Result := SysUtils.TrimLeft(Str);
 end;
 
-function StrTrimRightChars(const Str: string; const C: Char): string; overload;
+function StrTrimRightChars(const Str: UnicodeString; const C: Char):
+  UnicodeString; overload;
 var
   Idx: Integer; // index into string
 begin
@@ -297,17 +312,17 @@ begin
     Result := Str;
 end;
 
-function StrTrimRightSpaces(const Str: string): string;
+function StrTrimRightSpaces(const Str: UnicodeString): UnicodeString;
 begin
   Result := SysUtils.TrimRight(Str);
 end;
 
-function StrTrimSpaces(const Str: string): string;
+function StrTrimSpaces(const Str: UnicodeString): UnicodeString;
 begin
   Result := SysUtils.Trim(Str);
 end;
 
-function StrUnixLineBreaks(const Str: string): string;
+function StrUnixLineBreaks(const Str: UnicodeString): UnicodeString;
 begin
   // Replace any CRLF (MSDOS/Windows) line ends with LF
   Result := StrReplace(Str, CRLF, LF);
@@ -315,7 +330,7 @@ begin
   Result := StrReplace(Result, CR, LF);
 end;
 
-function StrWindowsLineBreaks(const Str: string): string;
+function StrWindowsLineBreaks(const Str: UnicodeString): UnicodeString;
 begin
   // First convert to Unix to get rid of all CR characters (CRs could come from
   // existing Windows CRLF or from Max CR)
