@@ -185,9 +185,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining},
+  Windows {for inlining},
   // Project
-  UXMLDocConsts;
+  UStrUtils, UXMLDocConsts;
 
 
 { TXMLDocHelper }
@@ -367,13 +367,13 @@ var
   Value: string;  // text value of Kind node
 begin
   Value := GetSubTagText(XMLDoc, SnippetNode, cKindNode);
-  if AnsiSameText(Value, 'freeform') then
+  if StrSameText(Value, 'freeform') then
     Result := skFreeform
-  else if AnsiSameText(Value, 'routine') then
+  else if StrSameText(Value, 'routine') then
     Result := skRoutine
-  else if AnsiSameText(Value, 'const') then
+  else if StrSameText(Value, 'const') then
     Result := skConstant
-  else if AnsiSameText(Value, 'type') then
+  else if StrSameText(Value, 'type') then
     Result := skTypeDef
   else
     Result := Default;

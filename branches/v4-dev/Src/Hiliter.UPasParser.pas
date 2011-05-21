@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -123,9 +123,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining},
+  Windows {for inlining},
   // Project
-  Hiliter.UPasLexer;
+  Hiliter.UPasLexer, UStrUtils;
 
 
 { THilitePasParser }
@@ -189,7 +189,7 @@ begin
             // we end assembler when an "end" keyword is encountered
             tkKeyword:
             begin
-              if AnsiSameText(Lexer.TokenStr, 'end') then
+              if StrSameText(Lexer.TokenStr, 'end') then
               begin
                 InASM := False;
                 Elem := heReserved;
@@ -215,7 +215,7 @@ begin
             tkKeyword:
             begin
               Elem := heReserved;
-              if AnsiSameText(Lexer.TokenStr, 'asm') then
+              if StrSameText(Lexer.TokenStr, 'asm') then
                 InASM := True;
             end;
             // Map other tokens onto highlight elements

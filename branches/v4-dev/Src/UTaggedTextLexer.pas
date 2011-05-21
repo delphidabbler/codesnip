@@ -1225,7 +1225,7 @@ begin
         );
       // check tag matches opening tag at top of stack
       ExpectedClosingTag := fTagStack.Pop;
-      if not AnsiSameText(fCurText, ExpectedClosingTag) then
+      if not StrSameText(fCurText, ExpectedClosingTag) then
         raise ETaggedTextLexer.CreateFmt(
           sStartAndEndTagMismatched,
           [fCurText, ExpectedClosingTag],

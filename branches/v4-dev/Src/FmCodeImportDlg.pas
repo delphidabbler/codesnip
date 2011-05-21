@@ -622,7 +622,7 @@ begin
   begin
     if LI = Item then
       Continue;     // this is item we're about to change: ignore its name
-    if AnsiSameText(Name, GetImportAsNameFromLV(LI)) then
+    if StrSameText(Name, GetImportAsNameFromLV(LI)) then
     begin
       ErrMsg := Format(sDuplicateName, [Name]);
       Exit(False);

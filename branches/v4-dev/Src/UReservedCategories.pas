@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -101,7 +101,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining};
+  Windows {for inlining},
+  // Project
+  UStrUtils;
 
 
 resourcestring
@@ -155,7 +157,7 @@ var
 begin
   Result := False;
   for Idx := 0 to Pred(Count) do
-    if AnsiSameText(CatName, Info(Idx).Name) then
+    if StrSameText(CatName, Info(Idx).Name) then
     begin
       Result := True;
       Exit;

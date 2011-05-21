@@ -194,7 +194,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UExceptions, USnippetIDs;
+  UExceptions, USnippetIDs, UStrUtils;
 
 
 type
@@ -613,7 +613,7 @@ function TCategoryViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
 begin
   if not (Key is TKey) then
     Exit(False);
-  Result := AnsiSameText((Key as TKey).fID, fID);
+  Result := StrSameText((Key as TKey).fID, fID);
 end;
 
 { TSnippetKindViewItem }

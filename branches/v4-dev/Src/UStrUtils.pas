@@ -66,6 +66,14 @@ function StrLastPos(const Needle, Haystack: string): Integer;
 ///  greater than Right.</summary>
 function StrCompareText(const Left, Right: string): Integer;
 
+///  <summary>Checks if Left and Right strings are equal. Case sensitive.
+///  </summary>
+function StrSameStr(const Left, Right: string): Boolean;
+
+///  <summary>Checks if Left and Right strings are equivalent when case is
+///  ignored.</summary>
+function StrSameText(const Left, Right: string): Boolean;
+
 ///  <summary>Converts a string to upper case.</summary>
 function StrToUpper(const Str: string): string;
 
@@ -135,6 +143,18 @@ function StrWindowsLineBreaks(const Str: string): string;
 ///  <remarks>Converts both Windows (CRLF) and Macintosh (CR) to LF.</remarks>
 function StrUnixLineBreaks(const Str: string): string;
 
+///  <summary>Checks if the character at index Idx in Str is one of the
+///  delimter characters stored in Delims.</summary>
+///  <remarks>Delims must contain only characters that take just one wide
+///  character, i.e. they are from the basic multiligual plane.</remarks>
+function StrIsDelimiter(const Delims, Str: string; const Idx: Integer): Boolean;
+
+///  <summary>Returns position of last character in Str that matches any
+///  character from Delims.</summary>
+///  <remarks>Delims must contain only characters that take just one wide
+///  character, i.e. they are from the basic multiligual plane.</remarks>
+function StrLastDelimiterPos(const Delims, Str: string): Integer;
+
 
 implementation
 
@@ -154,6 +174,16 @@ end;
 function StrContainsStr(const Needle, Haystack: string): Boolean;
 begin
   Result := StrUtils.AnsiContainsStr(Haystack, Needle);
+end;
+
+function StrIsDelimiter(const Delims, Str: string; const Idx: Integer): Boolean;
+begin
+  Result := SysUtils.IsDelimiter(Delims, Str, Idx);
+end;
+
+function StrLastDelimiterPos(const Delims, Str: string): Integer;
+begin
+  Result := SysUtils.LastDelimiter(Delims, Str);
 end;
 
 function StrLastPos(const Needle, Haystack: string): Integer;
@@ -184,6 +214,16 @@ end;
 function StrReplace(const Str, FindStr, ReplaceStr: string): string;
 begin
   Result := StrUtils.AnsiReplaceStr(Str, FindStr, ReplaceStr);
+end;
+
+function StrSameStr(const Left, Right: string): Boolean;
+begin
+  Result := SysUtils.AnsiSameStr(Left, Right);
+end;
+
+function StrSameText(const Left, Right: string): Boolean;
+begin
+  Result := SysUtils.AnsiSameText(Left, Right);
 end;
 
 function StrSlice(const Str: string; const StartIdx, Count: Integer): string;
@@ -278,7 +318,7 @@ end;
 function StrWindowsLineBreaks(const Str: string): string;
 begin
   // First convert to Unix to get rid of all CR characters (CRs could come from
-  // existing Windows CRLF or from Max CR.
+  // existing Windows CRLF or from Max CR)
   Result := StrUnixLineBreaks(Str);
   // Now have only LFs - convert them all to CRLFs
   Result := StrReplace(Result, LF, CRLF);

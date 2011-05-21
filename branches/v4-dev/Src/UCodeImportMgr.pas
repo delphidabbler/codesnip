@@ -172,7 +172,7 @@ uses
   // Delphi
   SysUtils, Classes, Generics.Defaults,
   // Project
-  DB.UMain, DB.USnippet, UActiveText, UIOUtils, USnippetIDs;
+  DB.UMain, DB.USnippet, UActiveText, UIOUtils, USnippetIDs, UStrUtils;
 
 
 { TCodeImportMgr }
@@ -203,7 +203,7 @@ begin
     if Snippet.UserDefined then
       Result.Add(Snippet.Name);
   for SnippetInfo in fSnippetInfoList do
-    if not AnsiSameText(SnippetInfo.Name, ExcludedName) then
+    if not StrSameText(SnippetInfo.Name, ExcludedName) then
       Result.Add(SnippetInfo.Name);
 end;
 

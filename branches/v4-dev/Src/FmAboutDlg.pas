@@ -179,7 +179,7 @@ uses
   // Project
   FmEasterEgg, FmRegistrationDlg, UAppInfo, UColours, UConsts, UCSSUtils,
   UCtrlArranger, UFontHelper, UHTMLUtils, UHTMLTemplate, UResourceUtils,
-  UThemesEx;
+  UStrUtils, UThemesEx;
 
 
 {
@@ -383,7 +383,7 @@ begin
   // pressed. Such an event is cancelled.
   if (EventInfo.DispatchId = cDocEventOnClick) and
     EventInfo.Args.ctrlKey and
-    AnsiSameText(EventInfo.Args.srcElement.id, cIconImgId) then
+    StrSameText(EventInfo.Args.srcElement.id, cIconImgId) then
   begin
     EventInfo.Cancelled := True;
     TEasterEggForm.Execute(Self);
@@ -391,7 +391,7 @@ begin
   // Check for mouse move over icon tag: change cursor to hand if ctrl key
   // pressed to indicate clickable. Event permitted to bubble up.
   if (EventInfo.DispatchId = cDocEventOnMouseMove) and
-    AnsiSameText(EventInfo.Args.srcElement.id, cIconImgId) then
+    StrSameText(EventInfo.Args.srcElement.id, cIconImgId) then
   begin
     if EventInfo.Args.ctrlKey then
       EventInfo.Args.srcElement.style.cursor := 'hand'

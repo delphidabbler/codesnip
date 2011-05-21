@@ -307,7 +307,7 @@ uses
   SysUtils,
   // Project
   Compilers.UGlobals, DB.USnippetKind, UActiveText, UComparers, UConsts,
-  UIniDataLoader, USnippetExtraHelper, UUtils;
+  UIniDataLoader, USnippetExtraHelper, UStrUtils, UUtils;
 
 
 const
@@ -454,13 +454,13 @@ var
     KindStr: string;  // string value read from ini file
   begin
     KindStr := CatIni.ReadString(Snippet, cKindName, '');
-    if AnsiSameText(KindStr, 'freeform') then
+    if StrSameText(KindStr, 'freeform') then
       Result := skFreeform
-    else if AnsiSameText(KindStr, 'routine') then
+    else if StrSameText(KindStr, 'routine') then
       Result := skRoutine
-    else if AnsiSameText(KindStr, 'const') then
+    else if StrSameText(KindStr, 'const') then
       Result := skConstant
-    else if AnsiSameText(KindStr, 'type') then
+    else if StrSameText(KindStr, 'type') then
       Result := skTypeDef
     // invalid or no Kind property: kind depends on StdFormat property
     else if GetStdFormatProperty then

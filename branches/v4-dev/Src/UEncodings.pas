@@ -391,7 +391,7 @@ uses
   // Delphi
   Windows,
   // Project
-  UGC, ULocales;
+  UGC, ULocales, UStrUtils;
 
 
 ///  <summary>
@@ -659,7 +659,7 @@ begin
     Exit(False);
   for EncType := Low(TEncodingType) to High(TEncodingType) do
   begin
-    if AnsiSameText(CharSet, fMap[EncType].CharSet) then
+    if StrSameText(CharSet, fMap[EncType].CharSet) then
     begin
       EncodingType := EncType;
       Exit(True);

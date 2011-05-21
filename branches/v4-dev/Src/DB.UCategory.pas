@@ -186,7 +186,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils;
+  SysUtils,
+  // Project
+  UStrUtils;
 
 
 { TCategory }
@@ -222,7 +224,7 @@ function TCategory.IsEqual(const Cat: TCategory): Boolean;
     @return True if categories are equal, False if not.
   }
 begin
-  Result := AnsiSameText(Self.Category, Cat.Category);
+  Result := StrSameText(Self.Category, Cat.Category);
 end;
 
 { TCategoryEx }
@@ -294,7 +296,7 @@ begin
   Result := nil;
   for Idx := 0 to Pred(Count) do
   begin
-    if AnsiSameText(CatName, Items[Idx].Category) then
+    if StrSameText(CatName, Items[Idx].Category) then
     begin
       Result := Items[Idx];
       Break;

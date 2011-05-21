@@ -141,8 +141,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   UAnchors, UGC, UHTMLDocHelper, UImageTags, ULinkAction, UMenuHelper,
   UStrUtils, UWBPopupMenus;
@@ -292,7 +290,7 @@ function TWBDefaultPopupMenuWrapper.GetImageIndex(
   var
     Pos: Integer; // position of last path delimiter in URL
   begin
-    Pos := LastDelimiter('/', URL);
+    Pos := StrLastDelimiterPos('/', URL);
     if Pos > 0 then
       Result := StrSliceRight(URL, Length(URL) - Pos)
     else

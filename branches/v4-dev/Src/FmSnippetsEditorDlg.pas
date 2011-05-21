@@ -1008,7 +1008,7 @@ begin
     raise EDataEntry.Create(ErrorMessage, edDescription, ErrorSelection);
   if not TSnippetValidator.ValidateName(
     edName.Text,
-    not AnsiSameText(StrTrimSpaces(edName.Text), fOrigName),
+    not StrSameText(StrTrimSpaces(edName.Text), fOrigName),
     ErrorMessage,
     ErrorSelection
   ) then

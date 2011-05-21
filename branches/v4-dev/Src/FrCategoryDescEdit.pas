@@ -139,7 +139,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining},
+  Windows {for inlining},
   // Project
   DB.UCategory, DB.UMain, UColours, UCtrlArranger, UStrUtils;
 
@@ -167,7 +167,7 @@ var
 begin
   Result := False;
   for Cat in Database.Categories do
-    if AnsiSameText(Desc, Cat.Description) then
+    if StrSameText(Desc, Cat.Description) then
     begin
       Result := True;
       Break;

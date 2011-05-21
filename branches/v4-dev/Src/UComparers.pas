@@ -94,8 +94,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   UStrUtils;
 
@@ -129,7 +127,7 @@ function TSameTextEqualityComparer.Equals(const Left, Right: string): Boolean;
     @return True if both strings are the same, ignoring case.
   }
 begin
-  Result := AnsiSameText(Left, Right);
+  Result := StrSameText(Left, Right);
 end;
 
 function TSameTextEqualityComparer.GetHashCode(const Value: string): Integer;
@@ -153,7 +151,7 @@ function TSameStringEqualityComparer.Equals(const Left, Right: string): Boolean;
     @return True if both strings are the same, taking case into account.
   }
 begin
-  Result := AnsiSameStr(Left, Right);
+  Result := StrSameStr(Left, Right);
 end;
 
 function TSameStringEqualityComparer.GetHashCode(const Value: string): Integer;

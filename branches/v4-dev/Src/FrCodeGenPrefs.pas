@@ -526,7 +526,7 @@ var
 begin
   for LI in lvWarnings.Items do
   begin
-    if AnsiSameText(Symbol, LI.Caption) then
+    if StrSameText(Symbol, LI.Caption) then
       Exit(LI.Index);
   end;
   Result := -1;

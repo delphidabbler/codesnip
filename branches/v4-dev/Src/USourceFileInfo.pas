@@ -151,7 +151,7 @@ uses
   // Delphi
   SysUtils, Windows {for inlining}, Character,
   // Project
-  UUtils;
+  UStrUtils, UUtils;
 
 
 { TSourceFileInfo }
@@ -164,7 +164,7 @@ begin
   Result := sfText;
   for FT := Low(TSourceFileType) to High(TSourceFileType) do
   begin
-    if AnsiSameText(Ext, fFileTypeInfo[FT].Extension) then
+    if StrSameText(Ext, fFileTypeInfo[FT].Extension) then
     begin
       Result := FT;
       Break;

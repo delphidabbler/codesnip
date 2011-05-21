@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -179,7 +179,7 @@ uses
   // Delphi
   SysUtils, Variants, Windows {for inlining},
   // Project
-  UUtils;
+  UStrUtils, UUtils;
 
 
 { THTMLDocHelper }
@@ -337,7 +337,7 @@ begin
   begin
     // Check tag's id and return it if id matches
     Tag := Tags.item(I, EmptyParam) as IHTMLElement;
-    if AnsiSameText(Tag.id, Id) then
+    if StrSameText(Tag.id, Id) then
     begin
       Result := Tag;
       Break;
@@ -419,7 +419,7 @@ begin
       Exit;
     // Match tag name if specified
     if (TagName <> '') and
-      not AnsiSameText(Element.parentElement.tagName, TagName) then
+      not StrSameText(Element.parentElement.tagName, TagName) then
     begin
       Result := nil;
       Exit;

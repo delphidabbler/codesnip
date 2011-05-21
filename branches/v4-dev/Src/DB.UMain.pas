@@ -294,7 +294,7 @@ uses
   // Delphi
   SysUtils, Generics.Defaults,
   // Project
-  DB.UDatabaseIO, IntfCommon, UExceptions;
+  DB.UDatabaseIO, IntfCommon, UExceptions, UStrUtils;
 
 
 var
@@ -1090,7 +1090,7 @@ begin
     else
       SnippetName := Snippet.Name;
     // If name has changed then new name musn't exist in user database
-    if not AnsiSameText(SnippetName, Snippet.Name) then
+    if not StrSameText(SnippetName, Snippet.Name) then
       if fSnippets.Find(SnippetName, True) <> nil then
         raise ECodeSnip.CreateFmt(sCantRename, [Snippet.Name, SnippetName]);
     // We update by deleting old snippet and inserting new one

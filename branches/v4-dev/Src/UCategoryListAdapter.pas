@@ -87,7 +87,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining}, Generics.Defaults,
+  Windows {for inlining}, Generics.Defaults,
   // Project
   UStrUtils;
 
@@ -145,7 +145,7 @@ begin
   Result := -1;
   for Idx := 0 to Pred(fCatList.Count) do
   begin
-    if AnsiSameText(fCatList[Idx].Category, CatName) then
+    if StrSameText(fCatList[Idx].Category, CatName) then
     begin
       Result := Idx;
       Break;

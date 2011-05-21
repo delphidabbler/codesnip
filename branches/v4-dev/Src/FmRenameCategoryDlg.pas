@@ -114,9 +114,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining},
+  Windows {for inlining},
   // Project
-  UCtrlArranger, DB.UMain;
+  DB.UMain, UCtrlArranger, UStrUtils;
 
 {$R *.dfm}
 
@@ -196,7 +196,7 @@ procedure TRenameCategoryDlg.DescriptionCheckHander(Sender: TObject;
 begin
   if not Valid then
     if Assigned(frmCategories.SelectedCategory) then
-      Valid := AnsiSameText(Desc, frmCategories.SelectedCategory.Description);
+      Valid := StrSameText(Desc, frmCategories.SelectedCategory.Description);
 end;
 
 class function TRenameCategoryDlg.Execute(AOwner: TComponent;
@@ -237,7 +237,7 @@ procedure TRenameCategoryDlg.UpdateOKBtn;
 begin
   btnOK.Enabled := frmDescription.IsValidEntry and
     frmCategories.IsValidEntry and
-    not AnsiSameStr(
+    not StrSameStr(
       frmCategories.SelectedCategory.Description, frmDescription.Description
     );
 end;

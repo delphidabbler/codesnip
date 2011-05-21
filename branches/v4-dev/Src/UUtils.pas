@@ -679,7 +679,7 @@ function MakeSentence(const Txt: string): string;
     @return Valid sentence.
   }
 begin
-  if IsDelimiter('.!?', Txt, Length(Txt)) then
+  if StrIsDelimiter('.!?', Txt, Length(Txt)) then
     Result := Txt
   else
     Result := Txt + '.'
@@ -756,7 +756,7 @@ var
 begin
   Result := 0;
   for Idx := 1 to Length(S) do
-    if IsDelimiter(Delims, S, Idx) then
+    if StrIsDelimiter(Delims, S, Idx) then
       Inc(Result);
 end;
 
