@@ -572,7 +572,7 @@ begin
   // Add each font in array to list
   for NameIdx := Low(FontNames) to High(FontNames) do
     // quote any font name containing spaces
-    Names.Add(StrQuoteSpacedString(FontNames[NameIdx]));
+    Names.Add(StrQuoteSpaced(FontNames[NameIdx]));
   // Add generic font family if required
   if Generic <> cfgDontCare then
     Names.Add(cGenerics[Generic]);

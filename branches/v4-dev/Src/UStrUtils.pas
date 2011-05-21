@@ -1,11 +1,11 @@
 {
  * UStrUtils.pas
  *
- * String utility routines.
+ * Unicode string utility routines.
  *
  * Some of the routines are simply wrappers around SysUtils and StrUtils string
  * routines with the purpose of (a) collecting them together in one place and
- * (b) providing a standardised parameter order.
+ * (b) providing a standardised parameter order. Other routines are original.
  *
  * $Rev$
  * $Date$
@@ -190,7 +190,7 @@ function StrContainsWhiteSpace(const Str: UnicodeString): Boolean;
 ///  <summary>Encloses string Str in quotes specified by Quote iff Str contains
 ///  white space.</summary>
 ///  <remarks>Opening and closing quote are the same character.</remarks>
-function StrQuoteSpacedString(const Str: UnicodeString;
+function StrQuoteSpaced(const Str: UnicodeString;
   const Quote: Char = '"'): UnicodeString;
 
 ///  <summary>Joins all strings from a string list together into a single string
@@ -331,17 +331,6 @@ end;
 function StrExplode(Str: UnicodeString; const Delim: UnicodeString;
   const List: TStrings; const AllowEmpty: Boolean = True;
   const TrimStrs: Boolean = False): Integer;
-  {Splits a delimited string into a list of sub-strings separated by a
-  delimiter.
-    @param Str [in] String to be split.
-    @param Delim [in] String that delimits sub strings.
-    @param List [in] Receives split strings.
-    @param AllowEmpty [in] True if empty sub strings are to be included in list.
-    @param TrimStrs [in] Determines whether strings are trimmed of trailing and
-      leading spaces before adding to list. Can mean a string of spaces is
-      ignored if AllowEmpty is True.
-    @return Number of strings in List.
-  }
 var
   Head: UnicodeString;      // head of Str before delimiter
   Remainder: UnicodeString; // remaining unconsumed part of string
@@ -385,12 +374,6 @@ end;
 
 function StrJoin(const SL: TStrings; const Delim: UnicodeString;
   const AllowEmpty: Boolean = True): UnicodeString;
-  {Joins all strings in a string list together into a single delimited string.
-    @param SL [in] List of strings to be joined.
-    @param Delim [in] String to use to delimit strings.
-    @param AllowEmpty [in] True if empty strings are to be included in output.
-    @return Joined string.
-  }
 var
   Idx: Integer; // loops thru all items in string list
 begin
@@ -448,7 +431,7 @@ begin
   Result := StrUtils.PosEx(Needle, Haystack, Offset);
 end;
 
-function StrQuoteSpacedString(const Str: UnicodeString;
+function StrQuoteSpaced(const Str: UnicodeString;
   const Quote: Char = '"'): UnicodeString;
 begin
   if StrContainsWhiteSpace(Str) then
@@ -493,15 +476,6 @@ end;
 
 function StrSplit(const Str: UnicodeString; const Delim: UnicodeString;
   out Left, Right: UnicodeString): Boolean;
-  {Splits the string Str at the first occurence of a delimiter.
-    @param Str [in] String to be split.
-    @param Delim [in] Delimiter separating sub strings.
-    @param Left [out] Sub string preceeding first delimiter or whole string if
-      delimiter not in string.
-    @param Right [out] Sub string following delimiter or '' if delimiter not in
-      string.
-    @return True if delimiter was found in string, False otherwise.
-  }
 var
   DelimPos: Integer;  // position of delimiter in source string
 begin
