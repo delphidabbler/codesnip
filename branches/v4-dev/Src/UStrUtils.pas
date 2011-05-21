@@ -103,6 +103,11 @@ function StrStartsStr(const SubStr, Str: string): Boolean;
 function StrStartsText(const SubStr, Str: string): Boolean;
 
 
+///  <summary>Replaces all occurences of FindStr in Str with ReplaceStr.
+///  </summary>
+function StrReplace(const Str, FindStr, ReplaceStr: string): string;
+
+
 implementation
 
 
@@ -144,6 +149,11 @@ end;
 function StrPos(const Needle, Haystack: string; const Offset: Integer): Integer;
 begin
   Result := StrUtils.PosEx(Needle, Haystack, Offset);
+end;
+
+function StrReplace(const Str, FindStr, ReplaceStr: string): string;
+begin
+  Result := StrUtils.AnsiReplaceStr(Str, FindStr, ReplaceStr);
 end;
 
 function StrSlice(const Str: string; const StartIdx, Count: Integer): string;

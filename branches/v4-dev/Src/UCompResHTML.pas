@@ -163,10 +163,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils,
+  SysUtils,
   // Project
   UConsts, UHTMLUtils, UHTMLDetailUtils, UIStringList, UJavaScriptUtils,
-  UResourceUtils;
+  UResourceUtils, UStrUtils;
 
 
 resourcestring
@@ -243,7 +243,7 @@ var
   CompilerNameHTML: string; // HTML containing compiler name
 begin
   // Any spaces in compiler name replaced by <br /> tags
-  CompilerNameHTML := ReplaceStr(
+  CompilerNameHTML := StrReplace(
     MakeSafeHTMLText(Compiler.GetName), ' ', MakeTag('br', ttSimple)
   );
   Result := MakeCompoundTag('th', CompilerNameHTML);

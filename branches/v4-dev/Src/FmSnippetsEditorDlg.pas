@@ -257,12 +257,12 @@ implementation
 
 uses
   // Delphi
-  StrUtils, Windows {for inlining}, Graphics,
+  Windows {for inlining}, Graphics,
   // Project
   DB.UMain, DB.USnippetKind, FmDependenciesDlg, FmViewExtraDlg, IntfCommon,
   UColours, UConsts, UCSSUtils, UCtrlArranger, UExceptions, UFontHelper,
   UReservedCategories, USnippetExtraHelper, USnippetValidator, UMessageBox,
-  USnippetIDs, UStructs, UTestUnitDlgMgr, UThemesEx, UUtils;
+  USnippetIDs, UStructs, UStrUtils, UTestUnitDlgMgr, UThemesEx, UUtils;
 
 
 {$R *.dfm}
@@ -564,7 +564,7 @@ function TSnippetsEditorDlg.BuildExtraActiveText: IActiveText;
   }
 begin
   Result := TSnippetExtraHelper.BuildActiveText(
-    Trim(CompressWhiteSpace(ReplaceStr(edExtra.Text, EOL, ' ')))
+    Trim(CompressWhiteSpace(StrReplace(edExtra.Text, EOL, ' ')))
   );
 end;
 

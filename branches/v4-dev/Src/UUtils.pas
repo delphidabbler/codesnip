@@ -247,7 +247,7 @@ implementation
 
 uses
   // Delphi
-  StrUtils, Windows, ShlObj, ActiveX, Messages, Character,
+  Windows, ShlObj, ActiveX, Messages, Character,
   // Project
   UConsts, UStrUtils;
 
@@ -764,9 +764,9 @@ function UnixLineBreaks(const S: string): string;
   }
 begin
   // Replace any CRLF (MSDOS/Windows) line ends with LF
-  Result := ReplaceStr(S, EOL, LF);
+  Result := StrReplace(S, EOL, LF);
   // Replace any remaining CR (Mac) line ends with LF
-  Result := ReplaceStr(Result, CR, LF);
+  Result := StrReplace(Result, CR, LF);
 end;
 
 function IsBaseFileName(const FileName: string): Boolean;

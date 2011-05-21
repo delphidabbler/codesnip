@@ -91,10 +91,8 @@ implementation
 
 
 uses
-  // Delphi
-  StrUtils,
   // Project
-  UEncodings, UHTMLUtils, UResourceUtils;
+  UEncodings, UHTMLUtils, UResourceUtils, UStrUtils;
 
 
 { THTMLTemplate }
@@ -120,7 +118,7 @@ procedure THTMLTemplate.ResolvePlaceholderHTML(const Placeholder, HTML: string);
     @param HTML [in] Valid HTML to replace placeholder.
   }
 begin
-  fHTML := ReplaceStr(fHTML, '<%' + Placeholder + '%>', HTML);
+  fHTML := StrReplace(fHTML, '<%' + Placeholder + '%>', HTML);
 end;
 
 procedure THTMLTemplate.ResolvePlaceholderText(const Placeholder, Text: string);

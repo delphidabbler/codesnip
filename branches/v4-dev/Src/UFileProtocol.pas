@@ -45,7 +45,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils, ExtActns,
+  SysUtils, ExtActns,
   // Project
   UBrowseProtocol, UProtocols, UStrUtils, UUtils;
 
@@ -164,9 +164,10 @@ begin
   if not StrStartsStr(cProtocol, Result) then
     Exit;
   // replace C| with C:
-  Result := ReplaceStr(Result, '|', ':'); // change c| to c:
+  Result := StrReplace(Result, '|', ':'); // change c| to c:
   // make all delimiters in unix format for processing
-  Result := ReplaceStr(Result, '\', '/'); // change \ in path to /
+  // TODO: Make speciallll UnixToDOSPath function for this in UUtils
+  Result := StrReplace(Result, '\', '/'); // change \ in path to /
   if StrStartsStr(cProtocol + '/', Result) then
     // starts with "file:///" => remove "file:///"
     //   file:///C:/filename
@@ -180,7 +181,8 @@ begin
     //     => //servername/sharename/filename
     Delete(Result, 1, Length(cProtocol) - 2);
   // change to DOS path delimiters
-  Result := ReplaceStr(Result, '/', '\');
+  // TODO: Make special DOSToUnixPath function for this in UUtils
+  Result := StrReplace(Result, '/', '\');
 end;
 
 class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
