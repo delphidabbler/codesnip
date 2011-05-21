@@ -44,8 +44,6 @@ implementation
 
 
 uses
-  // Delphi
-  StrUtils,
   // Project
   UHelpMgr, UURIEncode, UProtocols, UStrUtils;
 
@@ -93,7 +91,7 @@ end;
 
 class function THelpProtocol.SupportsProtocol(const URL: string): Boolean;
 begin
-  Result := AnsiStartsStr(cHelpProtocol, URL);
+  Result := StrStartsStr(cHelpProtocol, URL);
 end;
 
 initialization

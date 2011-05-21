@@ -112,7 +112,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils,
+  SysUtils,
   // Project
   UStrUtils, UVersionInfo;
 
@@ -523,21 +523,21 @@ begin
   begin
     Line := Trim(Lines[LineIdx]);
     // Check for pre-processor instructions
-    if AnsiStartsStr(cIfVerLT, Line) then
+    if StrStartsStr(cIfVerLT, Line) then
       Result.Add(ProcessVerLT(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerLTE, Line) then
+    else if StrStartsStr(cIfVerLTE, Line) then
       Result.Add(ProcessVerLTE(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerGT, Line) then
+    else if StrStartsStr(cIfVerGT, Line) then
       Result.Add(ProcessVerGT(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerGTE, Line) then
+    else if StrStartsStr(cIfVerGTE, Line) then
       Result.Add(ProcessVerGTE(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerInRange, Line) then
+    else if StrStartsStr(cIfVerInRange, Line) then
       Result.Add(ProcessVerInRange(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerEQ, Line) then
+    else if StrStartsStr(cIfVerEQ, Line) then
       Result.Add(ProcessVerEQ(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerNEQ, Line) then
+    else if StrStartsStr(cIfVerNEQ, Line) then
       Result.Add(ProcessVerNEQ(Lines, LineIdx))
-    else if AnsiStartsStr(cPreProcPrefix, Line) then
+    else if StrStartsStr(cPreProcPrefix, Line) then
       // ignore unknown pre-proc dirs
     else
       // no pre-processor, just use trimmed line

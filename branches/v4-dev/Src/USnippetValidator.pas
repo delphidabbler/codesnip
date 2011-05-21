@@ -154,7 +154,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils,
+  SysUtils,
   // Project
   DB.UMain, UStrUtils, UURIEncode;
 
@@ -369,7 +369,7 @@ class function TSnippetValidator.ValidateExtra(const Extra: IActiveText;
   begin
     Result := True;
     URL := URIDecode(URL);
-    if AnsiStartsText(cHTTPProtocol, URL) then
+    if StrStartsText(cHTTPProtocol, URL) then
     begin
       // http protocol: check length
       if Length(URL) < Length(cHTTPProtocol) + 6 then
@@ -379,7 +379,7 @@ class function TSnippetValidator.ValidateExtra(const Extra: IActiveText;
         Exit;
       end;
     end
-    else if AnsiStartsText(cFileProtocol, URL) then
+    else if StrStartsText(cFileProtocol, URL) then
     begin
       // file protocol: check length
       if Length(URL) < Length(cFileProtocol) + 4 then

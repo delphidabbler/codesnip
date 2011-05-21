@@ -918,7 +918,7 @@ function IsValidUNCFileName(const FileName: string): Boolean;
   }
 begin
   Result := (Length(FileName) > 5)
-    and AnsiStartsStr('\\', FileName)
+    and StrStartsStr('\\', FileName)
     and (StrPos('\', FileName, 4) >= 4);
 end;
 

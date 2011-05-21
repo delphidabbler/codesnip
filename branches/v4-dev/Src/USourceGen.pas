@@ -291,7 +291,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils,
+  SysUtils,
   // Project
   DB.USnippetKind, UConsts, UExceptions, UPreferences, USnippetValidator,
   UStrUtils, UUtils, UWarnings;
@@ -1164,7 +1164,7 @@ class procedure TConstAndTypeFormatter.Split(const ConstOrType: TSnippet;
   var
     EOLPos: Integer;  // position of end of line chars, if present after KW
   begin
-    if AnsiStartsStr(KW, SourceCode) then
+    if StrStartsStr(KW, SourceCode) then
     begin
       // KW starts SourceCode - perform split
       Keyword := KW;

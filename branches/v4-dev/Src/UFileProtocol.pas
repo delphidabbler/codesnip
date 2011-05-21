@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -47,7 +47,7 @@ uses
   // Delphi
   SysUtils, StrUtils, ExtActns,
   // Project
-  UBrowseProtocol, UProtocols, UUtils;
+  UBrowseProtocol, UProtocols, UStrUtils, UUtils;
 
 
 {
@@ -161,13 +161,13 @@ const
 begin
   Result := URL;
   // url doesn't start with file:// so assume a simple file name
-  if not AnsiStartsStr(cProtocol, Result) then
+  if not StrStartsStr(cProtocol, Result) then
     Exit;
   // replace C| with C:
   Result := ReplaceStr(Result, '|', ':'); // change c| to c:
   // make all delimiters in unix format for processing
   Result := ReplaceStr(Result, '\', '/'); // change \ in path to /
-  if AnsiStartsStr(cProtocol + '/', Result) then
+  if StrStartsStr(cProtocol + '/', Result) then
     // starts with "file:///" => remove "file:///"
     //   file:///C:/filename
     //     => C:/filename

@@ -72,7 +72,6 @@ function StrToUpper(const Str: string): string;
 ///  <summary>Converts a string to lower case.</summary>
 function StrToLower(const Str: string): string;
 
-
 ///  <summary>Returns a substring of Str starting at index StartIdx of length
 ///  Count.</summary>
 ///  <remarks>
@@ -94,6 +93,14 @@ function StrSliceLeft(const Str: string; const Count: Integer): string;
 ///  <remarks>If Count is greater than the length of Str the whole string is
 ///  returned.</remarks>
 function StrSliceRight(const Str: string; const Count: Integer): string;
+
+///  <summary>Checks if string Str begins with sub string SubStr. Case
+///  sensitive.</summary>
+function StrStartsStr(const SubStr, Str: string): Boolean;
+
+///  <summary>Checks if string Str begins with sub string SubStr. Case
+///  insensitive.</summary>
+function StrStartsText(const SubStr, Str: string): Boolean;
 
 
 implementation
@@ -152,6 +159,16 @@ end;
 function StrSliceRight(const Str: string; const Count: Integer): string;
 begin
   Result := StrUtils.AnsiRightStr(Str, Count);
+end;
+
+function StrStartsStr(const SubStr, Str: string): Boolean;
+begin
+  Result := StrUtils.AnsiStartsStr(SubStr, Str);
+end;
+
+function StrStartsText(const SubStr, Str: string): Boolean;
+begin
+  Result := StrUtils.AnsiStartsText(SubStr, Str);
 end;
 
 function StrToUpper(const Str: string): string;

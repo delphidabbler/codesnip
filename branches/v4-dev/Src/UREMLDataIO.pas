@@ -231,9 +231,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils,
+  SysUtils,
   // Project
-  UExceptions;
+  UExceptions, UStrUtils;
 
 
 type
@@ -925,7 +925,7 @@ begin
         Result := TagVer;
       // special case of <a href="file://...">
       if (Result < 3) and (TagElem.Kind = ekLink) and
-        AnsiStartsText('file://', TagElem.Param) then
+        StrStartsText('file://', TagElem.Param) then
         Result := 3;
     end;
     if Result = LATEST_VERSION then
