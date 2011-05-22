@@ -251,6 +251,16 @@ uses
 
 { Internal helper routines }
 
+///  <summary>Checks if character at position Idx in Str can be trimmed from
+///  string.</summary>
+///  <remarks>Character can be trimmed if it's not part of a multi-character
+///  sequence and TrimFn returns True for the character.</remarks>
+function IsTrimmableChar(const Str: UnicodeString; const Idx: Integer;
+  const TrimFn: TFunc<Char,Boolean>): Boolean;
+begin
+  Result := (ByteType(Str, Idx) = mbSingleByte) and TrimFn(Str[Idx]);
+end;
+
 ///  <summary>Trims characters from both ends of a string.</summary>
 ///  <remarks>Anonymous function TrimFn determines whether a character is to be
 ///  trimmed.</remarks>
@@ -262,11 +272,12 @@ var
 begin
   TextEnd := Length(Str);
   TextStart := 1;
-  while (TextStart <= TextEnd) and TrimFn(Str[TextStart]) do
+  while (TextStart <= TextEnd)
+    and IsTrimmableChar(Str, TextStart, TrimFn) do
     Inc(TextStart);
   if TextStart > TextEnd then
     Exit('');
-  while TrimFn(Str[TextEnd]) do
+  while IsTrimmableChar(Str, TextEnd, TrimFn) do
     Dec(TextEnd);
   Result := Copy(Str, TextStart, TextEnd - TextStart + 1);
 end;
@@ -280,7 +291,8 @@ var
   TextStart: Integer; // position of start of non-space text
 begin
   TextStart := 1;
-  while (TextStart <= Length(Str)) and TrimFn(Str[TextStart]) do
+  while (TextStart <= Length(Str))
+    and IsTrimmableChar(Str, TextStart, TrimFn) do
     Inc(TextStart);
   Result := Copy(Str, TextStart, MaxInt);
 end;
@@ -294,7 +306,7 @@ var
   TextEnd: Integer;   // position of end of non-space text
 begin
   TextEnd := Length(Str);
-  while (TextEnd > 0) and TrimFn(Str[TextEnd]) do
+  while (TextEnd > 0) and IsTrimmableChar(Str, TextEnd, TrimFn) do
     Dec(TextEnd);
   Result := Copy(Str, 1, TextEnd);
 end;

@@ -807,6 +807,8 @@ begin
   CheckEquals('', StrTrim('    '), 'Test 6');
   CheckEquals('', StrTrim(''), 'Test 7');
   CheckEquals('Foo', StrTrim('  '#13#10' Foo'#13#10'    '#9), 'Test 8');
+  // test multi-byte Unicode character (MUSICAL SYMBOL G CLEF)
+  CheckEquals(#$D834#$DD1E, StrTrim('  '#$D834#$DD1E'  '), 'Test 9');
 end;
 
 procedure TTestRoutines.TestStrTrimChars;
@@ -821,6 +823,8 @@ begin
   CheckEquals('Foo', StrTrimChars('Foo', 'X'), 'Test 8');
   CheckEquals('F', StrTrimChars('Foo', 'o'), 'Test 9');
   CheckEquals('oo', StrTrimChars('Foo', 'F'), 'Test 10');
+  // test multi-byte Unicode character (MUSICAL SYMBOL G CLEF)
+  CheckEquals('#$D834#$DD1E', StrTrimChars('XX#$D834#$DD1EXX', 'X'), 'Test 11');
 end;
 
 procedure TTestRoutines.TestStrTrimLeft;
@@ -834,6 +838,8 @@ begin
   CheckEquals('', StrTrimLeft(''), 'Test 7');
   CheckEquals('Foo'#13#10'   '#9,
     StrTrimLeft('  '#13#10' Foo'#13#10'   '#9), 'Test 8');
+  // test multi-byte Unicode character (MUSICAL SYMBOL G CLEF)
+  CheckEquals(#$D834#$DD1E'  ', StrTrimLeft('  '#$D834#$DD1E'  '), 'Test 9');
 end;
 
 procedure TTestRoutines.TestStrTrimLeftChars;
@@ -848,6 +854,9 @@ begin
   CheckEquals('Foo', StrTrimLeftChars('Foo', 'X'), 'Test 8');
   CheckEquals('Foo', StrTrimLeftChars('Foo', 'o'), 'Test 9');
   CheckEquals('oo', StrTrimLeftChars('Foo', 'F'), 'Test 10');
+  // test multi-byte Unicode character (MUSICAL SYMBOL G CLEF)
+  CheckEquals('#$D834#$DD1EXX', StrTrimLeftChars('XX#$D834#$DD1EXX', 'X'),
+    'Test 11');
 end;
 
 procedure TTestRoutines.TestStrTrimRight;
@@ -861,6 +870,8 @@ begin
   CheckEquals('', StrTrimRight(''), 'Test 7');
   CheckEquals('  '#13#10' Foo',
     StrTrimRight('  '#13#10' Foo'#13#10'   '#9), 'Test 8');
+  // test multi-byte Unicode character (MUSICAL SYMBOL G CLEF)
+  CheckEquals('  '#$D834#$DD1E, StrTrimRight('  '#$D834#$DD1E'  '), 'Test 9');
 end;
 
 procedure TTestRoutines.TestStrTrimRightChars;
@@ -875,6 +886,9 @@ begin
   CheckEquals('Foo', StrTrimRightChars('Foo', 'X'), 'Test 8');
   CheckEquals('F', StrTrimRightChars('Foo', 'o'), 'Test 9');
   CheckEquals('Foo', StrTrimRightChars('Foo', 'F'), 'Test 10');
+  // test multi-byte Unicode character (MUSICAL SYMBOL G CLEF)
+  CheckEquals('XX#$D834#$DD1E', StrTrimRightChars('XX#$D834#$DD1EXX', 'X'),
+    'Test 11');
 end;
 
 procedure TTestRoutines.TestStrUnixLineBreaks;
