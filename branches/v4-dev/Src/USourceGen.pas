@@ -912,7 +912,7 @@ var
   DummyBody: string;  // stores unused routine body retrieved from Split
 begin
   Split(Routine, Result, DummyBody);
-  Result := StrTrimSpaces(Result);
+  Result := StrTrim(Result);
 end;
 
 class function TRoutineFormatter.FormatRoutine(
@@ -933,17 +933,17 @@ begin
     begin
       // Format is: routine prototype - comment - routine body
       Split(Routine, Prototype, Body);
-      Result := StrTrimSpaces(Prototype) + EOL +
+      Result := StrTrim(Prototype) + EOL +
         RenderDescComment(CommentStyle, Routine) + EOL +
-        StrTrimSpaces(Body);
+        StrTrim(Body);
     end;
     csBefore:
       // Format is: comment - routine
       Result := RenderDescComment(CommentStyle, Routine) + EOL +
-        StrTrimSpaces(Routine.SourceCode);
+        StrTrim(Routine.SourceCode);
     else
       // No commenting: just return source code
-      Result := StrTrimSpaces(Routine.SourceCode);
+      Result := StrTrim(Routine.SourceCode);
   end;
 end;
 
@@ -990,7 +990,7 @@ begin
     ClassName + '.RenderDescComment: Routine must have kind skRoutine');
   // Format the output
   Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, StrTrimSpaces(Routine.Description)
+    CommentStyle, StrTrim(Routine.Description)
   );
 end;
 
@@ -1035,7 +1035,7 @@ const
   cOverload = 'overload';     // overload directive
 begin
   // Record code without any surrounding white space
-  SourceCode := StrTrimSpaces(Routine.SourceCode);
+  SourceCode := StrTrim(Routine.SourceCode);
   // Find relative positions of first key characters
   StartParam := StrPos('(', SourceCode);
   AfterParams := StrPos(')', SourceCode) + 1;
@@ -1060,7 +1060,7 @@ begin
   SemiColonPos := StrPos(';', SourceCode, EndDeclaration + 1);
   if SemiColonPos > 0 then
   begin
-    Fragment := StrTrimSpaces(
+    Fragment := StrTrim(
       Copy(SourceCode, EndDeclaration + 1, SemiColonPos - EndDeclaration - 1)
     );
     if IsDirective(Fragment) then
@@ -1070,7 +1070,7 @@ begin
   SemiColonPos := StrPos(';', SourceCode, EndDeclaration + 1);
   if SemiColonPos > 0 then
   begin
-    Fragment := StrTrimSpaces(
+    Fragment := StrTrim(
       Copy(SourceCode, EndDeclaration + 1, SemiColonPos - EndDeclaration - 1)
     );
     if StrToLower(Fragment) = cOverload then
@@ -1080,7 +1080,7 @@ begin
   Head := Copy(SourceCode, 1, EndDeclaration);
   // Get code body
   StartCodeBody := EndDeclaration + 1;
-  Body := StrTrimSpaces(Copy(SourceCode, StartCodeBody, MaxInt));
+  Body := StrTrim(Copy(SourceCode, StartCodeBody, MaxInt));
 end;
 
 { TConstAndTypeFormatter }
@@ -1102,14 +1102,14 @@ begin
   Assert(ConstOrType.Kind in [skConstant, skTypeDef],
     ClassName + '.FormatConstOrType: ConstOrType must have kind skTypeDef or '
     + 'skConstant');
-  Result := StrTrimSpaces(ConstOrType.Name);
+  Result := StrTrim(ConstOrType.Name);
   case CommentStyle of
     csNone:
-      Result := StrTrimSpaces(ConstOrType.SourceCode);
+      Result := StrTrim(ConstOrType.SourceCode);
     csBefore:
       Result := RenderDescComment(CommentStyle, ConstOrType)
         + EOL
-        + StrTrimSpaces(ConstOrtype.SourceCode);
+        + StrTrim(ConstOrtype.SourceCode);
     csAfter:
     begin
       Split(ConstOrType, Keyword, Body);
@@ -1138,7 +1138,7 @@ begin
     ClassName + '.RenderDescComment: ConstOrType must have kind skTypeDef or '
       + 'skConstant');
   Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, StrTrimSpaces(ConstOrType.Description)
+    CommentStyle, StrTrim(ConstOrType.Description)
   );
 end;
 
@@ -1172,7 +1172,7 @@ class procedure TConstAndTypeFormatter.Split(const ConstOrType: TSnippet;
       if EOLPos > 0 then
         Body := Copy(SourceCode, EOLPos + Length(EOL), MaxInt)
       else
-        Body := '  ' + StrTrimSpaces(Copy(SourceCode, Length(KW) + 1, MaxInt));
+        Body := '  ' + StrTrim(Copy(SourceCode, Length(KW) + 1, MaxInt));
     end
     else
     begin

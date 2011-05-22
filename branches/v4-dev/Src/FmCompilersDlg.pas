@@ -218,7 +218,7 @@ procedure TCompilersDlg.btnAddClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  lbSwitches.Items.Add(StrTrimSpaces(edSwitch.Text));
+  lbSwitches.Items.Add(StrTrim(edSwitch.Text));
   edSwitch.Text := '';
   UpdateSwitchButtons;
 end;
@@ -354,7 +354,7 @@ procedure TCompilersDlg.btnReplaceClick(Sender: TObject);
 begin
   Assert(lbSwitches.ItemIndex >= 0,
     ClassName + '.btnReplaceClick: lbSwitches.ItemIndex < 0');
-  lbSwitches.Items[lbSwitches.ItemIndex] := StrTrimSpaces(edSwitch.Text);
+  lbSwitches.Items[lbSwitches.ItemIndex] := StrTrim(edSwitch.Text);
   edSwitch.Text := '';
   UpdateSwitchButtons;
 end;
@@ -828,8 +828,8 @@ procedure TCompilersDlg.UpdateSwitchButtons;
   state of switch edit and list boxes.
   }
 begin
-  btnAdd.Enabled := (StrTrimSpaces(edSwitch.Text) <> '') and
-    (lbSwitches.Items.IndexOf(StrTrimSpaces(edSwitch.Text)) = -1);
+  btnAdd.Enabled := (StrTrim(edSwitch.Text) <> '') and
+    (lbSwitches.Items.IndexOf(StrTrim(edSwitch.Text)) = -1);
   btnReplace.Enabled := btnAdd.Enabled and
     (lbSwitches.ItemIndex >= 0);
   btnDelete.Enabled := lbSwitches.ItemIndex >= 0;

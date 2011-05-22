@@ -387,7 +387,7 @@ begin
       // Error message: show in warning text colour followed by extra error
       // info. Make sure headline ends in one space to separate headline from
       // error message
-      lblHeadline.Caption := StrTrimRightSpaces(lblHeadline.Caption) + ' ';
+      lblHeadline.Caption := StrTrimRight(lblHeadline.Caption) + ' ';
       lblHeadline.Font.Color := clWarningText;
       TCtrlArranger.MoveToRightOf(lblHeadline, lblError);
       lblError.Top := lblHeadline.Top;

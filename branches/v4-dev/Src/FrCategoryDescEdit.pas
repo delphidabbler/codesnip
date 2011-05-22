@@ -215,7 +215,7 @@ function TCategoryDescEditFrame.GetDescription: string;
     @return Current description from edit control.
   }
 begin
-  Result := StrTrimSpaces(edDescription.Text);
+  Result := StrTrim(edDescription.Text);
 end;
 
 function TCategoryDescEditFrame.GetPrompt: string;

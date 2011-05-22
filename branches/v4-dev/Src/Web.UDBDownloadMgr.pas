@@ -276,7 +276,7 @@ begin
   Response := TStringList.Create;
   try
     PostStdCommand('filecount', Response);
-    if not TryStrToInt(StrTrimSpaces(Response.Text), Result) then
+    if not TryStrToInt(StrTrim(Response.Text), Result) then
       raise EWebServiceFailure.Create(sBadFileCount);
   finally
     Response.Free;
@@ -345,7 +345,7 @@ begin
   Response := TStringList.Create;
   try
     PostStdCommand('lastupdate', Response);
-    Result := StrTrimSpaces(Response.Text);
+    Result := StrTrim(Response.Text);
   finally
     Response.Free;
   end;

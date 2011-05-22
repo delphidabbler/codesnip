@@ -246,13 +246,13 @@ begin
     ClassName + '.BuildSubmission: No snippets selected');
   Assert(edName.Text <> '',
     ClassName + '.BuildSubmission: No user name provided');
-  Assert(IsValidEmailAddress(StrTrimSpaces(edEmail.Text)),
+  Assert(IsValidEmailAddress(StrTrim(edEmail.Text)),
     ClassName + '.BuildSubmission: Invalid or no email address specified');
   // Build the document
   fData := TCodeExporter.ExportSnippets(
     TUserInfo.Create(
       TUserDetails.Create(edName.Text, edEmail.Text),
-      StrTrimSpaces(edComments.Text)
+      StrTrim(edComments.Text)
     ),
     frmSnippets.SelectedSnippets
   );
@@ -298,7 +298,7 @@ begin
     on E: EHTTPError do
       // error on web server: make more friendly
       raise ECodeSubmitDlg.CreateFmt(
-        sWebServerError, [E.HTTPErrorCode, StrTrimSpaces(E.Message)]
+        sWebServerError, [E.HTTPErrorCode, StrTrim(E.Message)]
       );
   end;
 end;
@@ -480,7 +480,7 @@ begin
         raise EDataEntry.Create(sNoName, edName);
       if edEmail.Text = '' then
         raise EDataEntry.Create(sNoEmail, edEmail);
-      if not IsValidEmailAddress(StrTrimSpaces(edEmail.Text)) then
+      if not IsValidEmailAddress(StrTrim(edEmail.Text)) then
         raise EDataEntry.Create(sBadEmail, edEmail);
     end;
   end;

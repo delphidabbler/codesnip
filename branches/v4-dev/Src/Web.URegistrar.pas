@@ -151,7 +151,7 @@ begin
   try
     Query := TURIParams.Create(Data);
     PostQuery(Query, Response);
-    Result := StrTrimSpaces(Response.Text);  // registration key
+    Result := StrTrim(Response.Text);  // registration key
   finally
     Query.Free;
     Response.Free;

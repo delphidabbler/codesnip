@@ -256,7 +256,7 @@ var
   Symbol: string; // symbol of selected warning
 begin
   // Delete selected warning
-  Symbol := StrTrimSpaces(lvWarnings.Selected.Caption);
+  Symbol := StrTrim(lvWarnings.Selected.Caption);
   lvWarnings.Selected.Delete;
   fWarnings.Delete(Symbol);
   // Ensure nothing selected in list view and clear edit controls
@@ -325,7 +325,7 @@ begin
   GetSymbol(NewSymbol);
   GetCompilerVersion(NewCompilerVer);
   SelItem := lvWarnings.Selected;
-  OldSymbol := StrTrimSpaces(SelItem.Caption);
+  OldSymbol := StrTrim(SelItem.Caption);
   SelItem.Caption := NewSymbol;
   SelItem.SubItems[0] := FormatCompilerVer(NewCompilerVer);
   // we update warnings by deleting old one and adding updated version
@@ -491,7 +491,7 @@ function TCodeGenPrefsFrame.GetCompilerVersion(out Ver: Single): Boolean;
 var
   ExtVer: Extended;   // version number as Extended float
 begin
-  Result := TryStrToFloat(StrTrimSpaces(edMinCompiler.Text), ExtVer);
+  Result := TryStrToFloat(StrTrim(edMinCompiler.Text), ExtVer);
   if Result then
     Ver := ExtVer;
 end;
@@ -503,7 +503,7 @@ function TCodeGenPrefsFrame.GetSymbol(out Symbol: string): Boolean;
     @return True if symbol is non-empty string, False if not.
   }
 begin
-  Symbol := StrTrimSpaces(edSymbol.Text);
+  Symbol := StrTrim(edSymbol.Text);
   Result := Symbol <> '';
 end;
 

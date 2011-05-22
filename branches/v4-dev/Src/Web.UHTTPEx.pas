@@ -426,7 +426,7 @@ begin
     raise EHTTPError.Create(E as EIdHTTPProtocolException)
   else if E is EIdSocketError then
     raise EWebConnectionError.CreateFmt(
-      sWebConnectionError, [StrTrimSpaces(E.Message)]
+      sWebConnectionError, [StrTrim(E.Message)]
     )
   else
     raise E;

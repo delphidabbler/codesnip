@@ -596,7 +596,7 @@ begin
   try
     Log(Filter, SL);
     // Concatenate log lines into string and return it
-    Result := StrTrimSpaces(SL.Text);
+    Result := StrTrim(SL.Text);
   finally
     SL.Free;
   end;

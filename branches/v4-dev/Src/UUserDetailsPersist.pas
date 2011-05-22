@@ -83,12 +83,12 @@ var
 begin
   inherited;
   UserData := Settings.ReadSection(ssUserInfo);
-  Name := StrTrimSpaces(UserData.ItemValues['Name']);
+  Name := StrTrim(UserData.ItemValues['Name']);
   if Name = '' then
-    Name := StrTrimSpaces(TAppInfo.RegisteredUser);
+    Name := StrTrim(TAppInfo.RegisteredUser);
   if Name = '' then
-    Name := StrTrimSpaces(TComputerInfo.UserName);
-  Email := StrTrimSpaces(UserData.ItemValues['Email']);
+    Name := StrTrim(TComputerInfo.UserName);
+  Email := StrTrim(UserData.ItemValues['Email']);
   Result := TUserDetails.Create(Name, Email);
 end;
 
@@ -97,8 +97,8 @@ var
   UserData: ISettingsSection; // persistent user data settings
 begin
   UserData := Settings.EmptySection(ssUserInfo);
-  UserData.ItemValues['Name'] := StrTrimSpaces(Info.Name);
-  UserData.ItemValues['Email'] := StrTrimSpaces(Info.Email);
+  UserData.ItemValues['Name'] := StrTrim(Info.Name);
+  UserData.ItemValues['Email'] := StrTrim(Info.Email);
   UserData.Save;
 end;
 
@@ -113,10 +113,10 @@ begin
   Name := Current.Name;
   Email := Current.Email;
   // only update non-empty values
-  if StrTrimSpaces(Info.Name) <> '' then
-    Name := StrTrimSpaces(Info.Name);
-  if StrTrimSpaces(Info.Email) <> '' then
-    Email := StrTrimSpaces(Info.Email);
+  if StrTrim(Info.Name) <> '' then
+    Name := StrTrim(Info.Name);
+  if StrTrim(Info.Email) <> '' then
+    Email := StrTrim(Info.Email);
   // store the modified settings
   Save(TUserDetails.Create(Name, Email));
 end;

@@ -102,7 +102,7 @@ end;
 
 function TUserDetails.IsNul: Boolean;
 begin
-  Result := (StrTrimSpaces(Name) = '') and (StrTrimSpaces(Email) = '');
+  Result := (StrTrim(Name) = '') and (StrTrim(Email) = '');
 end;
 
 end.

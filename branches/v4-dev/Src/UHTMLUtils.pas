@@ -434,7 +434,7 @@ begin
     Result := Result + Format(
       ' %0:s="%1:s"', [fAttrs.Names[Idx], fAttrs.ValueFromIndex[Idx]]
     );
-  Result := StrTrimLeftSpaces(Result);
+  Result := StrTrimLeft(Result);
 end;
 
 function THTMLAttributes.RenderSafe: string;
@@ -453,7 +453,7 @@ begin
         MakeSafeHTMLText(fAttrs.ValueFromIndex[Idx])
       ]
     );
-  Result := StrTrimLeftSpaces(Result);
+  Result := StrTrimLeft(Result);
 end;
 
 end.

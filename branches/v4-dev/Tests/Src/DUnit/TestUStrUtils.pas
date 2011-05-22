@@ -47,9 +47,9 @@ type
     procedure TestStrStartsStr;
     procedure TestStrStartsText;
     procedure TestStrReplace;
-    procedure TestStrTrimSpaces;
-    procedure TestStrTrimLeftSpaces;
-    procedure TestStrTrimRightSpaces;
+    procedure TestStrTrim;
+    procedure TestStrTrimLeft;
+    procedure TestStrTrimRight;
     procedure TestStrTrimChars;
     procedure TestStrTrimLeftChars;
     procedure TestStrTrimRightChars;
@@ -797,6 +797,18 @@ begin
   CheckEquals('+=¶', StrToUpper('+=¶'), 'Test 9');
 end;
 
+procedure TTestRoutines.TestStrTrim;
+begin
+  CheckEquals('Foo', StrTrim('Foo'), 'Test 1');
+  CheckEquals('Foo', StrTrim('  Foo'), 'Test 2');
+  CheckEquals('Foo', StrTrim('Foo    '), 'Test 3');
+  CheckEquals('Foo', StrTrim(' Foo   '), 'Test 4');
+  CheckEquals('- Foo -', StrTrim(' - Foo - '), 'Test 5');
+  CheckEquals('', StrTrim('    '), 'Test 6');
+  CheckEquals('', StrTrim(''), 'Test 7');
+  CheckEquals('Foo', StrTrim('  '#13#10' Foo'#13#10'    '#9), 'Test 8');
+end;
+
 procedure TTestRoutines.TestStrTrimChars;
 begin
   CheckEquals('', StrTrimChars('', 'X'), 'Test 1');
@@ -809,6 +821,19 @@ begin
   CheckEquals('Foo', StrTrimChars('Foo', 'X'), 'Test 8');
   CheckEquals('F', StrTrimChars('Foo', 'o'), 'Test 9');
   CheckEquals('oo', StrTrimChars('Foo', 'F'), 'Test 10');
+end;
+
+procedure TTestRoutines.TestStrTrimLeft;
+begin
+  CheckEquals('Foo', StrTrimLeft('Foo'), 'Test 1');
+  CheckEquals('Foo', StrTrimLeft('  Foo'), 'Test 2');
+  CheckEquals('Foo    ', StrTrimLeft('Foo    '), 'Test 3');
+  CheckEquals('Foo   ', StrTrimLeft(' Foo   '), 'Test 4');
+  CheckEquals('- Foo - ', StrTrimLeft(' - Foo - '), 'Test 5');
+  CheckEquals('', StrTrimLeft('    '), 'Test 6');
+  CheckEquals('', StrTrimLeft(''), 'Test 7');
+  CheckEquals('Foo'#13#10'   '#9,
+    StrTrimLeft('  '#13#10' Foo'#13#10'   '#9), 'Test 8');
 end;
 
 procedure TTestRoutines.TestStrTrimLeftChars;
@@ -825,17 +850,17 @@ begin
   CheckEquals('oo', StrTrimLeftChars('Foo', 'F'), 'Test 10');
 end;
 
-procedure TTestRoutines.TestStrTrimLeftSpaces;
+procedure TTestRoutines.TestStrTrimRight;
 begin
-  CheckEquals('Foo', StrTrimLeftSpaces('Foo'), 'Test 1');
-  CheckEquals('Foo', StrTrimLeftSpaces('  Foo'), 'Test 2');
-  CheckEquals('Foo    ', StrTrimLeftSpaces('Foo    '), 'Test 3');
-  CheckEquals('Foo   ', StrTrimLeftSpaces(' Foo   '), 'Test 4');
-  CheckEquals('- Foo - ', StrTrimLeftSpaces(' - Foo - '), 'Test 5');
-  CheckEquals('', StrTrimLeftSpaces('    '), 'Test 6');
-  CheckEquals('', StrTrimLeftSpaces(''), 'Test 7');
-  CheckEquals('Foo'#13#10'   '#9,
-    StrTrimLeftSpaces('  '#13#10' Foo'#13#10'   '#9), 'Test 8');
+  CheckEquals('Foo', StrTrimRight('Foo'), 'Test 1');
+  CheckEquals('  Foo', StrTrimRight('  Foo'), 'Test 2');
+  CheckEquals('Foo', StrTrimRight('Foo    '), 'Test 3');
+  CheckEquals(' Foo', StrTrimRight(' Foo   '), 'Test 4');
+  CheckEquals(' - Foo -', StrTrimRight(' - Foo - '), 'Test 5');
+  CheckEquals('', StrTrimRight('    '), 'Test 6');
+  CheckEquals('', StrTrimRight(''), 'Test 7');
+  CheckEquals('  '#13#10' Foo',
+    StrTrimRight('  '#13#10' Foo'#13#10'   '#9), 'Test 8');
 end;
 
 procedure TTestRoutines.TestStrTrimRightChars;
@@ -850,31 +875,6 @@ begin
   CheckEquals('Foo', StrTrimRightChars('Foo', 'X'), 'Test 8');
   CheckEquals('F', StrTrimRightChars('Foo', 'o'), 'Test 9');
   CheckEquals('Foo', StrTrimRightChars('Foo', 'F'), 'Test 10');
-end;
-
-procedure TTestRoutines.TestStrTrimRightSpaces;
-begin
-  CheckEquals('Foo', StrTrimRightSpaces('Foo'), 'Test 1');
-  CheckEquals('  Foo', StrTrimRightSpaces('  Foo'), 'Test 2');
-  CheckEquals('Foo', StrTrimRightSpaces('Foo    '), 'Test 3');
-  CheckEquals(' Foo', StrTrimRightSpaces(' Foo   '), 'Test 4');
-  CheckEquals(' - Foo -', StrTrimRightSpaces(' - Foo - '), 'Test 5');
-  CheckEquals('', StrTrimRightSpaces('    '), 'Test 6');
-  CheckEquals('', StrTrimRightSpaces(''), 'Test 7');
-  CheckEquals('  '#13#10' Foo',
-    StrTrimRightSpaces('  '#13#10' Foo'#13#10'   '#9), 'Test 8');
-end;
-
-procedure TTestRoutines.TestStrTrimSpaces;
-begin
-  CheckEquals('Foo', StrTrimSpaces('Foo'), 'Test 1');
-  CheckEquals('Foo', StrTrimSpaces('  Foo'), 'Test 2');
-  CheckEquals('Foo', StrTrimSpaces('Foo    '), 'Test 3');
-  CheckEquals('Foo', StrTrimSpaces(' Foo   '), 'Test 4');
-  CheckEquals('- Foo -', StrTrimSpaces(' - Foo - '), 'Test 5');
-  CheckEquals('', StrTrimSpaces('    '), 'Test 6');
-  CheckEquals('', StrTrimSpaces(''), 'Test 7');
-  CheckEquals('Foo', StrTrimSpaces('  '#13#10' Foo'#13#10'    '#9), 'Test 8');
 end;
 
 procedure TTestRoutines.TestStrUnixLineBreaks;

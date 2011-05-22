@@ -303,7 +303,7 @@ procedure TBaseWebService.GetStrings(const Params: TURIParams;
       nil.
   }
 begin
-  Strings.Text := StrTrimSpaces(GetText(Params));
+  Strings.Text := StrTrim(GetText(Params));
 end;
 
 function TBaseWebService.GetText(const Params: TURIParams = nil): string;
@@ -358,7 +358,7 @@ procedure TBaseWebService.PostStrings(const Params: TURIParams;
     @param Strings [in] String list that receives response.
   }
 begin
-  Strings.Text := StrTrimSpaces(PostText(Params));
+  Strings.Text := StrTrim(PostText(Params));
 end;
 
 procedure TBaseWebService.PostStrings(const Data: TBytes;
@@ -369,7 +369,7 @@ procedure TBaseWebService.PostStrings(const Data: TBytes;
     @param Strings [in] String list that receives response.
   }
 begin
-  Strings.Text := StrTrimSpaces(PostText(Data));
+  Strings.Text := StrTrim(PostText(Data));
 end;
 
 procedure TBaseWebService.PostStrings(const Data: TStream;
@@ -380,7 +380,7 @@ procedure TBaseWebService.PostStrings(const Data: TStream;
     @param Strings [in] String list that receives response.
   }
 begin
-  Strings.Text := StrTrimSpaces(PostText(Data));
+  Strings.Text := StrTrim(PostText(Data));
 end;
 
 function TBaseWebService.PostText(const Params: TURIParams): string;

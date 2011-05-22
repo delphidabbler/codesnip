@@ -337,7 +337,7 @@ end;
 
 function TCodeImportDlg.GetFileNameFromEditCtrl: string;
 begin
-  Result := StrTrimSpaces(edFile.Text);
+  Result := StrTrim(edFile.Text);
 end;
 
 function TCodeImportDlg.GetImportAsNameFromLV(const Item: TListItem): string;

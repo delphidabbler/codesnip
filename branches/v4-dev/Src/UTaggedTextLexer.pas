@@ -726,7 +726,7 @@ begin
     Inc(NextChPos);
   // Copy the name from the string
   Result := StrSlice(TagStr, StartPos, NextChPos - StartPos);
-  if StrTrimSpaces(Result) = '' then
+  if StrTrim(Result) = '' then
     raise ETaggedTextTagHandler.Create(sTagEmpty);
 end;
 

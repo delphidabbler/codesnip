@@ -217,10 +217,10 @@ procedure TNewsDlg.DisplayNews(const RSS: TRSS20);
     Title: string;  // title text
     Link: string;   // item's URL used for link
   begin
-    Title := StrTrimSpaces(Item.Title);
+    Title := StrTrim(Item.Title);
     if Title = '' then
       Title := sNoTitle;
-    Link := StrTrimSpaces(Item.Link);
+    Link := StrTrim(Item.Link);
     if Link = '' then
       Result := MakeSafeHTMLText(Title)
     else
@@ -235,7 +235,7 @@ procedure TNewsDlg.DisplayNews(const RSS: TRSS20);
   var
     Description: string;  // description text
   begin
-    Description := StrTrimSpaces(Item.Description);
+    Description := StrTrim(Item.Description);
     if Description = '' then
       Description := sNoDescription;
     Result := MakeSafeHTMLText(Description);

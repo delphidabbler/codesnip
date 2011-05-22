@@ -129,19 +129,18 @@ function StrReplace(const Str, FindStr, ReplaceStr: UnicodeString):
 ///  </summary>
 ///  <remarks>White space is considered to be any character from #0..#32.
 ///  </remarks>
-function StrTrimSpaces(const Str: UnicodeString): UnicodeString;
-// TODO: Revise StrTrimSpaces* methods to use TCharacter.IsWhiteSpace
-// TODO: Renamed StrTrimSpaces* method as StrTrim*
+function StrTrim(const Str: UnicodeString): UnicodeString;
+// TODO: Revise StrTrim* methods to use TCharacter.IsWhiteSpace
 
 ///  <summary>Trims leading white space characters from a string.</summary>
 ///  <remarks>White space is considered to be any character from #0..#32.
 ///  </remarks>
-function StrTrimLeftSpaces(const Str: UnicodeString): UnicodeString;
+function StrTrimLeft(const Str: UnicodeString): UnicodeString;
 
 ///  <summary>Trims trailing white space characters from a string.</summary>
 ///  <remarks>White space is considered to be any character from #0..#32.
 ///  </remarks>
-function StrTrimRightSpaces(const Str: UnicodeString): UnicodeString;
+function StrTrimRight(const Str: UnicodeString): UnicodeString;
 
 ///  <summary>Trims leading and trailing characters C from string Str.</summary>
 function StrTrimChars(const Str: UnicodeString; const C: Char): UnicodeString;
@@ -354,7 +353,7 @@ var
     }
   begin
     if TrimStrs then
-      Head := StrTrimSpaces(Head);
+      Head := StrTrim(Head);
     if (Head <> '') or AllowEmpty then
       List.Add(Head)
   end;
@@ -437,7 +436,7 @@ var
   Sentence: UnicodeString;            // sentence text without trailing spaces
   TrailingWhiteSpace: UnicodeString;  // records trailing white space from Str
 begin
-  Sentence := StrTrimRightSpaces(Str);
+  Sentence := StrTrimRight(Str);
   TrailingWhiteSpace := StrSliceRight(Str, Length(Str) - Length(Sentence));
   if Sentence = '' then
     Exit(TrailingWhiteSpace);
@@ -576,9 +575,19 @@ begin
   Result := SysUtils.AnsiUpperCase(Str);
 end;
 
+function StrTrim(const Str: UnicodeString): UnicodeString;
+begin
+  Result := SysUtils.Trim(Str);
+end;
+
 function StrTrimChars(const Str: UnicodeString; const C: Char): UnicodeString;
 begin
   Result := StrTrimLeftChars(StrTrimRightChars(Str, C), C);
+end;
+
+function StrTrimLeft(const Str: UnicodeString): UnicodeString;
+begin
+  Result := SysUtils.TrimLeft(Str);
 end;
 
 function StrTrimLeftChars(const Str: UnicodeString; const C: Char):
@@ -595,9 +604,9 @@ begin
     Result := Str;
 end;
 
-function StrTrimLeftSpaces(const Str: UnicodeString): UnicodeString;
+function StrTrimRight(const Str: UnicodeString): UnicodeString;
 begin
-  Result := SysUtils.TrimLeft(Str);
+  Result := SysUtils.TrimRight(Str);
 end;
 
 function StrTrimRightChars(const Str: UnicodeString; const C: Char):
@@ -612,16 +621,6 @@ begin
     Result := Copy(Str, 1, Idx)
   else
     Result := Str;
-end;
-
-function StrTrimRightSpaces(const Str: UnicodeString): UnicodeString;
-begin
-  Result := SysUtils.TrimRight(Str);
-end;
-
-function StrTrimSpaces(const Str: UnicodeString): UnicodeString;
-begin
-  Result := SysUtils.Trim(Str);
 end;
 
 function StrUnixLineBreaks(const Str: UnicodeString): UnicodeString;

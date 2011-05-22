@@ -160,7 +160,7 @@ resourcestring
 var
   FileName: string;   // name of export file
 begin
-  FileName := StrTrimSpaces(edFile.Text);
+  FileName := StrTrim(edFile.Text);
   // Assume failure
   ModalResult := mrNone;
   try
@@ -250,7 +250,7 @@ begin
   OutData := TCodeExporter.ExportSnippets(
     TUserInfo.CreateNul, frmSnippets.SelectedSnippets
   );
-  TFileIO.WriteAllBytes(StrTrimSpaces(edFile.Text), OutData.Data);
+  TFileIO.WriteAllBytes(StrTrim(edFile.Text), OutData.Data);
 end;
 
 end.
