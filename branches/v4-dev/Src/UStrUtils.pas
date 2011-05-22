@@ -576,8 +576,19 @@ begin
 end;
 
 function StrTrim(const Str: UnicodeString): UnicodeString;
+var
+  TextStart: Integer; // position of start of non-space text
+  TextEnd: Integer;   // position of end of non-space text
 begin
-  Result := SysUtils.Trim(Str);
+  TextEnd := Length(Str);
+  TextStart := 1;
+  while (TextStart <= TextEnd) and TCharacter.IsWhiteSpace(Str[TextStart]) do
+    Inc(TextStart);
+  if TextStart > TextEnd then
+    Exit('');
+  while TCharacter.IsWhiteSpace(Str[TextEnd]) do
+    Dec(TextEnd);
+  Result := StrSlice(Str, TextStart, TextEnd - TextStart + 1);
 end;
 
 function StrTrimChars(const Str: UnicodeString; const C: Char): UnicodeString;
@@ -586,8 +597,14 @@ begin
 end;
 
 function StrTrimLeft(const Str: UnicodeString): UnicodeString;
+var
+  TextStart: Integer; // position of start of non-space text
 begin
-  Result := SysUtils.TrimLeft(Str);
+  TextStart := 1;
+  while (TextStart <= Length(Str))
+    and TCharacter.IsWhiteSpace(Str[TextStart]) do
+    Inc(TextStart);
+  Result := StrSliceRight(Str, Length(Str) - TextStart + 1);
 end;
 
 function StrTrimLeftChars(const Str: UnicodeString; const C: Char):
@@ -605,8 +622,13 @@ begin
 end;
 
 function StrTrimRight(const Str: UnicodeString): UnicodeString;
+var
+  TextEnd: Integer;   // position of end of non-space text
 begin
-  Result := SysUtils.TrimRight(Str);
+  TextEnd := Length(Str);
+  while (TextEnd > 0) and TCharacter.IsWhiteSpace(Str[TextEnd]) do
+    Dec(TextEnd);
+  Result := StrSliceLeft(Str, TextEnd);
 end;
 
 function StrTrimRightChars(const Str: UnicodeString; const C: Char):
