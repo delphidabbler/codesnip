@@ -28,6 +28,9 @@
 			<DelphiCompile Include="CodeSnipTests.dpr">
 				<MainSource>MainSource</MainSource>
 			</DelphiCompile>
+			<DCCReference Include="TestUStrUtils.pas"/>
+			<DCCReference Include="..\..\..\Src\UStrUtils.pas"/>
+			<DCCReference Include="..\..\..\Src\UConsts.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>

@@ -52,7 +52,10 @@ uses
   Forms,
   TestFramework,
   GUITestRunner,
-  TextTestRunner;
+  TextTestRunner,
+  TestUStrUtils in 'TestUStrUtils.pas',
+  UStrUtils in '..\..\..\Src\UStrUtils.pas',
+  UConsts in '..\..\..\Src\UConsts.pas';
 
 {$R *.RES}
 
