@@ -527,6 +527,7 @@ end;
 
 procedure TTestRoutines.TestStrMakeSentence;
 begin
+  CheckEquals('', StrMakeSentence(''), 'Test 1');
   CheckEquals('.', StrMakeSentence('.'), 'Test 2');
   CheckEquals('!', StrMakeSentence('!'), 'Test 3');
   CheckEquals('?', StrMakeSentence('?'), 'Test 4');
