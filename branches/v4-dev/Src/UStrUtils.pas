@@ -588,7 +588,7 @@ begin
     Exit('');
   while TCharacter.IsWhiteSpace(Str[TextEnd]) do
     Dec(TextEnd);
-  Result := StrSlice(Str, TextStart, TextEnd - TextStart + 1);
+  Result := Copy(Str, TextStart, TextEnd - TextStart + 1);
 end;
 
 function StrTrimChars(const Str: UnicodeString; const C: Char): UnicodeString;
@@ -604,7 +604,7 @@ begin
   while (TextStart <= Length(Str))
     and TCharacter.IsWhiteSpace(Str[TextStart]) do
     Inc(TextStart);
-  Result := StrSliceRight(Str, Length(Str) - TextStart + 1);
+  Result := Copy(Str, TextStart, MaxInt);
 end;
 
 function StrTrimLeftChars(const Str: UnicodeString; const C: Char):
@@ -628,7 +628,7 @@ begin
   TextEnd := Length(Str);
   while (TextEnd > 0) and TCharacter.IsWhiteSpace(Str[TextEnd]) do
     Dec(TextEnd);
-  Result := StrSliceLeft(Str, TextEnd);
+  Result := Copy(Str, 1, TextEnd);
 end;
 
 function StrTrimRightChars(const Str: UnicodeString; const C: Char):
