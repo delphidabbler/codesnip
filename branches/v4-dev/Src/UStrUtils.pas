@@ -249,6 +249,57 @@ uses
   // Project
   UConsts;
 
+{ Internal helper routines }
+
+///  <summary>Trims characters from both ends of a string.</summary>
+///  <remarks>Anonymous function TrimFn determines whether a character is to be
+///  trimmed.</remarks>
+function InternalTrim(const Str: UnicodeString;
+  const TrimFn: TFunc<Char,Boolean>): UnicodeString;
+var
+  TextStart: Integer; // position of start of non-space text
+  TextEnd: Integer;   // position of end of non-space text
+begin
+  TextEnd := Length(Str);
+  TextStart := 1;
+  while (TextStart <= TextEnd) and TrimFn(Str[TextStart]) do
+    Inc(TextStart);
+  if TextStart > TextEnd then
+    Exit('');
+  while TrimFn(Str[TextEnd]) do
+    Dec(TextEnd);
+  Result := Copy(Str, TextStart, TextEnd - TextStart + 1);
+end;
+
+///  <summary>Trims characters from the left hand end of a string.</summary>
+///  <remarks>Anonymous function TrimFn determines whether a character is to be
+///  trimmed.</remarks>
+function InternalTrimLeft(const Str: UnicodeString;
+  const TrimFn: TFunc<Char,Boolean>): UnicodeString;
+var
+  TextStart: Integer; // position of start of non-space text
+begin
+  TextStart := 1;
+  while (TextStart <= Length(Str)) and TrimFn(Str[TextStart]) do
+    Inc(TextStart);
+  Result := Copy(Str, TextStart, MaxInt);
+end;
+
+///  <summary>Trims characters from the right hand end of a string.</summary>
+///  <remarks>Anonymous function TrimFn determines whether a character is to be
+///  trimmed.</remarks>
+function InternalTrimRight(const Str: UnicodeString;
+  const TrimFn: TFunc<Char,Boolean>): UnicodeString;
+var
+  TextEnd: Integer;   // position of end of non-space text
+begin
+  TextEnd := Length(Str);
+  while (TextEnd > 0) and TrimFn(Str[TextEnd]) do
+    Dec(TextEnd);
+  Result := Copy(Str, 1, TextEnd);
+end;
+
+{ Public routines }
 
 function StrCapitaliseWords(const Str: UnicodeString): UnicodeString;
 var
@@ -576,73 +627,44 @@ begin
 end;
 
 function StrTrim(const Str: UnicodeString): UnicodeString;
-var
-  TextStart: Integer; // position of start of non-space text
-  TextEnd: Integer;   // position of end of non-space text
 begin
-  TextEnd := Length(Str);
-  TextStart := 1;
-  while (TextStart <= TextEnd) and TCharacter.IsWhiteSpace(Str[TextStart]) do
-    Inc(TextStart);
-  if TextStart > TextEnd then
-    Exit('');
-  while TCharacter.IsWhiteSpace(Str[TextEnd]) do
-    Dec(TextEnd);
-  Result := Copy(Str, TextStart, TextEnd - TextStart + 1);
+  Result := InternalTrim(Str, TCharacter.IsWhiteSpace);
 end;
 
 function StrTrimChars(const Str: UnicodeString; const C: Char): UnicodeString;
 begin
-  Result := StrTrimLeftChars(StrTrimRightChars(Str, C), C);
+  Result := InternalTrim(
+    Str,
+    function (Ch: Char): Boolean begin Result := Ch = C; end
+  );
 end;
 
 function StrTrimLeft(const Str: UnicodeString): UnicodeString;
-var
-  TextStart: Integer; // position of start of non-space text
 begin
-  TextStart := 1;
-  while (TextStart <= Length(Str))
-    and TCharacter.IsWhiteSpace(Str[TextStart]) do
-    Inc(TextStart);
-  Result := Copy(Str, TextStart, MaxInt);
+  Result := InternalTrimLeft(Str, TCharacter.IsWhiteSpace);
 end;
 
 function StrTrimLeftChars(const Str: UnicodeString; const C: Char):
   UnicodeString;
-var
-  Idx: Integer; // index into string
 begin
-  Idx := 1;
-  while (Idx <= Length(Str)) and (Str[Idx] = C) do
-    Inc(Idx);
-  if Idx > 1 then
-    Result := Copy(Str, Idx, MaxInt)
-  else
-    Result := Str;
+  Result := InternalTrimLeft(
+    Str,
+    function (Ch: Char): Boolean begin Result := Ch = C; end
+  );
 end;
 
 function StrTrimRight(const Str: UnicodeString): UnicodeString;
-var
-  TextEnd: Integer;   // position of end of non-space text
 begin
-  TextEnd := Length(Str);
-  while (TextEnd > 0) and TCharacter.IsWhiteSpace(Str[TextEnd]) do
-    Dec(TextEnd);
-  Result := Copy(Str, 1, TextEnd);
+  Result := InternalTrimRight(Str, TCharacter.IsWhiteSpace);
 end;
 
 function StrTrimRightChars(const Str: UnicodeString; const C: Char):
   UnicodeString; overload;
-var
-  Idx: Integer; // index into string
 begin
-  Idx := Length(Str);
-  while (Idx >= 1) and (Str[Idx] = C) do
-    Dec(Idx);
-  if Idx < Length(Str) then
-    Result := Copy(Str, 1, Idx)
-  else
-    Result := Str;
+  Result := InternalTrimRight(
+    Str,
+    function (Ch: Char): Boolean begin Result := Ch = C; end
+  );
 end;
 
 function StrUnixLineBreaks(const Str: UnicodeString): UnicodeString;
