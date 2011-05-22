@@ -112,12 +112,12 @@ function StrSliceRight(const Str: UnicodeString; const Count: Integer):
 
 ///  <summary>Checks if string Str begins with sub string SubStr. Case
 ///  sensitive.</summary>
-///  <remarks>This routine considers that '' starts any string.</remarks>
+///  <remarks>False is returned if SubStr = ''.</remarks>
 function StrStartsStr(const SubStr, Str: UnicodeString): Boolean;
 
 ///  <summary>Checks if string Str begins with sub string SubStr. Case
 ///  insensitive.</summary>
-///  <remarks>This routine considers that '' starts any string.</remarks>
+///  <remarks>False is returned if SubStr = ''.</remarks>
 function StrStartsText(const SubStr, Str: UnicodeString): Boolean;
 
 ///  <summary>Replaces all occurences of FindStr in Str with ReplaceStr.
@@ -236,6 +236,8 @@ function StrWrap(const Str: UnicodeString; const MaxLen, Margin: Integer):
 
 ///  <summary>Checks in string Str forms a valid sentence and, if not, adds a
 ///  full stop.</summary>
+///  <remarks>Trailing white space is ignored when detecting full stops etc.
+///  </remarks>
 function StrMakeSentence(const Str: UnicodeString): UnicodeString;
 
 
@@ -386,16 +388,23 @@ end;
 function StrJoin(const SL: TStrings; const Delim: UnicodeString;
   const AllowEmpty: Boolean = True): UnicodeString;
 var
-  Idx: Integer; // loops thru all items in string list
+  Idx: Integer;       // loops thru all items in string list
+  FirstItem: Boolean; // flag true until first item has been added to result
 begin
   Result := '';
+  FirstItem := True;
   for Idx := 0 to Pred(SL.Count) do
   begin
     if (SL[Idx] <> '') or AllowEmpty then
-      if Result = '' then
-        Result := SL[Idx]
+    begin
+      if FirstItem then
+      begin
+        Result := SL[Idx];
+        FirstItem := False;
+      end
       else
         Result := Result + Delim + SL[Idx];
+    end;
   end;
 end;
 
@@ -424,11 +433,17 @@ resourcestring
   // characters that can close sentence
   sSentenceClosers = '.!?';
   sFullStop = '.';
+var
+  Sentence: UnicodeString;            // sentence text without trailing spaces
+  TrailingWhiteSpace: UnicodeString;  // records trailing white space from Str
 begin
-  if StrIsDelimiter(sSentenceClosers, Str, Length(Str)) then
-    Result := Str
-  else
-    Result := Str + sFullStop;
+  Sentence := StrTrimRightSpaces(Str);
+  TrailingWhiteSpace := StrSliceRight(Str, Length(Str) - Length(Sentence));
+  if Sentence = '' then
+    Exit(TrailingWhiteSpace);
+  if not StrIsDelimiter(sSentenceClosers, Sentence, Length(Sentence)) then
+    Sentence := Sentence + sFullStop;
+  Result := Sentence + TrailingWhiteSpace;
 end;
 
 function StrPos(const Needle, Haystack: UnicodeString): Integer;
@@ -510,11 +525,15 @@ end;
 
 function StrStartsStr(const SubStr, Str: UnicodeString): Boolean;
 begin
+  if SubStr = '' then
+    Exit(False);
   Result := StrUtils.AnsiStartsStr(SubStr, Str);
 end;
 
 function StrStartsText(const SubStr, Str: UnicodeString): Boolean;
 begin
+  if SubStr = '' then
+    Exit(False);
   Result := StrUtils.AnsiStartsText(SubStr, Str);
 end;
 
