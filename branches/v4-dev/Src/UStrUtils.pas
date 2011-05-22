@@ -112,10 +112,12 @@ function StrSliceRight(const Str: UnicodeString; const Count: Integer):
 
 ///  <summary>Checks if string Str begins with sub string SubStr. Case
 ///  sensitive.</summary>
+///  <remarks>This routine considers that '' starts any string.</remarks>
 function StrStartsStr(const SubStr, Str: UnicodeString): Boolean;
 
 ///  <summary>Checks if string Str begins with sub string SubStr. Case
 ///  insensitive.</summary>
+///  <remarks>This routine considers that '' starts any string.</remarks>
 function StrStartsText(const SubStr, Str: UnicodeString): Boolean;
 
 ///  <summary>Replaces all occurences of FindStr in Str with ReplaceStr.
@@ -123,14 +125,22 @@ function StrStartsText(const SubStr, Str: UnicodeString): Boolean;
 function StrReplace(const Str, FindStr, ReplaceStr: UnicodeString):
   UnicodeString;
 
-///  <summary>Trims leading and trailing space characters from a string.
+///  <summary>Trims leading and trailing white space characters from a string.
 ///  </summary>
+///  <remarks>White space is considered to be any character from #0..#32.
+///  </remarks>
 function StrTrimSpaces(const Str: UnicodeString): UnicodeString;
+// TODO: Revise StrTrimSpaces* methods to use TCharacter.IsWhiteSpace
+// TODO: Renamed StrTrimSpaces* method as StrTrim*
 
-///  <summary>Trims leading space characters from a string.</summary>
+///  <summary>Trims leading white space characters from a string.</summary>
+///  <remarks>White space is considered to be any character from #0..#32.
+///  </remarks>
 function StrTrimLeftSpaces(const Str: UnicodeString): UnicodeString;
 
-///  <summary>Trims trailing space characters from a string.</summary>
+///  <summary>Trims trailing white space characters from a string.</summary>
+///  <remarks>White space is considered to be any character from #0..#32.
+///  </remarks>
 function StrTrimRightSpaces(const Str: UnicodeString): UnicodeString;
 
 ///  <summary>Trims leading and trailing characters C from string Str.</summary>
@@ -155,7 +165,7 @@ function StrWindowsLineBreaks(const Str: UnicodeString): UnicodeString;
 function StrUnixLineBreaks(const Str: UnicodeString): UnicodeString;
 
 ///  <summary>Checks if the character at index Idx in Str is one of the
-///  delimter characters stored in Delims.</summary>
+///  delimiter characters stored in Delims.</summary>
 ///  <remarks>Delims must contain only characters that take just one wide
 ///  character, i.e. they are from the basic multiligual plane.</remarks>
 function StrIsDelimiter(const Delims, Str: UnicodeString; const Idx: Integer):
@@ -174,11 +184,12 @@ function StrCountDelims(const Delims, Str: UnicodeString): Integer;
 function StrLastDelimiterPos(const Delims, Str: UnicodeString): Integer;
 
 ///  <summary>Capitalises each word in string Str.</summary>
+///  <remarks>Words are recognised only if separated by white space.</remarks>
 function StrCapitaliseWords(const Str: UnicodeString): UnicodeString;
 
 ///  <summary>Compresses white space in string Str.</summary>
-///  <remarks>All sequences of white space in Str are replaced by a single
-///  space.</remarks>
+///  <remarks>Each sequence of one or more white space characters in Str is
+///  replaced by a single space.</remarks>
 function StrCompressWhiteSpace(const Str: UnicodeString): UnicodeString;
 
 ///  <summary>Removes all white space from string Str.</summary>
