@@ -166,8 +166,7 @@ begin
   // replace C| with C:
   Result := StrReplace(Result, '|', ':'); // change c| to c:
   // make all delimiters in unix format for processing
-  // TODO: Make speciallll UnixToDOSPath function for this in UUtils
-  Result := StrReplace(Result, '\', '/'); // change \ in path to /
+  Result := StrReplace(Result, '\', '/');
   if StrStartsStr(cProtocol + '/', Result) then
     // starts with "file:///" => remove "file:///"
     //   file:///C:/filename
@@ -181,7 +180,6 @@ begin
     //     => //servername/sharename/filename
     Delete(Result, 1, Length(cProtocol) - 2);
   // change to DOS path delimiters
-  // TODO: Make special DOSToUnixPath function for this in UUtils
   Result := StrReplace(Result, '/', '\');
 end;
 
@@ -190,11 +188,38 @@ class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
     @param URL [in] URL whose protocol is to be checked.
     @return True if URL's protocol is file:, False if not.
   }
+
+  // ---------------------------------------------------------------------------
+  function IsAbsoluteFileNameFormat(const FileName: string): Boolean;
+    {Checks if a filename is in absolute local file path format. Name is not
+    checked for valid characters.
+      @param FileName [in] File name to be checked.
+      @return True if file name is valid absolute file path, false if not.
+    }
+  begin
+    Result := (Length(FileName) > 3)
+      and IsValidDriveLetter(FileName[1])
+      and (FileName[2] = ':') and (FileName[3] = '\');
+  end;
+
+  function IsUNCFileNameFormat(const FileName: string): Boolean;
+    {Checks if a filename is in UNC file name format. Name is not checked for
+    valid characters.
+      @param FileName [in] File name to be checked.
+      @return True if file name is valid UNC name, false if not.
+    }
+  begin
+    Result := (Length(FileName) > 5)
+      and StrStartsStr('\\', FileName)
+      and (StrPos('\', FileName, 4) >= 4);
+  end;
+  // ---------------------------------------------------------------------------
+
 var
   FileName: string; // filename part of URL
 begin
   FileName := NormaliseURL(URL);
-  Result := IsValidAbsoluteFileName(FileName) or IsValidUNCFileName(FileName);
+  Result := IsAbsoluteFileNameFormat(FileName) or IsUNCFileNameFormat(FileName);
 end;
 
 initialization

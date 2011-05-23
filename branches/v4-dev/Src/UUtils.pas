@@ -127,18 +127,6 @@ function IsValidDriveLetter(const C: Char): Boolean;
     @return True if C is a valid drive letter, False otherwise.
   }
 
-function IsValidAbsoluteFileName(const FileName: string): Boolean;
-  {Checks if a filename is a valid, complete, absolute local file path.
-    @param FileName [in] File name to be checked.
-    @return True if file name is valid absolute file path, false if not.
-  }
-
-function IsValidUNCFileName(const FileName: string): Boolean;
-  {Checks if a filename is a valid, complete, UNC file name.
-    @param FileName [in] File name to be checked.
-    @return True if file name is valid UNC name, false if not.
-  }
-
 procedure KeyErrorBeep;
   {Emits a sound indicating a keypress error.
   }
@@ -391,28 +379,6 @@ function IsValidDriveLetter(const C: Char): Boolean;
   }
 begin
   Result := CharInSet(C, ['A'..'Z', 'a'..'z']);
-end;
-
-function IsValidAbsoluteFileName(const FileName: string): Boolean;
-  {Checks if a filename is a valid, complete, absolute local file path.
-    @param FileName [in] File name to be checked.
-    @return True if file name is valid absolute file path, false if not.
-  }
-begin
-  Result := (Length(FileName) > 3)
-    and IsValidDriveLetter(FileName[1])
-    and (FileName[2] = ':') and (FileName[3] = '\');
-end;
-
-function IsValidUNCFileName(const FileName: string): Boolean;
-  {Checks if a filename is a valid, complete, UNC file name.
-    @param FileName [in] File name to be checked.
-    @return True if file name is valid UNC name, false if not.
-  }
-begin
-  Result := (Length(FileName) > 5)
-    and StrStartsStr('\\', FileName)
-    and (StrPos('\', FileName, 4) >= 4);
 end;
 
 procedure KeyErrorBeep;
