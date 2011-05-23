@@ -58,6 +58,16 @@ begin
   CheckEquals(0, FloatToInt(-0.2), 'Test 14');
   CheckEquals(0, FloatToInt(-0.4999999), 'Test 15');
   CheckEquals(-1, FloatToInt(-0.5), 'Test 16');
+  CheckEquals(-1, FloatToInt(-1.499999), 'Test 17');
+  CheckEquals(1234567, FloatToInt(1234566.5), 'Test 18');
+  CheckEquals(1234566, FloatToInt(1234566.499999), 'Test 19');
+  CheckEquals(-1234567, FloatToInt(-1234566.5), 'Test 20');
+  CheckEquals(-1234566, FloatToInt(-1234566.499999), 'Test 21');
+  CheckEquals(-1234567, FloatToInt(-1234567.0), 'Test 22');
+  CheckEquals(1234568, FloatToInt(1234567.5), 'Test 23');
+  CheckEquals(1234567, FloatToInt(1234567.499999), 'Test 24');
+  CheckEquals(-1234567, FloatToInt(-1234567.499999), 'Test 25');
+  CheckEquals(-1234568, FloatToInt(-1234567.5), 'Test 26');
 end;
 
 procedure TTestRoutines.TestIsBaseFileName;
