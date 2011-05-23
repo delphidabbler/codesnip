@@ -55,7 +55,9 @@ uses
   TextTestRunner,
   TestUStrUtils in 'TestUStrUtils.pas',
   UStrUtils in '..\..\..\Src\UStrUtils.pas',
-  UConsts in '..\..\..\Src\UConsts.pas';
+  UConsts in '..\..\..\Src\UConsts.pas',
+  TestUUtils in 'TestUUtils.pas',
+  UUtils in '..\..\..\Src\UUtils.pas';
 
 {$R *.RES}
 
