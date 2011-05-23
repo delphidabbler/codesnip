@@ -143,7 +143,7 @@ implementation
 
 uses
   // Delphi
-  Windows, ShlObj, ActiveX, Messages, Character,
+  Windows, ShlObj, ActiveX, Messages, Character, Math,
   // Project
   UConsts, UStrUtils;
 
@@ -292,7 +292,8 @@ function FloatToInt(const F: Double): Int64;
     @return Rounded value as integer.
   }
 begin
-  Result := Trunc(F + 0.500001);
+  // We don't just use Round() on its own because don't want bankers rounding.
+  Result := Round(SimpleRoundTo(F, 0));
 end;
 
 function DateStamp: string;
@@ -332,7 +333,7 @@ function IsBaseFileName(const FileName: string): Boolean;
     @return True if file is a base file name, False otherwise.
   }
 begin
-  Result := ExtractFileName(FileName) = FileName;
+  Result := (FileName <> '') and (ExtractFileName(FileName) = FileName);
 end;
 
 procedure ProcessMessages;
