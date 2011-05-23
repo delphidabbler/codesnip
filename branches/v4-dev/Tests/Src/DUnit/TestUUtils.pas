@@ -57,7 +57,7 @@ begin
   CheckEquals(1, FloatToInt(0.5), 'Test 13');
   CheckEquals(0, FloatToInt(-0.2), 'Test 14');
   CheckEquals(0, FloatToInt(-0.4999999), 'Test 15');
-  CheckEquals(-1, FloatToInt(0.5), 'Test 16');
+  CheckEquals(-1, FloatToInt(-0.5), 'Test 16');
 end;
 
 procedure TTestRoutines.TestIsBaseFileName;
