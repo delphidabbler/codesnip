@@ -130,7 +130,6 @@ function StrReplace(const Str, FindStr, ReplaceStr: UnicodeString):
 ///  <remarks>White space is considered to be any character from #0..#32.
 ///  </remarks>
 function StrTrim(const Str: UnicodeString): UnicodeString;
-// TODO: Revise StrTrim* methods to use TCharacter.IsWhiteSpace
 
 ///  <summary>Trims leading white space characters from a string.</summary>
 ///  <remarks>White space is considered to be any character from #0..#32.
