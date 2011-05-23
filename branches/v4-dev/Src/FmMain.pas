@@ -1680,7 +1680,7 @@ begin
     evCategoryChanged:      // category edited: redisplay it
     begin
       ReInitialise;
-      fNotifier.DisplayCategory((EventInfo.Info as TCategory).Category);
+      fNotifier.DisplayCategory((EventInfo.Info as TCategory).ID);
     end;
   end;
   // Display updated database stats and search results in status bar

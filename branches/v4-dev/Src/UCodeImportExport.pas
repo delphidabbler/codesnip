@@ -593,7 +593,7 @@ begin
         (Database as IDatabaseEdit).GetEditableSnippetInfo;
       with fSnippetInfp[Idx].Data do
       begin
-        Props.Cat := TReservedCategories.ImportsCatName;
+        Props.Cat := TReservedCategories.ImportsCatID;
         Props.Desc :=
           TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cDescriptionNode);
         Props.SourceCode :=

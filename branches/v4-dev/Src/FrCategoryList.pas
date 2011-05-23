@@ -177,7 +177,7 @@ var
 begin
   if lbCategories.ItemIndex >= 0 then
   begin
-    CatID := fCatList.CatName(lbCategories.ItemIndex);
+    CatID := fCatList.CatID(lbCategories.ItemIndex);
     Result := Database.Categories.Find(CatID);
   end
   else

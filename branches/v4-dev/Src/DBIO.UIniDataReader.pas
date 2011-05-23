@@ -94,7 +94,7 @@ type
       ///  <summary>Reference to master ini file.</summary>
       fMasterIni: TCustomIniFile;
       ///  <summary>List of category ids in database.</summary>
-      fCatNames: TStringList;
+      fCatIDs: TStringList;
       ///  <summary>Map of snippet names to category ids.</summary>
       fSnippetCatMap: TSnippetCatMap;
       ///  <summary>Cache of category ini file objects.</summary>
@@ -114,9 +114,9 @@ type
     ///  <summary>
     ///  Returns name of ini file containing details of a category.
     ///  </summary>
-    ///  <param name="Cat">string [in] ID of category.</param>
+    ///  <param name="CatID">string [in] Id of category.</param>
     ///  <returns>string containing bame of category's ini file</returns>
-    function CatToCatIni(const Cat: string): string;
+    function CatToCatIni(const CatID: string): string;
     ///  <summary>
     ///  Loads indices of all names of categories and snippets in database.
     ///  </summary>
@@ -161,20 +161,20 @@ type
     ///  Gets name of all categories in the database.
     ///  </summary>
     ///  <returns>IStringList containing names.</returns>
-    function GetAllCatNames: IStringList;
+    function GetAllCatIDs: IStringList;
     ///  <summary>
     ///  Gets properties of a category.
     ///  </summary>
-    ///  <param name="Cat">string [in] ID of category.</param>
+    ///  <param name="CatID">string [in] Id of category.</param>
     ///  <param name="Props">TCategoryData [in/out] Receives empty property
     ///  record and updates relevant property fields.</param>
-    procedure GetCatProps(const Cat: string; var Props: TCategoryData);
+    procedure GetCatProps(const CatID: string; var Props: TCategoryData);
     ///  <summary>
     ///  Gets names of all snippets in a category.
     ///  </summary>
-    ///  <param name="Cat">string [in] ID of category.</param>
+    ///  <param name="CatID">string [in] Id of category.</param>
     ///  <returns>IStringList containing names of snippets.</returns>
-    function GetCatSnippets(const Cat: string): IStringList;
+    function GetCatSnippets(const CatID: string): IStringList;
     ///  <summary>
     ///  Gets propertyies of a snippet.
     ///  </summary>
@@ -338,9 +338,9 @@ const
 
 { TIniDataReader }
 
-function TIniDataReader.CatToCatIni(const Cat: string): string;
+function TIniDataReader.CatToCatIni(const CatID: string): string;
 begin
-  Result := DataFile(fMasterIni.ReadString(Cat, cMasterIniName, ''));
+  Result := DataFile(fMasterIni.ReadString(CatID, cMasterIniName, ''));
 end;
 
 class function TIniDataReader.CommaStrToStrings(
@@ -360,7 +360,7 @@ begin
     fIniCache := TIniFileCache.Create(fFileReader);
     try
       fMasterIni := TDatabaseIniFile.Create(fFileReader, MasterFileName);
-      fCatNames := TStringList.Create;
+      fCatIDs := TStringList.Create;
       fSnippetCatMap := TSnippetCatMap.Create(TSameTextEqualityComparer.Create);
       // Load required indexes
       LoadIndices;
@@ -390,34 +390,34 @@ begin
   fFileReader.Free;
   fIniCache.Free;
   fSnippetCatMap.Free;
-  fCatNames.Free;
+  fCatIDs.Free;
   fMasterIni.Free;
   inherited;
 end;
 
-function TIniDataReader.GetAllCatNames: IStringList;
+function TIniDataReader.GetAllCatIDs: IStringList;
 begin
-  Result := TIStringList.Create(fCatNames);
+  Result := TIStringList.Create(fCatIDs);
 end;
 
-procedure TIniDataReader.GetCatProps(const Cat: string;
+procedure TIniDataReader.GetCatProps(const CatID: string;
   var Props: TCategoryData);
 begin
   try
-    Props.Desc := fMasterIni.ReadString(Cat, cMasterDescName, '');
+    Props.Desc := fMasterIni.ReadString(CatID, cMasterDescName, '');
   except
     HandleCorruptDatabase(ExceptObject);
   end;
 end;
 
-function TIniDataReader.GetCatSnippets(const Cat: string): IStringList;
+function TIniDataReader.GetCatSnippets(const CatID: string): IStringList;
 var
   CatIni: TCustomIniFile; // accesses .ini file associated with category
   SnipList: TStringList;  // list of snippets in category
 begin
   try
     // Snippet names are names of sections in category's .ini file
-    CatIni := fIniCache.GetIniFile(CatToCatIni(Cat));
+    CatIni := fIniCache.GetIniFile(CatToCatIni(CatID));
     SnipList := TStringList.Create;
     try
       CatIni.ReadSections(SnipList);
@@ -439,7 +439,7 @@ procedure TIniDataReader.GetSnippetProps(const Snippet: string;
   var Props: TSnippetData);
 var
   CatIni: TCustomIniFile; // .ini file associated with snippet's category
-  Cat: string;            // snippet's category
+  CatID: string;          // snippet's category id
 
   // ---------------------------------------------------------------------------
   /// <summary>Reads "StandardFormat" value from ini file.</summary>
@@ -538,12 +538,12 @@ var
 begin
   try
     // Get name of category associated with this snippet
-    Cat := SnippetToCat(Snippet);
+    CatID := SnippetToCat(Snippet);
     // Get snippet properties from values listed under snippet's section in
     // category's .ini file
-    CatIni := fIniCache.GetIniFile(CatToCatIni(Cat));
+    CatIni := fIniCache.GetIniFile(CatToCatIni(CatID));
     Props.Kind := GetKindProperty;
-    Props.Cat := Cat;
+    Props.Cat := CatID;
     Props.Desc := CatIni.ReadString(Snippet, cDescName, '');
     Props.Extra := GetExtraProperty;
     Props.SourceCode := GetSourceCodeProperty;
@@ -601,14 +601,14 @@ var
   CatSnippets: IStringList;   // list of snippets in a single category
 begin
   // Read in list of category names
-  fMasterIni.ReadSections(fCatNames);
+  fMasterIni.ReadSections(fCatIDs);
   // We build map of snippet names to categories by reading snippets in each
   // category and referencing that category's id with the snippet name.
   CatSnippets := TIStringList.Create;
-  for CatIdx := 0 to Pred(fCatNames.Count) do
+  for CatIdx := 0 to Pred(fCatIDs.Count) do
   begin
     // Get list of snippets in category ...
-    CatSnippets := GetCatSnippets(fCatNames[CatIdx]);
+    CatSnippets := GetCatSnippets(fCatIDs[CatIdx]);
     for SnippetName in CatSnippets do
       fSnippetCatMap.Add(SnippetName, CatIdx);
   end;
@@ -629,7 +629,7 @@ begin
   if not fSnippetCatMap.ContainsKey(Snippet) then
     raise EDataIO.CreateFmt(sMissingSnippet, [Snippet]);
   CatIdx := fSnippetCatMap[Snippet];
-  Result := fCatNames[CatIdx];
+  Result := fCatIDs[CatIdx];
 end;
 
 { TIniDataReader.TIniFileCache }

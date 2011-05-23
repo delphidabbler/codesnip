@@ -132,7 +132,7 @@ type
     function CreateCategory(const CatID: string; const UserDefined: Boolean;
       const Data: TCategoryData): TCategory;
       {Creates a new category object.
-        @param CatID [in] ID (name) of new category. Must be unique.
+        @param CatID [in] ID of new category. Must be unique.
         @param UserDefined [in] True if category is user defined, False if not.
         @param Data [in] Record describing category's properties.
         @return Instance of new category object.
@@ -252,10 +252,10 @@ type
           whih case a blank record is returned.
         @return Required data.
       }
-    function AddCategory(const CatName: string;
+    function AddCategory(const CatID: string;
       const Data: TCategoryData): TCategory;
       {Adds a new category to the user database.
-        @param CatName [in] Name of new category.
+        @param CatID [in] ID of new category.
         @param Data [in] Record storing new category's properties.
         @return Reference to new category.
       }
@@ -313,7 +313,7 @@ type
     function CreateCategory(const CatID: string; const UserDefined: Boolean;
       const Data: TCategoryData): TCategory;
       {Creates a new category object.
-        @param CatID [in] ID (name) of new category. Must be unique.
+        @param CatID [in] ID of new category. Must be unique.
         @param UserDefined [in] True if category is user defined, False if not.
         @param Data [in] Record describing category's properties.
         @return Instance of new category object.
@@ -392,11 +392,11 @@ type
       {Deletes a snippet from the user database.
         @param Snippet [in] Snippet to delete from database.
       }
-    function InternalAddCategory(const CatName: string;
+    function InternalAddCategory(const CatID: string;
       const Data: TCategoryData): TCategory;
       {Adds a new category to the user database. Assumes category not already in
       user database.
-        @param CatName [in] Name of new category.
+        @param CatID [in] ID of new category.
         @param Data [in] Properties of new category.
         @return Reference to new category object.
       }
@@ -504,10 +504,10 @@ type
           which case a blank record is returned.
         @return Required data.
       }
-    function AddCategory(const CatName: string;
+    function AddCategory(const CatID: string;
       const Data: TCategoryData): TCategory;
       {Adds a new category to the user database.
-        @param CatName [in] Name of new category.
+        @param CatID [in] ID of new category.
         @param Data [in] Record storing new category's properties.
         @return Reference to new category.
       }
@@ -591,10 +591,10 @@ end;
 
 { TDatabase }
 
-function TDatabase.AddCategory(const CatName: string;
+function TDatabase.AddCategory(const CatID: string;
   const Data: TCategoryData): TCategory;
   {Adds a new category to the user database.
-    @param CatName [in] Name of new category.
+    @param CatID [in] ID of new category.
     @param Data [in] Record storing new category's properties.
     @return Reference to new category.
   }
@@ -605,10 +605,10 @@ begin
   Result := nil;
   TriggerEvent(evChangeBegin);
   try
-    // Check if category with same name exists in user database: error if so
-    if fCategories.Find(CatName) <> nil then
-      raise ECodeSnip.CreateFmt(sNameExists, [CatName]);
-    Result := InternalAddCategory(CatName, Data);
+    // Check if category with same id exists in user database: error if so
+    if fCategories.Find(CatID) <> nil then
+      raise ECodeSnip.CreateFmt(sNameExists, [CatID]);
+    Result := InternalAddCategory(CatID, Data);
     TriggerEvent(evCategoryAdded, Result);
   finally
     fUpdated := True;
@@ -889,16 +889,16 @@ begin
   Result := fSnippets;
 end;
 
-function TDatabase.InternalAddCategory(const CatName: string;
+function TDatabase.InternalAddCategory(const CatID: string;
   const Data: TCategoryData): TCategory;
   {Adds a new category to the user database. Assumes category not already in
   user database.
-    @param CatName [in] Name of new category.
+    @param CatID [in] ID of new category.
     @param Data [in] Properties of new category.
     @return Reference to new category object.
   }
 begin
-  Result := TCategoryEx.Create(CatName, True, Data);
+  Result := TCategoryEx.Create(CatID, True, Data);
   fCategories.Add(Result);
 end;
 
@@ -1025,7 +1025,7 @@ function TDatabase.UpdateCategory(const Category: TCategory;
 var
   SnippetList: TSnippetList;
   Snippet: TSnippet;
-  CatName: string;
+  CatID: string;
 begin
   TriggerEvent(evChangeBegin);
   try
@@ -1033,9 +1033,9 @@ begin
     try
       for Snippet in Category.Snippets do
         SnippetList.Add(Snippet);
-      CatName := Category.Category;
+      CatID := Category.ID;
       InternalDeleteCategory(Category);
-      Result := InternalAddCategory(CatName, Data);
+      Result := InternalAddCategory(CatID, Data);
       for Snippet in SnippetList do
         Result.Snippets.Add(Snippet);
     finally
@@ -1158,7 +1158,7 @@ end;
 function TDBDataItemFactory.CreateCategory(const CatID: string;
   const UserDefined: Boolean; const Data: TCategoryData): TCategory;
   {Creates a new category object.
-    @param CatID [in] ID (name) of new category. Must be unique.
+    @param CatID [in] ID of new category. Must be unique.
     @param UserDefined [in] True if category is user defined, False if not.
     @param Data [in] Record describing category's properties.
     @return Instance of new category object.

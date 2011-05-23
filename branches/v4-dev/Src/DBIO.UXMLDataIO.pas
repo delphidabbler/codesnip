@@ -75,9 +75,9 @@ type
       according to which database is being accessed.
         @return Path to directory.
       }
-    function FindCategoryNode(const Cat: string): IXMLNode;
+    function FindCategoryNode(const CatID: string): IXMLNode;
       {Finds a specified category node in the file.
-        @param Cat [in] Name of required category.
+        @param CatID [in] Id of required category.
         @return Required node or nil if node doesn't exist.
       }
     function FindSnippetNode(const SnippetName: string): IXMLNode;
@@ -136,19 +136,19 @@ type
       other methods are called if this method returns false.
         @return True if database exists, False if not.
       }
-    function GetAllCatNames: IStringList;
-      {Get names of all categories in database.
-        @return List of category names.
+    function GetAllCatIDs: IStringList;
+      {Get ids of all categories in database.
+        @return List of category IDs.
       }
-    procedure GetCatProps(const Cat: string; var Props: TCategoryData);
+    procedure GetCatProps(const CatID: string; var Props: TCategoryData);
       {Get properties of a category.
-        @param Cat [in] Name of required category.
+        @param CatID [in] Id of required category.
         @param Props [in/out] Empty properties passed in. Record fields set to
           values of category properties by implementor.
       }
-    function GetCatSnippets(const Cat: string): IStringList;
+    function GetCatSnippets(const CatID: string): IStringList;
       {Get names of all snippets in a category.
-        @param Cat [in] Name of category containing snippets.
+        @param CatID [in] Id of category containing snippets.
         @return List of snippet names.
       }
     procedure GetSnippetProps(const Snippet: string; var Props: TSnippetData);
@@ -213,18 +213,18 @@ type
     procedure Initialise;
       {Initialise the database. Always called before any other methods.
       }
-    procedure WriteCatProps(const CatName: string; const Props: TCategoryData);
+    procedure WriteCatProps(const CatID: string; const Props: TCategoryData);
       {Write the properties of a category. Always called before WriteCatSnippets
       for a given category, so can be used to perform any per-category
       initialisation.
-        @param CatName [in] Name of category.
+        @param CatID [in] ID of category.
         @param Props [in] Properties of category.
       }
-    procedure WriteCatSnippets(const CatName: string;
+    procedure WriteCatSnippets(const CatID: string;
       const SnipList: IStringList);
       {Write the list of snippets belonging to a category. Always called after
       WriteCatProps for any given category.
-        @param CatName [in] Name of category.
+        @param CatID [in] ID of category.
         @param SnipList [in] List of names of snippets.
       }
     procedure WriteSnippetProps(const SnippetName: string;
@@ -350,9 +350,9 @@ begin
   inherited;
 end;
 
-function TXMLDataIO.FindCategoryNode(const Cat: string): IXMLNode;
+function TXMLDataIO.FindCategoryNode(const CatID: string): IXMLNode;
   {Finds a specified category node in the file.
-    @param Cat [in] Name of required category.
+    @param CatID [in] Id of required category.
     @return Required node or nil if node doesn't exist.
   }
 var
@@ -365,7 +365,7 @@ begin
     Error(sMissingNode, [cCategoriesNode]);
   // Find required <category> node
   Result := fXMLDoc.FindFirstChildNode(
-    CatListNode, cCategoryNode, cCategoryIdAttr, Cat
+    CatListNode, cCategoryNode, cCategoryIdAttr, CatID
   )
 end;
 
@@ -449,8 +449,8 @@ begin
   Result := FileExists(PathToXMLFile);
 end;
 
-function TXMLDataReader.GetAllCatNames: IStringList;
-  {Get names of all categories in database.
+function TXMLDataReader.GetAllCatIDs: IStringList;
+  {Get ids of all categories in database.
     @return List of category names.
   }
 var
@@ -471,10 +471,10 @@ begin
   end;
 end;
 
-procedure TXMLDataReader.GetCatProps(const Cat: string;
+procedure TXMLDataReader.GetCatProps(const CatID: string;
   var Props: TCategoryData);
   {Get properties of a category.
-    @param Cat [in] Name of required category.
+    @param CatID [in] Id of required category.
     @param Props [in/out] Empty properties passed in. Record fields set to
       values of category properties by implementor.
   }
@@ -482,7 +482,7 @@ var
   CatNode: IXMLNode;  // reference to node for required category
 begin
   try
-    CatNode := FindCategoryNode(Cat);
+    CatNode := FindCategoryNode(CatID);
     if not Assigned(CatNode) then
       // Properties will not be requested for a category that doesn't exist in
       // this database, so this should never happen
@@ -495,9 +495,9 @@ begin
   end;
 end;
 
-function TXMLDataReader.GetCatSnippets(const Cat: string): IStringList;
+function TXMLDataReader.GetCatSnippets(const CatID: string): IStringList;
   {Get names of all snippets in a category.
-    @param Cat [in] Name of category containing snippets.
+    @param CatID [in] Id of category containing snippets.
     @return List of snippet names.
   }
 var
@@ -505,7 +505,7 @@ var
 begin
   try
     Result := TIStringList.Create;
-    CatNode := FindCategoryNode(Cat);
+    CatNode := FindCategoryNode(CatID);
     if not Assigned(CatNode) then
       // This is not an error since it is possible that a category exists in
       // another database and loader will request info from here also
@@ -813,11 +813,11 @@ begin
   end;
 end;
 
-procedure TXMLDataWriter.WriteCatProps(const CatName: string;
+procedure TXMLDataWriter.WriteCatProps(const CatID: string;
   const Props: TCategoryData);
   {Write the properties of a category. Always called before WriteCatSnippets for
   a given category, so can be used to perform any per-category initialisation.
-    @param CatName [in] Name of category.
+    @param CatID [in] ID of category.
     @param Props [in] Properties of category.
   }
 var
@@ -826,18 +826,18 @@ begin
   try
     // Create <category id='CatName'> node
     CatNode := fXMLDoc.CreateElement(fCategoriesNode, cCategoryNode);
-    CatNode.Attributes[cCategoryIdAttr] := CatName;
+    CatNode.Attributes[cCategoryIdAttr] := CatID;
     fXMLDoc.CreateElement(CatNode, cDescriptionNode, Props.Desc);
   except
     HandleException(ExceptObject);
   end;
 end;
 
-procedure TXMLDataWriter.WriteCatSnippets(const CatName: string;
+procedure TXMLDataWriter.WriteCatSnippets(const CatID: string;
   const SnipList: IStringList);
   {Write the list of snippets belonging to a category. Always called after
   WriteCatProps for any given category.
-    @param CatName [in] Name of category.
+    @param CatID [in] ID of category.
     @param SnipList [in] List of names of snippets.
   }
 var
@@ -848,7 +848,7 @@ begin
     if SnipList.Count = 0 then
       Exit;
     // Find required category node
-    CatNode := FindCategoryNode(CatName);
+    CatNode := FindCategoryNode(CatID);
     Assert(Assigned(CatNode),
       ClassName + '.WriteCatSnippets: Can''t find category node');
     // Write the list

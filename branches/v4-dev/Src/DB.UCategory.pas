@@ -73,7 +73,7 @@ type
   TCategory = class(TObject)
   strict private
     fSnippets: TSnippetList;  // List of snippet objects in category
-    fCategory: string;        // Category name
+    fID: string;              // Category id
     fDescription: string;     // Category description
     fUserDefined: Boolean;    // Whether this is a user-defined snippet
   public
@@ -87,12 +87,12 @@ type
       }
     function IsEqual(const Cat: TCategory): Boolean;
       {Checks if this category is same as another category. Categories are
-      considered equal if they have the same name.
+      considered equal if they have the same ID.
         @param Cat [in] Category being compared.
         @return True if categories are equal, False if not.
       }
-    property Category: string read fCategory;
-      {Category name. Must be unique}
+    property ID: string read fID;
+      {Category id. Must be unique}
     property Description: string read fDescription;
       {Description of category}
     property Snippets: TSnippetList read fSnippets;
@@ -147,9 +147,9 @@ type
         @param Category [in] Category to be added.
         @return Index where category inserted in list.
       }
-    function Find(const CatName: string): TCategory;
+    function Find(const CatID: string): TCategory;
       {Finds a named category in list.
-        @param CatName [in] Name of required category.
+        @param CatID [in] ID of required category.
         @return Reference to object representing category in list or nil if not
           in list.
       }
@@ -202,7 +202,7 @@ begin
   Assert(ClassType <> TCategory,
     ClassName + '.Create: must only be called from descendants.');
   inherited Create;
-  fCategory := CatID;
+  fID := CatID;
   fDescription := Data.Desc;
   fUserDefined := UserDefined;
   // Create list to store snippets in category
@@ -219,12 +219,12 @@ end;
 
 function TCategory.IsEqual(const Cat: TCategory): Boolean;
   {Checks if this category is same as another category. Categories are
-  considered equal if they have the same name.
+  considered equal if they have the same ID.
     @param Cat [in] Category being compared.
     @return True if categories are equal, False if not.
   }
 begin
-  Result := StrSameText(Self.Category, Cat.Category);
+  Result := StrSameText(Self.ID, Cat.ID);
 end;
 
 { TCategoryEx }
@@ -284,9 +284,9 @@ begin
   inherited;
 end;
 
-function TCategoryList.Find(const CatName: string): TCategory;
+function TCategoryList.Find(const CatID: string): TCategory;
   {Finds a named category in list.
-    @param CatName [in] Name of required category.
+    @param CatID [in] ID of required category.
     @return Reference to object representing category in list or nil if not in
       list.
   }
@@ -296,7 +296,7 @@ begin
   Result := nil;
   for Idx := 0 to Pred(Count) do
   begin
-    if StrSameText(CatName, Items[Idx].Category) then
+    if StrSameText(CatID, Items[Idx].ID) then
     begin
       Result := Items[Idx];
       Break;

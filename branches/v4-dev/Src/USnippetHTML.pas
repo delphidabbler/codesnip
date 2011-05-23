@@ -188,7 +188,7 @@ begin
   Cat := Database.Categories.Find(Snippet.Category);
   Assert(Assigned(Cat), ClassName + '.Category: Category not found');
   Result := StrMakeSentence(
-    CategoryALink(Cat.Category, Cat.Description)
+    CategoryALink(Cat.ID, Cat.Description)
   );
 end;
 

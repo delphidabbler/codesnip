@@ -193,10 +193,10 @@ type
     procedure LoadCategories; virtual;
       {Loads all categories from storage.
       }
-    procedure CreateCategory(const CatName: string;
+    procedure CreateCategory(const CatID: string;
       const CatData: TCategoryData);
       {Creates a new category and adds it to the categories list.
-        @param CatName [in] Name of category.
+        @param CatID [in] ID of category.
         @param CatData [in] Properties of category.
       }
     property Categories: TCategoryList read fCategories;
@@ -354,14 +354,14 @@ end;
 
 { TDatabaseLoader }
 
-procedure TDatabaseLoader.CreateCategory(const CatName: string;
+procedure TDatabaseLoader.CreateCategory(const CatID: string;
   const CatData: TCategoryData);
   {Creates a new category and adds it to the categories list.
-    @param CatName [in] Name of category.
+    @param CatID [in] ID of category.
     @param CatData [in] Properties of category.
   }
 begin
-  fCategories.Add(fFactory.CreateCategory(CatName, IsUserDatabase, CatData));
+  fCategories.Add(fFactory.CreateCategory(CatID, IsUserDatabase, CatData));
 end;
 
 procedure TDatabaseLoader.HandleException(const E: Exception);
@@ -422,22 +422,22 @@ procedure TDatabaseLoader.LoadCategories;
   {Loads all categories from storage
   }
 var
-  CatNames: IStringList;    // list of names of categories
-  CatName: string;          // name of each category
+  CatIDs: IStringList;      // list of ids of categories
+  CatID: string;            // name of each category
   Category: TCategory;      // a category object
   CatData: TCategoryData;   // properties of a category
 begin
   // Get name of all categories
-  CatNames := fReader.GetAllCatNames;
+  CatIDs := fReader.GetAllCatIDs;
   // Loop through each category by name
-  for CatName in CatNames do
+  for CatID in CatIDs do
   begin
     // Check if category exists, creating it if not
-    Category := fCategories.Find(CatName);
+    Category := fCategories.Find(CatID);
     if not Assigned(Category) then
     begin
-      fReader.GetCatProps(CatName, CatData);
-      CreateCategory(CatName, CatData);
+      fReader.GetCatProps(CatID, CatData);
+      CreateCategory(CatID, CatData);
     end;
   end;
 end;
@@ -491,7 +491,7 @@ var
 begin
   FillChar(SnippetProps, SizeOf(SnippetProps), 0);
   // Get names of all snippets in category
-  SnippetNames := fReader.GetCatSnippets(Cat.Category);
+  SnippetNames := fReader.GetCatSnippets(Cat.ID);
   // Process each snippet name in list
   for SnippetName in SnippetNames do
   begin
@@ -675,15 +675,15 @@ procedure TDatabaseWriter.WriteCategories;
   }
 var
   Cat: TCategory;         // loops through each category
-  Props: TCategoryData;   // categpry properties
+  Props: TCategoryData;   // category properties
   SnipList: IStringList;  // list of names of snippets in a category
 begin
   for Cat in fCategories do
   begin
     Props := fProvider.GetCategoryProps(Cat);
-    fWriter.WriteCatProps(Cat.Category, Props);
+    fWriter.WriteCatProps(Cat.ID, Props);
     SnipList := fProvider.GetCategorySnippets(Cat);
-    fWriter.WriteCatSnippets(Cat.Category, SnipList);
+    fWriter.WriteCatSnippets(Cat.ID, SnipList);
   end;
 end;
 

@@ -579,7 +579,7 @@ end;
 
 function TCategoryViewItem.GetKey: IViewKey;
 begin
-  Result := TKey.Create(GetCategory.Category);
+  Result := TKey.Create(GetCategory.ID);
 end;
 
 function TCategoryViewItem.IsEqual(View: IView): Boolean;

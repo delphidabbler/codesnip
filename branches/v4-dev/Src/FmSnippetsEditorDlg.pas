@@ -792,7 +792,7 @@ begin
     edSourceCode.Clear;
     edDescription.Clear;
     edName.Clear;
-    cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatName);
+    cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatID);
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
     cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);
@@ -900,7 +900,7 @@ begin
   Result.Init;
   with Result do
   begin
-    Props.Cat := fCatList.CatName(cbCategories.ItemIndex);
+    Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
     Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
     Props.Desc := StrTrim(edDescription.Text);
     Props.SourceCode := StrTrimRight(edSourceCode.Text);

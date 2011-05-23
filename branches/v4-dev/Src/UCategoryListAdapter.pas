@@ -70,13 +70,13 @@ type
       {Copies category description and related object to a string list.
         @param Strings [in] String list to receive information.
       }
-    function CatName(const Index: Integer): string;
-      {Gets name (id) of category at a specified index in the sorted list.
-        @param Index [in] Index of category for which name (id) is required.
+    function CatID(const Index: Integer): string;
+      {Gets id of category at a specified index in the sorted list.
+        @param Index [in] Index of category for which id is required.
       }
-    function IndexOf(const CatName: string): Integer;
-      {Gets index of a named category in sorted list.
-        @param CatName [in] Name (id) of category.
+    function IndexOf(const CatID: string): Integer;
+      {Gets index of a specified category in sorted list.
+        @param CatID [in] Id of category.
         @return Index of category in list or -1 if not found.
       }
   end;
@@ -94,12 +94,12 @@ uses
 
 { TCategoryListAdapter }
 
-function TCategoryListAdapter.CatName(const Index: Integer): string;
+function TCategoryListAdapter.CatID(const Index: Integer): string;
   {Gets name (id) of category at a specified index in the sorted list.
-    @param Index [in] Index of category for which name (id) is required.
+    @param Index [in] Index of category for which id is required.
   }
 begin
-  Result := fCatList[Index].Category;
+  Result := fCatList[Index].ID;
 end;
 
 constructor TCategoryListAdapter.Create(const CatList: TCategoryList);
@@ -134,9 +134,9 @@ begin
   inherited;
 end;
 
-function TCategoryListAdapter.IndexOf(const CatName: string): Integer;
-  {Gets index of a named category in sorted list.
-    @param CatName [in] Name (id) of category.
+function TCategoryListAdapter.IndexOf(const CatID: string): Integer;
+  {Gets index of a specified category in sorted list.
+    @param CatID [in] Id of category.
     @return Index of category in list or -1 if not found.
   }
 var
@@ -145,7 +145,7 @@ begin
   Result := -1;
   for Idx := 0 to Pred(fCatList.Count) do
   begin
-    if StrSameText(fCatList[Idx].Category, CatName) then
+    if StrSameText(fCatList[Idx].ID, CatID) then
     begin
       Result := Idx;
       Break;

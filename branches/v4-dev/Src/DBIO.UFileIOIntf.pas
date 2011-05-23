@@ -130,19 +130,19 @@ type
       other methods are called if this method returns false.
         @return True if database exists, False if not.
       }
-    function GetAllCatNames: IStringList;
+    function GetAllCatIDs: IStringList;
       {Get names of all categories in database.
-        @return List of category names.
+        @return List of category ids.
       }
-    procedure GetCatProps(const Cat: string; var Props: TCategoryData);
+    procedure GetCatProps(const CatID: string; var Props: TCategoryData);
       {Get properties of a category.
-        @param Cat [in] Name of required category.
+        @param CatID [in] Id of required category.
         @param Props [in/out] Empty properties passed in. Record fields set to
           values of category properties by implementor.
       }
-    function GetCatSnippets(const Cat: string): IStringList;
+    function GetCatSnippets(const CatID: string): IStringList;
       {Get names of all snippets in a category.
-        @param Cat [in] Name of category containing snippets.
+        @param CatID [in] Id of category containing snippets.
         @return List of snippet names.
       }
     procedure GetSnippetProps(const Snippet: string; var Props: TSnippetData);
@@ -179,18 +179,18 @@ type
     procedure Initialise;
       {Initialise the database. Always called before any other methods.
       }
-    procedure WriteCatProps(const CatName: string; const Props: TCategoryData);
+    procedure WriteCatProps(const CatID: string; const Props: TCategoryData);
       {Write the properties of a category. Always called before WriteCatSnippets
       for a given category, so can be used to perform any per-category
       initialisation.
-        @param CatName [in] Name of category.
+        @param CatID [in] ID of category.
         @param Props [in] Properties of category.
       }
-    procedure WriteCatSnippets(const CatName: string;
+    procedure WriteCatSnippets(const CatID: string;
       const SnipList: IStringList);
       {Write the list of snippets belonging to a category. Always called after
       WriteCatProps for any given category.
-        @param CatName [in] Name of category.
+        @param CatID [in] ID of category.
         @param SnipList [in] List of names of snippets.
       }
     procedure WriteSnippetProps(const SnippetName: string;

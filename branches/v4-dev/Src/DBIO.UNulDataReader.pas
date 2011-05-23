@@ -60,18 +60,18 @@ type
       other methods are called if this method returns false.
         @return Always returns True. It always can read a do-nothing database.
       }
-    function GetAllCatNames: IStringList;
-      {Gets names of all categories in database.
+    function GetAllCatIDs: IStringList;
+      {Gets ids of all categories in database.
         @return Empty string list.
       }
-    procedure GetCatProps(const Cat: string; var Props: TCategoryData);
+    procedure GetCatProps(const CatID: string; var Props: TCategoryData);
       {Gets properties of a category.
-        @param Cat [in] Name of required category.
+        @param CatID [in] Id of required category.
         @param Props [in/out] Empty properties passed in. Unchanged.
       }
-    function GetCatSnippets(const Cat: string): IStringList;
+    function GetCatSnippets(const CatID: string): IStringList;
       {Gets names of all snippets in a category.
-        @param Cat [in] Name of category containing snippets.
+        @param CatID [in] Id of category containing snippets.
         @return Empty list.
       }
     procedure GetSnippetProps(const Snippet: string; var Props: TSnippetData);
@@ -112,27 +112,27 @@ begin
   Result := True;
 end;
 
-function TNulDataReader.GetAllCatNames: IStringList;
-  {Gets names of all categories in database.
+function TNulDataReader.GetAllCatIDs: IStringList;
+  {Gets ids of all categories in database.
     @return Empty string list.
   }
 begin
   Result := TIStringList.Create;
 end;
 
-procedure TNulDataReader.GetCatProps(const Cat: string;
+procedure TNulDataReader.GetCatProps(const CatID: string;
   var Props: TCategoryData);
   {Gets properties of a category.
-    @param Cat [in] Name of required category.
+    @param CatID [in] Id of required category.
     @param Props [in/out] Empty properties passed in. Unchanged.
   }
 begin
   // Do nothing
 end;
 
-function TNulDataReader.GetCatSnippets(const Cat: string): IStringList;
+function TNulDataReader.GetCatSnippets(const CatID: string): IStringList;
   {Gets names of all snippets in a category.
-    @param Cat [in] Name of category containing snippets.
+    @param CatID [in] Id of category containing snippets.
     @return Empty list.
   }
 begin
