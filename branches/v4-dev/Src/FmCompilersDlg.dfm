@@ -45,13 +45,14 @@ inherited CompilersDlg: TCompilersDlg
       ActivePage = tsExecFile
       TabOrder = 1
       object tsExecFile: TTabSheet
-        Caption = '&Compiler'
+        Caption = 'Compiler'
         object lblCompilerPath: TLabel
           Left = 4
           Top = 4
           Width = 170
           Height = 13
-          Caption = 'Enter compiler e&xecutable file name:'
+          Caption = 'Enter compiler &executable file name:'
+          FocusControl = edCompilerPath
         end
         object edCompilerPath: TEdit
           Left = 3
@@ -83,13 +84,13 @@ inherited CompilersDlg: TCompilersDlg
           Top = 51
           Width = 75
           Height = 25
-          Caption = 'Cle&ar'
+          Caption = '&Clear'
           TabOrder = 2
           OnClick = btnClearClick
         end
       end
       object tsSwitches: TTabSheet
-        Caption = 'Co&mmand Line'
+        Caption = 'Command Line'
         ImageIndex = 2
         object lblExplainSwitches: TLabel
           Left = 160
@@ -107,7 +108,7 @@ inherited CompilersDlg: TCompilersDlg
           Top = 45
           Width = 46
           Height = 13
-          Caption = 'S&witches:'
+          Caption = '&Switches:'
           FocusControl = lbSwitches
         end
         object lblSwitch: TLabel
@@ -149,7 +150,7 @@ inherited CompilersDlg: TCompilersDlg
           Top = 7
           Width = 65
           Height = 25
-          Caption = 'A&dd'
+          Caption = '&Add'
           TabOrder = 2
           OnClick = btnAddClick
         end
@@ -173,7 +174,7 @@ inherited CompilersDlg: TCompilersDlg
         end
       end
       object tsOutputLog: TTabSheet
-        Caption = 'Output &Log'
+        Caption = 'Output Log'
         ImageIndex = 1
         object lblLogPrefixes: TLabel
           Left = 4
