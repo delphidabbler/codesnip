@@ -97,6 +97,8 @@ uses
   FmCodeSubmitDlg in 'FmCodeSubmitDlg.pas' {CodeSubmitDlg},
   FmCompErrorDlg in 'FmCompErrorDlg.pas' {CompErrorDlg},
   FmCompilersDlg in 'FmCompilersDlg.pas' {CompilersDlg},
+  FmCompilersDlg.UBannerMgr in 'FmCompilersDlg.UBannerMgr.pas',
+  FmCompilersDlg.UCompilerListMgr in 'FmCompilersDlg.UCompilerListMgr.pas',
   FmDeleteCategoryDlg in 'FmDeleteCategoryDlg.pas' {DeleteCategoryDlg},
   FmDependenciesDlg in 'FmDependenciesDlg.pas' {DependenciesDlg},
   FmDonateDlg in 'FmDonateDlg.pas' {DonateDlg},

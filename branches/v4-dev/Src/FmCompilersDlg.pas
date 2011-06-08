@@ -44,11 +44,11 @@ uses
   // Delphi
   Grids, ValEdit, StdCtrls, ComCtrls, Controls, ExtCtrls, Classes, Windows,
   // Project
-  Compilers.UGlobals, FmGenericOKDlg, UBaseObjects;
+  Compilers.UGlobals, FmCompilersDlg.UBannerMgr,
+  FmCompilersDlg.UCompilerListMgr, FmGenericOKDlg, UBaseObjects;
 
 
 type
-
   {
   TCompilersDlg:
     Implements a dialog box where the user can configure which Pascal compilers
@@ -71,7 +71,7 @@ type
     lblSwitch: TLabel;
     lblSwitches: TLabel;
     lbSwitches: TListBox;
-    pbCompiler: TPaintBox;
+    pbBanner: TPaintBox;
     pcCompiler: TPageControl;
     tsExecFile: TTabSheet;
     tsOutputLog: TTabSheet;
@@ -88,18 +88,18 @@ type
     procedure edCompilerPathExit(Sender: TObject);
     procedure edSwitchChange(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure lbCompilersClick(Sender: TObject);
-    procedure lbCompilersDrawItem(Control: TWinControl; Index: Integer;
-      Rect: TRect; State: TOwnerDrawState);
     procedure lbSwitchesClick(Sender: TObject);
-    procedure pbCompilerPaint(Sender: TObject);
     procedure vleLogPrefixesDrawCell(Sender: TObject; ACol, ARow: Integer;
       Rect: TRect; State: TGridDrawState);
     procedure vleLogPrefixesSelectCell(Sender: TObject; ACol, ARow: Integer;
       var CanSelect: Boolean);
+    procedure FormDestroy(Sender: TObject);
   strict private
+    fCompListMgr: TCompilerListMgr;
+    fBannerMgr: TCompilerBannerMgr;
     fCurCompiler: ICompiler;      // Reference to currently selected compiler
     fLocalCompilers: ICompilers;  // Copy of Compilers that is edited
+    procedure CompilerSelectHandler(Sender: TObject);
     procedure SelectCompiler;
       {Stores reference to currently selected local compiler and updates dialog
       box controls with details of the compiler.
@@ -272,6 +272,7 @@ procedure TCompilersDlg.btnClearClick(Sender: TObject);
   }
 begin
   edCompilerPath.Text := '';
+  UpdateCurrentCompiler;
 end;
 
 procedure TCompilersDlg.btnDefSwitchesClick(Sender: TObject);
@@ -324,8 +325,8 @@ begin
     end;
   end;
   // Redisplay compiler list and current compiler title to reflect any changes
-  lbCompilers.Invalidate;
-  pbCompiler.Refresh;
+  fCompListMgr.Refresh;
+  fBannerMgr.Refresh;
 end;
 
 procedure TCompilersDlg.btnOKClick(Sender: TObject);
@@ -429,6 +430,17 @@ begin
   Result := True;
 end;
 
+procedure TCompilersDlg.CompilerSelectHandler(Sender: TObject);
+  {Handles a compiler selection in list box. Updates compiler that is being
+  deselected with details in dialog box controls then displays details of newly
+  selected compiler.
+    @param Sender [in] Not used.
+  }
+begin
+  UpdateCurrentCompiler;
+  SelectCompiler;
+end;
+
 procedure TCompilersDlg.edCompilerPathExit(Sender: TObject);
   {Updates state of selected compiler when cursor leaves compiler edit control.
     @param Sender [in] Not used.
@@ -473,174 +485,36 @@ begin
 end;
 
 procedure TCompilersDlg.FormCreate(Sender: TObject);
-  {Initialises compiler information when form is created.
+  {Initialises compiler information and creates owned objects.
+    @param Sender [in] Not used.
   }
 begin
   inherited;
   // Take a copy of global compilers object: stores updates until OK clicked
   fLocalCompilers := TCompilersFactory.CreateCompilers;
+
+  fCompListMgr := TCompilerListMgr.Create(lbCompilers, fLocalCompilers);
+  fCompListMgr.OnSelect := CompilerSelectHandler;
+
+  fBannerMgr := TCompilerBannerMgr.Create(pbBanner);
+end;
+
+procedure TCompilersDlg.FormDestroy(Sender: TObject);
+  {Frees owned objects.
+    @param Sender [in] Not used.
+  }
+begin
+  fBannerMgr.Free;
+  fCompListMgr.Free;
+  inherited;
 end;
 
 procedure TCompilersDlg.InitForm;
   {Populates and initialises controls.
   }
-var
-  CompID: TCompilerID;  // loops thru supported compilers
 begin
   inherited;
-  // Add empty list items: one per supported compiler
-  // (note we don't need item text since we handle drawing of dialog ourselves
-  // and get display details from compiler objects
-  for CompID := Low(TCompilerID) to High(TCompilerID) do
-    lbCompilers.Items.Add('');
-  // Select first compiler in list and display its details in dialog controls
-  lbCompilers.ItemIndex := 0;
-  SelectCompiler;
-end;
-
-procedure TCompilersDlg.lbCompilersClick(Sender: TObject);
-  {Handles a click on compilers list. Updates compiler that is being deselected
-  with details in dialog box controls then displays details of newly selected
-  compiler.
-    @param Sender [in] Not used.
-  }
-begin
-  UpdateCurrentCompiler;
-  SelectCompiler;
-end;
-
-procedure TCompilersDlg.lbCompilersDrawItem(Control: TWinControl;
-  Index: Integer; Rect: TRect; State: TOwnerDrawState);
-  {Handles draw item event for compilers list box. We display compiler name and
-  any associated glyph. Compilers that a available for use by CodeSnip appear in
-  bold. A separator line appears between each list item.
-    @param Control [in] Reference to list box.
-    @param Index [in] Index of list item being drawn.
-    @param Rect [in] Bounding rectangle of list item being drawn.
-    @param State [in] State of control: focussed, selected etc.
-  }
-var
-  LB: TListBox;         // list box being drawn
-  TxtExtent: TSize;     // extent of text to be displayed
-  ItemRect: TRectEx;    // extended rectangle bounding the item being drawn
-  ImgRect: TRectEx;     // bounding rectangle of any glyph
-  TxtRect: TRectEx;     // bounding rectangle of text to be drawn
-  Bmp: TBitmap;         // reference to bitmap to be displayed (or nil if none)
-  DrawHeight: Integer;  // total height of drawing (text below bitmap)
-  Compiler: ICompiler;  // reference to compiler associated with list item
-begin
-  // Copy item rectangle as extended rect
-  ItemRect := Rect;
-
-  // Get reference to list box control
-  LB := Control as TListBox;
-
-  // Get reference to compiler object associated with list item and its bitmap
-  Compiler := fLocalCompilers[TCompilerID(Index)];
-  Bmp := Compiler.GetGlyph;
-
-  // Set font style: bold if compiler available
-  if Compiler.IsAvailable then
-    LB.Canvas.Font.Style := [fsBold]
-  else
-    LB.Canvas.Font.Style := [];
-
-  // Calculate display rectangles for text and any bitmap
-  TxtExtent := LB.Canvas.TextExtent(Compiler.GetName);
-  if Assigned(Bmp) then
-  begin
-    // Bitmap included: bitmap drawn above text and bounding box or both centred
-    // horizontally and vertically
-    DrawHeight := TxtExtent.cy + 2 + Bmp.Height;
-    ImgRect := TRectEx.CreateBounds(
-      (ItemRect.Left + ItemRect.Right - Bmp.Width) div 2,
-      (ItemRect.Top + ItemRect.Bottom - DrawHeight) div 2,
-      Bmp.Width,
-      Bmp.Height
-    );
-    TxtRect := TRectEx.CreateBounds(
-      (ItemRect.Left + ItemRect.Right - TxtExtent.cx) div 2,
-      ImgRect.Bottom + 2,
-      TxtExtent
-    );
-  end
-  else
-  begin
-    // No bitmap: text centred vertically and horizontally
-    TxtRect := TRectEx.CreateBounds(
-      (ItemRect.Left + ItemRect.Right - TxtExtent.cx) div 2,
-      (ItemRect.Top + ItemRect.Bottom - TxtExtent.cy) div 2,
-      TxtExtent
-    );
-  end;
-
-  // Erase background
-  LB.Canvas.Pen.Color := LB.Color;
-  LB.Canvas.Brush.Color := LB.Color;
-  LB.Canvas.FillRect(ItemRect);
-
-  // Draw any highlighting
-  if (odFocused in State) or (odSelected in State) then
-  begin
-    if ThemeServicesEx.ThemesEnabled then
-    begin
-      // themes are enabled
-      if (odFocused in State) then
-      begin
-        // focussed: draw highlight based on highlight colour and highlight text
-        LB.Canvas.Brush.Color := GetHighLightColor(clHighlight);
-        LB.Canvas.Pen.Color := GetShadowColor(LB.Canvas.Brush.Color);
-        LB.Canvas.Font.Color := clHighlightText;
-      end
-      else
-      begin
-        // not focussed: draw highlight in button face and standard text colour
-        LB.Canvas.Brush.Color := clBtnFace;
-        LB.Canvas.Pen.Color := GetShadowColor(clBtnFace);
-        LB.Canvas.Font.Color := LB.Font.Color;
-      end;
-    end
-    else
-    begin
-      // themes are not available: use a more classic style
-      if (odFocused in State) then
-      begin
-        // focussed: draw highlight in highlight colour
-        LB.Canvas.Brush.Color := clHighlight;
-        LB.Canvas.Pen.Color := GetShadowColor(LB.Canvas.Brush.Color);
-        LB.Canvas.Font.Color := clHighlightText;
-      end
-      else
-      begin
-        // not focussed: draw using button colour
-        LB.Canvas.Brush.Color := clBtnFace;
-        LB.Canvas.Pen.Color := GetShadowColor(clBtnFace);
-        LB.Canvas.Font.Color := LB.Font.Color;
-      end;
-    end;
-    // draw the highlight (smaller than item's rectangle)
-    LB.Canvas.Rectangle(ItemRect.Inflate(-4, -4));
-  end
-  else
-    // no highlighting: just ensure font colour correct
-    LB.Canvas.Font.Color := LB.Font.Color;
-
-  // Draw text and any bitamp
-  LB.Canvas.TextOut(TxtRect.Left, TxtRect.Top, Compiler.GetName);
-  if Assigned(Bmp) then
-    LB.Canvas.BrushCopy(ImgRect, Bmp, Bmp.Canvas.ClipRect, clFuchsia);
-
-  // Draw separator line if item not last one
-  if Index < Pred(LB.Count) then
-  begin
-    LB.Canvas.Pen.Color := clBtnShadow;
-    LB.Canvas.MoveTo(ItemRect.Left + 4, ItemRect.Bottom - 1);
-    LB.Canvas.LineTo(ItemRect.Right - 4, ItemRect.Bottom - 1);
-  end;
-
-  // Remove any focus rectangle
-  if odFocused in State then
-    LB.Canvas.DrawFocusRect(ItemRect);
+  fCompListMgr.Initialise;
 end;
 
 procedure TCompilersDlg.lbSwitchesClick(Sender: TObject);
@@ -652,105 +526,6 @@ begin
   edSwitch.Text := lbSwitches.Items[lbSwitches.ItemIndex];
   UpdateSwitchButtons;
   edSwitch.SetFocus;
-end;
-
-procedure TCompilersDlg.pbCompilerPaint(Sender: TObject);
-  {Handles paint event of paint box used to show name and glyph of selected
-  compiler.
-    @param Sender [in] Reference to paint box control.
-  }
-
-  // ---------------------------------------------------------------------------
-  procedure RenderCompilerTitle(const Canvas: TCanvas; const Rect: TRectEx);
-    {Displays compiler title on a gradient background.
-      @param Canvas [in] Canvas on which to display title.
-      @param Rect [in] Bounding rectangle of title.
-    }
-  const
-    cLeftMargin = 2;  // margin between edge of canvas and logo or text
-    cLogoPadding = 6; // padding between logo and text
-  var
-    GradColor1: TColor;     // primary gradient colour
-    GradColor2: TColor;     // secondary gradient colour
-    CompilerLogo: TBitmap;  // glyph of compiler logo or nil
-    CompilerName: string;   // name of compiler to be displayed
-    XOffset: Integer;       // X offset at which next left-aligned drawing done
-  begin
-    // Record name and glyph of compiler
-    CompilerName := fCurCompiler.GetName;
-    CompilerLogo := fCurCompiler.GetGlyph;
-
-    // Set up colors and font style for title: depends on compiler availability
-    if fCurCompiler.IsAvailable then
-    begin
-      GradColor1 := clActiveCaption;
-      GradColor2 := clGradientActiveCaption;
-      Canvas.Font.Style := [fsBold];
-      Canvas.Font.Color := clCaptionText;
-    end
-    else
-    begin
-      GradColor1 := clInactiveCaption;
-      GradColor2 := clGradientInactiveCaption;
-      Canvas.Font.Style := [fsBold];
-      Canvas.Font.Color := clInactiveCaptionText;
-    end;
-
-    // Draw gradient filled background rectangle
-    GradientFillCanvas(Canvas, GradColor1, GradColor2, Rect, gdHorizontal);
-
-    // Ensure that all further drawing on background is transparent
-    Canvas.Brush.Style := bsClear;
-
-    // Draw compiler logo (if present)
-    XOffset := Rect.Left + cLeftMargin;
-    if Assigned(CompilerLogo) then
-    begin
-      // draw the bitmap
-      Canvas.BrushCopy(
-        TRectEx.CreateBounds(
-          XOffset,
-          (Rect.Height - CompilerLogo.Height) div 2,
-          CompilerLogo.Width,
-          CompilerLogo.Height
-        ),
-        CompilerLogo,
-        CompilerLogo.Canvas.ClipRect,
-        clFuchsia // all logo glyphs have fuschia background
-      );
-      // we need to offset text to right of logo
-      XOffset := XOffset + CompilerLogo.Width + cLogoPadding;
-    end;
-
-    // Draw compiler name text, left aligned and vertically centred
-    Canvas.TextOut(
-      XOffset,
-      (Rect.Height - Canvas.TextHeight(CompilerName)) div 2,
-      CompilerName
-    );
-  end;
-  // ---------------------------------------------------------------------------
-
-var
-  PB: TPaintBox;          // reference to paint box control
-  BufferBmp: TBitmap;     // background bitmap used for double-buffering drawing
-begin
-  // Get reference to paint box
-  PB := Sender as TPaintBox;
-
-  // Render title onto buffer bitmap
-  BufferBmp := TBitmap.Create;
-  try
-    BufferBmp.Width := PB.Width;
-    BufferBmp.Height := PB.Height;
-    BufferBmp.Canvas.Font := PB.Canvas.Font;
-    RenderCompilerTitle(BufferBmp.Canvas, PB.ClientRect);
-
-    // Draw the offscreen bitmap in paintbox
-    PB.Canvas.Draw(0, 0, BufferBmp);
-  finally
-    FreeAndNil(BufferBmp);
-  end;
 end;
 
 procedure TCompilersDlg.PopulateSwitchList(const Switches: string);
@@ -770,9 +545,9 @@ var
   PrefixKind: TCompLogPrefixID; // loops thru log file prefixes
 begin
   // Store selected compiler
-  fCurCompiler := fLocalCompilers[TCompilerID(lbCompilers.ItemIndex)];
+  fCurCompiler := fCompListMgr.Selected;
   // Redraw compiler logo  and name in paint box
-  pbCompiler.Refresh;
+  fBannerMgr.Compiler := fCurCompiler;
   // Update controls
   // edit box
   edCompilerPath.Text := fCurCompiler.GetExecFile;
@@ -793,7 +568,6 @@ var
   Prefixes: TCompLogPrefixes;   // log file prefixes for selected compiler
   PrefixKind: TCompLogPrefixID; // loops thru log file prefixes
   WasAvailable: Boolean;        // whether compiler was available before update
-  InvalidRect: TRectEx;         // area of list box to invalidate
 begin
   if Assigned(fCurCompiler) then
   begin
@@ -816,9 +590,8 @@ begin
     // to give visual feedback of changed state
     if WasAvailable <> fCurCompiler.IsAvailable then
     begin
-      InvalidRect := lbCompilers.ItemRect(Ord(fCurCompiler.GetID));
-      InvalidateRect(lbCompilers.Handle, @InvalidRect, False);
-      pbCompiler.Refresh;
+      fCompListMgr.Refresh(fCurCompiler);
+      fBannerMgr.Refresh;
     end;
   end;
 end;

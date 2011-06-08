@@ -93,6 +93,8 @@
 			<DCCReference Include="FmCompilersDlg.pas">
 				<Form>CompilersDlg</Form>
 			</DCCReference>
+			<DCCReference Include="FmCompilersDlg.UBannerMgr.pas"/>
+			<DCCReference Include="FmCompilersDlg.UCompilerListMgr.pas"/>
 			<DCCReference Include="FmDeleteCategoryDlg.pas">
 				<Form>DeleteCategoryDlg</Form>
 			</DCCReference>

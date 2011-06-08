@@ -11,7 +11,7 @@ inherited CompilersDlg: TCompilersDlg
     Height = 249
     ExplicitWidth = 449
     ExplicitHeight = 249
-    object pbCompiler: TPaintBox
+    object pbBanner: TPaintBox
       Left = 128
       Top = 0
       Width = 321
@@ -24,7 +24,6 @@ inherited CompilersDlg: TCompilersDlg
       Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
-      OnPaint = pbCompilerPaint
     end
     object lbCompilers: TListBox
       Left = 0
@@ -37,8 +36,6 @@ inherited CompilersDlg: TCompilersDlg
       ItemHeight = 48
       ParentCtl3D = False
       TabOrder = 0
-      OnClick = lbCompilersClick
-      OnDrawItem = lbCompilersDrawItem
     end
     object pcCompiler: TPageControl
       Left = 127
