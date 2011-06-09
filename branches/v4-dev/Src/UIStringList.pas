@@ -183,6 +183,10 @@ type
         @param Idx [in] Index to check.
         @return True if index is valid and False if invalid.
       }
+    function ToArray: TArray<string>;
+      {Copies strings from string list into an array of strings.
+        @return Array of strings.
+      }
   end;
 
   {
@@ -330,6 +334,10 @@ type
       can be used as an index into the Items[] property without error.
         @param Idx [in] Index to check.
         @return True if index is valid and False if invalid.
+      }
+    function ToArray: TArray<string>;
+      {Copies strings from string list into an array of strings.
+        @return Array of strings.
       }
     { IAssignable methods }
     procedure Assign(const Src: IInterface);
@@ -682,6 +690,18 @@ procedure TIStringList.SetText(const Text: string; const Delim: string;
 begin
   Clear;
   Add(Text, Delim, AllowEmpty, Trim);
+end;
+
+function TIStringList.ToArray: TArray<string>;
+  {Copies strings from string list into an array of strings.
+    @return Array of strings.
+  }
+var
+  Idx: Integer; // loops through all strings
+begin
+  SetLength(Result, Count);
+  for Idx := 0 to Pred(Count) do
+    Result[Idx] := GetItem(Idx);
 end;
 
 { TIStringList.TEnumerator }
