@@ -93,6 +93,22 @@
 			<DCCReference Include="FmCompilersDlg.pas">
 				<Form>CompilersDlg</Form>
 			</DCCReference>
+			<DCCReference Include="FmCompilersDlg.FrBase.pas">
+				<Form>CompilersDlgBaseFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
+			<DCCReference Include="FmCompilersDlg.FrCompiler.pas">
+				<Form>CompilersDlgCompilerFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
+			<DCCReference Include="FmCompilersDlg.FrLog.pas">
+				<Form>CompilersDlgLogFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
+			<DCCReference Include="FmCompilersDlg.FrSwitches.pas">
+				<Form>CompilersDlgSwitchesFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
 			<DCCReference Include="FmCompilersDlg.UBannerMgr.pas"/>
 			<DCCReference Include="FmCompilersDlg.UCompilerListMgr.pas"/>
 			<DCCReference Include="FmDeleteCategoryDlg.pas">
