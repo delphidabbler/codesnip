@@ -159,8 +159,7 @@ begin
   Dlg := TBrowseForFolderDlg.Create(nil);
   try
     Dlg.Headline := sDlgHeading;
-    // TODO: Set help keyword
-    Dlg.HelpKeyword := '';
+    Dlg.HelpKeyword := 'BrowseSearchDirDlg';
     if Dlg.Execute then
       edPath.Text := Dlg.FolderName;
   finally
