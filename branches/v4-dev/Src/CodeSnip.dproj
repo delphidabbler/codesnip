@@ -54,6 +54,7 @@
 			<DCCReference Include="Compilers.UFreePascal.pas"/>
 			<DCCReference Include="Compilers.UGlobals.pas"/>
 			<DCCReference Include="Compilers.URunner.pas"/>
+			<DCCReference Include="Compilers.USearchDirs.pas"/>
 			<DCCReference Include="DB.UCategory.pas"/>
 			<DCCReference Include="DB.UDatabaseIO.pas"/>
 			<DCCReference Include="DB.UMain.pas"/>
@@ -103,6 +104,10 @@
 			</DCCReference>
 			<DCCReference Include="FmCompilersDlg.FrLog.pas">
 				<Form>CompilersDlgLogFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
+			<DCCReference Include="FmCompilersDlg.FrSearchDirs.pas">
+				<Form>CompilersDlgSearchDirsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="FmCompilersDlg.FrSwitches.pas">
@@ -338,6 +343,7 @@
 			<DCCReference Include="UAnchors.pas"/>
 			<DCCReference Include="UAppInfo.pas"/>
 			<DCCReference Include="UBaseObjects.pas"/>
+			<DCCReference Include="UBrowseForFolderDlg.pas"/>
 			<DCCReference Include="UBrowseProtocol.pas"/>
 			<DCCReference Include="UCategoryAction.pas"/>
 			<DCCReference Include="UCategoryListAdapter.pas"/>
@@ -531,8 +537,6 @@
 			<DCCReference Include="Web.URegistrar.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas"/>
-			<DCCReference Include="UBrowseForFolderDlg.pas"/>
-			<DCCReference Include="Compilers.USearchDirs.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

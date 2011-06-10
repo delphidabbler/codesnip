@@ -42,9 +42,9 @@ inherited CompilersDlg: TCompilersDlg
       Top = 32
       Width = 321
       Height = 212
-      ActivePage = tsExecFile
+      ActivePage = tsCompiler
       TabOrder = 1
-      object tsExecFile: TTabSheet
+      object tsCompiler: TTabSheet
         Caption = 'Compiler'
         inline frmCompiler: TCompilersDlgCompilerFrame
           Left = 0
@@ -61,7 +61,7 @@ inherited CompilersDlg: TCompilersDlg
         end
       end
       object tsSwitches: TTabSheet
-        Caption = 'Command Line'
+        Caption = 'Switches'
         ImageIndex = 2
         inline frmSwitches: TCompilersDlgSwitchesFrame
           Left = 0
@@ -77,9 +77,34 @@ inherited CompilersDlg: TCompilersDlg
           end
         end
       end
-      object tsOutputLog: TTabSheet
+      object tsSearchDirs: TTabSheet
+        Caption = 'Search Paths'
+        ImageIndex = 3
+        inline frmSearchDirs: TCompilersDlgSearchDirsFrame
+          Left = 0
+          Top = 0
+          Width = 313
+          Height = 184
+          Align = alClient
+          TabOrder = 0
+          ExplicitHeight = 184
+          inherited lblPaths: TLabel
+            Width = 69
+            ExplicitWidth = 69
+          end
+          inherited lblPath: TLabel
+            Width = 46
+            ExplicitWidth = 46
+          end
+        end
+      end
+      object tsLog: TTabSheet
         Caption = 'Output Log'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmLog: TCompilersDlgLogFrame
           Left = 0
           Top = 0

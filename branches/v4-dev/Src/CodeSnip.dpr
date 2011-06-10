@@ -78,6 +78,7 @@ uses
   Compilers.UFreePascal in 'Compilers.UFreePascal.pas',
   Compilers.UGlobals in 'Compilers.UGlobals.pas',
   Compilers.URunner in 'Compilers.URunner.pas',
+  Compilers.USearchDirs in 'Compilers.USearchDirs.pas',
   DB.UCategory in 'DB.UCategory.pas',
   DB.UDatabaseIO in 'DB.UDatabaseIO.pas',
   DB.UMain in 'DB.UMain.pas',
@@ -100,6 +101,7 @@ uses
   FmCompilersDlg.FrBase in 'FmCompilersDlg.FrBase.pas' {CompilersDlgBaseFrame: TFrame},
   FmCompilersDlg.FrCompiler in 'FmCompilersDlg.FrCompiler.pas' {CompilersDlgCompilerFrame: TFrame},
   FmCompilersDlg.FrLog in 'FmCompilersDlg.FrLog.pas' {CompilersDlgLogFrame: TFrame},
+  FmCompilersDlg.FrSearchDirs in 'FmCompilersDlg.FrSearchDirs.pas' {CompilersDlgSearchDirsFrame: TFrame},
   FmCompilersDlg.FrSwitches in 'FmCompilersDlg.FrSwitches.pas' {CompilersDlgSwitchesFrame: TFrame},
   FmCompilersDlg.UBannerMgr in 'FmCompilersDlg.UBannerMgr.pas',
   FmCompilersDlg.UCompilerListMgr in 'FmCompilersDlg.UCompilerListMgr.pas',
@@ -182,6 +184,7 @@ uses
   UAnchors in 'UAnchors.pas',
   UAppInfo in 'UAppInfo.pas',
   UBaseObjects in 'UBaseObjects.pas',
+  UBrowseForFolderDlg in 'UBrowseForFolderDlg.pas',
   UBrowseProtocol in 'UBrowseProtocol.pas',
   UCategoryAction in 'UCategoryAction.pas',
   UCategoryListAdapter in 'UCategoryListAdapter.pas',
@@ -374,9 +377,7 @@ uses
   Web.UInfo in 'Web.UInfo.pas',
   Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
-  Web.UXMLRequestor in 'Web.UXMLRequestor.pas',
-  UBrowseForFolderDlg in 'UBrowseForFolderDlg.pas',
-  Compilers.USearchDirs in 'Compilers.USearchDirs.pas';
+  Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
 
 // Include compiler defines: checks if compiler supported
 {$Include CompilerDefines.inc}

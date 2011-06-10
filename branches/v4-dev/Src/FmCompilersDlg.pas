@@ -45,8 +45,9 @@ uses
   SysUtils, ComCtrls, Controls, StdCtrls, ExtCtrls, Classes, Forms,
   // Project
   Compilers.UGlobals, FmCompilersDlg.FrBase, FmCompilersDlg.FrCompiler,
-  FmCompilersDlg.FrLog, FmCompilersDlg.FrSwitches, FmCompilersDlg.UBannerMgr,
-  FmCompilersDlg.UCompilerListMgr, FmGenericOKDlg, UBaseObjects;
+  FmCompilersDlg.FrSearchDirs, FmCompilersDlg.FrLog, FmCompilersDlg.FrSwitches,
+  FmCompilersDlg.UBannerMgr, FmCompilersDlg.UCompilerListMgr, FmGenericOKDlg,
+  UBaseObjects;
 
 
 type
@@ -60,12 +61,14 @@ type
     lbCompilers: TListBox;
     pbBanner: TPaintBox;
     pcCompiler: TPageControl;
-    tsExecFile: TTabSheet;
-    tsOutputLog: TTabSheet;
+    tsCompiler: TTabSheet;
+    tsLog: TTabSheet;
     tsSwitches: TTabSheet;
     frmCompiler: TCompilersDlgCompilerFrame;
     frmSwitches: TCompilersDlgSwitchesFrame;
     frmLog: TCompilersDlgLogFrame;
+    tsSearchDirs: TTabSheet;
+    frmSearchDirs: TCompilersDlgSearchDirsFrame;
     procedure btnDetectClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -288,7 +291,7 @@ begin
   fBannerMgr := TCompilerBannerMgr.Create(pbBanner);
 
   fFrames := TArray<TCompilersDlgBaseFrame>.Create(
-    frmCompiler, frmSwitches, frmLog
+    frmCompiler, frmSwitches, frmSearchDirs, frmLog
   );
   IterateFrames(
     procedure (Frame: TCompilersDlgBaseFrame)
