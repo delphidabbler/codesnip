@@ -43,10 +43,8 @@ interface
 uses
   // Delphi
   Classes, ActnList, ImgList, Controls, StdCtrls, Buttons,
-  // 3rd party
-  PJShellFolders,
   // Project
-  Compilers.UGlobals, FmCompilersDlg.FrBase, UBaseObjects;
+  Compilers.UGlobals, FmCompilersDlg.FrBase;
 
 
 type
