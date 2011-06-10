@@ -12,9 +12,9 @@ inherited CompilersDlgSearchDirsFrame: TCompilersDlgSearchDirsFrame
   object lblPath: TLabel
     Left = 3
     Top = 103
-    Width = 48
+    Width = 82
     Height = 13
-    Caption = 'Add pat&h:'
+    Caption = 'Add or edit pat&h:'
     FocusControl = edPath
   end
   object btnUp: TSpeedButton
