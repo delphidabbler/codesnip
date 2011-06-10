@@ -68,6 +68,8 @@ type
       {Glyph reprenting compiler: nil if no glyph}
     fSwitches: string;
       {User defined command line switches}
+    fSearchDirs: ISearchDirs;
+      {List of compiler search directories}
     function CommandLineSwitches: string;
       {Generate list of space separated switches for compiler command line.
         @return Required list.
@@ -107,6 +109,11 @@ type
     function GlyphResourceName: string; virtual;
       {Name of any resource containing a "glyph" bitmap for a compiler.
         @return Resource name or '' if the compiler has no glyph.
+      }
+    function SearchDirParams: string; virtual; abstract;
+      {One of more parameters that define any search directories to be passed
+      to compiler on command line.
+        @return Required space separated parameter(s).
       }
     { ICompiler methods }
     function GetName: string; virtual; abstract;
@@ -150,6 +157,14 @@ type
     procedure SetSwitches(const Switches: string);
       {Sets user defined switches.
         @param Switches [in] Required switches separated by commas.
+      }
+    function GetSearchDirs: ISearchDirs;
+      {Returns copy of list of search directories used by compiler.
+        @return Required list of directories.
+      }
+    procedure SetSearchDirs(Dirs: ISearchDirs);
+      {Stores a copy of given list of search directories.
+        @param Dirs [in] List of search directories.
       }
     function GetLogFilePrefixes: TCompLogPrefixes;
       {Returns prefixes used in interpreting error, fatal error and warning
@@ -246,7 +261,7 @@ implementation
 
 uses
   // Project
-  UStrUtils, UUtils;
+  Compilers.USearchDirs, IntfCommon, UStrUtils, UUtils;
 
 
 const
@@ -264,13 +279,14 @@ function TCompilerBase.BuildCommandLine(const Project, Path: string): string;
   }
 begin
   Result := Format(
-    '"%0:s" %1:s %2:s',
+    '"%0:s" %1:s %2:s %3:s',
     [
       fExecFile,                              // compiler exe
       LongToShortFilePath(
         IncludeTrailingPathDelimiter(Path)
       ) + Project,                            // path to project
-      CommandLineSwitches                     // command line switches
+      CommandLineSwitches,                    // command line switches
+      SearchDirParams                         // search directory param(s)
     ]
   );
 end;
@@ -397,6 +413,7 @@ begin
   fSwitches := Obj.fSwitches;
   fExecFile := Obj.fExecFile;
   fLastCompileResult := Obj.fLastCompileResult;
+  fSearchDirs := Obj.GetSearchDirs;
 end;
 
 destructor TCompilerBase.Destroy;
@@ -511,6 +528,14 @@ begin
   Result := fPrefixes;
 end;
 
+function TCompilerBase.GetSearchDirs: ISearchDirs;
+  {Returns copy of list of search directories used by compiler.
+    @return Required list of directories.
+  }
+begin
+  Result := (fSearchDirs as IClonable).Clone as ISearchDirs;
+end;
+
 function TCompilerBase.GetSwitches: string;
   {Returns user-defined swtches to be used by compiler.
     @return Required switches separated by commas. On creation these are default
@@ -542,6 +567,7 @@ procedure TCompilerBase.Initialize;
   }
 begin
   fCompileLog := TStringList.Create;
+  fSearchDirs := TSearchDirs.Create;
 end;
 
 function TCompilerBase.IsAvailable: Boolean;
@@ -625,6 +651,14 @@ begin
     else
       // no prefix set: use default value
       fPrefixes[Idx] := cPrefixDefaults[Idx];
+end;
+
+procedure TCompilerBase.SetSearchDirs(Dirs: ISearchDirs);
+  {Stores a copy of given list of search directories.
+    @param Dirs [in] List of search directories.
+  }
+begin
+  fSearchDirs := (Dirs as IClonable).Clone as ISearchDirs;
 end;
 
 procedure TCompilerBase.SetSwitches(const Switches: string);

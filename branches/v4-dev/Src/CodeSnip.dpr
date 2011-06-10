@@ -375,7 +375,8 @@ uses
   Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
   Web.UXMLRequestor in 'Web.UXMLRequestor.pas',
-  UBrowseForFolderDlg in 'UBrowseForFolderDlg.pas';
+  UBrowseForFolderDlg in 'UBrowseForFolderDlg.pas',
+  Compilers.USearchDirs in 'Compilers.USearchDirs.pas';
 
 // Include compiler defines: checks if compiler supported
 {$Include CompilerDefines.inc}

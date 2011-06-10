@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -57,6 +57,11 @@ type
     fId: TCompilerID;
       {Identifies compiler}
   protected
+    function SearchDirParams: string; override;
+      {One of more parameters that define any search directories to be passed
+      to compiler on command line.
+        @return Required space separated parameter(s).
+      }
     function InstallationRegKey: string; virtual; abstract;
       {Returns name of registry key where records compiler's installation path
       is recorded.
@@ -99,7 +104,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Registry, Windows;
+  SysUtils, Registry, Windows,
+  // Project
+  UIStringList, UStrUtils;
 
 
 constructor TBorlandCompiler.Create(const Id: TCompilerID);
@@ -188,6 +195,23 @@ function TBorlandCompiler.GetID: TCompilerID;
   }
 begin
   Result := fId;
+end;
+
+function TBorlandCompiler.SearchDirParams: string;
+  {One of more parameters that define any search directories to be passed to
+  compiler on command line.
+    @return Required space separated parameter(s).
+  }
+var
+  Dirs: IStringList;  // list of search directory strings
+begin
+  if GetSearchDirs.IsEmpty then
+    Exit('');
+  Dirs := TIStringList.Create(GetSearchDirs.ToStrings);
+  Result := StrQuoteSpaced('-U' + Dirs.GetText(';', False))
+    + ' ' + StrQuoteSpaced('-I' + Dirs.GetText(';', False))
+    + ' ' + StrQuoteSpaced('-O' + Dirs.GetText(';', False))
+    + ' ' + StrQuoteSpaced('-R' + Dirs.GetText(';', False));
 end;
 
 end.
