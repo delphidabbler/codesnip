@@ -100,13 +100,16 @@ type
       according to bounding rectangle.
         @param DlgBounds [in] Required bounding rectangle of dialog box.
       }
-    procedure DoAlign(const Dlg, Host: TComponent);
+    procedure DoAlign(const Dlg, Host: TComponent); overload;
       {Performs alignment of a window over a host window.
         @param Dlg [in] Dialog box to be aligned. Must not be nil.
         @param Host [in] Window over which window is to be aligned. May be nil.
       }
+    procedure DoAlign(const DlgHandle: THandle; const Host: TComponent);
+      overload;
+    procedure PerformAlignment;
   public
-    class procedure Align(const Dlg, Host: TComponent);
+    class procedure Align(const Dlg, Host: TComponent); overload;
       {Aligns a dialog window over a host window. If host window is a dialog box
       the window is offset from dialog's top left corner, otherwise the window
       is "centered" over the host window. If host window is not supported either
@@ -114,6 +117,8 @@ type
         @param Dlg [in] Dialog box to be aligned. Must not be nil.
         @param Host [in] Window over which window is to be aligned. May be nil.
       }
+    class procedure Align(const DlgHandle: THandle; const Host: TComponent);
+      overload;
     class procedure AlignToOwner(const Dlg: TComponent);
       {Aligns a dialog box window over window represented by dialog's Owner
       property. If Owner window is a dialog box the dialog window is offset from
@@ -197,13 +202,14 @@ type
   }
   TAlignableDialogFactory = class(TNoConstructObject)
   public
-    class function Instance(const Dlg: TComponent): IAlignableWindow;
+    class function Instance(const Dlg: TComponent): IAlignableWindow; overload;
       {Creates a suitable IAlignableWindow instance for a dialog box component.
         @param Dlg [in] Dialog component for which we need IWindowInfo instance.
           Dlg must be either a TCustomForm or a TCommonDialog.
         @return Required instance.
         @except EBug raised if Dlg is not one of required types.
       }
+    class function Instance(const Handle: THandle): IAlignableWindow; overload;
   end;
 
   {
@@ -334,6 +340,25 @@ type
       }
   end;
 
+  THandleWindow = class(TInterfacedObject,
+    IAlignableWindow
+  )
+  strict private
+    fHandle: THandle;
+  public
+    constructor Create(const Handle: THandle);
+    { IAlignableWindow methods }
+    function BoundsRect: TRectEx;
+      {Get bounding rectangle of window.
+        @return Required rectangle in screen co-ordinates.
+      }
+    procedure AdjustWindow(const Bounds: TRectEx);
+      {Adjust window to have a new bounding rectangle.
+        @param Bounds [in] New bounds for window, in screen co-ordinates.
+      }
+
+  end;
+
 
 { TDlgHelper }
 
@@ -391,6 +416,18 @@ begin
   end;
 end;
 
+class procedure TDlgAligner.Align(const DlgHandle: THandle;
+  const Host: TComponent);
+begin
+  Assert(IsWindow(DlgHandle), ClassName + '.Align: DlgHandle is not a window');
+  with InternalCreate do
+  try
+    DoAlign(DlgHandle, Host);
+  finally
+    Free;
+  end;
+end;
+
 class procedure TDlgAligner.AlignToOwner(const Dlg: TComponent);
   {Aligns a dialog box window over window represented by dialog's Owner
   property. If Owner window is a dialog box the dialog window is offset from
@@ -401,8 +438,14 @@ class procedure TDlgAligner.AlignToOwner(const Dlg: TComponent);
       but its owner may be.
   }
 begin
-  Assert(Assigned(Dlg), ClassName + '.AlignToOwner: Dlg is nil');
   Align(Dlg, Dlg.Owner);
+end;
+
+procedure TDlgAligner.DoAlign(const DlgHandle: THandle; const Host: TComponent);
+begin
+  fDialog := TAlignableDialogFactory.Instance(DlgHandle);
+  fHostWdw := TWindowInfoFactory.Instance(Host);
+  PerformAlignment;
 end;
 
 procedure TDlgAligner.DoAlign(const Dlg, Host: TComponent);
@@ -410,18 +453,10 @@ procedure TDlgAligner.DoAlign(const Dlg, Host: TComponent);
     @param Dlg [in] Dialog box to be aligned. Must not be nil.
     @param Host [in] Window over which window is to be aligned. May be nil.
   }
-var
-  DlgBounds: TRectEx; // bounding rectangle of dialog box
 begin
-  Assert(Assigned(Dlg), ClassName + '.DoAlign: Dlg is nil');
-  // Encapsulate window and host window
   fDialog := TAlignableDialogFactory.Instance(Dlg);
   fHostWdw := TWindowInfoFactory.Instance(Host);
-  // Do the alignment
-  GetDialogBounds(DlgBounds);
-  OffsetDialog(DlgBounds);
-  FitToWorkArea(DlgBounds);
-  AdjustWindowPosition(DlgBounds);
+  PerformAlignment;
 end;
 
 procedure TDlgAligner.FitToWorkArea(var DlgBounds: TRectEx);
@@ -481,6 +516,16 @@ begin
     )
 end;
 
+procedure TDlgAligner.PerformAlignment;
+var
+  DlgBounds: TRectEx; // bounding rectangle of dialog box
+begin
+  GetDialogBounds(DlgBounds);
+  OffsetDialog(DlgBounds);
+  FitToWorkArea(DlgBounds);
+  AdjustWindowPosition(DlgBounds);
+end;
+
 { TWindowInfoFactory }
 
 class function TWindowInfoFactory.Instance(
@@ -534,6 +579,12 @@ begin
     raise EBug.CreateFmt(
       '%0:s.Instance: Unsupported WdwCtrl type %1:s', [ClassName, Dlg.ClassName]
     );
+end;
+
+class function TAlignableDialogFactory.Instance(
+  const Handle: THandle): IAlignableWindow;
+begin
+  Result := THandleWindow.Create(Handle);
 end;
 
 { TFormWindow }
@@ -716,6 +767,34 @@ function TWinControlWindow.IsDialog: Boolean;
   }
 begin
   Result := False;
+end;
+
+{ THandleWindow }
+
+procedure THandleWindow.AdjustWindow(const Bounds: TRectEx);
+begin
+  SetWindowPos(
+    fHandle,                    // window to position
+    0,                          // only required if setting z-order
+    Bounds.Left, Bounds.Top,    // X and Y co-ords of window
+    0, 0,                       // only required if setting size of window
+    SWP_NOACTIVATE or SWP_NOSIZE or SWP_NOZORDER  // flags saying what to do
+  );
+end;
+
+function THandleWindow.BoundsRect: TRectEx;
+var
+  Rect: TRect;  // bounding rectangle
+begin
+  GetWindowRect(fHandle, Rect);
+  Result := Rect;
+end;
+
+constructor THandleWindow.Create(const Handle: THandle);
+begin
+  Assert(IsWindow(Handle), ClassName + '.Create: Handle is not a window.');
+  inherited Create;
+  fHandle := Handle;
 end;
 
 end.

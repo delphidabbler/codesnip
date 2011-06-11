@@ -89,8 +89,6 @@ type
     ///  </summary>
     ///  <param name="AHost">TComponent [in] Reference to component over which
     ///  the dialog box will be aligned.</param>
-    ///  <remarks>If AHost is nil the screen's active form is used if available
-    ///  otherwise application's main form is used.</remarks>
     constructor Create(AHost: TComponent);
     ///  <summary>Object destructor. Tidies up object.</summary>
     destructor Destroy; override;
@@ -116,7 +114,7 @@ uses
   // Delphi
   Controls, Windows, Forms,
   // Project
-  UHelpMgr, UStructs;
+  UDlgHelper, UHelpMgr, UStructs;
 
 
 { TBrowseForFolderDlg }
@@ -125,14 +123,6 @@ constructor TBrowseForFolderDlg.Create(AHost: TComponent);
 begin
   inherited Create;
   fHost := AHost;
-  if not Assigned(fHost) then
-  begin
-    if Assigned(Screen.ActiveCustomForm) then
-      fHost := Screen.ActiveCustomForm
-    else if Assigned(Application.MainForm) then
-      fHost := Application.MainForm;
-  end;
-  Assert(Assigned(fHost), ClassName + '.Create: AOwner is nil');
   fDialog := TPJBrowseDialog.Create(nil);
   InitProperties;
 end;
@@ -153,28 +143,8 @@ begin
 end;
 
 procedure TBrowseForFolderDlg.DlgInitHandler(Sender: TObject);
-var
-  WP: TWindowPlacement;
-  X, Y: Integer;
-  OwnerBounds, DlgBounds: TRectEx;
 begin
-  if not (fHost is TWinControl) then
-    Exit;
-  GetWindowPlacement(
-    fDialog.Handle,
-    WP
-  );
-  OwnerBounds := (fHost as TWinControl).BoundsRect;
-  DlgBounds := WP.rcNormalPosition;
-  X := OwnerBounds.Left + 40;
-  Y := OwnerBounds.Top + 40;
-  SetWindowPos(
-    fDialog.Handle,
-    0,
-    X, Y,
-    0, 0,
-    SWP_NOSIZE or SWP_NOZORDER
-  );
+  TDlgAligner.Align(fDialog.Handle, fHost);
 end;
 
 function TBrowseForFolderDlg.Execute: Boolean;
@@ -230,3 +200,4 @@ begin
 end;
 
 end.
+
