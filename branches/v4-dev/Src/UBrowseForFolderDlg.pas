@@ -111,10 +111,8 @@ implementation
 
 
 uses
-  // Delphi
-  Controls, Windows, Forms,
   // Project
-  UDlgHelper, UHelpMgr, UStructs;
+  UDlgHelper, UHelpMgr;
 
 
 { TBrowseForFolderDlg }
