@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -46,42 +46,6 @@ uses
 
 
 type
-
-  TContributors = class;
-
-  {
-  TContributorsClass:
-    Class reference for contributors classes
-  }
-  TContributorsClass = class of TContributors;
-
-  {
-  TContributorsEnum:
-    Enumerator for contributors classes. Enables use of for .. in construct on
-    TContributors descendants.
-  }
-  TContributorsEnum = class(TObject)
-  strict private
-    var
-      fContribs: TContributors; // Reference to object being enumerated
-      fIndex: Integer;          // Index of current object in enumeration
-  public
-    constructor Create(AContributors: TContributors);
-      {Class constructor. Initialises enumeration.
-        @param AContributors [in] Object to be enurmerated.
-      }
-    function GetCurrent: string;
-      {Gets name of current contributor.
-        @return Required name.
-      }
-    function MoveNext: Boolean;
-      {Moves to next item in enumeration.
-        @return True if there is a next item, False if beyond last item.
-      }
-    property Current: string read GetCurrent;
-      {Name of current contributor}
-  end;
-
   {
   TContributors:
     Abstract base class for classes that load and encapsulate a list of database
@@ -113,7 +77,7 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
-    function GetEnumerator: TContributorsEnum;
+    function GetEnumerator: TStringsEnumerator;
       {Creates an enumerator for this object.
         @return Reference to new enumerator. Caller is repsonsible for freeing
           this object.
@@ -151,6 +115,12 @@ type
         @return Required file base name.
       }
   end;
+
+  {
+  TContributorsClass:
+    Class reference for contributors classes
+  }
+  TContributorsClass = class of TContributors;
 
 
 implementation
@@ -192,7 +162,7 @@ destructor TContributors.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fContributors);
+  fContributors.Free;
   inherited;
 end;
 
@@ -204,13 +174,13 @@ begin
   Result := fContributors.Count;
 end;
 
-function TContributors.GetEnumerator: TContributorsEnum;
+function TContributors.GetEnumerator: TStringsEnumerator;
   {Creates an enumerator for this object.
     @return Reference to new enumerator. Caller is repsonsible for freeing this
       object.
   }
 begin
-  Result := TContributorsEnum.Create(Self);
+  Result := fContributors.GetEnumerator;
 end;
 
 function TContributors.GetItem(const Idx: Integer): string;
@@ -240,36 +210,6 @@ function TTesters.GetFileName: string;
   }
 begin
   Result := 'testers.txt';
-end;
-
-{ TContributorsEnum }
-
-constructor TContributorsEnum.Create(AContributors: TContributors);
-  {Class constructor. Initialises enumeration.
-    @param AContributors [in] Object to be enurmerated.
-  }
-begin
-  inherited Create;
-  fContribs := AContributors;
-  fIndex := -1;
-end;
-
-function TContributorsEnum.GetCurrent: string;
-  {Gets name of current contributor.
-    @return Required name.
-  }
-begin
-  Result := fContribs[fIndex];
-end;
-
-function TContributorsEnum.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, False if beyond last item.
-  }
-begin
-  Result := fIndex < Pred(fContribs.Count);
-  if Result then
-    Inc(fIndex);
 end;
 
 end.
