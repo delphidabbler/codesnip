@@ -49,117 +49,90 @@ uses
 
 
 type
-
-  {
-  TProtocol:
-    Abstract base class for all URL protocol handler classes.
-  }
+  ///  <summary>
+  ///  Abstract base class for all URL protocol handler classes.
+  ///  </summary>
   TProtocol = class abstract(TObject)
   strict private
     var
-      // Value of URL property
+      ///  <summary>Value of URL property.</summary>
       fURL: string;
   strict protected
+    ///  <summary>URL specifying a protocol and a resource.</summary>
     property URL: string read fURL;
-      {URL specifying a protocol and a resource}
   public
+    ///  <summary>Object constructor. Creates protocol handler for given URL's
+    ///  protocol.</summary>
     constructor Create(const URL: string);
-      {Class constructor. Creates protocol handler for a specified resource.
-        @param URL [in] URL specifying protocol and resource.
-      }
+    ///  <summary>Checks if this protocol handler handles a given URL's
+    ///  protocol.</summary>
     class function SupportsProtocol(const URL: string): Boolean;
       virtual; abstract;
-      {Checks if this protocol handler handles a URL's protocol.
-        @param URL [in] URL whose protocol is to be checked.
-        @return True if URL's protocol is supported, False if not.
-      }
+    ///  <summary>Attempts to execute a resource according to its protocol.
+    ///  Descendants must implement.</summary>
     function Execute: Boolean; virtual; abstract;
-      {Attempts to execute a resource. Descendants must implement.
-        @return True if resource could be handled (executed) or false if not.
-      }
   end;
 
 type
-  {
-  TProtocolFactory:
-    Factory class that creates and registers various TProtocol descendant
-    objects that can handle various supported URL protocols.
-  }
+  ///  <summary>
+  ///  Factory class that creates and registers various TProtocol descendant
+  ///  objects that can handle various supported URL protocols.
+  ///  </summary>
   TProtocolFactory = class(TNoConstructObject)
   strict private
     type
-      {
-      TProtocolClass:
-        Class reference for TProtocol descendant classes.
-      }
+      ///  <summary>Class reference for TProtocol descendant classes.</summary>
       TProtocolClass = class of TProtocol;
-      {
-      TProtocolRegistrar:
-        Class that implements register of URL protocol handlers that can be
-        instantiated by protocol factory class.
-      }
+    type
+      ///  <summary>Implements a register of URL protocol handlers that can be
+      ///  instantiated by protocol factory class.</summary>
       TProtocolRegistrar = class(TObject)
       strict private
-        // List of registered TProtocolClass references
-        fRegister: TList<TProtocolClass>;
+        var
+          ///  <summary>List of registered TProtocolClass references.</summary>
+          fRegister: TList<TProtocolClass>;
+        ///  <summary>Getter for Count property.</summary>
         function GetCount: Integer;
-          {Read accessor for Count property.
-            @return Number of registered protocols.
-          }
+        ///  <summary>Getter for indexed Protocols property.</summary>
         function GetProtocol(const Idx: Integer): TProtocolClass;
-          {Read accessor for Protocols property.
-            @param Idx [in] Index of protocol class reference in registry.
-            @return Instance of indexed protocol class reference.
-          }
       public
+        ///  <summary>Object constructor. Sets up empty register.</summary>
         constructor Create;
-          {Object constructor. Sets up empty registry.
-          }
+        ///  <summary>Object destructor. Tears down object.</summary>
         destructor Destroy; override;
-          {Object destructor. Tears down object.
-          }
+        ///  <summary>Gets instance of the registrar's enumerator.</summary>
         function GetEnumerator: TEnumerator<TProtocolClass>;
-          {Gets an instance of the registrar's enumerator.
-            @return Required enumerator.
-          }
+        ///  <summary>Registers the given protocol class.</summary>
         procedure RegisterProtocol(const ClassRef: TProtocolClass);
-          {Registers a protocol.
-            @param ClassRef [in] Class that implements support for the protocol.
-          }
+        ///  <summary>Indexed list of registered protocol classes.</summary>
         property Protocols[const Idx: Integer]: TProtocolClass
           read GetProtocol; default;
-          {List of regsitered protocol classes}
+        ///  <summary>Number of registered protocols.</summary>
         property Count: Integer read GetCount;
-          {Number of registered protocols}
       end;
-    class var
-      // Singleton protocol registrar
-      fRegistrar: TProtocolRegistrar;
+    ///  <summary>Gets singleton instance of protocol registrar.</summary>
     class function Registrar: TProtocolRegistrar;
-      {Gets singleton instance of protocol registar.
-        @return Singleton regsitrar object.
-      }
+    class var
+      ///  <summary>Protocol registrar singleton.</summary>
+      fRegistrar: TProtocolRegistrar;
   public
+    ///  <summary>Class constructor. Creates registrar singleton.</summary>
     class constructor Create;
+    ///  <summary>Class destructor. Frees registrar singleton.</summary>
     class destructor Destroy;
+    ///  <summary>Creates an appropriate concrete TProtocol class instance for
+    ///  given URL's protocol.</summary>
+    ///  <remarks>If no handler has been registered for the URL's protocol a nul
+    ///  handler instance is returned.</remarks>
     class function CreateHandler(const URL: string): TProtocol;
-      {Creates an appropriate TProtocol class instance for a protocol defined
-      in a URL.
-        @param URL [in] URL of a resource, prefixed by appropriate protocol.
-        @return Protocol handler for URL's protocol. If no handler is available
-          for the resource a nul handler instance is returned.
-      }
+    ///  <summary>Registers a protocol class with the factory.</summary>
     class procedure RegisterProtocol(const ClassRef: TProtocolClass);
-      {Registers a protocol with the factory class.
-        @param ClassRef [in] Reference to class implementing protocol.
-      }
   end;
 
 type
-  {
-  EProtocol:
-    Exception class for use in TProtocol descendant classes.
-  }
+  ///  <summary>
+  ///  Exception class for use in TProtocol descendant classes.
+  ///  </summary>
   EProtocol = class(ECodeSnip);
 
 
@@ -200,34 +173,29 @@ implementation
 }
 
 
-uses
-  // Delphi
-  Classes {for inlining};
-
-
 type
-
-  {
-  TNulProtocolHandler:
-    Nul protocol used when there is no suitable handler for a protocol. This
-    object is used to indicate that default handling of protocol by the browser
-    control is to be permitted. To this end the Execute method does nothing and
-    returns false to indicate the protocol was not handled and SupportsProtocol
-    returns false because this handler recognises no protocols.
-  }
+  ///  <summary>
+  ///  Nul protocol used when there is no suitable handler for a protocol.
+  ///  </summary>
+  ///  <remarks>
+  ///  This object is used to indicate that default handling of protocol by the
+  ///  browser control is to be permitted. To this end the Execute method does
+  ///  nothing and returns false to indicate the protocol was not handled and
+  ///  SupportsProtocol returns false because this handler recognises no
+  ///  protocols.
+  ///  </remarks>
   TNulProtocolHandler = class(TProtocol)
   public
+    ///  <summary>Checks if this protocol handler handles a URL's protocol.
+    ///  </summary>
+    ///  <remarks>This class handles no protocols so always returned False.
+    ///  </remarks>
     class function SupportsProtocol(const URL: string): Boolean; override;
-      {Checks if this protocol handler handles a URL's protocol. It never does
-      so it returns False.
-        @param URL [in] URL whose protocol is to be checked. Ignored.
-        @return False.
-      }
+    ///  <summary>Does nothing because no protocol is handled.</summary>
+    ///  <returns>Boolean. Always returns False.</returns>
     function Execute: Boolean; override;
-      {Does nothing.
-        @return False.
-      }
   end;
+
 
 { TProtocolFactory }
 
@@ -238,12 +206,6 @@ end;
 
 class function TProtocolFactory.CreateHandler(
   const URL: string): TProtocol;
-  {Creates an appropriate TProtocol class instance for a protocol defined in a
-  URL.
-    @param URL [in] URL of a resource, prefixed by appropriate protocol.
-    @return Protocol handler for URL's protocol. If no handler is available for
-      the resource a nul handler instance is returned.
-  }
 var
   RegisteredCls: TProtocolClass;  // enumerates registered protocol classes
 begin
@@ -269,17 +231,11 @@ end;
 
 class procedure TProtocolFactory.RegisterProtocol(
   const ClassRef: TProtocolClass);
-  {Registers a protocol with the factory class.
-    @param ClassRef [in] Reference to class implementing protocol.
-  }
 begin
   Registrar.RegisterProtocol(ClassRef);
 end;
 
 class function TProtocolFactory.Registrar: TProtocolRegistrar;
-  {Gets singleton instance of protocol registar.
-    @return Singleton regsitrar object.
-  }
 begin
   Result := fRegistrar;
 end;
@@ -287,53 +243,36 @@ end;
 { TProtocolFactory.TProtocolRegistrar }
 
 constructor TProtocolFactory.TProtocolRegistrar.Create;
-  {Object constructor. Sets up empty registry.
-  }
 begin
   inherited Create;
   fRegister := TList<TProtocolClass>.Create;
 end;
 
 destructor TProtocolFactory.TProtocolRegistrar.Destroy;
-  {Object destructor. Tears down object.
-  }
 begin
   FreeAndNil(fRegister);
   inherited;
 end;
 
 function TProtocolFactory.TProtocolRegistrar.GetCount: Integer;
-  {Read accessor for Count property.
-    @return Number of registered protocols.
-  }
 begin
   Result := fRegister.Count;
 end;
 
 function TProtocolFactory.TProtocolRegistrar.GetEnumerator:
   TEnumerator<TProtocolClass>;
-  {Gets an instance of the registrar's enumerator.
-    @return Required enumerator.
-  }
 begin
   Result := fRegister.GetEnumerator;
 end;
 
 function TProtocolFactory.TProtocolRegistrar.GetProtocol(
   const Idx: Integer): TProtocolClass;
-  {Read accessor for Protocols property.
-    @param Idx [in] Index of protocol class reference in registry.
-    @return Instance of indexed protocol class reference.
-  }
 begin
   Result := TProtocolClass(fRegister[Idx]);
 end;
 
 procedure TProtocolFactory.TProtocolRegistrar.RegisterProtocol(
   const ClassRef: TProtocolClass);
-  {Registers a protocol.
-    @param ClassRef [in] Class that implements support for the protocol.
-  }
 begin
   fRegister.Add(ClassRef);
 end;
@@ -341,9 +280,6 @@ end;
 { TProtocol }
 
 constructor TProtocol.Create(const URL: string);
-  {Class constructor. Creates protocol handler for a specified resource.
-    @param URL [in] URL specifying protocol and resource.
-  }
 begin
   inherited Create;
   fURL := URL;
@@ -352,19 +288,11 @@ end;
 { TNulProtocolHandler }
 
 function TNulProtocolHandler.Execute: Boolean;
-  {Does nothing.
-    @return False.
-  }
 begin
   Result := False;
 end;
 
 class function TNulProtocolHandler.SupportsProtocol(const URL: string): Boolean;
-  {Checks if this protocol handler handles a URL's protocol. It never does so it
-  returns False.
-    @param URL [in] URL whose protocol is to be checked. Ignored.
-    @return False.
-  }
 begin
   Result := False;
 end;
