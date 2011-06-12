@@ -100,14 +100,12 @@ type
       according to bounding rectangle.
         @param DlgBounds [in] Required bounding rectangle of dialog box.
       }
-    procedure DoAlign(const Dlg, Host: TComponent); overload;
-      {Performs alignment of a window over a host window.
-        @param Dlg [in] Dialog box to be aligned. Must not be nil.
-        @param Host [in] Window over which window is to be aligned. May be nil.
-      }
-    procedure DoAlign(const DlgHandle: THandle; const Host: TComponent);
-      overload;
     procedure PerformAlignment;
+  strict protected
+    constructor InternalCreate; overload;
+    constructor InternalCreate(const Dlg, Host: TComponent); overload;
+    constructor InternalCreate(const DlgHandle: THandle;
+      const Host: TComponent); overload;
   public
     class procedure Align(const Dlg, Host: TComponent); overload;
       {Aligns a dialog window over a host window. If host window is a dialog box
@@ -136,7 +134,7 @@ implementation
 
 uses
   // Delphi
-  Controls, Forms, Dialogs,
+  SysUtils, Controls, Forms, Dialogs,
   // Project
   UExceptions;
 
@@ -408,9 +406,9 @@ class procedure TDlgAligner.Align(const Dlg, Host: TComponent);
   }
 begin
   Assert(Assigned(Dlg), ClassName + '.Align: Dlg is nil');
-  with InternalCreate do
+  with InternalCreate(Dlg, Host) do
   try
-    DoAlign(Dlg, Host);
+    PerformAlignment;
   finally
     Free;
   end;
@@ -420,9 +418,9 @@ class procedure TDlgAligner.Align(const DlgHandle: THandle;
   const Host: TComponent);
 begin
   Assert(IsWindow(DlgHandle), ClassName + '.Align: DlgHandle is not a window');
-  with InternalCreate do
+  with InternalCreate(DlgHandle, Host) do
   try
-    DoAlign(DlgHandle, Host);
+    PerformAlignment;
   finally
     Free;
   end;
@@ -439,24 +437,6 @@ class procedure TDlgAligner.AlignToOwner(const Dlg: TComponent);
   }
 begin
   Align(Dlg, Dlg.Owner);
-end;
-
-procedure TDlgAligner.DoAlign(const DlgHandle: THandle; const Host: TComponent);
-begin
-  fDialog := TAlignableDialogFactory.Instance(DlgHandle);
-  fHostWdw := TWindowInfoFactory.Instance(Host);
-  PerformAlignment;
-end;
-
-procedure TDlgAligner.DoAlign(const Dlg, Host: TComponent);
-  {Performs alignment of a window over a host window.
-    @param Dlg [in] Dialog box to be aligned. Must not be nil.
-    @param Host [in] Window over which window is to be aligned. May be nil.
-  }
-begin
-  fDialog := TAlignableDialogFactory.Instance(Dlg);
-  fHostWdw := TWindowInfoFactory.Instance(Host);
-  PerformAlignment;
 end;
 
 procedure TDlgAligner.FitToWorkArea(var DlgBounds: TRectEx);
@@ -485,6 +465,28 @@ procedure TDlgAligner.GetDialogBounds(out DlgBounds: TRectEx);
   }
 begin
   DlgBounds := (fDialog as IAlignableWindow).BoundsRect;
+end;
+
+constructor TDlgAligner.InternalCreate;
+begin
+  raise ENoConstructException.Create(
+    ClassName + '.InternalCreate: Constructor required parameters'
+  );
+end;
+
+constructor TDlgAligner.InternalCreate(const Dlg, Host: TComponent);
+begin
+  inherited InternalCreate;
+  fDialog := TAlignableDialogFactory.Instance(Dlg);
+  fHostWdw := TWindowInfoFactory.Instance(Host);
+end;
+
+constructor TDlgAligner.InternalCreate(const DlgHandle: THandle;
+  const Host: TComponent);
+begin
+  inherited InternalCreate;
+  fDialog := TAlignableDialogFactory.Instance(DlgHandle);
+  fHostWdw := TWindowInfoFactory.Instance(Host);
 end;
 
 procedure TDlgAligner.OffsetDialog(var DlgBounds: TRectEx);
