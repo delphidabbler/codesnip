@@ -232,7 +232,9 @@ type
     var
       ///  <summary>Reference to encapsulated form.</summary>
       fForm: TCustomForm;
-  protected
+  public
+    ///  <summary>Sets up object for given form.</summary>
+    constructor Create(const Form: TCustomForm);
     ///  <summary>Gets form's bounding rectangle.</summary>
     ///  <remarks>Method of both IWindowInfo and IAlignableWindow.</remarks>
     function BoundsRect: TRectEx;
@@ -247,9 +249,6 @@ type
     ///  <summary>Gets form's window handle.</summary>
     ///  <remarks>Method of IWindowInfo.</remarks>
     function Handle: THandle;
-  public
-    ///  <summary>Sets up object for given form.</summary>
-    constructor Create(const Form: TCustomForm);
   end;
 
 type
@@ -264,7 +263,9 @@ type
     var
       ///  <summary>Reference to encapsulated control.</summary>
       fWinCtrl: TWinControl;
-  protected
+  public
+    ///  <summary>Sets up object for given TWinControl.</summary>
+    constructor Create(const WinCtrl: TWinControl);
     ///  <summary>Checks if control is a dialog box.</summary>
     ///  <remarks>
     ///  <para>Always returns False because a TWinControl is never a dialog box.
@@ -278,9 +279,6 @@ type
     ///  <summary>Gets window handle associated with control.</summary>
     ///  <remarks>Method of IWindowInfo.</remarks>
     function Handle: THandle;
-  public
-    ///  <summary>Sets up object for given TWinControl.</summary>
-    constructor Create(const WinCtrl: TWinControl);
   end;
 
 type
@@ -296,7 +294,9 @@ type
     var
       ///  <summary>Reference to common dialog to be encapsulated.</summary>
       fDlg: TCommonDialog;
-  protected
+  public
+    ///  <summary>Sets up object for given common dialog component.</summary>
+    constructor Create(const Dlg: TCommonDialog);
     ///  <summary>Gets dialog's bounding rectangle.</summary>
     ///  <remarks>Method of both IWindowInfo and IAlignableWindow.</remarks>
     function BoundsRect: TRectEx;
@@ -314,9 +314,6 @@ type
     ///  <summary>Gets dialog box's window handle.</summary>
     ///  <remarks>Method of IWindowInfo.</remarks>
     function Handle: THandle; virtual;
-  public
-    ///  <summary>Sets up object for given common dialog component.</summary>
-    constructor Create(const Dlg: TCommonDialog);
   end;
 
 type
@@ -327,7 +324,9 @@ type
   TOpenDialogWindow = class(TCommonDialogWindow,
     IWindowInfo, IAlignableWindow
   )
-  protected
+  public
+    ///  <summary>Sets up object for given open dialog component.</summary>
+    constructor Create(const Dlg: TOpenDialog);
     ///  <summary>Gets dialog box's window handle.</summary>
     ///  <remarks>
     ///  <para>Deals correctly with dialogs with explorer hooks and/or
@@ -335,9 +334,6 @@ type
     ///  <para>Method of IWindowInfo.</para>
     ///  </remarks>
     function Handle: THandle; override;
-  public
-    ///  <summary>Sets up object for given open dialog component.</summary>
-    constructor Create(const Dlg: TOpenDialog);
   end;
 
 type
