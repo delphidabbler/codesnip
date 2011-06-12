@@ -29,12 +29,20 @@ Notes
 Changes
 --------------------------------------------------------------------------------
 
-* Added a "Tests" directory and project for unit tests.
+* Features
+  o Can now specify search paths for compiler to use to find 3rd party and user
+    units.
+  o Now use wizard for code imports.
 
-* Refactorings:
+* Added a "Tests" directory and project for unit tests.
+  o Tests for UStrUtils
+  o Tests for UUtils (some changes to pass tests)
+
+* Refactorings and similar:
   o View unit - complete rewrite
   o Snippet Kind Info and Initial Letter code - complete rewrite
   o Alpha grouping code
+  o Initial letter object changes.
   o TDOSDateTime class.
   o Original installer Pascal Script files.
   o Code that manages saving of source code files.
@@ -42,6 +50,24 @@ Changes
     as "routines".
   o Some streamlining of units, removing / refactoring out some code.
   o Rationalised HTML resource files.
+  o Much renaming of code related to database. Particularly "routines" changed
+    to "snippets".
+  o TDlgAligner class: refactored and added support for dialogs specified by
+    window handle.
+  o THTMLTpltDlgFrame now uses callbacks to resolve placeholders using a
+    THTMLTemplate object: no longer uses TStringList and Name=Value strings.
+  o UAnchors.
+  o USearch.
+  o Some code moved from USnippets into new units and created new DB namespace.
+  o Created new DBIO namespace for code that performs database IO.
+  o TSnippetsValidator
+  o New UStrUtils unit that pulls together and standardises string manipulation
+    code.
+  o New CRLF constant (= EOL)
+  o Moved file name testing code from UUtils to UFileProtocol.
+  o New IStringList.ToArray method.
+  o New TTextComparer class in UComparers.
+  o Some protected interface implementation methods made public.
 
 * Bug fixes:
   o #3120962. This was a separate fix to that created for v3 - the two were
@@ -54,11 +80,13 @@ Changes
   o Various Unicode and code page related problems in RTF code (see below).
 
 * Help file:
-  o Privacy statement topic updated.
+  o Privacy statement topic updated in line with changes to text file.
   o Snippets Editor topic updated re change in snippet name rules.
+  o Configure Compiler topic updated for new tab and browse dialog box.
+  o Code import topic(s) rewritten re new import wizard.
 
 * Documentation:
-  o Privacy statement updated re config file name change.
+  o Privacy statement updated re file name changes.
   o Readme updated re v4 changes.
   o Noted new export file version 5.
   o New documentation for file formats in linked HTML files.
@@ -80,6 +108,9 @@ Changes
   o HTML builder now uses TStringBuilder to create HTML documents.
   o HTML builder no longer wraps embedded CSS code (in style tags) in HTML
     comments.
+  o THTMLAttributes can now have attributes passed to constructor to create
+    object with attributes on fly rather than having to call Add method for each
+    attribute.
 
 Printing:
   o Print engine and print document code updated to used TRTF as document type
@@ -93,8 +124,16 @@ Printing:
   to clipboard to enable correct encoding to be used for each format.
 
 * Dialog boxes:
-  o Config Compilers Dialog Box: Changed caption of button that detects
-    compilers to "Detect Delphi Compilers".
+  o Config Compilers Dialog Box:
+    - Changed caption of button that detects compilers to "Detect Delphi
+      Compilers".
+    - Renamed "Command Line" tab to "Switches".
+    - Added new "Search Paths" tab.
+    - Tabs now each host a frame that provides controls and logic.
+    - Custom paint code for compiler list and compiler name banner moved to
+      separate classes and units.
+    - Created namespace FmCompilersDlg for all subsidiary support units.
+    - Corrected and revised Alt keys used in dialog.
   o About Box's Paths tab now disable exlpore buttons if displayed paths don't
     exist. Also paths now appear in hints and include comment if path doesn't
     exist.
@@ -102,10 +141,16 @@ Printing:
     encoding to be used to save files. Provided different choices (or no choice)
     for each file type.
   o Preview dialog box:
-    * Simplified handling of captions in preview dialogs. No longer try to
+    - Simplified handling of captions in preview dialogs. No longer try to
       extract title from document text.
-    * Required document type now stated explicitly by calling code. No longer
+    - Required document type now stated explicitly by calling code. No longer
       detect doc type from content.
+  o Compiler error dialog box
+    - Compiler log processing pulled out into private inner class.
+  o Removed redundant FmHTMLViewDlg unit and THTMLViewDlg intermediate form
+    class.
+  o New Browse for Folder dialog implementation based on TPJBrowseDialog.
+  o Internal changes to FmWizardDlg to suit new sub-class.
 
 * Database:
   o Changed user database dir name to UserData.4.
@@ -114,6 +159,8 @@ Printing:
     maintains support for reading files in Default encoding because another
     version of CodeSnip may update database using that format.
   o User database file format updated. Now v5.
+  o Changes to records and objects:
+    - Fields of TSnippetID now encapsulated.
 
 * Import / Export / Backup
   o Updated export file version to v5. All files use v5 regardless of REML
@@ -121,6 +168,11 @@ Printing:
   o Code that reads / writes backups completely overhauled.
   o Updated backup file format to v4. Reader maintains backward support for v1
     to v3 and no longer tries to read later formats.
+  o Code import:
+    - Code overhauled and UI changed (see elsewhere).
+    - User info appended to Extra info can now be email or name only or both.
+  o Code import now uses byte array instead of stream to read input file.
+  o User details code revised.
 
 * Encoding:
   o Added explicit UTF-8 encoding attribute to XML processing instruction of
@@ -141,15 +193,17 @@ Printing:
     Unicode or even some ANSI file names).
   o New encoded data structure for passing around binary data with info about
     how it was encoded. Used in the main to replaced strings and streams.
-    * Used for database download processing.
-    * Used for code export (including code submission).
-    * Used for highlighted source code returned from syntax highlighters.
-    * Used for documents to be displyed in Preview dialog box.
-    * Used in print previews in preferences dialog box.
-    * Used when generating snippet information using TRoutineDoc and
+    - Used for database download processing.
+    - Used for code export (including code submission).
+    - Used for highlighted source code returned from syntax highlighters.
+    - Used for documents to be displyed in Preview dialog box.
+    - Used in print previews in preferences dialog box.
+    - Used when generating snippet information using TRoutineDoc and
       descendants.
-    * Used when copying code to clipboard.
-    * Replaces must uses of TStringStream.
+    - Used when copying code to clipboard.
+    - Replaces most uses of TStringStream.
+  o Compiler output encoding can now be set explicitly on a per-compiler
+    basis. Currently all compiler use default.
 
 * UI changes:
   o Snippets now displayed in history menu with "Snippet" instead of "Routine"
@@ -157,6 +211,8 @@ Printing:
   o Code Formatting preferences tab now always uses default font name and size
     and preview window enlarged so that longest example code is no longer
     truncated.
+  o Code Import now done via wizard rather file open and series of query dialog
+    boxes. Import manager code heavily revised to dis-entangle logic from UI.
 
 * Web Services
   o Updated database update web service code changed to work with v5 of the
@@ -168,8 +224,6 @@ Printing:
   o Updated HTTP handling code, and low level web service code, to be able to
     POST byte arrays and receive text responses. Code submitter web service now
     uses this facility.
-
-* Code import now uses byte array instead of stream to read input file.
 
 * IXMLDocumentEx had new LoadFromBytes and SaveToBytes methods: used by code
   import code - see other note re this.
@@ -193,6 +247,9 @@ Printing:
 * Refactored data stream reading / writing code and added code to read / write
   binary formatted data streams. Removed code that writes text formatted data
   streams.
+  
+* 3rd Party
+  o Added PJShellFolders.
 
 * Installer:
   o Updated installer scripts to recognise and copy config files and databases
