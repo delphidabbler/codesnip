@@ -43,7 +43,7 @@ interface
 
 uses
   // Delphi
-  SysUtils, Generics.Collections,
+  Generics.Collections,
   // Project
   UBaseObjects, UExceptions;
 
@@ -149,27 +149,27 @@ implementation
   the URL and perform special processing depending on the URL's protocol.
 
   In addition to performing custom processing on some standard URL protocols,
-  the program also defines its own "fake" protocols that have special meaning
-  within the program.
+  the program also defines its own "fake" protocols that have special meaning.
 
   The technique used is to define a series of classes that descend from the
   TProtocol abstract class. There is a separate class for each supported
   protocol and each class knows how to handle its own protocol. Each class
   registers itself with TProtocolFactory.
 
-  TProtocol.SupportsProtocol must return true if the class handles a protocol
-  or false if not. The first of the registered TProtocol sub classes to return
-  true from it SupportsProtocol method is used to handle the protocol and its
+  TProtocol.SupportsProtocol must return True if the class handles a protocol
+  or False if not. The first of the registered TProtocol sub classes to return
+  True from its SupportsProtocol method is used to handle the protocol and its
   TProtcol.Execute method is called.
 
-  The TProtocol.Execute method must return true if it handles a protocol and
+  The TProtocol.Execute method must return True if it handles a protocol and
   wishes to inhibit further processing. Code using the protocol classes must
-  prevent the browser from displaying the URL if Execute returns true but must
+  prevent the browser from displaying the URL if Execute returns True but must
   allow the browser control to process the URL normally if Execute returns
-  false.
+  False.
 
   A static factory class is provided that analyses URLs and creates the
-  appropriate TProtocol object, based on the URL's protocol.
+  appropriate TProtocol object, based on the URL's protocol and the registered
+  handler classes.
 }
 
 
@@ -209,19 +209,10 @@ class function TProtocolFactory.CreateHandler(
 var
   RegisteredCls: TProtocolClass;  // enumerates registered protocol classes
 begin
-  // Check for supported protocols
-  Result := nil;
   for RegisteredCls in Registrar do
-  begin
     if RegisteredCls.SupportsProtocol(URL) then
-    begin
-      Result := RegisteredCls.Create(URL);
-      Break;
-    end;
-  end;
-  if not Assigned(Result) then
-    // Protocol not supported: use nul protocol to indicate normal handling.
-    Result := TNulProtocolHandler.Create('');
+      Exit(RegisteredCls.Create(URL));
+  Result := TNulProtocolHandler.Create('');
 end;
 
 class destructor TProtocolFactory.Destroy;
@@ -250,7 +241,7 @@ end;
 
 destructor TProtocolFactory.TProtocolRegistrar.Destroy;
 begin
-  FreeAndNil(fRegister);
+  fRegister.Free;
   inherited;
 end;
 
