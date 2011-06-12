@@ -50,24 +50,6 @@ uses
 type
 
   {
-  IStringListEnum:
-    Enumerator for IStringList objects.
-  }
-  IStringListEnum = interface(IInterface)
-    ['{EA5F537F-3FEE-46ED-9569-97178446AC07}']
-    function GetCurrent: string;
-      {Gets current string in enumeration.
-        @return Current string.
-      }
-    function MoveNext: Boolean;
-      {Moves to next item in enumeration.
-        @return True if there is a next item, False if enumeration completed.
-      }
-    property Current: string read GetCurrent;
-      {Current item in enumeration}
-  end;
-
-  {
   IStringList:
     Interface to an object that stores and manipulates a list of strings.
   }
@@ -159,9 +141,9 @@ type
           case insensitive searching is required.
       }
     property CaseSensitive: Boolean
-      read GetCaseSensitive write SetCaseSensitive; // default False
+      read GetCaseSensitive write SetCaseSensitive; // default False;
       {Determines whether searching is case sensitive or case insensitive}
-    function GetEnumerator: IStringListEnum;
+    function GetEnumerator: TStringsEnumerator;
       {Creates an enumerator for the string list.
         @return Enumerator instance.
       }
@@ -198,37 +180,9 @@ type
     IStringList, IAssignable, IClonable
   )
   strict private
-    fStrings: TStringList;
-      {Stores string list}
-    type
-      {
-      TEnumerator:
-        Implements enumerator for IStringList.
-      }
-      TEnumerator = class(TInterfacedObject, IStringListEnum)
-      private
-        fStrings: IStringList;
-          {Reference to object being enumerated}
-        fIndex: Integer;
-          {Index of current item in enumeration}
-      public
-        constructor Create(const Strings: IStringList);
-          {Class constructor. Sets up and initialises enumeration.
-            @param Strings [in] Reference to object to be enumerated.
-          }
-        { IStringListEnum methods }
-        function GetCurrent: string;
-          {Gets current string in enumeration.
-            @return Current string.
-          }
-        function MoveNext: Boolean;
-          {Moves to next item in enumeration.
-            @return True if there is a next item, false if enumeration
-              completed.
-          }
-        property Current: string read GetCurrent;
-          {Current item in enumeration}
-      end;
+    var
+      fStrings: TStringList;
+        {Stores string list}
   protected
     { IStringList methods }
     function Add(const Str: string): Integer; overload;
@@ -313,7 +267,7 @@ type
         @param Flag [in] True if case sensitive searching is required, False if
           case insensitive searching is required.
       }
-    function GetEnumerator: IStringListEnum;
+    function GetEnumerator: TStringsEnumerator;
       {Creates an enumerator for the string list.
         @return Enumerator instance.
       }
@@ -450,7 +404,7 @@ begin
     // Add strings to this list
     Add(SL);
   finally
-    FreeAndNil(SL);
+    SL.Free;
   end;
 end;
 
@@ -599,7 +553,7 @@ destructor TIStringList.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fStrings);
+  fStrings.Free;
   inherited;
 end;
 
@@ -611,12 +565,12 @@ begin
   Result := fStrings.CaseSensitive;
 end;
 
-function TIStringList.GetEnumerator: IStringListEnum;
+function TIStringList.GetEnumerator: TStringsEnumerator;
   {Creates an enumerator for the string list.
     @return Enumerator instance.
   }
 begin
-  Result := TEnumerator.Create(Self);
+  Result := fStrings.GetEnumerator;
 end;
 
 function TIStringList.GetItem(const Idx: Integer): string;
@@ -702,36 +656,6 @@ begin
   SetLength(Result, Count);
   for Idx := 0 to Pred(Count) do
     Result[Idx] := GetItem(Idx);
-end;
-
-{ TIStringList.TEnumerator }
-
-constructor TIStringList.TEnumerator.Create(const Strings: IStringList);
-  {Class constructor. Sets up and initialises enumeration.
-    @param Strings [in] Reference to object to be enumerated.
-  }
-begin
-  inherited Create;
-  fIndex := -1;
-  fStrings := Strings;
-end;
-
-function TIStringList.TEnumerator.GetCurrent: string;
-  {Gets current string in enumeration.
-    @return Current string.
-  }
-begin
-  Result := fStrings[fIndex];
-end;
-
-function TIStringList.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, false if enumeration completed.
-  }
-begin
-  Result := fIndex < Pred(fStrings.Count);
-  if Result then
-    Inc(fIndex);
 end;
 
 end.
