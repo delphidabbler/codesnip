@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -41,7 +41,7 @@ interface
 
 uses
   // Delphi
-  Contnrs, ComCtrls, StdCtrls, Controls, ExtCtrls, Classes,
+  ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Generics.Collections,
   // Project
   FmGenericOKDlg, FrPrefsBase, UBaseObjects, UPreferences;
 
@@ -58,9 +58,10 @@ type
     procedure pcMainChange(Sender: TObject);
     procedure pcMainChanging(Sender: TObject; var AllowChange: Boolean);
   strict private
-    class var fPages: TClassList;   // List of registered page frames
-    class var fGC: IInterface;      // Garbage collector for class var
-    var fLocalPrefs: IPreferences;  // Llocal copy of preferences.
+    class var
+      fPages: TList<TPrefsFrameClass>;  // List of registered page frames
+    var
+      fLocalPrefs: IPreferences;        // Local copy of preferences.
     procedure CreatePages(const FrameClasses: array of TPrefsFrameClass);
       {Creates the required frames and displays each frame in a tab sheet within
       the page control.
@@ -97,6 +98,8 @@ type
       {Displays and initialises frames used to display pages of dialog.
       }
   public
+    class constructor Create;
+    class destructor Destroy;
     class function Execute(AOwner: TComponent;
       const Pages: array of TPrefsFrameClass): Boolean; overload;
       {Displays dialog with pages for each specified preferences frame.
@@ -142,7 +145,7 @@ implementation
 
 uses
   // Project
-  IntfCommon, UGC;
+  IntfCommon;
 
 
 {$R *.dfm}
@@ -184,6 +187,11 @@ begin
   (Preferences as IAssignable).Assign(fLocalPrefs);
 end;
 
+class constructor TPreferencesDlg.Create;
+begin
+  fPages := TList<TPrefsFrameClass>.Create;
+end;
+
 procedure TPreferencesDlg.CreatePages(
   const FrameClasses: array of TPrefsFrameClass);
   {Creates the required frames and displays each frame in a tab sheet within the
@@ -221,6 +229,11 @@ begin
   Result := GetSelectedPage.HelpKeyword;
 end;
 
+class destructor TPreferencesDlg.Destroy;
+begin
+  fPages.Free;
+end;
+
 class function TPreferencesDlg.Execute(AOwner: TComponent;
   const Pages: array of TPrefsFrameClass): Boolean;
   {Displays dialog with pages for each specified preferences frame.
@@ -251,7 +264,7 @@ begin
   // constructor that accepts a list of frames classes.
   SetLength(FrameClasses, fPages.Count);
   for Idx := 0 to Pred(fPages.Count) do
-    FrameClasses[Idx] := TPrefsFrameClass(fPages[Idx]);
+    FrameClasses[Idx] := fPages[Idx];
   Result := Execute(AOwner, FrameClasses);
 end;
 
@@ -345,18 +358,12 @@ var
   PageIdx: Integer; // loops through all registered frames
   InsIdx: Integer;  // place to insert new frame in list (per Index property)
 begin
-  // Ensure page list has been created and flagged for garbage collection
-  if not Assigned(fPages) then
-  begin
-    fPages := TClassList.Create;
-    TGC.GCLocalObj(fGC, fPages);
-  end;
   // Search for place in frame list to insert new frame (sorted on frame's Index
   // property).
   InsIdx := fPages.Count;
   for PageIdx := 0 to Pred(fPages.Count) do
   begin
-    if FrameCls.Index < TPrefsFrameClass(fPages[PageIdx]).Index then
+    if FrameCls.Index < fPages[PageIdx].Index then
     begin
       InsIdx := PageIdx;
       Break;
