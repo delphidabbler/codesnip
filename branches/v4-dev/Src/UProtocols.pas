@@ -259,7 +259,7 @@ end;
 function TProtocolFactory.TProtocolRegistrar.GetProtocol(
   const Idx: Integer): TProtocolClass;
 begin
-  Result := TProtocolClass(fRegister[Idx]);
+  Result := fRegister[Idx];
 end;
 
 procedure TProtocolFactory.TProtocolRegistrar.RegisterProtocol(
