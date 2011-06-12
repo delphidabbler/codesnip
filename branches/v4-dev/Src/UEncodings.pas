@@ -391,7 +391,7 @@ uses
   // Delphi
   Windows,
   // Project
-  UGC, ULocales, UStrUtils;
+  ULocales, UStrUtils;
 
 
 ///  <summary>
