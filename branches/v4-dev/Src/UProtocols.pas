@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -43,7 +43,7 @@ interface
 
 uses
   // Delphi
-  SysUtils, Contnrs,
+  SysUtils, Generics.Collections,
   // Project
   UBaseObjects, UExceptions;
 
@@ -51,19 +51,14 @@ uses
 type
 
   {
-  TProtocolClass:
-    Class reference for TProtocol descendant classes.
-  }
-  TProtocolClass = class of TProtocol;
-
-
-  {
   TProtocol:
     Abstract base class for all URL protocol handler classes.
   }
   TProtocol = class abstract(TObject)
   strict private
-    fURL: string;   // Value of URL property
+    var
+      // Value of URL property
+      fURL: string;
   strict protected
     property URL: string read fURL;
       {URL specifying a protocol and a resource}
@@ -84,6 +79,7 @@ type
       }
   end;
 
+type
   {
   TProtocolFactory:
     Factory class that creates and registers various TProtocol descendant
@@ -93,13 +89,19 @@ type
   strict private
     type
       {
+      TProtocolClass:
+        Class reference for TProtocol descendant classes.
+      }
+      TProtocolClass = class of TProtocol;
+      {
       TProtocolRegistrar:
         Class that implements register of URL protocol handlers that can be
         instantiated by protocol factory class.
       }
       TProtocolRegistrar = class(TObject)
       strict private
-        fRegister: TClassList;  // List of registered TProtocolClass references
+        // List of registered TProtocolClass references
+        fRegister: TList<TProtocolClass>;
         function GetCount: Integer;
           {Read accessor for Count property.
             @return Number of registered protocols.
@@ -109,40 +111,14 @@ type
             @param Idx [in] Index of protocol class reference in registry.
             @return Instance of indexed protocol class reference.
           }
-        type
-          {
-          TEnumerator:
-            Enumerator for TProtocolRegistrar.
-          }
-          TEnumerator = class(TObject)
-          strict private
-            fReg: TProtocolRegistrar; // Reference to register being enumerated
-            fIndex: Integer;          // Index of current item in enumeration
-          public
-            constructor Create(const Reg: TProtocolRegistrar);
-              {Class constructor. Sets up enumeration.
-                @param Reg [in] Protocol registrar instance being enumerated.
-              }
-            function GetCurrent: TProtocolClass;
-              {Gets current protocol class in enumeration.
-                @return Current class.
-              }
-            function MoveNext: Boolean;
-              {Moves to next item in enumeration.
-                @return True if there is a next item, false if enumeration
-                  completed.
-              }
-            property Current: TProtocolClass read GetCurrent;
-              {Current item in enumeration}
-          end;
       public
         constructor Create;
-          {Class constructor. Sets up empty registry.
+          {Object constructor. Sets up empty registry.
           }
         destructor Destroy; override;
-          {Class destructor. Tears down object.
+          {Object destructor. Tears down object.
           }
-        function GetEnumerator: TEnumerator;
+        function GetEnumerator: TEnumerator<TProtocolClass>;
           {Gets an instance of the registrar's enumerator.
             @return Required enumerator.
           }
@@ -156,13 +132,16 @@ type
         property Count: Integer read GetCount;
           {Number of registered protocols}
       end;
-    class var fGC: IInterface;                // Garbage collector for class var
-    class var fRegistrar: TProtocolRegistrar; // Singleton protocol registrar
+    class var
+      // Singleton protocol registrar
+      fRegistrar: TProtocolRegistrar;
     class function Registrar: TProtocolRegistrar;
       {Gets singleton instance of protocol registar.
         @return Singleton regsitrar object.
       }
   public
+    class constructor Create;
+    class destructor Destroy;
     class function CreateHandler(const URL: string): TProtocol;
       {Creates an appropriate TProtocol class instance for a protocol defined
       in a URL.
@@ -176,7 +155,7 @@ type
       }
   end;
 
-
+type
   {
   EProtocol:
     Exception class for use in TProtocol descendant classes.
@@ -223,9 +202,7 @@ implementation
 
 uses
   // Delphi
-  Classes {for inlining},
-  // Project
-  UGC;
+  Classes {for inlining};
 
 
 type
@@ -254,6 +231,11 @@ type
 
 { TProtocolFactory }
 
+class constructor TProtocolFactory.Create;
+begin
+  fRegistrar := TProtocolRegistrar.Create;
+end;
+
 class function TProtocolFactory.CreateHandler(
   const URL: string): TProtocol;
   {Creates an appropriate TProtocol class instance for a protocol defined in a
@@ -280,6 +262,11 @@ begin
     Result := TNulProtocolHandler.Create('');
 end;
 
+class destructor TProtocolFactory.Destroy;
+begin
+  fRegistrar.Free;
+end;
+
 class procedure TProtocolFactory.RegisterProtocol(
   const ClassRef: TProtocolClass);
   {Registers a protocol with the factory class.
@@ -294,26 +281,21 @@ class function TProtocolFactory.Registrar: TProtocolRegistrar;
     @return Singleton regsitrar object.
   }
 begin
-  if not Assigned(fRegistrar) then
-  begin
-    fRegistrar := TProtocolRegistrar.Create;
-    TGC.GCLocalObj(fGC, fRegistrar);
-  end;
   Result := fRegistrar;
 end;
 
 { TProtocolFactory.TProtocolRegistrar }
 
 constructor TProtocolFactory.TProtocolRegistrar.Create;
-  {Class constructor. Sets up empty registry.
+  {Object constructor. Sets up empty registry.
   }
 begin
   inherited Create;
-  fRegister := TClassList.Create;
+  fRegister := TList<TProtocolClass>.Create;
 end;
 
 destructor TProtocolFactory.TProtocolRegistrar.Destroy;
-  {Class destructor. Tears down object.
+  {Object destructor. Tears down object.
   }
 begin
   FreeAndNil(fRegister);
@@ -328,12 +310,13 @@ begin
   Result := fRegister.Count;
 end;
 
-function TProtocolFactory.TProtocolRegistrar.GetEnumerator: TEnumerator;
+function TProtocolFactory.TProtocolRegistrar.GetEnumerator:
+  TEnumerator<TProtocolClass>;
   {Gets an instance of the registrar's enumerator.
     @return Required enumerator.
   }
 begin
-  Result := TEnumerator.Create(Self);
+  Result := fRegister.GetEnumerator;
 end;
 
 function TProtocolFactory.TProtocolRegistrar.GetProtocol(
@@ -353,38 +336,6 @@ procedure TProtocolFactory.TProtocolRegistrar.RegisterProtocol(
   }
 begin
   fRegister.Add(ClassRef);
-end;
-
-{ TProtocolFactory.TProtocolRegistrar.TEnumerator }
-
-constructor TProtocolFactory.TProtocolRegistrar.TEnumerator.Create(
-  const Reg: TProtocolRegistrar);
-  {Class constructor. Sets up enumeration.
-    @param Reg [in] Protocol registrar instance being enumerated.
-  }
-begin
-  inherited Create;
-  fReg := Reg;
-  fIndex := -1;
-end;
-
-function TProtocolFactory.TProtocolRegistrar.TEnumerator.GetCurrent:
-  TProtocolClass;
-  {Gets current protocol class in enumeration.
-    @return Current class.
-  }
-begin
-  Result := fReg[fIndex];
-end;
-
-function TProtocolFactory.TProtocolRegistrar.TEnumerator.MoveNext: Boolean;
-  {Moves to next item in enumeration.
-    @return True if there is a next item, false if enumeration completed.
-  }
-begin
-  Result := fIndex < Pred(fReg.Count);
-  if Result then
-    Inc(fIndex);
 end;
 
 { TProtocol }
