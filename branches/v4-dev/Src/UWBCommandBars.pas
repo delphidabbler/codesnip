@@ -54,19 +54,17 @@ type
     Command bar manager for use with command bars associated with web browser
     controls. Uses a fixed image list.
   }
-  TWBCommandBarMgr = class(TCommandBarMgr, ICommandBarConfig)
+  TWBCommandBarMgr = class sealed(TCommandBarMgr, ICommandBarConfig)
   strict private
     class var fImages: TGIFImageList; // Static image list
-    class var fGC: IInterface;        // Garbage collector for staic image list
   strict protected
-    class function GetImages: TGIFImageList;
-      {Gets reference to static image list, creating it if necessary.
-        @return Reference to image list.
-      }
     procedure SetImages(const Images: TCustomImageList); override;
       {Specifies image list to be used by all command bars.
         @param Images [in] Image list to be used.
       }
+  public
+    class constructor Create;
+    class destructor Destroy;
   end;
 
   {
@@ -106,7 +104,7 @@ type
     TWBPopupMenuWrapper to add some menu items based on links in underlying
     document in browser control.
   }
-  TWBDefaultPopupMenuWrapper = class(TWBPopupMenuWrapper)
+  TWBDefaultPopupMenuWrapper = class sealed(TWBPopupMenuWrapper)
   strict private
     procedure ClearTempMenuItems;
       {Clears temporary menu items from menu.
@@ -142,23 +140,20 @@ implementation
 
 uses
   // Project
-  UAnchors, UGC, UHTMLDocHelper, UImageTags, ULinkAction, UMenuHelper,
-  UStrUtils, UWBPopupMenus;
+  UAnchors, UHTMLDocHelper, UImageTags, ULinkAction, UMenuHelper, UStrUtils,
+  UWBPopupMenus;
 
 
 { TWBCommandBarMgr }
 
-class function TWBCommandBarMgr.GetImages: TGIFImageList;
-  {Gets reference to static image list, creating it if necessary.
-    @return Reference to image list.
-  }
+class constructor TWBCommandBarMgr.Create;
 begin
-  if not Assigned(fImages) then
-  begin
-    fImages := TGIFImageList.Create(nil);
-    TGC.GCLocalObj(fGC, fImages);
-  end;
-  Result := fImages;
+  fImages := TGIFImageList.Create(nil);
+end;
+
+class destructor TWBCommandBarMgr.Destroy;
+begin
+  fImages.Free;
 end;
 
 procedure TWBCommandBarMgr.SetImages(const Images: TCustomImageList);
@@ -166,9 +161,9 @@ procedure TWBCommandBarMgr.SetImages(const Images: TCustomImageList);
     @param Images [in] Image list to be used.
   }
 begin
-  GetImages.Clear;
-  GetImages.AddImages(Images);
-  inherited SetImages(GetImages);
+  fImages.Clear;
+  fImages.AddImages(Images);
+  inherited SetImages(fImages);
 end;
 
 { TWBPopupMenuWrapper }
@@ -389,3 +384,4 @@ begin
 end;
 
 end.
+
