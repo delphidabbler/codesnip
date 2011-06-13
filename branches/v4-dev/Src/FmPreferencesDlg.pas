@@ -47,77 +47,91 @@ uses
 
 
 type
-
-  {
-  TPreferencesDlg:
-    Dialog box that sets user preferences.
-  }
+  ///  <summary>
+  ///  Dialog box that sets user preferences.
+  ///  </summary>
+  ///  <remarks>
+  ///  This dialog box displays tabs for preferences frames registered with the
+  ///  dialog box.
+  ///  </remarks>
   TPreferencesDlg = class(TGenericOKDlg, INoPublicConstruct)
     pcMain: TPageControl;
+    ///  <summary>OK button click event handler. Writes preference data to
+    ///  persistent storage.</summary>
     procedure btnOKClick(Sender: TObject);
+    ///  <param>Called when current tab sheet has changed. Gets newly selected
+    ///  page to re-initialise its controls from local preferences.</param>
+    ///  <remarks>This enables any pages that depend on preferences that may
+    ///  have been changed in other pages to update appropriately.</remarks>
     procedure pcMainChange(Sender: TObject);
+    ///  <summary>Called just before active tab sheet is changed. Causes page
+    ///  about to be deselected to update local preferences with any changes.
+    ///  </summary>
+    ///  <remarks>We do this in case another page needs to update due to changes
+    ///  made on current page.</remarks>
     procedure pcMainChanging(Sender: TObject; var AllowChange: Boolean);
   strict private
     class var
-      fPages: TList<TPrefsFrameClass>;  // List of registered page frames
+      ///  <summary>List of registered page frames</summary>
+      fPages: TList<TPrefsFrameClass>;
     var
-      fLocalPrefs: IPreferences;        // Local copy of preferences.
+      ///  <summary>Local copy of preferences.</summary>
+      fLocalPrefs: IPreferences;
+    ///  <summary>Creates the required frames and displays each in a tab sheet
+    ///  within the page control.</summary>
+    ///  <param name="FrameClasses">array of TPrefsFrameClass [in] Class
+    ///  references for each required frame.</param>
     procedure CreatePages(const FrameClasses: array of TPrefsFrameClass);
-      {Creates the required frames and displays each frame in a tab sheet within
-      the page control.
-        @param Frames [in] Class references for each required frame.
-      }
+    ///  <summary>Gets reference to preferences page frame associated with given
+    ///  tab sheet.</summary>
     function MapTabSheetToPage(const TabSheet: TTabSheet): TPrefsBaseFrame;
       overload;
-      {Gets reference to preferences page frame associated with a tab sheet.
-        @param TabSheet [in] Tab sheet for which page frame required.
-        @return Reference to associated frame.
-      }
+    ///  <summary>Gets reference to preferences page frame associated with given
+    ///  tab index.</summary>
     function MapTabSheetToPage(const TabIdx: Integer): TPrefsBaseFrame;
       overload;
-      {Gets reference to preferences page frame associated with a tab index.
-        @param TabIdx [in] Index of tab sheet for which page frame required.
-        @return Reference to associated frame.
-      }
+    ///  <summary>Gets reference to preferences frame on currently selected tab.
+    ///  </summary>
     function GetSelectedPage: TPrefsBaseFrame;
-      {Gets refence to preferences frame on currently selected tab.
-        @return Reference to required frame.
-      }
   strict protected
+    ///  <summary>Gets the help A-link keyword to be used when help button
+    ///  clicked.</summary>
+    ///  <remarks>Keyword depends on which preferences page is displayed to
+    ///  permit each preferences page to have its own help topic.</remarks>
     function CustomHelpKeyword: string; override;
-      {Gets the help A-link keyword to be used when help button clicked. Keyword
-      depends on which preferences page is displayed. This permits each
-      preferences page to have its own help topic.
-        @return Required frame-specific A-link keyword.
-      }
+    ///  <summary>Sizes frames providing content of pages of dialog and gets
+    ///  each to arrange its controls.</summary>
     procedure ArrangeForm; override;
-      {Sizes frames providing content of pages of dialog and gets each to
-      arrange its controls.
-      }
+    ///  <summary>Displays and initialises frames used to display pages of
+    ///  dialog.</summary>
     procedure InitForm; override;
-      {Displays and initialises frames used to display pages of dialog.
-      }
   public
+    ///  <summary>Creates empty registered page frame list object.</summary>
     class constructor Create;
+    ///  <summary>Frees registered page frame list object.</summary>
     class destructor Destroy;
+    ///  <summary>Displays dialog with pages for each specified preferences
+    ///  frame.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns dialog.
+    ///  </param>
+    ///  <param name="Pages">array of TPrefsFrameClass [in] Class references of
+    ///  frames to be displayed.</param>
+    ///  <returns>True if user clicks OK to accept changes or False if user
+    ///  cancels and no changes made.</returns>
     class function Execute(AOwner: TComponent;
       const Pages: array of TPrefsFrameClass): Boolean; overload;
-      {Displays dialog with pages for each specified preferences frame.
-        @param AOwner [in] Component that owns dialog.
-        @param Pages [in] Class references of frames to be displayed.
-        @return True if user accepts changes or false if cancels.
-      }
+    ///  <summary>Displays preferences dialog displaying all registered
+    ///  preference frames.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns dialog.
+    ///  </param>
+    ///  <returns>True if user clicks OK to accept changes or False if user
+    ///  cancels and no changes made.</returns>
     class function Execute(AOwner: TComponent): Boolean; overload;
-      {Displays preferences dialog with all pages for all registered preference
-      frames.
-        @param AOwner [in] Component that owns dialog.
-      }
+    ///  <summary>Registers given preferences frame class for inclusion in the
+    ///  preferences dialog box.</summary>
+    ///  <remarks>Registered frames are created when the dialog box is displayed
+    ///  and freed when it closes.</remarks>
     class procedure RegisterPage(const FrameCls: TPrefsFrameClass);
-      {Registers a preferences frame class for inclusion in the preferences
-      dialog box. Registered frames are created when the dialog box is displayed
-      and freed when it closes.
-        @param FrameCls [in] Class of frame to be registered.
-      }
   end;
 
 
@@ -129,9 +143,9 @@ implementation
   ------------
 
   This dialog box is a multi-page preferences dialog that provides access to
-  each page via a tab. The dialog box does not provide an implementation of
-  each page of the dialog. This representation must be provided by a frames
-  descended from TPrefsBaseFrame. Such frames must:
+  each page via a tab. The dialog box does not provide an implementation of each
+  page of the dialog. This representation must be provided by a frame descended
+  from TPrefsBaseFrame. Such frames must:
     (a) register themselves with the dialog box by passing their class to the
         TPreferencesDlg.RegisterPage class method.
     (b) implement all the abstract methods of TPrefsBaseFrame.
@@ -153,9 +167,6 @@ uses
 { TPreferencesDlg }
 
 procedure TPreferencesDlg.ArrangeForm;
-  {Sizes frames providing content of pages of dialog and gets each to arrange
-  its controls.
-  }
 var
   Idx: Integer;           // loops through all displayed tab sheets
   Frame: TPrefsBaseFrame; // references each preference frame
@@ -173,9 +184,6 @@ begin
 end;
 
 procedure TPreferencesDlg.btnOKClick(Sender: TObject);
-  {OK button click event handler. Writes preference data to persistent storage.
-    @param Sender [in] Not used.
-  }
 var
   TabIdx: Integer; // loops through all tab sheets on page
 begin
@@ -194,10 +202,6 @@ end;
 
 procedure TPreferencesDlg.CreatePages(
   const FrameClasses: array of TPrefsFrameClass);
-  {Creates the required frames and displays each frame in a tab sheet within the
-  page control.
-    @param Frames [in] Class references for each required frame.
-  }
 var
   Idx: Integer;           // loops through FrameClasses array
   TS: TTabSheet;          // references each tabsheet as it is created
@@ -219,11 +223,6 @@ begin
 end;
 
 function TPreferencesDlg.CustomHelpKeyword: string;
-  {Gets the help A-link keyword to be used when help button clicked. Keyword
-  depends on which preferences page is displayed. This permits each preferences
-  page to have its own help topic.
-    @return Required frame-specific A-link keyword.
-  }
 begin
   // We expect keyword to be stored in frame's HelpKeyword property
   Result := GetSelectedPage.HelpKeyword;
@@ -236,11 +235,6 @@ end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;
   const Pages: array of TPrefsFrameClass): Boolean;
-  {Displays dialog with pages for each specified preferences frame.
-    @param AOwner [in] Component that owns dialog.
-    @param Pages [in] Class references of frames to be displayed.
-    @return True if user accepts changes or false if cancels.
-  }
 begin
   with InternalCreate(AOwner) do
     try
@@ -252,10 +246,6 @@ begin
 end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent): Boolean;
-  {Displays preferences dialog with all pages for all registered preference
-  frames.
-    @param AOwner [in] Component that owns dialog.
-  }
 var
   FrameClasses: array of TPrefsFrameClass;  // array of preference frame classes
   Idx: Integer;                             // loops through registered frames
@@ -269,16 +259,11 @@ begin
 end;
 
 function TPreferencesDlg.GetSelectedPage: TPrefsBaseFrame;
-  {Gets refence to preferences frame on currently selected tab.
-    @return Reference to required frame.
-  }
 begin
   Result := MapTabSheetToPage(pcMain.ActivePage);
 end;
 
 procedure TPreferencesDlg.InitForm;
-  {Displays and initialises frames used to display pages of dialog.
-  }
 var
   TabIdx: Integer;  // loops thru tabs in page control
 begin
@@ -296,20 +281,12 @@ end;
 
 function TPreferencesDlg.MapTabSheetToPage(
   const TabIdx: Integer): TPrefsBaseFrame;
-  {Gets reference to preferences page frame associated with a tab index.
-    @param TabIdx [in] Index of tab sheet for which page frame required.
-    @return Reference to associated frame.
-  }
 begin
   Result := MapTabSheetToPage(pcMain.Pages[TabIdx]);
 end;
 
 function TPreferencesDlg.MapTabSheetToPage(
   const TabSheet: TTabSheet): TPrefsBaseFrame;
-  {Gets reference to preferences page frame associated with a tab sheet.
-    @param TabSheet [in] Tab sheet for which page frame required.
-    @return Reference to associated frame.
-  }
 var
   CtrlIdx: Integer; // loops through all child controls of tab sheet
 begin
@@ -327,33 +304,17 @@ begin
 end;
 
 procedure TPreferencesDlg.pcMainChange(Sender: TObject);
-  {Called when current tab sheet has changed. Gets newly selected page to re-
-  initialise its controls from local preferences. This enables any pages that
-  depend on preferences that may have been changed in other pages to update
-  appropriately.
-    @param Sender [in] Not used.
-  }
 begin
   GetSelectedPage.Activate(fLocalPrefs);
 end;
 
 procedure TPreferencesDlg.pcMainChanging(Sender: TObject;
   var AllowChange: Boolean);
-  {Called just before active tab sheet is changed. Causes page about to be
-  deselected to update local preferences with any changes. We do this in case
-  another page needs to update due to changes made on current page.
-    @param Sender [in] Not used.
-  }
 begin
   GetSelectedPage.Deactivate(fLocalPrefs);
 end;
 
 class procedure TPreferencesDlg.RegisterPage(const FrameCls: TPrefsFrameClass);
-  {Registers a preferences frame class for inclusion in the preferences dialog
-  box. Registered frames are created when the dialog box is displayed and freed
-  when it closes.
-    @param FrameCls [in] Class of frame to be registered.
-  }
 var
   PageIdx: Integer; // loops through all registered frames
   InsIdx: Integer;  // place to insert new frame in list (per Index property)
