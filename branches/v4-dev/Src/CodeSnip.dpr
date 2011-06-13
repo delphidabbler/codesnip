@@ -236,7 +236,6 @@ uses
   UFolderBackup in 'UFolderBackup.pas',
   UFontHelper in 'UFontHelper.pas',
   UFormAligner in 'UFormAligner.pas',
-  UGC in 'UGC.pas',
   UGIFImageList in 'UGIFImageList.pas',
   UGraphicUtils in 'UGraphicUtils.pas',
   UGroups in 'UGroups.pas',
