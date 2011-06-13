@@ -46,80 +46,67 @@ uses
 
 
 type
-  {
-  TContributors:
-    Abstract base class for classes that load and encapsulate a list of database
-    contributors.
-  }
+  ///  <summary>
+  ///  Abstract base class for classes that load and encapsulate a list of
+  ///  database contributors.
+  ///  </summary>
   TContributors = class abstract(TObject)
   strict private
     var
-      fContributors: TStringList;   // Stores list of contributors
-      fIsError: Boolean;            // Value of IsError property
+      ///  <summary>Stores list of contributors.</summary>
+      fContributors: TStringList;
+      ///  <summary>Value of IsError property.</summary>
+      fIsError: Boolean;
+    ///  <summary>Getter for Count property.</summary>
     function GetCount: Integer;
-      {Read accessor for Count property.
-        @return Number of contributors.
-      }
+    ///  <summary>Getter for indexed Items[] property.</summary>
     function GetItem(const Idx: Integer): string;
-      {Read accessor for Items property.
-        @param Idx [in] Index of requested contributor in Items[].
-        @return Details of requested contributor.
-      }
   strict protected
+    ///  <summary>Gets base name of file containing details of contributors.
+    ///  </summary>
     function GetFileName: string; virtual; abstract;
-      {Gets base name of file containing details of contributors.
-        @return Required file base name.
-      }
   public
+    ///  <summary>Sets up object and loads contributor information.</summary>
     constructor Create; virtual;
-      {Class constructor. Sets up object and loads contributor information.
-      }
+    ///  <summary>Tears down object.</summary>
     destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
+    ///  <summary>Creates and returns object enumerator.</summary>
     function GetEnumerator: TStringsEnumerator;
-      {Creates an enumerator for this object.
-        @return Reference to new enumerator. Caller is repsonsible for freeing
-          this object.
-      }
+    ///  <summary>Indexed list of contributors.</summary>
     property Items[const Idx: Integer]: string read GetItem; default;
-      {List of contributors}
+    ///  <summary>Number of contributors.</summary>
     property Count: Integer read GetCount;
-      {Number of contributors}
+    ///  <summary>Flag indicating if there has been an error loading
+    ///  contributors file.</summary>
     property IsError: Boolean read fIsError;
-      {Flag set true when contributors could not be loaded}
   end;
 
-  {
-  TCodeContributors:
-    Encapsulates a list of people who have contributed code to the CodeSnip
-    database.
-  }
+type
+  ///  <summary>
+  ///  Encapsulates a list of people who have contributed code to the CodeSnip
+  ///  database.
+  ///  </summary>
   TCodeContributors = class sealed(TContributors)
   strict protected
+    ///  <summary>Gets base name of file containing details of code
+    ///  contributors.</summary>
     function GetFileName: string; override;
-      {Gets base name of file containing details of code contributors.
-        @return Required file base name.
-      }
   end;
 
-  {
-  TTesters:
-    Encapsulates a list of people who have tested code in the CodeSnip
-    database.
-  }
+type
+  ///  <summary>
+  ///  Encapsulates a list of people who have tested code in the CodeSnip
+  ///  database.
+  ///  </summary>
   TTesters = class sealed(TContributors)
   strict protected
+    ///  <summary>Gets base name of file containing details of testers.
+    ///  </summary>
     function GetFileName: string; override;
-      {Gets base name of file containing details of testers.
-        @return Required file base name.
-      }
   end;
 
-  {
-  TContributorsClass:
-    Class reference for contributors classes
-  }
+type
+  ///  <summary>Class reference for contributors classes.</summary>
   TContributorsClass = class of TContributors;
 
 
@@ -136,8 +123,6 @@ uses
 { TContributors }
 
 constructor TContributors.Create;
-  {Class constructor. Sets up object and loads contributor information.
-  }
 var
   ContribFile: string;  // name of file containing contributor information
 begin
@@ -159,35 +144,22 @@ begin
 end;
 
 destructor TContributors.Destroy;
-  {Class destructor. Tears down object.
-  }
 begin
   fContributors.Free;
   inherited;
 end;
 
 function TContributors.GetCount: Integer;
-  {Read accessor for Count property.
-    @return Number of contributors.
-  }
 begin
   Result := fContributors.Count;
 end;
 
 function TContributors.GetEnumerator: TStringsEnumerator;
-  {Creates an enumerator for this object.
-    @return Reference to new enumerator. Caller is repsonsible for freeing this
-      object.
-  }
 begin
   Result := fContributors.GetEnumerator;
 end;
 
 function TContributors.GetItem(const Idx: Integer): string;
-  {Read accessor for Items property.
-    @param Idx [in] Index of requested contributor in Items[].
-    @return Details of requested contributor.
-  }
 begin
   Result := fContributors[Idx];
 end;
@@ -195,9 +167,6 @@ end;
 { TCodeContributors }
 
 function TCodeContributors.GetFileName: string;
-  {Gets base name of file containing details of code contributors.
-    @return Required file base name.
-  }
 begin
   Result := 'contrib.txt'
 end;
@@ -205,9 +174,6 @@ end;
 { TTesters }
 
 function TTesters.GetFileName: string;
-  {Gets base name of file containing details of testers.
-    @return Required file base name.
-  }
 begin
   Result := 'testers.txt';
 end;
