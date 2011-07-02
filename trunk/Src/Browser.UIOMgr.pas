@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -111,12 +111,6 @@ type
     procedure SetBodyHTML(const HTML: string);
       {Sets inner HTML of browser's current document <body>.
         @param HTML [in] Required inner HTML for <body> tag.
-      }
-    procedure LoadFromStream(const Stream: TStream);
-      {Loads and displays valid HTML document from the current location in a
-      stream.
-        @param Stream [in] Stream containing the HTML document.
-        @except EBug raised if document is not valid.
       }
     procedure EmptyDocument;
       {Creates an empty document. This method guarantees that the browser
@@ -265,31 +259,34 @@ begin
   end;
 end;
 
-procedure TWBIOMgr.LoadFromStream(const Stream: TStream);
-  {Loads and displays valid HTML document from the current location in a stream.
-    @param Stream [in] Stream containing the HTML document.
-    @except EBug raised if document is not valid.
-  }
-begin
-  // We must read into an existing document: so we first load an empty document
-  // then load document from stream into it.
-  EmptyDocument;
-  InternalLoadDocumentFromStream(Stream);
-end;
-
 procedure TWBIOMgr.LoadFromString(const HTML: string);
   {Loads and displays valid HTML source from a string.
     @param HTML [in] String containing the HTML source.
     @except EBug raised if document is not valid.
   }
 var
-  StringStream: TStringStream;  // stream onto string
+  Stm: TMemoryStream; // stream that receives HTML to be loaded
+
+  // ---------------------------------------------------------------------------
+  // Writes bytes from byte array B to Stm
+  procedure WriteBytes(const B: TBytes);
+  begin
+    if Length(B) > 0 then
+      Stm.WriteBuffer(Pointer(B)^, Length(B));
+  end;
+  // ---------------------------------------------------------------------------
+
 begin
-  StringStream := TStringStream.Create(HTML);
+  Stm := TMemoryStream.Create;
   try
-    LoadFromStream(StringStream);
+    // Write HTML in Unicode Little Endian format with BOM
+    WriteBytes(TEncoding.Unicode.GetPreamble);
+    WriteBytes(TEncoding.Unicode.GetBytes(HTML));
+    Stm.Position := 0;
+    EmptyDocument;
+    InternalLoadDocumentFromStream(Stm);
   finally
-    StringStream.Free;
+    Stm.Free;
   end;
 end;
 
