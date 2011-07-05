@@ -4,7 +4,11 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
-Release v3.8.10 of 19 May 2011
+Release v3.8.11 of 02 July 2011
++ Fixed display problem in about box and compiler error dialog boxes on systems using Internet Explorer v9 web browser control. This fixes issue #3349186 (http://bit.ly/lF6bTO).
++ Updated read-me file re support for IE9 browser control.
+
+Release v3.8.10 of 20 May 2011
 + Reverted checked tree views and list boxes to standard Windows behaviour. Clicking item text no longer toggles associated check boxes. This behaviour was more problematic then helpful.
 + Updated documentation, including new info about CodeSnip FAQ.
 + Added FAQs topic and TOC entry to help file that links to online FAQ.
