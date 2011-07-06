@@ -133,8 +133,8 @@ type
         @param Index [in] Index of type information to return. Pass 0 to
           retrieve type information for the IDispatch implementation.
         @param LocaleID [in] The locale ID for the type information.
-        @param TypeInfo [out] Set to interface of type information requested. We
-          set to nil.
+        @param TypeInfo [out] Set to ITypeInfo interface of type information
+          requested. We set to nil.
         @return Success or failure code. We return E_NOTIMPL.
       }
     function GetTypeInfoCount(out Count: Integer): HResult; stdcall;
@@ -204,12 +204,12 @@ function TSimpleDispatch.GetTypeInfo(Index, LocaleID: Integer;
     @param Index [in] Index of type information to return. Pass 0 to retrieve
       type information for the IDispatch implementation.
     @param LocaleID [in] The locale ID for the type information.
-    @param TypeInfo [out] Set to interface of type information requested. We set
-      to nil.
+    @param TypeInfo [out] Set to ITypeInfo interface of type information
+      requested. We set to nil.
     @return Success or failure code. We return E_NOTIMPL.
   }
 begin
-  ITypeInfo(TypeInfo) := nil;
+  Pointer(TypeInfo) := nil;
   Result := E_NOTIMPL;
 end;
 
