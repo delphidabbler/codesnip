@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -248,18 +248,21 @@ const
   cWdwEventOnAfterPrint = 1025;
 
 type
-
-  {
-  THTMLWdwErrorEvent:
-    Type of the OnError event.
-      @param Sender [in] Reference to object that triggered the event.
-      @param Desc [in] Description of error.
-      @param URL [in] URL of document triggering error.
-      @param Line [in] Line number where error occurred.
-  }
+  ///  <summary>Type of the OnError event.</summary>
+  ///  <param name="Sender">TObject [in] Reference to object that triggered
+  ///  event.</param>
+  ///  <param name="Desc">string [in] Description of error.</param>
+  ///  <param name="URL">string [in] URL of document triggering error.</param>
+  ///  <param name="Line">Integer [in] Line number where error occurred.</param>
+  ///  <param name="Handled">Boolean [in/out] Indicates if error has been
+  ///  handled. Always passed in as False. Set to True if error handled and
+  ///  further processing is to be inhibited.</param>
+  ///  <remarks>In the case of script errors, setting Handled to True inhibits
+  ///  the browser control's script error dialog box.</remarks>
   THTMLWdwErrorEvent = procedure(Sender: TObject; const Desc, URL: string;
-    const Line: Integer) of object;
+    const Line: Integer; var Handled: Boolean) of object;
 
+type
   {
   THTMLDocEventSink:
     Event sink for HTML document events. Sinks HTMLDocumentEvents2 events.
@@ -284,6 +287,7 @@ type
     property OnError: THTMLWdwErrorEvent read fOnError write fOnError;
       {Event triggered when browser's onerror event is invoked}
   end;
+
 
 implementation
 
@@ -421,7 +425,7 @@ begin
     raise EBug.Create(ClassName + ' does not support properties');
   // We don't handle named parameters
   if InvokeInfo.Params.cNamedArgs > 0 then
-    raise EBug.Create(ClassName + ' does not support named methods');
+    raise EBug.Create(ClassName + ' does not support named parameters');
   DispatchEvent(InvokeInfo);
 end;
 
@@ -543,6 +547,7 @@ procedure THTMLWdwEventSink.DispatchEvent(var InvokeInfo: TInvokeInfo);
     Description: WideString;  // description of error
     URL: WideString;          // URL of document that encountered error
     Line: Integer;            // line number of error in document
+    Handled: Boolean;         // flag indicating if error handled
     V: OleVariant;            // value of each validated parameter
   begin
     // NOTE: parameters are stored in reverse order in InvokeInfo.Params.rgvarg.
@@ -564,9 +569,11 @@ procedure THTMLWdwEventSink.DispatchEvent(var InvokeInfo: TInvokeInfo);
     if not GetValidParam(InvokeInfo, 0, varInteger, V) then
       Exit;
     Line := V;
-    // Everything's OK: trigger any assigned event
+    // Everything's OK: trigger any assigned event and return Handled value
+    Handled := False;
     if Assigned(fOnError) then
-      fOnError(Self, Description, URL, Line);
+      fOnError(Self, Description, URL, Line, Handled);
+    InvokeInfo.FnResult := Handled;
   end;
   // ---------------------------------------------------------------------------
 
