@@ -189,33 +189,33 @@ const
   cCloseRes = mrCancel; // modal result of choice dialog's close button
   cViewLinkRes = $FF;   // modal result of choice dialog's view button
 begin
-  case EventInfo.DispatchId of
-    cDocEventOnClick:
+  if EventInfo.IsEvent(
+    THTMLDocEventSink.IID, THTMLDocEventSink.DISPID_OnClick
+  ) then
+  begin
+    // Mouse click: check for click on a link and handle it
+    ALink := TAnchors.FindEnclosingAnchor(EventInfo.Args.srcElement);
+    if not Assigned(ALink) then
+      Exit;
+    // Cancel event: no further action needed
+    EventInfo.Cancelled := True;
+    // Give user info about link and option to display it
+    if TMessageBox.Custom(
+      Self,
+      Format(sDlgText, [TAnchors.GetURL(ALink)]),
+      [
+        TMessageBoxButton.Create(sClose, cCloseRes, True, True),
+        TMessageBoxButton.Create(sViewLink, cViewLinkRes)
+      ]
+    ) = cViewLinkRes then
     begin
-      // Mouse click: check for click on a link and handle it
-      ALink := TAnchors.FindEnclosingAnchor(EventInfo.Args.srcElement);
-      if not Assigned(ALink) then
-        Exit;
-      // Cancel event: no further action needed
-      EventInfo.Cancelled := True;
-      // Give user info about link and option to display it
-      if TMessageBox.Custom(
-        Self,
-        Format(sDlgText, [TAnchors.GetURL(ALink)]),
-        [
-          TMessageBoxButton.Create(sClose, cCloseRes, True, True),
-          TMessageBoxButton.Create(sViewLink, cViewLinkRes)
-        ]
-      ) = cViewLinkRes then
-      begin
-        // User wants to view link: use protocol handler to display it
-        with TProtocolFactory.CreateHandler(TAnchors.GetURL(ALink)) do
-          try
-            Execute;
-          finally
-            Free;
-          end;
-      end;
+      // User wants to view link: use protocol handler to display it
+      with TProtocolFactory.CreateHandler(TAnchors.GetURL(ALink)) do
+        try
+          Execute;
+        finally
+          Free;
+        end;
     end;
   end;
 end;

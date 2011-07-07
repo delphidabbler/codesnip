@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -128,8 +128,8 @@ procedure TEasterEggForm.BrowserEventHandler(Sender: TObject;
 const
   cCancelImgId = 'cancel-btn';  // id of cancel "button" image
 begin
-  if (EventInfo.DispatchId = cDocEventOnClick) and
-    (EventInfo.Args.srcElement.id = cCancelImgId) then
+  if EventInfo.IsEvent(THTMLDocEventSink.IID, THTMLDocEventSink.DISPID_OnClick)
+    and EventInfo.ElemHasId(cCancelImgId) then
   begin
     // Click on cancel image detected. Prevent event from bubbling up and close
     // dialog

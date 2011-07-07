@@ -381,17 +381,19 @@ const
 begin
   // Check for onclick event on icon tag: display easter egg if ctrl key
   // pressed. Such an event is cancelled.
-  if (EventInfo.DispatchId = cDocEventOnClick) and
-    EventInfo.Args.ctrlKey and
-    StrSameText(EventInfo.Args.srcElement.id, cIconImgId) then
+  if EventInfo.IsEvent(THTMLDocEventSink.IID, THTMLDocEventSink.DISPID_OnClick)
+    and EventInfo.Args.ctrlKey
+    and EventInfo.ElemHasId(cIconImgId) then
   begin
     EventInfo.Cancelled := True;
     TEasterEggForm.Execute(Self);
   end;
   // Check for mouse move over icon tag: change cursor to hand if ctrl key
   // pressed to indicate clickable. Event permitted to bubble up.
-  if (EventInfo.DispatchId = cDocEventOnMouseMove) and
-    StrSameText(EventInfo.Args.srcElement.id, cIconImgId) then
+  if EventInfo.IsEvent(
+      THTMLDocEventSink.IID, THTMLDocEventSink.DISPID_OnMouseMove
+    )
+    and EventInfo.ElemHasId(cIconImgId) then
   begin
     if EventInfo.Args.ctrlKey then
       EventInfo.Args.srcElement.style.cursor := 'hand'

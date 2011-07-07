@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -334,7 +334,10 @@ begin
       fOnHTMLEvent(Sender, EventInfo);
     // We only handle onclick events if they've not already been handled and
     // cancelled
-    if (EventInfo.DispatchId <> cDocEventOnClick) or (EventInfo.Cancelled) then
+    if EventInfo.Cancelled
+      or not EventInfo.IsEvent(
+        THTMLDocEventSink.IID, THTMLDocEventSink.DISPID_OnClick
+      ) then
       Exit;
     // We only handle clicks on <a> tags or tags within <a> tags (eg <img>)
     ALink := TAnchors.FindEnclosingAnchor(EventInfo.Args.srcElement);
