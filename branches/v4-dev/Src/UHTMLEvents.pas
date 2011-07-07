@@ -60,6 +60,8 @@ type
       fCancelled: Boolean;
       ///  <summary>Value of Args property.</summary>
       fArgs: IHTMLEventObj;
+      ///  <summary>Value of Sink property.</summary<
+      fSink: TGUID;
       ///  <summary>Value of DispatchId property.</summary>
       fDispatchId: Integer;
       ///  <summary>Setter for Cancelled property.</summary>
@@ -70,13 +72,31 @@ type
   public
     ///  <summary>Creates event object instance with specified property values.
     ///  </summary>
+    ///  <param name="Sink">TGUID [in] GUID of event source object.</param>
     ///  <param name="DispatchId">Integer [in] Dispatch ID of the event.</param>
     ///  <param name="Args">IHTMLEventObj [in] Information about the event
     ///  provided by browser control.</param>
     ///  <param name="CanCancel">Boolean [in] Flag indicating whether or not
     ///  event can be cancelled.</param>
-    constructor Create(const DispatchID: Integer;
+    constructor Create(const Sink: TGUID; const DispatchID: Integer;
       const Args: IHTMLEventObj; const CanCancel: Boolean);
+    ///  <summary>Checks if the event has a given dispid and belongs to a given
+    ///  events interface.</summary>
+    ///  <param name="ASink">TGUID [in] GUID of events interface to which event
+    ///  must belong.</param>
+    ///  <param name="ADispatchID">Integer [in] Dispid of required event.
+    ///  </param>
+    ///  <returns>Boolean. True if event's Sink and DispatchId properties match
+    ///  the parameters, False if not.</returns>
+    function IsEvent(const ASink: TGUID; const ADispatchId: Integer): Boolean;
+    ///  <summary>Checks if the element triggering the event has a specified id.
+    ///  </summary>
+    ///  <param name="ID">string [in] Required element ID.</param>
+    ///  <returns>Boolean. True if triggering element has ID, False otherwise.
+    ///  </returns>
+    function ElemHasId(const ID: string): Boolean;
+    ///  <summary>GUID of sink that triggered event.</summary>
+    property Sink: TGUID read fSink;
     ///  <summary>Dispatch ID of event.</summary>
     property DispatchId: Integer read fDispatchId;
     ///  <summary>Name of event.</summary>
@@ -117,7 +137,7 @@ type
   ///  IHTMLEventObj parameter that provides information about the event. The
   ///  events may or may not be able to be cancelled.
   ///  </remarks>
-  TAbstractHTMLEventSink = class(TSimpleDispatch,
+  TAbstractHTMLEventSink = class abstract(TSimpleDispatch,
     IUnknown, IDispatch
   )
   strict private
@@ -183,6 +203,8 @@ type
     ///  <param name="SinkIID">TGUID [in] Interface to events to be sunk by this
     ///  object.</param>
     constructor Create(const SinkIID: TGUID);
+    ///  <summary>Returns GUID of supported event sink object.</summary>
+    class function IID: TGUID; virtual; abstract;
     ///  <summary>Disconnects sink from event source and tears down object.
     ///  </summary>
     destructor Destroy; override;
@@ -198,38 +220,6 @@ type
     property OnEvent: THTMLEvent read fOnEvent write fOnEvent;
   end;
 
-const
-  // Event dispids from HTMLDocumentEvents2 dispinterface
-  cDocEventOnHelp               = -2147418102;
-  cDocEventOnClick              = -600;
-  cDocEventOnDblClick           = -601;
-  cDocEventOnKeyDown            = -602;
-  cDocEventOnKeyUp              = -604;
-  cDocEventOnKeyPress           = -603;
-  cDocEventOnMouseDown          = -605;
-  cDocEventOnMouseMove          = -606;
-  cDocEventOnMouseUp            = -607;
-  cDocEventOnMouseOut           = -2147418103;
-  cDocEventOnMouseOver          = -2147418104;
-  cDocEventOnReadyStateChange   = -609;
-  cDocEventOnBeforeUpdate       = -2147418108;
-  cDocEventOnAfterUpdate        = -2147418107;
-  cDocEventOnRowExit            = -2147418106;
-  cDocEventOnRowEnter           = -2147418105;
-  cDocEventOnDragStart          = -2147418101;
-  cDocEventOnSelectStart        = -2147418100;
-  cDocEventOnErrorUpdate        = -2147418099;
-  cDocEventOnContextMenu        = 1023;
-  cDocEventOnStop               = 1026;
-  cDocEventOnRowsDelete         = -2147418080;
-  cDocEventOnRowsInserted       = -2147418079;
-  cDocEventOnCellChange         = -2147418078;
-  cDocEventOnPropertyChange     = -2147418093;
-  cDocEventOnDatasetChanged     = -2147418098;
-  cDocEventOnDataAvailable      = -2147418097;
-  cDocEventOnDatasetComplete    = -2147418096;
-  cDocEventOnBeforeEditFocus    = 1027;
-
 type
   ///  <summary>
   ///  Event sink for HTMLDocumentEvents2 events.
@@ -238,7 +228,7 @@ type
   ///  Events are all "standard" HTML events notified via the inherited OnEvent
   ///  event.
   ///  </remarks>
-  THTMLDocEventSink = class(TAbstractHTMLEventSink,
+  THTMLDocEventSink = class sealed(TAbstractHTMLEventSink,
     IUnknown, IDispatch
   )
   strict protected
@@ -248,23 +238,44 @@ type
     ///  are updated to notify result of event invocation.</param>
     procedure DispatchEvent(var InvokeInfo: TInvokeInfo); override;
   public
+    const
+      // Event dispids from HTMLDocumentEvents2 dispinterface
+      DISPID_OnHelp               = -2147418102;
+      DISPID_OnClick              = -600;
+      DISPID_OnDblClick           = -601;
+      DISPID_OnKeyDown            = -602;
+      DISPID_OnKeyUp              = -604;
+      DISPID_OnKeyPress           = -603;
+      DISPID_OnMouseDown          = -605;
+      DISPID_OnMouseMove          = -606;
+      DISPID_OnMouseUp            = -607;
+      DISPID_OnMouseOut           = -2147418103;
+      DISPID_OnMouseOver          = -2147418104;
+      DISPID_OnReadyStateChange   = -609;
+      DISPID_OnBeforeUpdate       = -2147418108;
+      DISPID_OnAfterUpdate        = -2147418107;
+      DISPID_OnRowExit            = -2147418106;
+      DISPID_OnRowEnter           = -2147418105;
+      DISPID_OnDragStart          = -2147418101;
+      DISPID_OnSelectStart        = -2147418100;
+      DISPID_OnErrorUpdate        = -2147418099;
+      DISPID_OnContextMenu        = 1023;
+      DISPID_OnStop               = 1026;
+      DISPID_OnRowsDelete         = -2147418080;
+      DISPID_OnRowsInserted       = -2147418079;
+      DISPID_OnCellChange         = -2147418078;
+      DISPID_OnPropertyChange     = -2147418093;
+      DISPID_OnDatasetChanged     = -2147418098;
+      DISPID_OnDataAvailable      = -2147418097;
+      DISPID_OnDatasetComplete    = -2147418096;
+      DISPID_OnBeforeEditFocus    = 1027;
+  public
     ///  <summary>Creates HTMLDocumentEvents2 event sink object.</summary>
     constructor Create;
+    ///  <summary>Returns GUID of supported HTMLDocumentEvents2 event sink
+    ///  object.</summary>
+    class function IID: TGUID; override;
   end;
-
-const
-  // Event dispids from HTMLDocumentEvents2 dispinterface
-  cWdwEventOnLoad = 1003;
-  cWdwEventOnUnload = 1008;
-  cWdwEventOnHelp = -2147418102;
-  cWdwEventOnFocus = -2147418111;
-  cWdwEventOnBlur = -2147418112;
-  cWdwEventOnError = 1002;
-  cWdwEventOnResize = 1016;
-  cWdwEventOnScroll = 1014;
-  cWdwEventOnBeforeUnload = 1017;
-  cWdwEventOnBeforePrint = 1024;
-  cWdwEventOnAfterPrint = 1025;
 
 type
   ///  <summary>Type of the OnError event of THTMLWdwEventSink.</summary>
@@ -289,7 +300,7 @@ type
   ///  Events are either "standard" HTML events notified via the inherited
   ///  OnEvent event or error events notified by the OnError event.
   ///  </remarks>
-  THTMLWdwEventSink = class(TAbstractHTMLEventSink,
+  THTMLWdwEventSink = class sealed(TAbstractHTMLEventSink,
     IUnknown, IDispatch
   )
   strict private
@@ -303,8 +314,25 @@ type
     ///  are updated to notify result of event invocation.</param>
     procedure DispatchEvent(var InvokeInfo: TInvokeInfo); override;
   public
+    const
+      // Event dispids from HTMLDocumentEvents2 dispinterface
+      DISPID_OnLoad         = 1003;
+      DISPID_OnUnload       = 1008;
+      DISPID_OnHelp         = -2147418102;
+      DISPID_OnFocus        = -2147418111;
+      DISPID_OnBlur         = -2147418112;
+      DISPID_OnError        = 1002;
+      DISPID_OnResize       = 1016;
+      DISPID_OnScroll       = 1014;
+      DISPID_OnBeforeUnload = 1017;
+      DISPID_OnBeforePrint  = 1024;
+      DISPID_OnAfterPrint   = 1025;
+  public
     ///  <summary>Creates HTMLWindowEvents2 event sink object.</summary>
     constructor Create;
+    ///  <summary>Returns GUID of supported HTMLWindowEvents2 event sink
+    ///  object.</summary>
+    class function IID: TGUID; override;
     ///  <summary>Event triggered when HTMLWindowEvents2.onerror event is
     ///  invoked.</summary>
     property OnError: THTMLWdwErrorEvent read fOnError write fOnError;
@@ -318,24 +346,36 @@ uses
   // Delphi
   SysUtils, Variants, Windows, ComObj,
   // Project
-  UExceptions;
+  UExceptions, UStrUtils;
 
 
 { THTMLEventInfo }
 
-constructor THTMLEventInfo.Create(const DispatchID: Integer;
+constructor THTMLEventInfo.Create(const Sink: TGUID; const DispatchID: Integer;
   const Args: IHTMLEventObj; const CanCancel: Boolean);
 begin
   inherited Create;
+  fSink := Sink;
   fDispatchId := DispatchID;
   fArgs := Args;
   fCanCancel := CanCancel;
   fCancelled := False;
 end;
 
+function THTMLEventInfo.ElemHasId(const ID: string): Boolean;
+begin
+  Result := StrSameText(fArgs.srcElement.id, ID);
+end;
+
 function THTMLEventInfo.GetName: string;
 begin
   Result := fArgs.type_;
+end;
+
+function THTMLEventInfo.IsEvent(const ASink: TGUID;
+  const ADispatchId: Integer): Boolean;
+begin
+  Result := IsEqualGUID(ASink, fSink) and (ADispatchId = fDispatchId);
 end;
 
 procedure THTMLEventInfo.SetCancelled(const Value: Boolean);
@@ -387,7 +427,7 @@ begin
     Exit;
   // Create object to store info about the event
   EventInfo := THTMLEventInfo.Create(
-    InvokeInfo.DispatchID, EventArgs, CanCancel
+    fSinkIID, InvokeInfo.DispatchID, EventArgs, CanCancel
   );
   try
     // Trigger the event
@@ -442,7 +482,7 @@ end;
 
 constructor THTMLDocEventSink.Create;
 begin
-  inherited Create(HTMLDocumentEvents2);
+  inherited Create(IID);
 end;
 
 procedure THTMLDocEventSink.DispatchEvent(var InvokeInfo: TInvokeInfo);
@@ -450,45 +490,50 @@ begin
   inherited;
   // Dispatch events
   case InvokeInfo.DispatchID of
-    cDocEventOnHelp:              DispatchStdEvent(InvokeInfo, True);
-    cDocEventOnClick:             DispatchStdEvent(InvokeInfo, True);
-    cDocEventOnDblClick:          DispatchStdEvent(InvokeInfo, True);
-    cDocEventOnKeyDown:           DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnKeyUp:             DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnKeyPress:          DispatchStdEvent(InvokeInfo, True);
-    cDocEventOnMouseDown:         DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnMouseMove:         DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnMouseUp:           DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnMouseOut:          DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnMouseOver:         DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnReadyStateChange:  DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnBeforeUpdate:      DispatchStdEvent(InvokeInfo, True);
-    cDocEventOnAfterUpdate:       DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnRowExit:           DispatchStdEvent(InvokeInfo, True);
-    cDocEventOnRowEnter:          DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnDragStart:         DispatchStdEvent(InvokeInfo, True);
-    cDocEventOnSelectStart:       DispatchStdEvent(InvokeInfo, True);
-    cDocEventOnErrorUpdate:       DispatchStdEvent(InvokeInfo, True);
-    cDocEventOnContextMenu:       DispatchStdEvent(InvokeInfo, True);
-    cDocEventOnStop:              DispatchStdEvent(InvokeInfo, True);
-    cDocEventOnRowsDelete:        DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnRowsInserted:      DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnCellChange:        DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnPropertyChange:    DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnDatasetChanged:    DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnDataAvailable:     DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnDatasetComplete:   DispatchStdEvent(InvokeInfo, False);
-    cDocEventOnBeforeEditFocus:   DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnHelp:              DispatchStdEvent(InvokeInfo, True);
+    DISPID_OnClick:             DispatchStdEvent(InvokeInfo, True);
+    DISPID_OnDblClick:          DispatchStdEvent(InvokeInfo, True);
+    DISPID_OnKeyDown:           DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnKeyUp:             DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnKeyPress:          DispatchStdEvent(InvokeInfo, True);
+    DISPID_OnMouseDown:         DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnMouseMove:         DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnMouseUp:           DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnMouseOut:          DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnMouseOver:         DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnReadyStateChange:  DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnBeforeUpdate:      DispatchStdEvent(InvokeInfo, True);
+    DISPID_OnAfterUpdate:       DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnRowExit:           DispatchStdEvent(InvokeInfo, True);
+    DISPID_OnRowEnter:          DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnDragStart:         DispatchStdEvent(InvokeInfo, True);
+    DISPID_OnSelectStart:       DispatchStdEvent(InvokeInfo, True);
+    DISPID_OnErrorUpdate:       DispatchStdEvent(InvokeInfo, True);
+    DISPID_OnContextMenu:       DispatchStdEvent(InvokeInfo, True);
+    DISPID_OnStop:              DispatchStdEvent(InvokeInfo, True);
+    DISPID_OnRowsDelete:        DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnRowsInserted:      DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnCellChange:        DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnPropertyChange:    DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnDatasetChanged:    DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnDataAvailable:     DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnDatasetComplete:   DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnBeforeEditFocus:   DispatchStdEvent(InvokeInfo, False);
     else
       InvokeInfo.SCode := DISP_E_MEMBERNOTFOUND;
   end;
+end;
+
+class function THTMLDocEventSink.IID: TGUID;
+begin
+  Result := HTMLDocumentEvents2;
 end;
 
 { THTMLWdwEventSink }
 
 constructor THTMLWdwEventSink.Create;
 begin
-  inherited Create(HTMLWindowEvents2);
+  inherited Create(IID);
 end;
 
 procedure THTMLWdwEventSink.DispatchEvent(var InvokeInfo: TInvokeInfo);
@@ -534,20 +579,25 @@ begin
   inherited;
   // Dispatch events
   case InvokeInfo.DispatchID of
-    cWdwEventOnLoad:          DispatchStdEvent(InvokeInfo, False);
-    cWdwEventOnUnload:        DispatchStdEvent(InvokeInfo, False);
-    cWdwEventOnHelp:          DispatchStdEvent(InvokeInfo, True);
-    cWdwEventOnFocus:         DispatchStdEvent(InvokeInfo, False);
-    cWdwEventOnBlur:          DispatchStdEvent(InvokeInfo, False);
-    cWdwEventOnError:         DispatchErrorEvent;
-    cWdwEventOnResize:        DispatchStdEvent(InvokeInfo, False);
-    cWdwEventOnScroll:        DispatchStdEvent(InvokeInfo, False);
-    cWdwEventOnBeforeUnload:  DispatchStdEvent(InvokeInfo, False);
-    cWdwEventOnBeforePrint:   DispatchStdEvent(InvokeInfo, False);
-    cWdwEventOnAfterPrint:    DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnLoad:          DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnUnload:        DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnHelp:          DispatchStdEvent(InvokeInfo, True);
+    DISPID_OnFocus:         DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnBlur:          DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnError:         DispatchErrorEvent;
+    DISPID_OnResize:        DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnScroll:        DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnBeforeUnload:  DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnBeforePrint:   DispatchStdEvent(InvokeInfo, False);
+    DISPID_OnAfterPrint:    DispatchStdEvent(InvokeInfo, False);
   else
     InvokeInfo.SCode := DISP_E_MEMBERNOTFOUND;
   end;
+end;
+
+class function THTMLWdwEventSink.IID: TGUID;
+begin
+  Result := HTMLWindowEvents2;
 end;
 
 end.
