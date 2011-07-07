@@ -137,6 +137,9 @@ function IsHexDigit(C: Char): Boolean;
     @return True if character is a hex digit, False if not.
   }
 
+// todo: comment this routine
+function URIBaseName(const URI: string): string;
+
 
 implementation
 
@@ -396,6 +399,18 @@ function IsHexDigit(C: Char): Boolean;
   }
 begin
   Result := CharInSet(C, ['A'..'F', 'a'..'f', '0'..'9']);
+end;
+
+function URIBaseName(const URI: string): string;
+var
+  LastSlashPos: Integer;
+begin
+//  zzz/zzz.htm
+//  12345678901
+  LastSlashPos := StrLastPos('/', URI);
+  if LastSlashPos = 0 then
+    Exit(URI);
+  Result := StrSliceRight(URI, Length(URI) - LastSlashPos);
 end;
 
 end.
