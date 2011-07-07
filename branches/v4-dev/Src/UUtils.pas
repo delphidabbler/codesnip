@@ -339,29 +339,30 @@ begin
   Result := (FileName <> '') and (ExtractFileName(FileName) = FileName);
 end;
 
-procedure ProcessMessages;
-  {Processes all the messages a program's message queue.
-  }
-var
-  Msg: TMsg;  // stores message peeked from message loop
-begin
-  while PeekMessage(Msg, 0, 0, 0, PM_REMOVE) do
-  begin
-    if Msg.Message <> WM_QUIT then
-    begin
-      TranslateMessage(Msg);
-      DispatchMessage(Msg);
-    end
-    else
-      Exit;
-  end;
-end;
-
 procedure Pause(const ADelay: LongWord);
   {Pauses for a specified number of milliseconds before returning. Performs a
   busy wait.
     @param ADelay [in] Number of milliseconds to pause.
   }
+
+  procedure ProcessMessages;
+    {Processes all the messages in program's message queue.
+    }
+  var
+    Msg: TMsg;  // stores message peeked from message loop
+  begin
+    while PeekMessage(Msg, 0, 0, 0, PM_REMOVE) do
+    begin
+      if Msg.Message <> WM_QUIT then
+      begin
+        TranslateMessage(Msg);
+        DispatchMessage(Msg);
+      end
+      else
+        Exit;
+    end;
+  end;
+
 var
   StartTC: DWORD;   // tick count when routine called
   CurrentTC: Int64; // tick count at each loop iteration
