@@ -336,7 +336,7 @@ begin
     // cancelled
     if EventInfo.Cancelled
       or not EventInfo.IsEvent(
-        THTMLDocEventSink.IID, THTMLDocEventSink.DISPID_OnClick
+        THTMLDocEventSink.EventIntf, THTMLDocEventSink.DISPID_OnClick
       ) then
       Exit;
     // We only handle clicks on <a> tags or tags within <a> tags (eg <img>)

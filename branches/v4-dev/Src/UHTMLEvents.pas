@@ -60,8 +60,8 @@ type
       fCancelled: Boolean;
       ///  <summary>Value of Args property.</summary>
       fArgs: IHTMLEventObj;
-      ///  <summary>Value of Sink property.</summary<
-      fSink: TGUID;
+      ///  <summary>Value of EventIntf property.</summary>
+      fEventIntf: TGUID;
       ///  <summary>Value of DispatchId property.</summary>
       fDispatchId: Integer;
       ///  <summary>Setter for Cancelled property.</summary>
@@ -72,31 +72,32 @@ type
   public
     ///  <summary>Creates event object instance with specified property values.
     ///  </summary>
-    ///  <param name="Sink">TGUID [in] GUID of event source object.</param>
+    ///  <param name="EventIntf">TGUID [in] GUID of event source object.</param>
     ///  <param name="DispatchId">Integer [in] Dispatch ID of the event.</param>
     ///  <param name="Args">IHTMLEventObj [in] Information about the event
     ///  provided by browser control.</param>
     ///  <param name="CanCancel">Boolean [in] Flag indicating whether or not
     ///  event can be cancelled.</param>
-    constructor Create(const Sink: TGUID; const DispatchID: Integer;
+    constructor Create(const EventIntf: TGUID; const DispatchID: Integer;
       const Args: IHTMLEventObj; const CanCancel: Boolean);
     ///  <summary>Checks if the event has a given dispid and belongs to a given
     ///  events interface.</summary>
-    ///  <param name="ASink">TGUID [in] GUID of events interface to which event
-    ///  must belong.</param>
+    ///  <param name="AEventIntf">TGUID [in] GUID of events interface to which
+    ///  event must belong.</param>
     ///  <param name="ADispatchID">Integer [in] Dispid of required event.
     ///  </param>
     ///  <returns>Boolean. True if event's Sink and DispatchId properties match
     ///  the parameters, False if not.</returns>
-    function IsEvent(const ASink: TGUID; const ADispatchId: Integer): Boolean;
+    function IsEvent(const AEventIntf: TGUID; const ADispatchId: Integer):
+      Boolean;
     ///  <summary>Checks if the element triggering the event has a specified id.
     ///  </summary>
     ///  <param name="ID">string [in] Required element ID.</param>
     ///  <returns>Boolean. True if triggering element has ID, False otherwise.
     ///  </returns>
     function ElemHasId(const ID: string): Boolean;
-    ///  <summary>GUID of sink that triggered event.</summary>
-    property Sink: TGUID read fSink;
+    ///  <summary>GUID of event interface to which event belongs.</summary>
+    property EventIntf: TGUID read fEventIntf;
     ///  <summary>Dispatch ID of event.</summary>
     property DispatchId: Integer read fDispatchId;
     ///  <summary>Name of event.</summary>
@@ -142,8 +143,6 @@ type
   )
   strict private
     var
-      ///  <summary>Event interface supported by this sink object.</summary>
-      fSinkIID: TGUID;
       ///  <summary>Reference to event source object.</summary>
       fSource: IDispatch;
       ///  <summary>Identifies connection between source and sink.</summary>
@@ -191,20 +190,17 @@ type
     ///  If so a reference to the interface is passed out. Supported interfaces
     ///  are IUnknown, IDispatch and the interface implemented by the event
     ///  sink.</summary>
-    ///  <param name="IID">TGUID [in] Specifies interface being queried.</param>
+    ///  <param name="AIID">TGUID [in] Specifies interface being queried.
+    ///  </param>
     ///  <param name="Obj">Untyped [out] Reference to requested interface
     ///  implementation or nil if interface not supported.</param>
     ///  <returns>HResult. S_OK if interface supported or E_NOINTERFACE if not
     ///  supported.</returns>
     ///  <remarks>Re-implementation of method of IUnknown.</remarks>
-    function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
+    function QueryInterface(const AIID: TGUID; out Obj): HResult; stdcall;
   public
-    ///  <summary>Creates sink object for a given events interface.</summary>
-    ///  <param name="SinkIID">TGUID [in] Interface to events to be sunk by this
-    ///  object.</param>
-    constructor Create(const SinkIID: TGUID);
-    ///  <summary>Returns GUID of supported event sink object.</summary>
-    class function IID: TGUID; virtual; abstract;
+    ///  <summary>Returns GUID of supported events object.</summary>
+    class function EventIntf: TGUID; virtual; abstract;
     ///  <summary>Disconnects sink from event source and tears down object.
     ///  </summary>
     destructor Destroy; override;
@@ -270,11 +266,9 @@ type
       DISPID_OnDatasetComplete    = -2147418096;
       DISPID_OnBeforeEditFocus    = 1027;
   public
-    ///  <summary>Creates HTMLDocumentEvents2 event sink object.</summary>
-    constructor Create;
-    ///  <summary>Returns GUID of supported HTMLDocumentEvents2 event sink
-    ///  object.</summary>
-    class function IID: TGUID; override;
+    ///  <summary>Returns GUID of supported HTMLDocumentEvents2 events object.
+    ///  </summary>
+    class function EventIntf: TGUID; override;
   end;
 
 type
@@ -328,11 +322,9 @@ type
       DISPID_OnBeforePrint  = 1024;
       DISPID_OnAfterPrint   = 1025;
   public
-    ///  <summary>Creates HTMLWindowEvents2 event sink object.</summary>
-    constructor Create;
-    ///  <summary>Returns GUID of supported HTMLWindowEvents2 event sink
-    ///  object.</summary>
-    class function IID: TGUID; override;
+    ///  <summary>Returns GUID of supported HTMLWindowEvents2 events object.
+    ///  </summary>
+    class function EventIntf: TGUID; override;
     ///  <summary>Event triggered when HTMLWindowEvents2.onerror event is
     ///  invoked.</summary>
     property OnError: THTMLWdwErrorEvent read fOnError write fOnError;
@@ -351,11 +343,12 @@ uses
 
 { THTMLEventInfo }
 
-constructor THTMLEventInfo.Create(const Sink: TGUID; const DispatchID: Integer;
-  const Args: IHTMLEventObj; const CanCancel: Boolean);
+constructor THTMLEventInfo.Create(const EventIntf: TGUID;
+  const DispatchID: Integer; const Args: IHTMLEventObj;
+  const CanCancel: Boolean);
 begin
   inherited Create;
-  fSink := Sink;
+  fEventIntf := EventIntf;
   fDispatchId := DispatchID;
   fArgs := Args;
   fCanCancel := CanCancel;
@@ -372,10 +365,10 @@ begin
   Result := fArgs.type_;
 end;
 
-function THTMLEventInfo.IsEvent(const ASink: TGUID;
+function THTMLEventInfo.IsEvent(const AEventIntf: TGUID;
   const ADispatchId: Integer): Boolean;
 begin
-  Result := IsEqualGUID(ASink, fSink) and (ADispatchId = fDispatchId);
+  Result := IsEqualGUID(AEventIntf, fEventIntf) and (ADispatchId = fDispatchId);
 end;
 
 procedure THTMLEventInfo.SetCancelled(const Value: Boolean);
@@ -390,13 +383,7 @@ procedure TAbstractHTMLEventSink.Connect(const Source: IDispatch);
 begin
   Disconnect;
   fSource := Source;
-  InterfaceConnect(fSource, fSinkIID, Self, fConnectionCookie);
-end;
-
-constructor TAbstractHTMLEventSink.Create(const SinkIID: TGUID);
-begin
-  inherited Create;
-  fSinkIID := SinkIID;
+  InterfaceConnect(fSource, EventIntf, Self, fConnectionCookie);
 end;
 
 destructor TAbstractHTMLEventSink.Destroy;
@@ -409,7 +396,7 @@ procedure TAbstractHTMLEventSink.Disconnect;
 begin
   if Assigned(fSource) then
   begin
-    InterfaceDisconnect(fSource, fSinkIID, fConnectionCookie);
+    InterfaceDisconnect(fSource, EventIntf, fConnectionCookie);
     fSource := nil;
   end;
 end;
@@ -427,7 +414,7 @@ begin
     Exit;
   // Create object to store info about the event
   EventInfo := THTMLEventInfo.Create(
-    fSinkIID, InvokeInfo.DispatchID, EventArgs, CanCancel
+    EventIntf, InvokeInfo.DispatchID, EventArgs, CanCancel
   );
   try
     // Trigger the event
@@ -438,7 +425,7 @@ begin
     if EventInfo.CanCancel then
       InvokeInfo.FnResult := not EventInfo.Cancelled
   finally
-    FreeAndNil(EventInfo);
+    EventInfo.Free;
   end;
 end;
 
@@ -466,24 +453,19 @@ begin
     InvokeInfo.SCode := DISP_E_BADPARAMCOUNT;
 end;
 
-function TAbstractHTMLEventSink.QueryInterface(const IID: TGUID;
+function TAbstractHTMLEventSink.QueryInterface(const AIID: TGUID;
   out Obj): HResult;
 begin
   Result := S_OK;
-  if GetInterface(IID, Obj) then
+  if GetInterface(EventIntf, Obj) then
     Exit;
-  if IsEqualGUID(fSinkIID, IID) and GetInterface(IDispatch, Obj) then
+  if IsEqualGUID(EventIntf, AIID) and GetInterface(IDispatch, Obj) then
     Exit;
   Result := E_NOINTERFACE;
   Pointer(Obj) := nil;
 end;
 
 { THTMLDocEventSink }
-
-constructor THTMLDocEventSink.Create;
-begin
-  inherited Create(IID);
-end;
 
 procedure THTMLDocEventSink.DispatchEvent(var InvokeInfo: TInvokeInfo);
 begin
@@ -524,17 +506,12 @@ begin
   end;
 end;
 
-class function THTMLDocEventSink.IID: TGUID;
+class function THTMLDocEventSink.EventIntf: TGUID;
 begin
   Result := HTMLDocumentEvents2;
 end;
 
 { THTMLWdwEventSink }
-
-constructor THTMLWdwEventSink.Create;
-begin
-  inherited Create(IID);
-end;
 
 procedure THTMLWdwEventSink.DispatchEvent(var InvokeInfo: TInvokeInfo);
 
@@ -595,7 +572,7 @@ begin
   end;
 end;
 
-class function THTMLWdwEventSink.IID: TGUID;
+class function THTMLWdwEventSink.EventIntf: TGUID;
 begin
   Result := HTMLWindowEvents2;
 end;

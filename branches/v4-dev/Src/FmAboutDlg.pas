@@ -179,7 +179,7 @@ uses
   // Project
   FmEasterEgg, FmRegistrationDlg, UAppInfo, UColours, UConsts, UCSSUtils,
   UCtrlArranger, UFontHelper, UHTMLUtils, UHTMLTemplate, UResourceUtils,
-  UStrUtils, UThemesEx;
+  UThemesEx;
 
 
 {
@@ -381,7 +381,9 @@ const
 begin
   // Check for onclick event on icon tag: display easter egg if ctrl key
   // pressed. Such an event is cancelled.
-  if EventInfo.IsEvent(THTMLDocEventSink.IID, THTMLDocEventSink.DISPID_OnClick)
+  if EventInfo.IsEvent(
+      THTMLDocEventSink.EventIntf, THTMLDocEventSink.DISPID_OnClick
+    )
     and EventInfo.Args.ctrlKey
     and EventInfo.ElemHasId(cIconImgId) then
   begin
@@ -391,7 +393,7 @@ begin
   // Check for mouse move over icon tag: change cursor to hand if ctrl key
   // pressed to indicate clickable. Event permitted to bubble up.
   if EventInfo.IsEvent(
-      THTMLDocEventSink.IID, THTMLDocEventSink.DISPID_OnMouseMove
+      THTMLDocEventSink.EventIntf, THTMLDocEventSink.DISPID_OnMouseMove
     )
     and EventInfo.ElemHasId(cIconImgId) then
   begin

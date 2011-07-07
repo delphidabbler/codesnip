@@ -190,7 +190,7 @@ const
   cViewLinkRes = $FF;   // modal result of choice dialog's view button
 begin
   if EventInfo.IsEvent(
-    THTMLDocEventSink.IID, THTMLDocEventSink.DISPID_OnClick
+    THTMLDocEventSink.EventIntf, THTMLDocEventSink.DISPID_OnClick
   ) then
   begin
     // Mouse click: check for click on a link and handle it

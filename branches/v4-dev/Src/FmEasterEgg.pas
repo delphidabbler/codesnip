@@ -128,7 +128,9 @@ procedure TEasterEggForm.BrowserEventHandler(Sender: TObject;
 const
   cCancelImgId = 'cancel-btn';  // id of cancel "button" image
 begin
-  if EventInfo.IsEvent(THTMLDocEventSink.IID, THTMLDocEventSink.DISPID_OnClick)
+  if EventInfo.IsEvent(
+      THTMLDocEventSink.EventIntf, THTMLDocEventSink.DISPID_OnClick
+    )
     and EventInfo.ElemHasId(cCancelImgId) then
   begin
     // Click on cancel image detected. Prevent event from bubbling up and close
