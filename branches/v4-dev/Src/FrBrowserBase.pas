@@ -137,6 +137,9 @@ type
           object's OnHTMLEvent handler.
         @param EventInfo [in] Object providing information about the event.
       }
+    // todo: comment this method
+    procedure HTMLWindowErrorHandler(Sender: TObject; const Desc, URL: string;
+      const Line: Integer; var Handled: Boolean); virtual;
     property WBController: TWBController
       read fWBController;
       {Object used to control web browser}
@@ -188,7 +191,8 @@ uses
   // Delphi
   SysUtils, Messages,
   // Project
-  UAnchors, UColours, UCSSUtils, UHTMLDocHelper, UProtocols;
+  UAnchors, UColours, UCSSUtils, UExceptions, UHTMLDocHelper, UProtocols,
+  UUtils;
 
 
 {$R *.dfm}
@@ -277,6 +281,7 @@ begin
   fWBController.UIMgr.OnBrowserActivate := BrowserActivate;
   fWBController.IOMgr.OnNavigate := NavigateHandler;
   fWBController.IOMgr.OnHTMLEvent := HTMLEventHandler;
+  fWBController.IOMgr.OnHTMLWindowError := HTMLWindowErrorHandler;
 end;
 
 destructor TBrowserBaseFrame.Destroy;
@@ -354,6 +359,25 @@ begin
   except
     Application.HandleException(ExceptObject);
   end;
+end;
+
+procedure TBrowserBaseFrame.HTMLWindowErrorHandler(Sender: TObject; const Desc,
+  URL: string; const Line: Integer; var Handled: Boolean);
+const
+  ErrorMessage = 'An unexpected error occurred loading a document or running a '
+    + 'script in the browser control hosted by frame %0:s:'#10#10
+    + 'Document: %2:s, line %3:d'#10
+    + 'Error: "%1:s"';
+
+begin
+  try
+    raise EBug.CreateFmt(
+      ErrorMessage, [ClassName, Desc, URIBaseName(URL), Line]
+    );
+  except
+    Application.HandleException(ExceptObject);
+  end;
+  Handled := True;
 end;
 
 function TBrowserBaseFrame.IsBrowserActive: Boolean;
