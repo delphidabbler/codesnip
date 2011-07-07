@@ -44,100 +44,105 @@ uses
   SysUtils, Classes;
 
 
+///  <summary>Gets the OS time stamp for a file.</summary>
+///  <param name="FileName">string [in] Name of file.</param>
+///  <returns>Integer. Required OS time stamp or -1 if file does not exist.
+///  </returns>
 function FileAge(const FileName: string): Integer;
-  {Gets the OS time stamp for a file.
-    @param FileName [in] Name of file.
-    @return Required OS time stamp or -1 if file does not exist.
-  }
 
+///  <summary>Deletes all files in a directory that match a wildcard.</summary>
+///  <param name="Dir">string [in] Directory containing files to be deleted.
+///  </param>
+///  <param name="Wildcard">string [in] Wildcard specifying files to be deleted.
+///  *.* assumed if WildCard=''.</param>
+///  <returns>Integer. Number of files deleted.</returns>
+///  <remarks>Sub-directories and their files are ignored.</remarks>
 function DeleteFiles(const Dir, Wildcard: string): Integer;
-  {Deletes all files in a directory that match a wildcard. Sub-directories are
-  not deleted.
-    @param Dir [in] Directory containing files to be deleted.
-    @param Wildcard [in] Wildcard specifying files to be deleted - *.* assumed
-      if ''.
-    @return Number of files deleted.
-  }
 
+///  <summary>Ensures that a folder and all its subfolder exist.</summary>
+///  <param name="Folder">string [in] Fully specified name of folder.</param>
+///  <remarks>Any folder that does not exist is created.</remarks>
 procedure EnsureFolders(const Folder: string);
-  {Ensures that a folder and all its subfolder exist.
-    @param Folder [in] Fully specified name of folder.
-  }
 
+///  <summary>Gets a list of the files and sub-directories of a directory that
+///  match a wild card.</summary>
+///  <param name="Dir">string [in] Directory to be listed.</param>
+///  <param name="Wildcard">string [in] Wildcard of files to be listed.</param>
+///  <param name="List">TStrings [in] Receives directory listing.</param>
+///  <param name="IncludeDirs">Boolean [in] Flag true if sub-directory names are
+///  to be included in List, False if only files are required.</param>
+///  <returns>Boolean. True if Dir is a valid directory, False otherwise.
+///  </returns>
+///  <remarks>
+///  <para>Sub-directories are not recursed.</para>
+///  <para>File names include the full file path.</para>
+///  </remarks>
 function ListFiles(const Dir, Wildcard: string; const List: TStrings;
   IncludeDirs: Boolean = True): Boolean;
-  {Gets a list of the files and sub-directories of a directory that match a
-  wild card. The file names included in the list include the full file path
-    @param Dir [in] Directory to be listed.
-    @param Wildcard [in] Wildcard of files to be listed.
-    @param List [in] Receives directory listing.
-    @param IncludeDirs [in] Flag true if sub-directory names to be included in
-      List, False if true files only are required.
-    @return True if Dir is a valid directory.
-  }
 
+///  <summary>Converts a long file name to the equivalent shortened DOS style
+///  8.3 path.</summary>
+///  <param name="LongName">string [in] Long file name to be converted.</param>
+///  <returns>string. Short file name.</returns>
 function LongToShortFilePath(const LongName: string): string;
-  {Converts a long file name to the equivalent shortened DOS style 8.3 path.
-    @param LongName [in] Long file name to be converted.
-    @return Short file name.
-  }
 
+///  <summary>Checks if a directory exists.</summary>
+///  <param name="DirName">string [in] Name of directory to check.</param>
+///  <returns>Boolean. True if DirName is valid directory, False otherwise.
+///  </returns>
 function IsDirectory(const DirName: string): Boolean;
-  {Checks if a directory exists.
-    @param DirName [in] Name of directory to check.
-    @return True if DirName is valid directory.
-  }
 
+///  <summary>Converts a floating point number to an integer, rounding to
+///  nearest integer.</summary>
+///  <param name="F">Double [in] Floating point number to be rounded off.
+///  </param>
+///  <returns>Integer. Rounded value.</returns>
 function FloatToInt(const F: Double): Int64;
-  {Converts a floating point number to an integer, rounding to nearest integer.
-    @param F [in] Floating point number to be rounded off.
-    @return Rounded value as integer.
-  }
 
+///  <summary>Creates a date stamp for current date in RFC1123 format.</summary>
+///  <returns>string. Required date and time as date stamp in UTC/GMT.</returns>
 function DateStamp: string;
-  {Creates a date stamp in RFC1123 format
-    @return Current date and time as date stamp in UTC/GMT.
-  }
 
+///  <summary>Get a desired interface pointer to an object instance.</summary>
+///  <param name="Instance">IInterface [in] Instance for which an interface is
+///  requested. May be nil.</param>
+///  <param name="IID">TGUID [in] Identifier of required interface.</param>
+///  <param name="Intf">Untyped [out] Set to required interface pointer if
+///  Instance supports interface, or nil if interface not supported or Instance
+///  is nil.</param>
 procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
-  {Get a desired interface pointer to an object instance.
-    @param Instance [in] IInterface of instance for which an interface is
-      requested. May be nil.
-    @param IID [in] Identifier of required interface.
-    @param Intf [out] Set to required interface pointer if Instance supports
-      interface, or nil if interface not supported or Instance is nil.
-  }
 
+///  <summary>Checks if a file name is a base file name (i.e. contains no path
+///  information).</summary>
+///  <param name="FileName">string [in] File name to be tested.</param>
+///  <returns>Boolean. True if file is a base file name, False otherwise.
+///  </returns>
 function IsBaseFileName(const FileName: string): Boolean;
-  {Checks if a file name is a base file name (i.e. contains no path
-  information).
-    @param FileName [in] File name to be tested.
-    @return True if file is a base file name, False otherwise.
-  }
 
+///  <summary>Pauses for a specified number of milliseconds before returning.
+///  </summary>
+///  <param name="ADelay">Cardinal [in] Number of milliseconds to pause.</param>
+///  <remarks>Performs a busy wait.</remarks>
 procedure Pause(const ADelay: Cardinal);
-  {Pauses for a specified number of milliseconds before returning. Performs a
-  busy wait.
-    @param ADelay [in] Number of milliseconds to pause.
-  }
 
+///  <summary>Checks if a character is a valid Windows drive letter.</summary>
+///  <param name="C">Char [in] Character to be tested.</param>
+///  <returns>Boolean. True if C is a valid drive letter, False otherwise.
+///  </returns>
 function IsValidDriveLetter(const C: Char): Boolean;
-  {Checks if a character is a valid Windows drive letter.
-    @param C [in] Character to be tested.
-    @return True if C is a valid drive letter, False otherwise.
-  }
 
+///  <summary>Emits a sound indicating a keypress error.</summary>
 procedure KeyErrorBeep;
-  {Emits a sound indicating a keypress error.
-  }
 
+///  <summary>Checks whether a character is a valid hex digit.</summary>
+///  <param name="C">Char [in] Character to be tested.</param>
+///  <returns>Boolean. True if character is a hex digit, False if not.</returns>
 function IsHexDigit(C: Char): Boolean;
-  {Checks whether a character is defined as a hex digit.
-    @param C [in] Character to be tested.
-    @return True if character is a hex digit, False if not.
-  }
 
-// todo: comment this routine
+///  <summary>Gets the base resource name from a forward slash delimited URI.
+///  </summary>
+///  <param name="URI">string [in] Full URI.</param>
+///  <returns>string. Name following last slash in URI.</returns>
 function URIBaseName(const URI: string): string;
 
 
@@ -152,10 +157,6 @@ uses
 
 
 function FileAge(const FileName: string): Integer;
-  {Gets the OS time stamp for a file.
-    @param FileName [in] Name of file.
-    @return Required OS time stamp or -1 if file does not exist.
-  }
 var
   FH: Integer;  // file handle
 begin
@@ -173,13 +174,6 @@ begin
 end;
 
 function DeleteFiles(const Dir, Wildcard: string): Integer;
-  {Deletes all files in a directory that match a wildcard. Sub-directories are
-  not deleted.
-    @param Dir [in] Directory containing files to be deleted.
-    @param Wildcard [in] Wildcard specifying files to be deleted - *.* assumed
-      if ''.
-    @return Number of files deleted.
-  }
 var
   Files: TStringList; // stores files to be deleted
   I: Integer;         // loops thru files in folder
@@ -210,9 +204,6 @@ begin
 end;
 
 procedure EnsureFolders(const Folder: string);
-  {Ensures that a folder and all its subfolder exist.
-    @param Folder [in] Fully specified name of folder.
-  }
 begin
   // Check there's a folder to create: ForceDirectories raises exception if
   // passed empty string as parameter
@@ -223,25 +214,12 @@ begin
 end;
 
 function IsDirectory(const DirName: string): Boolean;
-  {Checks if a directory exists.
-    @param DirName [in] Name of directory to check.
-    @return True if DirName is valid directory.
-  }
 begin
   Result := DirectoryExists(DirName);
 end;
 
 function ListFiles(const Dir, Wildcard: string; const List: TStrings;
   IncludeDirs: Boolean = True): Boolean;
-  {Gets a list of the files and sub-directories of a directory that match a
-  wild card. The file names included in the list include the full file path
-    @param Dir [in] Directory to be listed.
-    @param Wildcard [in] Wildcard of files to be listed.
-    @param List [in] Receives directory listing.
-    @param IncludeDirs [in] Flag true if sub-directory names to be included in
-      List, False if true files only are required.
-    @return True if Dir is a valid directory.
-  }
 var
   FileSpec: string;   // full file spec of a wildcard
   Path: string;       // full path of directory, including training backslash
@@ -280,29 +258,18 @@ begin
 end;
 
 function LongToShortFilePath(const LongName: string): string;
-  {Converts a long file name to the equivalent shortened DOS style 8.3 path.
-    @param LongName [in] Long file name to be converted.
-    @return Short file name.
-  }
 begin
   SetLength(Result, MAX_PATH);
   SetLength(Result, GetShortPathName(PChar(LongName), PChar(Result), MAX_PATH));
 end;
 
 function FloatToInt(const F: Double): Int64;
-  {Converts a floating point number to an integer, rounding to nearest integer.
-    @param F [in] Floating point number to be rounded off.
-    @return Rounded value as integer.
-  }
 begin
   // We don't just use Round() on its own because don't want bankers rounding.
   Result := Round(SimpleRoundTo(F, 0));
 end;
 
 function DateStamp: string;
-  {Creates a date stamp in RFC1123 format
-    @return Current date and time as date stamp in UTC/GMT.
-  }
 const
   // Pattern to create RFC1123 date formats
   cRFC1123Pattern = 'ddd, dd mmm yyyy HH'':''nn'':''ss ''GMT''';
@@ -317,37 +284,21 @@ begin
 end;
 
 procedure GetIntf(const Instance: IInterface; const IID: TGUID; out Intf);
-  {Get a desired interface pointer to an object instance.
-    @param Instance [in] IInterface of instance for which an interface is
-      requested. May be nil.
-    @param IID [in] Identifier of required interface.
-    @param Intf [out] Set to required interface pointer if Instance supports
-      interface, or nil if interface not supported or Instance is nil.
-  }
 begin
   if not Supports(Instance, IID, Intf) then
     Pointer(Intf) := nil;
 end;
 
 function IsBaseFileName(const FileName: string): Boolean;
-  {Checks if a file name is a base file name (i.e. contains no path
-  information).
-    @param FileName [in] File name to be tested.
-    @return True if file is a base file name, False otherwise.
-  }
 begin
   Result := (FileName <> '') and (ExtractFileName(FileName) = FileName);
 end;
 
 procedure Pause(const ADelay: LongWord);
-  {Pauses for a specified number of milliseconds before returning. Performs a
-  busy wait.
-    @param ADelay [in] Number of milliseconds to pause.
-  }
 
+  // ---------------------------------------------------------------------------
+  ///  Processes all the messages in program's message queue.
   procedure ProcessMessages;
-    {Processes all the messages in program's message queue.
-    }
   var
     Msg: TMsg;  // stores message peeked from message loop
   begin
@@ -362,6 +313,7 @@ procedure Pause(const ADelay: LongWord);
         Exit;
     end;
   end;
+  // ---------------------------------------------------------------------------
 
 var
   StartTC: DWORD;   // tick count when routine called
@@ -378,36 +330,24 @@ begin
 end;
 
 function IsValidDriveLetter(const C: Char): Boolean;
-  {Checks if a character is a valid Windows drive letter.
-    @param C [in] Character to be tested.
-    @return True if C is a valid drive letter, False otherwise.
-  }
 begin
   Result := CharInSet(C, ['A'..'Z', 'a'..'z']);
 end;
 
 procedure KeyErrorBeep;
-  {Emits a sound indicating a keypress error.
-  }
 begin
   MessageBeep(UINT(-1));
 end;
 
 function IsHexDigit(C: Char): Boolean;
-  {Checks whether a character is defined as a hex digit.
-    @param C [in] Character to be tested.
-    @return True if character is a hex digit, False if not.
-  }
 begin
   Result := CharInSet(C, ['A'..'F', 'a'..'f', '0'..'9']);
 end;
 
 function URIBaseName(const URI: string): string;
 var
-  LastSlashPos: Integer;
+  LastSlashPos: Integer;  // position of last '/' in URI
 begin
-//  zzz/zzz.htm
-//  12345678901
   LastSlashPos := StrLastPos('/', URI);
   if LastSlashPos = 0 then
     Exit(URI);
