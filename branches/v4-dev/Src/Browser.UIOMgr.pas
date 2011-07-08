@@ -77,7 +77,7 @@ type
     ///  <summary>Handler for OnHTMLEvent event.</summary>
     fOnHTMLEvent: THTMLEvent;
     ///  <summary>Handler for OnHTMLWindowError event.</summary>
-    fOnHTMLWindowError: THTMLWdwErrorEvent;
+    fOnHTMLWindowError: THTMLWindowErrorEvent;
     ///  <summary>Event sink for HTMLDocumentEvents2 events.</summary>
     fDocEvents: THTMLDocumentEvents2Sink;
     ///  <summary>Event sink for HTMLWindowEvents2 events.</summary>
@@ -156,7 +156,7 @@ type
       read fOnHTMLEvent write fOnHTMLEvent;
     ///  <summary>Event triggered when browser window notifies an onerror event.
     ///  </summary>
-    property OnHTMLWindowError: THTMLWdwErrorEvent
+    property OnHTMLWindowError: THTMLWindowErrorEvent
       read fOnHTMLWindowError write fOnHTMLWindowError;
   end;
 
