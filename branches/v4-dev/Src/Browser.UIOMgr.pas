@@ -45,7 +45,7 @@ uses
   // Delphi
   SHDocVw, Classes,
   // Project
-  UHTMLEvents;
+  Browser.UHTMLEvents;
 
 
 type
@@ -78,10 +78,10 @@ type
     fOnHTMLEvent: THTMLEvent;
     ///  <summary>Handler for OnHTMLWindowError event.</summary>
     fOnHTMLWindowError: THTMLWdwErrorEvent;
-    ///  <summary>Event sink for browser document events.</summary>
-    fDocEvents: THTMLDocEventSink;
-    ///  <summary>Event sink for browser window events.</summary>
-    fWdwEvents: THTMLWdwEventSink;
+    ///  <summary>Event sink for HTMLDocumentEvents2 events.</summary>
+    fDocEvents: THTMLDocumentEvents2Sink;
+    ///  <summary>Event sink for HTMLWindowEvents2 events.</summary>
+    fWdwEvents: THTMLWindowEvents2Sink;
     ///  <summary>Handles OnEvent events triggered by browser document and
     ///  window event sinks. Triggers OnHTMLEvent and passes parameters to it.
     ///  </summary>
@@ -180,9 +180,9 @@ begin
   fWB := WB;
   fWB.OnBeforeNavigate2 := NavigateHandler;
   // Create event sinks and set event handlers
-  fDocEvents := THTMLDocEventSink.Create;
+  fDocEvents := THTMLDocumentEvents2Sink.Create;
   fDocEvents.OnEvent := HTMLEventHandler;
-  fWdwEvents := THTMLWdwEventSink.Create;
+  fWdwEvents := THTMLWindowEvents2Sink.Create;
   fWdwEvents.OnEvent := HTMLEventHandler;
   fWdwEvents.OnError := HTMLWindowErrorHandler;
 end;

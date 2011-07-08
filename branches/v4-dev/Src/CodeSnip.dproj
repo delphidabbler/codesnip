@@ -43,6 +43,7 @@
 			<DCCReference Include="Browser.UControlHelper.pas"/>
 			<DCCReference Include="Browser.UController.pas"/>
 			<DCCReference Include="Browser.UHighlighter.pas"/>
+			<DCCReference Include="Browser.UHTMLEvents.pas"/>
 			<DCCReference Include="Browser.UIOMgr.pas"/>
 			<DCCReference Include="Browser.UNulUIHandler.pas"/>
 			<DCCReference Include="Browser.UUIMgr.pas"/>
@@ -408,7 +409,6 @@
 			<DCCReference Include="UHTMLBuilder.pas"/>
 			<DCCReference Include="UHTMLDetailUtils.pas"/>
 			<DCCReference Include="UHTMLDocHelper.pas"/>
-			<DCCReference Include="UHTMLEvents.pas"/>
 			<DCCReference Include="UHTMLHelp.pas"/>
 			<DCCReference Include="UHTMLHelpMgr.pas"/>
 			<DCCReference Include="UHTMLTemplate.pas"/>

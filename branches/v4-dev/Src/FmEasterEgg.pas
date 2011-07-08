@@ -43,7 +43,7 @@ uses
   // Delphi
   ExtCtrls, Controls, Forms, Classes, Windows,
   // Project
-  IntfAligner, FmBase, FrBrowserBase, FrEasterEgg, UHTMLEvents;
+  Browser.UHTMLEvents, IntfAligner, FmBase, FrBrowserBase, FrEasterEgg;
 
 
 type
@@ -129,7 +129,8 @@ const
   cCancelImgId = 'cancel-btn';  // id of cancel "button" image
 begin
   if EventInfo.IsEvent(
-      THTMLDocEventSink.EventIntf, THTMLDocEventSink.DISPID_OnClick
+      THTMLDocumentEvents2Sink.EventIntf,
+      THTMLDocumentEvents2Sink.DISPID_OnClick
     )
     and EventInfo.ElemHasId(cCancelImgId) then
   begin

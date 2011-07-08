@@ -43,8 +43,8 @@ uses
   // Delphi
   Forms, ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Messages,
   // Project
-  FmGenericViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, UContributors,
-  UCSSBuilder, UHTMLEvents;
+  Browser.UHTMLEvents, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
+  FrHTMLTpltDlg, UContributors, UCSSBuilder;
 
 
 type
@@ -382,7 +382,8 @@ begin
   // Check for onclick event on icon tag: display easter egg if ctrl key
   // pressed. Such an event is cancelled.
   if EventInfo.IsEvent(
-      THTMLDocEventSink.EventIntf, THTMLDocEventSink.DISPID_OnClick
+      THTMLDocumentEvents2Sink.EventIntf,
+      THTMLDocumentEvents2Sink.DISPID_OnClick
     )
     and EventInfo.Args.ctrlKey
     and EventInfo.ElemHasId(cIconImgId) then
@@ -393,7 +394,8 @@ begin
   // Check for mouse move over icon tag: change cursor to hand if ctrl key
   // pressed to indicate clickable. Event permitted to bubble up.
   if EventInfo.IsEvent(
-      THTMLDocEventSink.EventIntf, THTMLDocEventSink.DISPID_OnMouseMove
+      THTMLDocumentEvents2Sink.EventIntf,
+      THTMLDocumentEvents2Sink.DISPID_OnMouseMove
     )
     and EventInfo.ElemHasId(cIconImgId) then
   begin

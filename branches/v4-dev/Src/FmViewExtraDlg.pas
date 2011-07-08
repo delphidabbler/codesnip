@@ -46,8 +46,8 @@ uses
   // Delphi
   Classes, Forms, StdCtrls, Controls, ExtCtrls,
   // Project
-  FmGenericViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, UActiveText,
-  UBaseObjects, UCSSBuilder, UHTMLEvents;
+  Browser.UHTMLEvents, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
+  FrHTMLTpltDlg, UActiveText, UBaseObjects, UCSSBuilder;
 
 
 type
@@ -190,7 +190,7 @@ const
   cViewLinkRes = $FF;   // modal result of choice dialog's view button
 begin
   if EventInfo.IsEvent(
-    THTMLDocEventSink.EventIntf, THTMLDocEventSink.DISPID_OnClick
+    THTMLDocumentEvents2Sink.EventIntf, THTMLDocumentEvents2Sink.DISPID_OnClick
   ) then
   begin
     // Mouse click: check for click on a link and handle it

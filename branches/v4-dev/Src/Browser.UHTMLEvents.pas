@@ -1,8 +1,9 @@
 {
- * UHTMLEvents.pas
+ * Browser.UHTMLEvents.pas
  *
- * Provides event sinks for the web browser control. Sinks for the browser's
- * document and window objects are implemented.
+ * Provides sinks for events triggered by HTML documents loaded in a TWebBrowser
+ * control. Sinks for the HTMLDocumentEvents2 and HTMLWindowEvents2
+ * dispinterfaces are provided.
  *
  * $Rev$
  * $Date$
@@ -19,7 +20,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UHTMLEvents.pas
+ * The Original Code is Browser.UHTMLEvents.pas, formerly UHTMLEvents.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +35,7 @@
 }
 
 
-unit UHTMLEvents;
+unit Browser.UHTMLEvents;
 
 
 interface
@@ -224,7 +225,7 @@ type
   ///  Events are all "standard" HTML events notified via the inherited OnEvent
   ///  event.
   ///  </remarks>
-  THTMLDocEventSink = class sealed(TAbstractHTMLEventSink,
+  THTMLDocumentEvents2Sink = class sealed(TAbstractHTMLEventSink,
     IUnknown, IDispatch
   )
   strict protected
@@ -272,7 +273,7 @@ type
   end;
 
 type
-  ///  <summary>Type of the OnError event of THTMLWdwEventSink.</summary>
+  ///  <summary>Type of the OnError event of THTMLWindowEvents2Sink.</summary>
   ///  <param name="Sender">TObject [in] Reference to object that triggered
   ///  event.</param>
   ///  <param name="Desc">string [in] Description of error.</param>
@@ -283,7 +284,7 @@ type
   ///  further processing is to be inhibited.</param>
   ///  <remarks>In the case of script errors, setting Handled to True inhibits
   ///  the browser control's script error dialog box.</remarks>
-  THTMLWdwErrorEvent = procedure(Sender: TObject; const Desc, URL: string;
+  THTMLWindowErrorEvent = procedure(Sender: TObject; const Desc, URL: string;
     const Line: Integer; var Handled: Boolean) of object;
 
 type
@@ -294,13 +295,13 @@ type
   ///  Events are either "standard" HTML events notified via the inherited
   ///  OnEvent event or error events notified by the OnError event.
   ///  </remarks>
-  THTMLWdwEventSink = class sealed(TAbstractHTMLEventSink,
+  THTMLWindowEvents2Sink = class sealed(TAbstractHTMLEventSink,
     IUnknown, IDispatch
   )
   strict private
     var
       ///  <summary>Reference to any OnError event handler.</summary>
-      fOnError: THTMLWdwErrorEvent;
+      fOnError: THTMLWindowErrorEvent;
   strict protected
     ///  <summary>Dispatches HTMLWindowEvents2 events.</summary>
     ///  <param name="InvokeInfo">TInvokeInfo [in/out] Structure containing
@@ -327,7 +328,7 @@ type
     class function EventIntf: TGUID; override;
     ///  <summary>Event triggered when HTMLWindowEvents2.onerror event is
     ///  invoked.</summary>
-    property OnError: THTMLWdwErrorEvent read fOnError write fOnError;
+    property OnError: THTMLWindowErrorEvent read fOnError write fOnError;
   end;
 
 
@@ -465,9 +466,9 @@ begin
   Pointer(Obj) := nil;
 end;
 
-{ THTMLDocEventSink }
+{ THTMLDocumentEvents2Sink }
 
-procedure THTMLDocEventSink.DispatchEvent(var InvokeInfo: TInvokeInfo);
+procedure THTMLDocumentEvents2Sink.DispatchEvent(var InvokeInfo: TInvokeInfo);
 begin
   inherited;
   // Dispatch events
@@ -506,14 +507,14 @@ begin
   end;
 end;
 
-class function THTMLDocEventSink.EventIntf: TGUID;
+class function THTMLDocumentEvents2Sink.EventIntf: TGUID;
 begin
   Result := HTMLDocumentEvents2;
 end;
 
-{ THTMLWdwEventSink }
+{ THTMLWindowEvents2Sink }
 
-procedure THTMLWdwEventSink.DispatchEvent(var InvokeInfo: TInvokeInfo);
+procedure THTMLWindowEvents2Sink.DispatchEvent(var InvokeInfo: TInvokeInfo);
 
   // ---------------------------------------------------------------------------
   ///  Dispatches an OnError event.
@@ -572,7 +573,7 @@ begin
   end;
 end;
 
-class function THTMLWdwEventSink.EventIntf: TGUID;
+class function THTMLWindowEvents2Sink.EventIntf: TGUID;
 begin
   Result := HTMLWindowEvents2;
 end;

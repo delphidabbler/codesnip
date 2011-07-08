@@ -43,7 +43,7 @@ uses
   // Delphi
   OleCtrls, SHDocVw, Classes, Controls, ExtCtrls, Forms, Windows,
   // Project
-  Browser.UController, UCSSBuilder, UHTMLEvents;
+  Browser.UController, Browser.UHTMLEvents, UCSSBuilder;
 
 
 type
@@ -304,7 +304,8 @@ begin
     // cancelled
     if EventInfo.Cancelled
       or not EventInfo.IsEvent(
-        THTMLDocEventSink.EventIntf, THTMLDocEventSink.DISPID_OnClick
+        THTMLDocumentEvents2Sink.EventIntf,
+        THTMLDocumentEvents2Sink.DISPID_OnClick
       ) then
       Exit;
     // We only handle clicks on <a> tags or tags within <a> tags (eg <img>)
