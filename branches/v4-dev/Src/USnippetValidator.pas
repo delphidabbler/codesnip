@@ -410,7 +410,9 @@ begin
   begin
     if Supports(Elem, IActiveTextActionElem, ActionElem)
       and (ActionElem.Kind = ekLink) then
-      if not ValidateURL(ActionElem.Param, ErrorMsg) then
+      if not ValidateURL(
+        ActionElem.Attrs[TActiveTextAttrNames.Link_URL], ErrorMsg
+      ) then
       begin
         Result := False;
         Exit;

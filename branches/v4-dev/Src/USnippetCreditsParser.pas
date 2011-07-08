@@ -169,12 +169,24 @@ begin
     // record the elements
     if Prefix <> '' then
       ActiveText.AddElem(TActiveTextFactory.CreateTextElem(Prefix));
-    ActiveText.AddElem(TActiveTextFactory.CreateActionElem(
-      ekLink, fURL, fsOpen)
+    ActiveText.AddElem(
+      TActiveTextFactory.CreateActionElem(
+        ekLink,
+        TActiveTextFactory.CreateAttrs(
+          TActiveTextAttr.Create(TActiveTextAttrNames.Link_URL, fURL)
+        ),
+        fsOpen
+      )
     );
     ActiveText.AddElem(TActiveTextFactory.CreateTextElem(LinkText));
-    ActiveText.AddElem(TActiveTextFactory.CreateActionElem(
-      ekLink, fURL, fsClose)
+    ActiveText.AddElem(
+      TActiveTextFactory.CreateActionElem(
+        ekLink,
+        TActiveTextFactory.CreateAttrs(
+          TActiveTextAttr.Create(TActiveTextAttrNames.Link_URL, fURL)
+        ),
+        fsClose
+      )
     );
     if Postfix <> '' then
       ActiveText.AddElem(TActiveTextFactory.CreateTextElem(Postfix));

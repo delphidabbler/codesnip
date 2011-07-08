@@ -130,9 +130,13 @@ begin
           if ActionElem.State = fsOpen then
             // opening tag: element's Param property is HTML href attribute
             Result := Result + AOpenTag(
-              ActionElem.Param,
+              ActionElem.Attrs[TActiveTextAttrNames.Link_URL],
               '',
-              '|' + Format(sCreditsURLHint, [ActionElem.Param]),
+              '|' +
+              Format(
+                sCreditsURLHint,
+                [ActionElem.Attrs[TActiveTextAttrNames.Link_URL]]
+              ),
               TIStringList.Create('external-link')
             )
           else
@@ -225,3 +229,4 @@ begin
 end;
 
 end.
+

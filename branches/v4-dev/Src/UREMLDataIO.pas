@@ -65,7 +65,8 @@ type
   TREMLReader = class(TInterfacedObject, IActiveTextParser)
   strict private
     fLexer: TTaggedTextLexer;     // Analysis REML markup
-    fParamStack: TStack<string>;  // Stack of REML tag params for closing tags
+    // Stack of tag params for use in closing tags
+    fParamStack: TStack<TActiveTextAttr>;
     function TagInfo(const TagIdx: Integer; out TagName: string;
       out TagCode: Word; out IsContainer: Boolean): Boolean;
       {Callback that provides lexer with information about supported tags. Lexer
@@ -400,7 +401,7 @@ constructor TREMLReader.Create;
 begin
   inherited Create;
   fLexer := TTaggedTextLexer.Create(TagInfo, EntityInfo);
-  fParamStack := TStack<string>.Create;
+  fParamStack := TStack<TActiveTextAttr>.Create;
 end;
 
 destructor TREMLReader.Destroy;
@@ -441,6 +442,7 @@ var
   ParamName: string;            // name of a parameter
   ParamValue: string;           // value of a parameter
   TagId: TActiveTextElemKind;   // id of a tag
+  Attr: TActiveTextAttr;        // attributes of tag
 resourcestring
   // Error message
   sErrMissingParam = 'Expected a "%0:s" parameter value in tag "%1:s"';
@@ -479,10 +481,13 @@ begin
                 sErrMissingParam, [ParamName, fLexer.TagName]
               );
             // Record param for use by closing tag
-            fParamStack.Push(ParamValue);
+            Attr := TActiveTextAttr.Create(ParamName, ParamValue);
+            fParamStack.Push(Attr);
             // Add opening action element
             ActiveText.AddElem(
-              TActiveTextFactory.CreateActionElem(TagId, ParamValue, fsOpen)
+              TActiveTextFactory.CreateActionElem(
+                TagId, TActiveTextFactory.CreateAttrs(Attr), fsOpen
+              )
             );
           end
           else
@@ -503,13 +508,15 @@ begin
           begin
             // We should have a param which must be stored in closing action
             // element, but closing REML tags have no parameters. We solve this
-            // by poppong the parameter value from the stack. This works because
+            // by popping the parameter value from the stack. This works because
             // we use a stack for params and opening and closing tags are
             // matched.
-            ParamValue := fParamStack.Pop;
+            Attr := fParamStack.Pop;
             // Add closing action element
             ActiveText.AddElem(
-              TActiveTextFactory.CreateActionElem(TagId, ParamValue, fsClose)
+              TActiveTextFactory.CreateActionElem(
+                TagId, TActiveTextFactory.CreateAttrs(Attr), fsClose
+              )
             );
           end
           else
@@ -618,7 +625,7 @@ begin
         // have a parameter: value must be safely encoded
         Result := Format(
           '<%0:s %1:s="%2:s">',
-          [TagName, ParamName, TextToREMLText(TagElem.Param)]
+          [TagName, ParamName, TextToREMLText(TagElem.Attrs[TActiveTextAttrNames.Link_URL])]
         );
     end;
   end;
@@ -925,7 +932,7 @@ begin
         Result := TagVer;
       // special case of <a href="file://...">
       if (Result < 3) and (TagElem.Kind = ekLink) and
-        StrStartsText('file://', TagElem.Param) then
+        StrStartsText('file://', TagElem.Attrs[TActiveTextAttrNames.Link_URL]) then
         Result := 3;
     end;
     if Result = LATEST_VERSION then

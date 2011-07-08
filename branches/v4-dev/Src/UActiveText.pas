@@ -39,7 +39,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -63,7 +63,6 @@ uses
 
 
 type
-
   {
   TActiveTextElemKind:
     Supported types of active text element.
@@ -79,6 +78,13 @@ type
     ekHeading,      // delimits a heading (block level)
     ekMono          // text formatted as mono spaced (inline)
   );
+
+type
+  TActiveTextAttrNames = record
+  public
+    const
+      Link_URL = 'href';
+  end;
 
 type
   {
@@ -114,6 +120,17 @@ type
       {Kind of element}
   end;
 
+  TActiveTextAttr = TPair<string,string>;
+
+  IActiveTextAttrs = interface(IInterface)
+    ['{6AE73940-60C4-4097-8DB8-6A88C97D7DA7}']
+    function GetAttr(const Name: string): string;
+    property Attrs[const Name: string]: string read GetAttr; default;
+    function Count: Integer;
+    procedure Add(const Name, Value: string);
+    function GetEnumerator: TEnumerator<TActiveTextAttr>;
+  end;
+
   {
   IActiveTextTextElem:
     Interface supported by plain text active text elements (i.e. with Kind =
@@ -144,11 +161,11 @@ type
     property State: TActiveTextElemState read GetState;
       {Indicates whether element is opening or closing operation. Operation is
       determined by inherited Kind property}
-    function GetParam: string;
+    function GetAttrs: IActiveTextAttrs;
       {Gets value of any parameter associated with the element.
         @return Required parameter value or '' if there is no parameter.
       }
-    property Param: string read GetParam;
+    property Attrs: IActiveTextAttrs read GetAttrs;
       {Parameter associated with element. '' if element has no parameter}
     function GetDisplayStyle: TActiveTextDisplayStyle;
       {Checks whether element is displayed inline or as a block.
@@ -248,8 +265,8 @@ type
         @return Required new element.
       }
     class function CreateActionElem(const Kind: TActiveTextElemKind;
-      const Param: string;
-      const State: TActiveTextElemState): IActiveTextActionElem; overload;
+      Attrs: IActiveTextAttrs; const State: TActiveTextElemState):
+      IActiveTextActionElem; overload;
       {Creates a new active text action element with a parameter.
         @param Kind [in] Identifies kind of element.
         @param Param [in] Value of element's Param property.
@@ -263,6 +280,11 @@ type
         @param State [in] State of element: opening or closing.
         @return Required new element.
       }
+    class function CreateAttrs: IActiveTextAttrs; overload;
+    class function CreateAttrs(Attr: TActiveTextAttr): IActiveTextAttrs;
+      overload;
+    class function CreateAttrs(const Attrs: array of TActiveTextAttr):
+      IActiveTextAttrs; overload;
   end;
 
 
@@ -342,7 +364,7 @@ type
     Base class for active text elements.
   }
   TActiveTextElem = class(TInterfacedObject,
-    IActiveTextElem
+    IActiveTextElem, IAssignable
   )
   strict private
     fKind: TActiveTextElemKind; // Kind of element
@@ -357,6 +379,7 @@ type
       {Object constructor. Sets up object of correct kind.
         @param Kind [in] Element kind.
       }
+    procedure Assign(const Src: IInterface); virtual;
   end;
 
   {
@@ -364,7 +387,7 @@ type
     Implements an active text text element.
   }
   TActiveTextTextElem = class(TActiveTextElem,
-    IActiveTextTextElem
+    IActiveTextTextElem, IAssignable, IClonable
   )
   strict private
     fText: string;  // Text of element
@@ -378,6 +401,9 @@ type
       {Object constructor. Records element's text and specifies correct kind.
         @param Text [in] Element's text.
       }
+    procedure Assign(const Src: IInterface); override;
+    { IClonable method }
+    function Clone: IInterface;
   end;
 
   {
@@ -385,17 +411,17 @@ type
     Implements an active text action element.
   }
   TActiveTextActionElem = class(TActiveTextElem,
-    IActiveTextActionElem
+    IActiveTextActionElem, IAssignable, IClonable
   )
   strict private
-    fState: TActiveTextElemState; // State of element: opening or closing
-    fParam: string;               // Any parameter associated with element
+    fState: TActiveTextElemState;        // State of element: opening or closing
+    fAttrs: IActiveTextAttrs;           // Any parameter associated with element
   protected // do not make strict
     function GetState: TActiveTextElemState;
       {Gets element state.
         @return Required state.
       }
-    function GetParam: string;
+    function GetAttrs: IActiveTextAttrs;
       {Gets element's parameter as text.
         @return Required parameter. '' if no parameter.
       }
@@ -405,12 +431,32 @@ type
       }
   public
     constructor Create(const Kind: TActiveTextElemKind;
-      const Param: string; const State: TActiveTextElemState);
+      Attrs: IActiveTextAttrs; const State: TActiveTextElemState);
       {Object constructor. Creates required action element.
         @param Kind [in] Element kind.
         @param Param [in] Any parameter associated with element. May be ''.
         @param State [in] Element state: opening or closing.
       }
+    procedure Assign(const Src: IInterface); override;
+    { IClonable method }
+    function Clone: IInterface;
+  end;
+
+  TActiveTextAttrs = class(TInterfacedObject,
+    IActiveTextAttrs, IAssignable, IClonable
+  )
+  strict private
+    fMap: TDictionary<string,string>;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function GetAttr(const Name: string): string;
+    function Count: Integer;
+    procedure Add(const Name, Value: string);
+    function GetEnumerator: TEnumerator<TPair<string,string>>;
+    procedure Assign(const Src: IInterface);
+    { IClonable method }
+    function Clone: IInterface;
   end;
 
 { TActiveTextFactory }
@@ -426,16 +472,8 @@ begin
   (Result as IAssignable).Assign(Src);
 end;
 
-class function TActiveTextFactory.CreateActiveText: IActiveText;
-  {Creates a new empty active text object.
-    @return Empty object.
-  }
-begin
-  Result := TActiveText.Create;
-end;
-
 class function TActiveTextFactory.CreateActionElem(
-  const Kind: TActiveTextElemKind; const Param: string;
+  const Kind: TActiveTextElemKind; Attrs: IActiveTextAttrs;
   const State: TActiveTextElemState): IActiveTextActionElem;
   {Creates a new active text action element with a parameter.
     @param Kind [in] Identifies kind of element.
@@ -444,7 +482,7 @@ class function TActiveTextFactory.CreateActionElem(
     @return Required new element.
   }
 begin
-  Result := TActiveTextActionElem.Create(Kind, Param, State);
+  Result := TActiveTextActionElem.Create(Kind, Attrs, State);
 end;
 
 class function TActiveTextFactory.CreateActionElem(
@@ -456,7 +494,15 @@ class function TActiveTextFactory.CreateActionElem(
     @return Required new element.
   }
 begin
-  Result := CreateActionElem(Kind, '', State);
+  Result := CreateActionElem(Kind, TActiveTextAttrs.Create, State);
+end;
+
+class function TActiveTextFactory.CreateActiveText: IActiveText;
+  {Creates a new empty active text object.
+    @return Empty object.
+  }
+begin
+  Result := TActiveText.Create;
 end;
 
 class function TActiveTextFactory.CreateActiveText(const Markup: string;
@@ -472,6 +518,27 @@ class function TActiveTextFactory.CreateActiveText(const Markup: string;
 begin
   Result := CreateActiveText;
   Parser.Parse(Markup, Result);
+end;
+
+class function TActiveTextFactory.CreateAttrs(
+  const Attrs: array of TActiveTextAttr): IActiveTextAttrs;
+var
+  Attr: TActiveTextAttr;
+begin
+  Result := TActiveTextAttrs.Create;
+  for Attr in Attrs do
+    Result.Add(Attr.Key, Attr.Value);
+end;
+
+class function TActiveTextFactory.CreateAttrs(Attr: TActiveTextAttr):
+  IActiveTextAttrs;
+begin
+  Result := CreateAttrs([Attr]);
+end;
+
+class function TActiveTextFactory.CreateAttrs: IActiveTextAttrs;
+begin
+  Result := TActiveTextAttrs.Create;
 end;
 
 class function TActiveTextFactory.CreateTextElem(
@@ -501,9 +568,13 @@ procedure TActiveText.Append(const ActiveText: IActiveText);
   }
 var
   Elem: IActiveTextElem;  // references each element in elems
+  NewElem: IActiveTextElem;
 begin
   for Elem in ActiveText do
-    AddElem(Elem);
+  begin
+    NewElem := (Elem as IClonable).Clone as IActiveTextElem;
+    AddElem(NewElem);
+  end;
 end;
 
 procedure TActiveText.Assign(const Src: IInterface);
@@ -580,6 +651,12 @@ end;
 
 { TActiveTextElem }
 
+procedure TActiveTextElem.Assign(const Src: IInterface);
+begin
+  Assert(Supports(Src, IActiveTextElem));
+  fKind := (Src as IActiveTextElem).Kind;
+end;
+
 constructor TActiveTextElem.Create(const Kind: TActiveTextElemKind);
   {Object constructor. Sets up object of correct kind.
     @param Kind [in] Element kind.
@@ -598,6 +675,18 @@ begin
 end;
 
 { TActiveTextTextElem }
+
+procedure TActiveTextTextElem.Assign(const Src: IInterface);
+begin
+  inherited;
+  fText := (Src as IActiveTextTextElem).Text;
+end;
+
+function TActiveTextTextElem.Clone: IInterface;
+begin
+  Result := TActiveTextTextElem.Create(fText);
+  (Result as IAssignable).Assign(Self);
+end;
 
 constructor TActiveTextTextElem.Create(const Text: string);
   {Object constructor. Records element's text and specifies correct kind.
@@ -618,8 +707,27 @@ end;
 
 { TActiveTextActionElem }
 
+procedure TActiveTextActionElem.Assign(const Src: IInterface);
+var
+  SrcElem: IActiveTextActionElem;
+begin
+  inherited;
+  if not Supports(Src, IActiveTextActionElem, SrcElem) then
+    raise EBug.Create(ClassName + '.Assign: Src is not IActiveTextActionElem');
+  fState := SrcElem.State;
+  (SrcElem.Attrs as IAssignable).Assign(SrcElem.Attrs);
+end;
+
+function TActiveTextActionElem.Clone: IInterface;
+var
+  Attrs: IActiveTextAttrs;
+begin
+  Attrs := (fAttrs as IClonable).Clone as IActiveTextAttrs;
+  Result := TActiveTextActionElem.Create(GetKind, Attrs, GetState);
+end;
+
 constructor TActiveTextActionElem.Create(const Kind: TActiveTextElemKind;
-  const Param: string; const State: TActiveTextElemState);
+  Attrs: IActiveTextAttrs; const State: TActiveTextElemState);
   {Object constructor. Creates required action element.
     @param Kind [in] Element kind.
     @param Param [in] Any parameter associated with element. May be ''.
@@ -629,8 +737,16 @@ begin
   Assert(Kind <> ekText,
     ClassName + '.Create: Kind is not valid for a compound element.');
   inherited Create(Kind);
-  fParam := Param;
+  fAttrs := Attrs;
   fState := State;
+end;
+
+function TActiveTextActionElem.GetAttrs: IActiveTextAttrs;
+  {Gets element's parameter as text.
+    @return Required parameter. '' if no parameter.
+  }
+begin
+  Result := fAttrs;
 end;
 
 function TActiveTextActionElem.GetDisplayStyle: TActiveTextDisplayStyle;
@@ -644,20 +760,67 @@ begin
     Result := dsInline;
 end;
 
-function TActiveTextActionElem.GetParam: string;
-  {Gets element's parameter as text.
-    @return Required parameter. '' if no parameter.
-  }
-begin
-  Result := fParam;
-end;
-
 function TActiveTextActionElem.GetState: TActiveTextElemState;
   {Gets element state.
     @return Required state.
   }
 begin
   Result := fState;
+end;
+
+{ TActiveTextAttrs }
+
+procedure TActiveTextAttrs.Add(const Name, Value: string);
+begin
+  fMap.Add(Name, Value);
+end;
+
+procedure TActiveTextAttrs.Assign(const Src: IInterface);
+var
+  Attr: TActiveTextAttr;
+begin
+  fMap.Clear;
+  for Attr in (Src as IActiveTextAttrs) do
+    fMap.Add(Attr.Key, Attr.Value);
+end;
+
+function TActiveTextAttrs.Clone: IInterface;
+begin
+  Result := TActiveTextAttrs.Create;
+  (Result as IAssignable).Assign(Self);
+end;
+
+function TActiveTextAttrs.Count: Integer;
+begin
+  Result := fMap.Count;
+end;
+
+constructor TActiveTextAttrs.Create;
+begin
+  inherited Create;
+  fMap := TDictionary<string,string>.Create;
+end;
+
+destructor TActiveTextAttrs.Destroy;
+begin
+  fMap.Free;
+  inherited;
+end;
+
+function TActiveTextAttrs.GetAttr(const Name: string): string;
+var
+  P: TActiveTextAttr;
+  S: string;
+begin
+  S := '';
+  for P in fMap do
+    S := S + '  ' + P.Key + ' | ' + P.Value;
+  Result := fMap[Name];
+end;
+
+function TActiveTextAttrs.GetEnumerator: TEnumerator<TPair<string, string>>;
+begin
+  Result := fMap.GetEnumerator;
 end;
 
 end.

@@ -227,7 +227,8 @@ begin
         // hyperlink element: output in brackets only if it's a closing element
         GetIntf(Elem, IActiveTextActionElem, ActionElem);
         if InBlock and (ActionElem.State = fsClose) then
-          Text := Text + Format(sURL, [ActionElem.Param]);
+          Text := Text
+            + Format(sURL, [ActionElem.Attrs[TActiveTextAttrNames.Link_URL]]);
       end;
     end;
   end;

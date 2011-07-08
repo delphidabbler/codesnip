@@ -340,7 +340,9 @@ begin
         begin
           fBuilder.BeginGroup;
           SetColour(clLinkText);
-          fBuilder.AddText(Format(sURL, [ActionElem.Param]));
+          fBuilder.AddText(
+            Format(sURL, [ActionElem.Attrs[TActiveTextAttrNames.Link_URL]])
+          );
           fBuilder.EndGroup;
         end;
       end;
