@@ -47,140 +47,142 @@ uses
 
 
 type
-
-  {
-  TBrowserBuildCSSEvent:
-    Type of event triggered when frame needs CSS. This can be handled by forms
-    that own frame to modify default CSS.
-      @param Sender [in] Reference to frame triggering event.
-      @param CSSBuilder [in] Object containing information about existing CSS.
-        Existing CSS can be modified and added to.
-  }
+  ///  <summary>Type of event triggered when frame that hosts a TWebBrowser
+  ///  needs CSS.</summary>
+  ///  <remarks>Such events can be handled by forms that own the frame to modify
+  ///  default CSS.</remarks>
+  ///  <param name="Sender">TObject [in] Reference to frame triggering event.
+  ///  </param>
+  ///  <param name="CSSBuilder">TCSSBuilder [in] Object containing information
+  ///  about existing CSS. This can be modified and/or added to.</param>
   TBrowserBuildCSSEvent = procedure(Sender: TObject;
     const CSSBuilder: TCSSBuilder) of object;
 
-  {
-  TBrowserBaseFrame:
-    Base class for all frames that contain a web browser control. Creates a
-    web browser controller object and sets default characteristics of controlled
-    browser object. Also provides methods to handle activation of browser, HTML
-    events, access selected links and provide information about the control.
-  }
+type
+  ///  <summary>
+  ///  Base class for all frames that contain a web browser control. Creates a
+  ///  web browser controller object and sets default characteristics of
+  ///  controlled browser object. Also provides methods to handle activation of
+  ///  browser, HTML events, access selected links and provide information about
+  ///  the browser control.
+  ///  </summary>
   TBrowserBaseFrame = class(TFrame)
     pnlBrowser: TPanel;
     wbBrowser: TWebBrowser;
+    ///  <summary>Handles event triggered when frame is entered. Activates
+    ///  browser.</summary>
     procedure FrameEnter(Sender: TObject);
   strict private
-    fWBController: TWBController;       // Object used to control web browser
-    fOnBuildCSS: TBrowserBuildCSSEvent; // Handler for OnBuildCSS event
-    fOnHTMLEvent: THTMLEvent;           // Handler for OnHTMLEvent event
+    var
+      ///  <summary>Object used to control web browser.</summary>
+      fWBController: TWBController;
+      ///  <summary>Handler for OnBuildCSS event.</summary>
+      fOnBuildCSS: TBrowserBuildCSSEvent;
+      ///  <summary>Handler for OnHTMLEvent event.</summary>
+      fOnHTMLEvent: THTMLEvent;
+    ///  <summary>Handles browser UI manager's OnUpdateCSS event. Passes CSS
+    ///  to be used by browser control via CSS parameter.</summary>
     procedure UpdateCSS(Sender: TObject; var CSS: string);
-      {Handles browser UI manager's OnUpdateCSS event. Sets browser control's
-      CSS.
-        @param Sender [in] Not used.
-        @param CSS [in/out] Browser's default CSS. Any CSS passed in is ignored
-          and CSS set to required CSS.
-      }
+    ///  <summary>Makes browser the active control of the parent form.</summary>
     procedure MakeBrowserActiveControl;
-      {Makes browser the active control of the parent form.
-      }
+    ///  <summary>Triggers any selected link in web browser control.</summary>
     procedure TriggerActiveLink;
-      {Triggers any selected link in web browser control.
-      }
   strict protected
+    ///  <summary>Returns reference to form that hosts the frame or nil if there
+    ///  is no host form.</summary>
     function ParentForm: TForm;
-      {Gets reference to form that hosts the frame.
-        @return Reference to host form or nil if no such host.
-      }
+    ///  <summary>Builds required default CSS using given TCSSBuilder object.
+    ///  </summary>
+    ///  <remarks>Can be overridden to modify the CSS.</remarks>
     procedure BuildCSS(const CSSBuilder: TCSSBuilder); virtual;
-      {Builds required default CSS. Can be overridden to add or modify the CSS.
-        @param CSSBuilder [in] Object used to construct the CSS.
-      }
+    ///  <summary>Handles web browser control's OnEnter event. Makes browser
+    ///  control the active control of the host form.</summary>
     procedure BrowserActivate(Sender: TObject); virtual;
-      {Handles web browser control's OnEnter event. Makes browser the active
-      control of the host form.
-        @param Sender [in] Not used.
-      }
+    ///  <summary>Handles event triggered by web browser controller when a key
+    ///  is pressed in the browser control.</summary>
+    ///  <remarks>Browser is prevented from handling any key press where we
+    ///  don't want browser's default action or we want an opportunity to handle
+    ///  the key press in owning form or main application.</remarks>
+    ///  <param name="Sender">TObject [in] Not used.</param>
+    ///  <param name="Msg">TMSG [in] Message generating accelerator translation
+    ///  request.</param>
+    ///  <param name="CmdID">DWORD [in] Not used.</param>
+    ///  <param name="Handled">Boolean [in/out] False when passed in. Set to
+    ///  True as required to prevent web browser handling key press.</param>
     procedure TranslateAccelHandler(Sender: TObject; const Msg: TMSG;
       const CmdID: DWORD; var Handled: Boolean);
-      {Handles event triggered by web browser controller when a key is pressed
-      in the browser control. Browser is prevented from handling any key press
-      where we don't want browser's default action or we want an opportunity to
-      handle the key press in owning form or main application.
-        @param Sender [in] Not used.
-        @param Msg [in] Message generating accelerator translation request.
-        @param CmdID [in] Not used.
-        @param Handled [in/out] False when passed in. Set to true as required to
-          prevent web browser handling key press.
-      }
+    ///  <summary>Navigates to a URL. Action peformed depends on URL's protocol.
+    ///  </summary>
+    ///  <param name="URL">string [in] URL to be navigated to.</param>
+    ///  <returns>Boolean. True if navigation was handled by method, False if
+    ///  not.</returns>
     function DoNavigate(const URL: string): Boolean;
-      {Navigates to a URL. Action peformed depends on URL's protocol.
-        @param URL [in] URL being navigated to.
-        @return True if navigation was handled by method, false if not.
-      }
+    ///  <summary>Handler for web browser controller's OnNavigate event.
+    ///  Navigates to given URL.</summary>
+    ///  <param name="Sender">TObject [in] Not used.</param>
+    ///  <param name="URL">string [in] URL to be navigated to.</param>
+    ///  <param name="Cancel">Boolean [in/out] False when passed in. Set to True
+    ///  to cancel browser's own navigation if navigation is handled by the
+    ///  application. Left False if browser is to handle navigation.</param>
     procedure NavigateHandler(Sender: TObject; const URL: string;
       var Cancel: Boolean);
-      {Handles web browser navigation events.
-        @param Sender [in] Not used.
-        @param URL [in] URL to access.
-        @param Cancel [in/out] False when passed in. Set to true to cancel
-          browser's own navigation if navigation is handled by the application.
-          Left false if browser is to handle navigation.
-      }
+    ///  <summary>Handles "standard" web browser events.</summary>
+    ///  <remarks>
+    ///  <para>Checks for shift key when link is clicked and inhibits default
+    ///  browser action of opening in IE. Instead URL is opened according to
+    ///  protocol handler.</para>
+    ///  <para>All events are passed to this object's OnHTMLEvent
+    ///  event.</para>
+    ///  </remarks>
+    ///  <param name="Sender">TObject [in] Object that triggered event.</param>
+    ///  <param name="EventInfo">THTMLEventInfo [in] Provides information about
+    ///  the event.</param>
     procedure HTMLEventHandler(Sender: TObject;
       const EventInfo: THTMLEventInfo); virtual;
-      {Handles "standard" web browser events. Checks for shift key being pressed
-      when link is clicked and inhibits default browser action of opening in IE.
-      Instead URL is opened according to protocol handler. All events are passed
-      on via this object's OnHTMLEvent event.
-        @param Sender [in] Object that triggered event. Passed on to this
-          object's OnHTMLEvent handler.
-        @param EventInfo [in] Object providing information about the event.
-      }
-    // todo: comment this method
+    ///  <summary>Handles browser window's onerror event. Generates and handles
+    ///  an EBug exception to report the error.</summary>
+    ///  <remarks>
+    ///  <para>Parameters are used in exception error message.</para>
+    ///  <para>Handles parameter is set True to inhibit browser control's script
+    ///  error dialog box.</para>
+    ///  </remarks>
     procedure HTMLWindowErrorHandler(Sender: TObject; const Desc, URL: string;
       const Line: Integer; var Handled: Boolean); virtual;
-    property WBController: TWBController
-      read fWBController;
-      {Object used to control web browser}
+    ///  <summary>Web browser controller object.</summary>
+    property WBController: TWBController read fWBController;
   protected // do not make strict
+    ///  <summary>Checks if browser control is currently active.</summary>
+    ///  <remarks>Implements a method of IWBInfo.</remarks>
     function IsBrowserActive: Boolean;
-      {Checks if browser control is currently active. Implements
-      IWBInfo.IsBrowserActive for sub-classes.
-        @return True if browser control is active, False otherwise.
-      }
+    ///  <summary>Checks whether text can be copied to clipboard from browser
+    ///  control.</summary>
+    ///  <remarks>Implements a method of IClipboardMgr</remarks>
     function CanCopy: Boolean;
-      {Checks whether text can be copied to clipboard from browser control.
-      Implements IClipboardMgr.CanCopy for sub-classes.
-        @return True if text can be copied.
-      }
+    ///  <summary>Copies selected text from browser control to clipboard.
+    ///  </summary>
+    ///  <remarks>Implements a method of IClipboardMgr.</remarks>
     procedure CopyToClipboard;
-      {Copies selected text from browser control to clipboard. Implements
-      IClipboardMgr.CopyToClipboard for sub-classes.
-      }
+    ///  <summary>Checks whether text can be selected in browser control.
+    ///  </summary>
+    ///  <remarks>Implements a method of ISelectionMgr.</remarks>
     function CanSelectAll: Boolean;
-      {Checks whether text can be selected in browser control. Implements
-      ISelectionMgr.CanSelectAll for sub-classes.
-        @return True if text can be selected.
-      }
+    ///  <summary>Selects all text in browser control.</summary>
+    ///  <remarks>Implements a method of ISelectionMgr.</remarks>
     procedure SelectAll;
-      {Selects all text in browser control. Implements ISelectionMgr.SelectAll
-      for sub-classes.
-      }
   public
+    ///  <summary>Creates frame with given owner and creates and initialises
+    ///  browser controller.</summary>
     constructor Create(AOwner: TComponent); override;
-      {Class constructor. Sets up browser frame.
-        @param AOwner [in] Component that owns frame.
-      }
+    ///  <summary>Tears down frame.</summary>
     destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
+    ///  <summary>Event triggerd when default CSS is required by browser
+    ///  control.</summary>
     property OnBuildCSS: TBrowserBuildCSSEvent
       read fOnBuildCSS write fOnBuildCSS;
-      {Event triggerd when default CSS is required by browser control}
+    ///  <summary>Event triggered when supported HTML events are intercepted.
+    ///  </summary>
     property OnHTMLEvent: THTMLEvent
       read fOnHTMLEvent write fOnHTMLEvent;
-      {Event used to pass on HTML events triggered by browser control}
   end;
 
 
@@ -201,18 +203,11 @@ uses
 { TBrowserBaseFrame }
 
 procedure TBrowserBaseFrame.BrowserActivate(Sender: TObject);
-  {Handles web browser control's OnEnter event. Makes browser the active control
-  of the host form.
-    @param Sender [in] Not used.
-  }
 begin
   MakeBrowserActiveControl;
 end;
 
 procedure TBrowserBaseFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
-  {Builds required default CSS. Can be overridden to add or modify the CSS.
-    @param CSSBuilder [in] Object used to construct the CSS.
-  }
 begin
   // Ensures images have no borders
   with CSSBuilder.AddSelector('img') do
@@ -240,39 +235,24 @@ begin
 end;
 
 function TBrowserBaseFrame.CanCopy: Boolean;
-  {Checks whether text can be copied to clipboard from browser control.
-  Implements IClipboardMgr.CanCopy for sub-classes.
-    @return True if text can be copied.
-  }
 begin
   Result := WBController.UIMgr.CanCopy;
 end;
 
 function TBrowserBaseFrame.CanSelectAll: Boolean;
-  {Checks whether text can be selected in browser control. Implements
-  ISelectionMgr.CanSelectAll for sub-classes.
-    @return True if text can be selected.
-  }
 begin
   Result := WBController.UIMgr.CanSelectAll;
 end;
 
 procedure TBrowserBaseFrame.CopyToClipboard;
-  {Copies selected text from browser control to clipboard. Implements
-  IClipboardMgr.CopyToClipboard for sub-classes.
-  }
 begin
   WBController.UIMgr.CopyToClipboard;
 end;
 
 constructor TBrowserBaseFrame.Create(AOwner: TComponent);
-  {Class constructor. Sets up browser frame.
-    @param AOwner [in] Component that owns frame.
-  }
 begin
   inherited;
   Assert(AOwner is TWinControl, ClassName + '.Create: AOwner not a TForm');
-  // Create web browser controller object and set defaults and event handlers
   fWBController := TWBController.Create(wbBrowser);
   fWBController.UIMgr.Show3dBorder := False;
   fWBController.UIMgr.UseDefaultContextMenu := False;
@@ -285,18 +265,12 @@ begin
 end;
 
 destructor TBrowserBaseFrame.Destroy;
-  {Class destructor. Tears down object.
-  }
 begin
   FreeAndNil(fWBController);
   inherited;
 end;
 
 function TBrowserBaseFrame.DoNavigate(const URL: string): Boolean;
-  {Navigates to a URL. Action peformed depends on URL's protocol.
-    @param URL [in] URL being navigated to.
-    @return True if navigation was handled by method, false if not.
-  }
 var
   Protocol: TProtocol;  // object used to handle certain URL protocols
 begin
@@ -313,23 +287,12 @@ begin
 end;
 
 procedure TBrowserBaseFrame.FrameEnter(Sender: TObject);
-  {Handles event triggered when frame is entered. Activates browser.
-    @param Sender [in] Not used.
-  }
 begin
   MakeBrowserActiveControl;
 end;
 
 procedure TBrowserBaseFrame.HTMLEventHandler(Sender: TObject;
   const EventInfo: THTMLEventInfo);
-  {Handles "standard" web browser events. Checks for shift key being pressed
-  when link is clicked and inhibits default browser action of opening in IE.
-  Instead URL is opened according to protocol handler. All events are passed on
-  via this object's OnHTMLEvent event.
-    @param Sender [in] Object that triggered event. Passed on to this object's
-      OnHTMLEvent handler.
-    @param EventInfo [in] Object providing information about the event.
-  }
 var
   ALink: IDispatch; // any <a> tag generating (or wrapping tag generating) event
 begin
@@ -381,17 +344,11 @@ begin
 end;
 
 function TBrowserBaseFrame.IsBrowserActive: Boolean;
-  {Checks if browser control is currently active. Implements
-  IWBInfo.IsBrowserActive for sub-classes.
-    @return True if browser control is active, False otherwise.
-  }
 begin
   Result := ParentForm.ActiveControl = wbBrowser;
 end;
 
 procedure TBrowserBaseFrame.MakeBrowserActiveControl;
-  {Makes browser the active control of the parent form.
-  }
 begin
   if ParentForm <> nil then
     ParentForm.ActiveControl := wbBrowser;
@@ -399,13 +356,6 @@ end;
 
 procedure TBrowserBaseFrame.NavigateHandler(Sender: TObject;
   const URL: string; var Cancel: Boolean);
-  {Handles web browser navigation events.
-    @param Sender [in] Not used.
-    @param URL [in] URL to access.
-    @param Cancel [in/out] False when passed in. Set to true to cancel browser's
-      own navigation if navigation is handled by the application. Left false if
-      browser is to handle navigation.
-  }
 begin
   try
     Cancel := DoNavigate(URL);
@@ -416,9 +366,6 @@ begin
 end;
 
 function TBrowserBaseFrame.ParentForm: TForm;
-  {Gets reference to form that hosts the frame.
-    @return Reference to host form or nil if no such host.
-  }
 var
   ParentCtrl: TWinControl;  // moves up tree of parent controls
 begin
@@ -432,33 +379,17 @@ begin
 end;
 
 procedure TBrowserBaseFrame.SelectAll;
-  {Selects all text in browser control. Implements ISelectionMgr.SelectAll for
-  sub-classes.
-  }
 begin
   WBController.UIMgr.SelectAll;
 end;
 
 procedure TBrowserBaseFrame.TranslateAccelHandler(Sender: TObject;
   const Msg: TMSG; const CmdID: DWORD; var Handled: Boolean);
-  {Handles event triggered by web browser controller when a key is pressed in
-  the browser control. Browser is prevented from handling any key press where we
-  don't want browser's default action or we want an opportunity to handle the
-  key press in owning form or main application.
-    @param Sender [in] Not used.
-    @param Msg [in] Message generating accelerator translation request.
-    @param CmdID [in] Not used.
-    @param Handled [in/out] False when passed in. Set to true as required to
-      prevent web browser handling key press.
-  }
 
   // ---------------------------------------------------------------------------
+  ///  Posts a key down and key up message to frame's parent window using wParam
+  ///  and lParam values of message passed to outer method.
   procedure PostKeyPress(const DownMsg, UpMsg: UINT);
-    {Posts a key down and key up message to frame's parent window using wParam
-    and lParam values of message passed to outer method.
-      @param DownMsg [in] Key down message (WM_KEYDOWN or WM_SYSKEYDOWN).
-      @param UpMsg [in] key up message (WM_KEYUP or WM_SYSKEYUP).
-    }
   begin
     PostMessage(Parent.Handle, DownMsg, Msg.wParam, Msg.lParam);
     PostMessage(Parent.Handle, UpMsg, Msg.wParam, Msg.lParam);
@@ -529,30 +460,19 @@ begin
 end;
 
 procedure TBrowserBaseFrame.TriggerActiveLink;
-  {Triggers any selected link in web browser control. Does nothing if there is
-  no active link.
-  }
 begin
   TAnchors.Click(THTMLDocHelper.GetActiveElem(wbBrowser.Document));
 end;
 
 procedure TBrowserBaseFrame.UpdateCSS(Sender: TObject; var CSS: string);
-  {Handles browser UI manager's OnUpdateCSS event. Sets browser control's CSS.
-    @param Sender [in] Not used.
-    @param CSS [in/out] Browser's default CSS. Any CSS passed in is ignored and
-      CSS set to required CSS.
-  }
 var
   CSSBuilder: TCSSBuilder;  // object used to build CSS
 begin
   CSSBuilder := TCSSBuilder.Create;
   try
-    // Build CSS
     BuildCSS(CSSBuilder);
-    // Modify / add CSS using OnBuildCSS event if set
     if Assigned(fOnBuildCSS) then
       fOnBuildCSS(Self, CSSBuilder);
-    // Render CSS
     CSS := CSSBuilder.AsString;
   finally
     FreeAndNil(CSSBuilder);
