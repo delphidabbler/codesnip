@@ -72,6 +72,10 @@ type
     ///  <remarks>Returns 0 if records are same, -ve if this record less than
     ///  other record or +ve if this record greater than other.</remarks>
     function Compare(const SID: TSnippetID): Integer;
+    ///  <summary>Compares two snippet names, Left and Right.</summary>
+    ///  <remarks>Returns 0 if names are same, -ve if Left is less than Right or
+    ///  +ve Left is greater than Right.</remarks>
+    class function CompareNames(const Left, Right: string): Integer; static;
     ///  <summary>Overload of equality operator.</summary>
     class operator Equal(const SID1, SID2: TSnippetID): Boolean;
     ///  <summary>Overload of inequality operator.</summary>
@@ -158,9 +162,14 @@ end;
 
 function TSnippetID.Compare(const SID: TSnippetID): Integer;
 begin
-  Result := StrCompareText(Name, SID.Name);
+  Result := CompareNames(Name, SID.Name);
   if Result = 0 then
     Result := Ord(UserDefined) - Ord(SID.UserDefined);
+end;
+
+class function TSnippetID.CompareNames(const Left, Right: string): Integer;
+begin
+  Result := StrCompareText(Left, Right);
 end;
 
 constructor TSnippetID.Create(const AName: string; const AUserDefined: Boolean);
