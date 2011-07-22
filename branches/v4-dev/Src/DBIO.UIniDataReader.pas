@@ -361,7 +361,7 @@ begin
     try
       fMasterIni := TDatabaseIniFile.Create(fFileReader, MasterFileName);
       fCatIDs := TStringList.Create;
-      fSnippetCatMap := TSnippetCatMap.Create(TSameTextEqualityComparer.Create);
+      fSnippetCatMap := TSnippetCatMap.Create(TTextEqualityComparer.Create);
       // Load required indexes
       LoadIndices;
     except
@@ -641,7 +641,7 @@ begin
   fFileReader := FileReader;
   // fCache owns and frees the ini file objects
   fCache := TIniFileMap.Create(
-    [doOwnsValues], TSameTextEqualityComparer.Create
+    [doOwnsValues], TTextEqualityComparer.Create
   );
 end;
 

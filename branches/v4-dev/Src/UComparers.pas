@@ -61,7 +61,7 @@ type
   ///  <summary>
   ///  Case insenstive string equality comparer.
   ///  </summary>
-  TSameTextEqualityComparer = class(TEqualityComparer<string>,
+  TTextEqualityComparer = class(TEqualityComparer<string>,
     IEqualityComparer<string>
   )
   public
@@ -75,7 +75,7 @@ type
   ///  <summary>
   ///  Case senstive string equality comparer.
   ///  </summary>
-  TSameStringEqualityComparer = class(TEqualityComparer<string>,
+  TStringEqualityComparer = class(TEqualityComparer<string>,
     IEqualityComparer<string>
   )
   public
@@ -120,14 +120,14 @@ begin
   Result := StrCompareText(Left, Right);
 end;
 
-{ TSameTextEqualityComparer }
+{ TTextEqualityComparer }
 
-function TSameTextEqualityComparer.Equals(const Left, Right: string): Boolean;
+function TTextEqualityComparer.Equals(const Left, Right: string): Boolean;
 begin
   Result := StrSameText(Left, Right);
 end;
 
-function TSameTextEqualityComparer.GetHashCode(const Value: string): Integer;
+function TTextEqualityComparer.GetHashCode(const Value: string): Integer;
 begin
   // Comparison takes place (i.e. Equals gets called) only if hashes are same.
   // So we must ignore case in hash if two strings that differ only in case are
@@ -135,14 +135,14 @@ begin
   Result := ElfHash(StrToLower(Value));
 end;
 
-{ TSameStringEqualityComparer }
+{ TStringEqualityComparer }
 
-function TSameStringEqualityComparer.Equals(const Left, Right: string): Boolean;
+function TStringEqualityComparer.Equals(const Left, Right: string): Boolean;
 begin
   Result := StrSameStr(Left, Right);
 end;
 
-function TSameStringEqualityComparer.GetHashCode(const Value: string): Integer;
+function TStringEqualityComparer.GetHashCode(const Value: string): Integer;
 begin
   Result := ElfHash(Value);
 end;

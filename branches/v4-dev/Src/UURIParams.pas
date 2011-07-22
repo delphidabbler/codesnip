@@ -270,7 +270,7 @@ constructor TURIParams.Create;
 begin
   inherited Create;
   fDict := TDictionary<string,string>.Create(
-    24, TSameTextEqualityComparer.Create
+    24, TTextEqualityComparer.Create
   );
 end;
 

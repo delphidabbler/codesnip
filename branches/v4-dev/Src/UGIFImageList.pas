@@ -142,7 +142,7 @@ constructor TGIFImageList.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   // Set up map: we ignore case of resource names
-  fGIFResNames := TResNamesMap.Create(TSameTextEqualityComparer.Create);
+  fGIFResNames := TResNamesMap.Create(TTextEqualityComparer.Create);
 end;
 
 function TGIFImageList.CreateBMPFromGIFRes(const GIFResName: string): TBitmap;

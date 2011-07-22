@@ -216,7 +216,7 @@ begin
   // fSelectors treats selector names are not case sensitive
   // fSelectors owns value objects and frees them when they are removed from map
   fSelectors := TCSSSelectorMap.Create(
-    [doOwnsValues], TSameTextEqualityComparer.Create
+    [doOwnsValues], TTextEqualityComparer.Create
   );
 end;
 

@@ -466,7 +466,7 @@ constructor TTaggedTextEntityHandler.Create;
 begin
   inherited;
   fSymbolicEntities := TDictionary<string, Char>.Create(
-    TSameStringEqualityComparer.Create
+    TStringEqualityComparer.Create
   );
 end;
 
@@ -636,7 +636,7 @@ begin
   Assert(Assigned(EH), ClassName + '.Create: EH is not assigned');
   inherited Create;
   fTags := TDictionary<string, TTagInfo>.Create(
-    TSameTextEqualityComparer.Create
+    TTextEqualityComparer.Create
   );
   fEntityHandler := EH;
 end;

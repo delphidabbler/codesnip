@@ -446,7 +446,7 @@ var
 begin
   // Map contains only symbols, therefore it doesn't matter if searching is
   // case sensitive. We use case insensitive since it is probably quicker
-  Map := TSymbolMap.Create(TSameStringEqualityComparer.Create);
+  Map := TSymbolMap.Create(TStringEqualityComparer.Create);
   for I := Low(cSymToTokenMap) to High(cSymToTokenMap) do
     Map.Add(cSymToTokenMap[I].Symbol, cSymToTokenMap[I].Token);
 end;
