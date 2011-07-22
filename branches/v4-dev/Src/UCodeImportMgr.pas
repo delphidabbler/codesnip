@@ -109,13 +109,9 @@ type
       fImportInfoList: TImportInfoList;
       ///  <summary>Value of UserInfo property.</summary>
       fUserInfo: TUserInfo;
-    ///  <summary>Initialises data before importing.</summary>
-    // TODO: Replace single call with content of method and remove method
-    procedure Initialise;
     ///  <summary>Initialises import information list with details of snippets
     ///  read from import file.</summary>
-    // TODO: Rename this method
-    procedure UpdateImportInfo;
+    procedure InitImportInfoList;
     ///  <summary>Returns list of names that can't be used to rename an imported
     ///  snippet.</summary>
     ///  <param name="ExcludedName">string [in] Name of snippet to be excluded
@@ -227,7 +223,7 @@ procedure TCodeImportMgr.Import(const FileName: string);
 var
   Data: TBytes; // content of import file as bytes
 begin
-  Initialise;
+  fUserInfo := TUserInfo.CreateNul;
   fImportInfoList.Clear;
   try
     Data := TFileIO.ReadAllBytes(FileName);
@@ -238,12 +234,22 @@ begin
     on E: ECodeImporter do
       raise ECodeImportMgr.Create(E);
   end;
-  UpdateImportInfo;
+  InitImportInfoList;
 end;
 
-procedure TCodeImportMgr.Initialise;
+procedure TCodeImportMgr.InitImportInfoList;
+var
+  SnippetInfo: TSnippetInfo;  // info about each snippet in import file
 begin
-  fUserInfo := TUserInfo.CreateNul;
+  fImportInfoList.Clear;
+  for SnippetInfo in fSnippetInfoList do
+  begin
+    fImportInfoList.Add(
+      TImportInfo.Create(
+        SnippetInfo.Name, GetUniqueSnippetName(SnippetInfo.Name)
+      )
+    );
+  end;
 end;
 
 procedure TCodeImportMgr.UpdateDatabase;
@@ -315,21 +321,6 @@ begin
     else
       // snippet is new: add to database
       Editor.AddSnippet(ImportInfo.ImportAsName, SnippetInfo.Data);
-  end;
-end;
-
-procedure TCodeImportMgr.UpdateImportInfo;
-var
-  SnippetInfo: TSnippetInfo;  // info about each snippet in import file
-begin
-  fImportInfoList.Clear;
-  for SnippetInfo in fSnippetInfoList do
-  begin
-    fImportInfoList.Add(
-      TImportInfo.Create(
-        SnippetInfo.Name, GetUniqueSnippetName(SnippetInfo.Name)
-      )
-    );
   end;
 end;
 
