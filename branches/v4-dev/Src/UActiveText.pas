@@ -307,7 +307,24 @@ type
   strict private
     ///  <summary> List of active text elements.</summary>
     fElems: TList<IActiveTextElem>;
-  protected // do not make strict
+  public
+    ///  <summary>Object constructor. Sets up object.</summary>
+    constructor Create;
+    ///  <summary>Object destructor. Tears down object.</summary>
+    destructor Destroy; override;
+    ///  <summary>Assigns properties of another object to this object.</summary>
+    ///  <param name="Src">IInterface [in] Object whose properties are to be
+    ///  assigned. Src must support IActiveText but may be nil.</param>
+    ///  <remarks>
+    ///  <para>Method of IAssignable.</para>
+    ///  <para>If Src is nil, all this object's properties are cleared.</para>
+    ///  <para>Raises EBug if Src is not nil and does not support IActiveText.
+    ///  </para>
+    ///  </remarks>
+    procedure Assign(const Src: IInterface);
+    ///  <summary>Returns a cloned instance of this object.</summary>
+    ///  <remarks>Method of IClonable.</remarks>
+    function Clone: IInterface;
     ///  <summary>Gets enumerator for contents of element list.</summary>
     ///  <remarks>Method of IActiveText.</remarks>
     function GetEnumerator: TEnumerator<IActiveTextElem>;
@@ -328,24 +345,6 @@ type
     ///  <summary>Returns number of elements element list.</summary>
     ///  <remarks>Method of IActiveText.</remarks>
     function GetCount: Integer;
-    ///  <summary>Assigns properties of another object to this object.</summary>
-    ///  <param name="Src">IInterface [in] Object whose properties are to be
-    ///  assigned. Src must support IActiveText but may be nil.</param>
-    ///  <remarks>
-    ///  <para>Method of IAssignable.</para>
-    ///  <para>If Src is nil, all this object's properties are cleared.</para>
-    ///  <para>Raises EBug if Src is not nil and does not support IActiveText.
-    ///  </para>
-    ///  </remarks>
-    procedure Assign(const Src: IInterface);
-    ///  <summary>Returns a cloned instance of this object.</summary>
-    ///  <remarks>Method of IClonable.</remarks>
-    function Clone: IInterface;
-  public
-    ///  <summary>Object constructor. Sets up object.</summary>
-    constructor Create;
-    ///  <summary>Object destructor. Tears down object.</summary>
-    destructor Destroy; override;
   end;
 
 type
@@ -356,10 +355,6 @@ type
   strict private
     ///  <summary>Kind of element encapsulated by this object.</summary>
     fKind: TActiveTextElemKind;
-  protected // do not make strict
-    ///  <summary>Returns element kind.</summary>
-    ///  <remarks>Method of IActiveTextElem.</remarks>
-    function GetKind: TActiveTextElemKind;
   public
     ///  <summary>Object constructor. Sets up object of given kind.</summary>
     constructor Create(const Kind: TActiveTextElemKind);
@@ -368,6 +363,9 @@ type
     ///  assigned. Src must support IActiveTextElem.</param>
     ///  <remarks>Method of IAssignable.</remarks>
     procedure Assign(const Src: IInterface); virtual;
+    ///  <summary>Returns element kind.</summary>
+    ///  <remarks>Method of IActiveTextElem.</remarks>
+    function GetKind: TActiveTextElemKind;
   end;
 
 type
@@ -378,10 +376,6 @@ type
   strict private
     ///  <summary>Element's text.</summary>
     fText: string;
-  protected // do not make strict
-    ///  <summary>Returns plain text represented by element.</summary>
-    ///  <remarks>Method of IActiveTextTextElem.</remarks>
-    function GetText: string;
   public
     ///  <summary>Object constructor. Records given element text and sets
     ///  required kind for a text element.</summary>
@@ -394,6 +388,9 @@ type
     ///  <summary>Returns a cloned instance of this object.</summary>
     ///  <remarks>Method of IClonable.</remarks>
     function Clone: IInterface;
+    ///  <summary>Returns plain text represented by element.</summary>
+    ///  <remarks>Method of IActiveTextTextElem.</remarks>
+    function GetText: string;
   end;
 
 type
@@ -406,17 +403,6 @@ type
     fState: TActiveTextElemState;
     ///  <summary>Attributes associated with element.</summary>
     fAttrs: IActiveTextAttrs;
-  protected // do not make strict
-    ///  <summary>Returns state of element.</summary>
-    ///  <remarks>Method of IActiveTextActionElem.</remarks>
-    function GetState: TActiveTextElemState;
-    ///  <summary>Returns object describing element's attributes.</summary>
-    ///  <remarks>Method of IActiveTextActionElem.</remarks>
-    function GetAttrs: IActiveTextAttrs;
-    ///  <summary>Returns value that indicates whether element is an inline or
-    ///  block element.</summary>
-    ///  <remarks>Method of IActiveTextActionElem.</remarks>
-    function GetDisplayStyle: TActiveTextDisplayStyle;
   public
     ///  <summary>Object constructor. Creates an action element.</summary>
     ///  <param name="Kind">TActiveTextElemKind [in] Required kind of element.
@@ -437,6 +423,16 @@ type
     ///  <summary>Returns a cloned instance of this object.</summary>
     ///  <remarks>Method of IClonable.</remarks>
     function Clone: IInterface;
+    ///  <summary>Returns state of element.</summary>
+    ///  <remarks>Method of IActiveTextActionElem.</remarks>
+    function GetState: TActiveTextElemState;
+    ///  <summary>Returns object describing element's attributes.</summary>
+    ///  <remarks>Method of IActiveTextActionElem.</remarks>
+    function GetAttrs: IActiveTextAttrs;
+    ///  <summary>Returns value that indicates whether element is an inline or
+    ///  block element.</summary>
+    ///  <remarks>Method of IActiveTextActionElem.</remarks>
+    function GetDisplayStyle: TActiveTextDisplayStyle;
   end;
 
 type
