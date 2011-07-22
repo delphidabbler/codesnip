@@ -268,38 +268,17 @@ procedure TCodeImportMgr.UpdateDatabase;
     end;
   end;
 
-  ///  Returns a text string containing contributor information, if any.
-  { TODO: -cRefactor: Move this method (in part) to TUserInfo and possibly to
-    TUserDetails (as ToString method?) }
-  function ContributorText: string;
+  ///  Builds an active text representation of the contributing user's details.
+  function UserDetailsActiveText: IActiveText;
   resourcestring
     // user information prefix text
     sContributorPrefix = 'Contributed by:';
-  begin
-    if UserInfo.IsNul then
-      Exit('');
-    Result := UserInfo.Details.Name;
-    if UserInfo.Details.Email <> '' then
-    begin
-      if Result <> '' then
-        Result := Result + ' ';
-      Result := Result + '<' + UserInfo.Details.Email + '>';
-    end;
-    if Result <> '' then
-      Result := sContributorPrefix + ' ' + Result;
-  end;
-
-  ///  Builds an active text representation of the contributing user's name and
-  ///  email address.
-  function UserInfoActiveText: IActiveText;
   begin
     Result := TActiveTextFactory.CreateActiveText;
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
     Result.AddElem(
       TActiveTextFactory.CreateTextElem(
-        Format(
-          ContributorText, [UserInfo.Details.Name, UserInfo.Details.Email]
-        )
+        sContributorPrefix + ' ' + UserInfo.Details.ToString
       )
     );
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
@@ -326,8 +305,8 @@ begin
 
     AdjustDependsList(SnippetInfo.Data.Refs.Depends);
 
-    if ContributorText <> '' then
-      SnippetInfo.Data.Props.Extra.Append(UserInfoActiveText);
+    if UserInfo.Details.ToString <> '' then
+      SnippetInfo.Data.Props.Extra.Append(UserDetailsActiveText);
 
     Snippet := Database.Snippets.Find(ImportInfo.ImportAsName, True);
     if Assigned(Snippet) then
