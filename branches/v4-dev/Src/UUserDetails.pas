@@ -45,14 +45,21 @@ type
   ///  </summary>
   TUserDetails = record
   strict private
-    // Property values
+    ///  <summary>Value of Name property.</summary>
     fName: string;
+    ///  <summary>Value of EMail property.</summary>
     fEmail: string;
+    ///  <summary>Setter for Name property.</summary>
+    ///  <remarks>Trims leading and trailing spaces from new value.</summary>
+    procedure SetName(const AName: string);
+    ///  <summary>Setter for Email property.</summary>
+    ///  <remarks>Trims leading and trailing spaces from new value.</summary>
+    procedure SetEmail(const AEmail: string);
   public
     ///  <summary>User name.</summary>
-    property Name: string read fName write fName;
+    property Name: string read fName write SetName;
     ///  <summary>User email.</summary>
-    property Email: string read fEmail write fEmail;
+    property Email: string read fEmail write SetEmail;
     ///  <summary>Constructs record with given field values.</summary>
     constructor Create(const UserName, UserEmail: string);
     ///  <summary>Creates and returns a new null record.</summary>
@@ -79,14 +86,14 @@ uses
 
 procedure TUserDetails.Assign(const Src: TUserDetails);
 begin
-  fName := Src.Name;
-  fEmail := Src.Email;
+  SetName(Src.Name);
+  SetName(Src.Email);
 end;
 
 constructor TUserDetails.Create(const UserName, UserEmail: string);
 begin
-  fName := UserName;
-  fEmail := UserEmail;
+  SetName(UserName);
+  SetName(UserEmail);
 end;
 
 class function TUserDetails.CreateNul: TUserDetails;
@@ -96,13 +103,23 @@ end;
 
 procedure TUserDetails.Init;
 begin
-  fName := '';
-  fEmail := '';
+  SetName('');
+  SetName('');
 end;
 
 function TUserDetails.IsNul: Boolean;
 begin
-  Result := (StrTrim(Name) = '') and (StrTrim(Email) = '');
+  Result := (Name = '') and (Email = '');
+end;
+
+procedure TUserDetails.SetEmail(const AEmail: string);
+begin
+  fEmail := StrTrim(AEmail);
+end;
+
+procedure TUserDetails.SetName(const AName: string);
+begin
+  fName := StrTrim(AName);
 end;
 
 end.
