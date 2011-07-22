@@ -71,6 +71,8 @@ type
     procedure Init;
     ///  <summary>Checks if record is null, i.e. empty.</summary>
     function IsNul: Boolean;
+    ///  <summary>Returns string representation of user details.</summary>
+    function ToString: string;
   end;
 
 
@@ -87,13 +89,13 @@ uses
 procedure TUserDetails.Assign(const Src: TUserDetails);
 begin
   SetName(Src.Name);
-  SetName(Src.Email);
+  SetEmail(Src.Email);
 end;
 
 constructor TUserDetails.Create(const UserName, UserEmail: string);
 begin
   SetName(UserName);
-  SetName(UserEmail);
+  SetEmail(UserEmail);
 end;
 
 class function TUserDetails.CreateNul: TUserDetails;
@@ -104,7 +106,7 @@ end;
 procedure TUserDetails.Init;
 begin
   SetName('');
-  SetName('');
+  SetEmail('');
 end;
 
 function TUserDetails.IsNul: Boolean;
@@ -120,6 +122,28 @@ end;
 procedure TUserDetails.SetName(const AName: string);
 begin
   fName := StrTrim(AName);
+end;
+
+function TUserDetails.ToString: string;
+begin
+  // Returns one of following:
+  // +-----------------+----------+-----------+
+  // | Result          | Name Set | Email Set |
+  // +-----------------+----------+-----------+
+  // | ''              | No       | No        |
+  // | 'Name'          | Yes      | No        |
+  // | '<Email>'       | No       | Yes       |
+  // | 'Name <Email>'  | Yes      | Yes       |
+  // +-----------------+----------+-----------+
+  if IsNul then
+    Exit('');
+  Result := Name;
+  if Email <> '' then
+  begin
+    if Result <> '' then
+      Result := Result + ' ';
+    Result := Result + '<' + Email + '>';
+  end;
 end;
 
 end.
