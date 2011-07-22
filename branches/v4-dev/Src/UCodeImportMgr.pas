@@ -42,7 +42,7 @@ interface
 
 uses
   // Delphi
-  Generics.Collections,
+  Generics.Collections, Generics.Defaults,
   // Project
   UCodeImportExport, UExceptions, UIStringList;
 
@@ -69,6 +69,18 @@ type
     ///  <summary>Flag indicating if snippet is to be skipped (ignored) when
     ///  updating database.</summary>
     property Skip: Boolean read fSkip write fSkip;
+  end;
+
+type
+  ///  <summary>
+  ///  Comparer for TImportInfo objects.
+  ///  </summary>
+  TImportInfoComparer = class(TComparer<TImportInfo>, IComparer<TImportInfo>)
+  public
+    ///  <summary>Compares Left and Right TImportInfo records. Returns -ve if
+    ///  Left less than Right, 0 if equal or +ve if Left greater than
+    ///  Right.</summary>
+    function Compare(const Left, Right: TImportInfo): Integer; override;
   end;
 
 type
@@ -103,7 +115,6 @@ type
   strict private
     var
       ///  <summary>List of snippet information read from import file.</summary>
-      // TODO: Change from array to list object
       fSnippetInfoList: TSnippetInfoList;
       ///  <summary>Value of ImportInfo property.</summary>
       fImportInfoList: TImportInfoList;
@@ -166,7 +177,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes, Generics.Defaults,
+  SysUtils, Classes,
   // Project
   DB.UMain, DB.USnippet, UActiveText, UIOUtils, USnippetIDs, UStrUtils;
 
@@ -334,23 +345,18 @@ begin
   fSkip := ASkip;
 end;
 
+{ TImportInfoComparer }
+
+function TImportInfoComparer.Compare(const Left, Right: TImportInfo): Integer;
+begin
+  Result := TSnippetID.CompareNames(Left.OrigName, Right.OrigName);
+end;
+
 { TImportInfoList }
 
 constructor TImportInfoList.Create;
 begin
-  { TODO: create a CompareNames class static function on TSnippetID to simply
-          compare names with having to create a TSnippetID record }
-  { TODO: can also create a comparer class for TSnippetID and snippet names }
-  inherited Create(
-    TDelegatedComparer<TImportInfo>.Create(
-      function(const Left, Right: TImportInfo): Integer
-      begin
-        Result := TSnippetID.Create(Left.OrigName, True).Compare(
-          TSnippetID.Create(Right.OrigName, True)
-        );
-      end
-    )
-  );
+  inherited Create(TImportInfoComparer.Create);
 end;
 
 function TImportInfoList.FindByName(const Name: string;
