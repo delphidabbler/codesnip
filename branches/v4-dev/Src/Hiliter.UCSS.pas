@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -55,7 +55,7 @@ type
     is also provided.
   }
   THiliterCSS = class(TObject)
-  private
+  strict private
     fHiliteAttrs: IHiliteAttrs;
       {Highlighter for which CSS is to be generated}
     procedure BuildElemCSS(const Elem: THiliteElement;

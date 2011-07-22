@@ -157,7 +157,7 @@ type
     frame.
   }
   TSourcePrefsPreview = class(TObject)
-  private
+  strict private
     fHiliteAttrs: IHiliteAttrs;
       {Attributes of syntax highlighter to use to render preview}
     fCommentStyle: TCommentStyle;

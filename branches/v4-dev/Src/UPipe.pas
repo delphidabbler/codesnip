@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -50,7 +50,7 @@ type
     Class that encapsulates an unamed pipe and can read and write the pipe.
   }
   TPipe = class(TObject)
-  private
+  strict private
     fReadHandle: THandle;
       {Handle used to read the pipe}
     fWriteHandle: THandle;

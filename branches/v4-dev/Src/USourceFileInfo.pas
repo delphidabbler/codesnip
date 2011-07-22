@@ -108,7 +108,7 @@ type
   ///  are supported.
   ///  </summary>
   TSourceFileInfo = class(TObject)
-  private
+  strict private
     var
       ///  <summary>Stores information about the different source code output
       //   types required by save source dialog boxes.</summary>

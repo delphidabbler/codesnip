@@ -53,7 +53,7 @@ type
     Borland compilers. Provides common functionality.
   }
   TBorlandCompiler = class(TCompilerBase)
-  private
+  strict private
     fId: TCompilerID;
       {Identifies compiler}
   protected

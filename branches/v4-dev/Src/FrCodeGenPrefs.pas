@@ -77,7 +77,7 @@ type
     procedure actPreviewExecute(Sender: TObject);
     procedure actPreviewUpdate(Sender: TObject);
     procedure btnPredefinedClick(Sender: TObject);
-  private
+  strict private
     fWarnings: IWarnings; // Object that stores details of warnings
     procedure PopulateLV;
       {Populates list view with details of warnings.

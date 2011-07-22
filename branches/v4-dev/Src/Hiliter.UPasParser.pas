@@ -78,7 +78,7 @@ type
     Notifies owning objects of each element and other key parsing events.
   }
   THilitePasParser = class(TObject)
-  private
+  strict private
     fOnElement: TParseElementEvent;
       {OnElement event handler}
     fOnLineBegin: TParseLineEvent;

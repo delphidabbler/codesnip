@@ -66,12 +66,11 @@ type
     interaction with web services.
   }
   TBaseWebService = class(TObject)
-  private
+  strict private
     fHTTP: THTTPEx;                         // Class used for HTTP requests
     fScriptURI: string;                     // URI of web service
     fOnProgress: TWebServiceProgressEvent;  // OnProgress event handler
     fWantProgress: Boolean;                 // Value of WantProgress property
-  strict private
     procedure DoPostParams(const Params: TURIParams;
       const PostProc: TProc<TStream>);
       {Helper method that assists in performing POST requests that send encoded

@@ -591,7 +591,7 @@ type
     ICompilerSearchCriteria,
     ISearchUIInfo
     )
-  private
+  strict private
     fCompilers: TCompilerSearchCompilers;
       {Compilers to include in search}
     fLogic: TSearchLogic;

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -273,7 +273,7 @@ type
   TIniSettings = class(TIniSettingsBase,
     ISettings
   )
-  private
+  strict private
     function CreateSection(const SectionID: TSettingsSectionId;
       const SubSection: string): ISettingsSection;
       {Creates object representing a section of the ini file.
@@ -315,7 +315,7 @@ type
   TIniSettingsSection = class(TIniSettingsBase,
     ISettingsSection
   )
-  private
+  strict private
     fSectionName: string;         // Name of section
     fStorage: TSettingsStorageId; // Id of storage to be used
     fValues: TStringList;         // Stores section's data as name=value pairs

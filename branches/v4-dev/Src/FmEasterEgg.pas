@@ -59,7 +59,7 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
-  private
+  strict private
     type
       {
       TAligner:

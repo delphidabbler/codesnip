@@ -89,7 +89,7 @@ type
     Class that can build a list of HTML tag attributes and render them.
   }
   THTMLAttributes = class(TInterfacedObject, IHTMLAttributes)
-  private
+  strict private
     fAttrs: TStringList;
       {Maintains list of attributes as name=value pairs}
   public

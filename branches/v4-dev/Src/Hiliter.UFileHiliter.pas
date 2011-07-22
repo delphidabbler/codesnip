@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -53,7 +53,7 @@ type
     file type.
   }
   TFileHiliter = class(TObject)
-  private
+  strict private
     fWantHiliting: Boolean;
       {Flag indicating whether output is to be highlighted. Ignored if target
       file type does not support highlighting}

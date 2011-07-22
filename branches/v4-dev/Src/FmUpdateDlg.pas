@@ -77,7 +77,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormDestroy(Sender: TObject);
     procedure btnNewsClick(Sender: TObject);
-  private
+  strict private
     fProgressBarMgr: TMemoProgBarMgr; // Displays progress bar in progress memo
     fDataUpdated: Boolean;            // Flag true if any data was updated
     fCancelled: Boolean;              // Flag true if user cancelled update

@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -83,7 +83,7 @@ type
     Manages download progress reporting for web service object.
   }
   TDownloadMonitor = class(TObject)
-  private
+  strict private
     fCallback: TDownloadMonitorCallback;
       {Reference to method called to notify changes in download state}
     fBytesExpected: Integer;

@@ -48,7 +48,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -179,7 +179,7 @@ type
     implementation and handles its own reference counting.
   }
   TAggregatedOrLoneObject = class(TInterfacedObject, IInterface)
-  private
+  strict private
     fController: Pointer;
       {Weak reference to controlling object if aggregated or nil if stand-alone}
     function GetController: IInterface;

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -64,7 +64,7 @@ type
   ///  hidden rich edit control to these documents.
   ///  </remarks>
   TPrintEngine = class(THiddenRichEdit)
-  private
+  strict private
     var
       ///  <summary>Value of Title property</summary>
       fTitle: string;
