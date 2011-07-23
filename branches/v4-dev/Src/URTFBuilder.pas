@@ -112,7 +112,7 @@ type
           available.
         @param Charset [in] Font's character set.
       }
-    function Compare(const RTFFont: TRTFFont): Integer;
+    function CompareTo(const RTFFont: TRTFFont): Integer;
       {Compares this font to another.
         @param RTFFont [in] Other font to be compared.
         @return -ve if this font is less than RTFFont, 0 if same and +ve if
@@ -493,7 +493,7 @@ end;
 
 { TRTFFont }
 
-function TRTFFont.Compare(const RTFFont: TRTFFont): Integer;
+function TRTFFont.CompareTo(const RTFFont: TRTFFont): Integer;
   {Compares this font to another.
     @param RTFFont [in] Other font to be compared.
     @return -ve if this font is less than RTFFont, 0 if same and +ve if
@@ -571,7 +571,7 @@ begin
     TDelegatedComparer<TRTFFont>.Create(
       function(const Left, Right: TRTFFont): Integer
       begin
-        Result := Left.Compare(Right);
+        Result := Left.CompareTo(Right);
       end
     )
   );

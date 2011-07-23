@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -395,7 +395,7 @@ begin
       for FileName in LocalFiles do
       begin
         FileDate  := TDOSDateTimeFactory.CreateFromFile(FileName);
-        if Result.Compare(FileDate) < 0 then
+        if Result.CompareTo(FileDate) < 0 then
           (Result as IAssignable).Assign(FileDate);
       end;
     end;
@@ -472,7 +472,7 @@ begin
     LastDatabaseUpdate := TDOSDateTimeFactory.CreateFromUnixTimeStamp(
       StrToInt64(fDownloadMgr.LastUpdate)
     );
-    Result := LastDatabaseUpdate.Compare(NewestLocalFileDate) > 0;
+    Result := LastDatabaseUpdate.CompareTo(NewestLocalFileDate) > 0;
   end;
 end;
 

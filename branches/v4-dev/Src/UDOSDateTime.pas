@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -59,7 +59,7 @@ type
     ///  <param name="DT">IDOSDateTime object to compare to.</param>
     ///  <returns>-ve if this date is less than DT, +ve if this date is greater
     ///  than DT and zero if the two objects are equal.</returns>
-    function Compare(const DT: IDOSDateTime): Integer;
+    function CompareTo(const DT: IDOSDateTime): Integer;
     ///  <summary>
     ///  Applies date stamp to a named file.
     ///  </summary>
@@ -139,7 +139,7 @@ type
     ///  seconds apart compare as equal. This is because DOS file stamps may
     ///  only be accurate to 2 seconds.
     ///  </remarks>
-    function Compare(const DT: IDOSDateTime): Integer;
+    function CompareTo(const DT: IDOSDateTime): Integer;
     ///  <summary>
     ///  Applies date stamp to a named file.
     ///  </summary>
@@ -192,7 +192,7 @@ begin
   fDateStamp := DT.DateStamp;
 end;
 
-function TDOSDateTime.Compare(const DT: IDOSDateTime): Integer;
+function TDOSDateTime.CompareTo(const DT: IDOSDateTime): Integer;
 const
   cDelta = 2; // DOS file stamps accurate to 2 sec on Win 9x
 var

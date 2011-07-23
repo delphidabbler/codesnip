@@ -574,7 +574,7 @@ class function TSnippetList.CompareIDs(const SID1, SID2: TSnippetID): Integer;
       SID1 > SID2.
   }
 begin
-  Result := SID1.Compare(SID2);
+  Result := SID1.CompareTo(SID2);
 end;
 
 function TSnippetList.Contains(const Snippet: TSnippet): Boolean;

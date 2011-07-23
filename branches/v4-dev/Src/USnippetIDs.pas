@@ -71,7 +71,7 @@ type
     ///  <summary>Compares this record to another.</summary>
     ///  <remarks>Returns 0 if records are same, -ve if this record less than
     ///  other record or +ve if this record greater than other.</remarks>
-    function Compare(const SID: TSnippetID): Integer;
+    function CompareTo(const SID: TSnippetID): Integer;
     ///  <summary>Compares two snippet names, Left and Right.</summary>
     ///  <remarks>Returns 0 if names are same, -ve if Left is less than Right or
     ///  +ve Left is greater than Right.</remarks>
@@ -160,16 +160,16 @@ begin
   Create(Src.Name, Src.UserDefined);
 end;
 
-function TSnippetID.Compare(const SID: TSnippetID): Integer;
+class function TSnippetID.CompareNames(const Left, Right: string): Integer;
+begin
+  Result := StrCompareText(Left, Right);
+end;
+
+function TSnippetID.CompareTo(const SID: TSnippetID): Integer;
 begin
   Result := CompareNames(Name, SID.Name);
   if Result = 0 then
     Result := Ord(UserDefined) - Ord(SID.UserDefined);
-end;
-
-class function TSnippetID.CompareNames(const Left, Right: string): Integer;
-begin
-  Result := StrCompareText(Left, Right);
 end;
 
 constructor TSnippetID.Create(const AName: string; const AUserDefined: Boolean);
@@ -180,7 +180,7 @@ end;
 
 class operator TSnippetID.Equal(const SID1, SID2: TSnippetID): Boolean;
 begin
-  Result := SID1.Compare(SID2) = 0;
+  Result := SID1.CompareTo(SID2) = 0;
 end;
 
 class operator TSnippetID.NotEqual(const SID1, SID2: TSnippetID): Boolean;
@@ -223,7 +223,7 @@ begin
     TDelegatedComparer<TSnippetID>.Create(
       function(const Left, Right: TSnippetID): Integer
       begin
-        Result := Left.Compare(Right);
+        Result := Left.CompareTo(Right);
       end
     )
   );
