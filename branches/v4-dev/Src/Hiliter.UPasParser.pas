@@ -63,7 +63,8 @@ type
         psInProperty,
         psAfterProperty,
         psInExports,
-        psInExternal
+        psInExternal,
+        psKeywordEscape
       );
     type
       TParserStates = set of TParserState;
@@ -307,26 +308,34 @@ begin
 end;
 
 function THilitePasParser.ParsePascalElement: THiliteElement;
+var
+  SaveState: TParserStates;
 begin
+  SaveState := fState;
   case fLexer.Token of
     tkKeyword:
     begin
       // Keywords are always reserved. We need to check for "asm" keyword
       // and switch to assembler mode when found. "asm" keyword is
       // rendered as reserved word.
-      Result := heReserved;
       if IsTokenStr('asm') then
         Include(fState, psInASM);
       if IsTokenStr('property') then
         Include(fState, psInProperty);
       if IsTokenStr('exports') then
         Include(fState, psInExports);
+      if psKeywordEscape in fState then
+        Result := heIdentifier
+      else
+        Result := heReserved;
     end;
     tkDirective:
     begin
       if IsTokenStr('external') then
         Include(fState, psInExternal);
-      if fContextDirs.IsReserved(fLexer.TokenStr, fState) then
+      if psKeywordEscape in fState then
+        Result := heIdentifier
+      else if fContextDirs.IsReserved(fLexer.TokenStr, fState) then
         Result := heReserved
       else
         Result := heIdentifier;
@@ -361,12 +370,17 @@ begin
         Exclude(fState, psInExports);
         Exclude(fState, psInExternal);
       end;
+      if IsTokenStr('&') then
+        Include(fState, psKeywordEscape);
     end;
     tkWhitespace:
       Result := heWhitespace;
     else
       Result := heError;
   end;
+  if not (psKeywordEscape in (fState - SaveState)) then
+    // remove keyword escape if it wasn't added in this call
+    Exclude(fState, psKeywordEscape);
 end;
 
 { THilitePasParser.TContextDirectives }
