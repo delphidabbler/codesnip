@@ -49,7 +49,11 @@ type
 
   TParserState = (
     psBetweenLines,
-    psASM
+    psASM,
+    psInProperty,
+    psAfterProperty,
+    psInExports,
+    psInExternal
   );
 
   TParserStates = set of TParserState;
@@ -92,7 +96,8 @@ type
     fState: TParserStates;
     function ParseASMElement: THiliteElement;
     function ParsePascalElement: THiliteElement;
-    function IsTokenStr(const TokenStr: string): Boolean; inline;
+    function IsTokenStr(const TokenStr: string): Boolean; overload; inline;
+    function IsTokenStr(const TokenStrs: array of string): Boolean; overload;
     procedure EnsureLineBegun;
     procedure EmitEndOfLine;
     procedure EmitElement(const Elem: THiliteElement);
@@ -137,6 +142,23 @@ uses
   // Project
   UStrUtils;
 
+
+const
+  DefaultDirective = 'default';
+  PartTimeDirectives: array[1..12] of string = (
+    'read', 'write', 'default', 'nodefault', 'stored', 'implements', 'readonly',
+    'writeonly', 'index', 'name', 'resident', 'delayed'
+  );
+  PropertyDirectives: array[1..9] of string = (
+    'read', 'write', 'default', 'nodefault', 'stored', 'implements', 'readonly',
+    'writeonly', 'index'
+  );
+  ExportsDirectives: array[1..3] of string = (
+    'name', 'index', 'resident'
+  );
+  ExternalDirectives: array[1..3] of string = (
+    'name', 'index', 'delayed'
+  );
 
 { THilitePasParser }
 
@@ -194,6 +216,16 @@ begin
     DoLineBegin;
     Exclude(fState, psBetweenLines);
   end;
+end;
+
+function THilitePasParser.IsTokenStr(const TokenStrs: array of string): Boolean;
+var
+  TokenStr: string;
+begin
+  for TokenStr in TokenStrs do
+    if IsTokenStr(TokenStr) then
+      Exit(True);
+  Result := False;
 end;
 
 function THilitePasParser.IsTokenStr(const TokenStr: string): Boolean;
@@ -270,9 +302,27 @@ begin
       Result := heReserved;
       if IsTokenStr('asm') then
         Include(fState, psASM);
+      if IsTokenStr('property') then
+        Include(fState, psInProperty);
+      if IsTokenStr('exports') then
+        Include(fState, psInExports);
     end;
     tkDirective:
-      Result := heReserved;
+    begin
+      if IsTokenStr('external') then
+        Include(fState, psInExternal);
+      if not IsTokenStr(PartTimeDirectives) then
+        Exit(heReserved);
+      if (psInProperty in fState) and IsTokenStr(PropertyDirectives) then
+        Exit(heReserved);
+      if (psAfterProperty in fState) and IsTokenStr(DefaultDirective) then
+        Exit(heReserved);
+      if (psInExports in fState) and IsTokenStr(ExportsDirectives) then
+        Exit(heReserved);
+      if (psInExternal in fState) and IsTokenStr(ExternalDirectives) then
+        Exit(heReserved);
+      Result := heIdentifier;
+    end;
     tkComment:
       Result := heComment;
     tkCompilerDir:
@@ -289,7 +339,21 @@ begin
     tkHex:
       Result := heHex;
     tkSymbol:
+    begin
       Result := heSymbol;
+      if IsTokenStr(';') then
+      begin
+        if psInProperty in fState then
+        begin
+          Exclude(fState, psInProperty);
+          Include(fState, psAfterProperty);
+        end
+        else
+          Exclude(fState, psAfterProperty);
+        Exclude(fState, psInExports);
+        Exclude(fState, psInExternal);
+      end;
+    end;
     tkWhitespace:
       Result := heWhitespace;
     else
