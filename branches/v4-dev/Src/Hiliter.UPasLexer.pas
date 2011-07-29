@@ -205,77 +205,44 @@ const
   cCompilerDirOpeners: array[0..1] of string = (    // comment symbols that open
     '{', '(*'                                             // compiler directives
   );
-  cKeywords: array[0..68] of string = (     // table of keywords per Delphi 2006
-    'and', 'array', 'as', 'asm',
-    'begin',
-    'case', 'class', 'const', 'constructor',
-    'destructor', 'dispinterface', 'div', 'do', 'downto',
-    'else', 'end', 'except', 'exports',
-    'file', 'final', 'finalization', 'finally', 'for', 'function',
-    'goto',
-    'if', 'implementation', 'in', 'inherited',
-    'initialization', 'inline', 'interface', 'is',
-    'label', 'library',
-    'mod',
-    'nil', 'not',
-    'object', 'of', 'or', 'out',
-    'packed', 'procedure', 'program', 'property',
-    'raise', 'record', 'repeat', 'resourcestring',
-    'sealed', 'set', 'shl', 'shr', 'static', 'string',
-    'then', 'threadvar', 'to', 'try', 'type',
-    'unit', 'unsafe', 'until', 'uses',
-    'var',
-    'while', 'with',
-    'xor'
+
+  // table of keywords per Delphi 2006
+  cKeywords: array[0..66] of string = (
+    'and',            'array',          'as',             'asm',
+    'at',             'begin',          'case',           'class',
+    'const',          'constructor',    'destructor',     'dispinterface',
+    'div',            'do',             'downto',         'else',
+    'end',            'except',         'exports',        'file',
+    'finalization',   'finally',        'for',            'function',
+    'goto',           'if',             'implementation', 'in',
+    'inherited',      'initialization', 'inline',         'interface',
+    'is',             'label',          'library',        'mod',
+    'nil',            'not',            'object',         'of',
+    'on',             'or',             'out',            'packed',
+    'procedure',      'program',        'property',       'raise',
+    'record',         'repeat',         'resourcestring', 'set',
+    'shl',            'shr',            'string',         'then',
+    'threadvar',      'to',             'try',            'type',
+    'unit',           'until',          'uses',           'var',
+    'while',          'with',           'xor'
   );
 
-  cDirectives: array[0..45] of string = (                 // table of directives
-    'absolute',     // used in variable declaration
-    'abstract',     // method directive
-    'assembly',     // flags routine as containing assembler
-    'at',           // only occurs in raise statement
-    'automated',    // used in class declarations
-    'cdecl',        // calling convention
-    'contains',     // package clause
-    'default',      // used in property declarations
-    'deprecated',   // portability directive
-    'dispid',       // used in automated properties
-    'dynamic',      // method directive
-    'export',       // calling convention (ignored)
-    'external',     // routine directive
-    'far',          // calling convention (ignored)
-    'forward',      // routine directive
-    'implements',   // used in property declarations
-    'index',        // used in property declarations and re DLLs
-    'inline',       // flags a routine as inlinable
-    'local',        // routine directive
-    'message',      // method directive
-    'name',         // used re DLLs
-    'near',         // calling convention (ignored)
-    'nodefault',    // used in property declarations
-    'on',           // used in exception handlers
-    'overload',     // method / routine directive
-    'override',     // method directive
-    'package',      // introduces a package
-    'pascal',       // calling convention
-    'platform',     // portability directive
-    'private',      // used in class declarations
-    'protected',    // used in class declarations
-    'public',       // used in class declarations
-    'published',    // used in class declarations
-    'read',         // used in property declarations
-    'readonly',     // property directive in dispinterfaces
-    'register',     // calling convention
-    'reintroduce',  // method directive
-    'requires',     // package clause
-    'resident',     // directive used in exports clauses (ignored)
-    'safecall',     // calling convention
-    'stdcall',      // calling convention
-    'stored',       // used in property declarations
-    'varargs',      // method / routine directive
-    'virtual',      // method directive
-    'write',        // used in property declarations
-    'writeonly'     // property directive in dispinterfaces
+  // table of directives per Delphi 2010
+  cDirectives: array[0..54] of string = (
+    'absolute',       'abstract',       'assembler',      'automated',
+    'cdecl',          'contains',       'default',        'delayed',
+    'deprecated',     'dispid',         'dynamic',        'experimental',
+    'export',         'external',       'far',            'final',
+    'forward',        'helper',         'implements',     'index',
+    'inline',         'local',          'message',        'name',
+    'near',           'nodefault',      'operator',       'overload',
+    'override',       'package',        'pascal',         'platform',
+    'private',        'protected',      'public',         'published',
+    'read',           'readonly',       'reference',      'register',
+    'reintroduce',    'requires',       'resident',       'safecall',
+    'sealed',         'static',         'stdcall',        'stored',
+    'strict',         'unsafe',         'varargs',        'virtual',
+    'winapi',         'write',          'writeonly'
   );
 
   // Maps symbols onto likely tokens or error if token shouldn't occur (eg
