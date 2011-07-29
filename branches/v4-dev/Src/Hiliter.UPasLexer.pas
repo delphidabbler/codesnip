@@ -47,12 +47,8 @@ uses
 
 
 type
-
-  {
-  THilitePasToken:
-    Tokens describing the different components of Pascal source code returned by
-    the lexical analyser.
-  }
+  ///  <summary>Tokens describing the different components of Pascal source code
+  ///  recognised by THilitePasLexer.</summary>
   THilitePasToken = (
     tkKeyword,        // Pascal keyword
     tkComment,        // comment including opening and closing symbols
@@ -71,103 +67,105 @@ type
     tkError           // error condition: shouldn't occur
   );
 
-  {
-  THilitePasLexer:
-    Class that analyses and tokenises Pascal code.
-  }
+type
+  ///  <summary>Class that analyses and tokenises Pascal source code.</summary>
   THilitePasLexer = class(TObject)
   strict private
-    fTokenStr: string;            // Text of last token read from input
-    fToken: THilitePasToken;      // Kind of last token read from input
-    fCommentState: record         // Records state of comment being processed
-      InComment: Boolean;           // whether currently processing comment
-      CommentType: THilitePasToken; // indicates comment or compiler directive
-      CommentCloser: string;        // closing comment symbol ( *), } or EOL )
-    end;
-    fReader: TStringReader;       // Object that reads characters from input
+    var
+      ///  <summary>Text of last token read from input.</summary>
+      fTokenStr: string;
+      ///  <summary>Identifies last token read from input.</summary>
+      fToken: THilitePasToken;
+      ///  <summary>Records state of comment being processed.</summary>
+      fCommentState: record
+        ///  <summary>Informs whether currently processing comment.</summary>
+        InComment: Boolean;
+        ///  <summary>Indicates whether comment or compiler directive.</summary>
+        CommentType: THilitePasToken;
+        ///  <summary>Closing comment symbol.</summary>
+        ///  <remarks>One of "*)", "}" or EOL.</remarks>
+        CommentCloser: string;
+      end;
+      ///  <summary>Object that reads characters from input.</summary>
+      fReader: TStringReader;
+    ///  <summary>Appends current character in input to token string.</summary>
+    ///  <remarks>Ignores EOF.</remarks>
     procedure UpdateTokenStr; overload;
-      {Appends current character in input to token string. Ignores EOF.
-      }
+    ///  <summary>Appends given character to token string.</summary>
+    ///  <remarks>Ignores EOF.</remarks>
     procedure UpdateTokenStr(const Ch: Char); overload;
-      {Appends a character to token string. Ignores EOF.
-        @param Ch [in] Character to append.
-      }
+    ///  <summary>Analyses a literal character from input and stores in token
+    ///  string.</summary>
+    ///  <remarks>A literal character comprises a # followed by a number.
+    ///  </remarks>
+    ///  <returns>THilitePasToken. Token indicating literal character.</returns>
     function ParseChar: THilitePasToken;
-      {Analyses a literal character (made from # followed by number) from input
-      and stores in token string.
-        @return Token indicating literal char (tkChar).
-      }
+    ///  <summary>Begins parsing of a new comment or compiler directive.
+    ///  </summary>
+    ///  <returns>THilitePasToken. Token informing whether this is a comment or
+    ///  compiler directive.</returns>
     function ParseCommentFromStart: THilitePasToken;
-      {Begins parsing of a new comment or compiler directive.
-        @return Token telling whether this is a comment or compiler directive
-          (tkComment, tkCompilerDir).
-      }
+    ///  <summary>Analyses body of comment following start or after resuming
+    ///  processing multi-line comments.</summary>
+    ///  <returns>THilitePasToken. Token informing whether this is a comment or
+    ///  compiler directive.</returns>
     function ParseCommentInterior: THilitePasToken;
-      {Analyses body of comment after start or after resuming processing multi-
-      line comments.
-        @return Token telling whether this is a comment or compiler directive
-          (tkComment, tkCompilerDir).
-      }
+    ///  <summary>Analyses end of line from input and stores in token string.
+    ///  </summary>
+    ///  <returns>THilitePasToken. End of line token.</returns>
     function ParseEOL: THilitePasToken;
-      {Analyses end of line from input and stores in token string.
-        @return End of line token (tkEOL).
-      }
+    ///  <summary>Analyses a hexadecimal integer from input and stores in token
+    ///  string.</summary>
+    ///  <returns>THilitePasToken. Token indicating hexadecimal value.</returns>
     function ParseHex: THilitePasToken;
-      {Analyses a hexadecimal integer from input and stores in token string.
-        @return Token indicating hexadecimal value (tkHex).
-      }
+    ///  <summary>Analyses an alphanumeric identifier from input and stores in
+    ///  token string.</summary>
+    ///  <returns>THilitePasToken. Token indicating if identifier is normal
+    ///  identifier, keyword or directive.</returns>
     function ParseIdent: THilitePasToken;
-      {Analyses an alphanumeric identifier from input and stores in token
-      string. Checks if identifier is keyword or directive.
-        @return Token representing identifier: tkKeyword, tkDirective or
-          tkIdentifier.
-      }
+    ///  <summary>Analyses a number from input and stores in token string.
+    ///  </summary>
+    ///  <remarks>Number can be integer or real.</remarks>
+    ///  <returns>THilitePasToken. Token indicating whether an integer or real
+    ///  number was parsed.</returns>
     function ParseNumber: THilitePasToken;
-      {Analyses a number from input and stores in token string. Number can be
-      integer or real.
-        @return Appropriate token for number (tkNumber or tkFloat).
-      }
+    ///  <summary>Analyses a string literal from input and stores in token
+    ///  string.</summary>
+    ///  <returns>THilitePasToken. Token indicating a string.</returns>
     function ParseString: THilitePasToken;
-      {Analyses a string literal from input and stores in token string.
-        @return String token (tkString).
-      }
+    ///  <summary>Parses a symbol from input and stores in token string.
+    ///  </summary>
+    ///  <remarks>Determines whether the current symbol character on input
+    ///  represents a symbol or introduces some other syntactic entity (i.e.
+    ///  comment, string, character literal or a hex number).</remarks>
+    ///  <returns>THilitePasToken. Token describing parsed entity.</returns>
     function ParseSymbol: THilitePasToken;
-      {Determines whether the current symbol character on input represents a
-      symbol or introduces some other syntactic entity (i.e. comment, string,
-      character literal or a hex number). Analyses the input accordingly and
-      stores the whole token in the token string.
-        @return Token describing entity parsed.
-      }
+    ///  <summary>Analyses an unrecognised entity from input and adds it to
+    ///  token string.</summary>
+    ///  <returns>THilitePasToken. Error token.</returns>
     function ParseUnknown: THilitePasToken;
-      {Analyses an unrecognised entity from input and adds it to token string.
-        @return Error token (tkError).
-      }
+    ///  <summary>Analyses a sequence of white space from input and appends to
+    ///  token string.</summary>
+    ///  <returns>THilitePasToken. White space token.</returns>
     function ParseWhiteSpace: THilitePasToken;
-      {Analyses a sequence of white space from input and appends space for each
-      white space character read to token string.
-        @return White space token (tkWhiteSpace).
-      }
+    ///  <summary>Analyses a whole number from input and appends to token
+    ///  string.</summary>
+    ///  <returns>THilitePasToken. Whole number token.</returns>
     function ParseWholeNumber: THilitePasToken;
-      {Analyses a whole number from input and appends to token string.
-        @return Whole number token (tkNumber).
-      }
   public
+    ///  <summary>Object constructor. Sets up object to analyse given Pascal
+    ///  source code string.</summary>
     constructor Create(const Source: string);
-      {Constructor. Sets up object to analyse code in a string.
-        @param Source [in] String containing Pascal source.
-      }
+    ///  <summary>Object destructor.</summary>
     destructor Destroy; override;
-      {Destructor. Tears down object.
-      }
+    ///  <summary>Gets and analyses next pascal token from input and stores
+    ///  details in token string.</summary>
+    ///  <returns>THilitePasToken. Token identifying type of token.</returns>
     function NextToken: THilitePasToken;
-      {Gets and analyses next pascal token from input and stores details in
-      token string.
-        @return Token identifier for type of token read.
-      }
+    ///  <summary>Text of token last read from input.</summary>
     property TokenStr: string read fTokenStr;
-      {Text that makes up the token last read from input}
+    ///  <summary>Identifies type of last token read from input.</summary>
     property Token: THilitePasToken read fToken;
-      {Kind of token last read from input}
   end;
 
 
@@ -288,7 +286,7 @@ const
 
 
 type
-  // Class that maps symbols to tokens
+  ///  <summary>Class that maps symbols to tokens.</summary>
   TSymbolMap = TDictionary<string,THilitePasToken>;
 
 var
@@ -301,37 +299,29 @@ var
 
 { Helper routines }
 
+///  <summary>Checks if given character is valid for inclusion in the body of a
+///  Delphi identifier, after the first character.</summary>
 function IsValidIdentBodyChar(const C: Char): Boolean; inline;
-  {Checks if a character is valid for inclusion in the body of a Delphi
-  identifier, after the first character.
-    @param C [in] Character to be tested.
-    @return True if C is valid, False otherwise.
-  }
 begin
   Result := TCharacter.IsLetterOrDigit(C) or (C = '_');
 end;
 
+///  <summary>Checks if given character is valid as a first character of a
+///  Delphi identifier.</summary>
 function IsValidIdentStartChar(const C: Char): Boolean; inline;
-  {Checks if a character is a valid first character of a Delphi identifier.
-    @param C [in] Character to be tested.
-    @return True if C is valid, False otherwise.
-  }
 begin
   Result := TCharacter.IsLetter(C) or (C = '_');
 end;
 
+///  <summary>Checks if given character is a white space character other than
+///  EOL or EOF characters.</summary>
 function IsWhiteSpaceChar(const C: Char): Boolean; inline;
-  {Checks if a character is a whitespace character but not end of line or end
-  of file character}
 begin
   Result := TCharacter.IsWhiteSpace(C) and not CharInSet(C, [CR, LF, cEOF]);
 end;
 
+///  <summary>Checks if given character is a Delphi symbol.</summary>
 function IsSymbolChar(const C: Char): Boolean; inline;
-  {Checks if a character is a symbol.
-    @param C [in] Character to check.
-    @return True if C is a symbol, False if not.
-  }
 const
   // valid symbols
   cSymbols = [
@@ -342,39 +332,28 @@ begin
   Result := CharInSet(C, cSymbols);
 end;
 
+///  <summary>Checks if given character is a valid exponent.</summary>
 function IsExponentChar(const C: Char): Boolean; inline;
-  {Checks if a character is an exponent.
-    @param C [in] Character to check.
-    @return True if C is an exponent, False if not.
-  }
 begin
   Result := CharInSet(C, ['E', 'e']);
 end;
 
+///  <summary>Checks if given character is a unary plus or minus operator.
+///  </summary>
 function IsUnaryPlusMinusChar(const C: Char): Boolean; inline;
-  {Checks if a character is a unary plus or minus operator.
-    @param C [in] Character to check.
-    @return True if C is a unary plus or minus, False if not.
-  }
 begin
   Result := CharInSet(C, ['+', '-']);
 end;
 
+///  <summary>Checks if given character is a separator character.</summary>
 function IsSeparatorChar(const C: Char): Boolean; inline;
-  {Checks if a character is a separator character.
-    @param C [in] Character to check.
-    @return True if C is a separator, False if not.
-  }
 begin
   Result := IsWhiteSpaceChar(C) or IsSymbolChar(C) or (C = cEOL);
 end;
 
+///  <summary>Returns index of given string in given table or -1 if string not
+///  in table.</summary>
 function IndexInTable(const Str: string; const Table: array of string): Integer;
-  {Gets the index of a string in a table.
-    @param Str [in] String to search for. Case is ignored.
-    @param Table [in] Table of strings to search.
-    @return Index of string in table or -1 if string not in table.
-  }
 var
   I: Integer;   // loops thru table
 begin
@@ -388,12 +367,10 @@ begin
     end;
 end;
 
+///  <summary>Creates and initialises a sorted string list from a given table of
+///  values.</summary>
 procedure InitStringList(out Strings: TStringList;
   const Table: array of string);
-  {Creates and initialises a sorted string list from a table of values.
-    @param Strings [out] String list we create and initialise.
-    @param Table [in] Table of strings to place in string list.
-  }
 var
   Idx: Integer; // loops thru rows of table
 begin
@@ -404,10 +381,8 @@ begin
   Strings.CaseSensitive := False;
 end;
 
+///  <summary>Initialises object used to map valid symbols to tokens.</summary>
 procedure InitSymbolMap(out Map: TSymbolMap);
-  {Initialises object used to map valid symbols to tokens.
-    @param Map [out] Map object we create and initialise.
-  }
 var
   I: Integer; // loops thru entries in symbol map constant table.
 begin
@@ -418,44 +393,32 @@ begin
     Map.Add(cSymToTokenMap[I].Symbol, cSymToTokenMap[I].Token);
 end;
 
+///  <summary>Checks if given symbol is valid double character symbol.</summary>
 function IsDoubleSym(const Symbol: string): Boolean;
-  {Checks if a symbol is a valid double character symbol.
-    @param Symbol [in] Symbol to check.
-    @return True if symbol is valid double character symbol.
-  }
 begin
   if not Assigned(pvtDoubleSyms) then
     InitStringList(pvtDoubleSyms, cDoubleSyms);
   Result := pvtDoubleSyms.IndexOf(Symbol) >= 0;
 end;
 
+///  <summary>Checks if given identifier is a directive.</summary>
 function IsDirective(const Ident: string): Boolean;
-  {Checks if an identifier is a directive.
-    @param Ident [in] Identifier to check.
-    @return True if Ident is a directive, false otherwise.
-  }
 begin
   if not Assigned(pvtDirectives) then
     InitStringList(pvtDirectives, cDirectives);
   Result := pvtDirectives.IndexOf(Ident) >= 0;
 end;
 
+/// <summary>Checks if given identifier is a keyword.</summary>
 function IsKeyword(const Ident: string): Boolean;
-  {Checks if an identifier is a keyword.
-    @param Ident [in] Identifier to check.
-    @return True if Ident is a keyword, false otherwise.
-  }
 begin
   if not Assigned(pvtKeywords) then
     InitStringList(pvtKeywords, cKeywords);
   Result := pvtKeywords.IndexOf(Ident) >= 0;
 end;
 
+///  <summary>Returns the likely token associated with given symbol.</summary>
 function SymbolToToken(const Symbol: string): THilitePasToken;
-  {Gets the likely token associated with a symbol.
-    @param Symbol [in] Symbol to check
-    @return Token associated with symbol.
-  }
 begin
   if not Assigned(pvtSymMap) then
     InitSymbolMap(pvtSymMap);
@@ -465,11 +428,9 @@ begin
     Result := tkError;
 end;
 
+///  <summary>Returns the closing comment symbol that matches the given opening
+///  comment symbol.</summary>
 function MatchingCommentCloser(const CommentOpener: string): string;
-  {Given a comment opening symbol gets the matching closing comment symbol.
-    @param CommentOpener [in] Opening comment we need to match.
-    @return Closing comment symbol.
-  }
 var
   Idx: Integer; // index of opening / closing symbols in table
 begin
@@ -479,41 +440,28 @@ begin
   Result := cCommentClosers[Idx];
 end;
 
+///  <param>Checks if given string is a comment opening symbol that is valid for
+///  a compiler directive.</param>
 function IsCompilerDirOpener(const Str: string): Boolean;
-  {Checks if text is a comment opening symbol that is valid for a compiler
-  directive.
-    @param Str [in] String we are check is a compiler directive opening symbol.
-    @return True if is a compiler directive opening symbol.
-  }
 begin
   Result := IndexInTable(Str, cCompilerDirOpeners) >= 0;
 end;
 
-
 { THilitePasLexer }
 
 constructor THilitePasLexer.Create(const Source: string);
-  {Constructor. Sets up object to analyse code in a string.
-    @param Source [in] String containing Pascal source.
-  }
 begin
   inherited Create;
   fReader := TStringReader.Create(Source);
 end;
 
 destructor THilitePasLexer.Destroy;
-  {Destructor. Tears down object.
-  }
 begin
   fReader.Free;
   inherited;
 end;
 
 function THilitePasLexer.NextToken: THilitePasToken;
-  {Gets and analyses next Pascal token from input and stores details in token
-  string.
-    @return Token identifiing type of token read.
-  }
 begin
   // Reset token string
   fTokenStr := '';
@@ -549,10 +497,6 @@ begin
 end;
 
 function THilitePasLexer.ParseChar: THilitePasToken;
-  {Analyses a literal character (made from # followed by number) from input and
-  stores in token string.
-    @return Token indicating literal char (tkChar).
-  }
 begin
   // This method called with token string already containing '#' and current
   // char is char after '#'
@@ -576,10 +520,6 @@ begin
 end;
 
 function THilitePasLexer.ParseCommentFromStart: THilitePasToken;
-  {Begins parsing of a new comment or compiler directive.
-    @return Token telling whether this is a comment or compiler directive
-      (tkComment, tkCompilerDir).
-  }
 begin
   // Token string contains comment opening symbol and current char is that which
   // follows opening symbol
@@ -600,11 +540,6 @@ begin
 end;
 
 function THilitePasLexer.ParseCommentInterior: THilitePasToken;
-  {Analyses body of comment after start or after resuming processing multi-line
-  comments.
-    @return Token telling whether this is a comment or compiler directive
-      (tkComment, tkCompilerDir).
-  }
 var
   Done: Boolean;  // flag true when we have finished comment
 begin
@@ -677,9 +612,6 @@ begin
 end;
 
 function THilitePasLexer.ParseEOL: THilitePasToken;
-  {Analyses end of line from input and stores in token string.
-    @return End of line token (tkEOL).
-  }
 begin
   UpdateTokenStr(cEOL);
   Result := tkEOL;
@@ -687,9 +619,6 @@ begin
 end;
 
 function THilitePasLexer.ParseHex: THilitePasToken;
-  {Analyses a hexadecimal integer from input and stores in token string.
-    @return Token indicating hexadecimal value (tkHex).
-  }
 begin
   // Called with fTokenStr = '$' and fReader.Ch with char after '$'
   // Build string of hex digits
@@ -706,11 +635,6 @@ begin
 end;
 
 function THilitePasLexer.ParseIdent: THilitePasToken;
-  {Analyses an alphanumeric identifier from input and stores in token string.
-  Checks if identifier is keyword or directive.
-    @return Token representing identifier: tkKeyword, tkDirective or
-      tkIdentifier.
-  }
 begin
   Assert(IsValidIdentStartChar(fReader.Ch),
     ClassName + '.ParseIdent: identifier starting character expected');
@@ -730,10 +654,6 @@ begin
 end;
 
 function THilitePasLexer.ParseNumber: THilitePasToken;
-  {Analyses a number from input and stores in token string. Number can be
-  integer or real.
-    @return Appropriate token for number (tkNumber or tkFloat).
-  }
 var
   TempCh: Char; // temporary storage for a character read from input
 begin
@@ -789,9 +709,6 @@ begin
 end;
 
 function THilitePasLexer.ParseString: THilitePasToken;
-  {Analyses a string literal from input and stores in token string.
-    @return String token (tkString).
-  }
 var
   Done: Boolean;  // flag true when done parsing string
 begin
@@ -824,12 +741,6 @@ begin
 end;
 
 function THilitePasLexer.ParseSymbol: THilitePasToken;
-  {Determines whether the current symbol character on input represents a symbol
-  or introduces some other syntactic entity (i.e. comment, string, character
-  literal or a hex number). Analyses the input accordingly and stores the whole
-  token in the token string.
-    @return Token describing entity parsed.
-  }
 var
   AToken: THilitePasToken; // token represented by the symbol
 begin
@@ -865,9 +776,6 @@ begin
 end;
 
 function THilitePasLexer.ParseUnknown: THilitePasToken;
-  {Analyses an unrecognised entity from input and adds it to token string.
-    @return Error token (tkError).
-  }
 begin
   Result := tkError;
   UpdateTokenStr;
@@ -875,10 +783,6 @@ begin
 end;
 
 function THilitePasLexer.ParseWhiteSpace: THilitePasToken;
-  {Analyses a sequence of white space from input and appends space for each
-  white space character read to token string.
-    @return White space token (tkWhiteSpace).
-  }
 begin
   Assert(IsWhiteSpaceChar(fReader.Ch),
     ClassName + '.ParseWhiteSpace: current char not white space');
@@ -891,9 +795,6 @@ begin
 end;
 
 function THilitePasLexer.ParseWholeNumber: THilitePasToken;
-  {Analyses a whole number from input and appends to token string.
-    @return Whole number token (tkNumber).
-  }
 begin
   Assert(TCharacter.IsDigit(fReader.Ch),
     ClassName + '.ParseWholeNumber: current char not a digit');
@@ -906,16 +807,11 @@ begin
 end;
 
 procedure THilitePasLexer.UpdateTokenStr;
-  {Appends current character in input to token string. Ignores EOF.
-  }
 begin
   UpdateTokenStr(fReader.Ch);
 end;
 
 procedure THilitePasLexer.UpdateTokenStr(const Ch: Char);
-  {Appends a character to token string. Ignores EOF.
-    @param Ch [in] Character to append.
-  }
 begin
   if Ch <> cEOF then
     fTokenStr := fTokenStr + Ch;
