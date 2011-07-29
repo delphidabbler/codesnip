@@ -41,22 +41,13 @@ interface
 
 
 uses
+  // Delphi
+  Generics.Collections,
   // Project
   Hiliter.UGlobals, Hiliter.UPasLexer;
 
 
 type
-
-  TParserState = (
-    psBetweenLines,
-    psASM,
-    psInProperty,
-    psAfterProperty,
-    psInExports,
-    psInExternal
-  );
-
-  TParserStates = set of TParserState;
 
   {
   THilitePasParser:
@@ -64,6 +55,29 @@ type
     Notifies owning objects of each element and other key parsing events.
   }
   THilitePasParser = class(TObject)
+  strict private
+    type
+      TParserState = (
+        psBetweenLines,
+        psInASM,
+        psInProperty,
+        psAfterProperty,
+        psInExports,
+        psInExternal
+      );
+    type
+      TParserStates = set of TParserState;
+    type
+      TContextDirectives = class(TObject)
+      strict private
+        fMap: TDictionary<string,TParserStates>;
+      public
+        constructor Create;
+        destructor Destroy; override;
+        procedure Add(const Dir: string; const SupportedStates: TParserStates);
+        function IsReserved(const Dir: string; const States: TParserStates):
+          Boolean;
+      end;
   public
     type
       {
@@ -78,6 +92,7 @@ type
       }
       TParseElementEvent = procedure(Parser: THilitePasParser;
         Element: THiliteElement; const ElemText: string) of object;
+    type
       {
       TParseLineEvent:
         Type of event raised at start and end of lines of highlighted code when
@@ -86,18 +101,20 @@ type
       }
       TParseLineEvent = procedure(Parser: THilitePasParser) of object;
   strict private
-    fLexer: THilitePasLexer;   // object that tokenises Pascal source
-    fOnElement: TParseElementEvent;
-      {OnElement event handler}
-    fOnLineBegin: TParseLineEvent;
-      {OnLineBegin event handler}
-    fOnLineEnd: TParseLineEvent;
-      {OnLineEnd event handler}
-    fState: TParserStates;
+    var
+      fLexer: THilitePasLexer;   // object that tokenises Pascal source
+      fOnElement: TParseElementEvent;
+        {OnElement event handler}
+      fOnLineBegin: TParseLineEvent;
+        {OnLineBegin event handler}
+      fOnLineEnd: TParseLineEvent;
+        {OnLineEnd event handler}
+      fState: TParserStates;
+    class var
+      fContextDirs: TContextDirectives;
     function ParseASMElement: THiliteElement;
     function ParsePascalElement: THiliteElement;
-    function IsTokenStr(const TokenStr: string): Boolean; overload; inline;
-    function IsTokenStr(const TokenStrs: array of string): Boolean; overload;
+    function IsTokenStr(const TokenStr: string): Boolean; inline;
     procedure EnsureLineBegun;
     procedure EmitEndOfLine;
     procedure EmitElement(const Elem: THiliteElement);
@@ -114,6 +131,8 @@ type
       {Triggers OnLineEnd event.
       }
   public
+    class constructor Create;
+    class destructor Destroy;
     destructor Destroy; override;
     procedure Parse(const Source: string);
       {Parses Pascal source code, triggering events as each line and token is
@@ -140,32 +159,38 @@ implementation
 
 uses
   // Project
-  UStrUtils;
+  UComparers, UStrUtils;
 
-
-const
-  DefaultDirective = 'default';
-  PartTimeDirectives: array[1..12] of string = (
-    'read', 'write', 'default', 'nodefault', 'stored', 'implements', 'readonly',
-    'writeonly', 'index', 'name', 'resident', 'delayed'
-  );
-  PropertyDirectives: array[1..9] of string = (
-    'read', 'write', 'default', 'nodefault', 'stored', 'implements', 'readonly',
-    'writeonly', 'index'
-  );
-  ExportsDirectives: array[1..3] of string = (
-    'name', 'index', 'resident'
-  );
-  ExternalDirectives: array[1..3] of string = (
-    'name', 'index', 'delayed'
-  );
 
 { THilitePasParser }
+
+class constructor THilitePasParser.Create;
+begin
+  fContextDirs := TContextDirectives.Create;
+  fContextDirs.Add('read', [psInProperty]);
+  fContextDirs.Add('write', [psInProperty]);
+  fContextDirs.Add('default', [psInProperty, psAfterProperty]);
+  fContextDirs.Add('nodefault', [psInProperty]);
+  fContextDirs.Add('stored', [psInProperty]);
+  fContextDirs.Add('implements', [psInProperty]);
+  fContextDirs.Add('readonly', [psInProperty]);
+  fContextDirs.Add('writeonly', [psInProperty]);
+  fContextDirs.Add('index', [psInProperty, psInExports, psInExternal]);
+  fContextDirs.Add('name', [psInExports, psInExternal]);
+  fContextDirs.Add('resident', [psInExports]);
+  fContextDirs.Add('delayed', [psInExternal]);
+  fContextDirs.Add('local', []); // Kylix directive: never reserved in Delphi
+end;
 
 destructor THilitePasParser.Destroy;
 begin
   fLexer.Free;
   inherited;
+end;
+
+class destructor THilitePasParser.Destroy;
+begin
+  fContextDirs.Free;
 end;
 
 procedure THilitePasParser.DoElement(Elem: THiliteElement;
@@ -218,16 +243,6 @@ begin
   end;
 end;
 
-function THilitePasParser.IsTokenStr(const TokenStrs: array of string): Boolean;
-var
-  TokenStr: string;
-begin
-  for TokenStr in TokenStrs do
-    if IsTokenStr(TokenStr) then
-      Exit(True);
-  Result := False;
-end;
-
 function THilitePasParser.IsTokenStr(const TokenStr: string): Boolean;
 begin
   Result := StrSameText(fLexer.TokenStr, TokenStr);
@@ -250,7 +265,7 @@ begin
     // We treat end of line separately from other tokens
     if fLexer.Token <> tkEOL then
     begin
-      if psASM in fState then
+      if psInASM in fState then
         // We are inside assembler code
         Elem := ParseASMElement
       else
@@ -275,7 +290,7 @@ begin
       if IsTokenStr('end') then
       begin
         // "end" keyword ends assembler code block
-        Exclude(fState, psASM);
+        Exclude(fState, psInASM);
         Result := heReserved;
       end;
     end;
@@ -301,7 +316,7 @@ begin
       // rendered as reserved word.
       Result := heReserved;
       if IsTokenStr('asm') then
-        Include(fState, psASM);
+        Include(fState, psInASM);
       if IsTokenStr('property') then
         Include(fState, psInProperty);
       if IsTokenStr('exports') then
@@ -311,17 +326,10 @@ begin
     begin
       if IsTokenStr('external') then
         Include(fState, psInExternal);
-      if not IsTokenStr(PartTimeDirectives) then
-        Exit(heReserved);
-      if (psInProperty in fState) and IsTokenStr(PropertyDirectives) then
-        Exit(heReserved);
-      if (psAfterProperty in fState) and IsTokenStr(DefaultDirective) then
-        Exit(heReserved);
-      if (psInExports in fState) and IsTokenStr(ExportsDirectives) then
-        Exit(heReserved);
-      if (psInExternal in fState) and IsTokenStr(ExternalDirectives) then
-        Exit(heReserved);
-      Result := heIdentifier;
+      if fContextDirs.IsReserved(fLexer.TokenStr, fState) then
+        Result := heReserved
+      else
+        Result := heIdentifier;
     end;
     tkComment:
       Result := heComment;
@@ -359,6 +367,36 @@ begin
     else
       Result := heError;
   end;
+end;
+
+{ THilitePasParser.TContextDirectives }
+
+procedure THilitePasParser.TContextDirectives.Add(const Dir: string;
+  const SupportedStates: TParserStates);
+begin
+  fMap.Add(Dir, SupportedStates);
+end;
+
+constructor THilitePasParser.TContextDirectives.Create;
+begin
+  inherited Create;
+  fMap := TDictionary<string,TParserStates>.Create(
+    TTextEqualityComparer.Create
+  );
+end;
+
+destructor THilitePasParser.TContextDirectives.Destroy;
+begin
+  fMap.Free;
+  inherited;
+end;
+
+function THilitePasParser.TContextDirectives.IsReserved(const Dir: string;
+  const States: TParserStates): Boolean;
+begin
+  if not fMap.ContainsKey(Dir) then
+    Exit(True);
+  Result := States * fMap[Dir] <> [];
 end;
 
 end.
