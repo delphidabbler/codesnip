@@ -49,109 +49,129 @@ uses
 
 type
 
-  {
-  THilitePasParser:
-    Parses pascal files and splits into different highlighting elements.
-    Notifies owning objects of each element and other key parsing events.
-  }
+  ///  <summary>
+  ///  Parses pascal source code into different highlighting elements.
+  ///  </summary>
+  ///  <remarks>
+  ///  Objects using this class are notified of different elements via events.
+  ///  </remarks>
   THilitePasParser = class(TObject)
   strict private
     type
-      TParserState = (
-        psBetweenLines,
-        psInASM,
-        psInProperty,
-        psAfterProperty,
-        psInExports,
-        psInExternal,
-        psKeywordEscape
+      ///  <summary>Set of possible states of parser.</summary>
+      TParserStates = set of (
+        psBetweenLines,   // start of a new line is pending
+        psInASM,          // processing assembler code
+        psInProperty,     // processing a property declaration
+        psAfterProperty,  // immediately after end of property declaration
+        psInExports,      // processing an exports statement
+        psInExternal,     // processing an external directive
+        psKeywordEscape   // & encountered, expecting keyword to treat as ident
       );
     type
-      TParserStates = set of TParserState;
-    type
+      ///  <summary>Object that maps directives whose highlighting depends on
+      ///  context onto the compiler states where they are treated as reserved
+      ///  words.</summary>
       TContextDirectives = class(TObject)
       strict private
+        ///  <summary>Maps directive names onto compiler states where they are
+        ///  treated as reserved words.</summary>
         fMap: TDictionary<string,TParserStates>;
       public
+        ///  <summary>Object constructor.</summary>
         constructor Create;
+        ///  <summary>Object destructor.</summary>
         destructor Destroy; override;
+        ///  <summary>Adds a given directive to the map along with the compiler
+        ///  states where it is to be treated as a reserved word.</summary>
         procedure Add(const Dir: string; const SupportedStates: TParserStates);
+        ///  <summary>Checks if a directive is to be treated as a reserved word
+        ///  in given compiler state.</summary>
+        ///  <remarks>Any directive not included in map is deemed to always be
+        ///  reserved.</remarks>
         function IsReserved(const Dir: string; const States: TParserStates):
           Boolean;
       end;
   public
     type
-      {
-      TParseElementEvent:
-        Type of event raised when a code element has been parsed that needs to
-        be highlighted in a particular style. Should be handled by classes that
-        render the highlighted text.
-          @param Parser [in] Parser object that triggered event.
-          @param Element [in] Identifies highlight style the text should be
-            rendered in.
-          @param ElemText [in] Text to be rendered.
-      }
+      ///  <summary>Type of event triggered when a code element has been parsed.
+      ///  </summary>
+      ///  <remarks>Provides information about the element to handler.</remarks>
+      ///  <param name="Parser">THilitePasParser [in] Parser object that
+      ///  triggered event.</param>
+      ///  <param name="Element">THiliteElement [in] Highlight style to be used
+      ///  to render ElemText.</param>
+      ///  <param name="ElemText">string [in] Text to be rendered.</param>
       TParseElementEvent = procedure(Parser: THilitePasParser;
         Element: THiliteElement; const ElemText: string) of object;
     type
-      {
-      TParseLineEvent:
-        Type of event raised at start and end of lines of highlighted code when
-        parsing a Pascal file for highlighting.
-          @param Parser [in] Parser object that triggered event.
-      }
+      ///  <summary>Type of event triggered at start and end of lines of code.
+      ///  </summary>
+      ///  <param name="Parser">THilitePasParser [in] Parser object that
+      ///  triggered event.</param>
       TParseLineEvent = procedure(Parser: THilitePasParser) of object;
   strict private
-    var
-      fLexer: THilitePasLexer;   // object that tokenises Pascal source
-      fOnElement: TParseElementEvent;
-        {OnElement event handler}
-      fOnLineBegin: TParseLineEvent;
-        {OnLineBegin event handler}
-      fOnLineEnd: TParseLineEvent;
-        {OnLineEnd event handler}
-      fState: TParserStates;
     class var
+      ///  <summary>Singleton object used to determine directive highlight
+      ///  styles that depend on context.</summary>
       fContextDirs: TContextDirectives;
+    var
+      ///  <summary>Object that tokenises Pascal source.</summary>
+      fLexer: THilitePasLexer;
+      ///  <summary>Reference to OnElement event handler.</summary>
+      fOnElement: TParseElementEvent;
+      ///  <summary>Reference to OnLineBegin event handler.</summary>
+      fOnLineBegin: TParseLineEvent;
+      ///  <summary>Reference to OnLineEnd event handler.</summary>
+      fOnLineEnd: TParseLineEvent;
+      ///  <summary>Records current state of parser.</summary>
+      fState: TParserStates;
+    ///  <summary>Parses a code element within assembly code and returns
+    ///  required highlight style.</summary>
     function ParseASMElement: THiliteElement;
+    ///  <summary>Parses a code element within normal Pascal code and returns
+    ///  required highlight style.</summary>
     function ParsePascalElement: THiliteElement;
+    ///  <summary>Checks if given text is that of the current token.</summary>
     function IsTokenStr(const TokenStr: string): Boolean; inline;
+    ///  <summary>Ensures that a line of output has been started.</summary>
+    ///  <remarks>New lines are not started until they are actually required.
+    ///  </remarks>
     procedure EnsureLineBegun;
+    ///  <summary>Triggers required events and updates compiler state when an
+    ///  end of line is encountered.</summary>
     procedure EmitEndOfLine;
+    ///  <summary>Triggers required events and updates compiler state when an
+    ///  element is to be written.</summary>
     procedure EmitElement(const Elem: THiliteElement);
   strict protected
+    ///  <summary>Triggers OnElement event for given element text and
+    ///  highlighting style.</summary>
     procedure DoElement(Elem: THiliteElement; const ElemText: string); virtual;
-      {Triggers OnElement event.
-        @param Elem [in] Element that has been parsed.
-        @param ElemText [in] Text of parsed element.
-      }
+    ///  <summary>Triggers OnLineBegin event.</summary>
     procedure DoLineBegin; virtual;
-      {Triggers OnLineBegin event.
-      }
+    ///  <summary>Triggers OnLineEnd events.</summary>
     procedure DoLineEnd; virtual;
-      {Triggers OnLineEnd event.
-      }
   public
     class constructor Create;
     class destructor Destroy;
     destructor Destroy; override;
+    ///  <summary>Parses given Pascal source code, triggering events to inform
+    ///  of progress.</summary>
     procedure Parse(const Source: string);
-      {Parses Pascal source code, triggering events as each line and token is
-      parsed.
-        @param Source [in] String containing Pascal source.
-      }
-    property OnElement: TParseElementEvent
-      read fOnElement write fOnElement;
-      {Event triggered when a highlight element has been parsed. Users should
-      render the element in response to this event}
-    property OnLineBegin: TParseLineEvent
-      read fOnLineBegin write fOnLineBegin;
-      {Event triggered just before first element on a new line is parsed. Users
-      should emit any output needed to open the new line}
-    property OnLineEnd: TParseLineEvent
-      read fOnLineEnd write fOnLineEnd;
-      {Event triggered at the end of each line of code. Users should close the
-      current line in response}
+    ///  <summary>Event triggered when a Pascal element has been parsed to
+    ///  inform caller of text to be output and highlight style required.
+    ///  </summary>
+    property OnElement: TParseElementEvent read fOnElement write fOnElement;
+    ///  <summary>Event triggered just before first element on a new line is
+    ///  parsed.</summary>
+    ///  <remarks>Users should emit any output required to open a new line.
+    ///  </remarks>
+    property OnLineBegin: TParseLineEvent read fOnLineBegin write fOnLineBegin;
+    ///  <summary>Event triggered at the end of each line of source code.
+    ///  </summary>
+    ///  <remarks>Users should emit any output required to end a line.</remarks>
+    property OnLineEnd: TParseLineEvent read fOnLineEnd write fOnLineEnd;
   end;
 
 
@@ -196,18 +216,12 @@ end;
 
 procedure THilitePasParser.DoElement(Elem: THiliteElement;
   const ElemText: string);
-  {Triggers OnElement event.
-    @param Elem [in] Element that has been parsed.
-    @param ElemText [in] Text of parsed element.
-  }
 begin
   if Assigned(fOnElement) then
     fOnElement(Self, Elem, ElemText);
 end;
 
 procedure THilitePasParser.DoLineBegin;
-  {Triggers OnLineBegin event.
-  }
 begin
   if Assigned(fOnLineBegin) then
     fOnLineBegin(Self);
@@ -250,10 +264,6 @@ begin
 end;
 
 procedure THilitePasParser.Parse(const Source: string);
-  {Parses Pascal source code, triggering events as each line and token is
-  parsed.
-    @param Source [in] String containing Pascal source.
-  }
 var
   Elem: THiliteElement;     // identifies a parsed highlight element
 begin
@@ -315,9 +325,6 @@ begin
   case fLexer.Token of
     tkKeyword:
     begin
-      // Keywords are always reserved. We need to check for "asm" keyword
-      // and switch to assembler mode when found. "asm" keyword is
-      // rendered as reserved word.
       if IsTokenStr('asm') then
         Include(fState, psInASM);
       if IsTokenStr('property') then
