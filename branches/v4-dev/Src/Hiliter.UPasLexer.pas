@@ -41,7 +41,7 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes,
+  SysUtils, Classes, Generics.Collections,
   // Project
   UStringReader;
 
@@ -71,6 +71,18 @@ type
   ///  <summary>Class that analyses and tokenises Pascal source code.</summary>
   THilitePasLexer = class(TObject)
   strict private
+    type
+      TEntityMap = class(TObject)
+      strict private
+        fMap: TDictionary<string,THilitePasToken>;
+      public
+        constructor Create;
+        destructor Destroy; override;
+        procedure Add(const Entity: string; const Token: THilitePasToken);
+        function Lookup(const Entity: string): THilitePasToken;
+      end;
+    class var
+      fEntityMap: TEntityMap;
     var
       ///  <summary>Text of last token read from input.</summary>
       fTokenStr: string;
@@ -153,6 +165,8 @@ type
     ///  <returns>THilitePasToken. Whole number token.</returns>
     function ParseWholeNumber: THilitePasToken;
   public
+    class constructor Create;
+    class destructor Destroy;
     ///  <summary>Object constructor. Sets up object to analyse given Pascal
     ///  source code string.</summary>
     constructor Create(const Source: string);
@@ -174,7 +188,7 @@ implementation
 
 uses
   // Delphi
-  Generics.Collections, Character,
+  Character,
   // Project
   UComparers, UConsts, UStrUtils, UUtils;
 
@@ -205,7 +219,7 @@ const
   );
 
   // table of keywords per Delphi 2006
-  cKeywords: array[0..66] of string = (
+  cKeywords: array[0..65] of string = (
     'and',            'array',          'as',             'asm',
     'at',             'begin',          'case',           'class',
     'const',          'constructor',    'destructor',     'dispinterface',
@@ -213,16 +227,16 @@ const
     'end',            'except',         'exports',        'file',
     'finalization',   'finally',        'for',            'function',
     'goto',           'if',             'implementation', 'in',
-    'inherited',      'initialization', 'inline',         'interface',
-    'is',             'label',          'library',        'mod',
-    'nil',            'not',            'object',         'of',
-    'on',             'or',             'out',            'packed',
-    'procedure',      'program',        'property',       'raise',
-    'record',         'repeat',         'resourcestring', 'set',
-    'shl',            'shr',            'string',         'then',
-    'threadvar',      'to',             'try',            'type',
-    'unit',           'until',          'uses',           'var',
-    'while',          'with',           'xor'
+    'inherited',      'initialization', 'interface',      'is',
+    'label',          'library',        'mod',            'nil',
+    'not',            'object',         'of',             'on',
+    'or',             'out',            'packed',         'procedure',
+    'program',        'property',       'raise',          'record',
+    'repeat',         'resourcestring', 'set',            'shl',
+    'shr',            'string',         'then',           'threadvar',
+    'to',             'try',            'type',           'unit',
+    'until',          'uses',           'var',            'while',
+    'with',           'xor'
   );
 
   // table of directives per Delphi 2010
@@ -285,16 +299,9 @@ const
   );
 
 
-type
-  ///  <summary>Class that maps symbols to tokens.</summary>
-  TSymbolMap = TDictionary<string,THilitePasToken>;
-
 var
   // Private objects used to store and search lists of symbols and keywords
-  pvtKeywords: TStringList = nil;   // keywords list
-  pvtDirectives: TStringList = nil; // directives list
   pvtDoubleSyms: TStringList = nil; // list of double symbols
-  pvtSymMap: TSymbolMap;            // map of symbols to tokens
 
 
 { Helper routines }
@@ -381,51 +388,12 @@ begin
   Strings.CaseSensitive := False;
 end;
 
-///  <summary>Initialises object used to map valid symbols to tokens.</summary>
-procedure InitSymbolMap(out Map: TSymbolMap);
-var
-  I: Integer; // loops thru entries in symbol map constant table.
-begin
-  // Map contains only symbols, therefore it doesn't matter if searching is
-  // case sensitive. We use case insensitive since it is probably quicker
-  Map := TSymbolMap.Create(TStringEqualityComparer.Create);
-  for I := Low(cSymToTokenMap) to High(cSymToTokenMap) do
-    Map.Add(cSymToTokenMap[I].Symbol, cSymToTokenMap[I].Token);
-end;
-
 ///  <summary>Checks if given symbol is valid double character symbol.</summary>
 function IsDoubleSym(const Symbol: string): Boolean;
 begin
   if not Assigned(pvtDoubleSyms) then
     InitStringList(pvtDoubleSyms, cDoubleSyms);
   Result := pvtDoubleSyms.IndexOf(Symbol) >= 0;
-end;
-
-///  <summary>Checks if given identifier is a directive.</summary>
-function IsDirective(const Ident: string): Boolean;
-begin
-  if not Assigned(pvtDirectives) then
-    InitStringList(pvtDirectives, cDirectives);
-  Result := pvtDirectives.IndexOf(Ident) >= 0;
-end;
-
-/// <summary>Checks if given identifier is a keyword.</summary>
-function IsKeyword(const Ident: string): Boolean;
-begin
-  if not Assigned(pvtKeywords) then
-    InitStringList(pvtKeywords, cKeywords);
-  Result := pvtKeywords.IndexOf(Ident) >= 0;
-end;
-
-///  <summary>Returns the likely token associated with given symbol.</summary>
-function SymbolToToken(const Symbol: string): THilitePasToken;
-begin
-  if not Assigned(pvtSymMap) then
-    InitSymbolMap(pvtSymMap);
-  if pvtSymMap.ContainsKey(Symbol) then
-    Result := pvtSymMap[Symbol]
-  else
-    Result := tkError;
 end;
 
 ///  <summary>Returns the closing comment symbol that matches the given opening
@@ -449,10 +417,29 @@ end;
 
 { THilitePasLexer }
 
+class constructor THilitePasLexer.Create;
+var
+  Entity: string; // each keyword and directive name
+  Idx: Integer;   // loops trhough symbol to token map
+begin
+  fEntityMap := TEntityMap.Create;
+  for Entity in cKeywords do
+    fEntityMap.Add(Entity, tkKeyword);
+  for Entity in cDirectives do
+    fEntityMap.Add(Entity, tkDirective);
+  for Idx := Low(cSymToTokenMap) to High(cSymToTokenMap) do
+    fEntityMap.Add(cSymToTokenMap[Idx].Symbol, cSymToTokenMap[Idx].Token);
+end;
+
 constructor THilitePasLexer.Create(const Source: string);
 begin
   inherited Create;
   fReader := TStringReader.Create(Source);
+end;
+
+class destructor THilitePasLexer.Destroy;
+begin
+  fEntityMap.Free;
 end;
 
 destructor THilitePasLexer.Destroy;
@@ -502,7 +489,7 @@ begin
   // char is char after '#'
   // Numeric part can either by whole number or hex number
   Result := tkChar;
-  if SymbolToToken(fReader.Ch) = tkHex then
+  if fEntityMap.Lookup(fReader.Ch) = tkHex then
   begin
     // Hex number ('$' detected)
     // store '$' and skip to next
@@ -645,11 +632,8 @@ begin
     fReader.NextChar;
   end;
   // Check if token is keyword or directive or is plain identifier
-  if IsKeyword(fTokenStr) then
-    Result := tkKeyword
-  else if IsDirective(fTokenStr) then
-    Result := tkDirective
-  else
+  Result := fEntityMap.Lookup(fTokenStr);
+  if not (Result in [tkKeyword, tkDirective]) then
     Result := tkIdentifier;
 end;
 
@@ -760,7 +744,7 @@ begin
   end;
   // Token string now holds symbol: check which kind of token it represents
   // and parse accordingly
-  AToken := SymbolToToken(TokenStr);
+  AToken := fEntityMap.Lookup(TokenStr);
   case AToken of
     tkComment:
       Result := ParseCommentFromStart;
@@ -817,16 +801,43 @@ begin
     fTokenStr := fTokenStr + Ch;
 end;
 
+{ THilitePasLexer.TEntityMap }
+
+constructor THilitePasLexer.TEntityMap.Create;
+begin
+  inherited Create;
+  fMap := TDictionary<string,THilitePasToken>.Create(
+    TTextEqualityComparer.Create
+  );
+end;
+
+destructor THilitePasLexer.TEntityMap.Destroy;
+begin
+  fMap.Free;
+  inherited;
+end;
+
+procedure THilitePasLexer.TEntityMap.Add(const Entity: string;
+  const Token: THilitePasToken);
+begin
+  fMap.Add(Entity, Token);
+end;
+
+function THilitePasLexer.TEntityMap.Lookup(const Entity: string):
+  THilitePasToken;
+begin
+  if fMap.ContainsKey(Entity) then
+    Result := fMap[Entity]
+  else
+    Result := tkError;
+end;
 
 initialization
 
 
 finalization
 
-pvtKeywords.Free;
-pvtDirectives.Free;
 pvtDoubleSyms.Free;
-pvtSymMap.Free;
 
 end.
 
