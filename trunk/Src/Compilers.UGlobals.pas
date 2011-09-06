@@ -58,6 +58,7 @@ type
     ciD2009w32,                         // Delphi 2009 Win32 personality
     ciD2010,                            // Delphi 2010
     ciDXE,                              // Delphi XE
+    ciDXE2,                             // Delphi XE2
     ciFPC                               // Free Pascal
   );
 
@@ -66,7 +67,7 @@ const
   cClassicDelphiCompilers =   // Classic Borland / Inprise Delphi
     [ciD2, ciD3, ciD4, ciD5, ciD6, ciD7];
   cBDSCompilers =             // BDS based compilers
-    [ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010, ciDXE];
+    [ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010, ciDXE, ciDXE2];
   cFreePascalCompilers =      // Free Pascal
     [ciFPC];
 
