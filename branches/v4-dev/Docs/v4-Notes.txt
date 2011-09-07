@@ -39,6 +39,17 @@ Changes
   o Tests for UUtils (some changes to pass tests)
 
 * Refactorings and similar:
+  o Changed several classes that used initialization and finalization sections
+    or TGC garbage collector instances to create and destroy objects stored in
+    private unit global variables to use class vars and class constructors /
+    destructors.
+  o Removed TGC garbage collector from project.
+  o Increased use of generics.
+  o Made some classes sealed.
+  o Moved some global constants into classes as private or public class
+    constants.
+  o Simplified many enumerators by re-using enumerators of VCL classes and
+    generic lists etc.
   o View unit - complete rewrite
   o Snippet Kind Info and Initial Letter code - complete rewrite
   o Alpha grouping code
@@ -52,12 +63,15 @@ Changes
   o Rationalised HTML resource files.
   o Much renaming of code related to database. Particularly "routines" changed
     to "snippets".
+  o Much unit renaming, some using namespaces.
   o TDlgAligner class: refactored and added support for dialogs specified by
     window handle.
   o THTMLTpltDlgFrame now uses callbacks to resolve placeholders using a
     THTMLTemplate object: no longer uses TStringList and Name=Value strings.
   o UAnchors.
   o USearch.
+  o Many "private" and "protected" class visibility specifiers replaced by
+    "strict private" and "strict protected".
   o Some code moved from USnippets into new units and created new DB namespace.
   o Created new DBIO namespace for code that performs database IO.
   o TSnippetsValidator
@@ -68,6 +82,12 @@ Changes
   o New IStringList.ToArray method.
   o New TTextComparer class in UComparers.
   o Some protected interface implementation methods made public.
+  o Some processing and trimming of record fields moved into records by using
+    properties and getter / setter methods.
+  o Moved formatting of user details into TUserDetails record using ToString
+    method.
+  o Increased used of dedicated comparer classes instead of delagating list /
+    dictionary comparisons to anonymous methods declared in using code.
 
 * Bug fixes:
   o #3120962. This was a separate fix to that created for v3 - the two were
@@ -111,6 +131,10 @@ Changes
   o THTMLAttributes can now have attributes passed to constructor to create
     object with attributes on fly rather than having to call Add method for each
     attribute.
+  o Added support for supressing IE browser control's script error dialog boxes.
+  o HTML script errors now raise exceptions instead of displaying an IE script
+    error dialog box.
+  o Refactored and improved HTML event sink code.
 
 Printing:
   o Print engine and print document code updated to used TRTF as document type
@@ -161,6 +185,8 @@ Printing:
   o User database file format updated. Now v5.
   o Changes to records and objects:
     - Fields of TSnippetID now encapsulated.
+  o Moved some field comparisons into records / classes instead of doing
+    comparison in called code. E.g. TSnippetID gets a CompareNames method.
 
 * Import / Export / Backup
   o Updated export file version to v5. All files use v5 regardless of REML
@@ -230,8 +256,15 @@ Printing:
 
 * Revised splash screen to include version number 4.
 
-* Changed syntax highlighter code to no longer use streams to pass text data
-  between classes but to use Unicode strings instead.
+* Syntax highlighter
+  o Changed code to no longer use streams to pass text data between highlighter
+    classes but to use Unicode strings instead.
+  o Updated list of keywords and directives for Delphi 2010.
+  o Added support for context sensitive highlighting of some directives within
+    "property", "exports" and "external" statements.
+  o Added support for "&" keyword prefix: prefixed keyords now treated as
+    identifiers instead of keywords.
+  o Refactored lexer.
 
 * Changed per-user config file name to User.4.ini.
 
