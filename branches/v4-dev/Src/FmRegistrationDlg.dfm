@@ -6,7 +6,7 @@ inherited RegistrationDlg: TRegistrationDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     inherited pcWizard: TPageControl
-      ActivePage = tsSubmit
+      ActivePage = tsAboutUser
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
@@ -43,29 +43,29 @@ inherited RegistrationDlg: TRegistrationDlg
         Caption = 'tsAboutUser'
         ImageIndex = 1
         TabVisible = False
-        ExplicitLeft = 8
         object lblName: TLabel
           Left = 0
           Top = 8
           Width = 369
-          Height = 30
+          Height = 41
           AutoSize = False
           Caption = 
             'The only information about you that is required to complete regs' +
             'tration is your &name. You can use a nickname if your prefer. Pl' +
-            'ease enter it below:'
+            'ease enter it below (maximum 48 characters):'
           FocusControl = edName
           WordWrap = True
         end
         object edName: TEdit
           Left = 0
-          Top = 36
+          Top = 55
           Width = 369
           Height = 21
           BevelInner = bvSpace
           BevelKind = bkFlat
           BevelOuter = bvRaised
           BorderStyle = bsNone
+          MaxLength = 48
           TabOrder = 0
         end
       end

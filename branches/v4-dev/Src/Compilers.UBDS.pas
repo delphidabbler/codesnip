@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -129,13 +129,15 @@ function TBDSCompiler.GetIDString: string;
     @return Compiler id string.
   }
 begin
-  case GetID of        
+  case GetID of
     ciD2005w32, ciD2006w32, ciD2009w32:
       Result := Format('D%dw32', [ProductVersion]);
     ciD2007, ciD2010:
       Result := Format('D%d', [ProductVersion]);
     ciDXE:
       Result := 'DXE';
+    ciDXE2:
+      Result := 'DXE2';
     else raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
   end;
 end;
@@ -147,11 +149,16 @@ function TBDSCompiler.GetName: string;
 resourcestring
   sCompilerName = 'Delphi %d';  // template for name of compiler
   sDelphiXE = 'Delphi XE';      // name of Delphi XE compiler
+  sDelphiXE2 = 'Delphi XE2';    // name of Delphi XE2 compiler
 begin
-  if GetID = ciDXE then
-    Result := sDelphiXE
-  else
-    Result := Format(sCompilerName, [ProductVersion]);
+  case GetID of
+    ciDXE:
+      Result := sDelphiXE;
+    ciDXE2:
+      Result := sDelphiXE2
+    else
+      Result := Format(sCompilerName, [ProductVersion]);
+  end;
 end;
 
 function TBDSCompiler.GlyphResourceName: string;
@@ -161,7 +168,7 @@ function TBDSCompiler.GlyphResourceName: string;
 begin
   case GetID of
     ciD2005w32, ciD2006w32, ciD2007, ciD2009w32: Result := 'BDS';
-    ciD2010, ciDXE: Result := 'EMBARCADERO';
+    ciD2010, ciDXE, ciDXE2: Result := 'EMBARCADERO';
     else raise EBug.Create(ClassName + '.GlyphResourceName: Invalid ID');
   end;
 end;
@@ -179,6 +186,7 @@ begin
     ciD2009w32: Result := '\SOFTWARE\CodeGear\BDS\6.0';
     ciD2010   : Result := '\SOFTWARE\CodeGear\BDS\7.0';
     ciDXE     : Result := '\Software\Embarcadero\BDS\8.0';
+    ciDXE2    : Result := '\Software\Embarcadero\BDS\9.0';
     else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;
@@ -195,6 +203,7 @@ begin
     ciD2009w32: Result := 2009;
     ciD2010:    Result := 2010;
     ciDXE:      Result := 2011;
+    ciDXE2:     Result := 2012;
     else raise EBug.Create(ClassName + '.ProductVersion: Invalid ID');
   end;
 end;
