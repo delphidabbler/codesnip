@@ -4,6 +4,14 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.9.0 of 07 September 2011
++ Added support for Delphi XE2 Windows 32 bit compiler:
+  - Can now test compile and display results with Delphi XE2 32 bit.
+  - Delphi XE2 compiler version 23.0 has been added to the drop down menu in the Code Generation tab of the preference dialog box.
+  - Updated help file re Delphi XE2 support.
+  - Updated documentation.
++ Limited user name edit control to 48 chars in registration wizard because this is limit in online registration database.
+
 Release v3.8.11 of 02 July 2011
 + Fixed display problem in about box and compiler error dialog boxes on systems using Internet Explorer v9 web browser control. This fixes issue #3349186 (http://bit.ly/lF6bTO).
 + Updated read-me file re support for IE9 browser control.
