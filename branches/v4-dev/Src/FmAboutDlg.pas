@@ -178,8 +178,8 @@ uses
   SysUtils, Graphics, Math, Windows, ShellAPI, IOUtils,
   // Project
   FmEasterEgg, FmRegistrationDlg, UAppInfo, UColours, UConsts, UCSSUtils,
-  UCtrlArranger, UFontHelper, UHTMLUtils, UHTMLTemplate, UResourceUtils,
-  UThemesEx;
+  UCtrlArranger, UFontHelper, UGraphicUtils, UHTMLUtils, UHTMLTemplate,
+  UResourceUtils, UThemesEx;
 
 
 {
@@ -650,17 +650,32 @@ procedure TPathInfoBox.SetPath(const Value: string);
     @param Value [in] New property value.
   }
 resourcestring
-  sPathDoesNotExist = '%s (does not exist)';
+  // hints used when path doesn't exist
+  sShortPathDoesNotExist = 'Path does not exist';
+  sLongPathDoesNotExist = 'Path "%s"' + EOL + 'does not exist';
+var
+  TextW: Integer; // width of full path name in label in pixels
 begin
   fPathLbl.Caption := Value;
+  TextW := StringExtent(Value, fPathLbl.Font).cx;
   if TDirectory.Exists(Value) then
   begin
-    fPathLbl.Hint := Value;
+    if TextW > fPathLbl.Width then
+      // path will contain ellipsis in label: display full path as hint
+      fPathLbl.Hint := Value + '|'  // pipe char makes this short (pop-up) hint
+    else
+      // path fully displayed in label: no hint
+      fPathLbl.Hint := '';
     fViewBtn.Enabled := True;
   end
   else
   begin
-    fPathLbl.Hint := Format(sPathDoesNotExist, [Value]);
+    if TextW > fPathLbl.Width then
+      // path will contain ellipsis: display full path with message as hint
+      fPathLbl.Hint := Format(sLongPathDoesNotExist, [Value]) + '|'
+    else
+      // path fully displayed in label: don't include full path in hint
+      fPathLbl.Hint := sShortPathDoesNotExist;
     fViewBtn.Enabled :=  False;
   end;
 end;
