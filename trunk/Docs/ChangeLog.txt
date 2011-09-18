@@ -4,6 +4,9 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.9.1 of 18 September 2001
++ Fixed bug #3369422 (http://bit.ly/omSp6F) in Pascal highlighter that was causing an assertion failure when parsing malformed Pascal general format floating point numbers.
+
 Release v3.9.0 of 07 September 2011
 + Added support for Delphi XE2 Windows 32 bit compiler:
   - Can now test compile and display results with Delphi XE2 32 bit.
