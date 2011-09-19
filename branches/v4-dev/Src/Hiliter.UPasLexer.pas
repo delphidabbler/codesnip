@@ -64,7 +64,7 @@ type
     tkWhitespace,     // white space (spaces, tabs etc, excluding CR and LF)
     tkEOL,            // end of line (usually CRLF but CR and LF on own valid)
     tkEOF,            // end of file
-    tkError           // error condition: shouldn't occur
+    tkError           // error condition: shouldn't occur in valid Pascal code
   );
 
 type
@@ -687,8 +687,13 @@ begin
       fReader.NextChar;
     end;
     // Next comes whole number: get it
-    ParseWholeNumber;
-    Result := tkFloat;
+    if TCharacter.IsDigit(fReader.Ch) then
+    begin
+      ParseWholeNumber;
+      Result := tkFloat
+    end
+    else
+      Result := tkError;
   end;
 end;
 
