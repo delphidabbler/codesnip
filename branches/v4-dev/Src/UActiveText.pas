@@ -741,13 +741,7 @@ begin
 end;
 
 function TActiveTextAttrs.GetAttr(const Name: string): string;
-var
-  P: TActiveTextAttr;
-  S: string;
 begin
-  S := '';
-  for P in fMap do
-    S := S + '  ' + P.Key + ' | ' + P.Value;
   Result := fMap[Name];
 end;
 
