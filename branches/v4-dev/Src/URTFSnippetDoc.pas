@@ -143,7 +143,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UHiliters, UColours, UConsts, URTFMerger, UUtils;
+  Hiliter.UHiliters, UColours, UConsts, URTFMerger;
 
 
 { TRTFSnippetDoc }
@@ -272,6 +272,7 @@ procedure TRTFSnippetDoc.RenderExtra(const ExtraText: IActiveText);
   }
 var
   Elem: IActiveTextElem;              // each active text element
+  TextElem: IActiveTextTextElem;      // refers to active text text elements
   ActionElem: IActiveTextActionElem;  // refers to active text action elements
   InBlock: Boolean;                   // flag true if inside a block level tag
 resourcestring
@@ -288,134 +289,128 @@ begin
   InBlock := False;
   for Elem in ExtraText do
   begin
-    case Elem.Kind of
-      ekText:
-      begin
-        // text: output it only if we're in a block
-        if InBlock then
-          fBuilder.AddText((Elem as IActiveTextTextElem).Text);
-      end;
-      ekPara:
-      begin
-        // begin or end a paragraph
-        GetIntf(Elem, IActiveTextActionElem, ActionElem);
-        case ActionElem.State of
-          fsOpen:
-          begin
-            fBuilder.SetParaSpacing(cParaSpacing, 0);
-            InBlock := True;
-          end;
-          fsClose:
-          begin
-            fBuilder.EndPara;
-            InBlock := False;
-          end;
-        end;
-      end;
-      ekHeading:
-      begin
-        // begin or end a heading
-        GetIntf(Elem, IActiveTextActionElem, ActionElem);
-        case ActionElem.State of
-          fsOpen:
-          begin
-            fBuilder.SetParaSpacing(cParaSpacing, 0);
-            fBuilder.BeginGroup;
-            fBuilder.SetFontStyle([fsBold]);
-            InBlock := True;
-          end;
-          fsClose:
-          begin
-            fBuilder.EndGroup;
-            fBuilder.EndPara;
-            InBlock := False;
-          end;
-        end;
-      end;
-      ekLink:
-      begin
-        // write a link (write url in brackets after text)
-        GetIntf(Elem, IActiveTextActionElem, ActionElem);
-        if ActionElem.State = fsClose then
+    if Supports(Elem, IActiveTextTextElem, TextElem) then
+    begin
+      if InBlock then
+        fBuilder.AddText(TextElem.Text);
+    end
+    else if Supports(Elem, IActiveTextActionElem, ActionElem) then
+    begin
+      case ActionElem.Kind of
+        ekPara:
         begin
-          fBuilder.BeginGroup;
-          SetColour(clLinkText);
-          fBuilder.AddText(
-            Format(sURL, [ActionElem.Attrs[TActiveTextAttrNames.Link_URL]])
-          );
-          fBuilder.EndGroup;
+          // begin or end a paragraph
+          case ActionElem.State of
+            fsOpen:
+            begin
+              fBuilder.SetParaSpacing(cParaSpacing, 0);
+              InBlock := True;
+            end;
+            fsClose:
+            begin
+              fBuilder.EndPara;
+              InBlock := False;
+            end;
+          end;
         end;
-      end;
-      ekStrong:
-      begin
-        // begin or end strong emphasis
-        GetIntf(Elem, IActiveTextActionElem, ActionElem);
-        case ActionElem.State of
-          fsOpen:
+        ekHeading:
+        begin
+          // begin or end a heading
+          case ActionElem.State of
+            fsOpen:
+            begin
+              fBuilder.SetParaSpacing(cParaSpacing, 0);
+              fBuilder.BeginGroup;
+              fBuilder.SetFontStyle([fsBold]);
+              InBlock := True;
+            end;
+            fsClose:
+            begin
+              fBuilder.EndGroup;
+              fBuilder.EndPara;
+              InBlock := False;
+            end;
+          end;
+        end;
+        ekLink:
+        begin
+          // write a link (write url in brackets after text)
+          if ActionElem.State = fsClose then
           begin
             fBuilder.BeginGroup;
-            fBuilder.SetFontStyle([fsBold]);
-          end;
-          fsClose:
+            SetColour(clLinkText);
+            fBuilder.AddText(
+              Format(sURL, [ActionElem.Attrs[TActiveTextAttrNames.Link_URL]])
+            );
             fBuilder.EndGroup;
+          end;
         end;
-      end;
-      ekEm:
-      begin
-        // begin or end emphasis
-        GetIntf(Elem, IActiveTextActionElem, ActionElem);
-        case ActionElem.State of
-          fsOpen:
-          begin
-            fBuilder.BeginGroup;
-            fBuilder.SetFontStyle([fsItalic]);
+        ekStrong:
+        begin
+          // begin or end strong emphasis
+          case ActionElem.State of
+            fsOpen:
+            begin
+              fBuilder.BeginGroup;
+              fBuilder.SetFontStyle([fsBold]);
+            end;
+            fsClose:
+              fBuilder.EndGroup;
           end;
-          fsClose:
-            fBuilder.EndGroup;
         end;
-      end;
-      ekVar:
-      begin
-        // begin or end variable
-        GetIntf(Elem, IActiveTextActionElem, ActionElem);
-        case ActionElem.State of
-          fsOpen:
-          begin
-            fBuilder.BeginGroup;
-            fBuilder.SetFontStyle([fsItalic]);
-            SetColour(clVarText);
+        ekEm:
+        begin
+          // begin or end emphasis
+          case ActionElem.State of
+            fsOpen:
+            begin
+              fBuilder.BeginGroup;
+              fBuilder.SetFontStyle([fsItalic]);
+            end;
+            fsClose:
+              fBuilder.EndGroup;
           end;
-          fsClose:
-            fBuilder.EndGroup;
         end;
-      end;
-      ekWarning:
-      begin
-        // begin or end warning text
-        GetIntf(Elem, IActiveTextActionElem, ActionElem);
-        case ActionElem.State of
-          fsOpen:
-          begin
-            fBuilder.BeginGroup;
-            fBuilder.SetFontStyle([fsBold]);
-            SetColour(clWarningText);
+        ekVar:
+        begin
+          // begin or end variable
+          case ActionElem.State of
+            fsOpen:
+            begin
+              fBuilder.BeginGroup;
+              fBuilder.SetFontStyle([fsItalic]);
+              SetColour(clVarText);
+            end;
+            fsClose:
+              fBuilder.EndGroup;
           end;
-          fsClose:
-            fBuilder.EndGroup;
         end;
-      end;
-      ekMono:
-      begin
-        // begin or end mono text
-        GetIntf(Elem, IActiveTextActionElem, ActionElem);
-        case ActionElem.State of
-          fsOpen:
-          begin
-            fBuilder.BeginGroup;
-            fBuilder.SetFont(cMonoFontName);
+        ekWarning:
+        begin
+          // begin or end warning text
+          case ActionElem.State of
+            fsOpen:
+            begin
+              fBuilder.BeginGroup;
+              fBuilder.SetFontStyle([fsBold]);
+              SetColour(clWarningText);
+            end;
+            fsClose:
+              fBuilder.EndGroup;
           end;
-          fsClose:
-            fBuilder.EndGroup;
+        end;
+        ekMono:
+        begin
+          // begin or end mono text
+          case ActionElem.State of
+            fsOpen:
+            begin
+              fBuilder.BeginGroup;
+              fBuilder.SetFont(cMonoFontName);
+            end;
+            fsClose:
+              fBuilder.EndGroup;
+          end;
         end;
       end;
     end;

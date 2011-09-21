@@ -251,11 +251,11 @@ type
         Record that stores information a REML tag.
       }
       TREMLTag = record
-        Id: TActiveTextElemKind;    // active text element kind
-        Version: TREMLVersion;      // REML version where tag introduced
-        TagName: string;            // corresponding REML tag name
-        ParamName: string;          // name of any REML parameter
-        constructor Create(const AId: TActiveTextElemKind;
+        Id: TActiveTextActionElemKind;  // active text element kind
+        Version: TREMLVersion;          // REML version where tag introduced
+        TagName: string;                // corresponding REML tag name
+        ParamName: string;              // name of any REML parameter
+        constructor Create(const AId: TActiveTextActionElemKind;
           const AVersion: TREMLVersion; const ATagName: string;
           const AParamName: string = '');
           {Record contructor. Initialises fields.
@@ -267,7 +267,7 @@ type
       end;
     class var fTagMap: array of TREMLTag;
       {Details of all supported tags}
-    class function IndexOfTagId(const Id: TActiveTextElemKind): Integer;
+    class function IndexOfTagId(const Id: TActiveTextActionElemKind): Integer;
       {Finds index of a tag id in tag map.
         @param Id [in] Tag id to be found.
         @return Index of tag id or -1 if tag id not found.
@@ -276,7 +276,7 @@ type
       {Read accessor for Count property.
         @return Number of supported tags.
       }
-    class function GetId(Idx: Integer): TActiveTextElemKind; static;
+    class function GetId(Idx: Integer): TActiveTextActionElemKind; static;
       {Read accessor for Ids[] property.
         @param Idx [in] Zero based index of required id.
         @return Required id.
@@ -293,14 +293,14 @@ type
     class destructor Destroy;
       {Class destructor. Clears tag map.
       }
-    class function LookupTagName(const Id: TActiveTextElemKind;
+    class function LookupTagName(const Id: TActiveTextActionElemKind;
       out TagName: string): Boolean;
       {Looks up name of a tag.
         @param Id [in] Id of tag.
         @param TagName [out] Name of tag or '' if unknown id.
         @return True if tag id is valid, False if not.
       }
-    class function LookupParamName(const Id: TActiveTextElemKind;
+    class function LookupParamName(const Id: TActiveTextActionElemKind;
       out ParamName: string): Boolean;
       {Looks up a parameter name of an identified REML tag.
         @param Id [in] Id of required tag.
@@ -308,7 +308,7 @@ type
           parameter or if tag id is not valid.
         @return True if tag is valid, False if not.
       }
-    class function LookupTagVersion(const Id: TActiveTextElemKInd;
+    class function LookupTagVersion(const Id: TActiveTextActionElemKind;
       out Version: TREMLVersion): Boolean;
       {Looks up REML version when tag was introduced.
         @param Id [in] Id of tag.
@@ -317,7 +317,7 @@ type
       }
     class property Count: Integer read GetCount;
       {Number of supported tags}
-    class property Ids[Idx: Integer]: TActiveTextElemKind read GetId;
+    class property Ids[Idx: Integer]: TActiveTextActionElemKind read GetId;
       {List of tag ids}
     class property Names[Idx: Integer]: string read GetName;
       {List of tag names}
@@ -439,10 +439,10 @@ procedure TREMLReader.Parse(const Markup: string;
     @param ActiveText [in] Active text object updated by parser.
   }
 var
-  ParamName: string;            // name of a parameter
-  ParamValue: string;           // value of a parameter
-  TagId: TActiveTextElemKind;   // id of a tag
-  Attr: TActiveTextAttr;        // attributes of tag
+  ParamName: string;                  // name of a parameter
+  ParamValue: string;                 // value of a parameter
+  TagId: TActiveTextActionElemKind;   // id of a tag
+  Attr: TActiveTextAttr;              // attributes of tag
 resourcestring
   // Error message
   sErrMissingParam = 'Expected a "%0:s" parameter value in tag "%1:s"';
@@ -470,7 +470,7 @@ begin
         begin
           // Start of an action element
           // Get tag id and any parameter
-          TagId := TActiveTextElemKind(fLexer.TagCode);
+          TagId := TActiveTextActionElemKind(fLexer.TagCode);
           TREMLTags.LookupParamName(TagId, ParamName);
           if ParamName <> '' then
           begin
@@ -502,7 +502,7 @@ begin
         begin
           // End of an action element
           // Get tag id and note if tag should have a parameter
-          TagId := TActiveTextElemKind(fLexer.TagCode);
+          TagId := TActiveTextActionElemKind(fLexer.TagCode);
           TREMLTags.LookupParamName(TagId, ParamName);
           if ParamName <> '' then
           begin
@@ -696,7 +696,7 @@ begin
   Result := Length(fTagMap);
 end;
 
-class function TREMLTags.GetId(Idx: Integer): TActiveTextElemKind;
+class function TREMLTags.GetId(Idx: Integer): TActiveTextActionElemKind;
   {Read accessor for Ids[] property.
     @param Idx [in] Zero based index of required id.
     @return Required id.
@@ -714,7 +714,8 @@ begin
   Result := fTagMap[Idx].TagName;
 end;
 
-class function TREMLTags.IndexOfTagId(const Id: TActiveTextElemKind): Integer;
+class function TREMLTags.IndexOfTagId(const Id: TActiveTextActionElemKind):
+  Integer;
   {Finds index of a tag id in tag map.
     @param Id [in] Tag id to be found.
     @return Index of tag id or -1 if tag id not found.
@@ -733,7 +734,7 @@ begin
   end;
 end;
 
-class function TREMLTags.LookupParamName(const Id: TActiveTextElemKind;
+class function TREMLTags.LookupParamName(const Id: TActiveTextActionElemKind;
   out ParamName: string): Boolean;
   {Looks up a parameter name of an identified REML tag.
     @param Id [in] Id of required tag.
@@ -752,7 +753,7 @@ begin
     ParamName := '';
 end;
 
-class function TREMLTags.LookupTagName(const Id: TActiveTextElemKind;
+class function TREMLTags.LookupTagName(const Id: TActiveTextActionElemKind;
   out TagName: string): Boolean;
   {Looks up name of a tag.
     @param Id [in] Id of tag.
@@ -770,7 +771,7 @@ begin
     TagName := '';
 end;
 
-class function TREMLTags.LookupTagVersion(const Id: TActiveTextElemKInd;
+class function TREMLTags.LookupTagVersion(const Id: TActiveTextActionElemKind;
   out Version: TREMLVersion): Boolean;
   {Looks up REML version when tag was introduced.
     @param Id [in] Id of tag.
@@ -790,7 +791,7 @@ end;
 
 { TREMLTags.TREMLTag }
 
-constructor TREMLTags.TREMLTag.Create(const AId: TActiveTextElemKind;
+constructor TREMLTags.TREMLTag.Create(const AId: TActiveTextActionElemKind;
   const AVersion: TREMLVersion; const ATagName, AParamName: string);
   {Record contructor. Initialises fields.
     @param AId [in] Active text element kind.
@@ -926,13 +927,15 @@ begin
     if Supports(Elem, IActiveTextActionElem, TagElem) and
       (TagElem.State = fsOpen) then
     begin
-      if not TREMLTags.LookupTagVersion(Elem.Kind, TagVer) then
+      if not TREMLTags.LookupTagVersion(TagElem.Kind, TagVer) then
         raise EBug.Create(ClassName + '.LowestWriterVersion: TagVer not found');
       if TagVer > Result then
         Result := TagVer;
       // special case of <a href="file://...">
       if (Result < 3) and (TagElem.Kind = ekLink) and
-        StrStartsText('file://', TagElem.Attrs[TActiveTextAttrNames.Link_URL]) then
+        StrStartsText(
+          'file://', TagElem.Attrs[TActiveTextAttrNames.Link_URL]
+        ) then
         Result := 3;
     end;
     if Result = LATEST_VERSION then

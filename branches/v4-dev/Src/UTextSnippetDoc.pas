@@ -112,7 +112,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UStrUtils, UUtils;
+  UStrUtils;
 
 
 { TTextSnippetDoc }
@@ -172,6 +172,7 @@ procedure TTextSnippetDoc.RenderExtra(const ExtraText: IActiveText);
   }
 var
   Elem: IActiveTextElem;              // each active text element
+  TextElem: IActiveTextTextElem;      // refers to active text text elements
   ActionElem: IActiveTextActionElem;  // refers to active text action elements
   Text: string;                       // text to be output
   InBlock: Boolean;                   // flag true if inside a block level tag
@@ -190,45 +191,47 @@ begin
   InBlock := False;
   for Elem in ExtraText do
   begin
-    case Elem.Kind of
-      ekText:
-        // text element: record it if in block, ignore if not
-        if InBlock then
-          Text := Text + (Elem as IActiveTextTextElem).Text;
-      ekPara, ekHeading:
-      begin
-        // paragraphs and headings start new lines, and are separated by
-        GetIntf(Elem, IActiveTextActionElem, ActionElem);
-        case ActionElem.State of
-          fsOpen:
-          begin
-            // open block: reset text - writing deferred until end of block
-            Text := '';
-            InBlock := True;
-          end;
-          fsClose:
-          begin
-            // close block: emit blank line then write any pending text only if
-            // there is any text
-            // note that we are guaranteed that a block close will be last thing
-            // in active text, so all text will be flushed
-            if Text <> '' then
+    if Supports(Elem, IActiveTextTextElem, TextElem) then
+    begin
+      if InBlock then
+        Text := Text + TextElem.Text;
+    end
+    else if Supports(Elem, IActiveTextActionElem, ActionElem) then
+    begin
+      case ActionElem.Kind of
+        ekPara, ekHeading:
+        begin
+          // paragraphs and headings start new lines, and are separated by
+          case ActionElem.State of
+            fsOpen:
             begin
-              fWriter.WriteLine;
-              fWriter.WriteLine(StrWrap(Text, cPageWidth, 0));
+              // open block: reset text - writing deferred until end of block
               Text := '';
-              InBlock := False;
+              InBlock := True;
+            end;
+            fsClose:
+            begin
+              // close block: emit blank line then write any pending text only
+              // if there is any text
+              // note that we are guaranteed that a block close will be last
+              // thing in active text, so all text will be flushed
+              if Text <> '' then
+              begin
+                fWriter.WriteLine;
+                fWriter.WriteLine(StrWrap(Text, cPageWidth, 0));
+                Text := '';
+                InBlock := False;
+              end;
             end;
           end;
         end;
-      end;
-      ekLink:
-      begin
-        // hyperlink element: output in brackets only if it's a closing element
-        GetIntf(Elem, IActiveTextActionElem, ActionElem);
-        if InBlock and (ActionElem.State = fsClose) then
-          Text := Text
-            + Format(sURL, [ActionElem.Attrs[TActiveTextAttrNames.Link_URL]]);
+        ekLink:
+        begin
+          // hyperlink element: output in brackets only if closing element
+          if InBlock and (ActionElem.State = fsClose) then
+            Text := Text
+              + Format(sURL, [ActionElem.Attrs[TActiveTextAttrNames.Link_URL]]);
+        end;
       end;
     end;
   end;

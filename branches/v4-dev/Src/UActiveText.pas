@@ -65,20 +65,6 @@ uses
 
 
 type
-  ///  <summary>Supported types of active text element.</summary>
-  TActiveTextElemKind = (
-    ekText,         // plain text element
-    ekLink,         // link element: has a URL (inline)
-    ekStrong,       // text formatted as strong (inline)
-    ekEm,           // text formatted as emphasised (inline)
-    ekVar,          // text formatted as variable (inline)
-    ekPara,         // delimits a paragraph (block level)
-    ekWarning,      // text formatted as a warning (inline)
-    ekHeading,      // delimits a heading (block level)
-    ekMono          // text formatted as mono spaced (inline)
-  );
-
-type
   ///  <summary>Contains constants that name the attributes supported by
   ///  different kinds of active text element.</summary>
   TActiveTextAttrNames = record
@@ -109,16 +95,10 @@ type
 
 type
   ///  <summary>
-  ///  Minimal interface supported by all active text elements.
+  ///  Base, do nothing, interface supported by all active text elements.
   ///  </summary>
   IActiveTextElem = interface(IInterface)
     ['{F08A9853-EDB6-4B14-8E21-F3AB10FAF7D9}']
-    ///  <summary>Returns kind of active text element represented by an
-    ///  instance.</summary>
-    function GetKind: TActiveTextElemKind;
-    ///  <summary>Kind of active text element represented by an instance.
-    ///  </summary>
-    property Kind: TActiveTextElemKind read GetKind;
   end;
 
 type
@@ -162,11 +142,28 @@ type
   end;
 
 type
+  ///  <summary>Supported types of active text action elements.</summary>
+  TActiveTextActionElemKind = (
+    ekLink,         // link element: has a URL (inline)
+    ekStrong,       // text formatted as strong (inline)
+    ekEm,           // text formatted as emphasised (inline)
+    ekVar,          // text formatted as variable (inline)
+    ekPara,         // delimits a paragraph (block level)
+    ekWarning,      // text formatted as a warning (inline)
+    ekHeading,      // delimits a heading (block level)
+    ekMono          // text formatted as mono spaced (inline)
+  );
+
+type
   ///  <summary>Interface supported by active text action elements, i.e. those
   ///  that specify actions to be performed on text.</summary>
   ///  <remarks>Actions include formatting text and hot links.</remarks>
   IActiveTextActionElem = interface(IActiveTextElem)
     ['{2956A28F-AED2-437E-A405-9A62077BD881}']
+    ///  <summary>Returns kind of action represented by this element.</summary>
+    function GetKind: TActiveTextActionElemKind;
+    ///  <summary>Kind of action represented by this element.</summary>
+    property Kind: TActiveTextActionElemKind read GetKind;
     ///  <summary>Gets state of element. Informs whether this element is an
     ///  opening or closing element.</summary>
     ///  <remarks>Opening elements switch on the action and closing elements
@@ -264,7 +261,7 @@ type
     ///  <param name="State">TActiveTextElemState [in] State of element (opening
     ///  or closing).</param>
     ///  <returns>IActiveTextActionElem. New element.</returns>
-    class function CreateActionElem(const Kind: TActiveTextElemKind;
+    class function CreateActionElem(const Kind: TActiveTextActionElemKind;
       Attrs: IActiveTextAttrs; const State: TActiveTextElemState):
       IActiveTextActionElem; overload;
     ///  <summary>Returns a new active text action element with no attributes.
@@ -274,7 +271,7 @@ type
     ///  <param name="State">TActiveTextElemState [in] State of element (opening
     ///  or closing).</param>
     ///  <returns>IActiveTextActionElem. New element.</returns>
-    class function CreateActionElem(const Kind: TActiveTextElemKind;
+    class function CreateActionElem(const Kind: TActiveTextActionElemKind;
       const State: TActiveTextElemState): IActiveTextActionElem; overload;
     ///  <summary>Returns a new empty active text attributes object.</summary>
     class function CreateAttrs: IActiveTextAttrs; overload;
@@ -350,22 +347,11 @@ type
 type
   ///  <summary>Base class for active text elements.</summary>
   TActiveTextElem = class(TInterfacedObject,
-    IActiveTextElem, IAssignable
+    IActiveTextElem
   )
-  strict private
-    ///  <summary>Kind of element encapsulated by this object.</summary>
-    fKind: TActiveTextElemKind;
   public
-    ///  <summary>Object constructor. Sets up object of given kind.</summary>
-    constructor Create(const Kind: TActiveTextElemKind);
-    ///  <summary>Assigns properties of another object to this object.</summary>
-    ///  <param name="Src">IInterface [in] Object whose properties are to be
-    ///  assigned. Src must support IActiveTextElem.</param>
-    ///  <remarks>Method of IAssignable.</remarks>
-    procedure Assign(const Src: IInterface); virtual;
-    ///  <summary>Returns element kind.</summary>
-    ///  <remarks>Method of IActiveTextElem.</remarks>
-    function GetKind: TActiveTextElemKind;
+    ///  <summary>Object constructor. Sets up object.</summary>
+    constructor Create;
   end;
 
 type
@@ -384,7 +370,7 @@ type
     ///  <param name="Src">IInterface [in] Object whose properties are to be
     ///  assigned. Src must support IActiveTextTextElem.</param>
     ///  <remarks>Method of IAssignable.</remarks>
-    procedure Assign(const Src: IInterface); override;
+    procedure Assign(const Src: IInterface);
     ///  <summary>Returns a cloned instance of this object.</summary>
     ///  <remarks>Method of IClonable.</remarks>
     function Clone: IInterface;
@@ -399,6 +385,8 @@ type
     IActiveTextActionElem, IAssignable, IClonable
   )
   strict private
+    ///  <summary>Kind of element encapsulated by this object.</summary>
+    fKind: TActiveTextActionElemKind;
     ///  <summary>State of element: opening or closing.</summary>
     fState: TActiveTextElemState;
     ///  <summary>Attributes associated with element.</summary>
@@ -410,7 +398,7 @@ type
     ///  <param name="Attrs">IActiveTextAttrs [in] Element's attributes.</param>
     ///  <param name="State">TActiveTextElemState [in] State of element: opening
     ///  or closing.</param>
-    constructor Create(const Kind: TActiveTextElemKind;
+    constructor Create(const Kind: TActiveTextActionElemKind;
       Attrs: IActiveTextAttrs; const State: TActiveTextElemState);
     ///  <summary>Assigns properties of another object to this object.</summary>
     ///  <param name="Src">IInterface [in] Object whose properties are to be
@@ -419,10 +407,13 @@ type
     ///  <para>Method of IAssignable.</para>
     ///  <para>Raises EBug if Src does not support IActiveTextActionElem.</para>
     ///  </remarks>
-    procedure Assign(const Src: IInterface); override;
+    procedure Assign(const Src: IInterface);
     ///  <summary>Returns a cloned instance of this object.</summary>
     ///  <remarks>Method of IClonable.</remarks>
     function Clone: IInterface;
+    ///  <summary>Returns kind of action represented by this element.</summary>
+    ///  <remarks>Method of IActiveTextActionElem.</remarks>
+    function GetKind: TActiveTextActionElemKind;
     ///  <summary>Returns state of element.</summary>
     ///  <remarks>Method of IActiveTextActionElem.</remarks>
     function GetState: TActiveTextElemState;
@@ -490,14 +481,14 @@ begin
 end;
 
 class function TActiveTextFactory.CreateActionElem(
-  const Kind: TActiveTextElemKind; Attrs: IActiveTextAttrs;
+  const Kind: TActiveTextActionElemKind; Attrs: IActiveTextAttrs;
   const State: TActiveTextElemState): IActiveTextActionElem;
 begin
   Result := TActiveTextActionElem.Create(Kind, Attrs, State);
 end;
 
 class function TActiveTextFactory.CreateActionElem(
-  const Kind: TActiveTextElemKind;
+  const Kind: TActiveTextActionElemKind;
   const State: TActiveTextElemState): IActiveTextActionElem;
 begin
   Result := CreateActionElem(Kind, TActiveTextAttrs.Create, State);
@@ -610,28 +601,15 @@ end;
 
 { TActiveTextElem }
 
-procedure TActiveTextElem.Assign(const Src: IInterface);
-begin
-  Assert(Supports(Src, IActiveTextElem));
-  fKind := (Src as IActiveTextElem).Kind;
-end;
-
-constructor TActiveTextElem.Create(const Kind: TActiveTextElemKind);
+constructor TActiveTextElem.Create;
 begin
   inherited Create;
-  fKind := Kind;
-end;
-
-function TActiveTextElem.GetKind: TActiveTextElemKind;
-begin
-  Result := fKind;
 end;
 
 { TActiveTextTextElem }
 
 procedure TActiveTextTextElem.Assign(const Src: IInterface);
 begin
-  inherited;
   fText := (Src as IActiveTextTextElem).Text;
 end;
 
@@ -643,7 +621,7 @@ end;
 
 constructor TActiveTextTextElem.Create(const Text: string);
 begin
-  inherited Create(ekText);
+  inherited Create;
   fText := Text;
 end;
 
@@ -658,9 +636,9 @@ procedure TActiveTextActionElem.Assign(const Src: IInterface);
 var
   SrcElem: IActiveTextActionElem;
 begin
-  inherited;
   if not Supports(Src, IActiveTextActionElem, SrcElem) then
     raise EBug.Create(ClassName + '.Assign: Src is not IActiveTextActionElem');
+  fKind := SrcElem.Kind;
   fState := SrcElem.State;
   (SrcElem.Attrs as IAssignable).Assign(SrcElem.Attrs);
 end;
@@ -673,14 +651,13 @@ begin
   Result := TActiveTextActionElem.Create(GetKind, Attrs, GetState);
 end;
 
-constructor TActiveTextActionElem.Create(const Kind: TActiveTextElemKind;
+constructor TActiveTextActionElem.Create(const Kind: TActiveTextActionElemKind;
   Attrs: IActiveTextAttrs; const State: TActiveTextElemState);
 begin
-  Assert(Kind <> ekText,
-    ClassName + '.Create: Kind is not valid for a compound element.');
-  inherited Create(Kind);
+  inherited Create;
   fAttrs := Attrs;
   fState := State;
+  fKind := Kind;
 end;
 
 function TActiveTextActionElem.GetAttrs: IActiveTextAttrs;
@@ -694,6 +671,11 @@ begin
     Result := dsBlock
   else
     Result := dsInline;
+end;
+
+function TActiveTextActionElem.GetKind: TActiveTextActionElemKind;
+begin
+  Result := fKind;
 end;
 
 function TActiveTextActionElem.GetState: TActiveTextElemState;
