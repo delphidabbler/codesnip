@@ -146,17 +146,6 @@ type
   end;
 
   {
-  TSyntaxHiliterKind:
-    Enumeration of various kinds of highlighter.
-  }
-  TSyntaxHiliterKind = (
-    hkNul,          // nul, do nothing highlighter
-    hkDetailHTML,   // used to highlight code part of detail pane HTML documents
-    hkXHTML,        // used to highlight complete XHTML documents
-    hkRTF           // used to highlight RTF documents
-  );
-
-  {
   ISyntaxHiliter:
     Interface implemented by all highlighter classes. Provides a method used to
     highlight a document.
