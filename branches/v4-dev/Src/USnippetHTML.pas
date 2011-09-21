@@ -140,7 +140,8 @@ implementation
 uses
   // Project
   DB.UCategory, DB.UMain, DB.USnippetKind, Hiliter.UAttrs, Hiliter.UGlobals,
-  Hiliter.UHiliters, UActiveTextHTML, UHTMLDetailUtils, UHTMLUtils, UStrUtils;
+  Hiliter.UHiliters, UActiveTextHTML, UHTMLBuilder, UHTMLDetailUtils,
+  UHTMLUtils, UStrUtils;
 
 
 { TSnippetHTML }
@@ -161,11 +162,20 @@ function TSnippetHTML.HiliteSource(const SourceCode: string): string;
   }
 var
   Hiliter: ISyntaxHiliter;  // highlighter object
+  Builder: THTMLBuilder;
+  Renderer: IHiliteRenderer;
 begin
-  Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkDetailHTML);
-  Result := Hiliter.Hilite(
-    SourceCode, THiliteAttrsFactory.CreateDisplayAttrs
-  ).ToString;
+  Builder := THTMLBuilder.Create;
+  try
+    Renderer := THTMLHiliteRenderer.Create(
+      Builder, THiliteAttrsFactory.CreateDisplayAttrs
+    );
+    Hiliter := CreateRenderedHiliter(Renderer);
+    Hiliter.Hilite(SourceCode, THiliteAttrsFactory.CreateDisplayAttrs);
+    Result := Builder.HTMLFragment;
+  finally
+    Builder.Free;
+  end;
 end;
 
 function TSnippetHTML.SnippetName: string;

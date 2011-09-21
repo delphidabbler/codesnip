@@ -157,6 +157,8 @@ type
     procedure AfterElem(Elem: THiliteElement);
   end;
 
+// todo: replace with direct access to class
+function CreateRenderedHiliter(Renderer: IHiliteRenderer): ISyntaxHiliter;
 
 implementation
 
@@ -360,6 +362,11 @@ type
   public
     constructor Create(Renderer: IHiliteRenderer); reintroduce;
   end;
+
+function CreateRenderedHiliter(Renderer: IHiliteRenderer): ISyntaxHiliter;
+begin
+  Result := TRenderedHiliter.Create(Renderer);
+end;
 
 type
   {
