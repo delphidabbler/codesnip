@@ -345,19 +345,9 @@ type
   end;
 
 type
-  ///  <summary>Base class for active text elements.</summary>
-  TActiveTextElem = class(TInterfacedObject,
-    IActiveTextElem
-  )
-  public
-    ///  <summary>Object constructor. Sets up object.</summary>
-    constructor Create;
-  end;
-
-type
-  ///  <summary>Implements a plain text active text.</summary>
-  TActiveTextTextElem = class(TActiveTextElem,
-    IActiveTextTextElem, IAssignable, IClonable
+  ///  <summary>Implements an active text plain text element.</summary>
+  TActiveTextTextElem = class(TInterfacedObject,
+    IActiveTextElem, IActiveTextTextElem, IAssignable, IClonable
   )
   strict private
     ///  <summary>Element's text.</summary>
@@ -381,8 +371,8 @@ type
 
 type
   ///  <summary>Implements an active text action element.</summary>
-  TActiveTextActionElem = class(TActiveTextElem,
-    IActiveTextActionElem, IAssignable, IClonable
+  TActiveTextActionElem = class(TInterfacedObject,
+    IActiveTextElem, IActiveTextActionElem, IAssignable, IClonable
   )
   strict private
     ///  <summary>Kind of element encapsulated by this object.</summary>
@@ -597,13 +587,6 @@ end;
 function TActiveText.IsEmpty: Boolean;
 begin
   Result := fElems.Count = 0;
-end;
-
-{ TActiveTextElem }
-
-constructor TActiveTextElem.Create;
-begin
-  inherited Create;
 end;
 
 { TActiveTextTextElem }
