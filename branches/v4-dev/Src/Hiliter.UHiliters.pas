@@ -213,26 +213,6 @@ type
 
 type
   {
-  TNulHiliter:
-    A do nothing highlighter class that passes source code through unchanged.
-  }
-  TNulHiliter = class(TSyntaxHiliter,
-    ISyntaxHiliter
-  )
-  protected
-    { ISyntaxHiliter methods }
-    function Hilite(const RawCode: string; const Attrs: IHiliteAttrs = nil;
-      const Title: string = ''): TEncodedData; override;
-      {Returns provided source code unchanged.
-        @param RawCode [in] Contains source code.
-        @param Attrs [in] Attributes to be used by highlighter. Ignored.
-        @param Title [in] Title of output document. Ignored.
-        @return Unchanged source code as encoded data.
-      }
-  end;
-
-type
-  {
   TParsedHiliter:
     Abstract base class for all highlighter classes that parse source code using
     Pascal parser object. Handles parser events and calls virtual methods to
@@ -354,20 +334,6 @@ constructor TSyntaxHiliter.Create;
 begin
   inherited;
   // Do nothing ** Do not remove - required for polymorphism to work **
-end;
-
-{ TNulHiliter }
-
-function TNulHiliter.Hilite(const RawCode: string; const Attrs: IHiliteAttrs;
-  const Title: string): TEncodedData;
-  {Returns provided source code unchanged.
-    @param RawCode [in] Contains source code.
-    @param Attrs [in] Attributes to be used by highlighter. Ignored.
-    @param Title [in] Title of output document. Ignored.
-    @return Unchanged source code as encoded data.
-  }
-begin
-  Result := TEncodedData.Create(RawCode, etUnicode);
 end;
 
 { TParsedHiliter }
@@ -507,11 +473,8 @@ end;
 
 class function TNulDocumentHiliter.Hilite(const RawCode: string;
   Attrs: IHiliteAttrs; const Title: string): TEncodedData;
-var
-  Hiliter: ISyntaxHiliter;
 begin
-  Hiliter := TNulHiliter.Create;
-  Result := Hiliter.Hilite(RawCode, Attrs, Title);
+  Result := TEncodedData.Create(RawCode, etUnicode);
 end;
 
 { TXHTMLDocumentHiliter }
