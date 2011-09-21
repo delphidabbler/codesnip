@@ -59,15 +59,6 @@ type
       file type does not support highlighting}
     fFileType: TSourceFileType;
       {Type of source file to be targetted}
-    function HiliterKind: TSyntaxHiliterKind;
-      {Determines kind of highlighter required for source file type.
-        @return Required highlighter kind.
-      }
-    function GetHiliteAttrs: IHiliteAttrs;
-      {Determines any attributes to be used by highlighter.
-        @return Required highlighter attributes or nil if no highlighter being
-          used.
-      }
   public
     constructor Create(const WantHiliting: Boolean;
       const FileType: TSourceFileType);
@@ -119,19 +110,6 @@ begin
   fWantHiliting := WantHiliting;
 end;
 
-function TFileHiliter.GetHiliteAttrs: IHiliteAttrs;
-  {Determines any attributes to be used by highlighter.
-    @return Required highlighter attributes or nil if no highlighter being used.
-  }
-begin
-  // We use default attributes only if highlighting requested and highlighter
-  // kind supports attributes
-  if fWantHiliting and (HiliterKind in [hkXHTML, hkRTF]) then
-    Result := THiliteAttrsFactory.CreateUserAttrs
-  else
-    Result := nil;
-end;
-
 function TFileHiliter.Hilite(const SourceCode, DocTitle: string): TEncodedData;
   {Highlights source code. Output is correctly formatted for file type.
     @param SourceCode [in] Source code to be highlighted.
@@ -140,23 +118,19 @@ function TFileHiliter.Hilite(const SourceCode, DocTitle: string): TEncodedData;
     @return Highlighted source.
   }
 var
-  Hiliter: ISyntaxHiliter;  // syntax highlighter object
+  HilitedDocCls: TDocumentHiliterClass; // class used to create hilited document
+  HiliteAttrs: IHiliteAttrs;            // highlighter attributes
 begin
-  Hiliter := TSyntaxHiliterFactory.CreateHiliter(HiliterKind);
-  Result := Hiliter.Hilite(SourceCode, GetHiliteAttrs, DocTitle);
-end;
-
-function TFileHiliter.HiliterKind: TSyntaxHiliterKind;
-  {Determines kind of highlighter required for source file type.
-    @return Required highlighter kind.
-  }
-begin
-  // We have nul hiliter unless file type is RTF or HTML
   case fFileType of
-    sfHTML: Result := hkXHTML;
-    sfRTF: Result := hkRTF;
-    else Result := hkNul;
+    sfRTF: HilitedDocCls := TRTFDocumentHiliter;
+    sfHTML: HilitedDocCls := TXHTMLDocumentHiliter;
+    else HilitedDocCls := TNulDocumentHiliter;
   end;
+  if fWantHiliting and IsHilitingSupported(fFileType) then
+    HiliteAttrs := THiliteAttrsFactory.CreateUserAttrs
+  else
+    HiliteAttrs := nil;
+  Result := HilitedDocCls.Hilite(SourceCode, HiliteAttrs, DocTitle);
 end;
 
 class function TFileHiliter.IsHilitingSupported(

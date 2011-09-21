@@ -390,11 +390,8 @@ function TSourcePrefsPreview.Generate: TRTF;
   {Generate RTF code used to render preview.
     @return Required RTF code.
   }
-var
-  Hiliter: ISyntaxHiliter;    // syntax highlighter
 begin
-  Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
-  Result := TRTF.Create(Hiliter.Hilite(SourceCode, fHiliteAttrs));
+  Result := TRTF.Create(TRTFDocumentHiliter.Hilite(SourceCode, fHiliteAttrs));
 end;
 
 function TSourcePrefsPreview.SourceCode: string;

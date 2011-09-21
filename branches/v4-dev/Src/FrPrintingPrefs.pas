@@ -402,7 +402,6 @@ const
     + '  ShowMessage(''Bar'');' + EOL
     + 'end;';
 var
-  Hiliter: ISyntaxHiliter;  // highlighter object
   Attrs: IHiliteAttrs;      // highlighter attributes
 begin
   // Determine which highlighter to use depending on options
@@ -413,8 +412,7 @@ begin
     // user-defined highlighter, maybe in mono
     Attrs := THiliteAttrsFactory.CreatePrintAttrs(fHiliteAttrs, UseColor);
   // Perform highlighting
-  Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
-  Result := Hiliter.Hilite(cSourceCode, Attrs);
+  Result := TRTFDocumentHiliter.Hilite(cSourceCode, Attrs);
 end;
 
 initialization

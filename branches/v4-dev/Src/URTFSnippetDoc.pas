@@ -184,12 +184,9 @@ function TRTFSnippetDoc.HiliteSource: TRTF;
     @return Highlighted source code as a RTF document.
   }
 var
-  Hiliter: ISyntaxHiliter;  // highlighter object
-  HilitedSource: TEncodedData;
+  HilitedSource: TEncodedData;  // RTF of highlighted source code
 begin
-  // Determine highlighter style: none, colour (default) or mono
-  Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
-  HilitedSource := Hiliter.Hilite(fSourceCode, fHiliteAttrs);
+  HilitedSource := TRTFDocumentHiliter.Hilite(fSourceCode, fHiliteAttrs);
   Assert(HilitedSource.EncodingType = etASCII,
     ClassName + '.HiliteSource: Highlighted source is not in ASCII format');
   Result := TRTF.Create(HilitedSource);

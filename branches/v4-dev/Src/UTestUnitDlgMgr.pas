@@ -84,7 +84,6 @@ class procedure TTestUnitDlgMgr.DisplayTestUnit(const Owner: TComponent;
   }
 var
   TestUnitSource: string;   // source code of test unit
-  Hiliter: ISyntaxHiliter;  // highlighter object
 resourcestring
   sDlgTitle = 'Test Unit for %s'; // caption of dialog box
 begin
@@ -96,10 +95,9 @@ begin
       Free;
     end;
   // Convert source to higlighted XHTML document and display it
-  Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkXHTML);
   TPreviewDlg.Execute(
     Owner,
-    Hiliter.Hilite(
+    TXHTMLDocumentHiliter.Hilite(
       TestUnitSource, THiliteAttrsFactory.CreateUserAttrs
     ),
     dtHTML,
