@@ -43,7 +43,8 @@ interface
 
 uses
   // Project
-  Hiliter.UGlobals, UBaseObjects, UEncodings, UHTMLBuilder, URTFBuilder;
+  Hiliter.UGlobals, Hiliter.UPasParser, UBaseObjects, UEncodings, UHTMLBuilder,
+  URTFBuilder;
 
 
 type
@@ -69,91 +70,6 @@ type
         @param Elem [in] Kind of highlight element.
       }
   end;
-
-type
-  TDocumentHiliter = class abstract(TNoConstructObject)
-  public
-    class function Hilite(const RawCode: string;
-      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
-      virtual; abstract;
-  end;
-
-type
-  TDocumentHiliterClass = class of TDocumentHiliter;
-
-type
-  TNulDocumentHiliter = class sealed(TDocumentHiliter)
-  public
-    class function Hilite(const RawCode: string;
-      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
-      override;
-  end;
-
-type
-  TXHTMLDocumentHiliter = class sealed(TDocumentHiliter)
-  strict private
-    class function GenerateCSSRules(Attrs: IHiliteAttrs): string;
-  public
-    class function Hilite(const RawCode: string;
-      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
-      override;
-  end;
-
-type
-  TRTFDocumentHiliter = class sealed(TDocumentHiliter)
-  public
-    class function Hilite(const RawCode: string;
-      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
-      override;
-  end;
-
-type
-  TRTFHiliteRenderer = class(TInterfacedObject, IHiliteRenderer)
-  strict private
-    fBuilder: TRTFBuilder;
-    fAttrs: IHiliteAttrs;
-  public
-    constructor Create(const Builder: TRTFBuilder;
-      const Attrs: IHiliteAttrs = nil);
-    procedure Initialise;
-    procedure Finalise;
-    procedure BeginLine;
-    procedure EndLine;
-    procedure WriteElemText(const Text: string);
-    procedure BeforeElem(Elem: THiliteElement);
-    procedure AfterElem(Elem: THiliteElement);
-  end;
-
-type
-  THTMLHiliteRenderer = class(TInterfacedObject, IHiliteRenderer)
-  strict private
-    fBuilder: THTMLBuilder;
-    fAttrs: IHiliteAttrs;
-    fIsFirstLine: Boolean;
-  public
-    constructor Create(const Builder: THTMLBuilder;
-      const Attrs: IHiliteAttrs = nil);
-    procedure Initialise;
-    procedure Finalise;
-    procedure BeginLine;
-    procedure EndLine;
-    procedure WriteElemText(const Text: string);
-    procedure BeforeElem(Elem: THiliteElement);
-    procedure AfterElem(Elem: THiliteElement);
-  end;
-
-// todo: replace with direct access to class
-function CreateRenderedHiliter(Renderer: IHiliteRenderer): ISyntaxHiliter;
-
-implementation
-
-
-uses
-  // Delphi
-  SysUtils, Graphics,
-  // Project
-  Hiliter.UAttrs, Hiliter.UCSS, Hiliter.UPasParser, IntfCommon, UCSSBuilder;
-
 
 type
   TSyntaxHiliter = class sealed(TInterfacedObject, ISyntaxHiliter)
@@ -241,10 +157,88 @@ type
       }
   end;
 
-function CreateRenderedHiliter(Renderer: IHiliteRenderer): ISyntaxHiliter;
-begin
-  Result := TSyntaxHiliter.Create(Renderer);
-end;
+type
+  TDocumentHiliter = class abstract(TNoConstructObject)
+  public
+    class function Hilite(const RawCode: string;
+      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
+      virtual; abstract;
+  end;
+
+type
+  TDocumentHiliterClass = class of TDocumentHiliter;
+
+type
+  TNulDocumentHiliter = class sealed(TDocumentHiliter)
+  public
+    class function Hilite(const RawCode: string;
+      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
+      override;
+  end;
+
+type
+  TXHTMLDocumentHiliter = class sealed(TDocumentHiliter)
+  strict private
+    class function GenerateCSSRules(Attrs: IHiliteAttrs): string;
+  public
+    class function Hilite(const RawCode: string;
+      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
+      override;
+  end;
+
+type
+  TRTFDocumentHiliter = class sealed(TDocumentHiliter)
+  public
+    class function Hilite(const RawCode: string;
+      Attrs: IHiliteAttrs = nil; const Title: string = ''): TEncodedData;
+      override;
+  end;
+
+type
+  TRTFHiliteRenderer = class(TInterfacedObject, IHiliteRenderer)
+  strict private
+    fBuilder: TRTFBuilder;
+    fAttrs: IHiliteAttrs;
+  public
+    constructor Create(const Builder: TRTFBuilder;
+      const Attrs: IHiliteAttrs = nil);
+    procedure Initialise;
+    procedure Finalise;
+    procedure BeginLine;
+    procedure EndLine;
+    procedure WriteElemText(const Text: string);
+    procedure BeforeElem(Elem: THiliteElement);
+    procedure AfterElem(Elem: THiliteElement);
+  end;
+
+type
+  THTMLHiliteRenderer = class(TInterfacedObject, IHiliteRenderer)
+  strict private
+    fBuilder: THTMLBuilder;
+    fAttrs: IHiliteAttrs;
+    fIsFirstLine: Boolean;
+  public
+    constructor Create(const Builder: THTMLBuilder;
+      const Attrs: IHiliteAttrs = nil);
+    procedure Initialise;
+    procedure Finalise;
+    procedure BeginLine;
+    procedure EndLine;
+    procedure WriteElemText(const Text: string);
+    procedure BeforeElem(Elem: THiliteElement);
+    procedure AfterElem(Elem: THiliteElement);
+  end;
+
+
+implementation
+
+
+uses
+  // Delphi
+  SysUtils, Graphics,
+  // Project
+  Hiliter.UAttrs, Hiliter.UCSS, IntfCommon, UCSSBuilder;
+
 
 { TSyntaxHiliter }
 

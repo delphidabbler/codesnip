@@ -170,7 +170,7 @@ begin
     Renderer := THTMLHiliteRenderer.Create(
       Builder, THiliteAttrsFactory.CreateDisplayAttrs
     );
-    Hiliter := CreateRenderedHiliter(Renderer);
+    Hiliter := TSyntaxHiliter.Create(Renderer);
     Hiliter.Hilite(SourceCode, THiliteAttrsFactory.CreateDisplayAttrs);
     Result := Builder.HTMLFragment;
   finally
