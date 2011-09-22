@@ -171,7 +171,7 @@ begin
       Builder, THiliteAttrsFactory.CreateDisplayAttrs
     );
     Hiliter := TSyntaxHiliter.Create(Renderer);
-    Hiliter.Hilite(SourceCode, THiliteAttrsFactory.CreateDisplayAttrs);
+    Hiliter.Hilite(SourceCode);
     Result := Builder.HTMLFragment;
   finally
     Builder.Free;

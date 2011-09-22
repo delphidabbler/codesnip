@@ -76,10 +76,6 @@ type
   strict private
     var
       fRenderer: IHiliteRenderer;
-      fAttrs: IHiliteAttrs;
-        {Reference to highlighter attributes}
-      fTitle: string;
-        {Document title}
     procedure ElementHandler(Parser: THilitePasParser; Elem: THiliteElement;
       const ElemText: string);
       {Handles parser's OnElement event. Calls virtual do nothing and abstract
@@ -99,61 +95,15 @@ type
       descendants override to output data needed to end a new line.
         @param Parser [in] Reference to parser that triggered event (unused).
       }
-    function Render: TEncodedData;
-      {Renders highlighted document as encoded data.
-        @return Rendered document with encoding info.
-      }
-    procedure BeginDoc;
-      {Called just before document is parsed. Used to initialise document.
-      }
-    procedure EndDoc;
-      {Called after parsing complete. Used to finalise document.
-      }
-    procedure BeginLine;
-      {Called when a new line in output is started. Used to initialise a line in
-      output.
-      }
-    procedure EndLine;
-      {Called when a line is ending. Used to terminate a line in output.
-      }
-    procedure WriteElem(const ElemText: string);
-      {Called for each different highlight element in document and is overridden
-      to output element's text.
-        @param ElemText [in] Text of the element.
-      }
-    procedure BeforeElem(Elem: THiliteElement);
-      {Called before a highlight element is output. Used to write code to
-      display element in required format.
-        @param Elem [in] Kind of highlight element.
-      }
-    procedure AfterElem(Elem: THiliteElement);
-      {Called after a highlight element is output. Used to write code to
-      finalise element formatting.
-        @param Elem [in] Kind of highlight element.
-      }
-    property Attrs: IHiliteAttrs read fAttrs;
-      {Object storing attributes of highlighter. Defines appearance of document
-      and each highlight element}
-    property Title: string read fTitle;
-      {Title of document. May be ignored if document type doesn't support title
-      meta data}
   public
     constructor Create(Renderer: IHiliteRenderer);
       {Class constructor. Sets up object.
       }
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
-    { ISyntaxHiliter methods }
-    function Hilite(const RawCode: string; const Attrs: IHiliteAttrs = nil;
-      const Title: string = ''): TEncodedData;
-      {Creates string containing highlighted source code.
-        @param RawCode [in] Contains source code to be highlighted.
-        @param Attrs [in] Attributes to be used by highlighter. Nil value causes
-          a nul highlighter to be used.
-        @param Title [in] Optional title to be used as meta data in output
-          document. Will be ignored if document type does not support title.
-        @return Formatted / highlighted source code with encoding info.
+    { ISyntaxHiliter method }
+    procedure Hilite(const RawCode: string);
+      {Highlights source code using renderer passed to constructor. Output is
+      dealt with by renderer.
+        @param RawCode [in] Source code to be highlighted.
       }
   end;
 
@@ -242,39 +192,6 @@ uses
 
 { TSyntaxHiliter }
 
-procedure TSyntaxHiliter.AfterElem(Elem: THiliteElement);
-  {Called after a highlight element is output. Used to write code to finalise
-  element formatting.
-    @param Elem [in] Kind of highlight element.
-  }
-begin
-  fRenderer.AfterElem(Elem);
-end;
-
-procedure TSyntaxHiliter.BeforeElem(Elem: THiliteElement);
-  {Called before a highlight element is output. Used to write code to display
-  element in required format.
-    @param Elem [in] Kind of highlight element.
-  }
-begin
-  fRenderer.BeforeElem(Elem);
-end;
-
-procedure TSyntaxHiliter.BeginDoc;
-  {Called just before document is parsed. Used to initialise document.
-  }
-begin
-  fRenderer.Initialise;
-end;
-
-procedure TSyntaxHiliter.BeginLine;
-  {Called when a new line in output is started. Used to initialise a line in
-  output.
-  }
-begin
-  fRenderer.BeginLine;
-end;
-
 constructor TSyntaxHiliter.Create(Renderer: IHiliteRenderer);
   {Class constructor. Sets up object.
   }
@@ -282,16 +199,6 @@ begin
   Assert(Assigned(Renderer), ClassName + '.Create: Renderer is nil');
   inherited Create;
   fRenderer := Renderer;
-  // Create nul highlighter object used by default
-  fAttrs := THiliteAttrsFactory.CreateNulAttrs;
-end;
-
-destructor TSyntaxHiliter.Destroy;
-  {Class destructor. Tears down object.
-  }
-begin
-  fAttrs := nil;
-  inherited;
 end;
 
 procedure TSyntaxHiliter.ElementHandler(Parser: THilitePasParser;
@@ -304,41 +211,15 @@ procedure TSyntaxHiliter.ElementHandler(Parser: THilitePasParser;
     @param ElemText [in] Text to be output for element.
   }
 begin
-  BeforeElem(Elem);
-  WriteElem(ElemText);
-  AfterElem(Elem);
+  fRenderer.BeforeElem(Elem);
+  fRenderer.WriteElemText(ElemText);
+  fRenderer.AfterElem(Elem);
 end;
 
-procedure TSyntaxHiliter.EndDoc;
-  {Called after parsing complete. Used to finalise document.
-  }
-begin
-  fRenderer.Finalise;
-end;
-
-procedure TSyntaxHiliter.EndLine;
-  {Called when a line is ending. Used to terminate a line in output.
-  }
-begin
-  fRenderer.EndLine;
-end;
-
-function TSyntaxHiliter.Hilite(const RawCode: string; const Attrs: IHiliteAttrs;
-  const Title: string): TEncodedData;
-  {Creates string containing highlighted source code.
-    @param RawCode [in] Contains source code to be highlighted.
-    @param Attrs [in] Attributes to be used by highlighter. Nil value causes a
-      nul highlighter to be used.
-    @param Title [in] Optional title to be used as meta data in output document.
-      Will be ignored if document type does not support title.
-    @return Formatted / highlighted source code with encoding info.
-  }
+procedure TSyntaxHiliter.Hilite(const RawCode: string);
 var
   Parser: THilitePasParser;   // object used to parse source
 begin
-  // Record copy of highlighter attributes and title
-  (fAttrs as IAssignable).Assign(Attrs);
-  fTitle := Title;
   Parser := nil;
   try
     // Create parser
@@ -347,11 +228,9 @@ begin
     Parser.OnLineBegin := LineBeginHandler;
     Parser.OnLineEnd := LineEndHandler;
     // Parse the document:
-    BeginDoc;   // overridden in descendants to initialise document
+    fRenderer.Initialise;
     Parser.Parse(RawCode);
-    EndDoc;     // overridden in descendants to finalise document
-    // Return string stored in destination stream
-    Result := Render;
+    fRenderer.Finalise;
   finally
     Parser.Free;
   end;
@@ -363,7 +242,7 @@ procedure TSyntaxHiliter.LineBeginHandler(Parser: THilitePasParser);
     @param Parser [in] Reference to parser that triggered event (unused).
   }
 begin
-  BeginLine;
+  fRenderer.BeginLine;
 end;
 
 procedure TSyntaxHiliter.LineEndHandler(Parser: THilitePasParser);
@@ -372,17 +251,7 @@ procedure TSyntaxHiliter.LineEndHandler(Parser: THilitePasParser);
     @param Parser [in] Reference to parser that triggered event (unused).
   }
 begin
-  EndLine;
-end;
-
-function TSyntaxHiliter.Render: TEncodedData;
-begin
-  Result := TEncodedData.Create(TBytes.Create(), etSysDefault);
-end;
-
-procedure TSyntaxHiliter.WriteElem(const ElemText: string);
-begin
-  fRenderer.WriteElemText(ElemText);
+  fRenderer.EndLine;
 end;
 
 { TNulDocumentHiliter }
@@ -436,7 +305,7 @@ begin
     Builder.CSS := GenerateCSSRules(Attrs);
     Renderer := THTMLHiliteRenderer.Create(Builder, Attrs);
     Hiliter := TSyntaxHiliter.Create(Renderer);
-    Hiliter.Hilite(RawCode, Attrs);
+    Hiliter.Hilite(RawCode);
     Result := TEncodedData.Create(Builder.HTMLDocument, etUTF8);
   finally
     Builder.Free;
@@ -457,7 +326,7 @@ begin
     Builder.DocProperties.Title := Title;
     Renderer := TRTFHiliteRenderer.Create(Builder, Attrs);
     Hiliter := TSyntaxHiliter.Create(Renderer);
-    Hiliter.Hilite(RawCode, Attrs);
+    Hiliter.Hilite(RawCode);
     Result := TEncodedData.Create(Builder.Render.ToBytes, etASCII);
   finally
     Builder.Free;
