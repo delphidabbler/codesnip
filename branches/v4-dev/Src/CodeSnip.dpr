@@ -301,7 +301,6 @@ uses
   URFC2822Date in 'URFC2822Date.pas',
   URSS20 in 'URSS20.pas',
   URTFBuilder in 'URTFBuilder.pas',
-  URTFMerger in 'URTFMerger.pas',
   URTFSnippetDoc in 'URTFSnippetDoc.pas',
   URTFUtils in 'URTFUtils.pas',
   USaveDialogEx in 'USaveDialogEx.pas',

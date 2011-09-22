@@ -460,7 +460,6 @@
 			<DCCReference Include="URFC2822Date.pas"/>
 			<DCCReference Include="URSS20.pas"/>
 			<DCCReference Include="URTFBuilder.pas"/>
-			<DCCReference Include="URTFMerger.pas"/>
 			<DCCReference Include="URTFSnippetDoc.pas"/>
 			<DCCReference Include="URTFUtils.pas"/>
 			<DCCReference Include="USaveDialogEx.pas"/>

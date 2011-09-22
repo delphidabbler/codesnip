@@ -137,7 +137,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UHiliters, UColours, UConsts, URTFMerger;
+  Hiliter.UHiliters, UColours, UConsts;
 
 
 { TRTFSnippetDoc }
