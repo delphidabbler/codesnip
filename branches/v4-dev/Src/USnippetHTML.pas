@@ -161,7 +161,6 @@ function TSnippetHTML.HiliteSource(const SourceCode: string): string;
     @return Highlighted source code.
   }
 var
-  Hiliter: ISyntaxHiliter;  // highlighter object
   Builder: THTMLBuilder;
   Renderer: IHiliteRenderer;
 begin
@@ -170,8 +169,7 @@ begin
     Renderer := THTMLHiliteRenderer.Create(
       Builder, THiliteAttrsFactory.CreateDisplayAttrs
     );
-    Hiliter := TSyntaxHiliter.Create(Renderer);
-    Hiliter.Hilite(SourceCode);
+    TSyntaxHiliter.Hilite(SourceCode, Renderer);
     Result := Builder.HTMLFragment;
   finally
     Builder.Free;

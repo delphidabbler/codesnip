@@ -49,9 +49,13 @@ uses
 
 type
   ///  <summary>
-  ///  Implements a syntax highlighter for Pascal source code.
+  ///  Static class that pmplements a syntax highlighter for Pascal source code.
   ///  </summary>
-  TSyntaxHiliter = class sealed(TInterfacedObject, ISyntaxHiliter)
+  ///  <remarks>
+  ///  Uses a user-provided rendering object to create highlighted output in
+  ///  various formats.
+  ///  </remarks>
+  TSyntaxHiliter = class sealed(TNoPublicConstructObject)
   strict private
     var
       ///  <summary>Object used to render parsed code in required format.
@@ -79,19 +83,22 @@ type
     ///  Not used.</param>
     ///  <remarks>Called when a new line of source code has ended.</remarks>
     procedure LineEndHandler(Parser: THilitePasParser);
+    ///  <summary>Performs syntax highlighting of given source code.</summary>
+    procedure DoHilite(const RawCode: string);
+  strict protected
+    ///  <summary>Internal object constructor. Sets up object to perform
+    ///  highlighting using given renderer object.</summary>
+    constructor InternalCreate(Renderer: IHiliteRenderer);
   public
-    ///  <summary>Object constructor. Sets up hiliter for a specified output
-    ///  format.</summary>
-    ///  <param name="Renderer">IHiliteRenderer [in] Object to be used to
-    ///  render output.</param>
-    constructor Create(Renderer: IHiliteRenderer);
-    ///  <summary>Highlights the given raw source code.</summary>
-    ///  <remarks>
-    ///  <para>Method of ISyntaxHiliter</para>
-    ///  <para>Output is written via renderer is some user defined way. This may
-    ///  update an object associated with the renderer.</para>
-    ///  </remarks>
-    procedure Hilite(const RawCode: string);
+    ///  <summary>Syntax highlights source code in an output format specified by
+    ///  caller.</summary>
+    ///  <param name="RawCode">string [in] Plain text source code to be
+    ///  highlighted.</param>
+    ///  <param name="Renderer">IHiliteRenderer [in] Object used to format and
+    ///  record output.</param>
+    ///  <remarks>Output is written via renderer in some user defined way. This
+    ///  may update an object associated with the renderer.</remarks>
+    class procedure Hilite(const RawCode: string; Renderer: IHiliteRenderer);
   end;
 
 type
@@ -324,29 +331,13 @@ uses
 
 { TSyntaxHiliter }
 
-constructor TSyntaxHiliter.Create(Renderer: IHiliteRenderer);
-begin
-  Assert(Assigned(Renderer), ClassName + '.Create: Renderer is nil');
-  inherited Create;
-  fRenderer := Renderer;
-end;
-
-procedure TSyntaxHiliter.ElementHandler(Parser: THilitePasParser;
-  Elem: THiliteElement; const ElemText: string);
-begin
-  fRenderer.BeforeElem(Elem);
-  fRenderer.WriteElemText(ElemText);
-  fRenderer.AfterElem(Elem);
-end;
-
-procedure TSyntaxHiliter.Hilite(const RawCode: string);
+procedure TSyntaxHiliter.DoHilite(const RawCode: string);
 var
   Parser: THilitePasParser;   // object used to parse source code
 begin
-  Parser := nil;
+  // Set up parser
+  Parser := THilitePasParser.Create;
   try
-    // Create parser
-    Parser := THilitePasParser.Create;
     Parser.OnElement := ElementHandler;
     Parser.OnLineBegin := LineBeginHandler;
     Parser.OnLineEnd := LineEndHandler;
@@ -359,6 +350,26 @@ begin
   end;
 end;
 
+procedure TSyntaxHiliter.ElementHandler(Parser: THilitePasParser;
+  Elem: THiliteElement; const ElemText: string);
+begin
+  fRenderer.BeforeElem(Elem);
+  fRenderer.WriteElemText(ElemText);
+  fRenderer.AfterElem(Elem);
+end;
+
+class procedure TSyntaxHiliter.Hilite(const RawCode: string;
+  Renderer: IHiliteRenderer);
+begin
+  Assert(Assigned(Renderer), ClassName + '.Create: Renderer is nil');
+  with InternalCreate(Renderer) do
+    try
+      DoHilite(RawCode);
+    finally
+      Free;
+    end;
+end;
+
 procedure TSyntaxHiliter.LineBeginHandler(Parser: THilitePasParser);
 begin
   fRenderer.BeginLine;
@@ -367,6 +378,12 @@ end;
 procedure TSyntaxHiliter.LineEndHandler(Parser: THilitePasParser);
 begin
   fRenderer.EndLine;
+end;
+
+constructor TSyntaxHiliter.InternalCreate(Renderer: IHiliteRenderer);
+begin
+  inherited InternalCreate;
+  fRenderer := Renderer;
 end;
 
 { TNulDocumentHiliter }
@@ -407,7 +424,6 @@ resourcestring
   // Default document title
   sDefaultTitle = 'DelphiDabbler CodeSnip Database';
 var
-  Hiliter: ISyntaxHiliter;      // syntax hiliter object
   Renderer: IHiliteRenderer;    // XHTML renderer object
   Builder: THTMLBuilder;        // object used to construct XHTML document
 begin
@@ -419,8 +435,7 @@ begin
       Builder.Title := sDefaultTitle;
     Builder.CSS := GenerateCSSRules(Attrs);
     Renderer := THTMLHiliteRenderer.Create(Builder, Attrs);
-    Hiliter := TSyntaxHiliter.Create(Renderer);
-    Hiliter.Hilite(RawCode);
+    TSyntaxHiliter.Hilite(RawCode, Renderer);
     Result := TEncodedData.Create(Builder.HTMLDocument, etUTF8);
   finally
     Builder.Free;
@@ -432,7 +447,6 @@ end;
 class function TRTFDocumentHiliter.Hilite(const RawCode: string;
   Attrs: IHiliteAttrs; const Title: string): TEncodedData;
 var
-  Hiliter: ISyntaxHiliter;    // syntax highlighter object
   Renderer: IHiliteRenderer;  // RTF renderer object
   Builder: TRTFBuilder;       // object used to construct RTF document
 begin
@@ -440,8 +454,7 @@ begin
   try
     Builder.DocProperties.Title := Title;
     Renderer := TRTFHiliteRenderer.Create(Builder, Attrs);
-    Hiliter := TSyntaxHiliter.Create(Renderer);
-    Hiliter.Hilite(RawCode);
+    TSyntaxHiliter.Hilite(RawCode, Renderer);
     Result := TEncodedData.Create(Builder.Render.ToBytes, etASCII);
   finally
     Builder.Free;

@@ -147,19 +147,6 @@ type
     hsVisualStudio  // Microsoft Visual Studio default style
   );
 
-
-type
-  ///  <summary>
-  ///  Interface implemented by highlighter objects.
-  ///  <summary>
-  ISyntaxHiliter = interface(IInterface)
-    ['{8FDE87E5-66AD-49AD-BDA8-2110F47C0F6C}']
-    ///  <summary>Highlights the given raw source code.</summary>
-    ///  <remarks>Output is returned in a way that is implementation dependent.
-    ///  </remarks>
-    procedure Hilite(const RawCode: string);
-  end;
-
 type
   ///  <summary>Interface implemented by objects that format different source
   ///  code elements on behalf of syntax highlighter.</summary>
