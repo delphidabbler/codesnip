@@ -80,13 +80,6 @@ type
         @param ActiveText [in] Active text object used to generate markup.
         @return Required REML markup.
       }
-    class function BuildREMLMarkupLowestVer(
-      const ActiveText: IActiveText): string;
-      {Creates REML markup from an active text object using lowest possible
-      version.
-        @param ActiveText [in] Active text object used to generate markup.
-        @return Required REML markup.
-      }
   end;
 
 
@@ -184,19 +177,7 @@ class function TSnippetExtraHelper.BuildREMLMarkup(
     @return Required REML markup.
   }
 begin
-  Result := TREMLWriter.Render(ActiveText, TREMLAnalyser.LATEST_VERSION);
-end;
-
-class function TSnippetExtraHelper.BuildREMLMarkupLowestVer(
-  const ActiveText: IActiveText): string;
-  {Creates REML markup from an active text object using lowest possible version.
-    @param ActiveText [in] Active text object used to generate markup.
-    @return Required REML markup.
-  }
-begin
-  Result := TREMLWriter.Render(
-    ActiveText, TREMLAnalyser.LowestWriterVersion(ActiveText)
-  );
+  Result := TREMLWriter.Render(ActiveText);
 end;
 
 end.

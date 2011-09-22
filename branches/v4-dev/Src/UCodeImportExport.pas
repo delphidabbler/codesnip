@@ -445,7 +445,7 @@ begin
     fXMLDoc.CreateElement(
       SnippetNode,
       cExtraNode,
-      TSnippetExtraHelper.BuildREMLMarkupLowestVer(Snippet.Extra)
+      TSnippetExtraHelper.BuildREMLMarkup(Snippet.Extra)
     );
   // write kind
   TXMLDocHelper.WriteSnippetKind(fXMLDoc, SnippetNode, Snippet.Kind);

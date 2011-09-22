@@ -801,7 +801,7 @@ begin
     TXMLDocHelper.CreateXMLProcInst(fXMLDoc);
     // comments
     TXMLDocHelper.CreateComment(fXMLDoc, sFileComment);
-    // root node: assume latest version needed
+    // root node
     RootNode := TXMLDocHelper.CreateRootNode(
       fXMLDoc, cUserDataRootNode, cWatermark, cLatestVersion
     );
@@ -949,7 +949,7 @@ begin
       fXMLDoc.CreateElement(
         SnippetNode,
         cExtraNode,
-        TSnippetExtraHelper.BuildREMLMarkupLowestVer(Props.Extra)
+        TSnippetExtraHelper.BuildREMLMarkup(Props.Extra)
       );
     end;
     // Kind property replaces StandardFormat
