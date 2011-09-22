@@ -156,7 +156,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UStrUtils, UURIEncode;
+  DB.UMain, UActiveTextValidator, UStrUtils;
 
 
 { TSnippetValidator }
@@ -352,71 +352,12 @@ class function TSnippetValidator.ValidateExtra(const Extra: IActiveText;
       returned.
     @return True if extra information is valid, False if not.
   }
-
-  // ---------------------------------------------------------------------------
-  function ValidateURL(URL: string; out ErrorMsg: string): Boolean;
-    {Validates a-link href URLs.
-      @param URL [in] URL to validate.
-    }
-  resourcestring
-    // validation error messages
-    sLinkErr = 'Hyperlink URL "%s" in extra information must use one of the '
-      + '"http://", "https://" or "file://" protocols';
-    sURLLengthErr = 'Hyperlink URL "%s" in extra information is badly formed';
-  type
-    // Record of information about each supported URL protocol.
-    TProtocolInfo = record
-      Protocol: string;       // name of protocol
-      MinURLLength: Integer;  // minimum length of URL after protocol
-    end;
-    TProtocolInfos = array[1..3] of TProtocolInfo;
-  const
-    // Array of info about supported protocols
-    ProtocolInfos: TProtocolInfos = (
-      (Protocol: 'http://'; MinURLLength: 6),
-      (Protocol: 'https://'; MinURLLength: 6),
-      (Protocol: 'file://'; MinURLLength: 4)
-    );
-  var
-    PI: TProtocolInfo;  // references each supported protocol
-  begin
-    URL := URIDecode(URL);
-    // Search for a supported protocol: check URL length if found
-    for PI in ProtocolInfos do
-    begin
-      if StrStartsText(PI.Protocol, URL) then
-      begin
-        if Length(URL)
-          < Length(PI.Protocol) + PI.MinURLLength then
-        begin
-          ErrorMsg := Format(sURLLengthErr, [URL]);
-          Exit(False);
-        end;
-        Exit(True);
-      end;
-    end;
-    // No supported protocol
-    ErrorMsg := Format(sLinkErr, [URL]);
-    Result := False;
-  end;
-  // ---------------------------------------------------------------------------
-
 var
-  Elem: IActiveTextElem;              // each element in active text
-  ActionElem: IActiveTextActionElem;  // references action element
+  ErrorInfo: TActiveTextValidator.TErrorInfo; // info about error
 begin
-  // Scan all active text looking of hyperlinks: check that URL has a
-  // supported protocol and some url text after it
-  Result := True;
-  for Elem in Extra do
-  begin
-    if Supports(Elem, IActiveTextActionElem, ActionElem)
-      and (ActionElem.Kind = ekLink) then
-      if not ValidateURL(
-        ActionElem.Attrs[TActiveTextAttrNames.Link_URL], ErrorMsg
-      ) then
-        Exit(False);
-  end;
+  Result :=  TActiveTextValidator.Validate(Extra, ErrorInfo);
+  if not Result then
+    ErrorMsg := ErrorInfo.Description;
 end;
 
 class function TSnippetValidator.ValidateName(const Name: string;
