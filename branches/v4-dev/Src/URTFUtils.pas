@@ -163,67 +163,7 @@ type
   ///  edit controls.
   ///  </summary>
   TRichEditHelper = record
-  strict private
-    ///  <summary>
-    ///  Callback routine used to read data from a stream that is being inserted
-    ///  into a rich edit control.
-    ///  </summary>
-    ///  <param name="Stream">TStream [in] Reference to stream being read.
-    ///  (Actual param is documented as a DWORD, but we cast to TStream).
-    ///  </param>
-    ///  <param name="pBuff">Pointer [in] Pointer to buffer to receive data read
-    ///  from stream.</param>
-    ///  <param name="cb">LongInt [in] Number of bytes requested to be read.
-    ///  </param>
-    ///  <param name="pcb">PLongInt [in] Pointer to variable to receive number
-    ///  of bytes actually read from stream.</param>
-    ///  <returns>LongWord - Success / error code. 0 indicates succcess. None
-    ///  zero indicates an error condition.</returns>
-    ///  <remarks>
-    ///  <para>This routine is called by a rich edit control when processing the
-    ///  EM_STREAMIN message.</para>
-    ///  <para>NOTE: we can use this method is a simple callback function
-    ///  because static functions have no additional hidden parameters.</para>
-    ///  </remarks>
-    class function EditStreamReader(Stream: TStream; pBuff: Pointer;
-      cb: LongInt; pcb: PLongInt): LongWord; stdcall; static;
-    ///  <summary>
-    ///  Inserts a stream of rich text code to current selection position in a
-    ///  rich edit control. If text is selected in the control the selection is
-    ///  first deleted.
-    ///  </summary>
-    ///  <param name="RE">TRichEdit [in] Rich edit control in which RTF code is
-    ///  to be inserted.</param>
-    ///  <param name="Stream">TStream [in] Stream containing valid rich text
-    ///  code to be inserted.</param>
-    class procedure InsertStream(const RE: TRichEdit; const Stream: TStream);
-      static;
   public
-    ///  <summary>
-    ///  Inserts RTF code into rich edit control at current selection position.
-    ///  </summary>
-    ///  <param name="RE">TRichEdit [in] Rich edit control.</param>
-    ///  <param name="RTF">TRTF [in] Contains rich text code to be inserted.
-    ///  </param>
-    ///  <remarks>
-    ///  Any text selected in RE will be deleted before insertion takes place.
-    ///  </remarks>
-    class procedure Insert(const RE: TRichEdit; const RTF: TRTF); overload;
-      static;
-    ///  <summary>
-    ///  Inserts RTF code into rich edit control, replacing first occurence of
-    ///  some given text.
-    ///  </summary>
-    ///  <param name="RE">TRichEdit [in] Rich edit control.</param>
-    ///  <param name="RTF">TRTF [in] Contains rich text code to be inserted.
-    ///  </param>
-    ///  <param name="ReplaceText">string [in] Text to be replaced.</param>
-    ///  <remarks>
-    ///  Only the first occurence of text is replaced. If text is not found then
-    ///  no insertion takes place.
-    ///  </remarks>
-    class procedure Insert(const RE: TRichEdit; const RTF: TRTF;
-      const ReplaceText: string); overload; static;
     ///  <summary>
     ///  Loads RTF code into a rich edit control, replacing existing content.
     ///  </summary>
@@ -231,12 +171,6 @@ type
     ///  <param name="RTF">TRTF [in] Contains rich text code to be loaded.
     ///  </param>
     class procedure Load(const RE: TRichEdit; const RTF: TRTF); static;
-    ///  <summary>
-    ///  Saves RTF code from a richedit control.
-    ///  </summary>
-    ///  <param name="RE">TRichEdit [in] Rich edit control.</param>
-    ///  <returns>TRTF containing RTF code.</returns>
-    class function Save(const RE: TRichEdit): TRTF; static;
   end;
 
 
@@ -518,75 +452,6 @@ end;
 
 { TRichEditHelper }
 
-class function TRichEditHelper.EditStreamReader(Stream: TStream; pBuff: Pointer;
-  cb: Integer; pcb: PLongInt): LongWord;
-begin
-  // Assume no error
-  Result := $0000;
-  try
-    // Read required data from stream, recording bytes actually read
-    pcb^ := Stream.Read(pBuff^, cb);
-  except
-    // Indicates error to calling routine
-    Result := $FFFF;
-  end;
-end;
-
-class procedure TRichEditHelper.Insert(const RE: TRichEdit;
-  const RTF: TRTF);
-var
-  Stream: TStream;
-begin
-  Stream := TMemoryStream.Create;
-  try
-    RTF.ToStream(Stream);
-    Stream.Position := 0;
-    InsertStream(RE, Stream);
-  finally
-    Stream.Free;
-  end;
-end;
-
-class procedure TRichEditHelper.Insert(const RE: TRichEdit; const RTF: TRTF;
-  const ReplaceText: string);
-var
-  FoundIdx: Integer;  // index of ReplaceText in RE
-begin
-  FoundIdx := RE.FindText(ReplaceText, 0, MaxInt, []);
-  if FoundIdx = -1 then
-    Exit;
-  RE.SelStart := FoundIdx;
-  RE.SelLength := Length(ReplaceText);
-  Insert(RE, RTF);
-end;
-
-class procedure TRichEditHelper.InsertStream(const RE: TRichEdit;
-  const Stream: TStream);
-const
-  // Flags used in EM_STREAMIN message call
-  cFlags = SFF_SELECTION or SF_RTF or SFF_PLAINRTF;
-  // Bug error message
-  cStreamErrMsg = 'TRTFCtrlHelper.InsertStream: Error inserting stream';
-var
-  EditStream: TEditStream;  // defines callback used to read inserted RTF
-begin
-  RE.Lines.BeginUpdate;
-  try
-    // Make sure rich edit control size is large enough to take inserted code
-    RE.MaxLength := RE.MaxLength + Stream.Size;
-    // Stream in the RTF via EM_STREAMIN message
-    EditStream.dwCookie := DWORD(Stream);
-    EditStream.dwError := $0000;
-    EditStream.pfnCallback := @EditStreamReader;
-    RE.Perform(EM_STREAMIN, cFlags, LPARAM(@EditStream));
-    // Report any errors as a bug
-    if EditStream.dwError <> $0000 then
-      raise EBug.Create(cStreamErrMsg);
-  finally
-    RE.Lines.EndUpdate;
-  end;
-end;
-
 class procedure TRichEditHelper.Load(const RE: TRichEdit; const RTF: TRTF);
 var
   Stream: TStream;
@@ -599,20 +464,6 @@ begin
     // must set MaxLength or long documents may not display
     RE.MaxLength := Stream.Size;
     RE.Lines.LoadFromStream(Stream, TEncoding.ASCII);
-  finally
-    Stream.Free;
-  end;
-end;
-
-class function TRichEditHelper.Save(const RE: TRichEdit): TRTF;
-var
-  Stream: TStream;
-begin
-  RE.PlainText := False;
-  Stream := TMemoryStream.Create;
-  try
-    RE.Lines.SaveToStream(Stream, TEncoding.ASCII);
-    Result := TRTF.Create(Stream, TEncoding.ASCII, True);
   finally
     Stream.Free;
   end;
