@@ -191,14 +191,17 @@ implementation
   paragraph, "Hello" will be bold, "to" should be plain text and "you" should
   hyperlink to "example.com".
 
-  There are several versions of REML as follows:
-  v1 - supported tags: <strong> and <a>. The href attribute of the <a> tag
-       required the http:// protocol.
+  There are two versions of REML as follows:
+  v1 - supported tags: <strong> and <a>.
      - supported entities: &gt;, &lt, &quot;, &amp;.
   v2 - added tags: <em>, <var>, <warning>, <mono>, <p> and <heading>.
      - added entity: &copy;.
-  v3 - changed <a> tag to accept file:// protocol in addition to http://
-       protocol in href attribute.
+
+  The implementation of active text's link element changed over time. At first
+  it supported only the http:// protocol for URLs. This limited REML v1 <a> tags
+  to using just that protocol. CodeSnip v3.0.1 added support to active text for
+  the file:// protocol. From CodeSnip v4.0 active text was extended to support
+  the https:// protocol.
 }
 
 
@@ -578,7 +581,11 @@ begin
         // have a parameter: value must be safely encoded
         Result := Format(
           '<%0:s %1:s="%2:s">',
-          [TagName, ParamName, TextToREMLText(TagElem.Attrs[TActiveTextAttrNames.Link_URL])]
+          [
+            TagName,
+            ParamName,
+            TextToREMLText(TagElem.Attrs[TActiveTextAttrNames.Link_URL])
+          ]
         );
     end;
   end;
