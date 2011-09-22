@@ -358,44 +358,46 @@ class function TSnippetValidator.ValidateExtra(const Extra: IActiveText;
     {Validates a-link href URLs.
       @param URL [in] URL to validate.
     }
-  const
-    cHTTPProtocol = 'http://';  // http protocol prefix
-    cFileProtocol = 'file://';  // file protocal prefix
   resourcestring
     // validation error messages
-    sLinkErr = 'Hyperlink URL "%s" in extra information must use either the '
-      + '"http://" or "file://" protocols';
+    sLinkErr = 'Hyperlink URL "%s" in extra information must use one of the '
+      + '"http://", "https://" or "file://" protocols';
     sURLLengthErr = 'Hyperlink URL "%s" in extra information is badly formed';
-  begin
-    Result := True;
-    URL := URIDecode(URL);
-    if StrStartsText(cHTTPProtocol, URL) then
-    begin
-      // http protocol: check length
-      if Length(URL) < Length(cHTTPProtocol) + 6 then
-      begin
-        Result := False;
-        ErrorMsg := Format(sURLLengthErr, [URL]);
-        Exit;
-      end;
-    end
-    else if StrStartsText(cFileProtocol, URL) then
-    begin
-      // file protocol: check length
-      if Length(URL) < Length(cFileProtocol) + 4 then
-      begin
-        Result := False;
-        ErrorMsg := Format(sURLLengthErr, [URL]);
-        Exit;
-      end;
-    end
-    else
-    begin
-      // Error neither file nor http protocols
-      Result := False;
-      ErrorMsg := Format(sLinkErr, [URL]);
-      Exit;
+  type
+    // Record of information about each supported URL protocol.
+    TProtocolInfo = record
+      Protocol: string;       // name of protocol
+      MinURLLength: Integer;  // minimum length of URL after protocol
     end;
+    TProtocolInfos = array[1..3] of TProtocolInfo;
+  const
+    // Array of info about supported protocols
+    ProtocolInfos: TProtocolInfos = (
+      (Protocol: 'http://'; MinURLLength: 6),
+      (Protocol: 'https://'; MinURLLength: 6),
+      (Protocol: 'file://'; MinURLLength: 4)
+    );
+  var
+    PI: TProtocolInfo;  // references each supported protocol
+  begin
+    URL := URIDecode(URL);
+    // Search for a supported protocol: check URL length if found
+    for PI in ProtocolInfos do
+    begin
+      if StrStartsText(PI.Protocol, URL) then
+      begin
+        if Length(URL)
+          < Length(PI.Protocol) + PI.MinURLLength then
+        begin
+          ErrorMsg := Format(sURLLengthErr, [URL]);
+          Exit(False);
+        end;
+        Exit(True);
+      end;
+    end;
+    // No supported protocol
+    ErrorMsg := Format(sLinkErr, [URL]);
+    Result := False;
   end;
   // ---------------------------------------------------------------------------
 
@@ -413,10 +415,7 @@ begin
       if not ValidateURL(
         ActionElem.Attrs[TActiveTextAttrNames.Link_URL], ErrorMsg
       ) then
-      begin
-        Result := False;
-        Exit;
-      end;
+        Exit(False);
   end;
 end;
 
