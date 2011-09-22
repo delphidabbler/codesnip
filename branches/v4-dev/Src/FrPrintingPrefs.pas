@@ -136,11 +136,12 @@ type
       {Reference to richedit control used to render preview}
     fHiliteAttrs: IHiliteAttrs;
       {Attributes of syntax highlighter to use to render preview}
-    function HiliteSource(const UseColor, SyntaxPrint: Boolean): TEncodedData;
+    procedure HiliteSource(const UseColor, SyntaxPrint: Boolean;
+      Builder: TRTFBuilder);
       {Generates sample highlighted source code.
         @param UseColor [in] Whether to use colour or mono highlighter.
         @param SyntaxPrint [in] Whether source code to be highlighted.
-        @return Suitably highlighted source code.
+        @param Builder [in] Object that receives highlighted source code.
       }
   public
     constructor Create(const RE: TRichEdit; const HiliteAttrs: IHiliteAttrs);
@@ -347,9 +348,6 @@ procedure TPrintingPrefsPreview.Generate(const UseColor, SyntaxPrint: Boolean);
     @param UseColor [in] Whether preview to be in colour or monochrome.
     @param SyntaxPrint [in] Whether preview source code to be syntax hilited.
   }
-const
-  // Placeholder to be replaced by source code
-  cPlaceholder = '[[%SourceCode%]]';
 resourcestring
   // Heading and dummy paragraph text
   sHeading = 'Sample';
@@ -373,26 +371,22 @@ begin
     Builder.SetFontSize(9);
     Builder.AddText(sBodyText);
     Builder.EndPara;
-    // Add placeholder for source code
-    Builder.AddText(cPlaceholder);
+    // Add highlighted source code
+    HiliteSource(UseColor, SyntaxPrint, Builder);
     Builder.EndPara;
     // Load document into rich edit
     TRichEditHelper.Load(fRe, Builder.Render);
   finally
     FreeAndNil(Builder);
   end;
-  // Merge in source code
-  TRichEditHelper.Insert(
-    fRe, TRTF.Create(HiliteSource(UseColor, SyntaxPrint)), cPlaceholder
-  );
 end;
 
-function TPrintingPrefsPreview.HiliteSource(const UseColor,
-  SyntaxPrint: Boolean): TEncodedData;
+procedure TPrintingPrefsPreview.HiliteSource(const UseColor,
+  SyntaxPrint: Boolean; Builder: TRTFBuilder);
   {Generates sample highlighted source code.
     @param UseColor [in] Whether to use colour or mono highlighter.
     @param SyntaxPrint [in] Whether source code to be highlighted.
-    @return Suitably highlighted source code.
+    @param Builder [in] Object that receives highlighted source code.
   }
 const
   // Sample source code displayed in preview
@@ -402,7 +396,8 @@ const
     + '  ShowMessage(''Bar'');' + EOL
     + 'end;';
 var
-  Attrs: IHiliteAttrs;      // highlighter attributes
+  Attrs: IHiliteAttrs;        // highlighter attributes
+  Renderer: IHiliteRenderer;  // renders highlighted code as RTF
 begin
   // Determine which highlighter to use depending on options
   if not SyntaxPrint then
@@ -412,7 +407,8 @@ begin
     // user-defined highlighter, maybe in mono
     Attrs := THiliteAttrsFactory.CreatePrintAttrs(fHiliteAttrs, UseColor);
   // Perform highlighting
-  Result := TRTFDocumentHiliter.Hilite(cSourceCode, Attrs);
+  Renderer := TRTFHiliteRenderer.Create(Builder, Attrs);
+  TSyntaxHiliter.Hilite(cSourceCode, Renderer);
 end;
 
 initialization

@@ -59,20 +59,14 @@ type
     var
       fHiliteAttrs: IHiliteAttrs; // Attributes determine source code formatting
       fBuilder: TRTFBuilder;      // Object used to build rich text document
-      fSourceCode: string;        // Stores snippet's source code}
       fUseColour: Boolean;        // Flag indicates whether to output in colour
     const
-      cSourceCodePlaceholder = '[[%SourceCode%]]';  // source code placeholder
       cMainFontName = 'Tahoma';                     // main font name
       cMonoFontName = 'Courier New';                // mono font name
       cHeadingFontSize = 16;                        // heading font size
       cParaFontSize = 10;                           // paragraph font size
       cParaSpacing = 12;                            // paragraph spacing
       cDBInfoFontSize = 9;                          // codesnip db font size
-    function HiliteSource: TRTF;
-      {Highlights snippet's source code.
-        @return Highlighted source code as a RTF document.
-      }
     procedure SetColour(const Colour: TColor);
       {Sets specified font colour in RTF, unless user specifies that colour is
       not to be used.
@@ -166,30 +160,8 @@ function TRTFSnippetDoc.FinaliseDoc: TEncodedData;
     @return ASCII encoded RTF document.
   }
 begin
-  // Insert highlighted source code in builder document. We have to do this here
-  // since hiliter object generates a complete RTF document which can't be
-  // simply added to document using RTF builder - it has to be merged in.
-  with TRTFMerger.Create(fBuilder.Render) do
-    try
-      ReplacePlaceholder(cSourceCodePlaceholder, HiliteSource);
-      Result := TEncodedData.Create(Render.ToBytes, etASCII);
-    finally
-      Free;
-    end;
+  Result := TEncodedData.Create(fBuilder.Render.ToBytes, etASCII);
   fBuilder.Free;
-end;
-
-function TRTFSnippetDoc.HiliteSource: TRTF;
-  {Highlights snippet's source code.
-    @return Highlighted source code as a RTF document.
-  }
-var
-  HilitedSource: TEncodedData;  // RTF of highlighted source code
-begin
-  HilitedSource := TRTFDocumentHiliter.Hilite(fSourceCode, fHiliteAttrs);
-  Assert(HilitedSource.EncodingType = etASCII,
-    ClassName + '.HiliteSource: Highlighted source is not in ASCII format');
-  Result := TRTF.Create(HilitedSource);
 end;
 
 procedure TRTFSnippetDoc.InitialiseDoc;
@@ -430,12 +402,12 @@ procedure TRTFSnippetDoc.RenderSourceCode(const SourceCode: string);
   Placeholder is replaced later when source code is generated.
     @param SourceCode [in] Source code to be written.
   }
+var
+  Renderer: IHiliteRenderer;  // renders highlighted source as RTF
 begin
-  // Simply record source code for later formatting
-  fSourceCode := SourceCode;
-  // Add placeholder to rich text document
   fBuilder.ClearParaFormatting;
-  fBuilder.AddText(cSourceCodePlaceholder);
+  Renderer := TRTFHiliteRenderer.Create(fBuilder, fHiliteAttrs);
+  TSyntaxHiliter.Hilite(SourceCode, Renderer);
   fBuilder.EndPara;
 end;
 
