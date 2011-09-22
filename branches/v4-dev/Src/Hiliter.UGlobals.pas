@@ -48,11 +48,8 @@ uses
 
 
 type
-  {
-  THiliteElement:
-    Defines the different elements that can be highlighted in Pascal source
-    code.
-  }
+  ///  <summary>Enumeration defining the different elements that can be
+  ///  highlighted in Pascal source code.</summary>
   THiliteElement = (
     heWhitespace,   // white space
     heComment,      // comments: in (* .. *), { .. } or // styles
@@ -69,88 +66,79 @@ type
   );
 
 type
-  {
-  IHiliteElemAttrs:
-    Interface supported by objects that store display attributes applicable to
-    various elements used in syntax highlighting.
-  }
+  ///  <summary>
+  ///  Interface supported by objects that store style attributes applicable
+  ///  to various source code elements used in syntax highlighting.
+  ///  </summary>
   IHiliteElemAttrs = interface(IInterface)
     ['{297A2F3D-77A8-45F9-A147-22A53791F114}']
+    ///  <summary>Checks whether an element's attributes are "null" - i.e. all
+    ///  properties have default values.</summary>
+    ///  <remarks>Use to determine whether to output formatting information for
+    ///  an element or not.</remarks>
     function IsNul: Boolean;
-      {Checks whether an element's attributes are "nul" - i.e. all properties
-      have default values. Used to determine whether to output formatting
-      information for an element.
-        @return True if element's attributes are nul.
-      }
+    ///  <summary>Returns the font style to use for a source code element.
+    ///  </summary>
     function GetFontStyle: TFontStyles;
-      {Gets the font style to use for element.
-        @return Set of font styles.
-      }
+    ///  <summary>Sets the font style to use for a source code element.
+    ///  </summary>
+    ///  <param name="AFontStyle">TFontStyles [in] Required font style.</param>
     procedure SetFontStyle(const AFontStyle: TFontStyles);
-      {Sets style of font to use for element.
-        @param AFontStyle Required set of font styles.
-      }
+    ///  <summary>Returns the foreground (i.e. text) colour to use for a source
+    ///  code element.</summary>
     function GetForeColor: TColor;
-      {Get the foreground colour (i.e. text colour) to use for element.
-        @return The colour.
-      }
+    ///  <summary>Sets the foreground (i.e. text) colour to use for a source
+    ///  code element.</summary>
+    ///  <param name="AColor">TColor [in] Required colour.</param>
     procedure SetForeColor(const AColor: TColor);
-      {Sets foreground colour (i.e. text colour) to use for element.
-        @param AColor Required colour.
-      }
+    ///  <summary>Set of font styles to use for a source code element.</summary>
     property FontStyle: TFontStyles read GetFontStyle write SetFontStyle;
-      {Set of font styles to use for element}
+    ///  <summary>Foreground (i.e. Text) colour to use for a source code
+    ///  element.</summary>
     property ForeColor: TColor read GetForeColor write SetForeColor;
-      {Foreground (i.e. text) colour to use for element. clNone => use default
-      colour}
   end;
 
 type
-  {
-  IHiliteAttrs:
-    Interface implemented by objects that store display attributes that are used
-    in a syntax highlighter.
-  }
+  ///  <summary>
+  ///  Interface implemented by objects that store style attributes that are
+  ///  used in a syntax highlighter.
+  ///  </summary>
   IHiliteAttrs = interface(IInterface)
     ['{25570AEE-3225-42A7-A534-3D27357EEA2E}']
+    ///  <summary>Returns name of font to use for all source code.</summary>
     function GetFontName: string;
-      {Gets name of font to use for all output.
-        @return Name of font.
-      }
+    ///  <summary>Sets name of font to use for all source code.</summary>
+    ///  <param name="AFontName">string [in] Name of required font.</param>
     procedure SetFontName(const AFontName: string);
-      {Sets name of font to use for all output.
-        @param AFontName Required font name.
-      }
+    ///  <summary>Returns size of font to use for all source code.</summary>
+    ///  <remarks>Font size is in points.</remarks>
     function GetFontSize: Integer;
-      {Gets size of font to use for all output.
-        @return Size of font in points.
-      }
+    ///  <summary>Sets size of font to use for all source code.</summary>
+    ///  <param name="AFontSize">Integer [in] Required font size in points.
+    ///  </param>
     procedure SetFontSize(const AFontSize: Integer);
-      {Sets size of font to use for all output.
-        @param AFontSize Required font size in points.
-      }
+    ///  <summary>Resets name and size of font used for all source code to
+    ///  default value.</summary>
     procedure ResetDefaultFont;
-      {Resets font name and size to default value.
-      }
+    ///  <summary>Returns style attributes for a source code element.</summary>
+    ///  <param name="Elem">THiliteElement [in] Specifies required attribute.
+    ///  </param>
+    ///  <returns>IHiliteElemAttrs [in] Interface to object providing required
+    ///  style attributes.</returns>
     function GetElement(const Elem: THiliteElement): IHiliteElemAttrs;
-      {Gets the highlight attributes of a highlighter element.
-        @param Elem Required element.
-        @return Highlight attributes for element.
-      }
+    ///  <summary>Name of font used for all source code.</summary>
     property FontName: string read GetFontName write SetFontName;
-      {Name of font used for all output}
+    ///  <summary>Size of font used for all soure code.</summary>
     property FontSize: Integer read GetFontSize write SetFontSize;
-      {Size of font used for all output in points}
+    ///  <summary>List of style attributes for each source code element.
+    ///  </summary>
     property Elements[const Elem: THiliteElement]: IHiliteElemAttrs
       read GetElement; default;
-      {List of highlight attributes of each highlight element}
   end;
 
 type
-  {
-  TPredefinedHiliteStyle:
-    Enumeration that specifies the different perdefined highlighter styles.
-  }
+  ///  <summary>Enumeration of identifiers for the various predefined
+  ///  highlighter styles.</summary>
   TPredefinedHiliteStyle = (
     hsNul,          // nul highlighter style
     hsCodeSnip,     // original codesnip default style
@@ -161,22 +149,19 @@ type
 
 
 type
-  {
-  ISyntaxHiliter:
-    Interface implemented by highlighter classes. Provides a method used to
-    highlight a document.
-  }
+  ///  <summary>
+  ///  Interface implemented by highlighter objects.
+  ///  <summary>
   ISyntaxHiliter = interface(IInterface)
     ['{8FDE87E5-66AD-49AD-BDA8-2110F47C0F6C}']
+    ///  <summary>Highlights the given raw source code.</summary>
+    ///  <remarks>Output is returned in a way that is implementation dependent.
+    ///  </remarks>
     procedure Hilite(const RawCode: string);
-      {Highlights source code using renderer passed to constructor. Output is
-      dealt with by renderer.
-        @param RawCode [in] Source code to be highlighted.
-      }
   end;
 
 type
-  ///  <summary>Interface implemented by object that format different source
+  ///  <summary>Interface implemented by objects that format different source
   ///  code elements on behalf of syntax highlighter.</summary>
   ///  <remarks>Implement this interface for each required output format.
   ///  Syntax highlighter calls the methods of this interface.</remarks>
@@ -185,7 +170,7 @@ type
     ///  <summary>Called by syntax highlighter before any source code is
     ///  processed.</summary>
     procedure Initialise;
-    ///  <summary>Called by syntax hgihlighter after all source code has been
+    ///  <summary>Called by syntax highlighter after all source code has been
     ///  processed.</summary>
     procedure Finalise;
     ///  <summary>Called by syntax highlighter when a new line of source code
