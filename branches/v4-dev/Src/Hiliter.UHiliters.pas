@@ -192,6 +192,25 @@ type
   end;
 
 type
+  ///  <summary>Base class for highlighter rendering objects. Provides common
+  ///  functionality needed by all implementations.</summary>
+  ///  <remarks>Marked as "abstract" because this class is meaningless if
+  ///  instantiated. It is intended only as a sub-class.</remarks>
+  THiliteRenderer = class abstract(TInterfacedObject)
+  strict private
+    var
+      ///  <summary>Specifies highlighting styles to be used.</summary>
+      fAttrs: IHiliteAttrs;
+  strict protected
+    ///  <summary>Highlighting styles to be used in rendering.</summary>
+    property Attrs: IHiliteAttrs read fAttrs;
+  public
+    ///  <summary>Object constructor. Records a copy of highlighter style
+    ///  attributes passed in Attrs parameter.</summary>
+    constructor Create(Attrs: IHiliteAttrs);
+  end;
+
+type
   ///  <summary>
   ///  Renders highlighted source code in rich text format. Generated code is
   ///  recorded in a given rich text code builder object.
@@ -199,13 +218,11 @@ type
   ///  <remarks>
   ///  Designed for use with TSyntaxHiliter objects.
   ///  </remarks>
-  TRTFHiliteRenderer = class(TInterfacedObject, IHiliteRenderer)
+  TRTFHiliteRenderer = class(THiliteRenderer, IHiliteRenderer)
   strict private
     var
       ///  <summary>Object used to record generated RTF code.</summary>
       fBuilder: TRTFBuilder;
-      ///  <summary>Specifies highlighting style to be used.</summary>
-      fAttrs: IHiliteAttrs;
   public
     ///  <summary>Object constructor. Sets up object to render documents.
     ///  </summary>
@@ -249,13 +266,11 @@ type
   ///  <remarks>
   ///  Designed for use with TSyntaxHiliter objects.
   ///  </remarks>
-  THTMLHiliteRenderer = class(TInterfacedObject, IHiliteRenderer)
+  THTMLHiliteRenderer = class(THiliteRenderer, IHiliteRenderer)
   strict private
     var
       ///  <summary>Object used to record generated XHTML code.</summary>
       fBuilder: THTMLBuilder;
-      ///  <summary>Specifies highlighting style to be used.</summary>
-      fAttrs: IHiliteAttrs;
       ///  <summary>Flag indicating if writing first line of output.</summary>
       fIsFirstLine: Boolean;
   public
@@ -433,41 +448,48 @@ begin
   end;
 end;
 
+{ THiliteRenderer }
+
+constructor THiliteRenderer.Create(Attrs: IHiliteAttrs);
+begin
+  inherited Create;
+  fAttrs := THiliteAttrsFactory.CreateNulAttrs;
+  (fAttrs as IAssignable).Assign(Attrs);
+end;
+
 { TRTFHiliteRenderer }
 
 procedure TRTFHiliteRenderer.AfterElem(Elem: THiliteElement);
 begin
-  if not fAttrs[Elem].IsNul then
+  if not Attrs[Elem].IsNul then
     fBuilder.EndGroup;
 end;
 
 procedure TRTFHiliteRenderer.BeforeElem(Elem: THiliteElement);
 begin
-  if not fAttrs[Elem].IsNul then
+  if not Attrs[Elem].IsNul then
   begin
     fBuilder.BeginGroup;
-    if fAttrs[Elem].ForeColor <> clNone then
-      fBuilder.SetColour(fAttrs[Elem].ForeColor);
-    if fAttrs[Elem].FontStyle <> [] then
-      fBuilder.SetFontStyle(fAttrs[Elem].FontStyle);
+    if Attrs[Elem].ForeColor <> clNone then
+      fBuilder.SetColour(Attrs[Elem].ForeColor);
+    if Attrs[Elem].FontStyle <> [] then
+      fBuilder.SetFontStyle(Attrs[Elem].FontStyle);
   end;
 end;
 
 procedure TRTFHiliteRenderer.BeginLine;
 begin
   fBuilder.ResetCharStyle;
-  fBuilder.SetFont(fAttrs.FontName);
-  fBuilder.SetFontSize(fAttrs.FontSize);
+  fBuilder.SetFont(Attrs.FontName);
+  fBuilder.SetFontSize(Attrs.FontSize);
 end;
 
 constructor TRTFHiliteRenderer.Create(const Builder: TRTFBuilder;
   const Attrs: IHiliteAttrs = nil);
 begin
   Assert(Assigned(Builder), ClassName + '.Create: Builder is nil');
-  inherited Create;
+  inherited Create(Attrs);
   fBuilder := Builder;
-  fAttrs := THiliteAttrsFactory.CreateNulAttrs;
-  (fAttrs as IAssignable).Assign(Attrs);
 end;
 
 procedure TRTFHiliteRenderer.EndLine;
@@ -486,10 +508,10 @@ var
   Elem: THiliteElement; // loops thru all highlight elements
 begin
   // Set up font table
-  fBuilder.FontTable.Add(fAttrs.FontName, rgfModern, 0);
+  fBuilder.FontTable.Add(Attrs.FontName, rgfModern, 0);
   // Set up colour table
   for Elem := Low(THiliteElement) to High(THiliteElement) do
-    fBuilder.ColourTable.Add(fAttrs[Elem].ForeColor);
+    fBuilder.ColourTable.Add(Attrs[Elem].ForeColor);
   // Begin group containing all source code
   fBuilder.BeginGroup;
   // Clear any paragraph formatting
@@ -505,13 +527,13 @@ end;
 
 procedure THTMLHiliteRenderer.AfterElem(Elem: THiliteElement);
 begin
-  if not fAttrs[Elem].IsNul then
+  if not Attrs[Elem].IsNul then
     fBuilder.CloseSpan;
 end;
 
 procedure THTMLHiliteRenderer.BeforeElem(Elem: THiliteElement);
 begin
-  if not fAttrs.Elements[Elem].IsNul then
+  if not Attrs.Elements[Elem].IsNul then
     fBuilder.OpenSpan(THiliterCSS.GetElemCSSClassName(Elem));
 end;
 
@@ -529,10 +551,8 @@ constructor THTMLHiliteRenderer.Create(const Builder: THTMLBuilder;
   const Attrs: IHiliteAttrs);
 begin
   Assert(Assigned(Builder), ClassName + '.Create: Builder is nil');
-  inherited Create;
+  inherited Create(Attrs);
   fBuilder := Builder;
-  fAttrs := THiliteAttrsFactory.CreateNulAttrs;
-  (fAttrs as IAssignable).Assign(Attrs);
 end;
 
 procedure THTMLHiliteRenderer.EndLine;
