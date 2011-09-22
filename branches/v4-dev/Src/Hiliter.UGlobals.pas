@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -48,7 +48,6 @@ uses
 
 
 type
-
   {
   THiliteElement:
     Defines the different elements that can be highlighted in Pascal source
@@ -69,6 +68,7 @@ type
     heError         // an unrecognised piece of code (shouldn't happen)
   );
 
+type
   {
   IHiliteElemAttrs:
     Interface supported by objects that store display attributes applicable to
@@ -105,6 +105,7 @@ type
       colour}
   end;
 
+type
   {
   IHiliteAttrs:
     Interface implemented by objects that store display attributes that are used
@@ -145,6 +146,21 @@ type
       {List of highlight attributes of each highlight element}
   end;
 
+type
+  {
+  TPredefinedHiliteStyle:
+    Enumeration that specifies the different perdefined highlighter styles.
+  }
+  TPredefinedHiliteStyle = (
+    hsNul,          // nul highlighter style
+    hsCodeSnip,     // original codesnip default style
+    hsDelphi7,      // Delphi 7 default style
+    hsDelphi2006,   // Delphi 2006 default style
+    hsVisualStudio  // Microsoft Visual Studio default style
+  );
+
+
+type
   {
   ISyntaxHiliter:
     Interface implemented by highlighter classes. Provides a method used to
@@ -160,18 +176,40 @@ type
   end;
 
 type
-
-  {
-  TPredefinedHiliteStyle:
-    Enumeration that specifies the different perdefined highlighter styles.
-  }
-  TPredefinedHiliteStyle = (
-    hsNul,          // nul highlighter style
-    hsCodeSnip,     // original codesnip default style
-    hsDelphi7,      // Delphi 7 default style
-    hsDelphi2006,   // Delphi 2006 default style
-    hsVisualStudio  // Microsoft Visual Studio default style
-  );
+  ///  <summary>Interface implemented by object that format different source
+  ///  code elements on behalf of syntax highlighter.</summary>
+  ///  <remarks>Implement this interface for each required output format.
+  ///  Syntax highlighter calls the methods of this interface.</remarks>
+  IHiliteRenderer = interface(IInterface)
+    ['{791CE200-C614-40FC-B93D-744ED2984755}']
+    ///  <summary>Called by syntax highlighter before any source code is
+    ///  processed.</summary>
+    procedure Initialise;
+    ///  <summary>Called by syntax hgihlighter after all source code has been
+    ///  processed.</summary>
+    procedure Finalise;
+    ///  <summary>Called by syntax highlighter when a new line of source code
+    ///  is started.</summary>
+    procedure BeginLine;
+    ///  <summary>Called by syntax highlighter after a line of souce code is
+    ///  complete.</summary>
+    procedure EndLine;
+    ///  <summary>Called by syntax highlighter just before a source code
+    ///  element is to be output.</summary>
+    ///  <param name="Elem">THiliteElement [in] Type of element to be output.
+    ///  </param>
+    procedure BeforeElem(Elem: THiliteElement);
+    ///  <summary>Called by syntax highlighter for each element of source code
+    ///  read. All the given text should be formatted in same style.</summary>
+    ///  <remarks>Type of the element will have been specified in prior call to
+    ///  BeforeElem.</remarks>
+    procedure WriteElemText(const Text: string);
+    ///  <summary>Called by syntax highlighter just after an element of source
+    ///  code has been written.</summary>
+    ///  <param name="Elem">THiliteElement [in] Type of element that has just
+    ///  been output.</param>
+    procedure AfterElem(Elem: THiliteElement);
+  end;
 
 
 implementation

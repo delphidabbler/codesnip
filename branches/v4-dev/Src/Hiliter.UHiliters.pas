@@ -48,30 +48,6 @@ uses
 
 
 type
-  IHiliteRenderer = interface(IInterface)
-    ['{791CE200-C614-40FC-B93D-744ED2984755}']
-    procedure Initialise;
-    procedure Finalise;
-    procedure BeginLine;
-    procedure EndLine;
-    procedure WriteElemText(const Text: string);
-      {Called for each different highlight element in document and is overridden
-      to output element's text.
-        @param Text [in] Text of the element.
-      }
-    procedure BeforeElem(Elem: THiliteElement);
-      {Called before a highlight element is output. Used to write code to
-      display element in required format.
-        @param Elem [in] Kind of highlight element.
-      }
-    procedure AfterElem(Elem: THiliteElement);
-      {Called after a highlight element is output. Used to write code to
-      finalise element formatting.
-        @param Elem [in] Kind of highlight element.
-      }
-  end;
-
-type
   TSyntaxHiliter = class sealed(TInterfacedObject, ISyntaxHiliter)
   strict private
     var
