@@ -63,10 +63,10 @@ type
   }
   TCompileMgr = class(TComponent)
   strict private
-    fLastCompiledSnipper: TSnippet; // Value of LastCompiledSnippet property
+    fLastCompiledSnippet: TSnippet; // Value of LastCompiledSnippet property
     fCompilers: ICompilers;         // Value of Compilers property
   strict protected
-    property LastCompiledSnippet: TSnippet read fLastCompiledSnipper;
+    property LastCompiledSnippet: TSnippet read fLastCompiledSnippet;
       {Last compiled snippet. May not be added to Snippets object}
   public
     constructor Create(AOwner: TComponent); override;
@@ -162,8 +162,8 @@ begin
   if Assigned(DisplayProc) then
     DisplayProc(fCompilers);
   // Copy snippet to LastCompiledSnippet property
-  fLastCompiledSnipper.Free;
-  fLastCompiledSnipper := (Database as IDatabaseEdit).CreateTempSnippet(
+  fLastCompiledSnippet.Free;
+  fLastCompiledSnippet := (Database as IDatabaseEdit).CreateTempSnippet(
     Snippet
   );
 end;
@@ -181,7 +181,7 @@ destructor TCompileMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  fLastCompiledSnipper.Free;
+  fLastCompiledSnippet.Free;
   fCompilers := nil;
   inherited;
 end;
@@ -219,9 +219,9 @@ procedure TCompileMgr.ShowErrors;
 begin
   Assert(HaveErrors,
     ClassName + '.ShowErrors: No compilers have errors or warnings');
-  Assert(Assigned(fLastCompiledSnipper),
+  Assert(Assigned(fLastCompiledSnippet),
     ClassName + '.ShowErrors: LastCompiledSnippet is nil');
-  TCompErrorDlg.Execute(Owner, fLastCompiledSnipper.ID, fCompilers);
+  TCompErrorDlg.Execute(Owner, fLastCompiledSnippet.ID, fCompilers);
 end;
 
 { TMainCompileMgr }
