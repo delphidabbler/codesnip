@@ -66,13 +66,6 @@ type
         @return Reference to newly created action.
       }
   public
-    class function CreateCompLogAction(const AOwner: TComponent;
-      const OnExecHandler: TNotifyEvent = nil): TBasicAction;
-      {Creates a Compiler Log action and sets OnExecute handler if provided.
-        @param AOwner [in] Owner of action.
-        @param OnExecHandler [in] Handler for action's OnExecute event.
-        @return Reference to newly created action.
-      }
     class function CreateHintAction(const AOwner: TComponent;
       const OnExecHandler: TNotifyEvent = nil): TBasicAction;
       {Creates a Hint action and sets OnExecute handler if provided.
@@ -125,8 +118,8 @@ uses
   // Delphi
   StdActns,
   // Project
-  UCategoryAction, UCompLogAction, UEditSnippetAction, ULinkAction,
-  USnippetAction, UViewItemAction;
+  UCategoryAction, UEditSnippetAction, ULinkAction, USnippetAction,
+  UViewItemAction;
 
 
 { TActionFactory }
@@ -154,17 +147,6 @@ class function TActionFactory.CreateCategoryAction(const AOwner: TComponent;
   }
 begin
   Result := CreateAction(TCategoryAction, AOwner, OnExecHandler);
-end;
-
-class function TActionFactory.CreateCompLogAction(const AOwner: TComponent;
-  const OnExecHandler: TNotifyEvent): TBasicAction;
-  {Creates a Compiler Log action and sets OnExecute handler if provided.
-    @param AOwner [in] Owner of action.
-    @param OnExecHandler [in] Handler for action's OnExecute event.
-    @return Reference to newly created action.
-  }
-begin
-  Result := CreateAction(TCompLogAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateEditSnippetAction(const AOwner: TComponent;

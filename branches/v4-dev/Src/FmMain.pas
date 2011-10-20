@@ -347,13 +347,6 @@ type
         @param Sender [in] Action triggering this event. Must be a
           TEditSnippetAction.
       }
-    procedure ActViewCompLogExecute(Sender: TObject);
-      {Displays compiler warning or error log for last compile by a specified
-      compiler.
-        @param Sender [in] Action triggering this event. Must be a
-          TCompLogAction.
-        @except Raised if last compiler result was not an error or a warning.
-      }
     procedure ActBrowserHintExecute(Sender: TObject);
       {Displays hint from browser hint action in status bar.
         @param Sender [in] Not used.
@@ -409,11 +402,10 @@ uses
   // Project
   DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
   FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo, UCodeShareMgr,
-  UCommandBars, UCompLogAction, UConsts, UCopyInfoMgr, UCopySourceMgr,
-  UDatabaseLoader, UDatabaseLoaderUI, UEditSnippetAction, UExceptions, UHelpMgr,
-  UHistoryMenus, UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery,
-  USaveSnippetMgr, USaveUnitMgr, UUserDBMgr, UView, UViewItemAction,
-  UWBExternal, Web.UInfo;
+  UCommandBars, UConsts, UCopyInfoMgr, UCopySourceMgr, UDatabaseLoader,
+  UDatabaseLoaderUI, UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus,
+  UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr,
+  USaveUnitMgr, UUserDBMgr, UView, UViewItemAction, UWBExternal, Web.UInfo;
 
 
 {$R *.dfm}
@@ -1182,17 +1174,6 @@ begin
     and fCompileMgr.HaveErrors;
 end;
 
-procedure TMainForm.ActViewCompLogExecute(Sender: TObject);
-  {Displays compiler warning or error log for last compile by a specified
-  compiler.
-    @param Sender [in] Action triggering this event. Must be a TCompLogAction.
-    @except Raised if last compiler result was not an error or a warning.
-  }
-begin
-  // Display log in compile error dialog box
-  fCompileMgr.ShowError((Sender as TCompLogAction).CompilerID);
-end;
-
 procedure TMainForm.actViewDependenciesExecute(Sender: TObject);
   {Displays dependency tree for selected snippet.
     @param Sender [in] Not used.
@@ -1432,9 +1413,6 @@ begin
       SetDisplaySnippetAction(TActionFactory.CreateSnippetAction(Self));
       SetDisplayCategoryAction(TActionFactory.CreateCategoryAction(Self));
       SetCompileSnippetAction(actTestCompile);
-      SetViewCompilerLogAction(
-        TActionFactory.CreateCompLogAction(Self, ActViewCompLogExecute)
-      );
       SetShowHintAction(
         TActionFactory.CreateHintAction(Self, ActBrowserHintExecute)
       );

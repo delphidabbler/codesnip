@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -48,17 +48,17 @@ library ExternalObj
   importlib("stdole2.tlb");
 
   /*
-   * V6 interface of extension to browser DOM's "external" object. Used for
+   * V7 interface of extension to browser DOM's "external" object. Used for
    * browser controls in CodeSnip's main display.
    */
   [
     uuid(61AB2A0B-0262-49D5-8E6D-43161D5A3C9D),
-    version(6.0),
-    helpstring("DOM external object extender v6"),
+    version(7.0),
+    helpstring("DOM external object extender v7"),
     dual,
     oleautomation
   ]
-  interface IWBExternal6: IDispatch
+  interface IWBExternal7: IDispatch
   {
     /*
      * Update database from internet.
@@ -86,17 +86,6 @@ library ExternalObj
     id(0x00000067)
     ]
     HRESULT _stdcall CompileSnippet( void );
-
-    /*
-     * Displays a compiler log.
-     *   @param Ver [in] Version of Delphi for which we need to display log. Ver
-     *     is the ordinal value of the required compiler version enumerated
-     *     type.
-     */
-    [
-    id(0x00000068)
-    ]
-    HRESULT _stdcall ViewCompilerLog([in] int Ver );
 
     /*
      * Displays a hint.

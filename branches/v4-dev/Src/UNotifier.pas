@@ -67,8 +67,6 @@ type
       {Action that causes a named snippet to be displayed}
     fCompileSnippetAction: TBasicAction;
       {Action that causes current snippet to be compiled}
-    fViewCompilerLogAction: TBasicAction;
-      {Action that causes a compiler log to be displayed}
     fShowHintAction: TBasicAction;
       {Action that causes a hint to be displayed}
     fConfigCompilersAction: TBasicAction;
@@ -104,12 +102,6 @@ type
       }
     procedure CompileSnippet;
       {Compiles the current snippet.
-      }
-    procedure ViewCompilerLog(CompID: SYSINT);
-      {Displays a compiler log.
-        @param CompID [in] Version of Delphi for which we need to display log.
-          CompID is the ordinal value of the required compiler version
-          enumerated type.
       }
     procedure ShowHint(const Hint: WideString);
       {Displays a hint.
@@ -152,10 +144,6 @@ type
     procedure SetCompileSnippetAction(const Action: TBasicAction);
       {Sets action triggered when user wants to test-compile the current
       snippet.
-        @param Action [in] Required action.
-      }
-    procedure SetViewCompilerLogAction(const Action: TBasicAction);
-      {Sets action triggered when user wants to view a compiler log.
         @param Action [in] Required action.
       }
     procedure SetShowHintAction(const Action: TBasicAction);
@@ -213,8 +201,8 @@ uses
   // Delphi
   SysUtils, StdActns,
   // Project
-  Compilers.UGlobals, UCategoryAction, UCompLogAction, UEditSnippetAction,
-  USnippetAction, UViewItemAction;
+  Compilers.UGlobals, UCategoryAction, UEditSnippetAction, USnippetAction,
+  UViewItemAction;
 
 
 { TNotifier }
@@ -432,17 +420,6 @@ begin
   fUpdateDbaseAction := Action;
 end;
 
-procedure TNotifier.SetViewCompilerLogAction(
-  const Action: TBasicAction);
-  {Sets action triggered when user wants to view a compiler log.
-    @param Action [in] Required action.
-  }
-begin
-  Assert(Action is TCompLogAction,
-    ClassName + '.SetViewCompilerLogAction: Action is not TCompLogAction');
-  fViewCompilerLogAction := Action;
-end;
-
 procedure TNotifier.ShowHint(const Hint: WideString);
   {Displays a hint.
     @param Hint [in] Hint to be displayed.
@@ -480,21 +457,6 @@ procedure TNotifier.UpdateDbase;
 begin
   if Assigned(fUpdateDbaseAction) then
     fUpdateDbaseAction.Execute;
-end;
-
-procedure TNotifier.ViewCompilerLog(CompID: SYSINT);
-  {Displays a compiler log.
-    @param CompID [in] Version of Delphi for which we need to display log.
-      CompID is the ordinal value of the required compiler version enumerated
-      type.
-  }
-begin
-  if Assigned(fViewCompilerLogAction) then
-  begin
-    (fViewCompilerLogAction as TCompLogAction).CompilerID :=
-      TCompilerID(CompID);
-    fViewCompilerLogAction.Execute;
-  end;
 end;
 
 end.

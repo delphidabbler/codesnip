@@ -202,7 +202,6 @@ inherited MainForm: TMainForm
     BevelOuter = bvNone
     BorderWidth = 2
     TabOrder = 2
-    ExplicitHeight = 313
     object splitVert: TSplitter
       Left = 187
       Top = 2
@@ -220,7 +219,6 @@ inherited MainForm: TMainForm
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
-      ExplicitHeight = 309
       inline frmOverview: TOverviewFrame
         Left = 1
         Top = 1
@@ -232,7 +230,7 @@ inherited MainForm: TMainForm
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 183
-        ExplicitHeight = 307
+        ExplicitHeight = 327
         inherited pnlTitle: TPanel
           Width = 183
           ExplicitWidth = 183
@@ -249,14 +247,14 @@ inherited MainForm: TMainForm
           Width = 183
           Height = 300
           ExplicitWidth = 183
-          ExplicitHeight = 280
+          ExplicitHeight = 300
           inherited tvSnippets: TTreeView
             Top = 42
             Width = 175
             Height = 254
             ExplicitTop = 42
             ExplicitWidth = 175
-            ExplicitHeight = 234
+            ExplicitHeight = 254
           end
         end
       end
@@ -269,7 +267,6 @@ inherited MainForm: TMainForm
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
-      ExplicitHeight = 309
       inline frmDetail: TDetailFrame
         Left = 1
         Top = 1
@@ -281,7 +278,7 @@ inherited MainForm: TMainForm
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 408
-        ExplicitHeight = 307
+        ExplicitHeight = 327
         inherited pnlTitle: TPanel
           Width = 408
           ExplicitWidth = 408
@@ -294,7 +291,7 @@ inherited MainForm: TMainForm
           Width = 408
           Height = 300
           ExplicitWidth = 408
-          ExplicitHeight = 280
+          ExplicitHeight = 300
           inherited tsInfo: TTabSheet
             ExplicitWidth = 400
             ExplicitHeight = 252

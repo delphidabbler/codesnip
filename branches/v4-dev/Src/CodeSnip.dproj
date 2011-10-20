@@ -360,7 +360,6 @@
 			<DCCReference Include="UComparers.pas"/>
 			<DCCReference Include="UCompileMgr.pas"/>
 			<DCCReference Include="UCompileResultsLBMgr.pas"/>
-			<DCCReference Include="UCompLogAction.pas"/>
 			<DCCReference Include="UCompResHTML.pas"/>
 			<DCCReference Include="UConsoleApp.pas"/>
 			<DCCReference Include="UConsts.pas"/>

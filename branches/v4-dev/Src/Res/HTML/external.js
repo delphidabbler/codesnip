@@ -36,16 +36,6 @@
 
 
 /*
- * Calls external object to get host application to display a compiler log.
- *  @param integer compId [in] Id of compiler to be displayed.
- *  @return False.
- */
-function viewCompilerLog(compId) {
-  external.ViewCompilerLog(compId);
-  return false;
-}
-
-/*
  * Calls external object to get host application to clear any current hint from
  * the status bar.
  */

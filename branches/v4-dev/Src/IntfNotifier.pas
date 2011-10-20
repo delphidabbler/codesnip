@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -71,11 +71,6 @@ type
       }
     procedure CompileSnippet;
       {Compiles the current snippet.
-      }
-    procedure ViewCompilerLog(Ver: SYSINT);
-      {Displays a compiler log.
-        @param Ver [in] Version of Delphi for which we need to display log. Ver
-          is the ordinal value of the required compiler version enumerated type.
       }
     procedure ShowHint(const Hint: WideString);
       {Displays a hint.
@@ -127,10 +122,6 @@ type
     procedure SetCompileSnippetAction(const Action: TBasicAction);
       {Sets action triggered when user wants to test-compile the current
       snippet.
-        @param Action [in] Required action.
-      }
-    procedure SetViewCompilerLogAction(const Action: TBasicAction);
-      {Sets action triggered when user wants to view a compiler log.
         @param Action [in] Required action.
       }
     procedure SetShowHintAction(const Action: TBasicAction);

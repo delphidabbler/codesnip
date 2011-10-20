@@ -202,7 +202,6 @@ uses
   UComparers in 'UComparers.pas',
   UCompileMgr in 'UCompileMgr.pas',
   UCompileResultsLBMgr in 'UCompileResultsLBMgr.pas',
-  UCompLogAction in 'UCompLogAction.pas',
   UCompResHTML in 'UCompResHTML.pas',
   UConsoleApp in 'UConsoleApp.pas',
   UConsts in 'UConsts.pas',

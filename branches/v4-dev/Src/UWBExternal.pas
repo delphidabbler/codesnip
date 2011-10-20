@@ -60,7 +60,7 @@ type
     events to application.
   }
   TWBExternal = class(TAutoIntfObject,
-    IWBExternal6, // browser external object's methods
+    IWBExternal7, // browser external object's methods
     ISetNotifier  // sets object used to notify app of events
     )
   strict private
@@ -69,7 +69,7 @@ type
       {Gets application to handle current exception.
       }
   protected // do not make strict
-    { IWBExternal5: defined in type library }
+    { IWBExternal7: defined in type library }
     procedure UpdateDbase; safecall;
       {Updates database from internet.
       }
@@ -81,11 +81,6 @@ type
       }
     procedure CompileSnippet; safecall;
       {Compiles the current snippet via notifier.
-      }
-    procedure ViewCompilerLog(Ver: SYSINT); safecall;
-      {Displays a compiler log.
-        @param Ver [in] Version of Delphi for which we need to display log. Ver
-          is the ordinal value of the required compiler version enumerated type.
       }
     procedure ShowHint(const Hint: WideString); safecall;
       {Displays a hint.
@@ -168,7 +163,7 @@ begin
   ExeName := TAppInfo.AppExeFilePath;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
-  inherited Create(TypeLib, IWBExternal6);
+  inherited Create(TypeLib, IWBExternal7);
 end;
 
 procedure TWBExternal.DisplayCategory(const CatID: WideString);
@@ -272,20 +267,6 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.UpdateDbase;
-  except
-    HandleException;
-  end;
-end;
-
-procedure TWBExternal.ViewCompilerLog(Ver: SYSINT);
-  {Displays a compiler log.
-    @param Ver [in] Version of Delphi for which we need to display log. Ver is
-      the ordinal value of the required compiler version enumerated type.
-  }
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.ViewCompilerLog(Ver);
   except
     HandleException;
   end;
