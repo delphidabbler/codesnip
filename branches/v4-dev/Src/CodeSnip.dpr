@@ -129,6 +129,7 @@ uses
   FmSelectionSearchDlg in 'FmSelectionSearchDlg.pas' {SelectionSearchDlg},
   FmSnippetsEditorDlg in 'FmSnippetsEditorDlg.pas' {SnippetsEditorDlg},
   FmSplash in 'FmSplash.pas' {SplashForm},
+  FmTestCompileDlg in 'FmTestCompileDlg.pas' {TestCompileDlg},
   FmTrappedBugReportDlg in 'FmTrappedBugReportDlg.pas' {TrappedBugReportDlg},
   FmUpdateDlg in 'FmUpdateDlg.pas' {UpdateDlg},
   FmUserBugReportDlg in 'FmUserBugReportDlg.pas' {UserBugReportDlg},

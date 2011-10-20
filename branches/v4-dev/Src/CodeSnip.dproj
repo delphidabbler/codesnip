@@ -186,6 +186,9 @@
 			<DCCReference Include="FmSplash.pas">
 				<Form>SplashForm</Form>
 			</DCCReference>
+			<DCCReference Include="FmTestCompileDlg.pas">
+				<Form>TestCompileDlg</Form>
+			</DCCReference>
 			<DCCReference Include="FmTrappedBugReportDlg.pas">
 				<Form>TrappedBugReportDlg</Form>
 			</DCCReference>
