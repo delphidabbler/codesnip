@@ -1101,19 +1101,10 @@ begin
   Assert(
     fCompileMgr.CanCompile(fMainDisplayMgr.CurrentView),
     ClassName + '.actTestCompileExecute: Can''t compile current view');
-  // Disable form to prevent other snippetss being selected while compiling
-  Enabled := False;
-  try
-    // Do test compile, show a window if it takes a long time, and show results
-    fCompileMgr.Compile(
-      frmDetail,
-      (fMainDisplayMgr.CurrentView as ISnippetView).Snippet,
-      fMainDisplayMgr.DisplayCompileResults
-    );
-  finally
-    // Re-enable form before displaying results: tab not changed if disabled
-    Enabled := True;
-  end;
+  fDialogMgr.ShowTestCompileDlg(
+    fCompileMgr,
+    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet
+  );
 end;
 
 procedure TMainForm.actTestCompileUpdate(Sender: TObject);
