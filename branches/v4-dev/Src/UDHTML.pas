@@ -45,36 +45,9 @@ uses
   Compilers.UGlobals, IntfHTMLDocHostInfo, UBaseObjects;
 
 
-type
-
-  {
-  ICompCheckSnippetDHTML:
-    Interface to DHTML object that manipulates snippet display in compiler check
-    pane.
-  }
-  ICompCheckSnippetDHTML = interface(IInterface)
-    ['{112DD126-0A16-4F7F-992C-35F94963B52C}']
-    procedure DisplayCompileResults(const ACompilers: ICompilers);
-      {Updates HTML to display results of last compile.
-        @param ACompilers [in] Compilers object containing required results.
-      }
-  end;
-
-  {
-  TDHTMLFactory:
-    Factory class for IDHTML objects.
-  }
-  TDHTMLFactory = class(TNoConstructObject)
-  public
-    class function CreateCompCheckSnippetDHTML(
-      const HostInfo: IHTMLDocHostInfo): ICompCheckSnippetDHTML;
-     {Creates instance of ICompCheckSnippetDHTML for use in compiler check
-      frames.
-        @param HostInfo [in] Provides information about object hosting the HTML
-          that is to be manipulated.
-        @return Required ICompCheckSnippetDHTML object.
-      }
-  end;
+{ TODO: Keep this unit until development is complete and then remove, along with
+        definition of IHTMLDocHostInfo if not needed. I've left the base class
+        here in case any DHTML is required. }
 
 
 implementation
@@ -116,37 +89,6 @@ type
       }
   end;
 
-  {
-  TCompCheckSnippetDHTML:
-    Object that manipulates HTML of compiler results for a snippet displayed in
-    compiler check pane.
-  }
-  TCompCheckSnippetDHTML = class(TDHTML,
-    ICompCheckSnippetDHTML
-  )
-  protected
-    { ICompCheckSnippetDHTML methods }
-    procedure DisplayCompileResults(const ACompilers: ICompilers);
-      {Updates HTML to display results of last compile.
-        @param ACompilers [in] Compilers object containing required results.
-      }
-  end;
-
-
-{ TDHTMLFactory }
-
-class function TDHTMLFactory.CreateCompCheckSnippetDHTML(
-  const HostInfo: IHTMLDocHostInfo): ICompCheckSnippetDHTML;
- {Creates instance of ICompCheckSnippetDHTML for use in compiler check frames.
-    @param HostInfo [in] Provides information about object hosting the HTML that
-      is to be manipulated.
-    @return Required ICompCheckSnippetDHTML object.
-  }
-begin
-  Result := TCompCheckSnippetDHTML.Create(HostInfo)
-    as ICompCheckSnippetDHTML;
-end;
-
 { TDHTML }
 
 constructor TDHTML.Create(const HostInfo: IHTMLDocHostInfo);
@@ -184,32 +126,6 @@ begin
     THTMLDocHelper.GetElementById(HostInfo.HTMLDocument, Id),
     HTML
   );
-end;
-
-{ TCompCheckSnippetDHTML }
-
-procedure TCompCheckSnippetDHTML.DisplayCompileResults(
-  const ACompilers: ICompilers);
-  {Updates HTML to display results of last compile.
-    @param ACompilers [in] Compilers object containing required results.
-  }
-var
-  Compiler: ICompiler;  // references each compiler
-begin
-  for Compiler in ACompilers do
-  begin
-    // update compiler image
-    SetImage(
-      TCompCheckResHTML.TestImgId(Compiler),
-      TCompCheckResHTML.ImageResURL(Compiler.GetLastCompileResult),
-      TCompCheckResHTML.CompileResultDesc(Compiler.GetLastCompileResult)
-    );
-    // display any error / warning message links
-    SetInnerHTML(
-      TCompCheckResHTML.ErrCellId(Compiler),
-      TCompCheckResHTML.LogLink(Compiler)
-    );
-  end;
 end;
 
 end.
