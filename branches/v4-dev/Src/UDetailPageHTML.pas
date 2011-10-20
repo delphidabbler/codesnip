@@ -179,24 +179,6 @@ type
   end;
 
   {
-  TSnippetCompCheckPageHTML:
-    Class that generates information about a snippet displayed in compiler check
-    pane. Uses a template stored in resources.
-  }
-  TSnippetCompCheckPageHTML = class sealed(TSnippetPageHTML)
-  strict protected
-    function GetTemplateResName: string; override;
-      {Gets the name of the HTML template resource.
-        @return Name of template resource.
-      }
-    procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
-      {Resolves the placeholders in the HTML template.
-        @param Tplt [in] Reference to HTML template object that encapsulates the
-          template.
-      }
-  end;
-
-  {
   TSnippetPageHTML:
     Abstract base class for classes that generate HTML for pages that display a
     list of snippets.
@@ -293,19 +275,6 @@ type
       }
     procedure BuildSnippetList; override;
       {Stores all snippets to be displayed in Snippets property.
-      }
-  end;
-
-  {
-  TNoCompCheckPageHTML:
-    Class that generates HTML that indicates that compiler checks are not
-    available for selected view item. Displays body HTML stored in resources.
-  }
-  TNoCompCheckPageHTML = class sealed(TDetailPageHTML)
-  public
-    function Generate: string; override;
-      {Generates HTML body content for "No compiler check available" pages.
-        @return Body HTML.
       }
   end;
 
@@ -529,66 +498,6 @@ begin
   end;
 end;
 
-{ TSnippetCompCheckPageHTML }
-
-function TSnippetCompCheckPageHTML.GetTemplateResName: string;
-  {Gets the name of the HTML template resource.
-    @return Name of template resource.
-  }
-begin
-  if CompilersInfo.AvailableCount = 0 then
-    Result := 'comp-nocompilers-tplt.html'
-  else if GetSnippet.CanCompile then
-    Result := 'comp-snippet-tplt.html'
-  else
-    Result := 'comp-freeform-tplt.html';
-end;
-
-procedure TSnippetCompCheckPageHTML.ResolvePlaceholders(
-  const Tplt: THTMLTemplate);
-  {Resolves the placeholders in the HTML template.
-    @param Tplt [in] Reference to HTML template object that encapsulates the
-      template.
-  }
-
-  // ---------------------------------------------------------------------------
-  function CompilerTableInner: string;
-    {Generates inner HTML (rows) of compiler table.
-      @return Required HTML.
-    }
-  var
-    Compiler: ICompiler;  // reference to each compiler
-  begin
-    Result := '';
-    for Compiler in CompilersInfo do
-    begin
-      // Add table row for each supported compiler
-      Result := Result
-        + MakeTag('tr', ttOpen)
-        + EOL
-        + TCompCheckResHTML.NameCell(Compiler)
-        + EOL
-        + TCompCheckResHTML.ResultCell(GetSnippet.Compatibility[Compiler.GetID])
-        + EOL
-        + TCompCheckResHTML.TestCellPlaceholder(Compiler)
-        + EOL
-        + TCompCheckResHTML.ErrCellPlaceholder(Compiler)
-        + EOL
-        + MakeTag('tr', ttClose)
-        + EOL;
-    end;
-  end;
-  // ---------------------------------------------------------------------------
-
-begin
-  inherited;
-  if GetSnippet.CanCompile and (CompilersInfo.AvailableCount > 0) then
-    // This placeholder occurs only in the template used for compilable snippets
-    Tplt.ResolvePlaceholderHTML(
-      'CompilerInfo', CompilerTableInner
-    );
-end;
-
 { TSnippetListPageHTML }
 
 constructor TSnippetListPageHTML.Create(View: IView);
@@ -784,18 +693,6 @@ begin
     Tplt.ResolvePlaceholderText(
       'Note', Format(sNote, [StrToLower(View.Description)])
     );
-end;
-
-{ TNoCompCheckPageHTML }
-
-function TNoCompCheckPageHTML.Generate: string;
-  {Generates HTML body content for "No compiler check available" pages.
-    @return Body HTML.
-  }
-begin
-  Result := LoadResourceAsString(
-    HInstance, 'nocompcheck-body.html', RT_HTML, etWindows1252
-  );
 end;
 
 end.
