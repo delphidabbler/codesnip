@@ -113,7 +113,6 @@ type
     actViewAlphabetical: TAction;
     actViewCategorised: TAction;
     actViewCompErrs: TAction;
-    actViewCompCheck: TAction;
     actViewDependencies: TAction;
     actViewInfo: TAction;
     actViewSnippetKinds: TAction;
@@ -199,7 +198,6 @@ type
     miUpdateDbase: TMenuItem;
     miView: TMenuItem;
     miViewCategorised: TMenuItem;
-    miViewCompCheck: TMenuItem;
     miViewCompErrs: TMenuItem;
     miViewDependencies: TMenuItem;
     miViewInfo: TMenuItem;
@@ -586,6 +584,7 @@ procedure TMainForm.ActDetailTabExecute(Sender: TObject);
     @param Sender [in] Action triggering this event
   }
 begin
+  // TODO: decide what to do with this - it is always Tag = 0
   // Action's Tag property specifies index of tab being selected
   fMainDisplayMgr.SelectedDetailTab := (Sender as TAction).Tag;
 end;
@@ -1423,7 +1422,6 @@ begin
     actViewAlphabetical.Tag := cAlphabeticTab;
     actViewSnippetKinds.Tag := cKindTab;
     actViewInfo.Tag := cInfoTab;
-    actViewCompCheck.Tag := cCompCheckTab;
 
     // Create notifier object and assign actions triggered by its methods
     // note that actions created on fly are automatically freed
@@ -1447,7 +1445,7 @@ begin
       SetOverviewStyleChangeActions(
         [actViewCategorised, actViewAlphabetical, actViewSnippetKinds]
       );
-      SetDetailPaneChangeActions([actViewInfo, actViewCompCheck]);
+      SetDetailPaneChangeActions([actViewInfo]);
       SetShowTestUnitAction(actViewTestUnit);
       SetEditSnippetAction(
         TActionFactory.CreateEditSnippetAction(

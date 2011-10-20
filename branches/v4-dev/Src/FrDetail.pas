@@ -45,7 +45,7 @@ uses
   Forms, ComCtrls, ExtCtrls, Controls, StdCtrls, Classes, ActiveX, ActnList,
   ImgList,
   // Project
-  Compilers.UGlobals, FrTitled, FrCompCheck, FrBrowserBase, FrDetailView,
+  Compilers.UGlobals, FrTitled, FrBrowserBase, FrDetailView,
   FrInfo, IntfFrameMgrs, IntfNotifier, UCommandBars, UView;
 
 
@@ -60,7 +60,7 @@ type
   TDetailFrame = class(TTitledFrame,
     ITabbedDisplayMgr,                    // uses tabs to select different views
     IViewItemDisplayMgr,                                 // displays a view item
-    ICompCheckDisplayMgr,              // displays compile results and test unit
+//    ICompCheckDisplayMgr,              // displays compile results and test unit
     IPaneInfo,                                // provides information about pane
     IWBCustomiser,                             // customises web browser control
     IClipboardMgr,                                          // clipboard manager
@@ -70,9 +70,7 @@ type
   )
     pcDetail: TPageControl;
     tsInfo: TTabSheet;
-    tsCompiler: TTabSheet;
     frmInfo: TInfoFrame;
-    frmCompCheck: TCompCheckFrame;
     procedure pcDetailChange(Sender: TObject);
   strict private
     fNotifier: INotifier;
@@ -113,11 +111,11 @@ type
         @param Force [in] Forces view item to be re-displayed even if not
           changed.
       }
-    { ICompCheckDisplayMgr }
-    procedure DisplayCompileResults(const ACompilers: ICompilers);
-      {Displays results of test compilation in compiler check pane.
-        @param ACompilers [in] Compilers object containing required results.
-      }
+//    { ICompCheckDisplayMgr }
+//    procedure DisplayCompileResults(const ACompilers: ICompilers);
+//      {Displays results of test compilation in compiler check pane.
+//        @param ACompilers [in] Compilers object containing required results.
+//      }
     { IPaneInfo }
     function IsInteractive: Boolean;
       {Checks if the pane is currently interactive with user.
@@ -272,18 +270,18 @@ begin
       (TabToPane(Idx) as IViewItemDisplayMgr).Display(View, Force);
 end;
 
-procedure TDetailFrame.DisplayCompileResults(const ACompilers: ICompilers);
-  {Displays results of test compilation in compiler check pane.
-    @param ACompilers [in] Compilers object containing required results.
-  }
-begin
-  if SelectedTab <> cCompCheckTab then
-    fNotifier.ChangeDetailPane(cCompCheckTab);
-  (TabToPane(cCompCheckTab) as ICompCheckDisplayMgr).DisplayCompileResults(
-    ACompilers
-  );
-end;
-
+//procedure TDetailFrame.DisplayCompileResults(const ACompilers: ICompilers);
+//  {Displays results of test compilation in compiler check pane.
+//    @param ACompilers [in] Compilers object containing required results.
+//  }
+//begin
+//  if SelectedTab <> cCompCheckTab then
+//    fNotifier.ChangeDetailPane(cCompCheckTab);
+//  (TabToPane(cCompCheckTab) as ICompCheckDisplayMgr).DisplayCompileResults(
+//    ACompilers
+//  );
+//end;
+//
 function TDetailFrame.IsInteractive: Boolean;
   {Checks if the pane is currently interactive with user.
     @return True if pane is interactive, False if not.
@@ -423,11 +421,13 @@ function TDetailFrame.TabToPane(const TabIdx: Integer): IInterface;
     @except EBug raised if tab index is out of range.
   }
 begin
-  case TabIdx of
-    cInfoTab: Result := frmInfo;
-    cCompCheckTab: Result := frmCompCheck;
-    else raise EBug.Create(ClassName + '.TabToPane: tab index out of range');
-  end;
+  // TODO: Temporary work-around - change this
+  Result := frmInfo;
+//  case TabIdx of
+//    cInfoTab: Result := frmInfo;
+//    cCompCheckTab: Result := frmCompCheck;
+//    else raise EBug.Create(ClassName + '.TabToPane: tab index out of range');
+//  end;
 end;
 
 end.

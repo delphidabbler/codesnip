@@ -124,11 +124,11 @@ type
       {Selects previous tab in currently active tab set. Does nothing if there
       is no active tab set.
       }
-    procedure DisplayCompileResults(const ACompilers: ICompilers);
-      {Displays results of a test compilation in Compiler Check tab of Details
-      pane.
-        @param ACompilers [in] Compilers object containing required results.
-      }
+//    procedure DisplayCompileResults(const ACompilers: ICompilers);
+//      {Displays results of a test compilation in Compiler Check tab of Details
+//      pane.
+//        @param ACompilers [in] Compilers object containing required results.
+//      }
     function CanCopy: Boolean;
       {Checks whether copying to clipboard is currently supported.
         @return True if clipboard copying supported, false if not.
@@ -250,14 +250,14 @@ begin
   inherited;
 end;
 
-procedure TMainDisplayMgr.DisplayCompileResults(const ACompilers: ICompilers);
-  {Displays results of a test compilation.
-    @param ACompilers [in] Compilers object containing required results.
-  }
-begin
- (fDetailsMgr as ICompCheckDisplayMgr).DisplayCompileResults(ACompilers);
-end;
-
+//procedure TMainDisplayMgr.DisplayCompileResults(const ACompilers: ICompilers);
+//  {Displays results of a test compilation.
+//    @param ACompilers [in] Compilers object containing required results.
+//  }
+//begin
+// (fDetailsMgr as ICompCheckDisplayMgr).DisplayCompileResults(ACompilers);
+//end;
+//
 procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView);
   {Displays a view item. Updates current view item, selects item in overview if
   possible and displays full details in detail pane.

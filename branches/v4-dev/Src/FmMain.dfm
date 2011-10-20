@@ -2,19 +2,19 @@ inherited MainForm: TMainForm
   Left = 204
   Top = 150
   Caption = 'MainForm'
-  ClientHeight = 364
+  ClientHeight = 384
   ClientWidth = 605
   Constraints.MinHeight = 360
   Constraints.MinWidth = 480
   Menu = mnuMain
   OnResize = FormResize
   ExplicitWidth = 621
-  ExplicitHeight = 420
+  ExplicitHeight = 440
   PixelsPerInch = 96
   TextHeight = 13
   object sbStatusBar: TStatusBar
     Left = 0
-    Top = 344
+    Top = 364
     Width = 605
     Height = 20
     Panels = <
@@ -27,6 +27,7 @@ inherited MainForm: TMainForm
       item
         Width = 50
       end>
+    ExplicitTop = 344
   end
   object tbarMain: TToolBar
     Left = 0
@@ -196,16 +197,17 @@ inherited MainForm: TMainForm
     Left = 0
     Top = 31
     Width = 605
-    Height = 313
+    Height = 333
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
     TabOrder = 2
+    ExplicitHeight = 313
     object splitVert: TSplitter
       Left = 187
       Top = 2
       Width = 6
-      Height = 309
+      Height = 329
       Beveled = True
       OnCanResize = splitVertCanResize
       ExplicitHeight = 292
@@ -214,15 +216,16 @@ inherited MainForm: TMainForm
       Left = 2
       Top = 2
       Width = 185
-      Height = 309
+      Height = 329
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
+      ExplicitHeight = 309
       inline frmOverview: TOverviewFrame
         Left = 1
         Top = 1
         Width = 183
-        Height = 307
+        Height = 327
         Align = alClient
         TabOrder = 0
         TabStop = True
@@ -244,13 +247,13 @@ inherited MainForm: TMainForm
         end
         inherited tcDisplayStyle: TTabControl
           Width = 183
-          Height = 280
+          Height = 300
           ExplicitWidth = 183
           ExplicitHeight = 280
           inherited tvSnippets: TTreeView
             Top = 42
             Width = 175
-            Height = 234
+            Height = 254
             ExplicitTop = 42
             ExplicitWidth = 175
             ExplicitHeight = 234
@@ -262,15 +265,16 @@ inherited MainForm: TMainForm
       Left = 193
       Top = 2
       Width = 410
-      Height = 309
+      Height = 329
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
+      ExplicitHeight = 309
       inline frmDetail: TDetailFrame
         Left = 1
         Top = 1
         Width = 408
-        Height = 307
+        Height = 327
         Align = alClient
         TabOrder = 0
         TabStop = True
@@ -288,53 +292,31 @@ inherited MainForm: TMainForm
         end
         inherited pcDetail: TPageControl
           Width = 408
-          Height = 280
+          Height = 300
           ExplicitWidth = 408
           ExplicitHeight = 280
           inherited tsInfo: TTabSheet
-            ExplicitLeft = 4
-            ExplicitTop = 24
             ExplicitWidth = 400
             ExplicitHeight = 252
             inherited frmInfo: TInfoFrame
               Width = 400
-              Height = 252
+              Height = 272
               ExplicitWidth = 400
               ExplicitHeight = 252
               inherited pnlBrowser: TPanel
                 Width = 400
-                Height = 252
+                Height = 272
                 ExplicitWidth = 400
                 ExplicitHeight = 252
                 inherited wbBrowser: TWebBrowser
                   Width = 400
-                  Height = 252
+                  Height = 272
                   ExplicitLeft = 1
                   ExplicitTop = 1
                   ExplicitWidth = 400
                   ExplicitHeight = 544
                   ControlData = {
-                    4C000000572900000C1A00000000000000000000000000000000000000000000
-                    000000004C000000000000000000000001000000E0D057007335CF11AE690800
-                    2B2E126208000000000000004C0000000114020000000000C000000000000046
-                    8000000000000000000000000000000000000000000000000000000000000000
-                    00000000000000000100000000000000000000000000000000000000}
-                end
-              end
-            end
-          end
-          inherited tsCompiler: TTabSheet
-            ExplicitLeft = 4
-            ExplicitTop = 24
-            ExplicitWidth = 310
-            ExplicitHeight = 183
-            inherited frmCompCheck: TCompCheckFrame
-              inherited pnlBrowser: TPanel
-                inherited wbBrowser: TWebBrowser
-                  ExplicitWidth = 408
-                  ExplicitHeight = 237
-                  ControlData = {
-                    4C0000000A200000EA1200000000000000000000000000000000000000000000
+                    4C000000572900001D1C00000000000000000000000000000000000000000000
                     000000004C000000000000000000000001000000E0D057007335CF11AE690800
                     2B2E126208000000000000004C0000000114020000000000C000000000000046
                     8000000000000000000000000000000000000000000000000000000000000000
@@ -1861,15 +1843,6 @@ inherited MainForm: TMainForm
       OnExecute = ActDetailTabExecute
       OnUpdate = ActDetailTabUpdate
     end
-    object actViewCompCheck: TAction
-      Category = 'View'
-      AutoCheck = True
-      Caption = 'Compiler Check'
-      GroupIndex = 200
-      Hint = 'Compiler check|View the Compiler Check tab in the details pane'
-      OnExecute = ActDetailTabExecute
-      OnUpdate = ActDetailTabUpdate
-    end
     object actWebSite: TBrowseURL
       Category = 'Help'
       Caption = 'DelphiDabbler Home Page'
@@ -2264,13 +2237,6 @@ inherited MainForm: TMainForm
         AutoCheck = True
         GroupIndex = 200
         Hint = 'Detailed information|View detailed information tab'
-        RadioItem = True
-      end
-      object miViewCompCheck: TMenuItem
-        Action = actViewCompCheck
-        AutoCheck = True
-        GroupIndex = 200
-        Hint = 'Compiler Check|View compiler check tab'
         RadioItem = True
       end
       object miSpacer10: TMenuItem

@@ -54,8 +54,8 @@ type
     Enumeration that defines kind of page to be loaded.
   }
   TDetailPageKind = (
-    pkInfo,         // for use on detailed information page
-    pkComp          // for use on compiler check page
+    pkInfo          // for use on detailed information page
+//    pkComp          // for use on compiler check page
   );
 
   {
@@ -119,22 +119,22 @@ begin
   else if Supports(View, ISnippetView) then
     case PageKind of
       pkInfo: Result := TSnippetInfoPageHTML.Create(View);
-      pkComp: Result := TSnippetCompCheckPageHTML.Create(View);
+//      pkComp: Result := TSnippetCompCheckPageHTML.Create(View);
     end
   else if Supports(View, ICategoryView) then
     case PageKind of
       pkInfo: Result := TCategoryPageHTML.Create(View);
-      pkComp: Result := TNoCompCheckPageHTML.Create(View);
+//      pkComp: Result := TNoCompCheckPageHTML.Create(View);
     end
   else if Supports(View, ISnippetKindView) then
     case PageKind of
       pkInfo: Result := TSnipKindPageHTML.Create(View);
-      pkComp: Result := TNoCompCheckPageHTML.Create(View);
+//      pkComp: Result := TNoCompCheckPageHTML.Create(View);
     end
   else if Supports(View, IInitialLetterView) then
     case PageKind of
       pkInfo: Result := TAlphaListPageHTML.Create(View);
-      pkComp: Result := TNoCompCheckPageHTML.Create(View);
+//      pkComp: Result := TNoCompCheckPageHTML.Create(View);
     end;
   Assert(Assigned(Result), ClassName + '.CreateGenerator: No HTML generator');
 end;

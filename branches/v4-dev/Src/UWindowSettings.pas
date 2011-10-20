@@ -182,7 +182,8 @@ begin
     State := Ord(wsNormal);   // we don't allow minimized: use normal
   fSplitterPos := StrToIntDef(Section.ItemValues['SplitterPos'], fSplitterPos);
   fOverviewTab := StrToIntDef(Section.ItemValues['OverviewTab'], fOverviewTab);
-  fDetailTab := StrToIntDef(Section.ItemValues['DetailTab'], fDetailTab);
+  // TODO: revert once more than one tab supported
+  fDetailTab := 0;//StrToIntDef(Section.ItemValues['DetailTab'], fDetailTab);
 end;
 
 procedure TWindowSettings.SaveWdwState(const Left, Top, Width, Height,

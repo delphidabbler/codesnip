@@ -223,10 +223,6 @@
 				<Form>CodeGenPrefsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="FrCompCheck.pas">
-				<Form>CompCheckFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
 			<DCCReference Include="FrDetail.pas">
 				<Form>DetailFrame</Form>
 				<DesignClass>TFrame</DesignClass>

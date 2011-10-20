@@ -56,7 +56,6 @@ const
 
   // Constants that index tabs in detail pane
   cInfoTab = 0;           // detail information tab
-  cCompCheckTab = 1;      // compiler check tab
 
   // Constants that identify command bars in overview pane
   // toolbar
@@ -205,20 +204,6 @@ type
           changed.
       }
   end;
-
-  {
-  ICompCheckDisplayMgr:
-    Interface implemented by panes that can display test compile related
-    information.
-  }
-  ICompCheckDisplayMgr = interface(IInterface)
-    ['{E4E9B05D-E53C-4448-946D-750BDA45328C}']
-    procedure DisplayCompileResults(const ACompilers: ICompilers);
-      {Displays results of test compilation in pane.
-        @param ACompilers [in] Compilers object containing required results.
-      }
-  end;
-
 
   //////////////////////////////////////////////////////////////////////////////
   // Other pane-related interfaces

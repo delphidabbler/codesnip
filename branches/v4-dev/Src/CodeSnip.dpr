@@ -140,7 +140,6 @@ uses
   FrCategoryDescEdit in 'FrCategoryDescEdit.pas' {CategoryDescEditFrame: TFrame},
   FrCategoryList in 'FrCategoryList.pas' {CategoryListFrame: TFrame},
   FrCodeGenPrefs in 'FrCodeGenPrefs.pas' {CodeGenPrefsFrame: TFrame},
-  FrCompCheck in 'FrCompCheck.pas' {CompCheckFrame: TFrame},
   FrDetail in 'FrDetail.pas' {DetailFrame: TFrame},
   FrDetailView in 'FrDetailView.pas' {DetailViewFrame: TFrame},
   FrEasterEgg in 'FrEasterEgg.pas' {EasterEggFrame: TFrame},
