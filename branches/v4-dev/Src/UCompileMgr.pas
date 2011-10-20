@@ -100,11 +100,6 @@ type
       {Shows dialog box containing all errors and warnings for last compiled
       snippet.
       }
-    procedure ShowError(const CompilerID: TCompilerID);
-      {Shows compile error or warning for last compiled snippet on a specified
-      compiler.
-        @param CompilerID [in] Id of compiler whose errors are to be displayed.
-      }
     property Compilers: ICompilers read fCompilers;
       {Compilers object to be used to perform compilation}
   end;
@@ -215,22 +210,6 @@ begin
       Exit;
     end;
   end;
-end;
-
-procedure TCompileMgr.ShowError(const CompilerID: TCompilerID);
-  {Shows compile error or warning for last compiled snippet on a specified
-  compiler.
-    @param CompilerID [in] Id of compiler whose errors are to be displayed.
-  }
-var
-  Compiler: ICompiler;  // reference to required compiler
-begin
-  Compiler := fCompilers[CompilerID];
-  Assert(Compiler.HasErrorsOrWarnings,
-    ClassName + '.ShowError: Compiler has no errors or warnings');
-  Assert(Assigned(fLastCompiledSnipper),
-    ClassName + '.ShowError: LastCompiledSnippet is nil');
-  TCompErrorDlg.Execute(Owner, fLastCompiledSnipper.ID, Compiler);
 end;
 
 procedure TCompileMgr.ShowErrors;
