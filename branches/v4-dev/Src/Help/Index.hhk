@@ -338,6 +338,10 @@
 		<param name="Local" value="HTML\dlg_prefs_hiliter.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="test compile results dialog">
+		<param name="Local" value="HTML\dlg_testcompile.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="test compiling">
 		<param name="Local" value="HTML\task_testcompile.htm">
 		</OBJECT>
