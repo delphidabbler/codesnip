@@ -1,7 +1,7 @@
 {
  * FmCompErrorDlg.pas
  *
- * Dialog box that displays compiler error or warning logs.
+ * Dialog box that displays compiler error and warning logs.
  *
  * $Rev$
  * $Date$
@@ -51,8 +51,8 @@ uses
 type
 
   ///  <summary>
-  ///  Implements a dialog box that displays error or warning logs from last
-  ///  compilation on one or more compilers for a given snippet.
+  ///  Implements a dialog box that displays error and warning logs from last
+  ///  test compilation.
   ///  </summary>
   ///  <remarks>
   ///  It is an error if there are no compiler warnings or errors.
@@ -111,9 +111,6 @@ type
         property Status: string read fStatus;
       end;
   strict private
-    ///  <summary>Flag indicating whether compilers tabset is to be displayed in
-    ///  dialog box or not.</summary>
-    fWantTabs: Boolean;
     ///  <summary>Snippet for which last compilation took place.</summary>
     fSnippet: TSnippetID;
     ///  <summary>List of compilers for which errors or warnings are to be
@@ -147,17 +144,6 @@ type
     ///  <remarks>Called from ancestor class.</remarks>
     procedure InitForm; override;
   public
-    ///  <summary>Shows a dialog box that displays error or warning log for a
-    ///  specified compiler that results from test compiling a snippet.
-    ///  </summary>
-    ///  <param name="AOwner">TComponent [in] Component that owns this form.
-    ///  </param>
-    ///  <param name="ASnippet">TSnippetID [in] ID of snippet that was compiled.
-    ///  </param>
-    ///  <param name="ACompiler">ICompiler [in] ID of compiler that created log.
-    ///  </param>
-    class procedure Execute(const AOwner: TComponent;
-      const ASnippet: TSnippetID; const ACompiler: ICompiler); overload;
     ///  <summary>Shows a dialog box that displays error and warning logs for
     ///  each compiler that reported errors or warnings when test compiling a
     ///  snippet. There is a tab for each compiler.</summary>
@@ -168,7 +154,7 @@ type
     ///  <param name="ACompilers">ICompilers [in] List of all supported
     ///  compilers.</param>
     class procedure Execute(const AOwner: TComponent;
-      const ASnippet: TSnippetID; const ACompilers: ICompilers); overload;
+      const ASnippet: TSnippetID; const ACompilers: ICompilers);
   end;
 
 
@@ -201,8 +187,6 @@ uses
 
 resourcestring
   // Strings for display in dialog
-  sSingularCaption    = 'Compiler Error or Warning';
-  sPluralCaption      = 'Compiler Errors or Warnings';
   sLogStatusWarning   = 'Warning';
   sLogStatusWarnings  = 'Warnings';
   sLogStatusError     = 'Error';
@@ -239,24 +223,6 @@ begin
       for Compiler in ACompilers do
         if Compiler.HasErrorsOrWarnings then
           fRequiredCompilers.Add(Compiler);
-      fWantTabs := True;
-      ShowModal;
-    finally
-      Free;
-    end;
-end;
-
-class procedure TCompErrorDlg.Execute(const AOwner: TComponent;
-  const ASnippet: TSnippetID; const ACompiler: ICompiler);
-begin
-  Assert(Assigned(ACompiler), ClassName + '.Execute: ACompiler is nil');
-  with InternalCreate(AOwner) do
-    try
-      // Record selected compiler and currently selected snippet
-      fSnippet := ASnippet;
-      fRequiredCompilers.Add(ACompiler);
-      fWantTabs := False;
-      // Display dialog
       ShowModal;
     finally
       Free;
@@ -291,47 +257,30 @@ end;
 
 function TCompErrorDlg.GetTabsetHeight: Integer;
 begin
-  if fWantTabs then
-  begin
-    Result := tsCompilers.Height;
-    if tsCompilers.AlignWithMargins then
-      Inc(Result, tsCompilers.Margins.Top + tsCompilers.Margins.Bottom);
-  end
-  else
-    Result := 0;
+  Result := tsCompilers.Height;
+  if tsCompilers.AlignWithMargins then
+    Inc(Result, tsCompilers.Margins.Top + tsCompilers.Margins.Bottom);
 end;
 
 procedure TCompErrorDlg.InitForm;
 var
   Compiler: ICompiler;  // references each required compiler
   Glyph: TBitmap;       // each compiler glyph
-const
-  // Array of Singular and Plural captions for form
-  cCaption: array[Boolean] of string = (sSingularCaption, sPluralCaption);
 begin
   inherited;
-  // Set caption
-  Caption := cCaption[fRequiredCompilers.Count > 1];
-  // Configure tabset
-  if fWantTabs then
+  tsCompilers.Tabs.Clear;
+  for Compiler in fRequiredCompilers do
   begin
-    tsCompilers.Tabs.Clear;
-    for Compiler in fRequiredCompilers do
-    begin
-      Glyph := Compiler.GetGlyph;
-      if Assigned(Glyph) then
-        fCompGlyphIndexes[Compiler.GetID] :=
-          ilCompilers.AddMasked(Glyph, Glyph.Canvas.Pixels[0, 0])
-      else
-        fCompGlyphIndexes[Compiler.GetID] := -1;
-      tsCompilers.Tabs.Add(' ' + Compiler.GetName + ' ');
-    end;
-    tsCompilers.TabIndex := 0;
-    LoadHTML(fRequiredCompilers[tsCompilers.TabIndex]);
-  end
-  else
-    // No tabs wanted: hide control
-    tsCompilers.Hide;
+    Glyph := Compiler.GetGlyph;
+    if Assigned(Glyph) then
+      fCompGlyphIndexes[Compiler.GetID] :=
+        ilCompilers.AddMasked(Glyph, Glyph.Canvas.Pixels[0, 0])
+    else
+      fCompGlyphIndexes[Compiler.GetID] := -1;
+    tsCompilers.Tabs.Add(' ' + Compiler.GetName + ' ');
+  end;
+  tsCompilers.TabIndex := 0;
+  LoadHTML(fRequiredCompilers[tsCompilers.TabIndex]);
 end;
 
 procedure TCompErrorDlg.LoadHTML(const Compiler: ICompiler);
