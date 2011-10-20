@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -111,6 +111,28 @@
   <div style="<%ShowCompilations%>">
     <p>
       <strong>Supported Compilers:</strong>
+      (<span
+        class="option"
+      >
+        <a
+          href="javascript:void(0);"
+          class="command-link"
+          onclick="compileSnippet();return false;"
+          onmouseover="showTestCompileHint();"
+          onmouseout="clearHint();"
+        ><img
+          src="compile.gif"
+          class="option-img"
+          style="width:16px;height:16px;"
+          title="Test Compile Snippet"
+        /></a><a
+          href="javascript:void(0);"
+          class="command-link menu-item"
+          onclick="compileSnippet();return false;"
+          onmouseover="showTestCompileHint();"
+          onmouseout="clearHint();"
+        >Test Compile Snippet</a>
+      </span>)
     </p>
 
     <table class="comptable" cellspacing="1" cellpadding="4">
