@@ -86,10 +86,6 @@ type
       criteria.
         @param Criteria [in] Text search criteria.
       }
-    function GetPageKind: TDetailPageKind; override;
-      {Gets page kind and provides to base class.
-        @return Page kind.
-      }
     procedure DisplayCurViewItem; override;
       {Displays current view item. This method should not be called directly
       from this class. Instead call inherited UpdateDisplay method which first
@@ -158,14 +154,6 @@ begin
       Query.CurrentSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
     ) then
     HighlightSearchResults(TextSearchCriteria);
-end;
-
-function TInfoFrame.GetPageKind: TDetailPageKind;
-  {Gets page kind and provides to base class.
-    @return Page kind.
-  }
-begin
-  Result := pkInfo;
 end;
 
 procedure TInfoFrame.HighlightSearchResults(

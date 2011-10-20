@@ -50,27 +50,14 @@ uses
 type
 
   {
-  TDetailPageKind:
-    Enumeration that defines kind of page to be loaded.
-  }
-  TDetailPageKind = (
-    pkInfo          // for use on detailed information page
-//    pkComp          // for use on compiler check page
-  );
-
-  {
   TDetailPageLoader:
     Static class that ensures an HTML document is loaded and sets its body to
     required HTML.
   }
   TDetailPageLoader = class(TNoConstructObject)
   strict private
-    class function CreateGenerator(const PageKind: TDetailPageKind;
-      View: IView): TDetailPageHTML;
-      {Creates correct HTML generator object for specified display pane and
-      view.
-        @param PageKind [in] Kind of page required: information or compiler
-          check.
+    class function CreateGenerator(View: IView): TDetailPageHTML;
+      {Creates required detail pane HTML generator object for a specified view.
         @param View [in] View to be displayed.
         @return Required generator object.
       }
@@ -86,11 +73,8 @@ type
         @param WBController [in] Controller object that loads HTML document.
       }
   public
-    class procedure LoadPage(const PageKind: TDetailPageKind; View: IView;
-      const WBController: TWBController);
+    class procedure LoadPage(View: IView; const WBController: TWBController);
       {Loads required HTML into body of a suitable host document.
-        @param PageKind [in] Kind of page required: information or compiler
-          check.
         @param View [in] View to be displayed.
         @param WBController [in] Controller object for displayed HTML document.
       }
@@ -102,10 +86,9 @@ implementation
 
 { TDetailPageLoader }
 
-class function TDetailPageLoader.CreateGenerator(
-  const PageKind: TDetailPageKind; View: IView): TDetailPageHTML;
-  {Creates correct HTML generator object for specified display pane and view.
-    @param PageKind [in] Kind of page required: information or compiler check.
+class function TDetailPageLoader.CreateGenerator(View: IView):
+  TDetailPageHTML;
+  {Creates required detail pane HTML generator object for a specified view.
     @param View [in] View to be displayed.
     @return Required generator object.
   }
@@ -117,25 +100,13 @@ begin
   else if Supports(View, IStartPageView) then
     Result := TWelcomePageHTML.Create(View)
   else if Supports(View, ISnippetView) then
-    case PageKind of
-      pkInfo: Result := TSnippetInfoPageHTML.Create(View);
-//      pkComp: Result := TSnippetCompCheckPageHTML.Create(View);
-    end
+    Result := TSnippetInfoPageHTML.Create(View)
   else if Supports(View, ICategoryView) then
-    case PageKind of
-      pkInfo: Result := TCategoryPageHTML.Create(View);
-//      pkComp: Result := TNoCompCheckPageHTML.Create(View);
-    end
+    Result := TCategoryPageHTML.Create(View)
   else if Supports(View, ISnippetKindView) then
-    case PageKind of
-      pkInfo: Result := TSnipKindPageHTML.Create(View);
-//      pkComp: Result := TNoCompCheckPageHTML.Create(View);
-    end
+    Result := TSnipKindPageHTML.Create(View)
   else if Supports(View, IInitialLetterView) then
-    case PageKind of
-      pkInfo: Result := TAlphaListPageHTML.Create(View);
-//      pkComp: Result := TNoCompCheckPageHTML.Create(View);
-    end;
+    Result := TAlphaListPageHTML.Create(View);
   Assert(Assigned(Result), ClassName + '.CreateGenerator: No HTML generator');
 end;
 
@@ -163,10 +134,9 @@ begin
     WBController.IOMgr.NavigateToResource(HInstance, 'detail.html');
 end;
 
-class procedure TDetailPageLoader.LoadPage(const PageKind: TDetailPageKind;
-  View: IView; const WBController: TWBController);
+class procedure TDetailPageLoader.LoadPage(View: IView;
+  const WBController: TWBController);
   {Loads required HTML into body of a suitable host document.
-    @param PageKind [in] Kind of page required: information or compiler check.
     @param View [in] View to be displayed.
     @param WBController [in] Controller object for displayed HTML document.
   }
@@ -176,7 +146,7 @@ begin
   Assert(Assigned(View), ClassName + '.LoadPage: View is nil');
   Assert(Assigned(WBController), ClassName + '.LoadPage: WBController is nil');
   InitBrowser(WBController);
-  Generator := CreateGenerator(PageKind, View);
+  Generator := CreateGenerator(View);
   try
     DisplayHTML(Generator, WBController);
   finally

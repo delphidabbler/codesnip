@@ -125,10 +125,6 @@ type
       read fCommandBars implements ICommandBarConfig;
       {References aggregated object implementing ICommandBarConfig}
   strict protected
-    function GetPageKind: TDetailPageKind; virtual; abstract;
-      {Gets kind of page to be loaded by DisplayCurViewItem.
-        @return Page kind.
-      }
     procedure DisplayCurViewItem; virtual;
       {Displays current view item. This method should not be called directly
       in descendant classes. They should instead call UpdateDisplay which checks
@@ -340,7 +336,7 @@ procedure TDetailViewFrame.DisplayCurViewItem;
   }
 begin
   // Load the required page using page loader.
-  TDetailPageLoader.LoadPage(GetPageKind, CurrentView, WBController);
+  TDetailPageLoader.LoadPage(CurrentView, WBController);
   // Cancel any selection in browser control
   WBController.UIMgr.ClearSelection;
 end;
