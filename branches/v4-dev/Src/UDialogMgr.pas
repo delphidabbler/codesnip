@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.USnippet, USearch;
+  DB.USnippet, UCompileMgr, USearch;
 
 
 type
@@ -126,6 +126,13 @@ type
     procedure ShowNewsDlg;
       {Displays latest news about CodeSnip and database in a dialog box.
       }
+    procedure ShowTestCompileDlg(const CompileMgr: TCompileMgr;
+      const Snippet: TSnippet);
+      {Displays test compile dialog box that performs a test compilation.
+        @param CompileMgr [in] Object used to manage compilation and retain
+          results.
+        @param Snippet [in] Snippet to be compiled.
+      }
   end;
 
 
@@ -136,8 +143,8 @@ uses
   // Project
   FmAboutDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg, FmFindTextDlg,
   FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg, FmProxyServerDlg,
-  FmRegistrationDlg, FmSelectionSearchDlg, FmUpdateDlg, FmUserBugReportDlg,
-  UPageSetupDlgMgr, UTestUnitDlgMgr;
+  FmRegistrationDlg, FmSelectionSearchDlg, FmTestCompileDlg, FmUpdateDlg,
+  FmUserBugReportDlg, UPageSetupDlgMgr, UTestUnitDlgMgr;
 
 
 { TDialogMgr }
@@ -266,6 +273,17 @@ procedure TDialogMgr.ShowNewsDlg;
   }
 begin
   TNewsDlg.Execute(Owner);
+end;
+
+procedure TDialogMgr.ShowTestCompileDlg(const CompileMgr: TCompileMgr;
+  const Snippet: TSnippet);
+  {Displays test compile dialog box that performs a test compilation.
+    @param CompileMgr [in] Object used to manage compilation and retain
+      results.
+    @param Snippet [in] Snippet to be compiled.
+  }
+begin
+  TTestCompileDlg.Execute(Owner, CompileMgr, Snippet);
 end;
 
 procedure TDialogMgr.ShowTestUnit(const Snippet: TSnippet);
