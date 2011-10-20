@@ -2,19 +2,19 @@ inherited MainForm: TMainForm
   Left = 204
   Top = 150
   Caption = 'MainForm'
-  ClientHeight = 384
+  ClientHeight = 404
   ClientWidth = 605
   Constraints.MinHeight = 360
   Constraints.MinWidth = 480
   Menu = mnuMain
   OnResize = FormResize
   ExplicitWidth = 621
-  ExplicitHeight = 440
+  ExplicitHeight = 460
   PixelsPerInch = 96
   TextHeight = 13
   object sbStatusBar: TStatusBar
     Left = 0
-    Top = 364
+    Top = 384
     Width = 605
     Height = 20
     Panels = <
@@ -27,7 +27,7 @@ inherited MainForm: TMainForm
       item
         Width = 50
       end>
-    ExplicitTop = 344
+    ExplicitTop = 364
   end
   object tbarMain: TToolBar
     Left = 0
@@ -197,16 +197,17 @@ inherited MainForm: TMainForm
     Left = 0
     Top = 31
     Width = 605
-    Height = 333
+    Height = 353
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
     TabOrder = 2
+    ExplicitHeight = 333
     object splitVert: TSplitter
       Left = 187
       Top = 2
       Width = 6
-      Height = 329
+      Height = 349
       Beveled = True
       OnCanResize = splitVertCanResize
       ExplicitHeight = 292
@@ -215,15 +216,16 @@ inherited MainForm: TMainForm
       Left = 2
       Top = 2
       Width = 185
-      Height = 329
+      Height = 349
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
+      ExplicitHeight = 329
       inline frmOverview: TOverviewFrame
         Left = 1
         Top = 1
         Width = 183
-        Height = 327
+        Height = 347
         Align = alClient
         TabOrder = 0
         TabStop = True
@@ -245,13 +247,13 @@ inherited MainForm: TMainForm
         end
         inherited tcDisplayStyle: TTabControl
           Width = 183
-          Height = 300
+          Height = 320
           ExplicitWidth = 183
           ExplicitHeight = 300
           inherited tvSnippets: TTreeView
             Top = 42
             Width = 175
-            Height = 254
+            Height = 274
             ExplicitTop = 42
             ExplicitWidth = 175
             ExplicitHeight = 254
@@ -263,15 +265,16 @@ inherited MainForm: TMainForm
       Left = 193
       Top = 2
       Width = 410
-      Height = 329
+      Height = 349
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
+      ExplicitHeight = 329
       inline frmDetail: TDetailFrame
         Left = 1
         Top = 1
         Width = 408
-        Height = 327
+        Height = 347
         Align = alClient
         TabOrder = 0
         TabStop = True
@@ -289,31 +292,33 @@ inherited MainForm: TMainForm
         end
         inherited pcDetail: TPageControl
           Width = 408
-          Height = 300
+          Height = 320
           ExplicitWidth = 408
           ExplicitHeight = 300
           inherited tsInfo: TTabSheet
+            ExplicitLeft = 4
+            ExplicitTop = 24
             ExplicitWidth = 400
-            ExplicitHeight = 252
+            ExplicitHeight = 272
             inherited frmInfo: TInfoFrame
               Width = 400
-              Height = 272
+              Height = 292
               ExplicitWidth = 400
-              ExplicitHeight = 252
+              ExplicitHeight = 272
               inherited pnlBrowser: TPanel
                 Width = 400
-                Height = 272
+                Height = 292
                 ExplicitWidth = 400
-                ExplicitHeight = 252
+                ExplicitHeight = 272
                 inherited wbBrowser: TWebBrowser
                   Width = 400
-                  Height = 272
+                  Height = 292
                   ExplicitLeft = 1
                   ExplicitTop = 1
                   ExplicitWidth = 400
                   ExplicitHeight = 544
                   ControlData = {
-                    4C000000572900001D1C00000000000000000000000000000000000000000000
+                    4C000000572900002E1E00000000000000000000000000000000000000000000
                     000000004C000000000000000000000001000000E0D057007335CF11AE690800
                     2B2E126208000000000000004C0000000114020000000000C000000000000046
                     8000000000000000000000000000000000000000000000000000000000000000
@@ -1927,9 +1932,28 @@ inherited MainForm: TMainForm
       OnExecute = actFindClearExecute
       OnUpdate = actFindClearUpdate
     end
+    object actTestCompile: TAction
+      Category = 'Compile'
+      Caption = 'Test Compile Snippet...'
+      Hint = 'Test Compile|Test compile the currently selected snippet'
+      ImageIndex = 12
+      ShortCut = 120
+      OnExecute = actTestCompileExecute
+      OnUpdate = actTestCompileUpdate
+    end
+    object actViewCompErrs: TAction
+      Category = 'Compile'
+      Caption = 'View Compile Errors...'
+      Hint = 
+        'View Compile Errors|Display any errors and warnings resulting fr' +
+        'om last test compilation'
+      ImageIndex = 34
+      OnExecute = actViewCompErrsExecute
+      OnUpdate = actViewCompErrsUpdate
+    end
     object actViewTestUnit: TAction
-      Category = 'View'
-      Caption = 'Test Unit...'
+      Category = 'Compile'
+      Caption = 'View Test Unit...'
       Hint = 'View Test Unit|Display test unit for selected snippet.'
       ImageIndex = 22
       OnExecute = actViewTestUnitExecute
@@ -2001,15 +2025,6 @@ inherited MainForm: TMainForm
       ImageIndex = 7
       OnExecute = actUpdateDbaseExecute
     end
-    object actTestCompile: TAction
-      Category = 'Database'
-      Caption = 'Test Compile'
-      Hint = 'Test Compile|Test compile the currently selected snippet'
-      ImageIndex = 12
-      ShortCut = 120
-      OnExecute = actTestCompileExecute
-      OnUpdate = actTestCompileUpdate
-    end
     object actSubmit: TAction
       Category = 'Database'
       Caption = 'Submit Snippets...'
@@ -2041,16 +2056,6 @@ inherited MainForm: TMainForm
       ShortCut = 16457
       OnExecute = actCopyInfoExecute
       OnUpdate = actCopyInfoUpdate
-    end
-    object actViewCompErrs: TAction
-      Category = 'Database'
-      Caption = 'View Compile Errors...'
-      Hint = 
-        'View Compile Errors|Display any errors and warnings resulting fr' +
-        'om last test compilation'
-      ImageIndex = 34
-      OnExecute = actViewCompErrsExecute
-      OnUpdate = actViewCompErrsUpdate
     end
     object actDonate: TAction
       Category = 'Help'
@@ -2240,10 +2245,6 @@ inherited MainForm: TMainForm
         Caption = '-'
         GroupIndex = 200
       end
-      object miViewTestUnit: TMenuItem
-        Action = actViewTestUnit
-        GroupIndex = 200
-      end
       object miViewDependencies: TMenuItem
         Action = actViewDependencies
         GroupIndex = 200
@@ -2350,11 +2351,18 @@ inherited MainForm: TMainForm
       object miSpacer14: TMenuItem
         Caption = '-'
       end
+    end
+    object miCompile: TMenuItem
+      Caption = 'Compile'
       object miTestCompile: TMenuItem
         Action = actTestCompile
       end
       object miViewCompErrs: TMenuItem
         Action = actViewCompErrs
+      end
+      object miViewTestUnit: TMenuItem
+        Action = actViewTestUnit
+        GroupIndex = 200
       end
     end
     object miTools: TMenuItem
