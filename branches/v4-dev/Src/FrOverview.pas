@@ -445,6 +445,7 @@ begin
     // Can't find item: show top of tree
     fCanChange := False;
     try
+      tvSnippets.Deselect(tvSnippets.Selected);
       tvSnippets.Selected := nil;
       tvSnippets.TopItem := tvSnippets.Items.GetFirstNode;
     finally
@@ -602,6 +603,7 @@ begin
   fCanChange := True;
   try
     tvSnippets.Selected := Node;
+    tvSnippets.Select(Node, []);
     if MakeVisible and Assigned(Node) then
       Node.MakeVisible;
   finally
