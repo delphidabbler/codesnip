@@ -432,6 +432,11 @@ begin
         // call any associated actions
         if ShiftState = [ssCtrl] then
           PostMsg := True;
+      VK_TAB:
+        // We post Ctrl+Tab and Shift+Ctrl+Tab to parent to enable tab switching
+        // where browser is hosted by a tab set of some description
+        if (ShiftState = [ssCtrl]) or (ShiftState = [ssCtrl, ssShift]) then
+          PostMsg := True;
       VK_RETURN:
         // We handle Ctrl+Return to trigger any active link. This message is not
         // posted to parent, but is handled here and browser is prevented from
