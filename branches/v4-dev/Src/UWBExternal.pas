@@ -89,9 +89,6 @@ type
     procedure ConfigCompilers; safecall;
       {Displays the Configure Compilers dialog box.
       }
-    procedure ShowTestUnit; safecall;
-      {Displays test unit for current snippet.
-      }
     procedure EditSnippet(const SnippetName: WideString); safecall;
       {Edits a named snippet.
         @param SnippetName [in] Name of snippet to be edited. Must be a user
@@ -243,18 +240,6 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.ShowHint(Hint);
-  except
-    HandleException;
-  end;
-end;
-
-procedure TWBExternal.ShowTestUnit;
-  {Displays test unit for current snippet.
-  }
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.ShowTestUnit;
   except
     HandleException;
   end;

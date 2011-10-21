@@ -91,9 +91,6 @@ type
       {Changes displayed pane in detail display area.
         @param Pane [in] Required new pane.
       }
-    procedure ShowTestUnit;
-      {Displays test unit.
-      }
     procedure EditSnippet(const SnippetName: WideString);
       {Edits a snippet.
         @param SnippetName [in] Name of snippet. Must be user defined.
@@ -150,10 +147,6 @@ type
       to be shown.
         @param Actions [in] Dynamic array of required actions: one per detail
           display tab.
-      }
-    procedure SetShowTestUnitAction(const Action: TBasicAction);
-      {Sets action triggered where displays a test unit.
-        @param Action [in] Required action.
       }
     procedure SetEditSnippetAction(const Action: TBasicAction);
       {Sets action triggered when user requests a user defined snippet is to be

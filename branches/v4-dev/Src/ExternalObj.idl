@@ -104,14 +104,6 @@ library ExternalObj
     HRESULT _stdcall ConfigCompilers( void );
 
     /*
-     * Displays a test unit.
-    */
-    [
-    id(0x0000006B)
-    ]
-    HRESULT _stdcall ShowTestUnit( void );
-
-    /*
      * Edits the named snippet.
      *    @param SnippetName [in] Name of snippet to edit. Must be user defined.
      */

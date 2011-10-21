@@ -1425,7 +1425,6 @@ begin
         [actViewCategorised, actViewAlphabetical, actViewSnippetKinds]
       );
       SetDetailPaneChangeActions([actViewInfo]);
-      SetShowTestUnitAction(actViewTestUnit);
       SetEditSnippetAction(
         TActionFactory.CreateEditSnippetAction(
           Self, ActEditSnippetByNameExecute

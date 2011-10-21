@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -36,7 +36,6 @@
 /*
  * Hint text
  */
-var vShowTestUnitHint     = "Display the source code of the test unit";
 var vAboutCompChecksHint  = "Display the About Compiler Checks help topic";
 var vOnlineDatabaseHint   = "View the online database at www.delphidabbler.com";
 var vUpdateDatabaseHint   = "Update the database from the internet";

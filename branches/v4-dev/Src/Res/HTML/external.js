@@ -83,15 +83,6 @@ function updateDbase() {
 }
 
 /*
- * Calls external object to get host application to display test unit.
- *  @return False.
- */
-function showTestUnit() {
-  external.ShowTestUnit();
-  return false;
-}
-
-/*
  * Calls external object to get host application to display a named snippet.
  *  @param string snippet [in] Name of snippet to be displayed.
  *  @param boolean userdefined [in] Whether snippet is user defined.

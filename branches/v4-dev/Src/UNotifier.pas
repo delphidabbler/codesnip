@@ -77,8 +77,6 @@ type
       {List of actions triggered when display style in overview pane changes}
     fDisplayPaneChangeActions: array of TBasicAction;
       {List of actions triggered when current pane in detail view changes}
-    fShowTestUnitAction: TBasicAction;
-      {Action that causes a test unit to be displayed}
     fEditSnippetAction: TBasicAction;
       {Action that causes a user defined snippet to be edited}
     fDonateAction: TBasicAction;
@@ -121,9 +119,6 @@ type
     procedure ChangeDetailPane(const Pane: Integer);
       {Changes displayed pane in detail display area.
         @param Pane [in] Required new pane.
-      }
-    procedure ShowTestUnit;
-      {Displays test unit.
       }
     procedure EditSnippet(const SnippetName: WideString);
       {Edits a snippet.
@@ -172,10 +167,6 @@ type
       to be shown.
         @param Actions [in] Dynamic array of required actions: one per detail
           display tab.
-      }
-    procedure SetShowTestUnitAction(const Action: TBasicAction);
-      {Sets action triggered where displays a test unit.
-        @param Action [in] Required action.
       }
     procedure SetEditSnippetAction(const Action: TBasicAction);
       {Sets action triggered when user requests a user defined snippet is to be
@@ -398,11 +389,6 @@ begin
   fShowHintAction := Action;
 end;
 
-procedure TNotifier.SetShowTestUnitAction(const Action: TBasicAction);
-begin
-  fShowTestUnitAction := Action;
-end;
-
 procedure TNotifier.SetShowViewItemAction(const Action: TBasicAction);
   {Sets action triggered when user requests a view item is displayed.
     @param Action [in] Required action.
@@ -431,12 +417,6 @@ begin
     (fShowHintAction as THintAction).Hint := Hint;
     fShowHintAction.Execute;
   end;
-end;
-
-procedure TNotifier.ShowTestUnit;
-begin
-  if Assigned(fShowTestUnitAction) then
-    fShowTestUnitAction.Execute;
 end;
 
 procedure TNotifier.ShowViewItem(ViewItem: IView);
