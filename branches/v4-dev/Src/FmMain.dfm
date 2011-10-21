@@ -2120,6 +2120,16 @@ inherited MainForm: TMainForm
       ShortCut = 16468
       OnExecute = actNewDetailsTabExecute
     end
+    object actCloseDetailsTab: TAction
+      Category = 'View'
+      Caption = 'Close Tab'
+      Hint = 'Close Tab|Closes the currently selected tab in the Details pane'
+      ShortCut = 16499
+      SecondaryShortCuts.Strings = (
+        'Ctrl+W')
+      OnExecute = actCloseDetailsTabExecute
+      OnUpdate = actCloseDetailsTabUpdate
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -2207,6 +2217,10 @@ inherited MainForm: TMainForm
       end
       object miNewDetailsTab: TMenuItem
         Action = actNewDetailsTab
+        GroupIndex = 100
+      end
+      object miCloseDetailsTab: TMenuItem
+        Action = actCloseDetailsTab
         GroupIndex = 100
       end
       object miSpacer10: TMenuItem

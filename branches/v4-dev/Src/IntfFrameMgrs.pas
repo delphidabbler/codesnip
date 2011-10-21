@@ -135,6 +135,12 @@ type
     ['{2E17C87F-952F-4EBF-8BF7-CF8107B3A7CF}']
     ///  <summary>Creates new tab and returns its index.</summary>
     function NewTab: Integer;
+    ///  <summary>Closes currently selected tab.</summary>
+//    ///  <remarks>Should only be called if CanCloseSelectedTab returns True.
+//    ///  </remarks>
+    procedure CloseSelectedTab;
+    ///  <summary>Checks if currently selected tab can be closed.</summary>*
+    function CanCloseSelectedTab: Boolean;
   end;
 
   {

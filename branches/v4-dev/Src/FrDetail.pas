@@ -97,6 +97,10 @@ type
     procedure DeactivateBrowserPanes;
       {Deactivates all child panes containing browser controls.
       }
+    function TabCount: Integer;
+      // TODO: comment this method
+    function IsEmptyTabSet: Boolean;
+      // TODO: comment this method
   protected // interface implementations
     { ITabbedDisplayMgr }
     procedure SelectTab(const TabIdx: Integer);
@@ -116,6 +120,10 @@ type
     ///  <summary>Creates new tab and returns its index.</summary>
     ///  <remarks>Method of IEditableTabbedDisplayMgr.</remarks>
     function NewTab: Integer;
+    // TODO: comment this method
+    procedure CloseSelectedTab;
+    // TODO: comment this method
+    function CanCloseSelectedTab: Boolean;
     { IViewItemDisplayMgr }
     ///  <summary>Displays a given view in currently selected tab.</summary>
     ///  <param name="View">IView [in] View to be displayed.</param>
@@ -209,7 +217,7 @@ var
   Idx: Integer; // loops through all tabsheets
 begin
   fCommandBarItems.Add(TCommandBarItem.Create(Action, ID));
-  for Idx := 0 to Pred(pcDetail.PageCount) do
+  for Idx := 0 to Pred(TabCount) do
     if Supports(TabToPane(Idx), ICommandBarConfig) then
       (TabToPane(Idx) as ICommandBarConfig).AddAction(Action, ID);
 end;
@@ -222,9 +230,14 @@ var
   Idx: Integer; // loops through all tabsheets
 begin
   fCommandBarItems.Add(TCommandBarItem.Create(nil, ID));
-  for Idx := 0 to Pred(pcDetail.PageCount) do
+  for Idx := 0 to Pred(TabCount) do
     if Supports(TabToPane(Idx), ICommandBarConfig) then
       (TabToPane(Idx) as ICommandBarConfig).AddSpacer(ID);
+end;
+
+function TDetailFrame.CanCloseSelectedTab: Boolean;
+begin
+  Result := not IsEmptyTabSet;
 end;
 
 function TDetailFrame.CanCopy: Boolean;
@@ -233,7 +246,7 @@ function TDetailFrame.CanCopy: Boolean;
   }
 begin
   // Get clipboard manager for current tab and check if it supports copying
-  if Supports(SelectedPane, IClipboardMgr) then
+  if not IsEmptyTabSet and Supports(SelectedPane, IClipboardMgr) then
     Result := (SelectedPane as IClipboardMgr).CanCopy
   else
     Result := False;
@@ -245,10 +258,29 @@ function TDetailFrame.CanSelectAll: Boolean;
   }
 begin
   // Get selection manager for current tab and check if it supports selection
-  if Supports(SelectedPane, ISelectionMgr) then
+  if not IsEmptyTabSet and Supports(SelectedPane, ISelectionMgr) then
     Result := IsInteractive and (SelectedPane as ISelectionMgr).CanSelectAll
   else
     Result := False;
+end;
+
+procedure TDetailFrame.CloseSelectedTab;
+var
+  ClosingTab: TTabSheet;
+  ClosingTabIdx: Integer;
+begin
+  if IsEmptyTabSet then
+    Exit;
+  ClosingTabIdx := SelectedTab;
+  ClosingTab := pcDetail.ActivePage;
+  ClosingTab.Free;
+  if IsEmptyTabSet then
+    Exit;
+  // Select another tab
+  if ClosingTabIdx >= TabCount then
+    SelectTab(Pred(TabCount))
+  else
+    SelectTab(ClosingTabIdx);
 end;
 
 procedure TDetailFrame.CopyToClipboard;
@@ -272,7 +304,7 @@ procedure TDetailFrame.DeactivateBrowserPanes;
 var
   Idx: Integer; // loops through all tabsheets
 begin
-  for Idx := 0 to Pred(pcDetail.PageCount) do
+  for Idx := 0 to Pred(TabCount) do
     if Supports(TabToPane(Idx), IWBDisplayMgr) then
       (TabToPane(Idx) as IWBDisplayMgr).Deactivate;
 end;
@@ -285,7 +317,7 @@ end;
 
 procedure TDetailFrame.Display(View: IView; const Force: Boolean);
 begin
-  if pcDetail.PageCount = 0 then
+  if IsEmptyTabSet then
     pcDetail.ActivePageIndex := NewTab;
   (SelectedPane as IViewItemDisplayMgr).Display(View, Force);
   pcDetail.ActivePage.Caption := View.Description;
@@ -294,6 +326,11 @@ end;
 function TDetailFrame.GetCurrentView: IView;
 begin
   Result := (SelectedPane as IViewItemDisplayMgr).GetCurrentView;
+end;
+
+function TDetailFrame.IsEmptyTabSet: Boolean;
+begin
+  Result := TabCount = 0;
 end;
 
 function TDetailFrame.IsInteractive: Boolean;
@@ -355,7 +392,7 @@ procedure TDetailFrame.NextTab;
   {Switches to next tab, or return to first tab if current tab is last.
   }
 begin
-  if SelectedTab = Pred(pcDetail.PageCount) then
+  if SelectedTab = Pred(TabCount) then
     SelectTab(0)
   else
     SelectTab(Succ(SelectedTab));
@@ -376,7 +413,7 @@ procedure TDetailFrame.PreviousTab;
   }
 begin
   if SelectedTab = 0 then
-    SelectTab(Pred(pcDetail.PageCount))
+    SelectTab(Pred(TabCount))
   else
     SelectTab(Pred(SelectedTab));
 end;
@@ -411,7 +448,7 @@ procedure TDetailFrame.SelectTab(const TabIdx: Integer);
     @param TabIdx [in] Tab to be selected.
   }
 begin
-  Assert((TabIdx >= 0) and (TabIdx < pcDetail.PageCount),
+  Assert((TabIdx >= 0) and (TabIdx < TabCount),
     ClassName + '.SelectTab: TabIdx out range');
 //  if TabIdx = pcDetail.ActivePageIndex then
 //    Exit;
@@ -432,7 +469,7 @@ procedure TDetailFrame.SetDragDropHandler(Obj: IDropTarget);
 var
   Idx: Integer;
 begin
-  for Idx := 0 to Pred(pcDetail.PageCount) do
+  for Idx := 0 to Pred(TabCount) do
     if Supports(TabToPane(Idx), IWBCustomiser) then
       (TabToPane(Idx) as IWBCustomiser).SetDragDropHandler(Obj);
 end;
@@ -445,7 +482,7 @@ var
   Idx: Integer; // loops thru all tabsheets
 begin
   fExternal := Obj;
-  for Idx := 0 to Pred(pcDetail.PageCount) do
+  for Idx := 0 to Pred(TabCount) do
     if Supports(TabToPane(Idx), IWBCustomiser) then
       (TabToPane(Idx) as IWBCustomiser).SetExternalObj(Obj);
 end;
@@ -458,7 +495,7 @@ var
   Idx: Integer; // loops through all tabsheets
 begin
   fImages := Images;
-  for Idx := 0 to Pred(pcDetail.PageCount) do
+  for Idx := 0 to Pred(TabCount) do
     if Supports(TabToPane(Idx), ICommandBarConfig) then
       (TabToPane(Idx) as ICommandBarConfig).SetImages(Images);
 end;
@@ -469,6 +506,11 @@ procedure TDetailFrame.SetNotifier(const Notifier: INotifier);
   }
 begin
   fNotifier := Notifier;
+end;
+
+function TDetailFrame.TabCount: Integer;
+begin
+  Result := pcDetail.PageCount;
 end;
 
 function TDetailFrame.TabToPane(const TabIdx: Integer): IInterface;
@@ -482,8 +524,7 @@ var
   CtrlIdx: Integer;
 begin
   Assert(TabIdx >= 0, ClassName + '.TabToPane: TabIdx < 0');
-  Assert(TabIdx < pcDetail.PageCount,
-    ClassName + '.TabToPane: TabIdx too large');
+  Assert(TabIdx < TabCount, ClassName + '.TabToPane: TabIdx too large');
   TS := pcDetail.Pages[TabIdx];
   Frame := nil;
   for CtrlIdx := 0 to Pred(TS.ControlCount) do

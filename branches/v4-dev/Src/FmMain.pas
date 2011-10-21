@@ -241,6 +241,8 @@ type
     miCompile: TMenuItem;
     actNewDetailsTab: TAction;
     miNewDetailsTab: TMenuItem;
+    actCloseDetailsTab: TAction;
+    miCloseDetailsTab: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
@@ -326,6 +328,8 @@ type
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
     procedure actNewDetailsTabExecute(Sender: TObject);
+    procedure actCloseDetailsTabExecute(Sender: TObject);
+    procedure actCloseDetailsTabUpdate(Sender: TObject);
   strict private
     fIsAppRegistered: Boolean;        // Flag noting if app is registered
     fNotifier: INotifier;             // Notififies app of user-initiated events
@@ -464,6 +468,16 @@ procedure TMainForm.actBugReportExecute(Sender: TObject);
   }
 begin
   fDialogMgr.ShowBugReportDlg;
+end;
+
+procedure TMainForm.actCloseDetailsTabExecute(Sender: TObject);
+begin
+  fMainDisplayMgr.CloseSelectedDetailsTab;
+end;
+
+procedure TMainForm.actCloseDetailsTabUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled := fMainDisplayMgr.CanCloseSelectedDetailsTab;
 end;
 
 procedure TMainForm.actCompilersExecute(Sender: TObject);

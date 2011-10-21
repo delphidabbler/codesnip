@@ -126,6 +126,11 @@ type
       }
     procedure CreateNewDetailsTab;
       // TODO: Comment this method
+    procedure CloseSelectedDetailsTab;
+      // TODO: Comment this method
+    function CanCloseSelectedDetailsTab: Boolean;
+      // TODO: Comment this method
+
 //    procedure DisplayCompileResults(const ACompilers: ICompilers);
 //      {Displays results of a test compilation in Compiler Check tab of Details
 //      pane.
@@ -186,6 +191,11 @@ uses
 
 { TMainDisplayMgr }
 
+function TMainDisplayMgr.CanCloseSelectedDetailsTab: Boolean;
+begin
+  Result := (fDetailsMgr as IEditableTabbedDisplayMgr).CanCloseSelectedTab;
+end;
+
 function TMainDisplayMgr.CanCopy: Boolean;
   {Checks whether copying to clipboard is currently supported.
     @return True if clipboard copying supported, false if not.
@@ -219,6 +229,11 @@ begin
   fCurrentView := TViewItemFactory.CreateNulView;
   (fOverviewMgr as IOverviewDisplayMgr).Clear;
   (fDetailsMgr as IViewItemDisplayMgr).Display(fCurrentView, False);
+end;
+
+procedure TMainDisplayMgr.CloseSelectedDetailsTab;
+begin
+  (fDetailsMgr as IEditableTabbedDisplayMgr).CloseSelectedTab;
 end;
 
 procedure TMainDisplayMgr.CopyToClipboard;
