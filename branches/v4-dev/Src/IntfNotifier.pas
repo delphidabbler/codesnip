@@ -142,11 +142,10 @@ type
         @param Actions [in] Dynamic array of required actions: one per display
           style.
       }
-    procedure SetDetailPaneChangeActions(const Actions: array of TBasicAction);
-      {Sets actions that are triggered when different detail panes are required
+    procedure SetDetailPaneChangeAction(const Action: TBasicAction);
+      {Sets action that us triggered when different detail panes are required
       to be shown.
-        @param Actions [in] Dynamic array of required actions: one per detail
-          display tab.
+        @param Action [in] Required action.
       }
     procedure SetEditSnippetAction(const Action: TBasicAction);
       {Sets action triggered when user requests a user defined snippet is to be

@@ -104,12 +104,14 @@ type
         @param Force [in] Forces view item to be re-displayed even if not
           changed.
       }
+    // TODO: Comment this method
+    function GetCurrentView: IView;
     { IWBCustomiser }
-    procedure SetExternalObj(const Obj: IDispatch);
+    procedure SetExternalObj(Obj: IDispatch);
       {Provides an object to be used to extend a web browser's external object.
         @param Obj [in] External browser object extender.
       }
-    procedure SetDragDropHandler(const Obj: IDropTarget);
+    procedure SetDragDropHandler(Obj: IDropTarget);
       {Provides an object to be used by web browser control to handle drag-drop
       operations.
         @param Obj [in] Drag-drop handler.
@@ -341,6 +343,11 @@ begin
   WBController.UIMgr.ClearSelection;
 end;
 
+function TDetailViewFrame.GetCurrentView: IView;
+begin
+  Result := fCurrentView;
+end;
+
 function TDetailViewFrame.HTMLDocument: IDispatch;
   {Gets reference to IDispatch interface of HTML document loaded in browser
   control.
@@ -385,7 +392,7 @@ begin
   Handled := True;
 end;
 
-procedure TDetailViewFrame.SetDragDropHandler(const Obj: IDropTarget);
+procedure TDetailViewFrame.SetDragDropHandler(Obj: IDropTarget);
   {Provides an object to be used by web browser control to handle drag-drop
   operations.
     @param Obj [in] Drag-drop handler.
@@ -394,7 +401,7 @@ begin
   WBController.UIMgr.DropTarget := Obj;
 end;
 
-procedure TDetailViewFrame.SetExternalObj(const Obj: IDispatch);
+procedure TDetailViewFrame.SetExternalObj(Obj: IDispatch);
   {Provides an object to be used to extend a web browser's external object.
     @param Obj [in] External browser object extender.
   }

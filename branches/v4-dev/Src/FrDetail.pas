@@ -43,7 +43,7 @@ interface
 uses
   // Delphi
   Forms, ComCtrls, ExtCtrls, Controls, StdCtrls, Classes, ActiveX, ActnList,
-  ImgList,
+  ImgList, Generics.Collections,
   // Project
   Compilers.UGlobals, FrTitled, FrBrowserBase, FrDetailView,
   FrInfo, IntfFrameMgrs, IntfNotifier, UCommandBars, UView;
@@ -59,8 +59,8 @@ type
   }
   TDetailFrame = class(TTitledFrame,
     ITabbedDisplayMgr,                    // uses tabs to select different views
+    IEditableTabbedDisplayMgr,           // enables tabs to be added and deleted
     IViewItemDisplayMgr,                                 // displays a view item
-//    ICompCheckDisplayMgr,              // displays compile results and test unit
     IPaneInfo,                                // provides information about pane
     IWBCustomiser,                             // customises web browser control
     IClipboardMgr,                                          // clipboard manager
@@ -69,17 +69,26 @@ type
     ICommandBarConfig                               // command bar configuration
   )
     pcDetail: TPageControl;
-    tsInfo: TTabSheet;
-    frmInfo: TInfoFrame;
     procedure pcDetailChange(Sender: TObject);
   strict private
+    type
+      TCommandBarItem = record
+        Action: TCustomAction;
+        ID: TCommandBarID;
+        constructor Create(AAction: TCustomAction; AID: TCommandBarID);
+      end;
+    type
+      TCommandBarItems = TList<TCommandBarItem>;
+  strict private
+    fExternal: IDispatch;
+    fImages: TCustomImageList;
     fNotifier: INotifier;
+    fCommandBarItems: TCommandBarItems;
       {Object used to notify application of user-initiated events}
     function TabToPane(const TabIdx: Integer): IInterface;
       {Gets reference to manager object of frame associated with a tab.
         @param TabIdx [in] Index of tab.
         @return Required frame manager object reference.
-        @except EBug raised if tab index is out of range.
       }
     function SelectedPane: IInterface;
       {Gets reference to manager object of frame in currently selected tab.
@@ -104,29 +113,29 @@ type
     procedure PreviousTab;
       {Switches to previous tab, or return to last tab if current tab is first.
       }
+    ///  <summary>Creates new tab and returns its index.</summary>
+    ///  <remarks>Method of IEditableTabbedDisplayMgr.</remarks>
+    function NewTab: Integer;
     { IViewItemDisplayMgr }
+    ///  <summary>Displays a given view in currently selected tab.</summary>
+    ///  <param name="View">IView [in] View to be displayed.</param>
+    ///  <param name="Force">Boolean [in[ Forces view item to be (re)displayed
+    ///  even if view has not changed.</param>
+    ///  <remarks>Method of IViewItemDisplayMgr.</remarks>
     procedure Display(View: IView; const Force: Boolean = False);
-      {Displays compiler support information for a view item in all child panes.
-        @param View [in] Information about view item to be displayed.
-        @param Force [in] Forces view item to be re-displayed even if not
-          changed.
-      }
-//    { ICompCheckDisplayMgr }
-//    procedure DisplayCompileResults(const ACompilers: ICompilers);
-//      {Displays results of test compilation in compiler check pane.
-//        @param ACompilers [in] Compilers object containing required results.
-//      }
+    // TODO: Comment this method
+    function GetCurrentView: IView;
     { IPaneInfo }
     function IsInteractive: Boolean;
       {Checks if the pane is currently interactive with user.
         @return True if pane is interactive, False if not.
       }
     { IWBCustomiser }
-    procedure SetExternalObj(const Obj: IDispatch);
+    procedure SetExternalObj(Obj: IDispatch);
       {Provides an object to be used to extend a web browsers' external objects.
         @param Obj [in] External object extender.
       }
-    procedure SetDragDropHandler(const Obj: IDropTarget);
+    procedure SetDragDropHandler(Obj: IDropTarget);
       {Provides an object to be used by web browser controls to handle drag-drop
       operations.
         @param Obj [in] Drag-drop handler.
@@ -169,6 +178,9 @@ type
       tabs.
         @param Images [in] Image list to be used.
       }
+    public
+      constructor Create(AOwner: TComponent); override;
+      destructor Destroy; override;
   end;
 
 
@@ -196,6 +208,7 @@ procedure TDetailFrame.AddAction(const Action: TCustomAction;
 var
   Idx: Integer; // loops through all tabsheets
 begin
+  fCommandBarItems.Add(TCommandBarItem.Create(Action, ID));
   for Idx := 0 to Pred(pcDetail.PageCount) do
     if Supports(TabToPane(Idx), ICommandBarConfig) then
       (TabToPane(Idx) as ICommandBarConfig).AddAction(Action, ID);
@@ -208,6 +221,7 @@ procedure TDetailFrame.AddSpacer(const ID: TCommandBarID);
 var
   Idx: Integer; // loops through all tabsheets
 begin
+  fCommandBarItems.Add(TCommandBarItem.Create(nil, ID));
   for Idx := 0 to Pred(pcDetail.PageCount) do
     if Supports(TabToPane(Idx), ICommandBarConfig) then
       (TabToPane(Idx) as ICommandBarConfig).AddSpacer(ID);
@@ -246,6 +260,12 @@ begin
     (SelectedPane as IClipboardMgr).CopyToClipboard;
 end;
 
+constructor TDetailFrame.Create(AOwner: TComponent);
+begin
+  inherited;
+  fCommandBarItems := TCommandBarItems.Create;
+end;
+
 procedure TDetailFrame.DeactivateBrowserPanes;
   {Deactivates all child panes containing browser controls.
   }
@@ -257,31 +277,25 @@ begin
       (TabToPane(Idx) as IWBDisplayMgr).Deactivate;
 end;
 
-procedure TDetailFrame.Display(View: IView; const Force: Boolean);
-  {Displays compiler support information for a view item in all child panes.
-    @param View [in] Information about view item to be displayed.
-    @param Force [in] Forces view item to be re-displayed even if not changed.
-  }
-var
-  Idx: Integer; // loops through all tabsheets
+destructor TDetailFrame.Destroy;
 begin
-  for Idx := 0 to Pred(pcDetail.PageCount) do
-    if Supports(TabToPane(Idx), IViewItemDisplayMgr) then
-      (TabToPane(Idx) as IViewItemDisplayMgr).Display(View, Force);
+  fCommandBarItems.Free;
+  inherited;
 end;
 
-//procedure TDetailFrame.DisplayCompileResults(const ACompilers: ICompilers);
-//  {Displays results of test compilation in compiler check pane.
-//    @param ACompilers [in] Compilers object containing required results.
-//  }
-//begin
-//  if SelectedTab <> cCompCheckTab then
-//    fNotifier.ChangeDetailPane(cCompCheckTab);
-//  (TabToPane(cCompCheckTab) as ICompCheckDisplayMgr).DisplayCompileResults(
-//    ACompilers
-//  );
-//end;
-//
+procedure TDetailFrame.Display(View: IView; const Force: Boolean);
+begin
+  if pcDetail.PageCount = 0 then
+    pcDetail.ActivePageIndex := NewTab;
+  (SelectedPane as IViewItemDisplayMgr).Display(View, Force);
+  pcDetail.ActivePage.Caption := View.Description;
+end;
+
+function TDetailFrame.GetCurrentView: IView;
+begin
+  Result := (SelectedPane as IViewItemDisplayMgr).GetCurrentView;
+end;
+
 function TDetailFrame.IsInteractive: Boolean;
   {Checks if the pane is currently interactive with user.
     @return True if pane is interactive, False if not.
@@ -303,6 +317,40 @@ begin
   end;
 end;
 
+function TDetailFrame.NewTab: Integer;
+var
+  TS: TTabSheet;
+  Frame: TInfoFrame;
+  Cmd: TCommandBarItem;
+begin
+  // create page control
+  TS := TTabSheet.Create(pcDetail);
+  TS.PageControl := pcDetail;
+  Result := TS.PageIndex;
+  // create a frame parented by tab sheet
+  Frame := TInfoFrame.Create(Self);
+  Frame.Name := ''; // important to avoid name clashes
+  Assert(Supports(Frame, IViewItemDisplayMgr),
+    ClassName + '.NewTab: New frame does not support IViewItemDisplayMgr');
+  Frame.Parent := TS;
+  Frame.Align := alClient;
+  if Supports(Frame, IWBCustomiser) then
+    (Frame as IWBCustomiser).SetExternalObj(fExternal);
+  if Supports(Frame, ICommandBarConfig) then
+    (Frame as ICommandBarConfig).SetImages(fImages);
+  if Supports(Frame, ICommandBarConfig) then
+  begin
+    for Cmd in fCommandBarItems do
+    begin
+      if Assigned(Cmd.Action) then
+        (Frame as ICommandBarConfig).AddAction(Cmd.Action, Cmd.ID)
+      else
+        (Frame as ICommandBarConfig).AddSpacer(Cmd.ID);
+    end;
+  end;
+  SelectTab(Result);
+end;
+
 procedure TDetailFrame.NextTab;
   {Switches to next tab, or return to first tab if current tab is last.
   }
@@ -319,7 +367,8 @@ procedure TDetailFrame.pcDetailChange(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  fNotifier.ChangeDetailPane(pcDetail.ActivePageIndex);
+  SelectTab(pcDetail.ActivePageIndex);
+//  fNotifier.ChangeDetailPane(pcDetail.ActivePageIndex);
 end;
 
 procedure TDetailFrame.PreviousTab;
@@ -364,12 +413,18 @@ procedure TDetailFrame.SelectTab(const TabIdx: Integer);
 begin
   Assert((TabIdx >= 0) and (TabIdx < pcDetail.PageCount),
     ClassName + '.SelectTab: TabIdx out range');
+//  if TabIdx = pcDetail.ActivePageIndex then
+//    Exit;
   DeactivateBrowserPanes;
   pcDetail.ActivePageIndex := TabIdx;
   (SelectedPane as IWBDisplayMgr).Activate;
+  if Assigned(fNotifier) then
+    fNotifier.ShowViewItem(
+      (SelectedPane as IViewItemDisplayMgr).GetCurrentView
+    );
 end;
 
-procedure TDetailFrame.SetDragDropHandler(const Obj: IDropTarget);
+procedure TDetailFrame.SetDragDropHandler(Obj: IDropTarget);
   {Provides an object to be used by web browser controls to handle drag-drop
   operations.
     @param Obj [in] Drag-drop handler.
@@ -382,13 +437,14 @@ begin
       (TabToPane(Idx) as IWBCustomiser).SetDragDropHandler(Obj);
 end;
 
-procedure TDetailFrame.SetExternalObj(const Obj: IDispatch);
+procedure TDetailFrame.SetExternalObj(Obj: IDispatch);
   {Provides an object to be used to extend a web browsers' external objects.
     @param Obj [in] External object extender.
   }
 var
   Idx: Integer; // loops thru all tabsheets
 begin
+  fExternal := Obj;
   for Idx := 0 to Pred(pcDetail.PageCount) do
     if Supports(TabToPane(Idx), IWBCustomiser) then
       (TabToPane(Idx) as IWBCustomiser).SetExternalObj(Obj);
@@ -401,6 +457,7 @@ procedure TDetailFrame.SetImages(const Images: TCustomImageList);
 var
   Idx: Integer; // loops through all tabsheets
 begin
+  fImages := Images;
   for Idx := 0 to Pred(pcDetail.PageCount) do
     if Supports(TabToPane(Idx), ICommandBarConfig) then
       (TabToPane(Idx) as ICommandBarConfig).SetImages(Images);
@@ -418,16 +475,36 @@ function TDetailFrame.TabToPane(const TabIdx: Integer): IInterface;
   {Gets reference to manager object of frame associated with a tab.
     @param TabIdx [in] Index of tab.
     @return Required frame manager object reference.
-    @except EBug raised if tab index is out of range.
   }
+var
+  TS: TTabSheet;
+  Frame: TInfoFrame;
+  CtrlIdx: Integer;
 begin
-  // TODO: Temporary work-around - change this
-  Result := frmInfo;
-//  case TabIdx of
-//    cInfoTab: Result := frmInfo;
-//    cCompCheckTab: Result := frmCompCheck;
-//    else raise EBug.Create(ClassName + '.TabToPane: tab index out of range');
-//  end;
+  Assert(TabIdx >= 0, ClassName + '.TabToPane: TabIdx < 0');
+  Assert(TabIdx < pcDetail.PageCount,
+    ClassName + '.TabToPane: TabIdx too large');
+  TS := pcDetail.Pages[TabIdx];
+  Frame := nil;
+  for CtrlIdx := 0 to Pred(TS.ControlCount) do
+  begin
+    if (TS.Controls[CtrlIdx] is TInfoFrame) then
+    begin
+      Frame := TS.Controls[CtrlIdx] as TInfoFrame;
+      Break;
+    end;
+  end;
+  Assert(Assigned(Frame), ClassName + '.TabToPane: Frame not found');
+  Result := Frame as IInterface;
+end;
+
+{ TDetailFrame.TCommandBarItem }
+
+constructor TDetailFrame.TCommandBarItem.Create(AAction: TCustomAction;
+  AID: TCommandBarID);
+begin
+  Action := AAction;
+  ID := AID;
 end;
 
 end.

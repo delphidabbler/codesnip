@@ -75,7 +75,7 @@ type
       {Action that causes a view item to be displayed}
     fOverviewStyleChangeActions: array of TBasicAction;
       {List of actions triggered when display style in overview pane changes}
-    fDisplayPaneChangeActions: array of TBasicAction;
+    fDisplayPaneChangeAction: TBasicAction;
       {List of actions triggered when current pane in detail view changes}
     fEditSnippetAction: TBasicAction;
       {Action that causes a user defined snippet to be edited}
@@ -162,11 +162,10 @@ type
         @param Actions [in] Dynamic array of required actions: one per display
           style.
       }
-    procedure SetDetailPaneChangeActions(const Actions: array of TBasicAction);
-      {Sets actions that are triggered when different detail panes are required
+    procedure SetDetailPaneChangeAction(const Action: TBasicAction);
+      {Sets action that us triggered when different detail panes are required
       to be shown.
-        @param Actions [in] Dynamic array of required actions: one per detail
-          display tab.
+        @param Action [in] Required action.
       }
     procedure SetEditSnippetAction(const Action: TBasicAction);
       {Sets action triggered when user requests a user defined snippet is to be
@@ -203,10 +202,12 @@ procedure TNotifier.ChangeDetailPane(const Pane: Integer);
     @param Pane [in] Required new pane.
   }
 begin
-  Assert((Pane >= 0) and (Pane < Length(fDisplayPaneChangeActions)),
-    ClassName + '.ChangeDetailPane: Pane out of range');   
-  if Assigned(fDisplayPaneChangeActions[Pane]) then
-    fDisplayPaneChangeActions[Pane].Execute;
+  if Assigned(fDisplayPaneChangeAction) then
+  begin
+    // TODO: change this for a custom action?
+    fDisplayPaneChangeAction.Tag := Pane;
+    fDisplayPaneChangeAction.Execute;
+  end;
 end;
 
 procedure TNotifier.ChangeOverviewStyle(const Style: Integer);
@@ -301,19 +302,9 @@ begin
   fConfigCompilersAction := Action;
 end;
 
-procedure TNotifier.SetDetailPaneChangeActions(
-  const Actions: array of TBasicAction);
-  {Sets actions that are triggered when different detail panes are required to
-  be shown.
-    @param Actions [in] Dynamic array of required actions: one per detail
-      display tab.
-  }
-var
-  Idx: Integer; // loops thru actions
+procedure TNotifier.SetDetailPaneChangeAction(const Action: TBasicAction);
 begin
-  SetLength(fDisplayPaneChangeActions, Length(Actions));
-  for Idx := Low(Actions) to High(Actions) do
-    fDisplayPaneChangeActions[Idx] := Actions[Idx];
+  fDisplayPaneChangeAction := Action;
 end;
 
 procedure TNotifier.SetDisplayCategoryAction(const Action: TBasicAction);

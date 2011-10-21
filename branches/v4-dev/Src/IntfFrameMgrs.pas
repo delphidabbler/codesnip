@@ -130,6 +130,13 @@ type
       }
   end;
 
+  // TODO: Comment this interface
+  IEditableTabbedDisplayMgr = interface(IInterface)
+    ['{2E17C87F-952F-4EBF-8BF7-CF8107B3A7CF}']
+    ///  <summary>Creates new tab and returns its index.</summary>
+    function NewTab: Integer;
+  end;
+
   {
   TTreeNodeAction:
     Enumeration that describes the different expand/collapse operations of tree
@@ -203,6 +210,8 @@ type
         @param Force [in] Forces view item to be re-displayed even if not
           changed.
       }
+    // TODO: Comment this method
+    function GetCurrentView: IView;
   end;
 
   //////////////////////////////////////////////////////////////////////////////
@@ -247,12 +256,12 @@ type
   }
   IWBCustomiser = interface(IInterface)
     ['{B46CDC61-EC43-43E3-838C-73AB8F150E46}']
-    procedure SetExternalObj(const Obj: IDispatch);
+    procedure SetExternalObj(Obj: IDispatch);
       {Provides an object that is used to extend a web browser's external
       object.
         @param Obj [in] External browser object extender.
       }
-    procedure SetDragDropHandler(const Obj: IDropTarget);
+    procedure SetDragDropHandler(Obj: IDropTarget);
       {Provides an object used by web browser control to handle drag-drop
       operations.
         @param Obj [in] Drag-drop handler.

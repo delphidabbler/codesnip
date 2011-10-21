@@ -124,6 +124,8 @@ type
       {Selects previous tab in currently active tab set. Does nothing if there
       is no active tab set.
       }
+    procedure CreateNewDetailsTab;
+      // TODO: Comment this method
 //    procedure DisplayCompileResults(const ACompilers: ICompilers);
 //      {Displays results of a test compilation in Compiler Check tab of Details
 //      pane.
@@ -240,6 +242,11 @@ begin
   fDetailsMgr := DetailsMgr;
   // Create owned view object: stores current view
   fCurrentView := TViewItemFactory.CreateNulView;
+end;
+
+procedure TMainDisplayMgr.CreateNewDetailsTab;
+begin
+  (fDetailsMgr as IEditableTabbedDisplayMgr).NewTab;
 end;
 
 destructor TMainDisplayMgr.Destroy;

@@ -200,7 +200,6 @@ type
     miViewCategorised: TMenuItem;
     miViewCompErrs: TMenuItem;
     miViewDependencies: TMenuItem;
-    miViewInfo: TMenuItem;
     miViewSnippetKinds: TMenuItem;
     miViewTestUnit: TMenuItem;
     miViewAlphabetical: TMenuItem;
@@ -240,6 +239,8 @@ type
     tbTestCompile: TToolButton;
     tbUpdateDbase: TToolButton;
     miCompile: TMenuItem;
+    actNewDetailsTab: TAction;
+    miNewDetailsTab: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
@@ -324,6 +325,7 @@ type
     procedure FormResize(Sender: TObject);
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
+    procedure actNewDetailsTabExecute(Sender: TObject);
   strict private
     fIsAppRegistered: Boolean;        // Flag noting if app is registered
     fNotifier: INotifier;             // Notififies app of user-initiated events
@@ -577,7 +579,7 @@ procedure TMainForm.ActDetailTabExecute(Sender: TObject);
     @param Sender [in] Action triggering this event
   }
 begin
-  // TODO: decide what to do with this - it is always Tag = 0
+  // TODO: decide what to do with this and whether needed
   // Action's Tag property specifies index of tab being selected
   fMainDisplayMgr.SelectedDetailTab := (Sender as TAction).Tag;
 end;
@@ -799,7 +801,7 @@ procedure TMainForm.actHelpQuickStartExecute(Sender: TObject);
   }
 begin
   // Displays help topic indirected via custom help topic action
-  DisplayHelp('QuickStart');                               
+  DisplayHelp('QuickStart');
 end;
 
 procedure TMainForm.actImportCodeExecute(Sender: TObject);
@@ -816,6 +818,11 @@ procedure TMainForm.actLicenseExecute(Sender: TObject);
   }
 begin
   DisplayHelp('License');
+end;
+
+procedure TMainForm.actNewDetailsTabExecute(Sender: TObject);
+begin
+  fMainDisplayMgr.CreateNewDetailsTab;
 end;
 
 procedure TMainForm.actNewsExecute(Sender: TObject);
@@ -1424,7 +1431,7 @@ begin
       SetOverviewStyleChangeActions(
         [actViewCategorised, actViewAlphabetical, actViewSnippetKinds]
       );
-      SetDetailPaneChangeActions([actViewInfo]);
+      SetDetailPaneChangeAction(actViewInfo);
       SetEditSnippetAction(
         TActionFactory.CreateEditSnippetAction(
           Self, ActEditSnippetByNameExecute
@@ -1453,7 +1460,7 @@ begin
     fMainDisplayMgr := TMainDisplayMgr.Create(frmOverview, frmDetail);
     // select active tabs
     fMainDisplayMgr.SelectedOverviewTab := fWindowSettings.OverviewTab;
-    fMainDisplayMgr.SelectedDetailTab := fWindowSettings.DetailTab;
+//    fMainDisplayMgr.SelectedDetailTab := fWindowSettings.DetailTab;
 
     // Create status bar manager
     fStatusBarMgr := TStatusBarMgr.Create(sbStatusBar);
