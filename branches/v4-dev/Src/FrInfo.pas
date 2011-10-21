@@ -66,125 +66,15 @@ type
     IClipboardMgr,                                          // clipboard manager
     ISelectionMgr,                                          // selection manager
     IHTMLDocHostInfo                        // info for use in HTML manipulation
-    )
-  protected // do not make strict
-    { IWBDisplayMgr: Implemented in ancestor class }
-    { IViewItemDisplayMgr: Implemented in ancestor class }
-    { IPaneInfo: Implemented in ancestor class }
-    { IWBCustomiser: Implemented in ancestor class }
-    { IClipboardMgr: Implemented in ancestor class }
-    { ISelectionMgr: Implemented in ancestor class }                                          // selection manager
-    { IHTMLDocHostInfo: Implemented in ancestor class }
-  strict protected
-    procedure BuildCSS(const CSSBuilder: TCSSBuilder); override;
-      {Generates CSS classes specific to HTML displayed in information pane.
-      This CSS is added to that provided by parent class.
-        @param CSSBuilder [in] Object used to build the CSS code.
-      }
-    procedure HighlightSearchResults(const Criteria: ITextSearchCriteria);
-      {Highlights words in current snippet document that match text search
-      criteria.
-        @param Criteria [in] Text search criteria.
-      }
-    procedure DisplayCurViewItem; override;
-      {Displays current view item. This method should not be called directly
-      from this class. Instead call inherited UpdateDisplay method which first
-      checks if frame is active before calling this method polymorphically.
-      }
+  )
   end;
 
 
 implementation
 
 
-uses
-  // Delphi
-  SysUtils, Graphics,
-  // Project
-  Browser.UHighlighter, UColours, UCSSUtils, UFontHelper, UQuery, UView;
-
-
 {$R *.dfm}
 
-
-{ TInfoFrame }
-
-procedure TInfoFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
-  {Generates CSS classes specific to HTML displayed in information pane. This
-  CSS is added to that provided by parent class.
-    @param CSSBuilder [in] Object used to build the CSS code.
-  }
-var
-  ContentFont: TFont;   // default content font for OS
-begin
-  // NOTE:
-  // We only set CSS properties that may need to use system colours or fonts
-  // that may be changed by user or changing program defaults. CSS that controls
-  // layout remains in a CSS file embedded in resources.
-  inherited;
-  // Add CSS relating to compiler table
-  with CSSBuilder.AddSelector('.comptable th') do
-  begin
-    AddProperty(CSSBackgroundColorProp(clCompTblHeadBg));
-    AddProperty(CSSFontWeightProp(cfwNormal));
-  end;
-  ContentFont := TFont.Create;
-  try
-    // Add CSS relating to Extra REML code
-    TFontHelper.SetContentFont(ContentFont, True);
-    TActiveTextHTML.Styles(ContentFont, CSSBuilder);
-  finally
-    ContentFont.Free;
-  end;
-end;
-
-procedure TInfoFrame.DisplayCurViewItem;
-  {Displays current view item. This method should not be called directly from
-  this class. Instead call inherited UpdateDisplay method which first checks if
-  frame is active before calling this method polymorphically.
-  }
-var
-  TextSearchCriteria: ITextSearchCriteria;  // criteria for any text search
-begin
-  inherited;  // Load page and update dynamically as required
-  // If we're viewing a snippet and there's an active text search, highlight
-  // text that matches search
-  if Supports(CurrentView, ISnippetView) and
-    Supports(
-      Query.CurrentSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
-    ) then
-    HighlightSearchResults(TextSearchCriteria);
-end;
-
-procedure TInfoFrame.HighlightSearchResults(
-  const Criteria: ITextSearchCriteria);
-  {Highlights words in current snippet document that match text search criteria.
-    @param Criteria [in] Text search criteria.
-  }
-var
-  Highlighter: TWBHighlighter;  // object used to perform highlighting
-begin
-  Assert(Assigned(Criteria),
-    ClassName + '.HighlightSearchResults: Criteria is nil');
-  Assert(Supports(Criteria, ITextSearchCriteria),
-    ClassName + '.HighlightSearchResults: There is no current text search');
-  Assert(Supports(CurrentView, ISnippetView),
-    ClassName + '.HighlightSearchResults: View item is not a snippet');
-  // Create and configure highlighter object
-  Highlighter := TWBHighlighter.Create(wbBrowser);
-  try
-    // only a snippet's description and source code are included in a text
-    // search. These sections are enclosed in tags with ids 'description',
-    // 'sourcecode' and 'extra' respectively in the document's HTML so we
-    // restrict highlighting to these sections
-    Highlighter.SearchSectionIDs.Add('description');
-    Highlighter.SearchSectionIDs.Add('sourcecode');
-    Highlighter.SearchSectionIDs.Add('extra');
-    Highlighter.HighlightSearchResults(Criteria);
-  finally
-    Highlighter.Free;
-  end;
-end;
 
 end.
 

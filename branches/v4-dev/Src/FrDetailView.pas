@@ -45,7 +45,7 @@ uses
   OleCtrls, SHDocVw, Classes, Controls, ExtCtrls, Windows, ActiveX,
   // Project
   FrBrowserBase, IntfFrameMgrs, IntfHTMLDocHostInfo, UCommandBars, UCSSBuilder,
-  UDetailPageLoader, UView, UWBPopupMenus;
+  UDetailPageLoader, USearch, UView, UWBPopupMenus;
 
 type
 
@@ -59,8 +59,13 @@ type
   }
   TDetailViewFrame = class(TBrowserBaseFrame,
     IPaneInfo,                                // provides information about pane
-    IHTMLDocHostInfo,                       // info for use in HTML manipulation
-    ICommandBarConfig                               // command bar configuration
+    ICommandBarConfig,                              // command bar configuration
+    IWBDisplayMgr,                         // support for hosted browser control
+    IViewItemDisplayMgr,                                 // displays a view item
+    IWBCustomiser,                             // customises web browser control
+    IClipboardMgr,                                          // clipboard manager
+    ISelectionMgr,                                          // selection manager
+    IHTMLDocHostInfo                        // info for use in HTML manipulation
   )
   strict private
     fCurrentView: IView;            // Value of CurrentView property
@@ -81,6 +86,11 @@ type
         @param Handled [in/out] Set to true to prevent browser control
           displaying own menu.
         @param Obj [in] Reference to HTML element at popup position.
+      }
+    procedure HighlightSearchResults(const Criteria: ITextSearchCriteria);
+      {Highlights words in current snippet document that match text search
+      criteria.
+        @param Criteria [in] Text search criteria.
       }
   protected // do not make strict
     { IClipboardMgr: Implemented in base class }
@@ -159,10 +169,11 @@ implementation
 
 uses
   // Delphi
-  Graphics, Menus,
+  SysUtils, Graphics, Menus,
   // Project
-  Hiliter.UAttrs, Hiliter.UCSS, Hiliter.UGlobals, UColours, UCSSUtils,
-  UFontHelper, UUtils, UWBCommandBars;
+  Browser.UHighlighter, Hiliter.UAttrs, Hiliter.UCSS, Hiliter.UGlobals,
+  UActiveTextHTML, UColours, UCSSUtils, UFontHelper, UQuery, UUtils,
+  UWBCommandBars;
 
 {$R *.dfm}
 
@@ -188,6 +199,7 @@ procedure TDetailViewFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
 var
   HiliteAttrs: IHiliteAttrs;  // syntax highlighter used to build CSS
   CSSFont: TFont;             // font used to set CSS properties
+  ContentFont: TFont;   // default content font for OS
 begin
   // NOTE:
   // We only set CSS properties that may need to use system colours or fonts
@@ -250,6 +262,21 @@ begin
       AddProperty(CSSBackgroundColorProp(clSourceBg));
   finally
     CSSFont.Free;
+  end;
+  // TODO: integrate this with above code and discard one of font variables
+  // Add CSS relating to compiler table
+  with CSSBuilder.AddSelector('.comptable th') do
+  begin
+    AddProperty(CSSBackgroundColorProp(clCompTblHeadBg));
+    AddProperty(CSSFontWeightProp(cfwNormal));
+  end;
+  ContentFont := TFont.Create;
+  try
+    // Add CSS relating to Extra REML code
+    TFontHelper.SetContentFont(ContentFont, True);
+    TActiveTextHTML.Styles(ContentFont, CSSBuilder);
+  finally
+    ContentFont.Free;
   end;
 end;
 
@@ -336,16 +363,55 @@ procedure TDetailViewFrame.DisplayCurViewItem;
   descendant classes. They should instead call UpdateDisplay which checks if
   frame is active before calling this method.
   }
+var
+  TextSearchCriteria: ITextSearchCriteria;  // criteria for any text search
 begin
   // Load the required page using page loader.
   TDetailPageLoader.LoadPage(CurrentView, WBController);
   // Cancel any selection in browser control
   WBController.UIMgr.ClearSelection;
+  // If we're viewing a snippet and there's an active text search, highlight
+  // text that matches search
+  if Supports(CurrentView, ISnippetView) and
+    Supports(
+      Query.CurrentSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
+    ) then
+    HighlightSearchResults(TextSearchCriteria);
 end;
 
 function TDetailViewFrame.GetCurrentView: IView;
 begin
   Result := fCurrentView;
+end;
+
+procedure TDetailViewFrame.HighlightSearchResults(
+  const Criteria: ITextSearchCriteria);
+  {Highlights words in current snippet document that match text search criteria.
+    @param Criteria [in] Text search criteria.
+  }
+var
+  Highlighter: TWBHighlighter;  // object used to perform highlighting
+begin
+  Assert(Assigned(Criteria),
+    ClassName + '.HighlightSearchResults: Criteria is nil');
+  Assert(Supports(Criteria, ITextSearchCriteria),
+    ClassName + '.HighlightSearchResults: There is no current text search');
+  Assert(Supports(CurrentView, ISnippetView),
+    ClassName + '.HighlightSearchResults: View item is not a snippet');
+  // Create and configure highlighter object
+  Highlighter := TWBHighlighter.Create(wbBrowser);
+  try
+    // only a snippet's description and source code are included in a text
+    // search. These sections are enclosed in tags with ids 'description',
+    // 'sourcecode' and 'extra' respectively in the document's HTML so we
+    // restrict highlighting to these sections
+    Highlighter.SearchSectionIDs.Add('description');
+    Highlighter.SearchSectionIDs.Add('sourcecode');
+    Highlighter.SearchSectionIDs.Add('extra');
+    Highlighter.HighlightSearchResults(Criteria);
+  finally
+    Highlighter.Free;
+  end;
 end;
 
 function TDetailViewFrame.HTMLDocument: IDispatch;
