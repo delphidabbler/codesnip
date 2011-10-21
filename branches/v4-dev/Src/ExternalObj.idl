@@ -48,13 +48,12 @@ library ExternalObj
   importlib("stdole2.tlb");
 
   /*
-   * V7 interface of extension to browser DOM's "external" object. Used for
-   * browser controls in CodeSnip's main display.
+   * V7 interface of extension to browser DOM's "external" object.
    */
   [
     uuid(316B5427-61DE-482A-8D71-10AFBACCB909),
     version(7.0),
-    helpstring("DOM external object extender v7"),
+    helpstring("DOM external object extender"),
     dual,
     oleautomation
   ]
