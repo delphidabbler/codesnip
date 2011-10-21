@@ -45,8 +45,8 @@ uses
   Forms, ComCtrls, ExtCtrls, Controls, StdCtrls, Classes, ActiveX, ActnList,
   ImgList, Generics.Collections,
   // Project
-  Compilers.UGlobals, FrTitled, FrBrowserBase, FrDetailView,
-  FrInfo, IntfFrameMgrs, IntfNotifier, UCommandBars, UView;
+  Compilers.UGlobals, FrTitled, FrBrowserBase, FrDetailView, IntfFrameMgrs,
+  IntfNotifier, UCommandBars, UView;
 
 
 type
@@ -357,7 +357,7 @@ end;
 function TDetailFrame.NewTab: Integer;
 var
   TS: TTabSheet;
-  Frame: TInfoFrame;
+  Frame: TDetailViewFrame;
   Cmd: TCommandBarItem;
 begin
   // create page control
@@ -365,7 +365,7 @@ begin
   TS.PageControl := pcDetail;
   Result := TS.PageIndex;
   // create a frame parented by tab sheet
-  Frame := TInfoFrame.Create(Self);
+  Frame := TDetailViewFrame.Create(Self);
   Frame.Name := ''; // important to avoid name clashes
   Assert(Supports(Frame, IViewItemDisplayMgr),
     ClassName + '.NewTab: New frame does not support IViewItemDisplayMgr');
@@ -520,7 +520,7 @@ function TDetailFrame.TabToPane(const TabIdx: Integer): IInterface;
   }
 var
   TS: TTabSheet;
-  Frame: TInfoFrame;
+  Frame: TDetailViewFrame;
   CtrlIdx: Integer;
 begin
   Assert(TabIdx >= 0, ClassName + '.TabToPane: TabIdx < 0');
@@ -529,9 +529,9 @@ begin
   Frame := nil;
   for CtrlIdx := 0 to Pred(TS.ControlCount) do
   begin
-    if (TS.Controls[CtrlIdx] is TInfoFrame) then
+    if (TS.Controls[CtrlIdx] is TDetailViewFrame) then
     begin
-      Frame := TS.Controls[CtrlIdx] as TInfoFrame;
+      Frame := TS.Controls[CtrlIdx] as TDetailViewFrame;
       Break;
     end;
   end;

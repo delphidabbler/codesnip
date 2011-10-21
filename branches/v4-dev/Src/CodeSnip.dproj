@@ -259,10 +259,6 @@
 				<Form>HTMLTpltDlgFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="FrInfo.pas">
-				<Form>InfoFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
 			<DCCReference Include="FrMemoPreview.pas">
 				<Form>MemoPreviewFrame</Form>
 				<DesignClass>TFrame</DesignClass>

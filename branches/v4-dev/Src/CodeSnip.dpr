@@ -149,7 +149,6 @@ uses
   FrHTMLDlg in 'FrHTMLDlg.pas' {HTMLDlgFrame: TFrame},
   FrHTMLPreview in 'FrHTMLPreview.pas' {HTMLPreviewFrame: TFrame},
   FrHTMLTpltDlg in 'FrHTMLTpltDlg.pas' {HTMLTpltDlgFrame: TFrame},
-  FrInfo in 'FrInfo.pas' {InfoFrame: TFrame},
   FrMemoPreview in 'FrMemoPreview.pas' {MemoPreviewFrame: TFrame},
   FrNewsPrefs in 'FrNewsPrefs.pas' {NewsPrefsFrame: TFrame},
   FrOverview in 'FrOverview.pas' {OverviewFrame: TFrame},
