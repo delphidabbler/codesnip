@@ -60,13 +60,13 @@ type
     evChangeEnd,            // a change to the database has completed
     evSnippetAdded,         // a snippet has been added
     evBeforeSnippetDelete,  // a snippet is about to be deleted
-    evAfterSnippetDelete,   // a snippet has just been deleted
     evSnippetDeleted,       // a snippet has been deleted
+    evBeforeSnippetChange,  // a snippet is about to be changed
     evSnippetChanged,       // a snippet's properties / references have changed
     evCategoryAdded,        // a category has been added
     evBeforeCategoryDelete, // a category is about to be deleted
-    evAfterCategoryDelete,  // a category has just been deleted
     evCategoryDeleted,      // a category has been deleted
+    evBeforeCategoryChange, // a category is about to be changed
     evCategoryChanged       // a category's properties have changed
   );
 
@@ -720,7 +720,6 @@ begin
     for SnipIdx := Pred(Category.Snippets.Count) downto 0 do
       InternalDeleteSnippet(Category.Snippets[SnipIdx]);
     InternalDeleteCategory(Category);
-    TriggerEvent(evCategoryDeleted);
   finally
     TriggerEvent(evChangeEnd);
     fUpdated := True;
@@ -757,7 +756,6 @@ begin
       (Dependent.Depends as TSnippetListEx).Delete(Snippet);
     // Delete snippet itself
     InternalDeleteSnippet(Snippet);
-    TriggerEvent(evSnippetDeleted);
   finally
     FreeAndNil(Referrers);
     FreeAndNil(Dependents);
@@ -933,7 +931,7 @@ procedure TDatabase.InternalDeleteCategory(const Cat: TCategory);
 begin
   TriggerEvent(evBeforeCategoryDelete, Cat);
   (fCategories as TCategoryListEx).Delete(Cat);
-  TriggerEvent(evAfterCategoryDelete);
+  TriggerEvent(evCategoryDeleted);
 end;
 
 procedure TDatabase.InternalDeleteSnippet(const Snippet: TSnippet);
@@ -950,7 +948,7 @@ begin
   // Delete from "master" list: this frees Snippet
   TriggerEvent(evBeforeSnippetDelete, Snippet);
   (fSnippets as TSnippetListEx).Delete(Snippet);
-  TriggerEvent(evAfterSnippetDelete);
+  TriggerEvent(evSnippetDeleted);
 end;
 
 procedure TDatabase.Load;
@@ -1028,6 +1026,7 @@ var
   CatID: string;
 begin
   TriggerEvent(evChangeBegin);
+  TriggerEvent(evBeforeCategoryChange, Category);
   try
     SnippetList := TSnippetList.Create;
     try
@@ -1083,6 +1082,7 @@ begin
   Referrers := nil;
   Dependents := nil;
   TriggerEvent(evChangeBegin);
+  TriggerEvent(evBeforeSnippetChange, Snippet);
   try
     // Calculate new name
     if NewName <> '' then
