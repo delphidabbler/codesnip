@@ -101,6 +101,10 @@ type
       // TODO: comment this method
     function IsEmptyTabSet: Boolean;
       // TODO: comment this method
+    // TODO: comment this method
+    procedure CloseSelectedTab;
+    // TODO: comment this method
+    procedure CloseAllTabs(ExcludeSelected: Boolean);
   protected // interface implementations
     { ITabbedDisplayMgr }
     procedure SelectTab(const TabIdx: Integer);
@@ -121,7 +125,7 @@ type
     ///  <remarks>Method of IEditableTabbedDisplayMgr.</remarks>
     function NewTab: Integer;
     // TODO: comment this method
-    procedure CloseSelectedTab;
+    procedure CloseTabs(const Action: TCloseTabAction);
     // TODO: comment this method
     function CanCloseSelectedTab: Boolean;
     { IViewItemDisplayMgr }
@@ -264,6 +268,34 @@ begin
     Result := False;
 end;
 
+procedure TDetailFrame.CloseAllTabs(ExcludeSelected: Boolean);
+var
+  Idx: Integer;                   // loops thru all tabs in page control
+  SelectedTab: TTabSheet;         // references currently selected tab
+  CloseTabList: TList<TTabSheet>; // list of tabs to close
+  ClosingTab: TTabSheet;          // each tab to be closed
+begin
+  if IsEmptyTabSet then
+    Exit;
+  SelectedTab := pcDetail.ActivePage;
+  CloseTabList := TList<TTabSheet>.Create;
+  try
+    for Idx := 0 to Pred(pcDetail.PageCount) do
+    begin
+      if not ExcludeSelected or (pcDetail.Pages[Idx] <> SelectedTab) then
+        CloseTabList.Add(pcDetail.Pages[Idx]);
+    end;
+    for ClosingTab in CloseTabList do
+      ClosingTab.Free;
+  finally
+    CloseTabList.Free;
+  end;
+  if IsEmptyTabSet then
+    Exit;
+  Assert(pcDetail.PageCount = 1, ClassName + '.CloseAllTabs: 1 tab expected');
+  SelectTab(0);
+end;
+
 procedure TDetailFrame.CloseSelectedTab;
 var
   ClosingTab: TTabSheet;
@@ -281,6 +313,18 @@ begin
     SelectTab(Pred(TabCount))
   else
     SelectTab(ClosingTabIdx);
+end;
+
+procedure TDetailFrame.CloseTabs(const Action: TCloseTabAction);
+begin
+  case Action of
+    ctaSelected:
+      CloseSelectedTab;
+    ctaAll:
+      CloseAllTabs(False);
+    ctaAllExceptSelected:
+      CloseAllTabs(True);
+  end;
 end;
 
 procedure TDetailFrame.CopyToClipboard;
