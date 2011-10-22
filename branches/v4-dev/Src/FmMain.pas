@@ -472,7 +472,7 @@ end;
 
 procedure TMainForm.actCloseDetailsTabExecute(Sender: TObject);
 begin
-  fMainDisplayMgr.CloseSelectedDetailsTab;
+  fMainDisplayMgr.CloseDetailsTab(ctaSelected);
 end;
 
 procedure TMainForm.actCloseDetailsTabUpdate(Sender: TObject);
@@ -1584,7 +1584,7 @@ begin
   // Inform that database is being loaded via status bar
   fStatusBarMgr.ShowSimpleMessage(sLoadingDatabase);
   fHistory.Clear;
-  fMainDisplayMgr.Clear;
+  fMainDisplayMgr.ClearAll;
   // Load the database
   try
     Loader;
@@ -1656,7 +1656,7 @@ begin
     evBeforeCategoryDelete: // category about to be deleted: clear display
     begin
       fHistory.Clear;
-      fMainDisplayMgr.Clear;
+      fMainDisplayMgr.ClearSelected;
     end;
     evSnippetDeleted,       // snippet deleted: display welcome page
     evCategoryDeleted:      // category deleted: display welcome page

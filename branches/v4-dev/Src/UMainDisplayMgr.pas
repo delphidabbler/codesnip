@@ -100,9 +100,12 @@ type
       {Initialises display. All snippets in database are shown in overview pane
       and detail pane is cleared.
       }
-    procedure Clear;
-      {Clears the main display, i.e. overview and detail panes.
-      }
+    ///  <summary>Clears main display: overview pane and selected page in
+    ///  detail pane are both cleared.</summary>
+    procedure ClearSelected;
+    ///  <summary>Clears whole display: overview pane is cleared and all detail
+    ///  tabs are closed.</summary>
+    procedure ClearAll;
     procedure DisplayViewItem(ViewItem: IView);
       {Displays a view item. Updates current view item, selects item in overview
       if possible and displays full details in detail pane.
@@ -124,18 +127,14 @@ type
       {Selects previous tab in currently active tab set. Does nothing if there
       is no active tab set.
       }
+    ///  <summary>Creates a new empty tab in details pane.</summary>
     procedure CreateNewDetailsTab;
-      // TODO: Comment this method
-    procedure CloseSelectedDetailsTab;
-      // TODO: Comment this method
+    ///  <summary>Closes one or more tabs in details pane.</summary>
+    ///  <param name="CloseAction">TCloseTabAction [in] Specifies which tab(s)
+    ///  to close: all, selected or all except selected.</param>
+    procedure CloseDetailsTab(const CloseAction: TCloseTabAction);
     function CanCloseSelectedDetailsTab: Boolean;
       // TODO: Comment this method
-
-//    procedure DisplayCompileResults(const ACompilers: ICompilers);
-//      {Displays results of a test compilation in Compiler Check tab of Details
-//      pane.
-//        @param ACompilers [in] Compilers object containing required results.
-//      }
     function CanCopy: Boolean;
       {Checks whether copying to clipboard is currently supported.
         @return True if clipboard copying supported, false if not.
@@ -222,18 +221,23 @@ begin
   Result := (fOverviewMgr as IOverviewDisplayMgr).CanUpdateTreeState(State);
 end;
 
-procedure TMainDisplayMgr.Clear;
-  {Clears the main display, i.e. overview and detail panes.
-  }
+procedure TMainDisplayMgr.ClearAll;
+begin
+  fCurrentView := TViewItemFactory.CreateNulView;
+  (fOverviewMgr as IOverviewDisplayMgr).Clear;
+  (fDetailsMgr as IEditableTabbedDisplayMgr).CloseTabs(ctaAll);
+end;
+
+procedure TMainDisplayMgr.ClearSelected;
 begin
   fCurrentView := TViewItemFactory.CreateNulView;
   (fOverviewMgr as IOverviewDisplayMgr).Clear;
   (fDetailsMgr as IViewItemDisplayMgr).Display(fCurrentView, False);
 end;
 
-procedure TMainDisplayMgr.CloseSelectedDetailsTab;
+procedure TMainDisplayMgr.CloseDetailsTab(const CloseAction: TCloseTabAction);
 begin
-  (fDetailsMgr as IEditableTabbedDisplayMgr).CloseSelectedTab;
+  (fDetailsMgr as IEditableTabbedDisplayMgr).CloseTabs(CloseAction);
 end;
 
 procedure TMainDisplayMgr.CopyToClipboard;
@@ -272,14 +276,6 @@ begin
   inherited;
 end;
 
-//procedure TMainDisplayMgr.DisplayCompileResults(const ACompilers: ICompilers);
-//  {Displays results of a test compilation.
-//    @param ACompilers [in] Compilers object containing required results.
-//  }
-//begin
-// (fDetailsMgr as ICompCheckDisplayMgr).DisplayCompileResults(ACompilers);
-//end;
-//
 procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView);
   {Displays a view item. Updates current view item, selects item in overview if
   possible and displays full details in detail pane.
@@ -333,7 +329,7 @@ procedure TMainDisplayMgr.Initialise;
   }
 begin
   // First we clear the display
-  Clear;
+  ClearSelected;
   // Now we display current query in overview pane
   QueryUpdated;
 end;
