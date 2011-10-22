@@ -194,7 +194,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UExceptions, USnippetIDs, UStrUtils;
+  DB.UMain, UExceptions, USnippetIDs, UStrUtils;
 
 
 type
@@ -262,8 +262,8 @@ type
   )
   strict private
     var
-      ///  <summary>Snippet associated with view.</summary>
-      fSnippet: TSnippet;
+      ///  <summary>ID of snippet associated with view.</summary>
+      fSnippetID: TSnippetID;
     type
       ///  <summary>Implementation of IViewKey for snippet view.</summary>
       TKey = class(TInterfacedObject, IViewKey)
@@ -305,8 +305,8 @@ type
   )
   strict private
     var
-      ///  <summary>Category associated with view.</summary>
-      fCategory: TCategory;
+      ///  <summary>ID of category associated with view.</summary>
+      fCategoryID: string;
     type
       ///  <summary>Implementation of IViewKey for category view item.</summary>
       TKey = class(TInterfacedObject, IViewKey)
@@ -507,7 +507,7 @@ end;
 constructor TSnippetViewItem.Create(const Snippet: TSnippet);
 begin
   inherited Create;
-  fSnippet := Snippet;
+  fSnippetID := Snippet.ID;
 end;
 
 function TSnippetViewItem.GetDescription: string;
@@ -517,12 +517,13 @@ end;
 
 function TSnippetViewItem.GetKey: IViewKey;
 begin
-  Result := TKey.Create(GetSnippet.ID);
+  Result := TKey.Create(fSnippetID);
 end;
 
 function TSnippetViewItem.GetSnippet: TSnippet;
 begin
-  Result := fSnippet;
+  Result := Database.Snippets.Find(fSnippetID);
+  Assert(Assigned(Result), ClassName + '.GetSnippet: Snippet not found');
 end;
 
 function TSnippetViewItem.IsEqual(View: IView): Boolean;
@@ -531,6 +532,7 @@ var
 begin
   if not Supports(View, ISnippetView, SnippetView) then
     Exit(False);
+  // don't compare snippet IDs directly in case snippet equality test changes
   Result := GetSnippet.IsEqual(SnippetView.Snippet);
 end;
 
@@ -564,12 +566,13 @@ end;
 constructor TCategoryViewItem.Create(const Category: TCategory);
 begin
   inherited Create;
-  fCategory := Category;
+  fCategoryID := Category.ID;
 end;
 
 function TCategoryViewItem.GetCategory: TCategory;
 begin
-  Result := fCategory;
+  Result := Database.Categories.Find(fCategoryID);
+  Assert(Assigned(Result), ClassName + '.GetCategory: Category not found');
 end;
 
 function TCategoryViewItem.GetDescription: string;
@@ -588,6 +591,7 @@ var
 begin
   if not Supports(View, ICategoryView, CatView) then
     Exit(False);
+  // don't compare category IDs directly in case equality test changes
   Result := GetCategory.IsEqual(CatView.Category);
 end;
 
