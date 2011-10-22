@@ -279,14 +279,18 @@ type
         @return Index where item was inserted in list
         @except Raised if duplicate snippet added to list.
       }
+    function Find(const SnippetID: TSnippetID): TSnippet; overload;
+      {Finds a specified snippet in list.
+        @param SnippetID [in] ID of snippet to find.
+        @return Reference to required snippet or nil if not found.
+      }
     function Find(const SnippetName: string;
       const UserDefined: Boolean): TSnippet; overload;
       {Finds a named snippet in list with a matching user defined property.
         @param SnippetName [in] Name of required snippet.
         @param UserDefined [in] Flag that determines if we are looking for a
           user defined snippet or one from main database.
-        @return Reference to object representing snippet in list or nil if not
-          in list.
+        @return Reference to required snippet or nil if not found.
       }
     function Contains(const Snippet: TSnippet): Boolean;
       {Checks whether list contains a specified snippet.
@@ -516,7 +520,7 @@ procedure TSnippetEx.UpdateRefs(const Refs: TSnippetReferences;
     SL.Clear;
     for ID in IDList do
     begin
-      Snippet := AllSnippets.Find(ID.Name, ID.UserDefined);
+      Snippet := AllSnippets.Find(ID);
       if Assigned(Snippet) then
         SL.Add(Snippet);
     end;
@@ -686,8 +690,7 @@ function TSnippetList.Find(const SnippetName: string;
     @param SnippetName [in] Name of required snippet.
     @param UserDefined [in] Flag that determines if we are looking for a
       user defined snippet or one from main database.
-    @return Reference to object representing snippet in list or nil if not
-      in list.
+    @return Reference to required snippet or nil if not found.
   }
 var
   Idx: Integer; // index of snippet name in list
@@ -696,6 +699,15 @@ begin
     Result := Items[Idx]
   else
     Result := nil;
+end;
+
+function TSnippetList.Find(const SnippetID: TSnippetID): TSnippet;
+  {Finds a specified snippet in list.
+    @param SnippetID [in] ID of snippet to find.
+    @return Reference to required snippet or nil if not found.
+  }
+begin
+  Result := Find(SnippetID.Name, SnippetID.UserDefined);
 end;
 
 function TSnippetList.GetEnumerator: TEnumerator<TSnippet>;
