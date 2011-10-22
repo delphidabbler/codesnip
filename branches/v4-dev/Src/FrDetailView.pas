@@ -54,19 +54,19 @@ type
   ///  <remarks>
   ///  Uses a web browser control to display the views.
   ///  </remarks>
-  TDetailViewFrame = class(TBrowserBaseFrame,
+  TDetailViewFrame = class sealed(TBrowserBaseFrame,
     IPaneInfo,                                // provides information about pane
     ICommandBarConfig,                              // command bar configuration
     IViewItemDisplayMgr,                                 // displays a view item
-    IClipboardMgr,                                          // clipboard manager
-    ISelectionMgr,                                          // selection manager
+    IClipboardMgr,                     // clipboard manager (impl in base class)
+    ISelectionMgr,                     // selection manager (impl in base class)
     IWBCustomiser,                             // customises web browser control
     IWBDisplayMgr,                         // support for hosted browser control
     IHTMLDocHostInfo                        // info for use in HTML manipulation
   )
   strict private
     var
-      ///  <summary>Value of CurrentView property.</summary>
+      ///  <summary>Information about currently displayed view item.</summary>
       fCurrentView: IView;
       ///  <summary>Value of Active property.</summary>
       fIsActivated: Boolean;
@@ -96,9 +96,30 @@ type
     ///  <summary>Highlights words in current document that match given text
     ///  search criteria.</summary>
     procedure HighlightSearchResults(const Criteria: ITextSearchCriteria);
-  protected // do not make strict
-    { IClipboardMgr: Implemented in base class }
-    { ISelectionMgr: Implemented in base class }
+    ///  <summary>Updates the display if active. Does nothing if display not
+    ///  active.</summary>
+    procedure UpdateDisplay;
+  strict protected
+    ///  <summary>Generates CSS classes specific to HTML displayed in this pane.
+    ///  </summary>
+    ///  <param name="CSSBuilder">TCSSBuilder [in] Used to build CSS code.
+    ///  </param>
+    ///  <remarks>The CSS generated in this method is added to that provided by
+    ///  base class.</remarks>
+    procedure BuildCSS(const CSSBuilder: TCSSBuilder); override;
+    ///  <summary>References contained object that implements ICommandBarConfig.
+    ///  </summary>
+    ///  <remarks>There is no need to access this property: it is here simply to
+    ///  implement the interface.</remarks>
+    property CommandBars: TCommandBarMgr
+      read fCommandBars implements ICommandBarConfig;
+  public
+    ///  <summary>Object constructor. Initialises frame.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns this frame.
+    ///  </param>
+    constructor Create(AOwner: TComponent); override;
+    ///  <summary>Object destructor. Tidies up owned object.</summary>
+    destructor Destroy; override;
     ///  <summary>Checks if this view is currently interactive with user.
     ///  </summary>
     ///  <remarks>Method of IPaneInfo.</remarks>
@@ -138,35 +159,6 @@ type
     ///  document loaded in browser control.</summary>
     ///  <remarks>Method of IHTMLDocHostInfo.</remarks>
     function HTMLDocument: IDispatch;
-    ///  <summary>References contained object that implements ICommandBarConfig.
-    ///  </summary>
-    property CommandBars: TCommandBarMgr
-      read fCommandBars implements ICommandBarConfig;
-  strict protected
-    ///  <summary>Displays current view item.</summary>
-    ///  <remarks>Any descendant classes should not call this method. They
-    ///  should instead call UpdateDisplay which checks if frame is active
-    ///  before calling this method.</remarks>
-    procedure DisplayCurViewItem; virtual;
-    ///  <summary>Updates the display if active. Does nothing if display not
-    ///  active.</summary>
-    procedure UpdateDisplay;
-    ///  <summary>Generates CSS classes specific to HTML displayed in this pane.
-    ///  </summary>
-    ///  <param name="CSSBuilder">TCSSBuilder [in] Used to build CSS code.
-    ///  </param>
-    ///  <remarks>The CSS generated in this method is added to that provided by
-    ///  base class.</remarks>
-    procedure BuildCSS(const CSSBuilder: TCSSBuilder); override;
-    ///  <summary>Information about currently displayed view item.</summary>
-    property CurrentView: IView read fCurrentView;
-  public
-    ///  <summary>Object constructor. Initialises frame.</summary>
-    ///  <param name="AOwner">TComponent [in] Component that owns this frame.
-    ///  </param>
-    constructor Create(AOwner: TComponent); override;
-    ///  <summary>Object destructor. Tidies up owned object.</summary>
-    destructor Destroy; override;
   end;
 
 
@@ -199,7 +191,6 @@ procedure TDetailViewFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
 var
   HiliteAttrs: IHiliteAttrs;  // syntax highlighter used to build CSS
   CSSFont: TFont;             // font used to set CSS properties
-  ContentFont: TFont;         // default content font for OS
 begin
   // NOTE:
   // We only set CSS properties that may need to use system colours or fonts
@@ -260,23 +251,16 @@ begin
     // Adjust .pas-source class to use required background colour
     with CSSBuilder.Selectors['.' + THiliterCSS.GetMainCSSClassName] do
       AddProperty(CSSBackgroundColorProp(clSourceBg));
+    with CSSBuilder.AddSelector('.comptable th') do
+    begin
+      AddProperty(CSSBackgroundColorProp(clCompTblHeadBg));
+      AddProperty(CSSFontWeightProp(cfwNormal));
+    end;
+    // Add CSS relating to active text
+    TFontHelper.SetContentFont(CSSFont, True);
+    TActiveTextHTML.Styles(CSSFont, CSSBuilder);
   finally
     CSSFont.Free;
-  end;
-  // TODO: integrate this with above code and discard one of font variables
-  // Add CSS relating to compiler table
-  with CSSBuilder.AddSelector('.comptable th') do
-  begin
-    AddProperty(CSSBackgroundColorProp(clCompTblHeadBg));
-    AddProperty(CSSFontWeightProp(cfwNormal));
-  end;
-  ContentFont := TFont.Create;
-  try
-    // Add CSS relating to Extra REML code
-    TFontHelper.SetContentFont(ContentFont, True);
-    TActiveTextHTML.Styles(ContentFont, CSSBuilder);
-  finally
-    ContentFont.Free;
   end;
 end;
 
@@ -289,7 +273,7 @@ const
   ///  associated popup menus.</summary>
   ///  <remarks>A nil entry indicates no menu or wrapper are required for that
   ///  menu type.</remarks>
-  cMenuWrapperClassMap: array[TWBMenuID] of TPopupMenuWrapperClass = (
+  MenuWrapperClassMap: array[TWBMenuID] of TPopupMenuWrapperClass = (
     TWBDefaultPopupMenuWrapper,   // cDetailPopupMenuDefault
     TWBPopupMenuWrapper,          // cDetailPopupMenuImage
     nil,                          // cDetailPopupMenuControl
@@ -311,7 +295,7 @@ begin
   // bar manager
   for CmdBarID := cDetailPopupMenuFirst to cDetailPopupMenuLast do
   begin
-    WrapperCls := cMenuWrapperClassMap[CmdBarID];
+    WrapperCls := MenuWrapperClassMap[CmdBarID];
     if Assigned(WrapperCls) then
     begin
       Menu := fPopupMenuMgr.AddMenu(CmdBarID);
@@ -338,26 +322,11 @@ end;
 
 procedure TDetailViewFrame.Display(View: IView; const Force: Boolean);
 begin
-  if not CurrentView.IsEqual(View) or Force then
+  if not fCurrentView.IsEqual(View) or Force then
   begin
     fCurrentView := TViewItemFactory.Clone(View);
     UpdateDisplay;
   end;
-end;
-
-procedure TDetailViewFrame.DisplayCurViewItem;
-var
-  TextSearchCriteria: ITextSearchCriteria;  // criteria for any text search
-begin
-  TDetailPageLoader.LoadPage(CurrentView, WBController);
-  WBController.UIMgr.ClearSelection;
-  // If we're viewing a snippet and there's an active text search, highlight
-  // text that matches search
-  if Supports(CurrentView, ISnippetView) and
-    Supports(
-      Query.CurrentSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
-    ) then
-    HighlightSearchResults(TextSearchCriteria);
 end;
 
 function TDetailViewFrame.GetCurrentView: IView;
@@ -374,7 +343,7 @@ begin
     ClassName + '.HighlightSearchResults: Criteria is nil');
   Assert(Supports(Criteria, ITextSearchCriteria),
     ClassName + '.HighlightSearchResults: There is no current text search');
-  Assert(Supports(CurrentView, ISnippetView),
+  Assert(Supports(fCurrentView, ISnippetView),
     ClassName + '.HighlightSearchResults: View item is not a snippet');
   // Create and configure highlighter object
   Highlighter := TWBHighlighter.Create(wbBrowser);
@@ -428,11 +397,24 @@ begin
 end;
 
 procedure TDetailViewFrame.UpdateDisplay;
+var
+  TextSearchCriteria: ITextSearchCriteria;  // criteria for any text search
 begin
   if fIsActivated then
   begin
-    DisplayCurViewItem;
-    MoveToDocTop; // ensures top of newly loaded document is displayed
+    // Load view's HTML into browser control
+    TDetailPageLoader.LoadPage(fCurrentView, WBController);
+    // Clear any existing text selection
+    WBController.UIMgr.ClearSelection;
+    // If we're viewing a snippet and there's an active text search, highlight
+    // text that matches search
+    if Supports(fCurrentView, ISnippetView) and
+      Supports(
+        Query.CurrentSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
+      ) then
+      HighlightSearchResults(TextSearchCriteria);
+    // Ensure top of newly loaded document is displayed
+    MoveToDocTop;
   end;
 end;
 
