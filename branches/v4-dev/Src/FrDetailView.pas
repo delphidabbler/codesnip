@@ -54,7 +54,7 @@ type
   ///  <remarks>
   ///  Uses a web browser control to display the views.
   ///  </remarks>
-  TDetailViewFrame = class sealed(TBrowserBaseFrame,
+  TDetailViewFrame = class {sealed}(TBrowserBaseFrame,
     IPaneInfo,                                // provides information about pane
     ICommandBarConfig,                              // command bar configuration
     IViewItemDisplayMgr,                                 // displays a view item
