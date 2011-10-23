@@ -636,7 +636,8 @@ procedure TOverviewFrame.tcDisplayStyleChange(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  fNotifier.ChangeOverviewStyle(tcDisplayStyle.TabIndex);
+  if Assigned(fNotifier) then
+    fNotifier.ChangeOverviewStyle(tcDisplayStyle.TabIndex);
 end;
 
 procedure TOverviewFrame.tcDisplayStyleChanging(Sender: TObject;
