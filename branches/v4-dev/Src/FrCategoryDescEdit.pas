@@ -141,7 +141,7 @@ uses
   // Delphi
   Windows {for inlining},
   // Project
-  DB.UCategory, DB.UMain, UColours, UCtrlArranger, UStrUtils;
+  DB.UCategory, DB.UMain, UColours, UCtrlArranger, UFontHelper, UStrUtils;
 
 {$R *.dfm}
 
@@ -151,6 +151,7 @@ procedure TCategoryDescEditFrame.ArrangeFrame;
   {Arranges controls in frame and sizes it to fit the controls.
   }
 begin
+  TCtrlArranger.SetLabelHeights(Self);
   edDescription.Top := TCtrlArranger.BottomOf(lblDescription, 4);
   lblError.Top := TCtrlArranger.BottomOf(edDescription, 4);
   Self.ClientHeight := TCtrlArranger.TotalControlHeight(Self);
@@ -181,6 +182,7 @@ constructor TCategoryDescEditFrame.Create(AOwner: TComponent);
 begin
   inherited;
   lblError.Font.Color := clWarningText;
+  TFontHelper.SetDefaultBaseFont(lblError.Font, True);
   UpdateControls;
 end;
 
