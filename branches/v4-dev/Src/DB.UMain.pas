@@ -714,7 +714,7 @@ begin
   Assert(fCategories.Contains(Category),
     ClassName + '.DeleteCategory: Category is not in the database');
   TriggerEvent(evChangeBegin);
-  TriggerEvent(evBeforeCategoryDelete);
+  TriggerEvent(evBeforeCategoryDelete, Category);
   try
     // all snippets that belong to category are deleted before category itself
     // can't use for..in here since Snippets list is modified in loop
@@ -743,7 +743,7 @@ begin
   Assert(fSnippets.Contains(Snippet),
     ClassName + '.DeleteSnippet: Snippet is not in the database');
   TriggerEvent(evChangeBegin);
-  TriggerEvent(evBeforeSnippetDelete);
+  TriggerEvent(evBeforeSnippetDelete, Snippet);
   // Get list of referencing and dependent snippets
   Dependents := nil;
   Referrers := nil;
