@@ -95,10 +95,8 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
-  DB.UMain, UColours, UConsts, UCtrlArranger, UFontHelper, UMessageBox;
+  DB.UMain, UColours, UCtrlArranger, UFontHelper;
 
 {$R *.dfm}
 
