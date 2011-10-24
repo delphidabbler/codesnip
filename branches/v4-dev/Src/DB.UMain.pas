@@ -714,6 +714,7 @@ begin
   Assert(fCategories.Contains(Category),
     ClassName + '.DeleteCategory: Category is not in the database');
   TriggerEvent(evChangeBegin);
+  TriggerEvent(evBeforeCategoryDelete);
   try
     // all snippets that belong to category are deleted before category itself
     // can't use for..in here since Snippets list is modified in loop
@@ -721,6 +722,7 @@ begin
       InternalDeleteSnippet(Category.Snippets[SnipIdx]);
     InternalDeleteCategory(Category);
   finally
+    TriggerEvent(evCategoryDeleted);
     TriggerEvent(evChangeEnd);
     fUpdated := True;
   end;
@@ -741,6 +743,7 @@ begin
   Assert(fSnippets.Contains(Snippet),
     ClassName + '.DeleteSnippet: Snippet is not in the database');
   TriggerEvent(evChangeBegin);
+  TriggerEvent(evBeforeSnippetDelete);
   // Get list of referencing and dependent snippets
   Dependents := nil;
   Referrers := nil;
@@ -760,6 +763,7 @@ begin
     FreeAndNil(Referrers);
     FreeAndNil(Dependents);
     fUpdated := True;
+    TriggerEvent(evSnippetDeleted);
     TriggerEvent(evChangeEnd);
   end;
 end;
@@ -929,9 +933,7 @@ procedure TDatabase.InternalDeleteCategory(const Cat: TCategory);
     @param Cat [in] Category to delete from database.
   }
 begin
-  TriggerEvent(evBeforeCategoryDelete, Cat);
   (fCategories as TCategoryListEx).Delete(Cat);
-  TriggerEvent(evCategoryDeleted);
 end;
 
 procedure TDatabase.InternalDeleteSnippet(const Snippet: TSnippet);
@@ -946,9 +948,7 @@ begin
   if Assigned(Cat) then
     (Cat.Snippets as TSnippetListEx).Delete(Snippet);
   // Delete from "master" list: this frees Snippet
-  TriggerEvent(evBeforeSnippetDelete, Snippet);
   (fSnippets as TSnippetListEx).Delete(Snippet);
-  TriggerEvent(evSnippetDeleted);
 end;
 
 procedure TDatabase.Load;
