@@ -706,20 +706,14 @@ procedure TDatabase.DeleteCategory(const Category: TCategory);
   {Deletes a category and all its snippets from the user database.
     @param Category [in] Category to be deleted.
   }
-var
-  SnipIdx: Integer; // loops thru all category's snippets
 begin
-  Assert(Category.UserDefined,
-    ClassName + '.DeleteCategory: Category is not user defined');
+  Assert(Category.CanDelete,
+    ClassName + '.DeleteCategory: Category can''t be deleted');
   Assert(fCategories.Contains(Category),
     ClassName + '.DeleteCategory: Category is not in the database');
   TriggerEvent(evChangeBegin);
   TriggerEvent(evBeforeCategoryDelete, Category);
   try
-    // all snippets that belong to category are deleted before category itself
-    // can't use for..in here since Snippets list is modified in loop
-    for SnipIdx := Pred(Category.Snippets.Count) downto 0 do
-      InternalDeleteSnippet(Category.Snippets[SnipIdx]);
     InternalDeleteCategory(Category);
   finally
     TriggerEvent(evCategoryDeleted);
