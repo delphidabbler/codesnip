@@ -1424,7 +1424,9 @@ begin
     actViewCategorised.Tag := cCategorisedTab;
     actViewAlphabetical.Tag := cAlphabeticTab;
     actViewSnippetKinds.Tag := cKindTab;
-    actViewInfo.Tag := cInfoTab;
+    // Detail pane tab actions have index placed in tag dynamically. We use 0 as
+    // default
+    actViewInfo.Tag := 0;
 
     // Create notifier object and assign actions triggered by its methods
     // note that actions created on fly are automatically freed

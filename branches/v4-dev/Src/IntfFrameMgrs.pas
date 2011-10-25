@@ -54,9 +54,6 @@ const
   cAlphabeticTab = 1;     // alphabetical tab
   cKindTab = 2;           // snippet kind tab
 
-  // Constants that index tabs in detail pane
-  cInfoTab = 0;           // detail information tab
-
   // Constants that identify command bars in overview pane
   // toolbar
   cOverviewToolBar: TCommandBarID =  1;
