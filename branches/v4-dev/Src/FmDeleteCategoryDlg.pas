@@ -141,8 +141,8 @@ begin
   frmCategories.OnChange := SelectionChangeHandler;
   frmCategories.Prompt := sPrompt;
   frmCategories.SetCategories(fCategories);
+  TFontHelper.SetDefaultFont(lblErrorMsg.Font, False);
   lblErrorMsg.Font.Color := clWarningText;
-  TFontHelper.SetDefaultBaseFont(lblErrorMsg.Font, False);
   lblErrorMsg.Visible := False;
 end;
 
