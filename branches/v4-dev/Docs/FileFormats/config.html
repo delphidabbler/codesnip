@@ -288,6 +288,24 @@
     default switches for compiler. A missing value is the same as an empty
     string value.
   </dd>
+  <dt>
+    <strong>SearchDirCount</strong> (Integer)
+  </dt>
+  <dd>
+    Count of number of search directories configured for compiler.
+  </dd>
+  <dt>
+    <strong>SearchDir<em>XXX</em></strong> (String)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Once entry for each search directory configured for compiler where
+      <em>XXX</em> ranges from 0 to <strong>SearchDirCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Each entry contains a fully specified directory path.
+    </div>
+  </dd>
 </dl>
 
 <h4>
@@ -606,7 +624,9 @@
     <strong>DetailTab</strong> (Integer)
   </dt>
   <dd>
-    Index of selected tab in details pane.
+    Unused. Will only be present if this config file was copied from an earlier
+    config file version by the program installer. This value is neither read nor
+    written by CodeSnip v4 and later.
   </dd>
 </dl>
 
