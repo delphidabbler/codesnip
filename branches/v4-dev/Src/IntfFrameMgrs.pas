@@ -87,6 +87,7 @@ type
 
   //////////////////////////////////////////////////////////////////////////////
   // Display manager interfaces
+  // TODO: Update this description
   //
   // These interfaces define methods for managing the display of the various
   // panes in the user interface.
@@ -99,12 +100,6 @@ type
   //
   // IViewItemDisplayMgr
   //   Implemented by panes that display a view item in detail
-  //
-  // ICompCheckDisplayMgr
-  //   Implemented by panes that can display test compile related information.
-  //
-  // IWBDisplayMgr
-  //   Implemented by panes that host a web browser control.
   //
   //////////////////////////////////////////////////////////////////////////////
 
@@ -188,20 +183,6 @@ type
       }
     procedure RestoreTreeState;
       {Restores last saved treeview expansion state from memory.
-      }
-  end;
-
-  {
-  IWBDisplayMgr:
-    Interface implemented by panes that host a web browser control.
-  }
-  IWBDisplayMgr = interface(IInterface)
-    ['{DE875803-D856-402C-BC3D-DBF79A0670D7}']
-    procedure Activate;
-      {Activates the frame (when it is shown).
-      }
-    procedure Deactivate;
-      {Deactivates the frame (when it is hidden).
       }
   end;
 

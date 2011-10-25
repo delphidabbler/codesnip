@@ -61,15 +61,12 @@ type
     IClipboardMgr,                     // clipboard manager (impl in base class)
     ISelectionMgr,                     // selection manager (impl in base class)
     IWBCustomiser,                             // customises web browser control
-    IWBDisplayMgr,                         // support for hosted browser control
     IHTMLDocHostInfo                        // info for use in HTML manipulation
   )
   strict private
     var
       ///  <summary>Information about currently displayed view item.</summary>
       fCurrentView: IView;
-      ///  <summary>Value of Active property.</summary>
-      fIsActivated: Boolean;
       ///  <summary>Manager for popup menus that relate to the browser control.
       ///  </summary>
       fPopupMenuMgr: TWBPopupMenuMgr;
@@ -96,9 +93,6 @@ type
     ///  <summary>Highlights words in current document that match given text
     ///  search criteria.</summary>
     procedure HighlightSearchResults(const Criteria: ITextSearchCriteria);
-    ///  <summary>Updates the display if active. Does nothing if display not
-    ///  active.</summary>
-    procedure UpdateDisplay;
   strict protected
     ///  <summary>Generates CSS classes specific to HTML displayed in this pane.
     ///  </summary>
@@ -124,18 +118,6 @@ type
     ///  </summary>
     ///  <remarks>Method of IPaneInfo.</remarks>
     function IsInteractive: Boolean;
-    ///  <summary>Activates the frame.</summary>
-    ///  <remarks>
-    ///  <para>Called when frame is shown.</para>
-    ///  <para>Method of IWBDisplayMgr.</para>
-    ///  </remarks>
-    procedure Activate;
-    ///  <summary>Deactivates the frame.</summary>
-    ///  <remarks>
-    ///  <para>Called when frame is hidden.</para>
-    ///  <para>Method of IWBDisplayMgr.</para>
-    ///  </remarks>
-    procedure Deactivate;
     ///  <summary>Displays a view in the frame.</summary>
     ///  <param name="View">IView [in] Information about view to be displayed.
     ///  </param>
@@ -176,16 +158,6 @@ uses
 {$R *.dfm}
 
 { TDetailViewFrame }
-
-procedure TDetailViewFrame.Activate;
-begin
-  if not fIsActivated then
-  begin
-    // We are going from inactive to active: draw display
-    fIsActivated := True;
-    UpdateDisplay;
-  end;
-end;
 
 procedure TDetailViewFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
 var
@@ -308,11 +280,6 @@ begin
   fCurrentView := TViewItemFactory.CreateNulView;
 end;
 
-procedure TDetailViewFrame.Deactivate;
-begin
-  fIsActivated := False;
-end;
-
 destructor TDetailViewFrame.Destroy;
 begin
   fCurrentView := nil;
@@ -321,11 +288,25 @@ begin
 end;
 
 procedure TDetailViewFrame.Display(View: IView; const Force: Boolean);
+var
+  TextSearchCriteria: ITextSearchCriteria;  // criteria for any text search
 begin
   if not fCurrentView.IsEqual(View) or Force then
   begin
     fCurrentView := TViewItemFactory.Clone(View);
-    UpdateDisplay;
+    // Load view's HTML into browser control
+    TDetailPageLoader.LoadPage(fCurrentView, WBController);
+    // Clear any existing text selection
+    WBController.UIMgr.ClearSelection;
+    // If we're viewing a snippet and there's an active text search, highlight
+    // text that matches search
+    if Supports(fCurrentView, ISnippetView) and
+      Supports(
+        Query.CurrentSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
+      ) then
+      HighlightSearchResults(TextSearchCriteria);
+    // Ensure top of newly loaded document is displayed
+    MoveToDocTop;
   end;
 end;
 
@@ -394,28 +375,6 @@ end;
 procedure TDetailViewFrame.SetExternalObj(Obj: IDispatch);
 begin
   WBController.UIMgr.ExternScript := Obj;
-end;
-
-procedure TDetailViewFrame.UpdateDisplay;
-var
-  TextSearchCriteria: ITextSearchCriteria;  // criteria for any text search
-begin
-  if fIsActivated then
-  begin
-    // Load view's HTML into browser control
-    TDetailPageLoader.LoadPage(fCurrentView, WBController);
-    // Clear any existing text selection
-    WBController.UIMgr.ClearSelection;
-    // If we're viewing a snippet and there's an active text search, highlight
-    // text that matches search
-    if Supports(fCurrentView, ISnippetView) and
-      Supports(
-        Query.CurrentSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
-      ) then
-      HighlightSearchResults(TextSearchCriteria);
-    // Ensure top of newly loaded document is displayed
-    MoveToDocTop;
-  end;
 end;
 
 end.

@@ -271,8 +271,6 @@ end;
 procedure TDetailFrame.InternalDisplay(View: IView; const Force: Boolean);
 begin
   (frmDetailView as IViewItemDisplayMgr).Display(View, Force);
-  // TODO: remove activation code from details view frame
-  (frmDetailView as IWBDisplayMgr).Activate;
 end;
 
 procedure TDetailFrame.InternalSelectTab(TabIdx: Integer);
