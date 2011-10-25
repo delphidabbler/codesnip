@@ -131,28 +131,17 @@ type
   end;
 
 type
-  ///  <summary>Enumeration of possible actions that determine how tabs are
-  ///  closed.</summary>
-  ///  <remarks>Used by IEditableTabbedDisplayMgr.</remarks>
-  TCloseTabAction = (
-    ctaSelected,            // close only the selected tab
-    ctaAll,                 // close all open tabs
-    ctaAllExceptSelected    // close all open tabs except the selected tab
-  );
-
-type
-  // TODO: Comment this interface
-  IEditableTabbedDisplayMgr = interface(IInterface)
-    ['{2E17C87F-952F-4EBF-8BF7-CF8107B3A7CF}']
-    ///  <summary>Creates new tab and returns its index.</summary>
-    function NewTab: Integer;
-    ///  <summary>Closes one or more tabs.</summary>
-    ///  <param name="Action">TCloseTabAction [in] Specifies which tab or tabs
-    ///  to close.</param>
-    procedure CloseTabs(const Action: TCloseTabAction);
-    ///  <summary>Checks if currently selected tab can be closed.</summary>
-    // TODO: Possibly change this for IsEmpty method instead
-    function CanCloseSelectedTab: Boolean;
+  IDetailPaneDisplayMgr = interface(IInterface)
+    ['{79F8BCAB-4C3F-4935-B5BF-9E5B9B32D88A}']
+    ///  <summary>Returns currently selected view.</summary>
+    function SelectedView: IView;
+    procedure SelectTab(const TabIdx: Integer);
+    function FindTab(ViewKey: IViewKey): Integer;
+    procedure Display(View: IView; const TabIdx: Integer; const Force: Boolean);
+    function CreateTab(View: IView): Integer;
+    function IsEmptyTabSet: Boolean;
+    procedure CloseTab(const TabIdx: Integer);
+    procedure CloseMultipleTabs(const KeepSelected: Boolean);
   end;
 
   {

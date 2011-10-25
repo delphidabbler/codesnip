@@ -338,7 +338,7 @@ type
     fMainDisplayMgr: TMainDisplayMgr; // Manages the main display output
     fStatusBarMgr: TStatusBarMgr;     // Manages status bar display
     fDialogMgr: TDialogMgr;           // Manages display of dialog boxes
-    fCompileMgr: TMainCompileMgr;     // Manage test compilations
+    fCompileMgr: TMainCompileMgr;     // Manages test compilations
     procedure ActViewItemExecute(Sender: TObject);
       {Displays a requested view item and records in history.
         @param Sender [in] Action triggering this event. Must be a
@@ -472,12 +472,12 @@ end;
 
 procedure TMainForm.actCloseDetailsTabExecute(Sender: TObject);
 begin
-  fMainDisplayMgr.CloseDetailsTab(ctaSelected);
+  fMainDisplayMgr.CloseSelectedDetailsTab;
 end;
 
 procedure TMainForm.actCloseDetailsTabUpdate(Sender: TObject);
 begin
-  (Sender as TAction).Enabled := fMainDisplayMgr.CanCloseSelectedDetailsTab;
+  (Sender as TAction).Enabled := fMainDisplayMgr.CanCloseDetailsTab;
 end;
 
 procedure TMainForm.actCompilersExecute(Sender: TObject);
@@ -593,7 +593,6 @@ procedure TMainForm.ActDetailTabExecute(Sender: TObject);
     @param Sender [in] Action triggering this event
   }
 begin
-  // TODO: decide what to do with this and whether needed
   // Action's Tag property specifies index of tab being selected
   fMainDisplayMgr.SelectedDetailTab := (Sender as TAction).Tag;
 end;
@@ -605,6 +604,7 @@ procedure TMainForm.ActDetailTabUpdate(Sender: TObject);
   }
 begin
   // Action's Tag property specifies index of tab being updated
+  // TODO: Probably safe to delete this event handler
   with Sender as TAction do
   begin
     Checked := fMainDisplayMgr.SelectedDetailTab = Tag;
@@ -1352,7 +1352,7 @@ begin
   // Save window state
   fWindowSettings.SplitterPos := pnlLeft.Width;
   fWindowSettings.OverviewTab := fMainDisplayMgr.SelectedOverviewTab;
-  fWindowSettings.DetailTab := fMainDisplayMgr.SelectedDetailTab;
+//  fWindowSettings.DetailTab := fMainDisplayMgr.SelectedDetailTab;
   fWindowSettings.Save;
   // Free owned objects
   fHistory.Free;
@@ -1620,14 +1620,11 @@ procedure TMainForm.SnippetsChangeHandler(Sender: TObject;
   }
 
   // ---------------------------------------------------------------------------
-  procedure ReInitialise;
-    {Re-initialises display, reseting any queries if necessary.
-    }
+  procedure UpdateQuery;
   begin
+    // TODO: Add a new method of TQuery that does this
     if not Query.Refresh then
       Query.Reset;
-    fMainDisplayMgr.Initialise;
-    fMainDisplayMgr.FinalizeChange;
   end;
   // ---------------------------------------------------------------------------
 
@@ -1643,32 +1640,67 @@ begin
     end;
     evChangeEnd:            // database change has completed
       Enabled := True;
-    evSnippetAdded,         // snippet added: display new snippet
-    evSnippetChanged:       // snippet edited: display changed snippet
+    evSnippetAdded:
     begin
-      ReInitialise;
-      fNotifier.DisplaySnippet(
-        (EventInfo.Info as TSnippet).Name,
-        (EventInfo.Info as TSnippet).UserDefined
+      UpdateQuery;
+      fMainDisplayMgr.SnippetAdded(
+        TViewItemFactory.CreateSnippetView(EventInfo.Info as TSnippet)
       );
     end;
-    evBeforeSnippetDelete,  // snippet about to be deleted: clear display
-    evBeforeCategoryDelete: // category about to be deleted: clear display
+    evBeforeSnippetChange:
     begin
-      fHistory.Clear;
-      fMainDisplayMgr.ClearSelected;
+      fMainDisplayMgr.PrepareForViewChange(
+        TViewItemFactory.CreateSnippetView(EventInfo.Info as TSnippet)
+      );
     end;
-    evSnippetDeleted,       // snippet deleted: display welcome page
-    evCategoryDeleted:      // category deleted: display welcome page
+    evSnippetChanged:
     begin
-      ReInitialise;
-      DisplayWelcomePage;
+      UpdateQuery;
+      fMainDisplayMgr.SnippetChanged(
+        TViewItemFactory.CreateSnippetView(EventInfo.Info as TSnippet)
+      );
     end;
-    evCategoryAdded,        // category added: display new empty category
-    evCategoryChanged:      // category edited: redisplay it
+    evBeforeSnippetDelete:
     begin
-      ReInitialise;
-      fNotifier.DisplayCategory((EventInfo.Info as TCategory).ID);
+      fMainDisplayMgr.PrepareForViewChange(
+        TViewItemFactory.CreateSnippetView(EventInfo.Info as TSnippet)
+      );
+    end;
+    evSnippetDeleted:
+    begin
+      UpdateQuery;
+      fMainDisplayMgr.SnippetDeleted;
+    end;
+    evCategoryAdded:
+    begin
+      UpdateQuery;
+      fMainDisplayMgr.CategoryAdded(
+        TViewItemFactory.CreateCategoryView(EventInfo.Info as TCategory)
+      );
+    end;
+    evBeforeCategoryChange:
+    begin
+      fMainDisplayMgr.PrepareForViewChange(
+        TViewItemFactory.CreateCategoryView(EventInfo.Info as TCategory)
+      );
+    end;
+    evCategoryChanged:
+    begin
+      UpdateQuery;
+      fMainDisplayMgr.CategoryChanged(
+        TViewItemFactory.CreateCategoryView(EventInfo.Info as TCategory)
+      );
+    end;
+    evBeforeCategoryDelete:
+    begin
+      fMainDisplayMgr.PrepareForViewChange(
+        TViewItemFactory.CreateCategoryView(EventInfo.Info as TCategory)
+      );
+    end;
+    evCategoryDeleted:
+    begin
+      UpdateQuery;
+      fMainDisplayMgr.CategoryDeleted;
     end;
   end;
   // Display updated database stats and search results in status bar

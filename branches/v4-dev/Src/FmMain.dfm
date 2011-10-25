@@ -286,11 +286,36 @@ inherited MainForm: TMainForm
             ExplicitWidth = 408
           end
         end
-        inherited pcDetail: TPageControl
+        inherited frmDetailView: TDetailViewFrame
           Width = 408
-          Height = 340
+          Height = 317
+          ExplicitLeft = 0
+          ExplicitTop = 50
           ExplicitWidth = 408
-          ExplicitHeight = 340
+          ExplicitHeight = 317
+          inherited pnlBrowser: TPanel
+            Width = 408
+            Height = 317
+            ExplicitWidth = 408
+            ExplicitHeight = 317
+            inherited wbBrowser: TWebBrowser
+              Width = 408
+              Height = 317
+              ExplicitWidth = 318
+              ExplicitHeight = 188
+              ControlData = {
+                4C0000002B2A0000C32000000000000000000000000000000000000000000000
+                000000004C000000000000000000000001000000E0D057007335CF11AE690800
+                2B2E126208000000000000004C0000000114020000000000C000000000000046
+                8000000000000000000000000000000000000000000000000000000000000000
+                00000000000000000100000000000000000000000000000000000000}
+            end
+          end
+        end
+        inherited tcViews: TTabControl
+          Width = 408
+          ExplicitTop = 27
+          ExplicitWidth = 408
         end
       end
     end

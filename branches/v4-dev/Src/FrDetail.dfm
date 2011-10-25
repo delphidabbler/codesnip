@@ -6,13 +6,39 @@ inherited DetailFrame: TDetailFrame
       ExplicitWidth = 40
     end
   end
-  object pcDetail: TPageControl
+  inline frmDetailView: TDetailViewFrame
+    Left = 0
+    Top = 50
+    Width = 318
+    Height = 188
+    Align = alClient
+    TabOrder = 1
+    TabStop = True
+    ExplicitLeft = 2
+    ExplicitTop = 2
+    inherited pnlBrowser: TPanel
+      Width = 318
+      Height = 188
+      inherited wbBrowser: TWebBrowser
+        Width = 318
+        Height = 188
+        ControlData = {
+          4C000000DE2000006E1300000000000000000000000000000000000000000000
+          000000004C000000000000000000000001000000E0D057007335CF11AE690800
+          2B2E126208000000000000004C0000000114020000000000C000000000000046
+          8000000000000000000000000000000000000000000000000000000000000000
+          00000000000000000100000000000000000000000000000000000000}
+      end
+    end
+  end
+  object tcViews: TTabControl
     Left = 0
     Top = 27
     Width = 318
-    Height = 211
-    Align = alClient
-    TabOrder = 1
-    OnChange = pcDetailChange
+    Height = 23
+    Align = alTop
+    TabOrder = 2
+    OnChange = tcViewsChange
+    ExplicitTop = 48
   end
 end

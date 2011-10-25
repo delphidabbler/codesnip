@@ -46,6 +46,11 @@ uses
 
 
 type
+  ///  TODO: DBG - this type is for debugging only
+  TDetailPaneDisplayMode = (
+    ddmOverwrite,
+    ddmInsert
+  );
 
   {
   TMainDisplayMgr:
@@ -54,16 +59,11 @@ type
   }
   TMainDisplayMgr = class(TObject)
   strict private
-    fOverviewMgr: IInterface; // Manager object for overview pane
-    fDetailsMgr: IInterface;  // Manager object for details pane
-    fCurrentView: IView;      // Value of CurrentView property
-    procedure InternalDisplayViewItem(ViewItem: IView; const Force: Boolean);
-      {Displays a view item. Updates current view item, selects item in overview
-      if possible and displays full details in detail pane. Optionally forces
-      redisplay of compiler pane.
-        @param ViewItem [in] Item to be displayed (may be nil).
-        @param Force [in] True if compiler pane redisplay is to be forced.
-      }
+    fOverviewMgr: IInterface;     // Manager object for overview pane
+    fDetailsMgr: IInterface;      // Manager object for details pane
+    fDetailPagePendingChange: Integer;
+    ///  TODO: DBG - following field is for debugging only
+    fDetailPaneDisplayMode: TDetailPaneDisplayMode;
     function GetInteractiveTabMgr: ITabbedDisplayMgr;
       {Gets reference to manager object for interactive tab set.
         @return Required tab manager or nil if no tab is interactive.
@@ -86,6 +86,10 @@ type
       {Write accessor for SelectedDetailTab property. Selects required tab.
         @param Value [in] Index of tab to be selected.
       }
+    function GetCurrentView: IView;
+    procedure DisplayInSelectedDetailView(View: IView; const Force: Boolean);
+    procedure RedisplayOverview;
+    procedure ShowInNewDetailPage(View: IView);
   public
     constructor Create(const OverviewMgr, DetailsMgr: IInterface);
       {Class constructor. Sets up object to work with subsidiary manager
@@ -100,9 +104,14 @@ type
       {Initialises display. All snippets in database are shown in overview pane
       and detail pane is cleared.
       }
-    ///  <summary>Clears main display: overview pane and selected page in
-    ///  detail pane are both cleared.</summary>
-    procedure ClearSelected;
+    procedure SetDetailPaneDisplayMode(Mode: TDetailPaneDisplayMode);
+
+    procedure SnippetAdded(View: IView);
+    procedure SnippetChanged(View: IView);
+    procedure SnippetDeleted;
+    procedure CategoryAdded(View: IView);
+    procedure CategoryChanged(View: IView);
+    procedure CategoryDeleted;
     ///  <summary>Clears whole display: overview pane is cleared and all detail
     ///  tabs are closed.</summary>
     procedure ClearAll;
@@ -111,10 +120,9 @@ type
       if possible and displays full details in detail pane.
         @param ViewItem [in] Item to be displayed (may be nil).
       }
+    ///  <summary>Refreshes display: re-selects current view in overview pane
+    ///  re-displays current tab view in details pane, if any.</summary>
     procedure Refresh;
-      {Refreshes current display, forcing redisplay of info and compiler check
-      panes.
-      }
     procedure QueryUpdated;
       {Notifies display manager that query current query has changed. Updates
       display to reflect changes.
@@ -127,14 +135,9 @@ type
       {Selects previous tab in currently active tab set. Does nothing if there
       is no active tab set.
       }
-    ///  <summary>Creates a new empty tab in details pane.</summary>
+    procedure CloseSelectedDetailsTab;
+    function CanCloseDetailsTab: Boolean;
     procedure CreateNewDetailsTab;
-    ///  <summary>Closes one or more tabs in details pane.</summary>
-    ///  <param name="CloseAction">TCloseTabAction [in] Specifies which tab(s)
-    ///  to close: all, selected or all except selected.</param>
-    procedure CloseDetailsTab(const CloseAction: TCloseTabAction);
-    function CanCloseSelectedDetailsTab: Boolean;
-      // TODO: Comment this method
     function CanCopy: Boolean;
       {Checks whether copying to clipboard is currently supported.
         @return True if clipboard copying supported, false if not.
@@ -163,11 +166,9 @@ type
     procedure PrepareForChange;
       {Makes preparations for a change in the database display.
       }
-    procedure FinalizeChange;
-      {Updates display following a change in the database.
-      }
+    procedure PrepareForViewChange(View: IView);
     property CurrentView: IView
-      read fCurrentView;
+      read GetCurrentView;
       {Information about currently displayed view}
     property SelectedOverviewTab: Integer
       read GetSelectedOverviewTab write SetSelectedOverviewTab;
@@ -184,15 +185,17 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   UQuery;
 
 
 { TMainDisplayMgr }
 
-function TMainDisplayMgr.CanCloseSelectedDetailsTab: Boolean;
+function TMainDisplayMgr.CanCloseDetailsTab: Boolean;
 begin
-  Result := (fDetailsMgr as IEditableTabbedDisplayMgr).CanCloseSelectedTab;
+  Result := not (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet;
 end;
 
 function TMainDisplayMgr.CanCopy: Boolean;
@@ -221,23 +224,62 @@ begin
   Result := (fOverviewMgr as IOverviewDisplayMgr).CanUpdateTreeState(State);
 end;
 
+procedure TMainDisplayMgr.CategoryAdded(View: IView);
+begin
+  // TODO: extract method from this and SnippetAdded code: identical code
+  RedisplayOverview;
+  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
+  // Display in details pane
+  if (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
+  begin
+    // no tabs => new tab
+    ShowInNewDetailPage(View);
+    Exit;
+  end;
+  // NOTE: new item, so won't already be displayed, so we don't look for it
+  if (fDetailPaneDisplayMode = ddmInsert) then
+  begin
+    // new tab required
+    ShowInNewDetailPage(View);
+  end
+  else
+  begin
+    // overwrite exiting tab
+    DisplayInSelectedDetailView(View, True);
+  end;
+end;
+
+procedure TMainDisplayMgr.CategoryChanged(View: IView);
+begin
+  RedisplayOverview;
+  if fDetailPagePendingChange >= 0 then
+    // category is displayed in detail pane: update display
+    (fDetailsMgr as IDetailPaneDisplayMgr).Display(
+      View, fDetailPagePendingChange, True
+    );
+  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
+end;
+
+procedure TMainDisplayMgr.CategoryDeleted;
+begin
+  RedisplayOverview;
+  if fDetailPagePendingChange >= 0 then
+    // category is displayed in detail pane: close its tab
+    (fDetailsMgr as IDetailPaneDisplayMgr).CloseTab(fDetailPagePendingChange);
+  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
+end;
+
 procedure TMainDisplayMgr.ClearAll;
 begin
-  fCurrentView := TViewItemFactory.CreateNulView;
   (fOverviewMgr as IOverviewDisplayMgr).Clear;
-  (fDetailsMgr as IEditableTabbedDisplayMgr).CloseTabs(ctaAll);
+  (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
 end;
 
-procedure TMainDisplayMgr.ClearSelected;
+procedure TMainDisplayMgr.CloseSelectedDetailsTab;
 begin
-  fCurrentView := TViewItemFactory.CreateNulView;
-  (fOverviewMgr as IOverviewDisplayMgr).Clear;
-  (fDetailsMgr as IViewItemDisplayMgr).Display(fCurrentView, False);
-end;
-
-procedure TMainDisplayMgr.CloseDetailsTab(const CloseAction: TCloseTabAction);
-begin
-  (fDetailsMgr as IEditableTabbedDisplayMgr).CloseTabs(CloseAction);
+  (fDetailsMgr as IDetailPaneDisplayMgr).CloseTab(
+    (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
+  );
 end;
 
 procedure TMainDisplayMgr.CopyToClipboard;
@@ -253,27 +295,66 @@ constructor TMainDisplayMgr.Create(const OverviewMgr, DetailsMgr: IInterface);
     @param DetailsMgr [in] Manager object for Details pane.
   }
 begin
-  Assert(Assigned(OverviewMgr), ClassName + '.Create: OverviewMgr is nil');
-  Assert(Assigned(DetailsMgr), ClassName + '.Create: DetailsMgr is nil');
+  Assert(Assigned(OverviewMgr),
+    ClassName + '.Create: OverviewMgr is nil');
+  Assert(Supports(OverviewMgr, ITabbedDisplayMgr),
+    ClassName + '.Create: OverviewMgr must support ITabbedDisplayMgr');
+  Assert(Supports(OverviewMgr, IPaneInfo),
+    ClassName + '.Create: OverviewMgr must support IPaneInfo');
+  Assert(Supports(OverviewMgr, IOverviewDisplayMgr),
+    ClassName + '.Create: OverviewMgr must support IOverviewDisplayMgr');
+
+  Assert(Assigned(DetailsMgr),
+    ClassName + '.Create: DetailsMgr is nil');
+  Assert(Supports(DetailsMgr, ITabbedDisplayMgr),
+    ClassName + '.Create: DetailsMgr must support ITabbedDisplayMgr');
+  Assert(Supports(DetailsMgr, IPaneInfo),
+    ClassName + '.Create: DetailsMgr must support IPaneInfo');
+  Assert(Supports(DetailsMgr, IDetailPaneDisplayMgr),
+    ClassName + '.Create: DetailsMgr must support IDetailPaneDisplayMgr');
+  Assert(Supports(DetailsMgr, IClipboardMgr),
+    ClassName + '.Create: DetailsMgr must support IClipboardMgr');
+  Assert(Supports(DetailsMgr, ISelectionMgr),
+    ClassName + '.Create: DetailsMgr must support IDetailPaneDisplayMgr');
+
+
   inherited Create;
+
   // Record subsidiary display managers
   fOverviewMgr := OverviewMgr;
   fDetailsMgr := DetailsMgr;
-  // Create owned view object: stores current view
-  fCurrentView := TViewItemFactory.CreateNulView;
+
+  // Default values
+  // TODO: DBG - these "mode" values should be removed after testing
+  fDetailPaneDisplayMode := ddmInsert;
+//  fDetailPaneDisplayMode := ddmOverwrite;
 end;
 
 procedure TMainDisplayMgr.CreateNewDetailsTab;
+var
+  NewPageView: IView;
 begin
-  (fDetailsMgr as IEditableTabbedDisplayMgr).NewTab;
+  // NOTE: Always uses new tab, even if view exists, by design
+  // TODO: change this for special "new page" view
+  NewPageView := TViewItemFactory.CreateStartPageView;
+  ShowInNewDetailPage(NewPageView);
 end;
 
 destructor TMainDisplayMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  fCurrentView := nil;
   inherited;
+end;
+
+procedure TMainDisplayMgr.DisplayInSelectedDetailView(View: IView;
+  const Force: Boolean);
+begin
+  (fDetailsMgr as IDetailPaneDisplayMgr).Display(
+    View,
+    (fDetailsMgr as ITabbedDisplayMgr).SelectedTab,
+    Force
+  );
 end;
 
 procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView);
@@ -281,16 +362,39 @@ procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView);
   possible and displays full details in detail pane.
     @param ViewItem [in] Item to be displayed (may be nil).
   }
+var
+  TabIdx: Integer;
 begin
-  InternalDisplayViewItem(ViewItem, False);
+  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(ViewItem);
+  if (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
+  begin
+    // no tabs => new tab
+    ShowInNewDetailPage(ViewItem);
+    Exit;
+  end;
+  TabIdx := (fDetailsMgr as IDetailPaneDisplayMgr).FindTab(ViewItem.GetKey);
+  if TabIdx >= 0 then
+  begin
+    // tab already exists for this view: switch to it
+    (fDetailsMgr as IDetailPaneDisplayMgr).SelectTab(TabIdx);
+    Exit;
+  end;
+  // tab doesn't already exist
+  if (fDetailPaneDisplayMode = ddmInsert) then
+  begin
+    // new tab required
+    ShowInNewDetailPage(ViewItem);
+  end
+  else
+  begin
+    // overwrite exiting tab
+    DisplayInSelectedDetailView(ViewItem, True);
+  end;
 end;
 
-procedure TMainDisplayMgr.FinalizeChange;
-  {Updates display following a change in the database.
-  }
+function TMainDisplayMgr.GetCurrentView: IView;
 begin
-  // restore the previously saved state of the overview pane treeview
-  (fOverviewMgr as IOverviewDisplayMgr).RestoreTreeState;
+  Result := (fDetailsMgr as IDetailPaneDisplayMgr).SelectedView;
 end;
 
 function TMainDisplayMgr.GetInteractiveTabMgr: ITabbedDisplayMgr;
@@ -307,7 +411,7 @@ end;
 
 function TMainDisplayMgr.GetSelectedDetailTab: Integer;
   {Read accessor for SelectedDetailTab property. Gets currently selected
-  overview tab.
+  detail tab.
     @return Index of selected tab.
   }
 begin
@@ -328,26 +432,10 @@ procedure TMainDisplayMgr.Initialise;
   detail pane is cleared.
   }
 begin
-  // First we clear the display
-  ClearSelected;
-  // Now we display current query in overview pane
-  QueryUpdated;
-end;
-
-procedure TMainDisplayMgr.InternalDisplayViewItem(ViewItem: IView;
-  const Force: Boolean);
-  {Displays a view item. Updates current view item, selects item in overview
-  if possible and displays full details in detail pane. Optionally forces
-  redisplay of compiler pane.
-    @param ViewItem [in] Item to be displayed (may be nil).
-    @param Force True [in] if compiler pane redisplay is to be forced.
-  }
-begin
-  // Record view item
-  fCurrentView := TViewItemFactory.Clone(ViewItem);
-  // Select item in overview pane and display in detail pane
-  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(fCurrentView);
-  (fDetailsMgr as IViewItemDisplayMgr).Display(fCurrentView, Force);
+  // Clear both displays
+  ClearAll;
+  // Now load current query into overview pane
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection);
 end;
 
 procedure TMainDisplayMgr.PrepareForChange;
@@ -358,24 +446,56 @@ begin
   (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
 end;
 
+procedure TMainDisplayMgr.PrepareForViewChange(View: IView);
+begin
+  // TODO: Change IDetailPaneDisplayMgr.FindTab to take IView parameter
+  fDetailPagePendingChange := (fDetailsMgr as IDetailPaneDisplayMgr).FindTab(
+    View.GetKey
+  );
+  if (fDetailPagePendingChange >= 0) and
+    (fDetailPagePendingChange = (fDetailsMgr as ITabbedDisplayMgr).SelectedTab)
+    then
+    begin
+      // TODO: Check if overview pane actually needs clearing here
+      (fOverviewMgr as IOverviewDisplayMgr).Clear;
+      DisplayInSelectedDetailView(TViewItemFactory.CreateNulView, True);
+    end;
+end;
+
 procedure TMainDisplayMgr.QueryUpdated;
+  // TODO: rename this method to something like UpdateSelectionFromQuery
   {Notifies display manager that current query has changed. Updates display to
   reflect changes.
   }
 begin
   // Update overview to show only found snippets
   (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection);
-  // Force redisplay of current view item (overview list may not have it and it
-  // may need search items highlighting or unhighlighting in detail view)
-  Refresh;
+  // Redisplay detail pane
+  if not (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
+  begin
+    (fDetailsMgr as IDetailPaneDisplayMgr).Display(
+      CurrentView,
+      (fDetailsMgr as ITabbedDisplayMgr).SelectedTab,
+      True
+    )
+  end;
+end;
+
+procedure TMainDisplayMgr.RedisplayOverview;
+begin
+  // TODO: check whether Clear needed here
+  // TODO: check whether RestoreTreeState needed: called indirectly by Display
+  (fOverviewMgr as IOverviewDisplayMgr).Clear;
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection);
+  (fOverviewMgr as IOverviewDisplayMgr).RestoreTreeState;
 end;
 
 procedure TMainDisplayMgr.Refresh;
-  {Refreshes current display, forcing redisplay of info and compiler check
-  panes.
-  }
 begin
-  InternalDisplayViewItem(fCurrentView, True);
+  // Redisplays current view in overview pane and active tab of detail pane
+  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
+  if not (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
+    DisplayInSelectedDetailView(CurrentView, True);
 end;
 
 procedure TMainDisplayMgr.SelectAll;
@@ -410,12 +530,21 @@ begin
     TabMgr.PreviousTab;
 end;
 
+procedure TMainDisplayMgr.SetDetailPaneDisplayMode(
+  Mode: TDetailPaneDisplayMode);
+begin
+  fDetailPaneDisplayMode := Mode;
+end;
+
 procedure TMainDisplayMgr.SetSelectedDetailTab(const Value: Integer);
   {Write accessor for SelectedDetailTab property. Selects required tab.
     @param Value [in] Index of tab to be selected.
   }
 begin
   (fDetailsMgr as ITabbedDisplayMgr).SelectTab(Value);
+  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(
+    (fDetailsMgr as IDetailPaneDisplayMgr).SelectedView
+  );
 end;
 
 procedure TMainDisplayMgr.SetSelectedOverviewTab(const Value: Integer);
@@ -424,6 +553,57 @@ procedure TMainDisplayMgr.SetSelectedOverviewTab(const Value: Integer);
   }
 begin
   (fOverviewMgr as ITabbedDisplayMgr).SelectTab(Value);
+end;
+
+procedure TMainDisplayMgr.ShowInNewDetailPage(View: IView);
+var
+  NewTabIdx: Integer;
+begin
+  NewTabIdx := (fDetailsMgr as IDetailPaneDisplayMgr).CreateTab(View);
+  (fDetailsMgr as ITabbedDisplayMgr).SelectTab(NewTabIdx);
+end;
+
+procedure TMainDisplayMgr.SnippetAdded(View: IView);
+begin
+  RedisplayOverview;
+  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
+  // Display in details pane
+  if (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
+  begin
+    // no tabs => new tab
+    ShowInNewDetailPage(View);
+    Exit;
+  end;
+  // NOTE: new item, so won't already be displayed, so we don't look for it
+  if (fDetailPaneDisplayMode = ddmInsert) then
+  begin
+    // new tab required
+    ShowInNewDetailPage(View);
+  end
+  else
+  begin
+    // overwrite exiting tab
+    DisplayInSelectedDetailView(View, True);
+  end;
+end;
+
+procedure TMainDisplayMgr.SnippetChanged(View: IView);
+begin
+  // We assume that edited snippet is being displayed in selected detail tab,
+  // because only way of editing a snippet is from this tab.
+  RedisplayOverview;
+  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
+  DisplayInSelectedDetailView(View, True);
+end;
+
+procedure TMainDisplayMgr.SnippetDeleted;
+begin
+  RedisplayOverview;
+  (fDetailsMgr as IDetailPaneDisplayMgr).CloseTab(
+    (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
+  );
+  // NOTE: closing tab triggers a notification to display a different tab which
+  // then takes care of updating view
 end;
 
 procedure TMainDisplayMgr.UpdateOverviewTreeState(const State: TTreeNodeAction);
