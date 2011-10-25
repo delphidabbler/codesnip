@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -61,7 +61,6 @@ type
     var
       fSplitterPos: Integer;      // Value of SplitterPos property
       fOverviewTab: Integer;      // Value of OverviewTab property
-      fDetailTab: Integer;        // Value of DetailTab property
     const
       cDefLeftPanelWidth  = 186;  // Default width of left hand panel
   strict protected
@@ -114,9 +113,6 @@ type
     property OverviewTab: Integer
       read fOverviewTab write fOverviewTab;
       {Index of selected tab in overview pane}
-    property DetailTab: Integer
-      read fDetailTab write fDetailTab;
-      {Index of selected tab in detail pane}
   end;
 
 
@@ -182,8 +178,6 @@ begin
     State := Ord(wsNormal);   // we don't allow minimized: use normal
   fSplitterPos := StrToIntDef(Section.ItemValues['SplitterPos'], fSplitterPos);
   fOverviewTab := StrToIntDef(Section.ItemValues['OverviewTab'], fOverviewTab);
-  // TODO: revert once more than one tab supported
-  fDetailTab := 0;//StrToIntDef(Section.ItemValues['DetailTab'], fDetailTab);
 end;
 
 procedure TWindowSettings.SaveWdwState(const Left, Top, Width, Height,
@@ -209,7 +203,6 @@ begin
   Section.ItemValues['State'] := IntToStr(State);
   Section.ItemValues['SplitterPos'] := IntToStr(fSplitterPos);
   Section.ItemValues['OverviewTab'] := IntToStr(fOverviewTab);
-  Section.ItemValues['DetailTab'] := IntToStr(fDetailTab);
   Section.Save;
 end;
 
