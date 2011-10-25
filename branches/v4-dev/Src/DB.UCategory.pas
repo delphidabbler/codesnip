@@ -91,6 +91,10 @@ type
         @param Cat [in] Category being compared.
         @return True if categories are equal, False if not.
       }
+    function CanDelete: Boolean;
+      {Checks if category can be deleted.
+        @return True if deletion allowed, False if not.
+      }
     property ID: string read fID;
       {Category id. Must be unique}
     property Description: string read fDescription;
@@ -188,10 +192,19 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UStrUtils;
+  UReservedCategories, UStrUtils;
 
 
 { TCategory }
+
+function TCategory.CanDelete: Boolean;
+  {Checks if category can be deleted.
+    @return True if deletion allowed, False if not.
+  }
+begin
+  Result := fUserDefined and (fSnippets.Count = 0)
+    and not TReservedCategories.IsReserved(Self);
+end;
 
 constructor TCategory.Create(const CatID: string; const UserDefined: Boolean;
   const Data: TCategoryData);
