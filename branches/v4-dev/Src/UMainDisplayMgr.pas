@@ -87,7 +87,7 @@ type
         @param Value [in] Index of tab to be selected.
       }
     function GetCurrentView: IView;
-    procedure DisplayInSelectedDetailView(View: IView; const Force: Boolean);
+    procedure DisplayInSelectedDetailView(View: IView);
     procedure RedisplayOverview;
     procedure ShowInNewDetailPage(View: IView);
   public
@@ -245,7 +245,7 @@ begin
   else
   begin
     // overwrite exiting tab
-    DisplayInSelectedDetailView(View, True);
+    DisplayInSelectedDetailView(View);
   end;
 end;
 
@@ -255,7 +255,7 @@ begin
   if fDetailPagePendingChange >= 0 then
     // category is displayed in detail pane: update display
     (fDetailsMgr as IDetailPaneDisplayMgr).Display(
-      View, fDetailPagePendingChange, True
+      View, fDetailPagePendingChange
     );
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
 end;
@@ -347,13 +347,10 @@ begin
   inherited;
 end;
 
-procedure TMainDisplayMgr.DisplayInSelectedDetailView(View: IView;
-  const Force: Boolean);
+procedure TMainDisplayMgr.DisplayInSelectedDetailView(View: IView);
 begin
   (fDetailsMgr as IDetailPaneDisplayMgr).Display(
-    View,
-    (fDetailsMgr as ITabbedDisplayMgr).SelectedTab,
-    Force
+    View, (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
   );
 end;
 
@@ -388,7 +385,7 @@ begin
   else
   begin
     // overwrite exiting tab
-    DisplayInSelectedDetailView(ViewItem, True);
+    DisplayInSelectedDetailView(ViewItem);
   end;
 end;
 
@@ -458,7 +455,7 @@ begin
     begin
       // TODO: Check if overview pane actually needs clearing here
       (fOverviewMgr as IOverviewDisplayMgr).Clear;
-      DisplayInSelectedDetailView(TViewItemFactory.CreateNulView, True);
+      DisplayInSelectedDetailView(TViewItemFactory.CreateNulView);
     end;
 end;
 
@@ -474,9 +471,7 @@ begin
   if not (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
   begin
     (fDetailsMgr as IDetailPaneDisplayMgr).Display(
-      CurrentView,
-      (fDetailsMgr as ITabbedDisplayMgr).SelectedTab,
-      True
+      CurrentView, (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
     )
   end;
 end;
@@ -495,7 +490,7 @@ begin
   // Redisplays current view in overview pane and active tab of detail pane
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
   if not (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
-    DisplayInSelectedDetailView(CurrentView, True);
+    DisplayInSelectedDetailView(CurrentView);
 end;
 
 procedure TMainDisplayMgr.SelectAll;
@@ -583,7 +578,7 @@ begin
   else
   begin
     // overwrite exiting tab
-    DisplayInSelectedDetailView(View, True);
+    DisplayInSelectedDetailView(View);
   end;
 end;
 
@@ -593,7 +588,7 @@ begin
   // because only way of editing a snippet is from this tab.
   RedisplayOverview;
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
-  DisplayInSelectedDetailView(View, True);
+  DisplayInSelectedDetailView(View);
 end;
 
 procedure TMainDisplayMgr.SnippetDeleted;

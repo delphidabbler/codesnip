@@ -87,7 +87,7 @@ type
     function TabCount: Integer;
     procedure NotifyTabChange(TabIdx: Integer);
     procedure InternalSelectTab(TabIdx: Integer);
-    procedure InternalDisplay(View: IView; const Force: Boolean);
+    procedure InternalDisplay(View: IView);
     procedure InternalDeleteTab(TabIdx: Integer);
   public
     constructor Create(AOwner: TComponent); override;
@@ -106,7 +106,7 @@ type
     function SelectedView: IView;
     procedure IDetailPaneDisplayMgr.SelectTab = SelectTab;
     function FindTab(ViewKey: IViewKey): Integer;
-    procedure Display(View: IView; const TabIdx: Integer; const Force: Boolean);
+    procedure Display(View: IView; const TabIdx: Integer);
     function CreateTab(View: IView): Integer;
     function IsEmptyTabSet: Boolean;
     procedure CloseTab(const TabIdx: Integer);
@@ -231,7 +231,7 @@ function TDetailFrame.CreateTab(View: IView): Integer;
 begin
   Result := tcViews.Tabs.Add(View.Description);
   fViews.Add(View);
-  InternalDisplay(View, True); // stores View in fViews again
+  InternalDisplay(View); // stores View in fViews again
 end;
 
 destructor TDetailFrame.Destroy;
@@ -241,15 +241,14 @@ begin
   inherited;
 end;
 
-procedure TDetailFrame.Display(View: IView; const TabIdx: Integer;
-  const Force: Boolean);
+procedure TDetailFrame.Display(View: IView; const TabIdx: Integer);
 begin
   Assert(Assigned(View), ClassName + '.Display: View is nil');
 
   fViews[TabIdx] := TViewItemFactory.Clone(View);
   tcViews.Tabs[TabIdx] := View.Description;
   if TabIdx = SelectedTab then
-    InternalDisplay(fViews[TabIdx], Force);
+    InternalDisplay(fViews[TabIdx]);
 end;
 
 function TDetailFrame.FindTab(ViewKey: IViewKey): Integer;
@@ -268,15 +267,15 @@ begin
   fViews.Delete(TabIdx);
 end;
 
-procedure TDetailFrame.InternalDisplay(View: IView; const Force: Boolean);
+procedure TDetailFrame.InternalDisplay(View: IView);
 begin
-  (frmDetailView as IViewItemDisplayMgr).Display(View, Force);
+  (frmDetailView as IViewItemDisplayMgr).Display(View);
 end;
 
 procedure TDetailFrame.InternalSelectTab(TabIdx: Integer);
 begin
   tcViews.TabIndex := TabIdx;
-  InternalDisplay(SelectedView, True);  // SelectedView allows for TabIdx = -1
+  InternalDisplay(SelectedView);  // SelectedView allows for TabIdx = -1
 end;
 
 function TDetailFrame.IsEmptyTabSet: Boolean;

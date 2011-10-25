@@ -132,7 +132,7 @@ type
     function SelectedView: IView;
     procedure SelectTab(const TabIdx: Integer);
     function FindTab(ViewKey: IViewKey): Integer;
-    procedure Display(View: IView; const TabIdx: Integer; const Force: Boolean);
+    procedure Display(View: IView; const TabIdx: Integer);
     function CreateTab(View: IView): Integer;
     function IsEmptyTabSet: Boolean;
     procedure CloseTab(const TabIdx: Integer);
@@ -192,11 +192,9 @@ type
   }
   IViewItemDisplayMgr = interface(IInterface)
     ['{1FE68233-1AD7-44C3-A6C0-3974E0C0455E}']
-    procedure Display(View: IView; const Force: Boolean = False);
+    procedure Display(View: IView);
       {Displays detailed information for a view. Pass nil to clear.
         @param View [in] Information about item to view.
-        @param Force [in] Forces view item to be re-displayed even if not
-          changed.
       }
     // TODO: Comment this method
     function GetCurrentView: IView;

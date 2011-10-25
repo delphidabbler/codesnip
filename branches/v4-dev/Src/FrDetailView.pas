@@ -66,7 +66,7 @@ type
   strict private
     var
       ///  <summary>Information about currently displayed view item.</summary>
-      fCurrentView: IView;
+      fCurrentView: IView;  // TODO: check if this field needed
       ///  <summary>Manager for popup menus that relate to the browser control.
       ///  </summary>
       fPopupMenuMgr: TWBPopupMenuMgr;
@@ -121,14 +121,11 @@ type
     ///  <summary>Displays a view in the frame.</summary>
     ///  <param name="View">IView [in] Information about view to be displayed.
     ///  </param>
-    ///  <param name="Force">Boolean [in] When True ensure that view is
-    ///  re-displayed even if not changed. When False view is only re-displayed
-    ///  if it is different to previous view.</param>
     ///  <remarks>Method of IViewItemDisplayMgr.</remarks>
-    procedure Display(View: IView; const Force: Boolean = False);
+    procedure Display(View: IView);
     ///  <summary>Gets reference to currently displayed view.</summary>
     ///  <remarks>Method of IViewItemDisplayMgr.</remarks>
-    function GetCurrentView: IView;
+    function GetCurrentView: IView; // TODO: check if this method method
     ///  <summary>Records the object used to extend the web browser control's
     ///  external object.</summary>
     ///  <remarks>Method of IWBCustomiser.</remarks>
@@ -287,27 +284,24 @@ begin
   inherited;
 end;
 
-procedure TDetailViewFrame.Display(View: IView; const Force: Boolean);
+procedure TDetailViewFrame.Display(View: IView);
 var
   TextSearchCriteria: ITextSearchCriteria;  // criteria for any text search
 begin
-  if not fCurrentView.IsEqual(View) or Force then
-  begin
-    fCurrentView := TViewItemFactory.Clone(View);
-    // Load view's HTML into browser control
-    TDetailPageLoader.LoadPage(fCurrentView, WBController);
-    // Clear any existing text selection
-    WBController.UIMgr.ClearSelection;
-    // If we're viewing a snippet and there's an active text search, highlight
-    // text that matches search
-    if Supports(fCurrentView, ISnippetView) and
-      Supports(
-        Query.CurrentSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
-      ) then
-      HighlightSearchResults(TextSearchCriteria);
-    // Ensure top of newly loaded document is displayed
-    MoveToDocTop;
-  end;
+  fCurrentView := TViewItemFactory.Clone(View);
+  // Load view's HTML into browser control
+  TDetailPageLoader.LoadPage(fCurrentView, WBController);
+  // Clear any existing text selection
+  WBController.UIMgr.ClearSelection;
+  // If we're viewing a snippet and there's an active text search, highlight
+  // text that matches search
+  if Supports(fCurrentView, ISnippetView) and
+    Supports(
+      Query.CurrentSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
+    ) then
+    HighlightSearchResults(TextSearchCriteria);
+  // Ensure top of newly loaded document is displayed
+  MoveToDocTop;
 end;
 
 function TDetailViewFrame.GetCurrentView: IView;
