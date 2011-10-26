@@ -48,8 +48,15 @@ uses
 type
   ///  TODO: DBG - this type is for debugging only
   TDetailPaneDisplayMode = (
+    ddmDEBUGOverwrite,
+    ddmDEBUGInsert
+  );
+
+  // TODO: Implement Display with these flags and remove CreateNewDetailsTab
+  TDetailPageDisplayMode = (
     ddmOverwrite,
-    ddmInsert
+    ddmRequestNewTab,
+    ddmForceNewTab
   );
 
   {
@@ -237,7 +244,7 @@ begin
     Exit;
   end;
   // NOTE: new item, so won't already be displayed, so we don't look for it
-  if (fDetailPaneDisplayMode = ddmInsert) then
+  if (fDetailPaneDisplayMode = ddmDEBUGInsert) then
   begin
     // new tab required
     ShowInNewDetailPage(View);
@@ -326,8 +333,8 @@ begin
 
   // Default values
   // TODO: DBG - these "mode" values should be removed after testing
-  fDetailPaneDisplayMode := ddmInsert;
-//  fDetailPaneDisplayMode := ddmOverwrite;
+  fDetailPaneDisplayMode := ddmDEBUGInsert;
+//  fDetailPaneDisplayMode := ddmDEBUGOverwrite;
 end;
 
 procedure TMainDisplayMgr.CreateNewDetailsTab;
@@ -377,7 +384,7 @@ begin
     Exit;
   end;
   // tab doesn't already exist
-  if (fDetailPaneDisplayMode = ddmInsert) then
+  if (fDetailPaneDisplayMode = ddmDEBUGInsert) then
   begin
     // new tab required
     ShowInNewDetailPage(ViewItem);
@@ -570,7 +577,7 @@ begin
     Exit;
   end;
   // NOTE: new item, so won't already be displayed, so we don't look for it
-  if (fDetailPaneDisplayMode = ddmInsert) then
+  if (fDetailPaneDisplayMode = ddmDEBUGInsert) then
   begin
     // new tab required
     ShowInNewDetailPage(View);
