@@ -731,7 +731,6 @@ constructor TPreferencesPersist.Create;
   }
 var
   Storage: ISettingsSection;  // object used to access persistent storage
-  V: Variant;
 const
   // Default margin size in millimeters
   cPrintPageMarginSizeMM = 25.0;
