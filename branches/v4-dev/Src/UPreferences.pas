@@ -122,6 +122,35 @@ type
       read GetOverviewStartState write SetOverviewStartState;
       {Startup state of overview treeview}
 
+    function GetShowEmptyCategories: Boolean;
+      {Gets flag that indicates whether empty categories are displayed in
+      overview pane.
+        @returns Flag value.
+      }
+    procedure SetShowEmptyCategories(const Value: Boolean);
+      {Sets flag that indicates whether empty categories are displayed in
+      overview pane.
+        @param Value [in] New flag value.
+      }
+    property ShowEmptyCategories: Boolean
+      read GetShowEmptyCategories write SetShowEmptyCategories;
+      {Indicates whether empty categories are displayed in overview pane}
+
+    function GetShowNewSnippetsInNewTabs: Boolean;
+      {Gets flag that indicates whether new snippets and categories are
+      displayed in new tabs in details pane.
+        @returns Flag value.
+      }
+    procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
+      {Sets flag that indicates whether new snippets and categories are
+      displayed in new tabs in details pane.
+        @param Value [in] New flag value.
+      }
+    property ShowNewSnippetsInNewTabs: Boolean
+      read GetShowNewSnippetsInNewTabs write SetShowNewSnippetsInNewTabs;
+      {Indicates whether new snippets and ca-tegories are displayed in new tabs 
+      in details pane}
+
     function GetPrinterOptions: TPrintOptions;
       {Gets print options.
         @return Default print options.
@@ -238,6 +267,10 @@ type
       {Measurement unit in use by application}
     fOverviewStartState: TOverviewStartState;
       {Startup state of overview treeview}
+    fShowEmptyCategories: Boolean;
+      {Indicates whether empty categories are displayed in overview pane}
+    fShowNewSnippetsInNewTabs: Boolean;
+      {Indicates whether empty categories are displayed in overview pane}
     fPrinterOptions: TPrintOptions;
       {Default print options}
     fPrinterPageMargins: TPageMargins;
@@ -294,6 +327,26 @@ type
     procedure SetOverviewStartState(const Value: TOverviewStartState);
       {Sets startup state of overview tree view.
         @param Value [in] Required startup state.
+      }
+    function GetShowEmptyCategories: Boolean;
+      {Gets flag that indicates whether empty categories are displayed in
+      overview pane.
+        @returns Flag value.
+      }
+    procedure SetShowEmptyCategories(const Value: Boolean);
+      {Sets flag that indicates whether empty categories are displayed in
+      overview pane.
+        @param Value [in] New flag value.
+      }
+    function GetShowNewSnippetsInNewTabs: Boolean;
+      {Gets flag that indicates whether new snippets and categories are
+      displayed in new tabs in details pane.
+        @returns Flag value.
+      }
+    procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
+      {Sets flag that indicates whether new snippets and categories are
+      displayed in new tabs in details pane.
+        @param Value [in] New flag value.
       }
     function GetPrinterOptions: TPrintOptions;
       {Gets print options.
@@ -431,6 +484,8 @@ begin
   Self.fSourceSyntaxHilited := SrcPref.SourceSyntaxHilited;
   Self.fMeasurementUnits := SrcPref.MeasurementUnits;
   Self.fOverviewStartState := SrcPref.OverviewStartState;
+  Self.fShowEmptyCategories := SrcPref.ShowEmptyCategories;
+  Self.fShowNewSnippetsInNewTabs := SrcPref.ShowNewSnippetsInNewTabs;
   Self.fPrinterOptions := SrcPref.PrinterOptions;
   Self.fPrinterPageMargins := SrcPref.PrinterPageMargins;
   Self.SetHiliteAttrs(SrcPref.HiliteAttrs);
@@ -504,6 +559,16 @@ function TPreferences.GetPrinterPageMargins: TPageMargins;
   }
 begin
   Result := fPrinterPageMargins;
+end;
+
+function TPreferences.GetShowEmptyCategories: Boolean;
+begin
+  Result := fShowEmptyCategories;
+end;
+
+function TPreferences.GetShowNewSnippetsInNewTabs: Boolean;
+begin
+  Result := fShowNewSnippetsInNewTabs;
 end;
 
 function TPreferences.GetSourceCommentStyle: TCommentStyle;
@@ -592,6 +657,16 @@ begin
   fPrinterPageMargins := Margins;
 end;
 
+procedure TPreferences.SetShowEmptyCategories(const Value: Boolean);
+begin
+  fShowEmptyCategories := Value;
+end;
+
+procedure TPreferences.SetShowNewSnippetsInNewTabs(const Value: Boolean);
+begin
+  fShowNewSnippetsInNewTabs := Value;
+end;
+
 procedure TPreferences.SetSourceCommentStyle(const Value: TCommentStyle);
   {Sets style of commenting to be used describe snippets in generated code.
     @param Value [in] Required commenting style.
@@ -640,6 +715,8 @@ begin
   NewPref.SourceSyntaxHilited := Self.fSourceSyntaxHilited;
   NewPref.MeasurementUnits := Self.fMeasurementUnits;
   NewPref.OverviewStartState := Self.fOverviewStartState;
+  NewPref.ShowEmptyCategories := Self.fShowEmptyCategories;
+  NewPref.ShowNewSnippetsInNewTabs := Self.fShowNewSnippetsInNewTabs;
   NewPref.PrinterOptions := Self.fPrinterOptions;
   NewPref.PrinterPageMargins := Self.fPrinterPageMargins;
   NewPref.HiliteAttrs := Self.GetHiliteAttrs;
@@ -654,6 +731,7 @@ constructor TPreferencesPersist.Create;
   }
 var
   Storage: ISettingsSection;  // object used to access persistent storage
+  V: Variant;
 const
   // Default margin size in millimeters
   cPrintPageMarginSizeMM = 25.0;
@@ -669,6 +747,12 @@ begin
   );
   fOverviewStartState := TOverviewStartState(
     StrToIntDef(Storage.ItemValues['OverviewStartState'], Ord(ossExpanded))
+  );
+  fShowEmptyCategories := Boolean(
+    StrToIntDef(Storage.ItemValues['ShowEmptyCategories'], Ord(False))
+  );
+  fShowNewSnippetsInNewTabs := Boolean(
+    StrToIntDef(Storage.ItemValues['ShowNewSnippetsInNewTabs'], Ord(False))
   );
 
   // Read source code section
@@ -727,6 +811,12 @@ begin
   Storage.ItemValues['Units'] := IntToStr(Ord(fMeasurementUnits));
   Storage.ItemValues['OverviewStartState'] := IntToStr(
     Ord(fOverviewStartState)
+  );
+  Storage.ItemValues['ShowEmptyCategories'] := IntToStr(
+    Ord(fShowEmptyCategories)
+  );
+  Storage.ItemValues['ShowNewSnippetsInNewTabs'] := IntToStr(
+    Ord(fShowNewSnippetsInNewTabs)
   );
   Storage.Save;
 
