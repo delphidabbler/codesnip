@@ -92,10 +92,10 @@ Changes
     IActiveTextElem descendant interfaces.
   o Major change to syntax highlighter classes:
     - Changed to single class that uses provided renderer objects to render in
-      different formats. 
+      different formats.
     - Provided nul, rtf and xhtml renderer classes.
     - Highlighter now only produces document fragments.
-    - Separate static classes are now used to render complete documents.  
+    - Separate static classes are now used to render complete documents.
   o Active text validation code moved to owen unit.
   o New methods added to TCtrlArranger to assist in arranging controls in a
     form.
@@ -103,24 +103,24 @@ Changes
     following change to multi-tab snippet views.
 
 * Bug fixes:
-  o #3120962. This was a separate fix to that created for v3 - the two were
-    incompatible.
-  o Fixed XML validation bug that was rejecting XML processing instructions with
-    "encoding" attributes. This is a copy of v3 fix.
-  o Fixed long standing bug that was crashing when database was updated or
-    restored after editing, adding or deleting any user defined snippet. This is
-    a different fix to that made in v3.
+  o Applied some different versions of fixes made to v3: not for change log,
+    since already noted in v3 releases.
+    - Fixed bug where snippets that have names beginning with a lower case
+      letter were being omitted from from the associated list of snippets shown
+      in the detail pane. Fixes bug #3120962. Different fix to v3.
+    - Fixed XML validation bug that was rejecting XML processing instructions
+      with "encoding" attributes. This is a copy of v3 fix.
+    - Fixed long standing bug that was crashing when database was updated or
+      restored after editing, adding or deleting any user defined snippet. This
+      is a different fix to that made in v3.
+    - Fixed bug that was preventing Ctrl+Tab and Shift+Ctrl+Tab key presses from
+      working in Detail Pane's tabs when browser control selected. v3 fix was
+      copied from this one.
+    - Fixed bug in overview pane where selecting a view item not in overview
+      pane does not deselect current selection. v3 fix was copied from this one.
+    - Fixed potential bug by testing for nil notifier in
+      TOverviewFrame.tcDisplayStyleChange. v3 fix was copied from this one.
   o Various Unicode and code page related problems in RTF code (see below).
-  o Fixed bug that was preventing Ctrl+Tab and Shift+Ctrl+Tab key presses from
-    working in Detail Pane's tabs when browser control selected.
-    *** NOTE: delete this if this bug gets fixed in a v3 release.
-  o Fixed bug in overview pane where selecting a view item not in overview pane
-    does not deselect current selection.
-    *** NOTE: delete this if this bug gets fixed in a v3 release.
-  o Fixed potential bug by testing for nil notifier in
-    TOverviewFrame.tcDisplayStyleChange.
-    *** NOTE: delete this if this bug gets fixed in a v3 release.
-      
 
 * Help file:
   o Privacy statement topic updated in line with changes to text file.
@@ -174,7 +174,7 @@ Printing:
 
 * Clipboard copying code modified to have a method to add each supported format
   to clipboard to enable correct encoding to be used for each format.
-  
+
 * Event handling following changes to database heavily revised, fixing a
   potential bug en-route.
 
@@ -285,7 +285,7 @@ Printing:
   o Detail Pane now uses single view frame with single browser control + a tab
     control instead of page control.
   o Created new "Compile" top-level menu and moved Test Compile and View Compile
-    Errors options from Database menu and View Test Unit from View menu to new 
+    Errors options from Database menu and View Test Unit from View menu to new
     menu.
   o Empty categories can now optionally be displayed in overview pane.
   o New snippets and categories can now optionally be displayed in a new tab
@@ -322,7 +322,7 @@ Printing:
 
 * External object changed to v7 to accomodate UI changes that relate to web-
   browser control.
-  
+
 * Config files:
   o Changed per-user config file name to User.4.ini.
   o Detail pane tab index no longer stored.
@@ -337,13 +337,13 @@ Printing:
 * Strings containing HTML are now loaded into WebBrowser control as Unicode
   (with BOM), not ANSI text. Characters above #127 in HTML are no longer
   converted to entities.
-  
+
 * https protocol added to list of valid protocols in active text links.
 
 * Refactored data stream reading / writing code and added code to read / write
   binary formatted data streams. Removed code that writes text formatted data
   streams.
-  
+
 * 3rd Party
   o Added PJShellFolders.
 
