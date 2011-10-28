@@ -88,6 +88,19 @@ Changes
     method.
   o Increased used of dedicated comparer classes instead of delagating list /
     dictionary comparisons to anonymous methods declared in using code.
+  o Kind property now only occurs in IActiveTextActionElem rather than in all
+    IActiveTextElem descendant interfaces.
+  o Major change to syntax highlighter classes:
+    - Changed to single class that uses provided renderer objects to render in
+      different formats. 
+    - Provided nul, rtf and xhtml renderer classes.
+    - Highlighter now only produces document fragments.
+    - Separate static classes are now used to render complete documents.  
+  o Active text validation code moved to owen unit.
+  o New methods added to TCtrlArranger to assist in arranging controls in a
+    form.
+  o Deatils Pane and Deatil View management code heavily revised and refactored
+    following change to multi-tab snippet views.
 
 * Bug fixes:
   o #3120962. This was a separate fix to that created for v3 - the two were
@@ -98,12 +111,24 @@ Changes
     restored after editing, adding or deleting any user defined snippet. This is
     a different fix to that made in v3.
   o Various Unicode and code page related problems in RTF code (see below).
+  o Fixed bug that was preventing Ctrl+Tab and Shift+Ctrl+Tab key presses from
+    working in Detail Pane's tabs when browser control selected.
+    *** NOTE: delete this if this bug gets fixed in a v3 release.
+  o Fixed bug in overview pane where selecting a view item not in overview pane
+    does not deselect current selection.
+    *** NOTE: delete this if this bug gets fixed in a v3 release.
+  o Fixed potential bug by testing for nil notifier in
+    TOverviewFrame.tcDisplayStyleChange.
+    *** NOTE: delete this if this bug gets fixed in a v3 release.
+      
 
 * Help file:
   o Privacy statement topic updated in line with changes to text file.
   o Snippets Editor topic updated re change in snippet name rules.
   o Configure Compiler topic updated for new tab and browse dialog box.
   o Code import topic(s) rewritten re new import wizard.
+  o Revised re Display Pane changes.
+  o Revised re Test Compile changes.
 
 * Documentation:
   o Privacy statement updated re file name changes.
@@ -123,6 +148,9 @@ Changes
     uses this instead of ANSI strings and streams.
   o Refactored and extended code that load, saves and inserts RTF code to use
     new static record and to use TRTF for the RTF data.
+  o RTF rendering code refactored. Highlighted source code is now inserted
+    directly into RTF document rather than having to merge in RTF to replace a
+    placeholder.
 
 * HTML processing:
   o HTML builder now uses TStringBuilder to create HTML documents.
@@ -146,6 +174,9 @@ Printing:
 
 * Clipboard copying code modified to have a method to add each supported format
   to clipboard to enable correct encoding to be used for each format.
+  
+* Event handling following changes to database heavily revised, fixing a
+  potential bug en-route.
 
 * Dialog boxes:
   o Config Compilers Dialog Box:
@@ -158,9 +189,10 @@ Printing:
       separate classes and units.
     - Created namespace FmCompilersDlg for all subsidiary support units.
     - Corrected and revised Alt keys used in dialog.
-  o About Box's Paths tab now disable exlpore buttons if displayed paths don't
-    exist. Also paths now appear in hints and include comment if path doesn't
-    exist.
+  o About Box:
+    - Paths tab now disable explore buttons if displayed paths don't exist.
+    - Paths tab hints now appear in sialog box instaed of main window status bar
+      and hints changed slightly.
   o Added encoding drop down to Save source dialog box where user can choose
     encoding to be used to save files. Provided different choices (or no choice)
     for each file type.
@@ -175,6 +207,10 @@ Printing:
     class.
   o New Browse for Folder dialog implementation based on TPJBrowseDialog.
   o Internal changes to FmWizardDlg to suit new sub-class.
+  o Compile results dialog box changed to only display tabbed display of compile
+    results from multiple (1 or more) compilers. Single compiler view removed.
+  o Delete Category dialog box no longer allows non-empty categories to be
+    selected.
 
 * Database:
   o Changed user database dir name to UserData.4.
@@ -187,6 +223,7 @@ Printing:
     - Fields of TSnippetID now encapsulated.
   o Moved some field comparisons into records / classes instead of doing
     comparison in called code. E.g. TSnippetID gets a CompareNames method.
+  o Non-empty categories can no longer be deleted.
 
 * Import / Export / Backup
   o Updated export file version to v5. All files use v5 regardless of REML
@@ -239,6 +276,20 @@ Printing:
     truncated.
   o Code Import now done via wizard rather file open and series of query dialog
     boxes. Import manager code heavily revised to dis-entangle logic from UI.
+  o Test compiles are now displayed in a dialog box instead of Compiler Check
+    tab in Details pane. This tab removed.
+  o More than one snippet can now be displayed in Detail pane: each one in its
+    own tab.
+  o Compilable snippets displayed in Details pane now have click to test compile
+    the snippets.
+  o Detail Pane now uses single view frame with single browser control + a tab
+    control instead of page control.
+  o Created new "Compile" top-level menu and moved Test Compile and View Compile
+    Errors options from Database menu and View Test Unit from View menu to new 
+    menu.
+  o Empty categories can now optionally be displayed in overview pane.
+  o New snippets and categories can now optionally be displayed in a new tab
+    when they are created.
 
 * Web Services
   o Updated database update web service code changed to work with v5 of the
@@ -266,7 +317,17 @@ Printing:
     identifiers instead of keywords.
   o Refactored lexer.
 
-* Changed per-user config file name to User.4.ini.
+* Code that handles REML now always uses latest version instead of trying to
+  write using earlier versions where possible.
+
+* External object changed to v7 to accomodate UI changes that relate to web-
+  browser control.
+  
+* Config files:
+  o Changed per-user config file name to User.4.ini.
+  o Detail pane tab index no longer stored.
+  o New ShowInNewDetailPage and SetShowEmptyCategories settings in per-user
+    file.
 
 * Increased use of TStringBuilder to build strings where string concatenation
   was used excessively.
@@ -276,6 +337,8 @@ Printing:
 * Strings containing HTML are now loaded into WebBrowser control as Unicode
   (with BOM), not ANSI text. Characters above #127 in HTML are no longer
   converted to entities.
+  
+* https protocol added to list of valid protocols in active text links.
 
 * Refactored data stream reading / writing code and added code to read / write
   binary formatted data streams. Removed code that writes text formatted data
