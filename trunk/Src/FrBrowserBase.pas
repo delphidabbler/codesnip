@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -472,6 +472,11 @@ begin
         // We post Ctrl+Ins and Ctrl+Del to parent to enable application to
         // call any associated actions
         if ShiftState = [ssCtrl] then
+          PostMsg := True;
+      VK_TAB:
+        // We post Ctrl+Tab and Shift+Ctrl+Tab to parent to enable tab switching
+        // where browser is hosted by a tab set of some description
+        if (ShiftState = [ssCtrl]) or (ShiftState = [ssCtrl, ssShift]) then
           PostMsg := True;
       VK_RETURN:
         // We handle Ctrl+Return to trigger any active link. This message is not
