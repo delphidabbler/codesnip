@@ -71,6 +71,9 @@ type
         @return True if search was re-applied, False if there was no search to
           apply.
       }
+    procedure Update;
+      {Updates query. Attempts to refresh query and, if that fails, resets it.
+      }
     function GetCurrentSearch: ISearch;
       {Gets value of CurrentSearch property.
         @return Search object used to generate current search.
@@ -150,6 +153,9 @@ type
     procedure Reset;
       {Resets query. Selection property is set to all snippets in database and
       Search property is set to nul search.
+      }
+    procedure Update;
+      {Updates query. Attempts to refresh query and, if that fails, resets it.
       }
     function GetCurrentSearch: ISearch;
       {Gets reference to current search object.
@@ -302,6 +308,14 @@ procedure TQuery.Reset;
 begin
   fSelection.Assign(Database.Snippets);
   fSearch := TSearchFactory.CreateNulSearch;
+end;
+
+procedure TQuery.Update;
+  {Updates query. Attempts to refresh query and, if that fails, resets it.
+  }
+begin
+  if not Refresh then
+    Reset;
 end;
 
 end.

@@ -1620,31 +1620,21 @@ procedure TMainForm.SnippetsChangeHandler(Sender: TObject;
     @param Sender [in] Not used.
     @para EvtInfo [in] Object providing information about the event.
   }
-
-  // ---------------------------------------------------------------------------
-  procedure UpdateQuery;
-  begin
-    // TODO: Add a new method of TQuery that does this
-    if not Query.Refresh then
-      Query.Reset;
-  end;
-  // ---------------------------------------------------------------------------
-
 var
   EventInfo: IDatabaseChangeEventInfo;  // information about the event
 begin
   EventInfo := EvtInfo as IDatabaseChangeEventInfo;
   case EventInfo.Kind of
-    evChangeBegin:          // database about to change
+    evChangeBegin:
     begin
       Enabled := False;
       fMainDisplayMgr.PrepareForChange;
     end;
-    evChangeEnd:            // database change has completed
+    evChangeEnd:
       Enabled := True;
     evSnippetAdded:
     begin
-      UpdateQuery;
+      Query.Update;;
       fMainDisplayMgr.SnippetAdded(
         TViewItemFactory.CreateSnippetView(EventInfo.Info as TSnippet)
       );
@@ -1657,7 +1647,7 @@ begin
     end;
     evSnippetChanged:
     begin
-      UpdateQuery;
+      Query.Update;;
       fMainDisplayMgr.SnippetChanged(
         TViewItemFactory.CreateSnippetView(EventInfo.Info as TSnippet)
       );
@@ -1670,12 +1660,12 @@ begin
     end;
     evSnippetDeleted:
     begin
-      UpdateQuery;
+      Query.Update;;
       fMainDisplayMgr.SnippetDeleted;
     end;
     evCategoryAdded:
     begin
-      UpdateQuery;
+      Query.Update;;
       fMainDisplayMgr.CategoryAdded(
         TViewItemFactory.CreateCategoryView(EventInfo.Info as TCategory)
       );
@@ -1688,7 +1678,7 @@ begin
     end;
     evCategoryChanged:
     begin
-      UpdateQuery;
+      Query.Update;;
       fMainDisplayMgr.CategoryChanged(
         TViewItemFactory.CreateCategoryView(EventInfo.Info as TCategory)
       );
@@ -1701,7 +1691,7 @@ begin
     end;
     evCategoryDeleted:
     begin
-      UpdateQuery;
+      Query.Update;;
       fMainDisplayMgr.CategoryDeleted;
     end;
   end;
