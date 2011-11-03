@@ -65,8 +65,6 @@ type
   )
   strict private
     var
-      ///  <summary>Information about currently displayed view item.</summary>
-      fCurrentView: IView;  // TODO: check if this field needed
       ///  <summary>Manager for popup menus that relate to the browser control.
       ///  </summary>
       fPopupMenuMgr: TWBPopupMenuMgr;
@@ -123,9 +121,6 @@ type
     ///  </param>
     ///  <remarks>Method of IViewItemDisplayMgr.</remarks>
     procedure Display(View: IView);
-    ///  <summary>Gets reference to currently displayed view.</summary>
-    ///  <remarks>Method of IViewItemDisplayMgr.</remarks>
-    function GetCurrentView: IView; // TODO: check if this method method
     ///  <summary>Records the object used to extend the web browser control's
     ///  external object.</summary>
     ///  <remarks>Method of IWBCustomiser.</remarks>
@@ -280,13 +275,10 @@ begin
   end;
   // Set pop-up menu handler for browser control
   WBController.UIMgr.OnMenuPopupEx := PopupMenuHandler;
-  // Create object to store detailed info about current view item
-  fCurrentView := TViewItemFactory.CreateNulView;
 end;
 
 destructor TDetailViewFrame.Destroy;
 begin
-  fCurrentView := nil;
   fCommandBars.Free;
   inherited;
 end;
@@ -295,25 +287,19 @@ procedure TDetailViewFrame.Display(View: IView);
 var
   TextSearchCriteria: ITextSearchCriteria;  // criteria for any text search
 begin
-  fCurrentView := TViewItemFactory.Clone(View);
   // Load view's HTML into browser control
-  TDetailPageLoader.LoadPage(fCurrentView, WBController);
+  TDetailPageLoader.LoadPage(View, WBController);
   // Clear any existing text selection
   WBController.UIMgr.ClearSelection;
   // If we're viewing a snippet and there's an active text search, highlight
   // text that matches search
-  if Supports(fCurrentView, ISnippetView) and
+  if Supports(View, ISnippetView) and
     Supports(
       Query.CurrentSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
     ) then
     HighlightSearchResults(TextSearchCriteria);
   // Ensure top of newly loaded document is displayed
   MoveToDocTop;
-end;
-
-function TDetailViewFrame.GetCurrentView: IView;
-begin
-  Result := fCurrentView;
 end;
 
 procedure TDetailViewFrame.HighlightSearchResults(
@@ -325,8 +311,6 @@ begin
     ClassName + '.HighlightSearchResults: Criteria is nil');
   Assert(Supports(Criteria, ITextSearchCriteria),
     ClassName + '.HighlightSearchResults: There is no current text search');
-  Assert(Supports(fCurrentView, ISnippetView),
-    ClassName + '.HighlightSearchResults: View item is not a snippet');
   // Create and configure highlighter object
   Highlighter := TWBHighlighter.Create(wbBrowser);
   try

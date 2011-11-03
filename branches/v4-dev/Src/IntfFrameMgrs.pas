@@ -193,8 +193,6 @@ type
       {Displays detailed information for a view. Pass nil to clear.
         @param View [in] Information about item to view.
       }
-    // TODO: Comment this method
-    function GetCurrentView: IView;
   end;
 
   //////////////////////////////////////////////////////////////////////////////
