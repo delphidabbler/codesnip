@@ -114,6 +114,14 @@ type
 
 type
   ///  <summary>
+  ///  Interface supported by view that provides info about a database update.
+  ///  </summary>
+  IDBUpdateInfoView = interface(IView)
+    ['{0E5220F3-33EE-4832-9533-B97B3F3E519B}']
+  end;
+
+type
+  ///  <summary>
   ///  Interface supported by snippet views.
   ///  </summary>
   ISnippetView = interface(IView)
@@ -177,10 +185,13 @@ type
     class function Clone(View: IView): IView;
     ///  <summary>Creates a nul view instance.</summary>
     class function CreateNulView: IView;
-    ///  <summary>Creates a start page view instance.</summary>
-    class function CreateStartPageView: IView;
     ///  <summary>Creates a new tab view instance.</summary>
     class function CreateNewTabView: IView;
+    ///  <summary>Creates a start page view instance.</summary>
+    class function CreateStartPageView: IView;
+    ///  <summary>Creates a database update information view instance.
+    ///  </summary>
+    class function CreateDBUpdateInfoView: IView;
     ///  <summary>Creates a snippet view instance associated with a given
     ///  snippet.</summary>
     class function CreateSnippetView(const Snippet: TSnippet): IView;
@@ -272,6 +283,18 @@ type
   ///  <summary>View associated with start page.</summary>
   TStartPageViewItem = class sealed(TSimpleViewItem,
     IView, IStartPageView
+  )
+  public
+    ///  <summary>Gets description of view.</summary>
+    ///  <remarks>Method of IView.</remarks>
+    function GetDescription: string; override;
+  end;
+
+type
+  ///  <summary>View associated with information about a database update.
+  ///  </summary>
+  TDBUpdateInfoViewItem = class sealed(TSimpleViewItem,
+    IView, IDBUpdateInfoView
   )
   public
     ///  <summary>Gets description of view.</summary>
@@ -535,6 +558,15 @@ begin
   Result := sDesc;
 end;
 
+{ TDBUpdateInfoViewItem }
+
+function TDBUpdateInfoViewItem.GetDescription: string;
+resourcestring
+  sDesc = 'Database Updated';
+begin
+  Result := sDesc;
+end;
+
 { TSnippetViewItem }
 
 constructor TSnippetViewItem.Create(const Snippet: TSnippet);
@@ -787,6 +819,8 @@ begin
     )
   else if Supports(View, INewTabView) then
     Result := CreateNewTabView
+  else if Supports(View, IDBUpdateInfoView) then
+    Result := CreateDBUpdateInfoView
   else
     raise EBug.CreateFmt(
       '%s.CreateCopy: View does not support a valid interface', [ClassName]
@@ -797,6 +831,11 @@ class function TViewItemFactory.CreateCategoryView(const Category: TCategory):
   IView;
 begin
   Result := TCategoryViewItem.Create(Category);
+end;
+
+class function TViewItemFactory.CreateDBUpdateInfoView: IView;
+begin
+  Result := TDBUpdateInfoViewItem.Create;
 end;
 
 class function TViewItemFactory.CreateInitialLetterView(
