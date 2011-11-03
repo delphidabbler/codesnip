@@ -98,18 +98,18 @@ type
 
 type
   ///  <summary>
-  ///  Interface supported by start page view.
-  ///  </summary>
-  IStartPageView = interface(IView)
-    ['{9D2208C4-8FFC-4532-8C3F-07514EDFAB9D}']
-  end;
-
-type
-  ///  <summary>
   ///  Interface supported by new tab page view.
   ///  </summary>
   INewTabView = interface(IView)
     ['{EF760E9C-2DEE-4CCA-AB85-E6C59AA100E7}']
+  end;
+
+type
+  ///  <summary>
+  ///  Interface supported by start page view.
+  ///  </summary>
+  IStartPageView = interface(IView)
+    ['{9D2208C4-8FFC-4532-8C3F-07514EDFAB9D}']
   end;
 
 type
@@ -206,92 +206,77 @@ uses
   // Project
   DB.UMain, UExceptions, USnippetIDs, UStrUtils;
 
-
 type
-  ///  <summary>Nul view.</summary>
-  TNulViewItem = class sealed(TInterfacedObject,
-    IView, INulView
-  )
+  ///  <summary>
+  ///  Base class for view items that contain no other object references and are
+  ///  used simply for display in the details pane.
+  ///  </summary>
+  TSimpleViewItem = class abstract(TInterfacedObject)
   strict private
     type
-      ///  <summary>Implementation of IViewKey for nul view.</summary>
+      ///  <summary>Implementation of IViewKey for descendants.</summary>
       TKey = class(TInterfacedObject, IViewKey)
+      strict private
+        ///  <summary>Class of object that owns this key.</summary>
+        fOwnerClass: TClass;
       public
+        ///  <summary>Constructs object with given owner class.</summary>
+        constructor Create(OwnerClass: TClass);
         ///  <summary>Checks if this key is equal to one passed as a parameter.
         ///  </summary>
+        ///  <remarks>Method of IViewKey.</remarks>
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
-    { IView methods }
     ///  <summary>Checks if this view item is equal to the one passed as a
     ///  parameter.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsEqual(View: IView): Boolean;
     ///  <summary>Gets description of view.</summary>
-    function GetDescription: string;
+    ///  <remarks>Method of IView.</remarks>
+    function GetDescription: string; virtual; abstract;
     ///  <summary>Gets object containing view's unique key.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
+  end;
+
+type
+  ///  <summary>Nul view.</summary>
+  TNulViewItem = class sealed(TSimpleViewItem,
+    IView, INulView
+  )
+  public
+    ///  <summary>Gets description of view.</summary>
+    ///  <remarks>Method of IView.</remarks>
+    function GetDescription: string; override;
   end;
 
 type
   ///  <summary>View associated with blank new tab pages.</summary>
-  TNewTabViewItem = class sealed(TInterfacedObject,
+  TNewTabViewItem = class sealed(TSimpleViewItem,
     IView, INewTabView
   )
-  strict private
-    type
-      ///  <summary>Implementation of IViewKey for new tab view.</summary>
-      TKey = class(TInterfacedObject, IViewKey)
-      public
-        ///  <summary>Checks if this key is equal to one passed as a parameter.
-        ///  </summary>
-        function IsEqual(const Key: IViewKey): Boolean;
-      end;
   public
-    { IView methods }
-    ///  <summary>Checks if this view item is equal to the one passed as a
-    ///  parameter.</summary>
-    function IsEqual(View: IView): Boolean;
     ///  <summary>Gets description of view.</summary>
-    function GetDescription: string;
-    ///  <summary>Gets object containing view's unique key.</summary>
-    function GetKey: IViewKey;
-    ///  <summary>Checks if view is user-defined.</summary>
-    function IsUserDefined: Boolean;
-    ///  <summary>Checks if view is a grouping.</summary>
-    function IsGrouping: Boolean;
+    ///  <remarks>Method of IView.</remarks>
+    function GetDescription: string; override;
   end;
 
 type
   ///  <summary>View associated with start page.</summary>
-  TStartPageViewItem = class sealed(TInterfacedObject,
+  TStartPageViewItem = class sealed(TSimpleViewItem,
     IView, IStartPageView
   )
-  strict private
-    type
-      ///  <summary>Implementation of IViewKey for start page view.</summary>
-      TKey = class(TInterfacedObject, IViewKey)
-      public
-        ///  <summary>Checks if this key is equal to one passed as a parameter.
-        ///  </summary>
-        function IsEqual(const Key: IViewKey): Boolean;
-      end;
   public
-    { IView methods }
-    ///  <summary>Checks if this view item is equal to the one passed as a
-    ///  parameter.</summary>
-    function IsEqual(View: IView): Boolean;
     ///  <summary>Gets description of view.</summary>
-    function GetDescription: string;
-    ///  <summary>Gets object containing view's unique key.</summary>
-    function GetKey: IViewKey;
-    ///  <summary>Checks if view is user-defined.</summary>
-    function IsUserDefined: Boolean;
-    ///  <summary>Checks if view is a grouping.</summary>
-    function IsGrouping: Boolean;
+    ///  <remarks>Method of IView.</remarks>
+    function GetDescription: string; override;
   end;
 
 type
@@ -315,25 +300,29 @@ type
         constructor Create(const ID: TSnippetID);
         ///  <summary>Checks if this key is equal to one passed as a parameter.
         ///  </summary>
+        ///  <remarks>Method of IViewKey.</remarks>
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
     ///  <summary>Constructs view for a specified snippet.</summary>
     constructor Create(const Snippet: TSnippet);
-    { IView methods }
     ///  <summary>Checks if this view item is equal to the one passed as a
     ///  parameter.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsEqual(View: IView): Boolean;
     ///  <summary>Gets description of view.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function GetDescription: string;
     ///  <summary>Gets object containing view's unique key.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
     function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
-    { ISnippetView methods }
     ///  <summary>Gets reference to snippet associated with view.</summary>
+    ///  <remarks>Method of ISnippetView.</remarks>
     function GetSnippet: TSnippet;
   end;
 
@@ -358,25 +347,30 @@ type
         constructor Create(const ID: string);
         ///  <summary>Checks if this key is equal to one passed as a parameter.
         ///  </summary>
+        ///  <remarks>Method of IViewKey.</remarks>
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
     ///  <summary>Constructs view for a specified category.</summary>
     constructor Create(const Category: TCategory);
-    { IView methods }
     ///  <summary>Checks if this view item is equal to the one passed as a
     ///  parameter.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsEqual(View: IView): Boolean;
     ///  <summary>Gets description of view.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function GetDescription: string;
     ///  <summary>Gets object containing view's unique key.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
-    { ICategoryView methods }
     ///  <summary>Gets reference to category associated with view.</summary>
+    ///  <remarks>Method of ICategoryView.</remarks>
     function GetCategory: TCategory;
   end;
 
@@ -403,25 +397,30 @@ type
         constructor Create(const ID: TSnippetKind);
         ///  <summary>Checks if this key is equal to one passed as a parameter.
         ///  </summary>
+        ///  <remarks>Method of IViewKey.</remarks>
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
     ///  <summary>Constructs view for a specified snippet kind.</summary>
     constructor Create(const KindInfo: TSnippetKindInfo);
-    { IView methods }
     ///  <summary>Checks if this view item is equal to the one passed as a
     ///  parameter.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsEqual(View: IView): Boolean;
     ///  <summary>Gets description of view.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function GetDescription: string;
     ///  <summary>Gets object containing view's unique key.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
-    { ISnippetKindView methods }
     ///  <summary>Gets info about snippet kind associated with view.</summary>
+    ///  <remarks>Method of ISnippetKindView.</remarks>
     function GetKindInfo: TSnippetKindInfo;
   end;
 
@@ -448,28 +447,68 @@ type
         constructor Create(const ID: TInitialLetter);
         ///  <summary>Checks if this key is equal to one passed as a parameter.
         ///  </summary>
+        ///  <remarks>Method of IViewKey.</remarks>
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
     ///  <summary>Constructs view for a specified initial letter.</summary>
     constructor Create(const Letter: TInitialLetter);
-    { IView methods }
     ///  <summary>Checks if this view item is equal to the one passed as a
     ///  parameter.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsEqual(View: IView): Boolean;
     ///  <summary>Gets description of view.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function GetDescription: string;
     ///  <summary>Gets object containing view's unique key.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
+    ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
     { IInitialLetterView methods }
     ///  <summary>Gets unfo about initial letter associated with view.</summary>
+    ///  <remarks>Method of IInitialLetterView.</remarks>
     function GetInitialLetter: TInitialLetter;
   end;
 
+{ TSimpleViewItem }
+
+function TSimpleViewItem.GetKey: IViewKey;
+begin
+  Result := TKey.Create(Self.ClassType);
+end;
+
+function TSimpleViewItem.IsEqual(View: IView): Boolean;
+begin
+  Result := View.GetKey.IsEqual(Self.GetKey);
+end;
+
+function TSimpleViewItem.IsGrouping: Boolean;
+begin
+  Result := False;
+end;
+
+function TSimpleViewItem.IsUserDefined: Boolean;
+begin
+  Result := False;
+end;
+
+{ TSimpleViewItem.TKey }
+
+constructor TSimpleViewItem.TKey.Create(OwnerClass: TClass);
+begin
+  inherited Create;
+  fOwnerClass := OwnerClass;
+end;
+
+function TSimpleViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
+begin
+  Result := (Key is TKey) and ((Key as TKey).fOwnerClass = Self.fOwnerClass);
+end;
 
 { TNulViewItem }
 
@@ -478,31 +517,13 @@ begin
   Result := '';
 end;
 
-function TNulViewItem.GetKey: IViewKey;
-begin
-  Result := TKey.Create;
-end;
+{ TNewTabViewItem }
 
-function TNulViewItem.IsEqual(View: IView): Boolean;
+function TNewTabViewItem.GetDescription: string;
+resourcestring
+  sDescription = 'Empty tab';
 begin
-  Result := Supports(View, INulView);
-end;
-
-function TNulViewItem.IsGrouping: Boolean;
-begin
-  Result := False;
-end;
-
-function TNulViewItem.IsUserDefined: Boolean;
-begin
-  Result := False;
-end;
-
-{ TNulViewItem.TKey }
-
-function TNulViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
-begin
-  Result := Key is TKey;
+  Result := sDescription;
 end;
 
 { TStartPageViewItem }
@@ -512,33 +533,6 @@ resourcestring
   sDesc = 'Welcome';
 begin
   Result := sDesc;
-end;
-
-function TStartPageViewItem.GetKey: IViewKey;
-begin
-  Result := TKey.Create;
-end;
-
-function TStartPageViewItem.IsEqual(View: IView): Boolean;
-begin
-  Result := Supports(View, IStartPageView);
-end;
-
-function TStartPageViewItem.IsGrouping: Boolean;
-begin
-  Result := False;
-end;
-
-function TStartPageViewItem.IsUserDefined: Boolean;
-begin
-  Result := False;
-end;
-
-{ TStartPageViewItem.TKey }
-
-function TStartPageViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
-begin
-  Result := Key is TKey;
 end;
 
 { TSnippetViewItem }
@@ -836,42 +830,6 @@ end;
 class function TViewItemFactory.CreateStartPageView: IView;
 begin
   Result := TStartPageViewItem.Create;
-end;
-
-{ TNewTabViewItem }
-
-function TNewTabViewItem.GetDescription: string;
-resourcestring
-  sDescription = 'Empty tab';
-begin
-  Result := sDescription;
-end;
-
-function TNewTabViewItem.GetKey: IViewKey;
-begin
-  Result := TKey.Create;
-end;
-
-function TNewTabViewItem.IsEqual(View: IView): Boolean;
-begin
-  Result := Supports(View, INewTabView);
-end;
-
-function TNewTabViewItem.IsGrouping: Boolean;
-begin
-  Result := False;
-end;
-
-function TNewTabViewItem.IsUserDefined: Boolean;
-begin
-  Result := False;
-end;
-
-{ TNewTabViewItem.TKey }
-
-function TNewTabViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
-begin
-  Result := Key is TKey;
 end;
 
 end.
