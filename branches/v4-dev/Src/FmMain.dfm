@@ -202,8 +202,6 @@ inherited MainForm: TMainForm
     BevelOuter = bvNone
     BorderWidth = 2
     TabOrder = 2
-    ExplicitTop = 31
-    ExplicitHeight = 373
     object splitVert: TSplitter
       Left = 187
       Top = 2
@@ -221,7 +219,6 @@ inherited MainForm: TMainForm
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
-      ExplicitHeight = 369
       inline frmOverview: TOverviewFrame
         Left = 1
         Top = 1
@@ -233,7 +230,7 @@ inherited MainForm: TMainForm
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 183
-        ExplicitHeight = 367
+        ExplicitHeight = 368
         inherited pnlTitle: TPanel
           Width = 183
           ExplicitWidth = 183
@@ -250,14 +247,14 @@ inherited MainForm: TMainForm
           Width = 183
           Height = 341
           ExplicitWidth = 183
-          ExplicitHeight = 340
+          ExplicitHeight = 341
           inherited tvSnippets: TTreeView
             Top = 42
             Width = 175
             Height = 295
             ExplicitTop = 42
             ExplicitWidth = 175
-            ExplicitHeight = 294
+            ExplicitHeight = 295
           end
         end
       end
@@ -270,7 +267,6 @@ inherited MainForm: TMainForm
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
-      ExplicitHeight = 369
       inline frmDetail: TDetailFrame
         Left = 1
         Top = 1
@@ -282,7 +278,7 @@ inherited MainForm: TMainForm
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 408
-        ExplicitHeight = 367
+        ExplicitHeight = 368
         inherited pnlTitle: TPanel
           Width = 408
           ExplicitWidth = 408
@@ -297,15 +293,17 @@ inherited MainForm: TMainForm
           ExplicitLeft = 0
           ExplicitTop = 50
           ExplicitWidth = 408
-          ExplicitHeight = 317
+          ExplicitHeight = 318
           inherited pnlBrowser: TPanel
             Width = 408
             Height = 318
             ExplicitWidth = 408
-            ExplicitHeight = 317
+            ExplicitHeight = 318
             inherited wbBrowser: TWebBrowser
               Width = 408
               Height = 318
+              ExplicitWidth = 408
+              ExplicitHeight = 318
               ControlData = {
                 4C0000002B2A0000DE2000000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -1824,8 +1822,7 @@ inherited MainForm: TMainForm
       OnExecute = ActOverviewTabExecute
       OnUpdate = ActOverviewTabUpdate
     end
-    object actViewInfo: TAction
-      Category = 'View'
+    object actSelectDetailTab: TAction
       AutoCheck = True
       Caption = 'Detailed Information'
       Checked = True
@@ -1833,8 +1830,7 @@ inherited MainForm: TMainForm
       Hint = 
         'Detailed Information|View the Information tab in the details pan' +
         'e'
-      OnExecute = ActDetailTabExecute
-      OnUpdate = ActDetailTabUpdate
+      OnExecute = actSelectDetailTabExecute
     end
     object actWebSite: TBrowseURL
       Category = 'Help'

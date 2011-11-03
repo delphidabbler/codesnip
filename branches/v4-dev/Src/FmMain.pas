@@ -114,7 +114,7 @@ type
     actViewCategorised: TAction;
     actViewCompErrs: TAction;
     actViewDependencies: TAction;
-    actViewInfo: TAction;
+    actSelectDetailTab: TAction;
     actViewSnippetKinds: TAction;
     actViewTestUnit: TAction;
     actWebSite: TBrowseURL;
@@ -260,8 +260,6 @@ type
     procedure actDeleteCategoryExecute(Sender: TObject);
     procedure actDeleteCategoryUpdate(Sender: TObject);
     procedure actDeleteSnippetExecute(Sender: TObject);
-    procedure ActDetailTabExecute(Sender: TObject);
-    procedure ActDetailTabUpdate(Sender: TObject);
     procedure actDonateExecute(Sender: TObject);
     procedure ActEditDeleteSnippetUpdate(Sender: TObject);
     procedure actExportCodeExecute(Sender: TObject);
@@ -330,6 +328,7 @@ type
     procedure actNewDetailsTabExecute(Sender: TObject);
     procedure actCloseDetailsTabExecute(Sender: TObject);
     procedure actCloseDetailsTabUpdate(Sender: TObject);
+    procedure actSelectDetailTabExecute(Sender: TObject);
   strict private
     fIsAppRegistered: Boolean;        // Flag noting if app is registered
     fNotifier: INotifier;             // Notififies app of user-initiated events
@@ -586,30 +585,6 @@ begin
     ClassName + '.actDeleteSnippetExecute: Can''t delete current view item');
   TUserDBMgr.DeleteSnippet(fMainDisplayMgr.CurrentView);
   // display update is handled by snippets change event handler
-end;
-
-procedure TMainForm.ActDetailTabExecute(Sender: TObject);
-  {Selects a tab in the detail pane.
-    @param Sender [in] Action triggering this event
-  }
-begin
-  // Action's Tag property specifies index of tab being selected
-  fMainDisplayMgr.SelectedDetailTab := (Sender as TAction).Tag;
-end;
-
-procedure TMainForm.ActDetailTabUpdate(Sender: TObject);
-  {Updates checked state of detail pane tab selection action according to if
-  associated tab is selected.
-    @param Sender [in] Action triggering this event.
-  }
-begin
-  // Action's Tag property specifies index of tab being updated
-  // TODO: Probably safe to delete this event handler
-  with Sender as TAction do
-  begin
-    Checked := fMainDisplayMgr.SelectedDetailTab = Tag;
-    Enabled := True;
-  end;
 end;
 
 procedure TMainForm.actDonateExecute(Sender: TObject);
@@ -1059,6 +1034,15 @@ begin
   (Sender as TAction).Enabled := fMainDisplayMgr.CanSelectAll;
 end;
 
+procedure TMainForm.actSelectDetailTabExecute(Sender: TObject);
+  {Selects a tab in the detail pane.
+    @param Sender [in] Action triggering this event
+  }
+begin
+  // Action's Tag property specifies index of tab being selected
+  fMainDisplayMgr.SelectedDetailTab := (Sender as TAction).Tag;
+end;
+
 procedure TMainForm.actSelectSnippetsExecute(Sender: TObject);
   {Permits user to select snippets to be displayed. Gets selection from user via
   Select Snippets dialog box then displays all selected snippets.
@@ -1352,7 +1336,6 @@ begin
   // Save window state
   fWindowSettings.SplitterPos := pnlLeft.Width;
   fWindowSettings.OverviewTab := fMainDisplayMgr.SelectedOverviewTab;
-//  fWindowSettings.DetailTab := fMainDisplayMgr.SelectedDetailTab;
   fWindowSettings.Save;
   // Free owned objects
   fHistory.Free;
@@ -1426,7 +1409,7 @@ begin
     actViewSnippetKinds.Tag := cKindTab;
     // Detail pane tab actions have index placed in tag dynamically. We use 0 as
     // default
-    actViewInfo.Tag := 0;
+    actSelectDetailTab.Tag := 0;
 
     // Create notifier object and assign actions triggered by its methods
     // note that actions created on fly are automatically freed
@@ -1447,7 +1430,7 @@ begin
       SetOverviewStyleChangeActions(
         [actViewCategorised, actViewAlphabetical, actViewSnippetKinds]
       );
-      SetDetailPaneChangeAction(actViewInfo);
+      SetDetailPaneChangeAction(actSelectDetailTab);
       SetEditSnippetAction(
         TActionFactory.CreateEditSnippetAction(
           Self, ActEditSnippetByNameExecute
@@ -1476,7 +1459,6 @@ begin
     fMainDisplayMgr := TMainDisplayMgr.Create(frmOverview, frmDetail);
     // select active tabs
     fMainDisplayMgr.SelectedOverviewTab := fWindowSettings.OverviewTab;
-//    fMainDisplayMgr.SelectedDetailTab := fWindowSettings.DetailTab;
 
     // Create status bar manager
     fStatusBarMgr := TStatusBarMgr.Create(sbStatusBar);
