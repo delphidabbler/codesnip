@@ -86,8 +86,7 @@ implementation
 
 { TDetailPageLoader }
 
-class function TDetailPageLoader.CreateGenerator(View: IView):
-  TDetailPageHTML;
+class function TDetailPageLoader.CreateGenerator(View: IView): TDetailPageHTML;
   {Creates required detail pane HTML generator object for a specified view.
     @param View [in] View to be displayed.
     @return Required generator object.
@@ -106,7 +105,9 @@ begin
   else if Supports(View, ISnippetKindView) then
     Result := TSnipKindPageHTML.Create(View)
   else if Supports(View, IInitialLetterView) then
-    Result := TAlphaListPageHTML.Create(View);
+    Result := TAlphaListPageHTML.Create(View)
+  else if Supports(View, INewTabView) then
+    Result := TNewTabPageHTML.Create(View);
   Assert(Assigned(Result), ClassName + '.CreateGenerator: No HTML generator');
 end;
 

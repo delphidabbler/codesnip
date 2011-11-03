@@ -112,6 +112,12 @@ type
       }
   end;
 
+  // TODO: Comment this class
+  TNewTabPageHTML = class sealed(TDetailPageHTML)
+  public
+    function Generate: string; override;
+  end;
+
   {
   TWelcomePageHTML:
     Class that generates the welcome page from a template stored in resources.
@@ -693,6 +699,17 @@ begin
     Tplt.ResolvePlaceholderText(
       'Note', Format(sNote, [StrToLower(View.Description)])
     );
+end;
+
+{ TNewTabPageHTML }
+
+function TNewTabPageHTML.Generate: string;
+begin
+  Result := MakeCompoundTag(
+    'div',
+    THTMLAttributes.Create('id', 'newtab'),
+    MakeSafeHTMLText(View.Description)
+  );
 end;
 
 end.
