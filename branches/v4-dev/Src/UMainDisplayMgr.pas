@@ -145,6 +145,7 @@ type
     procedure CloseSelectedDetailsTab;
     function CanCloseDetailsTab: Boolean;
     procedure CreateNewDetailsTab;
+    procedure ShowWelcomePage;
     function CanCopy: Boolean;
       {Checks whether copying to clipboard is currently supported.
         @return True if clipboard copying supported, false if not.
@@ -562,6 +563,11 @@ var
 begin
   NewTabIdx := (fDetailsMgr as IDetailPaneDisplayMgr).CreateTab(View);
   (fDetailsMgr as ITabbedDisplayMgr).SelectTab(NewTabIdx);
+end;
+
+procedure TMainDisplayMgr.ShowWelcomePage;
+begin
+  DisplayViewItem(TViewItemFactory.CreateStartPageView);
 end;
 
 procedure TMainDisplayMgr.SnippetAdded(View: IView);

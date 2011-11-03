@@ -363,9 +363,6 @@ type
         @param Sender [in] Not used.
         @para EvtInfo [in] Object providing information about the event.
       }
-    procedure DisplayWelcomePage;
-      {Displays welcome page in currently active detail pane.
-      }
     procedure DisplayHint(const Hint: string);
       {Displays hint in status bar using status bar manager.
         @param Hint [in] Hint to be displayed.
@@ -1253,7 +1250,7 @@ procedure TMainForm.actWelcomeExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  DisplayWelcomePage;
+  fMainDisplayMgr.ShowWelcomePage;
 end;
 
 procedure TMainForm.appEventsHint(Sender: TObject);
@@ -1272,14 +1269,6 @@ procedure TMainForm.DisplayHint(const Hint: string);
 begin
   if Assigned(fStatusBarMgr) then
     fStatusBarMgr.ShowHint(Hint);
-end;
-
-procedure TMainForm.DisplayWelcomePage;
-  {Displays welcome page in currently active detail pane.
-  }
-begin
-  // Get notifier to display welcome page
-  fNotifier.ShowViewItem(TViewItemFactory.CreateStartPageView);
 end;
 
 procedure TMainForm.DoSearchFilter(const Search: USearch.ISearch);
@@ -1578,7 +1567,8 @@ begin
   end;
   // Re-initialise display
   fMainDisplayMgr.Initialise;
-  DisplayWelcomePage;
+  // TODO: change to show special "database updated" page
+  fMainDisplayMgr.ShowWelcomePage;
   // Display updated database stats and search results in status bar
   fStatusBarMgr.Update;
 end;
