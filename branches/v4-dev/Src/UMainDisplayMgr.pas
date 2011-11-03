@@ -339,11 +339,10 @@ end;
 
 procedure TMainDisplayMgr.CreateNewDetailsTab;
 var
-  NewPageView: IView;
+  NewPageView: IView; // view item for new tab
 begin
   // NOTE: Always uses new tab, even if view exists, by design
-  // TODO: change this for special "new page" view
-  NewPageView := TViewItemFactory.CreateStartPageView;
+  NewPageView := TViewItemFactory.CreateNewTabView;
   ShowInNewDetailPage(NewPageView);
 end;
 
