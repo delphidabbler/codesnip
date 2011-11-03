@@ -158,7 +158,7 @@ type
   );
 
 function MakeTag(const TagName: string; const TagType: THTMLTagType;
-  const Attrs: IHTMLAttributes = nil): string;
+  Attrs: IHTMLAttributes = nil): string;
   {Generates an (X)HTML tag.
     @param TagName [in] Name of tag. Always output in lower case.
     @param TagType [in] Type of tag: open or close compound tag or simple tag.
@@ -168,7 +168,7 @@ function MakeTag(const TagName: string; const TagType: THTMLTagType;
     @return HTML safe tag.
   }
 
-function MakeCompoundTag(const TagName: string; const Attrs: IHTMLAttributes;
+function MakeCompoundTag(const TagName: string; Attrs: IHTMLAttributes;
   const InnerHTML: string): string; overload;
   {Generates a compound (X)HTML tag with its opening tag, inner HTML and closing
   tag.
@@ -254,7 +254,7 @@ begin
 end;
 
 function MakeTag(const TagName: string; const TagType: THTMLTagType;
-  const Attrs: IHTMLAttributes = nil): string;
+  Attrs: IHTMLAttributes = nil): string;
   {Generates an (X)HTML tag.
     @param TagName [in] Name of tag. Always output in lower case.
     @param TagType [in] Type of tag: open or close compound tag or simple tag.
@@ -278,7 +278,7 @@ begin
   end;
 end;
 
-function MakeCompoundTag(const TagName: string; const Attrs: IHTMLAttributes;
+function MakeCompoundTag(const TagName: string; Attrs: IHTMLAttributes;
   const InnerHTML: string): string;
   {Generates a compound (X)HTML tag with its opening tag, inner HTML and closing
   tag.
