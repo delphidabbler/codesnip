@@ -92,3 +92,11 @@ pre {
   margin-bottom: 2px;
 }
 
+#newtab {
+  text-align: center;
+  position: fixed;
+  top: 30%;
+  width: 100%;
+  margin-left: -4px;
+}
+

@@ -198,7 +198,6 @@ begin
     with CSSBuilder.AddSelector('h2') do
     begin
       TFontHelper.SetContentFont(CSSFont, True);
-      CSSFont.Assign(CSSFont);
       CSSFont.Style := [fsBold];
       AddProperty(CSSFontProps(CSSFont));
     end;
@@ -209,6 +208,14 @@ begin
       AddProperty(CSSColorProp(clUserSnippet));
     with CSSBuilder.AddSelector('.maindb') do
       AddProperty(CSSColorProp(Self.Font.Color));
+    // Sets CSS for style of New Tab text
+    with CSSBuilder.AddSelector('#newtab') do
+    begin
+      TFontHelper.SetContentFont(CSSFont, True);
+      CSSFont.Size := 36;
+      CSSFont.Color := clNewTabText;
+      AddProperty(CSSFontProps(CSSFont));
+    end;
     // Sets text styles and colours used by syntax highlighter
     HiliteAttrs := THiliteAttrsFactory.CreateDisplayAttrs;
     with THiliterCSS.Create(HiliteAttrs) do
