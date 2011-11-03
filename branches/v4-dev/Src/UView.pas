@@ -106,6 +106,14 @@ type
 
 type
   ///  <summary>
+  ///  Interface supported by new tab page view.
+  ///  </summary>
+  INewTabView = interface(IView)
+    ['{EF760E9C-2DEE-4CCA-AB85-E6C59AA100E7}']
+  end;
+
+type
+  ///  <summary>
   ///  Interface supported by snippet views.
   ///  </summary>
   ISnippetView = interface(IView)
@@ -171,6 +179,8 @@ type
     class function CreateNulView: IView;
     ///  <summary>Creates a start page view instance.</summary>
     class function CreateStartPageView: IView;
+    ///  <summary>Creates a new tab view instance.</summary>
+    class function CreateNewTabView: IView;
     ///  <summary>Creates a snippet view instance associated with a given
     ///  snippet.</summary>
     class function CreateSnippetView(const Snippet: TSnippet): IView;
@@ -205,6 +215,35 @@ type
   strict private
     type
       ///  <summary>Implementation of IViewKey for nul view.</summary>
+      TKey = class(TInterfacedObject, IViewKey)
+      public
+        ///  <summary>Checks if this key is equal to one passed as a parameter.
+        ///  </summary>
+        function IsEqual(const Key: IViewKey): Boolean;
+      end;
+  public
+    { IView methods }
+    ///  <summary>Checks if this view item is equal to the one passed as a
+    ///  parameter.</summary>
+    function IsEqual(View: IView): Boolean;
+    ///  <summary>Gets description of view.</summary>
+    function GetDescription: string;
+    ///  <summary>Gets object containing view's unique key.</summary>
+    function GetKey: IViewKey;
+    ///  <summary>Checks if view is user-defined.</summary>
+    function IsUserDefined: Boolean;
+    ///  <summary>Checks if view is a grouping.</summary>
+    function IsGrouping: Boolean;
+  end;
+
+type
+  ///  <summary>View associated with blank new tab pages.</summary>
+  TNewTabViewItem = class sealed(TInterfacedObject,
+    IView, INewTabView
+  )
+  strict private
+    type
+      ///  <summary>Implementation of IViewKey for new tab view.</summary>
       TKey = class(TInterfacedObject, IViewKey)
       public
         ///  <summary>Checks if this key is equal to one passed as a parameter.
@@ -752,6 +791,8 @@ begin
     Result := CreateInitialLetterView(
       (View as IInitialLetterView).InitialLetter
     )
+  else if Supports(View, INewTabView) then
+    Result := CreateNewTabView
   else
     raise EBug.CreateFmt(
       '%s.CreateCopy: View does not support a valid interface', [ClassName]
@@ -768,6 +809,11 @@ class function TViewItemFactory.CreateInitialLetterView(
   const Letter: TInitialLetter): IView;
 begin
   Result := TInitialLetterViewItem.Create(Letter);
+end;
+
+class function TViewItemFactory.CreateNewTabView: IView;
+begin
+  Result := TNewTabViewItem.Create;
 end;
 
 class function TViewItemFactory.CreateNulView: IView;
@@ -790,6 +836,42 @@ end;
 class function TViewItemFactory.CreateStartPageView: IView;
 begin
   Result := TStartPageViewItem.Create;
+end;
+
+{ TNewTabViewItem }
+
+function TNewTabViewItem.GetDescription: string;
+resourcestring
+  sDescription = 'Empty tab';
+begin
+  Result := sDescription;
+end;
+
+function TNewTabViewItem.GetKey: IViewKey;
+begin
+  Result := TKey.Create;
+end;
+
+function TNewTabViewItem.IsEqual(View: IView): Boolean;
+begin
+  Result := Supports(View, INewTabView);
+end;
+
+function TNewTabViewItem.IsGrouping: Boolean;
+begin
+  Result := False;
+end;
+
+function TNewTabViewItem.IsUserDefined: Boolean;
+begin
+  Result := False;
+end;
+
+{ TNewTabViewItem.TKey }
+
+function TNewTabViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
+begin
+  Result := Key is TKey;
 end;
 
 end.
