@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -72,6 +72,9 @@ const
   // splash screen
   clSplashPlainText     = clBlack;      // splash screen plain text
   clSplashShadowText    = $DDDDDD;      // splash screen text shadow
+
+  // new tab
+  clNewTabText          = cl3DLight;    // color of text displayed in new tabs
 
   // user defined snippets
   clUserSnippet         = clBlue;       // names of user snippets
