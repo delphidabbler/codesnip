@@ -92,6 +92,7 @@ class function TDetailPageLoader.CreateGenerator(View: IView): TDetailPageHTML;
     @return Required generator object.
   }
 begin
+  // TODO: Move this method into a factory in UDetailPageHTML
   // Create required generator
   Result := nil;
   if Supports(View, INulView) then
@@ -107,7 +108,9 @@ begin
   else if Supports(View, IInitialLetterView) then
     Result := TAlphaListPageHTML.Create(View)
   else if Supports(View, INewTabView) then
-    Result := TNewTabPageHTML.Create(View);
+    Result := TNewTabPageHTML.Create(View)
+  else if Supports(View, IDBUpdateInfoView) then
+    Result := TDBUpdatedPageHTML.Create(View);
   Assert(Assigned(Result), ClassName + '.CreateGenerator: No HTML generator');
 end;
 

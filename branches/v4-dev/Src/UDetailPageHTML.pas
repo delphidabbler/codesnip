@@ -135,6 +135,12 @@ type
       }
   end;
 
+  // TODO: Comment this class
+  TDBUpdatedPageHTML = class sealed(TDetailPageHTML)
+  public
+    function Generate: string; override;
+  end;
+
   {
   TSnippetPageHTML:
     Abstract base class for classes that generate HTML for pages that describe
@@ -339,6 +345,17 @@ begin
   Result := '';
 end;
 
+{ TNewTabPageHTML }
+
+function TNewTabPageHTML.Generate: string;
+begin
+  Result := MakeCompoundTag(
+    'div',
+    THTMLAttributes.Create('id', 'newtab'),
+    MakeSafeHTMLText(View.Description)
+  );
+end;
+
 { TWelcomePageHTML }
 
 function TWelcomePageHTML.GetTemplateResName: string;
@@ -378,6 +395,18 @@ begin
   Tplt.ResolvePlaceholderHTML(
     'DownloadDB', CSSBlockDisplayProp(not HaveMainDB)
   );
+end;
+
+{ TDBUpdatedPageHTML }
+
+function TDBUpdatedPageHTML.Generate: string;
+resourcestring
+  sBody = 'The database has been updated successfully.';
+begin
+  Result :=
+    MakeCompoundTag('h1', View.Description)
+    +
+    MakeCompoundTag('p', sBody);
 end;
 
 { TSnippetPageHTML }
@@ -699,17 +728,6 @@ begin
     Tplt.ResolvePlaceholderText(
       'Note', Format(sNote, [StrToLower(View.Description)])
     );
-end;
-
-{ TNewTabPageHTML }
-
-function TNewTabPageHTML.Generate: string;
-begin
-  Result := MakeCompoundTag(
-    'div',
-    THTMLAttributes.Create('id', 'newtab'),
-    MakeSafeHTMLText(View.Description)
-  );
 end;
 
 end.
