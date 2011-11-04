@@ -112,7 +112,7 @@ uses
   // Delphi
   SysUtils, Variants, MSHTML,
   // Project
-  UHTMLDocHelper, UIStringList;
+  UHTMLDOMHelper, UIStringList;
 
 
 { TAnchors }

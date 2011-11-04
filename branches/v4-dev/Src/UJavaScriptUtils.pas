@@ -60,7 +60,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UConsts, UExceptions, UHTMLDocHelper, UStrUtils;
+  UConsts, UExceptions, UStrUtils;
 
 
 function CEscapeStr(const S: string; const EscapeChars,

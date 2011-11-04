@@ -168,7 +168,7 @@ uses
   // Delphi
   SysUtils, ActiveX,
   // Project
-  Browser.UControlHelper, UHTMLDocHelper, UResourceUtils;
+  Browser.UControlHelper, UHTMLDOMHelper, UResourceUtils;
 
 
 { TWBIOMgr }

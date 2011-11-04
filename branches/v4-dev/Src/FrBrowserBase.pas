@@ -193,7 +193,7 @@ uses
   // Delphi
   SysUtils, Messages,
   // Project
-  UAnchors, UColours, UCSSUtils, UExceptions, UHTMLDocHelper, UProtocols,
+  UAnchors, UColours, UCSSUtils, UExceptions, UHTMLDOMHelper, UProtocols,
   UUtils;
 
 

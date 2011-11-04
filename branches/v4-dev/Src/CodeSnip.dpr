@@ -248,7 +248,7 @@ uses
   UHistoryMenus in 'UHistoryMenus.pas',
   UHTMLBuilder in 'UHTMLBuilder.pas',
   UHTMLDetailUtils in 'UHTMLDetailUtils.pas',
-  UHTMLDocHelper in 'UHTMLDocHelper.pas',
+  UHTMLDOMHelper in 'UHTMLDOMHelper.pas',
   UHTMLHelp in 'UHTMLHelp.pas',
   UHTMLHelpMgr in 'UHTMLHelpMgr.pas',
   UHTMLTemplate in 'UHTMLTemplate.pas',

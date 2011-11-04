@@ -145,7 +145,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Browser.UControlHelper, IntfCommon, UColours, UCSSUtils, UHTMLDocHelper,
+  Browser.UControlHelper, IntfCommon, UColours, UCSSUtils, UHTMLDOMHelper,
   UHTMLUtils;
 
 

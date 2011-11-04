@@ -143,7 +143,7 @@ implementation
 
 uses
   // Project
-  UAnchors, UHTMLDocHelper, UImageTags, ULinkAction, UMenuHelper, UStrUtils,
+  UAnchors, UHTMLDOMHelper, UImageTags, ULinkAction, UMenuHelper, UStrUtils,
   UWBPopupMenus;
 
 

@@ -55,7 +55,7 @@ implementation
 
 uses
   // Project
-  UCompResHTML, UHTMLDocHelper, UHTMLUtils, UImageTags;
+  UCompResHTML, UHTMLDOMHelper, UHTMLUtils, UImageTags;
 
 
 type
