@@ -237,7 +237,7 @@ begin
     AddProperty(TCSS.MarginProp(cssTop, 6));
     AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
     AddProperty(TCSS.OverflowProp(covAuto));
-    AddProperty(TCSS.WidthProp(cltAuto, 0));
+    AddProperty(TCSS.WidthProp(cluAuto, 0));
     // Use height instead of maxheight if IE 6 or lower
     if TOSInfo.BrowserVer > 6 then
       AddProperty(TCSS.MaxHeightProp(cMaxExtraHTMLHeight))

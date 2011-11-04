@@ -170,11 +170,11 @@ type
   TCSSLengthType:
     Enumeration of different types of length property values.
   }
-  TCSSLengthType = (
-    cltAuto,          // "auto"
-    cltPixels,        // pixels
-    cltEm,            // "em" values
-    cltPercent        // percentage values
+  TCSSLengthUnit = (
+    cluAuto,          // "auto"
+    cluPixels,        // pixels
+    cluEm,            // "em" values
+    cluPercent        // percentage values
   );
 
   {
@@ -193,18 +193,18 @@ type
   TCSS = record
   strict private
     ///  <summary>Gets the text representing the given unit of length.</summary>
-    ///  <param name="LU">TCSSLengthType [in] Required length unit.</param>
+    ///  <param name="LU">TCSSLengthUnit [in] Required length unit.</param>
     ///  <returns>string. Required length unit as text.</returns>
-    class function LengthUnit(const LU: TCSSLengthType): string; static;
+    class function LengthUnit(const LU: TCSSLengthUnit): string; static;
 
     ///  <summary>Builds a space separated list of lengths using specified
     ///  units.</summary>
     ///  <param name="List">array of Integer [in] List of lengths.</param>
-    ///  <param name="LT">TCSSLengthType [in] Specifies length unit to apply tp
+    ///  <param name="LU">TCSSLengthUnit [in] Specifies length unit to apply tp
     ///  each length.</param>
     ///  <returns>string. Required spaced separated list.</returns>
     class function LengthList(const List: array of Integer;
-      const LT: TCSSLengthType = cltPixels): string; static;
+      const LU: TCSSLengthUnit = cluPixels): string; static;
 
     ///  <summary>Creates a CSS "margin" property.</summary>
     ///  <param name="Margin">array of Integer [in] Array of margin widths. Must
@@ -405,12 +405,12 @@ type
     class function WidthProp(const WidthPx: Integer): string; overload; static;
 
     ///  <summary>Creates a CSS "width" property.</summary>
-    ///  <param name="LengthType">TCSSLengthType [in] Units used to specify
+    ///  <param name="LengthUnit">TCSSLengthUnit [in] Units used to specify
     ///  width. If cltAuto then Width is ignored.</param>
     ///  <param name="Width">Integer [in] Required width in specified units.
     ///  </param>
     ///  <returns>string. Required CSS property.</returns>
-    class function WidthProp(const LengthType: TCSSLengthType;
+    class function WidthProp(const LengthUnit: TCSSLengthUnit;
       const Width: Integer): string; overload; static;
 
     ///  <summary>Creates a CSS "display" property.</summary>
@@ -585,15 +585,15 @@ begin
 end;
 
 class function TCSS.LengthList(const List: array of Integer;
-  const LT: TCSSLengthType): string;
+  const LU: TCSSLengthUnit): string;
 var
   Idx: Integer;     // loops thru list of values
   ALength: Integer; // a length from list
 begin
-  Assert((LT <> cltAuto) or (Length(List) = 1),
+  Assert((LU <> cluAuto) or (Length(List) = 1),
     'TCSS.LengthList: List size may only be 1 when length type is cltAuto');
-  if LT = cltAuto then
-    Result := LengthUnit(LT)
+  if LU = cluAuto then
+    Result := LengthUnit(LU)
   else
   begin
     Result := '';
@@ -604,14 +604,14 @@ begin
         Result := Result + ' ';
       Result := Result + IntToStr(ALength);
       if ALength <> 0 then
-        Result := Result + LengthUnit(LT);  // only add unit if length not 0
+        Result := Result + LengthUnit(LU);  // only add unit if length not 0
     end;
   end;
 end;
 
-class function TCSS.LengthUnit(const LU: TCSSLengthType): string;
+class function TCSS.LengthUnit(const LU: TCSSLengthUnit): string;
 const
-  Units: array[TCSSLengthType] of string = (
+  Units: array[TCSSLengthUnit] of string = (
     'auto', 'px', 'em', '%'
   );
 begin
@@ -747,13 +747,13 @@ end;
 
 class function TCSS.WidthProp(const WidthPx: Integer): string;
 begin
-  Result := WidthProp(cltPixels, WidthPx);
+  Result := WidthProp(cluPixels, WidthPx);
 end;
 
-class function TCSS.WidthProp(const LengthType: TCSSLengthType;
+class function TCSS.WidthProp(const LengthUnit: TCSSLengthUnit;
   const Width: Integer): string;
 begin
-  Result := Format('width: %s;', [LengthList([Width], LengthType)]);
+  Result := Format('width: %s;', [LengthList([Width], LengthUnit)]);
 end;
 
 end.
