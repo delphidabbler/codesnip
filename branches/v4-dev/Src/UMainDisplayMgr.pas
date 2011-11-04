@@ -146,6 +146,7 @@ type
     function CanCloseDetailsTab: Boolean;
     procedure CreateNewDetailsTab;
     procedure ShowWelcomePage;
+    procedure ShowDBUpdatedPage;
     function CanCopy: Boolean;
       {Checks whether copying to clipboard is currently supported.
         @return True if clipboard copying supported, false if not.
@@ -555,6 +556,11 @@ procedure TMainDisplayMgr.SetSelectedOverviewTab(const Value: Integer);
   }
 begin
   (fOverviewMgr as ITabbedDisplayMgr).SelectTab(Value);
+end;
+
+procedure TMainDisplayMgr.ShowDBUpdatedPage;
+begin
+  DisplayViewItem(TViewItemFactory.CreateDBUpdateInfoView);
 end;
 
 procedure TMainDisplayMgr.ShowInNewDetailPage(View: IView);
