@@ -46,31 +46,41 @@ uses
 
 
 type
-
-  {
-  TDetailPageLoader:
-    Static class that ensures an HTML document is loaded and sets its body to
-    required HTML.
+  { TODO: Consider changing class into normal class and maintain an instance in
+          detail frame. This way detail.html can be loaded in constructor and
+          reference kept to controller, which is also passed in constructor.
   }
+  ///  <summary>
+  ///  Static class that displays an HTML page that represents a view.
+  ///  </summary>
+  ///  <remarks>
+  ///  Used to display views in main window's detail pane.
+  ///  </remarks>
   TDetailPageLoader = class(TNoConstructObject)
   strict private
+    ///  <summary>Loads a blank document into a browser control if no document
+    ///  already exists.</summary>
+    ///  <param name="WBController">TWBController [in] Controller object for
+    ///  an associated web browser control.</param>
+    ///  <remarks>Blank document imports all CSS and JavaScript required for
+    ///  detail pane views.</remarks>
     class procedure InitBrowser(const WBController: TWBController);
-      {Loads a blank document into browser control if it doesn't contain one
-      already.
-        @param WBController [in] Controller object for HTML document.
-      }
+    ///  <summary>Generates and displays a view in a browser control.</summary>
+    ///  <param name="Generator">TDetailPageHTML [in] Object that generates
+    ///  HTML to be displayed.</param>
+    ///  <param name="WBController">TWBController [in] Controller object used to
+    ///  display HTML in its web browser control.</param>
+    ///  <remarks>Generated HTML replaces current body of document currently
+    ///  loaded in web browser.</remarks>
     class procedure DisplayHTML(const Generator: TDetailPageHTML;
       const WBController: TWBController);
-      {Generates a displays HTML document.
-        @param Generator [in] Object used to generate HTML.
-        @param WBController [in] Controller object that loads HTML document.
-      }
   public
+    ///  <summary>Loads an HTML representation of a view into a web browser
+    ///  control.</summary>
+    ///  <param name="View">IView [in] View to be displayed.</param>
+    ///  <param name="WBController">TWBController [in] Controller object for
+    ///  an associated web browser control.</param>
     class procedure LoadPage(View: IView; const WBController: TWBController);
-      {Loads required HTML into body of a suitable host document.
-        @param View [in] View to be displayed.
-        @param WBController [in] Controller object for displayed HTML document.
-      }
   end;
 
 
@@ -81,10 +91,6 @@ implementation
 
 class procedure TDetailPageLoader.DisplayHTML(const Generator: TDetailPageHTML;
   const WBController: TWBController);
-  {Generates a displays HTML document.
-    @param Generator [in] Object used to generate HTML.
-    @param WBController [in] Controller object that loads HTML document.
-  }
 var
   HTML: string; // HTML to be displayed
 begin
@@ -94,10 +100,6 @@ end;
 
 class procedure TDetailPageLoader.InitBrowser(
   const WBController: TWBController);
-  {Loads a blank document into browser control if it doesn't contain one
-  already.
-    @param WBController [in] Controller object for HTML document.
-  }
 begin
   if not WBController.IOMgr.HTMLDocumentExists then
     WBController.IOMgr.NavigateToResource(HInstance, 'detail.html');
@@ -105,10 +107,6 @@ end;
 
 class procedure TDetailPageLoader.LoadPage(View: IView;
   const WBController: TWBController);
-  {Loads required HTML into body of a suitable host document.
-    @param View [in] View to be displayed.
-    @param WBController [in] Controller object for displayed HTML document.
-  }
 var
   Generator: TDetailPageHTML; // object used to generate body's inner HTML
 begin
