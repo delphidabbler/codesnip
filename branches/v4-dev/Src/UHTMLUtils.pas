@@ -201,14 +201,6 @@ function ImageTag(const Src, Title: string;
     @return Required image tag.
   }
 
-function ColorToHTML(const Color: TColor): string;
-  {Converts a Delphi TColor value into a string suitable for use in HTML or CSS
-  code. Any system colors (like clBtnFace) are mapped to the actual colour
-  according to the current Windows settings.
-    @param Color [in] Colour value to be converted.
-    @return HTML/CSS code for colour.
-  }
-
 
 implementation
 
@@ -339,23 +331,6 @@ begin
     Attrs.Add('id', Id);
   // Create tag
   Result := MakeTag('img', ttSimple, Attrs);
-end;
-
-function ColorToHTML(const Color: TColor): string;
-  {Converts a Delphi TColor value into a string suitable for use in HTML or CSS
-  code. Any system colors (like clBtnFace) are mapped to the actual colour
-  according to the current Windows settings.
-    @param Color [in] Colour value to be converted.
-    @return HTML/CSS code for colour.
-  }
-var
-  ColorRGB: Integer;  // RGB code for the colour
-begin
-  ColorRGB := ColorToRGB(Color);  // this translates system colours to actual
-  Result := Format(
-    '#%0.2X%0.2X%0.2X',
-    [GetRValue(ColorRGB), GetGValue(ColorRGB), GetBValue(ColorRGB)]
-  );
 end;
 
 { THTMLAttributes }

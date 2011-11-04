@@ -176,6 +176,14 @@ type
   ///  </summary>
   TCSS = record
   strict private
+    ///  <summary>Converts a Delphi TColor to a CSS compatible colour string.
+    ///  </summary>
+    ///  <param name="Color">TColor [in] Colour to map to CSS colour.</param>
+    ///  <returns>string. CSS code for Color.</returns>
+    ///  <remarks>Any system colors (like clBtnFace) are mapped to the actual
+    ///  colour according to the current Windows settings.</remarks>
+    class function ColorToCSS(const Color: TColor): string; static;
+
     ///  <summary>Gets the text representing the given unit of length.</summary>
     ///  <param name="LU">TCSSLengthUnit [in] Required length unit.</param>
     ///  <returns>string. Required length unit as text.</returns>
@@ -423,16 +431,16 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Windows,
   // Project
-  UHTMLUtils, UIStringList, UStrUtils;
+  UIStringList, UStrUtils;
 
 
 { TCSS }
 
 class function TCSS.BackgroundColorProp(const Color: TColor): string;
 begin
-  Result := Format('background-color: %s;', [ColorToHTML(Color)]);
+  Result := Format('background-color: %s;', [ColorToCSS(Color)]);
 end;
 
 class function TCSS.BlockDisplayProp(const Show: Boolean): string;
@@ -460,7 +468,7 @@ begin
     // Displaying border
     Result := Format(
       '%s: %s %s %s;',
-      [BorderSides[Side], ColorToHTML(Color), BorderStyles[Style],
+      [BorderSides[Side], ColorToCSS(Color), BorderStyles[Style],
       LengthList([WidthPx])]
     )
   else
@@ -470,7 +478,18 @@ end;
 
 class function TCSS.ColorProp(const Color: TColor): string;
 begin
-  Result := Format('color: %s;', [ColorToHTML(Color)]);
+  Result := Format('color: %s;', [ColorToCSS(Color)]);
+end;
+
+class function TCSS.ColorToCSS(const Color: TColor): string;
+var
+  ColorRGB: Integer;  // RGB code for the colour
+begin
+  ColorRGB := ColorToRGB(Color);  // this translates system colours to actual
+  Result := Format(
+    '#%0.2X%0.2X%0.2X',
+    [GetRValue(ColorRGB), GetGValue(ColorRGB), GetBValue(ColorRGB)]
+  );
 end;
 
 class function TCSS.DisplayProp(const Style: TCSSDisplayStyle): string;
