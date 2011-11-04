@@ -111,9 +111,9 @@ procedure TDHTML.SetImage(const Id, URL, Title: string);
 var
   Img: IDispatch; // reference to required image element
 begin
-  Img := THTMLDocHelper.GetElementById(HostInfo.HTMLDocument, Id);
+  Img := THTMLDOMHelper.GetElementById(HostInfo.HTMLDocument, Id);
   TImageTags.SetSrc(Img, MakeSafeHTMLText(URL));
-  THTMLDocHelper.SetTitle(Img, MakeSafeHTMLText(Title));
+  THTMLDOMHelper.SetTitle(Img, MakeSafeHTMLText(Title));
 end;
 
 procedure TDHTML.SetInnerHTML(const Id, HTML: string);
@@ -122,8 +122,8 @@ procedure TDHTML.SetInnerHTML(const Id, HTML: string);
     @param HTML [in] Required inner HTML.
   }
 begin
-  THTMLDocHelper.SetInnerHTML(
-    THTMLDocHelper.GetElementById(HostInfo.HTMLDocument, Id),
+  THTMLDOMHelper.SetInnerHTML(
+    THTMLDOMHelper.GetElementById(HostInfo.HTMLDocument, Id),
     HTML
   );
 end;

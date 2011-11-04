@@ -467,7 +467,7 @@ end;
 
 procedure TBrowserBaseFrame.TriggerActiveLink;
 begin
-  TAnchors.Click(THTMLDocHelper.GetActiveElem(wbBrowser.Document));
+  TAnchors.Click(THTMLDOMHelper.GetActiveElem(wbBrowser.Document));
 end;
 
 procedure TBrowserBaseFrame.UpdateCSS(Sender: TObject; var CSS: string);

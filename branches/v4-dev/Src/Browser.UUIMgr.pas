@@ -418,7 +418,7 @@ procedure TWBUIMgr.BrowserEnter(Sender: TObject);
   }
 begin
   // Focus the <body> tag if it exists
-  THTMLDocHelper.FocusElem(THTMLDocHelper.GetBodyElem(fWebBrowser.Document));
+  THTMLDOMHelper.FocusElem(THTMLDOMHelper.GetBodyElem(fWebBrowser.Document));
   // Pass event on to any original handler
   if Assigned(fOldOnEnter) then
     fOldOnEnter(Sender);
@@ -493,8 +493,8 @@ function TWBUIMgr.DocHeight: Integer;
   }
 begin
   // Calculate height of HTML in browser control: this is height of <body> tag
-  Result := THTMLDocHelper.GetScrollHeight(
-    THTMLDocHelper.GetBodyElem(fWebBrowser.Document)
+  Result := THTMLDOMHelper.GetScrollHeight(
+    THTMLDOMHelper.GetBodyElem(fWebBrowser.Document)
   );
 end;
 
@@ -596,7 +596,7 @@ function TWBUIMgr.GetSelectedText: string;
     @return Selected text or '' if none.
   }
 begin
-  Result := THTMLDocHelper.GetTextSelection(fWebBrowser.Document);
+  Result := THTMLDOMHelper.GetTextSelection(fWebBrowser.Document);
 end;
 
 function TWBUIMgr.HideUI: HResult;
@@ -616,7 +616,7 @@ procedure TWBUIMgr.ScrollTo(const X, Y: Integer);
     @param Y [in] Y-coordinate.
   }
 begin
-  THTMLDocHelper.ScrollTo(fWebBrowser.Document, X, Y);
+  THTMLDOMHelper.ScrollTo(fWebBrowser.Document, X, Y);
 end;
 
 procedure TWBUIMgr.SelectAll;

@@ -123,7 +123,7 @@ var
 begin
   if not IsAnchor(Anchor) then
     Exit(akError);
-  ClassNames := THTMLDocHelper.GetElemClasses(Anchor);
+  ClassNames := THTMLDOMHelper.GetElemClasses(Anchor);
   if ClassNames.Contains('command-link') then
     Result := akCommand
   else if ClassNames.Contains('help-link') then

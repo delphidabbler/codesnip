@@ -223,7 +223,7 @@ begin
   begin
     // Create action for menu item: store link reference and get caption from
     // link text. If link is not visible it is not added to menu.
-    if THTMLDocHelper.ElemIsVisible(Link) then
+    if THTMLDOMHelper.ElemIsVisible(Link) then
     begin
       Action := TLinkAction.Create(nil);
       Action.Link := Link;
@@ -271,16 +271,16 @@ var
 begin
   Result := -1;
   // Check if parent elem is a <div> or <span> with class "option"
-  ParentDiv := THTMLDocHelper.ParentElem(Link, 'div', 'option');
+  ParentDiv := THTMLDOMHelper.ParentElem(Link, 'div', 'option');
   if not Assigned(ParentDiv) then
-    ParentDiv := THTMLDocHelper.ParentElem(Link, 'span', 'option');
+    ParentDiv := THTMLDOMHelper.ParentElem(Link, 'span', 'option');
   if not Assigned(ParentDiv) then
     Exit;
   // So see if there's an child <img> of parent with class "option-img"
   ImgTags := TImageTags.GetAllImageTags(ParentDiv);
   ImgTag := nil;
   for ImgTag in ImgTags do
-    if THTMLDocHelper.ElemHasClass(ImgTag, 'option-img') then
+    if THTMLDOMHelper.ElemHasClass(ImgTag, 'option-img') then
       Break;
   if not Assigned(ImgTag) then
     Exit;
@@ -311,7 +311,7 @@ begin
   for Link in AllLinks do
   begin
     // To have a link on menu it must have 'menu-item' class
-    if THTMLDocHelper.ElemHasClass(Link, 'menu-item') then
+    if THTMLDOMHelper.ElemHasClass(Link, 'menu-item') then
     begin
       case TAnchors.AnchorKind(Link) of
         akCommand:
@@ -333,7 +333,7 @@ begin
   inherited;
   // Get list of command and help links from current document
   GetLinkMenuItems(
-    THTMLDocHelper.DocumentFromElem(
+    THTMLDOMHelper.DocumentFromElem(
       (Menu as TWBPopupMenu).HTMLElem
     ),
     CommandLinks,

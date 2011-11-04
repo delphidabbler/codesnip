@@ -207,7 +207,7 @@ var
   Range: IHTMLTxtRange;       // HTML range to be searched for the word
   SpanAttrs: IHTMLAttributes; // attributes of generated span tag
 begin
-  Range := THTMLDocHelper.CreateBodyTextRange(fWebBrowser.Document);
+  Range := THTMLDOMHelper.CreateBodyTextRange(fWebBrowser.Document);
   Assert(Assigned(Range),
     ClassName + '.HighlightWord: Can''t create body text range');
   Result := 0;

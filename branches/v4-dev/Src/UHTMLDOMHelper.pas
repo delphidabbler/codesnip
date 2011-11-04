@@ -1,5 +1,5 @@
 {
- * UHTMLDocHelper.pas
+ * UHTMLDOMHelper.pas
  *
  * Defines a static class that provides helper methods for manipulating HTML
  * documents and elements.
@@ -50,11 +50,11 @@ uses
 type
 
   {
-  THTMLDocHelper:
+  THTMLDOMHelper:
     Static class that provides helper methods for manipulating HTML documents
     and elements.
   }
-  THTMLDocHelper = class(TNoConstructObject)
+  THTMLDOMHelper = class(TNoConstructObject)
   public
     class function ParentWindow(const Doc: IDispatch): IHTMLWindow2;
       {Gets reference to window object that hosts an HTML document.
@@ -184,7 +184,7 @@ uses
 
 { THTMLDocHelper }
 
-class function THTMLDocHelper.CreateBodyTextRange(
+class function THTMLDOMHelper.CreateBodyTextRange(
   const Doc: IDispatch): IHTMLTxtRange;
   {Creates a text range on an HTML document's body element.
     @param Doc [in] IDispatch interface to document.
@@ -199,7 +199,7 @@ begin
     Result := nil;
 end;
 
-class function THTMLDocHelper.DocumentFromElem(
+class function THTMLDOMHelper.DocumentFromElem(
   const Elem: IDispatch): IDispatch;
   {Gets HTML document associated with an HTML element.
     @param Elem [in] IDispatch interface of HTML element.
@@ -214,7 +214,7 @@ begin
     Result := nil;
 end;
 
-class function THTMLDocHelper.ElemHasClass(const Elem: IDispatch;
+class function THTMLDOMHelper.ElemHasClass(const Elem: IDispatch;
   const ClassName: string): Boolean;
   {Checks if an HTML element has a specified CSS class.
     @param Elem [in] IDispatch interface of HTML element.
@@ -228,7 +228,7 @@ begin
   Result := ClassNames.Contains(ClassName);
 end;
 
-class function THTMLDocHelper.ElemIsVisible(const Elem: IDispatch): Boolean;
+class function THTMLDOMHelper.ElemIsVisible(const Elem: IDispatch): Boolean;
   {Checks if an HTML element is visible. It is considered visible only if it
   and all its parent elements are visible.
     @param Elem [in] IDispatch interface of HTML element.
@@ -251,7 +251,7 @@ begin
     Result := False;
 end;
 
-class procedure THTMLDocHelper.FocusElem(const Elem: IDispatch);
+class procedure THTMLDOMHelper.FocusElem(const Elem: IDispatch);
   {Focusses an HTML element. Does nothing if element is not valid.
     @param Elem [in] IDispatch interface to HTML element to be focussed.
   }
@@ -262,7 +262,7 @@ begin
     Element.focus;
 end;
 
-class function THTMLDocHelper.GetActiveElem(const Doc: IDispatch): IDispatch;
+class function THTMLDOMHelper.GetActiveElem(const Doc: IDispatch): IDispatch;
   {Gets active HTML element in a document.
     @param Doc [in] IDispatch interface to document.
     @return Reference to active element or nil if document is not valid or there
@@ -275,7 +275,7 @@ begin
     Result := nil;
 end;
 
-class function THTMLDocHelper.GetBodyElem(const Doc: IDispatch): IDispatch;
+class function THTMLDOMHelper.GetBodyElem(const Doc: IDispatch): IDispatch;
   {Gets reference to HTML document's body element.
     @param Doc [in] IDispatch interface to document.
     @return Reference to document's body or nil if document has no body element
@@ -288,7 +288,7 @@ begin
     Result := nil;
 end;
 
-class function THTMLDocHelper.GetDocTitle(const Doc: IDispatch): string;
+class function THTMLDOMHelper.GetDocTitle(const Doc: IDispatch): string;
   {Gets the title of an HTML document, i.e. content of <title> tag.
     @param Doc [in] IDispatch interface to document.
     @return Document title.
@@ -300,7 +300,7 @@ begin
     Result := '';
 end;
 
-class function THTMLDocHelper.GetElemClasses(
+class function THTMLDOMHelper.GetElemClasses(
   const Elem: IDispatch): IStringList;
   {Gets list of CSS classes associated with an HTML element.
     @param Elem [in] IDispatch interface to a HTML element.
@@ -315,7 +315,7 @@ begin
     Result.Add(Element.className, ' ', False);
 end;
 
-class function THTMLDocHelper.GetElementById(const Doc: IDispatch;
+class function THTMLDOMHelper.GetElementById(const Doc: IDispatch;
   const Id: string): IDispatch;
   {Gets element from HTML document that has a specified ID.
     @param Doc [in] IDispatch interface to document containing element.
@@ -345,7 +345,7 @@ begin
   end;
 end;
 
-class function THTMLDocHelper.GetScrollHeight(
+class function THTMLDOMHelper.GetScrollHeight(
   const Elem: IDispatch): Integer;
   {Gets scroll height of an HTML element.
     @param Elem [in] IDispatch interface to element.
@@ -360,7 +360,7 @@ begin
     Result := 0;
 end;
 
-class function THTMLDocHelper.GetTextSelection(
+class function THTMLDOMHelper.GetTextSelection(
   const Doc: IDispatch): string;
   {Gets selected text from a HTML document.
     @param Doc [in] IDispatch interface to document.
@@ -382,7 +382,7 @@ begin
     Result := '';
 end;
 
-class function THTMLDocHelper.IsValidDocument(
+class function THTMLDOMHelper.IsValidDocument(
   const Doc: IDispatch): Boolean;
   {Checks if an object is a valid HTML document.
     @param Doc [in] IDispatch interface to document to be checked.
@@ -393,7 +393,7 @@ begin
   Result := Supports(Doc, IHTMLDocument2);
 end;
 
-class function THTMLDocHelper.ParentElem(const Elem: IDispatch;
+class function THTMLDOMHelper.ParentElem(const Elem: IDispatch;
   const TagName, ClassName: string): IDispatch;
   {Gets reference to a parent element of a tag.
     @param Elem [in] IDispatch interface of HTML element for which parent is
@@ -431,7 +431,7 @@ begin
   end;
 end;
 
-class function THTMLDocHelper.ParentWindow(const Doc: IDispatch): IHTMLWindow2;
+class function THTMLDOMHelper.ParentWindow(const Doc: IDispatch): IHTMLWindow2;
   {Gets reference to window object that hosts an HTML document.
     @param Doc [in] IDispatch interface of document.
     @return Reference to parent window object or nil if document not valid or
@@ -444,7 +444,7 @@ begin
     Result := nil;
 end;
 
-class procedure THTMLDocHelper.ScrollTo(const Doc: IDispatch; const X,
+class procedure THTMLDOMHelper.ScrollTo(const Doc: IDispatch; const X,
   Y: Integer);
   {Scrolls an HTML document to specified co-ordinates. Does nothing if document
   not valid or has no window.
@@ -460,7 +460,7 @@ begin
     Wdw.scroll(X, Y);
 end;
 
-class procedure THTMLDocHelper.SetInnerHTML(const Elem: IDispatch;
+class procedure THTMLDOMHelper.SetInnerHTML(const Elem: IDispatch;
   const HTML: string);
   {Sets HTML contained by an HTML element. Does nothing if element is not valid.
     @param Elem [in] IDispatch interface to HTML element.
@@ -473,7 +473,7 @@ begin
     Element.innerHTML := WideString(HTML);
 end;
 
-class procedure THTMLDocHelper.SetTitle(const Elem: IDispatch;
+class procedure THTMLDOMHelper.SetTitle(const Elem: IDispatch;
   const Title: string);
   {Sets the title attribute of an HTML element.
     @param Elem [in] IDispatch interface of HTML element whose title is to be

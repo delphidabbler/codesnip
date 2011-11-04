@@ -110,7 +110,7 @@ begin
   Assert(Assigned(WB), ClassName + '.CheckValidDoc: WB is nil');
   if not Assigned(WB.Document) then
     raise EBug.Create(ClassName + '.CheckValidDoc: Document not assigned');
-  if not THTMLDocHelper.IsValidDocument(WB.Document) then
+  if not THTMLDOMHelper.IsValidDocument(WB.Document) then
     raise EBug.Create(
       ClassName + '.CheckValidDoc: Document is not a valid HTML document'
     );

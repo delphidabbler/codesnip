@@ -204,7 +204,7 @@ end;
 
 function TWBIOMgr.HTMLDocumentExists: Boolean;
 begin
-  Result := THTMLDocHelper.IsValidDocument(fWB.Document);
+  Result := THTMLDOMHelper.IsValidDocument(fWB.Document);
 end;
 
 procedure TWBIOMgr.HTMLEventHandler(Sender: TObject;
@@ -305,7 +305,7 @@ procedure TWBIOMgr.ReplaceExistingBodyHTML(const HTML: string);
 begin
   Assert(Self.HTMLDocumentExists,
     ClassName + '.ReplaceExistingBodyHTML: No HTML document exists');
-  THTMLDocHelper.SetInnerHTML(THTMLDocHelper.GetBodyElem(fWB.Document), HTML);
+  THTMLDOMHelper.SetInnerHTML(THTMLDOMHelper.GetBodyElem(fWB.Document), HTML);
 end;
 
 procedure TWBIOMgr.WaitForDocToLoad;
@@ -315,7 +315,7 @@ begin
   TWBControlHelper.WaitForValidDocToLoad(fWB);                 // can raise EBug
   // connect event sinks to browser document and window
   fDocEvents.Connect(fWB.Document);
-  fWdwEvents.Connect(THTMLDocHelper.ParentWindow(fWB.Document));
+  fWdwEvents.Connect(THTMLDOMHelper.ParentWindow(fWB.Document));
 end;
 
 end.
