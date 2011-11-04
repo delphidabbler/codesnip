@@ -45,83 +45,60 @@ uses
 
 
 type
-  {
-  TSnippetHTML:
-    Class that provides HTML used to display snippet details in information
-    pane.
-  }
+  ///  <summary>
+  ///  Provides HTML used to display snippet details in information pane.
+  ///  </summary>
   TSnippetHTML = class sealed(TObject)
   strict private
-    // Reference to snippet for which HTML is being generated.
-    fSnippet: TSnippet;
+    var
+      ///  <summary>Reference to snippet for which HTML is being generated.
+      ///  </summary>
+      fSnippet: TSnippet;
+    ///  <summary>Generates HTML of highlighted source code using styles
+    ///  suitable for display in detail pane.</summary>
+    ///  <param name="SourceCode">string [in] Source code to be highlighted.
+    ///  </param>
+    ///  <returns>string. HTML of highlighted source code.</returns>
     function HiliteSource(const SourceCode: string): string;
-      {Highlights source code in a style suitable for display in UI.
-        @param SourceCode [in] Source code to be highlighted.
-        @return Highlighted source code.
-      }
+    ///  <summary>Generates HTML of a comma separated list of snippets, where
+    ///  each snippet name is a link to the snippet.</summary>
+    ///  <param name="Snippets">TSnippetList [in] List of snippets.</param>
+    ///  <returns>string. HTML of snippet list or 'None' if list empty.
+    ///  </returns>
     function SnippetList(const Snippets: TSnippetList): string;
-      {Generates HTML of a comma separated list of snippets, where each snippet
-      name is a link to the snippet.
-        @param Snippets [in] List of snippets in list.
-        @return HTML of snippet list or 'None' if list empty.
-      }
+    ///  <summary>Returns HTML text indicating a list is empty.</summary>
     function EmptyListSentence: string;
-      {Generates an HTML safe sentence that indicates a list is empty.
-        @return Required sentenct.
-      }
   public
+    ///  <summary>Object constructor. Sets up object to provide HTML for given
+    ///  snippet.</summary>
     constructor Create(const Snippet: TSnippet);
-      {Object constructor. Sets up object to provide HTML for a snippet.
-        @param Snippet [in] Snippet for which to generate HTML.
-      }
+    ///  <summary>Returns snippet name as HTML.</summary>
     function SnippetName: string;
-      {Provides snippet name as valid HTML text.
-        @return Required HTML.
-      }
+    ///  <summary>Returns snippet description as HTML.</summary>
     function Description: string;
-      {Provides description of snippet as valid HTML text.
-        @return Required HTML.
-      }
+    ///  <summary>Returns description of snippet's kind as HTML.</summary>
     function SnippetKind: string;
-      {Provides HTML containing a description of snippet's kind.
-        @return Required HTML.
-      }
+    ///  <summary>Returns HTML of a link to category containing snippet.
+    ///  </summary>
     function Category: string;
-      {Provides HTML containing the category that the snippet belongs to.
-        @return Required HTML.
-      }
+    ///  <summary>Highlights snippet's source code and returns it as HTML.
+    ///  </summary>
     function SourceCode: string;
-      {Provides HTML containing snippet's source code, syntax highlighted in a
-      style suitable for display in the UI.
-        @return Required HTML.
-      }
+    ///  <summary>Returns HTML of a comma separated list of links to snippets on
+    ///  which the snippet depends, or a message if list is empty.</summary>
     function Depends: string;
-      {Provides list of links to snippets on which the snippet depends.
-        @return Required HTML containing either a list of links to snippets or
-          text informing there are no dependencies.
-      }
+    ///  <summary>Returns HTML of a comma separated list of links to snippet's
+    ///  cross-referenced snippets, or a message if list is empty.</summary>
     function XRefs: string;
-      {Provides list of links to the snippets with which this snippet is cross-
-      referenced.
-        @return Required HTML containing either a list of links to snippets or
-          text informing there are no cross references.
-      }
+    ///  <summary>Returns HTML of a comma separated list of units required by
+    ///  snippet, or a messafe if list is empty.</summary>
     function Units: string;
-      {Provides comma separated list of units required by the snippet as valid
-      HTML text.
-        @return Required HTML of list or text informing if no units are
-          required.
-      }
+    ///  <summary>Returns HTML representation of active text from snippet's
+    ///  Extra property.</summary>
     function Extra: string;
-      {Builds valid HTML containing information from snippet's Extra property.
-      May contain links and some formatting.
-        @return Required HTML.
-      }
+    ///  <summary>Returns HTML containing rows of a table representing snippet's
+    ///  compilation results for each supported compiler.</summary>
     function CompileResults: string;
-      {Builds valid HTML containing rows of a table representing snippet's
-      compilation results for each supported compiler.
-        @return Required HTML.
-      }
   end;
 
 
@@ -134,12 +111,10 @@ uses
   Hiliter.UHiliters, UActiveTextHTML, UCompResHTML, UHTMLBuilder,
   UHTMLDetailUtils, UHTMLUtils, UStrUtils;
 
+
 { TSnippetHTML }
 
 function TSnippetHTML.Category: string;
-  {Provides HTML containing the category that the snippet belongs to.
-    @return Required HTML.
-  }
 var
   Cat: TCategory; // category that snippet belongs to
 begin
@@ -162,49 +137,31 @@ begin
 end;
 
 function TSnippetHTML.Depends: string;
-  {Provides list of links to snippets on which the snippet depends.
-    @return Required HTML containing either a list of links to snippets or text
-      informing there are no dependencies.
-  }
 begin
   Result := SnippetList(fSnippet.Depends);
 end;
 
 function TSnippetHTML.Description: string;
-  {Provides description of snippet as valid HTML text.
-    @return Required HTML.
-  }
 begin
   Result := MakeSafeHTMLText(StrMakeSentence(fSnippet.Description));
 end;
 
 function TSnippetHTML.EmptyListSentence: string;
-  {Generates an HTML safe sentence that indicates a list is empty.
-    @return Required sentenct.
-  }
 resourcestring
-  sEmpty = 'None';  // word that indicates list is empty
+  sEmpty = 'None';
 begin
   Result := MakeSafeHTMLText(StrMakeSentence(sEmpty));
 end;
 
 function TSnippetHTML.Extra: string;
-  {Builds valid HTML containing information from snippet's Extra property. May
-  contain links and some formatting.
-    @return Required HTML.
-  }
 begin
   Result := TActiveTextHTML.Render(fSnippet.Extra);
 end;
 
 function TSnippetHTML.HiliteSource(const SourceCode: string): string;
-  {Highlights source code in a style suitable for display in UI.
-    @param SourceCode [in] Source code to be highlighted.
-    @return Highlighted source code.
-  }
 var
-  Builder: THTMLBuilder;
-  Renderer: IHiliteRenderer;
+  Builder: THTMLBuilder;      // object that assembles HTML
+  Renderer: IHiliteRenderer;  // object that renders highlighted code as HTML
 begin
   Builder := THTMLBuilder.Create;
   try
@@ -219,11 +176,6 @@ begin
 end;
 
 function TSnippetHTML.SnippetList(const Snippets: TSnippetList): string;
-  {Generates HTML of a comma separated list of snippets, where each snippet name
-  is a link to the snippet.
-    @param Snippets [in] List of snippets in list.
-    @return HTML of snippet list or 'None' if list empty.
-  }
 var
   Snippet: TSnippet;  // refers to each snippet in list
 begin
@@ -250,9 +202,6 @@ begin
 end;
 
 function TSnippetHTML.SnippetKind: string;
-  {Provides HTML containing a description of snippet's kind.
-    @return Required HTML.
-  }
 begin
   Result := MakeSafeHTMLText(
     StrMakeSentence(TSnippetKindInfoList.Items[fSnippet.Kind].DisplayName)
@@ -260,20 +209,11 @@ begin
 end;
 
 function TSnippetHTML.SourceCode: string;
-  {Provides HTML containing snippet's source code, syntax highlighted in a style
-  suitable for display in the UI.
-    @return Required HTML.
-  }
 begin
   Result := HiliteSource(fSnippet.SourceCode);
 end;
 
 function TSnippetHTML.Units: string;
-  {Provides comma separated list of units required by the snippet as valid HTML
-  text.
-    @return Required HTML of list or text informing if no units are
-      required.
-  }
 begin
   if fSnippet.Units.Count = 0 then
     Result := EmptyListSentence
@@ -282,11 +222,6 @@ begin
 end;
 
 function TSnippetHTML.XRefs: string;
-  {Provides list of links to the snippets with which this snippet is cross
-  referenced.
-    @return Required HTML containing either a list of links to snippets or text
-      informing there are no cross references.
-  }
 begin
   Result := SnippetList(fSnippet.XRef);
 end;
