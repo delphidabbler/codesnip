@@ -1,8 +1,7 @@
 {
  * USnippetHTML.pas
  *
- * Set of classes that generate HTML used to display snippets in information and
- * compiler check panes.
+ * Classes that generates HTML used to display snippets in detail pane.
  *
  * $Rev$
  * $Date$
@@ -46,41 +45,20 @@ uses
 
 
 type
-
-  {
-  TSnippetHTML:
-    Base for classes that provide HTML fragments used in pages that describe
-    snippets. Provides helper and common methods.
-  }
-  TSnippetHTML = class(TObject)
-  strict private
-    fSnippet: TSnippet; // Value of Snippet property
-  strict protected
-    function HiliteSource(const SourceCode: string): string;
-      {Highlights source code in a style suitable for display in UI.
-        @param SourceCode [in] Source code to be highlighted.
-        @return Highlighted source code.
-      }
-    property Snippet: TSnippet read fSnippet;
-      {Reference to snippet for which we're generating HTML}
-  public
-    constructor Create(const Snippet: TSnippet);
-      {Object constructor. Sets up object to provide HTML for a snippet.
-        @param Snippet [in] Snippet for which to generate HTML.
-      }
-    function SnippetName: string;
-      {Provides snippet name as valid HTML text.
-        @return Required HTML.
-      }
-  end;
-
   {
   TInfoHTML:
     Class that provides HTML used to display snippet details in information
     pane.
   }
-  TInfoHTML = class(TSnippetHTML)
+  TInfoHTML = class sealed(TObject)
   strict private
+    // Reference to snippet for which HTML is being generated.
+    fSnippet: TSnippet;
+    function HiliteSource(const SourceCode: string): string;
+      {Highlights source code in a style suitable for display in UI.
+        @param SourceCode [in] Source code to be highlighted.
+        @return Highlighted source code.
+      }
     function SnippetList(const Snippets: TSnippetList): string;
       {Generates HTML of a comma separated list of snippets, where each snippet
       name is a link to the snippet.
@@ -92,6 +70,14 @@ type
         @return Required sentenct.
       }
   public
+    constructor Create(const Snippet: TSnippet);
+      {Object constructor. Sets up object to provide HTML for a snippet.
+        @param Snippet [in] Snippet for which to generate HTML.
+      }
+    function SnippetName: string;
+      {Provides snippet name as valid HTML text.
+        @return Required HTML.
+      }
     function Description: string;
       {Provides description of snippet as valid HTML text.
         @return Required HTML.
@@ -143,47 +129,6 @@ uses
   Hiliter.UHiliters, UActiveTextHTML, UHTMLBuilder, UHTMLDetailUtils,
   UHTMLUtils, UStrUtils;
 
-
-{ TSnippetHTML }
-
-constructor TSnippetHTML.Create(const Snippet: TSnippet);
-  {Object constructor. Sets up object to provide HTML for a snippet.
-    @param Snippet [in] Snippet for which to generate HTML.
-  }
-begin
-  inherited Create;
-  fSnippet := Snippet;
-end;
-
-function TSnippetHTML.HiliteSource(const SourceCode: string): string;
-  {Highlights source code in a style suitable for display in UI.
-    @param SourceCode [in] Source code to be highlighted.
-    @return Highlighted source code.
-  }
-var
-  Builder: THTMLBuilder;
-  Renderer: IHiliteRenderer;
-begin
-  Builder := THTMLBuilder.Create;
-  try
-    Renderer := THTMLHiliteRenderer.Create(
-      Builder, THiliteAttrsFactory.CreateDisplayAttrs
-    );
-    TSyntaxHiliter.Hilite(SourceCode, Renderer);
-    Result := Builder.HTMLFragment;
-  finally
-    Builder.Free;
-  end;
-end;
-
-function TSnippetHTML.SnippetName: string;
-  {Provides snippet name as valid HTML text.
-    @return Required HTML.
-  }
-begin
-  Result := MakeSafeHTMLText(Snippet.Name);
-end;
-
 { TInfoHTML }
 
 function TInfoHTML.Category: string;
@@ -193,11 +138,17 @@ function TInfoHTML.Category: string;
 var
   Cat: TCategory; // category that snippet belongs to
 begin
-  Cat := Database.Categories.Find(Snippet.Category);
+  Cat := Database.Categories.Find(fSnippet.Category);
   Assert(Assigned(Cat), ClassName + '.Category: Category not found');
   Result := StrMakeSentence(
     CategoryALink(Cat.ID, Cat.Description)
   );
+end;
+
+constructor TInfoHTML.Create(const Snippet: TSnippet);
+begin
+  inherited Create;
+  fSnippet := Snippet;
 end;
 
 function TInfoHTML.Depends: string;
@@ -206,7 +157,7 @@ function TInfoHTML.Depends: string;
       informing there are no dependencies.
   }
 begin
-  Result := SnippetList(Snippet.Depends);
+  Result := SnippetList(fSnippet.Depends);
 end;
 
 function TInfoHTML.Description: string;
@@ -214,7 +165,7 @@ function TInfoHTML.Description: string;
     @return Required HTML.
   }
 begin
-  Result := MakeSafeHTMLText(StrMakeSentence(Snippet.Description));
+  Result := MakeSafeHTMLText(StrMakeSentence(fSnippet.Description));
 end;
 
 function TInfoHTML.EmptyListSentence: string;
@@ -233,7 +184,28 @@ function TInfoHTML.Extra: string;
     @return Required HTML.
   }
 begin
-  Result := TActiveTextHTML.Render(Snippet.Extra);
+  Result := TActiveTextHTML.Render(fSnippet.Extra);
+end;
+
+function TInfoHTML.HiliteSource(const SourceCode: string): string;
+  {Highlights source code in a style suitable for display in UI.
+    @param SourceCode [in] Source code to be highlighted.
+    @return Highlighted source code.
+  }
+var
+  Builder: THTMLBuilder;
+  Renderer: IHiliteRenderer;
+begin
+  Builder := THTMLBuilder.Create;
+  try
+    Renderer := THTMLHiliteRenderer.Create(
+      Builder, THiliteAttrsFactory.CreateDisplayAttrs
+    );
+    TSyntaxHiliter.Hilite(SourceCode, Renderer);
+    Result := Builder.HTMLFragment;
+  finally
+    Builder.Free;
+  end;
 end;
 
 function TInfoHTML.SnippetList(const Snippets: TSnippetList): string;
@@ -262,13 +234,18 @@ begin
   end;
 end;
 
+function TInfoHTML.SnippetName: string;
+begin
+  Result := MakeSafeHTMLText(fSnippet.Name);
+end;
+
 function TInfoHTML.SnippetKind: string;
   {Provides HTML containing a description of snippet's kind.
     @return Required HTML.
   }
 begin
   Result := MakeSafeHTMLText(
-    StrMakeSentence(TSnippetKindInfoList.Items[Snippet.Kind].DisplayName)
+    StrMakeSentence(TSnippetKindInfoList.Items[fSnippet.Kind].DisplayName)
   );
 end;
 
@@ -278,7 +255,7 @@ function TInfoHTML.SourceCode: string;
     @return Required HTML.
   }
 begin
-  Result := HiliteSource(Snippet.SourceCode);
+  Result := HiliteSource(fSnippet.SourceCode);
 end;
 
 function TInfoHTML.Units: string;
@@ -288,10 +265,10 @@ function TInfoHTML.Units: string;
       required.
   }
 begin
-  if Snippet.Units.Count = 0 then
+  if fSnippet.Units.Count = 0 then
     Result := EmptyListSentence
   else
-    Result := MakeSafeHTMLText(StrJoin(Snippet.Units, ', ', False) + '.');
+    Result := MakeSafeHTMLText(StrJoin(fSnippet.Units, ', ', False) + '.');
 end;
 
 function TInfoHTML.XRefs: string;
@@ -301,7 +278,7 @@ function TInfoHTML.XRefs: string;
       informing there are no cross references.
   }
 begin
-  Result := SnippetList(Snippet.XRef);
+  Result := SnippetList(fSnippet.XRef);
 end;
 
 end.
