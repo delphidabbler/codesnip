@@ -54,12 +54,6 @@ type
       ///  <summary>Reference to snippet for which HTML is being generated.
       ///  </summary>
       fSnippet: TSnippet;
-    ///  <summary>Generates HTML of highlighted source code using styles
-    ///  suitable for display in detail pane.</summary>
-    ///  <param name="SourceCode">string [in] Source code to be highlighted.
-    ///  </param>
-    ///  <returns>string. HTML of highlighted source code.</returns>
-    function HiliteSource(const SourceCode: string): string;
     ///  <summary>Generates HTML of a comma separated list of snippets, where
     ///  each snippet name is a link to the snippet.</summary>
     ///  <param name="Snippets">TSnippetList [in] List of snippets.</param>
@@ -158,23 +152,6 @@ begin
   Result := TActiveTextHTML.Render(fSnippet.Extra);
 end;
 
-function TSnippetHTML.HiliteSource(const SourceCode: string): string;
-var
-  Builder: THTMLBuilder;      // object that assembles HTML
-  Renderer: IHiliteRenderer;  // object that renders highlighted code as HTML
-begin
-  Builder := THTMLBuilder.Create;
-  try
-    Renderer := THTMLHiliteRenderer.Create(
-      Builder, THiliteAttrsFactory.CreateDisplayAttrs
-    );
-    TSyntaxHiliter.Hilite(SourceCode, Renderer);
-    Result := Builder.HTMLFragment;
-  finally
-    Builder.Free;
-  end;
-end;
-
 function TSnippetHTML.SnippetList(const Snippets: TSnippetList): string;
 var
   Snippet: TSnippet;  // refers to each snippet in list
@@ -209,8 +186,20 @@ begin
 end;
 
 function TSnippetHTML.SourceCode: string;
+var
+  Builder: THTMLBuilder;      // object that assembles HTML
+  Renderer: IHiliteRenderer;  // object that renders highlighted code as HTML
 begin
-  Result := HiliteSource(fSnippet.SourceCode);
+  Builder := THTMLBuilder.Create;
+  try
+    Renderer := THTMLHiliteRenderer.Create(
+      Builder, THiliteAttrsFactory.CreateDisplayAttrs
+    );
+    TSyntaxHiliter.Hilite(fSnippet.SourceCode, Renderer);
+    Result := Builder.HTMLFragment;
+  finally
+    Builder.Free;
+  end;
 end;
 
 function TSnippetHTML.Units: string;
