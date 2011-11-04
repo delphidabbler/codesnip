@@ -46,41 +46,32 @@ uses
 
 
 type
-
-  {
-  TCompResHTML:
-    Static class that provides ids and HTML of table cells for compilation
-    result tables displayed in the detail pane.
-  }
+  ///  <summary>
+  ///  Static class that generates HTML of rows of table that displayed compiler
+  ///  results.
+  ///  </summary>
   TCompResHTML = class(TNoConstructObject)
   strict private
+    ///  <summary>Returns HTML image tag used to represent a compilation result.
+    ///  </summary>
+    ///  <param name="CompRes">TCompileResult [in] Compilation result for which
+    ///  image required.</param>
+    ///  <param name="Id">string [in] Optional id attribute for image tag.
+    ///  </param>
+    ///  <returns>string. Required HTML.</returns>
     class function ImageTag(const CompRes: TCompileResult;
       const Id: string = ''): string;
-      {Provides HTML image tag used to represent a compilation result. Image has
-      title describing result.
-        @param CompRes [in] Required compilation result.
-        @param Id [in] Optional id attribute for image tag.
-      }
+    ///  <summary>Returns a description of given compile result.</summary>
     class function CompileResultDesc(const CompRes: TCompileResult): string;
-      {Provides description of a compiler result.
-        @param CompRes [in] Compiler result for which description wanted.
-        @return Required description.
-      }
+    ///  <summary>Returns URL of image representing given compile result.
+    ///  </summary>
     class function ImageResURL(const CompRes: TCompileResult): string;
-      {Provides URL of image representing a compilation result.
-        @param CompRes [in] Compiler result for which URL is required.
-        @return Required URL.
-      }
+    ///  <summary>Returns HTML of a table cell containing name of given
+    ///  compiler.</summary>
     class function NameCell(const Compiler: ICompiler): string;
-      {Generates HTML of a table cell containing the name of a compiler.
-        @param Compiler [in] Compiler whose name is to be displayed.
-        @result Required HTML code.
-      }
+    ///  <summary>Returns HTML of a table cell containing an image that
+    ///  indicates given compile result.</summary>
     class function ResultCell(const CompRes: TCompileResult): string;
-      {Generates HTML of a table cell that displays an image that indicates a
-      compiler result.
-        @param CompRes [in] Compiler result to be displayed.
-      }
   public
     ///  <summary>Generates and returns rows of an HTML table that displays
     ///  given compiler results for each compiler.</summary>
@@ -107,11 +98,11 @@ resourcestring
   sCompResImgTitleQuery  = 'Not tested';
 
 const
-  // Compiler result image sizes
+  ///  Compiler result image width.
   CompResImgWidth   = 18;
+  ///  Compiler result image height.
   CompResImgHeight  = 18;
-
-  // Table of compiler result images and associated titles
+  /// Table of compiler result images and associated titles.
   CompResImgInfo: array[TCompileResult] of record
     ResName: string;    // name of image resource
     Title: string;      // value of image tag title attribute
@@ -127,31 +118,18 @@ const
 
 class function TCompResHTML.CompileResultDesc(
   const CompRes: TCompileResult): string;
-  {Provides description of a compiler result.
-    @param CompRes [in] Compiler result for which description wanted.
-    @return Required description.
-  }
 begin
   Result := CompResImgInfo[CompRes].Title;
 end;
 
 class function TCompResHTML.ImageResURL(const CompRes: TCompileResult):
   string;
-  {Provides URL of image representing a compilation result.
-    @param CompRes [in] Compiler result for which URL is required.
-    @return Required URL.
-  }
 begin
   Result := MakeResourceURL(CompResImgInfo[CompRes].ResName);
 end;
 
 class function TCompResHTML.ImageTag(const CompRes: TCompileResult;
   const Id: string): string;
-  {Provides HTML image tag used to represent a compilation result. Image has
-  title describing result.
-    @param CompRes [in] Required compilation result.
-    @param Id [in] Optional id attribute for image tag.
-  }
 begin
   Result := UHTMLUtils.ImageTag(
     ImageResURL(CompRes),
@@ -164,10 +142,6 @@ end;
 
 class function TCompResHTML.NameCell(
   const Compiler: ICompiler): string;
-  {Generates HTML of a table cell containing the name of a compiler.
-    @param Compiler [in] Compiler whose name is to be displayed.
-    @result Required HTML code.
-  }
 var
   CompilerNameHTML: string; // HTML containing compiler name
 begin
@@ -180,10 +154,6 @@ end;
 
 class function TCompResHTML.ResultCell(
   const CompRes: TCompileResult): string;
-  {Generates HTML of a table cell that displays an image that indicates a
-  compiler result.
-    @param CompRes [in] Compiler result to be displayed.
-  }
 begin
   Result := MakeCompoundTag('td', ImageTag(CompRes));
 end;
