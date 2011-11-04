@@ -45,14 +45,11 @@ interface
 
 
 uses
-  // Delphi
-  Classes,
   // Project
-  Compilers.UGlobals, DB.USnippet, UHTMLTemplate, UView;
+  UView;
 
 
 type
-
   {
   TDetailPageHTML:
     Abstract base class for classes that generate body HTML displayed in detail
@@ -75,6 +72,27 @@ type
       }
   end;
 
+type
+  // TODO: Comment this method only record
+  TDetailPageHTMLFactory = record
+  public
+    class function CreateGenerator(View: IView): TDetailPageHTML; static;
+  end;
+
+
+implementation
+
+
+uses
+  // Delphi
+  SysUtils,
+  // Project
+  Compilers.UCompilers, Compilers.UGlobals, DB.UMain, DB.USnippet, UCompResHTML,
+  UConsts, UCSSUtils, UHTMLDetailUtils, UHTMLTemplate, UHTMLUtils,
+  UJavaScriptUtils, UQuery, USnippetHTML, UStrUtils;
+
+
+type
   {
   TDetailPageTpltHTML:
     Abstract base class for classes that generate HTML by updating a template
@@ -99,6 +117,7 @@ type
       }
   end;
 
+type
   {
   TNulPageHTML:
     Nul class called if blank HTML pages is required. Does nothing since blank
@@ -112,12 +131,14 @@ type
       }
   end;
 
+type
   // TODO: Comment this class
   TNewTabPageHTML = class sealed(TDetailPageHTML)
   public
     function Generate: string; override;
   end;
 
+type
   {
   TWelcomePageHTML:
     Class that generates the welcome page from a template stored in resources.
@@ -135,12 +156,14 @@ type
       }
   end;
 
+type
   // TODO: Comment this class
   TDBUpdatedPageHTML = class sealed(TDetailPageHTML)
   public
     function Generate: string; override;
   end;
 
+type
   {
   TSnippetPageHTML:
     Abstract base class for classes that generate HTML for pages that describe
@@ -172,6 +195,7 @@ type
       }
   end;
 
+type
   {
   TSnippetInfoPageHTML:
     Class that generates information about a snippet displayed in information
@@ -190,6 +214,7 @@ type
       }
   end;
 
+type
   {
   TSnippetPageHTML:
     Abstract base class for classes that generate HTML for pages that display a
@@ -239,6 +264,7 @@ type
       }
   end;
 
+type
   {
   TCategoryPageHTML:
     Class that displays snippets contained in a category. Uses a template stored
@@ -256,6 +282,7 @@ type
       }
   end;
 
+type
   {
   TAlphaListPageHTML:
     Class that displays all snippets that have same initial letter. Uses a
@@ -273,6 +300,7 @@ type
       }
   end;
 
+type
   {
   TSnipKindPageHTML:
     Class that displays all snippets that are of same kind. Uses a template
@@ -290,18 +318,29 @@ type
       }
   end;
 
-
-implementation
-
-
-uses
-  // Delphi
-  SysUtils, Character,
-  // Project
-  Compilers.UCompilers, DB.UMain, UCompResHTML, UConsts, UCSSUtils, UEncodings,
-  UHTMLUtils, UHTMLDetailUtils, UJavaScriptUtils, UQuery, UResourceUtils,
-  USnippetHTML, UStrUtils, UUtils;
-
+class function TDetailPageHTMLFactory.CreateGenerator(
+  View: IView): TDetailPageHTML;
+begin
+  Result := nil;
+  if Supports(View, INulView) then
+    Result := TNulPageHTML.Create(View)
+  else if Supports(View, IStartPageView) then
+    Result := TWelcomePageHTML.Create(View)
+  else if Supports(View, ISnippetView) then
+    Result := TSnippetInfoPageHTML.Create(View)
+  else if Supports(View, ICategoryView) then
+    Result := TCategoryPageHTML.Create(View)
+  else if Supports(View, ISnippetKindView) then
+    Result := TSnipKindPageHTML.Create(View)
+  else if Supports(View, IInitialLetterView) then
+    Result := TAlphaListPageHTML.Create(View)
+  else if Supports(View, INewTabView) then
+    Result := TNewTabPageHTML.Create(View)
+  else if Supports(View, IDBUpdateInfoView) then
+    Result := TDBUpdatedPageHTML.Create(View);
+  Assert(Assigned(Result),
+    'TDetailPageHTMLFactory.CreateGenerator: No HTML generator');
+end;
 
 { TDetailPageHTML }
 
@@ -729,6 +768,8 @@ begin
       'Note', Format(sNote, [StrToLower(View.Description)])
     );
 end;
+
+{ TDetailPageHTMLFactory }
 
 end.
 

@@ -41,8 +41,6 @@ interface
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   Browser.UController, UBaseObjects, UDetailPageHTML, UView;
 
@@ -56,11 +54,6 @@ type
   }
   TDetailPageLoader = class(TNoConstructObject)
   strict private
-    class function CreateGenerator(View: IView): TDetailPageHTML;
-      {Creates required detail pane HTML generator object for a specified view.
-        @param View [in] View to be displayed.
-        @return Required generator object.
-      }
     class procedure InitBrowser(const WBController: TWBController);
       {Loads a blank document into browser control if it doesn't contain one
       already.
@@ -85,34 +78,6 @@ implementation
 
 
 { TDetailPageLoader }
-
-class function TDetailPageLoader.CreateGenerator(View: IView): TDetailPageHTML;
-  {Creates required detail pane HTML generator object for a specified view.
-    @param View [in] View to be displayed.
-    @return Required generator object.
-  }
-begin
-  // TODO: Move this method into a factory in UDetailPageHTML
-  // Create required generator
-  Result := nil;
-  if Supports(View, INulView) then
-    Result := TNulPageHTML.Create(View)
-  else if Supports(View, IStartPageView) then
-    Result := TWelcomePageHTML.Create(View)
-  else if Supports(View, ISnippetView) then
-    Result := TSnippetInfoPageHTML.Create(View)
-  else if Supports(View, ICategoryView) then
-    Result := TCategoryPageHTML.Create(View)
-  else if Supports(View, ISnippetKindView) then
-    Result := TSnipKindPageHTML.Create(View)
-  else if Supports(View, IInitialLetterView) then
-    Result := TAlphaListPageHTML.Create(View)
-  else if Supports(View, INewTabView) then
-    Result := TNewTabPageHTML.Create(View)
-  else if Supports(View, IDBUpdateInfoView) then
-    Result := TDBUpdatedPageHTML.Create(View);
-  Assert(Assigned(Result), ClassName + '.CreateGenerator: No HTML generator');
-end;
 
 class procedure TDetailPageLoader.DisplayHTML(const Generator: TDetailPageHTML;
   const WBController: TWBController);
@@ -150,7 +115,7 @@ begin
   Assert(Assigned(View), ClassName + '.LoadPage: View is nil');
   Assert(Assigned(WBController), ClassName + '.LoadPage: WBController is nil');
   InitBrowser(WBController);
-  Generator := CreateGenerator(View);
+  Generator := TDetailPageHTMLFactory.CreateGenerator(View);
   try
     DisplayHTML(Generator, WBController);
   finally
