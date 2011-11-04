@@ -52,15 +52,9 @@ type
   ///  </summary>
   TCompResHTML = class(TNoConstructObject)
   strict private
-    ///  <summary>Returns HTML image tag used to represent a compilation result.
-    ///  </summary>
-    ///  <param name="CompRes">TCompileResult [in] Compilation result for which
-    ///  image required.</param>
-    ///  <param name="Id">string [in] Optional id attribute for image tag.
-    ///  </param>
-    ///  <returns>string. Required HTML.</returns>
-    class function ImageTag(const CompRes: TCompileResult;
-      const Id: string = ''): string;
+    ///  <summary>Returns HTML image tag for image used to represent given
+    ///  compilation result.</summary>
+    class function ImageTag(const CompRes: TCompileResult): string;
     ///  <summary>Returns a description of given compile result.</summary>
     class function CompileResultDesc(const CompRes: TCompileResult): string;
     ///  <summary>Returns URL of image representing given compile result.
@@ -116,8 +110,8 @@ const
 
 { TCompResHTML }
 
-class function TCompResHTML.CompileResultDesc(
-  const CompRes: TCompileResult): string;
+class function TCompResHTML.CompileResultDesc(const CompRes: TCompileResult):
+  string;
 begin
   Result := CompResImgInfo[CompRes].Title;
 end;
@@ -128,20 +122,17 @@ begin
   Result := MakeResourceURL(CompResImgInfo[CompRes].ResName);
 end;
 
-class function TCompResHTML.ImageTag(const CompRes: TCompileResult;
-  const Id: string): string;
+class function TCompResHTML.ImageTag(const CompRes: TCompileResult): string;
 begin
   Result := UHTMLUtils.ImageTag(
     ImageResURL(CompRes),
     CompileResultDesc(CompRes),
     CompResImgWidth,
-    CompResImgHeight,
-    Id
+    CompResImgHeight
   );
 end;
 
-class function TCompResHTML.NameCell(
-  const Compiler: ICompiler): string;
+class function TCompResHTML.NameCell(const Compiler: ICompiler): string;
 var
   CompilerNameHTML: string; // HTML containing compiler name
 begin
@@ -152,8 +143,7 @@ begin
   Result := MakeCompoundTag('th', CompilerNameHTML);
 end;
 
-class function TCompResHTML.ResultCell(
-  const CompRes: TCompileResult): string;
+class function TCompResHTML.ResultCell(const CompRes: TCompileResult): string;
 begin
   Result := MakeCompoundTag('td', ImageTag(CompRes));
 end;
