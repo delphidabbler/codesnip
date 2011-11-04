@@ -449,10 +449,10 @@ procedure TSnippetInfoPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
     for Compiler in fCompilersInfo do
     begin
       // Add table cell for compiler name to 1st row of table
-      Row1 := Row1 + TInfoCompResHTML.NameCell(Compiler) + EOL;
+      Row1 := Row1 + TCompResHTML.NameCell(Compiler) + EOL;
       // Add table cell containing required LED image to 2nd row of table
       Row2 := Row2
-        + TInfoCompResHTML.ResultCell(GetSnippet.Compatibility[Compiler.GetID])
+        + TCompResHTML.ResultCell(GetSnippet.Compatibility[Compiler.GetID])
         + EOL;
     end;
 
