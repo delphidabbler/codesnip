@@ -1540,6 +1540,7 @@ begin
         end;
       end
     );
+    fMainDisplayMgr.ShowWelcomePage;
   finally
     // Ready to start using app: request splash form closes and enable form
     SplashForm.RequestClose;
@@ -1567,8 +1568,6 @@ begin
   end;
   // Re-initialise display
   fMainDisplayMgr.Initialise;
-  // TODO: change to show special "database updated" page
-  fMainDisplayMgr.ShowWelcomePage;
   // Display updated database stats and search results in status bar
   fStatusBarMgr.Update;
 end;
@@ -1583,6 +1582,7 @@ begin
       TDatabaseLoaderUI.Execute(Self);
     end
   );
+  fMainDisplayMgr.ShowDBUpdatedPage;
 end;
 
 procedure TMainForm.SnippetsChangeHandler(Sender: TObject;
