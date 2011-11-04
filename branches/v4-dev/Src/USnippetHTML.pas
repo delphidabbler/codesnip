@@ -46,11 +46,11 @@ uses
 
 type
   {
-  TInfoHTML:
+  TSnippetHTML:
     Class that provides HTML used to display snippet details in information
     pane.
   }
-  TInfoHTML = class sealed(TObject)
+  TSnippetHTML = class sealed(TObject)
   strict private
     // Reference to snippet for which HTML is being generated.
     fSnippet: TSnippet;
@@ -129,9 +129,9 @@ uses
   Hiliter.UHiliters, UActiveTextHTML, UHTMLBuilder, UHTMLDetailUtils,
   UHTMLUtils, UStrUtils;
 
-{ TInfoHTML }
+{ TSnippetHTML }
 
-function TInfoHTML.Category: string;
+function TSnippetHTML.Category: string;
   {Provides HTML containing the category that the snippet belongs to.
     @return Required HTML.
   }
@@ -145,13 +145,13 @@ begin
   );
 end;
 
-constructor TInfoHTML.Create(const Snippet: TSnippet);
+constructor TSnippetHTML.Create(const Snippet: TSnippet);
 begin
   inherited Create;
   fSnippet := Snippet;
 end;
 
-function TInfoHTML.Depends: string;
+function TSnippetHTML.Depends: string;
   {Provides list of links to snippets on which the snippet depends.
     @return Required HTML containing either a list of links to snippets or text
       informing there are no dependencies.
@@ -160,7 +160,7 @@ begin
   Result := SnippetList(fSnippet.Depends);
 end;
 
-function TInfoHTML.Description: string;
+function TSnippetHTML.Description: string;
   {Provides description of snippet as valid HTML text.
     @return Required HTML.
   }
@@ -168,7 +168,7 @@ begin
   Result := MakeSafeHTMLText(StrMakeSentence(fSnippet.Description));
 end;
 
-function TInfoHTML.EmptyListSentence: string;
+function TSnippetHTML.EmptyListSentence: string;
   {Generates an HTML safe sentence that indicates a list is empty.
     @return Required sentenct.
   }
@@ -178,7 +178,7 @@ begin
   Result := MakeSafeHTMLText(StrMakeSentence(sEmpty));
 end;
 
-function TInfoHTML.Extra: string;
+function TSnippetHTML.Extra: string;
   {Builds valid HTML containing information from snippet's Extra property. May
   contain links and some formatting.
     @return Required HTML.
@@ -187,7 +187,7 @@ begin
   Result := TActiveTextHTML.Render(fSnippet.Extra);
 end;
 
-function TInfoHTML.HiliteSource(const SourceCode: string): string;
+function TSnippetHTML.HiliteSource(const SourceCode: string): string;
   {Highlights source code in a style suitable for display in UI.
     @param SourceCode [in] Source code to be highlighted.
     @return Highlighted source code.
@@ -208,7 +208,7 @@ begin
   end;
 end;
 
-function TInfoHTML.SnippetList(const Snippets: TSnippetList): string;
+function TSnippetHTML.SnippetList(const Snippets: TSnippetList): string;
   {Generates HTML of a comma separated list of snippets, where each snippet name
   is a link to the snippet.
     @param Snippets [in] List of snippets in list.
@@ -234,12 +234,12 @@ begin
   end;
 end;
 
-function TInfoHTML.SnippetName: string;
+function TSnippetHTML.SnippetName: string;
 begin
   Result := MakeSafeHTMLText(fSnippet.Name);
 end;
 
-function TInfoHTML.SnippetKind: string;
+function TSnippetHTML.SnippetKind: string;
   {Provides HTML containing a description of snippet's kind.
     @return Required HTML.
   }
@@ -249,7 +249,7 @@ begin
   );
 end;
 
-function TInfoHTML.SourceCode: string;
+function TSnippetHTML.SourceCode: string;
   {Provides HTML containing snippet's source code, syntax highlighted in a style
   suitable for display in the UI.
     @return Required HTML.
@@ -258,7 +258,7 @@ begin
   Result := HiliteSource(fSnippet.SourceCode);
 end;
 
-function TInfoHTML.Units: string;
+function TSnippetHTML.Units: string;
   {Provides comma separated list of units required by the snippet as valid HTML
   text.
     @return Required HTML of list or text informing if no units are
@@ -271,7 +271,7 @@ begin
     Result := MakeSafeHTMLText(StrJoin(fSnippet.Units, ', ', False) + '.');
 end;
 
-function TInfoHTML.XRefs: string;
+function TSnippetHTML.XRefs: string;
   {Provides list of links to the snippets with which this snippet is cross
   referenced.
     @return Required HTML containing either a list of links to snippets or text

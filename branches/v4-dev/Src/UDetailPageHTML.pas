@@ -465,7 +465,7 @@ procedure TSnippetInfoPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
   end;
 
 var
-  InfoHTML: TInfoHTML;  // object used to generate HTML for snippet
+  SnippetHTML: TSnippetHTML;  // object used to generate HTML for snippet
 begin
   if GetSnippet.UserDefined then
     Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb')
@@ -477,23 +477,23 @@ begin
   Tplt.ResolvePlaceholderText(
     'EditEventHandler', JSLiteralFunc('editSnippet', [GetSnippet.Name])
   );
-  InfoHTML := TInfoHTML.Create(GetSnippet);
+  SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
-    Tplt.ResolvePlaceholderHTML('SnippetName', InfoHTML.SnippetName);
-    Tplt.ResolvePlaceholderHTML('Kind', InfoHTML.SnippetKind);
-    Tplt.ResolvePlaceholderHTML('Category', InfoHTML.Category);
-    Tplt.ResolvePlaceholderHTML('Description', InfoHTML.Description);
-    Tplt.ResolvePlaceholderHTML('SourceCode', InfoHTML.SourceCode);
-    Tplt.ResolvePlaceholderHTML('Units', InfoHTML.Units);
-    Tplt.ResolvePlaceholderHTML('Depends', InfoHTML.Depends);
-    Tplt.ResolvePlaceholderHTML('XRefs', InfoHTML.XRefs);
+    Tplt.ResolvePlaceholderHTML('SnippetName', SnippetHTML.SnippetName);
+    Tplt.ResolvePlaceholderHTML('Kind', SnippetHTML.SnippetKind);
+    Tplt.ResolvePlaceholderHTML('Category', SnippetHTML.Category);
+    Tplt.ResolvePlaceholderHTML('Description', SnippetHTML.Description);
+    Tplt.ResolvePlaceholderHTML('SourceCode', SnippetHTML.SourceCode);
+    Tplt.ResolvePlaceholderHTML('Units', SnippetHTML.Units);
+    Tplt.ResolvePlaceholderHTML('Depends', SnippetHTML.Depends);
+    Tplt.ResolvePlaceholderHTML('XRefs', SnippetHTML.XRefs);
     Tplt.ResolvePlaceholderHTML('CompilerTableRows', CompilerTableInner);
-    Tplt.ResolvePlaceholderHTML('Extra', InfoHTML.Extra);
+    Tplt.ResolvePlaceholderHTML('Extra', SnippetHTML.Extra);
     Tplt.ResolvePlaceholderHTML(
       'ShowCompilations', CSSBlockDisplayProp(GetSnippet.CanCompile)
     );
   finally
-    InfoHTML.Free;
+    SnippetHTML.Free;
   end;
 end;
 
