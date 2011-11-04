@@ -171,43 +171,16 @@ type
 
 type
   ///  <summary>
-  ///  Abstract base class for classes that generate HTML bodies for pages that
-  ///  describe a snippet.
+  ///  Generates HTML body of a page that provides information about a snippet.
   ///  </summary>
-  ///  <remarks>
-  ///  View passed to constructor must be a valid snippet view.
-  ///  </remarks>
-  TSnippetPageHTML = class abstract(TDetailPageTpltHTML)
+  TSnippetInfoPageHTML = class sealed(TDetailPageTpltHTML)
   strict private
     var
       ///  <summary>Value of CompilerInfo property.</summary>
       fCompilersInfo: ICompilers;
-  strict protected
-    ///  <summary>Returns name of resource containing template used to render
-    ///  snippet.</summary>
-    function GetTemplateResName: string; override; abstract;
-    ///  <summary>Replaces place-holders in given template with suitable values.
-    ///  </summary>
-    procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
     ///  <summary>Returns reference to snippet that is being rendered.</summary>
     ///  <remarks>Snippet is recorded in View property.</remarks>
     function GetSnippet: TSnippet;
-    ///  <summary>Provides information about available compilers.</summary>
-    ///  <remarks>Provided for use by sub-classes.</remarks>
-    property CompilersInfo: ICompilers read fCompilersInfo;
-  public
-    ///  <summary>Object constructor. Sets up object to render snippet recorded
-    ///  in given view.</summary>
-    ///  <remarks>View must represent a snippet.</remarks>
-    constructor Create(View: IView); override;
-  end;
-
-type
-  // TODO: Collapse this class into base class, which has no other descendants
-  ///  <summary>
-  ///  Generates HTML body of a page that provides information about a snippet.
-  ///  </summary>
-  TSnippetInfoPageHTML = class sealed(TSnippetPageHTML)
   strict protected
     ///  <summary>Returns name of snippet information template resource.
     ///  </summary>
@@ -215,6 +188,11 @@ type
     ///  <summary>Replaces place-holders in snippet information template with
     ///  suitable values.</summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
+  public
+    ///  <summary>Object constructor. Sets up object to render snippet recorded
+    ///  in given view.</summary>
+    ///  <remarks>View must represent a snippet.</remarks>
+    constructor Create(View: IView); override;
   end;
 
 type
@@ -433,48 +411,21 @@ begin
     MakeCompoundTag('p', sBody);
 end;
 
-{ TSnippetPageHTML }
+{ TSnippetInfoPageHTML }
 
-constructor TSnippetPageHTML.Create(View: IView);
+constructor TSnippetInfoPageHTML.Create(View: IView);
 begin
+  Assert(Supports(View, ISnippetView),
+    ClassName + '.Create: View is not snippet');
   inherited;
   // create compilers info object
   fCompilersInfo := TCompilersFactory.CreateAndLoadCompilers;
 end;
 
-function TSnippetPageHTML.GetSnippet: TSnippet;
+function TSnippetInfoPageHTML.GetSnippet: TSnippet;
 begin
-  Assert(Supports(View, ISnippetView),
-    ClassName + '.GetSnippet: View is not snippet');
   Result := (View as ISnippetView).Snippet;
 end;
-
-procedure TSnippetPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
-var
-  SnippetHTML: TSnippetHTML;  // object used to generate HTML
-begin
-  // Resolve placeholders common to all snippet templates:
-  // snippet name and class
-  if GetSnippet.UserDefined then
-    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb')
-  else
-    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'maindb');
-  SnippetHTML := TSnippetHTML.Create(GetSnippet);
-  try
-    Tplt.ResolvePlaceholderHTML('SnippetName', SnippetHTML.SnippetName);
-  finally
-    SnippetHTML.Free;
-  end;
-  // "edit snippet" link for user-defined snippets
-  Tplt.ResolvePlaceholderHTML(
-    'EditLink', CSSBlockDisplayProp(GetSnippet.UserDefined)
-  );
-  Tplt.ResolvePlaceholderText(
-    'EditEventHandler', JSLiteralFunc('editSnippet', [GetSnippet.Name])
-  );
-end;
-
-{ TSnippetInfoPageHTML }
 
 function TSnippetInfoPageHTML.GetTemplateResName: string;
 begin
@@ -495,7 +446,7 @@ procedure TSnippetInfoPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
     Result := '';
 
     // Loop thru each supported compiler
-    for Compiler in CompilersInfo do
+    for Compiler in fCompilersInfo do
     begin
       // Add table cell for compiler name to 1st row of table
       Row1 := Row1 + TInfoCompResHTML.NameCell(Compiler) + EOL;
@@ -514,11 +465,21 @@ procedure TSnippetInfoPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
   end;
 
 var
-  InfoHTML: TInfoHTML;  // object used to generate HTML
+  InfoHTML: TInfoHTML;  // object used to generate HTML for snippet
 begin
-  inherited;
+  if GetSnippet.UserDefined then
+    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb')
+  else
+    Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'maindb');
+  Tplt.ResolvePlaceholderHTML(
+    'EditLink', CSSBlockDisplayProp(GetSnippet.UserDefined)
+  );
+  Tplt.ResolvePlaceholderText(
+    'EditEventHandler', JSLiteralFunc('editSnippet', [GetSnippet.Name])
+  );
   InfoHTML := TInfoHTML.Create(GetSnippet);
   try
+    Tplt.ResolvePlaceholderHTML('SnippetName', InfoHTML.SnippetName);
     Tplt.ResolvePlaceholderHTML('Kind', InfoHTML.SnippetKind);
     Tplt.ResolvePlaceholderHTML('Category', InfoHTML.Category);
     Tplt.ResolvePlaceholderHTML('Description', InfoHTML.Description);
