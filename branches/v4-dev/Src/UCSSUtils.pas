@@ -45,34 +45,28 @@ uses
 
 
 type
-
-  {
-  TCSSFontWeight:
-    Possible values of CSS font-weight property.
-  }
+  ///  <summary>Enumeration of values of CSS font-weight property.</summary>
   TCSSFontWeight = (
     cfwNormal,                              // absolute: normal (same as cfw400)
     cfwBold,                                // absolute: bold (same as cfw700)
     cfwBolder,                              // relative: heavier than current
     cfwLighter,                             // relative: lighter than current
     cfw100, cfw200, cfw300, cfw400,         // ordered sequence of weights
-    cfw500, cfw600, cfw700, cfw800, cfw900  // .. each darker than next
+    cfw500, cfw600, cfw700, cfw800, cfw900  // .. each heavier than predecessor
   );
 
-  {
-  TCSSFontStyle:
-    Possible values of CSS font-style property.
-  }
+type
+  ///  <summary>Enumeration of values of CSS font-style property.</summary>
   TCSSFontStyle = (
     cfsNormal,        // normal, upright, font
     cfsItalic,        // uses font labelled "italic" or failing that "oblique"
     cfsOblique        // uses font labelled "oblique"
   );
 
-  {
-  TCSSTextDecoration:
-    Possible values of CSS text-decoration property.
-  }
+type
+  ///  <summary>Enumeration of values of CSS text-decoration property.</summary>
+  ///  <remarks>Property takes a combination of one or more of these values.
+  ///  </remarks>
   TCSSTextDecoration = (
     ctdNone,          // no decoration
     ctdUnderline,     // text is underlines
@@ -81,17 +75,13 @@ type
     ctdBlink          // text is blinking
   );
 
-  {
-  TCSSTextDecorations:
-    Combination of text decoration values. All except ctdNone can be combined.
-    ctdNone must exist on its own.
-  }
+type
+  ///  <summary>Set of values of CSS text-decoration property.</summary>
   TCSSTextDecorations = set of TCSSTextDecoration;
 
-  {
-  TCSSFontGeneric:
-    Enumeration of generic font families recognised by CSS.
-  }
+type
+  ///  <summary>Enumeration of generic font families recognised by CSS
+  ///  font-family property.</summary>
   TCSSFontGeneric = (
     cfgDontCare,      // no generic family specified
     cfgSerif,         // serif font (e.g. Times New Roman)
@@ -101,10 +91,9 @@ type
     cfgMonoSpace      // fixed pitch font
   );
 
-  {
-  TCSSBorderStyle:
-    Possible border styles used in the CSS border property and its derivatives.
-  }
+type
+  ///  <summary>Enumeration of border styles used in the CSS border property and
+  ///  its derivatives.</summary>
   TCSSBorderStyle = (
     cbsNone,          // no border
     cbsDotted,        // dotted line border
@@ -117,10 +106,8 @@ type
     cbsOutset         // 3D outset: colours based on color property
   );
 
-  {
-  TCSSTextAlign:
-    Possible values of CSS text-align property.
-  }
+type
+  ///  <summary>Enumeration of values of CSS text-align property.</summary>
   TCSSTextAlign = (
     ctaLeft,          // text is left aligned: ragged right margin
     ctaRight,         // text is right aligned: ragged left margin
@@ -128,10 +115,8 @@ type
     ctaJustify        // text is justified flush with right and left margins
   );
 
-  {
-  TCSSVerticalAlign:
-    Possible values of CSS vertical-align property.
-  }
+type
+  ///  <summary>Enumeration of values of CSS vertical-align property.</summary>
   TCSSVerticalAlign = (
     cvaBaseline,      // align element baseline with parent's baseline
     cvaSub,           // subscript the element
@@ -143,11 +128,11 @@ type
     cvaTextBottom     // align bottom of element with bottom of parent's font
   );
 
-  {
-  TCSSSide:
-    Enumeration of "sides" that apply to various CSS properties. Used to specify
-    required variant of a property (e.g padding-top).
-  }
+type
+  ///  <summary>Enumeration of sides that apply to various CSS properties that
+  ///  apply to an element's bounding box.</summary>
+  ///  <remarks>Used to specify a variant of a property, e.g. padding-top.
+  ///  </remarks>
   TCSSSide = (
     cssAll,           // refers to all sides of an element
     cssTop,           // top of element
@@ -156,20 +141,18 @@ type
     cssRight          // right of element
   );
 
-  {
-  TCSSDisplayStyle:
-    Enumeration of various display styles used in CSS display property.
-  }
+type
+  ///  <summary>Enumeration of display styles used in CSS display property.
+  ///  </summary>
   TCSSDisplayStyle = (
     cdsNone,          // element not displayed
     cdsBlock,         // element displayed as a block
     cdsInline         // element displayed inline
   );
 
-  {
-  TCSSLengthType:
-    Enumeration of different types of length property values.
-  }
+type
+  ///  <summary>Enumeration of units that apply to measurements of length used
+  ///  in CSS.</summary>
   TCSSLengthUnit = (
     cluAuto,          // "auto"
     cluPixels,        // pixels
@@ -177,10 +160,8 @@ type
     cluPercent        // percentage values
   );
 
-  {
-  TCSSOverflowValue:
-    Enumeration of various overflow property values.
-  }
+type
+  ///  <summary>Enumeration of CSS overflow property values.</summary>
   TCSSOverflowValue = (
     covVisible,     // overflow is not clipped and overflows
     covHidden,      // overflow is clipped, rest of the content invisible
@@ -190,6 +171,9 @@ type
   );
 
 type
+  ///  <summary>
+  ///  Container for static methods that return CSS properties as text.
+  ///  </summary>
   TCSS = record
   strict private
     ///  <summary>Gets the text representing the given unit of length.</summary>
