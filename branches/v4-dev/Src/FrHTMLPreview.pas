@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -95,7 +95,7 @@ procedure THTMLPreviewFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
 begin
   inherited;
   with CSSBuilder.AddSelector('body') do
-    AddProperty(CSSMarginProp(cPreviewMargin));
+    AddProperty(TCSS.MarginProp(cPreviewMargin));
 end;
 
 procedure THTMLPreviewFrame.Display(const DocContent: TEncodedData);

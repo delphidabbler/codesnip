@@ -211,26 +211,26 @@ procedure TBrowserBaseFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
 begin
   // Ensures images have no borders
   with CSSBuilder.AddSelector('img') do
-    AddProperty(CSSBorderProp(cssAll, 0));
+    AddProperty(TCSS.HideBorderProp(cssAll));
   // Sets default link style
   with CSSBuilder.AddSelector('a:link, a:visited, a:active') do
   begin
-    AddProperty(CSSColorProp(clLinkText));
-    AddProperty(CSSTextDecorationProp([ctdUnderline]));
+    AddProperty(TCSS.ColorProp(clLinkText));
+    AddProperty(TCSS.TextDecorationProp([ctdUnderline]));
   end;
   // Sets style for help links
   with CSSBuilder.AddSelector(
     'a:link.help-link, a:visited.help-link, a:active.help-link'
   ) do
   begin
-    AddProperty(CSSColorProp(clHelpLinkText));
-    AddProperty(CSSTextDecorationProp([ctdUnderline]));
+    AddProperty(TCSS.ColorProp(clHelpLinkText));
+    AddProperty(TCSS.TextDecorationProp([ctdUnderline]));
   end;
   // Sets warning text class
   with CSSBuilder.AddSelector('.warning') do
   begin
-    AddProperty(CSSColorProp(clWarningText));
-    AddProperty(CSSFontWeightProp(cfwBold));
+    AddProperty(TCSS.ColorProp(clWarningText));
+    AddProperty(TCSS.FontWeightProp(cfwBold));
   end;
 end;
 

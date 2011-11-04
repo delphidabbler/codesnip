@@ -232,25 +232,25 @@ begin
   // Set rendered REML container
   with CSSBuilder.AddSelector('#content') do
   begin
-    AddProperty(CSSBackgroundColorProp(clWindow));
-    AddProperty(CSSPaddingProp(0, 6, 6, 6));
-    AddProperty(CSSMarginProp(cssTop, 6));
-    AddProperty(CSSBorderProp(cssAll, 1, cbsSolid, clBorder));
-    AddProperty(CSSOverflowProp(covAuto));
-    AddProperty(CSSWidthProp(cltAuto, 0));
+    AddProperty(TCSS.BackgroundColorProp(clWindow));
+    AddProperty(TCSS.PaddingProp(0, 6, 6, 6));
+    AddProperty(TCSS.MarginProp(cssTop, 6));
+    AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
+    AddProperty(TCSS.OverflowProp(covAuto));
+    AddProperty(TCSS.WidthProp(cltAuto, 0));
     // Use height instead of maxheight if IE 6 or lower
     if TOSInfo.BrowserVer > 6 then
-      AddProperty(CSSMaxHeightProp(cMaxExtraHTMLHeight))
+      AddProperty(TCSS.MaxHeightProp(cMaxExtraHTMLHeight))
     else
-      AddProperty(CSSHeightProp(cMaxExtraHTMLHeight));
+      AddProperty(TCSS.HeightProp(cMaxExtraHTMLHeight));
   end;
   // Show or hide text about links depending on if links in Extra HTML
   with CSSBuilder.AddSelector('#linktext') do
   begin
     if ExtraContainsLinks then
-      AddProperty(CSSDisplayProp(cdsInline))
+      AddProperty(TCSS.DisplayProp(cdsInline))
     else
-      AddProperty(CSSDisplayProp(cdsNone));
+      AddProperty(TCSS.DisplayProp(cdsNone));
   end;
   // Style the REML itself
   TActiveTextHTML.Styles(Font, CSSBuilder);

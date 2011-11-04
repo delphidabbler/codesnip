@@ -966,19 +966,19 @@ begin
     TFontHelper.SetDefaultFont(DefaultFont, True);
     with CSSBuilder.Selectors['body'] do
     begin
-      AddProperty(CSSFontProps(DefaultFont));
+      AddProperty(TCSS.FontProps(DefaultFont));
       if ThemeServicesEx.ThemesEnabled then
         // For themed windows only, modify background colour to suit tab sheet
         // background
-        AddProperty(CSSBackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
+        AddProperty(TCSS.BackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
     end;
     // Add definitions of custom classes used in extra info example frame
     // font style of REML tags
     with CSSBuilder.AddSelector('.elem') do
     begin
-      AddProperty(CSSColorProp(clREMLTags));
+      AddProperty(TCSS.ColorProp(clREMLTags));
       AddProperty(
-        CSSFontFamilyProp(TFontHelper.DefaultMonoFontName, cfgMonoSpace)
+        TCSS.FontFamilyProp(TFontHelper.DefaultMonoFontName, cfgMonoSpace)
       );
     end;
   finally

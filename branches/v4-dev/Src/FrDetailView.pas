@@ -167,49 +167,49 @@ begin
     with CSSBuilder.AddSelector('body') do
     begin
       TFontHelper.SetContentFont(CSSFont, True);
-      AddProperty(CSSFontProps(CSSFont));
-      AddProperty(CSSBackgroundColorProp(clWindow));
+      AddProperty(TCSS.FontProps(CSSFont));
+      AddProperty(TCSS.BackgroundColorProp(clWindow));
     end;
     // Set table to use required font
     with CSSBuilder.AddSelector('table') do
     begin
       TFontHelper.SetContentFont(CSSFont, True);
-      AddProperty(CSSFontProps(CSSFont));
-      AddProperty(CSSBackgroundColorProp(clBorder));
+      AddProperty(TCSS.FontProps(CSSFont));
+      AddProperty(TCSS.BackgroundColorProp(clBorder));
     end;
     // Set default table cell colour (must be different to table to get border)
     with CSSBuilder.AddSelector('td') do
-      AddProperty(CSSBackgroundColorProp(clWindow));
+      AddProperty(TCSS.BackgroundColorProp(clWindow));
     // Sets H1 heading font size and border
     with CSSBuilder.AddSelector('h1') do
     begin
       TFontHelper.SetContentFont(CSSFont, True);
       CSSFont.Size := CSSFont.Size + 2;
       CSSFont.Style := [fsBold];
-      AddProperty(CSSFontProps(CSSFont));
-      AddProperty(CSSBorderProp(cssBottom, 1, cbsSolid, clBorder));
+      AddProperty(TCSS.FontProps(CSSFont));
+      AddProperty(TCSS.BorderProp(cssBottom, 1, cbsSolid, clBorder));
     end;
     // Sets H2 heading font size and border
     with CSSBuilder.AddSelector('h2') do
     begin
       TFontHelper.SetContentFont(CSSFont, True);
       CSSFont.Style := [fsBold];
-      AddProperty(CSSFontProps(CSSFont));
+      AddProperty(TCSS.FontProps(CSSFont));
     end;
     // Style of box that appears around clickable options (or actions)
     with CSSBuilder.AddSelector('.optionbox') do
-      AddProperty(CSSBorderProp(cssAll, 1, cbsSolid, clBorder));
+      AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
     with CSSBuilder.AddSelector('.userdb') do
-      AddProperty(CSSColorProp(clUserSnippet));
+      AddProperty(TCSS.ColorProp(clUserSnippet));
     with CSSBuilder.AddSelector('.maindb') do
-      AddProperty(CSSColorProp(Self.Font.Color));
+      AddProperty(TCSS.ColorProp(Self.Font.Color));
     // Sets CSS for style of New Tab text
     with CSSBuilder.AddSelector('#newtab') do
     begin
       TFontHelper.SetContentFont(CSSFont, True);
       CSSFont.Size := 36;
       CSSFont.Color := clNewTabText;
-      AddProperty(CSSFontProps(CSSFont));
+      AddProperty(TCSS.FontProps(CSSFont));
     end;
     // Sets text styles and colours used by syntax highlighter
     HiliteAttrs := THiliteAttrsFactory.CreateDisplayAttrs;
@@ -221,11 +221,11 @@ begin
       end;
     // Adjust .pas-source class to use required background colour
     with CSSBuilder.Selectors['.' + THiliterCSS.GetMainCSSClassName] do
-      AddProperty(CSSBackgroundColorProp(clSourceBg));
+      AddProperty(TCSS.BackgroundColorProp(clSourceBg));
     with CSSBuilder.AddSelector('.comptable th') do
     begin
-      AddProperty(CSSBackgroundColorProp(clCompTblHeadBg));
-      AddProperty(CSSFontWeightProp(cfwNormal));
+      AddProperty(TCSS.BackgroundColorProp(clCompTblHeadBg));
+      AddProperty(TCSS.FontWeightProp(cfwNormal));
     end;
     // Add CSS relating to active text
     TFontHelper.SetContentFont(CSSFont, True);

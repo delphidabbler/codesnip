@@ -108,8 +108,8 @@ begin
   // Add font definition in main class
   with CSSBuilder.AddSelector('.' + GetMainCSSClassName) do
   begin
-    AddProperty(CSSFontFamilyProp(fHiliteAttrs.FontName, cfgMonoSpace));
-    AddProperty(CSSFontSizeProp(fHiliteAttrs.FontSize));
+    AddProperty(TCSS.FontFamilyProp(fHiliteAttrs.FontName, cfgMonoSpace));
+    AddProperty(TCSS.FontSizeProp(fHiliteAttrs.FontSize));
   end;
   // Add font style and colour definitions for each element
   for Elem := Low(THiliteElement) to High(THiliteElement) do
@@ -132,10 +132,10 @@ begin
     with CSSBuilder.AddSelector('.' + GetElemCSSClassName(Elem)) do
     begin
       if ElemAttr.ForeColor <> clNone then
-        AddProperty(CSSColorProp(ElemAttr.ForeColor));
-      AddProperty(CSSFontWeightProp(ElemAttr.FontStyle));
-      AddProperty(CSSFontStyleProp(ElemAttr.FontStyle));
-      AddProperty(CSSTextDecorationProp(ElemAttr.FontStyle));
+        AddProperty(TCSS.ColorProp(ElemAttr.ForeColor));
+      AddProperty(TCSS.FontWeightProp(ElemAttr.FontStyle));
+      AddProperty(TCSS.FontStyleProp(ElemAttr.FontStyle));
+      AddProperty(TCSS.TextDecorationProp(ElemAttr.FontStyle));
     end;
   end;
 end;

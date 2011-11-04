@@ -153,9 +153,9 @@ begin
     TFontHelper.SetContentFont(ContentFont, True);  // font must be true type
     with CSSBuilder.Selectors['body'] do
     begin
-      AddProperty(CSSFontProps(ContentFont));
-      AddProperty(CSSBackgroundColorProp(clWindow));
-      AddProperty(CSSPaddingProp(0, 6, 6, 6));
+      AddProperty(TCSS.FontProps(ContentFont));
+      AddProperty(TCSS.BackgroundColorProp(clWindow));
+      AddProperty(TCSS.PaddingProp(0, 6, 6, 6));
     end;
   finally
     FreeAndNil(ContentFont);

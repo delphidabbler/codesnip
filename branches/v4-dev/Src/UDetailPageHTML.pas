@@ -371,22 +371,22 @@ begin
   HaveMainDB := Database.Snippets.Count(False) > 0;
   HaveUserDB := Database.Snippets.Count(True) > 0;
   Tplt.ResolvePlaceholderHTML(
-    'NoUserDB', CSSBlockDisplayProp(not HaveUserDB)
+    'NoUserDB', TCSS.BlockDisplayProp(not HaveUserDB)
   );
   Tplt.ResolvePlaceholderHTML(
-    'NoMainDB', CSSBlockDisplayProp(not HaveMainDB)
+    'NoMainDB', TCSS.BlockDisplayProp(not HaveMainDB)
   );
   Tplt.ResolvePlaceholderHTML(
-    'Intro', CSSBlockDisplayProp(HaveMainDB or HaveUserDB)
+    'Intro', TCSS.BlockDisplayProp(HaveMainDB or HaveUserDB)
   );
   Tplt.ResolvePlaceholderHTML(
-    'Disclaimer', CSSBlockDisplayProp(HaveMainDB)
+    'Disclaimer', TCSS.BlockDisplayProp(HaveMainDB)
   );
   Tplt.ResolvePlaceholderHTML(
-    'UpdateDB', CSSBlockDisplayProp(HaveMainDB)
+    'UpdateDB', TCSS.BlockDisplayProp(HaveMainDB)
   );
   Tplt.ResolvePlaceholderHTML(
-    'DownloadDB', CSSBlockDisplayProp(not HaveMainDB)
+    'DownloadDB', TCSS.BlockDisplayProp(not HaveMainDB)
   );
 end;
 
@@ -425,7 +425,7 @@ begin
   else
     Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'maindb');
   Tplt.ResolvePlaceholderHTML(
-    'EditLink', CSSBlockDisplayProp(GetSnippet.UserDefined)
+    'EditLink', TCSS.BlockDisplayProp(GetSnippet.UserDefined)
   );
   Tplt.ResolvePlaceholderText(
     'EditEventHandler', JSLiteralFunc('editSnippet', [GetSnippet.Name])
@@ -445,7 +445,7 @@ begin
     );
     Tplt.ResolvePlaceholderHTML('Extra', SnippetHTML.Extra);
     Tplt.ResolvePlaceholderHTML(
-      'ShowCompilations', CSSBlockDisplayProp(GetSnippet.CanCompile)
+      'ShowCompilations', TCSS.BlockDisplayProp(GetSnippet.CanCompile)
     );
   finally
     SnippetHTML.Free;

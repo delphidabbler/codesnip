@@ -327,7 +327,11 @@ begin
   Attrs.Add(
     'style',
     TIStringList.Create(
-      [CSSVerticalAlignProp(cvaTop), CSSWidthProp(Width), CSSHeightProp(Height)]
+      [
+        TCSS.VerticalAlignProp(cvaTop),
+        TCSS.WidthProp(Width),
+        TCSS.HeightProp(Height)
+      ]
     )
   );
   Attrs.Add('title', Title);

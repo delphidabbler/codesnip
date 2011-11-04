@@ -521,23 +521,23 @@ begin
     ContentFont := TFont.Create;
     try
       TFontHelper.SetContentFont(ContentFont, True);
-      AddProperty(CSSFontProps(ContentFont));
+      AddProperty(TCSS.FontProps(ContentFont));
       if ThemeServicesEx.ThemesEnabled then
-        AddProperty(CSSBackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
-      AddProperty(UCSSUtils.CSSMarginProp(0, 2, 6, 2));
+        AddProperty(TCSS.BackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
+      AddProperty(UCSSUtils.TCSS.MarginProp(0, 2, 6, 2));
     finally
       FreeAndNil(ContentFont);
     end;
   end;
   // Put border round scroll box
   with CSSBuilder.AddSelector('.scrollbox') do
-    AddProperty(UCSSUtils.CSSBorderProp(cssAll, 1, cbsSolid, clBorder));
+    AddProperty(UCSSUtils.TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
   // Set colours and font style of contributors and testers headings
   with CSSBuilder.AddSelector('.contrib-head, .tester-head') do
   begin
-    AddProperty(CSSBackgroundColorProp(clBtnFace));
-    AddProperty(CSSColorProp(clBtnText));
-    AddProperty(CSSFontWeightProp(cfwBold));
+    AddProperty(TCSS.BackgroundColorProp(clBtnFace));
+    AddProperty(TCSS.ColorProp(clBtnText));
+    AddProperty(TCSS.FontWeightProp(cfwBold));
   end;
 end;
 
@@ -551,8 +551,8 @@ begin
   // Set body colour, and put border round it
   with CSSBuilder.Selectors['body'] do
   begin
-    AddProperty(CSSBackgroundColorProp(clWindow));
-    AddProperty(CSSPaddingProp(4));
+    AddProperty(TCSS.BackgroundColorProp(clWindow));
+    AddProperty(TCSS.PaddingProp(4));
   end;
 end;
 

@@ -203,13 +203,13 @@ begin
   // -- heading tag
   with CSSBuilder.AddSelector('h2.extra') do
   begin
-    AddProperty(CSSFontSizeProp(DefFont.Size + 1));
+    AddProperty(TCSS.FontSizeProp(DefFont.Size + 1));
   end;
   // -- warning tag
   with CSSBuilder.AddSelector('span.extra-warning') do
   begin
-    AddProperty(CSSFontWeightProp(cfwBold));
-    AddProperty(CSSColorProp(clWarningText));
+    AddProperty(TCSS.FontWeightProp(cfwBold));
+    AddProperty(TCSS.ColorProp(clWarningText));
   end;
   // -- mono tag
   with CSSBuilder.AddSelector('span.extra-mono') do
@@ -217,7 +217,7 @@ begin
     CSSFont := TFont.Create;
     try
       TFontHelper.SetDefaultMonoFont(CSSFont, True);
-      AddProperty(CSSFontProps(CSSFont));
+      AddProperty(TCSS.FontProps(CSSFont));
     finally
       FreeAndNil(CSSFont);
     end;
@@ -225,8 +225,8 @@ begin
   // -- var tag
   with CSSBuilder.AddSelector('var.extra') do
   begin
-    AddProperty(CSSColorProp(clVarText));
-    AddProperty(CSSFontStyleProp(cfsItalic));
+    AddProperty(TCSS.ColorProp(clVarText));
+    AddProperty(TCSS.FontStyleProp(cfsItalic));
   end;
 end;
 

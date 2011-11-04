@@ -330,10 +330,10 @@ begin
   fHighlightStyle := '';
   if fHighlightBackColor <> clNone then
     fHighlightStyle := fHighlightStyle +
-      CSSBackgroundColorProp(fHighlightBackColor);
+      TCSS.BackgroundColorProp(fHighlightBackColor);
   if fHighlightTextColor <> clNone then
     fHighlightStyle := fHighlightStyle +
-      CSSColorProp(fHighlightTextColor);
+      TCSS.ColorProp(fHighlightTextColor);
 end;
 
 end.
