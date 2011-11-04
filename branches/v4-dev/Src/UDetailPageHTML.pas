@@ -1,9 +1,9 @@
 {
  * UDetailPageHTML.pas
  *
- * Heirachy of classes that generate dynamic HTML pages from HTML templates, for
- * use in displaying detail view items. Also includes a factory class to create
- * HTML generator objects.
+ * Heirachy of classes that render views as HTML. The HTML is used to display
+ * the view item in a tab in the detail pane. A factory is provided that can
+ * create the correct object for any type of view item.
  *
  * Originally named UHTMLGenerators.pas. Renamed as UDetailPageHTML.pas as of
  * v2.0
@@ -50,32 +50,38 @@ uses
 
 
 type
-  {
-  TDetailPageHTML:
-    Abstract base class for classes that generate body HTML displayed in detail
-    views.
-  }
+  ///  <summary>
+  ///  Abstract base class for all classes that render a view item as HTML for
+  ///  inclusion in the body of an HTML document displayed in the detail pane.
+  ///  </summary>
   TDetailPageHTML = class abstract(TObject)
   strict private
-    var fView: IView; // Value of View property
+    var
+      ///  <summary>Value of View property.</summary>
+      fView: IView;
   strict protected
+    ///  <summary>Reference to view item that is to be rendered in HTML.
+    ///  </summary>
+    ///  <remarks>Provided for use by sub-classes.</remarks>
     property View: IView read fView;
-      {Reference to object providing information about item to be viewed}
   public
+    ///  <summary>Object constructor. Sets up object to render given view in
+    ///  HTML.</summary>
     constructor Create(View: IView); virtual;
-      {Object constructor. Sets up object for a view item.
-        @param View [in] Provides information about item to be displayed.
-      }
+    ///  <summary>Generates and returns HTML representing view passed to
+    ///  constructor.</summary>
     function Generate: string; virtual; abstract;
-      {Generates required body HTML and writes to stream.
-        @return Body HTML.
-      }
   end;
 
 type
-  // TODO: Comment this method only record
+  ///  <summary>
+  ///  Factory for creation of TDetailPageHTML objects for use in rendering a
+  ///  view as HTML for display in detail pane.
+  ///  </summary>
   TDetailPageHTMLFactory = record
   public
+    ///  <summary>Creates and returns object that can render given view as HTML
+    ///  for display in detail pane.</summary>
     class function CreateGenerator(View: IView): TDetailPageHTML; static;
   end;
 
@@ -93,230 +99,225 @@ uses
 
 
 type
-  {
-  TDetailPageTpltHTML:
-    Abstract base class for classes that generate HTML by updating a template
-    stored in resources.
-  }
+  ///  <summary>
+  ///  Abstract base class for classes that generate a view's HTML by updating a
+  ///  template stored in resources.
+  ///  </summary>
   TDetailPageTpltHTML = class abstract(TDetailPageHTML)
   strict protected
+    ///  <summary>Returns name of resource containing template.</summary>
+    ///  <remarks>Resource must be stored as HTML resource.</remarks>
     function GetTemplateResName: string; virtual; abstract;
-      {Gets the name of the HTML template resource.
-        @return Name of template resource.
-      }
+    ///  <summary>Replaces place-holders in a template with suitable values,
+    ///  depending on view.</summary>
+    ///  <param name="Tplt">THTMLTemplate [in] Object containing template to
+    ///  be updated.</param>
+    ///  <remarks>Implementors must replace every placeholder in template with
+    ///  required values. This is done by manipulating Tplt object.</remarks>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); virtual; abstract;
-      {Resolves the placeholders in the HTML template.
-        @param Tplt [in] Reference to HTML template object that encapsulates the
-          template.
-      }
   public
+    ///  <summary>Generates and returns HTML representing view passed to
+    ///  constructor.</summary>
     function Generate: string; override;
-      {Generates the required body HTML from a HTML template and writes to a
-      stream.
-        @return Body HTML.
-      }
   end;
 
 type
-  {
-  TNulPageHTML:
-    Nul class called if blank HTML pages is required. Does nothing since blank
-    HTML page has no body contents.
-  }
+  ///  <summary>
+  ///  Generates no HTML.
+  ///  </summary>
+  ///  <remarks>
+  ///  Used whenever a blank HTML page is required.
+  ///  </remarks>
   TNulPageHTML = class sealed(TDetailPageHTML)
   public
+    ///  <summary>Returns empty string, representing an empty document body.
+    ///  </summary>
     function Generate: string; override;
-      {Generates body content for nul document.
-        @return Empty string.
-      }
   end;
 
 type
-  // TODO: Comment this class
+  ///  <summary>
+  ///  Generates HTML body for page displayed for a new, empty, detail pane tab.
+  ///  </summary>
   TNewTabPageHTML = class sealed(TDetailPageHTML)
   public
+    ///  <summary>Returns fixed HTML informing of a new, empty tab.</summary>
     function Generate: string; override;
   end;
 
 type
-  {
-  TWelcomePageHTML:
-    Class that generates the welcome page from a template stored in resources.
-  }
+  ///  <summary>
+  ///  Generates HTML body of welcome page.
+  ///  </summary>
   TWelcomePageHTML = class sealed(TDetailPageTpltHTML)
   strict protected
+    ///  <summary>Returns name of welcome page template resource.</summary>
     function GetTemplateResName: string; override;
-      {Gets the name of the HTML template resource.
-        @return Name of template resource.
-      }
+    ///  <summary>Replaces place-holders in welcome page template with suitable
+    ///  values.</summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
-      {Resolves the placeholders in the HTML template.
-        @param Tplt [in] Reference to HTML template object that encapsulates the
-          template.
-      }
   end;
 
 type
-  // TODO: Comment this class
+  ///  <summary>
+  ///  Generates HTML body of page displayed after database has been updated.
+  ///  </summary>
   TDBUpdatedPageHTML = class sealed(TDetailPageHTML)
   public
+    ///  <summary>Returns fixed HTML informaing that database has been updated.
+    ///  </summary>
     function Generate: string; override;
   end;
 
 type
-  {
-  TSnippetPageHTML:
-    Abstract base class for classes that generate HTML for pages that describe
-    a snippet.
-  }
+  ///  <summary>
+  ///  Abstract base class for classes that generate HTML bodies for pages that
+  ///  describe a snippet.
+  ///  </summary>
+  ///  <remarks>
+  ///  View passed to constructor must be a valid snippet view.
+  ///  </remarks>
   TSnippetPageHTML = class abstract(TDetailPageTpltHTML)
   strict private
-    fCompilersInfo: ICompilers; // Provides information about compilers
+    var
+      ///  <summary>Value of CompilerInfo property.</summary>
+      fCompilersInfo: ICompilers;
   strict protected
+    ///  <summary>Returns name of resource containing template used to render
+    ///  snippet.</summary>
     function GetTemplateResName: string; override; abstract;
-      {Gets the name of the HTML template resource.
-        @return Name of template resource.
-      }
+    ///  <summary>Replaces place-holders in given template with suitable values.
+    ///  </summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
-      {Resolves the placeholders in the HTML template.
-        @param Tplt [in] Reference to HTML template object that encapsulates the
-          template.
-      }
+    ///  <summary>Returns reference to snippet that is being rendered.</summary>
+    ///  <remarks>Snippet is recorded in View property.</remarks>
     function GetSnippet: TSnippet;
-      {Gets reference to snippet from View property.
-        @return Required snippet reference.
-      }
+    ///  <summary>Provides information about available compilers.</summary>
+    ///  <remarks>Provided for use by sub-classes.</remarks>
     property CompilersInfo: ICompilers read fCompilersInfo;
-      {Provides information to sub classes about compilers}
   public
+    ///  <summary>Object constructor. Sets up object to render snippet recorded
+    ///  in given view.</summary>
+    ///  <remarks>View must represent a snippet.</remarks>
     constructor Create(View: IView); override;
-      {Object constructor. Sets up object for a view item.
-        @param View [in] Provides information about snippet to be displayed.
-      }
   end;
 
 type
-  {
-  TSnippetInfoPageHTML:
-    Class that generates information about a snippet displayed in information
-    pane. Uses a template stored in resources.
-  }
+  // TODO: Collapse this class into base class, which has no other descendants
+  ///  <summary>
+  ///  Generates HTML body of a page that provides information about a snippet.
+  ///  </summary>
   TSnippetInfoPageHTML = class sealed(TSnippetPageHTML)
   strict protected
+    ///  <summary>Returns name of snippet information template resource.
+    ///  </summary>
     function GetTemplateResName: string; override;
-      {Gets the name of the HTML template resource.
-        @return Name of template resource.
-      }
+    ///  <summary>Replaces place-holders in snippet information template with
+    ///  suitable values.</summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
-      {Resolves the placeholders in the HTML template.
-        @param Tplt [in] Reference to HTML template object that encapsulates the
-          template.
-      }
   end;
 
 type
-  {
-  TSnippetPageHTML:
-    Abstract base class for classes that generate HTML for pages that display a
-    list of snippets.
-  }
+  ///  <summary>
+  ///  Abstract base class for classes that generate HTML bodies for pages that
+  ///  display a list of snippets.
+  ///  </summary>
+  ///  <remarks>
+  ///  Snippet list may be empty.
+  ///  </remarks>
   TSnippetListPageHTML = class abstract(TDetailPageTpltHTML)
   strict private
-    fSnippets: TSnippetList;  // List of snippets to be displayed
+    var
+      ///  <summary>Value of Snippets property.</summary>
+      fSnippets: TSnippetList;
   strict protected
+    ///  <summary>Creates and returns a sequence of HTML table rows each
+    ///  containing a link to one of the snippets in the list, along with its
+    ///  description.</summary>
     function SnippetTableInner: string;
-      {Builds a sequence of table rows each containing a link to the snippet
-      along with its description.
-        @return Required table rows.
-      }
+    ///  <summary>Creates and returns an HTML table row containing one cell that
+    ///  links to given snippet and another containing snippet's description.
+    ///  </summary>
     function SnippetTableRow(const Snippet: TSnippet): string;
-      {Builds a table row containing cells with a link to a snippet and a
-      description of the snippet.
-        @param Snippet [in] Snippet to be included in row.
-        @return Required table row.
-      }
+    ///  <summary>Constructs a list of all snippets to be displayed and stores
+    ///  in in Snippets property.</summary>
     procedure BuildSnippetList; virtual; abstract;
-      {Stores all snippets to be displayed in Snippets property.
-      }
+    ///  <summary>List of all snippets to be displayed.</summary>
     property Snippets: TSnippetList read fSnippets;
-      {List of all snippets to be displayed}
+    ///  <summary>Returns name of template resource for either an empty or none-
+    ///  empty list of snippets.</summary>
     function GetTemplateResName: string; override;
-      {Gets the name of the HTML template resource.
-        @return Name of template resource.
-      }
+    ///  <summary>Replaces place-holders in chosen template with suitable
+    ///  values.</summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
       abstract;
-      {Resolves the placeholders in the HTML template.
-        @param Tplt [in] Reference to HTML template object that encapsulates the
-          template.
-      }
+    ///  <summary>Checks if there are snippets in snippets list.</summary>
     function HaveSnippets: Boolean;
-      {Checks if there are snippets in list.
-        @return True if there are snippets in list, False if not.
-      }
   public
+    ///  <summary>Object constructor. Sets up object to render snippet list
+    ///  represented by given view.</summary>
+    ///  <remarks>View must contain a list of snippets which may be empty.
+    ///  </remarks>
     constructor Create(View: IView); override;
-      {Object constructor. Sets up object for a view item.
-        @param View [in] Provides information about item to be displayed.
-      }
+    ///  <summary>Object destructor. Tears down object.</summary>
     destructor Destroy; override;
-      {Object destructor. Tidies up object.
-      }
   end;
 
 type
-  {
-  TCategoryPageHTML:
-    Class that displays snippets contained in a category. Uses a template stored
-    in resources.
-  }
+  ///  <summary>
+  ///  Generates HTML body of a page that displays information about a category
+  ///  grouping of snippets.
+  ///  </summary>
+  ///  <remarks>
+  ///  List of snippets contained in grouping may be empty.
+  ///  </remarks>
   TCategoryPageHTML = class sealed(TSnippetListPageHTML)
   strict protected
+    ///  <summary>Replaces place-holders in chosen template with suitable
+    ///  values.</summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
-      {Resolves the placeholders in the HTML template.
-        @param Tplt [in] Reference to HTML template object that encapsulates the
-          template.
-      }
+    ///  <summary>Stores all snippets in category grouping in Snippets
+    ///  property.</summary>
     procedure BuildSnippetList; override;
-      {Stores all snippets to be displayed in Snippets property.
-      }
   end;
 
 type
-  {
-  TAlphaListPageHTML:
-    Class that displays all snippets that have same initial letter. Uses a
-    template stored in resources.
-  }
+  ///  <summary>
+  ///  Generates HTML body of a page that displays information about an
+  ///  alphabetical grouping of snippets.
+  ///  </summary>
+  ///  <remarks>
+  ///  List of snippets contained in grouping may be empty.
+  ///  </remarks>
   TAlphaListPageHTML = class sealed(TSnippetListPageHTML)
   strict protected
+    ///  <summary>Replaces place-holders in chosen template with suitable
+    ///  values.</summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
-      {Resolves the placeholders in the HTML template.
-        @param Tplt [in] Reference to HTML template object that encapsulates the
-          template.
-      }
+    ///  <summary>Stores all snippets in alphabetical grouping in Snippets
+    ///  property.</summary>
     procedure BuildSnippetList; override;
-      {Stores all snippets to be displayed in Snippets property.
-      }
   end;
 
 type
-  {
-  TSnipKindPageHTML:
-    Class that displays all snippets that are of same kind. Uses a template
-    stored in resources.
-  }
+  ///  <summary>
+  ///  Generates HTML body of a page that displays information about a grouping
+  ///  of snippets by snippet kind.
+  ///  </summary>
+  ///  <remarks>
+  ///  List of snippets contained in grouping may be empty.
+  ///  </remarks>
   TSnipKindPageHTML = class sealed(TSnippetListPageHTML)
   strict protected
+    ///  <summary>Replaces place-holders in chosen template with suitable
+    ///  values.</summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
-      {Resolves the placeholders in the HTML template.
-        @param Tplt [in] Reference to HTML template object that encapsulates the
-          template.
-      }
+    ///  <summary>Stores all snippets in snippet kind grouping in Snippets
+    ///  property.</summary>
     procedure BuildSnippetList; override;
-      {Stores all snippets to be displayed in Snippets property.
-      }
   end;
+
+{ TDetailPageHTMLFactory }
 
 class function TDetailPageHTMLFactory.CreateGenerator(
   View: IView): TDetailPageHTML;
@@ -345,9 +346,6 @@ end;
 { TDetailPageHTML }
 
 constructor TDetailPageHTML.Create(View: IView);
-  {Object constructor. Sets up object for a view item.
-    @return Body HTML.
-  }
 begin
   Assert(Assigned(View), ClassName + '.Create: View is nil');
   inherited Create;
@@ -357,9 +355,6 @@ end;
 { TDetailPageTpltHTML }
 
 function TDetailPageTpltHTML.Generate: string;
-  {Generates the required body HTML from a HTML template and writes to a stream.
-    @return Body HTML.
-  }
 var
   Tplt: THTMLTemplate;  // encapsulates HTML template
 begin
@@ -377,9 +372,6 @@ end;
 { TNulPageHTML }
 
 function TNulPageHTML.Generate: string;
-  {Generates body content for nul document.
-    @return Empty string.
-  }
 begin
   Result := '';
 end;
@@ -398,18 +390,11 @@ end;
 { TWelcomePageHTML }
 
 function TWelcomePageHTML.GetTemplateResName: string;
-  {Gets the name of the HTML template resource.
-    @return Name of template resource.
-  }
 begin
   Result := 'welcome-tplt.html';
 end;
 
 procedure TWelcomePageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
-  {Resolves the placeholders in the HTML template.
-    @param Tplt [in] Reference to HTML template object that encapsulates the
-      template.
-  }
 var
   HaveMainDB: Boolean;  // flag indicating if main database is available
   HaveUserDB: Boolean;  // flag indicating if user database has entries
@@ -451,9 +436,6 @@ end;
 { TSnippetPageHTML }
 
 constructor TSnippetPageHTML.Create(View: IView);
-  {Object constructor. Sets up object for a view item.
-    @param View [in] Provides information about snippet to be displayed.
-  }
 begin
   inherited;
   // create compilers info object
@@ -461,9 +443,6 @@ begin
 end;
 
 function TSnippetPageHTML.GetSnippet: TSnippet;
-  {Gets reference to snippet from View property.
-    @return Required snippet reference.
-  }
 begin
   Assert(Supports(View, ISnippetView),
     ClassName + '.GetSnippet: View is not snippet');
@@ -471,14 +450,10 @@ begin
 end;
 
 procedure TSnippetPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
-  {Resolves the placeholders in the HTML template.
-    @param Tplt [in] Reference to HTML template object that encapsulates the
-      template.
-  }
 var
   SnippetHTML: TSnippetHTML;  // object used to generate HTML
 begin
-  // Resolve placeholders common to all snippet templates
+  // Resolve placeholders common to all snippet templates:
   // snippet name and class
   if GetSnippet.UserDefined then
     Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'userdb')
@@ -502,24 +477,14 @@ end;
 { TSnippetInfoPageHTML }
 
 function TSnippetInfoPageHTML.GetTemplateResName: string;
-  {Gets the name of the HTML template resource.
-    @return Name of template resource.
-  }
 begin
   Result := 'info-snippet-tplt.html';
 end;
 
 procedure TSnippetInfoPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
-  {Resolves the placeholders in the HTML template.
-    @param Tplt [in] Reference to HTML template object that encapsulates the
-      template.
-  }
 
-  // ---------------------------------------------------------------------------
+  ///  Generates and returns inner HTML (rows) of compiler table.
   function CompilerTableInner: string;
-    {Generates inner HTML (rows) of compiler table.
-      @return Required HTML.
-    }
   var
     Compiler: ICompiler;    // reference to each compiler
     Row1, Row2: string;     // HTML for two rows in HTML table
@@ -547,7 +512,6 @@ procedure TSnippetInfoPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
     // Return HTML of two rows
     Result := Row1 + Row2;
   end;
-  // ---------------------------------------------------------------------------
 
 var
   InfoHTML: TInfoHTML;  // object used to generate HTML
@@ -575,19 +539,13 @@ end;
 { TSnippetListPageHTML }
 
 constructor TSnippetListPageHTML.Create(View: IView);
-  {Object constructor. Sets up object for a view item.
-    @param View [in] Provides information about item to be displayed.
-  }
 begin
   inherited;
-  // Create list of all snippets to be displayed
   fSnippets := TSnippetList.Create;
   BuildSnippetList;
 end;
 
 destructor TSnippetListPageHTML.Destroy;
-  {Object destructor. Tidies up object.
-  }
 begin
   fSnippets.Free;
   inherited;
@@ -602,20 +560,13 @@ begin
 end;
 
 function TSnippetListPageHTML.HaveSnippets: Boolean;
-  {Checks if there are snippets in list.
-    @return True if there are snippets in list, False if not.
-  }
 begin
   Result := Snippets.Count > 0;
 end;
 
 function TSnippetListPageHTML.SnippetTableInner: string;
-  {Builds a sequence of table rows each containing a link to the snippet
-  along with its description.
-    @return Required table rows.
-  }
 var
-  Snippet: TSnippet;  // references each snippet in list
+  Snippet: TSnippet;  // each snippet in list
 begin
   Result := '';
   for Snippet in Snippets do
@@ -623,11 +574,6 @@ begin
 end;
 
 function TSnippetListPageHTML.SnippetTableRow(const Snippet: TSnippet): string;
-  {Builds a table row containing cells with a link to a snippet and a
-  description of the snippet.
-    @param Snippet [in] Snippet to be included in row.
-    @return Required table row.
-  }
 begin
   Result := MakeCompoundTag(
     'tr',
@@ -643,30 +589,20 @@ end;
 { TCategoryPageHTML }
 
 procedure TCategoryPageHTML.BuildSnippetList;
-  {Stores all snippets to be displayed in Snippets property.
-  }
 begin
   Query.GetCatSelection((View as ICategoryView).Category, Snippets);
 end;
 
 procedure TCategoryPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
-  {Resolves the placeholders in the HTML template.
-    @param Tplt [in] Reference to HTML template object that encapsulates the
-      template.
-  }
 
-  // ---------------------------------------------------------------------------
+  ///  Returns name of CSS class used in H1 heading.
   function H1ClassName: string;
-    {Gets CSS class name used in H1 heading.
-      @return Required name. Depends on whether category is user defined.
-    }
   begin
     if (View as ICategoryView).Category.UserDefined then
       Result := 'userdb'
     else
       Result := 'maindb';
   end;
-  // ---------------------------------------------------------------------------
 
 resourcestring
   sNarrative = 'List of selected snippets in this category.';
@@ -686,10 +622,8 @@ end;
 { TAlphaListPageHTML }
 
 procedure TAlphaListPageHTML.BuildSnippetList;
-  {Stores all snippets to be displayed in Snippets property.
-  }
 var
-  Snippet: TSnippet;
+  Snippet: TSnippet;  // each snippet in current query
 begin
   Snippets.Clear;
   for Snippet in Query.Selection do
@@ -700,10 +634,6 @@ begin
 end;
 
 procedure TAlphaListPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
-  {Resolves the placeholders in the HTML template.
-    @param Tplt [in] Reference to HTML template object that encapsulates the
-      template.
-  }
 resourcestring
   sNarrative = 'List of selected snippets beginning with the letter %s.';
   sNote = 'The are no snippets in the current selection that begin with the '
@@ -728,10 +658,8 @@ end;
 { TSnipKindPageHTML }
 
 procedure TSnipKindPageHTML.BuildSnippetList;
-  {Stores all snippets to be displayed in Snippets property.
-  }
 var
-  Snippet: TSnippet;
+  Snippet: TSnippet;  // each snippet in current query
 begin
   Snippets.Clear;
   for Snippet in Query.Selection do
@@ -742,10 +670,6 @@ begin
 end;
 
 procedure TSnipKindPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
-  {Resolves the placeholders in the HTML template.
-    @param Tplt [in] Reference to HTML template object that encapsulates the
-      template.
-  }
 resourcestring
   sHeading = '%s Snippets';
   sNarrative = 'List of all %s snippets in the current selection.';
@@ -768,8 +692,6 @@ begin
       'Note', Format(sNote, [StrToLower(View.Description)])
     );
 end;
-
-{ TDetailPageHTMLFactory }
 
 end.
 
