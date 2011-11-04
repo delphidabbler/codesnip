@@ -117,6 +117,11 @@ type
       May contain links and some formatting.
         @return Required HTML.
       }
+    function CompileResults: string;
+      {Builds valid HTML containing rows of a table representing snippet's
+      compilation results for each supported compiler.
+        @return Required HTML.
+      }
   end;
 
 
@@ -126,8 +131,8 @@ implementation
 uses
   // Project
   DB.UCategory, DB.UMain, DB.USnippetKind, Hiliter.UAttrs, Hiliter.UGlobals,
-  Hiliter.UHiliters, UActiveTextHTML, UHTMLBuilder, UHTMLDetailUtils,
-  UHTMLUtils, UStrUtils;
+  Hiliter.UHiliters, UActiveTextHTML, UCompResHTML, UHTMLBuilder,
+  UHTMLDetailUtils, UHTMLUtils, UStrUtils;
 
 { TSnippetHTML }
 
@@ -143,6 +148,11 @@ begin
   Result := StrMakeSentence(
     CategoryALink(Cat.ID, Cat.Description)
   );
+end;
+
+function TSnippetHTML.CompileResults: string;
+begin
+  Result := TCompResHTML.TableRows(fSnippet.Compatibility);
 end;
 
 constructor TSnippetHTML.Create(const Snippet: TSnippet);

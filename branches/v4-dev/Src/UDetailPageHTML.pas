@@ -93,8 +93,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, Compilers.UGlobals, DB.UMain, DB.USnippet, UCompResHTML,
-  UConsts, UCSSUtils, UHTMLDetailUtils, UHTMLTemplate, UHTMLUtils,
+  DB.UMain, DB.USnippet, UCSSUtils, UHTMLDetailUtils, UHTMLTemplate, UHTMLUtils,
   UJavaScriptUtils, UQuery, USnippetHTML, UStrUtils;
 
 
@@ -175,9 +174,6 @@ type
   ///  </summary>
   TSnippetInfoPageHTML = class sealed(TDetailPageTpltHTML)
   strict private
-    var
-      ///  <summary>Value of CompilerInfo property.</summary>
-      fCompilersInfo: ICompilers;
     ///  <summary>Returns reference to snippet that is being rendered.</summary>
     ///  <remarks>Snippet is recorded in View property.</remarks>
     function GetSnippet: TSnippet;
@@ -188,11 +184,6 @@ type
     ///  <summary>Replaces place-holders in snippet information template with
     ///  suitable values.</summary>
     procedure ResolvePlaceholders(const Tplt: THTMLTemplate); override;
-  public
-    ///  <summary>Object constructor. Sets up object to render snippet recorded
-    ///  in given view.</summary>
-    ///  <remarks>View must represent a snippet.</remarks>
-    constructor Create(View: IView); override;
   end;
 
 type
@@ -413,17 +404,10 @@ end;
 
 { TSnippetInfoPageHTML }
 
-constructor TSnippetInfoPageHTML.Create(View: IView);
+function TSnippetInfoPageHTML.GetSnippet: TSnippet;
 begin
   Assert(Supports(View, ISnippetView),
     ClassName + '.Create: View is not snippet');
-  inherited;
-  // create compilers info object
-  fCompilersInfo := TCompilersFactory.CreateAndLoadCompilers;
-end;
-
-function TSnippetInfoPageHTML.GetSnippet: TSnippet;
-begin
   Result := (View as ISnippetView).Snippet;
 end;
 
@@ -433,37 +417,6 @@ begin
 end;
 
 procedure TSnippetInfoPageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
-
-  ///  Generates and returns inner HTML (rows) of compiler table.
-  function CompilerTableInner: string;
-  var
-    Compiler: ICompiler;    // reference to each compiler
-    Row1, Row2: string;     // HTML for two rows in HTML table
-  begin
-    // Initialise HTML for two rows of table and resulting table HTML
-    Row1 := MakeTag('tr', ttOpen);
-    Row2 := MakeTag('tr', ttOpen);
-    Result := '';
-
-    // Loop thru each supported compiler
-    for Compiler in fCompilersInfo do
-    begin
-      // Add table cell for compiler name to 1st row of table
-      Row1 := Row1 + TCompResHTML.NameCell(Compiler) + EOL;
-      // Add table cell containing required LED image to 2nd row of table
-      Row2 := Row2
-        + TCompResHTML.ResultCell(GetSnippet.Compatibility[Compiler.GetID])
-        + EOL;
-    end;
-
-    // Close the two rows
-    Row1 := Row1 + MakeTag('tr', ttClose);
-    Row2 := Row2 + MakeTag('tr', ttClose);
-
-    // Return HTML of two rows
-    Result := Row1 + Row2;
-  end;
-
 var
   SnippetHTML: TSnippetHTML;  // object used to generate HTML for snippet
 begin
@@ -487,7 +440,9 @@ begin
     Tplt.ResolvePlaceholderHTML('Units', SnippetHTML.Units);
     Tplt.ResolvePlaceholderHTML('Depends', SnippetHTML.Depends);
     Tplt.ResolvePlaceholderHTML('XRefs', SnippetHTML.XRefs);
-    Tplt.ResolvePlaceholderHTML('CompilerTableRows', CompilerTableInner);
+    Tplt.ResolvePlaceholderHTML(
+      'CompilerTableRows', SnippetHTML.CompileResults
+    );
     Tplt.ResolvePlaceholderHTML('Extra', SnippetHTML.Extra);
     Tplt.ResolvePlaceholderHTML(
       'ShowCompilations', CSSBlockDisplayProp(GetSnippet.CanCompile)

@@ -71,7 +71,6 @@ type
         @param CompRes [in] Compiler result for which URL is required.
         @return Required URL.
       }
-  public
     class function NameCell(const Compiler: ICompiler): string;
       {Generates HTML of a table cell containing the name of a compiler.
         @param Compiler [in] Compiler whose name is to be displayed.
@@ -82,6 +81,10 @@ type
       compiler result.
         @param CompRes [in] Compiler result to be displayed.
       }
+  public
+    ///  <summary>Generates and returns rows of an HTML table that displays
+    ///  given compiler results for each compiler.</summary>
+    class function TableRows(const CompileResults: TCompileResults): string;
   end;
 
 
@@ -92,8 +95,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UConsts, UHTMLUtils, UHTMLDetailUtils, UIStringList, UJavaScriptUtils,
-  UResourceUtils, UStrUtils;
+  Compilers.UCompilers, UConsts, UHTMLUtils, UHTMLDetailUtils, UIStringList,
+  UJavaScriptUtils, UResourceUtils, UStrUtils;
 
 
 resourcestring
@@ -183,6 +186,31 @@ class function TCompResHTML.ResultCell(
   }
 begin
   Result := MakeCompoundTag('td', ImageTag(CompRes));
+end;
+
+class function TCompResHTML.TableRows(const CompileResults: TCompileResults):
+  string;
+var
+  Compilers: ICompilers;
+  Compiler: ICompiler;
+  Row1, Row2: string;     // HTML for two rows in HTML table
+begin
+  Compilers := TCompilersFactory.CreateAndLoadCompilers;
+  // Initialise HTML for two rows of table and resulting table HTML
+  Row1 := MakeTag('tr', ttOpen);
+  Row2 := MakeTag('tr', ttOpen);
+  // Add to each table row for each compiler: compiler name in row 1 and LED
+  // image representing compile result in row 2
+  for Compiler in Compilers do
+  begin
+    Row1 := Row1 + NameCell(Compiler) + EOL;
+    Row2 := Row2 + ResultCell(CompileResults[Compiler.GetID]) + EOL;
+  end;
+  // Close the two rows
+  Row1 := Row1 + MakeTag('tr', ttClose);
+  Row2 := Row2 + MakeTag('tr', ttClose);
+  // Return HTML of two rows
+  Result := Row1 + Row2;
 end;
 
 end.
