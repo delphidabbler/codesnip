@@ -724,7 +724,8 @@ begin
   if not Assigned(ViewItem) then
     raise EBug.CreateFmt(cHistoryError, [ClassName]);
   // Display item, but don't record in history list
-  fMainDisplayMgr.DisplayViewItem(ViewItem);
+  // TODO: decide if to have user option to decide how history items are shown
+  fMainDisplayMgr.DisplayViewItem(ViewItem, ddmOverwrite);
 end;
 
 procedure TMainForm.actGoBackUpdate(Sender: TObject);
@@ -752,7 +753,8 @@ begin
   if not Assigned(ViewItem) then
     raise EBug.CreateFmt(cHistoryError, [ClassName]);
   // Display item, but don't record in history list
-  fMainDisplayMgr.DisplayViewItem(ViewItem);
+  // TODO: decide if to have user option to decide how history items are shown
+  fMainDisplayMgr.DisplayViewItem(ViewItem, ddmOverwrite);
 end;
 
 procedure TMainForm.actGoForwardUpdate(Sender: TObject);
@@ -1204,7 +1206,10 @@ procedure TMainForm.ActViewHistoryItemExecute(Sender: TObject);
     @param Sender [in] Action triggering this event. Must be a TViewItemAction.
   }
 begin
-  fMainDisplayMgr.DisplayViewItem((Sender as TViewItemAction).ViewItem);
+  // TODO: decide if to have user option to decide how history items are shown
+  fMainDisplayMgr.DisplayViewItem(
+    (Sender as TViewItemAction).ViewItem, ddmOverwrite
+  );
   fHistory.SelectItem((Sender as TViewItemAction).ViewItem);
 end;
 
@@ -1213,7 +1218,10 @@ procedure TMainForm.ActViewItemExecute(Sender: TObject);
     @param Sender [in] Action triggering this event. Must be a TViewItemAction.
   }
 begin
-  fMainDisplayMgr.DisplayViewItem((Sender as TViewItemAction).ViewItem);
+  // TODO: Revise ActViewItem to have a "new tab" option.
+  fMainDisplayMgr.DisplayViewItem(
+    (Sender as TViewItemAction).ViewItem, ddmOverwrite
+  );
   fHistory.NewItem((Sender as TViewItemAction).ViewItem);
 end;
 

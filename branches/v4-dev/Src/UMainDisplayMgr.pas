@@ -46,13 +46,17 @@ uses
 
 
 type
-  ///  TODO: DBG - this type is for debugging only
-  TDetailPaneDisplayMode = (
-    ddmDEBUGOverwrite,
-    ddmDEBUGInsert
-  );
-
-  // TODO: Implement Display with these flags and remove CreateNewDetailsTab
+  ///  <summary>Enumeration that determines how view items are displayed in
+  ///  detail pane.</summary>
+  ///  <remarks>
+  ///  <para>ddmverwrite - Displays view item in an existing tab if possible.
+  ///  If view already displayed its tab is selected otherwise view overwrites
+  ///  content of selected tab. If no tabs are displayed a new one is created.
+  ///  </para>
+  ///  <para>ddmRequestNewTab - Displays view item in a new tab unless it is
+  ///  already displayed when it's tab is selected.</para>
+  ///  <para>ddmForceNewTab - Always displays view item in a new tab.</para>
+  ///  </remarks>
   TDetailPageDisplayMode = (
     ddmOverwrite,
     ddmRequestNewTab,
@@ -69,8 +73,6 @@ type
     fOverviewMgr: IInterface;     // Manager object for overview pane
     fDetailsMgr: IInterface;      // Manager object for details pane
     fDetailPagePendingChange: Integer;
-    ///  TODO: DBG - following field is for debugging only
-    fDetailPaneDisplayMode: TDetailPaneDisplayMode;
     function GetInteractiveTabMgr: ITabbedDisplayMgr;
       {Gets reference to manager object for interactive tab set.
         @return Required tab manager or nil if no tab is interactive.
@@ -111,7 +113,6 @@ type
       {Initialises display. All snippets in database are shown in overview pane
       and detail pane is cleared.
       }
-    procedure SetDetailPaneDisplayMode(Mode: TDetailPaneDisplayMode);
 
     procedure SnippetAdded(View: IView);
     procedure SnippetChanged(View: IView);
@@ -122,11 +123,13 @@ type
     ///  <summary>Clears whole display: overview pane is cleared and all detail
     ///  tabs are closed.</summary>
     procedure ClearAll;
-    procedure DisplayViewItem(ViewItem: IView);
-      {Displays a view item. Updates current view item, selects item in overview
-      if possible and displays full details in detail pane.
-        @param ViewItem [in] Item to be displayed (may be nil).
-      }
+    ///  <summary>Displays a view item.</summary>
+    ///  <param name="ViewItem">IView [in] View item to be displayed.</param>
+    ///  <param name="Mode">TDetailPageDisplayMode [in] Determines how view is
+    ///  displayed in detail pane.</param>
+    ///  <remarks>View item is selected in overview pane, if present, and shown
+    ///  in detail pane.</remarks>
+    procedure DisplayViewItem(ViewItem: IView; Mode: TDetailPageDisplayMode);
     ///  <summary>Refreshes display: re-selects current view in overview pane
     ///  re-displays current tab view in details pane, if any.</summary>
     procedure Refresh;
@@ -238,24 +241,9 @@ begin
   // TODO: extract method from this and SnippetAdded code: identical code
   RedisplayOverview;
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
-  // Display in details pane
-  if (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
-  begin
-    // no tabs => new tab
-    ShowInNewDetailPage(View);
-    Exit;
-  end;
-  // NOTE: new item, so won't already be displayed, so we don't look for it
-  if (fDetailPaneDisplayMode = ddmDEBUGInsert) then
-  begin
-    // new tab required
-    ShowInNewDetailPage(View);
-  end
-  else
-  begin
-    // overwrite exiting tab
-    DisplayInSelectedDetailView(View);
-  end;
+  // Always display new categories in a new tab
+  // TODO: consider adding option to choose between new tab or existing one
+  ShowInNewDetailPage(View);
 end;
 
 procedure TMainDisplayMgr.CategoryChanged(View: IView);
@@ -332,11 +320,6 @@ begin
   // Record subsidiary display managers
   fOverviewMgr := OverviewMgr;
   fDetailsMgr := DetailsMgr;
-
-  // Default values
-  // TODO: DBG - these "mode" values should be removed after testing
-  fDetailPaneDisplayMode := ddmDEBUGInsert;
-//  fDetailPaneDisplayMode := ddmDEBUGOverwrite;
 end;
 
 procedure TMainDisplayMgr.CreateNewDetailsTab;
@@ -362,21 +345,21 @@ begin
   );
 end;
 
-procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView);
-  {Displays a view item. Updates current view item, selects item in overview if
-  possible and displays full details in detail pane.
-    @param ViewItem [in] Item to be displayed (may be nil).
-  }
+procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView;
+  Mode: TDetailPageDisplayMode);
 var
   TabIdx: Integer;
 begin
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(ViewItem);
-  if (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
+  if (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet
+    or (Mode = ddmForceNewTab) then
   begin
     // no tabs => new tab
     ShowInNewDetailPage(ViewItem);
     Exit;
   end;
+  Assert(Mode in [ddmOverwrite, ddmRequestNewTab], ClassName
+    + '.DisplayViewItem: Mode in [ddmOverwrite, ddmRequestNewTab] expected');
   TabIdx := (fDetailsMgr as IDetailPaneDisplayMgr).FindTab(ViewItem.GetKey);
   if TabIdx >= 0 then
   begin
@@ -385,13 +368,15 @@ begin
     Exit;
   end;
   // tab doesn't already exist
-  if (fDetailPaneDisplayMode = ddmDEBUGInsert) then
+  if Mode = ddmRequestNewTab then
   begin
     // new tab required
     ShowInNewDetailPage(ViewItem);
   end
   else
   begin
+    Assert(Mode = ddmOverwrite,
+      ClassName + '.DisplayViewItem: Mode = ddmOverwrite expected');
     // overwrite exiting tab
     DisplayInSelectedDetailView(ViewItem);
   end;
@@ -533,12 +518,6 @@ begin
     TabMgr.PreviousTab;
 end;
 
-procedure TMainDisplayMgr.SetDetailPaneDisplayMode(
-  Mode: TDetailPaneDisplayMode);
-begin
-  fDetailPaneDisplayMode := Mode;
-end;
-
 procedure TMainDisplayMgr.SetSelectedDetailTab(const Value: Integer);
   {Write accessor for SelectedDetailTab property. Selects required tab.
     @param Value [in] Index of tab to be selected.
@@ -560,7 +539,8 @@ end;
 
 procedure TMainDisplayMgr.ShowDBUpdatedPage;
 begin
-  DisplayViewItem(TViewItemFactory.CreateDBUpdateInfoView);
+  // NOTE: Normally this page is only shown when there are no tabs displayed
+  DisplayViewItem(TViewItemFactory.CreateDBUpdateInfoView, ddmForceNewTab);
 end;
 
 procedure TMainDisplayMgr.ShowInNewDetailPage(View: IView);
@@ -573,31 +553,17 @@ end;
 
 procedure TMainDisplayMgr.ShowWelcomePage;
 begin
-  DisplayViewItem(TViewItemFactory.CreateStartPageView);
+  // TODO: May want a user option for welcome page to overwrite or use new tab
+  DisplayViewItem(TViewItemFactory.CreateStartPageView, ddmRequestNewTab);
 end;
 
 procedure TMainDisplayMgr.SnippetAdded(View: IView);
 begin
   RedisplayOverview;
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
-  // Display in details pane
-  if (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
-  begin
-    // no tabs => new tab
-    ShowInNewDetailPage(View);
-    Exit;
-  end;
-  // NOTE: new item, so won't already be displayed, so we don't look for it
-  if (fDetailPaneDisplayMode = ddmDEBUGInsert) then
-  begin
-    // new tab required
-    ShowInNewDetailPage(View);
-  end
-  else
-  begin
-    // overwrite exiting tab
-    DisplayInSelectedDetailView(View);
-  end;
+  // Always display new snippets in a new tab
+  // TODO: consider adding option to choose between new tab or existing one
+  ShowInNewDetailPage(View);
 end;
 
 procedure TMainDisplayMgr.SnippetChanged(View: IView);
