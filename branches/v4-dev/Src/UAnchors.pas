@@ -90,6 +90,11 @@ type
     ///  <remarks>Does nothing if anchor is not valid.</remarks>
     class function Click(const Anchor: IDispatch): Boolean;
 
+    ///  <summary>Simulates a click on active link within given document and
+    ///  returns True if active elememt is an anchor, False if not.</summary>
+    ///  <remarks>Does nothing if active elememt is not an anchor.</remarks>
+    class function ClickActiveLink(const Doc: IDispatch): Boolean;
+
     ///  <summary>Returns URL of given anchor.</summary>
     ///  <remarks>Empty string returned if anchor is not valid.</remarks>
     class function GetURL(const Anchor: IDispatch): string;
@@ -145,6 +150,11 @@ begin
   Result := IsAnchor(Anchor) and Supports(Anchor, IHTMLElement, Elem);
   if Result then
     Elem.click;
+end;
+
+class function TAnchors.ClickActiveLink(const Doc: IDispatch): Boolean;
+begin
+  Result := Click(THTMLDOMHelper.GetActiveElem(Doc));
 end;
 
 class function TAnchors.FindEnclosingAnchor(const Elem: IDispatch): IDispatch;
