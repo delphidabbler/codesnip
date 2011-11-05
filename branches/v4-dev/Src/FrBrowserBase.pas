@@ -193,8 +193,7 @@ uses
   // Delphi
   SysUtils, Messages,
   // Project
-  UAnchors, UColours, UCSSUtils, UExceptions, UHTMLDOMHelper, UProtocols,
-  UUtils;
+  UAnchors, UColours, UCSSUtils, UExceptions, UProtocols, UUtils;
 
 
 {$R *.dfm}
@@ -467,7 +466,7 @@ end;
 
 procedure TBrowserBaseFrame.TriggerActiveLink;
 begin
-  TAnchors.Click(THTMLDOMHelper.GetActiveElem(wbBrowser.Document));
+  TAnchors.ClickActiveLink(wbBrowser.Document);
 end;
 
 procedure TBrowserBaseFrame.UpdateCSS(Sender: TObject; var CSS: string);
