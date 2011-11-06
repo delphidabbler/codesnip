@@ -97,7 +97,8 @@ begin
   Cat := Database.Categories.Find(CatID);
   Assert(Assigned(Cat), ClassName + '.Execute: CatID not valid');
   // Create a view item for category and get notifier to display it
-  fNotifier.ShowViewItem(TViewItemFactory.CreateCategoryView(Cat));
+  // TODO: change TCategoryAction to allow for NewTab property??
+  fNotifier.ShowViewItem(TViewItemFactory.CreateCategoryView(Cat), False);
   Result := False;
 end;
 

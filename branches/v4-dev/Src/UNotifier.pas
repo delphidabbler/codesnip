@@ -108,9 +108,11 @@ type
     procedure ConfigCompilers;
       {Displays configure compilers dialog box.
       }
-    procedure ShowViewItem(ViewItem: IView);
+    procedure ShowViewItem(ViewItem: IView; const NewTab: Boolean);
       {Displays a view item.
         @param ViewItem [in] View item to display.
+        @param NewTab [in] Flag indicates whether view is to be displayed in
+          new tab.
       }
     procedure ChangeOverviewStyle(const Style: Integer);
       {Changes display style of overview pane.
@@ -410,14 +412,17 @@ begin
   end;
 end;
 
-procedure TNotifier.ShowViewItem(ViewItem: IView);
+procedure TNotifier.ShowViewItem(ViewItem: IView; const NewTab: Boolean);
   {Displays a view item.
     @param ViewItem [in] View item to display.
+    @param NewTab [in] Flag indicates whether view is to be displayed in
+      new tab.
   }
 begin
   if Assigned(fShowViewItemAction) then
   begin
     (fShowViewItemAction as TViewItemAction).ViewItem := ViewItem;
+    (fShowViewItemAction as TViewItemAction).NewTab := NewTab;
     fShowViewItemAction.Execute;
   end;
 end;

@@ -79,9 +79,11 @@ type
     procedure ConfigCompilers;
       {Displays configure compilers dialog box.
       }
-    procedure ShowViewItem(View: IView);
+    procedure ShowViewItem(View: IView; const NewTab: Boolean);
       {Displays a view item.
         @param ViewItem [in] View item to display.
+        @param NewTab [in] Flag indicates whether view is to be displayed in
+          new tab.
       }
     procedure ChangeOverviewStyle(const Style: Integer);
       {Changes display style of overview pane.

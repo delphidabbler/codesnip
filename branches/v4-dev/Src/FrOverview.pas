@@ -568,7 +568,7 @@ begin
     fPrevSelectedItem := TViewItemFactory.Clone(fSelectedItem);
     // Notify application of change
     if Assigned(fNotifier) then
-      fNotifier.ShowViewItem(fSelectedItem);
+      fNotifier.ShowViewItem(fSelectedItem, False);
   end;
 end;
 
