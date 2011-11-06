@@ -47,21 +47,20 @@ uses
 
 
 type
-
-  {
-  TViewItemAction:
-    Custom action used to request display of a view item. Stores reference to
-    required view item.
-  }
-  // TODO: Re-comment this class
+  ///  <summary>
+  ///  Custom action used to request display of a view item.
+  ///  </summary>
   TViewItemAction = class(TBasicAction)
   strict private
+    ///  <summary>Value of ViewItem property.</summary>
     fViewItem: IView;
-      {Reference to view item object}
+    ///  <summary>Value of NewTab property.</summary>
     fNewTab: Boolean;
   public
+    ///  <summary>View item to be displayed.</summary>
     property ViewItem: IView read fViewItem write fViewItem;
-      {View item object to be displayed}
+    ///  <summary>Flags whether view item is to be displayed in a new tab (True)
+    ///  or in existing tab (False).</summary>
     property NewTab: Boolean read fNewTab write fNewTab;
   end;
 
