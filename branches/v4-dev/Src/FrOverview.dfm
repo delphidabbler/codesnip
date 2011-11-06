@@ -58,6 +58,7 @@ inherited OverviewFrame: TOverviewFrame
     end
   end
   object mnuOverview: TPopupMenu
+    AutoPopup = False
     Left = 64
     Top = 72
   end

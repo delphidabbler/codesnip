@@ -796,16 +796,43 @@ procedure TOverviewFrame.tvSnippetsMouseDown(Sender: TObject;
   }
 var
   Node: TTreeNode;  // tree node clicked
+  PopupPt: TPoint;  // menu pop-up location
 begin
+  // Disallow use of Shift and Alt keys with mouse
+  if ExtractShiftKeys(Shift) * [ssShift, ssAlt] <> [] then
+    Exit;
   // Check if mouse click on a tree node
   if [htOnItem, htOnRight] * tvSnippets.GetHitTestInfoAt(X, Y) <> [] then
   begin
-    // Get node clicked
-    Node := tvSnippets.GetNodeAt(X, Y);
-    if Assigned(Node) and (Node is TViewItemTreeNode) then
-    begin
-      SelectNode(Node, False);
-      SelectionChange(Node);
+    case Button of
+      mbLeft:
+      begin
+        // Select node clicked
+        Node := tvSnippets.GetNodeAt(X, Y);
+        if Assigned(Node) and (Node is TViewItemTreeNode) then
+        begin
+          SelectNode(Node, False);
+          SelectionChange(Node);
+        end;
+      end;
+      mbRight:
+      begin
+        { TODO: This behaviour duplicates code in mbLeft deliberately - we may
+                want to change later so that right click does not select node. }
+        { TODO: May wish to inhibit Ctrl key for Right clicks later. }
+        // Select node clicked
+        Node := tvSnippets.GetNodeAt(X, Y);
+        if Assigned(Node) and (Node is TViewItemTreeNode) then
+        begin
+          SelectNode(Node, False);
+          SelectionChange(Node);
+        end;
+        // Display popup menu
+        PopupPt := tvSnippets.ClientToScreen(Point(X, y));
+        mnuOverview.Popup(PopupPt.X, PopupPt.Y);
+      end;
+      mbMiddle:
+        ; // Middle button is ignored
     end;
   end;
 end;
