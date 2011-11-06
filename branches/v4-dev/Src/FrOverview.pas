@@ -125,15 +125,21 @@ type
         @param MakeVisible [in] Flag indicating if node is to be made visible.
           Ignored if node is nil.
       }
-    procedure SelectionChange(const Node: TTreeNode); overload;
+    procedure SelectionChange(const Node: TTreeNode; const NewTab: Boolean);
+      overload;
       {Records view item associated with a selected node and, if item has
       changed, triggers action to notify program of selection change.
         @param Node [in] Selected node.
+        @param NewTab [in] Flag indicates whether view is to be displayed in
+          new tab.
       }
-    procedure SelectionChange(Item: IView); overload;
+    procedure SelectionChange(Item: IView; const NewTab: Boolean);
+      overload;
       {Records new selected view item and, if item has changed, triggers action
       to notify program of selection change.
         @param Item [in] Selected item.
+        @param NewTab [in] Flag indicates whether view is to be displayed in
+          new tab.
       }
     procedure Redisplay;
       {Redisplays all snippets within current snippet list in required style.
@@ -544,20 +550,25 @@ begin
   Result := tcDisplayStyle.TabIndex;
 end;
 
-procedure TOverviewFrame.SelectionChange(const Node: TTreeNode);
+procedure TOverviewFrame.SelectionChange(const Node: TTreeNode;
+  const NewTab: Boolean);
   {Records view item associated with a selected node and, if item has changed,
   triggers action to notify program of selection change.
     @param Node [in] Selected node.
+    @param NewTab [in] Flag indicates whether view is to be displayed in
+      new tab.
   }
 begin
   if Assigned(Node) and (Node is TViewItemTreeNode) then
-    SelectionChange((Node as TViewItemTreeNode).ViewItem);
+    SelectionChange((Node as TViewItemTreeNode).ViewItem, NewTab);
 end;
 
-procedure TOverviewFrame.SelectionChange(Item: IView);
+procedure TOverviewFrame.SelectionChange(Item: IView; const NewTab: Boolean);
   {Records new selected view item and, if item has changed, triggers action to
   notify program of selection change.
     @param Item [in] Selected item.
+    @param NewTab [in] Flag indicates whether view is to be displayed in
+      new tab.
   }
 begin
   // Record new selected item
@@ -568,7 +579,7 @@ begin
     fPrevSelectedItem := TViewItemFactory.Clone(fSelectedItem);
     // Notify application of change
     if Assigned(fNotifier) then
-      fNotifier.ShowViewItem(fSelectedItem, False);
+      fNotifier.ShowViewItem(fSelectedItem, NewTab);
   end;
 end;
 
@@ -688,7 +699,7 @@ begin
   if (tvSnippets.Items.Count > 0) and not Assigned(tvSnippets.Selected) then
   begin
     SelectNode(tvSnippets.Items.GetFirstNode, True);
-    SelectionChange(tvSnippets.Items.GetFirstNode);
+    SelectionChange(tvSnippets.Items.GetFirstNode, False);
   end;
 end;
 
@@ -766,7 +777,7 @@ begin
     // One of keys triggering selection change was released. We get reference to                          `
     // selected node and trigger notification via SelectionChange method
     if Assigned(Node) and (Node is TViewItemTreeNode) then
-      SelectionChange(Node);
+      SelectionChange(Node, False);
   end
   // Check for RETURN key with no modifiers: toggle node expand / collapse when
   // a section header has focus
@@ -807,12 +818,12 @@ begin
     case Button of
       mbLeft:
       begin
-        // Select node clicked
+        // Select node clicked: request new tab if Ctrl key pressed
         Node := tvSnippets.GetNodeAt(X, Y);
         if Assigned(Node) and (Node is TViewItemTreeNode) then
         begin
           SelectNode(Node, False);
-          SelectionChange(Node);
+          SelectionChange(Node, ExtractShiftKeys(Shift) = [ssCtrl]);
         end;
       end;
       mbRight:
@@ -825,7 +836,7 @@ begin
         if Assigned(Node) and (Node is TViewItemTreeNode) then
         begin
           SelectNode(Node, False);
-          SelectionChange(Node);
+          SelectionChange(Node, ExtractShiftKeys(Shift) = [ssCtrl]);
         end;
         // Display popup menu
         PopupPt := tvSnippets.ClientToScreen(Point(X, y));
@@ -878,7 +889,7 @@ begin
         if Assigned(SectionNode) then
         begin
           SectionNode.Expanded := False;
-          SelectionChange(SectionNode);
+          SelectionChange(SectionNode, False);
         end;
       end;
       taCollapseAll:
@@ -889,7 +900,7 @@ begin
         // collapse whole tree and notify change of selection
         tvSnippets.FullCollapse;
         if Assigned(SectionNode) then
-          SelectionChange(SectionNode);
+          SelectionChange(SectionNode, False);
       end;
     end;
   finally
