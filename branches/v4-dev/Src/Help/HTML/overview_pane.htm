@@ -92,7 +92,7 @@
           Up
         </td>
         <td class="desc">
-          Moves to previous entry in tree and displays it.
+          Moves to the previous entry in the tree, if any, and displays it.
         </td>
       </tr>
       <tr>
@@ -100,27 +100,27 @@
           Down
         </td>
         <td class="desc">
-          Moves to next entry in tree and displays it.
+          Moves to the next entry in the tree, if any, and displays it.
         </td>
       </tr>
       <tr>
         <td class="item smallcaps">
-          Ctrl+Up
+          Shift+Up
         </td>
         <td class="desc">
-          Jumps to previous section and selects and displays the header node. If
-          the current node is already in the last section the last section
-          header is selected.
+          Selects the section header above the currently selected item and
+          displays the section's details in the details pane. No action is taken
+          if the first section header is already selected.
         </td>
       </tr>
       <tr>
         <td class="item smallcaps">
-        	Ctrl+Down
+          Shift+Down
         </td>
         <td class="desc">
-          Jumps to next section and selects and displays the header node. If the
-          current node is already in the first section the first section header
-          is selected.
+          Selects the section header below the selected item and displays the
+          section's details in the details pane. If the selected item is part of
+          the last section, its own section header is selected.
         </td>
       </tr>
       <tr>
@@ -128,9 +128,20 @@
           Left
         </td>
         <td class="desc">
-          When on a sub item moves to section header node and displays it. When
-          on an expanded section header collapses the section. Does nothing when
-          on a collapsed section header node.
+          <ul>
+            <li>
+              If a sub item is currently selected, the item's parent node is
+              selected.
+            </li>
+            <li>
+              If an expanded section head item is currently selected, it's
+              section is collapsed.
+            </li>
+            <li>
+              If a collapsed section head is currently selected, no action is
+              taken.
+            </li>
+          </ul>
         </td>
       </tr>
       <tr>
@@ -138,9 +149,19 @@
           Right
         </td>
         <td class="desc">
-          When on a collapsed section header, expands it. When on an expanded
-          section header moves to first child node and displays it. Does nothing
-          when on a child node.
+          <ul>
+            <li>
+              If a collapsed section header is selected the section is expanded.
+            </li>
+            <li>
+              If an expanded section header is selected the section's first
+              child node is selected.
+            </li>
+            <li>
+              If a child node or an empty section header is selected no action
+              is taken.
+            </li>
+          </ul>
         </td>
       </tr>
       <tr>
@@ -148,7 +169,7 @@
           Page Up
         </td>
         <td class="desc">
-          Jumps up one page in tree and displays the newly selected item.
+          Jumps up one page in the tree and displays the newly selected item.
         </td>
       </tr>
       <tr>
@@ -156,12 +177,13 @@
           Page Down
         </td>
         <td class="desc">
-          Jumps down one page in tree and displays the newly selected item.
+          Jumps down one page in the tree and displays the newly selected item.
         </td>
       </tr>
       <tr>
         <td class="item smallcaps">
-          Home, Ctrl+Home
+          Home,<br>
+          Ctrl+Home
         </td>
         <td class="desc">
           Selects and displays the first item in the tree.
@@ -169,7 +191,8 @@
       </tr>
       <tr>
         <td class="item smallcaps">
-          End, Ctrl+End
+          End,<br>
+          Ctrl+End
         </td>
         <td class="desc">
           Selects and displays the last item in the tree.
@@ -180,21 +203,28 @@
           Return
         </td>
         <td class="desc">
-          Toggles a section header node between expanded and collapsed state.
-          Does nothing when a snippet item is selected.
+          <ul>
+            <li>
+              When a section header is selected it is toggled between expanded
+              and collapsed state.
+            </li>
+            <li>
+              When a child node is selected no action is taken.
+            </li>
+          </ul>
         </td>
       </tr>
       <tr>
         <td class="item smallcaps">
-          Ctrl+NUM SUB
+          Ctrl+Num&nbsp;Sub
         </td>
         <td class="desc">
-          Collapses an expanded selection and selects the section header.
+          Collapses an expanded section  and selects the section header.
         </td>
       </tr>
       <tr>
         <td class="item smallcaps">
-          Ctrl+NUM PLUS
+          Ctrl+Num&nbsp;Plus
         </td>
         <td class="desc">
           Expands a collapsed section.
@@ -202,7 +232,7 @@
       </tr>
       <tr>
         <td class="item smallcaps">
-          Shift+Ctrl+NUM SUB
+          Shift+Ctrl+Num&nbsp;Sub
         </td>
         <td class="desc">
           Collapses all sections in the tree.
@@ -210,7 +240,7 @@
       </tr>
       <tr>
         <td class="item smallcaps">
-          Shift+Ctrl+NUM PLUS
+          Shift+Ctrl+Num&nbsp;Plus
         </td>
         <td class="desc">
           Fully expands the tree.

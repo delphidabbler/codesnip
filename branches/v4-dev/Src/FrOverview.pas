@@ -84,6 +84,11 @@ type
     procedure tvSnippetsMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   strict private
+    const
+      cPermittedKeys = [            // Keypresses handled by treeview as default
+        VK_UP, VK_DOWN, VK_PRIOR, VK_NEXT, VK_LEFT, VK_RIGHT, VK_HOME, VK_END
+      ];
+  strict private
     type
       {
       TTVDraw:
@@ -113,10 +118,7 @@ type
       fTreeStates: array of TOverviewTreeState;
                                     // Array of tree state objects: one per tab
       fCommandBars: TCommandBarMgr; // Configures popup menu and toolbar
-    const
-      cPermittedKeys = [            // Keypresses handled by treeview as default
-        VK_UP, VK_DOWN, VK_PRIOR, VK_NEXT, VK_LEFT, VK_RIGHT, VK_HOME, VK_END
-      ];
+  strict private
     procedure SelectNode(const Node: TTreeNode; const MakeVisible: Boolean);
       {Selects a specified node and optionally make it visible in the tree view.
         @param Node [in] Node to be selected.
@@ -147,21 +149,21 @@ type
         @return Tree node associated with view item or nil if no match or if
           Item is nil.
       }
-    function GetSectionNode(const Node: TTreeNode): TViewItemTreeNode;
-      {Gets reference to the top level parent (section) node for any tree node.
+    function GetTopLevelNode(const Node: TTreeNode): TViewItemTreeNode;
+      {Gets reference to the top level parent node for any tree node.
         @param Node [in] Node whose section node is required.
         @return Required section node. Maybe Node if Node is a section node.
       }
-    function GetNextSectionNode: TTreeNode;
-      {Gets the next section node to that containing the currently selected
+    function GetNextTopLevelNode: TTreeNode;
+      {Gets the next top level node to that containing the currently selected
       node.
         @return Required node. If current node is last section node it is
           returned. If there is no selected node the first section node is
           returned.
       }
-    function GetPreviousSectionNode: TTreeNode;
-      {Gets the previous section node to that containing the currently selected
-      node.
+    function GetPreviousTopLevelNode: TTreeNode;
+      {Get previous top level top to selected node. If selected node is not
+      itself top level then returned node is its parent.
         @return Required node. If current node is first section node it is
           returned. If there is no selected node the first section node is
           returned.
@@ -258,12 +260,12 @@ begin
   case State of
     taExpandNode:
       Result := Assigned(tvSnippets.Selected) and
-        not GetSectionNode(tvSnippets.Selected).Expanded;
+        not GetTopLevelNode(tvSnippets.Selected).Expanded;
     taExpandAll:
       Result := True;
     taCollapseNode:
       Result := Assigned(tvSnippets.Selected) and
-        GetSectionNode(tvSnippets.Selected).Expanded;
+        GetTopLevelNode(tvSnippets.Selected).Expanded;
     taCollapseAll:
       Result := True;
     else
@@ -369,55 +371,45 @@ begin
   end;
 end;
 
-function TOverviewFrame.GetNextSectionNode: TTreeNode;
-  {Gets the next section node to that containing the currently selected node.
-    @return Required node. If current node is last section node it is returned.
-      If there is no selected node the first section node is returned.
-  }
+function TOverviewFrame.GetNextTopLevelNode: TTreeNode;
 var
-  ThisSectionNode: TTreeNode; // reference to current section node
-  SelectedNode: TTreeNode;    // currently selected node
+  SelectedNode: TTreeNode;      // currently selected node
+  ThisTopLevelNode: TTreeNode;  // top level node of SelectedNode
 begin
   SelectedNode := tvSnippets.Selected;
   if Assigned(SelectedNode) then
   begin
-    ThisSectionNode := GetSectionNode(SelectedNode);
-    Result := ThisSectionNode.GetNextSibling;
+    ThisTopLevelNode := GetTopLevelNode(SelectedNode);
+    Result := ThisTopLevelNode.GetNextSibling;
     if not Assigned(Result) then
-      Result := ThisSectionNode;
+      Result := ThisTopLevelNode;
   end
   else
     Result := tvSnippets.Items.GetFirstNode;
 end;
 
-function TOverviewFrame.GetPreviousSectionNode: TTreeNode;
-  {Gets the previous section node to that containing the currently selected
-  node.
-    @return Required node. If current node is first section node it is returned.
-      If there is no selected node the first section node is returned.
-  }
+function TOverviewFrame.GetPreviousTopLevelNode: TTreeNode;
 var
-  ThisSectionNode: TTreeNode; // reference to current section node
-  SelectedNode: TTreeNode;    // currently selected node
+  SelectedNode: TTreeNode;      // currently selected node
+  ThisTopLevelNode: TTreeNode;  // top level node of SelectedNode
 begin
   SelectedNode := tvSnippets.Selected;
   if Assigned(SelectedNode) then
   begin
-    ThisSectionNode := GetSectionNode(SelectedNode);
-    Result := ThisSectionNode.GetPrevSibling;
+    ThisTopLevelNode := GetTopLevelNode(SelectedNode);
+    if ThisTopLevelNode = SelectedNode then
+      Result := ThisTopLevelNode.GetPrevSibling
+    else
+      Result := ThisTopLevelNode;
     if not Assigned(Result) then
-      Result := ThisSectionNode;
+      Result := ThisTopLevelNode;
   end
   else
     Result := tvSnippets.Items.GetFirstNode;
 end;
 
-function TOverviewFrame.GetSectionNode(
+function TOverviewFrame.GetTopLevelNode(
   const Node: TTreeNode): TViewItemTreeNode;
-  {Gets reference to the top level parent (section) node for any tree node.
-    @param Node [in] Node whose section node is required.
-    @return Required section node. Maybe Node if Node is a section node.
-  }
 var
   CurrentNode: TTreeNode; // iterates through all parent nodes
 begin
@@ -724,13 +716,13 @@ begin
           if tvSnippets.Items.Count > 0 then
             SelectNode(tvSnippets.Items[Pred(tvSnippets.Items.Count)], True);
       VK_UP:
-        if ExtractShiftKeys(Shift) = [ssCtrl] then
+        if ExtractShiftKeys(Shift) = [ssShift] then
           if tvSnippets.Items.Count > 0 then
-            SelectNode(GetPreviousSectionNode, True);
+            SelectNode(GetPreviousTopLevelNode, True);
       VK_DOWN:
-        if ExtractShiftKeys(Shift) = [ssCtrl] then
+        if ExtractShiftKeys(Shift) = [ssShift] then
           if tvSnippets.Items.Count > 0 then
-            SelectNode(GetNextSectionNode, True);
+            SelectNode(GetNextTopLevelNode, True);
     end;
     // permit Alt+F4 and inhibit all other default processing
     if not IsKeyCombination(VK_F4, [ssAlt], Key, Shift) then
@@ -767,11 +759,9 @@ var
   Node: TTreeNode;  // selected tree node
 begin
   Node := tvSnippets.Selected;
-  if (not HasShiftKeys(Shift) and (Key in cPermittedKeys)) or
-    (
-      (ExtractShiftKeys(Shift) = [ssCtrl]) and
-      (Key in [VK_HOME, VK_END, VK_UP, VK_DOWN])
-    ) then
+  if (not HasShiftKeys(Shift) and (Key in cPermittedKeys))
+    or (ExtractShiftKeys(Shift) = [ssCtrl]) and (Key in [VK_HOME, VK_END])
+    or (ExtractShiftKeys(Shift) = [ssShift]) and (Key in [VK_UP, VK_DOWN]) then
   begin
     // One of keys triggering selection change was released. We get reference to                          `
     // selected node and trigger notification via SelectionChange method
@@ -831,7 +821,7 @@ begin
   // Get current node (if any) and corresponding section node (if any)
   Node := FindItemNode(fSelectedItem);
   if Assigned(Node) then
-    SectionNode := GetSectionNode(Node)
+    SectionNode := GetTopLevelNode(Node)
   else
     SectionNode := nil;
   // Perform expand or collapse
