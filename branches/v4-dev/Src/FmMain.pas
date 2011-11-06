@@ -1217,10 +1217,14 @@ procedure TMainForm.ActViewItemExecute(Sender: TObject);
   {Displays a requested view item and records in history.
     @param Sender [in] Action triggering this event. Must be a TViewItemAction.
   }
+const
+  TabDisplayMap: array[Boolean] of TDetailPageDisplayMode = (
+    ddmOverwrite, ddmRequestNewTab
+  );
 begin
-  // TODO: Revise ActViewItem to have a "new tab" option.
   fMainDisplayMgr.DisplayViewItem(
-    (Sender as TViewItemAction).ViewItem, ddmOverwrite
+    (Sender as TViewItemAction).ViewItem,
+    TabDisplayMap[(Sender as TViewItemAction).NewTab]
   );
   fHistory.NewItem((Sender as TViewItemAction).ViewItem);
 end;

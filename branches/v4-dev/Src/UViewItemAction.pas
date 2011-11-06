@@ -53,14 +53,16 @@ type
     Custom action used to request display of a view item. Stores reference to
     required view item.
   }
+  // TODO: Re-comment this class
   TViewItemAction = class(TBasicAction)
   strict private
     fViewItem: IView;
       {Reference to view item object}
+    fNewTab: Boolean;
   public
-    property ViewItem: IView
-      read fViewItem write fViewItem;
+    property ViewItem: IView read fViewItem write fViewItem;
       {View item object to be displayed}
+    property NewTab: Boolean read fNewTab write fNewTab;
   end;
 
 
