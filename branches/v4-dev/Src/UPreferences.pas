@@ -122,19 +122,19 @@ type
       read GetOverviewStartState write SetOverviewStartState;
       {Startup state of overview treeview}
 
-    function GetShowEmptyCategories: Boolean;
-      {Gets flag that indicates whether empty categories are displayed in
-      overview pane.
+    function GetShowEmptySections: Boolean;
+      {Gets flag that indicates whether empty sections are displayed in overview
+      pane.
         @returns Flag value.
       }
-    procedure SetShowEmptyCategories(const Value: Boolean);
-      {Sets flag that indicates whether empty categories are displayed in
-      overview pane.
+    procedure SetShowEmptySections(const Value: Boolean);
+      {Sets flag that indicates whether empty sections are displayed in overview
+      pane.
         @param Value [in] New flag value.
       }
-    property ShowEmptyCategories: Boolean
-      read GetShowEmptyCategories write SetShowEmptyCategories;
-      {Indicates whether empty categories are displayed in overview pane}
+    property ShowEmptySections: Boolean
+      read GetShowEmptySections write SetShowEmptySections;
+      {Indicates whether empty sections are displayed in overview pane}
 
     function GetShowNewSnippetsInNewTabs: Boolean;
       {Gets flag that indicates whether new snippets and categories are
@@ -267,10 +267,11 @@ type
       {Measurement unit in use by application}
     fOverviewStartState: TOverviewStartState;
       {Startup state of overview treeview}
-    fShowEmptyCategories: Boolean;
-      {Indicates whether empty categories are displayed in overview pane}
+    fShowEmptySections: Boolean;
+      {Indicates whether empty sections are displayed in overview pane}
     fShowNewSnippetsInNewTabs: Boolean;
-      {Indicates whether empty categories are displayed in overview pane}
+      {Indicates whether new snippets and categories are displayed in new tabs
+      in details pane}
     fPrinterOptions: TPrintOptions;
       {Default print options}
     fPrinterPageMargins: TPageMargins;
@@ -328,14 +329,14 @@ type
       {Sets startup state of overview tree view.
         @param Value [in] Required startup state.
       }
-    function GetShowEmptyCategories: Boolean;
-      {Gets flag that indicates whether empty categories are displayed in
-      overview pane.
+    function GetShowEmptySections: Boolean;
+      {Gets flag that indicates whether empty sections are displayed in overview
+      pane.
         @returns Flag value.
       }
-    procedure SetShowEmptyCategories(const Value: Boolean);
-      {Sets flag that indicates whether empty categories are displayed in
-      overview pane.
+    procedure SetShowEmptySections(const Value: Boolean);
+      {Sets flag that indicates whether empty sections are displayed in overview
+      pane.
         @param Value [in] New flag value.
       }
     function GetShowNewSnippetsInNewTabs: Boolean;
@@ -484,7 +485,7 @@ begin
   Self.fSourceSyntaxHilited := SrcPref.SourceSyntaxHilited;
   Self.fMeasurementUnits := SrcPref.MeasurementUnits;
   Self.fOverviewStartState := SrcPref.OverviewStartState;
-  Self.fShowEmptyCategories := SrcPref.ShowEmptyCategories;
+  Self.fShowEmptySections := SrcPref.ShowEmptySections;
   Self.fShowNewSnippetsInNewTabs := SrcPref.ShowNewSnippetsInNewTabs;
   Self.fPrinterOptions := SrcPref.PrinterOptions;
   Self.fPrinterPageMargins := SrcPref.PrinterPageMargins;
@@ -561,9 +562,9 @@ begin
   Result := fPrinterPageMargins;
 end;
 
-function TPreferences.GetShowEmptyCategories: Boolean;
+function TPreferences.GetShowEmptySections: Boolean;
 begin
-  Result := fShowEmptyCategories;
+  Result := fShowEmptySections;
 end;
 
 function TPreferences.GetShowNewSnippetsInNewTabs: Boolean;
@@ -657,9 +658,9 @@ begin
   fPrinterPageMargins := Margins;
 end;
 
-procedure TPreferences.SetShowEmptyCategories(const Value: Boolean);
+procedure TPreferences.SetShowEmptySections(const Value: Boolean);
 begin
-  fShowEmptyCategories := Value;
+  fShowEmptySections := Value;
 end;
 
 procedure TPreferences.SetShowNewSnippetsInNewTabs(const Value: Boolean);
@@ -715,7 +716,7 @@ begin
   NewPref.SourceSyntaxHilited := Self.fSourceSyntaxHilited;
   NewPref.MeasurementUnits := Self.fMeasurementUnits;
   NewPref.OverviewStartState := Self.fOverviewStartState;
-  NewPref.ShowEmptyCategories := Self.fShowEmptyCategories;
+  NewPref.ShowEmptySections := Self.fShowEmptySections;
   NewPref.ShowNewSnippetsInNewTabs := Self.fShowNewSnippetsInNewTabs;
   NewPref.PrinterOptions := Self.fPrinterOptions;
   NewPref.PrinterPageMargins := Self.fPrinterPageMargins;
@@ -747,8 +748,8 @@ begin
   fOverviewStartState := TOverviewStartState(
     StrToIntDef(Storage.ItemValues['OverviewStartState'], Ord(ossExpanded))
   );
-  fShowEmptyCategories := Boolean(
-    StrToIntDef(Storage.ItemValues['ShowEmptyCategories'], Ord(False))
+  fShowEmptySections := Boolean(
+    StrToIntDef(Storage.ItemValues['ShowEmptySections'], Ord(False))
   );
   fShowNewSnippetsInNewTabs := Boolean(
     StrToIntDef(Storage.ItemValues['ShowNewSnippetsInNewTabs'], Ord(False))
@@ -811,8 +812,8 @@ begin
   Storage.ItemValues['OverviewStartState'] := IntToStr(
     Ord(fOverviewStartState)
   );
-  Storage.ItemValues['ShowEmptyCategories'] := IntToStr(
-    Ord(fShowEmptyCategories)
+  Storage.ItemValues['ShowEmptySections'] := IntToStr(
+    Ord(fShowEmptySections)
   );
   Storage.ItemValues['ShowNewSnippetsInNewTabs'] := IntToStr(
     Ord(fShowNewSnippetsInNewTabs)

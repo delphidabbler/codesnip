@@ -53,12 +53,12 @@ inherited GeneralPrefsFrame: TGeneralPrefsFrame
       Style = csDropDownList
       TabOrder = 0
     end
-    object chkHideEmptyCategories: TCheckBox
+    object chkHideEmptySections: TCheckBox
       Left = 3
       Top = 64
       Width = 353
       Height = 17
-      Caption = 'Hide empty categories in overview'
+      Caption = 'Hide empty section headings in overview'
       TabOrder = 1
     end
     object chkSnippetsInNewTab: TCheckBox

@@ -62,7 +62,7 @@ type
     gbMeasurement: TGroupBox;
     lblOverviewTree: TLabel;
     lblUnits: TLabel;
-    chkHideEmptyCategories: TCheckBox;
+    chkHideEmptySections: TCheckBox;
     chkSnippetsInNewTab: TCheckBox;
   strict private
     procedure SelectUnits(const MU: TMeasurementUnits);
@@ -129,7 +129,7 @@ procedure TGeneralPrefsFrame.Activate(const Prefs: IPreferences);
 begin
   SelectOverviewTreeState(Prefs.OverviewStartState);
   SelectUnits(Prefs.MeasurementUnits);
-  chkHideEmptyCategories.Checked := not Prefs.ShowEmptyCategories;
+  chkHideEmptySections.Checked := not Prefs.ShowEmptySections;
   chkSnippetsInNewTab.Checked := Prefs.ShowNewSnippetsInNewTabs;
 end;
 
@@ -143,7 +143,7 @@ var
 begin
   lblOverviewTree.Left := Col1Left;
   lblUnits.Left := Col1Left;
-  chkHideEmptyCategories.Left := Col1Left;
+  chkHideEmptySections.Left := Col1Left;
   chkSnippetsInNewTab.Left := Col1Left;
 
   Col2Left := Col1Left + Max(
@@ -153,15 +153,15 @@ begin
   cbOverviewTree.Left := Col2Left;
   cbUnits.Left := Col2Left;
 
-  chkHideEmptyCategories.Width := Self.Width - 16;
+  chkHideEmptySections.Width := Self.Width - 16;
   chkSnippetsInNewTab.Width := Self.Width - 16;
 
   gbDisplay.Top := 0;
   TCtrlArranger.AlignVCentres(20, [lblOverviewTree, cbOverviewTree]);
-  chkHideEmptyCategories.Top := TCtrlArranger.BottomOf(
+  chkHideEmptySections.Top := TCtrlArranger.BottomOf(
     [lblOverviewTree, cbOverviewTree], 8
   );
-  chkSnippetsInNewTab.Top := TCtrlArranger.BottomOf(chkHideEmptyCategories, 8);
+  chkSnippetsInNewTab.Top := TCtrlArranger.BottomOf(chkHideEmptySections, 8);
   gbDisplay.ClientHeight := TCtrlArranger.TotalControlHeight(gbDisplay) + 12;
 
   gbMeasurement.Top := TCtrlArranger.BottomOf(gbDisplay, 12);
@@ -196,7 +196,7 @@ procedure TGeneralPrefsFrame.Deactivate(const Prefs: IPreferences);
   }
 begin
   Prefs.ShowNewSnippetsInNewTabs := chkSnippetsInNewTab.Checked;
-  Prefs.ShowEmptyCategories := not chkHideEmptyCategories.Checked;
+  Prefs.ShowEmptySections := not chkHideEmptySections.Checked;
   Prefs.OverviewStartState := TOverviewStartState(
     cbOverviewTree.Items.Objects[cbOverviewTree.ItemIndex]
   );
