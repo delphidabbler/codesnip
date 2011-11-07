@@ -159,6 +159,11 @@ type
 implementation
 
 
+uses
+  // Project
+  UPreferences;
+
+
 {
   NOTE:
 
@@ -203,7 +208,7 @@ begin
     // Create tree
     for Group in Grouping do
     begin
-      if not Group.IsEmpty then
+      if not Group.IsEmpty or Preferences.ShowEmptySections then
       begin
         ParentNode := AddViewItemNode(nil, CreateViewItemForGroup(Group));
         for Snippet in Group.SnippetList do

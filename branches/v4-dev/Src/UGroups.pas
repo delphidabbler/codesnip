@@ -469,8 +469,11 @@ begin
     ),
     []
   );
+  // NOTE: We have to read all snippets in database to get all possible initial
+  // letters in case user wants to display empty letter groups. We then add
+  // only those snippets in given snippet list to the grouping.
   try
-    for Snippet in SnippetList do
+    for Snippet in Database.Snippets do
     begin
       Letter := TInitialLetter.Create(FirstCharOfName(Snippet.Name));
       if Map.Contains(Letter) then
@@ -481,7 +484,8 @@ begin
         AddItem(GroupItem);
         Map.Add(Letter, GroupItem);
       end;
-      GroupItem.AddSnippet(Snippet);
+      if SnippetList.Contains(Snippet) then
+        GroupItem.AddSnippet(Snippet);
     end;
   finally
     Map.Free;
