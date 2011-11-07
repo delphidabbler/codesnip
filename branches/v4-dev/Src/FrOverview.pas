@@ -621,7 +621,14 @@ procedure TOverviewFrame.SelectTab(const TabIdx: Integer);
 begin
   Assert((TabIdx >= 0) and (TabIdx < tcDisplayStyle.Tabs.Count),
     ClassName + '.SelectTab: TabIdx out range');
-  tcDisplayStyle.TabIndex := TabIdx;
+  // If SelectTab called for current tab index we assume it's via
+  // tcDisplayStyleChange when tree state will have already been saved in
+  // tcDisplayStyleChanging
+  if tcDisplayStyle.TabIndex <> TabIdx then
+  begin
+    SaveTreeState;
+    tcDisplayStyle.TabIndex := TabIdx;
+  end;
   Redisplay;
 end;
 
@@ -639,6 +646,10 @@ procedure TOverviewFrame.tcDisplayStyleChange(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
+  // TODO: consider calling SelectTab direct rather than via Notifier
+  { TODO: create a Tab Manager object that triggers Changing and / or Change
+          events regardless of how tab is changed. This manager class could
+          implement ITabbedDisplayMgr on behalf of frame.}
   if Assigned(fNotifier) then
     fNotifier.ChangeOverviewStyle(tcDisplayStyle.TabIndex);
 end;
