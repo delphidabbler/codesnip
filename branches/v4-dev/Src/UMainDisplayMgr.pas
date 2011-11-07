@@ -99,6 +99,7 @@ type
     procedure DisplayInSelectedDetailView(View: IView);
     procedure RedisplayOverview;
     procedure ShowInNewDetailPage(View: IView);
+    procedure DisplayNewSnippetOrCategory(View: IView);
   public
     constructor Create(const OverviewMgr, DetailsMgr: IInterface);
       {Class constructor. Sets up object to work with subsidiary manager
@@ -200,7 +201,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UQuery;
+  UPreferences, UQuery;
 
 
 { TMainDisplayMgr }
@@ -239,11 +240,7 @@ end;
 procedure TMainDisplayMgr.CategoryAdded(View: IView);
 begin
   // TODO: extract method from this and SnippetAdded code: identical code
-  RedisplayOverview;
-  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
-  // Always display new categories in a new tab
-  // TODO: consider adding option to choose between new tab or existing one
-  ShowInNewDetailPage(View);
+  DisplayNewSnippetOrCategory(View);
 end;
 
 procedure TMainDisplayMgr.CategoryChanged(View: IView);
@@ -343,6 +340,18 @@ begin
   (fDetailsMgr as IDetailPaneDisplayMgr).Display(
     View, (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
   );
+end;
+
+procedure TMainDisplayMgr.DisplayNewSnippetOrCategory(View: IView);
+begin
+  Assert(Supports(View, ISnippetView) or Supports(View, ICategoryView),
+    ClassName + '.DisplayNewSnippetOrCategory: View not snippet or category');
+  RedisplayOverview;
+  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
+  if Preferences.ShowNewSnippetsInNewTabs then
+    DisplayViewItem(View, ddmForceNewTab)
+  else
+    DisplayViewItem(View, ddmOverwrite);
 end;
 
 procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView;
@@ -471,11 +480,10 @@ end;
 
 procedure TMainDisplayMgr.RedisplayOverview;
 begin
-  // TODO: check whether Clear needed here
-  // TODO: check whether RestoreTreeState needed: called indirectly by Display
+  // TODO: check whether Clear needed here: could have Force param in Display
+  (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
   (fOverviewMgr as IOverviewDisplayMgr).Clear;
   (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection);
-  (fOverviewMgr as IOverviewDisplayMgr).RestoreTreeState;
 end;
 
 procedure TMainDisplayMgr.Refresh;
@@ -559,11 +567,7 @@ end;
 
 procedure TMainDisplayMgr.SnippetAdded(View: IView);
 begin
-  RedisplayOverview;
-  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
-  // Always display new snippets in a new tab
-  // TODO: consider adding option to choose between new tab or existing one
-  ShowInNewDetailPage(View);
+  DisplayNewSnippetOrCategory(View);
 end;
 
 procedure TMainDisplayMgr.SnippetChanged(View: IView);
