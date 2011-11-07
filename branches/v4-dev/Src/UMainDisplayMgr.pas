@@ -431,10 +431,9 @@ procedure TMainDisplayMgr.Initialise;
   detail pane is cleared.
   }
 begin
-  // Clear both displays
-  ClearAll;
-  // Now load current query into overview pane
-  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection);
+  // Clear all tabs and force re-displayed of overview
+  (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
 end;
 
 procedure TMainDisplayMgr.PrepareForChange;
@@ -468,7 +467,7 @@ procedure TMainDisplayMgr.QueryUpdated;
   }
 begin
   // Update overview to show only found snippets
-  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection);
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, False);
   // Redisplay detail pane
   if not (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
   begin
@@ -480,10 +479,9 @@ end;
 
 procedure TMainDisplayMgr.RedisplayOverview;
 begin
-  // TODO: check whether Clear needed here: could have Force param in Display
+  // TODO: Note calling SaveTreeState here could be buggy
   (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
-  (fOverviewMgr as IOverviewDisplayMgr).Clear;
-  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection);
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
 end;
 
 procedure TMainDisplayMgr.Refresh;

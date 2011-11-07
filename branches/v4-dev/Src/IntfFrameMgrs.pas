@@ -154,9 +154,12 @@ type
   }
   IOverviewDisplayMgr = interface(IInterface)
     ['{AD5D5A0F-E7D3-4173-A4F9-04D43909B0F5}']
-    procedure Display(const SnippetList: TSnippetList);
+    procedure Display(const SnippetList: TSnippetList; const Force: Boolean);
       {Displays the snippets in the current overview tab.
+      NOTE: May not redisplay if SnippetList is same as that displayed, unless
+      Force is True.
         @param SnippetList [in] List of snippets to be displayed.
+        @param Force [in] Forces redisplay regardless of current state.
       }
     procedure Clear;
       {Clears the display.

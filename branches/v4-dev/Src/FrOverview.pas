@@ -191,10 +191,12 @@ type
       {Switches to previous tab, or return to last tab if current tab is first.
       }
     { IOverviewDisplayMgr }
-    procedure Display(const SnippetList: TSnippetList);
+    procedure Display(const SnippetList: TSnippetList; const Force: Boolean);
       {Displays the snippets in the current overview tab.
-        @param SnippetList [in] List of snippets to be displayed or nil if
-          nothing to be displayed.
+      NOTE: May not redisplay if SnippetList is same as that displayed, unless
+      Force is True.
+        @param SnippetList [in] List of snippets to be displayed.
+        @param Force [in] Forces redisplay regardless of current state.
       }
     procedure Clear;
       {Clears the display.
@@ -284,7 +286,7 @@ procedure TOverviewFrame.Clear;
   }
 begin
   SelectItem(nil);
-  Display(nil);
+  Display(nil, False);
 end;
 
 constructor TOverviewFrame.Create(AOwner: TComponent);
@@ -333,14 +335,18 @@ begin
   inherited;
 end;
 
-procedure TOverviewFrame.Display(const SnippetList: TSnippetList);
+procedure TOverviewFrame.Display(const SnippetList: TSnippetList;
+  const Force: Boolean);
   {Displays the snippets in the current overview tab.
-    @param SnippetList [in] List of snippets to be displayed or nil if nothing
-      to be displayed.
+  NOTE: May not redisplay if SnippetList is same as that displayed, unless
+  Force is True.
+    @param SnippetList [in] List of snippets to be displayed.
+    @param Force [in] Forces redisplay regardless of current state.
   }
 begin
-  // Only do update if new snippet list is different to current one
-  if not fSnippetList.IsEqual(SnippetList) then
+  // Only do update if new snippet list is different to current one unless
+  // Force is True
+  if Force or not fSnippetList.IsEqual(SnippetList) then
   begin
     // Take copy of new list
     fSnippetList.Assign(SnippetList);
