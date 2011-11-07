@@ -252,6 +252,9 @@ begin
     (fDetailsMgr as IDetailPaneDisplayMgr).Display(
       View, fDetailPagePendingChange
     );
+  if fDetailPagePendingChange <> SelectedDetailTab then
+    // current view may reference changed category, so it is updated.
+    RefreshDetailPage;
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
 end;
 
