@@ -72,6 +72,8 @@ type
     ///  </para>
     ///  <para>Any OnExecute event handler is ignored.</para>
     ///  </remarks>
+    ///  <returns>Boolean. False to indicate OnExecute event handler not called.
+    ///  </returns>
     function Execute: Boolean; override;
     ///  <summary>Stores reference to given notifier object.</summary>
     ///  <remarks>Implements ISetNotifier.SetNotifier</remarks>
