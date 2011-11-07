@@ -100,6 +100,7 @@ type
     procedure RedisplayOverview;
     procedure ShowInNewDetailPage(View: IView);
     procedure DisplayNewSnippetOrCategory(View: IView);
+    procedure RefreshDetailPage;
   public
     constructor Create(const OverviewMgr, DetailsMgr: IInterface);
       {Class constructor. Sets up object to work with subsidiary manager
@@ -469,12 +470,7 @@ begin
   // Update overview to show only found snippets
   (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, False);
   // Redisplay detail pane
-  if not (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
-  begin
-    (fDetailsMgr as IDetailPaneDisplayMgr).Display(
-      CurrentView, (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
-    )
-  end;
+  RefreshDetailPage;
 end;
 
 procedure TMainDisplayMgr.RedisplayOverview;
@@ -488,6 +484,11 @@ procedure TMainDisplayMgr.Refresh;
 begin
   // Redisplays current view in overview pane and active tab of detail pane
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
+  RefreshDetailPage;
+end;
+
+procedure TMainDisplayMgr.RefreshDetailPage;
+begin
   if not (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
     DisplayInSelectedDetailView(CurrentView);
 end;
