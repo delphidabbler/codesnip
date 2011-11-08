@@ -85,7 +85,6 @@ type
     fDisplayedView: IView;
     fViews: TList<IView>;
     function TabCount: Integer;
-    procedure NotifyTabChange(TabIdx: Integer);
     procedure InternalSelectTab(TabIdx: Integer);
     procedure InternalDisplay(View: IView);
     procedure InternalDeleteTab(TabIdx: Integer);
@@ -186,7 +185,7 @@ begin
   if KeepSelected then
     tcViews.TabIndex := 0 // only selected tab remains: new index
   else
-    NotifyTabChange(-1);  // empty: change of tab selection
+    tcViews.TabIndex := -1;
 end;
 
 procedure TDetailFrame.CloseTab(const TabIdx: Integer);
@@ -201,8 +200,7 @@ begin
   begin
     if SelectedIdx = TabCount then
       Dec(SelectedIdx);
-    // new tab (view) selected: notify tab change
-    NotifyTabChange(SelectedIdx);
+    tcViews.TabIndex := SelectedIdx;
   end
   else
   begin
@@ -298,13 +296,6 @@ begin
     InternalSelectTab(Succ(SelectedTab));
 end;
 
-procedure TDetailFrame.NotifyTabChange(TabIdx: Integer);
-begin
-  // NOTE: should only be called after some INTERNAL action changes tab
-  if Assigned(fNotifier) then
-    fNotifier.ChangeDetailPane(TabIdx);
-end;
-
 procedure TDetailFrame.PreviousTab;
 begin
   if IsEmptyTabSet then
@@ -375,7 +366,8 @@ begin
   // notify program via notifier: this will result in instruction back to select
   // the tab - this allows for other controls to change the tab
   Assert(tcViews.TabIndex >= 0, ClassName + '.tcViewsChange: tab index < 0');
-  NotifyTabChange(tcViews.TabIndex);
+  if Assigned(fNotifier) then
+    fNotifier.ChangeDetailPane(tcViews.TabIndex);
 end;
 
 { TDetailFrame.TCommandBarItem }
