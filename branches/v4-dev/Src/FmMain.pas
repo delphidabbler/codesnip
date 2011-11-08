@@ -1618,7 +1618,6 @@ begin
       Enabled := True;
     evSnippetAdded:
     begin
-      Query.Update;;
       fMainDisplayMgr.SnippetAdded(
         TViewItemFactory.CreateSnippetView(EventInfo.Info as TSnippet)
       );
@@ -1631,7 +1630,6 @@ begin
     end;
     evSnippetChanged:
     begin
-      Query.Update;;
       fMainDisplayMgr.SnippetChanged(
         TViewItemFactory.CreateSnippetView(EventInfo.Info as TSnippet)
       );
@@ -1644,12 +1642,10 @@ begin
     end;
     evSnippetDeleted:
     begin
-      Query.Update;;
       fMainDisplayMgr.SnippetDeleted;
     end;
     evCategoryAdded:
     begin
-      Query.Update;;
       fMainDisplayMgr.CategoryAdded(
         TViewItemFactory.CreateCategoryView(EventInfo.Info as TCategory)
       );
@@ -1662,7 +1658,6 @@ begin
     end;
     evCategoryChanged:
     begin
-      Query.Update;;
       fMainDisplayMgr.CategoryChanged(
         TViewItemFactory.CreateCategoryView(EventInfo.Info as TCategory)
       );
@@ -1675,7 +1670,6 @@ begin
     end;
     evCategoryDeleted:
     begin
-      Query.Update;;
       fMainDisplayMgr.CategoryDeleted;
     end;
   end;
