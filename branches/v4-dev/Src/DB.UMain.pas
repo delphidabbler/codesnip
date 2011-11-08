@@ -294,7 +294,7 @@ uses
   // Delphi
   SysUtils, Generics.Defaults,
   // Project
-  DB.UDatabaseIO, IntfCommon, UExceptions, UStrUtils;
+  DB.UDatabaseIO, IntfCommon, UExceptions, UQuery, UStrUtils;
 
 
 var
@@ -609,6 +609,7 @@ begin
     if fCategories.Find(CatID) <> nil then
       raise ECodeSnip.CreateFmt(sNameExists, [CatID]);
     Result := InternalAddCategory(CatID, Data);
+    Query.Update;
     TriggerEvent(evCategoryAdded, Result);
   finally
     fUpdated := True;
@@ -642,6 +643,7 @@ begin
     if fSnippets.Find(SnippetName, True) <> nil then
       raise ECodeSnip.CreateFmt(sNameExists, [SnippetName]);
     Result := InternalAddSnippet(SnippetName, Data);
+    Query.Update;
     TriggerEvent(evSnippetAdded, Result);
   finally
     fUpdated := True;
@@ -715,6 +717,7 @@ begin
   TriggerEvent(evBeforeCategoryDelete, Category);
   try
     InternalDeleteCategory(Category);
+    Query.Update;
   finally
     TriggerEvent(evCategoryDeleted);
     TriggerEvent(evChangeEnd);
@@ -753,6 +756,7 @@ begin
       (Dependent.Depends as TSnippetListEx).Delete(Snippet);
     // Delete snippet itself
     InternalDeleteSnippet(Snippet);
+    Query.Update;
   finally
     FreeAndNil(Referrers);
     FreeAndNil(Dependents);
@@ -1034,6 +1038,7 @@ begin
     finally
       FreeAndNil(SnippetList);
     end;
+    Query.Update;
     TriggerEvent(evCategoryChanged, Result);
   finally
     fUpdated := True;
@@ -1107,6 +1112,7 @@ begin
       Referrer.XRef.Add(Result);
     for Dependent in Dependents do
       Dependent.Depends.Add(Result);
+    Query.Update;
     TriggerEvent(evSnippetChanged, Result);
   finally
     fUpdated := True;
