@@ -222,7 +222,7 @@ begin
   inherited;
   fCommandBarItems := TCommandBarItems.Create;
   fViews := TList<IView>.Create;
-  fDisplayedView := TViewItemFactory.CreateNulView;
+  fDisplayedView := TViewFactory.CreateNulView;
 end;
 
 function TDetailFrame.CreateTab(View: IView): Integer;
@@ -243,7 +243,7 @@ procedure TDetailFrame.Display(View: IView; const TabIdx: Integer);
 begin
   Assert(Assigned(View), ClassName + '.Display: View is nil');
 
-  fViews[TabIdx] := TViewItemFactory.Clone(View);
+  fViews[TabIdx] := TViewFactory.Clone(View);
   tcViews.Tabs[TabIdx] := View.Description;
   if TabIdx = SelectedTab then
     InternalDisplay(fViews[TabIdx]);
@@ -323,7 +323,7 @@ end;
 function TDetailFrame.SelectedView: IView;
 begin
   if IsEmptyTabSet then
-    Result := TViewItemFactory.CreateNulView
+    Result := TViewFactory.CreateNulView
   else
     Result := fViews[SelectedTab];
 end;

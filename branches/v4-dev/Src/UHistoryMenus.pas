@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -69,10 +69,10 @@ type
     ///  <summary>Handles OnClick events for all menu items in menu by
     ///  executing action for view item associated with menu item.</summary>
     procedure MenuItemClick(Sender: TObject);
-    ///  <summary>Builds list of view items to be displayed in menu.</summary>
-    ///  <param name="List">TViewItemList [in] List that receives view items.
+    ///  <summary>Builds list of views to be displayed in menu.</summary>
+    ///  <param name="List">TViewItemList [in] List that receives views.
     ///  </param>
-    procedure GetViewItemList(const List: TViewItemList); virtual; abstract;
+    procedure GetViewItemList(const List: TViewList); virtual; abstract;
     ///  <summary>Populates menu with required items just before it is
     ///  displayed.</summary>
     procedure DoPopup(Sender: TObject); override;
@@ -98,10 +98,9 @@ type
   ///  </summary>
   TBackHistoryMenu = class sealed(THistoryMenu)
   strict protected
-    ///  <summary>Builds list of view items in "back" history.</summary>
-    ///  <param name="List">TViewItemList [in] List that receives view items.
-    ///  </param>
-    procedure GetViewItemList(const List: TViewItemList); override;
+    ///  <summary>Builds list of views in "back" history.</summary>
+    ///  <param name="List">TViewItemList [in] List that receives views.</param>
+    procedure GetViewItemList(const List: TViewList); override;
   end;
 
 type
@@ -112,10 +111,9 @@ type
   ///  </summary>
   TForwardHistoryMenu = class sealed(THistoryMenu)
   strict protected
-    ///  <summary>Builds list of view items in "forward" history.</summary>
-    ///  <param name="List">TViewItemList [in] List that receives view items.
-    ///  </param>
-    procedure GetViewItemList(const List: TViewItemList); override;
+    ///  <summary>Builds list of views in "forward" history.</summary>
+    ///  <param name="List">TViewItemList [in] List that receives views.</param>
+    procedure GetViewItemList(const List: TViewList); override;
   end;
 
 
@@ -176,24 +174,24 @@ end;
 
 procedure THistoryMenu.PopulateMenu;
 var
-  ViewList: TViewItemList;  // list of view items in required section of history
+  ViewList: TViewList;      // list of views in required section of history
   MI: THistoryMenuItem;     // a menu item instance
   Idx: Integer;             // loops thru ViewList
 begin
   // Remove any existing menu items (this frees them)
   Items.Clear;
   // Get a list of view items to be displayed in menu
-  ViewList := TViewItemList.Create;
+  ViewList := TViewList.Create;
   try
     GetViewItemList(ViewList);
-    // Loop thru view items, up to maximum that can be displayed
+    // Loop thru views, up to maximum that can be displayed
     for Idx := 0 to Pred(ViewList.Count) do
     begin
       if Idx = cMaxHistoryMenuItems then
         Break;
       // Create menu item
       MI := THistoryMenuItem.Create(Self);         // use custom menu item class
-      MI.ViewItem := ViewList[Idx];      // record view item (also sets Caption)
+      MI.ViewItem := ViewList[Idx];           // record view (also sets Caption)
       MI.OnClick := MenuItemClick;       // every item uses same OnClick handler
       MI.Default := (Idx = 0);                     // first menu item is default
       // Add item to menu
@@ -206,14 +204,14 @@ end;
 
 { TBackHistoryMenu }
 
-procedure TBackHistoryMenu.GetViewItemList(const List: TViewItemList);
+procedure TBackHistoryMenu.GetViewItemList(const List: TViewList);
 begin
   History.BackList(List);
 end;
 
 { TForwardHistoryMenu }
 
-procedure TForwardHistoryMenu.GetViewItemList(const List: TViewItemList);
+procedure TForwardHistoryMenu.GetViewItemList(const List: TViewList);
 begin
   History.ForwardList(List);
 end;

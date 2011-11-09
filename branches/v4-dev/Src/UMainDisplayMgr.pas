@@ -316,7 +316,7 @@ var
   NewPageView: IView; // view item for new tab
 begin
   // NOTE: Always uses new tab, even if view exists, by design
-  NewPageView := TViewItemFactory.CreateNewTabView;
+  NewPageView := TViewFactory.CreateNewTabView;
   ShowInNewDetailPage(NewPageView);
 end;
 
@@ -350,11 +350,11 @@ begin
   // TODO: Move this to TViewItemFactory as CreateDBView method (param=DBObj)?
   Result := nil;
   if not Assigned(EvtInfo) then
-    Result := TViewItemFactory.CreateNulView
+    Result := TViewFactory.CreateNulView
   else if EvtInfo is TSnippet then
-    Result := TViewItemFactory.CreateSnippetView(EvtInfo as TSnippet)
+    Result := TViewFactory.CreateSnippetView(EvtInfo as TSnippet)
   else if EvtInfo is TCategory then
-    Result := TViewItemFactory.CreateCategoryView(EvtInfo as TCategory);
+    Result := TViewFactory.CreateCategoryView(EvtInfo as TCategory);
   Assert(Assigned(Result), ClassName + '.DBEventInfoToView: Result is nil');
 end;
 
@@ -491,7 +491,7 @@ begin
     begin
       // TODO: Check if overview pane actually needs clearing here
       (fOverviewMgr as IOverviewDisplayMgr).Clear;
-      DisplayInSelectedDetailView(TViewItemFactory.CreateNulView);
+      DisplayInSelectedDetailView(TViewFactory.CreateNulView);
     end;
   fPendingViewChange := True;
 end;
@@ -582,7 +582,7 @@ end;
 procedure TMainDisplayMgr.ShowDBUpdatedPage;
 begin
   // NOTE: Normally this page is only shown when there are no tabs displayed
-  DisplayViewItem(TViewItemFactory.CreateDBUpdateInfoView, ddmForceNewTab);
+  DisplayViewItem(TViewFactory.CreateDBUpdateInfoView, ddmForceNewTab);
 end;
 
 procedure TMainDisplayMgr.ShowInNewDetailPage(View: IView);
@@ -596,7 +596,7 @@ end;
 procedure TMainDisplayMgr.ShowWelcomePage;
 begin
   // TODO: May want a user option for welcome page to overwrite or use new tab
-  DisplayViewItem(TViewItemFactory.CreateStartPageView, ddmRequestNewTab);
+  DisplayViewItem(TViewFactory.CreateStartPageView, ddmRequestNewTab);
 end;
 
 procedure TMainDisplayMgr.UpdateOverviewTreeState(const State: TTreeNodeAction);

@@ -106,7 +106,7 @@ begin
   Assert(Assigned(Snippet), ClassName + '.Execute: SnippetName not valid');
   // Create a view item for snippet and get notifier to display it
   // TODO: change TSnippetAction to allow for NewTab property??
-  fNotifier.ShowViewItem(TViewItemFactory.CreateSnippetView(Snippet), False);
+  fNotifier.ShowViewItem(TViewFactory.CreateSnippetView(Snippet), False);
   Result := False;
 end;
 

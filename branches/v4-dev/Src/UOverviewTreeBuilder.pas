@@ -213,7 +213,7 @@ begin
         ParentNode := AddViewItemNode(nil, CreateViewItemForGroup(Group));
         for Snippet in Group.SnippetList do
           AddViewItemNode(
-            ParentNode, TViewItemFactory.CreateSnippetView(Snippet)
+            ParentNode, TViewFactory.CreateSnippetView(Snippet)
           );
       end;
     end;
@@ -252,7 +252,7 @@ function TOverviewCategorisedTreeBuilder.CreateViewItemForGroup(
     @return Required category view item for group.
   }
 begin
-  Result := TViewItemFactory.CreateCategoryView(
+  Result := TViewFactory.CreateCategoryView(
     (Group as TCategoryGroupItem).Category
   );
 end;
@@ -274,7 +274,7 @@ function TOverviewAlphabeticTreeBuilder.CreateViewItemForGroup(
     @return Required alpha view item for group.
   }
 begin
-  Result := TViewItemFactory.CreateInitialLetterView(
+  Result := TViewFactory.CreateInitialLetterView(
     (Group as TAlphaGroupItem).Letter
   );
 end;
@@ -296,7 +296,7 @@ function TOverviewSnipKindTreeBuilder.CreateViewItemForGroup(
     @return Required snippet kind view item for group.
   }
 begin
-  Result := TViewItemFactory.CreateSnippetKindView(
+  Result := TViewFactory.CreateSnippetKindView(
     (Group as TSnipKindGroupItem).SnipKindInfo
   );
 end;

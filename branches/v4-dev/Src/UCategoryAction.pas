@@ -98,7 +98,7 @@ begin
   Assert(Assigned(Cat), ClassName + '.Execute: CatID not valid');
   // Create a view item for category and get notifier to display it
   // TODO: change TCategoryAction to allow for NewTab property??
-  fNotifier.ShowViewItem(TViewItemFactory.CreateCategoryView(Cat), False);
+  fNotifier.ShowViewItem(TViewFactory.CreateCategoryView(Cat), False);
   Result := False;
 end;
 

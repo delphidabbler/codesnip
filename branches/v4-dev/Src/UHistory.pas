@@ -58,8 +58,8 @@ type
   THistory = class(TObject)
   strict private
     type
-      // Implements list of view items in history
-      THistoryList = TViewItemList;
+      // Implements list of views in history
+      THistoryList = TViewList;
     var
       fItems: THistoryList;   // History list
       fCursor: Integer;       // Index of current history item in list
@@ -94,9 +94,9 @@ type
         @return Current item after moving back in history or nil if we were at
           start of list before method called.
       }
-    procedure BackList(const List: TViewItemList);
-      {Builds a list of items in the "back" list.
-        @param List [in] Receives items in "back" list.
+    procedure BackList(const List: TViewList);
+      {Builds a list of views in the "back" list.
+        @param List [in] Receives views in "back" list.
       }
     function BackListCount: Integer;
       {Counts items in "back" list.
@@ -107,9 +107,9 @@ type
         @return Current item after moving forward in history or nil if we were
           at end of list before method called.
       }
-    procedure ForwardList(const List: TViewItemList);
-      {Builds a list of items in the "forward" list.
-        @param List [in] Receives items in "forward" list.
+    procedure ForwardList(const List: TViewList);
+      {Builds a list of views in the "forward" list.
+        @param List [in] Receives views in "forward" list.
       }
     function ForwardListCount: Integer;
       {Counts items in "forward" list.
@@ -134,9 +134,9 @@ uses
 
 { THistory }
 
-procedure THistory.BackList(const List: TViewItemList);
-  {Builds a list of items in the "back" list.
-    @param List [in] Receives items in "back" list.
+procedure THistory.BackList(const List: TViewList);
+  {Builds a list of views in the "back" list.
+    @param List [in] Receives views in "back" list.
   }
 var
   Idx: Integer; // loops thru "back" list
@@ -185,9 +185,9 @@ begin
   inherited;
 end;
 
-procedure THistory.ForwardList(const List: TViewItemList);
-  {Builds a list of items in the "forward" list.
-    @param List [in] Receives items in "forward" list.
+procedure THistory.ForwardList(const List: TViewList);
+  {Builds a list of views in the "forward" list.
+    @param List [in] Receives views in "forward" list.
   }
 var
   Idx: Integer; // loops thru forward list
@@ -255,8 +255,8 @@ begin
   Assert(fCursor >= -1, ClassName + '.NewItem: fCursor too small');
   // Create copy of given view item
   if Supports(ViewItem, INulView) then
-    Exit; // don't record nul view items
-  ClonedItem := TViewItemFactory.Clone(ViewItem);
+    Exit; // don't record nul views
+  ClonedItem := TViewFactory.Clone(ViewItem);
   // Increment cursor if possible - it will reference new item
   if fCursor < fItems.Count then
     Inc(fCursor);

@@ -306,8 +306,8 @@ begin
     cOverviewPopupMenu, TPopupMenuWrapper.Create(mnuOverview)
   );
   // Create new empty objects to store current and previous selected view items
-  fSelectedItem := TViewItemFactory.CreateNulView;
-  fPrevSelectedItem := TViewItemFactory.CreateNulView;
+  fSelectedItem := TViewFactory.CreateNulView;
+  fPrevSelectedItem := TViewFactory.CreateNulView;
   // Create treeview draw object
   fTVDraw := TTVDraw.Create;
   tvSnippets.OnCustomDrawItem := fTVDraw.CustomDrawItem;
@@ -578,11 +578,11 @@ procedure TOverviewFrame.SelectionChange(Item: IView; const NewTab: Boolean);
   }
 begin
   // Record new selected item
-  fSelectedItem := TViewItemFactory.Clone(Item);
+  fSelectedItem := TViewFactory.Clone(Item);
   if not fSelectedItem.IsEqual(fPrevSelectedItem) then
   begin
     // Item has actually changed: store as previously selected item
-    fPrevSelectedItem := TViewItemFactory.Clone(fSelectedItem);
+    fPrevSelectedItem := TViewFactory.Clone(fSelectedItem);
     // Notify application of change
     if Assigned(fNotifier) then
       fNotifier.ShowViewItem(fSelectedItem, NewTab);
@@ -597,8 +597,8 @@ begin
   // Select in tree view
   InternalSelectItem(ViewItem);
   // Record view item as selected one
-  fSelectedItem := TViewItemFactory.Clone(ViewItem);
-  fPrevSelectedItem := TViewItemFactory.Clone(fSelectedItem);
+  fSelectedItem := TViewFactory.Clone(ViewItem);
+  fPrevSelectedItem := TViewFactory.Clone(fSelectedItem);
 end;
 
 procedure TOverviewFrame.SelectNode(const Node: TTreeNode;

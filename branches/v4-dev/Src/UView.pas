@@ -1,7 +1,7 @@
 {
  * UView.pas
  *
- * Classes that encapsulate and provide information about "view items" that are
+ * Classes that encapsulate and provide information about "views" that are
  * displayed in the user interface.
  *
  * $Rev$
@@ -68,22 +68,22 @@ type
   ///  </summary>
   IView = interface(IInterface)
     ['{707ED3DC-1738-4B79-B1BE-1C554572097E}']
-    ///  <summary>Checks if two view items are equal, i.e. they have the same
-    ///  "type" and any properties have the the same values.</summary>
+    ///  <summary>Checks if two viewsare equal, i.e. they have the same "type"
+    ///  and any properties have the the same values.</summary>
     function IsEqual(View: IView): Boolean;
     ///  <summary>Gets description of view.</summary>
     function GetDescription: string;
     ///  <summary>Description of view.</summary>
     property Description: string read GetDescription;
     ///  <summary>Gets object containing view's unique key.</summary>
-    ///  <remarks>Encapsulates the data that uniquely identifies the view item
-    ///  without having have an instance of any object wrapped by the view item.
+    ///  <remarks>Encapsulates the data that uniquely identifies the view
+    ///  without having have an instance of any object wrapped by the view.
     ///  </remarks>
     function GetKey: IViewKey;
     ///  <summary>Checks if view is user-defined.</summary>
     function IsUserDefined: Boolean;
     ///  <summary>Checks if view is a grouping.</summary>
-    ///  <remarks>A grouping is an item that groups other items together.
+    ///  <remarks>A grouping is a view that groups views together.
     ///  </remarks>
     function IsGrouping: Boolean;
   end;
@@ -170,15 +170,15 @@ type
 
 type
   ///  <summary>
-  ///  List of view items.
+  ///  List of views.
   ///  </summary>
-  TViewItemList = class sealed(TList<IView>);
+  TViewList = class sealed(TList<IView>);
 
 type
   ///  <summary>
   ///  Static factory class used to create view instances of different types.
   ///  </summary>
-  TViewItemFactory = class sealed(TNoConstructObject)
+  TViewFactory = class sealed(TNoConstructObject)
   public
     ///  <summary>Creates a copy of the given view. Copy has same type and
     ///  properties.</summary>
@@ -219,10 +219,10 @@ uses
 
 type
   ///  <summary>
-  ///  Base class for view items that contain no other object references and are
-  ///  used simply for display in the details pane.
+  ///  Base class for views that contain no other object references and are used
+  ///  simply for display in the details pane.
   ///  </summary>
-  TSimpleViewItem = class abstract(TInterfacedObject)
+  TSimpleView = class abstract(TInterfacedObject)
   strict private
     type
       ///  <summary>Implementation of IViewKey for descendants.</summary>
@@ -239,8 +239,8 @@ type
         function IsEqual(const Key: IViewKey): Boolean;
       end;
   public
-    ///  <summary>Checks if this view item is equal to the one passed as a
-    ///  parameter.</summary>
+    ///  <summary>Checks if this view is equal to the one passed as a parameter.
+    ///  </summary>
     ///  <remarks>Method of IView.</remarks>
     function IsEqual(View: IView): Boolean;
     ///  <summary>Gets description of view.</summary>
@@ -259,7 +259,7 @@ type
 
 type
   ///  <summary>Nul view.</summary>
-  TNulViewItem = class sealed(TSimpleViewItem,
+  TNulView = class sealed(TSimpleView,
     IView, INulView
   )
   public
@@ -270,7 +270,7 @@ type
 
 type
   ///  <summary>View associated with blank new tab pages.</summary>
-  TNewTabViewItem = class sealed(TSimpleViewItem,
+  TNewTabView = class sealed(TSimpleView,
     IView, INewTabView
   )
   public
@@ -281,7 +281,7 @@ type
 
 type
   ///  <summary>View associated with start page.</summary>
-  TStartPageViewItem = class sealed(TSimpleViewItem,
+  TStartPageView = class sealed(TSimpleView,
     IView, IStartPageView
   )
   public
@@ -293,7 +293,7 @@ type
 type
   ///  <summary>View associated with information about a database update.
   ///  </summary>
-  TDBUpdateInfoViewItem = class sealed(TSimpleViewItem,
+  TDBUpdateInfoView = class sealed(TSimpleView,
     IView, IDBUpdateInfoView
   )
   public
@@ -304,7 +304,7 @@ type
 
 type
   ///  <summary>View associated with a snippet.</summary>
-  TSnippetViewItem = class sealed(TInterfacedObject,
+  TSnippetView = class sealed(TInterfacedObject,
     IView, ISnippetView
   )
   strict private
@@ -329,8 +329,8 @@ type
   public
     ///  <summary>Constructs view for a specified snippet.</summary>
     constructor Create(const Snippet: TSnippet);
-    ///  <summary>Checks if this view item is equal to the one passed as a
-    ///  parameter.</summary>
+    ///  <summary>Checks if this view is equal to the one passed as a parameter.
+    ///  </summary>
     ///  <remarks>Method of IView.</remarks>
     function IsEqual(View: IView): Boolean;
     ///  <summary>Gets description of view.</summary>
@@ -351,7 +351,7 @@ type
 
 type
   ///  <summary>View associated with a category.</summary>
-  TCategoryViewItem = class sealed(TInterfacedObject,
+  TCategoryView = class sealed(TInterfacedObject,
     IView, ICategoryView
   )
   strict private
@@ -359,7 +359,7 @@ type
       ///  <summary>ID of category associated with view.</summary>
       fCategoryID: string;
     type
-      ///  <summary>Implementation of IViewKey for category view item.</summary>
+      ///  <summary>Implementation of IViewKey for category view.</summary>
       TKey = class(TInterfacedObject, IViewKey)
       strict private
         var
@@ -376,8 +376,8 @@ type
   public
     ///  <summary>Constructs view for a specified category.</summary>
     constructor Create(const Category: TCategory);
-    ///  <summary>Checks if this view item is equal to the one passed as a
-    ///  parameter.</summary>
+    ///  <summary>Checks if this view is equal to the one passed as a parameter.
+    ///  </summary>
     ///  <remarks>Method of IView.</remarks>
     function IsEqual(View: IView): Boolean;
     ///  <summary>Gets description of view.</summary>
@@ -399,7 +399,7 @@ type
 
 type
   ///  <summary>View associated with a snippet kind grouping.</summary>
-  TSnippetKindViewItem = class sealed(TInterfacedObject,
+  TSnippetKindView = class sealed(TInterfacedObject,
     IView, ISnippetKindView
   )
   strict private
@@ -407,7 +407,7 @@ type
       ///  <summary>Snippet kind associated with view.</summary>
       fKindInfo: TSnippetKindInfo;
     type
-      ///  <summary>Implementation of IViewKey for snippet kind view item.
+      ///  <summary>Implementation of IViewKey for snippet kind view.
       ///  </summary>
       TKey = class(TInterfacedObject, IViewKey)
       strict private
@@ -426,8 +426,8 @@ type
   public
     ///  <summary>Constructs view for a specified snippet kind.</summary>
     constructor Create(const KindInfo: TSnippetKindInfo);
-    ///  <summary>Checks if this view item is equal to the one passed as a
-    ///  parameter.</summary>
+    ///  <summary>Checks if this view is equal to the one passed as a parameter.
+    ///  </summary>
     ///  <remarks>Method of IView.</remarks>
     function IsEqual(View: IView): Boolean;
     ///  <summary>Gets description of view.</summary>
@@ -449,7 +449,7 @@ type
 
 type
   ///  <summary>View associated with an initial letter grouping.</summary>
-  TInitialLetterViewItem = class sealed(TInterfacedObject,
+  TInitialLetterView = class sealed(TInterfacedObject,
     IView, IInitialLetterView
   )
   strict private
@@ -457,7 +457,7 @@ type
       ///  <summary>Initial letter associated with view.</summary>
       fInitialLetter: TInitialLetter;
     type
-      ///  <summary>Implementation of IViewKey for initial letter view item.
+      ///  <summary>Implementation of IViewKey for initial letter view.
       ///  </summary>
       TKey = class(TInterfacedObject, IViewKey)
       strict private
@@ -476,8 +476,8 @@ type
   public
     ///  <summary>Constructs view for a specified initial letter.</summary>
     constructor Create(const Letter: TInitialLetter);
-    ///  <summary>Checks if this view item is equal to the one passed as a
-    ///  parameter.</summary>
+    ///  <summary>Checks if this view is equal to the one passed as a parameter.
+    ///  </summary>
     ///  <remarks>Method of IView.</remarks>
     function IsEqual(View: IView): Boolean;
     ///  <summary>Gets description of view.</summary>
@@ -492,106 +492,105 @@ type
     ///  <summary>Checks if view is a grouping.</summary>
     ///  <remarks>Method of IView.</remarks>
     function IsGrouping: Boolean;
-    { IInitialLetterView methods }
     ///  <summary>Gets unfo about initial letter associated with view.</summary>
     ///  <remarks>Method of IInitialLetterView.</remarks>
     function GetInitialLetter: TInitialLetter;
   end;
 
-{ TSimpleViewItem }
+{ TSimpleView }
 
-function TSimpleViewItem.GetKey: IViewKey;
+function TSimpleView.GetKey: IViewKey;
 begin
   Result := TKey.Create(Self.ClassType);
 end;
 
-function TSimpleViewItem.IsEqual(View: IView): Boolean;
+function TSimpleView.IsEqual(View: IView): Boolean;
 begin
   Result := View.GetKey.IsEqual(Self.GetKey);
 end;
 
-function TSimpleViewItem.IsGrouping: Boolean;
+function TSimpleView.IsGrouping: Boolean;
 begin
   Result := False;
 end;
 
-function TSimpleViewItem.IsUserDefined: Boolean;
+function TSimpleView.IsUserDefined: Boolean;
 begin
   Result := False;
 end;
 
-{ TSimpleViewItem.TKey }
+{ TSimpleView.TKey }
 
-constructor TSimpleViewItem.TKey.Create(OwnerClass: TClass);
+constructor TSimpleView.TKey.Create(OwnerClass: TClass);
 begin
   inherited Create;
   fOwnerClass := OwnerClass;
 end;
 
-function TSimpleViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
+function TSimpleView.TKey.IsEqual(const Key: IViewKey): Boolean;
 begin
   Result := (Key is TKey) and ((Key as TKey).fOwnerClass = Self.fOwnerClass);
 end;
 
-{ TNulViewItem }
+{ TNulView }
 
-function TNulViewItem.GetDescription: string;
+function TNulView.GetDescription: string;
 begin
   Result := '';
 end;
 
-{ TNewTabViewItem }
+{ TNewTabView }
 
-function TNewTabViewItem.GetDescription: string;
+function TNewTabView.GetDescription: string;
 resourcestring
   sDescription = 'Empty tab';
 begin
   Result := sDescription;
 end;
 
-{ TStartPageViewItem }
+{ TStartPageView }
 
-function TStartPageViewItem.GetDescription: string;
+function TStartPageView.GetDescription: string;
 resourcestring
   sDesc = 'Welcome';
 begin
   Result := sDesc;
 end;
 
-{ TDBUpdateInfoViewItem }
+{ TDBUpdateInfoView }
 
-function TDBUpdateInfoViewItem.GetDescription: string;
+function TDBUpdateInfoView.GetDescription: string;
 resourcestring
   sDesc = 'Database Updated';
 begin
   Result := sDesc;
 end;
 
-{ TSnippetViewItem }
+{ TSnippetView }
 
-constructor TSnippetViewItem.Create(const Snippet: TSnippet);
+constructor TSnippetView.Create(const Snippet: TSnippet);
 begin
   inherited Create;
   fSnippetID := Snippet.ID;
 end;
 
-function TSnippetViewItem.GetDescription: string;
+function TSnippetView.GetDescription: string;
 begin
   Result := GetSnippet.Name;
 end;
 
-function TSnippetViewItem.GetKey: IViewKey;
+function TSnippetView.GetKey: IViewKey;
 begin
   Result := TKey.Create(fSnippetID);
 end;
 
-function TSnippetViewItem.GetSnippet: TSnippet;
+function TSnippetView.GetSnippet: TSnippet;
 begin
   Result := Database.Snippets.Find(fSnippetID);
   Assert(Assigned(Result), ClassName + '.GetSnippet: Snippet not found');
 end;
 
-function TSnippetViewItem.IsEqual(View: IView): Boolean;
+function TSnippetView.IsEqual(View: IView): Boolean;
 var
   SnippetView: ISnippetView;
 begin
@@ -601,56 +600,56 @@ begin
   Result := GetSnippet.IsEqual(SnippetView.Snippet);
 end;
 
-function TSnippetViewItem.IsGrouping: Boolean;
+function TSnippetView.IsGrouping: Boolean;
 begin
   Result := False;
 end;
 
-function TSnippetViewItem.IsUserDefined: Boolean;
+function TSnippetView.IsUserDefined: Boolean;
 begin
   Result := GetSnippet.UserDefined;
 end;
 
-{ TSnippetViewItem.TKey }
+{ TSnippetView.TKey }
 
-constructor TSnippetViewItem.TKey.Create(const ID: TSnippetID);
+constructor TSnippetView.TKey.Create(const ID: TSnippetID);
 begin
   inherited Create;
   fID := ID;
 end;
 
-function TSnippetViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
+function TSnippetView.TKey.IsEqual(const Key: IViewKey): Boolean;
 begin
-  if not (Key is TSnippetViewItem.TKey) then
+  if not (Key is TSnippetView.TKey) then
     Exit(False);
-  Result := (Key as TSnippetViewItem.TKey).fID = fID;
+  Result := (Key as TSnippetView.TKey).fID = fID;
 end;
 
-{ TCategoryViewItem }
+{ TCategoryView }
 
-constructor TCategoryViewItem.Create(const Category: TCategory);
+constructor TCategoryView.Create(const Category: TCategory);
 begin
   inherited Create;
   fCategoryID := Category.ID;
 end;
 
-function TCategoryViewItem.GetCategory: TCategory;
+function TCategoryView.GetCategory: TCategory;
 begin
   Result := Database.Categories.Find(fCategoryID);
   Assert(Assigned(Result), ClassName + '.GetCategory: Category not found');
 end;
 
-function TCategoryViewItem.GetDescription: string;
+function TCategoryView.GetDescription: string;
 begin
   Result := GetCategory.Description;
 end;
 
-function TCategoryViewItem.GetKey: IViewKey;
+function TCategoryView.GetKey: IViewKey;
 begin
   Result := TKey.Create(GetCategory.ID);
 end;
 
-function TCategoryViewItem.IsEqual(View: IView): Boolean;
+function TCategoryView.IsEqual(View: IView): Boolean;
 var
   CatView: ICategoryView;
 begin
@@ -660,55 +659,55 @@ begin
   Result := GetCategory.IsEqual(CatView.Category);
 end;
 
-function TCategoryViewItem.IsGrouping: Boolean;
+function TCategoryView.IsGrouping: Boolean;
 begin
   Result := True;
 end;
 
-function TCategoryViewItem.IsUserDefined: Boolean;
+function TCategoryView.IsUserDefined: Boolean;
 begin
   Result := GetCategory.UserDefined;
 end;
 
-{ TCategoryViewItem.TKey }
+{ TCategoryView.TKey }
 
-constructor TCategoryViewItem.TKey.Create(const ID: string);
+constructor TCategoryView.TKey.Create(const ID: string);
 begin
   inherited Create;
   fID := ID;
 end;
 
-function TCategoryViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
+function TCategoryView.TKey.IsEqual(const Key: IViewKey): Boolean;
 begin
   if not (Key is TKey) then
     Exit(False);
   Result := StrSameText((Key as TKey).fID, fID);
 end;
 
-{ TSnippetKindViewItem }
+{ TSnippetKindView }
 
-constructor TSnippetKindViewItem.Create(const KindInfo: TSnippetKindInfo);
+constructor TSnippetKindView.Create(const KindInfo: TSnippetKindInfo);
 begin
   inherited Create;
   fKindInfo := KindInfo;
 end;
 
-function TSnippetKindViewItem.GetDescription: string;
+function TSnippetKindView.GetDescription: string;
 begin
   Result := GetKindInfo.DisplayName;
 end;
 
-function TSnippetKindViewItem.GetKey: IViewKey;
+function TSnippetKindView.GetKey: IViewKey;
 begin
   Result := TKey.Create(GetKindInfo.Kind);
 end;
 
-function TSnippetKindViewItem.GetKindInfo: TSnippetKindInfo;
+function TSnippetKindView.GetKindInfo: TSnippetKindInfo;
 begin
   Result := fKindInfo;
 end;
 
-function TSnippetKindViewItem.IsEqual(View: IView): Boolean;
+function TSnippetKindView.IsEqual(View: IView): Boolean;
 var
   SnipKindView: ISnippetKindView;
 begin
@@ -717,55 +716,55 @@ begin
   Result := GetKindInfo.Kind = SnipKindView.KindInfo.Kind;
 end;
 
-function TSnippetKindViewItem.IsGrouping: Boolean;
+function TSnippetKindView.IsGrouping: Boolean;
 begin
   Result := True;
 end;
 
-function TSnippetKindViewItem.IsUserDefined: Boolean;
+function TSnippetKindView.IsUserDefined: Boolean;
 begin
   Result := False;
 end;
 
-{ TSnippetKindViewItem.TKey }
+{ TSnippetKindView.TKey }
 
-constructor TSnippetKindViewItem.TKey.Create(const ID: TSnippetKind);
+constructor TSnippetKindView.TKey.Create(const ID: TSnippetKind);
 begin
   inherited Create;
   fID := ID;
 end;
 
-function TSnippetKindViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
+function TSnippetKindView.TKey.IsEqual(const Key: IViewKey): Boolean;
 begin
   if not (Key is TKey) then
     Exit(False);
   Result := (Key as TKey).fID = fID;
 end;
 
-{ TInitialLetterViewItem }
+{ TInitialLetterView }
 
-constructor TInitialLetterViewItem.Create(const Letter: TInitialLetter);
+constructor TInitialLetterView.Create(const Letter: TInitialLetter);
 begin
   inherited Create;
   fInitialLetter := Letter;
 end;
 
-function TInitialLetterViewItem.GetDescription: string;
+function TInitialLetterView.GetDescription: string;
 begin
   Result := GetInitialLetter.Letter;
 end;
 
-function TInitialLetterViewItem.GetInitialLetter: TInitialLetter;
+function TInitialLetterView.GetInitialLetter: TInitialLetter;
 begin
   Result := fInitialLetter;
 end;
 
-function TInitialLetterViewItem.GetKey: IViewKey;
+function TInitialLetterView.GetKey: IViewKey;
 begin
   Result := TKey.Create(GetInitialLetter);
 end;
 
-function TInitialLetterViewItem.IsEqual(View: IView): Boolean;
+function TInitialLetterView.IsEqual(View: IView): Boolean;
 var
   LetterView: IInitialLetterView;
 begin
@@ -774,34 +773,34 @@ begin
   Result := GetInitialLetter = LetterView.InitialLetter;
 end;
 
-function TInitialLetterViewItem.IsGrouping: Boolean;
+function TInitialLetterView.IsGrouping: Boolean;
 begin
   Result := True;
 end;
 
-function TInitialLetterViewItem.IsUserDefined: Boolean;
+function TInitialLetterView.IsUserDefined: Boolean;
 begin
   Result := False;
 end;
 
-{ TInitialLetterViewItem.TKey }
+{ TInitialLetterView.TKey }
 
-constructor TInitialLetterViewItem.TKey.Create(const ID: TInitialLetter);
+constructor TInitialLetterView.TKey.Create(const ID: TInitialLetter);
 begin
   inherited Create;
   fID := ID;
 end;
 
-function TInitialLetterViewItem.TKey.IsEqual(const Key: IViewKey): Boolean;
+function TInitialLetterView.TKey.IsEqual(const Key: IViewKey): Boolean;
 begin
   if not (Key is TKey) then
     Exit(False);
   Result := (Key as TKey).fID = fID;
 end;
 
-{ TViewItemFactory }
+{ TViewFactory }
 
-class function TViewItemFactory.Clone(View: IView): IView;
+class function TViewFactory.Clone(View: IView): IView;
 begin
   if not Assigned(View) or Supports(View, INulView) then
     Result := CreateNulView // also created if View = nil
@@ -827,48 +826,48 @@ begin
     );
 end;
 
-class function TViewItemFactory.CreateCategoryView(const Category: TCategory):
+class function TViewFactory.CreateCategoryView(const Category: TCategory):
   IView;
 begin
-  Result := TCategoryViewItem.Create(Category);
+  Result := TCategoryView.Create(Category);
 end;
 
-class function TViewItemFactory.CreateDBUpdateInfoView: IView;
+class function TViewFactory.CreateDBUpdateInfoView: IView;
 begin
-  Result := TDBUpdateInfoViewItem.Create;
+  Result := TDBUpdateInfoView.Create;
 end;
 
-class function TViewItemFactory.CreateInitialLetterView(
+class function TViewFactory.CreateInitialLetterView(
   const Letter: TInitialLetter): IView;
 begin
-  Result := TInitialLetterViewItem.Create(Letter);
+  Result := TInitialLetterView.Create(Letter);
 end;
 
-class function TViewItemFactory.CreateNewTabView: IView;
+class function TViewFactory.CreateNewTabView: IView;
 begin
-  Result := TNewTabViewItem.Create;
+  Result := TNewTabView.Create;
 end;
 
-class function TViewItemFactory.CreateNulView: IView;
+class function TViewFactory.CreateNulView: IView;
 begin
-  Result := TNulViewItem.Create;
+  Result := TNulView.Create;
 end;
 
-class function TViewItemFactory.CreateSnippetKindView(
+class function TViewFactory.CreateSnippetKindView(
   const KindInfo: TSnippetKindInfo): IView;
 begin
-  Result := TSnippetKindViewItem.Create(KindInfo);
+  Result := TSnippetKindView.Create(KindInfo);
 end;
 
-class function TViewItemFactory.CreateSnippetView(
+class function TViewFactory.CreateSnippetView(
   const Snippet: TSnippet): IView;
 begin
-  Result := TSnippetViewItem.Create(Snippet);
+  Result := TSnippetView.Create(Snippet);
 end;
 
-class function TViewItemFactory.CreateStartPageView: IView;
+class function TViewFactory.CreateStartPageView: IView;
 begin
-  Result := TStartPageViewItem.Create;
+  Result := TStartPageView.Create;
 end;
 
 end.
