@@ -83,6 +83,8 @@ type
       Shift: TShiftState);
     procedure tvSnippetsMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure tcDisplayStyleMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   strict private
     const
       cPermittedKeys = [            // Keypresses handled by treeview as default
@@ -669,6 +671,13 @@ procedure TOverviewFrame.tcDisplayStyleChanging(Sender: TObject;
   }
 begin
   SaveTreeState;
+end;
+
+procedure TOverviewFrame.tcDisplayStyleMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if htOnItem in tcDisplayStyle.GetHitTestInfoAt(X, Y) then
+    tcDisplayStyle.SetFocus;
 end;
 
 procedure TOverviewFrame.tvSnippetsChanging(Sender: TObject;

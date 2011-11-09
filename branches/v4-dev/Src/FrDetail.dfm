@@ -12,16 +12,21 @@ inherited DetailFrame: TDetailFrame
     Width = 318
     Height = 188
     Align = alClient
-    TabOrder = 1
+    TabOrder = 2
     TabStop = True
-    ExplicitLeft = 2
-    ExplicitTop = 2
+    ExplicitTop = 50
+    ExplicitWidth = 318
+    ExplicitHeight = 188
     inherited pnlBrowser: TPanel
       Width = 318
       Height = 188
+      ExplicitWidth = 318
+      ExplicitHeight = 188
       inherited wbBrowser: TWebBrowser
         Width = 318
         Height = 188
+        ExplicitWidth = 318
+        ExplicitHeight = 188
         ControlData = {
           4C000000DE2000006E1300000000000000000000000000000000000000000000
           000000004C000000000000000000000001000000E0D057007335CF11AE690800
@@ -37,8 +42,8 @@ inherited DetailFrame: TDetailFrame
     Width = 318
     Height = 23
     Align = alTop
-    TabOrder = 2
+    TabOrder = 1
     OnChange = tcViewsChange
-    ExplicitTop = 48
+    OnMouseDown = tcViewsMouseDown
   end
 end

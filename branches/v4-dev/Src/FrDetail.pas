@@ -69,6 +69,8 @@ type
     frmDetailView: TDetailViewFrame;
     tcViews: TTabControl;
     procedure tcViewsChange(Sender: TObject);
+    procedure tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   strict private
   type
     TCommandBarItem = record
@@ -282,8 +284,18 @@ begin
 end;
 
 function TDetailFrame.IsInteractive: Boolean;
+var
+  Idx: Integer;
 begin
-  Result := not IsEmptyTabSet and (frmDetailView as IPaneInfo).IsInteractive;
+  if IsEmptyTabSet then
+    Exit(False);
+  if (frmDetailView as IPaneInfo).IsInteractive then
+    Exit(True);
+  for Idx := 0 to Pred(ComponentCount) do
+    if (Components[Idx] is TWinControl)
+      and (Components[Idx] as TWinControl).Focused then
+      Exit(True);
+  Result := False;
 end;
 
 procedure TDetailFrame.NextTab;
@@ -368,6 +380,13 @@ begin
   Assert(tcViews.TabIndex >= 0, ClassName + '.tcViewsChange: tab index < 0');
   if Assigned(fNotifier) then
     fNotifier.ChangeDetailPane(tcViews.TabIndex);
+end;
+
+procedure TDetailFrame.tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if htOnItem in tcViews.GetHitTestInfoAt(X, Y) then
+    tcViews.SetFocus;
 end;
 
 { TDetailFrame.TCommandBarItem }
