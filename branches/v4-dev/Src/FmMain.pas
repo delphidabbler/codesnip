@@ -638,7 +638,7 @@ procedure TMainForm.actFindClearExecute(Sender: TObject);
   }
 begin
   Query.Reset;
-  fMainDisplayMgr.QueryUpdated;
+  fMainDisplayMgr.UpdateDisplayedQuery;
   fStatusBarMgr.Update;
 end;
 
@@ -844,7 +844,7 @@ procedure TMainForm.ActOverviewTabExecute(Sender: TObject);
   }
 begin
   // Action's Tag property specifies index of tab being selected
-  fMainDisplayMgr.SelectedOverviewTab := (Sender as TAction).Tag;
+  fMainDisplayMgr.SelectOverviewTab((Sender as TAction).Tag);
 end;
 
 procedure TMainForm.ActOverviewTabUpdate(Sender: TObject);
@@ -1038,7 +1038,7 @@ procedure TMainForm.actSelectDetailTabExecute(Sender: TObject);
   }
 begin
   // Action's Tag property specifies index of tab being selected
-  fMainDisplayMgr.SelectedDetailTab := (Sender as TAction).Tag;
+  fMainDisplayMgr.SelectDetailTab((Sender as TAction).Tag);
 end;
 
 procedure TMainForm.actSelectSnippetsExecute(Sender: TObject);
@@ -1292,7 +1292,7 @@ resourcestring
 begin
   if Query.ApplySearch(Search) then
   begin
-    fMainDisplayMgr.QueryUpdated;
+    fMainDisplayMgr.UpdateDisplayedQuery;
     fStatusBarMgr.Update;
   end
   else
@@ -1458,7 +1458,7 @@ begin
     // Create display manager
     fMainDisplayMgr := TMainDisplayMgr.Create(frmOverview, frmDetail);
     // select active tabs
-    fMainDisplayMgr.SelectedOverviewTab := fWindowSettings.OverviewTab;
+    fMainDisplayMgr.SelectOverviewTab(fWindowSettings.OverviewTab);
 
     // Create status bar manager
     fStatusBarMgr := TStatusBarMgr.Create(sbStatusBar);
