@@ -84,10 +84,14 @@ type
     procedure RedisplayOverview;
     procedure ShowInNewDetailPage(View: IView);
     procedure RefreshDetailPage;
+    procedure PrepareForDBChange;
+      {Makes preparations for a change in the database display.
+      }
+    procedure PrepareForDBViewChange(View: IView);
     procedure DBChangeEventHandler(Sender: TObject; const EvtInfo: IInterface);
     procedure AddDBView(View: IView);
-    procedure UpdateDBView(View: IView);
-    procedure DeleteDBView;
+    procedure UpdateDBView(TabIdx: Integer; View: IView);
+    procedure DeleteDBView(TabIdx: Integer);
   public
     constructor Create(const OverviewMgr, DetailsMgr: IInterface);
       {Class constructor. Sets up object to work with subsidiary manager
@@ -158,10 +162,6 @@ type
     procedure SelectAll;
       {Selects all text in current tab of detail pane.
       }
-    procedure PrepareForDBChange;
-      {Makes preparations for a change in the database display.
-      }
-    procedure PrepareForDBViewChange(View: IView);
     function CurrentView: IView;
     procedure SelectOverviewTab(TabIdx: Integer);
     function SelectedOverviewTab: Integer;
@@ -315,10 +315,10 @@ begin
       PrepareForDBViewChange(DBEventInfoToView(EventInfo.Info));
 
     evSnippetChanged, evCategoryChanged:
-      UpdateDBView(DBEventInfoToView(EventInfo.Info));
+      UpdateDBView(fDetailPagePendingChange, DBEventInfoToView(EventInfo.Info));
 
     evSnippetDeleted, evCategoryDeleted:
-      DeleteDBView;
+      DeleteDBView(fDetailPagePendingChange);
 
     evSnippetAdded, evCategoryAdded:
       AddDBView(DBEventInfoToView(EventInfo.Info));
@@ -338,14 +338,15 @@ begin
   Assert(Assigned(Result), ClassName + '.DBEventInfoToView: Result is nil');
 end;
 
-procedure TMainDisplayMgr.DeleteDBView;
+procedure TMainDisplayMgr.DeleteDBView(TabIdx: Integer);
 begin
   Assert(fPendingViewChange, ClassName + '.DeleteView: no view change pending');
   try
     RedisplayOverview;
-    if fDetailPagePendingChange >= 0 then
+    if TabIdx >= 0 then
       // view is displayed in detail pane: close its tab
-      (fDetailsMgr as IDetailPaneDisplayMgr).CloseTab(fDetailPagePendingChange);
+      (fDetailsMgr as IDetailPaneDisplayMgr).CloseTab(TabIdx);
+    // current view may have changed due to view deletion, so refresh it
     RefreshDetailPage;
     (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
   finally
@@ -547,17 +548,17 @@ begin
   DisplayViewItem(TViewFactory.CreateStartPageView, ddmRequestNewTab);
 end;
 
-procedure TMainDisplayMgr.UpdateDBView(View: IView);
+procedure TMainDisplayMgr.UpdateDBView(TabIdx: Integer; View: IView);
 begin
   Assert(fPendingViewChange, ClassName + '.UpdateView: no view change pending');
   try
     RedisplayOverview;
-    if fDetailPagePendingChange >= 0 then
+    if TabIdx >= 0 then
       // view is displayed in detail pane: update display
       (fDetailsMgr as IDetailPaneDisplayMgr).Display(
-        View, fDetailPagePendingChange
+        View, TabIdx
       );
-    if fDetailPagePendingChange <> SelectedDetailTab then
+    if TabIdx <> SelectedDetailTab then
       // current view may reference changed view, so it is updated.
       RefreshDetailPage;
     (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
