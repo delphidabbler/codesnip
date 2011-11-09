@@ -358,8 +358,7 @@ type
         @param Sender [in] Not used.
       }
     procedure SnippetsChangeHandler(Sender: TObject; const EvtInfo: IInterface);
-      {Handles Snippets change event handler that is trigerred when a user
-      defined entry in the database changes.
+      {Handles events that inform of changes to database.
         @param Sender [in] Not used.
         @para EvtInfo [in] Object providing information about the event.
       }
@@ -1599,79 +1598,17 @@ end;
 
 procedure TMainForm.SnippetsChangeHandler(Sender: TObject;
   const EvtInfo: IInterface);
-  {Handles Snippets change event handler that is trigerred when a user defined
-  entry in the database changes.
+  {Handles events that inform of changes to database.
     @param Sender [in] Not used.
     @para EvtInfo [in] Object providing information about the event.
   }
-var
-  EventInfo: IDatabaseChangeEventInfo;  // information about the event
 begin
-  EventInfo := EvtInfo as IDatabaseChangeEventInfo;
-  case EventInfo.Kind of
+  // TODO: Renamed this as DBChangeHandler
+  case (EvtInfo as IDatabaseChangeEventInfo).Kind of
     evChangeBegin:
-    begin
       Enabled := False;
-      fMainDisplayMgr.PrepareForChange;
-    end;
     evChangeEnd:
       Enabled := True;
-    evSnippetAdded:
-    begin
-      fMainDisplayMgr.SnippetAdded(
-        TViewItemFactory.CreateSnippetView(EventInfo.Info as TSnippet)
-      );
-    end;
-    evBeforeSnippetChange:
-    begin
-      fMainDisplayMgr.PrepareForViewChange(
-        TViewItemFactory.CreateSnippetView(EventInfo.Info as TSnippet)
-      );
-    end;
-    evSnippetChanged:
-    begin
-      fMainDisplayMgr.SnippetChanged(
-        TViewItemFactory.CreateSnippetView(EventInfo.Info as TSnippet)
-      );
-    end;
-    evBeforeSnippetDelete:
-    begin
-      fMainDisplayMgr.PrepareForViewChange(
-        TViewItemFactory.CreateSnippetView(EventInfo.Info as TSnippet)
-      );
-    end;
-    evSnippetDeleted:
-    begin
-      fMainDisplayMgr.SnippetDeleted;
-    end;
-    evCategoryAdded:
-    begin
-      fMainDisplayMgr.CategoryAdded(
-        TViewItemFactory.CreateCategoryView(EventInfo.Info as TCategory)
-      );
-    end;
-    evBeforeCategoryChange:
-    begin
-      fMainDisplayMgr.PrepareForViewChange(
-        TViewItemFactory.CreateCategoryView(EventInfo.Info as TCategory)
-      );
-    end;
-    evCategoryChanged:
-    begin
-      fMainDisplayMgr.CategoryChanged(
-        TViewItemFactory.CreateCategoryView(EventInfo.Info as TCategory)
-      );
-    end;
-    evBeforeCategoryDelete:
-    begin
-      fMainDisplayMgr.PrepareForViewChange(
-        TViewItemFactory.CreateCategoryView(EventInfo.Info as TCategory)
-      );
-    end;
-    evCategoryDeleted:
-    begin
-      fMainDisplayMgr.CategoryDeleted;
-    end;
   end;
   // Display updated database stats and search results in status bar
   fStatusBarMgr.Update;

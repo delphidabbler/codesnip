@@ -75,6 +75,7 @@ type
     fDetailPagePendingChange: Integer;
     fPendingViewChange: Boolean;
     fPendingChange: Boolean;
+    function DBEventInfoToView(EvtInfo: TObject): IView;
     function GetInteractiveTabMgr: ITabbedDisplayMgr;
       {Gets reference to manager object for interactive tab set.
         @return Required tab manager or nil if no tab is interactive.
@@ -102,6 +103,10 @@ type
     procedure RedisplayOverview;
     procedure ShowInNewDetailPage(View: IView);
     procedure RefreshDetailPage;
+    procedure DBChangeEventHandler(Sender: TObject; const EvtInfo: IInterface);
+    procedure AddView(View: IView);
+    procedure UpdateView(View: IView);
+    procedure DeleteView;
   public
     constructor Create(const OverviewMgr, DetailsMgr: IInterface);
       {Class constructor. Sets up object to work with subsidiary manager
@@ -116,17 +121,6 @@ type
       {Initialises display. All snippets in database are shown in overview pane
       and detail pane is cleared.
       }
-
-    procedure SnippetAdded(View: IView);
-    procedure SnippetChanged(View: IView);
-    procedure SnippetDeleted;
-    procedure CategoryAdded(View: IView);
-    procedure CategoryChanged(View: IView);
-    procedure CategoryDeleted;
-
-    procedure AddView(View: IView);
-    procedure UpdateView(View: IView);
-    procedure DeleteView;
 
     ///  <summary>Clears whole display: overview pane is cleared and all detail
     ///  tabs are closed.</summary>
@@ -208,7 +202,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UPreferences, UQuery;
+  DB.UCategory, DB.UMain, DB.USnippet, UPreferences, UQuery;
 
 
 { TMainDisplayMgr }
@@ -256,21 +250,6 @@ function TMainDisplayMgr.CanUpdateOverviewTreeState(
   }
 begin
   Result := (fOverviewMgr as IOverviewDisplayMgr).CanUpdateTreeState(State);
-end;
-
-procedure TMainDisplayMgr.CategoryAdded(View: IView);
-begin
-  AddView(View);
-end;
-
-procedure TMainDisplayMgr.CategoryChanged(View: IView);
-begin
-  UpdateView(View); // todo: replace CategoryChanged with this method
-end;
-
-procedure TMainDisplayMgr.CategoryDeleted;
-begin
-  DeleteView; // todo: replace category deleted with this method
 end;
 
 procedure TMainDisplayMgr.ClearAll;
@@ -329,6 +308,7 @@ begin
   // Record subsidiary display managers
   fOverviewMgr := OverviewMgr;
   fDetailsMgr := DetailsMgr;
+  Database.AddChangeEventHandler(DBChangeEventHandler);
 end;
 
 procedure TMainDisplayMgr.CreateNewDetailsTab;
@@ -338,6 +318,44 @@ begin
   // NOTE: Always uses new tab, even if view exists, by design
   NewPageView := TViewItemFactory.CreateNewTabView;
   ShowInNewDetailPage(NewPageView);
+end;
+
+procedure TMainDisplayMgr.DBChangeEventHandler(Sender: TObject;
+  const EvtInfo: IInterface);
+var
+  EventInfo: IDatabaseChangeEventInfo;  // information about the event
+begin
+  EventInfo := EvtInfo as IDatabaseChangeEventInfo;
+  case EventInfo.Kind of
+    evChangeBegin:
+      PrepareForChange;
+
+    evBeforeSnippetChange, evBeforeSnippetDelete,
+    evBeforeCategoryChange, evBeforeCategoryDelete:
+      PrepareForViewChange(DBEventInfoToView(EventInfo.Info));
+
+    evSnippetChanged, evCategoryChanged:
+      UpdateView(DBEventInfoToView(EventInfo.Info));
+
+    evSnippetDeleted, evCategoryDeleted:
+      DeleteView;
+
+    evSnippetAdded, evCategoryAdded:
+      AddView(DBEventInfoToView(EventInfo.Info));
+  end;
+end;
+
+function TMainDisplayMgr.DBEventInfoToView(EvtInfo: TObject): IView;
+begin
+  // TODO: Move this to TViewItemFactory as CreateDBView method (param=DBObj)?
+  Result := nil;
+  if not Assigned(EvtInfo) then
+    Result := TViewItemFactory.CreateNulView
+  else if EvtInfo is TSnippet then
+    Result := TViewItemFactory.CreateSnippetView(EvtInfo as TSnippet)
+  else if EvtInfo is TCategory then
+    Result := TViewItemFactory.CreateCategoryView(EvtInfo as TCategory);
+  Assert(Assigned(Result), ClassName + '.DBEventInfoToView: Result is nil');
 end;
 
 procedure TMainDisplayMgr.DeleteView;
@@ -359,6 +377,7 @@ destructor TMainDisplayMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
+  Database.RemoveChangeEventHandler(DBChangeEventHandler);
   inherited;
 end;
 
@@ -452,7 +471,7 @@ begin
 end;
 
 procedure TMainDisplayMgr.PrepareForChange;
-  {Makes preparations for a change in the database display.
+  {Makes preparations for a change in the database.
   }
 begin
   fPendingChange := True;
@@ -462,7 +481,6 @@ end;
 
 procedure TMainDisplayMgr.PrepareForViewChange(View: IView);
 begin
-  PrepareForChange;
   // TODO: Change IDetailPaneDisplayMgr.FindTab to take IView parameter
   fDetailPagePendingChange := (fDetailsMgr as IDetailPaneDisplayMgr).FindTab(
     View.GetKey
@@ -579,21 +597,6 @@ procedure TMainDisplayMgr.ShowWelcomePage;
 begin
   // TODO: May want a user option for welcome page to overwrite or use new tab
   DisplayViewItem(TViewItemFactory.CreateStartPageView, ddmRequestNewTab);
-end;
-
-procedure TMainDisplayMgr.SnippetAdded(View: IView);
-begin
-  AddView(View);
-end;
-
-procedure TMainDisplayMgr.SnippetChanged(View: IView);
-begin
-  UpdateView(View); // todo: replace SnippetChanged with this method
-end;
-
-procedure TMainDisplayMgr.SnippetDeleted;
-begin
-  DeleteView; // todo: replaced SnippetDeleted with this method
 end;
 
 procedure TMainDisplayMgr.UpdateOverviewTreeState(const State: TTreeNodeAction);
