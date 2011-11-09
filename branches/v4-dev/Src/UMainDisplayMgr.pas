@@ -73,6 +73,8 @@ type
     fOverviewMgr: IInterface;     // Manager object for overview pane
     fDetailsMgr: IInterface;      // Manager object for details pane
     fDetailPagePendingChange: Integer;
+    fPendingViewChange: Boolean;
+    fPendingChange: Boolean;
     function GetInteractiveTabMgr: ITabbedDisplayMgr;
       {Gets reference to manager object for interactive tab set.
         @return Required tab manager or nil if no tab is interactive.
@@ -99,7 +101,6 @@ type
     procedure DisplayInSelectedDetailView(View: IView);
     procedure RedisplayOverview;
     procedure ShowInNewDetailPage(View: IView);
-    procedure DisplayNewSnippetOrCategory(View: IView);
     procedure RefreshDetailPage;
   public
     constructor Create(const OverviewMgr, DetailsMgr: IInterface);
@@ -122,6 +123,11 @@ type
     procedure CategoryAdded(View: IView);
     procedure CategoryChanged(View: IView);
     procedure CategoryDeleted;
+
+    procedure AddView(View: IView);
+    procedure UpdateView(View: IView);
+    procedure DeleteView;
+
     ///  <summary>Clears whole display: overview pane is cleared and all detail
     ///  tabs are closed.</summary>
     procedure ClearAll;
@@ -207,6 +213,20 @@ uses
 
 { TMainDisplayMgr }
 
+procedure TMainDisplayMgr.AddView(View: IView);
+begin
+  Assert(fPendingChange, ClassName + '.AddView: no change pending');
+  Assert(Supports(View, ISnippetView) or Supports(View, ICategoryView),
+    ClassName + '.AddView: View not a database item');
+  // todo: ensure this is called after PrepareForChange called.
+  RedisplayOverview;
+  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
+  if Preferences.ShowNewSnippetsInNewTabs then
+    DisplayViewItem(View, ddmForceNewTab)
+  else
+    DisplayViewItem(View, ddmOverwrite);
+end;
+
 function TMainDisplayMgr.CanCloseDetailsTab: Boolean;
 begin
   Result := not (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet;
@@ -240,31 +260,17 @@ end;
 
 procedure TMainDisplayMgr.CategoryAdded(View: IView);
 begin
-  // TODO: extract method from this and SnippetAdded code: identical code
-  DisplayNewSnippetOrCategory(View);
+  AddView(View);
 end;
 
 procedure TMainDisplayMgr.CategoryChanged(View: IView);
 begin
-  RedisplayOverview;
-  if fDetailPagePendingChange >= 0 then
-    // category is displayed in detail pane: update display
-    (fDetailsMgr as IDetailPaneDisplayMgr).Display(
-      View, fDetailPagePendingChange
-    );
-  if fDetailPagePendingChange <> SelectedDetailTab then
-    // current view may reference changed category, so it is updated.
-    RefreshDetailPage;
-  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
+  UpdateView(View); // todo: replace CategoryChanged with this method
 end;
 
 procedure TMainDisplayMgr.CategoryDeleted;
 begin
-  RedisplayOverview;
-  if fDetailPagePendingChange >= 0 then
-    // category is displayed in detail pane: close its tab
-    (fDetailsMgr as IDetailPaneDisplayMgr).CloseTab(fDetailPagePendingChange);
-  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
+  DeleteView; // todo: replace category deleted with this method
 end;
 
 procedure TMainDisplayMgr.ClearAll;
@@ -278,6 +284,8 @@ begin
   (fDetailsMgr as IDetailPaneDisplayMgr).CloseTab(
     (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
   );
+  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
+  RefreshDetailPage;
 end;
 
 procedure TMainDisplayMgr.CopyToClipboard;
@@ -332,6 +340,21 @@ begin
   ShowInNewDetailPage(NewPageView);
 end;
 
+procedure TMainDisplayMgr.DeleteView;
+begin
+  Assert(fPendingViewChange, ClassName + '.DeleteView: no view change pending');
+  try
+    RedisplayOverview;
+    if fDetailPagePendingChange >= 0 then
+      // view is displayed in detail pane: close its tab
+      (fDetailsMgr as IDetailPaneDisplayMgr).CloseTab(fDetailPagePendingChange);
+    RefreshDetailPage;
+    (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
+  finally
+    fPendingViewChange := False;
+  end;
+end;
+
 destructor TMainDisplayMgr.Destroy;
   {Class destructor. Tears down object.
   }
@@ -344,18 +367,6 @@ begin
   (fDetailsMgr as IDetailPaneDisplayMgr).Display(
     View, (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
   );
-end;
-
-procedure TMainDisplayMgr.DisplayNewSnippetOrCategory(View: IView);
-begin
-  Assert(Supports(View, ISnippetView) or Supports(View, ICategoryView),
-    ClassName + '.DisplayNewSnippetOrCategory: View not snippet or category');
-  RedisplayOverview;
-  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
-  if Preferences.ShowNewSnippetsInNewTabs then
-    DisplayViewItem(View, ddmForceNewTab)
-  else
-    DisplayViewItem(View, ddmOverwrite);
 end;
 
 procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView;
@@ -444,12 +455,14 @@ procedure TMainDisplayMgr.PrepareForChange;
   {Makes preparations for a change in the database display.
   }
 begin
+  fPendingChange := True;
   // simply save the state of the overview tree view ready for later restoration
   (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
 end;
 
 procedure TMainDisplayMgr.PrepareForViewChange(View: IView);
 begin
+  PrepareForChange;
   // TODO: Change IDetailPaneDisplayMgr.FindTab to take IView parameter
   fDetailPagePendingChange := (fDetailsMgr as IDetailPaneDisplayMgr).FindTab(
     View.GetKey
@@ -462,6 +475,7 @@ begin
       (fOverviewMgr as IOverviewDisplayMgr).Clear;
       DisplayInSelectedDetailView(TViewItemFactory.CreateNulView);
     end;
+  fPendingViewChange := True;
 end;
 
 procedure TMainDisplayMgr.QueryUpdated;
@@ -478,8 +492,8 @@ end;
 
 procedure TMainDisplayMgr.RedisplayOverview;
 begin
-  // TODO: Note calling SaveTreeState here could be buggy
-  (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
+//  // TODO: Note calling SaveTreeState here could be buggy
+//  (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
   (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
 end;
 
@@ -569,26 +583,17 @@ end;
 
 procedure TMainDisplayMgr.SnippetAdded(View: IView);
 begin
-  DisplayNewSnippetOrCategory(View);
+  AddView(View);
 end;
 
 procedure TMainDisplayMgr.SnippetChanged(View: IView);
 begin
-  // We assume that edited snippet is being displayed in selected detail tab,
-  // because only way of editing a snippet is from this tab.
-  RedisplayOverview;
-  (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
-  DisplayInSelectedDetailView(View);
+  UpdateView(View); // todo: replace SnippetChanged with this method
 end;
 
 procedure TMainDisplayMgr.SnippetDeleted;
 begin
-  RedisplayOverview;
-  (fDetailsMgr as IDetailPaneDisplayMgr).CloseTab(
-    (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
-  );
-  // NOTE: closing tab triggers a notification to display a different tab which
-  // then takes care of updating view
+  DeleteView; // todo: replaced SnippetDeleted with this method
 end;
 
 procedure TMainDisplayMgr.UpdateOverviewTreeState(const State: TTreeNodeAction);
@@ -599,6 +604,25 @@ procedure TMainDisplayMgr.UpdateOverviewTreeState(const State: TTreeNodeAction);
   }
 begin
   (fOverviewMgr as IOverviewDisplayMgr).UpdateTreeState(State);
+end;
+
+procedure TMainDisplayMgr.UpdateView(View: IView);
+begin
+  Assert(fPendingViewChange, ClassName + '.UpdateView: no view change pending');
+  try
+    RedisplayOverview;
+    if fDetailPagePendingChange >= 0 then
+      // view is displayed in detail pane: update display
+      (fDetailsMgr as IDetailPaneDisplayMgr).Display(
+        View, fDetailPagePendingChange
+      );
+    if fDetailPagePendingChange <> SelectedDetailTab then
+      // current view may reference changed view, so it is updated.
+      RefreshDetailPage;
+    (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
+  finally
+    fPendingViewChange := False;
+  end;
 end;
 
 end.
