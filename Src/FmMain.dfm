@@ -32,7 +32,8 @@ inherited MainForm: TMainForm
     Left = 0
     Top = 0
     Width = 605
-    Height = 31
+    Height = 30
+    AutoSize = True
     BorderWidth = 1
     Caption = 'tbarMain'
     EdgeBorders = [ebTop, ebBottom]
@@ -194,9 +195,9 @@ inherited MainForm: TMainForm
   end
   object pnlBody: TPanel
     Left = 0
-    Top = 31
+    Top = 30
     Width = 605
-    Height = 313
+    Height = 314
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
@@ -205,7 +206,7 @@ inherited MainForm: TMainForm
       Left = 187
       Top = 2
       Width = 6
-      Height = 309
+      Height = 310
       Beveled = True
       OnCanResize = splitVertCanResize
       ExplicitHeight = 292
@@ -214,7 +215,7 @@ inherited MainForm: TMainForm
       Left = 2
       Top = 2
       Width = 185
-      Height = 309
+      Height = 310
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
@@ -222,14 +223,14 @@ inherited MainForm: TMainForm
         Left = 1
         Top = 1
         Width = 183
-        Height = 307
+        Height = 308
         Align = alClient
         TabOrder = 0
         TabStop = True
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 183
-        ExplicitHeight = 307
+        ExplicitHeight = 308
         inherited pnlTitle: TPanel
           Width = 183
           ExplicitWidth = 183
@@ -244,16 +245,16 @@ inherited MainForm: TMainForm
         end
         inherited tcDisplayStyle: TTabControl
           Width = 183
-          Height = 280
+          Height = 281
           ExplicitWidth = 183
-          ExplicitHeight = 280
+          ExplicitHeight = 281
           inherited tvSnippets: TTreeView
             Top = 42
             Width = 175
-            Height = 234
+            Height = 235
             ExplicitTop = 42
             ExplicitWidth = 175
-            ExplicitHeight = 234
+            ExplicitHeight = 235
           end
         end
       end
@@ -262,7 +263,7 @@ inherited MainForm: TMainForm
       Left = 193
       Top = 2
       Width = 410
-      Height = 309
+      Height = 310
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
@@ -270,14 +271,14 @@ inherited MainForm: TMainForm
         Left = 1
         Top = 1
         Width = 408
-        Height = 307
+        Height = 308
         Align = alClient
         TabOrder = 0
         TabStop = True
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 408
-        ExplicitHeight = 307
+        ExplicitHeight = 308
         inherited pnlTitle: TPanel
           Width = 408
           ExplicitWidth = 408
@@ -288,33 +289,33 @@ inherited MainForm: TMainForm
         end
         inherited pcDetail: TPageControl
           Width = 408
-          Height = 280
+          Height = 281
           ExplicitWidth = 408
-          ExplicitHeight = 280
+          ExplicitHeight = 281
           inherited tsInfo: TTabSheet
             ExplicitLeft = 4
             ExplicitTop = 24
             ExplicitWidth = 400
-            ExplicitHeight = 252
+            ExplicitHeight = 253
             inherited frmInfo: TInfoFrame
               Width = 400
-              Height = 252
+              Height = 253
               ExplicitWidth = 400
-              ExplicitHeight = 252
+              ExplicitHeight = 253
               inherited pnlBrowser: TPanel
                 Width = 400
-                Height = 252
+                Height = 253
                 ExplicitWidth = 400
-                ExplicitHeight = 252
+                ExplicitHeight = 253
                 inherited wbBrowser: TWebBrowser
                   Width = 400
-                  Height = 252
+                  Height = 253
                   ExplicitLeft = 1
                   ExplicitTop = 1
                   ExplicitWidth = 400
                   ExplicitHeight = 544
                   ControlData = {
-                    4C000000572900000C1A00000000000000000000000000000000000000000000
+                    4C00000057290000261A00000000000000000000000000000000000000000000
                     000000004C000000000000000000000001000000E0D057007335CF11AE690800
                     2B2E126208000000000000004C0000000114020000000000C000000000000046
                     8000000000000000000000000000000000000000000000000000000000000000
