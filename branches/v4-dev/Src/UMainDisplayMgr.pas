@@ -63,53 +63,136 @@ type
     ddmForceNewTab
   );
 
-  {
-  TMainDisplayMgr:
-    Manages and co-ordinates the display of the program's main UI. Calls into
-    subsidiary manager objects to perform display operations.
-  }
+type
+  ///  <summary>
+  ///  Manages and co-ordinates the display of the program's main UI. Calls into
+  ///  subsidiary manager objects to perform display operations.
+  ///  </summary>
   TMainDisplayMgr = class(TObject)
   strict private
-    fOverviewMgr: IInterface;     // Manager object for overview pane
-    fDetailsMgr: IInterface;      // Manager object for details pane
-    fDetailPagePendingChange: Integer;
-    fPendingViewChange: Boolean;
-    fPendingChange: Boolean;
-    function DBEventInfoToView(EvtInfo: TObject): IView;
-    function GetInteractiveTabMgr: ITabbedDisplayMgr;
-      {Gets reference to manager object for interactive tab set.
-        @return Required tab manager or nil if no tab is interactive.
-      }
-    procedure DisplayInSelectedDetailView(View: IView);
-    procedure RedisplayOverview;
-    procedure ShowInNewDetailPage(View: IView);
-    procedure RefreshDetailPage;
-    procedure PrepareForDBChange;
-      {Makes preparations for a change in the database display.
-      }
-    procedure PrepareForDBViewChange(View: IView);
-    procedure DBChangeEventHandler(Sender: TObject; const EvtInfo: IInterface);
-    procedure AddDBView(View: IView);
-    procedure UpdateDBView(TabIdx: Integer; View: IView);
-    procedure DeleteDBView(TabIdx: Integer);
-  public
-    constructor Create(const OverviewMgr, DetailsMgr: IInterface);
-      {Class constructor. Sets up object to work with subsidiary manager
-      objects.
-        @param OverviewMgr [in] Manager object for Overview pane.
-        @param DetailsMgr [in] Manager object for Details pane.
-      }
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
-    procedure Initialise;
-      {Initialises display. All snippets in current query are shown in overview
-      pane and detail pane is cleared.
-      }
+    var
+      ///  <summary>Manager object for overview pane.</summary>
+      fOverviewMgr: IInterface;
+      ///  <summary>Manager object for details pane.</summary>
+      fDetailsMgr: IInterface;
+      ///  <summary>Records index of any detail pane tab that is being changed.
+      ///  </summary>
+      ///  <remarks>Must be set before the view is changed for use after it has
+      ///  changed. May be used to refresh or delete a tab whose view has been
+      ///  updated or deleted.</remarks>
+      fChangingDetailPageIdx: Integer;
+      ///  <summary>Flag that records whether a change to an exisiting view
+      ///  object is in progress.</summary>
+      ///  <remarks>When true a view object is in the process of being updated
+      ///  or deleted.</remarks>
+      fPendingViewChange: Boolean;
+      ///  <summary>Flag that records whether database is in the process of
+      ///  being updated or deleted.</summary>
+      ///  <remarks>Will be true when fPendingViewChange is true, but will also
+      ///  be true in other circumstances, such as when a view is to be added.
+      ///  </remarks>
+      fPendingChange: Boolean;
 
-    ///  <summary>Clears whole display: overview pane is cleared and all detail
-    ///  tabs are closed.</summary>
+    ///  <summary>Creates and returns view object for a database object.
+    ///  </summary>
+    ///  <param name="DBObj">TObject [in] Database object for which view
+    ///  required. Must be a valid databse object or nil.</param>
+    ///  <returns>IView. Required view object. If DBObj is nil a null view is
+    ///  returned.</returns>
+    function DBEventInfoToView(EvtInfo: TObject): IView;
+
+    ///  <summary>Gets reference to manager object for tab set that is currently
+    ///  "interactive".</summary>
+    ///  <returns>ITabbedDisplayMgr. Reference to required tab set manager
+    ///  object, or nil if no tab set in interactive.</returns>
+    ///  <remarks>Both overview and detail pane has a tab set. The tab set in
+    ///  the frame that has (keyboard) focus is "interactive".</remarks>
+    function GetInteractiveTabMgr: ITabbedDisplayMgr;
+
+    ///  <summary>Redisplays the current grouping in overview pane's tree-view
+    ///  using the snippets included in the current database query.</summary>
+    procedure RedisplayOverview;
+
+    ///  <summary>Creates a new tab in the detail pane and displays the given
+    ///  view in it.</summary>
+    procedure ShowInNewDetailPage(View: IView);
+
+    ///  <summary>Displays given view in selected tab of detail pane.</summary>
+    procedure DisplayInSelectedDetailView(View: IView);
+
+    ///  <summary>Redisplays the current view in the selected detail pane tab,
+    ///  if any.</summary>
+    procedure RefreshDetailPage;
+
+    ///  <summary>Makes preparations for a change in the database.</summary>
+    ///  <remarks>Records any display information needed to update the display
+    ///  after the change.</remarks>
+    procedure PrepareForDBChange;
+
+    ///  <summary>Makes preparations for a change to a given database view
+    ///  object.</summary>
+    ///  <remarks>Records any display information for given view that is
+    ///  required to update display after the view has changed. Also makes
+    ///  temporary view changes to avoid referencing a invalid view object after
+    ///  the change.</remarks>
+    procedure PrepareForDBViewChange(View: IView);
+
+    ///  <summary>Handles database change events by updating the display as
+    ///  necessary.</summary>
+    ///  <param name="Sender">TObject [in] Object that triggered event. Not
+    ///  used.</param>
+    ///  <param name="EvtInfo">IInterface [in] Object that carries information
+    ///  about the database change event.</param>
+    procedure DBChangeEventHandler(Sender: TObject; const EvtInfo: IInterface);
+
+    ///  <summary>Adds a view representing a new database object to the display.
+    ///  </summary>
+    ///  <param name="View">IView [in] View to be displayed.</param>
+    ///  <remarks>This method *must* only be called after a call to
+    ///  PrepareForDBChange has been made.</remarks>
+    procedure AddDBView(View: IView);
+
+    ///  <summary>Updates that display to reflect changes to a database view.
+    ///  </summary>
+    ///  <param name="TabIdx">Integer [in] Index of detail pane tab where view
+    ///  is displayed. May be -1 if view not displayed in detail pane.</param>
+    ///  <param name="View">IView [in] Changed database view to be updated in
+    ///  display.</param>
+    ///  <remarks>Some of the required display changes are completed in
+    ///  PrepareForDBViewChange, which *must* have been called before this
+    ///  method.</remarks>
+    procedure UpdateDBView(TabIdx: Integer; View: IView);
+
+    ///  <summary>Deletes a database view from display.</summary>
+    ///  <param name="TabIdx">Integer [in] Index of detail pane tab that
+    ///  contained view to be deleted.</param>
+    ///  <remarks>Some of the required display changes are completed in
+    ///  PrepareForDBViewChange, which *must* have been called before this
+    ///  method.</remarks>
+    procedure DeleteDBView(TabIdx: Integer);
+
+  public
+    ///  <summary>Object contructor. Sets up object to work with given frame
+    ///  manager objects.</summary>
+    ///  <param name="OverviewMgr">IInterface [in] Object that manages overview
+    ///  frame.</param>
+    ///  <param name="DetailsMgr">IInterface [in] Object that manages detail
+    ///  frame.</param>
+    constructor Create(const OverviewMgr, DetailsMgr: IInterface);
+
+    ///  <summary>Object destructor. Tears down object.</summary>
+    destructor Destroy; override;
+
+    ///  <summary>Initialises display.</summary>
+    ///  <remarks>All snippets in current query are shown in overview pane and
+    ///  detail pane is cleared.</remarks>
+    procedure Initialise;
+
+    ///  <summary>Clears whole display</summary>
+    ///  <remarks>Overview pane is cleared and all detail tabs are closed.
+    ///  </remarks>
     procedure ClearAll;
+
     ///  <summary>Displays a view item.</summary>
     ///  <param name="ViewItem">IView [in] View item to be displayed.</param>
     ///  <param name="Mode">TDetailPageDisplayMode [in] Determines how view is
@@ -117,56 +200,92 @@ type
     ///  <remarks>View item is selected in overview pane, if present, and shown
     ///  in detail pane.</remarks>
     procedure DisplayViewItem(ViewItem: IView; Mode: TDetailPageDisplayMode);
-    ///  <summary>Refreshes display: re-selects current view in overview pane
-    ///  re-displays current tab view in details pane, if any.</summary>
+
+    ///  <summary>Refreshes display.</summary>
+    ///  <remarks>Re-selects current view in overview pane and re-displays
+    ///  current tab view in details pane, if any.</remarks>
     procedure Refresh;
+
+    ///  <summary>Updates display to show current query.</summary>
+    ///  <remarks>Overview pane is re-displayed only if query has changed.
+    ///  Detail pane is refreshed.</remarks>
     procedure UpdateDisplayedQuery;
-      {Notifies display manager that query current query has changed. Updates
-      display to reflect changes.
-      }
+
+    ///  <summary>Selects next tab in currently active tab set.</summary>
+    ///  <remarks>Does nothing if there is no active tab set.</remarks>
     procedure SelectNextActiveTab;
-      {Selects next tab in currently active tab set. Does nothing if there is no
-      active tab set.
-      }
+
+    ///  <summary>Selects previous tab in currently active tab set.</summary>
+    ///  <remarks>Does nothing if there is no active tab set.</remarks>
     procedure SelectPreviousActiveTab;
-      {Selects previous tab in currently active tab set. Does nothing if there
-      is no active tab set.
-      }
+
+    ///  <summary>Closes selected tab in detail pane.</summary>
+    ///  <remarks>A new tab is selected, if there is one, and overview pane is
+    ///  updated re change in selection.</remarks>
     procedure CloseSelectedDetailsTab;
+
+    ///  <summary>Checks if it is possible to close a tab in details pane.
+    ///  </summary>
     function CanCloseDetailsTab: Boolean;
+
+    ///  <summary>Creates a new tab in detail pane.</summary>
     procedure CreateNewDetailsTab;
+
+    ///  <summary>Displays welcome page in detail pane.</summary>
+    ///  <remarks>A new tab is used unless welcome page is currently displayed
+    ///  in which case its tab is selected.</remarks>
     procedure ShowWelcomePage;
+
+    ///  <summary>Displays a new tab in detail pane that displays page informing
+    ///  that the database has been updated.</summary>
     procedure ShowDBUpdatedPage;
-    function CanCopy: Boolean;
-      {Checks whether copying to clipboard is currently supported.
-        @return True if clipboard copying supported, false if not.
-      }
-    procedure UpdateOverviewTreeState(const State: TTreeNodeAction);
-      {Updates the expanded / collapsed state of nodes in the overview pane's
-      treeview control.
-        @param State [in] Determines which expand / collapse action is to be
-          performed.
-      }
+
+    ///  <summary>Checks if a specified expand / collapse action on the overview
+    ///  pane's treeview is permitted.</summary>
+    ///  <param name="State">TTreeNodeAction [in] Required expand / collapse
+    ///  action.</param>
+    ///  <returns>Boolean. True if action can be performed.</returns>
     function CanUpdateOverviewTreeState(const State: TTreeNodeAction): Boolean;
-      {Checks if a sepcified expand / collapse action on the overview pane's
-      treeview can be permitted.
-        @param State [in] Specifies the expand / collapse action being queried.
-      }
+
+    ///  <summary>Updates the expanded / collapsed state of nodes in the
+    ///  overview pane's treeview control.</summary>
+    ///  <param name="State">TTreeNodeAction [in] Required expand / collapse
+    ///  action.</param>
+    procedure UpdateOverviewTreeState(const State: TTreeNodeAction);
+
+    ///  <summary>Checks whether copying to clipboard in selected detail tab is
+    ///  possible.</summary>
+    function CanCopy: Boolean;
+
+    ///  <summary>Copies selected text in selected detail tab to clipboard.
+    ///  </summary>
     procedure CopyToClipboard;
-      {Copies selected text to clipboard.
-      }
+
+    ///  <summary>Checks whether selection of all text in selected detail tab is
+    ///  possible.</summary>
     function CanSelectAll: Boolean;
-      {Checks whether selection of all text in current detail view is permitted.
-        @return True if text can be selected, false otherwise.
-      }
+
+    ///  <summary>Selects all text in current detail tab.</summary>
     procedure SelectAll;
-      {Selects all text in current tab of detail pane.
-      }
-    function CurrentView: IView;
+
+    ///  <summary>Selects tab with given index in overview pane.</summary>
     procedure SelectOverviewTab(TabIdx: Integer);
+
+    ///  <summary>Returns index of selected tab in overview pane.</summary>
     function SelectedOverviewTab: Integer;
+
+    ///  <summary>Selects tab with given index in detail pane.</summary>
     procedure SelectDetailTab(TabIdx: Integer);
+
+    ///  <summary>Returns index of selected tab in detail pane.</summary>
     function SelectedDetailTab: Integer;
+
+    ///  <summary>Returns currently selected view.</summary>
+    ///  <remarks>
+    ///  <para>This is the view displayed in selected tab in detail pane.</para>
+    ///  <para>If detail pane has no tabs then null view is returned.</para>
+    ///  </remarks>
+    function CurrentView: IView;
   end;
 
 
@@ -202,27 +321,17 @@ begin
 end;
 
 function TMainDisplayMgr.CanCopy: Boolean;
-  {Checks whether copying to clipboard is currently supported.
-    @return True if clipboard copying supported, false if not.
-  }
 begin
   Result := (fDetailsMgr as IClipboardMgr).CanCopy;
 end;
 
 function TMainDisplayMgr.CanSelectAll: Boolean;
-  {Checks whether selection of all text in current detail view is permitted.
-    @return True if text can be selected, false otherwise.
-  }
 begin
   Result := (fDetailsMgr as ISelectionMgr).CanSelectAll;
 end;
 
 function TMainDisplayMgr.CanUpdateOverviewTreeState(
   const State: TTreeNodeAction): Boolean;
-  {Checks if a sepcified expand / collapse action on the overview pane's
-  treeview can be permitted.
-    @param State [in] Specifies the expand / collapse action being queried.
-  }
 begin
   Result := (fOverviewMgr as IOverviewDisplayMgr).CanUpdateTreeState(State);
 end;
@@ -243,17 +352,11 @@ begin
 end;
 
 procedure TMainDisplayMgr.CopyToClipboard;
-  {Copies selected text to clipboard.
-  }
 begin
   (fDetailsMgr as IClipboardMgr).CopyToClipboard;
 end;
 
 constructor TMainDisplayMgr.Create(const OverviewMgr, DetailsMgr: IInterface);
-  {Class constructor. Sets up object to work with subsidiary manager objects.
-    @param OverviewMgr [in] Manager object for Overview pane.
-    @param DetailsMgr [in] Manager object for Details pane.
-  }
 begin
   Assert(Assigned(OverviewMgr),
     ClassName + '.Create: OverviewMgr is nil');
@@ -315,10 +418,10 @@ begin
       PrepareForDBViewChange(DBEventInfoToView(EventInfo.Info));
 
     evSnippetChanged, evCategoryChanged:
-      UpdateDBView(fDetailPagePendingChange, DBEventInfoToView(EventInfo.Info));
+      UpdateDBView(fChangingDetailPageIdx, DBEventInfoToView(EventInfo.Info));
 
     evSnippetDeleted, evCategoryDeleted:
-      DeleteDBView(fDetailPagePendingChange);
+      DeleteDBView(fChangingDetailPageIdx);
 
     evSnippetAdded, evCategoryAdded:
       AddDBView(DBEventInfoToView(EventInfo.Info));
@@ -355,8 +458,6 @@ begin
 end;
 
 destructor TMainDisplayMgr.Destroy;
-  {Class destructor. Tears down object.
-  }
 begin
   Database.RemoveChangeEventHandler(DBChangeEventHandler);
   inherited;
@@ -372,7 +473,7 @@ end;
 procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView;
   Mode: TDetailPageDisplayMode);
 var
-  TabIdx: Integer;
+  TabIdx: Integer;  // index of tab showing given view (-1 if no such tab)
 begin
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(ViewItem);
   if (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet
@@ -407,9 +508,6 @@ begin
 end;
 
 function TMainDisplayMgr.GetInteractiveTabMgr: ITabbedDisplayMgr;
-  {Gets reference to manager object for interactive tab set.
-    @return Required tab manager or nil if no tab is interactive.
-  }
 begin
   Result := nil;
   if (fOverviewMgr as IPaneInfo).IsInteractive then
@@ -419,9 +517,6 @@ begin
 end;
 
 procedure TMainDisplayMgr.Initialise;
-  {Initialises display. All snippets in cuurent query are shown in overview pane
-  and detail pane is cleared.
-  }
 begin
   // Clear all tabs and force re-displayed of overview
   (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
@@ -429,8 +524,6 @@ begin
 end;
 
 procedure TMainDisplayMgr.PrepareForDBChange;
-  {Makes preparations for a change in the database.
-  }
 begin
   fPendingChange := True;
   // simply save the state of the overview tree view ready for later restoration
@@ -439,11 +532,11 @@ end;
 
 procedure TMainDisplayMgr.PrepareForDBViewChange(View: IView);
 begin
-  fDetailPagePendingChange := (fDetailsMgr as IDetailPaneDisplayMgr).FindTab(
+  fChangingDetailPageIdx := (fDetailsMgr as IDetailPaneDisplayMgr).FindTab(
     View.GetKey
   );
-  if (fDetailPagePendingChange >= 0) and
-    (fDetailPagePendingChange = (fDetailsMgr as ITabbedDisplayMgr).SelectedTab)
+  if (fChangingDetailPageIdx >= 0) and
+    (fChangingDetailPageIdx = (fDetailsMgr as ITabbedDisplayMgr).SelectedTab)
     then
     begin
       // NOTE: Clear overview pane here to ensure no hanging references to
@@ -474,8 +567,6 @@ begin
 end;
 
 procedure TMainDisplayMgr.SelectAll;
-  {Selects all text in current tab of detail pane.
-  }
 begin
   // Only details pane supports text selection
   (fDetailsMgr as ISelectionMgr).SelectAll;
@@ -500,9 +591,6 @@ begin
 end;
 
 procedure TMainDisplayMgr.SelectNextActiveTab;
-  {Selects next tab in currently active tab set. Does nothing if there is no
-  active tab set.
-  }
 var
   TabMgr: ITabbedDisplayMgr;  // reference to active tab manager object
 begin
@@ -517,9 +605,6 @@ begin
 end;
 
 procedure TMainDisplayMgr.SelectPreviousActiveTab;
-  {Selects previous tab in currently active tab set. Does nothing if there is no
-  active tab set.
-  }
 var
   TabMgr: ITabbedDisplayMgr;  // reference to active tab manager object
 begin
@@ -536,7 +621,7 @@ end;
 
 procedure TMainDisplayMgr.ShowInNewDetailPage(View: IView);
 var
-  NewTabIdx: Integer;
+  NewTabIdx: Integer; // index of new detail pane tab
 begin
   NewTabIdx := (fDetailsMgr as IDetailPaneDisplayMgr).CreateTab(View);
   (fDetailsMgr as ITabbedDisplayMgr).SelectTab(NewTabIdx);
@@ -576,11 +661,6 @@ begin
 end;
 
 procedure TMainDisplayMgr.UpdateOverviewTreeState(const State: TTreeNodeAction);
-  {Updates the expanded / collapsed state of nodes in the overview pane's
-  treeview control.
-    @param State [in] Determines which expand / collapse action is to be
-      performed.
-  }
 begin
   (fOverviewMgr as IOverviewDisplayMgr).UpdateTreeState(State);
 end;
