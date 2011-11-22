@@ -11,16 +11,13 @@ inherited DetailFrame: TDetailFrame
     Top = 27
     Width = 318
     Height = 211
-    ActivePage = tsInfo
+    ActivePage = tsCompiler
     Align = alClient
     TabOrder = 1
     OnChange = pcDetailChange
+    OnMouseDown = pcDetailMouseDown
     object tsInfo: TTabSheet
       Caption = 'Information'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       inline frmInfo: TInfoFrame
         Left = 0
         Top = 0
@@ -54,10 +51,6 @@ inherited DetailFrame: TDetailFrame
     object tsCompiler: TTabSheet
       Caption = 'Compiler Check'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       inline frmCompCheck: TCompCheckFrame
         Left = 0
         Top = 0
@@ -76,10 +69,10 @@ inherited DetailFrame: TDetailFrame
           inherited wbBrowser: TWebBrowser
             Width = 310
             Height = 183
-            ExplicitWidth = 310
-            ExplicitHeight = 183
+            ExplicitWidth = 312
+            ExplicitHeight = 185
             ControlData = {
-              4C0000003F2000001F1300000000000000000000000000000000000000000000
+              4C0000000A200000EA1200000000000000000000000000000000000000000000
               000000004C000000000000000000000001000000E0D057007335CF11AE690800
               2B2E126200000000000000004C0000000114020000000000C000000000000046
               8000000000000000000000000000000000000000000000000000000000000000

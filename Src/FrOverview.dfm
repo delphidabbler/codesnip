@@ -33,6 +33,8 @@ inherited OverviewFrame: TOverviewFrame
     TabIndex = 0
     OnChange = tcDisplayStyleChange
     OnChanging = tcDisplayStyleChanging
+    OnMouseDown = tcDisplayStyleMouseDown
+    ExplicitTop = 29
     object tvSnippets: TTreeView
       Left = 4
       Top = 24
