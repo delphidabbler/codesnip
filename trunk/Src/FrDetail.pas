@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -74,6 +74,8 @@ type
     frmInfo: TInfoFrame;
     frmCompCheck: TCompCheckFrame;
     procedure pcDetailChange(Sender: TObject);
+    procedure pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   private
     fNotifier: INotifier;
       {Object used to notify application of user-initiated events}
@@ -323,6 +325,21 @@ procedure TDetailFrame.pcDetailChange(Sender: TObject);
   }
 begin
   fNotifier.ChangeDetailPane(pcDetail.ActivePageIndex);
+end;
+
+procedure TDetailFrame.pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+  {Handles event triggered when user clicks on one of page control tabs. Ensures
+  page control has focus. This does always happen automatically.
+    @param Sender [in] Not used.
+    @param Button [in] Not used.
+    @param Shift [in] Not used.
+    @param X [in] X co-ordinate of mouse in client co-ordinates.
+    @param Y [in] Y co-ordinate of mouse in client co-ordinates.
+  }
+begin
+  if htOnItem in pcDetail.GetHitTestInfoAt(X, Y) then
+    pcDetail.SetFocus;
 end;
 
 procedure TDetailFrame.PreviousTab;

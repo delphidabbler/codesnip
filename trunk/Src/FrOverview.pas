@@ -70,6 +70,8 @@ type
     mnuOverview: TPopupMenu;
     procedure tcDisplayStyleChange(Sender: TObject);
     procedure tcDisplayStyleChanging(Sender: TObject; var AllowChange: Boolean);
+    procedure tcDisplayStyleMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
     procedure tvSnippetsChanging(Sender: TObject; Node: TTreeNode;
       var AllowChange: Boolean);
     procedure tvSnippetsCreateNodeClass(Sender: TCustomTreeView;
@@ -660,6 +662,21 @@ procedure TOverviewFrame.tcDisplayStyleChanging(Sender: TObject;
   }
 begin
   SaveTreeState;
+end;
+
+procedure TOverviewFrame.tcDisplayStyleMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+  {Handles event triggered when user clicks on tab control. Sets focus to tab
+  control. This does not always happen automatically.
+    @param Sender [in] Not used.
+    @param Button [in] Not used.
+    @param Shift [in] Not used.
+    @param X [in] X co-ordinate of mouse in client co-ordinates.
+    @param Y [in] Y co-ordinate of mouse in client co-ordinates.
+  }
+begin
+ if htOnItem in tcDisplayStyle.GetHitTestInfoAt(X, Y) then
+    tcDisplayStyle.SetFocus;
 end;
 
 procedure TOverviewFrame.tvSnippetsChanging(Sender: TObject;
