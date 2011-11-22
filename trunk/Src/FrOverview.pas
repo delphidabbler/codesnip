@@ -620,7 +620,16 @@ procedure TOverviewFrame.SelectTab(const TabIdx: Integer);
 begin
   Assert((TabIdx >= 0) and (TabIdx < tcDisplayStyle.Tabs.Count),
     ClassName + '.SelectTab: TabIdx out range');
-  tcDisplayStyle.TabIndex := TabIdx;
+  // Need to ensure tree state has been saved before changing tab and
+  // redisplaying. If this method was called for current tab index we assume
+  // it's via tcDisplayStyleChange when tree state will have already been saved
+  // in tcDisplayStyleChanging. If not, we need to save tree state before
+  // changing tab index.
+  if tcDisplayStyle.TabIndex <> TabIdx then
+  begin
+    SaveTreeState;
+    tcDisplayStyle.TabIndex := TabIdx;
+  end;
   Redisplay;
 end;
 
