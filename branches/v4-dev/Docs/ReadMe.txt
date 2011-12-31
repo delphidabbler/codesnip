@@ -1,6 +1,6 @@
 ================================================================================
 
-DELPHIDABBLER CODESNIP README
+DELPHIDABBLER CODESNIP v4 PREVIEW README
 
 ================================================================================
 
@@ -16,6 +16,71 @@ It displays details of each snippet in the database and can test-compile them
 with each installed Win32 version of Delphi from v2 to XE2 and Free Pascal.
 
 Compilable Pascal units containing selected snippets can be created.
+
+
+About the v4 Preview release
+================================================================================
+
+Overview
+--------
+
+This release is a pre-release version that shows some of the features scheduled
+for CodeSnip v4.
+
+If you accept the default install path, or specify a unique install path it will
+install alongside any v3 release and will not affect the v3 release in any way.
+The installer will copy over any user defined snippets from a pre-existing v3
+installation and will preserve most if not all settings.
+
+Any user defined snippets you edit will not be reflected in any v3 installation
+and any settings you change won't affect the v3 install.
+
+Nearly all the file formats have changed, so export and backup files will not be
+compatible with v3 and earlier, so be careful.
+
+Copies of the online database are stored in a different location to v3, so
+updating the database from the v4 preview will not update the database used by
+v3 and vice versa.
+
+** WARNING **
+-------------
+
+It is possible that file formats etc. may change before the final release of
+CodeSnip v4, so please use the preview only to experiment with the new version.
+Do not use this program as the only place you store valuable code.
+The are no guarantees that your data won't be damaged by later versions.
+
+New Features
+------------
+
+New features of this release worth trying out are:
+
+* The new multi-tab display that can show more than one snippet, category etc.
+  in the main display. Control click items in the overview pane to display them
+  in a new tab in the detail pane. Alternatively select View | New Tab (Ctrl+T)
+  to display a new empty tab that can display selected items. Press Ctrl+F4 to
+  close a tab.
+
+* Results of test compilations (F9) now appear in a dialog box.
+
+* You can specify the paths to be searched by the Delphi compilers when looking
+  for used units. This lets you compile snippets that use units other than those
+  provided in the VCL and RTL. For example you can specify a path to the Indy
+  components to compile them. Use the Compilers dialog box to set the paths on
+  a per-compiler basis.
+
+* You can use Unicode source code.
+
+For other features read the change log at
+http://www.delphidabbler.com/software/codesnip/log
+
+Bugs and Feature Requests
+-------------------------
+
+Please report bugs at http://www.delphidabbler.com/url/codesnip-bugs mentioning
+the program version you are using (see about box).
+
+Request new features at http://www.delphidabbler.com/url/codesnip-featurereq
 
 
 Installation
