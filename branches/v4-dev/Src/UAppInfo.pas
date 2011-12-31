@@ -65,6 +65,8 @@ type
       {Name of "company" that owns this program}
     const ProgramName = 'CodeSnip';
       {Name of program}
+    const ProgramCaption = ProgramName + ' (v4 preview)';
+      {Name of program displayed in main window and task bar caption}
     const FullProgramName = CompanyName + ' ' + ProgramName;
       {Full name of program, including company name}
     const ProgramID = 'codesnip';

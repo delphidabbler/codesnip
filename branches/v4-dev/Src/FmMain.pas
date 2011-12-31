@@ -1379,8 +1379,8 @@ begin
   try
     inherited;
     // Set window caption
-    Application.Title := TAppInfo.FullProgramName;
-    Caption := Application.Title;
+    Application.Title := TAppInfo.ProgramCaption;
+    Caption := TAppInfo.ProgramCaption;
     if TWebInfo.UsingLocalHost then
       Caption := Caption + ' [' + TWebInfo.LocalHost + ']';
 
