@@ -32,6 +32,10 @@ inherited AboutDlg: TAboutDlg
       TabOrder = 0
       object tsProgram: TTabSheet
         Caption = 'About The Program'
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmProgram: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -65,6 +69,10 @@ inherited AboutDlg: TAboutDlg
       object tsDatabase: TTabSheet
         Caption = 'About The Database'
         ImageIndex = 1
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         inline frmDatabase: THTMLTpltDlgFrame
           Left = 0
           Top = 0
@@ -98,6 +106,10 @@ inherited AboutDlg: TAboutDlg
       object tsPaths: TTabSheet
         Caption = 'Paths'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
       end
     end
     object pnlTitle: TPanel

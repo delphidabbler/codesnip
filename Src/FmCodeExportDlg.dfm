@@ -7,7 +7,7 @@ inherited CodeExportDlg: TCodeExportDlg
   inherited pnlBody: TPanel
     Height = 277
     ExplicitHeight = 277
-    object lblRoutines: TLabel
+    object lblSnippets: TLabel
       Left = 0
       Top = 0
       Width = 146

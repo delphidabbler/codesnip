@@ -22,7 +22,7 @@
 ; The Initial Developer of the Original Code is Peter Johnson
 ; (http://www.delphidabbler.com/).
 ;
-; Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+; Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
 ; Johnson. All Rights Reserved.
 ;
 ; Contributors:
@@ -52,6 +52,7 @@
 #define OutDir SourcePath + "..\..\Exe"
 #define SrcDocsPath SourcePath + "..\..\Docs\"
 #define SrcExePath SourcePath + "..\..\Exe\"
+#define ProgDataSubDir AppName + ".4"
 #define ExeProg SrcExePath + ExeFile
 #define AppVersion DeleteToVerStart(GetFileProductVersion(ExeProg))
 #define Copyright GetStringFileInfo(ExeProg, LEGAL_COPYRIGHT)
@@ -62,6 +63,10 @@
 #define InstUninstDir "Uninst"
 #define SetupHelper "CSSetupHelper.exe"
 
+; For v4 pre-release versions only, set version number here
+#define AppVersion "4.0-alpha.1"
+#define RealVersion "3.98.1"
+
 ; Creates name of setup file from app name, version and any special build string
 #define CreateSetupName(str fn) \
   Local[0] = GetStringFileInfo(fn, "SpecialBuild"), \
@@ -71,7 +76,7 @@
 #define SetupName CreateSetupName(ExeProg)
 
 [Setup]
-AppID={{B4BF7490-25F0-4CB1-A2D5-9E006D9FF05F}
+AppID={{578D0FFE-5873-4457-95F2-AAB38F52B622}
 AppName={#AppName}
 AppVersion={#AppVersion}
 AppVerName={#AppPublisher} {#AppName} {#AppVersion}
@@ -83,8 +88,8 @@ AppReadMeFile={app}\{#ReadMeFile}
 AppCopyright={#Copyright} ({#WebAddress})
 AppComments=
 AppContact=
-DefaultDirName={pf}\{#AppPublisher}\{#AppName}
-DefaultGroupName={#AppPublisher} {#AppName}
+DefaultDirName={pf}\{#AppPublisher}\{#AppName}-4
+DefaultGroupName={#AppPublisher} {#AppName} v4
 AllowNoIcons=true
 LicenseFile={#SrcDocsPath}{#LicenseFile}
 Compression=lzma/ultra
@@ -92,7 +97,9 @@ SolidCompression=true
 InternalCompressLevel=ultra
 OutputDir={#OutDir}
 OutputBaseFilename={#SetupName}
-VersionInfoVersion={#AppVersion}
+; VersionInfoVersion changed for v4 pre-release versions only
+;VersionInfoVersion={#AppVersion}
+VersionInfoVersion={#RealVersion}
 VersionInfoCompany={#Company}
 VersionInfoDescription=Installer for {#AppName}
 VersionInfoTextVersion=Release {#AppVersion}
@@ -105,8 +112,8 @@ UninstallDisplayIcon={app}\{#ExeFile}
 PrivilegesRequired=admin
 
 [Dirs]
-Name: {commonappdata}\{#AppPublisher}\{#AppName}; permissions: everyone-modify;
-Name: {commonappdata}\{#AppPublisher}\{#AppName}\Data; permissions: everyone-modify;
+Name: {commonappdata}\{#AppPublisher}\{#ProgDataSubDir}; permissions: everyone-modify;
+Name: {commonappdata}\{#AppPublisher}\{#ProgDataSubDir}\Database; permissions: everyone-modify;
 
 [Files]
 Source: {#SrcExePath}{#SetupHelper}; Flags: dontcopy
@@ -128,12 +135,13 @@ Filename: {app}\{#ExeFile}; Description: {cm:LaunchProgram,{#AppPublisher} {#App
 BeveledLabel={#Company}
 
 [UninstallDelete]
-; Deletes CodeSnip app config and data files (per-user data file is left in place)
-Type: filesandordirs; Name: "{commonappdata}\{#AppPublisher}\{#AppName}"
+; Deletes CodeSnip common app config and data files (per-user data file is left in place)
+Type: filesandordirs; Name: "{commonappdata}\{#AppPublisher}\{#ProgDataSubDir}"
 
 [Code]
 // DataLocations.pas must be declared first
 #include "DataLocations.ps"
+#include "Unicode.ps"
 #include "UpdateIni.ps"
 #include "UpdateDBase.ps"
 #include "EventHandlers.ps"

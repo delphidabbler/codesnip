@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,36 +45,9 @@ uses
   Compilers.UGlobals, IntfHTMLDocHostInfo, UBaseObjects;
 
 
-type
-
-  {
-  ICompCheckRoutineDHTML:
-    Interface to DHTML object that manipulates snippet display in compiler check
-    pane.
-  }
-  ICompCheckRoutineDHTML = interface(IInterface)
-    ['{112DD126-0A16-4F7F-992C-35F94963B52C}']
-    procedure DisplayCompileResults(const ACompilers: ICompilers);
-      {Updates HTML to display results of last compile.
-        @param ACompilers [in] Compilers object containing required results.
-      }
-  end;
-
-  {
-  TDHTMLFactory:
-    Factory class for IDHTML objects.
-  }
-  TDHTMLFactory = class(TNoConstructObject)
-  public
-    class function CreateCompCheckRoutineDHTML(
-      const HostInfo: IHTMLDocHostInfo): ICompCheckRoutineDHTML;
-     {Creates instance of ICompCheckRoutineDHTML for use in compiler check
-      frames.
-        @param HostInfo [in] Provides information about object hosting the HTML
-          that is to be manipulated.
-        @return Required ICompCheckRoutineDHTML object.
-      }
-  end;
+{ TODO: Keep this unit until development is complete and then remove, along with
+        definition of IHTMLDocHostInfo if not needed. I've left the base class
+        here in case any DHTML is required. }
 
 
 implementation
@@ -82,7 +55,7 @@ implementation
 
 uses
   // Project
-  UCompResHTML, UHTMLDocHelper, UHTMLUtils, UImageTags;
+  UCompResHTML, UHTMLDOMHelper, UHTMLUtils, UImageTags;
 
 
 type
@@ -116,37 +89,6 @@ type
       }
   end;
 
-  {
-  TCompCheckRoutineDHTML:
-    Object that manipulates HTML of compiler results for a snippet displayed in
-    compiler check pane.
-  }
-  TCompCheckRoutineDHTML = class(TDHTML,
-    ICompCheckRoutineDHTML
-  )
-  protected
-    { ICompCheckRoutineDHTML methods }
-    procedure DisplayCompileResults(const ACompilers: ICompilers);
-      {Updates HTML to display results of last compile.
-        @param ACompilers [in] Compilers object containing required results.
-      }
-  end;
-
-
-{ TDHTMLFactory }
-
-class function TDHTMLFactory.CreateCompCheckRoutineDHTML(
-  const HostInfo: IHTMLDocHostInfo): ICompCheckRoutineDHTML;
- {Creates instance of ICompCheckRoutineDHTML for use in compiler check frames.
-    @param HostInfo [in] Provides information about object hosting the HTML that
-      is to be manipulated.
-    @return Required ICompCheckRoutineDHTML object.
-  }
-begin
-  Result := TCompCheckRoutineDHTML.Create(HostInfo)
-    as ICompCheckRoutineDHTML;
-end;
-
 { TDHTML }
 
 constructor TDHTML.Create(const HostInfo: IHTMLDocHostInfo);
@@ -169,9 +111,9 @@ procedure TDHTML.SetImage(const Id, URL, Title: string);
 var
   Img: IDispatch; // reference to required image element
 begin
-  Img := THTMLDocHelper.GetElementById(HostInfo.HTMLDocument, Id);
+  Img := THTMLDOMHelper.GetElementById(HostInfo.HTMLDocument, Id);
   TImageTags.SetSrc(Img, MakeSafeHTMLText(URL));
-  THTMLDocHelper.SetTitle(Img, MakeSafeHTMLText(Title));
+  THTMLDOMHelper.SetTitle(Img, MakeSafeHTMLText(Title));
 end;
 
 procedure TDHTML.SetInnerHTML(const Id, HTML: string);
@@ -180,36 +122,10 @@ procedure TDHTML.SetInnerHTML(const Id, HTML: string);
     @param HTML [in] Required inner HTML.
   }
 begin
-  THTMLDocHelper.SetInnerHTML(
-    THTMLDocHelper.GetElementById(HostInfo.HTMLDocument, Id),
+  THTMLDOMHelper.SetInnerHTML(
+    THTMLDOMHelper.GetElementById(HostInfo.HTMLDocument, Id),
     HTML
   );
-end;
-
-{ TCompCheckRoutineDHTML }
-
-procedure TCompCheckRoutineDHTML.DisplayCompileResults(
-  const ACompilers: ICompilers);
-  {Updates HTML to display results of last compile.
-    @param ACompilers [in] Compilers object containing required results.
-  }
-var
-  Compiler: ICompiler;  // references each compiler
-begin
-  for Compiler in ACompilers do
-  begin
-    // update compiler image
-    SetImage(
-      TCompCheckResHTML.TestImgId(Compiler),
-      TCompCheckResHTML.ImageResURL(Compiler.GetLastCompileResult),
-      TCompCheckResHTML.CompileResultDesc(Compiler.GetLastCompileResult)
-    );
-    // display any error / warning message links
-    SetInnerHTML(
-      TCompCheckResHTML.ErrCellId(Compiler),
-      TCompCheckResHTML.LogLink(Compiler)
-    );
-  end;
 end;
 
 end.

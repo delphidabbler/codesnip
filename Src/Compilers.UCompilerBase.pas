@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphi
   SysUtils, Classes, Graphics,
   // Project
-  Compilers.UGlobals, Compilers.URunner, UExceptions;
+  Compilers.UGlobals, Compilers.URunner, UExceptions, UEncodings;
 
 
 type
@@ -68,6 +68,8 @@ type
       {Glyph reprenting compiler: nil if no glyph}
     fSwitches: string;
       {User defined command line switches}
+    fSearchDirs: ISearchDirs;
+      {List of compiler search directories}
     function CommandLineSwitches: string;
       {Generate list of space separated switches for compiler command line.
         @return Required list.
@@ -100,9 +102,18 @@ type
       {Initializes object.
       }
   protected
+    function CompilerOutputEncoding: TEncodingType; virtual;
+      {Encoding used for text output by compiler. Descendants can override.
+        @return System default ANSI encoding type.
+      }
     function GlyphResourceName: string; virtual;
       {Name of any resource containing a "glyph" bitmap for a compiler.
         @return Resource name or '' if the compiler has no glyph.
+      }
+    function SearchDirParams: string; virtual; abstract;
+      {One of more parameters that define any search directories to be passed
+      to compiler on command line.
+        @return Required space separated parameter(s).
       }
     { ICompiler methods }
     function GetName: string; virtual; abstract;
@@ -146,6 +157,14 @@ type
     procedure SetSwitches(const Switches: string);
       {Sets user defined switches.
         @param Switches [in] Required switches separated by commas.
+      }
+    function GetSearchDirs: ISearchDirs;
+      {Returns copy of list of search directories used by compiler.
+        @return Required list of directories.
+      }
+    procedure SetSearchDirs(Dirs: ISearchDirs);
+      {Stores a copy of given list of search directories.
+        @param Dirs [in] List of search directories.
       }
     function GetLogFilePrefixes: TCompLogPrefixes;
       {Returns prefixes used in interpreting error, fatal error and warning
@@ -242,7 +261,7 @@ implementation
 
 uses
   // Project
-  UUtils;
+  Compilers.USearchDirs, IntfCommon, UStrUtils, UUtils;
 
 
 const
@@ -260,13 +279,14 @@ function TCompilerBase.BuildCommandLine(const Project, Path: string): string;
   }
 begin
   Result := Format(
-    '"%0:s" %1:s %2:s',
+    '"%0:s" %1:s %2:s %3:s',
     [
-      fExecFile,                              // compile exe
+      fExecFile,                              // compiler exe
       LongToShortFilePath(
         IncludeTrailingPathDelimiter(Path)
       ) + Project,                            // path to project
-      CommandLineSwitches                     // command line switches
+      CommandLineSwitches,                    // command line switches
+      SearchDirParams                         // search directory param(s)
     ]
   );
 end;
@@ -277,10 +297,18 @@ procedure TCompilerBase.BuildCompileLog(const CompilerOutput: TStream);
     @param CompilerOutput [in] Stream containing compiler output.
   }
 var
-  Index: Integer;   // index into error string list
+  Index: Integer;       // index into error string list
+  Encoding: TEncoding;  // encoding used by compiler for its output
 begin
-  // Load log file into string list
-  fCompileLog.LoadFromStream(CompilerOutput);
+  // Load log file into string list: compiler output is expected to have
+  // encoding of type provided by CompilerOutputEncoding method.
+  CompilerOutput.Position := 0;
+  Encoding := TEncodingHelper.GetEncoding(CompilerOutputEncoding);
+  try
+    fCompileLog.LoadFromStream(CompilerOutput, Encoding);
+  finally
+    TEncodingHelper.FreeEncoding(Encoding);
+  end;
   // Strip out any blank lines
   Index := 0;
   while (Index < fCompileLog.Count) do
@@ -305,12 +333,12 @@ begin
   // Get list of params from string
   Params := TStringList.Create;
   try
-    ExplodeStr(GetSwitches, ',', Params, False);
+    StrExplode(GetSwitches, ',', Params, False);
     // Process each param: any containing spaces get quoted
     for Idx := 0 to Pred(Params.Count) do
     begin
       Param := Params[Idx];
-      if AnsiPos(' ', Param) > 0 then
+      if StrContainsStr(' ', Param) then
         Param := '"' + Param + '"';
       // params are space separated
       if Result <> '' then
@@ -318,7 +346,7 @@ begin
       Result := Result + Param;
     end;
   finally
-    FreeAndNil(Params);
+    Params.Free;
   end;
 end;
 
@@ -339,7 +367,7 @@ begin
   if Res = 0 then
   begin
     // no error code: could be clear compile or could have warnings
-    if AnsiPos(fPrefixes[cpWarning], fCompileLog.Text) > 0 then
+    if StrContainsStr(fPrefixes[cpWarning], fCompileLog.Text) then
       Result := crWarning
     else
       Result := crSuccess;
@@ -350,8 +378,18 @@ begin
   fLastCompileResult := Result;
 end;
 
+function TCompilerBase.CompilerOutputEncoding: TEncodingType;
+  {Encoding used for text output by compiler. Descendants can override.
+    @return System default ANSI encoding type.
+  }
+begin
+  // Best assumption for compiler output is ANSI default code page. Don't know
+  // this for sure, but it seems reasonable.
+  Result := etSysDefault;
+end;
+
 constructor TCompilerBase.Create;
-  {Class constructor. Sets up object.
+  {Object constructor. Sets up object.
   }
 begin
   inherited;
@@ -375,14 +413,15 @@ begin
   fSwitches := Obj.fSwitches;
   fExecFile := Obj.fExecFile;
   fLastCompileResult := Obj.fLastCompileResult;
+  fSearchDirs := Obj.GetSearchDirs;
 end;
 
 destructor TCompilerBase.Destroy;
-  {Class destructor. Tears down object.
+  {Object destructor. Tears down object.
   }
 begin
-  FreeAndNil(fCompileLog);
-  FreeAndNil(fBitmap);
+  fCompileLog.Free;
+  fBitmap.Free;
   inherited;
 end;
 
@@ -396,18 +435,18 @@ function TCompilerBase.ExecuteCompiler(const CommandLine,
   }
 var
   CompilerRunner: TCompilerRunner;  // object that executes compiler
-  OutStm: TStream;                  // stream that captures compiler output
+  CompilerOutput: TStream;          // stream that captures compiler output
 begin
   Result := 0;  // keeps compiler quiet
   CompilerRunner := nil;
   // Create stream to capture compiler output
-  OutStm := TMemoryStream.Create;
+  CompilerOutput := TMemoryStream.Create;
   try
     // Perform compilation
     CompilerRunner := TCompilerRunner.Create;
     try
       Result := CompilerRunner.Execute(
-        CommandLine, ExcludeTrailingPathDelimiter(Path), OutStm
+        CommandLine, ExcludeTrailingPathDelimiter(Path), CompilerOutput
       );
     except
       on E: ECompilerRunner do
@@ -416,11 +455,10 @@ begin
         raise;
     end;
     // Interpret compiler output
-    OutStm.Position := 0;
-    BuildCompileLog(OutStm);
+    BuildCompileLog(CompilerOutput);
   finally
-    FreeAndNil(CompilerRunner);
-    FreeAndNil(OutStm);
+    CompilerRunner.Free;
+    CompilerOutput.Free;
   end;
 end;
 
@@ -438,7 +476,7 @@ begin
   for Line in fCompileLog do
   begin
     // Check if Msg is in current line
-    Pos := AnsiPos(Msg, Line);
+    Pos := StrPos(Msg, Line);
     if Pos > 0 then
     begin
       // Line required: add line without message to output string list
@@ -490,6 +528,14 @@ begin
   Result := fPrefixes;
 end;
 
+function TCompilerBase.GetSearchDirs: ISearchDirs;
+  {Returns copy of list of search directories used by compiler.
+    @return Required list of directories.
+  }
+begin
+  Result := (fSearchDirs as IClonable).Clone as ISearchDirs;
+end;
+
 function TCompilerBase.GetSwitches: string;
   {Returns user-defined swtches to be used by compiler.
     @return Required switches separated by commas. On creation these are default
@@ -521,6 +567,7 @@ procedure TCompilerBase.Initialize;
   }
 begin
   fCompileLog := TStringList.Create;
+  fSearchDirs := TSearchDirs.Create;
 end;
 
 function TCompilerBase.IsAvailable: Boolean;
@@ -575,7 +622,7 @@ begin
   try
     Log(Filter, SL);
     // Concatenate log lines into string and return it
-    Result := Trim(SL.Text);
+    Result := StrTrim(SL.Text);
   finally
     SL.Free;
   end;
@@ -604,6 +651,14 @@ begin
     else
       // no prefix set: use default value
       fPrefixes[Idx] := cPrefixDefaults[Idx];
+end;
+
+procedure TCompilerBase.SetSearchDirs(Dirs: ISearchDirs);
+  {Stores a copy of given list of search directories.
+    @param Dirs [in] List of search directories.
+  }
+begin
+  fSearchDirs := (Dirs as IClonable).Clone as ISearchDirs;
 end;
 
 procedure TCompilerBase.SetSwitches(const Switches: string);

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -95,7 +95,7 @@ uses
   // Delphi
   Forms, Windows,
   // Project
-  UExceptions, UHTMLDocHelper, UUtils;
+  UExceptions, UHTMLDOMHelper, UUtils;
 
 
 { TWBControlHelper }
@@ -110,7 +110,7 @@ begin
   Assert(Assigned(WB), ClassName + '.CheckValidDoc: WB is nil');
   if not Assigned(WB.Document) then
     raise EBug.Create(ClassName + '.CheckValidDoc: Document not assigned');
-  if not THTMLDocHelper.IsValidDocument(WB.Document) then
+  if not THTMLDOMHelper.IsValidDocument(WB.Document) then
     raise EBug.Create(
       ClassName + '.CheckValidDoc: Document is not a valid HTML document'
     );

@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -43,7 +43,7 @@ uses
   // Delphi
   Classes,
   // Project
-  USearch, USnippets;
+  DB.USnippet, UCompileMgr, USearch;
 
 
 type
@@ -71,10 +71,10 @@ type
         @param ASearch [out] Set to object recording search details if user OKs.
         @return True if user OKs or false if user cancels.
       }
-    function ExecFindXRefsDlg(const ARoutine: TRoutine;
+    function ExecFindXRefsDlg(const ASnippet: TSnippet;
       out ASearch: ISearch): Boolean;
       {Displays Find Cross References dialog box.
-        @param ARoutine [in] Snippet for which Cross-references are required.
+        @param ASnippet [in] Snippet for which Cross-references are required.
         @param ASearch [out] Set to object recording search details if user OKs.
         @return True if user OKs or false if user cancels.
       }
@@ -87,10 +87,10 @@ type
       {Displays Registration dialog box.
         @return True if program was registered and False if not.
       }
-    function ExecSelectionSearchDlg(const SelectedRoutines: TRoutineList;
+    function ExecSelectionSearchDlg(const SelectedSnippets: TSnippetList;
       out ASearch: ISearch): Boolean;
       {Displays Select Snippets dialog box.
-        @param SelectedRoutines [in] Default list of selected snippets.
+        @param SelectedSnippets [in] Default list of selected snippets.
         @param ASearch [out] Search to be performed if user OKs.
         @return True if user OKs or false if user cancels.
       }
@@ -111,11 +111,11 @@ type
     procedure ShowDonateDlg;
       {Displays Donate dialog box.
       }
-    procedure ShowTestUnit(const Snippet: TRoutine);
+    procedure ShowTestUnit(const Snippet: TSnippet);
       {Displays test unit used to test compile a snippet.
         @param Snippet [in] Snippet to be test compiled.
       }
-    procedure ShowDependencyTree(const Snippet: TRoutine);
+    procedure ShowDependencyTree(const Snippet: TSnippet);
       {Displays dependency tree for a snippet.
         @param Snippet [in] Snippet for which dependency tree is required.
       }
@@ -125,6 +125,13 @@ type
       }
     procedure ShowNewsDlg;
       {Displays latest news about CodeSnip and database in a dialog box.
+      }
+    procedure ShowTestCompileDlg(const CompileMgr: TCompileMgr;
+      const Snippet: TSnippet);
+      {Displays test compile dialog box that performs a test compilation.
+        @param CompileMgr [in] Object used to manage compilation and retain
+          results.
+        @param Snippet [in] Snippet to be compiled.
       }
   end;
 
@@ -136,8 +143,8 @@ uses
   // Project
   FmAboutDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg, FmFindTextDlg,
   FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg, FmProxyServerDlg,
-  FmRegistrationDlg, FmSelectionSearchDlg, FmUpdateDlg, FmUserBugReportDlg,
-  UPageSetupDlgMgr, UTestUnitDlgMgr;
+  FmRegistrationDlg, FmSelectionSearchDlg, FmTestCompileDlg, FmUpdateDlg,
+  FmUserBugReportDlg, UPageSetupDlgMgr, UTestUnitDlgMgr;
 
 
 { TDialogMgr }
@@ -160,15 +167,15 @@ begin
   Result := TFindTextDlg.Execute(Owner, ASearch);
 end;
 
-function TDialogMgr.ExecFindXRefsDlg(const ARoutine: TRoutine;
+function TDialogMgr.ExecFindXRefsDlg(const ASnippet: TSnippet;
   out ASearch: ISearch): Boolean;
   {Displays Find Cross References dialog box.
-    @param ARoutine [in] Snippet for which Cross-references are required.
+    @param ASnippet [in] Snippet for which Cross-references are required.
     @param ASearch [out] Set to object recording search details if user OKs.
     @return True if user OKs or false if user cancels.
   }
 begin
-  Result := TFindXRefsDlg.Execute(Owner, ARoutine, ASearch);
+  Result := TFindXRefsDlg.Execute(Owner, ASnippet, ASearch);
 end;
 
 function TDialogMgr.ExecPageSetupDlg: Boolean;
@@ -213,14 +220,14 @@ begin
 end;
 
 function TDialogMgr.ExecSelectionSearchDlg(
-  const SelectedRoutines: TRoutineList; out ASearch: ISearch): Boolean;
+  const SelectedSnippets: TSnippetList; out ASearch: ISearch): Boolean;
   {Displays Select Snippets dialog box.
-    @param SelectedRoutines [in] Default list of selected snippets.
+    @param SelectedSnippets [in] Default list of selected snippets.
     @param ASearch [out] Search to be performed if user OKs.
     @return True if user OKs or false if user cancels.
   }
 begin
-  Result := TSelectionSearchDlg.Execute(Owner, SelectedRoutines, ASearch);
+  Result := TSelectionSearchDlg.Execute(Owner, SelectedSnippets, ASearch);
 end;
 
 function TDialogMgr.ExecUpdateDlg: Boolean;
@@ -246,7 +253,7 @@ begin
   TUserBugReportDlg.Execute(Owner);
 end;
 
-procedure TDialogMgr.ShowDependencyTree(const Snippet: TRoutine);
+procedure TDialogMgr.ShowDependencyTree(const Snippet: TSnippet);
   {Displays dependency tree for a snippet.
     @param Snippet [in] Snippet for which dependency tree is required.
   }
@@ -268,7 +275,18 @@ begin
   TNewsDlg.Execute(Owner);
 end;
 
-procedure TDialogMgr.ShowTestUnit(const Snippet: TRoutine);
+procedure TDialogMgr.ShowTestCompileDlg(const CompileMgr: TCompileMgr;
+  const Snippet: TSnippet);
+  {Displays test compile dialog box that performs a test compilation.
+    @param CompileMgr [in] Object used to manage compilation and retain
+      results.
+    @param Snippet [in] Snippet to be compiled.
+  }
+begin
+  TTestCompileDlg.Execute(Owner, CompileMgr, Snippet);
+end;
+
+procedure TDialogMgr.ShowTestUnit(const Snippet: TSnippet);
   {Displays test unit used to test compile a snippet.
     @param Snippet [in] Snippet to be test compiled.
   }

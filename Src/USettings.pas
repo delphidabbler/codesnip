@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -216,9 +216,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes, IniFiles,
-  // 3rd party
-  UAppInfo, UEncryptor, UExceptions, UHexUtils, UUtils;
+  SysUtils, Classes, IniFiles, IOUtils,
+  // Project
+  UAppInfo, UEncryptor, UExceptions, UHexUtils, UIOUtils;
 
 
 var
@@ -273,7 +273,7 @@ type
   TIniSettings = class(TIniSettingsBase,
     ISettings
   )
-  private
+  strict private
     function CreateSection(const SectionID: TSettingsSectionId;
       const SubSection: string): ISettingsSection;
       {Creates object representing a section of the ini file.
@@ -315,7 +315,7 @@ type
   TIniSettingsSection = class(TIniSettingsBase,
     ISettingsSection
   )
-  private
+  strict private
     fSectionName: string;         // Name of section
     fStorage: TSettingsStorageId; // Id of storage to be used
     fValues: TStringList;         // Stores section's data as name=value pairs
@@ -460,8 +460,8 @@ constructor TIniSettingsBase.Create;
 begin
   inherited;
   // Ensure storage directories exist
-  EnsureFolders(TAppInfo.UserAppDir);
-  EnsureFolders(TAppInfo.CommonAppDir);
+  TDirectory.CreateDirectory(TAppInfo.UserAppDir);
+  TDirectory.CreateDirectory(TAppInfo.CommonAppDir);
 end;
 
 function TIniSettingsBase.CreateIniFile(
@@ -470,8 +470,14 @@ function TIniSettingsBase.CreateIniFile(
     @param Id [in] Id of storage for which object is required.
     @return TIniFile instance.
   }
+var
+  FileName: string; // name if ini file
 begin
-  Result := TIniFile.Create(StorageName(Storage));
+  FileName := StorageName(Storage);
+  if not TFile.Exists(FileName) then
+    // create empty Unicode text file with BOM to force Win API to write Unicode
+    TFileIO.WriteAllText(FileName, '', TEncoding.Unicode, True);
+  Result := TIniFile.Create(FileName);
 end;
 
 function TIniSettingsBase.StorageName(
@@ -481,12 +487,11 @@ function TIniSettingsBase.StorageName(
     @return Required storage name.
   }
 begin
-  // We only support one storage: ssUser
   case Storage of
     ssUser:
-      Result := TAppInfo.UserAppDir + '\User.3.ini';
+      Result := TAppInfo.UserAppDir + '\User.config';
     ssCommon:
-      Result := TAppInfo.CommonAppDir + '\Common.ini';
+      Result := TAppInfo.CommonAppDir + '\Common.config';
     else
       raise EBug.Create(ClassName + '.StorageName: unknown storage type');
   end;

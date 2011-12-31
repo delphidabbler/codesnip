@@ -1,5 +1,8 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
+ * $Rev$
+ * $Date$
+ *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -17,7 +20,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -186,14 +189,13 @@
       <dt class="code">&lt;a href=&quot;url&quot;&gt;...&lt;/a&gt;</dt>
       <dd>
         Creates a hyperlink. The <span class="code">href</span> attribute must
-        specify the required URL, which must use either the <em>http:</em> or
-        <em>file:</em> protocols; others are not permitted. If you use the
-        <em>file:</em> protocol it must reference a valid local or network file
-        and the <em>file://</em> component of the URL <strong>must</strong> be
-        supplied. <span class="warning">Warning:</span>. Be aware that if you
-        submit or export a snippet containing a hyperlink that uses the
-        <em>file:</em> protocol it will not work on the recipient's system
-        unless the required file can be found in the same location.<br>
+        specify the required URL, which must use one of the <em>http:</em>,
+        <em>https:</em> or <em>file:</em> protocols; others are not permitted.
+        If you use the <em>file:</em> protocol it must reference a valid local
+        or network file. Be aware that if you submit or export a snippet
+        containing a hyperlink that uses the <em>file:</em> protocol it will
+        only work on the recipient's system if the specified file exists in the
+        same location.<br>
         <em>Example:</em> <span class="code">&lt;p&gt;&lt;a
         href=&quot;http://www.delphidabbler.com&quot;&gt;Visit
         DelphiDabbler.com&lt;/a&gt;&lt/p&gt;.</span>.

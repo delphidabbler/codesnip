@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -104,39 +104,39 @@ begin
     TFontHelper.SetContentFont(ContentFont, True);
     with CSSBuilder.AddSelector('body') do
     begin
-      AddProperty(CSSBackgroundColorProp(clWindow));
-      AddProperty(CSSFontProps(ContentFont));
-      AddProperty(CSSMarginProp(3));
+      AddProperty(TCSS.BackgroundColorProp(clWindow));
+      AddProperty(TCSS.FontProps(ContentFont));
+      AddProperty(TCSS.MarginProp(3));
     end;
     with CSSBuilder.AddSelector('p') do
     begin
-      AddProperty(CSSMarginProp(4, 0, 0, 0));
+      AddProperty(TCSS.MarginProp(4, 0, 0, 0));
     end;
     with CSSBuilder.AddSelector('dt') do
     begin
-      AddProperty(CSSMarginProp(0, 0, 4, 0));
-      AddProperty(CSSPaddingProp(4));
-      AddProperty(CSSBackgroundColorProp(clBtnFace));
-      AddProperty(CSSColorProp(clBtnText));
+      AddProperty(TCSS.MarginProp(0, 0, 4, 0));
+      AddProperty(TCSS.PaddingProp(4));
+      AddProperty(TCSS.BackgroundColorProp(clBtnFace));
+      AddProperty(TCSS.ColorProp(clBtnText));
     end;
     with CSSBuilder.AddSelector('dd') do
     begin
-      AddProperty(CSSMarginProp(0, 0, 8, 20));
+      AddProperty(TCSS.MarginProp(0, 0, 8, 20));
     end;
     with CSSBuilder.AddSelector('.message') do
     begin
-      AddProperty(CSSTextAlignProp(ctaCenter));
-      AddProperty(CSSMarginProp(cssTop, 30));
-      AddProperty(CSSFontWeightProp(cfwBold));
+      AddProperty(TCSS.TextAlignProp(ctaCenter));
+      AddProperty(TCSS.MarginProp(cssTop, 30));
+      AddProperty(TCSS.FontWeightProp(cfwBold));
     end;
     with CSSBuilder.AddSelector('.error-heading') do
     begin
-      AddProperty(CSSColorProp(clWarningText));
-      AddProperty(CSSFontWeightProp(cfwBold));
+      AddProperty(TCSS.ColorProp(clWarningText));
+      AddProperty(TCSS.FontWeightProp(cfwBold));
     end;
     with CSSBuilder.AddSelector('.error-message') do
     begin
-      AddProperty(CSSMarginProp(cssLeft, 20));
+      AddProperty(TCSS.MarginProp(cssLeft, 20));
     end;
   finally
     ContentFont.Free;

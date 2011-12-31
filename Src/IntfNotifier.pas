@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -59,23 +59,18 @@ type
     procedure UpdateDbase;
       {Updates database.
       }
-    procedure DisplayRoutine(const RoutineName: WideString;
+    procedure DisplaySnippet(const SnippetName: WideString;
       UserDefined: WordBool);
-      {Displays a named routine.
-        @param RoutineName [in] Name of routine to display.
-        @param UserDefined [in] Whether routine is user defined.
+      {Displays a named snippey.
+        @param SnippetName [in] Name of snippet to display.
+        @param UserDefined [in] Whether snippet is user defined.
       }
     procedure DisplayCategory(const CatID: WideString);
       {Displays an identified category.
         @param CatID [in] Id of category to display.
       }
-    procedure CompileRoutine;
-      {Compiles the current routine.
-      }
-    procedure ViewCompilerLog(Ver: SYSINT);
-      {Displays a compiler log.
-        @param Ver [in] Version of Delphi for which we need to display log. Ver
-          is the ordinal value of the required compiler version enumerated type.
+    procedure CompileSnippet;
+      {Compiles the current snippet.
       }
     procedure ShowHint(const Hint: WideString);
       {Displays a hint.
@@ -84,9 +79,11 @@ type
     procedure ConfigCompilers;
       {Displays configure compilers dialog box.
       }
-    procedure ShowViewItem(const ViewItem: TViewItem);
+    procedure ShowViewItem(View: IView; const NewTab: Boolean);
       {Displays a view item.
         @param ViewItem [in] View item to display.
+        @param NewTab [in] Flag indicates whether view is to be displayed in
+          new tab.
       }
     procedure ChangeOverviewStyle(const Style: Integer);
       {Changes display style of overview pane.
@@ -96,12 +93,9 @@ type
       {Changes displayed pane in detail display area.
         @param Pane [in] Required new pane.
       }
-    procedure ShowTestUnit;
-      {Displays test unit.
-      }
-    procedure EditRoutine(const RoutineName: WideString);
-      {Edits a routine.
-        @param RoutineName [in] Name of routine. Must be user defined.
+    procedure EditSnippet(const SnippetName: WideString);
+      {Edits a snippet.
+        @param SnippetName [in] Name of snippet. Must be user defined.
       }
     procedure Donate;
       {Displays donate dialog box.
@@ -120,17 +114,13 @@ type
       {Sets action triggered when user requests database update.
         @param Action [in] Required action.
       }
-    procedure SetDisplayRoutineAction(const Action: TBasicAction);
-      {Sets action triggered when a named routine is requested to be displayed.
+    procedure SetDisplaySnippetAction(const Action: TBasicAction);
+      {Sets action triggered when a named snippet is requested to be displayed.
         @param Action [in] Required action.
       }
-    procedure SetCompileRoutineAction(const Action: TBasicAction);
+    procedure SetCompileSnippetAction(const Action: TBasicAction);
       {Sets action triggered when user wants to test-compile the current
-      routine.
-        @param Action [in] Required action.
-      }
-    procedure SetViewCompilerLogAction(const Action: TBasicAction);
-      {Sets action triggered when user wants to view a compiler log.
+      snippet.
         @param Action [in] Required action.
       }
     procedure SetShowHintAction(const Action: TBasicAction);
@@ -154,18 +144,13 @@ type
         @param Actions [in] Dynamic array of required actions: one per display
           style.
       }
-    procedure SetDetailPaneChangeActions(const Actions: array of TBasicAction);
-      {Sets actions that are triggered when different detail panes are required
+    procedure SetDetailPaneChangeAction(const Action: TBasicAction);
+      {Sets action that us triggered when different detail panes are required
       to be shown.
-        @param Actions [in] Dynamic array of required actions: one per detail
-          display tab.
-      }
-    procedure SetShowTestUnitAction(const Action: TBasicAction);
-      {Sets action triggered where displays a test unit.
         @param Action [in] Required action.
       }
-    procedure SetEditRoutineAction(const Action: TBasicAction);
-      {Sets action triggered when user requests a user defined routine is to be
+    procedure SetEditSnippetAction(const Action: TBasicAction);
+      {Sets action triggered when user requests a user defined snippet is to be
       edited.
         @param Action [in] Required action.
       }

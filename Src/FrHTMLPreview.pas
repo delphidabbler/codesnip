@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -43,7 +43,7 @@ uses
   // Delphi
   OleCtrls, SHDocVw, Classes, Controls, ExtCtrls, Menus,
   // Project
-  FrBrowserBase, IntfFrameMgrs, IntfPreview, UCSSBuilder;
+  FrBrowserBase, IntfFrameMgrs, IntfPreview, UCSSBuilder, UEncodings;
 
 
 type
@@ -62,10 +62,9 @@ type
       }
   protected // do not make strict
     { IPreview }
-    procedure Display(const DocContent: string; out Title: string);
+    procedure Display(const DocContent: TEncodedData);
       {Displays document in preview dialog box.
         @param DocContent [in] Content of document to be displayed.
-        @param Title [out] Title of document, if any.
       }
     procedure SetPopupMenu(const Menu: TPopupMenu);
       {Sets pop up menu to be displayed when browser control is right clicked.
@@ -81,7 +80,7 @@ implementation
 
 uses
   // Project
-  UCSSUtils, UHTMLDocHelper;
+  UCSSUtils;
 
 
 {$R *.dfm}
@@ -96,18 +95,15 @@ procedure THTMLPreviewFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
 begin
   inherited;
   with CSSBuilder.AddSelector('body') do
-    AddProperty(CSSMarginProp(cPreviewMargin));
+    AddProperty(TCSS.MarginProp(cPreviewMargin));
 end;
 
-procedure THTMLPreviewFrame.Display(const DocContent: string;
-  out Title: string);
+procedure THTMLPreviewFrame.Display(const DocContent: TEncodedData);
   {Displays document in preview dialog box.
     @param DocContent [in] Content of document to be displayed.
-    @param Title [out] Title of document, if any.
   }
 begin
-  WBController.IOMgr.LoadFromString(DocContent);
-  Title := THTMLDocHelper.GetDocTitle(wbBrowser.Document);
+  WBController.IOMgr.LoadFromString(DocContent.ToString);
 end;
 
 procedure THTMLPreviewFrame.SetPopupMenu(const Menu: TPopupMenu);

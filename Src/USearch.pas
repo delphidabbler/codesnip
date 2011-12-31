@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes, Windows {for inlining}, Graphics,
   // Project
-  Compilers.UGlobals, UBaseObjects, USnippets;
+  Compilers.UGlobals, DB.USnippet, UBaseObjects;
 
 
 type
@@ -176,11 +176,11 @@ type
   }
   ISelectionSearchCriteria = interface(ISearchCriteria)
     ['{6FA6AC34-439B-4744-ACBC-1836EE140EB6}']
-    function GetSelectedItems: TRoutineList;
+    function GetSelectedItems: TSnippetList;
       {Read accessor for SelectedItems property.
         @return List of snippets to be selected in search.
       }
-    property SelectedItems: TRoutineList read GetSelectedItems;
+    property SelectedItems: TSnippetList read GetSelectedItems;
       {List of snippets to be selected in search}
   end;
 
@@ -193,7 +193,7 @@ type
     soRequiredRecurse,  // recursively find required snippets
     soSeeAlso,          // include X-refs ("see also") in search results
     soSeeAlsoRecurse,   // recursively find X-refs
-    soIncludeRoutine    // include original snippet in search results
+    soIncludeSnippet    // include original snippet in search results
   );
 
   {
@@ -209,15 +209,15 @@ type
   }
   IXRefSearchCriteria = interface(ISearchCriteria)
     ['{92277B2B-AB48-4B3B-8C4F-6DCC71716D79}']
-    function GetBaseRoutine: TRoutine;
-      {Read accessor for BaseRoutine property.
+    function GetBaseSnippet: TSnippet;
+      {Read accessor for BaseSnippet property.
         @return Reference to initiating snippet.
       }
     function GetOptions: TXRefSearchOptions;
       {Read accessor for Options property.
         @return Set of options controlling XRef search.
       }
-    property BaseRoutine: TRoutine read GetBaseRoutine;
+    property BaseSnippet: TSnippet read GetBaseSnippet;
       {Initiating snippet for search}
     property Options: TXRefSearchOptions read GetOptions;
       {Options controlling XRef search}
@@ -246,7 +246,7 @@ type
       {Read accessor for Criteria property.
         @return Criteria to be applied to search.
       }
-    function Execute(const InList, FoundList: TRoutineList): Boolean;
+    function Execute(const InList, FoundList: TSnippetList): Boolean;
       {Executes the search, determining which of a list of snippets match the
       search criteria.
         @param InList [in] List of snippets that the search is applied to.
@@ -329,17 +329,17 @@ type
         @return ITextSearchCriteria interface to created object.
       }
     class function CreateSelectionSearchCriteria(
-      const SelectedItems: TRoutineList): ISelectionSearchCriteria;
+      const SelectedItems: TSnippetList): ISelectionSearchCriteria;
       {Creates a selection search criteria object with specified property
       values.
         @param SelectedItems [in] List snippets to be included in search.
         @return ISelectionSearchCriteria interface to created object.
       }
-    class function CreateXRefSearchCriteria(const BaseRoutine: TRoutine;
+    class function CreateXRefSearchCriteria(const BaseSnippet: TSnippet;
       const Options: TXRefSearchOptions): IXRefSearchCriteria;
       {Creates a cross-reference search criteria object with specified property
       values.
-        @param BaseRoutine [in] Snippet whose cross references are to be
+        @param BaseSnippet [in] Snippet whose cross references are to be
           searched.
         @param Options [in] Options controlling XRef search.
         @return IXRefSearchCriteria interface to created object.
@@ -354,7 +354,7 @@ uses
   // Delphi
   SysUtils, Character,
   // Project
-  UActiveText, UUtils;
+  UActiveText, UStrUtils;
 
 
 type
@@ -367,14 +367,14 @@ type
   }
   TSearch = class(TInterfacedObject)
   strict protected
-    function Match(const Routine: TRoutine): Boolean; virtual; abstract;
+    function Match(const Snippet: TSnippet): Boolean; virtual; abstract;
       {Checks whether a snippet matches the search criteria.
-        @param Routine [in] Snippet to be tested.
+        @param Snippet [in] Snippet to be tested.
         @return True if snippet matches criteria, false if not.
       }
   protected
     { ISearch methods }
-    function Execute(const InList, FoundList: TRoutineList): Boolean;
+    function Execute(const InList, FoundList: TSnippetList): Boolean;
       {Executes the search, determining which of a list of snippets match the
       search criteria.
         @param InList [in] List of snippets that the search is applied to.
@@ -398,9 +398,9 @@ type
     fCriteria: ICompilerSearchCriteria;
       {Search criteria}
   strict protected
-    function Match(const Routine: TRoutine): Boolean; override;
+    function Match(const Snippet: TSnippet): Boolean; override;
       {Checks whether a snippet matches the search criteria.
-        @param Routine [in] Snippet to be tested.
+        @param Snippet [in] Snippet to be tested.
         @return True if snippet matches criteria, false if not.
       }
   protected
@@ -425,9 +425,9 @@ type
     fCriteria: ITextSearchCriteria;
       {Search criteria}
   strict protected
-    function Match(const Routine: TRoutine): Boolean; override;
+    function Match(const Snippet: TSnippet): Boolean; override;
       {Checks whether a snippet matches the search criteria.
-        @param Routine [in] Snippet to be tested.
+        @param Snippet [in] Snippet to be tested.
         @return True if snippet matches criteria, false if not.
       }
   protected
@@ -452,9 +452,9 @@ type
     fCriteria: ISelectionSearchCriteria;
       {Search criteria}
   strict protected
-    function Match(const Routine: TRoutine): Boolean; override;
+    function Match(const Snippet: TSnippet): Boolean; override;
       {Checks whether a snippet matches the search criteria.
-        @param Routine [in] Snippet to be tested.
+        @param Snippet [in] Snippet to be tested.
         @return True if snippet matches criteria, false if not.
       }
   protected
@@ -478,35 +478,35 @@ type
   strict private
     fCriteria: IXRefSearchCriteria;
       {Search criteria}
-    fXRefs: TRoutineList;
+    fXRefs: TSnippetList;
       {List of all cross-referenced snippets per current criteria}
-    function AddToXRefs(const Routine: TRoutine): Boolean;
+    function AddToXRefs(const Snippet: TSnippet): Boolean;
       {Adds snippet to list of cross-references if not already in list.
-        @param Routine [in] Snippet to add to list.
+        @param Snippet [in] Snippet to add to list.
         @return True if snippet added or false if snippet was already in list.
       }
-    procedure ReferenceRequired(const Routine: TRoutine);
+    procedure ReferenceRequired(const Snippet: TSnippet);
       {Adds all a snippet's required snippets to cross-reference list. These
       references are only added if appropriate search option is set.
-        @param Routine [in] Snippet whose required snippets are to be added to
+        @param Snippet [in] Snippet whose required snippets are to be added to
           x-ref list.
       }
-    procedure ReferenceSeeAlso(const Routine: TRoutine);
+    procedure ReferenceSeeAlso(const Snippet: TSnippet);
       {Adds all a snippet's "see also" snippets to cross-reference list. These
       references are only added if appropriate search option is set.
-        @param Routine [in] Snippet whose "see also" snippets are to be added to
+        @param Snippet [in] Snippet whose "see also" snippets are to be added to
           x-ref list.
       }
-    procedure ReferenceRoutine(const Routine: TRoutine);
+    procedure ReferenceSnippet(const Snippet: TSnippet);
       {Adds a snippet to cross-reference list if it is not already present. Also
       recursively adds the snippet's all its cross-referenced snippets if
       appropriate search options are set.
-        @param Routine [in] Snippet to add to x-ref list.
+        @param Snippet [in] Snippet to add to x-ref list.
       }
   strict protected
-    function Match(const Routine: TRoutine): Boolean; override;
+    function Match(const Snippet: TSnippet): Boolean; override;
       {Checks whether a snippet matches the search criteria.
-        @param Routine [in] Snippet to be tested.
+        @param Snippet [in] Snippet to be tested.
         @return True if snippet matches criteria, false if not.
       }
   protected
@@ -539,7 +539,7 @@ type
       {Read accessor for Criteria property.
         @return Criteria to be applied to search.
       }
-    function Execute(const InList, FoundList: TRoutineList): Boolean;
+    function Execute(const InList, FoundList: TSnippetList): Boolean;
       {Executes the search, determining which of a list of snippets match the
       search criteria.
         @param InList [in] List of snippets that the search is applied to.
@@ -591,7 +591,7 @@ type
     ICompilerSearchCriteria,
     ISearchUIInfo
     )
-  private
+  strict private
     fCompilers: TCompilerSearchCompilers;
       {Compilers to include in search}
     fLogic: TSearchLogic;
@@ -689,7 +689,7 @@ type
     ISearchUIInfo
   )
   strict private
-    fSelectedItems: TRoutineList;
+    fSelectedItems: TSnippetList;
       {List snippets to be selected in search}
   strict protected
     function GlyphResourceName: string; override;
@@ -698,12 +698,12 @@ type
       }
   protected
     { ISelectionSearchCriteria methods }
-    function GetSelectedItems: TRoutineList;
+    function GetSelectedItems: TSnippetList;
       {Read accessor for SelectedItems property.
         @return List of snippets to be selected in search.
       }
   public
-    constructor Create(const SelectedItems: TRoutineList);
+    constructor Create(const SelectedItems: TSnippetList);
       {Class constructor. Sets up object with specified property values.
         @param SelectedItems [in] List of snippets to be selected in search.
       }
@@ -723,7 +723,7 @@ type
     ISearchUIInfo
   )
   strict private
-    fBaseRoutine: TRoutine;
+    fBaseSnippet: TSnippet;
       {Snippet to which search of cross-references applies}
     fOptions: TXRefSearchOptions;
       {Set of poptions controlling XRef search}
@@ -734,8 +734,8 @@ type
       }
   protected
     { IXRefSearchCriteria methods }
-    function GetBaseRoutine: TRoutine;
-      {Read accessor for BaseRoutine property.
+    function GetBaseSnippet: TSnippet;
+      {Read accessor for BaseSnippet property.
         @return Reference to initiating snippet.
       }
     function GetOptions: TXRefSearchOptions;
@@ -743,10 +743,10 @@ type
         @return Set of options controlling XRef search.
       }
   public
-    constructor Create(const BaseRoutine: TRoutine;
+    constructor Create(const BaseSnippet: TSnippet;
       const Options: TXRefSearchOptions);
       {Class constructor. Sets up object with specified property values.
-        @param BaseRoutine [in] Snippet whose cross references are to be
+        @param BaseSnippet [in] Snippet whose cross references are to be
           searched.
         @param Options [in] Set of options conrtolling search.
       }
@@ -772,7 +772,7 @@ type
 
 { TSearch }
 
-function TSearch.Execute(const InList, FoundList: TRoutineList): Boolean;
+function TSearch.Execute(const InList, FoundList: TSnippetList): Boolean;
   {Executes the search, determining which of a list of snippets match the search
   criteria.
     @param InList [in] List of snippets that the search is applied to.
@@ -780,21 +780,16 @@ function TSearch.Execute(const InList, FoundList: TRoutineList): Boolean;
     @return True if some snippets were found or false if search failed.
   }
 var
-  Idx: Integer;         // loops thru snippets in InList
-  Routine: TRoutine;    // reference to a snippet in InList
+  Snippet: TSnippet;    // each snippet in InList
 begin
   Assert(Assigned(InList), ClassName + '.Execute: InList is nil');
   Assert(Assigned(FoundList), ClassName + '.Execute: FoundList is nil');
   Assert(InList <> FoundList, ClassName + '.Execute: InList = FoundList');
-  // Ensure found list is empty
+
   FoundList.Clear;
-  // We add all snippets from InList to FoundList if they match search criteria
-  for Idx := 0 to Pred(InList.Count) do
-  begin
-    Routine := InList[Idx];
-    if Match(Routine) then
-      FoundList.Add(Routine);
-  end;
+  for Snippet in InList do
+    if Match(Snippet) then
+      FoundList.Add(Snippet);
   Result := FoundList.Count > 0;
 end;
 
@@ -828,9 +823,9 @@ begin
   Result := fCriteria;
 end;
 
-function TCompilerSearch.Match(const Routine: TRoutine): Boolean;
+function TCompilerSearch.Match(const Snippet: TSnippet): Boolean;
   {Checks whether a snippet matches the search criteria.
-    @param Routine [in] Snippet to be tested.
+    @param Snippet [in] Snippet to be tested.
     @return True if snippet matches criteria, false if not.
   }
 const
@@ -842,44 +837,37 @@ const
     [crError],                // soCompileFail,
     [crQuery]                 // soUnkown
   );
+
+  // Checks if a snippet's compiler result for given compiler ID matches
+  // expected results.
+  function CompatibilityMatches(const CompID: TCompilerID): Boolean;
+  begin
+    Result := Snippet.Compatibility[CompID] in cCompatMap[fCriteria.Option];
+  end;
+
 var
   CompID: TCompilerID;  // loops thru supported compilers
 begin
   if fCriteria.Logic = slOr then
   begin
-    // Find any compiler: we set result true as soon as any compiler matches and
-    // stop searching
+    // Find any compiler: we return true as soon as any compiler compatibility
+    // matches
     Result := False;
-    for CompID := Low(TCompilerID) to High(TCompilerID) do
+    for CompID in fCriteria.Compilers do
     begin
-      if CompID in fCriteria.Compilers then
-      begin
-        // this is one of selected compilers: check compile result
-        if (Routine.Compatibility[CompID] in cCompatMap[fCriteria.Option]) then
-        begin
-          Result := True;
-          Break;
-        end;
-      end;
+      if CompatibilityMatches(CompID) then
+        Exit(True);
     end;
   end
   else {fLogic = slAnd}
   begin
-    // Find all compilers: we set result false as soon as any compiler doesn't
-    // match and stop searching
+    // Find all compilers: we return false as soon as any compiler compatibility
+    // doesn't match
     Result := True;
-    for CompID := Low(TCompilerID) to High(TCompilerID) do
+    for CompID in fCriteria.Compilers do
     begin
-      if CompID in fCriteria.Compilers then
-      begin
-        // this is one of selected compilers: check compile result
-        if not
-          (Routine.Compatibility[CompID] in cCompatMap[fCriteria.Option]) then
-        begin
-          Result := False;
-          Break;
-        end;
-      end;
+      if not CompatibilityMatches(CompID) then
+        Exit(False);
     end;
   end;
 end;
@@ -905,9 +893,9 @@ begin
   Result := fCriteria;
 end;
 
-function TTextSearch.Match(const Routine: TRoutine): Boolean;
+function TTextSearch.Match(const Snippet: TSnippet): Boolean;
   {Checks whether a snippet matches the search criteria.
-    @param Routine [in] Snippet to be tested.
+    @param Snippet [in] Snippet to be tested.
     @return True if snippet matches criteria, false if not.
   }
 
@@ -919,9 +907,37 @@ function TTextSearch.Match(const Routine: TRoutine): Boolean;
         punctuation are included in list in punctuated and non-punctuated state
         and all words are separated by a single space.
     }
+
+    // Replace each white space char in string S with single space character.
+    function WhiteSpaceToSpaces(const S: string): string;
+    var
+      Idx: Integer; // loops through chars of S
+    begin
+      // Pre-size spaced text string: same size as raw text input
+      SetLength(Result, Length(S));
+      // Convert all white space characters to spaces
+      for Idx := 1 to Length(S) do
+      begin
+        if TCharacter.IsWhiteSpace(S[Idx]) then
+          Result[Idx] := ' '
+        else
+          Result[Idx] := S[Idx]
+      end;
+    end;
+
+    // Strip single and double quotes from a string S.
+    procedure StripQuotes(var S: string);
+    begin
+      if S = '' then
+        Exit;
+      if (S[1] = '''') or (S[1] = '"') then
+        Delete(S, 1, 1);
+      if (S <> '') and
+        ((S[Length(S)] = '''') or (S[Length(S)] = '"')) then
+        Delete(S, Length(S), 1);
+    end;
+
   var
-    SpacedText: string;         // raw text with all white space as space chars
-    SrcIdx: Integer;            // loops through raw text string
     Words: TStringList;         // list of words from raw text
     Word: string;               // a word from Words list
     WordIdx: Integer;           // index into Words list
@@ -934,35 +950,23 @@ function TTextSearch.Match(const Routine: TRoutine): Boolean;
       '?', '/', '|', '\', ''''
     ];
   begin
-    // Create word lists
-    Words := TStringList.Create;
     ExtraWords := nil;
+    Words := TStringList.Create;
     try
       ExtraWords := TStringList.Create;
-      // Pre-size spaced text string: same size as raw text input
-      SetLength(SpacedText, Length(RawText));
-      // Convert all white space characters to spaces
-      for SrcIdx := 1 to Length(RawText) do
-      begin
-        if TCharacter.IsWhiteSpace(RawText[SrcIdx]) then
-          SpacedText[SrcIdx] := ' '
-        else
-          SpacedText[SrcIdx] := RawText[SrcIdx]
-      end;
-      // Convert spaced text to word list
-      ExplodeStr(SpacedText, ' ', Words, False);
-      // Scan word list adding any additional derived words to extra list
+      // Convert text to word list and process each word
+      StrExplode(WhiteSpaceToSpaces(RawText), ' ', Words, False);
       for WordIdx := 0 to Pred(Words.Count) do
       begin
         Word := Words[WordIdx];
-        // strip quotes from word
-        if (Word[1] = '''') or (Word[1] = '"') then
-          Delete(Word, 1, 1);
-        if (Word <> '') and
-          ((Word[Length(Word)] = '''') or (Word[Length(Word)] = '"')) then
-          Delete(Word, Length(Word), 1);
+        StripQuotes(Word);
         Words[WordIdx] := Word;
-        // add any word ending in punctuation in non-punctuated state
+        // Add any word ending in punctuation in non-punctuated state
+        // (note that any word ending in x punctuation character will be added
+        // several times, once with each of x, x-1, x-2 ... 0 punctuation
+        // characters.
+        // We need to do this in case user searches for a word followed by one
+        // or more punctuation characters.
         while (Word <> '') and CharInSet(Word[Length(Word)], cWordEnders) do
         begin
           // we add any variations to Extra words list
@@ -970,9 +974,10 @@ function TTextSearch.Match(const Routine: TRoutine): Boolean;
           ExtraWords.Add(Word);
         end;
       end;
-      // Build result string, topping and tailing with spaces
-      Result := ' ' + JoinStr(Words, ' ', False) + ' '
-        + JoinStr(ExtraWords, ' ', False) + ' ';
+      Result := ' ' + StrJoin(Words, ' ', False) + ' '
+        + StrJoin(ExtraWords, ' ', False) + ' ';
+      if not (soMatchCase in fCriteria.Options) then
+        Result := StrToLower(Result);
     finally
       ExtraWords.Free;
       Words.Free;
@@ -989,14 +994,14 @@ function TTextSearch.Match(const Routine: TRoutine): Boolean;
   begin
     Result := Word;
     if not (soMatchCase in fCriteria.Options) then
-      Result := AnsiLowerCase(Result);
+      Result := StrToLower(Result);
     if soWholeWord in fCriteria.Options then
       Result := ' ' + Result + ' ';
   end;
 
-  function ExtraText(const Extra: IActiveText): string;
-    {Gets plain text from a snippet's Extra property's active text.
-      @param Extra [in] Active text to process.
+  function ExtraText(const ActiveText: IActiveText): string;
+    {Gets plain text from active text.
+      @param ActiveText [in] Active text to process.
       @return Plain text extracted from active text.
     }
   var
@@ -1004,7 +1009,7 @@ function TTextSearch.Match(const Routine: TRoutine): Boolean;
     TextElem: IActiveTextTextElem;  // referece to a text active text element
   begin
     Result := '';
-    for Elem in Extra do
+    for Elem in ActiveText do
       if Supports(Elem, IActiveTextTextElem, TextElem) then
         Result := Result + TextElem.Text;
   end;
@@ -1013,49 +1018,30 @@ function TTextSearch.Match(const Routine: TRoutine): Boolean;
 var
   SearchText: string; // text we're searching in
   SearchWord: string; // a word we're searching for
-  Idx: Integer;       // loops thru words to be found
 begin
-  // Build search text: text begins and ends with a single space, has no
-  // punctuation, and each word is separated by a single space
+  // Build search text
   SearchText := NormaliseSearchText(
-    ' ' + MakeSentence(Routine.Description) +
-    ' ' + Routine.SourceCode +
-    ' ' + MakeSentence(ExtraText(Routine.Extra)) +
+    ' ' + StrMakeSentence(Snippet.Description) +
+    ' ' + Snippet.SourceCode +
+    ' ' + StrMakeSentence(ExtraText(Snippet.Extra)) +
     ' '
   );
-  // Set search text to lower case if we're ignoring case: we also convert words
-  // to be found to lower case when case ignored
-  if not (soMatchCase in fCriteria.Options) then
-    SearchText := AnsiLowerCase(SearchText);
   if fCriteria.Logic = slOr then
   begin
-    // Find any of words in search text
-    // we set result true as soon as any word matches and stop searching
+    // Find any of words in search text: return True as soon as any word matches
     Result := False;
-    for Idx := 0 to Pred(fCriteria.Words.Count) do
-    begin
-      SearchWord := NormaliseSearchWord(fCriteria.Words[Idx]);
-      if AnsiPos(SearchWord, SearchText) > 0 then
-      begin
-        Result := True;
-        Break;
-      end;
-    end;
+    for SearchWord in fCriteria.Words do
+      if StrContainsStr(NormaliseSearchWord(SearchWord), SearchText) then
+        Exit(True);
   end
   else {fLogic = slAnd}
   begin
-    // Find all words in search text
-    // we set result false as soon as any word doesn't match and stop searching
+    // Find all words in search text: return False as soon as any word doesn't
+    // match
     Result := True;
-    for Idx := 0 to Pred(fCriteria.Words.Count) do
-    begin
-      SearchWord := NormaliseSearchWord(fCriteria.Words[Idx]);
-      if AnsiPos(SearchWord, SearchText) = 0 then
-      begin
-        Result := False;
-        Break;
-      end;
-    end;
+    for SearchWord in fCriteria.Words do
+      if not StrContainsStr(NormaliseSearchWord(SearchWord), SearchText) then
+        Exit(False);
   end;
 end;
 
@@ -1080,26 +1066,26 @@ begin
   Result := fCriteria;
 end;
 
-function TSelectionSearch.Match(const Routine: TRoutine): Boolean;
+function TSelectionSearch.Match(const Snippet: TSnippet): Boolean;
   {Checks whether a snippet matches the search criteria.
-    @param Routine [in] Snippet to be tested.
+    @param Snippet [in] Snippet to be tested.
     @return True if snippet matches criteria, false if not.
   }
 begin
-  Result := fCriteria.SelectedItems.Contains(Routine);
+  Result := fCriteria.SelectedItems.Contains(Snippet);
 end;
 
 { TXRefSearch }
 
-function TXRefSearch.AddToXRefs(const Routine: TRoutine): Boolean;
+function TXRefSearch.AddToXRefs(const Snippet: TSnippet): Boolean;
   {Adds snippet to list of cross-references if not already in list.
-    @param Routine [in] Snippet to add to list.
+    @param Snippet [in] Snippet to add to list.
     @return True if snippet added or false if snippet was already in list.
   }
 begin
-  Result := not fXRefs.Contains(Routine);
+  Result := not fXRefs.Contains(Snippet);
   if Result then
-    fXRefs.Add(Routine);
+    fXRefs.Add(Snippet);
 end;
 
 constructor TXRefSearch.Create(const Criteria: IXRefSearchCriteria);
@@ -1112,14 +1098,14 @@ begin
   // Record search criteria
   fCriteria := Criteria;
   // Create and populate list of cross-referenced snippets
-  fXRefs := TRoutineList.Create;
+  fXRefs := TSnippetList.Create;
   // reference required and "see also" snippets
   // these methods do nothing if appropriate search options not set
-  ReferenceRequired(fCriteria.BaseRoutine);
-  ReferenceSeeAlso(fCriteria.BaseRoutine);
+  ReferenceRequired(fCriteria.BaseSnippet);
+  ReferenceSeeAlso(fCriteria.BaseSnippet);
   // add base snippet if appropriate search option set
-  if soIncludeRoutine in fCriteria.Options then
-    AddToXRefs(fCriteria.BaseRoutine);
+  if soIncludeSnippet in fCriteria.Options then
+    AddToXRefs(fCriteria.BaseSnippet);
 end;
 
 destructor TXRefSearch.Destroy;
@@ -1138,60 +1124,60 @@ begin
   Result := fCriteria;
 end;
 
-function TXRefSearch.Match(const Routine: TRoutine): Boolean;
+function TXRefSearch.Match(const Snippet: TSnippet): Boolean;
   {Checks whether a snippet matches the search criteria.
-    @param Routine [in] Snippet to be tested.
+    @param Snippet [in] Snippet to be tested.
     @return True if snippet matches criteria, false if not.
   }
 begin
   // We have already set up list of x-ref snippets: simply look up snippet in it
-  Result := fXRefs.Contains(Routine);
+  Result := fXRefs.Contains(Snippet);
 end;
 
-procedure TXRefSearch.ReferenceRequired(const Routine: TRoutine);
+procedure TXRefSearch.ReferenceRequired(const Snippet: TSnippet);
   {Adds all a snippet's required snippets to cross-reference list. These
   references are only added if appropriate search option is set.
-    @param Routine [in] Snippet whose required snippets are to be added to x-ref
+    @param Snippet [in] Snippet whose required snippets are to be added to x-ref
       list.
   }
 var
   Idx: Integer; // loops thru all required snippets
 begin
   if soRequired in fCriteria.Options then
-    for Idx := 0 to Pred(Routine.Depends.Count) do
-      ReferenceRoutine(Routine.Depends[Idx]);
+    for Idx := 0 to Pred(Snippet.Depends.Count) do
+      ReferenceSnippet(Snippet.Depends[Idx]);
 end;
 
-procedure TXRefSearch.ReferenceRoutine(const Routine: TRoutine);
+procedure TXRefSearch.ReferenceSnippet(const Snippet: TSnippet);
   {Adds a snippet to cross-reference list if it is not already present. Also
   recursively adds the snippet's all its cross-referenced snippets if
   appropriate search options are set.
-    @param Routine [in] Snippet to add to x-ref list.
+    @param Snippet [in] Snippet to add to x-ref list.
   }
 begin
   // Add snippet to list if not present. Quit if snippet already referenced.
-  if not AddToXRefs(Routine) then
+  if not AddToXRefs(Snippet) then
     Exit;
   // Recurse required snippets if specified in options
   if soRequiredRecurse in fCriteria.Options then
-    ReferenceRequired(Routine);
+    ReferenceRequired(Snippet);
   // Recurse "see also" snippets if specified in options
   if soSeeAlsoRecurse in fCriteria.Options then
-    ReferenceSeeAlso(Routine);
+    ReferenceSeeAlso(Snippet);
 end;
 
-procedure TXRefSearch.ReferenceSeeAlso(const Routine: TRoutine);
+procedure TXRefSearch.ReferenceSeeAlso(const Snippet: TSnippet);
   {Adds all a snippet's "see also" snippets to cross-reference list. These
   references are only added if appropriate search option is set.
-    @param Routine [in] Snippet whose "see also" snippets are to be added to
+    @param Snippet [in] Snippet whose "see also" snippets are to be added to
       x-ref list.
   }
 var
   Idx: Integer; // loops thru all "see also" snippets
 begin
   if soSeeAlso in fCriteria.Options then
-    for Idx := 0 to Pred(Routine.XRef.Count) do
-      ReferenceRoutine(Routine.XRef[Idx]);
+    for Idx := 0 to Pred(Snippet.XRef.Count) do
+      ReferenceSnippet(Snippet.XRef[Idx]);
 end;
 
 { TBaseSearchCriteria }
@@ -1229,7 +1215,7 @@ begin
   fCriteria := TNulSearchCriteria.Create;
 end;
 
-function TNulSearch.Execute(const InList, FoundList: TRoutineList): Boolean;
+function TNulSearch.Execute(const InList, FoundList: TSnippetList): Boolean;
   {Executes the search, determining which of a list of snippets match the
   search criteria.
     @param InList [in] List of snippets that the search is applied to.
@@ -1329,7 +1315,7 @@ begin
   fOptions := Options;
   // store each search word as entry in string list
   fWords := TStringList.Create;
-  ExplodeStr(CompressWhiteSpace(Words), ' ', fWords);
+  StrExplode(StrCompressWhiteSpace(Words), ' ', fWords);
 end;
 
 destructor TTextSearchCriteria.Destroy;
@@ -1375,13 +1361,13 @@ end;
 { TSelectionSearchCriteria }
 
 constructor TSelectionSearchCriteria.Create(
-  const SelectedItems: TRoutineList);
+  const SelectedItems: TSnippetList);
   {Class constructor. Sets up object with specified property values.
     @param SelectedItems [in] List of snippets to be selected in search.
   }
 begin
   inherited Create;
-  fSelectedItems := TRoutineList.Create;
+  fSelectedItems := TSnippetList.Create;
   fSelectedItems.Assign(SelectedItems);
 end;
 
@@ -1393,7 +1379,7 @@ begin
   inherited;
 end;
 
-function TSelectionSearchCriteria.GetSelectedItems: TRoutineList;
+function TSelectionSearchCriteria.GetSelectedItems: TSnippetList;
   {Read accessor for SelectedItems property.
     @return List of snippets to be selected in search.
   }
@@ -1411,25 +1397,25 @@ end;
 
 { TXRefSearchCriteria }
 
-constructor TXRefSearchCriteria.Create(const BaseRoutine: TRoutine;
+constructor TXRefSearchCriteria.Create(const BaseSnippet: TSnippet;
   const Options: TXRefSearchOptions);
   {Class constructor. Sets up object with specified property values.
-    @param BaseRoutine [in] Snippet whose cross references are to be searched.
+    @param BaseSnippet [in] Snippet whose cross references are to be searched.
     @param Options [in] Set of options conrtolling search.
   }
 begin
-  Assert(Assigned(BaseRoutine), ClassName + '.Create: BaseRoutine is nil');
+  Assert(Assigned(BaseSnippet), ClassName + '.Create: BaseSnippet is nil');
   inherited Create;
-  fBaseRoutine := BaseRoutine;
+  fBaseSnippet := BaseSnippet;
   fOptions := Options;
 end;
 
-function TXRefSearchCriteria.GetBaseRoutine: TRoutine;
-  {Read accessor for BaseRoutine property.
+function TXRefSearchCriteria.GetBaseSnippet: TSnippet;
+  {Read accessor for BaseSnippet property.
     @return Reference to initiating snippet.
   }
 begin
-  Result := fBaseRoutine;
+  Result := fBaseSnippet;
 end;
 
 function TXRefSearchCriteria.GetOptions: TXRefSearchOptions;
@@ -1484,7 +1470,7 @@ begin
     // source is text search object
     Result := TSearchFactory.CreateTextSearch(
       TSearchCriteriaFactory.CreateTextSearchCriteria(
-        JoinStr(TextCriteria.Words, ' '),
+        StrJoin(TextCriteria.Words, ' '),
         TextCriteria.Logic,
         TextCriteria.Options
       )
@@ -1518,7 +1504,7 @@ begin
     // source is cross-reference search object
     Result := TSearchFactory.CreateXRefSearch(
       TSearchCriteriaFactory.CreateXRefSearchCriteria(
-        XRefCriteria.BaseRoutine,
+        XRefCriteria.BaseSnippet,
         XRefCriteria.Options
       )
     );
@@ -1590,7 +1576,7 @@ begin
 end;
 
 class function TSearchCriteriaFactory.CreateSelectionSearchCriteria(
-  const SelectedItems: TRoutineList): ISelectionSearchCriteria;
+  const SelectedItems: TSnippetList): ISelectionSearchCriteria;
   {Creates a selection search criteria object with specified property values.
     @param SelectedItems [in] List of snippets to be included in search.
     @return ISelectionSearchCriteria interface to created object.
@@ -1613,16 +1599,16 @@ begin
 end;
 
 class function TSearchCriteriaFactory.CreateXRefSearchCriteria(
-  const BaseRoutine: TRoutine;
+  const BaseSnippet: TSnippet;
   const Options: TXRefSearchOptions): IXRefSearchCriteria;
   {Creates a cross-reference search criteria object with specified property
   values.
-    @param BaseRoutine [in] Snippet whose cross references are to be searched.
+    @param BaseSnippet [in] Snippet whose cross references are to be searched.
     @param Options [in] Options controlling XRef search.
     @return IXRefSearchCriteria interface to created object.
   }
 begin
-  Result := TXRefSearchCriteria.Create(BaseRoutine, Options);
+  Result := TXRefSearchCriteria.Create(BaseSnippet, Options);
 end;
 
 end.

@@ -4,8 +4,7 @@
  * Resource file containing images, dialog boxes and manifest for CodeSnip
  * program.
  *
- * Originally named Images.rc, containing only images. Renamed as Resources.rc
- * at v2.0.
+ * Originally named Images.rc, containing only images.
  *
  * $Rev$
  * $Date$
@@ -98,12 +97,12 @@ LANGUAGE LANG_NEUTRAL , SUBLANG_NEUTRAL
     Hidden static control required by Windows to extend dialog. Dialog is
     extended by difference between dialog size and size of this static control
   */
-  LTEXT "", 1119, 0, 0, 0, 100, SS_LEFT | WS_CHILD | NOT WS_VISIBLE | WS_GROUP
+  LTEXT "", 1119, 0, 0, 0, 88, SS_LEFT | WS_CHILD | NOT WS_VISIBLE | WS_GROUP
 }
 
 
 /*
-  XP and Vista manifest file
+  XP and later manifest file
 */
 1 24 "Res/Misc/CodeSnip.manifest"
 

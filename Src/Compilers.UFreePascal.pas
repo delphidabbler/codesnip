@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -58,6 +58,11 @@ type
     ICompiler       // this is a compiler
   )
   protected
+    function SearchDirParams: string; override;
+      {One of more parameters that define any search directories to be passed
+      to compiler on command line.
+        @return Required space separated parameter(s).
+      }
     { IClonable }
     function Clone: IInterface;
       {Creates a new instance of the object that is an extact copy and returns
@@ -95,7 +100,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining};
+  SysUtils, Windows {for inlining},
+  // Project
+  UIStringList, UStrUtils;
 
 
 { TFreePascalCompiler }
@@ -162,6 +169,28 @@ resourcestring
   sFreePascalName = 'Free Pascal';    // name of compiler
 begin
   Result := sFreePascalName;
+end;
+
+function TFreePascalCompiler.SearchDirParams: string;
+  {One of more parameters that define any search directories to be passed
+  to compiler on command line.
+    @return Required space separated parameter(s).
+  }
+var
+  Dirs: IStringList;  // list of search directory names
+  DirName: string;    // each search directory name
+begin
+  if GetSearchDirs.IsEmpty then
+    Exit('');
+  Dirs := TIStringList.Create;
+  for DirName in GetSearchDirs do
+  begin
+    Dirs.Add(StrQuoteSpaced('-Fu' + DirName));
+    Dirs.Add(StrQuoteSpaced('-Fi' + DirName));
+    Dirs.Add(StrQuoteSpaced('-Fl' + DirName));
+    Dirs.Add(StrQuoteSpaced('-Fo' + DirName));
+  end;
+  Result := Dirs.GetText(' ', False);
 end;
 
 end.

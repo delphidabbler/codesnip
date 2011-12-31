@@ -14,13 +14,13 @@
 
 
 
-{TODO -oSelf -cRefactor : Rename identifiers that refer to "routine" with "snippet".}
+{DONE -oSelf -cRefactor : Rename identifiers that refer to "routine" with "snippet".}
 
 
-{TODO -oSelf -cProposal : Consider moving syntax highlighting setting (CSS builder) down into FrInfo from FrDetailView since comp check tab no longer uses highlighting}
 
 
-{TODO -oSelf -cProposal : Move Compile, View compile errors and configure compilers menu options to a new Compile menu?}
+
+{DONE -oSelf -cProposal : Move Compile, View compile errors and configure compilers menu options to a new Compile menu?}
 {TODO -oSelf -cRefactor : See if we can pull out common HTML and REML code into SGML unit}
 
 {TODO -oSelf -cRefactor : Re-implement MakeSafeHTML in terms of a char entity class like that for REML? Use common base class with entities class in UREMLDataIO?}
@@ -28,7 +28,7 @@
 
 {TODO -oSelf -cRefactor : Merge the IO and UI manager code into WBController}
 
-{TODO  -oSelf -cRefactor : Try to decouple UPageSetup, UPrintMgr and source code manager objects from associated dialog boxes}
+
 
 
 {TODO -oSelf -cFeature : Add parsing for standard user routine. Must start with procedure or function. Need to

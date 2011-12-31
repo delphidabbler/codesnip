@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -61,7 +61,7 @@ type
     IOleClientSite,     // notifies web browser that we provide an OLE container
     IDocHostUIHandler   // accessed web browser to customise UI
   )
-  private
+  strict private
     fWebBrowser: TWebBrowser;
       {Reference to controlled web browser control}
     fIOMgr: TWBIOMgr;

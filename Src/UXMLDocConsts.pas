@@ -56,7 +56,7 @@ const
   cCategoriesNode             = 'categories';
   cCategoryNode               = 'category';
   cCategoryIdAttr             = 'id';
-  cCatRoutinesNode            = 'cat-routines';
+  cCatSnippetsNode            = 'cat-routines';
   cSourceCodeFileNode         = 'source-code';
   cXRefNode                   = 'xref';
   // export XML only
@@ -71,9 +71,9 @@ const
   cRootVersionAttr            = 'version';
   cRootWatermarkAttr          = 'watermark';
   cPascalNameNode             = 'pascal-name';
-  cRoutinesNode               = 'routines';
-  cRoutineNode                = 'routine';
-  cRoutineNameAttr            = 'name';
+  cSnippetsNode               = 'routines';
+  cSnippetNode                = 'routine';
+  cSnippetNameAttr            = 'name';
   cCatIdNode                  = 'cat-id';
   cDescriptionNode            = 'description';
   cUnitsNode                  = 'units';

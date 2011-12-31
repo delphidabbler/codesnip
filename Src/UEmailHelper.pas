@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -50,10 +50,8 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
-  UUtils;
+  UStrUtils;
 
 
 function IsValidEmailAddress(const EmailAddr: string): Boolean;
@@ -67,11 +65,11 @@ var
 begin
   Result := False;
   // Check if there's an '@' symbol and its not too close to start
-  AtPos := AnsiPos('@', EmailAddr);
+  AtPos := StrPos('@', EmailAddr);
   if AtPos < 2 then
     Exit;
   // Check if there's a '.' after '@' symbol
-  LastDotPos := LastPos('.', EmailAddr);
+  LastDotPos := StrLastPos('.', EmailAddr);
   if (LastDotPos - AtPos < 2) or (LastDotPos > Length(EmailAddr) - 2) then
     Exit;
   Result := True;

@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UContainers, USnippets;
+  DB.UCategory, UContainers;
 
 
 type
@@ -70,13 +70,13 @@ type
       {Copies category description and related object to a string list.
         @param Strings [in] String list to receive information.
       }
-    function CatName(const Index: Integer): string;
-      {Gets name (id) of category at a specified index in the sorted list.
-        @param Index [in] Index of category for which name (id) is required.
+    function CatID(const Index: Integer): string;
+      {Gets id of category at a specified index in the sorted list.
+        @param Index [in] Index of category for which id is required.
       }
-    function IndexOf(const CatName: string): Integer;
-      {Gets index of a named category in sorted list.
-        @param CatName [in] Name (id) of category.
+    function IndexOf(const CatID: string): Integer;
+      {Gets index of a specified category in sorted list.
+        @param CatID [in] Id of category.
         @return Index of category in list or -1 if not found.
       }
   end;
@@ -87,17 +87,19 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining}, Generics.Defaults;
+  Windows {for inlining}, Generics.Defaults,
+  // Project
+  UStrUtils;
 
 
 { TCategoryListAdapter }
 
-function TCategoryListAdapter.CatName(const Index: Integer): string;
+function TCategoryListAdapter.CatID(const Index: Integer): string;
   {Gets name (id) of category at a specified index in the sorted list.
-    @param Index [in] Index of category for which name (id) is required.
+    @param Index [in] Index of category for which id is required.
   }
 begin
-  Result := fCatList[Index].Category;
+  Result := fCatList[Index].ID;
 end;
 
 constructor TCategoryListAdapter.Create(const CatList: TCategoryList);
@@ -113,7 +115,7 @@ begin
     TDelegatedComparer<TCategory>.Create(
       function (const Left, Right: TCategory): Integer
       begin
-        Result := AnsiCompareText(Left.Description, Right.Description);
+        Result := StrCompareText(Left.Description, Right.Description);
         if Result = 0 then
           Result := Ord(Left.UserDefined) - Ord(Right.UserDefined);
       end
@@ -132,9 +134,9 @@ begin
   inherited;
 end;
 
-function TCategoryListAdapter.IndexOf(const CatName: string): Integer;
-  {Gets index of a named category in sorted list.
-    @param CatName [in] Name (id) of category.
+function TCategoryListAdapter.IndexOf(const CatID: string): Integer;
+  {Gets index of a specified category in sorted list.
+    @param CatID [in] Id of category.
     @return Index of category in list or -1 if not found.
   }
 var
@@ -143,7 +145,7 @@ begin
   Result := -1;
   for Idx := 0 to Pred(fCatList.Count) do
   begin
-    if AnsiSameText(fCatList[Idx].Category, CatName) then
+    if StrSameText(fCatList[Idx].ID, CatID) then
     begin
       Result := Idx;
       Break;
@@ -159,7 +161,7 @@ var
   Cat: TCategory; // each category in sorted list
 begin
   for Cat in fCatList do
-    Strings.AddObject(Cat.Description, Cat);
+    Strings.Add(Cat.Description);
 end;
 
 end.
