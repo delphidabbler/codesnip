@@ -22,7 +22,7 @@
 ; The Initial Developer of the Original Code is Peter Johnson
 ; (http://www.delphidabbler.com/).
 ;
-; Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+; Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
 ; Johnson. All Rights Reserved.
 ;
 ; Contributors:
@@ -63,6 +63,10 @@
 #define InstUninstDir "Uninst"
 #define SetupHelper "CSSetupHelper.exe"
 
+; For v4 pre-release versions only, set version number here
+#define AppVersion "4.0-alpha.1"
+#define RealVersion "3.98.1"
+
 ; Creates name of setup file from app name, version and any special build string
 #define CreateSetupName(str fn) \
   Local[0] = GetStringFileInfo(fn, "SpecialBuild"), \
@@ -93,7 +97,9 @@ SolidCompression=true
 InternalCompressLevel=ultra
 OutputDir={#OutDir}
 OutputBaseFilename={#SetupName}
-VersionInfoVersion={#AppVersion}
+; VersionInfoVersion changed for v4 pre-release versions only
+;VersionInfoVersion={#AppVersion}
+VersionInfoVersion={#RealVersion}
 VersionInfoCompany={#Company}
 VersionInfoDescription=Installer for {#AppName}
 VersionInfoTextVersion=Release {#AppVersion}
