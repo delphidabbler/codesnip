@@ -4,7 +4,20 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
-Release v3.9.1 of 18 September 2001
+Release v3.9.3 of 23 November 2011
++ Fixed some bugs in main window:
+  - Toolbar was truncated when window is too narrow to display it all. It now wraps.
+  - Treeview state in Overview pane was not restoring correctly after navigating away from and then returning to a tab.
+  - Pressing Ctrl+Tab or Shift+Ctrl+Tab did not necessarily change the tab in the expected tab set in either the Overview or Detail panes.
++ Fixed a broken URL in about box.
++ Bumped installer program helper build number re Delphi 2010 compilation (should have been done at v3.5.1).
+
+Release v3.9.2 of 28 October 2011
++ Fixed bug #3427741 (http://bit.ly/vq2fAz) where details pane tabs didn't change in response to key presses.
++ Fixed bug #3427866 (http://bit.ly/w31z8L) where selection in overview was not always same as item displayed in details pane.
++ Fixed bug #3427889 (http://bit.ly/tijnmF) where there was the possibility of a GPF in overview pane.
+
+Release v3.9.1 of 18 September 2011
 + Fixed bug #3369422 (http://bit.ly/omSp6F) in Pascal highlighter that was causing an assertion failure when parsing malformed Pascal general format floating point numbers.
 
 Release v3.9.0 of 07 September 2011
