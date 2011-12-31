@@ -17,9 +17,12 @@ Notes
 
 * Development started 26 Nov 2010.
 
-* Version numbers set to 3.99.0.0 - will bump third number by one for each
-  released alpha or beta version and fourth number will be set to an appropriate
-  build number at the time of release.
+* First alpha release 31 Dec 2011.
+
+* Version numbers set to 3.98.x.x for alpha versions. Beta versions will use
+  3.99.x.x. Third number will be bumped for each alpha or beta release and
+  fourth number will be set to an appropriate build number at the time of
+  release.
 
 * Periodic merging of changes from v3 development tree (trunk). Some trunk
   changes ignored where they clash with v4 changes.
@@ -29,370 +32,41 @@ Notes
 Changes
 --------------------------------------------------------------------------------
 
-* Features
-  o Can now specify search paths for compiler to use to find 3rd party and user
-    units.
-  o Now use wizard for code imports.
-  o Compiler checks now displayed in dialog box - compiler check tab removed.
-  o New multi-tab display that lets one then one snippet be displayed in details
-    pane.
-  o New views for display in detail pane:
-    - "New tab" view displayed when a new tab is created by user.
-    - "Database updated" view displayed after a database is updated or restored.
-    
-* Added a "Tests" directory and project for unit tests.
-  o Tests for UStrUtils
-  o Tests for UUtils (some changes to pass tests)
+* Features:
 
 * Refactorings and similar:
-  o Changed several classes that used initialization and finalization sections
-    or TGC garbage collector instances to create and destroy objects stored in
-    private unit global variables to use class vars and class constructors /
-    destructors.
-  o Removed TGC garbage collector from project.
-  o Increased use of generics.
-  o Made some classes sealed.
-  o Moved some global constants into classes as private or public class
-    constants.
-  o Simplified many enumerators by re-using enumerators of VCL classes and
-    generic lists etc.
-  o View unit - complete rewrite
-  o Snippet Kind Info and Initial Letter code - complete rewrite
-  o Alpha grouping code
-  o Initial letter object changes.
-  o TDOSDateTime class.
-  o Original installer Pascal Script files.
-  o Code that manages saving of source code files.
-  o Renamed various unit, class, field and other names that referred to Snippets
-    as "routines".
-  o Some streamlining of units, removing / refactoring out some code.
-  o Rationalised HTML resource files.
-  o Much renaming of code related to database. Particularly "routines" changed
-    to "snippets".
-  o Much unit renaming, some using namespaces.
-  o TDlgAligner class: refactored and added support for dialogs specified by
-    window handle.
-  o THTMLTpltDlgFrame now uses callbacks to resolve placeholders using a
-    THTMLTemplate object: no longer uses TStringList and Name=Value strings.
-  o UAnchors.
-  o USearch.
-  o Many "private" and "protected" class visibility specifiers replaced by
-    "strict private" and "strict protected".
-  o Some code moved from USnippets into new units and created new DB namespace.
-  o Created new DBIO namespace for code that performs database IO.
-  o TSnippetsValidator
-  o New UStrUtils unit that pulls together and standardises string manipulation
-    code.
-  o New CRLF constant (= EOL)
-  o Moved file name testing code from UUtils to UFileProtocol.
-  o New IStringList.ToArray method.
-  o New TTextComparer class in UComparers.
-  o Some protected interface implementation methods made public.
-  o Some processing and trimming of record fields moved into records by using
-    properties and getter / setter methods.
-  o Moved formatting of user details into TUserDetails record using ToString
-    method.
-  o Increased used of dedicated comparer classes instead of delagating list /
-    dictionary comparisons to anonymous methods declared in using code.
-  o Kind property now only occurs in IActiveTextActionElem rather than in all
-    IActiveTextElem descendant interfaces.
-  o Major change to syntax highlighter classes:
-    - Changed to single class that uses provided renderer objects to render in
-      different formats.
-    - Provided nul, rtf and xhtml renderer classes.
-    - Highlighter now only produces document fragments.
-    - Separate static classes are now used to render complete documents.
-  o Active text validation code moved to owen unit.
-  o New methods added to TCtrlArranger to assist in arranging controls in a
-    form.
-  o Details Pane and Detail View management code heavily revised and refactored
-    following change to multi-tab snippet views.
-  o TMainDisplayMgr code heavily revised.
-  o View item action and notifier now support "new tab" request.
-  o Most database change events now handled directly in TMainDisplayMgr rather
-    than via main form, which now only enables / disables form in response to
-    the events.
 
 * Bug fixes:
-  o Applied some different versions of fixes made to v3: not for change log,
-    since already noted in v3 releases.
-    - Fixed bug where snippets that have names beginning with a lower case
-      letter were being omitted from from the associated list of snippets shown
-      in the detail pane. Fixes bug #3120962. Different fix to v3.
-    - Fixed XML validation bug that was rejecting XML processing instructions
-      with "encoding" attributes. This is a copy of v3 fix.
-    - Fixed long standing bug that was crashing when database was updated or
-      restored after editing, adding or deleting any user defined snippet. This
-      is a different fix to that made in v3.
-    - Fixed bug that was preventing Ctrl+Tab and Shift+Ctrl+Tab key presses from
-      working in Detail Pane's tabs when browser control selected. v3 fix was
-      copied from this one.
-    - Fixed bug in overview pane where selecting a view item not in overview
-      pane does not deselect current selection. v3 fix was copied from this one.
-    - Fixed potential bug by testing for nil notifier in
-      TOverviewFrame.tcDisplayStyleChange. v3 fix was copied from this one.
-  o Various Unicode and code page related problems in RTF code (see below).
-  o Fixed memory leaks
+  o Fixes made in parrallel with v3 fixes (not for change log):
+    - NONE TO DATE
 
 * Help file:
-  o Privacy statement topic updated in line with changes to text file.
-  o Snippets Editor topic updated re change in snippet name rules.
-  o Configure Compiler topic updated for new tab and browse dialog box.
-  o Code import topic(s) rewritten re new import wizard.
-  o Revised re Display Pane changes.
-  o Revised re Test Compile changes.
 
 * Documentation:
-  o Privacy statement updated re file name changes.
-  o Readme updated re v4 changes.
-  o Noted new export file version 5.
-  o New documentation for file formats in linked HTML files.
 
-* RTF Support - major changes:
-  o Code that makes "safe" RTF modified to write ANSI characters that are
-    correct for specified code page, and to use Unicode only where there is no
-    ANSI support.
-  o Code page of generated RTF now has to be specified.
-  o Fixed bug where title destination did not work correctly with Unicode
-    characters: used Unicode sub-destinations where necessary per RTF 1.9.1
-    spec.
-  o New TRTF record provided to encapsulate RTF code. Much RTF related code now
-    uses this instead of ANSI strings and streams.
-  o Refactored and extended code that load, saves and inserts RTF code to use
-    new static record and to use TRTF for the RTF data.
-  o RTF rendering code refactored. Highlighted source code is now inserted
-    directly into RTF document rather than having to merge in RTF to replace a
-    placeholder.
+* RTF Support:
 
 * HTML & CSS processing:
-  o HTML builder now uses TStringBuilder to create HTML documents.
-  o HTML builder no longer wraps embedded CSS code (in style tags) in HTML
-    comments.
-  o THTMLAttributes can now have attributes passed to constructor to create
-    object with attributes on fly rather than having to call Add method for each
-    attribute.
-  o Added support for supressing IE browser control's script error dialog boxes.
-  o HTML script errors now raise exceptions instead of displaying an IE script
-    error dialog box.
-  o Refactored and improved HTML event sink code.
-  o Static and dynamic CSS modified for revised displays.
-  o Heavy refactoring and thinning out of snippet and compile results table HTML
-    generation code following removal of compiler check pane.
-  o New TCSS method only record replaces CSSxxxx routines in UCSSUtils. Some
-    types in unit renamed.
-  o HTML utility routines revised.
-  o HTML Document helper code renamed as HTML DOM helper to more accurately
-    reflect its usage.
-  o Some changes to TAnchor class to be able to click the active link in an
-    HTML document.
 
-Printing:
-  o Print engine and print document code updated to used TRTF as document type
-    rather than passing data in streams.
-  o Title used in print spooler now has default if no title specified.
-
-* Added support for full Unicode Pascal identifiers to be used as snippet names.
-  Modified alpha grouping to handle this.
-
-* Clipboard copying code modified to have a method to add each supported format
-  to clipboard to enable correct encoding to be used for each format.
-
-* Event handling following changes to database heavily revised, fixing a
-  potential bug en-route.
+* Printing:
 
 * Dialog boxes:
-  o Config Compilers Dialog Box:
-    - Changed caption of button that detects compilers to "Detect Delphi
-      Compilers".
-    - Renamed "Command Line" tab to "Switches".
-    - Added new "Search Paths" tab.
-    - Tabs now each host a frame that provides controls and logic.
-    - Custom paint code for compiler list and compiler name banner moved to
-      separate classes and units.
-    - Created namespace FmCompilersDlg for all subsidiary support units.
-    - Corrected and revised Alt keys used in dialog.
-  o About Box:
-    - Paths tab now disable explore buttons if displayed paths don't exist.
-    - Paths tab hints now appear in sialog box instaed of main window status bar
-      and hints changed slightly.
-  o Added encoding drop down to Save source dialog box where user can choose
-    encoding to be used to save files. Provided different choices (or no choice)
-    for each file type.
-  o Preview dialog box:
-    - Simplified handling of captions in preview dialogs. No longer try to
-      extract title from document text.
-    - Required document type now stated explicitly by calling code. No longer
-      detect doc type from content.
-  o Compiler error dialog box
-    - Compiler log processing pulled out into private inner class.
-  o Removed redundant FmHTMLViewDlg unit and THTMLViewDlg intermediate form
-    class.
-  o New Browse for Folder dialog implementation based on TPJBrowseDialog.
-  o Internal changes to FmWizardDlg to suit new sub-class.
-  o Compile results dialog box changed to only display tabbed display of compile
-    results from multiple (1 or more) compilers. Single compiler view removed.
-  o Delete Category dialog box no longer allows non-empty categories to be
-    selected.
-  o Preferences dialog box:
-    o New display preferences for how view items are displayed: new tabs or
-      existing tabs.
 
 * Database:
-  o Changed user database dir name to UserData.4.
-  o Added support for main database files with .4.* extensions.
-  o Main database files now stored in UTF-8 with BOM. Database reader code
-    maintains support for reading files in Default encoding because another
-    version of CodeSnip may update database using that format.
-  o User database file format updated. Now v5.
-  o Changes to records and objects:
-    - Fields of TSnippetID now encapsulated.
-  o Moved some field comparisons into records / classes instead of doing
-    comparison in called code. E.g. TSnippetID gets a CompareNames method.
-  o Non-empty categories can no longer be deleted.
-  o New convenience method (Update) in IQuery.
-  o All changes to database now update current query - this is no longer done
-    by calling code in main form.
 
-* Import / Export / Backup
-  o Updated export file version to v5. All files use v5 regardless of REML
-    version used.
-  o Code that reads / writes backups completely overhauled.
-  o Updated backup file format to v4. Reader maintains backward support for v1
-    to v3 and no longer tries to read later formats.
-  o Code import:
-    - Code overhauled and UI changed (see elsewhere).
-    - User info appended to Extra info can now be email or name only or both.
-  o Code import now uses byte array instead of stream to read input file.
-  o User details code revised.
+* Import / Export / Backup:
 
 * Encoding:
-  o Added explicit UTF-8 encoding attribute to XML processing instruction of
-    export files.
-  o User database files now all use UTF-8 encoding (from v5 file format).
-    Ability to read earlier formats in default encoding retained.
-  o Code submission dialog now sends data to web service as UTF-8.
-  o New encoding helper class.
-  o Updated data stream reader and writer code to work with specified encodings
-    (now defaults to UTF-8 if no encoding provided).
-  o Removed all explicit use of Windows-1252. (*** check this ***)
-  o Config files now UTF-16LE. TSettings now creates empty blank config files
-    if necessary to force Win API to read / write ini files in Unicode.
-  o Test units are now saved in UTF-8 if they contain chars that can't be stored
-    in default ANSI code page. ANSI still used if possible. Also, unit names are
-    restricted to ASCII if necessary to ensure older Delphis (some of which
-    support UTF-8 files) can read the unit. (Some Delphis can't open files with
-    Unicode or even some ANSI file names).
-  o New encoded data structure for passing around binary data with info about
-    how it was encoded. Used in the main to replaced strings and streams.
-    - Used for database download processing.
-    - Used for code export (including code submission).
-    - Used for highlighted source code returned from syntax highlighters.
-    - Used for documents to be displyed in Preview dialog box.
-    - Used in print previews in preferences dialog box.
-    - Used when generating snippet information using TRoutineDoc and
-      descendants.
-    - Used when copying code to clipboard.
-    - Replaces most uses of TStringStream.
   o Compiler output encoding can now be set explicitly on a per-compiler
     basis. Currently all compiler use default.
+    *** INCLUDE IN CHANGE LOG ONLY IF THIS IS MADE USE-CONFIGURABLE
 
 * UI changes:
-  o Snippets now displayed in history menu with "Snippet" instead of "Routine"
-    prefix.
-  o Code Formatting preferences tab now always uses default font name and size
-    and preview window enlarged so that longest example code is no longer
-    truncated.
-  o Code Import now done via wizard rather file open and series of query dialog
-    boxes. Import manager code heavily revised to dis-entangle logic from UI.
-  o Test compiles are now displayed in a dialog box instead of Compiler Check
-    tab in Details pane. This tab removed.
-  o More than one snippet can now be displayed in Detail pane: each one in its
-    own tab.
-  o Compilable snippets displayed in Details pane now have click to test compile
-    the snippets.
-  o Detail Pane now uses single view frame with single browser control + a tab
-    control instead of page control.
-  o Created new "Compile" top-level menu and moved Test Compile and View Compile
-    Errors options from Database menu and View Test Unit from View menu to new
-    menu.
-  o Empty section headings can now optionally be displayed in overview pane.
-  o New snippets and categories can now optionally be displayed in a new tab
-    when they are created.
-  o Special "database updated" view shown in detail pane after a database update
-    or restore instead of welcome page (which is still shown on start-up).
-  o Now use Shift+Up and Shift+Down instead of Ctrl+Up and Ctrl+Down to jump to
-    previous and next sections in overview treeview. Shift+Up on a sub-item now
-    selects its heading instead of previous one.
-  o No selection now made in overview treeview if Alt or Shift are pressed when
-    mouse is clicked. Context menu is also inhibited when these keys are
-    pressed.
-  o Ctrl clicking on item in overview treeview now displays item in a new tab
-    in detail pane.
-  o New snippets and categories now appear in a new tab or existing tab
-    according to user settings.
 
-* Web Services
-  o Updated database update web service code changed to work with v5 of the
-    codesnip-updt.php web service. Checksums no longer in download but in HTTP
-    header.
-  o Database update code changed to detect actual encoding used to send data
-    from web service and to use that for all encoding / decoding of received
-    data.
-  o Updated HTTP handling code, and low level web service code, to be able to
-    POST byte arrays and receive text responses. Code submitter web service now
-    uses this facility.
+* Web Services:
 
-* IXMLDocumentEx had new LoadFromBytes and SaveToBytes methods: used by code
-  import code - see other note re this.
-
-* Revised splash screen to include version number 4.
-
-* Syntax highlighter
-  o Changed code to no longer use streams to pass text data between highlighter
-    classes but to use Unicode strings instead.
-  o Updated list of keywords and directives for Delphi 2010.
-  o Added support for context sensitive highlighting of some directives within
-    "property", "exports" and "external" statements.
-  o Added support for "&" keyword prefix: prefixed keyords now treated as
-    identifiers instead of keywords.
-  o Refactored lexer.
-
-* Code that handles REML now always uses latest version instead of trying to
-  write using earlier versions where possible.
-
-* External object changed to v7 to accomodate UI changes that relate to web-
-  browser control.
+* Syntax highlighter:
 
 * Config files:
-  o Changed per-user config file name to User.4.ini.
-  o Detail pane tab index no longer stored.
-  o New ShowInNewDetailPage and SetShowEmptyCategories settings in per-user
-    file.
-
-* Increased use of TStringBuilder to build strings where string concatenation
-  was used excessively.
-
-* Added support for specifying encoding when writing / reading text files.
-
-* Strings containing HTML are now loaded into WebBrowser control as Unicode
-  (with BOM), not ANSI text. Characters above #127 in HTML are no longer
-  converted to entities.
-
-* https protocol added to list of valid protocols in active text links.
-
-* Refactored data stream reading / writing code and added code to read / write
-  binary formatted data streams. Removed code that writes text formatted data
-  streams.
-
-* 3rd Party
-  o Added PJShellFolders.
 
 * Installer:
-  o Updated installer scripts to recognise and copy config files and databases
-    from former locations to work with new v4 user config file and database
-    directory names.
-  o Installer changed so that v4 installs can co-exist - new app id, install
-    folder and program group. New locations for common and user app data
-    directories.
-  o Now uses (and requires) Unicode version of Inno Setup.
-  o User config file now v8 and common config file now v6.
