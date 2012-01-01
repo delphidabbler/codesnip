@@ -57,6 +57,7 @@ uses
   Windows,
   GIFImage in '3rdParty\GIFImage.pas',
   PJMD5 in '3rdParty\PJMD5.pas',
+  PJShellFolders in '3rdParty\PJShellFolders.pas',
   PJStreamWrapper in '3rdParty\PJStreamWrapper.pas',
   PJSysInfo in '3rdParty\PJSysInfo.pas',
   PJVersionInfo in '3rdParty\PJVersionInfo.pas',

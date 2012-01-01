@@ -33,6 +33,7 @@
 			</DelphiCompile>
 			<DCCReference Include="3rdParty\GIFImage.pas"/>
 			<DCCReference Include="3rdParty\PJMD5.pas"/>
+			<DCCReference Include="3rdParty\PJShellFolders.pas"/>
 			<DCCReference Include="3rdParty\PJStreamWrapper.pas"/>
 			<DCCReference Include="3rdParty\PJSysInfo.pas"/>
 			<DCCReference Include="3rdParty\PJVersionInfo.pas"/>
@@ -529,7 +530,10 @@
 			<DCCReference Include="Web.UInfo.pas"/>
 			<DCCReference Include="Web.URegistrar.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
-			<DCCReference Include="Web.UXMLRequestor.pas"/>
+			<DCCReference Include="Web.UXMLRequestor.pas">
+				<Form>/ Include compiler defines</Form>
+				<DesignClass>checks if compiler supported</DesignClass>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
