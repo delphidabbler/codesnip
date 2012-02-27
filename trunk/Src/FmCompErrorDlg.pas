@@ -1,7 +1,7 @@
 {
  * FmCompErrorDlg.pas
  *
- * Dialog box that displays compiler error or warning logs.
+ * Dialog box that displays compiler error and warning logs.
  *
  * $Rev$
  * $Date$
@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,90 +44,117 @@ uses
   Forms, StdCtrls, Controls, ExtCtrls, Classes, Tabs, ActnList, ImgList,
   Generics.Collections,
   // Project
-  Compilers.UGlobals, FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg,
+  Compilers.UGlobals, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg,
   UBaseObjects, USnippetIDs;
 
 
 type
 
-  {
-  TCompErrorDlg:
-    Implements a dialog box that displays error or warning logs from last
-    compilation on one or more compilers for a specified snippet. It is an
-    error if there are no compiler warnings or errors.
-  }
-  TCompErrorDlg = class(THTMLViewDlg, INoPublicConstruct)
+  ///  <summary>
+  ///  Implements a dialog box that displays error and warning logs from last
+  ///  test compilation.
+  ///  </summary>
+  ///  <remarks>
+  ///  It is an error if there are no compiler warnings or errors.
+  ///  </remarks>
+  TCompErrorDlg = class(TGenericViewDlg, INoPublicConstruct)
     frmHTML: THTMLTpltDlgFrame;
     tsCompilers: TTabSet;
     ilCompilers: TImageList;
     alTabs: TActionList;
     actNextTab: TAction;
     actPrevTab: TAction;
+    ///  <summary>Form construction event handler. Creates owned object.
+    ///  </summary>
     procedure FormCreate(Sender: TObject);
+    ///  <summary>Form destruction event handler. Free owned object.</summary>
     procedure FormDestroy(Sender: TObject);
+    ///  <summary>Handles Ctrl+Tab and Shift+Ctrl+Tab action OnExecute events.
+    ///  Cycles through tabs in forward or reverse direction depending on which
+    ///  action triggered event.</summary>
     procedure TabShortcutExecute(Sender: TObject);
+    ///  <summary>Handles Ctrl+Tab and Shift+Ctrl+Tab action OnUpdate events.
+    ///  Enables / disables actions that cycle through displayed tags.</summary>
     procedure TabShortcutUpdate(Sender: TObject);
+    /// <summary>OnChange event handler for tabset. Displays warnings or errors
+    ///  for newly specified by NewTab parameter.</summary>
+    ///  <remarks>Tab change is always permitted.</remarks>
     procedure tsCompilersChange(Sender: TObject; NewTab: Integer;
       var AllowChange: Boolean);
+    ///  <summary>Handles tabset's OnGetImageIndex event. Sets ImageIndex to
+    ///  index of compiler glyph in image list for given tab index.</summary>
     procedure tsCompilersGetImageIndex(Sender: TObject; TabIndex: Integer;
       var ImageIndex: Integer);
   strict private
-    fWantTabs: Boolean;
-      {Flag indicating whether compilers tabset is to be displayed in dialog
-      box}
+    type
+      ///  <summary>Class that analyses compiler logs and extract information
+      ///  required to be displayed in dialog box.</summary>
+      TCompilerLog = class(TObject)
+      strict private
+        ///  <summary>Reference to compiler whose log being used.</summary>
+        fCompiler: ICompiler;
+        ///  <summary>Records analysed log.</summary>
+        fLog: TStrings;
+        ///  <summary>Value of Staus property.</summary>
+        fStatus: string;
+        ///  <summary>Analyses compiler log file, extracting require
+        ///  information.</summary>
+        procedure AnalyseLog;
+      public
+        ///  <summary>Constructs object for given compiler.</summary>
+        constructor Create(Compiler: ICompiler);
+        ///  <summary>Tears down object.</summary>
+        destructor Destroy; override;
+        ///  <summary>Renders list of required log entries as HTML.</summary>
+        function LogListHTML: string;
+        ///  <summary>Text describing log status. Warning or error.</summary>
+        property Status: string read fStatus;
+      end;
+  strict private
+    ///  <summary>Snippet for which last compilation took place.</summary>
     fSnippet: TSnippetID;
-      {Snippet for which last compilation took place}
+    ///  <summary>List of compilers for which errors or warnings are to be
+    ///  displayed.</summary>
     fRequiredCompilers: TList<ICompiler>;
-      {Object that maintains a list of compilers for which errors or warnings
-      are to be displayed}
+    ///  <summary>Maps compiler ids to index of compiler images in image list.
+    ///  </summary>
     fCompGlyphIndexes: array[TCompilerId] of Integer;
-      {Maps compiler compiler ids to index of compiler images in image list}
+    ///  <summary>Gets vertical space required to display warnings or error
+    ///  messages in pixels.</summary>
+    ///  <remarks>Calculates maximum height of mesages for each required
+    ///  compiler.</remarks>
     function GetHTMLHeight: Integer;
-      {Gets height of rendered HTML required to display warnings or error
-      messages. Calculates maximum height of logs of each required compiler.
-        @return Required height in pixels.
-      }
+    ///  <summary>Gets total height of tabset control.</summary>
+    ///  <remarks>Returns 0 if tabset not required.</remarks>
     function GetTabsetHeight: Integer;
-      {Gets total height of tabset control.
-        @return Height of tabset or 0 if not required.
-      }
+    ///  <summary>Loads HTML representation of given compiler's error or warning
+    ///  log into browser control.</summary>
+    ///  <remarks>EBug raised if compiler result is not a warning or an error.
+    ///  </remarks>
     procedure LoadHTML(const Compiler: ICompiler);
-      {Loads HTML representation of a compiler's error or warning log into
-      browser control.
-        @param Compiler [in] Reference to compiler whose log is to be rendered.
-        @except EBug raised if compiler result is not a warning or an error.
-      }
   strict protected
+    ///  <summary>Arranges controls on form.</summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure ArrangeForm; override;
-      {Arranges controls in form.
-      }
+    ///  <summary>Initialises HTML frame and Sets UI font for tab set tabs.
+    ///  </summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure ConfigForm; override;
-      {Sets UI font for tab set control tabs.
-      }
+    ///  <summary>Configures tab set and sets form's caption.</summary>
+    ///  <remarks>Called from ancestor class.</remarks>
     procedure InitForm; override;
-      {Override of form initialisation that configures tabset and sets caption.
-      }
-    procedure InitHTMLFrame; override;
-      {Initialises HTML frame to display error log for first (or only) compiler.
-      }
   public
+    ///  <summary>Shows a dialog box that displays error and warning logs for
+    ///  each compiler that reported errors or warnings when test compiling a
+    ///  snippet. There is a tab for each compiler.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns this form.
+    ///  </param>
+    ///  <param name="ASnippet">TSnippetID [in] ID of snippet that was compiled.
+    ///  </param>
+    ///  <param name="ACompilers">ICompilers [in] List of all supported
+    ///  compilers.</param>
     class procedure Execute(const AOwner: TComponent;
-      const ASnippet: TSnippetID; const ACompiler: ICompiler); overload;
-      {Shows a dialog box that displays error or warning log for a specified
-      compiler as a result of test compiling a snippet.
-        @param AOwner [in] Component that owns this form.
-        @param ASnippet [in] ID of snippet that was compiled.
-        @param ACompiler [in] Id of compiler that created log.
-      }
-    class procedure Execute(const AOwner: TComponent;
-      const ASnippet: TSnippetID; const ACompilers: ICompilers); overload;
-      {Shows a dialog box that displays error and warning logs for each compiler
-      that reported warnings or errors when test compiling a snippet. There is a
-      tab for each compiler.
-        @param AOwner [in] Component that owns this form.
-        @param ASnippet [in] ID of snippet that was compiled.
-        @param ACompilers [in] Object that lists all supported compilers.
-      }
+      const ASnippet: TSnippetID; const ACompilers: ICompilers);
   end;
 
 
@@ -138,7 +165,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  UConsts, UExceptions, UHTMLUtils;
+  UConsts, UExceptions, UHTMLUtils, UHTMLTemplate;
 
 
 {$R *.dfm}
@@ -151,7 +178,7 @@ uses
   by values in this code:
 
   <%Status%>        log status - Error(s) or Warning(s)
-  <%Routine%>       name of snippet being compiled
+  <%SnippetName%>   name of snippet being compiled
   <%CompilerID%>    if of compiler that caused warning/error
   <%ErrorList%>     a CRLF delimited list of the errors/warnings from the log as
                     HTML list items in form <li>log-line</li>
@@ -160,8 +187,6 @@ uses
 
 resourcestring
   // Strings for display in dialog
-  sSingularCaption    = 'Compiler Error or Warning';
-  sPluralCaption      = 'Compiler Errors or Warnings';
   sLogStatusWarning   = 'Warning';
   sLogStatusWarnings  = 'Warnings';
   sLogStatusError     = 'Error';
@@ -171,8 +196,6 @@ resourcestring
 { TCompErrorDlg }
 
 procedure TCompErrorDlg.ArrangeForm;
-  {Arranges controls in form.
-  }
 begin
   pnlBody.Height := GetHTMLHeight + GetTabsetHeight;
   // set size of dialog
@@ -180,23 +203,16 @@ begin
 end;
 
 procedure TCompErrorDlg.ConfigForm;
-  {Sets UI font for tab set control tabs.
-  }
 begin
   inherited;
-  // required because for some reason tab control sets its font to Tahoma
+  LoadHTML(fRequiredCompilers[0]);
+  // must set tab set font because for some reason tab control sets its font to
+  // Tahoma
   tsCompilers.Font := Self.Font;
 end;
 
 class procedure TCompErrorDlg.Execute(const AOwner: TComponent;
   const ASnippet: TSnippetID; const ACompilers: ICompilers);
-  {Shows a dialog box that displays error and warning logs for each compiler
-  that reported warnings or errors when test compiling a snippet. There is a
-  tab for each compiler.
-    @param AOwner [in] Component that owns this form.
-    @param ASnippet [in] ID of snippet that was compiled.
-    @param ACompilers [in] Object that lists all supported compilers.
-  }
 var
   Compiler: ICompiler;  // each supported compiler
 begin
@@ -207,30 +223,6 @@ begin
       for Compiler in ACompilers do
         if Compiler.HasErrorsOrWarnings then
           fRequiredCompilers.Add(Compiler);
-      fWantTabs := True;
-      ShowModal;
-    finally
-      Free;
-    end;
-end;
-
-class procedure TCompErrorDlg.Execute(const AOwner: TComponent;
-  const ASnippet: TSnippetID; const ACompiler: ICompiler);
-  {Shows a dialog box that displays error or warning log for a specified
-  compiler as a result of test compiling a snippet.
-    @param AOwner [in] Component that owns this form.
-    @param ASnippet [in] ID of snippet that was compiled.
-    @param ACompiler [in] Id of compiler that created log.
-  }
-begin
-  Assert(Assigned(ACompiler), ClassName + '.Execute: ACompiler is nil');
-  with InternalCreate(AOwner) do
-    try
-      // Record selected compiler and currently selected snippet
-      fSnippet := ASnippet;
-      fRequiredCompilers.Add(ACompiler);
-      fWantTabs := False;
-      // Display dialog
       ShowModal;
     finally
       Free;
@@ -238,28 +230,18 @@ begin
 end;
 
 procedure TCompErrorDlg.FormCreate(Sender: TObject);
-  {Form construction event handler. Creates owned object.
-    @param Sender [in] Not used.
-  }
 begin
   inherited;
   fRequiredCompilers := TList<ICompiler>.Create;
 end;
 
 procedure TCompErrorDlg.FormDestroy(Sender: TObject);
-  {Form destruction event handler. Frees owned object.
-    @param Sender [in] Not used.
-  }
 begin
   fRequiredCompilers.Free;
   inherited;
 end;
 
 function TCompErrorDlg.GetHTMLHeight: Integer;
-  {Gets height of rendered HTML required to display warnings or error messages.
-  Calculates maximum height of logs of each required compiler.
-    @return Required height in pixels.
-  }
 var
   Compiler: ICompiler;  // reference to each required compiler
 begin
@@ -274,157 +256,60 @@ begin
 end;
 
 function TCompErrorDlg.GetTabsetHeight: Integer;
-  {Gets total height of tabset control.
-    @return Height of tabset or 0 if not required.
-  }
 begin
-  if fWantTabs then
-  begin
-    Result := tsCompilers.Height;
-    if tsCompilers.AlignWithMargins then
-      Inc(Result, tsCompilers.Margins.Top + tsCompilers.Margins.Bottom);
-  end
-  else
-    Result := 0;
+  Result := tsCompilers.Height;
+  if tsCompilers.AlignWithMargins then
+    Inc(Result, tsCompilers.Margins.Top + tsCompilers.Margins.Bottom);
 end;
 
 procedure TCompErrorDlg.InitForm;
-  {Override of form initialisation that configures tabset and sets caption.
-  }
 var
   Compiler: ICompiler;  // references each required compiler
   Glyph: TBitmap;       // each compiler glyph
-const
-  // Array of Singular and Plural captions for form
-  cCaption: array[Boolean] of string = (sSingularCaption, sPluralCaption);
 begin
   inherited;
-  // Set caption
-  Caption := cCaption[fRequiredCompilers.Count > 1];
-  // Configure tabset
-  if fWantTabs then
+  tsCompilers.Tabs.Clear;
+  for Compiler in fRequiredCompilers do
   begin
-    tsCompilers.Tabs.Clear;
-    for Compiler in fRequiredCompilers do
-    begin
-      Glyph := Compiler.GetGlyph;
-      if Assigned(Glyph) then
-        fCompGlyphIndexes[Compiler.GetID] :=
-          ilCompilers.AddMasked(Glyph, Glyph.Canvas.Pixels[0, 0])
-      else
-        fCompGlyphIndexes[Compiler.GetID] := -1;
-      tsCompilers.Tabs.Add(' ' + Compiler.GetName + ' ');
-    end;
-    tsCompilers.TabIndex := 0;
-    LoadHTML(fRequiredCompilers[tsCompilers.TabIndex]);
-  end
-  else
-    // No tabs wanted: hide control
-    tsCompilers.Hide;
-end;
-
-procedure TCompErrorDlg.InitHTMLFrame;
-  {Initialises HTML frame to display error log for first (or only) compiler.
-  }
-begin
-  LoadHTML(fRequiredCompilers[0]);
+    Glyph := Compiler.GetGlyph;
+    if Assigned(Glyph) then
+      fCompGlyphIndexes[Compiler.GetID] :=
+        ilCompilers.AddMasked(Glyph, Glyph.Canvas.Pixels[0, 0])
+    else
+      fCompGlyphIndexes[Compiler.GetID] := -1;
+    tsCompilers.Tabs.Add(' ' + Compiler.GetName + ' ');
+  end;
+  tsCompilers.TabIndex := 0;
+  LoadHTML(fRequiredCompilers[tsCompilers.TabIndex]);
 end;
 
 procedure TCompErrorDlg.LoadHTML(const Compiler: ICompiler);
-  {Loads HTML representation of a compiler's error or warning log into browser
-  control.
-    @param Compiler [in] Reference to compiler whose log is to be rendered.
-    @except EBug raised if compiler result is not a warning or an error.
-  }
 var
-  Values: TStringList;  // map of HTML placeholders to actual values
-  Log: TStringList;     // stores compiler log
-  Status: string;       // report status: error(s) or warning(s)
-
-  // ---------------------------------------------------------------------------
-  procedure GetLogInfo(const Log: TStrings; out Status: string);
-    {Gets the required log information and returns string that describes status
-    of log.
-      @param Log [out] Set to list of compiler log entries.
-      @param Status [out] Set to log type: warning(s) or error(s).
-      @except EBug raised if compiler result is not a warning or an error.
-    }
-  const
-    // singular & plural warning text
-    cWarnText: array[Boolean] of string = (
-      sLogStatusWarning, sLogStatusWarnings
-    );
-    // singular & plural error text
-    cErrorText: array[Boolean] of string = (
-      sLogStatusError, sLogStatusErrors
-    );
-    // bug error message
-    cBadResult = '%s.LoadHTML: compile result must be warning or error';
-  begin
-    case Compiler.GetLastCompileResult of
-      crWarning:
-      begin
-        // Extract warnings from raw log and note this is warning
-        Compiler.Log(cfWarnings, Log);
-        Status := cWarnText[Log.Count > 1];
-      end;
-      crError:
-      begin
-        // Extract errors from raw log and note this is error
-        Compiler.Log(cfErrors, Log);
-        Status := cErrorText[Log.Count > 1];
-      end;
-      else
-        // Not a warning or error: this is a bug
-        raise EBug.CreateFmt(cBadResult, [ClassName]);
-    end;
-  end;
-
-  function BuildLogListHTML(const Log: TStrings): string;
-    {Returns each line of a log as a HTML list item.
-      @param Log [in] List of log entries to be converted.
-      @return string containing HTML.
-    }
-  var
-    Line: string;   // each line of log
-  begin
-    Result := '';
-    for Line in Log do
-      Result := Result + MakeCompoundTag('li', MakeSafeHTMLText(Line)) + EOL;
-  end;
-  // ---------------------------------------------------------------------------
-
+  Log: TCompilerLog; // stores compiler log
 begin
   inherited;
-  // Create log and placeholder values string lists
-  Log := nil;
-  Values := TStringList.Create;
+  Log := TCompilerLog.Create(Compiler);
   try
-    Log := TStringList.Create;
-    // Get compiler log and status
-    GetLogInfo(Log, Status);
-    // Build log report and load into browser control
-    Values.Values['Status']     := Status;
-    Values.Values['ErrorList']  := BuildLogListHTML(Log);
-    Values.Values['Routine']    := MakeSafeHTMLText(fSnippet.Name);
-    Values.Values['CompilerID'] := MakeSafeHTMLText(Compiler.GetName);
-    frmHTML.Initialise('dlg-comperror-tplt.html', Values);
+    frmHTML.Initialise(
+      'dlg-comperror-tplt.html',
+      procedure(Tplt: THTMLTemplate)
+      begin
+        Tplt.ResolvePlaceholderText('Status', Log.Status);
+        Tplt.ResolvePlaceholderHTML('ErrorList', Log.LogListHTML);
+        Tplt.ResolvePlaceholderText('SnippetName', fSnippet.Name);
+        Tplt.ResolvePlaceholderText('CompilerID', Compiler.GetName);
+      end
+    );
   finally
-    // Free objects
     Log.Free;
-    Values.Free;
   end;
 end;
 
 procedure TCompErrorDlg.TabShortcutExecute(Sender: TObject);
-  {Cycles through tabs in forward or reverse direction depending on which action
-  is triggered.
-    @param Sender [in] Action that triggered event.
-  }
 var
   TabIdx: Integer;  // index of next or previous tab
 begin
-  // Ctrl+Tab and Shift+Ctrl+Tab have tag property containing direction -
+  // Ctrl+Tab and Shift+Ctrl+Tab actions have tag property containing direction:
   // (1 => forward and -1 => backward)
   TabIdx := tsCompilers.TabIndex + (Sender as TAction).Tag;
   if TabIdx < 0 then
@@ -435,36 +320,77 @@ begin
 end;
 
 procedure TCompErrorDlg.TabShortcutUpdate(Sender: TObject);
-  {Enables / disables actions that cycle through displayed tags.
-    @param Sender [in] Action that triggered event.
-  }
 begin
   (Sender as TAction).Enabled := fRequiredCompilers.Count > 1;
 end;
 
 procedure TCompErrorDlg.tsCompilersChange(Sender: TObject; NewTab: Integer;
   var AllowChange: Boolean);
-  {OnChange event handler for tabset. Displays warnings or errors for newly
-  selected tab.
-    @param Sender [in] Not used.
-    @param NewTab [in] Index of newly selected tab.
-    @param AllowChange [in/out] Not used.
-  }
 begin
   LoadHTML(fRequiredCompilers[NewTab]);
 end;
 
 procedure TCompErrorDlg.tsCompilersGetImageIndex(Sender: TObject;
   TabIndex: Integer; var ImageIndex: Integer);
-  {Handles tabset's OnGetImageIndex event. Finds index of compiler glyph in
-  image list.
-    @param Sender [in] Not used.
-    @param TabIndex [in] Tab for which image index is required.
-    @param ImageIndex [in/out] Set to index of appropriate compiler glyph in
-      image list, or -1 if compiler has no glyph.
-  }
 begin
   ImageIndex := fCompGlyphIndexes[fRequiredCompilers[TabIndex].GetID];
+end;
+
+{ TCompErrorDlg.TCompilerLog }
+
+procedure TCompErrorDlg.TCompilerLog.AnalyseLog;
+const
+  // singular & plural warning text
+  cWarnText: array[Boolean] of string = (
+    sLogStatusWarning, sLogStatusWarnings
+  );
+  // singular & plural error text
+  cErrorText: array[Boolean] of string = (
+    sLogStatusError, sLogStatusErrors
+  );
+  // bug error message
+  cBadResult = '%s.AnalyseLog: compile result must be warning or error';
+begin
+  case fCompiler.GetLastCompileResult of
+    crWarning:
+    begin
+      // Extract warnings from raw log and note this is warning
+      fCompiler.Log(cfWarnings, fLog);
+      fStatus := cWarnText[fLog.Count > 1];
+    end;
+    crError:
+    begin
+      // Extract errors from raw log and note this is error
+      fCompiler.Log(cfErrors, fLog);
+      fStatus := cErrorText[fLog.Count > 1];
+    end;
+    else
+      // Not a warning or error: this is a bug
+      raise EBug.CreateFmt(cBadResult, [ClassName]);
+  end;
+end;
+
+constructor TCompErrorDlg.TCompilerLog.Create(Compiler: ICompiler);
+begin
+  inherited Create;
+  fCompiler := Compiler;
+  fLog := TStringList.Create;
+  AnalyseLog;
+end;
+
+destructor TCompErrorDlg.TCompilerLog.Destroy;
+begin
+  fLog.Free;
+  inherited;
+end;
+
+function TCompErrorDlg.TCompilerLog.LogListHTML: string;
+var
+  Line: string;   // each line of log
+begin
+  Result := '';
+  for Line in fLog do
+    Result := Result + MakeCompoundTag('li', MakeSafeHTMLText(Line)) + EOL;
 end;
 
 end.

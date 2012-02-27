@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -66,13 +66,6 @@ type
         @return Reference to newly created action.
       }
   public
-    class function CreateCompLogAction(const AOwner: TComponent;
-      const OnExecHandler: TNotifyEvent = nil): TBasicAction;
-      {Creates a Compiler Log action and sets OnExecute handler if provided.
-        @param AOwner [in] Owner of action.
-        @param OnExecHandler [in] Handler for action's OnExecute event.
-        @return Reference to newly created action.
-      }
     class function CreateHintAction(const AOwner: TComponent;
       const OnExecHandler: TNotifyEvent = nil): TBasicAction;
       {Creates a Hint action and sets OnExecute handler if provided.
@@ -80,16 +73,16 @@ type
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
       }
-    class function CreateRoutineAction(const AOwner: TComponent;
+    class function CreateSnippetAction(const AOwner: TComponent;
       const OnExecHandler: TNotifyEvent = nil): TBasicAction;
-      {Creates a Routine action and sets OnExecute handler if provided.
+      {Creates a Snippet action and sets OnExecute handler if provided.
         @param AOwner [in] Owner of action.
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
       }
-    class function CreateEditRoutineAction(const AOwner: TComponent;
+    class function CreateEditSnippetAction(const AOwner: TComponent;
       const OnExecHandler: TNotifyEvent = nil): TBasicAction;
-      {Creates an Edit Routine actions and sets OnExecute handler if provided.
+      {Creates an Edit Snippet action and sets OnExecute handler if provided.
         @param AOwner [in] Owner of action.
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
@@ -125,8 +118,8 @@ uses
   // Delphi
   StdActns,
   // Project
-  UCategoryAction, UCompLogAction, UEditRoutineAction, ULinkAction,
-  URoutineAction, UViewItemAction;
+  UCategoryAction, UEditSnippetAction, ULinkAction, USnippetAction,
+  UViewItemAction;
 
 
 { TActionFactory }
@@ -156,26 +149,15 @@ begin
   Result := CreateAction(TCategoryAction, AOwner, OnExecHandler);
 end;
 
-class function TActionFactory.CreateCompLogAction(const AOwner: TComponent;
+class function TActionFactory.CreateEditSnippetAction(const AOwner: TComponent;
   const OnExecHandler: TNotifyEvent): TBasicAction;
-  {Creates a Compiler Log action and sets OnExecute handler if provided.
+  {Creates an Edit Snipper action and sets OnExecute handler if provided.
     @param AOwner [in] Owner of action.
     @param OnExecHandler [in] Handler for action's OnExecute event.
     @return Reference to newly created action.
   }
 begin
-  Result := CreateAction(TCompLogAction, AOwner, OnExecHandler);
-end;
-
-class function TActionFactory.CreateEditRoutineAction(const AOwner: TComponent;
-  const OnExecHandler: TNotifyEvent): TBasicAction;
-  {Creates an Edit Routine actions and sets OnExecute handler if provided.
-    @param AOwner [in] Owner of action.
-    @param OnExecHandler [in] Handler for action's OnExecute event.
-    @return Reference to newly created action.
-  }
-begin
-  Result := CreateAction(TEditRoutineAction, AOwner, OnExecHandler);
+  Result := CreateAction(TEditSnippetAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateHintAction(const AOwner: TComponent;
@@ -200,15 +182,15 @@ begin
   Result := CreateAction(TLinkAction, AOwner, OnExecHandler) as TCustomAction;
 end;
 
-class function TActionFactory.CreateRoutineAction(const AOwner: TComponent;
+class function TActionFactory.CreateSnippetAction(const AOwner: TComponent;
   const OnExecHandler: TNotifyEvent): TBasicAction;
-  {Creates a Routine action and sets OnExecute handler if provided.
+  {Creates a Snippet action and sets OnExecute handler if provided.
     @param AOwner [in] Owner of action.
     @param OnExecHandler [in] Handler for action's OnExecute event.
     @return Reference to newly created action.
   }
 begin
-  Result := CreateAction(TRoutineAction, AOwner, OnExecHandler);
+  Result := CreateAction(TSnippetAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateViewItemAction(

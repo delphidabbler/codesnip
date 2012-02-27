@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  UBaseObjects, USnippets;
+  DB.UCategory, UBaseObjects;
 
 
 type
@@ -71,14 +71,14 @@ type
   }
   TReservedCategories = class(TNoConstructObject)
   strict private
-    class function IsReservedName(const CatName: string): Boolean;
+    class function IsReservedName(const CatID: string): Boolean;
       {Checks if a category name is the id of a reserved category.
-        @param CatName [in] Name to be checked.
+        @param CatID [in] ID to be checked.
         @return True if category is reserved, False if not.
       }
   public
-    const UserCatName = 'user';       // default category for user snippets
-    const ImportsCatName = 'imports'; // category where imported snippets placed
+    const UserCatID = 'user';       // default category for user snippets
+    const ImportsCatID = 'imports'; // category where imported snippets placed
     class function IsReserved(const Cat: TCategory): Boolean;
       {Checks if a category is reserved.
         @param Cat [in] Category to be checked.
@@ -101,7 +101,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows {for inlining};
+  Windows {for inlining},
+  // Project
+  UStrUtils;
 
 
 resourcestring
@@ -112,8 +114,8 @@ resourcestring
 const
   // Maps reserved category ids onto info that describes category
   cReservedCats: array[0..1] of TReservedCategoryInfo = (
-    (Name: TReservedCategories.UserCatName;     Data: (Desc: sUserDesc)),
-    (Name: TReservedCategories.ImportsCatName;  Data: (Desc: sImportsDesc))
+    (Name: TReservedCategories.UserCatID;     Data: (Desc: sUserDesc)),
+    (Name: TReservedCategories.ImportsCatID;  Data: (Desc: sImportsDesc))
   );
 
 { TReservedCategories }
@@ -141,13 +143,13 @@ class function TReservedCategories.IsReserved(const Cat: TCategory): Boolean;
     @return True if category is reserved, False if not.
   }
 begin
-  Result := IsReservedName(Cat.Category);
+  Result := IsReservedName(Cat.ID);
 end;
 
 class function TReservedCategories.IsReservedName(
-  const CatName: string): Boolean;
+  const CatID: string): Boolean;
   {Checks if a category name is the id of a reserved category.
-    @param CatName [in] Name to be checked.
+    @param CatID [in] ID to be checked.
     @return True if category is reserved, False if not.
   }
 var
@@ -155,7 +157,7 @@ var
 begin
   Result := False;
   for Idx := 0 to Pred(Count) do
-    if AnsiSameText(CatName, Info(Idx).Name) then
+    if StrSameText(CatID, Info(Idx).Name) then
     begin
       Result := True;
       Exit;

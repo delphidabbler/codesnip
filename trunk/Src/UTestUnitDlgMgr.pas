@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UBaseObjects, USnippets;
+  DB.USnippet, UBaseObjects;
 
 
 type
@@ -56,7 +56,7 @@ type
   TTestUnitDlgMgr = class(TNoConstructObject)
   public
     class procedure DisplayTestUnit(const Owner: TComponent;
-      const Snippet: TRoutine);
+      const Snippet: TSnippet);
       {Generates and displays a highlighted test compile unit in a dialog box.
         @param Owner [in] Component that owns the dialog box.
         @param Snippet [in] Snippet for which test unit is to be displayed.
@@ -77,14 +77,13 @@ uses
 { TTestUnitDlgMgr }
 
 class procedure TTestUnitDlgMgr.DisplayTestUnit(const Owner: TComponent;
-  const Snippet: TRoutine);
+  const Snippet: TSnippet);
   {Generates and displays a highlighted test compile unit in a dialog box.
     @param Owner [in] Component that owns the dialog box.
     @param Snippet [in] Snippet for which test unit is to be displayed.
   }
 var
   TestUnitSource: string;   // source code of test unit
-  Hiliter: ISyntaxHiliter;  // highlighter object
 resourcestring
   sDlgTitle = 'Test Unit for %s'; // caption of dialog box
 begin
@@ -96,10 +95,12 @@ begin
       Free;
     end;
   // Convert source to higlighted XHTML document and display it
-  Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkXHTML);
   TPreviewDlg.Execute(
     Owner,
-    Hiliter.Hilite(TestUnitSource, THiliteAttrsFactory.CreateUserAttrs),
+    TXHTMLDocumentHiliter.Hilite(
+      TestUnitSource, THiliteAttrsFactory.CreateUserAttrs
+    ),
+    dtHTML,
     Format(sDlgTitle, [Snippet.Name])
   );
 end;

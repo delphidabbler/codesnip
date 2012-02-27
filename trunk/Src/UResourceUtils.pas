@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
 
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -37,6 +37,11 @@ unit UResourceUtils;
 
 
 interface
+
+
+uses
+  // Project
+  UEncodings;
 
 
 function MakeResourceURL(const ModuleName: string; const ResName: PChar;
@@ -66,13 +71,23 @@ function MakeResourceURL(const ResName: string): string; overload;
     @return Required res:// protocol URL.
   }
 
+function LoadResourceAsString(const Inst: HMODULE; const ResName: string;
+  const ResType: PChar; const EncType: TEncodingType): string;
+  {Loads a resource as a string.
+    @param Inst [in] Handle of module containing resource.
+    @param ResName [in] Name of resource.
+    @param ResType [in] Type of resource.
+    @param EncType [in] Type of encoding used for resource text.
+    @return Content of resource as a string.
+  }
+
 
 implementation
 
 
 uses
   // Delphi
-  SysUtils, Windows,
+  SysUtils, Classes, Windows,
   // Project
   UURIEncode;
 
@@ -140,6 +155,39 @@ function MakeResourceURL(const ResName: string): string; overload;
   }
 begin
   Result := MakeResourceURL(HInstance, PChar(ResName));
+end;
+
+function LoadResourceAsString(const Inst: HMODULE; const ResName: string;
+  const ResType: PChar; const EncType: TEncodingType): string;
+  {Loads a resource as a string.
+    @param Inst [in] Handle of module containing resource.
+    @param ResName [in] Name of resource.
+    @param ResType [in] Type of resource.
+    @param EncType [in] Type of encoding used for resource text.
+    @return Content of resource as a string.
+  }
+var
+  RS: TResourceStream;  // stream onto resource
+  SS: TStringStream;    // stream used to convert resource stream to string
+  Encoding: TEncoding;  // encoding to use for string conversion
+begin
+  Encoding := TEncodingHelper.GetEncoding(EncType);
+  try
+    SS := TStringStream.Create('', Encoding, False);
+    try
+      RS := TResourceStream.Create(Inst, ResName, ResType);
+      try
+        SS.CopyFrom(RS, 0);
+      finally
+        RS.Free;
+      end;
+      Result := SS.DataString
+    finally
+      SS.Free;
+    end;
+  finally
+    TEncodingHelper.FreeEncoding(Encoding);
+  end;
 end;
 
 end.

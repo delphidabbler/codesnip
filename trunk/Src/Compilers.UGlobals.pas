@@ -121,6 +121,26 @@ type
     cfErrors      // filter out anything that is not an error message
   );
 
+type
+  ///  <summary>
+  ///  Interface to list of directories to be searched by a compiler when
+  ///  looking for files.
+  ///  </summary>
+  ISearchDirs = interface(IInterface)
+    ['{77CAFAC1-9B0F-4244-9FFF-A9FB4EBDEE8B}']
+    ///  <summary>Creates and returns enumerator for directories list.</summary>
+    function GetEnumerator: TEnumerator<string>;
+    ///  <summary>Adds a new search directory to list.</summary>
+    procedure Add(const DirName: string);
+    ///  <summary>Clears list.</summary>
+    procedure Clear;
+    ///  <summary>Checks if list is empty.</summary>
+    function IsEmpty: Boolean;
+    ///  <summary>Returns an array containing the names of all directories in
+    ///  the list.</summary>
+    function ToStrings: TArray<string>;
+  end;
+
   {
   ICompiler:
     Interface that must be supported by any object that represents a compiler.
@@ -169,6 +189,14 @@ type
     procedure SetSwitches(const Switches: string);
       {Sets user defined switches.
         @param Switches [in] Required switches separated by commas.
+      }
+    function GetSearchDirs: ISearchDirs;
+      {Returns copy of list of search directories used by compiler.
+        @return Required list of directories.
+      }
+    procedure SetSearchDirs(Dirs: ISearchDirs);
+      {Stores a copy of given list of search directories.
+        @param Dirs [in] List of search directories.
       }
     function GetLogFilePrefixes: TCompLogPrefixes;
       {Returns prefixes used in interpreting error, fatal error and warning
@@ -221,7 +249,7 @@ type
 
   {
   ICompilers:
-    Interface implemented by an object tha maintans a list of all compilers
+    Interface implemented by an object that maintans a list of all compilers
     supported by the program.
   }
   ICompilers = interface(IInterface)

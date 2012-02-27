@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -45,9 +45,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils, ExtActns,
+  SysUtils, ExtActns,
   // Project
-  UBrowseProtocol, UProtocols, UUtils;
+  UBrowseProtocol, UProtocols, UStrUtils, UUtils;
 
 
 {
@@ -161,13 +161,13 @@ const
 begin
   Result := URL;
   // url doesn't start with file:// so assume a simple file name
-  if not AnsiStartsStr(cProtocol, Result) then
+  if not StrStartsStr(cProtocol, Result) then
     Exit;
   // replace C| with C:
-  Result := ReplaceStr(Result, '|', ':'); // change c| to c:
+  Result := StrReplace(Result, '|', ':'); // change c| to c:
   // make all delimiters in unix format for processing
-  Result := ReplaceStr(Result, '\', '/'); // change \ in path to /
-  if AnsiStartsStr(cProtocol + '/', Result) then
+  Result := StrReplace(Result, '\', '/');
+  if StrStartsStr(cProtocol + '/', Result) then
     // starts with "file:///" => remove "file:///"
     //   file:///C:/filename
     //     => C:/filename
@@ -180,7 +180,7 @@ begin
     //     => //servername/sharename/filename
     Delete(Result, 1, Length(cProtocol) - 2);
   // change to DOS path delimiters
-  Result := ReplaceStr(Result, '/', '\');
+  Result := StrReplace(Result, '/', '\');
 end;
 
 class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
@@ -188,11 +188,38 @@ class function TFileProtocol.SupportsProtocol(const URL: string): Boolean;
     @param URL [in] URL whose protocol is to be checked.
     @return True if URL's protocol is file:, False if not.
   }
+
+  // ---------------------------------------------------------------------------
+  function IsAbsoluteFileNameFormat(const FileName: string): Boolean;
+    {Checks if a filename is in absolute local file path format. Name is not
+    checked for valid characters.
+      @param FileName [in] File name to be checked.
+      @return True if file name is valid absolute file path, false if not.
+    }
+  begin
+    Result := (Length(FileName) > 3)
+      and IsValidDriveLetter(FileName[1])
+      and (FileName[2] = ':') and (FileName[3] = '\');
+  end;
+
+  function IsUNCFileNameFormat(const FileName: string): Boolean;
+    {Checks if a filename is in UNC file name format. Name is not checked for
+    valid characters.
+      @param FileName [in] File name to be checked.
+      @return True if file name is valid UNC name, false if not.
+    }
+  begin
+    Result := (Length(FileName) > 5)
+      and StrStartsStr('\\', FileName)
+      and (StrPos('\', FileName, 4) >= 4);
+  end;
+  // ---------------------------------------------------------------------------
+
 var
   FileName: string; // filename part of URL
 begin
   FileName := NormaliseURL(URL);
-  Result := IsValidAbsoluteFileName(FileName) or IsValidUNCFileName(FileName);
+  Result := IsAbsoluteFileNameFormat(FileName) or IsUNCFileNameFormat(FileName);
 end;
 
 initialization

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -157,7 +157,7 @@ type
     frame.
   }
   TSourcePrefsPreview = class(TObject)
-  private
+  strict private
     fHiliteAttrs: IHiliteAttrs;
       {Attributes of syntax highlighter to use to render preview}
     fCommentStyle: TCommentStyle;
@@ -174,7 +174,7 @@ type
         @param HiliteAttrs [in] Attributes of highlighter used to render
           preview.
       }
-    function Generate: ASCIIString;
+    function Generate: TRTF;
       {Generate RTF code used to render preview.
         @return Required RTF code.
       }
@@ -193,6 +193,7 @@ begin
   SelectCommentStyle(Prefs.SourceCommentStyle);
   chkSyntaxHighlighting.Checked := Prefs.SourceSyntaxHilited;
   (fHiliteAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
+  fHiliteAttrs.ResetDefaultFont;
   // Update state of controls and preview
   UpdateControlState;
   UpdatePreview;
@@ -344,26 +345,26 @@ begin
   Preview := TSourcePrefsPreview.Create(GetCommentStyle, fHiliteAttrs);
   try
     // Display preview
-    RTFLoadFromString(frmPreview.RichEdit, Preview.Generate);
+    TRichEditHelper.Load(frmPreview.RichEdit, Preview.Generate);
   finally
-    FreeAndNil(Preview);
+    Preview.Free;
   end;
 end;
 
 { TSourcePrefsPreview }
 
 resourcestring
-  // Preview routine names and description
-  sPrevProcName = 'Example';              // name of example routine
-  sPrevDesc = 'Description goes here.';   // sample routine description
-  sPrevCalledProc = 'DoSomethingHere';    // name of routine called from example
+  // Localisable source preview text
+  sPrevProcName = 'Example';              // name of example proc
+  sPrevDesc = 'Description goes here.';   // sample proc description
+  sPrevCalledProc = 'DoSomethingHere';    // name of proc called from example
 
 const
-  // Example routine prototype and body
-  cPrevProcProto = 'procedure %0:s;' + EOL;                 // routine prototype
-  cPrevProcBody = 'begin' + EOL +'  %1:s;'+ EOL + 'end;';   // routine body
+  // Example procedure prototype and body
+  cPrevProcProto = 'procedure %0:s;' + EOL;
+  cPrevProcBody = 'begin' + EOL +'  %1:s;'+ EOL + 'end;';
 
-  // Map of comment style to sample routine using the style
+  // Map of comment style to sample code
   cPrevSamples: array[TCommentStyle] of string = (
     // no comments: just prototype followed by body
     cPrevProcProto + cPrevProcBody,
@@ -385,15 +386,12 @@ begin
   fHiliteAttrs := HiliteAttrs;
 end;
 
-function TSourcePrefsPreview.Generate: ASCIIString;
+function TSourcePrefsPreview.Generate: TRTF;
   {Generate RTF code used to render preview.
     @return Required RTF code.
   }
-var
-  Hiliter: ISyntaxHiliter;    // syntax highlighter
 begin
-  Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
-  Result := StringToASCIIString(Hiliter.Hilite(SourceCode, fHiliteAttrs));
+  Result := TRTF.Create(TRTFDocumentHiliter.Hilite(SourceCode, fHiliteAttrs));
 end;
 
 function TSourcePrefsPreview.SourceCode: string;

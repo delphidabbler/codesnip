@@ -63,13 +63,12 @@
       Before <em>CodeSnip</em> can use the compilers it needs to be told about
       them. This is done using the <a
        href="dlg_configcompilers.htm">Configure Compilers</a> dialog box that
-      is accessed from the <em>Tools</em> menu or from a link in the <a
-       href="detail_pane.htm">Detail Pane</a>&#39;s <a
-       href="detail_compilerchecks.htm">Compiler Checks</a> tab.
+      is accessed from the <em>Tools</em> menu.
     </p>
     <p>
-      You can also customise the command line switches passed to the compilers
-      to replicate your usual compilation defaults. This is also done in the
+      You can customise the command line switches passed to the compilers to
+      replicate your usual compilation defaults. Compiler search paths can also
+      be configured. Both these actions are also done in the
       <em>Configure Compilers</em> dialog box.
     </p>
     <p>
@@ -77,47 +76,41 @@
       account maintains separate compiler configuration information. Therefore
       each user must configure compilers separately. The reason for this is that
       each user may wish to use a different set of available compilers and / or
-      may wish to use different compiler switches.
+      may wish to use different compiler switches and search paths.
     </p>
     <h2>
       Running the tests
     </h2>
     <p>
       Select the required routine in the
-      <a href="overview_pane.htm">Overview Pane</a>. Switch to the
-      <a href="detail_compilerchecks.htm">Compiler Checks</a> tab and click the
-      <img
-        src="../Images/TestCompile.gif"
-        alt="Test Compile button"
-        class="glyph"
-      > <em>Test Compile Snippet</em> link. This will generate a test unit for
-      the snippet and try to compile it with all the configured compilers. The
-      <em>Compiler Check</em> tab display will update to show the results.
-    </p>
-    <p>
-      The test unit can be displayed in a dialog box by clicking the
-      <img
-        src="../Images/ViewUnit.gif"
-        alt="Display Test Unit glyph"
-        class="glyph"
-      > <em>Display Test Unit</em> link.
-    </p>
-    <p>
-      You can also initiate tests from the <em>Database | Test Compile</em> menu
-      option or the
-      <img
+      <a href="overview_pane.htm">Overview Pane</a>. Select the <em>Compile |
+      Test Compile Snippet</em> menu option, press
+      <span class="smallcaps">F9</span> or click the <img
         src="../Images/TestCompile.gif"
         alt="Test Compile button"
         class="glyph"
       > <em>Test Compile</em> toolbar button.
+      This will generate a test unit for the snippet and try to compile it with
+      all the configured compilers. The results are displayed in the
+      <a href="dlg_testcompile.htm">Test Compile Results</a> dialog box.
+    </p>
+    <p>
+      You can see details of any compiler errors or warnings relating to the
+      last test compile by choosing the <em>Compile | View Compile Errors</em>
+      menu option. This information can also be displayed from the
+      <a href="dlg_testcompile.htm">Test Compile Results</a> dialog box.
+    </p>
+    <p>
+      The test unit can be displayed in a dialog box by choosing the
+      <em>Compile | View Test Unit</em> menu option.
     </p>
     <h2>
-      Warnings
+      Compiler Warnings
     </h2>
     <p>
       If any of the Delphi compilers from Delphi 6 onwards show one or more
-      warnings following a test compile you may be able to inhibit them by
-      enabling <em>CodeSnip</em>'s code generator to emit suitable compiler
+      warnings following a test compile, you may be able to inhibit them by
+      configuring <em>CodeSnip</em>'s code generator to emit suitable compiler
       directives. This is done using the <a href="dlg_prefs_codegen.htm">Code
       Generation</a> tab of the <a href="dlg_preferences.htm">Preferences</a>
       dialog box. Display the dialog box using the <em>Tools | Preferences</em>

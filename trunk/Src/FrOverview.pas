@@ -44,8 +44,8 @@ uses
   // Delphi
   ComCtrls, Controls, Classes, Windows, ExtCtrls, StdCtrls, ToolWin, Menus,
   // Project
-  FrTitled, IntfFrameMgrs, IntfNotifier, UCommandBars, UOverviewTreeState,
-  USnippets, USnippetsTVDraw, UView, UViewItemTreeNode;
+  DB.USnippet, FrTitled, IntfFrameMgrs, IntfNotifier, UCommandBars,
+  UOverviewTreeState, USnippetsTVDraw, UView, UViewItemTreeNode;
 
 
 type
@@ -70,8 +70,6 @@ type
     mnuOverview: TPopupMenu;
     procedure tcDisplayStyleChange(Sender: TObject);
     procedure tcDisplayStyleChanging(Sender: TObject; var AllowChange: Boolean);
-    procedure tcDisplayStyleMouseDown(Sender: TObject; Button: TMouseButton;
-      Shift: TShiftState; X, Y: Integer);
     procedure tvSnippetsChanging(Sender: TObject; Node: TTreeNode;
       var AllowChange: Boolean);
     procedure tvSnippetsCreateNodeClass(Sender: TCustomTreeView;
@@ -85,6 +83,13 @@ type
       Shift: TShiftState);
     procedure tvSnippetsMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure tcDisplayStyleMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+  strict private
+    const
+      cPermittedKeys = [            // Keypresses handled by treeview as default
+        VK_UP, VK_DOWN, VK_PRIOR, VK_NEXT, VK_LEFT, VK_RIGHT, VK_HOME, VK_END
+      ];
   strict private
     type
       {
@@ -109,61 +114,64 @@ type
       fTVDraw: TTVDraw;             // Object that renders tree view nodes
       fNotifier: INotifier;         // Notifies app of user initiated events
       fCanChange: Boolean;          // Whether selected node allowed to change
-      fSelectedItem: TViewItem;     // Current selected view item in tree view
-      fPrevSelectedItem: TViewItem; // Previous selected view item in tree view
-      fRoutineList: TRoutineList;   // List of currently displayed snippets
+      fSelectedItem: IView;         // Current selected view item in tree view
+      fPrevSelectedItem: IView;     // Previous selected view item in tree view
+      fSnippetList: TSnippetList;   // List of currently displayed snippets
       fTreeStates: array of TOverviewTreeState;
                                     // Array of tree state objects: one per tab
       fCommandBars: TCommandBarMgr; // Configures popup menu and toolbar
-    const
-      cPermittedKeys = [            // Keypresses handled by treeview as default
-        VK_UP, VK_DOWN, VK_PRIOR, VK_NEXT, VK_LEFT, VK_RIGHT, VK_HOME, VK_END
-      ];
+  strict private
     procedure SelectNode(const Node: TTreeNode; const MakeVisible: Boolean);
       {Selects a specified node and optionally make it visible in the tree view.
         @param Node [in] Node to be selected.
         @param MakeVisible [in] Flag indicating if node is to be made visible.
           Ignored if node is nil.
       }
-    procedure SelectionChange(const Node: TTreeNode); overload;
+    procedure SelectionChange(const Node: TTreeNode; const NewTab: Boolean);
+      overload;
       {Records view item associated with a selected node and, if item has
       changed, triggers action to notify program of selection change.
         @param Node [in] Selected node.
+        @param NewTab [in] Flag indicates whether view is to be displayed in
+          new tab.
       }
-    procedure SelectionChange(const Item: TViewItem); overload;
+    procedure SelectionChange(Item: IView; const NewTab: Boolean);
+      overload;
       {Records new selected view item and, if item has changed, triggers action
       to notify program of selection change.
         @param Item [in] Selected item.
+        @param NewTab [in] Flag indicates whether view is to be displayed in
+          new tab.
       }
     procedure Redisplay;
       {Redisplays all snippets within current snippet list in required style.
       }
-    procedure InternalSelectItem(const Item: TViewItem);
+    procedure InternalSelectItem(Item: IView);
       {Selects the tree node associated with a view item in the tree view if
       view item is in the tree view, otherwise deselects current item.
         @param Item [in] View item to be selected.
       }
-    function FindItemNode(const Item: TViewItem): TViewItemTreeNode;
+    function FindItemNode(Item: IView): TViewItemTreeNode;
       {Finds node representing a view item in the tree view.
         @param Item [in] View item to be found (may be nil).
         @return Tree node associated with view item or nil if no match or if
           Item is nil.
       }
-    function GetSectionNode(const Node: TTreeNode): TViewItemTreeNode;
-      {Gets reference to the top level parent (section) node for any tree node.
+    function GetTopLevelNode(const Node: TTreeNode): TViewItemTreeNode;
+      {Gets reference to the top level parent node for any tree node.
         @param Node [in] Node whose section node is required.
         @return Required section node. Maybe Node if Node is a section node.
       }
-    function GetNextSectionNode: TTreeNode;
-      {Gets the next section node to that containing the currently selected
+    function GetNextTopLevelNode: TTreeNode;
+      {Gets the next top level node to that containing the currently selected
       node.
         @return Required node. If current node is last section node it is
           returned. If there is no selected node the first section node is
           returned.
       }
-    function GetPreviousSectionNode: TTreeNode;
-      {Gets the previous section node to that containing the currently selected
-      node.
+    function GetPreviousTopLevelNode: TTreeNode;
+      {Get previous top level top to selected node. If selected node is not
+      itself top level then returned node is its parent.
         @return Required node. If current node is first section node it is
           returned. If there is no selected node the first section node is
           returned.
@@ -185,15 +193,17 @@ type
       {Switches to previous tab, or return to last tab if current tab is first.
       }
     { IOverviewDisplayMgr }
-    procedure Display(const RoutineList: TRoutineList);
+    procedure Display(const SnippetList: TSnippetList; const Force: Boolean);
       {Displays the snippets in the current overview tab.
-        @param RoutineList [in] List of snippets to be displayed or nil if
-          nothing to be displayed.
+      NOTE: May not redisplay if SnippetList is same as that displayed, unless
+      Force is True.
+        @param SnippetList [in] List of snippets to be displayed.
+        @param Force [in] Forces redisplay regardless of current state.
       }
     procedure Clear;
       {Clears the display.
       }
-    procedure SelectItem(const ViewItem: TViewItem);
+    procedure SelectItem(ViewItem: IView);
       {Selects a view item in the overview pane.
         @param ViewItem [in] Item to be selected.
       }
@@ -242,8 +252,6 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   UKeysHelper, UOverviewTreeBuilder;
 
@@ -262,12 +270,12 @@ begin
   case State of
     taExpandNode:
       Result := Assigned(tvSnippets.Selected) and
-        not GetSectionNode(tvSnippets.Selected).Expanded;
+        not GetTopLevelNode(tvSnippets.Selected).Expanded;
     taExpandAll:
       Result := True;
     taCollapseNode:
       Result := Assigned(tvSnippets.Selected) and
-        GetSectionNode(tvSnippets.Selected).Expanded;
+        GetTopLevelNode(tvSnippets.Selected).Expanded;
     taCollapseAll:
       Result := True;
     else
@@ -280,7 +288,7 @@ procedure TOverviewFrame.Clear;
   }
 begin
   SelectItem(nil);
-  Display(nil);
+  Display(nil, False);
 end;
 
 constructor TOverviewFrame.Create(AOwner: TComponent);
@@ -300,13 +308,13 @@ begin
     cOverviewPopupMenu, TPopupMenuWrapper.Create(mnuOverview)
   );
   // Create new empty objects to store current and previous selected view items
-  fSelectedItem := TViewItem.Create;
-  fPrevSelectedItem := TViewItem.Create;
+  fSelectedItem := TViewFactory.CreateNulView;
+  fPrevSelectedItem := TViewFactory.CreateNulView;
   // Create treeview draw object
   fTVDraw := TTVDraw.Create;
   tvSnippets.OnCustomDrawItem := fTVDraw.CustomDrawItem;
   // Create list to store displayed snippets
-  fRoutineList := TRoutineList.Create;
+  fSnippetList := TSnippetList.Create;
   // Create objects used to remember state of each tree view
   SetLength(fTreeStates, tcDisplayStyle.Tabs.Count);
   for TabIdx := 0 to Pred(tcDisplayStyle.Tabs.Count) do
@@ -320,31 +328,35 @@ var
   TabIdx: Integer;  // loops through tabs
 begin
   for TabIdx := Pred(tcDisplayStyle.Tabs.Count) downto 0 do
-    FreeAndNil(fTreeStates[TabIdx]);
-  FreeAndNil(fTVDraw);
-  FreeAndNil(fPrevSelectedItem);
-  FreeAndNil(fSelectedItem);
-  FreeAndNil(fRoutineList); // does not free referenced snippets
+    fTreeStates[TabIdx].Free;
+  fTVDraw.Free;
+  fPrevSelectedItem := nil;
+  fSelectedItem := nil;
+  fSnippetList.Free;  // does not free referenced snippets
   fCommandBars.Free;
   inherited;
 end;
 
-procedure TOverviewFrame.Display(const RoutineList: TRoutineList);
+procedure TOverviewFrame.Display(const SnippetList: TSnippetList;
+  const Force: Boolean);
   {Displays the snippets in the current overview tab.
-    @param RoutineList [in] List of snippets to be displayed or nil if nothing
-      to be displayed.
+  NOTE: May not redisplay if SnippetList is same as that displayed, unless
+  Force is True.
+    @param SnippetList [in] List of snippets to be displayed.
+    @param Force [in] Forces redisplay regardless of current state.
   }
 begin
-  // Only do update if new snippet list is different to current one
-  if not fRoutineList.IsEqual(RoutineList) then
+  // Only do update if new snippet list is different to current one unless
+  // Force is True
+  if Force or not fSnippetList.IsEqual(SnippetList) then
   begin
     // Take copy of new list
-    fRoutineList.Assign(RoutineList);
+    fSnippetList.Assign(SnippetList);
     Redisplay;
   end;
 end;
 
-function TOverviewFrame.FindItemNode(const Item: TViewItem): TViewItemTreeNode;
+function TOverviewFrame.FindItemNode(Item: IView): TViewItemTreeNode;
   {Finds node representing a view item in the tree view.
     @param Item [in] View item to be found (may be nil).
     @return Tree node associated with view item or nil if no match or if Item is
@@ -373,55 +385,45 @@ begin
   end;
 end;
 
-function TOverviewFrame.GetNextSectionNode: TTreeNode;
-  {Gets the next section node to that containing the currently selected node.
-    @return Required node. If current node is last section node it is returned.
-      If there is no selected node the first section node is returned.
-  }
+function TOverviewFrame.GetNextTopLevelNode: TTreeNode;
 var
-  ThisSectionNode: TTreeNode; // reference to current section node
-  SelectedNode: TTreeNode;    // currently selected node
+  SelectedNode: TTreeNode;      // currently selected node
+  ThisTopLevelNode: TTreeNode;  // top level node of SelectedNode
 begin
   SelectedNode := tvSnippets.Selected;
   if Assigned(SelectedNode) then
   begin
-    ThisSectionNode := GetSectionNode(SelectedNode);
-    Result := ThisSectionNode.GetNextSibling;
+    ThisTopLevelNode := GetTopLevelNode(SelectedNode);
+    Result := ThisTopLevelNode.GetNextSibling;
     if not Assigned(Result) then
-      Result := ThisSectionNode;
+      Result := ThisTopLevelNode;
   end
   else
     Result := tvSnippets.Items.GetFirstNode;
 end;
 
-function TOverviewFrame.GetPreviousSectionNode: TTreeNode;
-  {Gets the previous section node to that containing the currently selected
-  node.
-    @return Required node. If current node is first section node it is returned.
-      If there is no selected node the first section node is returned.
-  }
+function TOverviewFrame.GetPreviousTopLevelNode: TTreeNode;
 var
-  ThisSectionNode: TTreeNode; // reference to current section node
-  SelectedNode: TTreeNode;    // currently selected node
+  SelectedNode: TTreeNode;      // currently selected node
+  ThisTopLevelNode: TTreeNode;  // top level node of SelectedNode
 begin
   SelectedNode := tvSnippets.Selected;
   if Assigned(SelectedNode) then
   begin
-    ThisSectionNode := GetSectionNode(SelectedNode);
-    Result := ThisSectionNode.GetPrevSibling;
+    ThisTopLevelNode := GetTopLevelNode(SelectedNode);
+    if ThisTopLevelNode = SelectedNode then
+      Result := ThisTopLevelNode.GetPrevSibling
+    else
+      Result := ThisTopLevelNode;
     if not Assigned(Result) then
-      Result := ThisSectionNode;
+      Result := ThisTopLevelNode;
   end
   else
     Result := tvSnippets.Items.GetFirstNode;
 end;
 
-function TOverviewFrame.GetSectionNode(
+function TOverviewFrame.GetTopLevelNode(
   const Node: TTreeNode): TViewItemTreeNode;
-  {Gets reference to the top level parent (section) node for any tree node.
-    @param Node [in] Node whose section node is required.
-    @return Required section node. Maybe Node if Node is a section node.
-  }
 var
   CurrentNode: TTreeNode; // iterates through all parent nodes
 begin
@@ -431,7 +433,7 @@ begin
   Result := CurrentNode as TViewItemTreeNode;
 end;
 
-procedure TOverviewFrame.InternalSelectItem(const Item: TViewItem);
+procedure TOverviewFrame.InternalSelectItem(Item: IView);
   {Selects the tree node associated with a view item in the tree view if view
   item is in the tree view, otherwise deselects current item.
     @param Item [in] View item to be selected.
@@ -515,18 +517,18 @@ begin
     // Clear tree view
     fCanChange := False;
     tvSnippets.Items.Clear;
-    if fRoutineList.Count = 0 then
+    if fSnippetList.Count = 0 then
       Exit;
     // Build new treeview using grouping determined by selected tab
     Builder := BuilderClasses[tcDisplayStyle.TabIndex].Create(
-      tvSnippets, fRoutineList
+      tvSnippets, fSnippetList
     );
     Builder.Build;
     // Restore state of treeview based on last time it was displayed
     tvSnippets.FullExpand;
     RestoreTreeState;
   finally
-    FreeAndNil(Builder);
+    Builder.Free;
     fCanChange := True;
     tvSnippets.Items.EndUpdate;
   end;
@@ -556,35 +558,40 @@ begin
   Result := tcDisplayStyle.TabIndex;
 end;
 
-procedure TOverviewFrame.SelectionChange(const Node: TTreeNode);
+procedure TOverviewFrame.SelectionChange(const Node: TTreeNode;
+  const NewTab: Boolean);
   {Records view item associated with a selected node and, if item has changed,
   triggers action to notify program of selection change.
     @param Node [in] Selected node.
+    @param NewTab [in] Flag indicates whether view is to be displayed in
+      new tab.
   }
 begin
   if Assigned(Node) and (Node is TViewItemTreeNode) then
-    SelectionChange((Node as TViewItemTreeNode).ViewItem);
+    SelectionChange((Node as TViewItemTreeNode).ViewItem, NewTab);
 end;
 
-procedure TOverviewFrame.SelectionChange(const Item: TViewItem);
+procedure TOverviewFrame.SelectionChange(Item: IView; const NewTab: Boolean);
   {Records new selected view item and, if item has changed, triggers action to
   notify program of selection change.
     @param Item [in] Selected item.
+    @param NewTab [in] Flag indicates whether view is to be displayed in
+      new tab.
   }
 begin
   // Record new selected item
-  fSelectedItem.Assign(Item);
+  fSelectedItem := TViewFactory.Clone(Item);
   if not fSelectedItem.IsEqual(fPrevSelectedItem) then
   begin
     // Item has actually changed: store as previously selected item
-    fPrevSelectedItem.Assign(fSelectedItem);
+    fPrevSelectedItem := TViewFactory.Clone(fSelectedItem);
     // Notify application of change
     if Assigned(fNotifier) then
-      fNotifier.ShowViewItem(fSelectedItem);
+      fNotifier.ShowViewItem(fSelectedItem, NewTab);
   end;
 end;
 
-procedure TOverviewFrame.SelectItem(const ViewItem: TViewItem);
+procedure TOverviewFrame.SelectItem(ViewItem: IView);
   {Selects a view item in the overview pane.
     @param ViewItem [in] Item to be selected.
   }
@@ -592,8 +599,8 @@ begin
   // Select in tree view
   InternalSelectItem(ViewItem);
   // Record view item as selected one
-  fSelectedItem.Assign(ViewItem);
-  fPrevSelectedItem.Assign(fSelectedItem);
+  fSelectedItem := TViewFactory.Clone(ViewItem);
+  fPrevSelectedItem := TViewFactory.Clone(fSelectedItem);
 end;
 
 procedure TOverviewFrame.SelectNode(const Node: TTreeNode;
@@ -622,11 +629,9 @@ procedure TOverviewFrame.SelectTab(const TabIdx: Integer);
 begin
   Assert((TabIdx >= 0) and (TabIdx < tcDisplayStyle.Tabs.Count),
     ClassName + '.SelectTab: TabIdx out range');
-  // Need to ensure tree state has been saved before changing tab and
-  // redisplaying. If this method was called for current tab index we assume
-  // it's via tcDisplayStyleChange when tree state will have already been saved
-  // in tcDisplayStyleChanging. If not, we need to save tree state before
-  // changing tab index.
+  // If SelectTab called for current tab index we assume it's via
+  // tcDisplayStyleChange when tree state will have already been saved in
+  // tcDisplayStyleChanging
   if tcDisplayStyle.TabIndex <> TabIdx then
   begin
     SaveTreeState;
@@ -649,6 +654,10 @@ procedure TOverviewFrame.tcDisplayStyleChange(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
+  // TODO: consider calling SelectTab direct rather than via Notifier
+  { TODO: create a Tab Manager object that triggers Changing and / or Change
+          events regardless of how tab is changed. This manager class could
+          implement ITabbedDisplayMgr on behalf of frame.}
   if Assigned(fNotifier) then
     fNotifier.ChangeOverviewStyle(tcDisplayStyle.TabIndex);
 end;
@@ -666,16 +675,8 @@ end;
 
 procedure TOverviewFrame.tcDisplayStyleMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
-  {Handles event triggered when user clicks on tab control. Sets focus to tab
-  control. This does not always happen automatically.
-    @param Sender [in] Not used.
-    @param Button [in] Not used.
-    @param Shift [in] Not used.
-    @param X [in] X co-ordinate of mouse in client co-ordinates.
-    @param Y [in] Y co-ordinate of mouse in client co-ordinates.
-  }
 begin
- if htOnItem in tcDisplayStyle.GetHitTestInfoAt(X, Y) then
+  if htOnItem in tcDisplayStyle.GetHitTestInfoAt(X, Y) then
     tcDisplayStyle.SetFocus;
 end;
 
@@ -712,7 +713,7 @@ procedure TOverviewFrame.tvSnippetsDeletion(Sender: TObject;
   }
 begin
   if Assigned(Node) then
-    (Node as TViewItemTreeNode).ViewItem.Free;
+    (Node as TViewItemTreeNode).ViewItem := nil;
 end;
 
 procedure TOverviewFrame.tvSnippetsEnter(Sender: TObject);
@@ -724,7 +725,7 @@ begin
   if (tvSnippets.Items.Count > 0) and not Assigned(tvSnippets.Selected) then
   begin
     SelectNode(tvSnippets.Items.GetFirstNode, True);
-    SelectionChange(tvSnippets.Items.GetFirstNode);
+    SelectionChange(tvSnippets.Items.GetFirstNode, False);
   end;
 end;
 
@@ -752,13 +753,13 @@ begin
           if tvSnippets.Items.Count > 0 then
             SelectNode(tvSnippets.Items[Pred(tvSnippets.Items.Count)], True);
       VK_UP:
-        if ExtractShiftKeys(Shift) = [ssCtrl] then
+        if ExtractShiftKeys(Shift) = [ssShift] then
           if tvSnippets.Items.Count > 0 then
-            SelectNode(GetPreviousSectionNode, True);
+            SelectNode(GetPreviousTopLevelNode, True);
       VK_DOWN:
-        if ExtractShiftKeys(Shift) = [ssCtrl] then
+        if ExtractShiftKeys(Shift) = [ssShift] then
           if tvSnippets.Items.Count > 0 then
-            SelectNode(GetNextSectionNode, True);
+            SelectNode(GetNextTopLevelNode, True);
     end;
     // permit Alt+F4 and inhibit all other default processing
     if not IsKeyCombination(VK_F4, [ssAlt], Key, Shift) then
@@ -795,16 +796,14 @@ var
   Node: TTreeNode;  // selected tree node
 begin
   Node := tvSnippets.Selected;
-  if (not HasShiftKeys(Shift) and (Key in cPermittedKeys)) or
-    (
-      (ExtractShiftKeys(Shift) = [ssCtrl]) and
-      (Key in [VK_HOME, VK_END, VK_UP, VK_DOWN])
-    ) then
+  if (not HasShiftKeys(Shift) and (Key in cPermittedKeys))
+    or (ExtractShiftKeys(Shift) = [ssCtrl]) and (Key in [VK_HOME, VK_END])
+    or (ExtractShiftKeys(Shift) = [ssShift]) and (Key in [VK_UP, VK_DOWN]) then
   begin
     // One of keys triggering selection change was released. We get reference to                          `
     // selected node and trigger notification via SelectionChange method
     if Assigned(Node) and (Node is TViewItemTreeNode) then
-      SelectionChange(Node);
+      SelectionChange(Node, False);
   end
   // Check for RETURN key with no modifiers: toggle node expand / collapse when
   // a section header has focus
@@ -834,16 +833,43 @@ procedure TOverviewFrame.tvSnippetsMouseDown(Sender: TObject;
   }
 var
   Node: TTreeNode;  // tree node clicked
+  PopupPt: TPoint;  // menu pop-up location
 begin
+  // Disallow use of Shift and Alt keys with mouse
+  if ExtractShiftKeys(Shift) * [ssShift, ssAlt] <> [] then
+    Exit;
   // Check if mouse click on a tree node
   if [htOnItem, htOnRight] * tvSnippets.GetHitTestInfoAt(X, Y) <> [] then
   begin
-    // Get node clicked
-    Node := tvSnippets.GetNodeAt(X, Y);
-    if Assigned(Node) and (Node is TViewItemTreeNode) then
-    begin
-      SelectNode(Node, False);
-      SelectionChange(Node);
+    case Button of
+      mbLeft:
+      begin
+        // Select node clicked: request new tab if Ctrl key pressed
+        Node := tvSnippets.GetNodeAt(X, Y);
+        if Assigned(Node) and (Node is TViewItemTreeNode) then
+        begin
+          SelectNode(Node, False);
+          SelectionChange(Node, ExtractShiftKeys(Shift) = [ssCtrl]);
+        end;
+      end;
+      mbRight:
+      begin
+        { TODO: This behaviour duplicates code in mbLeft deliberately - we may
+                want to change later so that right click does not select node. }
+        { TODO: May wish to inhibit Ctrl key for Right clicks later. }
+        // Select node clicked
+        Node := tvSnippets.GetNodeAt(X, Y);
+        if Assigned(Node) and (Node is TViewItemTreeNode) then
+        begin
+          SelectNode(Node, False);
+          SelectionChange(Node, ExtractShiftKeys(Shift) = [ssCtrl]);
+        end;
+        // Display popup menu
+        PopupPt := tvSnippets.ClientToScreen(Point(X, y));
+        mnuOverview.Popup(PopupPt.X, PopupPt.Y);
+      end;
+      mbMiddle:
+        ; // Middle button is ignored
     end;
   end;
 end;
@@ -859,7 +885,7 @@ begin
   // Get current node (if any) and corresponding section node (if any)
   Node := FindItemNode(fSelectedItem);
   if Assigned(Node) then
-    SectionNode := GetSectionNode(Node)
+    SectionNode := GetTopLevelNode(Node)
   else
     SectionNode := nil;
   // Perform expand or collapse
@@ -889,7 +915,7 @@ begin
         if Assigned(SectionNode) then
         begin
           SectionNode.Expanded := False;
-          SelectionChange(SectionNode);
+          SelectionChange(SectionNode, False);
         end;
       end;
       taCollapseAll:
@@ -900,7 +926,7 @@ begin
         // collapse whole tree and notify change of selection
         tvSnippets.FullCollapse;
         if Assigned(SectionNode) then
-          SelectionChange(SectionNode);
+          SelectionChange(SectionNode, False);
       end;
     end;
   finally
@@ -916,9 +942,11 @@ function TOverviewFrame.TTVDraw.IsSectionHeadNode(
     @param Node [in] Node to be checked.
     @return True if node is a section header, False if not.
   }
+var
+  ViewItem: IView;  // view item represented by node
 begin
-  Result := (Node as TViewItemTreeNode).ViewItem.Kind
-    in [vkCategory, vkAlphabet, vkSnipKind];
+  ViewItem := (Node as TViewItemTreeNode).ViewItem;
+  Result := ViewItem.IsGrouping;
 end;
 
 function TOverviewFrame.TTVDraw.IsUserDefinedNode(
@@ -928,11 +956,10 @@ function TOverviewFrame.TTVDraw.IsUserDefinedNode(
     @return True if node represents user defined object, False if not.
   }
 var
-  ViewItem: TViewItem;  // view item represented by node
+  ViewItem: IView;  // view item represented by node
 begin
   ViewItem := (Node as TViewItemTreeNode).ViewItem;
-  Result := ((ViewItem.Kind = vkRoutine) and ViewItem.Routine.UserDefined)
-    or ((ViewItem.Kind = vkCategory) and ViewItem.Category.UserDefined);
+  Result := ViewItem.IsUserDefined;
 end;
 
 end.

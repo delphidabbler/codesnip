@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -47,20 +47,21 @@ uses
 
 
 type
-
-  {
-  TViewItemAction:
-    Custom action used to request display of a view item. Stores reference to
-    required view item.
-  }
+  ///  <summary>
+  ///  Custom action used to request display of a view item.
+  ///  </summary>
   TViewItemAction = class(TBasicAction)
-  private
-    fViewItem: TViewItem;
-      {Reference to view item object}
+  strict private
+    ///  <summary>Value of ViewItem property.</summary>
+    fViewItem: IView;
+    ///  <summary>Value of NewTab property.</summary>
+    fNewTab: Boolean;
   public
-    property ViewItem: TViewItem
-      read fViewItem write fViewItem;
-      {View item object to be displayed}
+    ///  <summary>View item to be displayed.</summary>
+    property ViewItem: IView read fViewItem write fViewItem;
+    ///  <summary>Flags whether view item is to be displayed in a new tab (True)
+    ///  or in existing tab (False).</summary>
+    property NewTab: Boolean read fNewTab write fNewTab;
   end;
 
 

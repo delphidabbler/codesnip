@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -52,7 +52,7 @@ type
     completed execution.
   }
   TThreadEx = class(TThread)
-  private
+  strict private
     fCompleted: Boolean;
       {Value of Completed property}
   protected

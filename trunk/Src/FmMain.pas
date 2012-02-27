@@ -105,7 +105,7 @@ type
     actSaveSnippet: TAction;
     actSaveUnit: TAction;
     actSelectAll: TAction;
-    actSelectRoutines: TAction;
+    actSelectSnippets: TAction;
     actSubmit: TAction;
     actTestBug: TAction;
     actTestCompile: TAction;
@@ -113,9 +113,8 @@ type
     actViewAlphabetical: TAction;
     actViewCategorised: TAction;
     actViewCompErrs: TAction;
-    actViewCompCheck: TAction;
     actViewDependencies: TAction;
-    actViewInfo: TAction;
+    actSelectDetailTab: TAction;
     actViewSnippetKinds: TAction;
     actViewTestUnit: TAction;
     actWebSite: TBrowseURL;
@@ -173,7 +172,7 @@ type
     miSaveDatabase: TMenuItem;
     miSaveUnit: TMenuItem;
     miSearch: TMenuItem;
-    miSelectRoutines: TMenuItem;
+    miSelectSnippets: TMenuItem;
     miSelectAll: TMenuItem;
     miSourceCode: TMenuItem;
     miSpacer1: TMenuItem;
@@ -199,10 +198,8 @@ type
     miUpdateDbase: TMenuItem;
     miView: TMenuItem;
     miViewCategorised: TMenuItem;
-    miViewCompCheck: TMenuItem;
     miViewCompErrs: TMenuItem;
     miViewDependencies: TMenuItem;
-    miViewInfo: TMenuItem;
     miViewSnippetKinds: TMenuItem;
     miViewTestUnit: TMenuItem;
     miViewAlphabetical: TMenuItem;
@@ -230,7 +227,7 @@ type
     tbSaveDatabase: TToolButton;
     tbSaveSnippet: TToolButton;
     tbSaveUnit: TToolButton;
-    tbSelectRoutines: TToolButton;
+    tbSelectSnippets: TToolButton;
     tbSpacer1: TToolButton;
     tbSpacer2: TToolButton;
     tbSpacer3: TToolButton;
@@ -241,6 +238,11 @@ type
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
     tbUpdateDbase: TToolButton;
+    miCompile: TMenuItem;
+    actNewDetailsTab: TAction;
+    miNewDetailsTab: TMenuItem;
+    actCloseDetailsTab: TAction;
+    miCloseDetailsTab: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
@@ -258,8 +260,6 @@ type
     procedure actDeleteCategoryExecute(Sender: TObject);
     procedure actDeleteCategoryUpdate(Sender: TObject);
     procedure actDeleteSnippetExecute(Sender: TObject);
-    procedure ActDetailTabExecute(Sender: TObject);
-    procedure ActDetailTabUpdate(Sender: TObject);
     procedure actDonateExecute(Sender: TObject);
     procedure ActEditDeleteSnippetUpdate(Sender: TObject);
     procedure actExportCodeExecute(Sender: TObject);
@@ -303,7 +303,7 @@ type
     procedure actSaveUnitExecute(Sender: TObject);
     procedure actSelectAllExecute(Sender: TObject);
     procedure actSelectAllUpdate(Sender: TObject);
-    procedure actSelectRoutinesExecute(Sender: TObject);
+    procedure actSelectSnippetsExecute(Sender: TObject);
     procedure actSubmitExecute(Sender: TObject);
     procedure ActSubmitOrExportUpdate(Sender: TObject);
     procedure actTestBugExecute(Sender: TObject);
@@ -325,6 +325,10 @@ type
     procedure FormResize(Sender: TObject);
     procedure splitVertCanResize(Sender: TObject; var NewSize: Integer;
       var Accept: Boolean);
+    procedure actNewDetailsTabExecute(Sender: TObject);
+    procedure actCloseDetailsTabExecute(Sender: TObject);
+    procedure actCloseDetailsTabUpdate(Sender: TObject);
+    procedure actSelectDetailTabExecute(Sender: TObject);
   strict private
     fIsAppRegistered: Boolean;        // Flag noting if app is registered
     fNotifier: INotifier;             // Notififies app of user-initiated events
@@ -333,7 +337,7 @@ type
     fMainDisplayMgr: TMainDisplayMgr; // Manages the main display output
     fStatusBarMgr: TStatusBarMgr;     // Manages status bar display
     fDialogMgr: TDialogMgr;           // Manages display of dialog boxes
-    fCompileMgr: TMainCompileMgr;     // Manage test compilations
+    fCompileMgr: TMainCompileMgr;     // Manages test compilations
     procedure ActViewItemExecute(Sender: TObject);
       {Displays a requested view item and records in history.
         @param Sender [in] Action triggering this event. Must be a
@@ -344,30 +348,19 @@ type
         @param Sender [in] Action triggering this event. Must be a
           TViewItemAction.
       }
-    procedure ActEditRoutineExecute(Sender: TObject);
+    procedure ActEditSnippetByNameExecute(Sender: TObject);
       {Edits a named user defined snippet.
         @param Sender [in] Action triggering this event. Must be a
-          TEditRoutineAction.
-      }
-    procedure ActViewCompLogExecute(Sender: TObject);
-      {Displays compiler warning or error log for last compile by a specified
-      compiler.
-        @param Sender [in] Action triggering this event. Must be a
-          TCompLogAction.
-        @except Raised if last compiler result was not an error or a warning.
+          TEditSnippetAction.
       }
     procedure ActBrowserHintExecute(Sender: TObject);
       {Displays hint from browser hint action in status bar.
         @param Sender [in] Not used.
       }
     procedure SnippetsChangeHandler(Sender: TObject; const EvtInfo: IInterface);
-      {Handles Snippets change event handler that is trigerred when a user
-      defined entry in the database changes.
+      {Handles events that inform of changes to database.
         @param Sender [in] Not used.
         @para EvtInfo [in] Object providing information about the event.
-      }
-    procedure DisplayWelcomePage;
-      {Displays welcome page in currently active detail pane.
       }
     procedure DisplayHint(const Hint: string);
       {Displays hint in status bar using status bar manager.
@@ -409,12 +402,12 @@ uses
   // Delphi
   Windows,
   // Project
-  FmSplash, FmTrappedBugReportDlg, FmWaitDlg, IntfFrameMgrs, UActionFactory,
-  UAppInfo, UCodeShareMgr, UCommandBars, UCompLogAction, UConsts, UCopyInfoMgr,
-  UCopySourceMgr, UDatabaseLoader, UDatabaseLoaderUI, UEditRoutineAction,
-  UExceptions, UHelpMgr, UHistoryMenus, UMessageBox, UNotifier, UNulDropTarget,
-  UPrintMgr, UQuery, USaveSnippetMgr, USaveUnitMgr, USnippets, UUserDBMgr,
-  UView, UViewItemAction, UWBExternal, Web.UInfo;
+  DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
+  FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo, UCodeShareMgr,
+  UCommandBars, UConsts, UCopyInfoMgr, UCopySourceMgr, UDatabaseLoader,
+  UDatabaseLoaderUI, UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus,
+  UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr,
+  USaveUnitMgr, UUserDBMgr, UView, UViewItemAction, UWBExternal, Web.UInfo;
 
 
 {$R *.dfm}
@@ -472,6 +465,16 @@ begin
   fDialogMgr.ShowBugReportDlg;
 end;
 
+procedure TMainForm.actCloseDetailsTabExecute(Sender: TObject);
+begin
+  fMainDisplayMgr.CloseSelectedDetailsTab;
+end;
+
+procedure TMainForm.actCloseDetailsTabUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled := fMainDisplayMgr.CanCloseDetailsTab;
+end;
+
 procedure TMainForm.actCompilersExecute(Sender: TObject);
   {Displays Configure Compilers dialog box.
     @param Sender [in] Not used.
@@ -508,7 +511,7 @@ begin
 end;
 
 procedure TMainForm.actCopySnippetExecute(Sender: TObject);
-  {Copies annotated source of selected routine or category to clipboard.
+  {Copies annotated source of selected snippet or category to clipboard.
     @param Sender [in] Not used.
   }
 begin
@@ -580,29 +583,6 @@ begin
   // display update is handled by snippets change event handler
 end;
 
-procedure TMainForm.ActDetailTabExecute(Sender: TObject);
-  {Selects a tab in the detail pane.
-    @param Sender [in] Action triggering this event
-  }
-begin
-  // Action's Tag property specifies index of tab being selected
-  fMainDisplayMgr.SelectedDetailTab := (Sender as TAction).Tag;
-end;
-
-procedure TMainForm.ActDetailTabUpdate(Sender: TObject);
-  {Updates checked state of detail pane tab selection action according to if
-  associated tab is selected.
-    @param Sender [in] Action triggering this event.
-  }
-begin
-  // Action's Tag property specifies index of tab being updated
-  with Sender as TAction do
-  begin
-    Checked := fMainDisplayMgr.SelectedDetailTab = Tag;
-    Enabled := True;
-  end;
-end;
-
 procedure TMainForm.actDonateExecute(Sender: TObject);
   {Displays the Donate dialog box.
     @param Sender [in] Not used.
@@ -621,13 +601,13 @@ begin
     TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView);
 end;
 
-procedure TMainForm.ActEditRoutineExecute(Sender: TObject);
+procedure TMainForm.ActEditSnippetByNameExecute(Sender: TObject);
   {Edits a named user defined snippet.
     @param Sender [in] Action triggering this event. Must be a
-      TEditRoutineAction.
+      TEditSnippetAction.
   }
 begin
-  TUserDBMgr.EditSnippet((Sender as TEditRoutineAction).RoutineName);
+  TUserDBMgr.EditSnippet((Sender as TEditSnippetAction).SnippetName);
 end;
 
 procedure TMainForm.actEditSnippetExecute(Sender: TObject);
@@ -638,7 +618,9 @@ procedure TMainForm.actEditSnippetExecute(Sender: TObject);
 begin
   Assert(TUserDBMgr.CanEdit(fMainDisplayMgr.CurrentView),
     ClassName + '.actEditSnippetExecute: Can''t edit current view item');
-  fNotifier.EditRoutine(fMainDisplayMgr.CurrentView.Routine.Name);
+  fNotifier.EditSnippet(
+    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet.Name
+  );
   // display of updated snippet is handled by snippets change event handler
 end;
 
@@ -656,7 +638,7 @@ procedure TMainForm.actFindClearExecute(Sender: TObject);
   }
 begin
   Query.Reset;
-  fMainDisplayMgr.QueryUpdated;
+  fMainDisplayMgr.UpdateDisplayedQuery;
   fStatusBarMgr.Update;
 end;
 
@@ -705,12 +687,12 @@ procedure TMainForm.actFindXRefsExecute(Sender: TObject);
 var
   Search: USearch.ISearch;  // cross reference search object
 begin
-  Assert(fMainDisplayMgr.CurrentView.Kind = vkRoutine,
-    ClassName + '.actFindXRefsExecute: Current view kind is not vkRoutine');
+  Assert(Supports(fMainDisplayMgr.CurrentView, ISnippetView),
+    ClassName + '.actFindXRefsExecute: Current view is not a snippet');
   // Display Find Cross Refs dialog box to enable user to enter search criteria
   // (dialog box creates and returns search object from entered criteria)
   if fDialogMgr.ExecFindXRefsDlg(
-    fMainDisplayMgr.CurrentView.Routine, Search
+    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet, Search
   ) then
     DoSearchFilter(Search);
 end;
@@ -721,7 +703,8 @@ procedure TMainForm.actFindXRefsUpdate(Sender: TObject);
     @param Sender [in] Action triggering the event.
   }
 begin
-  (Sender as TAction).Enabled := fMainDisplayMgr.CurrentView.Kind = vkRoutine;
+  (Sender as TAction).Enabled :=
+    Supports(fMainDisplayMgr.CurrentView, ISnippetView);
 end;
 
 procedure TMainForm.actGoBackExecute(Sender: TObject);
@@ -729,7 +712,7 @@ procedure TMainForm.actGoBackExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  ViewItem: TViewItem;  // previous view item in history list
+  ViewItem: IView;  // previous view item in history list
 const
   // Bug error message
   cHistoryError = '%s.actGoBackExecute: '
@@ -740,7 +723,8 @@ begin
   if not Assigned(ViewItem) then
     raise EBug.CreateFmt(cHistoryError, [ClassName]);
   // Display item, but don't record in history list
-  fMainDisplayMgr.DisplayViewItem(ViewItem);
+  // TODO: decide if to have user option to decide how history items are shown
+  fMainDisplayMgr.DisplayViewItem(ViewItem, ddmOverwrite);
 end;
 
 procedure TMainForm.actGoBackUpdate(Sender: TObject);
@@ -757,7 +741,7 @@ procedure TMainForm.actGoForwardExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  ViewItem: TViewItem;  // next view item in history list
+  ViewItem: IView;  // next view item in history list
 const
   // Bug error message
   cHistoryError = '%s.actGoForwardExecute: '
@@ -768,7 +752,8 @@ begin
   if not Assigned(ViewItem) then
     raise EBug.CreateFmt(cHistoryError, [ClassName]);
   // Display item, but don't record in history list
-  fMainDisplayMgr.DisplayViewItem(ViewItem);
+  // TODO: decide if to have user option to decide how history items are shown
+  fMainDisplayMgr.DisplayViewItem(ViewItem, ddmOverwrite);
 end;
 
 procedure TMainForm.actGoForwardUpdate(Sender: TObject);
@@ -803,11 +788,11 @@ procedure TMainForm.actHelpQuickStartExecute(Sender: TObject);
   }
 begin
   // Displays help topic indirected via custom help topic action
-  DisplayHelp('QuickStart');                               
+  DisplayHelp('QuickStart');
 end;
 
 procedure TMainForm.actImportCodeExecute(Sender: TObject);
-  {Exports one or more user-defined routines from a file.
+  {Exports one or more user-defined snippets from a file.
     @param Sender [in] Not used.
   }
 begin
@@ -820,6 +805,11 @@ procedure TMainForm.actLicenseExecute(Sender: TObject);
   }
 begin
   DisplayHelp('License');
+end;
+
+procedure TMainForm.actNewDetailsTabExecute(Sender: TObject);
+begin
+  fMainDisplayMgr.CreateNewDetailsTab;
 end;
 
 procedure TMainForm.actNewsExecute(Sender: TObject);
@@ -840,12 +830,12 @@ begin
 end;
 
 procedure TMainForm.ActNonEmptyDBUpdate(Sender: TObject);
-  {Enables / disables an action according to whether there are routines in
+  {Enables / disables an action according to whether there are snippets in
   database.
     @param Sender [in] Action triggering this event.
   }
 begin
-  (Sender as TAction).Enabled := Snippets.Routines.Count > 0;
+  (Sender as TAction).Enabled := Database.Snippets.Count > 0;
 end;
 
 procedure TMainForm.ActOverviewTabExecute(Sender: TObject);
@@ -854,7 +844,7 @@ procedure TMainForm.ActOverviewTabExecute(Sender: TObject);
   }
 begin
   // Action's Tag property specifies index of tab being selected
-  fMainDisplayMgr.SelectedOverviewTab := (Sender as TAction).Tag;
+  fMainDisplayMgr.SelectOverviewTab((Sender as TAction).Tag);
 end;
 
 procedure TMainForm.ActOverviewTabUpdate(Sender: TObject);
@@ -1000,7 +990,7 @@ begin
 end;
 
 procedure TMainForm.actSaveSnippetExecute(Sender: TObject);
-  {Saves selected routine or category to disk.
+  {Saves selected snippet to disk.
     @param Sender [in] Not used.
   }
 begin
@@ -1008,8 +998,8 @@ begin
 end;
 
 procedure TMainForm.actSaveSnippetUpdate(Sender: TObject);
-  {Enables / disables Save Snippet action according to whether a routine or
-  category is selected.
+  {Enables / disables Save Snippet action according to whether a summary is
+  selected.
     @param Sender [in] Action triggering the event.
   }
 begin
@@ -1042,7 +1032,16 @@ begin
   (Sender as TAction).Enabled := fMainDisplayMgr.CanSelectAll;
 end;
 
-procedure TMainForm.actSelectRoutinesExecute(Sender: TObject);
+procedure TMainForm.actSelectDetailTabExecute(Sender: TObject);
+  {Selects a tab in the detail pane.
+    @param Sender [in] Action triggering this event
+  }
+begin
+  // Action's Tag property specifies index of tab being selected
+  fMainDisplayMgr.SelectDetailTab((Sender as TAction).Tag);
+end;
+
+procedure TMainForm.actSelectSnippetsExecute(Sender: TObject);
   {Permits user to select snippets to be displayed. Gets selection from user via
   Select Snippets dialog box then displays all selected snippets.
     @param Sender [in] Not used.
@@ -1097,19 +1096,10 @@ begin
   Assert(
     fCompileMgr.CanCompile(fMainDisplayMgr.CurrentView),
     ClassName + '.actTestCompileExecute: Can''t compile current view');
-  // Disable form to prevent other snippetss being selected while compiling
-  Enabled := False;
-  try
-    // Do test compile, show a window if it takes a long time, and show results
-    fCompileMgr.Compile(
-      frmDetail,
-      fMainDisplayMgr.CurrentView.Routine,
-      fMainDisplayMgr.DisplayCompileResults
-    );
-  finally
-    // Re-enable form before displaying results: tab not changed if disabled
-    Enabled := True;
-  end;
+  fDialogMgr.ShowTestCompileDlg(
+    fCompileMgr,
+    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet
+  );
 end;
 
 procedure TMainForm.actTestCompileUpdate(Sender: TObject);
@@ -1161,9 +1151,9 @@ begin
   if fDialogMgr.ExecUpdateDlg then
   begin
     // Database was updated: check if user database needs saving
-    if (Snippets as ISnippetsEdit).Updated
+    if (Database as IDatabaseEdit).Updated
       and TMessageBox.Confirm(Self, sConfirmSave) then
-      (Snippets as ISnippetsEdit).Save;
+      (Database as IDatabaseEdit).Save;
     // Reload the databases
     ReloadDatabase;
   end;
@@ -1188,25 +1178,16 @@ begin
     and fCompileMgr.HaveErrors;
 end;
 
-procedure TMainForm.ActViewCompLogExecute(Sender: TObject);
-  {Displays compiler warning or error log for last compile by a specified
-  compiler.
-    @param Sender [in] Action triggering this event. Must be a TCompLogAction.
-    @except Raised if last compiler result was not an error or a warning.
-  }
-begin
-  // Display log in compile error dialog box
-  fCompileMgr.ShowError((Sender as TCompLogAction).CompilerID);
-end;
-
 procedure TMainForm.actViewDependenciesExecute(Sender: TObject);
   {Displays dependency tree for selected snippet.
     @param Sender [in] Not used.
   }
 begin
-  Assert(fMainDisplayMgr.CurrentView.Kind = vkRoutine,
-    ClassName + '.actViewDependenciesExecute: View kind vkRoutine expected');
-  fDialogMgr.ShowDependencyTree(fMainDisplayMgr.CurrentView.Routine);
+  Assert(Supports(fMainDisplayMgr.CurrentView, ISnippetView),
+    ClassName + '.actViewDependenciesExecute: Snippet view expected');
+  fDialogMgr.ShowDependencyTree(
+    (fMainDisplayMgr.CurrentView as ISnippetView).Snippet
+  );
 end;
 
 procedure TMainForm.actViewDependenciesUpdate(Sender: TObject);
@@ -1215,7 +1196,8 @@ procedure TMainForm.actViewDependenciesUpdate(Sender: TObject);
     @param Sender [in] Action triggering this event.
   }
 begin
-  (Sender as TAction).Enabled := fMainDisplayMgr.CurrentView.Kind = vkRoutine;
+  (Sender as TAction).Enabled :=
+    Supports(fMainDisplayMgr.CurrentView, ISnippetView);
 end;
 
 procedure TMainForm.ActViewHistoryItemExecute(Sender: TObject);
@@ -1223,7 +1205,10 @@ procedure TMainForm.ActViewHistoryItemExecute(Sender: TObject);
     @param Sender [in] Action triggering this event. Must be a TViewItemAction.
   }
 begin
-  fMainDisplayMgr.DisplayViewItem((Sender as TViewItemAction).ViewItem);
+  // TODO: decide if to have user option to decide how history items are shown
+  fMainDisplayMgr.DisplayViewItem(
+    (Sender as TViewItemAction).ViewItem, ddmOverwrite
+  );
   fHistory.SelectItem((Sender as TViewItemAction).ViewItem);
 end;
 
@@ -1231,8 +1216,15 @@ procedure TMainForm.ActViewItemExecute(Sender: TObject);
   {Displays a requested view item and records in history.
     @param Sender [in] Action triggering this event. Must be a TViewItemAction.
   }
+const
+  TabDisplayMap: array[Boolean] of TDetailPageDisplayMode = (
+    ddmOverwrite, ddmRequestNewTab
+  );
 begin
-  fMainDisplayMgr.DisplayViewItem((Sender as TViewItemAction).ViewItem);
+  fMainDisplayMgr.DisplayViewItem(
+    (Sender as TViewItemAction).ViewItem,
+    TabDisplayMap[(Sender as TViewItemAction).NewTab]
+  );
   fHistory.NewItem((Sender as TViewItemAction).ViewItem);
 end;
 
@@ -1240,12 +1232,15 @@ procedure TMainForm.actViewTestUnitExecute(Sender: TObject);
   {Displays test unit for currently selected snippet in a dialog box.
     @param Sender [in] Not used.
   }
+var
+  SelectedSnippet: TSnippet;  // currently selected snippet
 begin
-  Assert(fMainDisplayMgr.CurrentView.Kind = vkRoutine,
-    ClassName + '.actViewTestUnitExecute: View kind vkRoutine expected');
-  Assert(fMainDisplayMgr.CurrentView.Routine.CanCompile,
+  Assert(Supports(fMainDisplayMgr.CurrentView, ISnippetView),
+    ClassName + '.actViewTestUnitExecute: Snippet view expected');
+  SelectedSnippet := (fMainDisplayMgr.CurrentView as ISnippetView).Snippet;
+  Assert(SelectedSnippet.CanCompile,
     ClassName + '.actViewTestUnitExecute: Snippet is not compilable');
-  fDialogMgr.ShowTestUnit(fMainDisplayMgr.CurrentView.Routine);
+  fDialogMgr.ShowTestUnit(SelectedSnippet);
 end;
 
 procedure TMainForm.actViewTestUnitUpdate(Sender: TObject);
@@ -1253,9 +1248,12 @@ procedure TMainForm.actViewTestUnitUpdate(Sender: TObject);
   snippet.
     @param Sender [in] Action triggering this event.
   }
+var
+  SnippetView: ISnippetView;  // current view as snippet view if supported
 begin
-  (Sender as TAction).Enabled := (fMainDisplayMgr.CurrentView.Kind = vkRoutine)
-    and fMainDisplayMgr.CurrentView.Routine.CanCompile;
+  (Sender as TAction).Enabled :=
+    Supports(fMainDisplayMgr.CurrentView, ISnippetView, SnippetView)
+    and SnippetView.Snippet.CanCompile;
 end;
 
 procedure TMainForm.actWelcomeExecute(Sender: TObject);
@@ -1263,7 +1261,7 @@ procedure TMainForm.actWelcomeExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  DisplayWelcomePage;
+  fMainDisplayMgr.ShowWelcomePage;
 end;
 
 procedure TMainForm.appEventsHint(Sender: TObject);
@@ -1284,36 +1282,21 @@ begin
     fStatusBarMgr.ShowHint(Hint);
 end;
 
-procedure TMainForm.DisplayWelcomePage;
-  {Displays welcome page in currently active detail pane.
-  }
-var
-  Welcome: TViewItem; // welcome page view item
-begin
-  // Get notifier to display welcome page
-  Welcome := TViewItem.Create(vkWelcome);
-  try
-    fNotifier.ShowViewItem(Welcome);
-  finally
-    FreeAndNil(Welcome);
-  end;
-end;
-
 procedure TMainForm.DoSearchFilter(const Search: USearch.ISearch);
   {Filters main display using search object, displays message if no snippets
   found and updates status bar as required.
     @param Search [in] Search object to filter by.
   }
 resourcestring
-  sNoRoutines = 'No snippets found.'; // dialog box messages
+  sNoSnippets = 'No snippets found.'; // dialog box messages
 begin
   if Query.ApplySearch(Search) then
   begin
-    fMainDisplayMgr.QueryUpdated;
+    fMainDisplayMgr.UpdateDisplayedQuery;
     fStatusBarMgr.Update;
   end
   else
-    TMessageBox.Information(Self, sNoRoutines);
+    TMessageBox.Information(Self, sNoSnippets);
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -1343,21 +1326,22 @@ procedure TMainForm.FormDestroy(Sender: TObject);
 begin
   inherited;
   // Save any changes to user database
-  with Snippets as ISnippetsEdit do
+  with Database as IDatabaseEdit do
   begin
     if Updated then
       Save;
   end;
   // Unhook snippets event handler
-  Snippets.RemoveChangeEventHandler(SnippetsChangeHandler);
+  Database.RemoveChangeEventHandler(SnippetsChangeHandler);
   // Save window state
   fWindowSettings.SplitterPos := pnlLeft.Width;
   fWindowSettings.OverviewTab := fMainDisplayMgr.SelectedOverviewTab;
-  fWindowSettings.DetailTab := fMainDisplayMgr.SelectedDetailTab;
   fWindowSettings.Save;
   // Free owned objects
-  FreeAndNil(fHistory);
-  FreeAndNil(fMainDisplayMgr);
+  fHistory.Free;
+  fMainDisplayMgr.Free;
+  // fStatusBarMgr MUST be nilled: otherwise it can be called after status bar
+  // control has been freed and so cause AV when trying to use the control
   FreeAndNil(fStatusBarMgr);
 end;
 
@@ -1395,8 +1379,8 @@ begin
   try
     inherited;
     // Set window caption
-    Application.Title := TAppInfo.FullProgramName;
-    Caption := Application.Title;
+    Application.Title := TAppInfo.ProgramCaption;
+    Caption := TAppInfo.ProgramCaption;
     if TWebInfo.UsingLocalHost then
       Caption := Caption + ' [' + TWebInfo.LocalHost + ']';
 
@@ -1423,8 +1407,9 @@ begin
     actViewCategorised.Tag := cCategorisedTab;
     actViewAlphabetical.Tag := cAlphabeticTab;
     actViewSnippetKinds.Tag := cKindTab;
-    actViewInfo.Tag := cInfoTab;
-    actViewCompCheck.Tag := cCompCheckTab;
+    // Detail pane tab actions have index placed in tag dynamically. We use 0 as
+    // default
+    actSelectDetailTab.Tag := 0;
 
     // Create notifier object and assign actions triggered by its methods
     // note that actions created on fly are automatically freed
@@ -1432,12 +1417,9 @@ begin
     with fNotifier as ISetActions do
     begin
       SetUpdateDbaseAction(actUpdateDbase);
-      SetDisplayRoutineAction(TActionFactory.CreateRoutineAction(Self));
+      SetDisplaySnippetAction(TActionFactory.CreateSnippetAction(Self));
       SetDisplayCategoryAction(TActionFactory.CreateCategoryAction(Self));
-      SetCompileRoutineAction(actTestCompile);
-      SetViewCompilerLogAction(
-        TActionFactory.CreateCompLogAction(Self, ActViewCompLogExecute)
-      );
+      SetCompileSnippetAction(actTestCompile);
       SetShowHintAction(
         TActionFactory.CreateHintAction(Self, ActBrowserHintExecute)
       );
@@ -1445,13 +1427,14 @@ begin
       SetShowViewItemAction(
         TActionFactory.CreateViewItemAction(Self, ActViewItemExecute)
       );
-      SetOverviewStyleChangeActions([
-        actViewCategorised, actViewAlphabetical, actViewSnippetKinds
-      ]);
-      SetDetailPaneChangeActions([actViewInfo, actViewCompCheck]);
-      SetShowTestUnitAction(actViewTestUnit);
-      SetEditRoutineAction(
-        TActionFactory.CreateEditRoutineAction(Self, ActEditRoutineExecute)
+      SetOverviewStyleChangeActions(
+        [actViewCategorised, actViewAlphabetical, actViewSnippetKinds]
+      );
+      SetDetailPaneChangeAction(actSelectDetailTab);
+      SetEditSnippetAction(
+        TActionFactory.CreateEditSnippetAction(
+          Self, ActEditSnippetByNameExecute
+        )
       );
       SetDonateAction(actDonate);
     end;
@@ -1475,8 +1458,7 @@ begin
     // Create display manager
     fMainDisplayMgr := TMainDisplayMgr.Create(frmOverview, frmDetail);
     // select active tabs
-    fMainDisplayMgr.SelectedOverviewTab := fWindowSettings.OverviewTab;
-    fMainDisplayMgr.SelectedDetailTab := fWindowSettings.DetailTab;
+    fMainDisplayMgr.SelectOverviewTab(fWindowSettings.OverviewTab);
 
     // Create status bar manager
     fStatusBarMgr := TStatusBarMgr.Create(sbStatusBar);
@@ -1555,7 +1537,7 @@ begin
     fIsAppRegistered := TAppInfo.IsRegistered;
 
     // Set event handler for snippets database
-    Snippets.AddChangeEventHandler(SnippetsChangeHandler);
+    Database.AddChangeEventHandler(SnippetsChangeHandler);
 
     // Load snippets database
     LoadSnippets(
@@ -1569,6 +1551,7 @@ begin
         end;
       end
     );
+    fMainDisplayMgr.ShowWelcomePage;
   finally
     // Ready to start using app: request splash form closes and enable form
     SplashForm.RequestClose;
@@ -1586,7 +1569,7 @@ begin
   // Inform that database is being loaded via status bar
   fStatusBarMgr.ShowSimpleMessage(sLoadingDatabase);
   fHistory.Clear;
-  fMainDisplayMgr.Clear;
+  fMainDisplayMgr.ClearAll;
   // Load the database
   try
     Loader;
@@ -1596,7 +1579,6 @@ begin
   end;
   // Re-initialise display
   fMainDisplayMgr.Initialise;
-  DisplayWelcomePage;
   // Display updated database stats and search results in status bar
   fStatusBarMgr.Update;
 end;
@@ -1611,67 +1593,22 @@ begin
       TDatabaseLoaderUI.Execute(Self);
     end
   );
+  fMainDisplayMgr.ShowDBUpdatedPage;
 end;
 
 procedure TMainForm.SnippetsChangeHandler(Sender: TObject;
   const EvtInfo: IInterface);
-  {Handles Snippets change event handler that is trigerred when a user defined
-  entry in the database changes.
+  {Handles events that inform of changes to database.
     @param Sender [in] Not used.
     @para EvtInfo [in] Object providing information about the event.
   }
-
-  // ---------------------------------------------------------------------------
-  procedure ReInitialise;
-    {Re-initialises display, reseting any queries if necessary.
-    }
-  begin
-    if not Query.Refresh then
-      Query.Reset;
-    fMainDisplayMgr.Initialise;
-    fMainDisplayMgr.FinalizeChange;
-  end;
-  // ---------------------------------------------------------------------------
-
-var
-  EventInfo: ISnippetChangeEventInfo; // information about the event
 begin
-  EventInfo := EvtInfo as ISnippetChangeEventInfo;
-  case EventInfo.Kind of
-    evChangeBegin:          // database about to change
-    begin
+  // TODO: Renamed this as DBChangeHandler
+  case (EvtInfo as IDatabaseChangeEventInfo).Kind of
+    evChangeBegin:
       Enabled := False;
-      fMainDisplayMgr.PrepareForChange;
-    end;
-    evChangeEnd:            // database change has completed
+    evChangeEnd:
       Enabled := True;
-    evRoutineAdded,         // snippet added: display new routine
-    evRoutineChanged:       // snippet edited: display changed routine
-    begin
-      ReInitialise;
-      fNotifier.DisplayRoutine(
-        (EventInfo.Info as TRoutine).Name,
-        (EventInfo.Info as TRoutine).UserDefined
-      );
-    end;
-    evBeforeRoutineDelete,  // snippet about to be deleted: clear display
-    evBeforeCategoryDelete: // category about to be deleted: clear display
-    begin
-      fHistory.Clear;
-      fMainDisplayMgr.Clear;
-    end;
-    evRoutineDeleted,       // snippet deleted: display welcome page
-    evCategoryDeleted:      // category deleted: display welcome page
-    begin
-      ReInitialise;
-      DisplayWelcomePage;
-    end;
-    evCategoryAdded,        // category added: display new empty category
-    evCategoryChanged:      // category edited: redisplay it
-    begin
-      ReInitialise;
-      fNotifier.DisplayCategory((EventInfo.Info as TCategory).Category);
-    end;
   end;
   // Display updated database stats and search results in status bar
   fStatusBarMgr.Update;

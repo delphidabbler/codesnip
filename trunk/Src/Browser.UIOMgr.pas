@@ -45,121 +45,119 @@ uses
   // Delphi
   SHDocVw, Classes,
   // Project
-  UHTMLEvents;
+  Browser.UHTMLEvents;
 
 
 type
-
-  {
-  TWBNavigateEvent:
-    Type of event triggered just before browser control navigates to a new
-    document. Handle this event to intervene in, cancel or get information about
-    the navigation.
-      @param Sender [in] Object triggering event.
-      @param URL [in] URL to be navigated to.
-      @param Cancel [in/out] False when called. Set true to prevent the browser
-        navigating to the URL.
-  }
+  ///  <summary>
+  ///  Type of event triggered just before browser control navigates to a new
+  ///  document.
+  ///  </summary>
+  ///  <param name="Sender">TObject [in] Object triggering event.</param>
+  ///  <param name="URL">string [in] URL to be navigated to.</param>
+  ///  <param name="Cancel">Boolean [in/out] False when called. Set to True to
+  ///  prevent the browser navigating to the URL.</param>
+  ///  <remarks>Handle this event to intervene in, cancel or get information
+  ///  about the navigation.</remarks>
   TWBNavigateEvent = procedure(Sender: TObject; const URL: string;
     var Cancel: Boolean) of object;
 
-  {
-  TWBIOMgr:
-    Class that wraps the IE web browser control and provides ability to load and
-    save HTML from files, streams or strings. Also simplifies navigation to
-    documents stored locally or in resources and exposes some HTML events.
-  }
+type
+  ///  <summary>
+  ///  Class that wraps the IE web browser control and provides ability to load
+  ///  and save HTML from files, streams or strings. Also simplifies navigation
+  ///  to documents stored locally or in resources and exposes some HTML events.
+  ///  </summary>
   TWBIOMgr = class(TObject)
   strict private
-    fWB: TWebBrowser;                 // Reference to managed webbrowser
-    fOnNavigate: TWBNavigateEvent;    // Handler for OnNavigate event
-    fOnHTMLEvent: THTMLEvent;         // Handler for OnHTMLEvent event
-    fDocEvents: THTMLDocEventSink;    // Event sink for browser document events
-    fWdwEvents: THTMLWdwEventSink;    // Event since for browser window events
+    ///  <summary>Reference to managed webbrowser.</summary>
+    fWB: TWebBrowser;
+    ///  <summary>Handler for OnNavigate event.</summary>
+    fOnNavigate: TWBNavigateEvent;
+    ///  <summary>Handler for OnHTMLEvent event.</summary>
+    fOnHTMLEvent: THTMLEvent;
+    ///  <summary>Handler for OnHTMLWindowError event.</summary>
+    fOnHTMLWindowError: THTMLWindowErrorEvent;
+    ///  <summary>Event sink for HTMLDocumentEvents2 events.</summary>
+    fDocEvents: THTMLDocumentEvents2Sink;
+    ///  <summary>Event sink for HTMLWindowEvents2 events.</summary>
+    fWdwEvents: THTMLWindowEvents2Sink;
+    ///  <summary>Handles OnEvent events triggered by browser document and
+    ///  window event sinks. Triggers OnHTMLEvent and passes parameters to it.
+    ///  </summary>
     procedure HTMLEventHandler(Sender: TObject;
       const EventInfo: THTMLEventInfo);
-      {Handles OnEvent events triggered by browser document and window event
-      sinks.
-        @param Sender [in] Not used.
-        @param EventInfo [in] Object providing information about the event.
-      }
+    ///  <summary>Handles OnError events triggered by browser window event sink.
+    ///  Triggers OnHTMLWindowError and passes parameters to it.</summary>
+    procedure HTMLWindowErrorHandler(Sender: TObject; const Desc, URL: string;
+      const Line: Integer; var Handled: Boolean);
+    ///  <summary>Waits for a document to complete loading.</summary>
+    ///  <remarks>EBug raised if there is no document or it is not a valid HTML
+    ///  document.</remarks>
     procedure WaitForDocToLoad;
-      {Waits for a document to complete loading.
-        @except EBug raised if there is no document or it is not a valid HTML
-          document.
-      }
+    ///  <summary>Handles web browser navigation events. Triggers OnNavigate
+    ///  event and passes URL and Cancel parameters to it.</summary>
+    ///  <remarks>All parameters except URL and Cancel are ignored.</remarks>
     procedure NavigateHandler(Sender: TObject; const pDisp: IDispatch;
       var URL, Flags, TargetFrameName, PostData, Headers: OleVariant;
       var Cancel: WordBool);
-      {Handles web browser navigation events by triggering own OnNavigate event.
-        @param Sender [in] Not used.
-        @param pDisp [in] Not used.
-        @param URL [in/out] URL to access, passed to OnNavigate event handler.
-          Left unchanged.
-        @param Flags [in/out] Not used.
-        @param TargetFrameName [in/out] Not used.
-        @param PostData [in/out] Not used.
-        @param Headers [in/out] Not used.
-        @param Cancel [in] False when passed in. Set to true to cancel browser's
-          own navigation or leave false to permit browser to handle navigation.
-      }
+    ///  <summary>Updates the web browser's current document from HTML read from
+    ///  given stream.</summary>
+    ///  <remarks>EBug raised if updated document is not valid.</remarks>
     procedure InternalLoadDocumentFromStream(const Stream: TStream);
-      {Updates the web browser's current document from HTML read from stream.
-        @param Stream [in] Stream containing valid HTML source code.
-        @except EBug raised if updated document is not valid.
-      }
-    procedure SetBodyHTML(const HTML: string);
-      {Sets inner HTML of browser's current document <body>.
-        @param HTML [in] Required inner HTML for <body> tag.
-      }
+    ///  <summary>Creates an empty document in browser.</summary>
+    ///  <remarks>
+    ///  <para>This method guarantees that the browser contains a valid document
+    ///  object. The browser displays a blank page.</para>
+    ///  <para>EBug raised if document is not valid.</para>
+    ///  </remarks>
     procedure EmptyDocument;
-      {Creates an empty document. This method guarantees that the browser
-      contains a valid document object. The browser displays a blank page.
-        @except EBug raised if document is not valid.
-      }
+    ///  <summary>Navigates to a document at a specified URL.</summary>
+    ///  <remarks>EBug raised if new document is not valid.</remarks>
     procedure NavigateToURL(const URL: string);
-      {Navigates to a document at a specified URL.
-        @param URL [in] Full URL of the document.
-        @except EBug raised if new document is not valid.
-      }
   public
+    ///  <summary>Creates object to manage IO for a browser control.</summary>
+    ///  <param name="WB">TWebBrowser [in] Managed webbrowser control. Must not
+    ///  be nil.</param>
     constructor Create(const WB: TWebBrowser);
-      {Object constructor. Sets up object.
-        @param WB [in] Managed webbrowser control. Must not be nil.
-      }
+    ///  <summary>Tears down object and disconnects event sinks.</summary>
     destructor Destroy; override;
-      {Object destructor. Tears down object and disconnects event sinks.
-      }
+    ///  <summary>Loads HTML contained in given string into browser control.
+    ///  </summary>
+    ///  <remarks>EBug raised if document is not valid.</remarks>
     procedure LoadFromString(const HTML: string);
-      {Loads and displays valid HTML source from a string.
-        @param HTML [in] String containing the HTML source.
-        @except EBug raised if document is not valid.
-      }
+    ///  <summary>Loads the document stored as a resource in a module into
+    ///  browser control.</summary>
+    ///  <param name="Module">HMODULE [in] Handle of module containing resource.
+    ///  </param>
+    ///  <param name="ResName">PChar [in] Name of the resource.</param>
+    ///  <param name="ResType">PChar [in] Type of resource (RT_HTML is assumed
+    ///  if ResType is nil).</param>
+    ///  <remarks>EBug raised if document is not valid.</remarks>
     procedure NavigateToResource(const Module: HMODULE; const ResName: PChar;
       const ResType: PChar = nil);
-      {Navigates to the document stored as a resource in a module.
-        @param Module [in] Handle of module containing resource.
-        @param ResName [in] Name of the resource
-        @param ResType [in] Type of resource (RT_HTML is assumed if ResType is
-          nil).
-        @except EBug raised if document is not valid.
-      }
+    ///  <summary>Checks if a valid HTML document is loaded in the browser
+    ///  control.</summary>
     function HTMLDocumentExists: Boolean;
-      {Checks if a valid HTML document is loaded in the browser control.
-        @return True if valid HTML document is loaded, False if not.
-      }
+    ///  <summary>Replaces body of an existing HTML document with given HTML.
+    ///  </summary>
+    ///  <remarks>Given HTML is inserted between existing document's
+    ///  &lt;body&gt; tags and must be valid for this purpose.</remarks>
     procedure ReplaceExistingBodyHTML(const HTML: string);
-      {Replaces body HTML of an existing HTML document.
-        @param HTML [in] New body HTML.
-      }
+    ///  <summary>Event triggered when browser control is about to navigate to a
+    ///  new document.</summary>
+    ///  <remarks>Handle this event to intervene in navigation process.
+    ///  </remarks>
     property OnNavigate: TWBNavigateEvent
       read fOnNavigate write fOnNavigate;
-      {Event triggered when browser control is about to navigate to a new
-      document. Handle this event to intervene in navigation process}
+    ///  <summary>Event triggered when events are detected in browser's window
+    ///  and document.</summary>
     property OnHTMLEvent: THTMLEvent
       read fOnHTMLEvent write fOnHTMLEvent;
-      {Event triggered in response to browser's "standard" window and document
-      event sink events}
+    ///  <summary>Event triggered when browser window notifies an onerror event.
+    ///  </summary>
+    property OnHTMLWindowError: THTMLWindowErrorEvent
+      read fOnHTMLWindowError write fOnHTMLWindowError;
   end;
 
 
@@ -170,30 +168,26 @@ uses
   // Delphi
   SysUtils, ActiveX,
   // Project
-  Browser.UControlHelper, UHTMLDocHelper, UResourceUtils;
+  Browser.UControlHelper, UHTMLDOMHelper, UResourceUtils;
 
 
 { TWBIOMgr }
 
 constructor TWBIOMgr.Create(const WB: TWebBrowser);
-  {Object constructor. Sets up object.
-    @param WB [in] Managed webbrowser control. Must not be nil.
-  }
 begin
   Assert(Assigned(WB), ClassName + '.Create: WB is nil');
   inherited Create;
   fWB := WB;
   fWB.OnBeforeNavigate2 := NavigateHandler;
   // Create event sinks and set event handlers
-  fDocEvents := THTMLDocEventSink.Create;
+  fDocEvents := THTMLDocumentEvents2Sink.Create;
   fDocEvents.OnEvent := HTMLEventHandler;
-  fWdwEvents := THTMLWdwEventSink.Create;
+  fWdwEvents := THTMLWindowEvents2Sink.Create;
   fWdwEvents.OnEvent := HTMLEventHandler;
+  fWdwEvents.OnError := HTMLWindowErrorHandler;
 end;
 
 destructor TWBIOMgr.Destroy;
-  {Object destructor. Tears down object and disconnects event sinks.
-  }
 begin
   fWdwEvents.Disconnect;
   FreeAndNil(fWdwEvents);
@@ -203,39 +197,31 @@ begin
 end;
 
 procedure TWBIOMgr.EmptyDocument;
-  {Creates an empty document. This method guarantees that the browser
-  contains a valid document object. The browser displays a blank page.
-    @except EBug raised if document is not valid.
-  }
 begin
   // Load the special blank document
   NavigateToURL('about:blank');
 end;
 
 function TWBIOMgr.HTMLDocumentExists: Boolean;
-  {Checks if a valid HTML document is loaded in the browser control.
-    @return True if valid HTML document is loaded, False if not.
-  }
 begin
-  Result := THTMLDocHelper.IsValidDocument(fWB.Document);
+  Result := THTMLDOMHelper.IsValidDocument(fWB.Document);
 end;
 
 procedure TWBIOMgr.HTMLEventHandler(Sender: TObject;
   const EventInfo: THTMLEventInfo);
-  {Handles OnEvent events triggered by browser document and window event sinks.
-    @param Sender [in] Not used.
-    @param EventInfo [in] Object providing information about the event.
-  }
 begin
   if Assigned(fOnHTMLEvent) then
     fOnHTMLEvent(Self, EventInfo);
 end;
 
+procedure TWBIOMgr.HTMLWindowErrorHandler(Sender: TObject; const Desc,
+  URL: string; const Line: Integer; var Handled: Boolean);
+begin
+  if Assigned(fOnHTMLWindowError) then
+    fOnHTMLWindowError(Self, Desc, URL, Line, Handled);
+end;
+
 procedure TWBIOMgr.InternalLoadDocumentFromStream(const Stream: TStream);
-  {Updates the web browser's current document from HTML read from stream.
-    @param Stream [in] Stream containing valid HTML source code.
-    @except EBug raised if updated document is not valid.
-  }
 var
   PersistStreamInit: IPersistStreamInit;  // object used to load stream into doc
   StreamAdapter: IStream;                 // IStream interface to stream
@@ -251,7 +237,7 @@ begin
     if PersistStreamInit.InitNew = S_OK then
     begin
       // Load data from Stream into WebBrowser
-      StreamAdapter:= TStreamAdapter.Create(Stream);
+      StreamAdapter := TStreamAdapter.Create(Stream);
       PersistStreamInit.Load(StreamAdapter);
       // Wait for document to finish loading
       WaitForDocToLoad;
@@ -260,15 +246,11 @@ begin
 end;
 
 procedure TWBIOMgr.LoadFromString(const HTML: string);
-  {Loads and displays valid HTML source from a string.
-    @param HTML [in] String containing the HTML source.
-    @except EBug raised if document is not valid.
-  }
 var
-  Stm: TMemoryStream; // stream that receives HTML to be loaded
+  Stm: TMemoryStream; // stream that received HTML to be loaded
 
   // ---------------------------------------------------------------------------
-  // Writes bytes from byte array B to Stm
+  /// Writes bytes from byte array B to Stm
   procedure WriteBytes(const B: TBytes);
   begin
     if Length(B) > 0 then
@@ -293,18 +275,6 @@ end;
 procedure TWBIOMgr.NavigateHandler(Sender: TObject; const pDisp: IDispatch;
   var URL, Flags, TargetFrameName, PostData, Headers: OleVariant;
   var Cancel: WordBool);
-  {Handles web browser navigation events by triggering own OnNavigate event.
-    @param Sender [in] Not used.
-    @param pDisp [in] Not used.
-    @param URL [in/out] URL to access, passed to OnNavigate event handler.
-      Left unchanged.
-    @param Flags [in/out] Not used.
-    @param TargetFrameName [in/out] Not used.
-    @param PostData [in/out] Not used.
-    @param Headers [in/out] Not used.
-    @param Cancel [in] False when passed in. Set to true to cancel browser's own
-      navigation or leave false to permit browser to handle navigation.
-  }
 var
   DoCancel: Boolean;  // re-typing of Cancel parameter
 begin
@@ -318,21 +288,11 @@ end;
 
 procedure TWBIOMgr.NavigateToResource(const Module: HMODULE; const ResName,
   ResType: PChar);
-  {Navigates to the document stored as a resource in a module.
-    @param Module [in] Handle of module containing resource.
-    @param ResName [in] Name of the resource
-    @param ResType [in] Type of resource (RT_HTML is assumed if ResType is nil).
-    @except EBug raised if document is not valid.
-  }
 begin
   NavigateToURL(MakeResourceURL(Module, ResName, ResType));
 end;
 
 procedure TWBIOMgr.NavigateToURL(const URL: string);
-  {Navigates to a document at a specified URL.
-    @param URL [in] Full URL of the document.
-    @except EBug raised if new document is not valid.
-  }
 begin
   // Do the navigation, don't use cache or history and wait for document to load
   fWB.Navigate(
@@ -342,38 +302,20 @@ begin
 end;
 
 procedure TWBIOMgr.ReplaceExistingBodyHTML(const HTML: string);
-  {Replaces body HTML of an existing HTML document.
-    @param HTML [in] New body HTML.
-  }
 begin
   Assert(Self.HTMLDocumentExists,
     ClassName + '.ReplaceExistingBodyHTML: No HTML document exists');
-  SetBodyHTML(HTML);
-end;
-
-procedure TWBIOMgr.SetBodyHTML(const HTML: string);
-  {Sets inner HTML of browser's current document <body>.
-    @param HTML [in] Required inner HTML for <body> tag.
-  }
-begin
-  Assert(THTMLDocHelper.IsValidDocument(fWB.Document),
-    ClassName + '.SetBodyHTML: Invalid or no document loaded in browser control'
-  );
-  THTMLDocHelper.SetInnerHTML(THTMLDocHelper.GetBodyElem(fWB.Document), HTML);
+  THTMLDOMHelper.SetInnerHTML(THTMLDOMHelper.GetBodyElem(fWB.Document), HTML);
 end;
 
 procedure TWBIOMgr.WaitForDocToLoad;
-  {Waits for a document to complete loading.
-    @except EBug raised if there is no document or it is not a valid HTML
-      document.
-  }
 begin
   // NOTE: do not call this method in a FormCreate event handler since the
   // browser will never reach this state - use a FormShow event handler instead
   TWBControlHelper.WaitForValidDocToLoad(fWB);                 // can raise EBug
   // connect event sinks to browser document and window
   fDocEvents.Connect(fWB.Document);
-  fWdwEvents.Connect(THTMLDocHelper.ParentWindow(fWB.Document));
+  fWdwEvents.Connect(THTMLDOMHelper.ParentWindow(fWB.Document));
 end;
 
 end.

@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -95,8 +95,8 @@ uses
   // Delphi
   Generics.Collections, SysUtils,
   // Project
-  Compilers.UBDS, Compilers.UDelphi, Compilers.UFreePascal, IntfCommon,
-  UExceptions, USettings;
+  Compilers.UBDS, Compilers.UDelphi, Compilers.UFreePascal,
+  Compilers.USearchDirs, IntfCommon, UExceptions, UIStringList, USettings;
 
 
 type
@@ -294,11 +294,12 @@ procedure TPersistCompilers.Load(const Compilers: ICompilers);
     @param Compilers [in] List of compilers to load.
   }
 var
-  Compiler: ICompiler;        // refers to each compiler
-  Prefixes: TCompLogPrefixes; // compiler log prefixes from storage
-  PrefixID: TCompLogPrefixID; // loops thru all compiler log prefixes
-  Storage: ISettingsSection;  // object used to access persistent storage
-  ExePath: string;            // value of ExePath value in storage file
+  Compiler: ICompiler;            // refers to each compiler
+  Prefixes: TCompLogPrefixes;     // compiler log prefixes from storage
+  PrefixID: TCompLogPrefixID;     // loops thru all compiler log prefixes
+  Storage: ISettingsSection;      // object used to access persistent storage
+  ExePath: string;                // value of ExePath value in storage file
+  SearchDirNames: IStringList;    // list of search directory names
 begin
   // Loop thru each supported compiler
   for Compiler in Compilers do
@@ -322,6 +323,10 @@ begin
     // Load command line switches (empty entry => use default)
     if Storage.ItemExists('Switches') then
       Compiler.SetSwitches(Storage.ItemValues['Switches']);
+
+    // Load search directories
+    SearchDirNames := Storage.GetStrings('SearchDirCount', 'SearchDir%d');
+    Compiler.SetSearchDirs(TSearchDirs.Create(SearchDirNames.ToArray));
   end;
 end;
 
@@ -334,6 +339,7 @@ var
   Prefixes: TCompLogPrefixes; // compiler log prefixes from storage
   PrefixID: TCompLogPrefixID; // loops thru all compiler log prefixes
   Storage: ISettingsSection;  // object used to access persistent storage
+  SearchDirNames: IStringList;   // list of search directory names
 begin
   for Compiler in Compilers do
   begin
@@ -348,6 +354,8 @@ begin
         '"' + Prefixes[PrefixID] + '"';
     if Compiler.GetSwitches <> Compiler.GetDefaultSwitches then
       Storage.ItemValues['Switches'] := Compiler.GetSwitches;
+    SearchDirNames := TIStringList.Create(Compiler.GetSearchDirs.ToStrings);
+    Storage.SetStrings('SearchDirCount', 'SearchDir%d', SearchDirNames);
     // save the data
     Storage.Save;
   end;

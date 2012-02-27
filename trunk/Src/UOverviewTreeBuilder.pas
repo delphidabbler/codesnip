@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphu
   ComCtrls,
   // Project
-  UGroups, USnippets, UView, UViewItemTreeNode;
+  DB.USnippet, UGroups, UView, UViewItemTreeNode;
 
 
 type
@@ -57,14 +57,14 @@ type
   strict private
     var
       fTreeView: TTreeView;       // Value of TreeView property
-      fSnippetList: TRoutineList; // Value of SnippetList property
+      fSnippetList: TSnippetList; // Value of SnippetList property
   strict protected
     property TreeView: TTreeView read fTreeView;
       {Reference to treeview populated by class}
-    property SnippetList: TRoutineList read fSnippetList;
+    property SnippetList: TSnippetList read fSnippetList;
       {List of snippets to be displayed in treeview}
     function AddViewItemNode(const ParentNode: TViewItemTreeNode;
-      const ViewItem: TViewItem): TViewItemTreeNode;
+      ViewItem: IView): TViewItemTreeNode;
       {Adds a new node to the tree view that represents a view item.
         @param ParentNode [in] Node that is parent of new node.
         @param ViewItem [in] View item for which we are adding node.
@@ -74,14 +74,14 @@ type
       {Creates a grouping object of the required type.
         @return Required grouping object.
       }
-    function CreateViewItemForGroup(const Group: TGroupItem): TViewItem;
+    function CreateViewItemForGroup(const Group: TGroupItem): IView;
       virtual; abstract;
       {Creates a view item of a type that matches the type of a group item.
         @param Group [in] Group item for which view item is required.
         @return Required view item object.
       }
   public
-    constructor Create(const TV: TTreeView; const SnippetList: TRoutineList);
+    constructor Create(const TV: TTreeView; const SnippetList: TSnippetList);
       {Class constructor. Sets up object to populate a treeview with a list of
       snippets.
         @param TV [in] Treeview control to be populated.
@@ -109,7 +109,7 @@ type
       {Creates a categorised grouping object.
         @return Required grouping object.
       }
-    function CreateViewItemForGroup(const Group: TGroupItem): TViewItem;
+    function CreateViewItemForGroup(const Group: TGroupItem): IView;
       override;
       {Creates a category view item from group item.
         @param Group [in] Group item containing category data.
@@ -128,7 +128,7 @@ type
       {Creates an alphabetic grouping object.
         @return Required grouping object.
       }
-    function CreateViewItemForGroup(const Group: TGroupItem): TViewItem;
+    function CreateViewItemForGroup(const Group: TGroupItem): IView;
       override;
       {Creates an alpha view item from group item.
         @param Group [in] Group item containing alpha data.
@@ -147,7 +147,7 @@ type
       {Creates a snippet kind grouping object.
         @return Required grouping object.
       }
-    function CreateViewItemForGroup(const Group: TGroupItem): TViewItem;
+    function CreateViewItemForGroup(const Group: TGroupItem): IView;
       override;
       {Creates a snippet kind view item from group item.
         @param Group [in] Group item containing snippet kind data.
@@ -157,6 +157,11 @@ type
 
 
 implementation
+
+
+uses
+  // Project
+  UPreferences;
 
 
 {
@@ -173,16 +178,10 @@ implementation
 }
 
 
-uses
-  // Delphi
-  SysUtils;
-
-
 { TOverviewTreeBuilder }
 
 function TOverviewTreeBuilder.AddViewItemNode(
-  const ParentNode: TViewItemTreeNode;
-  const ViewItem: TViewItem): TViewItemTreeNode;
+  const ParentNode: TViewItemTreeNode; ViewItem: IView): TViewItemTreeNode;
   {Adds a new node to the tree view that represents a view item.
     @param ParentNode [in] Node that is parent of new node.
     @param ViewItem [in] View item for which we are adding node.
@@ -198,7 +197,7 @@ procedure TOverviewTreeBuilder.Build;
   {Populates the treeview.
   }
 var
-  Snippet: TRoutine;              // each snippet in a list
+  Snippet: TSnippet;              // each snippet in a list
   ParentNode: TViewItemTreeNode;  // each section node in tree
   Grouping: TGrouping;            // groups snippets
   Group: TGroupItem;              // each group of snippets
@@ -209,20 +208,22 @@ begin
     // Create tree
     for Group in Grouping do
     begin
-      if not Group.IsEmpty then
+      if not Group.IsEmpty or Preferences.ShowEmptySections then
       begin
         ParentNode := AddViewItemNode(nil, CreateViewItemForGroup(Group));
         for Snippet in Group.SnippetList do
-          AddViewItemNode(ParentNode, TViewItem.Create(Snippet));
+          AddViewItemNode(
+            ParentNode, TViewFactory.CreateSnippetView(Snippet)
+          );
       end;
     end;
   finally
-    FreeAndNil(Grouping);
+    Grouping.Free;
   end;
 end;
 
 constructor TOverviewTreeBuilder.Create(const TV: TTreeView;
-  const SnippetList: TRoutineList);
+  const SnippetList: TSnippetList);
   {Class constructor. Sets up object to populate a treeview with a list of
   snippets.
     @param TV [in] Treeview control to be populated.
@@ -245,13 +246,15 @@ begin
 end;
 
 function TOverviewCategorisedTreeBuilder.CreateViewItemForGroup(
-  const Group: TGroupItem): TViewItem;
+  const Group: TGroupItem): IView;
   {Creates a category view item from group item.
     @param Group [in] Group item containing category data.
     @return Required category view item for group.
   }
 begin
-  Result := TViewItem.Create((Group as TCategoryGroupItem).Category);
+  Result := TViewFactory.CreateCategoryView(
+    (Group as TCategoryGroupItem).Category
+  );
 end;
 
 { TOverviewAlphabeticTreeBuilder }
@@ -265,13 +268,15 @@ begin
 end;
 
 function TOverviewAlphabeticTreeBuilder.CreateViewItemForGroup(
-  const Group: TGroupItem): TViewItem;
+  const Group: TGroupItem): IView;
   {Creates an alpha view item from group item.
     @param Group [in] Group item containing alpha data.
     @return Required alpha view item for group.
   }
 begin
-  Result := TViewItem.Create((Group as TAlphaGroupItem).Letter);
+  Result := TViewFactory.CreateInitialLetterView(
+    (Group as TAlphaGroupItem).Letter
+  );
 end;
 
 { TOverviewSnipKindTreeBuilder }
@@ -285,13 +290,15 @@ begin
 end;
 
 function TOverviewSnipKindTreeBuilder.CreateViewItemForGroup(
-  const Group: TGroupItem): TViewItem;
+  const Group: TGroupItem): IView;
   {Creates a snippet kind view item from group item.
     @param Group [in] Group item containing snippet kind data.
     @return Required snippet kind view item for group.
   }
 begin
-  Result := TViewItem.Create((Group as TSnipKindGroupItem).SnipKindInfo);
+  Result := TViewFactory.CreateSnippetKindView(
+    (Group as TSnipKindGroupItem).SnipKindInfo
+  );
 end;
 
 end.

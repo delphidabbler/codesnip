@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,39 +44,39 @@ uses
   // Delphi
   Classes,
   // Project
-  UHiddenRichEdit;
+  UHiddenRichEdit, URTFUtils;
 
 
 type
-
-  {
-  TPrintMargins:
-    Defines the page margins on printed output, in pixels.
-  }
+  ///  <summary>
+  ///  Record that defines the page margins on printed output, in pixels.
+  ///  </summary>
   TPrintMargins = record
     Left, Top, Right, Bottom: Integer;  // the four margins
   end;
 
-  {
-  TPrintEngine:
-    Class that uses a rich edit control to print a rich text format document.
-  }
+type
+  ///  <summary>
+  ///  Class that prints suitably formatted documents.
+  ///  </summary>
+  ///  <remarks>
+  ///  "Suitable formatted" documents comprise RTF code. The class uses a
+  ///  hidden rich edit control to these documents.
+  ///  </remarks>
   TPrintEngine = class(THiddenRichEdit)
-  private
-    fTitle: string;
-      {Value of Title property}
+  strict private
+    var
+      ///  <summary>Value of Title property</summary>
+      fTitle: string;
+    ///  <summary>Gets print margins from page setup information.</summary>
     function GetPrintMargins: TPrintMargins;
-      {Gets print margins from page setup information.
-        @return Required margins.
-      }
   public
-    procedure Print(const Document: TStream);
-      {Prints a document.
-        @param Document [in] Stream containing document to be printed, in rich
-          text format.
-      }
+    ///  <summary>Prints given RTF document.</summary>
+    procedure Print(const Document: TRTF);
+    ///  <summary>Title of document that appears in print spooler.</summary>
+    ///  <remarks>A default title is used if Title is not set or is set to
+    ///  empty string.</remarks>
     property Title: string read fTitle write fTitle;
-      {Title that appears in print spooler}
   end;
 
 
@@ -87,29 +87,24 @@ uses
   // Delphi
   Printers,
   // Project
-  UMeasurement, UPrintInfo, URTFUtils;
+  UMeasurement, UPrintInfo;
 
 
 { TPrintEngine }
 
 function TPrintEngine.GetPrintMargins: TPrintMargins;
-  {Gets print margins from page setup information.
-    @return Required margins.
-  }
 
   // ---------------------------------------------------------------------------
+  ///  <summary>Converts inches to horizontal pixels on printer's canvas.
+  ///  </summary>
   function InchesToPixelsX(const Inches: Double): Integer;
-    {Converts inches to horizontal pixels on printer's canvas.
-      @param Inches [in] Measurement to covert.
-    }
   begin
     Result := InchesToPixels(Printer.Handle, Inches, axX);
   end;
 
+  ///  <summary>Converts inches to vertical pixels on printer's canvas.
+  ///  </summary>
   function InchesToPixelsY(const Inches: Double): Integer;
-    {Converts inches to vertical pixels on printer's canvas.
-      @param Inches [in] Measurement to covert.
-    }
   begin
     Result := InchesToPixels(Printer.Handle, Inches, axY);
   end;
@@ -123,16 +118,15 @@ begin
   Result.Bottom := InchesToPixelsY(MMToInches(PrintInfo.PageMargins.Bottom));
 end;
 
-procedure TPrintEngine.Print(const Document: TStream);
-  {Prints a document.
-    @param Document [in] Stream containing document to be printed, in rich text
-      format.
-  }
+procedure TPrintEngine.Print(const Document: TRTF);
 var
-  PrintMargins: TPrintMargins;
+  PrintMargins: TPrintMargins;  // page margins
+  DocTitle: string;             // document title for print spooler
+resourcestring
+  sDefTitle = 'CodeSnip document';  // default document title
 begin
   // Load document into engine
-  RTFLoadFromStream(RichEdit, Document);
+  TRichEditHelper.Load(RichEdit, Document);
   // Set up page margins
   PrintMargins := GetPrintMargins;
   RichEdit.PageRect := Rect(
@@ -141,8 +135,13 @@ begin
     Printer.PageWidth - PrintMargins.Right,
     Printer.PageHeight - PrintMargins.Bottom
   );
+  // Set title
+  if fTitle = '' then
+    DocTitle := sDefTitle
+  else
+    DocTitle := fTitle;
   // Perform printing
-  RichEdit.Print(fTitle);
+  RichEdit.Print(DocTitle);
 end;
 
 end.

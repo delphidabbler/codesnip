@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,53 +44,48 @@ uses
   // Delphi
   Classes,
   // Project
-  Hiliter.UGlobals, USnippets;
+  DB.USnippet, Hiliter.UGlobals, URTFUtils;
 
 
 type
-
-  {
-  IPrintDocument:
-    Interface supported by classes that can generate a print document suitable
-    for processing by the print engine.
-  }
+  ///  <summary>
+  ///  Interface supported by classes that can generate a print document
+  ///  suitable for processing by the print engine.
+  ///  </summary>
+  ///  <remarks>
+  ///  The print engine prints documents rendered in rich text format.
+  ///  </remarks>
   IPrintDocument = interface(IInterface)
     ['{56E4CA97-7F04-427A-A95F-03CE55910DC0}']
-    procedure Generate(const Document: TStream);
+    function Generate: TRTF;
       {Generates print document
         @param Document [in] Stream that receives document in format suitable
           for print engine.
       }
   end;
 
-  {
-  TRoutinePrintDocument:
-    Class that generates a print document that describes a routine.
-  }
-  TRoutinePrintDocument = class(TInterfacedObject,
+type
+  ///  <summary>
+  ///  Class that generates a print document that describes a snippet.
+  ///  </summary>
+  TSnippetPrintDocument = class(TInterfacedObject,
     IPrintDocument
   )
   strict private
-    fRoutine: TRoutine;
-      {Reference to routine that print document describes}
+    var
+      ///  <summary>Reference to snippet described by print document.</summary>
+      fSnippet: TSnippet;
+    ///  <summary>Gets highlighter attributes required to render source code,
+    ///  depending on printer properties.</summary>
     function GetHiliteAttrs: IHiliteAttrs;
-      {Gets highlighter attributes required to render source code. Object
-      depends on various printer properties.
-        @return Required highlighter attributes object.
-      }
-  protected // do not make strict
-    { IPrintDocument method }
-    procedure Generate(const Document: TStream);
-      {Generates print document.
-        @param Document [in] Stream that receives document in format suitable
-          for print engine.
-      }
   public
-    constructor Create(const Routine: TRoutine);
-      {Class constructor. Sets up object.
-        @param Routine [in] Routine for which print document is to be
-          generated.
-      }
+    ///  <summary>Object constructor. Sets up object to create print document
+    ///  for given snippet.</summary>
+    constructor Create(const Snippet: TSnippet);
+
+    { IPrintDocument method }
+    ///  <summary>Generates and returns print document.</summary>
+    function Generate: TRTF;
   end;
 
 
@@ -98,46 +93,33 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
-  Hiliter.UAttrs, URTFRoutineDoc, UPrintInfo;
+  Hiliter.UAttrs, URTFSnippetDoc, UPrintInfo;
 
 
-{ TRoutinePrintDocument }
+{ TSnippetPrintDocument }
 
-constructor TRoutinePrintDocument.Create(const Routine: TRoutine);
-  {Class constructor. Sets up object.
-    @param Routine [in] Routine for which print document is to be generated.
-  }
+constructor TSnippetPrintDocument.Create(const Snippet: TSnippet);
 begin
   inherited Create;
-  fRoutine := Routine;
+  fSnippet := Snippet;
 end;
 
-procedure TRoutinePrintDocument.Generate(const Document: TStream);
-  {Generates print document.
-    @param Document [in] Stream that receives document in format suitable for
-      print engine.
-  }
+function TSnippetPrintDocument.Generate: TRTF;
 var
-  Doc: TRTFRoutineDoc;  // object that renders routine document in RTF
+  Doc: TRTFSnippetDoc;  // object that renders snippet document in RTF
 begin
-  Doc := TRTFRoutineDoc.Create(
+  Doc := TRTFSnippetDoc.Create(
     GetHiliteAttrs, poUseColor in PrintInfo.PrintOptions
   );
   try
-    Doc.Generate(fRoutine, Document);
+    Result := TRTF.Create(Doc.Generate(fSnippet));
   finally
-    FreeAndNil(Doc);
+    Doc.Free;
   end;
 end;
 
-function TRoutinePrintDocument.GetHiliteAttrs: IHiliteAttrs;
-  {Gets highlighter attributes required to render source code. Object depends on
-  various printer properties.
-    @return Required highlighter attributes object.
-  }
+function TSnippetPrintDocument.GetHiliteAttrs: IHiliteAttrs;
 begin
   if not (poSyntaxPrint in PrintInfo.PrintOptions) then
     Result := THiliteAttrsFactory.CreatePrintAttrs(nil, False)

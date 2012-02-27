@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -123,7 +123,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils;
+  SysUtils,
+  // Project
+  UStrUtils;
 
 
 resourcestring
@@ -233,7 +235,7 @@ begin
   // because string is still URI encoded and space is not one of unreserved
   // chars and therefor should be percent-encoded. Finally we decode the
   // percent-encoded string.
-  Result := URIDecode(ReplaceStr(Str, cPlus, cPercentEncodedSpace));
+  Result := URIDecode(StrReplace(Str, cPlus, cPercentEncodedSpace));
 end;
 
 {
@@ -302,7 +304,7 @@ begin
   // encoded because we use them to replace spaces and we can't confuse '+'
   // already in URI with those that we add. After this step spaces get encoded
   // as %20. So next we replace all occurences of %20 with '+'.
-  Result := ReplaceStr(URIEncode(S), cPercentEncodedSpace, cPlus);
+  Result := StrReplace(URIEncode(S), cPercentEncodedSpace, cPlus);
 end;
 
 function URIEncodeQueryString(const S: UnicodeString): string; overload;

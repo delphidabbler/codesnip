@@ -27,7 +27,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -142,7 +142,7 @@ constructor TGIFImageList.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   // Set up map: we ignore case of resource names
-  fGIFResNames := TResNamesMap.Create(TSameTextEqualityComparer.Create);
+  fGIFResNames := TResNamesMap.Create(TTextEqualityComparer.Create);
 end;
 
 function TGIFImageList.CreateBMPFromGIFRes(const GIFResName: string): TBitmap;

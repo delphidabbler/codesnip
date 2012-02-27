@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -51,7 +51,7 @@ type
   {
   TFindTextDlg:
     Defines a dialog box that is used to select criteria for searches for
-    routines containing specified text.
+    snippets containing specified text.
   }
   TFindTextDlg = class(TGenericOKDlg, INoPublicConstruct)
     cbCaseSensitive: TCheckBox;

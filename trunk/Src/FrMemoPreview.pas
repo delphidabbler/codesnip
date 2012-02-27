@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -42,7 +42,9 @@ interface
 
 uses
   // Delphi
-  Forms, Classes, Controls, ExtCtrls, StdCtrls;
+  Forms, Classes, Controls, ExtCtrls, StdCtrls,
+  // Project
+  UEncodings;
 
 
 type
@@ -63,23 +65,16 @@ type
       {Gets reference to frame's custom memo control.
         @return Required control reference.
       }
-    function GetTitle(const DocContent: string): string; virtual; abstract;
-      {Extracts a document title from a document if possible.
-        @param DocContent [in] Document content.
-        @return Required tile or '' if no title present or title not supported
-          by document.
-      }
-    procedure LoadContent(const DocContent: string); virtual; abstract;
+    procedure LoadContent(const DocContent: TEncodedData); virtual; abstract;
       {Loads content into frame's custom memo control.
         @param DocContent [in] Content to be displayed in control. Must have a
           format that is displayed by the control.
       }
   protected // do not make strict
     { IPreview methods: partial implementation }
-    procedure Display(const DocContent: string; out Title: string);
+    procedure Display(const DocContent: TEncodedData);
       {Displays document in preview dialog box.
         @param DocContent [in] Content of document to be displayed.
-        @param Title [out] Title of document, if any.
       }
     { IClipboardMgr methods }
     function CanCopy: Boolean;
@@ -143,11 +138,9 @@ begin
   GetMemoCtrl.CopyToClipboard;
 end;
 
-procedure TMemoPreviewFrame.Display(const DocContent: string;
-  out Title: string);
+procedure TMemoPreviewFrame.Display(const DocContent: TEncodedData);
   {Displays document in preview dialog box.
     @param DocContent [in] Content of document to be displayed.
-    @param Title [out] Title of document, if any.
   }
 begin
   // Set margin of preview control
@@ -156,7 +149,6 @@ begin
   GetMemoCtrl.Lines.BeginUpdate;
   try
     LoadContent(DocContent);
-    Title := GetTitle(DocContent);
   finally
     GetMemoCtrl.Lines.EndUpdate;
   end;

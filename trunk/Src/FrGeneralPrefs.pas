@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -62,6 +62,8 @@ type
     gbMeasurement: TGroupBox;
     lblOverviewTree: TLabel;
     lblUnits: TLabel;
+    chkHideEmptySections: TCheckBox;
+    chkSnippetsInNewTab: TCheckBox;
   strict private
     procedure SelectUnits(const MU: TMeasurementUnits);
       {Selects combo box item associated with a measurement unit.
@@ -112,7 +114,7 @@ uses
   // Delphi
   Math,
   // Project
-  FmPreferencesDlg, UGraphicUtils;
+  FmPreferencesDlg, UCtrlArranger, UGraphicUtils;
 
 
 {$R *.dfm}
@@ -127,6 +129,8 @@ procedure TGeneralPrefsFrame.Activate(const Prefs: IPreferences);
 begin
   SelectOverviewTreeState(Prefs.OverviewStartState);
   SelectUnits(Prefs.MeasurementUnits);
+  chkHideEmptySections.Checked := not Prefs.ShowEmptySections;
+  chkSnippetsInNewTab.Checked := Prefs.ShowNewSnippetsInNewTabs;
 end;
 
 procedure TGeneralPrefsFrame.ArrangeControls;
@@ -139,12 +143,31 @@ var
 begin
   lblOverviewTree.Left := Col1Left;
   lblUnits.Left := Col1Left;
+  chkHideEmptySections.Left := Col1Left;
+  chkSnippetsInNewTab.Left := Col1Left;
+
   Col2Left := Col1Left + Max(
     StringExtent(lblUnits.Caption, lblUnits.Font).cx,
     StringExtent(lblOverviewTree.Caption, lblOverviewTree.Font).cx
   ) + 8;
   cbOverviewTree.Left := Col2Left;
   cbUnits.Left := Col2Left;
+
+  chkHideEmptySections.Width := Self.Width - 16;
+  chkSnippetsInNewTab.Width := Self.Width - 16;
+
+  gbDisplay.Top := 0;
+  TCtrlArranger.AlignVCentres(20, [lblOverviewTree, cbOverviewTree]);
+  chkHideEmptySections.Top := TCtrlArranger.BottomOf(
+    [lblOverviewTree, cbOverviewTree], 8
+  );
+  chkSnippetsInNewTab.Top := TCtrlArranger.BottomOf(chkHideEmptySections, 8);
+  gbDisplay.ClientHeight := TCtrlArranger.TotalControlHeight(gbDisplay) + 12;
+
+  gbMeasurement.Top := TCtrlArranger.BottomOf(gbDisplay, 12);
+  TCtrlArranger.AlignVCentres(20, [lblUnits, cbUnits]);
+  gbMeasurement.ClientHeight := TCtrlArranger.TotalControlHeight(gbMeasurement)
+    + 12;
 end;
 
 constructor TGeneralPrefsFrame.Create(AOwner: TComponent);
@@ -172,6 +195,8 @@ procedure TGeneralPrefsFrame.Deactivate(const Prefs: IPreferences);
     @param Prefs [in] Object used to store information.
   }
 begin
+  Prefs.ShowNewSnippetsInNewTabs := chkSnippetsInNewTab.Checked;
+  Prefs.ShowEmptySections := not chkHideEmptySections.Checked;
   Prefs.OverviewStartState := TOverviewStartState(
     cbOverviewTree.Items.Objects[cbOverviewTree.ItemIndex]
   );

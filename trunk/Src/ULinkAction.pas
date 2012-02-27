@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -106,7 +106,7 @@ const
   // Map of anchor kinds to action captions
   cCaptions: array[TAnchorKind] of string = (
     sOpenInBrowser,   // akExternal
-    sDisplaySnippet,  // akRoutine
+    sDisplaySnippet,  // akSnippet
     sDisplayCategory, // akCategory
     sExecCommand,     // akCommand
     sShowHelp,        // akHelp

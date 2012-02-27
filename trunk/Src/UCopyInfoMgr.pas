@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -41,47 +41,40 @@ interface
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
-  UCopyViewMgr, URoutineDoc, UView;
+  UCopyViewMgr, UEncodings, USnippetDoc, UView;
 
 
 type
-
-  {
-  TCopyInfoMgr:
-    Class that copies information about a snippet to clipboard in plain text and
-    rich text format. Only routines are supported.
-  }
+  ///  <summary>
+  ///  Class that copies information about a snippet to clipboard as plain
+  ///  Unicode text and rich text formats. Snippet is obtained from a view.
+  ///  Only snippet views are supported.
+  ///  </summary>
   TCopyInfoMgr = class sealed(TCopyViewMgr)
   strict private
-    class function GenerateDoc(const View: TViewItem; const Doc: TRoutineDoc;
-      const Encoding: TEncoding): string;
-      {Generates a document that describes a snippet.
-        @param View [in] View that defines snippet to be generated.
-        @param Doc [in] Object used to render document in required format.
-        @param Encoding [in] Encoding to use on string stream that receives
-          generated document.
-        @return Generated document as a string.
-      }
+    ///  <summary>Generates a document that describes a snippet.</summary>
+    ///  <param name="View">IView [in] View that represents the snippet to be
+    ///  described.</param>
+    ///  <param name="Doc">TSnippetDoc [in] Object that renders document. Format
+    ///  depends on concrete class of object.</param>
+    ///  <returns>TEncodedData - Document in form suitable for copying to
+    ///  clipboard.</returns>
+    class function GenerateDoc(View: IView; const Doc: TSnippetDoc):
+      TEncodedData;
   strict protected
-    class function GeneratePlainText(const View: TViewItem): string; override;
-      {Generates a plain text document providing information about a snippet.
-        @param View [in] View representing snippet.
-        @return Plain text document as a string.
-      }
-    class function GenerateRichText(const View: TViewItem): string; override;
-      {Generates a RTF document providing information about snippet.
-        @param View [in] View representing snippet.
-        @return RTF document as a string.
-      }
+    ///  <summary>Returns encoded data containing a Unicode plain text
+    ///  representation of information about the snippet represented by the
+    ///  given view that is to be copied to the clipboard.</summary>
+    class function GeneratePlainText(View: IView): TEncodedData; override;
+    ///  <summary>Returns encoded data containing a RTF representation of
+    ///  information about the snippet represented by the given view that is to
+    ///  be copied to the clipboard.</summary>
+    class function GenerateRichText(View: IView): TEncodedData; override;
   public
-    class function CanHandleView(const View: TViewItem): Boolean; override;
-      {Checks if snippet can be copied to clipboard.
-        @param View [in] View to be checked.
-        @return True if view is a snippet, False otherwise.
-      }
+    ///  <summary>Checks if a given view can be copied to the clipboard. Returns
+    ///  True only if the view represents a snippet.</summary>
+    class function CanHandleView(View: IView): Boolean; override;
   end;
 
 
@@ -90,72 +83,51 @@ implementation
 
 uses
   // Delphi
-  Classes,
+  SysUtils,
   // Project
-  Hiliter.UAttrs, URTFRoutineDoc, UTextRoutineDoc;
+  Hiliter.UAttrs, URTFSnippetDoc, UTextSnippetDoc;
 
 
 { TCopyInfoMgr }
 
-class function TCopyInfoMgr.CanHandleView(const View: TViewItem): Boolean;
-  {Checks if snippet can be copied to clipboard.
-    @param View [in] View to be checked.
-    @return True if view is a snippet, False otherwise.
-  }
+class function TCopyInfoMgr.CanHandleView(View: IView): Boolean;
 begin
-  Result := View.Kind = vkRoutine;
+  Result := Supports(View, ISnippetView);
 end;
 
-class function TCopyInfoMgr.GenerateDoc(const View: TViewItem;
-  const Doc: TRoutineDoc; const Encoding: TEncoding): string;
-  {Generates a document that describes a snippet.
-    @param View [in] View that defines snippet to be generated.
-    @param Doc [in] Object used to render document in required format.
-    @param Encoding [in] Encoding to use on string stream that receives
-      generated document.
-    @return Generated document as a string.
-  }
-var
-  SS: TStringStream;  // stream that receives document
+class function TCopyInfoMgr.GenerateDoc(View: IView; const Doc: TSnippetDoc):
+  TEncodedData;
 begin
-  SS := TStringStream.Create('', Encoding);
+  Result := Doc.Generate((View as ISnippetView).Snippet);
+end;
+
+class function TCopyInfoMgr.GeneratePlainText(View: IView): TEncodedData;
+var
+  Doc: TTextSnippetDoc; // object that generates plain text document
+begin
+  Doc := TTextSnippetDoc.Create;
   try
-    Doc.Generate(View.Routine, SS);
-    Result := SS.DataString;
+    // TTextSnippetDoc generates stream of Unicode bytes
+    Result := GenerateDoc(View, Doc);
+    Assert(Result.EncodingType = etUnicode,
+      ClassName + '.GeneratePlainText: Unicode encoded data expected');
   finally
-    FreeAndNil(SS);
+    Doc.Free;
   end;
 end;
 
-class function TCopyInfoMgr.GeneratePlainText(const View: TViewItem): string;
-  {Generates a plain text document providing information about a snippet.
-    @param View [in] View representing snippet.
-    @return Plain text document as a string.
-  }
+class function TCopyInfoMgr.GenerateRichText(View: IView): TEncodedData;
 var
-  Doc: TTextRoutineDoc; // object that generates plain text document
+  Doc: TRTFSnippetDoc;  // object that generates RTF document
 begin
-  Doc := TTextRoutineDoc.Create;
+  Doc := TRTFSnippetDoc.Create(THiliteAttrsFactory.CreateUserAttrs);
   try
-    Result := GenerateDoc(View, Doc, TEncoding.Unicode);
+    // TRTFSnippetDoc generates stream of ASCII bytes
+    Result := GenerateDoc(View, Doc);
+    Assert(Result.EncodingType = etASCII,
+      ClassName + '.GenerateRichText: ASCII encoded data expected');
   finally
-    FreeAndNil(Doc);
-  end;
-end;
-
-class function TCopyInfoMgr.GenerateRichText(const View: TViewItem): string;
-  {Generates a RTF document providing information about snippet.
-    @param View [in] View representing snippet.
-    @return RTF document as a string.
-  }
-var
-  Doc: TRTFRoutineDoc;  // object that generates RTF document
-begin
-  Doc := TRTFRoutineDoc.Create(THiliteAttrsFactory.CreateUserAttrs);
-  try
-    Result := GenerateDoc(View, Doc, TEncoding.Default);
-  finally
-    FreeAndNil(Doc);
+    Doc.Free;
   end;
 end;
 
