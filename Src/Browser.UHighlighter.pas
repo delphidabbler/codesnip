@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -145,7 +145,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Browser.UControlHelper, IntfCommon, UColours, UCSSUtils, UHTMLDocHelper,
+  Browser.UControlHelper, IntfCommon, UColours, UCSSUtils, UHTMLDOMHelper,
   UHTMLUtils;
 
 
@@ -207,7 +207,7 @@ var
   Range: IHTMLTxtRange;       // HTML range to be searched for the word
   SpanAttrs: IHTMLAttributes; // attributes of generated span tag
 begin
-  Range := THTMLDocHelper.CreateBodyTextRange(fWebBrowser.Document);
+  Range := THTMLDOMHelper.CreateBodyTextRange(fWebBrowser.Document);
   Assert(Assigned(Range),
     ClassName + '.HighlightWord: Can''t create body text range');
   Result := 0;
@@ -218,8 +218,7 @@ begin
     if IsRangeInSearchSection(Range) then
     begin
       // Apply highlight to found text by spanning it with highlight style
-      SpanAttrs := THTMLAttributes.Create;
-      SpanAttrs.Add('style', fHighLightStyle);
+      SpanAttrs := THTMLAttributes.Create('style', fHighLightStyle);
       Range.pasteHTML(MakeCompoundTag('span', SpanAttrs, Range.htmlText));
       Inc(Result);
     end
@@ -331,10 +330,10 @@ begin
   fHighlightStyle := '';
   if fHighlightBackColor <> clNone then
     fHighlightStyle := fHighlightStyle +
-      CSSBackgroundColorProp(fHighlightBackColor);
+      TCSS.BackgroundColorProp(fHighlightBackColor);
   if fHighlightTextColor <> clNone then
     fHighlightStyle := fHighlightStyle +
-      CSSColorProp(fHighlightTextColor);
+      TCSS.ColorProp(fHighlightTextColor);
 end;
 
 end.

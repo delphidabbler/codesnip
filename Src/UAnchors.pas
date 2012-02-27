@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -46,15 +46,15 @@ uses
 
 
 type
-
-  {
-  TAnchorKind:
-    Enumeration of various kinds of anchor displayed in browser controls.
-    Anchor kinds are specified by CSS class.
-  }
+  ///  <summary>
+  ///  Enumeration of various kinds of anchor displayed in browser controls.
+  ///  </summary>
+  ///  <remarks>
+  ///  Anchor kinds are specified by CSS class.
+  ///  </remarks>
   TAnchorKind = (
     akExternal,   // external link: class name = 'external-link'
-    akRoutine,    // link to a routine: class name = 'routine-link'
+    akSnippet,    // link to a snippet: class name = 'snippet-link'
     akCategory,   // link to a category: class name = 'category-link'
     akCommand,    // link to a JS command: class name = 'command-link'
     akHelp,       // link to help topic: class name = 'help-link'
@@ -62,52 +62,51 @@ type
     akError       // error finding link kind (element may not be a link)
   );
 
-  {
-  TAnchors:
-    Static class that gets information about and manipulates HTML anchor
-    element.
-  }
+type
+  ///  <summary>
+  ///  Static class that gets information about and manipulates HTML anchor
+  ///  element.
+  ///  </summary>
   TAnchors = class(TNoConstructObject)
   strict private
+    ///  <summary>Checks if a HTML element Elem is an anchor element.</summary>
     class function IsAnchor(const Elem: IDispatch): Boolean;
-      {Checks if an HTML element is an anchor element.
-        @param Elem [in] IDispatch interface to HTML element.
-        @return True if element is anchor, False if not.
-      }
   public
+    ///  <summary>Gets kind of given anchor from CSS class associated with it.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>akUnknown returned if no recognised CSS class associated with
+    ///  anchor.</para>
+    ///  <para>akError returned if parameter is not an anchor.</para>
+    ///  </remarks>
     class function AnchorKind(const Anchor: IDispatch): TAnchorKind;
-      {Gets kind of anchor dependent on css class of anchor element.
-        @param Anchor [in] Anchor to be tested.
-        @return Anchor kind.
-      }
+
+    ///  <summary>Returns a list of IDispatch interfaces to all anchors in given
+    ///  HTML document Doc.</summary>
     class function GetAllAnchors(const Doc: IDispatch): IDispatchList;
-      {Gets a list of all anchors in a HTML document.
-        @param Doc [in] IDispatch interface to HTML document.
-        @return List of IDispatch interfaces to anchors.
-      }
+
+    ///  <summary>Simulates a click on given anchor element and returns True
+    ///  if anchor element is valid, False if not.</summary>
+    ///  <remarks>Does nothing if anchor is not valid.</remarks>
     class function Click(const Anchor: IDispatch): Boolean;
-      {Emulates a click on an anchor element. Does nothing if provided anchor is
-      not valid.
-        @param Anchor [in] IDispatch interface to anchor element.
-        @return True if anchor is valid or False if not.
-      }
+
+    ///  <summary>Simulates a click on active link within given document and
+    ///  returns True if active elememt is an anchor, False if not.</summary>
+    ///  <remarks>Does nothing if active elememt is not an anchor.</remarks>
+    class function ClickActiveLink(const Doc: IDispatch): Boolean;
+
+    ///  <summary>Returns URL of given anchor.</summary>
+    ///  <remarks>Empty string returned if anchor is not valid.</remarks>
     class function GetURL(const Anchor: IDispatch): string;
-      {Gets URL of an anchor tag.
-        @param Anchor [in] Reference to tag for which URL is required.
-        @return Required URL or '' if Anchor is not an anchor tag.
-      }
+
+    ///  <summary>Returns inner text of given anchor.</summary>
     class function GetInnerText(const Anchor: IDispatch): string;
-      {Gets the inner text of an anchor.
-        @param Anchor [in] IDispath interface to anchor element.
-        @return Required text.
-      }
+
+    ///  <summary>Returns any anchor element that encloses, or is, the given
+    ///  HTML element.</summary>
+    ///  <remarks>nil is returned if there is no enclosing anchor element.
+    ///  </remarks>
     class function FindEnclosingAnchor(const Elem: IDispatch): IDispatch;
-      {Finds any anchor HTML element that encloses, or is, a specified element.
-        @param Elem [in] Element for which enclosing anchor is required.
-        @return IDispatch interface of enclosing anchor element (which may be
-          Elem itself if Elem is anchor element) or nil if there is no enclosing
-          anchor element.
-      }
   end;
 
 
@@ -118,67 +117,52 @@ uses
   // Delphi
   SysUtils, Variants, MSHTML,
   // Project
-  UHTMLDocHelper, UIStringList;
+  UHTMLDOMHelper, UIStringList;
 
 
 { TAnchors }
 
 class function TAnchors.AnchorKind(const Anchor: IDispatch): TAnchorKind;
-  {Gets kind of anchor dependent on css class of anchor element.
-    @param Anchor [in] Anchor to be tested.
-    @return Anchor kind.
-  }
 var
-  ClassNames: IStringList;  // list of element's CSS classes
+  ClassNames: IStringList;  // list of Anchor's CSS classes
 begin
-  if IsAnchor(Anchor) then
-  begin
-    ClassNames := THTMLDocHelper.GetElemClasses(Anchor);
-    if ClassNames.Contains('command-link') then
-      Result := akCommand
-    else if ClassNames.Contains('help-link') then
-      Result := akHelp
-    else if ClassNames.Contains('external-link') then
-      Result := akExternal
-    else if ClassNames.Contains('routine-link') then
-      Result := akRoutine
-    else if ClassNames.Contains('category-link') then
-      Result := akCategory
-    else
-      Result := akUnknown
-  end
+  if not IsAnchor(Anchor) then
+    Exit(akError);
+  ClassNames := THTMLDOMHelper.GetElemClasses(Anchor);
+  if ClassNames.Contains('command-link') then
+    Result := akCommand
+  else if ClassNames.Contains('help-link') then
+    Result := akHelp
+  else if ClassNames.Contains('external-link') then
+    Result := akExternal
+  else if ClassNames.Contains('snippet-link') then
+    Result := akSnippet
+  else if ClassNames.Contains('category-link') then
+    Result := akCategory
   else
-    Result := akError;
+    Result := akUnknown;
 end;
 
 class function TAnchors.Click(const Anchor: IDispatch): Boolean;
-  {Emulates a click on an anchor element. Does nothing if provided anchor is not
-  valid.
-    @param Anchor [in] IDispatch interface to anchor element.
-    @return True if anchor is valid or False if not.
-  }
 var
-  Elem: IHTMLElement; // IHTMLElement interface to Elem
+  Elem: IHTMLElement; // IHTMLElement interface to Anchor
 begin
   Result := IsAnchor(Anchor) and Supports(Anchor, IHTMLElement, Elem);
   if Result then
     Elem.click;
 end;
 
-class function TAnchors.FindEnclosingAnchor(
-  const Elem: IDispatch): IDispatch;
-  {Finds any anchor HTML element that encloses, or is, a specified element.
-    @param Elem [in] Element for which enclosing anchor is required.
-    @return IDispatch interface of enclosing anchor element (which may be
-      Elem itself if Elem is anchor element) or nil if there is no enclosing
-      anchor element.
-  }
+class function TAnchors.ClickActiveLink(const Doc: IDispatch): Boolean;
+begin
+  Result := Click(THTMLDOMHelper.GetActiveElem(Doc));
+end;
+
+class function TAnchors.FindEnclosingAnchor(const Elem: IDispatch): IDispatch;
 var
   Element: IHTMLElement;  // IHTMLElement interface to Elem
 begin
-  Result := nil;
   if not Supports(Elem, IHTMLElement, Element) then
-    Exit;
+    Exit(nil);
   // Search up tree of elements looking for ALink element
   Result := Element;
   while Assigned(Result) and not Supports(Result, IHTMLAnchorElement) do
@@ -186,10 +170,6 @@ begin
 end;
 
 class function TAnchors.GetAllAnchors(const Doc: IDispatch): IDispatchList;
-  {Gets a list of all anchors in a HTML document.
-    @param Doc [in] IDispatch interface to HTML document.
-    @return List of IDispatch interfaces to anchors.
-  }
 var
   Document: IHTMLDocument2; // IHTMLDocument2 interface to document
   Idx: Integer;             // loops through all elements in document
@@ -207,38 +187,26 @@ begin
 end;
 
 class function TAnchors.GetInnerText(const Anchor: IDispatch): string;
-  {Gets the inner text of an anchor.
-    @param Anchor [in] IDispath interface to anchor element.
-    @return Required text.
-  }
 var
-  Elem: IHTMLElement; // IHTMLElement inteface to Elem
+  Elem: IHTMLElement; // IHTMLElement inteface to Anchor
 begin
-  if IsAnchor(Anchor) and Supports(Anchor, IHTMLElement, Elem) then
-    Result := Elem.innerText
-  else
-    Result := '';
+  if not IsAnchor(Anchor) then
+    Exit('');
+  if not Supports(Anchor, IHTMLElement, Elem) then
+    Exit('');
+  Result := Elem.innerText
 end;
 
 class function TAnchors.GetURL(const Anchor: IDispatch): string;
-  {Gets URL of an anchor tag.
-    @param Anchor [in] Reference to tag for which URL is required.
-    @return Required URL or '' if Anchor is not an anchor tag.
-  }
 var
-  AnchorElem: IHTMLAnchorElement; // IHTMLAnchorElement interface to ALink
+  AnchorElem: IHTMLAnchorElement; // IHTMLAnchorElement interface to Anchor
 begin
-  Result := '';
   if not Supports(Anchor, IHTMLAnchorElement, AnchorElem) then
-    Exit;
+    Exit('');
   Result := AnchorElem.href;
 end;
 
 class function TAnchors.IsAnchor(const Elem: IDispatch): Boolean;
-  {Checks if an HTML element is an anchor element.
-    @param Elem [in] IDispatch interface to HTML element.
-    @return True if element is anchor, False if not.
-  }
 begin
   Result := Supports(Elem, IHTMLAnchorElement);
 end;

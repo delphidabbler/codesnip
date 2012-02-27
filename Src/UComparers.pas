@@ -23,7 +23,8 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2011
+  Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -46,46 +47,43 @@ uses
 
 type
 
-  {
-  TSameTextEqualityComparer:
-    Case insensitive string comparer.
-  }
-  TSameTextEqualityComparer = class(TEqualityComparer<string>,
-    IEqualityComparer<string>
-  )
+  ///  <summary>
+  ///  Case insenstive string comparer.
+  ///  </summary>
+  TTextComparer = class(TComparer<string>, IComparer<string>)
   public
-    function Equals(const Left, Right: string): Boolean; override;
-      {Checks if two strings are equal.
-        @param Left [in] First string to compare.
-        @param Right [in] Second string to compare.
-        @return True if both strings are the same, ignoring case.
-      }
-    function GetHashCode(const Value: string): Integer; override;
-      {Gets hash of a lower case version of a string.
-        @param Value [in] String for which hash is needed.
-        @return Required hash.
-      }
+    ///  <summary>Compares strings Left and Right. Returns -ve if Left less than
+    ///  Right, 0 if equal or +ve if Left greater than Right.</summary>
+    function Compare(const Left, Right: string): Integer; override;
   end;
 
-  {
-  TSameSttringEqualityComparer:
-    Case sensitive string comparer.
-  }
-  TSameStringEqualityComparer = class(TEqualityComparer<string>,
+type
+  ///  <summary>
+  ///  Case insenstive string equality comparer.
+  ///  </summary>
+  TTextEqualityComparer = class(TEqualityComparer<string>,
     IEqualityComparer<string>
   )
   public
+    ///  <summary>Checks if two strings are equal, ignoring case.</summary>
     function Equals(const Left, Right: string): Boolean; override;
-      {Checks if two strings are equal.
-        @param Left [in] First string to compare.
-        @param Right [in] Second string to compare.
-        @return True if both strings are the same, taking case into account.
-      }
+    ///  <summary>Gets hash of lower case version of given string.</summary>
     function GetHashCode(const Value: string): Integer; override;
-      {Gets hash of a string.
-        @param Value [in] String for which hash is needed.
-        @return Required hash.
-      }
+  end;
+
+type
+  ///  <summary>
+  ///  Case senstive string equality comparer.
+  ///  </summary>
+  TStringEqualityComparer = class(TEqualityComparer<string>,
+    IEqualityComparer<string>
+  )
+  public
+    ///  <summary>Checks if two strings are equal, taking account of case.
+    ///  </summary>
+    function Equals(const Left, Right: string): Boolean; override;
+    ///  <summary>Gets hash of given string.</summary>
+    function GetHashCode(const Value: string): Integer; override;
   end;
 
 
@@ -93,15 +91,13 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils;
+  // Project
+  UStrUtils;
 
 
+///  <summary>String has function.</summary>
+///  <remarks>Sourced from http://www.scalabium.com/faq/dct0136.htm.</summary>
 function ElfHash(const Value: string): Integer;
-  {String hash function. Sourced from http://www.scalabium.com/faq/dct0136.htm.
-    @param Value [in] String to be hashed.
-    @return Required hash.
-  }
 var
   I: Integer; // loops thru string
   X: Integer; // stores interim results
@@ -117,47 +113,36 @@ begin
   end;
 end;
 
-{ TSameTextEqualityComparer }
+{ TTextComparer }
 
-function TSameTextEqualityComparer.Equals(const Left, Right: string): Boolean;
-  {Checks if two strings are equal.
-    @param Left [in] First string to compare.
-    @param Right [in] Second string to compare.
-    @return True if both strings are the same, ignoring case.
-  }
+function TTextComparer.Compare(const Left, Right: string): Integer;
 begin
-  Result := AnsiSameText(Left, Right);
+  Result := StrCompareText(Left, Right);
 end;
 
-function TSameTextEqualityComparer.GetHashCode(const Value: string): Integer;
-  {Gets hash of a lower case version of a string.
-    @param Value [in] String for which hash is needed.
-    @return Required hash.
-  }
+{ TTextEqualityComparer }
+
+function TTextEqualityComparer.Equals(const Left, Right: string): Boolean;
+begin
+  Result := StrSameText(Left, Right);
+end;
+
+function TTextEqualityComparer.GetHashCode(const Value: string): Integer;
 begin
   // Comparison takes place (i.e. Equals gets called) only if hashes are same.
   // So we must ignore case in hash if two strings that differ only in case are
   // to be considered same.
-  Result := ElfHash(AnsiLowerCase(Value));
+  Result := ElfHash(StrToLower(Value));
 end;
 
-{ TSameStringEqualityComparer }
+{ TStringEqualityComparer }
 
-function TSameStringEqualityComparer.Equals(const Left, Right: string): Boolean;
-  {Checks if two strings are equal.
-    @param Left [in] First string to compare.
-    @param Right [in] Second string to compare.
-    @return True if both strings are the same, taking case into account.
-  }
+function TStringEqualityComparer.Equals(const Left, Right: string): Boolean;
 begin
-  Result := AnsiSameStr(Left, Right);
+  Result := StrSameStr(Left, Right);
 end;
 
-function TSameStringEqualityComparer.GetHashCode(const Value: string): Integer;
-  {Gets hash of a string.
-    @param Value [in] String for which hash is needed.
-    @return Required hash.
-  }
+function TStringEqualityComparer.GetHashCode(const Value: string): Integer;
 begin
   Result := ElfHash(Value);
 end;

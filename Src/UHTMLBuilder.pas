@@ -1,7 +1,7 @@
 {
  * UHTMLBuilder.pas
  *
- * Implements a class used to create content of an XHTML document.
+ * Implements a class used to create content of an XHTML strict document.
  *
  * $Rev$
  * $Date$
@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -40,85 +40,95 @@ interface
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   UHTMLUtils;
 
 
 type
-
-  {
-  THTMLBuilder:
-    Class used to create content of a XHTML document.
-  }
+  ///  <summary>
+  ///  Class used to create content of a XHTML strict document.
+  ///  </summary>
   THTMLBuilder = class(TObject)
   strict private
-    fCSS: string;   // Value of CSS property
-    fTitle: string; // Value of Title property
-    fBody: string;  // Records XHTML of document body
+    var
+      ///  <summary>Value of CSS property.</summary>
+      fCSS: string;
+      ///  <summary>Value of Title property.</summary>
+      fTitle: string;
+      ///  <summary>Used to create inner HTML of document body.</summary>
+      fBodyInner: TStringBuilder;
+
+    ///  <summary>Creates an HTML attributes object containing class attribute
+    ///  that references given CSS class name.</summary>
     function MakeClassAttr(const ClassName: string): IHTMLAttributes;
-      {Creates a HTML attributes object containing class attribute.
-        @param ClassName [in] Name of CSS class specified in class attribute.
-        @return HTML attributes object encapsulating class attribute.
-      }
-    procedure AppendBody(const S: string);
-      {Appends a string to XHTML body text.
-        @param S [in] String to be appended.
-      }
+
+    ///  <summary>Generates inline &lt;style&gt; tag containing CSS.</summary>
+    ///  <remarks>Returns empty string if there is no CSS.</remarks>
     function InlineStyleSheet: string;
-      {Generates <style> tag containing CSS.
-        @return Required XHTML tag and content or '' if there is no CSS.
-      }
+
+    ///  <summary>Builds document's compound &lt;head&gt; tag and its sub-tags.
+    ///  </summary>
     function HeadTag: string;
-      {Builds the document's compound <head> tag and its sub-tags.
-        @return Required tag text.
-      }
+
+    ///  <summary>Builds document's compound &lt;body&gt; tag and its content.
+    ///  </summary>
     function BodyTag: string;
-      {Builds document's compound <body> tag and its content.
-        @return Required tag.
-      }
+
+    ///  <summary>Builds document's compound &lt;html&gt; tag and all its sub
+    ///  tags and content.</summary>
     function HTMLTag: string;
-      {Builds document's compound <html> tag and all its sub tags and content.
-        @return Required tag.
-      }
+
+    ///  <summary>Getter for Title property.</summary>
+    ///  <remarks>Returns default title if title is empty string.</remarks>
     function GetTitle: string;
-      {Read accessor for Title property.
-        @return Property value if not '' or default title otherwise.
-      }
+
   public
+    ///  <summary>Object constructor. Initialises object with empty body.
+    ///  </summary>
+    constructor Create;
+
+    ///  <summary>Object destructor. Tears down object.</summary>
+    destructor Destroy; override;
+
+    ///  <summary>Appends an opening &lt;pre&gt; tag with specified class to
+    ///  document body.</summary>
     procedure OpenPre(const ClassName: string);
-      {Appends a <pre> tag to document body.
-        @param ClassName [in] Class of pre tag.
-      }
+
+    ///  <summary>Appends a closing &lt;/pre&gt; tag to document body.</summary>
     procedure ClosePre;
-      {Appends a </pre> tag to document body.
-      }
+
+    ///  <summary>Appends an opening &lt;span&gt; tag with specified class to
+    ///  document body.</summary>
     procedure OpenSpan(const ClassName: string);
-      {Appends a <span> tag to document body.
-        @param ClassName [in] Class of span tag.
-      }
+
+    ///  <summary>Appends a closing &lt;/span&gt; tag to document body.
+    ///  </summary>
     procedure CloseSpan;
-      {Appends a </span> tag to document body.
-      }
+
+    ///  <summary>Appends given text to document body. Text is converted to
+    ///  valid XHTML character entities if necessary.</summary>
     procedure AddText(const Text: string);
-      {Adds text to document body. Text is converted to valid XHTML characters
-      if necessary.
-        @param Text [in] Text to be added.
-      }
+
+    ///  <summary>Appends a new line to document body.</summary>
     procedure NewLine;
-      {Adds a new line to document body.
-      }
+
+    ///  <summary>Returns document fragment containing inner body XHTML.
+    ///  </summary>
+    ///  <remarks>Fragment does not include &lt;body&gt; tags.</remarks>
     function HTMLFragment: string;
-      {Gets XHTML document fragment written into body.
-        @return Required XHTML.
-      }
+
+    ///  <summary>Returns complete XHTML document.</summary>
     function HTMLDocument: string;
-      {Builds complete XHTML document.
-        @return Required XHTML.
-      }
+
+    ///  <summary>XHTML Document title.</summary>
+    ///  <remarks>Default value used if Title is empty string.</remarks>
     property Title: string read GetTitle write fTitle;
-      {Document's title}
+
+    ///  <summary>CSS used for document's inline cascading style sheet.
+    ///  </summary>
     property CSS: string read fCSS write fCSS;
-      {Document's inline cascading style sheet}
   end;
 
 
@@ -137,9 +147,6 @@ const
   // XML document type
   cDocType = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" '
     + '"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">';
-  // Comment tags
-  cOpenComment = '<!--';
-  cCloseComment = '-->';
   // Various tag names
   cHTMLTag = 'html';
   cHeadTag = 'head';
@@ -158,48 +165,38 @@ resourcestring
 { THTMLBuilder }
 
 procedure THTMLBuilder.AddText(const Text: string);
-  {Adds text to document body. Text is converted to valid XHTML characters if
-  necessary.
-    @param Text [in] Text to be added.
-  }
 begin
-  AppendBody(MakeSafeHTMLText(Text));
-end;
-
-procedure THTMLBuilder.AppendBody(const S: string);
-  {Appends a string to XHTML body text.
-    @param S [in] String to be appended.
-  }
-begin
-  fBody := fBody + S;
+  fBodyInner.Append(MakeSafeHTMLText(Text));
 end;
 
 function THTMLBuilder.BodyTag: string;
-  {Builds document's compound <body> tag and its content.
-    @return Required tag.
-  }
 begin
-  Result := MakeCompoundTag(cBodyTag, EOL + fBody + EOL);
+  Result := MakeCompoundTag(cBodyTag, EOL + HTMLFragment + EOL);
 end;
 
 procedure THTMLBuilder.ClosePre;
-  {Appends a </pre> tag to document body.
-  }
 begin
-  AppendBody(MakeTag(cPreTag, ttClose));
+  fBodyInner.Append(MakeTag(cPreTag, ttClose));
 end;
 
 procedure THTMLBuilder.CloseSpan;
-  {Appends a </span> tag to document body.
-  }
 begin
-  AppendBody(MakeTag(cSpanTag, ttClose));
+  fBodyInner.Append(MakeTag(cSpanTag, ttClose));
+end;
+
+constructor THTMLBuilder.Create;
+begin
+  inherited Create;
+  fBodyInner := TStringBuilder.Create;
+end;
+
+destructor THTMLBuilder.Destroy;
+begin
+  fBodyInner.Free;
+  inherited;
 end;
 
 function THTMLBuilder.GetTitle: string;
-  {Read accessor for Title property.
-    @return Property value if not '' or default title otherwise.
-  }
 begin
   if fTitle <> '' then
     Result := fTitle
@@ -208,9 +205,6 @@ begin
 end;
 
 function THTMLBuilder.HeadTag: string;
-  {Builds the document's compound <head> tag and its sub-tags.
-    @return Required tag.
-  }
 begin
   Result := MakeCompoundTag(
     cHeadTag,
@@ -222,9 +216,6 @@ begin
 end;
 
 function THTMLBuilder.HTMLDocument: string;
-  {Builds complete XHTML document.
-    @return Required XHTML.
-  }
 begin
   Result := cXMLProcInstruction
     + EOL
@@ -235,28 +226,22 @@ begin
 end;
 
 function THTMLBuilder.HTMLFragment: string;
-  {Gets XHTML document fragment written into body.
-    @return Required XHTML.
-  }
 begin
-  Result := fBody;
+  Result := fBodyInner.ToString;
 end;
 
 function THTMLBuilder.HTMLTag: string;
-  {Builds document's compound <html> tag and all its sub tags and content.
-    @return Required tag.
-  }
 
   // ---------------------------------------------------------------------------
+  ///  <summary>Builds object describing attributes of &lt;html&gt; tag.
+  ///  </summary>
   function HTMLAttrs: IHTMLAttributes;
-    {Builds object describing attributes of <html> tag.
-      @return Required attributes object.
-    }
   begin
-    Result := THTMLAttributes.Create;
-    Result.Add('xmlns', 'http://www.w3.org/1999/xhtml');
-    Result.Add('xml:lang', 'en');
-    Result.Add('lang', 'en');
+    Result := THTMLAttributes.Create(
+      [THTMLAttribute.Create('xmlns', 'http://www.w3.org/1999/xhtml'),
+      THTMLAttribute.Create('xml:lang', 'en'),
+      THTMLAttribute.Create('lang', 'en')]
+    );
   end;
   // ---------------------------------------------------------------------------
 
@@ -269,22 +254,14 @@ begin
 end;
 
 function THTMLBuilder.InlineStyleSheet: string;
-  {Generates <style> tag containing CSS.
-    @return Required XHTML tag and content or '' if there is no CSS.
-  }
 var
   Attrs: IHTMLAttributes; // style tag's attributes
 begin
   if fCSS <> '' then
   begin
-    Attrs := THTMLAttributes.Create;
-    Attrs.Add('type', 'text/css');
+    Attrs := THTMLAttributes.Create('type', 'text/css');
     Result := EOL
-      + MakeCompoundTag(
-        cStyleTag,
-        Attrs,
-        EOL + cOpenComment + EOL + fCSS + EOL + cCloseComment + EOL
-      )
+      + MakeCompoundTag(cStyleTag, Attrs, EOL + fCSS + EOL)
       + EOL;
   end
   else
@@ -292,10 +269,6 @@ begin
 end;
 
 function THTMLBuilder.MakeClassAttr(const ClassName: string): IHTMLAttributes;
-  {Creates a HTML attributes object containing class attribute.
-    @param ClassName [in] Name of CSS class specified in class attribute.
-    @return HTML attributes object encapsulating class attribute.
-  }
 begin
   Result := THTMLAttributes.Create;
   if ClassName <> '' then
@@ -303,26 +276,18 @@ begin
 end;
 
 procedure THTMLBuilder.NewLine;
-  {Adds a new line to document body.
-  }
 begin
-  AppendBody(EOL);
+  fBodyInner.AppendLine;
 end;
 
 procedure THTMLBuilder.OpenPre(const ClassName: string);
-  {Appends a <pre> tag to document body.
-    @param ClassName [in] Class of pre tag.
-  }
 begin
-  AppendBody(MakeTag(cPreTag, ttOpen, MakeClassAttr(ClassName)));
+  fBodyInner.Append(MakeTag(cPreTag, ttOpen, MakeClassAttr(ClassName)));
 end;
 
 procedure THTMLBuilder.OpenSpan(const ClassName: string);
-  {Appends a <span> tag to document body.
-    @param ClassName [in] Class of span tag.
-  }
 begin
-  AppendBody(MakeTag(cSpanTag, ttOpen, MakeClassAttr(ClassName)));
+  fBodyInner.Append(MakeTag(cSpanTag, ttOpen, MakeClassAttr(ClassName)));
 end;
 
 end.

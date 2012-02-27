@@ -45,51 +45,24 @@ uses
   // Delphi
   ComCtrls, Generics.Collections,
   // Project
-  UView, USnippetIDs, USnippets;
+  UView;
 
 
 type
 
-  {
-  TViewInfo:
-    Records identifying information about a view item without storing any
-    object contained in the view item. The actual object can be freed between
-    saving and restoring the tree state causing a crash, hence we only store
-    the view item's "key" value.
-    Can't clone the object contained in a view item because TRoutine and
-    TCategory don't permit it.
-    *** NOTE: This is a hack to fix a long standing bug. Not the cleanest fix,
-    but it works and I've found a more elegant solution for v4!
-  }
-  TViewInfo = class(TObject)
-  strict private
-    // Kind of view this info relates to
-    fViewKind: TViewKind;
-    // Fields recording info about view item. Which one is used depends on kind
-    // of view. None are used for vkNone and vkWelcome.
-    fCatID: string;
-    fSnipKindID: TSnippetKind;
-    fAlphaID: Char;
-    fSnippetID: TSnippetID;
-  public
-    // Creates view info object for a view item. Values recorded depend on kind
-    // of view item.
-    constructor Create(View: TViewItem);
-    // Checks if this view info object's key info matches that of a view item.
-    function IsEqual(View: TViewItem): Boolean;
-  end;
-
-  {
-  TOverviewTreeSectionState:
-    Class that records the state of an overview pane section node.
-  }
+  ///  <summary>
+  ///  Class that records state of a section (level 0) node in the overview
+  ///  pane's treeview.
+  ///  </summary>
   TOverviewTreeSectionState = class(TObject)
   strict private
     var
-      fExpanded: Boolean;     // Value of Expanded property
-      fViewInfo: TViewInfo;   // Value of ViewInfo property
+      /// <summary>Value of Expanded property.</summary>
+      fExpanded: Boolean;
+      /// <summary>Value of ViewKey property.</summary>
+      fViewKey: IViewKey;
   public
-    constructor Create(const ViewItem: TViewItem; const Expanded: Boolean);
+    constructor Create(ViewKey: IViewKey; const Expanded: Boolean);
       {Constructor. Sets up object.
         @param ViewItem [in] View item represented by section node.
         @param Expended [in] True if node is expanded, False if not.
@@ -99,9 +72,10 @@ type
       }
     property Expanded: Boolean read fExpanded;
       {Whether section node is expanded}
-    property ViewInfo: TViewInfo read fViewInfo;
-      {Info about view item displayed by section node}
+    property ViewKey: IViewKey read fViewKey;
   end;
+
+type
 
   {
   TOverviewTreeState:
@@ -124,7 +98,7 @@ type
       fTV: TTreeView;                   // Reference to treeview
       fSections: TSectionStates;        // List of section state objects
       fRestoreState: TResorationState;  // Current restoration state of tree
-    function FindSection(const ViewItem: TViewItem;
+    function FindSection(ViewKey: IViewKey;
       out FoundSection: TOverviewTreeSectionState): Boolean;
       {Finds a section object that references a specified view item.
         @param ViewItem [in] View item being searched for.
@@ -159,15 +133,13 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
   UPreferences, UViewItemTreeNode;
 
 
 { TOverviewTreeSectionState }
 
-constructor TOverviewTreeSectionState.Create(const ViewItem: TViewItem;
+constructor TOverviewTreeSectionState.Create(ViewKey: IViewKey;
   const Expanded: Boolean);
   {Constructor. Sets up object.
     @param ViewItem [in] View item represented by section node.
@@ -175,7 +147,7 @@ constructor TOverviewTreeSectionState.Create(const ViewItem: TViewItem;
   }
 begin
   inherited Create;
-  fViewInfo := TViewInfo.Create(ViewItem);
+  fViewKey := ViewKey;
   fExpanded := Expanded;
 end;
 
@@ -183,7 +155,7 @@ destructor TOverviewTreeSectionState.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  fViewInfo.Free;
+  fViewKey := nil;
   inherited;
 end;
 
@@ -211,7 +183,7 @@ begin
   inherited;
 end;
 
-function TOverviewTreeState.FindSection(const ViewItem: TViewItem;
+function TOverviewTreeState.FindSection(ViewKey: IViewKey;
   out FoundSection: TOverviewTreeSectionState): Boolean;
   {Finds a section object that references a specified view item.
     @param ViewItem [in] View item being searched for.
@@ -225,7 +197,7 @@ begin
   FoundSection := nil;
   for Section in fSections do
   begin
-    if Section.ViewInfo.IsEqual(ViewItem) then
+    if Section.ViewKey.IsEqual(ViewKey) then
     begin
       FoundSection := Section;
       Exit(True);
@@ -258,8 +230,10 @@ begin
     begin
       for Node in fTV.Items do
       begin
-        if IsSectionNode(Node)
-          and FindSection((Node as TViewItemTreeNode).ViewItem, Section) then
+        if IsSectionNode(Node) and
+          FindSection(
+            (Node as TViewItemTreeNode).ViewItem.GetKey, Section
+          ) then
           Node.Expanded := Section.Expanded;
       end;
     end;
@@ -278,7 +252,7 @@ procedure TOverviewTreeState.SaveState;
     }
   begin
     fSections.Add(
-      TOverviewTreeSectionState.Create(Node.ViewItem, Node.Expanded)
+      TOverviewTreeSectionState.Create(Node.ViewItem.GetKey, Node.Expanded)
     );
   end;
   // ---------------------------------------------------------------------------
@@ -294,38 +268,6 @@ begin
   end;
   // note that tree must be restored from this saved state
   fRestoreState := rsAsSaved;
-end;
-
-{ TViewInfo }
-
-constructor TViewInfo.Create(View: TViewItem);
-begin
-  inherited Create;
-  fViewKind := View.Kind;
-  case fViewKind of
-    vkRoutine: fSnippetID := View.Routine.ID;
-    vkCategory: fCatID := View.Category.Category;
-    vkSnipKind: fSnipKindID := View.SnippetKind.Kind;
-    vkAlphabet: fAlphaID := View.AlphaChar.Letter;
-  end;
-end;
-
-function TViewInfo.IsEqual(View: TViewItem): Boolean;
-begin
-  if View.Kind <> fViewKind then
-    Exit(False);
-  case fViewKind of
-    vkRoutine:
-      Result := View.Routine.ID = fSnippetID;
-    vkCategory:
-      Result := AnsiSameText(View.Category.Category, fCatID);
-    vkSnipKind:
-      Result := View.SnippetKind.Kind = fSnipKindID;
-    vkAlphabet:
-      Result := View.AlphaChar.Letter = fAlphaID;
-    else
-      Result := True;
-  end;
 end;
 
 end.

@@ -86,6 +86,11 @@ type
         @return Required position. This is maximum value of bottom of all
           controls.
       }
+    class function RightOf(const Ctrl: TControl): Integer;
+      {Returns horizontal position of right hand edge of given control.
+        @param Ctrl [in] Control for which location of right hand side required.
+        @return Required position.
+      }
     class procedure MoveToLeftOf(const RefCtrl, Ctrl: TControl;
       const Margin: Integer = 0);
       {Moves a control to the left of a reference control optionally separated
@@ -231,7 +236,16 @@ class procedure TCtrlArranger.MoveToRightOf(const RefCtrl, Ctrl: TControl;
       RefCtrl.
   }
 begin
-  Ctrl.Left := RefCtrl.Left + RefCtrl.Width + Margin;
+  Ctrl.Left := RightOf(RefCtrl) + Margin;
+end;
+
+class function TCtrlArranger.RightOf(const Ctrl: TControl): Integer;
+  {Returns horizontal position of right hand edge of given control.
+    @param Ctrl [in] Control for which location of right hand side required.
+    @return Required position.
+  }
+begin
+  Result := Ctrl.Left + Ctrl.Width;
 end;
 
 class function TCtrlArranger.SetLabelHeight(const Lbl: TLabel): Integer;

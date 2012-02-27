@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -43,7 +43,7 @@ uses
   // Delphi
   ExtCtrls, Controls, Forms, Classes, Windows,
   // Project
-  IntfAligner, FmBase, FrBrowserBase, FrEasterEgg, UHTMLEvents;
+  Browser.UHTMLEvents, IntfAligner, FmBase, FrBrowserBase, FrEasterEgg;
 
 
 type
@@ -59,7 +59,7 @@ type
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCreate(Sender: TObject);
-  private
+  strict private
     type
       {
       TAligner:
@@ -128,8 +128,11 @@ procedure TEasterEggForm.BrowserEventHandler(Sender: TObject;
 const
   cCancelImgId = 'cancel-btn';  // id of cancel "button" image
 begin
-  if (EventInfo.DispatchId = cDocEventOnClick) and
-    (EventInfo.Args.srcElement.id = cCancelImgId) then
+  if EventInfo.IsEvent(
+      THTMLDocumentEvents2Sink.EventIntf,
+      THTMLDocumentEvents2Sink.DISPID_OnClick
+    )
+    and EventInfo.ElemHasId(cCancelImgId) then
   begin
     // Click on cancel image detected. Prevent event from bubbling up and close
     // dialog

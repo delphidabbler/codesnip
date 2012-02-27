@@ -1,6 +1,6 @@
 ================================================================================
 
-DELPHIDABBLER CODESNIP README
+DELPHIDABBLER CODESNIP v4 PREVIEW README
 
 ================================================================================
 
@@ -18,6 +18,71 @@ with each installed Win32 version of Delphi from v2 to XE2 and Free Pascal.
 Compilable Pascal units containing selected snippets can be created.
 
 
+About the v4 Preview release
+================================================================================
+
+Overview
+--------
+
+This release is a pre-release version that shows some of the features scheduled
+for CodeSnip v4.
+
+If you accept the default install path, or specify a unique install path it will
+install alongside any v3 release and will not affect the v3 release in any way.
+The installer will copy over any user defined snippets from a pre-existing v3
+installation and will preserve most if not all settings.
+
+Any user defined snippets you edit will not be reflected in any v3 installation
+and any settings you change won't affect the v3 install.
+
+Nearly all the file formats have changed, so export and backup files will not be
+compatible with v3 and earlier, so be careful.
+
+Copies of the online database are stored in a different location to v3, so
+updating the database from the v4 preview will not update the database used by
+v3 and vice versa.
+
+** WARNING **
+-------------
+
+It is possible that file formats etc. may change before the final release of
+CodeSnip v4, so please use the preview only to experiment with the new version.
+Do not use this program as the only place you store valuable code.
+The are no guarantees that your data won't be damaged by later versions.
+
+New Features
+------------
+
+New features of this release worth trying out are:
+
+* The new multi-tab display that can show more than one snippet, category etc.
+  in the main display. Control click items in the overview pane to display them
+  in a new tab in the detail pane. Alternatively select View | New Tab (Ctrl+T)
+  to display a new empty tab that can display selected items. Press Ctrl+F4 to
+  close a tab.
+
+* Results of test compilations (F9) now appear in a dialog box.
+
+* You can specify the paths to be searched by the Delphi compilers when looking
+  for used units. This lets you compile snippets that use units other than those
+  provided in the VCL and RTL. For example you can specify a path to the Indy
+  components to compile them. Use the Compilers dialog box to set the paths on
+  a per-compiler basis.
+
+* You can use Unicode source code.
+
+For other features read the change log at
+http://www.delphidabbler.com/software/codesnip/log
+
+Bugs and Feature Requests
+-------------------------
+
+Please report bugs at http://www.delphidabbler.com/url/codesnip-bugs mentioning
+the program version you are using (see about box).
+
+Request new features at http://www.delphidabbler.com/url/codesnip-featurereq
+
+
 Installation
 ================================================================================
 
@@ -33,7 +98,12 @@ IMPORTANT NOTES:
    password if running as a standard user and setup will attempt to elevate the
    process. If UAC prompts are disabled you must run setup as administrator.
 
-CodeSnip's installation program is named codesnip-setup-3.x.x.exe, where x.x
+3) CodeSnip v4 will install alongside any v3 or earlier release that may already
+   be installed. If you want to replace the earlier version simply uninstall it
+   in the usual way. Uninstalling v3 will delete any existing main database so
+   that you will need to download it again.
+
+CodeSnip's installation program is named codesnip-setup-4.x.x.exe, where x.x
 is the program's minor version number. The install program may be distributed in
 a zip file. If this is the case then extract the install program.
 
@@ -43,7 +113,7 @@ follow the on-screen instructions.
 The installer makes the following changes to your system:
 
 + The main program's executable file and documentation are installed into the
-  chosen install folder (the %ProgramFiles%\DelphiDabbler\CodeSnip folder by
+  chosen install folder (the %ProgramFiles%\DelphiDabbler\CodeSnip-4 folder by
   default).
 
 + Files required by the uninstaller are stored in the main installation's Uninst
@@ -54,16 +124,16 @@ The installer makes the following changes to your system:
 
 + A program group may be created in the start menu (optional).
 
-+ A %ProgramData%\DelphiDabbler\CodeSnip folder is created. A configuration
++ A %ProgramData%\DelphiDabbler\CodeSnip.4 folder is created. A configuration
   file is stored in the folder. Once the database is downloaded, it will be
-  stored in a "Data" sub-folder (see below).
+  stored in a "Database" sub-folder (see below).
 
-+ A %AppData%\DelphiDabbler\CodeSnip folder is also created. This is used to
-  hold a file that stores per-user configuration data. A "UserData.3" sub-folder
-  is used to store any user defined snippets.
++ A %AppData%\DelphiDabbler\CodeSnip.4 folder is also created. This is used to
+  hold a file that stores per-user configuration data. A "UserDatabase" sub-
+  folder is used to store any user defined snippets.
 
-+ Setup offers to copy any relevant files from installations earlier than v3.0
-  into the correct locations for v3.
++ Setup offers to copy any relevant files from installations earlier than v4.0
+  into the correct locations for v4.
 
 
 Downloading the Database
@@ -77,7 +147,7 @@ up a message if none is present.
 When CodeSnip is first run it detects if there is no database and displays
 message to that effect in its main window. A link is displayed that can be used
 to download the database from the DelphiDabbler website. Once this is done the
-required files are stored in the %ProgramData%\DelphiDabbler\CodeSnip\Data
+required files are stored in the %ProgramData%\DelphiDabbler\CodeSnip.4\Database
 folder.
 
 
@@ -90,7 +160,7 @@ with any installed Windows 32 version of Delphi (i.e. Delphi 2 to 7 and 2005,
 also be test compiled providing some simple rules are followed.
 
 When CodeSnip is first installed it knows nothing about the available compilers
-and so test compilations can not be performed. You must tell CodeSnip about the
+and so test compilations cannot be performed. You must tell CodeSnip about the
 available compilers by using the "Tools | Configure Compilers" menu option. The
 resulting dialog can automatically detect all installed versions of supported
 Delphi compilers at the click of a button. Free Pascal, where installed, must be
@@ -127,6 +197,9 @@ Administrator privileges will be required to uninstall CodeSnip. Windows Vista
 and Windows 7 with UAC prompts enabled will prompt for an admin password if
 necessary.
 
+The uninstall program will delete the main database but will leave the user
+defined database intact.
+
 
 Updating the Database
 ================================================================================
@@ -148,14 +221,14 @@ Known Installation and Upgrading Issues
    to reset your preferences via the "Tools | Preferences" menu option.
 
 2) Syntax highlighting preferences will be lost when upgrading from any v1.x or
-   v2.x release and the new v3 default highlighting style will be used. This
+   v2.x release and the program's default highlighting style will be used. This
    can be changed from the Syntax Highlighter tab of the Preferences dialog box,
    accessed from the "Tools | Preferences" menu option.
 
 3) Users who have configured CodeSnip to access the internet via a proxy server
    will loose any stored passwords required by the proxy server when updgrading
-   from v3.6.0 and earlier to v3.6.1 and later. The installer will warn of this.
-   Passwords have to be re-entered using the "Tools | Proxy Server" menu option.
+   from v3.6.0 and earlier. The installer will warn of this. Passwords have to
+   be re-entered using the "Tools | Proxy Server" menu option.
 
 
 RSS News Feed
@@ -189,8 +262,8 @@ Source Code
 The source code of the latest version of CodeSnip can be downloaded from
 http://www.delphidabbler.com/software/codesnip/download.
 
-The current development source tree and all v3.x versions can be viewed and
-downloaded from SourgeForce.net at
+The current development source tree and snapshots of all releases from v3.0 can
+be viewed and downloaded from SourgeForge at
 http://codesnip.svn.sourceforge.net/viewvc/codesnip/.
 
 Subversion users can checkout code from
@@ -198,8 +271,8 @@ https://codesnip.svn.sourceforge.net/svnroot/codesnip. You will usually checkout
 the "trunk" branch (development branch) or one of the stable releases listed in
 the "tags" branch.
 
-Ready zipped source code archives of the current release and earlier versions
-can be downloaded from the CodeSnip Files page on SourceForge.net at:
+Ready zipped source code archives of the current release and some earlier
+versions can be downloaded from the CodeSnip Files page on SourceForge.net at:
 https://sourceforge.net/projects/codesnip/files/
 
 Available source code is released under the Mozilla Public license (see
@@ -226,6 +299,10 @@ http://www.delphidabbler.com/software/codesnip/bugs.
 If your bug hasn't been reported or fixed please add a report using the
 "Add new" link on Tracker.
 
+Please note that versions 1 and 2 of CodeSnip are no longer supported, so please
+don't report bugs for those versions. You should update the program first and
+only report the bug if it is still present.
+
 
 Make a Donation
 ================================================================================
@@ -245,7 +322,8 @@ Feedback
 ================================================================================
 
 If you want to suggest new features please use the feature request tracker at
-http://www.delphidabbler.com/url/codesnip-featurereq
+http://www.delphidabbler.com/url/codesnip-featurereq which redirects to
+SourceForge.
 
 Any other comments can be sent using the contact page at
 http://www.delphidabbler.com/contact

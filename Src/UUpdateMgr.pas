@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -41,9 +41,9 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes,
+  SysUtils,
   // Project
-  UDOSDateTime, Web.UDBDownloadMgr;
+  UDOSDateTime, UEncodings, Web.UDBDownloadMgr;
 
 
 type
@@ -145,15 +145,15 @@ type
       {Logs on to web server.
         @return True if log on successful or false if user cancelled.
       }
-    function DownloadDatabase(const Data: TStream): Boolean;
+    function DownloadDatabase(out Data: TEncodedData): Boolean;
       {Downloads database from web server.
-        @param Data [in] Stream that receives downloaded data.
+        @param Data [out] Receives downloaded data.
         @return True on success or false if cancelled.
       }
-    function UpdateLocalDatabase(const Data: TStream): Boolean;
+    function UpdateLocalDatabase(const Data: TEncodedData): Boolean;
       {Udpates files in local database from stream of data that has been
       downloaded from web server.
-        @param Data [in] Stream of data containing updates.
+        @param Data [in] Data containing updates.
         @return True if successfully updated, false if cancelled.
       }
     function HandleException(const E: Exception): Boolean;
@@ -201,6 +201,8 @@ implementation
 
 
 uses
+  // Delphi
+  Classes,
   // Project
   IntfCommon, UConsts, UFileUpdater, UUtils, UExceptions;
 
@@ -234,23 +236,22 @@ destructor TUpdateMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fDownloadMgr);
+  fDownloadMgr.Free;
   inherited;
 end;
 
-function TUpdateMgr.DownloadDatabase(const Data: TStream): Boolean;
+function TUpdateMgr.DownloadDatabase(out Data: TEncodedData): Boolean;
   {Downloads database from web server.
-    @param Data [in] Stream that receives downloaded data.
+    @param Data [out] Receives downloaded data.
     @return True on success or false if cancelled.
   }
 begin
   Result := False;
   if not NotifyStatus(usDownloadStart) then
     Exit;
-  fDownloadMgr.GetDatabase(Data, True);
+  Data := fDownloadMgr.GetDatabase(True);
   if not NotifyStatus(usDownloadEnd) then
     Exit;
-  Data.Position := 0;
   Result := not fCancelled;
 end;
 
@@ -359,7 +360,7 @@ begin
     ListFiles(fLocalDir, '*.*', LocalFiles);
     Result := LocalFiles.Count;
   finally
-    FreeAndNil(LocalFiles);
+    LocalFiles.Free;
   end;
 end;
 
@@ -393,15 +394,13 @@ begin
     begin
       for FileName in LocalFiles do
       begin
-        FileDate  := TDOSDateTimeFactory.CreateFromFile(
-          IncludeTrailingPathDelimiter(fLocalDir) + FileName
-        );
-        if Result.Compare(FileDate) < 0 then
+        FileDate  := TDOSDateTimeFactory.CreateFromFile(FileName);
+        if Result.CompareTo(FileDate) < 0 then
           (Result as IAssignable).Assign(FileDate);
       end;
     end;
   finally
-    FreeAndNil(LocalFiles);
+    LocalFiles.Free;
   end;
 end;
 
@@ -423,28 +422,23 @@ function TUpdateMgr.PerformUpdate: Boolean;
     @return True if update succeeded or false if update was cancelled.
   }
 var
-  Data: TMemoryStream;  // stream to store downloaded data
+  Data: TEncodedData; // stores downloaded data
 begin
   Result := False;
   if fCancelled then
     Exit;
-  Data := TMemoryStream.Create;
-  try
-    if DownloadDatabase(Data) then
-      Result := UpdateLocalDatabase(Data);
-  finally
-    FreeAndNil(Data);
-  end;
+  if DownloadDatabase(Data) then
+    Result := UpdateLocalDatabase(Data);
 end;
 
-function TUpdateMgr.UpdateLocalDatabase(const Data: TStream): Boolean;
+function TUpdateMgr.UpdateLocalDatabase(const Data: TEncodedData): Boolean;
   {Udpates files in local database from stream of data that has been downloaded
   from web server.
-    @param Data [in] Stream of data containing updates.
+    @param Data [in] Data containing updates.
     @return True if successfully updated, false if cancelled.
   }
 var
-  Updater: TFileUpdater;  // Object that performs file updates.
+  Updater: TFileUpdater;  // object that performs file updates.
 begin
   Result := False;
   if not NotifyStatus(usUpdating) then
@@ -454,7 +448,7 @@ begin
     Updater.Execute;
     Result := True;
   finally
-    FreeAndNil(Updater);
+    Updater.Free;
   end;
 end;
 
@@ -478,7 +472,7 @@ begin
     LastDatabaseUpdate := TDOSDateTimeFactory.CreateFromUnixTimeStamp(
       StrToInt64(fDownloadMgr.LastUpdate)
     );
-    Result := LastDatabaseUpdate.Compare(NewestLocalFileDate) > 0;
+    Result := LastDatabaseUpdate.CompareTo(NewestLocalFileDate) > 0;
   end;
 end;
 

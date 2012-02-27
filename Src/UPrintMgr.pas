@@ -2,7 +2,7 @@
  * UPrintMgr.pas
  *
  * Implements a class that manages printing of a document providing information
- * about a routine.
+ * about a snippet.
  *
  * $Rev$
  * $Date$
@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UBaseObjects, UPrintInfo, USnippets, UView;
+  DB.USnippet, UBaseObjects, UPrintInfo, URTFUtils, UView;
 
 
 type
@@ -52,32 +52,32 @@ type
   {
   TPrintMgr:
     Class that manages printing of a document providing information about a
-    routine. It generates a RTF formatted document and passes it to the print
+    snippet. It generates a RTF formatted document and passes it to the print
     engine for printing.
   }
   TPrintMgr = class(TNoPublicConstructObject)
   strict private
-    fRoutine: TRoutine;
-      {Reference to routine whose information is to be printed}
-    procedure GeneratePrintDocument(const Stm: TStream);
+    fSnippet: TSnippet;
+      {Reference to snippet whose information is to be printed}
+    function GeneratePrintDocument: TRTF;
       {Generates document suitable for printing by print engine.
         @param Stm [in] Stream to receive generated document.
       }
   strict protected
-    constructor InternalCreate(const ViewItem: TViewItem);
+    constructor InternalCreate(ViewItem: IView);
       {Class constructor. Sets up object to print a view item.
-        @param ViewItem [in] View item to be printed. Must be a routine.
+        @param ViewItem [in] View item to be printed. Must be a snippet.
       }
     procedure DoPrint;
-      {Prints document containing information about a routine. Uses print
+      {Prints document containing information about a snippet. Uses print
       engine.
       }
   public
-    class procedure Print(const ViewItem: TViewItem);
+    class procedure Print(ViewItem: IView);
       {Prints details of a view item using print engine.
-        @param ViewItem [in] View item to be printed. Must be a routine.
+        @param ViewItem [in] View item to be printed. Must be a snippet.
       }
-    class function CanPrint(const ViewItem: TViewItem): Boolean;
+    class function CanPrint(ViewItem: IView): Boolean;
       {Checks if a view item can be printed.
         @param ViewItem [in] View item to be checked.
         @return True if view item can be printed, False if not.
@@ -97,64 +97,58 @@ uses
 
 { TPrintMgr }
 
-class function TPrintMgr.CanPrint(const ViewItem: TViewItem): Boolean;
+class function TPrintMgr.CanPrint(ViewItem: IView): Boolean;
   {Checks if a view item can be printed.
     @param ViewItem [in] View item to be checked.
     @return True if view item can be printed, False if not.
   }
 begin
-  Result := ViewItem.Kind = vkRoutine;
+  Result := Supports(ViewItem, ISnippetView);
 end;
 
 procedure TPrintMgr.DoPrint;
-  {Prints document containing information about a routine. Uses print engine.
+  {Prints document containing information about a snippet. Uses print engine.
   }
 var
   PrintEngine: TPrintEngine;  // object that prints the print document
-  DocStm: TStream;            // stream containing generated print document
+  Document: TRTF;             // generated print document
 begin
   PrintEngine := TPrintEngine.Create;
   try
-    PrintEngine.Title := fRoutine.Name;
-    DocStm := TMemoryStream.Create;
-    try
-      GeneratePrintDocument(DocStm);
-      PrintEngine.Print(DocStm);
-    finally
-      FreeAndNil(DocStm);
-    end;
+    PrintEngine.Title := fSnippet.Name;
+    Document := GeneratePrintDocument;
+    PrintEngine.Print(Document);
   finally
-    FreeAndNil(PrintEngine);
+    PrintEngine.Free;
   end;
 end;
 
-procedure TPrintMgr.GeneratePrintDocument(const Stm: TStream);
+function TPrintMgr.GeneratePrintDocument: TRTF;
   {Generates document suitable for printing by print engine.
     @param Stm [in] Stream to receive generated document.
   }
 var
   PrintDoc: IPrintDocument;   // generates print document
 begin
-  PrintDoc := TRoutinePrintDocument.Create(fRoutine);
-  PrintDoc.Generate(Stm);
-  Stm.Position := 0;
+  PrintDoc := TSnippetPrintDocument.Create(fSnippet);
+  Result := PrintDoc.Generate;
 end;
 
-constructor TPrintMgr.InternalCreate(const ViewItem: TViewItem);
+constructor TPrintMgr.InternalCreate(ViewItem: IView);
   {Class constructor. Sets up object to print a view item.
-    @param ViewItem [in] View item to be printed. Must be a routine.
+    @param ViewItem [in] View item to be printed. Must be a snippet.
   }
 begin
   Assert(Assigned(ViewItem), ClassName + '.InternalCreate: ViewItem is nil');
-  Assert(ViewItem.Kind = vkRoutine,
-    ClassName + '.InternalCreate: ViewItem is not a routine');
+  Assert(Supports(ViewItem, ISnippetView),
+    ClassName + '.InternalCreate: ViewItem is not a snippet');
   inherited InternalCreate;
-  fRoutine := ViewItem.Routine;
+  fSnippet := (ViewItem as ISnippetView).Snippet;
 end;
 
-class procedure TPrintMgr.Print(const ViewItem: TViewItem);
+class procedure TPrintMgr.Print(ViewItem: IView);
   {Prints details of a view item using print engine.
-    @param ViewItem [in] View item to be printed. Must be a routine.
+    @param ViewItem [in] View item to be printed. Must be a snippet.
   }
 begin
   with InternalCreate(ViewItem) do

@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,7 +45,7 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes, Forms,
   // Project
-  FmHTMLViewDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UCSSBuilder;
+  FmGenericViewDlg, FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UCSSBuilder;
 
 
 type
@@ -54,7 +54,7 @@ type
     Dialog box that displays information about donating to support CodeSnip
     along with a button to display the Paypal donation web page.
   }
-  TDonateDlg = class(THTMLViewDlg)
+  TDonateDlg = class(TGenericViewDlg)
     btnDoDonate: TButton;
     frmContent: TFixedHTMLDlgFrame;
     procedure FormCreate(Sender: TObject);
@@ -67,14 +67,12 @@ type
       }
   strict protected
     procedure ConfigForm; override;
-      {Sets UI font for emboldened Donate button.
+      {Initialises HTML frame and sets UI font for emboldened Donate button.
+      Called from ancestor class.
       }
     procedure ArrangeForm; override;
       {Sizes dialog to fit content and adjusts position of donation button on
       bottom line. Called from ancestor class.
-      }
-    procedure InitHTMLFrame; override;
-      {Initialises HTML frame.
       }
   public
     class procedure Execute(const AOwner: TComponent);
@@ -111,11 +109,13 @@ begin
 end;
 
 procedure TDonateDlg.ConfigForm;
-  {Sets UI font for emboldened Donate button.
+  {Initialises HTML frame and sets UI font for emboldened Donate button.
   }
 begin
   inherited;
   TFontHelper.SetDefaultBaseFont(btnDoDonate.Font, False);
+  frmContent.OnBuildCSS := UpdateCSS;
+  frmContent.Initialise('dlg-donate.html');
 end;
 
 class procedure TDonateDlg.Execute(const AOwner: TComponent);
@@ -139,16 +139,6 @@ begin
   btnDoDonate.Action := TPaypalDonateAction.Create(Self);
 end;
 
-procedure TDonateDlg.InitHTMLFrame;
-  {Initialises HTML frame.
-  }
-begin
-  // Set event handler used to customise CSS
-  frmContent.OnBuildCSS := UpdateCSS;
-  // Load required HTML into frame
-  frmContent.Initialise('dlg-donate.html');
-end;
-
 procedure TDonateDlg.UpdateCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
   {Modifies CSS used to display dialog box body to achieve required appearance.
     @param Sender [in] Not used.
@@ -163,9 +153,9 @@ begin
     TFontHelper.SetContentFont(ContentFont, True);  // font must be true type
     with CSSBuilder.Selectors['body'] do
     begin
-      AddProperty(CSSFontProps(ContentFont));
-      AddProperty(CSSBackgroundColorProp(clWindow));
-      AddProperty(CSSPaddingProp(0, 6, 6, 6));
+      AddProperty(TCSS.FontProps(ContentFont));
+      AddProperty(TCSS.BackgroundColorProp(clWindow));
+      AddProperty(TCSS.PaddingProp(0, 6, 6, 6));
     end;
   finally
     FreeAndNil(ContentFont);

@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -60,7 +60,7 @@ type
     events to application.
   }
   TWBExternal = class(TAutoIntfObject,
-    IWBExternal6, // browser external object's methods
+    IWBExternal7, // browser external object's methods
     ISetNotifier  // sets object used to notify app of events
     )
   strict private
@@ -69,7 +69,7 @@ type
       {Gets application to handle current exception.
       }
   protected // do not make strict
-    { IWBExternal5: defined in type library }
+    { IWBExternal7: defined in type library }
     procedure UpdateDbase; safecall;
       {Updates database from internet.
       }
@@ -82,20 +82,12 @@ type
     procedure CompileSnippet; safecall;
       {Compiles the current snippet via notifier.
       }
-    procedure ViewCompilerLog(Ver: SYSINT); safecall;
-      {Displays a compiler log.
-        @param Ver [in] Version of Delphi for which we need to display log. Ver
-          is the ordinal value of the required compiler version enumerated type.
-      }
     procedure ShowHint(const Hint: WideString); safecall;
       {Displays a hint.
         @param Hint [in] Hint to be displayed.
       }
     procedure ConfigCompilers; safecall;
       {Displays the Configure Compilers dialog box.
-      }
-    procedure ShowTestUnit; safecall;
-      {Displays test unit for current snippet.
       }
     procedure EditSnippet(const SnippetName: WideString); safecall;
       {Edits a named snippet.
@@ -126,7 +118,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Forms,
+  Forms,
   // Project
   UAppInfo;
 
@@ -139,7 +131,7 @@ procedure TWBExternal.CompileSnippet;
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.CompileRoutine;
+      fNotifier.CompileSnippet;
   except
     HandleException;
   end;
@@ -168,7 +160,7 @@ begin
   ExeName := TAppInfo.AppExeFilePath;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
-  inherited Create(TypeLib, IWBExternal6);
+  inherited Create(TypeLib, IWBExternal7);
 end;
 
 procedure TWBExternal.DisplayCategory(const CatID: WideString);
@@ -193,7 +185,7 @@ procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.DisplayRoutine(SnippetName, UserDefined);
+      fNotifier.DisplaySnippet(SnippetName, UserDefined);
   except
     HandleException;
   end;
@@ -219,7 +211,7 @@ procedure TWBExternal.EditSnippet(const SnippetName: WideString);
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.EditRoutine(SnippetName);
+      fNotifier.EditSnippet(SnippetName);
   except
     HandleException;
   end;
@@ -253,18 +245,6 @@ begin
   end;
 end;
 
-procedure TWBExternal.ShowTestUnit;
-  {Displays test unit for current snippet.
-  }
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.ShowTestUnit;
-  except
-    HandleException;
-  end;
-end;
-
 procedure TWBExternal.UpdateDbase;
   {Updates database from internet.
   }
@@ -272,20 +252,6 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.UpdateDbase;
-  except
-    HandleException;
-  end;
-end;
-
-procedure TWBExternal.ViewCompilerLog(Ver: SYSINT);
-  {Displays a compiler log.
-    @param Ver [in] Version of Delphi for which we need to display log. Ver is
-      the ordinal value of the required compiler version enumerated type.
-  }
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.ViewCompilerLog(Ver);
   except
     HandleException;
   end;

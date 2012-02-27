@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,59 +44,66 @@ uses
   // Delphi
   Classes, IniFiles,
   // Project
-  UBaseObjects, UExceptions, UIStringList;
+  UBaseObjects, UExceptions, UIStringList, UMainDBFileReader;
 
 
 type
-  {
-  TDatabaseIniFile:
-    Extension of TMemIniFile that loads the ini data from a set of associated
-    files. Any quotes enclosing values read from ini file are stripped. Files
-    are pre-processed, and modified according to any pre-processing directives.
-  }
+  ///  <summary>
+  ///  Extension of TMemIniFile that loads the ini data from a set of associated
+  ///  files. Any quotes enclosing values read from ini file are stripped. Files
+  ///  are pre-processed, and modified according to any pre-processing
+  ///  directives.
+  ///  </summary>
   TDatabaseIniFile = class(TMemIniFile)
   strict private
-    procedure CopyFileToStream(const FileName: string; const Stream: TStream);
-      {Appends a file's contents to a stream.
-        @param FileName [in] Name of file to copy.
-        @param Stream [in] Stream that receives file's content.
-      }
-    procedure CopyFilesToStream(const FileNames: IStringList;
-      const Stream: TStream);
-      {Copies content of a list of file to a stream.
-        @param FileNames [in] List of name of files to be copied
-        @param Stream [in] Stream that receives files' contents.
-      }
-    procedure LoadFromStream(const Stream: TStream);
-      {Load ini data from a stream.
-        @param Stream [in] Stream containing ini data.
-      }
+    var
+      ///  <summary>Loads database files using correct encoding.</summary>
+      fFileReader: TMainDBFileReader;
+    ///  <summary>
+    ///  Concatenates the content of a list of text files.
+    ///  </summary>
+    ///  <param name="FileNames">IStringList [in] List of text files.</param>
+    ///  <returns>IStringList containing concatenation of lines read from the
+    ///  files.</returns>
+    function LoadFiles(const FileNames: IStringList): IStringList;
   public
-    constructor Create(const FileName: string);
-      {Class constructor. Sets up object and loads its data from a set of
-      associated files.
-        @param FileName [in] Base file name for associated files containing
-          data.
-      }
+    ///  <summary>
+    ///  Object constructor. Sets up ini file object and loads data into it from
+    ///  a set of associated files.
+    ///  </summary>
+    ///  <param name="FileReader">TMainDBFileReader [in] Object used to read
+    ///  database text files using correct encoding.</param>
+    ///  <param name="FileName">string [in] Base name of associated files
+    ///  containing data.</param>
+    constructor Create(const FileReader: TMainDBFileReader;
+      const FileName: string);
+    ///  <summary>
+    ///  Retrieves a string value from an ini file.
+    ///  </summary>
+    ///  <param name="Section">string [in] Section containing value.</param>
+    ///  <param name="Ident">string [in] Identifier of value.</param>
+    ///  <param name="Default">string [in] Default value used if ident is not
+    ///  present or not assigned.</param>
+    ///  <returns>string containing required value, with any enclosing quotes
+    ///  removed.</returns>
+    ///  <remarks>
+    ///  Overrides method in base class to strip enclosing quotes.
+    ///  </remarks>
     function ReadString(const Section, Ident, Default: string): string;
       override;
-      {Retrieves a string value from an ini file.
-        @param Section [in] Section containing desired value.
-        @param Ident [in] Identifier of desired value.
-        @param Default [in] Default value used if Ident is not present or not
-          assigned.
-        @return Required value, with any enclosing quotes removed.
-      }
+    ///  <summary>
+    ///  Loads ini object's data from a string list.
+    ///  </summary>
+    ///  <param name="Strings">IStringList [in] Strings to be loaded.</param>
+    ///  <remarks>
+    ///  Overloads inherited SetStrings to load data from IStringList as well
+    ///  as TStringList.
+    ///  </remarks>
     procedure SetStrings(const Strings: IStringList); overload;
-      {Adapts inherited SetStrings to load data from IStringList instead of
-      TStringList.
-        @param Strings [in] Strings to be loaded.
-      }
   end;
 
-  {
-  EDatabaseIniFile:
-  }
+type
+  ///  <summary>Type of exception raised by TDatabaseIniFile.</summary>
   EDatabaseIniFile = class(ECodeSnip);
 
 
@@ -105,9 +112,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils,
+  SysUtils,
   // Project
-  UVersionInfo;
+  UStrUtils, UVersionInfo;
 
 
 type
@@ -119,21 +126,24 @@ type
   }
   TDatabaseFileMapper = class(TNoConstructObject)
   strict private
-    class function AlternateFileName(const FileName: string): string;
-      {Creates an alternate file name for a specified file that will be
-      recognised by v3 of CodeSnip or later.
-        @param FileName [in] Base file name.
+    class function AlternateFileName(const FileName, InnerExt: string): string;
+      {Creates an alternate file name for a specified file and an "inner"
+      extension that is inserted before the file's current extension.
+        @param FileName [in] File name to form basis of alternate name.
+        @param InnerExt [in] "Inner" extension that comes between file name and
+          its last extension.
         @return Alternate file name.
       }
   public
     class function GetRelatedFiles(const FileName: string): IStringList;
-      {Builds a list of file names associated with a base file name.
-        @param FileName [in] Base file name.
-        @return List of associated files, all of which exist. List may not
-          include base file name if it doesn't exist.
+      {Builds a list of file names associated with a file name.
+        @param FileName [in] Original file name.
+        @return List of associated files, all of which exist. Original file name
+          may be omitted from the list if it doesn't exist.
       }
   end;
 
+type
   {
   TDatabasePreprocessor:
     Static class used to pre-process ini file, acting on pre-processor
@@ -310,95 +320,42 @@ type
 
 { TDatabaseIniFile }
 
-procedure TDatabaseIniFile.CopyFilesToStream(const FileNames: IStringList;
-  const Stream: TStream);
-  {Copies content of a list of file to a stream.
-    @param FileNames [in] List of name of files to be copied
-    @param Stream [in] Stream that receives files' contents.
-  }
+constructor TDatabaseIniFile.Create(const FileReader: TMainDBFileReader;
+  const FileName: string);
 var
-  FileName: string; // each file name in list
-begin
-  for FileName in FileNames do
-    CopyFileToStream(FileName, Stream);
-end;
-
-procedure TDatabaseIniFile.CopyFileToStream(const FileName: string;
-  const Stream: TStream);
-  {Appends a file's contents to a stream.
-    @param FileName [in] Name of file to copy.
-    @param Stream [in] Stream that receives file's content.
-  }
-var
-  FS: TFileStream;  // stream onto file
-begin
-  FS := TFileStream.Create(FileName, fmOpenRead or fmShareDenyNone);
-  try
-    Stream.CopyFrom(FS, FS.Size);
-  finally
-    FreeAndNil(FS);
-  end;
-end;
-
-constructor TDatabaseIniFile.Create(const FileName: string);
-  {Class constructor. Sets up object and loads its data from a set of associated
-  files.
-    @param FileName [in] Base file name for associated files containing data.
-  }
-var
-  Stream: TStream;    // Stream that receives data from files
   Files: IStringList; // List of associated file names
 resourcestring
   // Error message
   sMissingCatFile = 'Neither category file "%s" nor its alternate exists.';
 begin
   inherited Create(FileName);
-  Stream := TMemoryStream.Create;
-  try
-    // Get list of file names containing data
-    Files := TDatabaseFileMapper.GetRelatedFiles(FileName);
-    if Files.Count = 0 then
-      raise EDatabaseIniFile.CreateFmt(
-        sMissingCatFile, [ExtractFileName(FileName)]
-      );
-    // Load ini data via intermediate streams
-    CopyFilesToStream(TDatabaseFileMapper.GetRelatedFiles(FileName), Stream);
-    Stream.Position := 0;
-    LoadFromStream(Stream);
-  finally
-    FreeAndNil(Stream);
-  end;
+  fFileReader := FileReader;
+  // get list of associated files
+  Files := TDatabaseFileMapper.GetRelatedFiles(FileName);
+  if Files.Count = 0 then
+    raise EDatabaseIniFile.CreateFmt(
+      sMissingCatFile, [ExtractFileName(FileName)]
+    );
+  // load ini file from concatenated contents of Files after running through
+  // pre-processor
+  SetStrings(
+    TDatabasePreprocessor.PreProcess(
+      LoadFiles(Files)
+    )
+  );
 end;
 
-procedure TDatabaseIniFile.LoadFromStream(const Stream: TStream);
-  {Load ini data from a stream.
-    @param Stream [in] Stream containing ini data.
-  }
+function TDatabaseIniFile.LoadFiles(const FileNames: IStringList): IStringList;
 var
-  Strings: TStringList;         // string list that contains ini data as text
-  PreProcStrings: IStringList;  // string list of data after pre-processing
+  FileName: string; // each file name is list
 begin
-  Strings := TStringList.Create;
-  try
-    Strings.LoadFromStream(Stream);
-    PreProcStrings := TDatabasePreprocessor.PreProcess(
-      TIStringList.Create(Strings)
-    );
-    SetStrings(PreProcStrings);
-  finally
-    FreeAndNil(Strings);
-  end;
+  Result := TIStringList.Create;
+  for FileName in FileNames do
+    Result.Add(fFileReader.ReadAllStrings(FileName));
 end;
 
 function TDatabaseIniFile.ReadString(const Section, Ident,
   Default: string): string;
-  {Retrieves a string value from an ini file.
-    @param Section [in] Section containing desired value.
-    @param Ident [in] Identifier of desired value.
-    @param Default [in] Default value used if Ident is not present or not
-      assigned.
-    @return Required value, with any enclosing quotes removed.
-  }
 const
   cQuote = '"';   // quote character
 begin
@@ -411,10 +368,6 @@ begin
 end;
 
 procedure TDatabaseIniFile.SetStrings(const Strings: IStringList);
-  {Adapts inherited SetStrings to load data from IStringList instead of
-  TStringList.
-    @param Strings [in] Strings to be loaded.
-  }
 var
   SL: TStringList;  // string list use to call inherited method
 begin
@@ -435,48 +388,53 @@ function RemoveFileExt(const FileName: string): string;
     @return File name without extension.
   }
 begin
-  if SysUtils.AnsiPos('.', FileName) > 0 then
+  if StrContainsStr('.', FileName) then
     Result := SysUtils.ChangeFileExt(FileName, '')
   else
     Result := FileName;
 end;
 
 class function TDatabaseFileMapper.AlternateFileName(
-  const FileName: string): string;
-  {Creates an alternate file name for a specified file that will be recognised
-  by v3 of CodeSnip or later.
-    @param FileName [in] Base file name.
+  const FileName, InnerExt: string): string;
+  {Creates an alternate file name for a specified file and an "inner" extension
+  that is inserted before the file's current extension.
+    @param FileName [in] File name to form basis of alternate name.
+    @param InnerExt [in] "Inner" extension that comes between file name and its
+      last extension.
     @return Alternate file name.
   }
 var
   BaseName: string;   // base of file name without extension
   Extension: string;  // extension common to all names
-const
-  cV3Ext = '.3';  // first extension for v3 database files
 begin
-  // Get base file name without extension
   Extension := ExtractFileExt(FileName);
   BaseName := RemoveFileExt(ExtractFileName(FileName));
-  // Build alternate file name
-  Result := ExtractFilePath(FileName) + BaseName + cV3Ext + Extension;
+  Result := ExtractFilePath(FileName) + BaseName + InnerExt + Extension;
 end;
 
 class function TDatabaseFileMapper.GetRelatedFiles(
   const FileName: string): IStringList;
-  {Builds a list of file names associated with a base file name.
-    @param FileName [in] Base file name.
-    @return List of associated files, all of which exist. List may not include
-      base file name if it doesn't exist.
+  {Builds a list of file names associated with a file name.
+    @param FileName [in] Original file name.
+    @return List of associated files, all of which exist. Original file name may
+      be omitted from the list if it doesn't exist.
   }
 var
   AltFileName: string;  // an alternate file name
+  InnerExt: string;     // each inner extension
+const
+  // "Inner" extensions to be interposed between filename and its extension
+  InnerExts: array[0..1] of string = ('.3', '.4');
 begin
   Result := TIStringList.Create;
   if FileExists(FileName) then
     Result.Add(FileName);
-  AltFileName := AlternateFileName(FileName);
-  if (AltFileName <> '') and FileExists(AltFileName) then
-    Result.Add(AltFileName);
+  for InnerExt in InnerExts do
+  begin
+    AltFileName := AlternateFileName(FileName, InnerExt);
+    if (AltFileName <> '') and FileExists(AltFileName) then
+      Result.Add(AltFileName);
+  end;
 end;
 
 { TDatabasePreprocessor }
@@ -563,23 +521,23 @@ begin
   LineIdx := 0;
   while LineIdx < Lines.Count do
   begin
-    Line := Trim(Lines[LineIdx]);
+    Line := StrTrim(Lines[LineIdx]);
     // Check for pre-processor instructions
-    if AnsiStartsStr(cIfVerLT, Line) then
+    if StrStartsStr(cIfVerLT, Line) then
       Result.Add(ProcessVerLT(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerLTE, Line) then
+    else if StrStartsStr(cIfVerLTE, Line) then
       Result.Add(ProcessVerLTE(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerGT, Line) then
+    else if StrStartsStr(cIfVerGT, Line) then
       Result.Add(ProcessVerGT(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerGTE, Line) then
+    else if StrStartsStr(cIfVerGTE, Line) then
       Result.Add(ProcessVerGTE(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerInRange, Line) then
+    else if StrStartsStr(cIfVerInRange, Line) then
       Result.Add(ProcessVerInRange(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerEQ, Line) then
+    else if StrStartsStr(cIfVerEQ, Line) then
       Result.Add(ProcessVerEQ(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerNEQ, Line) then
+    else if StrStartsStr(cIfVerNEQ, Line) then
       Result.Add(ProcessVerNEQ(Lines, LineIdx))
-    else if AnsiStartsStr(cPreProcPrefix, Line) then
+    else if StrStartsStr(cPreProcPrefix, Line) then
       // ignore unknown pre-proc dirs
     else
       // no pre-processor, just use trimmed line
@@ -593,7 +551,7 @@ class function TDatabasePreprocessor.ProcessToEndIf(const Lines: IStringList;
 begin
   Inc(LineIdx);
   Result := TIStringList.Create;
-  while (LineIdx < Lines.Count) and (Trim(Lines[LineIdx]) <> cEndIf) do
+  while (LineIdx < Lines.Count) and (StrTrim(Lines[LineIdx]) <> cEndIf) do
   begin
     if RecordLines then
       Result.Add(Lines[LineIdx]);

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -82,14 +82,14 @@ function JSLink(const JSFn, Hint: string; Classes: IStringList;
     @return Complete <a> tag.
   }
 
-function RoutineALink(const RoutineName: string;
+function SnippetALink(const SnippetName: string;
   const UserDefined: Boolean): string;
-  {Creates an <a>..</a> link that triggers external object's DisplayRoutine
+  {Creates an <a>..</a> link that triggers external object's DisplaySnippet
   method when clicked. The link does not access a URL. The link's text is the
   name of the snippet. The external object's ShowHint method is called to
   display a hint containing the snippet's name when the mouse passes over the
   link.
-    @param RoutineName [in] Name of snippet to be displayed when link is
+    @param SnippetName [in] Name of snippet to be displayed when link is
       clicked.
     @param UserDefined [in] Flag indicating if snippet is user defined.
     @return Complete <a> tag.
@@ -254,28 +254,28 @@ begin
   Result := TextLink('', JSFn, Hint, Classes, Text);
 end;
 
-function RoutineALink(const RoutineName: string;
+function SnippetALink(const SnippetName: string;
   const UserDefined: Boolean): string;
-  {Creates an <a>..</a> link that triggers external object's DisplayRoutine
+  {Creates an <a>..</a> link that triggers external object's DisplaySnippet
   method when clicked. The link does not access a URL. The link's text is the
   name of the snippet. The external object's ShowHint method is called to
   display a hint containing the snippet's name when the mouse passes over the
   link.
-    @param RoutineName [in] Name of snippet to be displayed when link is
+    @param SnippetName [in] Name of snippet to be displayed when link is
       clicked.
     @param UserDefined [in] Flag indicating if snippet is user defined.
     @return Complete <a> tag.
   }
 resourcestring
   // Long hint
-  sRoutineHint = 'Display "%s"';  // long hint
+  sSnippetHint = 'Display "%s"';  // long hint
 begin
   // Create javascript link enclosing snippet name
   Result := JSLink(
-    JSLiteralFunc('displayRoutine', [RoutineName, UserDefined]),
-    '|' + Format(sRoutineHint, [RoutineName]),
-    TIStringList.Create('routine-link'),
-    RoutineName
+    JSLiteralFunc('displaySnippet', [SnippetName, UserDefined]),
+    '|' + Format(sSnippetHint, [SnippetName]),
+    TIStringList.Create('snippet-link'),
+    SnippetName
   );
 end;
 

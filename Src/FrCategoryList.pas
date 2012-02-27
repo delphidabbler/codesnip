@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphi
   Forms, Controls, StdCtrls, Classes,
   // Project
-  UCategoryListAdapter, USnippets;
+  DB.UCategory, UCategoryListAdapter;
 
 
 type
@@ -113,7 +113,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UCtrlArranger;
+  DB.UMain, UCtrlArranger;
 
 {$R *.dfm}
 
@@ -177,8 +177,8 @@ var
 begin
   if lbCategories.ItemIndex >= 0 then
   begin
-    CatID := fCatList.CatName(lbCategories.ItemIndex);
-    Result := Snippets.Categories.Find(CatID);
+    CatID := fCatList.CatID(lbCategories.ItemIndex);
+    Result := Database.Categories.Find(CatID);
   end
   else
     Result := nil;

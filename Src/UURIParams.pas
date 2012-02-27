@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -270,7 +270,7 @@ constructor TURIParams.Create;
 begin
   inherited Create;
   fDict := TDictionary<string,string>.Create(
-    24, TSameTextEqualityComparer.Create
+    24, TTextEqualityComparer.Create
   );
 end;
 

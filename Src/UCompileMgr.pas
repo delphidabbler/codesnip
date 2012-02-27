@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes, Controls,
   // Project
-  Compilers.UGlobals, USnippets, UView;
+  Compilers.UGlobals, DB.USnippet, UView;
 
 
 type
@@ -63,11 +63,11 @@ type
   }
   TCompileMgr = class(TComponent)
   strict private
-    fLastCompiledRoutine: TRoutine; // Value of LastCompiledRoutine property
+    fLastCompiledSnippet: TSnippet; // Value of LastCompiledSnippet property
     fCompilers: ICompilers;         // Value of Compilers property
   strict protected
-    property LastCompiledRoutine: TRoutine read fLastCompiledRoutine;
-      {Last compiled routine. May not be added to Snippets object}
+    property LastCompiledSnippet: TSnippet read fLastCompiledSnippet;
+      {Last compiled snippet. May not be added to Snippets object}
   public
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Sets up object.
@@ -80,14 +80,14 @@ type
       {Checks if any compilers are set up to work with CodeSnip.
         @return True if at least one compiler is available, False otherwise.
       }
-    procedure Compile(const UIParent: TWinControl; const Routine: TRoutine;
+    procedure Compile(const UIParent: TWinControl; const Snippet: TSnippet;
       const DisplayProc: TCompileResultDisplay = nil);
-      {Test compiles a routine and then displays the compilation results. Shows
+      {Test compiles a snippet and then displays the compilation results. Shows
       a wait dialog box if compilation takes a long time.
         @param UIParent [in] Control that parents any wait window that is
           displayed. Wait window aligned above this control.
-        @param Routine [in] Routine to be compiled. Stored in
-          LastCompiledRoutine property.
+        @param Snippet [in] Snippet to be compiled. Stored in
+          LastCompiledSnippet property.
         @param DisplayProc [in] Callback method called to display compilation
           results.
       }
@@ -98,12 +98,7 @@ type
       }
     procedure ShowErrors;
       {Shows dialog box containing all errors and warnings for last compiled
-      routine.
-      }
-    procedure ShowError(const CompilerID: TCompilerID);
-      {Shows compile error or warning for last compiled routine on a specified
-      compiler.
-        @param CompilerID [in] Id of compiler whose errors are to be displayed.
+      snippet.
       }
     property Compilers: ICompilers read fCompilers;
       {Compilers object to be used to perform compilation}
@@ -116,12 +111,12 @@ type
   }
   TMainCompileMgr = class(TCompileMgr)
   public
-    function CanCompile(const View: TViewItem): Boolean;
+    function CanCompile(View: IView): Boolean;
       {Checks if the object represented by a view item can be test compiled.
         @param View [in] View item to test.
         @return True if view can be compiled, False otherwise.
       }
-    function IsLastCompiledView(const View: TViewItem): Boolean;
+    function IsLastCompiledView(View: IView): Boolean;
       {Checks if the object represented by a view item is the last one that was
       test compiled.
         @param View [in] View item to test.
@@ -143,32 +138,33 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, FmCompErrorDlg, FmCompilersDlg, UTestCompileUI;
+  Compilers.UCompilers, DB.UMain, FmCompErrorDlg, FmCompilersDlg,
+  UTestCompileUI;
 
 
 { TCompileMgr }
 
 procedure TCompileMgr.Compile(const UIParent: TWinControl;
-  const Routine: TRoutine; const DisplayProc: TCompileResultDisplay);
-  {Test compiles a routine and then displays the compilation results. Shows a
+  const Snippet: TSnippet; const DisplayProc: TCompileResultDisplay);
+  {Test compiles a snippet and then displays the compilation results. Shows a
   wait dialog box if compilation takes a long time.
     @param UIParent [in] Control that parents any wait window that is displayed.
       Wait window aligned above this control.
-    @param Routine [in] Routine to be compiled. Stored in LastCompiledRoutine
+    @param Snippet [in] Snippet to be compiled. Stored in LastCompiledSnippet
        property.
     @param DisplayProc [in] Callback method called to display compilation
       results.
   }
 begin
-  Assert(Assigned(Routine), ClassName + '.Compile: Routine is nil');
-  // Compile routine and optionally display result
-  TTestCompileUI.Execute(UIParent, fCompilers, Routine);
+  Assert(Assigned(Snippet), ClassName + '.Compile: Snippet is nil');
+  // Compile snippet and optionally display result
+  TTestCompileUI.Execute(UIParent, fCompilers, Snippet);
   if Assigned(DisplayProc) then
     DisplayProc(fCompilers);
-  // Copy routine to LastCompiledRoutine property
-  FreeAndNil(fLastCompiledRoutine);
-  fLastCompiledRoutine := (Snippets as ISnippetsEdit).CreateTempRoutine(
-    Routine
+  // Copy snippet to LastCompiledSnippet property
+  fLastCompiledSnippet.Free;
+  fLastCompiledSnippet := (Database as IDatabaseEdit).CreateTempSnippet(
+    Snippet
   );
 end;
 
@@ -185,8 +181,8 @@ destructor TCompileMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fLastCompiledRoutine);
-  fCompilers := nil;  // release compilers object
+  fLastCompiledSnippet.Free;
+  fCompilers := nil;
   inherited;
 end;
 
@@ -216,46 +212,32 @@ begin
   end;
 end;
 
-procedure TCompileMgr.ShowError(const CompilerID: TCompilerID);
-  {Shows compile error or warning for last compiled routine on a specified
-  compiler.
-    @param CompilerID [in] Id of compiler whose errors are to be displayed.
-  }
-var
-  Compiler: ICompiler;  // reference to required compiler
-begin
-  Compiler := fCompilers[CompilerID];
-  Assert(Compiler.HasErrorsOrWarnings,
-    ClassName + '.ShowError: Compiler has no errors or warnings');
-  Assert(Assigned(fLastCompiledRoutine),
-    ClassName + '.ShowError: LastCompiledRoutine is nil');
-  TCompErrorDlg.Execute(Owner, fLastCompiledRoutine.ID, Compiler);
-end;
-
 procedure TCompileMgr.ShowErrors;
   {Shows dialog box containing all errors and warnings for last compiled
-  routine.
+  snippet.
   }
 begin
   Assert(HaveErrors,
     ClassName + '.ShowErrors: No compilers have errors or warnings');
-  Assert(Assigned(fLastCompiledRoutine),
-    ClassName + '.ShowErrors: LastCompiledRoutine is nil');
-  TCompErrorDlg.Execute(Owner, fLastCompiledRoutine.ID, fCompilers);
+  Assert(Assigned(fLastCompiledSnippet),
+    ClassName + '.ShowErrors: LastCompiledSnippet is nil');
+  TCompErrorDlg.Execute(Owner, fLastCompiledSnippet.ID, fCompilers);
 end;
 
 { TMainCompileMgr }
 
-function TMainCompileMgr.CanCompile(const View: TViewItem): Boolean;
+function TMainCompileMgr.CanCompile(View: IView): Boolean;
   {Checks if the object represented by a view item can be test compiled.
     @param View [in] View item to test.
     @return True if view can be compiled, False otherwise.
   }
+var
+  SnippetView: ISnippetView;  // view as snippet view if supported
 begin
   Result := Assigned(View)
     and HaveCompilers
-    and (View.Kind = vkRoutine)
-    and View.Routine.CanCompile;
+    and Supports(View, ISnippetView, SnippetView)
+    and SnippetView.Snippet.CanCompile;
 end;
 
 function TMainCompileMgr.ConfigCompilers: Boolean;
@@ -267,15 +249,19 @@ begin
   Result := TCompilersDlg.Execute(Owner, Compilers);
 end;
 
-function TMainCompileMgr.IsLastCompiledView(const View: TViewItem): Boolean;
+function TMainCompileMgr.IsLastCompiledView(View: IView): Boolean;
   {Checks if the object represented by a view item is the last one that was test
   compiled.
     @param View [in] View item to test.
     @return True if view represents last object to be compiled, False otherwise.
   }
+var
+  SnippetView: ISnippetView;  // view as snippet view if supported
 begin
-  Result := Assigned(View) and (View.Kind = vkRoutine) and
-    Assigned(LastCompiledRoutine) and View.Routine.IsEqual(LastCompiledRoutine);
+  Result := Assigned(View)
+    and Assigned(LastCompiledSnippet)
+    and Supports(View, ISnippetView, SnippetView)
+    and SnippetView.Snippet.IsEqual(LastCompiledSnippet);
 end;
 
 end.

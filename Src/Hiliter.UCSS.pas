@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -55,7 +55,7 @@ type
     is also provided.
   }
   THiliterCSS = class(TObject)
-  private
+  strict private
     fHiliteAttrs: IHiliteAttrs;
       {Highlighter for which CSS is to be generated}
     procedure BuildElemCSS(const Elem: THiliteElement;
@@ -108,8 +108,8 @@ begin
   // Add font definition in main class
   with CSSBuilder.AddSelector('.' + GetMainCSSClassName) do
   begin
-    AddProperty(CSSFontFamilyProp(fHiliteAttrs.FontName, cfgMonoSpace));
-    AddProperty(CSSFontSizeProp(fHiliteAttrs.FontSize));
+    AddProperty(TCSS.FontFamilyProp(fHiliteAttrs.FontName, cfgMonoSpace));
+    AddProperty(TCSS.FontSizeProp(fHiliteAttrs.FontSize));
   end;
   // Add font style and colour definitions for each element
   for Elem := Low(THiliteElement) to High(THiliteElement) do
@@ -132,10 +132,10 @@ begin
     with CSSBuilder.AddSelector('.' + GetElemCSSClassName(Elem)) do
     begin
       if ElemAttr.ForeColor <> clNone then
-        AddProperty(CSSColorProp(ElemAttr.ForeColor));
-      AddProperty(CSSFontWeightProp(ElemAttr.FontStyle));
-      AddProperty(CSSFontStyleProp(ElemAttr.FontStyle));
-      AddProperty(CSSTextDecorationProp(ElemAttr.FontStyle));
+        AddProperty(TCSS.ColorProp(ElemAttr.ForeColor));
+      AddProperty(TCSS.FontWeightProp(ElemAttr.FontStyle));
+      AddProperty(TCSS.FontStyleProp(ElemAttr.FontStyle));
+      AddProperty(TCSS.TextDecorationProp(ElemAttr.FontStyle));
     end;
   end;
 end;

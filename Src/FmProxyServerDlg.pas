@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -116,7 +116,7 @@ uses
   SysUtils, Windows, Character,
   // Project
   UConsts, UExceptions, UFontHelper, UMessageBox, USettings, UStructs,
-  USystemInfo, UUtils;
+  USystemInfo, UStrUtils, UUtils;
 
 
 {$R *.dfm}
@@ -188,7 +188,7 @@ begin
   if not TCharacter.IsDigit(Key) and (Key <> cDot) and (Key <> BACKSPACE) then
     Key := #0
   else if (Key = cDot) and (
-    (edIPAddress.SelStart = 0) or (CountDelims(edIPAddress.Text, cDot) = 3)
+    (edIPAddress.SelStart = 0) or (StrCountDelims(cDot, edIPAddress.Text) = 3)
   ) then
     Key := #0;
   if Key = #0 then
@@ -288,7 +288,7 @@ procedure TProxyServerDlg.Validate;
     Quads := TStringList.Create;
     try
       // split IP address into quads (they are separated by dots)
-      ExplodeStr(Addr, '.', Quads);
+      StrExplode(Addr, '.', Quads);
       if Quads.Count <> 4 then
         Exit;   // must be 4 quads
       for Quad in Quads do

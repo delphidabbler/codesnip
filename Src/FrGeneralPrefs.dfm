@@ -8,7 +8,7 @@ inherited GeneralPrefsFrame: TGeneralPrefsFrame
     311)
   object gbMeasurement: TGroupBox
     Left = 1
-    Top = 66
+    Top = 127
     Width = 393
     Height = 57
     Anchors = [akLeft, akTop, akRight]
@@ -27,7 +27,6 @@ inherited GeneralPrefsFrame: TGeneralPrefsFrame
       Width = 113
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 0
     end
   end
@@ -35,7 +34,7 @@ inherited GeneralPrefsFrame: TGeneralPrefsFrame
     Left = 1
     Top = 3
     Width = 393
-    Height = 57
+    Height = 118
     Anchors = [akLeft, akTop, akRight]
     Caption = ' Display '
     TabOrder = 0
@@ -52,8 +51,23 @@ inherited GeneralPrefsFrame: TGeneralPrefsFrame
       Width = 113
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 0
+    end
+    object chkHideEmptySections: TCheckBox
+      Left = 3
+      Top = 64
+      Width = 353
+      Height = 17
+      Caption = 'Hide empty section headings in overview'
+      TabOrder = 1
+    end
+    object chkSnippetsInNewTab: TCheckBox
+      Left = 3
+      Top = 87
+      Width = 374
+      Height = 17
+      Caption = 'Display newly added snippets && categories in new tabs'
+      TabOrder = 2
     end
   end
 end

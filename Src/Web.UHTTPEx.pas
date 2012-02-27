@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -98,6 +98,10 @@ type
     procedure SetContentTtype(const Value: string);
       {Write accessor for ContentType property.
         @param Value [in] New property value.
+      }
+    function GetResponseCharSet: string;
+      {Read accessor for ResponseCharSet property.
+        @return String containing character set.
       }
   strict protected
     function DoRequestText(const Requestor: TProc<TBytesStream>): string;
@@ -181,6 +185,8 @@ type
       {Media type specified when making HTTP requests}
     property ContentType: string read GetContentType write SetContentTtype;
       {Content type specified when making HTTP requests}
+    property ResponseCharSet: string read GetResponseCharSet;
+      {Character set used for HTTP response}
   end;
 
 
@@ -193,7 +199,7 @@ uses
   // 3rd party
   PJMD5,
   // Project
-  UConsts, Web.UCharEncodings, Web.UExceptions, Web.UInfo;
+  UConsts, UStrUtils, Web.UCharEncodings, Web.UExceptions, Web.UInfo;
 
 
 resourcestring
@@ -345,12 +351,11 @@ begin
   // Perform request, getting raw content
   Content := DoRequestRaw(Requestor);
   // Get text from raw data, decoded according to HTTP response header
-  Encoding := TWebCharEncodings.GetEncoding(fHTTP.Response.CharSet);
+  Encoding := TWebCharEncodings.GetEncoding(GetResponseCharSet);
   try
     Result := Encoding.GetString(Content);
   finally
-    if not TEncoding.IsStandardEncoding(Encoding) then
-      Encoding.Free;
+    TWebCharEncodings.FreeEncoding(Encoding);
   end;
 end;
 
@@ -374,6 +379,17 @@ begin
       fHTTP.Get(URI, ResponseStream)
     end
   );
+end;
+
+function THTTPEx.GetResponseCharSet: string;
+  {Read accessor for ResponseCharSet property.
+    @return String containing character set.
+  }
+begin
+  if fHTTP.Response.CharSet <> '' then
+    Result := fHTTP.Response.CharSet
+  else
+    Result := TWebCharEncodings.DefaultCharSet;
 end;
 
 function THTTPEx.GetText(const URI: string): string;
@@ -409,7 +425,9 @@ begin
   if E is EIdHTTPProtocolException then
     raise EHTTPError.Create(E as EIdHTTPProtocolException)
   else if E is EIdSocketError then
-    raise EWebConnectionError.CreateFmt(sWebConnectionError, [Trim(E.Message)])
+    raise EWebConnectionError.CreateFmt(
+      sWebConnectionError, [StrTrim(E.Message)]
+    )
   else
     raise E;
 end;

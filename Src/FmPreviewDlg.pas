@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -46,15 +46,24 @@ uses
   ExtCtrls,
   // Project
   FmGenericViewDlg, FrBrowserBase, FrHTMLPreview, FrMemoPreview, FrRTFPreview,
-  FrTextPreview, IntfPreview, UBaseObjects;
+  FrTextPreview, UBaseObjects, UEncodings;
 
 
 type
+  ///  <summary>
+  ///  Enumeration of types of document that can be displayed by preview dialog
+  ///  box.
+  ///  </summary>
+  TPreviewDocType = (
+    dtPlainText,  // plain text document
+    dtHTML,       // HTML document
+    dtRTF         // rich text format document
+  );
 
-  {
-  TPreviewDlg:
-    Dialog box used to preview text, HTML and Rich text documents.
-  }
+type
+  ///  <summary>
+  ///  Dialog box used to preview text, HTML and Rich text documents.
+  ///  </summary>
   TPreviewDlg = class(TGenericViewDlg, INoPublicConstruct)
     actCopy: TAction;
     actSelectAll: TAction;
@@ -70,49 +79,63 @@ type
     tsHTML: TTabSheet;
     tsRTF: TTabSheet;
     tsText: TTabSheet;
+    ///  <summary>Copies preview text to clipboard.</summary>
     procedure actCopyExecute(Sender: TObject);
+    ///  <summary>Enables / disables Copy action depending or whether copying is
+    ///  supported in current view.</summary>
     procedure actCopyUpdate(Sender: TObject);
+    ///  <summary>Selects all preview text.</summary>
     procedure actSelectAllExecute(Sender: TObject);
+    ///  <summary>Enables / disables Select All action depending on whether
+    /// selection is supported in current view.</summary>
     procedure actSelectAllUpdate(Sender: TObject);
+    ///  <summary>Frees viewer object when form is closed.</summary>
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   strict private
-    fViewer: IInterface;  // Interfaces with viewer frame
-    fDocContent: string;  // Stores content of document we are displaying
-    fDlgTitle: string;    // Dialog box title
+    var
+      ///  <summary>Reference to viewer frame's IInterface.</summary>
+      fViewer: IInterface;
+      ///  <summary>Content of document being displayed.</summary>
+      fDocContent: TEncodedData;
+      ///  <summary>Type (format) of document to be displayed.</summary>
+      fDocType: TPreviewDocType;
+      ///  <summary>Dialog box title.</summary>
+      fDlgTitle: string;
+    ///  <summary>Gets information about required document viewer and tab sheet
+    ///  that contains it.</summary>
+    ///  <param name="Viewer">IInterface [out] Interface to viewer frame.
+    ///  </param>
+    ///  <param name="TabSheet">TTabSheet [out] Tab sheet containing viewer
+    ///  frame.</param>
     procedure GetViewerInfo(out Viewer: IInterface; out TabSheet: TTabSheet);
-      {Gets information about required document viewer and tab sheet that
-      contains it.
-        @param Viewer [out] Interface to viewer frame.
-        @param TabSheet [out] Tab sheet containing viewer frame.
-      }
+    ///  <summary>Checks if current view supports copying to clipboard.
+    ///  </summary>
     function CanCopy: Boolean;
-      {Checks if current view supports copying to clipboard.
-        @return True if copying supported.
-      }
+    ///  <summary>Checks if current view supports text selection.</summary>
     function CanSelectAll: Boolean;
-      {Checks if current view supports text selection.
-        @return True if selection supported.
-      }
+    ///  <summary>Copies selected text to clipboard from current view if viewer
+    ///  supports copying.</summary>
     procedure CopyToClipboard;
-      {Copies selected text to clipboard from current view if view supports
-      copying.
-      }
+    ///  <summary>Selects all text in current view if viewer supports selection.
+    ///  </summary>
     procedure SelectAll;
-      {Selects all text in current view if view supports selection.
-      }
+    ///  <summary>Finds tab sheet that is parent of a given frame.</summary>
+    class function FindParentTabSheet(const Frame: TFrame): TTabSheet;
   strict protected
+    ///  <summary>Loads and displays the document being previewed.</summary>
     procedure InitForm; override;
-      {Loads and displays the document being previewed.
-      }
   public
-    class procedure Execute(AOwner: TComponent; const ADocContent: string;
-      const ADlgTitle: string = '');
-      {Displays a document in the preview dialog.
-        @param AOwner [in] Owning component.
-        @param ADocContent [in] Content of document to be displayed (HTML, RTF
-          or plain text).
-        @param ADlgTitle [in] Title of dialog box. Default is used if ''.
-      }
+    ///  <summary>Displays a document in preview dialog box.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns dialog box.
+    ///  </param>
+    ///  <param name="ADocContent">TEncodedData [in] Content of document to be
+    ///  displayed.</param>
+    ///  <param name="ADocType">TPreviewDocType [in] Type or format of document
+    ///  to be displayed: HTML, RTF or plain text.</param>
+    ///  <param name="ADlgTitle">string [in] Optional dialog box title. If not
+    ///  supplied default title is used.</param>
+    class procedure Execute(AOwner: TComponent; const ADocContent: TEncodedData;
+      const ADocType: TPreviewDocType; const ADlgTitle: string = '');
   end;
 
 
@@ -123,7 +146,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  IntfFrameMgrs, URTFUtils, UHTMLUtils;
+  IntfFrameMgrs, IntfPreview;
 
 
 {$R *.dfm}
@@ -132,43 +155,26 @@ uses
 { TPreviewDlg }
 
 procedure TPreviewDlg.actCopyExecute(Sender: TObject);
-  {Copies preview text to clipboard.
-    @param Sender [in] Not used.
-  }
 begin
   CopyToClipboard;
 end;
 
 procedure TPreviewDlg.actCopyUpdate(Sender: TObject);
-  {Enables / disables Copy action depending or whether copying is supported in
-  current view.
-    @param Sender [in] Not used.
-  }
 begin
   actCopy.Enabled := CanCopy;
 end;
 
 procedure TPreviewDlg.actSelectAllExecute(Sender: TObject);
-  {Selects all preview text.
-    @param Sender [in] Not used.
-  }
 begin
   SelectAll;
 end;
 
 procedure TPreviewDlg.actSelectAllUpdate(Sender: TObject);
-  {Enables / disables Select All action depending on whether selection is
-  supported in current view.
-    @param Sender [in] Not used.
-  }
 begin
   actSelectAll.Enabled := CanSelectAll;
 end;
 
 function TPreviewDlg.CanCopy: Boolean;
-  {Checks if current view supports copying to clipboard.
-    @return True if copying supported.
-  }
 begin
   Result := False;
   if Supports(fViewer, IClipboardMgr) then
@@ -176,9 +182,6 @@ begin
 end;
 
 function TPreviewDlg.CanSelectAll: Boolean;
-  {Checks if current view supports text selection.
-    @return True if selection supported.
-  }
 begin
   Result := False;
   if Supports(fViewer, ISelectionMgr) then
@@ -186,37 +189,39 @@ begin
 end;
 
 procedure TPreviewDlg.CopyToClipboard;
-  {Copies selected text to clipboard from current view if view supports copying.
-  }
 begin
   if Supports(fViewer, IClipboardMgr) then
     (fViewer as IClipboardMgr).CopyToClipboard;
 end;
 
 class procedure TPreviewDlg.Execute(AOwner: TComponent;
-  const ADocContent: string; const ADlgTitle: string = '');
-  {Displays a document in the preview dialog.
-    @param AOwner [in] Owning component.
-    @param ADocContent [in] Content of document to be displayed (HTML, RTF or
-      plain text).
-    @param ADlgTitle [in] Title of dialog box. Default is used if ''.
-  }
+  const ADocContent: TEncodedData; const ADocType: TPreviewDocType;
+  const ADlgTitle: string);
 begin
   with InternalCreate(AOwner) do
     try
       fDlgTitle := ADlgTitle;
-      fDocContent := ADocContent;
+      fDocContent := TEncodedData.Create(ADocContent);
+      fDocType := ADocType;
       ShowModal;
     finally
       Free;
     end;
 end;
 
+class function TPreviewDlg.FindParentTabSheet(const Frame: TFrame): TTabSheet;
+var
+  ParentCtrl: TWinControl;  // moves up tree of parent controls
+begin
+  ParentCtrl := Frame.Parent;
+  while Assigned(ParentCtrl) and not (ParentCtrl is TTabSheet) do
+    ParentCtrl := ParentCtrl.Parent;
+  Assert(Assigned(ParentCtrl),
+    ClassName + '.FindParentTabSheet: Tab sheet not found.');
+  Result := ParentCtrl as TTabSheet;
+end;
+
 procedure TPreviewDlg.FormClose(Sender: TObject; var Action: TCloseAction);
-  {Frees viewer object whether form is closed.
-    @param Sender [in] Not used.
-    @param Action [in] Not used.
-  }
 begin
   inherited;
   fViewer := nil; // required to prevent access violation
@@ -224,38 +229,23 @@ end;
 
 procedure TPreviewDlg.GetViewerInfo(out Viewer: IInterface;
   out TabSheet: TTabSheet);
-  {Gets information about required document viewer and tab sheet that contains
-  it.
-    @param Viewer [out] Interface to viewer frame.
-    @param TabSheet [out] Tab sheet containing viewer frame.
-  }
+var
+  Frame: TFrame;
 begin
-  if URTFUtils.IsValidRTFCode(fDocContent) then
-  begin
-    // RTF document
-    TabSheet := tsRTF;
-    Viewer := frRTF;
-  end
-  else if UHTMLUtils.IsValidHTMLCode(fDocContent) then
-  begin
-    // HTML document
-    TabSheet := tsHTML;
-    Viewer := frHTML;
-  end
-  else
-  begin
-    // Plain text document
-    TabSheet := tsText;
-    Viewer := frText;
+  case fDocType of
+    dtPlainText: Frame := frText;
+    dtHTML: Frame := frHTML;
+    dtRTF: Frame := frRTF;
+    else Frame := nil;
   end;
+  Assert(Assigned(Frame), ClassName + '.GetViewerInfo: No frame assigned');
+  Viewer := Frame as IInterface;
+  TabSheet := FindParentTabSheet(Frame);
 end;
 
 procedure TPreviewDlg.InitForm;
-  {Loads and displays the document being previewed.
-  }
 var
   TabSheet: TTabSheet;  // tab sheet containing preview frame
-  Title: string;        // document title
 begin
   inherited;
   // Display document (select tab, load doc and set submenu on into frame)
@@ -265,16 +255,12 @@ begin
   // update required frame's popup menu and display document in it
   (fViewer as IPreview).SetPopupMenu(mnuPreview);
   // load content into preview and set dialog caption
-  (fViewer as IPreview).Display(fDocContent, Title);
+  (fViewer as IPreview).Display(fDocContent);
   if fDlgTitle <> '' then
-    Caption := fDlgTitle                // caller specified title - use it
-  else if Title <> '' then
-    Caption := Caption + ': ' + Title;  // use title extracted from document
+    Caption := fDlgTitle; // caller specified title - use it
 end;
 
 procedure TPreviewDlg.SelectAll;
-  {Selects all text in current view if view supports selection.
-  }
 begin
   if Supports(fViewer, ISelectionMgr) then
     (fViewer as ISelectionMgr).SelectAll;
