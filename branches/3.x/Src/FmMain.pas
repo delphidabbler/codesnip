@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -78,6 +78,7 @@ type
     actExpandNode: TAction;
     actExpandTree: TAction;
     actExportCode: TAction;
+    actFAQs: TBrowseURL;
     actFindClear: TAction;
     actFindCompiler: TAction;
     actFindText: TAction;
@@ -145,6 +146,7 @@ type
     miExpandNode: TMenuItem;
     miExpandTree: TMenuItem;
     miExportCode: TMenuItem;
+    miFAQs: TMenuItem;
     miFile: TMenuItem;
     miFindClear: TMenuItem;
     miFindCompiler: TMenuItem;
@@ -193,6 +195,7 @@ type
     miSpacer15: TMenuItem;
     miSpacer16: TMenuItem;
     miSpacer17: TMenuItem;
+    miSpacer18: TMenuItem;
     miSubmit: TMenuItem;
     miTestCompile: TMenuItem;
     miTools: TMenuItem;
@@ -1409,6 +1412,7 @@ begin
     // Browse actions have to have URLs set dynamically
     actHomePage.URL := TWebInfo.ProgramHomeURL;
     actWebSite.URL := TWebInfo.DelphiDabblerHomeURL;
+    actFAQs.URL := TWebInfo.FAQsURL;
     // Tree control actions need shortcuts adding dynamically, and state stored
     // in Tag property
     actExpandNode.ShortCut := ShortCut(VK_ADD, [ssCtrl]);

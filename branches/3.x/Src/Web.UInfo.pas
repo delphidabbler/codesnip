@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -109,6 +109,8 @@ type
       without modifying this code}
     const BugTrackerURL = WebsiteURL + '/url/codesnip-bugs';
       {Bug tracker page}
+    const FAQsURL = WebsiteURL + '/url/codesnip-faq';
+      {CodeSnip FAQs page}
     class function NewsFeedURL(const Age: Word): string;
       {Gets the URL of the CodeSnip news feed .
         @param Age [in] Maximum age of included news items in days.

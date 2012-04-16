@@ -246,6 +246,7 @@ inherited MainForm: TMainForm
         inherited tcDisplayStyle: TTabControl
           Width = 183
           Height = 281
+          ExplicitTop = 27
           ExplicitWidth = 183
           ExplicitHeight = 281
           inherited tvSnippets: TTreeView
@@ -295,9 +296,29 @@ inherited MainForm: TMainForm
           inherited tsInfo: TTabSheet
             ExplicitLeft = 4
             ExplicitTop = 24
+            ExplicitWidth = 310
+            ExplicitHeight = 183
+            inherited frmInfo: TInfoFrame
+              inherited pnlBrowser: TPanel
+                inherited wbBrowser: TWebBrowser
+                  ExplicitWidth = 400
+                  ExplicitHeight = 253
+                  ControlData = {
+                    4C0000000A200000EA1200000000000000000000000000000000000000000000
+                    000000004C000000000000000000000001000000E0D057007335CF11AE690800
+                    2B2E126208000000000000004C0000000114020000000000C000000000000046
+                    8000000000000000000000000000000000000000000000000000000000000000
+                    00000000000000000100000000000000000000000000000000000000}
+                end
+              end
+            end
+          end
+          inherited tsCompiler: TTabSheet
+            ExplicitLeft = 4
+            ExplicitTop = 24
             ExplicitWidth = 400
             ExplicitHeight = 253
-            inherited frmInfo: TInfoFrame
+            inherited frmCompCheck: TCompCheckFrame
               Width = 400
               Height = 253
               ExplicitWidth = 400
@@ -310,32 +331,10 @@ inherited MainForm: TMainForm
                 inherited wbBrowser: TWebBrowser
                   Width = 400
                   Height = 253
-                  ExplicitLeft = 1
-                  ExplicitTop = 1
-                  ExplicitWidth = 400
-                  ExplicitHeight = 544
+                  ExplicitWidth = 310
+                  ExplicitHeight = 183
                   ControlData = {
                     4C00000057290000261A00000000000000000000000000000000000000000000
-                    000000004C000000000000000000000001000000E0D057007335CF11AE690800
-                    2B2E126208000000000000004C0000000114020000000000C000000000000046
-                    8000000000000000000000000000000000000000000000000000000000000000
-                    00000000000000000100000000000000000000000000000000000000}
-                end
-              end
-            end
-          end
-          inherited tsCompiler: TTabSheet
-            ExplicitLeft = 4
-            ExplicitTop = 24
-            ExplicitWidth = 310
-            ExplicitHeight = 183
-            inherited frmCompCheck: TCompCheckFrame
-              inherited pnlBrowser: TPanel
-                inherited wbBrowser: TWebBrowser
-                  ExplicitWidth = 408
-                  ExplicitHeight = 237
-                  ControlData = {
-                    4C0000000A200000EA1200000000000000000000000000000000000000000000
                     000000004C000000000000000000000001000000E0D057007335CF11AE690800
                     2B2E126208000000000000004C0000000114020000000000C000000000000046
                     8000000000000000000000000000000000000000000000000000000000000000
@@ -2175,6 +2174,11 @@ inherited MainForm: TMainForm
         'base'
       OnExecute = actNewsExecute
     end
+    object actFAQs: TBrowseURL
+      Category = 'Help'
+      Caption = 'FAQs'
+      Hint = 'FAQ|See CodeSnip'#39's online Frequently Asked Questions'
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -2445,6 +2449,12 @@ inherited MainForm: TMainForm
         ImageIndex = 6
         object miHomePage: TMenuItem
           Action = actHomePage
+        end
+        object miFAQs: TMenuItem
+          Action = actFAQs
+        end
+        object miSpacer18: TMenuItem
+          Caption = '-'
         end
         object miWebSite: TMenuItem
           Action = actWebSite
