@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -243,6 +243,9 @@ type
     miNewDetailsTab: TMenuItem;
     actCloseDetailsTab: TAction;
     miCloseDetailsTab: TMenuItem;
+    actFAQs: TBrowseURL;
+    miFAQs: TMenuItem;
+    miSpacer18: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
@@ -1393,6 +1396,7 @@ begin
     // Browse actions have to have URLs set dynamically
     actHomePage.URL := TWebInfo.ProgramHomeURL;
     actWebSite.URL := TWebInfo.DelphiDabblerHomeURL;
+    actFAQs.URL := TWebInfo.FAQsURL;
     // Tree control actions need shortcuts adding dynamically, and state stored
     // in Tag property
     actExpandNode.ShortCut := ShortCut(VK_ADD, [ssCtrl]);

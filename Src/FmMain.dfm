@@ -290,8 +290,6 @@ inherited MainForm: TMainForm
         inherited frmDetailView: TDetailViewFrame
           Width = 408
           Height = 318
-          ExplicitLeft = 0
-          ExplicitTop = 50
           ExplicitWidth = 408
           ExplicitHeight = 318
           inherited pnlBrowser: TPanel
@@ -2153,6 +2151,11 @@ inherited MainForm: TMainForm
       OnExecute = actCloseDetailsTabExecute
       OnUpdate = actCloseDetailsTabUpdate
     end
+    object actFAQs: TBrowseURL
+      Category = 'Help'
+      Caption = 'FAQs'
+      Hint = 'FAQs|See CodeSnip'#39's online Frequently Asked Questions'
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -2420,6 +2423,12 @@ inherited MainForm: TMainForm
         ImageIndex = 6
         object miHomePage: TMenuItem
           Action = actHomePage
+        end
+        object miFAQs: TMenuItem
+          Action = actFAQs
+        end
+        object miSpacer18: TMenuItem
+          Caption = '-'
         end
         object miWebSite: TMenuItem
           Action = actWebSite
