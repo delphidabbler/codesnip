@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -145,6 +145,12 @@ type
     procedure lblSnippetKindHelpClick(Sender: TObject);
     procedure lblViewCompErrsClick(Sender: TObject);
     procedure pcMainChange(Sender: TObject);
+    ///  <summary>Handles event triggered when user clicks on one of page
+    ///  control tabs. Ensures page control has focus.</summary>
+    ///  <remarks>Without this fix, page control does not always get focus when
+    ///  a tab is clicked.</remarks>
+    procedure pcMainMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   strict private
     fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
@@ -871,6 +877,13 @@ begin
   // We always hide "view errors" link whenever page changes since snippet
   // properties may have changed since page was last accessed
   pnlViewCompErrs.Hide;
+end;
+
+procedure TSnippetsEditorDlg.pcMainMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if htOnItem in pcMain.GetHitTestInfoAt(X, Y) then
+    pcMain.SetFocus;
 end;
 
 procedure TSnippetsEditorDlg.PopulateControls;

@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -70,6 +70,12 @@ type
     ///  <remarks>We do this in case another page needs to update due to changes
     ///  made on current page.</remarks>
     procedure pcMainChanging(Sender: TObject; var AllowChange: Boolean);
+    ///  <summary>Handles event triggered when user clicks on one of page
+    ///  control tabs. Ensures page control has focus.</summary>
+    ///  <remarks>Without this fix, page control does not always get focus when
+    ///  a tab is clicked.</remarks>
+    procedure pcMainMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   strict private
     class var
       ///  <summary>List of registered page frames</summary>
@@ -312,6 +318,13 @@ procedure TPreferencesDlg.pcMainChanging(Sender: TObject;
   var AllowChange: Boolean);
 begin
   GetSelectedPage.Deactivate(fLocalPrefs);
+end;
+
+procedure TPreferencesDlg.pcMainMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if htOnItem in pcMain.GetHitTestInfoAt(X, Y) then
+    pcMain.SetFocus;
 end;
 
 class procedure TPreferencesDlg.RegisterPage(const FrameCls: TPrefsFrameClass);

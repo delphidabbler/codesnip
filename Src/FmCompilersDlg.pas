@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -73,6 +73,12 @@ type
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    ///  <summary>Handles event triggered when user clicks on one of page
+    ///  control tabs. Ensures page control has focus.</summary>
+    ///  <remarks>Without this fix, page control does not always get focus when
+    ///  a tab is clicked.</remarks>
+    procedure pcCompilerMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   strict private
     var
       fCompListMgr: TCompilerListMgr;
@@ -326,6 +332,13 @@ var
 begin
   for Frame in fFrames do
     Proc(Frame);
+end;
+
+procedure TCompilersDlg.pcCompilerMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  if htOnItem in pcCompiler.GetHitTestInfoAt(X, Y) then
+    pcCompiler.SetFocus;
 end;
 
 procedure TCompilersDlg.SelectCompiler;
