@@ -23,6 +23,7 @@ inherited PreferencesDlg: TPreferencesDlg
       TabOrder = 0
       OnChange = pcMainChange
       OnChanging = pcMainChanging
+      OnMouseDown = pcMainMouseDown
     end
   end
   inherited btnOK: TButton

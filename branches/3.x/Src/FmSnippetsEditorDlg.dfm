@@ -23,6 +23,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
+      OnMouseDown = pcMainMouseDown
       object tsCode: TTabSheet
         Caption = 'Code'
         object lblDescription: TLabel
@@ -229,6 +230,10 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsComments: TTabSheet
         Caption = 'Extra Information'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblExtra: TLabel
           Left = 3
           Top = 3
@@ -304,7 +309,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsCompileResults: TTabSheet
         Caption = 'Compile Results'
         ImageIndex = 3
-        ExplicitLeft = 0
         object lblCompilers: TLabel
           Left = 3
           Top = 3

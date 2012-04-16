@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -57,6 +57,8 @@ type
     procedure btnOKClick(Sender: TObject);
     procedure pcMainChange(Sender: TObject);
     procedure pcMainChanging(Sender: TObject; var AllowChange: Boolean);
+    procedure pcMainMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   strict private
     class var fPages: TClassList;   // List of registered page frames
     class var fGC: IInterface;      // Garbage collector for class var
@@ -333,6 +335,21 @@ procedure TPreferencesDlg.pcMainChanging(Sender: TObject;
   }
 begin
   GetSelectedPage.Deactivate(fLocalPrefs);
+end;
+
+procedure TPreferencesDlg.pcMainMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+  {Handles event triggered when user clicks on one of page control tabs. Ensures
+  page control has focus. This does always happen automatically.
+    @param Sender [in] Not used.
+    @param Button [in] Not used.
+    @param Shift [in] Not used.
+    @param X [in] X co-ordinate of mouse in client co-ordinates.
+    @param Y [in] Y co-ordinate of mouse in client co-ordinates.
+  }
+begin
+  if htOnItem in pcMain.GetHitTestInfoAt(X, Y) then
+    pcMain.SetFocus;
 end;
 
 class procedure TPreferencesDlg.RegisterPage(const FrameCls: TPrefsFrameClass);

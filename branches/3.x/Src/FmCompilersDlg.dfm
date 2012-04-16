@@ -2,6 +2,8 @@ inherited CompilersDlg: TCompilersDlg
   Caption = 'Configure Compilers'
   ClientHeight = 362
   ClientWidth = 471
+  ExplicitWidth = 477
+  ExplicitHeight = 388
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -45,12 +47,9 @@ inherited CompilersDlg: TCompilersDlg
       Height = 212
       ActivePage = tsExecFile
       TabOrder = 1
+      OnMouseDown = pcCompilerMouseDown
       object tsExecFile: TTabSheet
         Caption = '&Compiler'
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 136
         object lblCompilerPath: TLabel
           Left = 4
           Top = 4
@@ -96,6 +95,10 @@ inherited CompilersDlg: TCompilersDlg
       object tsSwitches: TTabSheet
         Caption = 'Co&mmand Line'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblExplainSwitches: TLabel
           Left = 160
           Top = 69
