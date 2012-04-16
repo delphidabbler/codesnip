@@ -170,8 +170,9 @@ class function TWebInfo.UsingLocalHost: Boolean;
     @return True if localhost being used, False if not.
   }
 begin
-  // We are using local host if -localhost command line switch provided.
-  Result := FindCmdLineSwitch('localhost', ['-', '\'], True);
+  // We are using local host if -localhost (or /localhost) command line switch
+  // provided.
+  Result := FindCmdLineSwitch('localhost', True);
 end;
 
 class function TWebInfo.WebProxyInfo: TWebProxyInfo;
