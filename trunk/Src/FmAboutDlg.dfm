@@ -30,6 +30,7 @@ inherited AboutDlg: TAboutDlg
       ActivePage = tsPaths
       Align = alTop
       TabOrder = 0
+      OnMouseDown = pcDetailMouseDown
       object tsProgram: TTabSheet
         Caption = 'About The Program'
         ExplicitLeft = 0
@@ -106,10 +107,6 @@ inherited AboutDlg: TAboutDlg
       object tsPaths: TTabSheet
         Caption = 'Paths'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
       end
     end
     object pnlTitle: TPanel

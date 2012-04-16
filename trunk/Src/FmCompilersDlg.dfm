@@ -39,11 +39,12 @@ inherited CompilersDlg: TCompilersDlg
     end
     object pcCompiler: TPageControl
       Left = 127
-      Top = 32
+      Top = 29
       Width = 321
       Height = 212
       ActivePage = tsCompiler
       TabOrder = 1
+      OnMouseDown = pcCompilerMouseDown
       object tsCompiler: TTabSheet
         Caption = 'Compiler'
         inline frmCompiler: TCompilersDlgCompilerFrame
@@ -93,8 +94,8 @@ inherited CompilersDlg: TCompilersDlg
             ExplicitWidth = 69
           end
           inherited lblPath: TLabel
-            Width = 46
-            ExplicitWidth = 46
+            Width = 78
+            ExplicitWidth = 78
           end
         end
       end

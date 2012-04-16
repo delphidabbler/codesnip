@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -113,6 +113,12 @@ type
     procedure btnRegisterClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
+    ///  <summary>Handles event triggered when user clicks on one of page
+    ///  control tabs. Ensures page control has focus.</summary>
+    ///  <remarks>Without this fix, page control does not always get focus when
+    ///  a tab is clicked.</remarks>
+    procedure pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   strict private
     fMainDBPathGp: TPathInfoBox;  // control that displays main database folder
     fUserDBPathGp: TPathInfoBox;  // control that displays user database folder
@@ -476,6 +482,13 @@ begin
   InitTitleFrame;
   InitDatabaseFrame;
   InitProgramFrame;
+end;
+
+procedure TAboutDlg.pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if htOnItem in pcDetail.GetHitTestInfoAt(X, Y) then
+    pcDetail.SetFocus;
 end;
 
 function TAboutDlg.RegistrationHTML: string;
