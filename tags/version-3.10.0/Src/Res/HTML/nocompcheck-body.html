@@ -1,0 +1,85 @@
+<!--
+ * nocompcheck-body.html
+ *
+ * Compiler check pane content that inform that a compiler check is not valid
+ * for a view item.
+ *
+ * Must be hosted within a complete HTML document.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is nocompcheck-body.html
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *    NONE
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+
+
+<h1>
+  No Compiler Check Available
+</h1>
+
+<div class="details">
+
+  <!-- explanatory text -->
+  <div style="float:left;margin-right:1em;">
+    <img src="symbol-information.png" style="width:64px;height:64px;" />
+  </div>
+  <p>
+    Compiler checks are not available for this item.
+  </p>
+  <p>
+    Please select a snippet to check from the list on the left.
+  </p>
+  <!-- end of explanatory text -->
+
+  <!-- options box -->
+  <div class="optionbox" style="clear:all;">
+
+    <!-- link to display About Compiler Checks help -->
+    <div class="option">
+      <a
+        href="help:CompChecks"
+        class="help-link"
+        onmouseover="showHint(vAboutCompChecksHint);"
+        onmouseout="clearHint();"
+      ><img
+        src="help.gif"
+        class="option-img"
+        style="width:16px;height:16px;"
+        title="View About Compiler Checks help"
+      /></a>
+      <a
+        href="help:CompChecks"
+        class="help-link menu-item"
+        onmouseover="showHint(vAboutCompChecksHint);"
+        onmouseout="clearHint();"
+      >About Compiler Checks</a>
+    </div>
+    <!-- end of link -->
+
+  </div>
+  <!-- end of options box -->
+
+</div>
