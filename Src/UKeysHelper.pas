@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -82,9 +82,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Character,
+  SysUtils, StrUtils, Character,
   // Project
-  UConsts, UStrUtils;
+  UConsts;
 
 
 function ExtractShiftKeys(const Shift: TShiftState): TShiftState;
@@ -133,7 +133,7 @@ begin
   if (Key = DecimalSeparator) then
   begin
     // Only allow decimal point if not already entered: can't have more than one
-    if StrContainsStr(DecimalSeparator, Text) then
+    if AnsiContainsStr(Text, DecimalSeparator) then
       Result := False;
   end
   else if not TCharacter.IsDigit(Key) and (Key <> BACKSPACE) then

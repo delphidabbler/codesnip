@@ -88,6 +88,10 @@
 			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="compiler checks tab">
+		<param name="Local" value="HTML\detail_compilerchecks.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="configure compilers dialog">
 		<param name="Local" value="HTML\dlg_configcompilers.htm">
 		</OBJECT>
@@ -120,6 +124,16 @@
 			<param name="Name" value="detail pane">
 			<param name="Local" value="HTML\detail_pane.htm">
 			</OBJECT>
+		<UL>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="compiler checks tab">
+				<param name="Local" value="HTML\detail_compilerchecks.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="information tab">
+				<param name="Local" value="HTML\detail_information.htm">
+				</OBJECT>
+		</UL>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="overview page">
 			<param name="Local" value="HTML\overview_pane.htm">
@@ -174,8 +188,12 @@
 		<param name="Local" value="HTML\menu_help.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="import wizard">
+		<param name="Name" value="import routines dialog">
 		<param name="Local" value="HTML\dlg_import.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="information tab">
+		<param name="Local" value="HTML\detail_information.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="import snippets">
@@ -318,10 +336,6 @@
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="syntax highlighter preferences">
 		<param name="Local" value="HTML\dlg_prefs_hiliter.htm">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="test compile results dialog">
-		<param name="Local" value="HTML\dlg_testcompile.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="test compiling">

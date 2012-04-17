@@ -20,7 +20,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s):
@@ -58,14 +58,19 @@
       It is accessed from the <em>Database | Delete Category</em> menu option.
     </p>
     <p>
-      Select the category to be deleted from the list box. If the selected
-      category is non-empty, i.e. it contains snippets then it can't be deleted
-      and a message wil be displayed to that effect. Once a suitable category is
-      selected simply click the <em>Delete</em> button to delete it.
+      <span class="warning">Warning:</span> Deleting a category that contains
+      snippets also deletes all those snippets from the database. The dialog box
+      will warn you if this is about to happen.
+    </p>
+    <p>
+      Select the category to be deleted from the list box. then click
+      <em>Delete</em> to delete it. If the category contains any snippets a
+      dialog box will be displayed that asks you to confirm you wish to delete
+      the category and all its snippets. Click <em>Yes</em> to confirm.
     </p>
     <p>
       The <em>Delete</em> button will be disabled if you haven't selected a
-      category from the list box or if the category can't be deleted.
+      category from the list box.
     </p>
     <p>
       You may have noticed that some user defined categories do not appear in

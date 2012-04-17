@@ -44,7 +44,7 @@ uses
   // Delphi
   Buttons, StdCtrls, Forms, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericViewDlg, FrBrowserBase, FrRSSNews, UBaseObjects, UExceptions, URSS20,
+  FmHTMLViewDlg, FrBrowserBase, FrRSSNews, UBaseObjects, UExceptions, URSS20,
   UXMLDocumentEx;
 
 
@@ -54,63 +54,69 @@ type
   TNewsDlg:
     Dialog box that displays news items from CodeSnip's RSS news feed.
   }
-  TNewsDlg = class(TGenericViewDlg, INoPublicConstruct)
+  TNewsDlg = class(THTMLViewDlg, INoPublicConstruct)
     btnRSSFeed: TBitBtn;
     frmHTML: TRSSNewsFrame;
     lblDays: TLabel;
     pnlTop: TPanel;
     btnConfig: TButton;
-    ///  <summary>RSS Feed button click handler. Displays RSS feed in default
-    ///  web browser.</summary>
     procedure btnRSSFeedClick(Sender: TObject);
-    ///  <summary>Change button click handler. Displays news prefs page of
-    ///  Preferences dialog box to enable number of days to display in news
-    ///  feed to be changed.</summary>
     procedure btnConfigClick(Sender: TObject);
   strict private
-    ///  <summary>Loads news from RSS feed, converts to HTML and displays in
-    ///  browser control.</summary>
     procedure LoadNews;
-    ///  <summary>Displays brief message Msg as an HTML paragraph in browser
-    ///  control.</summary>
+      {Loads news from RSS feed, converts to HTML and displays in browser
+      control.
+      }
     procedure DisplayMessage(const Msg: string);
-    ///  <summary>Displays a message in browser that informs that content is
-    ///  loading.</summary>
+      {Displays a brief message as an HTML paragraph in browser control.
+        @param Msg [in] Message to display.
+      }
     procedure DisplayLoadingMsg;
-    ///  <summary>Renders RSS news feed in HTML and displays in browser control.
-    ///  </summary>
+      {Displays a message in browser that informs that content is loading.
+      }
     procedure DisplayNews(const RSS: TRSS20);
-    ///  <summary>Displays a message in browser control informing that there are
-    ///  no news items in RSS feed.</summary>
+      {Renders the RSS news feed in HTML and displays in browser control.
+        @param RSS [in] Object that provides access to RSS feed.
+      }
     procedure DisplayNoNewsMsg;
-    ///  <summary>Renders HTML describing exception E and displays it in browser
-    ///  control.</summary>
+      {Displays a message in browser control informing that there are no news
+      items in RSS feed.
+      }
     procedure DisplayErrorMsg(E: ECodeSnip);
-    ///  <summary>Gets and returns interface to XML document containing details
-    ///  of RSS news feed from web.</summary>
+      {Renders HTML describing a trapped exception and displays it in browser
+      control.
+        @param E [in] Exception whose message is to be displayed.
+      }
     function GetRSSDocument: IXMLDocumentEx;
-    ///  <summary>Gets maximum number of days of news to be displayed.</summary>
+      {Gets XML document containing details of RSS news feed from web.
+        @return Interface to required XML document.
+      }
     function GetMaxNewsAge: Integer;
-    ///  <summary>Updates label with current maximum news age.</summary>
+      {Gets maximum number of days of news to be displayed.
+        @return Required number of days.
+      }
     procedure UpdateNewsAgeLbl;
+      {Updates maximum news age label with current value.
+      }
   strict protected
-    ///  <summary>Arranges controls on form.</summary>
-    ///  <remarks>Called from ancestor class.</remarks>
     procedure ArrangeForm; override;
-    ///  <summary>Initialises HTML frame.</summary>
-    ///  <remarks>Called from ancestor class.</remarks>
-    procedure ConfigForm; override;
-    ///  <summary>Initialises form's controls.</summary>
-    ///  <remarks>Called from ancestor class.</remarks>
+      {Arranges controls on form. Called from ancestor class.
+      }
+    procedure InitHTMLFrame; override;
+      {Initialises HTML frame. Called from ancestor class.
+      }
     procedure InitForm; override;
-    ///  <summary>Loads new from RSS feed after form is displayed.</summary>
-    ///  <remarks>Called from ancestor class.</remarks>
+      {Initialises form's controls.
+      }
     procedure AfterShowForm; override;
+      {Override of method called from ancestor class after form is displayed.
+      Loads news from RSS feed.
+      }
   public
-    ///  <summary>Displays dialog box.</summary>
-    ///  <param name="AOwner">TComponent [in] Control that owns dialog box.
-    ///  </param>
     class procedure Execute(AOwner: TComponent);
+      {Displays dialog box.
+        @param AOwner [in] Component that owns this dialog box.
+      }
   end;
 
 
@@ -122,7 +128,7 @@ uses
   SysUtils, ExtActns,
   // Project
   FmPreferencesDlg, FrNewsPrefs, UCtrlArranger, UHTMLDetailUtils, UHTMLUtils,
-  UPreferences, UStrUtils, Web.UInfo, Web.UXMLRequestor;
+  UPreferences, Web.UInfo, Web.UXMLRequestor;
 
 {$R *.dfm}
 
@@ -130,11 +136,16 @@ uses
 { TNewsDlg }
 
 procedure TNewsDlg.AfterShowForm;
+  {Override of method called from ancestor class after form is displayed. Loads
+  news from RSS feed.
+  }
 begin
   LoadNews;
 end;
 
 procedure TNewsDlg.ArrangeForm;
+  {Arranges controls on form. Called from ancestor class.
+  }
 begin
   inherited;
   TCtrlArranger.AlignVCentres(2, [lblDays, btnConfig]);
@@ -156,6 +167,9 @@ begin
 end;
 
 procedure TNewsDlg.btnRSSFeedClick(Sender: TObject);
+  {Displays RSS feed in default web browser.
+    @param Sender [in] Not used.
+  }
 var
   BrowseAction: TBrowseURL; // action that displays RSS feed URL in browser
 begin
@@ -168,21 +182,21 @@ begin
   end;
 end;
 
-procedure TNewsDlg.ConfigForm;
-begin
-  inherited;
-  frmHTML.Initialise;
-end;
-
 procedure TNewsDlg.DisplayErrorMsg(E: ECodeSnip);
+  {Renders HTML describing a trapped exception and displays it in browser
+  control.
+    @param E [in] Exception whose message is to be displayed.
+  }
 resourcestring
   sErrorHeading = 'Error loading news:';  // fixed heading text
 var
   ErrHeadingAttrs: IHTMLAttributes; // HTML attributes of heading
   ErrMessageAttrs: IHTMLAttributes; // HTML attributes of error message
 begin
-  ErrHeadingAttrs := THTMLAttributes.Create('class', 'error-heading');
-  ErrMessageAttrs := THTMLAttributes.Create('class', 'error-message');
+  ErrHeadingAttrs := THTMLAttributes.Create;
+  ErrHeadingAttrs.Add('class', 'error-heading');
+  ErrMessageAttrs := THTMLAttributes.Create;
+  ErrMessageAttrs.Add('class', 'error-message');
   frmHTML.DisplayContent(
     MakeCompoundTag('p', ErrHeadingAttrs, MakeSafeHTMLText(sErrorHeading)) +
     MakeCompoundTag('p', ErrMessageAttrs, MakeSafeHTMLText(E.Message))
@@ -190,6 +204,8 @@ begin
 end;
 
 procedure TNewsDlg.DisplayLoadingMsg;
+  {Displays a message in browser that informs that content is loading.
+  }
 resourcestring
   sLoadingMsg = 'Loading...'; // message text
 begin
@@ -197,30 +213,39 @@ begin
 end;
 
 procedure TNewsDlg.DisplayMessage(const Msg: string);
+  {Displays a brief message as an HTML paragraph in browser control.
+    @param Msg [in] Message to display.
+  }
 var
   HTMLAttrs: IHTMLAttributes; // HTML attributes
 begin
-  HTMLAttrs := THTMLAttributes.Create('class', 'message');
+  HTMLAttrs := THTMLAttributes.Create;
+  HTMLAttrs.Add('class', 'message');
   frmHTML.DisplayContent(
     MakeCompoundTag('p', HTMLAttrs, MakeSafeHTMLText(Msg))
   );
 end;
 
 procedure TNewsDlg.DisplayNews(const RSS: TRSS20);
+  {Renders the RSS news feed in HTML and displays in browser control.
+    @param RSS [in] Object that provides access to RSS feed.
+  }
 
-  ///  Renders the given RSS news item title as HTML. Rendered as a link if item
-  ///  specifies a URL.
   function TitleHTML(const Item: TRSS20Item): string;
+    {Renders RSS news item title as HTML. Rendered as a link if item specifies
+    a URL.
+      @param Item [in] RSS item.
+    }
   resourcestring
     sNoTitle = 'Untitled';  // text used when no title
   var
     Title: string;  // title text
     Link: string;   // item's URL used for link
   begin
-    Title := StrTrim(Item.Title);
+    Title := Trim(Item.Title);
     if Title = '' then
       Title := sNoTitle;
-    Link := StrTrim(Item.Link);
+    Link := Trim(Item.Link);
     if Link = '' then
       Result := MakeSafeHTMLText(Title)
     else
@@ -228,14 +253,16 @@ procedure TNewsDlg.DisplayNews(const RSS: TRSS20);
     Result := MakeCompoundTag('strong', Result);
   end;
 
-  ///  Renders given RSS new item's description as HTML.
   function DescriptionHTML(const Item: TRSS20Item): string;
+    {Renders RSS news item's desciption as HTML.
+      @param Item [in] RSS item.
+    }
   resourcestring
     sNoDescription = 'No description.'; // text used when no description
   var
     Description: string;  // description text
   begin
-    Description := StrTrim(Item.Description);
+    Description := Trim(Item.Description);
     if Description = '' then
       Description := sNoDescription;
     Result := MakeSafeHTMLText(Description);
@@ -254,7 +281,10 @@ begin
       SB.AppendLine(MakeCompoundTag('div', TitleHTML(Item)));
       if Item.PubDateAsText <> '' then
         SB.AppendLine(
-          MakeCompoundTag('div', MakeSafeHTMLText(DateTimeToStr(Item.PubDate)))
+          MakeCompoundTag(
+            'div',
+            MakeSafeHTMLText(DateTimeToStr(Item.PubDate))
+          )
         );
       SB.AppendLine(MakeTag('dt', ttClose));
       SB.AppendLine(MakeCompoundTag('dd', DescriptionHTML(Item)));
@@ -267,6 +297,9 @@ begin
 end;
 
 procedure TNewsDlg.DisplayNoNewsMsg;
+  {Displays a message in browser control informing that there are no news items
+  in RSS feed.
+  }
 resourcestring
   sNoNews = 'There are no news items to display.';  // message text
 begin
@@ -274,6 +307,9 @@ begin
 end;
 
 class procedure TNewsDlg.Execute(AOwner: TComponent);
+  {Displays dialog box.
+    @param AOwner [in] Component that owns this dialog box.
+  }
 begin
   with InternalCreate(AOwner) do
     try
@@ -284,11 +320,17 @@ begin
 end;
 
 function TNewsDlg.GetMaxNewsAge: Integer;
+  {Gets maximum number of days of news to be displayed.
+    @return Required number of days.
+  }
 begin
   Result := Preferences.NewsAge;
 end;
 
 function TNewsDlg.GetRSSDocument: IXMLDocumentEx;
+  {Gets XML document containing details of RSS news feed from web.
+    @return Interface to required XML document.
+  }
 var
   Requestor: TXMLRequestor; // object that makes XML request
 begin
@@ -301,12 +343,23 @@ begin
 end;
 
 procedure TNewsDlg.InitForm;
+  {Initialises form's controls.
+  }
 begin
   inherited;
   lblDays.Caption := '';
 end;
 
+procedure TNewsDlg.InitHTMLFrame;
+  {Initialises HTML frame. Called from ancestor class.
+  }
+begin
+  frmHTML.Initialise;
+end;
+
 procedure TNewsDlg.LoadNews;
+  {Loads news from RSS feed, converts to HTML and displays in browser control.
+  }
 var
   RSSFeed: TRSS20;  // object used to interpret RSS feed XML
 begin

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,8 +44,8 @@ uses
   // Delphi
   Classes, StdCtrls, Controls, Forms, ExtCtrls,
   // Project
-  DB.USnippet, FmGenericOKDlg, FrCheckedTV, FrSelectUserSnippets,
-  FrSelectSnippets, FrSelectSnippetsBase, UBaseObjects;
+  FmGenericOKDlg, FrCheckedTV, FrSelectUserSnippets, FrSelectSnippets,
+  FrSelectSnippetsBase, UBaseObjects, USnippets;
 
 
 type
@@ -60,11 +60,11 @@ type
     edFile: TEdit;
     frmSnippets: TSelectUserSnippetsFrame;
     lblFile: TLabel;
-    lblSnippets: TLabel;
+    lblRoutines: TLabel;
     procedure btnBrowseClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
   strict private
-    procedure SelectSnippet(const Snippet: TSnippet);
+    procedure SelectRoutine(const Snippet: TRoutine);
       {Selects a snippet in the snippets check list.
         @param Snippet [in] Snippet to be selected. If nil, or not user-defined,
           no snippet is selected.
@@ -78,7 +78,7 @@ type
       controls that depend on UI font.
       }
   public
-    class procedure Execute(const AOwner: TComponent; const Snippet: TSnippet);
+    class procedure Execute(const AOwner: TComponent; const Snippet: TRoutine);
       {Displays export dialog box and writes export file if user OKs entries.
         @param AOwner [in] Reference to control that owns the dialog box.
         @param Snippet [in] Reference to a snippet to pre-select in snippets
@@ -95,8 +95,8 @@ uses
   // Delphi
   SysUtils, Dialogs,
   // Project
-  UCodeImportExport, UCtrlArranger, UEncodings, UExceptions, UIOUtils,
-  UMessageBox, UOpenDialogHelper, USaveDialogEx, UStrUtils, UUtils;
+  UCodeImportExport, UCtrlArranger, UExceptions, UMessageBox, UOpenDialogHelper,
+  USaveDialogEx, UUtils;
 
 
 {$R *.dfm}
@@ -108,7 +108,7 @@ procedure TCodeExportDlg.ArrangeForm;
   that depend on UI font.
   }
 begin
-  frmSnippets.Top := TCtrlArranger.BottomOf(lblSnippets, 4);
+  frmSnippets.Top := TCtrlArranger.BottomOf(lblRoutines, 4);
   lblFile.Top := TCtrlArranger.BottomOf(frmSnippets, 8);
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(lblFile, 4), [edFile, btnBrowse]
@@ -151,7 +151,7 @@ procedure TCodeExportDlg.btnOKClick(Sender: TObject);
   }
 resourcestring
   // Error messages
-  sNoSnippets = 'Please select one or more snippets';
+  sNoRoutines = 'Please select one or more snippets';
   sNoFileName = 'Please specify a file name';
   sBadPath = 'The specified file path does not exist';
   sFileExists = 'Please specify another file name';
@@ -160,15 +160,15 @@ resourcestring
 var
   FileName: string;   // name of export file
 begin
-  FileName := StrTrim(edFile.Text);
+  FileName := Trim(edFile.Text);
   // Assume failure
   ModalResult := mrNone;
   try
 
     // Validate entries
     // must have at least one snippet
-    if frmSnippets.SelectedSnippets.Count = 0 then
-      raise EDataEntry.Create(sNoSnippets, frmSnippets);
+    if frmSnippets.SelectedRoutines.Count = 0 then
+      raise EDataEntry.Create(sNoRoutines, frmSnippets);
     // must have a file name
     if FileName = '' then
       raise EDataEntry.Create(sNoFileName, edFile);
@@ -200,41 +200,41 @@ begin
 end;
 
 class procedure TCodeExportDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet);
+  const Snippet: TRoutine);
   {Displays export dialog box and writes export file if user OKs entries.
     @param AOwner [in] Reference to control that owns the dialog box.
-    @param Snippet [in] Reference to a snippet to pre-select in snippets check
+    @param Snippet [in] Reference to a routine to pre-select in snippets check
       list box. If nil or not user-defined then no snippet is pre-selected.
   }
 begin
   with InternalCreate(AOwner) do
     try
-      SelectSnippet(Snippet);
+      SelectRoutine(Snippet);
       ShowModal;
     finally
       Free;
     end;
 end;
 
-procedure TCodeExportDlg.SelectSnippet(const Snippet: TSnippet);
+procedure TCodeExportDlg.SelectRoutine(const Snippet: TRoutine);
   {Selects a snippet in the snippets check list.
     @param Snippet [in] Snippet to be selected. If nil, or not user-defined, no
       snippet is selected.
   }
 var
-  List: TSnippetList; // list containing only the provided snippet
+  List: TRoutineList; // list containing only the provided routine
 begin
   if not Assigned(Snippet) or not Snippet.UserDefined then
     // Snippet is nil or not user-defined: select nothing
-    frmSnippets.SelectedSnippets := nil
+    frmSnippets.SelectedRoutines := nil
   else
   begin
     // Snippet is user-defined. We make a snippet list containing only this
-    // snippet because frmSnippets requires a list of snippets to select.
-    List := TSnippetList.Create;
+    // snippet because frmRoutines requires a list of snippets to select.
+    List := TRoutineList.Create;
     try
       List.Add(Snippet);
-      frmSnippets.SelectedSnippets := List;
+      frmSnippets.SelectedRoutines := List;
     finally
       FreeAndNil(List);
     end;
@@ -245,12 +245,16 @@ procedure TCodeExportDlg.WriteOutputFile;
   {Writes export file.
   }
 var
-  OutData: TEncodedData;  // receives export file content
+  OutStm: TStream;  // stream that receives export file content
 begin
-  OutData := TCodeExporter.ExportSnippets(
-    TUserInfo.CreateNul, frmSnippets.SelectedSnippets
-  );
-  TFileIO.WriteAllBytes(StrTrim(edFile.Text), OutData.Data);
+  OutStm := TFileStream.Create(Trim(edFile.Text), fmCreate);
+  try
+    TCodeExporter.ExportRoutines(
+      TUserInfo.CreateNul, frmSnippets.SelectedRoutines, OutStm
+    );
+  finally
+    FreeAndNil(OutStm);
+  end;
 end;
 
 end.

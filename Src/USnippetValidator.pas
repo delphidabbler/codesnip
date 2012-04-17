@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  DB.USnippet, DB.USnippetKind, UActiveText, UBaseObjects, UStructs;
+  UActiveText, UBaseObjects, USnippets, UStructs;
 
 
 type
@@ -55,7 +55,7 @@ type
       cAllSnippetKinds: TSnippetKinds =   // Set of all possible snippet kinds
         [skFreeform, skRoutine, skConstant, skTypeDef];
   public
-    class function ValidateDependsList(const Snippet: TSnippet;
+    class function ValidateDependsList(const Snippet: TRoutine;
       out ErrorMsg: string): Boolean; overload;
       {Recursively checks dependency list of a snippet for validity.
         @param Snippet [in] Snippet for which dependencies are to be checked.
@@ -93,19 +93,8 @@ type
         @return True if description is valid or False if not.
       }
     class function ValidateName(const Name: string;
-      const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
-      overload;
-      {Validates a snippet's name.
-        @param Name [in] Snippet name to be checked.
-        @param CheckForUniqueness [in] Flag indicating whether a check should
-          be made to see if snippet name is already in user database.
-        @param ErrorMsg [out] Message that describes error. Undefined if True
-          returned.
-        @return True if name is valid or False if not.
-      }
-    class function ValidateName(const Name: string;
       const CheckForUniqueness: Boolean; out ErrorMsg: string;
-      out ErrorSel: TSelection): Boolean; overload;
+      out ErrorSel: TSelection): Boolean;
       {Validates a snippet's name.
         @param Name [in] Snippet name to be checked.
         @param CheckForUniqueness [in] Flag indicating whether a check should
@@ -123,16 +112,8 @@ type
           returned.
         @return True if extra information is valid, False if not.
       }
-    class function Validate(const Snippet: TSnippet; out ErrorMsg: string):
-      Boolean; overload;
-      {Checks a snippet for validity.
-        @param Snippet [in] Snippet to be checked.
-        @param ErrorMsg [out] Message that describes error. Undefined if True
-          returned.
-        @return True if snippet valid or False if not.
-      }
-    class function Validate(const Snippet: TSnippet; out ErrorMsg: string;
-      out ErrorSel: TSelection): Boolean; overload;
+    class function Validate(const Snippet: TRoutine; out ErrorMsg: string;
+      out ErrorSel: TSelection): Boolean;
       {Checks a snippet for validity.
         @param Snippet [in] Snippet to be checked.
         @param ErrorMsg [out] Message that describes error. Undefined if True
@@ -154,28 +135,14 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, StrUtils,
   // Project
-  DB.UMain, UActiveTextValidator, UStrUtils;
+  USnippetKindInfo, UURIEncode;
 
 
 { TSnippetValidator }
 
-class function TSnippetValidator.Validate(const Snippet: TSnippet;
-  out ErrorMsg: string): Boolean;
-  {Checks a snippet for validity.
-    @param Snippet [in] Snippet to be checked.
-    @param ErrorMsg [out] Message that describes error. Undefined if True
-      returned.
-    @return True if snippet valid or False if not.
-  }
-var
-  DummySel: TSelection; // unused parameter to overloaded Validate call
-begin
-  Result := Validate(Snippet, ErrorMsg, DummySel);
-end;
-
-class function TSnippetValidator.Validate(const Snippet: TSnippet;
+class function TSnippetValidator.Validate(const Snippet: TRoutine;
   out ErrorMsg: string; out ErrorSel: TSelection): Boolean;
   {Checks a snippet for validity.
     @param Snippet [in] Snippet to be checked.
@@ -192,7 +159,7 @@ begin
     and ValidateExtra(Snippet.Extra, ErrorMsg);
 end;
 
-class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
+class function TSnippetValidator.ValidateDependsList(const Snippet: TRoutine;
   out ErrorMsg: string): Boolean;
   {Recursively checks dependency list of a snippet for validity.
     @param Snippet [in] Snippet for which dependencies are to be checked.
@@ -202,8 +169,8 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
   }
 
   // ---------------------------------------------------------------------------
-  function DependsListIsCircular(const Snippet: TSnippet;
-    const DependsList: TSnippetList): Boolean;
+  function DependsListIsCircular(const Snippet: TRoutine;
+    const DependsList: TRoutineList): Boolean;
     {Checks if dependency list is circular, i.e. a snippet is referenced in own
     chain of dependencies. Recursive function.
       @param Snippet [in] Snippet to be checked.
@@ -211,7 +178,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
       @return True if dependency list is circular, false if not.
     }
   var
-    RequiredSnippet: TSnippet;  // iterates through DependsList
+    RequiredSnippet: TRoutine;  // iterates through DependsList
   begin
     Result := False;
     for RequiredSnippet in DependsList do
@@ -225,7 +192,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
     end;
   end;
 
-  function DependsListHasKinds(const DependsList: TSnippetList;
+  function DependsListHasKinds(const DependsList: TRoutineList;
     const Kinds: TSnippetKinds): Boolean;
     {Recursively checks if a dependency list contains snippets of specified
     kinds.
@@ -234,7 +201,7 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
       @return True if one or more of specified kinds are found, false if not.
     }
   var
-    RequiredSnippet: TSnippet;  // iterates through depends list
+    RequiredSnippet: TRoutine;  // iterates through depends list
   begin
     Result := False;
     if Kinds = [] then
@@ -266,7 +233,7 @@ begin
   begin
     ErrorMsg := Format(
       sCircular, [
-        TSnippetKindInfoList.Items[Snippet.Kind].DisplayName,
+        TSnippetKindInfoList.Instance[Snippet.Kind].Description,
         Snippet.Name
       ]
     );
@@ -281,7 +248,7 @@ begin
     ErrorMsg := Format(
       sInvalidKind,
       [
-        TSnippetKindInfoList.Items[Snippet.Kind].DisplayName,
+        TSnippetKindInfoList.Instance[Snippet.Kind].Description,
         Snippet.Name
       ]
     );
@@ -299,15 +266,15 @@ class function TSnippetValidator.ValidateDependsList(const SnippetName: string;
     @return True if dependency list is valid or False if not.
   }
 var
-  TempSnippet: TSnippet;  // temporary snippet that is checked for dependencies
+  TempSnippet: TRoutine;  // temporary snippet that is checked for dependencies
 begin
-  TempSnippet := (Database as IDatabaseEdit).CreateTempSnippet(
+  TempSnippet := (Snippets as ISnippetsEdit).CreateTempRoutine(
     SnippetName, Data
   );
   try
     Result := ValidateDependsList(TempSnippet, ErrorMsg);
   finally
-    TempSnippet.Free;
+    FreeAndNil(TempSnippet);
   end;
 end;
 
@@ -328,16 +295,16 @@ const
   ClosingBrace = '}';
 begin
   Result := False;
-  if StrTrim(Desc) = '' then
+  if Trim(Desc) = '' then
   begin
     ErrorMsg := sErrNoDesc;
     ErrorSel := TSelection.Create(0, Length(Desc));
   end
-  else if StrContainsStr(ClosingBrace, Desc) then
+  else if AnsiContainsText(Desc, ClosingBrace) then
   begin
     ErrorMsg := sErrDescHasClosingBrace;
     ErrorSel := TSelection.Create(
-      StrPos(ClosingBrace, Desc) - 1, Length(ClosingBrace)
+      AnsiPos(ClosingBrace, Desc) - 1, Length(ClosingBrace)
     );
   end
   else
@@ -352,43 +319,70 @@ class function TSnippetValidator.ValidateExtra(const Extra: IActiveText;
       returned.
     @return True if extra information is valid, False if not.
   }
-var
-  ErrorInfo: TActiveTextValidator.TErrorInfo; // info about error
-begin
-  Result :=  TActiveTextValidator.Validate(Extra, ErrorInfo);
-  if not Result then
-    ErrorMsg := ErrorInfo.Description;
-end;
 
-class function TSnippetValidator.ValidateName(const Name: string;
-  const CheckForUniqueness: Boolean; out ErrorMsg: string): Boolean;
-  {Validates a snippet's name.
-    @param Name [in] Snippet name to be checked.
-    @param CheckForUniqueness [in] Flag indicating whether a check should be
-      made to see if snippet name is already in user database.
-    @param ErrorMsg [out] Message that describes error. Undefined if True
-      returned.
-    @return True if name is valid or False if not.
-  }
-resourcestring
-  // Error messages
-  sErrNoName = 'A name must be provided';
-  sErrDupName = '"%s" is already in the database. Please choose another name';
-  sErrBadName = '"%s" is not a valid Pascal identifier';
-var
-  TrimmedName: string;  // Name param trimmed of leading trailing spaces
-begin
-  Result := False;
-  TrimmedName := StrTrim(Name);
-  if TrimmedName = '' then
-    ErrorMsg := sErrNoName
-  else if not IsValidIdent(TrimmedName) then
-    ErrorMsg := Format(sErrBadName, [TrimmedName])
-  else if CheckForUniqueness and
-    (Database.Snippets.Find(TrimmedName, True) <> nil) then
-    ErrorMsg := Format(sErrDupName, [TrimmedName])
-  else
+  // ---------------------------------------------------------------------------
+  function ValidateURL(URL: string; out ErrorMsg: string): Boolean;
+    {Validates a-link href URLs.
+      @param URL [in] URL to validate.
+    }
+  const
+    cHTTPProtocol = 'http://';  // http protocol prefix
+    cFileProtocol = 'file://';  // file protocal prefix
+  resourcestring
+    // validation error messages
+    sLinkErr = 'Hyperlink URL "%s" in extra information must use either the '
+      + '"http://" or "file://" protocols';
+    sURLLengthErr = 'Hyperlink URL "%s" in extra information is badly formed';
+  begin
     Result := True;
+    URL := URIDecode(URL);
+    if AnsiStartsText(cHTTPProtocol, URL) then
+    begin
+      // http protocol: check length
+      if Length(URL) < Length(cHTTPProtocol) + 6 then
+      begin
+        Result := False;
+        ErrorMsg := Format(sURLLengthErr, [URL]);
+        Exit;
+      end;
+    end
+    else if AnsiStartsText(cFileProtocol, URL) then
+    begin
+      // file protocol: check length
+      if Length(URL) < Length(cFileProtocol) + 4 then
+      begin
+        Result := False;
+        ErrorMsg := Format(sURLLengthErr, [URL]);
+        Exit;
+      end;
+    end
+    else
+    begin
+      // Error neither file nor http protocols
+      Result := False;
+      ErrorMsg := Format(sLinkErr, [URL]);
+      Exit;
+    end;
+  end;
+  // ---------------------------------------------------------------------------
+
+var
+  Elem: IActiveTextElem;              // each element in active text
+  ActionElem: IActiveTextActionElem;  // references action element
+begin
+  // Scan all active text looking of hyperlinks: check that URL has a
+  // supported protocol and some url text after it
+  Result := True;
+  for Elem in Extra do
+  begin
+    if Supports(Elem, IActiveTextActionElem, ActionElem)
+      and (ActionElem.Kind = ekLink) then
+      if not ValidateURL(ActionElem.Param, ErrorMsg) then
+      begin
+        Result := False;
+        Exit;
+      end;
+  end;
 end;
 
 class function TSnippetValidator.ValidateName(const Name: string;
@@ -403,8 +397,28 @@ class function TSnippetValidator.ValidateName(const Name: string;
     @param ErrorSel [out] Selection that can be used to highlight error.
     @return True if name is valid or False if not.
   }
+resourcestring
+  // Error messages
+  sErrNoName = 'A name must be provided';
+  sErrDupName = '"%s" is already in the database. Please choose another name';
+  sErrBadName = 'Name must begin with ''A''..''Z'', ''a''..''z'' or ''_''';
+  sErrBadIdent = '"%s" is not a valid Pascal identifier';
+var
+  TrimmedName: string;  // Name param trimmed of leading trailing spaces
 begin
-  Result := ValidateName(Name, CheckForUniqueness, ErrorMsg);
+  Result := False;
+  TrimmedName := Trim(Name);
+  if TrimmedName = '' then
+    ErrorMsg := sErrNoName
+  else if not CharInSet(TrimmedName[1], ['A'..'Z', 'a'..'z', '_']) then
+    ErrorMsg := sErrBadName
+  else if not IsValidIdent(TrimmedName) then
+    ErrorMsg := Format(sErrBadIdent, [TrimmedName])
+  else if CheckForUniqueness and
+    (Snippets.Routines.Find(TrimmedName, True) <> nil) then
+    ErrorMsg := Format(sErrDupName, [TrimmedName])
+  else
+    Result := True;
   if not Result then
     ErrorSel := TSelection.Create(0, Length(Name));
 end;
@@ -423,7 +437,7 @@ resourcestring
   sErrNoSource = 'Some source code must be provided';
 begin
   // Source code must be provided
-  Result := StrTrim(Source) <> '';
+  Result := Trim(Source) <> '';
   if not Result then
   begin
     ErrorMsg := sErrNoSource;

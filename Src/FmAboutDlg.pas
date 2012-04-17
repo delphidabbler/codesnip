@@ -43,8 +43,8 @@ uses
   // Delphi
   Forms, ComCtrls, StdCtrls, Controls, ExtCtrls, Classes, Messages,
   // Project
-  Browser.UHTMLEvents, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
-  FrHTMLTpltDlg, UContributors, UCSSBuilder;
+  FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, UCSSBuilder,
+  UHTMLEvents;
 
 
 type
@@ -63,8 +63,7 @@ type
         @return Property value.
       }
     procedure SetPath(const Value: string);
-      {Write accessor for Path property. Stores value in label and updates state
-      of button.
+      {Write accessor for Path property. Stores value in label.
         @param Value [in] New property value.
       }
     procedure BtnClick(Sender: TObject);
@@ -99,7 +98,7 @@ type
     the dialog box content are loaded from resources. Also provides access to
     the program's easter egg.
   }
-  TAboutDlg = class(TGenericViewDlg)
+  TAboutDlg = class(THTMLViewDlg)
     btnRegister: TButton;
     bvlSeparator: TBevel;
     frmDatabase: THTMLTpltDlgFrame;
@@ -113,10 +112,6 @@ type
     procedure btnRegisterClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
-    ///  <summary>Handles event triggered when user clicks on one of page
-    ///  control tabs. Ensures page control has focus.</summary>
-    ///  <remarks>Without this fix, page control does not always get focus when
-    ///  a tab is clicked.</remarks>
     procedure pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   strict private
@@ -130,27 +125,15 @@ type
         @param Sender [in] Not used.
         @param EventInfo [in] Object providing information about the event.
       }
-    function RegistrationHTML: string;
-      {Builds HTML used to display registration information.
-        @return Required HTML.
-      }
-    function ContribListHTML(const ContribClass: TContributorsClass): string;
-      {Builds HTML used to display list of contributors or creates an error
-      message if contributor list is not available.
-        @param ContribClass [in] Type of contributor class to use. This
-          determines names that are displayed.
-        @return Required HTML.
-      }
   strict protected
     procedure ConfigForm; override;
-      {Configures form by creating custom controls and initialising HTML frames.
-      Called from ancestor class.
+      {Configures form by creating custom controls.
       }
     procedure InitForm; override;
-      {Initialises form's controls. Called from ancestor class.
+      {Initialises form's controls.
       }
-    procedure InitHTMLFrames;
-      {Initialises HTML frames to use required template document with
+    procedure InitHTMLFrame; override;
+      {Initialises HTML frame to use required template document with
       placeholders replaced by required values.
       }
     procedure ArrangeForm; override;
@@ -181,11 +164,11 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Graphics, Math, Windows, ShellAPI, IOUtils,
+  SysUtils, Graphics, Math, Windows {for inlining}, ShellAPI,
   // Project
-  FmEasterEgg, FmRegistrationDlg, UAppInfo, UColours, UConsts, UCSSUtils,
-  UCtrlArranger, UFontHelper, UGraphicUtils, UHTMLUtils, UHTMLTemplate,
-  UResourceUtils, UThemesEx;
+  FmEasterEgg, FmRegistrationDlg, UAppInfo, UColours, UConsts, UContributors,
+  UCSSUtils, UCtrlArranger, UFontHelper, UHTMLUtils, UResourceUtils, UThemesEx,
+  UUtils;
 
 
 {
@@ -204,8 +187,6 @@ uses
   <%Copyright%>       copyright info
   <%ResURL%>          url of programs HTML resources
   <%Registered%>      info about whether program is registered
-  <%ContribList%>     list of program contributors
-  <%TesterList%>      list of program testers
 }
 
 
@@ -217,7 +198,7 @@ function ExploreFolder(const Folder: string): Boolean;
     @return True if explorer displayed, False if not.
   }
 begin
-  if TDirectory.Exists(Folder) then
+  if IsDirectory(Folder) then
     Result := ShellExecute(
       0, 'explore', PChar(Folder), nil, nil, SW_SHOWNORMAL
     ) > 32
@@ -262,8 +243,7 @@ begin
 end;
 
 procedure TAboutDlg.ConfigForm;
-  {Configures form by creating custom controls and initialising HTML frames.
-  Called from ancestor class.
+  {Configures form by creating custom controls.
   }
 
   function CreatePathInfoBox(const Caption, Path: string): TPathInfoBox;
@@ -296,48 +276,6 @@ begin
   fUserDBPathGp := CreatePathInfoBox(
     sUserDBPathGpCaption, TAppInfo.UserDataDir
   );
-  // Load content into HTML frames
-  InitHTMLFrames;
-end;
-
-function TAboutDlg.ContribListHTML(const ContribClass: TContributorsClass):
-  string;
-  {Builds HTML used to display list of contributors or creates an error
-  message if contributor list is not available.
-    @param ContribClass [in] Type of contributor class to use. This determines
-      names that are displayed.
-    @return Required HTML.
-  }
-resourcestring
-  // Error string used when contributor file not available
-  sNoContributors       = 'List not available, please update database.';
-var
-  Contributors: TContributors;  // contributors to database
-  Contributor: string;          // name of a contributor
-  DivAttrs: IHTMLAttributes;    // attributes of div tag
-begin
-  Result := '';
-  // Get list of contributors
-  Contributors := ContribClass.Create;
-  try
-    if not Contributors.IsError then
-    begin
-      for Contributor in Contributors do
-        Result := Result
-          + MakeCompoundTag('div', MakeSafeHTMLText(Contributor))
-          + EOL;
-    end
-    else
-    begin
-      // List couldn't be found: display warning message
-      DivAttrs := THTMLAttributes.Create('class', 'warning');
-      Result := MakeCompoundTag(
-        'div', DivAttrs, MakeSafeHTMLText(sNoContributors)
-      );
-    end;
-  finally
-    FreeAndNil(Contributors);
-  end;
 end;
 
 class procedure TAboutDlg.Execute(AOwner: TComponent);
@@ -387,23 +325,17 @@ const
 begin
   // Check for onclick event on icon tag: display easter egg if ctrl key
   // pressed. Such an event is cancelled.
-  if EventInfo.IsEvent(
-      THTMLDocumentEvents2Sink.EventIntf,
-      THTMLDocumentEvents2Sink.DISPID_OnClick
-    )
-    and EventInfo.Args.ctrlKey
-    and EventInfo.ElemHasId(cIconImgId) then
+  if (EventInfo.DispatchId = cDocEventOnClick) and
+    EventInfo.Args.ctrlKey and
+    AnsiSameText(EventInfo.Args.srcElement.id, cIconImgId) then
   begin
     EventInfo.Cancelled := True;
     TEasterEggForm.Execute(Self);
   end;
   // Check for mouse move over icon tag: change cursor to hand if ctrl key
   // pressed to indicate clickable. Event permitted to bubble up.
-  if EventInfo.IsEvent(
-      THTMLDocumentEvents2Sink.EventIntf,
-      THTMLDocumentEvents2Sink.DISPID_OnMouseMove
-    )
-    and EventInfo.ElemHasId(cIconImgId) then
+  if (EventInfo.DispatchId = cDocEventOnMouseMove) and
+    AnsiSameText(EventInfo.Args.srcElement.id, cIconImgId) then
   begin
     if EventInfo.Args.ctrlKey then
       EventInfo.Args.srcElement.style.cursor := 'hand'
@@ -421,101 +353,111 @@ begin
   btnRegister.Visible := not TAppInfo.IsRegistered;
 end;
 
-procedure TAboutDlg.InitHTMLFrames;
-  {Initialises HTML frames to use required template document with placeholders
+procedure TAboutDlg.InitHTMLFrame;
+  {Initialises HTML frame to use required template document with placeholders
   replaced by required values.
   }
+resourcestring
+  // Registration messages
+  sRegisteredMessage    = 'Registered to %0:s.';
+  sUnregisteredMessage  = 'Unregistered copy:';
+  sRegistrationPrompt   = 'Please click the button below to register CodeSnip.';
+  // Error string used when contributor file not available
+  sNoContributors       = 'List not available, please update database.';
 
   // ---------------------------------------------------------------------------
-  procedure InitTitleFrame;
-    {Initialises and loads HTML into title frame.
+  function BuildContribList(const ContribClass: TContributorsClass): string;
+    {Builds HTML used to display list of contributors or creates an error
+    message if contributor list is not available.
+      @param ContribClass [in] Type of contributor class to use. This determines
+        names that are displayed.
+      @return Required HTML.
     }
+  var
+    Contributors: TContributors;  // contributors to database
+    Contributor: string;          // name of a contributor
+    DivAttrs: IHTMLAttributes;    // attributes of div tag
   begin
-    frmTitle.Initialise(
-      'dlg-about-head-tplt.html',
-      procedure(Tplt: THTMLTemplate)
+    Result := '';
+    // Get list of contributors
+    Contributors := ContribClass.Create;
+    try
+      if not Contributors.IsError then
       begin
-        Tplt.ResolvePlaceholderText('Release', TAppInfo.ProgramReleaseInfo);
-        // MakeResourceURL('') provides just URL part before resource name
-        Tplt.ResolvePlaceholderHTML('ResURL', MakeResourceURL(''));
+        for Contributor in Contributors do
+          Result := Result
+            + MakeCompoundTag('div', MakeSafeHTMLText(Contributor))
+            + EOL;
       end
-    );
-    frmTitle.OnHTMLEvent := HTMLEventHandler;
-  end;
-
-  procedure InitProgramFrame;
-    {Initialises and loads HTML into program frame.
-    }
-  begin
-    pcDetail.ActivePage := tsProgram;   // display page to let browser load OK
-    frmProgram.Initialise(
-      'dlg-about-program-tplt.html',
-      procedure(Tplt: THTMLTemplate)
+      else
       begin
-        Tplt.ResolvePlaceholderText('Copyright', TAppInfo.ProgramCopyright);
-        Tplt.ResolvePlaceholderHTML('Registered', RegistrationHTML);
-      end
-    );
-  end;
-
-  procedure InitDatabaseFrame;
-    {Initialises and loads HTML into database frame.
-    }
-  begin
-    pcDetail.ActivePage := tsDatabase;  // display page to let browser load OK
-    frmDatabase.Initialise(
-      'dlg-about-database-tplt.html',
-      procedure(Tplt: THTMLTemplate)
-      begin
-        Tplt.ResolvePlaceholderHTML(
-          'ContribList', ContribListHTML(TCodeContributors)
+        // List couldn't be found: display warning message
+        DivAttrs := THTMLAttributes.Create;
+        DivAttrs.Add('class', 'warning');
+        Result := MakeCompoundTag(
+          'div', DivAttrs, MakeSafeHTMLText(sNoContributors)
         );
-        Tplt.ResolvePlaceholderHTML(
-          'TesterList', ContribListHTML(TTesters)
-        );
-      end
-    );
+      end;
+    finally
+      FreeAndNil(Contributors);
+    end;
   end;
   // ---------------------------------------------------------------------------
 
+var
+  Values: TStringList;        // map of HTML placeholders to actual values
+  SpanAttrs: IHTMLAttributes; // attributes of span tag
 begin
-  InitTitleFrame;
-  InitDatabaseFrame;
-  InitProgramFrame;
+  // Build map of placeholders to actual values
+  // the placeholders include all values for all three templates
+  Values := TStringList.Create;
+  try
+    Values.Values['Release'] := TAppInfo.ProgramReleaseInfo;
+    Values.Values['Copyright'] := TAppInfo.ProgramCopyright;
+    Values.Values['ResURL'] := MakeResourceURL('');  // URL part before res name
+    if TAppInfo.IsRegistered then
+      Values.Values['Registered'] :=
+        Format(sRegisteredMessage, [TAppInfo.RegisteredUser])
+    else
+    begin
+      SpanAttrs := THTMLAttributes.Create;
+      SpanAttrs.Add('class', 'warning');
+      Values.Values['Registered'] :=
+        MakeCompoundTag(
+          'span', SpanAttrs, MakeSafeHTMLText(sUnregisteredMessage)
+        ) +
+        MakeSafeHTMLText(' ' + sRegistrationPrompt);
+    end;
+    Values.Values['ContribList'] := BuildContribList(TCodeContributors);
+    Values.Values['TesterList'] := BuildContribList(TTesters);
+
+    // Initialise the dialog content from HTML templates and replacement values
+    frmTitle.Initialise('dlg-about-head-tplt.html', Values);
+    pcDetail.ActivePage := tsDatabase;  // display page to let browser load OK
+    frmDatabase.Initialise('dlg-about-database-tplt.html', Values);
+    pcDetail.ActivePage := tsProgram;   // display page to let browser load OK
+    frmProgram.Initialise('dlg-about-program-tplt.html', Values);
+
+    // Handle HTML events on title frame
+    frmTitle.OnHTMLEvent := HTMLEventHandler;
+  finally
+    FreeAndNil(Values);
+  end;
 end;
 
 procedure TAboutDlg.pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
+  {Handles event triggered when user clicks on one of page control tabs. Ensures
+  page control has focus. This does always happen automatically.
+    @param Sender [in] Not used.
+    @param Button [in] Not used.
+    @param Shift [in] Not used.
+    @param X [in] X co-ordinate of mouse in client co-ordinates.
+    @param Y [in] Y co-ordinate of mouse in client co-ordinates.
+  }
 begin
   if htOnItem in pcDetail.GetHitTestInfoAt(X, Y) then
     pcDetail.SetFocus;
-end;
-
-function TAboutDlg.RegistrationHTML: string;
-  {Builds HTML used to display registration information.
-    @return Required HTML.
-  }
-resourcestring
-  // Registration messages
-  sRegisteredMessage = 'Registered to %0:s.';
-  sUnregisteredMessage  = 'Unregistered copy:';
-  sRegistrationPrompt = 'Please click the button below to register CodeSnip.';
-var
-  SpanAttrs: IHTMLAttributes; // attributes of span tag
-begin
-  if TAppInfo.IsRegistered then
-    Result := MakeSafeHTMLText(
-      Format(sRegisteredMessage, [TAppInfo.RegisteredUser])
-    )
-  else
-  begin
-    SpanAttrs := THTMLAttributes.Create('class', 'warning');
-    Result :=
-      MakeCompoundTag(
-        'span', SpanAttrs, MakeSafeHTMLText(sUnregisteredMessage)
-      ) +
-      MakeSafeHTMLText(' ' + sRegistrationPrompt);
-  end;
 end;
 
 procedure TAboutDlg.UpdateDetailCSS(Sender: TObject;
@@ -534,23 +476,23 @@ begin
     ContentFont := TFont.Create;
     try
       TFontHelper.SetContentFont(ContentFont, True);
-      AddProperty(TCSS.FontProps(ContentFont));
+      AddProperty(CSSFontProps(ContentFont));
       if ThemeServicesEx.ThemesEnabled then
-        AddProperty(TCSS.BackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
-      AddProperty(UCSSUtils.TCSS.MarginProp(0, 2, 6, 2));
+        AddProperty(CSSBackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
+      AddProperty(UCSSUtils.CSSMarginProp(0, 2, 6, 2));
     finally
       FreeAndNil(ContentFont);
     end;
   end;
   // Put border round scroll box
   with CSSBuilder.AddSelector('.scrollbox') do
-    AddProperty(UCSSUtils.TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
+    AddProperty(UCSSUtils.CSSBorderProp(cssAll, 1, cbsSolid, clBorder));
   // Set colours and font style of contributors and testers headings
   with CSSBuilder.AddSelector('.contrib-head, .tester-head') do
   begin
-    AddProperty(TCSS.BackgroundColorProp(clBtnFace));
-    AddProperty(TCSS.ColorProp(clBtnText));
-    AddProperty(TCSS.FontWeightProp(cfwBold));
+    AddProperty(CSSBackgroundColorProp(clBtnFace));
+    AddProperty(CSSColorProp(clBtnText));
+    AddProperty(CSSFontWeightProp(cfwBold));
   end;
 end;
 
@@ -564,8 +506,8 @@ begin
   // Set body colour, and put border round it
   with CSSBuilder.Selectors['body'] do
   begin
-    AddProperty(TCSS.BackgroundColorProp(clWindow));
-    AddProperty(TCSS.PaddingProp(4));
+    AddProperty(CSSBackgroundColorProp(clWindow));
+    AddProperty(CSSPaddingProp(4));
   end;
 end;
 
@@ -601,7 +543,6 @@ begin
   fPathLbl.Width := Self.Width - 16;
   fPathLbl.Caption := ' ';
   fPathLbl.Transparent := False;
-  fPathLbl.ShowHint := True;
   // Create and setup view button
   fViewBtn := TButton.Create(Self);
   fViewBtn.Parent := Self;
@@ -658,39 +599,11 @@ begin
 end;
 
 procedure TPathInfoBox.SetPath(const Value: string);
-  {Write accessor for Path property. Stores value in label and updates state
-  of button.
+  {Write accessor for Path property. Stores value in label.
     @param Value [in] New property value.
   }
-resourcestring
-  // hints used when path doesn't exist
-  sShortPathDoesNotExist = 'Path does not exist';
-  sLongPathDoesNotExist = 'Path "%s"' + EOL + 'does not exist';
-var
-  TextW: Integer; // width of full path name in label in pixels
 begin
   fPathLbl.Caption := Value;
-  TextW := StringExtent(Value, fPathLbl.Font).cx;
-  if TDirectory.Exists(Value) then
-  begin
-    if TextW > fPathLbl.Width then
-      // path will contain ellipsis in label: display full path as hint
-      fPathLbl.Hint := Value + '|'  // pipe char makes this short (pop-up) hint
-    else
-      // path fully displayed in label: no hint
-      fPathLbl.Hint := '';
-    fViewBtn.Enabled := True;
-  end
-  else
-  begin
-    if TextW > fPathLbl.Width then
-      // path will contain ellipsis: display full path with message as hint
-      fPathLbl.Hint := Format(sLongPathDoesNotExist, [Value]) + '|'
-    else
-      // path fully displayed in label: don't include full path in hint
-      fPathLbl.Hint := sShortPathDoesNotExist;
-    fViewBtn.Enabled :=  False;
-  end;
 end;
 
 end.

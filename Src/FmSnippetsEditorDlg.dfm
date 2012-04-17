@@ -230,6 +230,10 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsComments: TTabSheet
         Caption = 'Extra Information'
         ImageIndex = 2
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblExtra: TLabel
           Left = 3
           Top = 3

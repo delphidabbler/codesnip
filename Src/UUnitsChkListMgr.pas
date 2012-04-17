@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -57,7 +57,7 @@ type
     checked units.
   }
   TUnitsChkListMgr = class(TObject)
-  strict private
+  private
     fCLB: TCheckListBox;    // Check list box being managed
     procedure InitStandardUnits;
       {Initialises unit list with standard units that are always available.

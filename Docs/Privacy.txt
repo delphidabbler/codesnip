@@ -11,12 +11,12 @@ Offline Privacy
 CodeSnip stores some personal information in two configuration files:
 
 
-Common.config
+Common.ini
 --------------------------------------------------------------------------------
 
-Common.config is located in the %ProgramData%\DelphiDabbler\CodeSnip.4 folder.
+Common.ini is located in the %ProgramData%\DelphiDabbler\CodeSnip folder.
 
-The data that is stored in Common.config is:
+The data that is stored in Common.ini is:
 
     * A unique 32 digit hexadecimal key based on attributes of your computer.
     * A 32 digit hexadecimal registration key (registered programs only).
@@ -26,10 +26,10 @@ The data that is used to create the hexidecimal keys cannot be recovered from
 the keys.
 
 
-User.config
+User.3.ini
 --------------------------------------------------------------------------------
 
-User.config is found in the current user's %AppData%\DelphiDabbler\CodeSnip.4
+User.3.ini is found in the current user's %AppData%\DelphiDabbler\CodeSnip
 folder.
 
 The file stores several user-specific application data settings such as your
@@ -45,9 +45,9 @@ preferences. The only personal information is as follows:
       internet using a proxy server. The information is used only to access the
       proxy. Passwords and encrypted.
 
-If you have upgraded from CodeSnip v2 or v3 there may also be a files named
-User.ini and / or User.3.ini. These contain pretty much the same information as
-User.config. These older files are ignored by CodeSnip v4.
+If you have upgraded from CodeSnip v2 there may also be a file named User.ini.
+This contains pretty much the same information as User.3.ini. The file is
+ignored by CodeSnip v3.
 
 
 Spyware
@@ -123,7 +123,7 @@ The registration data is recorded in a database on the DelphiDabbler web server.
 The data is only used to keep track of the number of people using the different
 versions of the program and what operating systems are being used. The
 registration web service returns a registration code to the program. CodeSnip
-records this code, with the user name, in Common.config.
+records this code, with the user name, in Common.ini.
 
 
 Submitting code to the main database

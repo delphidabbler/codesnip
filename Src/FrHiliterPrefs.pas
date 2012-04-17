@@ -45,7 +45,7 @@ uses
   StdCtrls, Forms, Controls, Classes, Menus, Buttons,
   // Project
   FrPrefsBase, FrRTFShowCase, Hiliter.UGlobals, UColorBoxEx, UColorDialogEx,
-  UConsts, UEncodings, UPreferences, URTFUtils;
+  UConsts, UEncodings, UPreferences;
 
 
 type
@@ -120,7 +120,7 @@ type
     procedure UpdatePreview;
       {Updates preview of highlighting of current highlighter element.
       }
-    function GenerateRTF: TRTF;
+    function GenerateRTF: ASCIIString;
       {Generates RTF of example of current highlighter element.
         @return Required RTF code.
       }
@@ -169,7 +169,7 @@ uses
   SysUtils, ExtCtrls, Windows, Graphics, Dialogs,
   // Project
   FmPreferencesDlg, Hiliter.UAttrs, IntfCommon, UCtrlArranger, UFontHelper,
-  UIStringList, UMessageBox, URTFBuilder, UUtils;
+  UMessageBox, URTFBuilder, URTFUtils, UUtils;
 
 
 {$R *.dfm}
@@ -474,43 +474,48 @@ begin
   Result := sDisplayName;
 end;
 
-function THiliterPrefsFrame.GenerateRTF: TRTF;
+function THiliterPrefsFrame.GenerateRTF: ASCIIString;
   {Generates RTF of example of current highlighter element.
     @return Required RTF code.
   }
 var
-  RTFBuilder: TRTFBuilder;  // object used to create and render RTFBuilder
-  EgLines: IStringList;     // list of lines in the example
-  EgLine: string;           // each line of example
+  RTF: TRTFBuilder;     // object used to create and render RTF
+  EgLines: TStringList; // list of lines in the example
+  LineIdx: Integer;     // loops thru lines of example
 begin
-  // Create builder object to create RTFBuilder document
-  RTFBuilder := TRTFBuilder.Create(0); // use default code page
+  // Create builder object to create RTF document
+  RTF := TRTFBuilder.Create;
   try
     // Set up font and colour tables
-    RTFBuilder.DefaultFontIdx := RTFBuilder.FontTable.Add(
+    RTF.DefaultFontIdx := RTF.FontTable.Add(
       fAttrs.FontName, rgfModern, DEFAULT_CHARSET
     );
-    RTFBuilder.ColourTable.Add(CurrentElement.ForeColor);
+    RTF.ColourTable.Add(CurrentElement.ForeColor);
 
     // Set character formating
-    RTFBuilder.SetFont(fAttrs.FontName);
-    RTFBuilder.SetFontSize(fAttrs.FontSize);
-    RTFBuilder.SetColour(CurrentElement.ForeColor);
-    RTFBuilder.SetFontStyle(CurrentElement.FontStyle);
+    RTF.SetFont(fAttrs.FontName);
+    RTF.SetFontSize(fAttrs.FontSize);
+    RTF.SetColour(CurrentElement.ForeColor);
+    RTF.SetFontStyle(CurrentElement.FontStyle);
 
     // Write out each line of example
-    EgLines := TIStringList.Create(cElementEgs[CurrentElementId], LF, False);
-    for EgLine in EgLines do
-    begin
-      RTFBuilder.AddText(EgLine);
-      RTFBuilder.EndPara;
+    EgLines := TStringList.Create;
+    try
+      ExplodeStr(cElementEgs[CurrentElementId], LF, EgLines, False);
+      for LineIdx := 0 to Pred(EgLines.Count) do
+      begin
+        RTF.AddText(EgLines[LineIdx]);
+        RTF.EndPara;
+      end;
+
+      // Create RTF source
+      Result := RTF.AsString;
+
+    finally
+      FreeAndNil(EgLines);
     end;
-
-    // Create RTFBuilder source
-    Result := RTFBuilder.Render;
-
   finally
-    RTFBuilder.Free;
+    FreeAndNil(RTF);
   end;
 end;
 
@@ -610,7 +615,7 @@ procedure THiliterPrefsFrame.UpdatePreview;
   {Updates preview of highlighting of current highlighter element.
   }
 begin
-  TRichEditHelper.Load(frmExample.RichEdit, GenerateRTF);
+  RTFLoadFromString(frmExample.RichEdit, GenerateRTF);
 end;
 
 initialization

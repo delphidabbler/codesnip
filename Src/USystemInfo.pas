@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -77,7 +77,7 @@ type
     causing and assertion failure when called.
   }
   TOSInfo = class(TPJOSInfo)
-  strict private
+  private
     class function CheckForKernelFn(const FnName: string): Boolean;
       {Checks if a specified function exists in OSs kernel.
         @param FnName [in] Name of required function.

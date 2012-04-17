@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -58,7 +58,7 @@ type
   }
   TRTFShowCaseFrame = class(TFrame)
     reView: TRichEdit;
-  strict private
+  private
     fShowCase: TShowCaseCtrl;
       {Transparent "show case" control placed in front of rich edit control}
     function GetRichEdit: TRichEdit;

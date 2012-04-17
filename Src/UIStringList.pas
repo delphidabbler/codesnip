@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -48,6 +48,24 @@ uses
 
 
 type
+
+  {
+  IStringListEnum:
+    Enumerator for IStringList objects.
+  }
+  IStringListEnum = interface(IInterface)
+    ['{EA5F537F-3FEE-46ED-9569-97178446AC07}']
+    function GetCurrent: string;
+      {Gets current string in enumeration.
+        @return Current string.
+      }
+    function MoveNext: Boolean;
+      {Moves to next item in enumeration.
+        @return True if there is a next item, False if enumeration completed.
+      }
+    property Current: string read GetCurrent;
+      {Current item in enumeration}
+  end;
 
   {
   IStringList:
@@ -141,9 +159,9 @@ type
           case insensitive searching is required.
       }
     property CaseSensitive: Boolean
-      read GetCaseSensitive write SetCaseSensitive; // default False;
+      read GetCaseSensitive write SetCaseSensitive; // default False
       {Determines whether searching is case sensitive or case insensitive}
-    function GetEnumerator: TStringsEnumerator;
+    function GetEnumerator: IStringListEnum;
       {Creates an enumerator for the string list.
         @return Enumerator instance.
       }
@@ -165,10 +183,6 @@ type
         @param Idx [in] Index to check.
         @return True if index is valid and False if invalid.
       }
-    function ToArray: TArray<string>;
-      {Copies strings from string list into an array of strings.
-        @return Array of strings.
-      }
   end;
 
   {
@@ -180,9 +194,37 @@ type
     IStringList, IAssignable, IClonable
   )
   strict private
-    var
-      fStrings: TStringList;
-        {Stores string list}
+    fStrings: TStringList;
+      {Stores string list}
+    type
+      {
+      TEnumerator:
+        Implements enumerator for IStringList.
+      }
+      TEnumerator = class(TInterfacedObject, IStringListEnum)
+      private
+        fStrings: IStringList;
+          {Reference to object being enumerated}
+        fIndex: Integer;
+          {Index of current item in enumeration}
+      public
+        constructor Create(const Strings: IStringList);
+          {Class constructor. Sets up and initialises enumeration.
+            @param Strings [in] Reference to object to be enumerated.
+          }
+        { IStringListEnum methods }
+        function GetCurrent: string;
+          {Gets current string in enumeration.
+            @return Current string.
+          }
+        function MoveNext: Boolean;
+          {Moves to next item in enumeration.
+            @return True if there is a next item, false if enumeration
+              completed.
+          }
+        property Current: string read GetCurrent;
+          {Current item in enumeration}
+      end;
   protected
     { IStringList methods }
     function Add(const Str: string): Integer; overload;
@@ -267,7 +309,7 @@ type
         @param Flag [in] True if case sensitive searching is required, False if
           case insensitive searching is required.
       }
-    function GetEnumerator: TStringsEnumerator;
+    function GetEnumerator: IStringListEnum;
       {Creates an enumerator for the string list.
         @return Enumerator instance.
       }
@@ -288,10 +330,6 @@ type
       can be used as an index into the Items[] property without error.
         @param Idx [in] Index to check.
         @return True if index is valid and False if invalid.
-      }
-    function ToArray: TArray<string>;
-      {Copies strings from string list into an array of strings.
-        @return Array of strings.
       }
     { IAssignable methods }
     procedure Assign(const Src: IInterface);
@@ -350,7 +388,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UExceptions, UStrUtils;
+  UExceptions, UUtils;
 
 
 { TIStringList }
@@ -400,11 +438,11 @@ begin
   // Explode string an store in string list
   SL := TStringList.Create;
   try
-    StrExplode(Str, Delim, SL, AllowEmpty, Trim);
+    ExplodeStr(Str, Delim, SL, AllowEmpty, Trim);
     // Add strings to this list
     Add(SL);
   finally
-    SL.Free;
+    FreeAndNil(SL);
   end;
 end;
 
@@ -553,7 +591,7 @@ destructor TIStringList.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  fStrings.Free;
+  FreeAndNil(fStrings);
   inherited;
 end;
 
@@ -565,12 +603,12 @@ begin
   Result := fStrings.CaseSensitive;
 end;
 
-function TIStringList.GetEnumerator: TStringsEnumerator;
+function TIStringList.GetEnumerator: IStringListEnum;
   {Creates an enumerator for the string list.
     @return Enumerator instance.
   }
 begin
-  Result := fStrings.GetEnumerator;
+  Result := TEnumerator.Create(Self);
 end;
 
 function TIStringList.GetItem(const Idx: Integer): string;
@@ -591,7 +629,7 @@ function TIStringList.GetText(const Glue: string;
     @return Required text string.
   }
 begin
-  Result := StrJoin(fStrings, Glue, AllowEmpty);
+  Result := JoinStr(fStrings, Glue, AllowEmpty);
 end;
 
 function TIStringList.IndexOf(const Str: string): Integer;
@@ -646,16 +684,34 @@ begin
   Add(Text, Delim, AllowEmpty, Trim);
 end;
 
-function TIStringList.ToArray: TArray<string>;
-  {Copies strings from string list into an array of strings.
-    @return Array of strings.
+{ TIStringList.TEnumerator }
+
+constructor TIStringList.TEnumerator.Create(const Strings: IStringList);
+  {Class constructor. Sets up and initialises enumeration.
+    @param Strings [in] Reference to object to be enumerated.
   }
-var
-  Idx: Integer; // loops through all strings
 begin
-  SetLength(Result, Count);
-  for Idx := 0 to Pred(Count) do
-    Result[Idx] := GetItem(Idx);
+  inherited Create;
+  fIndex := -1;
+  fStrings := Strings;
+end;
+
+function TIStringList.TEnumerator.GetCurrent: string;
+  {Gets current string in enumeration.
+    @return Current string.
+  }
+begin
+  Result := fStrings[fIndex];
+end;
+
+function TIStringList.TEnumerator.MoveNext: Boolean;
+  {Moves to next item in enumeration.
+    @return True if there is a next item, false if enumeration completed.
+  }
+begin
+  Result := fIndex < Pred(fStrings.Count);
+  if Result then
+    Inc(fIndex);
 end;
 
 end.

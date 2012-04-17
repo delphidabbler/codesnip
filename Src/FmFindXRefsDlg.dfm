@@ -18,12 +18,12 @@ inherited FindXRefsDlg: TFindXRefsDlg
       Height = 13
       Caption = 'Find cross references for '
     end
-    object lblSnippetName: TLabel
+    object lblRoutineName: TLabel
       Left = 119
       Top = 0
-      Width = 74
+      Width = 75
       Height = 13
-      Caption = 'lblSnippetName'
+      Caption = 'lblRoutineName'
     end
     object chkRequired: TCheckBox
       Left = 0
@@ -43,7 +43,7 @@ inherited FindXRefsDlg: TFindXRefsDlg
       TabOrder = 2
       OnClick = SearchCheckClick
     end
-    object chkIncludeSnippet: TCheckBox
+    object chkIncludeRoutine: TCheckBox
       Left = 0
       Top = 126
       Width = 305

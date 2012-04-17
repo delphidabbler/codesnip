@@ -33,7 +33,6 @@
 			</DelphiCompile>
 			<DCCReference Include="3rdParty\GIFImage.pas"/>
 			<DCCReference Include="3rdParty\PJMD5.pas"/>
-			<DCCReference Include="3rdParty\PJShellFolders.pas"/>
 			<DCCReference Include="3rdParty\PJStreamWrapper.pas"/>
 			<DCCReference Include="3rdParty\PJSysInfo.pas"/>
 			<DCCReference Include="3rdParty\PJVersionInfo.pas"/>
@@ -44,7 +43,6 @@
 			<DCCReference Include="Browser.UControlHelper.pas"/>
 			<DCCReference Include="Browser.UController.pas"/>
 			<DCCReference Include="Browser.UHighlighter.pas"/>
-			<DCCReference Include="Browser.UHTMLEvents.pas"/>
 			<DCCReference Include="Browser.UIOMgr.pas"/>
 			<DCCReference Include="Browser.UNulUIHandler.pas"/>
 			<DCCReference Include="Browser.UUIMgr.pas"/>
@@ -56,16 +54,6 @@
 			<DCCReference Include="Compilers.UFreePascal.pas"/>
 			<DCCReference Include="Compilers.UGlobals.pas"/>
 			<DCCReference Include="Compilers.URunner.pas"/>
-			<DCCReference Include="Compilers.USearchDirs.pas"/>
-			<DCCReference Include="DB.UCategory.pas"/>
-			<DCCReference Include="DB.UDatabaseIO.pas"/>
-			<DCCReference Include="DB.UMain.pas"/>
-			<DCCReference Include="DB.USnippet.pas"/>
-			<DCCReference Include="DB.USnippetKind.pas"/>
-			<DCCReference Include="DBIO.UFileIOIntf.pas"/>
-			<DCCReference Include="DBIO.UIniDataReader.pas"/>
-			<DCCReference Include="DBIO.UNulDataReader.pas"/>
-			<DCCReference Include="DBIO.UXMLDataIO.pas"/>
 			<DCCReference Include="FmAboutDlg.pas">
 				<Form>AboutDlg</Form>
 			</DCCReference>
@@ -84,9 +72,6 @@
 			<DCCReference Include="FmCodeExportDlg.pas">
 				<Form>CodeExportDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmCodeImportDlg.pas">
-				<Form>CodeImportDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmCodeSubmitDlg.pas">
 				<Form>CodeSubmitDlg</Form>
 			</DCCReference>
@@ -96,28 +81,6 @@
 			<DCCReference Include="FmCompilersDlg.pas">
 				<Form>CompilersDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmCompilersDlg.FrBase.pas">
-				<Form>CompilersDlgBaseFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
-			<DCCReference Include="FmCompilersDlg.FrCompiler.pas">
-				<Form>CompilersDlgCompilerFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
-			<DCCReference Include="FmCompilersDlg.FrLog.pas">
-				<Form>CompilersDlgLogFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
-			<DCCReference Include="FmCompilersDlg.FrSearchDirs.pas">
-				<Form>CompilersDlgSearchDirsFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
-			<DCCReference Include="FmCompilersDlg.FrSwitches.pas">
-				<Form>CompilersDlgSwitchesFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
-			<DCCReference Include="FmCompilersDlg.UBannerMgr.pas"/>
-			<DCCReference Include="FmCompilersDlg.UCompilerListMgr.pas"/>
 			<DCCReference Include="FmDeleteCategoryDlg.pas">
 				<Form>DeleteCategoryDlg</Form>
 			</DCCReference>
@@ -154,6 +117,9 @@
 			<DCCReference Include="FmHelpAware.pas">
 				<Form>HelpAwareForm</Form>
 			</DCCReference>
+			<DCCReference Include="FmHTMLViewDlg.pas">
+				<Form>HTMLViewDlg</Form>
+			</DCCReference>
 			<DCCReference Include="FmMain.pas">
 				<Form>MainForm</Form>
 			</DCCReference>
@@ -187,9 +153,6 @@
 			<DCCReference Include="FmSplash.pas">
 				<Form>SplashForm</Form>
 			</DCCReference>
-			<DCCReference Include="FmTestCompileDlg.pas">
-				<Form>TestCompileDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmTrappedBugReportDlg.pas">
 				<Form>TrappedBugReportDlg</Form>
 			</DCCReference>
@@ -222,6 +185,10 @@
 			</DCCReference>
 			<DCCReference Include="FrCodeGenPrefs.pas">
 				<Form>CodeGenPrefsFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
+			<DCCReference Include="FrCompCheck.pas">
+				<Form>CompCheckFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="FrDetail.pas">
@@ -258,6 +225,10 @@
 			</DCCReference>
 			<DCCReference Include="FrHTMLTpltDlg.pas">
 				<Form>HTMLTpltDlgFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
+			<DCCReference Include="FrInfo.pas">
+				<Form>InfoFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
 			<DCCReference Include="FrMemoPreview.pas">
@@ -337,11 +308,10 @@
 			<DCCReference Include="UActionFactory.pas"/>
 			<DCCReference Include="UActiveText.pas"/>
 			<DCCReference Include="UActiveTextHTML.pas"/>
-			<DCCReference Include="UActiveTextValidator.pas"/>
+			<DCCReference Include="UAlphabet.pas"/>
 			<DCCReference Include="UAnchors.pas"/>
 			<DCCReference Include="UAppInfo.pas"/>
 			<DCCReference Include="UBaseObjects.pas"/>
-			<DCCReference Include="UBrowseForFolderDlg.pas"/>
 			<DCCReference Include="UBrowseProtocol.pas"/>
 			<DCCReference Include="UCategoryAction.pas"/>
 			<DCCReference Include="UCategoryListAdapter.pas"/>
@@ -357,6 +327,7 @@
 			<DCCReference Include="UComparers.pas"/>
 			<DCCReference Include="UCompileMgr.pas"/>
 			<DCCReference Include="UCompileResultsLBMgr.pas"/>
+			<DCCReference Include="UCompLogAction.pas"/>
 			<DCCReference Include="UCompResHTML.pas"/>
 			<DCCReference Include="UConsoleApp.pas"/>
 			<DCCReference Include="UConsts.pas"/>
@@ -381,7 +352,7 @@
 			<DCCReference Include="UDlgHelper.pas"/>
 			<DCCReference Include="UDOSDateTime.pas"/>
 			<DCCReference Include="UDropDownButtons.pas"/>
-			<DCCReference Include="UEditSnippetAction.pas"/>
+			<DCCReference Include="UEditRoutineAction.pas"/>
 			<DCCReference Include="UEmailHelper.pas"/>
 			<DCCReference Include="UEncodings.pas"/>
 			<DCCReference Include="UEncryptor.pas"/>
@@ -392,6 +363,7 @@
 			<DCCReference Include="UFolderBackup.pas"/>
 			<DCCReference Include="UFontHelper.pas"/>
 			<DCCReference Include="UFormAligner.pas"/>
+			<DCCReference Include="UGC.pas"/>
 			<DCCReference Include="UGIFImageList.pas"/>
 			<DCCReference Include="UGraphicUtils.pas"/>
 			<DCCReference Include="UGroups.pas"/>
@@ -404,7 +376,8 @@
 			<DCCReference Include="UHistoryMenus.pas"/>
 			<DCCReference Include="UHTMLBuilder.pas"/>
 			<DCCReference Include="UHTMLDetailUtils.pas"/>
-			<DCCReference Include="UHTMLDOMHelper.pas"/>
+			<DCCReference Include="UHTMLDocHelper.pas"/>
+			<DCCReference Include="UHTMLEvents.pas"/>
 			<DCCReference Include="UHTMLHelp.pas"/>
 			<DCCReference Include="UHTMLHelpMgr.pas"/>
 			<DCCReference Include="UHTMLTemplate.pas"/>
@@ -412,15 +385,13 @@
 			<DCCReference Include="UHTTPProtocol.pas"/>
 			<DCCReference Include="UImageTags.pas"/>
 			<DCCReference Include="UIniDataLoader.pas"/>
-			<DCCReference Include="UInitialLetter.pas"/>
-			<DCCReference Include="UIOUtils.pas"/>
+			<DCCReference Include="UIniDataReader.pas"/>
 			<DCCReference Include="UIStringList.pas"/>
 			<DCCReference Include="UJavaScriptUtils.pas"/>
 			<DCCReference Include="UKeysHelper.pas"/>
 			<DCCReference Include="ULEDImageList.pas"/>
 			<DCCReference Include="ULinkAction.pas"/>
 			<DCCReference Include="ULocales.pas"/>
-			<DCCReference Include="UMainDBFileReader.pas"/>
 			<DCCReference Include="UMainDisplayMgr.pas"/>
 			<DCCReference Include="UMarquee.pas"/>
 			<DCCReference Include="UMeasurement.pas"/>
@@ -432,6 +403,7 @@
 			<DCCReference Include="UMessageWindow.pas"/>
 			<DCCReference Include="UMultiCastEvents.pas"/>
 			<DCCReference Include="UNotifier.pas"/>
+			<DCCReference Include="UNulDataReader.pas"/>
 			<DCCReference Include="UNulDropTarget.pas"/>
 			<DCCReference Include="UNulFormAligner.pas"/>
 			<DCCReference Include="UOleClientSite.pas"/>
@@ -454,36 +426,40 @@
 			<DCCReference Include="UReservedCategories.pas"/>
 			<DCCReference Include="UResourceUtils.pas"/>
 			<DCCReference Include="URFC2822Date.pas"/>
+			<DCCReference Include="URoutineAction.pas"/>
+			<DCCReference Include="URoutineCreditsParser.pas"/>
+			<DCCReference Include="URoutineDoc.pas"/>
+			<DCCReference Include="URoutineExtraHelper.pas"/>
+			<DCCReference Include="URoutineHTML.pas"/>
 			<DCCReference Include="URSS20.pas"/>
 			<DCCReference Include="URTFBuilder.pas"/>
-			<DCCReference Include="URTFSnippetDoc.pas"/>
+			<DCCReference Include="URTFMerger.pas"/>
+			<DCCReference Include="URTFRoutineDoc.pas"/>
 			<DCCReference Include="URTFUtils.pas"/>
 			<DCCReference Include="USaveDialogEx.pas"/>
-			<DCCReference Include="USaveSnippetMgr.pas"/>
 			<DCCReference Include="USaveSourceDlg.pas"/>
-			<DCCReference Include="USaveSourceMgr.pas"/>
+			<DCCReference Include="USaveSnippetMgr.pas"/>
 			<DCCReference Include="USaveUnitMgr.pas"/>
 			<DCCReference Include="USearch.pas"/>
 			<DCCReference Include="USettings.pas"/>
 			<DCCReference Include="UShowCaseCtrl.pas"/>
 			<DCCReference Include="USimpleDispatch.pas"/>
+			<DCCReference Include="USnipData.pas"/>
 			<DCCReference Include="USnipKindListAdapter.pas"/>
-			<DCCReference Include="USnippetAction.pas"/>
-			<DCCReference Include="USnippetCreditsParser.pas"/>
-			<DCCReference Include="USnippetDoc.pas"/>
-			<DCCReference Include="USnippetExtraHelper.pas"/>
-			<DCCReference Include="USnippetHTML.pas"/>
 			<DCCReference Include="USnippetIDs.pas"/>
+			<DCCReference Include="USnippetKindInfo.pas"/>
+			<DCCReference Include="USnippets.pas"/>
 			<DCCReference Include="USnippetsChkListMgr.pas"/>
+			<DCCReference Include="USnippetsIO.pas"/>
 			<DCCReference Include="USnippetSourceGen.pas"/>
 			<DCCReference Include="USnippetsTVDraw.pas"/>
 			<DCCReference Include="USnippetValidator.pas"/>
 			<DCCReference Include="USourceFileInfo.pas"/>
+			<DCCReference Include="USourceFileOutputMgr.pas"/>
 			<DCCReference Include="USourceGen.pas"/>
 			<DCCReference Include="UStatusBarMgr.pas"/>
-			<DCCReference Include="UStringReader.pas"/>
+			<DCCReference Include="UStrStreamWriter.pas"/>
 			<DCCReference Include="UStructs.pas"/>
-			<DCCReference Include="UStrUtils.pas"/>
 			<DCCReference Include="USystemID.pas"/>
 			<DCCReference Include="USystemInfo.pas"/>
 			<DCCReference Include="UTaggedTextLexer.pas"/>
@@ -491,7 +467,8 @@
 			<DCCReference Include="UTestCompileUI.pas"/>
 			<DCCReference Include="UTestUnit.pas"/>
 			<DCCReference Include="UTestUnitDlgMgr.pas"/>
-			<DCCReference Include="UTextSnippetDoc.pas"/>
+			<DCCReference Include="UTextRoutineDoc.pas"/>
+			<DCCReference Include="UTextStreamReader.pas"/>
 			<DCCReference Include="UThemesEx.pas"/>
 			<DCCReference Include="UThreadEx.pas"/>
 			<DCCReference Include="UToolButtonEx.pas"/>
@@ -505,7 +482,6 @@
 			<DCCReference Include="UUserDBBackup.pas"/>
 			<DCCReference Include="UUserDBMgr.pas"/>
 			<DCCReference Include="UUserDetails.pas"/>
-			<DCCReference Include="UUserDetailsPersist.pas"/>
 			<DCCReference Include="UUtils.pas"/>
 			<DCCReference Include="UVersionInfo.pas"/>
 			<DCCReference Include="UView.pas"/>
@@ -517,6 +493,7 @@
 			<DCCReference Include="UWBExternal.pas"/>
 			<DCCReference Include="UWBPopupMenus.pas"/>
 			<DCCReference Include="UWindowSettings.pas"/>
+			<DCCReference Include="UXMLDataIO.pas"/>
 			<DCCReference Include="UXMLDocConsts.pas"/>
 			<DCCReference Include="UXMLDocHelper.pas"/>
 			<DCCReference Include="UXMLDocumentEx.pas"/>
@@ -530,10 +507,7 @@
 			<DCCReference Include="Web.UInfo.pas"/>
 			<DCCReference Include="Web.URegistrar.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
-			<DCCReference Include="Web.UXMLRequestor.pas">
-				<Form>/ Include compiler defines</Form>
-				<DesignClass>checks if compiler supported</DesignClass>
-			</DCCReference>
+			<DCCReference Include="Web.UXMLRequestor.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

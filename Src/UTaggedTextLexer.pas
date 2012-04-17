@@ -28,7 +28,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -405,9 +405,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Character,
+  SysUtils, StrUtils, Character,
   // Project
-  UComparers, UStructs, UStrUtils;
+  UComparers, UStructs, UUtils;
 
 
 const
@@ -466,7 +466,7 @@ constructor TTaggedTextEntityHandler.Create;
 begin
   inherited;
   fSymbolicEntities := TDictionary<string, Char>.Create(
-    TStringEqualityComparer.Create
+    TSameStringEqualityComparer.Create
   );
 end;
 
@@ -516,7 +516,7 @@ begin
       sEntityHasNoValue, TSelection.Create(fCurrentIdx - 1)
     );
   // check for valid entity format
-  EntityValStr := StrSliceRight(Entity, Length(Entity) - 1);
+  EntityValStr := RightStr(Entity, Length(Entity) - 1);
   if not TryStrToInt64(EntityValStr, EntityVal) or (EntityVal < 0) then
     raise ETaggedTextEntityHandler.CreateFmt(
       sEntityValueNotValid, [Entity], TSelection.Create(fCurrentIdx - 1)
@@ -585,7 +585,7 @@ begin
           sEntityUnterminated, TSelection.Create(fCurrentIdx - 1)
         );
       // record entity excluding opening '&' and closing ';'
-      Entity := StrSlice(Text, EntityStart, Idx - EntityStart);
+      Entity := MidStr(Text, EntityStart, Idx - EntityStart);
       // skip over ending ';' in input
       Inc(Idx);
       // insert translated character in TransStr, and update its cursor
@@ -625,7 +625,7 @@ begin
     raise EBug.CreateFmt(
       '%0:s.AddTag: Tag "%s" already registered', [ClassName, Tag]
     );
-  fTags.Add(StrToLower(Tag), TTagInfo.Create(Code, IsCompound));
+  fTags.Add(AnsiLowerCase(Tag), TTagInfo.Create(Code, IsCompound));
 end;
 
 constructor TTaggedTextTagHandler.Create(const EH: TTaggedTextEntityHandler);
@@ -636,7 +636,7 @@ begin
   Assert(Assigned(EH), ClassName + '.Create: EH is not assigned');
   inherited Create;
   fTags := TDictionary<string, TTagInfo>.Create(
-    TTextEqualityComparer.Create
+    TSameTextEqualityComparer.Create
   );
   fEntityHandler := EH;
 end;
@@ -682,9 +682,9 @@ begin
     // tag is of form <!directive> or <!-- comment -->: we delete ! and any --
     Result := ttsComment;
     Delete(WorkTag, 2, 1);
-    if StrPos('--', WorkTag) = 2 then
+    if AnsiPos('--', WorkTag) = 2 then
       Delete(WorkTag, 2, 2);
-    if StrPos('--', WorkTag) = Length(WorkTag) - 2 then
+    if AnsiPos('--', WorkTag) = Length(WorkTag) - 2 then
       Delete(WorkTag, Length(WorkTag) - 2, 2);
   end
   else if WorkTag[2] = '?' then
@@ -699,7 +699,7 @@ begin
     // tag is of form <tag>: start of compound tag: no changes to text
     Result := ttsCompoundStartTag;
   // Finally strip off delimiting < and > chars
-  WorkTag := StrSlice(WorkTag, 2, Length(WorkTag) - 2);
+  WorkTag := MidStr(WorkTag, 2, Length(WorkTag) - 2);
 end;
 
 function TTaggedTextTagHandler.GetTagName(const TagStr: string;
@@ -725,8 +725,8 @@ begin
     and not TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
     Inc(NextChPos);
   // Copy the name from the string
-  Result := StrSlice(TagStr, StartPos, NextChPos - StartPos);
-  if StrTrim(Result) = '' then
+  Result := MidStr(TagStr, StartPos, NextChPos - StartPos);
+  if Trim(Result) = '' then
     raise ETaggedTextTagHandler.Create(sTagEmpty);
 end;
 
@@ -785,7 +785,7 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
       and not TCharacter.IsWhiteSpace(TagStr[NextChPos])
       and (TagStr[NextChPos] <> cEquals) do
       Inc(NextChPos);
-    Name := StrSlice(TagStr, StartPos, NextChPos - StartPos);
+    Name := MidStr(TagStr, StartPos, NextChPos - StartPos);
 
     // skip any white space following name
     while (NextChPos <= Len) and TCharacter.IsWhiteSpace(TagStr[NextChPos]) do
@@ -812,7 +812,7 @@ function TTaggedTextTagHandler.GetTagParams(const TagStr: string;
       Inc(NextChPos);
     if (NextChPos > Len) then
       raise EAttrError.Create(sBadAttribute);
-    EscapedValue := StrSlice(TagStr, StartPos, NextChPos - StartPos);
+    EscapedValue := MidStr(TagStr, StartPos, NextChPos - StartPos);
     // translate any entities in value
     try
       fEntityHandler.TranslateTextEntities(EscapedValue, Value);
@@ -1161,7 +1161,7 @@ begin
   // check the plain text for entities, replacing them with values
   try
     fEntityHandler.TranslateTextEntities(
-      StrSlice(fTaggedText, StartPos, fNextCharPos - StartPos), fCurText
+      MidStr(fTaggedText, StartPos, fNextCharPos - StartPos), fCurText
     );
   except
     on E: ETaggedTextEntityHandler do
@@ -1174,7 +1174,7 @@ begin
     end;
   end;
   // replace all CR LF pairs with LF
-  fCurText := StrUnixLineBreaks(fCurText);
+  fCurText := UnixLineBreaks(fCurText);
 end;
 
 procedure TTaggedTextLexer.ProcessTag;
@@ -1199,7 +1199,7 @@ begin
   // skip over tag closer
   Inc(fNextCharPos);
   // get info about tag
-  Tag := StrSlice(fTaggedText, StartPos, fNextCharPos - StartPos);
+  Tag := MidStr(fTaggedText, StartPos, fNextCharPos - StartPos);
   try
     fTagHandler.ProcessTag(Tag, fCurText, fKind, fTagCode, fParams);
   except
@@ -1225,7 +1225,7 @@ begin
         );
       // check tag matches opening tag at top of stack
       ExpectedClosingTag := fTagStack.Pop;
-      if not StrSameText(fCurText, ExpectedClosingTag) then
+      if not AnsiSameText(fCurText, ExpectedClosingTag) then
         raise ETaggedTextLexer.CreateFmt(
           sStartAndEndTagMismatched,
           [fCurText, ExpectedClosingTag],

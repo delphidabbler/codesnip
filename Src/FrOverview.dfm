@@ -34,6 +34,7 @@ inherited OverviewFrame: TOverviewFrame
     OnChange = tcDisplayStyleChange
     OnChanging = tcDisplayStyleChanging
     OnMouseDown = tcDisplayStyleMouseDown
+    ExplicitTop = 29
     object tvSnippets: TTreeView
       Left = 4
       Top = 24
@@ -59,7 +60,6 @@ inherited OverviewFrame: TOverviewFrame
     end
   end
   object mnuOverview: TPopupMenu
-    AutoPopup = False
     Left = 64
     Top = 72
   end

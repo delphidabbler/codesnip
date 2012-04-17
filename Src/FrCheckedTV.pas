@@ -191,7 +191,7 @@ type
       }
     function AddNode(const Parent: TCheckedTreeNode; const Text: string;
       const Data: Pointer): TCheckedTreeNode;
-      {Adds new unchecked tree node. This method can be called from descendant
+      {Adds new unchecked tree node. This routine can be called from descendant
       classes to add new nodes to tree from their implementation of the AddNodes
       method.
         @param Parent [in] Parent of new node or nil if new node is top level.
@@ -244,7 +244,7 @@ uses
 
 function TCheckedTVFrame.AddNode(const Parent: TCheckedTreeNode;
   const Text: string; const Data: Pointer): TCheckedTreeNode;
-  {Adds new unchecked tree node. This method can be called from descendant
+  {Adds new unchecked tree node. This routine can be called from descendant
   classes to add new nodes to tree from their implementation of the AddNodes
   method.
     @param Parent [in] Parent of new node or nil if new node is top level.
@@ -334,7 +334,7 @@ begin
   while Assigned(Node) do
   begin
     SetLeafNodeStates(Node);
-    Node := Node.GetNextSibling;
+    Node := Node.GetNextSibling as TCheckedTreeNode;
   end;
   // Set state of parent nodes based on state of leaf node
   SetParentStates;
