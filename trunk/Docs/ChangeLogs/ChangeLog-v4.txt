@@ -1,0 +1,63 @@
+; ------------------------------------------------------------------------------
+; Change Log for CodeSnip Release 4
+; $Rev$
+; $Date$
+; ------------------------------------------------------------------------------
+
+Release 4.0 alpha 1 (preview) of 31 December 2011
+Changes relate to v3.9.3
++ Interface changes:
+  - New multi-tab detail pane can now show more than one snippet, category etc.
+  - Results of test compiles now appear in a dialog box instead of in details pane.
+  - New code import wizard for cleaner control over import process.
+  - New "Compile" top level menu that groups all actions relating to test compilation.
+  - Empty section headings can now be displayed in overview pane if required.
+  - New display options relating to multi-tab display.
+  - New view displayed instead of welcome screen when database updated.
+  - Some additions and changes to main window navigation keys.
+  - Main window and task bar captions changed.
+  - Some dialog boxes tweaked.
+  - Compiler configuration dialog box heavliy revised to support default compiler paths.
+  - "About" dialog box paths tab display improved.
+  - Compile error dialog box display standardised.
+  - Splash screen updated.
++ Improved Delphi code syntax highlighter:
+  - Recognises Delphi 2010 keywords
+  - Correctly handles context sensitive directives within "property", "exports" and "external" statements.
+  - Recognises '&' prefix that causes keywords to be treated as identifiers.
++ Compiler search paths can now be specified for included units permitting non-VCL units to be used by snippets.
++ Database:
+  - Non-empty categories can no longer be deleted.
+  - File format of both user-defined and main databases changed.
+  - Database locations changed: updates to main database and edits to user database do not affect databases used by v3 and earlier.
+  - Location and file format of both user defined and main databases changed.
+  - Database now supports Unicode Delphi source code.
+  - Unicode Delphi identifiers can now be used for snippet names.
+  - Export and backup file formats updated: new formats are not backward compatible but older versions can still be imported.
+  - Code submission service now supports Unicode souce code.
+  - Database updates now use v5 of delphidabbler.com web update service with revised checksum handling.
++ Unicode support:
+  - Program now fully supports Unicode internally.
+  - Test units now use UTF-8 format if source code contains non-ANSI characters. ANSI format is used otherwise to permit compilation on older Delphi compilers.
+  - Many export file formats now support Unicode and UTF8 formats. User may specify file types from Save dialog box.
+  - Configuration files are now in Unicode format.
+  - Some Unicode support added to database (see above).
++ Web service data handling code improved: now includes ability to send raw bytes and can detect and adapt to character encoding used in responses.
++ Configuration file names and locations changed.
++ Fixed some bugs:
+  - Various Unicode and code page related problems in RTF code generation.
+  - Memory leaks.
+  - Version detection in backup file restoration.
++ Cascading style sheet handling improved.
++ Any errors in scripts run in browser control now trapped and reported as exceptions instead of via browser control's own error dialog box.
++ Revised external object that communicates with JavaScript in browser controls.
++ Hyperlinks used in snippets now support the https:// protocol.
++ A default title now used in print spooler if none specified.
++ Source code heavily refactored.
++ Help file updated in line with changes.
++ Updated documentation, including changes to privacy statement and new file format documentation.
++ Installer:
+  - Changed so that v3 and v4 installs can co-exist - default install locations are different and v4 does not overwrite v3.
+  - Converts v3 config files to v4 Unicode format and copies to new locations. File version stamps are updated.
+  - Installer is now compiled with Unicode version of Inno Setup instead of ANSI version.
+  - Scripts updated and refactored.
