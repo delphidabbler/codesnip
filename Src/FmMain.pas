@@ -203,7 +203,6 @@ type
     miViewSnippetKinds: TMenuItem;
     miViewTestUnit: TMenuItem;
     miViewAlphabetical: TMenuItem;
-    miWeb: TMenuItem;
     miWebSite: TMenuItem;
     miWelcome: TMenuItem;
     mnuMain: TMainMenu;
@@ -245,7 +244,6 @@ type
     miCloseDetailsTab: TMenuItem;
     actFAQs: TBrowseURL;
     miFAQs: TMenuItem;
-    miSpacer18: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
