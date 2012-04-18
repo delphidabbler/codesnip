@@ -344,6 +344,7 @@ uses
   UTVCheckBoxes in 'UTVCheckBoxes.pas',
   UUIWidgetImages in 'UUIWidgetImages.pas',
   UUniqueID in 'UUniqueID.pas',
+  UUnitAnalyser in 'UUnitAnalyser.pas',
   UUnitsChkListMgr in 'UUnitsChkListMgr.pas',
   UUpdateMgr in 'UUpdateMgr.pas',
   UURIEncode in 'UURIEncode.pas',
@@ -377,6 +378,7 @@ uses
   Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
   Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
+
 
 // Include compiler defines: checks if compiler supported
 {$Include CompilerDefines.inc}
