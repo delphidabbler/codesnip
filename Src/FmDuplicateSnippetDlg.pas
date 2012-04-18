@@ -43,7 +43,8 @@ uses
   // Delphi
   SysUtils, Controls, StdCtrls, ExtCtrls, Classes,
   // Project
-  DB.UCategory, DB.USnippet, FmGenericOKDlg, UBaseObjects, UIStringList;
+  DB.UCategory, DB.USnippet, FmGenericOKDlg, UBaseObjects, UCategoryListAdapter,
+  UIStringList;
 
 
 type
@@ -53,14 +54,16 @@ type
     lblCategory: TLabel;
     cbCategory: TComboBox;
     procedure btnOKClick(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   strict private
     var
       fSnippet: TSnippet;
+      fCatList: TCategoryListAdapter;
     function DisallowedNames: IStringList;
     function UniqueSnippetName(const BaseName: string): string;
     procedure ValidateData;
     procedure HandleException(const E: Exception);
-    function SelectedCategory: TCategory;
     procedure UpdateDatabase;
   strict protected
     ///  <summary>Initialises form fields and controls.</summary>
@@ -82,8 +85,8 @@ uses
   // Delphi
   Math,
   // Project
-  DB.UMain, UCategoryListAdapter, UCtrlArranger, UExceptions,
-  UMessageBox, USnippetValidator, UStructs, UStrUtils;
+  DB.UMain, UCtrlArranger, UExceptions, UMessageBox, USnippetValidator,
+  UStructs, UStrUtils;
 
 {$R *.dfm}
 
@@ -167,27 +170,16 @@ end;
 
 procedure TDuplicateSnippetDlg.InitForm;
 var
-  CatList: TCategoryListAdapter;
   SnippetCat: TCategory;
 begin
   inherited;
   edNewName.Text := UniqueSnippetName(fSnippet.Name);
-  CatList := TCategoryListAdapter.Create(Database.Categories);
-  try
-    CatList.ToStrings(cbCategory.Items);
-  finally
-    CatList.Free;
-  end;
+  fCatList.ToStrings(cbCategory.Items);
   SnippetCat := Database.Categories.Find(fSnippet.Category);
   if Assigned(SnippetCat) then
     cbCategory.ItemIndex := cbCategory.Items.IndexOf(SnippetCat.Description)
   else
     cbCategory.ItemIndex := -1;
-end;
-
-function TDuplicateSnippetDlg.SelectedCategory: TCategory;
-begin
-  Result := cbCategory.Items.Objects[cbCategory.ItemIndex] as TCategory;
 end;
 
 function TDuplicateSnippetDlg.UniqueSnippetName(const BaseName: string): string;
@@ -210,7 +202,7 @@ begin
   (Database as IDatabaseEdit).DuplicateSnippet(
     fSnippet,
     StrTrim(edNewName.Text),
-    SelectedCategory.ID
+    fCatList.CatID(cbCategory.ItemIndex)
   );
 end;
 
@@ -227,6 +219,18 @@ begin
     raise EDataEntry.Create(ErrMsg, edNewName, ErrSel);
   if cbCategory.ItemIndex = -1 then
     raise EDataEntry.Create(sNoCategory, cbCategory);
+end;
+
+procedure TDuplicateSnippetDlg.FormCreate(Sender: TObject);
+begin
+  inherited;
+  fCatList := TCategoryListAdapter.Create(Database.Categories);
+end;
+
+procedure TDuplicateSnippetDlg.FormDestroy(Sender: TObject);
+begin
+  inherited;
+  fCatList.Free;
 end;
 
 end.
