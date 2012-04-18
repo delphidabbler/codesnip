@@ -26,6 +26,10 @@
 		<param name="Local" value="HTML\dlg_userbugreport.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="categories menu">
+		<param name="Local" value="HTML\menu_categories.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="choose element colour dialog">
 		<param name="Local" value="HTML\dlg_elementcolour.htm">
 		</OBJECT>
@@ -191,6 +195,10 @@
 		</OBJECT>
 	<UL>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="categories">
+			<param name="Local" value="HTML\menu_categories.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="database">
 			<param name="Local" value="HTML\menu_database.htm">
 			</OBJECT>
@@ -209,6 +217,10 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="search">
 			<param name="Local" value="HTML\menu_search.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="snippets">
+			<param name="Local" value="HTML\menu_snippets.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="tools">
@@ -310,6 +322,10 @@
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="snippet kinds">
 		<param name="Local" value="HTML\snippet_kinds.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="snippets menu">
+		<param name="Local" value="HTML\menu_snippets.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="submit code to the database">

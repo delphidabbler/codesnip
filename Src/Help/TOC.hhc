@@ -62,6 +62,14 @@
 			<param name="Local" value="HTML\menu_search.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Snippets Menu">
+			<param name="Local" value="HTML\menu_snippets.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Categories Menu">
+			<param name="Local" value="HTML\menu_categories.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Database Menu">
 			<param name="Local" value="HTML\menu_database.htm">
 			</OBJECT>
