@@ -67,7 +67,7 @@ type
       {Object destructor. Tears down object.
       }
     procedure ToStrings(const Strings: TStrings);
-      {Copies category description and related object to a string list.
+      {Copies category description to a string list.
         @param Strings [in] String list to receive information.
       }
     function CatID(const Index: Integer): string;
@@ -154,14 +154,14 @@ begin
 end;
 
 procedure TCategoryListAdapter.ToStrings(const Strings: TStrings);
-  {Copies category description and related object to a string list.
+  {Copies category description to a string list.
     @param Strings [in] String list to receive information.
   }
 var
   Cat: TCategory; // each category in sorted list
 begin
   for Cat in fCatList do
-    Strings.AddObject(Cat.Description, Cat);
+    Strings.Add(Cat.Description);
 end;
 
 end.
