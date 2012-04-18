@@ -342,7 +342,7 @@ Contribute to the Database
 Please do contribute procedures, functions and type or constant definitions to
 the on-line Code Snippets database.
 
-You can submit routines from your user-defined database using the "Database |
+You can submit routines from your user-defined database using the "Snippets |
 Submit Routines" menu option. Otherwise please send your code via the
 DelphiDabbler contact page at http://www.delphidabbler.com/contact
 
