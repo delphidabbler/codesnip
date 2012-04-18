@@ -63,6 +63,7 @@ type
     actAddSnippet: TAction;
     actBackupDatabase: TAction;
     actBugReport: TAction;
+    actCloseDetailsTab: TAction;
     actCollapseNode: TAction;
     actCollapseTree: TAction;
     actCompilers: TAction;
@@ -78,6 +79,7 @@ type
     actExpandNode: TAction;
     actExpandTree: TAction;
     actExportCode: TAction;
+    actFAQs: TBrowseURL;
     actFindClear: TAction;
     actFindCompiler: TAction;
     actFindText: TAction;
@@ -91,6 +93,7 @@ type
     actImportCode: TAction;
     actLicense: TAction;
     actNextTab: TAction;
+    actNewDetailsTab: TAction;
     actNews: TAction;
     actPageSetup: TAction;
     actPreferences: TAction;
@@ -128,8 +131,11 @@ type
     miAddCategory: TMenuItem;
     miAddSnippet: TMenuItem;
     miBackupDatabase: TMenuItem;
+    miCategories: TMenuItem;
+    miCloseDetailsTab: TMenuItem;
     miCollapseNode: TMenuItem;
     miCollapseTree: TMenuItem;
+    miCompile: TMenuItem;
     miCompilers: TMenuItem;
     miCopy: TMenuItem;
     miCopyInfo: TMenuItem;
@@ -144,6 +150,7 @@ type
     miExpandNode: TMenuItem;
     miExpandTree: TMenuItem;
     miExportCode: TMenuItem;
+    miFAQs: TMenuItem;
     miFile: TMenuItem;
     miFindClear: TMenuItem;
     miFindCompiler: TMenuItem;
@@ -158,6 +165,7 @@ type
     miHomePage: TMenuItem;
     miImportCode: TMenuItem;
     miLicense: TMenuItem;
+    miNewDetailsTab: TMenuItem;
     miNews: TMenuItem;
     miPageSetup: TMenuItem;
     miPreferences: TMenuItem;
@@ -174,6 +182,7 @@ type
     miSearch: TMenuItem;
     miSelectSnippets: TMenuItem;
     miSelectAll: TMenuItem;
+    miSnippets: TMenuItem;
     miSourceCode: TMenuItem;
     miSpacer1: TMenuItem;
     miSpacer2: TMenuItem;
@@ -191,7 +200,6 @@ type
     miSpacer14: TMenuItem;
     miSpacer15: TMenuItem;
     miSpacer16: TMenuItem;
-    miSpacer17: TMenuItem;
     miSubmit: TMenuItem;
     miTestCompile: TMenuItem;
     miTools: TMenuItem;
@@ -237,13 +245,6 @@ type
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
     tbUpdateDbase: TToolButton;
-    miCompile: TMenuItem;
-    actNewDetailsTab: TAction;
-    miNewDetailsTab: TMenuItem;
-    actCloseDetailsTab: TAction;
-    miCloseDetailsTab: TMenuItem;
-    actFAQs: TBrowseURL;
-    miFAQs: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
