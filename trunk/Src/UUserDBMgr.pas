@@ -82,11 +82,17 @@ type
         @param SnippetName [in] Name of snippet to be edited. Must be user
           defined.
       }
+    ///  <summary>Duplicates snippet in given view as a user defined snippet
+    ///  with name specified by user.</summary>
+    class procedure DuplicateSnippet(ViewItem: IView);
     class procedure DeleteSnippet(ViewItem: IView);
       {Deletes a snippet from the database if possible.
         @param ViewItem [in] View item containing snippet to be deleted. Must be
           a user defined snippet.
       }
+    ///  <summary>Checks if given view item can be duplicated.</summary>
+    ///  <remarks>To be duplicated view must be a snippet.</summary>
+    class function CanDuplicate(ViewItem: IView): Boolean;
     class function CanEdit(ViewItem: IView): Boolean;
       {Checks if a view item can be edited.
         @param ViewItem [in] View item to check.
@@ -136,9 +142,9 @@ uses
   SysUtils, Dialogs, Windows {for inlining},
   // Project
   DB.UMain, DB.USnippet, FmAddCategoryDlg, FmDeleteCategoryDlg,
-  FmRenameCategoryDlg, FmSnippetsEditorDlg, UConsts, UExceptions, UIStringList,
-  UMessageBox, UOpenDialogEx, UOpenDialogHelper, UReservedCategories,
-  USaveDialogEx, USnippetIDs, UUserDBBackup;
+  FmDuplicateSnippetDlg, FmRenameCategoryDlg, FmSnippetsEditorDlg, UConsts,
+  UExceptions, UIStringList, UMessageBox, UOpenDialogEx, UOpenDialogHelper,
+  UReservedCategories, USaveDialogEx, USnippetIDs, UUserDBBackup;
 
 
 { TUserDBMgr }
@@ -208,6 +214,11 @@ begin
   finally
     CatList.Free;
   end;
+end;
+
+class function TUserDBMgr.CanDuplicate(ViewItem: IView): Boolean;
+begin
+  Result := Supports(ViewItem, ISnippetView);
 end;
 
 class function TUserDBMgr.CanEdit(ViewItem: IView): Boolean;
@@ -398,6 +409,13 @@ begin
     );
   if TMessageBox.Confirm(nil, ConfirmMsg) then
     (Database as IDatabaseEdit).DeleteSnippet(Snippet);
+end;
+
+class procedure TUserDBMgr.DuplicateSnippet(ViewItem: IView);
+begin
+  Assert(CanDuplicate(ViewItem),
+    ClassName + '.DuplicateSnippet: ViewItem can''t be duplicated');
+  TDuplicateSnippetDlg.Execute(nil, (ViewItem as ISnippetView).Snippet);
 end;
 
 class procedure TUserDBMgr.EditSnippet(const SnippetName: string);
