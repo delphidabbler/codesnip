@@ -110,6 +110,7 @@ uses
   FmDeleteCategoryDlg in 'FmDeleteCategoryDlg.pas' {DeleteCategoryDlg},
   FmDependenciesDlg in 'FmDependenciesDlg.pas' {DependenciesDlg},
   FmDonateDlg in 'FmDonateDlg.pas' {DonateDlg},
+  FmDuplicateSnippetDlg in 'FmDuplicateSnippetDlg.pas' {DuplicateSnippetDlg},
   FmEasterEgg in 'FmEasterEgg.pas' {EasterEggForm},
   FmEditTextDlg in 'FmEditTextDlg.pas' {EditTextDlg},
   FmFindCompilerDlg in 'FmFindCompilerDlg.pas' {FindCompilerDlg},

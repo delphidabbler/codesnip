@@ -127,6 +127,9 @@
 			<DCCReference Include="FmDonateDlg.pas">
 				<Form>DonateDlg</Form>
 			</DCCReference>
+			<DCCReference Include="FmDuplicateSnippetDlg.pas">
+				<Form>DuplicateSnippetDlg</Form>
+			</DCCReference>
 			<DCCReference Include="FmEasterEgg.pas">
 				<Form>EasterEggForm</Form>
 			</DCCReference>

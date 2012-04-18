@@ -245,6 +245,8 @@ type
     tbSpacer8: TToolButton;
     tbTestCompile: TToolButton;
     tbUpdateDbase: TToolButton;
+    actDuplicateSnippet: TAction;
+    miDuplicateSnippet: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
@@ -331,6 +333,8 @@ type
     procedure actCloseDetailsTabExecute(Sender: TObject);
     procedure actCloseDetailsTabUpdate(Sender: TObject);
     procedure actSelectDetailTabExecute(Sender: TObject);
+    procedure actDuplicateSnippetExecute(Sender: TObject);
+    procedure actDuplicateSnippetUpdate(Sender: TObject);
   strict private
     fIsAppRegistered: Boolean;        // Flag noting if app is registered
     fNotifier: INotifier;             // Notififies app of user-initiated events
@@ -591,6 +595,17 @@ procedure TMainForm.actDonateExecute(Sender: TObject);
   }
 begin
   fDialogMgr.ShowDonateDlg
+end;
+
+procedure TMainForm.actDuplicateSnippetExecute(Sender: TObject);
+begin
+  TUserDBMgr.DuplicateSnippet(fMainDisplayMgr.CurrentView);
+end;
+
+procedure TMainForm.actDuplicateSnippetUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled :=
+    TUserDBMgr.CanDuplicate(fMainDisplayMgr.CurrentView);
 end;
 
 procedure TMainForm.ActEditDeleteSnippetUpdate(Sender: TObject);
