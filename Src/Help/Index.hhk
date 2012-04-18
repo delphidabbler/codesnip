@@ -63,6 +63,10 @@
 			<param name="Local" value="HTML\task_customise.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="duplicate snippet">
+			<param name="Local" value="HTML\dlg_duplicatesnippet.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="generate a unit">
 			<param name="Local" value="HTML\task_generateunit.htm">
 			</OBJECT>
