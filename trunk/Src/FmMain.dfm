@@ -1962,7 +1962,7 @@ inherited MainForm: TMainForm
     end
     object actPrint: TAction
       Category = 'File'
-      Caption = '&Print...'
+      Caption = 'Print...'
       Hint = 'Print|Prints the current selected routine'
       ImageIndex = 24
       ShortCut = 16464
@@ -2166,7 +2166,7 @@ inherited MainForm: TMainForm
     Left = 233
     Top = 96
     object miFile: TMenuItem
-      Caption = '&File'
+      Caption = 'File'
       object miSaveSnippet: TMenuItem
         Action = actSaveSnippet
       end
@@ -2190,7 +2190,7 @@ inherited MainForm: TMainForm
       end
     end
     object miEdit: TMenuItem
-      Caption = '&Edit'
+      Caption = 'Edit'
       object miCopy: TMenuItem
         Action = actCopy
       end
@@ -2211,7 +2211,7 @@ inherited MainForm: TMainForm
       end
     end
     object miView: TMenuItem
-      Caption = '&View'
+      Caption = 'View'
       object miGoBack: TMenuItem
         Action = actGoBack
       end
@@ -2406,7 +2406,7 @@ inherited MainForm: TMainForm
       end
     end
     object miHelp: TMenuItem
-      Caption = '&Help'
+      Caption = 'Help'
       object miHelpContents: TMenuItem
         Action = actHelpContents
       end
