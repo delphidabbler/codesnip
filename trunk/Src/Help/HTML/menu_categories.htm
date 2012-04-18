@@ -15,12 +15,12 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is menu_database.htm
+ * The Original Code is menu_categories.htm
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2012 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -28,71 +28,53 @@
 <html>
   <head>
     <title>
-      Database Menu
+      Categories Menu
     </title>
     <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
     <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
   </head>
   <body>
     <h1>
-      <a name="menu_database"></a>Database&nbsp;Menu
+      <a name="menu_categories"></a>Categories&nbsp;Menu
     </h1>
     <p>
-      The Database menu contains the following options:
+      The Categories menu contains the following options:
     </p>
     <table class="menu" cellspacing="1" cellpadding="0">
       <tr>
         <td class="img">
-          <img alt="Menu icon" src="../images/SaveDatabase.gif" class="glyph">
+          &nbsp;
         </td>
         <td class="item">
-          Save User Database
+          New Category
         </td>
         <td class="desc">
-          Saves the user defined database. Not available if the database has not
-          changed.
+          Displays the <a href="dlg_addcategory.htm">Add Category</a> dialog
+          box to enable the user to enter a new user-defined category.
         </td>
       </tr>
       <tr>
         <td class="img">
-          <img
-            alt="Menu item" src="../images/BackupDatabase.gif" class="gylph"
-          >
+          &nbsp;
         </td>
         <td class="item">
-          Backup User Database
+          Rename Category
         </td>
         <td class="desc">
-          Creates a backup of the user defined database. The backup is stored in
-          a file specified by the user via the <a href="dlg_backup.htm">Save
-          Backup</a> dialog box.
+          Displays the <a href="dlg_renamecategory.htm">Rename Category</a>
+          dialog box which is used to rename any user-defined category,
         </td>
       </tr>
       <tr>
         <td class="img">
-          <img
-            alt="Menu item" src="../images/RestoreDatabase.gif" class="gylph"
-          >
+          &nbsp;
         </td>
         <td class="item">
-          Restore User Database
+          Delete Category
         </td>
         <td class="desc">
-          Restores the local database from a backup. The backup file to be
-          restored is chosen by the user via the <a href="dlg_restore.htm">Open
-          Backup File</a> dialog box.
-        </td>
-      </tr>
-      <tr>
-        <td class="img">
-          <img alt="Menu icon" src="../images/Download.gif" class="glyph">
-        </td>
-        <td class="item">
-          Update From Web
-        </td>
-        <td class="desc">
-          Displays the <a href="dlg_update.htm">Update from Web</a> dialog box
-          that enables the main code snippets database to be updated.
+          Displays the <a href="dlg_deletecategory.htm">Delete Category</a>
+          dialog box where a category can be selected and deleted.
         </td>
       </tr>
     </table>
