@@ -24,9 +24,6 @@ Notes
   fourth number will be set to an appropriate build number at the time of
   release.
 
-* Periodic merging of changes from v3 development tree (trunk). Some trunk
-  changes ignored where they clash with v4 changes.
-
 
 --------------------------------------------------------------------------------
 Changes
@@ -37,12 +34,17 @@ Changes
 * Refactorings and similar:
 
 * Bug fixes:
-  o Fixes made in parrallel with v3 fixes (not for change log):
-    - NONE TO DATE
+  o Fixed unreported minor bug in dialog boxes that display tabbed page
+    controls: clicking a tab did not always give it the keyboard focus.
 
 * Help file:
+  o Removed reference to FAQ being a wiki from FAQ help topic: wiki is no longer
+    editable without password.
 
 * Documentation:
+  o Replaced single changelog with five files, one for each major release
+    v0..v4, in new ChangeLogs directory.
+  o Updated change logs.
 
 * RTF Support:
 
@@ -60,8 +62,12 @@ Changes
   o Compiler output encoding can now be set explicitly on a per-compiler
     basis. Currently all compiler use default.
     *** INCLUDE IN CHANGE LOG ONLY IF THIS IS MADE USE-CONFIGURABLE
+  o Changed encoding of .manifest files from ANSI to UTF-8 to match encoding
+    noted in <?xml?> processing instruction.
 
 * UI changes:
+  o Added new Help | On The Web | FAQs menu option to display CodeSnip FAQs in
+    default browser.
 
 * Web Services:
 
@@ -70,3 +76,7 @@ Changes
 * Config files:
 
 * Installer:
+
+* Misc:
+  o Characters used to introduced switches on command line were changed: '/'
+    replaces non-standard '\'. '-' is still permitted.
