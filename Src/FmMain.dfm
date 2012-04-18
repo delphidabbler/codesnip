@@ -1663,15 +1663,15 @@ inherited MainForm: TMainForm
       OnUpdate = actSaveSnippetUpdate
     end
     object actAddSnippet: TAction
-      Category = 'Database'
-      Caption = 'Add Snippet...'
-      Hint = 'Add Snippet|Add a new snippet to the database.'
+      Category = 'Snippets'
+      Caption = 'New Snippet...'
+      Hint = 'New Snippet|Add a new snippet to the database.'
       ImageIndex = 27
       ShortCut = 16429
       OnExecute = actAddSnippetExecute
     end
     object actDeleteSnippet: TAction
-      Category = 'Database'
+      Category = 'Snippets'
       Caption = 'Delete Snippet'
       Hint = 'Delete Snippet|Delete the selected snippet from the database'
       ImageIndex = 26
@@ -1700,7 +1700,7 @@ inherited MainForm: TMainForm
       OnUpdate = ActNonEmptyDBUpdate
     end
     object actEditSnippet: TAction
-      Category = 'Database'
+      Category = 'Snippets'
       Caption = 'Edit Snippet...'
       Hint = 'Edit Snippet|Edit the selected snippet in the database'
       ImageIndex = 28
@@ -2013,7 +2013,7 @@ inherited MainForm: TMainForm
       OnExecute = actUpdateDbaseExecute
     end
     object actSubmit: TAction
-      Category = 'Database'
+      Category = 'Snippets'
       Caption = 'Submit Snippets...'
       Hint = 
         'Submit|Submit one or more snippets for inclusion in the main dat' +
@@ -2022,14 +2022,14 @@ inherited MainForm: TMainForm
       OnUpdate = ActSubmitOrExportUpdate
     end
     object actExportCode: TAction
-      Category = 'Database'
+      Category = 'Snippets'
       Caption = 'Export Snippets...'
       Hint = 'Export Snippets|Export one or more snippets to a file'
       OnExecute = actExportCodeExecute
       OnUpdate = ActSubmitOrExportUpdate
     end
     object actImportCode: TAction
-      Category = 'Database'
+      Category = 'Snippets'
       Caption = 'Import Snippets...'
       Hint = 'Import Snippets|Import one or more snippets from a file'
       OnExecute = actImportCodeExecute
@@ -2109,20 +2109,20 @@ inherited MainForm: TMainForm
       OnExecute = actProxyServerExecute
     end
     object actAddCategory: TAction
-      Category = 'Database'
-      Caption = 'Add Category...'
-      Hint = 'Add Category|Adds a new category to the database'
+      Category = 'Categories'
+      Caption = 'New Category...'
+      Hint = 'New Category|Adds a new category to the database'
       OnExecute = actAddCategoryExecute
     end
     object actRenameCategory: TAction
-      Category = 'Database'
+      Category = 'Categories'
       Caption = 'Rename Category...'
       Hint = 'Rename Category|Renames a user defined category in the database'
       OnExecute = actRenameCategoryExecute
       OnUpdate = actRenameCategoryUpdate
     end
     object actDeleteCategory: TAction
-      Category = 'Database'
+      Category = 'Categories'
       Caption = 'Delete Category...'
       Hint = 'Delete Category|Deletes an empty category from the database'
       OnExecute = actDeleteCategoryExecute
@@ -2303,8 +2303,8 @@ inherited MainForm: TMainForm
         Action = actFindClear
       end
     end
-    object miDatabase: TMenuItem
-      Caption = 'Database'
+    object miSnippets: TMenuItem
+      Caption = 'Snippets'
       object miAddSnippet: TMenuItem
         Action = actAddSnippet
       end
@@ -2314,9 +2314,24 @@ inherited MainForm: TMainForm
       object miDeleteSnippet: TMenuItem
         Action = actDeleteSnippet
       end
-      object miSpacer17: TMenuItem
+      object miSpacer12: TMenuItem
         Caption = '-'
       end
+      object miExportCode: TMenuItem
+        Action = actExportCode
+      end
+      object miImportCode: TMenuItem
+        Action = actImportCode
+      end
+      object miSpacer14: TMenuItem
+        Caption = '-'
+      end
+      object miSubmit: TMenuItem
+        Action = actSubmit
+      end
+    end
+    object miCategories: TMenuItem
+      Caption = 'Categories'
       object miAddCategory: TMenuItem
         Action = actAddCategory
       end
@@ -2326,12 +2341,15 @@ inherited MainForm: TMainForm
       object miDeleteCategory: TMenuItem
         Action = actDeleteCategory
       end
-      object miSpacer12: TMenuItem
-        Caption = '-'
-      end
+    end
+    object miDatabase: TMenuItem
+      Caption = 'Database'
       object miSaveDatabase: TMenuItem
         Action = actSaveDatabase
         Hint = 'Save User Database|Saves all changes to user database'
+      end
+      object miSpacer11: TMenuItem
+        Caption = '-'
       end
       object miBackupDatabase: TMenuItem
         Action = actBackupDatabase
@@ -2347,21 +2365,6 @@ inherited MainForm: TMainForm
       end
       object miUpdateDbase: TMenuItem
         Action = actUpdateDbase
-      end
-      object miSpacer11: TMenuItem
-        Caption = '-'
-      end
-      object miSubmit: TMenuItem
-        Action = actSubmit
-      end
-      object miExportCode: TMenuItem
-        Action = actExportCode
-      end
-      object miImportCode: TMenuItem
-        Action = actImportCode
-      end
-      object miSpacer14: TMenuItem
-        Caption = '-'
       end
     end
     object miCompile: TMenuItem
