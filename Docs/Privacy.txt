@@ -129,7 +129,7 @@ records this code, with the user name, in Common.config.
 Submitting code to the main database
 --------------------------------------------------------------------------------
 
-This activity is started from the "Database | Submit Snippets" menu option and
+This activity is started from the "Snippets | Submit Snippets" menu option and
 data is collected using the resulting wizard. Clicking the Submit button in the
 wizard sends the following information to the DelphiDabbler code submission web
 service:
