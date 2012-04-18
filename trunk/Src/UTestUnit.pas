@@ -89,7 +89,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UEncodings, UIOUtils, USourceGen, USystemInfo, UUtils;
+  UEncodings, UIOUtils, USourceGen, USystemInfo, UUnitAnalyser, UUtils;
 
 
 { TTestUnit }
@@ -126,11 +126,12 @@ begin
   // Preference for default ANSI encoding is because early Delphis can only read
   // source code files in this format. Later versions that can handle unicode
   // characters in units also support UTF-8 format source code files.
-  if EncodingSupportsString(SourceCode, TEncoding.Default) then
-    Encoding := TEncoding.Default
-  else
-    Encoding := TEncoding.UTF8;
-  TFileIO.WriteAllText(FileName, SourceCode, Encoding, True);
+  Encoding := TUnitAnalyser.RequiredEncoding(SourceCode);
+  try
+    TFileIO.WriteAllText(FileName, SourceCode, Encoding, True);
+  finally
+    TEncodingHelper.FreeEncoding(Encoding);
+  end;
 end;
 
 function TTestUnit.UnitFileName: string;
