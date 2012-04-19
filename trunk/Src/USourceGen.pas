@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -89,62 +89,6 @@ type
   end;
 
   {
-  TConstAndTypeList:
-    Maintains a list of constant and type snippets and maintains order to
-    account for dependencies.
-  }
-  TConstAndTypeList = class(TObject)
-  strict private
-    type
-      {
-      TUnitRecorder:
-        Method that is called to record the units required by a constant or
-        type.
-          @param Units [in] String list containing list of units.
-      }
-      TUnitRecorder = procedure(const Units: TStringList) of object;
-    var
-      fItems: TObjectList<TSnippet>;  // List of consts or types
-    function GetCount: Integer;
-      {Read accessor for Count property.
-        @return Number of items in list.
-      }
-    function GetItem(Idx: Integer): TSnippet;
-      {Read access for Items[] property.
-        @param Idx [in] Index of required snippet in list.
-        @return Indexed snippet.
-      }
-    function Contains(const ConstOrType: TSnippet): Boolean;
-      {Checks if the list contains a constant or type snippet.
-        @param ConstOrType [in] Constant or type snippet being checked for.
-        @return True if snippet in list, False if not.
-      }
-  public
-    constructor Create;
-      {Constructor. Sets up list.
-      }
-    destructor Destroy; override;
-      {Destructor. Tears down object.
-      }
-    procedure Add(const ConstOrType: TSnippet;
-      const UnitRecorder: TUnitRecorder);
-      {Adds a constant or type snippet to the list, ignoring duplicates.
-        @param ConstOrType [in] Constant or type snippet to be added.
-        @param UnitRecorder [in] Method that records units required by
-          ConstOrType.
-        @except Exception raised if dependency list is not valid.
-      }
-    function GetEnumerator: TEnumerator<TSnippet>;
-      {Gets an intialised const and type list enumerator.
-        @return Required enumerator.
-      }
-    property Items[Idx: Integer]: TSnippet read GetItem; default;
-      {Array of items in list, in dependency oder}
-    property Count: Integer read GetCount;
-      {Number of items in list}
-  end;
-
-  {
   TSourceAnalyser:
     Class that receives snippets for which source is to be generated and
     analyses relationships, pulling in any required snippets. Creates data
@@ -154,7 +98,7 @@ type
   TSourceAnalyser = class(TObject)
   strict private
     var
-      fTypesAndConsts: TConstAndTypeList; // Value of TypesAndConsts property
+      fTypesAndConsts: TObjectList<TSnippet>; // Value of TypesAndConsts prop
       fIntfRoutines: TSnippetList;        // Value of IntfRoutines property
       fAllRoutines: TSnippetList;         // Value of AllRoutines property
       fForwardRoutines: TSnippetList;     // Value of ForwardRoutines property
@@ -206,7 +150,7 @@ type
     procedure Generate;
       {Generates the analysis.
       }
-    property TypesAndConsts: TConstAndTypeList read fTypesAndConsts;
+    property TypesAndConsts: TObjectList<TSnippet> read fTypesAndConsts;
       {List of both added and required Types and constants, in required order}
     property IntfRoutines: TSnippetList read fIntfRoutines;
       {List of routines added by user. These routines would appear in a unit's
@@ -707,8 +651,23 @@ procedure TSourceAnalyser.AddTypeOrConst(const TypeOrConst: TSnippet);
   {Adds a user specified or required type or constant to the analysis.
     @param TypeOrConst [in] Type of constant snippet to be added.
   }
+var
+  ErrorMsg: string;       // any error message
 begin
-  fTypesAndConsts.Add(TypeOrConst, RequireUnits);
+  Assert(Assigned(TypeOrConst), ClassName + '.Add: ConstOrType in nil');
+  Assert(TypeOrConst.Kind in [skTypeDef, skConstant],
+    ClassName + '.Add: ConstOrType must have kind skTypeDef or skConstant');
+  // Ignore if already in list
+  if fTypesAndConsts.Contains(TypeOrConst) then
+    Exit;
+  // Validate dependency list
+  if not TSnippetValidator.ValidateDependsList(TypeOrConst, ErrorMsg) then
+    raise ECodeSnip.Create(ErrorMsg);
+  // Add all required snippets to list before adding this one: this ensures
+  // required snippets preceed those that depend on them
+  RequireSnippets(TypeOrConst.Depends);
+  RequireUnits(TypeOrConst.Units);
+  fTypesAndConsts.Add(TypeOrConst)
 end;
 
 constructor TSourceAnalyser.Create;
@@ -716,7 +675,7 @@ constructor TSourceAnalyser.Create;
   }
 begin
   inherited;
-  fTypesAndConsts := TConstAndTypeList.Create;
+  fTypesAndConsts := TObjectList<TSnippet>.Create(False);
   fIntfRoutines := TSnippetList.Create;
   fAllRoutines := TSnippetList.Create;
   fForwardRoutines := TSnippetList.Create;
@@ -818,86 +777,6 @@ var
 begin
   for UnitName in Units do
     RequireUnit(UnitName);
-end;
-
-{ TConstAndTypeList }
-
-procedure TConstAndTypeList.Add(const ConstOrType: TSnippet;
-  const UnitRecorder: TUnitRecorder);
-  {Adds a constant or type snippet to the list, ignoring duplicates.
-    @param ConstOrType [in] Constant or type snippet to be added.
-    @param UnitRecorder [in] Method that records units required by ConstOrType.
-    @except Exception raised if dependency list is not valid.
-  }
-var
-  RequiredSnip: TSnippet; // reference snippets in depends list
-  ErrorMsg: string;       // any error message
-begin
-  Assert(Assigned(ConstOrType), ClassName + '.Add: ConstOrType in nil');
-  Assert(ConstOrType.Kind in [skTypeDef, skConstant],
-    ClassName + '.Add: ConstOrType must have kind skTypeDef or skConstant');
-  // Ignore if already in list
-  if Contains(ConstOrType) then
-    Exit;
-  // Validate dependency list
-  if not TSnippetValidator.ValidateDependsList(ConstOrType, ErrorMsg) then
-    raise ECodeSnip.Create(ErrorMsg);
-  // Add all required snippets to list before adding this one: this ensures
-  // required snippets preceed those that depend on them
-  for RequiredSnip in ConstOrType.Depends do
-    Add(RequiredSnip, UnitRecorder);
-  UnitRecorder(ConstOrType.Units);
-  fItems.Add(ConstOrType)
-end;
-
-function TConstAndTypeList.Contains(const ConstOrType: TSnippet): Boolean;
-  {Checks if the list contains a constant or type snippet.
-    @param ConstOrType [in] Constant or type snippet being checked for.
-    @return True if snippet in list, False if not.
-  }
-begin
-  Result := fItems.Contains(ConstOrType);
-end;
-
-constructor TConstAndTypeList.Create;
-  {Constructor. Sets up list.
-  }
-begin
-  inherited;
-  fItems := TObjectList<TSnippet>.Create(False);
-end;
-
-destructor TConstAndTypeList.Destroy;
-  {Destructor. Tears down object.
-  }
-begin
-  fItems.Free;
-  inherited;
-end;
-
-function TConstAndTypeList.GetCount: Integer;
-  {Read accessor for Count property.
-    @return Number of items in list.
-  }
-begin
-  Result := fItems.Count;
-end;
-
-function TConstAndTypeList.GetEnumerator: TEnumerator<TSnippet>;
-  {Gets an intialised const and type list enumerator.
-    @return Required enumerator.
-  }
-begin
-  Result := fItems.GetEnumerator;
-end;
-
-function TConstAndTypeList.GetItem(Idx: Integer): TSnippet;
-  {Read access for Items[] property.
-    @param Idx [in] Index of required snippet in list.
-    @return Indexed snippet.
-  }
-begin
-  Result := fItems[Idx];
 end;
 
 { TRoutineFormatter }
@@ -1109,7 +988,7 @@ begin
     csBefore:
       Result := RenderDescComment(CommentStyle, ConstOrType)
         + EOL
-        + StrTrim(ConstOrtype.SourceCode);
+        + StrTrim(ConstOrType.SourceCode);
     csAfter:
     begin
       Split(ConstOrType, Keyword, Body);
