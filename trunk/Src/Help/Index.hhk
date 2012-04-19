@@ -30,6 +30,10 @@
 		<param name="Local" value="HTML\menu_categories.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="compile menu">
+		<param name="Local" value="HTML\menu_compile.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="choose element colour dialog">
 		<param name="Local" value="HTML\dlg_elementcolour.htm">
 		</OBJECT>
@@ -201,6 +205,10 @@
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="categories">
 			<param name="Local" value="HTML\menu_categories.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="compile">
+			<param name="Local" value="HTML\menu_compile.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="database">
