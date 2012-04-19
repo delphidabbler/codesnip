@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -89,7 +89,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UEncodings, UIOUtils, USourceGen, USystemInfo, UUnitAnalyser, UUtils;
+  DB.USnippetKind, UEncodings, UIOUtils, USourceGen, USystemInfo, UUnitAnalyser,
+  UUtils;
 
 
 { TTestUnit }
@@ -103,15 +104,20 @@ end;
 
 function TTestUnit.GenerateUnitSource: string;
 begin
-  with TSourceGen.Create do
-    try
-      IncludeSnippet(fSnippet);
-      // Must use Self.UnitName below for Delphis that defined TObject.UnitName
-      // otherwise the TObject version is used.
-      Result := UnitAsString(Self.UnitName);
-    finally
-      Free;
-    end;
+  if fSnippet.Kind <> skUnit then
+  begin
+    with TSourceGen.Create do
+      try
+        IncludeSnippet(fSnippet);
+        // Must use Self.UnitName below for Delphis that defined TObject.UnitName
+        // otherwise the TObject version is used.
+        Result := UnitAsString(Self.UnitName);
+      finally
+        Free;
+      end;
+  end
+  else
+    Result := fSnippet.SourceCode;
 end;
 
 procedure TTestUnit.SaveUnit(out FileName: string);
@@ -150,6 +156,8 @@ var
   I: Integer;
   Ch: Char;
 begin
+  if fSnippet.Kind = skUnit then
+    Exit(TUnitAnalyser.UnitName(fSnippet.SourceCode));
   // Unit name is same as Snippet being tested, but with prefix to make unique
   Result := cUnitPrefix + fSnippet.Name;
   // We ensure only ASCII characters are used in unit name. Any unsuitable

@@ -43,26 +43,25 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UBaseObjects;
+  UBaseObjects, UExceptions;
 
 
 type
-  { TODO: Provide method that gets unit name from source code: use pascal
-          lexer to do this.
-          Use the method to get test unit file name from a provided complete
-          unit and to suggest unit name for code imported from a file }
   TUnitAnalyser = class sealed(TNoConstructObject)
   public
     class function RequiredEncoding(const SourceCode: string): TEncoding;
+    class function UnitName(const SourceCode: string): string;
   end;
 
+type
+  EUnitAnalyser = class(ECodeSnip);
 
 implementation
 
 
 uses
   // Project
-  UEncodings;
+  Hiliter.UPasLexer, UEncodings, UStrUtils;
 
 { TUnitAnalyser }
 
@@ -75,4 +74,59 @@ begin
     Result := TEncoding.UTF8;
 end;
 
+class function TUnitAnalyser.UnitName(const SourceCode: string): string;
+
+var
+  Lexer: THilitePasLexer; // object used to tokenise Pascal source code
+
+  ///  <summary>Skips over white space and command tokens in source code.
+  ///  </summary>
+  procedure SkipWhiteSpaceTokens;
+  const
+    WhiteSpaceTokens = [tkComment, tkCompilerDir, tkWhitespace, tkEOL];
+  begin
+    while Lexer.NextToken in WhiteSpaceTokens do
+      ;
+  end;
+
+resourcestring
+  // Error messages
+  sNotAUnit = 'Source code is not a valid unit';
+  sBadName = 'Invalid unit name found in source code';
+  sBadUnitStatement = 'Malformed "unit" statement in source code';
+begin
+  Lexer := THilitePasLexer.Create(SourceCode);
+  try
+    // first Pascal token must be "unit" keyword
+    SkipWhiteSpaceTokens;
+    if (Lexer.Token <> tkKeyword)
+      or not StrSameText(Lexer.TokenStr, 'unit') then
+      raise EUnitAnalyser.Create(sNotAUnit);
+    // next Pascal token must be unit name identifier
+    SkipWhiteSpaceTokens;
+    if (Lexer.Token <> tkIdentifier)
+      or not IsValidIdent(Lexer.TokenStr, True) then
+      raise EUnitAnalyser.Create(sBadName);
+    Result := Lexer.TokenStr;
+    // we also support dotted unit names: complication is that white space and
+    // comments can separate identifiers from dots.
+    SkipWhiteSpaceTokens;
+    while (Lexer.Token = tkSymbol) and (Lexer.TokenStr = '.') do
+    begin
+      SkipWhiteSpaceTokens;
+      if (Lexer.Token <> tkIdentifier)
+        or not IsValidIdent(Lexer.TokenStr, True) then
+        raise EUnitAnalyser.Create(sBadName);
+      Result := Result + '.' + Lexer.TokenStr;
+      SkipWhiteSpaceTokens;
+    end;
+    // unit statement must end with ';'
+    if (Lexer.Token <> tkSymbol) or (Lexer.TokenStr <> ';') then
+      raise EUnitAnalyser.Create(sBadUnitStatement);
+  finally
+    Lexer.Free;
+  end;
+end;
+
 end.
+

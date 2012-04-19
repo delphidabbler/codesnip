@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -375,6 +375,8 @@ begin
     Result := skConstant
   else if StrSameText(Value, 'type') then
     Result := skTypeDef
+  else if StrSameText(Value, 'unit') then
+    Result := skUnit
   else
     Result := Default;
 end;
@@ -525,7 +527,7 @@ class procedure TXMLDocHelper.WriteSnippetKind(const XMLDoc: IXMLDocumentEx;
   }
 const
   cValues: array[TSnippetKind] of string = (
-    'freeform', 'routine', 'const', 'type'
+    'freeform', 'routine', 'const', 'type', 'unit'
   );
 begin
   XMLDoc.CreateElement(SnippetNode, cKindNode, cValues[Value]);
