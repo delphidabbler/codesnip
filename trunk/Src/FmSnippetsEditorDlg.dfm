@@ -19,7 +19,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       Top = 0
       Width = 646
       Height = 465
-      ActivePage = tsCompileResults
+      ActivePage = tsCode
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
@@ -59,7 +59,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           FocusControl = cbCategories
         end
         object lblSnippetKindHelp: TLabel
-          Left = 236
+          Left = 333
           Top = 311
           Width = 118
           Height = 13
@@ -116,7 +116,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object edName: TEdit
           Left = 80
           Top = 366
-          Width = 177
+          Width = 209
           Height = 21
           PopupMenu = mnuEditCtrls
           TabOrder = 3
@@ -124,15 +124,15 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object cbCategories: TComboBox
           Left = 80
           Top = 393
-          Width = 177
+          Width = 209
           Height = 21
           Style = csDropDownList
           TabOrder = 4
         end
         object cbKind: TComboBox
           Left = 80
-          Top = 312
-          Width = 145
+          Top = 311
+          Width = 209
           Height = 21
           Style = csDropDownList
           TabOrder = 1

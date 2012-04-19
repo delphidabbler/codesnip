@@ -518,6 +518,7 @@ begin
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(clbXRefs, 6), [btnDependencies, edUnit, btnAddUnit]
   );
+  lblSnippetKindHelp.Left := TCtrlArranger.RightOf(cbKind) + 12;
   // tsComments
   lblExtraCaretPos.Top := lblExtra.Top;
   frmExtraInstructions.Top := TCtrlArranger.BottomOf(edExtra, 4);
