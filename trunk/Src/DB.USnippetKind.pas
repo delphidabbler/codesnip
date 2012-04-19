@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -54,7 +54,8 @@ type
     skFreeform,   // free-form code - not in any of other supported formats
     skRoutine,    // procedure or function in standard format
     skConstant,   // constant definition in standard format
-    skTypeDef     // type definition in standard format
+    skTypeDef,    // type definition in standard format
+    skUnit        // complete source code unit
   );
 
 type
@@ -145,10 +146,11 @@ resourcestring
   sRoutine          = 'Routine';
   sConstant         = 'Constant';
   sTypeDef          = 'Type Definition';
+  sUnit             = 'Unit';
 const
   // Map of snippet kinds onto their descriptions
   Descriptions: array[TSnippetKind] of string = (
-    sFreeform, sRoutine, sConstant, sTypeDef
+    sFreeform, sRoutine, sConstant, sTypeDef, sUnit
   );
 var
   Kind: TSnippetKind;

@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -281,9 +281,9 @@ type
 *         ? - Not tested.                                                      *
 *   11) [StandardFormat] - whether snippet is in standard format. Assumes true *
 *       if not present and there is no Kind value.                             *
-*   12) [Kind] - kind of snippet. One of freeform, snippet, type or const.     *
-*       If value not present then snippet is assumed unless StandardFormat is  *
-*       present and 0, when freeform is assumed.                               *
+*   12) [Kind] - kind of snippet. One of freeform, routine, type, const or     *
+*       unit. If value not present then routine is assumed unless              *
+*       StandardFormat is present and 0, when freeform is assumed.             *
 *                                                                              *
 * ---------------------------------------------------------------------------- *
 * <999>.dat                                                                    *
@@ -462,6 +462,8 @@ var
       Result := skConstant
     else if StrSameText(KindStr, 'type') then
       Result := skTypeDef
+    else if StrSameText(KindStr, 'unit') then
+      Result := skUnit
     // invalid or no Kind property: kind depends on StdFormat property
     else if GetStdFormatProperty then
       Result := skRoutine

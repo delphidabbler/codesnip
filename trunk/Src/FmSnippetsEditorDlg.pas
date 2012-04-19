@@ -313,7 +313,8 @@ procedure TSnippetsEditorDlg.actAddUnitUpdate(Sender: TObject);
     @param Sender [in] Action triggering this event.
   }
 begin
-  (Sender as TAction).Enabled := StrTrim(edUnit.Text) <> '';
+  (Sender as TAction).Enabled := (StrTrim(edUnit.Text) <> '')
+    and clbUnits.Enabled;
 end;
 
 procedure TSnippetsEditorDlg.actCompileExecute(Sender: TObject);
@@ -940,6 +941,7 @@ begin
   fXRefsCLBMgr.Save;
   fXRefsCLBMgr.Clear;
   EditSnippetID := TSnippetID.Create(fOrigName, True);
+  EditSnippetKind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
   for Snippet in Database.Snippets do
   begin
     // We ignore snippet being edited and main database snippets if there is
@@ -951,7 +953,6 @@ begin
       ) then
     begin
       // Decide if snippet can be added to depends list: must be correct kind
-      EditSnippetKind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
       if Snippet.Kind in
         TSnippetValidator.ValidDependsKinds(EditSnippetKind) then
         fDependsCLBMgr.AddSnippet(Snippet);
@@ -962,6 +963,8 @@ begin
   // Restore checks to any saved checked item that still exist in new list
   fDependsCLBMgr.Restore;
   fXRefsCLBMgr.Restore;
+  clbUnits.Enabled := EditSnippetKind <> skUnit;
+  edUnit.Enabled := EditSnippetKind <> skUnit;
 end;
 
 procedure TSnippetsEditorDlg.UpdateTabSheetCSS(Sender: TObject;

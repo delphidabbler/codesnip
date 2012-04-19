@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -53,7 +53,7 @@ type
   strict private
     const
       cAllSnippetKinds: TSnippetKinds =   // Set of all possible snippet kinds
-        [skFreeform, skRoutine, skConstant, skTypeDef];
+        [skFreeform, skRoutine, skConstant, skTypeDef, skUnit];
   public
     class function ValidateDependsList(const Snippet: TSnippet;
       out ErrorMsg: string): Boolean; overload;
@@ -439,9 +439,10 @@ class function TSnippetValidator.ValidDependsKinds(
   }
 begin
   case Kind of
-    skFreeform: Result := cAllSnippetKinds;
-    skRoutine: Result := cAllSnippetKinds - [skFreeform];
+    skFreeform: Result := [skRoutine, skConstant, skTypeDef, skFreeform];
+    skRoutine: Result := [skRoutine, skConstant, skTypeDef];
     skConstant, skTypeDef: Result := [skConstant, skTypeDef];
+    skUnit: Result := [];
   end;
 end;
 
