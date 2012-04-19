@@ -74,6 +74,10 @@
 			<param name="Local" value="HTML\menu_database.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Compile Menu">
+			<param name="Local" value="HTML\menu_compile.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Tools Menu">
 			<param name="Local" value="HTML\menu_tools.htm">
 			</OBJECT>
