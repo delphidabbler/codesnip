@@ -93,7 +93,6 @@ resourcestring
   // Error messages
   sNotAUnit = 'Source code is not a valid unit';
   sBadName = 'Invalid unit name found in source code';
-  sBadUnitStatement = 'Malformed "unit" statement in source code';
 begin
   Lexer := THilitePasLexer.Create(SourceCode);
   try
@@ -120,9 +119,6 @@ begin
       Result := Result + '.' + Lexer.TokenStr;
       SkipWhiteSpaceTokens;
     end;
-    // unit statement must end with ';'
-    if (Lexer.Token <> tkSymbol) or (Lexer.TokenStr <> ';') then
-      raise EUnitAnalyser.Create(sBadUnitStatement);
   finally
     Lexer.Free;
   end;
