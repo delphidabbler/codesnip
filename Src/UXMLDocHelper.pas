@@ -377,6 +377,8 @@ begin
     Result := skTypeDef
   else if StrSameText(Value, 'unit') then
     Result := skUnit
+  else if StrSameText(Value, 'class') then
+    Result := skClass
   else
     Result := Default;
 end;
@@ -527,7 +529,7 @@ class procedure TXMLDocHelper.WriteSnippetKind(const XMLDoc: IXMLDocumentEx;
   }
 const
   cValues: array[TSnippetKind] of string = (
-    'freeform', 'routine', 'const', 'type', 'unit'
+    'freeform', 'routine', 'const', 'type', 'unit', 'class'
   );
 begin
   XMLDoc.CreateElement(SnippetNode, cKindNode, cValues[Value]);
