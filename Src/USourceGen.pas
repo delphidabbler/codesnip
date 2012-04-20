@@ -1086,18 +1086,12 @@ class procedure TConstAndTypeFormatter.Split(const ConstOrType: TSnippet;
       @param Body [out] Source code that follows keyword if KW is present,
         otherwise set to SourceCode.
     }
-  var
-    EOLPos: Integer;  // position of end of line chars, if present after KW
   begin
     if StrStartsStr(KW, SourceCode) then
     begin
       // KW starts SourceCode - perform split
       Keyword := KW;
-      EOLPos := StrPos(EOL, SourceCode, Length(KW));
-      if EOLPos > 0 then
-        Body := Copy(SourceCode, EOLPos + Length(EOL), MaxInt)
-      else
-        Body := '  ' + StrTrim(Copy(SourceCode, Length(KW) + 1, MaxInt));
+      Body := '  ' + StrTrim(Copy(SourceCode, Length(KW) + 1, MaxInt));
     end
     else
     begin
