@@ -4,6 +4,9 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.10.1 of 20 April 2012
++ Fixed bug #3519784 (http://bit.ly/IsCsun) where multi-line type or const snippets that start on same line as type or const keyword were corrupted when included in units using the "comments after snippet header" comment style.
+
 Release v3.10.0 of 17 April 2012
 + Added new Help | On The Web | FAQs menu option to display CodeSnip FAQs in default browser.
 + Fixed unreported minor bug in dialog boxes that display tabbed page controls: clicking a tab did not always give it the keyboard focus.
