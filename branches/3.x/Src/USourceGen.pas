@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -1171,18 +1171,12 @@ class procedure TConstAndTypeFormatter.Split(const ConstOrType: TRoutine;
       @param Body [out] Source code that follows keyword if KW is present,
         otherwise set to SourceCode.
     }
-  var
-    EOLPos: Integer;  // position of end of line chars, if present after KW
   begin
     if AnsiStartsStr(KW, SourceCode) then
     begin
       // KW starts SourceCode - perform split
       Keyword := KW;
-      EOLPos := PosEx(EOL, SourceCode, Length(KW));
-      if EOLPos > 0 then
-        Body := Copy(SourceCode, EOLPos + Length(EOL), MaxInt)
-      else
-        Body := '  ' + Trim(Copy(SourceCode, Length(KW) + 1, MaxInt));
+      Body := '  ' + Trim(Copy(SourceCode, Length(KW) + 1, MaxInt));
     end
     else
     begin
