@@ -55,7 +55,8 @@ type
     skRoutine,    // procedure or function in standard format
     skConstant,   // constant definition in standard format
     skTypeDef,    // type definition in standard format
-    skUnit        // complete source code unit
+    skUnit,       // complete source code unit
+    skClass       // Delphi class or record with methods
   );
 
 type
@@ -147,10 +148,11 @@ resourcestring
   sConstant         = 'Constant';
   sTypeDef          = 'Type Definition';
   sUnit             = 'Unit';
+  sClass            = 'Class / Advanced Record';
 const
   // Map of snippet kinds onto their descriptions
   Descriptions: array[TSnippetKind] of string = (
-    sFreeform, sRoutine, sConstant, sTypeDef, sUnit
+    sFreeform, sRoutine, sConstant, sTypeDef, sUnit, sClass
   );
 var
   Kind: TSnippetKind;

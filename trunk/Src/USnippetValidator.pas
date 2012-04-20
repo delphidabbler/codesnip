@@ -53,7 +53,7 @@ type
   strict private
     const
       cAllSnippetKinds: TSnippetKinds =   // Set of all possible snippet kinds
-        [skFreeform, skRoutine, skConstant, skTypeDef, skUnit];
+        [skFreeform, skRoutine, skConstant, skTypeDef, skUnit, skClass];
   public
     class function ValidateDependsList(const Snippet: TSnippet;
       out ErrorMsg: string): Boolean; overload;
@@ -440,9 +440,11 @@ class function TSnippetValidator.ValidDependsKinds(
 begin
   case Kind of
     skFreeform: Result := [skRoutine, skConstant, skTypeDef, skFreeform];
-    skRoutine: Result := [skRoutine, skConstant, skTypeDef];
-    skConstant, skTypeDef: Result := [skConstant, skTypeDef];
+    skRoutine: Result := [skRoutine, skConstant, skTypeDef, skClass];
+    skConstant: Result := [skConstant, skTypeDef];
+    skTypeDef: Result := [skConstant, skTypeDef, skClass];
     skUnit: Result := [];
+    skClass: Result := [skRoutine, skConstant, skTypeDef, skClass];
   end;
 end;
 

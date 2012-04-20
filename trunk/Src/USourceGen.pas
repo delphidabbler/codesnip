@@ -238,7 +238,7 @@ uses
   SysUtils,
   // Project
   DB.USnippetKind, UConsts, UExceptions, UPreferences, USnippetValidator,
-  UStrUtils, UWarnings;
+  UStrUtils, UWarnings, Hiliter.UPasLexer;
 
 
 const
@@ -329,6 +329,32 @@ type
           constant or type.
         @return Formatted prototype.
       }
+  end;
+
+  TClassFormatter = class(TNoConstructObject)
+  strict private
+    class function RenderDescComment(CommentStyle: TCommentStyle;
+      const Snippet: TSnippet): string;
+      {Creates comment in required style that contains class' description.
+        @param CommentStyle [in] Required commenting style.
+        @param Snippet [in] Class for which comments required.
+        @return Formatted comments.
+      }
+    class function RemoveKeywordFromDecl(const Decl: string;
+      out DeclBody: string): Boolean;
+      {Removes any introductory "type" keyword from a type declaration, if
+      possible.
+        @param Decl [in] Type declaration to be processed.
+        @param DeclBody [out] Source code that follows "type" keyword if
+          keyword is found, otherwise set to Decl.
+        @returns True if successful, False if not.
+      }
+    class procedure SplitDeclFromDefn(const Source: string; out Decl,
+      Defn: string);
+  public
+    class function FormatClassDeclaration(CommentStyle: TCommentStyle;
+      const Snippet: TSnippet): string;
+    class function FormatClassDefinition(const Snippet: TSnippet): string;
   end;
 
 { TSourceGen }
@@ -545,9 +571,16 @@ begin
     // consts and types
     for Snippet in fSourceAnalyser.TypesAndConsts do
     begin
-      Writer.AppendLine(
-        TConstAndTypeFormatter.FormatConstOrType(CommentStyle, Snippet)
-      );
+      case Snippet.Kind of
+        skTypeDef, skConstant:
+          Writer.AppendLine(
+            TConstAndTypeFormatter.FormatConstOrType(CommentStyle, Snippet)
+          );
+        skClass:
+          Writer.AppendLine(
+            TClassFormatter.FormatClassDeclaration(CommentStyle, Snippet)
+          );
+      end;
       Writer.AppendLine;
     end;
 
@@ -580,6 +613,15 @@ begin
     begin
       Writer.AppendLine(TRoutineFormatter.FormatRoutine(CommentStyle, Snippet));
       Writer.AppendLine;
+    end;
+
+    for Snippet in fSourceAnalyser.TypesAndConsts do
+    begin
+      if Snippet.Kind = skClass then
+      begin
+        Writer.AppendLine(TClassFormatter.FormatClassDefinition(Snippet));
+        Writer.AppendLine;
+      end;
     end;
 
     // close unit
@@ -644,6 +686,10 @@ begin
       AddTypeOrConst(Snippet);
     skFreeform:
       {Ignore};
+    skUnit:
+      {Ignore};
+    skClass:
+      AddTypeOrConst(Snippet);
   end;
 end;
 
@@ -655,8 +701,8 @@ var
   ErrorMsg: string;       // any error message
 begin
   Assert(Assigned(TypeOrConst), ClassName + '.Add: ConstOrType in nil');
-  Assert(TypeOrConst.Kind in [skTypeDef, skConstant],
-    ClassName + '.Add: ConstOrType must have kind skTypeDef or skConstant');
+  Assert(TypeOrConst.Kind in [skTypeDef, skConstant, skClass],
+    ClassName + '.Add: ConstOrType.Kind is not valid');
   // Ignore if already in list
   if fTypesAndConsts.Contains(TypeOrConst) then
     Exit;
@@ -1145,6 +1191,159 @@ begin
         + '}';
     csAfter:
       Result := StrWrap('{' + Text + '}', cLineWidth - cIndent, cIndent);
+  end;
+end;
+
+{ TClassFormatter }
+
+class function TClassFormatter.FormatClassDeclaration(
+  CommentStyle: TCommentStyle; const Snippet: TSnippet): string;
+var
+  Dummy: string;
+  Decl: string;
+  DeclBody: string;
+begin
+  // TODO: add comments
+  SplitDeclFromDefn(Snippet.SourceCode, Decl, Dummy);
+  Decl := StrTrim(Decl);
+  case CommentStyle of
+    csNone:
+      Result := StrTrim(Decl);
+    csBefore:
+      Result := RenderDescComment(CommentStyle, Snippet)
+        + EOL
+        + StrTrim(Decl);
+    csAfter:
+    begin
+      if RemoveKeywordFromDecl(Decl, DeclBody) then
+        Result := 'type'
+          + EOL
+          + RenderDescComment(CommentStyle, Snippet)
+          + EOL
+          + DeclBody
+      else
+        Result := Decl;
+    end;
+  end;
+end;
+
+class function TClassFormatter.FormatClassDefinition(const Snippet: TSnippet):
+  string;
+var
+  Dummy: string;
+begin
+  // TODO: remove leading comments / white space
+  SplitDeclFromDefn(Snippet.SourceCode, Dummy, Result);
+end;
+
+class function TClassFormatter.RemoveKeywordFromDecl(const Decl: string;
+  out DeclBody: string): Boolean;
+const
+  Keyword = 'type';
+begin
+  Result := StrStartsStr(Keyword, Decl);
+  if Result then
+    DeclBody := '  ' + StrTrim(Copy(Decl, Length(Keyword) + 1, MaxInt))
+  else
+    // "type" not found - can't remove
+    DeclBody := Decl;
+end;
+
+class function TClassFormatter.RenderDescComment(CommentStyle: TCommentStyle;
+  const Snippet: TSnippet): string;
+begin
+  Result := TSourceComments.FormatSnippetComment(
+    CommentStyle, StrTrim(Snippet.Description)
+  );
+end;
+
+class procedure TClassFormatter.SplitDeclFromDefn(const Source: string;
+  out Decl, Defn: string);
+var
+  Lexer: THilitePasLexer;
+  SB: TStringBuilder;
+  ClassTypeName: string;
+  Temp: string;
+const
+  WhiteSpaceTokens = [tkComment, tkCompilerDir, tkWhitespace, tkEOL];
+begin
+  Lexer := THilitePasLexer.Create(Source);
+  try
+    SB := TStringBuilder.Create;
+    try
+      // skip any leading white space and comments to first Pascal token
+      // this must be "type" keyword
+      while Lexer.NextToken in WhiteSpaceTokens do
+        SB.Append(Lexer.TokenStr);
+      if (Lexer.Token <> tkKeyword)
+        and not StrSameText(Lexer.TokenStr, 'type') then
+        raise ECodeSnip.Create('"type" must be first keyword in source code');
+      SB.Append(Lexer.TokenStr);
+
+      // get name of class from following indentifier
+      while Lexer.NextToken in WhiteSpaceTokens do
+        SB.Append(Lexer.TokenStr);
+      if Lexer.Token <> tkIdentifier then
+        raise ECodeSnip.Create('Class type name expected in source code');
+      ClassTypeName := Lexer.TokenStr;
+      SB.Append(Lexer.TokenStr);
+
+      while True do
+      begin
+        // look for function or procedure
+        while not (Lexer.NextToken in [tkKeyword, tkEOF])
+          or not (
+            StrSameText(Lexer.TokenStr, 'function')
+            or StrSameText(Lexer.TokenStr, 'procedure')
+          ) do
+          SB.Append(Lexer.TokenStr);
+        if Lexer.Token = tkEOF then
+          raise ECodeSnip.Create('Invalid class or advanced record type');
+        // check if function is followed by ClassTypeName and a dot => start
+        // of declaration
+        // record "function" or "procedure"
+        Temp := Lexer.TokenStr;
+        // record following white space
+        while Lexer.NextToken in WhiteSpaceTokens do
+          Temp := Temp + Lexer.TokenStr;
+        // record pascal item after white space
+        Temp := Temp + Lexer.TokenStr;
+        if (Lexer.Token <> tkIdentifier)
+          or not StrSameText(Lexer.TokenStr, ClassTypeName) then
+        begin
+          // not the required identifier: record text and go round again
+          SB.Append(Temp);
+          Continue;
+        end;
+        // check for following '.'
+        while Lexer.NextToken in WhiteSpaceTokens do
+          Temp := Temp + Lexer.TokenStr;
+        Temp := Temp + Lexer.TokenStr;
+        if (Lexer.Token <> tkSymbol) or (Lexer.TokenStr <> '.') then
+        begin
+          SB.Append(Temp);
+          Continue;
+        end;
+        // check for following identifier
+        while Lexer.NextToken in WhiteSpaceTokens do
+          Temp := Temp + Lexer.TokenStr;
+        Temp := Temp + Lexer.TokenStr;
+        if (Lexer.Token <> tkIdentifier) then
+        begin
+          SB.Append(Temp);
+          Continue;
+        end;
+        Break;
+      end;
+      // Lexer replaces CRLF with LF, but we need CRLF to keep string length
+      // same as original so that string slice below works
+      Decl := StrReplace(SB.ToString, LF, CRLF);
+    finally
+      SB.Free;
+    end;
+    Defn := StrSliceRight(Source, Length(Source) - Length(Decl));
+  finally
+    Lexer.Free;
   end;
 end;
 
