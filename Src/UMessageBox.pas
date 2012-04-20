@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -189,7 +189,7 @@ uses
   // Delphi
   SysUtils, Windows, Forms, StdCtrls, ExtCtrls, Consts, Math,
   // Project
-  UConsts, UDlgHelper, UFontHelper, UGraphicUtils, UStructs, UStrUtils;
+  UConsts, UDlgHelper, UFontHelper, UGraphicUtils, UStructs, UUtils;
 
 
 type
@@ -414,7 +414,7 @@ begin
     // convert line breaks in Msg to LF only, remove leading and trailing LFs,
     // ensure proper sentence and then convert text string list.
     TIStringList.Create(
-      StrMakeSentence(StrTrimChars(StrUnixLineBreaks(Msg), LF)),
+      MakeSentence(TrimChar(UnixLineBreaks(Msg), LF)),
       LF,
       True
     ),

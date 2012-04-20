@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -44,10 +44,10 @@ interface
 
 uses
   // Delphi
-  Classes, Forms, StdCtrls, Controls, ExtCtrls,
+  Forms, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  Browser.UHTMLEvents, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
-  FrHTMLTpltDlg, UActiveText, UBaseObjects, UCSSBuilder;
+  FmHTMLViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg, UActiveText,
+  UBaseObjects, UCSSBuilder, UHTMLEvents;
 
 
 type
@@ -56,7 +56,7 @@ type
     Dialog box that displays active text rendered from REML markup entered in
     snippets editor. Active text is rendered as HTML.
   }
-  TViewExtraDlg = class(TGenericViewDlg, INoPublicConstruct)
+  TViewExtraDlg = class(THTMLViewDlg, INoPublicConstruct)
     frmExtraInfo: THTMLTpltDlgFrame;
   strict private
     fActiveText: IActiveText; // Active text to be displayed.
@@ -81,7 +81,7 @@ type
     procedure ArrangeForm; override;
       {Sizes dialog box to fit content.
       }
-    procedure ConfigForm; override;
+    procedure InitHTMLFrame; override;
       {Initialises HTML frame, loads HTML template and inserts HTML
       representation of Extra Text REML.
       }
@@ -102,8 +102,8 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UActiveTextHTML, UAnchors, UColours, UConsts, UCSSUtils, UHTMLTemplate,
-  UMessageBox, UProtocols, USystemInfo;
+  UActiveTextHTML, UAnchors, UColours, UConsts, UCSSUtils, UMessageBox,
+  UProtocols, USystemInfo;
 
 {$R *.dfm}
 
@@ -115,25 +115,6 @@ procedure TViewExtraDlg.ArrangeForm;
 begin
   pnlBody.Height := frmExtraInfo.DocHeight;
   inherited;
-end;
-
-procedure TViewExtraDlg.ConfigForm;
-  {Initialises HTML frame, loads HTML template and inserts HTML representation
-  of Extra Text REML.
-  }
-begin
-  inherited;
-  frmExtraInfo.OnBuildCSS := UpdateCSS;
-  frmExtraInfo.OnHTMLEvent := HTMLEventHandler;
-  frmExtraInfo.Initialise(
-    'dlg-viewextra-tplt.html',
-    procedure(Tplt: THTMLTemplate)
-    begin
-      Tplt.ResolvePlaceholderHTML(
-        'Content', TActiveTextHTML.Render(fActiveText)
-      );
-    end
-  );
 end;
 
 class procedure TViewExtraDlg.Execute(const AOwner: TComponent;
@@ -189,34 +170,52 @@ const
   cCloseRes = mrCancel; // modal result of choice dialog's close button
   cViewLinkRes = $FF;   // modal result of choice dialog's view button
 begin
-  if EventInfo.IsEvent(
-    THTMLDocumentEvents2Sink.EventIntf, THTMLDocumentEvents2Sink.DISPID_OnClick
-  ) then
-  begin
-    // Mouse click: check for click on a link and handle it
-    ALink := TAnchors.FindEnclosingAnchor(EventInfo.Args.srcElement);
-    if not Assigned(ALink) then
-      Exit;
-    // Cancel event: no further action needed
-    EventInfo.Cancelled := True;
-    // Give user info about link and option to display it
-    if TMessageBox.Custom(
-      Self,
-      Format(sDlgText, [TAnchors.GetURL(ALink)]),
-      [
-        TMessageBoxButton.Create(sClose, cCloseRes, True, True),
-        TMessageBoxButton.Create(sViewLink, cViewLinkRes)
-      ]
-    ) = cViewLinkRes then
+  case EventInfo.DispatchId of
+    cDocEventOnClick:
     begin
-      // User wants to view link: use protocol handler to display it
-      with TProtocolFactory.CreateHandler(TAnchors.GetURL(ALink)) do
-        try
-          Execute;
-        finally
-          Free;
-        end;
+      // Mouse click: check for click on a link and handle it
+      ALink := TAnchors.FindEnclosingAnchor(EventInfo.Args.srcElement);
+      if not Assigned(ALink) then
+        Exit;
+      // Cancel event: no further action needed
+      EventInfo.Cancelled := True;
+      // Give user info about link and option to display it
+      if TMessageBox.Custom(
+        Self,
+        Format(sDlgText, [TAnchors.GetURL(ALink)]),
+        [
+          TMessageBoxButton.Create(sClose, cCloseRes, True, True),
+          TMessageBoxButton.Create(sViewLink, cViewLinkRes)
+        ]
+      ) = cViewLinkRes then
+      begin
+        // User wants to view link: use protocol handler to display it
+        with TProtocolFactory.CreateHandler(TAnchors.GetURL(ALink)) do
+          try
+            Execute;
+          finally
+            Free;
+          end;
+      end;
     end;
+  end;
+end;
+
+procedure TViewExtraDlg.InitHTMLFrame;
+  {Initialises HTML frame, loads HTML template and inserts HTML
+  representation of Extra Text REML.
+  }
+var
+  Values: TStringList;  // values to insert in HTML template
+begin
+  Values := TStringList.Create;
+  try
+    frmExtraInfo.OnBuildCSS := UpdateCSS;
+    frmExtraInfo.OnHTMLEvent := HTMLEventHandler;
+    Values.Values['Content'] := TActiveTextHTML.Render(fActiveText);
+    frmExtraInfo.Initialise('dlg-viewextra-tplt.html', Values);
+  finally
+    FreeAndNil(Values);
   end;
 end;
 
@@ -232,25 +231,25 @@ begin
   // Set rendered REML container
   with CSSBuilder.AddSelector('#content') do
   begin
-    AddProperty(TCSS.BackgroundColorProp(clWindow));
-    AddProperty(TCSS.PaddingProp(0, 6, 6, 6));
-    AddProperty(TCSS.MarginProp(cssTop, 6));
-    AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
-    AddProperty(TCSS.OverflowProp(covAuto));
-    AddProperty(TCSS.WidthProp(cluAuto, 0));
+    AddProperty(CSSBackgroundColorProp(clWindow));
+    AddProperty(CSSPaddingProp(0, 6, 6, 6));
+    AddProperty(CSSMarginProp(cssTop, 6));
+    AddProperty(CSSBorderProp(cssAll, 1, cbsSolid, clBorder));
+    AddProperty(CSSOverflowProp(covAuto));
+    AddProperty(CSSWidthProp(cltAuto, 0));
     // Use height instead of maxheight if IE 6 or lower
     if TOSInfo.BrowserVer > 6 then
-      AddProperty(TCSS.MaxHeightProp(cMaxExtraHTMLHeight))
+      AddProperty(CSSMaxHeightProp(cMaxExtraHTMLHeight))
     else
-      AddProperty(TCSS.HeightProp(cMaxExtraHTMLHeight));
+      AddProperty(CSSHeightProp(cMaxExtraHTMLHeight));
   end;
   // Show or hide text about links depending on if links in Extra HTML
   with CSSBuilder.AddSelector('#linktext') do
   begin
     if ExtraContainsLinks then
-      AddProperty(TCSS.DisplayProp(cdsInline))
+      AddProperty(CSSDisplayProp(cdsInline))
     else
-      AddProperty(TCSS.DisplayProp(cdsNone));
+      AddProperty(CSSDisplayProp(cdsNone));
   end;
   // Style the REML itself
   TActiveTextHTML.Styles(Font, CSSBuilder);

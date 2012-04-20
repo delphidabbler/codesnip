@@ -60,16 +60,16 @@ type
   IPreferences = interface(IInterface)
     ['{381B9A92-B528-47E1-AC04-90E1FFFDADA7}']
     function GetSourceCommentStyle: TCommentStyle;
-      {Gets style of commenting used to describe snippets in generated code.
+      {Gets style of commenting used to describe routines in generated code.
         @return Current commenting style.
       }
     procedure SetSourceCommentStyle(const Value: TCommentStyle);
-      {Sets style of commenting to be used describe snippets in generated code.
+      {Sets style of commenting to be used describe routines in generated code.
         @param Value [in] Required commenting style.
       }
     property SourceCommentStyle: TCommentStyle
       read GetSourceCommentStyle write SetSourceCommentStyle;
-      {Commenting style used to describe snippets in generated source code}
+      {Commenting style used to describe routines in generated source code}
 
     function GetSourceDefaultFileType: TSourceFileType;
       {Gets current default file extension / type used when writing code
@@ -121,35 +121,6 @@ type
     property OverviewStartState: TOverviewStartState
       read GetOverviewStartState write SetOverviewStartState;
       {Startup state of overview treeview}
-
-    function GetShowEmptySections: Boolean;
-      {Gets flag that indicates whether empty sections are displayed in overview
-      pane.
-        @returns Flag value.
-      }
-    procedure SetShowEmptySections(const Value: Boolean);
-      {Sets flag that indicates whether empty sections are displayed in overview
-      pane.
-        @param Value [in] New flag value.
-      }
-    property ShowEmptySections: Boolean
-      read GetShowEmptySections write SetShowEmptySections;
-      {Indicates whether empty sections are displayed in overview pane}
-
-    function GetShowNewSnippetsInNewTabs: Boolean;
-      {Gets flag that indicates whether new snippets and categories are
-      displayed in new tabs in details pane.
-        @returns Flag value.
-      }
-    procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
-      {Sets flag that indicates whether new snippets and categories are
-      displayed in new tabs in details pane.
-        @param Value [in] New flag value.
-      }
-    property ShowNewSnippetsInNewTabs: Boolean
-      read GetShowNewSnippetsInNewTabs write SetShowNewSnippetsInNewTabs;
-      {Indicates whether new snippets and ca-tegories are displayed in new tabs 
-      in details pane}
 
     function GetPrinterOptions: TPrintOptions;
       {Gets print options.
@@ -260,18 +231,13 @@ type
     fSourceDefaultFileType: TSourceFileType;
       {Default file extension / type used when writing code snippets to file}
     fSourceCommentStyle: TCommentStyle;
-      {Commenting style used to describe snippets in generated source code}
+      {Commenting style used to describe routines in generated source code}
     fSourceSyntaxHilited: Boolean;
       {Indicates whether generated source is highlighted by default}
     fMeasurementUnits: TMeasurementUnits;
       {Measurement unit in use by application}
     fOverviewStartState: TOverviewStartState;
       {Startup state of overview treeview}
-    fShowEmptySections: Boolean;
-      {Indicates whether empty sections are displayed in overview pane}
-    fShowNewSnippetsInNewTabs: Boolean;
-      {Indicates whether new snippets and categories are displayed in new tabs
-      in details pane}
     fPrinterOptions: TPrintOptions;
       {Default print options}
     fPrinterPageMargins: TPageMargins;
@@ -287,11 +253,11 @@ type
   protected // do not make strict
     { IPreferences methods }
     function GetSourceCommentStyle: TCommentStyle;
-      {Gets style of commenting used to describe snippets in generated code.
+      {Gets style of commenting used to describe routines in generated code.
         @return Current commenting style.
       }
     procedure SetSourceCommentStyle(const Value: TCommentStyle);
-      {Sets style of commenting to be used describe snippets in generated code.
+      {Sets style of commenting to be used describe routines in generated code.
         @param Value [in] Required commenting style.
       }
     function GetSourceDefaultFileType: TSourceFileType;
@@ -328,26 +294,6 @@ type
     procedure SetOverviewStartState(const Value: TOverviewStartState);
       {Sets startup state of overview tree view.
         @param Value [in] Required startup state.
-      }
-    function GetShowEmptySections: Boolean;
-      {Gets flag that indicates whether empty sections are displayed in overview
-      pane.
-        @returns Flag value.
-      }
-    procedure SetShowEmptySections(const Value: Boolean);
-      {Sets flag that indicates whether empty sections are displayed in overview
-      pane.
-        @param Value [in] New flag value.
-      }
-    function GetShowNewSnippetsInNewTabs: Boolean;
-      {Gets flag that indicates whether new snippets and categories are
-      displayed in new tabs in details pane.
-        @returns Flag value.
-      }
-    procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
-      {Sets flag that indicates whether new snippets and categories are
-      displayed in new tabs in details pane.
-        @param Value [in] New flag value.
       }
     function GetPrinterOptions: TPrintOptions;
       {Gets print options.
@@ -485,8 +431,6 @@ begin
   Self.fSourceSyntaxHilited := SrcPref.SourceSyntaxHilited;
   Self.fMeasurementUnits := SrcPref.MeasurementUnits;
   Self.fOverviewStartState := SrcPref.OverviewStartState;
-  Self.fShowEmptySections := SrcPref.ShowEmptySections;
-  Self.fShowNewSnippetsInNewTabs := SrcPref.ShowNewSnippetsInNewTabs;
   Self.fPrinterOptions := SrcPref.PrinterOptions;
   Self.fPrinterPageMargins := SrcPref.PrinterPageMargins;
   Self.SetHiliteAttrs(SrcPref.HiliteAttrs);
@@ -562,18 +506,8 @@ begin
   Result := fPrinterPageMargins;
 end;
 
-function TPreferences.GetShowEmptySections: Boolean;
-begin
-  Result := fShowEmptySections;
-end;
-
-function TPreferences.GetShowNewSnippetsInNewTabs: Boolean;
-begin
-  Result := fShowNewSnippetsInNewTabs;
-end;
-
 function TPreferences.GetSourceCommentStyle: TCommentStyle;
-  {Gets style of commenting used to describe snippets in generated code.
+  {Gets style of commenting used to describe routines in generated code.
     @return Current commenting style.
   }
 begin
@@ -658,18 +592,8 @@ begin
   fPrinterPageMargins := Margins;
 end;
 
-procedure TPreferences.SetShowEmptySections(const Value: Boolean);
-begin
-  fShowEmptySections := Value;
-end;
-
-procedure TPreferences.SetShowNewSnippetsInNewTabs(const Value: Boolean);
-begin
-  fShowNewSnippetsInNewTabs := Value;
-end;
-
 procedure TPreferences.SetSourceCommentStyle(const Value: TCommentStyle);
-  {Sets style of commenting to be used describe snippets in generated code.
+  {Sets style of commenting to be used describe routines in generated code.
     @param Value [in] Required commenting style.
   }
 begin
@@ -716,8 +640,6 @@ begin
   NewPref.SourceSyntaxHilited := Self.fSourceSyntaxHilited;
   NewPref.MeasurementUnits := Self.fMeasurementUnits;
   NewPref.OverviewStartState := Self.fOverviewStartState;
-  NewPref.ShowEmptySections := Self.fShowEmptySections;
-  NewPref.ShowNewSnippetsInNewTabs := Self.fShowNewSnippetsInNewTabs;
   NewPref.PrinterOptions := Self.fPrinterOptions;
   NewPref.PrinterPageMargins := Self.fPrinterPageMargins;
   NewPref.HiliteAttrs := Self.GetHiliteAttrs;
@@ -747,12 +669,6 @@ begin
   );
   fOverviewStartState := TOverviewStartState(
     StrToIntDef(Storage.ItemValues['OverviewStartState'], Ord(ossExpanded))
-  );
-  fShowEmptySections := Boolean(
-    StrToIntDef(Storage.ItemValues['ShowEmptySections'], Ord(False))
-  );
-  fShowNewSnippetsInNewTabs := Boolean(
-    StrToIntDef(Storage.ItemValues['ShowNewSnippetsInNewTabs'], Ord(False))
   );
 
   // Read source code section
@@ -811,12 +727,6 @@ begin
   Storage.ItemValues['Units'] := IntToStr(Ord(fMeasurementUnits));
   Storage.ItemValues['OverviewStartState'] := IntToStr(
     Ord(fOverviewStartState)
-  );
-  Storage.ItemValues['ShowEmptySections'] := IntToStr(
-    Ord(fShowEmptySections)
-  );
-  Storage.ItemValues['ShowNewSnippetsInNewTabs'] := IntToStr(
-    Ord(fShowNewSnippetsInNewTabs)
   );
   Storage.Save;
 

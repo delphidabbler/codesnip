@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphi
   ComCtrls, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  DB.USnippet, FmGenericViewDlg, UBaseObjects, USnippetIDs, USnippetsTVDraw;
+  FmGenericViewDlg, UBaseObjects, USnippetIDs, USnippets, USnippetsTVDraw;
 
 
 type
@@ -89,13 +89,13 @@ type
       end;
     var
       fSnippetID: TSnippetID;     // Snippet whose dependencies are displayed
-      fDependsList: TSnippetList; // List of dependencies to be displayed
+      fDependsList: TRoutineList; // List of dependencies to be displayed
       fTVDraw: TTVDraw;           // Customises appearance of tree view}
     procedure PopulateTreeView;
       {Populates treeview with nodes for each snippet in dependency list.
       }
     procedure AddDependencies(const Parent: TTreeNode;
-      const DependsList: TSnippetList);
+      const DependsList: TRoutineList);
       {Adds tree nodes for snippets in a dependency list.
         @param Parent [in] Parent node for nodes from dependency list.
         @param DependsList [in] Dependency list containing snippets to be added
@@ -121,13 +121,13 @@ type
       }
   public
     class procedure Execute(const AOwner: TComponent;
-      const SnippetID: TSnippetID; const DependsList: TSnippetList); overload;
+      const SnippetID: TSnippetID; const DependsList: TRoutineList); overload;
       {Displays dialog box containing details of a snippet's dependencies.
         @param AOwner [in] Component that owns the dialog box.
         @param SnippetID [in] ID of snippet for which dependencies are to be
           displayed.
       }
-    class procedure Execute(const AOwner: TComponent; const Snippet: TSnippet);
+    class procedure Execute(const AOwner: TComponent; const Snippet: TRoutine);
       overload;
       {Displays dialog box containing details of a snippet's dependencies.
         @param AOwner [in] Component that owns the dialog box.
@@ -143,7 +143,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  DB.USnippetKind, UColours, UFontHelper;
+  UColours, UFontHelper, USnippetKindInfo, FmGenericDlg;
 
 {$R *.dfm}
 
@@ -151,14 +151,14 @@ uses
 { TDependenciesDlg }
 
 procedure TDependenciesDlg.AddDependencies(const Parent: TTreeNode;
-  const DependsList: TSnippetList);
+  const DependsList: TRoutineList);
   {Adds tree nodes for snippets in a dependency list.
     @param Parent [in] Parent node for nodes from dependency list.
     @param DependsList [in] Dependency list containing snippets to be added to
       treeview.
   }
 var
-  RequiredSnippet: TSnippet;  // iterates through snippets in DependsList
+  RequiredSnippet: TRoutine;  // iterates through snippets in DependsList
   ChildNode: TTreeNode;       // a node added to treeview
 begin
   for RequiredSnippet in DependsList do
@@ -168,7 +168,7 @@ begin
       Parent,
       RequiredSnippet.Name
         + ' ('
-        + TSnippetKindInfoList.Items[RequiredSnippet.Kind].DisplayName
+        + TSnippetKindInfoList.Instance[RequiredSnippet.Kind].Description
         + ')'
     );
     ChildNode.Data := RequiredSnippet;  // reference to associated snippet
@@ -240,7 +240,7 @@ begin
 end;
 
 class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet);
+  const Snippet: TRoutine);
   {Displays dialog box containing details of a snippet's dependencies.
     @param AOwner [in] Component that owns the dialog box.
     @param Snippet [in] Snippet for which dependencies are to be displayed.
@@ -250,7 +250,7 @@ begin
 end;
 
 class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
-  const SnippetID: TSnippetID; const DependsList: TSnippetList);
+  const SnippetID: TSnippetID; const DependsList: TRoutineList);
   {Displays dialog box containing details of a snippet's dependencies.
     @param AOwner [in] Component that owns the dialog box.
     @param SnippetIS [in] ID of snippet for which dependencies are to be
@@ -273,7 +273,7 @@ procedure TDependenciesDlg.FormDestroy(Sender: TObject);
   }
 begin
   inherited;
-  fTVDraw.Free;
+  FreeAndNil(fTVDraw);
 end;
 
 function TDependenciesDlg.GetDisplayName: string;
@@ -342,7 +342,7 @@ function TDependenciesDlg.TTVDraw.IsErrorNode(
     @return True if node represents error condition, False if not.
   }
 begin
-  Result := Assigned(Node.Data) and (TSnippet(Node.Data).ID = fRootID);
+  Result := Assigned(Node.Data) and (TRoutine(Node.Data).ID = fRootID);
 end;
 
 function TDependenciesDlg.TTVDraw.IsUserDefinedNode(
@@ -355,7 +355,7 @@ begin
   if not Assigned(Node.Data) then
     Result := True
   else
-    Result := TSnippet(Node.Data).UserDefined;
+    Result := TRoutine(Node.Data).UserDefined;
 end;
 
 end.

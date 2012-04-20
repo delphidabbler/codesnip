@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,9 +45,9 @@ implementation
 
 uses
   // Delphi
-  ExtActns,
+  StrUtils, ExtActns,
   // Project
-  UBrowseProtocol, UProtocols, UStrUtils;
+  UBrowseProtocol, UProtocols;
 
 
 type
@@ -94,14 +94,14 @@ class function THTTPProtocol.SupportsProtocol(const URL: string): Boolean;
     @return True if URL's protocol is http:, False if not.
   }
 begin
-  Result := StrStartsStr(cHTTPProtocol, URL);
+  Result := AnsiStartsStr(cHTTPProtocol, URL);
 end;
 
 { THTTPSProtocol }
 
 class function THTTPSProtocol.SupportsProtocol(const URL: string): Boolean;
 begin
-  Result := StrStartsStr(cHTTPSProtocol, URL);
+  Result := AnsiStartsStr(cHTTPSProtocol, URL);
 end;
 
 initialization

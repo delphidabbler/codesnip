@@ -77,7 +77,7 @@ type
     procedure actPreviewExecute(Sender: TObject);
     procedure actPreviewUpdate(Sender: TObject);
     procedure btnPredefinedClick(Sender: TObject);
-  strict private
+  private
     fWarnings: IWarnings; // Object that stores details of warnings
     procedure PopulateLV;
       {Populates list view with details of warnings.
@@ -161,8 +161,8 @@ uses
   // Delphi
   SysUtils, Types,
   // Project
-  FmPreferencesDlg, FmPreviewDlg, IntfCommon, UCtrlArranger, UEncodings,
-  UKeysHelper, UStrUtils, UUtils;
+  FmPreferencesDlg, FmPreviewDlg, IntfCommon, UCtrlArranger, UKeysHelper,
+  UUtils;
 
 {$R *.dfm}
 
@@ -256,7 +256,7 @@ var
   Symbol: string; // symbol of selected warning
 begin
   // Delete selected warning
-  Symbol := StrTrim(lvWarnings.Selected.Caption);
+  Symbol := Trim(lvWarnings.Selected.Caption);
   lvWarnings.Selected.Delete;
   fWarnings.Delete(Symbol);
   // Ensure nothing selected in list view and clear edit controls
@@ -293,12 +293,7 @@ procedure TCodeGenPrefsFrame.actPreviewExecute(Sender: TObject);
 resourcestring
   sCaption = 'Compiler Directives Preview';
 begin
-  TPreviewDlg.Execute(
-    Self.Owner,
-    TEncodedData.Create(fWarnings.Render, etUnicode),
-    dtPlainText,
-    sCaption
-  );
+  TPreviewDlg.Execute(Self.Owner, fWarnings.Render, sCaption);
 end;
 
 procedure TCodeGenPrefsFrame.actPreviewUpdate(Sender: TObject);
@@ -325,7 +320,7 @@ begin
   GetSymbol(NewSymbol);
   GetCompilerVersion(NewCompilerVer);
   SelItem := lvWarnings.Selected;
-  OldSymbol := StrTrim(SelItem.Caption);
+  OldSymbol := Trim(SelItem.Caption);
   SelItem.Caption := NewSymbol;
   SelItem.SubItems[0] := FormatCompilerVer(NewCompilerVer);
   // we update warnings by deleting old one and adding updated version
@@ -491,7 +486,7 @@ function TCodeGenPrefsFrame.GetCompilerVersion(out Ver: Single): Boolean;
 var
   ExtVer: Extended;   // version number as Extended float
 begin
-  Result := TryStrToFloat(StrTrim(edMinCompiler.Text), ExtVer);
+  Result := TryStrToFloat(Trim(edMinCompiler.Text), ExtVer);
   if Result then
     Ver := ExtVer;
 end;
@@ -503,7 +498,7 @@ function TCodeGenPrefsFrame.GetSymbol(out Symbol: string): Boolean;
     @return True if symbol is non-empty string, False if not.
   }
 begin
-  Symbol := StrTrim(edSymbol.Text);
+  Symbol := Trim(edSymbol.Text);
   Result := Symbol <> '';
 end;
 
@@ -526,7 +521,7 @@ var
 begin
   for LI in lvWarnings.Items do
   begin
-    if StrSameText(Symbol, LI.Caption) then
+    if AnsiSameText(Symbol, LI.Caption) then
       Exit(LI.Index);
   end;
   Result := -1;

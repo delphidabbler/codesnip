@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -139,9 +139,9 @@ implementation
 
 uses
   // Delphi
-  Windows {for inlining},
+  SysUtils, Windows {for inlining},
   // Project
-  DB.UCategory, DB.UMain, UColours, UCtrlArranger, UFontHelper, UStrUtils;
+  UColours, UCtrlArranger, USnippets;
 
 {$R *.dfm}
 
@@ -151,7 +151,6 @@ procedure TCategoryDescEditFrame.ArrangeFrame;
   {Arranges controls in frame and sizes it to fit the controls.
   }
 begin
-  TCtrlArranger.SetLabelHeights(Self);
   edDescription.Top := TCtrlArranger.BottomOf(lblDescription, 4);
   lblError.Top := TCtrlArranger.BottomOf(edDescription, 4);
   Self.ClientHeight := TCtrlArranger.TotalControlHeight(Self);
@@ -167,8 +166,8 @@ var
   Cat: TCategory; // each category in database
 begin
   Result := False;
-  for Cat in Database.Categories do
-    if StrSameText(Desc, Cat.Description) then
+  for Cat in Snippets.Categories do
+    if AnsiSameText(Desc, Cat.Description) then
     begin
       Result := True;
       Break;
@@ -182,7 +181,6 @@ constructor TCategoryDescEditFrame.Create(AOwner: TComponent);
 begin
   inherited;
   lblError.Font.Color := clWarningText;
-  TFontHelper.SetDefaultBaseFont(lblError.Font, True);
   UpdateControls;
 end;
 
@@ -217,7 +215,7 @@ function TCategoryDescEditFrame.GetDescription: string;
     @return Current description from edit control.
   }
 begin
-  Result := StrTrim(edDescription.Text);
+  Result := Trim(edDescription.Text);
 end;
 
 function TCategoryDescEditFrame.GetPrompt: string;

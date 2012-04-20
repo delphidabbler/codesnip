@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -43,7 +43,7 @@ uses
   // Delphi
   Generics.Collections, Graphics,
   // Project
-  UEncodings, URTFUtils;
+  UEncodings;
 
 
 type
@@ -112,7 +112,7 @@ type
           available.
         @param Charset [in] Font's character set.
       }
-    function CompareTo(const RTFFont: TRTFFont): Integer;
+    function Compare(const RTFFont: TRTFFont): Integer;
       {Compares this font to another.
         @param RTFFont [in] Other font to be compared.
         @return -ve if this font is less than RTFFont, 0 if same and +ve if
@@ -172,19 +172,13 @@ type
   }
   TRTFDocProperties = class(TObject)
   strict private
-    var
-      fTitle: string;     // Value of Title property
-      fCodePage: Integer; // Code page used by document.
+    var fTitle: string; // Value of Title property
     function IsEmpty: Boolean;
       {Checks if document properties are empty, i.e. non have be defined.
         @return True if no document properties have been defined, False
           otherwise.
       }
   public
-    constructor Create(const CodePage: Integer);
-      {Constructor. Sets up object.
-        @param CodePage [in] Code page to use for RTF document.
-      }
     function AsString: ASCIIString;
       {Builds RTF code representing document properties.
         @return Required RTF code.
@@ -201,7 +195,6 @@ type
   strict private
     var
       fBody: ASCIIString;                 // Accumulates RTF code for doc body
-      fCodePage: Integer;                 // Code page used for RTF
       fInControls: Boolean;               // Tells of emitting RTF ctrls or text
       fColourTable: TRTFColourTable;      // Value of ColourTable property
       fFontTable: TRTFFontTable;          // Value of FontTable property
@@ -219,14 +212,9 @@ type
       {Adds an RTF control to document body.
         @param Ctrl [in] Text representation of control to be added.
       }
-    function AsString: ASCIIString;
-      {Generates RTF code for whole document as string.
-        @return Required RTF as ASCII.
-      }
   public
-    constructor Create(const CodePage: Integer);
+    constructor Create;
       {Constructor. Sets up object.
-        @param CodePage [in] Code page to use for RTF document.
       }
     destructor Destroy; override;
       {Destructor. Tears down object.
@@ -273,9 +261,9 @@ type
         @param Before [in] Spacing before paragraph in points.
         @param After [in] Spacing after paragraph in points.
       }
-    function Render: TRTF;
+    function AsString: ASCIIString;
       {Generates RTF code for whole document.
-        @return Required RTF.
+        @return Required RTF as ASCII.
       }
     property ColourTable: TRTFColourTable
       read fColourTable write fColourTable;
@@ -297,9 +285,9 @@ implementation
 
 uses
   // Delphi
-  Generics.Defaults, Windows, Character,
+  SysUtils, Generics.Defaults, Windows, Character,
   // Project
-  UConsts, UExceptions, ULocales, UStrUtils, UUtils;
+  UConsts, UExceptions, ULocales, URTFUtils, UUtils;
 
 
 { TRTFBuilder }
@@ -310,7 +298,7 @@ procedure TRTFBuilder.AddControl(const Ctrl: ASCIIString);
   }
 begin
   Assert((Ctrl <> '') and not TCharacter.IsWhiteSpace(Char(Ctrl[Length(Ctrl)])),
-    ClassName + '.AddControls: Ctrl ends in whitespace');
+    ClassName + '.AddControls: Ctrls ends in whitespace');
   AppendBody(Ctrl);
   fInControls := True;
 end;
@@ -327,7 +315,7 @@ begin
     fInControls := False;
   end;
   // Add text, escaping disallowed characters
-  AppendBody(RTFMakeSafeText(Text, fCodePage));
+  AppendBody(RTFMakeSafeText(Text));
 end;
 
 procedure TRTFBuilder.AppendBody(const S: ASCIIString);
@@ -361,19 +349,14 @@ begin
   AddControl(RTFControl(rcPard));
 end;
 
-constructor TRTFBuilder.Create(const CodePage: Integer);
+constructor TRTFBuilder.Create;
   {Constructor. Sets up object.
-    @param CodePage [in] Code page to use for RTF document.
   }
 begin
-  inherited Create;
-  if CodePage = 0 then
-    fCodePage := ULocales.DefaultAnsiCodePage
-  else
-    fCodePage := CodePage;
+  inherited;
   fColourTable := TRTFColourTable.Create;
   fFontTable := TRTFFontTable.Create;
-  fDocProperties := TRTFDocProperties.Create(fCodePage);
+  fDocProperties := TRTFDocProperties.Create;
   fBody := '';
   fInControls := False;
 end;
@@ -395,7 +378,7 @@ function TRTFBuilder.DocHeader: ASCIIString;
 begin
   Result := RTFControl(rcRTF, cRTFVersion)
     + RTFControl(rcAnsi)
-    + RTFControl(rcAnsiCodePage, fCodePage)
+    + RTFControl(rcAnsiCodePage, DefaultAnsiCodePage)
     + RTFControl(rcDefFontNum, DefaultFontIdx)
     + RTFControl(rcDefLanguage, DefaultLanguageID)
     + fFontTable.AsString
@@ -419,14 +402,6 @@ begin
   AddControl(RTFControl(rcPar));
   AppendBody(EOL);
   fInControls := False;
-end;
-
-function TRTFBuilder.Render: TRTF;
-  {Generates RTF code for whole document.
-    @return Required RTF.
-  }
-begin
-  Result := TRTF.Create(AsString);
 end;
 
 procedure TRTFBuilder.ResetCharStyle;
@@ -493,14 +468,14 @@ end;
 
 { TRTFFont }
 
-function TRTFFont.CompareTo(const RTFFont: TRTFFont): Integer;
+function TRTFFont.Compare(const RTFFont: TRTFFont): Integer;
   {Compares this font to another.
     @param RTFFont [in] Other font to be compared.
     @return -ve if this font is less than RTFFont, 0 if same and +ve if
       RTFFont is less than this one.
   }
 begin
-  Result := StrCompareText(Self.Name, RTFFont.Name);
+  Result := AnsiCompareText(Self.Name, RTFFont.Name);
 end;
 
 constructor TRTFFont.Create(const Name: string;
@@ -571,7 +546,7 @@ begin
     TDelegatedComparer<TRTFFont>.Create(
       function(const Left, Right: TRTFFont): Integer
       begin
-        Result := Left.CompareTo(Right);
+        Result := Left.Compare(Right);
       end
     )
   );
@@ -693,18 +668,12 @@ begin
   // Start with \info control word in group
   Result := '{' + RTFControl(rcInfo);
   if fTitle <> '' then
-    Result := Result + RTFUnicodeSafeDestination(rcTitle, fTitle, fCodePage);
+    // Add \title group
+    Result := Result + '{'
+      + RTFControl(rcTitle) + ' ' + RTFMakeSafeText(fTitle)
+      + '}';
   // Close \info group
   Result := Result + '}';
-end;
-
-constructor TRTFDocProperties.Create(const CodePage: Integer);
-  {Constructor. Sets up object.
-    @param CodePage [in] Code page to use for RTF document.
-  }
-begin
-  inherited Create;
-  fCodePage := CodePage;
 end;
 
 function TRTFDocProperties.IsEmpty: Boolean;

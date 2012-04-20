@@ -23,7 +23,7 @@
 # The Initial Developer of the Original Code is Peter Johnson
 # (http://www.delphidabbler.com/).
 #
-# Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+# Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
 # Johnson. All Rights Reserved.
 #
 # Contributors:
@@ -48,6 +48,9 @@ Res\HTML\easteregg.js
 
 # compiler error log
 Res\HTML\dlg-comperror-tplt.html
+
+# update dialog news pane
+Res\HTML\dlg-updt-news-tplt.html
 
 # user db edit dialog
 Res\HTML\dlg-userdb-extra.html
@@ -83,11 +86,11 @@ Res\HTML\detail.js
 # routines that call external object
 Res\HTML\external.js
 
-# Container document for all HTML displayed in detail panes
-Res\HTML\detail.html
+# information pane
+# ----------------
 
-# snippet information pages
-# -------------------------
+# Container document for all HTML displayed in info pane
+Res\HTML\detail-info.html
 
 # lists of snippets
 Res\HTML\info-snippet-list-tplt.html
@@ -97,6 +100,20 @@ Res\HTML\info-empty-selection-tplt.html
 
 # snippet information
 Res\HTML\info-snippet-tplt.html
+
+# compiler check pane
+# -------------------          
+
+# Container document for all HTML displayed in comp check pane
+Res\HTML\detail-compcheck.html
+
+# snippet compiler results
+Res\HTML\comp-snippet-tplt.html
+Res\HTML\comp-freeform-tplt.html
+Res\HTML\comp-nocompilers-tplt.html
+
+# compiler check not applicable
+Res\HTML\nocompcheck-body.html
 
 # welcome page
 # -------------

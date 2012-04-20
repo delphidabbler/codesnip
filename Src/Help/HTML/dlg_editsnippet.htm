@@ -20,7 +20,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s):
@@ -51,8 +51,8 @@
       Edit Snippet Dialog Box
     </h1>
     <p>
-      This dialog box is displayed when either the <em>Snippets | New
-      Snippet</em> or <em>Snippets | Edit Snippet</em> menu options are
+      This dialog box is displayed when either the <em>Database | Add
+      Snippet</em> or <em>Database | Edit Snippet</em> menu options are
       selected. It is used to enter details of a new user defined code snippet
       or to edit the details of an existing user-defined snippet.
     </p>
@@ -113,14 +113,16 @@
           <em>Name</em> edit box.
         </div>
         <div>
-          Give the code snippet a name here. Names must be valid Unicode Pascal
-          identifiers. Names must also be unique within the user database,
-          although they may duplicate names in the main database.
+          Give the code snippet a name here. Names must be valid Pascal
+          identifiers with the added restriction that they must start with one
+          of the English letters 'A'..'Z', 'a'..'z' or the underscore character.
+          Names must also be unique within the user database, although they may
+          duplicate names in the main database.
         </div>
         <div>
           It is customary to name functions or procedures using the routine's
           name. Overloaded routines are often named by suffixing the routine
-          name with '_A', '_B', '_C' and so on.
+          name with '_A', '_B' etc.
         </div>
       </li>
       <li>

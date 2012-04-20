@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -275,8 +275,7 @@ uses
   // Delphi
   SysUtils, Generics.Defaults, Math,
   // Project
-  UConsts, UExceptions, UStrUtils;
-
+  UConsts, UExceptions;
 
 { TWarning }
 
@@ -401,7 +400,7 @@ begin
     TDelegatedComparer<TWarning>.Create(
       function(const Left, Right: TWarning): Integer
       begin
-        Result := StrCompareText(Left.Symbol, Right.Symbol);
+        Result := AnsiCompareText(Left.Symbol, Right.Symbol);
       end
     )
   );

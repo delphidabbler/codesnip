@@ -30,6 +30,14 @@
 				<param name="Name" value="Detail Pane">
 				<param name="Local" value="HTML\detail_pane.htm">
 				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Information Tab">
+				<param name="Local" value="HTML\detail_information.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Compiler Checks Tab">
+				<param name="Local" value="HTML\detail_compilerchecks.htm">
+				</OBJECT>
 		</UL>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Navigating the Database">
@@ -62,20 +70,8 @@
 			<param name="Local" value="HTML\menu_search.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Snippets Menu">
-			<param name="Local" value="HTML\menu_snippets.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Categories Menu">
-			<param name="Local" value="HTML\menu_categories.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Database Menu">
 			<param name="Local" value="HTML\menu_database.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Compile Menu">
-			<param name="Local" value="HTML\menu_compile.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Tools Menu">

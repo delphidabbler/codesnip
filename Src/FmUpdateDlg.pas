@@ -77,7 +77,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormDestroy(Sender: TObject);
     procedure btnNewsClick(Sender: TObject);
-  strict private
+  private
     fProgressBarMgr: TMemoProgBarMgr; // Displays progress bar in progress memo
     fDataUpdated: Boolean;            // Flag true if any data was updated
     fCancelled: Boolean;              // Flag true if user cancelled update
@@ -145,7 +145,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  FmNewsDlg, UAppInfo, UColours, UConsts, UCtrlArranger, UStrUtils, UUtils;
+  FmNewsDlg, UAppInfo, UColours, UConsts, UCtrlArranger, UUtils;
 
 
 {$R *.dfm}
@@ -387,7 +387,7 @@ begin
       // Error message: show in warning text colour followed by extra error
       // info. Make sure headline ends in one space to separate headline from
       // error message
-      lblHeadline.Caption := StrTrimRight(lblHeadline.Caption) + ' ';
+      lblHeadline.Caption := TrimRight(lblHeadline.Caption) + ' ';
       lblHeadline.Font.Color := clWarningText;
       TCtrlArranger.MoveToRightOf(lblHeadline, lblError);
       lblError.Top := lblHeadline.Top;

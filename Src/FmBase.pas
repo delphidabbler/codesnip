@@ -135,9 +135,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows,
+  SysUtils, StrUtils, Windows,
   // Project
-  UAppInfo, UBaseObjects, UFontHelper, UNulFormAligner, UStrUtils;
+  UAppInfo, UBaseObjects, UFontHelper, UNulFormAligner;
 
 
 {$R *.dfm}
@@ -299,8 +299,8 @@ var
 begin
   // Calculate window class name postfix. This is form class name, stripped of
   // any preceeding 'T'
-  if StrStartsStr('T', ClassName) then
-    PostfixName := StrSliceRight(ClassName, Length(ClassName) - 1)
+  if AnsiStartsStr('T', ClassName) then
+    PostfixName := AnsiRightStr(ClassName, Length(ClassName) - 1)
   else
     PostfixName := ClassName;
   // Build window class name

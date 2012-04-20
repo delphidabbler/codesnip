@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -62,8 +62,7 @@ type
         @return Required HTML.
       }
     class procedure Styles(const DefFont: TFont; const CSSBuilder: TCSSBuilder);
-      {Sets the CSS styles required to render an HTML representation of active
-      text.
+      {Sets the CSS styles required to render an HTML representation of REML.
         @param DefFont [in] Default font to use for styles.
         @param  CSSBuilder [in] Object that is used to create the CSS.
       }
@@ -108,7 +107,8 @@ var
       @return Required HTML attributes object.
     }
   begin
-    Result := THTMLAttributes.Create('class', ClassName);
+    Result := THTMLAttributes.Create;
+    Result.Add('class', ClassName);
   end;
   // ---------------------------------------------------------------------------
 
@@ -126,17 +126,14 @@ begin
       case ActionElem.Kind of
         ekLink:
         begin
-          // => HTML <a class="external-link" href="Link_URL">
+          // REML <a> => HTML <a class="external-link">
+          //   REML href => HTML href
           if ActionElem.State = fsOpen then
             // opening tag: element's Param property is HTML href attribute
             Result := Result + AOpenTag(
-              ActionElem.Attrs[TActiveTextAttrNames.Link_URL],
+              ActionElem.Param,
               '',
-              '|' +
-              Format(
-                sCreditsURLHint,
-                [ActionElem.Attrs[TActiveTextAttrNames.Link_URL]]
-              ),
+              '|' + Format(sCreditsURLHint, [ActionElem.Param]),
               TIStringList.Create('external-link')
             )
           else
@@ -144,31 +141,31 @@ begin
             Result := Result + MakeTag('a', ttClose);
         end;
         ekStrong:
-          // => HTML <strong>
+          // REML <strong> => HTML <strong>
           Result := Result + MakeTag('strong', cTagTypeMap[ActionElem.State]);
         ekEm:
-          // => HTML <em>
+          // REML <em> => HTML <em>
           Result := Result + MakeTag('em', cTagTypeMap[ActionElem.State]);
         ekVar:
-          // => HTML <var class="extra">
+          // REML <var> => HTML <var class="extra">
           Result := Result + MakeTag(
             'var', cTagTypeMap[ActionElem.State], ClassAttr('extra')
           );
         ekPara:
-          // => HTML <p>
+          // REML <p> => HTML <p>
           Result := Result + MakeTag('p', cTagTypeMap[ActionElem.State]);
         ekWarning:
-          // => HTML <span class="extra-warning">
+          // REML <warning> => HTML <span class="extra-warning">
           Result := Result + MakeTag(
             'span', cTagTypeMap[ActionElem.State], ClassAttr('extra-warning')
           );
         ekMono:
-          // => HTML <span class="extra-mono">
+          // REML <mono> => HTML <span class="extra-mono">
           Result := Result + MakeTag(
             'span', cTagTypeMap[ActionElem.State], ClassAttr('extra-mono')
           );
         ekHeading:
-          // => HTML <h2 class="extra">
+          // REML <heading> => HTML <h2 class="extra">
           Result := Result + MakeTag(
             'h2', cTagTypeMap[ActionElem.State], ClassAttr('extra')
           );
@@ -177,13 +174,11 @@ begin
       end;
     end;
   end;
-  // TODO: Remove following code: extra text is *always* wrapped in block tags
   // Extra property may have "p" or "heading" tags, but may not have. So we
   // check and add enclosing "div" tags if necessary with required properties.
   // paragraph tags if
   EncloseInDiv := not ActiveText.IsEmpty and
-    Supports(ActiveText[0], IActiveTextActionElem, ActionElem) and
-    not ((ActionElem.Kind in [ekPara, ekHeading]));
+    not ((ActiveText[0].Kind in [ekPara, ekHeading]));
   if EncloseInDiv then
     Result := MakeTag('div', ttOpen, ClassAttr('extra-wrapper')) +
       Result +
@@ -192,24 +187,24 @@ end;
 
 class procedure TActiveTextHTML.Styles(const DefFont: TFont;
   const CSSBuilder: TCSSBuilder);
-  {Sets the CSS styles required to render an HTML representation of active text.
+  {Sets the CSS styles required to render an HTML representation of REML.
     @param DefFont [in] Default font to use for styles.
     @param  CSSBuilder [in] Object that is used to create the CSS.
   }
 var
   CSSFont: TFont; // font used for CSS styles
 begin
-  // Add CSS relating to active text HTML code
+  // Add CSS relating to Extra REML code
   // -- heading tag
   with CSSBuilder.AddSelector('h2.extra') do
   begin
-    AddProperty(TCSS.FontSizeProp(DefFont.Size + 1));
+    AddProperty(CSSFontSizeProp(DefFont.Size + 1));
   end;
   // -- warning tag
   with CSSBuilder.AddSelector('span.extra-warning') do
   begin
-    AddProperty(TCSS.FontWeightProp(cfwBold));
-    AddProperty(TCSS.ColorProp(clWarningText));
+    AddProperty(CSSFontWeightProp(cfwBold));
+    AddProperty(CSSColorProp(clWarningText));
   end;
   // -- mono tag
   with CSSBuilder.AddSelector('span.extra-mono') do
@@ -217,7 +212,7 @@ begin
     CSSFont := TFont.Create;
     try
       TFontHelper.SetDefaultMonoFont(CSSFont, True);
-      AddProperty(TCSS.FontProps(CSSFont));
+      AddProperty(CSSFontProps(CSSFont));
     finally
       FreeAndNil(CSSFont);
     end;
@@ -225,10 +220,9 @@ begin
   // -- var tag
   with CSSBuilder.AddSelector('var.extra') do
   begin
-    AddProperty(TCSS.ColorProp(clVarText));
-    AddProperty(TCSS.FontStyleProp(cfsItalic));
+    AddProperty(CSSColorProp(clVarText));
+    AddProperty(CSSFontStyleProp(cfsItalic));
   end;
 end;
 
 end.
-
