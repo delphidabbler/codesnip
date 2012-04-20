@@ -20,7 +20,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -94,12 +94,14 @@ begin
 end;</pre>
     <p>
       Routine snippets may refer to other routines,
-      <a href="snippet_type.htm">type definitions</a> or
+      <a href="snippet_type.htm">simple type</a> definitions,
+      <a href="snippet_class.htm">class &amp; advanced record</a> definitions or
       <a href="snippet_constant.htm">constants</a>, providing they are defined
       in Delphi units or elsewhere in the database. The snippet's units and
       dependency references should indicate where to find referenced types,
-      constants and routines. Routine may not reference
-      <a href="snippet_freeform.htm">freeform</a> snippets.
+      constants and routines. Routine snippets may not reference
+      <a href="snippet_freeform.htm">freeform</a> or
+      <a href="snippet_unit.htm">unit</a> snippets.
     </p>
     <p>
       It is important that the routine prototype is recognisable by
