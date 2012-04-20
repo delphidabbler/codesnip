@@ -146,15 +146,23 @@
 			<param name="Local" value="HTML\snippet_routine.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Type Definitions">
-			<param name="Local" value="HTML\snippet_type.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Constants">
 			<param name="Local" value="HTML\snippet_constant.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Freeform Snippets">
+			<param name="Name" value="Simple Types">
+			<param name="Local" value="HTML\snippet_type.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Classes and Advanced Records">
+			<param name="Local" value="HTML\snippet_class.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Units">
+			<param name="Local" value="HTML\snippet_unit.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Freeform">
 			<param name="Local" value="HTML\snippet_freeform.htm">
 			</OBJECT>
 	</UL>
