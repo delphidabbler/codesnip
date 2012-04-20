@@ -150,7 +150,8 @@
         <div>
           Use this list to specify any other snippets to be cross-referenced
           from this snippet. Check the boxes next to desired snippets. Cross
-          references are for information only. All snippets are listed.
+          references are for information only. All snippets are listed, except
+          for the one being edited.
         </div>
         <div>
           User defined snippets are displayed in blue.
@@ -164,15 +165,19 @@
           Specify any other snippets that this snippet depends upon by checking
           the boxes next to the desired snippets. If this snippet is to be test
           compiled then any other snippets it requires must be specified here or
-          the test compile will fail. The available entries in this list box
-          will vary according to the <a href="snippet_kinds.htm">snippet
-          kind</a>.
+          the test compile will fail. The exception is that
+          <a href="snippet_unit.htm">unit snippets</a> never have any
+          dependencies.
         </div>
         <div>
-          Routine snippets are not included in this list if the snippet being
-          edited is a constant or type definition.
+          The available entries in this list box will vary according to the
+          <a href="snippet_kinds.htm">snippet kind</a> and the kind of snippets
+          it can depend on. For example, <a href="snippet_constant.htm">constant
+          snippets</a> can't depend on <a href="snippet_routine.htm">routine</a>
+          snippets and <a href="snippet_unit.htm">unit snippets</a> can't depend
+          on anything, so the list is empty.
           <a href="snippet_freeform.htm">Freeform</a> snippets are never
-          included in this list.
+          included.
         </div>
         <div>
           User defined snippets are displayed in blue.
@@ -208,6 +213,11 @@
           identifiers in the source code with the unit name, e.g.
           <code>Graphics.TBitmap</code>.
         </div>
+        <div>
+          <a href="snippet_unit.htm">Unit snippets</a> must declare their used
+          units in the unit source code, so this list box is disabled when the
+          snippet kind is <em>unit</em>.
+        </div>
       </li>
       <li>
         <div>
@@ -218,6 +228,10 @@
           type the name of the unit in the edit box and click the <em>Add
           Unit</em> button. The unit will be added to the <em>Units</em> check
           list box and its check box will be checked.
+        </div>
+        <div>
+          This button is disabled for <a href="snippet_unit.htm">unit
+          snippets</a>.
         </div>
       </li>
     </ul>
