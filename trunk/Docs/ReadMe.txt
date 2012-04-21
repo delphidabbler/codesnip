@@ -30,13 +30,17 @@ for CodeSnip v4.
 If you accept the default install path, or specify a unique install path it will
 install alongside any v3 release and will not affect the v3 release in any way.
 The installer will copy over any user defined snippets from a pre-existing v3
-installation and will preserve most if not all settings.
+installation and will preserve most if not all settings. Any existing v4 preview
+will be overwritten.
 
 Any user defined snippets you edit will not be reflected in any v3 installation
 and any settings you change won't affect the v3 install.
 
 Nearly all the file formats have changed, so export and backup files will not be
-compatible with v3 and earlier, so be careful.
+compatible with v3 and earlier, so be careful. The database files formats were
+changed between v4 preview 1 and preview 2. If you use any of the new snippet
+types introduced in preview 2 then the user database file will not be readable
+in preview 1.
 
 Copies of the online database are stored in a different location to v3, so
 updating the database from the v4 preview will not update the database used by
@@ -53,7 +57,20 @@ The are no guarantees that your data won't be damaged by later versions.
 New Features
 ------------
 
-New features of this release worth trying out are:
+New features of v4 to date worth trying out are:
+
+* New "unit" and "class" snippet types that can include complete units and
+  classes (and advanced records) in the database. Both can be test compiled
+  and classes and advanced records can also be included in generated units. Read
+  up on these in the help file - see the Snippet Kinds help topic.
+
+* Snippets from both the main and user databases can now be duplicated. This is
+  very useful if you have created a snippet and want to create another one that
+  shares a lot of the source code, dependencies etc. Just duplicate the first
+  one with a new name and edit it as required. Saves a lot of time. There's a
+  second use where you can duplicate a snippet from the main database under the
+  same name and make any tweaks you like to the new version: duplicate snippets
+  are always editable.
 
 * The new multi-tab display that can show more than one snippet, category etc.
   in the main display. Control click items in the overview pane to display them
@@ -71,8 +88,8 @@ New features of this release worth trying out are:
 
 * You can use Unicode source code.
 
-For other features read the change log at
-http://www.delphidabbler.com/software/codesnip/log
+For other features of the v4 previews please read the change log at
+http://www.delphidabbler.com/software/codesnip/log?v=4
 
 Bugs and Feature Requests
 -------------------------
@@ -80,7 +97,9 @@ Bugs and Feature Requests
 Please report bugs at http://www.delphidabbler.com/url/codesnip-bugs mentioning
 the program version you are using (see about box).
 
-Request new features at http://www.delphidabbler.com/url/codesnip-featurereq
+Request new features at http://www.delphidabbler.com/url/codesnip-featurereq.
+You may also see the other features currently slated for inclusion in release 4.
+No promises though!
 
 
 Installation
@@ -101,11 +120,15 @@ IMPORTANT NOTES:
 3) CodeSnip v4 will install alongside any v3 or earlier release that may already
    be installed. If you want to replace the earlier version simply uninstall it
    in the usual way. Uninstalling v3 will delete any existing main database so
-   that you will need to download it again.
+   that you will need to download it again if you want it.
 
 CodeSnip's installation program is named codesnip-setup-4.x.x.exe, where x.x
 is the program's minor version number. The install program may be distributed in
 a zip file. If this is the case then extract the install program.
+
+*** NOTE. The pre-release versions of CodeSnip 4 have slightly different setup
+    file names: codesnip-setup-4.0-yyyy.x where yyyy is either "alpha" or
+    "beta" and x is the alpha or beta version.
 
 Close any running instance of CodeSnip, double click the install program then
 follow the on-screen instructions.
@@ -130,7 +153,9 @@ The installer makes the following changes to your system:
 
 + A %AppData%\DelphiDabbler\CodeSnip.4 folder is also created. This is used to
   hold a file that stores per-user configuration data. A "UserDatabase" sub-
-  folder is used to store any user defined snippets.
+  folder is used to store any user defined snippets. This happens only for the
+  user installing the program. Other users will have default folders and config
+  files created when they first run CodeSnip.
 
 + Setup offers to copy any relevant files from installations earlier than v4.0
   into the correct locations for v4.
@@ -269,9 +294,10 @@ http://codesnip.svn.sourceforge.net/viewvc/codesnip/.
 Subversion users can checkout code from
 https://codesnip.svn.sourceforge.net/svnroot/codesnip. You will usually checkout
 the "trunk" branch (development branch) or one of the stable releases listed in
-the "tags" branch.
+the "tags" branch. There is also a maintenance branch for the v3.x releases in
+the "branches/3.x" branch.
 
-Ready zipped source code archives of the current release and some earlier
+Ready zipped source code archives of the current release and many earlier
 versions can be downloaded from the CodeSnip Files page on SourceForge.net at:
 https://sourceforge.net/projects/codesnip/files/
 
