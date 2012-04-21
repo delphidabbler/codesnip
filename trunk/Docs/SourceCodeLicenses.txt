@@ -247,6 +247,10 @@ Exceptions
 + Res\Img\cancel.png is taken from the Led Icon Set from
   http://led24.de/iconset/ and Res\Img\cancel-glow.png is based on it. See below
   for license terms and conditions.
+  
++ The "about" and "help" glyphs the FmMain.dfm image list were adapted from an
+  image in the PixelBox image collection by Icojam (http://www.icojam.com).
+  See below for the license.
 
 + Res\Img\tvr.jpg and Res\Img\pj.jpg are copyright (C) 2009, Peter Johnson.
   These images are made available under a Creative Commons Attribution-
@@ -337,6 +341,12 @@ license.
 
 led24.de
 31/05/2009
+
+
+PixelBox icons by Icojam (http://www.icojam.com)
+--------------------------------------------------------------------------------
+License: These icons are free to use in any kind of commercial or non-commercial
+project unlimited times.
 
 
 ================================================================================
