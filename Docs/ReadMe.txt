@@ -36,11 +36,12 @@ will be overwritten.
 Any user defined snippets you edit will not be reflected in any v3 installation
 and any settings you change won't affect the v3 install.
 
-Nearly all the file formats have changed, so export and backup files will not be
-compatible with v3 and earlier, so be careful. The database files formats were
-changed between v4 preview 1 and preview 2. If you use any of the new snippet
-types introduced in preview 2 then the user database file will not be readable
-in preview 1.
+Nearly all the file formats have been changed from v3, so export and backup
+files are not be compatible with v3 and earlier. Be careful.
+
+The v5 database and export file formats were changed between v4 previews 1 and
+2. If you use any of the new snippet types introduced in preview 2 then the user
+database file will not be readable in preview 1 and will cause it to crash.
 
 Copies of the online database are stored in a different location to v3, so
 updating the database from the v4 preview will not update the database used by
@@ -53,6 +54,9 @@ It is possible that file formats etc. may change before the final release of
 CodeSnip v4, so please use the preview only to experiment with the new version.
 Do not use this program as the only place you store valuable code.
 The are no guarantees that your data won't be damaged by later versions.
+
+In particular, once you have upgraded from preview alpha 1 to preview alpha 2
+do try to go back if you have save your user database with the newer version.
 
 New Features
 ------------
