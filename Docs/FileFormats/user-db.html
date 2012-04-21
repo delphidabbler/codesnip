@@ -405,12 +405,12 @@
             <li>
               <span class="highlight">versions 3 and 4:</span>
               &quot;freeform&quot;, &quot;routine&quot;, &quot;type&quot; &amp;
-              &quot;snippet&quot;.
+              &quot;const&quot;.
             </li>
             <li>
               <span class="highlight">version 5:</span>
               &quot;freeform&quot;, &quot;routine&quot;, &quot;type&quot;,
-              &quot;snippet&quot; &amp; &quot;unit&quot;.
+              &quot;const&quot;, &quot;class&quot; &amp; &quot;unit&quot;.
             </li>
           </ul>
         </li>
@@ -689,6 +689,9 @@
       Data files changed to use UTF-8 encoding with no BOM instead of the system #
       default encoding.
     </div>
+    <div class="half-spaced">
+      New &quot;class&quot and &quot;unit&quot; snippet kinds supported.
+    </div>
   </dd>
 </dl>
 
@@ -697,7 +700,7 @@
 </h3>
 
 <p>
-  Readers of version 1 files must generate REML markup from the
+  Readers of version 1 files must simulate the effect of REML markup from the
   <em>codesnip-data/routines/routine/comments</em>,
   <em>codesnip-data/routines/routine/credits</em> and
   <em>codesnip-data/routines/routine/credits-url</em> tags to mimic the data
@@ -708,7 +711,7 @@
   Readers of v1 and v2 files should map a
   <em>codesnip-data/routines/routine/standard-format</em> value of &quot;0&quot;
   to a <em>codesnip-data/routines/routine/kind</em> value of
-  &quot;freeform&quot; and  a value of &quot;1&quot; to &quot;routine&quot;.
+  &quot;freeform&quot; and a value of &quot;1&quot; to &quot;routine&quot;.
 </p>
 
 </body>
