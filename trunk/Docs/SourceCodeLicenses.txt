@@ -249,8 +249,7 @@ Exceptions
   for license terms and conditions.
   
 + The "about" and "help" glyphs the FmMain.dfm image list were adapted from an
-  image in the PixelBox image collection by Icojam (http://www.icojam.com).
-  See below for the license.
+  image in the PixelBox icon collection. See below for the license.
 
 + Res\Img\tvr.jpg and Res\Img\pj.jpg are copyright (C) 2009, Peter Johnson.
   These images are made available under a Creative Commons Attribution-
@@ -343,10 +342,12 @@ led24.de
 31/05/2009
 
 
-PixelBox icons by Icojam (http://www.icojam.com)
+PixelBox icons
 --------------------------------------------------------------------------------
-License: These icons are free to use in any kind of commercial or non-commercial
-project unlimited times.
+
+This work (Pixelbox icons, by Stan Khodjaev) is free of known copyright
+restrictions. It is made available under the terms of the Creative Commans
+Public Domain Mark 1.0 (see http://creativecommons.org/publicdomain/mark/1.0/).
 
 
 ================================================================================
