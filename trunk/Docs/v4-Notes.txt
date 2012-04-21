@@ -19,6 +19,8 @@ Notes
 
 * First alpha release 31 Dec 2011.
 
+* Second alpha release 21 Apr 2012
+
 * Version numbers set to 3.98.x.x for alpha versions. Beta versions will use
   3.99.x.x. Third number will be bumped for each alpha or beta release and
   fourth number will be set to an appropriate build number at the time of
@@ -34,17 +36,10 @@ Changes
 * Refactorings and similar:
 
 * Bug fixes:
-  o Fixed unreported minor bug in dialog boxes that display tabbed page
-    controls: clicking a tab did not always give it the keyboard focus.
 
 * Help file:
-  o Removed reference to FAQ being a wiki from FAQ help topic: wiki is no longer
-    editable without password.
 
 * Documentation:
-  o Replaced single changelog with five files, one for each major release
-    v0..v4, in new ChangeLogs directory.
-  o Updated change logs.
 
 * RTF Support:
 
@@ -62,12 +57,8 @@ Changes
   o Compiler output encoding can now be set explicitly on a per-compiler
     basis. Currently all compiler use default.
     *** INCLUDE IN CHANGE LOG ONLY IF THIS IS MADE USE-CONFIGURABLE
-  o Changed encoding of .manifest files from ANSI to UTF-8 to match encoding
-    noted in <?xml?> processing instruction.
 
 * UI changes:
-  o Added new Help | On The Web | FAQs menu option to display CodeSnip FAQs in
-    default browser.
 
 * Web Services:
 
@@ -78,5 +69,3 @@ Changes
 * Installer:
 
 * Misc:
-  o Characters used to introduced switches on command line were changed: '/'
-    replaces non-standard '\'. '-' is still permitted.
