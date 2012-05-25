@@ -153,6 +153,9 @@ const
     for Microsoft ActiveX controls and Java Applets embedded within a web page.
     When a control is inactive, it does not respond to user input; however, it
     can perform operations that do not involve interaction}
+  DOCHOSTUIFLAG_DPI_AWARE = $40000000;
+    {IE8. Causes layout engine to calculate document pixels as 96 dots per inch.
+    Normally, a document pixel is the same size as a screen pixel}
 
   DOCHOSTUIFLAG_BROWSER = DOCHOSTUIFLAG_DISABLE_HELP_MENU
     or DOCHOSTUIFLAG_DISABLE_SCRIPT_INACTIVE;
@@ -421,7 +424,7 @@ type
           if we don't supply a IDataObject, even if we fail or return S_FALSE.
         @return S_OK if the data object is replaced, or S_FALSE if not.
       }
-    end;
+  end;
 
   {
   ICustomDoc:
