@@ -258,7 +258,7 @@ procedure TDialogMgr.ShowDependencyTree(const Snippet: TSnippet);
     @param Snippet [in] Snippet for which dependency tree is required.
   }
 begin
-  TDependenciesDlg.Execute(Owner, Snippet);
+  TDependenciesDlg.Execute(Owner, Snippet, [tiDependsUpon, tiRequiredBy]);
 end;
 
 procedure TDialogMgr.ShowDonateDlg;
