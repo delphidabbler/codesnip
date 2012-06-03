@@ -178,13 +178,7 @@ begin
   for RequiredSnippet in DependsList do
   begin
     // Add node for snippet from dependency list
-    ChildNode := tvDependencies.Items.AddChild(
-      Parent,
-      RequiredSnippet.Name
-        + ' ('
-        + TSnippetKindInfoList.Items[RequiredSnippet.Kind].DisplayName
-        + ')'
-    );
+    ChildNode := tvDependencies.Items.AddChild(Parent, RequiredSnippet.Name);
     ChildNode.Data := RequiredSnippet;  // reference to associated snippet
     // Check for circular reference. If detetected display warning otherwise
     // recursively add child nodes for snippet's dependency list
