@@ -187,6 +187,7 @@ uses
   UAnchors in 'UAnchors.pas',
   UAppInfo in 'UAppInfo.pas',
   UBaseObjects in 'UBaseObjects.pas',
+  UBox in 'UBox.pas',
   UBrowseForFolderDlg in 'UBrowseForFolderDlg.pas',
   UBrowseProtocol in 'UBrowseProtocol.pas',
   UCategoryAction in 'UCategoryAction.pas',
@@ -378,7 +379,6 @@ uses
   Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
   Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
-
 
 // Include compiler defines: checks if compiler supported
 {$Include CompilerDefines.inc}
