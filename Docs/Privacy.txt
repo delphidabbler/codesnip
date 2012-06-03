@@ -36,10 +36,10 @@ The file stores several user-specific application data settings such as your
 preferences. The only personal information is as follows:
 
     * Any user name or email address you provided if you ever entered the
-      information in a dialog box. This is used simply to automatically enter
-      the data in dialog boxes where needed, to save you re-typing it. See below
-      for details of activities that require either or both a name or email
-      address to be submitted.
+      information in a dialogue box. This is used simply to automatically enter
+      the data in dialogue boxes where needed, to save you re-typing it. See
+      below for details of activities that require either or both a name or
+      email address to be submitted.
 
     * Your user name and password if you configured CodeSnip to access the
       internet using a proxy server. The information is used only to access the
@@ -73,7 +73,7 @@ Various user-initiated actions cause CodeSnip to go online. They are:
    1. Updating the database.
    2. Registering the program.
    3. Submitting code for inclusion in the main database.
-   4. Displaying the latest news in the "CodeSnip News" dialog box.
+   4. Displaying the latest news in the "CodeSnip News" dialogue box.
    4. Accessing various websites via hyperlinks and menu options.
    5. Accessing the internet using a proxy server.
 
@@ -90,7 +90,7 @@ the author for the purposes described.
 Updating the Database
 --------------------------------------------------------------------------------
 
-This activity is started by displaying the "Update From Web" dialog box and
+This activity is started by displaying the "Update From Web" dialogue box and
 clicking its "Update from Web" button. CodeSnip then contacts the update web
 service and sends the following information:
 
@@ -172,7 +172,7 @@ Displaying the latest news
 --------------------------------------------------------------------------------
 
 This action is performed by selecting the "Help | CodeSnip News" menu option or
-by clicking the "Latest News" button in the "Update from Web" dialog box.
+by clicking the "Latest News" button in the "Update from Web" dialogue box.
 
 CodeSnip simply requests an XML document containing an RSS 2.0 news feed from
 the DelphiDabbler website using HTTP on port 80. No personal information is
@@ -186,8 +186,8 @@ CodeSnip's "Help | On The Web" menu option leads to sub menu items that cause
 various pages from DelphiDabbler.com to be displayed in the user's default
 browser.
 
-In addition, various links in the program's main display, some dialog boxes and
-the help file access remote websites which are displayed in your default
+In addition, various links in the program's main display, some dialogue boxes
+and the help file access remote websites which are displayed in your default
 browser. You should refer to the relevant website's privacy policies to learn
 how they use any data you supply when visiting their pages. DelphiDabbler has no
 control over the content of linked third party websites and you follow such

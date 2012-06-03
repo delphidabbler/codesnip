@@ -18,7 +18,7 @@ Release 4.0 alpha 2 (preview) of 21 April 2012
   - Minor changes to the style of version info displayed on the splash screen.
 + Bug fixes:
   - Fixed potential source of a bug in code that edits user-defined categories.
-  - Fixed unreported minor bug in dialog boxes that display tabbed page controls: clicking a tab did not always give it the keyboard focus.
+  - Fixed unreported minor bug in dialogue boxes that display tabbed page controls: clicking a tab did not always give it the keyboard focus.
   - Fixed bug #3519784 (http://bit.ly/IsCsun) where multi-line "type" or "constant" snippets that start on the same line as the type or const keyword were corrupted when included in units using the "comments after snippet header" comment style.
 + Characters used to introduced switches on the command line were changed: '/' replaces '\'. '-' is still permitted.
 + User and main database formats modified. User databases saved with this version may not be readable with release 4.0 alpha 1.
@@ -30,7 +30,7 @@ Release 4.0 alpha 1 (preview) of 31 December 2011
 Changes relate to v3.9.3
 + Interface changes:
   - New multi-tab detail pane can now show more than one snippet, category etc.
-  - Results of test compiles now appear in a dialog box instead of in details pane.
+  - Results of test compiles now appear in a dialogue box instead of in details pane.
   - New code import wizard for cleaner control over import process.
   - New "Compile" top level menu that groups all actions relating to test compilation.
   - Empty section headings can now be displayed in overview pane if required.
@@ -38,10 +38,10 @@ Changes relate to v3.9.3
   - New view displayed instead of welcome screen when database updated.
   - Some additions and changes to main window navigation keys.
   - Main window and task bar captions changed.
-  - Some dialog boxes tweaked.
-  - Compiler configuration dialog box heavliy revised to support default compiler paths.
-  - "About" dialog box paths tab display improved.
-  - Compile error dialog box display standardised.
+  - Some dialogue boxes tweaked.
+  - Compiler configuration dialogue box heavliy revised to support default compiler paths.
+  - "About" dialogue box paths tab display improved.
+  - Compile error dialogue box display standardised.
   - Splash screen updated.
 + Improved Delphi code syntax highlighter:
   - Recognises Delphi 2010 keywords
@@ -61,7 +61,7 @@ Changes relate to v3.9.3
 + Unicode support:
   - Program now fully supports Unicode internally.
   - Test units now use UTF-8 format if source code contains non-ANSI characters. ANSI format is used otherwise to permit compilation on older Delphi compilers.
-  - Many export file formats now support Unicode and UTF8 formats. User may specify file types from Save dialog box.
+  - Many export file formats now support Unicode and UTF8 formats. User may specify file types from Save dialogue box.
   - Configuration files are now in Unicode format.
   - Some Unicode support added to database (see above).
 + Web service data handling code improved: now includes ability to send raw bytes and can detect and adapt to character encoding used in responses.
@@ -71,7 +71,7 @@ Changes relate to v3.9.3
   - Memory leaks.
   - Version detection in backup file restoration.
 + Cascading style sheet handling improved.
-+ Any errors in scripts run in browser control now trapped and reported as exceptions instead of via browser control's own error dialog box.
++ Any errors in scripts run in browser control now trapped and reported as exceptions instead of via browser control's own error dialogue box.
 + Revised external object that communicates with JavaScript in browser controls.
 + Hyperlinks used in snippets now support the https:// protocol.
 + A default title now used in print spooler if none specified.

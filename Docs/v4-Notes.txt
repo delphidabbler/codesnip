@@ -47,7 +47,7 @@ Changes
 
 * Printing:
 
-* Dialog boxes:
+* Dialogue boxes:
 
 * Database:
 
