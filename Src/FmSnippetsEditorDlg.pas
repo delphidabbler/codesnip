@@ -373,7 +373,10 @@ begin
   try
     fDependsCLBMgr.GetCheckedSnippets(DependsList);
     TDependenciesDlg.Execute(
-      Self, TSnippetID.Create(StrTrim(edName.Text), True), DependsList
+      Self,
+      TSnippetID.Create(StrTrim(edName.Text), True),
+      DependsList,
+      [tiDependsUpon]
     );
   finally
     FreeAndNil(DependsList);
