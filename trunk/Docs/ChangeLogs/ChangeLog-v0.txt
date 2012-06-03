@@ -16,7 +16,7 @@ Release v0.11.0 Beta of 07 April 2006
   - Application is identified by a unique key.
   - Registration information is stored in persistent storage.
 + Reworked and added classes to centralise access to system and application information.
-+ Updated help file with details of registration dialog and CodeSnip mailing list.
++ Updated help file with details of registration dialogue and CodeSnip mailing list.
 
 Un-released v0.10.12 Beta of 04 April 2006
 + Improved code that stores global application settings. Prepared way for having per-user and global settings rather than just per-user settings as at present.
@@ -28,7 +28,7 @@ Un-released v0.10.10 Beta of 02 April 2006
 + Added program icon (16x16, 32x32 and 48x48 versions).
 
 Release v0.10.9 Beta of 02 April 2006
-+ Fixed bug where browser controls displayed JavaScript error dialog when exceptions were raised by database updates initiated from browser control's "external" object.
++ Fixed bug where browser controls displayed JavaScript error dialogue when exceptions were raised by database updates initiated from browser control's "external" object.
 + Refactored some code in main form and main snippets object as a result of above fix.
 + Also refactored some of search code in main form.
 
@@ -50,18 +50,18 @@ Release v0.10.5 Beta of 14 January 2006
 
 Release v0.10.4 Beta of 12 January 2006
 + Added checking of checksums of downloaded files to increase security. Exceptions now raised when a file's checksum is incorrect.
-+ Fixed small alignment problem in update dialog.
++ Fixed small alignment problem in update dialogue.
 
 Un-released v0.10.3 Beta of 11 January 2006
 + Changed so that compiler output is now captured directly rather than via temporary log file.
 + Compiler execution is now time-sliced and time-limited rather than being allowed infinite processing time.
 
 Un-released v0.10.2 Beta of 10 January 2006
-+ Reverted to Delphi 7 to avoid Delphi 2006 bug that was enabling dialogs to be minimized and maximized.
-+ Reordered controls in Find Compiler dialogs.
-+ Restored title bar close button to web update dialog.
++ Reverted to Delphi 7 to avoid Delphi 2006 bug that was enabling dialogues to be minimized and maximized.
++ Reordered controls in Find Compiler dialogues.
++ Restored title bar close button to web update dialogue.
 + Reverted to Indy 9 Internet controls (from Indy 10) and made relevant adjustments to code.
-+ Completed help topics for Find Text and Find Compiler dialogs.
++ Completed help topics for Find Text and Find Compiler dialogues.
 
 Release v0.10.1 Beta of 09 January 2006
 + Removed debug code (message box) mistakenly left in compiler execution code.
@@ -71,13 +71,13 @@ Release v0.10.0 Beta of 08 January 2006
 + Added support for Delphi 2005/6 Win32 compilers.
 + Refactored some compiler support code.
 + Added support for user-configurable compiler switches.
-+ Used new tabbed layout for Configure Compilers dialog box and added tab for configuring compiler switches.
-+ Updated help file to reflect redesign of Configure Compilers dialog box.
++ Used new tabbed layout for Configure Compilers dialogue box and added tab for configuring compiler switches.
++ Updated help file to reflect redesign of Configure Compilers dialogue box.
 
 Release v0.9.0 Beta of 06 January 2006
 + Added facility to copy code snippets to clipboard.
-+ Added new preferences dialog box to enable configuration of default format for code snippets.
-+ Added new preferences class to persist data entered in the preferences dialog.
++ Added new preferences dialogue box to enable configuration of default format for code snippets.
++ Added new preferences class to persist data entered in the preferences dialogue.
 + Refactored main snippets class to simplify addition of new copy snippet facility.
 + Updated help file re new additions.
 
@@ -88,7 +88,7 @@ Un-released v0.8.2 Beta of 04 January 2006
 + Created static class to interpret command line and changed other code to work with the new class.
 
 Un-released v0.8.1 Beta of 04 January 2006
-+ Fixed minor display bug in web update dialog box.
++ Fixed minor display bug in web update dialogue box.
 + Fixed about box's problem in displaying help in response to F1 key press.
 
 Release v0.8.0 Beta of 30 November 2005
@@ -98,7 +98,7 @@ Release v0.8.0 Beta of 30 November 2005
 Release v0.7.7 Beta of 22 November 2005
 + Refactored and revised code that accesses DelphiDabbler web services.
 + Updated to use v2 of the database update web service.
-+ Added topics for Bug Report Dialog and Web Update dialog to help file.
++ Added topics for Bug Report dialogue and Web Update dialogue to help file.
 
 Release v0.7.6 Beta of 04 June 2005
 + Fixed Delphi compiler auto-detection bug.
@@ -110,12 +110,12 @@ Release v0.7.5 Beta of 03 June 2005
 + Fixes bugs that surface when user has disabled scripts in IE's Internet zone. Program no longer runs in Internet zone.
 
 Release v0.7.4 Beta of 09 May 2005
-+ Made user defined settings in Save Snippets dialog box persistent.
++ Made user defined settings in Save Snippets dialogue box persistent.
 
 Un-released v0.7.3 Beta of 25 April 2005
 + Disabled test compile button on compiler checks pane along with associated menu and toolbar button when no compilers installed.
-+ Rewrote main welcome page, adding links to compiler check dialog. Made same welcome page appear in both detail panes.
-+ Updated compiler check pages by adding links to compiler check dialog and new "about compiler checks" help topic.
++ Rewrote main welcome page, adding links to compiler check dialogue. Made same welcome page appear in both detail panes.
++ Updated compiler check pages by adding links to compiler check dialogue and new "about compiler checks" help topic.
 + Updated help file with new "about compiler checks" topic and completed "QuickStart" topic.
 + Added new features to DOM's external object to support above changes.
 
@@ -126,7 +126,7 @@ Un-released v0.7.2 Beta of 21 April 2005
 + Carried out minor refactoring of Pascal analyser unit.
 
 Un-released v0.7.1 Beta of 20 April 2005
-+ Disabled F1 key press handling in dialogs with no help button. Was triggering bad topic errors in WinHelp.
++ Disabled F1 key press handling in dialogues with no help button. Was triggering bad topic errors in WinHelp.
 + Added "Compile" prefix to compiler check page's "Test Compile" button.
 + Fixed errors in "do nothing" doc host handler used by web browser control.
 
@@ -140,12 +140,12 @@ Release v0.6.0 Beta of 10 March 2005
 
 Release v0.5.0 Beta of 05 March 2005
 + Added support for Free Pascal compiler by totally reworking the compiler support engine.
-+ Added new dialog box to configure compilers. Compiler detection ability retained but now only works in response to user request.
++ Added new dialogue box to configure compilers. Compiler detection ability retained but now only works in response to user request.
 + Revised about box to include "powered by Delphi" logo.
 + Updated help file:
   - Added incomplete topics for each of the main menus.
-  - Added complete new topic for the compiler configuration dialog box.
-  - Fixed K-keyword errors and added extra keywords for dialog boxes.
+  - Added complete new topic for the compiler configuration dialogue box.
+  - Fixed K-keyword errors and added extra keywords for dialogue boxes.
 
 Release v0.4.0 Beta of 28 February 2005
 + Text search results are now highlighted when routines are displayed in the information pane.
@@ -155,23 +155,23 @@ Un-released v0.3.4 Beta of 26 February 2005
 + New back end code designed to make it easy to change the data provider in future versions. Current version accesses data in .ini and .dat files.
 
 Un-released v0.3.3 Beta of 25 February 2005
-+ Fixed bug that was preventing Ctrl+F from activating Find Text dialog box.
-+ Realigned controls in bug report dialog and fixed tab order problems.
-+ Fixed email address validation error in bug report dialog
++ Fixed bug that was preventing Ctrl+F from activating Find Text dialogue box.
++ Realigned controls in bug report dialogue and fixed tab order problems.
++ Fixed email address validation error in bug report dialogue
 
 Un-released v0.3.2 Beta of 24 February 2005
 + Refactored code that provides compiler names and introduced global Compilers object.
 
 Un-released v0.3.1 Beta of 24 February 2005
-+ Centralised code that displays message dialogs and standardised their appearance.
++ Centralised code that displays message dialogues and standardised their appearance.
 
 Un-released v0.3.0 Beta of 23 February 2005
 + Updated welcome pages to provide more help on using CodeSnip.
-+ Removed dialogs that appeared on start up when database was empty. Welcome page now provides this information along with an option to download database.
++ Removed dialogues that appeared on start up when database was empty. Welcome page now provides this information along with an option to download database.
 + Improved handling of welcome page.
 
 Un-released v0.2.4 Beta of 23 February 2005
-+ Refactored and simplified access to dialog boxes.
++ Refactored and simplified access to dialogue boxes.
 + Improved search code.
 
 Un-released v0.2.3 Beta of 23 February 2005

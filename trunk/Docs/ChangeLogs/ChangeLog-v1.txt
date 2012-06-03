@@ -6,7 +6,7 @@
 
 Release v1.9.4 of 01 September 2008
 + Improved handling of errors encountered when running compilers.
-+ Provided checks for invalid compiler exe files in Config Compilers dialog box.
++ Provided checks for invalid compiler exe files in Config Compilers dialogue box.
 + Added enumerator to Compilers object.
 + Made ECodeSnip exceptions and descendants clonable when copying between threads.
 
@@ -38,10 +38,10 @@ Un-released v1.8.10 of 11 August 2008
 + Suppressed un-necessary compiler warnings.
 
 Un-released v1.8.9 of 10 August 2008
-+ Modified Select Compiler dialog box (opened from Configure Compiler dialog) and Choose Element Colour dialog (opened from Preferences dialog) to be aligned correctly over dialogs, work correctly with Vista task bar and support help keywords.
-+ Select Compiler file open dialog now defaults to display any current compiler executable.
-+ Choose Element Colour dialog box now uses UK English and has custom title.
-+ Added help topics for Select Compiler and Choose Element Colour dialogs.
++ Modified Select Compiler dialogue box (opened from Configure Compiler dialogue) and Choose Element Colour dialogue (opened from Preferences dialogue) to be aligned correctly over dialogues, work correctly with Vista task bar and support help keywords.
++ Select Compiler file open dialogue now defaults to display any current compiler executable.
++ Choose Element Colour dialogue box now uses UK English and has custom title.
++ Added help topics for Select Compiler and Choose Element Colour dialogues.
 
 Release v1.8.8 of 16 June 2008
 + Changed to make application minimisation, task bar preview window, and appearance in "Flip 3D" task switching display correctly on Windows Vista.
@@ -52,19 +52,19 @@ Un-released v1.8.7 of 05 June 2008
 + Fixed bug in build script.
 
 Un-released v1.8.6 of 02 June 2008
-+ Fixed lock-up that could occur when displaying wait dialog box while background tasks execute. Previous attempt to fix this problem failed.
-+ Changed "marquee" that is displayed in wait dialog box to appear correctly on Vista.
++ Fixed lock-up that could occur when displaying wait dialogue box while background tasks execute. Previous attempt to fix this problem failed.
++ Changed "marquee" that is displayed in wait dialogue box to appear correctly on Vista.
 
 Release v1.8.5 of 30 May 2008
-+ Fixed bug that was causing Save Snippet and Save Unit dialog boxes to ignore file type
++ Fixed bug that was causing Save Snippet and Save Unit dialogue boxes to ignore file type
  selected by user, always outputting default file type.
 + Deleted some unused source code.
 + Removed option to install a desktop icon from installer. Also refactored install script to conform to current Inno Setup standards.
 
 Release v1.8.4 of 22 April 2008
 + Added manifest resource to ensure compatibility with Windows Vista and to use Vista themes.
-+ Fixed border problem in web update dialog box and about box when displayed under Vista / IE7 browser control.
-+ Prevented selection of text in previews displayed in preferences dialog box.
++ Fixed border problem in web update dialogue box and about box when displayed under Vista / IE7 browser control.
++ Prevented selection of text in previews displayed in preferences dialogue box.
 + Updated Setup script to use macros.
 + Modified Build batch file to work with Windows SDK 2008.
 
@@ -81,13 +81,13 @@ Un-released v1.8 of 04 November 2007
 + Added pop-up context menus to main display's detail pane.
 
 Un-released v1.7.7 of 29 October 2007
-+ Modified code of compiler wait dialog box and splash screen to try to prevent bug that occasionally prevent the dialog from closing, locking up application.
++ Modified code of compiler wait dialogue box and splash screen to try to prevent bug that occasionally prevent the dialogue from closing, locking up application.
 
 Un-released v1.7.6 of 18 October 2007
-+ Shift-clicking links in the main display and some dialog boxes was starting Internet Explorer. Fixed so that Internet Explorer is no longer started and shift-clicking external links now starts default browser.
++ Shift-clicking links in the main display and some dialogue boxes was starting Internet Explorer. Fixed so that Internet Explorer is no longer started and shift-clicking external links now starts default browser.
 
 Un-released v1.7.5 of 17 October 2007
-+ Modified Preferences dialog box:
++ Modified Preferences dialogue box:
   - Refactored code that displays measurement units.
   - Preview on Source Code tab now takes on appearance of source code highlighter defined on Syntax Highlighter tab.
 + Changed format of ini file that stores persistent settings so that source code highlighter preferences are now stored in Prefs section of ini file rather than own section.
@@ -99,11 +99,11 @@ Release v1.7.4 of 14 October 2007
 + Fixed typo in the "About The Database" section of the About box.
 
 Release v1.7.3 of 27 September 2007
-+ Improved alignment of dialog boxes and splash screen over owning forms. Alignment code substantially refactored.
++ Improved alignment of dialogue boxes and splash screen over owning forms. Alignment code substantially refactored.
 + Added support for multiple monitors.
 
 Release v1.7.2 of 24 September 2007
-+ Fixed bug that was preventing wait dialog box from displaying during long compilations.
++ Fixed bug that was preventing wait dialogue box from displaying during long compilations.
 
 Un-released v1.7.1 of 22 September 2007
 + Added list of testers to credits section of Database tab in About box.
@@ -113,7 +113,7 @@ Un-released v1.7.1 of 22 September 2007
 
 Release v1.7 of 08 September 2007
 + Added new facility to print information about selected routines, with page setup and printer configuration.
-+ Added new "general" tab (sets default measurement units) and "printing" tab (to set printing defaults) to preferences dialog box.
++ Added new "general" tab (sets default measurement units) and "printing" tab (to set printing defaults) to preferences dialogue box.
 + Changed format of ini file that stores persistent settings.
 + Updated help file to reflect changes.
 + Customised installer to update existing ini files to revised version.
@@ -121,17 +121,17 @@ Release v1.7 of 08 September 2007
 Un-released v1.6.4 of 02 July 2007
 + Corrected typos in generated source code header comments.
 + Added support for embedding titles in generated documents where document supports title meta data.
-+ Added suggested file name to save unit and save snippets dialog boxes.
++ Added suggested file name to save unit and save snippets dialogue boxes.
 + Refactored code in syntax highlighter that generates XHTML.
 
 Un-released v1.6.3 of 13 May 2007
-+ Added support for selecting and copying text displayed in preview dialog.
-+ Changed so that each document type displayed in preview dialog box has same margins.
-+ Updated help file re changes to preview dialog box.
++ Added support for selecting and copying text displayed in preview dialogue.
++ Changed so that each document type displayed in preview dialogue box has same margins.
++ Updated help file re changes to preview dialogue box.
 
 Un-released v1.6.2 of 12 May 2007
 + Updated to use revised news data format provided by web service.
-+ Update from Web dialog box now displays number of news items along with page number of currently displayed item.
++ Update from Web dialogue box now displays number of news items along with page number of currently displayed item.
 
 Release v1.6.1 of 09 May 2007
 + Fixed bug that allowed user to select a different routine while compiling another causing display to get out sync.
@@ -146,8 +146,8 @@ Release v1.5.13 of 04 March 2007
 
 Release v1.5.12 of 01 March 2007
 + Made long operations (loading database and compiling test units) execute in threads.
-+ Changed to display wait dialog while updated database is being loaded.
-+ Made progress meters displayed in wait dialogs update more smoothly.
++ Changed to display wait dialogue while updated database is being loaded.
++ Made progress meters displayed in wait dialogues update more smoothly.
 
 Release v1.5.11 of 25 February 2007
 + Added splash screen displayed when program is loading.
@@ -172,13 +172,13 @@ Un-released v1.5.7 of 12 February 2007
   - Generated XHTML less likely to contain illegal characters.
 
 Un-released v1.5.6 of 11 February 2007
-+ Modified about dialog box to display information about the Code Snippets Database in addition to the program. The two kinds of information are displayed in two tabs.
++ Modified about dialogue box to display information about the Code Snippets Database in addition to the program. The two kinds of information are displayed in two tabs.
 + Added code to get list of database contributors from a file downloaded with database updates.
 
 Un-released v1.5.5 of 11 February 2007
 + Made keyboard interaction with application more consistent:
   - Made browser controls activate and focus properly when user tabs into them.
-  - Fixed tab order problems in main display and about dialog box so that only controls that may need to receive user input are now activated by tabbing.
+  - Fixed tab order problems in main display and about dialogue box so that only controls that may need to receive user input are now activated by tabbing.
   - Links displayed in browser controls are always now included in tab sequence and can be activated by Ctrl+Return when focused.
   - Fixed inconsistency in tab sets in overview and details pane responded inconsistently to Ctrl+Tab and Shift+Ctrl+Tab.
 + Changed browser control respond to activation via the mouse to be the same as for the keyboard.
@@ -189,8 +189,8 @@ Release v1.5.4 of 09 February 2007
 
 Release v1.5.3 of 08 February 2007
 + Refactored and rationalised code in main form and moved some code into help classes.
-+ Revised code that performs customisation, auto-sizing and alignment of forms and dialog boxes.
-+ Standardised execution method of dialog boxes.
++ Revised code that performs customisation, auto-sizing and alignment of forms and dialogue boxes.
++ Standardised execution method of dialogue boxes.
 
 Un-released v1.5.2 of 04 February 2007
 + Refactored help manager system to make it easier to swap in new help systems in future.
@@ -226,7 +226,7 @@ Un-released v1.4.3 of 03 December 2006
 + Revised information pane's underlying HTML code.
 
 Un-released v1.4.2 of 03 December 2006
-+ Corrected alignment of About and Compiler Errors dialog boxes over main form.
++ Corrected alignment of About and Compiler Errors dialogue boxes over main form.
 
 Un-released v1.4.1 of 03 December 2006
 + Fixed bug where Test Compile menu option and tool button were always enabled and could cause an assertion failure when no routine was selected or no compilers were available.
@@ -240,7 +240,7 @@ Un-released v1.4 of 03 December 2006
 + Fixed a typo and index error in help file.
 
 Un-released v1.3.5 of 01 December 2006
-+ Changed to display a border-less message dialog during long test compilations. The dialog is not displayed for shorter compilations.
++ Changed to display a border-less message dialogue during long test compilations. The dialogue is not displayed for shorter compilations.
 + Updated help file re above and fixed an error in the search menu topic.
 
 Un-released v1.3.4 of 26 November 2006
@@ -256,7 +256,7 @@ Release v1.3.2 of 24 November 2006
 + Made program remember whether test units are displayed or hidden until end of session.
 
 Un-released v1.3.1 of 21 November 2006
-+ Made minor modification to appearance of Configure Compilers dialog box.
++ Made minor modification to appearance of Configure Compilers dialogue box.
 
 Un-released v1.3 of 18 November 2006
 + Added facility to sign up to CodeSnip mailing list on-line.
@@ -275,19 +275,19 @@ Un-released v1.2.3 of 12 November 2006
 + Moved Tools | Preferences menu option to top of Tools menu.
 
 Un-released v1.2.2 of 12 November 2006
-+ Added hot tracking to tree view check boxes used in Select Routines dialog box when Windows XP themes are enabled.
++ Added hot tracking to tree view check boxes used in Select Routines dialogue box when Windows XP themes are enabled.
 
 Un-released v1.2.1 of 11 November 2006
 + Refactoring release:
   - Method used to construct and use help file changed.
   - Moved code that detects HTML and RTF files to appropriate utility units.
-  - Streamlined code in preview dialog box.
+  - Streamlined code in preview dialogue box.
 
 Release v1.2 of 11 November 2006
 + Changed syntax highlighter used to format units and code snippets to be able to read custom settings from persistent storage.
-+ Added Syntax Highlighter tab to preferences dialog box to enable users to customise the font, style and colours used by the syntax highlighter.
-+ Modified preferences dialog box's Source Code tab to display a preview of routines using various comment styles.
-+ Updated help file re revised preferences dialog box.
++ Added Syntax Highlighter tab to preferences dialogue box to enable users to customise the font, style and colours used by the syntax highlighter.
++ Modified preferences dialogue box's Source Code tab to display a preview of routines using various comment styles.
++ Updated help file re revised preferences dialogue box.
 
 Un-released v1.1.2 of 07 November 2006
 + Refactoring release:
@@ -297,7 +297,7 @@ Un-released v1.1.2 of 07 November 2006
 + Now generates much smaller RTF export files.
 
 Un-released v1.1.1 of 31 October 2006
-+ Changed Select Routines dialog to use XP style check boxes when XP themes active and custom check boxes when XP themes inactive.
++ Changed Select Routines dialogue to use XP style check boxes when XP themes active and custom check boxes when XP themes inactive.
 
 Release v1.1 of 30 October 2006
 + Added ability to generate and save whole Pascal unit containing currently selected routines.
@@ -305,7 +305,7 @@ Release v1.1 of 30 October 2006
 + Added ability to manually select routines that are displayed in overview pane.
 + Added shortcut key and changed glyph for File | Save Snippet option / tool button.
 + Updated way source code preferences are stored. Broke backwards compatibility with previous storage method, so upgraders may loose settings.
-+ Made minor changes to preferences dialog box.
++ Made minor changes to preferences dialogue box.
 + Word-wrapped long uses lists in generated units.
 + Refactored code that determines type of exported files.
 + Refactored and expanded code that deals with source code exporting.
@@ -324,7 +324,7 @@ Un-released v1.0.3 of 26 October 2006
   - Standardised all singleton objects on interface based implementation.
   - Centralised code that gets location of license file.
   - Standardised links that trigger JavaScript in some HTML resources.
-  - Changed bug report dialog box to descend from common wizard dialog box.
+  - Changed bug report dialogue box to descend from common wizard dialogue box.
 
 Release v1.0.2 of 25 October 2006
 + Changed so that links from program to external web pages display in default browser rather than IE.
@@ -340,8 +340,8 @@ Release v1.0 of 09 June 2006
 + Version 1 release.
 + Revised About Box text and appearance and added link that displays license file.
 + Refactored and renamed some code.
-+ Made minor changes to appearance and effect of Configure Compilers dialog box.
-+ Fixed potential bug displaying JavaScript error dialog if help called from links in main display fail.
++ Made minor changes to appearance and effect of Configure Compilers dialogue box.
++ Fixed potential bug displaying JavaScript error dialogue if help called from links in main display fail.
 + Made some literal strings resource strings.
 + Made calls to help system fail gracefully on machines without HTML Help installed.
 + Modified code that reads program's version information.
@@ -359,9 +359,9 @@ Release v1.0 RC 3 of 01 May 2006
 Internal CodeSnip version 0.12.0
 + 3rd release candidate for the v1.0 release.
 + Updated to use v4 of update web service that uses completely new update protocol. Significant changes to code were needed to achieve this.
-+ Redesigned update dialog box accordingly.
-+ Added ability to update dialog to display latest CodeSnip news delivered as part update process.
-+ Updated help file re changes to update dialog box.
++ Redesigned update dialogue box accordingly.
++ Added ability to update dialogue to display latest CodeSnip news delivered as part update process.
++ Updated help file re changes to update dialogue box.
 
 Release v1.0 RC 2 of 16 April 2006
 Internal CodeSnip version 0.11.3

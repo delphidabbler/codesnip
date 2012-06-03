@@ -82,12 +82,12 @@ New features of v4 to date worth trying out are:
   to display a new empty tab that can display selected items. Press Ctrl+F4 to
   close a tab.
 
-* Results of test compilations (F9) now appear in a dialog box.
+* Results of test compilations (F9) now appear in a dialogue box.
 
 * You can specify the paths to be searched by the Delphi compilers when looking
   for used units. This lets you compile snippets that use units other than those
   provided in the VCL and RTL. For example you can specify a path to the Indy
-  components to compile them. Use the Compilers dialog box to set the paths on
+  components to compile them. Use the Compilers dialogue box to set the paths on
   a per-compiler basis.
 
 * You can use Unicode source code.
@@ -191,13 +191,13 @@ also be test compiled providing some simple rules are followed.
 When CodeSnip is first installed it knows nothing about the available compilers
 and so test compilations cannot be performed. You must tell CodeSnip about the
 available compilers by using the "Tools | Configure Compilers" menu option. The
-resulting dialog can automatically detect all installed versions of supported
+resulting dialogue can automatically detect all installed versions of supported
 Delphi compilers at the click of a button. Free Pascal, where installed, must be
 set up manually.
 
 Compilers that do not use English as their output language will need further
 configuration. See the help file for information (look up "configure compilers
-dialog" in the help file index).
+dialogue" in the help file index).
 
 Each user can configure compilers differently.
 
@@ -251,8 +251,8 @@ Known Installation and Upgrading Issues
 
 2) Syntax highlighting preferences will be lost when upgrading from any v1.x or
    v2.x release and the program's default highlighting style will be used. This
-   can be changed from the Syntax Highlighter tab of the Preferences dialog box,
-   accessed from the "Tools | Preferences" menu option.
+   can be changed from the Syntax Highlighter tab of the Preferences dialogue
+   box, accessed from the "Tools | Preferences" menu option.
 
 3) Users who have configured CodeSnip to access the internet via a proxy server
    will loose any stored passwords required by the proxy server when updgrading
@@ -320,7 +320,7 @@ Bugs are recorded in Tracker on SourceForge. View the reported and fixed bugs
 via http://www.delphidabbler.com/url/codesnip-bugs which redirects to
 SourceForge. You can also access the bug tracker from CodeSnip by using the
 "Tools | Report Bug Online" menu option then following the link that appears in
-the resulting dialog box.
+the resulting dialogue box.
 
 If you wish to report a bug, please check the current reports on Tracker AND
 the historic list of fixed bugs at
