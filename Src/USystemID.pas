@@ -125,8 +125,6 @@ var
   Drive: Byte;    // loops through all drive numbers
   Serial: DWORD;  // serial number of a hard diak
 begin
-  // Begin id string Windows product ID
-  Result := TOSInfo.ProductID;
   // Append serial number of first fixed hard drive as 8 digit hex string
   for Drive := 0 to 25 do
   begin
@@ -134,14 +132,11 @@ begin
     begin
       Serial := HardDiskSerial(DriveRootPath(Drive));
       if Serial <> 0 then
-      begin
-        Result := Result + IntToHex(Serial, 8);
-        Break;
-      end;
+        Exit(TOSInfo.ProductID + IntToHex(Serial, 8));
     end;
   end;
   // Couldn't find a drive serial number: use 0
-  Result := Result + IntToHex(0, 8);
+  Result := TOSInfo.ProductID + IntToHex(0, 8);
 end;
 
 end.
