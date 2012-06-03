@@ -51,8 +51,10 @@ in the public domain.
 Any other source code files that contain no copyright or license information are
 public domain.
 
-Many files are licensed under the Mozilla Public License. A full copy of that
-license can be found in MPL.txt
+Many files are licensed under the Mozilla Public License (MPL) v1.1. New source
+code is being licensed under v2.0 of the MPL. Over time MPL v1.1 licensed code
+will be changed to MPL v2.0. Copies of versions 1.1 and 2.0 of the Mozilla
+Public License can be found in MPL-1.1.txt and MPL-2.0.txt respectively.
 
 
 Third Party Source Code
@@ -247,7 +249,7 @@ Exceptions
 + Res\Img\cancel.png is taken from the Led Icon Set from
   http://led24.de/iconset/ and Res\Img\cancel-glow.png is based on it. See below
   for license terms and conditions.
-  
+
 + The "about" and "help" glyphs the FmMain.dfm image list were adapted from an
   image in the PixelBox icon collection. See below for the license.
 
