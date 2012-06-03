@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -55,20 +55,13 @@ type
   }
   TDBDownloadMgr = class sealed(TStdWebService)
   strict private
-    function ProductVersion: string;
-      {Gets program's product version.
-        @return String representation of product version number.
-      }
-    function ProgId: string;
-      {Gets program's id code.
-        @return Program id.
-      }
     procedure HandleException(const E: EWebError);
       {Converts EWebError exceptions into EDBDownloadMgr exceptions with both
       a long and a short description.
         @param E [in] EWebError or descendant exception to be converted.
         @except Raises EDBDownloadMgr exceptions based on given exception.
       }
+    procedure GetStdParams(const Params: TURIParams);
     procedure PostStdCommand(const Cmd: string; const Response: TStrings);
       {Sends command to server that includes standard parameters that are sent
       with all commands, i.e. "progid" and "version".
@@ -161,7 +154,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UConsts, UStrUtils, Web.UCharEncodings, Web.UInfo;
+  UAppInfo, UConsts, UStrUtils, USystemInfo, Web.UCharEncodings, Web.UInfo;
 
 
 {
@@ -175,13 +168,13 @@ uses
     cmd=<command> [<params>]
   where <params> is a list of parameters in form param-name=param-value.
 
-  All responses from the v4 service have two parts:
+  All responses from the v5 service have two parts:
   + Successful responses have '0' on first line followed by optional lines of
     data resulting from command.
   + Error responses have +ve error code on first line and error message on 2nd
     line.
 
-  The web service expects a user agent of "DelphiDabbler-CodeSnip-Updater-v4"
+  The web service expects a user agent of "DelphiDabbler-CodeSnip-Updater-v5"
   and will return a 403 "Forbidden" error if this is not provided.
 
   Table of Commands
@@ -191,7 +184,8 @@ uses
   |logon      |cmd    |"logon"               |OK: Stream of news items which   |
   |           |progid |unique id of program  |is ignored                       |
   |           |version|program version number|ERROR: CSUPDT_ERR_STDPARAMS if   |
-  |           |       |                      |required params not provided     |
+  |           |os     |operating system info |required params not provided     |
+  |           |browser|version of IE browser |                                 |
   +-----------+-------+----------------------+---------------------------------+
   |filecount  |cmd    |"filecount"           |OK: Integer indication number of |
   |           |progid |unique id of program  |files in remote database         |
@@ -226,9 +220,6 @@ uses
   +-----------+-------+----------------------+---------------------------------+
   If any other command (or no command) is specified then error code
   CSUPDT_ERR_CMD (1) is returned.
-
-  The filecount command was only implemented from v1.9.3 of CodeSnip and v4.10
-  of the web service.
 }
 
 
@@ -304,6 +295,12 @@ begin
   end;
 end;
 
+procedure TDBDownloadMgr.GetStdParams(const Params: TURIParams);
+begin
+  Params.Add('progid', TAppInfo.ProgramKey);
+  Params.Add('version', TAppInfo.ProgramReleaseVersion);
+end;
+
 procedure TDBDownloadMgr.HandleException(const E: EWebError);
   {Converts EWebError exceptions into EDBDownloadMgr exceptions with both
   a long and a short description.
@@ -375,11 +372,20 @@ procedure TDBDownloadMgr.LogOn(const WantProgress: Boolean);
   }
 var
   Response: TStringList;  // response from server
+  Params: TURIParams;     // parameters to send with command
 begin
   Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
-    PostStdCommand('logon', Response);
+    Params := TURIParams.Create;
+    try
+      GetStdParams(Params);
+      Params.Add('os', TOSInfo.Description);
+      Params.Add('browser', IntToStr(TOSInfo.BrowserVer));
+      SafePostCommand('logon', Params, Response);
+    finally
+      Params.Free;
+    end;
   finally
     Response.Free;
   end;
@@ -398,28 +404,11 @@ var
 begin
   StdParams := TURIParams.Create;
   try
-    StdParams.Add('progid', ProgId);
-    StdParams.Add('version', ProductVersion);
+    GetStdParams(StdParams);
     SafePostCommand(Cmd, StdParams, Response);
   finally
     StdParams.Free;
   end;
-end;
-
-function TDBDownloadMgr.ProductVersion: string;
-  {Gets program's product version.
-    @return String representation of product version number.
-  }
-begin
-  Result := TAppInfo.ProgramReleaseVersion;
-end;
-
-function TDBDownloadMgr.ProgId: string;
-  {Gets program's id code.
-    @return Program id.
-  }
-begin
-  Result := TAppInfo.ProgramKey;
 end;
 
 procedure TDBDownloadMgr.SafePostCommand(const Cmd: string;
