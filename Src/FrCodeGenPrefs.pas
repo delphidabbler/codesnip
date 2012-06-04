@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -48,7 +48,7 @@ uses
 type
 
   TCodeGenPrefsFrame = class(TPrefsBaseFrame)
-    chkSwitchOff: TCheckBox;
+    chkWARNEnabled: TCheckBox;
     lvWarnings: TListView;
     lblSymbol: TLabel;
     lblMinCompiler: TLabel;
@@ -71,7 +71,7 @@ type
     procedure actUpdateUpdate(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actDeleteUpdate(Sender: TObject);
-    procedure chkSwitchOffClick(Sender: TObject);
+    procedure chkWARNEnabledClick(Sender: TObject);
     procedure lvWarningsClick(Sender: TObject);
     procedure edMinCompilerKeyPress(Sender: TObject; var Key: Char);
     procedure actPreviewExecute(Sender: TObject);
@@ -281,7 +281,7 @@ procedure TCodeGenPrefsFrame.Activate(const Prefs: IPreferences);
   }
 begin
   (fWarnings as IAssignable).Assign(Prefs.Warnings);
-  chkSwitchOff.Checked := fWarnings.SwitchOff;
+  chkWARNEnabled.Checked := fWarnings.Enabled;
   PopulateLV;
 end;
 
@@ -308,7 +308,7 @@ procedure TCodeGenPrefsFrame.actPreviewUpdate(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  actPreview.Enabled := (lvWarnings.Items.Count > 0) and chkSwitchOff.Checked;
+  actPreview.Enabled := (lvWarnings.Items.Count > 0) and chkWARNEnabled.Checked;
 end;
 
 procedure TCodeGenPrefsFrame.actUpdateExecute(Sender: TObject);
@@ -391,8 +391,8 @@ procedure TCodeGenPrefsFrame.ArrangeControls;
 begin
   btnPreview.Left := Width - btnPreview.Width;
   lvWarnings.Width := Width;
-  TCtrlArranger.AlignVCentres(0, [chkSwitchOff, btnPreview]);
-  lvWarnings.Top := TCtrlArranger.BottomOf([chkSwitchOff, btnPreview], 8);
+  TCtrlArranger.AlignVCentres(0, [chkWARNEnabled, btnPreview]);
+  lvWarnings.Top := TCtrlArranger.BottomOf([chkWARNEnabled, btnPreview], 8);
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(lvWarnings, 8),
     [lblSymbol, edSymbol]
@@ -421,13 +421,13 @@ begin
   mnuPreDefCompilers.Popup(PopupPos.X, PopupPos.Y);
 end;
 
-procedure TCodeGenPrefsFrame.chkSwitchOffClick(Sender: TObject);
+procedure TCodeGenPrefsFrame.chkWARNEnabledClick(Sender: TObject);
   {Click event handler for "switch off warnings" check box. Updated warnings
   object per state of check box.
     @param Sender [in] Not used.
   }
 begin
-  fWarnings.SwitchOff := chkSwitchOff.Checked;
+  fWarnings.Enabled := chkWARNEnabled.Checked;
 end;
 
 constructor TCodeGenPrefsFrame.Create(AOwner: TComponent);
@@ -447,7 +447,7 @@ procedure TCodeGenPrefsFrame.Deactivate(const Prefs: IPreferences);
     @param Prefs [in] Object used to store information.
   }
 begin
-  fWarnings.SwitchOff := chkSwitchOff.Checked;
+  fWarnings.Enabled := chkWARNEnabled.Checked;
   Prefs.Warnings := fWarnings;
 end;
 

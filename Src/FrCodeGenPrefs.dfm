@@ -19,14 +19,14 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Caption = 'Min. &Compiler:'
     FocusControl = edMinCompiler
   end
-  object chkSwitchOff: TCheckBox
+  object chkWARNEnabled: TCheckBox
     Left = 0
     Top = 0
     Width = 414
     Height = 17
     Caption = 'Emit $&WARN directives to switch off listed warnings'
     TabOrder = 0
-    OnClick = chkSwitchOffClick
+    OnClick = chkWARNEnabledClick
   end
   object lvWarnings: TListView
     Left = 0
