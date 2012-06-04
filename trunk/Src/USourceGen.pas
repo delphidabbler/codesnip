@@ -544,7 +544,7 @@ begin
 
     // any conditional compilation symbols
     Warnings := Preferences.Warnings;
-    if Warnings.SwitchOff and not Warnings.IsEmpty then
+    if Warnings.Enabled and not Warnings.IsEmpty then
     begin
       Writer.Append(Warnings.Render);
       Writer.AppendLine;

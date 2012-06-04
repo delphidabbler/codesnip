@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -74,6 +74,7 @@ type
     const MinSupportedCompiler = 14.0;
       {Version number of earliest compiler that supports any $WARN directive.
       (Delphi 6)}
+  public
     constructor Create(const ASymbol: string; const AMinCompiler: Single);
       overload;
       {Constructor that provides values for both Symbol and MinCompiler
@@ -141,17 +142,17 @@ type
       }
     property Items[const Idx: Integer]: TWarning read GetItem; default;
       {Array of warnings}
-    function GetSwitchOff: Boolean;
-      {Read accessor for SwitchOff property.
-        @return Value of SwitchOff property.
+    function GetEnabled: Boolean;
+      {Read accessor for Enabled property.
+        @return Value of Enabled property.
       }
-    procedure SetSwitchOff(const Value: Boolean);
-      {Write accessor for SwitchOff property. Sets property to specified value.
+    procedure SetEnabled(const Value: Boolean);
+      {Write accessor for Enabled property. Sets property to specified value.
         @param Value [in] New property value.
       }
-    property SwitchOff: Boolean read GetSwitchOff write SetSwitchOff;
-      {Property that indicates whether code should be emitted to switch off
-      listed warnings}
+    property Enabled: Boolean read GetEnabled write SetEnabled;
+      {Property that indicates whether code should be emitted to control listed
+      warnings}
     function GetEnumerator: TEnumerator<TWarning>;
       {Creates an enumerator for all the warnings in the warnings list.
         @return Instance of enumerator.
@@ -194,7 +195,7 @@ type
   TWarnings = class(TInterfacedObject, IWarnings, IAssignable)
   strict private
     fItems: TList<TWarning>;    // List of warning records
-    fSwitchOff: Boolean;        // Value of SwitchOff property
+    fEnabled: Boolean;        // Value of Enabled property
     procedure Delete(const AWarning: TWarning); overload;
       {Removes a warning from the list based on its symbol.
         @param AWarning [in] Warning to be removed.
@@ -245,15 +246,15 @@ type
       }
     property Items[const Idx: Integer]: TWarning read GetItem; default;
       {Array of warnings}
-    function GetSwitchOff: Boolean;
-      {Read accessor for SwitchOff property.
-        @return Value of SwitchOff property.
+    function GetEnabled: Boolean;
+      {Read accessor for Enabled property.
+        @return Value of Enabled property.
       }
-    procedure SetSwitchOff(const Value: Boolean);
-      {Write accessor for SwitchOff property. Sets property to specified value.
+    procedure SetEnabled(const Value: Boolean);
+      {Write accessor for Enabled property. Sets property to specified value.
         @param Value [in] New property value.
       }
-    property SwitchOff: Boolean read GetSwitchOff write SetSwitchOff;
+    property Enabled: Boolean read GetEnabled write SetEnabled;
       {Property that indicates whether code should be emitted to switch off
       listed warnings}
     function GetEnumerator: TEnumerator<TWarning>;
@@ -364,7 +365,7 @@ begin
   Clear;
   for W in (Src as IWarnings) do
     Add(W);
-  fSwitchOff := (Src as IWarnings).SwitchOff;
+  fEnabled := (Src as IWarnings).Enabled;
 end;
 
 procedure TWarnings.Clear;
@@ -431,6 +432,11 @@ begin
   inherited;
 end;
 
+function TWarnings.GetEnabled: Boolean;
+begin
+  Result := fEnabled;
+end;
+
 function TWarnings.GetEnumerator: TEnumerator<TWarning>;
   {Creates an enumerator for all the warnings in the warnings list.
     @return Instance of enumerator.
@@ -447,14 +453,6 @@ function TWarnings.GetItem(const Idx: Integer): TWarning;
   }
 begin
   Result := fItems[Idx];
-end;
-
-function TWarnings.GetSwitchOff: Boolean;
-  {Read accessor for SwitchOff property.
-    @return Value of SwitchOff property.
-  }
-begin
-  Result := fSwitchOff;
 end;
 
 function TWarnings.IsEmpty: Boolean;
@@ -541,19 +539,16 @@ begin
   end;
 end;
 
-procedure TWarnings.SetSwitchOff(const Value: Boolean);
-  {Write accessor for SwitchOff property. Sets property to specified value.
-    @param Value [in] New property value.
-  }
+procedure TWarnings.SetEnabled(const Value: Boolean);
 begin
-  fSwitchOff := Value;
+  fEnabled := Value;
 end;
 
 { TWarningsPersist }
 
 const
   // Names of values stored in persistent storage
-  cInhibitedName = 'SwitchOffWarnings';
+  cWarningsEnabledName = 'SwitchOffWarnings'; // this name is historical
   cWarningCountName = 'WarningCount';
   cWarningCompoundName = 'Warning%d.%s';
   // Names of properties used in compound value names
@@ -572,8 +567,8 @@ var
   Symbol: string;       // symbol of a warning read from storage
 begin
   Warnings.Clear;
-  Warnings.SwitchOff := Boolean(
-    StrToIntDef(Storage.ItemValues[cInhibitedName], Ord(False))
+  Warnings.Enabled := Boolean(
+    StrToIntDef(Storage.ItemValues[cWarningsEnabledName], Ord(False))
   );
   for Idx := 0 to Pred(StrToIntDef(Storage.ItemValues[cWarningCountName], 0)) do
   begin
@@ -599,7 +594,7 @@ class procedure TWarningsPersist.Save(Storage: ISettingsSection;
 var
   Idx: Integer; // loops through all warnings
 begin
-  Storage.ItemValues[cInhibitedName] := IntToStr(Ord(Warnings.SwitchOff));
+  Storage.ItemValues[cWarningsEnabledName] := IntToStr(Ord(Warnings.Enabled));
   Storage.ItemValues[cWarningCountName] := IntToStr(Warnings.Count);
   for Idx := 0 to Pred(Warnings.Count) do
   begin
