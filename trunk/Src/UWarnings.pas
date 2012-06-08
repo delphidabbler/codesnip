@@ -78,17 +78,12 @@ type
       (Delphi 6)}
   public
     constructor Create(const ASymbol: string; const AMinCompiler: Single;
-      const AState: Boolean); overload;
+      const AState: Boolean);
       {Constructor that provides values for both Symbol and MinCompiler
       properties.
         @param ASymbol [in] Warning symbol.
         @param AMinCompiler [in] Earliest compiler that supports ASymbol.
         @param AState [in] Warning state: on or off.
-      }
-    constructor Create(const ASymbol: string); overload;
-      {Constructor that provides a value for Symbol property and uses default
-      value for MinCompiler property.
-        @param ASymbol [in] Warning symbol.
       }
     function IsValid: Boolean;
       {Checks if properties of this warning are valid.
@@ -105,7 +100,7 @@ type
   {
   IWarnings:
     Interface to class that encapsulates information about warnings and whether
-    code can be generated to supress them.
+    code can be generated to supress or enable them.
   }
   IWarnings = interface(IInterface)
     ['{EBE8C8BD-535D-4B4B-A6D4-1AFC02E1C5B7}']
@@ -195,7 +190,7 @@ type
   {
   TWarnings:
     Class that encapsulates information about warnings and whether code can be
-    generated to supress them. Implements IWarnings interface.
+    generated to supress or enable them. Implements IWarnings interface.
   }
   TWarnings = class(TInterfacedObject, IWarnings, IAssignable)
   strict private
@@ -295,16 +290,6 @@ begin
   fState := AState;
 end;
 
-constructor TWarning.Create(const ASymbol: string);
-  {Constructor that provides a value for Symbol property and uses default
-  value for MinCompiler property.
-    @param ASymbol [in] Warning symbol.
-  }
-begin
-  // we use earliest compiler to support any $WARN directive as MinCompiler
-  Create(ASymbol, MinSupportedCompiler, False);
-end;
-
 function TWarning.GetMinCompiler: Single;
   {Read accessor for MinCompiler property.
     @return Version number of earliest compiler to support Symbol.
@@ -384,7 +369,10 @@ function TWarnings.Contains(const ASymbol: string): Boolean;
     @return True if warning with symbol is in list, False if not.
   }
 begin
-  Result := fItems.Contains(TWarning.Create(ASymbol));
+  Result := fItems.Contains(
+    // use fake warning: we only use Symbol property in search
+    TWarning.Create(ASymbol, TWarning.MinSupportedCompiler, False)
+  );
 end;
 
 function TWarnings.Count: Integer;
