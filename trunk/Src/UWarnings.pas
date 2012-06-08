@@ -203,6 +203,9 @@ type
     destructor Destroy; override;
       {Destructor. Tears down object.
       }
+    ///  <summary>Creates a TWarnings instance containing default warnings.
+    ///  </summary>
+    class function Defaults: TWarnings;
     { IWarnings methods }
     procedure Add(const AWarning: TWarning);
       {Adds a warning to list.
@@ -397,6 +400,19 @@ begin
       end
     )
   );
+end;
+
+class function TWarnings.Defaults: TWarnings;
+begin
+  Result := Create;
+  Result.Add(TWarning.Create('UNSAFE_TYPE', 15.0, False));
+  Result.Add(TWarning.Create('UNSAFE_CAST', 15.0, False));
+  Result.Add(TWarning.Create('UNSAFE_CODE', 15.0, False));
+  Result.Add(TWarning.Create('SYMBOL_PLATFORM', 14.0, False));
+  Result.Add(TWarning.Create('SYMBOL_DEPRECATED', 14.0, False));
+  Result.Add(TWarning.Create('SYMBOL_LIBRARY', 14.0, False));
+  Result.Add(TWarning.Create('IMPLICIT_STRING_CAST', 20.0, False));
+  Result.Add(TWarning.Create('EXPLICIT_STRING_CAST', 20.0, False));
 end;
 
 procedure TWarnings.Delete(const AWarning: TWarning);
