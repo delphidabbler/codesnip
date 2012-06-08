@@ -17,6 +17,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Width = 68
     Height = 13
     Caption = 'Min. &Compiler:'
+    FocusControl = edMinCompiler
   end
   object lblState: TLabel
     Left = 2
@@ -78,7 +79,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Top = 218
     Width = 106
     Height = 25
-    Caption = 'Pre-defined'
+    Caption = '&Pre-defined'
     DoubleBuffered = True
     Glyph.Data = {
       F6000000424DF600000000000000760000002800000010000000100000000100
@@ -107,7 +108,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Top = 247
     Width = 48
     Height = 17
-    Caption = 'Off'
+    Caption = '&Off'
     TabOrder = 5
   end
   object rbStateOn: TRadioButton
@@ -115,7 +116,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Top = 247
     Width = 50
     Height = 17
-    Caption = 'On'
+    Caption = 'O&n'
     TabOrder = 6
   end
   object btnRestoreDefaults: TButton
@@ -126,7 +127,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Action = actRestoreDefaults
     TabOrder = 10
   end
-  object actMain: TActionList
+  object alMain: TActionList
     Left = 328
     Top = 120
     object actAdd: TAction
@@ -145,12 +146,12 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
       OnUpdate = actDeleteUpdate
     end
     object actPreview: TAction
-      Caption = '&Preview...'
+      Caption = 'Pre&view...'
       OnExecute = actPreviewExecute
       OnUpdate = actPreviewUpdate
     end
     object actRestoreDefaults: TAction
-      Caption = 'Restore Defaults'
+      Caption = '&Restore Defaults'
       OnExecute = actRestoreDefaultsExecute
     end
   end
