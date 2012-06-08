@@ -63,30 +63,30 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
   object edSymbol: TEdit
     Left = 88
     Top = 193
-    Width = 201
+    Width = 190
     Height = 21
     TabOrder = 3
   end
   object btnAdd: TButton
     Left = 88
     Top = 280
-    Width = 65
+    Width = 60
     Height = 25
     Action = actAdd
     TabOrder = 8
   end
   object btnDelete: TButton
-    Left = 230
+    Left = 218
     Top = 280
-    Width = 65
+    Width = 60
     Height = 25
     Action = actDelete
     TabOrder = 10
   end
   object btnUpdate: TButton
-    Left = 159
+    Left = 153
     Top = 280
-    Width = 65
+    Width = 60
     Height = 25
     Action = actUpdate
     TabOrder = 9
@@ -100,8 +100,8 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     TabOrder = 1
   end
   object btnPredefined: TBitBtn
-    Left = 183
-    Top = 216
+    Left = 172
+    Top = 218
     Width = 106
     Height = 25
     Caption = 'Pre-defined'
@@ -123,7 +123,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
   object edMinCompiler: TEdit
     Left = 88
     Top = 220
-    Width = 81
+    Width = 73
     Height = 21
     TabOrder = 4
     OnKeyPress = edMinCompilerKeyPress
@@ -143,6 +143,14 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Height = 17
     Caption = 'On'
     TabOrder = 7
+  end
+  object btnRestoreDefaults: TButton
+    Left = 296
+    Top = 280
+    Width = 102
+    Height = 25
+    Action = actRestoreDefaults
+    TabOrder = 11
   end
   object actMain: TActionList
     Left = 328
@@ -166,6 +174,10 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
       Caption = '&Preview...'
       OnExecute = actPreviewExecute
       OnUpdate = actPreviewUpdate
+    end
+    object actRestoreDefaults: TAction
+      Caption = 'Restore Defaults'
+      OnExecute = actRestoreDefaultsExecute
     end
   end
   object mnuPreDefCompilers: TPopupMenu

@@ -68,6 +68,8 @@ type
     edMinCompiler: TEdit;
     rbStateOff: TRadioButton;
     rbStateOn: TRadioButton;
+    btnRestoreDefaults: TButton;
+    actRestoreDefaults: TAction;
     procedure actAddExecute(Sender: TObject);
     procedure actAddUpdate(Sender: TObject);
     procedure actUpdateExecute(Sender: TObject);
@@ -82,6 +84,7 @@ type
     procedure btnPredefinedClick(Sender: TObject);
     procedure lvWarningsCreateItemClass(Sender: TCustomListView;
       var ItemClass: TListItemClass);
+    procedure actRestoreDefaultsExecute(Sender: TObject);
   strict private
     fWarnings: IWarnings; // Object that stores details of warnings
     procedure PopulateLV;
@@ -341,12 +344,18 @@ begin
   actPreview.Enabled := (lvWarnings.Items.Count > 0) and chkWARNEnabled.Checked;
 end;
 
+procedure TCodeGenPrefsFrame.actRestoreDefaultsExecute(Sender: TObject);
+begin
+  fWarnings := TWarnings.Defaults;
+  fWarnings.Enabled := chkWARNEnabled.Checked;
+  PopulateLV;
+end;
+
 procedure TCodeGenPrefsFrame.actUpdateExecute(Sender: TObject);
   {Updates selected warning from data entered in edit controls.
     @param Sender [in] Not used.
   }
 var
-//  OldSymbol: string;      // symbol associated with selected warning
   NewSymbol: string;      // new symbol from edit control
   NewCompilerVer: Single; // new compiler version from edit control
   NewState: Boolean;      // new warning state from radio buttons
@@ -443,8 +452,10 @@ begin
   );
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf([lblState, rbStateOff, rbStateOn], 8),
-    [btnAdd, btnDelete, btnUpdate]
+    [btnAdd, btnDelete, btnUpdate, btnRestoreDefaults]
   );
+  btnRestoreDefaults.Left :=
+    lvWarnings.Left + lvWarnings.Width - btnRestoreDefaults.Width;
 end;
 
 procedure TCodeGenPrefsFrame.btnPredefinedClick(Sender: TObject);
