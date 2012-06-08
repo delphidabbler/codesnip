@@ -56,8 +56,10 @@ type
   }
   TWarning = record
   strict private
-    var fSymbol: string;        // Value of Symbol property
-    var fMinCompiler: Single;   // Value of MinCompiler property
+    var
+      fSymbol: string;        // Value of Symbol property
+      fMinCompiler: Single;   // Value of MinCompiler property
+      fState: Boolean;        // Value of State property
     function GetMinCompiler: Single;
       {Read accessor for MinCompiler property.
         @return Version number of earliest compiler to support Symbol.
@@ -75,12 +77,13 @@ type
       {Version number of earliest compiler that supports any $WARN directive.
       (Delphi 6)}
   public
-    constructor Create(const ASymbol: string; const AMinCompiler: Single);
-      overload;
+    constructor Create(const ASymbol: string; const AMinCompiler: Single;
+      const AState: Boolean); overload;
       {Constructor that provides values for both Symbol and MinCompiler
       properties.
         @param ASymbol [in] Warning symbol.
         @param AMinCompiler [in] Earliest compiler that supports ASymbol.
+        @param AState [in] Warning state: on or off.
       }
     constructor Create(const ASymbol: string); overload;
       {Constructor that provides a value for Symbol property and uses default
@@ -95,6 +98,8 @@ type
       {Symbol used to specify this warning in $WARN compiler directives}
     property MinCompiler: Single read GetMinCompiler write SetMinCompiler;
       {Version number of earliest compiler that supports this warning}
+    ///  <summary>State of warning switch: defaults to False (off).</summary>
+    property State: Boolean read fState write fState;
   end;
 
   {
@@ -125,10 +130,10 @@ type
         @param ASymbol [in] Symbol to be checked.
         @return True if warning with symbol is in list, False if not.
       }
-    procedure Delete(const ASymbol: string); overload;
-      {Deletes warning containing specified symbol from list.
-        @param ASymbol [in] Symbol of warning to be deleted.
-      }
+    ///  <summary>Deletes given warning from list.</summary>
+    ///  <remarks>First warning with a matching symbol is deleted, regardless of
+    ///  value of other properties.</remarks>
+    procedure Delete(const AWarning: TWarning);
     function Render: string;
       {Generates source code for compiler directives that switch off all
       warnings in list for supporting compilers.
@@ -196,10 +201,6 @@ type
   strict private
     fItems: TList<TWarning>;    // List of warning records
     fEnabled: Boolean;        // Value of Enabled property
-    procedure Delete(const AWarning: TWarning); overload;
-      {Removes a warning from the list based on its symbol.
-        @param AWarning [in] Warning to be removed.
-      }
   public
     constructor Create;
       {Constructor. Sets up object.
@@ -229,9 +230,9 @@ type
         @param ASymbol [in] Symbol to be checked.
         @return True if warning with symbol is in list, False if not.
       }
-    procedure Delete(const ASymbol: string); overload;
-      {Deletes warning containing specified symbol from list.
-        @param ASymbol [in] Symbol of warning to be deleted.
+    procedure Delete(const AWarning: TWarning);
+      {Removes a warning from the list based on its symbol.
+        @param AWarning [in] Warning to be removed.
       }
     function Render: string;
       {Generates source code for compiler directives that switch off all
@@ -281,7 +282,8 @@ uses
 
 { TWarning }
 
-constructor TWarning.Create(const ASymbol: string; const AMinCompiler: Single);
+constructor TWarning.Create(const ASymbol: string; const AMinCompiler: Single;
+  const AState: Boolean);
   {Constructor that provides values for both Symbol and MinCompiler properties.
     @param ASymbol [in] Warning symbol.
     @param AMinCompiler [in] Earliest compiler that supports ASymbol.
@@ -290,6 +292,7 @@ begin
   Assert(ASymbol <> '', 'TWarning.Create: ASymbol is empty string');
   fSymbol := ASymbol;
   MinCompiler := AMinCompiler;
+  fState := AState;
 end;
 
 constructor TWarning.Create(const ASymbol: string);
@@ -299,7 +302,7 @@ constructor TWarning.Create(const ASymbol: string);
   }
 begin
   // we use earliest compiler to support any $WARN directive as MinCompiler
-  Create(ASymbol, MinSupportedCompiler);
+  Create(ASymbol, MinSupportedCompiler, False);
 end;
 
 function TWarning.GetMinCompiler: Single;
@@ -416,14 +419,6 @@ begin
   fItems.Remove(AWarning);
 end;
 
-procedure TWarnings.Delete(const ASymbol: string);
-  {Deletes warning containing specified symbol from list.
-    @param ASymbol [in] Symbol of warning to be deleted.
-  }
-begin
-  Delete(TWarning.Create(ASymbol));
-end;
-
 destructor TWarnings.Destroy;
   {Destructor. Tears down object.
   }
@@ -474,8 +469,11 @@ var
   SortedList: TList<TWarning>;  // list of warnings sorted by compiler version
   CurrentVer: Single;           // compiler version currently being processed
   InsideVer: Boolean;           // true if rendering warnings for a compiler ver
+const
+  // values written to compiler directive, depending on warning state
+  StateStrings: array[Boolean] of string = ('OFF', 'ON');
 begin
-  if IsEmpty then
+  if not Enabled or IsEmpty then
     Exit('');
 
   // Create a list of warnings sorted by minimum compiler: we do this so we can
@@ -522,7 +520,9 @@ begin
           CurrentVer := W.MinCompiler;
         end;
         // write directive to turn warning off
-        SB.AppendFormat('      {$WARN %s OFF}' + EOL, [W.Symbol]);
+        SB.AppendFormat(
+          '      {$WARN %0:s %1:s}' + EOL, [W.Symbol, StateStrings[W.State]]
+        );
       end;
       // close off any open conditional statement
       if InsideVer then
@@ -548,12 +548,13 @@ end;
 
 const
   // Names of values stored in persistent storage
-  cWarningsEnabledName = 'SwitchOffWarnings'; // this name is historical
+  cWarningsEnabledName = 'SwitchOffWarnings'; //! this name is historical
   cWarningCountName = 'WarningCount';
   cWarningCompoundName = 'Warning%d.%s';
   // Names of properties used in compound value names
   cWarningSymbolProp = 'Symbol';
   cWarningSupportProp = 'MinCompiler';
+  cWarningStateProp = 'State';
 
 class procedure TWarningsPersist.Load(Storage: ISettingsSection;
   Warnings: IWarnings);
@@ -565,6 +566,7 @@ var
   Idx: Integer;         // loops thru all warnings in storage
   CompilerVer: Double;  // min compiler version for a warning read from storage
   Symbol: string;       // symbol of a warning read from storage
+  State: Boolean;       // state of a warning read from storage
 begin
   Warnings.Clear;
   Warnings.Enabled := Boolean(
@@ -581,7 +583,13 @@ begin
     );
     if CompilerVer < TWarning.MinSupportedCompiler then
       CompilerVer := TWarning.MinSupportedCompiler;
-    Warnings.Add(TWarning.Create(Symbol, CompilerVer));
+    State := Boolean(
+      StrToIntDef(
+        Storage.ItemValues[WarningCompoundName(Idx, cWarningStateProp)],
+        Ord(False)
+      )
+    );
+    Warnings.Add(TWarning.Create(Symbol, CompilerVer, State));
   end;
 end;
 
@@ -602,6 +610,8 @@ begin
       Warnings[Idx].Symbol;
     Storage.ItemValues[WarningCompoundName(Idx, cWarningSupportProp)] :=
       Format('%.2f', [Warnings[Idx].MinCompiler]);
+    Storage.ItemValues[WarningCompoundName(Idx, cWarningStateProp)] :=
+      IntToStr(Ord(Warnings[Idx].State));
   end;
   Storage.Save;
 end;
