@@ -36,7 +36,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
   end
   object lvWarnings: TListView
     Left = 0
-    Top = 26
+    Top = 23
     Width = 414
     Height = 150
     Columns = <
@@ -51,13 +51,14 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
       item
         Caption = 'State'
       end>
-    ColumnClick = False
     HideSelection = False
     ReadOnly = True
     RowSelect = True
     TabOrder = 2
     ViewStyle = vsReport
     OnClick = lvWarningsClick
+    OnColumnClick = lvWarningsColumnClick
+    OnCompare = lvWarningsCompare
     OnCreateItemClass = lvWarningsCreateItemClass
   end
   object edSymbol: TEdit

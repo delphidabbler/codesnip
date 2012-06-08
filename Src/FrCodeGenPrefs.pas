@@ -46,6 +46,7 @@ uses
   FrPrefsBase, UPreferences, UWarnings;
 
 type
+  TSortDirection = (sdAscending, sdDescending);
 
   TCodeGenPrefsFrame = class(TPrefsBaseFrame)
     chkWARNEnabled: TCheckBox;
@@ -85,8 +86,15 @@ type
     procedure lvWarningsCreateItemClass(Sender: TCustomListView;
       var ItemClass: TListItemClass);
     procedure actRestoreDefaultsExecute(Sender: TObject);
+    procedure lvWarningsColumnClick(Sender: TObject; Column: TListColumn);
+    procedure lvWarningsCompare(Sender: TObject; Item1, Item2: TListItem;
+      Data: Integer; var Compare: Integer);
   strict private
-    fWarnings: IWarnings; // Object that stores details of warnings
+    var
+      fWarnings: IWarnings; // Object that stores details of warnings
+      fSortColIdx: Integer; // Index of column being sorted
+      fSortDirection: TSortDirection; // Direction of sort
+    function LVColumnText(const LI: TListItem; const Idx: Integer): string;
     procedure PopulateLV;
       {Populates list view with details of warnings.
       }
@@ -240,6 +248,7 @@ begin
   W := TWarning.Create(Symbol, CompilerVer, GetState);
   fWarnings.Add(W);
   AddWarningToLV(W);
+  lvWarnings.AlphaSort;
   // Select new list item and make it visible
   lvWarnings.Selected := lvWarnings.Items[IndexOfSymbolInLV(Symbol)];
   lvWarnings.Selected.MakeVisible(False);
@@ -372,6 +381,7 @@ begin
   OldWarning := SelectedWarning;
   NewWarning := TWarning.Create(NewSymbol, NewCompilerVer, NewState);
   SetLVItem(SelItem, NewWarning);
+  lvWarnings.AlphaSort;
   // we update warnings by deleting old one and adding updated version
   fWarnings.Delete(OldWarning);
   fWarnings.Add(NewWarning);
@@ -490,6 +500,8 @@ begin
   HelpKeyword := 'CodeGenPrefs';
   fWarnings := TWarnings.Create;
   PopulatePreDefCompilerMenu;
+  fSortColIdx := 0;
+  fSortDirection := sdAscending;
 end;
 
 procedure TCodeGenPrefsFrame.Deactivate(const Prefs: IPreferences);
@@ -616,6 +628,15 @@ begin
   Result := GetSymbol(Symbol);
 end;
 
+function TCodeGenPrefsFrame.LVColumnText(const LI: TListItem;
+  const Idx: Integer): string;
+begin
+  if Idx = 0 then
+    Result := LI.Caption
+  else
+    Result := LI.SubItems[Idx - 1];
+end;
+
 procedure TCodeGenPrefsFrame.lvWarningsClick(Sender: TObject);
   {Click event handler for warnings list view. Copies details of warning
   associated with selected (clicked) list item to edit controls.
@@ -625,6 +646,34 @@ begin
   if not Assigned(lvWarnings.Selected) then
     Exit;
   UpdateControls;
+end;
+
+procedure TCodeGenPrefsFrame.lvWarningsColumnClick(Sender: TObject;
+  Column: TListColumn);
+begin
+  if fSortColIdx = Column.Index then
+  begin
+    // same column clicked twice: reverse sort order
+    if fSortDirection = sdAscending then
+      fSortDirection := sdDescending
+    else
+      fSortDirection := sdAscending;
+  end
+  else
+    // different column clicked: ascending sort order
+    fSortDirection := sdAscending;
+  fSortColIdx := Column.Index;
+  lvWarnings.AlphaSort;
+end;
+
+procedure TCodeGenPrefsFrame.lvWarningsCompare(Sender: TObject; Item1,
+  Item2: TListItem; Data: Integer; var Compare: Integer);
+begin
+  Compare := StrCompareText(
+    LVColumnText(Item1, fSortColIdx), LVColumnText(Item2, fSortColIdx)
+  );
+  if fSortDirection = sdDescending then
+    Compare := -Compare;
 end;
 
 procedure TCodeGenPrefsFrame.lvWarningsCreateItemClass(Sender: TCustomListView;
@@ -645,6 +694,7 @@ begin
     for W in fWarnings do
       AddWarningToLV(W);
     lvWarnings.Selected := nil;
+    lvWarnings.AlphaSort;
   finally
     lvWarnings.Items.EndUpdate;
   end;
