@@ -42,15 +42,14 @@ interface
 uses
   // Delphi
   Classes, ActnList, StdCtrls, Controls, ComCtrls, Menus, Buttons,
+  // 3rd party
+  LVEx,
   // Project
   FrPrefsBase, UPreferences, UWarnings;
 
 type
-  TSortDirection = (sdAscending, sdDescending);
-
   TCodeGenPrefsFrame = class(TPrefsBaseFrame)
     chkWARNEnabled: TCheckBox;
-    lvWarnings: TListView;
     lblSymbol: TLabel;
     lblMinCompiler: TLabel;
     edSymbol: TEdit;
@@ -77,24 +76,23 @@ type
     procedure actUpdateUpdate(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);
     procedure actDeleteUpdate(Sender: TObject);
+    procedure actRestoreDefaultsExecute(Sender: TObject);
     procedure chkWARNEnabledClick(Sender: TObject);
-    procedure lvWarningsClick(Sender: TObject);
     procedure edMinCompilerKeyPress(Sender: TObject; var Key: Char);
     procedure actPreviewExecute(Sender: TObject);
     procedure actPreviewUpdate(Sender: TObject);
     procedure btnPredefinedClick(Sender: TObject);
-    procedure lvWarningsCreateItemClass(Sender: TCustomListView;
-      var ItemClass: TListItemClass);
-    procedure actRestoreDefaultsExecute(Sender: TObject);
-    procedure lvWarningsColumnClick(Sender: TObject; Column: TListColumn);
-    procedure lvWarningsCompare(Sender: TObject; Item1, Item2: TListItem;
-      Data: Integer; var Compare: Integer);
   strict private
     var
       fWarnings: IWarnings; // Object that stores details of warnings
-      fSortColIdx: Integer; // Index of column being sorted
-      fSortDirection: TSortDirection; // Direction of sort
+      fLVWarnings: TListViewEx;
+    procedure LVWarningsClick(Sender: TObject);
+    procedure LVWarningsCreateItemClass(Sender: TCustomListView;
+      var ItemClass: TListItemClass);
+    procedure LVWarningsCompare(Sender: TObject; Item1, Item2: TListItem;
+      Data: Integer; var Compare: Integer);
     function LVColumnText(const LI: TListItem; const Idx: Integer): string;
+    procedure CreateLV;
     procedure PopulateLV;
       {Populates list view with details of warnings.
       }
@@ -103,6 +101,7 @@ type
         @param Warning [in] Warning to be added.
       }
     procedure SetLVItem(const LI: TListItem; const Warning: TWarning);
+    procedure ReSortLV;
     function FormatCompilerVer(const Ver: Single): string;
       {Formats compiler version number as a string.
         @param Ver [in] Version number to be formatted.
@@ -248,10 +247,10 @@ begin
   W := TWarning.Create(Symbol, CompilerVer, GetState);
   fWarnings.Add(W);
   AddWarningToLV(W);
-  lvWarnings.AlphaSort;
+  ReSortLV;
   // Select new list item and make it visible
-  lvWarnings.Selected := lvWarnings.Items[IndexOfSymbolInLV(Symbol)];
-  lvWarnings.Selected.MakeVisible(False);
+  fLVWarnings.Selected := fLVWarnings.Items[IndexOfSymbolInLV(Symbol)];
+  fLVWarnings.Selected.MakeVisible(False);
 end;
 
 procedure TCodeGenPrefsFrame.actAddUpdate(Sender: TObject);
@@ -296,14 +295,14 @@ procedure TCodeGenPrefsFrame.actDeleteExecute(Sender: TObject);
 var
   Warning: TWarning;  // selected warning
 begin
-  Assert(Assigned(lvWarnings.Selected),
+  Assert(Assigned(fLVWarnings.Selected),
     ClassName + '.actDeleteExecute: No list view item selected');
   // Delete selected warning
   Warning := SelectedWarning;
-  lvWarnings.Selected.Delete;
+  fLVWarnings.Selected.Delete;
   fWarnings.Delete(Warning);
   // Ensure nothing selected in list view and clear edit controls
-  lvWarnings.Selected := nil;
+  fLVWarnings.Selected := nil;
   UpdateControls;
 end;
 
@@ -313,7 +312,7 @@ procedure TCodeGenPrefsFrame.actDeleteUpdate(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  actDelete.Enabled := Assigned(lvWarnings.Selected);
+  actDelete.Enabled := Assigned(fLVWarnings.Selected);
 end;
 
 procedure TCodeGenPrefsFrame.Activate(const Prefs: IPreferences);
@@ -350,7 +349,7 @@ procedure TCodeGenPrefsFrame.actPreviewUpdate(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  actPreview.Enabled := (lvWarnings.Items.Count > 0) and chkWARNEnabled.Checked;
+  actPreview.Enabled := (fLVWarnings.Items.Count > 0) and chkWARNEnabled.Checked;
 end;
 
 procedure TCodeGenPrefsFrame.actRestoreDefaultsExecute(Sender: TObject);
@@ -372,21 +371,21 @@ var
   OldWarning: TWarning;   // warning associated with selected list view item
   NewWarning: TWarning;   // updated warning
 begin
-  Assert(Assigned(lvWarnings.Selected),
+  Assert(Assigned(fLVWarnings.Selected),
     ClassName + '.actUpdateExecute: no item selected in lvWarnings');
   GetSymbol(NewSymbol);
   GetCompilerVersion(NewCompilerVer);
   NewState := GetState;
-  SelItem := lvWarnings.Selected;
+  SelItem := fLVWarnings.Selected;
   OldWarning := SelectedWarning;
   NewWarning := TWarning.Create(NewSymbol, NewCompilerVer, NewState);
   SetLVItem(SelItem, NewWarning);
-  lvWarnings.AlphaSort;
+  ReSortLV;
   // we update warnings by deleting old one and adding updated version
   fWarnings.Delete(OldWarning);
   fWarnings.Add(NewWarning);
   // Ensure updated item is still selected in list view and is visible
-  lvWarnings.Selected := SelItem;
+  fLVWarnings.Selected := SelItem;
   SelItem.MakeVisible(False);
 end;
 
@@ -410,13 +409,13 @@ var
   begin
     GetSymbol(Symbol);
     LIIdx := IndexOfSymbolInLV(Symbol);
-    Result := (LIIdx >= 0) and (LIIdx <> lvWarnings.Selected.Index);
+    Result := (LIIdx >= 0) and (LIIdx <> fLVWarnings.Selected.Index);
   end;
   // ---------------------------------------------------------------------------
 
 begin
   CanUpdate := True;
-  if lvWarnings.Selected = nil then
+  if fLVWarnings.Selected = nil then
     CanUpdate := False
   else if not IsValidSymbol then
     CanUpdate := False
@@ -436,7 +435,7 @@ procedure TCodeGenPrefsFrame.AddWarningToLV(const Warning: TWarning);
 var
   LI: TListItem;  // new list item for warning
 begin
-  LI := lvWarnings.Items.Add;
+  LI := fLVWarnings.Items.Add;
   SetLVItem(LI, Warning);
 end;
 
@@ -445,11 +444,11 @@ procedure TCodeGenPrefsFrame.ArrangeControls;
   }
 begin
   btnPreview.Left := Width - btnPreview.Width;
-  lvWarnings.Width := Width;
+  fLVWarnings.Width := Width;
   TCtrlArranger.AlignVCentres(0, [chkWARNEnabled, btnPreview]);
-  lvWarnings.Top := TCtrlArranger.BottomOf([chkWARNEnabled, btnPreview], 8);
+  fLVWarnings.Top := TCtrlArranger.BottomOf([chkWARNEnabled, btnPreview], 8);
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf(lvWarnings, 8),
+    TCtrlArranger.BottomOf(fLVWarnings, 8),
     [lblSymbol, edSymbol]
   );
   TCtrlArranger.AlignVCentres(
@@ -465,7 +464,7 @@ begin
     [btnAdd, btnDelete, btnUpdate, btnRestoreDefaults]
   );
   btnRestoreDefaults.Left :=
-    lvWarnings.Left + lvWarnings.Width - btnRestoreDefaults.Width;
+    fLVWarnings.Left + fLVWarnings.Width - btnRestoreDefaults.Width;
 end;
 
 procedure TCodeGenPrefsFrame.btnPredefinedClick(Sender: TObject);
@@ -500,8 +499,42 @@ begin
   HelpKeyword := 'CodeGenPrefs';
   fWarnings := TWarnings.Create;
   PopulatePreDefCompilerMenu;
-  fSortColIdx := 0;
-  fSortDirection := sdAscending;
+  CreateLV;
+end;
+
+procedure TCodeGenPrefsFrame.CreateLV;
+begin
+  fLVWarnings := TListViewEx.Create(Self);
+  with fLVWarnings do
+  begin
+    Parent := Self;
+    Height := 150;
+    Left := 0;
+    HideSelection := False;
+    ReadOnly := True;
+    RowSelect := True;
+    TabOrder := 2;
+    ViewStyle := vsReport;
+    SortImmediately := False;
+    with Columns.Add do
+    begin
+      Caption := 'Symbol';
+      Width := 240;
+    end;
+    with Columns.Add do
+    begin
+      Caption := 'Min. Compiler';
+      Width := 100;
+    end;
+    with Columns.Add do
+    begin
+      Caption := 'State';
+      Width := 50;
+    end;
+    OnClick := LVWarningsClick;
+    OnCompare := LVWarningsCompare;
+    OnCreateItemClass := LVWarningsCreateItemClass;
+  end;
 end;
 
 procedure TCodeGenPrefsFrame.Deactivate(const Prefs: IPreferences);
@@ -593,7 +626,7 @@ function TCodeGenPrefsFrame.IndexOfSymbolInLV(const Symbol: string): Integer;
 var
   LI: TListItem;  // each list item in list view
 begin
-  for LI in lvWarnings.Items do
+  for LI in fLVWarnings.Items do
   begin
     if StrSameText(Symbol, LI.Caption) then
       Exit(LI.Index);
@@ -637,46 +670,28 @@ begin
     Result := LI.SubItems[Idx - 1];
 end;
 
-procedure TCodeGenPrefsFrame.lvWarningsClick(Sender: TObject);
+procedure TCodeGenPrefsFrame.LVWarningsClick(Sender: TObject);
   {Click event handler for warnings list view. Copies details of warning
   associated with selected (clicked) list item to edit controls.
     @param Sender [in] Not used.
   }
 begin
-  if not Assigned(lvWarnings.Selected) then
+  if not Assigned(fLVWarnings.Selected) then
     Exit;
   UpdateControls;
 end;
 
-procedure TCodeGenPrefsFrame.lvWarningsColumnClick(Sender: TObject;
-  Column: TListColumn);
-begin
-  if fSortColIdx = Column.Index then
-  begin
-    // same column clicked twice: reverse sort order
-    if fSortDirection = sdAscending then
-      fSortDirection := sdDescending
-    else
-      fSortDirection := sdAscending;
-  end
-  else
-    // different column clicked: ascending sort order
-    fSortDirection := sdAscending;
-  fSortColIdx := Column.Index;
-  lvWarnings.AlphaSort;
-end;
-
-procedure TCodeGenPrefsFrame.lvWarningsCompare(Sender: TObject; Item1,
+procedure TCodeGenPrefsFrame.LVWarningsCompare(Sender: TObject; Item1,
   Item2: TListItem; Data: Integer; var Compare: Integer);
 begin
   Compare := StrCompareText(
-    LVColumnText(Item1, fSortColIdx), LVColumnText(Item2, fSortColIdx)
+    LVColumnText(Item1, Data + 1), LVColumnText(Item2, Data + 1)
   );
-  if fSortDirection = sdDescending then
+  if fLVWarnings.SortOrder = soDown then
     Compare := -Compare;
 end;
 
-procedure TCodeGenPrefsFrame.lvWarningsCreateItemClass(Sender: TCustomListView;
+procedure TCodeGenPrefsFrame.LVWarningsCreateItemClass(Sender: TCustomListView;
   var ItemClass: TListItemClass);
 begin
   ItemClass := TWarningListItem;
@@ -688,15 +703,15 @@ procedure TCodeGenPrefsFrame.PopulateLV;
 var
   W: TWarning;  // references each warning
 begin
-  lvWarnings.Items.BeginUpdate;
+  fLVWarnings.Items.BeginUpdate;
   try
-    lvWarnings.Clear;
+    fLVWarnings.Clear;
     for W in fWarnings do
       AddWarningToLV(W);
-    lvWarnings.Selected := nil;
-    lvWarnings.AlphaSort;
+    fLVWarnings.Selected := nil;
+    ReSortLV;
   finally
-    lvWarnings.Items.EndUpdate;
+    fLVWarnings.Items.EndUpdate;
   end;
   UpdateControls;
 end;
@@ -743,11 +758,17 @@ begin
   );
 end;
 
+procedure TCodeGenPrefsFrame.ReSortLV;
+begin
+  if fLVWarnings.SortColumn <> -1 then
+    fLVWarnings.CustomSort(nil, fLVWarnings.SortColumn - 1);
+end;
+
 function TCodeGenPrefsFrame.SelectedWarning: TWarning;
 begin
-  Assert(Assigned(lvWarnings.Selected),
+  Assert(Assigned(fLVWarnings.Selected),
     ClassName + '.SelectedWarning: No warning selected in list view');
-  Result := (lvWarnings.Selected as TWarningListItem).Warning;
+  Result := (fLVWarnings.Selected as TWarningListItem).Warning;
 end;
 
 procedure TCodeGenPrefsFrame.SelectSwitchState(const State: Boolean);
@@ -777,7 +798,7 @@ end;
 
 procedure TCodeGenPrefsFrame.UpdateControls;
 begin
-  if Assigned(lvWarnings.Selected) then
+  if Assigned(fLVWarnings.Selected) then
   begin
     edSymbol.Text := SelectedWarning.Symbol;
     edMinCompiler.Text := FormatCompilerVer(SelectedWarning.MinCompiler);
