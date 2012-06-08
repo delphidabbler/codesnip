@@ -65,6 +65,9 @@ directory. There are several such files:
 
 + GIFImage.pas
   See below for license information
++ LVEx.pas
+  This code is copyright c) 1999-2009 Vadim Crits. No licensing conditions are
+  specified.
 + PJMD5.pas
   This is a DelphiDabbler library. The MPL 1.1 / GPL 2.0 / LGPL 2.1 tri license
   applies. It derives from the RSA Data Security, Inc. MD5 Message-Digest
