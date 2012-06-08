@@ -56,6 +56,7 @@ uses
   Forms,
   Windows,
   GIFImage in '3rdParty\GIFImage.pas',
+  LVEx in '3rdParty\LVEx.pas',
   PJMD5 in '3rdParty\PJMD5.pas',
   PJShellFolders in '3rdParty\PJShellFolders.pas',
   PJStreamWrapper in '3rdParty\PJStreamWrapper.pas',
@@ -380,7 +381,6 @@ uses
   Web.UStdWebService in 'Web.UStdWebService.pas',
   Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
 
-// Include compiler defines: checks if compiler supported
 {$Include CompilerDefines.inc}
 
 // Include resources
