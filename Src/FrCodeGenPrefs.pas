@@ -80,7 +80,8 @@ type
     procedure actPreviewExecute(Sender: TObject);
     procedure actPreviewUpdate(Sender: TObject);
     procedure btnPredefinedClick(Sender: TObject);
-    procedure lvWarningsDeletion(Sender: TObject; Item: TListItem);
+    procedure lvWarningsCreateItemClass(Sender: TCustomListView;
+      var ItemClass: TListItemClass);
   strict private
     fWarnings: IWarnings; // Object that stores details of warnings
     procedure PopulateLV;
@@ -174,7 +175,7 @@ uses
   // Delphi
   SysUtils, Types,
   // Project
-  FmPreferencesDlg, FmPreviewDlg, IntfCommon, UBox, UCtrlArranger, UEncodings,
+  FmPreferencesDlg, FmPreviewDlg, IntfCommon, UCtrlArranger, UEncodings,
   UKeysHelper, UStrUtils, UUtils;
 
 {$R *.dfm}
@@ -202,6 +203,19 @@ type
     property CompilerVer: Single read fCompilerVer write fCompilerVer;
       {Version number of compiler whose name is displayed in menu item's
       Caption}
+  end;
+
+type
+  ///  <summary>Custom list item class that adds ability to store a TWarning
+  ///  record with list item.</summary>
+  TWarningListItem = class(TListItem)
+  strict private
+    var
+      ///  <summary>Value of Warning property.</summary>
+      fWarning: TWarning;
+  public
+    ///  <summary>Warning associated with list item.</summary>
+    property Warning: TWarning read fWarning write fWarning;
   end;
 
 
@@ -273,15 +287,12 @@ begin
   Assert(Assigned(lvWarnings.Selected),
     ClassName + '.actDeleteExecute: No list view item selected');
   // Delete selected warning
-  Warning := TBox<TWarning>(lvWarnings.Selected.Data).Value;
+  Warning := SelectedWarning;
   lvWarnings.Selected.Delete;
   fWarnings.Delete(Warning);
   // Ensure nothing selected in list view and clear edit controls
   lvWarnings.Selected := nil;
-  edSymbol.Text := '';
-  edMinCompiler.Text := '';
-  rbStateOff.Checked := False;
-  rbStateOn.Checked := False;
+  UpdateControls;
 end;
 
 procedure TCodeGenPrefsFrame.actDeleteUpdate(Sender: TObject);
@@ -349,8 +360,7 @@ begin
   GetCompilerVersion(NewCompilerVer);
   NewState := GetState;
   SelItem := lvWarnings.Selected;
-  OldWarning := TBox<TWarning>(SelItem.Data).Value;
-  TBox<TWarning>(SelItem.Data).Free;
+  OldWarning := SelectedWarning;
   NewWarning := TWarning.Create(NewSymbol, NewCompilerVer, NewState);
   SetLVItem(SelItem, NewWarning);
   // we update warnings by deleting old one and adding updated version
@@ -408,9 +418,6 @@ var
   LI: TListItem;  // new list item for warning
 begin
   LI := lvWarnings.Items.Add;
-  // create required sub-items entries for SetLVItem to populate
-  LI.SubItems.Add('');
-  LI.SubItems.Add('');
   SetLVItem(LI, Warning);
 end;
 
@@ -603,21 +610,16 @@ procedure TCodeGenPrefsFrame.lvWarningsClick(Sender: TObject);
   associated with selected (clicked) list item to edit controls.
     @param Sender [in] Not used.
   }
-var
-  Warning: TWarning;
 begin
   if not Assigned(lvWarnings.Selected) then
     Exit;
-  Warning := TBox<TWarning>(lvWarnings.Selected.Data).Value;
-  edSymbol.Text := Warning.Symbol;
-  edMinCompiler.Text := FormatCompilerVer(Warning.MinCompiler);
-  SelectSwitchState(Warning.State);
+  UpdateControls;
 end;
 
-procedure TCodeGenPrefsFrame.lvWarningsDeletion(Sender: TObject;
-  Item: TListItem);
+procedure TCodeGenPrefsFrame.lvWarningsCreateItemClass(Sender: TCustomListView;
+  var ItemClass: TListItemClass);
 begin
-  TObject(Item.Data).Free;
+  ItemClass := TWarningListItem;
 end;
 
 procedure TCodeGenPrefsFrame.PopulateLV;
@@ -684,7 +686,7 @@ function TCodeGenPrefsFrame.SelectedWarning: TWarning;
 begin
   Assert(Assigned(lvWarnings.Selected),
     ClassName + '.SelectedWarning: No warning selected in list view');
-  Result := TBox<TWarning>(lvWarnings.Selected).Value;
+  Result := (lvWarnings.Selected as TWarningListItem).Warning;
 end;
 
 procedure TCodeGenPrefsFrame.SelectSwitchState(const State: Boolean);
@@ -705,9 +707,11 @@ const
   StateDescs: array[Boolean] of string = (sOff, sOn);
 begin
   LI.Caption := Warning.Symbol;
+  while LI.SubItems.Count < 2 do
+    LI.SubItems.Add('');
   LI.SubItems[0] := FormatCompilerVer(Warning.MinCompiler);
   LI.SubItems[1] := StateDescs[Warning.State];
-  LI.Data := TBox<TWarning>.Create(Warning);
+  (LI as TWarningListItem).Warning := Warning;
 end;
 
 procedure TCodeGenPrefsFrame.UpdateControls;
@@ -722,6 +726,8 @@ begin
   begin
     edSymbol.Text := '';
     edMinCompiler.Text := '';
+    rbStateOff.Checked := False;
+    rbStateOn.Checked := False;
   end;
 end;
 
