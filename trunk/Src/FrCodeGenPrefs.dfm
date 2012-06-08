@@ -58,7 +58,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     TabOrder = 2
     ViewStyle = vsReport
     OnClick = lvWarningsClick
-    OnDeletion = lvWarningsDeletion
+    OnCreateItemClass = lvWarningsCreateItemClass
   end
   object edSymbol: TEdit
     Left = 88
