@@ -56,7 +56,7 @@ type
     btnAdd: TButton;
     btnDelete: TButton;
     btnUpdate: TButton;
-    actMain: TActionList;
+    alMain: TActionList;
     actAdd: TAction;
     actUpdate: TAction;
     actDelete: TAction;
@@ -185,8 +185,8 @@ uses
   // Delphi
   SysUtils, Types,
   // Project
-  FmPreferencesDlg, FmPreviewDlg, IntfCommon, UCtrlArranger, UEncodings,
-  UKeysHelper, UStrUtils, UUtils;
+  FmPreferencesDlg, FmPreviewDlg, IntfCommon, UConsts, UCtrlArranger,
+  UEncodings, UKeysHelper, UMessageBox, UStrUtils, UUtils;
 
 {$R *.dfm}
 
@@ -349,11 +349,17 @@ procedure TCodeGenPrefsFrame.actPreviewUpdate(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  actPreview.Enabled := (fLVWarnings.Items.Count > 0) and chkWARNEnabled.Checked;
+  actPreview.Enabled := (fLVWarnings.Items.Count > 0)
+    and chkWARNEnabled.Checked;
 end;
 
 procedure TCodeGenPrefsFrame.actRestoreDefaultsExecute(Sender: TObject);
+resourcestring
+  sConfirmAction = 'Are you sure you want to restore the default directives? '
+    + EOL2 + 'All existing custom directives will be lost.';
 begin
+  if not TMessageBox.Confirm(Self, sConfirmAction) then
+    Exit;
   fWarnings := TWarnings.Defaults;
   fWarnings.Enabled := chkWARNEnabled.Checked;
   PopulateLV;
@@ -503,6 +509,11 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.CreateLV;
+resourcestring
+  // column header captions
+  sSymbolColCaption = 'Symbol';
+  sMinCompilerColCaption = 'Min. Compiler';
+  sStateColCaption = 'State';
 begin
   fLVWarnings := TListViewEx.Create(Self);
   with fLVWarnings do
@@ -518,17 +529,17 @@ begin
     SortImmediately := False;
     with Columns.Add do
     begin
-      Caption := 'Symbol';
+      Caption := sSymbolColCaption;
       Width := 240;
     end;
     with Columns.Add do
     begin
-      Caption := 'Min. Compiler';
+      Caption := sMinCompilerColCaption;
       Width := 100;
     end;
     with Columns.Add do
     begin
-      Caption := 'State';
+      Caption := sStateColCaption;
       Width := 50;
     end;
     OnClick := LVWarningsClick;
@@ -808,8 +819,7 @@ begin
   begin
     edSymbol.Text := '';
     edMinCompiler.Text := '';
-    rbStateOff.Checked := False;
-    rbStateOn.Checked := False;
+    rbStateOff.Checked := True;
   end;
 end;
 
