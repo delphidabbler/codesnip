@@ -34,39 +34,12 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     TabOrder = 0
     OnClick = chkWARNEnabledClick
   end
-  object lvWarnings: TListView
-    Left = 0
-    Top = 23
-    Width = 414
-    Height = 150
-    Columns = <
-      item
-        Caption = 'Symbol'
-        Width = 240
-      end
-      item
-        Caption = 'Min. Compiler'
-        Width = 100
-      end
-      item
-        Caption = 'State'
-      end>
-    HideSelection = False
-    ReadOnly = True
-    RowSelect = True
-    TabOrder = 2
-    ViewStyle = vsReport
-    OnClick = lvWarningsClick
-    OnColumnClick = lvWarningsColumnClick
-    OnCompare = lvWarningsCompare
-    OnCreateItemClass = lvWarningsCreateItemClass
-  end
   object edSymbol: TEdit
     Left = 88
     Top = 193
     Width = 190
     Height = 21
-    TabOrder = 3
+    TabOrder = 2
   end
   object btnAdd: TButton
     Left = 88
@@ -74,7 +47,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Width = 60
     Height = 25
     Action = actAdd
-    TabOrder = 8
+    TabOrder = 7
   end
   object btnDelete: TButton
     Left = 218
@@ -82,7 +55,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Width = 60
     Height = 25
     Action = actDelete
-    TabOrder = 10
+    TabOrder = 9
   end
   object btnUpdate: TButton
     Left = 153
@@ -90,7 +63,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Width = 60
     Height = 25
     Action = actUpdate
-    TabOrder = 9
+    TabOrder = 8
   end
   object btnPreview: TButton
     Left = 339
@@ -118,7 +91,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
     Layout = blGlyphRight
     ParentDoubleBuffered = False
-    TabOrder = 5
+    TabOrder = 4
     OnClick = btnPredefinedClick
   end
   object edMinCompiler: TEdit
@@ -126,7 +99,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Top = 220
     Width = 73
     Height = 21
-    TabOrder = 4
+    TabOrder = 3
     OnKeyPress = edMinCompilerKeyPress
   end
   object rbStateOff: TRadioButton
@@ -135,7 +108,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Width = 48
     Height = 17
     Caption = 'Off'
-    TabOrder = 6
+    TabOrder = 5
   end
   object rbStateOn: TRadioButton
     Left = 150
@@ -143,7 +116,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Width = 50
     Height = 17
     Caption = 'On'
-    TabOrder = 7
+    TabOrder = 6
   end
   object btnRestoreDefaults: TButton
     Left = 296
@@ -151,7 +124,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Width = 102
     Height = 25
     Action = actRestoreDefaults
-    TabOrder = 11
+    TabOrder = 10
   end
   object actMain: TActionList
     Left = 328
