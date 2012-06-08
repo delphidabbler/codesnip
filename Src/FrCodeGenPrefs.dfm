@@ -17,14 +17,20 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Width = 68
     Height = 13
     Caption = 'Min. &Compiler:'
-    FocusControl = edMinCompiler
+  end
+  object lblState: TLabel
+    Left = 2
+    Top = 251
+    Width = 73
+    Height = 13
+    Caption = 'Warning State:'
   end
   object chkWARNEnabled: TCheckBox
     Left = 0
     Top = 0
     Width = 414
     Height = 17
-    Caption = 'Emit $&WARN directives to switch off listed warnings'
+    Caption = 'Emit $&WARN directives'
     TabOrder = 0
     OnClick = chkWARNEnabledClick
   end
@@ -36,11 +42,14 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Columns = <
       item
         Caption = 'Symbol'
-        Width = 300
+        Width = 240
       end
       item
         Caption = 'Min. Compiler'
         Width = 100
+      end
+      item
+        Caption = 'State'
       end>
     ColumnClick = False
     HideSelection = False
@@ -49,45 +58,38 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     TabOrder = 2
     ViewStyle = vsReport
     OnClick = lvWarningsClick
+    OnDeletion = lvWarningsDeletion
   end
   object edSymbol: TEdit
     Left = 88
     Top = 193
-    Width = 273
+    Width = 201
     Height = 21
     TabOrder = 3
   end
-  object edMinCompiler: TEdit
-    Left = 88
-    Top = 220
-    Width = 121
-    Height = 21
-    TabOrder = 4
-    OnKeyPress = edMinCompilerKeyPress
-  end
   object btnAdd: TButton
     Left = 88
-    Top = 247
+    Top = 280
     Width = 65
     Height = 25
     Action = actAdd
-    TabOrder = 6
+    TabOrder = 8
   end
   object btnDelete: TButton
     Left = 230
-    Top = 247
+    Top = 280
     Width = 65
     Height = 25
     Action = actDelete
-    TabOrder = 8
+    TabOrder = 10
   end
   object btnUpdate: TButton
     Left = 159
-    Top = 247
+    Top = 280
     Width = 65
     Height = 25
     Action = actUpdate
-    TabOrder = 7
+    TabOrder = 9
   end
   object btnPreview: TButton
     Left = 339
@@ -98,7 +100,7 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     TabOrder = 1
   end
   object btnPredefined: TBitBtn
-    Left = 215
+    Left = 183
     Top = 216
     Width = 106
     Height = 25
@@ -117,6 +119,30 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     ParentDoubleBuffered = False
     TabOrder = 5
     OnClick = btnPredefinedClick
+  end
+  object edMinCompiler: TEdit
+    Left = 88
+    Top = 220
+    Width = 81
+    Height = 21
+    TabOrder = 4
+    OnKeyPress = edMinCompilerKeyPress
+  end
+  object rbStateOff: TRadioButton
+    Left = 88
+    Top = 247
+    Width = 48
+    Height = 17
+    Caption = 'Off'
+    TabOrder = 6
+  end
+  object rbStateOn: TRadioButton
+    Left = 150
+    Top = 247
+    Width = 50
+    Height = 17
+    Caption = 'On'
+    TabOrder = 7
   end
   object actMain: TActionList
     Left = 328
