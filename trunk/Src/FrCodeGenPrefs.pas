@@ -53,7 +53,6 @@ type
     lblSymbol: TLabel;
     lblMinCompiler: TLabel;
     edSymbol: TEdit;
-    edMinCompiler: TEdit;
     btnAdd: TButton;
     btnDelete: TButton;
     btnUpdate: TButton;
@@ -65,6 +64,10 @@ type
     actPreview: TAction;
     btnPredefined: TBitBtn;
     mnuPreDefCompilers: TPopupMenu;
+    lblState: TLabel;
+    edMinCompiler: TEdit;
+    rbStateOff: TRadioButton;
+    rbStateOn: TRadioButton;
     procedure actAddExecute(Sender: TObject);
     procedure actAddUpdate(Sender: TObject);
     procedure actUpdateExecute(Sender: TObject);
@@ -77,6 +80,7 @@ type
     procedure actPreviewExecute(Sender: TObject);
     procedure actPreviewUpdate(Sender: TObject);
     procedure btnPredefinedClick(Sender: TObject);
+    procedure lvWarningsDeletion(Sender: TObject; Item: TListItem);
   strict private
     fWarnings: IWarnings; // Object that stores details of warnings
     procedure PopulateLV;
@@ -86,6 +90,7 @@ type
       {Adds details of a warning to list view.
         @param Warning [in] Warning to be added.
       }
+    procedure SetLVItem(const LI: TListItem; const Warning: TWarning);
     function FormatCompilerVer(const Ver: Single): string;
       {Formats compiler version number as a string.
         @param Ver [in] Version number to be formatted.
@@ -116,6 +121,10 @@ type
       {Checks if compiler version entered in edit control is valid.
         @return True if valid, False if not.
       }
+    ///  <summary>Gets a warning state from radio buttons.</summary>
+    function GetState: Boolean;
+    ///  <summary>Checks if a warning state has been specified.</summary>
+    function IsValidState: Boolean;
     procedure PopulatePreDefCompilerMenu;
       {Populates pre-defined compiler version pop-up menu with menu items.
       }
@@ -124,6 +133,10 @@ type
       required compiler version in associated edit control.
         @param Sender [in] Reference to clicked menu item.
       }
+    ///  <summary>Selects required switch state in state combo.</summary>
+    procedure SelectSwitchState(const State: Boolean);
+    function SelectedWarning: TWarning;
+    procedure UpdateControls;
   public
     constructor Create(AOwner: TComponent); override;
       {Constructor. Sets up frame and populates controls.
@@ -161,7 +174,7 @@ uses
   // Delphi
   SysUtils, Types,
   // Project
-  FmPreferencesDlg, FmPreviewDlg, IntfCommon, UCtrlArranger, UEncodings,
+  FmPreferencesDlg, FmPreviewDlg, IntfCommon, UBox, UCtrlArranger, UEncodings,
   UKeysHelper, UStrUtils, UUtils;
 
 {$R *.dfm}
@@ -207,7 +220,7 @@ begin
   // Add new warning from edit controls to fWarnings and list view
   GetSymbol(Symbol);
   GetCompilerVersion(CompilerVer);
-  W := TWarning.Create(Symbol, CompilerVer);
+  W := TWarning.Create(Symbol, CompilerVer, GetState);
   fWarnings.Add(W);
   AddWarningToLV(W);
   // Select new list item and make it visible
@@ -244,6 +257,8 @@ begin
   else if SymbolIsDuplicate then
     CanAdd := False
   else if not IsValidCompilerVersion then
+    CanAdd := False
+  else if not IsValidState then
     CanAdd := False;
   actAdd.Enabled := CanAdd;
 end;
@@ -253,16 +268,20 @@ procedure TCodeGenPrefsFrame.actDeleteExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  Symbol: string; // symbol of selected warning
+  Warning: TWarning;  // selected warning
 begin
+  Assert(Assigned(lvWarnings.Selected),
+    ClassName + '.actDeleteExecute: No list view item selected');
   // Delete selected warning
-  Symbol := StrTrim(lvWarnings.Selected.Caption);
+  Warning := TBox<TWarning>(lvWarnings.Selected.Data).Value;
   lvWarnings.Selected.Delete;
-  fWarnings.Delete(Symbol);
+  fWarnings.Delete(Warning);
   // Ensure nothing selected in list view and clear edit controls
   lvWarnings.Selected := nil;
   edSymbol.Text := '';
   edMinCompiler.Text := '';
+  rbStateOff.Checked := False;
+  rbStateOn.Checked := False;
 end;
 
 procedure TCodeGenPrefsFrame.actDeleteUpdate(Sender: TObject);
@@ -316,21 +335,27 @@ procedure TCodeGenPrefsFrame.actUpdateExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  OldSymbol: string;      // symbol associated with selected warning
+//  OldSymbol: string;      // symbol associated with selected warning
   NewSymbol: string;      // new symbol from edit control
   NewCompilerVer: Single; // new compiler version from edit control
+  NewState: Boolean;      // new warning state from radio buttons
   SelItem: TListItem;     // reference to selected item in list view
+  OldWarning: TWarning;   // warning associated with selected list view item
+  NewWarning: TWarning;   // updated warning
 begin
-  // Update selected warning with new values: update display and warning list
+  Assert(Assigned(lvWarnings.Selected),
+    ClassName + '.actUpdateExecute: no item selected in lvWarnings');
   GetSymbol(NewSymbol);
   GetCompilerVersion(NewCompilerVer);
+  NewState := GetState;
   SelItem := lvWarnings.Selected;
-  OldSymbol := StrTrim(SelItem.Caption);
-  SelItem.Caption := NewSymbol;
-  SelItem.SubItems[0] := FormatCompilerVer(NewCompilerVer);
+  OldWarning := TBox<TWarning>(SelItem.Data).Value;
+  TBox<TWarning>(SelItem.Data).Free;
+  NewWarning := TWarning.Create(NewSymbol, NewCompilerVer, NewState);
+  SetLVItem(SelItem, NewWarning);
   // we update warnings by deleting old one and adding updated version
-  fWarnings.Delete(OldSymbol);
-  fWarnings.Add(TWarning.Create(NewSymbol, NewCompilerVer));
+  fWarnings.Delete(OldWarning);
+  fWarnings.Add(NewWarning);
   // Ensure updated item is still selected in list view and is visible
   lvWarnings.Selected := SelItem;
   SelItem.MakeVisible(False);
@@ -369,6 +394,8 @@ begin
   else if SymbolIsDuplicate then
     CanUpdate := False
   else if not IsValidCompilerVersion then
+    CanUpdate := False
+  else if not IsValidState then
     CanUpdate := False;
   actUpdate.Enabled := CanUpdate;
 end;
@@ -381,8 +408,10 @@ var
   LI: TListItem;  // new list item for warning
 begin
   LI := lvWarnings.Items.Add;
-  LI.Caption := Warning.Symbol;
-  LI.SubItems.Add(FormatCompilerVer(Warning.MinCompiler));
+  // create required sub-items entries for SetLVItem to populate
+  LI.SubItems.Add('');
+  LI.SubItems.Add('');
+  SetLVItem(LI, Warning);
 end;
 
 procedure TCodeGenPrefsFrame.ArrangeControls;
@@ -403,6 +432,10 @@ begin
   );
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf([lblMinCompiler, edMinCompiler, btnPredefined], 8),
+    [lblState, rbStateOff, rbStateOn]
+  );
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf([lblState, rbStateOff, rbStateOn], 8),
     [btnAdd, btnDelete, btnUpdate]
   );
 end;
@@ -496,6 +529,12 @@ begin
     Ver := ExtVer;
 end;
 
+function TCodeGenPrefsFrame.GetState: Boolean;
+begin
+  // Only valid iff one radio button is checked
+  Result := rbStateOn.Checked;
+end;
+
 function TCodeGenPrefsFrame.GetSymbol(out Symbol: string): Boolean;
   {Gets warning symbol from edit control.
     @param Symbol [out] Required symbol, trimmed of white space. Undefined if
@@ -544,6 +583,11 @@ begin
     Result := Ver >= TWarning.MinSupportedCompiler;
 end;
 
+function TCodeGenPrefsFrame.IsValidState: Boolean;
+begin
+  Result := rbStateOff.Checked <> rbStateOn.Checked;
+end;
+
 function TCodeGenPrefsFrame.IsValidSymbol: Boolean;
   {Checks if symbol entered in edit control is valid.
     @return True if valid, False if not.
@@ -559,11 +603,21 @@ procedure TCodeGenPrefsFrame.lvWarningsClick(Sender: TObject);
   associated with selected (clicked) list item to edit controls.
     @param Sender [in] Not used.
   }
+var
+  Warning: TWarning;
 begin
   if not Assigned(lvWarnings.Selected) then
     Exit;
-  edSymbol.Text := lvWarnings.Selected.Caption;
-  edMinCompiler.Text := lvWarnings.Selected.SubItems[0];
+  Warning := TBox<TWarning>(lvWarnings.Selected.Data).Value;
+  edSymbol.Text := Warning.Symbol;
+  edMinCompiler.Text := FormatCompilerVer(Warning.MinCompiler);
+  SelectSwitchState(Warning.State);
+end;
+
+procedure TCodeGenPrefsFrame.lvWarningsDeletion(Sender: TObject;
+  Item: TListItem);
+begin
+  TObject(Item.Data).Free;
 end;
 
 procedure TCodeGenPrefsFrame.PopulateLV;
@@ -577,9 +631,11 @@ begin
     lvWarnings.Clear;
     for W in fWarnings do
       AddWarningToLV(W);
+    lvWarnings.Selected := nil;
   finally
     lvWarnings.Items.EndUpdate;
   end;
+  UpdateControls;
 end;
 
 procedure TCodeGenPrefsFrame.PopulatePreDefCompilerMenu;
@@ -622,6 +678,51 @@ begin
   edMinCompiler.Text := FormatCompilerVer(
     (Sender as TPreDefCompilerMenuItem).CompilerVer
   );
+end;
+
+function TCodeGenPrefsFrame.SelectedWarning: TWarning;
+begin
+  Assert(Assigned(lvWarnings.Selected),
+    ClassName + '.SelectedWarning: No warning selected in list view');
+  Result := TBox<TWarning>(lvWarnings.Selected).Value;
+end;
+
+procedure TCodeGenPrefsFrame.SelectSwitchState(const State: Boolean);
+begin
+  if State then
+    rbStateOn.Checked := True
+  else
+    rbStateOff.Checked := True;
+end;
+
+procedure TCodeGenPrefsFrame.SetLVItem(const LI: TListItem;
+  const Warning: TWarning);
+resourcestring
+  sOn = 'On';
+  sOff = 'Off';
+const
+  // Map of warning state onto description
+  StateDescs: array[Boolean] of string = (sOff, sOn);
+begin
+  LI.Caption := Warning.Symbol;
+  LI.SubItems[0] := FormatCompilerVer(Warning.MinCompiler);
+  LI.SubItems[1] := StateDescs[Warning.State];
+  LI.Data := TBox<TWarning>.Create(Warning);
+end;
+
+procedure TCodeGenPrefsFrame.UpdateControls;
+begin
+  if Assigned(lvWarnings.Selected) then
+  begin
+    edSymbol.Text := SelectedWarning.Symbol;
+    edMinCompiler.Text := FormatCompilerVer(SelectedWarning.MinCompiler);
+    SelectSwitchState(SelectedWarning.State);
+  end
+  else
+  begin
+    edSymbol.Text := '';
+    edMinCompiler.Text := '';
+  end;
 end;
 
 { TPreDefCompilerMenuItem }
