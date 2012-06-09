@@ -461,6 +461,7 @@
 			<DCCReference Include="URFC2822Date.pas"/>
 			<DCCReference Include="URSS20.pas"/>
 			<DCCReference Include="URTFBuilder.pas"/>
+			<DCCReference Include="URTFCategoryDoc.pas"/>
 			<DCCReference Include="URTFSnippetDoc.pas"/>
 			<DCCReference Include="URTFUtils.pas"/>
 			<DCCReference Include="USaveDialogEx.pas"/>
@@ -537,10 +538,7 @@
 			<DCCReference Include="Web.URegistrar.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas">
-				<Form>/ Include compiler defines</Form>
-				<DesignClass>checks if compiler supported</DesignClass>
 			</DCCReference>
-			<DCCReference Include="URTFCategoryDoc.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
