@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -47,41 +47,30 @@ uses
 
 
 type
-
-  {
-  TRTFColourTable:
-    Class that builds, interogates and renders an RTF colour table.
-  }
+  ///  <summary>Encapsulates an RTF colour table.</summary>
   TRTFColourTable = class(TObject)
   strict private
-    var fColours: TList<TColor>;  // List of colours in table
+    var
+      ///  <summary>List of colours in table.</summary>
+      fColours: TList<TColor>;
   public
+    ///  <summary>Constructs object.</summary>
     constructor Create;
-      {Constructor. Sets up table.
-      }
+    ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
-      {Destructor. Tears down object.
-      }
+    ///  <summary>Adds given colour to colour table unless it is already
+    ///  present.</summary>
     procedure Add(const Colour: TColor);
-      {Adds colour to table if it is not already present.
-        @param Colour [in] Colour to add to table.
-      }
+    ///  <summary>Returns index of given colour in colour table.</summary>
+    ///  <exception>EBug raised if colour is not in colour table.</exception>
     function ColourRef(const Colour: TColor): Integer;
-      {Gets index of a colour in table.
-        @param Colour [in] Colour whose index is required.
-        @return Required index.
-        @except EBug raised if colour not in table.
-      }
+    ///  <summary>Builds and returns RTF code representing colour
+    ///  table.</summary>
     function AsString: ASCIIString;
-      {Builds RTF code representing colour table.
-        @return Required RTF code.
-      }
   end;
 
-  {
-  TRTFGenericFont:
-    Enumerates supported generic font families.
-  }
+type
+  ///  <summary>Enumerates supported generic font families.</summary>
   TRTFGenericFont = (
     rgfDontCare,      // unknown or unspecified font family
     rgfRoman,         // proportional serif font
@@ -92,203 +81,172 @@ type
     rgfTechnical      // technical, symbol or maths font
   );
 
-  {
-  TRTFFont:
-    Representation of a font in font table.
-  }
+type
+  ///  <summary>Representation of a font in font table.</summary>
   TRTFFont = record
   strict private
     var
-      fName: string;              // Value of Name property
-      fCharset: TFontCharset;     // Value of Charset property
-      fGeneric: TRTFGenericFont;  // Value of Generic property
+      ///  <summary>Value of Name property.</summary>
+      fName: string;
+      ///  <summary>Value of CharSet property.</summary>
+      fCharset: TFontCharset;
+      ///  <summary>Value of Generic property.</summary>
+      fGeneric: TRTFGenericFont;
   public
+    ///  <summary>Initialises record's properties.</summary>
+    ///  <param name="Name">string [in] Font name.</param>
+    ///  <param name="Generic">TRTFGenericFont [in] Generic font family to be
+    ///  used if font not available.</param>
+    ///  <param name="Charset">TFontCharset [in] Font's character set.</param>
     constructor Create(const Name: string;
       const Generic: TRTFGenericFont = rgfDontCare;
       const Charset: TFontCharset = 0);
-      {Constructor. Initialises record's properties.
-        @param Name [in] Name of font.
-        @param Generic [in] Generic font family to be used if font not
-          available.
-        @param Charset [in] Font's character set.
-      }
+    ///  <summary>Compares this font to another.</summary>
+    ///  <param name="RTFFont">TRTFont [in] Other font to be compared.</param>
+    ///  <returns>Integer. -ve if this font is less than RTFFont, 0 if same and
+    ///  +ve if RTFFont is less than this one.</returns>
     function CompareTo(const RTFFont: TRTFFont): Integer;
-      {Compares this font to another.
-        @param RTFFont [in] Other font to be compared.
-        @return -ve if this font is less than RTFFont, 0 if same and +ve if
-          RTFFont is less than this one.
-      }
+    ///  <summary>Name of font.</summary>
     property Name: string read fName write fName;
-      {Name of font}
+    ///  <summary>Generic font family to be used if font not available.
+    ///  </summary>
     property Generic: TRTFGenericFont read fGeneric write fGeneric;
-      {Generic font family to be used if font not available}
+    ///  <summary>Character set used by font.</summary>
     property Charset: TFontCharset read fCharset write fCharset;
-      {Character set used by font}
   end;
 
-  {
-  TRTFFontTable:
-    Class that builds, interogates and renders an RTF font table. Only one font
-    of each font name is permitted, e.g. "Arial" may only be present once.
-  }
+type
+  ///  <summary>Encapsulates an RTF font table.</summary>
   TRTFFontTable = class(TObject)
   strict private
-    var fFonts: TList<TRTFFont>;  // List of fonts in table
+    var
+      ///  <summary>List of fonts in table.</summary>
+      fFonts: TList<TRTFFont>;  // List of fonts in table
+    ///  <summary>Returns index of given font name in table or -1 if font not
+    ///  present.</summary>
     function FindFont(const FontName: string): Integer;
-      {Finds index of a named font in font table.
-        @param FontName [in] Name of font to be found.
-        @return Index of font in table or -1 if not present.
-      }
   public
+    ///  <summary>Constructs object.</summary>
     constructor Create;
-      {Constructor. Sets up object.
-      }
+    ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
-      {Destructor. Tears down object.
-      }
+    ///  <summary>Adds new font to table if not already present.</summary>
+    ///  <remarks>Does nothing except return index if a font with same name is
+    ///  already in table.</remarks>
+    ///  <param name="FontName">string [in] Name of font.</param>
+    ///  <param name="Generic">TRTFGenericFont [in] Generic font family of font.
+    ///  </param>
+    ///  <param name="Charset">TFontCharset [in] Character set used by new font.
+    ///  </param>
+    ///  <returns>Integer. Index of font in font table, either existing or new.
+    ///  </returns>
     function Add(const FontName: string; const Generic: TRTFGenericFont;
       const Charset: TFontCharset): Integer;
-      {Adds a new font to table if not already present.
-        @param FontName [in] Name of new font.
-        @param Generic [in] Generic font family of new font.
-        @param Charset [in] Character set used by new font.
-        @return Index of font in font table (either existing or new)
-      }
+    ///  <summary>Returns index of a named font in table.</summary>
+    ///  <exception>EBug raise if font not in table.</exception>
     function FontRef(const FontName: string): Integer;
-      {Gets index of a named font in table.
-        @param FontName [in] Name of font whose index is required.
-        @return Required index.
-        @except EBug raised if font not in table.
-      }
+    ///  <summary>Builds and returns RTF code representing font table.</summary>
     function AsString: ASCIIString;
-      {Builds RTF code representing font table.
-        @return Required RTF code.
-      }
   end;
 
-  {
-  TRTFDocProperties:
-    Class that stores RTF document properties and builds RTF code.
-  }
+type
+  ///  <summary>Encapsulate properties of an RTF document.</summary>
   TRTFDocProperties = class(TObject)
   strict private
     var
-      fTitle: string;     // Value of Title property
-      fCodePage: Integer; // Code page used by document.
+      ///  <summary>Value of Title property.</summary>
+      fTitle: string;
+      ///  <summary>Code page used by document.</summary>
+      fCodePage: Integer;
+    ///  <summary>Checks if document properties are empty, i.e. have not be
+    ///  defined.</summary>
     function IsEmpty: Boolean;
-      {Checks if document properties are empty, i.e. non have be defined.
-        @return True if no document properties have been defined, False
-          otherwise.
-      }
   public
+    ///  <summary>Constructs object for document using given code page.
+    ///  </summary>
     constructor Create(const CodePage: Integer);
-      {Constructor. Sets up object.
-        @param CodePage [in] Code page to use for RTF document.
-      }
+    ///  <summary>Builds and returns RTF code representing document properties.
+    ///  </summary>
     function AsString: ASCIIString;
-      {Builds RTF code representing document properties.
-        @return Required RTF code.
-      }
+    ///  <summary>Document title.</summary>
     property Title: string read fTitle write fTitle;
-      {Document title}
   end;
 
-  {
-  TRTFBuilder:
-    Class used to create content of a rich text document.
-  }
+type
+  ///  <summary>Class used to construct and render a RTF document.</summary>
   TRTFBuilder = class(TObject)
   strict private
     var
-      fBody: ASCIIString;                 // Accumulates RTF code for doc body
-      fCodePage: Integer;                 // Code page used for RTF
-      fInControls: Boolean;               // Tells of emitting RTF ctrls or text
-      fColourTable: TRTFColourTable;      // Value of ColourTable property
-      fFontTable: TRTFFontTable;          // Value of FontTable property
-      fDefaultFontIdx: Integer;           // Value of DefaultFontIdx property
-      fDocProperties: TRTFDocProperties;  // Value of DocProperties property
+      ///  <summary>Accumulates RTF code for doc body.</summary>
+      fBody: ASCIIString;
+      ///  <summary>Code page used for RTF document.</summary>
+      fCodePage: Integer;
+      ///  <summary>Flag True when emitting RTF controls and False when emitting
+      ///  text.</summary>
+      fInControls: Boolean;
+      ///  <summary>Value of ColourTable property.</summary>
+      fColourTable: TRTFColourTable;
+      ///  <summary>Value of FontTable property.</summary>
+      fFontTable: TRTFFontTable;
+      ///  <summary>Value of DefaultFontIdx property.</summary>
+      fDefaultFontIdx: Integer;
+      ///  <summary>Value of DocProperties property.</summary>
+      fDocProperties: TRTFDocProperties;
+    ///  <summary>Appends given text string to document body.</summary>
     procedure AppendBody(const S: ASCIIString);
-      {Appends string data to document body.
-        @param S [in] String data to add.
-      }
+    ///  <summary>Generates RTF code for document header.</summary>
     function DocHeader: ASCIIString;
-      {Generates document header RTF.
-        @return Required RTF.
-      }
+    ///  <summary>Adds given RTF control to document body.</summary>
     procedure AddControl(const Ctrl: ASCIIString);
-      {Adds an RTF control to document body.
-        @param Ctrl [in] Text representation of control to be added.
-      }
+    ///  <summary>Generates RTF code for whole document.</summary>
     function AsString: ASCIIString;
-      {Generates RTF code for whole document as string.
-        @return Required RTF as ASCII.
-      }
   public
+    ///  <summary>Constructs object for RTF document using given code page.
+    ///  </summary>
     constructor Create(const CodePage: Integer);
-      {Constructor. Sets up object.
-        @param CodePage [in] Code page to use for RTF document.
-      }
+    ///  <summary>Destroys object.</summary>
     destructor Destroy; override;
-      {Destructor. Tears down object.
-      }
+    ///  <summary>Ends a paragraph in document body.</summary>
     procedure EndPara;
-      {Ends a paragraph.
-      }
+    ///  <summary>Begins a new group in document body.</summary>
     procedure BeginGroup;
-      {Start a new group in document body.
-      }
+    ///  <summary>Closes current group in document body.</summary>
     procedure EndGroup;
-      {Closes a group in document body.
-      }
+    ///  <summary>Adds given text to document body.</summary>
     procedure AddText(const Text: string);
-      {Adds text to document body.
-        @param Text [in] Text to be added.
-      }
+    ///  <summary>Clears paragraph formatting.</summary>
     procedure ClearParaFormatting;
-      {Clears paragrapah formatting.
-      }
+    ///  <summary>Resets character styles to defaults.</summary>
     procedure ResetCharStyle;
-      {Resets character styles to defaults.
-      }
+    ///  <summary>Sets colour to be used as foreground colour for subsequent
+    ///  text.</summary>.
+    ///  <exception>EBug raised if colour not in colour table.</exception>
     procedure SetColour(const Colour: TColor);
-      {Sets a foreground colour to be used for subsequent text.
-        @param Colour [in] Required colour.
-        @except Exception raised if colour not in colour table.
-      }
+    ///  <summary>Sets name of font to be used for subsequent text.</summary>
+    ///  <exception>EBug raised if font name is not in font table.</exception>
     procedure SetFont(const FontName: string);
-      {Sets a font to be used for subsequent text.
-        @param FontName [in] Name of required font.
-        @except Exception raised if font not in font table.
-      }
+    ///  <summary>Sets size of font, in points, to be used for subsequent text.
+    ///  </summary>
     procedure SetFontSize(const Points: Double);
-      {Sets size of font used for subsequent text.
-        @param Size [in] Size of font in points.
-      }
+    ///  <summary>Sets style of font to be used for subsequent text.</summary>
     procedure SetFontStyle(const Style: TFontStyles);
-      {Sets style of font used for subsequent text.
-        @param Style [in] Font style.
-      }
+    ///  <summary>Sets before and after spacing, in points, to be used for
+    ///  subsequent paragraphs.</summary>
     procedure SetParaSpacing(const PtsBefore, PtsAfter: Double);
-      {Sets spacing above and below a paragraph.
-        @param Before [in] Spacing before paragraph in points.
-        @param After [in] Spacing after paragraph in points.
-      }
+    ///  <summary>Generates RTF code for whole document.</summary>
     function Render: TRTF;
-      {Generates RTF code for whole document.
-        @return Required RTF.
-      }
+    ///  <summary>Table of colours used in document.</summary>
     property ColourTable: TRTFColourTable
       read fColourTable write fColourTable;
-      {Table of colours used in document}
+    ///  <summary>Table of fonts used in document.</summary>
     property FontTable: TRTFFontTable
       read fFontTable write fFontTable;
-      {Table of fonts used in document}
+    ///  <summary>Index of default font in font table.</summary>
     property DefaultFontIdx: Integer
       read fDefaultFontIdx write fDefaultFontIdx;
-      {Index of default font in font table}
+    ///  <summary>Document's properties.</summary>
     property DocProperties: TRTFDocProperties
       read fDocProperties write fDocProperties;
-      {Document's properties}
   end;
 
 
@@ -305,9 +263,6 @@ uses
 { TRTFBuilder }
 
 procedure TRTFBuilder.AddControl(const Ctrl: ASCIIString);
-  {Adds an RTF control to document body.
-    @param Ctrl [in] Text representation of control to be added.
-  }
 begin
   Assert((Ctrl <> '') and not TCharacter.IsWhiteSpace(Char(Ctrl[Length(Ctrl)])),
     ClassName + '.AddControls: Ctrl ends in whitespace');
@@ -316,9 +271,6 @@ begin
 end;
 
 procedure TRTFBuilder.AddText(const Text: string);
-  {Adds text to document body.
-    @param Text [in] Text to be added.
-  }
 begin
   if fInControls then
   begin
@@ -331,40 +283,27 @@ begin
 end;
 
 procedure TRTFBuilder.AppendBody(const S: ASCIIString);
-  {Appends string data to document body.
-    @param S [in] String data to add.
-  }
 begin
   fBody := fBody + S;
 end;
 
 function TRTFBuilder.AsString: ASCIIString;
-  {Generates RTF code for whole document.
-    @return Required RTF as ASCII.
-  }
 begin
   Result := '{' + DocHeader + fBody + '}';
 end;
 
 procedure TRTFBuilder.BeginGroup;
-  {Start a new group in document body.
-  }
 begin
   AppendBody('{');
   fInControls := False;
 end;
 
 procedure TRTFBuilder.ClearParaFormatting;
-  {Clears paragrapah formatting.
-  }
 begin
   AddControl(RTFControl(rcPard));
 end;
 
 constructor TRTFBuilder.Create(const CodePage: Integer);
-  {Constructor. Sets up object.
-    @param CodePage [in] Code page to use for RTF document.
-  }
 begin
   inherited Create;
   if CodePage = 0 then
@@ -379,8 +318,6 @@ begin
 end;
 
 destructor TRTFBuilder.Destroy;
-  {Destructor. Tears down object.
-  }
 begin
   fDocProperties.Free;
   fFontTable.Free;
@@ -389,9 +326,6 @@ begin
 end;
 
 function TRTFBuilder.DocHeader: ASCIIString;
-  {Generates document header RTF.
-    @return Required RTF.
-  }
 begin
   Result := RTFControl(rcRTF, cRTFVersion)
     + RTFControl(rcAnsi)
@@ -405,16 +339,12 @@ begin
 end;
 
 procedure TRTFBuilder.EndGroup;
-  {Closes a group in document body.
-  }
 begin
   AppendBody('}');
   fInControls := False;
 end;
 
 procedure TRTFBuilder.EndPara;
-  {Ends a paragraph.
-  }
 begin
   AddControl(RTFControl(rcPar));
   AppendBody(EOL);
@@ -422,34 +352,21 @@ begin
 end;
 
 function TRTFBuilder.Render: TRTF;
-  {Generates RTF code for whole document.
-    @return Required RTF.
-  }
 begin
   Result := TRTF.Create(AsString);
 end;
 
 procedure TRTFBuilder.ResetCharStyle;
-  {Resets character styles to defaults.
-  }
 begin
   AddControl(RTFControl(rcPlain));
 end;
 
 procedure TRTFBuilder.SetColour(const Colour: TColor);
-  {Sets a foreground colour to be used for subsequent text.
-    @param Colour [in] Required colour.
-    @except Exception raised if colour not in colour table.
-  }
 begin
   AddControl(RTFControl(rcForeColorNum, fColourTable.ColourRef(Colour)));
 end;
 
 procedure TRTFBuilder.SetFont(const FontName: string);
-  {Sets a font to be used for subsequent text.
-    @param FontName [in] Name of required font.
-    @except Exception raised if font not in font table.
-  }
 var
   FontIdx: Integer; // index of font in font table
 begin
@@ -460,17 +377,11 @@ begin
 end;
 
 procedure TRTFBuilder.SetFontSize(const Points: Double);
-  {Sets size of font used for subsequent text.
-    @param Points [in] Size of font in points.
-  }
 begin
   AddControl(RTFControl(rcFontSize, FloatToInt(2 * Points)));
 end;
 
 procedure TRTFBuilder.SetFontStyle(const Style: TFontStyles);
-  {Sets style of font used for subsequent text.
-    @param Style [in] Font style.
-  }
 begin
   if fsBold in Style then
     AddControl(RTFControl(rcBold));
@@ -481,10 +392,6 @@ begin
 end;
 
 procedure TRTFBuilder.SetParaSpacing(const PtsBefore, PtsAfter: Double);
-  {Sets spacing above and below a paragraph.
-    @param Before [in] Spacing before paragraph in points.
-    @param After [in] Spacing after paragraph in points.
-  }
 begin
   // Note: 20 Twips in a point
   AddControl(RTFControl(rcSpaceBefore, FloatToInt(20 * PtsBefore)));
@@ -494,22 +401,12 @@ end;
 { TRTFFont }
 
 function TRTFFont.CompareTo(const RTFFont: TRTFFont): Integer;
-  {Compares this font to another.
-    @param RTFFont [in] Other font to be compared.
-    @return -ve if this font is less than RTFFont, 0 if same and +ve if
-      RTFFont is less than this one.
-  }
 begin
   Result := StrCompareText(Self.Name, RTFFont.Name);
 end;
 
 constructor TRTFFont.Create(const Name: string;
   const Generic: TRTFGenericFont; const Charset: TFontCharset);
-  {Constructor. Initialises record's properties.
-    @param Name [in] Name of font.
-    @param Generic [in] Generic font family to be used if font not available.
-    @param Charset [in] Font's character set.
-  }
 begin
   fName := Name;
   fGeneric := Generic;
@@ -520,12 +417,6 @@ end;
 
 function TRTFFontTable.Add(const FontName: string;
   const Generic: TRTFGenericFont; const Charset: TFontCharset): Integer;
-  {Adds a new font to table if not already present.
-    @param FontName [in] Name of new font.
-    @param Generic [in] Generic font family of new font.
-    @param Charset [in] Character set used by new font.
-    @return Index of font in font table (either existing or new)
-  }
 begin
   Result := FindFont(FontName);
   if Result = -1 then
@@ -533,9 +424,6 @@ begin
 end;
 
 function TRTFFontTable.AsString: ASCIIString;
-  {Builds RTF code representing font table.
-    @return Required RTF code.
-  }
 const
   // Map of generic font families to RTF controls
   cGenericFonts: array[TRTFGenericFont] of TRTFControl = (
@@ -563,8 +451,6 @@ begin
 end;
 
 constructor TRTFFontTable.Create;
-  {Constructor. Sets up object.
-  }
 begin
   inherited;
   fFonts := TList<TRTFFont>.Create(
@@ -578,28 +464,17 @@ begin
 end;
 
 destructor TRTFFontTable.Destroy;
-  {Destructor. Tears down object.
-  }
 begin
   fFonts.Free;
   inherited;
 end;
 
 function TRTFFontTable.FindFont(const FontName: string): Integer;
-  {Finds index of a named font in font table.
-    @param FontName [in] Name of font to be found.
-    @return Index of font in table or -1 if not present.
-  }
 begin
   Result := fFonts.IndexOf(TRTFFont.Create(FontName));
 end;
 
 function TRTFFontTable.FontRef(const FontName: string): Integer;
-  {Gets index of a named font in table.
-    @param FontName [in] Name of font whose index is required.
-    @return Required index.
-    @except EBug raised if font not in table.
-  }
 begin
   Result := FindFont(FontName);
   if Result = -1 then
@@ -609,18 +484,12 @@ end;
 { TRTFColourTable }
 
 procedure TRTFColourTable.Add(const Colour: TColor);
-  {Adds colour to table if it is not already present.
-    @param Colour [in] Colour to add to table.
-  }
 begin
   if not fColours.Contains(Colour) then
     fColours.Add(Colour);
 end;
 
 function TRTFColourTable.AsString: ASCIIString;
-  {Builds RTF code representing colour table.
-    @return Required RTF code.
-  }
 var
   Colour: TColor;     // each colour in table
   RGB: Cardinal;      // RGB representation of a colour
@@ -649,11 +518,6 @@ begin
 end;
 
 function TRTFColourTable.ColourRef(const Colour: TColor): Integer;
-  {Gets index of a colour in table.
-    @param Colour [in] Colour whose index is required.
-    @return Required index.
-    @except EBug raised if colour not in table.
-  }
 begin
   Result := fColours.IndexOf(Colour);
   if Result = -1 then
@@ -661,8 +525,6 @@ begin
 end;
 
 constructor TRTFColourTable.Create;
-  {Constructor. Sets up table.
-  }
 begin
   inherited;
   fColours := TList<TColor>.Create; // use default integer comparer
@@ -670,8 +532,6 @@ begin
 end;
 
 destructor TRTFColourTable.Destroy;
-  {Destructor. Tears down object.
-  }
 begin
   fColours.Free;
   inherited;
@@ -680,9 +540,6 @@ end;
 { TRTFDocProperties }
 
 function TRTFDocProperties.AsString: ASCIIString;
-  {Builds RTF code representing document properties.
-    @return Required RTF code.
-  }
 begin
   if IsEmpty then
   begin
@@ -699,18 +556,12 @@ begin
 end;
 
 constructor TRTFDocProperties.Create(const CodePage: Integer);
-  {Constructor. Sets up object.
-    @param CodePage [in] Code page to use for RTF document.
-  }
 begin
   inherited Create;
   fCodePage := CodePage;
 end;
 
 function TRTFDocProperties.IsEmpty: Boolean;
-  {Checks if document properties are empty, i.e. non have be defined.
-    @return True if no document properties have been defined, False otherwise.
-  }
 begin
   Result := fTitle = '';
 end;
