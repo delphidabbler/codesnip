@@ -252,6 +252,8 @@ implementation
 
 
 uses
+  // Delphi
+  Messages,
   // Project
   UKeysHelper, UOverviewTreeBuilder;
 
@@ -753,13 +755,31 @@ begin
           if tvSnippets.Items.Count > 0 then
             SelectNode(tvSnippets.Items[Pred(tvSnippets.Items.Count)], True);
       VK_UP:
+      begin
         if ExtractShiftKeys(Shift) = [ssShift] then
+        begin
           if tvSnippets.Items.Count > 0 then
-            SelectNode(GetPreviousTopLevelNode, True);
+            SelectNode(GetPreviousTopLevelNode, True)
+        end
+        else if ExtractShiftKeys(Shift) = [ssCtrl] then
+          tvSnippets.Perform(WM_VSCROLL, SB_LINEUP, 0);
+      end;
       VK_DOWN:
+      begin
         if ExtractShiftKeys(Shift) = [ssShift] then
+        begin
           if tvSnippets.Items.Count > 0 then
             SelectNode(GetNextTopLevelNode, True);
+        end
+        else if ExtractShiftKeys(Shift) = [ssCtrl] then
+          tvSnippets.Perform(WM_VSCROLL, SB_LINEDOWN, 0);
+      end;
+      VK_LEFT:
+        if ExtractShiftKeys(Shift) = [ssCtrl] then
+          tvSnippets.Perform(WM_HSCROLL, SB_LINELEFT, 0);
+      VK_RIGHT:
+        if ExtractShiftKeys(Shift) = [ssCtrl] then
+          tvSnippets.Perform(WM_HSCROLL, SB_LINERIGHT, 0);
     end;
     // permit Alt+F4 and inhibit all other default processing
     if not IsKeyCombination(VK_F4, [ssAlt], Key, Shift) then

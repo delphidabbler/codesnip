@@ -42,11 +42,11 @@ inherited OverviewFrame: TOverviewFrame
       Align = alClient
       BorderStyle = bsNone
       HideSelection = False
-      Indent = 19
+      HotTrack = True
+      Indent = 12
       PopupMenu = mnuOverview
       ReadOnly = True
-      ShowButtons = False
-      ShowRoot = False
+      ShowLines = False
       TabOrder = 0
       OnChanging = tvSnippetsChanging
       OnCreateNodeClass = tvSnippetsCreateNodeClass
