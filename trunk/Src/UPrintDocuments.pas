@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,29 +44,22 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.USnippet, Hiliter.UGlobals, URTFUtils;
+  DB.UCategory, DB.USnippet, Hiliter.UGlobals, URTFUtils;
 
 
 type
-  ///  <summary>
-  ///  Interface supported by classes that can generate a print document
-  ///  suitable for processing by the print engine.
-  ///  </summary>
-  ///  <remarks>
-  ///  The print engine prints documents rendered in rich text format.
+  ///  <summary>Interface supported by classes that can generate a print
+  ///  document suitable for processing by the print engine.</summary>
+  ///  <remarks>The print engine prints documents rendered in rich text format.
   ///  </remarks>
   IPrintDocument = interface(IInterface)
     ['{56E4CA97-7F04-427A-A95F-03CE55910DC0}']
+    ///  <summary>Generates and returns print document.</summary>
     function Generate: TRTF;
-      {Generates print document
-        @param Document [in] Stream that receives document in format suitable
-          for print engine.
-      }
   end;
 
 type
-  ///  <summary>
-  ///  Class that generates a print document that describes a snippet.
+  ///  <summary>Class that generates a print document that describes a snippet.
   ///  </summary>
   TSnippetPrintDocument = class(TInterfacedObject,
     IPrintDocument
@@ -79,22 +72,39 @@ type
     ///  depending on printer properties.</summary>
     function GetHiliteAttrs: IHiliteAttrs;
   public
-    ///  <summary>Object constructor. Sets up object to create print document
-    ///  for given snippet.</summary>
+    ///  <summary>Constructs object to create print document for given snippet.
+    ///  </summary>
     constructor Create(const Snippet: TSnippet);
-
-    { IPrintDocument method }
     ///  <summary>Generates and returns print document.</summary>
+    ///  <remarks>Method of IPrintDocument.</remarks>
     function Generate: TRTF;
   end;
 
+type
+  ///  <summary>Class that generates a print document that describes a category.
+  ///  </summary>
+  TCategoryPrintDocument = class(TInterfacedObject,
+    IPrintDocument
+  )
+  strict private
+    var
+      ///  <summary>Reference to category described by print document.</summary>
+      fCategory: TCategory;
+  public
+    ///  <summary>Constructs object to create print document for given category.
+    ///  </summary>
+    constructor Create(const Category: TCategory);
+    ///  <summary>Generates and returns print document.</summary>
+    ///  <remarks>Method of IPrintDocument.</remarks>
+    function Generate: TRTF;
+  end;
 
 implementation
 
 
 uses
   // Project
-  Hiliter.UAttrs, URTFSnippetDoc, UPrintInfo;
+  Hiliter.UAttrs, URTFCategoryDoc, URTFSnippetDoc, UPrintInfo;
 
 
 { TSnippetPrintDocument }
@@ -128,6 +138,26 @@ begin
       THiliteAttrsFactory.CreateUserAttrs,
       poUseColor in PrintInfo.PrintOptions
     );
+end;
+
+{ TCategoryPrintDocument }
+
+constructor TCategoryPrintDocument.Create(const Category: TCategory);
+begin
+  inherited Create;
+  fCategory := Category;
+end;
+
+function TCategoryPrintDocument.Generate: TRTF;
+var
+  Doc: TRTFCategoryDoc; // object that renders category document in RTF
+begin
+  Doc := TRTFCategoryDoc.Create(poUseColor in PrintInfo.PrintOptions);
+  try
+    Result := TRTF.Create(Doc.Generate(fCategory));
+  finally
+    Doc.Free;
+  end;
 end;
 
 end.
