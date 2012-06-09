@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -167,7 +167,7 @@ begin
 
     // Validate entries
     // must have at least one snippet
-    if frmSnippets.SelectedSnippets.Count = 0 then
+    if frmSnippets.SelectedSnippets.IsEmpty then
       raise EDataEntry.Create(sNoSnippets, frmSnippets);
     // must have a file name
     if FileName = '' then

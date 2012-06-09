@@ -102,7 +102,7 @@ begin
   (
     Supports(ViewItem, ICategoryView)
       and
-    ((ViewItem as ICategoryView).Category.Snippets.Count > 0)
+    not (ViewItem as ICategoryView).Category.Snippets.IsEmpty
   );
 end;
 

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2011-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -320,6 +320,10 @@ type
     function Count: Integer; overload;
       {Counts number of snippets in list.
         @return Number of snippets in list.
+      }
+    function IsEmpty: Boolean; inline;
+      {Checks if list is empty.
+        @return True if list is empty, False otehrwise.
       }
     property Items[Idx: Integer]: TSnippet read GetItem; default;
       {List of snippets}
@@ -725,6 +729,14 @@ function TSnippetList.GetItem(Idx: Integer): TSnippet;
   }
 begin
   Result := fList[Idx];
+end;
+
+function TSnippetList.IsEmpty: Boolean;
+  {Checks if list is empty.
+    @return True if list is empty, False otehrwise.
+  }
+begin
+  Result := Count = 0;
 end;
 
 function TSnippetList.IsEqual(const AList: TSnippetList): Boolean;
