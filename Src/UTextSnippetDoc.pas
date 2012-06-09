@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -48,60 +48,49 @@ uses
 
 
 type
-  {
-  TTextSnippetDoc:
-    Class that renders a document that describes a snippet as plain text.
-  }
+  ///  <summary>Renders a document that describes a snippet as plain text.
+  ///  </summary>
   TTextSnippetDoc = class(TSnippetDoc)
   strict private
-    var fWriter: TStringWriter;   // Used to write plain text to stream
-    const cPageWidth = 80;        // Width of output in characters
-    const cIndent = 2;            // Size of indentation in characters
+    var
+      ///  <summary>Object used to build plain text document.</summary>
+      fWriter: TStringWriter;
+    const
+      ///  <summary>Width of output in characters.</summary>
+      cPageWidth = 80;
+      ///  <summary>Size of a single level of indentation in characters.
+      ///  </summary>
+      cIndent = 2;
   strict protected
+    ///  <summary>Initialises plain text document.</summary>
     procedure InitialiseDoc; override;
-      {Create writer object for output stream.
-      }
+    ///  <summary>Adds given heading (i.e. snippet name) to document.</summary>
     procedure RenderHeading(const Heading: string); override;
-      {Writes heading (snippet name) to output stream.
-        @param Heading [in] Heading to be written.
-      }
+    ///  <summary>Adds given snippet description to document.</summary>
     procedure RenderDescription(const Desc: string); override;
-      {Writes snippet description to output stream.
-        @param Desc [in] Description to be written.
-      }
+    ///  <summary>Adds given source code to document.</summary>
     procedure RenderSourceCode(const SourceCode: string); override;
-      {Writes snippet's source code to output stream.
-        @param SourceCode [in] Source code to be written.
-      }
+    ///  <summary>Adds given title followed by given text to document.</summary>
     procedure RenderTitledText(const Title, Text: string); override;
-      {Outputs text preceded by a title.
-        @param Title [in] Text title.
-        @param Text [in] Text to be written.
-      }
+    ///  <summary>Adds a comma-separated list of text, preceded by given title,
+    ///  to document.</summary>
     procedure RenderTitledList(const Title: string; List: IStringList);
       override;
-      {Writes a comma-separated list preceded by a title to output stream.
-        @param Title [in] List title.
-        @param List [in] List of text to be written.
-      }
+    ///  <summary>Adds given compiler info, preceeded by given heading, to
+    ///  document.</summary>
     procedure RenderCompilerInfo(const Heading: string;
       const Info: TCompileDocInfoArray); override;
-      {Writes details of compiler information to output stream.
-        @param Heading [in] Heading for compiler information.
-        @param Info [in] Array of compiler results (name and result as text).
-      }
+    ///  <summary>Interprets and adds given extra information to document.
+    ///  </summary>
+    ///  <remarks>Active text is converted to plain text with only block level
+    ///  formatting observed.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); override;
-      {Writes snippet's extra information to output stream.
-        @param ExtraText [in] Text to be written.
-      }                 
+    ///  <summary>Adds given information about code snippets database to
+    ///  document.</summary>
     procedure RenderDBInfo(const Text: string); override;
-      {Writes information about code snippets database to output stream.
-        @param Text [in] Text to be written.
-      }
+    ///  <summary>Finalises document and returns content as encoded data.
+    ///  </summary>
     function FinaliseDoc: TEncodedData; override;
-      {Renders text document as Unicode encoded data. Releases write object.
-        @return Unicode encoded text document.
-      }
   end;
 
 
@@ -118,27 +107,18 @@ uses
 { TTextSnippetDoc }
 
 function TTextSnippetDoc.FinaliseDoc: TEncodedData;
-  {Renders text document as Unicode encoded data. Releases write object.
-    @return Unicode encoded text document.
-  }
 begin
   Result := TEncodedData.Create(fWriter.ToString, etUnicode);
   fWriter.Free;
 end;
 
 procedure TTextSnippetDoc.InitialiseDoc;
-  {Create writer object to build up text.
-  }
 begin
   fWriter := TStringWriter.Create;
 end;
 
 procedure TTextSnippetDoc.RenderCompilerInfo(const Heading: string;
   const Info: TCompileDocInfoArray);
-  {Writes details of compiler information to output stream.
-    @param Heading [in] Heading for compiler information.
-    @param Info [in] Array of compiler results (name and result as text).
-  }
 var
   Idx: Integer; // loops compiler information table
 begin
@@ -149,27 +129,18 @@ begin
 end;
 
 procedure TTextSnippetDoc.RenderDBInfo(const Text: string);
-  {Writes information about code snippets database to output stream.
-    @param Text [in] Text to be written.
-  }
 begin
   fWriter.WriteLine;
   fWriter.WriteLine(StrWrap(Text, cPageWidth, 0));
 end;
 
 procedure TTextSnippetDoc.RenderDescription(const Desc: string);
-  {Writes snippet description to output stream.
-    @param Desc [in] Description to be written.
-  }
 begin
   fWriter.WriteLine;
   fWriter.WriteLine(StrWrap(Desc, cPageWidth, 0));
 end;
 
 procedure TTextSnippetDoc.RenderExtra(const ExtraText: IActiveText);
-  {Writes snippet's extra information to output stream.
-    @param ExtraText [in] Text to be written.
-  }
 var
   Elem: IActiveTextElem;              // each active text element
   TextElem: IActiveTextTextElem;      // refers to active text text elements
@@ -238,17 +209,11 @@ begin
 end;
 
 procedure TTextSnippetDoc.RenderHeading(const Heading: string);
-  {Writes heading (snippet name) to output stream.
-    @param Heading [in] Heading to be written.
-  }
 begin
   fWriter.WriteLine(Heading);
 end;
 
 procedure TTextSnippetDoc.RenderSourceCode(const SourceCode: string);
-  {Writes snippet's source code to output stream.
-    @param SourceCode [in] Source code to be written.
-  }
 begin
   fWriter.WriteLine;
   fWriter.WriteLine(SourceCode);
@@ -257,19 +222,11 @@ end;
 
 procedure TTextSnippetDoc.RenderTitledList(const Title: string;
   List: IStringList);
-  {Writes a comma-separated list preceded by a title to output stream.
-    @param Title [in] List title.
-    @param List [in] List of text to be written.
-  }
 begin
   RenderTitledText(Title, CommaList(List));
 end;
 
 procedure TTextSnippetDoc.RenderTitledText(const Title, Text: string);
-  {Outputs text preceded by a title.
-    @param Title [in] Text title.
-    @param Text [in] Text to be written.
-  }
 begin
   fWriter.WriteLine(Title);
   fWriter.WriteLine(StrWrap(Text, cPageWidth - cIndent, cIndent));

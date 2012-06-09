@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -49,101 +49,78 @@ uses
 
 
 type
-
-  {
-  TCompileDocInfo:
-    Provides information about a compilation result as text.
-  }
+  ///  <summary>Records information about a compilation result as text.
+  ///  </summary>
   TCompileDocInfo = record
-    Compiler: string;   // name of compiler
-    Result: string;     // description of compilation result
+    ///  <summary>Name of compiler.</summary>
+    Compiler: string;
+    ///  <summary>Description of compilation result.</summary>
+    Result: string;
+    ///  <summary>Initialises record files from given compiler name and
+    ///  compilation result.</summary>
     constructor Create(const ACompiler: string; const ACompRes: TCompileResult);
-      {Record constructor. Initialises fields from compiler name and a compiler
-      result.
-        @param ACompiler [in] Compiler name.
-        @param CompRes [in] Compiler result.
-      }
   end;
 
-  {
-  TCompileDocInfoArray:
-    Array of compiler result information.
-  }
+type
+  ///  <summary>Array of textual compiler result information.</summary>
   TCompileDocInfoArray = array of TCompileDocInfo;
 
-  {
-  TSnippetDoc:
-    Abstract base class that renders a text document that describes a snippet.
-  }
+type
+  ///  <summary>Abstract base class for classes that render documents that
+  ///  describe snippets.</summary>
   TSnippetDoc = class(TObject)
   strict private
+    ///  <summary>Creates and returns a string list containing snippet names
+    ///  from given snippet list.</summary>
     function SnippetsToStrings(const SnippetList: TSnippetList): IStringList;
-      {Creates a string list containing a list of snippet names.
-        @param SnippetList [in] List of snippets.
-        @return String list containing names of snippets from list.
-      }
+    ///  <summary>Creates and returns an array of compiler compatibility
+    ///  information for given snippet.</summary>
     function CompilerInfo(const Snippet: TSnippet): TCompileDocInfoArray;
       {Gets compiler compatibility information for a snippet.
         @param Snippet [in] Snippet for which compiler information is required.
         @return Array of compiler compatibility information.
       }
   strict protected
+    ///  <summary>Initialise document.</summary>
+    ///  <remarks>Does nothing. Descendant classes should perform any required
+    ///  initialisation here.</remarks>
     procedure InitialiseDoc; virtual;
-      {Initialises document. Does nothing. Descendant classes should add any
-      required initialisation here.
-      }
+    ///  <summary>Output given heading, i.e. snippet name.</summary>
     procedure RenderHeading(const Heading: string); virtual; abstract;
-      {Outputs heading (snippet name).
-        @param Heading [in] Heading to be written.
-      }
+    ///  <summary>Output given snippet description.</summary>
     procedure RenderDescription(const Desc: string); virtual; abstract;
-      {Outputs snippet description.
-        @param Desc [in] Description to be written.
-      }
+    ///  <summary>Output given source code.</summary>
     procedure RenderSourceCode(const SourceCode: string); virtual; abstract;
-      {Outputs snippet's source code.
-        @param SourceCode [in] Source code to be written.
-      }
+    ///  <summary>Output given title followed by given text.</summary>
+    procedure RenderTitledText(const Title, Text: string); virtual; abstract;
+    ///  <summary>Output given comma-separated list of text, preceded by given
+    ///  title.</summary>
     procedure RenderTitledList(const Title: string; List: IStringList);
       virtual; abstract;
-      {Outputs a list preceded by a title.
-        @param Title [in] List title.
-        @param List [in] List of text to be written.
-      }
-    procedure RenderTitledText(const Title, Text: string); virtual; abstract;
-      {Outputs text preceded by a title.
-        @param Title [in] Text title.
-        @param Text [in] Text to be written.
-      }
+    ///  <summary>Output given compiler info, preceeded by given heading.
+    ///  </summary>
     procedure RenderCompilerInfo(const Heading: string;
       const Info: TCompileDocInfoArray); virtual; abstract;
-      {Outputs details of compiler information.
-        @param Heading [in] Heading for compiler information.
-        @param Info [in] Array of compiler results (name and result as text).
-      }
+    ///  <summary>Output given extra information to document.</summary>
+    ///  <remarks>Active text must be interpreted in a manner that makes sense
+    ///  for document format.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); virtual; abstract;
-      {Outputs snippet's extra information.
-        @param ExtraText [in] Text to be written.
-      }
+    ///  <summary>Output given information about code snippets database.
+    ///  </summary>
     procedure RenderDBInfo(const Text: string); virtual; abstract;
-      {Outputs information about code snippets database.
-        @param Text [in] Text to be written.
-      }
+    ///  <summary>Finalise document and return content as encoded data.
+    ///  </summary>
+    ///  <remarks>Descendant classes should perform any required finalisation
+    ///  here.</remarks>
     function FinaliseDoc: TEncodedData; virtual; abstract;
-      {Finalises and returns document.
-        @return Document as encoded data.
-      }
+    ///  <summary>Builds and returns a comma separated list from strings in
+    ///  given string list.</summary>
     function CommaList(const List: IStringList): string;
-      {Builds a comma delimited list of names from a string list.
-        @param List [in] List of names.
-        @return Required comma separated list or "none" if list is empty.
-      }
   public
+    ///  <summary>Generates a document that describes given snippet and returns
+    ///  as encoded data using an encoding that suits type of document.
+    ///  </summary>
     function Generate(const Snippet: TSnippet): TEncodedData;
-      {Generates document that describes a snippet.
-        @param Snippet [in] Snippet for which document is required.
-        @return Encoded data containing document in appropriate format.
-      }
   end;
 
 
@@ -160,10 +137,6 @@ uses
 { TSnippetDoc }
 
 function TSnippetDoc.CommaList(const List: IStringList): string;
-  {Builds a comma delimited list of names from a string list.
-    @param List [in] List of names.
-    @return Required comma separated list or "none" if list is empty.
-  }
 resourcestring
   sNone = 'None.';  // string output for empty lists
 begin
@@ -176,10 +149,6 @@ end;
 
 function TSnippetDoc.CompilerInfo(const Snippet: TSnippet):
   TCompileDocInfoArray;
-  {Gets compiler compatibility information for a snippet.
-    @param Snippet [in] Snippet for which compiler information is required.
-    @return Array of compiler compatibility information.
-  }
 var
   Compilers: ICompilers;  // provided info about compilers
   Compiler: ICompiler;    // each supported compiler
@@ -198,10 +167,6 @@ begin
 end;
 
 function TSnippetDoc.Generate(const Snippet: TSnippet): TEncodedData;
-  {Generates document that describes a snippet.
-    @param Snippet [in] Snippet for which document is required.
-    @return Encoded data containing document in appropriate format.
-  }
 resourcestring
   // Literal string required in output
   sKindTitle = 'Snippet Type:';
@@ -238,19 +203,12 @@ begin
 end;
 
 procedure TSnippetDoc.InitialiseDoc;
-  {Initialises document. Does nothing. Descendant classes should add any
-  required initialisation here.
-  }
 begin
   // Do nothing
 end;
 
 function TSnippetDoc.SnippetsToStrings(const SnippetList: TSnippetList):
   IStringList;
-  {Creates a string list containing a list of snippet names.
-    @param SnippetList [in] List of snippets.
-    @return String list containing names of snippets from list.
-  }
 var
   Snippet: TSnippet;  // each snippet in list
 begin
@@ -263,11 +221,6 @@ end;
 
 constructor TCompileDocInfo.Create(const ACompiler: string;
   const ACompRes: TCompileResult);
-  {Record constructor. Initialises fields from compiler name and a compiler
-  result.
-    @param ACompiler [in] Compiler name.
-    @param CompRes [in] Compiler result.
-  }
 resourcestring
   // Compiler results descriptions
   sSuccess = 'Compiles OK';
