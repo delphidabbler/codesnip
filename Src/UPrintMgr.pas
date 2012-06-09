@@ -2,7 +2,7 @@
  * UPrintMgr.pas
  *
  * Implements a class that manages printing of a document providing information
- * about a snippet.
+ * about certain view items.
  *
  * $Rev$
  * $Date$
@@ -48,37 +48,37 @@ uses
 
 
 type
-
-  {
-  TPrintMgr:
-    Class that manages printing of a document providing information about a
-    snippet. It generates a RTF formatted document and passes it to the print
-    engine for printing.
-  }
+  ///  <summary>Class that manages printing of a document providing information
+  ///  about certain view items.</summary>
+  ///  <remarks>
+  ///  <para>Currently supports printing of snippets and non-empty categories.
+  ///  </para>
+  ///  <para>Generates an RTF formatted document and passes it to the print
+  ///  engine for printing.</para>
+  ///  </remarks>
   TPrintMgr = class(TNoPublicConstructObject)
   strict private
     var
+      ///  <summary>View item to be printed.</summary>
       fViewItem: IView;
+    ///  <summary>Returns interface to an object that can generate a print
+    ///  document for the current view item.</summary>
     function GetDocGenerator: IPrintDocument;
   strict protected
+    ///  <summary>Contructs object for use in printing given view item.
+    ///  </summary>
     constructor InternalCreate(ViewItem: IView);
-      {Class constructor. Sets up object to print a view item.
-        @param ViewItem [in] View item to be printed. Must be a snippet.
-      }
+    ///  <summary>Performs printing of document containing information about
+    ///  view item.</summary>
     procedure DoPrint;
-      {Prints document containing information about a snippet. Uses print
-      engine.
-      }
   public
+    ///  <summary>Prints details of given view item using print engine.
+    ///  </summary>
     class procedure Print(ViewItem: IView);
-      {Prints details of a view item using print engine.
-        @param ViewItem [in] View item to be printed. Must be a snippet.
-      }
+    ///  <summary>Checks if given view item can be printed.</summary>
+    ///  <remarks>View item must either represent a snippet or a non-empty
+    ///  category to be able to be printed.</remarks>
     class function CanPrint(ViewItem: IView): Boolean;
-      {Checks if a view item can be printed.
-        @param ViewItem [in] View item to be checked.
-        @return True if view item can be printed, False if not.
-      }
   end;
 
 
@@ -95,10 +95,6 @@ uses
 { TPrintMgr }
 
 class function TPrintMgr.CanPrint(ViewItem: IView): Boolean;
-  {Checks if a view item can be printed.
-    @param ViewItem [in] View item to be checked.
-    @return True if view item can be printed, False if not.
-  }
 begin
   // Can print snippets or non-empty categories
   Result := Supports(ViewItem, ISnippetView)
@@ -111,8 +107,6 @@ begin
 end;
 
 procedure TPrintMgr.DoPrint;
-  {Prints document containing information about a snippet. Uses print engine.
-  }
 var
   PrintEngine: TPrintEngine;  // object that prints the print document
   Document: TRTF;             // generated print document
@@ -141,18 +135,12 @@ begin
 end;
 
 constructor TPrintMgr.InternalCreate(ViewItem: IView);
-  {Class constructor. Sets up object to print a view item.
-    @param ViewItem [in] View item to be printed. Must be a snippet.
-  }
 begin
   inherited InternalCreate;
   fViewItem := ViewItem;
 end;
 
 class procedure TPrintMgr.Print(ViewItem: IView);
-  {Prints details of a view item using print engine.
-    @param ViewItem [in] View item to be printed. Must be a snippet.
-  }
 begin
   Assert(Assigned(ViewItem), ClassName + '.Print: ViewItem is nil');
   Assert(CanPrint(ViewItem), ClassName + '.Print: ViewItem can''t be printed');
