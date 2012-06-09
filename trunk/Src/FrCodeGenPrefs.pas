@@ -37,7 +37,9 @@
 
 unit FrCodeGenPrefs;
 
+
 interface
+
 
 uses
   // Delphi
@@ -47,7 +49,11 @@ uses
   // Project
   FrPrefsBase, UPreferences, UWarnings;
 
+
 type
+  ///  <summary>Frame that allows user to set source code generation
+  ///  preferences.</summary>
+  ///  <remarks>Designed for use in preferences dialog box.</remarks>
   TCodeGenPrefsFrame = class(TPrefsBaseFrame)
     chkWARNEnabled: TCheckBox;
     lblSymbol: TLabel;
@@ -70,116 +76,151 @@ type
     rbStateOn: TRadioButton;
     btnRestoreDefaults: TButton;
     actRestoreDefaults: TAction;
+    ///  <summary>Creates new warning from data entered in controls and adds it
+    ///  to warnings list.</summary>
     procedure actAddExecute(Sender: TObject);
+    ///  <summary>Enables or disables "Add" action depending on validity of data
+    ///  entered in controls.</summary>
     procedure actAddUpdate(Sender: TObject);
-    procedure actUpdateExecute(Sender: TObject);
-    procedure actUpdateUpdate(Sender: TObject);
+    ///  <summary>Deletes warning selected in list view from warnings list.
+    ///  </summary>
     procedure actDeleteExecute(Sender: TObject);
+    ///  <summary>Enables "Delete" action only if an item is selected in list
+    ///  view.</summary>
     procedure actDeleteUpdate(Sender: TObject);
-    procedure actRestoreDefaultsExecute(Sender: TObject);
-    procedure chkWARNEnabledClick(Sender: TObject);
-    procedure edMinCompilerKeyPress(Sender: TObject; var Key: Char);
+    ///  <summary>Displays a preview of $WARN compiler directives that will be
+    ///  emitted by code generator.</summary>
     procedure actPreviewExecute(Sender: TObject);
+    ///  <summary>Enables "Preview" action only if user has specified that $WARN
+    ///  directives will be emitted.</summary>
     procedure actPreviewUpdate(Sender: TObject);
+    ///  <summary>Restores default $WARN directives, replacing all directives
+    ///  shown in list view.</summary>
+    procedure actRestoreDefaultsExecute(Sender: TObject);
+    ///  <summary>Updates warning selected in list view with data entered in
+    ///  controls.</summary>
+    procedure actUpdateExecute(Sender: TObject);
+    ///  <summary>Enables or disables "Update" action depending on validity of
+    ///  data enterend in controls.</summary>
+    procedure actUpdateUpdate(Sender: TObject);
+    ///  <summary>Displays menu of predefined compiler versions when
+    ///  "pre-defined" button is clicked.</summary>
     procedure btnPredefinedClick(Sender: TObject);
+    ///  <summary>Handles clicks on check box that enables or disables warnings
+    ///  and updates warnings object with state.</summary>
+    procedure chkWARNEnabledClick(Sender: TObject);
+    ///  <summary>Inhibits non-numerical key presses in Min Compiler edit box.
+    ///  </summary>
+    procedure edMinCompilerKeyPress(Sender: TObject; var Key: Char);
   strict private
     var
-      fWarnings: IWarnings; // Object that stores details of warnings
+      ///  <summary>Stores details of warnings.</summary>
+      fWarnings: IWarnings;
+      ///  <summary>References dynamically created list view control.</summary>
       fLVWarnings: TListViewEx;
+    ///  <summary>Handles clicks on pre-defined compiler menu items. Stores
+    ///  version number of selected compiler in associated edit control.
+    ///  </summary>
+    procedure PreDefCompilerMenuClick(Sender: TObject);
+    ///  <summary>Handles clicks on warnings list view. Copies details of
+    ///  selected warning into controls, ready for editing.</summary>
     procedure LVWarningsClick(Sender: TObject);
+    ///  <summary>Specifies that TWarningListItem is to be used to create new
+    ///  list view items.</summary>
     procedure LVWarningsCreateItemClass(Sender: TCustomListView;
       var ItemClass: TListItemClass);
+    ///  <summary>Compares two list items, Item1 and Item2, using text contained
+    ///  in row specified Data parameter, recording result of comparison in
+    ///  Compare parameter.</summary>
     procedure LVWarningsCompare(Sender: TObject; Item1, Item2: TListItem;
       Data: Integer; var Compare: Integer);
+    ///  <summary>Returns text of list item LI in column specified by Idx.
+    ///  </summary>
+    ///  <remarks>Idx = 0 returns list item's caption while Idx > 0 returns text
+    ///  of SubItem[Idx-1].</remarks>
     function LVColumnText(const LI: TListItem; const Idx: Integer): string;
+    ///  <summary>Dynamically creates list view control and sets required
+    ///  properties.</summary>
     procedure CreateLV;
+    ///  <summary>Populates list view with details of warnings.</summary>
     procedure PopulateLV;
-      {Populates list view with details of warnings.
-      }
+    ///  <summary>Adds details of given warning to list view.</summary>
     procedure AddWarningToLV(const Warning: TWarning);
-      {Adds details of a warning to list view.
-        @param Warning [in] Warning to be added.
-      }
+    ///  <summary>Sets given list view item to display and record details of
+    ///  given warning.</summary>
     procedure SetLVItem(const LI: TListItem; const Warning: TWarning);
+    ///  <summary>Sorts list view using current sort column and direction.
+    ///  </summary>
+    ///  <remarks>Does nothing if list view hasn't already been sorted.
+    ///  </remarks>
     procedure ReSortLV;
+    ///  <summary>Returns given version number formatted as a string.</summary>
     function FormatCompilerVer(const Ver: Single): string;
-      {Formats compiler version number as a string.
-        @param Ver [in] Version number to be formatted.
-        @return Formatted string.
-      }
+    ///  <summary>Returns index of list view item associated with warning with
+    ///  given symbol.</summary>
+    ///  <remarks>Returns -1 if warning is not in list.</remarks>
     function IndexOfSymbolInLV(const Symbol: string): Integer;
-      {Gets the index of the list item containing a warning symbol in the list
-      view.
-        @param Symbol [in] Symbol to be found.
-        @return Index of required list view item or -1 if not found.
-      }
+    ///  <summary>Gets warning symbol entered in edit control.</summary>
+    ///  <param name="Symbol">string [out] Required symbol, trimmed of white
+    ///  space.</param>
+    ///  <returns>Boolean. True if symbol is non-empty string, False if not.
+    ///  </returns>
     function GetSymbol(out Symbol: string): Boolean;
-      {Gets warning symbol from edit control.
-        @param Symbol [out] Required symbol, trimmed of white space. Undefined
-          if not valid.
-        @return True if symbol is non-empty string, False if not.
-      }
+    ///  <summary>Checks if symbol entered in edit control is valid.</summary>
     function IsValidSymbol: Boolean;
-      {Checks if symbol entered in edit control is valid.
-        @return True if valid, False if not.
-      }
+    ///  <summary>Gets compiler version entered in edit control.</summary>
+    ///  <param name="Ver">Single [out] Required version number, undefined if
+    ///  not valid.</param>
+    ///  <returns>Boolean. True if version number is valid, False if not.
+    ///  </returns>
     function GetCompilerVersion(out Ver: Single): Boolean;
-      {Gets a compiler version number from edit control.
-        @param Ver [out] Required version number. Undefined if not valid.
-        @return True if version number is valid, False if not.
-      }
+    ///  <summary>Checks if compiler version entered in edit control is
+    ///  valid.</summary>
     function IsValidCompilerVersion: Boolean;
-      {Checks if compiler version entered in edit control is valid.
-        @return True if valid, False if not.
-      }
     ///  <summary>Gets a warning state from radio buttons.</summary>
     function GetState: Boolean;
     ///  <summary>Checks if a warning state has been specified.</summary>
     function IsValidState: Boolean;
+    ///  <summary>Populates pre-defined compiler version pop-up menu with menu
+    ///  items.</summary>
     procedure PopulatePreDefCompilerMenu;
-      {Populates pre-defined compiler version pop-up menu with menu items.
-      }
-    procedure PreDefCompilerMenuClick(Sender: TObject);
-      {Handler for click events on any pre-defined compiler menu item. Stores
-      required compiler version in associated edit control.
-        @param Sender [in] Reference to clicked menu item.
-      }
-    ///  <summary>Selects required switch state in state combo.</summary>
+    ///  <summary>Selects required switch state in radio buttons.</summary>
     procedure SelectSwitchState(const State: Boolean);
+    ///  <summary>Returns warning associated with selected list view item.
+    ///  </summary>
     function SelectedWarning: TWarning;
+    ///  <summary>Updates edit controls to reflect properties of warning
+    ///  selected in list view.</summary>
+    ///  <remarks>Nulls edit controls if no warning selected.</remarks>
     procedure UpdateControls;
   public
+    ///  <summary>Constructs and initiases frame.</summary>
     constructor Create(AOwner: TComponent); override;
-      {Constructor. Sets up frame and populates controls.
-        @param AOwner [in] Component that owns frame.
-      }
+    ///  <summary>Records details of warnings from given preferences object and
+    ///  updates controls accordingly.</summary>
+    ///  <remarks>Called when page is activated.</remarks>
     procedure Activate(const Prefs: IPreferences); override;
-      {Called when page activated. Records details of warnings and updates
-      controls accordingly.
-        @param Prefs [in] Object that provides info used to update controls.
-      }
+    ///  <summary>Updates given preferences object with details of warnings as
+    ///  modified by user.</summary>
+    ///  <remarks>Called when page is deactivated.</remarks>
     procedure Deactivate(const Prefs: IPreferences); override;
-      {Called when page is deactivated. Updates warnings and preferences objects
-      from information entered in tab.
-        @param Prefs [in] Object used to store information.
-      }
+    ///  <summary>Arranges controls on frame.</summary>
+    ///  <remarks>Called after frame has been sized.</remarks>
     procedure ArrangeControls; override;
-      {Arranges controls on frame. Called after frame has been sized.
-      }
+    ///  <summary>Returns a descriptive name for this frame.</summary>
+    ///  <remarks>Used for display in the tab sheet that contains this frame
+    ///  when displayed in the preferences dialog box.</remarks>
     function DisplayName: string; override;
-      {Provides caption that is displayed in the tab sheet that contains this
-      frame when displayed in the preference dialog box.
-        @return Required display name.
-      }
+    ///  <summary>Returns an index number that determines this frame's position
+    ///  in relation to other preferences frames.</summary>
+    ///  <remarks>Used by preferences dialog box to determine ordering of tabs
+    ///  that contain the different preferences frames.</remarks>
     class function Index: Byte; override;
-      {Provides an index number that determines the order in which the tabs
-      containing frames are displayed in the preferences dialog box.
-        @return Required index number.
-      }
   end;
 
 
 implementation
+
 
 uses
   // Delphi
@@ -188,31 +229,34 @@ uses
   FmPreferencesDlg, FmPreviewDlg, IntfCommon, UConsts, UCtrlArranger,
   UEncodings, UKeysHelper, UMessageBox, UStrUtils, UUtils;
 
+
 {$R *.dfm}
 
+
 type
-  {
-  TPreDefCompilerMenuItem:
-    Custom menu item with additional property to store a compiler version and
-    extended constructor that takes all required properties and event handlers.
-  }
+  ///  <summary>Custom menu item with additional property to store a compiler
+  ///  version.</summary>
   TPreDefCompilerMenuItem = class(TMenuItem)
   strict private
-    fCompilerVer: Single; // Value of CompilerVer property
+    var
+      ///  <summary>Value of CompilerVer property</summary>
+      fCompilerVer: Single;
   public
+    ///  <summary>Constructs a menu item will all required properties and event
+    ///  handlers.</summary>
+    ///  <param name="AOwner">TComponent [in] Menu item's owner.</param>
+    ///  <param name="ACaption">string [in] Menu item's caption. Should be name
+    ///  of a compiler.</param>
+    ///  <param name="ACompilerVer">Single [in] Version of compiler named in
+    ///  ACaption</param>
+    ///  <param name="AClickHandler">TNotifyEvent [in] Reference to an event
+    ///  handler for menu item's OnClick event.</param>
     constructor Create(AOwner: TComponent; const ACaption: string;
       const ACompilerVer: Single; const AClickHandler: TNotifyEvent);
       reintroduce;
-      {Constructor. Used to fully create a menu item with all required
-      properties and event handlers.
-        @param AOwner [in] Component that owns menu item.
-        @param ACaption [in] Name of compiler displayed in menu item's caption.
-        @param ACompilerVer [in] Version number of compiler named in ACaption.
-        @param AClickHandler [in] Menu item's OnClick event handler.
-      }
+    ///  <summary>Version number of compiler whose name is displayed in menu
+    ///  item's caption.</summary>
     property CompilerVer: Single read fCompilerVer write fCompilerVer;
-      {Version number of compiler whose name is displayed in menu item's
-      Caption}
   end;
 
 type
@@ -232,10 +276,6 @@ type
 { TCodeGenPrefsFrame }
 
 procedure TCodeGenPrefsFrame.actAddExecute(Sender: TObject);
-  {Creates a new warning from data entered in edit controls and adds it to the
-  list view and records in warnings list.
-    @param Sender [in] Not used.
-  }
 var
   W: TWarning;          // new warning
   Symbol: string;       // name of warning's symbol
@@ -254,26 +294,18 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.actAddUpdate(Sender: TObject);
-  {Updates state of action that creates and records a warning. Action enabled
-  only if data in edit controls is valid.
-    @param Sender [in] Not used.
-  }
 var
   CanAdd: Boolean; // flag that records whether a warning can be added to list
 
-  // ---------------------------------------------------------------------------
+  ///  Checks if symbol entered in edit control is a duplicate of an existing
+  ///  symbol in the list view.
   function SymbolIsDuplicate: Boolean;
-    {Checks if symbol entered in edit control is a duplicate of an existing
-    symbol in the list view.
-      @return True if duplicate, False if not.
-    }
   var
     Symbol: string; // symbol from edit control
   begin
     GetSymbol(Symbol);
     Result := IndexOfSymbolInLV(Symbol) >= 0;
   end;
-  // ---------------------------------------------------------------------------
 
 begin
   CanAdd := True;
@@ -289,9 +321,6 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.actDeleteExecute(Sender: TObject);
-  {Deletes selected warning from warnings list and list view.
-    @param Sender [in] Not used.
-  }
 var
   Warning: TWarning;  // selected warning
 begin
@@ -307,19 +336,11 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.actDeleteUpdate(Sender: TObject);
-  {Updates state of action that deletes a warning. Action enabled only if an
-  item is selected in list view.
-    @param Sender [in] Not used.
-  }
 begin
   actDelete.Enabled := Assigned(fLVWarnings.Selected);
 end;
 
 procedure TCodeGenPrefsFrame.Activate(const Prefs: IPreferences);
-  {Called when page activated. Records details of warnings and updates controls
-  accordingly.
-    @param Prefs [in] Object that provides info used to update controls.
-  }
 begin
   (fWarnings as IAssignable).Assign(Prefs.Warnings);
   chkWARNEnabled.Checked := fWarnings.Enabled;
@@ -327,10 +348,6 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.actPreviewExecute(Sender: TObject);
-  {Displays compiler directives used to switch off listed warnings in a dialog
-  box.
-    @param Sender [in] Not used.
-  }
 resourcestring
   sCaption = 'Compiler Directives Preview';
 begin
@@ -343,11 +360,6 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.actPreviewUpdate(Sender: TObject);
-  {Updates state of action that displays preview of compiler directives. Enabled
-  only if switching off of warnings is allowed and there are warnings in list
-  view.
-    @param Sender [in] Not used.
-  }
 begin
   actPreview.Enabled := (fLVWarnings.Items.Count > 0)
     and chkWARNEnabled.Checked;
@@ -355,6 +367,7 @@ end;
 
 procedure TCodeGenPrefsFrame.actRestoreDefaultsExecute(Sender: TObject);
 resourcestring
+  // message displayed in confirmation dialogue box
   sConfirmAction = 'Are you sure you want to restore the default directives? '
     + EOL2 + 'All existing custom directives will be lost.';
 begin
@@ -366,9 +379,6 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.actUpdateExecute(Sender: TObject);
-  {Updates selected warning from data entered in edit controls.
-    @param Sender [in] Not used.
-  }
 var
   NewSymbol: string;      // new symbol from edit control
   NewCompilerVer: Single; // new compiler version from edit control
@@ -396,19 +406,12 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.actUpdateUpdate(Sender: TObject);
-  {Updates state of action that updates a warning. Action enabled only if data
-  in edit controls is valid.
-    @param Sender [in] Not used.
-  }
 var
   CanUpdate: Boolean;   // flag that indicates if a warning can be updated
 
-  // ---------------------------------------------------------------------------
+  ///  Checks if symbol entered in edit control is a duplicate of an existing
+  ///  symbol in the list view, other than that of the selected warning.
   function SymbolIsDuplicate: Boolean;
-    {Checks if symbol entered in edit control is a duplicate of an existing
-    symbol in the list view, other than that of the selected warning.
-      @return True if duplicate, False if not.
-    }
   var
     Symbol: string; // symbol entered in edit control
     LIIdx: Integer; // index of list item with Symbol as caption
@@ -417,7 +420,6 @@ var
     LIIdx := IndexOfSymbolInLV(Symbol);
     Result := (LIIdx >= 0) and (LIIdx <> fLVWarnings.Selected.Index);
   end;
-  // ---------------------------------------------------------------------------
 
 begin
   CanUpdate := True;
@@ -435,9 +437,6 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.AddWarningToLV(const Warning: TWarning);
-  {Adds details of a warning to list view.
-    @param Warning [in] Warning to be added.
-  }
 var
   LI: TListItem;  // new list item for warning
 begin
@@ -446,8 +445,6 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.ArrangeControls;
-  {Arranges controls on frame. Called after frame has been sized.
-  }
 begin
   btnPreview.Left := Width - btnPreview.Width;
   fLVWarnings.Width := Width;
@@ -474,10 +471,6 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.btnPredefinedClick(Sender: TObject);
-  {Click event handler for pre-defined compiler versions button. Drops down
-  associated popup menu.
-    @param Sender [in] Not used.
-  }
 var
   PopupPos: TPoint; // place where menu pops up
 begin
@@ -488,18 +481,11 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.chkWARNEnabledClick(Sender: TObject);
-  {Click event handler for "switch off warnings" check box. Updated warnings
-  object per state of check box.
-    @param Sender [in] Not used.
-  }
 begin
   fWarnings.Enabled := chkWARNEnabled.Checked;
 end;
 
 constructor TCodeGenPrefsFrame.Create(AOwner: TComponent);
-  {Constructor. Sets up frame and populates controls.
-    @param AOwner [in] Component that owns frame.
-  }
 begin
   inherited;
   HelpKeyword := 'CodeGenPrefs';
@@ -549,52 +535,31 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.Deactivate(const Prefs: IPreferences);
-  {Called when page is deactivated. Updates warnings and preferences objects
-  from information entered in tab.
-    @param Prefs [in] Object used to store information.
-  }
 begin
   fWarnings.Enabled := chkWARNEnabled.Checked;
   Prefs.Warnings := fWarnings;
 end;
 
 function TCodeGenPrefsFrame.DisplayName: string;
-  {Provides caption that is displayed in the tab sheet that contains this frame
-  when displayed in the preference dialog box.
-    @return Required display name.
-  }
 resourcestring
-  sDisplayName = 'Code Generation'; // display name
+  sDisplayName = 'Code Generation';
 begin
   Result := sDisplayName;
 end;
 
 procedure TCodeGenPrefsFrame.edMinCompilerKeyPress(Sender: TObject;
   var Key: Char);
-  {Called whenever a key is pressed in a minimum compiler edit control. We
-  prevent all but valid number keys, a single decimal point and backspace.
-    @param Sender [in] Not used.
-    @param Key [in/out] Key that was pressed. Set to #0 to inhibit if not valid.
-  }
 begin
   if not IsValidDecimalNumberKey((Sender as TEdit).Text, Key) then
     KeyErrorBeep;
 end;
 
 function TCodeGenPrefsFrame.FormatCompilerVer(const Ver: Single): string;
-  {Formats compiler version number as a string.
-    @param Ver [in] Version number to be formatted.
-    @return Formatted string.
-  }
 begin
   Result := Format('%.2f', [Ver]);
 end;
 
 function TCodeGenPrefsFrame.GetCompilerVersion(out Ver: Single): Boolean;
-  {Gets a compiler version number from edit control.
-    @param Ver [out] Required version number. Undefined if not valid.
-    @return True if version number is valid, False if not.
-  }
 var
   ExtVer: Extended;   // version number as Extended float
 begin
@@ -610,30 +575,17 @@ begin
 end;
 
 function TCodeGenPrefsFrame.GetSymbol(out Symbol: string): Boolean;
-  {Gets warning symbol from edit control.
-    @param Symbol [out] Required symbol, trimmed of white space. Undefined if
-      not valid.
-    @return True if symbol is non-empty string, False if not.
-  }
 begin
   Symbol := StrTrim(edSymbol.Text);
   Result := Symbol <> '';
 end;
 
 class function TCodeGenPrefsFrame.Index: Byte;
-  {Provides an index number that determines the order in which the tabs
-  containing frames are displayed in the preferences dialog box.
-    @return Required index number.
-  }
 begin
   Result := 15;
 end;
 
 function TCodeGenPrefsFrame.IndexOfSymbolInLV(const Symbol: string): Integer;
-  {Gets the index of the list item containing a warning symbol in the list view.
-    @param Symbol [in] Symbol to be found.
-    @return Index of required list view item or -1 if not found.
-  }
 var
   LI: TListItem;  // each list item in list view
 begin
@@ -646,9 +598,6 @@ begin
 end;
 
 function TCodeGenPrefsFrame.IsValidCompilerVersion: Boolean;
-  {Checks if compiler version entered in edit control is valid.
-    @return True if valid, False if not.
-  }
 var
   Ver: Single;  // compiler version from edit control
 begin
@@ -663,9 +612,6 @@ begin
 end;
 
 function TCodeGenPrefsFrame.IsValidSymbol: Boolean;
-  {Checks if symbol entered in edit control is valid.
-    @return True if valid, False if not.
-  }
 var
   Symbol: string; // stores symbol: unused
 begin
@@ -682,10 +628,6 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.LVWarningsClick(Sender: TObject);
-  {Click event handler for warnings list view. Copies details of warning
-  associated with selected (clicked) list item to edit controls.
-    @param Sender [in] Not used.
-  }
 begin
   if not Assigned(fLVWarnings.Selected) then
     Exit;
@@ -709,8 +651,6 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.PopulateLV;
-  {Populates list view with details of warnings.
-  }
 var
   W: TWarning;  // references each warning
 begin
@@ -728,15 +668,9 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.PopulatePreDefCompilerMenu;
-  {Populates pre-defined compiler version pop-up menu with menu items.
-  }
 
-  // ---------------------------------------------------------------------------
+  ///  Adds a menu item for given compiler name and version to the pop-up menu.
   procedure AddMenuItem(const Compiler: string; const Ver: Single);
-    {Adds a menu item to the pop-up menu.
-      @param Compiler [in] Name of compiler (for menu item caption).
-      @param Ver [in] Version of named compiler.
-    }
   begin
     mnuPreDefCompilers.Items.Add(
       TPreDefCompilerMenuItem.Create(
@@ -744,7 +678,6 @@ procedure TCodeGenPrefsFrame.PopulatePreDefCompilerMenu;
       )
     );
   end;
-  // ---------------------------------------------------------------------------
 
 begin
   AddMenuItem('Delphi 6', 14.0);
@@ -759,10 +692,6 @@ begin
 end;
 
 procedure TCodeGenPrefsFrame.PreDefCompilerMenuClick(Sender: TObject);
-  {Handler for click events on any pre-defined compiler menu item. Stores
-  required compiler version in associated edit control.
-    @param Sender [in] Reference to clicked menu item.
-  }
 begin
   edMinCompiler.Text := FormatCompilerVer(
     (Sender as TPreDefCompilerMenuItem).CompilerVer
@@ -826,15 +755,8 @@ end;
 { TPreDefCompilerMenuItem }
 
 constructor TPreDefCompilerMenuItem.Create(AOwner: TComponent;
-  const ACaption: string; const ACompilerVer: Single;
+const ACaption: string; const ACompilerVer: Single;
   const AClickHandler: TNotifyEvent);
-  {Constructor. Used to fully create a menu item with all required properties
-  and event handlers.
-    @param AOwner [in] Component that owns menu item.
-    @param ACaption [in] Name of compiler displayed in menu item's caption.
-    @param ACompilerVer [in] Version number of compiler named in ACaption.
-    @param AClickHandler [in] Menu item's OnClick event handler.
-  }
 begin
   inherited Create(AOwner);
   Caption := ACaption;
