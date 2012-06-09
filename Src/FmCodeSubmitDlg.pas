@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -440,7 +440,7 @@ procedure TCodeSubmitDlg.SnippetListChange(Sender: TObject);
 begin
   if CurrentPage = cSnippetsPageIdx then
     UpdateButtons(CurrentPage);
-  lblSnippetPrompt.Visible := frmSnippets.SelectedSnippets.Count = 0;
+  lblSnippetPrompt.Visible := frmSnippets.SelectedSnippets.IsEmpty;
 end;
 
 procedure TCodeSubmitDlg.UpdateButtons(const PageIdx: Integer);

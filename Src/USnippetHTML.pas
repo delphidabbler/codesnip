@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -156,7 +156,7 @@ function TSnippetHTML.SnippetList(const Snippets: TSnippetList): string;
 var
   Snippet: TSnippet;  // refers to each snippet in list
 begin
-  if Snippets.Count = 0 then
+  if Snippets.IsEmpty then
     // There are no snippets: say so
     Result := EmptyListSentence
   else

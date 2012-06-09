@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -517,7 +517,7 @@ begin
     // Clear tree view
     fCanChange := False;
     tvSnippets.Items.Clear;
-    if fSnippetList.Count = 0 then
+    if fSnippetList.IsEmpty then
       Exit;
     // Build new treeview using grouping determined by selected tab
     Builder := BuilderClasses[tcDisplayStyle.TabIndex].Create(
