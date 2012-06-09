@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -47,16 +47,13 @@ uses
 
 
 const
-  // Constants relating to RTF
-  cRTFVersion = 1;          // RTF version
+  ///  <summary>RTF version.</summary>
+  cRTFVersion = 1;
 
 
 type
-
-  {
-  TRTFControl:
-    Identifiers for each RTF control word supported by the program.
-  }
+  ///  <summary>Enumeration containing identifiers for each supported RTF
+  ///  control word.</summary>
   TRTFControl = (
     rcRTF,                  // RTF version
     rcAnsi,                 // use ANSI character set
@@ -97,16 +94,13 @@ type
   );
 
 type
-  ///  <summary>
-  ///  Record that encapsulate rich text markup code.
-  ///  </summary>
-  ///  <remarks>
-  ///  Valid rich text markup contains only ASCII characters.
-  ///  </remarks>
+  ///  <summary>Encapsulate rich text markup code.</summary>
+  ///  <remarks>Valid rich text markup contains only ASCII characters.</remarks>
   TRTF = record
   strict private
-    ///  <summary>Byte array that stores RTF code as bytes</summary>
-    fData: TBytes;
+    var
+      ///  <summary>Byte array that stores RTF code as bytes</summary>
+      fData: TBytes;
   public
     ///  <summary>Initialises record from raw binary data.</summary>
     ///  <param name="ABytes">TBytes [in] Array storing RTF code as bytes.
@@ -158,15 +152,12 @@ type
   ERTF = class(Exception);
 
 type
-  ///  <summary>
-  ///  Record containing only static methods that assist in working with rich
-  ///  edit controls.
-  ///  </summary>
+  ///  <summary>Static method record that assists in working with rich edit
+  ///  VCL controls.</summary>
   TRichEditHelper = record
   public
-    ///  <summary>
-    ///  Loads RTF code into a rich edit control, replacing existing content.
-    ///  </summary>
+    ///  <summary>Loads RTF code into a rich edit control, replacing existing
+    ///  content.</summary>
     ///  <param name="RE">TRichEdit [in] Rich edit control.</param>
     ///  <param name="RTF">TRTF [in] Contains rich text code to be loaded.
     ///  </param>
@@ -174,53 +165,40 @@ type
   end;
 
 
+///  <summary>Returns a parameterless RTF control word of given kind.</summary>
 function RTFControl(const Ctrl: TRTFControl): ASCIIString; overload;
-  {Creates a parameterless RTF control word.
-    @param Ctrl [in] Id of required control word.
-    @return RTF control.
-  }
 
+///  <summary>Returns a parameterised RTF control word of given kind with given
+///  parameter value.</summary>
 function RTFControl(const Ctrl: TRTFControl;
   const Param: SmallInt): ASCIIString; overload;
-  {Creates an RTF control word with parameter.
-    @param Ctrl [in] Id of required control word.
-    @param Param [in] Required parameter.
-    @return RTF control.
-  }
 
+///  <summary>Returns an RTF escape sequence for the given ANSI character.
+///  </summary>
 function RTFEscape(const Ch: AnsiChar): ASCIIString;
-  {Creates RTF escape sequence for a character.
-    @param Ch [in] Character to escape.
-    @return Escape sequence.
-  }
 
+///  <summary>returns an RTF hexadecimal escape sequence for given ANSI
+///  character.</summary>
 function RTFHexEscape(const Ch: AnsiChar): ASCIIString;
-  {Creates RTF hexadecimal escape sequence for a character.
-    @param Ch [in] Character to escape.
-    @return Escape sequence.
-  }
 
+///  <summary>Encodes given text for given code page so that any incompatible
+///  characters are replaced by suitable control words.</summary>
 function RTFMakeSafeText(const TheText: string; const CodePage: Integer):
   ASCIIString;
-  {Encodes text so that any RTF-incompatible characters are replaced with
-  suitable control words.
-    @param TheText [in] Text to be encoded.
-    @param CodePage [in] Code page to use for encoding.
-    @return Encoded text.
-  }
 
+///  <summary>Creates an RTF destination in a Unicode safe way.</summary>
+///  <param name="DestCtrl">TRTFControl [in] Destination control.</param>
+///  <param name="DestText">string [in] Text of destination.</param>
+///  <param name="CodePage">Integer [in] Code page to use for encoding.</param>
+///  <returns>ASCIIString. Destination RTF, containing ANSI and Unicode
+///  sub-destinations if necessary.</returns>
+///  <remarks>If DestText contains only characters supported by the given code
+///  page then a normal destination is returned, containing only the given text.
+///  Should any characters in DestText be incompatible with the code page then
+///  two sub-destinations are created, one ANSI only and the other containing
+///  Unicode characters.</remarks>
 function RTFUnicodeSafeDestination(const DestCtrl: TRTFControl;
   const DestText: string; const CodePage: Integer): ASCIIString;
-  {Creates a destination in a Unicode safe way. If text contains only
-  characters supported by the given code page a normal destination is written,
-  containing only the given text. If, however, any characters incompatible with
-  the code page are in the text two sub-destinations are written, one ANSI only
-  and the other containing Unicode characters.
-    @param DestCtrl [in] Destination control.
-    @param DestText [in] Text of destination.
-    @param CodePage [in] Code page to use for encoding.
-    @return Destination RTF, with special Unicode sub-destination if needed.
-  }
 
 
 implementation
@@ -243,51 +221,28 @@ const
   );
 
 function RTFControl(const Ctrl: TRTFControl): ASCIIString;
-  {Creates a parameterless RTF control word.
-    @param Ctrl [in] Id of required control word.
-    @return RTF control.
-  }
 begin
   Result := '\' + cControls[Ctrl];
 end;
 
 function RTFControl(const Ctrl: TRTFControl;
   const Param: SmallInt): ASCIIString;
-  {Creates an RTF control word with parameter.
-    @param Ctrl [in] Id of required control word.
-    @param Param [in] Required parameter.
-    @return RTF control.
-  }
 begin
   Result := RTFControl(Ctrl) + StringToASCIIString(IntToStr(Param));
 end;
 
 function RTFEscape(const Ch: AnsiChar): ASCIIString;
-  {Creates RTF escape sequence for a character.
-    @param Ch [in] Character to escape.
-    @return Escape sequence.
-  }
 begin
   Result := AnsiChar('\') + Ch;
 end;
 
 function RTFHexEscape(const Ch: AnsiChar): ASCIIString;
-  {Creates RTF hexadecimal escape sequence for a character.
-    @param Ch [in] Character to escape.
-    @return Escape sequence.
-  }
 begin
   Result := StringToASCIIString('\''' + IntToHex(Ord(Ch), 2));
 end;
 
 function RTFMakeSafeText(const TheText: string; const CodePage: Integer):
   ASCIIString;
-  {Encodes text so that any RTF-incompatible characters are replaced with
-  suitable control words.
-    @param TheText [in] Text to be encoded.
-    @param CodePage [in] Code page to use for encoding.
-    @return Encoded text.
-  }
 var
   Ch: Char;                     // each Unicode character in TheText
   AnsiChars: TArray<AnsiChar>;  // translation of a Ch into ANSI code page
@@ -315,21 +270,9 @@ end;
 
 function RTFUnicodeSafeDestination(const DestCtrl: TRTFControl;
   const DestText: string; const CodePage: Integer): ASCIIString;
-  {Creates a destination in a Unicode safe way. If text contains only
-  characters supported by the given code page a normal destination is written,
-  containing only the given text. If, however, any characters incompatible with
-  the code page are in the text two sub-destinations are written, one ANSI only
-  and the other containing Unicode characters.
-    @param DestCtrl [in] Destination control.
-    @param DestText [in] Text of destination.
-    @param CodePage [in] Code page to use for encoding.
-    @return Destination RTF, with special Unicode sub-destination if needed.
-  }
 
+  ///  Makes a destination for DestCtrl using given text.
   function MakeDestination(const S: string): ASCIIString;
-    {Makes a detination for control using given text.
-      @param S [in] Text to include in control.
-    }
   begin
     Result := '{'
       + RTFControl(DestCtrl) + ' '
@@ -338,8 +281,8 @@ function RTFUnicodeSafeDestination(const DestCtrl: TRTFControl;
   end;
 
 var
-  Encoding: TEncoding;
-  AnsiStr: string;
+  Encoding: TEncoding;  // encoding for CodePage
+  AnsiStr: string;      // Unicode string containing only characters of CodePage
 begin
   if CodePageSupportsString(DestText, CodePage) then
     // All chars of DestText supported in code page => RTF text won't have any
