@@ -2,7 +2,7 @@
  * URTFSnippetDoc.pas
  *
  * Implements a class that renders a document that describes a snippet as rich
- * text. Source code highlighting can be customised.
+ * text.
  *
  * $Rev$
  * $Date$
@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -49,84 +49,76 @@ uses
 
 
 type
-
-  {
-  TRTFSnippetDoc:
-    Class that renders a document that describes a snippet as rich text.
-  }
+  ///  <summary>Renders a document that describes a snippet as rich text.
+  ///  </summary>
+  ///  <remarks>Highlighting of document's source code can be customised.
+  ///  </remarks>
   TRTFSnippetDoc = class(TSnippetDoc)
   strict private
     var
-      fHiliteAttrs: IHiliteAttrs; // Attributes determine source code formatting
-      fBuilder: TRTFBuilder;      // Object used to build rich text document
-      fUseColour: Boolean;        // Flag indicates whether to output in colour
+      ///  <summary>Attributes that determine formatting of highlighted source
+      ///  code formatting.</summary>
+      fHiliteAttrs: IHiliteAttrs;
+      ///  <summary>Object used to build rich text document.</summary>
+      fBuilder: TRTFBuilder;
+      ///  <summary>Flag indicates whether to output in colour.</summary>
+      fUseColour: Boolean;
     const
-      cMainFontName = 'Tahoma';                     // main font name
-      cMonoFontName = 'Courier New';                // mono font name
-      cHeadingFontSize = 16;                        // heading font size
-      cParaFontSize = 10;                           // paragraph font size
-      cParaSpacing = 12;                            // paragraph spacing
-      cDBInfoFontSize = 9;                          // codesnip db font size
+      ///  <summary>Name of main document font.</summary>
+      cMainFontName = 'Tahoma';
+      ///  <summary>Name of mono font.</summary>
+      cMonoFontName = 'Courier New';
+      ///  <summary>Size of heading font.</summary>
+      cHeadingFontSize = 16;
+      ///  <summary>Size of paragraph font.</summary>
+      cParaFontSize = 10;
+      ///  <summary>Paragraph spacing in points.</summary>
+      cParaSpacing = 12;
+      ///  <summary>Size of font used for database information.</summary>
+      cDBInfoFontSize = 9;
+  strict private
+    ///  <summary>Uses given font colour for subsequent text unless caller has
+    ///  specified that colour is not to be used.</summary>
+    ///  <remarks>Font colour is used until next call to this method.</remarks>
     procedure SetColour(const Colour: TColor);
-      {Sets specified font colour in RTF, unless user specifies that colour is
-      not to be used.
-        @param Colour [in] Required colour. Ignored if fUseColour is false.
-      }
   strict protected
+    ///  <summary>Initialises rich text document.</summary>
     procedure InitialiseDoc; override;
-      {Initialises rich text document.
-      }
+    ///  <summary>Adds given heading (i.e. snippet name) to document.</summary>
     procedure RenderHeading(const Heading: string); override;
-      {Adds heading (snippet name) to rich text document.
-        @param Heading [in] Heading to be written.
-      }
+    ///  <summary>Adds given snippet description to document.</summary>
     procedure RenderDescription(const Desc: string); override;
-      {Adds snippet's description to rich text document.
-        @param Desc [in] Description to be written.
-      }
+    ///  <summary>Hilights given source code and adds to document.</summary>
     procedure RenderSourceCode(const SourceCode: string); override;
-      {Adds a placeholder for snippet's source code to rich text document.
-      Placeholder is replaced later when source code is generated.
-        @param SourceCode [in] Source code to be written.
-      }
+    ///  <summary>Adds given title followed by given text to document.</summary>
     procedure RenderTitledText(const Title, Text: string); override;
-      {Outputs text preceded by a title.
-        @param Title [in] Text title.
-        @param Text [in] Text to be written.
-      }
+    ///  <summary>Adds a comma-separated list of text, preceded by given title,
+    ///  to document.</summary>
     procedure RenderTitledList(const Title: string; List: IStringList);
       override;
-      {Adds a comma-separated list preceded by a title to rich text document.
-        @param Title [in] List title.
-        @param List [in] List of text to be written.
-      }
+    ///  <summary>Adds given compiler info, preceeded by given heading, to
+    ///  document.</summary>
     procedure RenderCompilerInfo(const Heading: string;
       const Info: TCompileDocInfoArray); override;
-      {Adds details of compiler information to rich edit document.
-        @param Heading [in] Heading for compiler information.
-        @param Info [in] Array of compiler results (name and result as text).
-      }
+    ///  <summary>Interprets and adds given extra information to document.
+    ///  </summary>
+    ///  <remarks>Active text formatting is observed and styled to suit
+    ///  document.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); override;
-      {Adds snippet's extra information to rich text document.
-        @param ExtraText [in] Text to be written.
-      }
+    ///  <summary>Adds given information about code snippets database to
+    ///  document.</summary>
     procedure RenderDBInfo(const Text: string); override;
-      {Adds information about code snippets database to rich text document.
-        @param Text [in] Text to be written.
-      }
+    ///  <summary>Finalises document and returns content as encoded data.
+    ///  </summary>
     function FinaliseDoc: TEncodedData; override;
-      {Merges hilited source code document into main document and returns final
-      document. Releases RTF builder object.
-        @return ASCII encoded RTF document.
-      }
   public
+    ///  <summary>Constructs object to render a snippet.</summary>
+    ///  <param name="HiliteAttrs">IHiliteAttrs [in] Defines style of syntax
+    ///  highlighting used for source code.</param>
+    ///  <param name="UseColour">Boolean [in] Flag that whether document is
+    ///  printed in colour (True) or black and white (False).</param>
     constructor Create(const HiliteAttrs: IHiliteAttrs;
       const UseColour: Boolean = True);
-      {Class constructor. Sets up object with customised source code
-      highlighting.
-        @param HiliteAttrs [in] Defines source code syntax highlighting.
-        @param UseColour [in] Determines if output is to be rendered in colour.
-      }
   end;
 
 
@@ -144,10 +136,6 @@ uses
 
 constructor TRTFSnippetDoc.Create(const HiliteAttrs: IHiliteAttrs;
   const UseColour: Boolean = True);
-  {Class constructor. Sets up object with customised source code highlighting.
-    @param HiliteAttrs [in] Defines source code syntax highlighting.
-    @param UseColour [in] Determines if output is to be rendered in colour.
-  }
 begin
   inherited Create;
   fHiliteAttrs := HiliteAttrs;
@@ -155,18 +143,12 @@ begin
 end;
 
 function TRTFSnippetDoc.FinaliseDoc: TEncodedData;
-  {Merges hilited source code document into main document and returns final
-  document. Releases RTF builder object.
-    @return ASCII encoded RTF document.
-  }
 begin
   Result := TEncodedData.Create(fBuilder.Render.ToBytes, etASCII);
   fBuilder.Free;
 end;
 
 procedure TRTFSnippetDoc.InitialiseDoc;
-  {Initialises rich text document.
-  }
 begin
   // Create object used to build main rich text document
   fBuilder := TRTFBuilder.Create(0);  // Use default code page
@@ -181,10 +163,6 @@ end;
 
 procedure TRTFSnippetDoc.RenderCompilerInfo(const Heading: string;
   const Info: TCompileDocInfoArray);
-  {Adds details of compiler information to rich edit document.
-    @param Heading [in] Heading for compiler information.
-    @param Info [in] Array of compiler results (name and result as text).
-  }
 var
   Idx: Integer; // loops compiler information table
 begin
@@ -208,9 +186,6 @@ begin
 end;
 
 procedure TRTFSnippetDoc.RenderDBInfo(const Text: string);
-  {Adds information about code snippets database to rich text document.
-    @param Text [in] Text to be written.
-  }
 begin
   fBuilder.SetParaSpacing(cParaSpacing, 0);
   fBuilder.SetFontSize(cDBInfoFontSize);
@@ -222,9 +197,6 @@ begin
 end;
 
 procedure TRTFSnippetDoc.RenderDescription(const Desc: string);
-  {Adds snippet's description to rich text document.
-    @param Desc [in] Description to be written.
-  }
 begin
   fBuilder.ResetCharStyle;
   fBuilder.SetParaSpacing(cParaSpacing, cParaSpacing);
@@ -236,9 +208,6 @@ begin
 end;
 
 procedure TRTFSnippetDoc.RenderExtra(const ExtraText: IActiveText);
-  {Adds snippet's extra information to rich text document.
-    @param ExtraText [in] Text to be written.
-  }
 var
   Elem: IActiveTextElem;              // each active text element
   TextElem: IActiveTextTextElem;      // refers to active text text elements
@@ -387,9 +356,6 @@ begin
 end;
 
 procedure TRTFSnippetDoc.RenderHeading(const Heading: string);
-  {Adds heading (snippet name) to rich text document.
-    @param Heading [in] Heading to be written.
-  }
 begin
   fBuilder.SetFontStyle([fsBold]);
   fBuilder.SetFontSize(cHeadingFontSize);
@@ -398,10 +364,6 @@ begin
 end;
 
 procedure TRTFSnippetDoc.RenderSourceCode(const SourceCode: string);
-  {Adds a placeholder for snippet's source code to rich text document.
-  Placeholder is replaced later when source code is generated.
-    @param SourceCode [in] Source code to be written.
-  }
 var
   Renderer: IHiliteRenderer;  // renders highlighted source as RTF
 begin
@@ -413,19 +375,11 @@ end;
 
 procedure TRTFSnippetDoc.RenderTitledList(const Title: string;
   List: IStringList);
-  {Adds a comma-separated list preceded by a title to rich text document.
-    @param Title [in] List title.
-    @param List [in] List of text to be written.
-  }
 begin
   RenderTitledText(Title, CommaList(List));
 end;
 
 procedure TRTFSnippetDoc.RenderTitledText(const Title, Text: string);
-  {Outputs text preceded by a title.
-    @param Title [in] Text title.
-    @param Text [in] Text to be written.
-  }
 begin
   fBuilder.ClearParaFormatting;
   fBuilder.ResetCharStyle;
@@ -441,10 +395,6 @@ begin
 end;
 
 procedure TRTFSnippetDoc.SetColour(const Colour: TColor);
-  {Sets specified font colour in RTF, unless user specifies that colour is not
-  to be used.
-    @param Colour [in] Required colour. Ignored if fUseColour is false.
-  }
 begin
   if fUseColour then
     fBuilder.SetColour(Colour);
