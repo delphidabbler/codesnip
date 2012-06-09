@@ -14,10 +14,6 @@ inherited CodeImportDlg: TCodeImportDlg
       object tsInfo: TTabSheet
         Caption = 'tsInfo'
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 27
-        ExplicitWidth = 0
-        ExplicitHeight = 217
         object lblIntro: TLabel
           Left = 0
           Top = 8
@@ -34,10 +30,6 @@ inherited CodeImportDlg: TCodeImportDlg
         Caption = 'tsFile'
         ImageIndex = 1
         TabVisible = False
-        ExplicitLeft = 8
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 238
         object lblFile: TLabel
           Left = 0
           Top = 8
@@ -79,10 +71,6 @@ inherited CodeImportDlg: TCodeImportDlg
         Caption = 'tsUserInfo'
         ImageIndex = 2
         TabVisible = False
-        ExplicitLeft = 8
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 238
         object lblName: TLabel
           Left = 0
           Top = 8
@@ -189,6 +177,7 @@ inherited CodeImportDlg: TCodeImportDlg
           HideSelection = False
           ReadOnly = True
           RowSelect = True
+          SortType = stText
           TabOrder = 0
           ViewStyle = vsReport
           OnSelectItem = lvImportsSelectItem
@@ -214,10 +203,6 @@ inherited CodeImportDlg: TCodeImportDlg
         Caption = 'tsFinish'
         ImageIndex = 5
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 27
-        ExplicitWidth = 0
-        ExplicitHeight = 217
         object lblFinish: TLabel
           Left = 0
           Top = 8
