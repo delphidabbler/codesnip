@@ -540,6 +540,7 @@
 				<Form>/ Include compiler defines</Form>
 				<DesignClass>checks if compiler supported</DesignClass>
 			</DCCReference>
+			<DCCReference Include="URTFCategoryDoc.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
