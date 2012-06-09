@@ -243,6 +243,7 @@ begin
   if not ValidateSnippetName(edRename.Text, lvImports.Selected, ErrMsg) then
     raise EDataEntry.Create(ErrMsg, edRename);
   SetImportNameInLV(lvImports.Selected, edRename.Text);
+  lvImports.Selected.MakeVisible(False);
   UpdateImportData(lvImports.Selected);
 end;
 
