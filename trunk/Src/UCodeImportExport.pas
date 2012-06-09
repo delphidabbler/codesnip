@@ -112,7 +112,7 @@ type
   strict private
     fVersion: Integer;              // Version of file being imported
     fUserInfo: TUserInfo;           // Information about user who created export
-    fSnippetInfp: TSnippetInfoList; // List of snippets read from XML
+    fSnippetInfo: TSnippetInfoList; // List of snippets read from XML
     fXMLDoc: IXMLDocumentEx;        // Extended XML document object
     function GetAllSnippetNodes: IXMLSimpleNodeList;
       {Retrieves a list of all snippet nodes in XML document.
@@ -583,15 +583,15 @@ begin
 
     // Read in all snippets
     SnippetNodes := GetAllSnippetNodes;
-    SetLength(fSnippetInfp, SnippetNodes.Count);
+    SetLength(fSnippetInfo, SnippetNodes.Count);
     for Idx := 0 to Pred(SnippetNodes.Count) do
     begin
       // Read a snippet node
       SnippetNode := SnippetNodes[Idx];
-      fSnippetInfp[Idx].Name := SnippetNode.Attributes[cSnippetNameAttr];
-      fSnippetInfp[Idx].Data :=
+      fSnippetInfo[Idx].Name := SnippetNode.Attributes[cSnippetNameAttr];
+      fSnippetInfo[Idx].Data :=
         (Database as IDatabaseEdit).GetEditableSnippetInfo;
-      with fSnippetInfp[Idx].Data do
+      with fSnippetInfo[Idx].Data do
       begin
         Props.Cat := TReservedCategories.ImportsCatID;
         Props.Desc :=
@@ -672,9 +672,9 @@ begin
     try
       Execute(Data);
       UserInfo.Assign(fUserInfo);
-      SetLength(SnippetInfo, Length(fSnippetInfp));
-      for Idx := Low(fSnippetInfp) to High(fSnippetInfp) do
-        SnippetInfo[Idx].Assign(fSnippetInfp[Idx]);
+      SetLength(SnippetInfo, Length(fSnippetInfo));
+      for Idx := Low(fSnippetInfo) to High(fSnippetInfo) do
+        SnippetInfo[Idx].Assign(fSnippetInfo[Idx]);
     finally
       Free;
     end;
@@ -689,7 +689,7 @@ begin
   OleInitialize(nil);
   fXMLDoc := TXMLDocHelper.CreateXMLDoc;
   // Initialise fields that receive imported data
-  SetLength(fSnippetInfp, 0);
+  SetLength(fSnippetInfo, 0);
   fUserInfo.Init;
 end;
 
