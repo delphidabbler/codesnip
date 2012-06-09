@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  DB.USnippet, UBaseObjects, UPrintInfo, URTFUtils, UView;
+  DB.USnippet, UBaseObjects, UPrintDocuments, UPrintInfo, URTFUtils, UView;
 
 
 type
@@ -57,12 +57,9 @@ type
   }
   TPrintMgr = class(TNoPublicConstructObject)
   strict private
-    fSnippet: TSnippet;
-      {Reference to snippet whose information is to be printed}
-    function GeneratePrintDocument: TRTF;
-      {Generates document suitable for printing by print engine.
-        @param Stm [in] Stream to receive generated document.
-      }
+    var
+      fViewItem: IView;
+    function GetDocGenerator: IPrintDocument;
   strict protected
     constructor InternalCreate(ViewItem: IView);
       {Class constructor. Sets up object to print a view item.
@@ -92,7 +89,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UPrintEngine, UPrintDocuments;
+  UPrintEngine;
 
 
 { TPrintMgr }
@@ -103,7 +100,14 @@ class function TPrintMgr.CanPrint(ViewItem: IView): Boolean;
     @return True if view item can be printed, False if not.
   }
 begin
-  Result := Supports(ViewItem, ISnippetView);
+  // Can print snippets or non-empty categories
+  Result := Supports(ViewItem, ISnippetView)
+    or
+  (
+    Supports(ViewItem, ICategoryView)
+      and
+    ((ViewItem as ICategoryView).Category.Snippets.Count > 0)
+  );
 end;
 
 procedure TPrintMgr.DoPrint;
@@ -115,23 +119,25 @@ var
 begin
   PrintEngine := TPrintEngine.Create;
   try
-    PrintEngine.Title := fSnippet.Name;
-    Document := GeneratePrintDocument;
+    PrintEngine.Title := fViewItem.Description;
+    Document := GetDocGenerator.Generate;
     PrintEngine.Print(Document);
   finally
     PrintEngine.Free;
   end;
 end;
 
-function TPrintMgr.GeneratePrintDocument: TRTF;
-  {Generates document suitable for printing by print engine.
-    @param Stm [in] Stream to receive generated document.
-  }
+function TPrintMgr.GetDocGenerator: IPrintDocument;
 var
-  PrintDoc: IPrintDocument;   // generates print document
+  SnippetView: ISnippetView;
+  CategoryView: ICategoryView;
 begin
-  PrintDoc := TSnippetPrintDocument.Create(fSnippet);
-  Result := PrintDoc.Generate;
+  Result := nil;
+  if Supports(fViewItem, ISnippetView, SnippetView) then
+    Result := TSnippetPrintDocument.Create(SnippetView.Snippet)
+  else if Supports(fViewItem, ICategoryView, CategoryView) then
+    Result := TCategoryPrintDocument.Create(CategoryView.Category);
+  Assert(Assigned(Result), ClassName + '.GetPrintDocument: Invalid view');
 end;
 
 constructor TPrintMgr.InternalCreate(ViewItem: IView);
@@ -139,11 +145,8 @@ constructor TPrintMgr.InternalCreate(ViewItem: IView);
     @param ViewItem [in] View item to be printed. Must be a snippet.
   }
 begin
-  Assert(Assigned(ViewItem), ClassName + '.InternalCreate: ViewItem is nil');
-  Assert(Supports(ViewItem, ISnippetView),
-    ClassName + '.InternalCreate: ViewItem is not a snippet');
   inherited InternalCreate;
-  fSnippet := (ViewItem as ISnippetView).Snippet;
+  fViewItem := ViewItem;
 end;
 
 class procedure TPrintMgr.Print(ViewItem: IView);
@@ -151,6 +154,8 @@ class procedure TPrintMgr.Print(ViewItem: IView);
     @param ViewItem [in] View item to be printed. Must be a snippet.
   }
 begin
+  Assert(Assigned(ViewItem), ClassName + '.Print: ViewItem is nil');
+  Assert(CanPrint(ViewItem), ClassName + '.Print: ViewItem can''t be printed');
   with InternalCreate(ViewItem) do
     try
       DoPrint;
