@@ -65,17 +65,17 @@ type
       fUseColour: Boolean;
     const
       ///  <summary>Name of main document font.</summary>
-      cMainFontName = 'Tahoma';
+      MainFontName = 'Tahoma';
       ///  <summary>Name of mono font.</summary>
-      cMonoFontName = 'Courier New';
+      MonoFontName = 'Courier New';
       ///  <summary>Size of heading font.</summary>
-      cHeadingFontSize = 16;
+      HeadingFontSize = 16;
       ///  <summary>Size of paragraph font.</summary>
-      cParaFontSize = 10;
+      ParaFontSize = 10;
       ///  <summary>Paragraph spacing in points.</summary>
-      cParaSpacing = 12;
+      ParaSpacing = 12;
       ///  <summary>Size of font used for database information.</summary>
-      cDBInfoFontSize = 9;
+      DBInfoFontSize = 9;
   strict private
     ///  <summary>Uses given font colour for subsequent text unless caller has
     ///  specified that colour is not to be used.</summary>
@@ -153,8 +153,8 @@ begin
   // Create object used to build main rich text document
   fBuilder := TRTFBuilder.Create(0);  // Use default code page
   // Set up font table
-  fBuilder.FontTable.Add(cMainFontName, rgfSwiss, 0);
-  fBuilder.FontTable.Add(cMonoFontName, rgfModern, 0);
+  fBuilder.FontTable.Add(MainFontName, rgfSwiss, 0);
+  fBuilder.FontTable.Add(MonoFontName, rgfModern, 0);
   // set up colour table
   fBuilder.ColourTable.Add(clWarningText);
   fBuilder.ColourTable.Add(clVarText);
@@ -167,12 +167,12 @@ var
   Idx: Integer; // loops compiler information table
 begin
   fBuilder.SetFontStyle([fsBold]);
-  fBuilder.SetParaSpacing(cParaSpacing, cParaSpacing div 3);
+  fBuilder.SetParaSpacing(ParaSpacing, ParaSpacing div 3);
   fBuilder.AddText(Heading);
   fBuilder.ResetCharStyle;
   fBuilder.EndPara;
   fBuilder.ClearParaFormatting;
-  fBuilder.SetFontSize(cParaFontSize);
+  fBuilder.SetFontSize(ParaFontSize);
   for Idx := Low(Info) to High(Info) do
   begin
     fBuilder.AddText(Info[Idx].Compiler);
@@ -187,8 +187,8 @@ end;
 
 procedure TRTFSnippetDoc.RenderDBInfo(const Text: string);
 begin
-  fBuilder.SetParaSpacing(cParaSpacing, 0);
-  fBuilder.SetFontSize(cDBInfoFontSize);
+  fBuilder.SetParaSpacing(ParaSpacing, 0);
+  fBuilder.SetFontSize(DBInfoFontSize);
   fBuilder.SetFontStyle([fsItalic]);
   fBuilder.AddText(Text);
   fBuilder.EndPara;
@@ -199,9 +199,9 @@ end;
 procedure TRTFSnippetDoc.RenderDescription(const Desc: string);
 begin
   fBuilder.ResetCharStyle;
-  fBuilder.SetParaSpacing(cParaSpacing, cParaSpacing);
+  fBuilder.SetParaSpacing(ParaSpacing, ParaSpacing);
   fBuilder.SetFontStyle([]);
-  fBuilder.SetFontSize(cParaFontSize);
+  fBuilder.SetFontSize(ParaFontSize);
   fBuilder.SetColour(clNone);
   fBuilder.AddText(Desc);
   fBuilder.EndPara;
@@ -241,7 +241,7 @@ begin
           case ActionElem.State of
             fsOpen:
             begin
-              fBuilder.SetParaSpacing(cParaSpacing, 0);
+              fBuilder.SetParaSpacing(ParaSpacing, 0);
               InBlock := True;
             end;
             fsClose:
@@ -257,7 +257,7 @@ begin
           case ActionElem.State of
             fsOpen:
             begin
-              fBuilder.SetParaSpacing(cParaSpacing, 0);
+              fBuilder.SetParaSpacing(ParaSpacing, 0);
               fBuilder.BeginGroup;
               fBuilder.SetFontStyle([fsBold]);
               InBlock := True;
@@ -344,7 +344,7 @@ begin
             fsOpen:
             begin
               fBuilder.BeginGroup;
-              fBuilder.SetFont(cMonoFontName);
+              fBuilder.SetFont(MonoFontName);
             end;
             fsClose:
               fBuilder.EndGroup;
@@ -358,7 +358,7 @@ end;
 procedure TRTFSnippetDoc.RenderHeading(const Heading: string);
 begin
   fBuilder.SetFontStyle([fsBold]);
-  fBuilder.SetFontSize(cHeadingFontSize);
+  fBuilder.SetFontSize(HeadingFontSize);
   fBuilder.AddText(Heading);
   fBuilder.EndPara;
 end;
@@ -383,9 +383,9 @@ procedure TRTFSnippetDoc.RenderTitledText(const Title, Text: string);
 begin
   fBuilder.ClearParaFormatting;
   fBuilder.ResetCharStyle;
-  fBuilder.SetFont(cMainFontName);
-  fBuilder.SetFontSize(cParaFontSize);
-  fBuilder.SetParaSpacing(cParaSpacing, 0);
+  fBuilder.SetFont(MainFontName);
+  fBuilder.SetFontSize(ParaFontSize);
+  fBuilder.SetParaSpacing(ParaSpacing, 0);
   fBuilder.BeginGroup;
   fBuilder.SetFontStyle([fsBold]);
   fBuilder.AddText(Title);
