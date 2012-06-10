@@ -108,6 +108,7 @@ type
     procedure IDetailPaneDisplayMgr.SelectTab = SelectTab;
     function FindTab(ViewKey: IViewKey): Integer;
     procedure Display(View: IView; const TabIdx: Integer);
+    procedure Clear;
     function CreateTab(View: IView): Integer;
     function IsEmptyTabSet: Boolean;
     procedure CloseTab(const TabIdx: Integer);
@@ -168,6 +169,11 @@ end;
 function TDetailFrame.CanSelectAll: Boolean;
 begin
   Result := not IsEmptyTabSet and (frmDetailView as ISelectionMgr).CanSelectAll;
+end;
+
+procedure TDetailFrame.Clear;
+begin
+  InternalDisplay(TViewFactory.CreateNulView);
 end;
 
 procedure TDetailFrame.CloseMultipleTabs(const KeepSelected: Boolean);

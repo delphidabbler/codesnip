@@ -122,6 +122,8 @@ type
 
     ///  <summary>Redisplays the current view in the selected detail pane tab,
     ///  if any.</summary>
+    ///  <remarks>If there are no tabs in detail pane, its display is cleared.
+    ///  </remarks>
     procedure RefreshDetailPage;
 
     ///  <summary>Makes preparations for a change in the database.</summary>
@@ -573,7 +575,9 @@ end;
 procedure TMainDisplayMgr.RefreshDetailPage;
 begin
   if not (fDetailsMgr as IDetailPaneDisplayMgr).IsEmptyTabSet then
-    DisplayInSelectedDetailView(CurrentView);
+    DisplayInSelectedDetailView(CurrentView)
+  else
+    (fDetailsMgr as IDetailPaneDisplayMgr).Clear;
 end;
 
 procedure TMainDisplayMgr.SelectAll;
