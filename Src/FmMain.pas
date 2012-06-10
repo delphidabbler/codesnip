@@ -890,8 +890,12 @@ procedure TMainForm.actPreferencesExecute(Sender: TObject);
   {Displays Preferences dialog box.
     @param Sender [in] Not used.
   }
+var
+  UpdateUI: Boolean;  // flag true if preference changes affect main window UI
 begin
-  fDialogMgr.ExecPreferencesDlg;
+  fDialogMgr.ExecPreferencesDlg(UpdateUI);
+  if UpdateUI then
+    fMainDisplayMgr.CompleteRefresh;
 end;
 
 procedure TMainForm.actPreviousTabExecute(Sender: TObject);

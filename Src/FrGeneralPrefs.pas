@@ -64,7 +64,11 @@ type
     lblUnits: TLabel;
     chkHideEmptySections: TCheckBox;
     chkSnippetsInNewTab: TCheckBox;
+    procedure chkHideEmptySectionsClick(Sender: TObject);
   strict private
+    var
+      ///  <summary>Flag indicating if changes affect UI.</summary>
+      fUIChanged: Boolean;
     procedure SelectUnits(const MU: TMeasurementUnits);
       {Selects combo box item associated with a measurement unit.
         @param Units [in] Measurement unit to be selected.
@@ -91,6 +95,10 @@ type
       {Called when page is deactivated. Stores information entered by user.
         @param Prefs [in] Object used to store information.
       }
+    ///  <summary>Checks if preference changes require that main window UI is
+    ///  updated.</summary>
+    ///  <remarks>Called when dialog box containing frame is closing.</remarks>
+    function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
@@ -168,6 +176,15 @@ begin
   TCtrlArranger.AlignVCentres(20, [lblUnits, cbUnits]);
   gbMeasurement.ClientHeight := TCtrlArranger.TotalControlHeight(gbMeasurement)
     + 12;
+end;
+
+procedure TGeneralPrefsFrame.chkHideEmptySectionsClick(Sender: TObject);
+  {Handles clicks on "Hide Empty Sections" check box. Flags UI preferences has
+  having changed.
+    @param Sender [in] Ignored.
+  }
+begin
+  fUIChanged := True;
 end;
 
 constructor TGeneralPrefsFrame.Create(AOwner: TComponent);
@@ -277,6 +294,11 @@ begin
       Break;
     end;
   end;
+end;
+
+function TGeneralPrefsFrame.UIUpdated: Boolean;
+begin
+  Result := fUIChanged;
 end;
 
 initialization
