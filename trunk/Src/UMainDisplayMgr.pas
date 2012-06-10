@@ -206,6 +206,11 @@ type
     ///  current tab view in details pane, if any.</remarks>
     procedure Refresh;
 
+    ///  <summary>Completely refreshes display.</summary>
+    ///  <remarks>Forces a total redraw of overview pane and all tabs of details
+    ///  pane.</remarks>
+    procedure CompleteRefresh;
+
     ///  <summary>Updates display to show current query.</summary>
     ///  <remarks>Overview pane is re-displayed only if query has changed.
     ///  Detail pane is refreshed.</remarks>
@@ -351,6 +356,12 @@ begin
   RefreshDetailPage;
 end;
 
+procedure TMainDisplayMgr.CompleteRefresh;
+begin
+  RedisplayOverview;
+  RefreshDetailPage;
+end;
+
 procedure TMainDisplayMgr.CopyToClipboard;
 begin
   (fDetailsMgr as IClipboardMgr).CopyToClipboard;
@@ -379,7 +390,6 @@ begin
     ClassName + '.Create: DetailsMgr must support IClipboardMgr');
   Assert(Supports(DetailsMgr, ISelectionMgr),
     ClassName + '.Create: DetailsMgr must support IDetailPaneDisplayMgr');
-
 
   inherited Create;
 
