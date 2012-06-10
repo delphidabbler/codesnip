@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes, Windows {for inlining}, Graphics,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects;
+  Compilers.UGlobals, DB.USnippet, UBaseObjects, USnippetIDs;
 
 
 type
@@ -176,11 +176,11 @@ type
   }
   ISelectionSearchCriteria = interface(ISearchCriteria)
     ['{6FA6AC34-439B-4744-ACBC-1836EE140EB6}']
-    function GetSelectedItems: TSnippetList;
+    function GetSelectedItems: ISnippetIDList;
       {Read accessor for SelectedItems property.
         @return List of snippets to be selected in search.
       }
-    property SelectedItems: TSnippetList read GetSelectedItems;
+    property SelectedItems: ISnippetIDList read GetSelectedItems;
       {List of snippets to be selected in search}
   end;
 
@@ -329,7 +329,14 @@ type
         @return ITextSearchCriteria interface to created object.
       }
     class function CreateSelectionSearchCriteria(
-      const SelectedItems: TSnippetList): ISelectionSearchCriteria;
+      const SelectedItems: ISnippetIDList): ISelectionSearchCriteria; overload;
+      {Creates a selection search criteria object with specified property
+      values.
+        @param SelectedItems [in] List snippets to be included in search.
+        @return ISelectionSearchCriteria interface to created object.
+      }
+    class function CreateSelectionSearchCriteria(
+      const SelectedSnippets: TSnippetList): ISelectionSearchCriteria; overload;
       {Creates a selection search criteria object with specified property
       values.
         @param SelectedItems [in] List snippets to be included in search.
@@ -354,7 +361,7 @@ uses
   // Delphi
   SysUtils, Character,
   // Project
-  UActiveText, UStrUtils;
+  IntfCommon, UActiveText, UStrUtils;
 
 
 type
@@ -689,8 +696,9 @@ type
     ISearchUIInfo
   )
   strict private
-    fSelectedItems: TSnippetList;
-      {List snippets to be selected in search}
+    var
+      fSelectedItems: ISnippetIDList;
+        {List snippets ids to be selected in search}
   strict protected
     function GlyphResourceName: string; override;
       {Provides name of required glyph bitmap in resources.
@@ -698,17 +706,14 @@ type
       }
   protected
     { ISelectionSearchCriteria methods }
-    function GetSelectedItems: TSnippetList;
+    function GetSelectedItems: ISnippetIDList;
       {Read accessor for SelectedItems property.
         @return List of snippets to be selected in search.
       }
   public
-    constructor Create(const SelectedItems: TSnippetList);
+    constructor Create(const SelectedItems: ISnippetIDList);
       {Class constructor. Sets up object with specified property values.
         @param SelectedItems [in] List of snippets to be selected in search.
-      }
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
       }
   end;
 
@@ -1072,7 +1077,7 @@ function TSelectionSearch.Match(const Snippet: TSnippet): Boolean;
     @return True if snippet matches criteria, false if not.
   }
 begin
-  Result := fCriteria.SelectedItems.Contains(Snippet);
+  Result := fCriteria.SelectedItems.Contains(Snippet.ID);
 end;
 
 { TXRefSearch }
@@ -1361,25 +1366,17 @@ end;
 { TSelectionSearchCriteria }
 
 constructor TSelectionSearchCriteria.Create(
-  const SelectedItems: TSnippetList);
+  const SelectedItems: ISnippetIDList);
   {Class constructor. Sets up object with specified property values.
     @param SelectedItems [in] List of snippets to be selected in search.
   }
 begin
   inherited Create;
-  fSelectedItems := TSnippetList.Create;
-  fSelectedItems.Assign(SelectedItems);
+  fSelectedItems := TSnippetIDList.Create;
+  (fSelectedItems as IAssignable).Assign(SelectedItems);
 end;
 
-destructor TSelectionSearchCriteria.Destroy;
-  {Class destructor. Tears down object.
-  }
-begin
-  FreeAndNil(fSelectedItems);
-  inherited;
-end;
-
-function TSelectionSearchCriteria.GetSelectedItems: TSnippetList;
+function TSelectionSearchCriteria.GetSelectedItems: ISnippetIDList;
   {Read accessor for SelectedItems property.
     @return List of snippets to be selected in search.
   }
@@ -1576,11 +1573,23 @@ begin
 end;
 
 class function TSearchCriteriaFactory.CreateSelectionSearchCriteria(
-  const SelectedItems: TSnippetList): ISelectionSearchCriteria;
+  const SelectedSnippets: TSnippetList): ISelectionSearchCriteria;
   {Creates a selection search criteria object with specified property values.
     @param SelectedItems [in] List of snippets to be included in search.
     @return ISelectionSearchCriteria interface to created object.
   }
+var
+  SnippetIDs: ISnippetIDList; // snippet id list
+  Snippet: TSnippet;          // each snippet in SelectedSnippets
+begin
+  SnippetIDs := TSnippetIDList.Create;
+  for Snippet in SelectedSnippets do
+    SnippetIDs.Add(Snippet.ID);
+  Result := TSelectionSearchCriteria.Create(SnippetIDs);
+end;
+
+class function TSearchCriteriaFactory.CreateSelectionSearchCriteria(
+  const SelectedItems: ISnippetIDList): ISelectionSearchCriteria;
 begin
   Result := TSelectionSearchCriteria.Create(SelectedItems);
 end;
