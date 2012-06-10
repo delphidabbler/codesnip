@@ -32,14 +32,29 @@ Changes
 --------------------------------------------------------------------------------
 
 * Features:
+  o Compiler warnings can now be switched on as well as off in generated code.
+  o Contents of a category can be printed: category name used in header then sub-heading for each snippet and description of snippet follows.
 
 * Refactorings and similar:
+  o Updated browser interface code with IE 8 specific flags.
+  o New code to "box" value types as objects.
+  o Warnings code and Code Generation tab of preferences dialogue box.
+  o Some renamings.
+  o Some new helper methods added to some classes.
+  o HTML page loading code for detail pane refactored.
 
 * Bug fixes:
+  o Unreported bug in logic of code that generates program ID: not causing a problem, just wrong!
+  o Bug #2868708 fixed by changing implementation of TTextSearchCriteria: edited snippets no longer are lost from manual snippet selections unless name changes.
+  o Bug #3534138 fixed: details pane display is now emptied when last tab is closed: previously content of last closed tab remained on screen.
 
 * Help file:
+  o Updated re program changes.
+  o Changed spelling of some words to UK English.
 
 * Documentation:
+  o Privacy statement updated re changes in data recorded via database update logons
+  o Licensing docs updated re MPL 2.0
 
 * RTF Support:
 
@@ -48,6 +63,14 @@ Changes
 * Printing:
 
 * Dialogue boxes:
+  o Dependencies dialogue box now displays snippets that depend upon a snippet in addition to its own dependencies. Original display no longer includes Snippet kinds.
+  o Changes to Code Generation tab of preferences dialogue box:
+    - updated to allow new feature to switch warnings on or off to be specified
+    - default warnings can now be restored
+    - warnings list view can now be sorted on any column
+    - revised and extended Alt key shortcuts
+  o Code Import dialogue box now sorts imported units in list view and scrolls to make renamed snippets visible.
+  o About box program tab updated with credits for new third party code.
 
 * Database:
 
@@ -59,8 +82,14 @@ Changes
     *** INCLUDE IN CHANGE LOG ONLY IF THIS IS MADE USE-CONFIGURABLE
 
 * UI changes:
+  o Minor tweak to text displayed for empty sections in details pane.
+  o Now displays buttons next to non-empty section heads in overview panes, and lines have been removed from treeview.
+  o Ctrl + arrow keys can now be used to scroll list view vertically and horizontally without changing selection in overview pane.
+  o Main window UI is now refresshed whenever changes that affect UI are made in preferences dialogue box.
 
 * Web Services:
+  o Logon to database update web service now sends info about OS and IE version.
+
 
 * Syntax highlighter:
 
@@ -69,3 +98,4 @@ Changes
 * Installer:
 
 * Misc:
+  o Some source code now licensed with MPL v2.0
