@@ -1197,7 +1197,6 @@ var
   Decl: string;
   DeclBody: string;
 begin
-  // TODO: add comments
   SplitDeclFromDefn(Snippet.SourceCode, Decl, Dummy);
   Decl := StrTrim(Decl);
   case CommentStyle of
@@ -1226,7 +1225,6 @@ class function TClassFormatter.FormatClassDefinition(const Snippet: TSnippet):
 var
   Dummy: string;
 begin
-  // TODO: remove leading comments / white space
   SplitDeclFromDefn(Snippet.SourceCode, Dummy, Result);
 end;
 
