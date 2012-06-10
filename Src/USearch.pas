@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -37,6 +37,7 @@
 
 unit USearch;
 
+// TODO: Rewrite this unit - it's all become rather messy!!
 
 interface
 
@@ -261,6 +262,7 @@ type
       {Criteria to be applied to search}
   end;
 
+type
   {
   TSearchFactory:
     Static class that creates and clones the different types of search objects.
@@ -291,6 +293,9 @@ type
         @param Criteria [in] Criteria to apply to search.
         @return ISearch interface to cross-reference search object instance.
       }
+    ///  <summary>Creates and returns a compound search for two given searches.
+    ///  </summary>
+    class function CreateCompoundSearch(Search1, Search2: ISearch): ISearch;
     class function CreateNulSearch: ISearch;
       {Creates a nul search object.
         @return ISearch interface to nul search object instance.
@@ -530,6 +535,45 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
+  end;
+
+type
+  ///  <summary>Class that compounds two searches together and performs both.
+  ///  </summary>
+  ///  <remarks>
+  ///  <para>Multiple searches can be compounded by compounding a simple
+  ///  search with an existing compound search.</para>
+  ///  <para>Null searches cannot be included in a compound search.</para>
+  ///  </remarks>
+  TCompoundSearch = class(TInterfacedObject, ISearch)
+  strict private
+    var
+      ///  <summary>First search.</summary>
+      fSearch1: ISearch;
+      ///  <summary>Second search.</summary>
+      fSearch2: ISearch;
+  public
+    ///  <summary>Creates search object that compounds the two given searches.
+    ///  </summary>
+    constructor Create(Search1, Search2: ISearch);
+    ///  <summary>Read accessor for Criteria property.</summary>
+    ///  <remarks>
+    ///  <para>This is the Criteria property of the second search.</para>
+    ///  <para>Method of ISearch.</para>
+    ///  </remarks>
+    function GetCriteria: ISearchCriteria;
+    ///  <summary>Executes the search.</summary>
+    ///  <param name="InList">TSnippetList [in] List of snippets to which search
+    ///  will be applied.</param>
+    ///  <param name="FoundList">TSnippetList [in] Receives list of snippets
+    ///  which meet search criteria.</param>
+    ///  <returns>Boolean. True if one or more snippets meet search criteria,
+    ///  False if not.</returns>
+    ///  <remarks>Method of ISearch</remarks>
+    function Execute(const InList, FoundList: TSnippetList): Boolean;
+    ///  <summary>Informs if this search a null search. Always returns False
+    ///  because this search is not null.</summary>
+    function IsNul: Boolean;
   end;
 
   {
@@ -1209,6 +1253,47 @@ begin
   Result := fBitmap;
 end;
 
+{ TCompoundSearch }
+
+constructor TCompoundSearch.Create(Search1, Search2: ISearch);
+begin
+  Assert(not Search1.IsNul, ClassName + '.Create: Search1 is null');
+  Assert(not Search2.IsNul, ClassName + '.Create: Search2 is null');
+  inherited Create;
+  fSearch1 := Search1;
+  fSearch2 := Search2;
+end;
+
+function TCompoundSearch.Execute(const InList, FoundList: TSnippetList):
+  Boolean;
+var
+  InterimList: TSnippetList;
+begin
+  InterimList := TSnippetList.Create;
+  try
+    if not fSearch1.Execute(InList, InterimList) then
+    begin
+      FoundList.Clear;
+      Exit(False);
+    end;
+    if not fSearch2.Execute(InterimList, FoundList) then
+      Exit(False);  // FoundList should be empty
+    Result := True;
+  finally
+    InterimList.Free;
+  end;
+end;
+
+function TCompoundSearch.GetCriteria: ISearchCriteria;
+begin
+  Result := fSearch2.Criteria;
+end;
+
+function TCompoundSearch.IsNul: Boolean;
+begin
+  Result := False;
+end;
+
 { TNulSearch }
 
 constructor TNulSearch.Create;
@@ -1517,6 +1602,12 @@ class function TSearchFactory.CreateCompilerSearch(
   }
 begin
   Result := TCompilerSearch.Create(Criteria);
+end;
+
+class function TSearchFactory.CreateCompoundSearch(Search1,
+  Search2: ISearch): ISearch;
+begin
+  Result := TCompoundSearch.Create(Search1, Search2);
 end;
 
 class function TSearchFactory.CreateNulSearch: ISearch;
