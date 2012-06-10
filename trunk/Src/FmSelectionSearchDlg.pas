@@ -251,7 +251,7 @@ procedure TSelectionSearchDlg.SelectionChanged(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  btnOK.Enabled := frmSelect.SelectedSnippets.Count > 0;
+  btnOK.Enabled := not frmSelect.SelectedSnippets.IsEmpty;
 end;
 
 procedure TSelectionSearchDlg.SetSelectedSnippets(const Value: TSnippetList);

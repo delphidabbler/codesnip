@@ -242,7 +242,7 @@ procedure TCodeSubmitDlg.BuildSubmission;
   {Builds XML document containing details of submission and stores in a stream.
   }
 begin
-  Assert(frmSnippets.SelectedSnippets.Count > 0,
+  Assert(not frmSnippets.SelectedSnippets.IsEmpty,
     ClassName + '.BuildSubmission: No snippets selected');
   Assert(edName.Text <> '',
     ClassName + '.BuildSubmission: No user name provided');

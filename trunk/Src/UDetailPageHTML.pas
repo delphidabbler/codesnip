@@ -477,7 +477,7 @@ end;
 
 function TSnippetListPageHTML.HaveSnippets: Boolean;
 begin
-  Result := Snippets.Count > 0;
+  Result := not Snippets.IsEmpty;
 end;
 
 function TSnippetListPageHTML.SnippetTableInner: string;

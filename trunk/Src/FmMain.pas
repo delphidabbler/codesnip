@@ -852,7 +852,7 @@ procedure TMainForm.ActNonEmptyDBUpdate(Sender: TObject);
     @param Sender [in] Action triggering this event.
   }
 begin
-  (Sender as TAction).Enabled := Database.Snippets.Count > 0;
+  (Sender as TAction).Enabled := not Database.Snippets.IsEmpty;
 end;
 
 procedure TMainForm.ActOverviewTabExecute(Sender: TObject);
