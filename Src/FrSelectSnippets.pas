@@ -86,7 +86,7 @@ function TSelectSnippetsFrame.CanAddCatNode(const Cat: TCategory): Boolean;
     @return True if category contains any snippets.
   }
 begin
-  Result := Cat.Snippets.Count > 0;
+  Result := not Cat.Snippets.IsEmpty;
 end;
 
 function TSelectSnippetsFrame.CanAddSnippetNode(
