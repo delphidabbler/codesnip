@@ -70,6 +70,9 @@ type
       fPopupMenuMgr: TWBPopupMenuMgr;
       ///  <summary>Configures command bars (i.e. browser popups).</summary>
       fCommandBars: TCommandBarMgr;
+      ///  <summary>Generates and loads HTML representing a view into browser
+      ///  control.</summary>
+      fPageLoader: TDetailPageLoader;
     ///  <summary>Scrolls browser control to top.</summary>
     ///  <remarks>This method is used to ensure that newly loaded documents are
     ///  not partially scrolled.</remarks>
@@ -275,10 +278,13 @@ begin
   end;
   // Set pop-up menu handler for browser control
   WBController.UIMgr.OnMenuPopupEx := PopupMenuHandler;
+  // Set up HTML page loader
+  fPageLoader := TDetailPageLoader.Create(WBController);
 end;
 
 destructor TDetailViewFrame.Destroy;
 begin
+  fPageLoader.Free;
   fCommandBars.Free;
   inherited;
 end;
@@ -288,7 +294,7 @@ var
   TextSearchCriteria: ITextSearchCriteria;  // criteria for any text search
 begin
   // Load view's HTML into browser control
-  TDetailPageLoader.LoadPage(View, WBController);
+  fPageLoader.LoadPage(View);
   // Clear any existing text selection
   WBController.UIMgr.ClearSelection;
   // If we're viewing a snippet and there's an active text search, highlight
