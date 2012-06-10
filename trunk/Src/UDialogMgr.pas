@@ -78,8 +78,10 @@ type
         @param ASearch [out] Set to object recording search details if user OKs.
         @return True if user OKs or false if user cancels.
       }
-    function ExecPreferencesDlg: Boolean;
+    function ExecPreferencesDlg(out UpdateUI: Boolean): Boolean;
       {Display Preferences dialog box.
+        @param UpdateUI [out] Flag indicates if UI needs to be updated as a
+          result of changes to preferences.
         @return True if user OKs and preferences are updated or False if
           cancelled.
       }
@@ -187,12 +189,14 @@ begin
   Result := TPageSetupDlgMgr.Execute(Owner);
 end;
 
-function TDialogMgr.ExecPreferencesDlg: Boolean;
+function TDialogMgr.ExecPreferencesDlg(out UpdateUI: Boolean): Boolean;
   {Display Preferences dialog box.
+    @param UpdateUI [out] Flag indicates if UI needs to be updated as a result
+      of changes to preferences.
     @return True if user OKs and preferences are updated or False if cancelled.
   }
 begin
-  Result := TPreferencesDlg.Execute(Owner);
+  Result := TPreferencesDlg.Execute(Owner, UpdateUI);
 end;
 
 function TDialogMgr.ExecPrintDlg: Boolean;

@@ -204,6 +204,11 @@ type
     ///  modified by user.</summary>
     ///  <remarks>Called when page is deactivated.</remarks>
     procedure Deactivate(const Prefs: IPreferences); override;
+    ///  <summary>Checks if preference changes require that main window UI is
+    ///  updated.</summary>
+    ///  <remarks>Called when dialog box containing frame is closing. Always
+    ///  returns False because these preferences never affect UI.</remarks>
+    function UIUpdated: Boolean; override;
     ///  <summary>Arranges controls on frame.</summary>
     ///  <remarks>Called after frame has been sized.</remarks>
     procedure ArrangeControls; override;
@@ -734,6 +739,11 @@ begin
   LI.SubItems[0] := FormatCompilerVer(Warning.MinCompiler);
   LI.SubItems[1] := StateDescs[Warning.State];
   (LI as TWarningListItem).Warning := Warning;
+end;
+
+function TCodeGenPrefsFrame.UIUpdated: Boolean;
+begin
+  Result := False;
 end;
 
 procedure TCodeGenPrefsFrame.UpdateControls;

@@ -94,6 +94,7 @@ type
     fColorBox: TColorBoxEx;     // Custom colour combo box component
     fColorDlg: TColorDialogEx;  // Custom colour dialog box (use with combo)
     fAttrs: IHiliteAttrs;       // Loads and records user's hilite preferences
+    fChanged: Boolean;          // Flags if any preference has changed
     procedure PopulateElementsList;
       {Populates list box containing customisable highlighter attribute
       elements.
@@ -145,6 +146,10 @@ type
       {Called when page is deactivated. Stores information entered by user.
         @param Prefs [in] Object used to store information.
       }
+    ///  <summary>Checks if preference changes require that main window UI is
+    ///  updated.</summary>
+    ///  <remarks>Called when dialog box containing frame is closing.</remarks>
+    function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
@@ -287,6 +292,7 @@ procedure THiliterPrefsFrame.btnResetClick(Sender: TObject);
 begin
   fAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
   UpdateControls;
+  fChanged := True;
 end;
 
 procedure THiliterPrefsFrame.btnStyleClick(Sender: TObject);
@@ -311,6 +317,7 @@ procedure THiliterPrefsFrame.cbColourChange(Sender: TObject);
 begin
   CurrentElement.ForeColor := fColorBox.Selected;
   UpdatePreview;
+  fChanged := True;
 end;
 
 procedure THiliterPrefsFrame.cbFontNameChange(Sender: TObject);
@@ -322,6 +329,7 @@ begin
   inherited;
   fAttrs.FontName := cbFontName.Text;
   UpdatePreview;
+  fChanged := True;
 end;
 
 procedure THiliterPrefsFrame.cbFontSizeChange(Sender: TObject);
@@ -341,6 +349,7 @@ begin
     // Combo has valid value entered: update
     fAttrs.FontSize := Size;
     UpdatePreview;
+    fChanged := True;
   end
   else
   begin
@@ -367,6 +376,7 @@ begin
   else
     Elem.FontStyle := Elem.FontStyle - [TFontStyle(CB.Tag)];
   UpdatePreview;
+  fChanged := True;
 end;
 
 constructor THiliterPrefsFrame.Create(AOwner: TComponent);
@@ -426,6 +436,9 @@ begin
   miDelphi2006.Tag := Ord(hsDelphi2006);
   miVisualStudio.Tag := Ord(hsVisualStudio);
   miNoHilite.Tag := Ord(hsNul);
+
+  // Clear dirty flag
+  fChanged := False;
 end;
 
 function THiliterPrefsFrame.CurrentElement: IHiliteElemAttrs;
@@ -587,6 +600,12 @@ begin
     TPredefinedHiliteStyle((Sender as TMenuItem).Tag)
   );
   UpdateControls;
+  fChanged := True;
+end;
+
+function THiliterPrefsFrame.UIUpdated: Boolean;
+begin
+  Result := fChanged;
 end;
 
 procedure THiliterPrefsFrame.UpdateControls;

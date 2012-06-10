@@ -83,6 +83,9 @@ type
     var
       ///  <summary>Local copy of preferences.</summary>
       fLocalPrefs: IPreferences;
+      ///  <summary>Records if main UI needs to be updated to reflect changed
+      ///  preferences.</summary>
+      fUpdateUI: Boolean;
     ///  <summary>Creates the required frames and displays each in a tab sheet
     ///  within the page control.</summary>
     ///  <param name="FrameClasses">array of TPrefsFrameClass [in] Class
@@ -122,17 +125,33 @@ type
     ///  </param>
     ///  <param name="Pages">array of TPrefsFrameClass [in] Class references of
     ///  frames to be displayed.</param>
+    ///  <param name="UpdateUI">Boolean [out] Indicates if main UI needs to
+    ///  be updated as a result of preference changes.</param>
+    ///  <returns>True if user clicks OK to accept changes or False if user
+    ///  cancels and no changes made.</returns>
+    class function Execute(AOwner: TComponent;
+      const Pages: array of TPrefsFrameClass; out UpdateUI: Boolean): Boolean;
+      overload;
+    ///  <summary>Displays dialog with pages for each specified preferences
+    ///  frame.</summary>
+    ///  <param name="AOwner">TComponent [in] Component that owns dialog.
+    ///  </param>
+    ///  <param name="Pages">array of TPrefsFrameClass [in] Class references of
+    ///  frames to be displayed.</param>
     ///  <returns>True if user clicks OK to accept changes or False if user
     ///  cancels and no changes made.</returns>
     class function Execute(AOwner: TComponent;
       const Pages: array of TPrefsFrameClass): Boolean; overload;
-    ///  <summary>Displays preferences dialog displaying all registered
-    ///  preference frames.</summary>
+    ///  <summary>Displays preferences dialog with all registered preference
+    ///  frames.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns dialog.
     ///  </param>
+    ///  <param name="UpdateUI">Boolean [out] Indicates if main UI needs to
+    ///  be updated as a result of preference changes.</param>
     ///  <returns>True if user clicks OK to accept changes or False if user
     ///  cancels and no changes made.</returns>
-    class function Execute(AOwner: TComponent): Boolean; overload;
+    class function Execute(AOwner: TComponent; out UpdateUI: Boolean): Boolean;
+      overload;
     ///  <summary>Registers given preferences frame class for inclusion in the
     ///  preferences dialog box.</summary>
     ///  <remarks>Registered frames are created when the dialog box is displayed
@@ -196,7 +215,10 @@ begin
   inherited;
   // Get each visible page to update local preferences
   for TabIdx := 0 to Pred(pcMain.PageCount) do
+  begin
     MapTabSheetToPage(TabIdx).SavePrefs(fLocalPrefs);
+    fUpdateUI := fUpdateUI or MapTabSheetToPage(TabIdx).UIUpdated;
+  end;
   // Update global preferences with data from local preferences object
   (Preferences as IAssignable).Assign(fLocalPrefs);
 end;
@@ -240,18 +262,21 @@ begin
 end;
 
 class function TPreferencesDlg.Execute(AOwner: TComponent;
-  const Pages: array of TPrefsFrameClass): Boolean;
+  const Pages: array of TPrefsFrameClass; out UpdateUI: Boolean): Boolean;
 begin
   with InternalCreate(AOwner) do
     try
       CreatePages(Pages);
       Result := ShowModal = mrOK;
+      if Result then
+        UpdateUI := fUpdateUI;
     finally
       Free;
     end;
 end;
 
-class function TPreferencesDlg.Execute(AOwner: TComponent): Boolean;
+class function TPreferencesDlg.Execute(AOwner: TComponent;
+  out UpdateUI: Boolean): Boolean;
 var
   FrameClasses: array of TPrefsFrameClass;  // array of preference frame classes
   Idx: Integer;                             // loops through registered frames
@@ -261,7 +286,15 @@ begin
   SetLength(FrameClasses, fPages.Count);
   for Idx := 0 to Pred(fPages.Count) do
     FrameClasses[Idx] := fPages[Idx];
-  Result := Execute(AOwner, FrameClasses);
+  Result := Execute(AOwner, FrameClasses, UpdateUI);
+end;
+
+class function TPreferencesDlg.Execute(AOwner: TComponent;
+  const Pages: array of TPrefsFrameClass): Boolean;
+var
+  Dummy: Boolean; // unused UpdateUI parameters
+begin
+  Result := Execute(AOwner, Pages, Dummy);
 end;
 
 function TPreferencesDlg.GetSelectedPage: TPrefsBaseFrame;

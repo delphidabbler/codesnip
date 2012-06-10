@@ -60,6 +60,7 @@ inherited GeneralPrefsFrame: TGeneralPrefsFrame
       Height = 17
       Caption = 'Hide empty section headings in overview'
       TabOrder = 1
+      OnClick = chkHideEmptySectionsClick
     end
     object chkSnippetsInNewTab: TCheckBox
       Left = 3
