@@ -96,6 +96,8 @@ type
     ///  <summary>Adds given snippet ID record to list.</summary>
     ///  <remarks>Returns index of new record in list.</remarks>
     function Add(const SnippetID: TSnippetID): Integer;
+    ///  <summary>Checks if list contains given snippet ID.</summary>
+    function Contains(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Returns number of snippet ID records in list.</summary>
     function Count: Integer;
     ///  <summary>Gets snippet ID record from list by index.</summary>
@@ -125,6 +127,8 @@ type
     ///  <summary>Adds given snippet ID record to list.</summary>
     ///  <remarks>Returns index of new record in list.</remarks>
     function Add(const SnippetID: TSnippetID): Integer;
+    ///  <summary>Checks if list contains given snippet ID.</summary>
+    function Contains(const SnippetID: TSnippetID): Boolean;
     ///  <summary>Returns number of snippet ID records in list.</summary>
     function Count: Integer;
     ///  <summary>Gets snippet ID record from list by index.</summary>
@@ -209,6 +213,11 @@ end;
 procedure TSnippetIDList.Clear;
 begin
   fList.Clear;
+end;
+
+function TSnippetIDList.Contains(const SnippetID: TSnippetID): Boolean;
+begin
+  Result := fList.Contains(SnippetID);
 end;
 
 function TSnippetIDList.Count: Integer;
