@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -662,14 +662,8 @@ begin
   TextExtent := ButtonTextExtent;
   // Size of each button to be large enough to hold largest caption, but ensure
   // buttons are no smaller than default size. All buttons have same size.
-  BtnSize.cx := Max(
-    fButtons[0].Width,
-    TextExtent.cx + fButtons[0].Margins.Left + fButtons[0].Margins.Right
-  );
-  BtnSize.cy := Max(
-    fButtons[0].Height,
-    TextExtent.cy + fButtons[0].Margins.Top + fButtons[0].Margins.Bottom
-  );
+  BtnSize.cx := Max(fButtons[0].Width, TextExtent.cx + 12);
+  BtnSize.cy := Max(fButtons[0].Height, TextExtent.cy + 10);
   SizeButtons(BtnSize);
 end;
 
