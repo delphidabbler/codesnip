@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -55,17 +55,21 @@ type
   }
   IQuery = interface(IInterface)
     ['{10998D72-CD5D-482B-9626-D771A50C53BA}']
-    function ApplySearch(const Search: ISearch): Boolean;
+    function ApplySearch(const Search: ISearch; const Refine: Boolean): Boolean;
       {Runs query by applying a search to the whole database. If search succeeds
       matching snippets and search are stored in query's Selection and Search
       properties. If search fails Selection and Search are left unchanged.
         @param Search [in] Search to apply.
+        @param Refine [in] Flag indicating whether any existing search should
+          be refined (True) or search should be of whole databas (False).
         @return True if search succeeds and False if it fails.
       }
     procedure Reset;
       {Resets query. Selection property is set to all snippets in database and
       Search property is set to nul search.
       }
+    ///  <summary>Checks if there is an active search.</summary>
+    function IsSearchActive: Boolean;
     function Refresh: Boolean;
       {Re-applies the current search if one exists.
         @return True if search was re-applied, False if there was no search to
@@ -129,7 +133,7 @@ type
   strict private
     var
       fSelection: TSnippetList;   // List of snippets selected by current query
-      fSearch: ISearch;           // Search object used by current query
+      fCurrentSearch: ISearch;    // Search object used by current query
     class var
       fInstance: IQuery;          // Singleton object instance of this class
     class function GetInstance: IQuery; static;
@@ -138,13 +142,19 @@ type
       }
   protected // do not make strict
     { IQuery methods }
-    function ApplySearch(const Search: ISearch): Boolean;
+    function ApplySearch(const Search: ISearch; const Refine: Boolean): Boolean;
       {Runs query by applying a search to the whole database. If search succeeds
       matching snippets and search are stored in query's Selection and Search
       properties. If search fails Selection and Search are left unchanged.
         @param Search [in] Search to apply.
+        @param Refine [in] Flag indicating whether any existing search should
+          be refined (True) or search should be of whole databas (False).
         @return True if search succeeds and False if it fails.
       }
+    ///  <summary>Checks if there is an active search.</summary>
+    ///  <remarks>A search is active if the current search is not the null
+    ///  search.</remarks>
+    function IsSearchActive: Boolean;
     function Refresh: Boolean;
       {Re-applies the current search if one exists.
         @return True if search was re-applied, False if there was no search to
@@ -196,30 +206,38 @@ end;
 
 { TQuery }
 
-function TQuery.ApplySearch(const Search: ISearch): Boolean;
+function TQuery.ApplySearch(const Search: ISearch; const Refine: Boolean):
+  Boolean;
   {Runs query by applying a search to the whole database. If search succeeds
   matching snippets and search are stored in query's Selection and Search
   properties. If search fails Selection and Search are left unchanged.
-    @param Search [in] Search to apply.
+    @param Search [in] Search to apply. Must not be nil or null search.
+    @param Refine [in] Flag indicating whether any existing search should be
+      refined (True) or search should be of whole databas (False).
     @return True if search succeeds and False if it fails.
   }
 var
   FoundList: TSnippetList;  // list receives found snippets
 begin
   Assert(Assigned(Search), ClassName + '.ApplySearch: Search is nil');
+  Assert(not Search.IsNul, ClassName + '.ApplySearch: Search can''t be null');
   FoundList := TSnippetList.Create;
   try
-    // Get list of snippets that match search
-    // if there are no snippets found we leave current selection alone
-    Result := (Search as ISearch).Execute(Database.Snippets, FoundList);
+    if IsSearchActive and not Refine then
+      Reset;
+    Result := (Search as ISearch).Execute(fSelection, FoundList);
     if Result then
     begin
-      // Search succeeded: record search and list of snippets
-      fSearch := Search;
+      if Refine and IsSearchActive then
+        fCurrentSearch := TSearchFactory.CreateCompoundSearch(
+          fCurrentSearch, Search
+        )
+      else
+        fCurrentSearch := Search;
       fSelection.Assign(FoundList);
     end;
   finally
-    FreeAndNil(FoundList);
+    FoundList.Free;
   end;
 end;
 
@@ -227,8 +245,8 @@ destructor TQuery.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  FreeAndNil(fSelection);
-  fSearch := nil;
+  fSelection.Free;
+  fCurrentSearch := nil;
   inherited;
 end;
 
@@ -256,7 +274,7 @@ function TQuery.GetCurrentSearch: ISearch;
     @return Required search object.
   }
 begin
-  Result := fSearch;
+  Result := fCurrentSearch;
 end;
 
 class function TQuery.GetInstance: IQuery;
@@ -289,14 +307,19 @@ begin
   Reset;
 end;
 
+function TQuery.IsSearchActive: Boolean;
+begin
+  Result := not fCurrentSearch.IsNul;
+end;
+
 function TQuery.Refresh: Boolean;
   {Re-applies the current search if one exists.
     @return True if search was re-applied, False if there was no search to
       apply.
   }
 begin
-  if Assigned(fSearch) then
-    Result := ApplySearch(fSearch)
+  if Assigned(fCurrentSearch) then
+    Result := ApplySearch(fCurrentSearch, False)
   else
     Result := False;
 end;
@@ -307,7 +330,7 @@ procedure TQuery.Reset;
   }
 begin
   fSelection.Assign(Database.Snippets);
-  fSearch := TSearchFactory.CreateNulSearch;
+  fCurrentSearch := TSearchFactory.CreateNulSearch;
 end;
 
 procedure TQuery.Update;
