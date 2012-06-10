@@ -130,6 +130,7 @@ type
     procedure SelectTab(const TabIdx: Integer);
     function FindTab(ViewKey: IViewKey): Integer;
     procedure Display(View: IView; const TabIdx: Integer);
+    procedure Clear;
     function CreateTab(View: IView): Integer;
     function IsEmptyTabSet: Boolean;
     procedure CloseTab(const TabIdx: Integer);
