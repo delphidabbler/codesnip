@@ -384,10 +384,13 @@ type
     procedure ReloadDatabase;
       {Reloads the whole database in a thread.
       }
-    procedure DoSearchFilter(const Search: ISearch);
+    procedure DoSearchFilter(const Search: ISearch;
+      const Refine: Boolean = False);
       {Filters main display using search object and displays message if no
       snippets found.
         @param Search [in] Search object to filter by.
+        @param Refine [in] Flag indicating whether any existing search should
+          be refined (True) or search should be of whole databas (False).
       }
   strict protected
     procedure InitForm; override;
@@ -665,7 +668,7 @@ procedure TMainForm.actFindClearUpdate(Sender: TObject);
   }
 begin
   // We have an active search if current search's criteria is not nul
-  (Sender as TAction).Enabled := not Query.CurrentSearch.IsNul;
+  (Sender as TAction).Enabled := Query.IsSearchActive;
 end;
 
 procedure TMainForm.actFindCompilerExecute(Sender: TObject);
@@ -674,12 +677,13 @@ procedure TMainForm.actFindCompilerExecute(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  Search: USearch.ISearch;  // text search object
+  Search: USearch.ISearch;  // compiler search object
+  Refine: Boolean;          // flag indicating if existing search to be refined
 begin
   // Display Find Compiler dialog box to enable user to enter search criteria
   // (dialog box creates and returns search object from entered criteria)
-  if fDialogMgr.ExecFindCompilerDlg(Search) then
-    DoSearchFilter(Search);
+  if fDialogMgr.ExecFindCompilerDlg(Search, Refine) then
+    DoSearchFilter(Search, Refine);
 end;
 
 procedure TMainForm.actFindTextExecute(Sender: TObject);
@@ -689,11 +693,12 @@ procedure TMainForm.actFindTextExecute(Sender: TObject);
   }
 var
   Search: USearch.ISearch;  // text search object
+  Refine: Boolean;          // flag indicating if existing search to be refined
 begin
   // Display Find Text dialog box to enable user to enter search criteria
   // (dialog box creates and returns search object from entered criteria)
-  if fDialogMgr.ExecFindTextDlg(Search) then
-    DoSearchFilter(Search);
+  if fDialogMgr.ExecFindTextDlg(Search, Refine) then
+    DoSearchFilter(Search, Refine);
 end;
 
 procedure TMainForm.actFindXRefsExecute(Sender: TObject);
@@ -1303,21 +1308,41 @@ begin
     fStatusBarMgr.ShowHint(Hint);
 end;
 
-procedure TMainForm.DoSearchFilter(const Search: USearch.ISearch);
+procedure TMainForm.DoSearchFilter(const Search: USearch.ISearch;
+  const Refine: Boolean);
   {Filters main display using search object, displays message if no snippets
   found and updates status bar as required.
     @param Search [in] Search object to filter by.
+    @param Refine [in] Flag indicating whether any existing search should
+      be refined (True) or search should be of whole databas (False).
   }
-resourcestring
-  sNoSnippets = 'No snippets found.'; // dialog box messages
-begin
-  if Query.ApplySearch(Search) then
+var
+  PrevSearchExists: Boolean;  // flags if a search was active before this search
+
+  ///  Returns a suitable error message depending on if a search was active
+  ///  before this search was run and what action was taken on failure.
+  function FailureMessage: string;
+  resourcestring
+    // dialog box message
+    sFailureMsg = 'The search did not find any snippets.';
+    sSearchNotChanged = 'No changes were made to the existing search results.';
+    sDatabaseSelected = 'The previous search results have been cleared.';
   begin
-    fMainDisplayMgr.UpdateDisplayedQuery;
-    fStatusBarMgr.Update;
-  end
-  else
-    TMessageBox.Information(Self, sNoSnippets);
+    Result := sFailureMsg;
+    if PrevSearchExists then
+      if Refine then
+        Result := Result + EOL2 + sSearchNotChanged
+      else
+        Result := Result + EOL2 + sDatabaseSelected;
+  end;
+
+begin
+  // Check if a search is already active: needed to create error message
+  PrevSearchExists := Query.IsSearchActive;
+  if not Query.ApplySearch(Search, Refine) then
+    TMessageBox.Information(Self, FailureMessage);
+  fMainDisplayMgr.UpdateDisplayedQuery;
+  fStatusBarMgr.Update;
 end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
@@ -1625,7 +1650,7 @@ procedure TMainForm.SnippetsChangeHandler(Sender: TObject;
     @para EvtInfo [in] Object providing information about the event.
   }
 begin
-  // TODO: Renamed this as DBChangeHandler
+  // TODO: Rename this as DBChangeHandler
   case (EvtInfo as IDatabaseChangeEventInfo).Kind of
     evChangeBegin:
       Enabled := False;

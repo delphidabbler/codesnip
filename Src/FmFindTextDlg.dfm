@@ -5,10 +5,10 @@ inherited FindTextDlg: TFindTextDlg
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Width = 357
-    Height = 137
-    ExplicitWidth = 357
-    ExplicitHeight = 137
+    Width = 385
+    Height = 257
+    ExplicitWidth = 385
+    ExplicitHeight = 257
     object lblFindText: TLabel
       Left = 0
       Top = 4
@@ -18,9 +18,9 @@ inherited FindTextDlg: TFindTextDlg
       FocusControl = cbFindText
     end
     object lblDesc: TLabel
-      Left = 76
-      Top = 24
-      Width = 281
+      Left = 0
+      Top = 48
+      Width = 301
       Height = 27
       AutoSize = False
       Caption = 
@@ -29,18 +29,17 @@ inherited FindTextDlg: TFindTextDlg
       WordWrap = True
     end
     object cbFindText: TComboBox
-      Left = 76
-      Top = 0
-      Width = 281
+      Left = 0
+      Top = 24
+      Width = 301
       Height = 21
-      ItemHeight = 13
       TabOrder = 0
       OnChange = cbFindTextChange
     end
     object rgLogic: TRadioGroup
-      Left = 76
-      Top = 56
-      Width = 137
+      Left = 0
+      Top = 80
+      Width = 143
       Height = 77
       Caption = 'Search logic'
       ItemIndex = 1
@@ -51,9 +50,9 @@ inherited FindTextDlg: TFindTextDlg
       TabStop = True
     end
     object gbOptions: TGroupBox
-      Left = 220
-      Top = 56
-      Width = 137
+      Left = 158
+      Top = 80
+      Width = 143
       Height = 77
       Caption = 'Options'
       TabOrder = 2
@@ -73,6 +72,19 @@ inherited FindTextDlg: TFindTextDlg
         Caption = '&Whole words only'
         TabOrder = 0
       end
+    end
+    object rgScope: TRadioGroup
+      Left = 0
+      Top = 163
+      Width = 302
+      Height = 77
+      Caption = 'Search scope'
+      ItemIndex = 0
+      Items.Strings = (
+        'Refine existing search'
+        'Search whole database (resets current search)')
+      TabOrder = 3
+      TabStop = True
     end
   end
   inherited btnOK: TButton
