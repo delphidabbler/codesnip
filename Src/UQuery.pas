@@ -55,7 +55,7 @@ type
   }
   IQuery = interface(IInterface)
     ['{10998D72-CD5D-482B-9626-D771A50C53BA}']
-    function ApplySearch(const Search: ISearch; const Refine: Boolean): Boolean;
+    function ApplySearch(Search: ISearch; const Refine: Boolean): Boolean;
       {Runs query by applying a search to the whole database. If search succeeds
       matching snippets and search are stored in query's Selection and Search
       properties. If search fails Selection and Search are left unchanged.
@@ -94,6 +94,7 @@ type
         @param Snippets [in] Object to receive snippet list. List is emptied
           before snippets are copied in.
       }
+    // TODO: rename CurrentSearch as LatestSearch
     property CurrentSearch: ISearch read GetCurrentSearch;
       {Reference to search object used to generate current query}
     property Selection: TSnippetList read GetSelection;
@@ -114,7 +115,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Generics.Collections,
   // Project
   DB.UMain, UBaseObjects;
 
@@ -133,16 +134,17 @@ type
   strict private
     var
       fSelection: TSnippetList;   // List of snippets selected by current query
-      fCurrentSearch: ISearch;    // Search object used by current query
+      fActiveSearches: TList<ISearch>; // List of current active searches
     class var
       fInstance: IQuery;          // Singleton object instance of this class
     class function GetInstance: IQuery; static;
       {Gets singleton instance of class, creating it if necessary
         @return Singleton instance.
       }
+    function RunSearch(Search: ISearch): Boolean;
   protected // do not make strict
     { IQuery methods }
-    function ApplySearch(const Search: ISearch; const Refine: Boolean): Boolean;
+    function ApplySearch(Search: ISearch; const Refine: Boolean): Boolean;
       {Runs query by applying a search to the whole database. If search succeeds
       matching snippets and search are stored in query's Selection and Search
       properties. If search fails Selection and Search are left unchanged.
@@ -206,7 +208,7 @@ end;
 
 { TQuery }
 
-function TQuery.ApplySearch(const Search: ISearch; const Refine: Boolean):
+function TQuery.ApplySearch(Search: ISearch; const Refine: Boolean):
   Boolean;
   {Runs query by applying a search to the whole database. If search succeeds
   matching snippets and search are stored in query's Selection and Search
@@ -216,29 +218,17 @@ function TQuery.ApplySearch(const Search: ISearch; const Refine: Boolean):
       refined (True) or search should be of whole databas (False).
     @return True if search succeeds and False if it fails.
   }
-var
-  FoundList: TSnippetList;  // list receives found snippets
 begin
   Assert(Assigned(Search), ClassName + '.ApplySearch: Search is nil');
   Assert(not Search.IsNul, ClassName + '.ApplySearch: Search can''t be null');
-  FoundList := TSnippetList.Create;
-  try
-    if IsSearchActive and not Refine then
-      Reset;
-    Result := (Search as ISearch).Execute(fSelection, FoundList);
-    if Result then
-    begin
-      if Refine and IsSearchActive then
-        fCurrentSearch := TSearchFactory.CreateCompoundSearch(
-          fCurrentSearch, Search
-        )
-      else
-        fCurrentSearch := Search;
-      fSelection.Assign(FoundList);
-    end;
-  finally
-    FoundList.Free;
-  end;
+
+  if IsSearchActive and not Refine then
+    Reset;
+  Result := RunSearch(Search);
+  if not Result then
+    Exit;
+  // Search was successful
+  fActiveSearches.Add(Search);
 end;
 
 destructor TQuery.Destroy;
@@ -246,7 +236,7 @@ destructor TQuery.Destroy;
   }
 begin
   fSelection.Free;
-  fCurrentSearch := nil;
+  fActiveSearches.Free;
   inherited;
 end;
 
@@ -274,7 +264,10 @@ function TQuery.GetCurrentSearch: ISearch;
     @return Required search object.
   }
 begin
-  Result := fCurrentSearch;
+  if fActiveSearches.Count > 0 then
+    Result := fActiveSearches.Last
+  else
+    Result := TSearchFactory.CreateNulSearch;
 end;
 
 class function TQuery.GetInstance: IQuery;
@@ -304,12 +297,14 @@ begin
     ClassName + '.InternalCreate: Must only call once - singleton object');
   inherited InternalCreate;
   fSelection := TSnippetList.Create;
+  fActiveSearches := TList<ISearch>.Create;
   Reset;
 end;
 
 function TQuery.IsSearchActive: Boolean;
 begin
-  Result := not fCurrentSearch.IsNul;
+  // Search is active if there is one or more in active search list
+  Result := fActiveSearches.Count > 0;
 end;
 
 function TQuery.Refresh: Boolean;
@@ -317,11 +312,15 @@ function TQuery.Refresh: Boolean;
     @return True if search was re-applied, False if there was no search to
       apply.
   }
+var
+  Search: ISearch;
 begin
-  if Assigned(fCurrentSearch) then
-    Result := ApplySearch(fCurrentSearch, False)
-  else
-    Result := False;
+  if not IsSearchActive then
+    Exit(False);
+  fSelection.Assign(Database.Snippets);
+  for Search in fActiveSearches do
+    RunSearch(Search);
+  Result := True;
 end;
 
 procedure TQuery.Reset;
@@ -330,7 +329,22 @@ procedure TQuery.Reset;
   }
 begin
   fSelection.Assign(Database.Snippets);
-  fCurrentSearch := TSearchFactory.CreateNulSearch;
+  fActiveSearches.Clear;
+end;
+
+function TQuery.RunSearch(Search: ISearch): Boolean;
+var
+  FoundList: TSnippetList;
+begin
+  FoundList := TSnippetList.Create;
+  try
+    Result := Search.Execute(fSelection, FoundList);
+    if not Result then
+      Exit;
+    fSelection.Assign(FoundList);
+  finally
+    FoundList.Free;
+  end;
 end;
 
 procedure TQuery.Update;
