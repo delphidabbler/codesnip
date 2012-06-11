@@ -2,7 +2,7 @@
  * UCtrlArranger.pas
  *
  * Implements a static class that provides methods to assist in aligning a the
- * controls on a form or frame etc.
+ * controls in forms, frames etc.
  *
  * $Rev$
  * $Date$
@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -48,141 +48,126 @@ uses
 
 
 type
-
-  {
-  TCtrlArranger:
-    Static class used to arrange and size controls in forms and frames etc.
-  }
+  ///  <summary>Static class used to arrange and size controls in forms, frames
+  ///  etc.</summary>
   TCtrlArranger = class(TNoConstructObject)
   public
+    ///  <summary>Sets height of given label to accommodate its caption text in
+    ///  its current font. The new height is returned.</summary>
     class function SetLabelHeight(const Lbl: TLabel): Integer;
-      {Sets height of a label to accommodate the text it contains in its font.
-        @param Lbl [in] Label whose height is to be set.
-        @return New label height.
-      }
+
+    ///  <summary>Sets heights of all labels owned by given container to
+    ///  accomodate their captions in their current fonts, unless label is
+    ///  auto-sized and IgnoreAutoSize flag is set.</summary>
     class procedure SetLabelHeights(const Container: TControl;
       const IgnoreAutoSize: Boolean = False);
-      {Sets heights of labels owned by a container control such as a form to
-      accommodate the text they contain in the appropriate font.
-        @param Container [in] Control that owns the labels.
-        @param IgnoreAutoSize [in] Flagthat determines if labels with AutoSize
-          property set to true are sized. When False only labels with AutoSize
-          true are sized, otherwise all labels are sized.
-      }
+
+    ///  <summary>Returns Y co-ordinate of bottom of given control, allowing
+    ///  space for optional margin.</summary>
     class function BottomOf(const Ctrl: TControl; const BM: Integer = 0):
       Integer; overload;
-      {Gets Y coordinate of bottom of a control, leaving space for an optional
-      margin under the control, relative to its parent controls in pixels.
-        @param Ctl [in] Control to check.
-        @param BM [in] Bottom margin to leave under control. Optional.
-        @return Required position.
-      }
+
+    ///  <summary>Returns Y co-ordinate of bottom of lower-most control in given
+    ///  array, allowing space for optional margin.</summary>
     class function BottomOf(const Ctrls: array of TControl;
       const BM: Integer = 0): Integer; overload;
-      {Gets Y co-ordinate of bottom of the lowermost of a set of controls,
-      leaving space for an optional margin under the controls.
-        @param Ctrls [in] Controls to be examined.
-        @param BM [in] Bottom margin to leave under all controls. Optional.
-        @return Required position. This is maximum value of bottom of all
-          controls.
-      }
+
+    ///  <summary>Returns X co-ordinate of right hand side of given control,
+    ///  allowing space for optional margin.</summary>
     class function RightOf(const Ctrl: TControl; const RM: Integer = 0):
       Integer; overload;
-      {Returns horizontal position of right hand edge of given control, plus an
-        optional margin.
-        @param Ctrl [in] Control for which location of right hand side required.
-        @return Required position.
-      }
-    ///  <summary>Returns horizontal position of right most right hand edge of
-    ///  given controls, plus an optional margin.</summary>
-    ///  <remarks>Control array must not be empty.</remarks>
+
+    ///  <summary>Returns X co-ordinate of right-most right hand side of
+    ///  controls in given array, allowing space for optional margin.</summary>
     class function RightOf(const Ctrls: array of TControl;
       const RM: Integer = 0): Integer; overload;
+
+    ///  <summary>Locates control Ctrl to the left of reference control RefCtrl,
+    ///  optionally separated by given margin.</summary>
     class procedure MoveToLeftOf(const RefCtrl, Ctrl: TControl;
       const Margin: Integer = 0);
-      {Moves a control to the left of a reference control optionally separated
-      by a margin.
-        @param RefCtrl [in] Control relative to which control is moved.
-        @param Ctrl [in] Control being moved.
-        @param Margin [in] Optional margin, in pixels, required between Ctrl and
-          RefCtrl.
-      }
+
+    ///  <summary>Locates control Ctrl to right of reference control RefCtrl,
+    ///  optionally separated by given margin.</summary>
     class procedure MoveToRightOf(const RefCtrl, Ctrl: TControl;
       const Margin: Integer = 0); overload;
-      {Moves a control to the right of a reference control optionally separated
-      by a margin.
-        @param RefCtrl [in] Control relative to which control is moved.
-        @param Ctrl [in] Control being moved.
-        @param Margin [in] Optional margin, in pixels, required between Ctrl and
-          RefCtrl.
-      }
-    class procedure MoveToRightOf(const RefCtrls: array of TControl;
-      const Ctrl: TControl; const Margin: Integer = 0); overload;
+
+    ///  <summary>Locates control Ctrl below reference control RefCtrl,
+    ///  optionally separated by given margin.</summary>
     class procedure MoveBelow(const RefCtrl, Ctrl: TControl;
       const Margin: Integer = 0); overload;
+
+    ///  <summary>Locates control Ctrl below bottom-most of reference controls
+    ///  in RefCtrls, optionally separated by given margin.</summary>
     class procedure MoveBelow(const RefCtrls: array of TControl;
       const Ctrl: TControl; const Margin: Integer = 0); overload;
+
+    ///  <summary>Vertically centres all controls in Ctrls array aligned so that
+    ///  top of top-most control is located at ATop. Returns total height
+    ///  occupied by controls.</summary>
     class function AlignVCentres(const ATop: Integer;
       const Ctrls: array of TControl): Integer;
-      {Vertically centres a list of controls.
-        @param ATop [in] Top of tallest control to be aligned.
-        @param Ctrls [in] Array of controls to be aligned.
-        @return Height occupied by controls (= height of tallest control).
-      }
-    ///  <summary>Aligns tops of all given controls with top of first control
-    ///  and returns that top position.</summary>
+
+    ///  <summary>Aligns tops of all controls in Ctrls array with top of first
+    ///  control in array and returns that top position.</summary>
     ///  <remarks>Array of controls must not be empty.</remarks>
     class function AlignTops(const Ctrls: array of TControl): Integer; overload;
-    ///  <summary>Aligns tops of all given controls at given position.</summary>
+
+    ///  <summary>Aligns tops of all controls in Ctrls array at position given
+    ///  by ATop.</summary>
     class procedure AlignTops(const Ctrls: array of TControl;
       const ATop: Integer); overload;
-    ///  <summary>Aligns bottoms of all given controls with bottom of first
-    ///  control and returns that bottom position.</summary>
+
+    ///  <summary>Aligns bottoms of all controls in Ctrls array with bottom of
+    ///  first control in array and returns that bottom position.</summary>
     ///  <remarks>Array of controls must not be empty.</remarks>
     class function AlignBottoms(const Ctrls: array of TControl): Integer;
       overload;
-    ///  <summary>Aligns bottoms of all given controls at given position.
-    ///  </summary>
+
+    ///  <summary>Aligns bottoms of all controls in Ctrls array at position
+    ///  given by ABottom.</summary>
     class procedure AlignBottoms(const Ctrls: array of TControl;
       const ABottom: Integer); overload;
-    ///  <summary>Aligns left hand sides of all given controls with left of
-    ///  first control and returns the that value.</summary>
+
+    ///  <summary>Aligns left hand sides of all controls in Ctrls array with
+    ///  left of first control in array and returns that left position.
+    ///  </summary>
     ///  <remarks>Array of controls must not be empty.</remarks>
     class function AlignLefts(const Ctrls: array of TControl): Integer;
       overload;
-    ///  <summary>Aligns right hand sidea of all given controls at given
-    ///  position.</summary>
-    class procedure AlignRights(const Ctrls: array of TControl;
-      const ARight: Integer); overload;
-    ///  <summary>Aligns right hand sides of all given controls with right of
-    ///  first control and returns the that value.</summary>
-    ///  <remarks>Array of controls must not be empty.</remarks>
-    class function AlignRights(const Ctrls: array of TControl): Integer;
-      overload;
-    ///  <summary>Aligns left hand sidea of all given controls at given
-    ///  position.</summary>
+
+    ///  <summary>Aligns left hand sides of all controls in Ctrls array at
+    ///  position given by ALeft.</summary>
     class procedure AlignLefts(const Ctrls: array of TControl;
       const ALeft: Integer); overload;
+
+    ///  <summary>Aligns right hand sides of all controls in Ctrls array with
+    ///  right of first control in array and returns that right position.
+    ///  </summary>
+    ///  <remarks>Array of controls must not be empty.</remarks>
+    class procedure AlignRights(const Ctrls: array of TControl;
+      const ARight: Integer); overload;
+
+    ///  <summary>Aligns right hand sides of all controls in Ctrls array at
+    ///  position given by ARight.</summary>
+    class function AlignRights(const Ctrls: array of TControl): Integer;
+      overload;
+
+    ///  <summary>Returns the total height needed to display all the controls
+    ///  parented by given container.</summary>
+    class function TotalControlHeight(const Container: TWinControl): Integer;
+
+    ///  <summary>Returns the total width needed to display all the controls
+    ///  parented by given container.</summary>
+    class function TotalControlWidth(const Container: TWinControl): Integer;
+
+    ///  <summary>Returns maximum height of controls parented by given set of
+    ///  parent controls.</summary>
+    ///  <remarks>Designed for use in determining the height of a control that
+    ///  has to accomodate all the controls from any of the containers, for
+    ///  example a page control where the containers are the pages.</remarks>
     class function MaxContainerHeight(const Containers: array of TWinControl):
       Integer;
-      {Checks the maximum height of controls parented by a set of controls. Can
-      be used to determine the height of a control that has to be able to
-      display all the controls from any of the containers.
-        @param Containers [in] Controls that parent the controls being measured.
-        @return Required height.
-      }
-    class function TotalControlHeight(const Container: TWinControl): Integer;
-      {Gets the height that a container needs to be to accommodate all its
-      contained controls.
-        @param Container [in] Container to be checked.
-        @return Required height.
-      }
-    class function TotalControlWidth(const Container: TWinControl): Integer;
-      {Gets the width that a container needs to be to accommodate all its
-      contained controls.
-        @param Container [in] Container to be checked.
-        @return Required width.
-      }
   end;
 
 
@@ -209,7 +194,7 @@ end;
 class procedure TCtrlArranger.AlignBottoms(const Ctrls: array of TControl;
   const ABottom: Integer);
 var
-  Ctrl: TControl;
+  Ctrl: TControl; // each control in Ctrls
 begin
   for Ctrl in Ctrls do
     Ctrl.Top := ABottom - Ctrl.Height;
@@ -226,7 +211,7 @@ end;
 class procedure TCtrlArranger.AlignLefts(const Ctrls: array of TControl;
   const ALeft: Integer);
 var
-  Ctrl: TControl;
+  Ctrl: TControl; // each control in Ctrls
 begin
   for Ctrl in Ctrls do
     Ctrl.Left := ALeft;
@@ -243,7 +228,7 @@ end;
 class procedure TCtrlArranger.AlignRights(const Ctrls: array of TControl;
   const ARight: Integer);
 var
-  Ctrl: TControl;
+  Ctrl: TControl; // each control in Ctrls
 begin
   for Ctrl in Ctrls do
     Ctrl.Left := ARight - Ctrl.Width;
@@ -259,7 +244,7 @@ end;
 class procedure TCtrlArranger.AlignTops(const Ctrls: array of TControl;
   const ATop: Integer);
 var
-  Ctrl: TControl;
+  Ctrl: TControl; // each control in Ctrls
 begin
   for Ctrl in Ctrls do
     Ctrl.Top := ATop;
@@ -267,13 +252,8 @@ end;
 
 class function TCtrlArranger.AlignVCentres(const ATop: Integer;
   const Ctrls: array of TControl): Integer;
-  {Vertically centres a list of controls.
-    @param ATop [in] Top of tallest control to be aligned.
-    @param Ctrls [in] Array of controls to be aligned.
-    @return Height occupied by controls (= height of tallest control).
-  }
 var
-  Ctrl: TControl; // references each control in Ctrls array
+  Ctrl: TControl; // each control in Ctrls
 begin
   Result := 0;
   for Ctrl in Ctrls do
@@ -284,26 +264,14 @@ end;
 
 class function TCtrlArranger.BottomOf(const Ctrl: TControl;
   const BM: Integer): Integer;
-  {Gets Y coordinate of bottom of a control, leaving space for an optional
-  margin unser the control, relative to its parent controls in pixels.
-    @param Ctl [in] Control to check.
-    @param BM [in] Bottom margin to leave under control. Optional.
-    @return Required position.
-  }
 begin
   Result := Ctrl.Top + Ctrl.Height + BM;
 end;
 
 class function TCtrlArranger.BottomOf(const Ctrls: array of TControl;
   const BM: Integer): Integer;
-  {Gets Y co-ordinate of bottom of the lowermost of a set of controls, leaving
-  space for an optional margin under the controls.
-    @param Ctrls [in] Controls to be examined.
-    @param BM [in] Bottom margin to leave under all controls. Optional.
-    @return Required position. This is maximum value of bottom of all controls.
-  }
 var
-  Ctrl: TControl; // references each control in Ctrls array
+  Ctrl: TControl; // each control in Ctrls
 begin
   Result := 0;
   for Ctrl in Ctrls do
@@ -313,14 +281,8 @@ end;
 
 class function TCtrlArranger.MaxContainerHeight(
   const Containers: array of TWinControl): Integer;
-  {Checks the maximum height of controls parented by a set of controls. Can be
-  used to determine the height of a control that has to be able to display all
-  the controls from any of the containers.
-    @param Containers [in] Controls that parent the controls being measured.
-    @return Required height.
-  }
 var
-  Container: TWinControl;   // references each container in Containers array
+  Container: TWinControl;   // each container in Containers
 begin
   Result := 0;
   for Container in Containers do
@@ -341,43 +303,22 @@ end;
 
 class procedure TCtrlArranger.MoveToLeftOf(const RefCtrl, Ctrl: TControl;
   const Margin: Integer);
-  {Moves a control to the left of a reference control optionally separated by a
-  margin.
-    @param RefCtrl [in] Control relative to which control is moved.
-    @param Ctrl [in] Control being moved.
-    @param Margin [in] Optional margin, in pixels, required between Ctrl and
-      RefCtrl.
-  }
 begin
   Ctrl.Left := RefCtrl.Left - Margin - Ctrl.Width;
 end;
 
 class procedure TCtrlArranger.MoveToRightOf(const RefCtrl, Ctrl: TControl;
   const Margin: Integer);
-  {Moves a control to the right of a reference control optionally separated by a
-  margin.
-    @param RefCtrl [in] Control relative to which control is moved.
-    @param Ctrl [in] Control being moved.
-    @param Margin [in] Optional margin, in pixels, required between Ctrl and
-      RefCtrl.
-  }
 begin
   Ctrl.Left := RightOf(RefCtrl) + Margin;
-end;
-
-class procedure TCtrlArranger.MoveToRightOf(const RefCtrls: array of TControl;
-  const Ctrl: TControl; const Margin: Integer);
-begin
-//  Ctrl.Left :=
 end;
 
 class function TCtrlArranger.RightOf(const Ctrls: array of TControl;
   const RM: Integer = 0): Integer;
 var
-  Ctrl: TControl;
+  Ctrl: TControl; // each control in Ctrls
 begin
-  Assert(Length(Ctrls) > 0, ClassName + '.RightOf: Ctrls array is empty.');
-  Result := -MaxInt;
+  Result := 0;
   for Ctrl in Ctrls do
     Result := Max(Result, RightOf(Ctrl));
   Inc(Result, RM);
@@ -390,10 +331,6 @@ begin
 end;
 
 class function TCtrlArranger.SetLabelHeight(const Lbl: TLabel): Integer;
-  {Sets height of a label to accommodate the text it contains in its font.
-    @param Lbl [in] Label whose height is to be set.
-    @return New label height.
-  }
 begin
   Lbl.Height := StringExtent(Lbl.Caption, Lbl.Font, Lbl.Width).cy;
   Result := Lbl.Height;
@@ -401,13 +338,6 @@ end;
 
 class procedure TCtrlArranger.SetLabelHeights(const Container: TControl;
   const IgnoreAutoSize: Boolean);
-  {Sets heights of labels owned by a container control such as a form to
-  accommodate the text they contain in the appropriate font.
-    @param Container [in] Control that owns the labels.
-    @param IgnoreAutoSize [in] Flagthat determines if labels with AutoSize
-      property set to true are sized. When False only labels with AutoSize true
-      are sized, otherwise all labels are sized.
-  }
 var
   Idx: Integer; // loops through all components owned by container control
   Lbl: TLabel;  // references each label component
@@ -425,11 +355,6 @@ end;
 
 class function TCtrlArranger.TotalControlHeight(const Container: TWinControl):
   Integer;
-  {Gets the height that a container needs to be to accommodate all its contained
-  controls.
-    @param Container [in] Container to be checked.
-    @return Required height.
-  }
 var
   CtrlIdx: Integer;         // loops through all controls in Container
   Ctrls: array of TControl; // array of controls contained in each container
@@ -442,11 +367,6 @@ end;
 
 class function TCtrlArranger.TotalControlWidth(
   const Container: TWinControl): Integer;
-  {Gets the width that a container needs to be to accommodate all its contained
-  controls.
-    @param Container [in] Container to be checked.
-    @return Required width.
-  }
 var
   CtrlIdx: Integer; // loops through all controls in Container
   Ctrl: TControl;   // references each control in Container
