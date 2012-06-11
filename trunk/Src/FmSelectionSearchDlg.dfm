@@ -36,7 +36,7 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
       OnClick = btnSelectAllClick
     end
     object btnClearAll: TButton
-      Left = 288
+      Left = 287
       Top = 32
       Width = 83
       Height = 25
@@ -46,7 +46,7 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
     end
     object btnUserDB: TButton
       Left = 287
-      Top = 81
+      Top = 63
       Width = 83
       Height = 25
       Caption = '&User Defined'
@@ -55,12 +55,30 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
     end
     object btnMainDB: TButton
       Left = 287
-      Top = 112
+      Top = 94
       Width = 83
       Height = 25
       Caption = '&Main'
       TabOrder = 4
       OnClick = btnMainDBClick
+    end
+    object btnExpandAll: TButton
+      Left = 287
+      Top = 174
+      Width = 82
+      Height = 25
+      Caption = 'Expand Tree'
+      TabOrder = 5
+      OnClick = btnExpandAllClick
+    end
+    object btnCollapseAll: TButton
+      Left = 287
+      Top = 205
+      Width = 82
+      Height = 25
+      Caption = 'Collapse Tree'
+      TabOrder = 6
+      OnClick = btnCollapseAllClick
     end
   end
   inherited btnOK: TButton

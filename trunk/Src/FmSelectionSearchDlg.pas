@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -63,12 +63,16 @@ type
     btnSelectAll: TButton;
     btnUserDB: TButton;
     frmSelect: TSelectSnippetsFrame;
+    btnExpandAll: TButton;
+    btnCollapseAll: TButton;
     procedure btnClearAllClick(Sender: TObject);
     procedure btnMainDBClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
     procedure btnUserDBClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure btnExpandAllClick(Sender: TObject);
+    procedure btnCollapseAllClick(Sender: TObject);
   strict private
     fSearch: ISearch; // Search corresponding to snippets selected by the user
     procedure SetSelectedSnippets(const Value: TSnippetList);
@@ -139,6 +143,16 @@ begin
   // Assigning nil to snippet selection frame's SelectedSnippets property clears
   // the list.
   frmSelect.SelectedSnippets := nil;
+end;
+
+procedure TSelectionSearchDlg.btnCollapseAllClick(Sender: TObject);
+begin
+  frmSelect.CollapseTree;
+end;
+
+procedure TSelectionSearchDlg.btnExpandAllClick(Sender: TObject);
+begin
+  frmSelect.ExpandTree;
 end;
 
 procedure TSelectionSearchDlg.btnMainDBClick(Sender: TObject);
@@ -222,6 +236,8 @@ procedure TSelectionSearchDlg.InitForm;
   }
 begin
   inherited;
+  frmSelect.CanCollapse := True;
+  frmSelect.CollapseTree;
   btnUserDB.Enabled := Database.Snippets.Count(True) > 0;
 end;
 
