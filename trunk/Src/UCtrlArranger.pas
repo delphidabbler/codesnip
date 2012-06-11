@@ -109,6 +109,10 @@ type
         @param Margin [in] Optional margin, in pixels, required between Ctrl and
           RefCtrl.
       }
+    class procedure MoveBelow(const RefCtrl, Ctrl: TControl;
+      const Margin: Integer = 0); overload;
+    class procedure MoveBelow(const RefCtrls: array of TControl;
+      const Ctrl: TControl; const Margin: Integer = 0); overload;
     class function AlignVCentres(const ATop: Integer;
       const Ctrls: array of TControl): Integer;
       {Vertically centres a list of controls.
@@ -116,6 +120,13 @@ type
         @param Ctrls [in] Array of controls to be aligned.
         @return Height occupied by controls (= height of tallest control).
       }
+    ///  <summary>Aligns tops of all given controls with top of first control
+    ///  and returns the top position.</summary>
+    ///  <remarks>Array of controls must not be empty.</remarks>
+    class function AlignTops(const Ctrls: array of TControl): Integer; overload;
+    ///  <summary>Aligns tops of all given controls at given position.</summary>
+    class procedure AlignTops(const Ctrls: array of TControl;
+      const ATop: Integer); overload;
     class function MaxContainerHeight(const Containers: array of TWinControl):
       Integer;
       {Checks the maximum height of controls parented by a set of controls. Can
@@ -150,6 +161,22 @@ uses
 
 
 { TCtrlArranger }
+
+class function TCtrlArranger.AlignTops(const Ctrls: array of TControl): Integer;
+begin
+  Assert(Length(Ctrls) > 0, ClassName + '.AlignTops: control array empty');
+  Result := Ctrls[0].Top;
+  AlignTops(Ctrls, Result);
+end;
+
+class procedure TCtrlArranger.AlignTops(const Ctrls: array of TControl;
+  const ATop: Integer);
+var
+  Ctrl: TControl;
+begin
+  for Ctrl in Ctrls do
+    Ctrl.Top := ATop;
+end;
 
 class function TCtrlArranger.AlignVCentres(const ATop: Integer;
   const Ctrls: array of TControl): Integer;
@@ -211,6 +238,18 @@ begin
   Result := 0;
   for Container in Containers do
     Result := Max(Result, TotalControlHeight(Container));
+end;
+
+class procedure TCtrlArranger.MoveBelow(const RefCtrl, Ctrl: TControl;
+  const Margin: Integer);
+begin
+  Ctrl.Top := BottomOf(RefCtrl, Margin);
+end;
+
+class procedure TCtrlArranger.MoveBelow(const RefCtrls: array of TControl;
+  const Ctrl: TControl; const Margin: Integer);
+begin
+  Ctrl.Top := BottomOf(RefCtrls, Margin);
 end;
 
 class procedure TCtrlArranger.MoveToLeftOf(const RefCtrl, Ctrl: TControl;
@@ -282,8 +321,8 @@ begin
   end;
 end;
 
-class function TCtrlArranger.TotalControlHeight(
-  const Container: TWinControl): Integer;
+class function TCtrlArranger.TotalControlHeight(const Container: TWinControl):
+  Integer;
   {Gets the height that a container needs to be to accommodate all its contained
   controls.
     @param Container [in] Container to be checked.
