@@ -64,23 +64,23 @@ type
 
     ///  <summary>Returns Y co-ordinate of bottom of given control, allowing
     ///  space for optional margin.</summary>
-    class function BottomOf(const Ctrl: TControl; const BM: Integer = 0):
+    class function BottomOf(const Ctrl: TControl; const Margin: Integer = 0):
       Integer; overload;
 
     ///  <summary>Returns Y co-ordinate of bottom of lower-most control in given
     ///  array, allowing space for optional margin.</summary>
     class function BottomOf(const Ctrls: array of TControl;
-      const BM: Integer = 0): Integer; overload;
+      const Margin: Integer = 0): Integer; overload;
 
     ///  <summary>Returns X co-ordinate of right hand side of given control,
     ///  allowing space for optional margin.</summary>
-    class function RightOf(const Ctrl: TControl; const RM: Integer = 0):
+    class function RightOf(const Ctrl: TControl; const Margin: Integer = 0):
       Integer; overload;
 
     ///  <summary>Returns X co-ordinate of right-most right hand side of
     ///  controls in given array, allowing space for optional margin.</summary>
     class function RightOf(const Ctrls: array of TControl;
-      const RM: Integer = 0): Integer; overload;
+      const Margin: Integer = 0): Integer; overload;
 
     ///  <summary>Locates control Ctrl to the left of reference control RefCtrl,
     ///  optionally separated by given margin.</summary>
@@ -118,16 +118,21 @@ type
     class procedure AlignTops(const Ctrls: array of TControl;
       const ATop: Integer); overload;
 
+    ///  <summary>Aligns bottoms of all controls in Ctrls array at position
+    ///  given by ABottom.</summary>
+    class procedure AlignBottoms(const Ctrls: array of TControl;
+      const ABottom: Integer); overload;
+
     ///  <summary>Aligns bottoms of all controls in Ctrls array with bottom of
     ///  first control in array and returns that bottom position.</summary>
     ///  <remarks>Array of controls must not be empty.</remarks>
     class function AlignBottoms(const Ctrls: array of TControl): Integer;
       overload;
 
-    ///  <summary>Aligns bottoms of all controls in Ctrls array at position
-    ///  given by ABottom.</summary>
-    class procedure AlignBottoms(const Ctrls: array of TControl;
-      const ABottom: Integer); overload;
+    ///  <summary>Aligns left hand sides of all controls in Ctrls array at
+    ///  position given by ALeft.</summary>
+    class procedure AlignLefts(const Ctrls: array of TControl;
+      const ALeft: Integer); overload;
 
     ///  <summary>Aligns left hand sides of all controls in Ctrls array with
     ///  left of first control in array and returns that left position.
@@ -136,20 +141,15 @@ type
     class function AlignLefts(const Ctrls: array of TControl): Integer;
       overload;
 
-    ///  <summary>Aligns left hand sides of all controls in Ctrls array at
-    ///  position given by ALeft.</summary>
-    class procedure AlignLefts(const Ctrls: array of TControl;
-      const ALeft: Integer); overload;
+    ///  <summary>Aligns right hand sides of all controls in Ctrls array at
+    ///  position given by ARight.</summary>
+    class procedure AlignRights(const Ctrls: array of TControl;
+      const ARight: Integer); overload;
 
     ///  <summary>Aligns right hand sides of all controls in Ctrls array with
     ///  right of first control in array and returns that right position.
     ///  </summary>
     ///  <remarks>Array of controls must not be empty.</remarks>
-    class procedure AlignRights(const Ctrls: array of TControl;
-      const ARight: Integer); overload;
-
-    ///  <summary>Aligns right hand sides of all controls in Ctrls array at
-    ///  position given by ARight.</summary>
     class function AlignRights(const Ctrls: array of TControl): Integer;
       overload;
 
@@ -263,20 +263,20 @@ begin
 end;
 
 class function TCtrlArranger.BottomOf(const Ctrl: TControl;
-  const BM: Integer): Integer;
+  const Margin: Integer): Integer;
 begin
-  Result := Ctrl.Top + Ctrl.Height + BM;
+  Result := Ctrl.Top + Ctrl.Height + Margin;
 end;
 
 class function TCtrlArranger.BottomOf(const Ctrls: array of TControl;
-  const BM: Integer): Integer;
+  const Margin: Integer): Integer;
 var
   Ctrl: TControl; // each control in Ctrls
 begin
   Result := 0;
   for Ctrl in Ctrls do
     Result := Max(Result, BottomOf(Ctrl));
-  Inc(Result, BM);
+  Inc(Result, Margin);
 end;
 
 class function TCtrlArranger.MaxContainerHeight(
@@ -314,20 +314,20 @@ begin
 end;
 
 class function TCtrlArranger.RightOf(const Ctrls: array of TControl;
-  const RM: Integer = 0): Integer;
+  const Margin: Integer = 0): Integer;
 var
   Ctrl: TControl; // each control in Ctrls
 begin
   Result := 0;
   for Ctrl in Ctrls do
     Result := Max(Result, RightOf(Ctrl));
-  Inc(Result, RM);
+  Inc(Result, Margin);
 end;
 
 class function TCtrlArranger.RightOf(const Ctrl: TControl;
-  const RM: Integer = 0): Integer;
+  const Margin: Integer = 0): Integer;
 begin
-  Result := Ctrl.Left + Ctrl.Width + RM;
+  Result := Ctrl.Left + Ctrl.Width + Margin;
 end;
 
 class function TCtrlArranger.SetLabelHeight(const Lbl: TLabel): Integer;
