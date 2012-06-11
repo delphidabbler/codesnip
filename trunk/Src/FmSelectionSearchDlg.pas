@@ -65,6 +65,7 @@ type
     frmSelect: TSelectSnippetsFrame;
     btnExpandAll: TButton;
     btnCollapseAll: TButton;
+    lblOverwriteSearch: TLabel;
     procedure btnClearAllClick(Sender: TObject);
     procedure btnMainDBClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
@@ -119,7 +120,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain;
+  DB.UMain, UCtrlArranger, UQuery;
 
 
 {$R *.dfm}
@@ -239,6 +240,9 @@ begin
   frmSelect.CanCollapse := True;
   frmSelect.CollapseTree;
   btnUserDB.Enabled := Database.Snippets.Count(True) > 0;
+  lblOverwriteSearch.Visible := Query.IsSearchActive;
+  if lblOverwriteSearch.Visible then
+    TCtrlArranger.SetLabelHeight(lblOverwriteSearch);
 end;
 
 procedure TSelectionSearchDlg.SelectDB(const UserDefined: Boolean);
