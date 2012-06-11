@@ -92,7 +92,7 @@ type
     class function Display(const Parent: TComponent;
       MsgLines: IStringList; const DlgType: TMsgDlgType;
       const Buttons: array of TMessageBoxButton; const Title: string;
-      const IconRes: PChar): Word; overload;
+      const IconRes: PChar; const InhibitCancel: Boolean): Word; overload;
       {Displays a message in a customised dialog box located over the calling
       form.
         @param Parent [in] Component that dialog box is aligned over and that
@@ -106,13 +106,16 @@ type
           DlgType.
         @param IconRes [in] Icon resource identifier. If nil icon used depends
           on DlgType.
+        @param InhibitCancel [in] Flag that, when true, removes close button
+          from dialogue box and prevents it responding to the ESC key.
         @return Value indicating which button was pressed to close dialog box.
           This will be value of ModalResult field of one of the buttons
           specified in Buttons.
       }
     class function Display(const Parent: TComponent; const Msg: string;
       const DlgType: TMsgDlgType; const Buttons: array of TMessageBoxButton;
-      const Title: string; const IconRes: PChar): Word; overload;
+      const Title: string; const IconRes: PChar; const InhibitCancel: Boolean):
+      Word; overload;
       {Displays a message in a customised dialog box located over the calling
       form.
         @param Parent [in] Component that dialog box is aligned over and that
@@ -126,6 +129,8 @@ type
           DlgType.
         @param IconRes [in] Icon resource identifier. If nil icon used depends
           on DlgType.
+        @param InhibitCancel [in] Flag that, when true, removes close button
+          from dialogue box and prevents it responding to the ESC key.
         @return Value indicating which button was pressed to close dialog box.
           This will be value of ModalResult field of one of the buttons
           specified in Buttons.
@@ -161,7 +166,8 @@ type
       }
     class function Custom(const Parent: TComponent; const Msg: string;
       const Buttons: array of TMessageBoxButton;
-      const Title: string = DefaultTitle; const IconRes: PChar = DefaultIcon):
+      const Title: string = DefaultTitle; const IconRes: PChar = DefaultIcon;
+      const InhibitCancel: Boolean = False):
       Word;
       {Displays a message in a dialog box with custom buttons and no icon that
       is located relative to owner form.
@@ -175,6 +181,8 @@ type
           application title is used.
         @param IconRes [in] Optional icon resource. No icon is displayed if not
           provided.
+        @param InhibitCancel [in] Flag that, when true, removes close button
+          from dialogue box and prevents it responding to the ESC key.
         @return Value indicating which button was pressed to close dialog box.
           This will be value of ModalResult field of one of the buttons
           specified in the Buttons array.
@@ -282,12 +290,10 @@ type
       {Arranges all controls within dialog box.
       }
   public
-    constructor Create(const Owner: TComponent;
-      const Text: IStringList;
-      const Buttons: array of TMessageBoxButton;
-      const DlgType: TMsgDlgType;
-      const Title: string;
-      const IconRes: PChar); reintroduce;
+    constructor Create(const Owner: TComponent; const Text: IStringList;
+      const Buttons: array of TMessageBoxButton; const DlgType: TMsgDlgType;
+      const Title: string; const IconRes: PChar; const InhibitCancel: Boolean);
+      reintroduce;
       {Object constructor. Reintroduced constructor that creates dialog box form
       with components required to display text, buttons and optional icon.
         @param Owner [in] Control that owns this dialog box.
@@ -300,6 +306,8 @@ type
           depends on DlgType.
         @param IconRes [in] Resource to be used for icon displayed. If nil then
           any icon displayed depends on DlgType.
+        @param InhibitCancel [in] Flag that, when true, removes close button
+          from dialogue box and prevents it responding to the ESC key.
       }
   end;
 
@@ -326,13 +334,14 @@ begin
       TMessageBoxButton.Create(sBtnNo, mrNo, False, True)
     ],
     DefaultTitle,
-    DefaultIcon
+    DefaultIcon,
+    False
   ) = mrYes;
 end;
 
 class function TMessageBox.Custom(const Parent: TComponent; const Msg: string;
   const Buttons: array of TMessageBoxButton; const Title: string;
-  const IconRes: PChar): Word;
+  const IconRes: PChar; const InhibitCancel: Boolean): Word;
   {Displays a message in a dialog box with custom buttons and no icon that is
   located relative to owner form.
     @param Parent [in] Component that dialog box is aligned over and that
@@ -345,18 +354,22 @@ class function TMessageBox.Custom(const Parent: TComponent; const Msg: string;
       title is used.
     @param IconRes [in] Optional icon resource. No icon is displayed if not
       provided.
+    @param InhibitCancel [in] Flag that, when true, removes close button from
+      dialogue box and prevents it responding to the ESC key.
     @return Value indicating which button was pressed to close dialog box. This
       will be value of ModalResult field of one of the buttons specified in the
       Buttons array.
   }
 begin
-  Result := Display(Parent, Msg, mtCustom, Buttons, Title, IconRes);
+  Result := Display(
+    Parent, Msg, mtCustom, Buttons, Title, IconRes, InhibitCancel
+  );
 end;
 
 class function TMessageBox.Display(const Parent: TComponent;
   MsgLines: IStringList; const DlgType: TMsgDlgType;
   const Buttons: array of TMessageBoxButton; const Title: string;
-  const IconRes: PChar): Word;
+  const IconRes: PChar; const InhibitCancel: Boolean): Word;
   {Displays a message in a customised dialog box located over the calling form.
     @param Parent [in] Component that dialog box is aligned over and that
       becomes parent of dialog box. If Parent is nil then current active form is
@@ -368,6 +381,8 @@ class function TMessageBox.Display(const Parent: TComponent;
     @param Title [in] Title of dialog box. If '' title used depends on DlgType.
     @param IconRes [in] Icon resource identifier. If nil icon used depends on
       DlgType.
+    @param InhibitCancel [in] Flag that, when true, removes close button from
+      dialogue box and prevents it responding to the ESC key.
     @return Value indicating which button was pressed to close dialog box. This
       will be value of ModalResult field of one of the buttons specified in
       Buttons.
@@ -377,7 +392,7 @@ var
 begin
   // Create a dialog box of required type
   Dlg := TMessageBoxForm.Create(
-    Parent, MsgLines, Buttons, DlgType, Title, IconRes
+    Parent, MsgLines, Buttons, DlgType, Title, IconRes, InhibitCancel
   );
   try
     // Make sure "Parent" control is parent of dialog and align over it
@@ -392,7 +407,8 @@ end;
 
 class function TMessageBox.Display(const Parent: TComponent; const Msg: string;
   const DlgType: TMsgDlgType; const Buttons: array of TMessageBoxButton;
-  const Title: string; const IconRes: PChar): Word;
+  const Title: string; const IconRes: PChar; const InhibitCancel: Boolean):
+  Word;
   {Displays a message in a customised dialog box located over the calling form.
     @param Parent [in] Component that dialog box is aligned over and that
       becomes parent of dialog box. If Parent is nil then current active form is
@@ -404,6 +420,8 @@ class function TMessageBox.Display(const Parent: TComponent; const Msg: string;
     @param Title [in] Title of dialog box. If '' title used depends on DlgType.
     @param IconRes [in] Icon resource identifier. If nil icon used depends on
       DlgType.
+    @param InhibitCancel [in] Flag that, when true, removes close button from
+      dialogue box and prevents it responding to the ESC key.
     @return Value indicating which button was pressed to close dialog box. This
       will be value of ModalResult field of one of the buttons specified in
       Buttons.
@@ -421,7 +439,8 @@ begin
     DlgType,
     Buttons,
     Title,
-    IconRes
+    IconRes,
+    InhibitCancel
   );
 end;
 
@@ -441,7 +460,8 @@ begin
     mtError,
     [TMessageBoxButton.Create(sBtnOK, mrOK, True, True)],
     DefaultTitle,
-    DefaultIcon
+    DefaultIcon,
+    False
   );
 end;
 
@@ -462,7 +482,8 @@ begin
     mtInformation,
     [TMessageBoxButton.Create(sBtnOK, mrOK, True, True)],
     DefaultTitle,
-    DefaultIcon
+    DefaultIcon,
+    False
   );
 end;
 
@@ -553,7 +574,8 @@ end;
 
 constructor TMessageBoxForm.Create(const Owner: TComponent;
   const Text: IStringList; const Buttons: array of TMessageBoxButton;
-  const DlgType: TMsgDlgType; const Title: string; const IconRes: PChar);
+  const DlgType: TMsgDlgType; const Title: string; const IconRes: PChar;
+  const InhibitCancel: Boolean);
   {Object constructor. Reintroduced constructor that creates dialog box form
   with components required to display text, buttons and optional icon.
     @param Owner [in] Control that owns this dialog box.
@@ -563,6 +585,8 @@ constructor TMessageBoxForm.Create(const Owner: TComponent;
     @param DlgType [in] Type of dialog box to be displayed.
     @param Title [in] Optional dialog box caption text. If Title='' caption
       depends on DlgType.
+    @param InhibitCancel [in] Flag that, when true, removes close button from
+      dialogue box and prevents it responding to the ESC key.
     @param IconRes [in] Resource to be used for icon displayed. If nil then any
       icon displayed depends on DlgType.
   }
@@ -573,16 +597,14 @@ begin
   inherited CreateNew(Owner);
   Position := poDesigned;   // must be poDesgined to enable alignment
   BorderStyle := bsDialog;  // it's a dialog box
-  // Set font to OS default
+  if InhibitCancel then
+    BorderIcons := BorderIcons - [biSystemMenu];
   TFontHelper.SetDefaultFont(Font, False);
-  // Initialise controls
   InitCaption(Title, DlgType);
   InitImage(IconRes, DlgType);
   InitButtons(Buttons);
   InitLabels(Text);
-  // Size the dialog box
   SizeDialogBox;
-  // Arrange controls within dialog box
   ArrangeControls;
 end;
 
