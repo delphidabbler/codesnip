@@ -32,8 +32,8 @@ inherited FindXRefsDlg: TFindXRefsDlg
       Height = 13
       AutoSize = False
       Caption = 
-        'NOTE: Running this cross reference search will overwrite your ex' +
-        'isting searches.'
+        'NOTE: Running this cross reference search will override your exi' +
+        'sting search(es).'
       WordWrap = True
     end
     object chkRequired: TCheckBox
