@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -61,14 +61,22 @@ type
     procedure ShowBugReportDlg;
       {Displays Bug Report dialog box.
       }
-    function ExecFindCompilerDlg(out ASearch: ISearch): Boolean;
+    function ExecFindCompilerDlg(out ASearch: ISearch;
+      out RefineExisting: Boolean): Boolean;
       {Displays Find Compiler dialog box.
         @param ASearch [out] Set to object recording search details if user OKs.
+        @param RefineExisting [out] Set to flag indicating if any existing
+          search is to be refined (True) or if compiler search is to apply to
+          whole database (False).
         @return True if user OKs or false if user cancels.
       }
-    function ExecFindTextDlg(out ASearch: ISearch): Boolean;
+    function ExecFindTextDlg(out ASearch: ISearch; out RefineExisting: Boolean):
+      Boolean;
       {Displays Find Text dialog box.
         @param ASearch [out] Set to object recording search details if user OKs.
+        @param RefineExisting [out] Set to flag indicating if any existing
+          search is to be refined (True) or if text search is to apply to whole
+          database (False).
         @return True if user OKs or false if user cancels.
       }
     function ExecFindXRefsDlg(const ASnippet: TSnippet;
@@ -151,22 +159,30 @@ uses
 
 { TDialogMgr }
 
-function TDialogMgr.ExecFindCompilerDlg(out ASearch: ISearch): Boolean;
+function TDialogMgr.ExecFindCompilerDlg(out ASearch: ISearch;
+  out RefineExisting: Boolean): Boolean;
   {Displays Find Compiler dialog box.
     @param ASearch [out] Set to object recording search details if user OKs.
+    @param RefineExisting [out] Set to flag indicating if any existing search is
+      to be refined (True) or if compiler search is to apply to whole database
+      (False).
     @return True if user OKs or false if user cancels.
   }
 begin
-  Result := TFindCompilerDlg.Execute(Owner, ASearch);
+  Result := TFindCompilerDlg.Execute(Owner, ASearch, RefineExisting);
 end;
 
-function TDialogMgr.ExecFindTextDlg(out ASearch: ISearch): Boolean;
+function TDialogMgr.ExecFindTextDlg(out ASearch: ISearch;
+  out RefineExisting: Boolean): Boolean;
   {Displays Find Text dialog box.
     @param ASearch [out] Set to object recording search details if user OKs.
+    @param RefineExisting [out] Set to flag indicating if any existing search is
+      to be refined (True) or if text search is to apply to whole database
+      (False).
     @return True if user OKs or false if user cancels.
   }
 begin
-  Result := TFindTextDlg.Execute(Owner, ASearch);
+  Result := TFindTextDlg.Execute(Owner, ASearch, RefineExisting);
 end;
 
 function TDialogMgr.ExecFindXRefsDlg(const ASnippet: TSnippet;

@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -65,6 +65,7 @@ type
     lblCompilerVer: TLabel;
     lblCriteria: TLabel;
     rgLogic: TRadioGroup;
+    rgScope: TRadioGroup;
     procedure btnClearAllClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
@@ -76,6 +77,8 @@ type
     fCompilers: ICompilers;               // Provides info about compilers
     fSearchParams: TCompilerSearchParams; // Persistent compiler search options
     fSearch: ISearch;                     // Search entered by user
+    fRefinePreviousSearch: Boolean;       // Whether to refine previous search
+
     procedure UpdateOKBtn;
       {Updates state of OK button according to whether valid entries made in
       dialog.
@@ -88,13 +91,17 @@ type
     procedure InitForm; override;
       {Populates and initialises controls.
       }
+    procedure ArrangeForm; override;
   public
     class function Execute(const AOwner: TComponent;
-      out ASearch: ISearch): Boolean;
+      out ASearch: ISearch; out RefineExisting: Boolean): Boolean;
       {Displays dialog and returns search object based on entered criteria.
-        @param AOwner Component that owns this dialog.
+        @param AOwner [in] Component that owns this dialog.
         @param ASearch [out] Set to value of Search property: nil if user
           cancels.
+        @param RefineExisting [out] Set to flag indicating if any existing
+          search is to be refined (True) or if this search is to apply to whole
+          database (False).
         @return True if user OKs and search object created or false if user
           cancels and search object is nil.
       }
@@ -165,7 +172,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, USettings;
+  Compilers.UCompilers, UCtrlArranger, UQuery, USettings;
 
 
 {$R *.dfm}
@@ -187,6 +194,36 @@ const
 
 
 { TFindCompilerDlg }
+
+procedure TFindCompilerDlg.ArrangeForm;
+begin
+  TCtrlArranger.SetLabelHeights(pnlBody);
+  // Arrange columns horizontally
+  TCtrlArranger.AlignLefts([lblCompilerVer, lbCompilerVers, btnSelectAll], 0);
+  TCtrlArranger.AlignRights([lbCompilerVers, btnClearAll]);
+  TCtrlArranger.AlignLefts(
+    [lblCriteria, cbCriteria, rgLogic, rgScope],
+    TCtrlArranger.RightOf(
+      [lblCompilerVer, lbCompilerVers, btnSelectAll, btnClearAll], 24
+    )
+  );
+  // Arrange vertically
+  TCtrlArranger.AlignTops([lblCompilerVer, lblCriteria], 0);
+  TCtrlArranger.AlignTops(
+    [lbCompilerVers, cbCriteria],
+    TCtrlArranger.BottomOf([lblCompilerVer, lblCriteria], 4)
+  );
+  TCtrlArranger.AlignTops(
+    [btnClearAll, btnSelectAll], TCtrlArranger.BottomOf(lbCompilerVers, 4)
+  );
+  TCtrlArranger.AlignBottoms([btnClearAll, btnSelectAll, rgScope]);
+  rgLogic.Top :=
+    (rgScope.Top + TCtrlArranger.BottomOf(cbCriteria) - rgLogic.Height) div 2;
+  // Size body panel
+  pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 4;
+  pnlBody.ClientWidth := TCtrlArranger.TotalControlWidth(pnlBody);
+  inherited;
+end;
 
 procedure TFindCompilerDlg.btnClearAllClick(Sender: TObject);
   {Deselects all compilers when user clicks "Clear All" button.
@@ -256,6 +293,8 @@ begin
   fSearchParams.Compilers := SearchCriteria.Compilers;
   // Create search object from the entered criteria
   fSearch := TSearchFactory.CreateCompilerSearch(SearchCriteria);
+  // Record search scope
+  fRefinePreviousSearch := rgScope.ItemIndex = 0
 end;
 
 procedure TFindCompilerDlg.btnSelectAllClick(Sender: TObject);
@@ -295,18 +334,23 @@ begin
 end;
 
 class function TFindCompilerDlg.Execute(const AOwner: TComponent;
-  out ASearch: ISearch): Boolean;
+  out ASearch: ISearch; out RefineExisting: Boolean): Boolean;
   {Displays dialog and returns search object based on entered criteria.
-    @param AOwner Component that owns this dialog.
-    @param ASearch [out] Set to value of Search property: nil if user cancels.
-    @return True if user OKs and search object created or false if user cancels
-      and search object is nil.
+    @param AOwner [in] Component that owns this dialog.
+    @param ASearch [out] Set to value of Search property: nil if user
+      cancels.
+    @param RefineExisting [out] Set to flag indicating if any existing
+      search is to be refined (True) or if this search is to apply to whole
+      database (False).
+    @return True if user OKs and search object created or false if user
+      cancels and search object is nil.
   }
 begin
   with InternalCreate(AOwner) do
     try
       Result := (ShowModal = mrOK);
       ASearch := fSearch;
+      RefineExisting := fRefinePreviousSearch;
     finally
       Free;
     end;
@@ -320,6 +364,7 @@ begin
   inherited;
   fCompilers := TCompilersFactory.CreateAndLoadCompilers;
   fSearchParams := TCompilerSearchParams.Create(fCompilers);
+  fRefinePreviousSearch := False;
 end;
 
 procedure TFindCompilerDlg.FormDestroy(Sender: TObject);
@@ -366,6 +411,13 @@ begin
   // Select appropriate search logic radio button
   // radio button index is ordinal value of Logic
   rgLogic.ItemIndex := Ord(fSearchParams.Logic);
+
+  // Set search scope enabled state and selected appropriate default button
+  rgScope.Enabled := Query.IsSearchActive;
+  if Query.IsSearchActive then
+    rgScope.ItemIndex := 0
+  else
+    rgScope.ItemIndex := 1;
 
   // Update OK button state
   UpdateOKBtn;
