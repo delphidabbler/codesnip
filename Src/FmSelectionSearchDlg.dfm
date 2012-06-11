@@ -9,21 +9,37 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
     Height = 293
     ExplicitWidth = 371
     ExplicitHeight = 293
+    object lblOverwriteSearch: TLabel
+      AlignWithMargins = True
+      Left = 0
+      Top = 280
+      Width = 371
+      Height = 13
+      Margins.Left = 0
+      Margins.Top = 8
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Align = alBottom
+      AutoSize = False
+      Caption = 'NOTE: Your selection will replace your current search(es).'
+      WordWrap = True
+      ExplicitWidth = 272
+    end
     inline frmSelect: TSelectSnippetsFrame
       Left = 0
       Top = 0
       Width = 281
-      Height = 293
+      Height = 272
       Align = alLeft
       TabOrder = 0
       TabStop = True
       ExplicitWidth = 281
-      ExplicitHeight = 293
+      ExplicitHeight = 272
       inherited tvChecked: TTreeView
         Width = 281
-        Height = 293
+        Height = 272
         ExplicitWidth = 281
-        ExplicitHeight = 293
+        ExplicitHeight = 272
       end
     end
     object btnSelectAll: TButton
