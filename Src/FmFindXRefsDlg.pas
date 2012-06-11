@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -65,6 +65,7 @@ type
     chkIncludeSnippet: TCheckBox;
     chkRequiredRecurse: TCheckBox;
     chkSeeAlsoRecurse: TCheckBox;
+    lblOverwriteSearch: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SearchCheckClick(Sender: TObject);
@@ -149,7 +150,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UColours, UCtrlArranger, USettings;
+  UColours, UCtrlArranger, UQuery, USettings;
 
 
 {$R *.dfm}
@@ -161,12 +162,34 @@ procedure TFindXRefsDlg.ArrangeForm;
   {Arranges components on form and rezize form as required.
   }
 begin
+  // Horizontal alignment & sizing
   // Place snippet name after end of description label
+  TCtrlArranger.AlignLefts(
+    [lblDesc, chkRequired, chkSeeAlso, chkIncludeSnippet, lblOverwriteSearch], 0
+  );
+  TCtrlArranger.AlignLefts([chkRequiredRecurse, chkSeeAlsoRecurse], 24);
   TCtrlArranger.MoveToRightOf(lblDesc, lblSnippetName);
   // Check if snippet name is clipped at right of dialog box and increase
   // available body panel space if so
+  // Don't use TCtrlArranger.TotalControlWidth here
   if lblSnippetName.Left + lblSnippetName.Width > pnlBody.ClientWidth then
     pnlBody.ClientWidth := lblSnippetName.Left + lblSnippetName.Width;
+  lblOverwriteSearch.Width := pnlBody.ClientWidth;
+  TCtrlArranger.SetLabelHeight(lblOverwriteSearch);
+
+  // Vertical alignment & sizing
+  TCtrlArranger.AlignVCentres(0, [lblDesc, lblSnippetName]);
+  TCtrlArranger.MoveBelow([lblDesc, lblSnippetName], chkRequired, 12);
+  TCtrlArranger.MoveBelow(chkRequired, chkRequiredRecurse, 6);
+  TCtrlArranger.MoveBelow(chkRequiredRecurse, chkSeeAlso, 12);
+  TCtrlArranger.MoveBelow(chkSeeAlso, chkSeeAlsoRecurse, 6);
+  TCtrlArranger.MoveBelow(chkSeeAlsoRecurse, chkIncludeSnippet, 12);
+  if lblOverwriteSearch.Visible then
+    TCtrlArranger.MoveBelow(chkIncludeSnippet, lblOverwriteSearch, 12)
+  else
+    lblOverwriteSearch.SetBounds(0, 0, 0, 0); // hide from panel sizing
+  pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 4;
+
   // Inherited arrangement: will set dialog width based on body panel width
   inherited;
 end;
@@ -223,6 +246,8 @@ begin
   chkIncludeSnippet.Caption := Format(
     chkIncludeSnippet.Caption, [fSnippet.Name]
   );
+  // Display or hide warning about overwriting searches
+  lblOverwriteSearch.Visible := Query.IsSearchActive;
 end;
 
 class function TFindXRefsDlg.Execute(const AOwner: TComponent;
