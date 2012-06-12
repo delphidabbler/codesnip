@@ -266,6 +266,7 @@ begin
   pcWizard.ActivePage := tsUserInfo;  // show page so that HTML can load
   frmPrivacy.Initialise('frm-emailprivacy.html');
   lblSnippetPrompt.Font.Style := [fsBold];
+  frmSnippets.CanCollapse := True;
 end;
 
 procedure TCodeSubmitDlg.DoSubmit;
