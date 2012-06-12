@@ -73,6 +73,7 @@ type
       {Writes export file.
       }
   strict protected
+    procedure ConfigForm; override;
     procedure ArrangeForm; override;
       {Aligns controls vertically where necessary to accomodate height of
       controls that depend on UI font.
@@ -197,6 +198,12 @@ begin
         E.Ctrl.SetFocus;
     end;
   end;
+end;
+
+procedure TCodeExportDlg.ConfigForm;
+begin
+  inherited;
+  frmSnippets.CanCollapse := True;
 end;
 
 class procedure TCodeExportDlg.Execute(const AOwner: TComponent;
