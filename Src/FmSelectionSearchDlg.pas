@@ -92,6 +92,7 @@ type
           selected, False if main database snippets are to be selected.
       }
   strict protected
+    procedure ConfigForm; override;
     procedure InitForm; override;
       {Initialises form. Disables User Defined button if there are no user
       defined snippets in database.
@@ -199,6 +200,15 @@ begin
   SelectDB(True);
 end;
 
+procedure TSelectionSearchDlg.ConfigForm;
+begin
+  inherited;
+  frmSelect.CanCollapse := True;
+  lblOverwriteSearch.Visible := Query.IsSearchActive;
+  if lblOverwriteSearch.Visible then
+    TCtrlArranger.SetLabelHeight(lblOverwriteSearch);
+end;
+
 class function TSelectionSearchDlg.Execute(const AOwner: TComponent;
   const SelectedSnippets: TSnippetList; out ASearch: ISearch): Boolean;
   {Displays dialog and returns search object based on entered criteria.
@@ -237,12 +247,8 @@ procedure TSelectionSearchDlg.InitForm;
   }
 begin
   inherited;
-  frmSelect.CanCollapse := True;
   frmSelect.CollapseTree;
   btnUserDB.Enabled := Database.Snippets.Count(True) > 0;
-  lblOverwriteSearch.Visible := Query.IsSearchActive;
-  if lblOverwriteSearch.Visible then
-    TCtrlArranger.SetLabelHeight(lblOverwriteSearch);
 end;
 
 procedure TSelectionSearchDlg.SelectDB(const UserDefined: Boolean);
