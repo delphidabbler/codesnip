@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -116,6 +116,10 @@ type
     function Count: Integer;
       {Gets number of items in list.
         @return Required number of items.
+      }
+    procedure Delete(const Idx: Integer);
+      {Deletes a string from list.
+        @param Index of string to be deleted.
       }
     function GetItem(const Idx: Integer): string;
       {Gets string at a given position in list.
@@ -246,6 +250,10 @@ type
     function Count: Integer;
       {Gets number of items in list.
         @return Required number of items.
+      }
+    procedure Delete(const Idx: Integer);
+      {Deletes a string from list.
+        @param Index of string to be deleted.
       }
     function GetItem(const Idx: Integer): string;
       {Gets string at a given position in list.
@@ -547,6 +555,14 @@ constructor TIStringList.Create(const Strs: array of string);
 begin
   Create;
   Add(Strs);
+end;
+
+procedure TIStringList.Delete(const Idx: Integer);
+  {Deletes a string from list.
+    @param Index of string to be deleted.
+  }
+begin
+  fStrings.Delete(Idx);
 end;
 
 destructor TIStringList.Destroy;
