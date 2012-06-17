@@ -22,7 +22,7 @@
 ; The Initial Developer of the Original Code is Peter Johnson
 ; (http://www.delphidabbler.com/).
 ;
-; Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+; Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
 ; Johnson. All Rights Reserved.
 ;
 ; Contributors:
@@ -64,8 +64,8 @@
 #define SetupHelper "CSSetupHelper.exe"
 
 ; For v4 pre-release versions only, set version number here
-#define AppVersion "4.0-alpha.2"
-#define RealVersion "3.98.2"
+#define AppVersion "4.0-alpha.3"
+#define RealVersion "3.98.3"
 
 ; Creates name of setup file from app name, version and any special build string
 #define CreateSetupName(str fn) \
