@@ -313,6 +313,8 @@ uses
   USaveSourceMgr in 'USaveSourceMgr.pas',
   USaveUnitMgr in 'USaveUnitMgr.pas',
   USearch in 'USearch.pas',
+  USelectionIOHandler in 'USelectionIOHandler.pas',
+  USelectionIOMgr in 'USelectionIOMgr.pas',
   USettings in 'USettings.pas',
   UShowCaseCtrl in 'UShowCaseCtrl.pas',
   USimpleDispatch in 'USimpleDispatch.pas',
