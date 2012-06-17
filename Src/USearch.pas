@@ -186,6 +186,21 @@ type
   end;
 
   {
+  IStoredSelectionSearchCriteria:
+    Search criteria for stored snippet selection searches. Stores list of
+    snippets to be selected.
+  }
+  IStoredSelectionSearchCriteria = interface(ISearchCriteria)
+    ['{6FA6AC34-439B-4744-ACBC-1836EE140EB6}']
+    function GetSelectedItems: ISnippetIDList;
+      {Read accessor for SelectedItems property.
+        @return List of snippets to be selected in search.
+      }
+    property SelectedItems: ISnippetIDList read GetSelectedItems;
+      {List of snippets to be selected in search}
+  end;
+
+  {
   TXRefSearchOption:
     Search options used in XRef search criteria.
   }
@@ -286,6 +301,8 @@ type
         @param Criteria [in] Criteria to apply to search.
         @return ISearch interface to selection search object instance.
       }
+    class function CreateStoredSelectionSearch(
+      const Criteria: IStoredSelectionSearchCriteria): ISearch;
     class function CreateXRefSearch(
       const Criteria: IXRefSearchCriteria): ISearch;
       {Creates a cross-reference search object.
@@ -343,6 +360,8 @@ type
         @param SelectedItems [in] List snippets to be included in search.
         @return ISelectionSearchCriteria interface to created object.
       }
+    class function CreateStoredSelectionSearchCriteria(
+      const SelectedSnippets: ISnippetIDList): IStoredSelectionSearchCriteria;
     class function CreateXRefSearchCriteria(const BaseSnippet: TSnippet;
       const Options: TXRefSearchOptions): IXRefSearchCriteria;
       {Creates a cross-reference search criteria object with specified property
@@ -473,6 +492,29 @@ type
       }
   public
     constructor Create(const Criteria: ISelectionSearchCriteria);
+      {Class constructor. Sets up selection search.
+        @param Critera [in] Criteria for this search.
+      }
+  end;
+
+  TStoredSelectionSearch = class(TSearch, ISearch)
+  strict private
+    fCriteria: IStoredSelectionSearchCriteria;
+      {Search criteria}
+  strict protected
+    function Match(const Snippet: TSnippet): Boolean; override;
+      {Checks whether a snippet matches the search criteria.
+        @param Snippet [in] Snippet to be tested.
+        @return True if snippet matches criteria, false if not.
+      }
+  protected
+    { ISearch methods not defined in base class }
+    function GetCriteria: ISearchCriteria;
+      {Read accessor for Criteria property.
+        @return Criteria to be applied to search.
+      }
+  public
+    constructor Create(const Criteria: IStoredSelectionSearchCriteria);
       {Class constructor. Sets up selection search.
         @param Critera [in] Criteria for this search.
       }
@@ -694,6 +736,33 @@ type
   TSelectionSearchCriteria = class(TBaseSearchCriteria,
     ISearchCriteria,
     ISelectionSearchCriteria,
+    ISearchUIInfo
+  )
+  strict private
+    var
+      fSelectedItems: ISnippetIDList;
+        {List snippets ids to be selected in search}
+  strict protected
+    function GlyphResourceName: string; override;
+      {Provides name of required glyph bitmap in resources.
+        @return Name of bitmap resource.
+      }
+  protected
+    { ISelectionSearchCriteria methods }
+    function GetSelectedItems: ISnippetIDList;
+      {Read accessor for SelectedItems property.
+        @return List of snippets to be selected in search.
+      }
+  public
+    constructor Create(const SelectedItems: ISnippetIDList);
+      {Class constructor. Sets up object with specified property values.
+        @param SelectedItems [in] List of snippets to be selected in search.
+      }
+  end;
+
+  TStoredSelectionSearchCriteria = class(TBaseSearchCriteria,
+    ISearchCriteria,
+    IStoredSelectionSearchCriteria,
     ISearchUIInfo
   )
   strict private
@@ -1081,6 +1150,26 @@ begin
   Result := fCriteria.SelectedItems.Contains(Snippet.ID);
 end;
 
+{ TStoredSelectionSearch }
+
+constructor TStoredSelectionSearch.Create(
+  const Criteria: IStoredSelectionSearchCriteria);
+begin
+  Assert(Assigned(Criteria), ClassName + '.Create: Criteria is nil');
+  inherited Create;
+  fCriteria := Criteria;
+end;
+
+function TStoredSelectionSearch.GetCriteria: ISearchCriteria;
+begin
+  Result := fCriteria;
+end;
+
+function TStoredSelectionSearch.Match(const Snippet: TSnippet): Boolean;
+begin
+  Result := fCriteria.SelectedItems.Contains(Snippet.ID);
+end;
+
 { TXRefSearch }
 
 function TXRefSearch.AddToXRefs(const Snippet: TSnippet): Boolean;
@@ -1393,6 +1482,26 @@ begin
   Result := 'SELECTIONSEARCH';
 end;
 
+{ TStoredSelectionSearchCriteria }
+
+constructor TStoredSelectionSearchCriteria.Create(
+  const SelectedItems: ISnippetIDList);
+begin
+  inherited Create;
+  fSelectedItems := TSnippetIDList.Create;
+  (fSelectedItems as IAssignable).Assign(SelectedItems);
+end;
+
+function TStoredSelectionSearchCriteria.GetSelectedItems: ISnippetIDList;
+begin
+  Result := fSelectedItems;
+end;
+
+function TStoredSelectionSearchCriteria.GlyphResourceName: string;
+begin
+  Result := 'STOREDSELECTIONSEARCH';
+end;
+
 { TXRefSearchCriteria }
 
 constructor TXRefSearchCriteria.Create(const BaseSnippet: TSnippet;
@@ -1538,6 +1647,12 @@ begin
   Result := TSelectionSearch.Create(Criteria);
 end;
 
+class function TSearchFactory.CreateStoredSelectionSearch(
+  const Criteria: IStoredSelectionSearchCriteria): ISearch;
+begin
+  Result := TStoredSelectionSearch.Create(Criteria);
+end;
+
 class function TSearchFactory.CreateTextSearch(
   const Criteria: ITextSearchCriteria): ISearch;
   {Creates a text search object.
@@ -1593,6 +1708,12 @@ class function TSearchCriteriaFactory.CreateSelectionSearchCriteria(
   const SelectedItems: ISnippetIDList): ISelectionSearchCriteria;
 begin
   Result := TSelectionSearchCriteria.Create(SelectedItems);
+end;
+
+class function TSearchCriteriaFactory.CreateStoredSelectionSearchCriteria(
+  const SelectedSnippets: ISnippetIDList): IStoredSelectionSearchCriteria;
+begin
+  Result := TStoredSelectionSearchCriteria.Create(SelectedSnippets);
 end;
 
 class function TSearchCriteriaFactory.CreateTextSearchCriteria(
