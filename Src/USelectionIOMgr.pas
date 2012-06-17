@@ -97,9 +97,9 @@ end;
 
 class function TSelectionIOMgr.GetLoadFileName(out FileName: string): Boolean;
 resourcestring
-  sDlgTitle = 'Load Selection From File';               // dialogue box title
-  sFilter = 'CodeSnip export files (*.cssel)|*.cssel|'  // file filter
-    + 'All files (*.*)|*.*';
+  sDlgTitle = 'Load Selection'; // dialogue box title
+  sFilter = 'CodeSnip selection files (*.cssel)|*.cssel|'
+    + 'All files (*.*)|*.*';    // file filter
 var
   OpenDlg: TOpenDialogEx; // load selection dialogue box
 begin
@@ -125,9 +125,9 @@ end;
 
 class function TSelectionIOMgr.GetSaveFileName(out FileName: string): Boolean;
 resourcestring
-  sDlgTitle = 'Save Selection From File';               // dialogue box caption
-  sFilter = 'CodeSnip export files (*.cssel)|*.cssel|'  // file filter
-    + 'All files (*.*)|*.*';
+  sDlgTitle = 'Save Selection'; // dialogue box caption
+  sFilter = 'CodeSnip selection files (*.cssel)|*.cssel|'
+    + 'All files (*.*)|*.*';    // file filter
 var
   SaveDlg: TSaveDialogEx; // save selection dialogue box
 begin
