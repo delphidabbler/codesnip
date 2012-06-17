@@ -62,6 +62,8 @@ implementation
 
 
 uses
+  // Delphi
+  Classes,
   // Project
   UConsts, UIOUtils, UStrUtils;
 
@@ -108,7 +110,7 @@ begin
     if UserDefStr = '' then
       raise ESelectionFileReader.CreateFmt(sMissingUserDef, [Line]);
     if not TryStrToInt(UserDefStr, UserDefInt)
-      and not (UserDefInt in [0, 1]) then
+      or not (UserDefInt in [0, 1]) then
       raise ESelectionFileReader.CreateFmt(sBadUserDef, [Line]);
     fSnippetIDs.Add(TSnippetID.Create(Name, Boolean(UserDefInt)));
   end;
@@ -116,12 +118,21 @@ end;
 
 function TSelectionFileReader.ReadFile(const FileName: string): ISnippetIDLIst;
 begin
-  fLines.SetText(
-    TFileIO.ReadAllText(FileName, TEncoding.UTF8, True),
-    CRLF,
-    False,
-    True
-  );
+  try
+    fLines.SetText(
+      TFileIO.ReadAllText(FileName, TEncoding.UTF8, True),
+      CRLF,
+      False,
+      True
+    );
+  except
+    on E: EFOpenError do
+      raise ESelectionFileReader.Create(E);
+    on E: EIOUtils do
+      raise ESelectionFileReader.Create(E);
+    else
+      raise;
+  end;
   Parse;
   Result := fSnippetIDs;
 end;
