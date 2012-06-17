@@ -1790,7 +1790,7 @@ inherited MainForm: TMainForm
       Caption = 'Save Snippet...'
       Hint = 'Save Snippet|Save current routine or category to a file'
       ImageIndex = 18
-      ShortCut = 16467
+      ShortCut = 24654
       OnExecute = actSaveSnippetExecute
       OnUpdate = actSaveSnippetUpdate
     end
@@ -2134,6 +2134,7 @@ inherited MainForm: TMainForm
       Caption = 'Save User Database'
       Hint = 'Save Database|Saves all changes to user database'
       ImageIndex = 25
+      ShortCut = 16467
       OnExecute = actSaveDatabaseExecute
       OnUpdate = actSaveDatabaseUpdate
     end
