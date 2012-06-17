@@ -247,6 +247,11 @@ type
     tbUpdateDbase: TToolButton;
     actDuplicateSnippet: TAction;
     miDuplicateSnippet: TMenuItem;
+    actSaveSelection: TAction;
+    actLoadSelection: TAction;
+    miSpacer17: TMenuItem;
+    miLoadSelection: TMenuItem;
+    miSaveSelection: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
@@ -335,6 +340,9 @@ type
     procedure actSelectDetailTabExecute(Sender: TObject);
     procedure actDuplicateSnippetExecute(Sender: TObject);
     procedure actDuplicateSnippetUpdate(Sender: TObject);
+    procedure actSaveSelectionExecute(Sender: TObject);
+    procedure actSaveSelectionUpdate(Sender: TObject);
+    procedure actLoadSelectionExecute(Sender: TObject);
   strict private
     fIsAppRegistered: Boolean;        // Flag noting if app is registered
     fNotifier: INotifier;             // Notififies app of user-initiated events
@@ -416,7 +424,8 @@ uses
   UCommandBars, UConsts, UCopyInfoMgr, UCopySourceMgr, UDatabaseLoader,
   UDatabaseLoaderUI, UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus,
   UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr,
-  USaveUnitMgr, UUserDBMgr, UView, UViewItemAction, UWBExternal, Web.UInfo;
+  USaveUnitMgr, USelectionIOMgr, UUserDBMgr, UView, UViewItemAction,
+  UWBExternal, Web.UInfo;
 
 
 {$R *.dfm}
@@ -829,6 +838,14 @@ begin
   DisplayHelp('License');
 end;
 
+procedure TMainForm.actLoadSelectionExecute(Sender: TObject);
+var
+  Search: ISearch;
+begin
+  if TSelectionIOMgr.LoadSelectionSearch(Search) then
+    DoSearchFilter(Search);
+end;
+
 procedure TMainForm.actNewDetailsTabExecute(Sender: TObject);
 begin
   fMainDisplayMgr.CreateNewDetailsTab;
@@ -1013,6 +1030,16 @@ procedure TMainForm.actSaveDatabaseUpdate(Sender: TObject);
   }
 begin
   (Sender as TAction).Enabled := TUserDBMgr.CanSave;
+end;
+
+procedure TMainForm.actSaveSelectionExecute(Sender: TObject);
+begin
+  TSelectionIOMgr.SaveCurrentSelection;
+end;
+
+procedure TMainForm.actSaveSelectionUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled := TSelectionIOMgr.CanSaveCurrentSelection;
 end;
 
 procedure TMainForm.actSaveSnippetExecute(Sender: TObject);

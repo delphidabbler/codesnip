@@ -27,7 +27,6 @@ inherited MainForm: TMainForm
       item
         Width = 50
       end>
-    ExplicitTop = 407
   end
   object tbarMain: TToolBar
     Left = 0
@@ -2304,6 +2303,24 @@ inherited MainForm: TMainForm
       OnExecute = actDuplicateSnippetExecute
       OnUpdate = actDuplicateSnippetUpdate
     end
+    object actSaveSelection: TAction
+      Category = 'File'
+      Caption = 'Save Selection...'
+      Hint = 'Save Current Selection|Saves currently selected snippets to disk'
+      ShortCut = 41043
+      OnExecute = actSaveSelectionExecute
+      OnUpdate = actSaveSelectionUpdate
+    end
+    object actLoadSelection: TAction
+      Category = 'File'
+      Caption = 'Load Selection...'
+      Hint = 
+        'Load Current Selection|Loads a saved selection of snippets from ' +
+        'disk'
+      ShortCut = 41036
+      OnExecute = actLoadSelectionExecute
+      OnUpdate = ActNonEmptyDBUpdate
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -2318,6 +2335,15 @@ inherited MainForm: TMainForm
         Action = actSaveUnit
       end
       object miSpacer6: TMenuItem
+        Caption = '-'
+      end
+      object miSaveSelection: TMenuItem
+        Action = actSaveSelection
+      end
+      object miLoadSelection: TMenuItem
+        Action = actLoadSelection
+      end
+      object miSpacer17: TMenuItem
         Caption = '-'
       end
       object miPageSetup: TMenuItem
