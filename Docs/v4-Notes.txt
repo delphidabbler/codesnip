@@ -34,6 +34,8 @@ Changes
 * Features:
   o Compiler warnings can now be switched on as well as off in generated code.
   o Contents of a category can be printed: category name used in header then sub-heading for each snippet and description of snippet follows.
+  o Text and compiler searches can now be nested so that the later search refines the earlier one.
+  o New option to store currently selected snippets to disk for later restoration. Accessed by new Save Selection and Load Selection menu options on File menu.
 
 * Refactorings and similar:
   o Updated browser interface code with IE 8 specific flags.
@@ -42,6 +44,9 @@ Changes
   o Some renamings.
   o Some new helper methods added to some classes.
   o HTML page loading code for detail pane refactored.
+  o Many more control alignment methods in TCtrlAligner.
+  o Message dialogues can now have close button removed: feature not used at present.
+  o Extended IStringList.
 
 * Bug fixes:
   o Unreported bug in logic of code that generates program ID: not causing a problem, just wrong!
@@ -61,6 +66,7 @@ Changes
 * HTML & CSS processing:
 
 * Printing:
+  o List of snippets in selected category can now be printed.
 
 * Dialogue boxes:
   o Dependencies dialogue box now displays snippets that depend upon a snippet in addition to its own dependencies. Original display no longer includes Snippet kinds.
@@ -71,6 +77,9 @@ Changes
     - revised and extended Alt key shortcuts
   o Code Import dialogue box now sorts imported units in list view and scrolls to make renamed snippets visible.
   o About box program tab updated with credits for new third party code.
+  o Appearance of message boxes tweaked.
+  o Search dialogues given makeover either to report search will be overwritten or to ask if search is to be refined.
+  o Snippets tree views in Snippet Selection, Snippets export and Snippets submission dialogue boxes can now be expanded and collapsed. Snippets Selection treeview now starts fully collapsed whereas others start fully expanded.
 
 * Database:
 
@@ -85,11 +94,11 @@ Changes
   o Minor tweak to text displayed for empty sections in details pane.
   o Now displays buttons next to non-empty section heads in overview panes, and lines have been removed from treeview.
   o Ctrl + arrow keys can now be used to scroll list view vertically and horizontally without changing selection in overview pane.
-  o Main window UI is now refresshed whenever changes that affect UI are made in preferences dialogue box.
+  o Main window UI is now refreshed whenever changes that affect UI are made in preferences dialogue box.
+  o Some main menu shortcut keys changed: Ctrl+S now saves user database instead of saving selected snippet, which now uses Shift+Ctrl+N.
 
 * Web Services:
   o Logon to database update web service now sends info about OS and IE version.
-
 
 * Syntax highlighter:
 
