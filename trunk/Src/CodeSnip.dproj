@@ -470,6 +470,8 @@
 			<DCCReference Include="USaveSourceMgr.pas"/>
 			<DCCReference Include="USaveUnitMgr.pas"/>
 			<DCCReference Include="USearch.pas"/>
+			<DCCReference Include="USelectionIOHandler.pas"/>
+			<DCCReference Include="USelectionIOMgr.pas"/>
 			<DCCReference Include="USettings.pas"/>
 			<DCCReference Include="UShowCaseCtrl.pas"/>
 			<DCCReference Include="USimpleDispatch.pas"/>
@@ -537,8 +539,7 @@
 			<DCCReference Include="Web.UInfo.pas"/>
 			<DCCReference Include="Web.URegistrar.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
-			<DCCReference Include="Web.UXMLRequestor.pas">
-			</DCCReference>
+			<DCCReference Include="Web.UXMLRequestor.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
