@@ -1,0 +1,115 @@
+; ------------------------------------------------------------------------------
+; Change Log for CodeSnip Release 4
+; $Rev$
+; $Date$
+; ------------------------------------------------------------------------------
+
+Release 4.0 alpha 3 (preview) of 18 June 2012
++ New features:
+  - Compiler warnings can now be switched on as well as off in generated code.
+  - Names and descriptions of snippets in a category can now be printed.
+  - Text and compiler searches can now be nested so that the later search refines the earlier one.
+  - Current selection (i.e. search result set) can be saved to disk and loaded again later.
++ User interface changes:
+  - Overview pane now displays buttons that can be used to collapse or expand non-empty section headings.
+  - Ctrl + arrow keys can now be used to scroll overview pane tree view vertically and horizontally without changing selection in overview pane.
+  - Main window is now refreshed whenever changes that affect it are made in the Preferences dialogue box.
+  - Some main menu shortcut keys changed.
+  - Dependencies dialogue box now has two tabs: the first displays the snippets required to compile the selected snippet while the second tab displays snippets that depend upon the selected snippet.
+  - Code Generation tab of Preferences dialogue box updated to enable warnings to be switched on or off. In addition default warnings can be restored, list view columns can be sorted and Alt key shortcuts tweaked.
+  - Code Import dialogue box improved: now sorts imported units in list view and scrolls to make renamed snippets visible.
+  - Snippet selection and cross-reference search dialogues now report if existing search results will be overwritten.
+  - Text and compiler search dialogues now ask if any current search results are to be refined.
+  - Tree views in Snippet Selection, Snippets export and Snippets submission dialogue boxes can now be expanded and collapsed.
+  - Appearance of message boxes tweaked.
+  - Program tab of About box updated with credits for new third party code.
++ Bug fixes:
+  - Error in logic of code that generates program ID was fixed.
+  - Bug #2868708 fixed (http://bit.ly/KeyAvS): edited snippets are no longer lost from manual snippet selections unless snippet names are changed.
+  - Bug #3534138 fixed (http://bit.ly/Mg9gJG): details pane display is now cleared when last tab is closed: previously content of last closed tab remained on screen.
++ Info about user's OS and IE version is now sent to web server during online database updates.
++ Some refactoring.
++ Help file updated in line with changes and new features. Some US English spellings changed to UK English for consistency.
++ Updated documentation, including:
+  - Privacy statement updated re changes in data recorded via database update logons.
+  - Licensing docs updated re introduction of some MPL 2.0 files.
+
+Release 4.0 alpha 2 (preview) of 21 April 2012
++ New features:
+  - New "unit" snippet type that enables complete units to be stored in database and to be test compiled.
+  - New "classes" snippet type that enables a single Object Pascal class or advanced record-with-methods to be stored in database, test compiled and included in generated units.
+  - Snippets from both the user and main databases can now be duplicated. Duplicates are editable and are stored in the user database.
+  - Online CodeSnip FAQs can now be displayed in the default browser from a new option on the "Help" menu.
++ User interface changes:
+  - New "Snippets" and "Categories" top level menus have been added. They are populated with items previously on the "Database" menu. "Snippets" menu also has new "Duplicate Snippet" item.
+  - "Help" menu re-arranged: items from the former "On The Web" sub-menu are now placed directly on "Help" menu.
+  - Numerous new and updated glyphs on toolbar, menu and in main display.
+  - Minor tweaks to controls in the Code tab of the Snippets Editor.
+  - Minor changes to the style of version info displayed on the splash screen.
++ Bug fixes:
+  - Fixed potential source of a bug in code that edits user-defined categories.
+  - Fixed unreported minor bug in dialogue boxes that display tabbed page controls: clicking a tab did not always give it the keyboard focus.
+  - Fixed bug #3519784 (http://bit.ly/IsCsun) where multi-line "type" or "constant" snippets that start on the same line as the type or const keyword were corrupted when included in units using the "comments after snippet header" comment style.
++ Characters used to introduced switches on the command line were changed: '/' replaces '\'. '-' is still permitted.
++ User and main database formats modified. User databases saved with this version may not be readable with release 4.0 alpha 1.
++ Some refactoring.
++ Help file updated in line with changes and some errors fixed.
++ Updated documentation.
+
+Release 4.0 alpha 1 (preview) of 31 December 2011
+Changes relate to v3.9.3
++ User interface changes:
+  - New multi-tab detail pane can now show more than one snippet, category etc.
+  - Results of test compiles now appear in a dialogue box instead of in details pane.
+  - New code import wizard for cleaner control over import process.
+  - New "Compile" top level menu that groups all actions relating to test compilation.
+  - Empty section headings can now be displayed in overview pane if required.
+  - New display options relating to multi-tab display.
+  - New view displayed instead of welcome screen when database updated.
+  - Some additions and changes to main window navigation keys.
+  - Main window and task bar captions changed.
+  - Some dialogue boxes tweaked.
+  - Compiler configuration dialogue box heavliy revised to support default compiler paths.
+  - "About" dialogue box paths tab display improved.
+  - Compile error dialogue box display standardised.
+  - Splash screen updated.
++ Improved Delphi code syntax highlighter:
+  - Recognises Delphi 2010 keywords
+  - Correctly handles context sensitive directives within "property", "exports" and "external" statements.
+  - Recognises '&' prefix that causes keywords to be treated as identifiers.
++ Compiler search paths can now be specified for included units permitting non-VCL units to be used by snippets.
++ Database:
+  - Non-empty categories can no longer be deleted.
+  - File format of both user-defined and main databases changed.
+  - Database locations changed: updates to main database and edits to user database do not affect databases used by v3 and earlier.
+  - Location and file format of both user defined and main databases changed.
+  - Database now supports Unicode Delphi source code.
+  - Unicode Delphi identifiers can now be used for snippet names.
+  - Export and backup file formats updated: new formats are not backward compatible but older versions can still be imported.
+  - Code submission service now supports Unicode souce code.
+  - Database updates now use v5 of delphidabbler.com web update service with revised checksum handling.
++ Unicode support:
+  - Program now fully supports Unicode internally.
+  - Test units now use UTF-8 format if source code contains non-ANSI characters. ANSI format is used otherwise to permit compilation on older Delphi compilers.
+  - Many export file formats now support Unicode and UTF8 formats. User may specify file types from Save dialogue box.
+  - Configuration files are now in Unicode format.
+  - Some Unicode support added to database (see above).
++ Web service data handling code improved: now includes ability to send raw bytes and can detect and adapt to character encoding used in responses.
++ Configuration file names and locations changed.
++ Fixed some bugs:
+  - Various Unicode and code page related problems in RTF code generation.
+  - Memory leaks.
+  - Version detection in backup file restoration.
++ Cascading style sheet handling improved.
++ Any errors in scripts run in browser control now trapped and reported as exceptions instead of via browser control's own error dialogue box.
++ Revised external object that communicates with JavaScript in browser controls.
++ Hyperlinks used in snippets now support the https:// protocol.
++ A default title now used in print spooler if none specified.
++ Source code heavily refactored.
++ Help file updated in line with changes.
++ Updated documentation, including changes to privacy statement and new file format documentation.
++ Installer:
+  - Changed so that v3 and v4 installs can co-exist - default install locations are different and v4 does not overwrite v3.
+  - Converts v3 config files to v4 Unicode format and copies to new locations. File version stamps are updated.
+  - Installer is now compiled with Unicode version of Inno Setup instead of ANSI version.
+  - Scripts updated and refactored.
