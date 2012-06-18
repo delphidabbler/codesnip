@@ -41,7 +41,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -153,6 +153,10 @@ type
     ekHeading,      // delimits a heading (block level)
     ekMono          // text formatted as mono spaced (inline)
   );
+
+type
+  ///  <summary>Set of types of active text action elements.</summary>
+  TActiveTextActionElemKinds = set of TActiveTextActionElemKind;
 
 type
   ///  <summary>Interface supported by active text action elements, i.e. those
