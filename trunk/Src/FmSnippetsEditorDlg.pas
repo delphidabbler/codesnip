@@ -574,9 +574,7 @@ function TSnippetsEditorDlg.BuildExtraActiveText: IActiveText;
     @return Required active text object.
   }
 begin
-  Result := TSnippetExtraHelper.BuildActiveText(
-    StrTrim(StrCompressWhiteSpace(StrReplace(edExtra.Text, EOL, ' ')))
-  );
+  Result := TSnippetExtraHelper.BuildActiveText(edExtra.Text);
 end;
 
 procedure TSnippetsEditorDlg.cbKindChange(Sender: TObject);
