@@ -451,11 +451,12 @@ begin
       case fLexer.Kind of
         ttsText:
         begin
-          // Plain text: add text element (lexer will have replaced character
-          // entities with actual characters
-          ActiveText.AddElem(
-            TActiveTextFactory.CreateTextElem(fLexer.PlainText)
-          );
+          if fLexer.PlainText <> '' then
+            // Plain text: add text element (lexer will have replaced character
+            // entities with actual characters
+            ActiveText.AddElem(
+              TActiveTextFactory.CreateTextElem(fLexer.PlainText)
+            );
         end;
         ttsCompoundStartTag:
         begin
