@@ -224,7 +224,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UExceptions, UStrUtils;
+  UConsts, UExceptions, UStrUtils;
 
 
 type
@@ -653,8 +653,12 @@ begin
   TREMLTags.LookupParamName(TagElem.Kind, ParamName);
   case TagElem.State of
     fsClose:
+    begin
       // closing tag
       Result := Format('</%s>', [TagName]);
+      if TagElem.DisplayStyle = dsBlock then
+        Result := Result + EOL;
+    end;
     fsOpen:
     begin
       // opening tag: may have a parameter
