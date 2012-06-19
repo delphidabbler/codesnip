@@ -186,7 +186,7 @@ class function TSnippetValidator.Validate(const Snippet: TSnippet;
   }
 begin
   Result := ValidateName(Snippet.Name, False, ErrorMsg, ErrorSel)
-    and ValidateDescription(Snippet.Description, ErrorMsg, ErrorSel)
+    and ValidateDescription(Snippet.Description.ToString, ErrorMsg, ErrorSel)
     and ValidateSourceCode(Snippet.SourceCode, ErrorMsg, ErrorSel)
     and ValidateDependsList(Snippet, ErrorMsg)
     and ValidateExtra(Snippet.Extra, ErrorMsg);

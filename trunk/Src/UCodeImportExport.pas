@@ -218,8 +218,9 @@ uses
   // Delphi
   ActiveX, XMLDom,
   // Project
-  DB.UMain, DB.USnippetKind, UAppInfo, UREMLDataIO, UReservedCategories,
-  USnippetExtraHelper, USnippetIDs, UStructs, UXMLDocConsts;
+  DB.UMain, DB.USnippetKind, UActiveText, UAppInfo, UREMLDataIO,
+  UReservedCategories, USnippetExtraHelper, USnippetIDs, UStructs,
+  UXMLDocConsts;
 
 
 const
@@ -367,7 +368,10 @@ begin
   SnippetNode := fXMLDoc.CreateElement(ParentNode, cSnippetNode);
   SnippetNode.Attributes[cSnippetNameAttr] := Snippet.Name;
   // Add nodes for properties: (ignore category and xrefs)
-  fXMLDoc.CreateElement(SnippetNode, cDescriptionNode, Snippet.Description);
+  // TODO: change to write description as active text
+  fXMLDoc.CreateElement(
+    SnippetNode, cDescriptionNode, Snippet.Description.ToString
+  );
   // source code is stored directly in XML, not in external file
   fXMLDoc.CreateElement(SnippetNode, cSourceCodeTextNode, Snippet.SourceCode);
   // extra info is written only if present
@@ -456,6 +460,18 @@ procedure TCodeImporter.Execute(const Data: TBytes);
       Depends.Add(TSnippetID.Create(SnippetName, True));
   end;
 
+  function GetDescription(const SnippetNode: IXMLNode): IActiveText;
+  var
+    Desc: string;
+  begin
+    // TODO: change to get description as active text if present (test version)
+    Desc := TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cDescriptionNode);
+    if Desc <> '' then
+      Result := TSnippetExtraHelper.PlainTextToActiveText(Desc)
+    else
+      Result := TActiveTextFactory.CreateActiveText;
+  end;
+
 resourcestring
   // Error message
   sParseError = 'Import file has an invalid format';
@@ -501,8 +517,7 @@ begin
       with fSnippetInfo[Idx].Data do
       begin
         Props.Cat := TReservedCategories.ImportsCatID;
-        Props.Desc :=
-          TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cDescriptionNode);
+        Props.Desc := GetDescription(SnippetNode);
         Props.SourceCode :=
           TXMLDocHelper.GetSubTagText(
             fXMLDoc, SnippetNode, cSourceCodeTextNode

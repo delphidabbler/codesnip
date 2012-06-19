@@ -158,7 +158,8 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(ParaFontSize);
   fBuilder.SetFontStyle([]);
-  fBuilder.AddText(Snippet.Description);
+  // TODO -cURGENT: change to render active text of description correctly
+  fBuilder.AddText(Snippet.Description.ToString);
   fBuilder.EndPara;
   fBuilder.EndGroup;
 end;

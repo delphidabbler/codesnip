@@ -537,6 +537,20 @@ var
       end;
     end;
   end;
+
+  ///  <summary>Gets snippet description from ini file.</summary>
+  function GetDescription: IActiveText;
+  var
+    Text: string;
+  begin
+    // TODO: change to read description as active text if present
+    Text := CatIni.ReadString(Snippet, cDescName, '');
+    if Text <> '' then
+      // TODO: rename TSnippetExtraHelper now used for Description
+      Result := TSnippetExtraHelper.PlainTextToActiveText(Text)
+    else
+      Result := TActiveTextFactory.CreateActiveText;
+  end;
   // ---------------------------------------------------------------------------
 
 begin
@@ -548,7 +562,7 @@ begin
     CatIni := fIniCache.GetIniFile(CatToCatIni(CatID));
     Props.Kind := GetKindProperty;
     Props.Cat := CatID;
-    Props.Desc := CatIni.ReadString(Snippet, cDescName, '');
+    Props.Desc := GetDescription;
     Props.Extra := GetExtraProperty;
     Props.SourceCode := GetSourceCodeProperty;
     Props.CompilerResults := GetCompilerResultsProperty;
