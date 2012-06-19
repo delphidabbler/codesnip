@@ -4,6 +4,11 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.10.2 of 19 June 2012
++ Fixed bug #3536331 (http://bit.ly/KQVATf) where some distinct words in a snippet's Extra text where not being found in text searches.
++ Info about user's OS and IE version is now sent to web server during online database updates.
++ Updated privacy statement re changes in information sent by update web service.
+
 Release v3.10.1 of 20 April 2012
 + Fixed bug #3519784 (http://bit.ly/IsCsun) where multi-line type or const snippets that start on same line as type or const keyword were corrupted when included in units using the "comments after snippet header" comment style.
 + Also fixed potential source of a bug in code that edits user-defined categories.
