@@ -190,7 +190,8 @@ uses
   |logon      |cmd    |"logon"               |OK: Stream of news items which   |
   |           |progid |unique id of program  |is ignored                       |
   |           |version|program version number|ERROR: CSUPDT_ERR_STDPARAMS if   |
-  |           |       |                      |required params not provided     |
+  |           |os     |operating system info |required params not provided     |
+  |           |browser|version of IE browser |                                 |
   +-----------+-------+----------------------+---------------------------------+
   |filecount  |cmd    |"filecount"           |OK: Integer indication number of |
   |           |progid |unique id of program  |files in remote database         |
