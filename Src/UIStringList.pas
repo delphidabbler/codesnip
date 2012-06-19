@@ -330,12 +330,12 @@ type
       {Class constructor. Creates new list containing a single string.
         @param Str [in] String to be included in list.
       }
-    constructor Create(const Str: string; const Delim: Char;
-      const AllowEmpty: Boolean; const Trim: Boolean = False); overload;
+    constructor Create(const Str, Delim: string; const AllowEmpty: Boolean;
+      const Trim: Boolean = False); overload;
       {Class constructor. Creates new list containing strings split at a
       delimiter.
         @param Str [in] String to be split.
-        @param Delim [in] Character that delimits components of string.
+        @param Delim [in] String that delimits components of string.
         @param AllowEmpty [in] Determines whether empty components are stored in
           list (True) or ignored (False).
         @param Trim [in] Determines whether strings are trimmed of trailing and
@@ -533,11 +533,11 @@ begin
   Add(Strs);
 end;
 
-constructor TIStringList.Create(const Str: string; const Delim: Char;
+constructor TIStringList.Create(const Str, Delim: string;
   const AllowEmpty, Trim: Boolean);
   {Class constructor. Creates new list containing strings split at a delimiter.
     @param Str [in] String to be split.
-    @param Delim [in] Character that delimits components of string.
+    @param Delim [in] String that delimits components of string.
     @param AllowEmpty [in] Determines whether empty components are stored in
       list (True) or ignored (False).
     @param Trim [in] Determines whether strings are trimmed of trailing and
