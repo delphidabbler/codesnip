@@ -20,7 +20,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s):
@@ -183,16 +183,55 @@
       <li>
         Program version number.
       </li>
+      <li>
+        Operating system description.
+      </li>
+      <li>
+        Internet Explorer version.
+      </li>
     </ul>
     <p>
-      All update activity is logged on the web server and the program key and
-      version number are recorded in the log. The web service sends updated
-      database files to <em>CodeSnip</em> along with any current news items.
-      News items may contain web links.
+      This information is recorded in two places:
+    </p>
+    <ol>
+      <li>
+        Each transaction is recorded in a log file on the web server. This log
+        is used for tracking any database errors.
+      </li>
+      <li>
+        <div>
+          A database of the program keys is updated with the following data:
+        </div>
+        <ul class="unspaced">
+          <li>
+            the number of times that program has updated the database;
+          </li>
+          <li>
+            the first and latest version of CodeSnip having that program key;
+          </li>
+          <li>
+            the date of the first and latest updates;
+          </li>
+          <li>
+            the current operating system being used;
+          </li>
+          <li>
+            the current Internet Explorer version being used.
+          </li>
+        </ul>
+        <div>
+          This database is used to provide CodeSnip usage information and to
+          track the operating systems and browser control versions currently in
+          use. This information informs development of CodeSnip.
+        </div>
+      </li>
+    </ol>
+    <p>
+      This information may be used to update the registered program database.
     </p>
     <p>
-      The data is used to provide statistics about database usage and which
-      versions of the program are in active use.
+      None of these records store any information that can be tracked back to an
+      individual.
     </p>
     <h3>
       Registering the Program
@@ -226,6 +265,10 @@
       used. The registration web service returns a registration code to the
       program. <em>CodeSnip</em> records this code, with the user name, in
       <code>Common.ini</code>.
+    </p>
+    <p>
+      The registration information may be updated when the user updates the
+      database (see &quot;Updating the Database&quot; above).
     </p>
     <h3>
       Submitting code to the main database

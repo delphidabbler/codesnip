@@ -96,13 +96,30 @@ service and sends the following information:
 
     * Unique program key (see above for details).
     * Program version number.
+    * Operating system description.
+    * Internet Explorer version.
 
-All update activity is logged on the web server and the program key and version
-number are recorded in the log. The web service sends updated database files to
-CodeSnip along with any current news items. News items may contain web links.
+This information is recorded in two places:
 
-The data is used to provide statistics about database usage and which versions
-of the program are in active use.
+   1. Each transaction is recorded in a log file on the web server. This log
+      is used for tracking any database errors.
+
+   2. A database of the program keys is updated with the following data:
+
+        * the number of times that program has updated the database;
+        * the first and latest version of CodeSnip having that program key;
+        * the date of the first and latest updates;
+        * the current operating system being used;
+        * the current Internet Explorer version being used.
+
+      This database is used to provide CodeSnip usage information and to track
+      the operating systems and browser control versions currently in use. This
+      information informs development of CodeSnip.
+
+This information may be used to update the registered program database.
+
+None of these records store any information that can be tracked back to an
+individual.
 
 
 Registering the Program
@@ -124,6 +141,9 @@ The data is only used to keep track of the number of people using the different
 versions of the program and what operating systems are being used. The
 registration web service returns a registration code to the program. CodeSnip
 records this code, with the user name, in Common.ini.
+
+The registration information may be updated when the user updates the database
+(see "Updating the Database" above).
 
 
 Submitting code to the main database
