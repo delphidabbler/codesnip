@@ -79,14 +79,42 @@
       <span class="code">&lt;/p&gt;</span> tags that you will see the next time
       you edit the text.
     </p>
+    <p>
+      You can create multiple paragraphs of text simply by separating the
+      paragraphs with blank lines. For example, entering:
+    </p>
+    <p class="indent code">
+      The cat sat<br><br>
+      on the mat
+    </p>
+    <p>
+      is interpreted as
+    </p>
+    <p class="indent code">
+      &lt;p&gt;the cat sat&lt;/p&gt;<br>
+      &lt;p&gt;on the mat&lt;/p&gt;
+    </p>
+    <p>
+      Be careful though, because if you don't leave a blank line, as in
+    </p>
+   <p class="indent code">
+      The cat sat<br>
+      on the mat
+    </p>
+    <p>
+      you will get the equivalent of
+    </p>
+    <p class="indent code">
+      &lt;p&gt;the cat sat on the mat&lt;/p&gt;
+    </p>
     <h2>
       Using markup
     </h2>
     <p>
-      The REML language is a simple SGML language like a very simple version of
-      HTML. The are a small number of tags you can use. Firstly there are two
-      block-level tags that render text in paragraphs, while the other tags
-      format text inline.
+      The REML language is a simple SGML language similar to a greatly
+      simplified XHTML. The are a small number of tags you can use. Firstly
+      there are two block-level tags that render text in paragraphs, while the
+      other tags format text inline.
     </p>
     <h3>
       Block level tags
@@ -129,20 +157,33 @@
         <span class="code">&lt;p&gt;Hello World&lt;/p&gt;</span>
       </li>
       <li>
-        <span class="code">&lt;heading&gt;Hello&lt;/heading&gt;
+        <span class="code">&lt;heading&gt;Hello&lt;/heading&gt;<br>
         &lt;p&gt;Hello World&lt;/p&gt;</span>
       </li>
     </ol>
     <p>
-      And here's an example of invalid code &ndash; the highlighted sections
-      are in error, because they are not contained within block tags.
+      Srictly speaking, the following example is invalid code &ndash; the
+      highlighted sections are in error, because they are not contained within
+      block tags.
     </p>
-    <p class="indent">
-      <span class="code"><span class="hilite">blah</span>
+    <p class="indent code">
+      <span class="hilite">blah</span>
       &lt;heading&gt;blah&lt;/heading&gt;
       <span class="hilite">blah</span>
       &lt;p&gt;blah&lt;/p&gt;
-      <span class="hilite">blah</span></span>
+      <span class="hilite">blah</span>
+    </p>
+    <p>
+      However, because plain text can be entered without tags the
+      <a href="dlg_editsnippet.htm">Snippets Editor</a> will interpret this
+      code as:
+    </p>
+    <p class="indent code">
+      &lt;p&gt;<span class="hilite">blah</span> &lt;/p&gt;<br>
+      &lt;heading&gt;blah&lt;/heading&gt;<br>
+      &lt;p&gt;<span class="hilite">blah</span> &lt;/p&gt;<br>
+      &lt;p&gt;blah&lt;/p&gt;<br>
+      &lt;p&gt;<span class="hilite">blah</span>&lt;/p&gt;
     </p>
     <h3>
       Inline tags
@@ -240,6 +281,28 @@
     </p>
     <p class="indent">
       <code>x &amp;lt; y</code>
+    </p>
+    <h2>
+      Mix and Match
+    </h2>
+    <p>
+      You can mix plain text with markup if you like, but you may get unexpected results mixing plain text with block level tags: see the example of bad
+      code above.
+    </p>
+    <p>
+      However it can save some typing if you use plain text paragraphs,
+      separated by blank lines along with some inline tags, for example
+    </p>
+    <p class="indent code">
+      The &lt;em&gt;cat&lt;/em&gt; sat<br><br>
+      on the &lt;strong&gt;mat&lt;/strong&gt;.
+    </p>
+    <p>
+      Which is equivalent to
+    </p>
+    <p class="indent code">
+      &lt;p&gt;The &lt;em&gt;cat&lt;/em&gt; sat&lt;/p&gt;<br>
+      &lt;p&gt;on the &lt;strong&gt;mat&lt;/strong&gt;.&lt;/p&gt;
     </p>
   </body>
 </html>
