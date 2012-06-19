@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -354,7 +354,7 @@ uses
   // Delphi
   SysUtils, Character,
   // Project
-  UActiveText, UUtils;
+  UActiveText, UConsts, UUtils;
 
 
 type
@@ -1000,13 +1000,20 @@ function TTextSearch.Match(const Routine: TRoutine): Boolean;
       @return Plain text extracted from active text.
     }
   var
-    Elem: IActiveTextElem;          // loops through all active text elements
-    TextElem: IActiveTextTextElem;  // referece to a text active text element
+    Elem: IActiveTextElem;              // each active text elements
+    TextElem: IActiveTextTextElem;      // each text active text element
+    ActionElem: IActiveTextActionElem;  // each active text action element
   begin
     Result := '';
     for Elem in Extra do
+    begin
       if Supports(Elem, IActiveTextTextElem, TextElem) then
         Result := Result + TextElem.Text;
+      if Supports(Elem, IActiveTextActionElem, ActionElem)
+        and (ActionElem.DisplayStyle = dsBlock)
+        and (ActionElem.State = fsClose) then
+        Result := Result + EOL;
+    end;
   end;
   // ---------------------------------------------------------------------------
 
