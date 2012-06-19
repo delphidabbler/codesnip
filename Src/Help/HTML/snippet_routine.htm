@@ -1,8 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * $Rev$
- * $Date$
- *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -20,7 +17,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -48,7 +45,7 @@
       Methods are not permitted.
     </p>
     <p>
-      Each routine snippet begins with either the <strong>function</strong> or
+      Each routine snippet begins with either the <strong>function</strong> or 
       <strong>procedure</strong> keyword followed by a valid Pascal routine
       prototype (see below). No source code or comments may not preceed the
       <strong>function</strong> or <strong>procedure</strong> keywords. The
@@ -88,20 +85,18 @@
     <p>
       Here's an example of a valid routine snippet:
     </p>
-<pre class="source-code">function MyFunc(const Param1, Param2: string): string; stdcall;
+<pre class="source-code">function MyFunc(const Param1, Param2: string): string; stdcall; 
 begin
   Result := Param1 + ' - ' + Param2;
 end;</pre>
     <p>
       Routine snippets may refer to other routines,
-      <a href="snippet_type.htm">simple type</a> definitions,
-      <a href="snippet_class.htm">class &amp; advanced record</a> definitions or
+      <a href="snippet_type.htm">type definitions</a> or
       <a href="snippet_constant.htm">constants</a>, providing they are defined
       in Delphi units or elsewhere in the database. The snippet's units and
       dependency references should indicate where to find referenced types,
-      constants and routines. Routine snippets may not reference
-      <a href="snippet_freeform.htm">freeform</a> or
-      <a href="snippet_unit.htm">unit</a> snippets.
+      constants and routines. Routine may not reference
+      <a href="snippet_freeform.htm">freeform</a> snippets.
     </p>
     <p>
       It is important that the routine prototype is recognisable by

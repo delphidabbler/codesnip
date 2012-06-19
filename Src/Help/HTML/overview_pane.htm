@@ -20,7 +20,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -42,75 +42,43 @@
     </h1>
     <p>
       This pane appears on the left hand side of the main window. It lists all
-      the snippets in the database, grouped under section headers, which appear
-      in bold. Snippets can be grouped in three ways:
+      the snippets in the database. Snippets can be grouped in three ways:
+      by category, using the <em>Categorised</em> tab, alphabetically, using the
+      <em>Alphabetical</em> tab or by <a href="snippet_kinds.htm">snippet
+      kind</a> using the <em>Snippet Kind</em> tab.
     </p>
-    <ol class="unspaced">
-      <li>
-        by category, using the <em>Categorised</em> tab;
-      </li>
-      <li>
-        alphabetically, using the <em>Alphabetical</em> tab;
-      </li>
-      <li>
-        by <a href="snippet_kinds.htm">snippet kind</a> using the <em>Snippet
-        Kind</em> tab.
-      </li>
-    </ol>
     <p>
-      Choosing an item in the overview pane causes detailed information about
-      it to appear in the <a href="detail_pane.htm">Detail Pane</a>. Selecting a
-      snippet displays a description and its source code while selecting a
-      section heading lists all the currently selected routines in the section
-      along with their descriptions.
+      Selecting an item in the overview pane causes detailed information about
+      it to appear in the <a href="detail_pane.htm">Detail Pane</a>'s
+      <a href="detail_information.htm">Information tab</a>. Selecting a snippet
+      displays a description and its source code while selecting a section
+      heading lists all the currently selected routines in the section along
+      with their descriptions.
     </p>
     <p>
       The nodes of the tree used to display the routines can be expanded and
-      collapsed in several ways:
+      collapsed using the
+      <img
+        src="../images/expand.gif"
+        alt="Expand toolbar button"
+        class="glyph"
+      > or
+      <img
+        src="../images/collapse.gif"
+        alt="Collapse toolbar button"
+        class="glyph"
+      >  buttons in the title of the pane, or by using the various expand and
+      collapse options on the <em>View</em> menu.
     </p>
-    <ul class="unspaced">
-      <li>
-        Double clicking a section header toggles it between expanded and
-        collapsed states.
-      </li>
-      <li>
-        Clicking the arrow to the left of a section header toggles it between
-        expanded and collapsed states.
-      </li>
-      <li>
-        Clicking the <img
-          src="../images/expand.gif"
-          alt="Expand toolbar button"
-          class="glyph"
-        > button in the title of the pane expands a selected section header
-        while clicking the <img
-          src="../images/collapse.gif"
-          alt="Collapse toolbar button"
-          class="glyph"
-        > button collapses the section containing the highlight.
-      </li>
-      <li>
-        Menu items on the <a href="menu_view.htm">View</a> menu and the overview
-        pane's context menu can also be used to expand and collapse sections.
-      </li>
-      <li>
-        Finally some key presses will expand and collapse sections: these are
-        listed below.
-      </li>
-    </ul>
     <p>
       You can confgure how the overview pane's display appears when the program
       starts by using the <a
         href="dlg_prefs_general.htm"
       >General</a> tab of the <a
         href="dlg_preferences.htm"
-      >Preferences</a> dialogue box (accessed via the <em>Tools |
-      Preferences</em> menu option). The pane can either display all items or
-      just the section headers.
-    </p>
-    <p>
-      Rolling the mouse over a tree item highlights it, and if it's text is not
-      completely visible, displays a tool-tip showing the complete text.
+      >Preferences</a> dialog box (accessed via the <em>Tools | Preferences</em>
+      menu option). The pane can either display all items or just the section
+      headers.
     </p>
     <h2>
       Keyboard Shortcuts
@@ -125,7 +93,7 @@
           Up
         </td>
         <td class="desc">
-          Moves to the previous entry in the tree, if any, and displays it.
+          Moves to previous entry in tree and displays it.
         </td>
       </tr>
       <tr>
@@ -133,27 +101,7 @@
           Down
         </td>
         <td class="desc">
-          Moves to the next entry in the tree, if any, and displays it.
-        </td>
-      </tr>
-      <tr>
-        <td class="item smallcaps">
-          Shift+Up
-        </td>
-        <td class="desc">
-          Selects the section header above the currently selected item and
-          displays the section's details in the details pane. No action is taken
-          if the first section header is already selected.
-        </td>
-      </tr>
-      <tr>
-        <td class="item smallcaps">
-          Shift+Down
-        </td>
-        <td class="desc">
-          Selects the section header below the selected item and displays the
-          section's details in the details pane. If the selected item is part of
-          the last section, its own section header is selected.
+          Moves to next entry in tree and displays it.
         </td>
       </tr>
       <tr>
@@ -161,15 +109,19 @@
           Ctrl+Up
         </td>
         <td class="desc">
-          Scrolls up the tree, without changing the selected item.
+          Jumps to previous section and selects and displays the header node. If
+          the current node is already in the last section the last section
+          header is selected.
         </td>
       </tr>
       <tr>
         <td class="item smallcaps">
-          Ctrl+Down
+        	Ctrl+Down
         </td>
         <td class="desc">
-          Scrolls down the tree, without changing the selected item.
+          Jumps to next section and selects and displays the header node. If the
+          current node is already in the first section the first section header
+          is selected.
         </td>
       </tr>
       <tr>
@@ -177,20 +129,9 @@
           Left
         </td>
         <td class="desc">
-          <ul>
-            <li>
-              If a sub item is currently selected, the item's parent node is
-              selected.
-            </li>
-            <li>
-              If an expanded section head item is currently selected, it's
-              section is collapsed.
-            </li>
-            <li>
-              If a collapsed section head is currently selected, no action is
-              taken.
-            </li>
-          </ul>
+          When on a sub item moves to section header node and displays it. When
+          on an expanded section header collapses the section. Does nothing when
+          on a collapsed section header node.
         </td>
       </tr>
       <tr>
@@ -198,35 +139,9 @@
           Right
         </td>
         <td class="desc">
-          <ul>
-            <li>
-              If a collapsed section header is selected the section is expanded.
-            </li>
-            <li>
-              If an expanded section header is selected the section's first
-              child node is selected.
-            </li>
-            <li>
-              If a child node or an empty section header is selected no action
-              is taken.
-            </li>
-          </ul>
-        </td>
-      </tr>
-      <tr>
-        <td class="item smallcaps">
-          Ctrl+Left
-        </td>
-        <td class="desc">
-          Pans to the left of the tree, without changing the selected item.
-        </td>
-      </tr>
-      <tr>
-        <td class="item smallcaps">
-          Ctrl+Right
-        </td>
-        <td class="desc">
-          Pans to the right of the tree, without changing the selected item.
+          When on a collapsed section header, expands it. When on an expanded
+          section header moves to first child node and displays it. Does nothing
+          when on a child node.
         </td>
       </tr>
       <tr>
@@ -234,7 +149,7 @@
           Page Up
         </td>
         <td class="desc">
-          Jumps up one page in the tree and displays the newly selected item.
+          Jumps up one page in tree and displays the newly selected item.
         </td>
       </tr>
       <tr>
@@ -242,24 +157,20 @@
           Page Down
         </td>
         <td class="desc">
-          Jumps down one page in the tree and displays the newly selected item.
+          Jumps down one page in tree and displays the newly selected item.
         </td>
       </tr>
       <tr>
-        <td class="item">
-          <span class="smallcaps">Home</span><br>
-          &nbsp;&nbsp;or<br>
-          <span class="smallcaps">Ctrl+Home</span>
+        <td class="item smallcaps">
+          Home, Ctrl+Home
         </td>
         <td class="desc">
           Selects and displays the first item in the tree.
         </td>
       </tr>
       <tr>
-        <td class="item">
-          <span class="smallcaps">End</span><br>
-          &nbsp;&nbsp;or<br>
-          <span class="smallcaps">Ctrl+End</span>
+        <td class="item smallcaps">
+          End, Ctrl+End
         </td>
         <td class="desc">
           Selects and displays the last item in the tree.
@@ -270,28 +181,21 @@
           Return
         </td>
         <td class="desc">
-          <ul>
-            <li>
-              When a section header is selected it is toggled between expanded
-              and collapsed state.
-            </li>
-            <li>
-              When a child node is selected no action is taken.
-            </li>
-          </ul>
+          Toggles a section header node between expanded and collapsed state.
+          Does nothing when a snippet item is selected.
         </td>
       </tr>
       <tr>
         <td class="item smallcaps">
-          Ctrl+Num&nbsp;Sub
+          Ctrl+NUM SUB
         </td>
         <td class="desc">
-          Collapses an expanded section  and selects the section header.
+          Collapses an expanded selection and selects the section header.
         </td>
       </tr>
       <tr>
         <td class="item smallcaps">
-          Ctrl+Num&nbsp;Plus
+          Ctrl+NUM PLUS
         </td>
         <td class="desc">
           Expands a collapsed section.
@@ -299,7 +203,7 @@
       </tr>
       <tr>
         <td class="item smallcaps">
-          Shift+Ctrl+Num&nbsp;Sub
+          Shift+Ctrl+NUM SUB
         </td>
         <td class="desc">
           Collapses all sections in the tree.
@@ -307,7 +211,7 @@
       </tr>
       <tr>
         <td class="item smallcaps">
-          Shift+Ctrl+Num&nbsp;Plus
+          Shift+Ctrl+NUM PLUS
         </td>
         <td class="desc">
           Fully expands the tree.

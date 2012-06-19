@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -80,6 +80,10 @@ type
           include <% and %> placeholder delimiters.
         @param HTML [in] Valid HTML to replace placeholder.
       }
+    procedure SaveToStream(const Stm: TStream);
+      {Saves HTML code to a stream.
+        @param Stm [in] Stream to receive the HTML.
+      }
     property HTML: string
       read fHTML;
       {HTML loaded from resources and manipulated by object's Resolve***
@@ -91,8 +95,10 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils, StrUtils,
   // Project
-  UEncodings, UHTMLUtils, UResourceUtils, UStrUtils;
+  UEncodings, UHTMLUtils;
 
 
 { THTMLTemplate }
@@ -105,9 +111,23 @@ constructor THTMLTemplate.Create(const Inst: THandle; const ResName: string;
     @param ResType [in] Type of resource containing template - assumes RT_HTML
       if parameter omitted.
   }
+var
+  RS: TResourceStream;  // stream used to access HTML template resource
+  SS: TStringStream;    // string stream used to get string from resource stream
 begin
   inherited Create;
-  fHTML := LoadResourceAsString(Inst, ResName, ResType, etWindows1252);
+  SS := nil;
+  // NOTE: Resource stream is not unicode: all template files were written using
+  // the Windows-1252 code page.
+  RS := TResourceStream.Create(Inst, ResName, ResType);
+  try
+    SS := TStringStream.Create('', Windows1252CodePage);
+    SS.CopyFrom(RS, 0);
+    fHTML := SS.DataString;
+  finally
+    SS.Free;
+    RS.Free;
+  end;
 end;
 
 procedure THTMLTemplate.ResolvePlaceholderHTML(const Placeholder, HTML: string);
@@ -118,7 +138,7 @@ procedure THTMLTemplate.ResolvePlaceholderHTML(const Placeholder, HTML: string);
     @param HTML [in] Valid HTML to replace placeholder.
   }
 begin
-  fHTML := StrReplace(fHTML, '<%' + Placeholder + '%>', HTML);
+  fHTML := ReplaceStr(fHTML, '<%' + Placeholder + '%>', HTML);
 end;
 
 procedure THTMLTemplate.ResolvePlaceholderText(const Placeholder, Text: string);
@@ -130,6 +150,21 @@ procedure THTMLTemplate.ResolvePlaceholderText(const Placeholder, Text: string);
   }
 begin
   ResolvePlaceholderHTML(Placeholder, MakeSafeHTMLText(Text));
+end;
+
+procedure THTMLTemplate.SaveToStream(const Stm: TStream);
+  {Saves HTML code to a stream.
+    @param Stm [in] Stream to receive the HTML.
+  }
+var
+  SS: TStringStream;  // stream onto HTML string
+begin
+  SS := TStringStream.Create(fHTML);
+  try
+    Stm.CopyFrom(SS, 0);
+  finally
+    SS.Free;
+  end;
 end;
 
 end.

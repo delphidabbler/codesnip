@@ -19,7 +19,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       Top = 0
       Width = 646
       Height = 465
-      ActivePage = tsCode
+      ActivePage = tsCompileResults
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
@@ -59,7 +59,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           FocusControl = cbCategories
         end
         object lblSnippetKindHelp: TLabel
-          Left = 333
+          Left = 236
           Top = 311
           Width = 118
           Height = 13
@@ -116,7 +116,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object edName: TEdit
           Left = 80
           Top = 366
-          Width = 209
+          Width = 177
           Height = 21
           PopupMenu = mnuEditCtrls
           TabOrder = 3
@@ -124,15 +124,15 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object cbCategories: TComboBox
           Left = 80
           Top = 393
-          Width = 209
+          Width = 177
           Height = 21
           Style = csDropDownList
           TabOrder = 4
         end
         object cbKind: TComboBox
           Left = 80
-          Top = 311
-          Width = 209
+          Top = 312
+          Width = 145
           Height = 21
           Style = csDropDownList
           TabOrder = 1
@@ -142,10 +142,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsReferences: TTabSheet
         Caption = 'References'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblXRefs: TLabel
           Left = 3
           Top = 3
@@ -313,10 +309,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsCompileResults: TTabSheet
         Caption = 'Compile Results'
         ImageIndex = 3
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblCompilers: TLabel
           Left = 3
           Top = 3

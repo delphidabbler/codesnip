@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -145,7 +145,7 @@ uses
   // Delphi
   SysUtils, Forms,
   // Project
-  DB.UMain, UQuery, USearch, UStructs;
+  UQuery, USearch, USnippets, UStructs;
 
 
 { TStatusBarMgr }
@@ -370,9 +370,9 @@ resourcestring
   sWithUserInfo = '%0:d snippets (%2:d user defined) in %1:d categories';
 begin
   // Calculate database stats
-  TotalSnippets := Database.Snippets.Count;
-  TotalUserSnippets := Database.Snippets.Count(True);
-  TotalCategories := Database.Categories.Count;
+  TotalSnippets := Snippets.Routines.Count;
+  TotalUserSnippets := Snippets.Routines.Count(True);
+  TotalCategories := Snippets.Categories.Count;
   // Build display text and display it
   if TotalUserSnippets = 0 then
     DisplayText := Format(sNoUserInfo, [TotalSnippets, TotalCategories])
@@ -392,7 +392,7 @@ begin
   // status bar to draw the panel.
 
   // We hide message if database not updated
-  fUserDBInfoVisible := (Database as IDatabaseEdit).Updated;
+  fUserDBInfoVisible := (Snippets as ISnippetsEdit).Updated;
   fStatusBar.Repaint;
 end;
 

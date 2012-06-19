@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -68,9 +68,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, DateUtils,
+  SysUtils, StrUtils, DateUtils,
   // Project
-  UIStringList, UStructs, UStrUtils;
+  UIStringList, UStructs, UUtils;
 
 
 function StrToWordInRange(const S: string; const Range: TRange;
@@ -343,7 +343,7 @@ const
 begin
   // Sun, 29 Aug 2010 13:06:03 +0000
   // Newlines allowed between fields: we compress to single white spaces
-  DateStr := StrCompressWhiteSpace(DateStr);
+  DateStr := UUtils.CompressWhiteSpace(DateStr);
   // Split date into constituent parts
   Parts := TIStringList.Create(DateStr, ' ', False, True);
   if Parts.Count <> 6 then

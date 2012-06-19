@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  DB.UCategory, UBaseObjects, UView;
+  UBaseObjects, USnippets, UView;
 
 
 type
@@ -82,18 +82,12 @@ type
         @param SnippetName [in] Name of snippet to be edited. Must be user
           defined.
       }
-    ///  <summary>Duplicates snippet in given view as a user defined snippet
-    ///  with name specified by user.</summary>
-    class procedure DuplicateSnippet(ViewItem: IView);
-    class procedure DeleteSnippet(ViewItem: IView);
+    class procedure DeleteSnippet(const ViewItem: TViewItem);
       {Deletes a snippet from the database if possible.
         @param ViewItem [in] View item containing snippet to be deleted. Must be
           a user defined snippet.
       }
-    ///  <summary>Checks if given view item can be duplicated.</summary>
-    ///  <remarks>To be duplicated view must be a snippet.</summary>
-    class function CanDuplicate(ViewItem: IView): Boolean;
-    class function CanEdit(ViewItem: IView): Boolean;
+    class function CanEdit(const ViewItem: TViewItem): Boolean;
       {Checks if a view item can be edited.
         @param ViewItem [in] View item to check.
         @return True if view item can be edited, i.e. if ViewItem is a snippet
@@ -141,10 +135,10 @@ uses
   // Delphi
   SysUtils, Dialogs, Windows {for inlining},
   // Project
-  DB.UMain, DB.USnippet, FmAddCategoryDlg, FmDeleteCategoryDlg,
-  FmDuplicateSnippetDlg, FmRenameCategoryDlg, FmSnippetsEditorDlg, UConsts,
-  UExceptions, UIStringList, UMessageBox, UOpenDialogEx, UOpenDialogHelper,
-  UReservedCategories, USaveDialogEx, USnippetIDs, UUserDBBackup;
+  FmAddCategoryDlg, FmDeleteCategoryDlg, FmRenameCategoryDlg,
+  FmSnippetsEditorDlg, UConsts, UExceptions, UIStringList, UMessageBox,
+  UOpenDialogEx, UOpenDialogHelper, UReservedCategories, USaveDialogEx,
+  USnippetIDs, UUserDBBackup;
 
 
 { TUserDBMgr }
@@ -162,7 +156,7 @@ class procedure TUserDBMgr.AddSnippet;
   }
 begin
   // Display Add Snippet dialog box which performs update of database.
-  TSnippetsEditorDlg.AddNewSnippet(nil);
+  TSnippetsEditorDlg.AddNewRoutine(nil);
 end;
 
 class procedure TUserDBMgr.BackupDatabase;
@@ -192,11 +186,11 @@ begin
       try
         UserDBBackup.Backup;
       finally
-        UserDBBackup.Free;
+        FreeAndNil(UserDBBackup);
       end;
     end;
   finally
-    SaveDlg.Free;
+    FreeAndNil(SaveDlg);
   end;
 end;
 
@@ -212,28 +206,21 @@ begin
   try
     Result := CatList.Count > 0;
   finally
-    CatList.Free;
+    FreeAndNil(CatList);
   end;
 end;
 
-class function TUserDBMgr.CanDuplicate(ViewItem: IView): Boolean;
-begin
-  Result := Supports(ViewItem, ISnippetView);
-end;
-
-class function TUserDBMgr.CanEdit(ViewItem: IView): Boolean;
+class function TUserDBMgr.CanEdit(const ViewItem: TViewItem): Boolean;
   {Checks if a view item can be edited.
     @param ViewItem [in] View item to check.
     @return True if view item can be edited, i.e. if ViewItem is a snippet and
       is user defined.
   }
-var
-  SnippetView: ISnippetView;  // ViewItem as snippet view if supported
 begin
   Assert(Assigned(ViewItem), ClassName + '.CanEdit: ViewItem is nil');
-  Result := Assigned(ViewItem)
-    and Supports(ViewItem, ISnippetView, SnippetView)
-    and SnippetView.Snippet.UserDefined;
+  Result := Assigned(ViewItem) and
+    (ViewItem.Kind = vkRoutine) and
+    ViewItem.Routine.UserDefined;
 end;
 
 class procedure TUserDBMgr.CanOpenDialogClose(Sender: TObject;
@@ -275,7 +262,7 @@ begin
   try
     Result := CatList.Count > 0;
   finally
-    CatList.Free;
+    FreeAndNil(CatList);
   end;
 end;
 
@@ -285,7 +272,7 @@ class function TUserDBMgr.CanSave: Boolean;
   }
 begin
   // We can save database if it's been changed
-  Result := (Database as IDatabaseEdit).Updated;
+  Result := (Snippets as ISnippetsEdit).Updated;
 end;
 
 class procedure TUserDBMgr.CanSaveDialogClose(Sender: TObject;
@@ -321,7 +308,7 @@ var
   Cat: TCategory; // references each category in snippets database
 begin
   Result := TCategoryList.Create;
-  for Cat in Database.Categories do
+  for Cat in Snippets.Categories do
     if Cat.UserDefined and
       (IncludeSpecial or not TReservedCategories.IsReserved(Cat)) then
       Result.Add(Cat);
@@ -338,11 +325,11 @@ begin
     // all work takes place in dialog box
     TDeleteCategoryDlg.Execute(nil, CatList)
   finally
-    CatList.Free;
+    FreeAndNil(CatList);
   end;
 end;
 
-class procedure TUserDBMgr.DeleteSnippet(ViewItem: IView);
+class procedure TUserDBMgr.DeleteSnippet(const ViewItem: TViewItem);
   {Deletes a snippet from the database if possible.
     @param ViewItem [in] View item containing snippet to be deleted. Must be a
       user defined snippet.
@@ -367,7 +354,6 @@ var
   Dependents: ISnippetIDList; // list of dependent snippet IDs
   Referrers: ISnippetIDList;  // list referring snippet IDs
   ConfirmMsg: string;         // message displayed to confirm deletion
-  Snippet: TSnippet;          // snippet being deleted
 resourcestring
   // Prompts & error messages
   sConfirmDelete = 'Please confirm you wish to delete %s';
@@ -377,13 +363,12 @@ resourcestring
   sHasDependents = 'Sorry, this snippet can''t be deleted. It is required by '
     + 'the following snippets:' + EOL + '    %s';
 begin
-  Assert(Supports(ViewItem, ISnippetView),
-    ClassName + '.Delete: Current view is not a snippet');
-  Snippet := (ViewItem as ISnippetView).Snippet;
-  Assert(Snippet.UserDefined,
+  Assert(ViewItem.Kind = vkRoutine,
+    ClassName + '.Delete: Current view kind is not vkRoutine');
+  Assert(ViewItem.Routine.UserDefined,
     ClassName + '.Delete: Snippet must be user defined');
   // Check if snippet has dependents: don't allow deletion if so
-  Dependents := (Database as IDatabaseEdit).GetDependents(Snippet);
+  Dependents := (Snippets as ISnippetsEdit).GetDependents(ViewItem.Routine);
   if Dependents.Count > 0 then
   begin
     TMessageBox.Error(
@@ -396,26 +381,19 @@ begin
     Exit;
   end;
   // Get permission to delete. If snippet has dependents list them in prompt
-  Referrers := (Database as IDatabaseEdit).GetReferrers(Snippet);
+  Referrers := (Snippets as ISnippetsEdit).GetReferrers(ViewItem.Routine);
   if Referrers.Count = 0 then
-    ConfirmMsg := Format(sConfirmDelete, [Snippet.Name])
+    ConfirmMsg := Format(sConfirmDelete, [ViewItem.Routine.Name])
   else
     ConfirmMsg := Format(
       sConfirmDeleteEx,
       [
-        Snippet.Name,
+        ViewItem.Routine.Name,
         SnippetNames(Referrers).GetText(',' + EOL + '    ', False)
       ]
     );
   if TMessageBox.Confirm(nil, ConfirmMsg) then
-    (Database as IDatabaseEdit).DeleteSnippet(Snippet);
-end;
-
-class procedure TUserDBMgr.DuplicateSnippet(ViewItem: IView);
-begin
-  Assert(CanDuplicate(ViewItem),
-    ClassName + '.DuplicateSnippet: ViewItem can''t be duplicated');
-  TDuplicateSnippetDlg.Execute(nil, (ViewItem as ISnippetView).Snippet);
+    (Snippets as ISnippetsEdit).DeleteRoutine(ViewItem.Routine);
 end;
 
 class procedure TUserDBMgr.EditSnippet(const SnippetName: string);
@@ -423,12 +401,12 @@ class procedure TUserDBMgr.EditSnippet(const SnippetName: string);
     @param SnippetName [in] Name of snippet to be edited. Must be user defined.
   }
 var
-  Snippet: TSnippet;    // reference to snippet to be edited
+  Snippet: TRoutine;    // reference to snippet to be edited
 begin
-  Snippet := Database.Snippets.Find(SnippetName, True);
+  Snippet := Snippets.Routines.Find(SnippetName, True);
   if not Assigned(Snippet) then
     raise EBug.Create(ClassName + '.EditSnippet: Snippet not in user database');
-  TSnippetsEditorDlg.EditSnippet(nil, Snippet);
+  TSnippetsEditorDlg.EditRoutine(nil, Snippet);
 end;
 
 class procedure TUserDBMgr.RenameACategory;
@@ -442,7 +420,7 @@ begin
     // all work takes place in dialog box
     TRenameCategoryDlg.Execute(nil, CatList)
   finally
-    CatList.Free;
+    FreeAndNil(CatList);
   end;
 end;
 
@@ -474,11 +452,11 @@ begin
       try
         UserDBBackup.Restore;
       finally
-        UserDBBackup.Free;
+        FreeAndNil(UserDBBackup);
       end;
     end;
   finally
-    Dlg.Free;
+    FreeAndNil(Dlg);
   end;
 end;
 
@@ -486,7 +464,7 @@ class procedure TUserDBMgr.Save;
   {Saves user database.
   }
 begin
-  (Database as IDatabaseEdit).Save;
+  (Snippets as ISnippetsEdit).Save;
 end;
 
 end.

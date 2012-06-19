@@ -1,9 +1,9 @@
 {
  * FmSelectionSearchDlg.pas
  *
- * Dialog box that is used to select snippets manually by placing check marks
- * next to the required snippet names. The dialog creates search criteria based
- * on the selected snippets.
+ * Dialog box that is used to select routines manually by placing check marks
+ * next to the required routine names. The dialog creates search criteria based
+ * on the selected routines.
  *
  * $Rev$
  * $Date$
@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,8 +45,8 @@ uses
   // Delphi
   Forms, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  DB.USnippet, FmGenericOKDlg, FrCheckedTV, FrSelectSnippets,
-  FrSelectSnippetsBase, UBaseObjects, USearch;
+  FmGenericOKDlg, FrCheckedTV, FrSelectSnippets, FrSelectSnippetsBase,
+  UBaseObjects, USearch, USnippets;
 
 
 type
@@ -63,20 +63,15 @@ type
     btnSelectAll: TButton;
     btnUserDB: TButton;
     frmSelect: TSelectSnippetsFrame;
-    btnExpandAll: TButton;
-    btnCollapseAll: TButton;
-    lblOverwriteSearch: TLabel;
     procedure btnClearAllClick(Sender: TObject);
     procedure btnMainDBClick(Sender: TObject);
     procedure btnOKClick(Sender: TObject);
     procedure btnSelectAllClick(Sender: TObject);
     procedure btnUserDBClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
-    procedure btnExpandAllClick(Sender: TObject);
-    procedure btnCollapseAllClick(Sender: TObject);
   strict private
     fSearch: ISearch; // Search corresponding to snippets selected by the user
-    procedure SetSelectedSnippets(const Value: TSnippetList);
+    procedure SetSelectedRoutines(const Value: TRoutineList);
       {Stores a list of snippets in snippet selection frame. Frame then selects
       all listed snippets in its treeview.
         @param Value [in] List of snippets.
@@ -92,7 +87,6 @@ type
           selected, False if main database snippets are to be selected.
       }
   strict protected
-    procedure ConfigForm; override;
     procedure InitForm; override;
       {Initialises form. Disables User Defined button if there are no user
       defined snippets in database.
@@ -102,10 +96,10 @@ type
       }
   public
     class function Execute(const AOwner: TComponent;
-      const SelectedSnippets: TSnippetList; out ASearch: ISearch): Boolean;
+      const SelectedRoutines: TRoutineList; out ASearch: ISearch): Boolean;
       {Displays dialog and returns search object based on entered criteria.
         @param AOwner [in] Component that owns this dialog.
-        @param SelectedSnippets [in] Default list of selected snippets.
+        @param SelectedRoutines [in] Default list of selected snippets.
         @param ASearch [out] Search to be performed if user OKs. Has criteria
           that causes all snippets selected by user to be returned by search.
           Set to nil if user cancels.
@@ -119,9 +113,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
-  // Project
-  DB.UMain, UCtrlArranger, UQuery;
+  SysUtils;
 
 
 {$R *.dfm}
@@ -142,19 +134,9 @@ procedure TSelectionSearchDlg.btnClearAllClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  // Assigning nil to snippet selection frame's SelectedSnippets property clears
+  // Assigning nil to snippet selection frame's SelectedRoutines property clears
   // the list.
-  frmSelect.SelectedSnippets := nil;
-end;
-
-procedure TSelectionSearchDlg.btnCollapseAllClick(Sender: TObject);
-begin
-  frmSelect.CollapseTree;
-end;
-
-procedure TSelectionSearchDlg.btnExpandAllClick(Sender: TObject);
-begin
-  frmSelect.ExpandTree;
+  frmSelect.SelectedRoutines := nil;
 end;
 
 procedure TSelectionSearchDlg.btnMainDBClick(Sender: TObject);
@@ -175,7 +157,7 @@ begin
   inherited;
   // Create search criteria for all selected snippets
   SearchCriteria := TSearchCriteriaFactory.CreateSelectionSearchCriteria(
-    frmSelect.SelectedSnippets
+    frmSelect.SelectedRoutines
   );
   // Create search object from the entered criteria
   fSearch := TSearchFactory.CreateSelectionSearch(SearchCriteria);
@@ -187,8 +169,8 @@ procedure TSelectionSearchDlg.btnSelectAllClick(Sender: TObject);
   }
 begin
   // Storing all snippets in database in snippet selection frame's
-  // SelectedSnippets property causes all snippets to be selected
-  frmSelect.SelectedSnippets := Database.Snippets;
+  // SelectedRoutines property causes all snippets to be selected
+  frmSelect.SelectedRoutines := Snippets.Routines;
 end;
 
 procedure TSelectionSearchDlg.btnUserDBClick(Sender: TObject);
@@ -200,20 +182,11 @@ begin
   SelectDB(True);
 end;
 
-procedure TSelectionSearchDlg.ConfigForm;
-begin
-  inherited;
-  frmSelect.CanCollapse := True;
-  lblOverwriteSearch.Visible := Query.IsSearchActive;
-  if lblOverwriteSearch.Visible then
-    TCtrlArranger.SetLabelHeight(lblOverwriteSearch);
-end;
-
 class function TSelectionSearchDlg.Execute(const AOwner: TComponent;
-  const SelectedSnippets: TSnippetList; out ASearch: ISearch): Boolean;
+  const SelectedRoutines: TRoutineList; out ASearch: ISearch): Boolean;
   {Displays dialog and returns search object based on entered criteria.
     @param AOwner [in] Component that owns this dialog.
-    @param SelectedSnippets [in] Default list of selected snippets.
+    @param SelectedRoutines [in] Default list of selected snippets.
     @param ASearch [out] Search to be performed if user OKs. Has criteria that
       causes all snippets selected by user to be returned by search. Set to nil
       if user cancels.
@@ -222,7 +195,7 @@ class function TSelectionSearchDlg.Execute(const AOwner: TComponent;
 begin
   with InternalCreate(AOwner) do
     try
-      SetSelectedSnippets(SelectedSnippets);
+      SetSelectedRoutines(SelectedRoutines);
       Result := (ShowModal = mrOK);
       ASearch := fSearch;
     finally
@@ -247,8 +220,7 @@ procedure TSelectionSearchDlg.InitForm;
   }
 begin
   inherited;
-  frmSelect.CollapseTree;
-  btnUserDB.Enabled := Database.Snippets.Count(True) > 0;
+  btnUserDB.Enabled := Snippets.Routines.Count(True) > 0;
 end;
 
 procedure TSelectionSearchDlg.SelectDB(const UserDefined: Boolean);
@@ -257,17 +229,17 @@ procedure TSelectionSearchDlg.SelectDB(const UserDefined: Boolean);
       selected, False if main database snippets are to be selected.
   }
 var
-  Snippet: TSnippet;          // references each snippet in database
-  SnippetList: TSnippetList;  // list of selected snippets
+  Routine: TRoutine;          // references each snippet in database
+  RoutineList: TRoutineList;  // list of selected snippets
 begin
-  SnippetList := TSnippetList.Create;
+  RoutineList := TRoutineList.Create;
   try
-    for Snippet in Database.Snippets do
-      if Snippet.UserDefined = UserDefined then
-        SnippetList.Add(Snippet);
-    frmSelect.SelectedSnippets := SnippetList;
+    for Routine in Snippets.Routines do
+      if Routine.UserDefined = UserDefined then
+        RoutineList.Add(Routine);
+    frmSelect.SelectedRoutines := RoutineList;
   finally
-    FreeAndNil(SnippetList);
+    FreeAndNil(RoutineList);
   end;
 end;
 
@@ -277,16 +249,16 @@ procedure TSelectionSearchDlg.SelectionChanged(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  btnOK.Enabled := not frmSelect.SelectedSnippets.IsEmpty;
+  btnOK.Enabled := frmSelect.SelectedRoutines.Count > 0;
 end;
 
-procedure TSelectionSearchDlg.SetSelectedSnippets(const Value: TSnippetList);
+procedure TSelectionSearchDlg.SetSelectedRoutines(const Value: TRoutineList);
   {Stores a list of snippets in snippet selection frame. Frame then selects all
   listed snippets in its treeview.
     @param Value [in] List of snippets.
   }
 begin
-  frmSelect.SelectedSnippets := Value;
+  frmSelect.SelectedRoutines := Value;
 end;
 
 end.

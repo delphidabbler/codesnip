@@ -1,5 +1,5 @@
 inherited CompErrorDlg: TCompErrorDlg
-  Caption = 'Compiler Errors & Warnings'
+  Caption = 'CompErrorDlg'
   ClientWidth = 401
   ExplicitWidth = 407
   ExplicitHeight = 354

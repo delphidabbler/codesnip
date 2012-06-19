@@ -51,10 +51,8 @@ in the public domain.
 Any other source code files that contain no copyright or license information are
 public domain.
 
-Many files are licensed under the Mozilla Public License (MPL) v1.1. New source
-code is being licensed under v2.0 of the MPL. Over time MPL v1.1 licensed code
-will be changed to MPL v2.0. Copies of versions 1.1 and 2.0 of the Mozilla
-Public License can be found in MPL-1.1.txt and MPL-2.0.txt respectively.
+Many files are licensed under the Mozilla Public License. A full copy of that
+license can be found in MPL.txt
 
 
 Third Party Source Code
@@ -65,9 +63,6 @@ directory. There are several such files:
 
 + GIFImage.pas
   See below for license information
-+ LVEx.pas
-  This code is copyright c) 1999-2009 Vadim Crits. No licensing conditions are
-  specified.
 + PJMD5.pas
   This is a DelphiDabbler library. The MPL 1.1 / GPL 2.0 / LGPL 2.1 tri license
   applies. It derives from the RSA Data Security, Inc. MD5 Message-Digest
@@ -253,9 +248,6 @@ Exceptions
   http://led24.de/iconset/ and Res\Img\cancel-glow.png is based on it. See below
   for license terms and conditions.
 
-+ The "about" and "help" glyphs the FmMain.dfm image list were adapted from an
-  image in the PixelBox icon collection. See below for the license.
-
 + Res\Img\tvr.jpg and Res\Img\pj.jpg are copyright (C) 2009, Peter Johnson.
   These images are made available under a Creative Commons Attribution-
   Noncommercial-No Derivative Works 2.0 license (See
@@ -345,14 +337,6 @@ license.
 
 led24.de
 31/05/2009
-
-
-PixelBox icons
---------------------------------------------------------------------------------
-
-This work (Pixelbox icons, by Stan Khodjaev) is free of known copyright
-restrictions. It is made available under the terms of the Creative Commans
-Public Domain Mark 1.0 (see http://creativecommons.org/publicdomain/mark/1.0/).
 
 
 ================================================================================

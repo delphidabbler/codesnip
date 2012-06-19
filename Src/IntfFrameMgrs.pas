@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,7 +45,7 @@ uses
   // Delphi
   SHDocVw, ActiveX,
   // Project
-  Browser.IntfDocHostUI, DB.USnippet, Compilers.UGlobals, UCommandBars, UView;
+  Browser.IntfDocHostUI, Compilers.UGlobals, UCommandBars, USnippets, UView;
 
 
 const
@@ -53,6 +53,10 @@ const
   cCategorisedTab = 0;    // categorised tab
   cAlphabeticTab = 1;     // alphabetical tab
   cKindTab = 2;           // snippet kind tab
+
+  // Constants that index tabs in detail pane
+  cInfoTab = 0;           // detail information tab
+  cCompCheckTab = 1;      // compiler check tab
 
   // Constants that identify command bars in overview pane
   // toolbar
@@ -84,7 +88,6 @@ type
 
   //////////////////////////////////////////////////////////////////////////////
   // Display manager interfaces
-  // TODO: Update this description
   //
   // These interfaces define methods for managing the display of the various
   // panes in the user interface.
@@ -97,6 +100,12 @@ type
   //
   // IViewItemDisplayMgr
   //   Implemented by panes that display a view item in detail
+  //
+  // ICompCheckDisplayMgr
+  //   Implemented by panes that can display test compile related information.
+  //
+  // IWBDisplayMgr
+  //   Implemented by panes that host a web browser control.
   //
   //////////////////////////////////////////////////////////////////////////////
 
@@ -122,21 +131,6 @@ type
       }
   end;
 
-type
-  IDetailPaneDisplayMgr = interface(IInterface)
-    ['{79F8BCAB-4C3F-4935-B5BF-9E5B9B32D88A}']
-    ///  <summary>Returns currently selected view.</summary>
-    function SelectedView: IView;
-    procedure SelectTab(const TabIdx: Integer);
-    function FindTab(ViewKey: IViewKey): Integer;
-    procedure Display(View: IView; const TabIdx: Integer);
-    procedure Clear;
-    function CreateTab(View: IView): Integer;
-    function IsEmptyTabSet: Boolean;
-    procedure CloseTab(const TabIdx: Integer);
-    procedure CloseMultipleTabs(const KeepSelected: Boolean);
-  end;
-
   {
   TTreeNodeAction:
     Enumeration that describes the different expand/collapse operations of tree
@@ -155,17 +149,14 @@ type
   }
   IOverviewDisplayMgr = interface(IInterface)
     ['{AD5D5A0F-E7D3-4173-A4F9-04D43909B0F5}']
-    procedure Display(const SnippetList: TSnippetList; const Force: Boolean);
+    procedure Display(const RoutineList: TRoutineList);
       {Displays the snippets in the current overview tab.
-      NOTE: May not redisplay if SnippetList is same as that displayed, unless
-      Force is True.
-        @param SnippetList [in] List of snippets to be displayed.
-        @param Force [in] Forces redisplay regardless of current state.
+        @param RoutineList [in] List of snippets to be displayed.
       }
     procedure Clear;
       {Clears the display.
       }
-    procedure SelectItem(ViewItem: IView);
+    procedure SelectItem(const ViewItem: TViewItem);
       {Select a view item in the overview pane.
         @param ViewItem [in] Item to be selected. Pass nil to deselect current
           item.
@@ -188,16 +179,46 @@ type
   end;
 
   {
+  IWBDisplayMgr:
+    Interface implemented by panes that host a web browser control.
+  }
+  IWBDisplayMgr = interface(IInterface)
+    ['{DE875803-D856-402C-BC3D-DBF79A0670D7}']
+    procedure Activate;
+      {Activates the frame (when it is shown).
+      }
+    procedure Deactivate;
+      {Deactivates the frame (when it is hidden).
+      }
+  end;
+
+  {
   IViewItemDisplayMgr:
     Interface implemented by panes that display a view item in detail.
   }
   IViewItemDisplayMgr = interface(IInterface)
     ['{1FE68233-1AD7-44C3-A6C0-3974E0C0455E}']
-    procedure Display(View: IView);
+    procedure Display(const View: TViewItem; const Force: Boolean = False);
       {Displays detailed information for a view. Pass nil to clear.
         @param View [in] Information about item to view.
+        @param Force [in] Forces view item to be re-displayed even if not
+          changed.
       }
   end;
+
+  {
+  ICompCheckDisplayMgr:
+    Interface implemented by panes that can display test compile related
+    information.
+  }
+  ICompCheckDisplayMgr = interface(IInterface)
+    ['{E4E9B05D-E53C-4448-946D-750BDA45328C}']
+    procedure DisplayCompileResults(const ACompilers: ICompilers);
+      {Displays results of test compilation in pane.
+        @param ACompilers [in] Compilers object containing required results.
+      }
+  end;
+
 
   //////////////////////////////////////////////////////////////////////////////
   // Other pane-related interfaces
@@ -241,12 +262,12 @@ type
   }
   IWBCustomiser = interface(IInterface)
     ['{B46CDC61-EC43-43E3-838C-73AB8F150E46}']
-    procedure SetExternalObj(Obj: IDispatch);
+    procedure SetExternalObj(const Obj: IDispatch);
       {Provides an object that is used to extend a web browser's external
       object.
         @param Obj [in] External browser object extender.
       }
-    procedure SetDragDropHandler(Obj: IDropTarget);
+    procedure SetDragDropHandler(const Obj: IDropTarget);
       {Provides an object used by web browser control to handle drag-drop
       operations.
         @param Obj [in] Drag-drop handler.

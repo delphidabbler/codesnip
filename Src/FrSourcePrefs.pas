@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -105,11 +105,6 @@ type
       {Called when page is deactivated. Stores information entered by user.
         @param Prefs [in] Object used to store information.
       }
-    ///  <summary>Checks if preference changes require that main window UI is
-    ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing. Always
-    ///  returns False because these preferences never affect UI.</remarks>
-    function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
@@ -162,7 +157,7 @@ type
     frame.
   }
   TSourcePrefsPreview = class(TObject)
-  strict private
+  private
     fHiliteAttrs: IHiliteAttrs;
       {Attributes of syntax highlighter to use to render preview}
     fCommentStyle: TCommentStyle;
@@ -179,7 +174,7 @@ type
         @param HiliteAttrs [in] Attributes of highlighter used to render
           preview.
       }
-    function Generate: TRTF;
+    function Generate: ASCIIString;
       {Generate RTF code used to render preview.
         @return Required RTF code.
       }
@@ -198,7 +193,6 @@ begin
   SelectCommentStyle(Prefs.SourceCommentStyle);
   chkSyntaxHighlighting.Checked := Prefs.SourceSyntaxHilited;
   (fHiliteAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
-  fHiliteAttrs.ResetDefaultFont;
   // Update state of controls and preview
   UpdateControlState;
   UpdatePreview;
@@ -330,11 +324,6 @@ begin
     cbSnippetFileType.Items.IndexOfObject(TObject(FT));
 end;
 
-function TSourcePrefsFrame.UIUpdated: Boolean;
-begin
-  Result := False;
-end;
-
 procedure TSourcePrefsFrame.UpdateControlState;
   {Updates state of dialog's controls depending on values entered.
   }
@@ -355,26 +344,26 @@ begin
   Preview := TSourcePrefsPreview.Create(GetCommentStyle, fHiliteAttrs);
   try
     // Display preview
-    TRichEditHelper.Load(frmPreview.RichEdit, Preview.Generate);
+    RTFLoadFromString(frmPreview.RichEdit, Preview.Generate);
   finally
-    Preview.Free;
+    FreeAndNil(Preview);
   end;
 end;
 
 { TSourcePrefsPreview }
 
 resourcestring
-  // Localisable source preview text
-  sPrevProcName = 'Example';              // name of example proc
-  sPrevDesc = 'Description goes here.';   // sample proc description
-  sPrevCalledProc = 'DoSomethingHere';    // name of proc called from example
+  // Preview routine names and description
+  sPrevProcName = 'Example';              // name of example routine
+  sPrevDesc = 'Description goes here.';   // sample routine description
+  sPrevCalledProc = 'DoSomethingHere';    // name of routine called from example
 
 const
-  // Example procedure prototype and body
-  cPrevProcProto = 'procedure %0:s;' + EOL;
-  cPrevProcBody = 'begin' + EOL +'  %1:s;'+ EOL + 'end;';
+  // Example routine prototype and body
+  cPrevProcProto = 'procedure %0:s;' + EOL;                 // routine prototype
+  cPrevProcBody = 'begin' + EOL +'  %1:s;'+ EOL + 'end;';   // routine body
 
-  // Map of comment style to sample code
+  // Map of comment style to sample routine using the style
   cPrevSamples: array[TCommentStyle] of string = (
     // no comments: just prototype followed by body
     cPrevProcProto + cPrevProcBody,
@@ -396,12 +385,15 @@ begin
   fHiliteAttrs := HiliteAttrs;
 end;
 
-function TSourcePrefsPreview.Generate: TRTF;
+function TSourcePrefsPreview.Generate: ASCIIString;
   {Generate RTF code used to render preview.
     @return Required RTF code.
   }
+var
+  Hiliter: ISyntaxHiliter;    // syntax highlighter
 begin
-  Result := TRTF.Create(TRTFDocumentHiliter.Hilite(SourceCode, fHiliteAttrs));
+  Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
+  Result := StringToASCIIString(Hiliter.Hilite(SourceCode, fHiliteAttrs));
 end;
 
 function TSourcePrefsPreview.SourceCode: string;

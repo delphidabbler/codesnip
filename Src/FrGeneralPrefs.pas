@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -62,13 +62,7 @@ type
     gbMeasurement: TGroupBox;
     lblOverviewTree: TLabel;
     lblUnits: TLabel;
-    chkHideEmptySections: TCheckBox;
-    chkSnippetsInNewTab: TCheckBox;
-    procedure chkHideEmptySectionsClick(Sender: TObject);
   strict private
-    var
-      ///  <summary>Flag indicating if changes affect UI.</summary>
-      fUIChanged: Boolean;
     procedure SelectUnits(const MU: TMeasurementUnits);
       {Selects combo box item associated with a measurement unit.
         @param Units [in] Measurement unit to be selected.
@@ -95,10 +89,6 @@ type
       {Called when page is deactivated. Stores information entered by user.
         @param Prefs [in] Object used to store information.
       }
-    ///  <summary>Checks if preference changes require that main window UI is
-    ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing.</remarks>
-    function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
@@ -122,7 +112,7 @@ uses
   // Delphi
   Math,
   // Project
-  FmPreferencesDlg, UCtrlArranger, UGraphicUtils;
+  FmPreferencesDlg, UGraphicUtils;
 
 
 {$R *.dfm}
@@ -137,8 +127,6 @@ procedure TGeneralPrefsFrame.Activate(const Prefs: IPreferences);
 begin
   SelectOverviewTreeState(Prefs.OverviewStartState);
   SelectUnits(Prefs.MeasurementUnits);
-  chkHideEmptySections.Checked := not Prefs.ShowEmptySections;
-  chkSnippetsInNewTab.Checked := Prefs.ShowNewSnippetsInNewTabs;
 end;
 
 procedure TGeneralPrefsFrame.ArrangeControls;
@@ -151,40 +139,12 @@ var
 begin
   lblOverviewTree.Left := Col1Left;
   lblUnits.Left := Col1Left;
-  chkHideEmptySections.Left := Col1Left;
-  chkSnippetsInNewTab.Left := Col1Left;
-
   Col2Left := Col1Left + Max(
     StringExtent(lblUnits.Caption, lblUnits.Font).cx,
     StringExtent(lblOverviewTree.Caption, lblOverviewTree.Font).cx
   ) + 8;
   cbOverviewTree.Left := Col2Left;
   cbUnits.Left := Col2Left;
-
-  chkHideEmptySections.Width := Self.Width - 16;
-  chkSnippetsInNewTab.Width := Self.Width - 16;
-
-  gbDisplay.Top := 0;
-  TCtrlArranger.AlignVCentres(20, [lblOverviewTree, cbOverviewTree]);
-  chkHideEmptySections.Top := TCtrlArranger.BottomOf(
-    [lblOverviewTree, cbOverviewTree], 8
-  );
-  chkSnippetsInNewTab.Top := TCtrlArranger.BottomOf(chkHideEmptySections, 8);
-  gbDisplay.ClientHeight := TCtrlArranger.TotalControlHeight(gbDisplay) + 12;
-
-  gbMeasurement.Top := TCtrlArranger.BottomOf(gbDisplay, 12);
-  TCtrlArranger.AlignVCentres(20, [lblUnits, cbUnits]);
-  gbMeasurement.ClientHeight := TCtrlArranger.TotalControlHeight(gbMeasurement)
-    + 12;
-end;
-
-procedure TGeneralPrefsFrame.chkHideEmptySectionsClick(Sender: TObject);
-  {Handles clicks on "Hide Empty Sections" check box. Flags UI preferences has
-  having changed.
-    @param Sender [in] Ignored.
-  }
-begin
-  fUIChanged := True;
 end;
 
 constructor TGeneralPrefsFrame.Create(AOwner: TComponent);
@@ -212,8 +172,6 @@ procedure TGeneralPrefsFrame.Deactivate(const Prefs: IPreferences);
     @param Prefs [in] Object used to store information.
   }
 begin
-  Prefs.ShowNewSnippetsInNewTabs := chkSnippetsInNewTab.Checked;
-  Prefs.ShowEmptySections := not chkHideEmptySections.Checked;
   Prefs.OverviewStartState := TOverviewStartState(
     cbOverviewTree.Items.Objects[cbOverviewTree.ItemIndex]
   );
@@ -294,11 +252,6 @@ begin
       Break;
     end;
   end;
-end;
-
-function TGeneralPrefsFrame.UIUpdated: Boolean;
-begin
-  Result := fUIChanged;
 end;
 
 initialization

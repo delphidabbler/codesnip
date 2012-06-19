@@ -10,7 +10,7 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
     Left = 0
     Top = 0
     Width = 393
-    Height = 181
+    Height = 163
     Anchors = [akLeft, akTop, akRight]
     Caption = ' Source code formatting '
     TabOrder = 0
@@ -28,6 +28,7 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
       Width = 198
       Height = 21
       Style = csDropDownList
+      ItemHeight = 13
       TabOrder = 0
       OnChange = cbCommentStyleChange
     end
@@ -35,16 +36,16 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
       Left = 122
       Top = 46
       Width = 198
-      Height = 123
+      Height = 107
       TabOrder = 1
       TabStop = True
       ExplicitLeft = 122
       ExplicitTop = 46
       ExplicitWidth = 198
-      ExplicitHeight = 123
+      ExplicitHeight = 107
       inherited reView: TRichEdit
         Width = 198
-        Height = 123
+        Height = 107
         ExplicitWidth = 198
         ExplicitHeight = 107
       end
@@ -52,7 +53,7 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
   end
   object gbFileFormat: TGroupBox
     Left = 0
-    Top = 187
+    Top = 171
     Width = 393
     Height = 81
     Anchors = [akLeft, akTop, akRight]
@@ -80,6 +81,7 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
       Width = 81
       Height = 21
       Style = csDropDownList
+      ItemHeight = 13
       TabOrder = 0
       OnChange = cbSnippetFileTypeChange
     end

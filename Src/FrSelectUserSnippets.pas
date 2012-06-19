@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphi
   ImgList, Controls, Classes, ComCtrls,
   // Project
-  DB.UCategory, DB.USnippet, FrSelectSnippetsBase;
+  FrSelectSnippetsBase, USnippets;
 
 
 type
@@ -64,7 +64,7 @@ type
         @param Cat [in] Category to be checked.
         @return True if category contains any user-defined snippets.
       }
-    function CanAddSnippetNode(const Snippet: TSnippet): Boolean; override;
+    function CanAddSnippetNode(const Snippet: TRoutine): Boolean; override;
       {Checks if a snippet node should be added to treeview.
         @param Snippet [in] Snippet to be checked.
         @return True if snippet is user-defined.
@@ -86,11 +86,11 @@ function TSelectUserSnippetsFrame.CanAddCatNode(const Cat: TCategory): Boolean;
     @return True if category contains any user-defined snippets.
   }
 begin
-  Result := Cat.Snippets.Count(True) > 0;
+  Result := Cat.Routines.Count(True) > 0;
 end;
 
 function TSelectUserSnippetsFrame.CanAddSnippetNode(
-  const Snippet: TSnippet): Boolean;
+  const Snippet: TRoutine): Boolean;
   {Checks if a snippet node should be added to treeview.
     @param Snippet [in] Snippet to be checked.
     @return True if snippet is user-defined.

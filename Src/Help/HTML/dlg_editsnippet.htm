@@ -20,7 +20,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s):
@@ -32,7 +32,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
     <title>
-      Add / Edit Snippet Dialogue Box
+      Add / Edit Snippet Dialog Box
     </title>
     <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
   </head>
@@ -46,13 +46,13 @@
     <h1>
       <a name="dlg_editsnippet"></a>
       <img alt="Menu icon" src="../images/AddSnippet.gif" class="glyph">
-      Add Snippet Dialogue Box<br>
+      Add Snippet Dialog Box<br>
       <img alt="Menu icon" src="../images/EditSnippet.gif" class="glyph">
-      Edit Snippet Dialogue Box
+      Edit Snippet Dialog Box
     </h1>
     <p>
-      This dialogue box is displayed when either the <em>Snippets | New
-      Snippet</em> or <em>Snippets | Edit Snippet</em> menu options are
+      This dialog box is displayed when either the <em>Database | Add
+      Snippet</em> or <em>Database | Edit Snippet</em> menu options are
       selected. It is used to enter details of a new user defined code snippet
       or to edit the details of an existing user-defined snippet.
     </p>
@@ -65,7 +65,7 @@
       Editing the snippet
     </h2>
     <p>
-      The dialogue has multiple tabs. All but the <em>Code</em> tab are optional
+      The dialog has multiple tabs. All but the <em>Code</em> tab are optional
       &ndash; others can be used to provide additional information about the
       snippet. However, if you plan to test compile the snippet you must ensure
       that the snippet's dependencies and units are properly set up on the
@@ -113,14 +113,16 @@
           <em>Name</em> edit box.
         </div>
         <div>
-          Give the code snippet a name here. Names must be valid Unicode Pascal
-          identifiers. Names must also be unique within the user database,
-          although they may duplicate names in the main database.
+          Give the code snippet a name here. Names must be valid Pascal
+          identifiers with the added restriction that they must start with one
+          of the English letters 'A'..'Z', 'a'..'z' or the underscore character.
+          Names must also be unique within the user database, although they may
+          duplicate names in the main database.
         </div>
         <div>
           It is customary to name functions or procedures using the routine's
           name. Overloaded routines are often named by suffixing the routine
-          name with '_A', '_B', '_C' and so on.
+          name with '_A', '_B' etc.
         </div>
       </li>
       <li>
@@ -150,8 +152,7 @@
         <div>
           Use this list to specify any other snippets to be cross-referenced
           from this snippet. Check the boxes next to desired snippets. Cross
-          references are for information only. All snippets are listed, except
-          for the one being edited.
+          references are for information only. All snippets are listed.
         </div>
         <div>
           User defined snippets are displayed in blue.
@@ -165,19 +166,15 @@
           Specify any other snippets that this snippet depends upon by checking
           the boxes next to the desired snippets. If this snippet is to be test
           compiled then any other snippets it requires must be specified here or
-          the test compile will fail. The exception is that
-          <a href="snippet_unit.htm">unit snippets</a> never have any
-          dependencies.
+          the test compile will fail. The available entries in this list box
+          will vary according to the <a href="snippet_kinds.htm">snippet
+          kind</a>.
         </div>
         <div>
-          The available entries in this list box will vary according to the
-          <a href="snippet_kinds.htm">snippet kind</a> and the kind of snippets
-          it can depend on. For example, <a href="snippet_constant.htm">constant
-          snippets</a> can't depend on <a href="snippet_routine.htm">routine</a>
-          snippets and <a href="snippet_unit.htm">unit snippets</a> can't depend
-          on anything, so the list is empty.
+          Routine snippets are not included in this list if the snippet being
+          edited is a constant or type definition.
           <a href="snippet_freeform.htm">Freeform</a> snippets are never
-          included.
+          included in this list.
         </div>
         <div>
           User defined snippets are displayed in blue.
@@ -189,11 +186,11 @@
         </div>
         <div>
           Click this button to see all dependencies for the snippet being edited
-          in the <a href="dlg_dependencies.htm">Dependencies dialogue box</a>.
-          All entries checked in the <em>Dependencies</em> list box are
-          included, along with all their dependencies, and so on. You must not
-          create a circular dependency; the <em>Dependencies</em> dialogue box
-          will help you detect them.
+          in the <a href="dlg_dependencies.htm">Dependencies dialog box</a>. All
+          entries checked in the <em>Dependencies</em> list box are included,
+          along with all their dependencies, and so on. You must not create a
+          circular dependency; the <em>Dependencies</em> dialog box will help
+          you detect them.
         </div>
       </li>
       <li>
@@ -213,11 +210,6 @@
           identifiers in the source code with the unit name, e.g.
           <code>Graphics.TBitmap</code>.
         </div>
-        <div>
-          <a href="snippet_unit.htm">Unit snippets</a> must declare their used
-          units in the unit source code, so this list box is disabled when the
-          snippet kind is <em>unit</em>.
-        </div>
       </li>
       <li>
         <div>
@@ -228,10 +220,6 @@
           type the name of the unit in the edit box and click the <em>Add
           Unit</em> button. The unit will be added to the <em>Units</em> check
           list box and its check box will be checked.
-        </div>
-        <div>
-          This button is disabled for <a href="snippet_unit.htm">unit
-          snippets</a>.
         </div>
       </li>
     </ul>
@@ -315,8 +303,8 @@
     <p>
       Clicking <em>OK</em> causes the edited snippet to be validated. If an
       error is found the control where the error is located is selected and an
-      error message is displayed. If the snippet is valid the dialogue box
-      closes and the user database is updated.
+      error message is displayed. If the snippet is valid the dialog box closes
+      and the user database is updated.
     </p>
     <p>
       Click <em>Cancel</em> to abort the edit.
