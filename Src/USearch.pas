@@ -1073,21 +1073,6 @@ function TTextSearch.Match(const Snippet: TSnippet): Boolean;
     if soWholeWord in fCriteria.Options then
       Result := ' ' + Result + ' ';
   end;
-
-  function ExtraText(const ActiveText: IActiveText): string;
-    {Gets plain text from active text.
-      @param ActiveText [in] Active text to process.
-      @return Plain text extracted from active text.
-    }
-  var
-    Elem: IActiveTextElem;          // loops through all active text elements
-    TextElem: IActiveTextTextElem;  // referece to a text active text element
-  begin
-    Result := '';
-    for Elem in ActiveText do
-      if Supports(Elem, IActiveTextTextElem, TextElem) then
-        Result := Result + TextElem.Text;
-  end;
   // ---------------------------------------------------------------------------
 
 var
@@ -1098,7 +1083,7 @@ begin
   SearchText := NormaliseSearchText(
     ' ' + StrMakeSentence(Snippet.Description) +
     ' ' + Snippet.SourceCode +
-    ' ' + StrMakeSentence(ExtraText(Snippet.Extra)) +
+    ' ' + StrMakeSentence(Snippet.Extra.ToString) +
     ' '
   );
   if fCriteria.Logic = slOr then
