@@ -267,8 +267,9 @@ uses
   // Project
   DB.UMain, DB.USnippetKind, FmDependenciesDlg, FmViewExtraDlg, IntfCommon,
   UColours, UConsts, UCSSUtils, UCtrlArranger, UExceptions, UFontHelper,
-  UReservedCategories, USnippetExtraHelper, USnippetValidator, UMessageBox,
-  USnippetIDs, UStructs, UStrUtils, UTestUnitDlgMgr, UThemesEx, UUtils;
+  UIStringList, UReservedCategories, USnippetExtraHelper, USnippetValidator,
+  UMessageBox, USnippetIDs, UStructs, UStrUtils, UTestUnitDlgMgr, UThemesEx,
+  UUtils;
 
 
 {$R *.dfm}
@@ -573,8 +574,11 @@ function TSnippetsEditorDlg.BuildExtraActiveText: IActiveText;
   information memo control.
     @return Required active text object.
   }
+var
+  Paras: IStringList;
 begin
-  Result := TSnippetExtraHelper.BuildActiveText(edExtra.Text);
+  Paras := TIStringList.Create(edExtra.Text, EOL2, False, True);
+  Result := TSnippetExtraHelper.BuildActiveText(Paras);
 end;
 
 procedure TSnippetsEditorDlg.cbKindChange(Sender: TObject);
