@@ -496,8 +496,9 @@ begin
     MakeCompoundTag(
       'td', SnippetALink(Snippet.Name, Snippet.UserDefined)
     )
+    // TODO -cURGENT: change to format description per its active text
     + MakeCompoundTag(
-      'td', MakeSafeHTMLText(Snippet.Description)
+      'td', MakeSafeHTMLText(Snippet.Description.ToString)
     )
   )
 end;

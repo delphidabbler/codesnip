@@ -915,7 +915,7 @@ begin
     ClassName + '.RenderDescComment: Routine must have kind skRoutine');
   // Format the output
   Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, StrTrim(Routine.Description)
+    CommentStyle, StrTrim(Routine.Description.ToString)
   );
 end;
 
@@ -1063,7 +1063,7 @@ begin
     ClassName + '.RenderDescComment: ConstOrType must have kind skTypeDef or '
       + 'skConstant');
   Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, StrTrim(ConstOrType.Description)
+    CommentStyle, StrTrim(ConstOrType.Description.ToString)
   );
 end;
 
@@ -1245,7 +1245,7 @@ class function TClassFormatter.RenderDescComment(CommentStyle: TCommentStyle;
   const Snippet: TSnippet): string;
 begin
   Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, StrTrim(Snippet.Description)
+    CommentStyle, StrTrim(Snippet.Description.ToString)
   );
 end;
 

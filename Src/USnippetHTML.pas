@@ -137,7 +137,8 @@ end;
 
 function TSnippetHTML.Description: string;
 begin
-  Result := MakeSafeHTMLText(StrMakeSentence(fSnippet.Description));
+  // TODO -cURGENT: change to format description according to active text
+  Result := MakeSafeHTMLText(StrMakeSentence(fSnippet.Description.ToString));
 end;
 
 function TSnippetHTML.EmptyListSentence: string;

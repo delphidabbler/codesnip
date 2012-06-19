@@ -1081,7 +1081,7 @@ var
 begin
   // Build search text
   SearchText := NormaliseSearchText(
-    ' ' + StrMakeSentence(Snippet.Description) +
+    ' ' + StrMakeSentence(Snippet.Description.ToString) +
     ' ' + Snippet.SourceCode +
     ' ' + StrMakeSentence(Snippet.Extra.ToString) +
     ' '

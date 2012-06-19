@@ -56,7 +56,7 @@ type
   TSnippetData = record
     Kind: TSnippetKind;               // Kind of snippet
     Cat: string;                      // Category containing snippet
-    Desc: string;                     // Description of snippet
+    Desc: IActiveText;                // Description of snippet
     SourceCode: string;               // Snippet's source code
     Extra: IActiveText;               // Extra text used to describe snippet
     CompilerResults: TCompileResults; // Compilation results
@@ -113,7 +113,7 @@ type
   strict private
     fKind: TSnippetKind;              // Kind of snippet this is
     fCategory: string;                // Name of snippet's category
-    fDescription: string;             // Description of snippet
+    fDescription: IActiveText;        // Description of snippet
     fSourceCode: string;              // Snippet's source code}
     fName: string;                    // Name of snippet
     fUnits: TStringList;              // List of required units
@@ -164,7 +164,7 @@ type
       {Name of snippet}
     property Category: string read fCategory;
       {Category to which snippet belongs}
-    property Description: string read fDescription;
+    property Description: IActiveText read fDescription;
       {Description of snippet}
     property SourceCode: string read fSourceCode;
       {Source code of snippet}
@@ -805,7 +805,7 @@ procedure TSnippetData.Assign(const Src: TSnippetData);
 begin
   Kind := Src.Kind;
   Cat := Src.Cat;
-  Desc := Src.Desc;
+  Desc := TActiveTextFactory.CloneActiveText(Src.Desc);
   SourceCode := Src.SourceCode;
   // we use cloning for Extra below because it deals uccessfully with both
   // Self.Extra = nil and Src.Extra = nil
@@ -821,7 +821,7 @@ var
 begin
   Kind := skFreeform;
   Cat := '';
-  Desc := '';
+  Desc := TActiveTextFactory.CreateActiveText;
   SourceCode := '';
   Extra := TActiveTextFactory.CreateActiveText;
   for CompID := Low(TCompilerID) to High(TCompilerID) do

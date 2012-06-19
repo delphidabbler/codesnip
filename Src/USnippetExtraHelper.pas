@@ -82,6 +82,7 @@ type
         @param ActiveText [in] Active text object used to generate markup.
         @return Required REML markup.
       }
+    class function PlainTextToActiveText(const Text: string): IActiveText;
   end;
 
 
@@ -259,6 +260,17 @@ class function TSnippetExtraHelper.BuildREMLMarkup(
   }
 begin
   Result := TREMLWriter.Render(ActiveText);
+end;
+
+class function TSnippetExtraHelper.PlainTextToActiveText(
+  const Text: string): IActiveText;
+begin
+  Result := TActiveTextFactory.CreateActiveText;
+  Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
+  Result.AddElem(
+    TActiveTextFactory.CreateTextElem(Text)
+  );
+  Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
 end;
 
 end.

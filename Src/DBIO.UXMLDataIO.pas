@@ -630,6 +630,18 @@ var
       Result := TActiveTextFactory.CreateActiveText;
     end;
   end;
+
+  function GetDescriptionProperty: IActiveText;
+  var
+    Desc: string;
+  begin
+    // TODO: change to read active text if present (depends on version)
+    Desc := GetPropertyText(cDescriptionNode);
+    if Desc <> '' then
+      Result := TSnippetExtraHelper.PlainTextToActiveText(Desc)
+    else
+      Result := TActiveTextFactory.CreateActiveText;
+  end;
   // ---------------------------------------------------------------------------
 
 begin
@@ -641,7 +653,7 @@ begin
     // Snippet found: read properties
     Props.Cat := GetPropertyText(cCatIdNode);
     Props.Kind := GetKindProperty;
-    Props.Desc := GetPropertyText(cDescriptionNode);
+    Props.Desc := GetDescriptionProperty;
     Props.Extra := GetExtraProperty;
     Props.SourceCode := GetSourceCodePropertyText;
     Props.CompilerResults := TXMLDocHelper.GetCompilerResults(
@@ -934,7 +946,8 @@ begin
     SnippetNode.Attributes[cSnippetNameAttr] := SnippetName;
     // Add properties
     fXMLDoc.CreateElement(SnippetNode, cCatIdNode, Props.Cat);
-    fXMLDoc.CreateElement(SnippetNode, cDescriptionNode, Props.Desc);
+    // TODO: change to write description as active text
+    fXMLDoc.CreateElement(SnippetNode, cDescriptionNode, Props.Desc.ToString);
     // source code is written to a UTF-8 encoded file with no BOM and filename
     // is stored in XML
     Inc(fFileNum);

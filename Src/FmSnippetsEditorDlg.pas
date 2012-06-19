@@ -787,7 +787,8 @@ begin
   begin
     // We are editing a snippet: initialise controls from snippet's properties
     edSourceCode.Text := fSnippet.SourceCode;
-    edDescription.Text := fSnippet.Description;
+    // TODO -cURGENT: change to use correct for of editor
+    edDescription.Text := fSnippet.Description.ToString;
     edName.Text := fSnippet.Name;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
     edExtra.Text := TSnippetExtraHelper.BuildREMLMarkup(fSnippet.Extra);
@@ -922,7 +923,10 @@ begin
   begin
     Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
     Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
-    Props.Desc := StrTrim(edDescription.Text);
+    // TODO -cURGENT: change this as required to work with active text
+    Props.Desc := TSnippetExtraHelper.BuildActiveText(
+      StrTrim(edDescription.Text)
+    );
     Props.SourceCode := StrTrimRight(edSourceCode.Text);
     (Props.Extra as IAssignable).Assign(BuildExtraActiveText);
     Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
