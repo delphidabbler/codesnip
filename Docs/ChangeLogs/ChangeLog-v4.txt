@@ -4,7 +4,8 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
-Release 4.0 alpha 3 (preview) of 18 June 2012
+Release v4.0 alpha 3 (preview) of 18 June 2012
+Internal CodeSnip version 3.98.3
 + New features:
   - Compiler warnings can now be switched on as well as off in generated code.
   - Names and descriptions of snippets in a category can now be printed.
@@ -34,7 +35,8 @@ Release 4.0 alpha 3 (preview) of 18 June 2012
   - Privacy statement updated re changes in data recorded via database update logons.
   - Licensing docs updated re introduction of some MPL 2.0 files.
 
-Release 4.0 alpha 2 (preview) of 21 April 2012
+Release v4.0 alpha 2 (preview) of 21 April 2012
+Internal CodeSnip version 3.98.2
 + New features:
   - New "unit" snippet type that enables complete units to be stored in database and to be test compiled.
   - New "classes" snippet type that enables a single Object Pascal class or advanced record-with-methods to be stored in database, test compiled and included in generated units.
@@ -56,7 +58,8 @@ Release 4.0 alpha 2 (preview) of 21 April 2012
 + Help file updated in line with changes and some errors fixed.
 + Updated documentation.
 
-Release 4.0 alpha 1 (preview) of 31 December 2011
+Release v4.0 alpha 1 (preview) of 31 December 2011
+Internal CodeSnip version 3.98.1
 Changes relate to v3.9.3
 + User interface changes:
   - New multi-tab detail pane can now show more than one snippet, category etc.
