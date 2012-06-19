@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -55,19 +55,16 @@ type
   }
   TDBDownloadMgr = class sealed(TStdWebService)
   strict private
-    function ProductVersion: string;
-      {Gets program's product version.
-        @return String representation of product version number.
-      }
-    function ProgId: string;
-      {Gets program's id code.
-        @return Program id.
-      }
     procedure HandleException(const E: EWebError);
       {Converts EWebError exceptions into EDBDownloadMgr exceptions with both
       a long and a short description.
         @param E [in] EWebError or descendant exception to be converted.
         @except Raises EDBDownloadMgr exceptions based on given exception.
+      }
+    procedure GetStdParams(const Params: TURIParams);
+      {Adds standard "progid" and "version" commands and their parameters to
+      given parameter object.
+        @param Params [in] Object that recieves standard parameters.
       }
     procedure PostStdCommand(const Cmd: string; const Response: TStrings);
       {Sends command to server that includes standard parameters that are sent
@@ -163,7 +160,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UConsts, UEncodings, Web.UInfo;
+  UAppInfo, UConsts, UEncodings, USystemInfo, Web.UInfo;
 
 
 {
@@ -308,6 +305,16 @@ begin
   end;
 end;
 
+procedure TDBDownloadMgr.GetStdParams(const Params: TURIParams);
+  {Adds standard "progid" and "version" commands and their parameters to given
+  parameter object.
+    @param Params [in] Object that recieves standard parameters.
+  }
+begin
+  Params.Add('progid', TAppInfo.ProgramKey);
+  Params.Add('version', TAppInfo.ProgramReleaseVersion);
+end;
+
 procedure TDBDownloadMgr.HandleException(const E: EWebError);
   {Converts EWebError exceptions into EDBDownloadMgr exceptions with both
   a long and a short description.
@@ -379,14 +386,22 @@ procedure TDBDownloadMgr.LogOn(const WantProgress: Boolean);
   }
 var
   Response: TStringList;  // response from server
+  Params: TURIParams;     // parameters to send with command
 begin
   Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
-    // NOTE: Response may still include some news data, but this is ignored
-    PostStdCommand('logon', Response);
+    Params := TURIParams.Create;
+    try
+      GetStdParams(Params);
+      Params.Add('os', TOSInfo.Description);
+      Params.Add('browser', IntToStr(TOSInfo.BrowserVer));
+      SafePostCommand('logon', Params, Response);
+    finally
+      Params.Free;
+    end;
   finally
-    FreeAndNil(Response);
+    Response.Free;
   end;
 end;
 
@@ -403,28 +418,11 @@ var
 begin
   StdParams := TURIParams.Create;
   try
-    StdParams.Add('progid', ProgId);
-    StdParams.Add('version', ProductVersion);
+    GetStdParams(StdParams);
     SafePostCommand(Cmd, StdParams, Response);
   finally
     StdParams.Free;
   end;
-end;
-
-function TDBDownloadMgr.ProductVersion: string;
-  {Gets program's product version.
-    @return String representation of product version number.
-  }
-begin
-  Result := TAppInfo.ProgramReleaseVersion;
-end;
-
-function TDBDownloadMgr.ProgId: string;
-  {Gets program's id code.
-    @return Program id.
-  }
-begin
-  Result := TAppInfo.ProgramKey;
 end;
 
 procedure TDBDownloadMgr.SafePostCommand(const Cmd: string;
