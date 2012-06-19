@@ -211,6 +211,8 @@ type
     ///  <summary>Returns number of elements in active text object's element
     ///  list.</summary>
     function GetCount: Integer;
+    ///  <summary>Converts active text object into plain text.</summary<>
+    function ToString: string;
     ///  <summary>List of elements in active text object.</summary>
     property Elems[Idx: Integer]: IActiveTextElem read GetElem; default;
     ///  <summary>Number of elements in element list.</summary>
@@ -346,6 +348,9 @@ type
     ///  <summary>Returns number of elements element list.</summary>
     ///  <remarks>Method of IActiveText.</remarks>
     function GetCount: Integer;
+    ///  <summary>Converts active text object into plain text.</summary<>
+    ///  <remarks>Method of IActiveText.</remarks>
+    function ToString: string; override;
   end;
 
 type
@@ -591,6 +596,32 @@ end;
 function TActiveText.IsEmpty: Boolean;
 begin
   Result := fElems.Count = 0;
+end;
+
+function TActiveText.ToString: string;
+var
+  Elem: IActiveTextElem;
+  TextElem: IActiveTextTextElem;
+  ActionElem: IActiveTextActionElem;
+  SB: TStringBuilder;
+begin
+  SB := TStringBuilder.Create;
+  try
+    for Elem in fElems do
+    begin
+      if Supports(Elem, IActiveTextTextElem, TextElem) then
+        SB.Append(TextElem.Text);
+      if Supports(Elem, IActiveTextActionElem, ActionElem)
+        and (ActionElem.DisplayStyle = dsBlock)
+        and (ActionElem.State = fsClose) then
+        // new line at end of block to separate text at end of closing block
+        // from text at start of following block
+        SB.AppendLine;
+    end;
+    Result := SB.ToString;
+  finally
+    SB.Free;
+  end;
 end;
 
 { TActiveTextTextElem }
