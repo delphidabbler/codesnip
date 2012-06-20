@@ -64,9 +64,8 @@
 </h2>
 
 <p>
-  The XML files used for exported file use UTF-8 encoding without a byte order
-  mark. XML generated for submission to the online database are also encoded in
-  UTF-8.
+  XML export files use UTF-8 encoding without a byte order mark. XML generated
+  for submission to the online database is also encoded in UTF-8.
 </p>
 
 <p>
@@ -80,10 +79,10 @@
 </h2>
 
 <p>
-  There have been five different versions of the XML file format &ndash; v1 to
-  v5. Tags from all five versions are explained below with notes describing
-  which formats a tag applies to. Where there is no note the tag is valid in all
-  file format versions.
+  There have been six different versions of the XML file format &ndash; v1 to
+  v6. Tags from all six versions are explained below with notes describing
+  which versions a tag applies to. Where there is no note the tag is valid in
+  all versions.
 </p>
 
 <dl>
@@ -114,7 +113,7 @@
             provided.
           </li>
           <li>
-            <span class="highlight">version 5:</span> Always set to
+            <span class="highlight">version 5 and later:</span> Always set to
             &quot;UTF-8&quot;.
           </li>
         </ul>
@@ -142,7 +141,7 @@
       </dt>
       <dd>
         Identifies version of file. Determines which tags are valid and
-        establishes rules concerning content. Valid versions are 1..5.
+        establishes rules concerning content. Valid versions are 1..6.
       </dd>
     </dl>
   </dd>
@@ -197,7 +196,7 @@
   <dd>
     <div class="half-spaced">
       Contains information about an exported snippet. One per snippet.
-      Attribute is  :
+      Attribute is:
     </div>
     <dl class="indent">
       <dt>
@@ -213,9 +212,9 @@
             an English language letter or the underscore.
           </li>
           <li>
-            <span class="highlight">version 5:</span> Name can begin with any
-            character that is valid as the first character of a Unicode Pascal
-            identifier.
+            <span class="highlight">version 5 and later:</span> Name can begin
+            with any character that is valid as the first character of a Unicode
+            Pascal identifier.
           </li>
         </ul>
       </dd>
@@ -226,7 +225,19 @@
     <strong>codesnip-export/routines/routine/description</strong>
   </dt>
   <dd>
-    Description of snippet.
+    <div class="half-spaced">
+      Description of snippet.
+    </div>
+    <ul class="squashed">
+      <li>
+        <span class="highlight">versions 1..5:</span> Content is a single line
+        of plain text.
+      </li>
+      <li>
+        <span class="highlight">version 6:</span> Content is formatted text
+        encoded in REML markup. REML v3 is supported.
+      </li>
+    </ul>
   </dd>
 
   <dt>
@@ -302,7 +313,8 @@
         <li>
           <div class="unspaced">
             <span class="highlight">version 2 and later:</span> Additional
-            information about a snippet. Content is REML markup.
+            information about a snippet. Content is formatted text encoded in
+            REML markup.
           </div>
           <ul class="squashed">
             <li>
@@ -358,7 +370,7 @@
               &quot;const&quot;.
             </li>
             <li>
-              <span class="highlight">version 5:</span>
+              <span class="highlight">version 5 and later:</span>
               &quot;freeform&quot;, &quot;routine&quot;, &quot;type&quot;,
               &quot;const&quot;, &quot;class&quot; &amp; &quot;unit&quot;.
             </li>
@@ -495,8 +507,8 @@
         English language letter or the underscore.
       </li>
       <li>
-        <span class="highlight">version 5:</span> Name can begin with any
-        character that is valid as the first character of a Unicode Pascal
+        <span class="highlight">version 5 and later:</span> Name can begin with
+        any character that is valid as the first character of a Unicode Pascal
         identifier.
       </li>
     </ul>
@@ -522,8 +534,8 @@
         English language letter or the underscore.
       </li>
       <li>
-        <span class="highlight">version 5:</span> Name can begin with any
-        character that is valid as the first character of a Unicode Pascal
+        <span class="highlight">version 5 and later:</span> Name can begin with
+        any character that is valid as the first character of a Unicode Pascal
         identifier.
       </li>
     </ul>
@@ -618,6 +630,16 @@
       identifier. Previously the first character of the attribute had to be one
       of 'A'..'Z', 'a'..'z' or '_'.
     </div>
+    <div class="half-spaced">
+      New &quot;class&quot and &quot;unit&quot; snippet kinds supported.
+    </div>
+  </dd>
+  <dt>
+    Version 6
+  </dt>
+  <dd>
+    A snippet's description is now stored as formatted text using REML markup.
+    Previously the description was plain text.
   </dd>
 </dl>
 
@@ -626,19 +648,27 @@
 </h3>
 
 <p>
-  Readers of version 1 files must generate REML markup from the
-  <em>codesnip-export/routines/routine/comments</em>,
-  <em>codesnip-export/routines/routine/credits</em> and
-  <em>codesnip-export/routines/routine/credits-url</em> tags to mimic the data
-  normally provided by the extra tag.
+  Readers of version 1 files must convert the contents of the
+  <em>codesnip-data/routines/routine/comments</em>,
+  <em>codesnip-data/routines/routine/credits</em> and
+  <em>codesnip-data/routines/routine/credits-url</em> tags into formatted text
+  that simulates the parsed content of the
+  <em>codesnip-data/routines/routine/extra</em> tag.
 </p>
 
 <p>
   Readers of v1 and v2 files should map a
-  <em>codesnip-export/routines/routine/standard-format</em> value of &quot;0&quot;
-  to a <em>codesnip-export/routines/routine/kind</em> value of
-  &quot;freeform&quot; and  a value of &quot;1&quot; to &quot;routine&quot;.
+  <em>codesnip-data/routines/routine/standard-format</em> value of &quot;0&quot;
+  to a <em>codesnip-data/routines/routine/kind</em> value of
+  &quot;freeform&quot; and a value of &quot;1&quot; to &quot;routine&quot;.
 </p>
+
+<p>
+  Readers of v1 to v5 files must convert the plain text snippet description read
+  from <em>codesnip-data/routines/routine/description</em> into the formatted
+  text equivalent of a single paragraph containing the description.
+</p>
+
 
 </body>
 
