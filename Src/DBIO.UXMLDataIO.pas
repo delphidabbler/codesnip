@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -278,7 +278,7 @@ const
   cWatermark            = '531257EA-1EE3-4B0F-8E46-C6E7F7140106';
   // supported file format versions
   cEarliestVersion      = 1;
-  cLatestVersion        = 5;
+  cLatestVersion        = 6;
 
 
 { Support routines }
@@ -579,8 +579,7 @@ var
 
   function GetStandardFormatProperty: Boolean;
     {Gets value of standard format node.
-      @return True if standard format, False if not. If node present result
-        depends of which database is being accessed.
+      @return True if standard format, False if not.
     }
   begin
     Result := TXMLDocHelper.GetStandardFormat(
@@ -595,9 +594,9 @@ var
   var
     Default: TSnippetKind;  // default value
   begin
-    // In earlier versions of the document we have no Kind node, so we calculate
-    // kind value from StandardFormat value. If Kind node is present
-    // StandardFormat is ignored
+    // In earlier file format versions we have no Kind node, so we calculate
+    // kind from StandardFormat value. If Kind node is present StandardFormat is
+    // ignored.
     if GetStandardFormatProperty then
       Default := skRoutine
     else
@@ -621,7 +620,7 @@ var
           GetPropertyText(cCreditsUrlNode)
         )
       else
-        // version 2: build extra data from extra node
+        // version 2 & later: build extra data from REML in extra node
         Result := TSnippetExtraHelper.BuildActiveText(
           GetPropertyText(cExtraNode)
         );
@@ -633,12 +632,18 @@ var
 
   function GetDescriptionProperty: IActiveText;
   var
-    Desc: string;
+    Desc: string; // text read from description node
   begin
-    // TODO: change to read active text if present (depends on version)
     Desc := GetPropertyText(cDescriptionNode);
     if Desc <> '' then
-      Result := TSnippetExtraHelper.PlainTextToActiveText(Desc)
+    begin
+      if fVersion < 6 then
+        // versions before 6: description is stored as plain text
+        Result := TSnippetExtraHelper.PlainTextToActiveText(Desc)
+      else
+        // version 6 & later: description is stored as REML
+        Result := TSnippetExtraHelper.BuildActiveText(Desc)
+    end
     else
       Result := TActiveTextFactory.CreateActiveText;
   end;
@@ -946,8 +951,12 @@ begin
     SnippetNode.Attributes[cSnippetNameAttr] := SnippetName;
     // Add properties
     fXMLDoc.CreateElement(SnippetNode, cCatIdNode, Props.Cat);
-    // TODO: change to write description as active text
-    fXMLDoc.CreateElement(SnippetNode, cDescriptionNode, Props.Desc.ToString);
+    // description node is written even if empty (which it shouldn't be)
+    fXMLDoc.CreateElement(
+      SnippetNode,
+      cDescriptionNode,
+      TSnippetExtraHelper.BuildREMLMarkup(Props.Desc)
+    );
     // source code is written to a UTF-8 encoded file with no BOM and filename
     // is stored in XML
     Inc(fFileNum);
@@ -956,7 +965,7 @@ begin
       DataFile(FileName), Props.SourceCode, TEncoding.UTF8, False
     );
     fXMLDoc.CreateElement(SnippetNode, cSourceCodeFileNode, FileName);
-    // extra property is only written if value exists
+    // extra node is only written if extra property has a value
     if not Props.Extra.IsEmpty then
     begin
       fXMLDoc.CreateElement(
@@ -965,9 +974,8 @@ begin
         TSnippetExtraHelper.BuildREMLMarkup(Props.Extra)
       );
     end;
-    // Kind property replaces StandardFormat
     TXMLDocHelper.WriteSnippetKind(fXMLDoc, SnippetNode, Props.Kind);
-    // compiler results value: only write known results
+    // only known compiler results are written
     TXMLDocHelper.WriteCompilerResults(
       fXMLDoc, SnippetNode, Props.CompilerResults
     );
