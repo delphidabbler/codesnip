@@ -89,7 +89,9 @@ type
     ///  <summary>Adds given heading (i.e. snippet name) to document.</summary>
     procedure RenderHeading(const Heading: string); override;
     ///  <summary>Adds given snippet description to document.</summary>
-    procedure RenderDescription(const Desc: string); override;
+    ///  <remarks>Active text formatting is observed and styled to suit
+    ///  document.</remarks>
+    procedure RenderDescription(const Desc: IActiveText); override;
     ///  <summary>Hilights given source code and adds to document.</summary>
     procedure RenderSourceCode(const SourceCode: string); override;
     ///  <summary>Adds given title followed by given text to document.</summary>
@@ -133,7 +135,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UHiliters, UColours, UConsts;
+  Hiliter.UHiliters, UColours, UConsts, UStrUtils;
 
 
 { TRTFSnippetDoc }
@@ -289,14 +291,15 @@ begin
   fBuilder.ResetCharStyle;
 end;
 
-procedure TRTFSnippetDoc.RenderDescription(const Desc: string);
+procedure TRTFSnippetDoc.RenderDescription(const Desc: IActiveText);
 begin
+  // TODO: change this to render in similar way to RenderExtra
   fBuilder.ResetCharStyle;
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, ParaSpacing));
   fBuilder.SetFontStyle([]);
   fBuilder.SetFontSize(ParaFontSize);
   fBuilder.SetColour(clNone);
-  fBuilder.AddText(Desc);
+  fBuilder.AddText(StrTrim(Desc.ToString));
   fBuilder.EndPara;
 end;
 
