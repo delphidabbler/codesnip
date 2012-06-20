@@ -1,7 +1,8 @@
 {
  * DBIO.UIniDataReader.pas
  *
- * Implements code that reads code snip database from .ini and .dat files.
+ * Implements code that reads the main CodeSnip database from .ini and .dat
+ * files.
  *
  * $Rev$
  * $Date$
@@ -221,84 +222,6 @@ type
   end;
 
 
-{*******************************************************************************
-*                                                                              *
-* This unit provides a database reader that gets code snippet data from .ini   *
-* and .dat files. The object implements the IDataReader interface to provide   *
-* access to the data when creating the code snippets global object. The data   *
-* files are described below:                                                   *
-*                                                                              *
-* ---------------------------------------------------------------------------- *
-* categories.ini                                                               *
-*   This is the master ini file. It has one section for each category in the   *
-*   database. The section names are the ids of the categories. Each category   *
-*   section contains two values:                                               *
-*   1)  Desc - a description of the category.                                  *
-*   2)  Ini - the name of a further .ini file that provides details of all the *
-*       snippets in the category.                                              *
-* ---------------------------------------------------------------------------- *
-* <category>.ini                                                               *
-*   There is one of these files for each category - named after the Ini        *
-*   entries in categories.ini. The file contains details of all the snippets   *
-*   in the category. The section names are the names of the snippets. Each     *
-*   snippet section contains the following values (values shown in [ ] are     *
-*   optional):                                                                 *
-*   1)  Desc - a description of the snippet.                                   *
-*   2)  Units - comma separated list of units used by the snippet.             *
-*   3)  Depends - comma separated list of other snippets in database required  *
-*       by the snippet.                                                        *
-*   4)  Snip - name of a .dat file that contains the snippet source code.      *
-*   5)  [SeeAlso] - comma separated list of snippets in database that are      *
-*       cross referenced from this snippet.                                    *
-*   6)  [Credits] - text that gives credit to another individual. May contain  *
-*       text text of a hyperlink enclosed in [ ]. If present the URL is in the *
-*       Credits_URL value. Ignored if Extra is specified.                      *
-*   7)  [Credits_URL] - URL of any hyperlink in Credits. Ignored if Extra is   *
-*       specified.                                                             *
-*   8)  [Comments] - further comments pertaining to snippet. Ignored if Extra  *
-*       is specified.                                                          *
-*   9)  [Extra] - extra information pertaining to snippet. If present then     *
-*       Credits, Credits_URL and Comments are ignored. Contains text in REML,  *
-*       "Routine Extra Markup Language".                                       *
-*   10) DelphiX (where X is 2..7)                                              *
-*         or                                                                   *
-*       DelphiXXXXWin32 (where XXXX is 2005, 2006 or 2009)                     *
-*         or                                                                   *
-*       DelphiXXXX (where XXXX is 2007 or 2010)                                *
-*         or                                                                   *
-*       DelphiXE                                                               *
-*         or                                                                   *
-*       FPC (Free Pascal) - one entry for each supported compiler that         *
-*       indicates compatibility of the snippet with given compiler. Values are *
-*       one of:                                                                *
-*         Y - Compiles without warning;                                        *
-*         W - Compiles with warnings. This is now treated the same as "Y".     *
-*             This is because the user can now configure which warnings are    *
-*             displayed, therefore this setting is now meaningless. See        *
-*             feature request #3290359.                                        *
-*         N - Does not compile;                                                *
-*         Q - Not tested;                                                      *
-*         ? - Not tested.                                                      *
-*   11) [StandardFormat] - whether snippet is in standard format. Assumes true *
-*       if not present and there is no Kind value.                             *
-*   12) [Kind] - kind of snippet. One of freeform, routine, type, const, unit  *
-*       or class. If value not present then routine is assumed unless          *
-*       StandardFormat is present and 0, when freeform is assumed.             *
-*                                                                              *
-* ---------------------------------------------------------------------------- *
-* <999>.dat                                                                    *
-*   There is one of these files for each snippet in the database. It stores    *
-*   the snippet's Pascal source code. The name of the file is specified by the *
-*   Snip value in the <category>.ini file.                                     *
-* ---------------------------------------------------------------------------- *
-*                                                                              *
-* The database reader object interprets these files and provides the common    *
-* view onto them expected by the program. See the comments in DB.UFileIOIntf   *
-* for details.                                                                 *
-*                                                                              *
-*******************************************************************************}
-
-
 implementation
 
 
@@ -324,7 +247,8 @@ const
   cCreditsName = 'Credits';           // snippet credits
   cCreditsURLName = 'Credits_URL';    // url relating to snippet credits
   cCommentsName = 'Comments';         // snippet additional comments
-  cDescName = 'Desc';                 // snippet description
+  cDescName = 'Desc';                 // snippet description (plain text)
+  cDescExName = 'DescEx';             // snippet descriptio (REML)
   cSnipFileName = 'Snip';             // name of snippet's snippet file
   cStdFormatName = 'StandardFormat';  // whether snippet in std format
   cKindName = 'Kind';                 // kind of snippet
@@ -539,17 +463,25 @@ var
   end;
 
   ///  <summary>Gets snippet description from ini file.</summary>
+  ///  <remarks>Uses REML from DescEx field if present, otherwise uses plain
+  ///  text from Desc field if present, otherwise description is empty.
+  ///  </remarks>
   function GetDescription: IActiveText;
   var
-    Text: string;
+    REML: string;       // REML code from DescEx field
+    PlainText: string;  // plain text from Desc field
   begin
-    // TODO: change to read description as active text if present
-    Text := CatIni.ReadString(Snippet, cDescName, '');
-    if Text <> '' then
-      // TODO: rename TSnippetExtraHelper now used for Description
-      Result := TSnippetExtraHelper.PlainTextToActiveText(Text)
+    REML := CatIni.ReadString(Snippet, cDescExName, '');
+    if REML <> '' then
+      Result := TSnippetExtraHelper.BuildActiveText(REML)
     else
-      Result := TActiveTextFactory.CreateActiveText;
+    begin
+      PlainText := CatIni.ReadString(Snippet, cDescName, '');
+      if PlainText <> '' then
+        Result := TSnippetExtraHelper.PlainTextToActiveText(PlainText)
+      else
+        Result := TActiveTextFactory.CreateActiveText;
+    end;
   end;
   // ---------------------------------------------------------------------------
 
