@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -121,8 +121,8 @@ uses
   SysUtils, Windows, Graphics, Math, ComCtrls,
   // Project
   FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UHiliters, IntfCommon, UConsts,
-  UEncodings, UKeysHelper, UPrintInfo, URTFBuilder, URTFUtils, UStrUtils,
-  UUtils;
+  UEncodings, UKeysHelper, UPrintInfo, URTFBuilder, URTFStyles, URTFUtils,
+  UStrUtils, UUtils;
 
 
 {$R *.dfm}

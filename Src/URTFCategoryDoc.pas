@@ -84,7 +84,7 @@ implementation
 
 uses
   // Project
-  UColours;
+  UColours, URTFStyles;
 
 
 { TRTFCategoryDoc }
