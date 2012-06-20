@@ -341,6 +341,7 @@
 			<DCCReference Include="UActionFactory.pas"/>
 			<DCCReference Include="UActiveText.pas"/>
 			<DCCReference Include="UActiveTextHTML.pas"/>
+			<DCCReference Include="UActiveTextRTF.pas"/>
 			<DCCReference Include="UActiveTextValidator.pas"/>
 			<DCCReference Include="UAnchors.pas"/>
 			<DCCReference Include="UAppInfo.pas"/>
