@@ -66,8 +66,11 @@ type
     procedure InitialiseDoc; override;
     ///  <summary>Adds given heading (i.e. snippet name) to document.</summary>
     procedure RenderHeading(const Heading: string); override;
-    ///  <summary>Adds given snippet description to document.</summary>
-    procedure RenderDescription(const Desc: string); override;
+    ///  <summary>Interprets and adds given snippet description to document.
+    ///  </summary>
+    ///  <remarks>Active text is converted to plain text with only block level
+    ///  formatting observed.</remarks>
+    procedure RenderDescription(const Desc: IActiveText); override;
     ///  <summary>Adds given source code to document.</summary>
     procedure RenderSourceCode(const SourceCode: string); override;
     ///  <summary>Adds given title followed by given text to document.</summary>
@@ -134,10 +137,12 @@ begin
   fWriter.WriteLine(StrWrap(Text, cPageWidth, 0));
 end;
 
-procedure TTextSnippetDoc.RenderDescription(const Desc: string);
+procedure TTextSnippetDoc.RenderDescription(const Desc: IActiveText);
 begin
   fWriter.WriteLine;
-  fWriter.WriteLine(StrWrap(Desc, cPageWidth, 0));
+  { TODO -cURGENT: Revise to be like RenderExtra: pull out common code to
+         generic class like TActiveTextRTF }
+  fWriter.WriteLine(StrWrap(StrTrim(Desc.ToString), cPageWidth, 0));
 end;
 
 procedure TTextSnippetDoc.RenderExtra(const ExtraText: IActiveText);

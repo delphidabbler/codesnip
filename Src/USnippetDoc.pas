@@ -88,7 +88,7 @@ type
     ///  <summary>Output given heading, i.e. snippet name.</summary>
     procedure RenderHeading(const Heading: string); virtual; abstract;
     ///  <summary>Output given snippet description.</summary>
-    procedure RenderDescription(const Desc: string); virtual; abstract;
+    procedure RenderDescription(const Desc: IActiveText); virtual; abstract;
     ///  <summary>Output given source code.</summary>
     procedure RenderSourceCode(const SourceCode: string); virtual; abstract;
     ///  <summary>Output given title followed by given text.</summary>
@@ -182,7 +182,7 @@ begin
   InitialiseDoc;
   RenderHeading(Snippet.Name);
   // TODO -cURGENT: change pass description as active text to enable rendering
-  RenderDescription(StrTrim(Snippet.Description.ToString));
+  RenderDescription(Snippet.Description);
   RenderSourceCode(Snippet.SourceCode);
   RenderTitledText(
     sKindTitle, TSnippetKindInfoList.Items[Snippet.Kind].DisplayName
