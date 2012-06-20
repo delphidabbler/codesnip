@@ -184,6 +184,7 @@ uses
   UActionFactory in 'UActionFactory.pas',
   UActiveText in 'UActiveText.pas',
   UActiveTextHTML in 'UActiveTextHTML.pas',
+  UActiveTextRTF in 'UActiveTextRTF.pas',
   UActiveTextValidator in 'UActiveTextValidator.pas',
   UAnchors in 'UAnchors.pas',
   UAppInfo in 'UAppInfo.pas',
