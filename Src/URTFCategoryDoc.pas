@@ -126,7 +126,7 @@ end;
 procedure TRTFCategoryDoc.OutputCategoryHeading(const Category: TCategory);
 begin
   fBuilder.BeginGroup;
-  fBuilder.SetParaSpacing(HeadingSpacing, 0.0);
+  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(HeadingSpacing, 0.0));
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(HeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
@@ -140,7 +140,7 @@ end;
 procedure TRTFCategoryDoc.OutputSnippetSubHeading(const Snippet: TSnippet);
 begin
   fBuilder.BeginGroup;
-  fBuilder.SetParaSpacing(SubHeadingSpacing, 0.0);
+  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(SubHeadingSpacing, 0.0));
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(SubHeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
@@ -154,7 +154,7 @@ end;
 procedure TRTFCategoryDoc.OutputSnippetText(const Snippet: TSnippet);
 begin
   fBuilder.BeginGroup;
-  fBuilder.SetParaSpacing(ParaSpacing, 0.0);
+  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, 0.0));
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(ParaFontSize);
   fBuilder.SetFontStyle([]);
