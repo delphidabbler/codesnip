@@ -297,7 +297,7 @@ type
     fCurText: string;
       {Storage for text for various properties}
     fInSpace: Boolean;
-      // TODO: comment above field
+      {Indicates if lexer is currently processing white space}
     procedure SetTaggedText(const Value: string);
       {Setter for TaggedText property. Records new value and resets lexer ready
       to analyse the new tagged text.
@@ -1177,16 +1177,15 @@ begin
   end;
   // Process spaces: only first of a sequence of white space is used and
   // intervening tags have no effect on this process
-  // -- compress all consecutive spaces down to single space
+  // compress all consecutive spaces down to single space
   fCurText := StrCompressWhiteSpace(fCurText);
   if fInSpace then
-    // -- we have emitted a space in current sequence, so strip from start of
-    // -- fCurText
+    // space has been emitted in current sequence, strip from start of fCurText
     fCurText := StrTrimLeft(fCurText);
   if fCurText = '' then
     Exit;
-  // -- we are in space only if last char is a space: this space is being
-  // -- handled so immediately following spaces must be ignored.
+  // we are processing white space only if last char is a space: this space is
+  // being handled here so any immediately following spaces must be ignored.
   fInSpace := TCharacter.IsWhiteSpace(fCurText[Length(fCurText)]);
 end;
 
