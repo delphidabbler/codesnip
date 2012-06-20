@@ -174,18 +174,9 @@ begin
 end;
 
 procedure TRTFSnippetDoc.InitStyles;
-
-  // Removes colour capability from style if colour not enabled.
-  function AdjustCaps(const Caps: TRTFStyleCaps): TRTFStyleCaps;
-  begin
-    Result := Caps;
-    if not fUseColour then
-      Exclude(Result, scColour);
-  end;
-
 begin
   fExtraURLStyle := TRTFStyle.Create(
-    AdjustCaps([scColour]), TRTFFont.CreateNull, 0.0, [], clLinkText
+    [scColour], TRTFFont.CreateNull, 0.0, [], clLinkText
   );
   fExtraStyles.Add(
      ekPara,
@@ -196,7 +187,7 @@ begin
   fExtraStyles.Add(
     ekHeading,
     TRTFStyle.Create(
-      AdjustCaps([scParaSpacing, scFontStyles]),
+      [scParaSpacing, scFontStyles],
       TRTFParaSpacing.Create(ParaSpacing, 0.0),
       TRTFFont.CreateNull,
       0.0,
@@ -207,7 +198,7 @@ begin
   fExtraStyles.Add(
     ekStrong,
     TRTFStyle.Create(
-      AdjustCaps([scFontStyles]),
+      [scFontStyles],
       TRTFFont.CreateNull,
       0.0,
       [fsBold],
@@ -217,7 +208,7 @@ begin
   fExtraStyles.Add(
     ekEm,
     TRTFStyle.Create(
-      AdjustCaps([scFontStyles]),
+      [scFontStyles],
       TRTFFont.CreateNull,
       0.0,
       [fsItalic],
@@ -227,7 +218,7 @@ begin
   fExtraStyles.Add(
     ekVar,
     TRTFStyle.Create(
-      AdjustCaps([scFontStyles, scColour]),
+      [scFontStyles, scColour],
       TRTFFont.CreateNull,
       0.0,
       [fsItalic],
@@ -237,7 +228,7 @@ begin
   fExtraStyles.Add(
     ekWarning,
     TRTFStyle.Create(
-      AdjustCaps([scFontStyles, scColour]),
+      [scFontStyles, scColour],
       TRTFFont.CreateNull,
       0.0,
       [fsBold],
@@ -247,13 +238,18 @@ begin
   fExtraStyles.Add(
     ekMono,
     TRTFStyle.Create(
-      AdjustCaps([scFont]),
+      [scFont],
       TRTFFont.Create(MonoFontName, rgfModern),
       0.0,
       [],
       clNone
     )
   );
+  if not fUseColour then
+  begin
+    fExtraStyles.MakeMonochrome;
+    fExtraURLStyle.MakeMonochrome;
+  end;
 end;
 
 procedure TRTFSnippetDoc.RenderCompilerInfo(const Heading: string;
