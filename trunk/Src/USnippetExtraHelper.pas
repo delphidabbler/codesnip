@@ -268,7 +268,7 @@ begin
   Result := TActiveTextFactory.CreateActiveText;
   Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
   Result.AddElem(
-    TActiveTextFactory.CreateTextElem(Text)
+    TActiveTextFactory.CreateTextElem(StrTrim(Text))
   );
   Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
 end;
