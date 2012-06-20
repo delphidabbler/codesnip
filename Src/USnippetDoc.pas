@@ -181,7 +181,6 @@ begin
   // generate document
   InitialiseDoc;
   RenderHeading(Snippet.Name);
-  // TODO -cURGENT: change pass description as active text to enable rendering
   RenderDescription(Snippet.Description);
   RenderSourceCode(Snippet.SourceCode);
   RenderTitledText(
