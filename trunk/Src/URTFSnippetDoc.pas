@@ -44,8 +44,8 @@ uses
   // Delphi
   Graphics,
   // Project
-  Hiliter.UGlobals, UActiveText, UEncodings, UIStringList, USnippetDoc,
-  URTFBuilder, URTFUtils;
+  Hiliter.UGlobals, UActiveText, UActiveTextRTF, UEncodings, UIStringList,
+  USnippetDoc, URTFBuilder, URTFStyles, URTFUtils;
 
 
 type
@@ -63,6 +63,9 @@ type
       fBuilder: TRTFBuilder;
       ///  <summary>Flag indicates whether to output in colour.</summary>
       fUseColour: Boolean;
+
+      fExtraStyles: TRTFStyleMap;
+      fExtraURLStyle: TRTFStyle;
     const
       ///  <summary>Name of main document font.</summary>
       MainFontName = 'Tahoma';
@@ -77,10 +80,9 @@ type
       ///  <summary>Size of font used for database information.</summary>
       DBInfoFontSize = 9;
   strict private
-    ///  <summary>Uses given font colour for subsequent text unless caller has
-    ///  specified that colour is not to be used.</summary>
-    ///  <remarks>Font colour is used until next call to this method.</remarks>
-    procedure SetColour(const Colour: TColor);
+    ///  <summary>Initialises RTF style used when rendering active text as RTF.
+    ///  </summary>
+    procedure InitStyles;
   strict protected
     ///  <summary>Initialises rich text document.</summary>
     procedure InitialiseDoc; override;
@@ -119,6 +121,8 @@ type
     ///  printed in colour (True) or black and white (False).</param>
     constructor Create(const HiliteAttrs: IHiliteAttrs;
       const UseColour: Boolean = True);
+    ///  <summary>Destroys object.</summary>
+    destructor Destroy; override;
   end;
 
 
@@ -129,7 +133,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UHiliters, UColours, UConsts, URTFStyles;
+  Hiliter.UHiliters, UColours, UConsts;
 
 
 { TRTFSnippetDoc }
@@ -140,6 +144,14 @@ begin
   inherited Create;
   fHiliteAttrs := HiliteAttrs;
   fUseColour := UseColour;
+  fExtraStyles := TRTFStyleMap.Create;
+  InitStyles;
+end;
+
+destructor TRTFSnippetDoc.Destroy;
+begin
+  fExtraStyles.Free;
+  inherited;
 end;
 
 function TRTFSnippetDoc.FinaliseDoc: TEncodedData;
@@ -159,6 +171,89 @@ begin
   fBuilder.ColourTable.Add(clWarningText);
   fBuilder.ColourTable.Add(clVarText);
   fBuilder.ColourTable.Add(clLinkText);
+end;
+
+procedure TRTFSnippetDoc.InitStyles;
+
+  // Removes colour capability from style if colour not enabled.
+  function AdjustCaps(const Caps: TRTFStyleCaps): TRTFStyleCaps;
+  begin
+    Result := Caps;
+    if not fUseColour then
+      Exclude(Result, scColour);
+  end;
+
+begin
+  fExtraURLStyle := TRTFStyle.Create(
+    AdjustCaps([scColour]), TRTFFont.CreateNull, 0.0, [], clLinkText
+  );
+  fExtraStyles.Add(
+     ekPara,
+     TRTFStyle.Create(
+       TRTFParaSpacing.Create(ParaSpacing, 0.0)
+     )
+  );
+  fExtraStyles.Add(
+    ekHeading,
+    TRTFStyle.Create(
+      AdjustCaps([scParaSpacing, scFontStyles]),
+      TRTFParaSpacing.Create(ParaSpacing, 0.0),
+      TRTFFont.CreateNull,
+      0.0,
+      [fsBold],
+      clNone
+    )
+  );
+  fExtraStyles.Add(
+    ekStrong,
+    TRTFStyle.Create(
+      AdjustCaps([scFontStyles]),
+      TRTFFont.CreateNull,
+      0.0,
+      [fsBold],
+      clNone
+    )
+  );
+  fExtraStyles.Add(
+    ekEm,
+    TRTFStyle.Create(
+      AdjustCaps([scFontStyles]),
+      TRTFFont.CreateNull,
+      0.0,
+      [fsItalic],
+      clNone
+    )
+  );
+  fExtraStyles.Add(
+    ekVar,
+    TRTFStyle.Create(
+      AdjustCaps([scFontStyles, scColour]),
+      TRTFFont.CreateNull,
+      0.0,
+      [fsItalic],
+      clVarText
+    )
+  );
+  fExtraStyles.Add(
+    ekWarning,
+    TRTFStyle.Create(
+      AdjustCaps([scFontStyles, scColour]),
+      TRTFFont.CreateNull,
+      0.0,
+      [fsBold],
+      clWarningText
+    )
+  );
+  fExtraStyles.Add(
+    ekMono,
+    TRTFStyle.Create(
+      AdjustCaps([scFont]),
+      TRTFFont.Create(MonoFontName, rgfModern),
+      0.0,
+      [],
+      clNone
+    )
+  );
 end;
 
 procedure TRTFSnippetDoc.RenderCompilerInfo(const Heading: string;
@@ -211,149 +306,17 @@ end;
 
 procedure TRTFSnippetDoc.RenderExtra(const ExtraText: IActiveText);
 var
-  Elem: IActiveTextElem;              // each active text element
-  TextElem: IActiveTextTextElem;      // refers to active text text elements
-  ActionElem: IActiveTextActionElem;  // refers to active text action elements
-  InBlock: Boolean;                   // flag true if inside a block level tag
-resourcestring
-  sURL = ' (%s)';                     // formatting for URLs from hyperlinks
+  RTFWriter: TActiveTextRTF;  // Object that generates RTF from active text
 begin
   Assert(not ExtraText.IsEmpty, ClassName + '.RenderExtra: ExtraText is empty');
-  Assert(Supports(ExtraText[0], IActiveTextActionElem) and
-    ((ExtraText[0] as IActiveTextActionElem).DisplayStyle = dsBlock),
-    ClassName + '.RenderExtra: ExtraText must begin with a block tag');
-  Assert(Supports(ExtraText[Pred(ExtraText.Count)], IActiveTextActionElem) and
-    ((ExtraText[Pred(ExtraText.Count)] as IActiveTextActionElem).DisplayStyle
-      = dsBlock),
-    ClassName + '.RenderExtra: ExtraText must end with a block tag');
-  InBlock := False;
-  for Elem in ExtraText do
-  begin
-    if Supports(Elem, IActiveTextTextElem, TextElem) then
-    begin
-      if InBlock then
-        fBuilder.AddText(TextElem.Text);
-    end
-    else if Supports(Elem, IActiveTextActionElem, ActionElem) then
-    begin
-      case ActionElem.Kind of
-        ekPara:
-        begin
-          // begin or end a paragraph
-          case ActionElem.State of
-            fsOpen:
-            begin
-              fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, 0.0));
-              InBlock := True;
-            end;
-            fsClose:
-            begin
-              fBuilder.EndPara;
-              InBlock := False;
-            end;
-          end;
-        end;
-        ekHeading:
-        begin
-          // begin or end a heading
-          case ActionElem.State of
-            fsOpen:
-            begin
-              fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, 0.0));
-              fBuilder.BeginGroup;
-              fBuilder.SetFontStyle([fsBold]);
-              InBlock := True;
-            end;
-            fsClose:
-            begin
-              fBuilder.EndGroup;
-              fBuilder.EndPara;
-              InBlock := False;
-            end;
-          end;
-        end;
-        ekLink:
-        begin
-          // write a link (write url in brackets after text)
-          if ActionElem.State = fsClose then
-          begin
-            fBuilder.BeginGroup;
-            SetColour(clLinkText);
-            fBuilder.AddText(
-              Format(sURL, [ActionElem.Attrs[TActiveTextAttrNames.Link_URL]])
-            );
-            fBuilder.EndGroup;
-          end;
-        end;
-        ekStrong:
-        begin
-          // begin or end strong emphasis
-          case ActionElem.State of
-            fsOpen:
-            begin
-              fBuilder.BeginGroup;
-              fBuilder.SetFontStyle([fsBold]);
-            end;
-            fsClose:
-              fBuilder.EndGroup;
-          end;
-        end;
-        ekEm:
-        begin
-          // begin or end emphasis
-          case ActionElem.State of
-            fsOpen:
-            begin
-              fBuilder.BeginGroup;
-              fBuilder.SetFontStyle([fsItalic]);
-            end;
-            fsClose:
-              fBuilder.EndGroup;
-          end;
-        end;
-        ekVar:
-        begin
-          // begin or end variable
-          case ActionElem.State of
-            fsOpen:
-            begin
-              fBuilder.BeginGroup;
-              fBuilder.SetFontStyle([fsItalic]);
-              SetColour(clVarText);
-            end;
-            fsClose:
-              fBuilder.EndGroup;
-          end;
-        end;
-        ekWarning:
-        begin
-          // begin or end warning text
-          case ActionElem.State of
-            fsOpen:
-            begin
-              fBuilder.BeginGroup;
-              fBuilder.SetFontStyle([fsBold]);
-              SetColour(clWarningText);
-            end;
-            fsClose:
-              fBuilder.EndGroup;
-          end;
-        end;
-        ekMono:
-        begin
-          // begin or end mono text
-          case ActionElem.State of
-            fsOpen:
-            begin
-              fBuilder.BeginGroup;
-              fBuilder.SetFont(MonoFontName);
-            end;
-            fsClose:
-              fBuilder.EndGroup;
-          end;
-        end;
-      end;
-    end;
+  RTFWriter := TActiveTextRTF.Create;
+  try
+    RTFWriter.ElemStyleMap := fExtraStyles;
+    RTFWriter.DisplayURLs := True;
+    RTFWriter.URLStyle := fExtraURLStyle;
+    RTFWriter.Render(ExtraText, fBuilder);
+  finally
+    RTFWriter.Free;
   end;
 end;
 
@@ -394,12 +357,6 @@ begin
   fBuilder.EndGroup;
   fBuilder.AddText(' ' + Text);
   fBuilder.EndPara;
-end;
-
-procedure TRTFSnippetDoc.SetColour(const Colour: TColor);
-begin
-  if fUseColour then
-    fBuilder.SetColour(Colour);
 end;
 
 end.
