@@ -229,7 +229,7 @@ const
   cWatermark        = 'B46969D4-D367-4F5F-833E-F165FBA78631';
   // file version numbers
   cEarliestVersion  = 1;  // earliest file version supported by importer
-  cLatestVersion    = 5;  // current file version written by exporter
+  cLatestVersion    = 6;  // current file version written by exporter
 
 
 { TUserInfo }
@@ -368,9 +368,11 @@ begin
   SnippetNode := fXMLDoc.CreateElement(ParentNode, cSnippetNode);
   SnippetNode.Attributes[cSnippetNameAttr] := Snippet.Name;
   // Add nodes for properties: (ignore category and xrefs)
-  // TODO: change to write description as active text
+  // description node is written even if empty (which it shouldn't be)
   fXMLDoc.CreateElement(
-    SnippetNode, cDescriptionNode, Snippet.Description.ToString
+    SnippetNode,
+    cDescriptionNode,
+    TSnippetExtraHelper.BuildREMLMarkup(Snippet.Description)
   );
   // source code is stored directly in XML, not in external file
   fXMLDoc.CreateElement(SnippetNode, cSourceCodeTextNode, Snippet.SourceCode);
@@ -460,14 +462,21 @@ procedure TCodeImporter.Execute(const Data: TBytes);
       Depends.Add(TSnippetID.Create(SnippetName, True));
   end;
 
+  // Reads description node and converts to active text.
   function GetDescription(const SnippetNode: IXMLNode): IActiveText;
   var
-    Desc: string;
+    Desc: string; // text read from description node
   begin
-    // TODO: change to get description as active text if present (test version)
     Desc := TXMLDocHelper.GetSubTagText(fXMLDoc, SnippetNode, cDescriptionNode);
     if Desc <> '' then
-      Result := TSnippetExtraHelper.PlainTextToActiveText(Desc)
+    begin
+      if fVersion < 6 then
+        // versions before 6: description is stored as plain text
+        Result := TSnippetExtraHelper.PlainTextToActiveText(Desc)
+      else
+        // version 6 & later: description is stored as REML
+        Result := TSnippetExtraHelper.BuildActiveText(Desc)
+    end
     else
       Result := TActiveTextFactory.CreateActiveText;
   end;
