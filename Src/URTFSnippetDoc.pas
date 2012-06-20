@@ -64,8 +64,9 @@ type
       ///  <summary>Flag indicates whether to output in colour.</summary>
       fUseColour: Boolean;
 
+      fDescStyles: TRTFStyleMap;
       fExtraStyles: TRTFStyleMap;
-      fExtraURLStyle: TRTFStyle;
+      fURLStyle: TRTFStyle;
     const
       ///  <summary>Name of main document font.</summary>
       MainFontName = 'Tahoma';
@@ -146,6 +147,7 @@ begin
   inherited Create;
   fHiliteAttrs := HiliteAttrs;
   fUseColour := UseColour;
+  fDescStyles := TRTFStyleMap.Create;
   fExtraStyles := TRTFStyleMap.Create;
   InitStyles;
 end;
@@ -153,6 +155,7 @@ end;
 destructor TRTFSnippetDoc.Destroy;
 begin
   fExtraStyles.Free;
+  fDescStyles.Free;
   inherited;
 end;
 
@@ -177,15 +180,23 @@ end;
 
 procedure TRTFSnippetDoc.InitStyles;
 begin
-  fExtraURLStyle := TRTFStyle.Create(
+  fURLStyle := TRTFStyle.Create(
     [scColour], TRTFFont.CreateNull, 0.0, [], clLinkText
   );
+
   fExtraStyles.Add(
      ekPara,
      TRTFStyle.Create(
        TRTFParaSpacing.Create(ParaSpacing, 0.0)
      )
   );
+  fDescStyles.Add(
+     ekPara,
+     TRTFStyle.Create(
+       TRTFParaSpacing.Create(0.0, ParaSpacing)
+     )
+  );
+
   fExtraStyles.Add(
     ekHeading,
     TRTFStyle.Create(
@@ -197,6 +208,18 @@ begin
       clNone
     )
   );
+  fDescStyles.Add(
+    ekHeading,
+    TRTFStyle.Create(
+      [scParaSpacing, scFontStyles],
+      TRTFParaSpacing.Create(0.0, ParaSpacing),
+      TRTFFont.CreateNull,
+      0.0,
+      [fsBold],
+      clNone
+    )
+  );
+
   fExtraStyles.Add(
     ekStrong,
     TRTFStyle.Create(
@@ -207,6 +230,8 @@ begin
       clNone
     )
   );
+  fDescStyles.Add(ekStrong, fExtraStyles[ekStrong]);
+
   fExtraStyles.Add(
     ekEm,
     TRTFStyle.Create(
@@ -217,6 +242,8 @@ begin
       clNone
     )
   );
+  fDescStyles.Add(ekEm, fExtraStyles[ekEm]);
+
   fExtraStyles.Add(
     ekVar,
     TRTFStyle.Create(
@@ -227,6 +254,8 @@ begin
       clVarText
     )
   );
+  fDescStyles.Add(ekVar, fExtraStyles[ekVar]);
+
   fExtraStyles.Add(
     ekWarning,
     TRTFStyle.Create(
@@ -237,6 +266,8 @@ begin
       clWarningText
     )
   );
+  fDescStyles.Add(ekWarning, fExtraStyles[ekWarning]);
+
   fExtraStyles.Add(
     ekMono,
     TRTFStyle.Create(
@@ -247,10 +278,13 @@ begin
       clNone
     )
   );
+  fDescStyles.Add(ekMono, fExtraStyles[ekMono]);
+
   if not fUseColour then
   begin
+    fDescStyles.MakeMonochrome;
     fExtraStyles.MakeMonochrome;
-    fExtraURLStyle.MakeMonochrome;
+    fURLStyle.MakeMonochrome;
   end;
 end;
 
@@ -292,15 +326,20 @@ begin
 end;
 
 procedure TRTFSnippetDoc.RenderDescription(const Desc: IActiveText);
+var
+  RTFWriter: TActiveTextRTF;  // Object that generates RTF from active text
 begin
-  // TODO: change this to render in similar way to RenderExtra
   fBuilder.ResetCharStyle;
-  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, ParaSpacing));
-  fBuilder.SetFontStyle([]);
   fBuilder.SetFontSize(ParaFontSize);
-  fBuilder.SetColour(clNone);
-  fBuilder.AddText(StrTrim(Desc.ToString));
-  fBuilder.EndPara;
+  RTFWriter := TActiveTextRTF.Create;
+  try
+    RTFWriter.ElemStyleMap := fDescStyles;
+    RTFWriter.DisplayURLs := True;
+    RTFWriter.URLStyle := fURLStyle;
+    RTFWriter.Render(Desc, fBuilder);
+  finally
+    RTFWriter.Free;
+  end;
 end;
 
 procedure TRTFSnippetDoc.RenderExtra(const ExtraText: IActiveText);
@@ -312,7 +351,7 @@ begin
   try
     RTFWriter.ElemStyleMap := fExtraStyles;
     RTFWriter.DisplayURLs := True;
-    RTFWriter.URLStyle := fExtraURLStyle;
+    RTFWriter.URLStyle := fURLStyle;
     RTFWriter.Render(ExtraText, fBuilder);
   finally
     RTFWriter.Free;
@@ -323,6 +362,7 @@ procedure TRTFSnippetDoc.RenderHeading(const Heading: string);
 begin
   fBuilder.SetFontStyle([fsBold]);
   fBuilder.SetFontSize(HeadingFontSize);
+  fBuilder.SetParaSpacing(TRTFParaSpacing.Create(0.0, ParaSpacing));
   fBuilder.AddText(Heading);
   fBuilder.EndPara;
 end;
