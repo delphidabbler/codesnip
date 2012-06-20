@@ -117,6 +117,7 @@ type
     constructor Create(const AParaSpacing: TRTFParaSpacing); overload;
     class function CreateNull: TRTFStyle; static;
     function IsNull: Boolean;
+    procedure MakeMonochrome;
     class operator Equal(const Left, Right: TRTFStyle): Boolean;
     class operator NotEqual(const Left, Right: TRTFStyle): Boolean;
   end;
@@ -238,6 +239,11 @@ end;
 function TRTFStyle.IsNull: Boolean;
 begin
   Result := Capabilities = [];
+end;
+
+procedure TRTFStyle.MakeMonochrome;
+begin
+  Exclude(Capabilities, scColour);
 end;
 
 class operator TRTFStyle.NotEqual(const Left, Right: TRTFStyle): Boolean;

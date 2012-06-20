@@ -39,6 +39,7 @@ type
     procedure Add(const ElemKind: TActiveTextActionElemKind;
       const Style: TRTFStyle);
     procedure Assign(const Src: TRTFStyleMap);
+    procedure MakeMonochrome;
     // enumerator enumerates styles, not pair or action element kind
     function GetEnumerator: TEnumerator<TRTFStyle>;
     property Styles[ElemKInd: TActiveTextActionElemKind]: TRTFStyle
@@ -136,6 +137,14 @@ begin
     Result := fMap[ElemKind]
   else
     Result := TRTFStyle.CreateNull;
+end;
+
+procedure TRTFStyleMap.MakeMonochrome;
+var
+  Style: TRTFStyle;
+begin
+  for Style in Self do
+    Style.MakeMonochrome;
 end;
 
 { TActiveTextRTF }
