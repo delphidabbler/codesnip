@@ -153,6 +153,7 @@ constructor TActiveTextRTF.Create;
 begin
   inherited Create;
   fElemStyleMap := TRTFStyleMap.Create;
+  fURLStyle := TRTFStyle.CreateNull;
 end;
 
 destructor TActiveTextRTF.Destroy;
