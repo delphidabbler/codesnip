@@ -61,6 +61,10 @@ type
     ///  <summary>Adds given colour to colour table unless it is already
     ///  present.</summary>
     procedure Add(const Colour: TColor);
+    ///  <summary>Ensures that any colour defined in the given style is present
+    ///  in the colour table.</summary>
+    ///  <remarks>Does nothing if the style doesn't define a colour.</remarks>
+    procedure AddFromStyle(const Style: TRTFStyle);
     ///  <summary>Returns index of given colour in colour table.</summary>
     ///  <exception>EBug raised if colour is not in colour table.</exception>
     function ColourRef(const Colour: TColor): Integer;
@@ -95,7 +99,19 @@ type
     ///  <returns>Integer. Index of font in font table, either existing or new.
     ///  </returns>
     function Add(const FontName: string; const Generic: TRTFGenericFont;
-      const Charset: TFontCharset): Integer;
+      const Charset: TFontCharset): Integer; overload;
+    ///  <summary>Adds new font to table if not already present.</summary>
+    ///  <remarks>Does nothing except return index if a font with same name is
+    ///  already in table.</remarks>
+    ///  <param name="Font">TRTFFont [in] Font to be added.</param>
+    ///  <returns>Integer. Index of font in font table, either existing or new.
+    ///  </returns>
+    function Add(const Font: TRTFFont): Integer; overload;
+    ///  <summary>Ensures that any font defined in the given style is present in
+    ///  the font table.</summary>
+    ///  <remarks>Does nothing if the style doesn't define a font or if the font
+    ///  is null.</remarks>
+    procedure AddFromStyle(const Style: TRTFStyle);
     ///  <summary>Returns index of a named font in table.</summary>
     ///  <exception>EBug raise if font not in table.</exception>
     function FontRef(const FontName: string): Integer;
@@ -187,6 +203,9 @@ type
     ///  <summary>Sets before and after spacing, in points, to be used for
     ///  subsequent paragraphs.</summary>
     procedure SetParaSpacing(const Spacing: TRTFParaSpacing);
+    ///  <summary>Sets paragraph and character styling for subsequent text
+    ///  according to given RTF style.</summary>
+    procedure ApplyStyle(const Style: TRTFStyle);
     ///  <summary>Generates RTF code for whole document.</summary>
     function Render: TRTF;
     ///  <summary>Table of colours used in document.</summary>
@@ -239,6 +258,20 @@ end;
 procedure TRTFBuilder.AppendBody(const S: ASCIIString);
 begin
   fBody := fBody + S;
+end;
+
+procedure TRTFBuilder.ApplyStyle(const Style: TRTFStyle);
+begin
+  if scParaSpacing in Style.Capabilities then
+    SetParaSpacing(Style.ParaSpacing);
+  if scFont in Style.Capabilities then
+    SetFont(Style.Font.Name);
+  if scFontSize in Style.Capabilities then
+    SetFontSize(Style.FontSize);
+  if scFontStyles in Style.Capabilities then
+    SetFontStyle(Style.FontStyles);
+  if scColour in Style.Capabilities then
+    SetColour(Style.Colour);
 end;
 
 function TRTFBuilder.AsString: ASCIIString;
@@ -362,6 +395,19 @@ begin
     Result := fFonts.Add(TRTFFont.Create(FontName, Generic, Charset));
 end;
 
+function TRTFFontTable.Add(const Font: TRTFFont): Integer;
+begin
+  Result := FindFont(Font.Name);
+  if Result = -1 then
+    Result := fFonts.Add(Font);
+end;
+
+procedure TRTFFontTable.AddFromStyle(const Style: TRTFStyle);
+begin
+  if (scFont in Style.Capabilities) and not Style.Font.IsNull then
+    Add(Style.Font);
+end;
+
 function TRTFFontTable.AsString: ASCIIString;
 const
   // Map of generic font families to RTF controls
@@ -426,6 +472,12 @@ procedure TRTFColourTable.Add(const Colour: TColor);
 begin
   if not fColours.Contains(Colour) then
     fColours.Add(Colour);
+end;
+
+procedure TRTFColourTable.AddFromStyle(const Style: TRTFStyle);
+begin
+  if scColour in Style.Capabilities then
+    Add(Style.Colour);
 end;
 
 function TRTFColourTable.AsString: ASCIIString;
