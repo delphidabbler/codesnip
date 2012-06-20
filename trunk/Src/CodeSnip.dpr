@@ -306,6 +306,7 @@ uses
   URTFBuilder in 'URTFBuilder.pas',
   URTFCategoryDoc in 'URTFCategoryDoc.pas',
   URTFSnippetDoc in 'URTFSnippetDoc.pas',
+  URTFStyles in 'URTFStyles.pas',
   URTFUtils in 'URTFUtils.pas',
   USaveDialogEx in 'USaveDialogEx.pas',
   USaveSnippetMgr in 'USaveSnippetMgr.pas',

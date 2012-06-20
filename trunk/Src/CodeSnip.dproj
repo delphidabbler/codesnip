@@ -463,6 +463,7 @@
 			<DCCReference Include="URTFBuilder.pas"/>
 			<DCCReference Include="URTFCategoryDoc.pas"/>
 			<DCCReference Include="URTFSnippetDoc.pas"/>
+			<DCCReference Include="URTFStyles.pas"/>
 			<DCCReference Include="URTFUtils.pas"/>
 			<DCCReference Include="USaveDialogEx.pas"/>
 			<DCCReference Include="USaveSnippetMgr.pas"/>
