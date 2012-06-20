@@ -23,7 +23,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  DB.UCategory, DB.USnippet, UEncodings, URTFBuilder;
+  DB.UCategory, DB.USnippet, UActiveTextRTF, UEncodings, URTFBuilder;
 
 
 type
@@ -54,6 +54,9 @@ type
       fBuilder: TRTFBuilder;
       ///  <summary>Flag indicates whether to output in colour.</summary>
       fUseColour: Boolean;
+      ///  <summary>Map of active text action elements to their RTF styling.
+      ///  </summary>
+      fDescStyles: TRTFStyleMap;
     ///  <summary>Outputs description of given category as a main heading as
     ///  RTF.</summary>
     procedure OutputCategoryHeading(const Category: TCategory);
@@ -65,6 +68,9 @@ type
     ///  specified that colour is not to be used.</summary>
     ///  <remarks>Font colour is used until next call to this method.</remarks>
     procedure SetColour(const Colour: TColor);
+    ///  <summary>Initialises RTF styles used when writing active text of
+    ///  a snippet description.</summary>
+    procedure InitStyles;
   public
     ///  <summary>Constructs and configures object.</summary>
     ///  <param name="UseColour">Boolean [in] Flag that whether document is
@@ -84,7 +90,7 @@ implementation
 
 uses
   // Project
-  UColours, URTFStyles;
+  UActiveText, UColours, URTFStyles;
 
 
 { TRTFCategoryDoc }
@@ -98,14 +104,14 @@ begin
   fBuilder.FontTable.Add(MainFontName, rgfSwiss, 0);
   fBuilder.FontTable.Add(MonoFontName, rgfModern, 0);
   // Set up colour table
-  fBuilder.ColourTable.Add(clWarningText);
-  fBuilder.ColourTable.Add(clVarText);
-  fBuilder.ColourTable.Add(clLinkText);
   fBuilder.ColourTable.Add(clUserSnippet);
+  fDescStyles := TRTFStyleMap.Create;
+  InitStyles;
 end;
 
 destructor TRTFCategoryDoc.Destroy;
 begin
+  fDescStyles.Free;
   fBuilder.Free;
   inherited;
 end;
@@ -121,6 +127,76 @@ begin
     OutputSnippetText(Snippet);
   end;
   Result := TEncodedData.Create(fBuilder.Render.ToBytes, etASCII);
+end;
+
+procedure TRTFCategoryDoc.InitStyles;
+begin
+  fDescStyles.Add(
+    ekPara, TRTFStyle.Create(TRTFParaSpacing.Create(ParaSpacing, 0.0))
+  );
+  fDescStyles.Add(
+    ekHeading,
+    TRTFStyle.Create(
+      [scParaSpacing, scFontStyles],
+      TRTFParaSpacing.Create(ParaSpacing, 0.0),
+      TRTFFont.CreateNull,
+      0.0,
+      [fsUnderline],
+      clNone
+    )
+  );
+  fDescStyles.Add(
+    ekStrong,
+    TRTFStyle.Create(
+      [scFontStyles],
+      TRTFFont.CreateNull,
+      0.0,
+      [fsBold],
+      clNone
+    )
+  );
+  fDescStyles.Add(
+    ekEm,
+    TRTFStyle.Create(
+      [scFontStyles],
+      TRTFFont.CreateNull,
+      0.0,
+      [fsItalic],
+      clNone
+    )
+  );
+  fDescStyles.Add(
+    ekVar,
+    TRTFStyle.Create(
+      [scFontStyles, scColour],
+      TRTFFont.CreateNull,
+      0.0,
+      [fsItalic],
+      clVarText
+    )
+  );
+  fDescStyles.Add(
+    ekWarning,
+    TRTFStyle.Create(
+      [scFontStyles, scColour],
+      TRTFFont.CreateNull,
+      0.0,
+      [fsBold],
+      clWarningText
+    )
+  );
+  fDescStyles.Add(
+    ekMono,
+    TRTFStyle.Create(
+      [scFont],
+      TRTFFont.Create(MonoFontName, rgfModern),
+      0.0,
+      [],
+      clNone
+    )
+  );
+  if not fUseColour then
+    fDescStyles.MakeMonochrome;
 end;
 
 procedure TRTFCategoryDoc.OutputCategoryHeading(const Category: TCategory);
@@ -152,15 +228,23 @@ begin
 end;
 
 procedure TRTFCategoryDoc.OutputSnippetText(const Snippet: TSnippet);
+var
+  RTFWriter: TActiveTextRTF;  // Object that generates RTF from active text
 begin
   fBuilder.BeginGroup;
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(ParaSpacing, 0.0));
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(ParaFontSize);
   fBuilder.SetFontStyle([]);
-  // TODO -cURGENT: change to render active text of description correctly
-  fBuilder.AddText(Snippet.Description.ToString);
-  fBuilder.EndPara;
+  RTFWriter := TActiveTextRTF.Create;
+  try
+    RTFWriter.ElemStyleMap := fDescStyles;
+    RTFWriter.DisplayURLs := False;
+    RTFWriter.URLStyle := TRTFStyle.CreateNull;
+    RTFWriter.Render(Snippet.Description, fBuilder);
+  finally
+    RTFWriter.Free;
+  end;
   fBuilder.EndGroup;
 end;
 
@@ -171,3 +255,4 @@ begin
 end;
 
 end.
+
