@@ -128,6 +128,7 @@ Ini=date.ini</pre>
 
 <pre class="indent">[snippet-name]
 Desc=&lt;description-text&gt;
+DescEx=&lt;description-REML&gt;
 Snip=&lt;snippet-file-name&gt;
 Units=&lt;required-units&gt;
 Depends=&lt;required-snippets&gt;
@@ -163,7 +164,18 @@ MinVer=&lt;version-number&gt;</pre>
     <em>Desc</em>
   </dt>
   <dd>
-    Description of the snippet.
+    Description of the snippet as plain text. Ignored by versions of CodeSnip
+    that recognise <em>DescEx</em> if that field is present.
+  </dd>
+  <dt>
+    <em>DescEx</em>
+  </dt>
+  <dd>
+    Formatted description of the snippet using <acronym
+      title="REML is decribed in the program's help file"
+    >REML</acronym> code. This value was supported from CodeSnip v4.0 beta 1.
+    May be empty, in which case the <em>Desc</em> field is used. The
+    <em>Desc</em> field is ignored if <em>DescEx</em> has a value.
   </dd>
   <dt>
     <em>Snip</em>
