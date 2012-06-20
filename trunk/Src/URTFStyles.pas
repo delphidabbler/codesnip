@@ -69,6 +69,15 @@ type
     property Charset: TFontCharset read fCharset write fCharset;
   end;
 
+type
+  TRTFParaSpacing = record
+  public
+    var
+      Before: Double;
+      After: Double;
+    constructor Create(const ABefore, AAfter: Double);
+  end;
+
 
 implementation
 
@@ -93,4 +102,13 @@ begin
   fCharset := Charset;
 end;
 
+{ TRTFParaSpacing }
+
+constructor TRTFParaSpacing.Create(const ABefore, AAfter: Double);
+begin
+  Before := ABefore;
+  After := AAfter;
+end;
+
 end.
+

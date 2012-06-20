@@ -186,7 +186,7 @@ type
     procedure SetFontStyle(const Style: TFontStyles);
     ///  <summary>Sets before and after spacing, in points, to be used for
     ///  subsequent paragraphs.</summary>
-    procedure SetParaSpacing(const PtsBefore, PtsAfter: Double);
+    procedure SetParaSpacing(const Spacing: TRTFParaSpacing);
     ///  <summary>Generates RTF code for whole document.</summary>
     function Render: TRTF;
     ///  <summary>Table of colours used in document.</summary>
@@ -345,11 +345,11 @@ begin
     AddControl(RTFControl(rcUnderline));
 end;
 
-procedure TRTFBuilder.SetParaSpacing(const PtsBefore, PtsAfter: Double);
+procedure TRTFBuilder.SetParaSpacing(const Spacing: TRTFParaSpacing);
 begin
   // Note: 20 Twips in a point
-  AddControl(RTFControl(rcSpaceBefore, FloatToInt(20 * PtsBefore)));
-  AddControl(RTFControl(rcSpaceAfter, FloatToInt(20 * PtsAfter)));
+  AddControl(RTFControl(rcSpaceBefore, FloatToInt(20 * Spacing.Before)));
+  AddControl(RTFControl(rcSpaceAfter, FloatToInt(20 * Spacing.After)));
 end;
 
 { TRTFFontTable }

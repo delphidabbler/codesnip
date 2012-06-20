@@ -369,7 +369,7 @@ begin
   try
     // Set global document font and paragraph spacing
     Builder.FontTable.Add('Tahoma', rgfSwiss, 0);
-    Builder.SetParaSpacing(0, 2);
+    Builder.SetParaSpacing(TRTFParaSpacing.Create(0.0, 2.0));
     // Add heading text
     Builder.BeginGroup;
     Builder.SetFontSize(10);
