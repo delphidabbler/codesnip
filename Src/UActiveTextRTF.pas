@@ -183,6 +183,7 @@ var
   ActionElem: IActiveTextActionElem;
 begin
   Initialise(RTFBuilder);
+  fInBlock := False;
   for Elem in ActiveText do
   begin
     if Supports(Elem, IActiveTextTextElem, TextElem) then
