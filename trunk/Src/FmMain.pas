@@ -371,7 +371,7 @@ type
       {Displays hint from browser hint action in status bar.
         @param Sender [in] Not used.
       }
-    procedure SnippetsChangeHandler(Sender: TObject; const EvtInfo: IInterface);
+    procedure DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
       {Handles events that inform of changes to database.
         @param Sender [in] Not used.
         @para EvtInfo [in] Object providing information about the event.
@@ -1326,6 +1326,22 @@ begin
   DisplayHint(Application.Hint);
 end;
 
+procedure TMainForm.DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
+  {Handles events that inform of changes to database.
+    @param Sender [in] Not used.
+    @para EvtInfo [in] Object providing information about the event.
+  }
+begin
+  case (EvtInfo as IDatabaseChangeEventInfo).Kind of
+    evChangeBegin:
+      Enabled := False;
+    evChangeEnd:
+      Enabled := True;
+  end;
+  // Display updated database stats and search results in status bar
+  fStatusBarMgr.Update;
+end;
+
 procedure TMainForm.DisplayHint(const Hint: string);
   {Displays hint in status bar using status bar manager.
     @param Hint [in] Hint to be displayed.
@@ -1405,7 +1421,7 @@ begin
       Save;
   end;
   // Unhook snippets event handler
-  Database.RemoveChangeEventHandler(SnippetsChangeHandler);
+  Database.RemoveChangeEventHandler(DBChangeHandler);
   // Save window state
   fWindowSettings.SplitterPos := pnlLeft.Width;
   fWindowSettings.OverviewTab := fMainDisplayMgr.SelectedOverviewTab;
@@ -1611,7 +1627,7 @@ begin
     fIsAppRegistered := TAppInfo.IsRegistered;
 
     // Set event handler for snippets database
-    Database.AddChangeEventHandler(SnippetsChangeHandler);
+    Database.AddChangeEventHandler(DBChangeHandler);
 
     // Load snippets database
     LoadSnippets(
@@ -1668,24 +1684,6 @@ begin
     end
   );
   fMainDisplayMgr.ShowDBUpdatedPage;
-end;
-
-procedure TMainForm.SnippetsChangeHandler(Sender: TObject;
-  const EvtInfo: IInterface);
-  {Handles events that inform of changes to database.
-    @param Sender [in] Not used.
-    @para EvtInfo [in] Object providing information about the event.
-  }
-begin
-  // TODO: Rename this as DBChangeHandler
-  case (EvtInfo as IDatabaseChangeEventInfo).Kind of
-    evChangeBegin:
-      Enabled := False;
-    evChangeEnd:
-      Enabled := True;
-  end;
-  // Display updated database stats and search results in status bar
-  fStatusBarMgr.Update;
 end;
 
 procedure TMainForm.splitVertCanResize(Sender: TObject;
