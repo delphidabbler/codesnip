@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
 
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -77,6 +77,11 @@ type
         @param Name [in] Name of attribute.
         @param Values [in] String list of attribute values. If not assigned or
           empty, attribute is not added.
+      }
+    procedure Append(Attrs: IHTMLAttributes);
+      {Appends all given attributes to these attributes. Any attributes with
+      same name as an existing attribute overwrite the existing one.
+        @param Attrs [in] Attributes to be appended.
       }
   end;
 
@@ -133,6 +138,11 @@ type
         @param Name [in] Name of attribute.
         @param Values [in] String list of attribute values. If not assigned or
           empty, attribute is not added.
+      }
+    procedure Append(Attrs: IHTMLAttributes);
+      {Appends all given attributes to these attributes. Any attributes with
+      same name as an existing attribute overwrite the existing one.
+        @param Attrs [in] Attributes to be appended.
       }
   end;
 
@@ -353,6 +363,22 @@ procedure THTMLAttributes.Add(const Name: string; Values: IStringList);
 begin
   if Assigned(Values) and (Values.Count > 0) then
     Add(Name, Values.GetText(' ', False));
+end;
+
+procedure THTMLAttributes.Append(Attrs: IHTMLAttributes);
+  {Appends all given attributes to these attributes. Any attributes with
+  same name as an existing attribute overwrite the existing one.
+    @param Attrs [in] Attributes to be appended.
+  }
+var
+  Idx: Integer;
+  AttrsObj: THTMLAttributes;
+begin
+  if not Assigned(Attrs) or Attrs.IsEmpty then
+    Exit;
+  AttrsObj := Attrs as THTMLAttributes;
+  for Idx := 0 to Pred(AttrsObj.fAttrs.Count) do
+    Add(AttrsObj.fAttrs.Names[Idx], AttrsObj.fAttrs.ValueFromIndex[Idx]);
 end;
 
 constructor THTMLAttributes.Create;
