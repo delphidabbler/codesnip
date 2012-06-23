@@ -232,7 +232,7 @@ begin
     end;
     // Add CSS relating to active text
     TFontHelper.SetContentFont(CSSFont, True);
-    TActiveTextHTML.Styles(CSSFont, CSSBuilder);
+    TActiveTextHTML.SetStyles(CSSFont, CSSBuilder);
   finally
     CSSFont.Free;
   end;

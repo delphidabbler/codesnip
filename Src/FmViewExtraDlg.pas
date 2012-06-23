@@ -121,19 +121,32 @@ procedure TViewExtraDlg.ConfigForm;
   {Initialises HTML frame, loads HTML template and inserts HTML representation
   of Extra Text REML.
   }
+var
+  Renderer: TActiveTextHTML;
 begin
   inherited;
   frmExtraInfo.OnBuildCSS := UpdateCSS;
   frmExtraInfo.OnHTMLEvent := HTMLEventHandler;
-  frmExtraInfo.Initialise(
-    'dlg-viewextra-tplt.html',
-    procedure(Tplt: THTMLTemplate)
-    begin
-      Tplt.ResolvePlaceholderHTML(
-        'Content', TActiveTextHTML.Render(fActiveText)
-      );
-    end
-  );
+
+  Renderer := TActiveTextHTML.Create;
+  try
+    Renderer.Styles.ElemClasses[ekLink] := 'external-link';
+    Renderer.Styles.ElemClasses[ekVar] := 'extra';
+    Renderer.Styles.ElemClasses[ekWarning] := 'extra-warning';
+    Renderer.Styles.ElemClasses[ekMono] := 'extra-mono';
+    Renderer.Styles.ElemClasses[ekHeading] := 'extra';
+    frmExtraInfo.Initialise(
+      'dlg-viewextra-tplt.html',
+      procedure(Tplt: THTMLTemplate)
+      begin
+        Tplt.ResolvePlaceholderHTML(
+          'Content', Renderer.Render(fActiveText)
+        );
+      end
+    );
+  finally
+    Renderer.Free;
+  end;
 end;
 
 class procedure TViewExtraDlg.Execute(const AOwner: TComponent;
@@ -253,7 +266,7 @@ begin
       AddProperty(TCSS.DisplayProp(cdsNone));
   end;
   // Style the REML itself
-  TActiveTextHTML.Styles(Font, CSSBuilder);
+  TActiveTextHTML.SetStyles(Font, CSSBuilder);
 end;
 
 end.
