@@ -102,7 +102,7 @@ implementation
 uses
   // Project
   DB.UCategory, DB.UMain, DB.USnippetKind, Hiliter.UAttrs, Hiliter.UGlobals,
-  Hiliter.UHiliters, UActiveTextHTML, UCompResHTML, UHTMLBuilder,
+  Hiliter.UHiliters, UActiveText, UActiveTextHTML, UCompResHTML, UHTMLBuilder,
   UHTMLDetailUtils, UHTMLUtils, UStrUtils;
 
 
@@ -149,8 +149,20 @@ begin
 end;
 
 function TSnippetHTML.Extra: string;
+var
+  Renderer: TActiveTextHTML;
 begin
-  Result := TActiveTextHTML.Render(fSnippet.Extra);
+  Renderer := TActiveTextHTML.Create;
+  try
+    Renderer.Styles.ElemClasses[ekLink] := 'external-link';
+    Renderer.Styles.ElemClasses[ekVar] := 'extra';
+    Renderer.Styles.ElemClasses[ekWarning] := 'extra-warning';
+    Renderer.Styles.ElemClasses[ekMono] := 'extra-mono';
+    Renderer.Styles.ElemClasses[ekHeading] := 'extra';
+    Result := Renderer.Render(fSnippet.Extra);
+  finally
+    Renderer.Free;
+  end;
 end;
 
 function TSnippetHTML.SnippetList(const Snippets: TSnippetList): string;
