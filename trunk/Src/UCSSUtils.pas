@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s):
@@ -240,7 +240,7 @@ type
     class function FontFamilyProp(const FontName: string;
       const Generic: TCSSFontGeneric): string; static;
 
-    ///  <summary>Creates a CSS "font-size" property for a font sized in pixels.
+    ///  <summary>Creates a CSS "font-size" property for a font sized in points.
     ///  </summary>
     ///  <param name="PtSize">Cardinal [in] Font's point size.</param>
     ///  <returns>string. Required CSS property.</returns>
