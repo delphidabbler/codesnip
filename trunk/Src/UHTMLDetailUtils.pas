@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  UIStringList;
+  UHTMLUtils, UIStringList;
 
 
 function TextLink(const URL, JSFn, Hint: string; Classes: IStringList;
@@ -123,6 +123,11 @@ function AOpenTag(const URL, JSFn, Hint: string;
     @return Required opening <a> tag.
   }
 
+///  <summary>Creates HTML attrubites required to produce a roll-over hint with
+///  given name.</summary>
+function RollOverHintAttrs(const Hint: string): IHTMLAttributes;
+
+
 implementation
 
 
@@ -130,8 +135,15 @@ uses
   // Delphi
   SysUtils, Controls,
   // Project
-  UHTMLUtils, UJavaScriptUtils;
+  UJavaScriptUtils;
 
+
+///  <summary>Appends a false return statement to given JavaScript function
+///  call and returns combined statement.</summary>
+function JSFnWithFalseReturn(const JSFn: string): string;
+begin
+  Result := JSFn + '; return false;';
+end;
 
 function AOpenTag(const URL, JSFn, Hint: string;
   Classes: IStringList): string;
@@ -151,7 +163,6 @@ function AOpenTag(const URL, JSFn, Hint: string;
   }
 const
   cVoid = 'javascript:void(0);';  // used as nul href
-  cJSFn = '%s; return false;';    // adds a false return to any JavaScript func
 var
   Attrs: IHTMLAttributes; // tag's attributes
   ShortHint: string;      // short hint from Hint param
@@ -174,17 +185,25 @@ begin
     Attrs.Add('class', Classes);
   // Set onclick event if JavaScript function provided
   if JSFn <> '' then
-    Attrs.Add('onclick', Format(cJSFn, [JSFn]));
+    Attrs.Add('onclick', JSFnWithFalseReturn(JSFn));
   // Set onmouseover and onmouseout to external ShowHint if long hint provided
   if LongHint <> '' then
-  begin
-    Attrs.Add(
-      'onmouseover', Format(cJSFn, [JSLiteralFunc('showHint', [LongHint])])
-    );
-    Attrs.Add('onmouseout', Format(cJSFn, [JSLiteralFunc('clearHint', [])]));
-  end;
+    Attrs.Append(RollOverHintAttrs(LongHint));
   // Build and return the tag
   Result := MakeTag('a', ttOpen, Attrs);
+end;
+
+function RollOverHintAttrs(const Hint: string): IHTMLAttributes;
+begin
+  Result := THTMLAttributes.Create;
+  if Hint = '' then
+    Exit;
+  Result.Add(
+    'onmouseover', JSFnWithFalseReturn(JSLiteralFunc('showHint', [Hint]))
+  );
+  Result.Add(
+    'onmouseout', JSFnWithFalseReturn(JSLiteralFunc('clearHint', []))
+  );
 end;
 
 function ALink(const URL, JSFn, Hint: string; Classes: IStringList;
