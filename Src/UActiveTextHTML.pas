@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -42,26 +42,71 @@ interface
 
 uses
   // Delphi
-  Graphics,
+  SysUtils, Graphics, Generics.Collections,
   // Project
-  UActiveText, UBaseObjects, UCSSBuilder;
+  UActiveText, UBaseObjects, UCSSBuilder, UHTMLUtils;
 
 
 type
-
-  {
-  TActiveTextHTML:
-    Static class that provides assistance when rendering active text as HTML.
-    The class renders the active text as HTML and provides CSS to style it.
-  }
-  TActiveTextHTML = class(TNoConstructObject)
+  TActiveTextHTML = class(TObject)
+  strict private
+    type
+      TTagInfo = class(TObject)
+      public
+        type
+          TTagAttrCallback = reference to function
+            (Elem: IActiveTextActionElem): IHTMLAttributes;
+      strict private
+        var
+          fName: string;
+          fAttrs: TTagAttrCallback;
+      public
+        property Name: string read fName;
+        property Attrs: TTagAttrCallback read fAttrs;
+        constructor Create(const AName: string; AAttrs: TTagAttrCallback);
+      end;
+    type
+      TTagInfoMap = array[TActiveTextActionElemKind] of TTagInfo;
   public
-    class function Render(const ActiveText: IActiveText): string;
-     {Builds valid HTML containing information from snippet's Extra property.
-     May contain links and some formatting.
-        @return Required HTML.
-      }
-    class procedure Styles(const DefFont: TFont; const CSSBuilder: TCSSBuilder);
+    type
+      TCSSStyles = class(TObject)
+      strict private
+        var
+          fWrapperClass: string;
+          fElemClassMap: array[TActiveTextActionElemKind] of string;
+        procedure SetElemClass(ElemKind: TActiveTextActionElemKind;
+          const Value: string); inline;
+        function GetElemClass(ElemKind: TActiveTextActionElemKind): string;
+          inline;
+      public
+        constructor Create;
+        property WrapperClass: string read fWrapperClass write fWrapperClass;
+        property ElemClasses[Kind: TActiveTextActionElemKind]: string
+          read GetElemClass write SetElemClass;
+      end;
+  strict private
+    var
+      fCSSStyles: TCSSStyles;
+      fBuilder: TStringBuilder;
+      fInBlock: Boolean;
+      fTagInfoMap: TTagInfoMap;
+    procedure InitialiseTagInfoMap;
+    procedure InitialiseRender;
+    procedure RenderTextElem(Elem: IActiveTextTextElem);
+    procedure RenderBlockActionElem(Elem: IActiveTextActionElem);
+    procedure RenderInlineActionElem(Elem: IActiveTextActionElem);
+    procedure FinaliseRender;
+    function MakeOpeningTag(const Elem: IActiveTextActionElem): string;
+    function MakeClosingTag(const Elem: IActiveTextActionElem): string;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function Render(ActiveText: IActiveText): string;
+    property Styles: TCSSStyles read fCSSStyles;
+    { TODO: Move this elsewhere: style names are fixed & need to come from
+            caller who sets variable style names in Styles property. }
+    class procedure SetStyles(const DefFont: TFont;
+      const CSSBuilder: TCSSBuilder);
       {Sets the CSS styles required to render an HTML representation of active
       text.
         @param DefFont [in] Default font to use for styles.
@@ -74,128 +119,163 @@ implementation
 
 
 uses
-  // Delphi
-  SysUtils,
   // Project
-  UColours, UCSSUtils, UFontHelper, UHTMLDetailUtils, UHTMLUtils, UIStringList;
+  UColours, UCSSUtils, UFontHelper, UHTMLDetailUtils, UIStringList;
 
 
 { TActiveTextHTML }
 
-class function TActiveTextHTML.Render(const ActiveText: IActiveText): string;
- {Builds valid HTML containing information from snippet's Extra property. May
-  contain links and some formatting.
-    @return Required HTML.
-  }
-const
-  // maps state of an active text element to equivalent HTML tag type
-  cTagTypeMap: array[TActiveTextElemState] of THTMLTagType = (
-    ttClose,  // fsClose: closing tag e.g. </tagname>
-    ttOpen    // fsOpen: opening tag e.g. <tagname [params]>
-  );
-resourcestring
-  sCreditsURLHint = 'Visit %s';       // hint used in <a> tag title attribute
-var
-  Elem: IActiveTextElem;              // each active text element
-  TextElem: IActiveTextTextElem;      // a text active text element
-  ActionElem: IActiveTextActionElem;  // an action active text element
-  EncloseInDiv: Boolean;
-
-  // ---------------------------------------------------------------------------
-  function ClassAttr(const ClassName: string): IHTMLAttributes;
-    {Creates an HTML attributes object containing a class attribute.
-      @param ClassName [in] Name of class.
-      @return Required HTML attributes object.
-    }
-  begin
-    Result := THTMLAttributes.Create('class', ClassName);
-  end;
-  // ---------------------------------------------------------------------------
-
+constructor TActiveTextHTML.Create;
 begin
-  Result := '';
-  // Process each active text element
+  inherited Create;
+  fCSSStyles := TCSSStyles.Create;
+  fBuilder := TStringBuilder.Create;
+  InitialiseTagInfoMap;
+end;
+
+destructor TActiveTextHTML.Destroy;
+var
+  TagInfo: TTagInfo;
+begin
+  fBuilder.Free;
+  fCSSStyles.Free;
+  for TagInfo in fTagInfoMap do
+    TagInfo.Free;
+  inherited;
+end;
+
+procedure TActiveTextHTML.FinaliseRender;
+begin
+  fBuilder.AppendLine(MakeTag('div', ttClose));
+end;
+
+procedure TActiveTextHTML.InitialiseRender;
+var
+  WrapperClassAttr: IHTMLAttributes;
+begin
+  if fCSSStyles.WrapperClass <> '' then
+    WrapperClassAttr := THTMLAttributes.Create('class', fCSSStyles.WrapperClass)
+  else
+    WrapperClassAttr := nil;
+  fBuilder.AppendLine(MakeTag('div', ttOpen, WrapperClassAttr));
+end;
+
+procedure TActiveTextHTML.InitialiseTagInfoMap;
+var
+  NullAttrs: TTagInfo.TTagAttrCallback;
+  LinkAttrs: TTagInfo.TTagAttrCallback;
+  AttrFn: TTagInfo.TTagAttrCallback;
+  ElemKind: TActiveTextActionElemKind;
+const
+  Tags: array[TActiveTextActionElemKind] of string = (
+    'a', 'strong', 'em', 'var', 'p', 'span', 'h2', 'span'
+  );
+begin
+  NullAttrs := function(Elem: IActiveTextActionElem): IHTMLAttributes
+    begin
+      Result := nil;
+    end;
+  LinkAttrs := function(Elem: IActiveTextActionElem): IHTMLAttributes
+    begin
+      Result := RollOverHintAttrs(
+        Elem.Attrs[TActiveTextAttrNames.Link_URL]
+      );
+      Result.Add('href', Elem.Attrs[TActiveTextAttrNames.Link_URL]);
+    end;
+  for ElemKind := Low(TActiveTextActionElemKind) to
+    High(TActiveTextActionElemKind) do
+  begin
+    if ElemKind <> ekLink then
+      AttrFn := NullAttrs
+    else
+      AttrFn := LinkAttrs;
+    fTagInfoMap[ElemKind] := TTagInfo.Create(Tags[ElemKind], AttrFn);
+  end;
+end;
+
+function TActiveTextHTML.MakeClosingTag(const Elem: IActiveTextActionElem):
+  string;
+begin
+  Result := MakeTag(fTagInfoMap[Elem.Kind].Name, ttClose);
+end;
+
+function TActiveTextHTML.MakeOpeningTag(const Elem: IActiveTextActionElem):
+  string;
+var
+  Attrs: IHTMLAttributes;
+begin
+  Attrs := fTagInfoMap[Elem.Kind].Attrs(Elem);
+  if fCSSStyles.ElemClasses[Elem.Kind] <> '' then
+  begin
+    if not Assigned(Attrs) then
+      Attrs := THTMLAttributes.Create;
+    Attrs.Add('class', fCSSStyles.ElemClasses[Elem.Kind])
+  end;
+  Result := MakeTag(fTagInfoMap[Elem.Kind].Name, ttOpen, Attrs);
+end;
+
+function TActiveTextHTML.Render(ActiveText: IActiveText): string;
+var
+  Elem: IActiveTextElem;
+  TextElem: IActiveTextTextElem;
+  ActionElem: IActiveTextActionElem;
+begin
+  fBuilder.Clear;
+  fInBlock := False;
+  InitialiseRender;
   for Elem in ActiveText do
   begin
     if Supports(Elem, IActiveTextTextElem, TextElem) then
-      // A text element: write it literally as safe HTML text
-      Result := Result + MakeSafeHTMLText(TextElem.Text)
+      RenderTextElem(TextElem)
     else if Supports(Elem, IActiveTextActionElem, ActionElem) then
     begin
-      // An action element: if supported output it in HTML
-      case ActionElem.Kind of
-        ekLink:
-        begin
-          // => HTML <a class="external-link" href="Link_URL">
-          if ActionElem.State = fsOpen then
-            // opening tag: element's Param property is HTML href attribute
-            Result := Result + AOpenTag(
-              ActionElem.Attrs[TActiveTextAttrNames.Link_URL],
-              '',
-              '|' +
-              Format(
-                sCreditsURLHint,
-                [ActionElem.Attrs[TActiveTextAttrNames.Link_URL]]
-              ),
-              TIStringList.Create('external-link')
-            )
-          else
-            // an </a> tag
-            Result := Result + MakeTag('a', ttClose);
-        end;
-        ekStrong:
-          // => HTML <strong>
-          Result := Result + MakeTag('strong', cTagTypeMap[ActionElem.State]);
-        ekEm:
-          // => HTML <em>
-          Result := Result + MakeTag('em', cTagTypeMap[ActionElem.State]);
-        ekVar:
-          // => HTML <var class="extra">
-          Result := Result + MakeTag(
-            'var', cTagTypeMap[ActionElem.State], ClassAttr('extra')
-          );
-        ekPara:
-          // => HTML <p>
-          Result := Result + MakeTag('p', cTagTypeMap[ActionElem.State]);
-        ekWarning:
-          // => HTML <span class="extra-warning">
-          Result := Result + MakeTag(
-            'span', cTagTypeMap[ActionElem.State], ClassAttr('extra-warning')
-          );
-        ekMono:
-          // => HTML <span class="extra-mono">
-          Result := Result + MakeTag(
-            'span', cTagTypeMap[ActionElem.State], ClassAttr('extra-mono')
-          );
-        ekHeading:
-          // => HTML <h2 class="extra">
-          Result := Result + MakeTag(
-            'h2', cTagTypeMap[ActionElem.State], ClassAttr('extra')
-          );
-        else
-          {Unsupported action element type: do nothing};
-      end;
+      if ActionElem.DisplayStyle = dsBlock then
+        RenderBlockActionElem(ActionElem)
+      else
+        RenderInlineActionElem(ActionElem);
     end;
   end;
-  // TODO: Remove following code: extra text is *always* wrapped in block tags
-  // Extra property may have "p" or "heading" tags, but may not have. So we
-  // check and add enclosing "div" tags if necessary with required properties.
-  // paragraph tags if
-  EncloseInDiv := not ActiveText.IsEmpty and
-    Supports(ActiveText[0], IActiveTextActionElem, ActionElem) and
-    not ((ActionElem.Kind in [ekPara, ekHeading]));
-  if EncloseInDiv then
-    Result := MakeTag('div', ttOpen, ClassAttr('extra-wrapper')) +
-      Result +
-      MakeTag('div', ttClose);
+  FinaliseRender;
+  Result := fBuilder.ToString;
 end;
 
-class procedure TActiveTextHTML.Styles(const DefFont: TFont;
+procedure TActiveTextHTML.RenderBlockActionElem(Elem: IActiveTextActionElem);
+begin
+  case Elem.State of
+    fsOpen:
+    begin
+      fBuilder.Append(MakeOpeningTag(Elem));
+      fInBlock := True;
+    end;
+    fsClose:
+    begin
+      fInBlock := False;
+      fBuilder.AppendLine(MakeClosingTag(Elem));
+    end;
+  end;
+end;
+
+procedure TActiveTextHTML.RenderInlineActionElem(Elem: IActiveTextActionElem);
+begin
+  if not fInBlock then
+    Exit;
+  case Elem.State of
+    fsOpen:
+      fBuilder.Append(MakeOpeningTag(Elem));
+    fsClose:
+      fBuilder.Append(MakeClosingTag(Elem));
+  end;
+end;
+
+procedure TActiveTextHTML.RenderTextElem(Elem: IActiveTextTextElem);
+begin
+  if not fInBlock then
+    Exit;
+  fBuilder.Append(MakeSafeHTMLText(Elem.Text));
+end;
+
+class procedure TActiveTextHTML.SetStyles(const DefFont: TFont;
   const CSSBuilder: TCSSBuilder);
-  {Sets the CSS styles required to render an HTML representation of active text.
-    @param DefFont [in] Default font to use for styles.
-    @param  CSSBuilder [in] Object that is used to create the CSS.
-  }
 var
   CSSFont: TFont; // font used for CSS styles
 begin
@@ -228,6 +308,45 @@ begin
     AddProperty(TCSS.ColorProp(clVarText));
     AddProperty(TCSS.FontStyleProp(cfsItalic));
   end;
+end;
+
+{ TActiveTextHTML.TCSSStyles }
+
+constructor TActiveTextHTML.TCSSStyles.Create;
+const
+  DefaultClasses: array[TActiveTextActionElemKind] of string = (
+    '', '', '', '', '', 'warning', '', 'mono'
+  );
+var
+  ElemKind: TActiveTextActionElemKind;
+begin
+  inherited Create;
+  fWrapperClass := '';
+  for ElemKind := Low(TActiveTextActionElemKind)
+    to High(TActiveTextActionElemKind) do
+    SetElemClass(ElemKind, DefaultClasses[ElemKind]);
+end;
+
+function TActiveTextHTML.TCSSStyles.GetElemClass(
+  ElemKind: TActiveTextActionElemKind): string;
+begin
+  Result := fElemClassMap[ElemKind];
+end;
+
+procedure TActiveTextHTML.TCSSStyles.SetElemClass(
+  ElemKind: TActiveTextActionElemKind; const Value: string);
+begin
+  fElemClassMap[ElemKind] := Value;
+end;
+
+{ TActiveTextHTML.TTagInfo }
+
+constructor TActiveTextHTML.TTagInfo.Create(const AName: string;
+  AAttrs: TTagAttrCallback);
+begin
+  inherited Create;
+  fName := AName;
+  fAttrs := AAttrs;
 end;
 
 end.
