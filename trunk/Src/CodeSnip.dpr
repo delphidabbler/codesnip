@@ -65,6 +65,7 @@ uses
   PJWdwState in '3rdParty\PJWdwState.pas',
   UEncrypt in '3rdParty\UEncrypt.pas',
   IntfExternalObj in 'AutoGen\IntfExternalObj.pas',
+  ActiveText.UTextRenderer in 'ActiveText.UTextRenderer.pas',
   Browser.IntfDocHostUI in 'Browser.IntfDocHostUI.pas',
   Browser.UControlHelper in 'Browser.UControlHelper.pas',
   Browser.UController in 'Browser.UController.pas',
