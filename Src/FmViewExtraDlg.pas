@@ -130,11 +130,6 @@ begin
 
   Renderer := TActiveTextHTML.Create;
   try
-    Renderer.Styles.ElemClasses[ekLink] := 'external-link';
-    Renderer.Styles.ElemClasses[ekVar] := 'extra';
-    Renderer.Styles.ElemClasses[ekWarning] := 'extra-warning';
-    Renderer.Styles.ElemClasses[ekMono] := 'extra-mono';
-    Renderer.Styles.ElemClasses[ekHeading] := 'extra';
     frmExtraInfo.Initialise(
       'dlg-viewextra-tplt.html',
       procedure(Tplt: THTMLTemplate)
@@ -257,6 +252,14 @@ begin
     else
       AddProperty(TCSS.HeightProp(cMaxExtraHTMLHeight));
   end;
+  with CSSBuilder.AddSelector('.active-text h2') do
+  begin
+    AddProperty(TCSS.MarginProp(4, 0, 0, 0));
+    AddProperty(TCSS.FontWeightProp(cfwBold));
+    AddProperty(TCSS.FontSizeProp(Font.Size + 1));
+  end;
+  with CSSBuilder.AddSelector('.active-text p') do
+    AddProperty(TCSS.MarginProp(4, 0, 0, 0));
   // Show or hide text about links depending on if links in Extra HTML
   with CSSBuilder.AddSelector('#linktext') do
   begin
@@ -265,8 +268,6 @@ begin
     else
       AddProperty(TCSS.DisplayProp(cdsNone));
   end;
-  // Style the REML itself
-  TActiveTextHTML.SetStyles(Font, CSSBuilder);
 end;
 
 end.
