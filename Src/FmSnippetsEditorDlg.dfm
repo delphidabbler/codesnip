@@ -11,24 +11,26 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     Width = 646
-    Height = 465
+    Height = 504
     ExplicitWidth = 646
-    ExplicitHeight = 465
+    ExplicitHeight = 504
     object pcMain: TPageControl
       Left = 0
       Top = 0
       Width = 646
-      Height = 465
+      Height = 504
       ActivePage = tsCode
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
       OnMouseDown = pcMainMouseDown
+      ExplicitHeight = 465
       object tsCode: TTabSheet
         Caption = 'Code'
+        ExplicitHeight = 437
         object lblDescription: TLabel
           Left = 3
-          Top = 343
+          Top = 41
           Width = 56
           Height = 13
           Caption = '&Description:'
@@ -36,7 +38,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblSourceCode: TLabel
           Left = 3
-          Top = 3
+          Top = 172
           Width = 64
           Height = 13
           Caption = '&Source code:'
@@ -44,7 +46,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblName: TLabel
           Left = 3
-          Top = 369
+          Top = 11
           Width = 31
           Height = 13
           Caption = '&Name:'
@@ -52,7 +54,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblCategories: TLabel
           Left = 3
-          Top = 397
+          Top = 143
           Width = 45
           Height = 13
           Caption = '&Category:'
@@ -60,7 +62,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblSnippetKindHelp: TLabel
           Left = 333
-          Top = 311
+          Top = 106
           Width = 118
           Height = 13
           Cursor = crHandPoint
@@ -75,7 +77,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblKind: TLabel
           Left = 3
-          Top = 316
+          Top = 111
           Width = 24
           Height = 13
           Caption = '&Kind:'
@@ -83,7 +85,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblSourceCaretPos: TLabel
           Left = 543
-          Top = 3
+          Top = 172
           Width = 91
           Height = 13
           Alignment = taRightJustify
@@ -92,7 +94,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object edSourceCode: TMemo
           Left = 3
-          Top = 22
+          Top = 191
           Width = 631
           Height = 283
           Font.Charset = ANSI_CHARSET
@@ -103,49 +105,46 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           ParentFont = False
           PopupMenu = mnuEditCtrls
           ScrollBars = ssBoth
-          TabOrder = 0
+          TabOrder = 4
         end
         object edDescription: TEdit
           Left = 80
-          Top = 339
+          Top = 37
           Width = 554
           Height = 21
           PopupMenu = mnuEditCtrls
-          TabOrder = 2
+          TabOrder = 1
         end
         object edName: TEdit
           Left = 80
-          Top = 366
+          Top = 8
           Width = 209
           Height = 21
           PopupMenu = mnuEditCtrls
-          TabOrder = 3
+          TabOrder = 0
         end
         object cbCategories: TComboBox
           Left = 80
-          Top = 393
+          Top = 139
           Width = 209
           Height = 21
           Style = csDropDownList
-          TabOrder = 4
+          TabOrder = 3
         end
         object cbKind: TComboBox
           Left = 80
-          Top = 311
+          Top = 106
           Width = 209
           Height = 21
           Style = csDropDownList
-          TabOrder = 1
+          TabOrder = 2
           OnChange = cbKindChange
         end
       end
       object tsReferences: TTabSheet
         Caption = 'References'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitHeight = 437
         object lblXRefs: TLabel
           Left = 3
           Top = 3
@@ -234,10 +233,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsComments: TTabSheet
         Caption = 'Extra Information'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitHeight = 437
         object lblExtra: TLabel
           Left = 3
           Top = 3
@@ -313,10 +309,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsCompileResults: TTabSheet
         Caption = 'Compile Results'
         ImageIndex = 3
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitHeight = 437
         object lblCompilers: TLabel
           Left = 3
           Top = 3

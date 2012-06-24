@@ -500,37 +500,42 @@ procedure TSnippetsEditorDlg.ArrangeForm;
   }
 begin
   // tsCode
-  lblSourceCaretPos.Top := lblSourceCode.Top;
-  edSourceCode.Top := TCtrlArranger.BottomOf(lblSourceCode, 4);
+  TCtrlArranger.AlignRights([edSourceCode, lblSourceCaretPos]);
+  TCtrlArranger.AlignVCentres(3, [lblName, edName]);
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf(edSourceCode, 8),
-    [cbKind, lblKind, lblSnippetKindHelp]
+    TCtrlArranger.BottomOf([lblName, edName], 8),
+    [lblDescription, edDescription]
   );
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([cbKind, lblKind, lblSnippetKindHelp], 8),
-    [edDescription, lblDescription]
+    TCtrlArranger.BottomOf([lblDescription, edDescription], 8),
+    [lblKind, cbKind, lblSnippetKindHelp]
   );
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([edDescription, lblDescription], 8),
-    [edName, lblName]
+    TCtrlArranger.BottomOf([lblKind, cbKind, lblSnippetKindHelp], 8),
+    [lblCategories, cbCategories]
   );
-  TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([edName, lblName], 8),
-    [cbCategories, lblCategories]
+  TCtrlArranger.AlignTops(
+    [lblSourceCode, lblSourceCaretPos],
+    TCtrlArranger.BottomOf([lblCategories, cbCategories], 8)
   );
+  TCtrlArranger.MoveBelow([lblSourceCode, lblSourceCaretPos], edSourceCode, 4);
+
   // tsReferences
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(clbXRefs, 6), [btnDependencies, edUnit, btnAddUnit]
   );
-  lblSnippetKindHelp.Left := TCtrlArranger.RightOf(cbKind) + 12;
+  TCtrlArranger.MoveToRightOf(cbKind, lblSnippetKindHelp, 12);
+
   // tsComments
   lblExtraCaretPos.Top := lblExtra.Top;
   frmExtraInstructions.Top := TCtrlArranger.BottomOf(edExtra, 4);
   btnViewExtra.Top := TCtrlArranger.BottomOf(frmExtraInstructions);
+
   // tsCompileResults
   lblViewCompErrsKey.Top := TCtrlArranger.BottomOf(lblViewCompErrs);
   TCtrlArranger.SetLabelHeight(lblCompResDesc);
   lblCompResDesc.Top := TCtrlArranger.BottomOf(lbCompilers, 8);
+
   // set body panel size to accommodate controls
   pnlBody.ClientHeight := TCtrlArranger.MaxContainerHeight(
     [tsCode, tsComments, tsCompileResults, tsReferences]
