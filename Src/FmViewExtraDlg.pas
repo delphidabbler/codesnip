@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -102,8 +102,8 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UActiveTextHTML, UAnchors, UColours, UConsts, UCSSUtils, UHTMLTemplate,
-  UMessageBox, UProtocols, USystemInfo;
+  UActiveTextHTML, UAnchors, UColours, UConsts, UCSSUtils, UFontHelper,
+  UHTMLTemplate, UMessageBox, UProtocols, USystemInfo;
 
 {$R *.dfm}
 
@@ -236,37 +236,46 @@ procedure TViewExtraDlg.UpdateCSS(Sender: TObject;
   }
 const
   cMaxExtraHTMLHeight = 240;  // max height of Extra HTML
+var
+  ContentFont: TFont;             // font used for #content tab
 begin
-  // Set rendered REML container
-  with CSSBuilder.AddSelector('#content') do
-  begin
-    AddProperty(TCSS.BackgroundColorProp(clWindow));
-    AddProperty(TCSS.PaddingProp(0, 6, 6, 6));
-    AddProperty(TCSS.MarginProp(cssTop, 6));
-    AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
-    AddProperty(TCSS.OverflowProp(covAuto));
-    AddProperty(TCSS.WidthProp(cluAuto, 0));
-    // Use height instead of maxheight if IE 6 or lower
-    if TOSInfo.BrowserVer > 6 then
-      AddProperty(TCSS.MaxHeightProp(cMaxExtraHTMLHeight))
-    else
-      AddProperty(TCSS.HeightProp(cMaxExtraHTMLHeight));
-  end;
-  with CSSBuilder.AddSelector('.active-text h2') do
-  begin
-    AddProperty(TCSS.MarginProp(4, 0, 0, 0));
-    AddProperty(TCSS.FontWeightProp(cfwBold));
-    AddProperty(TCSS.FontSizeProp(Font.Size + 1));
-  end;
-  with CSSBuilder.AddSelector('.active-text p') do
-    AddProperty(TCSS.MarginProp(4, 0, 0, 0));
-  // Show or hide text about links depending on if links in Extra HTML
-  with CSSBuilder.AddSelector('#linktext') do
-  begin
-    if ExtraContainsLinks then
-      AddProperty(TCSS.DisplayProp(cdsInline))
-    else
-      AddProperty(TCSS.DisplayProp(cdsNone));
+  ContentFont := TFont.Create;
+  try
+    TFontHelper.SetContentFont(ContentFont, True);
+    // Set rendered REML container
+    with CSSBuilder.AddSelector('#content') do
+    begin
+      AddProperty(TCSS.FontProps(ContentFont));
+      AddProperty(TCSS.BackgroundColorProp(clWindow));
+      AddProperty(TCSS.PaddingProp(0, 6, 6, 6));
+      AddProperty(TCSS.MarginProp(cssTop, 6));
+      AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
+      AddProperty(TCSS.OverflowProp(covAuto));
+      AddProperty(TCSS.WidthProp(cluAuto, 0));
+      // Use height instead of maxheight if IE 6 or lower
+      if TOSInfo.BrowserVer > 6 then
+        AddProperty(TCSS.MaxHeightProp(cMaxExtraHTMLHeight))
+      else
+        AddProperty(TCSS.HeightProp(cMaxExtraHTMLHeight));
+    end;
+    with CSSBuilder.AddSelector('.active-text h2') do
+    begin
+      AddProperty(TCSS.MarginProp(4, 0, 0, 0));
+      AddProperty(TCSS.FontWeightProp(cfwBold));
+      AddProperty(TCSS.FontSizeProp(ContentFont.Size + 1));
+    end;
+    with CSSBuilder.AddSelector('.active-text p') do
+      AddProperty(TCSS.MarginProp(4, 0, 0, 0));
+    // Show or hide text about links depending on if links in Extra HTML
+    with CSSBuilder.AddSelector('#linktext') do
+    begin
+      if ExtraContainsLinks then
+        AddProperty(TCSS.DisplayProp(cdsInline))
+      else
+        AddProperty(TCSS.DisplayProp(cdsNone));
+    end;
+  finally
+    ContentFont.Free;
   end;
 end;
 
