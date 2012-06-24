@@ -154,11 +154,6 @@ var
 begin
   Renderer := TActiveTextHTML.Create;
   try
-    Renderer.Styles.ElemClasses[ekLink] := 'external-link';
-    Renderer.Styles.ElemClasses[ekVar] := 'extra';
-    Renderer.Styles.ElemClasses[ekWarning] := 'extra-warning';
-    Renderer.Styles.ElemClasses[ekMono] := 'extra-mono';
-    Renderer.Styles.ElemClasses[ekHeading] := 'extra';
     Result := Renderer.Render(fSnippet.Extra);
   finally
     Renderer.Free;
