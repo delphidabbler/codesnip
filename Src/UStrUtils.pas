@@ -27,7 +27,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2011-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -228,9 +228,17 @@ function StrSplit(const Str: UnicodeString; const Delim: UnicodeString;
 ///  <summary>Word wraps text Str to form lines of maximum length MaxLen and
 ///  offsets each line using spaces to form a left margin of size given by
 ///  Margin.</summary>
-///  <remarks>Lines are separated by CRLF.</remarks>
+///  <remarks>Output lines are separated by CRLF.</remarks>
 function StrWrap(const Str: UnicodeString; const MaxLen, Margin: Integer):
-  UnicodeString;
+  UnicodeString; overload;
+
+///  <summary>Word wraps each paragraph of text in Paras so that each line of a
+///  paragraph has lines of maximum length MaxLineLen and is offset by the
+///  number of spaces gvien by Margin. Blanks lines are used to separate
+///  output paragraphs iff SeparateParas is true.</summary>
+///  <remarks>Output lines are separated by CRLF.</remarks>
+function StrWrap(const Paras: TStrings; const MaxLineLen, Margin: Integer;
+  const SeparateParas: Boolean): UnicodeString; overload;
 
 ///  <summary>Checks in string Str forms a valid sentence and, if not, adds a
 ///  full stop.</summary>
@@ -744,6 +752,26 @@ begin
       AddLine(Line);
   finally
     Words.Free;
+  end;
+end;
+
+function StrWrap(const Paras: TStrings; const MaxLineLen, Margin: Integer;
+  const SeparateParas: Boolean): UnicodeString; overload;
+var
+  Para: string;
+  SB: TStringBuilder;
+begin
+  SB := TStringBuilder.Create;
+  try
+    for Para in Paras do
+    begin
+      SB.AppendLine(StrTrimRight(StrWrap(Para, MaxLineLen, Margin)));
+      if SeparateParas then
+        SB.AppendLine;
+    end;
+    Result := SB.ToString;
+  finally
+    SB.Free;
   end;
 end;
 
