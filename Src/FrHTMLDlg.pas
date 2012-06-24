@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -121,7 +121,7 @@ begin
       AddProperty(TCSS.PaddingProp(0));
     end;
     // Sets paragraph margins and padding
-    with CSSBuilder.Selectors['p'] do
+    with CSSBuilder.AddSelector('p') do
     begin
       AddProperty(TCSS.MarginProp(cssTop, 6));
       AddProperty(TCSS.MarginProp(cssBottom, 0));
