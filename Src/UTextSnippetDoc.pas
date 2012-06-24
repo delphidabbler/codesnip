@@ -130,14 +130,24 @@ procedure TTextSnippetDoc.RenderActiveText(ActiveText: IActiveText;
   const Indent: Cardinal; const SpaceParas: Boolean);
 var
   Renderer: TActiveTextTextRenderer;
+  Lines: TStringList;
 begin
   Renderer := TActiveTextTextRenderer.Create;
   try
-    Renderer.LineWidth := cPageWidth - Indent;
-    Renderer.LineIndent := Indent;
-    Renderer.SpaceParas := SpaceParas;
     Renderer.DisplayURLs := True;
-    fWriter.WriteLine(Renderer.Render(ActiveText));
+    Lines := TStringList.Create;
+    try
+      Lines.Text := Renderer.Render(ActiveText);
+      fWriter.WriteLine(
+        StrTrimRight(
+          StrWrap(
+            Lines, cPageWidth - Indent, Indent, True
+          )
+        )
+      );
+    finally
+      Lines.Free;
+    end;
   finally
     Renderer.Free;
   end;
