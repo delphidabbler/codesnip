@@ -61,6 +61,10 @@ type
       ///  <summary>Size of a single level of indentation in characters.
       ///  </summary>
       cIndent = 2;
+  strict private
+    ///  <summary>Renders given active text as word-wrapped paragraphs of width
+    ///  cPageWidth and given indent. Blank lines are added between paragraphs
+    ///  iff SpaceParas in True.</summary>
     procedure RenderActiveText(ActiveText: IActiveText; const Indent: Cardinal;
       const SpaceParas: Boolean);
   strict protected
@@ -70,8 +74,8 @@ type
     procedure RenderHeading(const Heading: string); override;
     ///  <summary>Interprets and adds given snippet description to document.
     ///  </summary>
-    ///  <remarks>Active text is converted to plain text with only block level
-    ///  formatting observed.</remarks>
+    ///  <remarks>Active text is converted to word-wrapped plain text
+    ///  paragraphs.</remarks>
     procedure RenderDescription(const Desc: IActiveText); override;
     ///  <summary>Adds given source code to document.</summary>
     procedure RenderSourceCode(const SourceCode: string); override;
@@ -87,8 +91,8 @@ type
       const Info: TCompileDocInfoArray); override;
     ///  <summary>Interprets and adds given extra information to document.
     ///  </summary>
-    ///  <remarks>Active text is converted to plain text with only block level
-    ///  formatting observed.</remarks>
+    ///  <remarks>Active text is converted to word-wrapped plain text
+    ///  paragraphs.</remarks>
     procedure RenderExtra(const ExtraText: IActiveText); override;
     ///  <summary>Adds given information about code snippets database to
     ///  document.</summary>
@@ -129,7 +133,7 @@ var
 begin
   Renderer := TActiveTextTextRenderer.Create;
   try
-    Renderer.LineWidth := cPageWidth;
+    Renderer.LineWidth := cPageWidth - Indent;
     Renderer.LineIndent := Indent;
     Renderer.SpaceParas := SpaceParas;
     Renderer.DisplayURLs := True;
