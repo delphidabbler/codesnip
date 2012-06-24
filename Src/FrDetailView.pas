@@ -199,6 +199,14 @@ begin
       CSSFont.Style := [fsBold];
       AddProperty(TCSS.FontProps(CSSFont));
     end;
+    // Set H2 heading font for use in rendered active text
+    with CSSBuilder.AddSelector('.active-text h2') do
+    begin
+      TFontHelper.SetContentFont(CSSFont, True);
+      CSSFont.Style := [fsBold];
+      CSSFont.Size := CSSFont.Size + 1;
+      AddProperty(TCSS.FontProps(CSSFont));
+    end;
     // Style of box that appears around clickable options (or actions)
     with CSSBuilder.AddSelector('.optionbox') do
       AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
@@ -230,9 +238,6 @@ begin
       AddProperty(TCSS.BackgroundColorProp(clCompTblHeadBg));
       AddProperty(TCSS.FontWeightProp(cfwNormal));
     end;
-    // Add CSS relating to active text
-    TFontHelper.SetContentFont(CSSFont, True);
-    TActiveTextHTML.SetStyles(CSSFont, CSSBuilder);
   finally
     CSSFont.Free;
   end;
