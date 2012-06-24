@@ -46,7 +46,7 @@ uses
   // Delphi
   Classes, Generics.Collections,
   // Project
-  DB.USnippet, UBaseObjects, UIStringList;
+  ActiveText.UMain, DB.USnippet, UBaseObjects, UIStringList;
 
 
 type
@@ -67,6 +67,9 @@ type
     comments in appropriate style.
   }
   TSourceComments = class(TNoConstructObject)
+  strict private
+    class function FormatCommentLines(const Text: string;
+      const Indent: Cardinal): string;
   public
     class function CommentStyleDesc(const Style: TCommentStyle): string;
       {Gets description of a comment style for use in UI elements.
@@ -74,11 +77,11 @@ type
         @return Required description.
       }
     class function FormatSnippetComment(const Style: TCommentStyle;
-      const Text: string): string;
+      const Text: IActiveText): string;
       {Formats a snippet's comment text as Pascal comment according to
       commenting style.
         @param Style [in] Desired commenting style.
-        @param Text [in] Text of comment. Ignored if Style = csNone.
+        @param Text [in] Active text of comment. Ignored if Style = csNone.
         @return Formatted comment. Empty string if Style = csNone.
       }
     class function FormatHeaderComments(const Comments: IStringList): string;
@@ -237,8 +240,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.USnippetKind, UConsts, UExceptions, UPreferences, USnippetValidator,
-  UStrUtils, UWarnings, Hiliter.UPasLexer;
+  ActiveText.UTextRenderer, DB.USnippetKind, UConsts, UExceptions, UPreferences,
+  USnippetValidator, UStrUtils, UWarnings, Hiliter.UPasLexer;
 
 
 const
@@ -915,7 +918,7 @@ begin
     ClassName + '.RenderDescComment: Routine must have kind skRoutine');
   // Format the output
   Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, StrTrim(Routine.Description.ToString)
+    CommentStyle, Routine.Description
   );
 end;
 
@@ -1063,7 +1066,7 @@ begin
     ClassName + '.RenderDescComment: ConstOrType must have kind skTypeDef or '
       + 'skConstant');
   Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, StrTrim(ConstOrType.Description.ToString)
+    CommentStyle, ConstOrType.Description
   );
 end;
 
@@ -1131,6 +1134,20 @@ begin
   Result := sDescriptions[Style];
 end;
 
+class function TSourceComments.FormatCommentLines(const Text: string;
+  const Indent: Cardinal): string;
+var
+  Lines: TStringList;
+begin
+  Lines := TStringList.Create;
+  try
+    Lines.Text := Text;
+    Result := StrTrimRight(StrWrap(Lines, cLineWidth - Indent, Indent, False));
+  finally
+    Lines.Free;
+  end;
+end;
+
 class function TSourceComments.FormatHeaderComments(
   const Comments: IStringList): string;
   {Formats header comment text as Pascal comments.
@@ -1166,25 +1183,35 @@ begin
 end;
 
 class function TSourceComments.FormatSnippetComment(const Style: TCommentStyle;
-  const Text: string): string;
+  const Text: IActiveText): string;
   {Formats a snippet's comment text as Pascal comment according to commenting
   style.
     @param Style [in] Desired commenting style.
-    @param Text [in] Text of comment. Ignored if Style = csNone.
+    @param Text [in] Active text of comment. Ignored if Style = csNone.
     @return Formatted comment. Empty string if Style = csNone.
   }
+var
+  Renderer: TActiveTextTextRenderer;
 begin
-  case Style of
-    csNone:
-      Result := '';
-    csBefore:
-      Result := '{'
-        + EOL
-        + StrWrap(Text, cLineWidth - cIndent, cIndent)
-        + EOL
-        + '}';
-    csAfter:
-      Result := StrWrap('{' + Text + '}', cLineWidth - cIndent, cIndent);
+  Renderer := TActiveTextTextRenderer.Create;
+  try
+    Renderer.DisplayURLs := False;
+    case Style of
+      csNone:
+        Result := '';
+      csBefore:
+        Result := '{'
+          + EOL
+          + FormatCommentLines(Renderer.Render(Text), cIndent)
+          + EOL
+          + '}';
+      csAfter:
+        Result := FormatCommentLines(
+          '{' + Renderer.Render(Text) + '}', cIndent
+        );
+    end;
+  finally
+    Renderer.Free;
   end;
 end;
 
@@ -1245,7 +1272,7 @@ class function TClassFormatter.RenderDescComment(CommentStyle: TCommentStyle;
   const Snippet: TSnippet): string;
 begin
   Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, StrTrim(Snippet.Description.ToString)
+    CommentStyle, Snippet.Description
   );
 end;
 
