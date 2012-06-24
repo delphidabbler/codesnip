@@ -45,7 +45,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  UActiveText, UBaseObjects, UTaggedTextLexer;
+  ActiveText.UMain, UBaseObjects, UTaggedTextLexer;
 
 
 type

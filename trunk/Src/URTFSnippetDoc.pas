@@ -44,8 +44,8 @@ uses
   // Delphi
   Graphics,
   // Project
-  Hiliter.UGlobals, UActiveText, UActiveTextRTF, UEncodings, UIStringList,
-  USnippetDoc, URTFBuilder, URTFStyles, URTFUtils;
+  ActiveText.UMain, ActiveText.URTFRenderer, Hiliter.UGlobals, UEncodings,
+  UIStringList, USnippetDoc, URTFBuilder, URTFStyles, URTFUtils;
 
 
 type

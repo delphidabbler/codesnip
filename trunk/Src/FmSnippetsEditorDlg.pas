@@ -45,8 +45,8 @@ uses
   SysUtils, Classes, ActnList, Buttons, StdCtrls, Forms, Controls, CheckLst,
   ComCtrls, ExtCtrls, StdActns, Menus, ImgList,
   // Project
-  Compilers.UGlobals, DB.USnippet, FmGenericOKDlg, FrBrowserBase,
-  FrFixedHTMLDlg, FrHTMLDlg, UActiveText, UBaseObjects, UCategoryListAdapter,
+  ActiveText.UMain, Compilers.UGlobals, DB.USnippet, FmGenericOKDlg,
+  FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UBaseObjects, UCategoryListAdapter,
   UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, ULEDImageList,
   UMemoCaretPosDisplayMgr, UMemoHelper, USnipKindListAdapter,
   USnippetsChkListMgr, UUnitsChkListMgr;

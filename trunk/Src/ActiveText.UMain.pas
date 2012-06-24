@@ -1,5 +1,5 @@
 {
- * UActiveText.pas
+ * ActiveText.UMain.pas
  *
  * Provides interfaces, a factory class and implementation of "active text".
  * Active text is text that can have actions performed on it. Actions may
@@ -36,7 +36,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UActiveText.pas
+ * The Original Code is ActiveText.UMain, formerly UActiveText.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -51,7 +51,7 @@
 }
 
 
-unit UActiveText;
+unit ActiveText.UMain;
 
 
 interface

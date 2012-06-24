@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  DB.USnippet, DB.USnippetKind, UActiveText, UBaseObjects, UStructs;
+  ActiveText.UMain, DB.USnippet, DB.USnippetKind, UBaseObjects, UStructs;
 
 
 type
@@ -144,7 +144,7 @@ type
       {Gets set of snippet kinds that are valid in a snippet's dependency list.
         @param Kind [in] Kind of snippet for which valid dependency kinds
           required.
-        @return Set of valid kinds for snippets in dependenc list.
+        @return Set of valid kinds for snippets in dependency list.
       }
   end;
 
@@ -156,7 +156,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UMain, UActiveTextValidator, UStrUtils;
+  ActiveText.UValidator, DB.UMain, UStrUtils;
 
 
 { TSnippetValidator }

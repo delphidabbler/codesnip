@@ -1,5 +1,5 @@
 {
- * UActiveTextHTML.pas
+ * ActiveText.UHTMLRenderer.pas
  *
  * Static class that provides assistance when rendering active text as HTML.
  * The class renders the active text as HTML and provides CSS to style it.
@@ -19,7 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UActiveTextHTML.pas
+ * The Original Code is ActiveText.UHTMLRenderer, formerly UActiveTextHTML.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -34,7 +34,7 @@
 }
 
 
-unit UActiveTextHTML;
+unit ActiveText.UHTMLRenderer;
 
 
 interface
@@ -44,7 +44,7 @@ uses
   // Delphi
   SysUtils, Graphics, Generics.Collections,
   // Project
-  UActiveText, UBaseObjects, UCSSBuilder, UHTMLUtils;
+  ActiveText.UMain, UBaseObjects, UCSSBuilder, UHTMLUtils;
 
 
 type

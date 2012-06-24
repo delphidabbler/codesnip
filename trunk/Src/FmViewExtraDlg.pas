@@ -46,8 +46,8 @@ uses
   // Delphi
   Classes, Forms, StdCtrls, Controls, ExtCtrls,
   // Project
-  Browser.UHTMLEvents, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
-  FrHTMLTpltDlg, UActiveText, UBaseObjects, UCSSBuilder;
+  ActiveText.UMain, Browser.UHTMLEvents, FmGenericViewDlg, FrBrowserBase,
+  FrHTMLDlg, FrHTMLTpltDlg, UBaseObjects, UCSSBuilder;
 
 
 type
@@ -102,7 +102,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UActiveTextHTML, UAnchors, UColours, UConsts, UCSSUtils, UFontHelper,
+  ActiveText.UHTMLRenderer, UAnchors, UColours, UConsts, UCSSUtils, UFontHelper,
   UHTMLTemplate, UMessageBox, UProtocols, USystemInfo;
 
 {$R *.dfm}

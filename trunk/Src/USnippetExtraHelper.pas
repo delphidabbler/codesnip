@@ -43,7 +43,7 @@ interface
 
 uses
   // Project
-  UActiveText, UBaseObjects, UIStringList;
+  ActiveText.UMain, UBaseObjects, UIStringList;
 
 
 type

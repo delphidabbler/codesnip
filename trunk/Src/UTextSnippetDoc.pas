@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UActiveText, UEncodings, UIStringList, USnippetDoc;
+  ActiveText.UMain, UEncodings, UIStringList, USnippetDoc;
 
 
 type

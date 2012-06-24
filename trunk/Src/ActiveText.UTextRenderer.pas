@@ -19,7 +19,7 @@ interface
 
 uses
   SysUtils,
-  UActiveText;
+  ActiveText.UMain;
 
 type
   TActiveTextTextRenderer = class(TObject)

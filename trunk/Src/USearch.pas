@@ -381,7 +381,7 @@ uses
   // Delphi
   SysUtils, Character,
   // Project
-  IntfCommon, UActiveText, UStrUtils;
+  ActiveText.UMain, IntfCommon, UStrUtils;
 
 
 type
