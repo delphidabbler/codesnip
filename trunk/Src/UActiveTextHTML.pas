@@ -103,15 +103,6 @@ type
     destructor Destroy; override;
     function Render(ActiveText: IActiveText): string;
     property Styles: TCSSStyles read fCSSStyles;
-    { TODO: Move this elsewhere: style names are fixed & need to come from
-            caller who sets variable style names in Styles property. }
-    class procedure SetStyles(const DefFont: TFont;
-      const CSSBuilder: TCSSBuilder);
-      {Sets the CSS styles required to render an HTML representation of active
-      text.
-        @param DefFont [in] Default font to use for styles.
-        @param  CSSBuilder [in] Object that is used to create the CSS.
-      }
   end;
 
 
@@ -168,7 +159,7 @@ var
   ElemKind: TActiveTextActionElemKind;
 const
   Tags: array[TActiveTextActionElemKind] of string = (
-    'a', 'strong', 'em', 'var', 'p', 'span', 'h2', 'span'
+    'a', 'strong', 'em', 'var', 'p', 'span', 'h2', 'code'
   );
 begin
   NullAttrs := function(Elem: IActiveTextActionElem): IHTMLAttributes
@@ -274,54 +265,18 @@ begin
   fBuilder.Append(MakeSafeHTMLText(Elem.Text));
 end;
 
-class procedure TActiveTextHTML.SetStyles(const DefFont: TFont;
-  const CSSBuilder: TCSSBuilder);
-var
-  CSSFont: TFont; // font used for CSS styles
-begin
-  // Add CSS relating to active text HTML code
-  // -- heading tag
-  with CSSBuilder.AddSelector('h2.extra') do
-  begin
-    AddProperty(TCSS.FontSizeProp(DefFont.Size + 1));
-  end;
-  // -- warning tag
-  with CSSBuilder.AddSelector('span.extra-warning') do
-  begin
-    AddProperty(TCSS.FontWeightProp(cfwBold));
-    AddProperty(TCSS.ColorProp(clWarningText));
-  end;
-  // -- mono tag
-  with CSSBuilder.AddSelector('span.extra-mono') do
-  begin
-    CSSFont := TFont.Create;
-    try
-      TFontHelper.SetDefaultMonoFont(CSSFont, True);
-      AddProperty(TCSS.FontProps(CSSFont));
-    finally
-      FreeAndNil(CSSFont);
-    end;
-  end;
-  // -- var tag
-  with CSSBuilder.AddSelector('var.extra') do
-  begin
-    AddProperty(TCSS.ColorProp(clVarText));
-    AddProperty(TCSS.FontStyleProp(cfsItalic));
-  end;
-end;
-
 { TActiveTextHTML.TCSSStyles }
 
 constructor TActiveTextHTML.TCSSStyles.Create;
 const
   DefaultClasses: array[TActiveTextActionElemKind] of string = (
-    '', '', '', '', '', 'warning', '', 'mono'
+    'external-link', '', '', '', '', 'warning', '', ''
   );
 var
   ElemKind: TActiveTextActionElemKind;
 begin
   inherited Create;
-  fWrapperClass := '';
+  fWrapperClass := 'active-text';
   for ElemKind := Low(TActiveTextActionElemKind)
     to High(TActiveTextActionElemKind) do
     SetElemClass(ElemKind, DefaultClasses[ElemKind]);
