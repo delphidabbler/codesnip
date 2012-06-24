@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  DB.USnippet, UActiveText;
+  ActiveText.UMain, DB.USnippet;
 
 
 type
@@ -103,9 +103,9 @@ implementation
 
 uses
   // Project
-  DB.UCategory, DB.UMain, DB.USnippetKind, Hiliter.UAttrs, Hiliter.UGlobals,
-  Hiliter.UHiliters, UActiveTextHTML, UCompResHTML, UHTMLBuilder,
-  UHTMLDetailUtils, UHTMLUtils, UStrUtils;
+  ActiveText.UHTMLRenderer, DB.UCategory, DB.UMain, DB.USnippetKind,
+  Hiliter.UAttrs, Hiliter.UGlobals, Hiliter.UHiliters, UCompResHTML,
+  UHTMLBuilder, UHTMLDetailUtils, UHTMLUtils, UStrUtils;
 
 
 { TSnippetHTML }

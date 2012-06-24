@@ -44,7 +44,7 @@ uses
   // Delphi
   Classes, Generics.Collections,
   // Project
-  Compilers.UGlobals, DB.UCategory, DB.USnippet, UActiveText, UContainers,
+  ActiveText.UMain, Compilers.UGlobals, DB.UCategory, DB.USnippet, UContainers,
   UIStringList, UMultiCastEvents, USnippetIDs;
 
 

@@ -45,7 +45,7 @@ uses
   // Delphi
   Classes,
   // Project
-  Compilers.UGlobals, DB.USnippet, UActiveText, UEncodings, UIStringList;
+  ActiveText.UMain, Compilers.UGlobals, DB.USnippet, UEncodings, UIStringList;
 
 
 type

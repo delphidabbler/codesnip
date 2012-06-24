@@ -146,8 +146,8 @@ uses
   // Delphi
   SysUtils, Graphics, Menus,
   // Project
-  Browser.UHighlighter, Hiliter.UAttrs, Hiliter.UCSS, Hiliter.UGlobals,
-  UActiveTextHTML, UColours, UCSSUtils, UFontHelper, UQuery, UUtils,
+  ActiveText.UHTMLRenderer, Browser.UHighlighter, Hiliter.UAttrs, Hiliter.UCSS,
+  Hiliter.UGlobals, UColours, UCSSUtils, UFontHelper, UQuery, UUtils,
   UWBCommandBars;
 
 {$R *.dfm}

@@ -41,7 +41,11 @@
 			<DCCReference Include="3rdParty\PJWdwState.pas"/>
 			<DCCReference Include="3rdParty\UEncrypt.pas"/>
 			<DCCReference Include="AutoGen\IntfExternalObj.pas"/>
+			<DCCReference Include="ActiveText.UHTMLRenderer.pas"/>
+			<DCCReference Include="ActiveText.UMain.pas"/>
+			<DCCReference Include="ActiveText.URTFRenderer.pas"/>
 			<DCCReference Include="ActiveText.UTextRenderer.pas"/>
+			<DCCReference Include="ActiveText.UValidator.pas"/>
 			<DCCReference Include="Browser.IntfDocHostUI.pas"/>
 			<DCCReference Include="Browser.UControlHelper.pas"/>
 			<DCCReference Include="Browser.UController.pas"/>
@@ -340,10 +344,6 @@
 			<DCCReference Include="IntfNotifier.pas"/>
 			<DCCReference Include="IntfPreview.pas"/>
 			<DCCReference Include="UActionFactory.pas"/>
-			<DCCReference Include="UActiveText.pas"/>
-			<DCCReference Include="UActiveTextHTML.pas"/>
-			<DCCReference Include="UActiveTextRTF.pas"/>
-			<DCCReference Include="UActiveTextValidator.pas"/>
 			<DCCReference Include="UAnchors.pas"/>
 			<DCCReference Include="UAppInfo.pas"/>
 			<DCCReference Include="UBaseObjects.pas"/>

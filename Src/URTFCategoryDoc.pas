@@ -23,7 +23,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  DB.UCategory, DB.USnippet, UActiveTextRTF, UEncodings, URTFBuilder;
+  ActiveText.URTFRenderer, DB.UCategory, DB.USnippet, UEncodings, URTFBuilder;
 
 
 type
@@ -90,7 +90,7 @@ implementation
 
 uses
   // Project
-  UActiveText, UColours, URTFStyles;
+  ActiveText.UMain, UColours, URTFStyles;
 
 
 { TRTFCategoryDoc }

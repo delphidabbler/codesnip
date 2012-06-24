@@ -13,7 +13,7 @@
 }
 
 
-unit UActiveTextRTF;
+unit ActiveText.URTFRenderer;
 
 
 interface
@@ -23,7 +23,7 @@ uses
   // Delphi
   Generics.Collections,
   // Project
-  UActiveText, UBaseObjects, URTFBuilder, URTFStyles;
+  ActiveText.UMain, UBaseObjects, URTFBuilder, URTFStyles;
 
 
 type

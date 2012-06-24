@@ -229,7 +229,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UGlobals, DB.USnippetKind, UActiveText, UComparers, UConsts,
+  ActiveText.UMain, Compilers.UGlobals, DB.USnippetKind, UComparers, UConsts,
   UIniDataLoader, USnippetExtraHelper, UStrUtils, UUtils;
 
 

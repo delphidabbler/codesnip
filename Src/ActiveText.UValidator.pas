@@ -1,5 +1,5 @@
 {
- * UActiveTextValidator.pas
+ * ActiveText.UValidator.pas
  *
  * Implements a container record that provides methods to validate active text
  * object.
@@ -19,12 +19,12 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UActiveTextValidator.pas
+ * The Original Code is ActiveText.UValidator, formerly UActiveTextValidator.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2011-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -34,7 +34,7 @@
 }
 
 
-unit UActiveTextValidator;
+unit ActiveText.UValidator;
 
 
 interface
@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  UActiveText;
+  ActiveText.UMain;
 
 
 type
