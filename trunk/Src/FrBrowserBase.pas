@@ -191,9 +191,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Messages,
+  SysUtils, Messages, Graphics,
   // Project
-  UAnchors, UColours, UCSSUtils, UExceptions, UProtocols, UUtils;
+  UAnchors, UColours, UCSSUtils, UExceptions, UFontHelper, UProtocols, UUtils;
 
 
 {$R *.dfm}
@@ -207,17 +207,22 @@ begin
 end;
 
 procedure TBrowserBaseFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
+var
+  CSSFont: TFont;
 begin
-  // Ensures images have no borders
+  // <p> tag style: use same font as frame, including size
+  with CSSBuilder.AddSelector('p') do
+    AddProperty(TCSS.FontProps(Self.Font));
+  // <img> tag style: no borders
   with CSSBuilder.AddSelector('img') do
     AddProperty(TCSS.HideBorderProp(cssAll));
-  // Sets default link style
+  // <a> tag style: all link states appear same
   with CSSBuilder.AddSelector('a:link, a:visited, a:active') do
   begin
     AddProperty(TCSS.ColorProp(clLinkText));
     AddProperty(TCSS.TextDecorationProp([ctdUnderline]));
   end;
-  // Sets style for help links
+  // <a class=".help-link"> override: different colour to other links
   with CSSBuilder.AddSelector(
     'a:link.help-link, a:visited.help-link, a:active.help-link'
   ) do
@@ -225,7 +230,24 @@ begin
     AddProperty(TCSS.ColorProp(clHelpLinkText));
     AddProperty(TCSS.TextDecorationProp([ctdUnderline]));
   end;
-  // Sets warning text class
+  // <var> tag style
+  with CSSBuilder.AddSelector('var') do
+  begin
+    AddProperty(TCSS.ColorProp(clVarText));
+    AddProperty(TCSS.FontStyleProp(cfsItalic));
+  end;
+  // <code> tag style
+  with CSSBuilder.AddSelector('code') do
+  begin
+    CSSFont := TFont.Create;
+    try
+      TFontHelper.SetDefaultMonoFont(CSSFont, True);
+      AddProperty(TCSS.FontProps(CSSFont));
+    finally
+      CSSFont.Free;
+    end;
+  end;
+  // .warning class style: mainly for use inline
   with CSSBuilder.AddSelector('.warning') do
   begin
     AddProperty(TCSS.ColorProp(clWarningText));

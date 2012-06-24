@@ -121,7 +121,7 @@ begin
       AddProperty(TCSS.PaddingProp(0));
     end;
     // Sets paragraph margins and padding
-    with CSSBuilder.AddSelector('p') do
+    with CSSBuilder.Selectors['p'] do
     begin
       AddProperty(TCSS.MarginProp(cssTop, 6));
       AddProperty(TCSS.MarginProp(cssBottom, 0));
