@@ -61,6 +61,8 @@ type
       ///  <summary>Size of a single level of indentation in characters.
       ///  </summary>
       cIndent = 2;
+    procedure RenderActiveText(ActiveText: IActiveText; const Indent: Cardinal;
+      const SpaceParas: Boolean);
   strict protected
     ///  <summary>Initialises plain text document.</summary>
     procedure InitialiseDoc; override;
@@ -104,7 +106,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UStrUtils;
+  ActiveText.UTextRenderer, UStrUtils;
 
 
 { TTextSnippetDoc }
@@ -118,6 +120,23 @@ end;
 procedure TTextSnippetDoc.InitialiseDoc;
 begin
   fWriter := TStringWriter.Create;
+end;
+
+procedure TTextSnippetDoc.RenderActiveText(ActiveText: IActiveText;
+  const Indent: Cardinal; const SpaceParas: Boolean);
+var
+  Renderer: TActiveTextTextRenderer;
+begin
+  Renderer := TActiveTextTextRenderer.Create;
+  try
+    Renderer.LineWidth := cPageWidth;
+    Renderer.LineIndent := Indent;
+    Renderer.SpaceParas := SpaceParas;
+    Renderer.DisplayURLs := True;
+    fWriter.WriteLine(Renderer.Render(ActiveText));
+  finally
+    Renderer.Free;
+  end;
 end;
 
 procedure TTextSnippetDoc.RenderCompilerInfo(const Heading: string;
@@ -140,77 +159,14 @@ end;
 procedure TTextSnippetDoc.RenderDescription(const Desc: IActiveText);
 begin
   fWriter.WriteLine;
-  { TODO -cURGENT: Revise to be like RenderExtra: pull out common code to
-         generic class like TActiveTextRTF }
-  fWriter.WriteLine(StrWrap(StrTrim(Desc.ToString), cPageWidth, 0));
+  RenderActiveText(Desc, 0, True);
 end;
 
 procedure TTextSnippetDoc.RenderExtra(const ExtraText: IActiveText);
-var
-  Elem: IActiveTextElem;              // each active text element
-  TextElem: IActiveTextTextElem;      // refers to active text text elements
-  ActionElem: IActiveTextActionElem;  // refers to active text action elements
-  Text: string;                       // text to be output
-  InBlock: Boolean;                   // flag true if inside a block level tag
-resourcestring
-  sURL = ' (%s)';                     // formatting for URLs from hyperlinks
 begin
   Assert(not ExtraText.IsEmpty, ClassName + '.RenderExtra: ExtraText is empty');
-  Assert(Supports(ExtraText[0], IActiveTextActionElem) and
-    ((ExtraText[0] as IActiveTextActionElem).DisplayStyle = dsBlock),
-    ClassName + '.RenderExtra: ExtraText must begin with a block tag');
-  Assert(Supports(ExtraText[Pred(ExtraText.Count)], IActiveTextActionElem) and
-    ((ExtraText[Pred(ExtraText.Count)] as IActiveTextActionElem).DisplayStyle
-      = dsBlock),
-    ClassName + '.RenderExtra: ExtraText must end with a block tag');
-  Text := '';
-  InBlock := False;
-  for Elem in ExtraText do
-  begin
-    if Supports(Elem, IActiveTextTextElem, TextElem) then
-    begin
-      if InBlock then
-        Text := Text + TextElem.Text;
-    end
-    else if Supports(Elem, IActiveTextActionElem, ActionElem) then
-    begin
-      case ActionElem.Kind of
-        ekPara, ekHeading:
-        begin
-          // paragraphs and headings start new lines, and are separated by
-          case ActionElem.State of
-            fsOpen:
-            begin
-              // open block: reset text - writing deferred until end of block
-              Text := '';
-              InBlock := True;
-            end;
-            fsClose:
-            begin
-              // close block: emit blank line then write any pending text only
-              // if there is any text
-              // note that we are guaranteed that a block close will be last
-              // thing in active text, so all text will be flushed
-              if Text <> '' then
-              begin
-                fWriter.WriteLine;
-                fWriter.WriteLine(StrWrap(Text, cPageWidth, 0));
-                Text := '';
-                InBlock := False;
-              end;
-            end;
-          end;
-        end;
-        ekLink:
-        begin
-          // hyperlink element: output in brackets only if closing element
-          if InBlock and (ActionElem.State = fsClose) then
-            Text := Text
-              + Format(sURL, [ActionElem.Attrs[TActiveTextAttrNames.Link_URL]]);
-        end;
-      end;
-    end;
-  end;
+  fWriter.WriteLine;
+  RenderActiveText(ExtraText, 0, True);
 end;
 
 procedure TTextSnippetDoc.RenderHeading(const Heading: string);

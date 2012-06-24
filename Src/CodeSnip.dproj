@@ -41,6 +41,7 @@
 			<DCCReference Include="3rdParty\PJWdwState.pas"/>
 			<DCCReference Include="3rdParty\UEncrypt.pas"/>
 			<DCCReference Include="AutoGen\IntfExternalObj.pas"/>
+			<DCCReference Include="ActiveText.UTextRenderer.pas"/>
 			<DCCReference Include="Browser.IntfDocHostUI.pas"/>
 			<DCCReference Include="Browser.UControlHelper.pas"/>
 			<DCCReference Include="Browser.UController.pas"/>
