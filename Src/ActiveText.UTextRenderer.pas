@@ -26,15 +26,12 @@ type
   strict private
     var
       fDisplayURLs: Boolean;
-      fLineWidth: Cardinal;
-      fLineIndent: Cardinal;
-      fSpaceParas: Boolean;
       fInBlock: Boolean;
       fParaBuilder: TStringBuilder;
       fDocBuilder: TStringBuilder;
     procedure InitialiseRender;
     procedure FinaliseRender;
-    procedure FormatParagraph;
+    procedure OutputParagraph;
     procedure RenderTextElem(Elem: IActiveTextTextElem);
     procedure RenderBlockActionElem(Elem: IActiveTextActionElem);
     procedure RenderInlineActionElem(Elem: IActiveTextActionElem);
@@ -42,12 +39,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    property DisplayURLs: Boolean read fDisplayURLs write fDisplayURLs;
-    property LineWidth: Cardinal read fLineWidth write fLineWidth
-      default 80;
-    property LineIndent: Cardinal read fLineIndent write fLineIndent
-      default 0;
-    property SpaceParas: Boolean read fSpaceParas write fSpaceParas
+    property DisplayURLs: Boolean read fDisplayURLs write fDisplayURLs
       default False;
     function Render(ActiveText: IActiveText): string;
   end;
@@ -65,9 +57,7 @@ begin
   inherited Create;
   fParaBuilder := TStringBuilder.Create;
   fDocBuilder := TStringBuilder.Create;
-  fLineWidth := 80;
-  fLineIndent := 0;
-  fSpaceParas := False;
+  fDisplayURLs := False;
 end;
 
 destructor TActiveTextTextRenderer.Destroy;
@@ -79,25 +69,21 @@ end;
 
 procedure TActiveTextTextRenderer.FinaliseRender;
 begin
-  FormatParagraph;
-end;
-
-procedure TActiveTextTextRenderer.FormatParagraph;
-begin
-  if fParaBuilder.Length = 0 then
-    Exit;
-  fDocBuilder.AppendLine(
-    StrWrap(StrTrimRight(fParaBuilder.ToString), fLineWidth, fLineIndent)
-  );
-  if fSpaceParas then
-    fDocBuilder.AppendLine;
-  fParaBuilder.Clear;
+  OutputParagraph;
 end;
 
 procedure TActiveTextTextRenderer.InitialiseRender;
 begin
   fParaBuilder.Clear;
   fDocBuilder.Clear;
+end;
+
+procedure TActiveTextTextRenderer.OutputParagraph;
+begin
+  if fParaBuilder.Length = 0 then
+    Exit;
+  fDocBuilder.AppendLine(StrTrim(fParaBuilder.ToString));
+  fParaBuilder.Clear;
 end;
 
 function TActiveTextTextRenderer.Render(ActiveText: IActiveText): string;
@@ -134,7 +120,7 @@ begin
     end;
     fsClose:
     begin
-      FormatParagraph;
+      OutputParagraph;
       fInBlock := False;
     end;
   end;
