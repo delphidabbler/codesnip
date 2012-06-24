@@ -205,6 +205,12 @@ type
     ///  <summary>Checks if the active text object contains any elements.
     ///  </summary>
     function IsEmpty: Boolean;
+    ///  <summary>Checks if the active text object contains only plain text.
+    ///  </summary>
+    ///  <remarks>Plain text is considered to be active text with no action
+    ///  elements except for "para". This can rendered in plain text with no
+    ///  loss of formatting.</remarks>
+    function IsPlainText: Boolean;
     ///  <summary>Returns element at given index in active text object's element
     ///  list.</summary>
     function GetElem(Idx: Integer): IActiveTextElem;
@@ -342,6 +348,15 @@ type
     ///  <summary>Checks if the element list is empty.</summary>
     ///  <remarks>Method of IActiveText.</remarks>
     function IsEmpty: Boolean;
+    ///  <summary>Checks if the active text object contains only plain text.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>Plain text is considered to be active text with no action
+    ///  elements except for "para". This can rendered in plain text with no
+    ///  loss of formatting.</para>
+    ///  <para>Method of IActiveText.</para>
+    ///  </remarks>
+    function IsPlainText: Boolean;
     ///  <summary>Returns element at given index in element list.</summary>
     ///  <remarks>Method of IActiveText.</remarks>
     function GetElem(Idx: Integer): IActiveTextElem;
@@ -596,6 +611,20 @@ end;
 function TActiveText.IsEmpty: Boolean;
 begin
   Result := fElems.Count = 0;
+end;
+
+function TActiveText.IsPlainText: Boolean;
+var
+  Elem: IActiveTextElem;
+  ActionElem: IActiveTextActionElem;
+begin
+  for Elem in fElems do
+  begin
+    if Supports(Elem, IActiveTextActionElem, ActionElem)
+      and (ActionElem.Kind <> ekPara) then
+      Exit(False);
+  end;
+  Result := True;
 end;
 
 function TActiveText.ToString: string;
