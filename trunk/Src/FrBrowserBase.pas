@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -210,9 +210,6 @@ procedure TBrowserBaseFrame.BuildCSS(const CSSBuilder: TCSSBuilder);
 var
   CSSFont: TFont;
 begin
-  // <p> tag style: use same font as frame, including size
-  with CSSBuilder.AddSelector('p') do
-    AddProperty(TCSS.FontProps(Self.Font));
   // <img> tag style: no borders
   with CSSBuilder.AddSelector('img') do
     AddProperty(TCSS.HideBorderProp(cssAll));
