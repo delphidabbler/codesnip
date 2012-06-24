@@ -28,7 +28,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -490,17 +490,25 @@ begin
 end;
 
 function TSnippetListPageHTML.SnippetTableRow(const Snippet: TSnippet): string;
+var
+  SnippetHTML: TSnippetHTML;
+  NameCellAttrs: IHTMLAttributes;
+  DescCellAttrs: IHTMLAttributes;
 begin
-  Result := MakeCompoundTag(
-    'tr',
-    MakeCompoundTag(
-      'td', SnippetALink(Snippet.Name, Snippet.UserDefined)
-    )
-    // TODO -cURGENT: change to format description per its active text
-    + MakeCompoundTag(
-      'td', MakeSafeHTMLText(Snippet.Description.ToString)
-    )
-  )
+  NameCellAttrs := THTMLAttributes.Create('class', 'name');
+  DescCellAttrs := THTMLAttributes.Create('class', 'desc');
+  SnippetHTML := TSnippetHTML.Create(Snippet);
+  try
+    Result := MakeCompoundTag(
+      'tr',
+      MakeCompoundTag(
+        'td', NameCellAttrs, SnippetALink(Snippet.Name, Snippet.UserDefined)
+      )
+      + MakeCompoundTag('td', DescCellAttrs, SnippetHTML.Description)
+    );
+  finally
+    SnippetHTML.Free;
+  end;
 end;
 
 { TCategoryPageHTML }
