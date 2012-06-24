@@ -104,7 +104,7 @@ begin
   begin
     StrSplit(Line, TAB, Name, UserDefStr);
     Name := StrTrim(Name);
-    UserDefStr := StrTrim(Name);
+    UserDefStr := StrTrim(UserDefStr);
     if Name = '' then
       raise ESelectionFileReader.CreateFmt(sMissingName, [Line]);
     if UserDefStr = '' then
