@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -205,6 +205,13 @@ begin
       TFontHelper.SetContentFont(CSSFont, True);
       CSSFont.Style := [fsBold];
       CSSFont.Size := CSSFont.Size + 1;
+      AddProperty(TCSS.FontProps(CSSFont));
+    end;
+    // Set H2 heading font for use in rendered active text in snippet list table
+    with CSSBuilder.AddSelector('.snippet-list .active-text h2') do
+    begin
+      TFontHelper.SetContentFont(CSSFont, True);
+      CSSFont.Style := [fsBold];
       AddProperty(TCSS.FontProps(CSSFont));
     end;
     // Style of box that appears around clickable options (or actions)
