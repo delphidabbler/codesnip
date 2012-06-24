@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  DB.USnippet;
+  DB.USnippet, UActiveText;
 
 
 type
@@ -62,6 +62,8 @@ type
     function SnippetList(const Snippets: TSnippetList): string;
     ///  <summary>Returns HTML text indicating a list is empty.</summary>
     function EmptyListSentence: string;
+    ///  <summary>Renders given active text as HTML and returns it.</summary>
+    function RenderActiveText(ActiveText: IActiveText): string;
   public
     ///  <summary>Object constructor. Sets up object to provide HTML for given
     ///  snippet.</summary>
@@ -102,7 +104,7 @@ implementation
 uses
   // Project
   DB.UCategory, DB.UMain, DB.USnippetKind, Hiliter.UAttrs, Hiliter.UGlobals,
-  Hiliter.UHiliters, UActiveText, UActiveTextHTML, UCompResHTML, UHTMLBuilder,
+  Hiliter.UHiliters, UActiveTextHTML, UCompResHTML, UHTMLBuilder,
   UHTMLDetailUtils, UHTMLUtils, UStrUtils;
 
 
@@ -137,8 +139,7 @@ end;
 
 function TSnippetHTML.Description: string;
 begin
-  // TODO -cURGENT: change to format description according to active text
-  Result := MakeSafeHTMLText(StrMakeSentence(fSnippet.Description.ToString));
+  Result := RenderActiveText(fSnippet.Description);
 end;
 
 function TSnippetHTML.EmptyListSentence: string;
@@ -149,12 +150,17 @@ begin
 end;
 
 function TSnippetHTML.Extra: string;
+begin
+  Result := RenderActiveText(fSnippet.Extra);
+end;
+
+function TSnippetHTML.RenderActiveText(ActiveText: IActiveText): string;
 var
   Renderer: TActiveTextHTML;
 begin
   Renderer := TActiveTextHTML.Create;
   try
-    Result := Renderer.Render(fSnippet.Extra);
+    Result := Renderer.Render(ActiveText);
   finally
     Renderer.Free;
   end;
