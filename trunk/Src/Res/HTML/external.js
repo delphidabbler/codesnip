@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -59,16 +59,6 @@ function showHint(hint) {
  */
 function configCompilers() {
   external.ConfigCompilers();
-  return false;
-}
-
-/*
- * Calls external object to get host application to compile currently selected
- * snippet.
- *  @return False.
- */
-function compileSnippet() {
-  external.CompileSnippet();
   return false;
 }
 
