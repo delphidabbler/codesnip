@@ -75,47 +75,18 @@
       Code Tab
     </h3>
     <p>
-      This tab gathers all the information to uniquely define a snippet. All the
+      This tab gathers all the information needed to define a snippet. All the
       fields are required. They are:
     </p>
     <ul>
       <li>
         <div>
-          <em>Source code</em> text box.
+          <em>Name</em>
         </div>
         <div>
-          Enter the snippet's source code here. The format of the code is
-          important unless you are using the freeform snippet kind.
-        </div>
-      </li>
-      <li>
-        <div>
-          <em>Kind</em> drop down list.
-        </div>
-        <div>
-          Select the <a href="snippet_kinds.htm">kind of snippet</a> you are
-          editing.
-        </div>
-      </li>
-      <li>
-        <div>
-          <em>Description</em> edit box.
-        </div>
-        <div>
-          Enter a description of the code snippet here. This field should not
-          contain &quot;}&quot; characters since the field's text is used in
-          comments in exported Pascal code and the &quot;}&quot; character will
-          terminate the comment early.
-        </div>
-      </li>
-      <li>
-        <div>
-          <em>Name</em> edit box.
-        </div>
-        <div>
-          Give the code snippet a name here. Names must be valid Unicode Pascal
-          identifiers. Names must also be unique within the user database,
-          although they may duplicate names in the main database.
+          Enter a name for the snippet in the edit box. The name must be a valid
+          Unicode Pascal identifier. It must also be unique within the user
+          database, it may duplicate names in the main database.
         </div>
         <div>
           It is customary to name functions or procedures using the routine's
@@ -125,10 +96,50 @@
       </li>
       <li>
         <div>
-          <em>Category</em> drop down list.
+          <em>Description</em>
         </div>
         <div>
-          Select the category to which the snippet belongs.
+          Enter a description of the code snippet in the
+          <a href="markup_editor.htm">markup editor</a>. You can use more than
+          one paragraph of text. You have the choice of styling the text and
+          using hyperlinks.
+        </div>
+        <div>
+          The description field should not contain &quot;}&quot; characters
+          since the field's text is used in comments in exported Pascal code and
+          the &quot;}&quot; character will terminate the comment early.
+        </div>
+        <div>
+          The description can be previewed using the <em>Preview</em> button.
+          Clicking this button also validates markup if you have used it.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Kind</em>
+        </div>
+        <div>
+          Select the <a href="snippet_kinds.htm">kind of snippet</a> from the
+          drop down list.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Category</em>
+        </div>
+        <div>
+          Select the category to which the snippet belongs from the drop down
+          list.
+        </div>
+      </li>
+      <li>
+        <div>
+          <em>Source code</em>
+        </div>
+        <div>
+          Enter the snippet's source code in this text box. The format of the
+          source code is important unless you are using the freeform snippet
+          kind.
         </div>
       </li>
     </ul>
@@ -142,13 +153,16 @@
       completed if the snippet depends on a Delphi unit or if it uses another
       snippet from the database.
     </p>
+    <p>
+      The available controls are:
+    </p>
     <ul>
       <li>
         <div>
-          <em>Cross-references</em> check list box.
+          <em>Cross-references</em> list box
         </div>
         <div>
-          Use this list to specify any other snippets to be cross-referenced
+          Use this list box to specify any other snippets to be cross-referenced
           from this snippet. Check the boxes next to desired snippets. Cross
           references are for information only. All snippets are listed, except
           for the one being edited.
@@ -159,14 +173,14 @@
       </li>
       <li>
         <div>
-          <em>Dependencies</em> check list box.
+          <em>Dependencies</em> list box
         </div>
         <div>
           Specify any other snippets that this snippet depends upon by checking
-          the boxes next to the desired snippets. If this snippet is to be test
-          compiled then any other snippets it requires must be specified here or
-          the test compile will fail. The exception is that
-          <a href="snippet_unit.htm">unit snippets</a> never have any
+          the boxes next to the desired snippets in this list box. If this
+          snippet is to be test compiled then any other snippets it requires
+          must be specified here or the test compile will fail. The exception is
+          that <a href="snippet_unit.htm">unit snippets</a> never have any
           dependencies.
         </div>
         <div>
@@ -185,7 +199,7 @@
       </li>
       <li>
         <div>
-          <em>View Dependencies</em> button.
+          <em>View Dependencies</em> button
         </div>
         <div>
           Click this button to see all dependencies for the snippet being edited
@@ -198,14 +212,14 @@
       </li>
       <li>
         <div>
-          <em>Units</em> check list box.
+          <em>Units</em> list box
         </div>
         <div>
-          Select any units that this snippet requires in order to compile.
-          Required units must be specified if test compilation is to be
-          attempted. A selection of common units is provided, along with any
-          units already associated with the snippet. More units can be added to
-          the list &ndash; see below.
+          Select any units that this snippet requires in order to compile using
+          this list box. Required units must be specified if test compilation is
+          to be attempted. A selection of common units is provided, along with
+          any units already associated with the snippet. More units can be added
+          to the list &ndash; see below.
         </div>
         <div>
           Units are &quot;used&quot; in the order they appear in the list. If
@@ -221,7 +235,7 @@
       </li>
       <li>
         <div>
-          <em>Add Unit</em> edit box and button.
+          <em>Add Unit</em> edit box and button
         </div>
         <div>
           If additional units are required in the <em>Units</em> check list box
@@ -240,8 +254,18 @@
     </h3>
     <p>
       This tab is used to provide additional descriptive information about the
-      snippet. Information can be specified using a simple markup language
-      called <a href="reml.htm">REML</a>.
+      snippet. Use it for information that supplements the snippet's
+      description or for crediting authors etc.
+    </p>
+    <p>
+      Enter the required information in the <em>Extra information</em>
+      <a href="markup_editor.htm">markup editor</a>. You can enter either plain
+      text of formatted text and hyperlinks using the custom
+      <a href="reml.htm">REML</a> markup language.
+    </p>
+    <p>
+      The information can be previewed using the <em>Preview</em> button.
+      Clicking this button also validates markup if you have used it.
     </p>
     <h3>
       Compile Results Tab
