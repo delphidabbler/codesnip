@@ -63,8 +63,6 @@ type
     procedure SetActiveText(Value: IActiveText);
     procedure SetEditMode(AMode: TEditMode);
   public
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
     procedure Validate;
     procedure Clear;
     procedure Preview;
@@ -80,8 +78,8 @@ implementation
 
 uses
   // Project
-  ActiveText.UValidator, FmViewExtraDlg, UConsts, UExceptions, UIStringList,
-  USnippetExtraHelper, UStrUtils;
+  ActiveText.UValidator, FmViewExtraDlg, UConsts, UExceptions, UFontHelper,
+  UIStringList, USnippetExtraHelper, UStrUtils;
 
 
 {$R *.dfm}
@@ -154,18 +152,6 @@ end;
 procedure TSnippetsActiveTextEdFrame.Clear;
 begin
   edText.Clear;
-end;
-
-constructor TSnippetsActiveTextEdFrame.Create(AOwner: TComponent);
-begin
-  inherited;
-
-end;
-
-destructor TSnippetsActiveTextEdFrame.Destroy;
-begin
-
-  inherited;
 end;
 
 function TSnippetsActiveTextEdFrame.GetActiveText: IActiveText;
@@ -293,9 +279,15 @@ begin
   fEditMode := AMode;
   case fEditMode of
     emPlainText:
+    begin
       tcEditMode.TabIndex := 0;
+      TFontHelper.SetDefaultFont(edText.Font, True);
+    end;
     emREML:
+    begin
       tcEditMode.TabIndex := 1;
+      TFontHelper.SetDefaultMonoFont(edText.Font, True);
+    end;
   end;
 end;
 
