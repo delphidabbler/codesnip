@@ -136,6 +136,7 @@ uses
   FmRenameCategoryDlg in 'FmRenameCategoryDlg.pas' {RenameCategoryDlg},
   FmSelectionSearchDlg in 'FmSelectionSearchDlg.pas' {SelectionSearchDlg},
   FmSnippetsEditorDlg in 'FmSnippetsEditorDlg.pas' {SnippetsEditorDlg},
+  FmSnippetsEditorDlg.FrActiveTextEditor in 'FmSnippetsEditorDlg.FrActiveTextEditor.pas' {SnippetsActiveTextEdFrame: TFrame},
   FmSplash in 'FmSplash.pas' {SplashForm},
   FmTestCompileDlg in 'FmTestCompileDlg.pas' {TestCompileDlg},
   FmTrappedBugReportDlg in 'FmTrappedBugReportDlg.pas' {TrappedBugReportDlg},
