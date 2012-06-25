@@ -190,3 +190,7 @@ table.menu td.desc {
   background-color: yellow;
 }
 
+.bordered {
+  border: 1px silver solid;
+  padding: 0.25em;
+}
