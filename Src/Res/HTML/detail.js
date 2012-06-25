@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -60,15 +60,6 @@ function getInnerText(id) {
  */
 function getSnippetName() {
   return trim(getInnerText("snippetname"));
-}
-
-/*
- * Displays hint information that a test compilation can be performed. Hint
- * contains name of current snippet.
- *  @return void.
- */
-function showTestCompileHint() {
-  showHint("Compile \"" + getSnippetName() + "\"");
 }
 
 /*
