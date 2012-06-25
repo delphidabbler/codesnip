@@ -79,14 +79,6 @@ library ExternalObj
       [in] VARIANT_BOOL UserDefined );
 
     /*
-     * Compiles current snippet.
-     */
-    [
-    id(0x00000067)
-    ]
-    HRESULT _stdcall CompileSnippet( void );
-
-    /*
      * Displays a hint.
      *   @param Hint [in] Hint to be displayed.
      */
@@ -94,6 +86,14 @@ library ExternalObj
     id(0x00000069)
     ]
     HRESULT _stdcall ShowHint([in] BSTR Hint );
+
+    /*
+     * Displays configure compilers dialog box.
+     */
+    [
+    id(0x0000006A)
+    ]
+    HRESULT _stdcall ConfigCompilers( void );
 
     /*
      * Edits the named snippet.
