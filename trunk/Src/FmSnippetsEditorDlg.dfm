@@ -19,7 +19,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       Top = 0
       Width = 646
       Height = 504
-      ActivePage = tsCode
+      ActivePage = tsComments
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
@@ -51,7 +51,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblCategories: TLabel
           Left = 3
-          Top = 143
+          Top = 151
           Width = 45
           Height = 13
           Caption = '&Category:'
@@ -59,7 +59,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblSnippetKindHelp: TLabel
           Left = 333
-          Top = 106
+          Top = 114
           Width = 118
           Height = 13
           Cursor = crHandPoint
@@ -74,7 +74,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblKind: TLabel
           Left = 3
-          Top = 111
+          Top = 119
           Width = 24
           Height = 13
           Caption = '&Kind:'
@@ -114,7 +114,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object cbCategories: TComboBox
           Left = 80
-          Top = 139
+          Top = 147
           Width = 209
           Height = 21
           Style = csDropDownList
@@ -122,7 +122,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object cbKind: TComboBox
           Left = 80
-          Top = 106
+          Top = 114
           Width = 209
           Height = 21
           Style = csDropDownList
@@ -145,13 +145,14 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           inherited edText: TMemo
             Width = 462
             Height = 55
-            ExplicitTop = 23
+            ExplicitTop = 0
             ExplicitWidth = 462
-            ExplicitHeight = 47
+            ExplicitHeight = 55
           end
           inherited tcEditMode: TTabControl
             Top = 55
             Width = 462
+            ExplicitTop = 55
             ExplicitWidth = 462
           end
         end
@@ -261,7 +262,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 81
           Height = 13
           Caption = 'E&xtra information:'
-          FocusControl = edExtra
         end
         object lblExtraCaretPos: TLabel
           Left = 544
@@ -272,27 +272,12 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           AutoSize = False
           Caption = 'lblExtraCaretPos'
         end
-        object edExtra: TMemo
-          Left = 3
-          Top = 22
-          Width = 631
-          Height = 147
-          Font.Charset = ANSI_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -12
-          Font.Name = 'Courier New'
-          Font.Style = []
-          ParentFont = False
-          PopupMenu = mnuEditCtrls
-          ScrollBars = ssVertical
-          TabOrder = 0
-        end
         inline frmExtraInstructions: TFixedHTMLDlgFrame
           Left = 3
           Top = 172
           Width = 631
           Height = 122
-          TabOrder = 1
+          TabOrder = 0
           TabStop = True
           ExplicitLeft = 3
           ExplicitTop = 172
@@ -324,7 +309,33 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 166
           Height = 25
           Action = actViewExtra
+          TabOrder = 1
+        end
+        inline frmExtra: TSnippetsActiveTextEdFrame
+          Left = 0
+          Top = 22
+          Width = 631
+          Height = 155
+          Color = clWindow
+          ParentBackground = False
+          ParentColor = False
           TabOrder = 2
+          ExplicitTop = 22
+          ExplicitWidth = 631
+          ExplicitHeight = 155
+          inherited edText: TMemo
+            Width = 631
+            Height = 132
+            ExplicitTop = 0
+            ExplicitWidth = 631
+            ExplicitHeight = 93
+          end
+          inherited tcEditMode: TTabControl
+            Top = 132
+            Width = 631
+            ExplicitTop = 93
+            ExplicitWidth = 631
+          end
         end
       end
       object tsCompileResults: TTabSheet

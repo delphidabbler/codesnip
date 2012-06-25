@@ -86,7 +86,6 @@ type
     clbDepends: TCheckListBox;
     clbUnits: TCheckListBox;
     clbXRefs: TCheckListBox;
-    edExtra: TMemo;
     edName: TEdit;
     edSourceCode: TMemo;
     edUnit: TEdit;
@@ -127,6 +126,7 @@ type
     frmDescription: TSnippetsActiveTextEdFrame;
     btnViewDescription: TButton;
     actViewDescription: TAction;
+    frmExtra: TSnippetsActiveTextEdFrame;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -197,11 +197,6 @@ type
         @param E [in] Exception to be handled.
         @except Exceptions re-raised if not EDataEntry.
       }
-    function BuildExtraActiveText: IActiveText;
-      {Creates an active text object from the REML text entered in the extra
-      information memo control.
-        @return Required active text object.
-      }
     procedure SetAllCompilerResults(const CompRes: TCompileResult);
       {Sets all compiler results to same value.
         @param CompRes [in] Required compiler result.
@@ -228,10 +223,6 @@ type
       {Displays results of a test compilation. Used as callback method for
       compile manager.
         @param Compilers [in] Object containing compilation results.
-      }
-    procedure CheckExtra;
-      {Checks the REML text entered in the extra information memo control.
-        @except EDataEntry raised on error.
       }
   strict protected
     procedure ArrangeForm; override;
@@ -406,7 +397,12 @@ end;
 
 procedure TSnippetsEditorDlg.actViewDescriptionExecute(Sender: TObject);
 begin
-  frmDescription.Preview;
+  try
+    frmDescription.Preview;
+  except
+    on E: Exception do
+      HandleException(E);
+  end;
 end;
 
 procedure TSnippetsEditorDlg.actViewDescriptionUpdate(Sender: TObject);
@@ -438,8 +434,7 @@ procedure TSnippetsEditorDlg.actViewExtraExecute(Sender: TObject);
   }
 begin
   try
-    CheckExtra;
-    TViewExtraDlg.Execute(Self, BuildExtraActiveText);
+    frmExtra.Preview;
   except
     on E: Exception do
       HandleException(E);
@@ -452,7 +447,7 @@ procedure TSnippetsEditorDlg.actViewExtraUpdate(Sender: TObject);
     @param Sender [in] Reference to action to be updated.
   }
 begin
-  (Sender as TAction).Enabled := StrTrim(edExtra.Text) <> '';
+  (Sender as TAction).Enabled := frmExtra.CanPreview;
 end;
 
 procedure TSnippetsEditorDlg.actViewTestUnitExecute(Sender: TObject);
@@ -550,9 +545,10 @@ begin
   TCtrlArranger.MoveToRightOf(cbKind, lblSnippetKindHelp, 12);
 
   // tsComments
-  lblExtraCaretPos.Top := lblExtra.Top;
-  frmExtraInstructions.Top := TCtrlArranger.BottomOf(edExtra, 4);
-  btnViewExtra.Top := TCtrlArranger.BottomOf(frmExtraInstructions);
+  TCtrlArranger.AlignTops([lblExtra, lblExtraCaretPos]);
+  TCtrlArranger.MoveBelow([lblExtra, lblExtraCaretPos], frmExtra, 4);
+  TCtrlArranger.MoveBelow(frmExtra, frmExtraInstructions, 4);
+  TCtrlArranger.MoveBelow(frmExtraInstructions, btnViewExtra);
 
   // tsCompileResults
   lblViewCompErrsKey.Top := TCtrlArranger.BottomOf(lblViewCompErrs);
@@ -597,18 +593,6 @@ begin
   end;
 end;
 
-function TSnippetsEditorDlg.BuildExtraActiveText: IActiveText;
-  {Creates an active text object from the REML text entered in the extra
-  information memo control.
-    @return Required active text object.
-  }
-var
-  Paras: IStringList;
-begin
-  Paras := TIStringList.Create(edExtra.Text, EOL2, False, True);
-  Result := TSnippetExtraHelper.BuildActiveText(Paras);
-end;
-
 procedure TSnippetsEditorDlg.cbKindChange(Sender: TObject);
   {Handles change events on snippet kind drop down list. Updates list of
   references depending on new kind.
@@ -616,41 +600,6 @@ procedure TSnippetsEditorDlg.cbKindChange(Sender: TObject);
   }
 begin
   UpdateReferences;
-end;
-
-procedure TSnippetsEditorDlg.CheckExtra;
-  {Checks the REML text entered in the extra information memo control.
-    @except EDataEntry raised on error.
-  }
-var
-  ActiveText: IActiveText;  // active text created from text
-  ErrorMsg: string;         // error message from validator
-  DataError: EDataEntry;    // data entry error exception raised on error
-resourcestring
-  // parse error message
-  sActiveTextErr = 'Error parsing extra information markup:' + EOL2 + '%s';
-begin
-  try
-    // Try to create active text: this parses the text and raises exception
-    // if there is an error in the REML markup
-    ActiveText := BuildExtraActiveText;
-  except
-    // Convert active text parser to data exception
-    on E: EActiveTextParserError do
-    begin
-      DataError := EDataEntry.CreateFmt(
-        sActiveTextErr, [E.Message], edExtra
-      );
-      if E.HasSelection then
-        DataError.Selection := E.Selection;
-      raise DataError;
-    end
-    else
-      raise;
-  end;
-  // Validate the active text
-  if not TSnippetValidator.ValidateExtra(ActiveText, ErrorMsg) then
-    raise EDataEntry.Create(ErrorMsg, edExtra); // no selection info available
 end;
 
 procedure TSnippetsEditorDlg.ConfigForm;
@@ -819,7 +768,8 @@ begin
     frmDescription.ActiveText := fSnippet.Description;
     edName.Text := fSnippet.Name;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
-    edExtra.Text := TSnippetExtraHelper.BuildREMLMarkup(fSnippet.Extra);
+    frmExtra.DefaultEditMode := emAuto;
+    frmExtra.ActiveText := fSnippet.Extra;
     cbKind.ItemIndex := fSnipKindList.IndexOf(fSnippet.Kind);
     // check required items in references check list boxes
     UpdateReferences;
@@ -839,7 +789,8 @@ begin
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
     cbKind.ItemIndex := fSnipKindList.IndexOf(skFreeform);
-    edExtra.Clear;
+    frmExtra.DefaultEditMode := emPlainText;
+    frmExtra.Clear;
     UpdateReferences;
   end;
   // Display all compiler results
@@ -850,7 +801,7 @@ begin
     ClassName + '.InitControls: no selection in cbCategories');
   // Auto-update caret position display for source and extra info memos
   fMemoCaretPosDisplayMgr.Manage(edSourceCode, lblSourceCaretPos);
-  fMemoCaretPosDisplayMgr.Manage(edExtra, lblExtraCaretPos);
+  fMemoCaretPosDisplayMgr.Manage(frmExtra.edText, lblExtraCaretPos);
 end;
 
 procedure TSnippetsEditorDlg.InitForm;
@@ -954,7 +905,7 @@ begin
     Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
     (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
     Props.SourceCode := StrTrimRight(edSourceCode.Text);
-    (Props.Extra as IAssignable).Assign(BuildExtraActiveText);
+    (Props.Extra as IAssignable).Assign(frmExtra.ActiveText);
     Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
     fUnitsCLBMgr.GetCheckedUnits(Refs.Units);
     fDependsCLBMgr.GetCheckedSnippets(Refs.Depends);
@@ -1062,7 +1013,7 @@ begin
     edSourceCode.Text, ErrorMessage, ErrorSelection
   ) then
     raise EDataEntry.Create(ErrorMessage, edSourceCode, ErrorSelection);
-  CheckExtra;
+  frmExtra.Validate;
   if not TSnippetValidator.ValidateDependsList(
     StrTrim(edName.Text), UpdateData, ErrorMessage
   ) then
