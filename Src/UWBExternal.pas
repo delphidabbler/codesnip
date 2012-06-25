@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -60,7 +60,7 @@ type
     events to application.
   }
   TWBExternal = class(TAutoIntfObject,
-    IWBExternal7, // browser external object's methods
+    IWBExternal8, // browser external object's methods
     ISetNotifier  // sets object used to notify app of events
     )
   strict private
@@ -69,7 +69,7 @@ type
       {Gets application to handle current exception.
       }
   protected // do not make strict
-    { IWBExternal7: defined in type library }
+    { IWBExternal8: defined in type library }
     procedure UpdateDbase; safecall;
       {Updates database from internet.
       }
@@ -78,9 +78,6 @@ type
       {Displays a named snippet.
         @param SnippetName [in] Name of snippet to display.
         @param UserDefined [in] Whether snippet is user defined.
-      }
-    procedure CompileSnippet; safecall;
-      {Compiles the current snippet via notifier.
       }
     procedure ShowHint(const Hint: WideString); safecall;
       {Displays a hint.
@@ -125,18 +122,6 @@ uses
 
 { TWBExternal }
 
-procedure TWBExternal.CompileSnippet;
-  {Compiles the current snippet.
-  }
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.CompileSnippet;
-  except
-    HandleException;
-  end;
-end;
-
 procedure TWBExternal.ConfigCompilers;
   {Displays the Configure Compilers dialog box.
   }
@@ -160,7 +145,7 @@ begin
   ExeName := TAppInfo.AppExeFilePath;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
-  inherited Create(TypeLib, IWBExternal7);
+  inherited Create(TypeLib, IWBExternal8);
 end;
 
 procedure TWBExternal.DisplayCategory(const CatID: WideString);
