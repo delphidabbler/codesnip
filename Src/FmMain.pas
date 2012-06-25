@@ -1584,6 +1584,8 @@ begin
       AddAction(actCopySnippet, cDetailPopupMenuDefault);
       AddAction(actCopySource, cDetailPopupMenuDefault);
       AddSpacer(cDetailPopupMenuDefault);
+      AddAction(actTestCompile, cDetailPopupMenuDefault);
+      AddSpacer(cDetailPopupMenuDefault);
       AddAction(actSaveSnippet, cDetailPopupMenuDefault);
       AddAction(actPrint, cDetailPopupMenuDefault);
       AddSpacer(cDetailPopupMenuDefault);
