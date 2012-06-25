@@ -89,7 +89,6 @@ type
     edName: TEdit;
     edSourceCode: TMemo;
     edUnit: TEdit;
-    frmExtraInstructions: TFixedHTMLDlgFrame;
     ilMain: TImageList;
     lbCompilers: TListBox;
     lblCategories: TLabel;
@@ -174,11 +173,6 @@ type
     fSourceMemoHelper: TMemoHelper; // Helper for working with source code memo
     fMemoCaretPosDisplayMgr: TMemoCaretPosDisplayMgr;
                                     // Manages display of memo caret positions
-    procedure UpdateTabSheetCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
-      {Updates CSS used for HTML displayed in frames on tab sheets.
-        @param Sender [in] Not used.
-        @param CSSBuilder [in] Object used to update CSS.
-      }
     procedure PopulateControls;
       {Populates controls with dynamic data.
       }
@@ -545,10 +539,10 @@ begin
   TCtrlArranger.MoveToRightOf(cbKind, lblSnippetKindHelp, 12);
 
   // tsComments
-  TCtrlArranger.AlignTops([lblExtra, lblExtraCaretPos]);
+  TCtrlArranger.AlignVCentres(3, [lblExtra, lblExtraCaretPos]);
+  TCtrlArranger.AlignRights([frmExtra, lblExtraCaretPos]);
   TCtrlArranger.MoveBelow([lblExtra, lblExtraCaretPos], frmExtra, 4);
-  TCtrlArranger.MoveBelow(frmExtra, frmExtraInstructions, 4);
-  TCtrlArranger.MoveBelow(frmExtraInstructions, btnViewExtra);
+  TCtrlArranger.MoveBelow(frmExtra, btnViewExtra, 12);
 
   // tsCompileResults
   lblViewCompErrsKey.Top := TCtrlArranger.BottomOf(lblViewCompErrs);
@@ -821,9 +815,6 @@ begin
   PopulateControls;
   // Initialise controls to default values
   InitControls;
-  // Set up CSS builder for extra instructions frame (HTML loading is delayed
-  // until appropriate tab is displayed)
-  frmExtraInstructions.OnBuildCSS := UpdateTabSheetCSS;
   // Select first tab sheet
   pcMain.ActivePageIndex := 0;
 end;
@@ -853,15 +844,6 @@ procedure TSnippetsEditorDlg.pcMainChange(Sender: TObject);
   }
 begin
   inherited;
-  if pcMain.ActivePage = tsComments then
-  begin
-    // We have to load instructions here, since loading them when comments tab
-    // is hidden causes dialog box to freeze and not be displayed. We may only
-    // load the content when tab is visible. The HTML is loaded each time the
-    // tab is displayed, but there is no noticable lag as a result.
-    frmExtraInstructions.Initialise('dlg-userdb-extra.html');
-    frmExtraInstructions.Height := frmExtraInstructions.DocHeight;
-  end;
   // We always hide "view errors" link whenever page changes since snippet
   // properties may have changed since page was last accessed
   pnlViewCompErrs.Hide;
@@ -952,41 +934,6 @@ begin
   fXRefsCLBMgr.Restore;
   clbUnits.Enabled := EditSnippetKind <> skUnit;
   edUnit.Enabled := EditSnippetKind <> skUnit;
-end;
-
-procedure TSnippetsEditorDlg.UpdateTabSheetCSS(Sender: TObject;
-  const CSSBuilder: TCSSBuilder);
-  {Updates CSS used for HTML displayed in frames on tab sheets.
-    @param Sender [in] Not used.
-    @param CSSBuilder [in] Object used to update CSS.
-  }
-var
-  DefaultFont: TFont; // font used for dialog box content (not controls)
-begin
-  // Build default font and apply to HTML frame
-  DefaultFont := TFont.Create;
-  try
-    TFontHelper.SetDefaultFont(DefaultFont, True);
-    with CSSBuilder.Selectors['body'] do
-    begin
-      AddProperty(TCSS.FontProps(DefaultFont));
-      if ThemeServicesEx.ThemesEnabled then
-        // For themed windows only, modify background colour to suit tab sheet
-        // background
-        AddProperty(TCSS.BackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
-    end;
-    // Add definitions of custom classes used in extra info example frame
-    // font style of REML tags
-    with CSSBuilder.AddSelector('.elem') do
-    begin
-      AddProperty(TCSS.ColorProp(clREMLTags));
-      AddProperty(
-        TCSS.FontFamilyProp(TFontHelper.DefaultMonoFontName, cfgMonoSpace)
-      );
-    end;
-  finally
-    FreeAndNil(DefaultFont);
-  end;
 end;
 
 procedure TSnippetsEditorDlg.ValidateData;
