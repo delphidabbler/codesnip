@@ -3,48 +3,40 @@ object SnippetsActiveTextEdFrame: TSnippetsActiveTextEdFrame
   Top = 0
   Width = 454
   Height = 116
+  Color = clWindow
+  ParentBackground = False
+  ParentColor = False
   TabOrder = 0
-  DesignSize = (
-    454
-    116)
   object edText: TMemo
     Left = 0
     Top = 0
     Width = 454
-    Height = 95
-    Align = alTop
-    Anchors = [akLeft, akTop, akRight, akBottom]
+    Height = 93
+    Align = alClient
     PopupMenu = mnuEdit
     ScrollBars = ssVertical
     TabOrder = 0
-    ExplicitTop = -4
-    ExplicitHeight = 97
+    ExplicitTop = 46
+    ExplicitHeight = 95
   end
-  object rbPlainTextMode: TRadioButton
+  object tcEditMode: TTabControl
     Left = 0
-    Top = 97
-    Width = 113
-    Height = 17
-    Action = actSwitchToPlainTextMode
-    Anchors = [akLeft, akBottom]
+    Top = 93
+    Width = 454
+    Height = 23
+    Align = alBottom
+    Style = tsFlatButtons
     TabOrder = 1
-    TabStop = True
-    ExplicitTop = 93
-  end
-  object rbREMLMode: TRadioButton
-    Left = 111
-    Top = 97
-    Width = 113
-    Height = 17
-    Action = actSwitchToREMLMode
-    Anchors = [akLeft, akBottom]
-    TabOrder = 2
-    TabStop = True
-    ExplicitTop = 93
+    Tabs.Strings = (
+      'Plain Text'
+      'Markup')
+    TabIndex = 0
+    OnChange = tcEditModeChange
+    ExplicitTop = 0
   end
   object alEditor: TActionList
-    Left = 63
-    Top = 5
+    Left = 47
+    Top = 29
     object actConvertToPlainText: TAction
       Caption = 'Convert To Plain Text'
       OnExecute = actConvertToPlainTextExecute
@@ -65,8 +57,8 @@ object SnippetsActiveTextEdFrame: TSnippetsActiveTextEdFrame
     end
   end
   object mnuEdit: TPopupMenu
-    Left = 15
-    Top = 5
+    Left = 7
+    Top = 29
     object miConvertToPlainText: TMenuItem
       Action = actConvertToPlainText
     end

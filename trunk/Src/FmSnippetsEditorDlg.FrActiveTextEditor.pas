@@ -17,19 +17,20 @@
 
 unit FmSnippetsEditorDlg.FrActiveTextEditor;
 
+
 interface
 
-uses
-  Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, Menus, ActnList, StdCtrls,
 
+uses
+  // Delphi
+  Forms, ComCtrls, Menus, Classes, ActnList, Controls, StdCtrls,
+  // Project
   ActiveText.UMain;
+
 
 type
   TSnippetsActiveTextEdFrame = class(TFrame)
     edText: TMemo;
-    rbPlainTextMode: TRadioButton;
-    rbREMLMode: TRadioButton;
     alEditor: TActionList;
     mnuEdit: TPopupMenu;
     miConvertToPlainText: TMenuItem;
@@ -38,12 +39,14 @@ type
     actConvertToREML: TAction;
     actSwitchToPlainTextMode: TAction;
     actSwitchToREMLMode: TAction;
+    tcEditMode: TTabControl;
     procedure actConvertToPlainTextExecute(Sender: TObject);
     procedure actConvertToREMLExecute(Sender: TObject);
     procedure actSwitchToPlainTextModeExecute(Sender: TObject);
     procedure actSwitchToREMLModeExecute(Sender: TObject);
     procedure actConvertToPlainTextUpdate(Sender: TObject);
     procedure actConvertToREMLUpdate(Sender: TObject);
+    procedure tcEditModeChange(Sender: TObject);
   public
     type
       TEditMode = (emPlainText, emREML, emAuto);
@@ -71,13 +74,15 @@ type
       read fDefaultEditMode write fDefaultEditMode;
   end;
 
+
 implementation
 
+
 uses
-  ActiveText.UValidator, FmViewExtraDlg,
-  UConsts, UCtrlArranger, UExceptions, UIStringList, USnippetExtraHelper,
-  USnippetValidator,
-  UStrUtils;
+  // Project
+  ActiveText.UValidator, FmViewExtraDlg, UConsts, UExceptions, UIStringList,
+  USnippetExtraHelper, UStrUtils;
+
 
 {$R *.dfm}
 
@@ -223,7 +228,7 @@ var
   Line: string;
 begin
   Result := TActiveTextFactory.CreateActiveText;
-  Text := Trim(Text);
+  Text := StrTrim(Text);
   if Text = '' then
     Exit;
   { TODO: this code is similar (but safer) than
@@ -284,23 +289,21 @@ end;
 
 procedure TSnippetsActiveTextEdFrame.SetEditMode(AMode: TEditMode);
 begin
+  Assert(AMode <> emAuto, ClassName + '.SetEditMode: AMode is emAuto');
   fEditMode := AMode;
   case fEditMode of
     emPlainText:
-    begin
-      rbPlainTextMode.Checked := True;
-      rbREMLMode.Checked := False;
-    end;
+      tcEditMode.TabIndex := 0;
     emREML:
-    begin
-      rbPlainTextMode.Checked := False;
-      rbREMLMode.Checked := True;
-    end;
-    emAuto:
-    begin
-      rbPlainTextMode.Checked := False;
-      rbREMLMode.Checked := False;
-    end;
+      tcEditMode.TabIndex := 1;
+  end;
+end;
+
+procedure TSnippetsActiveTextEdFrame.tcEditModeChange(Sender: TObject);
+begin
+  case tcEditMode.TabIndex of
+    0: SetEditMode(emPlainText);
+    1: SetEditMode(emREML);
   end;
 end;
 
