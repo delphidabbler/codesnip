@@ -524,8 +524,14 @@ begin
     [lblDescription, frmDescription]
   );
   TCtrlArranger.AlignTops(
-    [lblDescription, frmDescription],
+    [lblDescription, frmDescription, btnViewDescription],
     TCtrlArranger.BottomOf([lblName, edName], 8)
+  );
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(
+      [lblDescription, frmDescription, btnViewDescription], 8
+    ),
+    [lblKind, cbKind, lblSnippetKindHelp]
   );
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf([lblKind, cbKind, lblSnippetKindHelp], 8),

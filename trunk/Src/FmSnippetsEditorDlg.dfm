@@ -26,7 +26,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       OnMouseDown = pcMainMouseDown
       object tsCode: TTabSheet
         Caption = 'Code'
-        ExplicitLeft = 0
         object lblDescription: TLabel
           Left = 3
           Top = 41
@@ -134,26 +133,26 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Left = 80
           Top = 35
           Width = 462
-          Height = 70
+          Height = 78
+          Color = clWindow
+          ParentBackground = False
+          ParentColor = False
           TabOrder = 1
           ExplicitLeft = 80
           ExplicitTop = 35
           ExplicitWidth = 462
-          ExplicitHeight = 70
+          ExplicitHeight = 78
           inherited edText: TMemo
             Width = 462
-            Height = 49
-            ExplicitLeft = 8
-            ExplicitTop = 0
-            ExplicitHeight = 49
+            Height = 55
+            ExplicitTop = 23
+            ExplicitWidth = 462
+            ExplicitHeight = 47
           end
-          inherited rbPlainTextMode: TRadioButton
-            Top = 51
-            ExplicitTop = 97
-          end
-          inherited rbREMLMode: TRadioButton
-            Top = 51
-            ExplicitTop = 97
+          inherited tcEditMode: TTabControl
+            Top = 55
+            Width = 462
+            ExplicitWidth = 462
           end
         end
         object btnViewDescription: TButton
