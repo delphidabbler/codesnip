@@ -198,6 +198,10 @@
 		<param name="Local" value="HTML\license.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="markup editor">
+		<param name="Local" value="HTML\markup_editor.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="menus">
 		<param name="Local" value="HTML\main_menu.htm">
 		</OBJECT>
