@@ -1509,7 +1509,6 @@ begin
       SetUpdateDbaseAction(actUpdateDbase);
       SetDisplaySnippetAction(TActionFactory.CreateSnippetAction(Self));
       SetDisplayCategoryAction(TActionFactory.CreateCategoryAction(Self));
-      SetCompileSnippetAction(actTestCompile);
       SetShowHintAction(
         TActionFactory.CreateHintAction(Self, ActBrowserHintExecute)
       );

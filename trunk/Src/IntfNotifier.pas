@@ -69,9 +69,6 @@ type
       {Displays an identified category.
         @param CatID [in] Id of category to display.
       }
-    procedure CompileSnippet;
-      {Compiles the current snippet.
-      }
     procedure ShowHint(const Hint: WideString);
       {Displays a hint.
         @param Hint [in] Hint to be displayed.
@@ -116,11 +113,6 @@ type
       }
     procedure SetDisplaySnippetAction(const Action: TBasicAction);
       {Sets action triggered when a named snippet is requested to be displayed.
-        @param Action [in] Required action.
-      }
-    procedure SetCompileSnippetAction(const Action: TBasicAction);
-      {Sets action triggered when user wants to test-compile the current
-      snippet.
         @param Action [in] Required action.
       }
     procedure SetShowHintAction(const Action: TBasicAction);
