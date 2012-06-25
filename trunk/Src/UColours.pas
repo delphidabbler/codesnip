@@ -79,8 +79,7 @@ const
   // user defined snippets
   clUserSnippet         = clBlue;       // names of user snippets
 
-  // REML markup tags
-  clREMLTags            = clPurple;     // highlighted REML tags
+  // markup tags
   clVarText             = clPurple;     // <var> tag text
 
   // easter egg
