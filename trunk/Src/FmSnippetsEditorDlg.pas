@@ -49,7 +49,7 @@ uses
   FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UBaseObjects, UCategoryListAdapter,
   UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, ULEDImageList,
   UMemoCaretPosDisplayMgr, UMemoHelper, USnipKindListAdapter,
-  USnippetsChkListMgr, UUnitsChkListMgr;
+  USnippetsChkListMgr, UUnitsChkListMgr, FmSnippetsEditorDlg.FrActiveTextEditor;
 
 
 type
@@ -86,7 +86,6 @@ type
     clbDepends: TCheckListBox;
     clbUnits: TCheckListBox;
     clbXRefs: TCheckListBox;
-    edDescription: TEdit;
     edExtra: TMemo;
     edName: TEdit;
     edSourceCode: TMemo;
@@ -125,6 +124,9 @@ type
     tsComments: TTabSheet;
     tsCompileResults: TTabSheet;
     tsReferences: TTabSheet;
+    frmDescription: TSnippetsActiveTextEdFrame;
+    btnViewDescription: TButton;
+    actViewDescription: TAction;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -151,6 +153,8 @@ type
     ///  a tab is clicked.</remarks>
     procedure pcMainMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+    procedure actViewDescriptionExecute(Sender: TObject);
+    procedure actViewDescriptionUpdate(Sender: TObject);
   strict private
     fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
@@ -400,6 +404,16 @@ begin
   SetAllCompilerResults(crSuccess);
 end;
 
+procedure TSnippetsEditorDlg.actViewDescriptionExecute(Sender: TObject);
+begin
+  frmDescription.Preview;
+end;
+
+procedure TSnippetsEditorDlg.actViewDescriptionUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled := frmDescription.CanPreview;
+end;
+
 procedure TSnippetsEditorDlg.actViewErrorsExecute(Sender: TObject);
   {Displays compiler errors.
     @param Sender [in] Not used.
@@ -500,15 +514,18 @@ procedure TSnippetsEditorDlg.ArrangeForm;
   }
 begin
   // tsCode
-  TCtrlArranger.AlignRights([edSourceCode, lblSourceCaretPos]);
+  TCtrlArranger.AlignRights(
+    [edSourceCode, lblSourceCaretPos, btnViewDescription]
+  );
+  frmDescription.Width := btnViewDescription.Left - frmDescription.Left - 8;
   TCtrlArranger.AlignVCentres(3, [lblName, edName]);
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf([lblName, edName], 8),
-    [lblDescription, edDescription]
+    [lblDescription, frmDescription]
   );
-  TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf([lblDescription, edDescription], 8),
-    [lblKind, cbKind, lblSnippetKindHelp]
+  TCtrlArranger.AlignTops(
+    [lblDescription, frmDescription],
+    TCtrlArranger.BottomOf([lblName, edName], 8)
   );
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf([lblKind, cbKind, lblSnippetKindHelp], 8),
@@ -792,8 +809,8 @@ begin
   begin
     // We are editing a snippet: initialise controls from snippet's properties
     edSourceCode.Text := fSnippet.SourceCode;
-    // TODO -cURGENT: change to use correct for of editor
-    edDescription.Text := fSnippet.Description.ToString;
+    frmDescription.DefaultEditMode := emAuto;
+    frmDescription.ActiveText := fSnippet.Description;
     edName.Text := fSnippet.Name;
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
     edExtra.Text := TSnippetExtraHelper.BuildREMLMarkup(fSnippet.Extra);
@@ -809,7 +826,8 @@ begin
   begin
     // We are adding a new snippet: clear all controls or set default values
     edSourceCode.Clear;
-    edDescription.Clear;
+    frmDescription.DefaultEditMode := emPlainText;
+    frmDescription.Clear;
     edName.Clear;
     cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatID);
     if cbCategories.ItemIndex = -1 then
@@ -928,10 +946,7 @@ begin
   begin
     Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
     Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
-    // TODO -cURGENT: change this as required to work with active text
-    Props.Desc := TSnippetExtraHelper.BuildActiveText(
-      StrTrim(edDescription.Text)
-    );
+    (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
     Props.SourceCode := StrTrimRight(edSourceCode.Text);
     (Props.Extra as IAssignable).Assign(BuildExtraActiveText);
     Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
@@ -1029,14 +1044,6 @@ var
   ErrorMessage: string;       // receives validation error messages
   ErrorSelection: TSelection; // receives selection containing errors
 begin
-  if not TSnippetValidator.ValidateSourceCode(
-    edSourceCode.Text, ErrorMessage, ErrorSelection
-  ) then
-    raise EDataEntry.Create(ErrorMessage, edSourceCode, ErrorSelection);
-  if not TSnippetValidator.ValidateDescription(
-    edDescription.Text, ErrorMessage, ErrorSelection
-  ) then
-    raise EDataEntry.Create(ErrorMessage, edDescription, ErrorSelection);
   if not TSnippetValidator.ValidateName(
     edName.Text,
     not StrSameText(StrTrim(edName.Text), fOrigName),
@@ -1044,6 +1051,11 @@ begin
     ErrorSelection
   ) then
     raise EDataEntry.Create(ErrorMessage, edName, ErrorSelection);
+  frmDescription.Validate;
+  if not TSnippetValidator.ValidateSourceCode(
+    edSourceCode.Text, ErrorMessage, ErrorSelection
+  ) then
+    raise EDataEntry.Create(ErrorMessage, edSourceCode, ErrorSelection);
   CheckExtra;
   if not TSnippetValidator.ValidateDependsList(
     StrTrim(edName.Text), UpdateData, ErrorMessage

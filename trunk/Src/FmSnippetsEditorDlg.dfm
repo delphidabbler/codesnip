@@ -24,17 +24,15 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       TabOrder = 0
       OnChange = pcMainChange
       OnMouseDown = pcMainMouseDown
-      ExplicitHeight = 465
       object tsCode: TTabSheet
         Caption = 'Code'
-        ExplicitHeight = 437
+        ExplicitLeft = 0
         object lblDescription: TLabel
           Left = 3
           Top = 41
           Width = 56
           Height = 13
           Caption = '&Description:'
-          FocusControl = edDescription
         end
         object lblSourceCode: TLabel
           Left = 3
@@ -105,15 +103,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           ParentFont = False
           PopupMenu = mnuEditCtrls
           ScrollBars = ssBoth
-          TabOrder = 4
-        end
-        object edDescription: TEdit
-          Left = 80
-          Top = 37
-          Width = 554
-          Height = 21
-          PopupMenu = mnuEditCtrls
-          TabOrder = 1
+          TabOrder = 5
         end
         object edName: TEdit
           Left = 80
@@ -129,7 +119,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 209
           Height = 21
           Style = csDropDownList
-          TabOrder = 3
+          TabOrder = 4
         end
         object cbKind: TComboBox
           Left = 80
@@ -137,14 +127,47 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 209
           Height = 21
           Style = csDropDownList
-          TabOrder = 2
+          TabOrder = 3
           OnChange = cbKindChange
+        end
+        inline frmDescription: TSnippetsActiveTextEdFrame
+          Left = 80
+          Top = 35
+          Width = 462
+          Height = 70
+          TabOrder = 1
+          ExplicitLeft = 80
+          ExplicitTop = 35
+          ExplicitWidth = 462
+          ExplicitHeight = 70
+          inherited edText: TMemo
+            Width = 462
+            Height = 49
+            ExplicitLeft = 8
+            ExplicitTop = 0
+            ExplicitHeight = 49
+          end
+          inherited rbPlainTextMode: TRadioButton
+            Top = 51
+            ExplicitTop = 97
+          end
+          inherited rbREMLMode: TRadioButton
+            Top = 51
+            ExplicitTop = 97
+          end
+        end
+        object btnViewDescription: TButton
+          Left = 549
+          Top = 33
+          Width = 85
+          Height = 25
+          Action = actViewDescription
+          TabOrder = 2
         end
       end
       object tsReferences: TTabSheet
         Caption = 'References'
         ImageIndex = 1
-        ExplicitHeight = 437
         object lblXRefs: TLabel
           Left = 3
           Top = 3
@@ -233,7 +256,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsComments: TTabSheet
         Caption = 'Extra Information'
         ImageIndex = 2
-        ExplicitHeight = 437
         object lblExtra: TLabel
           Left = 3
           Top = 3
@@ -309,7 +331,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsCompileResults: TTabSheet
         Caption = 'Compile Results'
         ImageIndex = 3
-        ExplicitHeight = 437
         object lblCompilers: TLabel
           Left = 3
           Top = 3
@@ -511,6 +532,11 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       Caption = 'View Test &Unit...'
       OnExecute = actViewTestUnitExecute
       OnUpdate = actViewTestUnitUpdate
+    end
+    object actViewDescription: TAction
+      Caption = 'Preview...'
+      OnExecute = actViewDescriptionExecute
+      OnUpdate = actViewDescriptionUpdate
     end
   end
   object mnuEditCtrls: TPopupMenu
