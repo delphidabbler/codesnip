@@ -193,6 +193,10 @@
 			<DCCReference Include="FmSnippetsEditorDlg.pas">
 				<Form>SnippetsEditorDlg</Form>
 			</DCCReference>
+			<DCCReference Include="FmSnippetsEditorDlg.FrActiveTextEditor.pas">
+				<Form>SnippetsActiveTextEdFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
 			<DCCReference Include="FmSplash.pas">
 				<Form>SplashForm</Form>
 			</DCCReference>
