@@ -801,7 +801,7 @@ begin
     ClassName + '.InitControls: no selection in cbCategories');
   // Auto-update caret position display for source and extra info memos
   fMemoCaretPosDisplayMgr.Manage(edSourceCode, lblSourceCaretPos);
-  fMemoCaretPosDisplayMgr.Manage(frmExtra.edText, lblExtraCaretPos);
+  fMemoCaretPosDisplayMgr.Manage(frmExtra, lblExtraCaretPos);
 end;
 
 procedure TSnippetsEditorDlg.InitForm;
