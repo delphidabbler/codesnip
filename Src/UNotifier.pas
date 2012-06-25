@@ -65,8 +65,6 @@ type
       {Action that triggers database update}
     fDisplaySnippetAction: TBasicAction;
       {Action that causes a named snippet to be displayed}
-    fCompileSnippetAction: TBasicAction;
-      {Action that causes current snippet to be compiled}
     fShowHintAction: TBasicAction;
       {Action that causes a hint to be displayed}
     fConfigCompilersAction: TBasicAction;
@@ -97,9 +95,6 @@ type
     procedure DisplayCategory(const CatID: WideString);
       {Displays an identified category.
         @param CatID [in] Id of category to display.
-      }
-    procedure CompileSnippet;
-      {Compiles the current snippet.
       }
     procedure ShowHint(const Hint: WideString);
       {Displays a hint.
@@ -136,11 +131,6 @@ type
       }
     procedure SetDisplaySnippetAction(const Action: TBasicAction);
       {Sets action triggered when a named snippet is requested to be displayed.
-        @param Action [in] Required action.
-      }
-    procedure SetCompileSnippetAction(const Action: TBasicAction);
-      {Sets action triggered when user wants to test-compile the current
-      snippet.
         @param Action [in] Required action.
       }
     procedure SetShowHintAction(const Action: TBasicAction);
@@ -223,14 +213,6 @@ begin
     fOverviewStyleChangeActions[Style].Execute;
 end;
 
-procedure TNotifier.CompileSnippet;
-  {Compiles the current snippet.
-  }
-begin
-  if Assigned(fCompileSnippetAction) then
-    fCompileSnippetAction.Execute;
-end;
-
 procedure TNotifier.ConfigCompilers;
   {Displays configure compilers dialog box.
   }
@@ -284,15 +266,6 @@ begin
     (fEditSnippetAction as TEditSnippetAction).SnippetName := SnippetName;
     fEditSnippetAction.Execute;
   end;
-end;
-
-procedure TNotifier.SetCompileSnippetAction(
-  const Action: TBasicAction);
-  {Sets action triggered when user wants to test-compile the current snippet.
-    @param Action [in] Required action.
-  }
-begin
-  fCompileSnippetAction := Action;
 end;
 
 procedure TNotifier.SetConfigCompilersAction(const Action: TBasicAction);
