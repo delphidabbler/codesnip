@@ -256,6 +256,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsComments: TTabSheet
         Caption = 'Extra Information'
         ImageIndex = 2
+        ExplicitLeft = 0
         object lblExtra: TLabel
           Left = 3
           Top = 3
@@ -272,68 +273,39 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           AutoSize = False
           Caption = 'lblExtraCaretPos'
         end
-        inline frmExtraInstructions: TFixedHTMLDlgFrame
-          Left = 3
-          Top = 172
-          Width = 631
-          Height = 122
-          TabOrder = 0
-          TabStop = True
-          ExplicitLeft = 3
-          ExplicitTop = 172
-          ExplicitWidth = 631
-          ExplicitHeight = 122
-          inherited pnlBrowser: TPanel
-            Width = 631
-            Height = 122
-            ExplicitWidth = 631
-            ExplicitHeight = 122
-            inherited wbBrowser: TWebBrowser
-              Width = 631
-              Height = 122
-              ExplicitTop = 1
-              ExplicitWidth = 631
-              ExplicitHeight = 122
-              ControlData = {
-                4C000000374100009C0C00000000000000000000000000000000000000000000
-                000000004C000000000000000000000001000000E0D057007335CF11AE690800
-                2B2E126208000000000000004C0000000114020000000000C000000000000046
-                8000000000000000000000000000000000000000000000000000000000000000
-                00000000000000000100000000000000000000000000000000000000}
-            end
-          end
-        end
         object btnViewExtra: TButton
           Left = 3
           Top = 409
-          Width = 166
+          Width = 85
           Height = 25
           Action = actViewExtra
           TabOrder = 1
         end
         inline frmExtra: TSnippetsActiveTextEdFrame
-          Left = 0
+          Left = 3
           Top = 22
-          Width = 631
-          Height = 155
+          Width = 632
+          Height = 381
           Color = clWindow
           ParentBackground = False
           ParentColor = False
-          TabOrder = 2
+          TabOrder = 0
+          ExplicitLeft = 3
           ExplicitTop = 22
-          ExplicitWidth = 631
-          ExplicitHeight = 155
+          ExplicitWidth = 632
+          ExplicitHeight = 381
           inherited edText: TMemo
-            Width = 631
-            Height = 132
+            Width = 632
+            Height = 358
+            ExplicitLeft = 3
             ExplicitTop = 0
             ExplicitWidth = 631
-            ExplicitHeight = 93
+            ExplicitHeight = 316
           end
           inherited tcEditMode: TTabControl
-            Top = 132
-            Width = 631
-            ExplicitTop = 93
+            Top = 358
+            Width = 632
+            ExplicitTop = 132
             ExplicitWidth = 631
           end
         end
@@ -500,7 +472,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       OnExecute = actDependenciesExecute
     end
     object actViewExtra: TAction
-      Caption = 'Render Extra Information...'
+      Caption = 'Preview...'
       OnExecute = actViewExtraExecute
       OnUpdate = actViewExtraUpdate
     end
