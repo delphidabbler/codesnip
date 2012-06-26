@@ -21,6 +21,9 @@
  *      exist as aggregated objects or as stand-alone reference counted objects.
  *      This implementation is based on code suggested by Hallvard VossBotn, as
  *      presented in Eric Harmon's book "Delphi COM programming".
+ *   6) TConditionalFreeObject:
+ *      An abstract base class for objects that cannot be destroyed unless some
+ *      condition is met.
  *
  * Also provides an interface - INoPublicConstruct - that can be supported by
  * objects that don't allow public construction but cannot inherited from
@@ -226,6 +229,33 @@ type
       nil if stand-alone}
   end;
 
+  {
+  TConditionalFreeObject:
+    Abstract base class for objects that cannot be destroyed unless some
+    condition is met. Descendants must override CanDestroy which must return
+    True if the object can be freed. Attempts to free the object when CanDestroy
+    returns False fail and the object remains in existance.
+  }
+  TConditionalFreeObject = class abstract(TObject)
+  strict protected
+    procedure Finalize; virtual;
+      {Tidies up object. Descendants should override this method instead of
+      destructor.
+      }
+    function CanDestroy: Boolean; virtual; abstract;
+      {Determines if the object can be destroyed.
+        @return True if object can be destroyed.
+      }
+  public
+    destructor Destroy; override;
+      {Class destructor tidies up and tears down object only if object can be
+      freed.
+      }
+    procedure FreeInstance; override;
+      {Frees instance data only if object can be destroyed.
+      }
+  end;
+
 
 implementation
 
@@ -388,6 +418,38 @@ begin
     Result := IInterface(fController)._Release
   else
     Result := inherited _Release;
+end;
+
+{ TConditionalFreeObject }
+
+destructor TConditionalFreeObject.Destroy;
+  {Class destructor tidies up and tears down object only if object can be freed.
+  }
+begin
+  // Do not override to tidy up unless you first check CanDestroy and only tidy
+  // up if it returns true. Override Finalize instead.
+  if CanDestroy then
+  begin
+    Finalize;
+    inherited;
+  end;
+end;
+
+procedure TConditionalFreeObject.Finalize;
+  {Tidies up object. Descendants should override this method instead of
+  destructor.
+  }
+begin
+  // Override this to tidy up the object instead of overriding the destructor
+end;
+
+procedure TConditionalFreeObject.FreeInstance;
+  {Frees instance data only if object can be destroyed.
+  }
+begin
+  // Check if object can be destroyed
+  if CanDestroy then
+    inherited;
 end;
 
 end.
