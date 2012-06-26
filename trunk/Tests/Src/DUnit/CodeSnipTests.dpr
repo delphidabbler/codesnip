@@ -59,7 +59,9 @@ uses
   TestUUtils in 'TestUUtils.pas',
   UUtils in '..\..\..\Src\UUtils.pas',
   UBaseObjects in '..\..\..\Src\UBaseObjects.pas',
-  TestUBaseObjects in 'TestUBaseObjects.pas';
+  TestUBaseObjects in 'TestUBaseObjects.pas',
+  USingleton in '..\..\..\Src\USingleton.pas',
+  TestUSingleton in 'TestUSingleton.pas';
 
 {$R *.RES}
 
