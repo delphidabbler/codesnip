@@ -57,7 +57,9 @@ uses
   UStrUtils in '..\..\..\Src\UStrUtils.pas',
   UConsts in '..\..\..\Src\UConsts.pas',
   TestUUtils in 'TestUUtils.pas',
-  UUtils in '..\..\..\Src\UUtils.pas';
+  UUtils in '..\..\..\Src\UUtils.pas',
+  UBaseObjects in '..\..\..\Src\UBaseObjects.pas',
+  TestUBaseObjects in 'TestUBaseObjects.pas';
 
 {$R *.RES}
 

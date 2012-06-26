@@ -33,6 +33,8 @@
 			<DCCReference Include="..\..\..\Src\UConsts.pas"/>
 			<DCCReference Include="TestUUtils.pas"/>
 			<DCCReference Include="..\..\..\Src\UUtils.pas"/>
+			<DCCReference Include="..\..\..\Src\UBaseObjects.pas"/>
+			<DCCReference Include="TestUBaseObjects.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
