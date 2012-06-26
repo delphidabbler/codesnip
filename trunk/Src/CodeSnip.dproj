@@ -482,6 +482,7 @@
 			<DCCReference Include="USettings.pas"/>
 			<DCCReference Include="UShowCaseCtrl.pas"/>
 			<DCCReference Include="USimpleDispatch.pas"/>
+			<DCCReference Include="USingleton.pas"/>
 			<DCCReference Include="USnipKindListAdapter.pas"/>
 			<DCCReference Include="USnippetAction.pas"/>
 			<DCCReference Include="USnippetCreditsParser.pas"/>

@@ -322,6 +322,7 @@ uses
   USettings in 'USettings.pas',
   UShowCaseCtrl in 'UShowCaseCtrl.pas',
   USimpleDispatch in 'USimpleDispatch.pas',
+  USingleton in 'USingleton.pas',
   USnipKindListAdapter in 'USnipKindListAdapter.pas',
   USnippetAction in 'USnippetAction.pas',
   USnippetCreditsParser in 'USnippetCreditsParser.pas',
