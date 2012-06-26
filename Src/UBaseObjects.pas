@@ -51,7 +51,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -259,6 +259,10 @@ type
 
 implementation
 
+uses
+  // Delphi
+  SysUtils;
+
 
 { TNoConstructObject }
 
@@ -267,7 +271,9 @@ constructor TNoConstructObject.Create;
   constructed.
   }
 begin
-  Assert(False, ClassName + '.Create: Constructor can''t be called');
+  raise ENoConstructException.Create(
+    ClassName + '.Create: Constructor can''t be called'
+  );
 end;
 
 { TNoPublicConstructObject }
@@ -277,7 +283,9 @@ constructor TNoPublicConstructObject.Create;
   never constructed.
   }
 begin
-  Assert(False, ClassName + '.Create: Public constructor can''t be called');
+  raise ENoConstructException.Create(
+    ClassName + '.Create: Public constructor can''t be called'
+  );
 end;
 
 constructor TNoPublicConstructObject.InternalCreate;
@@ -296,7 +304,9 @@ constructor TNoPublicConstructIntfObject.Create;
   constructed.
   }
 begin
-  Assert(False, ClassName + '.Create: Public constructor can''t be called');
+  raise ENoConstructException.Create(
+    ClassName + '.Create: Public constructor can''t be called'
+  );
 end;
 
 constructor TNoPublicConstructIntfObject.InternalCreate;
