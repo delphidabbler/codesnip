@@ -154,7 +154,7 @@ uses
   FrDisplayPrefs in 'FrDisplayPrefs.pas' {DisplayPrefsFrame: TFrame},
   FrEasterEgg in 'FrEasterEgg.pas' {EasterEggFrame: TFrame},
   FrFixedHTMLDlg in 'FrFixedHTMLDlg.pas' {FixedHTMLDlgFrame: TFrame},
-  FrGeneralPrefs in 'FrGeneralPrefs.pas',
+  FrGeneralPrefs in 'FrGeneralPrefs.pas' {GeneralPrefsFrame: TFrame},
   FrHiliterPrefs in 'FrHiliterPrefs.pas' {HiliterPrefsFrame: TFrame},
   FrHTMLDlg in 'FrHTMLDlg.pas' {HTMLDlgFrame: TFrame},
   FrHTMLPreview in 'FrHTMLPreview.pas' {HTMLPreviewFrame: TFrame},
