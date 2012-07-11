@@ -44,7 +44,7 @@ uses
   // Delphi
   Controls, StdCtrls, Classes,
   // Project
-  FrPrefsBase, UMeasurement, UPreferences;
+  FrPrefsBase, UColorBoxEx, UColorDialogEx, UPreferences;
 
 
 type
@@ -60,11 +60,17 @@ type
     cbOverviewTree: TComboBox;
     chkHideEmptySections: TCheckBox;
     chkSnippetsInNewTab: TCheckBox;
+    lblMainColour: TLabel;
+    lblUserColour: TLabel;
     procedure chkHideEmptySectionsClick(Sender: TObject);
   strict private
     var
       ///  <summary>Flag indicating if changes affect UI.</summary>
       fUIChanged: Boolean;
+      fMainColourBox: TColorBoxEx;
+      fMainColourDlg: TColorDialogEx;
+      fUserColourBox: TColorBoxEx;
+      fUserColourDlg: TColorDialogEx;
     procedure SelectOverviewTreeState(const State: TOverviewStartState);
       {Selects combo box item associated with a overview treeview startup state.
         @param State [in] Startup state to be selected.
@@ -74,6 +80,9 @@ type
         @param State [in] State for which description is required.
         @return Required description.
       }
+    function CreateCustomColourBox(const ColourDlg: TColorDialogEx):
+      TColorBoxEx;
+    procedure ColourBoxChangeHandler(Sender: TObject);
   public
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Sets up frame and populates controls.
@@ -112,7 +121,7 @@ implementation
 
 uses
   // Delphi
-  Math,
+  Math, Graphics, ExtCtrls,
   // Project
   FmPreferencesDlg, UCtrlArranger, UGraphicUtils;
 
@@ -128,8 +137,14 @@ procedure TDisplayPrefsFrame.Activate(const Prefs: IPreferences);
   }
 begin
   SelectOverviewTreeState(Prefs.OverviewStartState);
+  chkHideEmptySections.OnClick := nil;  // prevent OnClick when Checked set
   chkHideEmptySections.Checked := not Prefs.ShowEmptySections;
+  chkHideEmptySections.OnClick := chkHideEmptySectionsClick;
   chkSnippetsInNewTab.Checked := Prefs.ShowNewSnippetsInNewTabs;
+  fMainColourBox.Selected := Prefs.DBHeadingColours[False];
+  fUserColourBox.Selected := Prefs.DBHeadingColours[True];
+  Prefs.DBHeadingCustomColours[False].CopyTo(fMainColourDlg.CustomColors, True);
+  Prefs.DBHeadingCustomColours[True].CopyTo(fUserColourDlg.CustomColors, True);
 end;
 
 procedure TDisplayPrefsFrame.ArrangeControls;
@@ -137,16 +152,34 @@ procedure TDisplayPrefsFrame.ArrangeControls;
   }
 begin
   TCtrlArranger.AlignLefts(
-    [lblOverviewTree, chkHideEmptySections, chkSnippetsInNewTab], 0
+    [
+      lblOverviewTree, chkHideEmptySections, chkSnippetsInNewTab,
+      lblMainColour, lblUserColour
+    ],
+    0
   );
-  TCtrlArranger.MoveToRightOf(lblOverviewTree, cbOverviewTree, 8);
-  chkHideEmptySections.Width := Self.Width - 16;
-  chkSnippetsInNewTab.Width := Self.Width - 16;
+  TCtrlArranger.AlignLefts(
+    [cbOverviewTree, fMainColourBox, fUserColourBox],
+    TCtrlArranger.RightOf(
+      [lblOverviewTree, lblMainColour, lblUserColour],
+      8
+    )
+  );
   TCtrlArranger.AlignVCentres(0, [lblOverviewTree, cbOverviewTree]);
   TCtrlArranger.MoveBelow(
-    [lblOverviewTree, cbOverviewTree], chkHideEmptySections, 8
+    [lblOverviewTree, cbOverviewTree], chkSnippetsInNewTab, 24
   );
-  TCtrlArranger.MoveBelow(chkHideEmptySections, chkSnippetsInNewTab, 8);
+  TCtrlArranger.MoveBelow(chkSnippetsInNewTab, chkHideEmptySections, 8);
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf(chkHideEmptySections, 24),
+    [lblMainColour, fMainColourBox]
+  );
+  TCtrlArranger.AlignVCentres(
+    TCtrlArranger.BottomOf([lblMainColour, fMainColourBox], 8),
+    [lblUserColour, fUserColourBox]
+  );
+  chkHideEmptySections.Width := Self.Width - 16;
+  chkSnippetsInNewTab.Width := Self.Width - 16;
 end;
 
 procedure TDisplayPrefsFrame.chkHideEmptySectionsClick(Sender: TObject);
@@ -158,10 +191,17 @@ begin
   fUIChanged := True;
 end;
 
+procedure TDisplayPrefsFrame.ColourBoxChangeHandler(Sender: TObject);
+begin
+  fUIChanged := True;
+end;
+
 constructor TDisplayPrefsFrame.Create(AOwner: TComponent);
   {Class constructor. Sets up frame and populates controls.
     @param AOwner [in] Component that owns frame.
   }
+resourcestring
+  sColourDlgTitle = 'Heading Colour';
 var
   OTStateIdx: TOverviewStartState;  // loops thru each overview tree start state
 begin
@@ -172,6 +212,35 @@ begin
     cbOverviewTree.Items.AddObject(
       OverviewTreeStateDesc(OTStateIdx), TObject(OTStateIdx)
     );
+  // Create colour dialogue boxes
+  fMainColourDlg := TColorDialogEx.Create(Self);
+  fMainColourDlg.Title := sColourDlgTitle;
+  fUserColourDlg := TColorDialogEx.Create(Self);
+  fUserColourDlg.Title := sColourDlgTitle;
+  // Create colour combo boxes
+  fMainColourBox := CreateCustomColourBox(fMainColourDlg);
+  fMainColourBox.TabOrder := 3;
+  fUserColourBox := CreateCustomColourBox(fUserColourDlg);
+  fUserColourBox.TabOrder := 4;
+end;
+
+function TDisplayPrefsFrame.CreateCustomColourBox(
+  const ColourDlg: TColorDialogEx): TColorBoxEx;
+begin
+  // Create and initialise custom color combo box
+  Result := TColorBoxEx.Create(Self);  // automatically freed
+  Result.Parent := Self;
+  Result.Width := 137;
+  Result.Height := 22;
+  Result.NoneColorColor := clNone;
+  // cbCustomColor not included in Style since assigning ColorDialog property
+  // sets this style
+  Result.Style := [cbStandardColors, cbExtendedColors, cbSystemColors,
+    cbIncludeNone, cbPrettyNames];
+  Result.ItemHeight := 16;
+  if Assigned(ColourDlg) then
+    Result.ColorDialog := ColourDlg;
+  Result.OnChange := ColourBoxChangeHandler;
 end;
 
 procedure TDisplayPrefsFrame.Deactivate(const Prefs: IPreferences);
@@ -183,6 +252,14 @@ begin
   Prefs.ShowEmptySections := not chkHideEmptySections.Checked;
   Prefs.OverviewStartState := TOverviewStartState(
     cbOverviewTree.Items.Objects[cbOverviewTree.ItemIndex]
+  );
+  Prefs.DBHeadingColours[False] := fMainColourBox.Selected;
+  Prefs.DBHeadingColours[True] := fUserColourBox.Selected;
+  Prefs.DBHeadingCustomColours[False].CopyFrom(
+    fMainColourDlg.CustomColors, True
+  );
+  Prefs.DBHeadingCustomColours[True].CopyFrom(
+    fUserColourDlg.CustomColors, True
   );
 end;
 
