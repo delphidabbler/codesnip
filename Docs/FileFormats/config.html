@@ -688,11 +688,11 @@
 </dl>
 
 <h4>
-  [Prefs:General] section
+  [Prefs:Display] section
 </h4>
 
 <p>
-  Stores general application preferences.
+  Stores main display preferences.
 </p>
 
 <p>
@@ -700,13 +700,6 @@
 </p>
 
 <dl class="indent">
-  <dt>
-    <strong>Units</strong> (Integer)
-  </dt>
-  <dd>
-    A code that records the units of measurement used by the application: 0
-    &rArr; inches; 1 &rArr; millimeters.
-  </dd>
   <dt>
     <strong>OverviewStartState</strong> (Integer)
   </dt>
@@ -729,6 +722,86 @@
     Flag that specifies how newly created snippets and categories are displayed
     in detail pane. True &rArr; new tab created for each new item; False &rArr;
     new items overwrite item in selected tab.
+  </dd>
+  <dt>
+    <strong>MainDBHeadingColour</strong> (Integer)
+  </dt>
+  <dd>
+    Colour to be used to display headings of items from main database.
+  </dd>
+  <dt>
+    <strong>UserDBHeadingColour</strong> (Integer)
+  </dt>
+  <dd>
+    Colour to be used to display headings of items from user database.
+  </dd>
+  <dt>
+    <strong>MainDBHeadingCustomColourCount</strong> (Integer)
+  </dt>
+  <dd>
+    Number of recorded custom colours for main database item headings.
+  </dd>
+  <dl>
+    <strong>MainDBHeadingCustomColour<em>XXX</em></strong> (String)
+  </dl>
+  <dd>
+    <div class="half-spaced">
+      One entry for each recorded custom colours for main database item
+      headings, where <em>XXX</em> ranges from 0 to <strong>
+      MainDBHeadingCustomColourCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      The value is a definition of a custom colour in the format used by the
+      <var>TColorDialog</var> dialogue box. This format is
+      <em>ColourID</em>=<em>ColourNum</em> where <em>ColourID</em> is a value
+      from &quot;ColorA&quot; to &quot;ColorP&quot; and <em>ColourNum</em> is
+      the hex representation of the colour.
+    </div>
+  </dd>
+  <dt>
+    <strong>UserDBHeadingCustomColourCount</strong> (Integer)
+  </dt>
+  <dd>
+    Number of recorded custom colours for user database item headings.
+  </dd>
+  <dl>
+    <strong>UserDBHeadingCustomColour<em>XXX</em></strong> (String)
+  </dl>
+  <dd>
+    <div class="half-spaced">
+      One entry for each recorded custom colours for user database item
+      headings, where <em>XXX</em> ranges from 0 to <strong>
+      UserDBHeadingCustomColourCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      The value is a definition of a custom colour in the format used by the
+      <var>TColorDialog</var> dialogue box. This format is
+      <em>ColourID</em>=<em>ColourNum</em> where <em>ColourID</em> is a value
+      from &quot;ColorA&quot; to &quot;ColorP&quot; and <em>ColourNum</em> is
+      the hex representation of the colour.
+    </div>
+  </dd>
+</dl>
+
+<h4>
+  [Prefs:General] section
+</h4>
+
+<p>
+  Stores general (miscellaneous) application preferences.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>Units</strong> (Integer)
+  </dt>
+  <dd>
+    A code that records the units of measurement used by the application: 0
+    &rArr; inches; 1 &rArr; millimeters.
   </dd>
 </dl>
 
@@ -789,7 +862,7 @@
     <strong>CustomColourCount</strong> (Integer)
   </dt>
   <dd>
-    Number of recorded custom colours.
+    Number of recorded custom colours available for use by highlighter elements.
   </dd>
   <dl>
     <strong>CustomColour<em>XXX</em></strong> (String)
@@ -801,10 +874,10 @@
     </div>
     <div class="half-spaced">
       The value is a definition of a custom colour in the format used by the
-      Color dialogue box. This format is <em>ColourID</em>=<em>ColourNum</em>
-      where <em>ColourID</em> is a value from &quot;ColorA&quot; to
-      &quot;ColorP&quot; and <em>ColourNum</em> is the hex representation of the
-      colour.
+      <var>TColorDialog</var> dialogue box. This format is
+      <em>ColourID</em>=<em>ColourNum</em> where <em>ColourID</em> is a value
+      from &quot;ColorA&quot; to &quot;ColorP&quot; and <em>ColourNum</em> is
+      the hex representation of the colour.
     </div>
   </dd>
 </dl>
@@ -814,7 +887,7 @@
 </h4>
 
 <p>
-  Stores preferences that determine how items from the CodeSnip news feed are 
+  Stores preferences that determine how items from the CodeSnip news feed are
   displayed.
 </p>
 
