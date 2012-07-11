@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -72,15 +72,14 @@ type
     procedure tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   strict private
-  type
-    TCommandBarItem = record
-      Action: TCustomAction;
-      ID: TCommandBarID;
-      constructor Create(AAction: TCustomAction; AID: TCommandBarID);
-    end;
-
-  type
-    TCommandBarItems = TList<TCommandBarItem>;
+    type
+      TCommandBarItem = record
+        Action: TCustomAction;
+        ID: TCommandBarID;
+        constructor Create(AAction: TCustomAction; AID: TCommandBarID);
+      end;
+    type
+      TCommandBarItems = TList<TCommandBarItem>;
   strict private
     fNotifier: INotifier;
     fCommandBarItems: TCommandBarItems;
@@ -88,7 +87,7 @@ type
     fViews: TList<IView>;
     function TabCount: Integer;
     procedure InternalSelectTab(TabIdx: Integer);
-    procedure InternalDisplay(View: IView);
+    procedure InternalDisplay(View: IView; ForceReload: Boolean);
     procedure InternalDeleteTab(TabIdx: Integer);
   public
     constructor Create(AOwner: TComponent); override;
@@ -108,6 +107,7 @@ type
     procedure IDetailPaneDisplayMgr.SelectTab = SelectTab;
     function FindTab(ViewKey: IViewKey): Integer;
     procedure Display(View: IView; const TabIdx: Integer);
+    procedure Reload;
     procedure Clear;
     function CreateTab(View: IView): Integer;
     function IsEmptyTabSet: Boolean;
@@ -173,7 +173,7 @@ end;
 
 procedure TDetailFrame.Clear;
 begin
-  InternalDisplay(TViewFactory.CreateNulView);
+  InternalDisplay(TViewFactory.CreateNulView, False);
 end;
 
 procedure TDetailFrame.CloseMultipleTabs(const KeepSelected: Boolean);
@@ -237,7 +237,7 @@ function TDetailFrame.CreateTab(View: IView): Integer;
 begin
   Result := tcViews.Tabs.Add(View.Description);
   fViews.Add(View);
-  InternalDisplay(View); // stores View in fViews again
+  InternalDisplay(View, False); // stores View in fViews again
 end;
 
 destructor TDetailFrame.Destroy;
@@ -254,7 +254,7 @@ begin
   fViews[TabIdx] := TViewFactory.Clone(View);
   tcViews.Tabs[TabIdx] := View.Description;
   if TabIdx = SelectedTab then
-    InternalDisplay(fViews[TabIdx]);
+    InternalDisplay(fViews[TabIdx], False);
 end;
 
 function TDetailFrame.FindTab(ViewKey: IViewKey): Integer;
@@ -273,15 +273,15 @@ begin
   fViews.Delete(TabIdx);
 end;
 
-procedure TDetailFrame.InternalDisplay(View: IView);
+procedure TDetailFrame.InternalDisplay(View: IView; ForceReload: Boolean);
 begin
-  (frmDetailView as IViewItemDisplayMgr).Display(View);
+  (frmDetailView as IViewItemDisplayMgr).Display(View, ForceReload);
 end;
 
 procedure TDetailFrame.InternalSelectTab(TabIdx: Integer);
 begin
   tcViews.TabIndex := TabIdx;
-  InternalDisplay(SelectedView);  // SelectedView allows for TabIdx = -1
+  InternalDisplay(SelectedView, False);  // SelectedView allows for TabIdx = -1
 end;
 
 function TDetailFrame.IsEmptyTabSet: Boolean;
@@ -322,6 +322,11 @@ begin
     InternalSelectTab(Pred(TabCount))
   else
     InternalSelectTab(Pred(SelectedTab));
+end;
+
+procedure TDetailFrame.Reload;
+begin
+  InternalDisplay(SelectedView, True);  // SelectedView allows for TabIdx = -1
 end;
 
 procedure TDetailFrame.SelectAll;
