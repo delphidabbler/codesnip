@@ -34,7 +34,7 @@
 }
 
 
-unit FrGeneralPrefs;
+unit FrDisplayPrefs;
 
 
 interface
@@ -55,14 +55,24 @@ type
     preferences entered by user. Note: Designed for use in preferences dialog
     box.
   }
-  TGeneralPrefsFrame = class(TPrefsBaseFrame)
-    cbUnits: TComboBox;
-    gbMeasurement: TGroupBox;
-    lblUnits: TLabel;
+  TDisplayPrefsFrame = class(TPrefsBaseFrame)
+    lblOverviewTree: TLabel;
+    cbOverviewTree: TComboBox;
+    chkHideEmptySections: TCheckBox;
+    chkSnippetsInNewTab: TCheckBox;
+    procedure chkHideEmptySectionsClick(Sender: TObject);
   strict private
-    procedure SelectUnits(const MU: TMeasurementUnits);
-      {Selects combo box item associated with a measurement unit.
-        @param Units [in] Measurement unit to be selected.
+    var
+      ///  <summary>Flag indicating if changes affect UI.</summary>
+      fUIChanged: Boolean;
+    procedure SelectOverviewTreeState(const State: TOverviewStartState);
+      {Selects combo box item associated with a overview treeview startup state.
+        @param State [in] Startup state to be selected.
+      }
+    function OverviewTreeStateDesc(const State: TOverviewStartState): string;
+      {Gets description of an overview treeview startup state.
+        @param State [in] State for which description is required.
+        @return Required description.
       }
   public
     constructor Create(AOwner: TComponent); override;
@@ -112,98 +122,136 @@ uses
 
 { TGeneralPrefsFrame }
 
-procedure TGeneralPrefsFrame.Activate(const Prefs: IPreferences);
+procedure TDisplayPrefsFrame.Activate(const Prefs: IPreferences);
   {Called when page activated. Updates controls.
     @param Prefs [in] Object that provides info used to update controls.
   }
 begin
-  SelectUnits(Prefs.MeasurementUnits);
+  SelectOverviewTreeState(Prefs.OverviewStartState);
+  chkHideEmptySections.Checked := not Prefs.ShowEmptySections;
+  chkSnippetsInNewTab.Checked := Prefs.ShowNewSnippetsInNewTabs;
 end;
 
-procedure TGeneralPrefsFrame.ArrangeControls;
+procedure TDisplayPrefsFrame.ArrangeControls;
   {Arranges controls on frame. Called after frame has been sized.
   }
-const
-  Col1Left = 8;       // position of left of first column of controls
 begin
-  lblUnits.Left := Col1Left;
-  TCtrlArranger.MoveToRightOf(lblUnits, cbUnits, 8);
-  gbMeasurement.Top := 0;
-  TCtrlArranger.AlignVCentres(20, [lblUnits, cbUnits]);
-  gbMeasurement.ClientHeight := TCtrlArranger.TotalControlHeight(gbMeasurement)
-    + 12;
+  TCtrlArranger.AlignLefts(
+    [lblOverviewTree, chkHideEmptySections, chkSnippetsInNewTab], 0
+  );
+  TCtrlArranger.MoveToRightOf(lblOverviewTree, cbOverviewTree, 8);
+  chkHideEmptySections.Width := Self.Width - 16;
+  chkSnippetsInNewTab.Width := Self.Width - 16;
+  TCtrlArranger.AlignVCentres(0, [lblOverviewTree, cbOverviewTree]);
+  TCtrlArranger.MoveBelow(
+    [lblOverviewTree, cbOverviewTree], chkHideEmptySections, 8
+  );
+  TCtrlArranger.MoveBelow(chkHideEmptySections, chkSnippetsInNewTab, 8);
 end;
 
-constructor TGeneralPrefsFrame.Create(AOwner: TComponent);
+procedure TDisplayPrefsFrame.chkHideEmptySectionsClick(Sender: TObject);
+  {Handles clicks on "Hide Empty Sections" check box. Flags UI preferences has
+  having changed.
+    @param Sender [in] Ignored.
+  }
+begin
+  fUIChanged := True;
+end;
+
+constructor TDisplayPrefsFrame.Create(AOwner: TComponent);
   {Class constructor. Sets up frame and populates controls.
     @param AOwner [in] Component that owns frame.
   }
 var
-  UnitsIdx: TMeasurementUnits;      // loops thru each measurement unit
+  OTStateIdx: TOverviewStartState;  // loops thru each overview tree start state
 begin
   inherited;
-  HelpKeyword := 'GeneralPrefs';
-  // Populate measurement unit combo
-  for UnitsIdx := Low(TMeasurementUnits) to High(TMeasurementUnits) do
-    cbUnits.Items.AddObject(UMeasurement.UnitName(UnitsIdx), TObject(UnitsIdx));
+  HelpKeyword := 'DisplayPrefs';
+  // Populate overview tree start state
+  for OTStateIdx := Low(TOverviewStartState) to High(TOverviewStartState) do
+    cbOverviewTree.Items.AddObject(
+      OverviewTreeStateDesc(OTStateIdx), TObject(OTStateIdx)
+    );
 end;
 
-procedure TGeneralPrefsFrame.Deactivate(const Prefs: IPreferences);
+procedure TDisplayPrefsFrame.Deactivate(const Prefs: IPreferences);
   {Called when page is deactivated. Stores information entered by user.
     @param Prefs [in] Object used to store information.
   }
 begin
-  Prefs.MeasurementUnits := TMeasurementUnits(
-    cbUnits.Items.Objects[cbUnits.ItemIndex]
+  Prefs.ShowNewSnippetsInNewTabs := chkSnippetsInNewTab.Checked;
+  Prefs.ShowEmptySections := not chkHideEmptySections.Checked;
+  Prefs.OverviewStartState := TOverviewStartState(
+    cbOverviewTree.Items.Objects[cbOverviewTree.ItemIndex]
   );
 end;
 
-function TGeneralPrefsFrame.DisplayName: string;
+function TDisplayPrefsFrame.DisplayName: string;
   {Caption that is displayed in the tab sheet that contains this frame when
   displayed in the preference dialog box.
     @return Required display name.
   }
 resourcestring
-  sDisplayName = 'Misc.'; // display name
+  sDisplayName = 'Display'; // display name
 begin
   Result := sDisplayName;
 end;
 
-class function TGeneralPrefsFrame.Index: Byte;
+class function TDisplayPrefsFrame.Index: Byte;
   {Index number that determines the location of the tab containing this frame
   when displayed in the preferences dialog box.
     @return Required index number.
   }
 begin
-  Result := 255;
+  Result := 10;
 end;
 
-procedure TGeneralPrefsFrame.SelectUnits(const MU: TMeasurementUnits);
-  {Selects combo box item associated with a measurement unit.
-    @param Units [in] Measurement unit to be selected.
+function TDisplayPrefsFrame.OverviewTreeStateDesc(
+  const State: TOverviewStartState): string;
+  {Gets description of an overview treeview startup state.
+    @param State [in] State for which description is required.
+    @return Required description.
+  }
+resourcestring
+  // Startup state descriptions
+  sOTSExpanded = 'Fully expanded';
+  sOTSCollapsed = 'Fully collapsed';
+const
+  // Map of overview tree start states to descriptions
+  cOTSStartStates: array[TOverviewStartState] of string = (
+    sOTSExpanded, sOTSCollapsed
+  );
+begin
+  Result := cOTSStartStates[State];
+end;
+
+procedure TDisplayPrefsFrame.SelectOverviewTreeState(
+  const State: TOverviewStartState);
+  {Selects combo box item associated with a overview treeview startup state.
+    @param State [in] Startup state to be selected.
   }
 var
   CBIdx: Integer; // loops through each entry in combo box
 begin
-  for CBIdx := 0 to Pred(cbUnits.Items.Count) do
+  for CBIdx := 0 to Pred(cbOverviewTree.Items.Count) do
   begin
-    if MU = TMeasurementUnits(cbUnits.Items.Objects[CBIdx]) then
+    if State = TOverviewStartState(cbOverviewTree.Items.Objects[CBIdx]) then
     begin
-      cbUnits.ItemIndex := CBIdx;
+      cbOverviewTree.ItemIndex := CBIdx;
       Break;
     end;
   end;
 end;
 
-function TGeneralPrefsFrame.UIUpdated: Boolean;
+function TDisplayPrefsFrame.UIUpdated: Boolean;
 begin
-  Result := False;
+  Result := fUIChanged;
 end;
 
 initialization
 
 // Register frame with preferences dialog box
-TPreferencesDlg.RegisterPage(TGeneralPrefsFrame);
+TPreferencesDlg.RegisterPage(TDisplayPrefsFrame);
 
 end.
 
