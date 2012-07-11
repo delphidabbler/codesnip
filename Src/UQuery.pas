@@ -117,7 +117,7 @@ uses
   // Delphi
   SysUtils, Generics.Collections,
   // Project
-  DB.UMain, UBaseObjects;
+  DB.UMain, UBaseObjects, USingleton;
 
 
 type
@@ -128,15 +128,13 @@ type
     search to be run against the database and makes the found snippets
     available. Must only be instantiated once as a singleton.
   }
-  TQuery = class(TNoPublicConstructIntfObject,
+  TQuery = class(TSingleton,
     IQuery
   )
   strict private
     var
       fSelection: TSnippetList;   // List of snippets selected by current query
       fActiveSearches: TList<ISearch>; // List of current active searches
-    class var
-      fInstance: IQuery;          // Singleton object instance of this class
     class function GetInstance: IQuery; static;
       {Gets singleton instance of class, creating it if necessary
         @return Singleton instance.
@@ -186,14 +184,9 @@ type
           before snippets are copied in.
       }
   strict protected
-    constructor InternalCreate;
-      {Internal class constructor. Sets up object with all snippets in database
-      selected.
-      }
+    procedure Initialize; override;
+    procedure Finalize; override;
   public
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
-      }
     class property Instance: IQuery read GetInstance;
   end;
 
@@ -231,9 +224,7 @@ begin
   fActiveSearches.Add(Search);
 end;
 
-destructor TQuery.Destroy;
-  {Class destructor. Tears down object.
-  }
+procedure TQuery.Finalize;
 begin
   fSelection.Free;
   fActiveSearches.Free;
@@ -275,9 +266,7 @@ class function TQuery.GetInstance: IQuery;
     @return Singleton instance.
   }
 begin
-  if not Assigned(fInstance) then
-    fInstance := TQuery.InternalCreate; // "TQuery" reference required here
-  Result := fInstance;
+  Result := TQuery.Create;  // OK since multiple calls return same instance
 end;
 
 function TQuery.GetSelection: TSnippetList;
@@ -288,14 +277,9 @@ begin
   Result := fSelection;
 end;
 
-constructor TQuery.InternalCreate;
-  {Internal class constructor. Sets up object with all snippets in database
-  selected. Must only be called once.
-  }
+procedure TQuery.Initialize;
 begin
-  Assert(not Assigned(fInstance),
-    ClassName + '.InternalCreate: Must only call once - singleton object');
-  inherited InternalCreate;
+  inherited;
   fSelection := TSnippetList.Create;
   fActiveSearches := TList<ISearch>.Create;
   Reset;
