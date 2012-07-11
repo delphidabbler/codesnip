@@ -28,12 +28,6 @@ uses
 
 type
 
-  {
-  TGeneralPrefsFrame:
-    Frame that allows user to set general application preferences. Can persist
-    preferences entered by user. Note: Designed for use in preferences dialog
-    box.
-  }
   TDisplayPrefsFrame = class(TPrefsBaseFrame)
     lblOverviewTree: TLabel;
     cbOverviewTree: TComboBox;
@@ -108,7 +102,7 @@ uses
 {$R *.dfm}
 
 
-{ TGeneralPrefsFrame }
+{ TDisplayPrefsFrame }
 
 procedure TDisplayPrefsFrame.Activate(const Prefs: IPreferences);
   {Called when page activated. Updates controls.
