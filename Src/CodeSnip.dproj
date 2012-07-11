@@ -245,6 +245,10 @@
 				<Form>DetailViewFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
+			<DCCReference Include="FrDisplayPrefs.pas">
+				<Form>DisplayPrefsFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
 			<DCCReference Include="FrEasterEgg.pas">
 				<Form>EasterEggFrame</Form>
 				<DesignClass>TFrame</DesignClass>
@@ -253,10 +257,7 @@
 				<Form>FixedHTMLDlgFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="FrGeneralPrefs.pas">
-				<Form>GeneralPrefsFrame</Form>
-				<DesignClass>TFrame</DesignClass>
-			</DCCReference>
+			<DCCReference Include="FrGeneralPrefs.pas"/>
 			<DCCReference Include="FrHiliterPrefs.pas">
 				<Form>HiliterPrefsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
