@@ -23,7 +23,7 @@
 # The Initial Developer of the Original Code is Peter Johnson
 # (http://www.delphidabbler.com/).
 #
-# Portions created by the Initial Developer are Copyright (C) 2009 Peter
+# Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
 # Johnson. All Rights Reserved.
 #
 # Contributors:
@@ -49,6 +49,9 @@ HTMLRES = "$(HTMLRESROOT)\HTMLRes.exe"
 HTMLRES = HTMLRes
 !endif
 
+!ifdef INNOSETUP_U
+INNOSETUP = $(INNOSETUP_U)
+!endif
 !ifdef INNOSETUP
 ISCC = "$(INNOSETUP)\ISCC.exe"
 !else
