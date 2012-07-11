@@ -84,6 +84,24 @@ type
       already exists returns existing instance.
         @return Singleton instance.
       }
+    function QueryInterface(const IID: TGUID; out Obj): HResult; stdcall;
+      {Checks the specified interface is supported by this object. If so
+      reference to interface is passed out.
+        @param IID [in] Specifies interface being queried.
+        @param Obj [out] Reference to interface implementation or nil if not
+          supported.
+        @result S_OK if interface supported or E_NOINTERFACE if not supported.
+      }
+    function _AddRef: Integer; stdcall;
+      {Called by Delphi when interface is referenced. Reference count is not
+      updated.
+        @return -1.
+      }
+    function _Release: Integer; stdcall;
+      {Called by Delphi when interface reference goes out of scope. Reference
+      count is not updated and instance is never freed.
+        @return -1.
+      }
   end;
 
 
@@ -211,6 +229,24 @@ begin
     end;
   end;
   Result := TSingletonManager.Lookup(Self);
+end;
+
+function TSingleton.QueryInterface(const IID: TGUID; out Obj): HResult;
+begin
+  if GetInterface(IID, Obj) then
+    Result := S_OK
+  else
+    Result := E_NOINTERFACE;
+end;
+
+function TSingleton._AddRef: Integer;
+begin
+  Result := -1;
+end;
+
+function TSingleton._Release: Integer;
+begin
+  Result := -1;
 end;
 
 { TSingletonManager }
