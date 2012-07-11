@@ -410,8 +410,10 @@ set PATHSET=1
 </p>
 
 <p>
-  Unicode Inno setup is expected to be on the path unless its install directory
-  is specified by the <code>INNOSETUP</code> environment variable.
+  The path to Unicode Inno Setup's install directory will be looked for in the
+  <code>INNOSETUP_U</code> environment variable, or, if that is not set, in the
+  <code>INNOSETUP</code> environment variable. If neither of these is set then
+  the correct version of Inno Setup is expected to be on the path.
 </p>
 
 <h3>
