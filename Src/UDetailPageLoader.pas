@@ -55,10 +55,13 @@ type
       ///  <summary>Web browser control host.</summary>
       fWBController: TWBController;
     ///  <summary>Loads a blank document into a browser control if no document
-    ///  already exists.</summary>
-    ///  <remarks>Blank document imports all CSS and JavaScript required for
+    ///  already exists or if forced.</summary>
+    ///  <param name="Reload">Boolean [in] Flag indicating whether HTML document
+    ///  is to be forcibly reloaded (True) or only loading if a document does
+    ///  not yet exist (False).</param>
+    ///  <remarks>Loading a document imports all CSS and JavaScript required for
     ///  detail pane views.</remarks>
-    procedure InitBrowser;
+    procedure InitBrowser(const Reload: Boolean);
     ///  <summary>Generates and displays a view in a browser control.</summary>
     ///  <param name="Generator">TDetailPageHTML [in] Object that generates
     ///  HTML to be displayed.</param>
@@ -72,7 +75,10 @@ type
     ///  <summary>Loads an HTML representation of a view into a web browser
     ///  control.</summary>
     ///  <param name="View">IView [in] View to be displayed.</param>
-    procedure LoadPage(View: IView);
+    ///  <param name="Reload">Boolean [in] Flag indicating whether HTML document
+    ///  is to be reloaded (True) or any existing document is to be re-used
+    ///  (False).</param>
+    procedure LoadPage(View: IView; const Reload: Boolean);
   end;
 
 
@@ -96,18 +102,18 @@ begin
   fWBController.IOMgr.ReplaceExistingBodyHTML(HTML);
 end;
 
-procedure TDetailPageLoader.InitBrowser;
+procedure TDetailPageLoader.InitBrowser(const Reload: Boolean);
 begin
-  if not fWBController.IOMgr.HTMLDocumentExists then
+  if Reload or not fWBController.IOMgr.HTMLDocumentExists then
     fWBController.IOMgr.NavigateToResource(HInstance, 'detail.html');
 end;
 
-procedure TDetailPageLoader.LoadPage(View: IView);
+procedure TDetailPageLoader.LoadPage(View: IView; const Reload: Boolean);
 var
   Generator: TDetailPageHTML; // object used to generate body's inner HTML
 begin
   Assert(Assigned(View), ClassName + '.LoadPage: View is nil');
-  InitBrowser;
+  InitBrowser(Reload);
   Generator := TDetailPageHTMLFactory.CreateGenerator(View);
   try
     DisplayHTML(Generator);
