@@ -6,18 +6,6 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
   DesignSize = (
     393
     326)
-  object lblNotice: TLabel
-    Left = 0
-    Top = 301
-    Width = 393
-    Height = 18
-    Alignment = taCenter
-    Anchors = [akLeft, akTop, akRight]
-    AutoSize = False
-    Caption = 
-      'Changes will be reflected in the main display only when you rest' +
-      'art CodeSnip.'
-  end
   object gbElements: TGroupBox
     Left = 0
     Top = 95
@@ -141,7 +129,6 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
       Width = 153
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       Sorted = True
       TabOrder = 0
       OnChange = cbFontNameChange
@@ -151,7 +138,6 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
       Top = 48
       Width = 57
       Height = 21
-      ItemHeight = 13
       TabOrder = 1
       OnChange = cbFontSizeChange
     end
@@ -173,8 +159,7 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
     Height = 25
     Anchors = [akTop, akRight]
     Caption = '&Use Predefined Styles'
-    TabOrder = 1
-    OnClick = btnStyleClick
+    DoubleBuffered = True
     Glyph.Data = {
       F6000000424DF600000000000000760000002800000010000000100000000100
       0400000000008000000000000000000000001000000010000000000000000000
@@ -185,6 +170,9 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
       0FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
     Layout = blGlyphRight
+    ParentDoubleBuffered = False
+    TabOrder = 1
+    OnClick = btnStyleClick
   end
   object mnuStyles: TPopupMenu
     Left = 304

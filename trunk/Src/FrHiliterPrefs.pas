@@ -74,7 +74,6 @@ type
     lblFontName: TLabel;
     lblFontSize: TLabel;
     lblElements: TLabel;
-    lblNotice: TLabel;
     miClassic: TMenuItem;
     miDelphi7: TMenuItem;
     miDelphi2006: TMenuItem;
