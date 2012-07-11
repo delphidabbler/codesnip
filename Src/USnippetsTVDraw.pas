@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -94,7 +94,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  UColours;
+  UColours, UPreferences;
 
 
 { TSnippetsTVDraw }
@@ -139,11 +139,9 @@ begin
       if IsErrorNode(Node) then
         // colour unselected error nodes differently
         TV.Canvas.Font.Color := clWarningText
-      else if IsUserDefinedNode(Node) then
-        // colour unselected user defined snippets differently
-        TV.Canvas.Font.Color := clUserSnippet
       else
-        TV.Canvas.Font.Color := TV.Font.Color;
+        TV.Canvas.Font.Color :=
+          Preferences.DBHeadingColours[IsUserDefinedNode(Node)];
       TV.Canvas.Brush.Color := TV.Color;
     end;
     if IsSectionHeadNode(Node) then

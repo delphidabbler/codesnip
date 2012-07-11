@@ -147,8 +147,8 @@ uses
   SysUtils, Graphics, Menus,
   // Project
   ActiveText.UHTMLRenderer, Browser.UHighlighter, Hiliter.UAttrs, Hiliter.UCSS,
-  Hiliter.UGlobals, UColours, UCSSUtils, UFontHelper, UQuery, UUtils,
-  UWBCommandBars;
+  Hiliter.UGlobals, UColours, UCSSUtils, UFontHelper, UPreferences, UQuery,
+  UUtils, UWBCommandBars;
 
 {$R *.dfm}
 
@@ -218,9 +218,9 @@ begin
     with CSSBuilder.AddSelector('.optionbox') do
       AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clBorder));
     with CSSBuilder.AddSelector('.userdb') do
-      AddProperty(TCSS.ColorProp(clUserSnippet));
+      AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[True]));
     with CSSBuilder.AddSelector('.maindb') do
-      AddProperty(TCSS.ColorProp(Self.Font.Color));
+      AddProperty(TCSS.ColorProp(Preferences.DBHeadingColours[False]));
     // Sets CSS for style of New Tab text
     with CSSBuilder.AddSelector('#newtab') do
     begin

@@ -150,7 +150,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UColours, UCtrlArranger, UQuery, USettings;
+  UColours, UCtrlArranger, UPreferences, UQuery, USettings;
 
 
 {$R *.dfm}
@@ -239,8 +239,8 @@ begin
   inherited;
   // Set label font styles and colours
   lblSnippetName.Font.Style := [fsBold];
-  if fSnippet.UserDefined then
-    lblSnippetName.Font.Color := clUserSnippet;
+  lblSnippetName.Font.Color :=
+    Preferences.DBHeadingColours[fSnippet.UserDefined];
   // Display selected snippet name in appropriate controls
   lblSnippetName.Caption := fSnippet.Name;
   chkIncludeSnippet.Caption := Format(
