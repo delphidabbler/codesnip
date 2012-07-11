@@ -232,11 +232,10 @@ begin
   Result.Parent := Self;
   Result.Width := 137;
   Result.Height := 22;
-  Result.NoneColorColor := clNone;
   // cbCustomColor not included in Style since assigning ColorDialog property
   // sets this style
   Result.Style := [cbStandardColors, cbExtendedColors, cbSystemColors,
-    cbIncludeNone, cbPrettyNames];
+    cbPrettyNames];
   Result.ItemHeight := 16;
   if Assigned(ColourDlg) then
     Result.ColorDialog := ColourDlg;
