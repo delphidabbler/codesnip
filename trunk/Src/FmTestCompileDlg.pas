@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2011-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -181,7 +181,7 @@ uses
   // Delphi
   Math, Windows, Graphics,
   // Project
-  UColours, UCtrlArranger, UFontHelper;
+  UColours, UCtrlArranger, UFontHelper, UPreferences;
 
 {$R *.dfm}
 
@@ -294,8 +294,8 @@ begin
   CreateCompilerCtrls;
   // Set required label fonts and captions
   TFontHelper.SetDefaultBaseFont(lblSnippetName.Font, False);
-  if fSnippet.UserDefined then
-    lblSnippetName.Font.Color := clUserSnippet;
+  lblSnippetName.Font.Color :=
+    Preferences.DBHeadingColours[fSnippet.UserDefined];
   lblSnippetName.Caption := fSnippet.Name;
 end;
 

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -125,7 +125,7 @@ uses
   // Delphi
   Graphics, StdCtrls,
   // Project
-  UColours, UGraphicUtils;
+  UColours, UGraphicUtils, UPreferences;
 
 
 { TSnippetsChkListMgr }
@@ -221,9 +221,10 @@ begin
   inherited;
   Assert(fCLB = Control, ClassName + '.DrawItem: Control <> fCLB');
   Canvas := fCLB.Canvas;
-  if not (odSelected in State)
-    and (fCLB.Items.Objects[Index] as TSnippet).UserDefined then
-    Canvas.Font.Color := clUserSnippet;
+  if not (odSelected in State) then
+    Canvas.Font.Color := Preferences.DBHeadingColours[
+      (fCLB.Items.Objects[Index] as TSnippet).UserDefined
+    ];
   Canvas.TextRect(
     Rect,
     Rect.Left + 2,

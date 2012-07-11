@@ -90,7 +90,7 @@ implementation
 
 uses
   // Project
-  ActiveText.UMain, UColours, URTFStyles;
+  ActiveText.UMain, UColours, UPreferences, URTFStyles;
 
 
 { TRTFCategoryDoc }
@@ -104,7 +104,8 @@ begin
   fBuilder.FontTable.Add(MainFontName, rgfSwiss, 0);
   fBuilder.FontTable.Add(MonoFontName, rgfModern, 0);
   // Set up colour table
-  fBuilder.ColourTable.Add(clUserSnippet);
+  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[False]);
+  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[True]);
   fDescStyles := TRTFStyleMap.Create;
   InitStyles;
 end;
@@ -206,8 +207,7 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(HeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
-  if Category.UserDefined then
-    SetColour(clUserSnippet);
+  SetColour(Preferences.DBHeadingColours[Category.UserDefined]);
   fBuilder.AddText(Category.Description);
   fBuilder.EndPara;
   fBuilder.EndGroup;
@@ -220,8 +220,7 @@ begin
   fBuilder.SetFont(MainFontName);
   fBuilder.SetFontSize(SubHeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
-  if Snippet.UserDefined then
-    SetColour(clUserSnippet);
+  SetColour(Preferences.DBHeadingColours[Snippet.UserDefined]);
   fBuilder.AddText(Snippet.Name);
   fBuilder.EndPara;
   fBuilder.EndGroup;

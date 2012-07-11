@@ -157,7 +157,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  DB.UMain, DB.USnippetKind, UBox, UColours, UFontHelper;
+  DB.UMain, DB.USnippetKind, UBox, UColours, UFontHelper, UPreferences;
 
 {$R *.dfm}
 
@@ -335,8 +335,8 @@ var
 begin
   LB := Control as TListBox;
   Canvas := LB.Canvas;
-  if not (odSelected in State) and IsUserDefinedItem then
-    Canvas.Font.Color := clUserSnippet;
+  if not (odSelected in State) then
+    Canvas.Font.Color := Preferences.DBHeadingColours[IsUserDefinedItem];
   Canvas.TextRect(
     Rect,
     Rect.Left + 2,
