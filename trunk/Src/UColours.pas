@@ -76,8 +76,9 @@ const
   // new tab
   clNewTabText          = cl3DLight;    // color of text displayed in new tabs
 
-  // user defined snippets
-  clUserSnippet         = clBlue;       // names of user snippets
+  // colours of snippet titles / heading
+  clMainSnippet         = clWindowText; // main database snippets
+  clUserSnippet         = clBlue;       // user database snippets
 
   // markup tags
   clVarText             = clPurple;     // <var> tag text
