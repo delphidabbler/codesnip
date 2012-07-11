@@ -257,7 +257,10 @@
 				<Form>FixedHTMLDlgFrame</Form>
 				<DesignClass>TFrame</DesignClass>
 			</DCCReference>
-			<DCCReference Include="FrGeneralPrefs.pas"/>
+			<DCCReference Include="FrGeneralPrefs.pas">
+				<Form>GeneralPrefsFrame</Form>
+				<DesignClass>TFrame</DesignClass>
+			</DCCReference>
 			<DCCReference Include="FrHiliterPrefs.pas">
 				<Form>HiliterPrefsFrame</Form>
 				<DesignClass>TFrame</DesignClass>
