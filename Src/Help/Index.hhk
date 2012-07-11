@@ -138,6 +138,10 @@
 			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="display preferences">
+		<param name="Local" value="HTML\dlg_prefs_display.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="download database">
 		<param name="Local" value="HTML\task_update.htm">
 		</OBJECT>
@@ -176,10 +180,6 @@
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="find text dialog">
 		<param name="Local" value="HTML\dlg_findtext.htm">
-		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="general preferences">
-		<param name="Local" value="HTML\dlg_prefs_general.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="help menu">
@@ -247,6 +247,10 @@
 			<param name="Local" value="HTML\menu_view.htm">
 			</OBJECT>
 	</UL>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="miscellaneous preferences">
+		<param name="Local" value="HTML\dlg_prefs_general.htm">
+		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="navigation">
 		<param name="Local" value="HTML\navigation.htm">
