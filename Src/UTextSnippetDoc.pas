@@ -70,8 +70,12 @@ type
   strict protected
     ///  <summary>Initialises plain text document.</summary>
     procedure InitialiseDoc; override;
-    ///  <summary>Adds given heading (i.e. snippet name) to document.</summary>
-    procedure RenderHeading(const Heading: string); override;
+    ///  <summary>Adds given heading (i.e. snippet name) to document. Can be
+    ///  user defined or from main database.</summary>
+    ///  <remarks>Heading is output the same whether user defined or not, so
+    ///  UserDefined parameter is ignored.</remarks>
+    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
+      override;
     ///  <summary>Interprets and adds given snippet description to document.
     ///  </summary>
     ///  <remarks>Active text is converted to word-wrapped plain text
@@ -183,7 +187,8 @@ begin
   RenderActiveText(ExtraText, 0, True);
 end;
 
-procedure TTextSnippetDoc.RenderHeading(const Heading: string);
+procedure TTextSnippetDoc.RenderHeading(const Heading: string;
+  const UserDefined: Boolean);
 begin
   fWriter.WriteLine(Heading);
 end;
