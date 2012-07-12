@@ -87,8 +87,12 @@ type
   strict protected
     ///  <summary>Initialises rich text document.</summary>
     procedure InitialiseDoc; override;
-    ///  <summary>Adds given heading (i.e. snippet name) to document.</summary>
-    procedure RenderHeading(const Heading: string); override;
+    ///  <summary>Adds given heading (i.e. snippet name) to document. Can be
+    ///  user defined or from main database.</summary>
+    ///  <remarks>Heading is coloured according to whether user defined or not.
+    ///  </remarks>
+    procedure RenderHeading(const Heading: string; const UserDefined: Boolean);
+      override;
     ///  <summary>Adds given snippet description to document.</summary>
     ///  <remarks>Active text formatting is observed and styled to suit
     ///  document.</remarks>
@@ -136,7 +140,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UHiliters, UColours, UConsts, UStrUtils;
+  Hiliter.UHiliters, UColours, UConsts, UPreferences, UStrUtils;
 
 
 { TRTFSnippetDoc }
@@ -176,6 +180,8 @@ begin
   fBuilder.ColourTable.Add(clWarningText);
   fBuilder.ColourTable.Add(clVarText);
   fBuilder.ColourTable.Add(clLinkText);
+  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[False]);
+  fBuilder.ColourTable.Add(Preferences.DBHeadingColours[True]);
 end;
 
 procedure TRTFSnippetDoc.InitStyles;
@@ -358,10 +364,13 @@ begin
   end;
 end;
 
-procedure TRTFSnippetDoc.RenderHeading(const Heading: string);
+procedure TRTFSnippetDoc.RenderHeading(const Heading: string;
+  const UserDefined: Boolean);
 begin
   fBuilder.SetFontStyle([fsBold]);
   fBuilder.SetFontSize(HeadingFontSize);
+  if fUseColour then
+    fBuilder.SetColour(Preferences.DBHeadingColours[UserDefined]);
   fBuilder.SetParaSpacing(TRTFParaSpacing.Create(0.0, ParaSpacing));
   fBuilder.AddText(Heading);
   fBuilder.EndPara;
