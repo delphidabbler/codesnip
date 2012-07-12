@@ -32,7 +32,7 @@ type
     var
       fSnippetIDs: ISnippetIDList;
       ///  <summary>Lines of text from file.</summary>
-      ///  <remarks>Must be stripped of blank blanks.</remarks>
+      ///  <remarks>Must be stripped of blank lines.</remarks>
       fLines: IStringList;
     procedure Parse;
   public
@@ -56,6 +56,10 @@ type
     destructor Destroy; override;
     procedure WriteFile(const FileName: string; SnippetIDs: ISnippetIDList);
   end;
+
+type
+
+  ESelectionFileWriter = class(ECodeSnip);
 
 
 implementation
@@ -126,7 +130,7 @@ begin
       True
     );
   except
-    on E: EFOpenError do
+    on E: EStreamError do
       raise ESelectionFileReader.Create(E);
     on E: EIOUtils do
       raise ESelectionFileReader.Create(E);
@@ -172,7 +176,14 @@ procedure TSelectionFileWriter.WriteFile(const FileName: string;
   SnippetIDs: ISnippetIDList);
 begin
   CreateContent(SnippetIDs);
-  TFileIO.WriteAllText(FileName, fBuilder.ToString, TEncoding.UTF8, True);
+  try
+    TFileIO.WriteAllText(FileName, fBuilder.ToString, TEncoding.UTF8, True);
+  except
+    on E: EStreamError do
+      raise ESelectionFileWriter.Create(E);
+    else
+      raise;
+  end;
 end;
 
 end.
