@@ -10,32 +10,35 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Width = 646
+    Width = 662
     Height = 504
-    ExplicitWidth = 646
+    ExplicitWidth = 662
     ExplicitHeight = 504
     object pcMain: TPageControl
       Left = 0
       Top = 0
-      Width = 646
+      Width = 662
       Height = 504
       ActivePage = tsComments
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
       OnMouseDown = pcMainMouseDown
+      ExplicitWidth = 646
       object tsCode: TTabSheet
         Caption = 'Code'
+        ExplicitLeft = 12
+        ExplicitWidth = 638
         object lblDescription: TLabel
-          Left = 3
-          Top = 41
+          Left = 0
+          Top = 73
           Width = 56
           Height = 13
           Caption = '&Description:'
         end
         object lblSourceCode: TLabel
-          Left = 3
-          Top = 172
+          Left = 0
+          Top = 204
           Width = 64
           Height = 13
           Caption = '&Source code:'
@@ -50,16 +53,16 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           FocusControl = edName
         end
         object lblCategories: TLabel
-          Left = 3
-          Top = 151
+          Left = 0
+          Top = 183
           Width = 45
           Height = 13
           Caption = '&Category:'
           FocusControl = cbCategories
         end
         object lblSnippetKindHelp: TLabel
-          Left = 333
-          Top = 114
+          Left = 330
+          Top = 146
           Width = 118
           Height = 13
           Cursor = crHandPoint
@@ -73,27 +76,35 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           OnClick = lblSnippetKindHelpClick
         end
         object lblKind: TLabel
-          Left = 3
-          Top = 119
+          Left = 0
+          Top = 151
           Width = 24
           Height = 13
           Caption = '&Kind:'
           FocusControl = cbKind
         end
         object lblSourceCaretPos: TLabel
-          Left = 543
-          Top = 172
+          Left = 556
+          Top = 204
           Width = 91
           Height = 13
           Alignment = taRightJustify
           AutoSize = False
           Caption = 'lblSourceCaretPos'
         end
-        object edSourceCode: TMemo
+        object lblDisplayName: TLabel
           Left = 3
-          Top = 191
-          Width = 631
-          Height = 283
+          Top = 40
+          Width = 68
+          Height = 13
+          Caption = 'Displa&y Name:'
+          FocusControl = edDisplayName
+        end
+        object edSourceCode: TMemo
+          Left = 4
+          Top = 224
+          Width = 647
+          Height = 250
           Font.Charset = ANSI_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
@@ -102,49 +113,50 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           ParentFont = False
           PopupMenu = mnuEditCtrls
           ScrollBars = ssBoth
-          TabOrder = 5
+          TabOrder = 6
         end
         object edName: TEdit
-          Left = 80
-          Top = 8
+          Left = 93
+          Top = 7
           Width = 209
           Height = 21
           PopupMenu = mnuEditCtrls
           TabOrder = 0
         end
         object cbCategories: TComboBox
-          Left = 80
-          Top = 147
+          Left = 93
+          Top = 179
+          Width = 209
+          Height = 21
+          Style = csDropDownList
+          TabOrder = 5
+        end
+        object cbKind: TComboBox
+          Left = 93
+          Top = 146
           Width = 209
           Height = 21
           Style = csDropDownList
           TabOrder = 4
-        end
-        object cbKind: TComboBox
-          Left = 80
-          Top = 114
-          Width = 209
-          Height = 21
-          Style = csDropDownList
-          TabOrder = 3
           OnChange = cbKindChange
         end
         inline frmDescription: TSnippetsActiveTextEdFrame
-          Left = 80
-          Top = 35
+          Left = 93
+          Top = 67
           Width = 462
           Height = 78
           Color = clWindow
           ParentBackground = False
           ParentColor = False
-          TabOrder = 1
-          ExplicitLeft = 80
-          ExplicitTop = 35
+          TabOrder = 2
+          ExplicitLeft = 93
+          ExplicitTop = 67
           ExplicitWidth = 462
           ExplicitHeight = 78
           inherited edText: TMemo
             Width = 462
             Height = 55
+            ExplicitLeft = 1
             ExplicitTop = 0
             ExplicitWidth = 462
             ExplicitHeight = 55
@@ -157,17 +169,25 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           end
         end
         object btnViewDescription: TButton
-          Left = 549
-          Top = 33
+          Left = 562
+          Top = 65
           Width = 85
           Height = 25
           Action = actViewDescription
-          TabOrder = 2
+          TabOrder = 3
+        end
+        object edDisplayName: TEdit
+          Left = 93
+          Top = 34
+          Width = 298
+          Height = 21
+          TabOrder = 1
         end
       end
       object tsReferences: TTabSheet
         Caption = 'References'
         ImageIndex = 1
+        ExplicitWidth = 638
         object lblXRefs: TLabel
           Left = 3
           Top = 3
@@ -177,7 +197,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           FocusControl = clbXRefs
         end
         object lblDepends: TLabel
-          Left = 219
+          Left = 228
           Top = 3
           Width = 72
           Height = 13
@@ -185,7 +205,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           FocusControl = clbDepends
         end
         object lblUnits: TLabel
-          Left = 435
+          Left = 452
           Top = 3
           Width = 27
           Height = 13
@@ -195,23 +215,23 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object clbXRefs: TCheckListBox
           Left = 3
           Top = 22
-          Width = 209
+          Width = 217
           Height = 368
           IntegralHeight = True
           ItemHeight = 13
           TabOrder = 0
         end
         object clbDepends: TCheckListBox
-          Left = 219
+          Left = 228
           Top = 22
-          Width = 209
+          Width = 217
           Height = 368
           IntegralHeight = True
           ItemHeight = 13
           TabOrder = 1
         end
         object clbUnits: TCheckListBox
-          Left = 435
+          Left = 452
           Top = 22
           Width = 198
           Height = 368
@@ -230,14 +250,14 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           TabOrder = 3
         end
         object edUnit: TEdit
-          Left = 435
+          Left = 452
           Top = 398
           Width = 117
           Height = 21
           TabOrder = 4
         end
         object btnAddUnit: TButton
-          Left = 558
+          Left = 575
           Top = 396
           Width = 75
           Height = 25
@@ -245,7 +265,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           TabOrder = 5
         end
         object btnDependencies: TButton
-          Left = 219
+          Left = 228
           Top = 409
           Width = 141
           Height = 25
@@ -256,7 +276,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsComments: TTabSheet
         Caption = 'Extra Information'
         ImageIndex = 2
-        ExplicitLeft = 0
+        ExplicitWidth = 638
         object lblExtra: TLabel
           Left = 3
           Top = 3
@@ -265,7 +285,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Caption = 'E&xtra information:'
         end
         object lblExtraCaretPos: TLabel
-          Left = 544
+          Left = 560
           Top = 3
           Width = 91
           Height = 13
@@ -284,7 +304,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         inline frmExtra: TSnippetsActiveTextEdFrame
           Left = 3
           Top = 22
-          Width = 632
+          Width = 648
           Height = 381
           Color = clWindow
           ParentBackground = False
@@ -292,27 +312,27 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           TabOrder = 0
           ExplicitLeft = 3
           ExplicitTop = 22
-          ExplicitWidth = 632
+          ExplicitWidth = 648
           ExplicitHeight = 381
           inherited edText: TMemo
-            Width = 632
+            Width = 648
             Height = 358
-            ExplicitLeft = 3
             ExplicitTop = 0
-            ExplicitWidth = 631
-            ExplicitHeight = 316
+            ExplicitWidth = 632
+            ExplicitHeight = 358
           end
           inherited tcEditMode: TTabControl
             Top = 358
-            Width = 632
-            ExplicitTop = 132
-            ExplicitWidth = 631
+            Width = 648
+            ExplicitTop = 358
+            ExplicitWidth = 632
           end
         end
       end
       object tsCompileResults: TTabSheet
         Caption = 'Compile Results'
         ImageIndex = 3
+        ExplicitWidth = 638
         object lblCompilers: TLabel
           Left = 3
           Top = 3
@@ -516,7 +536,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       OnUpdate = actViewTestUnitUpdate
     end
     object actViewDescription: TAction
-      Caption = 'Preview...'
+      Caption = 'Pre&view...'
       OnExecute = actViewDescriptionExecute
       OnUpdate = actViewDescriptionUpdate
     end

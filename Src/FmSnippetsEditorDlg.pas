@@ -126,6 +126,8 @@ type
     btnViewDescription: TButton;
     actViewDescription: TAction;
     frmExtra: TSnippetsActiveTextEdFrame;
+    lblDisplayName: TLabel;
+    edDisplayName: TEdit;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -503,6 +505,14 @@ procedure TSnippetsEditorDlg.ArrangeForm;
   }
 begin
   // tsCode
+  edSourceCode.Width := tsCode.ClientWidth - 8;
+  TCtrlArranger.AlignLefts(
+    [
+      lblName, lblDisplayName, lblDescription, lblKind, lblCategories,
+      lblSourceCode, edSourceCode
+    ],
+    3
+  );
   TCtrlArranger.AlignRights(
     [edSourceCode, lblSourceCaretPos, btnViewDescription]
   );
@@ -510,11 +520,11 @@ begin
   TCtrlArranger.AlignVCentres(3, [lblName, edName]);
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf([lblName, edName], 8),
-    [lblDescription, frmDescription]
+    [lblDisplayName, edDisplayName]
   );
   TCtrlArranger.AlignTops(
     [lblDescription, frmDescription, btnViewDescription],
-    TCtrlArranger.BottomOf([lblName, edName], 8)
+    TCtrlArranger.BottomOf([lblDisplayName, edDisplayName], 8)
   );
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(
@@ -526,6 +536,7 @@ begin
     TCtrlArranger.BottomOf([lblKind, cbKind, lblSnippetKindHelp], 8),
     [lblCategories, cbCategories]
   );
+  TCtrlArranger.MoveToRightOf(cbKind, lblSnippetKindHelp, 12);
   TCtrlArranger.AlignTops(
     [lblSourceCode, lblSourceCaretPos],
     TCtrlArranger.BottomOf([lblCategories, cbCategories], 8)
@@ -536,9 +547,10 @@ begin
   TCtrlArranger.AlignVCentres(
     TCtrlArranger.BottomOf(clbXRefs, 6), [btnDependencies, edUnit, btnAddUnit]
   );
-  TCtrlArranger.MoveToRightOf(cbKind, lblSnippetKindHelp, 12);
 
   // tsComments
+  frmExtra.Width := tsComments.ClientWidth - 8;
+  TCtrlArranger.AlignLefts([lblExtra, frmExtra, btnViewExtra], 3);
   TCtrlArranger.AlignVCentres(3, [lblExtra, lblExtraCaretPos]);
   TCtrlArranger.AlignRights([frmExtra, lblExtraCaretPos]);
   TCtrlArranger.MoveBelow([lblExtra, lblExtraCaretPos], frmExtra, 4);
