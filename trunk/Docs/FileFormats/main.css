@@ -133,20 +133,6 @@ a:hover {
   padding: 0.25em 0.5em;
 }
 
-p.todo {
-  border: 1px #faa solid;
-  border-left: 8px #faa solid;
-  background-color: #fdd;
-  color: red;
-  margin: 0.5em 0 0 0;
-  padding: 0.25em 0.5em;
-}
-
-span.todo {
-  background-color: #fdd;
-  color: red;
-}
-
 acronym {
   color: purple;
   border-bottom: 1px dotted purple;
