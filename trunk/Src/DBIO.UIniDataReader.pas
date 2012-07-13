@@ -243,6 +243,7 @@ const
   cDependsName = 'Depends';           // dependency list for snippet
   cUnitsName = 'Units';               // required unit list for snippet
   cXRefName = 'SeeAlso';              // cross-reference list for snippet
+  cDisplayName = 'DisplayName';       // snippet's display name if any
   cExtraName = 'Extra';               // extra information for snippet
   cCreditsName = 'Credits';           // snippet credits
   cCreditsURLName = 'Credits_URL';    // url relating to snippet credits
@@ -483,6 +484,12 @@ var
         Result := TActiveTextFactory.CreateActiveText;
     end;
   end;
+
+  ///  <summary>Gets snippet's display name from ini file.</summary>
+  function GetDisplayNameProperty: string;
+  begin
+    Result := CatIni.ReadString(Snippet, cDisplayName, '');
+  end;
   // ---------------------------------------------------------------------------
 
 begin
@@ -496,6 +503,7 @@ begin
     Props.Cat := CatID;
     Props.Desc := GetDescription;
     Props.Extra := GetExtraProperty;
+    Props.DisplayName := GetDisplayNameProperty;
     Props.SourceCode := GetSourceCodeProperty;
     Props.CompilerResults := GetCompilerResultsProperty;
   except

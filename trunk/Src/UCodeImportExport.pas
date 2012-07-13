@@ -374,6 +374,9 @@ begin
     cDescriptionNode,
     TSnippetExtraHelper.BuildREMLMarkup(Snippet.Description)
   );
+  // Snippet's display name is only written if different to Snippet's name
+  if Snippet.Name <> Snippet.DisplayName then
+    fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Snippet.DisplayName);
   // source code is stored directly in XML, not in external file
   fXMLDoc.CreateElement(SnippetNode, cSourceCodeTextNode, Snippet.SourceCode);
   // extra info is written only if present
@@ -527,10 +530,12 @@ begin
       begin
         Props.Cat := TReservedCategories.ImportsCatID;
         Props.Desc := GetDescription(SnippetNode);
-        Props.SourceCode :=
-          TXMLDocHelper.GetSubTagText(
-            fXMLDoc, SnippetNode, cSourceCodeTextNode
-          );
+        Props.DisplayName := TXMLDocHelper.GetSubTagText(
+          fXMLDoc, SnippetNode, cDisplayNameNode
+        );
+        Props.SourceCode := TXMLDocHelper.GetSubTagText(
+          fXMLDoc, SnippetNode, cSourceCodeTextNode
+        );
         // how we read extra property depends on version of file
         case fVersion of
           1:
