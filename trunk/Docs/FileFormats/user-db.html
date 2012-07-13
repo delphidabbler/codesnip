@@ -299,6 +299,23 @@
   </dd>
 
   <dt>
+    <strong>codesnip-data/routines/routine/display-name</strong>
+  </dt>
+  <dd>
+    <ul class="squashed">
+      <li>
+        <span class="highlight">versions 1..5:</span> Not supported.
+      </li>
+      <li>
+        <span class="highlight">version 6:</span> Display name of snippet. Can
+        contain any characters and need not be unique. Present only if snippet
+        has a display name that is different to the value of the <em>name</em>
+        attribute of the <em>codesnip-data/routines/routine</em> tag.
+      </li>
+    </ul>
+  </dd>
+
+  <dt>
     <strong>codesnip-data/routines/routine/comments</strong>
   </dt>
   <dd>
@@ -709,8 +726,18 @@
     Version 6
   </dt>
   <dd>
-    A snippet's description is now stored as formatted text using REML markup.
-    Previously the description was plain text.
+    <div class="half-spaced">
+      A snippet's description is now stored as formatted text using REML markup.
+      Previously the description was plain text.
+    </div>
+    <div class="half-spaced">
+      The following tag was introduced:
+    </div>
+    <ul class="squashed">
+      <li>
+        <em>codesnip-data/routines/routine/display-name</em>
+      </li>
+    </ul>
   </dd>
 </dl>
 

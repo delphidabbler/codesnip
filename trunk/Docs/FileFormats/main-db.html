@@ -127,6 +127,7 @@ Ini=date.ini</pre>
 </p>
 
 <pre class="indent">[snippet-name]
+DisplayName=&lt;snippet-display-name&gt;
 Desc=&lt;description-text&gt;
 DescEx=&lt;description-REML&gt;
 Snip=&lt;snippet-file-name&gt;
@@ -156,10 +157,21 @@ MinVer=&lt;version-number&gt;</pre>
 
 <p>
   The sections in these files are named with a unique name that identifies a
-  snippet. The values have the following purpose:
+  snippet. This must be a valid Unicode Pascal identifier. The values have the
+  following purpose:
 </p>
 
 <dl>
+  <dt>
+    <em>DisplayName</em>
+  </dt>
+  <dd>
+    Display name of snippet. If present this value is used in the program GUI as
+    the snippet's name. The value is optional. If not present the name of the
+    section is used as the display name. There are no restriction on the
+    characters used. Supported from CodeSnip v4.0 beta 1 and ignored by earler
+    versions which always use the section name as display name.
+  </dd>
   <dt>
     <em>Desc</em>
   </dt>
