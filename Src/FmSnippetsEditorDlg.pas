@@ -773,6 +773,10 @@ begin
     frmDescription.DefaultEditMode := emAuto;
     frmDescription.ActiveText := fSnippet.Description;
     edName.Text := fSnippet.Name;
+    if fSnippet.Name <> fSnippet.DisplayName then
+      edDisplayName.Text := fSnippet.DisplayName
+    else
+      edDisplayName.Text := '';
     cbCategories.ItemIndex := fCatList.IndexOf(fSnippet.Category);
     frmExtra.DefaultEditMode := emAuto;
     frmExtra.ActiveText := fSnippet.Extra;
@@ -791,6 +795,7 @@ begin
     frmDescription.DefaultEditMode := emPlainText;
     frmDescription.Clear;
     edName.Clear;
+    edDisplayName.Clear;
     cbCategories.ItemIndex := fCatList.IndexOf(TReservedCategories.UserCatID);
     if cbCategories.ItemIndex = -1 then
       cbCategories.ItemIndex := 0;
@@ -895,6 +900,10 @@ begin
   Result.Init;
   with Result do
   begin
+    if StrTrim(edName.Text) <> StrTrim(edDisplayName.Text) then
+      Props.DisplayName := StrTrim(edDisplayName.Text)
+    else
+      Props.DisplayName := '';
     Props.Cat := fCatList.CatID(cbCategories.ItemIndex);
     Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
     (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
