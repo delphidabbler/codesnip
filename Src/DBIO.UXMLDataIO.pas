@@ -657,6 +657,7 @@ begin
       Error(sSnippetNotFound, [Snippet]);
     // Snippet found: read properties
     Props.Cat := GetPropertyText(cCatIdNode);
+    Props.DisplayName := GetPropertyText(cDisplayNameNode);
     Props.Kind := GetKindProperty;
     Props.Desc := GetDescriptionProperty;
     Props.Extra := GetExtraProperty;
@@ -965,6 +966,7 @@ begin
       DataFile(FileName), Props.SourceCode, TEncoding.UTF8, False
     );
     fXMLDoc.CreateElement(SnippetNode, cSourceCodeFileNode, FileName);
+    fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Props.DisplayName);
     // extra node is only written if extra property has a value
     if not Props.Extra.IsEmpty then
     begin
