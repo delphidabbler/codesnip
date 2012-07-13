@@ -58,6 +58,7 @@ type
     Cat: string;                      // Category containing snippet
     Desc: IActiveText;                // Description of snippet
     SourceCode: string;               // Snippet's source code
+    DisplayName: string;              // Snippet's display name
     Extra: IActiveText;               // Extra text used to describe snippet
     CompilerResults: TCompileResults; // Compilation results
     procedure Init;
@@ -114,8 +115,9 @@ type
     fKind: TSnippetKind;              // Kind of snippet this is
     fCategory: string;                // Name of snippet's category
     fDescription: IActiveText;        // Description of snippet
-    fSourceCode: string;              // Snippet's source code}
+    fSourceCode: string;              // Snippet's source code
     fName: string;                    // Name of snippet
+    fDisplayName: string;             // Display name of snippet
     fUnits: TStringList;              // List of required units
     fDepends: TSnippetList;           // List of required snippets
     fXRef: TSnippetList;              // List of cross-referenced snippets
@@ -126,6 +128,10 @@ type
       {Gets snippet's unique ID.
         @return Required ID.
       }
+    function GetDisplayName: string;
+      {Gets snippet's display name, or name if no display name is set
+        @return Required display name.
+      }
   strict protected
     procedure SetName(const Name: string);
       {Sets Name property.
@@ -134,6 +140,10 @@ type
     procedure SetProps(const Data: TSnippetData);
       {Sets snippet's properties.
         @param Data [in] Record containing property values.
+      }
+    function GetDisplayNameValue: string;
+      {Get's value of snippet's display name field.
+        @return Required field content.
       }
   public
     constructor Create(const Name: string; const UserDefined: Boolean;
@@ -162,6 +172,8 @@ type
       {Snippet's unique ID}
     property Name: string read fName;
       {Name of snippet}
+    property DisplayName: string read GetDisplayName;
+      {Displat name of snippet}
     property Category: string read fCategory;
       {Category to which snippet belongs}
     property Description: IActiveText read fDescription;
@@ -412,7 +424,21 @@ begin
   FreeAndNil(fDepends);
   FreeAndNil(fUnits);
   fExtra := nil;
+  fDescription := nil;
   inherited;
+end;
+
+function TSnippet.GetDisplayName: string;
+begin
+  if GetDisplayNameValue <> '' then
+    Result := GetDisplayNameValue
+  else
+    Result := fName;
+end;
+
+function TSnippet.GetDisplayNameValue: string;
+begin
+  Result := fDisplayName;
 end;
 
 function TSnippet.GetID: TSnippetID;
@@ -450,6 +476,7 @@ begin
   fKind := Data.Kind;
   fDescription := Data.Desc;
   fSourceCode := StrWindowsLineBreaks(Data.SourceCode);
+  fDisplayName := Data.DisplayName;
   fExtra := TActiveTextFactory.CloneActiveText(Data.Extra);
   fCompatibility := Data.CompilerResults;
 end;
@@ -474,6 +501,7 @@ begin
   Result.Kind := Kind;
   Result.Desc := Description;
   Result.SourceCode := SourceCode;
+  Result.DisplayName := GetDisplayNameValue;
   Result.Extra := TActiveTextFactory.CloneActiveText(Extra);
   Result.CompilerResults := Compatibility;
 end;
@@ -807,6 +835,7 @@ begin
   Cat := Src.Cat;
   Desc := TActiveTextFactory.CloneActiveText(Src.Desc);
   SourceCode := Src.SourceCode;
+  DisplayName := Src.DisplayName;
   // we use cloning for Extra below because it deals uccessfully with both
   // Self.Extra = nil and Src.Extra = nil
   Extra := TActiveTextFactory.CloneActiveText(Src.Extra);
@@ -822,6 +851,7 @@ begin
   Kind := skFreeform;
   Cat := '';
   Desc := TActiveTextFactory.CreateActiveText;
+  DisplayName := '';
   SourceCode := '';
   Extra := TActiveTextFactory.CreateActiveText;
   for CompID := Low(TCompilerID) to High(TCompilerID) do
