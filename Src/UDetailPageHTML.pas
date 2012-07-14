@@ -94,7 +94,7 @@ uses
   SysUtils,
   // Project
   DB.UMain, DB.USnippet, UCSSUtils, UHTMLDetailUtils, UHTMLTemplate, UHTMLUtils,
-  UJavaScriptUtils, UQuery, USnippetHTML, UStrUtils;
+  UJavaScriptUtils, UQuery, USnippetHTML, USnippetPageHTML, UStrUtils;
 
 
 type
@@ -433,23 +433,12 @@ begin
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
     Tplt.ResolvePlaceholderHTML('SnippetName', SnippetHTML.SnippetName);
-    Tplt.ResolvePlaceholderHTML('Kind', SnippetHTML.SnippetKind);
-    Tplt.ResolvePlaceholderHTML('Category', SnippetHTML.Category);
-    Tplt.ResolvePlaceholderHTML('Description', SnippetHTML.Description);
-    Tplt.ResolvePlaceholderHTML('SourceCode', SnippetHTML.SourceCode);
-    Tplt.ResolvePlaceholderHTML('Units', SnippetHTML.Units);
-    Tplt.ResolvePlaceholderHTML('Depends', SnippetHTML.Depends);
-    Tplt.ResolvePlaceholderHTML('XRefs', SnippetHTML.XRefs);
-    Tplt.ResolvePlaceholderHTML(
-      'CompilerTableRows', SnippetHTML.CompileResults
-    );
-    Tplt.ResolvePlaceholderHTML('Extra', SnippetHTML.Extra);
-    Tplt.ResolvePlaceholderHTML(
-      'ShowCompilations', TCSS.BlockDisplayProp(GetSnippet.CanCompile)
-    );
   finally
     SnippetHTML.Free;
   end;
+  Tplt.ResolvePlaceholderHTML(
+    'SnippetPageFragments', TSnippetPageHTML.Render(GetSnippet)
+  );
 end;
 
 { TSnippetListPageHTML }
