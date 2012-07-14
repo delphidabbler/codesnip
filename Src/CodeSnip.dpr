@@ -331,6 +331,8 @@ uses
   USnippetExtraHelper in 'USnippetExtraHelper.pas',
   USnippetHTML in 'USnippetHTML.pas',
   USnippetIDs in 'USnippetIDs.pas',
+  USnippetPageHTML in 'USnippetPageHTML.pas',
+  USnippetPageStructure in 'USnippetPageStructure.pas',
   USnippetsChkListMgr in 'USnippetsChkListMgr.pas',
   USnippetSourceGen in 'USnippetSourceGen.pas',
   USnippetsTVDraw in 'USnippetsTVDraw.pas',

@@ -494,6 +494,8 @@
 			<DCCReference Include="USnippetExtraHelper.pas"/>
 			<DCCReference Include="USnippetHTML.pas"/>
 			<DCCReference Include="USnippetIDs.pas"/>
+			<DCCReference Include="USnippetPageHTML.pas"/>
+			<DCCReference Include="USnippetPageStructure.pas"/>
 			<DCCReference Include="USnippetsChkListMgr.pas"/>
 			<DCCReference Include="USnippetSourceGen.pas"/>
 			<DCCReference Include="USnippetsTVDraw.pas"/>
