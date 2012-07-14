@@ -41,7 +41,7 @@ interface
 
 uses
   // Project
-  ActiveText.UMain, DB.USnippet;
+  ActiveText.UMain, DB.UCategory, DB.USnippet;
 
 
 type
@@ -64,6 +64,18 @@ type
     function EmptyListSentence: string;
     ///  <summary>Renders given active text as HTML and returns it.</summary>
     function RenderActiveText(ActiveText: IActiveText): string;
+    ///  <summary>Returns HTML of link to given snippet.</summary>
+    class function SnippetALink(const Snippet: TSnippet): string; overload;
+    ///  <summary>Returns HTML of a link that performs its action using
+    ///  JavaScript.</summary>
+    ///  <param name="JSFn">string [in] Javascript function to be called when
+    ///  link is clicked.</param>
+    ///  <param name="Hint">string [in] Hint to be displayed when mouse rolls
+    ///  over link.</param>
+    ///  <param name="CSSClass">string [in] CSS class of link.</param>
+    ///  <param name="Text">string [in] Text to be displayed in link.</param>
+    ///  <returns>string. Required HTML.</returns>
+    class function JSALink(const JSFn, Hint, CSSClass, Text: string): string;
   public
     ///  <summary>Object constructor. Sets up object to provide HTML for given
     ///  snippet.</summary>
@@ -95,6 +107,8 @@ type
     ///  <summary>Returns HTML containing rows of a table representing snippet's
     ///  compilation results for each supported compiler.</summary>
     function CompileResults: string;
+    ///  <summary>Returns HTML of link to snippet.</summary>
+    function SnippetALink: string; overload;
   end;
 
 
@@ -102,22 +116,31 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
-  ActiveText.UHTMLRenderer, DB.UCategory, DB.UMain, DB.USnippetKind,
-  Hiliter.UAttrs, Hiliter.UGlobals, Hiliter.UHiliters, UCompResHTML,
-  UHTMLBuilder, UHTMLDetailUtils, UHTMLUtils, UStrUtils;
+  ActiveText.UHTMLRenderer, DB.UMain, DB.USnippetKind, Hiliter.UAttrs,
+  Hiliter.UGlobals, Hiliter.UHiliters, UCompResHTML, UHTMLBuilder,
+  UHTMLDetailUtils, UHTMLUtils, UIStringList, UJavaScriptUtils, UStrUtils;
 
 
 { TSnippetHTML }
 
 function TSnippetHTML.Category: string;
+resourcestring
+  sCategoryHint = 'Display "%s" category';  // long hint
 var
   Cat: TCategory; // category that snippet belongs to
 begin
   Cat := Database.Categories.Find(fSnippet.Category);
   Assert(Assigned(Cat), ClassName + '.Category: Category not found');
   Result := StrMakeSentence(
-    CategoryALink(Cat.ID, Cat.Description)
+    JSALink(
+      JSLiteralFunc('displayCategory', [Cat.ID]),
+      Format(sCategoryHint, [Cat.Description]),
+      'category-link',
+      Cat.Description
+    )
   );
 end;
 
@@ -154,6 +177,12 @@ begin
   Result := RenderActiveText(fSnippet.Extra);
 end;
 
+class function TSnippetHTML.JSALink(const JSFn, Hint, CSSClass, Text: string):
+  string;
+begin
+  Result := TextLink('', JSFn, '|' + Hint, TIStringList.Create(CSSClass), Text);
+end;
+
 function TSnippetHTML.RenderActiveText(ActiveText: IActiveText): string;
 var
   Renderer: TActiveTextHTML;
@@ -181,9 +210,7 @@ begin
     begin
       if Result <> '' then
         Result := Result + ', ';
-      Result := Result + SnippetALink(
-        Snippet.Name, Snippet.DisplayName, Snippet.UserDefined
-      );
+      Result := Result + SnippetALink(Snippet);
     end;
     Result := StrMakeSentence(Result);
   end;
@@ -192,6 +219,25 @@ end;
 function TSnippetHTML.SnippetName: string;
 begin
   Result := MakeSafeHTMLText(fSnippet.DisplayName);
+end;
+
+class function TSnippetHTML.SnippetALink(const Snippet: TSnippet): string;
+resourcestring
+  // Long hint
+  sSnippetHint = 'Display "%s"';  // long hint
+begin
+  // Create javascript link enclosing snippet name
+  Result := JSALink(
+    JSLiteralFunc('displaySnippet', [Snippet.Name, Snippet.UserDefined]),
+    Format(sSnippetHint, [Snippet.DisplayName]),
+    'snippet-link',
+    Snippet.DisplayName
+  );
+end;
+
+function TSnippetHTML.SnippetALink: string;
+begin
+  Result := SnippetALink(fSnippet);
 end;
 
 function TSnippetHTML.SnippetKind: string;

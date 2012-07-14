@@ -504,7 +504,7 @@ begin
       MakeCompoundTag(
         'td',
         NameCellAttrs,
-        SnippetALink(Snippet.Name, Snippet.DisplayName, Snippet.UserDefined)
+        SnippetHTML.SnippetALink
       )
       + MakeCompoundTag('td', DescCellAttrs, SnippetHTML.Description)
     );
