@@ -70,6 +70,7 @@ type
     function IsEmpty: Boolean;
     property Kind: TSnippetKind read fKind;
     property Parts: TArray<TSnippetPagePart> read GetParts;
+    function HasPart(PartId: TSnippetPagePartId): Boolean;
   end;
 
 type
@@ -116,12 +117,6 @@ type
     class procedure SetDefaults(PS: TSnippetPageStructures);
   end;
 
-implementation
-
-uses
-  SysUtils,
-  UExceptions, UIStringList;
-
 type
   TAllSnippetPageParts = class(TNoConstructObject)
   strict private
@@ -135,6 +130,12 @@ type
     class function GetPartId(const Key: string; out Id: TSnippetPagePartId):
       Boolean;
   end;
+
+implementation
+
+uses
+  SysUtils,
+  UExceptions, UIStringList;
 
 { TSnippetPageStructure }
 
@@ -194,6 +195,16 @@ begin
   SetLength(Result, fParts.Count);
   for Idx := 0 to Pred(fParts.Count) do
     Result[Idx] := fParts[Idx];
+end;
+
+function TSnippetPageStructure.HasPart(PartId: TSnippetPagePartId): Boolean;
+var
+  Part: TSnippetPagePart;
+begin
+  for Part in fParts do
+    if Part.Id = PartId then
+      Exit(True);
+  Result := False;
 end;
 
 procedure TSnippetPageStructure.InsertPart(Idx: Integer;
@@ -357,7 +368,7 @@ begin
     sppDescription, 'Description', sDescription
   );
   fParts[sppSourceCode] := TSnippetPagePart.Create(
-    sppSourceCode, 'SouceCode', sSourceCode
+    sppSourceCode, 'SourceCode', sSourceCode
   );
   fParts[sppKind] := TSnippetPagePart.Create(
     sppKind, 'Kind', sKind
