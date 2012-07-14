@@ -147,30 +147,6 @@ begin
   );
 end;
 
-function ALink(const URL, JSFn, Hint: string; Classes: IStringList;
-  const InnerHTML: string): string;
-  {Creates a hyper-link compound tag surrounding some inner HTML.
-    @param URL [in] URL accessed by link. Should be url encoded. Setting URL to
-      '' creates a link to "javascript:void(0);".
-    @param JSFn [in] JavaScript code called in the tag's onclick event. Setting
-      to '' prevents the onclick event being used. When set the onclick event
-      returns false.
-    @param Hint [in] Standard Delphi hint string, in form short-hint|long-hint.
-      Link's title attribute is set to short-hint while if long-hint is provided
-      the external object's ShowHint method is called with long-hint when mouse
-      passes over the link.
-    @param Classes [in] List of class names used in tag's class attribute. May
-      be nil if no classes required.
-    @param InnerHTML [in] HTML to be included within link. Must be valid HTML
-      code.
-    @return Required HTML tag.
-  }
-begin
-  Result := AOpenTag(URL, JSFn, Hint, Classes)
-    + InnerHTML
-    + MakeTag('a', ttClose)
-end;
-
 function TextLink(const URL, JSFn, Hint: string; Classes: IStringList;
   const Text: string): string;
   {Creates an <a>..</a> link surrounding some text.
@@ -190,7 +166,9 @@ function TextLink(const URL, JSFn, Hint: string; Classes: IStringList;
     @return Complete <a> tag.
   }
 begin
-  Result := ALink(URL, JSFn, Hint, Classes, MakeSafeHTMLText(Text));
+  Result := AOpenTag(URL, JSFn, Hint, Classes)
+    + MakeSafeHTMLText(Text)
+    + MakeTag('a', ttClose);
 end;
 
 end.
