@@ -82,15 +82,30 @@ type
     class function RightOf(const Ctrls: array of TControl;
       const Margin: Integer = 0): Integer; overload;
 
+    ///  <summary>Returns X co-ordinate of left-most left hand side of
+    ///  controls in given array, allowing space for optional margin.</summary>
+    class function LeftOf(const Ctrls: array of TControl;
+      const Margin: Integer = 0): Integer;
+
     ///  <summary>Locates control Ctrl to the left of reference control RefCtrl,
     ///  optionally separated by given margin.</summary>
     class procedure MoveToLeftOf(const RefCtrl, Ctrl: TControl;
-      const Margin: Integer = 0);
+      const Margin: Integer = 0); overload;
+
+    ///  <summary>Locates control Ctrl to left of left most edge of controls
+    ///  in RefCtrl, optionally separated by given margin.</summary>
+    class procedure MoveToLeftOf(const RefCtrls: array of TControl;
+      const Ctrl: TControl; const Margin: Integer = 0); overload;
 
     ///  <summary>Locates control Ctrl to right of reference control RefCtrl,
     ///  optionally separated by given margin.</summary>
     class procedure MoveToRightOf(const RefCtrl, Ctrl: TControl;
       const Margin: Integer = 0); overload;
+
+    ///  <summary>Locates control Ctrl to right of right most edge of controls
+    ///  in RefCtrl, optionally separated by given margin.</summary>
+    class procedure MoveToRightOf(const RefCtrls: array of TControl;
+      const Ctrl: TControl; const Margin: Integer = 0); overload;
 
     ///  <summary>Locates control Ctrl below reference control RefCtrl,
     ///  optionally separated by given margin.</summary>
@@ -279,6 +294,17 @@ begin
   Inc(Result, Margin);
 end;
 
+class function TCtrlArranger.LeftOf(const Ctrls: array of TControl;
+  const Margin: Integer): Integer;
+var
+  Ctrl: TControl;
+begin
+  Result := MaxInt;
+  for Ctrl in Ctrls do
+    Result := Min(Result, Ctrl.Left);
+  Dec(Result, Margin);
+end;
+
 class function TCtrlArranger.MaxContainerHeight(
   const Containers: array of TWinControl): Integer;
 var
@@ -307,10 +333,22 @@ begin
   Ctrl.Left := RefCtrl.Left - Margin - Ctrl.Width;
 end;
 
+class procedure TCtrlArranger.MoveToLeftOf(const RefCtrls: array of TControl;
+  const Ctrl: TControl; const Margin: Integer);
+begin
+  Ctrl.Left := TCtrlArranger.LeftOf(RefCtrls, Margin) - Ctrl.Width;
+end;
+
+class procedure TCtrlArranger.MoveToRightOf(const RefCtrls: array of TControl;
+  const Ctrl: TControl; const Margin: Integer);
+begin
+  Ctrl.Left := RightOf(RefCtrls, Margin);
+end;
+
 class procedure TCtrlArranger.MoveToRightOf(const RefCtrl, Ctrl: TControl;
   const Margin: Integer);
 begin
-  Ctrl.Left := RightOf(RefCtrl) + Margin;
+  Ctrl.Left := RightOf(RefCtrl, Margin);
 end;
 
 class function TCtrlArranger.RightOf(const Ctrls: array of TControl;
