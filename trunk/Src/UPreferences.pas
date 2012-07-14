@@ -43,8 +43,8 @@ uses
   // Delphi
   Graphics,
   // Project
-  Hiliter.UGlobals, UIStringList, UMeasurement, UPrintInfo, USourceFileInfo,
-  USourceGen, UWarnings;
+  Hiliter.UGlobals, UIStringList, UMeasurement, UPrintInfo,
+  USnippetPageStructure, USourceFileInfo, USourceGen, UWarnings;
 
 
 type
@@ -262,6 +262,17 @@ type
     property NewsAge: Integer
       read GetNewsAge write SetNewsAge;
       {Maximum age of news items to be displayed}
+
+    ///  <summary>Gets information about snippet detail page customisations.
+    ///  </summary>
+    function GetPageStructures: TSnippetPageStructures;
+    ///  <summary>Updates information describing snippet detail page
+    ///  customisations.</summary>
+    procedure SetPageStructures(PageStructures: TSnippetPageStructures);
+    ///  <summary>Information about snippet detail page customisations.
+    ///  </summary>
+    property PageStructures: TSnippetPageStructures
+      read GetPageStructures write SetPageStructures;
   end;
 
 
@@ -326,6 +337,7 @@ type
       {Information about warnings to be inhibited by code generator}
     fNewsAge: Integer;
       {Maximum age of news items in days}
+    fPageStructures: TSnippetPageStructures;
   protected // do not make strict
     { IPreferences methods }
     function GetSourceCommentStyle: TCommentStyle;
@@ -473,6 +485,16 @@ type
       {Sets maximum age of news items to be displayed.
         @param Age [in] Required age in days.
       }
+
+    ///  <summary>Gets information about snippet detail page customisations.
+    ///  </summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetPageStructures: TSnippetPageStructures;
+    ///  <summary>Updates information describing snippet detail page
+    ///  customisations.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetPageStructures(PageStructures: TSnippetPageStructures);
+
     { IAssignable method }
     procedure Assign(const Src: IInterface);
       {Assigns properties of a given object to this object.
@@ -483,6 +505,7 @@ type
     constructor Create;
       {Class constructor. Sets up object.
       }
+    destructor Destroy; override;
   end;
 
   {
@@ -506,6 +529,7 @@ type
       cCodeGenerator = 'CodeGen';
       cNews = 'News';
       cDisplay = 'Display';
+      cPageStructures = 'SnippetPageStructure';
     class var fInstance: IPreferences;
       {Stores reference to singleton instance of this class}
     class function GetInstance: IPreferences; static;
@@ -573,6 +597,7 @@ begin
   Self.SetCustomHiliteColours(SrcPref.CustomHiliteColours);
   Self.SetWarnings(SrcPref.Warnings);
   Self.SetNewsAge(SrcPref.NewsAge);
+  Self.SetPageStructures(SrcPref.PageStructures);
 end;
 
 constructor TPreferences.Create;
@@ -585,6 +610,14 @@ begin
   fWarnings := TWarnings.Create;
   fDBHeadingCustomColours[False] := TIStringList.Create;
   fDBHeadingCustomColours[True] := TIStringList.Create;
+  fPageStructures := TSnippetPageStructures.Create;
+  TDefaultPageStructures.SetDefaults(fPageStructures);
+end;
+
+destructor TPreferences.Destroy;
+begin
+  fPageStructures.Free;
+  inherited;
 end;
 
 function TPreferences.GetCustomHiliteColours: IStringList;
@@ -636,6 +669,11 @@ function TPreferences.GetOverviewStartState: TOverviewStartState;
   }
 begin
   Result := fOverviewStartState;
+end;
+
+function TPreferences.GetPageStructures: TSnippetPageStructures;
+begin
+  Result := fPageStructures;
 end;
 
 function TPreferences.GetPrinterOptions: TPrintOptions;
@@ -747,6 +785,12 @@ begin
   fOverviewStartState := Value;
 end;
 
+procedure TPreferences.SetPageStructures(
+  PageStructures: TSnippetPageStructures);
+begin
+  fPageStructures.Assign(PageStructures);
+end;
+
 procedure TPreferences.SetPrinterOptions(const Options: TPrintOptions);
   {Sets default print options.
     @param Options [in] New print options.
@@ -833,6 +877,7 @@ begin
   NewPref.CustomHiliteColours := Self.GetCustomHiliteColours;
   NewPref.Warnings := Self.GetWarnings;
   NewPref.NewsAge := Self.fNewsAge;
+  NewPref.PageStructures := Self.fPageStructures;
 end;
 
 constructor TPreferencesPersist.Create;
@@ -921,6 +966,10 @@ begin
   // Read news section
   Storage := Settings.ReadSection(ssPreferences, cNews);
   fNewsAge := StrToIntDef(Storage.ItemValues['MaxAge'], cDefNewsAge);
+
+  // Read page structure section
+  Storage := Settings.ReadSection(ssPreferences, cPageStructures);
+  TSnippetPageStructuresPersist.Load(Storage, fPageStructures);
 end;
 
 destructor TPreferencesPersist.Destroy;
@@ -1005,6 +1054,10 @@ begin
   Storage := Settings.EmptySection(ssPreferences, cNews);
   Storage.ItemValues['MaxAge'] := IntToStr(fNewsAge);
   Storage.Save;
+
+  // Write page structure section
+  Storage := Settings.EmptySection(ssPreferences, cPageStructures);
+  TSnippetPageStructuresPersist.Save(Storage, fPageStructures);
 
   inherited;
 end;
