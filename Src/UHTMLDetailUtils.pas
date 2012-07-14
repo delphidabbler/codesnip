@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -82,7 +82,7 @@ function JSLink(const JSFn, Hint: string; Classes: IStringList;
     @return Complete <a> tag.
   }
 
-function SnippetALink(const SnippetName: string;
+function SnippetALink(const SnippetName, DisplayName: string;
   const UserDefined: Boolean): string;
   {Creates an <a>..</a> link that triggers external object's DisplaySnippet
   method when clicked. The link does not access a URL. The link's text is the
@@ -90,6 +90,8 @@ function SnippetALink(const SnippetName: string;
   display a hint containing the snippet's name when the mouse passes over the
   link.
     @param SnippetName [in] Name of snippet to be displayed when link is
+      clicked.
+    @param DisplayName [in] Display name of snippet to be displayed when link is
       clicked.
     @param UserDefined [in] Flag indicating if snippet is user defined.
     @return Complete <a> tag.
@@ -273,7 +275,7 @@ begin
   Result := TextLink('', JSFn, Hint, Classes, Text);
 end;
 
-function SnippetALink(const SnippetName: string;
+function SnippetALink(const SnippetName, DisplayName: string;
   const UserDefined: Boolean): string;
   {Creates an <a>..</a> link that triggers external object's DisplaySnippet
   method when clicked. The link does not access a URL. The link's text is the
@@ -281,6 +283,8 @@ function SnippetALink(const SnippetName: string;
   display a hint containing the snippet's name when the mouse passes over the
   link.
     @param SnippetName [in] Name of snippet to be displayed when link is
+      clicked.
+    @param DisplayName [in] Display name of snippet to be displayed when link is
       clicked.
     @param UserDefined [in] Flag indicating if snippet is user defined.
     @return Complete <a> tag.
@@ -294,7 +298,7 @@ begin
     JSLiteralFunc('displaySnippet', [SnippetName, UserDefined]),
     '|' + Format(sSnippetHint, [SnippetName]),
     TIStringList.Create('snippet-link'),
-    SnippetName
+    DisplayName
   );
 end;
 

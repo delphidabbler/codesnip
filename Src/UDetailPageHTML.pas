@@ -502,7 +502,9 @@ begin
     Result := MakeCompoundTag(
       'tr',
       MakeCompoundTag(
-        'td', NameCellAttrs, SnippetALink(Snippet.Name, Snippet.UserDefined)
+        'td',
+        NameCellAttrs,
+        SnippetALink(Snippet.Name, Snippet.DisplayName, Snippet.UserDefined)
       )
       + MakeCompoundTag('td', DescCellAttrs, SnippetHTML.Description)
     );
