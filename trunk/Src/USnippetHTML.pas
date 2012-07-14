@@ -68,7 +68,7 @@ type
     ///  <summary>Object constructor. Sets up object to provide HTML for given
     ///  snippet.</summary>
     constructor Create(const Snippet: TSnippet);
-    ///  <summary>Returns snippet name as HTML.</summary>
+    ///  <summary>Returns snippet display name as HTML.</summary>
     function SnippetName: string;
     ///  <summary>Returns snippet description as HTML.</summary>
     function Description: string;
@@ -181,7 +181,9 @@ begin
     begin
       if Result <> '' then
         Result := Result + ', ';
-      Result := Result + SnippetALink(Snippet.Name, Snippet.UserDefined);
+      Result := Result + SnippetALink(
+        Snippet.Name, Snippet.DisplayName, Snippet.UserDefined
+      );
     end;
     Result := StrMakeSentence(Result);
   end;
@@ -189,7 +191,7 @@ end;
 
 function TSnippetHTML.SnippetName: string;
 begin
-  Result := MakeSafeHTMLText(fSnippet.Name);
+  Result := MakeSafeHTMLText(fSnippet.DisplayName);
 end;
 
 function TSnippetHTML.SnippetKind: string;

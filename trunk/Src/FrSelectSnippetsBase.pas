@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -173,7 +173,7 @@ begin
       CatNode := AddNode(nil, Group.Title, Cat);
       for Snippet in Group.SnippetList do
         if CanAddSnippetNode(Snippet) then
-          AddNode(CatNode, Snippet.Name, Snippet);
+          AddNode(CatNode, Snippet.DisplayName, Snippet);
     end;
   finally
     FreeAndNil(Grouping);

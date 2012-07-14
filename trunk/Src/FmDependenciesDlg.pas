@@ -178,7 +178,9 @@ begin
   for RequiredSnippet in DependsList do
   begin
     // Add node for snippet from dependency list
-    ChildNode := tvDependencies.Items.AddChild(Parent, RequiredSnippet.Name);
+    ChildNode := tvDependencies.Items.AddChild(
+      Parent, RequiredSnippet.DisplayName
+    );
     ChildNode.Data := RequiredSnippet;  // reference to associated snippet
     // Check for circular reference. If detetected display warning otherwise
     // recursively add child nodes for snippet's dependency list
@@ -356,6 +358,7 @@ procedure TDependenciesDlg.PopulateRequiredByList;
 var
   Dependents: ISnippetIDList;
   SnippetID: TSnippetID;
+  Snippet: TSnippet;
 begin
   Dependents := (Database as IDatabaseEdit).GetDependents(
     Database.Snippets.Find(fSnippetID)
@@ -366,9 +369,14 @@ begin
     if tiRequiredBy in fTabs then
     begin
       for SnippetID in Dependents do
+      begin
+        Snippet := Database.Snippets.Find(SnippetID);
+        Assert(Assigned(Snippet),
+          ClassName + '.PopulateRequiredByList: Snippet id not found');
         lbDependents.Items.AddObject(
-          SnippetID.Name, TBox<Boolean>.Create(SnippetID.UserDefined)
+          Snippet.DisplayName, TBox<Boolean>.Create(Snippet.UserDefined)
         );
+      end;
     end;
   finally
     lbDependents.Items.EndUpdate;
