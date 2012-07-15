@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2011-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -57,6 +57,7 @@ type
     edCompilerPath: TEdit;
     btnBrowse: TButton;
     btnClear: TButton;
+    chkShowInMain: TCheckBox;
     ///  <summary>Displays file open dialog box and places entered file name in
     ///  compiler file name edit control.</summary>
     procedure btnBrowseClick(Sender: TObject);
@@ -104,6 +105,7 @@ uses
   // Delphi
   Sysutils, Dialogs,
   // Project
+  Compilers.UGlobals,
   UCtrlArranger, UExeFileType, UMessageBox, UOpenDialogEx, UOpenDialogHelper,
   UStrUtils;
 
@@ -119,6 +121,7 @@ begin
     TCtrlArranger.BottomOf(lblCompilerPath, 4), [edCompilerPath, btnBrowse]
   );
   btnClear.Top := TCtrlArranger.BottomOf([edCompilerPath, btnBrowse], 8);
+  chkShowInMain.Top := TCtrlArranger.BottomOf(btnClear, 24);
 end;
 
 procedure TCompilersDlgCompilerFrame.btnBrowseClick(Sender: TObject);
@@ -184,11 +187,13 @@ end;
 procedure TCompilersDlgCompilerFrame.Initialise;
 begin
   edCompilerPath.Text := Compiler.GetExecFile;
+  chkShowInMain.Checked := Compiler.GetDisplayable;
 end;
 
 procedure TCompilersDlgCompilerFrame.UpdateCompiler;
 begin
   Compiler.SetExecFile(GetCompilerPath);
+  Compiler.SetDisplayable(chkShowInMain.Checked);
 end;
 
 function TCompilersDlgCompilerFrame.ValidateFileName(const FileName: string;

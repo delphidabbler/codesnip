@@ -45,4 +45,12 @@ inherited CompilersDlgCompilerFrame: TCompilersDlgCompilerFrame
     TabOrder = 2
     OnClick = btnClearClick
   end
+  object chkShowInMain: TCheckBox
+    Left = 3
+    Top = 88
+    Width = 273
+    Height = 17
+    Caption = 'Display results for this compiler in details pane'
+    TabOrder = 3
+  end
 end
