@@ -255,6 +255,7 @@ var
   SKInfo: TSnippetKindInfo;
 begin
   inherited;
+  HelpKeyword := 'SnippetLayoutPrefs';
   fPageStructs := TSnippetPageStructures.Create;
   for SKInfo in TSnippetKindInfoList.Items do
     cbSnippetKinds.Items.AddObject(SKInfo.DisplayName, TObject(SKInfo.Kind));
