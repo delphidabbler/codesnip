@@ -451,10 +451,6 @@ begin
     );
 
   // Draw compiler name
-  if fCompiler.IsAvailable then
-    Canvas.Font.Color := clWindowText
-  else
-    Canvas.Font.Color := clGrayText;
   NameRect := Bounds(
     NameLeftOffset,
     (Height - Canvas.TextHeight(Name)) div 2,
