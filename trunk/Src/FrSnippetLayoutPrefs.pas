@@ -59,7 +59,6 @@ type
     var
       fPageStructs: TSnippetPageStructures;
       fUIUpdated: Boolean;
-      fSelectedKindIdx: Integer;
     function PartIdFromStrings(Strings: TStrings; Idx: Integer):
       TSnippetPagePartId;
     function SelectedKind: TSnippetKind;
@@ -257,8 +256,6 @@ var
 begin
   inherited;
   fPageStructs := TSnippetPageStructures.Create;
-  fSelectedKindIdx := -1;
-
   for SKInfo in TSnippetKindInfoList.Items do
     cbSnippetKinds.Items.AddObject(SKInfo.DisplayName, TObject(SKInfo.Kind));
   cbSnippetKinds.ItemIndex := 0;
