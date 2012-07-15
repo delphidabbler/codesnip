@@ -50,15 +50,15 @@ inherited SnippetLayoutPrefsFrame: TSnippetLayoutPrefsFrame
     Top = 48
     Width = 159
     Height = 13
-    Caption = 'Edit page layout for snippet kind:'
+    Caption = 'Edit page layout for snippet &kind:'
     FocusControl = cbSnippetKinds
   end
   object lblAvailable: TLabel
     Left = 3
     Top = 72
-    Width = 135
+    Width = 128
     Height = 13
-    Caption = 'Available page components:'
+    Caption = '&Unused page components:'
     FocusControl = lbAvailableFragments
   end
   object lblUsed: TLabel
@@ -66,7 +66,7 @@ inherited SnippetLayoutPrefsFrame: TSnippetLayoutPrefsFrame
     Top = 72
     Width = 138
     Height = 13
-    Caption = 'Displayed page components:'
+    Caption = '&Displayed page components:'
     FocusControl = lbAvailableFragments
   end
   object cbSnippetKinds: TComboBox
@@ -137,7 +137,7 @@ inherited SnippetLayoutPrefsFrame: TSnippetLayoutPrefsFrame
       OnUpdate = actExcludeFragmentUpdate
     end
     object actRestoreDefaults: TAction
-      Caption = 'Restore &Defaults'
+      Caption = '&Restore Defaults'
       OnExecute = actRestoreDefaultsExecute
     end
   end
