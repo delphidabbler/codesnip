@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -66,9 +66,21 @@ type
     ///  <summary>Returns HTML of a table cell containing an image that
     ///  indicates given compile result.</summary>
     class function ResultCell(const CompRes: TCompileResult): string;
+    ///  <summary>Generates and returns rows of an HTML table that displays
+    ///  given compiler result for each displayable compiler in Compilers.
+    ///  </summary>
+    class function CompileResultsTableRows(Compilers: ICompilers;
+      const CompileResults: TCompileResults): string;
+    ///  <summary>Generates and returns rows of an HTML table containing no
+    ///  compiler result information.</summary>
+    ///  <remarks>Table contains an explanation of the problem.</remarks>
+    class function EmptyTableRows: string;
   public
     ///  <summary>Generates and returns rows of an HTML table that displays
     ///  given compiler results for each compiler.</summary>
+    ///  <remarks>If there are no displayable compilers, an 'error table' is
+    ///  generated that contains no compile results but instead has an
+    ///  explanation of the problem.</remarks>
     class function TableRows(const CompileResults: TCompileResults): string;
   end;
 
@@ -116,6 +128,68 @@ begin
   Result := CompResImgInfo[CompRes].Title;
 end;
 
+class function TCompResHTML.CompileResultsTableRows(Compilers: ICompilers;
+  const CompileResults: TCompileResults): string;
+var
+  Row1, Row2: string;   // collect HTML of first and second table rows
+  Compiler: ICompiler;  // each supported compiler
+begin
+  // Initialise HTML for two rows of table and resulting table HTML
+  Row1 := MakeTag('tr', ttOpen);
+  Row2 := MakeTag('tr', ttOpen);
+  // Add to each table row for each compiler: compiler name in row 1 and LED
+  // image representing compile result in row 2
+  for Compiler in Compilers do
+  begin
+    if not Compiler.GetDisplayable then
+      Continue;
+    Row1 := Row1 + NameCell(Compiler) + EOL;
+    Row2 := Row2 + ResultCell(CompileResults[Compiler.GetID]) + EOL;
+  end;
+  // Close the two rows
+  Row1 := Row1 + MakeTag('tr', ttClose);
+  Row2 := Row2 + MakeTag('tr', ttClose);
+  // Return HTML of two rows
+  Result := Row1 + Row2;
+end;
+
+class function TCompResHTML.EmptyTableRows: string;
+resourcestring
+  sHeading = 'No compiler results available';
+  sMessage = 'Results for all compilers have been hidden.';
+  sHelpText = 'More information';
+  sHelpHint = 'View explanatory help topic';
+begin
+  Result := MakeCompoundTag(
+    'tr',
+    MakeCompoundTag(
+      'th',
+      MakeCompoundTag(
+        'span',
+        THTMLAttributes.Create('class', 'warning'),
+        MakeSafeHTMLText(sHeading)
+      )
+    )
+  ) +
+  MakeCompoundTag(
+    'tr',
+    MakeCompoundTag(
+      'td',
+      MakeSafeHTMLText(sMessage)
+      + ' ' +
+      TextLink(
+        'help:AllCompilersHidden',
+        '',
+        '|' + sHelpHint,
+        TIStringList.Create('help-link'),
+        sHelpText
+      )
+      +
+      '.'
+    )
+  );
+end;
+
 class function TCompResHTML.ImageResURL(const CompRes: TCompileResult):
   string;
 begin
@@ -151,26 +225,13 @@ end;
 class function TCompResHTML.TableRows(const CompileResults: TCompileResults):
   string;
 var
-  Compilers: ICompilers;
-  Compiler: ICompiler;
-  Row1, Row2: string;     // HTML for two rows in HTML table
+  Compilers: ICompilers;     // HTML for two rows in HTML table
 begin
   Compilers := TCompilersFactory.CreateAndLoadCompilers;
-  // Initialise HTML for two rows of table and resulting table HTML
-  Row1 := MakeTag('tr', ttOpen);
-  Row2 := MakeTag('tr', ttOpen);
-  // Add to each table row for each compiler: compiler name in row 1 and LED
-  // image representing compile result in row 2
-  for Compiler in Compilers do
-  begin
-    Row1 := Row1 + NameCell(Compiler) + EOL;
-    Row2 := Row2 + ResultCell(CompileResults[Compiler.GetID]) + EOL;
-  end;
-  // Close the two rows
-  Row1 := Row1 + MakeTag('tr', ttClose);
-  Row2 := Row2 + MakeTag('tr', ttClose);
-  // Return HTML of two rows
-  Result := Row1 + Row2;
+  if Compilers.HaveDisplayable then
+    Result := CompileResultsTableRows(Compilers, CompileResults)
+  else
+    Result := EmptyTableRows;
 end;
 
 end.
