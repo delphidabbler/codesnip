@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -207,6 +207,16 @@ type
       {Records prefixes used in interpreting error, fatal error and warning
       conditions in log files.
         @param Prefixes [in] Array of required prefix strings.
+      }
+    function GetDisplayable: Boolean;
+      {Returns flag indicating if compiler is displayable, i.e. compile results
+      for it are to be displayed in UI etc.
+        @return Boolean flag.
+      }
+    procedure SetDisplayable(const Flag: Boolean);
+      {Sets a flag indicating if compiler is displayable, i.e. compile results
+      for it are to be displayed in UI etc.
+        @param Flag [in] Requried value.
       }
     function Compile(const Path, Project: string): TCompileResult;
       {Compiles a project and returns result of compilation. Records result of

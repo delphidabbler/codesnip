@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -70,6 +70,8 @@ type
       {User defined command line switches}
     fSearchDirs: ISearchDirs;
       {List of compiler search directories}
+    fDisplayable: Boolean;
+      {Indicates whether compiler's results are to be displayed in UI etc}
     function CommandLineSwitches: string;
       {Generate list of space separated switches for compiler command line.
         @return Required list.
@@ -175,6 +177,16 @@ type
       {Records prefixes used in interpreting error, fatal error and warning
       conditions in log files.
         @param Prefixes [in] Array of required prefix strings.
+      }
+    function GetDisplayable: Boolean;
+      {Returns flag indicating if compiler is displayable, i.e. compile results
+      for it are to be displayed in UI etc.
+        @return Boolean flag.
+      }
+    procedure SetDisplayable(const Flag: Boolean);
+      {Sets a flag indicating if compiler is displayable, i.e. compile results
+      for it are to be displayed in UI etc.
+        @param Flag [in] Requried value.
       }
     function Compile(const Path, Project: string): TCompileResult;
       {Compiles a project and returns result of compilation. Records result of
@@ -399,6 +411,7 @@ begin
   fSwitches := GetDefaultSwitches;
   fExecFile := '';
   fLastCompileResult := crQuery;
+  fDisplayable := True;
 end;
 
 constructor TCompilerBase.CreateCopy(const Obj: TCompilerBase);
@@ -414,6 +427,7 @@ begin
   fExecFile := Obj.fExecFile;
   fLastCompileResult := Obj.fLastCompileResult;
   fSearchDirs := Obj.GetSearchDirs;
+  fDisplayable := Obj.GetDisplayable;
 end;
 
 destructor TCompilerBase.Destroy;
@@ -484,6 +498,15 @@ begin
       Lines.Add(System.Copy(Line, Pos, MaxInt));
     end;
   end;
+end;
+
+function TCompilerBase.GetDisplayable: Boolean;
+  {Returns flag indicating if compiler is displayable, i.e. compile results for
+  it are to be displayed in UI etc.
+    @return Boolean flag.
+  }
+begin
+  Result := fDisplayable;
 end;
 
 function TCompilerBase.GetExecFile: string;
@@ -626,6 +649,15 @@ begin
   finally
     SL.Free;
   end;
+end;
+
+procedure TCompilerBase.SetDisplayable(const Flag: Boolean);
+  {Sets a flag indicating if compiler is displayable, i.e. compile results for
+  it are to be displayed in UI etc.
+    @param Flag [in] Requried value.
+  }
+begin
+  fDisplayable := Flag;
 end;
 
 procedure TCompilerBase.SetExecFile(const Value: string);
