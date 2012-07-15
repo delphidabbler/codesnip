@@ -291,6 +291,10 @@ type
       read GetAvailableCount;
       {Number of compilers installed on this computer and made available to
       program}
+    function HaveDisplayable: Boolean;
+      {Checks if any compilers are displayable.
+        @return True if at least one compiler is displayable, False otherwise.
+      }
   end;
 
   {

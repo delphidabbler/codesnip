@@ -124,7 +124,8 @@ type
     ICompilers, IAssignable
   )
   strict private
-    var fCompilers: TList<ICompiler>; // List of compiler objects
+    var
+      fCompilers: TList<ICompiler>; // List of compiler objects
   protected // do not make strict
     { IAssignable method }
     procedure Assign(const Src: IInterface);
@@ -146,6 +147,10 @@ type
     function GetAvailableCount: Integer;
       {Read access method for AvailableCount property
         @return Number of installed compilers available to program.
+      }
+    function HaveDisplayable: Boolean;
+      {Checks if any compilers are displayable.
+        @return True if at least one compiler is displayable, False otherwise.
       }
     function GetEnumerator: TEnumerator<ICompiler>;
       {Creates an enumerator for this object.
@@ -256,7 +261,7 @@ var
   Compiler: ICompiler;  // loops thru all compilers
 begin
   Result := 0;
-  for Compiler in (Self as ICompilers) do
+  for Compiler in fCompilers do
     if Compiler.IsAvailable then
       Inc(Result);
 end;
@@ -285,6 +290,16 @@ function TCompilers.GetEnumerator: TEnumerator<ICompiler>;
   }
 begin
   Result := fCompilers.GetEnumerator;
+end;
+
+function TCompilers.HaveDisplayable: Boolean;
+var
+  Compiler: ICompiler;  // each compiler
+begin
+  for Compiler in fCompilers do
+    if Compiler.GetDisplayable then
+      Exit(True);
+  Result := False;
 end;
 
 { TPersistCompilers }
