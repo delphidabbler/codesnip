@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -294,12 +294,12 @@ procedure TPersistCompilers.Load(const Compilers: ICompilers);
     @param Compilers [in] List of compilers to load.
   }
 var
-  Compiler: ICompiler;            // refers to each compiler
-  Prefixes: TCompLogPrefixes;     // compiler log prefixes from storage
-  PrefixID: TCompLogPrefixID;     // loops thru all compiler log prefixes
-  Storage: ISettingsSection;      // object used to access persistent storage
-  ExePath: string;                // value of ExePath value in storage file
-  SearchDirNames: IStringList;    // list of search directory names
+  Compiler: ICompiler;                  // refers to each compiler
+  Prefixes: TCompLogPrefixes;           // compiler log prefixes from storage
+  PrefixID: TCompLogPrefixID;           // loops thru all compiler log prefixes
+  Storage: ISettingsSection;            // accesses persistent storage
+  ExePath: string;                      // value of ExePath in storage file
+  SearchDirNames: IStringList;          // list of search directory names
 begin
   // Loop thru each supported compiler
   for Compiler in Compilers do
@@ -313,6 +313,11 @@ begin
     ExePath := Storage.ItemValues['ExePath'];
     if ExePath <> '' then
       Compiler.SetExecFile(ExePath);
+
+    // Get compiler visibility in UI
+    Compiler.SetDisplayable(
+      Boolean(StrToIntDef(Storage.ItemValues['Displayable'], Ord(True)))
+    );
 
     // Load compiler log prefixes (format PrefixX)
     for PrefixID := Low(TCompLogPrefixID) to High(TCompLogPrefixID) do
@@ -335,11 +340,11 @@ procedure TPersistCompilers.Save(const Compilers: ICompilers);
     @param Compilers [in] List of compilers to save.
   }
 var
-  Compiler: ICompiler;        // refers to each compiler
-  Prefixes: TCompLogPrefixes; // compiler log prefixes from storage
-  PrefixID: TCompLogPrefixID; // loops thru all compiler log prefixes
-  Storage: ISettingsSection;  // object used to access persistent storage
-  SearchDirNames: IStringList;   // list of search directory names
+  Compiler: ICompiler;          // refers to each compiler
+  Prefixes: TCompLogPrefixes;   // compiler log prefixes from storage
+  PrefixID: TCompLogPrefixID;   // loops thru all compiler log prefixes
+  Storage: ISettingsSection;    // object used to access persistent storage
+  SearchDirNames: IStringList;  // list of search directory names
 begin
   for Compiler in Compilers do
   begin
@@ -348,6 +353,7 @@ begin
     Storage := Settings.EmptySection(ssCompilerInfo, Compiler.GetIDString);
     // add required data to storage object
     Storage.ItemValues['ExePath'] := Compiler.GetExecFile;
+    Storage.ItemValues['Displayable'] := IntToStr(Ord(Compiler.GetDisplayable));
     Prefixes := Compiler.GetLogFilePrefixes;
     for PrefixID := Low(TCompLogPrefixID) to High(TCompLogPrefixID) do
       Storage.ItemValues[Format('Prefix%d', [Ord(PrefixID)])] :=
