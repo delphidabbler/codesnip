@@ -255,6 +255,13 @@
     Path to compiler. Empty string if compiler not configured.
   </dd>
   <dt>
+    <strong>Displayable</strong> (Boolean)
+  </dt>
+  <dd>
+    Indicates whether compiler's compilation results for a snippet can be
+    displayed in detail pane.
+  </dd>
+  <dt>
     <strong>Prefix0</strong> (String)
   </dt>
   <dd>
@@ -949,6 +956,67 @@
   </dt>
   <dd>
     Size of printed page's bottom margin in mm.
+  </dd>
+</dl>
+
+<h4>
+  [Prefs:SnippetPageStructure] section
+</h4>
+
+<p>
+  Stores preferences that describes customisations of snippet pages displayed in
+  details pane.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>PageKind<em>XXX</em></strong> (String)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each snippet kind where <em>XXX</em> is the ordinal value of
+      the snippet kind.
+    </div>
+    <div class="half-spaced">
+      Each entry's value describes the structure of the details pane page that
+      snippets of the kind given by the key name. The value is a comma separated
+      list of zero or more names, each of which denotes a page component.
+      Components are displayed in the order they are listed. Valid component
+      names are:
+    </div>
+    <ul class="unspaced">
+      <li>
+        <em>Description</em>
+      </li>
+      <li>
+        <em>SourceCode</em>
+      </li>
+      <li>
+        <em>Kind</em>
+      </li>
+      <li>
+        <em>Category</em>
+      </li>
+      <li>
+        <em>Units</em>
+      </li>
+      <li>
+        <em>Depends</em>
+      </li>
+      <li>
+        <em>XRefs</em>
+      </li>
+      <li>
+        <em>CompileResults</em>
+      </li>
+      <li>
+        <em>ExtraInfo</em>
+      </li>
+    </ul>
   </dd>
 </dl>
 
