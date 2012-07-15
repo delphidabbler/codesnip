@@ -238,9 +238,11 @@ const
   SnippetLblTop = 0;
   SnippetLblBottomMargin = 8;
   CompilerCtrlListTop = 0;
+  MaxCompilersBeforeScroll = 8;
 var
-  CompCtrl: TCompilerCtrl;  // each compiler control
-  NextTop: Integer;         // top of next compiler control in scroll box
+  CompCtrl: TCompilerCtrl;    // each compiler control
+  NextTop: Integer;           // top of next compiler control in scroll box
+  MaxCompListHeight: Integer; // max height of compiler list
 begin
   TCtrlArranger.SetLabelHeight(lblSnippetNameDesc);
 
@@ -271,8 +273,14 @@ begin
   sbCompilers.Top := TCtrlArranger.BottomOf(
     lblSnippetName, SnippetLblBottomMargin
   );
-  sbCompilers.Height := pnlBody.ClientHeight - sbCompilers.Top;
-  btnViewErrors.Top := btnHelp.Top;
+  if fCompilerCtrlList.Count > 0 then
+    MaxCompListHeight := Min(MaxCompilersBeforeScroll, fCompilerCtrlList.Count)
+      * fCompilerCtrlList[0].Height
+  else
+    MaxCompListHeight := 20;
+  sbCompilers.Height := MaxCompListHeight + 2 * sbCompilers.BevelWidth;
+
+  pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 8;
 
   // Arrange compiler controls vertically within scroll box
   NextTop := CompilerCtrlListTop;
@@ -285,7 +293,10 @@ begin
   // vertical scroll bar in scroll box has been created
   for CompCtrl in fCompilerCtrlList do
     CompCtrl.Width := sbCompilers.ClientWidth;
+
   inherited;
+
+  btnViewErrors.Top := btnHelp.Top;
 end;
 
 procedure TTestCompileDlg.ConfigForm;
@@ -306,10 +317,14 @@ var
 begin
   for Compiler in fCompileMgr.Compilers do
   begin
-    Ctrl := TCompilerCtrl.Create(Self);
-    Ctrl.Parent := sbCompilers;
-    Ctrl.Compiler := Compiler;
-    fCompilerCtrlList.Add(Ctrl);
+    if Compiler.IsAvailable then
+    begin
+      Ctrl := TCompilerCtrl.Create(Self);
+      Ctrl.Parent := sbCompilers;
+      Ctrl.Compiler := Compiler;
+      Ctrl.Color := Self.Color;
+      fCompilerCtrlList.Add(Ctrl);
+    end;
   end;
 end;
 
