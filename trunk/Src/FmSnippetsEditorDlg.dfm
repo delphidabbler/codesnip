@@ -19,16 +19,13 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       Top = 0
       Width = 662
       Height = 504
-      ActivePage = tsComments
+      ActivePage = tsCode
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
       OnMouseDown = pcMainMouseDown
-      ExplicitWidth = 646
       object tsCode: TTabSheet
         Caption = 'Code'
-        ExplicitLeft = 12
-        ExplicitWidth = 638
         object lblDescription: TLabel
           Left = 0
           Top = 73
@@ -104,7 +101,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Left = 4
           Top = 224
           Width = 647
-          Height = 250
+          Height = 225
           Font.Charset = ANSI_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
@@ -156,7 +153,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           inherited edText: TMemo
             Width = 462
             Height = 55
-            ExplicitLeft = 1
             ExplicitTop = 0
             ExplicitWidth = 462
             ExplicitHeight = 55
@@ -183,11 +179,18 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Height = 21
           TabOrder = 1
         end
+        object chkUseHiliter: TCheckBox
+          Left = 3
+          Top = 455
+          Width = 478
+          Height = 17
+          Caption = 'Synta&x highlight this snippet as Pascal code'
+          TabOrder = 7
+        end
       end
       object tsReferences: TTabSheet
         Caption = 'References'
         ImageIndex = 1
-        ExplicitWidth = 638
         object lblXRefs: TLabel
           Left = 3
           Top = 3
@@ -276,7 +279,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsComments: TTabSheet
         Caption = 'Extra Information'
         ImageIndex = 2
-        ExplicitWidth = 638
         object lblExtra: TLabel
           Left = 3
           Top = 3
@@ -318,21 +320,20 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
             Width = 648
             Height = 358
             ExplicitTop = 0
-            ExplicitWidth = 632
+            ExplicitWidth = 648
             ExplicitHeight = 358
           end
           inherited tcEditMode: TTabControl
             Top = 358
             Width = 648
             ExplicitTop = 358
-            ExplicitWidth = 632
+            ExplicitWidth = 648
           end
         end
       end
       object tsCompileResults: TTabSheet
         Caption = 'Compile Results'
         ImageIndex = 3
-        ExplicitWidth = 638
         object lblCompilers: TLabel
           Left = 3
           Top = 3
@@ -460,8 +461,8 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
   end
   object alMain: TActionList
     Images = ilMain
-    Left = 48
-    Top = 488
+    Left = 146
+    Top = 264
     object actAddUnit: TAction
       Caption = '&Add Unit'
       OnExecute = actAddUnitExecute
@@ -543,8 +544,8 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
   end
   object mnuEditCtrls: TPopupMenu
     Images = ilMain
-    Left = 80
-    Top = 488
+    Left = 86
+    Top = 264
     object miCut: TMenuItem
       Action = actCut
     end
@@ -568,8 +569,8 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
     end
   end
   object ilMain: TImageList
-    Left = 112
-    Top = 488
+    Left = 26
+    Top = 264
     Bitmap = {
       494C010104000500040010001000FFFFFFFFFF10FFFFFFFFFFFFFFFF424D3600
       0000000000003600000028000000400000002000000001002000000000000020

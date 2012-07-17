@@ -128,6 +128,7 @@ type
     frmExtra: TSnippetsActiveTextEdFrame;
     lblDisplayName: TLabel;
     edDisplayName: TEdit;
+    chkUseHiliter: TCheckBox;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -542,6 +543,7 @@ begin
     TCtrlArranger.BottomOf([lblCategories, cbCategories], 8)
   );
   TCtrlArranger.MoveBelow([lblSourceCode, lblSourceCaretPos], edSourceCode, 4);
+  TCtrlArranger.MoveBelow(edSourceCode, chkUseHiliter, 8);
 
   // tsReferences
   TCtrlArranger.AlignVCentres(
@@ -770,6 +772,7 @@ begin
   begin
     // We are editing a snippet: initialise controls from snippet's properties
     edSourceCode.Text := fSnippet.SourceCode;
+    chkUseHiliter.Checked := fSnippet.HiliteSource;
     frmDescription.DefaultEditMode := emAuto;
     frmDescription.ActiveText := fSnippet.Description;
     edName.Text := fSnippet.Name;
@@ -792,6 +795,7 @@ begin
   begin
     // We are adding a new snippet: clear all controls or set default values
     edSourceCode.Clear;
+    chkUseHiliter.Checked := True;
     frmDescription.DefaultEditMode := emPlainText;
     frmDescription.Clear;
     edName.Clear;
@@ -908,6 +912,7 @@ begin
     Props.Kind := fSnipKindList.SnippetKind(cbKind.ItemIndex);
     (Props.Desc as IAssignable).Assign(frmDescription.ActiveText);
     Props.SourceCode := StrTrimRight(edSourceCode.Text);
+    Props.HiliteSource := chkUseHiliter.Checked;
     (Props.Extra as IAssignable).Assign(frmExtra.ActiveText);
     Props.CompilerResults := fCompilersLBMgr.GetCompileResults;
     fUnitsCLBMgr.GetCheckedUnits(Refs.Units);
