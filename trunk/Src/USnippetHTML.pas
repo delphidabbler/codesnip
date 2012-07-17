@@ -251,12 +251,15 @@ function TSnippetHTML.SourceCode: string;
 var
   Builder: THTMLBuilder;      // object that assembles HTML
   Renderer: IHiliteRenderer;  // object that renders highlighted code as HTML
+  Attrs: IHiliteAttrs;        // attributes of syntax highlighter
 begin
+  if fSnippet.HiliteSource then
+    Attrs := THiliteAttrsFactory.CreateDisplayAttrs
+  else
+    Attrs := THiliteAttrsFactory.CreateNulAttrs;
   Builder := THTMLBuilder.Create;
   try
-    Renderer := THTMLHiliteRenderer.Create(
-      Builder, THiliteAttrsFactory.CreateDisplayAttrs
-    );
+    Renderer := THTMLHiliteRenderer.Create(Builder, Attrs);
     TSyntaxHiliter.Hilite(fSnippet.SourceCode, Renderer);
     Result := Builder.HTMLFragment;
   finally
