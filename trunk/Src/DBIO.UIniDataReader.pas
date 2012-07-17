@@ -506,6 +506,9 @@ begin
     Props.DisplayName := GetDisplayNameProperty;
     Props.SourceCode := GetSourceCodeProperty;
     Props.CompilerResults := GetCompilerResultsProperty;
+    // all snippets from main database are Pascal and use syntax highlighter:
+    // there is no entry in data files to switch this on or off
+    Props.HiliteSource := True;
   except
     HandleCorruptDatabase(ExceptObject);
   end;
