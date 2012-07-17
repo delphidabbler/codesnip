@@ -132,6 +132,15 @@ type
           non-standard value.
         @return Required snippet kind.
       }
+    class function GetHiliteSource(const XMLDoc: IXMLDocumentEx;
+      const SnippetNode: IXMLNode; const Default: Boolean): Boolean;
+      {Gets value of a <highlight-source> node of a snippet in an XML document.
+        @param XMLDoc [in] XML document containing snippet.
+        @param SnippetNode [in] Snippet node that contains highlight source tag.
+        @param Default [in] Value to use if node doesn't exist or has
+          non-standard value.
+        @return Value of node, or default value.
+      }
     class procedure WriteCompilerResults(const XMLDoc: IXMLDocumentEx;
       const SnippetNode: IXMLNode; const CompRes: TCompileResults);
       {Writes compile results for a snippet to XML document.
@@ -332,6 +341,25 @@ begin
       end;
     end;
   end;
+end;
+
+class function TXMLDocHelper.GetHiliteSource(const XMLDoc: IXMLDocumentEx;
+  const SnippetNode: IXMLNode; const Default: Boolean): Boolean;
+  {Gets value of a <highlight-source> node of a snippet in an XML document.
+    @param XMLDoc [in] XML document containing snippet.
+    @param SnippetNode [in] Snippet node that contains highlight source tag.
+    @param Default [in] Value to use if node doesn't exist or has non-standard
+      value.
+    @return Value of node, or default value.
+  }
+var
+  Value: string;  // text value of HiliteSource node
+begin
+  Value := GetSubTagText(XMLDoc, SnippetNode, cHighlightSource);
+  if Value <> '' then
+    Result := Value <> '0'
+  else
+    Result := Default;
 end;
 
 class procedure TXMLDocHelper.GetPascalNameList(const XMLDoc: IXMLDocumentEx;
