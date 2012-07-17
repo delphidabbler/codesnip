@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -87,7 +87,7 @@ type
         @param Msg [in/out] Not used.
       }
     function GetDataDir: string;
-      {Returns directory where data files stored and ensures it exists.
+      {Returns directory where data files stored.
         @return Data directory.
       }
     procedure UpdateStatusHandler(Sender: TObject; Status: TUpdateStatus;
@@ -349,12 +349,11 @@ begin
 end;
 
 function TUpdateDlg.GetDataDir: string;
-  {Returns directory where data files stored and ensures it exists.
+  {Returns directory where data files stored.
     @return Data directory.
   }
 begin
   Result := TAppInfo.AppDataDir;
-  EnsureFolders(Result);
 end;
 
 procedure TUpdateDlg.HeadlineMsg(const Msg: string;

@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -228,8 +228,9 @@ begin
   // Create download manager to download from remote web server
   fDownloadMgr := TDBDownloadMgr.Create;
   fDownloadMgr.OnProgress := DownloadProgressHandler;
-  // Record local data directory
+  // Record local data directory & ensure it exists
   fLocalDir := LocalDir;
+  EnsureFolders(fLocalDir);
 end;
 
 destructor TUpdateMgr.Destroy;
