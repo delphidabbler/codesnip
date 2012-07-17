@@ -79,11 +79,12 @@ const
   cDescriptionNode            = 'description';
   cUnitsNode                  = 'units';
   cDependsNode                = 'depends';
-  cCommentsNode               = 'comments';           // v1 docs only
-  cCreditsNode                = 'credits';            // v1 docs only
-  cCreditsUrlNode             = 'credits-url';        // v1 docs only
-  cExtraNode                  = 'extra';              // v2 docs only
-  cKindNode                   = 'kind';               // v3 docs only
+  cCommentsNode               = 'comments';
+  cCreditsNode                = 'credits';
+  cCreditsUrlNode             = 'credits-url';
+  cExtraNode                  = 'extra';
+  cKindNode                   = 'kind';
+  cHighlightSource            = 'highlight-source';
   cStandardFormatNode         = 'standard-format';
   cCompilerResultsNode        = 'compiler-results';
   cCompilerResultNode         = 'compiler-result';

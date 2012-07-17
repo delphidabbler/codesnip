@@ -379,6 +379,10 @@ begin
     fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Snippet.DisplayName);
   // source code is stored directly in XML, not in external file
   fXMLDoc.CreateElement(SnippetNode, cSourceCodeTextNode, Snippet.SourceCode);
+  // write highlight source flag
+  fXMLDoc.CreateElement(
+    SnippetNode, cHighlightSource, IntToStr(Ord(Snippet.HiliteSource))
+  );
   // extra info is written only if present
   if not Snippet.Extra.IsEmpty then
     fXMLDoc.CreateElement(
@@ -535,6 +539,9 @@ begin
         );
         Props.SourceCode := TXMLDocHelper.GetSubTagText(
           fXMLDoc, SnippetNode, cSourceCodeTextNode
+        );
+        Props.HiliteSource := TXMLDocHelper.GetHiliteSource(
+          fXMLDoc, SnippetNode, True
         );
         // how we read extra property depends on version of file
         case fVersion of

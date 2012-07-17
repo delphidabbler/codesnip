@@ -662,6 +662,9 @@ begin
     Props.Desc := GetDescriptionProperty;
     Props.Extra := GetExtraProperty;
     Props.SourceCode := GetSourceCodePropertyText;
+    Props.HiliteSource := TXMLDocHelper.GetHiliteSource(
+      fXMLDoc, SnippetNode, True
+    );
     Props.CompilerResults := TXMLDocHelper.GetCompilerResults(
       fXMLDoc, SnippetNode
     );
@@ -966,6 +969,9 @@ begin
       DataFile(FileName), Props.SourceCode, TEncoding.UTF8, False
     );
     fXMLDoc.CreateElement(SnippetNode, cSourceCodeFileNode, FileName);
+    fXMLDoc.CreateElement(
+      SnippetNode, cHighlightSource, IntToStr(Ord(Props.HiliteSource))
+    );
     fXMLDoc.CreateElement(SnippetNode, cDisplayNameNode, Props.DisplayName);
     // extra node is only written if extra property has a value
     if not Props.Extra.IsEmpty then
