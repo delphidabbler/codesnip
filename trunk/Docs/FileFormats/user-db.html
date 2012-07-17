@@ -293,6 +293,40 @@
   </dd>
 
   <dt>
+    <strong>codesnip-export/routines/routine/highlight-source</strong>
+  </dt>
+  <dd>
+    <ul class="squashed">
+      <li>
+        <span class="highlight">versions 1..5:</span> Not supported.
+      </li>
+      <li>
+        <div>
+          <span class="highlight">version 6:</span>
+        </div>
+        <div class="indent">
+          <div>
+            Flag indicating if snippet source code can be highlighted using
+            syntax highlighter. Permissible values are:
+          </div>
+          <ul class="squashed">
+            <li>
+              &quot;0&quot; &ndash; do not syntax highlight source code
+            </li>
+            <li>
+              &quot;1&quot; &ndash; syntax highlight source code
+            </li>
+          </ul>
+          <div class="half-spaced">
+            Omitting this tag is permitted. Value defaults to &quot;1&quot; in
+            this case.
+          </div>
+        </div>
+      </li>
+    </ul>
+  </dd>
+
+  <dt>
     <strong>codesnip-data/routines/routine/display-name</strong>
   </dt>
   <dd>
@@ -731,6 +765,9 @@
       <li>
         <em>codesnip-data/routines/routine/display-name</em>
       </li>
+      <li>
+        <em>codesnip-export/routines/routine/highlight-source</em>
+      </li>
     </ul>
   </dd>
 </dl>
@@ -756,10 +793,19 @@
 </p>
 
 <p>
-  Readers of v1 to v5 files must convert the plain text snippet description read
-  from <em>codesnip-data/routines/routine/description</em> into the formatted
-  text equivalent of a single paragraph containing the description.
+  Readers of v1 to v5 files must:
 </p>
+<ol>
+  <li>
+    Convert the plain text snippet description read from
+    <em>codesnip-data/routines/routine/description</em> into the formatted text
+    equivalent of a single paragraph containing the description.
+  </li>
+  <li>
+    Proceed as if a <em>codesnip-export/routines/routine/highlight-source</em>
+    tag with value &quot;1&quot; had been specified.
+  </li>
+</ul>
 
 </body>
 
