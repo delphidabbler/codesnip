@@ -54,13 +54,14 @@ type
     Record that provides information about a snippet's properties.
   }
   TSnippetData = record
-    Kind: TSnippetKind;               // Kind of snippet
-    Cat: string;                      // Category containing snippet
-    Desc: IActiveText;                // Description of snippet
-    SourceCode: string;               // Snippet's source code
-    DisplayName: string;              // Snippet's display name
-    Extra: IActiveText;               // Extra text used to describe snippet
-    CompilerResults: TCompileResults; // Compilation results
+    Kind: TSnippetKind;                   // Kind of snippet
+    Cat: string;                          // Category containing snippet
+    Desc: IActiveText;                    // Description of snippet
+    SourceCode: string;                   // Snippet's source code
+    HiliteSource: Boolean;                // If syntax highlighter to be used
+    DisplayName: string;                  // Snippet's display name
+    Extra: IActiveText;                   // Extra text used to describe snippet
+    CompilerResults: TCompileResults;     // Compilation results
     procedure Init;
       {Initialises record by setting default values for fields.
       }
@@ -112,18 +113,19 @@ type
   }
   TSnippet = class(TObject)
   strict private
-    fKind: TSnippetKind;              // Kind of snippet this is
-    fCategory: string;                // Name of snippet's category
-    fDescription: IActiveText;        // Description of snippet
-    fSourceCode: string;              // Snippet's source code
-    fName: string;                    // Name of snippet
-    fDisplayName: string;             // Display name of snippet
-    fUnits: TStringList;              // List of required units
-    fDepends: TSnippetList;           // List of required snippets
-    fXRef: TSnippetList;              // List of cross-referenced snippets
-    fExtra: IActiveText;              // Additional information about snippet
-    fCompatibility: TCompileResults;  // Snippet's compiler compatibility
-    fUserDefined: Boolean;            // Whether this snippet is user-defined
+    fKind: TSnippetKind;                    // Kind of snippet this is
+    fCategory: string;                      // Name of snippet's category
+    fDescription: IActiveText;              // Description of snippet
+    fSourceCode: string;                    // Snippet's source code
+    fName: string;                          // Name of snippet
+    fDisplayName: string;                   // Display name of snippet
+    fUnits: TStringList;                    // List of required units
+    fDepends: TSnippetList;                 // List of required snippets
+    fXRef: TSnippetList;                    // List of cross-referenced snippets
+    fExtra: IActiveText;                    // Further information for snippet
+    fCompatibility: TCompileResults;        // Snippet's compiler compatibility
+    fUserDefined: Boolean;                  // If this snippet is user-defined
+    fHiliteSource: Boolean;                 // If source is syntax highlighted
     function GetID: TSnippetID;
       {Gets snippet's unique ID.
         @return Required ID.
@@ -180,6 +182,8 @@ type
       {Description of snippet}
     property SourceCode: string read fSourceCode;
       {Source code of snippet}
+    property HiliteSource: Boolean read fHiliteSource;
+      {Flags whether source code can be syntax highlighted}
     property Extra: IActiveText read fExtra;
       {Additional information about snippet}
     property Compatibility: TCompileResults read fCompatibility;
@@ -476,6 +480,7 @@ begin
   fKind := Data.Kind;
   fDescription := Data.Desc;
   fSourceCode := StrWindowsLineBreaks(Data.SourceCode);
+  fHiliteSource := Data.HiliteSource;
   fDisplayName := Data.DisplayName;
   fExtra := TActiveTextFactory.CloneActiveText(Data.Extra);
   fCompatibility := Data.CompilerResults;
@@ -501,6 +506,7 @@ begin
   Result.Kind := Kind;
   Result.Desc := Description;
   Result.SourceCode := SourceCode;
+  Result.HiliteSource := HiliteSource;
   Result.DisplayName := GetDisplayNameValue;
   Result.Extra := TActiveTextFactory.CloneActiveText(Extra);
   Result.CompilerResults := Compatibility;
@@ -835,6 +841,7 @@ begin
   Cat := Src.Cat;
   Desc := TActiveTextFactory.CloneActiveText(Src.Desc);
   SourceCode := Src.SourceCode;
+  HiliteSource := Src.HiliteSource;
   DisplayName := Src.DisplayName;
   // we use cloning for Extra below because it deals uccessfully with both
   // Self.Extra = nil and Src.Extra = nil
@@ -853,6 +860,7 @@ begin
   Desc := TActiveTextFactory.CreateActiveText;
   DisplayName := '';
   SourceCode := '';
+  HiliteSource := True;
   Extra := TActiveTextFactory.CreateActiveText;
   for CompID := Low(TCompilerID) to High(TCompilerID) do
     CompilerResults[CompID] := crQuery;
