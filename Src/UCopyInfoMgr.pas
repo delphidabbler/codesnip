@@ -85,7 +85,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UAttrs, URTFSnippetDoc, UTextSnippetDoc;
+  Hiliter.UAttrs, Hiliter.UGlobals, URTFSnippetDoc, UTextSnippetDoc;
 
 
 { TCopyInfoMgr }
@@ -118,9 +118,16 @@ end;
 
 class function TCopyInfoMgr.GenerateRichText(View: IView): TEncodedData;
 var
-  Doc: TRTFSnippetDoc;  // object that generates RTF document
+  Doc: TRTFSnippetDoc;        // object that generates RTF document
+  HiliteAttrs: IHiliteAttrs;  // syntax highlighter formatting attributes
 begin
-  Doc := TRTFSnippetDoc.Create(THiliteAttrsFactory.CreateUserAttrs);
+  Assert(Supports(View, ISnippetView),
+    ClassName + '.GenerateRichText: View is not a snippet view');
+  if (View as ISnippetView).Snippet.HiliteSource then
+    HiliteAttrs := THiliteAttrsFactory.CreateUserAttrs
+  else
+    HiliteAttrs := THiliteAttrsFactory.CreateNulAttrs;
+  Doc := TRTFSnippetDoc.Create(HiliteAttrs);
   try
     // TRTFSnippetDoc generates stream of ASCII bytes
     Result := GenerateDoc(View, Doc);

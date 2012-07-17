@@ -131,13 +131,16 @@ end;
 
 function TSnippetPrintDocument.GetHiliteAttrs: IHiliteAttrs;
 begin
-  if not (poSyntaxPrint in PrintInfo.PrintOptions) then
-    Result := THiliteAttrsFactory.CreatePrintAttrs(nil, False)
+  if fSnippet.HiliteSource then
+    if not (poSyntaxPrint in PrintInfo.PrintOptions) then
+      Result := THiliteAttrsFactory.CreatePrintAttrs(nil, False)
+    else
+      Result := THiliteAttrsFactory.CreatePrintAttrs(
+        THiliteAttrsFactory.CreateUserAttrs,
+        poUseColor in PrintInfo.PrintOptions
+      )
   else
-    Result := THiliteAttrsFactory.CreatePrintAttrs(
-      THiliteAttrsFactory.CreateUserAttrs,
-      poUseColor in PrintInfo.PrintOptions
-    );
+    Result := THiliteAttrsFactory.CreateNulAttrs;
 end;
 
 { TCategoryPrintDocument }
