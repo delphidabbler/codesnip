@@ -35,6 +35,52 @@
   * ***** END LICENSE BLOCK *****
 }
 
+unit FirstRun.UUpdateDBase;
+
+interface
+
+// Copies both main and (where it exists) user databases from location they are
+// in on installation identified by PrevInstallID to correct location for
+// directory being installed.
+procedure CopyDatabases(PrevInstallID: Integer);
+
+// Checks if main database is installed in correct install directory for
+// current version of program.
+function MainDatabaseExists: Boolean;
+
+implementation
+
+uses
+  SysUtils, Classes,
+  FirstRun.UDataLocations, UUtils;
+
+// TODO: NOTE inserted from snippets database
+procedure CopyFile(const Source, Dest: string);
+var
+  SourceStream, DestStream: Classes.TFileStream; // source and dest file streams
+begin
+  DestStream := nil;
+  // Open source and dest file streams
+  SourceStream := Classes.TFileStream.Create(
+    Source, SysUtils.fmOpenRead or SysUtils.fmShareDenyWrite
+  );
+  try
+    DestStream := Classes.TFileStream.Create(
+      Dest, Classes.fmCreate or SysUtils.fmShareExclusive
+    );
+    // Copy file from source to dest
+    DestStream.CopyFrom(SourceStream, SourceStream.Size);
+    // Set dest file's modification date to same as source file
+    SysUtils.FileSetDate(
+      DestStream.Handle, SysUtils.FileGetDate(SourceStream.Handle)
+    );
+  finally
+    // Close files
+    DestStream.Free;
+    SourceStream.Free;
+  end;
+end;
+
 // Copies all files from one directory for another. Does nothing if SourceDir
 // doesn't exist or if both directories are the same. If DestDir does not exist
 // it is created.
@@ -42,24 +88,24 @@ procedure CopyDirectory(SourceDir, DestDir: string);
 var
   SourcePath: string;
   DestPath: string;
-  FindRec: TFindRec;
+  FindRec: TSearchRec;
 begin
   if CompareText(SourceDir, DestDir) = 0 then
     Exit;
-  if not DirExists(SourceDir) then
+  if not IsDirectory(SourceDir) then
     Exit;
-  if not DirExists(DestDir) then
+  if not IsDirectory(DestDir) then
     ForceDirectories(DestDir);
-  SourcePath := AddBackslash(SourceDir);
-  DestPath := AddBackslash(DestDir);
-  if FindFirst(SourcePath + '*', FindRec) then
+  SourcePath := IncludeTrailingPathDelimiter(SourceDir);
+  DestPath := IncludeTrailingPathDelimiter(DestDir);
+  if FindFirst(SourcePath + '*', faAnyFile, FindRec) = 0 then
   begin
     repeat
-      if (FindRec.Attributes and FILE_ATTRIBUTE_DIRECTORY) = 0 then
+      if (FindRec.Attr and faDirectory) = 0 then
       begin
-        FileCopy(SourcePath + FindRec.Name, DestPath + FindRec.Name, False);
+        CopyFile(SourcePath + FindRec.Name, DestPath + FindRec.Name);
       end;
-    until not FindNext(FindRec);
+    until not FindNext(FindRec) <> 0;
     FindClose(FindRec);
   end;
 end;
@@ -86,4 +132,6 @@ function MainDatabaseExists: Boolean;
 begin
   Result := FileExists(gMainDatabaseDirs[piCurrent] + '\categories.ini');
 end;
+
+end.
 

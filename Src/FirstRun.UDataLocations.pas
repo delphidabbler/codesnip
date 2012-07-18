@@ -37,6 +37,10 @@
  * ***** END LICENSE BLOCK *****
 }
 
+unit FirstRun.UDataLocations;
+
+interface
+
 {
   File locations in different CodeSnip versions
   ---------------------------------------------
@@ -115,45 +119,26 @@ var
   gCurrentCommonConfigFile: string;
   gCurrentUserConfigFile: string;
 
+// Initialises global variables that (a) store location of config files and
+// databases used by different versions of CodeSnip and (b) record type of any
+// previous installation that was detected.
+procedure InitGlobals;
+
+// Checks if database and config files need to be converted and / or copied to
+// new locations for application being installed.
+function DataConversionRequired: Boolean;
+
+implementation
+
+uses
+  SysUtils,
+  UAppInfo, USystemInfo;
+
 // Checks if database and config files need to be converted and / or copied to
 // new locations for application being installed.
 function DataConversionRequired: Boolean;
 begin
   Result := (gPrevInstallID <> piNone) and (gPrevInstallID < piCurrent);
-end;
-
-// Gets application data folder of user who started installation by using
-// helper app run as original user.
-function GetAppData: string;
-var
-  HelperApp: string;    // name of setup helper app
-  TmpDir: string;       // temp dir where helper app writes required info
-  TmpFile: string;      // temp file that received helper app's info
-  Res: Integer;         // return code from helper app: ignored
-begin
-  // Create name of a temporary directory in which helper app can store data
-  TmpDir := ExpandConstant('{commonappdata}\DelphiDabbler\~Tmp');
-  TmpFile := TmpDir + '\data';
-  ForceDirectories(TmpDir);
-  // Copy helper app into temp directory
-  HelperApp := ExpandConstant('{#SetupHelper}');
-  ExtractTemporaryFile(HelperApp);
-  // Run helper app as original user. Helper app writes information relating to
-  // original user to a ini file in temp directory created above.
-  ExecAsOriginalUser(
-    ExpandConstant('{tmp}\' + HelperApp),
-    '"' + TmpFile + '"',
-    '',
-    SW_HIDE,
-    ewWaitUntilTerminated,
-    Res
-  );
-  // Get original user's application data directory from temp file
-  Result := AddBackSlash(
-    GetIniString('SpecialFolders', 'CSIDL_APPDATA', '', TmpFile)
-  );
-  // Delete temporary directory
-  DelTree(TmpDir, True, True, True);
 end;
 
 // Records the application's data directories for each different arrangement
@@ -164,8 +149,8 @@ var
   ProgramData: string;  // path to common application data directory
 begin
   // Record system's common and user application data directories
-  ProgramData := ExpandConstant('{commonappdata}\');
-  AppData := GetAppData;
+  ProgramData := TSystemFolders.CommonAppData;
+  AppData := TSystemFolders.PerUserAppData;
 
   // Record paths to config files and database for each installation type
   gCommonConfigFiles[piOriginal] := '';
@@ -181,7 +166,7 @@ begin
     AppData + 'DelphiDabbler\CodeSnip\User.ini';
   gMainDatabaseDirs[piV1_9] :=
     ProgramData + 'DelphiDabbler\CodeSnip\Data';
-  gUserDatabaseDirs[piV1_9] := ''
+  gUserDatabaseDirs[piV1_9] := '';
 
   gCommonConfigFiles[piV2] :=
     ProgramData + 'DelphiDabbler\CodeSnip\Common.ini';
@@ -245,4 +230,6 @@ begin
   InitAppDataFolders;
   DetectPrevInstall;
 end;
+
+end.
 
