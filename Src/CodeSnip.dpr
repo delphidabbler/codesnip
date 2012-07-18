@@ -131,6 +131,7 @@ uses
   FmPreferencesDlg in 'FmPreferencesDlg.pas' {PreferencesDlg},
   FmPreviewDlg in 'FmPreviewDlg.pas' {PreviewDlg},
   FmPrintDlg in 'FmPrintDlg.pas' {PrintDlg},
+  FmProgramUpdatesDlg in 'FmProgramUpdatesDlg.pas' {ProgramUpdatesDlg},
   FmProxyServerDlg in 'FmProxyServerDlg.pas' {ProxyServerDlg},
   FmRegistrationDlg in 'FmRegistrationDlg.pas' {RegistrationDlg},
   FmRenameCategoryDlg in 'FmRenameCategoryDlg.pas' {RenameCategoryDlg},
