@@ -252,6 +252,9 @@ type
     miSpacer17: TMenuItem;
     miLoadSelection: TMenuItem;
     miSaveSelection: TMenuItem;
+    actProgramUpdates: TAction;
+    miSpacer18: TMenuItem;
+    miCheckUpdates: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
@@ -343,6 +346,7 @@ type
     procedure actSaveSelectionExecute(Sender: TObject);
     procedure actSaveSelectionUpdate(Sender: TObject);
     procedure actLoadSelectionExecute(Sender: TObject);
+    procedure actProgramUpdatesExecute(Sender: TObject);
   strict private
     fIsAppRegistered: Boolean;        // Flag noting if app is registered
     fNotifier: INotifier;             // Notififies app of user-initiated events
@@ -957,6 +961,14 @@ procedure TMainForm.actPrivacyExecute(Sender: TObject);
   }
 begin
   DisplayHelp('PrivacyStatement');
+end;
+
+procedure TMainForm.actProgramUpdatesExecute(Sender: TObject);
+  {Displays dialogue box that checks for program updates.
+    @param Sender [in] Not used.
+  }
+begin
+  fDialogMgr.ShowProgramUpdatesDlg;
 end;
 
 procedure TMainForm.actProxyServerExecute(Sender: TObject);
