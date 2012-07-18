@@ -10,19 +10,19 @@
 		<param name="Local" value="HTML\about_compiler_checks.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="about dialog">
+		<param name="Name" value="about dialogue">
 		<param name="Local" value="HTML\dlg_about.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="add category dialog">
+		<param name="Name" value="add category dialogue">
 		<param name="Local" value="HTML\dlg_addcategory.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="add snippet dialog">
+		<param name="Name" value="add snippet dialogue">
 		<param name="Local" value="HTML\dlg_editsnippet.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="bug report dialog">
+		<param name="Name" value="bug report dialogue">
 		<param name="Local" value="HTML\dlg_userbugreport.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -34,7 +34,7 @@
 		<param name="Local" value="HTML\menu_compile.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="choose element colour dialog">
+		<param name="Name" value="choose element colour dialogue">
 		<param name="Local" value="HTML\dlg_elementcolour.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -46,7 +46,7 @@
 		<param name="Local" value="HTML\dlg_prefs_codegen.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="code submission dialog">
+		<param name="Name" value="code submission dialogue">
 		<param name="Local" value="HTML\dlg_submit.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -100,7 +100,7 @@
 			</OBJECT>
 	</UL>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="configure compilers dialog">
+		<param name="Name" value="configure compilers dialogue">
 		<param name="Local" value="HTML\dlg_configcompilers.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -112,11 +112,11 @@
 		<param name="Local" value="HTML\task_customise.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="delete category dialog">
+		<param name="Name" value="delete category dialogue">
 		<param name="Local" value="HTML\dlg_deletecategory.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="dependencies dialog">
+		<param name="Name" value="dependencies dialogue">
 		<param name="Local" value="HTML\dlg_dependencies.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -150,11 +150,11 @@
 		<param name="Local" value="HTML\menu_edit.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="edit snippet dialog">
+		<param name="Name" value="edit snippet dialogue">
 		<param name="Local" value="HTML\dlg_editsnippet.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="export routines dialog">
+		<param name="Name" value="export routines dialogue">
 		<param name="Local" value="HTML\dlg_export.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -170,15 +170,15 @@
 		<param name="Local" value="HTML\menu_file.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="find compiler dialog">
+		<param name="Name" value="find compiler dialogue">
 		<param name="Local" value="HTML\dlg_findcompiler.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="find cross references dialog">
+		<param name="Name" value="find cross references dialogue">
 		<param name="Local" value="HTML\dlg_findxrefs.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="find text dialog">
+		<param name="Name" value="find text dialogue">
 		<param name="Local" value="HTML\dlg_findtext.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -256,7 +256,7 @@
 		<param name="Local" value="HTML\navigation.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="news dialog">
+		<param name="Name" value="news dialogue">
 		<param name="Local" value="HTML\dlg_news.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -264,7 +264,7 @@
 		<param name="Local" value="HTML\dlg_prefs_news.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="open backup dialog">
+		<param name="Name" value="open backup dialogue">
 		<param name="Local" value="HTML\dlg_restore.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -272,15 +272,15 @@
 		<param name="Local" value="HTML\overview_pane.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="page setup dialog">
+		<param name="Name" value="page setup dialogue">
 		<param name="Local" value="HTML\dlg_pagesetup.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="preferences dialog">
+		<param name="Name" value="preferences dialogue">
 		<param name="Local" value="HTML\dlg_preferences.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="print dialog">
+		<param name="Name" value="print dialogue">
 		<param name="Local" value="HTML\dlg_print.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -296,7 +296,7 @@
 		<param name="Local" value="HTML\privacy_statement.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="proxy server dialog">
+		<param name="Name" value="proxy server dialogue">
 		<param name="Local" value="HTML\dlg_proxyserver.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -308,11 +308,11 @@
 		<param name="Local" value="HTML\dlg_register.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="rename category dialog">
+		<param name="Name" value="rename category dialogue">
 		<param name="Local" value="HTML\dlg_renamecategory.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="save backup dialog">
+		<param name="Name" value="save backup dialogue">
 		<param name="Local" value="HTML\dlg_backup.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -320,7 +320,7 @@
 		<param name="Local" value="HTML\task_savesnippet.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="save snippet dialog">
+		<param name="Name" value="save snippet dialogue">
 		<param name="Local" value="HTML\dlg_savesnippet.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -332,11 +332,11 @@
 		<param name="Local" value="HTML\task_search.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="select compiler dialog">
+		<param name="Name" value="select compiler dialogue">
 		<param name="Local" value="HTML\dlg_selectcompiler.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="select routines dialog">
+		<param name="Name" value="select routines dialogue">
 		<param name="Local" value="HTML\dlg_selectroutines.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -356,7 +356,7 @@
 		<param name="Local" value="HTML\dlg_prefs_hiliter.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="test compile results dialog">
+		<param name="Name" value="test compile results dialogue">
 		<param name="Local" value="HTML\dlg_testcompile.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
@@ -372,7 +372,7 @@
 		<param name="Local" value="HTML\task_update.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="update from web dialog">
+		<param name="Name" value="update from web dialogue">
 		<param name="Local" value="HTML\dlg_update.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
