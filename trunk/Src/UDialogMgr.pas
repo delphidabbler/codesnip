@@ -143,6 +143,9 @@ type
           results.
         @param Snippet [in] Snippet to be compiled.
       }
+    procedure ShowProgramUpdatesDlg;
+      {Displays dialogue box used to check for database and program updates.
+      }
   end;
 
 
@@ -150,11 +153,13 @@ implementation
 
 
 uses
+  // Delphi
+  Forms,
   // Project
   FmAboutDlg, FmDependenciesDlg, FmDonateDlg, FmFindCompilerDlg, FmFindTextDlg,
-  FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg, FmProxyServerDlg,
-  FmRegistrationDlg, FmSelectionSearchDlg, FmTestCompileDlg, FmUpdateDlg,
-  FmUserBugReportDlg, UPageSetupDlgMgr, UTestUnitDlgMgr;
+  FmFindXRefsDlg, FmNewsDlg, FmPreferencesDlg, FmPrintDlg, FmProgramUpdatesDlg,
+  FmProxyServerDlg, FmRegistrationDlg, FmSelectionSearchDlg, FmTestCompileDlg,
+  FmUpdateDlg, FmUserBugReportDlg, UPageSetupDlgMgr, UTestUnitDlgMgr;
 
 
 { TDialogMgr }
@@ -293,6 +298,13 @@ procedure TDialogMgr.ShowNewsDlg;
   }
 begin
   TNewsDlg.Execute(Owner);
+end;
+
+procedure TDialogMgr.ShowProgramUpdatesDlg;
+  {Displays dialogue box used to check for database and program updates.
+  }
+begin
+  TProgramUpdatesDlg.Execute(Owner);
 end;
 
 procedure TDialogMgr.ShowTestCompileDlg(const CompileMgr: TCompileMgr;
