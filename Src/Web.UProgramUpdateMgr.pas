@@ -21,7 +21,7 @@ interface
 
 uses
   // Project
-  UDOSDateTime, Web.UExceptions, Web.UStdWebService;
+  Web.UStdWebService;
 
 
 type
@@ -42,7 +42,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes,
+  Classes,
   // Project
   UAppInfo, UStrUtils, UURIParams, Web.UInfo;
 
