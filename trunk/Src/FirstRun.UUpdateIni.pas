@@ -36,19 +36,173 @@
  * ***** END LICENSE BLOCK *****
 }
 
+unit FirstRun.UUpdateIni;
+
+interface
+
+// Creates new style per user and common config files from content of single,
+// old style config file used before CodeSnip v1.9.
+procedure CreateIniFilesFromOldStyle;
+
+// Copies config files of a previous installation to new installation, updating
+// to Unicode format if necessary.
+procedure CopyConfigFiles(InstallID: Integer);
+
+// Deletes any highlighter preferences from new installation's user config file.
+procedure DeleteHighligherPrefs;
+
+// Gets version number of new installation's user config file.
+function UserConfigFileVer: Integer;
+
+// Adds Prefs:CodeGen section along with default data to new installation's user
+// config file.
+procedure CreateDefaultCodeGenEntries;
+
+// Deletes proxt password entry from new installation's user config file.
+procedure DeleteProxyPassword;
+
+// Updates both common and user config files with correct version information.
+// This records both config file versions and (common config file only) version
+// number of program being installed.
+procedure StampConfigFiles;
+
+implementation
+
+uses
+  SysUtils, Types, Classes, Windows,
+  FirstRun.UDataLocations, FirstRun.UUnicode, UAppInfo, UIOUtils;
+
+// TODO: NOTE inserted from snippets database (duplicates FirstRun.UUpdateDBase)
+procedure CopyFile(const Source, Dest: string);
+var
+  SourceStream, DestStream: Classes.TFileStream; // source and dest file streams
+begin
+  DestStream := nil;
+  // Open source and dest file streams
+  SourceStream := Classes.TFileStream.Create(
+    Source, SysUtils.fmOpenRead or SysUtils.fmShareDenyWrite
+  );
+  try
+    DestStream := Classes.TFileStream.Create(
+      Dest, Classes.fmCreate or SysUtils.fmShareExclusive
+    );
+    // Copy file from source to dest
+    DestStream.CopyFrom(SourceStream, SourceStream.Size);
+    // Set dest file's modification date to same as source file
+    SysUtils.FileSetDate(
+      DestStream.Handle, SysUtils.FileGetDate(SourceStream.Handle)
+    );
+  finally
+    // Close files
+    DestStream.Free;
+    SourceStream.Free;
+  end;
+end;
+
+// #################### FROM INNO SETUP SOURCE
+
+{ TODO: If any of the Inno setup source is used then move it into it own unit
+        that meets with Inno setup license requirements }
+
+function GetIniString(const Section, Key: String; Default: String;
+  const Filename: String): String;
+var
+  BufSize, Len: Integer;
+begin
+  { On Windows 9x, Get*ProfileString can modify the lpDefault parameter, so
+  make sure it's unique and not read-only }
+  UniqueString(Default);
+  BufSize := 256;
+  while True do begin
+    SetString(Result, nil, BufSize);
+    if Filename <> '' then
+      Len := GetPrivateProfileString(PChar(Section), PChar(Key), PChar(Default),
+        @Result[1], BufSize, PChar(Filename))
+    else
+      Len := GetProfileString(PChar(Section), PChar(Key), PChar(Default),
+        @Result[1], BufSize);
+    { Work around bug present on Windows NT/2000 (not 95): When lpDefault is
+    too long to fit in the buffer, nSize is returned (null terminator counted)
+    instead of nSize-1 (what it's supposed to return). So don't trust the
+    returned length; calculate it ourself.
+    Note: This also ensures the string can never include embedded nulls. }
+    if Len <> 0 then
+      Len := StrLen(PChar(Result));
+    { Break if the string fits, or if it's apparently 64 KB or longer.
+    No point in increasing buffer size past 64 KB because the length returned by
+    Windows 2000 seems to be mod 65536. And Windows 95 returns 0 on values
+    longer than ~32 KB. Note: The docs say the function returns "nSize minus
+    one" if the buffer is too small, but I'm willing to bet it can be "minus
+    two" if the last character is double-byte. Let's just be extremely paranoid
+    and check for BufSize-8. }
+    if (Len < BufSize-8) or (BufSize >= 65536) then begin
+      SetLength(Result, Len);
+      Break;
+    end;
+    { Otherwise double the buffer size and try again }
+    BufSize := BufSize * 2;
+  end;
+end;
+
+function GetIniInt(const Section, Key: String;
+  const Default, Min, Max: Longint; const Filename: String): Longint;
+{ Reads a Longint from an INI file. If the Longint read is not between Min/Max
+then it returns Default. If Min=Max then Min/Max are ignored }
+var
+  S: String;
+  E: Integer;
+begin
+  S := GetIniString(Section, Key, '', Filename);
+  if S = '' then
+    Result := Default
+  else begin
+    Val(S, Result, E);
+    if (E <> 0) or ((Min <> Max) and ((Result < Min) or (Result > Max))) then
+      Result := Default;
+  end;
+end;
+
+function SetIniString(const Section, Key, Value, Filename: String): Boolean;
+begin
+  if Filename <> '' then
+    Result := WritePrivateProfileString(PChar(Section), PChar(Key),
+      PChar(Value), PChar(Filename))
+  else
+    Result := WriteProfileString(PChar(Section), PChar(Key),
+      PChar(Value));
+end;
+
+function SetIniInt(const Section, Key: String; const Value: Longint;
+  const Filename: String): Boolean;
+begin
+  Result := SetIniString(Section, Key, IntToStr(Value), Filename);
+end;
+
+procedure DeleteIniSection(const Section, Filename: String);
+begin
+  if Filename <> '' then
+    WritePrivateProfileString(PChar(Section), nil, nil,
+      PChar(Filename))
+  else
+    WriteProfileString(PChar(Section), nil, nil);
+end;
+
+// ################### END
+
 // Reads an ANSI config file, converts content to Unicode and writes that to a
 // UTF-16LE encoded Unicode config file with BOM. Does nothing if old and new
 // file names are the same.
 // *** Requires Unicode Inno Setup. ***
 procedure CopyAnsiToUnicodeConfigFile(OldFileName, NewFileName: string);
 var
-  Lines: TArrayOfString;  // lines of text read from ANSI .ini file
+  Lines: TStringDynArray;  // lines of text read from ANSI .ini file
 begin
   if CompareText(OldFileName, NewFileName) = 0 then
     Exit;
   // reads an ANSI file and converts contents to Unicode, using system default
   // encoding
-  LoadStringsFromFile(OldFileName, Lines);
+  Lines := TFileIO.ReadAllLines(OldFileName, TEncoding.Default);
+//  LoadStringsFromFile(OldFileName, Lines);
   // writes string array to UTF-16LE file
   ForceDirectories(ExtractFileDir(NewFileName));
   WriteStringsToUnicodeFile(NewFileName, Lines);
@@ -61,7 +215,7 @@ begin
   if CompareText(OldFileName, NewFileName) = 0 then
     Exit;
   ForceDirectories(ExtractFileDir(NewFileName));
-  FileCopy(OldFileName, NewFileName, False);
+  CopyFile(OldFileName, NewFileName);
 end;
 
 // Checks if a config file is ANSI. If False is returned the file is assumed to
@@ -84,7 +238,7 @@ end;
 // writes ANSI text.
 procedure CreateUnicodeConfigFile(FileName: string);
 var
-  NulLines: TArrayOfString;   // dummy empty string array
+  NulLines: TStringDynArray;   // dummy empty string array
 begin
   ForceDirectories(ExtractFileDir(FileName));
   SetLength(NulLines, 0);
@@ -132,7 +286,7 @@ begin
   SetIniString(
     'Application',
     'Version',
-    ExpandConstant('{#AppVersion}'),
+    TAppInfo.ProgramReleaseVersion,
     gCurrentCommonConfigFile
   );
 end;
@@ -333,4 +487,6 @@ begin
     gCurrentUserConfigFile
   );
 end;
+
+end.
 

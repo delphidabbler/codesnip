@@ -35,42 +35,55 @@
  * ***** END LICENSE BLOCK *****
 }
 
+unit FirstRun.UUnicode;
 
-const
-  // Constants for Windows CreateFile API function.
-  GENERIC_WRITE = $40000000;
-  CREATE_ALWAYS = 2;
-
-// Import for Windows CreateFileW API function.
-function CreateFileW(
-  lpFileName: string; // PWideChar;
-  dwDesiredAccess, dwShareMode: LongWord; //DWORD;
-  lpSecurityAttributes: LongWord; // PSecurityAttributes;
-  dwCreationDisposition, dwFlagsAndAttributes: LongWord; //DWORD;
-  hTemplateFile: THandle
-): THandle;
-external 'CreateFileW@kernel32.dll stdcall';
-
-// Import for Windows WriteFile API function. Prototype specialised for writing
-// Unicode strings.
-function WriteFile(
-  hFile: THandle;
-  const Buffer: string; // untyped param
-  nNumberOfBytesToWrite: LongWord; // DWORD;
-  var lpNumberOfBytesWritten: LongWord; // DWORD;
-  lpOverlapped: Cardinal // POverlapped
-): BOOL;
-external 'WriteFile@kernel32.dll stdcall';
-
-// Import for Windows CloseHandle API function.
-function CloseHandle(
-  hObject: THandle
-): BOOL;
-external 'CloseHandle@kernel32.dll stdcall';
+interface
 
 // Writes the lines of Unicode strings from the given string array to a named
 // file. Each line is terminated with CRLF.
-procedure WriteStringsToUnicodeFile(FileName: string; Lines: TArrayOfString);
+procedure WriteStringsToUnicodeFile(FileName: string; Lines: array of string);
+
+implementation
+
+uses
+  Windows,
+  UMessageBox;
+
+//const
+//  // Constants for Windows CreateFile API function.
+//  GENERIC_WRITE = $40000000;
+//  CREATE_ALWAYS = 2;
+
+//// Import for Windows CreateFileW API function.
+//function CreateFileW(
+//  lpFileName: PWideChar;
+//  dwDesiredAccess, dwShareMode: DWORD;
+//  lpSecurityAttributes: PSecurityAttributes;
+//  dwCreationDisposition, dwFlagsAndAttributes: DWORD;
+//  hTemplateFile: THandle
+//): THandle;
+//external 'CreateFileW@kernel32.dll stdcall';
+//
+//// Import for Windows WriteFile API function. Prototype specialised for writing
+//// Unicode strings.
+//function WriteFile(
+//  hFile: THandle;
+//  const Buffer: string; // untyped param
+//  nNumberOfBytesToWrite: LongWord; // DWORD;
+//  var lpNumberOfBytesWritten: LongWord; // DWORD;
+//  lpOverlapped: Cardinal // POverlapped
+//): BOOL;
+//external 'WriteFile@kernel32.dll stdcall';
+//
+//// Import for Windows CloseHandle API function.
+//function CloseHandle(
+//  hObject: THandle
+//): BOOL;
+//external 'CloseHandle@kernel32.dll stdcall';
+
+// Writes the lines of Unicode strings from the given string array to a named
+// file. Each line is terminated with CRLF.
+procedure WriteStringsToUnicodeFile(FileName: string; Lines: array of string);
 var
   F: THandle;             // file handle
   I: Integer;             // loops thru string array
@@ -80,17 +93,17 @@ var
 begin
   // Create new file
   F := CreateFileW(
-    FileName,
+    PChar(FileName),
     GENERIC_WRITE,
     0,
-    0,
+    nil,
     CREATE_ALWAYS,
     FILE_ATTRIBUTE_ARCHIVE,
     0
   );
   if F = LongWord(-1) then
   begin
-    MsgBox('Error - can''t create file ' + FileName, mbError, MB_OK);
+    TMessageBox.Error( nil, 'Error - can''t create file ' + FileName);
     Exit;
   end;
   // Write BOM for UTF-16LE
@@ -100,7 +113,7 @@ begin
     BOM,
     2,      // Size of a Unicode char
     BytesWritten,
-    0
+    nil
   );
   // Write each element of string array terminated by CRLF
   for I := 0 to Length(Lines) - 1 do
@@ -111,10 +124,12 @@ begin
       Line,
       Length(Line) * 2, // These are 2 byte Unicode chars
       BytesWritten,
-      0
+      nil
     );
   end;
   // Close the file
   CloseHandle(F);
 end;
+
+end.
 

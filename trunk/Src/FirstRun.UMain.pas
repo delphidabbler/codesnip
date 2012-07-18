@@ -36,12 +36,26 @@
 }
 
 
-var
-  // Reference to custom wizard page that gets info from user about whether to
-  // preserve config data and database. Whether page is displayed depends on
-  // whether we can update config files and database.
-  gConfigPage: TInputOptionWizardPage;
+unit FirstRun.UMain;
 
+interface
+
+// Initialises global variables that provide information on location of data
+// folders and database and about any earlier installation that has been
+// detected.
+function InitializeSetup: Boolean;
+
+// Performs any required data conversion
+procedure PerformRequiredDataConversion;
+
+implementation
+
+uses
+  SysUtils, Windows, IOUtils,
+  FirstRun.UDataLocations, FirstRun.UUpdateDBase, FirstRun.UUpdateIni,
+  UMessageBox, UUtils;
+
+var
   // Flag true if user wants to update database and config files
   gDataConversionRequested: Boolean;
 
@@ -49,123 +63,68 @@ var
   gDeleteOldDataRequested: Boolean;
 
 
-// Called during Setup's initialization. Initialises global variables that
-// provide information location of data folders and database and about any
-// earlier installation that has been detected.
+// ###################### INNO SETUP ROUTINES
+
+// TODO: duplicated with FirstRun.UUpdateIni
+function GetIniString(const Section, Key: String; Default: String;
+  const Filename: String): String;
+var
+  BufSize, Len: Integer;
+begin
+  { On Windows 9x, Get*ProfileString can modify the lpDefault parameter, so
+  make sure it's unique and not read-only }
+  UniqueString(Default);
+  BufSize := 256;
+  while True do begin
+    SetString(Result, nil, BufSize);
+    if Filename <> '' then
+      Len := GetPrivateProfileString(PChar(Section), PChar(Key), PChar(Default),
+        @Result[1], BufSize, PChar(Filename))
+    else
+      Len := GetProfileString(PChar(Section), PChar(Key), PChar(Default),
+        @Result[1], BufSize);
+    { Work around bug present on Windows NT/2000 (not 95): When lpDefault is
+    too long to fit in the buffer, nSize is returned (null terminator counted)
+    instead of nSize-1 (what it's supposed to return). So don't trust the
+    returned length; calculate it ourself.
+    Note: This also ensures the string can never include embedded nulls. }
+    if Len <> 0 then
+      Len := StrLen(PChar(Result));
+    { Break if the string fits, or if it's apparently 64 KB or longer.
+    No point in increasing buffer size past 64 KB because the length returned by
+    Windows 2000 seems to be mod 65536. And Windows 95 returns 0 on values
+    longer than ~32 KB. Note: The docs say the function returns "nSize minus
+    one" if the buffer is too small, but I'm willing to bet it can be "minus
+    two" if the last character is double-byte. Let's just be extremely paranoid
+    and check for BufSize-8. }
+    if (Len < BufSize-8) or (BufSize >= 65536) then begin
+      SetLength(Result, Len);
+      Break;
+    end;
+    { Otherwise double the buffer size and try again }
+    BufSize := BufSize * 2;
+  end;
+end;
+
+
+// ###################### END
+
+// Initialises global variables that provide information on location of data
+// folders and database and about any earlier installation that has been
+// detected.
 function InitializeSetup: Boolean;
 begin
   InitGlobals;
   Result := True;
 end;
 
-// Called when wizard is initialising. Creates custom page used to inform
-// whether existing old-style config files and database should be preserved.
-procedure InitializeWizard;
-begin
-  // Create custom page
-  gConfigPage := CreateInputOptionPage(
-    wpSelectProgramGroup,
-    'Configure CodeSnip',
-    'Should Setup preserve your old installation''s database and '
-      + 'configuration?',
-    'This version of CodeSnip stores its data differently to your earlier '
-      + 'version. Setup can attempt to copy any existing database files and '
-      + 'preserve your earlier settings. Choose what action to take below.',
-    False,
-    False
-  );
-  // Add check boxes if required
-  if DataConversionRequired then
-  begin
-    gConfigPage.Add('Copy existing settings and database');
-    gConfigPage.Values[0] := True;
-    gConfigPage.Add('Delete old settings and database after copying');
-    gConfigPage.Values[1] := False;
-  end;
-end;
-
-// Called to determine whether page specified by PageID should be displayed.
-// Display of custom page is inhibited only if no data conversion is necessary.
-function ShouldSkipPage(PageID: Integer): Boolean;
-begin
-  Result := False;
-  if PageID = gConfigPage.ID then
-  begin
-    if not DataConversionRequired then
-      Result := True;
-  end;
-end;
-
-// Called when "Next" button is clicked on page specified by CurPageID. Used to
-// record state of check boxes on custom page.
-function NextButtonClick(CurPageID: Integer): Boolean;
-begin
-  Result := True;
-  if CurPageID = gConfigPage.ID then
-  begin
-    gDataConversionRequested := gConfigPage.Values[0];
-    gDeleteOldDataRequested := gConfigPage.Values[1];
-  end;
-end;
-
-// Helper routine for UpdateReadyMemo. Appends text to a string followed by two
-// newlines (per NewLine parameter) providing text is not an empty string.
-// Returns updated string in Res.
-procedure AddTextToMemo(Text: string; var Res: string; NewLine: string);
-begin
-  if Text <> '' then
-    Res := Res + Text + NewLine + NewLine;
-end;
-
-// Called to determine text to be displayed on "Ready to install" wizard page.
-// We use all given information and add information about any data conversion to
-// be carried out.
-// See Inno Setup docs for details of parameters.
-function UpdateReadyMemo(Space, NewLine, MemoUserInfoInfo, MemoDirInfo,
-  MemoTypeInfo, MemoComponentsInfo, MemoGroupInfo,
-  MemoTasksInfo: String): String;
-begin
-  Result := '';
-  // Use all given info: empty strings ignored
-  AddTextToMemo(MemoUserInfoInfo, Result, NewLine);
-  AddTextToMemo(MemoDirInfo, Result, NewLine);
-  AddTextToMemo(MemoTypeInfo, Result, NewLine);
-  AddTextToMemo(MemoComponentsInfo, Result, NewLine);
-  AddTextToMemo(MemoGroupInfo, Result, NewLine);
-  AddTextToMemo(MemoTasksInfo, Result, NewLine);
-  // Add custom information
-  if DataConversionRequired then
-  begin
-    Result := Result +  'Data preservation:';
-    Result := Result + NewLine + Space;
-    if gDataConversionRequested then
-      Result := Result + 'Copy existing database and settings'
-    else
-      Result := Result + 'Don''t copy database and settings'
-        + NewLine + Space + Space
-        + 'A new database must be downloaded when the program is run'
-        + NewLine + Space + Space
-        + 'Registered programs will need re-registering';
-    Result := Result + NewLine + Space;
-    if gDeleteOldDataRequested then
-      Result := Result + 'Old database and settings will be deleted'
-    else
-      Result := Result + 'Old database and settings will be retained'
-  end;
-end;
-
-// Called to perform pre-install and post-install tasks. We performs any
-// required data conversion at the post-install stage.
-procedure CurStepChanged(CurStep: TSetupStep);
+// Performs any required data conversion
+procedure PerformRequiredDataConversion;
 var
   PrevInstallID: Integer; // loops through previous installs
   FileName: string;       // name of a config file
   DirName: string;        // name of a database directory
 begin
-  // We perform ini file post-install
-  if CurStep <> ssPostInstall then
-    Exit;
-
   // Check if data conversion is needed
   if DataConversionRequired then
   begin
@@ -206,22 +165,22 @@ begin
         FileName := gCommonConfigFiles[PrevInstallId];
         if (FileName <> '') and (FileName <> gCurrentCommonConfigFile)
           and FileExists(FileName) then
-          DeleteFile(FileName);
+          SysUtils.DeleteFile(FileName);
         FileName := gUserConfigFiles[PrevInstallId];
         if (FileName <> '') and (FileName <> gCurrentUserConfigFile)
           and FileExists(FileName) then
-          DeleteFile(FileName);
+          SysUtils.DeleteFile(FileName);
       end;
       for PrevInstallID := piOriginal to piCurrent - 1 do
       begin
         DirName := gMainDatabaseDirs[PrevInstallID];
         if (DirName <> '') and (DirName <> gMainDatabaseDirs[piCurrent])
-          and DirExists(DirName) then
-          DelTree(DirName, True, True, True);
+          and TDirectory.Exists(DirName) then
+          TDirectory.Delete(DirName, True);
         DirName := gUserDatabaseDirs[PrevInstallID];
         if (DirName <> '') and (DirName <> gUserDatabaseDirs[piCurrent])
-          and DirExists(DirName) then
-          DelTree(DirName, True, True, True);
+          and TDirectory.Exists(DirName) then
+          TDirectory.Delete(DirName, True);
       end;
     end;
   end;
@@ -240,15 +199,14 @@ begin
     ) then
   begin
     DeleteProxyPassword;
-    MsgBox(
+    TMessageBox.Information(
+      nil,
       'Your existing proxy server password has been deleted. This is because '
        + 'the format for storing the password has been changed to permit '
        + 'non European characters to be used.'#13#10#13#10
        + 'When you start CodeSnip please select the Tools | Proxy Server '
        + 'menu option and re-enter your password in the dialog box.'#13#10#13#10
-       + 'Sorry for the inconvenience.',
-      mbInformation,
-      MB_OK
+       + 'Sorry for the inconvenience.'
     );
   end;
 
@@ -258,14 +216,15 @@ begin
 
   // Display message if no database is installed
   if not MainDatabaseExists then
-    MsgBox(
+    TMessageBox.Information(
+      nil,
       'The Code Snippets database is not currently installed. '
         + 'Therefore when you first start CodeSnip no snippets will be '
         + 'displayed.'#10#10
         + 'You can download the database using the program''s "Database | '
-        + 'Update From Web" menu option.',
-      mbInformation,
-      MB_OK
+        + 'Update From Web" menu option.'
     );
 end;
+
+end.
 
