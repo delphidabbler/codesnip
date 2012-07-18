@@ -74,8 +74,9 @@ Various user-initiated actions cause CodeSnip to go online. They are:
    2. Registering the program.
    3. Submitting code for inclusion in the main database.
    4. Displaying the latest news in the "CodeSnip News" dialogue box.
-   4. Accessing various websites via hyperlinks and menu options.
-   5. Accessing the internet using a proxy server.
+   5. Checking for program updates
+   6. Accessing various websites via hyperlinks and menu options.
+   7. Accessing the internet using a proxy server.
 
 The first four actions are performed directly by CodeSnip, which communicates
 with web services located at www.delphidabbler.com using HTTP on port 80. The
@@ -177,6 +178,18 @@ by clicking the "Latest News" button in the "Update from Web" dialogue box.
 CodeSnip simply requests an XML document containing an RSS 2.0 news feed from
 the DelphiDabbler website using HTTP on port 80. No personal information is
 included in the request.
+
+
+Checking for program updates
+--------------------------------------------------------------------------------
+
+This action is started by when the Tools | Check For Program Updates menu option
+is selected. The resulting dialogue box connects to the DelphiDabbler program
+update web service and sends only the id 'codesnip' and your program's version
+number.
+
+If you choose to download the program you are simply sent to the CodeSnip
+download web page which is displayed in your browser.
 
 
 Accessing Websites via Links and Menu Options
