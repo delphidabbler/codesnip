@@ -2322,6 +2322,12 @@ inherited MainForm: TMainForm
       OnExecute = actLoadSelectionExecute
       OnUpdate = ActNonEmptyDBUpdate
     end
+    object actProgramUpdates: TAction
+      Category = 'Tools'
+      Caption = 'Check For Program Updates...'
+      Hint = 'Check for program updates|Check for the latest program updates'
+      OnExecute = actProgramUpdatesExecute
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -2564,6 +2570,12 @@ inherited MainForm: TMainForm
       end
       object miProxyServer: TMenuItem
         Action = actProxyServer
+      end
+      object miSpacer18: TMenuItem
+        Caption = '-'
+      end
+      object miCheckUpdates: TMenuItem
+        Action = actProgramUpdates
       end
       object miSpacer7: TMenuItem
         Caption = '-'
