@@ -562,6 +562,11 @@
 			<DCCReference Include="Web.URegistrar.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas"/>
+			<DCCReference Include="FirstRun.UDataLocations.pas"/>
+			<DCCReference Include="FirstRun.UMain.pas"/>
+			<DCCReference Include="FirstRun.UUnicode.pas"/>
+			<DCCReference Include="FirstRun.UUpdateDBase.pas"/>
+			<DCCReference Include="FirstRun.UUpdateIni.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
