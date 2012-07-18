@@ -4,6 +4,45 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v4.0 beta 1 of xxx July 2012
+Internal CodeSnip version 3.99.1
++ New features:
+  - Structure of snippet pages in details pane is now customisable: various page elements can be omitted and order of elements can be specified. Each snippet type has its own page customisation. Implements feature request #3519456 (http://bit.ly/NhT8Kr).
+  - Snippets can now have a "display name" that can contain any characters and does not need to be unique. When provided the display name is displayed in preference to the normal name. Implements feature request #3519460 (http://bit.ly/NN6kRP).
+  - Snippet descriptions can now be formatted and contain multiple paragraphs. This implements feature requests #3411890 (http://bit.ly/OS8a5a) and #3520405 (http://bit.ly/OS8yRe).
+  - Snippets can now be configured so that their source code is not syntax highlighted. This change allows snippets in other languages not to be highlighted as if they are Pascal. Implements feature request #3519935 (http://bit.ly/LrNiAg)
+  - Colour of headings for snippets and categories from main and user databases are now user configurable. This implements feature request #3519463 (http://bit.ly/Nz9JH2).
+  - User can now limit the number of compilers that appear in the compiler results table in the display pane. This is done via the Configure Compilers dialogue box. Implements feature request #3519459 (http://bit.ly/Q5O51z).
+  - New option on Tools menu that checks availability of new versions of CodeSnip.
++ User interface changes:
+  - "Test Compile" link removed from snippet display in details pane.
+  - "Test Compile" dialogue box changed so that only the installed compilers that CodeSnip uses for test compilation are displayed, instead of all known compilers.
++ Changes to snippets editor:
+  - New field on Code tab to enter optional snippet display name.
+  - New check box on Code tab to specify if Pascal syntax highlighter is to be used for source code.
+  - New tabbed "markup editor" lets user enter multi-paragraph snippet descriptions and extra information either as plain text or as REML markup.
+  - Controls on Code tab re-ordered.
+  - Extra Information tab revised with much larger edit control and deletion of explanatory text.
+  - Editor enlarged.
++ Changes to Preferences dialogue box:
+  - New "Snippet Layout" tab added where composition and layout of snippet pages can be customised.
+  - "General" preferences tab split into two: "Misc." that contains only measurement units and "Display" that contains display related options.
+  - Added controls to "Display" tab to set main and user database heading colours.
+  - Changes that affect appearance of content of details pane are now reflected in the display as soon as the Preferences dialogue box closes, rather than on program restart.
++ Changes to REML markup handling:
+  - Any REML text not embedded in block level tags is now automatically wrapped in <p> tags.
+  - Nested REML block level tags are no longer allowed.
+  - Changed handling of multiple spaces in REML code to be the same as in HTML.
+  - Formatting of REML code improved when re-displayed.
++ Bug fixes:
+  - Bug #3536331 fixed (http://bit.ly/KQTYc3): words at the end of some paragraphs in a snippet's extra information were not being found in "whole word only" searches.
+  - Fixed unreported file parsing bug that occured when loading a saved snippet selection from disk.
++ Improved error handling when reading and writing snippet selection files.
++ User database and export file formats updated to v6.
++ Significant refactoring.
++ Updated help file in line with changes and new features.
++ Updated documentation, including minor changes to privacy statement and license.
+
 Release v4.0 alpha 3 (preview) of 18 June 2012
 Internal CodeSnip version 3.98.3
 + New features:
