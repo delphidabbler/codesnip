@@ -393,7 +393,12 @@ uses
   Web.UProgramUpdateMgr in 'Web.UProgramUpdateMgr.pas',
   Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
-  Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
+  Web.UXMLRequestor in 'Web.UXMLRequestor.pas',
+  FirstRun.UDataLocations in 'FirstRun.UDataLocations.pas',
+  FirstRun.UMain in 'FirstRun.UMain.pas',
+  FirstRun.UUnicode in 'FirstRun.UUnicode.pas',
+  FirstRun.UUpdateDBase in 'FirstRun.UUpdateDBase.pas',
+  FirstRun.UUpdateIni in 'FirstRun.UUpdateIni.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb} // Type library file
