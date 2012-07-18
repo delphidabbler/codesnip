@@ -389,17 +389,18 @@ uses
   Web.UExceptions in 'Web.UExceptions.pas',
   Web.UHTTPEx in 'Web.UHTTPEx.pas',
   Web.UInfo in 'Web.UInfo.pas',
+  Web.UProgramUpdateMgr in 'Web.UProgramUpdateMgr.pas',
   Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
   Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
-
-{$Include CompilerDefines.inc}
 
 // Include resources
 {$Resource ExternalObj.tlb} // Type library file
 {$Resource HTML.res}        // HTML resources
 {$Resource VCodeSnip.res}   // Version information resource
 {$Resource Resources.res}   // All other resources.
+
+{$Include CompilerDefines.inc}
 
 begin
   ReportMemoryLeaksOnShutdown := DebugHook <> 0;
