@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -67,7 +67,7 @@ begin
     wpSelectProgramGroup,
     'Configure CodeSnip',
     'Should Setup preserve your old installation''s database and '
-      + 'configuration?',
+      + 'any registration information?',
     'This version of CodeSnip stores its data differently to your earlier '
       + 'version. Setup can attempt to copy any existing database files and '
       + 'preserve your earlier settings. Choose what action to take below.',
@@ -175,25 +175,17 @@ begin
       case gPrevInstallID of
         piOriginal:
         begin
-          CopyDatabases(piOriginal);
-          CreateIniFilesFromOldStyle;
+          // do nothing: everything is per-user & could be more than one
         end;
         piV1_9:
         begin
-          CopyDatabases(piV1_9);
-          CopyConfigFiles(piV1_9);
-          DeleteHighligherPrefs;  // default highlighting changes in v3
+          CopyMainDatabase(piV1_9);
+          CopyCommonConfigFile(piV1_9);
         end;
-        piV2:
+        piV2V3:
         begin
-          CopyDatabases(piV2);
-          CopyConfigFiles(piV2);
-          DeleteHighligherPrefs;  // default highlighting changes in v3
-        end;
-        piV3:
-        begin
-          CopyDatabases(piV3);
-          CopyConfigFiles(piV3);
+          CopyMainDatabase(piV2V3);
+          CopyCommonConfigFile(piV2V3);
         end;
       end;
     end;
@@ -201,60 +193,26 @@ begin
     // Check if old data should be deleted
     if gDeleteOldDataRequested then
     begin
-      for PrevInstallID := piOriginal to piCurrent - 1 do
+      for PrevInstallID := piFirstReadableVersionID to piCurrent - 1 do
       begin
         FileName := gCommonConfigFiles[PrevInstallId];
         if (FileName <> '') and (FileName <> gCurrentCommonConfigFile)
           and FileExists(FileName) then
           DeleteFile(FileName);
-        FileName := gUserConfigFiles[PrevInstallId];
-        if (FileName <> '') and (FileName <> gCurrentUserConfigFile)
-          and FileExists(FileName) then
-          DeleteFile(FileName);
       end;
-      for PrevInstallID := piOriginal to piCurrent - 1 do
+      for PrevInstallID := piFirstReadableVersionID to piCurrent - 1 do
       begin
         DirName := gMainDatabaseDirs[PrevInstallID];
         if (DirName <> '') and (DirName <> gMainDatabaseDirs[piCurrent])
-          and DirExists(DirName) then
-          DelTree(DirName, True, True, True);
-        DirName := gUserDatabaseDirs[PrevInstallID];
-        if (DirName <> '') and (DirName <> gUserDatabaseDirs[piCurrent])
           and DirExists(DirName) then
           DelTree(DirName, True, True, True);
       end;
     end;
   end;
 
-  // Check if any additional default data needs to be added to older ini files
-  if UserConfigFileVer < 6 then
-    // user ini file versions before 6 don't have the Prefs:CodeGen section and
-    // default entries for predefined warnings
-    CreateDefaultCodeGenEntries;
-
-  // Check if there's a proxy server password in incompatible format and delete
-  // it if so. Inform user.
-  if (UserConfigFileVer < 7) and
-    (
-      GetIniString('ProxyServer', 'Password', '', gCurrentUserConfigFile) <> ''
-    ) then
-  begin
-    DeleteProxyPassword;
-    MsgBox(
-      'Your existing proxy server password has been deleted. This is because '
-       + 'the format for storing the password has been changed to permit '
-       + 'non European characters to be used.'#13#10#13#10
-       + 'When you start CodeSnip please select the Tools | Proxy Server '
-       + 'menu option and re-enter your password in the dialog box.'#13#10#13#10
-       + 'Sorry for the inconvenience.',
-      mbInformation,
-      MB_OK
-    );
-  end;
-
-  // Ensure ini files have correct ini file and program version information
-  // This creates ini files if they don't exist
-  StampConfigFiles;
+  // Ensure common config has correct config file and program version
+  // information. This creates the config file if it doesn't exist
+  StampCommonConfigFile;
 
   // Display message if no database is installed
   if not MainDatabaseExists then
