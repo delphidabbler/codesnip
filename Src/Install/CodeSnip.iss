@@ -61,7 +61,6 @@
 #define WebURL "http://" + WebAddress + "/"
 #define AppURL WebURL + "software/codesnip"
 #define InstUninstDir "Uninst"
-#define SetupHelper "CSSetupHelper.exe"
 
 ; For v4 pre-release versions only, set version number here
 #define AppVersion "4.0-alpha.3"
@@ -116,7 +115,6 @@ Name: {commonappdata}\{#AppPublisher}\{#ProgDataSubDir}; permissions: everyone-m
 Name: {commonappdata}\{#AppPublisher}\{#ProgDataSubDir}\Database; permissions: everyone-modify;
 
 [Files]
-Source: {#SrcExePath}{#SetupHelper}; Flags: dontcopy
 Source: {#SrcExePath}{#ExeFile}; DestDir: {app}
 Source: {#SrcExePath}{#HelpFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#LicenseTextFile}; DestDir: {app}; Flags: ignoreversion
