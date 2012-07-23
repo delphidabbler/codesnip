@@ -39,14 +39,9 @@ unit FirstRun.UUpdateDBase;
 
 interface
 
-// Copies both main and (where it exists) user databases from location they are
-// in on installation identified by PrevInstallID to correct location for
-// directory being installed.
+// Copies user databases from it's old location identified by PrevInstallID to
+// correct location for directory being installed.
 procedure CopyDatabases(PrevInstallID: Integer);
-
-// Checks if main database is installed in correct install directory for
-// current version of program.
-function MainDatabaseExists: Boolean;
 
 implementation
 
@@ -110,27 +105,15 @@ begin
   end;
 end;
 
-// Copies both main and (where it exists) user databases from location they are
-// in on installation identified by PrevInstallID to correct location for
-// directory being installed.
+// Copies user databases from it's old location identified by PrevInstallID to
+// correct location for directory being installed.
 procedure CopyDatabases(PrevInstallID: Integer);
 var
-  OldMainDatabase: string;
   OldUserDatabase: string;
 begin
-  OldMainDatabase := gMainDatabaseDirs[PrevInstallID];
-  if OldMainDatabase <> '' then
-    CopyDirectory(OldMainDatabase, gMainDatabaseDirs[piCurrent]);
   OldUserDatabase := gUserDatabaseDirs[PrevInstallID];
   if OldUserDatabase <> '' then
     CopyDirectory(OldUserDatabase, gUserDatabaseDirs[piCurrent]);
-end;
-
-// Checks if main database is installed in correct install directory for
-// current version of program.
-function MainDatabaseExists: Boolean;
-begin
-  Result := FileExists(gMainDatabaseDirs[piCurrent] + '\categories.ini');
 end;
 
 end.

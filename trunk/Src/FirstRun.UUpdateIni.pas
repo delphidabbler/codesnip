@@ -249,18 +249,9 @@ end;
 // to Unicode format if necessary.
 procedure CopyConfigFiles(InstallID: Integer);
 var
-  OldCommonConfigFile: string;
   OldUserConfigFile: string;
 begin
-  OldCommonConfigFile := gCommonConfigFiles[InstallID];
   OldUserConfigFile := gUserConfigFiles[InstallID];
-  if OldCommonConfigFile <> '' then
-  begin
-    if IsAnsiConfigFile(InstallID) then
-      CopyAnsiToUnicodeConfigFile(OldCommonConfigFile, gCurrentCommonConfigFile)
-    else
-      CopyUnicodeConfigFiles(OldCommonConfigFile, gCurrentCommonConfigFile);
-  end;
   if OldUserConfigFile <> '' then
   begin
     if IsAnsiConfigFile(InstallID) then
@@ -279,16 +270,13 @@ begin
   if not FileExists(gCurrentUserConfigFile) then
     CreateUnicodeConfigFile(gCurrentUserConfigFile);
   SetIniInt('IniFile', 'Version', 8, gCurrentUserConfigFile);
-  if not FileExists(gCurrentCommonConfigFile) then
-    CreateUnicodeConfigFile(gCurrentCommonConfigFile);
-  SetIniInt('IniFile', 'Version', 6, gCurrentCommonConfigFile);
-  // Record application version in common ini file
-  SetIniString(
-    'Application',
-    'Version',
-    TAppInfo.ProgramReleaseVersion,
-    gCurrentCommonConfigFile
-  );
+//  // Record application version in common ini file
+//  SetIniString(
+//    'Application',
+//    'Version',
+//    TAppInfo.ProgramReleaseVersion,
+//    gCurrentCommonConfigFile
+//  );
 end;
 
 // Deletes any highlighter preferences from new installation's user config file.
@@ -309,54 +297,22 @@ begin
     gUserConfigFiles[piOriginal], gCurrentUserConfigFile
   );
   // Delete unwanted sections:
-  // - Application section now in common config file
+  // - Application section: now in common config file
   // - Source code output format: format lost when updating from CodeSnip pre
   //   1.7 since section was SourceOutput, but format preserved from v1.7 since
   //   current Prefs:SourceCode section used
-  // - Highlighting style is deliberately lost since CodeSnip v3 has new default
-  //   style and main display uses style, therefore sections HiliteOutput
-  //   (pre v1.7.5) and Prefs:Hiliter (v1.7 and later) deleted
+  // - Highlighting style is deliberately lost since CodeSnip v3 & v4 have
+  //   different default style and main display uses that style, therefore
+  //   section's HiliteOutput (pre v1.7.5) and Prefs:Hiliter (v1.7 and later)
+  //   deleted.
   DeleteIniSection('Application', gCurrentUserConfigFile);
   DeleteIniSection('SourceOutput', gCurrentUserConfigFile);
   DeleteIniSection('HiliteOutput', gCurrentUserConfigFile);
   for I := 0 to 11 do
     DeleteIniSection('HiliteOutput:Elem' + IntToStr(I), gCurrentUserConfigFile);
   DeleteHighligherPrefs;
-  // Main window's overview tabs have changed in v3: so we reset to 0 (default)
+  // Main window's overview tabs changed at v3: so we reset to 0 (default)
   SetIniInt('MainWindow', 'OverviewTab', 0, gCurrentUserConfigFile);
-
-  // Create common (application specific) settings file
-  // Copy file
-  CopyAnsiToUnicodeConfigFile(
-     gUserConfigFiles[piOriginal], gCurrentCommonConfigFile
-  );
-  // Delete unwanted sections
-  // following sections belong in per-user file
-  DeleteIniSection('Cmp:D2', gCurrentCommonConfigFile);
-  DeleteIniSection('Cmp:D3', gCurrentCommonConfigFile);
-  DeleteIniSection('Cmp:D4', gCurrentCommonConfigFile);
-  DeleteIniSection('Cmp:D5', gCurrentCommonConfigFile);
-  DeleteIniSection('Cmp:D6', gCurrentCommonConfigFile);
-  DeleteIniSection('Cmp:D7', gCurrentCommonConfigFile);
-  DeleteIniSection('Cmp:D2005w32', gCurrentCommonConfigFile);
-  DeleteIniSection('Cmp:D2006w32', gCurrentCommonConfigFile);
-  DeleteIniSection('Cmp:D2007', gCurrentCommonConfigFile);
-  DeleteIniSection('Cmp:FPC', gCurrentCommonConfigFile);
-  DeleteIniSection('FindCompiler', gCurrentCommonConfigFile);
-  DeleteIniSection('FindText', gCurrentCommonConfigFile);
-  DeleteIniSection('FindXRefs', gCurrentCommonConfigFile);
-  DeleteIniSection('MainWindow', gCurrentCommonConfigFile);
-  DeleteIniSection('Prefs:General', gCurrentCommonConfigFile);
-  DeleteIniSection('Prefs:Printing', gCurrentCommonConfigFile);
-  DeleteIniSection('Prefs:SourceCode', gCurrentCommonConfigFile);
-  DeleteIniSection('Prefs:Hiliter', gCurrentCommonConfigFile);
-  // following sections may occur when updating from CodeSnip v1.7.5 or earlier
-  DeleteIniSection('SourceOutput', gCurrentCommonConfigFile);
-  DeleteIniSection('HiliteOutput', gCurrentCommonConfigFile);
-  for I := 0 to 11 do
-    DeleteIniSection(
-      'HiliteOutput:Elem' + IntToStr(I), gCurrentCommonConfigFile
-    );
 end;
 
 // Adds Prefs:CodeGen section along with default data to new installation's user

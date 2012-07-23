@@ -42,51 +42,31 @@ unit FirstRun.UDataLocations;
 interface
 
 {
-  File locations in different CodeSnip versions
-  ---------------------------------------------
+  User config file and database locations in different CodeSnip versions
+  ----------------------------------------------------------------------
 
   Note that the location of %AppData% varies according to the current user.
   Version numbers refer to the CodeSnip release.
 
   + Versions up to v1.8.11:
     - Config file: %AppData%\DelphiDabbler\CodeSnip\CodeSnip.ini
-    - Main database directory: %AppData%\DelphiDabbler\CodeSnip\Data
-    - No user defined database.
+    - No user database.
 
   + From v1.9 to v1.9.4:
-    - Two config files:
-      o %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
-      o %AppData%\DelphiDabbler\CodeSnip\User.ini
-    - Main database directory:
-        %ProgramData%\DelphiDabbler\CodeSnip\Data
-    - No user defined database.
+    - Config file: %AppData%\DelphiDabbler\CodeSnip\User.ini
+    - No user database.
 
   + All v2 versions:
-    - Two config files:
-      o %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
-      o %AppData%\DelphiDabbler\CodeSnip\User.ini
-    - Main database directory:
-        %ProgramData%\DelphiDabbler\CodeSnip\Data
-    - User defined database directory:
-        %AppData%\DelphiDabbler\CodeSnip\UserData
+    - Config file: %AppData%\DelphiDabbler\CodeSnip\User.ini
+    - Database directory: %AppData%\DelphiDabbler\CodeSnip\UserData
 
   + All v3 versions:
-    - Two config files:
-      o %ProgramData%\DelphiDabbler\CodeSnip\Common.ini
-      o %AppData%\DelphiDabbler\CodeSnip\User.3.ini
-    - Main database directory:
-        %ProgramData%\DelphiDabbler\CodeSnip\Data
-    - User defined database directory:
-        %AppData%\DelphiDabbler\CodeSnip\UserData.3
+    - Config file: %AppData%\DelphiDabbler\CodeSnip\User.3.ini
+    - Database directory: %AppData%\DelphiDabbler\CodeSnip\UserData.3
 
   + From v4.0:
-    - Two config files:
-      o %ProgramData%\DelphiDabbler\CodeSnip.4\Common.config
-      o %AppData%\DelphiDabbler\CodeSnip.4\User.config
-    - Main database directory:
-        %ProgramData%\DelphiDabbler\CodeSnip.4\Database
-    - User defined database directory:
-        %AppData%\DelphiDabbler\CodeSnip.4\UserDatabase
+    - Config file: %AppData%\DelphiDabbler\CodeSnip.4\User.config
+    - Database directory: %AppData%\DelphiDabbler\CodeSnip.4\UserDatabase
 }
 
 const
@@ -108,15 +88,11 @@ var
   // Records info about previous install
   gPrevInstallID: Integer;
 
-  // Arrays of paths to common and per-user config files.
-  gCommonConfigFiles: array[piFirstVersionID..piLastVersionID] of string;
+  // Arrays of paths to user config file and user database
   gUserConfigFiles: array[piFirstVersionID..piLastVersionID] of string;
-  // Array of paths to main and user database directories
-  gMainDatabaseDirs: array[piFirstVersionID..piLastVersionID] of string;
   gUserDatabaseDirs: array[piFirstVersionID..piLastVersionID] of string;
 
-  // Paths to common and user config files for program being installed
-  gCurrentCommonConfigFile: string;
+  // Path to user config file for program being installed
   gCurrentUserConfigFile: string;
 
 // Initialises global variables that (a) store location of config files and
@@ -146,57 +122,35 @@ end;
 procedure InitAppDataFolders;
 var
   AppData: string;      // path to user's application data directory
-  ProgramData: string;  // path to common application data directory
 begin
-  // Record system's common and user application data directories
-  ProgramData := TSystemFolders.CommonAppData;
+  // Record system's user application data directory
   AppData := TSystemFolders.PerUserAppData;
 
   // Record paths to config files and database for each installation type
-  gCommonConfigFiles[piOriginal] := '';
   gUserConfigFiles[piOriginal] :=
     AppData + 'DelphiDabbler\CodeSnip\CodeSnip.ini';
-  gMainDatabaseDirs[piOriginal] :=
-    AppData + 'DelphiDabbler\CodeSnip\Data';
   gUserDatabaseDirs[piOriginal] := '';
 
-  gCommonConfigFiles[piV1_9] :=
-    ProgramData + 'DelphiDabbler\CodeSnip\Common.ini';
   gUserConfigFiles[piV1_9] :=
     AppData + 'DelphiDabbler\CodeSnip\User.ini';
-  gMainDatabaseDirs[piV1_9] :=
-    ProgramData + 'DelphiDabbler\CodeSnip\Data';
   gUserDatabaseDirs[piV1_9] := '';
 
-  gCommonConfigFiles[piV2] :=
-    ProgramData + 'DelphiDabbler\CodeSnip\Common.ini';
   gUserConfigFiles[piV2] :=
     AppData + 'DelphiDabbler\CodeSnip\User.ini';
-  gMainDatabaseDirs[piV2] :=
-    ProgramData + 'DelphiDabbler\CodeSnip\Data';
   gUserDatabaseDirs[piV2] :=
     AppData + 'DelphiDabbler\CodeSnip\UserData';
 
-  gCommonConfigFiles[piV3] :=
-    ProgramData + 'DelphiDabbler\CodeSnip\Common.ini';
   gUserConfigFiles[piV3] :=
     AppData + 'DelphiDabbler\CodeSnip\User.3.ini';
-  gMainDatabaseDirs[piV3] :=
-    ProgramData + 'DelphiDabbler\CodeSnip\Data';
   gUserDatabaseDirs[piV3] :=
     AppData + 'DelphiDabbler\CodeSnip\UserData.3';
 
-  gCommonConfigFiles[piV4] :=
-    ProgramData + 'DelphiDabbler\CodeSnip.4\Common.config';
   gUserConfigFiles[piV4] :=
     AppData + 'DelphiDabbler\CodeSnip.4\User.config';
-  gMainDatabaseDirs[piV4] :=
-    ProgramData + 'DelphiDabbler\CodeSnip.4\Database';
   gUserDatabaseDirs[piV4] :=
     AppData + 'DelphiDabbler\CodeSnip.4\UserDatabase';
 
   // Record installation type current being installed
-  gCurrentCommonConfigFile := gCommonConfigFiles[piCurrent];
   gCurrentUserConfigFile := gUserConfigFiles[piCurrent];
 
 end;
@@ -205,16 +159,13 @@ end;
 // known files and directories.
 procedure DetectPrevInstall;
 begin
-  if FileExists(gCommonConfigFiles[piV4]) or
-    FileExists(gUserConfigFiles[piV4]) then
+  if FileExists(gUserConfigFiles[piV4]) then
     gPrevInstallID := piV4
-  else if FileExists(gCommonConfigFiles[piV3])
-    and FileExists(gUserConfigFiles[piV3]) then
+  else if FileExists(gUserConfigFiles[piV3]) then
     gPrevInstallID := piV3
-  else if FileExists(gCommonConfigFiles[piV2])
-    and FileExists(gUserDatabaseDirs[piV2] + '\database.xml') then
+  else if FileExists(gUserDatabaseDirs[piV2] + '\database.xml') then
     gPrevInstallID := piV2
-  else if FileExists(gCommonConfigFiles[piV1_9]) then
+  else if FileExists(gUserDatabaseDirs[piV1_9]) then
     gPrevInstallID := piV1_9
   else if FileExists(gUserConfigFiles[piOriginal]) then
     gPrevInstallID := piOriginal
@@ -222,9 +173,9 @@ begin
     gPrevInstallID := piNone;
 end;
 
-// Initialises global variables that (a) store location of config files and
-// databases used by different versions of CodeSnip and (b) record type of any
-// previous installation that was detected.
+// Initialises global variables that (a) store location of user config file and
+// user database used by different versions of CodeSnip and (b) record type of
+// any previous installation that was detected.
 procedure InitGlobals;
 begin
   InitAppDataFolders;
