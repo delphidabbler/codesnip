@@ -85,8 +85,8 @@ MIDL = @echo *** IGNORING MIDL
 # Default is to build everything and release
 everything: config exes setup release
 
-# Builds all exe files + help
-exes: codesnip installhelper help
+# Builds CodeSnip exe file + help
+exes: codesnip help
 
 # Build CodeSnip executable
 codesnip: typelib resources autogen pascal
@@ -102,20 +102,9 @@ config:
   @if exist Exe rmdir /S /Q Exe
   @if exist Release rmdir /S /Q Release
   @mkdir Bin
-  @mkdir Bin\InstallHelper
   @mkdir Exe
   @mkdir Release
   @cd Src
-  # Config install helper
-  @cd InstallHelper
-  @$(MAKE) config
-  @cd ..
-
-# Build install helper executable
-installhelper: 
-  @cd InstallHelper
-  @$(MAKE) exe
-  @cd ..
 
 # Builds CodeSnip pascal files and links program
 pascal: CodeSnip.exe
@@ -134,7 +123,7 @@ HTML.res: HTML.hrc
   @$(HTMLRES) -mHTML.hrc -o$(BIN)\HTML.res -r -q
 
 # Compiles type library from IDL
-typelib:  
+typelib:
   @$(MIDL) .\ExternalObj.idl /tlb $(BIN)\ExternalObj.tlb /I "$(MSSDK)\Include"
 
 # Builds setup program
@@ -143,7 +132,7 @@ setup:
   @$(ISCC) Install\CodeSnip.iss
 
 # Creates auto generated files
-autogen: 
+autogen:
   @$(TLIBIMP) -P+ -Ps+ -D.\AutoGen -FtIntfExternalObj $(BIN)\ExternalObj.tlb
   @if exist .\AutoGen\IntfExternalObj.dcr del .\AutoGen\IntfExternalObj.dcr
 
