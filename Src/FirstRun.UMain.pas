@@ -56,7 +56,7 @@ uses
   UMessageBox, UUtils;
 
 var
-  // Flag true if user wants to update database and config files
+  // Flag true if user wants to update user database and config file
   gDataConversionRequested: Boolean;
 
   // Flag true if user wants to have old data deleted after conversion
@@ -157,15 +157,11 @@ begin
       end;
     end;
 
-    // Check if old data should be deleted
+    // Check if old user database and config file should be deleted
     if gDeleteOldDataRequested then
     begin
       for PrevInstallID := piOriginal to piCurrent - 1 do
       begin
-        FileName := gCommonConfigFiles[PrevInstallId];
-        if (FileName <> '') and (FileName <> gCurrentCommonConfigFile)
-          and FileExists(FileName) then
-          SysUtils.DeleteFile(FileName);
         FileName := gUserConfigFiles[PrevInstallId];
         if (FileName <> '') and (FileName <> gCurrentUserConfigFile)
           and FileExists(FileName) then
@@ -173,10 +169,6 @@ begin
       end;
       for PrevInstallID := piOriginal to piCurrent - 1 do
       begin
-        DirName := gMainDatabaseDirs[PrevInstallID];
-        if (DirName <> '') and (DirName <> gMainDatabaseDirs[piCurrent])
-          and TDirectory.Exists(DirName) then
-          TDirectory.Delete(DirName, True);
         DirName := gUserDatabaseDirs[PrevInstallID];
         if (DirName <> '') and (DirName <> gUserDatabaseDirs[piCurrent])
           and TDirectory.Exists(DirName) then
@@ -210,20 +202,9 @@ begin
     );
   end;
 
-  // Ensure ini files have correct ini file and program version information
-  // This creates ini files if they don't exist
+  // Ensure user config file has correct ini file and program version
+  // information. This creates config file if it doesn't exist
   StampConfigFiles;
-
-  // Display message if no database is installed
-  if not MainDatabaseExists then
-    TMessageBox.Information(
-      nil,
-      'The Code Snippets database is not currently installed. '
-        + 'Therefore when you first start CodeSnip no snippets will be '
-        + 'displayed.'#10#10
-        + 'You can download the database using the program''s "Database | '
-        + 'Update From Web" menu option.'
-    );
 end;
 
 end.
