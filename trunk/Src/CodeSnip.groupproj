@@ -6,9 +6,6 @@
 			<Projects Include="CodeSnip.dproj">
 				<Dependencies/>
 			</Projects>
-			<Projects Include="InstallHelper\CSSetupHelper.dproj">
-				<Dependencies/>
-			</Projects>
 			<Projects Include="..\Tests\Src\DUnit\CodeSnipTests.dproj">
 				<Dependencies/>
 			</Projects>
@@ -29,15 +26,6 @@
 		<Target Name="CodeSnip:Make">
 			<MSBuild Targets="Make" Projects="CodeSnip.dproj"/>
 		</Target>
-		<Target Name="CSSetupHelper">
-			<MSBuild Projects="InstallHelper\CSSetupHelper.dproj"/>
-		</Target>
-		<Target Name="CSSetupHelper:Clean">
-			<MSBuild Targets="Clean" Projects="InstallHelper\CSSetupHelper.dproj"/>
-		</Target>
-		<Target Name="CSSetupHelper:Make">
-			<MSBuild Targets="Make" Projects="InstallHelper\CSSetupHelper.dproj"/>
-		</Target>
 		<Target Name="CodeSnipTests">
 			<MSBuild Projects="..\Tests\Src\DUnit\CodeSnipTests.dproj"/>
 		</Target>
@@ -48,13 +36,13 @@
 			<MSBuild Targets="Make" Projects="..\Tests\Src\DUnit\CodeSnipTests.dproj"/>
 		</Target>
 		<Target Name="Build">
-			<CallTarget Targets="CodeSnip;CSSetupHelper;CodeSnipTests"/>
+			<CallTarget Targets="CodeSnip;CodeSnipTests"/>
 		</Target>
 		<Target Name="Clean">
-			<CallTarget Targets="CodeSnip:Clean;CSSetupHelper:Clean;CodeSnipTests:Clean"/>
+			<CallTarget Targets="CodeSnip:Clean;CodeSnipTests:Clean"/>
 		</Target>
 		<Target Name="Make">
-			<CallTarget Targets="CodeSnip:Make;CSSetupHelper:Make;CodeSnipTests:Make"/>
+			<CallTarget Targets="CodeSnip:Make;CodeSnipTests:Make"/>
 		</Target>
 		<Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
 	</Project>
