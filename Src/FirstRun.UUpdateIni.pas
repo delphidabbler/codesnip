@@ -266,17 +266,16 @@ end;
 // number of program being installed.
 procedure StampConfigFiles;
 begin
-  // Flag ini file versions
+  // Config file Meta data: config file version & program version
   if not FileExists(gCurrentUserConfigFile) then
     CreateUnicodeConfigFile(gCurrentUserConfigFile);
   SetIniInt('IniFile', 'Version', 8, gCurrentUserConfigFile);
-//  // Record application version in common ini file
-//  SetIniString(
-//    'Application',
-//    'Version',
-//    TAppInfo.ProgramReleaseVersion,
-//    gCurrentCommonConfigFile
-//  );
+  SetIniString(
+    'IniFile',
+    'ProgramVersion',
+    TAppInfo.ProgramReleaseVersion,
+    gCurrentUserConfigFile
+  );
 end;
 
 // Deletes any highlighter preferences from new installation's user config file.
