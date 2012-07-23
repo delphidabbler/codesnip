@@ -517,7 +517,7 @@ set PATHSET=1
     <code>HTMLRESROOT</code>
   </li>
   <li>
-    <code>INNOSETUP</code>
+    <code>INNOSETUP_U</code> or <code>INNOSETUP</code>
   </li>
   <li>
     <code>HHCROOT</code>
@@ -634,10 +634,6 @@ set PATHSET=1
       |
       +-- Install           - setup script and support code
       |
-      +-- InstallHelper     - source for install helper program
-      |   |
-      |   +-- Res           - resources for install helper program
-      |
       +-- Res               - container for various types of resources
           |
           +-- HTML          - html, css, js and images included in resources
@@ -657,7 +653,7 @@ set PATHSET=1
 <p>
   Before you can get hacking, you need to prepare the code tree. Open a
   command console and navigate into the <code>Src</code> sub-folder. Run any
-  script you have created to set the required environment variables then do:
+  script you have created to set environment variables then do:
 </p>
 
 <pre class="cmd"><span class="prompt">&gt;</span> Make config</pre>
@@ -688,8 +684,6 @@ set PATHSET=1
 <pre>./
   |
   +-- Bin                   - receives object files for CodeSnip
-  |   |
-  |   +-- InstallHelper     - receives object files for CSSetupHelper
   |
   ...
   |
@@ -702,10 +696,9 @@ set PATHSET=1
 <p>
   If the <code>Bin</code>, <code>Exe</code> and <code>Release</code> folders
   already existed they will have been emptied.
-  In addition, <code>Make</code> will have created <code>.cfg</code> files from
-  templates in the <code>Src</code> and <code>Src\InstallHelper</code> folders.
-  <code>.cfg</code> files are needed for DCC32 to run correctly. These files
-  will be ignored by Subversion.
+  In addition, <code>Make</code> will have created a <code>.cfg</code> file from
+  template in the <code>Src</code> folder. This <code>.cfg</code> file is needed
+  for DCC32 to run correctly. The file will be ignored by Subversion.
 </p>
 
 <p>
@@ -912,15 +905,7 @@ set PATHSET=1
 <p>
   The setup program requires that the <em>CodeSnip</em> excutable and the
   compiled help file are already present in the <code>Exe</code> directory.
-  <code>CSInstallHelper.exe</code> must also be present in the same folder.
 </p>
-
-<p>
-  We've already shown how to build <em>CodeSnip</em> and the help file.
-  <code>CSInstallHelper.exe</code> is built by doing:
-</p>
-
-<pre class="cmd"><span class="prompt">&gt;</span> Make installhelper</pre>
 
 <p>
   As an aside, you can make all the required files by doing:
@@ -1029,11 +1014,10 @@ set PATHSET=1
 
 <p>
   It is intended to change the licensing for the majority of the code base
-  from the Mozilla Public License to the <a
-    href="http://www.mozilla.org/MPL/"
-  >MPL / GPL / LGPL disjunctive tri-license</a>. This could take some time.
-  In the meantime if you would like to use parts of the code under the
-  tri-license, <a
+  from the Mozilla Public License v1,1 to the <a
+    href="http://www.mozilla.org/MPL/2.0/"
+  >Mozilla Public License v2.0</a>. This could take some time. In the meantime
+  if you would like to use parts of the code under MPL v2.0, <a
     href="http://www.delphidabbler.com/contact"
   >please ask</a>.
 </p>
