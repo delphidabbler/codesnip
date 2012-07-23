@@ -75,12 +75,8 @@ begin
     False,
     False
   );
-  // Add check boxes if required
-  if not MainDatabaseExists then
-  begin
-    gConfigPage.Add('Copy existing database');
-    gConfigPage.Values[0] := True;
-  end;
+  gConfigPage.Add('Copy existing database');
+  gConfigPage.Values[0] := True;
 end;
 
 // Called to determine whether page specified by PageID should be displayed.
@@ -90,7 +86,7 @@ begin
   Result := False;
   if PageID = gConfigPage.ID then
   begin
-    if MainDatabaseExists then
+    if not DataConversionRequired or MainDatabaseExists then
       Result := True;
   end;
 end;
@@ -130,7 +126,7 @@ begin
   AddTextToMemo(MemoGroupInfo, Result, NewLine);
   AddTextToMemo(MemoTasksInfo, Result, NewLine);
   // Add custom information
-  if not MainDatabaseExists then
+  if DataConversionRequired and not MainDatabaseExists then
   begin
     Result := Result +  'Database preservation:';
     Result := Result + NewLine + Space;
@@ -152,7 +148,7 @@ begin
   if CurStep <> ssPostInstall then
     Exit;
 
-  // Check if data conversion is needed
+  // Update config file and copy database if necessary
   if DataConversionRequired then
   begin
     // Check if user has requested data conversion
@@ -160,28 +156,23 @@ begin
       piOriginal:
         {Do nothing: per user config files only};
       piV1_9:
+      begin
         CopyCommonConfigFile(piV1_9);
+        if gDatabaseCopyingRequested then
+          CopyMainDatabase(piV1_9);
+      end;
       piV2V3:
+      begin
         CopyCommonConfigFile(piV2V3);
+        if gDatabaseCopyingRequested then
+          CopyMainDatabase(piV2V3);
+      end;
     end;
   end;
 
   // Ensure common config has correct config file and program version
   // information. This creates the config file if it doesn't exist
   StampCommonConfigFile;
-
-  // Bring forward database if requested and required
-  if gDatabaseCopyingRequested then
-  begin
-    case gPrevInstallID of
-      piOriginal:
-        {Do nothing: main database is per-user};
-      piV1_9:
-        CopyMainDatabase(piV1_9);
-      piV2V3:
-        CopyMainDatabase(piV2V3);
-    end;
-  end;
 
   // Display message if no database is installed
   if not MainDatabaseExists then
