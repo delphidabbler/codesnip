@@ -1,0 +1,285 @@
+{
+ * EventHandlers.ps
+ *
+ * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
+ *
+ * Implements all event handlers that hook into Setup program to perform
+ * required customisations.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is EventHandlers.ps.
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributors:
+ *    NONE
+ *
+ * ***** END LICENSE BLOCK *****
+}
+
+
+var
+  // Reference to custom wizard page that gets info from user about whether to
+  // preserve config data and database. Whether page is displayed depends on
+  // whether we can update config files and database.
+  gConfigPage: TInputOptionWizardPage;
+
+  // Flag true if user wants to update database and config files
+  gDataConversionRequested: Boolean;
+
+  // Flag true if user wants to have old data deleted after conversion
+  gDeleteOldDataRequested: Boolean;
+
+
+function InitializeSetup: Boolean;
+  {Called during Setup's initialization. Initialises global variables that store
+  information about data folders and location of any existing config files and
+  database.
+    @return True to enable setup to continue.
+  }
+begin
+  InitDataLocations;
+  Result := True;
+end;
+
+procedure InitializeWizard;
+  {Called when wizard is initialising. Creates custom page used to inform
+  whether existing old-style config files and database should be preserved.
+  }
+begin
+  // Create custom page
+  gConfigPage := CreateInputOptionPage(
+    wpSelectProgramGroup,
+    'Configure CodeSnip',
+    'Should Setup preserve your old installation''s database and '
+      + 'configuration?',
+    'This version of CodeSnip stores its data differently to your earlier '
+      + 'version. Setup can attempt to copy any existing database files and '
+      + 'preserve your earlier settings. Choose what action to take below.',
+    False,
+    False
+  );
+  // Add check boxes if required
+  if DataConversionRequired then
+  begin
+    gConfigPage.Add('Copy existing settings and database');
+    gConfigPage.Values[0] := True;
+    gConfigPage.Add('Delete old settings and database after copying');
+    gConfigPage.Values[1] := False;
+  end;
+end;
+
+function ShouldSkipPage(PageID: Integer): Boolean;
+  {Called to determine whether a page should be displayed. Display of custom
+  page is inhibited only if no data conversion is necessary.
+    @param PageID [in] ID of page that can be skipped.
+    @return True to skip page or False to show it.
+  }
+begin
+  Result := False;
+  if PageID = gConfigPage.ID then
+  begin
+    if not DataConversionRequired then
+      Result := True;
+  end;
+end;
+
+function NextButtonClick(CurPageID: Integer): Boolean;
+  {Called when "Next" button is clicked. Used to record state of check boxes on
+  custom page.
+    @param CurPageID [in] ID of page on which button clicked.
+    @return True to enable next page to be shown.
+  }
+begin
+  Result := True;
+  if CurPageID = gConfigPage.ID then
+  begin
+    gDataConversionRequested := gConfigPage.Values[0];
+    gDeleteOldDataRequested := gConfigPage.Values[1];
+  end;
+end;
+
+procedure AddTextToMemo(Text: string; var Res: string; NewLine: string);
+  {Helper routine for UpdateReadyMemo. Appends text to a string followed by two
+  newlines providing text is not an empty string.
+    @param Text [in] Text to be appended. Ignored if ''.
+    @param Res [in/out] In: current string. Out: updated string.
+    @param NewLine [in] String used to add new line to a string.
+  }
+begin
+  if Text <> '' then
+    Res := Res + Text + NewLine + NewLine;
+end;
+
+function UpdateReadyMemo(Space, NewLine, MemoUserInfoInfo, MemoDirInfo,
+  MemoTypeInfo, MemoComponentsInfo, MemoGroupInfo,
+  MemoTasksInfo: String): String;
+  {Called to determine text to be displayed on "Ready to install" wizard page.
+  We use all given information and add information about any data conversion to
+  be carried out.
+    @param Space [in] String containing spaces used to indent lines.
+    @param NewLine [in] String to be used as line separator.
+    @param MemoUserInfoInfo [in] User info to be displayed (may be empty).
+    @param MemoDirInfo [in] Selected directory (may be empty).
+    @param MemoTypeInfo [in] Installation type (may be empty).
+    @param MemoComponentsInfo [in] Components to install (may be empty).
+    @param MemoGroupInfo [in] Program group (may be empty).
+    @param MemoTasksInfo [in] Install tasks (may be empty).
+    @return All given none-empty strings followed, optionally, by data
+      conversion information.
+  }
+begin
+  Result := '';
+  // Use all given info: empty strings ignored
+  AddTextToMemo(MemoUserInfoInfo, Result, NewLine);
+  AddTextToMemo(MemoDirInfo, Result, NewLine);
+  AddTextToMemo(MemoTypeInfo, Result, NewLine);
+  AddTextToMemo(MemoComponentsInfo, Result, NewLine);
+  AddTextToMemo(MemoGroupInfo, Result, NewLine);
+  AddTextToMemo(MemoTasksInfo, Result, NewLine);
+  // Add custom information
+  if DataConversionRequired then
+  begin
+    Result := Result +  'Data preservation:';
+    Result := Result + NewLine + Space;
+    if gDataConversionRequested then
+      Result := Result + 'Copy existing database and settings'
+    else
+      Result := Result + 'Don''t copy database and settings'
+        + NewLine + Space + Space
+        + 'A new database must be downloaded when the program is run'
+        + NewLine + Space + Space
+        + 'Registered programs will need re-registering';
+    Result := Result + NewLine + Space;
+    if gDeleteOldDataRequested then
+      Result := Result + 'Old database and settings will be deleted'
+    else
+      Result := Result + 'Old database and settings will be retained'
+  end;
+end;
+
+function UserIniFileVer: Integer;
+  {Gets version number of existing user ini file. Must be in expected location.
+    @return Required version number. 1 if file doesn't exist or is not stamped.
+  }
+begin
+  Result := GetIniInt('IniFile', 'Version', 1, 0, 0, UserIniFileName);
+end;
+
+procedure CurStepChanged(CurStep: TSetupStep);
+  {Called to perform pre-install and post-install taks. We performs any required
+  data conversion at the post-install stage.
+    @param CurStep [in] Current step in installation.
+  }
+begin
+  // We perform ini file post-install
+  if CurStep <> ssPostInstall then
+    Exit;
+
+  // Check if data conversion is needed
+  if DataConversionRequired then
+  begin
+    // Check if user has requested data conversion
+    if gDataConversionRequested then
+    begin
+      case gFileLocation of
+        flOriginal:
+        begin
+          // Data is in earliest format. We copy main database from the per user
+          // application data folder and create new config files from the
+          // original single config file. Data is modified. There is no user
+          // database to copy.
+          CopyOldMainDatabase;
+          CreateIniFilesFromOldStyle;
+        end;
+        flV1_9:
+        begin
+          // Data created by v1.9 or later. Database already in correct place.
+          // User.ini is copied to User.3.ini and hilite info is removed. There
+          // is no user database.
+          CopyOldUserIniFile;
+        end;
+        flV2:
+        begin
+          // All v2 versions. Database is already in correct place. User.ini is
+          // copied to User.3.ini and hilite info is removed. Any use database
+          // is copied to new location.
+          CopyV2UserDatabase;
+          CopyOldUserIniFile;
+        end;
+      end;
+    end;
+
+    // Check if old data should be deleted
+    if gDeleteOldDataRequested then
+    begin
+      if FileExists(AddBackslash(gUserAppDataDir) + 'CodeSnip.ini') then
+        DeleteFile(AddBackslash(gUserAppDataDir) + 'CodeSnip.ini');
+      if FileExists(AddBackslash(gUserAppDataDir) + 'User.ini') then
+        DeleteFile(AddBackslash(gUserAppDataDir) + 'User.ini');
+      if DirExists(AddBackslash(gUserAppDataDir) + 'Data') then
+        DelTree(AddBackslash(gUserAppDataDir) + 'Data', True, True, True);
+      if DirExists(AddBackslash(gUserAppDataDir) + 'UserData') then
+        DelTree(AddBackslash(gUserAppDataDir) + 'UserData', True, True, True);
+    end;
+  end;
+
+  // Check if any additional default data needs to be added to older ini files
+  if UserIniFileVer < 6 then
+    // user ini file versions before 6 don't have the Prefs:CodeGen section and
+    // default entries for predefined warnings
+    CreateDefaultCodeGenEntries;
+
+  // Check if there's a proxy server password in incompatible format and delete
+  // it if so. Inform user
+  if (UserIniFileVer < 7) and
+    (GetIniString('ProxyServer', 'Password', '', UserIniFileName) <> '' ) then
+  begin
+    DeleteProxyPassword;
+    MsgBox(
+      'Your existing proxy server password has been deleted. This is because '
+       + 'the format for storing the password has been changed to permit '
+       + 'non European characters to be used.'#13#10#13#10
+       + 'When you start CodeSnip please select the Tools | Proxy Server '
+       + 'menu option and re-enter your password in the dialog box.'#13#10#13#10
+       + 'Sorry for the inconvenience.',
+      mbInformation,
+      MB_OK
+    );
+  end;
+
+  // Ensure ini files have correct ini file and program version information
+  // This creates ini files if they don't exist
+  StampIniFiles;
+
+  // Display message if no database is installed
+  if not MainDatabaseExists then
+    MsgBox(
+      'The Code Snippets database is not currently installed. '
+        + 'Therefore when you first start CodeSnip no routines will be '
+        + 'displayed.'#10#10
+        + 'You can download the database using the program''s "Database | '
+        + 'Update From Web" menu option.',
+      mbInformation,
+      MB_OK
+    );
+end;
+
