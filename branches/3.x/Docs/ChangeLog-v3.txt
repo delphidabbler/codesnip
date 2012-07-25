@@ -4,6 +4,10 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.10.3 of 25 July 2012
++ Changed so that Delphi compilers can be detected by examining current user registry key in addition to local machine registry key. This enables Delphis that were installed for a given user only to be detected.
++ Fixed bug in Compiler tab of Configure Compilers dialogue box that failed to flag selected compiler as unavailable after button was pressed.
+
 Release v3.10.2 of 19 June 2012
 + Fixed bug #3536331 (http://bit.ly/KQVATf) where some distinct words in a snippet's Extra text where not being found in text searches.
 + Info about user's OS and IE version is now sent to web server during online database updates.
