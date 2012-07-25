@@ -274,6 +274,7 @@ procedure TCompilersDlg.btnClearClick(Sender: TObject);
   }
 begin
   edCompilerPath.Text := '';
+  UpdateCurrentCompiler;
 end;
 
 procedure TCompilersDlg.btnDefSwitchesClick(Sender: TObject);
