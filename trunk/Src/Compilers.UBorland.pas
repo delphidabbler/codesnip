@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -41,6 +41,8 @@ interface
 
 
 uses
+  // Delphi
+  Windows,
   // Project
   Compilers.UCompilerBase, Compilers.UGlobals;
 
@@ -54,8 +56,14 @@ type
   }
   TBorlandCompiler = class(TCompilerBase)
   strict private
-    fId: TCompilerID;
-      {Identifies compiler}
+    var
+      fId: TCompilerID;
+        {Identifies compiler}
+    function InstallPathFromReg(const RootKey: HKEY): string;
+      {Gets compiler install root path from given registry root key, if present.
+        @param RootKey [in] Given registry root key.
+        @return Required root path or '' if not compiler not installed.
+      }
   protected
     function SearchDirParams: string; override;
       {One of more parameters that define any search directories to be passed
@@ -104,7 +112,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Registry, Windows,
+  SysUtils, Registry,
   // Project
   UIStringList, UStrUtils;
 
@@ -144,29 +152,17 @@ function TBorlandCompiler.DetectExeFile: Boolean;
     @return True if compiler path found, false otherwise.
   }
 var
-  Reg: TRegistry;     // registry object
   InstDir: string;    // installation root directory
 begin
-  Result := False;
-  // Open registry
-  Reg := TRegistry.Create;
-  try
-    // Open key where required Delphi version stores root directory
-    Reg.RootKey := HKEY_LOCAL_MACHINE;
-    if Reg.OpenKeyReadOnly(InstallationRegKey) then
-    begin
-      // Get compiler file spec. First read Delphi's root path from registry,
-      // and check for errors Reg.ReadString may raise exception. We also check
-      // for no value from registry
-      InstDir := Reg.ReadString('RootDir');
-      Result := (InstDir <> '');
-    end;
-    if Result then
-      SetExecFile(IncludeTrailingPathDelimiter(InstDir) + 'Bin\DCC32.exe');
-  finally
-    // Close registry
-    Reg.Free;
-  end;
+  // try HKLM
+  InstDir := InstallPathFromReg(HKEY_LOCAL_MACHINE);
+  if InstDir = '' then
+    // in case install was for user only, try HKCU
+    InstDir := InstallPathFromReg(HKEY_CURRENT_USER);
+  if InstDir = '' then
+    Exit(False);
+  SetExecFile(IncludeTrailingPathDelimiter(InstDir) + 'Bin\DCC32.exe');
+  Result := True;
 end;
 
 function TBorlandCompiler.GetDefaultSwitches: string;
@@ -195,6 +191,25 @@ function TBorlandCompiler.GetID: TCompilerID;
   }
 begin
   Result := fId;
+end;
+
+function TBorlandCompiler.InstallPathFromReg(const RootKey: HKEY): string;
+  {Gets compiler install root path from given registry root key, if present.
+    @param RootKey [in] Given registry root key.
+    @return Required root path or '' if not compiler not installed.
+  }
+var
+  Reg: TRegistry; // registry accessor
+begin
+  Reg := TRegistry.Create;
+  try
+    Reg.RootKey := RootKey;
+    if not Reg.OpenKeyReadOnly(InstallationRegKey) then
+      Exit('');
+    Result := Reg.ReadString('RootDir');
+  finally
+    Reg.Free;
+  end;
 end;
 
 function TBorlandCompiler.SearchDirParams: string;
