@@ -8,9 +8,9 @@ inherited FindXRefsDlg: TFindXRefsDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     Width = 305
-    Height = 177
+    Height = 159
     ExplicitWidth = 305
-    ExplicitHeight = 177
+    ExplicitHeight = 159
     object lblDesc: TLabel
       Left = 0
       Top = 0
@@ -18,23 +18,12 @@ inherited FindXRefsDlg: TFindXRefsDlg
       Height = 13
       Caption = 'Find cross references for '
     end
-    object lblSnippetName: TLabel
+    object lblRoutineName: TLabel
       Left = 119
       Top = 0
-      Width = 74
+      Width = 75
       Height = 13
-      Caption = 'lblSnippetName'
-    end
-    object lblOverwriteSearch: TLabel
-      Left = 0
-      Top = 160
-      Width = 220
-      Height = 13
-      AutoSize = False
-      Caption = 
-        'NOTE: Running this cross reference search will override your exi' +
-        'sting search(es).'
-      WordWrap = True
+      Caption = 'lblRoutineName'
     end
     object chkRequired: TCheckBox
       Left = 0
@@ -54,10 +43,10 @@ inherited FindXRefsDlg: TFindXRefsDlg
       TabOrder = 2
       OnClick = SearchCheckClick
     end
-    object chkIncludeSnippet: TCheckBox
+    object chkIncludeRoutine: TCheckBox
       Left = 0
       Top = 126
-      Width = 600
+      Width = 305
       Height = 17
       Caption = '&Include "%s" in search'
       TabOrder = 4

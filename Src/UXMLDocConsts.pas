@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -56,7 +56,7 @@ const
   cCategoriesNode             = 'categories';
   cCategoryNode               = 'category';
   cCategoryIdAttr             = 'id';
-  cCatSnippetsNode            = 'cat-routines';
+  cCatRoutinesNode            = 'cat-routines';
   cSourceCodeFileNode         = 'source-code';
   cXRefNode                   = 'xref';
   // export XML only
@@ -71,20 +71,18 @@ const
   cRootVersionAttr            = 'version';
   cRootWatermarkAttr          = 'watermark';
   cPascalNameNode             = 'pascal-name';
-  cDisplayNameNode            = 'display-name';
-  cSnippetsNode               = 'routines';
-  cSnippetNode                = 'routine';
-  cSnippetNameAttr            = 'name';
+  cRoutinesNode               = 'routines';
+  cRoutineNode                = 'routine';
+  cRoutineNameAttr            = 'name';
   cCatIdNode                  = 'cat-id';
   cDescriptionNode            = 'description';
   cUnitsNode                  = 'units';
   cDependsNode                = 'depends';
-  cCommentsNode               = 'comments';
-  cCreditsNode                = 'credits';
-  cCreditsUrlNode             = 'credits-url';
-  cExtraNode                  = 'extra';
-  cKindNode                   = 'kind';
-  cHighlightSource            = 'highlight-source';
+  cCommentsNode               = 'comments';           // v1 docs only
+  cCreditsNode                = 'credits';            // v1 docs only
+  cCreditsUrlNode             = 'credits-url';        // v1 docs only
+  cExtraNode                  = 'extra';              // v2 docs only
+  cKindNode                   = 'kind';               // v3 docs only
   cStandardFormatNode         = 'standard-format';
   cCompilerResultsNode        = 'compiler-results';
   cCompilerResultNode         = 'compiler-result';

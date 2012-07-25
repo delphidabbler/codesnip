@@ -67,11 +67,13 @@ type
       BeginPage.
         @param PageIdx [in] Index of new page.
       }
-    procedure GoForward;
+    procedure GoForward(const NewPageIdx: Integer);
       {Attempts to move forward in wizard.
+        @param NewPageIdx [in] Index of page in wizard to display.
       }
-    procedure GoBackward;
+    procedure GoBackward(const NewPageIdx: Integer);
       {Attempts to move backward in wizard.
+        @param NewPageIdx [in] Index of page in wizard to display.
       }
   strict protected
     procedure ArrangeForm; override;
@@ -195,7 +197,7 @@ procedure TWizardDlg.btnBackClick(Sender: TObject);
   }
 begin
   if CurrentPage <> FirstPage then
-    GoBackward;
+    GoBackward(PrevPage(CurrentPage));
 end;
 
 procedure TWizardDlg.btnNextClick(Sender: TObject);
@@ -205,7 +207,7 @@ procedure TWizardDlg.btnNextClick(Sender: TObject);
   }
 begin
   if CurrentPage <> LastPage then
-    GoForward
+    GoForward(NextPage(CurrentPage))
   else
     Close;
 end;
@@ -234,7 +236,7 @@ begin
   Result := 0;
 end;
 
-procedure TWizardDlg.GoBackward;
+procedure TWizardDlg.GoBackward(const NewPageIdx: Integer);
   {Attempts to move backward in wizard.
     @param NewPageIdx [in] Index of page in wizard to display.
   }
@@ -244,11 +246,12 @@ begin
   CanLeave := True;
   MoveBackward(CurrentPage, CanLeave);
   if CanLeave then
-    InitPage(PrevPage(CurrentPage));
+    InitPage(NewPageIdx);
 end;
 
-procedure TWizardDlg.GoForward;
+procedure TWizardDlg.GoForward(const NewPageIdx: Integer);
   {Attempts to move forward in wizard.
+    @param NewPageIdx [in] Index of page in wizard to display.
   }
 var
   CanLeave: Boolean;  // Flag indicating whether we can leave current page
@@ -256,7 +259,7 @@ begin
   CanLeave := True;
   MoveForward(CurrentPage, CanLeave);
   if CanLeave then
-    InitPage(NextPage(CurrentPage));
+    InitPage(NewPageIdx);
 end;
 
 procedure TWizardDlg.InitForm;

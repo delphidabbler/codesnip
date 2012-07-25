@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphi
   Forms, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  DB.UCategory, FmCategoryEditDlg, FrCategoryList, UBaseObjects;
+  FmCategoryEditDlg, FrCategoryList, UBaseObjects, USnippets;
 
 
 type
@@ -54,7 +54,6 @@ type
   }
   TDeleteCategoryDlg = class(TCategoryEditDlg, INoPublicConstruct)
     frmCategories: TCategoryListFrame;
-    lblErrorMsg: TLabel;
     procedure btnOKClick(Sender: TObject);
   strict private
     fCategories: TCategoryList; // List of categories that can be deleted
@@ -62,10 +61,6 @@ type
       {Handles category list frame's change event. Updates state of OK button
       according to changes.
         @param Sender [in] Not used.
-      }
-    procedure UpdateErrorLabelState;
-      {Shows or hides error state label depending of whether selected category
-      can be deleted.
       }
     procedure DeleteCategory(const Cat: TCategory);
       {Deletes category and all its snippets from database.
@@ -97,8 +92,10 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
-  DB.UMain, UColours, UCtrlArranger, UFontHelper;
+  UConsts, UMessageBox;
 
 {$R *.dfm}
 
@@ -110,8 +107,6 @@ procedure TDeleteCategoryDlg.ArrangeForm;
   }
 begin
   frmCategories.ArrangeFrame;
-  TCtrlArranger.SetLabelHeight(lblErrorMsg);
-  lblErrorMsg.Top := TCtrlArranger.BottomOf(frmCategories, 8);
   inherited;
 end;
 
@@ -122,16 +117,28 @@ procedure TDeleteCategoryDlg.btnOKClick(Sender: TObject);
   }
 var
   Cat: TCategory; // selected category
+resourcestring
+  // Confirmation prompt
+  sConfirmDelete = 'The "%0:2s" category contains %1:d snippet(s).'
+    + EOL2
+    + 'If you delete the category all the snippet(s) will also be deleted.'
+    + EOL2 + EOL
+    + 'Are you sure you want to delete "%0:2s"?';
 begin
   inherited;
   Cat := frmCategories.SelectedCategory;
   Assert(Assigned(Cat), ClassName + '.btnOKClick: No category selected');
-  Assert(Cat.CanDelete, ClassName + '.btnOKClick: Category can''t be deleted');
-  DeleteCategory(Cat);
+  if (Cat.Routines.Count = 0)
+    or TMessageBox.Confirm(
+      Self, Format(sConfirmDelete, [Cat.Description, Cat.Routines.Count])
+    ) then
+    DeleteCategory(Cat)
+  else
+    ModalResult := mrNone;
 end;
 
 procedure TDeleteCategoryDlg.ConfigForm;
-  {Configures form. Sets up controls and supplies event handler to frame.
+  {Configures form. Populates controls and supplies event handler to frame.
   }
 resourcestring
   // Prompt text for frame
@@ -141,9 +148,6 @@ begin
   frmCategories.OnChange := SelectionChangeHandler;
   frmCategories.Prompt := sPrompt;
   frmCategories.SetCategories(fCategories);
-  TFontHelper.SetDefaultFont(lblErrorMsg.Font, False);
-  lblErrorMsg.Font.Color := clWarningText;
-  lblErrorMsg.Visible := False;
 end;
 
 procedure TDeleteCategoryDlg.DeleteCategory(const Cat: TCategory);
@@ -151,7 +155,7 @@ procedure TDeleteCategoryDlg.DeleteCategory(const Cat: TCategory);
     @param Cat [in] Category to be deleted.
   }
 begin
-  (Database as IDatabaseEdit).DeleteCategory(Cat);
+  (Snippets as ISnippetsEdit).DeleteCategory(Cat);
 end;
 
 class function TDeleteCategoryDlg.Execute(AOwner: TComponent;
@@ -178,18 +182,6 @@ procedure TDeleteCategoryDlg.SelectionChangeHandler(Sender: TObject);
   }
 begin
   UpdateOKBtn;
-  UpdateErrorLabelState;
-end;
-
-procedure TDeleteCategoryDlg.UpdateErrorLabelState;
-  {Shows or hides error state label depending of whether selected category can
-  be deleted.
-  }
-begin
-  if not frmCategories.IsValidEntry then
-    lblErrorMsg.Visible := False
-  else
-    lblErrorMsg.Visible := not frmCategories.SelectedCategory.CanDelete;
 end;
 
 procedure TDeleteCategoryDlg.UpdateOKBtn;
@@ -197,8 +189,7 @@ procedure TDeleteCategoryDlg.UpdateOKBtn;
   dialog box.
   }
 begin
-  btnOK.Enabled := frmCategories.IsValidEntry
-    and frmCategories.SelectedCategory.CanDelete;
+  btnOK.Enabled := frmCategories.IsValidEntry;
 end;
 
 end.

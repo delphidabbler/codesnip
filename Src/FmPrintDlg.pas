@@ -97,10 +97,10 @@ implementation
 
 uses
   // Delphi
-  Printers, Graphics,
+  SysUtils, Printers, Graphics,
   // Project
   FmPreferencesDlg, FrPrintingPrefs, UConsts, UMessageBox, UPageSetupDlgMgr,
-  UPrintInfo, UStructs, UStrUtils;
+  UPrintInfo, UStructs;
 
 
 {$R *.dfm}
@@ -199,7 +199,7 @@ procedure TPrintDlg.cbPrintersDrawItem(Control: TWinControl; Index: Integer;
       try
         // Check printer name against default
         Printer.PrinterIndex := -1; // this selects default printer
-        Result := StrSameText(PrnName, Printer.Printers[Printer.PrinterIndex]);
+        Result := AnsiSameText(PrnName, Printer.Printers[Printer.PrinterIndex]);
       finally
         // Restore selected printer index
         Printer.PrinterIndex := OldPrinterIdx;

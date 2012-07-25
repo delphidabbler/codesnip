@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -43,97 +43,136 @@ interface
 uses
   // Delphi
   Forms, ComCtrls, ExtCtrls, Controls, StdCtrls, Classes, ActiveX, ActnList,
-  ImgList, Generics.Collections,
+  ImgList,
   // Project
-  Compilers.UGlobals, FrTitled, FrBrowserBase, FrDetailView, IntfFrameMgrs,
-  IntfNotifier, UCommandBars, UView;
+  Compilers.UGlobals, FrTitled, FrCompCheck, FrBrowserBase, FrDetailView,
+  FrInfo, IntfFrameMgrs, IntfNotifier, UCommandBars, UView;
+
 
 type
 
   {
-    TDetailFrame:
+  TDetailFrame:
     Title frame that displays and manages user interaction with the detail
     pane tabs. The frame implements display manager interfaces and notifies
     application of user-initiated events via a notifier object.
-    }
+  }
   TDetailFrame = class(TTitledFrame,
-    ITabbedDisplayMgr,
-    IPaneInfo,
-    IDetailPaneDisplayMgr,
-    IWBCustomiser,
-    ISetNotifier,
-    ICommandBarConfig,
-    ISelectionMgr,
-    IClipboardMgr
+    ITabbedDisplayMgr,                    // uses tabs to select different views
+    IViewItemDisplayMgr,                                 // displays a view item
+    ICompCheckDisplayMgr,              // displays compile results and test unit
+    IPaneInfo,                                // provides information about pane
+    IWBCustomiser,                             // customises web browser control
+    IClipboardMgr,                                          // clipboard manager
+    ISelectionMgr,                                          // selection manager
+    ISetNotifier,                                        // sets notifier object
+    ICommandBarConfig                               // command bar configuration
   )
-    frmDetailView: TDetailViewFrame;
-    tcViews: TTabControl;
-    procedure tcViewsChange(Sender: TObject);
-    procedure tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
+    pcDetail: TPageControl;
+    tsInfo: TTabSheet;
+    tsCompiler: TTabSheet;
+    frmInfo: TInfoFrame;
+    frmCompCheck: TCompCheckFrame;
+    procedure pcDetailChange(Sender: TObject);
+    procedure pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
-  strict private
-    type
-      TCommandBarItem = record
-        Action: TCustomAction;
-        ID: TCommandBarID;
-        constructor Create(AAction: TCustomAction; AID: TCommandBarID);
-      end;
-    type
-      TCommandBarItems = TList<TCommandBarItem>;
-  strict private
+  private
     fNotifier: INotifier;
-    fCommandBarItems: TCommandBarItems;
-    fDisplayedView: IView;
-    fViews: TList<IView>;
-    function TabCount: Integer;
-    procedure InternalSelectTab(TabIdx: Integer);
-    procedure InternalDisplay(View: IView; ForceReload: Boolean);
-    procedure InternalDeleteTab(TabIdx: Integer);
-  public
-    constructor Create(AOwner: TComponent); override;
-    destructor Destroy; override;
-
-    // ITabbedDisplayMgr
+      {Object used to notify application of user-initiated events}
+    function TabToPane(const TabIdx: Integer): IInterface;
+      {Gets reference to manager object of frame associated with a tab.
+        @param TabIdx [in] Index of tab.
+        @return Required frame manager object reference.
+        @except EBug raised if tab index is out of range.
+      }
+    function SelectedPane: IInterface;
+      {Gets reference to manager object of frame in currently selected tab.
+        @return Reference to frame's manager object.
+      }
+    procedure DeactivateBrowserPanes;
+      {Deactivates all child panes containing browser controls.
+      }
+  protected // interface implementations
+    { ITabbedDisplayMgr }
     procedure SelectTab(const TabIdx: Integer);
+      {Selects tab with specified index.
+        @param TabIdx [in] Index of tab to be selected.
+      }
     function SelectedTab: Integer;
+      {Returns index of currently selected tab.
+        @return Required tab index.
+      }
     procedure NextTab;
+      {Switches to next tab, or return to first tab if current tab is last.
+      }
     procedure PreviousTab;
-
-    // IPaneInfo
+      {Switches to previous tab, or return to last tab if current tab is first.
+      }
+    { IViewItemDisplayMgr }
+    procedure Display(const View: TViewItem; const Force: Boolean = False);
+      {Displays compiler support information for a view item in all child panes.
+        @param View [in] Information about view item to be displayed.
+        @param Force [in] Forces view item to be re-displayed even if not
+          changed.
+      }
+    { ICompCheckDisplayMgr }
+    procedure DisplayCompileResults(const ACompilers: ICompilers);
+      {Displays results of test compilation in compiler check pane.
+        @param ACompilers [in] Compilers object containing required results.
+      }
+    { IPaneInfo }
     function IsInteractive: Boolean;
-
-    // IDetailPaneDisplayMgr
-    function SelectedView: IView;
-    procedure IDetailPaneDisplayMgr.SelectTab = SelectTab;
-    function FindTab(ViewKey: IViewKey): Integer;
-    procedure Display(View: IView; const TabIdx: Integer);
-    procedure Reload;
-    procedure Clear;
-    function CreateTab(View: IView): Integer;
-    function IsEmptyTabSet: Boolean;
-    procedure CloseTab(const TabIdx: Integer);
-    procedure CloseMultipleTabs(const KeepSelected: Boolean);
-
-    // IWBCustomiser
-    procedure SetExternalObj(Obj: IDispatch);
-    procedure SetDragDropHandler(Obj: IDropTarget);
-
-    // ISetNotifier
-    procedure SetNotifier(const Notifier: INotifier);
-
-    // ICommandBarConfig
-    procedure AddAction(const Action: TCustomAction; const ID: TCommandBarID);
-    procedure AddSpacer(const ID: TCommandBarID);
-    procedure SetImages(const Images: TCustomImageList);
-
-    // ISelectionMgr
-    function CanSelectAll: Boolean;
-    procedure SelectAll;
-
-    // IClipboardMgr
+      {Checks if the pane is currently interactive with user.
+        @return True if pane is interactive, False if not.
+      }
+    { IWBCustomiser }
+    procedure SetExternalObj(const Obj: IDispatch);
+      {Provides an object to be used to extend a web browsers' external objects.
+        @param Obj [in] External object extender.
+      }
+    procedure SetDragDropHandler(const Obj: IDropTarget);
+      {Provides an object to be used by web browser controls to handle drag-drop
+      operations.
+        @param Obj [in] Drag-drop handler.
+      }
+    { IClipboard }
     function CanCopy: Boolean;
+      {Checks whether text can be copied to clipboard from current child frame.
+        @return True if text can be copied.
+      }
     procedure CopyToClipboard;
-
+      {Copies selected text from current child frame to clipboard.
+      }
+    { ISelectionMgr }
+    function CanSelectAll: Boolean;
+      {Checks whether text can be selected in current child frame.
+        @return True if text can be selected.
+      }
+    procedure SelectAll;
+      {Selects all text in active control of current child frame.
+      }
+    { ISetNotifier }
+    procedure SetNotifier(const Notifier: INotifier);
+      {Sets the object's notifier object to be called in response to user input.
+        @param Notifier [in] Required Notifier object.
+      }
+    { ICommandBarConfig }
+    procedure AddAction(const Action: TCustomAction;
+      const ID: TCommandBarID);
+      {Adds an action item to a command bar. Passes request to all subsidiary
+      tabs.
+        @param Action [in] Action to be associated with menu item.
+        @param ID [in] Specifies command bar to add action to.
+      }
+    procedure AddSpacer(const ID: TCommandBarID);
+      {Adds a spacer to a command bar. Passes request to all subsidiary tabs.
+        @param Kind [in] Specifies command bar to add spacer to.
+      }
+    procedure SetImages(const Images: TCustomImageList);
+      {Sets image list to be used by command bars. Passes on to all subsidiary
+      tabs.
+        @param Images [in] Image list to be used.
+      }
   end;
 
 
@@ -142,271 +181,271 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults,
+  SysUtils,
   // Project
   UExceptions;
 
+
 {$R *.dfm}
+
 
 { TDetailFrame }
 
 procedure TDetailFrame.AddAction(const Action: TCustomAction;
   const ID: TCommandBarID);
+  {Adds an action item to a command bar. Passes request to all subsidiary tabs.
+    @param Action [in] Action to be associated with menu item.
+    @param ID [in] Specifies command bar to add action to.
+  }
+var
+  Idx: Integer; // loops through all tabsheets
 begin
-  (frmDetailView as ICommandBarConfig).AddAction(Action, ID);
+  for Idx := 0 to Pred(pcDetail.PageCount) do
+    if Supports(TabToPane(Idx), ICommandBarConfig) then
+      (TabToPane(Idx) as ICommandBarConfig).AddAction(Action, ID);
 end;
 
 procedure TDetailFrame.AddSpacer(const ID: TCommandBarID);
+  {Adds a spacer to a command bar. Passes request to all subsidiary tabs.
+    @param Kind [in] Specifies command bar to add spacer to.
+  }
+var
+  Idx: Integer; // loops through all tabsheets
 begin
-  (frmDetailView as ICommandBarConfig).AddSpacer(ID);
+  for Idx := 0 to Pred(pcDetail.PageCount) do
+    if Supports(TabToPane(Idx), ICommandBarConfig) then
+      (TabToPane(Idx) as ICommandBarConfig).AddSpacer(ID);
 end;
 
 function TDetailFrame.CanCopy: Boolean;
+  {Checks whether text can be copied to clipboard from current child frame.
+    @return True if text can be copied.
+  }
 begin
-  Result := not IsEmptyTabSet and (frmDetailView as IClipboardMgr).CanCopy;
+  // Get clipboard manager for current tab and check if it supports copying
+  if Supports(SelectedPane, IClipboardMgr) then
+    Result := (SelectedPane as IClipboardMgr).CanCopy
+  else
+    Result := False;
 end;
 
 function TDetailFrame.CanSelectAll: Boolean;
+  {Checks whether text can be selected in current child frame.
+    @return True if text can be selected.
+  }
 begin
-  Result := not IsEmptyTabSet and (frmDetailView as ISelectionMgr).CanSelectAll;
-end;
-
-procedure TDetailFrame.Clear;
-begin
-  InternalDisplay(TViewFactory.CreateNulView, False);
-end;
-
-procedure TDetailFrame.CloseMultipleTabs(const KeepSelected: Boolean);
-var
-  Idx: Integer;
-  SelectedIdx: Integer;
-begin
-  if IsEmptyTabSet then
-    Exit;
-  SelectedIdx := SelectedTab;
-  for Idx := Pred(TabCount) downto 0 do
-  begin
-    if (Idx = SelectedIdx) and KeepSelected then
-      Continue;
-    InternalDeleteTab(Idx);
-  end;
-  if KeepSelected then
-    tcViews.TabIndex := 0 // only selected tab remains: new index
+  // Get selection manager for current tab and check if it supports selection
+  if Supports(SelectedPane, ISelectionMgr) then
+    Result := IsInteractive and (SelectedPane as ISelectionMgr).CanSelectAll
   else
-    tcViews.TabIndex := -1;
-end;
-
-procedure TDetailFrame.CloseTab(const TabIdx: Integer);
-var
-  SelectedIdx: Integer;
-  ClosingSelectedIdx: Boolean;
-begin
-  ClosingSelectedIdx := SelectedTab = TabIdx;
-  SelectedIdx := SelectedTab;
-  InternalDeleteTab(TabIdx);
-  if ClosingSelectedIdx then
-  begin
-    if SelectedIdx = TabCount then
-      Dec(SelectedIdx);
-    tcViews.TabIndex := SelectedIdx;
-  end
-  else
-  begin
-    if TabIdx < SelectedIdx then
-      // keeps existing selected tab displayed
-      tcViews.TabIndex := Pred(SelectedIdx);
-  end;
+    Result := False;
 end;
 
 procedure TDetailFrame.CopyToClipboard;
+  {Copies selected text from current child frame to clipboard.
+  }
 begin
-  if IsEmptyTabSet then
-    Exit;
-  (frmDetailView as IClipboardMgr).CopyToClipboard;
+  // Ask clipboard manager for current tab to perform copying
+  if Supports(SelectedPane, IClipboardMgr) then
+    (SelectedPane as IClipboardMgr).CopyToClipboard;
 end;
 
-constructor TDetailFrame.Create(AOwner: TComponent);
-begin
-  inherited;
-  fCommandBarItems := TCommandBarItems.Create;
-  fViews := TList<IView>.Create;
-  fDisplayedView := TViewFactory.CreateNulView;
-end;
-
-function TDetailFrame.CreateTab(View: IView): Integer;
-begin
-  Result := tcViews.Tabs.Add(View.Description);
-  fViews.Add(View);
-  InternalDisplay(View, False); // stores View in fViews again
-end;
-
-destructor TDetailFrame.Destroy;
-begin
-  fViews.Free;
-  fCommandBarItems.Free;
-  inherited;
-end;
-
-procedure TDetailFrame.Display(View: IView; const TabIdx: Integer);
-begin
-  Assert(Assigned(View), ClassName + '.Display: View is nil');
-
-  fViews[TabIdx] := TViewFactory.Clone(View);
-  tcViews.Tabs[TabIdx] := View.Description;
-  if TabIdx = SelectedTab then
-    InternalDisplay(fViews[TabIdx], False);
-end;
-
-function TDetailFrame.FindTab(ViewKey: IViewKey): Integer;
+procedure TDetailFrame.DeactivateBrowserPanes;
+  {Deactivates all child panes containing browser controls.
+  }
 var
-  Idx: Integer;
+  Idx: Integer; // loops through all tabsheets
 begin
-  for Idx := 0 to Pred(fViews.Count) do
-    if ViewKey.IsEqual(fViews[Idx].GetKey) then
-      Exit(Idx);
-  Result := -1;
+  for Idx := 0 to Pred(pcDetail.PageCount) do
+    if Supports(TabToPane(Idx), IWBDisplayMgr) then
+      (TabToPane(Idx) as IWBDisplayMgr).Deactivate;
 end;
 
-procedure TDetailFrame.InternalDeleteTab(TabIdx: Integer);
+procedure TDetailFrame.Display(const View: TViewItem;
+  const Force: Boolean);
+  {Displays compiler support information for a view item in all child panes.
+    @param View [in] Information about view item to be displayed.
+    @param Force [in] Forces view item to be re-displayed even if not changed.
+  }
+var
+  Idx: Integer; // loops through all tabsheets
 begin
-  tcViews.Tabs.Delete(TabIdx);
-  fViews.Delete(TabIdx);
+  for Idx := 0 to Pred(pcDetail.PageCount) do
+    if Supports(TabToPane(Idx), IViewItemDisplayMgr) then
+      (TabToPane(Idx) as IViewItemDisplayMgr).Display(View, Force);
 end;
 
-procedure TDetailFrame.InternalDisplay(View: IView; ForceReload: Boolean);
+procedure TDetailFrame.DisplayCompileResults(const ACompilers: ICompilers);
+  {Displays results of test compilation in compiler check pane.
+    @param ACompilers [in] Compilers object containing required results.
+  }
 begin
-  (frmDetailView as IViewItemDisplayMgr).Display(View, ForceReload);
-end;
-
-procedure TDetailFrame.InternalSelectTab(TabIdx: Integer);
-begin
-  tcViews.TabIndex := TabIdx;
-  InternalDisplay(SelectedView, False);  // SelectedView allows for TabIdx = -1
-end;
-
-function TDetailFrame.IsEmptyTabSet: Boolean;
-begin
-  Result := TabCount = 0;
+  if SelectedTab <> cCompCheckTab then
+    fNotifier.ChangeDetailPane(cCompCheckTab);
+  (TabToPane(cCompCheckTab) as ICompCheckDisplayMgr).DisplayCompileResults(
+    ACompilers
+  );
 end;
 
 function TDetailFrame.IsInteractive: Boolean;
+  {Checks if the pane is currently interactive with user.
+    @return True if pane is interactive, False if not.
+  }
 var
-  Idx: Integer;
+  Idx: Integer; // loops thru frame's owned components
 begin
-  if IsEmptyTabSet then
-    Exit(False);
-  if (frmDetailView as IPaneInfo).IsInteractive then
-    Exit(True);
-  for Idx := 0 to Pred(ComponentCount) do
-    if (Components[Idx] is TWinControl)
-      and (Components[Idx] as TWinControl).Focused then
-      Exit(True);
+  // This frame is interactive if one of owned control has focus or if one
+  // of contained frames is interactive
   Result := False;
+  for Idx := 0 to Pred(ComponentCount) do
+  begin
+    if Supports(Components[Idx], IPaneInfo) then
+      Result := (Components[Idx] as IPaneInfo).IsInteractive
+    else if (Components[Idx] is TWinControl) then
+      Result := (Components[Idx] as TWinControl).Focused;
+    if Result then
+      Break;
+  end;
 end;
 
 procedure TDetailFrame.NextTab;
+  {Switches to next tab, or return to first tab if current tab is last.
+  }
 begin
-  if IsEmptyTabSet then
-    Exit;
-  if SelectedTab = Pred(TabCount) then
-    InternalSelectTab(0)
+  if SelectedTab = Pred(pcDetail.PageCount) then
+    SelectTab(0)
   else
-    InternalSelectTab(Succ(SelectedTab));
+    SelectTab(Succ(SelectedTab));
+end;
+
+procedure TDetailFrame.pcDetailChange(Sender: TObject);
+  {Handles event triggered when detail page changes. Notifies application of
+  display style change via notifier object.
+    @param Sender [in] Not used.
+  }
+begin
+  fNotifier.ChangeDetailPane(pcDetail.ActivePageIndex);
+end;
+
+procedure TDetailFrame.pcDetailMouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+  {Handles event triggered when user clicks on one of page control tabs. Ensures
+  page control has focus. This does always happen automatically.
+    @param Sender [in] Not used.
+    @param Button [in] Not used.
+    @param Shift [in] Not used.
+    @param X [in] X co-ordinate of mouse in client co-ordinates.
+    @param Y [in] Y co-ordinate of mouse in client co-ordinates.
+  }
+begin
+  if htOnItem in pcDetail.GetHitTestInfoAt(X, Y) then
+    pcDetail.SetFocus;
 end;
 
 procedure TDetailFrame.PreviousTab;
+  {Switches to previous tab, or return to last tab if current tab is first.
+  }
 begin
-  if IsEmptyTabSet then
-    Exit;
   if SelectedTab = 0 then
-    InternalSelectTab(Pred(TabCount))
+    SelectTab(Pred(pcDetail.PageCount))
   else
-    InternalSelectTab(Pred(SelectedTab));
-end;
-
-procedure TDetailFrame.Reload;
-begin
-  InternalDisplay(SelectedView, True);  // SelectedView allows for TabIdx = -1
+    SelectTab(Pred(SelectedTab));
 end;
 
 procedure TDetailFrame.SelectAll;
+  {Selects all text in active control of current child frame.
+  }
 begin
-  if IsEmptyTabSet then
-    Exit;
-  (frmDetailView as ISelectionMgr).SelectAll;
+  // Ask selection manager for current tab to perform selection
+  if Supports(SelectedPane, ISelectionMgr) then
+    (SelectedPane as ISelectionMgr).SelectAll;
+end;
+
+function TDetailFrame.SelectedPane: IInterface;
+  {Gets reference to manager object of frame in currently selected tab.
+    @return Reference to frame's manager object.
+  }
+begin
+  Result := TabToPane(SelectedTab);
 end;
 
 function TDetailFrame.SelectedTab: Integer;
+  {Returns index of currently selected tab.
+    @return Tab index.
+  }
 begin
-  if IsEmptyTabSet then
-    Exit(-1);
-  Result := tcViews.TabIndex;
-end;
-
-function TDetailFrame.SelectedView: IView;
-begin
-  if IsEmptyTabSet then
-    Result := TViewFactory.CreateNulView
-  else
-    Result := fViews[SelectedTab];
+  Result := pcDetail.ActivePageIndex;
 end;
 
 procedure TDetailFrame.SelectTab(const TabIdx: Integer);
+  {Selects tab with specified index.
+    @param TabIdx [in] Tab to be selected.
+  }
 begin
-  InternalSelectTab(TabIdx);
+  Assert((TabIdx >= 0) and (TabIdx < pcDetail.PageCount),
+    ClassName + '.SelectTab: TabIdx out range');
+  DeactivateBrowserPanes;
+  pcDetail.ActivePageIndex := TabIdx;
+  (SelectedPane as IWBDisplayMgr).Activate;
 end;
 
-procedure TDetailFrame.SetDragDropHandler(Obj: IDropTarget);
+procedure TDetailFrame.SetDragDropHandler(const Obj: IDropTarget);
+  {Provides an object to be used by web browser controls to handle drag-drop
+  operations.
+    @param Obj [in] Drag-drop handler.
+  }
+var
+  Idx: Integer;
 begin
-  (frmDetailView as IWBCustomiser).SetDragDropHandler(Obj);
+  for Idx := 0 to Pred(pcDetail.PageCount) do
+    if Supports(TabToPane(Idx), IWBCustomiser) then
+      (TabToPane(Idx) as IWBCustomiser).SetDragDropHandler(Obj);
 end;
 
-procedure TDetailFrame.SetExternalObj(Obj: IDispatch);
+procedure TDetailFrame.SetExternalObj(const Obj: IDispatch);
+  {Provides an object to be used to extend a web browsers' external objects.
+    @param Obj [in] External object extender.
+  }
+var
+  Idx: Integer; // loops thru all tabsheets
 begin
-  (frmDetailView as IWBCustomiser).SetExternalObj(Obj);
+  for Idx := 0 to Pred(pcDetail.PageCount) do
+    if Supports(TabToPane(Idx), IWBCustomiser) then
+      (TabToPane(Idx) as IWBCustomiser).SetExternalObj(Obj);
 end;
 
 procedure TDetailFrame.SetImages(const Images: TCustomImageList);
+  {Sets image list to be used by command bars. Passes on to all subsidiary tabs.
+    @param Images [in] Image list to be used.
+  }
+var
+  Idx: Integer; // loops through all tabsheets
 begin
-  (frmDetailView as ICommandBarConfig).SetImages(Images);
+  for Idx := 0 to Pred(pcDetail.PageCount) do
+    if Supports(TabToPane(Idx), ICommandBarConfig) then
+      (TabToPane(Idx) as ICommandBarConfig).SetImages(Images);
 end;
 
 procedure TDetailFrame.SetNotifier(const Notifier: INotifier);
+  {Sets the object's notifier object to be called in response to user input.
+    @param Notifier [in] Required Notifier object.
+  }
 begin
   fNotifier := Notifier;
 end;
 
-function TDetailFrame.TabCount: Integer;
+function TDetailFrame.TabToPane(const TabIdx: Integer): IInterface;
+  {Gets reference to manager object of frame associated with a tab.
+    @param TabIdx [in] Index of tab.
+    @return Required frame manager object reference.
+    @except EBug raised if tab index is out of range.
+  }
 begin
-  Result := tcViews.Tabs.Count;
-  Assert(Result = fViews.Count,
-    ClassName + '.TabCount: Tabs.Count differs from fViews.Count');
-end;
-
-procedure TDetailFrame.tcViewsChange(Sender: TObject);
-begin
-  // User changed tab
-  // notify program via notifier: this will result in instruction back to select
-  // the tab - this allows for other controls to change the tab
-  Assert(tcViews.TabIndex >= 0, ClassName + '.tcViewsChange: tab index < 0');
-  if Assigned(fNotifier) then
-    fNotifier.ChangeDetailPane(tcViews.TabIndex);
-end;
-
-procedure TDetailFrame.tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
-  Shift: TShiftState; X, Y: Integer);
-begin
-  if htOnItem in tcViews.GetHitTestInfoAt(X, Y) then
-    tcViews.SetFocus;
-end;
-
-{ TDetailFrame.TCommandBarItem }
-
-constructor TDetailFrame.TCommandBarItem.Create(AAction: TCustomAction;
-  AID: TCommandBarID);
-begin
-  Action := AAction;
-  ID := AID;
+  case TabIdx of
+    cInfoTab: Result := frmInfo;
+    cCompCheckTab: Result := frmCompCheck;
+    else raise EBug.Create(ClassName + '.TabToPane: tab index out of range');
+  end;
 end;
 
 end.

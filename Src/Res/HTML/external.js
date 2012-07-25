@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -34,6 +34,16 @@
  * ***** END LICENSE BLOCK *****
  */
 
+
+/*
+ * Calls external object to get host application to display a compiler log.
+ *  @param integer compId [in] Id of compiler to be displayed.
+ *  @return False.
+ */
+function viewCompilerLog(compId) {
+  external.ViewCompilerLog(compId);
+  return false;
+}
 
 /*
  * Calls external object to get host application to clear any current hint from
@@ -63,6 +73,16 @@ function configCompilers() {
 }
 
 /*
+ * Calls external object to get host application to compile currently selected
+ * snippet.
+ *  @return False.
+ */
+function compileRoutine() {
+  external.CompileSnippet();
+  return false;
+}
+
+/*
  * Calls external object to get host application to display Update Database
  * dialog box.
  *  @return False.
@@ -73,12 +93,21 @@ function updateDbase() {
 }
 
 /*
+ * Calls external object to get host application to display test unit.
+ *  @return False.
+ */
+function showTestUnit() {
+  external.ShowTestUnit();
+  return false;
+}
+
+/*
  * Calls external object to get host application to display a named snippet.
  *  @param string snippet [in] Name of snippet to be displayed.
  *  @param boolean userdefined [in] Whether snippet is user defined.
  *  @return False.
  */
-function displaySnippet(snippet, userdefined) {
+function displayRoutine(snippet, userdefined) {
   external.DisplaySnippet(snippet, userdefined);
   return false;
 }
@@ -99,7 +128,7 @@ function displayCategory(catid) {
  *    defined.
  *  @return False.
  */
-function editSnippet(snippet) {
+function editRoutine(snippet) {
   external.EditSnippet(snippet);
   return false;
 }

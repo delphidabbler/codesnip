@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,8 +44,8 @@ uses
   // Delphi
   Forms, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  DB.UCategory, FmCategoryEditDlg, FrCategoryList, FrCategoryDescEdit,
-  UBaseObjects;
+  FmCategoryEditDlg, FrCategoryList, FrCategoryDescEdit, UBaseObjects,
+  USnippets;
 
 
 type
@@ -114,9 +114,9 @@ implementation
 
 uses
   // Delphi
-  Windows {for inlining},
+  SysUtils, Windows {for inlining},
   // Project
-  DB.UMain, UCtrlArranger, UStrUtils;
+  UCtrlArranger;
 
 {$R *.dfm}
 
@@ -196,7 +196,7 @@ procedure TRenameCategoryDlg.DescriptionCheckHander(Sender: TObject;
 begin
   if not Valid then
     if Assigned(frmCategories.SelectedCategory) then
-      Valid := StrSameText(Desc, frmCategories.SelectedCategory.Description);
+      Valid := AnsiSameText(Desc, frmCategories.SelectedCategory.Description);
 end;
 
 class function TRenameCategoryDlg.Execute(AOwner: TComponent;
@@ -225,9 +225,9 @@ procedure TRenameCategoryDlg.RenameCategory(const Category: TCategory;
 var
   EditData: TCategoryData;  // category properties
 begin
-  EditData := (Database as IDatabaseEdit).GetEditableCategoryInfo(Category);
+  EditData := (Snippets as ISnippetsEdit).GetEditableCategoryInfo(Category);
   EditData.Desc := NewDesc;
-  (Database as IDatabaseEdit).UpdateCategory(Category, EditData);
+  (Snippets as ISnippetsEdit).UpdateCategory(Category, EditData);
 end;
 
 procedure TRenameCategoryDlg.UpdateOKBtn;
@@ -237,7 +237,7 @@ procedure TRenameCategoryDlg.UpdateOKBtn;
 begin
   btnOK.Enabled := frmDescription.IsValidEntry and
     frmCategories.IsValidEntry and
-    not StrSameStr(
+    not AnsiSameStr(
       frmCategories.SelectedCategory.Description, frmDescription.Description
     );
 end;

@@ -34,6 +34,7 @@ inherited OverviewFrame: TOverviewFrame
     OnChange = tcDisplayStyleChange
     OnChanging = tcDisplayStyleChanging
     OnMouseDown = tcDisplayStyleMouseDown
+    ExplicitTop = 29
     object tvSnippets: TTreeView
       Left = 4
       Top = 24
@@ -42,11 +43,11 @@ inherited OverviewFrame: TOverviewFrame
       Align = alClient
       BorderStyle = bsNone
       HideSelection = False
-      HotTrack = True
-      Indent = 12
+      Indent = 19
       PopupMenu = mnuOverview
       ReadOnly = True
-      ShowLines = False
+      ShowButtons = False
+      ShowRoot = False
       TabOrder = 0
       OnChanging = tvSnippetsChanging
       OnCreateNodeClass = tvSnippetsCreateNodeClass
@@ -59,7 +60,6 @@ inherited OverviewFrame: TOverviewFrame
     end
   end
   object mnuOverview: TPopupMenu
-    AutoPopup = False
     Left = 64
     Top = 72
   end

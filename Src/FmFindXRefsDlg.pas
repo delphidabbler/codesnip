@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,7 +45,7 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  DB.USnippet, FmGenericOKDlg, UBaseObjects, USearch;
+  FmGenericOKDlg, UBaseObjects, USearch, USnippets;
 
 
 type
@@ -59,13 +59,12 @@ type
   }
   TFindXRefsDlg = class(TGenericOKDlg, INoPublicConstruct)
     lblDesc: TLabel;
-    lblSnippetName: TLabel;
+    lblRoutineName: TLabel;
     chkRequired: TCheckBox;
     chkSeeAlso: TCheckBox;
-    chkIncludeSnippet: TCheckBox;
+    chkIncludeRoutine: TCheckBox;
     chkRequiredRecurse: TCheckBox;
     chkSeeAlsoRecurse: TCheckBox;
-    lblOverwriteSearch: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure SearchCheckClick(Sender: TObject);
@@ -73,7 +72,7 @@ type
   strict private
     fSearchParams: TXRefSearchParams; // Persists XRef search options
     fSearch: ISearch;                 // Search for user's criteria
-    fSnippet: TSnippet;               // Snippet whose x-refs to be found
+    fRoutine: TRoutine;               // Snippet whose x-refs to be found
     procedure UpdateControls;
       {Updates state of controls.
       }
@@ -88,11 +87,11 @@ type
       {Populates and initialises controls.
       }
   public
-    class function Execute(const AOwner: TComponent; const Snippet: TSnippet;
+    class function Execute(const AOwner: TComponent; const Routine: TRoutine;
       out ASearch: ISearch): Boolean;
       {Displays dialog and returns search object based on entered criteria.
         @param AOwner [in] Component that owns this dialog.
-        @param Snippet [in] Snippet whose cross references are to be found.
+        @param Routine [in] Snippet whose cross references are to be found.
         @param ASearch [out] Search to be performed if user OKs. Has criteria
           that causes specified cross references be returned by search. Set to
           nil if user cancels.
@@ -150,7 +149,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  UColours, UCtrlArranger, UPreferences, UQuery, USettings;
+  UColours, UCtrlArranger, USettings;
 
 
 {$R *.dfm}
@@ -162,34 +161,12 @@ procedure TFindXRefsDlg.ArrangeForm;
   {Arranges components on form and rezize form as required.
   }
 begin
-  // Horizontal alignment & sizing
   // Place snippet name after end of description label
-  TCtrlArranger.AlignLefts(
-    [lblDesc, chkRequired, chkSeeAlso, chkIncludeSnippet, lblOverwriteSearch], 0
-  );
-  TCtrlArranger.AlignLefts([chkRequiredRecurse, chkSeeAlsoRecurse], 24);
-  TCtrlArranger.MoveToRightOf(lblDesc, lblSnippetName);
+  TCtrlArranger.MoveToRightOf(lblDesc, lblRoutineName);
   // Check if snippet name is clipped at right of dialog box and increase
   // available body panel space if so
-  // Don't use TCtrlArranger.TotalControlWidth here
-  if lblSnippetName.Left + lblSnippetName.Width > pnlBody.ClientWidth then
-    pnlBody.ClientWidth := lblSnippetName.Left + lblSnippetName.Width;
-  lblOverwriteSearch.Width := pnlBody.ClientWidth;
-  TCtrlArranger.SetLabelHeight(lblOverwriteSearch);
-
-  // Vertical alignment & sizing
-  TCtrlArranger.AlignVCentres(0, [lblDesc, lblSnippetName]);
-  TCtrlArranger.MoveBelow([lblDesc, lblSnippetName], chkRequired, 12);
-  TCtrlArranger.MoveBelow(chkRequired, chkRequiredRecurse, 6);
-  TCtrlArranger.MoveBelow(chkRequiredRecurse, chkSeeAlso, 12);
-  TCtrlArranger.MoveBelow(chkSeeAlso, chkSeeAlsoRecurse, 6);
-  TCtrlArranger.MoveBelow(chkSeeAlsoRecurse, chkIncludeSnippet, 12);
-  if lblOverwriteSearch.Visible then
-    TCtrlArranger.MoveBelow(chkIncludeSnippet, lblOverwriteSearch, 12)
-  else
-    lblOverwriteSearch.SetBounds(0, 0, 0, 0); // hide from panel sizing
-  pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody) + 4;
-
+  if lblRoutineName.Left + lblRoutineName.Width > pnlBody.ClientWidth then
+    pnlBody.ClientWidth := lblRoutineName.Left + lblRoutineName.Width;
   // Inherited arrangement: will set dialog width based on body panel width
   inherited;
 end;
@@ -214,8 +191,8 @@ procedure TFindXRefsDlg.btnOKClick(Sender: TObject);
       Include(Result, soSeeAlso);
     if chkSeeAlsoRecurse.Checked then
       Include(Result, soSeeAlsoRecurse);
-    if chkIncludeSnippet.Checked then
-      Include(Result, soIncludeSnippet);
+    if chkIncludeRoutine.Checked then
+      Include(Result, soIncludeRoutine);
   end;
   // ---------------------------------------------------------------------------
 
@@ -224,7 +201,7 @@ var
 begin
   // Create search criteria from entries made in dialog box
   SearchCriteria := TSearchCriteriaFactory.CreateXRefSearchCriteria(
-    fSnippet, GetOptionsFromUI
+    fRoutine, GetOptionsFromUI
   );
   // Persist the search criteria
   fSearchParams.Options := SearchCriteria.Options;
@@ -238,23 +215,21 @@ procedure TFindXRefsDlg.ConfigForm;
 begin
   inherited;
   // Set label font styles and colours
-  lblSnippetName.Font.Style := [fsBold];
-  lblSnippetName.Font.Color :=
-    Preferences.DBHeadingColours[fSnippet.UserDefined];
+  lblRoutineName.Font.Style := [fsBold];
+  if fRoutine.UserDefined then
+    lblRoutineName.Font.Color := clUserRoutine;
   // Display selected snippet name in appropriate controls
-  lblSnippetName.Caption := fSnippet.Name;
-  chkIncludeSnippet.Caption := Format(
-    chkIncludeSnippet.Caption, [fSnippet.Name]
+  lblRoutineName.Caption := fRoutine.Name;
+  chkIncludeRoutine.Caption := Format(
+    chkIncludeRoutine.Caption, [fRoutine.Name]
   );
-  // Display or hide warning about overwriting searches
-  lblOverwriteSearch.Visible := Query.IsSearchActive;
 end;
 
 class function TFindXRefsDlg.Execute(const AOwner: TComponent;
-  const Snippet: TSnippet; out ASearch: ISearch): Boolean;
+  const Routine: TRoutine; out ASearch: ISearch): Boolean;
   {Displays dialog and returns search object based on entered criteria.
     @param AOwner [in] Component that owns this dialog.
-    @param Snippet [in] Snippet whose cross references are to be found.
+    @param Routine [in] Snippet whose cross references are to be found.
     @param ASearch [out] Search to be performed if user OKs. Has criteria that
       causes specified cross references be returned by search. Set to nil if
       user cancels.
@@ -262,10 +237,10 @@ class function TFindXRefsDlg.Execute(const AOwner: TComponent;
       and search object is nil.
   }
 begin
-  Assert(Assigned(Snippet), ClassName + '.Execute: Snippet is nil');
+  Assert(Assigned(Routine), ClassName + '.Execute: Routine is nil');
   with InternalCreate(AOwner) do
     try
-      fSnippet := Snippet;
+      fRoutine := Routine;
       Result := (ShowModal = mrOK);
       ASearch := fSearch;
     finally
@@ -302,7 +277,7 @@ begin
   chkRequiredRecurse.Checked := soRequiredRecurse in fSearchParams.Options;
   chkSeeAlso.Checked := soSeeAlso in fSearchParams.Options;
   chkSeeAlsoRecurse.Checked := soSeeAlsoRecurse in fSearchParams.Options;
-  chkIncludeSnippet.Checked := soIncludeSnippet in fSearchParams.Options;
+  chkIncludeRoutine.Checked := soIncludeRoutine in fSearchParams.Options;
   // Update other controls per state of check boxes
   UpdateControls;
 end;
@@ -356,7 +331,7 @@ begin
   Storage := Settings.ReadSection(ssFindXRefs);
   fOptions := [];
   if Boolean(StrToIntDef(Storage.ItemValues['IncludeRoutine'], 1)) then
-    Include(fOptions, soIncludeSnippet);
+    Include(fOptions, soIncludeRoutine);
   if Boolean(StrToIntDef(Storage.ItemValues['Required'], 1)) then
     Include(fOptions, soRequired);
   if Boolean(StrToIntDef(Storage.ItemValues['RequiredRecurse'], 0)) then
@@ -405,7 +380,7 @@ begin
   // Create blank persistent storage object
   Storage := Settings.EmptySection(ssFindXRefs);
   // Record parameters
-  StoreOption('IncludeRoutine', soIncludeSnippet);
+  StoreOption('IncludeRoutine', soIncludeRoutine);
   StoreOption('Required', soRequired);
   StoreOption('RequiredRecurse', soRequiredRecurse);
   StoreOption('SeeAlso', soSeeAlso);

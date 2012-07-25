@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphi
   StdCtrls, Classes, Controls, ExtCtrls, Menus,
   // Project
-  FrMemoPreview, IntfFrameMgrs, IntfPreview, UEncodings;
+  FrMemoPreview, IntfFrameMgrs, IntfPreview;
 
 
 type
@@ -64,9 +64,15 @@ type
       {Gets reference to memo control used to display plain text.
         @return Required TMemo reference.
       }
-    procedure LoadContent(const DocContent: TEncodedData); override;
+    procedure LoadContent(const DocContent: string); override;
       {Loads document into memo control.
         @param DocContent [in] Plain text document to be displayed.
+      }
+
+    function GetTitle(const DocContent: string): string; override;
+      {Extracts a document title from a document if possible.
+        @param DocContent [in] Document content.
+        @return '' (plain text does not support an embedded title).
       }
   protected
     { IPreview: Partially implemented in base class }
@@ -95,12 +101,21 @@ begin
   Result := edDisplay;
 end;
 
-procedure TTextPreviewFrame.LoadContent(const DocContent: TEncodedData);
+function TTextPreviewFrame.GetTitle(const DocContent: string): string;
+  {Extracts a document title from a document if possible.
+    @param DocContent [in] Document content.
+    @return '' (plain text does not support an embedded title).
+  }
+begin
+  Result := '';   // can't get a title from plain text objects
+end;
+
+procedure TTextPreviewFrame.LoadContent(const DocContent: string);
   {Loads document into memo control.
     @param DocContent [in] Plain text document to be displayed.
   }
 begin
-  edDisplay.Text := DocContent.ToString;
+  edDisplay.Text := DocContent;
 end;
 
 procedure TTextPreviewFrame.SetPopupMenu(const Menu: TPopupMenu);

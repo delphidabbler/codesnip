@@ -1,8 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * $Rev$
- * $Date$
- *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -20,7 +17,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -29,7 +26,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
     <title>
-      Dependencies Dialogue Box
+      Dependencies Dialog Box
     </title>
     <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
   </head>
@@ -42,54 +39,37 @@
     </object>
     <h1>
       <a name="dlg_dependencies.htm"></a>
-      <img alt="Menu icon" src="../images/Dependencies.png" class="glyph">
-      Dependencies Dialogue Box
+      <img alt="Menu icon" src="../images/Dependencies.gif" class="glyph">
+      Dependencies Dialog Box
     </h1>
     <p>
-      This dialogue box contains two tabs. The first, labelled <em>Depends
-      Upon</em> displays all the other snippets that the selected snippet
-      depends upon (i.e. requires in order to compile). The <em>Required By</em>
-      tab displays all the snippets that directly require, or depend upon, the
-      selected snippet.
+      This dialog box displays all the other snippets that the selected snippet
+      depends upon, either directly or indirectly.
     </p>
     <p>
-      Which tabs are displayed depends on how the dialogue box is accessed:
+      The dialog box is accessed in two ways:
     </p>
     <ol>
       <li>
-        Choosing the <em>View | Dependencies</em> menu item when it displays
-        both tabs of the dialogue box with information about the dependencies
-        for the currently selected snippet.
+        From the <em>View | Dependencies</em> menu item when it displays
+        dependencies for the selected snippet.
       </li>
       <li>
-        Clicking the <em>View Dependencies</em> button on the
-        <em>References</em> tab in the
-        <a href="dlg_editsnippet.htm">Snippets Editor</a> displays just the
-        <em>Depends Upon</em> tab.
+        By clicking the <em>View Dependencies</em> button on the
+        <em>References</em> tab of the 
+        <a href="dlg_editsnippet.htm">Snippets Editor</a>
       </li>
     </ol>
-    <h2>
-      <em>Depends Upon</em> Tab
-    </h2>
     <p>
-      If the selected snippet has dependenciess a tree of snippets is displayed
-      that shows the direct and indirect dependencies. When there are no
-      dependencies a message is displayed to that effect.
+      If the snippet has no dependenciess then a message to that effect is
+      displayed. Otherwise a tree of snippets is displayed that show the
+      direct and indirect dependencies. 
     </p>
     <p>
       If a circular reference is detected (i.e. the snippet depends directly or
       indirectly upon itself) the circular reference is displayed in red and an
       error message is displayed. Circular references are not permitted and must
-      be corrected. This should only occur when the dialogue box is displayed
-      from the <a href="dlg_editsnippet.htm">Snippets Editor</a>.
-    </p>
-    <h2>
-      <em>Required By</em> Tab
-    </h2>
-    <p>
-      This tab displays a simple list of snippets that immediately depend on the
-      selected snippet. Again, if there are no snippets to list a message is
-      displayed to that effect.
+      be corrected. 
     </p>
   </body>
 </html>
