@@ -66,6 +66,9 @@ procedure DeleteProxyPassword;
 // number of program being installed.
 procedure StampConfigFiles;
 
+// Checks if current user's config file has a proxy password.
+function HasProxyPassword: Boolean;
+
 implementation
 
 uses
@@ -449,6 +452,13 @@ begin
     '',
     gCurrentUserConfigFile
   );
+end;
+
+// Checks if current user's config file has a proxy password.
+function HasProxyPassword: Boolean;
+begin
+  Result := GetIniString('ProxyServer', 'Password', '', gCurrentUserConfigFile)
+    <> '';
 end;
 
 end.
