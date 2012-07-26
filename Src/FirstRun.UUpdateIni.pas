@@ -231,6 +231,14 @@ begin
   Result := GetIniInt('IniFile', 'Version', 1, 0, 0, gCurrentUserConfigFile);
 end;
 
+// Gets version number of program from user config file.
+function ConfigFilePrograrmVer: string;
+begin
+  Result := GetIniString(
+    'IniFile', 'ProgramVersion', '', gCurrentUserConfigFile
+  );
+end;
+
 // Create a new empty UTF-16LE encoding config file. Used to ensure the config
 // file writing routines write in Unicode. This works because built in Inno
 // Setup ini functions call Windows API WritePrivateProfileString which only
