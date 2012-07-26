@@ -54,6 +54,10 @@ procedure DeleteHighligherPrefs;
 // Gets version number of new installation's user config file.
 function UserConfigFileVer: Integer;
 
+// Gets version number of program from user config file. Returns empty string if
+// no program version information is present
+function ConfigFileProgramVer: string;
+
 // Adds Prefs:CodeGen section along with default data to new installation's user
 // config file.
 procedure CreateDefaultCodeGenEntries;
@@ -234,8 +238,9 @@ begin
   Result := GetIniInt('IniFile', 'Version', 1, 0, 0, gCurrentUserConfigFile);
 end;
 
-// Gets version number of program from user config file.
-function ConfigFilePrograrmVer: string;
+// Gets version number of program from user config file. Returns empty string if
+// no program version information is present
+function ConfigFileProgramVer: string;
 begin
   Result := GetIniString(
     'IniFile', 'ProgramVersion', '', gCurrentUserConfigFile
