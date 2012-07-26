@@ -120,6 +120,7 @@ Source: {#SrcExePath}{#HelpFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#LicenseTextFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#ReadMeFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#PrivacyFile}; DestDir: {app}; Flags: ignoreversion
+Source: {#SrcDocsPath}UpdatingPreview.rtf; Flags: dontcopy
 
 [Icons]
 Name: {group}\{#AppPublisher} {#AppName}; Filename: {app}\{#ExeFile}
