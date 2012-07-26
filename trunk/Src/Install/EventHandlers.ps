@@ -41,7 +41,9 @@ var
   // preserve config data and database. Whether page is displayed depends on
   // whether we can update config files and database.
   gConfigPage: TInputOptionWizardPage;
-  
+
+  // Reference to custom memo page that displays instructions for updating from
+  // a v4 preview release.
   gUpdateFromPreviewPage: TOutputMsgMemoWizardPage;
 
   // Flag true if user wants to bring forward a copy of the main database
@@ -57,14 +59,14 @@ begin
   Result := True;
 end;
 
-// Called when wizard is initialising. Creates custom page used to inform
-// whether existing old-style config files and database should be preserved.
+// Called when wizard is initialising. Creates required custom pages.
 procedure InitializeWizard;
 var
   RTFFile: string;
   RTF: AnsiString;
 begin
   // Create custom pages
+  // page used to determine if main database is to be brought forward
   gConfigPage := CreateInputOptionPage(
     wpSelectProgramGroup,
     'Code Snippets Online Database',
@@ -82,7 +84,8 @@ begin
   );
   gConfigPage.Add('Copy existing database');
   gConfigPage.Values[0] := True;
-  
+
+  // page that displays notes about updating from vv preview release
   gUpdateFromPreviewPage := CreateOutputMsgMemoPage(
     wpWelcome,
     'Updating from v4 Preview Release',
@@ -98,17 +101,20 @@ begin
 end;
 
 // Called to determine whether page specified by PageID should be displayed.
-// Display of custom page is inhibited only if no data conversion is necessary.
 function ShouldSkipPage(PageID: Integer): Boolean;
 var
   ProgVer: string;
 begin
   Result := False;
+  // decide if page used to decide whether to display page that gives user
+  // option to copy older version of main database
   if PageID = gConfigPage.ID then
   begin
     if not DataConversionRequired or MainDatabaseExists then
       Result := True;
   end
+  // decide if page is displayed that gives instructions on updating from v4
+  // preview
   else if PageId = gUpdateFromPreviewPage.ID then
   begin
     ProgVer := GetIniString(
