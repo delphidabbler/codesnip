@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -124,6 +124,16 @@ type
       const Encoding: TEncoding; const HasBOM: Boolean = False):
       TStringDynArray; static;
 
+    ///  <summary>
+    ///  Copies content of one file to another.
+    ///  </summary>
+    ///  <param name="SrcFileName">string [in] Name of file to be copied.
+    ///  </param>
+    ///  <param name="DestFileName">string [in] Name of file to receive
+    ///  contents of file named in SrcFileName.</param>
+    ///  <remarks>SrcFileName and DestFileName must be different. SrcFileName
+    ///  must exist. DestFileName is overwritten if it already exists.</remarks>
+    class procedure CopyFile(const SrcFileName, DestFileName: string); static;
   end;
 
 type
@@ -163,6 +173,11 @@ begin
     if Bytes[I] <> Preamble[I] then
       Exit(False);
   Result := True;
+end;
+
+class procedure TFileIO.CopyFile(const SrcFileName, DestFileName: string);
+begin
+  TFileIO.WriteAllBytes(DestFileName, TFileIO.ReadAllBytes(SrcFileName));
 end;
 
 class function TFileIO.ReadAllBytes(const FileName: string): TBytes;
