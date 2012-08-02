@@ -107,7 +107,7 @@ function DataConversionRequired: Boolean;
 implementation
 
 uses
-  SysUtils,
+  SysUtils, IOUtils,
   UAppInfo, USystemInfo;
 
 // Checks if database and config files need to be converted and / or copied to
@@ -124,7 +124,7 @@ var
   AppData: string;      // path to user's application data directory
 begin
   // Record system's user application data directory
-  AppData := TSystemFolders.PerUserAppData;
+  AppData := IncludeTrailingPathDelimiter(TSystemFolders.PerUserAppData);
 
   // Record paths to config files and database for each installation type
   gUserConfigFiles[piOriginal] :=
@@ -163,7 +163,7 @@ begin
     gPrevInstallID := piV4
   else if FileExists(gUserConfigFiles[piV3]) then
     gPrevInstallID := piV3
-  else if FileExists(gUserDatabaseDirs[piV2] + '\database.xml') then
+  else if TDirectory.Exists(gUserDatabaseDirs[piV2]) then
     gPrevInstallID := piV2
   else if FileExists(gUserDatabaseDirs[piV1_9]) then
     gPrevInstallID := piV1_9
