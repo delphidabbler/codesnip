@@ -79,33 +79,6 @@ uses
   SysUtils, Types, Classes, Windows,
   FirstRun.UDataLocations, FirstRun.UUnicode, UAppInfo, UIOUtils;
 
-// TODO: NOTE inserted from snippets database (duplicates FirstRun.UUpdateDBase)
-procedure CopyFile(const Source, Dest: string);
-var
-  SourceStream, DestStream: Classes.TFileStream; // source and dest file streams
-begin
-  DestStream := nil;
-  // Open source and dest file streams
-  SourceStream := Classes.TFileStream.Create(
-    Source, SysUtils.fmOpenRead or SysUtils.fmShareDenyWrite
-  );
-  try
-    DestStream := Classes.TFileStream.Create(
-      Dest, Classes.fmCreate or SysUtils.fmShareExclusive
-    );
-    // Copy file from source to dest
-    DestStream.CopyFrom(SourceStream, SourceStream.Size);
-    // Set dest file's modification date to same as source file
-    SysUtils.FileSetDate(
-      DestStream.Handle, SysUtils.FileGetDate(SourceStream.Handle)
-    );
-  finally
-    // Close files
-    DestStream.Free;
-    SourceStream.Free;
-  end;
-end;
-
 // #################### FROM INNO SETUP SOURCE
 
 { TODO: If any of the Inno setup source is used then move it into it own unit
@@ -209,7 +182,6 @@ begin
   // reads an ANSI file and converts contents to Unicode, using system default
   // encoding
   Lines := TFileIO.ReadAllLines(OldFileName, TEncoding.Default);
-//  LoadStringsFromFile(OldFileName, Lines);
   // writes string array to UTF-16LE file
   ForceDirectories(ExtractFileDir(NewFileName));
   WriteStringsToUnicodeFile(NewFileName, Lines);
@@ -222,7 +194,7 @@ begin
   if CompareText(OldFileName, NewFileName) = 0 then
     Exit;
   ForceDirectories(ExtractFileDir(NewFileName));
-  CopyFile(OldFileName, NewFileName);
+  TFileIO.CopyFile(OldFileName, NewFileName);
 end;
 
 // Checks if a config file is ANSI. If False is returned the file is assumed to

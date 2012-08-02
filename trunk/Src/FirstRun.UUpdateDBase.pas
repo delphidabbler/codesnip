@@ -47,34 +47,7 @@ implementation
 
 uses
   SysUtils, Classes,
-  FirstRun.UDataLocations, UUtils;
-
-// TODO: NOTE inserted from snippets database
-procedure CopyFile(const Source, Dest: string);
-var
-  SourceStream, DestStream: Classes.TFileStream; // source and dest file streams
-begin
-  DestStream := nil;
-  // Open source and dest file streams
-  SourceStream := Classes.TFileStream.Create(
-    Source, SysUtils.fmOpenRead or SysUtils.fmShareDenyWrite
-  );
-  try
-    DestStream := Classes.TFileStream.Create(
-      Dest, Classes.fmCreate or SysUtils.fmShareExclusive
-    );
-    // Copy file from source to dest
-    DestStream.CopyFrom(SourceStream, SourceStream.Size);
-    // Set dest file's modification date to same as source file
-    SysUtils.FileSetDate(
-      DestStream.Handle, SysUtils.FileGetDate(SourceStream.Handle)
-    );
-  finally
-    // Close files
-    DestStream.Free;
-    SourceStream.Free;
-  end;
-end;
+  FirstRun.UDataLocations, UIOUtils, UUtils;
 
 // Copies all files from one directory for another. Does nothing if SourceDir
 // doesn't exist or if both directories are the same. If DestDir does not exist
@@ -97,9 +70,7 @@ begin
   begin
     repeat
       if (FindRec.Attr and faDirectory) = 0 then
-      begin
-        CopyFile(SourcePath + FindRec.Name, DestPath + FindRec.Name);
-      end;
+        TFileIO.CopyFile(SourcePath + FindRec.Name, DestPath + FindRec.Name);
     until not FindNext(FindRec) <> 0;
     FindClose(FindRec);
   end;
