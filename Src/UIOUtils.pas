@@ -89,6 +89,21 @@ type
       const Encoding: TEncoding; const UseBOM: Boolean = False); static;
 
     ///  <summary>
+    ///  Writes lines of text to a text file with lines separated by CRLF.
+    ///  </summary>
+    ///  <param name="FileName">string [in] Name of file.</param>
+    ///  <param name="Lines">array of string [in] Array of lines of text to be
+    ///  written.</param>
+    ///  <param name="Encoding">TEncoding [in] Encoding to be used by file.
+    ///  </param>
+    ///  <param name="UseBOM">Boolean [in] Flag indicating whether BOM to be
+    ///  written to file. If Encoding has no BOM then UseBOM has no effect.
+    ///  </param>
+    class procedure WriteAllLines(const FileName: string;
+      const Lines: array of string; const Encoding: TEncoding;
+      const UseBOM: Boolean = False); static;
+
+    ///  <summary>
     ///  Reads all bytes from a file into a byte array.
     ///  </summary>
     ///  <param name="FileName">string [in] Name of file.</param>
@@ -247,6 +262,23 @@ begin
     BytesToStream(Bytes, FS);
   finally
     FS.Free;
+  end;
+end;
+
+class procedure TFileIO.WriteAllLines(const FileName: string;
+  const Lines: array of string; const Encoding: TEncoding;
+  const UseBOM: Boolean);
+var
+  Line: string;
+  SB: TStringBuilder;
+begin
+  SB := TStringBuilder.Create;
+  try
+    for Line in Lines do
+      SB.AppendLine(Line);
+    WriteAllText(FileName, SB.ToString, Encoding, UseBOM);
+  finally
+    SB.Free;
   end;
 end;
 
