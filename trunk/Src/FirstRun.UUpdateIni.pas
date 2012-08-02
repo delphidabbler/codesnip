@@ -77,7 +77,7 @@ implementation
 
 uses
   SysUtils, Types, Classes, Windows,
-  FirstRun.UDataLocations, FirstRun.UUnicode, UAppInfo, UIOUtils;
+  FirstRun.UDataLocations, UAppInfo, UIOUtils;
 
 // #################### FROM INNO SETUP SOURCE
 
@@ -184,7 +184,7 @@ begin
   Lines := TFileIO.ReadAllLines(OldFileName, TEncoding.Default);
   // writes string array to UTF-16LE file
   ForceDirectories(ExtractFileDir(NewFileName));
-  WriteStringsToUnicodeFile(NewFileName, Lines);
+  TFileIO.WriteAllLines(NewFileName, Lines, TEncoding.Unicode, True);
 end;
 
 // Makes a copy of a Unicode config file with a different name. Does nothing if
@@ -219,18 +219,15 @@ begin
   );
 end;
 
-// Create a new empty UTF-16LE encoding config file. Used to ensure the config
+// Create a new empty UTF-16LE encoded config file. Used to ensure the config
 // file writing routines write in Unicode. This works because built in Inno
 // Setup ini functions call Windows API WritePrivateProfileString which only
 // writes Unicode if the file it is writing to is detected as Unicode. If not it
 // writes ANSI text.
 procedure CreateUnicodeConfigFile(FileName: string);
-var
-  NulLines: TStringDynArray;   // dummy empty string array
 begin
   ForceDirectories(ExtractFileDir(FileName));
-  SetLength(NulLines, 0);
-  WriteStringsToUnicodeFile(FileName, NulLines);
+  TFileIO.WriteAllText(FileName, '', TEncoding.Unicode, True);
 end;
 
 // Copies config files of a previous installation to new installation, updating
