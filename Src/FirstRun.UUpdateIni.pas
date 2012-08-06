@@ -77,6 +77,9 @@ function IsCurrentProgramVer: Boolean;
 // Checks if current user's config file has a proxy password.
 function HasProxyPassword: Boolean;
 
+// Deletes config file from given previous installation
+procedure DeleteUserCfgFile(InstallID: Integer);
+
 implementation
 
 uses
@@ -444,6 +447,17 @@ function HasProxyPassword: Boolean;
 begin
   Result := GetIniString('ProxyServer', 'Password', '', gCurrentUserConfigFile)
     <> '';
+end;
+
+// Deletes config file from given previous installation
+procedure DeleteUserCfgFile(InstallID: Integer);
+var
+  FileName: string;
+begin
+  FileName := gUserConfigFiles[InstallId];
+  if (FileName <> '') and (FileName <> gCurrentUserConfigFile)
+    and FileExists(FileName) then
+    SysUtils.DeleteFile(FileName);
 end;
 
 end.
