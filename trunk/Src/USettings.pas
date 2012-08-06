@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -223,7 +223,7 @@ uses
 
 var
   // Private global variable: stores reference to settings singleton object
-  pvtSettings: ISettings;
+  pvtSettings: ISettings = nil;
 
 
 type
@@ -424,6 +424,8 @@ function Settings: ISettings;
     @return Reference to singleton.
   }
 begin
+  if not Assigned(pvtSettings) then
+    pvtSettings := TIniSettings.Create as ISettings;
   Result := pvtSettings;
 end;
 
@@ -796,16 +798,6 @@ begin
   for Idx := 0 to Pred(Value.Count) do
     SetItemValue(Format(ItemFmt, [Idx]), Value[Idx]);
 end;
-
-initialization
-
-// Initialise settings singletion
-pvtSettings := TIniSettings.Create as ISettings;
-
-finalization
-
-// Free the singleton
-pvtSettings := nil;
 
 end.
 
