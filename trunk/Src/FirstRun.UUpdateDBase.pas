@@ -43,10 +43,13 @@ interface
 // correct location for directory being installed.
 procedure CopyDatabases(PrevInstallID: Integer);
 
+// Delete user database for given previous installation
+procedure DeleteUserDatabase(PrevInstallID: Integer);
+
 implementation
 
 uses
-  SysUtils, Classes,
+  SysUtils, Classes, IOUtils,
   FirstRun.UDataLocations, UIOUtils, UUtils;
 
 // Copies all files from one directory for another. Does nothing if SourceDir
@@ -85,6 +88,17 @@ begin
   OldUserDatabase := gUserDatabaseDirs[PrevInstallID];
   if OldUserDatabase <> '' then
     CopyDirectory(OldUserDatabase, gUserDatabaseDirs[piCurrent]);
+end;
+
+// Delete user database for given previous installation
+procedure DeleteUserDatabase(PrevInstallID: Integer);
+var
+  DirName: string;
+begin
+  DirName := gUserDatabaseDirs[PrevInstallID];
+  if (DirName <> '') and (DirName <> gUserDatabaseDirs[piCurrent])
+    and TDirectory.Exists(DirName) then
+    TDirectory.Delete(DirName, True);
 end;
 
 end.
