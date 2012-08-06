@@ -62,13 +62,17 @@ function ConfigFileProgramVer: string;
 // config file.
 procedure CreateDefaultCodeGenEntries;
 
-// Deletes proxt password entry from new installation's user config file.
+// Deletes proxy password entry from new installation's user config file.
 procedure DeleteProxyPassword;
 
 // Updates both common and user config files with correct version information.
 // This records both config file versions and (common config file only) version
 // number of program being installed.
 procedure StampConfigFiles;
+
+// Checks if program version from config file is same as current program
+// version.
+function IsCurrentProgramVer: Boolean;
 
 // Checks if current user's config file has a proxy password.
 function HasProxyPassword: Boolean;
@@ -261,6 +265,13 @@ begin
     TAppInfo.ProgramReleaseVersion,
     gCurrentUserConfigFile
   );
+end;
+
+// Checks if program version from config file is same as current program
+// version.
+function IsCurrentProgramVer: Boolean;
+begin
+  Result := ConfigFileProgramVer = TAppInfo.ProgramReleaseVersion;
 end;
 
 // Deletes any highlighter preferences from new installation's user config file.
