@@ -27,7 +27,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -361,6 +361,35 @@ type
     procedure AdjustWindow(const Bounds: TRectEx);
   end;
 
+type
+  ///  <summary>
+  ///  Class that implements IWindowInfo for the Application object.
+  ///  </summary>
+  TApplicationWindow = class(TInterfacedObject,
+    IWindowInfo
+  )
+  public
+    ///  <summary>Checks if application window is a dialog box or not.</summary>
+    ///  <remarks>
+    ///  <para>Always returns False because application window can't be a
+    ///  dialogue box.</para>
+    ///  <para>Method of IWindowInfo.</para>
+    ///  </remarks>
+    function IsDialog: Boolean;
+    ///  <summary>Get window's bounding rectangle.</summary>
+    ///  <remarks>
+    ///  <para>Returns bounds of work area of primary monitor.</para>
+    ///  <para>Method of IWindowInfo.</para>
+    ///  </remarks>
+    function BoundsRect: TRectEx;
+    ///  <summary>Gets window's handle.</summary>
+    ///  <remarks>
+    ///  <para>Returns application window's handle.</para>
+    ///  <para>Method of IWindowInfo.</para>
+    ///  </remarks>
+    function Handle: THandle;
+  end;
+
 
 { TDlgHelper }
 
@@ -493,8 +522,7 @@ end;
 
 { TWindowInfoFactory }
 
-class function TWindowInfoFactory.Instance(
-  const Host: TComponent): IWindowInfo;
+class function TWindowInfoFactory.Instance(const Host: TComponent): IWindowInfo;
 begin
   Result := nil;
   if Host is TCustomForm then
@@ -511,14 +539,16 @@ begin
       Result := TFormWindow.Create(Screen.ActiveCustomForm)
     else if Assigned(Application.MainForm) then
       Result := TFormWindow.Create(Application.MainForm)
+    else
+      Result := TApplicationWindow.Create;
   end;
   Assert(Assigned(Result), ClassName + '.Instance: Can''t create instance');
 end;
 
 { TAlignableDialogFactory }
 
-class function TAlignableDialogFactory.Instance(
-  const Dlg: TComponent): IAlignableWindow;
+class function TAlignableDialogFactory.Instance(const Dlg: TComponent):
+  IAlignableWindow;
 begin
   Assert(Assigned(Dlg), ClassName + '.Instance: Dlg is nil');
   if Dlg is TCustomForm then
@@ -529,12 +559,13 @@ begin
     Result := TCommonDialogWindow.Create(Dlg as TCommonDialog)
   else
     raise EBug.CreateFmt(
-      '%0:s.Instance: Unsupported WdwCtrl type %1:s', [ClassName, Dlg.ClassName]
+      '%0:s.Instance: Unsupported dialogue type: %1:s',
+      [ClassName, Dlg.ClassName]
     );
 end;
 
-class function TAlignableDialogFactory.Instance(
-  const Handle: THandle): IAlignableWindow;
+class function TAlignableDialogFactory.Instance(const Handle: THandle):
+  IAlignableWindow;
 begin
   Result := THandleWindow.Create(Handle);
 end;
@@ -695,6 +726,23 @@ begin
   Assert(IsWindow(Handle), ClassName + '.Create: Handle is not a window.');
   inherited Create;
   fHandle := Handle;
+end;
+
+{ TApplicationWindow }
+
+function TApplicationWindow.BoundsRect: TRectEx;
+begin
+  Result := Screen.DesktopRect;
+end;
+
+function TApplicationWindow.Handle: THandle;
+begin
+  Result := Application.Handle;
+end;
+
+function TApplicationWindow.IsDialog: Boolean;
+begin
+  Result := False;
 end;
 
 end.
