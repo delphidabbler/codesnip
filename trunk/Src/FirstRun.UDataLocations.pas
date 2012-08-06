@@ -108,7 +108,7 @@ implementation
 
 uses
   SysUtils, IOUtils,
-  UAppInfo, USystemInfo;
+  UAppInfo, UIOUtils, UStrUtils, USystemInfo;
 
 // Checks if database and config files need to be converted and / or copied to
 // new locations for application being installed.
@@ -158,8 +158,18 @@ end;
 // Attempts to detect and identify any previous installation by checking for
 // known files and directories.
 procedure DetectPrevInstall;
+
+  function IsEmptyUnicodeCfgFile(const FileName: string): Boolean;
+  var
+    Content: string;
+  begin
+    Content := StrTrim(TFileIO.ReadAllText(FileName, TEncoding.Unicode, True));
+    Result := Content = '';
+  end;
+
 begin
-  if FileExists(gUserConfigFiles[piV4]) then
+  if FileExists(gUserConfigFiles[piV4])
+    and not IsEmptyUnicodeCfgFile(gUserConfigFiles[piV4]) then
     gPrevInstallID := piV4
   else if FileExists(gUserConfigFiles[piV3]) then
     gPrevInstallID := piV3
