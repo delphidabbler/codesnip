@@ -74,7 +74,7 @@ begin
     repeat
       if (FindRec.Attr and faDirectory) = 0 then
         TFileIO.CopyFile(SourcePath + FindRec.Name, DestPath + FindRec.Name);
-    until not FindNext(FindRec) <> 0;
+    until FindNext(FindRec) <> 0;
     FindClose(FindRec);
   end;
 end;
