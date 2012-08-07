@@ -197,7 +197,6 @@ const
 
 procedure TFindCompilerDlg.ArrangeForm;
 begin
-  TCtrlArranger.SetLabelHeights(pnlBody);
   // Arrange columns horizontally
   TCtrlArranger.AlignLefts([lblCompilerVer, lbCompilerVers, btnSelectAll], 0);
   TCtrlArranger.AlignRights([lbCompilerVers, btnClearAll]);
