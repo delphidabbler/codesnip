@@ -40,9 +40,15 @@ unit FirstRun.UUpdateIni;
 
 interface
 
-// Creates new style per user and common config files from content of single,
-// old style config file used before CodeSnip v1.9.
-procedure CreateIniFilesFromOldStyle;
+// Create a new empty UTF-16LE encoded config file. Used to ensure the config
+// file writing routines write in Unicode. This works because built in Inno
+// Setup ini functions call Windows API WritePrivateProfileString which only
+// writes Unicode if the file it is writing to is detected as Unicode. If not it
+// writes ANSI text.
+procedure CreateUnicodeConfigFile(FileName: string);
+
+// Updates config file copied from old stye (pre CodeSnip v1.9) file
+procedure UpdateOldStyleIniFile;
 
 // Copies config files of a previous installation to new installation, updating
 // to Unicode format if necessary.
@@ -283,17 +289,11 @@ begin
   DeleteIniSection('Prefs:Hiliter', gCurrentUserConfigFile);
 end;
 
-// Creates new style per user and common config files from content of single,
-// old style config file used before CodeSnip v1.9.
-procedure CreateIniFilesFromOldStyle;
+// Updates config file copied from old stye (pre CodeSnip v1.9) file
+procedure UpdateOldStyleIniFile;
 var
   I: Integer; // loops thru all highlight elements
 begin
-  // Create per-user settings file:
-  // Copy file
-  CopyAnsiToUnicodeConfigFile(
-    gUserConfigFiles[piOriginal], gCurrentUserConfigFile
-  );
   // Delete unwanted sections:
   // - Application section: now in common config file
   // - Source code output format: format lost when updating from CodeSnip pre
@@ -301,7 +301,7 @@ begin
   //   current Prefs:SourceCode section used
   // - Highlighting style is deliberately lost since CodeSnip v3 & v4 have
   //   different default style and main display uses that style, therefore
-  //   section's HiliteOutput (pre v1.7.5) and Prefs:Hiliter (v1.7 and later)
+  //   section's HiliteOutput (pre v1.7.5) and Prefs:Hiliter (v1.7.5 and later)
   //   deleted.
   DeleteIniSection('Application', gCurrentUserConfigFile);
   DeleteIniSection('SourceOutput', gCurrentUserConfigFile);
