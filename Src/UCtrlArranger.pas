@@ -42,7 +42,7 @@ interface
 
 uses
   // Delphi
-  Controls, StdCtrls,
+  Classes, Controls, StdCtrls,
   // Projects
   UBaseObjects;
 
@@ -56,11 +56,10 @@ type
     ///  its current font. The new height is returned.</summary>
     class function SetLabelHeight(const Lbl: TLabel): Integer;
 
-    ///  <summary>Sets heights of all labels owned by given container to
-    ///  accomodate their captions in their current fonts, unless label is
-    ///  auto-sized and IgnoreAutoSize flag is set.</summary>
-    class procedure SetLabelHeights(const Container: TControl;
-      const IgnoreAutoSize: Boolean = False);
+    ///  <summary>Sets heights of all labels owned by given component to
+    ///  accomodate their captions in their current fonts, unless label has its
+    ///  AutoSize property set to True.</summary>
+    class procedure SetLabelHeights(const AOwner: TComponent);
 
     ///  <summary>Returns Y co-ordinate of bottom of given control, allowing
     ///  space for optional margin.</summary>
@@ -374,18 +373,17 @@ begin
   Result := Lbl.Height;
 end;
 
-class procedure TCtrlArranger.SetLabelHeights(const Container: TControl;
-  const IgnoreAutoSize: Boolean);
+class procedure TCtrlArranger.SetLabelHeights(const AOwner: TComponent);
 var
-  Idx: Integer; // loops through all components owned by container control
+  Idx: Integer; // loops through all components owned AOwner
   Lbl: TLabel;  // references each label component
 begin
-  for Idx := 0 to Pred(Container.ComponentCount) do
+  for Idx := 0 to Pred(AOwner.ComponentCount) do
   begin
-    if Container.Components[Idx] is TLabel then
+    if AOwner.Components[Idx] is TLabel then
     begin
-      Lbl := Container.Components[Idx] as TLabel;
-      if IgnoreAutoSize or not Lbl.AutoSize then
+      Lbl := AOwner.Components[Idx] as TLabel;
+      if not Lbl.AutoSize then
         SetLabelHeight(Lbl);
     end;
   end;
