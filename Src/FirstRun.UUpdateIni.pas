@@ -86,10 +86,13 @@ function HasProxyPassword: Boolean;
 // Deletes config file from given previous installation
 procedure DeleteUserCfgFile(InstallID: Integer);
 
+// Deletes given value from current user's config file
+procedure DeleteCfgValue(const Section, Name: string);
+
 implementation
 
 uses
-  SysUtils, Types, Classes, Windows,
+  SysUtils, Types, Classes, Windows, IniFiles,
   FirstRun.UDataLocations, UAppInfo, UIOUtils;
 
 // #################### FROM INNO SETUP SOURCE
@@ -180,7 +183,21 @@ begin
     WriteProfileString(PChar(Section), nil, nil);
 end;
 
+
 // ################### END
+
+// Delete key from given section of given ini file.
+procedure DeleteIniKey(const Section, ValueName, FileName: string);
+var
+  Ini: TIniFile;
+begin
+  Ini := TIniFile.Create(FileName);
+  try
+    Ini.DeleteKey(Section, ValueName);
+  finally
+    Ini.Free;
+  end;
+end;
 
 // Reads an ANSI config file, converts content to Unicode and writes that to a
 // UTF-16LE encoded Unicode config file with BOM. Does nothing if old and new
@@ -331,6 +348,7 @@ begin
     8,
     gCurrentUserConfigFile
   );
+  // We don't set warning state: it defaults to required "off" value
   SetIniString(
     'Prefs:CodeGen',
     'Warning0.Symbol',
@@ -458,6 +476,12 @@ begin
   if (FileName <> '') and (FileName <> gCurrentUserConfigFile)
     and FileExists(FileName) then
     SysUtils.DeleteFile(FileName);
+end;
+
+// Deletes given value from current user's config file
+procedure DeleteCfgValue(const Section, Name: string);
+begin
+  DeleteIniKey(Section, Name, gCurrentUserConfigFile);
 end;
 
 end.
