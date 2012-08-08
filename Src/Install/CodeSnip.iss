@@ -62,9 +62,9 @@
 #define AppURL WebURL + "software/codesnip"
 #define InstUninstDir "Uninst"
 
-; For v4 pre-release versions only, set version number here
-#define AppVersion "4.0-alpha.3"
-#define RealVersion "3.98.3"
+; For v4 alpha and beta versions only, set version number here
+#define AppVersion "4.0-beta.1"
+#define RealVersion "3.99.1"
 
 ; Creates name of setup file from app name, version and any special build string
 #define CreateSetupName(str fn) \
@@ -96,7 +96,7 @@ SolidCompression=true
 InternalCompressLevel=ultra
 OutputDir={#OutDir}
 OutputBaseFilename={#SetupName}
-; VersionInfoVersion changed for v4 pre-release versions only
+; VersionInfoVersion changed for v4 alpha and beta versions only
 ;VersionInfoVersion={#AppVersion}
 VersionInfoVersion={#RealVersion}
 VersionInfoCompany={#Company}
@@ -138,7 +138,7 @@ BeveledLabel={#Company}
 Type: filesandordirs; Name: "{commonappdata}\{#AppPublisher}\{#ProgDataSubDir}"
 
 [Code]
-// DataLocations.pas must be declared first
+// DataLocations.ps must be declared first
 #include "DataLocations.ps"
 #include "Unicode.ps"
 #include "UpdateIni.ps"
