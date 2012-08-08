@@ -566,6 +566,9 @@
 			<DCCReference Include="FirstRun.UMain.pas"/>
 			<DCCReference Include="FirstRun.UUpdateDBase.pas"/>
 			<DCCReference Include="FirstRun.UUpdateIni.pas"/>
+			<DCCReference Include="FmFirstRunDlg.pas">
+				<Form>FirstRunDlg</Form>
+			</DCCReference>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
