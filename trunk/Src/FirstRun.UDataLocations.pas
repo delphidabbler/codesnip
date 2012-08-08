@@ -175,7 +175,7 @@ begin
     gPrevInstallID := piV3
   else if TDirectory.Exists(gUserDatabaseDirs[piV2]) then
     gPrevInstallID := piV2
-  else if FileExists(gUserDatabaseDirs[piV1_9]) then
+  else if FileExists(gUserConfigFiles[piV1_9]) then
     gPrevInstallID := piV1_9
   else if FileExists(gUserConfigFiles[piOriginal]) then
     gPrevInstallID := piOriginal
