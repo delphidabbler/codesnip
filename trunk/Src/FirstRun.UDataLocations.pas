@@ -100,10 +100,6 @@ var
 // previous installation that was detected.
 procedure InitGlobals;
 
-// Checks if database and config files need to be converted and / or copied to
-// new locations for application being installed.
-function DataConversionRequired: Boolean;
-
 implementation
 
 uses
@@ -112,11 +108,6 @@ uses
 
 // Checks if database and config files need to be converted and / or copied to
 // new locations for application being installed.
-function DataConversionRequired: Boolean;
-begin
-  Result := (gPrevInstallID <> piNone) and (gPrevInstallID < piCurrent);
-end;
-
 // Records the application's data directories for each different arrangement
 // used in different versions of CodeSnip.
 procedure InitAppDataFolders;
