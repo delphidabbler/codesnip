@@ -38,124 +38,198 @@
 
 unit FirstRun.UMain;
 
+{TODO: This entire FirstRun code needs a thorough rewrite:
+       it's very messy, having been derived from former install Pascal script.
+}
+
 interface
 
-// Initialises global variables that provide information on location of data
-// folders and database and about any earlier installation that has been
-// detected.
-function InitializeSetup: Boolean;
+type
+  TFirstRunCfgChanges = (
+    frcRegistration,
+    frcHiliter,
+    frcProxyPwd,
+    frcSourceFormat
+  );
 
-// Performs any required data conversion
-procedure PerformRequiredDataConversion;
+type
+  TFirstRunCfgChangeSet = set of TFirstRunCfgChanges;
+
+type
+  TFirstRun = class(TObject)
+  strict private
+    function HasOldStyleProxyPwd: Boolean;
+  public
+    constructor Create;
+    destructor Destroy; override;
+    function HaveOldCfgFile: Boolean;
+    // Brings forward config file from older version
+    procedure BringForwardCfgFile;
+    // Updates config file in place and notofies of changes
+    procedure UpdateCfgFile(out Changes: TFirstRunCfgChangeSet);
+    function HaveOldUserDB: Boolean;
+    procedure BringForwardUserDB;
+    procedure CreateEmptyCfgFile;
+    function IsProgramUpdated: Boolean;
+  end;
+
+type
+  TFirstRunMgr = class(TObject)
+  strict private
+    class function CfgFileExists: Boolean;
+    class function IsFirstRun: Boolean;
+    class function IsProgramUpdated: Boolean;
+  public
+    class procedure Execute;
+  end;
 
 implementation
 
 uses
-  SysUtils, Windows, IOUtils,
+  SysUtils, Windows, IOUtils, Forms,
   FirstRun.UDataLocations, FirstRun.UUpdateDBase, FirstRun.UUpdateIni,
+  FmFirstRunDlg,
   UMessageBox, UUtils;
 
-var
-  // Flag true if user wants to update user database and config file
-  gDataConversionRequested: Boolean;
+{ TFirstRun }
 
-  // Flag true if user wants to have old data deleted after conversion
-  gDeleteOldDataRequested: Boolean;
-
-
-// Initialises global variables that provide information on location of data
-// folders and database and about any earlier installation that has been
-// detected.
-function InitializeSetup: Boolean;
+procedure TFirstRun.BringForwardCfgFile;
 begin
-  InitGlobals;
-  Result := True;
+  Assert(HaveOldCfgFile,
+    ClassName + '.BringForwardCfgFile: Old config file does not exist');
+  CopyConfigFiles(gPrevInstallID);
 end;
 
-// Performs any required data conversion
-procedure PerformRequiredDataConversion;
-var
-  PrevInstallID: Integer; // loops through previous installs
-  FileName: string;       // name of a config file
-  DirName: string;        // name of a database directory
+procedure TFirstRun.BringForwardUserDB;
 begin
-  // Check if data conversion is needed
-  if DataConversionRequired then
-  begin
-    // Check if user has requested data conversion
-    if gDataConversionRequested then
-    begin
-      case gPrevInstallID of
-        piOriginal:
-        begin
-          CopyDatabases(piOriginal);
-          CreateIniFilesFromOldStyle;
-        end;
-        piV1_9:
-        begin
-          CopyDatabases(piV1_9);
-          CopyConfigFiles(piV1_9);
-          DeleteHighligherPrefs;  // default highlighting changes in v3
-        end;
-        piV2:
-        begin
-          CopyDatabases(piV2);
-          CopyConfigFiles(piV2);
-          DeleteHighligherPrefs;  // default highlighting changes in v3
-        end;
-        piV3:
-        begin
-          CopyDatabases(piV3);
-          CopyConfigFiles(piV3);
-        end;
-      end;
-    end;
+  Assert(HaveOldUserDB,
+    ClassName + '.BringForwardUserDB: Old user database does not exist');
+  CopyDatabases(gPrevInstallID);
+end;
 
-    // Check if old user database and config file should be deleted
-    if gDeleteOldDataRequested then
+constructor TFirstRun.Create;
+begin
+  inherited Create;
+end;
+
+procedure TFirstRun.CreateEmptyCfgFile;
+begin
+  CreateUnicodeConfigFile(gCurrentUserConfigFile);
+end;
+
+destructor TFirstRun.Destroy;
+begin
+
+  inherited;
+end;
+
+function TFirstRun.HasOldStyleProxyPwd: Boolean;
+begin
+  Result := (UserConfigFileVer <= 6) and HasProxyPassword;
+end;
+
+function TFirstRun.HaveOldCfgFile: Boolean;
+begin
+  Result := TFile.Exists(gUserConfigFiles[gPrevInstallID]);
+end;
+
+function TFirstRun.HaveOldUserDB: Boolean;
+begin
+  Result := TFile.Exists(
+    IncludeTrailingPathDelimiter(gUserDatabaseDirs[gPrevInstallID])
+      + 'database.xml'
+  );
+end;
+
+function TFirstRun.IsProgramUpdated: Boolean;
+begin
+  Result := IsCurrentProgramVer;
+end;
+
+procedure TFirstRun.UpdateCfgFile(out Changes: TFirstRunCfgChangeSet);
+begin
+  Changes := [];
+  case gPrevInstallID of
+    piOriginal:
     begin
-      for PrevInstallID := piOriginal to piCurrent - 1 do
+      UpdateOldStyleIniFile;
+      Include(Changes, frcHiliter);
+      Include(Changes, frcRegistration);
+      Include(Changes, frcSourceFormat);
+    end;
+    piV1_9, piV2:
+    begin
+      DeleteHighligherPrefs;  // default highlighting changes in v3
+      Include(Changes, frcHiliter);
+    end;
+    piV3:
+    begin
+      if HasOldStyleProxyPwd then
       begin
-        FileName := gUserConfigFiles[PrevInstallId];
-        if (FileName <> '') and (FileName <> gCurrentUserConfigFile)
-          and FileExists(FileName) then
-          SysUtils.DeleteFile(FileName);
-      end;
-      for PrevInstallID := piOriginal to piCurrent - 1 do
-      begin
-        DirName := gUserDatabaseDirs[PrevInstallID];
-        if (DirName <> '') and (DirName <> gUserDatabaseDirs[piCurrent])
-          and TDirectory.Exists(DirName) then
-          TDirectory.Delete(DirName, True);
+        DeleteProxyPassword;  // proxy password encryption changed during v3
+        Include(Changes, frcProxyPwd);
       end;
     end;
   end;
-
-  // Check if any additional default data needs to be added to older ini files
   if UserConfigFileVer < 6 then
-    // user ini file versions before 6 don't have the Prefs:CodeGen section and
-    // default entries for predefined warnings
+    // User ini file versions before 6 don't have the Prefs:CodeGen section and
+    // default entries for predefined warnings.
+    // NOTE: This works for a new config file providing it has not been stamped.
     CreateDefaultCodeGenEntries;
 
-  // Check if there's a proxy server password in incompatible format and delete
-  // it if so. Inform user.
-  if (UserConfigFileVer < 7) and HasProxyPassword then
-  begin
-    DeleteProxyPassword;
-    TMessageBox.Information(
-      nil,
-      'Your existing proxy server password has been deleted. This is because '
-       + 'the format for storing the password has been changed to permit '
-       + 'non European characters to be used.'#13#10#13#10
-       + 'When you start CodeSnip please select the Tools | Proxy Server '
-       + 'menu option and re-enter your password in the dialog box.'#13#10#13#10
-       + 'Sorry for the inconvenience.'
-    );
-  end;
+  if UserConfigFileVer < 8 then
+    DeleteCfgValue('MainWindow', 'DetailTab');
 
-  // Ensure user config file has correct ini file and program version
-  // information. This creates config file if it doesn't exist
   StampConfigFiles;
+end;
+
+{ TFirstRunMgr }
+
+class function TFirstRunMgr.CfgFileExists: Boolean;
+begin
+  Result := TFile.Exists(gCurrentUserConfigFile);
+end;
+
+class procedure TFirstRunMgr.Execute;
+var
+  FR: TFirstRun;
+  Changes: TFirstRunCfgChangeSet;
+begin
+  FirstRun.UDataLocations.InitGlobals;
+  if IsFirstRun then
+  begin
+    FR := TFirstRun.Create;
+    try
+      if FR.HaveOldCfgFile or FR.HaveOldUserDB then
+        TFirstRunDlg.Execute(Application, FR);
+      if not CfgFileExists then
+      begin
+        FR.CreateEmptyCfgFile;
+        FR.UpdateCfgFile(Changes);
+      end;
+    finally
+      FR.Free;
+    end;
+  end
+  else if IsProgramUpdated then
+  begin
+    FR := TFirstRun.Create;
+    try
+      FR.UpdateCfgFile(Changes);
+    finally
+      FR.Free;
+    end;
+  end;
+end;
+
+class function TFirstRunMgr.IsFirstRun: Boolean;
+begin
+  Result := not CfgFileExists;
+end;
+
+class function TFirstRunMgr.IsProgramUpdated: Boolean;
+begin
+  Result := IsCurrentProgramVer;
 end;
 
 end.

@@ -397,7 +397,8 @@ uses
   FirstRun.UDataLocations in 'FirstRun.UDataLocations.pas',
   FirstRun.UMain in 'FirstRun.UMain.pas',
   FirstRun.UUpdateDBase in 'FirstRun.UUpdateDBase.pas',
-  FirstRun.UUpdateIni in 'FirstRun.UUpdateIni.pas';
+  FirstRun.UUpdateIni in 'FirstRun.UUpdateIni.pas',
+  FmFirstRunDlg in 'FmFirstRunDlg.pas' {FirstRunDlg};
 
 // Include resources
 {$Resource ExternalObj.tlb} // Type library file
@@ -411,6 +412,7 @@ begin
   ReportMemoryLeaksOnShutdown := DebugHook <> 0;
   Application.Initialize;
   Application.MainFormOnTaskBar := True;
+  TFirstRunMgr.Execute;
   SplashForm := TSplashForm.Create(Application);
   SplashForm.Show;
   Application.ModalPopupMode := pmAuto;
