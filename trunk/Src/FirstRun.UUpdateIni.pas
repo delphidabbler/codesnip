@@ -64,6 +64,10 @@ function UserConfigFileVer: Integer;
 // config file.
 procedure CreateDefaultCodeGenEntries;
 
+// Updates Prefs:CodeGen section from format prior to version 9 to version 9
+// format
+procedure UpdateCodeGenEntries;
+
 // Deletes proxy password entry from new installation's user config file.
 procedure DeleteProxyPassword;
 
@@ -79,8 +83,8 @@ function IsCurrentProgramVer: Boolean;
 // Checks if current user's config file has a proxy password.
 function HasProxyPassword: Boolean;
 
-// Deletes given value from current user's config file
-procedure DeleteCfgValue(const Section, Name: string);
+// Deletes unused key that determines detail pane index.
+procedure DeleteDetailsPaneIndex;
 
 implementation
 
@@ -180,17 +184,31 @@ end;
 // ################### END
 
 // Delete key from given section of given ini file.
-procedure DeleteIniKey(const Section, ValueName, FileName: string);
+procedure DeleteIniKey(const Section, Key, FileName: string);
 var
   Ini: TIniFile;
 begin
   Ini := TIniFile.Create(FileName);
   try
-    Ini.DeleteKey(Section, ValueName);
+    Ini.DeleteKey(Section, Key);
   finally
     Ini.Free;
   end;
 end;
+
+// Checks if a key in given section of an ini file exists
+function IniKeyExists(const Section, Key, FileName: string): Boolean;
+var
+  Ini: TIniFile;
+begin
+  Ini := TIniFile.Create(FileName);
+  try
+    Result := Ini.ValueExists(Section, Key);
+  finally
+    Ini.Free;
+  end;
+end;
+
 
 // Reads an ANSI config file, converts content to Unicode and writes that to a
 // UTF-16LE encoded Unicode config file with BOM. Does nothing if old and new
@@ -277,7 +295,7 @@ begin
   // Config file Meta data: config file version & program version
   if not FileExists(gCurrentUserConfigFile) then
     CreateUnicodeConfigFile(gCurrentUserConfigFile);
-  SetIniInt('IniFile', 'Version', 8, gCurrentUserConfigFile);
+  SetIniInt('IniFile', 'Version', 9, gCurrentUserConfigFile);
   SetIniString(
     'IniFile',
     'ProgramVersion',
@@ -331,7 +349,7 @@ begin
     CreateUnicodeConfigFile(gCurrentUserConfigFile);
   SetIniInt(
     'Prefs:CodeGen',
-    'SwitchOffWarnings',
+    'EmitWarnDirs',
     0,
     gCurrentUserConfigFile
   );
@@ -440,7 +458,31 @@ begin
   );
 end;
 
-// Deletes proxt password entry from new installation's user config file.
+// Updates Prefs:CodeGen section from format prior to version 9 to version 9
+// format
+procedure UpdateCodeGenEntries;
+begin
+  // Key that determines if warnings are emitted changes from SwitchOffWarnings
+  // to EmitWarnDirs.
+  if IniKeyExists(
+    'Prefs:CodeGen', 'SwitchOffWarnings', gCurrentUserConfigFile
+  ) then
+  begin
+    SetIniInt(
+      'Prefs:CodeGen',
+      'EmitWarnDirs',
+      GetIniInt(
+        'Prefs:CodeGen', 'SwitchOffWarnings', 0, 0, 0, gCurrentUserConfigFile
+      ),
+      gCurrentUserConfigFile
+    );
+    DeleteIniKey('Prefs:CodeGen', 'SwitchOffWarnings', gCurrentUserConfigFile);
+  end
+  else
+    SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, gCurrentUserConfigFile);
+end;
+
+// Deletes proxy password entry from new installation's user config file.
 procedure DeleteProxyPassword;
 begin
   if not FileExists(gCurrentUserConfigFile) then
@@ -460,10 +502,10 @@ begin
     <> '';
 end;
 
-// Deletes given value from current user's config file
-procedure DeleteCfgValue(const Section, Name: string);
+// Deletes unused key that determines detail pane index.
+procedure DeleteDetailsPaneIndex;
 begin
-  DeleteIniKey(Section, Name, gCurrentUserConfigFile);
+  DeleteIniKey('MainWindow', 'DetailTab', gCurrentUserConfigFile);
 end;
 
 end.
