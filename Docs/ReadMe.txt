@@ -30,22 +30,24 @@ the look and feel may change by the final release.
 If you accept the default install path, or specify a unique install path it will
 install alongside any v3 release and will not affect the v3 release in any way.
 The program will copy over any user defined snippets from a pre-existing v3
-installation and will preserve most if not all settings. Any v4 preview release
-will be overwritten.
+installation and will preserve most if not all settings. Any v4 preview (alpha)
+release will be overwritten.
 
 Any user defined snippets you edit will not be reflected in any v3 installation
 and any settings you change won't affect the v3 install.
 
 Nearly all the file formats have been changed from v3, so export and backup
-files are not be compatible with v3 and earlier. Don't expect any snippets or
+files are not compatible with v3 and earlier. Don't expect any backups or
 export files you create to work with v3.
 
 If you have been using one of the CodeSnip 4 previews this beta will attempt to
-bring forward all settings.
+bring forward all settings from that. If you don't want to do that, follow the
+instructions the installer displays when it detects that a preview release was
+installed.
 
 Copies of the online database are stored in a different location to v3, so
-updating the database from the v4 preview will not update the database used by
-v3 and vice versa.
+updating the database from v4 will not update the database used by v3 and vice
+versa.
 
 If any file formats change before the final release of CodeSnip 4, that program
 WILL be able to read files created by this beta.
@@ -65,15 +67,15 @@ New features of v4 to date worth trying out are:
 * Snippets from both the main and user databases can now be duplicated. This is
   very useful if you have created a snippet and want to create another one that
   shares a lot of the source code, dependencies etc. Just duplicate the first
-  one with a new name and edit it as required. Saves a lot of time. There's a
+  one with a new name and edit it as required. It saves a lot of time. There's a
   second use where you can duplicate a snippet from the main database under the
   same name and make any tweaks you like to the new version: duplicate snippets
   are always editable.
 
-* The new multi-tab display that can show more than one snippet, category etc.
-  in the main display. Control click items in the overview pane to display them
-  in a new tab in the detail pane. Alternatively select View | New Tab (Ctrl+T)
-  to display a new empty tab that can display selected items. Press Ctrl+F4 to
+* The new multi-tab display can show more than one snippet, category etc. in the
+  main display. Control click items in the overview pane to display them in a
+  new tab in the detail pane. Alternatively select View | New Tab (Ctrl+T) to
+  display a new empty tab that can display selected items. Press Ctrl+F4 to
   close a tab.
 
 * Results of test compilations (F9) now appear in a dialogue box.
@@ -96,10 +98,12 @@ New features of v4 to date worth trying out are:
   contain multiple paragraphs.
 
 * The number of compilers that appear in the compiler results table in the
-  display pane can now be determined by the user.
+  display pane can now be determined by the user, so you can omit those that are
+  of no interest to you.
 
-* There is a new option on Tools menu that checks availability of new versions
-  of CodeSnip.
+* There is a new option on the Tools menu that checks availability of new
+  versions of CodeSnip. Note though that this does not report new beta's, only
+  final releases.
 
 For other features of the v4 beta please read the change log for this release
 and all the v4 previews at http://delphidabbler.com/software/codesnip/log?v=4
@@ -173,10 +177,10 @@ The installer makes the following changes to your system:
 Downloading the Database
 ================================================================================
 
-The main CodeSnip database is not installed with the program. However, a
-previous installation may be present. Setup will try to use an older version of
-the database if present. When setup completes it checks for a database and puts
-up a message if none is present.
+The main CodeSnip database is not installed with the program. However, an older
+installation may be present. Setup will try to use any older installation's
+database if present. When setup completes it checks for a database and puts up a
+message if none is present.
 
 When CodeSnip is first run it detects if there is no database and displays
 message to that effect in its main window. A link is displayed that can be used
@@ -205,6 +209,10 @@ configuration. See the help file for information (look up "configure compilers
 dialogue" in the help file index).
 
 Each user can configure compilers differently.
+
+Some problems test compiling with Delphi XE2 have been reported. For an
+explanation and a work-around see the FAQ at
+http://wiki.delphidabbler.com/index.php/FAQs/CodeSnipAppUsing#FAQ7
 
 
 Registration
@@ -263,19 +271,32 @@ subscribe to the feed in your news reader - see below for details.
 Known Installation and Upgrading Issues
 ================================================================================
 
-1) Users of any v0.x (beta) or v1.x versions of CodeSnip will loose all settings
-   when upgrading to the latest version. You will need to reset your preferences
-   via the "Tools | Preferences" menu option.
++ Any syntax highlighter customisation you have made will be lost if you are
+  updating from any v2 or earlier release.
 
-2) Syntax highlighting preferences will be lost when upgrading from any v2.x
-   release and the program's default highlighting style will be used. This can
-   be changed from the Syntax Highlighter tab of the Preferences dialogue box,
-   accessed from the "Tools | Preferences" menu option.
+  You will need to redo any customisation using the Syntax Highlighter tab of
+  the Preferences dialogue box.
 
-3) Users who have configured CodeSnip to access the internet via a proxy server
-   will loose any stored passwords required by the proxy server when updgrading
-   from v3.6.0 and earlier. The installer will warn of this. Passwords have to
-   be re-entered using the "Tools | Proxy Server" menu option.
++ If you are updating from v3.6.0 or earlier and have set up a password
+  protected proxy server for internet access you will need to re-enter the
+  password since it will have been lost. This is because the format for storing
+  passwords changed at v3.6.1.
+
+  To re-enter your proxy password use the Proxy Server Configuration dialogue
+  box.
+
++ Your source code formatting preferences will have been lost if you are
+  updating from v1.7.4 or earlier.
+
+  You will need to reconfigure them using the Code Formatting tab of the
+  Preferences dialogue box.
+
++ If you are updating from v1.8.11 or earlier and have registered CodeSnip your
+  registration information will have been lost.
+
+  You can check this by displaying the About dialogue box and checking the About
+  The Program tab. If it displays a Register CodeSnip button the program is not
+  registered. You can (re)register if you wish by clicking the button.
 
 
 RSS News Feed
@@ -385,12 +406,11 @@ http://www.delphidabbler.com/url/codesnip-faq
 Contribute to the Database
 ================================================================================
 
-Please do contribute procedures, functions and type or constant definitions to
-the on-line Code Snippets database.
+Please do contribute Pascal snippets to the on-line Code Snippets database.
 
-You can submit routines from your user-defined database using the "Snippets |
-Submit Routines" menu option. Otherwise please send your code via the
-DelphiDabbler contact page at http://www.delphidabbler.com/contact
+You can submit routines from your user-defined snippets database using the
+"Snippets | Submit Routines" menu option. Otherwise please send your code via
+the DelphiDabbler contact page at http://www.delphidabbler.com/contact
 
 
 Thanks
@@ -401,8 +421,8 @@ Thanks to:
 + David Mustard and Bill Miller for providing information that enabled me to add
   Delphi 2007 and Delphi 2009 support respectively to the program.
 
-+ An anonymous contributor for clarification of installation details of Delphi
-  XE2.
++ geoffsmith82 and an anonymous contributor for information about getting
+  CodeSnip to work with Delphi XE2.
 
 + The authors of various pieces of source code and images used by the program.
   See the program's about box (use the "Help | About" menu option and see the
