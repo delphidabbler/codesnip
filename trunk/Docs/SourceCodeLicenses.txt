@@ -27,16 +27,16 @@ Original Source Code
 
 Original source files are stored in the the following directories:
 
-+ Src
-+ Src\AutoGen
-+ Src\Help
-+ Src\Help\CSS
-+ Src\Help\HTML
-+ Src\Install
-+ Src\InstallHelper
-+ Src\InstallHelper\Res
-+ Src\Res\HTML
-+ Src\Res\Misc
+  Src
+  Src\AutoGen
+  Src\Help
+  Src\Help\CSS
+  Src\Help\HTML
+  Src\Install
+  Src\InstallHelper
+  Src\InstallHelper\Res
+  Src\Res\HTML
+  Src\Res\Misc
 
 Any original source code file that is governed by a license has a comment to
 that effect in the source. The exception is that .dfm files are considered to be
@@ -73,7 +73,7 @@ directory. There are several such files:
   applies. It derives from the RSA Data Security, Inc. MD5 Message-Digest
   Algorithm. See below for the MD5 copyright notice.
 + PJStreamWrapper.pas, PJSysInfo.pas, PJVersionInfo.pas, PJWdwState.pas
-  These are DelphiDabbler libraries: the Mozilla Public License applies.
+  These are DelphiDabbler libraries: the Mozilla Public License v1.1 applies.
 + UEncrypt.pas
   Public domain.
 
