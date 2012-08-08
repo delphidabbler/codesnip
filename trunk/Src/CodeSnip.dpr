@@ -398,7 +398,7 @@ uses
   FirstRun.UMain in 'FirstRun.UMain.pas',
   FirstRun.UUpdateDBase in 'FirstRun.UUpdateDBase.pas',
   FirstRun.UUpdateIni in 'FirstRun.UUpdateIni.pas',
-  FmFirstRunDlg in 'FmFirstRunDlg.pas' {FirstRunDlg},
+  FirstRun.FmV4ConfigDlg in 'FirstRun.FmV4ConfigDlg.pas' {V4ConfigDlg},
   FirstRun.UIniFile in 'FirstRun.UIniFile.pas';
 
 // Include resources

@@ -14,7 +14,7 @@
 }
 
 
-unit FmFirstRunDlg;
+unit FirstRun.FmV4ConfigDlg;
 
 interface
 
@@ -26,7 +26,7 @@ uses
 
 type
 
-  TFirstRunDlg = class(TWizardDlg, INoPublicConstruct)
+  TV4ConfigDlg = class(TWizardDlg, INoPublicConstruct)
     tsIntro: TTabSheet;
     tsConfigFile: TTabSheet;
     tsUserDB: TTabSheet;
@@ -138,7 +138,7 @@ uses
 
 { TFirstRunDlg }
 
-procedure TFirstRunDlg.ArrangeForm;
+procedure TV4ConfigDlg.ArrangeForm;
 begin
   TCtrlArranger.SetLabelHeights(Self);
 
@@ -170,18 +170,18 @@ begin
   inherited;
 end;
 
-procedure TFirstRunDlg.BeginPage(const PageIdx: Integer);
+procedure TV4ConfigDlg.BeginPage(const PageIdx: Integer);
 begin
   if PageIdx = SummaryPageIdx then
     UpdateChoices;
 end;
 
-function TFirstRunDlg.ConfigFileAvailable: Boolean;
+function TV4ConfigDlg.ConfigFileAvailable: Boolean;
 begin
   Result := fFirstRun.HaveOldCfgFile;
 end;
 
-procedure TFirstRunDlg.ConfigForm;
+procedure TV4ConfigDlg.ConfigForm;
 resourcestring
   sConfigFiles = 'Configuration file';
   sDatabase = 'User-defined snippets database';
@@ -191,7 +191,7 @@ begin
   fCfgChanges := [];
 end;
 
-procedure TFirstRunDlg.CreateBulletPage(TS: TTabSheet;
+procedure TV4ConfigDlg.CreateBulletPage(TS: TTabSheet;
   const Prefix: array of TLabel; BulletPoints: IStringList;
   const PostFix: array of TLabel);
 var
@@ -242,12 +242,12 @@ begin
   end;
 end;
 
-function TFirstRunDlg.DatabaseAvailable: Boolean;
+function TV4ConfigDlg.DatabaseAvailable: Boolean;
 begin
   Result := fFirstRun.HaveOldUserDB;
 end;
 
-class procedure TFirstRunDlg.Execute(AOwner: TComponent;
+class procedure TV4ConfigDlg.Execute(AOwner: TComponent;
   const FirstRun: TFirstRun);
 begin
   with InternalCreate(AOwner) do
@@ -259,7 +259,7 @@ begin
     end;
 end;
 
-procedure TFirstRunDlg.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
+procedure TV4ConfigDlg.FormCloseQuery(Sender: TObject; var CanClose: Boolean);
 resourcestring
   sCantCloseMsg = 'Sorry, you can''t close this wizard prematurely.'
     + EOL2
@@ -271,12 +271,12 @@ begin
     TMessageBox.Error(Self, sCantCloseMsg);
 end;
 
-function TFirstRunDlg.GetAligner: IFormAligner;
+function TV4ConfigDlg.GetAligner: IFormAligner;
 begin
   Result := TAligner.Create;
 end;
 
-function TFirstRunDlg.GetUpdateActions: TUpdateActions;
+function TV4ConfigDlg.GetUpdateActions: TUpdateActions;
 begin
   Result := [];
   if ConfigFileAvailable and chkCopyConfig.Checked then
@@ -285,7 +285,7 @@ begin
     Include(Result, uaCopyUserDB);
 end;
 
-function TFirstRunDlg.HeadingText(const PageIdx: Integer): string;
+function TV4ConfigDlg.HeadingText(const PageIdx: Integer): string;
 resourcestring
   sIntroHeading   = 'New version of CodeSnip';
   sConfigHeading  = 'Preferences';
@@ -310,7 +310,7 @@ begin
   end;
 end;
 
-procedure TFirstRunDlg.ListChanges;
+procedure TV4ConfigDlg.ListChanges;
 resourcestring
   sRegistration = 'Program registration information has been lost.';
   sHiliter = 'Syntax highlighter customisations have been lost.';
@@ -348,7 +348,7 @@ begin
 
 end;
 
-procedure TFirstRunDlg.MoveForward(const PageIdx: Integer;
+procedure TV4ConfigDlg.MoveForward(const PageIdx: Integer;
   var CanMove: Boolean);
 begin
   if PageIdx = SummaryPageIdx then
@@ -358,7 +358,7 @@ begin
   end;
 end;
 
-function TFirstRunDlg.NextPage(const PageIdx: Integer): Integer;
+function TV4ConfigDlg.NextPage(const PageIdx: Integer): Integer;
 begin
   Result := inherited NextPage(PageIdx);
   // Don't display related pages if no config file or no user database
@@ -368,7 +368,7 @@ begin
     Exit(NextPage(Result));
 end;
 
-function TFirstRunDlg.PrevPage(const PageIdx: Integer): Integer;
+function TV4ConfigDlg.PrevPage(const PageIdx: Integer): Integer;
 begin
   Result := inherited PrevPage(PageIdx);
   // Don't display related pages if no config file or no user database
@@ -378,7 +378,7 @@ begin
     Exit(PrevPage(Result));
 end;
 
-procedure TFirstRunDlg.UpdateButtons(const PageIdx: Integer);
+procedure TV4ConfigDlg.UpdateButtons(const PageIdx: Integer);
 resourcestring
   sUpdate = '&Confirm';
 begin
@@ -391,7 +391,7 @@ begin
     btnBack.Enabled := False;
 end;
 
-procedure TFirstRunDlg.UpdateChoices;
+procedure TV4ConfigDlg.UpdateChoices;
 resourcestring
   sBFConfigYes = 'Bring forward preferences from earlier version';
   sBFConfigNo = 'Use default settings, ignoring earlier preferences';
@@ -425,7 +425,7 @@ begin
   );
 end;
 
-procedure TFirstRunDlg.UpdateData;
+procedure TV4ConfigDlg.UpdateData;
 var
   Actions: TUpdateActions;
 begin
@@ -441,7 +441,7 @@ end;
 
 { TFirstRunDlg.TAligner }
 
-procedure TFirstRunDlg.TAligner.AlignForm(const AForm: TCustomForm);
+procedure TV4ConfigDlg.TAligner.AlignForm(const AForm: TCustomForm);
 var
   WorkArea: TRectEx;
 begin

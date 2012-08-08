@@ -86,10 +86,11 @@ type
 implementation
 
 uses
+  // Delphi
   SysUtils, Windows, IOUtils, Forms,
-  FirstRun.UDataLocations, FirstRun.UUpdateDBase, FirstRun.UUpdateIni,
-  FmFirstRunDlg,
-  UMessageBox, UUtils;
+  // Project
+  FirstRun.FmV4ConfigDlg, FirstRun.UDataLocations, FirstRun.UUpdateDBase,
+  FirstRun.UUpdateIni, UMessageBox, UUtils;
 
 { TFirstRun }
 
@@ -204,7 +205,7 @@ begin
     FR := TFirstRun.Create;
     try
       if FR.HaveOldCfgFile or FR.HaveOldUserDB then
-        TFirstRunDlg.Execute(Application, FR);
+        TV4ConfigDlg.Execute(Application, FR);
       if not CfgFileExists then
       begin
         FR.CreateEmptyCfgFile;
