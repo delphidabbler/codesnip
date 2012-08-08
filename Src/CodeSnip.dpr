@@ -398,7 +398,8 @@ uses
   FirstRun.UMain in 'FirstRun.UMain.pas',
   FirstRun.UUpdateDBase in 'FirstRun.UUpdateDBase.pas',
   FirstRun.UUpdateIni in 'FirstRun.UUpdateIni.pas',
-  FmFirstRunDlg in 'FmFirstRunDlg.pas' {FirstRunDlg};
+  FmFirstRunDlg in 'FmFirstRunDlg.pas' {FirstRunDlg},
+  FirstRun.UIniFile in 'FirstRun.UIniFile.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb} // Type library file

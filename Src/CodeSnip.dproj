@@ -569,6 +569,7 @@
 			<DCCReference Include="FmFirstRunDlg.pas">
 				<Form>FirstRunDlg</Form>
 			</DCCReference>
+			<DCCReference Include="FirstRun.UIniFile.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
