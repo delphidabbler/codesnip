@@ -130,7 +130,7 @@ end;
 // Gets version number of new installation's user config file.
 function UserConfigFileVer: Integer;
 begin
-  Result := GetIniInt('IniFile', 'Version', 1, 0, 0, gCurrentUserConfigFile);
+  Result := GetIniInt('IniFile', 'Version', 1, gCurrentUserConfigFile);
 end;
 
 // Gets version number of program from user config file. Returns empty string if
@@ -354,7 +354,7 @@ begin
       'Prefs:CodeGen',
       'EmitWarnDirs',
       GetIniInt(
-        'Prefs:CodeGen', 'SwitchOffWarnings', 0, 0, 0, gCurrentUserConfigFile
+        'Prefs:CodeGen', 'SwitchOffWarnings', 0, gCurrentUserConfigFile
       ),
       gCurrentUserConfigFile
     );

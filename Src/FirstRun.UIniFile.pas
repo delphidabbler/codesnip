@@ -19,8 +19,8 @@ interface
 function GetIniString(const Section, Key: string; Default: string;
   const FileName: String): string;
 
-function GetIniInt(const Section, Key: string;
-  const Default, Min, Max: Longint; const FileName: string): Longint;
+function GetIniInt(const Section, Key: string; const Default: Longint;
+  const FileName: string): Longint;
 
 procedure SetIniString(const Section, Key, Value, FileName: string);
 
@@ -54,8 +54,8 @@ begin
   end;
 end;
 
-function GetIniInt(const Section, Key: string;
-  const Default, Min, Max: Longint; const FileName: string): Longint;
+function GetIniInt(const Section, Key: string; const Default: Longint;
+  const FileName: string): Longint;
 var
   Ini: TIniFile;
 begin
