@@ -177,8 +177,11 @@ begin
     // NOTE: This works for a new config file providing it has not been stamped.
     CreateDefaultCodeGenEntries;
 
-  if UserConfigFileVer < 8 then
-    DeleteCfgValue('MainWindow', 'DetailTab');
+  if UserConfigFileVer < 9 then
+  begin
+    DeleteDetailsPaneIndex; // can be present in file v8 even tho not supported
+    UpdateCodeGenEntries;
+  end;
 
   StampConfigFiles;
 end;
@@ -229,7 +232,7 @@ end;
 
 class function TFirstRunMgr.IsProgramUpdated: Boolean;
 begin
-  Result := IsCurrentProgramVer;
+  Result := not IsCurrentProgramVer;
 end;
 
 end.
