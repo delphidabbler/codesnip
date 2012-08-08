@@ -96,11 +96,11 @@
 </p>
 
 <h4>
-  [Description] section
+  [Application] section
 </h4>
 
 <p>
-  Describes the current installation.
+  Provides information about the application.
 </p>
 
 <p>
@@ -563,6 +563,12 @@
       Current value is <strong>8</strong>.
     </div>
   </dd>
+  <dt>
+    <strong>ProgramVersion</strong> (String)
+  </dt>
+  <dd>
+    Internal version number of currently installed program as a dotted quad.
+  </dd>
 </dl>
 
 <h4>
@@ -622,14 +628,6 @@
   <dd>
     Index of selected tab in overview pane.
   </dd>
-  <dt>
-    <strong>DetailTab</strong> (Integer)
-  </dt>
-  <dd>
-    Unused. Will only be present if this config file was copied from an earlier
-    config file version by the program installer. This value is neither read nor
-    written by CodeSnip v4 and later.
-  </dd>
 </dl>
 
 <h4>
@@ -660,7 +658,7 @@
     Number of warnings supported.
   </dd>
   <dt>
-    <strong>Warning<em>XXX</em>.Symbol</strong> (String).
+    <strong>Warning<em>XXX</em>.Symbol</strong> (String)
   </dt>
   <dd>
     <div class="half-spaced">
@@ -685,6 +683,19 @@
       version number is a decimal value containing compiler version number as
       specified by Delphi's <var>CompilerVersion</var> constant. Must be 14.0
       (Delphi 6) or higher.
+    </div>
+  </dd>
+  <dt>
+    <strong>Warning<em>XXX</em>.State</strong> (Boolean)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      One entry for each supported warning where <em>XXX</em> ranges from 0 to
+      <strong>WarningCount</strong> - 1.
+    </div>
+    <div class="half-spaced">
+      Indicates whether the warning should be switched on or off. True &rArr;
+      switch on; False &rArr; switch off.
     </div>
   </dd>
 </dl>
