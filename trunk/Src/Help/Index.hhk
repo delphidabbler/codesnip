@@ -166,6 +166,10 @@
 		<param name="Local" value="HTML\task_export.htm">
 		</OBJECT>
 	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="first run wizard">
+		<param name="Local" value="HTML\dlg_firstrun.htm">
+		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
 		<param name="Name" value="frequently asked questions">
 		<param name="Local" value="HTML\faqs.htm">
 		</OBJECT>
