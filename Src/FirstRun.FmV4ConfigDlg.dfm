@@ -1,4 +1,4 @@
-inherited FirstRunDlg: TFirstRunDlg
+inherited V4ConfigDlg: TV4ConfigDlg
   Left = 0
   Top = 75
   BorderIcons = [biMinimize, biMaximize]
@@ -15,6 +15,10 @@ inherited FirstRunDlg: TFirstRunDlg
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblIntro1: TLabel
           Left = 0
           Top = 3
@@ -98,6 +102,9 @@ inherited FirstRunDlg: TFirstRunDlg
         ImageIndex = 2
         TabVisible = False
         ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblUserDB1: TLabel
           Left = 0
           Top = 3
@@ -137,6 +144,10 @@ inherited FirstRunDlg: TFirstRunDlg
         Caption = 'tsSummary'
         ImageIndex = 3
         TabVisible = False
+        ExplicitLeft = 0
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblSummaryPrefix: TLabel
           Left = 0
           Top = 3
@@ -172,6 +183,9 @@ inherited FirstRunDlg: TFirstRunDlg
         ImageIndex = 4
         TabVisible = False
         ExplicitLeft = 8
+        ExplicitTop = 0
+        ExplicitWidth = 0
+        ExplicitHeight = 0
         object lblFinish1: TLabel
           Left = 0
           Top = 3
