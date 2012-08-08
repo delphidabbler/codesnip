@@ -14,32 +14,73 @@
 
 unit FirstRun.UIniFile;
 
+
 interface
 
+
+///  <summary>Gets a string value from an ini file.</summary>
+///  <param name="Section">string [in] Ini file section containing key.</param>
+///  <param name="Key">string [in] Name of key whose value is required.</param>
+///  <param name="Default">string [in] Default value to be returned if key can't
+///  be read.</param>
+///  <param name="FileName">string [in] Name of ini file.</param>
+///  <returns>string. Required key value or Default if key can't be read.
+///  </returns>
 function GetIniString(const Section, Key: string; Default: string;
   const FileName: String): string;
 
+///  <summary>Gets an integer value from an ini file.</summary>
+///  <param name="Section">string [in] Ini file section containing key.</param>
+///  <param name="Key">string [in] Name of key whose value is required.</param>
+///  <param name="Default">LongInt [in] Default value to be returned if key
+///  can't be read.</param>
+///  <param name="FileName">string [in] Name of ini file.</param>
+///  <returns>LongInt. Required key value or Default if key can't be read.
+///  </returns>
 function GetIniInt(const Section, Key: string; const Default: Longint;
   const FileName: string): Longint;
 
+///  <summary>Writes a string value to an ini file.</summary>
+///  <param name="Section">string [in] Ini file section containing key.</param>
+///  <param name="Key">string [in] Name of key that receives value.</param>
+///  <param name="Value">string [in] Value to be stored.</param>
+///  <param name="FileName">string [in] Name of ini file.</param>
 procedure SetIniString(const Section, Key, Value, FileName: string);
 
+///  <summary>Writes an integer value to an ini file.</summary>
+///  <param name="Section">string [in] Ini file section containing key.</param>
+///  <param name="Key">string [in] Name of key that receives value.</param>
+///  <param name="Value">LongInt [in] Value to be stored.</param>
+///  <param name="FileName">string [in] Name of ini file.</param>
 procedure SetIniInt(const Section, Key: string; const Value: Longint;
   const FileName: string);
 
+///  <summary>Deletes a section of an ini file.</summary>
+///  <param name="Section">string [in] Section to be deleted.</param>
+///  <param name="FileName">string [in] Name of ini file.</param>
 procedure DeleteIniSection(const Section, FileName: string);
 
-// Delete key from given section of given ini file.
+///  <summary>Delete a key / value pair from an ini file.</summary>
+///  <param name="Section">string [in] Ini file section containing key.</param>
+///  <param name="Key">string [in] Name of key to be deleted.</param>
+///  <param name="FileName">string [in] Name of ini file.</param>
 procedure DeleteIniKey(const Section, Key, FileName: string);
 
-// Checks if a key in given section of an ini file exists
+///  <summary>Checks if a key exists in an ini file.</summary>
+///  <param name="Section">string [in] Ini file section containing key.</param>
+///  <param name="Key">string [in] Name of required key.</param>
+///  <param name="FileName">string [in] Name of ini file.</param>
+///  <returns>Boolean. True if key exists, False if not.</returns>
 function IniKeyExists(const Section, Key, FileName: string): Boolean;
 
+
 implementation
+
 
 uses
   // Delphi
   IniFiles;
+
 
 function GetIniString(const Section, Key: string; Default: string;
   const FileName: String): string;
@@ -131,3 +172,4 @@ begin
 end;
 
 end.
+
