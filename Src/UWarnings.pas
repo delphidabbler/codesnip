@@ -461,7 +461,7 @@ end;
 
 const
   // Names of values stored in persistent storage
-  cWarningsEnabledName = 'SwitchOffWarnings'; //! this name is historical
+  cWarningsEnabledName = 'EmitWarnDirs';
   cWarningCountName = 'WarningCount';
   cWarningCompoundName = 'Warning%d.%s';
   // Names of properties used in compound value names
