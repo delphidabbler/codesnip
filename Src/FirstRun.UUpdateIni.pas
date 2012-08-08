@@ -60,10 +60,6 @@ procedure DeleteHighligherPrefs;
 // Gets version number of new installation's user config file.
 function UserConfigFileVer: Integer;
 
-// Gets version number of program from user config file. Returns empty string if
-// no program version information is present
-function ConfigFileProgramVer: string;
-
 // Adds Prefs:CodeGen section along with default data to new installation's user
 // config file.
 procedure CreateDefaultCodeGenEntries;
@@ -82,9 +78,6 @@ function IsCurrentProgramVer: Boolean;
 
 // Checks if current user's config file has a proxy password.
 function HasProxyPassword: Boolean;
-
-// Deletes config file from given previous installation
-procedure DeleteUserCfgFile(InstallID: Integer);
 
 // Deletes given value from current user's config file
 procedure DeleteCfgValue(const Section, Name: string);
@@ -465,17 +458,6 @@ function HasProxyPassword: Boolean;
 begin
   Result := GetIniString('ProxyServer', 'Password', '', gCurrentUserConfigFile)
     <> '';
-end;
-
-// Deletes config file from given previous installation
-procedure DeleteUserCfgFile(InstallID: Integer);
-var
-  FileName: string;
-begin
-  FileName := gUserConfigFiles[InstallId];
-  if (FileName <> '') and (FileName <> gCurrentUserConfigFile)
-    and FileExists(FileName) then
-    SysUtils.DeleteFile(FileName);
 end;
 
 // Deletes given value from current user's config file

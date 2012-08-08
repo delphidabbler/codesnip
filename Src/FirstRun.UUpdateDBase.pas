@@ -43,9 +43,6 @@ interface
 // correct location for directory being installed.
 procedure CopyDatabases(PrevInstallID: Integer);
 
-// Delete user database for given previous installation
-procedure DeleteUserDatabase(PrevInstallID: Integer);
-
 implementation
 
 uses
@@ -88,17 +85,6 @@ begin
   OldUserDatabase := gUserDatabaseDirs[PrevInstallID];
   if OldUserDatabase <> '' then
     CopyDirectory(OldUserDatabase, gUserDatabaseDirs[piCurrent]);
-end;
-
-// Delete user database for given previous installation
-procedure DeleteUserDatabase(PrevInstallID: Integer);
-var
-  DirName: string;
-begin
-  DirName := gUserDatabaseDirs[PrevInstallID];
-  if (DirName <> '') and (DirName <> gUserDatabaseDirs[piCurrent])
-    and TDirectory.Exists(DirName) then
-    TDirectory.Delete(DirName, True);
 end;
 
 end.
