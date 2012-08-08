@@ -211,11 +211,9 @@ begin
   // Display message if no database is installed
   if not MainDatabaseExists then
     MsgBox(
-      'The Code Snippets database is not currently installed. '
-        + 'Therefore when you first start CodeSnip no snippets will be '
-        + 'displayed.'#10#10
-        + 'You can download the database using the program''s "Database | '
-        + 'Update From Web" menu option.',
+      'The is no copy of the online Code Snippets database installed.'#10#10
+        + 'You can download the database at any time using the program''s '
+        + '"Database | Update From Web" menu option.',
       mbInformation,
       MB_OK
     );
