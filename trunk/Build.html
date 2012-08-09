@@ -107,23 +107,15 @@
   type library.
 </p>
 
-<p>
-  <em>If you want to compile with an earlier Delphi, </em>CodeSnip<em> was
-  compatible with Delphi 2006 and later up to and including v3.5.4. You could
-  fetch the source for an earlier version from the repository. If you do this
-  you should refer to the version of this file that accompanied the chosen
-  version.</em>
-</p>
-
 <h2>
   Dependencies
 </h2>
 
 <p>
   Several DelphiDabbler and other 3rd party libraries and components are
-    required to compile <em>CodeSnip</em>, most of which are included in the
-  code repository in the <code>Src/3rdParty</code> directory. Code not
-  included in the repository is noted below.
+  required to compile <em>CodeSnip</em>, most of which are included in the code
+  repository in the <code>Src/3rdParty</code> directory. Code not included in
+  the repository is noted below.
 </p>
 
 <h3>
@@ -164,7 +156,7 @@
   correct event handler signatures &ndash; and it makes an intelligent guess
   at which signature to use depending on the version number provided by the
   Indy library code. Should the program fail to compile with an error in the
-  <var>UDownloadMonitor</var> unit, you should check the event signatures in
+  <var>Web.UDownloadMonitor</var> unit, you should check the event signatures in
   your Indy <var>IdComponent</var> unit and then define the
   <code>INDY_WORKEVENT_INT64</code> environment variable if <var>Int64</var>
   parameters are required or <code>INDY_WORKEVENT_INT32</code> if
@@ -270,7 +262,7 @@
 </dl>
 
 <h3>
-  Borland MAKE
+  MAKE
 </h3>
 
 <p>
@@ -616,44 +608,53 @@ set PATHSET=1
   |
   +-- Docs                  - documentation
   |   |
-  |   +-- Design            - documents concerning design
+  |   +-- ChangeLogs        - program change log files
+  |   |
+  |   +-- Design            - documents concerning program design
+  |   |
+  |   +-- FileFormats       - documentation of CodeSnip's file formats
   |
   +-- Src                   - main CodeSnip source code
+  |   |
+  |   +-- 3rdParty          - third party &amp; DelphiDabbler library source code
+  |   |
+  |   +-- AutoGen           - receives automatically generated code
+  |   |
+  |   +-- Help              - help source files
+  |   |   |
+  |   |   +-- CSS           - CSS code for help files
+  |   |   |
+  |   |   +-- HTML          - HTML files included in help file
+  |   |   |
+  |   |   +-- Images        - images included in help file
+  |   |
+  |   +-- Install           - setup script and support code
+  |   |
+  |   +-- Res               - container for various types of resources
+  |       |
+  |       +-- HTML          - html, css, js and images included in resources
+  |       |
+  |       +-- Img           - images included in resources
+  |       |
+  |       +-- Misc          - other resources
+  |
+  +-- Tests                 - contains test code
       |
-      +-- 3rdParty          - third party &amp; DelphiDabbler library source code
-      |
-      +-- AutoGen           - receives automatically generated code
-      |
-      +-- Help              - help source files
-      |   |
-      |   +-- CSS           - CSS code for help files
-      |   |
-      |   +-- HTML          - HTML files included in help file
-      |   |
-      |   +-- Images        - images included in help file
-      |
-      +-- Install           - setup script and support code
-      |
-      +-- Res               - container for various types of resources
+      +-- Src               - test source code
           |
-          +-- HTML          - html, css, js and images included in resources
-          |
-          +-- Img           - images included in resources
-          |
-          +-- Misc          - other resources</pre>
-
+          +-- DUnit         - test source code that uses the DUnit framework</pre>
 <p>
-  If, by chance you also have a <code>Bin</code>, <code>Exe</code> and
-  <code>Release</code> directory don't worry - all will become clear.
+  If, by chance you also have <code>Bin</code>, <code>Exe</code> and / or
+  <code>Release</code> directories don't worry - all will become clear.
   Subversion users may also see the usual <code>.svn</code> hidden
-  directories. If you have done some editing you may also see occasional
-  hidden <code>__history</code> folders.
+  directories. If you have done some editing in the Delphi IDE you may also see
+  occasional hidden <code>__history</code> folders.
 </p>
 
 <p>
-  Before you can get hacking, you need to prepare the code tree. Open a
-  command console and navigate into the <code>Src</code> sub-folder. Run any
-  script you have created to set environment variables then do:
+  Before you can get hacking, you need to prepare the code tree. Open a command
+  console and navigate into the <code>Src</code> sub-folder. Run any script you
+  have created to set environment variables then do:
 </p>
 
 <pre class="cmd"><span class="prompt">&gt;</span> Make config</pre>
@@ -661,7 +662,7 @@ set PATHSET=1
 <p>
   You may need to replace <code>Make</code> with the full path to
   <code>Make</code> if it isn't on the path, or if the <code>Make</code> that
-  runs isn't the Borland / CodeGear version. If this is the case try:
+  runs isn't the CodeGear / Embarcadero version. If this is the case try:
 </p>
 
 <pre class="cmd"><span class="prompt">&gt;</span> %DELPHIROOT%\Bin\Make config</pre>
@@ -783,9 +784,8 @@ set PATHSET=1
   If you do make changes you should also use the type library editor's
   <em>Export to IDL</em> button to save a copy of the IDL in
   <code>ExternalObj.idl</code> in the <code>Src</code> folder. The license in
-  the original code must be restored and you can add yourself as a
-  contributor, so take a copy of the license from <code>ExternalObj.idl</code>
-  before saving!
+  the original code must be restored, so take a copy of the license from
+  <code>ExternalObj.idl</code> before overwriting it!
 </p>
 
 <p>
@@ -844,6 +844,12 @@ set PATHSET=1
 <p>
   Each of these options is described below. All except the last assume that
   <code>Make config</code> has been run.
+</p>
+
+<p class="box">
+  <em><strong>Note:</strong> This information applies only to building
+  </em>CodeSnip<em> itself, not to building and using the code in the
+  <code>Test</code> directory.</em>
 </p>
 
 <h3>
@@ -997,8 +1003,36 @@ set PATHSET=1
 <pre class="cmd"><span class="prompt">&gt;</span> Make clean</pre>
 
 <p>
-  Be warned though that this command removes the <code>__history</code>
+  <strong>Warning:</strong> This command removes the <code>__history</code>
   folders that Delphi uses to maintain earlier versions of files.
+</p>
+
+<h2>
+  Running the Tests
+</h2>
+
+<p>
+  At present all tests use the <em>DUnit</em> unit testing framework and are
+  combined into a single test application.
+</p>
+
+<p>
+  To compile the tests, open the <code>.\Src\CodeSnip.groupproj</code> group
+  project file in the Delphi 2010 IDE. Now select the <em>CodeSnipTests.exe</em>
+  target in the project manager and compile.
+</p>
+
+<p>
+  If they were not already present <code>Bin</code> and <code>Exe</code>
+  sub-directories will have been created in the <code>.\Tests</code> directory.
+  The <code>Exe</code> directory contains the <em>DUnit</em> test program while
+  <code>Bin</code> contains intermediate binaries.
+</p>
+
+<p>
+  You can compile the tests as either a GUI application (default) or as a
+  console application. For details please see the comments in
+  <code>.\Tests\Src\DUnit\CodeSnipTests.dpr</code>.
 </p>
 
 <h2>
@@ -1014,7 +1048,7 @@ set PATHSET=1
 
 <p>
   It is intended to change the licensing for the majority of the code base
-  from the Mozilla Public License v1,1 to the <a
+  from the Mozilla Public License v1.1 to the <a
     href="http://www.mozilla.org/MPL/2.0/"
   >Mozilla Public License v2.0</a>. This could take some time. In the meantime
   if you would like to use parts of the code under MPL v2.0, <a
