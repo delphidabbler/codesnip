@@ -42,8 +42,13 @@ inherited DetailFrame: TDetailFrame
     Width = 318
     Height = 23
     Align = alTop
+    PopupMenu = mnuTabs
     TabOrder = 1
     OnChange = tcViewsChange
     OnMouseDown = tcViewsMouseDown
+  end
+  object mnuTabs: TPopupMenu
+    Left = 144
+    Top = 104
   end
 end

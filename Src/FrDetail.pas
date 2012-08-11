@@ -46,7 +46,7 @@ uses
   ImgList, Generics.Collections,
   // Project
   Compilers.UGlobals, FrTitled, FrBrowserBase, FrDetailView, IntfFrameMgrs,
-  IntfNotifier, UCommandBars, UView;
+  IntfNotifier, UCommandBars, UView, Menus;
 
 type
 
@@ -68,6 +68,7 @@ type
   )
     frmDetailView: TDetailViewFrame;
     tcViews: TTabControl;
+    mnuTabs: TPopupMenu;
     procedure tcViewsChange(Sender: TObject);
     procedure tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
@@ -85,6 +86,7 @@ type
     fCommandBarItems: TCommandBarItems;
     fDisplayedView: IView;
     fViews: TList<IView>;
+    fTabSetCmdBar: TPopupMenuWrapper;
     function TabCount: Integer;
     procedure InternalSelectTab(TabIdx: Integer);
     procedure InternalDisplay(View: IView; ForceReload: Boolean);
@@ -153,12 +155,18 @@ uses
 procedure TDetailFrame.AddAction(const Action: TCustomAction;
   const ID: TCommandBarID);
 begin
-  (frmDetailView as ICommandBarConfig).AddAction(Action, ID);
+  if ID = cDetailTabSetPopupMenu then
+    fTabSetCmdBar.AddAction(Action)
+  else
+    (frmDetailView as ICommandBarConfig).AddAction(Action, ID);
 end;
 
 procedure TDetailFrame.AddSpacer(const ID: TCommandBarID);
 begin
-  (frmDetailView as ICommandBarConfig).AddSpacer(ID);
+  if ID = cDetailTabSetPopupMenu then
+    fTabSetCmdBar.AddSpacer
+  else
+    (frmDetailView as ICommandBarConfig).AddSpacer(ID);
 end;
 
 function TDetailFrame.CanCopy: Boolean;
@@ -231,6 +239,7 @@ begin
   fCommandBarItems := TCommandBarItems.Create;
   fViews := TList<IView>.Create;
   fDisplayedView := TViewFactory.CreateNulView;
+  fTabSetCmdBar := TPopupMenuWrapper.Create(mnuTabs);
 end;
 
 function TDetailFrame.CreateTab(View: IView): Integer;
@@ -242,6 +251,7 @@ end;
 
 destructor TDetailFrame.Destroy;
 begin
+  fTabSetCmdBar.Free;
   fViews.Free;
   fCommandBarItems.Free;
   inherited;
@@ -368,6 +378,7 @@ end;
 
 procedure TDetailFrame.SetImages(const Images: TCustomImageList);
 begin
+  fTabSetCmdBar.SetImages(Images);
   (frmDetailView as ICommandBarConfig).SetImages(Images);
 end;
 
