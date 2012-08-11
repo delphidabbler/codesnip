@@ -73,20 +73,11 @@ type
     procedure tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   strict private
-    type
-      TCommandBarItem = record
-        Action: TCustomAction;
-        ID: TCommandBarID;
-        constructor Create(AAction: TCustomAction; AID: TCommandBarID);
-      end;
-    type
-      TCommandBarItems = TList<TCommandBarItem>;
-  strict private
-    fNotifier: INotifier;
-    fCommandBarItems: TCommandBarItems;
-    fDisplayedView: IView;
-    fViews: TList<IView>;
-    fTabSetCmdBar: TPopupMenuWrapper;
+    var
+      fNotifier: INotifier;
+      fDisplayedView: IView;
+      fViews: TList<IView>;
+      fTabSetCmdBar: TPopupMenuWrapper;
     function TabCount: Integer;
     procedure InternalSelectTab(TabIdx: Integer);
     procedure InternalDisplay(View: IView; ForceReload: Boolean);
@@ -236,7 +227,6 @@ end;
 constructor TDetailFrame.Create(AOwner: TComponent);
 begin
   inherited;
-  fCommandBarItems := TCommandBarItems.Create;
   fViews := TList<IView>.Create;
   fDisplayedView := TViewFactory.CreateNulView;
   fTabSetCmdBar := TPopupMenuWrapper.Create(mnuTabs);
@@ -253,7 +243,6 @@ destructor TDetailFrame.Destroy;
 begin
   fTabSetCmdBar.Free;
   fViews.Free;
-  fCommandBarItems.Free;
   inherited;
 end;
 
@@ -409,15 +398,6 @@ procedure TDetailFrame.tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
 begin
   if htOnItem in tcViews.GetHitTestInfoAt(X, Y) then
     tcViews.SetFocus;
-end;
-
-{ TDetailFrame.TCommandBarItem }
-
-constructor TDetailFrame.TCommandBarItem.Create(AAction: TCustomAction;
-  AID: TCommandBarID);
-begin
-  Action := AAction;
-  ID := AID;
 end;
 
 end.
