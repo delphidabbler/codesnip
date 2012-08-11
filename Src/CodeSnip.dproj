@@ -72,6 +72,14 @@
 			<DCCReference Include="DBIO.UIniDataReader.pas"/>
 			<DCCReference Include="DBIO.UNulDataReader.pas"/>
 			<DCCReference Include="DBIO.UXMLDataIO.pas"/>
+			<DCCReference Include="FirstRun.FmV4ConfigDlg.pas">
+				<Form>V4ConfigDlg</Form>
+			</DCCReference>
+			<DCCReference Include="FirstRun.UDataLocations.pas"/>
+			<DCCReference Include="FirstRun.UIniFile.pas"/>
+			<DCCReference Include="FirstRun.UMain.pas"/>
+			<DCCReference Include="FirstRun.UUpdateDBase.pas"/>
+			<DCCReference Include="FirstRun.UUpdateIni.pas"/>
 			<DCCReference Include="FmAboutDlg.pas">
 				<Form>AboutDlg</Form>
 			</DCCReference>
@@ -562,14 +570,6 @@
 			<DCCReference Include="Web.URegistrar.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas"/>
-			<DCCReference Include="FirstRun.UDataLocations.pas"/>
-			<DCCReference Include="FirstRun.UMain.pas"/>
-			<DCCReference Include="FirstRun.UUpdateDBase.pas"/>
-			<DCCReference Include="FirstRun.UUpdateIni.pas"/>
-			<DCCReference Include="FirstRun.FmV4ConfigDlg.pas">
-				<Form>V4ConfigDlg</Form>
-			</DCCReference>
-			<DCCReference Include="FirstRun.UIniFile.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>

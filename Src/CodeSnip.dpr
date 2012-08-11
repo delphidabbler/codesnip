@@ -96,6 +96,12 @@ uses
   DBIO.UIniDataReader in 'DBIO.UIniDataReader.pas',
   DBIO.UNulDataReader in 'DBIO.UNulDataReader.pas',
   DBIO.UXMLDataIO in 'DBIO.UXMLDataIO.pas',
+  FirstRun.FmV4ConfigDlg in 'FirstRun.FmV4ConfigDlg.pas' {V4ConfigDlg},
+  FirstRun.UDataLocations in 'FirstRun.UDataLocations.pas',
+  FirstRun.UIniFile in 'FirstRun.UIniFile.pas',
+  FirstRun.UMain in 'FirstRun.UMain.pas',
+  FirstRun.UUpdateDBase in 'FirstRun.UUpdateDBase.pas',
+  FirstRun.UUpdateIni in 'FirstRun.UUpdateIni.pas',
   FmAboutDlg in 'FmAboutDlg.pas' {AboutDlg},
   FmAddCategoryDlg in 'FmAddCategoryDlg.pas' {AddCategoryDlg},
   FmBase in 'FmBase.pas' {BaseForm},
@@ -393,13 +399,7 @@ uses
   Web.UProgramUpdateMgr in 'Web.UProgramUpdateMgr.pas',
   Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
-  Web.UXMLRequestor in 'Web.UXMLRequestor.pas',
-  FirstRun.UDataLocations in 'FirstRun.UDataLocations.pas',
-  FirstRun.UMain in 'FirstRun.UMain.pas',
-  FirstRun.UUpdateDBase in 'FirstRun.UUpdateDBase.pas',
-  FirstRun.UUpdateIni in 'FirstRun.UUpdateIni.pas',
-  FirstRun.FmV4ConfigDlg in 'FirstRun.FmV4ConfigDlg.pas' {V4ConfigDlg},
-  FirstRun.UIniFile in 'FirstRun.UIniFile.pas';
+  Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb} // Type library file
