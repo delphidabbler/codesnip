@@ -1588,7 +1588,7 @@ begin
     begin
       // set images to use
       SetImages(ilMain);
-      // default menu
+      // detail view: default menu
       AddAction(actViewDependencies, cDetailPopupMenuDefault);
       AddSpacer(cDetailPopupMenuDefault);
       AddAction(actCopyInfo, cDetailPopupMenuDefault);
@@ -1601,13 +1601,15 @@ begin
       AddAction(actPrint, cDetailPopupMenuDefault);
       AddSpacer(cDetailPopupMenuDefault);
       AddAction(actSelectAll, cDetailPopupMenuDefault);
-      // selected text menu
+      // detail view: selected text menu
       AddAction(actCopy, cDetailPopupMenuTextSelect);
       AddAction(actSelectAll, cDetailPopupMenuTextSelect);
-      // anchor menu
+      // detail view: anchor menu
       AddAction(TActionFactory.CreateLinkAction(Self), cDetailPopupMenuAnchor);
-      // image menu
+      // detail view: image menu
       AddAction(TActionFactory.CreateLinkAction(Self), cDetailPopupMenuImage);
+      // tab set menu
+      AddAction(actCloseDetailsTab, cDetailTabSetPopupMenu);
     end;
 
     // Set up overview pane's toolbar and popup menu

@@ -2,19 +2,19 @@ inherited MainForm: TMainForm
   Left = 204
   Top = 150
   Caption = 'MainForm'
-  ClientHeight = 424
+  ClientHeight = 444
   ClientWidth = 605
   Constraints.MinHeight = 360
   Constraints.MinWidth = 480
   Menu = mnuMain
   OnResize = FormResize
   ExplicitWidth = 621
-  ExplicitHeight = 480
+  ExplicitHeight = 500
   PixelsPerInch = 96
   TextHeight = 13
   object sbStatusBar: TStatusBar
     Left = 0
-    Top = 404
+    Top = 424
     Width = 605
     Height = 20
     Panels = <
@@ -27,6 +27,7 @@ inherited MainForm: TMainForm
       item
         Width = 50
       end>
+    ExplicitTop = 404
   end
   object tbarMain: TToolBar
     Left = 0
@@ -197,16 +198,17 @@ inherited MainForm: TMainForm
     Left = 0
     Top = 30
     Width = 605
-    Height = 374
+    Height = 394
     Align = alClient
     BevelOuter = bvNone
     BorderWidth = 2
     TabOrder = 2
+    ExplicitHeight = 374
     object splitVert: TSplitter
       Left = 187
       Top = 2
       Width = 6
-      Height = 370
+      Height = 390
       Beveled = True
       OnCanResize = splitVertCanResize
       ExplicitHeight = 292
@@ -215,15 +217,16 @@ inherited MainForm: TMainForm
       Left = 2
       Top = 2
       Width = 185
-      Height = 370
+      Height = 390
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
+      ExplicitHeight = 370
       inline frmOverview: TOverviewFrame
         Left = 1
         Top = 1
         Width = 183
-        Height = 368
+        Height = 388
         Align = alClient
         TabOrder = 0
         TabStop = True
@@ -245,13 +248,13 @@ inherited MainForm: TMainForm
         end
         inherited tcDisplayStyle: TTabControl
           Width = 183
-          Height = 341
+          Height = 361
           ExplicitWidth = 183
           ExplicitHeight = 341
           inherited tvSnippets: TTreeView
             Top = 42
             Width = 175
-            Height = 295
+            Height = 315
             ExplicitTop = 42
             ExplicitWidth = 175
             ExplicitHeight = 295
@@ -263,15 +266,16 @@ inherited MainForm: TMainForm
       Left = 193
       Top = 2
       Width = 410
-      Height = 370
+      Height = 390
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
+      ExplicitHeight = 370
       inline frmDetail: TDetailFrame
         Left = 1
         Top = 1
         Width = 408
-        Height = 368
+        Height = 388
         Align = alClient
         TabOrder = 0
         TabStop = True
@@ -289,7 +293,7 @@ inherited MainForm: TMainForm
         end
         inherited frmDetailView: TDetailViewFrame
           Width = 408
-          Height = 318
+          Height = 338
           ExplicitWidth = 408
           ExplicitHeight = 318
           inherited pnlBrowser: TPanel
