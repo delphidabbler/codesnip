@@ -82,6 +82,7 @@ type
     procedure InternalSelectTab(TabIdx: Integer);
     procedure InternalDisplay(View: IView; ForceReload: Boolean);
     procedure InternalDeleteTab(TabIdx: Integer);
+    procedure NotifyTabChange;
   public
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
@@ -313,6 +314,12 @@ begin
     InternalSelectTab(Succ(SelectedTab));
 end;
 
+procedure TDetailFrame.NotifyTabChange;
+begin
+  if Assigned(fNotifier) then
+    fNotifier.ChangeDetailPane(tcViews.TabIndex);
+end;
+
 procedure TDetailFrame.PreviousTab;
 begin
   if IsEmptyTabSet then
@@ -389,15 +396,30 @@ begin
   // notify program via notifier: this will result in instruction back to select
   // the tab - this allows for other controls to change the tab
   Assert(tcViews.TabIndex >= 0, ClassName + '.tcViewsChange: tab index < 0');
-  if Assigned(fNotifier) then
-    fNotifier.ChangeDetailPane(tcViews.TabIndex);
+  NotifyTabChange;
 end;
 
 procedure TDetailFrame.tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
+var
+  TabIdx: Integer;
 begin
   if htOnItem in tcViews.GetHitTestInfoAt(X, Y) then
+  begin
+    // ensure tab set has focus when a tab is clicked
     tcViews.SetFocus;
+    if Button = mbRight then
+    begin
+      // select tab when right clicked
+      TabIdx := tcViews.IndexOfTabAt(X, Y);
+      if (TabIdx >= 0) and (TabIdx < tcViews.Tabs.Count) then
+      begin
+        tcViews.TabIndex := TabIdx;
+        NotifyTabChange;
+      end;
+    end;
+  end;
+
 end;
 
 end.
