@@ -10,20 +10,20 @@
 
 
 
-{TODO -oSelf -cProposal : Consider what gesture support to add (needs Delphi 2010).}
-
-
-
-{DONE -oSelf -cRefactor : Rename identifiers that refer to "routine" with "snippet".}
 
 
 
 
 
-{DONE -oSelf -cProposal : Move Compile, View compile errors and configure compilers menu options to a new Compile menu?}
-{TODO -oSelf -cRefactor : See if we can pull out common HTML and REML code into SGML unit}
 
-{TODO -oSelf -cRefactor : Re-implement MakeSafeHTML in terms of a char entity class like that for REML? Use common base class with entities class in UREMLDataIO?}
+
+
+
+
+
+
+
+
 
 
 {TODO -oSelf -cRefactor : Merge the IO and UI manager code into WBController}
