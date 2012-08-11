@@ -17,6 +17,7 @@ Internal CodeSnip version 3.99.1
 + User interface changes:
   - "Test Compile" link removed from snippet display in details pane.
   - "Test Compile" dialogue box changed so that only the installed compilers that CodeSnip uses for test compilation are displayed, instead of all known compilers.
+  - Welcome page revised.
 + Changes to snippets editor:
   - New field on Code tab to enter optional snippet display name.
   - New check box on Code tab to specify if Pascal syntax highlighter is to be used for source code.
