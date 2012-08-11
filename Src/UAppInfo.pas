@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -65,7 +65,7 @@ type
       {Name of "company" that owns this program}
     const ProgramName = 'CodeSnip';
       {Name of program}
-    const ProgramCaption = ProgramName + ' (v4 preview)';
+    const ProgramCaption = ProgramName;
       {Name of program displayed in main window and task bar caption}
     const FullProgramName = CompanyName + ' ' + ProgramName;
       {Full name of program, including company name}
