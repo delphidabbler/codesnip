@@ -104,3 +104,7 @@ pre {
   margin-left: -4px;
 }
 
+.smallcaps {
+  font-variant: small-caps;
+}
+
