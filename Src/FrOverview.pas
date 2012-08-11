@@ -176,6 +176,10 @@ type
           returned. If there is no selected node the first section node is
           returned.
       }
+    procedure NotifyTabChange;
+      {Sends a notification that overview display style tab has changed as a
+      result.
+      }
   protected // interface implementations - do not make strict
     { ITabbedDisplayMgr }
     procedure SelectTab(const TabIdx: Integer);
@@ -490,6 +494,12 @@ begin
     SelectTab(Succ(SelectedTab));
 end;
 
+procedure TOverviewFrame.NotifyTabChange;
+begin
+  if Assigned(fNotifier) then
+    fNotifier.ChangeOverviewStyle(tcDisplayStyle.TabIndex);
+end;
+
 procedure TOverviewFrame.PreviousTab;
   {Switches to previous tab, or return to last tab if current tab is first.
   }
@@ -656,12 +666,10 @@ procedure TOverviewFrame.tcDisplayStyleChange(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  // TODO: consider calling SelectTab direct rather than via Notifier
   { TODO: create a Tab Manager object that triggers Changing and / or Change
           events regardless of how tab is changed. This manager class could
           implement ITabbedDisplayMgr on behalf of frame.}
-  if Assigned(fNotifier) then
-    fNotifier.ChangeOverviewStyle(tcDisplayStyle.TabIndex);
+  NotifyTabChange;
 end;
 
 procedure TOverviewFrame.tcDisplayStyleChanging(Sender: TObject;
@@ -677,9 +685,24 @@ end;
 
 procedure TOverviewFrame.tcDisplayStyleMouseDown(Sender: TObject;
   Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+var
+  TabIdx: Integer;  // index of clicked tab
 begin
   if htOnItem in tcDisplayStyle.GetHitTestInfoAt(X, Y) then
+  begin
+    // ensure tab set has focus when a tab is clicked
     tcDisplayStyle.SetFocus;
+    if Button = mbRight then
+    begin
+      // select tab when right clicked
+      TabIdx := tcDisplayStyle.IndexOfTabAt(X, Y);
+      if (TabIdx >= 0) and (TabIdx < tcDisplayStyle.Tabs.Count) then
+      begin
+        tcDisplayStyle.TabIndex := TabIdx;
+        NotifyTabChange;
+      end;
+    end;
+  end;
 end;
 
 procedure TOverviewFrame.tvSnippetsChanging(Sender: TObject;
