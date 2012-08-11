@@ -4,7 +4,7 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
-Release v4.0 beta 1 of xxx July 2012
+Release v4.0 beta 1 of 11 August 2012
 Internal CodeSnip version 3.99.1
 + New features:
   - Structure of snippet pages in details pane is now customisable: various page elements can be omitted and order of elements can be specified. Each snippet type has its own page customisation. Implements feature request #3519456 (http://bit.ly/NhT8Kr).
@@ -37,8 +37,19 @@ Internal CodeSnip version 3.99.1
 + Bug fixes:
   - Bug #3536331 fixed (http://bit.ly/KQTYc3): words at the end of some paragraphs in a snippet's extra information were not being found in "whole word only" searches.
   - Fixed unreported file parsing bug that occured when loading a saved snippet selection from disk.
++ Changed Delphi compiler detection so that compilers can be detected by examining current user registry key in addition to local machine registry key. This enables Delphis that were installed for a given user only to be detected.
 + Improved error handling when reading and writing snippet selection files.
 + User database and export file formats updated to v6.
++ Per-user confuration file format changes: bumped file version to v9.
++ Major changes to installer:
+  - Now always brings forward any earlier common config files if needed.
+  - Per user configuration files are now ignored: they are handled by main program (see below).
+  - Only main database, not user database, is now imported from earlier versions on user request. User databases are now handled by main program (see below).
+  - There is no longer an option to delete old databases or configuration files.
+  - Updating from a v4 preview (alpha) release causes an extra page to be displayed that gives instructions relating to updating from preview to current release.
++ Program now detects if it is running for first time since updating:
+  - If this is first run since updating from v3 or earlier a "first run" wizard guides user through importing any old preferences or user databases.
+  - For point v4.x point updates user configuration file is silently updated as necessary.
 + Significant refactoring.
 + Updated help file in line with changes and new features.
 + Updated documentation, including minor changes to privacy statement and license.
@@ -137,7 +148,7 @@ Changes relate to v3.9.3
   - Configuration files are now in Unicode format.
   - Some Unicode support added to database (see above).
 + Web service data handling code improved: now includes ability to send raw bytes and can detect and adapt to character encoding used in responses.
-+ Configuration file names and locations changed.
++ Common and per-user configuration file names and locations changed. Bumped file version numbers to 6 and 8 respectively.
 + Fixed some bugs:
   - Various Unicode and code page related problems in RTF code generation.
   - Memory leaks.
@@ -149,9 +160,9 @@ Changes relate to v3.9.3
 + A default title now used in print spooler if none specified.
 + Source code heavily refactored.
 + Help file updated in line with changes.
-+ Updated documentation, including changes to privacy statement and new file format documentation.
 + Installer:
   - Changed so that v3 and v4 installs can co-exist - default install locations are different and v4 does not overwrite v3.
   - Converts v3 config files to v4 Unicode format and copies to new locations. File version stamps are updated.
   - Installer is now compiled with Unicode version of Inno Setup instead of ANSI version.
   - Scripts updated and refactored.
++ Updated documentation, including changes to privacy statement and new file format documentation.
