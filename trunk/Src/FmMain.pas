@@ -1619,6 +1619,8 @@ begin
       AddAction(actPrint, cDetailPopupMenuDefault);
       AddSpacer(cDetailPopupMenuDefault);
       AddAction(actSelectAll, cDetailPopupMenuDefault);
+      AddSpacer(cDetailPopupMenuDefault);
+      AddAction(actCloseDetailsTab, cDetailPopupMenuDefault);
       // detail view: selected text menu
       AddAction(actCopy, cDetailPopupMenuTextSelect);
       AddAction(actSelectAll, cDetailPopupMenuTextSelect);
