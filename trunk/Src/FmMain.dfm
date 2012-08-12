@@ -27,7 +27,6 @@ inherited MainForm: TMainForm
       item
         Width = 50
       end>
-    ExplicitTop = 404
   end
   object tbarMain: TToolBar
     Left = 0
@@ -203,7 +202,6 @@ inherited MainForm: TMainForm
     BevelOuter = bvNone
     BorderWidth = 2
     TabOrder = 2
-    ExplicitHeight = 374
     object splitVert: TSplitter
       Left = 187
       Top = 2
@@ -221,7 +219,6 @@ inherited MainForm: TMainForm
       Align = alLeft
       BevelOuter = bvLowered
       TabOrder = 0
-      ExplicitHeight = 370
       inline frmOverview: TOverviewFrame
         Left = 1
         Top = 1
@@ -233,7 +230,7 @@ inherited MainForm: TMainForm
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 183
-        ExplicitHeight = 368
+        ExplicitHeight = 388
         inherited pnlTitle: TPanel
           Width = 183
           ExplicitWidth = 183
@@ -250,14 +247,14 @@ inherited MainForm: TMainForm
           Width = 183
           Height = 361
           ExplicitWidth = 183
-          ExplicitHeight = 341
+          ExplicitHeight = 361
           inherited tvSnippets: TTreeView
             Top = 42
             Width = 175
             Height = 315
             ExplicitTop = 42
             ExplicitWidth = 175
-            ExplicitHeight = 295
+            ExplicitHeight = 315
           end
         end
       end
@@ -270,7 +267,6 @@ inherited MainForm: TMainForm
       Align = alClient
       BevelOuter = bvLowered
       TabOrder = 1
-      ExplicitHeight = 370
       inline frmDetail: TDetailFrame
         Left = 1
         Top = 1
@@ -282,7 +278,7 @@ inherited MainForm: TMainForm
         ExplicitLeft = 1
         ExplicitTop = 1
         ExplicitWidth = 408
-        ExplicitHeight = 368
+        ExplicitHeight = 388
         inherited pnlTitle: TPanel
           Width = 408
           ExplicitWidth = 408
@@ -295,19 +291,19 @@ inherited MainForm: TMainForm
           Width = 408
           Height = 338
           ExplicitWidth = 408
-          ExplicitHeight = 318
+          ExplicitHeight = 338
           inherited pnlBrowser: TPanel
             Width = 408
-            Height = 318
+            Height = 338
             ExplicitWidth = 408
-            ExplicitHeight = 318
+            ExplicitHeight = 338
             inherited wbBrowser: TWebBrowser
               Width = 408
-              Height = 318
+              Height = 338
               ExplicitWidth = 408
               ExplicitHeight = 318
               ControlData = {
-                4C0000002B2A0000DE2000000000000000000000000000000000000000000000
+                4C0000002B2A0000EF2200000000000000000000000000000000000000000000
                 000000004C000000000000000000000001000000E0D057007335CF11AE690800
                 2B2E126208000000000000004C0000000114020000000000C000000000000046
                 8000000000000000000000000000000000000000000000000000000000000000
@@ -2291,7 +2287,7 @@ inherited MainForm: TMainForm
       SecondaryShortCuts.Strings = (
         'Ctrl+W')
       OnExecute = actCloseDetailsTabExecute
-      OnUpdate = actCloseDetailsTabUpdate
+      OnUpdate = actCloseDetailsTabsUpdate
     end
     object actFAQs: TBrowseURL
       Category = 'Help'
@@ -2331,6 +2327,22 @@ inherited MainForm: TMainForm
       Caption = 'Check For Program Updates...'
       Hint = 'Check for program updates|Check for the latest program updates'
       OnExecute = actProgramUpdatesExecute
+    end
+    object actCloseUnselectedDetailsTabs: TAction
+      Category = 'View'
+      Caption = 'Close All Other Tabs'
+      Hint = 
+        'Close All Other Tabs|Closes all tabs in the Details pane except ' +
+        'the current tab'
+      ShortCut = 24691
+      OnExecute = actCloseUnselectedDetailsTabsExecute
+      OnUpdate = actCloseDetailsTabsUpdate
+    end
+    object actCloseAllDetailsTabs: TAction
+      Category = 'View'
+      Caption = 'Close All Tabs'
+      OnExecute = actCloseAllDetailsTabsExecute
+      OnUpdate = actCloseDetailsTabsUpdate
     end
   end
   object mnuMain: TMainMenu
@@ -2432,6 +2444,10 @@ inherited MainForm: TMainForm
       end
       object miCloseDetailsTab: TMenuItem
         Action = actCloseDetailsTab
+        GroupIndex = 100
+      end
+      object miCloseAllDetailsTabs: TMenuItem
+        Action = actCloseAllDetailsTabs
         GroupIndex = 100
       end
       object miSpacer10: TMenuItem

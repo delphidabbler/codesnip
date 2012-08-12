@@ -255,6 +255,9 @@ type
     actProgramUpdates: TAction;
     miSpacer18: TMenuItem;
     miCheckUpdates: TMenuItem;
+    actCloseUnselectedDetailsTabs: TAction;
+    actCloseAllDetailsTabs: TAction;
+    miCloseAllDetailsTabs: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
@@ -339,7 +342,7 @@ type
       var Accept: Boolean);
     procedure actNewDetailsTabExecute(Sender: TObject);
     procedure actCloseDetailsTabExecute(Sender: TObject);
-    procedure actCloseDetailsTabUpdate(Sender: TObject);
+    procedure actCloseDetailsTabsUpdate(Sender: TObject);
     procedure actSelectDetailTabExecute(Sender: TObject);
     procedure actDuplicateSnippetExecute(Sender: TObject);
     procedure actDuplicateSnippetUpdate(Sender: TObject);
@@ -347,6 +350,8 @@ type
     procedure actSaveSelectionUpdate(Sender: TObject);
     procedure actLoadSelectionExecute(Sender: TObject);
     procedure actProgramUpdatesExecute(Sender: TObject);
+    procedure actCloseUnselectedDetailsTabsExecute(Sender: TObject);
+    procedure actCloseAllDetailsTabsExecute(Sender: TObject);
   strict private
     fIsAppRegistered: Boolean;        // Flag noting if app is registered
     fNotifier: INotifier;             // Notififies app of user-initiated events
@@ -487,14 +492,27 @@ begin
   fDialogMgr.ShowBugReportDlg;
 end;
 
-procedure TMainForm.actCloseDetailsTabExecute(Sender: TObject);
+procedure TMainForm.actCloseAllDetailsTabsExecute(Sender: TObject);
 begin
-  fMainDisplayMgr.CloseSelectedDetailsTab;
+  fMainDisplayMgr.CloseDetailsTabs(dtcAll);
 end;
 
-procedure TMainForm.actCloseDetailsTabUpdate(Sender: TObject);
+procedure TMainForm.actCloseDetailsTabExecute(Sender: TObject);
 begin
+  fMainDisplayMgr.CloseDetailsTabs(dtcSelected);
+end;
+
+procedure TMainForm.actCloseDetailsTabsUpdate(Sender: TObject);
+begin
+  // Enables one or more details tabs to be closed.
+  // Used by actCloseDetailsTab, actCloseUnselectedDetailsTabs and
+  // actCloseAllDetailsTabs.
   (Sender as TAction).Enabled := fMainDisplayMgr.CanCloseDetailsTab;
+end;
+
+procedure TMainForm.actCloseUnselectedDetailsTabsExecute(Sender: TObject);
+begin
+  fMainDisplayMgr.CloseDetailsTabs(dtcAllExceptSelected);
 end;
 
 procedure TMainForm.actCompilersExecute(Sender: TObject);
@@ -1610,6 +1628,7 @@ begin
       AddAction(TActionFactory.CreateLinkAction(Self), cDetailPopupMenuImage);
       // tab set menu
       AddAction(actCloseDetailsTab, cDetailTabSetPopupMenu);
+      AddAction(actCloseUnselectedDetailsTabs, cDetailTabSetPopupMenu);
     end;
 
     // Set up overview pane's toolbar and popup menu

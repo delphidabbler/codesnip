@@ -64,6 +64,21 @@ type
   );
 
 type
+  ///  <summary>Enumeration that determines which tabs in detail pane are closed
+  ///  by TMainDisplayManager when CloseDetailsTabs method is called.</summary>
+  ///  <remarks>
+  ///  <para>dtcSelected - Close selected tab only.</para>
+  ///  <para>dtcAllExceptSelected - Close all open tabs excepted selected tab.
+  ///  </para>
+  ///  <para>dtcAll - Close all open tabs.</para>
+  ///  </remarks>
+  TDetailPageTabCloseOptions = (
+    dtcSelected,
+    dtcAllExceptSelected,
+    dtcAll
+  );
+
+type
   ///  <summary>
   ///  Manages and co-ordinates the display of the program's main UI. Calls into
   ///  subsidiary manager objects to perform display operations.
@@ -226,12 +241,13 @@ type
     ///  <remarks>Does nothing if there is no active tab set.</remarks>
     procedure SelectPreviousActiveTab;
 
-    ///  <summary>Closes selected tab in detail pane.</summary>
+    ///  <summary>Closes one or more tabs in detail pane, according to value
+    ///  of Options parameter.</summary>
     ///  <remarks>A new tab is selected, if there is one, and overview pane is
     ///  updated re change in selection.</remarks>
-    procedure CloseSelectedDetailsTab;
+    procedure CloseDetailsTabs(const Option: TDetailPageTabCloseOptions);
 
-    ///  <summary>Checks if it is possible to close a tab in details pane.
+    ///  <summary>Checks if it is possible to close any tab in details pane.
     ///  </summary>
     function CanCloseDetailsTab: Boolean;
 
@@ -349,11 +365,19 @@ begin
   (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
 end;
 
-procedure TMainDisplayMgr.CloseSelectedDetailsTab;
+procedure TMainDisplayMgr.CloseDetailsTabs(
+  const Option: TDetailPageTabCloseOptions);
 begin
-  (fDetailsMgr as IDetailPaneDisplayMgr).CloseTab(
-    (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
-  );
+  case Option of
+    dtcSelected:
+      (fDetailsMgr as IDetailPaneDisplayMgr).CloseTab(
+        (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
+      );
+    dtcAllExceptSelected:
+      (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(True);
+    dtcAll:
+      (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
+  end;
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(CurrentView);
   RefreshDetailPage;
 end;
