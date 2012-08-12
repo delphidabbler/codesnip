@@ -77,7 +77,7 @@ type
     ///  <remarks>This method is used to ensure that newly loaded documents are
     ///  not partially scrolled.</remarks>
     procedure MoveToDocTop;
-    ///  <summary>Handles web browser UI manager's OnMenuPopupEx event. Pops up
+    ///  <summary>Handles web browser UI manager's OnMenuPopup event. Pops up
     ///  relevant menu if appropriate.</summary>
     ///  <param name="Sender">TObject [in] Not used.</param>
     ///  <param name="PopupPos">TPoint [in] Position at which menu is to be
@@ -292,7 +292,7 @@ begin
     end;
   end;
   // Set pop-up menu handler for browser control
-  WBController.UIMgr.OnMenuPopupEx := PopupMenuHandler;
+  WBController.UIMgr.OnMenuPopup := PopupMenuHandler;
   // Set up HTML page loader
   fPageLoader := TDetailPageLoader.Create(WBController);
 end;
