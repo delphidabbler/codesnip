@@ -152,9 +152,6 @@ type
       {Determines whether text can be selected in browser}
     fCSS: string;
       {Records master cascading style sheet used by browser}
-    fUseDefaultContextMenu: Boolean;
-      {Records whether browser's default context menus are displayed or whether
-      program handles context menus}
     fExternScript: IDispatch;
       {Reference to object that implement's browser "external" object}
     fDropTarget: IDropTarget;
@@ -202,16 +199,17 @@ type
     function ShowContextMenu(const dwID: DWORD; const ppt: PPOINT;
       const pcmdtReserved: IUnknown; const pdispReserved: IDispatch): HResult;
       stdcall;
-      {Called by browser when about to display a context menu. We change
-      behaviour as required by relevant property values.
+      {Called by browser when about to display a context menu. We always handle
+      popup menu and never use IE's default menu. Whether menu is displayed
+      depends on if OnMenuPopup or OnMenuPopupEx events are handled or if
+      PopupMenu property is set.
         @param dwID [in] Specifies identifier of the shortcut menu to be
           displayed.
         @param ppt [in] Pointer screen coordinates for the menu.
         @param pcmdtReserved [in] Not used.
         @param pdispReserved [in] IDispatch interface of HTML object under
           mouse.
-        @return S_OK to prevent IE displaying its menu or S_FALSE to enable the
-          IE menu.
+        @return S_OK to prevent IE displaying its default context menu.
       }
     function GetHostInfo(var pInfo: TDocHostUIInfo): HResult; stdcall;
       {Called by browser to get UI capabilities. We configure the required UI
@@ -303,11 +301,6 @@ type
       {Gets height of currently displayed document.
         @return Required height in pixels.
       }
-    property UseDefaultContextMenu: Boolean
-      read fUseDefaultContextMenu write fUseDefaultContextMenu default True;
-      {Determines if IE displays its default context menu (true) or if program
-      handles this (false). The value of this property can be selectively
-      overridden if the OnMenuPopup or OnMenuPopupEx events are handled}
     property ScrollbarStyle: TWBScrollbarStyle
       read fScrollbarStyle write fScrollbarStyle default sbsNormal;
       {Determines style of browser control's scroll bars, or hides them. See
@@ -477,7 +470,6 @@ begin
   Assert(Assigned(WebBrowser), ClassName + '.Create: WebBrowser is nil');
   inherited Create(Controller);
   fWebBrowser := WebBrowser;
-  fUseDefaultContextMenu := True;
   fScrollbarStyle := sbsNormal;
   fShow3dBorder := True;
   fAllowTextSelection := True;
@@ -640,48 +632,37 @@ end;
 function TWBUIMgr.ShowContextMenu(const dwID: DWORD; const ppt: PPOINT;
   const pcmdtReserved: IInterface;
   const pdispReserved: IDispatch): HResult;
-  {Called by browser when about to display a context menu. We change behaviour
-  as required by relevant property values.
+  {Called by browser when about to display a context menu. We always handle
+  popup menu and never use IE's default menu. Whether menu is displayed depends
+  on if OnMenuPopup or OnMenuPopupEx events are handled or if PopupMenu property
+  is set.
     @param dwID [in] Specifies identifier of the shortcut menu to be displayed.
     @param ppt [in] Pointer screen coordinates for the menu.
     @param pcmdtReserved [in] Not used.
     @param pdispReserved [in] IDispatch interface of HTML object under mouse.
-    @return S_OK to prevent IE displaying its menu or S_FALSE to enable the IE
-      menu.
+    @return S_OK to prevent IE displaying its default context menu.
   }
 var
-  Handled: Boolean; // whether program handled pop-up menu
+  Handled: Boolean; // whether event handlers handled pop-up menu
 begin
-  // Set default value of Handled: program handles if not using default IE menu
-  Handled := not fUseDefaultContextMenu;
-
+  // Always returns S_OK to prevent IE showing own context menu
+  Result := S_OK;
+  // Assume event handlers don't handle context menu
+  Handled := False;
   // Try to trigger OnMenuPopup or OnMenuPopupEx events. Only one of these
   // events is triggered: OnMenuPopupEx is only triggered if assigned and
-  // OnMenuPopup is not assigned. Handler can change value of Handled hence
-  // overriding UseDefaultContextMenu property. This permits handler to display
-  // some menu types while leaving IE to handle others, depending on system
-  // state or menu id. Note that handler should only display popup menu here if
-  // Handled is set true and web browser control has no popup menu assigned.
+  // OnMenuPopup is not assigned. Handler sets Handled to True if it actually
+  // handles the event.
   // The additional information provided by OnMenuPopupEx is the IDispatch
-  // interface of the clicked object
+  // interface of the clicked object.
   if Assigned(fOnMenuPopup) then
     fOnMenuPopup(Self, Point(ppt.X, ppt.Y), dwID, Handled)
   else if Assigned(fOnMenuPopupEx) then
     fOnMenuPopupEx(Self, Point(ppt.X, ppt.Y), dwID, Handled, pDispReserved);
-
-  // Determine whether event handler or IE display menu popup
-  if not Handled then
-    // Tell IE to use default popup menu action
-    Result := S_FALSE
-  else
-  begin
-    // Tell IE we're handling the context menu so that it will not display menu.
-    // If web browser control has popup menu assigned it is displayed, otherwise
-    // no menu shown
-    Result := S_OK;
-    if Assigned(fWebBrowser.PopupMenu) then
-      fWebBrowser.PopupMenu.Popup(ppt.X, ppt.Y);
-  end;
+  if not Handled and Assigned(fWebBrowser.PopupMenu) then
+    // Event handlers didn't handle context menu: display any menu referenced by
+    // PopupMenu property.
+    fWebBrowser.PopupMenu.Popup(ppt.X, ppt.Y);
 end;
 
 function TWBUIMgr.ShowUI(const dwID: DWORD;

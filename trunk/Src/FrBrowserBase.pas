@@ -273,7 +273,6 @@ begin
   Assert(AOwner is TWinControl, ClassName + '.Create: AOwner not a TForm');
   fWBController := TWBController.Create(wbBrowser);
   fWBController.UIMgr.Show3dBorder := False;
-  fWBController.UIMgr.UseDefaultContextMenu := False;
   fWBController.UIMgr.OnTranslateAccel := TranslateAccelHandler;
   fWBController.UIMgr.OnUpdateCSS := UpdateCSS;
   fWBController.UIMgr.OnBrowserActivate := BrowserActivate;
