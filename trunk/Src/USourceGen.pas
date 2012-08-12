@@ -1285,6 +1285,16 @@ var
   Temp: string;
 const
   WhiteSpaceTokens = [tkComment, tkCompilerDir, tkWhitespace, tkEOL];
+
+  function IsMethodKwd(const Tok: string): Boolean;
+  begin
+    Result := StrSameText(Lexer.TokenStr, 'function')
+      or StrSameText(Lexer.TokenStr, 'procedure')
+      or StrSameText(Lexer.TokenStr, 'constructor')
+      or StrSameText(Lexer.TokenStr, 'destructor')
+      or StrSameText(Lexer.TokenStr, 'operator');
+  end;
+
 begin
   Lexer := THilitePasLexer.Create(Source);
   try
@@ -1309,19 +1319,42 @@ begin
 
       while True do
       begin
-        // look for function or procedure
+        // look for methods
         while not (Lexer.NextToken in [tkKeyword, tkEOF])
-          or not (
-            StrSameText(Lexer.TokenStr, 'function')
-            or StrSameText(Lexer.TokenStr, 'procedure')
+          and not (
+            IsMethodKwd(Lexer.TokenStr)
+            or StrSameText(Lexer.TokenStr, 'class')
+            or StrSameText(Lexer.TokenStr, 'implementation')
           ) do
           SB.Append(Lexer.TokenStr);
         if Lexer.Token = tkEOF then
           raise ECodeSnip.Create('Invalid class or advanced record type');
+        if (Lexer.Token = tkKeyword)
+          and StrSameText(Lexer.TokenStr, 'implementation') then
+          raise ECodeSnip.Create(
+            '"implementation" keyword not permitted in class or advanced '
+            + 'record snippets.');
         // check if function is followed by ClassTypeName and a dot => start
         // of declaration
-        // record "function" or "procedure"
-        Temp := Lexer.TokenStr;
+        Temp := '';
+        if not IsMethodKwd(Lexer.TokenStr) then
+        begin
+          // must have tkKeyword of "class": record it and look for
+          Temp := Lexer.TokenStr;
+          // skip whitespace following "class"
+          while Lexer.NextToken in WhiteSpaceTokens do
+            Temp := Temp + Lexer.TokenStr;
+          // now look for one of method keywords "class" keyword
+          if (Lexer.Token <> tkKeyword) and not IsMethodKwd(Lexer.TokenStr) then
+          begin
+            // didn't find method: record text read and go round again
+            SB.Append(Temp);            // "class" and whitespace
+            SB.Append(Lexer.TokenStr);  // token after whitespace
+            Continue;
+          end;
+        end;
+        // record method name
+        Temp := Temp + Lexer.TokenStr;
         // record following white space
         while Lexer.NextToken in WhiteSpaceTokens do
           Temp := Temp + Lexer.TokenStr;
