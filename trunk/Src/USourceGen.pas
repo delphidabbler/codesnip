@@ -1295,6 +1295,12 @@ const
       or StrSameText(Lexer.TokenStr, 'operator');
   end;
 
+resourcestring
+  sTypeKwdError = '"type" must be first keyword in source code';
+  sClassTypeNameError = 'Class type name expected in source code';
+  sBadTypeError = 'Invalid class or advanced record type';
+  sImplementationKwdError = '"implementation" keyword not permitted in class or '
+    + 'advanced record snippets.';
 begin
   Lexer := THilitePasLexer.Create(Source);
   try
@@ -1306,14 +1312,14 @@ begin
         SB.Append(Lexer.TokenStr);
       if (Lexer.Token <> tkKeyword)
         and not StrSameText(Lexer.TokenStr, 'type') then
-        raise ECodeSnip.Create('"type" must be first keyword in source code');
+        raise ECodeSnip.Create(sTypeKwdError);
       SB.Append(Lexer.TokenStr);
 
       // get name of class from following indentifier
       while Lexer.NextToken in WhiteSpaceTokens do
         SB.Append(Lexer.TokenStr);
       if Lexer.Token <> tkIdentifier then
-        raise ECodeSnip.Create('Class type name expected in source code');
+        raise ECodeSnip.Create(sClassTypeNameError);
       ClassTypeName := Lexer.TokenStr;
       SB.Append(Lexer.TokenStr);
 
@@ -1328,12 +1334,10 @@ begin
           ) do
           SB.Append(Lexer.TokenStr);
         if Lexer.Token = tkEOF then
-          raise ECodeSnip.Create('Invalid class or advanced record type');
+          raise ECodeSnip.Create(sBadTypeError);
         if (Lexer.Token = tkKeyword)
           and StrSameText(Lexer.TokenStr, 'implementation') then
-          raise ECodeSnip.Create(
-            '"implementation" keyword not permitted in class or advanced '
-            + 'record snippets.');
+          raise ECodeSnip.Create(sImplementationKwdError);
         // check if function is followed by ClassTypeName and a dot => start
         // of declaration
         Temp := '';
