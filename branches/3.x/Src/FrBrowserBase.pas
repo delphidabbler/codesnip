@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -43,7 +43,7 @@ uses
   // Delphi
   OleCtrls, SHDocVw, Classes, Controls, ExtCtrls, Forms, Windows,
   // Project
-  Browser.UController, UCSSBuilder, UHTMLEvents;
+  Browser.UController, UCSSBuilder, UHTMLEvents, UMenuHelper;
 
 
 type
@@ -64,9 +64,10 @@ type
     Base class for all frames that contain a web browser control. Creates a
     web browser controller object and sets default characteristics of controlled
     browser object. Also provides methods to handle activation of browser, HTML
-    events, access selected links and provide information about the control.
+    events, access selected links, trigger pop-up menus and provide information
+    about the control.
   }
-  TBrowserBaseFrame = class(TFrame)
+  TBrowserBaseFrame = class(TFrame, IPopupMenu)
     pnlBrowser: TPanel;
     wbBrowser: TWebBrowser;
     procedure FrameEnter(Sender: TObject);
@@ -171,6 +172,13 @@ type
       }
     destructor Destroy; override;
       {Class destructor. Tears down object.
+      }
+    function HasPopup: Boolean;
+      {Checks if browser control has a pop-up menu. Method of IPopupMenu.
+      }
+    procedure Popup(const Pt: TPoint);
+      {Displays browser control's menu for active element at given point. Method
+      of IPopupMenu.
       }
     property OnBuildCSS: TBrowserBuildCSSEvent
       read fOnBuildCSS write fOnBuildCSS;
@@ -315,6 +323,13 @@ begin
   MakeBrowserActiveControl;
 end;
 
+function TBrowserBaseFrame.HasPopup: Boolean;
+  {Checks if browser control has a pop-up menu. Method of IPopupMenu.
+  }
+begin
+  Result := WBController.UIMgr.SupportsPopupMenu;
+end;
+
 procedure TBrowserBaseFrame.HTMLEventHandler(Sender: TObject;
   const EventInfo: THTMLEventInfo);
   {Handles "standard" web browser events. Checks for shift key being pressed
@@ -404,6 +419,14 @@ begin
     Result := nil;
 end;
 
+procedure TBrowserBaseFrame.Popup(const Pt: TPoint);
+  {Displays browser control's menu for active element at given point. Method
+  of IPopupMenu.
+  }
+begin
+  WBController.UIMgr.ShowPopupMenu(Pt);
+end;
+
 procedure TBrowserBaseFrame.SelectAll;
   {Selects all text in browser control. Implements ISelectionMgr.SelectAll for
   sub-classes.
@@ -461,7 +484,7 @@ begin
         // We post all function keys with any modifier to parent to allow
         // processing there. It is particularly important for pass on F5 to
         // prevent browser from refreshing and F1 to enable help.
-        // NOTE: we assume all function keys have contigous codes
+        // NOTE: we assume all function keys have contiguous codes.
         PostMsg := True;
       VK_LEFT, VK_RIGHT, VK_HOME:
         // We post Alt+Left, Alt+Right and Alt+Home keys to parent to enable

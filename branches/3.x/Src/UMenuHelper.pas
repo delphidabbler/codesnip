@@ -1,7 +1,7 @@
 {
  * UMenuHelper.pas
  *
- * Helper routines for working with menus.
+ * Helper routines and interface for working with menus.
  *
  * $Rev$
  * $Date$
@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -41,8 +41,20 @@ interface
 
 uses
   // Delphi
-  Classes, Menus;
+  Classes, Types, Menus;
 
+
+type
+  ///  <summary>Interface supported by objects that can display a pop-up menu
+  ///  by means other than a menu associated with a PopupMenu
+  ///  property.</summary>
+  IPopupMenu = interface(IInterface)
+    ['{A01D903C-90B9-4D24-8B0C-D770852C6340}']
+    ///  <summary>Informs if the object has a pop-up menu available.</summary>
+    function HasPopup: Boolean;
+    ///  <summary>Displays pop-up menu at given point on screen.</summary>
+    procedure Popup(const Pt: TPoint);
+  end;
 
 type
   {TMenuItemClass:

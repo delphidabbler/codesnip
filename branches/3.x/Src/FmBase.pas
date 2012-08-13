@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -60,6 +60,7 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   strict private
     var
       fCtrlStateMgr: TControlStateMgr;  // Enables/disables all form's controls
@@ -78,6 +79,10 @@ type
       {Handles custom method that is posted just before form is shown and
       handled just after form is shown.
         @param Msg [in/out] Unused.
+      }
+    procedure ActivateContextMenu;
+      {Activates any context menu associated with active control or any of its
+      parents.
       }
   strict protected
     procedure CreateParams(var Params: TCreateParams); override;
@@ -135,15 +140,59 @@ implementation
 
 uses
   // Delphi
-  SysUtils, StrUtils, Windows,
+  SysUtils, StrUtils, Windows, Menus,
   // Project
-  UAppInfo, UBaseObjects, UFontHelper, UNulFormAligner;
+  UAppInfo, UBaseObjects, UFontHelper, UKeysHelper, UMenuHelper,
+  UNulFormAligner;
 
 
 {$R *.dfm}
 
 
+type
+  ///  <summary>Class helper that provides information about, and access to, the
+  ///  protected PopupMenu property of TControl.</summary>
+  TControlHelper = class helper for TControl
+  public
+    ///  <summary>Gets reference to pop-up menu assigned to protected PopupMenu
+    ///  property.</summary>
+    function GetPopupMenu: TPopupMenu;
+    ///  <summary>Checks if protected PopupMenu property is assigned.</summary>
+    function HasPopupMenu: Boolean;
+  end;
+
 { TBaseForm }
+
+procedure TBaseForm.ActivateContextMenu;
+  {Activates any context menu associated with active control or any of its
+  parents.
+  }
+var
+  Ctrl: TControl;       // active control or a parent that supports pop-up menu
+  MenuIntf: IPopupMenu; // interface reference to controls supporting IPopupMenu
+  PopupPos: TPoint;     // pop-up position of menu in screen co-ords
+begin
+  // search active control parents to try to find if pop-up menu supported
+  Ctrl := ActiveControl;
+  if not Assigned(Ctrl) then
+    Ctrl := Self;
+  while Assigned(Ctrl)
+    and (Ctrl <> Self)
+    and not Ctrl.HasPopupMenu
+    and not (Supports(Ctrl, IPopupMenu, MenuIntf) and MenuIntf.HasPopup) do
+    Ctrl := Ctrl.Parent;
+  if not Assigned(Ctrl) then
+    Exit;
+  // we use an arbitrary pop-up position: may be able to improve on this
+  PopupPos := Ctrl.ClientToScreen(
+    Point(40, 40)
+  );
+  // show pop-up menu, either via PopupMenu property or via IPopupMenu interface
+  if Ctrl.HasPopupMenu then
+    Ctrl.GetPopupMenu.Popup(PopupPos.X, PopupPos.Y)
+  else if Supports(Ctrl, IPopupMenu, MenuIntf) and MenuIntf.HasPopup then
+    MenuIntf.Popup(PopupPos);
+end;
 
 procedure TBaseForm.AfterShowForm;
   {Used to perform any actions that need to occur after the form has been shown
@@ -239,6 +288,17 @@ begin
   FreeAndNil(fCtrlStateMgr);
 end;
 
+procedure TBaseForm.FormKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+  {Handles form's OnKeyDown event. Traps Alt+F10 keypress and displays any
+  suitable context menu in response.
+  }
+begin
+  inherited;
+  if (Key = VK_F10) and (ExtractShiftKeys(Shift) = [ssAlt]) then
+    ActivateContextMenu;
+end;
+
 procedure TBaseForm.FormShow(Sender: TObject);
   {Handles form's OnShow event. Calls a virtual method to customise form before
   aligning it. A further virtual method is then called to initialise the form.
@@ -316,6 +376,18 @@ procedure TBaseForm.WMAfterShow(var Msg: TMessage);
   }
 begin
   AfterShowForm;
+end;
+
+{ TControlHelper }
+
+function TControlHelper.GetPopupMenu: TPopupMenu;
+begin
+  Result := PopupMenu;
+end;
+
+function TControlHelper.HasPopupMenu: Boolean;
+begin
+  Result := Assigned(PopupMenu);
 end;
 
 end.

@@ -174,13 +174,22 @@ type
         @param Value [in] Reference to required popup menu or nil if no popup
           menu required.
       }
+    procedure DisplayPopupMenu(const Pt: TPoint; const MenuID: DWORD;
+      Elem: IDispatch);
+      {Displays web browser's pop-up menu if any.
+        @param Pt [in] Co-ordinates at which to display menu.
+        @param MenuID [in] Describes type of menu required.
+        @param Elem [in] HTML element for which menu is requested.
+      }
   protected // do not make strict
     { IDocHostUIHandler overrides }
     function ShowContextMenu(const dwID: DWORD; const ppt: PPOINT;
       const pcmdtReserved: IUnknown; const pdispReserved: IDispatch): HResult;
       stdcall;
-      {Called by browser when about to display a context menu. We change
-      behaviour as required by relevant property values.
+      {Called by browser when about to display a context menu. We always handle
+      popup menu and never use IE's default menu. Whether menu is displayed
+      depends on if OnMenuPopup event is handled or if PopupMenu property is
+      set.
         @param dwID [in] Specifies identifier of the shortcut menu to be
           displayed.
         @param ppt [in] Pointer screen coordinates for the menu.
@@ -279,6 +288,16 @@ type
     function DocHeight: Integer;
       {Gets height of currently displayed document.
         @return Required height in pixels.
+      }
+    function SupportsPopupMenu: Boolean;
+      {Checks if pop-up menu(s) are supported for browser control.
+      REMARKS: Checks if either PopupMenu or OnMenuPopup are assigned.
+        @returns True if pop-up menus are supported, False if not.
+      }
+    procedure ShowPopupMenu(const Pt: TPoint);
+      {Displays any supported pop-up menu for active HTML element displayed in
+      browser control, or for body element if no element active.
+        @param Pt [in] Co-ordinates at which menu is displayed.
       }
     property UseDefaultContextMenu: Boolean
       read fUseDefaultContextMenu write fUseDefaultContextMenu default True;
@@ -457,6 +476,28 @@ begin
   fWebBrowser.OnEnter := BrowserEnter;
 end;
 
+procedure TWBUIMgr.DisplayPopupMenu(const Pt: TPoint; const MenuID: DWORD;
+  Elem: IDispatch);
+  {Displays web browser's pop-up menu if any.
+    @param Pt [in] Co-ordinates at which to display menu.
+    @param MenuID [in] Describes type of menu required.
+    @param Elem [in] HTML element for which menu is requested.
+  }
+var
+  Handled: Boolean; // flag indicating if OnPopupMenu event handled menu display
+begin
+  // Assume event handler doesn't handle context menu
+  Handled := False;
+  // Try to trigger OnMenuPopup event. Handler sets Handled to True if it
+  // actually handles the event.
+  if Assigned(fOnMenuPopup) then
+    fOnMenuPopup(Self, Pt, MenuID, Handled, Elem);
+  if not Handled and Assigned(fWebBrowser.PopupMenu) then
+    // Event handlers didn't handle context menu: display any menu referenced by
+    // PopupMenu property.
+    fWebBrowser.PopupMenu.Popup(Pt.X, Pt.Y);
+end;
+
 function TWBUIMgr.DocHeight: Integer;
   {Gets height of currently displayed document.
     @return Required height in pixels.
@@ -610,38 +651,33 @@ end;
 function TWBUIMgr.ShowContextMenu(const dwID: DWORD; const ppt: PPOINT;
   const pcmdtReserved: IInterface;
   const pdispReserved: IDispatch): HResult;
-  {Called by browser when about to display a context menu. We change behaviour
-  as required by relevant property values.
+  {Called by browser when about to display a context menu. We always handle
+  popup menu and never use IE's default menu. Whether menu is displayed depends
+  on if OnMenuPopup event is handled or if PopupMenu property is set.
     @param dwID [in] Specifies identifier of the shortcut menu to be displayed.
     @param ppt [in] Pointer screen coordinates for the menu.
     @param pcmdtReserved [in] Not used.
     @param pdispReserved [in] IDispatch interface of HTML object under mouse.
-    @return S_OK to prevent IE displaying its menu or S_FALSE to enable the IE
-      menu.
+    @return S_OK to prevent IE displaying its default context menu.
+  }
+begin
+  // Always returns S_OK to prevent IE showing own context menu
+  Result := S_OK;
+  DisplayPopupMenu(Point(ppt.X, ppt.Y), dwID, pDispReserved);
+end;
+
+procedure TWBUIMgr.ShowPopupMenu(const Pt: TPoint);
+  {Displays any supported default pop-up menu for displayed HTML document, if
+  any.
+    @param Pt [in] Co-ordinates at which menu is displayed.
   }
 var
-  Handled: Boolean; // whether program handled pop-up menu
+  BodyElem: IDispatch;
 begin
-  // Set default value of Handled: program handles if not using default IE menu
-  Handled := not fUseDefaultContextMenu;
-
-  // Try to call OnMenuPopup event
-  if Assigned(fOnMenuPopup) then
-    fOnMenuPopup(Self, Point(ppt.X, ppt.Y), dwID, Handled, pDispReserved);
-
-  // Determine whether event handler or IE display menu popup
-  if not Handled then
-    // Tell IE to use default popup menu action
-    Result := S_FALSE
-  else
-  begin
-    // Tell IE we're handling the context menu so that it will not display menu.
-    // If web browser control has popup menu assigned it is displayed, otherwise
-    // no menu shown
-    Result := S_OK;
-    if Assigned(fWebBrowser.PopupMenu) then
-      fWebBrowser.PopupMenu.Popup(ppt.X, ppt.Y);
-  end;
+  BodyElem := THTMLDocHelper.GetBodyElem(fWebBrowser.Document);
+  if not Assigned(BodyElem) then
+    Exit;
+  DisplayPopupMenu(Pt, CONTEXT_MENU_DEFAULT, BodyElem);
 end;
 
 function TWBUIMgr.ShowUI(const dwID: DWORD;
@@ -661,6 +697,15 @@ begin
   Result := inherited ShowUI(dwID, pActiveObject, pCommandTarget, pFrame, pDoc);
   if Assigned(fOnBrowserActivate) then
     fOnBrowserActivate(Self);
+end;
+
+function TWBUIMgr.SupportsPopupMenu: Boolean;
+  {Checks if pop-up menu(s) are supported for browser control.
+  REMARKS: Checks if either PopupMenu or OnMenuPopup are assigned.
+    @returns True if pop-up menus are supported, False if not.
+  }
+begin
+  Result := Assigned(OnMenuPopup) or Assigned(PopupMenu);
 end;
 
 function TWBUIMgr.TranslateAccelerator(const lpMsg: PMSG;
