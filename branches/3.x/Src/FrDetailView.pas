@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -73,8 +73,8 @@ type
       }
     procedure PopupMenuHandler(Sender: TObject; PopupPos: TPoint;
       const MenuID: DWORD; var Handled: Boolean; const Obj: IDispatch);
-      {Handles web browser UI manager's OnMenuPopupEx event. Pops up relevant
-      menu if appropriate.
+      {Handles web browser UI manager's OnMenuPopup event. Pops up relevant menu
+      if appropriate.
         @param Sender [in] Not used.
         @param PopupPos [in] Point at which menu is to be displayed.
         @param MenuID [in] Identifies kinds of menu required.
@@ -295,7 +295,7 @@ begin
     end;
   end;
   // Set pop-up menu handler for browser control
-  WBController.UIMgr.OnMenuPopupEx := PopupMenuHandler;
+  WBController.UIMgr.OnMenuPopup := PopupMenuHandler;
   // Create object to store detailed info about current view item
   fCurrentView := TViewItem.Create;
 end;

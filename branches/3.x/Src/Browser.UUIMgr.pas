@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -70,41 +70,20 @@ type
 
   {
   TWBMenuPopupEvent:
-    Event called when browser wishes to display a popup menu. A popup menu
-    should only be displayed in this event handler if Handled is true and the
-    web browser's PopupMenu property is nil, otherwise two menus will be
-    displayed.
+    Event called when browser wishes to display a popup menu. If a context menu
       @param Sender [in] Object triggering event.
       @param PopupPos [in] Position to display the menu.
       @param MenuID [in] Type of menu to be displayed - this is one of the
         CONTEXT_MENU_* values.
-      @param Handled [in/out] When called will be true if the program is to
-        display the popup menu and false if the browser is intending to display
-        the menu. Change Handled's value to change this behaviour and to
-        override the manager object's UseDefaultContextMenu property.
-  }
-  TWBMenuPopupEvent = procedure(Sender: TObject; PopupPos: TPoint;
-    const MenuID: DWORD; var Handled: Boolean) of object;
-
-  {
-  TWBMenuPopupEventEx:
-    Extended version of event called when browser wishes to display a popup
-    menu. A popup menu should only be displayed in this event handler if Handled
-    is true and the web browser's PopupMenu property is nil, otherwise two menus
-    will be displayed.
-      @param Sender [in] Object triggering event.
-      @param PopupPos [in] Position to display the menu.
-      @param MenuID [in] Type of menu to be displayed - this is one of the
-        CONTEXT_MENU_* values.
-      @param Handled [in/out] When called will be true if the program is to
-        display the popup menu and false if the browser is intending to display
-        the menu. Change Handled's value to change this behaviour and to
-        override the manager object's UseDefaultContextMenu property.
+      @param Handled [in/out] When called will be false to indicate no popup
+        menu is displayed. If a popup menu is displayed by the event handler
+        then Handled should be set to false to prevent any popup menu assigned
+        to the browser control's PopupMenu property from being displayed.
       @param Obj [in] IDispatch interface to the selected object in the current
         document when the menu was summoned. Cast this to IHTMLElement to get
         information about the selected tag.
   }
-  TWBMenuPopupEventEx = procedure(Sender: TObject; PopupPos: TPoint;
+  TWBMenuPopupEvent = procedure(Sender: TObject; PopupPos: TPoint;
     const MenuID: DWORD; var Handled: Boolean; const Obj: IDispatch)
     of object;
 
@@ -167,8 +146,6 @@ type
       {Handler for OnTranslateAccel event}
     fOnMenuPopup: TWBMenuPopupEvent;
       {Handler for OnMenuPopup event}
-    fOnMenuPopupEx: TWBMenuPopupEventEx;
-      {Handler for OnMenuPopupEx event}
     fOnUpdateCSS: TWBUpdateCSSEvent;
       {Handler for OnUpdateCSS event}
     fOnBrowserDeactivate: TNotifyEvent;
@@ -356,13 +333,6 @@ type
       {Event triggered when the browser is ready to display a popup menu. Allows
       the program to customise the menu or to display its own. See the
       documentation of TWBMenuPopupEvent for more information}
-    property OnMenuPopupEx: TWBMenuPopupEventEx
-      read fOnMenuPopupEx write fOnMenuPopupEx;
-      {Extended version of OnMenuPopup event triggered when the browser is ready
-      to display a popup menu. In addition to information made available in
-      OnMenuPopup the IDispatch interface of the object under the cursor when
-      the menu was summoned is made available. This event is only triggered if
-      OnMenuPopup has no event handler}
     property OnUpdateCSS: TWBUpdateCSSEvent
       read fOnUpdateCSS write fOnUpdateCSS;
       {Event triggered when browser needs default CSS. Provides opportunity to
@@ -655,19 +625,9 @@ begin
   // Set default value of Handled: program handles if not using default IE menu
   Handled := not fUseDefaultContextMenu;
 
-  // Try to trigger OnMenuPopup or OnMenuPopupEx events. Only one of these
-  // events is triggered: OnMenuPopupEx is only triggered if assigned and
-  // OnMenuPopup is not assigned. Handler can change value of Handled hence
-  // overriding UseDefaultContextMenu property. This permits handler to display
-  // some menu types while leaving IE to handle others, depending on system
-  // state or menu id. Note that handler should only display popup menu here if
-  // Handled is set true and web browser control has no popup menu assigned.
-  // The additional information provided by OnMenuPopupEx is the IDispatch
-  // interface of the clicked object
+  // Try to call OnMenuPopup event
   if Assigned(fOnMenuPopup) then
-    fOnMenuPopup(Self, Point(ppt.X, ppt.Y), dwID, Handled)
-  else if Assigned(fOnMenuPopupEx) then
-    fOnMenuPopupEx(Self, Point(ppt.X, ppt.Y), dwID, Handled, pDispReserved);
+    fOnMenuPopup(Self, Point(ppt.X, ppt.Y), dwID, Handled, pDispReserved);
 
   // Determine whether event handler or IE display menu popup
   if not Handled then
