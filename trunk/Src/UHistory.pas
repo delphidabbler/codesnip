@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -70,6 +70,14 @@ type
         @return Reference to current view item or nil if there is no current
           item.
       }
+    procedure DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
+    ///  <summary>Creates and returns view object for a database object.
+    ///  </summary>
+    ///  <param name="DBObj">TObject [in] Database object for which view
+    ///  required. Must be a valid databse object or nil.</param>
+    ///  <returns>IView. Required view object. If DBObj is nil a null view is
+    ///  returned.</returns>
+    function DBEventInfoToView(EvtInfo: TObject): IView;
   public
     constructor Create;
       {Constructor. Sets up and initialises object.
@@ -129,7 +137,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UExceptions;
+  DB.UCategory, DB.UMain, DB.USnippet, UExceptions;
 
 
 { THistory }
@@ -175,12 +183,45 @@ begin
   inherited;
   fItems := THistoryList.Create;
   Clear;
+  Database.AddChangeEventHandler(DBChangeHandler);
+end;
+
+procedure THistory.DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
+var
+  EventInfo: IDatabaseChangeEventInfo;  // information about the event
+begin
+  EventInfo := EvtInfo as IDatabaseChangeEventInfo;
+  // Clear history if snippet or category changed or removed
+  case EventInfo.Kind of
+    evSnippetDeleted, evSnippetChanged,
+    evCategoryDeleted, evCategoryChanged:
+      Clear;
+    evSnippetAdded, evCategoryAdded:
+      NewItem(DBEventInfoToView(EventInfo.Info));
+  end;
+end;
+
+function THistory.DBEventInfoToView(EvtInfo: TObject): IView;
+begin
+  { TODO: This duplicates method of same name in TMainDisplayMgr - Move
+          to TViewItemFactory as CreateDBView method (param=DBObj)? }
+  { TODO: If this method moved, remove DB.UCategory & DB.USnippet from uses
+          clause. }
+  Result := nil;
+  if not Assigned(EvtInfo) then
+    Result := TViewFactory.CreateNulView
+  else if EvtInfo is TSnippet then
+    Result := TViewFactory.CreateSnippetView(EvtInfo as TSnippet)
+  else if EvtInfo is TCategory then
+    Result := TViewFactory.CreateCategoryView(EvtInfo as TCategory);
+  Assert(Assigned(Result), ClassName + '.DBEventInfoToView: Result is nil');
 end;
 
 destructor THistory.Destroy;
   {Destructor. Tears down object.
   }
 begin
+  Database.RemoveChangeEventHandler(DBChangeHandler);
   fItems.Free;
   inherited;
 end;
