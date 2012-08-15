@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -186,16 +186,16 @@ procedure TUnitsChkListMgr.InitStandardUnits;
   }
 const
   // list of standard units
-  cStdUnits: array[1..9] of string = (
+  StdUnits: array[1..10] of string = (
     'SysUtils', 'Classes', 'Controls', 'Messages',
-    'Windows', 'Graphics', 'ShlObj', 'ShellAPI', 'ActiveX'
+    'Windows', 'Graphics', 'Types', 'ShlObj', 'ShellAPI', 'ActiveX'
   );
 var
-  Idx: Integer; // loops thru all standard units
+  StdUnit: string;  // each standard unit in list
 begin
   fCLB.Clear;
-  for Idx := Low(cStdUnits) to High(cStdUnits) do
-    fCLB.Items.Add(cStdUnits[Idx]);
+  for StdUnit in StdUnits do
+    fCLB.Items.Add(StdUnit);
 end;
 
 function TUnitsChkListMgr.IsValidUnitName(const UnitName: string): Boolean;
