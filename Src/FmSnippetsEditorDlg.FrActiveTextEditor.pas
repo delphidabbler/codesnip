@@ -23,7 +23,8 @@ interface
 
 uses
   // Delphi
-  Forms, ComCtrls, Menus, Classes, ActnList, Controls, StdCtrls,
+  Forms, ComCtrls, Menus, Classes, ActnList, Controls, StdCtrls, ImgList,
+  StdActns,
   // Project
   ActiveText.UMain;
 
@@ -32,7 +33,7 @@ type
   TSnippetsActiveTextEdFrame = class(TFrame)
     edText: TMemo;
     alEditor: TActionList;
-    mnuEdit: TPopupMenu;
+    mnuEditor: TPopupMenu;
     miConvertToPlainText: TMenuItem;
     miConvertToREML: TMenuItem;
     actConvertToPlainText: TAction;
@@ -40,6 +41,20 @@ type
     actSwitchToPlainTextMode: TAction;
     actSwitchToREMLMode: TAction;
     tcEditMode: TTabControl;
+    ilEditor: TImageList;
+    actCut: TEditCut;
+    actCopy: TEditCopy;
+    actPaste: TEditPaste;
+    actSelectAll: TEditSelectAll;
+    actUndo: TEditUndo;
+    miSpace1: TMenuItem;
+    miCut: TMenuItem;
+    miCopy: TMenuItem;
+    miPaste: TMenuItem;
+    miSelectAll: TMenuItem;
+    miSpacer2: TMenuItem;
+    miUndo: TMenuItem;
+    miSpacer3: TMenuItem;
     procedure actConvertToPlainTextExecute(Sender: TObject);
     procedure actConvertToREMLExecute(Sender: TObject);
     procedure actSwitchToPlainTextModeExecute(Sender: TObject);
