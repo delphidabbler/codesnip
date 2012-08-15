@@ -45,14 +45,6 @@ object SnippetsActiveTextEdFrame: TSnippetsActiveTextEdFrame
       OnExecute = actConvertToREMLExecute
       OnUpdate = actConvertToREMLUpdate
     end
-    object actSwitchToPlainTextMode: TAction
-      Caption = 'Plain Text'
-      OnExecute = actSwitchToPlainTextModeExecute
-    end
-    object actSwitchToREMLMode: TAction
-      Caption = 'Markup'
-      OnExecute = actSwitchToREMLModeExecute
-    end
     object actCut: TEditCut
       Category = 'Edit'
       Caption = 'Cu&t'
