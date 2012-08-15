@@ -153,7 +153,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           inherited edText: TMemo
             Width = 462
             Height = 55
-            ExplicitTop = 0
             ExplicitWidth = 462
             ExplicitHeight = 55
           end
@@ -177,6 +176,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Top = 34
           Width = 298
           Height = 21
+          PopupMenu = mnuEditCtrls
           TabOrder = 1
         end
         object chkUseHiliter: TCheckBox
@@ -257,6 +257,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Top = 398
           Width = 117
           Height = 21
+          PopupMenu = mnuEditCtrls
           TabOrder = 4
         end
         object btnAddUnit: TButton
@@ -319,7 +320,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           inherited edText: TMemo
             Width = 648
             Height = 358
-            ExplicitTop = 0
             ExplicitWidth = 648
             ExplicitHeight = 358
           end
