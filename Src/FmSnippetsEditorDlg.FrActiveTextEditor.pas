@@ -38,8 +38,6 @@ type
     miConvertToREML: TMenuItem;
     actConvertToPlainText: TAction;
     actConvertToREML: TAction;
-    actSwitchToPlainTextMode: TAction;
-    actSwitchToREMLMode: TAction;
     tcEditMode: TTabControl;
     ilEditor: TImageList;
     actCut: TEditCut;
@@ -57,8 +55,6 @@ type
     miSpacer3: TMenuItem;
     procedure actConvertToPlainTextExecute(Sender: TObject);
     procedure actConvertToREMLExecute(Sender: TObject);
-    procedure actSwitchToPlainTextModeExecute(Sender: TObject);
-    procedure actSwitchToREMLModeExecute(Sender: TObject);
     procedure actConvertToPlainTextUpdate(Sender: TObject);
     procedure actConvertToREMLUpdate(Sender: TObject);
     procedure tcEditModeChange(Sender: TObject);
@@ -145,18 +141,6 @@ function TSnippetsActiveTextEdFrame.ActiveTextToREML(ActiveText: IActiveText):
   string;
 begin
   Result := TSnippetExtraHelper.BuildREMLMarkup(ActiveText);
-end;
-
-procedure TSnippetsActiveTextEdFrame.actSwitchToPlainTextModeExecute(
-  Sender: TObject);
-begin
-  SetEditMode(emPlainText);
-end;
-
-procedure TSnippetsActiveTextEdFrame.actSwitchToREMLModeExecute(
-  Sender: TObject);
-begin
-  SetEditMode(emREML);
 end;
 
 function TSnippetsActiveTextEdFrame.CanPreview: Boolean;
