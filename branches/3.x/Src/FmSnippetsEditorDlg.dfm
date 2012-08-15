@@ -19,7 +19,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       Top = 0
       Width = 646
       Height = 465
-      ActivePage = tsCompileResults
+      ActivePage = tsCode
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
@@ -208,6 +208,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Top = 398
           Width = 117
           Height = 21
+          PopupMenu = mnuEditCtrls
           TabOrder = 4
         end
         object btnAddUnit: TButton
@@ -230,10 +231,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsComments: TTabSheet
         Caption = 'Extra Information'
         ImageIndex = 2
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblExtra: TLabel
           Left = 3
           Top = 3
