@@ -19,7 +19,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       Top = 0
       Width = 646
       Height = 465
-      ActivePage = tsCode
+      ActivePage = tsReferences
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
@@ -185,22 +185,12 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           TabOrder = 1
         end
         object clbUnits: TCheckListBox
-          Left = 435
+          Left = 434
           Top = 22
           Width = 198
           Height = 368
           IntegralHeight = True
           ItemHeight = 13
-          Items.Strings = (
-            'SysUtils'
-            'Classes'
-            'Controls'
-            'Messages'
-            'Windows'
-            'Graphics'
-            'ShlObj'
-            'ShellAPI'
-            'ActiveX')
           TabOrder = 3
         end
         object edUnit: TEdit
