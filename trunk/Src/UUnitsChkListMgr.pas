@@ -204,7 +204,7 @@ function TUnitsChkListMgr.IsValidUnitName(const UnitName: string): Boolean;
     @return True if UnitName is valid, False if not.
   }
 begin
-  Result := IsValidIdent(UnitName);
+  Result := IsValidIdent(UnitName, True); // allow dots in unit name
 end;
 
 end.
