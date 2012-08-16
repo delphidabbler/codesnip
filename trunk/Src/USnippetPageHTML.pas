@@ -264,7 +264,7 @@ var
   Fragment: TSnippetHTMLFragment;
 
 begin
-  PageStruct := Preferences.PageStructures.PageStructure(Snippet.Kind);
+  PageStruct := Preferences.PageStructures[Snippet.Kind];
   SB := TStringBuilder.Create;
   try
     for Part in PageStruct.Parts do

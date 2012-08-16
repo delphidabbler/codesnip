@@ -81,16 +81,29 @@ type
     var
       fPages: array[TSnippetKind] of TSnippetPageStructure;
     function GetPages: TArray<TSnippetPageStructure>;
+    function GetPage(Kind: TSnippetKind): TSnippetPageStructure;
+  strict private
+    type
+      TEnumerator = class(TObject)
+      strict private
+        var
+          fCurrentIdx: Integer;
+          fPages: TArray<TSnippetPageStructure>;
+        function GetCurrent: TSnippetPageStructure;
+      public
+        property Current: TSnippetPageStructure read GetCurrent;
+        function MoveNext: Boolean;
+        constructor Create(const Pages: TArray<TSnippetPageStructure>);
+      end;
   public
     constructor Create;
     destructor Destroy; override;
-    { TODO: rationalise Pages and PageStructures - use default array property
-            and enumerator for object }
-    property Pages: TArray<TSnippetPageStructure> read GetPages;
-    function PageStructure(const Kind: TSnippetKind): TSnippetPageStructure;
     ///  <summary>Assigns properties of another TSnippetPageStructures instance
     ///  to this object.</summary>
     procedure Assign(const Src: TSnippetPageStructures);
+    function GetEnumerator: TEnumerator;
+    property Pages[Kind: TSnippetKind]: TSnippetPageStructure
+      read GetPage; default;
   end;
 
 type
@@ -161,7 +174,6 @@ begin
   Clear;
   for Part in Src.fParts do
     fParts.Add(Part);
-  // TODO: decide whether to only permit assignment from structure of same kind
   fKind := Src.fKind;
 end;
 
@@ -252,6 +264,17 @@ begin
   inherited;
 end;
 
+function TSnippetPageStructures.GetEnumerator: TEnumerator;
+begin
+  Result := TEnumerator.Create(GetPages);
+end;
+
+function TSnippetPageStructures.GetPage(
+  Kind: TSnippetKind): TSnippetPageStructure;
+begin
+  Result := fPages[Kind];
+end;
+
 function TSnippetPageStructures.GetPages: TArray<TSnippetPageStructure>;
 var
   Idx: Integer;
@@ -264,12 +287,6 @@ begin
     Result[Idx] := Page;
     Inc(Idx);
   end;
-end;
-
-function TSnippetPageStructures.PageStructure(
-  const Kind: TSnippetKind): TSnippetPageStructure;
-begin
-  Result := fPages[Kind];
 end;
 
 { TSnippetPageStructuresPersist }
@@ -305,7 +322,7 @@ var
   end;
 
 begin
-  for Page in PageStructs.Pages do
+  for Page in PageStructs do
   begin
     Page.Clear;
     PartIds := ParsePartsStr(Storage.ItemValues[KindValueName(Page)]);
@@ -332,7 +349,7 @@ var
   end;
 
 begin
-  for Page in PageStructs.Pages do
+  for Page in PageStructs do
     Storage.ItemValues[KindValueName(Page)] := KindValues(Page);
   Storage.Save;
 end;
@@ -446,11 +463,34 @@ class procedure TDefaultPageStructures.SetDefaults(PS: TSnippetPageStructures);
 var
   Page: TSnippetPageStructure;
 begin
-  for Page in PS.Pages do
+  for Page in PS do
   begin
     Page.Clear;
     Page.AppendParts(GetParts(Page.Kind));
   end;
+end;
+
+{ TSnippetPageStructures.TEnumerator }
+
+constructor TSnippetPageStructures.TEnumerator.Create(
+  const Pages: TArray<TSnippetPageStructure>);
+begin
+  inherited Create;
+  fPages := Pages;
+  fCurrentIdx := -1;
+end;
+
+function TSnippetPageStructures.TEnumerator.GetCurrent: TSnippetPageStructure;
+begin
+  Result := fPages[fCurrentIdx];
+end;
+
+function TSnippetPageStructures.TEnumerator.MoveNext: Boolean;
+begin
+  if fCurrentIdx >= Length(fPages) then
+    Exit(False);
+  Inc(fCurrentIdx);
+  Result := fCurrentIdx < Length(fPages);
 end;
 
 end.
