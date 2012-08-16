@@ -153,7 +153,7 @@ web service:
 
     * The CodeSnip program version number.
     * Your name, email address any comments entered in the wizard.
-    * All the snippets you choose to send.
+    * All the snippets you chose to send.
 
 You can preview the data to be sent (in XML format) from the wizard. The XML
 will be stored in a file on the DelphiDabbler server until processed. The data
@@ -172,7 +172,7 @@ This action is performed by selecting the "Help | CodeSnip News" menu option or
 by clicking the "Latest News" button in the "Update from Web" dialogue box.
 
 CodeSnip simply requests an XML document containing an RSS 2.0 news feed from
-the DelphiDabbler website. No personal information is ?included in the request.
+the DelphiDabbler website. No personal information is included in the request.
 
 
 Checking for program updates
@@ -196,9 +196,10 @@ DelphiDabbler.com to be displayed in your default web browser.
 In addition, various links in the program's main display, some dialogue boxes
 and the help file access remote websites which are displayed in your default
 browser. You should refer to the relevant website's privacy policies to learn
-how they use any data you supply when visiting their pages. DelphiDabbler has no
-control over the content of linked third party websites and you follow such
-links at your own risk.
+how they use any data you supply when visiting their pages.
+
+DelphiDabbler has no control over the content of linked third party websites and
+you follow such links at your own risk.
 
 
 Accessing the internet using a proxy server
@@ -206,9 +207,11 @@ Accessing the internet using a proxy server
 
 CodeSnip can be configured to use a proxy server to access the internet. In this
 case the program sends the appropriate user name and password to the proxy
-server if required. DelphiDabbler has no control over the proxy server and you
-should satisfy yourself that the proxy you use is trustworthy. You use this
-feature at your own risk.
+server if required.
+
+DelphiDabbler has no control over the proxy server and you should satisfy
+yourself that the proxy you use is trustworthy. You use this feature at your own
+risk.
 
 
 ================================================================================
