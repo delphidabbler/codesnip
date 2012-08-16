@@ -20,7 +20,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s):
@@ -210,6 +210,23 @@
           identifiers in the source code with the unit name, e.g.
           <code>Graphics.TBitmap</code>.
         </div>
+        <div>
+          <strong class="warning">NOTE:</strong> If you intend to test compile
+          your snippet with Delphi XE2 you will need to make sure it is
+          configured to search the namespaces containing the units you list
+          here. Do this in the <a href="dlg_configcompilers.htm">Configure
+          Compilers</a> dialogue box. Use the <em>Command Line</em> tab to enter
+          an <code>-NS</code> &quot;switch&quot; that has a semi-colon separated
+          list of namespaces appended to it. For example
+          <code>-NSSystem;WinAPI</code> causes the compiler to search the
+          <var>System</var> and <var>WinAPI</var> namespaces. You can see a list
+          of namespaces with the units they contain in the <a
+            href="http://docwiki.embarcadero.com/RADStudio/en/Unit_Scope_Names"
+            class="weblink"
+            target="_blank"
+          >Unit Scope Names</a> topic of the Embarcadero RADStudio
+          documentation.
+        </div>
       </li>
       <li>
         <div>
@@ -221,9 +238,9 @@
           Unit</em> button. The unit will be added to the <em>Units</em> check
           list box and its check box will be checked.
         </div>
-      </li>
+       </li>
     </ul>
-    <h3>
+   <h3>
       Extra Information Tab
     </h3>
     <p>
