@@ -29,16 +29,19 @@ the look and feel may change by the final release.
 
 If you accept the default install path, or specify a unique install path it will
 install alongside any v3 release and will not affect the v3 release in any way.
-The program will copy over any user defined snippets from a pre-existing v3
-installation and will preserve most if not all settings. Any v4 preview (alpha)
-release will be overwritten.
+
+If you have not created a user database using any v4 preview or beta releases
+the program will offer to copy over any user defined snippets from a
+pre-existing v3 and can preserve most if not all settings. Any v4 preview or
+earlier beta release will be overwritten.
 
 Any user defined snippets you edit will not be reflected in any v3 installation
 and any settings you change won't affect the v3 install.
 
 Nearly all the file formats have been changed from v3, so export and backup
 files are not compatible with v3 and earlier. Don't expect any backups or
-export files you create to work with v3.
+export files you create to work with v3. However files created by v3 can be read
+by v4.
 
 If you have been using one of the CodeSnip 4 previews this beta will attempt to
 bring forward all settings from that. If you don't want to do that, follow the
@@ -89,7 +92,7 @@ New features of v4 to date worth trying out are:
 * You can use Unicode source code.
 
 * The structure of snippet pages in the details pane is now customisable:
-  various page elements can be omitted and order of elements can be changed.
+  various page elements can be omitted and the order of elements can be changed.
   Each snippet type has its own page customisation. The colours used for Snippet
   and other headings can now be customised.
 
@@ -102,11 +105,11 @@ New features of v4 to date worth trying out are:
   of no interest to you.
 
 * There is a new option on the Tools menu that checks availability of new
-  versions of CodeSnip. Note though that this does not report new beta's, only
+  versions of CodeSnip. Note though that this does not report new betas, only
   final releases.
 
-For other features of the v4 beta please read the change log for this release
-and all the v4 previews at http://delphidabbler.com/software/codesnip/log?v=4
+For other features of v4 please read the change log for this release and all
+earlier betas and previews at http://delphidabbler.com/software/codesnip/log?v=4
 
 Bugs and Feature Requests
 -------------------------
@@ -116,7 +119,7 @@ the program version you are using (see about box).
 
 Request new features at http://www.delphidabbler.com/url/codesnip-featurereq.
 No more new features will be implemented in release 4.0, but I will consider
-them for other 4.x point releases.
+them for other v4.x point releases.
 
 
 Installation
@@ -170,8 +173,8 @@ The installer makes the following changes to your system:
 + A %AppData%\DelphiDabbler\CodeSnip.4 folder is also created. This is used to
   hold a file that stores per-user configuration data. A "UserDatabase" sub-
   folder is used to store any user defined snippets. This happens only for the
-  user installing the program. Other users will have default folders and config
-  files created when they first run CodeSnip.
+  user installing the program. Other users will have different default folders
+  and config files created when they first run CodeSnip.
 
 
 Downloading the Database
@@ -179,8 +182,8 @@ Downloading the Database
 
 The main CodeSnip database is not installed with the program. However, an older
 installation may be present. Setup will try to use any older installation's
-database if present. When setup completes it checks for a database and puts up a
-message if none is present.
+database if possible. When setup completes it checks for a database and puts up
+a message if none is present.
 
 When CodeSnip is first run it detects if there is no database and displays
 message to that effect in its main window. A link is displayed that can be used
@@ -210,9 +213,9 @@ dialogue" in the help file index).
 
 Each user can configure compilers differently.
 
-Some problems test compiling with Delphi XE2 have been reported. For an
-explanation and a work-around see the FAQ at
-http://wiki.delphidabbler.com/index.php/FAQs/CodeSnipAppUsing#FAQ7
+Delphi XE2 may need to be configured to search the namespaces containing any
+required units. This is explaned in the Add/Edit Snippet Dialogue Box help
+topic. Alternatively see the FAQ at http://wiki.delphidabbler.com/index.php/FAQs/CodeSnipAppUsing#FAQ7
 
 
 Registration
@@ -222,7 +225,8 @@ Registration of CodeSnip is not required, but the author would be grateful if
 you do register the program, just so he knows it is being used.
 
 To register click the "Tools | Register CodeSnip" menu item and follow the
-wizard.
+wizard. If this menu option is not displayed then the program has already been
+registered.
 
 On systems with multiple users, only one user needs to register. Once this is
 done the program will show as registered regardless of which user is logged on.
@@ -246,11 +250,12 @@ defined database intact.
 Updating the Database
 ================================================================================
 
-From time to time you should check for updates to the CodeSnip database. This is
-done by selecting the program's "Database | Update From Web" menu option.
+From time to time you should check for updates to the online code snippets
+database. This is done by selecting the program's "Database | Update From Web"
+menu option.
 
-It should be sufficient to check for updates about once per month. You can get
-to know about updates by subscribing to the CodeSnip RSS feed (see below).
+You can get to know about updates by subscribing to the CodeSnip RSS feed (see
+below).
 
 Updates will apply to all users of the computer.
 
@@ -260,7 +265,7 @@ Updating the Program
 
 You can use the "Tools | Check For Program Updates" menu option to find out if
 an updated version of CodeSnip is available. If so you will be directed to a
-page onb delphidabbler.com from where the updated program can be downloaded.
+page on delphidabbler.com from where the updated program can be downloaded.
 
 Note that new betas and previews are not notified using this method. You will
 need to keep an eye of the CodeSnip news feed to find out when these programs
@@ -381,7 +386,7 @@ Having said that, it takes time and money to maintain CodeSnip and the online
 database. So if you wish to make a contribution it will be most welcome.
 
 Payment in pounds sterling can be made via this address -
-http://www.delphidabbler.com/url/donate-cs which redirects to a secure PayPal
+http://www.delphidabbler.com/url/donate-cs - which redirects to a secure PayPal
 page.
 
 
