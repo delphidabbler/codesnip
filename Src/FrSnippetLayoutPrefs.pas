@@ -102,7 +102,7 @@ begin
   DestIdx := lbAvailableFragments.Items.AddObject(
     TAllSnippetPageParts.Parts[SrcPartId].DisplayName, TObject(SrcPartId)
   );
-  fPageStructs.PageStructure(SelectedKind).DeletePart(SrcIdx);
+  fPageStructs[SelectedKind].DeletePart(SrcIdx);
   lbAvailableFragments.ItemIndex := DestIdx;
   lbUsedFragments.Items.Delete(SrcIdx);
   if SrcIdx >= lbUsedFragments.Items.Count then
@@ -131,7 +131,7 @@ begin
   DestIdx := lbUsedFragments.Items.AddObject(
     TAllSnippetPageParts.Parts[SrcPartId].DisplayName, TObject(SrcPartId)
   );
-  fPageStructs.PageStructure(SelectedKind).InsertPart(DestIdx, SrcPartId);
+  fPageStructs[SelectedKind].InsertPart(DestIdx, SrcPartId);
   lbUsedFragments.ItemIndex := DestIdx;
   lbAvailableFragments.Items.Delete(SrcIdx);
   if SrcIdx >= lbAvailableFragments.Items.Count then
@@ -160,7 +160,7 @@ var
 begin
   OldIdx := lbUsedFragments.ItemIndex;
   NewIdx := Succ(OldIdx);
-  fPageStructs.PageStructure(SelectedKind).MovePart(OldIdx, NewIdx);
+  fPageStructs[SelectedKind].MovePart(OldIdx, NewIdx);
   lbUsedFragments.Items.Move(OldIdx, NewIdx);
   lbUsedFragments.ItemIndex := NewIdx;
   Changed;
@@ -179,7 +179,7 @@ var
 begin
   OldIdx := lbUsedFragments.ItemIndex;
   NewIdx := Pred(OldIdx);
-  fPageStructs.PageStructure(SelectedKind).MovePart(OldIdx, NewIdx);
+  fPageStructs[SelectedKind].MovePart(OldIdx, NewIdx);
   lbUsedFragments.Items.Move(OldIdx, NewIdx);
   lbUsedFragments.ItemIndex := NewIdx;
   Changed;
@@ -314,7 +314,7 @@ begin
   try
     lbAvailableFragments.Items.Clear;
     for PartId := Low(TSnippetPagePartId) to High(TSnippetPagePartId) do
-      if not fPageStructs.PageStructure(SelectedKind).HasPart(PartId) then
+      if not fPageStructs[SelectedKind].HasPart(PartId) then
         lbAvailableFragments.Items.AddObject(
           TAllSnippetPageParts.Parts[PartId].DisplayName, TObject(PartId)
         );
@@ -327,7 +327,7 @@ begin
   lbUsedFragments.Items.BeginUpdate;
   try
     lbUsedFragments.Items.Clear;
-    for Part in fPageStructs.PageStructure(SelectedKind).Parts do
+    for Part in fPageStructs[SelectedKind].Parts do
       lbUsedFragments.Items.AddObject(Part.DisplayName, TObject(Part.Id));
     if lbUsedFragments.Items.Count >= 0 then
       lbUsedFragments.ItemIndex := 0;
