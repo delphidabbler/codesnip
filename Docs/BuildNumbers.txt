@@ -4,6 +4,7 @@ List of build numbers used for various CodeSnip releases
 
 ================================================================================
 
+203   v3.10.4 of 16 August 2012
 202   v4.0 beta 1 09 August 2012 (Internal version 3.99.1)
 201   v3.10.3 of 25 July 2012
 200   v3.10.2 of 19 June 2012
