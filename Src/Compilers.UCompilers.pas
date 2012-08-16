@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -95,8 +95,8 @@ uses
   // Delphi
   Generics.Collections, SysUtils,
   // Project
-  Compilers.UBDS, Compilers.UDelphi, Compilers.UFreePascal,
-  Compilers.USearchDirs, IntfCommon, UExceptions, UIStringList, USettings;
+  Compilers.UBDS, Compilers.UDelphi, Compilers.UFreePascal, IntfCommon,
+  UExceptions, USettings;
 
 
 type
@@ -124,8 +124,7 @@ type
     ICompilers, IAssignable
   )
   strict private
-    var
-      fCompilers: TList<ICompiler>; // List of compiler objects
+    var fCompilers: TList<ICompiler>; // List of compiler objects
   protected // do not make strict
     { IAssignable method }
     procedure Assign(const Src: IInterface);
@@ -147,10 +146,6 @@ type
     function GetAvailableCount: Integer;
       {Read access method for AvailableCount property
         @return Number of installed compilers available to program.
-      }
-    function HaveDisplayable: Boolean;
-      {Checks if any compilers are displayable.
-        @return True if at least one compiler is displayable, False otherwise.
       }
     function GetEnumerator: TEnumerator<ICompiler>;
       {Creates an enumerator for this object.
@@ -261,7 +256,7 @@ var
   Compiler: ICompiler;  // loops thru all compilers
 begin
   Result := 0;
-  for Compiler in fCompilers do
+  for Compiler in (Self as ICompilers) do
     if Compiler.IsAvailable then
       Inc(Result);
 end;
@@ -292,16 +287,6 @@ begin
   Result := fCompilers.GetEnumerator;
 end;
 
-function TCompilers.HaveDisplayable: Boolean;
-var
-  Compiler: ICompiler;  // each compiler
-begin
-  for Compiler in fCompilers do
-    if Compiler.GetDisplayable then
-      Exit(True);
-  Result := False;
-end;
-
 { TPersistCompilers }
 
 procedure TPersistCompilers.Load(const Compilers: ICompilers);
@@ -309,12 +294,11 @@ procedure TPersistCompilers.Load(const Compilers: ICompilers);
     @param Compilers [in] List of compilers to load.
   }
 var
-  Compiler: ICompiler;                  // refers to each compiler
-  Prefixes: TCompLogPrefixes;           // compiler log prefixes from storage
-  PrefixID: TCompLogPrefixID;           // loops thru all compiler log prefixes
-  Storage: ISettingsSection;            // accesses persistent storage
-  ExePath: string;                      // value of ExePath in storage file
-  SearchDirNames: IStringList;          // list of search directory names
+  Compiler: ICompiler;        // refers to each compiler
+  Prefixes: TCompLogPrefixes; // compiler log prefixes from storage
+  PrefixID: TCompLogPrefixID; // loops thru all compiler log prefixes
+  Storage: ISettingsSection;  // object used to access persistent storage
+  ExePath: string;            // value of ExePath value in storage file
 begin
   // Loop thru each supported compiler
   for Compiler in Compilers do
@@ -329,11 +313,6 @@ begin
     if ExePath <> '' then
       Compiler.SetExecFile(ExePath);
 
-    // Get compiler visibility in UI
-    Compiler.SetDisplayable(
-      Boolean(StrToIntDef(Storage.ItemValues['Displayable'], Ord(True)))
-    );
-
     // Load compiler log prefixes (format PrefixX)
     for PrefixID := Low(TCompLogPrefixID) to High(TCompLogPrefixID) do
       Prefixes[PrefixID] :=
@@ -343,10 +322,6 @@ begin
     // Load command line switches (empty entry => use default)
     if Storage.ItemExists('Switches') then
       Compiler.SetSwitches(Storage.ItemValues['Switches']);
-
-    // Load search directories
-    SearchDirNames := Storage.GetStrings('SearchDirCount', 'SearchDir%d');
-    Compiler.SetSearchDirs(TSearchDirs.Create(SearchDirNames.ToArray));
   end;
 end;
 
@@ -355,11 +330,10 @@ procedure TPersistCompilers.Save(const Compilers: ICompilers);
     @param Compilers [in] List of compilers to save.
   }
 var
-  Compiler: ICompiler;          // refers to each compiler
-  Prefixes: TCompLogPrefixes;   // compiler log prefixes from storage
-  PrefixID: TCompLogPrefixID;   // loops thru all compiler log prefixes
-  Storage: ISettingsSection;    // object used to access persistent storage
-  SearchDirNames: IStringList;  // list of search directory names
+  Compiler: ICompiler;        // refers to each compiler
+  Prefixes: TCompLogPrefixes; // compiler log prefixes from storage
+  PrefixID: TCompLogPrefixID; // loops thru all compiler log prefixes
+  Storage: ISettingsSection;  // object used to access persistent storage
 begin
   for Compiler in Compilers do
   begin
@@ -368,15 +342,12 @@ begin
     Storage := Settings.EmptySection(ssCompilerInfo, Compiler.GetIDString);
     // add required data to storage object
     Storage.ItemValues['ExePath'] := Compiler.GetExecFile;
-    Storage.ItemValues['Displayable'] := IntToStr(Ord(Compiler.GetDisplayable));
     Prefixes := Compiler.GetLogFilePrefixes;
     for PrefixID := Low(TCompLogPrefixID) to High(TCompLogPrefixID) do
       Storage.ItemValues[Format('Prefix%d', [Ord(PrefixID)])] :=
         '"' + Prefixes[PrefixID] + '"';
     if Compiler.GetSwitches <> Compiler.GetDefaultSwitches then
       Storage.ItemValues['Switches'] := Compiler.GetSwitches;
-    SearchDirNames := TIStringList.Create(Compiler.GetSearchDirs.ToStrings);
-    Storage.SetStrings('SearchDirCount', 'SearchDir%d', SearchDirNames);
     // save the data
     Storage.Save;
   end;

@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -168,7 +168,7 @@ procedure TSplashForm.pbMainPaint(Sender: TObject);
 var
   GIF: TGIFImage; // main splash image
 const
-  cVerPos: TPoint = (X: 34; Y: 118);  // position of version info text
+  cVerPos: TPoint = (X: 46; Y: 113);  // position of version info text
 begin
   // Load and display splash screen image
   GIF := TGIFImage.Create;

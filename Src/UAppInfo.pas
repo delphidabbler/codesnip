@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -65,8 +65,6 @@ type
       {Name of "company" that owns this program}
     const ProgramName = 'CodeSnip';
       {Name of program}
-    const ProgramCaption = ProgramName;
-      {Name of program displayed in main window and task bar caption}
     const FullProgramName = CompanyName + ' ' + ProgramName;
       {Full name of program, including company name}
     const ProgramID = 'codesnip';
@@ -149,7 +147,7 @@ uses
   // DelphiDabbler library
   PJMD5,
   // Project
-  USettings, UStrUtils, USystemID, USystemInfo, UVersionInfo;
+  USettings, USystemID, USystemInfo, UVersionInfo;
 
 
 { TAppInfo }
@@ -159,7 +157,7 @@ class function TAppInfo.AppDataDir: string;
     @return Full path to database sub directory.
   }
 begin
-  Result := CommonAppDir + '\Database';
+  Result := CommonAppDir + '\Data';
 end;
 
 class function TAppInfo.AppExeDir: string;
@@ -184,7 +182,7 @@ class function TAppInfo.CommonAppDir: string;
     @return Full path to common application data directory.
   }
 begin
-  Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.4';
+  Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip';
 end;
 
 class function TAppInfo.GenerateKey: string;
@@ -192,7 +190,7 @@ class function TAppInfo.GenerateKey: string;
     @return Required key.
   }
 begin
-  Result := StrToUpper(
+  Result := UpperCase(
     TPJMD5.Calculate(
       USystemID.SystemIDStr, TEncoding.ASCII
     )
@@ -246,7 +244,7 @@ begin
   begin
     // Key not present: create and store it
     Result := GenerateKey;
-    Section.ItemValues['Key'] := Result;
+    Section.ItemValues['Key'] := Result;                  
     Section.Save;
   end;
 end;
@@ -257,9 +255,9 @@ class function TAppInfo.ProgramReleaseInfo: string;
     @return Release information.
   }
 begin
-  Result := StrTrim(TVersionInfo.ProductVersionStr);
-  if StrTrim(TVersionInfo.SpecialBuildStr) <> '' then
-    Result := Result + '-' + StrTrim(TVersionInfo.SpecialBuildStr);
+  Result := Trim(TVersionInfo.ProductVersionStr);
+  if Trim(TVersionInfo.SpecialBuildStr) <> '' then
+    Result := Result + '-' + Trim(TVersionInfo.SpecialBuildStr);   
 end;
 
 class function TAppInfo.ProgramReleaseVersion: string;
@@ -292,7 +290,7 @@ var
 begin
   Section := Settings.ReadSection(ssApplication);
   Section.ItemValues['RegCode'] := Code;
-  Section.ItemValues['RegName'] := Name;
+  Section.ItemValues['RegName'] := Name;                   
   Section.Save;
 end;
 
@@ -313,7 +311,7 @@ class function TAppInfo.UserAppDir: string;
     @return Full path to per-user application data directory.
   }
 begin
-  Result := TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip.4';
+  Result := TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip';
 end;
 
 class function TAppInfo.UserDataDir: string;
@@ -321,7 +319,7 @@ class function TAppInfo.UserDataDir: string;
     @return Full path to database sub directory.
   }
 begin
-  Result := UserAppDir + '\UserDatabase';
+  Result := UserAppDir + '\UserData.3';
 end;
 
 end.

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -137,8 +137,8 @@ uses
   // Delphi
   SysUtils, Forms,
   // Project
-  UAppInfo, UFontHelper, UCtrlArranger, UMessageBox, UStrUtils, USystemInfo,
-  UUserDetails, UUserDetailsPersist, Web.URegistrar;
+  UAppInfo, UFontHelper, UCtrlArranger, UMessageBox, USystemInfo, UUserDetails,
+  Web.URegistrar;
 
 
 {$R *.dfm}
@@ -222,7 +222,7 @@ begin
   Report.Values['ProgName'] := TAppInfo.ProgramName;
   Report.Values['ProgVer'] := TAppInfo.ProgramReleaseVersion;
   Report.Values['ProgKey'] := TAppInfo.ProgramKey;
-  Report.Values['UserName'] := StrTrim(edName.Text);
+  Report.Values['UserName'] := Trim(edName.Text);
   Report.Values['OSDesc'] :=
     Format('%0:s. IE Version %1:d.', [TOSInfo.Description, TOSInfo.BrowserVer]);
 end;
@@ -246,7 +246,7 @@ begin
     // register with server
     edRegCode.Text := RegisterWithWebServer;
     // record registration & user details
-    UserDetails := TUserDetails.Create(StrTrim(edName.Text), '');
+    UserDetails := TUserDetails.Create(Trim(edName.Text), '');
     TAppInfo.RegisterProgram(edRegCode.Text, UserDetails.Name);
     TUserDetailsPersist.Update(UserDetails);
     fRegistered := True;
@@ -353,7 +353,7 @@ function TRegistrationDlg.ValidateUserInfo: Boolean;
   }
 begin
   Result := True;
-  if StrTrim(edName.Text) = '' then
+  if Trim(edName.Text) = '' then
   begin
     Result := False;
     TMessageBox.Error(Self, sErrNameRequired);

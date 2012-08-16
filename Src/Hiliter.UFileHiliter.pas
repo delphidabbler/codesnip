@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -42,7 +42,7 @@ interface
 
 uses
   // Project
-  Hiliter.UGlobals, UEncodings, USourceFileInfo;
+  Hiliter.UGlobals, USourceFileInfo;
 
 
 type
@@ -53,12 +53,21 @@ type
     file type.
   }
   TFileHiliter = class(TObject)
-  strict private
+  private
     fWantHiliting: Boolean;
       {Flag indicating whether output is to be highlighted. Ignored if target
       file type does not support highlighting}
     fFileType: TSourceFileType;
       {Type of source file to be targetted}
+    function HiliterKind: TSyntaxHiliterKind;
+      {Determines kind of highlighter required for source file type.
+        @return Required highlighter kind.
+      }
+    function GetHiliteAttrs: IHiliteAttrs;
+      {Determines any attributes to be used by highlighter.
+        @return Required highlighter attributes or nil if no highlighter being
+          used.
+      }
   public
     constructor Create(const WantHiliting: Boolean;
       const FileType: TSourceFileType);
@@ -69,7 +78,7 @@ type
         @param FileType [in] Specifies kind of file that highlighting is to
           target. This determines format of output.
       }
-    function Hilite(const SourceCode, DocTitle: string): TEncodedData;
+    function Hilite(const SourceCode, DocTitle: string): string;
       {Highlights source code. Output is correctly formatted for file type.
         @param SourceCode [in] Source code to be highlighted.
         @param DocTitle [in] Title of document to be outputted. Ignored if
@@ -110,7 +119,20 @@ begin
   fWantHiliting := WantHiliting;
 end;
 
-function TFileHiliter.Hilite(const SourceCode, DocTitle: string): TEncodedData;
+function TFileHiliter.GetHiliteAttrs: IHiliteAttrs;
+  {Determines any attributes to be used by highlighter.
+    @return Required highlighter attributes or nil if no highlighter being used.
+  }
+begin
+  // We use default attributes only if highlighting requested and highlighter
+  // kind supports attributes
+  if fWantHiliting and (HiliterKind in [hkXHTML, hkRTF]) then
+    Result := THiliteAttrsFactory.CreateUserAttrs
+  else
+    Result := nil;
+end;
+
+function TFileHiliter.Hilite(const SourceCode, DocTitle: string): string;
   {Highlights source code. Output is correctly formatted for file type.
     @param SourceCode [in] Source code to be highlighted.
     @param DocTitle [in] Title of document to be outputted. Ignored if file type
@@ -118,19 +140,23 @@ function TFileHiliter.Hilite(const SourceCode, DocTitle: string): TEncodedData;
     @return Highlighted source.
   }
 var
-  HilitedDocCls: TDocumentHiliterClass; // class used to create hilited document
-  HiliteAttrs: IHiliteAttrs;            // highlighter attributes
+  Hiliter: ISyntaxHiliter;  // syntax highlighter object
 begin
+  Hiliter := TSyntaxHiliterFactory.CreateHiliter(HiliterKind);
+  Result := Hiliter.Hilite(SourceCode, GetHiliteAttrs, DocTitle);
+end;
+
+function TFileHiliter.HiliterKind: TSyntaxHiliterKind;
+  {Determines kind of highlighter required for source file type.
+    @return Required highlighter kind.
+  }
+begin
+  // We have nul hiliter unless file type is RTF or HTML
   case fFileType of
-    sfRTF: HilitedDocCls := TRTFDocumentHiliter;
-    sfHTML: HilitedDocCls := TXHTMLDocumentHiliter;
-    else HilitedDocCls := TNulDocumentHiliter;
+    sfHTML: Result := hkXHTML;
+    sfRTF: Result := hkRTF;
+    else Result := hkNul;
   end;
-  if fWantHiliting and IsHilitingSupported(fFileType) then
-    HiliteAttrs := THiliteAttrsFactory.CreateUserAttrs
-  else
-    HiliteAttrs := nil;
-  Result := HilitedDocCls.Hilite(SourceCode, HiliteAttrs, DocTitle);
 end;
 
 class function TFileHiliter.IsHilitingSupported(

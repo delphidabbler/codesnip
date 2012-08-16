@@ -130,13 +130,9 @@ type
     IAssignable   // defines object assignment
   )
   strict private
-    var
-      fElemAttrs: TList<IHiliteElemAttrs>;  // List of element attributes
-      fFontSize: Integer;                   // Size of font in points
-      fFontName: string;                    // Name of font
-    const
-      cDefFontName = 'Courier New'; // Default font name
-      cDefFontSize = 9;             // Default font size
+    var fElemAttrs: TList<IHiliteElemAttrs>;  // List of element attributes
+    var fFontSize: Integer;                   // Size of font in points
+    var fFontName: string;                    // Name of font
   protected // do not make strict
     { IHiliteAttrs methods }
     function GetFontName: string;
@@ -155,9 +151,6 @@ type
       {Sets size of font to use for all output.
         @param AFontSize [in] Required font size in points.
       }
-    procedure ResetDefaultFont;
-      {Resets font name and size to default value.
-      }
     function GetElement(const Elem: THiliteElement): IHiliteElemAttrs;
       {Gets the attributes of a highlighter element.
         @param Elem [in] Required element.
@@ -171,6 +164,8 @@ type
         @except EBug raised if Src is incompatible with this object.
       }
   public
+    const cDefFontName = 'Courier New'; // Default font name
+    const cDefFontSize = 9;             // Default font size
     constructor Create;
       {Object constructor. Sets up and intialises object.
       }
@@ -317,14 +312,6 @@ function THiliteAttrs.GetFontSize: Integer;
   }
 begin
   Result := fFontSize;
-end;
-
-procedure THiliteAttrs.ResetDefaultFont;
-  {Resets font name and size to default value.
-  }
-begin
-  SetFontName(cDefFontName);
-  SetFontSize(cDefFontSize);
 end;
 
 procedure THiliteAttrs.SetFontName(const AFontName: string);
@@ -595,7 +582,8 @@ begin
         Result[Elem].ForeColor := clNone;
   end;
   // Ensure we use required printing fonts
-  Result.ResetDefaultFont;
+  Result.FontName := THiliteAttrs.cDefFontName;
+  Result.FontSize := THiliteAttrs.cDefFontSize;
 end;
 
 class function THiliteAttrsFactory.CreateUserAttrs: IHiliteAttrs;

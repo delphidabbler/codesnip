@@ -71,11 +71,6 @@ type
       {Called when page is deactivated. Stores information entered by user.
         @param Prefs [in] Object used to store information.
       }
-    ///  <summary>Checks if preference changes require that main window UI is
-    ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing. Always
-    ///  returns False because these preferences never affect UI.</remarks>
-    function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
@@ -157,11 +152,6 @@ class function TNewsPrefsFrame.Index: Byte;
   }
 begin
   Result := 50;
-end;
-
-function TNewsPrefsFrame.UIUpdated: Boolean;
-begin
-  Result := False;
 end;
 
 initialization

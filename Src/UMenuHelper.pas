@@ -35,7 +35,6 @@
 
 unit UMenuHelper;
 
-// TODO: rename this unit as UMenusEx
 
 interface
 
@@ -59,7 +58,7 @@ type
 
 type
   {TMenuItemClass:
-    Class reference to TMenuItem.
+    Class reference to TMenuItem and descendants.
   }
   TMenuItemClass = class of TMenuItem;
 

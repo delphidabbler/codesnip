@@ -49,6 +49,7 @@ uses
 
 
 type
+
   {
   TBaseForm:
     Base class for all forms in application. Sets a unique window class name for
@@ -139,12 +140,14 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows, Menus,
+  SysUtils, StrUtils, Windows, Menus,
   // Project
   UAppInfo, UBaseObjects, UFontHelper, UKeysHelper, UMenuHelper,
-  UNulFormAligner, UStrUtils;
+  UNulFormAligner;
+
 
 {$R *.dfm}
+
 
 type
   ///  <summary>Class helper that provides information about, and access to, the
@@ -287,13 +290,13 @@ end;
 
 procedure TBaseForm.FormKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
+  {Handles form's OnKeyDown event. Traps Alt+F10 keypress and displays any
+  suitable context menu in response.
+  }
 begin
   inherited;
   if (Key = VK_F10) and (ExtractShiftKeys(Shift) = [ssAlt]) then
-  begin
-    outputdebugstring('Alt+F10 pressed');
     ActivateContextMenu;
-  end;
 end;
 
 procedure TBaseForm.FormShow(Sender: TObject);
@@ -356,8 +359,8 @@ var
 begin
   // Calculate window class name postfix. This is form class name, stripped of
   // any preceeding 'T'
-  if StrStartsStr('T', ClassName) then
-    PostfixName := StrSliceRight(ClassName, Length(ClassName) - 1)
+  if AnsiStartsStr('T', ClassName) then
+    PostfixName := AnsiRightStr(ClassName, Length(ClassName) - 1)
   else
     PostfixName := ClassName;
   // Build window class name

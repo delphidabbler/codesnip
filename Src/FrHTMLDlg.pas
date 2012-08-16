@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -55,7 +55,7 @@ type
     on the appearance of a dialog box.
   }
   THTMLDlgFrame = class(TBrowserBaseFrame)
-  strict private
+  private
     fOwner: TForm;
       {Form that owns the frame. Used to set font and colours to display in
       frame's HTML }
@@ -106,9 +106,9 @@ begin
   try
     with CSSBuilder.AddSelector('body') do
     begin
-      AddProperty(TCSS.BackgroundColorProp(fOwner.Color));
-      AddProperty(TCSS.FontProps(fOwner.Font));
-      AddProperty(TCSS.MarginProp(0));
+      AddProperty(CSSBackgroundColorProp(fOwner.Color));
+      AddProperty(CSSFontProps(fOwner.Font));
+      AddProperty(CSSMarginProp(0));
     end;
     // Sets heading margins, padding and font size
     with CSSBuilder.AddSelector('h1') do
@@ -116,20 +116,20 @@ begin
       CSSFont.Assign(Self.Font);
       CSSFont.Size := CSSFont.Size + 2;
       CSSFont.Style := [fsBold];
-      AddProperty(TCSS.FontProps(CSSFont));
-      AddProperty(TCSS.MarginProp(0));
-      AddProperty(TCSS.PaddingProp(0));
+      AddProperty(CSSFontProps(CSSFont));
+      AddProperty(CSSMarginProp(0));
+      AddProperty(CSSPaddingProp(0));
     end;
     // Sets paragraph margins and padding
     with CSSBuilder.AddSelector('p') do
     begin
-      AddProperty(TCSS.MarginProp(cssTop, 6));
-      AddProperty(TCSS.MarginProp(cssBottom, 0));
-      AddProperty(TCSS.PaddingProp(0));
+      AddProperty(CSSMarginProp(cssTop, 6));
+      AddProperty(CSSMarginProp(cssBottom, 0));
+      AddProperty(CSSPaddingProp(0));
     end;
     // Sets table font info
     with CSSBuilder.AddSelector('table') do
-      AddProperty(TCSS.FontProps(fOwner.Font));
+      AddProperty(CSSFontProps(fOwner.Font));
   finally
     FreeAndNil(CSSFont);
   end;

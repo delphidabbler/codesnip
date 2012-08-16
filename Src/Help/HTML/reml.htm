@@ -1,8 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * $Rev$
- * $Date$
- *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -20,7 +17,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -49,6 +46,10 @@
       .hilite {
         background-color: #ff9;
       }
+     var.reml {
+        color: #99099;
+        color: purple;
+      }
     </style>
   </head>
   <body>
@@ -62,11 +63,11 @@
       <a name="reml"></a>About the REML markup language
     </h1>
     <p>
-      <em>REML</em> is <em>CodeSnip</em>'s own little markup language that can
-      be used to style the text of a snippet's description and / or extra
-      information.
+      The <em>REML</em> markup language can be used to format any extra
+      information you want to associate with a code snippet. It is entered on
+      the <em>Extra Information</em> tab of the
+      <a href="dlg_editsnippet.htm">Snippets Editor</a> dialog box.
     </p>
-<!--
     <h2>
       Using plain text
     </h2>
@@ -79,43 +80,14 @@
       <span class="code">&lt;/p&gt;</span> tags that you will see the next time
       you edit the text.
     </p>
-    <p>
-      You can create multiple paragraphs of text simply by separating the
-      paragraphs with blank lines. For example, entering:
-    </p>
-    <p class="indent code">
-      The cat sat<br><br>
-      on the mat
-    </p>
-    <p>
-      is interpreted as
-    </p>
-    <p class="indent code">
-      &lt;p&gt;the cat sat&lt;/p&gt;<br>
-      &lt;p&gt;on the mat&lt;/p&gt;
-    </p>
-    <p>
-      Be careful though, because if you don't leave a blank line, as in
-    </p>
-   <p class="indent code">
-      The cat sat<br>
-      on the mat
-    </p>
-    <p>
-      you will get the equivalent of
-    </p>
-    <p class="indent code">
-      &lt;p&gt;the cat sat on the mat&lt;/p&gt;
-    </p>
--->
     <h2>
-      Language Details
+      Using markup
     </h2>
     <p>
-      The <em>REML</em> language is a simple SGML language similar to a greatly
-      simplified XHTML. The are a small number of tags you can use. Firstly
-      there are two block-level tags that render text in paragraphs, while the
-      other tags format text inline or embed hyplerlinks.
+      The REML language is a simple SGML language like a very simple version of
+      HTML. The are a small number of tags you can use. Firstly there are two
+      block-level tags that render text in paragraphs, while the other tags
+      format text inline.
     </p>
     <h3>
       Block level tags
@@ -140,9 +112,9 @@
         These tags must not be nested.
       </li>
       <li>
-        All your markup should be enclosed in one or more pairs of these block
-        level tags &ndash; that means that markup must start with one of these
-        tags and end with a suitable closing tags.
+        Furthermore, all your markup should be enclosed in one or more pairs of
+        these block level tags &ndash; that means that markup must start with
+        one of these tags and end with a suitable closing tags.
       </li>
       <li>
         The tags must be matched, e.g.
@@ -158,33 +130,20 @@
         <span class="code">&lt;p&gt;Hello World&lt;/p&gt;</span>
       </li>
       <li>
-        <span class="code">&lt;heading&gt;Hello&lt;/heading&gt;<br>
+        <span class="code">&lt;heading&gt;Hello&lt;/heading&gt;
         &lt;p&gt;Hello World&lt;/p&gt;</span>
       </li>
     </ol>
     <p>
-      Srictly speaking, the following example is invalid code &ndash; the
-      highlighted sections are in error, because they are not contained within
-      block tags.
+      And here's an example of invalid code &ndash; the highlighted sections
+      are in error, because they are not contained within block tags.
     </p>
-    <p class="indent code">
-      <span class="hilite">blah</span>
+    <p class="indent">
+      <span class="code"><span class="hilite">blah</span>
       &lt;heading&gt;blah&lt;/heading&gt;
       <span class="hilite">blah</span>
       &lt;p&gt;blah&lt;/p&gt;
-      <span class="hilite">blah</span>
-    </p>
-    <p>
-      However, because <em>CodeSnip</em> automatically adds &lt;p&gt; tags for
-      some lines entered without block level tags (<a href="#shortcuts">see
-      below</a>) the above code is interpreted as:
-    </p>
-    <p class="indent code">
-      &lt;p&gt;<span class="hilite">blah</span> &lt;/p&gt;<br>
-      &lt;heading&gt;blah&lt;/heading&gt;<br>
-      &lt;p&gt;<span class="hilite">blah</span> &lt;/p&gt;<br>
-      &lt;p&gt;blah&lt;/p&gt;<br>
-      &lt;p&gt;<span class="hilite">blah</span>&lt;/p&gt;
+      <span class="hilite">blah</span></span>
     </p>
     <h3>
       Inline tags
@@ -196,14 +155,14 @@
       <dt class="code">&lt;strong&gt;...&lt/strong&gt;</dt>
       <dd>
         Renders the enclosed markup with strong emphasis.<br>
-        <em>Example:</em> <span class="code">&lt;p&gt;Make stuff
-        &lt;strong&gt;stand out&lt;/strong&gt;.&lt;/p&gt;</span>
+        <em>Example:</em> <code>&lt;p&gt;Make stuff &lt;strong&gt;stand
+        out&lt;/strong&gt;.&lt;/p&gt;</code>
       </dd>
       <dt class="code">&lt;em&gt;...&lt;/em&gt;</dt>
       <dd>
         Emphasises the enclosed markup.<br>
-        <em>Example:</em> <span class="code">&lt;p&gt;Draw
-        &lt;em&gt;attention&lt;/em&gt; to something.&lt;/p&gt;</span>
+        <em>Example:</em> <code>&lt;p&gt;Draw &lt;em&gt;attention&lt;/em&gt; to
+        something.&lt;/p&gt;</code>
       </dd>
       <dt class="code">&lt;var&gt;...&lt;/var&gt;</dt>
       <dd>
@@ -222,18 +181,19 @@
       <dd>
         Renders markup in a mono-spaced font.<br>
         <em>Example:</em> <span class="code">&lt;p&gt;Use the:
-        &lt;mono&gt;Windows&lt;/mono&gt; unit.&lt;/p&gt;</span>
+        &lt;mono&gt;Windows:&lt;/mono&gt; unit.&lt;/p&gt;</span>
       </dd>
       <dt class="code">&lt;a href=&quot;url&quot;&gt;...&lt;/a&gt;</dt>
       <dd>
         Creates a hyperlink. The <span class="code">href</span> attribute must
-        specify the required URL, which must use one of the <em>http:</em>,
-        <em>https:</em> or <em>file:</em> protocols; others are not permitted.
-        If you use the <em>file:</em> protocol it must reference a valid local
-        or network file. Be aware that if you submit or export a snippet
-        containing a hyperlink that uses the <em>file:</em> protocol it will
-        only work on the recipient's system if the specified file exists in the
-        same location.<br>
+        specify the required URL, which must use either the <em>http:</em> or
+        <em>file:</em> protocols; others are not permitted. If you use the
+        <em>file:</em> protocol it must reference a valid local or network file
+        and the <em>file://</em> component of the URL <strong>must</strong> be
+        supplied. <span class="warning">Warning:</span>. Be aware that if you
+        submit or export a snippet containing a hyperlink that uses the
+        <em>file:</em> protocol it will not work on the recipient's system
+        unless the required file can be found in the same location.<br>
         <em>Example:</em> <span class="code">&lt;p&gt;&lt;a
         href=&quot;http://www.delphidabbler.com&quot;&gt;Visit
         DelphiDabbler.com&lt;/a&gt;&lt/p&gt;.</span>.
@@ -250,28 +210,11 @@
       <span class="code">&amp;amp;</span> instead of &quot;&amp;&quot;.
     </p>
     <p>
-      A few other character entities are supported for convenience. Here is the
-      complete list:
+      You may also use <span class="code">&amp;quot;</span> instead of double
+      quotes and <span class="code">&amp;gt;</span> in place of
+      &quot;&gt;&quot;. No other symbolic character entities are supported.
     </p>
-    <ul class="unspaced">
-      <li>
-        <code>&amp;lt;</code> for <code>&lt;</code>
-      </li>
-      <li>
-        <code>&amp;gt;</code> for <code>&gt;</code>
-      </li>
-      <li>
-        <code>&amp;quot;</code> for <code>&quot;</code>
-      </li>
-      <li>
-        <code>&amp;amp;</code> for <code>&amp;</code>
-      </li>
-      <li>
-        <code>&amp;copy;</code> for <code>&copy;</code>
-      </li>
-    </ul>
     <p>
-      No other symbolic character entities are supported.
       However, numeric character entities can be used to insert other characters
       by specifying its code. For example <span class="code">&amp;#64;</span> is
       equivalent to &quot;&#64;&quot;.
@@ -282,48 +225,6 @@
     </p>
     <p class="indent">
       <code>x &amp;lt; y</code>
-    </p>
-    <h2 id="shortcuts">
-      Shortcuts
-    </h2>
-    <p>
-      You can get away with leaving out block level tags where you only want
-      simple paragraphs and not headings. You can include inline tags. Text must
-      still have special characters replaced by <a href="#entities">character
-      entities</a>.
-    </p>
-    <p>
-      You can create multiple paragraphs of text simply by separating the
-      paragraphs with blank lines. For example, entering:
-    </p>
-    <p class="indent code bordered">
-      The &lt;strong&gt;cat&lt;/strong&gt; sat<br><br>
-      on the mat
-    </p>
-    <p>
-      is interpreted as
-    </p>
-    <p class="indent code">
-      &lt;p&gt;the &lt;strong&gt;cat&lt;/strong&gt; sat&lt;/p&gt;<br>
-      &lt;p&gt;on the mat&lt;/p&gt;
-    </p>
-    <p>
-      Be careful though, because if you don't leave a blank line, as in
-    </p>
-   <p class="indent code bordered">
-      The &lt;strong&gt;cat&lt;/strong&gt; sat<br>
-      on the mat
-    </p>
-    <p>
-      you will get the equivalent of
-    </p>
-    <p class="indent code">
-      &lt;p&gt;the &lt;strong&gt;cat&lt;/strong&gt; sat on the mat&lt;/p&gt;
-    </p>
-    <p>
-      It is also possible, if used with care, to mix text lines without block
-      level tags with other lines with block level tags. This is not
-      recommended.
     </p>
   </body>
 </html>

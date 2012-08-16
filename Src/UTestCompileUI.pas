@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -45,7 +45,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  Compilers.UGlobals, DB.USnippet, UBaseObjects;
+  Compilers.UGlobals, UBaseObjects, USnippets;
 
 
 type
@@ -67,13 +67,13 @@ type
       }
   public
     class procedure Execute(const AOwner: TComponent;
-      const ACompilers: ICompilers; const ASnippet: TSnippet);
+      const ACompilers: ICompilers; const ARoutine: TRoutine);
       {Test compiles a snippet in a thread and displays a wait dialog if
       compilation takes some time.
         @param AOwner [in] Control that owns the wait dialog box. Dialog is
           aligned over this control.
         @param ACompilers [in] Compilers object used to perform compilation.
-        @param ASnippet [in] Snippet to be compiled.
+        @param ARoutine [in] Snippet to be compiled.
       }
   end;
 
@@ -92,13 +92,13 @@ uses
 { TTestCompileUI }
 
 class procedure TTestCompileUI.Execute(const AOwner: TComponent;
-  const ACompilers: ICompilers; const ASnippet: TSnippet);
+  const ACompilers: ICompilers; const ARoutine: TRoutine);
   {Test compiles a snippet in a thread and displays a wait dialog if compilation
   takes some time.
     @param AOwner [in] Control that owns the wait dialog box. Dialog is aligned
       over this control.
     @param ACompilers [in] Compilers object used to perform compilation.
-    @param ASnippet [in] Snippet to be compiled.
+    @param Routine [in] Snippet to be compiled.
   }
 resourcestring
   // Caption for wait dialog
@@ -113,7 +113,7 @@ begin
   try
     WaitDlg.Caption := sWaitCaption;
     // Do the compilation
-    CompThread := TTestCompileThread.Create(ACompilers, ASnippet);
+    CompThread := TTestCompileThread.Create(ACompilers, ARoutine);
     try
       TWaitForThreadUI.Run( // this blocks until thread completes
         CompThread, WaitDlg, PauseBeforeDisplay, MinDisplayTime

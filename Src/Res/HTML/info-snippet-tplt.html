@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -69,15 +69,59 @@
       >Edit Snippet</a>
     </div>
 
-    <h1 id="snippetname" class="<%SnippetCSSClass%>">
-      <%SnippetName%>
+    <!-- Routine name common with info-routine-tplt.html -->
+    <h1 id="routinename" class="<%RoutineCSSClass%>">
+      <%RoutineName%>
     </h1>
 
   </div>
 
-  <div id="details">
-    <%SnippetPageFragments%>
+  <p id="description">
+    <%Description%>
+  </p>
+
+  <div id="sourcecode">
+    <%SourceCode%>
   </div>
 
- </div>
+  <p>
+    <strong>Snippet type:</strong>
+    <span id="kind"><%Kind%></span>
+  </p>
+
+  <p>
+    <strong>Category:</strong>
+    <span id="category"><%Category%></span>
+  </p>
+
+  <p>
+    <strong>Required units:</strong>
+    <span id="units"><%Units%></span>
+  </p>
+
+  <p>
+    <strong>Required snippets:</strong>
+    <span id="depends"><%Depends%></span>
+  </p>
+
+  <p>
+    <strong>See also:</strong>
+    <span id="xrefs"><%XRefs%></span>
+  </p>
+
+  <div style="<%ShowCompilations%>">
+    <p>
+      <strong>Supported Compilers:</strong>
+    </p>
+
+    <table class="comptable" cellspacing="1" cellpadding="4">
+      <%CompilerTableRows%>
+    </table>
+  </div>
+
+  <div id="extra">
+    <%Extra%>
+  </div>
+
+</div>
 

@@ -26,7 +26,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes,
+  Classes,
   // Project
   UURIParams, Web.UBaseWebService;
 
@@ -104,23 +104,10 @@ type
         @except EHTTPError raised if EIdHTTPProtocolException encountered.
         @except EIdException or descendant re-raised for other exception types.
       }
-    procedure PostData(const Data: TStream; const Response: TStrings); overload;
+    procedure PostData(const Data: TStream; const Response: TStrings);
       {Posts raw data to server and returns data component of response in a
       string list.
         @param Data [in] Stream containing raw data to be posted.
-        @param Response [in] Server's response as string list where each line of
-          response is a line of string list.
-        @except EWebServiceError raised on receipt of valid error response.
-        @except EWebServiceFailure raised if web service sends invalid response.
-        @except EWebConnectionError raised if EIdSocketError encoutered.
-        @except EWebTransmissionError raised if data is garbled in transmission.
-        @except EHTTPError raised if EIdHTTPProtocolException encountered.
-        @except EIdException or descendant re-raised for other exception types.
-      }
-    procedure PostData(const Data: TBytes; const Response: TStrings); overload;
-      {Posts raw data to server and returns data component of response in a
-      string list.
-        @param Data [in] Byte array containing raw data to be posted.
         @param Response [in] Server's response as string list where each line of
           response is a line of string list.
         @except EWebServiceError raised on receipt of valid error response.
@@ -137,8 +124,10 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
-  UStrUtils, Web.UExceptions;
+  Web.UExceptions;
 
 
 { TStdWebService }
@@ -168,24 +157,6 @@ procedure TStdWebService.PostCommand(const Cmd: string;
 begin
   Params.Add('cmd', Cmd);
   PostQuery(Params, Response);
-end;
-
-procedure TStdWebService.PostData(const Data: TBytes; const Response: TStrings);
-  {Posts raw data to server and returns data component of response in a string
-  list.
-    @param Data [in] Byte array containing raw data to be posted.
-    @param Response [in] Server's response as string list where each line of
-      response is a line of string list.
-    @except EWebServiceError raised on receipt of valid error response.
-    @except EWebServiceFailure raised if web service sends invalid response.
-    @except EWebConnectionError raised if EIdSocketError encoutered.
-    @except EWebTransmissionError raised if data is garbled in transmission.
-    @except EHTTPError raised if EIdHTTPProtocolException encountered.
-    @except EIdException or descendant re-raised for other exception types.
-  }
-begin
-  PostStrings(Data, Response);
-  ProcessResponse(Response);
 end;
 
 procedure TStdWebService.PostData(const Data: TStream;
@@ -253,9 +224,9 @@ begin
   begin
     // Error response: raise web service error exception unless data doesn't
     // contain expected error message when failure exception is raised
-    if StrTrim(Response.Text) = '' then
+    if Trim(Response.Text) = '' then
       raise EWebServiceFailure.Create(sUnrecognizedError);
-    raise EWebServiceError.Create(StrTrim(Response.Text), StatusCode);
+    raise EWebServiceError.Create(Trim(Response.Text), StatusCode);
   end
 end;
 

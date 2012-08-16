@@ -1,7 +1,7 @@
 {
  * UConsts.pas
  *
- * Defines various character, string and resource id constants.
+ * Defines various character constants.
  *
  * $Rev$
  * $Date$
@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -53,9 +53,10 @@ const
   CR        = #13;      // carriage return character
   ESC       = #27;      // escape character
 
-  CRLF  = CR + LF;      // carriage return followed by line feed
-  EOL   = CRLF;         // end of line character sequence for Windows systems
-  EOL2  = EOL + EOL;    // 2 end of line sequences
+  EOL   = CR + LF;      // end of line character sequence
+  EOL2  = EOL + EOL;    // 2 EOLs characters
+
+
 
   RT_HTML = MakeIntResource(23);    // HTML resource identifier
 

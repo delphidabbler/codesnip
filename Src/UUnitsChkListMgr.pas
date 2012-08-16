@@ -57,7 +57,7 @@ type
     checked units.
   }
   TUnitsChkListMgr = class(TObject)
-  strict private
+  private
     fCLB: TCheckListBox;    // Check list box being managed
     procedure InitStandardUnits;
       {Initialises unit list with standard units that are always available.
@@ -186,16 +186,16 @@ procedure TUnitsChkListMgr.InitStandardUnits;
   }
 const
   // list of standard units
-  StdUnits: array[1..10] of string = (
+  cStdUnits: array[1..10] of string = (
     'SysUtils', 'Classes', 'Controls', 'Messages',
     'Windows', 'Graphics', 'Types', 'ShlObj', 'ShellAPI', 'ActiveX'
   );
 var
-  StdUnit: string;  // each standard unit in list
+  Idx: Integer; // loops thru all standard units
 begin
   fCLB.Clear;
-  for StdUnit in StdUnits do
-    fCLB.Items.Add(StdUnit);
+  for Idx := Low(cStdUnits) to High(cStdUnits) do
+    fCLB.Items.Add(cStdUnits[Idx]);
 end;
 
 function TUnitsChkListMgr.IsValidUnitName(const UnitName: string): Boolean;
@@ -204,7 +204,8 @@ function TUnitsChkListMgr.IsValidUnitName(const UnitName: string): Boolean;
     @return True if UnitName is valid, False if not.
   }
 begin
-  Result := IsValidIdent(UnitName);
+  Result := IsValidIdent(UnitName, True); // allow dots in unit name
 end;
 
 end.
+

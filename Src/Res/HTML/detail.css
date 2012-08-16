@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -56,12 +56,20 @@ th {
   text-align: center;
 }
 
-table.snippet-list td {
-  padding: 4px;
+.testcomp th, .testcomp td {
+  vertical-align: middle;
 }
 
-table.snippet-list td.desc {
-  padding-top: 0;
+.testcomp .compiler {
+  text-align: left;
+}
+
+.testcomp .dbres, .testcomp .testres {
+  text-align: center;
+}
+
+.testcomp .testerr {
+  text-align: left;
 }
 
 h1 {
@@ -73,11 +81,15 @@ h2 {
   margin: 8px 0 0 0;
 }
 
-.active-text h2 {
+h2.extra {
   margin: 4px 0 0 0;
 }
 
 p {
+  margin: 4px 0 0 0;
+}
+
+div.extra-wrapper {
   margin: 4px 0 0 0;
 }
 
@@ -95,16 +107,3 @@ pre {
   margin-top: 2px;
   margin-bottom: 2px;
 }
-
-#newtab {
-  text-align: center;
-  position: fixed;
-  top: 30%;
-  width: 100%;
-  margin-left: -4px;
-}
-
-.smallcaps {
-  font-variant: small-caps;
-}
-

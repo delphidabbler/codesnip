@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -54,7 +54,7 @@ type
     Class that maintains and provides access to a hidden rich edit control.
   }
   THiddenRichEdit = class(TObject)
-  strict private
+  private
     fRichEdit: TRichEdit;
       {Reference to hidden rich edit control}
     fHiddenWindow: THiddenWindow;

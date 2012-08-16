@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -120,7 +120,7 @@ implementation
 
 uses
   // Delphi
-  UPreferences, USingleton;
+  UPreferences;
 
 
 type
@@ -131,15 +131,16 @@ type
     application. This class stores information that the Printer object doesn't
     maintain.
   }
-  TPrintInfo = class(TSingleton,
+  TPrintInfo = class(TInterfacedObject,
     IPrintInfo
   )
   strict private
-    var
-      fPageMargins: TPageMargins;
-        {Stores current page margins in millimeters}
-      fPrintOptions: TPrintOptions;
-        {Stores current print options}
+    fPageMargins: TPageMargins;
+      {Stores current page margins in millimeters}
+    fPrintOptions: TPrintOptions;
+      {Stores current print options}
+    class var fInstance: IPrintInfo;
+      {Stores reference to singleton instance of this class}
     class function GetInstance: IPrintInfo; static;
       {Returns singletion IPrintInfo object initialised from persistent storage.
         @return Object instance.
@@ -165,10 +166,10 @@ type
       {Sets print options.
         @param Options [in] New options.
       }
-  strict protected
-    ///  <summary>Initialises singleton object on creation.</summary>
-    procedure Initialize; override;
   public
+    constructor Create;
+      {Class constructor. Sets up and initialises properties to default values.
+      }
     class property Instance: IPrintInfo
       read GetInstance;
       {Reference to singleton instance of this class}
@@ -186,12 +187,22 @@ end;
 
 { TPrintInfo }
 
+constructor TPrintInfo.Create;
+  {Class constructor. Sets up and initialises properties to default values.
+  }
+begin
+  inherited;
+  LoadDefaults;
+end;
+
 class function TPrintInfo.GetInstance: IPrintInfo;
   {Returns singletion IPrintInfo object initialised from persistent storage.
     @return Object instance.
   }
 begin
-  Result := TPrintInfo.Create;
+  if not Assigned(fInstance) then
+    fInstance := TPrintInfo.Create;
+  Result := fInstance;
 end;
 
 function TPrintInfo.GetPageMargins: TPageMargins;
@@ -208,12 +219,6 @@ function TPrintInfo.GetPrintOptions: TPrintOptions;
   }
 begin
   Result := fPrintOptions;
-end;
-
-procedure TPrintInfo.Initialize;
-begin
-  inherited;
-  LoadDefaults;
 end;
 
 procedure TPrintInfo.LoadDefaults;

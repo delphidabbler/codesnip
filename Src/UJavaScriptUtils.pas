@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -60,7 +60,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UConsts, UExceptions, UStrUtils;
+  UConsts, UExceptions, UHTMLDocHelper, UUtils;
 
 
 function CEscapeStr(const S: string; const EscapeChars,
@@ -90,7 +90,7 @@ begin
   EscCount := 0;
   for Idx := 1 to Length(S) do
   begin
-    if StrContainsStr(S[Idx], EscapableChars) then
+    if SysUtils.AnsiPos(S[Idx], EscapableChars) > 0 then
       Inc(EscCount);
   end;
   // Set size of result string and get pointer to it
@@ -99,7 +99,7 @@ begin
   // Replace escapable chars with the escaped version
   for Idx := 1 to Length(S) do
   begin
-    EscCharPos := StrPos(S[Idx], EscapableChars);
+    EscCharPos := SysUtils.AnsiPos(S[Idx], EscapableChars);
     if EscCharPos > 0 then
     begin
       PRes^ := cEscChar;
@@ -140,7 +140,7 @@ begin
   Result :=
     cQuote +
     CEscapeStr(
-      StrUnixLineBreaks(S),   // convert CRLF to LF
+      UUtils.UnixLineBreaks(S),   // convert CRLF to LF
       cEscapeChars,
       cEscapableChars
     ) +
@@ -213,7 +213,7 @@ begin
       ParamList.Add(Param);
     end;
     // Build function name and parameter list
-    Result := FnName + '(' + StrJoin(ParamList, ', ') + ')';
+    Result := FnName + '(' + JoinStr(ParamList, ', ') + ')';
   finally
     FreeAndNil(ParamList);
   end;

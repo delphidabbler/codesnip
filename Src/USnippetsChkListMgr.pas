@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,7 +44,7 @@ uses
   // Delphi
   Controls, CheckLst, Windows,
   // Project
-  DB.USnippet, USnippetIDs;
+  USnippetIDs, USnippets;
 
 
 type
@@ -58,8 +58,8 @@ type
   TSnippetsChkListMgr = class(TObject)
   strict private
     fCLB: TCheckListBox;      // Reference to check list box being managed
-    fSaveList: TSnippetList;  // Internal snaphot of checked snippets
-    procedure CheckSnippet(const Snippet: TSnippet);
+    fSaveList: TRoutineList;  // Internal snaphot of checked snippets
+    procedure CheckSnippet(const Snippet: TRoutine);
       {Checks entry corresponding to a snippet in check list box. Snippets not
       in check list box are ignored.
         @param Snippet [in] Snippet to be checked.
@@ -98,16 +98,16 @@ type
       other entries in check list box a cleared. Any snippets in snapshot that
       are not in the check list box are ignored.
       }
-    procedure AddSnippet(const Snippet: TSnippet);
+    procedure AddSnippet(const Snippet: TRoutine);
       {Adds a snippet to the check box list, unchecked.
         @param Snippet [in] Snippet to be added to list.
       }
-    procedure CheckSnippets(const SnipList: TSnippetList);
+    procedure CheckSnippets(const SnipList: TRoutineList);
       {Checks entries in list corresponding to each snippet in a list.
         @param SnipList [in] List of snippets to check. Snippets not in check
           list box are ignored.
       }
-    procedure GetCheckedSnippets(const SnipList: TSnippetList); overload;
+    procedure GetCheckedSnippets(const SnipList: TRoutineList); overload;
       {Gets all checked snippets in check list box.
         @param SnipList [in] List that receives checked snippets objects.
       }
@@ -123,14 +123,14 @@ implementation
 
 uses
   // Delphi
-  Graphics, StdCtrls,
+  SysUtils, Graphics, StdCtrls,
   // Project
-  UColours, UGraphicUtils, UPreferences;
+  UColours, UGraphicUtils;
 
 
 { TSnippetsChkListMgr }
 
-procedure TSnippetsChkListMgr.AddSnippet(const Snippet: TSnippet);
+procedure TSnippetsChkListMgr.AddSnippet(const Snippet: TRoutine);
   {Adds a snippet to the check box list, unchecked.
     @param Snippet [in] Snippet to be added to list.
   }
@@ -138,7 +138,7 @@ begin
   fCLB.Items.AddObject(Snippet.Name, Snippet);
 end;
 
-procedure TSnippetsChkListMgr.CheckSnippet(const Snippet: TSnippet);
+procedure TSnippetsChkListMgr.CheckSnippet(const Snippet: TRoutine);
   {Checks entry corresponding to a snippet in check list box. Snippets not in
   check list box are ignored.
     @param Snippet [in] Snippet to be checked.
@@ -151,13 +151,13 @@ begin
     fCLB.Checked[Idx] := True;
 end;
 
-procedure TSnippetsChkListMgr.CheckSnippets(const SnipList: TSnippetList);
+procedure TSnippetsChkListMgr.CheckSnippets(const SnipList: TRoutineList);
   {Checks entries in list corresponding to each snippet in a list.
     @param SnipList [in] List of snippets to check. Snippets not in check list
       box are ignored.
   }
 var
-  Snippet: TSnippet;  // each snippet in list
+  Snippet: TRoutine;  // each snippet in list
 begin
   for Snippet in SnipList do
     CheckSnippet(Snippet);
@@ -192,7 +192,7 @@ begin
   fCLB.OnDrawItem := DrawItem;
   fCLB.Style := lbOwnerDrawFixed;
   fCLB.ItemHeight := StringExtent('Xy', fCLB.Font).cy;
-  fSaveList := TSnippetList.Create;
+  fSaveList := TRoutineList.Create;
 end;
 
 destructor TSnippetsChkListMgr.Destroy;
@@ -221,10 +221,9 @@ begin
   inherited;
   Assert(fCLB = Control, ClassName + '.DrawItem: Control <> fCLB');
   Canvas := fCLB.Canvas;
-  if not (odSelected in State) then
-    Canvas.Font.Color := Preferences.DBHeadingColours[
-      (fCLB.Items.Objects[Index] as TSnippet).UserDefined
-    ];
+  if not (odSelected in State)
+    and (fCLB.Items.Objects[Index] as TRoutine).UserDefined then
+    Canvas.Font.Color := clUserRoutine;
   Canvas.TextRect(
     Rect,
     Rect.Left + 2,
@@ -244,11 +243,11 @@ begin
   SnipList.Clear;
   for Idx := 0 to Pred(fCLB.Count) do
     if fCLB.Checked[Idx] then
-      SnipList.Add((fCLB.Items.Objects[Idx] as TSnippet).ID);
+      SnipList.Add((fCLB.Items.Objects[Idx] as TRoutine).ID);
 end;
 
 procedure TSnippetsChkListMgr.GetCheckedSnippets(
-  const SnipList: TSnippetList);
+  const SnipList: TRoutineList);
   {Gets all checked snippets in check list box.
     @param SnipList [in] List that receives checked snippets objects.
   }
@@ -258,7 +257,7 @@ begin
   SnipList.Clear;
   for Idx := 0 to Pred(fCLB.Count) do
     if fCLB.Checked[Idx] then
-      SnipList.Add(fCLB.Items.Objects[Idx] as TSnippet);
+      SnipList.Add(fCLB.Items.Objects[Idx] as TRoutine);
 end;
 
 procedure TSnippetsChkListMgr.Restore;
