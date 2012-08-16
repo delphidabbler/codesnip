@@ -4,6 +4,14 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.10.4 of 16 August 2012
++ Added support for displaying pop-up menus over appropriate control when Alt+F10 is pressed. Fixes bug #3556713 (http://bit.ly/RIzfvQ).
++ Changes to snippets editor:
+  - Added missing edit context menu to "add unit" edit control on References tab. Fixes bug #3556718 (http://bit.ly/RVanCE) as it relates to v3.
+  - Predefined list of units in Units list on References tab now includes the "Types" unit.
+  - Referenced unit names may now contain dots.
+  - Snippets Editor help topic now explains need to configure Delphi XE2 compiler to search namespaces containing referenced units. This provides a solution to bug #3536531 (http://bit.ly/Q2bcmY).
+
 Release v3.10.3 of 25 July 2012
 + Changed so that Delphi compilers can be detected by examining current user registry key in addition to local machine registry key. This enables Delphis that were installed for a given user only to be detected.
 + Fixed bug in Compiler tab of Configure Compilers dialogue box that failed to flag selected compiler as unavailable after button was pressed.
