@@ -19,7 +19,7 @@ interface
 
 uses
   Generics.Collections,
-  DB.USnippetKind, IntfCommon, UBaseObjects, USettings, USingleton;
+  DB.USnippetKind, IntfCommon, UBaseObjects, UContainers, USettings, USingleton;
 
 type
 
@@ -82,26 +82,13 @@ type
       fPages: array[TSnippetKind] of TSnippetPageStructure;
     function GetPages: TArray<TSnippetPageStructure>;
     function GetPage(Kind: TSnippetKind): TSnippetPageStructure;
-  strict private
-    type
-      TEnumerator = class(TObject)
-      strict private
-        var
-          fCurrentIdx: Integer;
-          fPages: TArray<TSnippetPageStructure>;
-        function GetCurrent: TSnippetPageStructure;
-      public
-        property Current: TSnippetPageStructure read GetCurrent;
-        function MoveNext: Boolean;
-        constructor Create(const Pages: TArray<TSnippetPageStructure>);
-      end;
   public
     constructor Create;
     destructor Destroy; override;
     ///  <summary>Assigns properties of another TSnippetPageStructures instance
     ///  to this object.</summary>
     procedure Assign(const Src: TSnippetPageStructures);
-    function GetEnumerator: TEnumerator;
+    function GetEnumerator: TArrayEnumerator<TSnippetPageStructure>;
     property Pages[Kind: TSnippetKind]: TSnippetPageStructure
       read GetPage; default;
   end;
@@ -264,9 +251,10 @@ begin
   inherited;
 end;
 
-function TSnippetPageStructures.GetEnumerator: TEnumerator;
+function TSnippetPageStructures.GetEnumerator:
+  TArrayEnumerator<TSnippetPageStructure>;
 begin
-  Result := TEnumerator.Create(GetPages);
+  Result := TArrayEnumerator<TSnippetPageStructure>.Create(GetPages);
 end;
 
 function TSnippetPageStructures.GetPage(
@@ -468,29 +456,6 @@ begin
     Page.Clear;
     Page.AppendParts(GetParts(Page.Kind));
   end;
-end;
-
-{ TSnippetPageStructures.TEnumerator }
-
-constructor TSnippetPageStructures.TEnumerator.Create(
-  const Pages: TArray<TSnippetPageStructure>);
-begin
-  inherited Create;
-  fPages := Pages;
-  fCurrentIdx := -1;
-end;
-
-function TSnippetPageStructures.TEnumerator.GetCurrent: TSnippetPageStructure;
-begin
-  Result := fPages[fCurrentIdx];
-end;
-
-function TSnippetPageStructures.TEnumerator.MoveNext: Boolean;
-begin
-  if fCurrentIdx >= Length(fPages) then
-    Exit(False);
-  Inc(fCurrentIdx);
-  Result := fCurrentIdx < Length(fPages);
 end;
 
 end.
