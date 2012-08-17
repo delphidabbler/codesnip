@@ -1,7 +1,7 @@
 {
  * UContainers.pas
  *
- * Provides various generic container classes.
+ * Provides various generic container classes and enumerators.
  *
  * $Rev$
  * $Date$
@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -514,6 +514,32 @@ type
     property Ownerships: TDictionaryOwnerships read fOwnerships;
       {Specifies whether the dictionary owns the keys and/or values if they are
       objects}
+  end;
+
+type
+  ///  <summary>Generic enumerator for dynamic arrays.</summary>
+  TArrayEnumerator<T> = class(TEnumerator<T>)
+  strict private
+    var
+      ///  <summary>Array being enumerated.</summary>
+      fArray: TArray<T>;
+      ///  <summary>Index of current array element in enumeration.</summary>
+      fIndex: Integer;
+  strict protected
+    ///  <summary>Gets current array element in enumeration.</summary>
+    ///  <returns>T. Content of current array element.</returns>
+    function DoGetCurrent: T; override;
+    ///  <summary>Moves to next item in enumeration.</summary>
+    ///  <returns>Boolean. True if there is a next item, False if at end of
+    ///  enumeration.</returns>
+    function DoMoveNext: Boolean; override;
+  public
+    ///  <summary>Creates enumerator for given dynamic array.</summary>
+    ///  <param name="A">array of T [in] Array to be enumerated.</param>
+    ///  <remarks>Constructor makes a shallow copy of the given array: value
+    ///  type elements are copied but reference type elements are simply
+    ///  referenced.</remarks>
+    constructor Create(const A: array of T);
   end;
 
 
@@ -1228,6 +1254,32 @@ begin
   inherited;
   if (Action = cnRemoved) and (doOwnsValues in fOwnerships) then
     TObject(Value).Free;
+end;
+
+{ TArrayEnumerator<T> }
+
+constructor TArrayEnumerator<T>.Create(const A: array of T);
+var
+  Idx: Integer;
+begin
+  inherited Create;
+  SetLength(fArray, Length(A));
+  for Idx := Low(A) to High(A) do
+    fArray[Idx] := A[Idx];
+  fIndex := -1;
+end;
+
+function TArrayEnumerator<T>.DoGetCurrent: T;
+begin
+  Result := fArray[fIndex];
+end;
+
+function TArrayEnumerator<T>.DoMoveNext: Boolean;
+begin
+  if fIndex >= Length(fArray) then
+    Exit(False);
+  Inc(fIndex);
+  Result := fIndex < Length(fArray);
 end;
 
 end.
