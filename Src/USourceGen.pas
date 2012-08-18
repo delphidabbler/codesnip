@@ -433,7 +433,7 @@ begin
           Writer.AppendLine;
         Writer.AppendLine('  ' + sReqConstsAndTypes);
         for Snippet in fSourceAnalyser.TypesAndConsts do
-          Writer.AppendLine('    ' + Snippet.Name);
+          Writer.AppendLine('    ' + Snippet.DisplayName);
       end;
       if fSourceAnalyser.ForwardRoutines.Count > 0 then
       begin
@@ -443,7 +443,7 @@ begin
           Writer.AppendLine;
         Writer.AppendLine('  ' + sReqRoutines);
         for Snippet in fSourceAnalyser.ForwardRoutines do
-          Writer.AppendLine('    ' + Snippet.Name);
+          Writer.AppendLine('    ' + Snippet.DisplayName);
       end;
       Writer.AppendLine('}');
       Writer.AppendLine;
@@ -793,7 +793,7 @@ begin
     skConstant, skTypeDef:        // add type or const allowing for dependencies
       AddTypeOrConst(Snippet);
     skFreeform:                   // can't require a freeform snippet
-      raise ECodeSnip.CreateFmt(sCantDependOnFreeform, [Snippet.Name]);
+      raise ECodeSnip.CreateFmt(sCantDependOnFreeform, [Snippet.DisplayName]);
   end;
 end;
 
@@ -1030,7 +1030,7 @@ begin
   Assert(ConstOrType.Kind in [skConstant, skTypeDef],
     ClassName + '.FormatConstOrType: ConstOrType must have kind skTypeDef or '
     + 'skConstant');
-  Result := StrTrim(ConstOrType.Name);
+  Result := '';
   case CommentStyle of
     csNone:
       Result := StrTrim(ConstOrType.SourceCode);
