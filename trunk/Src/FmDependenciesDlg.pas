@@ -103,6 +103,7 @@ type
       end;
     var
       fSnippetID: TSnippetID;     // Snippet whose dependencies are displayed
+      fDisplayName: string;       // Display name of snippet
       fDependsList: TSnippetList; // List of dependencies to be displayed
       fTVDraw: TTVDraw;           // Customises appearance of tree view}
       fTabs: TTabIDs;
@@ -134,18 +135,23 @@ type
       }
   public
     class procedure Execute(const AOwner: TComponent;
-      const SnippetID: TSnippetID; const DependsList: TSnippetList;
-      const Tabs: TTabIDs); overload;
-      {Displays dialog box containing details of a snippet's dependencies.
+      const SnippetID: TSnippetID; const DisplayName: string;
+      const DependsList: TSnippetList; const Tabs: TTabIDs); overload;
+      {Displays dialogue box containing details of a snippet's dependencies.
         @param AOwner [in] Component that owns the dialog box.
         @param SnippetID [in] ID of snippet for which dependencies are to be
           displayed.
+        @param DisplayName [in] Display name of snippet for which dependencies
+          are to be displayed.
+        @param DependsList [in] List of dependencies.
+        @param Tabs [in] Tabs to be displayed in dialogue box.
       }
     class procedure Execute(const AOwner: TComponent; const Snippet: TSnippet;
       const Tabs: TTabIDs); overload;
-      {Displays dialog box containing details of a snippet's dependencies.
+      {Displays dialogue box containing details of a snippet's dependencies.
         @param AOwner [in] Component that owns the dialog box.
         @param Snippet [in] Snippet for which dependencies are to be displayed.
+        @param Tabs [in] Tabs to be displayed in dialogue box.
       }
   end;
 
@@ -268,27 +274,19 @@ end;
 
 class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
   const Snippet: TSnippet; const Tabs: TTabIDs);
-  {Displays dialog box containing details of a snippet's dependencies.
-    @param AOwner [in] Component that owns the dialog box.
-    @param Snippet [in] Snippet for which dependencies are to be displayed.
-  }
 begin
-  Execute(AOwner, Snippet.ID, Snippet.Depends, Tabs);
+  Execute(AOwner, Snippet.ID, Snippet.DisplayName, Snippet.Depends, Tabs);
 end;
 
 class procedure TDependenciesDlg.Execute(const AOwner: TComponent;
-  const SnippetID: TSnippetID; const DependsList: TSnippetList;
-  const Tabs: TTabIDs);
-  {Displays dialog box containing details of a snippet's dependencies.
-    @param AOwner [in] Component that owns the dialog box.
-    @param SnippetIS [in] ID of snippet for which dependencies are to be
-      displayed.
-  }
+  const SnippetID: TSnippetID; const DisplayName: string;
+  const DependsList: TSnippetList; const Tabs: TTabIDs);
 begin
   Assert(Tabs <> [], ClassName + '.Execute: Tabs is []');
   with InternalCreate(AOwner) do
     try
       fSnippetID := SnippetID;
+      fDisplayName := DisplayName;
       fDependsList := DependsList;
       fTabs := Tabs;
       ShowModal;
@@ -318,9 +316,11 @@ function TDependenciesDlg.GetDisplayName: string;
 resourcestring
   sUntitled = '<Untitled Snippet>'; // display name when snippet has no name
 begin
-  Result := fSnippetID.Name;
-  if Result = '' then
-    Result := sUntitled;
+  if fDisplayName <> '' then
+    Exit(fDisplayName);
+  if fSnippetID.Name <> '' then
+    Exit(fSnippetID.Name);
+  Result := sUntitled;
 end;
 
 procedure TDependenciesDlg.lbDependentsDrawItem(Control: TWinControl;
@@ -358,23 +358,24 @@ procedure TDependenciesDlg.PopulateRequiredByList;
 var
   Dependents: ISnippetIDList;
   SnippetID: TSnippetID;
-  Snippet: TSnippet;
+  ThisSnippet: TSnippet;
+  ASnippet: TSnippet;
 begin
-  Dependents := (Database as IDatabaseEdit).GetDependents(
-    Database.Snippets.Find(fSnippetID)
-  );
   lbDependents.Items.BeginUpdate;
   try
     lbDependents.Clear;
-    if tiRequiredBy in fTabs then
+    ThisSnippet := Database.Snippets.Find(fSnippetID);
+    // must only try to get dependents for snippet if it is in database
+    if (tiRequiredBy in fTabs) and Assigned(ThisSnippet) then
     begin
+      Dependents := (Database as IDatabaseEdit).GetDependents(ThisSnippet);
       for SnippetID in Dependents do
       begin
-        Snippet := Database.Snippets.Find(SnippetID);
-        Assert(Assigned(Snippet),
+        ASnippet := Database.Snippets.Find(SnippetID);
+        Assert(Assigned(ASnippet),
           ClassName + '.PopulateRequiredByList: Snippet id not found');
         lbDependents.Items.AddObject(
-          Snippet.DisplayName, TBox<Boolean>.Create(Snippet.UserDefined)
+          ASnippet.DisplayName, TBox<Boolean>.Create(ASnippet.UserDefined)
         );
       end;
     end;
