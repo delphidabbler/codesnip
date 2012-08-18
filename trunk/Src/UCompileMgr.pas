@@ -221,7 +221,7 @@ begin
     ClassName + '.ShowErrors: No compilers have errors or warnings');
   Assert(Assigned(fLastCompiledSnippet),
     ClassName + '.ShowErrors: LastCompiledSnippet is nil');
-  TCompErrorDlg.Execute(Owner, fLastCompiledSnippet.ID, fCompilers);
+  TCompErrorDlg.Execute(Owner, fLastCompiledSnippet, fCompilers);
 end;
 
 { TMainCompileMgr }
