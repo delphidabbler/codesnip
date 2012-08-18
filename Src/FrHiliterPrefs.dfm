@@ -86,7 +86,6 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
       Width = 226
       Height = 51
       TabOrder = 2
-      TabStop = True
       ExplicitLeft = 159
       ExplicitTop = 133
       ExplicitWidth = 226

@@ -37,7 +37,6 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
       Width = 198
       Height = 123
       TabOrder = 1
-      TabStop = True
       ExplicitLeft = 122
       ExplicitTop = 46
       ExplicitWidth = 198
@@ -46,7 +45,7 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
         Width = 198
         Height = 123
         ExplicitWidth = 198
-        ExplicitHeight = 107
+        ExplicitHeight = 123
       end
     end
   end
