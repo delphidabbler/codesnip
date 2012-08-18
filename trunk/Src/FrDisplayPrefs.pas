@@ -35,7 +35,9 @@ type
     chkSnippetsInNewTab: TCheckBox;
     lblMainColour: TLabel;
     lblUserColour: TLabel;
+    btnDefHeadingColours: TButton;
     procedure chkHideEmptySectionsClick(Sender: TObject);
+    procedure btnDefHeadingColoursClick(Sender: TObject);
   strict private
     var
       ///  <summary>Flag indicating if changes affect UI.</summary>
@@ -96,7 +98,7 @@ uses
   // Delphi
   Math, Graphics, ExtCtrls,
   // Project
-  FmPreferencesDlg, UCtrlArranger, UGraphicUtils;
+  FmPreferencesDlg, UColours, UCtrlArranger, UGraphicUtils;
 
 
 {$R *.dfm}
@@ -127,7 +129,7 @@ begin
   TCtrlArranger.AlignLefts(
     [
       lblOverviewTree, chkHideEmptySections, chkSnippetsInNewTab,
-      lblMainColour, lblUserColour
+      lblMainColour, lblUserColour, btnDefHeadingColours
     ],
     0
   );
@@ -151,8 +153,19 @@ begin
     TCtrlArranger.BottomOf([lblMainColour, fMainColourBox], 8),
     [lblUserColour, fUserColourBox]
   );
+  TCtrlArranger.MoveBelow(
+    [lblUserColour, fUserColourBox], btnDefHeadingColours, 12
+  );
   chkHideEmptySections.Width := Self.Width - 16;
   chkSnippetsInNewTab.Width := Self.Width - 16;
+end;
+
+procedure TDisplayPrefsFrame.btnDefHeadingColoursClick(Sender: TObject);
+begin
+  // Restores default heading colours in colour combo boxes
+  fMainColourBox.Selected := clMainSnippet;
+  fUserColourBox.Selected := clUserSnippet;
+  fUIChanged := True;
 end;
 
 procedure TDisplayPrefsFrame.chkHideEmptySectionsClick(Sender: TObject);
@@ -193,8 +206,10 @@ begin
   // Create colour combo boxes
   fMainColourBox := CreateCustomColourBox(fMainColourDlg);
   fMainColourBox.TabOrder := 3;
+  lblMainColour.FocusControl := fMainColourBox;
   fUserColourBox := CreateCustomColourBox(fUserColourDlg);
   fUserColourBox.TabOrder := 4;
+  lblUserColour.FocusControl := fUserColourBox;
 end;
 
 function TDisplayPrefsFrame.CreateCustomColourBox(
