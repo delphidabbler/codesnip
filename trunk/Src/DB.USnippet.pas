@@ -352,10 +352,9 @@ type
   TSnippetListEx = class(TSnippetList)
   public
     function Add(const Snippet: TSnippet): Integer; override;
-      {Adds a snippet to list. Prevents TTempSnippet instances from being added.
+      {Adds a snippet to list. Snippet must not be TTempSnippet class.
         @param Snippet [in] Snippet to be added.
         @return Index where snippet was added to list.
-        @except EBug raised if Snippet is a TTempSnippet instance.
       }
     procedure Delete(const Snippet: TSnippet);
       {Deletes a snippet from list.
@@ -801,18 +800,13 @@ end;
 { TSnippetListEx }
 
 function TSnippetListEx.Add(const Snippet: TSnippet): Integer;
-  {Adds a snippet to list. Prevents TTempSnippet instances from being added.
+  {Adds a snippet to list. Snippet must not be TTempSnippet class.
     @param Snippet [in] Snippet to be added.
     @return Index where snippet was added to list.
-    @except EBug raised if Snippet is a TTempSnippet instance.
   }
 begin
-  if Snippet is TTempSnippet then
-    // don't allow temp snippets to be added to list
-    raise EBug.CreateFmt(
-      ClassName + '.Add: Can''t add temporary snippets to database (%s)',
-      [Snippet.Name]
-    );
+  Assert(not(Snippet is TTempSnippet),
+    ClassName + '.Add: Can''t add temporary snippets to database');
   Result := inherited Add(Snippet);
 end;
 
