@@ -42,7 +42,6 @@ inherited PrintingPrefsFrame: TPrintingPrefsFrame
       Height = 127
       Anchors = [akTop, akRight]
       TabOrder = 2
-      TabStop = True
       ExplicitLeft = 184
       ExplicitTop = 15
       ExplicitWidth = 199

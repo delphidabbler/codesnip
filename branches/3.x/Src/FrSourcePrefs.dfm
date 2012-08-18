@@ -28,7 +28,6 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
       Width = 198
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 0
       OnChange = cbCommentStyleChange
     end
@@ -38,7 +37,6 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
       Width = 198
       Height = 107
       TabOrder = 1
-      TabStop = True
       ExplicitLeft = 122
       ExplicitTop = 46
       ExplicitWidth = 198
@@ -81,7 +79,6 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
       Width = 81
       Height = 21
       Style = csDropDownList
-      ItemHeight = 13
       TabOrder = 0
       OnChange = cbSnippetFileTypeChange
     end
