@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -56,6 +56,7 @@ type
   }
   TCompileResultDisplay = procedure(const Compilers: ICompilers) of object;
 
+type
   {
   TCompileMgr:
     Object that performs test compilations and display of compile errors and
@@ -65,6 +66,13 @@ type
   strict private
     fLastCompiledSnippet: TSnippet; // Value of LastCompiledSnippet property
     fCompilers: ICompilers;         // Value of Compilers property
+    ///  <summary>Handles database change events. Clears test compilation if
+    ///  related snippet is changed or deleted.</summary>
+    ///  <param name="Sender">TObject [in] Object that triggered event. Not
+    ///  used.</param>
+    ///  <param name="EvtInfo">IInterface [in] Object that carries information
+    ///  about the database change event.</param>
+    procedure DBChangeEventHandler(Sender: TObject; const EvtInfo: IInterface);
   strict protected
     property LastCompiledSnippet: TSnippet read fLastCompiledSnippet;
       {Last compiled snippet. May not be added to Snippets object}
@@ -175,12 +183,32 @@ constructor TCompileMgr.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   fCompilers := TCompilersFactory.CreateAndLoadCompilers;
+  Database.AddChangeEventHandler(DBChangeEventHandler);
+end;
+
+procedure TCompileMgr.DBChangeEventHandler(Sender: TObject;
+  const EvtInfo: IInterface);
+var
+  EventInfo: IDatabaseChangeEventInfo;  // information about the event
+begin
+  if not Assigned(fLastCompiledSnippet) then
+    Exit;
+  EventInfo := EvtInfo as IDatabaseChangeEventInfo;
+  if not (EventInfo.Kind in [evBeforeSnippetChange, evBeforeSnippetDelete]) then
+    Exit;
+  Assert(EventInfo.Info is TSnippet,
+    ClassName + '.DBChangeEventHandler: EventInfo is not TSnippet');
+  if (EventInfo.Info as TSnippet).IsEqual(fLastCompiledSnippet) then
+    // Snippet being changed is last compiled snippet: free and nil it so to
+    // ensure incorrect results can't be viewed.
+    FreeAndNil(fLastCompiledSnippet);
 end;
 
 destructor TCompileMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
+  Database.RemoveChangeEventHandler(DBChangeEventHandler);
   fLastCompiledSnippet.Free;
   fCompilers := nil;
   inherited;
