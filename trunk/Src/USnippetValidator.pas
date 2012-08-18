@@ -253,8 +253,9 @@ class function TSnippetValidator.ValidateDependsList(const Snippet: TSnippet;
 
 resourcestring
   // Error messages
-  sInvalidKind = 'Invalid snippet kind in depends list for %0:s "%1:s".';
-  sCircular = '%0:s "%1:s" cannot depend on itself';
+  sInvalidKind = 'Invalid snippet kind "%0:s" in depends list for snippet '
+    + 'named "%1:s"';
+  sCircular = '%0:s Snippet named "%1:s" cannot depend on itself.';
 var
   DeniedDepends: TSnippetKinds; // snippet kinds that can't be in depends list
 begin
