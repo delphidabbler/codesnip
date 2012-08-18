@@ -44,8 +44,8 @@ uses
   Forms, StdCtrls, Controls, ExtCtrls, Classes, Tabs, ActnList, ImgList,
   Generics.Collections,
   // Project
-  Compilers.UGlobals, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg, FrHTMLTpltDlg,
-  UBaseObjects, USnippetIDs;
+  Compilers.UGlobals, DB.USnippet, FmGenericViewDlg, FrBrowserBase, FrHTMLDlg,
+  FrHTMLTpltDlg, UBaseObjects, USnippetIDs;
 
 
 type
@@ -112,7 +112,7 @@ type
       end;
   strict private
     ///  <summary>Snippet for which last compilation took place.</summary>
-    fSnippet: TSnippetID;
+    fSnippet: TSnippet;
     ///  <summary>List of compilers for which errors or warnings are to be
     ///  displayed.</summary>
     fRequiredCompilers: TList<ICompiler>;
@@ -149,12 +149,12 @@ type
     ///  snippet. There is a tab for each compiler.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns this form.
     ///  </param>
-    ///  <param name="ASnippet">TSnippetID [in] ID of snippet that was compiled.
-    ///  </param>
+    ///  <param name="ASnippet">TSnippet [in] Reference to snippet that was
+    ///  compiled.</param>
     ///  <param name="ACompilers">ICompilers [in] List of all supported
     ///  compilers.</param>
     class procedure Execute(const AOwner: TComponent;
-      const ASnippet: TSnippetID; const ACompilers: ICompilers);
+      const ASnippet: TSnippet; const ACompilers: ICompilers);
   end;
 
 
@@ -165,7 +165,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  UConsts, UExceptions, UHTMLUtils, UHTMLTemplate;
+  DB.UMain, UConsts, UExceptions, UHTMLUtils, UHTMLTemplate;
 
 
 {$R *.dfm}
@@ -212,7 +212,7 @@ begin
 end;
 
 class procedure TCompErrorDlg.Execute(const AOwner: TComponent;
-  const ASnippet: TSnippetID; const ACompilers: ICompilers);
+  const ASnippet: TSnippet; const ACompilers: ICompilers);
 var
   Compiler: ICompiler;  // each supported compiler
 begin
@@ -285,7 +285,7 @@ end;
 
 procedure TCompErrorDlg.LoadHTML(const Compiler: ICompiler);
 var
-  Log: TCompilerLog; // stores compiler log
+  Log: TCompilerLog;  // stores compiler log
 begin
   inherited;
   Log := TCompilerLog.Create(Compiler);
@@ -296,7 +296,7 @@ begin
       begin
         Tplt.ResolvePlaceholderText('Status', Log.Status);
         Tplt.ResolvePlaceholderHTML('ErrorList', Log.LogListHTML);
-        Tplt.ResolvePlaceholderText('SnippetName', fSnippet.Name);
+        Tplt.ResolvePlaceholderText('SnippetName', fSnippet.DisplayName);
         Tplt.ResolvePlaceholderText('CompilerID', Compiler.GetName);
       end
     );
