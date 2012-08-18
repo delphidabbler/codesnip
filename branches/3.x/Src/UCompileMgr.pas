@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -65,6 +65,13 @@ type
   strict private
     fLastCompiledRoutine: TRoutine; // Value of LastCompiledRoutine property
     fCompilers: ICompilers;         // Value of Compilers property
+    procedure DBChangeEventHandler(Sender: TObject; const EvtInfo: IInterface);
+      {Handles database change events. Clears text compilation for every
+      database change event.
+        @param Sender [in] Not used.
+        @param EvtInfo [in] Object that carries information about the database 
+          change event.
+       }
   strict protected
     property LastCompiledRoutine: TRoutine read fLastCompiledRoutine;
       {Last compiled routine. May not be added to Snippets object}
@@ -179,12 +186,28 @@ constructor TCompileMgr.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   fCompilers := TCompilersFactory.CreateAndLoadCompilers;
+  Snippets.AddChangeEventHandler(DBChangeEventHandler);
+end;
+
+procedure TCompileMgr.DBChangeEventHandler(Sender: TObject;
+  const EvtInfo: IInterface);
+  {Handles database change events. Clears text compilation for every database
+  change event.
+    @param Sender [in] Not used.
+    @param EvtInfo [in] Object that carries information about the database
+      change event.
+   }
+begin
+  if Assigned(fLastCompiledRoutine)
+    and ((EvtInfo as ISnippetChangeEventInfo).Kind = evChangeBegin) then
+    FreeAndNil(fLastCompiledRoutine);
 end;
 
 destructor TCompileMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
+  Snippets.RemoveChangeEventHandler(DBChangeEventHandler);
   FreeAndNil(fLastCompiledRoutine);
   fCompilers := nil;  // release compilers object
   inherited;
