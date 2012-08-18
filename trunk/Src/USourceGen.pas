@@ -788,11 +788,11 @@ resourcestring
   sCantDependOnFreeform = 'Can''t depend on "%s" - it is freeform code';
 begin
   case Snippet.Kind of
-    skRoutine:                    // require routine
+    skRoutine:                      // require routine
       RequireRoutine(Snippet);
-    skConstant, skTypeDef:        // add type or const allowing for dependencies
+    skConstant, skTypeDef, skClass: // add type/const allowing for dependencies
       AddTypeOrConst(Snippet);
-    skFreeform:                   // can't require a freeform snippet
+    skFreeform:                     // can't require a freeform snippet
       raise ECodeSnip.CreateFmt(sCantDependOnFreeform, [Snippet.DisplayName]);
   end;
 end;
