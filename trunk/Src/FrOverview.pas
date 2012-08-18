@@ -874,6 +874,21 @@ procedure TOverviewFrame.tvSnippetsMouseDown(Sender: TObject;
     @param X [in] position of mouse.
     @param Y [in] position of mouse.
   }
+
+  // Selects node at mouse co-ordinates X,Y and displays associated view item.
+  // If Ctrl is pressed view item is displayed in new tab.
+  procedure SelectNodeUnderMouseCursor;
+  var
+    Node: TTreeNode;  // node under mouse co-ordinates
+  begin
+    Node := tvSnippets.GetNodeAt(X, Y);
+    if Assigned(Node) and (Node is TViewItemTreeNode) then
+    begin
+      SelectNode(Node, False);
+      SelectionChange(Node, ExtractShiftKeys(Shift) = [ssCtrl]);
+    end;
+  end;
+
 var
   Node: TTreeNode;  // tree node clicked
   PopupPt: TPoint;  // menu pop-up location
@@ -885,34 +900,14 @@ begin
   if [htOnItem, htOnRight] * tvSnippets.GetHitTestInfoAt(X, Y) <> [] then
   begin
     case Button of
-      mbLeft:
-      begin
-        // Select node clicked: request new tab if Ctrl key pressed
-        Node := tvSnippets.GetNodeAt(X, Y);
-        if Assigned(Node) and (Node is TViewItemTreeNode) then
-        begin
-          SelectNode(Node, False);
-          SelectionChange(Node, ExtractShiftKeys(Shift) = [ssCtrl]);
-        end;
-      end;
+      mbLeft, mbMiddle:
+        SelectNodeUnderMouseCursor;
       mbRight:
       begin
-        { TODO: This behaviour duplicates code in mbLeft deliberately - we may
-                want to change later so that right click does not select node. }
-        { TODO: May wish to inhibit Ctrl key for Right clicks later. }
-        // Select node clicked
-        Node := tvSnippets.GetNodeAt(X, Y);
-        if Assigned(Node) and (Node is TViewItemTreeNode) then
-        begin
-          SelectNode(Node, False);
-          SelectionChange(Node, ExtractShiftKeys(Shift) = [ssCtrl]);
-        end;
-        // Display popup menu
-        PopupPt := tvSnippets.ClientToScreen(Point(X, y));
+        SelectNodeUnderMouseCursor;
+        PopupPt := tvSnippets.ClientToScreen(Point(X, Y));
         mnuOverview.Popup(PopupPt.X, PopupPt.Y);
       end;
-      mbMiddle:
-        ; // Middle button is ignored
     end;
   end;
 end;
