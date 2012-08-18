@@ -205,6 +205,11 @@ type
     ///  <summary>Creates an initial letter view instance associated with a
     ///  given letter.</summary>
     class function CreateInitialLetterView(const Letter: TInitialLetter): IView;
+    ///  <summary>Creates a view of given database object. View type depends on
+    ///  the object's type.</summary>
+    ///  <remarks>Database object type must be valid, i.e. either TSnippet or
+    ///  TCategory, or nil.</remarks>
+    class function CreateDBItemView(const DBObj: TObject): IView;
   end;
 
 
@@ -830,6 +835,19 @@ class function TViewFactory.CreateCategoryView(const Category: TCategory):
   IView;
 begin
   Result := TCategoryView.Create(Category);
+end;
+
+class function TViewFactory.CreateDBItemView(const DBObj: TObject): IView;
+begin
+  Result := nil;
+  if not Assigned(DBObj) then
+    Result := TViewFactory.CreateNulView
+  else if DBObj is TSnippet then
+    Result := TViewFactory.CreateSnippetView(DBObj as TSnippet)
+  else if DBObj is TCategory then
+    Result := TViewFactory.CreateCategoryView(DBObj as TCategory);
+  Assert(Assigned(Result),
+    ClassName + '.CreateDBItemView: DBObj is not valid type');
 end;
 
 class function TViewFactory.CreateDBUpdateInfoView: IView;

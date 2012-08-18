@@ -108,14 +108,6 @@ type
       ///  </remarks>
       fPendingChange: Boolean;
 
-    ///  <summary>Creates and returns view object for a database object.
-    ///  </summary>
-    ///  <param name="DBObj">TObject [in] Database object for which view
-    ///  required. Must be a valid databse object or nil.</param>
-    ///  <returns>IView. Required view object. If DBObj is nil a null view is
-    ///  returned.</returns>
-    function DBEventInfoToView(EvtInfo: TObject): IView;
-
     ///  <summary>Gets reference to manager object for tab set that is currently
     ///  "interactive".</summary>
     ///  <returns>ITabbedDisplayMgr. Reference to required tab set manager
@@ -319,7 +311,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UCategory, DB.UMain, DB.USnippet, UPreferences, UQuery;
+  DB.UMain, UPreferences, UQuery;
 
 
 { TMainDisplayMgr }
@@ -329,7 +321,6 @@ begin
   Assert(fPendingChange, ClassName + '.AddView: no change pending');
   Assert(Supports(View, ISnippetView) or Supports(View, ICategoryView),
     ClassName + '.AddView: View not a database item');
-  // todo: ensure this is called after PrepareForDBChange called.
   RedisplayOverview;
   (fOverviewMgr as IOverviewDisplayMgr).SelectItem(View);
   if Preferences.ShowNewSnippetsInNewTabs then
@@ -452,30 +443,19 @@ begin
 
     evBeforeSnippetChange, evBeforeSnippetDelete,
     evBeforeCategoryChange, evBeforeCategoryDelete:
-      PrepareForDBViewChange(DBEventInfoToView(EventInfo.Info));
+      PrepareForDBViewChange(TViewFactory.CreateDBItemView(EventInfo.Info));
 
     evSnippetChanged, evCategoryChanged:
-      UpdateDBView(fChangingDetailPageIdx, DBEventInfoToView(EventInfo.Info));
+      UpdateDBView(
+        fChangingDetailPageIdx, TViewFactory.CreateDBItemView(EventInfo.Info)
+      );
 
     evSnippetDeleted, evCategoryDeleted:
       DeleteDBView(fChangingDetailPageIdx);
 
     evSnippetAdded, evCategoryAdded:
-      AddDBView(DBEventInfoToView(EventInfo.Info));
+      AddDBView(TViewFactory.CreateDBItemView(EventInfo.Info));
   end;
-end;
-
-function TMainDisplayMgr.DBEventInfoToView(EvtInfo: TObject): IView;
-begin
-  // TODO: Move this to TViewItemFactory as CreateDBView method (param=DBObj)?
-  Result := nil;
-  if not Assigned(EvtInfo) then
-    Result := TViewFactory.CreateNulView
-  else if EvtInfo is TSnippet then
-    Result := TViewFactory.CreateSnippetView(EvtInfo as TSnippet)
-  else if EvtInfo is TCategory then
-    Result := TViewFactory.CreateCategoryView(EvtInfo as TCategory);
-  Assert(Assigned(Result), ClassName + '.DBEventInfoToView: Result is nil');
 end;
 
 procedure TMainDisplayMgr.DeleteDBView(TabIdx: Integer);
@@ -668,7 +648,6 @@ end;
 
 procedure TMainDisplayMgr.ShowWelcomePage;
 begin
-  // TODO: May want a user option for welcome page to overwrite or use new tab
   DisplayViewItem(TViewFactory.CreateStartPageView, ddmRequestNewTab);
 end;
 

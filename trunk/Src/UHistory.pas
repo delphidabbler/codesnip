@@ -78,14 +78,6 @@ type
     ///  about the database change event.</param>
     procedure DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
 
-    ///  <summary>Creates and returns view object for a database object.
-    ///  </summary>
-    ///  <param name="DBObj">TObject [in] Database object for which view
-    ///  required. Must be a valid databse object or nil.</param>
-    ///  <returns>IView. Required view object. If DBObj is nil a null view is
-    ///  returned.</returns>
-    function DBEventInfoToView(EvtInfo: TObject): IView;
-
   public
     ///  <summary>Constructs and initialises history object.</summary>
     constructor Create;
@@ -140,7 +132,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  DB.UCategory, DB.UMain, DB.USnippet, UExceptions;
+  DB.UMain, UExceptions;
 
 
 { THistory }
@@ -190,24 +182,8 @@ begin
     evCategoryDeleted, evCategoryChanged:
       Clear;
     evSnippetAdded, evCategoryAdded:
-      NewItem(DBEventInfoToView(EventInfo.Info));
+      NewItem(TViewFactory.CreateDBItemView(EventInfo.Info));
   end;
-end;
-
-function THistory.DBEventInfoToView(EvtInfo: TObject): IView;
-begin
-  { TODO: This duplicates method of same name in TMainDisplayMgr - Move
-          to TViewItemFactory as CreateDBView method (param=DBObj)? }
-  { TODO: If this method moved, remove DB.UCategory & DB.USnippet from uses
-          clause. }
-  Result := nil;
-  if not Assigned(EvtInfo) then
-    Result := TViewFactory.CreateNulView
-  else if EvtInfo is TSnippet then
-    Result := TViewFactory.CreateSnippetView(EvtInfo as TSnippet)
-  else if EvtInfo is TCategory then
-    Result := TViewFactory.CreateCategoryView(EvtInfo as TCategory);
-  Assert(Assigned(Result), ClassName + '.DBEventInfoToView: Result is nil');
 end;
 
 destructor THistory.Destroy;
