@@ -544,6 +544,8 @@ begin
   Snippets.Clear;
   for Snippet in Query.Selection do
   begin
+    Assert(Snippet.Name <> '',
+      ClassName + '.BuildSnippetList: Snippet name is empty string';
     if Snippet.Name[1] = (View as IInitialLetterView).InitialLetter then
       Snippets.Add(Snippet);
   end;
