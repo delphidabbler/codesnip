@@ -221,7 +221,7 @@ begin
   fBuilder.SetFontSize(SubHeadingFontSize);
   fBuilder.SetFontStyle([fsBold]);
   SetColour(Preferences.DBHeadingColours[Snippet.UserDefined]);
-  fBuilder.AddText(Snippet.Name);
+  fBuilder.AddText(Snippet.DisplayName);
   fBuilder.EndPara;
   fBuilder.EndGroup;
 end;

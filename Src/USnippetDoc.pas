@@ -184,7 +184,7 @@ begin
   Assert(Assigned(Snippet), ClassName + '.Create: Snippet is nil');
   // generate document
   InitialiseDoc;
-  RenderHeading(Snippet.Name, Snippet.UserDefined);
+  RenderHeading(Snippet.DisplayName, Snippet.UserDefined);
   RenderDescription(Snippet.Description);
   RenderSourceCode(Snippet.SourceCode);
   RenderTitledText(
@@ -218,7 +218,7 @@ var
 begin
   Result := TIStringList.Create;
   for Snippet in SnippetList do
-    Result.Add(Snippet.Name);
+    Result.Add(Snippet.DisplayName);
 end;
 
 { TCompileDocInfo }
