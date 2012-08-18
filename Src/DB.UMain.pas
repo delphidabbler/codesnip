@@ -685,7 +685,7 @@ var
 begin
   Assert(Assigned(Snippet), ClassName + '.CreateTempSnippet: Snippet is nil');
   Assert(Snippet is TSnippetEx,
-    ClassName + '.CreateTempSnippet: Snippet is not a TSnippetEx');
+    ClassName + '.CreateTempSnippet: Snippet is a TSnippetEx');
   Data := (Snippet as TSnippetEx).GetEditData;
   Result := TTempSnippet.Create(
     Snippet.Name, Snippet.UserDefined, (Snippet as TSnippetEx).GetProps);
@@ -930,7 +930,8 @@ var
   Cat: TCategory; // category object containing new snippet
 resourcestring
   // Error message
-  sCatNotFound = 'Category "%0:s" for new snippet "%1:s" does not exist';
+  sCatNotFound = 'Category "%0:s" referenced by new snippet named "%1:s" does '
+    + 'not exist';
 begin
   Result := TSnippetEx.Create(SnippetName, True, Data.Props);
   (Result as TSnippetEx).UpdateRefs(Data.Refs, fSnippets);
@@ -1087,8 +1088,8 @@ var
   Referrers: TSnippetList;  // list of referencing snippets
 resourcestring
   // Error message
-  sCantRename = 'Can''t rename snippet %0:s to %1:s: Snippet %1:s already '
-    + 'exists in user database';
+  sCantRename = 'Can''t rename snippet named %0:s to %1:s: Snippet with name '
+    + '%1:s already exists in user database';
 begin
   Result := Snippet;      // keeps compiler happy
   Assert(Snippet.UserDefined,
