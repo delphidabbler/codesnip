@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -59,6 +59,12 @@ type
         @param Params [in/out] In: default parameters. Out: transparent added to
           required styles.
       }
+  public
+    procedure Invalidate; override;
+      {Overrides window invalidation code to do nothing.
+      NOTE: we don't want any repainting since this will overwrite the showcased
+      item.
+      }
   end;
 
 
@@ -82,4 +88,14 @@ begin
   Params.ExStyle := Params.ExStyle or WS_EX_TRANSPARENT;
 end;
 
+procedure TShowCaseCtrl.Invalidate;
+  {Overrides window invalidation code to do nothing.
+  NOTE: we don't want any repainting since this will overwrite the showcased
+  item}
+begin
+  // Do nothing.
+  // Do not call inherited.
+end;
+
 end.
+
