@@ -67,7 +67,7 @@ inherited SnippetLayoutPrefsFrame: TSnippetLayoutPrefsFrame
     Width = 138
     Height = 13
     Caption = '&Displayed page components:'
-    FocusControl = lbAvailableFragments
+    FocusControl = lbUsedFragments
   end
   object cbSnippetKinds: TComboBox
     Left = 168
