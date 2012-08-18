@@ -307,7 +307,7 @@ begin
   TFontHelper.SetDefaultBaseFont(lblSnippetName.Font, False);
   lblSnippetName.Font.Color :=
     Preferences.DBHeadingColours[fSnippet.UserDefined];
-  lblSnippetName.Caption := fSnippet.Name;
+  lblSnippetName.Caption := fSnippet.DisplayName;
 end;
 
 procedure TTestCompileDlg.CreateCompilerCtrls;
