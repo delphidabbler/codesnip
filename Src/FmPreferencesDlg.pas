@@ -214,6 +214,7 @@ var
 begin
   inherited;
   // Get each visible page to update local preferences
+  fUpdateUI := False;
   for TabIdx := 0 to Pred(pcMain.PageCount) do
   begin
     MapTabSheetToPage(TabIdx).SavePrefs(fLocalPrefs);
@@ -269,7 +270,9 @@ begin
       CreatePages(Pages);
       Result := ShowModal = mrOK;
       if Result then
-        UpdateUI := fUpdateUI;
+        UpdateUI := fUpdateUI
+      else
+        UpdateUI := False;
     finally
       Free;
     end;

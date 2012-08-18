@@ -611,15 +611,32 @@ procedure THiliterPrefsFrame.UpdateControls;
   {Updates state of controls and preview to reflect currently selected
   highlighter element.
   }
+
+  // Ticks or clears a check box without triggering an OnClick event. To fire
+  // event would mean that frame would be marked as changed when it should not
+  // be.
+  procedure SafeCheck(const CB: TCheckBox; const State: Boolean);
+  var
+    OnClickSave: TNotifyEvent;
+  begin
+    OnClickSave := CB.OnClick;
+    try
+      CB.OnClick := nil;
+      CB.Checked := State;
+    finally
+      CB.OnClick := OnClickSave;
+    end;
+  end;
+
 var
   Elem: IHiliteElemAttrs; // currently selected highlighter element
 begin
   Elem := CurrentElement;
   cbFontName.ItemIndex := cbFontName.Items.IndexOf(fAttrs.FontName);
   cbFontSize.Text := IntToStr(fAttrs.FontSize);
-  chkBold.Checked := fsBold in Elem.FontStyle;
-  chkItalics.Checked := fsItalic in Elem.FontStyle;
-  chkUnderline.Checked := fsUnderline in Elem.FontStyle;
+  SafeCheck(chkBold, fsBold in Elem.FontStyle);
+  SafeCheck(chkItalics, fsItalic in Elem.FontStyle);
+  SafeCheck(chkUnderline, fsUnderline in Elem.FontStyle);
   fColorBox.Selected := Elem.ForeColor;
   UpdatePreview;
 end;
