@@ -140,7 +140,7 @@ begin
   Assert(Assigned(ASnippet), ClassName + '.Execute: ASnippet is nil');
   with InternalCreate(AOwner) do
     try
-      Caption := Format(sCaption, [ASnippet.Name]);
+      Caption := Format(sCaption, [ASnippet.DisplayName]);
       fSnippet := ASnippet;
       Result := ShowModal = mrOK;
     finally
