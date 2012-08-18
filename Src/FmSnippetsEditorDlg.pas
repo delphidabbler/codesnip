@@ -368,6 +368,7 @@ begin
     TDependenciesDlg.Execute(
       Self,
       TSnippetID.Create(StrTrim(edName.Text), True),
+      StrTrim(edDisplayName.Text),
       DependsList,
       [tiDependsUpon]
     );
@@ -667,11 +668,11 @@ class function TSnippetsEditorDlg.EditSnippet(AOwner: TComponent;
     @return True if user OKs, False if cancels.
   }
 resourcestring
-  sCaption = 'Edit %s';   // dialog box caption
+  sCaption = 'Edit Snippet';  // dialogue box caption
 begin
   with InternalCreate(AOwner) do
     try
-      Caption := Format(sCaption, [Snippet.Name]);
+      Caption := sCaption;
       fSnippet := Snippet;
       Result := ShowModal = mrOK;
     finally
@@ -967,7 +968,6 @@ procedure TSnippetsEditorDlg.ValidateData;
     @except EDataEntry raised if data is not valid.
   }
 resourcestring
-  // Messages
   sDependencyPrompt = 'See the dependencies by clicking the View Dependencies '
     + 'button on the References tab.';
 var
