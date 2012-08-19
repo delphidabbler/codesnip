@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -60,14 +60,16 @@ type
       {Updates database.
       }
     procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool);
+      UserDefined: WordBool; NewTab: WordBool);
       {Displays a named snippey.
         @param SnippetName [in] Name of snippet to display.
         @param UserDefined [in] Whether snippet is user defined.
+        @param NewTab [in] Whether to display in new tab in detail pane.
       }
-    procedure DisplayCategory(const CatID: WideString);
+    procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
       {Displays an identified category.
         @param CatID [in] Id of category to display.
+        @param NewTab [in] Whether to display in new tab in detail pane.
       }
     procedure ShowHint(const Hint: WideString);
       {Displays a hint.

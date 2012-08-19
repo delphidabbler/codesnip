@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -87,14 +87,16 @@ type
       {Updates database.
       }
     procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool);
-      {Displays a named snippet.
+      UserDefined: WordBool; NewTab: WordBool);
+      {Displays a named snippey.
         @param SnippetName [in] Name of snippet to display.
         @param UserDefined [in] Whether snippet is user defined.
+        @param NewTab [in] Whether to display in new tab in detail pane.
       }
-    procedure DisplayCategory(const CatID: WideString);
+    procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
       {Displays an identified category.
         @param CatID [in] Id of category to display.
+        @param NewTab [in] Whether to display in new tab in detail pane.
       }
     procedure ShowHint(const Hint: WideString);
       {Displays a hint.
@@ -221,29 +223,33 @@ begin
     fConfigCompilersAction.Execute;
 end;
 
-procedure TNotifier.DisplayCategory(const CatID: WideString);
+procedure TNotifier.DisplayCategory(const CatID: WideString; NewTab: WordBool);
   {Displays an identified category.
     @param CatID [in] Id of category to display.
+    @param NewTab [in] Whether to display in new tab in detail pane.
   }
 begin
   if Assigned(fDisplayCategoryAction) then
   begin
     (fDisplayCategoryAction as TCategoryAction).CatID := CatID;
+    (fDisplayCategoryAction as TCategoryAction).NewTab := NewTab;
     fDisplayCategoryAction.Execute;
   end;
 end;
 
 procedure TNotifier.DisplaySnippet(const SnippetName: WideString;
-  UserDefined: WordBool);
+  UserDefined: WordBool; NewTab: WordBool);
   {Displays a named snippet.
     @param SnippetName [in] Name of snippet to display.
     @param UserDefined [in] Whether snippet is user defined.
+    @param NewTab [in] Whether to display in new tab in detail pane.
   }
 begin
   if Assigned(fDisplaySnippetAction) then
   begin
     (fDisplaySnippetAction as TSnippetAction).SnippetName := SnippetName;
     (fDisplaySnippetAction as TSnippetAction).UserDefined := UserDefined;
+    (fDisplaySnippetAction as TSnippetAction).NewTab := NewTab;
     fDisplaySnippetAction.Execute;
   end;
 end;
