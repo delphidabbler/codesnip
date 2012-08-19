@@ -66,6 +66,7 @@ type
 
       fDescStyles: TRTFStyleMap;
       fExtraStyles: TRTFStyleMap;
+      ///  <summary>Styling applied to URLs.</summary>
       fURLStyle: TRTFStyle;
     const
       ///  <summary>Name of main document font.</summary>
@@ -179,7 +180,7 @@ begin
   // set up colour table
   fBuilder.ColourTable.Add(clWarningText);
   fBuilder.ColourTable.Add(clVarText);
-  fBuilder.ColourTable.Add(clLinkText);
+  fBuilder.ColourTable.Add(clExternalLink);
   fBuilder.ColourTable.Add(Preferences.DBHeadingColours[False]);
   fBuilder.ColourTable.Add(Preferences.DBHeadingColours[True]);
 end;
@@ -187,7 +188,7 @@ end;
 procedure TRTFSnippetDoc.InitStyles;
 begin
   fURLStyle := TRTFStyle.Create(
-    [scColour], TRTFFont.CreateNull, 0.0, [], clLinkText
+    [scColour], TRTFFont.CreateNull, 0.0, [], clExternalLink
   );
 
   fExtraStyles.Add(
