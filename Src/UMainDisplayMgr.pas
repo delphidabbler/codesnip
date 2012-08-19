@@ -180,6 +180,15 @@ type
     ///  method.</remarks>
     procedure DeleteDBView(TabIdx: Integer);
 
+    ///  <summary>Displays a view item.</summary>
+    ///  <param name="ViewItem">IView [in] View item to be displayed.</param>
+    ///  <param name="Mode">TDetailPageDisplayMode [in] Determines how view is
+    ///  displayed in detail pane.</param>
+    ///  <remarks>View item is selected in overview pane, if present, and shown
+    ///  in detail pane.</remarks>
+    procedure DisplayViewItem(ViewItem: IView; Mode: TDetailPageDisplayMode);
+      overload;
+
   public
     ///  <summary>Object contructor. Sets up object to work with given frame
     ///  manager objects.</summary>
@@ -202,13 +211,17 @@ type
     ///  </remarks>
     procedure ClearAll;
 
-    ///  <summary>Displays a view item.</summary>
+    ///  <summary>Display a view item.</summary>
     ///  <param name="ViewItem">IView [in] View item to be displayed.</param>
-    ///  <param name="Mode">TDetailPageDisplayMode [in] Determines how view is
-    ///  displayed in detail pane.</param>
-    ///  <remarks>View item is selected in overview pane, if present, and shown
-    ///  in detail pane.</remarks>
-    procedure DisplayViewItem(ViewItem: IView; Mode: TDetailPageDisplayMode);
+    ///  <param name="NewTab">Boolean [in] Determines if view is dislayed in
+    ///  a new tab in detail pane.</param>
+    ///  <remarks>
+    ///  <para>View item is selected in overview pane, if present, and shown in
+    ///  detail pane.</para>
+    ///  <para>When new tab is requested one is created unless view item is
+    ///  already displayed, when that tab is re-used.</para>
+    ///  </remarks>
+    procedure DisplayViewItem(ViewItem: IView; NewTab: Boolean); overload;
 
     ///  <summary>Refreshes display.</summary>
     ///  <remarks>Re-selects current view in overview pane and re-displays
@@ -485,6 +498,15 @@ begin
   (fDetailsMgr as IDetailPaneDisplayMgr).Display(
     View, (fDetailsMgr as ITabbedDisplayMgr).SelectedTab
   );
+end;
+
+procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView; NewTab: Boolean);
+const
+  TabDisplayMap: array[Boolean] of TDetailPageDisplayMode = (
+    ddmOverwrite, ddmRequestNewTab
+  );
+begin
+  DisplayViewItem(ViewItem, TabDisplayMap[NewTab]);
 end;
 
 procedure TMainDisplayMgr.DisplayViewItem(ViewItem: IView;
