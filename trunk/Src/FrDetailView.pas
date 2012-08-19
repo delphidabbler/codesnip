@@ -260,16 +260,15 @@ type
 const
   ///  <summary>Maps popup menu ids to command bar wrapper classes for
   ///  associated popup menus.</summary>
-  ///  <remarks>A nil entry indicates no menu or wrapper are required for that
-  ///  menu type.</remarks>
+  ///  <remarks>Must never have a nil entry.</remarks>
   MenuWrapperClassMap: array[TWBMenuID] of TPopupMenuWrapperClass = (
     TWBDefaultPopupMenuWrapper,   // cDetailPopupMenuDefault
     TWBPopupMenuWrapper,          // cDetailPopupMenuImage
-    nil,                          // cDetailPopupMenuControl
-    nil,                          // cDetailPopupMenuTable
-    TWBPopupMenuWrapper,          // cDetailPopupMenuTextSelect
+    TWBDefaultPopupMenuWrapper,   // cDetailPopupMenuControl
+    TWBDefaultPopupMenuWrapper,   // cDetailPopupMenuTable
+    TWBDefaultPopupMenuWrapper,   // cDetailPopupMenuTextSelect
     TWBPopupMenuWrapper,          // cDetailPopupMenuAnchor
-    nil                           // cDetailPopupMenuUnknown
+    TWBPopupMenuWrapper           // cDetailPopupMenuUnknown
   );
 var
   CmdBarID: TCommandBarID;            // loops through browser menu command ids

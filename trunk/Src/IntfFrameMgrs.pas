@@ -75,6 +75,10 @@ const
   cDetailPopupMenuFirst = CONTEXT_MENU_DEFAULT;
   cDetailPopupMenuLast = CONTEXT_MENU_UNKNOWN;
 
+  // set of all TCommandBarID values
+  cDetailPopupMenuIDs: TCommandBarIDs =
+    [cDetailPopupMenuFirst..cDetailPopupMenuLast];
+
   // Constant that identifies command bar in detail pane tab set
   // (must be different to all cDetailPopupMenuXXX constants)
   cDetailTabSetPopupMenu = Succ(cDetailPopupMenuLast);
