@@ -23,7 +23,8 @@ uses
   // Delphi
   Graphics,
   // Project
-  ActiveText.URTFRenderer, DB.UCategory, DB.USnippet, UEncodings, URTFBuilder;
+  ActiveText.URTFRenderer, DB.UCategory, DB.USnippet, UEncodings, URTFBuilder,
+  URTFStyles;
 
 
 type
@@ -57,6 +58,8 @@ type
       ///  <summary>Map of active text action elements to their RTF styling.
       ///  </summary>
       fDescStyles: TRTFStyleMap;
+      ///  <summary>Styling applied to URLs.</summary>
+      fURLStyle: TRTFStyle;
     ///  <summary>Outputs description of given category as a main heading as
     ///  RTF.</summary>
     procedure OutputCategoryHeading(const Category: TCategory);
@@ -90,7 +93,7 @@ implementation
 
 uses
   // Project
-  ActiveText.UMain, UColours, UPreferences, URTFStyles;
+  ActiveText.UMain, UColours, UPreferences;
 
 
 { TRTFCategoryDoc }
@@ -106,6 +109,7 @@ begin
   // Set up colour table
   fBuilder.ColourTable.Add(Preferences.DBHeadingColours[False]);
   fBuilder.ColourTable.Add(Preferences.DBHeadingColours[True]);
+  fBuilder.ColourTable.Add(clExternalLink);
   fDescStyles := TRTFStyleMap.Create;
   InitStyles;
 end;
@@ -132,6 +136,9 @@ end;
 
 procedure TRTFCategoryDoc.InitStyles;
 begin
+  fURLStyle := TRTFStyle.Create(
+    [scColour], TRTFFont.CreateNull, 0.0, [], clExternalLink
+  );
   fDescStyles.Add(
     ekPara, TRTFStyle.Create(TRTFParaSpacing.Create(ParaSpacing, 0.0))
   );
@@ -197,7 +204,10 @@ begin
     )
   );
   if not fUseColour then
+  begin
     fDescStyles.MakeMonochrome;
+    fURLStyle.MakeMonochrome;
+  end;
 end;
 
 procedure TRTFCategoryDoc.OutputCategoryHeading(const Category: TCategory);
@@ -238,8 +248,8 @@ begin
   RTFWriter := TActiveTextRTF.Create;
   try
     RTFWriter.ElemStyleMap := fDescStyles;
-    RTFWriter.DisplayURLs := False;
-    RTFWriter.URLStyle := TRTFStyle.CreateNull;
+    RTFWriter.DisplayURLs := True;
+    RTFWriter.URLStyle := fURLStyle;
     RTFWriter.Render(Snippet.Description, fBuilder);
   finally
     RTFWriter.Free;
