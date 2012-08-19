@@ -55,6 +55,8 @@ type
   }
   TCommandBarID = type Byte;
 
+  TCommandBarIDs = set of TCommandBarID;
+
   {
   ICommandBarConfig:
     Interface supported by objects that can configure one or more
@@ -63,15 +65,18 @@ type
   ICommandBarConfig = interface(IInterface)
     ['{B70EAC6F-F0AB-4318-B36A-CBC3C89DC9A5}']
     procedure AddAction(const Action: TCustomAction;
-      const ID: TCommandBarID);
+      const ID: TCommandBarID); overload;
       {Adds an new command action to a command bar.
         @param Action [in] Action to be added.
         @param Kind [in] Id of command bar to receive command bar item.
       }
-    procedure AddSpacer(const ID: TCommandBarID);
+    procedure AddAction(const Action: TCustomAction;
+      const IDs: TCommandBarIDs); overload;
+    procedure AddSpacer(const ID: TCommandBarID); overload;
       {Adds a spacer to a command bar.
         @param Kind [in] Id of command bar to receive spacer.
       }
+    procedure AddSpacer(const IDs: TCommandBarIDs); overload;
     procedure SetImages(const Images: TCustomImageList);
       {Specifies image list to be used by all command bars.
         @param Images [in] Image list to be used.
@@ -191,15 +196,18 @@ type
   protected // do not make strict
     { ICommandBarConfig methods }
     procedure AddAction(const Action: TCustomAction;
-      const ID: TCommandBarID);
+      const ID: TCommandBarID); overload;
       {Adds an new command action to a command bar.
         @param Action [in] Action to be added.
         @param Kind [in] Id of command bar to receive command bar item.
       }
-    procedure AddSpacer(const ID: TCommandBarID);
+    procedure AddAction(const Action: TCustomAction;
+      const IDs: TCommandBarIDs); overload;
+    procedure AddSpacer(const ID: TCommandBarID); overload;
       {Adds a spacer to a command bar.
         @param Kind [in] Id of command bar to receive spacer.
       }
+    procedure AddSpacer(const IDs: TCommandBarIDs); overload;
     procedure SetImages(const Images: TCustomImageList); virtual;
       {Specifies image list to be used by all command bars.
         @param Images [in] Image list to be used.
@@ -242,6 +250,15 @@ begin
   fCommandBars[ID].AddAction(Action);
 end;
 
+procedure TCommandBarMgr.AddAction(const Action: TCustomAction;
+  const IDs: TCommandBarIDs);
+var
+  ID: TCommandBarID;
+begin
+  for ID in IDs do
+    AddAction(Action, ID);
+end;
+
 procedure TCommandBarMgr.AddCommandBar(const ID: TCommandBarID;
   const CommandBar: TCommandBarWrapper);
   {Adds a new command bar to command bar manager.
@@ -251,6 +268,14 @@ procedure TCommandBarMgr.AddCommandBar(const ID: TCommandBarID;
 begin
   fCommandBars.Add(ID, CommandBar);
   CommandBar.SetImages(fImageList);
+end;
+
+procedure TCommandBarMgr.AddSpacer(const IDs: TCommandBarIDs);
+var
+  ID: TCommandBarID;
+begin
+  for ID in IDs do
+    AddSpacer(ID);
 end;
 
 procedure TCommandBarMgr.AddSpacer(const ID: TCommandBarID);

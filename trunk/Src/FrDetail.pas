@@ -117,7 +117,11 @@ type
 
     // ICommandBarConfig
     procedure AddAction(const Action: TCustomAction; const ID: TCommandBarID);
-    procedure AddSpacer(const ID: TCommandBarID);
+      overload;
+    procedure AddAction(const Action: TCustomAction;
+      const IDs: TCommandBarIDs); overload;
+    procedure AddSpacer(const ID: TCommandBarID); overload;
+    procedure AddSpacer(const IDs: TCommandBarIDs); overload;
     procedure SetImages(const Images: TCustomImageList);
 
     // ISelectionMgr
@@ -151,6 +155,23 @@ begin
     fTabSetCmdBar.AddAction(Action)
   else
     (frmDetailView as ICommandBarConfig).AddAction(Action, ID);
+end;
+
+procedure TDetailFrame.AddAction(const Action: TCustomAction;
+  const IDs: TCommandBarIDs);
+var
+  ID: TCommandBarID;
+begin
+  for ID in IDs do
+    AddAction(Action, ID);
+end;
+
+procedure TDetailFrame.AddSpacer(const IDs: TCommandBarIDs);
+var
+  ID: TCommandBarID;
+begin
+  for ID in IDs do
+    AddSpacer(ID);
 end;
 
 procedure TDetailFrame.AddSpacer(const ID: TCommandBarID);
