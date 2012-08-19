@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -124,7 +124,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UExceptions;
+  UExceptions, UKeysHelper;
 
 
 type
@@ -169,6 +169,7 @@ end;
 procedure THistoryMenu.MenuItemClick(Sender: TObject);
 begin
   fAction.ViewItem := (Sender as THistoryMenuItem).ViewItem;
+  fAction.NewTab := ssCtrl in ShiftKeysPressed;
   fAction.Execute;
 end;
 
