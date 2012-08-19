@@ -117,7 +117,6 @@ type
     actViewCategorised: TAction;
     actViewCompErrs: TAction;
     actViewDependencies: TAction;
-    actSelectDetailTab: TAction;
     actViewSnippetKinds: TAction;
     actViewTestUnit: TAction;
     actWebSite: TBrowseURL;
@@ -343,7 +342,6 @@ type
     procedure actNewDetailsTabExecute(Sender: TObject);
     procedure actCloseDetailsTabExecute(Sender: TObject);
     procedure actCloseDetailsTabsUpdate(Sender: TObject);
-    procedure actSelectDetailTabExecute(Sender: TObject);
     procedure actDuplicateSnippetExecute(Sender: TObject);
     procedure actDuplicateSnippetUpdate(Sender: TObject);
     procedure actSaveSelectionExecute(Sender: TObject);
@@ -379,6 +377,10 @@ type
     procedure ActBrowserHintExecute(Sender: TObject);
       {Displays hint from browser hint action in status bar.
         @param Sender [in] Not used.
+      }
+    procedure ActSelectDetailTabExecute(Sender: TObject);
+      {Selects a tab in the detail pane.
+        @param Sender [in] Action triggering this event
       }
     procedure DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
       {Handles events that inform of changes to database.
@@ -431,10 +433,10 @@ uses
   DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
   FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo, UCodeShareMgr,
   UCommandBars, UConsts, UCopyInfoMgr, UCopySourceMgr, UDatabaseLoader,
-  UDatabaseLoaderUI, UEditSnippetAction, UExceptions, UHelpMgr, UHistoryMenus,
-  UKeysHelper, UMessageBox, UNotifier, UNulDropTarget, UPrintMgr, UQuery,
-  USaveSnippetMgr,  USaveUnitMgr, USelectionIOMgr, UUserDBMgr, UView,
-  UViewItemAction, UWBExternal, Web.UInfo;
+  UDatabaseLoaderUI, UDetailTabAction, UEditSnippetAction, UExceptions,
+  UHelpMgr, UHistoryMenus, UKeysHelper, UMessageBox, UNotifier, UNulDropTarget,
+  UPrintMgr, UQuery, USaveSnippetMgr, USaveUnitMgr, USelectionIOMgr, UUserDBMgr,
+  UView, UViewItemAction, UWBExternal, Web.UInfo;
 
 
 {$R *.dfm}
@@ -1113,13 +1115,12 @@ begin
   (Sender as TAction).Enabled := fMainDisplayMgr.CanSelectAll;
 end;
 
-procedure TMainForm.actSelectDetailTabExecute(Sender: TObject);
+procedure TMainForm.ActSelectDetailTabExecute(Sender: TObject);
   {Selects a tab in the detail pane.
     @param Sender [in] Action triggering this event
   }
 begin
-  // Action's Tag property specifies index of tab being selected
-  fMainDisplayMgr.SelectDetailTab((Sender as TAction).Tag);
+  fMainDisplayMgr.SelectDetailTab((Sender as TDetailTabAction).TabIndex);
 end;
 
 procedure TMainForm.actSelectSnippetsExecute(Sender: TObject);
@@ -1518,9 +1519,6 @@ begin
     actViewCategorised.Tag := cCategorisedTab;
     actViewAlphabetical.Tag := cAlphabeticTab;
     actViewSnippetKinds.Tag := cKindTab;
-    // Detail pane tab actions have index placed in tag dynamically. We use 0 as
-    // default
-    actSelectDetailTab.Tag := 0;
 
     // Create notifier object and assign actions triggered by its methods
     // note that actions created on fly are automatically freed
@@ -1540,7 +1538,9 @@ begin
       SetOverviewStyleChangeActions(
         [actViewCategorised, actViewAlphabetical, actViewSnippetKinds]
       );
-      SetDetailPaneChangeAction(actSelectDetailTab);
+      SetDetailPaneChangeAction(
+        TActionFactory.CreateDetailTabAction(Self, ActSelectDetailTabExecute)
+      );
       SetEditSnippetAction(
         TActionFactory.CreateEditSnippetAction(
           Self, ActEditSnippetByNameExecute

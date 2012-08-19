@@ -185,8 +185,8 @@ uses
   // Delphi
   SysUtils, StdActns,
   // Project
-  Compilers.UGlobals, UCategoryAction, UEditSnippetAction, USnippetAction,
-  UViewItemAction;
+  Compilers.UGlobals, UCategoryAction, UDetailTabAction, UEditSnippetAction,
+  USnippetAction, UViewItemAction;
 
 
 { TNotifier }
@@ -198,8 +198,7 @@ procedure TNotifier.ChangeDetailPane(const Pane: Integer);
 begin
   if Assigned(fDisplayPaneChangeAction) then
   begin
-    // TODO: change this for a custom action?
-    fDisplayPaneChangeAction.Tag := Pane;
+    (fDisplayPaneChangeAction as TDetailTabAction).TabIndex := Pane;
     fDisplayPaneChangeAction.Execute;
   end;
 end;
@@ -285,6 +284,8 @@ end;
 
 procedure TNotifier.SetDetailPaneChangeAction(const Action: TBasicAction);
 begin
+  Assert(Action is TDetailTabAction,
+    ClassName + '.SetDetailPaneChangeAction: Action is not TDetailTabAction');
   fDisplayPaneChangeAction := Action;
 end;
 

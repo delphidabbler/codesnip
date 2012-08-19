@@ -399,7 +399,8 @@ uses
   Web.UProgramUpdateMgr in 'Web.UProgramUpdateMgr.pas',
   Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
-  Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
+  Web.UXMLRequestor in 'Web.UXMLRequestor.pas',
+  UDetailTabAction in 'UDetailTabAction.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb} // Type library file
