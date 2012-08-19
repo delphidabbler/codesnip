@@ -79,7 +79,8 @@ function updateDbase() {
  *  @return False.
  */
 function displaySnippet(snippet, userdefined) {
-  external.DisplaySnippet(snippet, userdefined);
+  var e = window.event;
+  external.DisplaySnippet(snippet, userdefined, e.ctrlKey);
   return false;
 }
 
@@ -89,7 +90,8 @@ function displaySnippet(snippet, userdefined) {
  *  @return False.
  */
 function displayCategory(catid) {
-  external.DisplayCategory(catid);
+  var e = window.event;
+  external.DisplayCategory(catid, e.ctrlKey);
   return false;
 }
 
