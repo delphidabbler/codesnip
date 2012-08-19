@@ -89,8 +89,8 @@ implementation
 
 uses
   // Project
-  ActiveText.UValidator, FmViewExtraDlg, UConsts, UExceptions, UFontHelper,
-  UIStringList, USnippetExtraHelper, UStrUtils;
+  ActiveText.UValidator, FmActiveTextPreviewDlg, UConsts, UExceptions,
+  UFontHelper, UIStringList, USnippetExtraHelper, UStrUtils;
 
 
 {$R *.dfm}
@@ -235,8 +235,7 @@ var
   ActiveText: IActiveText;
 begin
   ActiveText := GetActiveText;  // raises exceptions on error
-  // TODO: TViewExtraDlg needs to be renamed
-  TViewExtraDlg.Execute(nil, ActiveText);
+  TActiveTextPreviewDlg.Execute(nil, ActiveText);
 end;
 
 function TSnippetsActiveTextEdFrame.REMLToActiveText(const Text: string):

@@ -223,8 +223,8 @@
 			<DCCReference Include="FmUserBugReportDlg.pas">
 				<Form>UserBugReportDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FmViewExtraDlg.pas">
-				<Form>ViewExtraDlg</Form>
+			<DCCReference Include="FmActiveTextPreviewDlg.pas">
+				<Form>ActiveTextPreviewDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FmWaitDlg.pas">
 				<Form>WaitDlg</Form>

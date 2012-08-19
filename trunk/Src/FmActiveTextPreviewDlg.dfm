@@ -1,11 +1,11 @@
-inherited ViewExtraDlg: TViewExtraDlg
+inherited ActiveTextPreviewDlg: TActiveTextPreviewDlg
   Caption = 'View Snippet Extra Information'
   ExplicitWidth = 474
   ExplicitHeight = 354
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    inline frmExtraInfo: THTMLTpltDlgFrame
+    inline frmPreview: THTMLTpltDlgFrame
       Left = 0
       Top = 0
       Width = 377

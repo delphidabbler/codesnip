@@ -55,8 +55,8 @@ Res\HTML\dlg-donate.html
 # email privacy information for display in frames
 Res\HTML\frm-emailprivacy.html
 
-# view extra dialog
-Res\HTML\dlg-viewextra-tplt.html
+# active text preview dialogue
+Res\HTML\dlg-activetext-preview-tplt.html
 
 # news dialog
 Res\HTML\dlg-rssnews.html
