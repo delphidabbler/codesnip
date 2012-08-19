@@ -36,7 +36,7 @@
 
 [
   uuid(DA95AEFB-3FB5-4A9E-9F9D-A53DD05CA7D4),
-  version(8.0),
+  version(9.0),
   helpstring("CodeSnip DOM External Object Extender Type Library"),
   custom(DE77BA63-517C-11D1-A2DA-0000F8773CE9, 1219706147),
   custom(DE77BA64-517C-11D1-A2DA-0000F8773CE9, 117441012)
@@ -48,16 +48,16 @@ library ExternalObj
   importlib("stdole2.tlb");
 
   /*
-   * V7 interface of extension to browser DOM's "external" object.
+   * V9 interface of extension to browser DOM's "external" object.
    */
   [
     uuid(316B5427-61DE-482A-8D71-10AFBACCB909),
-    version(8.0),
+    version(9.0),
     helpstring("DOM external object extender"),
     dual,
     oleautomation
   ]
-  interface IWBExternal8: IDispatch
+  interface IWBExternal9: IDispatch
   {
     /*
      * Update database from internet.
@@ -76,7 +76,7 @@ library ExternalObj
     id(0x00000066)
     ]
     HRESULT _stdcall DisplaySnippet([in] BSTR SnippetName,
-      [in] VARIANT_BOOL UserDefined );
+      [in] VARIANT_BOOL UserDefined, [in] VARIANT_BOOL NewTab );
 
     /*
      * Displays a hint.
@@ -119,7 +119,7 @@ library ExternalObj
     [
     id(0x0000006E)
     ]
-    HRESULT _stdcall DisplayCategory([in] BSTR CatID);
+    HRESULT _stdcall DisplayCategory([in] BSTR CatID, [in] VARIANT_BOOL NewTab);
 
   };
 

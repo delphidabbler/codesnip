@@ -60,7 +60,7 @@ type
     events to application.
   }
   TWBExternal = class(TAutoIntfObject,
-    IWBExternal8, // browser external object's methods
+    IWBExternal9, // browser external object's methods
     ISetNotifier  // sets object used to notify app of events
     )
   strict private
@@ -74,10 +74,11 @@ type
       {Updates database from internet.
       }
     procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool); safecall;
+      UserDefined: WordBool; NewTab: WordBool); safecall;
       {Displays a named snippet.
         @param SnippetName [in] Name of snippet to display.
         @param UserDefined [in] Whether snippet is user defined.
+        @param NewTab [in] Whether to display in new tab in detail pane.
       }
     procedure ShowHint(const Hint: WideString); safecall;
       {Displays a hint.
@@ -94,9 +95,11 @@ type
     procedure Donate; safecall;
       {Displays the Donate dialog box.
       }
-    procedure DisplayCategory(const CatID: WideString); safecall;
+    procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
+      safecall;
       {Displays a category.
         @param CatID [in] ID of category to display.
+        @param NewTab [in] Whether to display in new tab in detail pane.
       }
     { ISetNotifier }
     procedure SetNotifier(const Notifier: INotifier);
@@ -145,32 +148,35 @@ begin
   ExeName := TAppInfo.AppExeFilePath;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
-  inherited Create(TypeLib, IWBExternal8);
+  inherited Create(TypeLib, IWBExternal9);
 end;
 
-procedure TWBExternal.DisplayCategory(const CatID: WideString);
+procedure TWBExternal.DisplayCategory(const CatID: WideString;
+  NewTab: WordBool);
   {Displays a category.
     @param CatID [in] ID of category to display.
+    @param NewTab [in] Whether to display in new tab in detail pane.
   }
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.DisplayCategory(CatID);
+      fNotifier.DisplayCategory(CatID, NewTab);
   except
     HandleException;
   end;
 end;
 
 procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
-  UserDefined: WordBool);
+  UserDefined: WordBool; NewTab: WordBool);
   {Displays a named snippet.
     @param SnippetName [in] Name of snippet to display.
     @param UserDefined [in] Whether snippet is user defined.
+    @param NewTab [in] Whether to display in new tab in detail pane.
   }
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.DisplaySnippet(SnippetName, UserDefined);
+      fNotifier.DisplaySnippet(SnippetName, UserDefined, NewTab);
   except
     HandleException;
   end;
