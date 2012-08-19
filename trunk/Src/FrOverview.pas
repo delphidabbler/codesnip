@@ -890,7 +890,6 @@ procedure TOverviewFrame.tvSnippetsMouseDown(Sender: TObject;
   end;
 
 var
-  Node: TTreeNode;  // tree node clicked
   PopupPt: TPoint;  // menu pop-up location
 begin
   // Disallow use of Shift and Alt keys with mouse
