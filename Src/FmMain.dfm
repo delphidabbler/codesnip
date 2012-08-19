@@ -1952,16 +1952,6 @@ inherited MainForm: TMainForm
       OnExecute = ActOverviewTabExecute
       OnUpdate = ActOverviewTabUpdate
     end
-    object actSelectDetailTab: TAction
-      AutoCheck = True
-      Caption = 'Detailed Information'
-      Checked = True
-      GroupIndex = 200
-      Hint = 
-        'Detailed Information|View the Information tab in the details pan' +
-        'e'
-      OnExecute = actSelectDetailTabExecute
-    end
     object actWebSite: TBrowseURL
       Category = 'Help'
       Caption = 'DelphiDabbler Website'

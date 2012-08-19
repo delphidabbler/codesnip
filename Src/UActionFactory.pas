@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -108,6 +108,14 @@ type
         @param OnExecHandler [in] Handler for action's OnExecute event.
         @return Reference to newly created action.
       }
+    class function CreateDetailTabAction(const AOwner: TComponent;
+      const OnExecHandler: TNotifyEvent = nil): TBasicAction;
+      {Creates a Detail Pane Tab Selection action and sets OnExecute handler if
+      provided.
+        @param AOwner [in] Owner of action.
+        @param OnExecHandler [in] Handler for action's OnExecute event.
+        @return Reference to newly created action.
+      }
   end;
 
 
@@ -118,8 +126,8 @@ uses
   // Delphi
   StdActns,
   // Project
-  UCategoryAction, UEditSnippetAction, ULinkAction, USnippetAction,
-  UViewItemAction;
+  UCategoryAction, UDetailTabAction, UEditSnippetAction, ULinkAction,
+  USnippetAction, UViewItemAction;
 
 
 { TActionFactory }
@@ -147,6 +155,18 @@ class function TActionFactory.CreateCategoryAction(const AOwner: TComponent;
   }
 begin
   Result := CreateAction(TCategoryAction, AOwner, OnExecHandler);
+end;
+
+class function TActionFactory.CreateDetailTabAction(const AOwner: TComponent;
+  const OnExecHandler: TNotifyEvent): TBasicAction;
+  {Creates a Detail Pane Tab Selection action and sets OnExecute handler if
+  provided.
+    @param AOwner [in] Owner of action.
+    @param OnExecHandler [in] Handler for action's OnExecute event.
+    @return Reference to newly created action.
+  }
+begin
+  Result := CreateAction(TDetailTabAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateEditSnippetAction(const AOwner: TComponent;
