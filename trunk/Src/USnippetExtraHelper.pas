@@ -82,7 +82,12 @@ type
         @param ActiveText [in] Active text object used to generate markup.
         @return Required REML markup.
       }
-    class function PlainTextToActiveText(const Text: string): IActiveText;
+    ///  <summary>Converts given plain text into an active text paragraph.
+    ///  </summary>
+    ///  <remarks>All text is treated as one paragraph, embedded newlines are
+    ///  ignored. Text is trimmed of leading and trailing spaces. If trimmed
+    ///  text is empty, empty active text is returned.</remarks>
+    class function PlainTextToActiveText(Text: string): IActiveText;
   end;
 
 
@@ -263,12 +268,15 @@ begin
 end;
 
 class function TSnippetExtraHelper.PlainTextToActiveText(
-  const Text: string): IActiveText;
+  Text: string): IActiveText;
 begin
   Result := TActiveTextFactory.CreateActiveText;
+  Text := StrTrim(Text);
+  if Text = '' then
+    Exit;
   Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
   Result.AddElem(
-    TActiveTextFactory.CreateTextElem(StrTrim(Text))
+    TActiveTextFactory.CreateTextElem(Text)
   );
   Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
 end;
