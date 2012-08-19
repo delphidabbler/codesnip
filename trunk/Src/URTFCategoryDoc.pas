@@ -57,7 +57,7 @@ type
       fUseColour: Boolean;
       ///  <summary>Map of active text action elements to their RTF styling.
       ///  </summary>
-      fDescStyles: TRTFStyleMap;
+      fDescStyles: TActiveTextRTFStyleMap;
       ///  <summary>Styling applied to URLs.</summary>
       fURLStyle: TRTFStyle;
     ///  <summary>Outputs description of given category as a main heading as
@@ -110,7 +110,7 @@ begin
   fBuilder.ColourTable.Add(Preferences.DBHeadingColours[False]);
   fBuilder.ColourTable.Add(Preferences.DBHeadingColours[True]);
   fBuilder.ColourTable.Add(clExternalLink);
-  fDescStyles := TRTFStyleMap.Create;
+  fDescStyles := TActiveTextRTFStyleMap.Create;
   InitStyles;
 end;
 

@@ -27,8 +27,7 @@ uses
 
 
 type
-  // TODO: need a better name for this class
-  TRTFStyleMap = class(TObject)
+  TActiveTextRTFStyleMap = class(TObject)
   strict private
     var
       fMap: TDictionary<TActiveTextActionElemKind,TRTFStyle>;
@@ -38,7 +37,7 @@ type
     destructor Destroy; override;
     procedure Add(const ElemKind: TActiveTextActionElemKind;
       const Style: TRTFStyle);
-    procedure Assign(const Src: TRTFStyleMap);
+    procedure Assign(const Src: TActiveTextRTFStyleMap);
     procedure MakeMonochrome;
     // enumerator enumerates styles, not pair or action element kind
     function GetEnumerator: TEnumerator<TRTFStyle>;
@@ -50,11 +49,11 @@ type
   TActiveTextRTF = class(TObject)
   strict private
     var
-      fElemStyleMap: TRTFStyleMap;
+      fElemStyleMap: TActiveTextRTFStyleMap;
       fDisplayURLs: Boolean;
       fURLStyle: TRTFStyle;
       fInBlock: Boolean;
-    procedure SetElemStyleMap(const ElemStyleMap: TRTFStyleMap);
+    procedure SetElemStyleMap(const ElemStyleMap: TActiveTextRTFStyleMap);
     procedure Initialise(const Builder: TRTFBuilder);
     procedure RenderTextElem(Elem: IActiveTextTextElem;
       const Builder: TRTFBuilder);
@@ -67,7 +66,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    property ElemStyleMap: TRTFStyleMap
+    property ElemStyleMap: TActiveTextRTFStyleMap
       read fElemStyleMap write SetElemStyleMap;
     property DisplayURLs: Boolean read fDisplayURLs write fDisplayURLs;
     property URLStyle: TRTFStyle read fURLStyle write fURLStyle;
@@ -84,9 +83,9 @@ uses
   SysUtils, Generics.Defaults;
 
 
-{ TRTFStyleMap }
+{ TActiveTextRTFStyleMap }
 
-procedure TRTFStyleMap.Add(const ElemKind: TActiveTextActionElemKind;
+procedure TActiveTextRTFStyleMap.Add(const ElemKind: TActiveTextActionElemKind;
   const Style: TRTFStyle);
 begin
   Assert(not fMap.ContainsKey(ElemKind),
@@ -94,7 +93,7 @@ begin
   fMap.Add(ElemKind, Style);
 end;
 
-procedure TRTFStyleMap.Assign(const Src: TRTFStyleMap);
+procedure TActiveTextRTFStyleMap.Assign(const Src: TActiveTextRTFStyleMap);
 var
   Entry: TPair<TActiveTextActionElemKind, TRTFStyle>;
 begin
@@ -103,7 +102,7 @@ begin
     fMap.Add(Entry.Key, Entry.Value);
 end;
 
-constructor TRTFStyleMap.Create;
+constructor TActiveTextRTFStyleMap.Create;
 begin
   inherited Create;
   fMap := TDictionary<TActiveTextActionElemKind,TRTFStyle>.Create(
@@ -120,18 +119,19 @@ begin
   )
 end;
 
-destructor TRTFStyleMap.Destroy;
+destructor TActiveTextRTFStyleMap.Destroy;
 begin
   fMap.Free;
   inherited;
 end;
 
-function TRTFStyleMap.GetEnumerator: TEnumerator<TRTFStyle>;
+function TActiveTextRTFStyleMap.GetEnumerator: TEnumerator<TRTFStyle>;
 begin
   Result := fMap.Values.GetEnumerator;
 end;
 
-function TRTFStyleMap.GetStyle(ElemKind: TActiveTextActionElemKind): TRTFStyle;
+function TActiveTextRTFStyleMap.GetStyle(ElemKind: TActiveTextActionElemKind):
+  TRTFStyle;
 begin
   if fMap.ContainsKey(ElemKind) then
     Result := fMap[ElemKind]
@@ -139,7 +139,7 @@ begin
     Result := TRTFStyle.CreateNull;
 end;
 
-procedure TRTFStyleMap.MakeMonochrome;
+procedure TActiveTextRTFStyleMap.MakeMonochrome;
 var
   Style: TRTFStyle;
 begin
@@ -152,7 +152,7 @@ end;
 constructor TActiveTextRTF.Create;
 begin
   inherited Create;
-  fElemStyleMap := TRTFStyleMap.Create;
+  fElemStyleMap := TActiveTextRTFStyleMap.Create;
   fURLStyle := TRTFStyle.CreateNull;
 end;
 
@@ -259,9 +259,11 @@ begin
   Builder.EndGroup;
 end;
 
-procedure TActiveTextRTF.SetElemStyleMap(const ElemStyleMap: TRTFStyleMap);
+procedure TActiveTextRTF.SetElemStyleMap(
+  const ElemStyleMap: TActiveTextRTFStyleMap);
 begin
   fElemStyleMap.Assign(ElemStyleMap);
 end;
 
 end.
+
