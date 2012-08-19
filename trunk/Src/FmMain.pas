@@ -770,21 +770,13 @@ const
   // Bug error message
   cHistoryError = '%s.actGoBackExecute: '
     + 'There are no items before current one in history list';
-const
-  // TODO: extract common code from all methods that use this map
-  TabDisplayMap: array[Boolean] of TDetailPageDisplayMode = (
-    ddmOverwrite, ddmRequestNewTab
-  );
 begin
   // Get previous view item from history list and check it is assigned
   ViewItem := fHistory.GoBack;
   if not Assigned(ViewItem) then
     raise EBug.CreateFmt(cHistoryError, [ClassName]);
   // Display item, but don't record in history list
-  fMainDisplayMgr.DisplayViewItem(
-    ViewItem,
-    TabDisplayMap[(ssCtrl in ShiftKeysPressed)]
-  );
+  fMainDisplayMgr.DisplayViewItem(ViewItem, ssCtrl in ShiftKeysPressed);
 end;
 
 procedure TMainForm.actGoBackUpdate(Sender: TObject);
@@ -806,21 +798,13 @@ const
   // Bug error message
   cHistoryError = '%s.actGoForwardExecute: '
     + 'There are no items after current one in history list';
-const
-  // TODO: extract common code from all methods that use this map
-  TabDisplayMap: array[Boolean] of TDetailPageDisplayMode = (
-    ddmOverwrite, ddmRequestNewTab
-  );
 begin
   // Get next view item from history list and check it is assigned
   ViewItem := fHistory.GoForward;
   if not Assigned(ViewItem) then
     raise EBug.CreateFmt(cHistoryError, [ClassName]);
   // Display item, but don't record in history list
-  fMainDisplayMgr.DisplayViewItem(
-    ViewItem,
-    TabDisplayMap[(ssCtrl in ShiftKeysPressed)]
-  );
+  fMainDisplayMgr.DisplayViewItem(ViewItem, ssCtrl in ShiftKeysPressed);
 end;
 
 procedure TMainForm.actGoForwardUpdate(Sender: TObject);
@@ -1301,14 +1285,9 @@ procedure TMainForm.ActViewHistoryItemExecute(Sender: TObject);
   {Displays requested history item and selects it in the history list.
     @param Sender [in] Action triggering this event. Must be a TViewItemAction.
   }
-const
-  TabDisplayMap: array[Boolean] of TDetailPageDisplayMode = (
-    ddmOverwrite, ddmRequestNewTab
-  );
 begin
   fMainDisplayMgr.DisplayViewItem(
-    (Sender as TViewItemAction).ViewItem,
-    TabDisplayMap[(Sender as TViewItemAction).NewTab]
+    (Sender as TViewItemAction).ViewItem, (Sender as TViewItemAction).NewTab
   );
   fHistory.SelectItem((Sender as TViewItemAction).ViewItem);
 end;
@@ -1317,14 +1296,9 @@ procedure TMainForm.ActViewItemExecute(Sender: TObject);
   {Displays a requested view item and records in history.
     @param Sender [in] Action triggering this event. Must be a TViewItemAction.
   }
-const
-  TabDisplayMap: array[Boolean] of TDetailPageDisplayMode = (
-    ddmOverwrite, ddmRequestNewTab
-  );
 begin
   fMainDisplayMgr.DisplayViewItem(
-    (Sender as TViewItemAction).ViewItem,
-    TabDisplayMap[(Sender as TViewItemAction).NewTab]
+    (Sender as TViewItemAction).ViewItem, (Sender as TViewItemAction).NewTab
   );
   fHistory.NewItem((Sender as TViewItemAction).ViewItem);
 end;
