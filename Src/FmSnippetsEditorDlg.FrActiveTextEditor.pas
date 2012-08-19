@@ -206,25 +206,25 @@ begin
   end;
 end;
 
-function TSnippetsActiveTextEdFrame.PlainTextToActiveText(
-  Text: string): IActiveText;
+function TSnippetsActiveTextEdFrame.PlainTextToActiveText(Text: string):
+  IActiveText;
 var
-  Lines: IStringList;
-  Line: string;
+  Paragraphs: IStringList;  // list of paragraphs (separated by newlines pairs)
+  Paragraph: string;        // each paragraph in paragraphs
 begin
+  // NOTE: TSnippetExtraHelper.PlainTextToActiveText is not sufficient for use
+  // here since it ignores newlines and we want double newlines to separated
+  // paragraphs.
   Result := TActiveTextFactory.CreateActiveText;
   Text := StrTrim(Text);
   if Text = '' then
     Exit;
-  { TODO: this code is similar (but safer) than
-          TSnippetExtraHelper.PlainTextToActiveText: see if this can replace
-          that. }
-  Lines := TIStringList.Create(Text, EOL2, False, True);
-  for Line in Lines do
+  Paragraphs := TIStringList.Create(Text, EOL2, False, True);
+  for Paragraph in Paragraphs do
   begin
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsOpen));
     Result.AddElem(
-      TActiveTextFactory.CreateTextElem(StrCompressWhiteSpace(Line))
+      TActiveTextFactory.CreateTextElem(StrCompressWhiteSpace(Paragraph))
     );
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
   end;
