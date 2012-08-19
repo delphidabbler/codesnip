@@ -475,9 +475,9 @@ begin
         // We handle Ctrl+Return to trigger any active link. This message is not
         // posted to parent, but is handled here and browser is prevented from
         // processing the keypress further
-        if ShiftState = [ssCtrl] then
+        if (ShiftState = [ssCtrl]) or (ShiftState = []) then
         begin
-          TriggerActiveLink;
+          TriggerActiveLink;  // uses new tab if Ctrl key pressed.
           Handled := True;
         end;
         VK_ESCAPE:
