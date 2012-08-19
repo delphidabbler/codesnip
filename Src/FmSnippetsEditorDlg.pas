@@ -618,9 +618,9 @@ procedure TSnippetsEditorDlg.ConfigForm;
 begin
   inherited;
   // Set colour and actions of link labels
-  lblSnippetKindHelp.Font.Color := clHelpLinkText;
+  lblSnippetKindHelp.Font.Color := clHelpLink;
   TFontHelper.SetDefaultBaseFont(lblSnippetKindHelp.Font, False);
-  lblViewCompErrs.Font.Color := clLinkText;
+  lblViewCompErrs.Font.Color := clCommandLink;
   TFontHelper.SetDefaultBaseFont(lblViewCompErrs.Font, False);
   lblViewCompErrs.Caption := actViewErrors.Caption;
   lblViewCompErrsKey.Caption :=

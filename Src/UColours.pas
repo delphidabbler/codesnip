@@ -56,8 +56,11 @@ const
   clCompTblHeadBg       = cl3DLight;    // background of compiler table heading
 
   // links
-  clLinkText            = clBlue;       // a-links
-  clHelpLinkText        = clGreen;      // help a-links
+  clDefaultLink         = clWindowText; // un-styled links
+  clExternalLink        = clBlue;       // external links
+  clHelpLink            = clGreen;      // help links
+  clDBLink              = clNavy;       // database links (cat. and snippet)
+  clCommandLink         = clMaroon;     // links that execute program commands
 
   // news pane
   clNewsHeading         = clHotLight;   // headings in news frames

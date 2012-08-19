@@ -220,26 +220,48 @@ begin
   // <img> tag style: no borders
   with CSSBuilder.AddSelector('img') do
     AddProperty(TCSS.HideBorderProp(cssAll));
-  // <a> tag style: all link states appear same
-  with CSSBuilder.AddSelector('a:link, a:visited, a:active') do
+
+  // Default <a> tag style: fall back links for unknown link classes.
+  // Each link type is expected to define own colour as a minimum.
+  with CSSBuilder.AddSelector('a') do
   begin
-    AddProperty(TCSS.ColorProp(clLinkText));
+    AddProperty(TCSS.ColorProp(clDefaultLink));
     AddProperty(TCSS.TextDecorationProp([ctdUnderline]));
   end;
-  // <a class=".help-link"> override: different colour to other links
-  with CSSBuilder.AddSelector(
-    'a:link.help-link, a:visited.help-link, a:active.help-link'
-  ) do
+  // <a class="help-link"> override
+  with CSSBuilder.AddSelector('a.help-link') do
   begin
-    AddProperty(TCSS.ColorProp(clHelpLinkText));
+    AddProperty(TCSS.ColorProp(clHelpLink));
+  end;
+  // <a class="snippet-link"> and <a class="category-link"> overrides
+  with CSSBuilder.AddSelector('a.snippet-link, a.category-link') do
+  begin
+    AddProperty(TCSS.ColorProp(clDBLink));
+    AddProperty(TCSS.FontStyleProp(cfsItalic));
+    AddProperty(TCSS.TextDecorationProp([ctdNone]));
+  end;
+  with CSSBuilder.AddSelector('a:hover.snippet-link, a:hover.category-link') do
+  begin
     AddProperty(TCSS.TextDecorationProp([ctdUnderline]));
   end;
+  // <a class="command-link"> override
+  with CSSBuilder.AddSelector('a.command-link') do
+  begin
+    AddProperty(TCSS.ColorProp(clCommandLink));
+  end;
+  // <a class="external-link"> override
+  with CSSBuilder.AddSelector('a.external-link') do
+  begin
+    AddProperty(TCSS.ColorProp(clExternalLink));
+  end;
+
   // <var> tag style
   with CSSBuilder.AddSelector('var') do
   begin
     AddProperty(TCSS.ColorProp(clVarText));
     AddProperty(TCSS.FontStyleProp(cfsItalic));
   end;
+
   // <code> tag style
   with CSSBuilder.AddSelector('code') do
   begin
@@ -251,6 +273,7 @@ begin
       CSSFont.Free;
     end;
   end;
+
   // .warning class style: mainly for use inline
   with CSSBuilder.AddSelector('.warning') do
   begin
