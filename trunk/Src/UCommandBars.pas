@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -53,7 +53,7 @@ type
     Valid values for command bar IDs used to uniquely identify command bars
     within a container.
   }
-  TCommandBarID = 0..High(SmallInt);
+  TCommandBarID = type Byte;
 
   {
   ICommandBarConfig:
