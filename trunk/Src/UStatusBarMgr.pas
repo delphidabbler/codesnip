@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -57,7 +57,7 @@ type
       fStatusBar: TStatusBar;
         {Reference to managed status bar}
       fSearchGlyph: TBitmap;
-        {Stores reference to glyph used to indicate kind of current search}
+        {Stores reference to glyph used to indicate kind of latest search}
       fModifiedGlyph: TBitmap;
         {Stores glyph displayed when user database has been modified}
       fSearchInfoVisible: Boolean;
@@ -127,7 +127,7 @@ implementation
   + Panel[0]: Displays database statistics or a simple prompt. Status bar
     default drawing is used. When a simple prompty is displayed Panel[1] and
     Panel[2] are hidden.
-  + Panel[1]: Displays information about current search. A glyph indicating
+  + Panel[1]: Displays information about latest search. A glyph indicating
     search type is displayed. The panel is owner-drawn.
   + Panel[2]: Displays a modification flag and glyph if user defined database
     has been modified since last save. Nothing is displayed when database is
@@ -329,13 +329,13 @@ begin
   // method is called by the status bar to draw the panel.
 
   // Store text describing search result
-  if Query.CurrentSearch.IsNul then
+  if Query.LatestSearch.IsNul then
     fStatusBar.Panels[cSearchPanel].Text := sNoSearch
   else
     fStatusBar.Panels[cSearchPanel].Text
       := Format(sSearchActive, [Query.Selection.Count]);
-  // Store glyph that indicates current search type
-  fSearchGlyph.Assign((Query.CurrentSearch.Criteria as ISearchUIInfo).Glyph);
+  // Store glyph that indicates latest search type
+  fSearchGlyph.Assign((Query.LatestSearch.Criteria as ISearchUIInfo).Glyph);
   // Ensure search info panel of status bar is displayed
   fSearchInfoVisible := True;
   // Force status bar to repaint itself

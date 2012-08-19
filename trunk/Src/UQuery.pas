@@ -71,16 +71,16 @@ type
     ///  <summary>Checks if there is an active search.</summary>
     function IsSearchActive: Boolean;
     function Refresh: Boolean;
-      {Re-applies the current search if one exists.
+      {Re-applies the latest search if one exists.
         @return True if search was re-applied, False if there was no search to
           apply.
       }
     procedure Update;
       {Updates query. Attempts to refresh query and, if that fails, resets it.
       }
-    function GetCurrentSearch: ISearch;
-      {Gets value of CurrentSearch property.
-        @return Search object used to generate current search.
+    function GetLatestSearch: ISearch;
+      {Gets value of LatestSearch property.
+        @return Search object used to generate latest search.
       }
     function GetSelection: TSnippetList;
       {Gets value of Selection property.
@@ -94,8 +94,7 @@ type
         @param Snippets [in] Object to receive snippet list. List is emptied
           before snippets are copied in.
       }
-    // TODO: rename CurrentSearch as LatestSearch
-    property CurrentSearch: ISearch read GetCurrentSearch;
+    property LatestSearch: ISearch read GetLatestSearch;
       {Reference to search object used to generate current query}
     property Selection: TSnippetList read GetSelection;
       {List of snippets that match current query. This records all snippets in
@@ -134,7 +133,7 @@ type
   strict private
     var
       fSelection: TSnippetList;   // List of snippets selected by current query
-      fActiveSearches: TList<ISearch>; // List of current active searches
+      fActiveSearches: TList<ISearch>; // List of currently active searches
     class function GetInstance: IQuery; static;
       {Gets singleton instance of class, creating it if necessary
         @return Singleton instance.
@@ -152,11 +151,11 @@ type
         @return True if search succeeds and False if it fails.
       }
     ///  <summary>Checks if there is an active search.</summary>
-    ///  <remarks>A search is active if the current search is not the null
+    ///  <remarks>A search is active if the latest search is not the null
     ///  search.</remarks>
     function IsSearchActive: Boolean;
     function Refresh: Boolean;
-      {Re-applies the current search if one exists.
+      {Re-applies the latest search if one exists.
         @return True if search was re-applied, False if there was no search to
           apply.
       }
@@ -167,8 +166,8 @@ type
     procedure Update;
       {Updates query. Attempts to refresh query and, if that fails, resets it.
       }
-    function GetCurrentSearch: ISearch;
-      {Gets reference to current search object.
+    function GetLatestSearch: ISearch;
+      {Gets reference to latest search object.
         @return Required search object.
       }
     function GetSelection: TSnippetList;
@@ -250,8 +249,8 @@ begin
   end;
 end;
 
-function TQuery.GetCurrentSearch: ISearch;
-  {Gets reference to current search object.
+function TQuery.GetLatestSearch: ISearch;
+  {Gets reference to latest search object.
     @return Required search object.
   }
 begin
@@ -292,7 +291,7 @@ begin
 end;
 
 function TQuery.Refresh: Boolean;
-  {Re-applies the current search if one exists.
+  {Re-applies the latest search if one exists.
     @return True if search was re-applied, False if there was no search to
       apply.
   }
