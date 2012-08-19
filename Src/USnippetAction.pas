@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -62,6 +62,8 @@ type
       fSnippetName: string;
       ///  <summary>Value of UserDefined property.</summary>
       fUserDefined: Boolean;
+      ///  <summary>Value of NewTab property.</summary>
+      fNewTab: Boolean;
       ///  <summary>Reference to Notifier object.</summary>
       fNotifier: INotifier;
   public
@@ -83,6 +85,9 @@ type
     ///  <summary>Flag indicating whether snippet to be displayed is user
     ///  defined.</summary>
     property UserDefined: Boolean read fUserDefined write fUserDefined;
+    ///  <summary>Flag indicating if snippet is to be displayed in new detail
+    ///  pane tab.</summary>
+    property NewTab: Boolean read fNewTab write fNewTab;
   end;
 
 
@@ -105,8 +110,7 @@ begin
   Snippet := Database.Snippets.Find(SnippetName, UserDefined);
   Assert(Assigned(Snippet), ClassName + '.Execute: SnippetName not valid');
   // Create a view item for snippet and get notifier to display it
-  // TODO: change TSnippetAction to allow for NewTab property??
-  fNotifier.ShowViewItem(TViewFactory.CreateSnippetView(Snippet), False);
+  fNotifier.ShowViewItem(TViewFactory.CreateSnippetView(Snippet), NewTab);
   Result := False;
 end;
 

@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -57,6 +57,8 @@ type
     var
       ///  <summary>Value of CatID property.</summary>
       fCatID: string;
+      ///  <summary>Value of NewTab property.</summary>
+      fNewTab: Boolean;
       ///  <summary>Reference to Notifier object.</summary>
       fNotifier: INotifier;
   public
@@ -75,6 +77,9 @@ type
     procedure SetNotifier(const Notifier: INotifier);
     ///  <summary>ID of category to be displayed.</summary>
     property CatID: string read fCatID write fCatID;
+    ///  <summary>Flag indicating if category is to be displayed in new detail
+    ///  pane tab.</summary>
+    property NewTab: Boolean read fNewTab write fNewTab;
   end;
 
 
@@ -97,8 +102,7 @@ begin
   Cat := Database.Categories.Find(CatID);
   Assert(Assigned(Cat), ClassName + '.Execute: CatID not valid');
   // Create a view item for category and get notifier to display it
-  // TODO: change TCategoryAction to allow for NewTab property??
-  fNotifier.ShowViewItem(TViewFactory.CreateCategoryView(Cat), False);
+  fNotifier.ShowViewItem(TViewFactory.CreateCategoryView(Cat), NewTab);
   Result := False;
 end;
 
