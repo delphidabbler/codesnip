@@ -64,8 +64,8 @@ type
       ///  <summary>Flag indicates whether to output in colour.</summary>
       fUseColour: Boolean;
 
-      fDescStyles: TRTFStyleMap;
-      fExtraStyles: TRTFStyleMap;
+      fDescStyles: TActiveTextRTFStyleMap;
+      fExtraStyles: TActiveTextRTFStyleMap;
       ///  <summary>Styling applied to URLs.</summary>
       fURLStyle: TRTFStyle;
     const
@@ -152,8 +152,8 @@ begin
   inherited Create;
   fHiliteAttrs := HiliteAttrs;
   fUseColour := UseColour;
-  fDescStyles := TRTFStyleMap.Create;
-  fExtraStyles := TRTFStyleMap.Create;
+  fDescStyles := TActiveTextRTFStyleMap.Create;
+  fExtraStyles := TActiveTextRTFStyleMap.Create;
   InitStyles;
 end;
 
