@@ -103,6 +103,7 @@ uses
   FirstRun.UUpdateDBase in 'FirstRun.UUpdateDBase.pas',
   FirstRun.UUpdateIni in 'FirstRun.UUpdateIni.pas',
   FmAboutDlg in 'FmAboutDlg.pas' {AboutDlg},
+  FmActiveTextPreviewDlg in 'FmActiveTextPreviewDlg.pas' {ActiveTextPreviewDlg},
   FmAddCategoryDlg in 'FmAddCategoryDlg.pas' {AddCategoryDlg},
   FmBase in 'FmBase.pas' {BaseForm},
   FmBugReportBaseDlg in 'FmBugReportBaseDlg.pas' {BugReportBaseDlg},
@@ -149,7 +150,6 @@ uses
   FmTrappedBugReportDlg in 'FmTrappedBugReportDlg.pas' {TrappedBugReportDlg},
   FmUpdateDlg in 'FmUpdateDlg.pas' {UpdateDlg},
   FmUserBugReportDlg in 'FmUserBugReportDlg.pas' {UserBugReportDlg},
-  FmActiveTextPreviewDlg in 'FmActiveTextPreviewDlg.pas' {ActiveTextPreviewDlg},
   FmWaitDlg in 'FmWaitDlg.pas' {WaitDlg},
   FmWizardDlg in 'FmWizardDlg.pas' {WizardDlg},
   FrBrowserBase in 'FrBrowserBase.pas' {BrowserBaseFrame: TFrame},
@@ -235,6 +235,7 @@ uses
   UDataStreamIO in 'UDataStreamIO.pas',
   UDetailPageHTML in 'UDetailPageHTML.pas',
   UDetailPageLoader in 'UDetailPageLoader.pas',
+  UDetailTabAction in 'UDetailTabAction.pas',
   UDHTML in 'UDHTML.pas',
   UDialogMgr in 'UDialogMgr.pas',
   UDispatchList in 'UDispatchList.pas',
@@ -399,8 +400,7 @@ uses
   Web.UProgramUpdateMgr in 'Web.UProgramUpdateMgr.pas',
   Web.URegistrar in 'Web.URegistrar.pas',
   Web.UStdWebService in 'Web.UStdWebService.pas',
-  Web.UXMLRequestor in 'Web.UXMLRequestor.pas',
-  UDetailTabAction in 'UDetailTabAction.pas';
+  Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
 
 // Include resources
 {$Resource ExternalObj.tlb} // Type library file

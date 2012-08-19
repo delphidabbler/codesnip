@@ -83,6 +83,9 @@
 			<DCCReference Include="FmAboutDlg.pas">
 				<Form>AboutDlg</Form>
 			</DCCReference>
+			<DCCReference Include="FmActiveTextPreviewDlg.pas">
+				<Form>ActiveTextPreviewDlg</Form>
+			</DCCReference>
 			<DCCReference Include="FmAddCategoryDlg.pas">
 				<Form>AddCategoryDlg</Form>
 			</DCCReference>
@@ -222,9 +225,6 @@
 			</DCCReference>
 			<DCCReference Include="FmUserBugReportDlg.pas">
 				<Form>UserBugReportDlg</Form>
-			</DCCReference>
-			<DCCReference Include="FmActiveTextPreviewDlg.pas">
-				<Form>ActiveTextPreviewDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FmWaitDlg.pas">
 				<Form>WaitDlg</Form>
@@ -405,6 +405,7 @@
 			<DCCReference Include="UDataStreamIO.pas"/>
 			<DCCReference Include="UDetailPageHTML.pas"/>
 			<DCCReference Include="UDetailPageLoader.pas"/>
+			<DCCReference Include="UDetailTabAction.pas"/>
 			<DCCReference Include="UDHTML.pas"/>
 			<DCCReference Include="UDialogMgr.pas"/>
 			<DCCReference Include="UDispatchList.pas"/>
@@ -570,7 +571,6 @@
 			<DCCReference Include="Web.URegistrar.pas"/>
 			<DCCReference Include="Web.UStdWebService.pas"/>
 			<DCCReference Include="Web.UXMLRequestor.pas"/>
-			<DCCReference Include="UDetailTabAction.pas"/>
 			<None Include="CodeSnip.todo"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
