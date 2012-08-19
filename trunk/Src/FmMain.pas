@@ -1289,7 +1289,6 @@ begin
   fMainDisplayMgr.DisplayViewItem(
     (Sender as TViewItemAction).ViewItem, (Sender as TViewItemAction).NewTab
   );
-  fHistory.SelectItem((Sender as TViewItemAction).ViewItem);
 end;
 
 procedure TMainForm.ActViewItemExecute(Sender: TObject);

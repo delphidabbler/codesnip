@@ -171,6 +171,7 @@ begin
   fAction.ViewItem := (Sender as THistoryMenuItem).ViewItem;
   fAction.NewTab := ssCtrl in ShiftKeysPressed;
   fAction.Execute;
+  fHistory.SelectItem(fAction.ViewItem);
 end;
 
 procedure THistoryMenu.PopulateMenu;
