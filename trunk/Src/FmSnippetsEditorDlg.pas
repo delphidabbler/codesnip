@@ -257,11 +257,10 @@ uses
   // Delphi
   Windows {for inlining}, Graphics,
   // Project
-  DB.UMain, DB.USnippetKind, FmDependenciesDlg, FmViewExtraDlg, IntfCommon,
-  UColours, UConsts, UCSSUtils, UCtrlArranger, UExceptions, UFontHelper,
-  UIStringList, UReservedCategories, USnippetExtraHelper, USnippetValidator,
-  UMessageBox, USnippetIDs, UStructs, UStrUtils, UTestUnitDlgMgr, UThemesEx,
-  UUtils;
+  DB.UMain, DB.USnippetKind, FmDependenciesDlg, IntfCommon, UColours, UConsts,
+  UCSSUtils, UCtrlArranger, UExceptions, UFontHelper, UIStringList,
+  UReservedCategories, USnippetExtraHelper, USnippetValidator, UMessageBox,
+  USnippetIDs, UStructs, UStrUtils, UTestUnitDlgMgr, UThemesEx, UUtils;
 
 
 {$R *.dfm}
