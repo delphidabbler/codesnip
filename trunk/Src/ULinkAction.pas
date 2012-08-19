@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -74,8 +74,8 @@ type
         @return Returns True if OnExecute handler assigned or False if not.
       }
     function Update: Boolean; override;
-      {Calls OnUpdate handler if one is assigned, otherwise sets visibility of
-      action.
+      {Calls OnUpdate handler if one is assigned, otherwise sets visibility and
+      enabled state of action.
         @return Returns True if OnUpdate handler assigned or False if not.
       }
     property Link: IDispatch read fLink write SetLink;
@@ -153,15 +153,18 @@ begin
 end;
 
 function TLinkAction.Update: Boolean;
-  {Calls OnUpdate handler if one is assigned, otherwise sets visibility of
-  action.
+  {Calls OnUpdate handler if one is assigned, otherwise sets visibility and
+  enabled state of action.
     @return Returns True if OnUpdate handler assigned or False if not.
   }
 begin
   Result := inherited Update;
   if not Result then
-    // set invisible if element is not an anchor
+  begin
+    // set invisible and disabled if element is not an anchor
     Visible := Anchor <> nil;
+    Enabled := Visible;
+  end;
 end;
 
 end.
