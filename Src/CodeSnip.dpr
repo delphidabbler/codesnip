@@ -149,7 +149,7 @@ uses
   FmTrappedBugReportDlg in 'FmTrappedBugReportDlg.pas' {TrappedBugReportDlg},
   FmUpdateDlg in 'FmUpdateDlg.pas' {UpdateDlg},
   FmUserBugReportDlg in 'FmUserBugReportDlg.pas' {UserBugReportDlg},
-  FmViewExtraDlg in 'FmViewExtraDlg.pas' {ViewExtraDlg},
+  FmActiveTextPreviewDlg in 'FmActiveTextPreviewDlg.pas' {ActiveTextPreviewDlg},
   FmWaitDlg in 'FmWaitDlg.pas' {WaitDlg},
   FmWizardDlg in 'FmWizardDlg.pas' {WizardDlg},
   FrBrowserBase in 'FrBrowserBase.pas' {BrowserBaseFrame: TFrame},

@@ -1,10 +1,8 @@
 {
- * FmViewExtraDlg.pas
+ * FmActiveTextPreviewDlg.pas
  *
  * Implements a dialog box that displays active text rendered from REML markup
- * entered in snippets editor. Active text is rendered as HTML. Purpose is to
- * allow users to test the extra information markup before saving. Can also
- * display urls of any links and allow them to be displayed.
+ * or plain text.
  *
  * $Rev$
  * $Date$
@@ -21,7 +19,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is FmViewExtraDlg.pas
+ * The Original Code is FmActiveTextPreviewDlg, formerly FmViewExtraDlg.pas
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -36,7 +34,7 @@
 }
 
 
-unit FmViewExtraDlg;
+unit FmActiveTextPreviewDlg;
 
 
 interface
@@ -52,12 +50,13 @@ uses
 
 type
   {
-  TViewExtraDlg:
-    Dialog box that displays active text rendered from REML markup entered in
-    snippets editor. Active text is rendered as HTML.
+  TActiveTextPreviewDlg:
+    Dialog box that displays active text rendered from REML markup or plain
+    text.
+    Active text is rendered as HTML. Link URLs can be viewed and tested.
   }
-  TViewExtraDlg = class(TGenericViewDlg, INoPublicConstruct)
-    frmExtraInfo: THTMLTpltDlgFrame;
+  TActiveTextPreviewDlg = class(TGenericViewDlg, INoPublicConstruct)
+    frmPreview: THTMLTpltDlgFrame;
   strict private
     fActiveText: IActiveText; // Active text to be displayed.
     procedure UpdateCSS(Sender: TObject; const CSSBuilder: TCSSBuilder);
@@ -73,17 +72,17 @@ type
         @param Sender [in] Not used.
         @param EventInfo [in] Object providing information about the event.
       }
-    function ExtraContainsLinks: Boolean;
-      {Checks if the "extra" active text contains any link (<a>) tags.
+    function ContainsLinks: Boolean;
+      {Checks if the active text contains any links.
         @return True if links found, False if not.
       }
   strict protected
     procedure ArrangeForm; override;
-      {Sizes dialog box to fit content.
+      {Sizes dialogue box to fit content.
       }
     procedure ConfigForm; override;
       {Initialises HTML frame, loads HTML template and inserts HTML
-      representation of Extra Text REML.
+      representation of the active text.
       }
   public
     class procedure Execute(const AOwner: TComponent;
@@ -107,31 +106,31 @@ uses
 
 {$R *.dfm}
 
-{ TViewExtraDlg }
+{ TActiveTextPreviewDlg }
 
-procedure TViewExtraDlg.ArrangeForm;
+procedure TActiveTextPreviewDlg.ArrangeForm;
   {Sizes dialog box to fit content.
   }
 begin
-  pnlBody.Height := frmExtraInfo.DocHeight;
+  pnlBody.Height := frmPreview.DocHeight;
   inherited;
 end;
 
-procedure TViewExtraDlg.ConfigForm;
+procedure TActiveTextPreviewDlg.ConfigForm;
   {Initialises HTML frame, loads HTML template and inserts HTML representation
-  of Extra Text REML.
+  of the active text.
   }
 var
   Renderer: TActiveTextHTML;
 begin
   inherited;
-  frmExtraInfo.OnBuildCSS := UpdateCSS;
-  frmExtraInfo.OnHTMLEvent := HTMLEventHandler;
+  frmPreview.OnBuildCSS := UpdateCSS;
+  frmPreview.OnHTMLEvent := HTMLEventHandler;
 
   Renderer := TActiveTextHTML.Create;
   try
-    frmExtraInfo.Initialise(
-      'dlg-viewextra-tplt.html',
+    frmPreview.Initialise(
+      'dlg-activetext-preview-tplt.html',
       procedure(Tplt: THTMLTemplate)
       begin
         Tplt.ResolvePlaceholderHTML(
@@ -144,24 +143,8 @@ begin
   end;
 end;
 
-class procedure TViewExtraDlg.Execute(const AOwner: TComponent;
-  const ActiveText: IActiveText);
-  {Displays dialog box to display HTML representation of some active text.
-    @param AOwner [in] Component that owns this dialog box.
-    @param ActiveText [in] Active text to be displayed as HTML.
-  }
-begin
-  with InternalCreate(AOwner) do
-    try
-      fActiveText := ActiveText;
-      ShowModal;
-    finally
-      Free;
-    end;
-end;
-
-function TViewExtraDlg.ExtraContainsLinks: Boolean;
-  {Checks if the "extra" active text contains any link (<a>) tags.
+function TActiveTextPreviewDlg.ContainsLinks: Boolean;
+  {Checks if the active text contains any links.
     @return True if links found, False if not.
   }
 var
@@ -178,7 +161,23 @@ begin
     end;
 end;
 
-procedure TViewExtraDlg.HTMLEventHandler(Sender: TObject;
+class procedure TActiveTextPreviewDlg.Execute(const AOwner: TComponent;
+  const ActiveText: IActiveText);
+  {Displays dialog box to display HTML representation of some active text.
+    @param AOwner [in] Component that owns this dialog box.
+    @param ActiveText [in] Active text to be displayed as HTML.
+  }
+begin
+  with InternalCreate(AOwner) do
+    try
+      fActiveText := ActiveText;
+      ShowModal;
+    finally
+      Free;
+    end;
+end;
+
+procedure TActiveTextPreviewDlg.HTMLEventHandler(Sender: TObject;
   const EventInfo: THTMLEventInfo);
   {Handles HTML frame's OnHTMLEvent event. Cancels any clicks on links and
   handles these by displaying dialog and acting on user's response.
@@ -228,16 +227,16 @@ begin
   end;
 end;
 
-procedure TViewExtraDlg.UpdateCSS(Sender: TObject;
+procedure TActiveTextPreviewDlg.UpdateCSS(Sender: TObject;
   const CSSBuilder: TCSSBuilder);
   {Modifies CSS used to display dialog box body to achieve required appearance.
     @param Sender [in] Not used.
     @param CSSBuilder [in] Object used to modify CSS.
   }
 const
-  cMaxExtraHTMLHeight = 240;  // max height of Extra HTML
+  MaxHTMLHeight = 240;  // max height of rendered HTML
 var
-  ContentFont: TFont;             // font used for #content tab
+  ContentFont: TFont;   // font used for #content tab
 begin
   ContentFont := TFont.Create;
   try
@@ -254,9 +253,9 @@ begin
       AddProperty(TCSS.WidthProp(cluAuto, 0));
       // Use height instead of maxheight if IE 6 or lower
       if TOSInfo.BrowserVer > 6 then
-        AddProperty(TCSS.MaxHeightProp(cMaxExtraHTMLHeight))
+        AddProperty(TCSS.MaxHeightProp(MaxHTMLHeight))
       else
-        AddProperty(TCSS.HeightProp(cMaxExtraHTMLHeight));
+        AddProperty(TCSS.HeightProp(MaxHTMLHeight));
     end;
     with CSSBuilder.AddSelector('.active-text h2') do
     begin
@@ -266,10 +265,10 @@ begin
     end;
     with CSSBuilder.AddSelector('.active-text p') do
       AddProperty(TCSS.MarginProp(4, 0, 0, 0));
-    // Show or hide text about links depending on if links in Extra HTML
+    // Show or hide text about links depending on if links are present
     with CSSBuilder.AddSelector('#linktext') do
     begin
-      if ExtraContainsLinks then
+      if ContainsLinks then
         AddProperty(TCSS.DisplayProp(cdsInline))
       else
         AddProperty(TCSS.DisplayProp(cdsNone));
