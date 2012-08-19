@@ -1597,28 +1597,27 @@ begin
     begin
       // set images to use
       SetImages(ilMain);
-      // detail view: default menu
-      AddAction(actViewDependencies, cDetailPopupMenuDefault);
-      AddSpacer(cDetailPopupMenuDefault);
-      AddAction(actCopyInfo, cDetailPopupMenuDefault);
-      AddAction(actCopySnippet, cDetailPopupMenuDefault);
-      AddAction(actCopySource, cDetailPopupMenuDefault);
-      AddSpacer(cDetailPopupMenuDefault);
-      AddAction(actTestCompile, cDetailPopupMenuDefault);
-      AddSpacer(cDetailPopupMenuDefault);
-      AddAction(actSaveSnippet, cDetailPopupMenuDefault);
-      AddAction(actPrint, cDetailPopupMenuDefault);
-      AddSpacer(cDetailPopupMenuDefault);
-      AddAction(actSelectAll, cDetailPopupMenuDefault);
-      AddSpacer(cDetailPopupMenuDefault);
-      AddAction(actCloseDetailsTab, cDetailPopupMenuDefault);
-      // detail view: selected text menu
+      // detail view menus
+      AddAction(
+        TActionFactory.CreateLinkAction(Self),
+        [cDetailPopupMenuAnchor, cDetailPopupMenuImage]
+      );
+      AddSpacer([cDetailPopupMenuAnchor, cDetailPopupMenuImage]);
+      AddAction(actViewDependencies, cDetailPopupMenuIDs);
+      AddSpacer(cDetailPopupMenuIDs);
+      AddAction(actCopyInfo, cDetailPopupMenuIDs);
+      AddAction(actCopySnippet, cDetailPopupMenuIDs);
+      AddAction(actCopySource, cDetailPopupMenuIDs);
+      AddSpacer(cDetailPopupMenuIDs);
+      AddAction(actTestCompile, cDetailPopupMenuIDs);
+      AddSpacer(cDetailPopupMenuIDs);
+      AddAction(actSaveSnippet, cDetailPopupMenuIDs);
+      AddAction(actPrint, cDetailPopupMenuIDs);
+      AddSpacer(cDetailPopupMenuIDs);
       AddAction(actCopy, cDetailPopupMenuTextSelect);
-      AddAction(actSelectAll, cDetailPopupMenuTextSelect);
-      // detail view: anchor menu
-      AddAction(TActionFactory.CreateLinkAction(Self), cDetailPopupMenuAnchor);
-      // detail view: image menu
-      AddAction(TActionFactory.CreateLinkAction(Self), cDetailPopupMenuImage);
+      AddAction(actSelectAll, cDetailPopupMenuIDs);
+      AddSpacer(cDetailPopupMenuIDs);
+      AddAction(actCloseDetailsTab, cDetailPopupMenuIDs);
       // tab set menu
       AddAction(actCloseDetailsTab, cDetailTabSetPopupMenu);
       AddAction(actCloseUnselectedDetailsTabs, cDetailTabSetPopupMenu);
