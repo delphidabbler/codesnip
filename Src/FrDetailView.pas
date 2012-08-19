@@ -315,7 +315,7 @@ begin
   // text that matches search
   if Supports(View, ISnippetView) and
     Supports(
-      Query.CurrentSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
+      Query.LatestSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
     ) then
     HighlightSearchResults(TextSearchCriteria);
   // Ensure top of newly loaded document is displayed
