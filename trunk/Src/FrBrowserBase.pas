@@ -43,7 +43,7 @@ uses
   // Delphi
   OleCtrls, SHDocVw, Classes, Controls, ExtCtrls, Forms, Windows,
   // Project
-  Browser.UController, Browser.UHTMLEvents, UCSSBuilder, UMenuHelper;
+  Browser.UController, Browser.UHTMLEvents, UCSSBuilder, UMenus;
 
 
 type

@@ -1,5 +1,5 @@
 {
- * UMenuHelper.pas
+ * UMenus.pas
  *
  * Helper routines and interface for working with menus.
  *
@@ -18,7 +18,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is UMenuHelper.pas
+ * The Original Code is UMenus.pas, formerly UMenuHelper.pas.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -33,9 +33,8 @@
 }
 
 
-unit UMenuHelper;
+unit UMenus;
 
-// TODO: rename this unit as UMenusEx
 
 interface
 

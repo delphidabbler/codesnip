@@ -458,7 +458,7 @@
 			<DCCReference Include="UMemoCaretPosDisplayMgr.pas"/>
 			<DCCReference Include="UMemoHelper.pas"/>
 			<DCCReference Include="UMemoProgBarMgr.pas"/>
-			<DCCReference Include="UMenuHelper.pas"/>
+			<DCCReference Include="UMenus.pas"/>
 			<DCCReference Include="UMessageBox.pas"/>
 			<DCCReference Include="UMessageWindow.pas"/>
 			<DCCReference Include="UMultiCastEvents.pas"/>
