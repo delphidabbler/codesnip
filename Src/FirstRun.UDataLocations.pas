@@ -37,7 +37,9 @@
  * ***** END LICENSE BLOCK *****
 }
 
+
 unit FirstRun.UDataLocations;
+
 
 interface
 
@@ -104,11 +106,16 @@ procedure InitGlobals;
 // be Unicode.
 function IsAnsiConfigFile(InstallID: Integer): Boolean;
 
+
 implementation
 
+
 uses
+  // Delphi
   SysUtils, IOUtils,
-  UAppInfo, UIOUtils, UStrUtils, USystemInfo;
+  // Project
+  UIOUtils, UStrUtils, USystemInfo;
+
 
 // Checks if database and config files need to be converted and / or copied to
 // new locations for application being installed.

@@ -112,9 +112,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Types, Classes, Windows,
+  SysUtils, Types,
   // Project
-  FirstRun.UDataLocations, FirstRun.UIniFile, UAppInfo, UIOUtils;
+  FirstRun.UIniFile, UAppInfo, UIOUtils;
 
 
 { TUserConfigFileUpdater }

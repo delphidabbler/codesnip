@@ -42,6 +42,7 @@ unit FirstRun.UMain;
 interface
 
 uses
+  // Project
   FirstRun.UUpdateIni, FirstRun.UUpdateDBase;
 
 type
@@ -90,10 +91,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows, IOUtils, Forms,
+  SysUtils, IOUtils, Forms,
   // Project
-  FirstRun.FmV4ConfigDlg, FirstRun.UDataLocations,
-  UMessageBox, UUtils;
+  FirstRun.FmV4ConfigDlg, FirstRun.UDataLocations;
 
 { TFirstRun }
 
