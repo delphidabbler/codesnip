@@ -145,7 +145,6 @@ begin
   end;
 end;
 
-// Delete key from given section of given ini file.
 procedure DeleteIniKey(const Section, Key, FileName: string);
 var
   Ini: TIniFile;
@@ -158,7 +157,6 @@ begin
   end;
 end;
 
-// Checks if a key in given section of an ini file exists
 function IniKeyExists(const Section, Key, FileName: string): Boolean;
 var
   Ini: TIniFile;
