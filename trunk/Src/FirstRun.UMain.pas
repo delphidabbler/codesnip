@@ -43,7 +43,7 @@ interface
 
 uses
   // Project
-  FirstRun.UUpdateIni, FirstRun.UUpdateDBase;
+  FirstRun.UDataLocations, FirstRun.UUpdateDBase, FirstRun.UUpdateIni;
 
 type
   TFirstRunCfgChanges = (
@@ -60,6 +60,7 @@ type
   TFirstRun = class(TObject)
   strict private
     var
+      fInstallInfo: TInstallInfo;
       fConfigFile: TUserConfigFileUpdater;
       fDatabase: TUserDatabaseUpdater;
     function HasOldStyleProxyPwd: Boolean;
@@ -93,7 +94,7 @@ uses
   // Delphi
   SysUtils, IOUtils, Forms,
   // Project
-  FirstRun.FmV4ConfigDlg, FirstRun.UDataLocations;
+  FirstRun.FmV4ConfigDlg;
 
 { TFirstRun }
 
@@ -102,8 +103,8 @@ begin
   Assert(HaveOldCfgFile,
     ClassName + '.BringForwardCfgFile: Old config file does not exist');
   fConfigFile.CopyFile(
-    gUserConfigFiles[gPrevInstallID],
-    FirstRun.UDataLocations.IsAnsiConfigFile(gPrevInstallID)
+    fInstallInfo.PreviousUserConfigFileName,
+    fInstallInfo.IsPreviousUserConfigFileANSI
   );
 end;
 
@@ -111,14 +112,19 @@ procedure TFirstRun.BringForwardUserDB;
 begin
   Assert(HaveOldUserDB,
     ClassName + '.BringForwardUserDB: Old user database does not exist');
-  fDatabase.CopyDatabase(gUserDatabaseDirs[gPrevInstallID]);
+  fDatabase.CopyDatabase(fInstallInfo.PreviousUserDatabaseDir);
 end;
 
 constructor TFirstRun.Create;
 begin
   inherited Create;
-  fConfigFile := TUserConfigFileUpdater.Create(gCurrentUserConfigFile);
-  fDatabase := TUserDatabaseUpdater.Create(gUserDatabaseDirs[piCurrent]);
+  fInstallInfo := TInstallInfo.Create;
+  fConfigFile := TUserConfigFileUpdater.Create(
+    fInstallInfo.CurrentUserConfigFileName
+  );
+  fDatabase := TUserDatabaseUpdater.Create(
+    fInstallInfo.CurrentUserDatabaseDir
+  );
 end;
 
 procedure TFirstRun.CreateEmptyCfgFile;
@@ -130,6 +136,7 @@ destructor TFirstRun.Destroy;
 begin
   fDatabase.Free;
   fConfigFile.Free;
+  fInstallInfo.Free;
   inherited;
 end;
 
@@ -140,15 +147,12 @@ end;
 
 function TFirstRun.HaveOldCfgFile: Boolean;
 begin
-  Result := TFile.Exists(gUserConfigFiles[gPrevInstallID]);
+  Result := TFile.Exists(fInstallInfo.PreviousUserConfigFileName);
 end;
 
 function TFirstRun.HaveOldUserDB: Boolean;
 begin
-  Result := TFile.Exists(
-    IncludeTrailingPathDelimiter(gUserDatabaseDirs[gPrevInstallID])
-      + 'database.xml'
-  );
+  Result := TFile.Exists(fInstallInfo.PreviousUserDatabaseFileName);
 end;
 
 function TFirstRun.IsProgramUpdated: Boolean;
@@ -159,7 +163,7 @@ end;
 procedure TFirstRun.UpdateCfgFile(out Changes: TFirstRunCfgChangeSet);
 begin
   Changes := [];
-  case gPrevInstallID of
+  case fInstallInfo.InstallID of
     piOriginal:
     begin
       fConfigFile.UpdateFromOriginal;
@@ -200,7 +204,7 @@ end;
 
 class function TFirstRunMgr.CfgFileExists: Boolean;
 begin
-  Result := TFile.Exists(gCurrentUserConfigFile);
+  Result := TFile.Exists(TInstallInfo.CurrentUserConfigFileName);
 end;
 
 class procedure TFirstRunMgr.Execute;
@@ -208,7 +212,6 @@ var
   FR: TFirstRun;
   Changes: TFirstRunCfgChangeSet;
 begin
-  FirstRun.UDataLocations.InitGlobals;
   if IsFirstRun then
   begin
     FR := TFirstRun.Create;
@@ -243,7 +246,7 @@ end;
 class function TFirstRunMgr.IsProgramUpdated: Boolean;
 begin
   Result := not TUserConfigFileUpdater.IsCurrentProgramVer(
-    gCurrentUserConfigFile
+    TInstallInfo.CurrentUserConfigFileName
   );
 end;
 
