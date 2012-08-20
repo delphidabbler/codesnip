@@ -71,41 +71,54 @@ interface
     - Database directory: %AppData%\DelphiDabbler\CodeSnip.4\UserDatabase
 }
 
-const
-  // Identifiers for different types of previous installations of CodeSnip
-  piNone = 0;           // CodeSnip not installed
-  piOriginal = 1;       // original locations used up to v1.8.11
-  piV1_9 = 2;           // v1.9 to v1.9.4
-  piV2 = 3;             // all v2 versions
-  piV3 = 4;             // all v3 versions
-  piV4 = 5;             // from v4.0 (including alpha and beta code v3.99.x
-  // Values of first and last indentifiers for different types of CodeSnip
-  // installations
-  piFirstVersionID = 1;
-  piLastVersionID = 5;
-  // Identifiers of type of current installation
-  piCurrent = piV4;
+type
+  ///  <summary>Identifiers for different type of CodeSnip installations that
+  ///  can be detected.</summary>
+  TInstallId = (
+    piNone,       // CodeSnip not installed
+    piOriginal,   // "original" installation up to v1.8.11
+    piV1_9,       // v1.9 to v1.9.4
+    piV2,         // all v2 versions
+    piV3,         // all v3 versions
+    piV4          // from v4.0 (including alpha & beta code v3.98.x & v3.99.x
+  );
 
-var
-  // Records info about previous install
-  gPrevInstallID: Integer;
-
-  // Arrays of paths to user config file and user database
-  gUserConfigFiles: array[piFirstVersionID..piLastVersionID] of string;
-  gUserDatabaseDirs: array[piFirstVersionID..piLastVersionID] of string;
-
-  // Path to user config file for program being installed
-  gCurrentUserConfigFile: string;
-
-// Initialises global variables that (a) store location of config files and
-// databases used by different versions of CodeSnip and (b) record type of any
-// previous installation that was detected.
-procedure InitGlobals;
-
-// Checks if a config file is ANSI. If False is returned the file is assumed to
-// be Unicode.
-function IsAnsiConfigFile(InstallID: Integer): Boolean;
-
+type
+  TInstallInfo = class(TObject)
+  strict private
+    const
+      FirstVersionID = piOriginal;
+      CurrentVersionID = piv4;
+      ConfigFileNames: array[FirstVersionID..CurrentVersionID] of string =
+        (
+          'DelphiDabbler\CodeSnip\CodeSnip.ini',
+          'DelphiDabbler\CodeSnip\User.ini',
+          'DelphiDabbler\CodeSnip\User.ini',
+          'DelphiDabbler\CodeSnip\User.3.ini',
+          'DelphiDabbler\CodeSnip.4\User.config'
+        );
+      DatabaseDirs: array[FirstVersionID..CurrentVersionID] of string =
+        (
+          '',
+          '',
+          'DelphiDabbler\CodeSnip\UserData',
+          'DelphiDabbler\CodeSnip\UserData.3',
+          'DelphiDabbler\CodeSnip.4\UserDatabase'
+        );
+    var
+      fInstallID: TInstallId;
+    class function MakeFullPath(const Name: string): string;
+    procedure DetectInstall;
+  public
+    constructor Create;
+    class function CurrentUserConfigFileName: string;
+    class function CurrentUserDatabaseDir: string;
+    function PreviousUserConfigFileName: string;
+    function IsPreviousUserConfigFileANSI: Boolean;
+    function PreviousUserDatabaseDir: string;
+    function PreviousUserDatabaseFileName: string;
+    property InstallID: TInstallId read fInstallID;
+  end;
 
 implementation
 
@@ -117,49 +130,25 @@ uses
   UIOUtils, UStrUtils, USystemInfo;
 
 
-// Checks if database and config files need to be converted and / or copied to
-// new locations for application being installed.
-// Records the application's data directories for each different arrangement
-// used in different versions of CodeSnip.
-procedure InitAppDataFolders;
-var
-  AppData: string;      // path to user's application data directory
+{ TInstallInfo }
+
+constructor TInstallInfo.Create;
 begin
-  // Record system's user application data directory
-  AppData := IncludeTrailingPathDelimiter(TSystemFolders.PerUserAppData);
-
-  // Record paths to config files and database for each installation type
-  gUserConfigFiles[piOriginal] :=
-    AppData + 'DelphiDabbler\CodeSnip\CodeSnip.ini';
-  gUserDatabaseDirs[piOriginal] := '';
-
-  gUserConfigFiles[piV1_9] :=
-    AppData + 'DelphiDabbler\CodeSnip\User.ini';
-  gUserDatabaseDirs[piV1_9] := '';
-
-  gUserConfigFiles[piV2] :=
-    AppData + 'DelphiDabbler\CodeSnip\User.ini';
-  gUserDatabaseDirs[piV2] :=
-    AppData + 'DelphiDabbler\CodeSnip\UserData';
-
-  gUserConfigFiles[piV3] :=
-    AppData + 'DelphiDabbler\CodeSnip\User.3.ini';
-  gUserDatabaseDirs[piV3] :=
-    AppData + 'DelphiDabbler\CodeSnip\UserData.3';
-
-  gUserConfigFiles[piV4] :=
-    AppData + 'DelphiDabbler\CodeSnip.4\User.config';
-  gUserDatabaseDirs[piV4] :=
-    AppData + 'DelphiDabbler\CodeSnip.4\UserDatabase';
-
-  // Record installation type current being installed
-  gCurrentUserConfigFile := gUserConfigFiles[piCurrent];
-
+  inherited Create;
+  DetectInstall;
 end;
 
-// Attempts to detect and identify any previous installation by checking for
-// known files and directories.
-procedure DetectPrevInstall;
+class function TInstallInfo.CurrentUserConfigFileName: string;
+begin
+  Result := MakeFullPath(ConfigFileNames[CurrentVersionID]);
+end;
+
+class function TInstallInfo.CurrentUserDatabaseDir: string;
+begin
+  Result := MakeFullPath(DatabaseDirs[CurrentVersionID]);
+end;
+
+procedure TInstallInfo.DetectInstall;
 
   function IsEmptyUnicodeCfgFile(const FileName: string): Boolean;
   var
@@ -170,35 +159,47 @@ procedure DetectPrevInstall;
   end;
 
 begin
-  if FileExists(gUserConfigFiles[piV4])
-    and not IsEmptyUnicodeCfgFile(gUserConfigFiles[piV4]) then
-    gPrevInstallID := piV4
-  else if FileExists(gUserConfigFiles[piV3]) then
-    gPrevInstallID := piV3
-  else if TDirectory.Exists(gUserDatabaseDirs[piV2]) then
-    gPrevInstallID := piV2
-  else if FileExists(gUserConfigFiles[piV1_9]) then
-    gPrevInstallID := piV1_9
-  else if FileExists(gUserConfigFiles[piOriginal]) then
-    gPrevInstallID := piOriginal
+  if TFile.Exists(MakeFullPath(ConfigFileNames[piV4]))
+    and not IsEmptyUnicodeCfgFile(MakeFullPath(ConfigFileNames[piV4])) then
+    fInstallID := piV4
+  else if TFile.Exists(MakeFullPath(ConfigFileNames[piV3])) then
+    fInstallID := piV3
+  else if TDirectory.Exists(MakeFullPath(DatabaseDirs[piV2])) then
+    fInstallID := piV2
+  else if TFile.Exists(MakeFullPath(ConfigFileNames[piV1_9])) then
+    fInstallID := piV1_9
+  else if TFile.Exists(MakeFullPath(ConfigFileNames[piOriginal])) then
+    fInstallID := piOriginal
   else
-    gPrevInstallID := piNone;
+    fInstallID := piNone;
 end;
 
-// Initialises global variables that (a) store location of user config file and
-// user database used by different versions of CodeSnip and (b) record type of
-// any previous installation that was detected.
-procedure InitGlobals;
+function TInstallInfo.IsPreviousUserConfigFileANSI: Boolean;
 begin
-  InitAppDataFolders;
-  DetectPrevInstall;
+  Result := fInstallID <= piV3;
 end;
 
-// Checks if a config file is ANSI. If False is returned the file is assumed to
-// be Unicode.
-function IsAnsiConfigFile(InstallID: Integer): Boolean;
+class function TInstallInfo.MakeFullPath(const Name: string): string;
 begin
-  Result := InstallID <= piV3;
+  if Name = '' then
+    Exit('');
+  Result := IncludeTrailingPathDelimiter(TSystemFolders.PerUserAppData) + Name;
+end;
+
+function TInstallInfo.PreviousUserConfigFileName: string;
+begin
+  Result := MakeFullPath(ConfigFileNames[fInstallID]);
+end;
+
+function TInstallInfo.PreviousUserDatabaseDir: string;
+begin
+  Result := MakeFullPath(DatabaseDirs[fInstallID]);
+end;
+
+function TInstallInfo.PreviousUserDatabaseFileName: string;
+begin
+  Result := IncludeTrailingPathDelimiter(PreviousUserDatabaseDir)
+    + 'database.xml';
 end;
 
 end.
