@@ -67,9 +67,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes, IOUtils,
+  SysUtils, IOUtils,
   // Project
-  FirstRun.UDataLocations, UIOUtils, UUtils;
+  UIOUtils;
 
 
 { TUserDatabaseUpdater }
