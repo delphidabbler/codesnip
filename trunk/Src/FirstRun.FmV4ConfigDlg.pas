@@ -25,103 +25,135 @@ uses
   FmWizardDlg, FirstRun.UMain, UBaseObjects, IntfAligner, UIStringList;
 
 type
-
+  ///  <summary>Wizard dialogue box for display on first run of program if there
+  ///  is a need to offer user a choice whether to bring forward preferences
+  ///  and/or a user database.</summary>
   TV4ConfigDlg = class(TWizardDlg, INoPublicConstruct)
-    tsIntro: TTabSheet;
-    tsConfigFile: TTabSheet;
-    tsUserDB: TTabSheet;
-    tsSummary: TTabSheet;
-    lblCopyConfig: TLabel;
     chkCopyConfig: TCheckBox;
-    lblUserDB1: TLabel;
     chkCopyDB: TCheckBox;
-    lblSummaryPrefix: TLabel;
-    lblSummaryPostfix1: TLabel;
-    tsFinish: TTabSheet;
+    lblCopyConfig: TLabel;
     lblFinish1: TLabel;
+    lblFinish2: TLabel;
+    lblFinish3: TLabel;
     lblIntro1: TLabel;
     lblIntro2: TLabel;
     lblIntro4: TLabel;
     lblIntro5: TLabel;
     lblIntro3: TLabel;
-    lblUserDB2: TLabel;
+    lblSummaryPrefix: TLabel;
+    lblSummaryPostfix1: TLabel;
     lblSummaryPostfix2: TLabel;
-    lblFinish2: TLabel;
-    lblFinish3: TLabel;
+    lblUserDB1: TLabel;
+    lblUserDB2: TLabel;
+    tsConfigFile: TTabSheet;
+    tsFinish: TTabSheet;
+    tsIntro: TTabSheet;
+    tsSummary: TTabSheet;
+    tsUserDB: TTabSheet;
+    ///  <summary>Determines if form can close.</summary>
+    ///  <remarks>Permits closure only if wizard has been completed.</remarks>
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
   strict private
     const
+      ///  <summary>Index of introductory page.</summary>
       IntroPageIdx = 0;
+      ///  <summary>Index of page dealing with bringing forward user
+      ///  preferences.</summary>
       ConfigPageIdx = 1;
+      ///  <summary>Index of page dealing with bringing forward an earlier
+      ///  user database.</summary>
       DBPageIdx = 2;
+      ///  <summary>Index of page that summarises actions to be taken.</summary>
       SummaryPageIdx = 3;
+      ///  <summary>Index of last page.</summary>
       FinishPageIdx = 4;
     type
+      ///  <summary>Set of actions to be taken as a result of user input.
+      ///  </summary>
       TUpdateActions = set of (uaCopyCfgFile, uaCopyUserDB);
   strict private
     var
+      ///  <summary>Object that provides info about user config file and
+      ///  database and performs required actions.</summary>
       fFirstRun: TFirstRun;
+      ///  <summary>Set of changes made to brought forward config files that
+      ///  result in data loss.</summary>
       fCfgChanges: TFirstRunCfgChangeSet;
+    ///  <summary>Gets set of actions to be taken from user input.</summary>
     function GetUpdateActions: TUpdateActions;
+    ///  <summary>Checks if an old user config file is available for copying.
+    ///  </summary>
     function ConfigFileAvailable: Boolean;
+    ///  <summary>Checks if an old user database is available for copying.
+    ///  </summary>
     function DatabaseAvailable: Boolean;
+    ///  <summary>Creates a bullet list on a tab sheet.</summary>
+    ///  <param name="TS">TTabSheet [in] Tab sheet where buller list is to be
+    ///  placed.</param>
+    ///  <param name="Prefix">array of TLabel [in] List of labels to be
+    ///  positioned before bullet list.</param>
+    ///  <param name="BulletPoints">IStringList [in] List of bullet item text.
+    ///  </param>
+    ///  <param name="PostFix">array of TLabel [in] List of labels to be
+    ///  positioned after bullet list.</param>
     procedure CreateBulletPage(TS: TTabSheet; const Prefix: array of TLabel;
       BulletPoints: IStringList; const PostFix: array of TLabel);
+    ///  <summary>Gets description of choices made and displays them in a bullet
+    ///  list on summary page.</summary>
     procedure UpdateChoices;
+    ///  <summary>Performs any config file and database updates requested by
+    ///  user.</summary>
     procedure UpdateData;
+    ///  <summary>Displays message on final page confirming that changes have
+    ///  been applied. Also displays a bullet list of any changes that resulted
+    ///  in data loss.</summary>
     procedure ListChanges;
   strict private
     type
+      ///  <summary>Custom form aligner class for wizard.</summary>
       TAligner = class(TInterfacedObject, IFormAligner)
       public
         ///  <summary>Aligns wizard at centre of primary monitor.</summary>
         procedure AlignForm(const AForm: TCustomForm);
-          {Aligns splash form over main form.
-            @param AForm [in] Form to be aligned.
-          }
       end;
   strict protected
+    ///  <summary>Returns instance of form aligner object.</summary>
     function GetAligner: IFormAligner; override;
+    ///  <summary>Arranges controls within each tab sheet.</summary>
     procedure ArrangeForm; override;
+    ///  <summary>Sets up wizard ready for display.</summary>
     procedure ConfigForm; override;
-      {Initialises HTML frame, loads HTML template and inserts HTML
-      representation of Extra Text REML.
-      }
+    ///  <summary>Returns heading text of given wizard page.</summary>
     function HeadingText(const PageIdx: Integer): string; override;
-      {Gets text of heading of a wizard page.
-        @param PageIdx [in] Index of page for which heading is required.
-        @return Heading text.
-      }
+    ///  <summary>Returns index of page following given page index in wizard.
+    ///  </summary>
+    ///  <remarks>Preferences or database pages are skipped if not relevant.
+    ///  </remarks>
     function NextPage(const PageIdx: Integer): Integer; override;
-      {Index of next wizard page. Must not be called when at last page. Can be
-      overridden to change default ordering of pages.
-        @param PageIdx [in] Index of current page.
-        @return Index of next page.
-      }
+    ///  <summary>Returns index of page before given page index in wizard.
+    ///  </summary>
+    ///  <remarks>Preferences or database pages are skipped if not relevant.
+    ///  </remarks>
     function PrevPage(const PageIdx: Integer): Integer; override;
-      {Index of previous wizard page. Must not be called when at first page. Can
-      be overridden to change deafult ordering of pages.
-        @param PageIdx [in] Index of current page.
-        @return Index of previous page.
-      }
+    ///  <summary>Initialises wizard page with given index in cases where page
+    ///  content depends on user input in other pages.</summary>
+    ///  <remarks>Used only for summary page to display a summary of choices
+    ///  user made on previous pages.</remarks>
     procedure BeginPage(const PageIdx: Integer); override;
-      {Called when a wizard page is first displayed. Descendants can override to
-      perform initialisation.
-        @param PageIdx [in] Index page to be initialised.
-      }
+    ///  <summary>Finalises the page with the given index before moving to next
+    ///  page. Page is prevented from changing if CanMove is set to False.
+    ///  </summary>
+    ///  <remarks>Used only to perform any config file and database updates when
+    ///  leaving summary page.</remarks>
     procedure MoveForward(const PageIdx: Integer;
       var CanMove: Boolean); override;
-      {Called when about to move forward to a new page. Descendants can override
-      to tidy up existing page or prevent move.
-        @param PageIdx [in] Index of page we are about move to.
-        @param CanMove [in/out] Flag indicating whether page change is allowed.
-          Defaults to true.
-      }
+    ///  <summary>Updates state and caption of wizard's buttons as displayed for
+    ///  page with given index.</summary>
     procedure UpdateButtons(const PageIdx: Integer); override;
-      {Updates wizard buttons depending on page and state.
-        @param PageIdx [in] Index of current page.
-      }
   public
+    ///  <summary>Displays wizard with given owner. Wizard uses given FirstRun
+    ///  object to get info about user config file and database and performs
+    ///  any required actions.</summary>
     class procedure Execute(AOwner: TComponent; const FirstRun: TFirstRun);
   end;
 
@@ -166,7 +198,6 @@ begin
   TCtrlArranger.MoveBelow(chkCopyDB, lblUserDB2, 12);
 
   // tsSummary & tsFinish are arranged on the fly when displayed
-
   inherited;
 end;
 
@@ -182,12 +213,9 @@ begin
 end;
 
 procedure TV4ConfigDlg.ConfigForm;
-resourcestring
-  sConfigFiles = 'Configuration file';
-  sDatabase = 'User-defined snippets database';
 begin
   inherited;
-  pcWizard.ActivePage := tsIntro; // ensure HTML frame tab active before loading
+  pcWizard.ActivePage := tsIntro;
   fCfgChanges := [];
 end;
 
@@ -202,6 +230,7 @@ const
   Spacing = 6;
   Bullet: Char = #$2022;
 
+  // Frees any dynamically created labels
   procedure FreeDynLabels;
   var
     Idx: Integer;
@@ -225,7 +254,7 @@ begin
   for BulletPoint in BulletPoints do
   begin
     Lbl := TLabel.Create(Self);
-    // Don't give label a name: required for FreeDynLabels to work
+    // Don't give label a name or FreeDynLabels will not work
     Lbl.Parent := TS;
     Lbl.Left := 12;
     Lbl.Top := NextTop;
@@ -321,6 +350,7 @@ var
 begin
   if fCfgChanges <> [] then
   begin
+    // there are changes to config file: show in bullet list
     lblFinish2.Visible := True;
     Changes := TIStringList.Create;
     if frcRegistration in fCfgChanges then
@@ -340,6 +370,7 @@ begin
   end
   else
   begin
+    // no changes to config file: just display "finished" message
     lblFinish2.Visible := False;
     TCtrlArranger.AlignLefts([lblFinish1, lblFinish3], 0);
     lblFinish1.Top := 4;
