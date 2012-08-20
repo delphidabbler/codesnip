@@ -75,11 +75,11 @@
 			<DCCReference Include="FirstRun.FmV4ConfigDlg.pas">
 				<Form>V4ConfigDlg</Form>
 			</DCCReference>
-			<DCCReference Include="FirstRun.UDataLocations.pas"/>
+			<DCCReference Include="FirstRun.UConfigFile.pas"/>
+			<DCCReference Include="FirstRun.UDatabase.pas"/>
 			<DCCReference Include="FirstRun.UIniFile.pas"/>
+			<DCCReference Include="FirstRun.UInstallInfo.pas"/>
 			<DCCReference Include="FirstRun.UMain.pas"/>
-			<DCCReference Include="FirstRun.UUpdateDBase.pas"/>
-			<DCCReference Include="FirstRun.UUpdateIni.pas"/>
 			<DCCReference Include="FmAboutDlg.pas">
 				<Form>AboutDlg</Form>
 			</DCCReference>

@@ -1,5 +1,5 @@
 {
- * FirstRun.UDataLocations.pas
+ * FirstRun.UInstallInfo.pas
  *
  * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
  *
@@ -23,7 +23,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is FirstRun.UDataLocations.pas, formerly DataLocations.ps.
+ * The Original Code is FirstRun.UInstallInfo.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -38,7 +38,7 @@
 }
 
 
-unit FirstRun.UDataLocations;
+unit FirstRun.UInstallInfo;
 
 
 interface

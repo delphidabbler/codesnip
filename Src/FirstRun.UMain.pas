@@ -43,7 +43,7 @@ interface
 
 uses
   // Project
-  FirstRun.UDataLocations, FirstRun.UUpdateDBase, FirstRun.UUpdateIni;
+  FirstRun.UConfigFile, FirstRun.UDatabase, FirstRun.UInstallInfo;
 
 type
   TFirstRunCfgChanges = (
