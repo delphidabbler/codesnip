@@ -40,85 +40,79 @@ unit FirstRun.UUpdateIni;
 
 interface
 
-// Create a new empty UTF-16LE encoded config file. Used to ensure the config
-// file writing routines write in Unicode. This works because built in Inno
-// Setup ini functions call Windows API WritePrivateProfileString which only
-// writes Unicode if the file it is writing to is detected as Unicode. If not it
-// writes ANSI text.
-procedure CreateUnicodeConfigFile(FileName: string);
+type
+  ///  <summary>Class that manages the updating of older config files to the
+  ///  current format. Missing files will also be converted.</summary>
+  TUserConfigFileUpdater = class(TObject)
+  strict private
+    var
+      ///  <summary>Name of config file.</summary>
+      fCfgFileName: string;
+    ///  <summary>Copies an ANSI format config file from SrcFileName, converted
+    ///  to UTF-16LE encoded Unicode.</summary>
+    procedure CopyANSIFile(const SrcFileName: string);
+    ///  <summary>Copies a Unicode config file from SrcFileName.</summary>
+    procedure CopyUnicodeFile(const SrcFileName: string);
+  public
+    const
+      ///  <summary>Current user config file version.</summary>
+      FileVersion = 9;
+  public
+    ///  <summary>Constructs object to operate on given config file.</summary>
+    ///  <remarks>Given file may or may not exist.</remarks>
+    constructor Create(const CfgFileName: string);
+    ///  <summary>Creates a new empty UTF-16LE encoded config file.</summary>
+    ///  <remarks>Used to ensure the config file writing routines write in
+    ///  Unicode. This works because ini access routines call Windows API
+    ///  WritePrivateProfileString which only writes Unicode if the file it is
+    ///  writing to is detected as Unicode. If not it writes ANSI text.
+    ///  </remarks>
+    procedure CreateNewFile;
+    ///  <summary>Copies config file from SrcFileName. File created is always
+    ///  Uincode and is converted if source file is ANSI, as specified by IsAnsi
+    ///  parameter.</summary>
+    procedure CopyFile(const SrcFileName: string; const IsAnsi: Boolean);
+    ///  <summary>Gets file version number of config file.</summary>
+    function FileVer: Integer;
+    ///  <summary>Checks if program version in given config file is same as
+    ///  current program version.</summary>
+    class function IsCurrentProgramVer(const CfgFileName: string): Boolean;
+      overload;
+    ///  <summary>Checks if program version in config file is same as current
+    ///  program version.</summary>
+    function IsCurrentProgramVer: Boolean; overload;
+    ///  <summary>Updates config file currently in original (pre v1.9) format to
+    ///  current format.</summary>
+    procedure UpdateFromOriginal;
+    ///  <summary>Deletes any highlighter preferences.</summary>
+    procedure DeleteHighligherPrefs;
+    ///  <summary>Checks a proxy password is present in file.</summary>
+    function HasProxyPassword: Boolean;
+    ///  <summary>Deletes proxy password entry.</summary>
+    procedure DeleteProxyPassword;
+    ///  <summary>Adds Prefs:CodeGen section along with default data.</summary>
+    procedure CreateDefaultCodeGenEntries;
+    ///  <summary>Updates Prefs:CodeGen section from format prior to version 9
+    ///  to version 9 format.</summary>
+    procedure UpdateCodeGenEntries;
+    ///  <summary>Deletes unused key that determines detail pane index.
+    ///  </summary>
+    procedure DeleteDetailsPaneIndex;
+    ///  <summary>Stamp config file with current program and file versions.
+    ///  </summary>
+    procedure Stamp;
+  end;
 
-// Updates config file copied from old stye (pre CodeSnip v1.9) file
-procedure UpdateOldStyleIniFile;
-
-// Copies config files of a previous installation to new installation, updating
-// to Unicode format if necessary.
-procedure CopyConfigFiles(InstallID: Integer);
-
-// Deletes any highlighter preferences from new installation's user config file.
-procedure DeleteHighligherPrefs;
-
-// Gets version number of new installation's user config file.
-function UserConfigFileVer: Integer;
-
-// Adds Prefs:CodeGen section along with default data to new installation's user
-// config file.
-procedure CreateDefaultCodeGenEntries;
-
-// Updates Prefs:CodeGen section from format prior to version 9 to version 9
-// format
-procedure UpdateCodeGenEntries;
-
-// Deletes proxy password entry from new installation's user config file.
-procedure DeleteProxyPassword;
-
-// Updates both common and user config files with correct version information.
-// This records both config file versions and (common config file only) version
-// number of program being installed.
-procedure StampConfigFiles;
-
-// Checks if program version from config file is same as current program
-// version.
-function IsCurrentProgramVer: Boolean;
-
-// Checks if current user's config file has a proxy password.
-function HasProxyPassword: Boolean;
-
-// Deletes unused key that determines detail pane index.
-procedure DeleteDetailsPaneIndex;
+// TODO: Move this routine to UDataLocations
+// Checks if a config file is ANSI. If False is returned the file is assumed to
+// be Unicode.
+function IsAnsiConfigFile(InstallID: Integer): Boolean;
 
 implementation
 
 uses
   SysUtils, Types, Classes, Windows,
   FirstRun.UDataLocations, FirstRun.UIniFile, UAppInfo, UIOUtils;
-
-// Reads an ANSI config file, converts content to Unicode and writes that to a
-// UTF-16LE encoded Unicode config file with BOM. Does nothing if old and new
-// file names are the same.
-// *** Requires Unicode Inno Setup. ***
-procedure CopyAnsiToUnicodeConfigFile(OldFileName, NewFileName: string);
-var
-  Lines: TStringDynArray;  // lines of text read from ANSI .ini file
-begin
-  if CompareText(OldFileName, NewFileName) = 0 then
-    Exit;
-  // reads an ANSI file and converts contents to Unicode, using system default
-  // encoding
-  Lines := TFileIO.ReadAllLines(OldFileName, TEncoding.Default);
-  // writes string array to UTF-16LE file
-  ForceDirectories(ExtractFileDir(NewFileName));
-  TFileIO.WriteAllLines(NewFileName, Lines, TEncoding.Unicode, True);
-end;
-
-// Makes a copy of a Unicode config file with a different name. Does nothing if
-// old and new file names are the same.
-procedure CopyUnicodeConfigFiles(OldFileName, NewFileName: string);
-begin
-  if CompareText(OldFileName, NewFileName) = 0 then
-    Exit;
-  ForceDirectories(ExtractFileDir(NewFileName));
-  TFileIO.CopyFile(OldFileName, NewFileName);
-end;
 
 // Checks if a config file is ANSI. If False is returned the file is assumed to
 // be Unicode.
@@ -127,83 +121,176 @@ begin
   Result := InstallID <= piV3;
 end;
 
-// Gets version number of new installation's user config file.
-function UserConfigFileVer: Integer;
-begin
-  Result := GetIniInt('IniFile', 'Version', 1, gCurrentUserConfigFile);
-end;
+{ TUserConfigFileUpdater }
 
-// Gets version number of program from user config file. Returns empty string if
-// no program version information is present
-function ConfigFileProgramVer: string;
-begin
-  Result := GetIniString(
-    'IniFile', 'ProgramVersion', '', gCurrentUserConfigFile
-  );
-end;
-
-// Create a new empty UTF-16LE encoded config file. Used to ensure the config
-// file writing routines write in Unicode. This works because built in Inno
-// Setup ini functions call Windows API WritePrivateProfileString which only
-// writes Unicode if the file it is writing to is detected as Unicode. If not it
-// writes ANSI text.
-procedure CreateUnicodeConfigFile(FileName: string);
-begin
-  ForceDirectories(ExtractFileDir(FileName));
-  TFileIO.WriteAllText(FileName, '', TEncoding.Unicode, True);
-end;
-
-// Copies config files of a previous installation to new installation, updating
-// to Unicode format if necessary.
-procedure CopyConfigFiles(InstallID: Integer);
+procedure TUserConfigFileUpdater.CopyANSIFile(const SrcFileName: string);
 var
-  OldUserConfigFile: string;
+  Lines: TStringDynArray;  // lines of text read from ANSI .ini file
 begin
-  OldUserConfigFile := gUserConfigFiles[InstallID];
-  if OldUserConfigFile <> '' then
+  if CompareText(SrcFileName, fCfgFileName) = 0 then
+    Exit;
+  // reads an ANSI file and converts contents to Unicode, using system default
+  // encoding
+  Lines := TFileIO.ReadAllLines(SrcFileName, TEncoding.Default);
+  // writes string array to UTF-16LE file
+  ForceDirectories(ExtractFileDir(fCfgFileName));
+  TFileIO.WriteAllLines(fCfgFileName, Lines, TEncoding.Unicode, True);
+end;
+
+procedure TUserConfigFileUpdater.CopyFile(const SrcFileName: string;
+  const IsAnsi: Boolean);
+begin
+  if SrcFileName <> '' then
   begin
-    if IsAnsiConfigFile(InstallID) then
-      CopyAnsiToUnicodeConfigFile(OldUserConfigFile, gCurrentUserConfigFile)
+    if IsAnsi then
+      CopyANSIFile(SrcFileName)
     else
-      CopyUnicodeConfigFiles(OldUserConfigFile, gCurrentUserConfigFile);
+      CopyUnicodeFile(SrcFileName);
   end;
 end;
 
-// Updates both common and user config files with correct version information.
-// This records both config file versions and (common config file only) version
-// number of program being installed.
-procedure StampConfigFiles;
+procedure TUserConfigFileUpdater.CopyUnicodeFile(const SrcFileName: string);
 begin
-  // Config file Meta data: config file version & program version
-  if not FileExists(gCurrentUserConfigFile) then
-    CreateUnicodeConfigFile(gCurrentUserConfigFile);
-  SetIniInt('IniFile', 'Version', 9, gCurrentUserConfigFile);
+  if CompareText(SrcFileName, fCfgFileName) = 0 then
+    Exit;
+  ForceDirectories(ExtractFileDir(fCfgFileName));
+  TFileIO.CopyFile(SrcFileName, fCfgFileName);
+end;
+
+constructor TUserConfigFileUpdater.Create(const CfgFileName: string);
+begin
+  inherited Create;
+  fCfgFileName := CfgFileName;
+end;
+
+procedure TUserConfigFileUpdater.CreateDefaultCodeGenEntries;
+begin
+  if not FileExists(fCfgFileName) then
+    CreateNewFile;
+  SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, fCfgFileName);
+  SetIniInt('Prefs:CodeGen', 'WarningCount', 8, fCfgFileName);
+  // We don't set warning state: it defaults to required "off" value
   SetIniString(
-    'IniFile',
-    'ProgramVersion',
-    TAppInfo.ProgramReleaseVersion,
-    gCurrentUserConfigFile
+    'Prefs:CodeGen', 'Warning0.Symbol', 'UNSAFE_TYPE', fCfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning0.MinCompiler', '15.00', fCfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning1.Symbol', 'UNSAFE_CAST', fCfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning1.MinCompiler', '15.00', fCfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning2.Symbol', 'UNSAFE_CODE', fCfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning2.MinCompiler', '15.00', fCfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning3.Symbol', 'SYMBOL_PLATFORM', fCfgFileName
+  );
+  SetIniString('Prefs:CodeGen','Warning3.MinCompiler', '14.00', fCfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning4.Symbol', 'SYMBOL_DEPRECATED', fCfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning4.MinCompiler', '14.00', fCfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning5.Symbol', 'SYMBOL_LIBRARY', fCfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning5.MinCompiler', '14.00', fCfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning6.Symbol', 'IMPLICIT_STRING_CAST', fCfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning6.MinCompiler', '20.00', fCfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning7.Symbol', 'EXPLICIT_STRING_CAST', fCfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning7.MinCompiler', '20.00', fCfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.CreateNewFile;
+begin
+  ForceDirectories(ExtractFileDir(fCfgFileName));
+  TFileIO.WriteAllText(fCfgFileName, '', TEncoding.Unicode, True);
+end;
+
+procedure TUserConfigFileUpdater.DeleteDetailsPaneIndex;
+begin
+  if not FileExists(fCfgFileName) then
+    CreateNewFile;
+  DeleteIniKey('MainWindow', 'DetailTab', fCfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.DeleteHighligherPrefs;
+begin
+  if not FileExists(fCfgFileName) then
+    CreateNewFile;
+  DeleteIniSection('Prefs:Hiliter', fCfgFileName);
+end;
+
+procedure TUserConfigFileUpdater.DeleteProxyPassword;
+begin
+  if not FileExists(fCfgFileName) then
+    CreateNewFile;
+  SetIniString('ProxyServer', 'Password', '', fCfgFileName);
+end;
+
+function TUserConfigFileUpdater.FileVer: Integer;
+begin
+  Result := GetIniInt('IniFile', 'Version', 1, fCfgFileName);
+end;
+
+function TUserConfigFileUpdater.HasProxyPassword: Boolean;
+begin
+  Result := GetIniString('ProxyServer', 'Password', '', fCfgFileName) <> '';
+end;
+
+function TUserConfigFileUpdater.IsCurrentProgramVer: Boolean;
+begin
+  Result := IsCurrentProgramVer(fCfgFileName);
+end;
+
+class function TUserConfigFileUpdater.IsCurrentProgramVer(
+  const CfgFileName: string): Boolean;
+var
+  CfgProgVer: string;  // program version from config file
+begin
+  CfgProgVer := GetIniString('IniFile', 'ProgramVersion', '', CfgFileName);
+  Result := CfgProgVer = TAppInfo.ProgramReleaseVersion;
+end;
+
+procedure TUserConfigFileUpdater.Stamp;
+begin
+  if not FileExists(fCfgFileName) then
+    CreateNewFile;
+  SetIniInt('IniFile', 'Version', FileVersion, fCfgFileName);
+  SetIniString(
+    'IniFile', 'ProgramVersion', TAppInfo.ProgramReleaseVersion, fCfgFileName
   );
 end;
 
-// Checks if program version from config file is same as current program
-// version.
-function IsCurrentProgramVer: Boolean;
+procedure TUserConfigFileUpdater.UpdateCodeGenEntries;
 begin
-  Result := ConfigFileProgramVer = TAppInfo.ProgramReleaseVersion;
+  // Key that determines if warnings are emitted changes from SwitchOffWarnings
+  // to EmitWarnDirs.
+  if not FileExists(fCfgFileName) then
+    CreateNewFile;
+  if IniKeyExists('Prefs:CodeGen', 'SwitchOffWarnings', fCfgFileName) then
+  begin
+    SetIniInt(
+      'Prefs:CodeGen',
+      'EmitWarnDirs',
+      GetIniInt('Prefs:CodeGen', 'SwitchOffWarnings', 0, fCfgFileName),
+      fCfgFileName
+    );
+    DeleteIniKey('Prefs:CodeGen', 'SwitchOffWarnings', fCfgFileName);
+  end
+  else
+    SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, fCfgFileName);
 end;
 
-// Deletes any highlighter preferences from new installation's user config file.
-procedure DeleteHighligherPrefs;
-begin
-  DeleteIniSection('Prefs:Hiliter', gCurrentUserConfigFile);
-end;
-
-// Updates config file copied from old stye (pre CodeSnip v1.9) file
-procedure UpdateOldStyleIniFile;
+procedure TUserConfigFileUpdater.UpdateFromOriginal;
 var
   I: Integer; // loops thru all highlight elements
 begin
+  if not FileExists(fCfgFileName) then
+    CreateNewFile;
   // Delete unwanted sections:
   // - Application section: now in common config file
   // - Source code output format: format lost when updating from CodeSnip pre
@@ -213,181 +300,14 @@ begin
   //   different default style and main display uses that style, therefore
   //   section's HiliteOutput (pre v1.7.5) and Prefs:Hiliter (v1.7.5 and later)
   //   deleted.
-  DeleteIniSection('Application', gCurrentUserConfigFile);
-  DeleteIniSection('SourceOutput', gCurrentUserConfigFile);
-  DeleteIniSection('HiliteOutput', gCurrentUserConfigFile);
+  DeleteIniSection('Application', fCfgFileName);
+  DeleteIniSection('SourceOutput', fCfgFileName);
+  DeleteIniSection('HiliteOutput', fCfgFileName);
   for I := 0 to 11 do
-    DeleteIniSection('HiliteOutput:Elem' + IntToStr(I), gCurrentUserConfigFile);
+    DeleteIniSection('HiliteOutput:Elem' + IntToStr(I), fCfgFileName);
   DeleteHighligherPrefs;
   // Main window's overview tabs changed at v3: so we reset to 0 (default)
-  SetIniInt('MainWindow', 'OverviewTab', 0, gCurrentUserConfigFile);
-end;
-
-// Adds Prefs:CodeGen section along with default data to new installation's user
-// config file.
-procedure CreateDefaultCodeGenEntries;
-begin
-  if not FileExists(gCurrentUserConfigFile) then
-    CreateUnicodeConfigFile(gCurrentUserConfigFile);
-  SetIniInt(
-    'Prefs:CodeGen',
-    'EmitWarnDirs',
-    0,
-    gCurrentUserConfigFile
-  );
-  SetIniInt(
-    'Prefs:CodeGen',
-    'WarningCount',
-    8,
-    gCurrentUserConfigFile
-  );
-  // We don't set warning state: it defaults to required "off" value
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning0.Symbol',
-    'UNSAFE_TYPE',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning0.MinCompiler',
-    '15.00',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning1.Symbol',
-    'UNSAFE_CAST',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning1.MinCompiler',
-    '15.00',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning2.Symbol',
-    'UNSAFE_CODE',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning2.MinCompiler',
-    '15.00',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning3.Symbol',
-    'SYMBOL_PLATFORM',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning3.MinCompiler',
-    '14.00',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning4.Symbol',
-    'SYMBOL_DEPRECATED',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning4.MinCompiler',
-    '14.00',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning5.Symbol',
-    'SYMBOL_LIBRARY',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning5.MinCompiler',
-    '14.00',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning6.Symbol',
-    'IMPLICIT_STRING_CAST',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning6.MinCompiler',
-    '20.00',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning7.Symbol',
-    'EXPLICIT_STRING_CAST',
-    gCurrentUserConfigFile
-  );
-  SetIniString(
-    'Prefs:CodeGen',
-    'Warning7.MinCompiler',
-    '20.00',
-    gCurrentUserConfigFile
-  );
-end;
-
-// Updates Prefs:CodeGen section from format prior to version 9 to version 9
-// format
-procedure UpdateCodeGenEntries;
-begin
-  // Key that determines if warnings are emitted changes from SwitchOffWarnings
-  // to EmitWarnDirs.
-  if IniKeyExists(
-    'Prefs:CodeGen', 'SwitchOffWarnings', gCurrentUserConfigFile
-  ) then
-  begin
-    SetIniInt(
-      'Prefs:CodeGen',
-      'EmitWarnDirs',
-      GetIniInt(
-        'Prefs:CodeGen', 'SwitchOffWarnings', 0, gCurrentUserConfigFile
-      ),
-      gCurrentUserConfigFile
-    );
-    DeleteIniKey('Prefs:CodeGen', 'SwitchOffWarnings', gCurrentUserConfigFile);
-  end
-  else
-    SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, gCurrentUserConfigFile);
-end;
-
-// Deletes proxy password entry from new installation's user config file.
-procedure DeleteProxyPassword;
-begin
-  if not FileExists(gCurrentUserConfigFile) then
-    CreateUnicodeConfigFile(gCurrentUserConfigFile);
-  SetIniString(
-    'ProxyServer',
-    'Password',
-    '',
-    gCurrentUserConfigFile
-  );
-end;
-
-// Checks if current user's config file has a proxy password.
-function HasProxyPassword: Boolean;
-begin
-  Result := GetIniString('ProxyServer', 'Password', '', gCurrentUserConfigFile)
-    <> '';
-end;
-
-// Deletes unused key that determines detail pane index.
-procedure DeleteDetailsPaneIndex;
-begin
-  DeleteIniKey('MainWindow', 'DetailTab', gCurrentUserConfigFile);
+  SetIniInt('MainWindow', 'OverviewTab', 0, fCfgFileName);
 end;
 
 end.
