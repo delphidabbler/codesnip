@@ -37,35 +37,65 @@
 
 unit FirstRun.UUpdateDBase;
 
+
 interface
 
-// Copies user databases from it's old location identified by PrevInstallID to
-// correct location for directory being installed.
-procedure CopyDatabases(PrevInstallID: Integer);
+
+type
+  ///  <summary>Class that handles updating of user database from an earlier
+  ///  version.</summary>
+  TUserDatabaseUpdater = class(TObject)
+  strict private
+    var
+      ///  <summary>User database directory.</summary>
+      fDatabaseDir: string;
+    ///  <summary>Copies content of given database directory to current database
+    ///  directory.</summary>
+    procedure CopyDirectory(const SrcDir: string);
+  public
+    ///  <summary>Constructs object to update database in given directory.
+    ///  </summary>
+    constructor Create(const DatabaseDir: string);
+    ///  <summary>Copies database from given directory into current database
+    ///  directory.</summary>
+    procedure CopyDatabase(const SrcDir: string);
+  end;
+
 
 implementation
 
+
 uses
+  // Delphi
   SysUtils, Classes, IOUtils,
+  // Project
   FirstRun.UDataLocations, UIOUtils, UUtils;
 
-// Copies all files from one directory for another. Does nothing if SourceDir
-// doesn't exist or if both directories are the same. If DestDir does not exist
-// it is created.
-procedure CopyDirectory(SourceDir, DestDir: string);
+
+{ TUserDatabaseUpdater }
+
+procedure TUserDatabaseUpdater.CopyDatabase(const SrcDir: string);
+begin
+  if (SrcDir = '')
+    or not TDirectory.Exists(ExcludeTrailingPathDelimiter(SrcDir)) then
+    Exit;
+  CopyDirectory(SrcDir);
+end;
+
+procedure TUserDatabaseUpdater.CopyDirectory(const SrcDir: string);
 var
   SourcePath: string;
   DestPath: string;
   FindRec: TSearchRec;
 begin
-  if CompareText(SourceDir, DestDir) = 0 then
+  SourcePath := IncludeTrailingPathDelimiter(SrcDir);
+  DestPath := IncludeTrailingPathDelimiter(fDatabaseDir);
+  if CompareText(SourcePath, DestPath) = 0 then
     Exit;
-  if not IsDirectory(SourceDir) then
+  if not TDirectory.Exists(ExcludeTrailingPathDelimiter(SourcePath)) then
     Exit;
-  if not IsDirectory(DestDir) then
-    ForceDirectories(DestDir);
-  SourcePath := IncludeTrailingPathDelimiter(SourceDir);
-  DestPath := IncludeTrailingPathDelimiter(DestDir);
+  if not TDirectory.Exists(ExcludeTrailingPathDelimiter(DestPath)) then
+    ForceDirectories(DestPath);
   if FindFirst(SourcePath + '*', faAnyFile, FindRec) = 0 then
   begin
     repeat
@@ -76,15 +106,10 @@ begin
   end;
 end;
 
-// Copies user databases from it's old location identified by PrevInstallID to
-// correct location for directory being installed.
-procedure CopyDatabases(PrevInstallID: Integer);
-var
-  OldUserDatabase: string;
+constructor TUserDatabaseUpdater.Create(const DatabaseDir: string);
 begin
-  OldUserDatabase := gUserDatabaseDirs[PrevInstallID];
-  if OldUserDatabase <> '' then
-    CopyDirectory(OldUserDatabase, gUserDatabaseDirs[piCurrent]);
+  inherited Create;
+  fDatabaseDir := ExcludeTrailingPathDelimiter(DatabaseDir);
 end;
 
 end.
