@@ -1,5 +1,5 @@
 {
- * FirstRun.UUpdateIni.pas
+ * FirstRun.UConfigFile.pas
  *
  * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
  *
@@ -22,7 +22,7 @@
  * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
  * the specific language governing rights and limitations under the License.
  *
- * The Original Code is FirstRun.UUpdateIni.pas, formerly UpdateIni.ps.
+ * The Original Code is FirstRun.UConfigFile.
  *
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
@@ -37,7 +37,7 @@
 }
 
 
-unit FirstRun.UUpdateIni;
+unit FirstRun.UConfigFile;
 
 
 interface
