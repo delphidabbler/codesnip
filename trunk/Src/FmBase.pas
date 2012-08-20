@@ -272,11 +272,7 @@ procedure TBaseForm.FormKeyDown(Sender: TObject; var Key: Word;
 begin
   inherited;
   if (Key = VK_F10) and (ExtractShiftKeys(Shift) = [ssAlt]) then
-  begin
-    // TODO: remove this debug code
-    outputdebugstring('Alt+F10 pressed');
     ActivateContextMenu;
-  end;
 end;
 
 procedure TBaseForm.FormShow(Sender: TObject);
