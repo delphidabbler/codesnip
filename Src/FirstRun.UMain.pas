@@ -102,7 +102,7 @@ begin
     ClassName + '.BringForwardCfgFile: Old config file does not exist');
   fConfigFile.CopyFile(
     gUserConfigFiles[gPrevInstallID],
-    FirstRun.UUpdateIni.IsAnsiConfigFile(gPrevInstallID)
+    FirstRun.UDataLocations.IsAnsiConfigFile(gPrevInstallID)
   );
 end;
 

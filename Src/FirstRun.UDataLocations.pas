@@ -100,6 +100,10 @@ var
 // previous installation that was detected.
 procedure InitGlobals;
 
+// Checks if a config file is ANSI. If False is returned the file is assumed to
+// be Unicode.
+function IsAnsiConfigFile(InstallID: Integer): Boolean;
+
 implementation
 
 uses
@@ -181,6 +185,13 @@ procedure InitGlobals;
 begin
   InitAppDataFolders;
   DetectPrevInstall;
+end;
+
+// Checks if a config file is ANSI. If False is returned the file is assumed to
+// be Unicode.
+function IsAnsiConfigFile(InstallID: Integer): Boolean;
+begin
+  Result := InstallID <= piV3;
 end;
 
 end.
