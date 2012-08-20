@@ -42,7 +42,7 @@ unit FirstRun.UMain;
 interface
 
 uses
-  FirstRun.UUpdateIni;
+  FirstRun.UUpdateIni, FirstRun.UUpdateDBase;
 
 type
   TFirstRunCfgChanges = (
@@ -60,6 +60,7 @@ type
   strict private
     var
       fConfigFile: TUserConfigFileUpdater;
+      fDatabase: TUserDatabaseUpdater;
     function HasOldStyleProxyPwd: Boolean;
   public
     constructor Create;
@@ -91,7 +92,7 @@ uses
   // Delphi
   SysUtils, Windows, IOUtils, Forms,
   // Project
-  FirstRun.FmV4ConfigDlg, FirstRun.UDataLocations, FirstRun.UUpdateDBase,
+  FirstRun.FmV4ConfigDlg, FirstRun.UDataLocations,
   UMessageBox, UUtils;
 
 { TFirstRun }
@@ -110,13 +111,14 @@ procedure TFirstRun.BringForwardUserDB;
 begin
   Assert(HaveOldUserDB,
     ClassName + '.BringForwardUserDB: Old user database does not exist');
-  CopyDatabases(gPrevInstallID);
+  fDatabase.CopyDatabase(gUserDatabaseDirs[gPrevInstallID]);
 end;
 
 constructor TFirstRun.Create;
 begin
   inherited Create;
   fConfigFile := TUserConfigFileUpdater.Create(gCurrentUserConfigFile);
+  fDatabase := TUserDatabaseUpdater.Create(gUserDatabaseDirs[piCurrent]);
 end;
 
 procedure TFirstRun.CreateEmptyCfgFile;
@@ -126,6 +128,7 @@ end;
 
 destructor TFirstRun.Destroy;
 begin
+  fDatabase.Free;
   fConfigFile.Free;
   inherited;
 end;
