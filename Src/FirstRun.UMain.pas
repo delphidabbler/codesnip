@@ -41,60 +41,115 @@ unit FirstRun.UMain;
 
 interface
 
+
 uses
   // Project
   FirstRun.UConfigFile, FirstRun.UDatabase, FirstRun.UInstallInfo;
 
+
 type
+  ///  <summary>Enumeration of changes that can be made to brought forward
+  ///  config files that result in data loss.</summary>
   TFirstRunCfgChanges = (
-    frcRegistration,
-    frcHiliter,
-    frcProxyPwd,
-    frcSourceFormat
+    frcRegistration,    // local registration record lost
+    frcHiliter,         // syntax highlighter customisation lost
+    frcProxyPwd,        // internet proxy password lost
+    frcSourceFormat     // source code output formatting lost
   );
 
 type
+  ///  <summary>Set of first run changes to brought forward config file that can
+  ///  result in data loss.</summary>
   TFirstRunCfgChangeSet = set of TFirstRunCfgChanges;
 
 type
+  ///  <summary>Class that provides information about current and previous
+  ///  installations of CodeSnip along with operations to carry forward user
+  ///  preferences and database and to update user config file when necessary.
+  ///  </summary>
   TFirstRun = class(TObject)
   strict private
     var
+      ///  <summary>Object that provides information about current and earlier
+      ///  installations.</summary>
       fInstallInfo: TInstallInfo;
+      ///  <summary>Object that interogates and updates user's config file.
+      ///  </summary>
       fConfigFile: TUserConfigFileUpdater;
+      ///  <summary>Object used to copy forward older versions of user database.
+      ///  </summary>
       fDatabase: TUserDatabaseUpdater;
+    ///  <summary>Checks if config file uses earlier format for storing proxy
+    ///  server passwords.</summary>
     function HasOldStyleProxyPwd: Boolean;
   public
+    ///  <summary>Constructs object and owned object.</summary>
     constructor Create;
+    ///  <summary>Frees object and owned objects.</summary>
     destructor Destroy; override;
+    ///  <summary>Checks if a user config file exists for an earlier CodeSnip
+    ///  installation.</summary>
     function HaveOldCfgFile: Boolean;
-    // Brings forward config file from older version
+    ///  <summary>Copies user config file from an earlier CodeSnip installation.
+    ///  </summary>
     procedure BringForwardCfgFile;
-    // Updates config file in place and notofies of changes
+    ///  <summary>Updates current version's user config file in place as
+    ///  necessary and notifies caller of changes via Changes parameter.
+    /// </summary>
     procedure UpdateCfgFile(out Changes: TFirstRunCfgChangeSet);
+    ///  <summary>Checks if a user database exist for an earlier CodeSnip
+    ///  installation.</summary>
     function HaveOldUserDB: Boolean;
+    ///  <summary>Copies user database from an earlier CodeSnip installation.
+    ///  </summary>
     procedure BringForwardUserDB;
+    ///  <summary>Creates a new, empty, Unicode encoded config file for current
+    ///  installation.</summary>
     procedure CreateEmptyCfgFile;
+    ///  <summary>
     function IsProgramUpdated: Boolean;
   end;
 
 type
+  ///  <summary>Static class that manages program's first run processing.
+  ///  </summary>
+  ///  <remarks>
+  ///  <para>Designed to be called before any program preferences are read.
+  ///  </para>
+  ///  <para>If current major version of program has not been run before and
+  ///  user data from an earlier version is detected then a dialogue box is
+  ///  displayed to give user various options to bring forward data.</para>
+  ///  <para>If major version is unchanged but minor version, or user config
+  ///  file version, has changed then config file may be modified.</para>
+  ///  </remarks>
   TFirstRunMgr = class(TObject)
   strict private
+    ///  <summary>Checks if user config file exists for current program version.
+    ///  </summary>
     class function CfgFileExists: Boolean;
+    ///  <summary>Determines if this is first time this major version of the
+    ///  program has been run.</summary>
     class function IsFirstRun: Boolean;
+    ///  <summary>Determines if program has been updated since last run.
+    ///  </summary>
     class function IsProgramUpdated: Boolean;
   public
+    ///  <summary>Runs start-up checks to detect if program has been run before
+    ///  and performs any required user config and user database updates.
+    ///  </summary>
     class procedure Execute;
   end;
 
+
 implementation
+
 
 uses
   // Delphi
   SysUtils, IOUtils, Forms,
   // Project
   FirstRun.FmV4ConfigDlg;
+
 
 { TFirstRun }
 
