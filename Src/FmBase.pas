@@ -141,8 +141,8 @@ uses
   // Delphi
   SysUtils, Windows, Menus,
   // Project
-  UAppInfo, UBaseObjects, UFontHelper, UKeysHelper, UMenuHelper,
-  UNulFormAligner, UStrUtils;
+  UAppInfo, UBaseObjects, UFontHelper, UKeysHelper, UMenus, UNulFormAligner,
+  UStrUtils;
 
 {$R *.dfm}
 

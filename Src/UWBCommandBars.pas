@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -143,7 +143,7 @@ implementation
 
 uses
   // Project
-  UAnchors, UHTMLDOMHelper, UImageTags, ULinkAction, UMenuHelper, UStrUtils,
+  UAnchors, UHTMLDOMHelper, UImageTags, ULinkAction, UMenus, UStrUtils,
   UWBPopupMenus;
 
 

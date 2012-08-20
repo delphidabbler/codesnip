@@ -288,7 +288,7 @@ uses
   UMemoCaretPosDisplayMgr in 'UMemoCaretPosDisplayMgr.pas',
   UMemoHelper in 'UMemoHelper.pas',
   UMemoProgBarMgr in 'UMemoProgBarMgr.pas',
-  UMenuHelper in 'UMenuHelper.pas',
+  UMenus in 'UMenus.pas',
   UMessageBox in 'UMessageBox.pas',
   UMessageWindow in 'UMessageWindow.pas',
   UMultiCastEvents in 'UMultiCastEvents.pas',

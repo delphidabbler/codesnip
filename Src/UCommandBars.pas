@@ -234,7 +234,7 @@ implementation
 
 uses
   // Project
-  UMenuHelper, UToolButtonEx;
+  UMenus, UToolButtonEx;
 
 
 { TCommandBarMgr }
