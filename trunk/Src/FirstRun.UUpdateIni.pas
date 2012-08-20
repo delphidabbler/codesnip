@@ -36,9 +36,12 @@
  * ***** END LICENSE BLOCK *****
 }
 
+
 unit FirstRun.UUpdateIni;
 
+
 interface
+
 
 type
   ///  <summary>Class that manages the updating of older config files to the
@@ -103,23 +106,16 @@ type
     procedure Stamp;
   end;
 
-// TODO: Move this routine to UDataLocations
-// Checks if a config file is ANSI. If False is returned the file is assumed to
-// be Unicode.
-function IsAnsiConfigFile(InstallID: Integer): Boolean;
 
 implementation
 
+
 uses
+  // Delphi
   SysUtils, Types, Classes, Windows,
+  // Project
   FirstRun.UDataLocations, FirstRun.UIniFile, UAppInfo, UIOUtils;
 
-// Checks if a config file is ANSI. If False is returned the file is assumed to
-// be Unicode.
-function IsAnsiConfigFile(InstallID: Integer): Boolean;
-begin
-  Result := InstallID <= piV3;
-end;
 
 { TUserConfigFileUpdater }
 
