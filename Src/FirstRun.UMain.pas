@@ -38,11 +38,11 @@
 
 unit FirstRun.UMain;
 
-{TODO: This entire FirstRun code needs a thorough rewrite:
-       it's very messy, having been derived from former install Pascal script.
-}
 
 interface
+
+uses
+  FirstRun.UUpdateIni;
 
 type
   TFirstRunCfgChanges = (
@@ -58,6 +58,8 @@ type
 type
   TFirstRun = class(TObject)
   strict private
+    var
+      fConfigFile: TUserConfigFileUpdater;
     function HasOldStyleProxyPwd: Boolean;
   public
     constructor Create;
@@ -90,7 +92,7 @@ uses
   SysUtils, Windows, IOUtils, Forms,
   // Project
   FirstRun.FmV4ConfigDlg, FirstRun.UDataLocations, FirstRun.UUpdateDBase,
-  FirstRun.UUpdateIni, UMessageBox, UUtils;
+  UMessageBox, UUtils;
 
 { TFirstRun }
 
@@ -98,7 +100,10 @@ procedure TFirstRun.BringForwardCfgFile;
 begin
   Assert(HaveOldCfgFile,
     ClassName + '.BringForwardCfgFile: Old config file does not exist');
-  CopyConfigFiles(gPrevInstallID);
+  fConfigFile.CopyFile(
+    gUserConfigFiles[gPrevInstallID],
+    FirstRun.UUpdateIni.IsAnsiConfigFile(gPrevInstallID)
+  );
 end;
 
 procedure TFirstRun.BringForwardUserDB;
@@ -111,22 +116,23 @@ end;
 constructor TFirstRun.Create;
 begin
   inherited Create;
+  fConfigFile := TUserConfigFileUpdater.Create(gCurrentUserConfigFile);
 end;
 
 procedure TFirstRun.CreateEmptyCfgFile;
 begin
-  CreateUnicodeConfigFile(gCurrentUserConfigFile);
+  fConfigFile.CreateNewFile;
 end;
 
 destructor TFirstRun.Destroy;
 begin
-
+  fConfigFile.Free;
   inherited;
 end;
 
 function TFirstRun.HasOldStyleProxyPwd: Boolean;
 begin
-  Result := (UserConfigFileVer <= 6) and HasProxyPassword;
+  Result := (fConfigFile.FileVer <= 6) and fConfigFile.HasProxyPassword;
 end;
 
 function TFirstRun.HaveOldCfgFile: Boolean;
@@ -144,7 +150,7 @@ end;
 
 function TFirstRun.IsProgramUpdated: Boolean;
 begin
-  Result := IsCurrentProgramVer;
+  Result := fConfigFile.IsCurrentProgramVer;
 end;
 
 procedure TFirstRun.UpdateCfgFile(out Changes: TFirstRunCfgChangeSet);
@@ -153,38 +159,38 @@ begin
   case gPrevInstallID of
     piOriginal:
     begin
-      UpdateOldStyleIniFile;
+      fConfigFile.UpdateFromOriginal;
       Include(Changes, frcHiliter);
       Include(Changes, frcRegistration);
       Include(Changes, frcSourceFormat);
     end;
     piV1_9, piV2:
     begin
-      DeleteHighligherPrefs;  // default highlighting changes in v3
+      fConfigFile.DeleteHighligherPrefs;
       Include(Changes, frcHiliter);
     end;
     piV3:
     begin
       if HasOldStyleProxyPwd then
       begin
-        DeleteProxyPassword;  // proxy password encryption changed during v3
+        fConfigFile.DeleteProxyPassword;
         Include(Changes, frcProxyPwd);
       end;
     end;
   end;
-  if UserConfigFileVer < 6 then
+  if fConfigFile.FileVer < 6 then
     // User ini file versions before 6 don't have the Prefs:CodeGen section and
     // default entries for predefined warnings.
     // NOTE: This works for a new config file providing it has not been stamped.
-    CreateDefaultCodeGenEntries;
+    fConfigFile.CreateDefaultCodeGenEntries;
 
-  if UserConfigFileVer < 9 then
+  if fConfigFile.FileVer < 9 then
   begin
-    DeleteDetailsPaneIndex; // can be present in file v8 even tho not supported
-    UpdateCodeGenEntries;
+    fConfigFile.DeleteDetailsPaneIndex; // can be v8 file even tho not supported
+    fConfigFile.UpdateCodeGenEntries;
   end;
 
-  StampConfigFiles;
+  fConfigFile.Stamp;
 end;
 
 { TFirstRunMgr }
@@ -233,7 +239,9 @@ end;
 
 class function TFirstRunMgr.IsProgramUpdated: Boolean;
 begin
-  Result := not IsCurrentProgramVer;
+  Result := not TUserConfigFileUpdater.IsCurrentProgramVer(
+    gCurrentUserConfigFile
+  );
 end;
 
 end.
