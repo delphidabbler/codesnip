@@ -47,7 +47,6 @@ interface
   User config file and database locations in different CodeSnip versions
   ----------------------------------------------------------------------
 
-  Note that the location of %AppData% varies according to the current user.
   Version numbers refer to the CodeSnip release.
 
   + Versions up to v1.8.11:
@@ -84,11 +83,17 @@ type
   );
 
 type
+  ///  <summary>Class that provides information about CodeSnip installations.
+  ///  </summary>
   TInstallInfo = class(TObject)
   strict private
     const
+      ///  <summary>ID earliest version of CodeSnip.</summary>
       FirstVersionID = piOriginal;
+      ///  <summary>ID of current version of CodeSnip.</summary>
       CurrentVersionID = piv4;
+      ///  <summary>Array mapping install IDs to relative paths to user config
+      ///  file for for that installation version.</summary>
       ConfigFileNames: array[FirstVersionID..CurrentVersionID] of string =
         (
           'DelphiDabbler\CodeSnip\CodeSnip.ini',
@@ -97,6 +102,8 @@ type
           'DelphiDabbler\CodeSnip\User.3.ini',
           'DelphiDabbler\CodeSnip.4\User.config'
         );
+      ///  <summary>Array mapping install IDs to relative paths to user database
+      ///  directories for for that installation version.</summary>
       DatabaseDirs: array[FirstVersionID..CurrentVersionID] of string =
         (
           '',
@@ -106,17 +113,47 @@ type
           'DelphiDabbler\CodeSnip.4\UserDatabase'
         );
     var
+      ///  <summary>Value of InstallID property.</summary>
       fInstallID: TInstallId;
+    ///  <summary>Converts given relative directory path or file name into an
+    ///  absolute path by pre-prending the user's application data folder.
+    ///  </summary>
+    ///  <remarks>If Name = '' then '' is returned.</remarks>
     class function MakeFullPath(const Name: string): string;
+    ///  <summary>Detects latest version of CodeSnip for which user data can be
+    ///  found and sets InstallID property accordingly.</summary>
     procedure DetectInstall;
   public
+    ///  <summary>Creates object to provide information about latest CodeSnip
+    ///  installation for which user data can be found.</summary>
     constructor Create;
+    ///  <summary>Returns full path to user config file for current version of
+    ///  CodeSnip.</summary>
     class function CurrentUserConfigFileName: string;
+    ///  <summary>Returns full path to database directory for current version of
+    ///  CodeSnip.</summary>
     class function CurrentUserDatabaseDir: string;
+    ///  <summary>Returns full path to user config file version of CodeSnip for
+    ///  which user data is available.</summary>
+    ///  <remarks>This can be current version's config file if present.
+    ///  </remarks>
     function PreviousUserConfigFileName: string;
+    ///  <summary>Informs if user config file returned by
+    ///  PreviousUserConfigFileName is in ANSI format.</summary>
     function IsPreviousUserConfigFileANSI: Boolean;
+    ///  <summary>Returns full path to user database directory for latest
+    ///  version of CodeSnip for which a user database is available.</summary>
+    ///  <remarks>This can be current version's database directory if present.
+    ///  </remarks>
     function PreviousUserDatabaseDir: string;
+    ///  <summary>Returns full path on user database file for latest version of
+    ///  CodeSnip for which a user database is available.</summary>
+    ///  <remarks>This can be current version's database file if present.
+    ///  </remarks>
     function PreviousUserDatabaseFileName: string;
+    ///  <summary>ID of latest CodeSnip install found.</summary>
+    ///  <remarks>This is ID of latest version for which user data can be found.
+    ///  </remarks>
     property InstallID: TInstallId read fInstallID;
   end;
 
@@ -150,9 +187,10 @@ end;
 
 procedure TInstallInfo.DetectInstall;
 
+  // Checks if given Unicode format file is empty.
   function IsEmptyUnicodeCfgFile(const FileName: string): Boolean;
   var
-    Content: string;
+    Content: string;  // content of file
   begin
     Content := StrTrim(TFileIO.ReadAllText(FileName, TEncoding.Unicode, True));
     Result := Content = '';
