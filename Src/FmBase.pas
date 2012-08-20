@@ -49,88 +49,107 @@ uses
 
 
 type
-  {
-  TBaseForm:
-    Base class for all forms in application. Sets a unique window class name for
-    all derived forms and provides various operations that are common to all
-    forms in application.
-  }
+  ///  <summary>Base class for all forms in application.</summary>
+  ///  <remarks>Sets a unique window class name for all derived forms and
+  ///  provides various operations that are common to all forms in application.
+  ///  </remarks>
   TBaseForm = class(TForm)
+    ///  <summary>Handles form's OnDestroy event. Frees owned objects.</summary>
     procedure FormDestroy(Sender: TObject);
+    ///  <summary>Handles form's OnShow event. Aligns form on screen using
+    ///  aligner object. Calls virtual methods that sub-classes override to
+    ///  perform pre- and post- alignment initialisation.</summary>
     procedure FormShow(Sender: TObject);
+    ///  <summary>Handles form's OnCreate event to perform initialisations
+    ///  required for every form.</summary>
+    ///  <remarks>In addition to creation of owned objects this method also
+    ///  sets form's font in OS dependent way.</remarks>
     procedure FormCreate(Sender: TObject);
+    ///  <summary>Handles form's OnKeyDown event. Intercepts Alt+F10 key press
+    ///  and displays any available context menu.</summary>
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
   strict private
     var
-      fCtrlStateMgr: TControlStateMgr;  // Enables/disables all form's controls
+      ///  <summary>Object used to enable / disable all form's controls when.
+      ///  form's enabled state changes.</summary>
+      fCtrlStateMgr: TControlStateMgr;
     const
+      ///  <summary>Custom message used to call AfterShow method after form
+      ///  appears on screen.</summary>
       WM_AFTERSHOW = WM_USER + 1; // Custom message used to call AfterShow
+  strict private
+    ///  <summary>Aligns form on screen using an IAligner instance.</summary>
+    ///  <remarks>Called from OnShow event after form is customised and before
+    ///  it is initialised.</remarks>
     procedure AlignForm;
-      {Optionally aligns form to a "parent" window, using an IAligner instance.
-      Called from Form's OnShow event after form is customised and before it is
-      initialised.
-      }
+    ///  <summary>Message handler that responds to changes in form's enabled
+    ///  state by updating state of all controls according to whether form is
+    ///  enabled or disabled.</summary>
     procedure CMEnabledChanged(var Msg: TMessage); message CM_ENABLEDCHANGED;
-      {Called when enabled state of form changes. Updates state of all controls.
-        @param Msg [in/out] Unused.
-      }
+    ///  <summary>Message handler that responds to custom message sent from
+    ///  OnShow event handler that arrives after form has been displayed. Calls
+    ///  virtual AfterShow method.</summary>
     procedure WMAfterShow(var Msg: TMessage); message WM_AFTERSHOW;
-      {Handles custom method that is posted just before form is shown and
-      handled just after form is shown.
-        @param Msg [in/out] Unused.
-      }
+    ///  <summary>Activates any context menu associated with the active control
+    ///  or any of its parent controls.</summary>
     procedure ActivateContextMenu;
-      {Activates any context menu associated with active control or any of its
-      parents.
-      }
   strict protected
+    ///  <summary>Overrides window creation parameters to set window class name
+    ///  to that provided by virtual WindowClassName method.</summary>
     procedure CreateParams(var Params: TCreateParams); override;
-      {Sets window class name to that provided by WindowClassName method if not
-      empty string.
-        @param Params [in/out] Parameters used in underlying call to
-          CreateWindowEx API function. Window class name member field is set.
-      }
+    ///  <summary>Returns a window class name comprised of company, program and
+    ///  form class names.</summary>
     function WindowClassName: string; virtual;
-      {Returns name of form's window class. This is a name comprised of company,
-      program and form class names. Subclasses may override.
-        @return Required window class name.
-      }
+    ///  <summary>Returns new instance of aligner object used to align form to
+    ///  owner.</summary>
+    ///  <remarks>This implementation returns a null aligner. Subclasses that
+    ///  require alignment should return a suitable IAligner instance.</remarks>
     function GetAligner: IFormAligner; virtual;
-      {Gets object to be used to align form to owner.
-        @return Nul aligner that does nothing. Subclasses that require alignment
-          should override to return a suitable IAligner instance.
-      }
+    ///  <summary>Customises form.</summary>
+    ///  <remarks>
+    ///  <para>This method is called during the form's OnShow event before the
+    ///  form is aligned.</para>
+    ///  <para>In this implementation the method does nothing. Subclasses should
+    ///  overrride to perform any customisation and to change the default size
+    ///  of form if necessary instead handling the OnShow event.</para>
+    ///  </remarks>
     procedure CustomiseForm; virtual;
-      {Used to customise form. This method is called during the form's OnShow
-      event before the form is aligned. This implementation does nothing.
-      Subclasses should overrride to perform any customisation and to change
-      default size of form if necessary rather than handling the OnShow event.
-      }
+    ///  <summary>Initialises form content.</summary>
+    ///  <remarks>
+    ///  <para>This method is called during the form's OnShow event after the
+    ///  form is aligned.</para>
+    ///  <para>This implementation does nothing. Subclasses should override to
+    ///  initialise the form instead of handling the OnShow event.</para>
+    ///  <para>The form size should not be changed in this method since it will
+    ///  interfere with the aligment.</para>
+    ///  </remarks>
     procedure InitForm; virtual;
-      {Used to initialise form content. This method is called during the form's
-      OnShow event after the form is aligned. This implementation does nothing.
-      Subclasses should override to initialise the form rather than handling the
-      OnShow event. Form size must not be changed in this method.
-      }
+    ///  <summary>Performs any actions needed after the form is visible on
+    ///  screen.</summary>
+    ///  <remarks>This implementation does nothing. Subclasses that need this
+    ///  functionality should override this method.</remarks>
     procedure AfterShowForm; virtual;
-      {Used to perform any actions that need to occur after the form has been
-      shown and is visible on-screen. This implementation does nothing.
-      Subclasses that need this functionality should override this method.
-      }
+    ///  <summary>Protected constructor. Does nothing but call the inherited
+    ///  constructor.</summary>
+    ///  <remarks>
+    ///  <para>This constructor is provided for use in derived form classes that
+    ///  implement the INoPublicConstruct interface where the public Create
+    ///  constructor can't be called.</para>
+    ///  <para>Such classes must instantiate the form from a class method that
+    ///  must call InternalCreate instead of Create.</para>
+    ///  </remarks>
     constructor InternalCreate(AOwner: TComponent); virtual;
-      {Protected constructor. Does nothing but call inherited constructor.
-      Must be called by class methods of derived classes instead of inherited
-      Create if and only if the form supports the INoPublicConstruct interface.
-        @param AOwner [in] Component that owns form. May be nil.
-      }
   public
+    ///  <summary>Public constructor. Does nothing but call the inherited
+    ///  constructor.</summary>
+    ///  <remarks>
+    ///  <para>This constructor can be called directly or from class methods in
+    ///  a descendant class, providing that class does not support the
+    ///  INoPublicConstruct interface.</para>
+    ///  <para>In cases where INoPublicConstruct is supported the protected
+    ///  InternalCreate constructor must be called instead.</para>
+    ///  </remarks>
     constructor Create(AOwner: TComponent); override;
-      {Public constructor. Does nothing but call inherited constructor. Can be
-      called from descendant classes if necessary to override the constructor.
-      Must not be called, directly or indirectly if the descendant form supports
-      the INoPublicConstruct interface.
-        @param AOwner [in] Component that owns form. May be nil.
-      }
   end;
 
 
@@ -161,9 +180,6 @@ type
 { TBaseForm }
 
 procedure TBaseForm.ActivateContextMenu;
-  {Activates any context menu associated with active control or any of its
-  parents.
-  }
 var
   Ctrl: TControl;       // active control or a parent that supports pop-up menu
   MenuIntf: IPopupMenu; // interface reference to controls supporting IPopupMenu
@@ -192,19 +208,11 @@ begin
 end;
 
 procedure TBaseForm.AfterShowForm;
-  {Used to perform any actions that need to occur after the form has been shown
-  and is visible on-screen. This implementation does nothing. Subclasses that
-  need this functionality should override this method.
-  }
 begin
   // Do nothing
 end;
 
 procedure TBaseForm.AlignForm;
-  {Optionally aligns form to a "parent" window, using an IAligner instance.
-  Called from Form's OnShow event after form is customised and before it is
-  initialised.
-  }
 begin
   // Align the control. This does nothing by default, since default aligner is
   // a do-nothing instance
@@ -212,9 +220,6 @@ begin
 end;
 
 procedure TBaseForm.CMEnabledChanged(var Msg: TMessage);
-  {Called when enabled state of form changes. Updates state of all controls.
-    @param Msg [in/out] Unused.
-  }
 begin
   inherited;
   // We update state of all controls, menu items and actions if possible
@@ -223,12 +228,6 @@ begin
 end;
 
 constructor TBaseForm.Create(AOwner: TComponent);
-  {Public constructor. Does nothing but call inherited constructor. Can be
-  called from descendant classes if necessary to override the constructor. Must
-  not be called, directly or indirectly if the descendant form supports the
-  INoPublicConstruct interface.
-    @param AOwner [in] Component that owns form. May be nil.
-  }
 begin
   Assert(not Supports(Self, INoPublicConstruct),
     ClassName + '.Create: Form''s public constructor can''t be called');
@@ -236,11 +235,6 @@ begin
 end;
 
 procedure TBaseForm.CreateParams(var Params: TCreateParams);
-  {Sets window class name to that provided by WindowClassName method if not
-  empty string.
-    @param Params [in/out] Parameters used in underlying call to
-      CreateWindowEx API function. Window class name member field is set.
-  }
 var
   ClassName: string;  // window class name
 begin
@@ -255,19 +249,11 @@ begin
 end;
 
 procedure TBaseForm.CustomiseForm;
-  {Used to customise form. This method is called during the form's OnShow
-  event before the form is aligned. This implementation does nothing.
-  Subclasses should overrride to perform any customisation and to change
-  default size of form if necessary rather than handling the OnShow event.
-  }
 begin
   // Do nothing
 end;
 
 procedure TBaseForm.FormCreate(Sender: TObject);
-  {Handles form's OnCreate event. Creates owned objects.
-    @param Sender [in] Not used.
-  }
 begin
   inherited;
   fCtrlStateMgr := TControlStateMgr.Create(Self);
@@ -277,10 +263,6 @@ begin
 end;
 
 procedure TBaseForm.FormDestroy(Sender: TObject);
-  {Handles form's OnDestroy event. Unregisters form with object that works
-  around Delphi's Alt Key bug and frees control state manager.
-    @param Sender [in] Not used.
-  }
 begin
   FreeAndNil(fCtrlStateMgr);
 end;
@@ -291,55 +273,33 @@ begin
   inherited;
   if (Key = VK_F10) and (ExtractShiftKeys(Shift) = [ssAlt]) then
   begin
+    // TODO: remove this debug code
     outputdebugstring('Alt+F10 pressed');
     ActivateContextMenu;
   end;
 end;
 
 procedure TBaseForm.FormShow(Sender: TObject);
-  {Handles form's OnShow event. Calls a virtual method to customise form before
-  aligning it. A further virtual method is then called to initialise the form.
-  Finally a message is posted to the form that results in the AfterShowForm
-  method being called after the form has been displayed. Subclasses should
-  override the CustomiseForm, AlignForm and InitForm methods rather than
-  handling this event.
-    @param Sender [in] Not used.
-  }
 begin
-  // Call virtual methods
-  CustomiseForm;  // customise form: override if form size needs to be changed
-  AlignForm;      // optionally align form using provided IAligner object
-  InitForm;       // initialise form: do not change size of form in overrides
+  CustomiseForm;
+  AlignForm;
+  InitForm;
   // Post message that causes AfterShowForm to be called after form has appeared
   // on screen
   PostMessage(Handle, WM_AFTERSHOW, 0, 0);
 end;
 
 function TBaseForm.GetAligner: IFormAligner;
-  {Gets object to be used to align form to owner.
-    @return Nul aligner that does nothing. Subclasses that require alignment
-      should override to return a suitable IAligner instance.
-  }
 begin
   Result := TNulAligner.Create;
 end;
 
 procedure TBaseForm.InitForm;
-  {Used to initialise form content. This method is called during the form's
-  OnShow event after the form is aligned. This implementation does nothing.
-  Subclasses should override to initialise the form rather than handling the
-  OnShow event. Form size must not be changed in this method.
-  }
 begin
   // Do nothing
 end;
 
 constructor TBaseForm.InternalCreate(AOwner: TComponent);
-  {Protected constructor. Does nothing but call inherited constructor. Must be
-  called by class methods of derived classes instead of inherited Create if and
-  only if the form supports the INoPublicConstruct interface.
-    @param AOwner [in] Component that owns form. May be nil.
-  }
 begin
   Assert(Supports(Self, INoPublicConstruct), ClassName + '.InternalCreate: '
     + 'Form''s protected constructor can''t be called');
@@ -347,10 +307,6 @@ begin
 end;
 
 function TBaseForm.WindowClassName: string;
-  {Returns name of form's window class. This is a name comprised of company,
-  program and form class names. Subclasses may override.
-    @return Required window class name.
-  }
 var
   PostfixName: string;  // Postfix to name, based on form's class name
 begin
@@ -367,10 +323,6 @@ begin
 end;
 
 procedure TBaseForm.WMAfterShow(var Msg: TMessage);
-  {Handles custom method that is posted just before form is shown and handled
-  just after form is shown.
-    @param Msg [in/out] Unused.
-  }
 begin
   AfterShowForm;
 end;
