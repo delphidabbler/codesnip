@@ -67,71 +67,182 @@ type
     IClipboardMgr
   )
     frmDetailView: TDetailViewFrame;
-    tcViews: TTabControl;
     mnuTabs: TPopupMenu;
+    tcViews: TTabControl;
     procedure tcViewsChange(Sender: TObject);
     procedure tcViewsMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
   strict private
     var
+      ///  <summary>Notification object used to notify other parts of program
+      ///  about changes in this frame.</summary>
       fNotifier: INotifier;
+      // TODO: remove following unused field
       fDisplayedView: IView;
+      ///  <summary>List of views associated with tabs.</summary>
+      ///  <remarks>Index of a view in this list is same as index of its tab
+      ///  in tab set.</remarks>
       fViews: TList<IView>;
+      ///  <summary>Command bar that wraps tab set's context menu.</summary>
       fTabSetCmdBar: TPopupMenuWrapper;
+    ///  <summary>Returns number of tabs currently displayed.</summary>
     function TabCount: Integer;
+    ///  <summary>Selects tab at given index and displays its associated view.
+    ///  </summary>
     procedure InternalSelectTab(TabIdx: Integer);
+    ///  <summary>Displays given view in deatil view pane. If ForceReload is
+    ///  True then view is totally reloaded, otherwise it is displayed normally.
+    ///  </summary>
     procedure InternalDisplay(View: IView; ForceReload: Boolean);
+    ///  <summary>Deletes a tab at given index along with its associated view.
+    ///  </summary>
     procedure InternalDeleteTab(TabIdx: Integer);
+    ///  <summary>Sends notification via notifier object that selected tab has
+    ///  changed.</summary>
     procedure NotifyTabChange;
   public
+    ///  <summary>Constructs frame and its owned objects.</summary>
     constructor Create(AOwner: TComponent); override;
+    ///  <summary>Destroys frame and its owned objects.</summary>
     destructor Destroy; override;
 
-    // ITabbedDisplayMgr
+    ///  <summary>Selects tab with given index and displays associated view.
+    ///  </summary>
+    ///  <remarks>Method of ITabbedDisplayMgr and IDetailPaneDisplayMgr.
+    ///  </remarks>
     procedure SelectTab(const TabIdx: Integer);
+    procedure ITabbedDisplayMgr.SelectTab = SelectTab;
+    procedure IDetailPaneDisplayMgr.SelectTab = SelectTab;
+
+    ///  <summary>Gets index of currently selected tab.</summary>
+    ///  <remarks>Method of ITabbedDisplayMgr.</remarks>
     function SelectedTab: Integer;
+
+    ///  <summary>Switches to next tab in sequence or goes to first tab if
+    ///  current tab is last.</summary>
+    ///  <remarks>Method of ITabbedDisplayMgr.</remarks>
     procedure NextTab;
+
+    ///  <summary>Switches to previous tab in sequence or goes to last tab if
+    ///  current tab is first.</summary>
+    ///  <remarks>Method of ITabbedDisplayMgr.</remarks>
     procedure PreviousTab;
 
-    // IPaneInfo
+    ///  <summary>Checks if the frame, or one of its child controls, is
+    ///  currently interactive with the user.</summary>
+    ///  <remarks>Method of IPaneInfo.</remarks>
     function IsInteractive: Boolean;
 
-    // IDetailPaneDisplayMgr
+    ///  <summary>Returns view associated with currently selected tab.</summary>
+    ///  <remarks>
+    ///  <para>If tab set is empty, a null view is returned.</para>
+    ///  <para>Method of IDetailPaneDisplayMgr.</para>
+    ///  </remarks>
     function SelectedView: IView;
-    procedure IDetailPaneDisplayMgr.SelectTab = SelectTab;
+
+    ///  <summary>Finds index of tab displaying given view or -1 if no such tab.
+    ///  </summary>
+    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     function FindTab(ViewKey: IViewKey): Integer;
+
+    ///  <summary>Associates given view with tab at given index.</summary>
+    ///  <remarks>
+    ///  <para>If specified tab is currently selected the view is displayed.
+    ///  </para>
+    ///  <para>Method of IDetailPaneDisplayMgr.</para>
+    ///  </remarks>
     procedure Display(View: IView; const TabIdx: Integer);
+
+    ///  <summary>Reloads the currently displayed view.</summary>
+    ///  <remarks>
+    ///  <para>If tab set is empty, null view is reloaded.</para>
+    ///  <para>Method of IDetailPaneDisplayMgr.</para>
+    ///  </remarks>
     procedure Reload;
+
+    ///  <summary>Closes all tabs and deletes all views.</summary>
+    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     procedure Clear;
+
+    ///  <summary>Creates a new tab displaying given view and returns its index.
+    ///  </summary>
+    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     function CreateTab(View: IView): Integer;
+
+    ///  <summary>Checks if tab set is empty, i.e. there are no tabs displayed.
+    ///  </summary>
+    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     function IsEmptyTabSet: Boolean;
+
+    ///  <summary>Closes tab at given index.</summary>
+    ///  <remarks>
+    ///  <para>If closed tab was selected, another tab is selected and its view
+    ///  displayed, otherwise currently selected tab remains unchanged.</para>
+    ///  <para>Method of IDetailPaneDisplayMgr.</para>
+    ///  </remarks>
     procedure CloseTab(const TabIdx: Integer);
+
+    ///  <summary>Closes all tabs, or all except selected tabs, depending on
+    ///  whether KeepSelected is False or True, respectively.</summary>
+    ///  <remarks>Method of IDetailPaneDisplayMgr.</remarks>
     procedure CloseMultipleTabs(const KeepSelected: Boolean);
 
-    // IWBCustomiser
+    ///  <summary>Uses the given object to extend the browser control's
+    ///  'external object'.</summary>
+    ///  <remarks>Method of IWBCustomiser.</remarks>
     procedure SetExternalObj(Obj: IDispatch);
+
+    ///  <summary>Uses the given object to handle drag-drop operations for the
+    ///  browser control.</summary>
+    ///  <remarks>Method of IWBCustomiser.</remarks>
     procedure SetDragDropHandler(Obj: IDropTarget);
 
-    // ISetNotifier
+    ///  <summary>Sets the notifier object to be called in reponse to user
+    ///  input.</summary>
+    ///  <remarks>Method of ISetNotifier.</remarks>
     procedure SetNotifier(const Notifier: INotifier);
 
-    // ICommandBarConfig
+    ///  <summary>Adds given action to command bar with given ID.</summary>
+    ///  <remarks>Method of ICommandBarConfig.</remarks>
     procedure AddAction(const Action: TCustomAction; const ID: TCommandBarID);
       overload;
-    procedure AddAction(const Action: TCustomAction;
-      const IDs: TCommandBarIDs); overload;
+
+    ///  <summary>Adds given action to command bars with given IDs.</summary>
+    ///  <remarks>Method of ICommandBarConfig.</remarks>
+    procedure AddAction(const Action: TCustomAction; const IDs: TCommandBarIDs);
+      overload;
+
+    ///  <summary>Adds a spacer to command bar with given ID.</summary>
+    ///  <remarks>Method of ICommandBarConfig.</remarks>
     procedure AddSpacer(const ID: TCommandBarID); overload;
+
+    ///  <summary>Adds a spacer to command bars with given IDs.</summary>
+    ///  <remarks>Method of ICommandBarConfig.</remarks>
     procedure AddSpacer(const IDs: TCommandBarIDs); overload;
+
+    ///  <summary>Specifies image list to be used by all hostes command bars.
+    ///  </summary>
+    ///  <remarks>Method of ICommandBarConfig.</remarks>
     procedure SetImages(const Images: TCustomImageList);
 
-    // ISelectionMgr
+    ///  <summary>Checks whether any text can be selected in any selected view.
+    ///  </summary>
+    ///  <remarks>Method of ISelectionMgr.</remarks>
     function CanSelectAll: Boolean;
+
+    ///  <summary>Selects all text in any current view.</summary>
+    ///  <remarks>Method of ISelectionMgr.</remarks>
     procedure SelectAll;
 
-    // IClipboardMgr
+    ///  <summary>Checks whether anything can currently be copied to the
+    ///  clipboard.</summary>
+    ///  <remarks>Method of IClipboardMgr.</remarks>
     function CanCopy: Boolean;
-    procedure CopyToClipboard;
 
+    ///  <summary>Copies any selected text in current view to clipboard.
+    ///  </summary>
+    ///  <remarks>Method of IClipboardMgr.</remarks>
+    procedure CopyToClipboard;
   end;
 
 
@@ -222,6 +333,7 @@ var
   SelectedIdx: Integer;
   ClosingSelectedIdx: Boolean;
 begin
+  // TODO: protect against empty tab set
   ClosingSelectedIdx := SelectedTab = TabIdx;
   SelectedIdx := SelectedTab;
   InternalDeleteTab(TabIdx);
@@ -271,7 +383,6 @@ end;
 procedure TDetailFrame.Display(View: IView; const TabIdx: Integer);
 begin
   Assert(Assigned(View), ClassName + '.Display: View is nil');
-
   fViews[TabIdx] := TViewFactory.Clone(View);
   tcViews.Tabs[TabIdx] := View.Description;
   if TabIdx = SelectedTab then
@@ -440,7 +551,6 @@ begin
       end;
     end;
   end;
-
 end;
 
 end.
