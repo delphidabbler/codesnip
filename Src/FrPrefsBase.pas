@@ -82,10 +82,6 @@ type
       {Called when page is deactivated. Must store information entered by user.
         @param Prefs [in] Object used to store information.
       }
-    ///  <summary>Checks if preference changes require that main window UI is
-    ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing.</remarks>
-    function UIUpdated: Boolean; virtual; abstract;
     procedure ArrangeControls; virtual; abstract;
       {Arranges controls on frame. Called after frame has been sized.
       }

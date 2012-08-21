@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -44,8 +44,10 @@ implementation
 
 
 uses
+  // Delphi
+  StrUtils,
   // Project
-  UHelpMgr, UURIEncode, UProtocols, UStrUtils;
+  UHelpMgr, UURIEncode, UProtocols;
 
 
 type
@@ -83,7 +85,7 @@ function THelpProtocol.Execute: Boolean;
 var
   ALink: string;  // a-link help keyword
 begin
-  ALink := URIDecode(StrSliceRight(URL, Length(URL) - Length(cHelpProtocol)));
+  ALink := URIDecode(AnsiRightStr(URL, Length(URL) - Length(cHelpProtocol)));
   HelpMgr.ShowHelp(ALink);
   Result := True;
 end;
@@ -91,7 +93,7 @@ end;
 
 class function THelpProtocol.SupportsProtocol(const URL: string): Boolean;
 begin
-  Result := StrStartsStr(cHelpProtocol, URL);
+  Result := AnsiStartsStr(cHelpProtocol, URL);
 end;
 
 initialization

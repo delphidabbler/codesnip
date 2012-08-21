@@ -43,7 +43,7 @@ interface
 
 uses
   // Delphi
-  SysUtils, Classes,
+  Classes,
   // Project
   Web.UStdWebService;
 
@@ -59,9 +59,9 @@ type
     constructor Create;
       {Class constructor. Initialises service.
       }
-    procedure SubmitData(const Data: TBytes);
+    procedure SubmitData(const Data: TStream);
       {Submits data describing code to web service.
-        @param Data [in] Byte array containing code submission information.
+        @param Data [in] Stream containing code submission information.
       }
   end;
 
@@ -70,6 +70,8 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   Web.UInfo;
 
@@ -95,9 +97,9 @@ begin
   inherited Create(TWebServiceInfo.Create(cScriptName, cUserAgent, cMediaType));
 end;
 
-procedure TCodeSubmitter.SubmitData(const Data: TBytes);
+procedure TCodeSubmitter.SubmitData(const Data: TStream);
   {Submits data describing code to web service.
-    @param Data [in] Byte array containing code submission information.
+    @param Data [in] Stream containing code submission information.
   }
 var
   Response: TStringList;  // valid response from web service

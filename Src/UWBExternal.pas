@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -60,7 +60,7 @@ type
     events to application.
   }
   TWBExternal = class(TAutoIntfObject,
-    IWBExternal9, // browser external object's methods
+    IWBExternal6, // browser external object's methods
     ISetNotifier  // sets object used to notify app of events
     )
   strict private
@@ -69,16 +69,23 @@ type
       {Gets application to handle current exception.
       }
   protected // do not make strict
-    { IWBExternal8: defined in type library }
+    { IWBExternal5: defined in type library }
     procedure UpdateDbase; safecall;
       {Updates database from internet.
       }
     procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool); safecall;
+      UserDefined: WordBool); safecall;
       {Displays a named snippet.
         @param SnippetName [in] Name of snippet to display.
         @param UserDefined [in] Whether snippet is user defined.
-        @param NewTab [in] Whether to display in new tab in detail pane.
+      }
+    procedure CompileSnippet; safecall;
+      {Compiles the current snippet via notifier.
+      }
+    procedure ViewCompilerLog(Ver: SYSINT); safecall;
+      {Displays a compiler log.
+        @param Ver [in] Version of Delphi for which we need to display log. Ver
+          is the ordinal value of the required compiler version enumerated type.
       }
     procedure ShowHint(const Hint: WideString); safecall;
       {Displays a hint.
@@ -86,6 +93,9 @@ type
       }
     procedure ConfigCompilers; safecall;
       {Displays the Configure Compilers dialog box.
+      }
+    procedure ShowTestUnit; safecall;
+      {Displays test unit for current snippet.
       }
     procedure EditSnippet(const SnippetName: WideString); safecall;
       {Edits a named snippet.
@@ -95,11 +105,9 @@ type
     procedure Donate; safecall;
       {Displays the Donate dialog box.
       }
-    procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
-      safecall;
+    procedure DisplayCategory(const CatID: WideString); safecall;
       {Displays a category.
         @param CatID [in] ID of category to display.
-        @param NewTab [in] Whether to display in new tab in detail pane.
       }
     { ISetNotifier }
     procedure SetNotifier(const Notifier: INotifier);
@@ -118,12 +126,24 @@ implementation
 
 uses
   // Delphi
-  Forms,
+  SysUtils, Forms,
   // Project
   UAppInfo;
 
 
 { TWBExternal }
+
+procedure TWBExternal.CompileSnippet;
+  {Compiles the current snippet.
+  }
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.CompileRoutine;
+  except
+    HandleException;
+  end;
+end;
 
 procedure TWBExternal.ConfigCompilers;
   {Displays the Configure Compilers dialog box.
@@ -148,35 +168,32 @@ begin
   ExeName := TAppInfo.AppExeFilePath;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
-  inherited Create(TypeLib, IWBExternal9);
+  inherited Create(TypeLib, IWBExternal6);
 end;
 
-procedure TWBExternal.DisplayCategory(const CatID: WideString;
-  NewTab: WordBool);
+procedure TWBExternal.DisplayCategory(const CatID: WideString);
   {Displays a category.
     @param CatID [in] ID of category to display.
-    @param NewTab [in] Whether to display in new tab in detail pane.
   }
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.DisplayCategory(CatID, NewTab);
+      fNotifier.DisplayCategory(CatID);
   except
     HandleException;
   end;
 end;
 
 procedure TWBExternal.DisplaySnippet(const SnippetName: WideString;
-  UserDefined: WordBool; NewTab: WordBool);
+  UserDefined: WordBool);
   {Displays a named snippet.
     @param SnippetName [in] Name of snippet to display.
     @param UserDefined [in] Whether snippet is user defined.
-    @param NewTab [in] Whether to display in new tab in detail pane.
   }
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.DisplaySnippet(SnippetName, UserDefined, NewTab);
+      fNotifier.DisplayRoutine(SnippetName, UserDefined);
   except
     HandleException;
   end;
@@ -202,7 +219,7 @@ procedure TWBExternal.EditSnippet(const SnippetName: WideString);
 begin
   try
     if Assigned(fNotifier) then
-      fNotifier.EditSnippet(SnippetName);
+      fNotifier.EditRoutine(SnippetName);
   except
     HandleException;
   end;
@@ -236,6 +253,18 @@ begin
   end;
 end;
 
+procedure TWBExternal.ShowTestUnit;
+  {Displays test unit for current snippet.
+  }
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.ShowTestUnit;
+  except
+    HandleException;
+  end;
+end;
+
 procedure TWBExternal.UpdateDbase;
   {Updates database from internet.
   }
@@ -243,6 +272,20 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.UpdateDbase;
+  except
+    HandleException;
+  end;
+end;
+
+procedure TWBExternal.ViewCompilerLog(Ver: SYSINT);
+  {Displays a compiler log.
+    @param Ver [in] Version of Delphi for which we need to display log. Ver is
+      the ordinal value of the required compiler version enumerated type.
+  }
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.ViewCompilerLog(Ver);
   except
     HandleException;
   end;

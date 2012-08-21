@@ -1,8 +1,5 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * $Rev$
- * $Date$
- *
  * ***** BEGIN LICENSE BLOCK *****
  *
  * Version: MPL 1.1
@@ -20,7 +17,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
  * Johnson. All Rights Reserved.
  *
  * ***** END LICENSE BLOCK *****
@@ -29,7 +26,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
     <title>
-      Simple Type Definition Snippets
+      Type Definition Snippets
     </title>
     <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
   </head>
@@ -41,15 +38,13 @@
       <param name="ALink Name" value="SnippetType">
     </object>
     <h1>
-      <a name="snippet_type"></a>Simple Type Definition Snippets
+      <a name="snippet_type"></a>Type Definition Snippets
     </h1>
     <p>
-      A simple type definition snippet, unsurprisingly, defines one or more
-      Pascal types. Only simple types are supported. Classes, objects and
-      records that contain methods are not: use
-      <a href="snippet_class.htm">class &amp; advanced record</a> snippet kinds
-      for those. If you're not sure, the only types supported are those that can
-      be completely defined in the interface section of a unit.
+      A type definition snippet, unsurprisingly, defines one or more Pascal
+      types. Only simple types are supported: classes, objects and records that
+      contain methods are not. If you're not sure, the only types supported are
+      those that can be completely defined in the interface section of a unit.
     </p>
     <p>
       Each type definition snippet must begin with the <strong>type</strong>
@@ -64,14 +59,12 @@
   TMyType = 1..20;
   TMySecondType = array[TMyType] of Integer;</pre>
     <p>
-      Simple type definitions may refer to other simple type definitions,
-      <a href="snippet_class.htm">class &amp; advanced record</a> type
-      definitions or <a href="snippet_constant.htm">constants</a>, providing
-      they are defined in Delphi units or elsewhere in the database. The
-      snippet's units and dependencies references should indicate where to find
-      the other types and constants. Type definitions must not reference
-      <a href="snippet_routine.htm">routine</a>,
-      <a href="snippet_unit.htm">unit</a> or
+      Type definitions may refer to other type definitions or
+      <a href="snippet_constant.htm">constants</a>, providing they are defined
+      in Delphi units or elsewhere in the database. The snippet's units and
+      dependencies references should indicate where to find the other types and
+      constants. Type definitions must not reference
+      <a href="snippet_routine.htm">routines</a> or 
       <a href="snippet_freeform.htm">freeform</a> snippets.
     </p>
   </body>

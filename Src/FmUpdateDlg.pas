@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -77,7 +77,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormDestroy(Sender: TObject);
     procedure btnNewsClick(Sender: TObject);
-  strict private
+  private
     fProgressBarMgr: TMemoProgBarMgr; // Displays progress bar in progress memo
     fDataUpdated: Boolean;            // Flag true if any data was updated
     fCancelled: Boolean;              // Flag true if user cancelled update
@@ -87,7 +87,7 @@ type
         @param Msg [in/out] Not used.
       }
     function GetDataDir: string;
-      {Returns directory where data files stored.
+      {Returns directory where data files stored and ensures it exists.
         @return Data directory.
       }
     procedure UpdateStatusHandler(Sender: TObject; Status: TUpdateStatus;
@@ -145,7 +145,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  FmNewsDlg, UAppInfo, UColours, UConsts, UCtrlArranger, UStrUtils, UUtils;
+  FmNewsDlg, UAppInfo, UColours, UConsts, UCtrlArranger, UUtils;
 
 
 {$R *.dfm}
@@ -349,11 +349,12 @@ begin
 end;
 
 function TUpdateDlg.GetDataDir: string;
-  {Returns directory where data files stored.
+  {Returns directory where data files stored and ensures it exists.
     @return Data directory.
   }
 begin
   Result := TAppInfo.AppDataDir;
+  EnsureFolders(Result);
 end;
 
 procedure TUpdateDlg.HeadlineMsg(const Msg: string;
@@ -386,7 +387,7 @@ begin
       // Error message: show in warning text colour followed by extra error
       // info. Make sure headline ends in one space to separate headline from
       // error message
-      lblHeadline.Caption := StrTrimRight(lblHeadline.Caption) + ' ';
+      lblHeadline.Caption := TrimRight(lblHeadline.Caption) + ' ';
       lblHeadline.Font.Color := clWarningText;
       TCtrlArranger.MoveToRightOf(lblHeadline, lblError);
       lblError.Top := lblHeadline.Top;

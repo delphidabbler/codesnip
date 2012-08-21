@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -134,12 +134,6 @@ type
       {Updates display of a memo control's caret position.
         @param SourceCtrl [in] Memo whose caret position to be displayed.
       }
-    function FindFirstMemoControl(const ParentCtrl: TWinControl): TMemo;
-      {Finds first memo child control of given parent control.
-        @param ParentCtrl [in] Parent containing required memo control.
-        @return Reference to memo control or nil if ParentCtrl has no memo
-          child control.
-      }
   public
     constructor Create;
       {Object constructor. Sets up object.
@@ -149,25 +143,12 @@ type
       controls then clears up object.
       }
     procedure Manage(const SourceCtrl: TMemo; const DisplayCtrl: TLabel);
-      overload;
       {Registers a memo control to have caret position displayed in an
       associated label. NOTE: This method must only be called once the memo
       control has initialised otherwise selection change events will not be
       detected. Calling during a form's OnShow event is recommended.
         @param SourceCtrl [in] Memo control whose caret position is to be
           displayed.
-        @param DisplayCtrl [in] Label used to display caret position.
-      }
-    procedure Manage(const ParentCtrl: TWinControl; const DisplayCtrl: TLabel);
-      overload;
-      {Registers first memo child control of given parent control to have caret
-      position displayed in an associated label. NOTE 1: This method must only
-      be called once the memo control has initialised otherwise selection change
-      events will not be detected. Calling during a form's OnShow event is
-      recommended. NOTE 2: Parent control MUST have at least one memo control as
-      a child.
-        @param ParentCtrl [in] Parent of memo control whose caret position is to
-          be displayed.
         @param DisplayCtrl [in] Label used to display caret position.
       }
   end;
@@ -214,41 +195,6 @@ begin
   inherited;
 end;
 
-function TMemoCaretPosDisplayMgr.FindFirstMemoControl(
-  const ParentCtrl: TWinControl): TMemo;
-  {Finds first memo child control of given parent control.
-    @param ParentCtrl [in] Parent containing required memo control.
-    @return Reference to memo control or nil if ParentCtrl has no memo child
-      control.
-  }
-var
-  Ctrl: TControl;
-  Idx: Integer;
-begin
-  for Idx := 0 to Pred(ParentCtrl.ControlCount) do
-  begin
-    Ctrl := ParentCtrl.Controls[Idx];
-    if Ctrl is TMemo then
-      Exit(Ctrl as TMemo);
-  end;
-  Result := nil;
-end;
-
-procedure TMemoCaretPosDisplayMgr.Manage(const ParentCtrl: TWinControl;
-  const DisplayCtrl: TLabel);
-  {Registers first memo child control of given parent control to have caret
-  position displayed in an associated label. NOTE 1: This method must only be
-  called once the memo control has initialised otherwise selection change events
-  will not be detected. Calling during a form's OnShow event is recommended.
-  NOTE 2: Parent control MUST have at least one memo control as a child.
-    @param ParentCtrl [in] Parent of memo control whose caret position is to be
-      displayed.
-    @param DisplayCtrl [in] Label used to display caret position.
-  }
-begin
-  Manage(FindFirstMemoControl(ParentCtrl), DisplayCtrl);
-end;
-
 procedure TMemoCaretPosDisplayMgr.Manage(const SourceCtrl: TMemo;
   const DisplayCtrl: TLabel);
   {Registers a memo control to have caret position displayed in an associated
@@ -259,8 +205,6 @@ procedure TMemoCaretPosDisplayMgr.Manage(const SourceCtrl: TMemo;
 var
   Associations: TAssociations;  // data to be associated with memo control
 begin
-  Assert(Assigned(SourceCtrl), ClassName + '.Manage: SourceCtrl is nil');
-  Assert(Assigned(DisplayCtrl), ClassName + '.Manage: DisplayCtrl is nil');
   Assert(not fMap.ContainsKey(SourceCtrl),
     ClassName + '.Manage: Source memo already managed');
   // save old event handlers

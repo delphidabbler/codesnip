@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2008-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -89,7 +89,7 @@ uses
   // Delphi
   SysUtils, Classes, Windows, Dlgs, CommDlg,
   // Project
-  UStrUtils, UUtils;
+  UUtils;
 
 
 function FilterIndexToExt(const Dlg: TOpenDialog): string;
@@ -106,7 +106,7 @@ begin
   try
     // Split filter string into parts (divided by | chars):
     // even number indexes are descriptions and odd indexes are extensions
-    StrExplode(Dlg.Filter, '|', FilterParts);
+    ExplodeStr(Dlg.Filter, '|', FilterParts);
     Result := ExtractFileExt(FilterParts[2 * (Dlg.FilterIndex - 1) + 1]);
   finally
     FreeAndNil(FilterParts);
@@ -135,7 +135,7 @@ begin
   try
     // Split filter string into parts (divided by | chars):
     // even number indexes are descriptions and odd indexes are extensions
-    StrExplode(FilterStr, '|', FilterParts);
+    ExplodeStr(FilterStr, '|', FilterParts);
     // Record only extensions (every 2nd entry starting at index 1)
     Extensions := TStringList.Create;
     Idx := 1;
@@ -171,7 +171,7 @@ begin
   if (ExtractFileExt(Dlg.FileName) = '') and (Dlg.Filter <> '') then
   begin
     DefaultExt := FilterIndexToExt(Dlg);
-    if not StrContainsStr('*', DefaultExt) then
+    if AnsiPos('*', DefaultExt) = 0 then
       Result := Result + DefaultExt;
   end;
 end;

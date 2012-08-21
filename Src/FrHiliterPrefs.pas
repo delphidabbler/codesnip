@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -45,7 +45,7 @@ uses
   StdCtrls, Forms, Controls, Classes, Menus, Buttons,
   // Project
   FrPrefsBase, FrRTFShowCase, Hiliter.UGlobals, UColorBoxEx, UColorDialogEx,
-  UConsts, UEncodings, UPreferences, URTFUtils;
+  UConsts, UEncodings, UPreferences;
 
 
 type
@@ -74,6 +74,7 @@ type
     lblFontName: TLabel;
     lblFontSize: TLabel;
     lblElements: TLabel;
+    lblNotice: TLabel;
     miClassic: TMenuItem;
     miDelphi7: TMenuItem;
     miDelphi2006: TMenuItem;
@@ -93,7 +94,6 @@ type
     fColorBox: TColorBoxEx;     // Custom colour combo box component
     fColorDlg: TColorDialogEx;  // Custom colour dialog box (use with combo)
     fAttrs: IHiliteAttrs;       // Loads and records user's hilite preferences
-    fChanged: Boolean;          // Flags if any preference has changed
     procedure PopulateElementsList;
       {Populates list box containing customisable highlighter attribute
       elements.
@@ -120,7 +120,7 @@ type
     procedure UpdatePreview;
       {Updates preview of highlighting of current highlighter element.
       }
-    function GenerateRTF: TRTF;
+    function GenerateRTF: ASCIIString;
       {Generates RTF of example of current highlighter element.
         @return Required RTF code.
       }
@@ -145,10 +145,6 @@ type
       {Called when page is deactivated. Stores information entered by user.
         @param Prefs [in] Object used to store information.
       }
-    ///  <summary>Checks if preference changes require that main window UI is
-    ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing.</remarks>
-    function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
@@ -173,7 +169,7 @@ uses
   SysUtils, ExtCtrls, Windows, Graphics, Dialogs,
   // Project
   FmPreferencesDlg, Hiliter.UAttrs, IntfCommon, UCtrlArranger, UFontHelper,
-  UIStringList, UMessageBox, URTFBuilder, URTFStyles, UUtils;
+  UMessageBox, URTFBuilder, URTFUtils, UUtils;
 
 
 {$R *.dfm}
@@ -291,7 +287,6 @@ procedure THiliterPrefsFrame.btnResetClick(Sender: TObject);
 begin
   fAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
   UpdateControls;
-  fChanged := True;
 end;
 
 procedure THiliterPrefsFrame.btnStyleClick(Sender: TObject);
@@ -316,7 +311,6 @@ procedure THiliterPrefsFrame.cbColourChange(Sender: TObject);
 begin
   CurrentElement.ForeColor := fColorBox.Selected;
   UpdatePreview;
-  fChanged := True;
 end;
 
 procedure THiliterPrefsFrame.cbFontNameChange(Sender: TObject);
@@ -328,7 +322,6 @@ begin
   inherited;
   fAttrs.FontName := cbFontName.Text;
   UpdatePreview;
-  fChanged := True;
 end;
 
 procedure THiliterPrefsFrame.cbFontSizeChange(Sender: TObject);
@@ -348,7 +341,6 @@ begin
     // Combo has valid value entered: update
     fAttrs.FontSize := Size;
     UpdatePreview;
-    fChanged := True;
   end
   else
   begin
@@ -375,7 +367,6 @@ begin
   else
     Elem.FontStyle := Elem.FontStyle - [TFontStyle(CB.Tag)];
   UpdatePreview;
-  fChanged := True;
 end;
 
 constructor THiliterPrefsFrame.Create(AOwner: TComponent);
@@ -435,9 +426,6 @@ begin
   miDelphi2006.Tag := Ord(hsDelphi2006);
   miVisualStudio.Tag := Ord(hsVisualStudio);
   miNoHilite.Tag := Ord(hsNul);
-
-  // Clear dirty flag
-  fChanged := False;
 end;
 
 function THiliterPrefsFrame.CurrentElement: IHiliteElemAttrs;
@@ -486,43 +474,48 @@ begin
   Result := sDisplayName;
 end;
 
-function THiliterPrefsFrame.GenerateRTF: TRTF;
+function THiliterPrefsFrame.GenerateRTF: ASCIIString;
   {Generates RTF of example of current highlighter element.
     @return Required RTF code.
   }
 var
-  RTFBuilder: TRTFBuilder;  // object used to create and render RTFBuilder
-  EgLines: IStringList;     // list of lines in the example
-  EgLine: string;           // each line of example
+  RTF: TRTFBuilder;     // object used to create and render RTF
+  EgLines: TStringList; // list of lines in the example
+  LineIdx: Integer;     // loops thru lines of example
 begin
-  // Create builder object to create RTFBuilder document
-  RTFBuilder := TRTFBuilder.Create(0); // use default code page
+  // Create builder object to create RTF document
+  RTF := TRTFBuilder.Create;
   try
     // Set up font and colour tables
-    RTFBuilder.DefaultFontIdx := RTFBuilder.FontTable.Add(
+    RTF.DefaultFontIdx := RTF.FontTable.Add(
       fAttrs.FontName, rgfModern, DEFAULT_CHARSET
     );
-    RTFBuilder.ColourTable.Add(CurrentElement.ForeColor);
+    RTF.ColourTable.Add(CurrentElement.ForeColor);
 
     // Set character formating
-    RTFBuilder.SetFont(fAttrs.FontName);
-    RTFBuilder.SetFontSize(fAttrs.FontSize);
-    RTFBuilder.SetColour(CurrentElement.ForeColor);
-    RTFBuilder.SetFontStyle(CurrentElement.FontStyle);
+    RTF.SetFont(fAttrs.FontName);
+    RTF.SetFontSize(fAttrs.FontSize);
+    RTF.SetColour(CurrentElement.ForeColor);
+    RTF.SetFontStyle(CurrentElement.FontStyle);
 
     // Write out each line of example
-    EgLines := TIStringList.Create(cElementEgs[CurrentElementId], LF, False);
-    for EgLine in EgLines do
-    begin
-      RTFBuilder.AddText(EgLine);
-      RTFBuilder.EndPara;
+    EgLines := TStringList.Create;
+    try
+      ExplodeStr(cElementEgs[CurrentElementId], LF, EgLines, False);
+      for LineIdx := 0 to Pred(EgLines.Count) do
+      begin
+        RTF.AddText(EgLines[LineIdx]);
+        RTF.EndPara;
+      end;
+
+      // Create RTF source
+      Result := RTF.AsString;
+
+    finally
+      FreeAndNil(EgLines);
     end;
-
-    // Create RTFBuilder source
-    Result := RTFBuilder.Render;
-
   finally
-    RTFBuilder.Free;
+    FreeAndNil(RTF);
   end;
 end;
 
@@ -599,44 +592,21 @@ begin
     TPredefinedHiliteStyle((Sender as TMenuItem).Tag)
   );
   UpdateControls;
-  fChanged := True;
-end;
-
-function THiliterPrefsFrame.UIUpdated: Boolean;
-begin
-  Result := fChanged;
 end;
 
 procedure THiliterPrefsFrame.UpdateControls;
   {Updates state of controls and preview to reflect currently selected
   highlighter element.
   }
-
-  // Ticks or clears a check box without triggering an OnClick event. To fire
-  // event would mean that frame would be marked as changed when it should not
-  // be.
-  procedure SafeCheck(const CB: TCheckBox; const State: Boolean);
-  var
-    OnClickSave: TNotifyEvent;
-  begin
-    OnClickSave := CB.OnClick;
-    try
-      CB.OnClick := nil;
-      CB.Checked := State;
-    finally
-      CB.OnClick := OnClickSave;
-    end;
-  end;
-
 var
   Elem: IHiliteElemAttrs; // currently selected highlighter element
 begin
   Elem := CurrentElement;
   cbFontName.ItemIndex := cbFontName.Items.IndexOf(fAttrs.FontName);
   cbFontSize.Text := IntToStr(fAttrs.FontSize);
-  SafeCheck(chkBold, fsBold in Elem.FontStyle);
-  SafeCheck(chkItalics, fsItalic in Elem.FontStyle);
-  SafeCheck(chkUnderline, fsUnderline in Elem.FontStyle);
+  chkBold.Checked := fsBold in Elem.FontStyle;
+  chkItalics.Checked := fsItalic in Elem.FontStyle;
+  chkUnderline.Checked := fsUnderline in Elem.FontStyle;
   fColorBox.Selected := Elem.ForeColor;
   UpdatePreview;
 end;
@@ -645,7 +615,7 @@ procedure THiliterPrefsFrame.UpdatePreview;
   {Updates preview of highlighting of current highlighter element.
   }
 begin
-  TRichEditHelper.Load(frmExample.RichEdit, GenerateRTF);
+  RTFLoadFromString(frmExample.RichEdit, GenerateRTF);
 end;
 
 initialization

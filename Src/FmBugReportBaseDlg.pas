@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2011 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -111,7 +111,7 @@ procedure TBugReportBaseDlg.ConfigForm;
   }
 begin
   inherited;
-  lblBugTracker.Font.Color := clExternalLink;
+  lblBugTracker.Font.Color := clLinkText;
   TFontHelper.SetDefaultBaseFont(lblBugTracker.Font, False);
 end;
 

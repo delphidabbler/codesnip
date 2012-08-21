@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -56,13 +56,25 @@ type
     box.
   }
   TGeneralPrefsFrame = class(TPrefsBaseFrame)
+    cbOverviewTree: TComboBox;
     cbUnits: TComboBox;
+    gbDisplay: TGroupBox;
     gbMeasurement: TGroupBox;
+    lblOverviewTree: TLabel;
     lblUnits: TLabel;
   strict private
     procedure SelectUnits(const MU: TMeasurementUnits);
       {Selects combo box item associated with a measurement unit.
         @param Units [in] Measurement unit to be selected.
+      }
+    procedure SelectOverviewTreeState(const State: TOverviewStartState);
+      {Selects combo box item associated with a overview treeview startup state.
+        @param State [in] Startup state to be selected.
+      }
+    function OverviewTreeStateDesc(const State: TOverviewStartState): string;
+      {Gets description of an overview treeview startup state.
+        @param State [in] State for which description is required.
+        @return Required description.
       }
   public
     constructor Create(AOwner: TComponent); override;
@@ -77,10 +89,6 @@ type
       {Called when page is deactivated. Stores information entered by user.
         @param Prefs [in] Object used to store information.
       }
-    ///  <summary>Checks if preference changes require that main window UI is
-    ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing.</remarks>
-    function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
@@ -104,7 +112,7 @@ uses
   // Delphi
   Math,
   // Project
-  FmPreferencesDlg, UCtrlArranger, UGraphicUtils;
+  FmPreferencesDlg, UGraphicUtils;
 
 
 {$R *.dfm}
@@ -117,6 +125,7 @@ procedure TGeneralPrefsFrame.Activate(const Prefs: IPreferences);
     @param Prefs [in] Object that provides info used to update controls.
   }
 begin
+  SelectOverviewTreeState(Prefs.OverviewStartState);
   SelectUnits(Prefs.MeasurementUnits);
 end;
 
@@ -125,13 +134,17 @@ procedure TGeneralPrefsFrame.ArrangeControls;
   }
 const
   Col1Left = 8;       // position of left of first column of controls
+var
+  Col2Left: Integer;  // position of left of second column of controls
 begin
+  lblOverviewTree.Left := Col1Left;
   lblUnits.Left := Col1Left;
-  TCtrlArranger.MoveToRightOf(lblUnits, cbUnits, 8);
-  gbMeasurement.Top := 0;
-  TCtrlArranger.AlignVCentres(20, [lblUnits, cbUnits]);
-  gbMeasurement.ClientHeight := TCtrlArranger.TotalControlHeight(gbMeasurement)
-    + 12;
+  Col2Left := Col1Left + Max(
+    StringExtent(lblUnits.Caption, lblUnits.Font).cx,
+    StringExtent(lblOverviewTree.Caption, lblOverviewTree.Font).cx
+  ) + 8;
+  cbOverviewTree.Left := Col2Left;
+  cbUnits.Left := Col2Left;
 end;
 
 constructor TGeneralPrefsFrame.Create(AOwner: TComponent);
@@ -139,10 +152,16 @@ constructor TGeneralPrefsFrame.Create(AOwner: TComponent);
     @param AOwner [in] Component that owns frame.
   }
 var
+  OTStateIdx: TOverviewStartState;  // loops thru each overview tree start state
   UnitsIdx: TMeasurementUnits;      // loops thru each measurement unit
 begin
   inherited;
   HelpKeyword := 'GeneralPrefs';
+  // Populate overview tree start state
+  for OTStateIdx := Low(TOverviewStartState) to High(TOverviewStartState) do
+    cbOverviewTree.Items.AddObject(
+      OverviewTreeStateDesc(OTStateIdx), TObject(OTStateIdx)
+    );
   // Populate measurement unit combo
   for UnitsIdx := Low(TMeasurementUnits) to High(TMeasurementUnits) do
     cbUnits.Items.AddObject(UMeasurement.UnitName(UnitsIdx), TObject(UnitsIdx));
@@ -153,6 +172,9 @@ procedure TGeneralPrefsFrame.Deactivate(const Prefs: IPreferences);
     @param Prefs [in] Object used to store information.
   }
 begin
+  Prefs.OverviewStartState := TOverviewStartState(
+    cbOverviewTree.Items.Objects[cbOverviewTree.ItemIndex]
+  );
   Prefs.MeasurementUnits := TMeasurementUnits(
     cbUnits.Items.Objects[cbUnits.ItemIndex]
   );
@@ -164,7 +186,7 @@ function TGeneralPrefsFrame.DisplayName: string;
     @return Required display name.
   }
 resourcestring
-  sDisplayName = 'Misc.'; // display name
+  sDisplayName = 'General'; // display name
 begin
   Result := sDisplayName;
 end;
@@ -175,7 +197,44 @@ class function TGeneralPrefsFrame.Index: Byte;
     @return Required index number.
   }
 begin
-  Result := 255;
+  Result := 10;
+end;
+
+function TGeneralPrefsFrame.OverviewTreeStateDesc(
+  const State: TOverviewStartState): string;
+  {Gets description of an overview treeview startup state.
+    @param State [in] State for which description is required.
+    @return Required description.
+  }
+resourcestring
+  // Startup state descriptions
+  sOTSExpanded = 'Fully expanded';
+  sOTSCollapsed = 'Fully collapsed';
+const
+  // Map of overview tree start states to descriptions
+  cOTSStartStates: array[TOverviewStartState] of string = (
+    sOTSExpanded, sOTSCollapsed
+  );
+begin
+  Result := cOTSStartStates[State];
+end;
+
+procedure TGeneralPrefsFrame.SelectOverviewTreeState(
+  const State: TOverviewStartState);
+  {Selects combo box item associated with a overview treeview startup state.
+    @param State [in] Startup state to be selected.
+  }
+var
+  CBIdx: Integer; // loops through each entry in combo box
+begin
+  for CBIdx := 0 to Pred(cbOverviewTree.Items.Count) do
+  begin
+    if State = TOverviewStartState(cbOverviewTree.Items.Objects[CBIdx]) then
+    begin
+      cbOverviewTree.ItemIndex := CBIdx;
+      Break;
+    end;
+  end;
 end;
 
 procedure TGeneralPrefsFrame.SelectUnits(const MU: TMeasurementUnits);
@@ -193,11 +252,6 @@ begin
       Break;
     end;
   end;
-end;
-
-function TGeneralPrefsFrame.UIUpdated: Boolean;
-begin
-  Result := False;
 end;
 
 initialization

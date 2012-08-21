@@ -55,21 +55,15 @@ type
     Borland compilers. Provides common functionality.
   }
   TBorlandCompiler = class(TCompilerBase)
-  strict private
-    var
-      fId: TCompilerID;
-        {Identifies compiler}
+  private
+    fId: TCompilerID;
+      {Identifies compiler}
     function InstallPathFromReg(const RootKey: HKEY): string;
       {Gets compiler install root path from given registry root key, if present.
         @param RootKey [in] Given registry root key.
         @return Required root path or '' if not compiler not installed.
       }
   protected
-    function SearchDirParams: string; override;
-      {One of more parameters that define any search directories to be passed
-      to compiler on command line.
-        @return Required space separated parameter(s).
-      }
     function InstallationRegKey: string; virtual; abstract;
       {Returns name of registry key where records compiler's installation path
       is recorded.
@@ -112,9 +106,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Registry,
-  // Project
-  UIStringList, UStrUtils;
+  SysUtils, Registry;
 
 
 constructor TBorlandCompiler.Create(const Id: TCompilerID);
@@ -210,23 +202,6 @@ begin
   finally
     Reg.Free;
   end;
-end;
-
-function TBorlandCompiler.SearchDirParams: string;
-  {One of more parameters that define any search directories to be passed to
-  compiler on command line.
-    @return Required space separated parameter(s).
-  }
-var
-  Dirs: IStringList;  // list of search directory strings
-begin
-  if GetSearchDirs.IsEmpty then
-    Exit('');
-  Dirs := TIStringList.Create(GetSearchDirs.ToStrings);
-  Result := StrQuoteSpaced('-U' + Dirs.GetText(';', False))
-    + ' ' + StrQuoteSpaced('-I' + Dirs.GetText(';', False))
-    + ' ' + StrQuoteSpaced('-O' + Dirs.GetText(';', False))
-    + ' ' + StrQuoteSpaced('-R' + Dirs.GetText(';', False));
 end;
 
 end.

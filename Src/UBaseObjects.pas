@@ -21,9 +21,6 @@
  *      exist as aggregated objects or as stand-alone reference counted objects.
  *      This implementation is based on code suggested by Hallvard VossBotn, as
  *      presented in Eric Harmon's book "Delphi COM programming".
- *   6) TConditionalFreeObject:
- *      An abstract base class for objects that cannot be destroyed unless some
- *      condition is met.
  *
  * Also provides an interface - INoPublicConstruct - that can be supported by
  * objects that don't allow public construction but cannot inherited from
@@ -51,7 +48,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -182,7 +179,7 @@ type
     implementation and handles its own reference counting.
   }
   TAggregatedOrLoneObject = class(TInterfacedObject, IInterface)
-  strict private
+  private
     fController: Pointer;
       {Weak reference to controlling object if aggregated or nil if stand-alone}
     function GetController: IInterface;
@@ -229,39 +226,8 @@ type
       nil if stand-alone}
   end;
 
-  {
-  TConditionalFreeObject:
-    Abstract base class for objects that cannot be destroyed unless some
-    condition is met. Descendants must override CanDestroy which must return
-    True if the object can be freed. Attempts to free the object when CanDestroy
-    returns False fail and the object remains in existance.
-  }
-  TConditionalFreeObject = class abstract(TObject)
-  strict protected
-    procedure Finalize; virtual;
-      {Tidies up object. Descendants should override this method instead of
-      destructor.
-      }
-    function CanDestroy: Boolean; virtual; abstract;
-      {Determines if the object can be destroyed.
-        @return True if object can be destroyed.
-      }
-  public
-    destructor Destroy; override;
-      {Class destructor tidies up and tears down object only if object can be
-      freed.
-      }
-    procedure FreeInstance; override;
-      {Frees instance data only if object can be destroyed.
-      }
-  end;
-
 
 implementation
-
-uses
-  // Delphi
-  SysUtils;
 
 
 { TNoConstructObject }
@@ -271,9 +237,7 @@ constructor TNoConstructObject.Create;
   constructed.
   }
 begin
-  raise ENoConstructException.Create(
-    ClassName + '.Create: Constructor can''t be called'
-  );
+  Assert(False, ClassName + '.Create: Constructor can''t be called');
 end;
 
 { TNoPublicConstructObject }
@@ -283,9 +247,7 @@ constructor TNoPublicConstructObject.Create;
   never constructed.
   }
 begin
-  raise ENoConstructException.Create(
-    ClassName + '.Create: Public constructor can''t be called'
-  );
+  Assert(False, ClassName + '.Create: Public constructor can''t be called');
 end;
 
 constructor TNoPublicConstructObject.InternalCreate;
@@ -304,9 +266,7 @@ constructor TNoPublicConstructIntfObject.Create;
   constructed.
   }
 begin
-  raise ENoConstructException.Create(
-    ClassName + '.Create: Public constructor can''t be called'
-  );
+  Assert(False, ClassName + '.Create: Public constructor can''t be called');
 end;
 
 constructor TNoPublicConstructIntfObject.InternalCreate;
@@ -428,38 +388,6 @@ begin
     Result := IInterface(fController)._Release
   else
     Result := inherited _Release;
-end;
-
-{ TConditionalFreeObject }
-
-destructor TConditionalFreeObject.Destroy;
-  {Class destructor tidies up and tears down object only if object can be freed.
-  }
-begin
-  // Do not override to tidy up unless you first check CanDestroy and only tidy
-  // up if it returns true. Override Finalize instead.
-  if CanDestroy then
-  begin
-    Finalize;
-    inherited;
-  end;
-end;
-
-procedure TConditionalFreeObject.Finalize;
-  {Tidies up object. Descendants should override this method instead of
-  destructor.
-  }
-begin
-  // Override this to tidy up the object instead of overriding the destructor
-end;
-
-procedure TConditionalFreeObject.FreeInstance;
-  {Frees instance data only if object can be destroyed.
-  }
-begin
-  // Check if object can be destroyed
-  if CanDestroy then
-    inherited;
 end;
 
 end.

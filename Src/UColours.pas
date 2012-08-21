@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2009 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -48,43 +48,37 @@ const
   // Colour constants defining special program colours
 
   // general
-  clBorder              = clGrayText;   // borders used in HTML
-  clWarningText         = clRed;        // warning message text
+  clBorder              = clGrayText;   // colour of borders used in HTML
+  clWarningText         = clRed;        // colour of warning message text
 
   // backgrounds
-  clSourceBg            = $CCFFFF;      // background of displayed source code
-  clCompTblHeadBg       = cl3DLight;    // background of compiler table heading
+  clSourceBg            = $CCFFFF;      // bg colour of displayed source code
+  clCompTblHeadBg       = cl3DLight;    // bg colour of compiler table heading
 
   // links
-  clDefaultLink         = clWindowText; // un-styled links
-  clExternalLink        = clBlue;       // external links
-  clHelpLink            = clGreen;      // help links
-  clDBLink              = clNavy;       // database links (cat. and snippet)
-  clCommandLink         = clMaroon;     // links that execute program commands
+  clLinkText            = clBlue;       // colour of a-links
+  clHelpLinkText        = clGreen;      // colour of help a-links
 
   // news pane
-  clNewsHeading         = clHotLight;   // headings in news frames
-  clNewsHighlight       = clHotLight;   // hilited text in news frames
-  clNewsBodyBorder      = clBorder;     // border round news frame
-  clNewsDateText        = clGrayText;   // dates in news frame
+  clNewsHeading         = clHotLight;   // colour of headings in news frames
+  clNewsHighlight       = clHotLight;   // colour of hilited text in news frames
+  clNewsBodyBorder      = clBorder;     // colour of border round news frame
+  clNewsDateText        = clGrayText;   // colour of dates in news frame
 
   // text search
-  clTextSearchHighlight = $77FFFF;      // background of info pane search text
-  clTextSearchText      = clNone;       // search text in info pane
+  clTextSearchHighlight = $77FFFF;      // bg colour of search text in info pane
+  clTextSearchText      = clNone;       // colour of search text in info pane
 
   // splash screen
-  clSplashPlainText     = $B52F20;      // splash screen plain text
-  clSplashShadowText    = clWhite;      // splash screen text shadow
+  clSplashPlainText     = clBlack;      // colour of splash screen plain text
+  clSplashShadowText    = $DDDDDD;      // colour of splash screen text shadow
 
-  // new tab
-  clNewTabText          = cl3DLight;    // color of text displayed in new tabs
+  // user routines
+  clUserRoutine         = clBlue;       // colour of names of user routines
 
-  // colours of snippet titles / heading
-  clMainSnippet         = clWindowText; // main database snippets
-  clUserSnippet         = clBlue;       // user database snippets
-
-  // markup tags
-  clVarText             = clPurple;     // <var> tag text
+  // REML markup tags
+  clREMLTags            = clPurple;     // colour of highlighted REML tags
+  clVarText             = clPurple;     // colour of <var> tag text
 
   // easter egg
   clEggBlurbBg          = clWindow;     // blurb div background
@@ -92,7 +86,7 @@ const
   clEggBlurbBorder      = clBorder;     // blurb div border
   clEggMoreInfoBg       = $EEFFEE;      // more info box background
   clEggMoreInfoBorder   = clSilver;     // more info box border
-  clEggLinkText         = clNavy;       // a-links used in more info box
+  clEggLinkText         = clNavy;       // a-link colour (used in more info box)
 
 
 implementation

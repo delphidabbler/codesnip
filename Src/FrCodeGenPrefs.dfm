@@ -19,52 +19,75 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     Caption = 'Min. &Compiler:'
     FocusControl = edMinCompiler
   end
-  object lblState: TLabel
-    Left = 2
-    Top = 251
-    Width = 73
-    Height = 13
-    Caption = 'Warning State:'
-  end
-  object chkWARNEnabled: TCheckBox
+  object chkSwitchOff: TCheckBox
     Left = 0
     Top = 0
     Width = 414
     Height = 17
-    Caption = 'Emit $&WARN directives'
+    Caption = 'Emit $&WARN directives to switch off listed warnings'
     TabOrder = 0
-    OnClick = chkWARNEnabledClick
+    OnClick = chkSwitchOffClick
+  end
+  object lvWarnings: TListView
+    Left = 0
+    Top = 26
+    Width = 414
+    Height = 150
+    Columns = <
+      item
+        Caption = 'Symbol'
+        Width = 300
+      end
+      item
+        Caption = 'Min. Compiler'
+        Width = 100
+      end>
+    ColumnClick = False
+    HideSelection = False
+    ReadOnly = True
+    RowSelect = True
+    TabOrder = 2
+    ViewStyle = vsReport
+    OnClick = lvWarningsClick
   end
   object edSymbol: TEdit
     Left = 88
     Top = 193
-    Width = 190
+    Width = 273
     Height = 21
-    TabOrder = 2
+    TabOrder = 3
+  end
+  object edMinCompiler: TEdit
+    Left = 88
+    Top = 220
+    Width = 121
+    Height = 21
+    TabOrder = 4
+    OnKeyPress = edMinCompilerKeyPress
   end
   object btnAdd: TButton
     Left = 88
-    Top = 280
-    Width = 60
+    Top = 247
+    Width = 65
     Height = 25
     Action = actAdd
-    TabOrder = 7
+    TabOrder = 6
   end
   object btnDelete: TButton
-    Left = 218
-    Top = 280
-    Width = 60
+    Left = 230
+    Top = 247
+    Width = 65
     Height = 25
     Action = actDelete
-    TabOrder = 9
+    TabOrder = 8
   end
   object btnUpdate: TButton
-    Left = 153
-    Top = 280
-    Width = 60
+    Left = 159
+    Top = 247
+    Width = 65
     Height = 25
     Action = actUpdate
-    TabOrder = 8
+    TabOrder = 7
   end
   object btnPreview: TButton
     Left = 339
@@ -75,11 +98,11 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
     TabOrder = 1
   end
   object btnPredefined: TBitBtn
-    Left = 172
-    Top = 218
+    Left = 215
+    Top = 216
     Width = 106
     Height = 25
-    Caption = '&Pre-defined'
+    Caption = 'Pre-defined'
     DoubleBuffered = True
     Glyph.Data = {
       F6000000424DF600000000000000760000002800000010000000100000000100
@@ -92,42 +115,10 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
       FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF}
     Layout = blGlyphRight
     ParentDoubleBuffered = False
-    TabOrder = 4
+    TabOrder = 5
     OnClick = btnPredefinedClick
   end
-  object edMinCompiler: TEdit
-    Left = 88
-    Top = 220
-    Width = 73
-    Height = 21
-    TabOrder = 3
-    OnKeyPress = edMinCompilerKeyPress
-  end
-  object rbStateOff: TRadioButton
-    Left = 88
-    Top = 247
-    Width = 48
-    Height = 17
-    Caption = '&Off'
-    TabOrder = 5
-  end
-  object rbStateOn: TRadioButton
-    Left = 150
-    Top = 247
-    Width = 50
-    Height = 17
-    Caption = 'O&n'
-    TabOrder = 6
-  end
-  object btnRestoreDefaults: TButton
-    Left = 296
-    Top = 280
-    Width = 102
-    Height = 25
-    Action = actRestoreDefaults
-    TabOrder = 10
-  end
-  object alMain: TActionList
+  object actMain: TActionList
     Left = 328
     Top = 120
     object actAdd: TAction
@@ -146,13 +137,9 @@ inherited CodeGenPrefsFrame: TCodeGenPrefsFrame
       OnUpdate = actDeleteUpdate
     end
     object actPreview: TAction
-      Caption = 'Pre&view...'
+      Caption = '&Preview...'
       OnExecute = actPreviewExecute
       OnUpdate = actPreviewUpdate
-    end
-    object actRestoreDefaults: TAction
-      Caption = '&Restore Defaults'
-      OnExecute = actRestoreDefaultsExecute
     end
   end
   object mnuPreDefCompilers: TPopupMenu

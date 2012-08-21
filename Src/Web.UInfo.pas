@@ -100,8 +100,6 @@ type
       {DelphiDabbler site home page}
     const ProgramHomeURL = WebsiteURL + '/software/codesnip';
       {CodeSnip's home page on DelphiDabbler.com}
-    const ProgramDownloadURL = ProgramHomeURL + '/download';
-      {CodeSnip's download page of DelphiDabbler.com}
     const DatabaseURL = WebsiteURL + '/codesnip';
       {Online Code Snippets database on DelphiDabbler.com}
     const ContactPageURL = WebsiteURL + '/contact';

@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -44,8 +44,8 @@
   <!-- introductory text -->
   <p>
     <em>CodeSnip</em> maintains a repository of your source code snippets. It
-    can also download and display the Object Pascal snippets stored in the
-    online
+    can also access and display the Object Pascal routines, types and constants
+    stored in the online
     <a
       href="http://www.delphidabbler.com/codesnip"
       class="external-link"
@@ -56,8 +56,8 @@
 
   <div id="main-db-only" style="<%NoUserDB%>">
     <p>
-      You have not yet created any of your own snippets. Use the <em>Snippets |
-      New Snippet</em> menu option to get started.
+      You have not yet created your own repository. Use the <em>Database</em>
+      menu to do this.
       <a
         href="help:TaskAddSnippets"
         class="help-link"
@@ -76,7 +76,7 @@
         onclick="updateDbase();return false;"
         onmouseover="showHint(vDownloadDatabaseHint);"
         onmouseout="clearHint();"
-      >Download it now</a>.
+      >Download it</a>.
     </p>
   </div>
 
@@ -97,25 +97,13 @@
     <p>
       Selecting a snippet's name in the <em>Overview</em> pane causes the a
       description of the snippet, its source code and other information to be
-      displayed in a tab in the <em>Information Tab</em> of the <em>Details</em>
-      pane. The information displayed can be customised using the <em>Snippet
-      Layout</em> tab of the <em>Preferences</em> dialogue box.
+      displayed in the <em>Information Tab</em> of the <em>Details</em> pane.
     </p>
 
     <p>
-      You can have more than one tab open in the <em>Details</em> pane. Open a
-      new tab using the <em>View | New Tab</em> menu option or use the
-      <span class="smallcaps">Ctrl+T</span> shortcut. Use the <em>View  | Close
-      Tab</em> menu option or press <span class="smallcaps">Ctrl+F4</span> to
-      close a tab. You can also display a snippet directly in a new tab by
-      <span class="smallcaps">Ctrl</span> clicking it in the <em>Overview</em>
-      pane.
-    </p>
-
-    <p>
-      Pascal snippets can be test compiled using any Delphi or Free Pascal
-      compiler available on your computer. Before you can do this you need to
-      tell <em>CodeSnip</em> where to find the compilers by using the
+      The <em>Detail</em> pane's <em>Compiler Check Tab</em> is used to test
+      compile a selected snippet in any supported Pascal compiler that is
+      installed on your computer. Use the
       <!-- span has hidden image for pop-up menu -->
       <span
         class="option"
@@ -129,7 +117,8 @@
         onclick="configCompilers();return false;"
         onmouseover="showHint(vConfigCompilersHint);"
         onmouseout="clearHint();"
-      >Configure Compilers</a></span> dialogue box .
+      >Configure Compilers</a></span> dialog box to tell <em>CodeSnip</em> about
+      the available compilers.
     </p>
 
   </div>

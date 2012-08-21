@@ -23,7 +23,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2006-2012 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributors:
@@ -32,15 +32,15 @@
  * ***** END LICENSE BLOCK *****
  */
 
-
+ 
 /*
  * Trims leading and trailing whitespace from a string.
  *  @param string str [in] String to be trimmed.
  *  @return string Trimmed string.
  */
 function trim(str) {
-  // see http://developer.loftdigital.com/blog/trim-a-string-in-javascript
-  return str.replace(/^\s+|\s+$/g, '');
+	// see http://developer.loftdigital.com/blog/trim-a-string-in-javascript
+	return str.replace(/^\s+|\s+$/g, ''); 
 }
 
 /*
@@ -55,11 +55,20 @@ function getInnerText(id) {
 
 /*
  * Gets the name of the displayed snippet from the HTML element with id of
- * "snippetname".
+ * "routinename".
  *  @return Required snippet name.
  */
 function getSnippetName() {
-  return trim(getInnerText("snippetname"));
+	return trim(getInnerText("routinename"));
+}
+
+/*
+ * Displays hint information that a test compilation can be performed. Hint
+ * contains name of current snippet.
+ *  @return void.
+ */
+function showTestCompileHint() {
+  showHint("Compile \"" + getSnippetName() + "\"");
 }
 
 /*
@@ -68,6 +77,5 @@ function getSnippetName() {
  *  @return void.
  */
 function showEditSnippetHint() {
-  showHint("Edit \"" + getSnippetName() + "\"");
+	showHint("Edit \"" + getSnippetName() + "\"");
 }
-
