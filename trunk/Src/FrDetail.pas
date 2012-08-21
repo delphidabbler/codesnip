@@ -77,8 +77,6 @@ type
       ///  <summary>Notification object used to notify other parts of program
       ///  about changes in this frame.</summary>
       fNotifier: INotifier;
-      // TODO: remove following unused field
-      fDisplayedView: IView;
       ///  <summary>List of views associated with tabs.</summary>
       ///  <remarks>Index of a view in this list is same as index of its tab
       ///  in tab set.</remarks>
@@ -333,7 +331,8 @@ var
   SelectedIdx: Integer;
   ClosingSelectedIdx: Boolean;
 begin
-  // TODO: protect against empty tab set
+  if IsEmptyTabSet then
+    Exit;
   ClosingSelectedIdx := SelectedTab = TabIdx;
   SelectedIdx := SelectedTab;
   InternalDeleteTab(TabIdx);
@@ -362,7 +361,6 @@ constructor TDetailFrame.Create(AOwner: TComponent);
 begin
   inherited;
   fViews := TList<IView>.Create;
-  fDisplayedView := TViewFactory.CreateNulView;
   fTabSetCmdBar := TPopupMenuWrapper.Create(mnuTabs);
 end;
 
