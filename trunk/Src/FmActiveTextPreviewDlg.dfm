@@ -1,5 +1,5 @@
 inherited ActiveTextPreviewDlg: TActiveTextPreviewDlg
-  Caption = 'View Snippet Extra Information'
+  Caption = 'Markup Preview'
   ExplicitWidth = 474
   ExplicitHeight = 354
   PixelsPerInch = 96
