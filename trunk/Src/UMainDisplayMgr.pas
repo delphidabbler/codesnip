@@ -370,6 +370,7 @@ procedure TMainDisplayMgr.ClearAll;
 begin
   (fOverviewMgr as IOverviewDisplayMgr).Clear;
   (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
+  RefreshDetailPage;
 end;
 
 procedure TMainDisplayMgr.CloseDetailsTabs(
