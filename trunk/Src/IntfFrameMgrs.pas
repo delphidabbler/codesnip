@@ -146,6 +146,8 @@ type
   ///  snippets.</summary>
   IOverviewDisplayMgr = interface(IInterface)
     ['{AD5D5A0F-E7D3-4173-A4F9-04D43909B0F5}']
+    ///  <summary>Initialise frame with given tab selected.</summary>
+    procedure Initialise(const TabIdx: Integer);
     ///  <summary>Display given list of snippets in the current overview tab.
     ///  </summary>
     ///  <remarks>If given snippet list is same as that displayed it may not
