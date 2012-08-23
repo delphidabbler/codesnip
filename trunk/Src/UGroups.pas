@@ -55,7 +55,13 @@ type
   }
   TGroupItem = class abstract(TObject)
   strict private
-    var fSnippetList: TSnippetList; // List of snippets in group
+    type
+      ///  <summary>Implements a sorted list of snippets.</summary>
+      TSortedSnippetList = TSortedObjectList<TSnippet>;
+    var
+      ///  <summary>List of snippets belonging to group, sorted on display name.
+      ///  </summary>
+      fSnippetList: TSortedSnippetList;
   strict protected
     function GetTitle: string; virtual; abstract;
       {Read accessor for Title property.
@@ -82,8 +88,8 @@ type
         @return -ve if this item sorts before Item, 0 if same and +ve if this
           item sorts after Item.
       }
-    property SnippetList: TSnippetList read fSnippetList;
-      {List of snippets associated with this group}
+    property SnippetList: TSortedSnippetList read fSnippetList;
+      {Sorted list of snippets associated with this group}
     property Title: string read GetTitle;
       {Title of group. Used for display}
   end;
@@ -362,7 +368,16 @@ constructor TGroupItem.Create;
   }
 begin
   inherited Create;
-  fSnippetList := TSnippetList.Create;
+  fSnippetList := TSortedSnippetList.Create(
+    TDelegatedComparer<TSnippet>.Create(
+      function (const Left, Right: TSnippet): Integer
+      begin
+        Result := StrCompareText(Left.DisplayName, Right.DisplayName);
+        if Result = 0 then
+          Result := Ord(Left.UserDefined) - Ord(Right.UserDefined);
+      end
+    )
+  );
 end;
 
 destructor TGroupItem.Destroy;
