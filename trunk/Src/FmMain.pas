@@ -1703,6 +1703,7 @@ procedure TMainForm.ReloadDatabase;
   {Reloads the whole database in a thread.
   }
 begin
+  fMainDisplayMgr.PrepareForDBReload;
   LoadSnippets(
     procedure
     begin
