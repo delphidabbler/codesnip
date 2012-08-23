@@ -1693,7 +1693,7 @@ begin
       Application.HandleException(E);
   end;
   // Re-initialise display
-  fMainDisplayMgr.Initialise;
+  fMainDisplayMgr.ReStart;
   // Display updated database stats and search results in status bar
   fStatusBarMgr.Update;
 end;
