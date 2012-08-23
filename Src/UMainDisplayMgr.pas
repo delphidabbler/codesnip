@@ -314,6 +314,9 @@ type
     ///  <para>If detail pane has no tabs then null view is returned.</para>
     ///  </remarks>
     function CurrentView: IView;
+
+    /// <summary>Prepares display ready for database to be reloaded.</summary>
+    procedure PrepareForDBReload;
   end;
 
 
@@ -566,6 +569,13 @@ procedure TMainDisplayMgr.PrepareForDBChange;
 begin
   fPendingChange := True;
   // simply save the state of the overview tree view ready for later restoration
+  (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
+end;
+
+procedure TMainDisplayMgr.PrepareForDBReload;
+begin
+  // save tree state so that correct state can been reloaded after update
+  // completes
   (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
 end;
 
