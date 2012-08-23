@@ -201,10 +201,10 @@ type
     ///  <summary>Object destructor. Tears down object.</summary>
     destructor Destroy; override;
 
-    ///  <summary>Initialises display.</summary>
+    ///  <summary>Re-starts display.</summary>
     ///  <remarks>All snippets in current query are shown in overview pane and
-    ///  detail pane is cleared.</remarks>
-    procedure Initialise;
+    ///  all detail pane tabs are closed.</remarks>
+    procedure ReStart;
 
     ///  <summary>Display a view item.</summary>
     ///  <param name="ViewItem">IView [in] View item to be displayed.</param>
@@ -547,13 +547,6 @@ begin
     Result := fDetailsMgr as ITabbedDisplayMgr;
 end;
 
-procedure TMainDisplayMgr.Initialise;
-begin
-  // Clear all tabs and force re-displayed of overview
-  (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
-  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
-end;
-
 procedure TMainDisplayMgr.PrepareForDBChange;
 begin
   fPendingChange := True;
@@ -607,6 +600,13 @@ begin
     DisplayInSelectedDetailView(CurrentView)
   else
     (fDetailsMgr as IDetailPaneDisplayMgr).Clear;
+end;
+
+procedure TMainDisplayMgr.ReStart;
+begin
+  // Clear all tabs and force re-displayed of overview
+  (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
+  (fOverviewMgr as IOverviewDisplayMgr).Display(Query.Selection, True);
 end;
 
 procedure TMainDisplayMgr.SelectAll;
