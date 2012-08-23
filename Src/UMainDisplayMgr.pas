@@ -201,6 +201,9 @@ type
     ///  <summary>Object destructor. Tears down object.</summary>
     destructor Destroy; override;
 
+    ///  <summary>Performs start-up initialisation of display.</summary>
+    procedure Initialise(const OverviewTab: Integer);
+
     ///  <summary>Re-starts display.</summary>
     ///  <remarks>All snippets in current query are shown in overview pane and
     ///  all detail pane tabs are closed.</remarks>
@@ -545,6 +548,11 @@ begin
     Result := fOverviewMgr as ITabbedDisplayMgr
   else if (fDetailsMgr as IPaneInfo).IsInteractive then
     Result := fDetailsMgr as ITabbedDisplayMgr;
+end;
+
+procedure TMainDisplayMgr.Initialise(const OverviewTab: Integer);
+begin
+  (fOverviewMgr as IOverviewDisplayMgr).Initialise(OverviewTab);
 end;
 
 procedure TMainDisplayMgr.PrepareForDBChange;

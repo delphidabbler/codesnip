@@ -197,6 +197,9 @@ type
       {Switches to previous tab, or return to last tab if current tab is first.
       }
     { IOverviewDisplayMgr }
+    ///  <summary>Initialise frame with given tab selected.</summary>
+    ///  <remarks>Method of IOverviewDisplayMgr.</remarks>
+    procedure Initialise(const TabIdx: Integer);
     procedure Display(const SnippetList: TSnippetList; const Force: Boolean);
       {Displays the snippets in the current overview tab.
       NOTE: May not redisplay if SnippetList is same as that displayed, unless
@@ -437,6 +440,14 @@ begin
   while (CurrentNode.Level > 0) do
     CurrentNode := CurrentNode.Parent;
   Result := CurrentNode as TViewItemTreeNode;
+end;
+
+procedure TOverviewFrame.Initialise(const TabIdx: Integer);
+begin
+  Assert((TabIdx >= 0) and (TabIdx < tcDisplayStyle.Tabs.Count),
+    ClassName + '.Initialise: TabIdx out range');
+  tcDisplayStyle.TabIndex := TabIdx;
+  Redisplay;
 end;
 
 procedure TOverviewFrame.InternalSelectItem(Item: IView);

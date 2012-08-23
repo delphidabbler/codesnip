@@ -1565,10 +1565,9 @@ begin
     // Create dialog box manager
     fDialogMgr := TDialogMgr.Create(Self);  // automatically freed
 
-    // Create display manager
+    // Create and initialise display manager
     fMainDisplayMgr := TMainDisplayMgr.Create(frmOverview, frmDetail);
-    // select active tabs
-    fMainDisplayMgr.SelectOverviewTab(fWindowSettings.OverviewTab);
+    fMainDisplayMgr.Initialise(fWindowSettings.OverviewTab);
 
     // Create status bar manager
     fStatusBarMgr := TStatusBarMgr.Create(sbStatusBar);
