@@ -206,11 +206,6 @@ type
     ///  detail pane is cleared.</remarks>
     procedure Initialise;
 
-    ///  <summary>Clears whole display</summary>
-    ///  <remarks>Overview pane is cleared and all detail tabs are closed.
-    ///  </remarks>
-    procedure ClearAll;
-
     ///  <summary>Display a view item.</summary>
     ///  <param name="ViewItem">IView [in] View item to be displayed.</param>
     ///  <param name="NewTab">Boolean [in] Determines if view is dislayed in
@@ -364,13 +359,6 @@ function TMainDisplayMgr.CanUpdateOverviewTreeState(
   const State: TTreeNodeAction): Boolean;
 begin
   Result := (fOverviewMgr as IOverviewDisplayMgr).CanUpdateTreeState(State);
-end;
-
-procedure TMainDisplayMgr.ClearAll;
-begin
-  (fOverviewMgr as IOverviewDisplayMgr).Clear;
-  (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
-  RefreshDetailPage;
 end;
 
 procedure TMainDisplayMgr.CloseDetailsTabs(
@@ -578,6 +566,9 @@ begin
   // save tree state so that correct state can been reloaded after update
   // completes
   (fOverviewMgr as IOverviewDisplayMgr).SaveTreeState;
+  (fOverviewMgr as IOverviewDisplayMgr).Clear;
+  (fDetailsMgr as IDetailPaneDisplayMgr).CloseMultipleTabs(False);
+  RefreshDetailPage;  // deletes any displayed view item
 end;
 
 procedure TMainDisplayMgr.PrepareForDBViewChange(View: IView);

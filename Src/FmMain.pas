@@ -1685,7 +1685,6 @@ begin
   // Inform that database is being loaded via status bar
   fStatusBarMgr.ShowSimpleMessage(sLoadingDatabase);
   fHistory.Clear;
-  fMainDisplayMgr.ClearAll;
   // Load the database
   try
     Loader;
