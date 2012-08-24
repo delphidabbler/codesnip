@@ -112,7 +112,7 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Types,
+  SysUtils, Types, IOUtils,
   // Project
   FirstRun.UIniFile, UAppInfo, UIOUtils, UStrUtils;
 
@@ -161,7 +161,7 @@ end;
 
 procedure TUserConfigFileUpdater.CreateDefaultCodeGenEntries;
 begin
-  if not FileExists(fCfgFileName) then
+  if not TFile.Exists(fCfgFileName) then
     CreateNewFile;
   SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, fCfgFileName);
   SetIniInt('Prefs:CodeGen', 'WarningCount', 8, fCfgFileName);
@@ -208,21 +208,21 @@ end;
 
 procedure TUserConfigFileUpdater.DeleteDetailsPaneIndex;
 begin
-  if not FileExists(fCfgFileName) then
+  if not TFile.Exists(fCfgFileName) then
     CreateNewFile;
   DeleteIniKey('MainWindow', 'DetailTab', fCfgFileName);
 end;
 
 procedure TUserConfigFileUpdater.DeleteHighligherPrefs;
 begin
-  if not FileExists(fCfgFileName) then
+  if not TFile.Exists(fCfgFileName) then
     CreateNewFile;
   DeleteIniSection('Prefs:Hiliter', fCfgFileName);
 end;
 
 procedure TUserConfigFileUpdater.DeleteProxyPassword;
 begin
-  if not FileExists(fCfgFileName) then
+  if not TFile.Exists(fCfgFileName) then
     CreateNewFile;
   SetIniString('ProxyServer', 'Password', '', fCfgFileName);
 end;
@@ -253,7 +253,7 @@ end;
 
 procedure TUserConfigFileUpdater.Stamp;
 begin
-  if not FileExists(fCfgFileName) then
+  if not TFile.Exists(fCfgFileName) then
     CreateNewFile;
   SetIniInt('IniFile', 'Version', FileVersion, fCfgFileName);
   SetIniString(
@@ -265,7 +265,7 @@ procedure TUserConfigFileUpdater.UpdateCodeGenEntries;
 begin
   // Key that determines if warnings are emitted changes from SwitchOffWarnings
   // to EmitWarnDirs.
-  if not FileExists(fCfgFileName) then
+  if not TFile.Exists(fCfgFileName) then
     CreateNewFile;
   if IniKeyExists('Prefs:CodeGen', 'SwitchOffWarnings', fCfgFileName) then
   begin
@@ -285,7 +285,7 @@ procedure TUserConfigFileUpdater.UpdateFromOriginal;
 var
   I: Integer; // loops thru all highlight elements
 begin
-  if not FileExists(fCfgFileName) then
+  if not TFile.Exists(fCfgFileName) then
     CreateNewFile;
   // Delete unwanted sections:
   // - Application section: now in common config file
