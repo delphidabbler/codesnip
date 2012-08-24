@@ -69,7 +69,7 @@ uses
   // Delphi
   SysUtils, IOUtils,
   // Project
-  UIOUtils;
+  UIOUtils, UStrUtils;
 
 
 { TUserDatabaseUpdater }
@@ -90,7 +90,7 @@ var
 begin
   SourcePath := IncludeTrailingPathDelimiter(SrcDir);
   DestPath := IncludeTrailingPathDelimiter(fDatabaseDir);
-  if CompareText(SourcePath, DestPath) = 0 then
+  if StrSameText(SourcePath, DestPath) then
     Exit;
   if not TDirectory.Exists(ExcludeTrailingPathDelimiter(SourcePath)) then
     Exit;

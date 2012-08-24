@@ -114,7 +114,7 @@ uses
   // Delphi
   SysUtils, Types,
   // Project
-  FirstRun.UIniFile, UAppInfo, UIOUtils;
+  FirstRun.UIniFile, UAppInfo, UIOUtils, UStrUtils;
 
 
 { TUserConfigFileUpdater }
@@ -123,7 +123,7 @@ procedure TUserConfigFileUpdater.CopyANSIFile(const SrcFileName: string);
 var
   Lines: TStringDynArray;  // lines of text read from ANSI .ini file
 begin
-  if CompareText(SrcFileName, fCfgFileName) = 0 then
+  if StrSameText(SrcFileName, fCfgFileName) then
     Exit;
   // reads an ANSI file and converts contents to Unicode, using system default
   // encoding
@@ -147,7 +147,7 @@ end;
 
 procedure TUserConfigFileUpdater.CopyUnicodeFile(const SrcFileName: string);
 begin
-  if CompareText(SrcFileName, fCfgFileName) = 0 then
+  if StrSameText(SrcFileName, fCfgFileName) then
     Exit;
   ForceDirectories(ExtractFileDir(fCfgFileName));
   TFileIO.CopyFile(SrcFileName, fCfgFileName);
