@@ -4,6 +4,46 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v4.0 beta 2 of 25 August 2012
+Internal CodeSnip version 3.99.2
++ Bug fixes:
+  - #3556620 (http://bit.ly/Mq1Khh): Serious flaw in generating units containing class types when the classes contain method types other than procedure or function.
+  - #3556713 (http://bit.ly/RIzfvQ): Context menus are not displayed when pressing Alt+F10.
+  - #3556715 (http://bit.ly/O3QN0u): Deleting a category then returning to it via the history list causes a GPF.
+  - #3556718 (http://bit.ly/RVanCE): Inconsistent context menus for edit controls in Snippets Editor.
+  - #3557107 (http://bit.ly/PfiYxm): New snippets and categories are not added to the history list.
+  - #3558649 (http://bit.ly/PAXLQv): Closing the Preferences dialogue always refreshes the main display even if the dialogue box was cancelled or if nothing was changed.
+  - #3559156 (http://bit.ly/TKXYQ7): "Previews" giving examples of the effect of changes made in the Preferences dialogue box sometimes disappear when the tab key is pressed.
+  - #3559239 (http://bit.ly/Pm1HU4): Snippet names and display names are used inconsistently in the UI.
+  - #3559257 (http://bit.ly/Qc8Fqu): Compile Results displayed from the main menu can get out of sync with the actual compile results of snippets that have been edited since they were last compiled.
+  - #3559265 (http://bit.ly/NvV9iH): Viewing dependencies for an un-named snippet or a snippet not in the database causes a GPF.
+  - #3559266 (http://bit.ly/S69wO2): When include files are generated for a snippet that depends on a class type, the required class is not listed in the file's header comments.
+  - #3560317 (http://bit.ly/PUcEgV): The caption of the Active Text preview dialogue box refers to "Extra" text when it is used to preview a snippet's description.
+  - #3560521 (http://bit.ly/RG7Jlw): The state of the Overview tree often doesn't restore correctly after a database update.
+  - #3560958 (http://bit.ly/TX7M9V): Snippets are not sorted correctly (i.e. on display name) in the Overview pane.
+  - #3561014 (http://bit.ly/PEFgXY): The current view in the Display pane is not cleared, wven though all tabs are closed, when the database is re-loading.
+  - #3561047 (http://bit.ly/Pf5L5v): The Category view in the Overview pane sometimes appears fully expanded when it is expected to be fully collapsed.
+  - Untracked: Removed "(v4 preview)" text that had been left in main window title bar.
+  - Untracked: Minor accelerator key related problems in the Preferences dialogue box.
++ Main UI changes:
+  - The Detail pane tabset now has a context menu that can be used to close the current tab or all but the current tab. The Close tab option is also added to current view's context menu.
+  - Right-clicking a tab in the Overview or Detail pane now selects the tab.
+  - Middle-clicking an item in the Overview pane now selects it. Previously middle clicks were ignored.
+  - Many more parts of the main display and dialogue boxes now display display names for snippets rather than unique names.
+  - Ctrl clicking snippet and category links in the Detail pane and History UI controls now opens the chosen item in a new tab. Implements feature requests #3559377 (http://bit.ly/OqnAjd) and #3559378 (http://bit.ly/NPtEkX).
+  - Different link styles are now used for the different types of link in the Detail pane. Implements feature request #3559464 (http://bit.ly/Pwsqg6).
+  - Pressing Ctrl+Return on an active snippet or category link in the Details pane now opens the item in a new tab instead of the current tab. Pressing Return now opens the item in the current tab.
+  - The Detail pane's context menu now displays more options when text selections and links are right clicked. Implements feature request #3559375 (http://bit.ly/NzaY8a) with some minor differences.
+  - New button added to the Display tab of the Preferences dialogue box that resets default snippet heading colours. Implements feature request #3559140 (http://bit.ly/QKQo43).
+  - The "Types" unit is now displayed by default in the Snippets Editor Reference Tab's predefined units list.
++ When a category is printed, any URLs in snippet descriptions are output and styled.
++ Names of units referenced by snippets may now contain dots.
++ Some refactoring and internal code changes, including a major reworking of the "first run" program configuration and a revision to the "external" object that communicates with JavaScript in browser controls.
++ Help file updated:
+  - Re UI changes.
+  - With a description of the need to configure namespaces for Delphi XE2 for each unit referenced by the code it is test compiling - addresses bug #3536531 (http://bit.ly/Q2bcmY).
++ Updated documentation.
+
 Release v4.0 beta 1 of 11 August 2012
 Internal CodeSnip version 3.99.1
 + New features:
