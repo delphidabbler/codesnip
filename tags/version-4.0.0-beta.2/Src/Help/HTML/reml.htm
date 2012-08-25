@@ -1,0 +1,330 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is reml.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      About REML
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+    <style type="text/css">
+      dl {
+        margin: 6px 0 0 0;
+      }
+      dl dt {
+        margin: 3px 0 0 0;
+      }
+      dl dd {
+        margin-left: 24px;
+      }
+      .code {
+        font-family: "Courier New";
+        color: purple;
+      }
+      .hilite {
+        background-color: #ff9;
+      }
+    </style>
+  </head>
+  <body>
+    <object
+     type="application/x-oleobject"
+     classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="REML">
+    </object>
+    <h1>
+      <a name="reml"></a>About the REML markup language
+    </h1>
+    <p>
+      <em>REML</em> is <em>CodeSnip</em>'s own little markup language that can
+      be used to style the text of a snippet's description and / or extra
+      information.
+    </p>
+<!--
+    <h2>
+      Using plain text
+    </h2>
+    <p>
+      First note that you do not have to use REML to markup your extra text
+      &ndash; you can use plain text (with a couple of exceptions: see
+      <a href="#entities">character entities</a> below). <em>CodeSnip</em> will
+      convert your text into a simple REML paragraph by surrounding it in
+      suitable <span class="code">&lt;p&gt;</span> and
+      <span class="code">&lt;/p&gt;</span> tags that you will see the next time
+      you edit the text.
+    </p>
+    <p>
+      You can create multiple paragraphs of text simply by separating the
+      paragraphs with blank lines. For example, entering:
+    </p>
+    <p class="indent code">
+      The cat sat<br><br>
+      on the mat
+    </p>
+    <p>
+      is interpreted as
+    </p>
+    <p class="indent code">
+      &lt;p&gt;the cat sat&lt;/p&gt;<br>
+      &lt;p&gt;on the mat&lt;/p&gt;
+    </p>
+    <p>
+      Be careful though, because if you don't leave a blank line, as in
+    </p>
+   <p class="indent code">
+      The cat sat<br>
+      on the mat
+    </p>
+    <p>
+      you will get the equivalent of
+    </p>
+    <p class="indent code">
+      &lt;p&gt;the cat sat on the mat&lt;/p&gt;
+    </p>
+-->
+    <h2>
+      Language Details
+    </h2>
+    <p>
+      The <em>REML</em> language is a simple SGML language similar to a greatly
+      simplified XHTML. The are a small number of tags you can use. Firstly
+      there are two block-level tags that render text in paragraphs, while the
+      other tags format text inline or embed hyplerlinks.
+    </p>
+    <h3>
+      Block level tags
+    </h3>
+    <dl>
+      <dt class="code">&lt;p&gt;...&lt/p&gt;</dt>
+      <dd>
+        Renders the enclosed markup as a simple paragraph.
+      </dd>
+      <dt class="code">&lt;heading&gt;...&lt;/heading&gt;</dt>
+      <dd>
+        Renders the enclosed markup as a heading.
+      </dd>
+    </dl>
+    <p>
+      The following rules apply to the use of
+      <span class="code">&lt;p&gt;</span> and
+      <span class="code">&lt;heading&gt;</span>
+    </p>
+    <ol>
+      <li>
+        These tags must not be nested.
+      </li>
+      <li>
+        All your markup should be enclosed in one or more pairs of these block
+        level tags &ndash; that means that markup must start with one of these
+        tags and end with a suitable closing tags.
+      </li>
+      <li>
+        The tags must be matched, e.g.
+        <span class="code">&lt;p&gt;</span> must have a matching
+        <span class="code">&lt;/p&gt;</span>.
+      </li>
+    </ol>
+    <p>
+      Here are some valid examples:
+    </p>
+    <ol>
+      <li class="extra-spacing">
+        <span class="code">&lt;p&gt;Hello World&lt;/p&gt;</span>
+      </li>
+      <li>
+        <span class="code">&lt;heading&gt;Hello&lt;/heading&gt;<br>
+        &lt;p&gt;Hello World&lt;/p&gt;</span>
+      </li>
+    </ol>
+    <p>
+      Srictly speaking, the following example is invalid code &ndash; the
+      highlighted sections are in error, because they are not contained within
+      block tags.
+    </p>
+    <p class="indent code">
+      <span class="hilite">blah</span>
+      &lt;heading&gt;blah&lt;/heading&gt;
+      <span class="hilite">blah</span>
+      &lt;p&gt;blah&lt;/p&gt;
+      <span class="hilite">blah</span>
+    </p>
+    <p>
+      However, because <em>CodeSnip</em> automatically adds &lt;p&gt; tags for
+      some lines entered without block level tags (<a href="#shortcuts">see
+      below</a>) the above code is interpreted as:
+    </p>
+    <p class="indent code">
+      &lt;p&gt;<span class="hilite">blah</span> &lt;/p&gt;<br>
+      &lt;heading&gt;blah&lt;/heading&gt;<br>
+      &lt;p&gt;<span class="hilite">blah</span> &lt;/p&gt;<br>
+      &lt;p&gt;blah&lt;/p&gt;<br>
+      &lt;p&gt;<span class="hilite">blah</span>&lt;/p&gt;
+    </p>
+    <h3>
+      Inline tags
+    </h3>
+    <p>
+      Here are the available inline tags:
+    </p>
+    <dl>
+      <dt class="code">&lt;strong&gt;...&lt/strong&gt;</dt>
+      <dd>
+        Renders the enclosed markup with strong emphasis.<br>
+        <em>Example:</em> <span class="code">&lt;p&gt;Make stuff
+        &lt;strong&gt;stand out&lt;/strong&gt;.&lt;/p&gt;</span>
+      </dd>
+      <dt class="code">&lt;em&gt;...&lt;/em&gt;</dt>
+      <dd>
+        Emphasises the enclosed markup.<br>
+        <em>Example:</em> <span class="code">&lt;p&gt;Draw
+        &lt;em&gt;attention&lt;/em&gt; to something.&lt;/p&gt;</span>
+      </dd>
+      <dt class="code">&lt;var&gt;...&lt;/var&gt;</dt>
+      <dd>
+        Used to indicate the enclosed markup is a variable.<br>
+        <em>Example:</em> <span class="code">&lt;p&gt;Refer to a function
+        &lt;var&gt;parameter&lt;/var&gt;.&lt;/p&gt;</span>
+      </dd>
+      <dt class="code">&lt;warning&gt;...&lt;/warning&gt;</dt>
+      <dd>
+        Used for warning text.<br>
+        <em>Example:</em>
+        <span class="code">&lt;p&gt;&lt;warning&gt;Warning:&lt;/warning&gt;
+        Don't do it!&lt;/p&gt;</span>
+      </dd>
+      <dt class="code">&lt;mono&gt;...&lt;/mono&gt;</dt>
+      <dd>
+        Renders markup in a mono-spaced font.<br>
+        <em>Example:</em> <span class="code">&lt;p&gt;Use the:
+        &lt;mono&gt;Windows&lt;/mono&gt; unit.&lt;/p&gt;</span>
+      </dd>
+      <dt class="code">&lt;a href=&quot;url&quot;&gt;...&lt;/a&gt;</dt>
+      <dd>
+        Creates a hyperlink. The <span class="code">href</span> attribute must
+        specify the required URL, which must use one of the <em>http:</em>,
+        <em>https:</em> or <em>file:</em> protocols; others are not permitted.
+        If you use the <em>file:</em> protocol it must reference a valid local
+        or network file. Be aware that if you submit or export a snippet
+        containing a hyperlink that uses the <em>file:</em> protocol it will
+        only work on the recipient's system if the specified file exists in the
+        same location.<br>
+        <em>Example:</em> <span class="code">&lt;p&gt;&lt;a
+        href=&quot;http://www.delphidabbler.com&quot;&gt;Visit
+        DelphiDabbler.com&lt;/a&gt;&lt/p&gt;.</span>.
+      </dd>
+    </dl>
+    <h3 id="entities">
+      Character Entities
+    </h3>
+    <p>
+      The &quot;&lt;&quot; and &quot;&amp;&quot; characters are special within
+      the markup and must not be used directly, even when you are just entering
+      plain text. You must use the <span class="code">&amp;lt;</span> character
+      entity in place of &quot;&lt;&quot; and
+      <span class="code">&amp;amp;</span> instead of &quot;&amp;&quot;.
+    </p>
+    <p>
+      A few other character entities are supported for convenience. Here is the
+      complete list:
+    </p>
+    <ul class="unspaced">
+      <li>
+        <code>&amp;lt;</code> for <code>&lt;</code>
+      </li>
+      <li>
+        <code>&amp;gt;</code> for <code>&gt;</code>
+      </li>
+      <li>
+        <code>&amp;quot;</code> for <code>&quot;</code>
+      </li>
+      <li>
+        <code>&amp;amp;</code> for <code>&amp;</code>
+      </li>
+      <li>
+        <code>&amp;copy;</code> for <code>&copy;</code>
+      </li>
+    </ul>
+    <p>
+      No other symbolic character entities are supported.
+      However, numeric character entities can be used to insert other characters
+      by specifying its code. For example <span class="code">&amp;#64;</span> is
+      equivalent to &quot;&#64;&quot;.
+    </p>
+    <p>
+      By way of an example, if you want to display
+      <span class="code">x &lt; y</span>, use:
+    </p>
+    <p class="indent">
+      <code>x &amp;lt; y</code>
+    </p>
+    <h2 id="shortcuts">
+      Shortcuts
+    </h2>
+    <p>
+      You can get away with leaving out block level tags where you only want
+      simple paragraphs and not headings. You can include inline tags. Text must
+      still have special characters replaced by <a href="#entities">character
+      entities</a>.
+    </p>
+    <p>
+      You can create multiple paragraphs of text simply by separating the
+      paragraphs with blank lines. For example, entering:
+    </p>
+    <p class="indent code bordered">
+      The &lt;strong&gt;cat&lt;/strong&gt; sat<br><br>
+      on the mat
+    </p>
+    <p>
+      is interpreted as
+    </p>
+    <p class="indent code">
+      &lt;p&gt;the &lt;strong&gt;cat&lt;/strong&gt; sat&lt;/p&gt;<br>
+      &lt;p&gt;on the mat&lt;/p&gt;
+    </p>
+    <p>
+      Be careful though, because if you don't leave a blank line, as in
+    </p>
+   <p class="indent code bordered">
+      The &lt;strong&gt;cat&lt;/strong&gt; sat<br>
+      on the mat
+    </p>
+    <p>
+      you will get the equivalent of
+    </p>
+    <p class="indent code">
+      &lt;p&gt;the &lt;strong&gt;cat&lt;/strong&gt; sat on the mat&lt;/p&gt;
+    </p>
+    <p>
+      It is also possible, if used with care, to mix text lines without block
+      level tags with other lines with block level tags. This is not
+      recommended.
+    </p>
+  </body>
+</html>
+
