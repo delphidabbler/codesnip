@@ -63,8 +63,8 @@
 #define InstUninstDir "Uninst"
 
 ; For v4 alpha and beta versions only, set version number here
-#define AppVersion "4.0-beta.1"
-#define RealVersion "3.99.1"
+#define AppVersion "4.0-beta.2"
+#define RealVersion "3.99.2"
 
 ; Creates name of setup file from app name, version and any special build string
 #define CreateSetupName(str fn) \
