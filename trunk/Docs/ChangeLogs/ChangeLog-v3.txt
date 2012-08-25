@@ -4,6 +4,11 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v3.10.5 of 21 August 2012
++ Fixed bugs:
+  - #3559257 (http://bit.ly/Qc8Fqu): Compile Results accessed from menu can get out of sync.
+  - #3559156 (http://bit.ly/TKXYQ7): "Previews" disappearing in Preferences dialogue box
+
 Release v3.10.4 of 16 August 2012
 + Added support for displaying pop-up menus over appropriate control when Alt+F10 is pressed. Fixes bug #3556713 (http://bit.ly/RIzfvQ).
 + Changes to snippets editor:
