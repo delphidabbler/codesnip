@@ -1479,7 +1479,8 @@ begin
     // Create display manager
     fMainDisplayMgr := TMainDisplayMgr.Create(frmOverview, frmDetail);
     // select active tabs
-    fMainDisplayMgr.SelectedOverviewTab := fWindowSettings.OverviewTab;
+    // ** don't set fMainDisplayMgr.SelectedOverviewTab here: causes bug
+    fMainDisplayMgr.InitOverview(fWindowSettings.OverviewTab);
     fMainDisplayMgr.SelectedDetailTab := fWindowSettings.DetailTab;
 
     // Create status bar manager

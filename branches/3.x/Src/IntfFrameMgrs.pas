@@ -25,7 +25,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -149,6 +149,10 @@ type
   }
   IOverviewDisplayMgr = interface(IInterface)
     ['{AD5D5A0F-E7D3-4173-A4F9-04D43909B0F5}']
+    procedure Initialise(const TabIdx: Integer);
+      {Initialise frame with specified tab selected.
+        @param TabIdx [in] Index of required tab.
+      }
     procedure Display(const RoutineList: TRoutineList);
       {Displays the snippets in the current overview tab.
         @param RoutineList [in] List of snippets to be displayed.

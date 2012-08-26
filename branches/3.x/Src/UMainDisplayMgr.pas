@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -100,6 +100,12 @@ type
     procedure Initialise;
       {Initialises display. All snippets in database are shown in overview pane
       and detail pane is cleared.
+      }
+    procedure InitOverview(const TabIdx: Integer);
+      {Initialises overview pane, selecting required start-up tab.
+      NOTE: Can't use normal method of tab selection on initialisation - see bug
+      #3561713.
+        {param TabIdx [in] Index of required tab.
       }
     procedure Clear;
       {Clears the main display, i.e. overview and detail panes.
@@ -317,6 +323,16 @@ begin
   Clear;
   // Now we display current query in overview pane
   QueryUpdated;
+end;
+
+procedure TMainDisplayMgr.InitOverview(const TabIdx: Integer);
+  {Initialises overview pane, selecting required start-up tab.
+  NOTE: Can't use normal method of tab selection on initialisation - see bug
+  #3561713.
+    {param TabIdx [in] Index of required tab.
+  }
+begin
+  (fOverviewMgr as IOverviewDisplayMgr).Initialise(TabIdx);
 end;
 
 procedure TMainDisplayMgr.InternalDisplayViewItem(const ViewItem: TViewItem;

@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -185,6 +185,10 @@ type
       {Switches to previous tab, or return to last tab if current tab is first.
       }
     { IOverviewDisplayMgr }
+    procedure Initialise(const TabIdx: Integer);
+      {Initialise frame with specified tab selected.
+        @param TabIdx [in] Index of required tab.
+      }
     procedure Display(const RoutineList: TRoutineList);
       {Displays the snippets in the current overview tab.
         @param RoutineList [in] List of snippets to be displayed or nil if
@@ -429,6 +433,17 @@ begin
   while (CurrentNode.Level > 0) do
     CurrentNode := CurrentNode.Parent;
   Result := CurrentNode as TViewItemTreeNode;
+end;
+
+procedure TOverviewFrame.Initialise(const TabIdx: Integer);
+  {Initialise frame with specified tab selected.
+    @param TabIdx [in] Index of required tab.
+  }
+begin
+  Assert((TabIdx >= 0) and (TabIdx < tcDisplayStyle.Tabs.Count),
+    ClassName + '.Initialise: TabIdx out range');
+  tcDisplayStyle.TabIndex := TabIdx;
+  Redisplay;
 end;
 
 procedure TOverviewFrame.InternalSelectItem(const Item: TViewItem);
