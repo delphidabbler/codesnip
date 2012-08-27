@@ -5,6 +5,9 @@
  *
  * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
  *
+ * $Rev$
+ * $Date$
+ *
  * Implements a frame containing a web browser control that displays content
  * loaded from an HTML resource.
 }
