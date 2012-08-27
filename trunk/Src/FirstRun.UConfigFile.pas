@@ -1,39 +1,15 @@
 {
- * FirstRun.UConfigFile.pas
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Pascal script for use in [Code] Section of CodeSnip's Install.iss.
- *
- * Creates per-user and application-wide ini files in correct data folders. Can
- * also create the ini files from the information stored in the single ini file
- * used in versions of CodeSnip prior to version 1.9.
+ * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * ***** BEGIN LICENSE BLOCK *****
- *
- * Version: MPL 1.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- *
- * The Original Code is FirstRun.UConfigFile.
- *
- * The Initial Developer of the Original Code is Peter Johnson
- * (http://www.delphidabbler.com/).
- *
- * Portions created by the Initial Developer are Copyright (C) 2007-2012 Peter
- * Johnson. All Rights Reserved.
- *
- * Contributors:
- *    NONE
- *
- * ***** END LICENSE BLOCK *****
+ * Implements class that manages the updating of older config files to the
+ * current format.
 }
 
 
@@ -45,7 +21,7 @@ interface
 
 type
   ///  <summary>Class that manages the updating of older config files to the
-  ///  current format. Missing files will also be converted.</summary>
+  ///  current format. Missing files will also be created.</summary>
   TUserConfigFileUpdater = class(TObject)
   strict private
     var
