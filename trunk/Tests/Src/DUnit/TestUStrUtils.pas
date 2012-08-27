@@ -1,10 +1,9 @@
 {
- * TestUStrUtils
- *
- * DUnit Test Case for UStrUtils
- *
- * $Rev$
- * $Date$
+  Delphi DUnit Test Case for the UStrUtils Unit
+  ---------------------------------------------
+
+  $Rev$
+  $Date$
 }
 
 unit TestUStrUtils;
