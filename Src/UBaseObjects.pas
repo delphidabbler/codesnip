@@ -1,5 +1,12 @@
 {
- * UBaseObjects.pas
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
  *
  * Contains various common classes for use as base classes to other classes.
  * Classes are:
@@ -8,19 +15,24 @@
  *      Object that fails if its constructor is called. Provided as a base class
  *      for classes that contains only class methods and should never be
  *      constructed.
+ *
  *   2) TNoPublicConstructObject:
  *      Object that provides a protected constructor but fails if the public
  *      constructor is called. For use as a base class for objects that are
  *      constructed via class methods but should not be constructed directly.
+ *
  *   3) TNoPublicConstructIntfObject:
  *      Same as 2) except class descends from TInterfacedObject instead of
  *      TObject.
+ *
  *   4) TNonRefCountedObject implements a non reference counted implementation
  *      of IInterface.
+ *
  *   5) TAggregatedOrLoneObject is a base class for objects that can either
  *      exist as aggregated objects or as stand-alone reference counted objects.
  *      This implementation is based on code suggested by Hallvard VossBotn, as
  *      presented in Eric Harmon's book "Delphi COM programming".
+ *
  *   6) TConditionalFreeObject:
  *      An abstract base class for objects that cannot be destroyed unless some
  *      condition is met.
@@ -28,36 +40,6 @@
  * Also provides an interface - INoPublicConstruct - that can be supported by
  * objects that don't allow public construction but cannot inherited from
  * TNoPublicConstructObject, for example forms.
- *
- * Unit originally named UIntfObjects.pas. Changed to UBaseObjects.pas at v2.0.
- *
- * $Rev$
- * $Date$
- *
- * ***** BEGIN LICENSE BLOCK *****
- *
- * Version: MPL 1.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- *
- * The Original Code is UBaseObjects.pas
- *
- * The Initial Developer of the Original Code is Peter Johnson
- * (http://www.delphidabbler.com/).
- *
- * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
- * Johnson. All Rights Reserved.
- *
- * Contributor(s)
- *   NONE
- *
- * ***** END LICENSE BLOCK *****
 }
 
 
