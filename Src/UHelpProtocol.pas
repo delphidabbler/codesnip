@@ -9,7 +9,7 @@
  * $Date$
  *
  * Implements a handler for the fake "help" URL protocol that displays a help
- * topic specified by an a-link keyword included in the URL.
+ * topic or contents depending on URL.
 }
 
 
@@ -32,9 +32,12 @@ type
   {
   THelpProtocol:
     Implements a handler for the fake "help" URL protocol that has special
-    meaning within the program. The "help" protocol causes a help topic to be
-    displayed to corresponds to an a-link keyword that is specified as part of
-    the URL. Format of protocol is "help:alink-keyword".
+    meaning within the program. The "help" protocol causes the help system to
+    display either a given topic or help contents depending on the content of
+    the URL.
+    If URL is 'help:#' then help contents is displayed.
+    If URL is 'help:any-text' then a help topic with a-link keyword matching
+    'any-text' is displayed.
   }
   THelpProtocol = class sealed(TProtocol)
   strict private
@@ -47,7 +50,7 @@ type
         @return True if URL's protocol is help:, False if not.
       }
     function Execute: Boolean; override;
-      {Displays a-link help topic identified by URL.
+      {Displays a-link help topic or help contents depending on content of URL.
         @return True.
       }
   end;
@@ -56,15 +59,20 @@ type
 
 
 function THelpProtocol.Execute: Boolean;
-  {Displays a-link help topic identified by URL.
+  {Displays a-link help topic or help contents depending on content of URL.
     @return True.
   }
 var
-  ALink: string;  // a-link help keyword
+  Param: string;  // parameter that follows protocol
 begin
-  ALink := URIDecode(StrSliceRight(URL, Length(URL) - Length(cHelpProtocol)));
-  HelpMgr.ShowHelp(ALink);
   Result := True;
+  Param := URIDecode(StrSliceRight(URL, Length(URL) - Length(cHelpProtocol)));
+  if Param = '' then
+    Exit;
+  if Param = '#' then
+    HelpMgr.ShowContents
+  else
+    HelpMgr.ShowHelp(Param);
 end;
 
 
