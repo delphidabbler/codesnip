@@ -234,6 +234,8 @@ begin
   begin
     AddProperty(TCSS.BorderProp(cssBottom, 1, cbsDotted, clCommandLink));
   end;
+  with CSSBuilder.AddSelector('.no-link-decoration a:hover') do
+    AddProperty(TCSS.HideBorderProp(cssBottom));
   // <a class="external-link"> override
   with CSSBuilder.AddSelector('a.external-link') do
   begin
