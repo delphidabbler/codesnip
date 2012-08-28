@@ -221,12 +221,18 @@ begin
   end;
   with CSSBuilder.AddSelector('a:hover.snippet-link, a:hover.category-link') do
   begin
-    AddProperty(TCSS.TextDecorationProp([ctdUnderline]));
+    AddProperty(TCSS.BorderProp(cssBottom, 1, cbsDotted, clDBLink));
   end;
   // <a class="command-link"> override
   with CSSBuilder.AddSelector('a.command-link') do
   begin
     AddProperty(TCSS.ColorProp(clCommandLink));
+    AddProperty(TCSS.FontStyleProp(cfsItalic));
+    AddProperty(TCSS.TextDecorationProp([ctdNone]));
+  end;
+  with CSSBuilder.AddSelector('a:hover.command-link') do
+  begin
+    AddProperty(TCSS.BorderProp(cssBottom, 1, cbsDotted, clCommandLink));
   end;
   // <a class="external-link"> override
   with CSSBuilder.AddSelector('a.external-link') do
