@@ -1526,6 +1526,10 @@ begin
         )
       );
       SetDonateAction(actDonate);
+      SetNewSnippetAction(actAddSnippet);
+      SetNewsAction(actNews);
+      SetCheckForUpdatesAction(actProgramUpdates);
+      SetAboutBoxAction(actAbout);
     end;
 
     // Customise web browser controls in Details pane
