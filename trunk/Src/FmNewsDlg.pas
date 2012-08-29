@@ -101,7 +101,7 @@ uses
   SysUtils, ExtActns,
   // Project
   FmPreferencesDlg, FrNewsPrefs, UCtrlArranger, UHTMLDetailUtils, UHTMLUtils,
-  UPreferences, UStrUtils, Web.UInfo, Web.UXMLRequestor;
+  UIStringList, UPreferences, UStrUtils, Web.UInfo, Web.UXMLRequestor;
 
 {$R *.dfm}
 
@@ -203,7 +203,13 @@ procedure TNewsDlg.DisplayNews(const RSS: TRSS20);
     if Link = '' then
       Result := MakeSafeHTMLText(Title)
     else
-      Result := TextLink(Link, '', '', nil, Title);
+      Result := TextLink(
+        Link,
+        '',
+        '',
+        TIStringList.Create('external-link'),
+        Title
+      );
     Result := MakeCompoundTag('strong', Result);
   end;
 
