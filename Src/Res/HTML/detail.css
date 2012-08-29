@@ -87,3 +87,60 @@ pre {
   font-variant: small-caps;
 }
 
+.box {
+  margin: 8px 0;
+  border: 1px solid silver;
+  padding: 0;
+}
+.caption {
+  font-weight: bold;
+  padding: 4px;
+  border-bottom: 1px solid silver;
+}
+
+#user-db .caption {
+  background-color: #D5E0FF;
+}
+
+#main-db .caption {
+  background-color: #DBD1FF;
+}
+
+#compilers .caption {
+  background-color: #FCD9F3;
+}
+
+#donate .caption {
+  background-color: #FFF1A4;
+}
+
+#help .caption {
+  background-color: #D3FFB6;
+}
+
+.content {
+  margin: 4px;
+}
+
+.content ul {
+  margin: 4px 0 4px 24px;
+  padding: 0;
+}
+
+#footer {
+  margin-top: 8px;
+  color: gray;
+  text-align: right;
+  line-height: 150%;
+}
+
+#footer a {
+  color: gray;
+  text-decoration: none;
+  font-style: normal;
+  font-weight: normal;
+}
+
+#footer a:hover {
+  border-bottom: 1px dotted grey;
+}
