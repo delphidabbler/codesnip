@@ -94,3 +94,40 @@ function donate() {
   return false;
 }
 
+/*
+ * Calls external object to get host application to start Snippets Editor ready
+ * for a new snippet to be entered.
+ *  @return False.
+ */
+function newSnippet() {
+  external.newSnippet();
+  return false;
+}
+
+/*
+ * Calls external object to get host application to display the CodeSnip news
+ * feed.
+ *  @return False.
+ */
+function showNews() {
+  external.showNews();
+  return false;
+}
+
+/*
+ * Calls external object to get host application to check for program updates.
+ *  @return False.
+ */
+function checkForUpdates() {
+  external.checkForUpdates();
+  return false;
+}
+
+/*
+ * Calls external object to get host application to display About box.
+ *  @return False,
+ */
+function showAboutBox() {
+  external.showAboutBox();
+  return false;
+}
