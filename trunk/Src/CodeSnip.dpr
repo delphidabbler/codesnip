@@ -350,6 +350,7 @@ uses
   UUpdateMgr in 'UUpdateMgr.pas',
   UURIEncode in 'UURIEncode.pas',
   UURIParams in 'UURIParams.pas',
+  UUrlMonEx in 'UUrlMonEx.pas',
   UUserDBBackup in 'UUserDBBackup.pas',
   UUserDBMgr in 'UUserDBMgr.pas',
   UUserDetails in 'UUserDetails.pas',
