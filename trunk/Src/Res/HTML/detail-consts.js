@@ -15,16 +15,20 @@
 /*
  * Hint text
  */
-var vAboutCompChecksHint  = "Display the About Compiler Checks help topic";
-var vOnlineDatabaseHint   = "View the online database at www.delphidabbler.com";
+var vOnlineDatabaseHint   = "View the online database at delphidabbler.com";
 var vUpdateDatabaseHint   = "Update the database from the internet";
 var vDownloadDatabaseHint = "Download the database from the internet";
-var vQuickStartHint       = "Display the QuickStart help topic";
+var vHelpContentsHint     = "Display help contents";
+var vQuickStartHint       = "Display the Quick Start Guide help topic";
+var vCommonTasksHint      = "Display the Common Tasks help topic";
+var vFAQsHint             = "Display the FAQs help topic";
+var vAboutCompChecksHint  = "Display the About Compiler Checks help topic";
+var vLicenseHint          = "Display the program license help topic";
 var vConfigCompilersHint  = "Display the Configure Compilers dialogue box";
-var vTaskAddSnippetsHint  = "View more information about the user database";
+var vAddSnippetHint       = "Add a new snippet";
+var vTaskAddSnippetsHint  =
+  "View information about how to add a snippet to the database";
 var vDonateHint           = "Make a donation";
-var vFreeformHelpHint     = "Display help about freeform snippets";
-var vRoutineHelpHint      = "Display help about routine snippets";
-var vTypeDefHelpHint      = "Display help about type definition snippets";
-var vConstantHelpHint     = "Display help about constant snippets";
-var vSnippetKindHelpHint  = "Display help about snippet kinds";
+var vNewsHint             = "View latest CodeSnip news";
+var vProgramUpdatesHint   = "Check online for program updates";
+var vAboutBoxHint         = "Display the About box";
