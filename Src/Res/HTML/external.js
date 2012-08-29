@@ -100,7 +100,7 @@ function donate() {
  *  @return False.
  */
 function newSnippet() {
-  external.newSnippet();
+  external.NewSnippet();
   return false;
 }
 
@@ -110,7 +110,7 @@ function newSnippet() {
  *  @return False.
  */
 function showNews() {
-  external.showNews();
+  external.ShowNews();
   return false;
 }
 
@@ -119,7 +119,7 @@ function showNews() {
  *  @return False.
  */
 function checkForUpdates() {
-  external.checkForUpdates();
+  external.CheckForUpdates();
   return false;
 }
 
@@ -128,6 +128,6 @@ function checkForUpdates() {
  *  @return False,
  */
 function showAboutBox() {
-  external.showAboutBox();
+  external.ShowAboutBox();
   return false;
 }
