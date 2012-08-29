@@ -78,6 +78,18 @@ type
     procedure Donate;
       {Displays donate dialog box.
       }
+    procedure NewSnippet;
+      {Opens Snippets Editor ready to create a new snippet.
+      }
+    procedure ShowNews;
+      {Shows news items from CodeSnip news feed.
+      }
+    procedure CheckForUpdates;
+      {Checks for program updates.
+      }
+    procedure ShowAboutBox;
+      {Displays the program's About box.
+      }
   end;
 
   {
@@ -129,12 +141,26 @@ type
       }
     procedure SetDonateAction(const Action: TBasicAction);
       {Sets action triggered when user requests that the donate dialog box is
-      displays.
+      displayed.
         @param Action [in] Required action.
       }
     procedure SetDisplayCategoryAction(const Action: TBasicAction);
       {Sets actions triggered when a category is requested to be displayed.
         @param Action [in] Required action.
+      }
+    procedure SetNewSnippetAction(const Action: TBasicAction);
+      {Sets action triggered when user requests that the Snippets Editor is
+      opened ready to create a new snippet.
+      }
+    procedure SetNewsAction(const Action: TBasicAction);
+      {Sets action triggered when user requests that news items from CodeSnip
+      news feed are displayed.
+      }
+    procedure SetCheckForUpdatesAction(const Action: TBasicAction);
+      {Sets action triggered when user requests a check for program updates.
+      }
+    procedure SetAboutBoxAction(const Action: TBasicAction);
+      {Sets action triggered when user requests that the About box is displayed.
       }
   end;
 

@@ -39,7 +39,7 @@ type
     events to application.
   }
   TWBExternal = class(TAutoIntfObject,
-    IWBExternal9, // browser external object's methods
+    IWBExternal10,// browser external object's methods
     ISetNotifier  // sets object used to notify app of events
     )
   strict private
@@ -48,7 +48,7 @@ type
       {Gets application to handle current exception.
       }
   protected // do not make strict
-    { IWBExternal8: defined in type library }
+    { IWBExternal10: defined in type library }
     procedure UpdateDbase; safecall;
       {Updates database from internet.
       }
@@ -80,6 +80,18 @@ type
         @param CatID [in] ID of category to display.
         @param NewTab [in] Whether to display in new tab in detail pane.
       }
+    procedure NewSnippet; safecall;
+      {Opens Snippets Editor ready to create a new snippet.
+      }
+    procedure ShowNews; safecall;
+      {Shows news items from CodeSnip news feed.
+      }
+    procedure CheckForUpdates; safecall;
+      {Checks for program updates.
+      }
+    procedure ShowAboutBox; safecall;
+      {Displays the program's About box.
+      }
     { ISetNotifier }
     procedure SetNotifier(const Notifier: INotifier);
       {Records the notifier object that is called in response to user input.
@@ -104,6 +116,16 @@ uses
 
 { TWBExternal }
 
+procedure TWBExternal.CheckForUpdates;
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.CheckForUpdates;
+  except
+    HandleException;
+  end;
+end;
+
 procedure TWBExternal.ConfigCompilers;
   {Displays the Configure Compilers dialog box.
   }
@@ -127,7 +149,7 @@ begin
   ExeName := TAppInfo.AppExeFilePath;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
-  inherited Create(TypeLib, IWBExternal9);
+  inherited Create(TypeLib, IWBExternal10);
 end;
 
 procedure TWBExternal.DisplayCategory(const CatID: WideString;
@@ -194,12 +216,32 @@ begin
   Application.HandleException(ExceptObject);
 end;
 
+procedure TWBExternal.NewSnippet;
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.NewSnippet;
+  except
+    HandleException;
+  end;
+end;
+
 procedure TWBExternal.SetNotifier(const Notifier: INotifier);
   {Records the notifier object that is called in response to user input.
     @param Notifier [in] Notifier object.
   }
 begin
   fNotifier := Notifier;
+end;
+
+procedure TWBExternal.ShowAboutBox;
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.ShowAboutBox;
+  except
+    HandleException;
+  end;
 end;
 
 procedure TWBExternal.ShowHint(const Hint: WideString);
@@ -210,6 +252,16 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.ShowHint(Hint);
+  except
+    HandleException;
+  end;
+end;
+
+procedure TWBExternal.ShowNews;
+begin
+  try
+    if Assigned(fNotifier) then
+      fNotifier.ShowNews;
   except
     HandleException;
   end;

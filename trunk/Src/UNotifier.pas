@@ -60,6 +60,15 @@ type
       {Action that displays donate dialog box}
     fDisplayCategoryAction: TBasicAction;
       {Action that causes a category to be displayed}
+    fNewSnippetAction: TBasicAction;
+      {Action that causes the Snippets Editor to be opened ready to create a new
+      snippet}
+    fNewsAction: TBasicAction;
+      {Action that causes news items from CodeSnip news feed to be displayed}
+    fCheckForUpdatesAction: TBasicAction;
+      {Action that causes a check for program updates to be performed}
+    fAboutBoxAction: TBasicAction;
+      {Action that causes About box to be displayed}
   protected // do not make strict
     { INotifier }
     procedure UpdateDbase;
@@ -104,6 +113,18 @@ type
       }
     procedure Donate;
       {Displays donate dialog box.
+      }
+    procedure NewSnippet;
+      {Opens Snippets Editor ready to create a new snippet.
+      }
+    procedure ShowNews;
+      {Shows news items from CodeSnip news feed.
+      }
+    procedure CheckForUpdates;
+      {Checks for program updates.
+      }
+    procedure ShowAboutBox;
+      {Displays the program's About box.
       }
     { ISetActions }
     procedure SetUpdateDbaseAction(const Action: TBasicAction);
@@ -154,6 +175,24 @@ type
       {Sets actions triggered when a category is requested to be displayed.
         @param Action [in] Required action.
       }
+    procedure SetNewSnippetAction(const Action: TBasicAction);
+      {Sets action triggered when user requests that the Snippets Editor is
+      opened ready to create a new snippet.
+        @param Action [in] Required action.
+      }
+    procedure SetNewsAction(const Action: TBasicAction);
+      {Sets action triggered when user requests that news items from CodeSnip
+      news feed are displayed.
+        @param Action [in] Required action.
+      }
+    procedure SetCheckForUpdatesAction(const Action: TBasicAction);
+      {Sets action triggered when user requests a check for program updates.
+        @param Action [in] Required action.
+      }
+    procedure SetAboutBoxAction(const Action: TBasicAction);
+      {Sets action triggered when user requests that the About box is displayed.
+        @param Action [in] Required action.
+      }
   end;
 
 
@@ -191,6 +230,12 @@ begin
     ClassName + '.ChangeOverviewStyle: Pane out of range');
   if Assigned(fOverviewStyleChangeActions[Style]) then
     fOverviewStyleChangeActions[Style].Execute;
+end;
+
+procedure TNotifier.CheckForUpdates;
+begin
+  if Assigned(fCheckForUpdatesAction) then
+    fCheckForUpdatesAction.Execute;
 end;
 
 procedure TNotifier.ConfigCompilers;
@@ -250,6 +295,22 @@ begin
     (fEditSnippetAction as TEditSnippetAction).SnippetName := SnippetName;
     fEditSnippetAction.Execute;
   end;
+end;
+
+procedure TNotifier.NewSnippet;
+begin
+  if Assigned(fNewSnippetAction) then
+    fNewSnippetAction.Execute;
+end;
+
+procedure TNotifier.SetAboutBoxAction(const Action: TBasicAction);
+begin
+  fAboutBoxAction := Action;
+end;
+
+procedure TNotifier.SetCheckForUpdatesAction(const Action: TBasicAction);
+begin
+  fCheckForUpdatesAction := Action;
 end;
 
 procedure TNotifier.SetConfigCompilersAction(const Action: TBasicAction);
@@ -315,6 +376,16 @@ begin
   fEditSnippetAction := Action;
 end;
 
+procedure TNotifier.SetNewsAction(const Action: TBasicAction);
+begin
+  fNewsAction := Action;
+end;
+
+procedure TNotifier.SetNewSnippetAction(const Action: TBasicAction);
+begin
+  fNewSnippetAction := Action;
+end;
+
 procedure TNotifier.SetOverviewStyleChangeActions(
   const Actions: array of TBasicAction);
   {Sets actions that are triggered when different overview display styles are
@@ -358,6 +429,12 @@ begin
   fUpdateDbaseAction := Action;
 end;
 
+procedure TNotifier.ShowAboutBox;
+begin
+  if Assigned(fAboutBoxAction) then
+    fAboutBoxAction.Execute;
+end;
+
 procedure TNotifier.ShowHint(const Hint: WideString);
   {Displays a hint.
     @param Hint [in] Hint to be displayed.
@@ -369,6 +446,12 @@ begin
     (fShowHintAction as THintAction).Hint := Hint;
     fShowHintAction.Execute;
   end;
+end;
+
+procedure TNotifier.ShowNews;
+begin
+  if Assigned(fNewsAction) then
+    fNewsAction.Execute;
 end;
 
 procedure TNotifier.ShowViewItem(ViewItem: IView; const NewTab: Boolean);
