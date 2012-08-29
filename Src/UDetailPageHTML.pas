@@ -69,6 +69,7 @@ uses
   // Delphi
   SysUtils,
   // Project
+  Compilers.UGlobals, Compilers.UCompilers,
   DB.UMain, DB.USnippet, UCSSUtils, UHTMLDetailUtils, UHTMLTemplate, UHTMLUtils,
   UJavaScriptUtils, UQuery, USnippetHTML, USnippetPageHTML, UStrUtils;
 
@@ -341,29 +342,61 @@ end;
 
 procedure TWelcomePageHTML.ResolvePlaceholders(const Tplt: THTMLTemplate);
 var
-  HaveMainDB: Boolean;  // flag indicating if main database is available
-  HaveUserDB: Boolean;  // flag indicating if user database has entries
+  UserDBCount: Integer;
+  MainDBCount: Integer;
+  Compilers: ICompilers;
+  Compiler: ICompiler;
+  CompilerList: TStringBuilder;
 begin
-  HaveMainDB := Database.Snippets.Count(False) > 0;
-  HaveUserDB := Database.Snippets.Count(True) > 0;
+  UserDBCount := Database.Snippets.Count(True);
   Tplt.ResolvePlaceholderHTML(
-    'NoUserDB', TCSS.BlockDisplayProp(not HaveUserDB)
+    'HaveUserDB', TCSS.BlockDisplayProp(UserDBCount > 0)
+//    'HaveUserDB', TCSS.BlockDisplayProp(False)
   );
   Tplt.ResolvePlaceholderHTML(
-    'NoMainDB', TCSS.BlockDisplayProp(not HaveMainDB)
+    'NoUserDB', TCSS.BlockDisplayProp(UserDBCount <= 0)
+//    'NoUserDB', TCSS.BlockDisplayProp(True)
+  );
+  Tplt.ResolvePlaceholderText(
+    'UserDBCount', IntToStr(UserDBCount)
+  );
+
+  MainDBCount := Database.Snippets.Count(False);
+  Tplt.ResolvePlaceholderHTML(
+    'HaveMainDB', TCSS.BlockDisplayProp(MainDBCount > 0)
+//    'HaveMainDB', TCSS.BlockDisplayProp(False)
   );
   Tplt.ResolvePlaceholderHTML(
-    'Intro', TCSS.BlockDisplayProp(HaveMainDB or HaveUserDB)
+    'NoMainDB', TCSS.BlockDisplayProp(MainDBCount <= 0)
+//    'NoMainDB', TCSS.BlockDisplayProp(True)
+  );
+  Tplt.ResolvePlaceholderText(
+    'MainDBCount', IntToStr(MainDBCount)
+  );
+
+  Compilers := TCompilersFactory.CreateAndLoadCompilers;
+  Tplt.ResolvePlaceholderHTML(
+    'HaveCompilers', TCSS.BlockDisplayProp(Compilers.AvailableCount > 0)
+//    'HaveCompilers', TCSS.BlockDisplayProp(False)
   );
   Tplt.ResolvePlaceholderHTML(
-    'Disclaimer', TCSS.BlockDisplayProp(HaveMainDB)
+    'NoCompilers', TCSS.BlockDisplayProp(Compilers.AvailableCount <= 0)
+//    'NoCompilers', TCSS.BlockDisplayProp(True)
   );
-  Tplt.ResolvePlaceholderHTML(
-    'UpdateDB', TCSS.BlockDisplayProp(HaveMainDB)
-  );
-  Tplt.ResolvePlaceholderHTML(
-    'DownloadDB', TCSS.BlockDisplayProp(not HaveMainDB)
-  );
+  CompilerList := TStringBuilder.Create;
+  try
+    for Compiler in Compilers do
+      if Compiler.IsAvailable then
+        CompilerList.AppendLine(
+          MakeCompoundTag(
+            'li',
+            MakeSafeHTMLText(Compiler.GetName)
+          )
+        );
+    Tplt.ResolvePlaceholderHTML('CompilerList', CompilerList.ToString);
+  finally
+    CompilerList.Free;
+  end;
 end;
 
 { TDBUpdatedPageHTML }
