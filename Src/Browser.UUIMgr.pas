@@ -346,7 +346,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Browser.UControlHelper, UHTMLDOMHelper, UThemesEx;
+  Browser.UControlHelper, UHTMLDOMHelper, UThemesEx, UUrlMonEx;
 
 
 function TaskAllocWideString(const S: string): PWChar;
@@ -559,6 +559,12 @@ begin
     fOnUpdateCSS(Self, CSS);
   if CSS <> '' then
     pInfo.pchHostCss := TaskAllocWideString(CSS);
+
+  // Turn off the annoying click sound in browser control: it's not helpful in
+  // an application where interface does not appear to be a browser.
+  CoInternetSetFeatureEnabled(
+    FEATURE_DISABLE_NAVIGATION_SOUNDS, SET_FEATURE_ON_PROCESS, True
+  );
 
   Result := S_OK;
 end;
