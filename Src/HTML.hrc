@@ -20,8 +20,8 @@ Res\HTML\dlg-about-database-tplt.html
 
 # easter egg
 Res\HTML\dlg-easter-egg.html
-Res\HTML\easteregg.css
-Res\HTML\easteregg.js
+Res\CSS\easteregg.css
+Res\Scripts\easteregg.js
 
 # compiler error log
 Res\HTML\dlg-comperror-tplt.html
@@ -46,16 +46,16 @@ Res\HTML\dlg-rssnews.html
 # ------
 
 # style sheet
-Res\HTML\detail.css
+Res\CSS\detail.css
 
 # javascript "constants"
-Res\HTML\detail-consts.js
+Res\Scripts\detail-consts.js
 
 # general routines for use in any detail pane
-Res\HTML\detail.js
+Res\Scripts\detail.js
 
 # routines that call external object
-Res\HTML\external.js
+Res\Scripts\external.js
 
 # Container document for all HTML displayed in detail panes
 Res\HTML\detail.html
