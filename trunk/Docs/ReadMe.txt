@@ -315,14 +315,13 @@ http://www.delphidabbler.com/feeds/site-news-feed?id=codesnip.
 License & Disclaimer
 ================================================================================
 
-The executable program's End User License Agreement is displayed by the install
-program and must be accepted in order to proceed with installation. A copy of
-the license is installed with the program - see License.txt. The license can be
-viewed from the "Help | License" menu option or from the About Box by clicking
-the "End User License Agreement" link.
+CodeSnip is made available under the terms of the Mozilla Public License v2.0.
+The license is explained in full in the file License.html that is installed with
+CodeSnip. The license can be viewed from the "Help | License" menu option or
+from the About Box by clicking the "End User License Agreement" link.
 
 CodeSnip is supplied on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
-express or implied. See License.txt for details.
+express or implied. See License.html for details.
 
 The source code contained in the database, or in any units or snippets generated
 by this program, is made available on an "AS IS" basis, WITHOUT WARRANTY OF ANY
