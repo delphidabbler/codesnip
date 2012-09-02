@@ -27,7 +27,7 @@
 #define HelpFile AppName + ".chm"
 #define ReadMeFile "ReadMe.txt"
 #define LicenseFile "License.rtf"
-#define LicenseTextFile "License.txt"
+#define LicenseTextFile "License.html"
 #define PrivacyFile "Privacy.txt"
 #define OutDir SourcePath + "..\..\Exe"
 #define SrcDocsPath SourcePath + "..\..\Docs\"
