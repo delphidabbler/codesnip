@@ -23,7 +23,6 @@ var vQuickStartHint       = "Display the Quick Start Guide help topic";
 var vCommonTasksHint      = "Display the Common Tasks help topic";
 var vFAQsHint             = "Display the FAQs help topic";
 var vAboutCompChecksHint  = "Display the About Compiler Checks help topic";
-var vLicenseHint          = "Display the program license help topic";
 var vConfigCompilersHint  = "Display the Configure Compilers dialogue box";
 var vAddSnippetHint       = "Add a new snippet";
 var vTaskAddSnippetsHint  =
