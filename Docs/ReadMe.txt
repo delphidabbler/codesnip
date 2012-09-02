@@ -349,10 +349,10 @@ Ready zipped source code archives of the current release and all earlier
 versions back to v3.0.0 can be downloaded from the CodeSnip Files page on
 SourceForge.net at https://sourceforge.net/projects/codesnip/files/
 
-Available source code is released under the Mozilla Public license v1.1 or v2.0
+The original source code is released under the Mozilla Public license v2.0
 (see http://www.mozilla.org/MPL/) and other open source licenses. See the file
-SourceCodeLicenses.txt in the "Docs" directory of the repository for full
-source code licensing information.
+"License.html" in the "Docs" directory of the repository for full licensing
+information.
 
 
 Bugs
