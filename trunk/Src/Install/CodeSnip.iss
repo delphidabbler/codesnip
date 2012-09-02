@@ -31,6 +31,7 @@
 #define PrivacyFile "Privacy.txt"
 #define OutDir SourcePath + "..\..\Exe"
 #define SrcDocsPath SourcePath + "..\..\Docs\"
+#define SrcAssetsPath SourcePath + '\Assets\"
 #define SrcExePath SourcePath + "..\..\Exe\"
 #define ProgDataSubDir AppName + ".4"
 #define ExeProg SrcExePath + ExeFile
@@ -70,7 +71,7 @@ AppContact=
 DefaultDirName={pf}\{#AppPublisher}\{#AppName}-4
 DefaultGroupName={#AppPublisher} {#AppName} v4
 AllowNoIcons=true
-LicenseFile={#SrcDocsPath}{#LicenseFile}
+LicenseFile={#SrcAssetsPath}{#LicenseFile}
 Compression=lzma/ultra
 SolidCompression=true
 InternalCompressLevel=ultra
@@ -100,7 +101,7 @@ Source: {#SrcExePath}{#HelpFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#LicenseTextFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#ReadMeFile}; DestDir: {app}; Flags: ignoreversion
 Source: {#SrcDocsPath}{#PrivacyFile}; DestDir: {app}; Flags: ignoreversion
-Source: {#SrcDocsPath}UpdatingPreview.rtf; Flags: dontcopy
+Source: {#SrcAssetsPath}UpdatingPreview.rtf; Flags: dontcopy
 
 [Icons]
 Name: {group}\{#AppPublisher} {#AppName}; Filename: {app}\{#ExeFile}
