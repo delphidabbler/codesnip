@@ -180,7 +180,6 @@ uses
   placeholders are replaced by their values within this unit:
 
   <%Release%>         program release number
-  <%Copyright%>       copyright info
   <%ResURL%>          url of programs HTML resources
   <%Registered%>      info about whether program is registered
   <%ContribList%>     list of program contributors
@@ -431,7 +430,6 @@ procedure TAboutDlg.InitHTMLFrames;
       'dlg-about-program-tplt.html',
       procedure(Tplt: THTMLTemplate)
       begin
-        Tplt.ResolvePlaceholderText('Copyright', TAppInfo.ProgramCopyright);
         Tplt.ResolvePlaceholderHTML('Registered', RegistrationHTML);
       end
     );
