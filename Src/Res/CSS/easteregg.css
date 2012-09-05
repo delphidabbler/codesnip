@@ -12,102 +12,132 @@
  */
 
 
-/* main scrolling content */
-#blurb {
-  position: absolute;
-  /* width + 2*left + 2*padding + 2*margin 2*2px for border set in
-     container must add up to 380 ( = width of browser in frame) */
-  width: 300px;
-  left: 34px;
-  padding: 4px;
+/* styling for body including defaults
+   NOTE: font family must be set externally */
+
+body {
+  background-color: transparent;
+  background-image: url('blue-paper.png');
+  color: #3333cc;
   margin: 0;
-  height: 20px;
-  top: 360px;
-  overflow: hidden;
+  padding: 0;
+  font-size: 14px;
 }
 
-/* applies to headings in main content */
-#blurb h1 {
+/* styling for segments of slide screen image: sets starting positions for
+   animation (ending positions shown in comments) */
+
+.screen {
+  display: block;
+  position: absolute;
+  left: 16px;
+}
+
+#screen-top {
+  top: 320px;       /* 26px; */
+  width: 510px;
+  height: 23px;
+  z-index: 30;
+  cursor: pointer;
+}
+
+#screen-middle {
+  top: 343px;       /* 48px; */
+  width: 510px;
+  height: 10px;     /* 304px; */
+  z-index: 20;
+}
+
+#screen-bottom {
+  top: 352px;
+  width: 510px;
+  height: 270px;
+  z-index: 25;
+}
+
+/* styling for introductory text and play button displayed after slide screen
+   has expanded */
+
+#intro {
+  position: absolute;
+  top: 52px;
+  left: 39px;
+  width: 384px;
+  height: 200px;
+  padding: 40px;
   text-align: center;
-}
-
-/* div containing cancel button */
-#cancel {
+  vertical-align: center;
+  z-index: 60;
   display: none;
-  position: fixed;
-  top: 0; /* gets set dynamically relative to final top position of #blurb */
-  /* left = #blurb.left + #blurb.width + 2 * #blurb.padding + 2 * #blurb.margin
-     - #cancel-btn.width */
-  left: 326px;
+  background-color: transparent;
 }
 
-/* applies to cancel button image */
-#cancel-btn {
-  width: 16px;
-  height: 16px;
-  cursor: hand;
+#intro h1 {
+  font-weight: bold;
+  font-style: italic;
+  font-size: 24px;
+  margin: 0 0 0 18px;
 }
 
-/* links that appear after content has scrolled */
-#more-info {
-  position: absolute;
-  /* width + 2*left + 2*padding + 2*margin + 2*1px for border set in
-     container must add up to 380 ( = width of browser in frame ) */
-  width: 210px;
-  left: 80px;
-  padding: 4px;
-  margin: 0;
-  height: auto;
-  top: 380px;
-  text-align: center;
+#intro p {
+  margin: 12px 0;
+  padding: 0;
 }
 
-/* applies to div containing "click me" image */
-#click-me {
-  display: none;
-  position: absolute;
-  /* 2*left + width of "click me" image must add up to 380 ( = width of browser
-     in frame ) */
-  left: 133px;
-  top: 120px;
+#start {
+  cursor: pointer;
+  font-style: italic;
 }
 
-/* applies to "click me" image contained in #click-me div */
-#click-me img {
-  width: 114px;
-  height: 76px;
-  cursor: hand;
-}
+/* styling for slideshow */
 
-/* applies to divs containing egg images */
-div.egg {
-  position: absolute;
-  /* 2*left + width of egg image must add up to 380 ( = width of browser in
-     frame ) => both egg images must be same width (see img.egg) */
-  left: 25px;
-  cursor: hand;
-}
-
-/* applies to egg images - must both be same size */
-img.egg {
-  width: 330px;
-  height: 450px;
-}
-
-/* applies to padding at start at end of scrolling content */
-div.padding {
+#slideshow {
   position: relative;
   width: 300px;
-  overflow: hidden;
+  top: 62px;
+  margin: 24px auto;
+  z-index: 100;
+  background-color: #773333;
+  display: none;
 }
 
-/* applies to paragraph containing close instructions */
-p.esc {
+#slideshow .caption {
+  margin-top: 8px;
   text-align: center;
-  margin-top: 4em;
 }
 
-/* applies to paragraphs that enclose photos */
-p.photo {
+/* styling for prompt and animated arrow that appear as a hint on how to expand
+   slide screen */
+#click-prompt {
+  position: absolute;
+  width: 300px;
+  left: 121px;
+  top: 0px;         /* actual value set by script */
+  display: none;
   text-align: center;
+  vertical-align: center;
 }
+
+#click-arrow {
+  position: absolute;
+  width: 32px;
+  height: 50px;
+  left: 255px;
+  top: 0px;         /* actual value set by script */
+  display: none;
+}
+
+/* styling for cancel button that appears at top right of slide screen once it
+   has expanded */
+
+#cancel-btn {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 56px;
+  left: 486px;
+  display: none;
+  z-index: 100;
+  cursor: pointer;
+}
+

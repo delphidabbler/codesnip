@@ -212,7 +212,7 @@ procedure TEasterEggForm.RevealTick(Sender: TObject);
     @param Sender [in] Not used.
   }
 const
-  cAlphaDelta = 4;  // change made to alpha channel on each tick
+  cAlphaDelta = 6;  // change made to alpha channel on each tick
 begin
   if AlphaBlendValue >= 255 - cAlphaDelta then
   begin

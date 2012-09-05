@@ -22,6 +22,8 @@ Res\HTML\dlg-about-database-tplt.html
 Res\HTML\dlg-easter-egg.html
 Res\CSS\easteregg.css
 Res\Scripts\easteregg.js
+Res\Scripts\3rdParty\jquery-1.8.0.min.js
+Res\Scripts\3rdParty\jquery.cycle.lite.js
 
 # compiler error log
 Res\HTML\dlg-comperror-tplt.html
@@ -136,6 +138,18 @@ Res\Img\easter-egg-bottom.png
 Res\Img\click-me.png
 Res\Img\cancel.png
 Res\Img\cancel-glow.png
+Res\Img\Egg\screen-top.png
+Res\Img\Egg\screen-middle.png
+Res\Img\Egg\screen-bottom.png
+Res\Img\Egg\dogs-1.jpg
+Res\Img\Egg\dogs-2.jpg
+Res\Img\Egg\dogs-3.jpg
+Res\Img\Egg\dogs-4.jpg
+Res\Img\Egg\prompt-arrow.png
+Res\Img\Egg\play-btn.png
+Res\Img\Egg\play-btn-hover.png
+Res\Img\Egg\doggy-pics.png
+Res\Img\Egg\blue-paper.png
 
 # donate dialog - £ sign image
 Res\Img\pound-sign.png
