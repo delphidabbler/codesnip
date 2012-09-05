@@ -65,15 +65,6 @@ const
   // markup tags
   clVarText             = clPurple;     // <var> tag text
 
-  // easter egg
-  clEggBlurbBg          = clWindow;     // blurb div background
-  clEggBlurbHeadingBg   = $DDDDDD;      // blurb div heading background
-  clEggBlurbBorder      = clBorder;     // blurb div border
-  clEggMoreInfoBg       = $EEFFEE;      // more info box background
-  clEggMoreInfoBorder   = clSilver;     // more info box border
-  clEggLinkText         = clNavy;       // a-links used in more info box
-
-
 implementation
 
 end.
