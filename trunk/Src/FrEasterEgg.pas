@@ -57,7 +57,7 @@ uses
   // Delphi
   SysUtils, Graphics,
   // Project
-  Browser.UUIMgr, UColours, UCSSUtils, UFontHelper;
+  Browser.UUIMgr, UCSSUtils, UFontHelper;
 
 {$R *.dfm}
 
@@ -77,43 +77,8 @@ begin
   CSSFont := TFont.Create;
   try
     TFontHelper.SetContentFont(CSSFont, True);
-    CSSFont.Size := CSSFont.Size + 1;
     with CSSBuilder.AddSelector('body') do
-    begin
       AddProperty(TCSS.FontProps(CSSFont));
-      AddProperty(TCSS.MarginProp(3));
-      // background colour same as parent: used as transparency colour key
-      AddProperty(TCSS.BackgroundColorProp(ParentForm.Color));
-    end;
-    // Sets paragraph style
-    with CSSBuilder.AddSelector('p') do
-    begin
-      AddProperty(TCSS.MarginProp(4, 0, 0, 0));
-    end;
-    // Customises A-link styles
-    with CSSBuilder.AddSelector('a:link, a:active, a:visited') do
-      AddProperty(TCSS.ColorProp(clEggLinkText));
-    // Customises "blurb" id
-    with CSSBuilder.AddSelector('#blurb') do
-    begin
-      AddProperty(TCSS.BorderProp(cssAll, 2, cbsSolid, clEggBlurbBorder));
-      AddProperty(TCSS.BackgroundColorProp(clEggBlurbBg));
-    end;
-    // Sets H1 style for "blurb" div
-    with CSSBuilder.AddSelector('#blurb h1') do
-    begin
-      CSSFont.Style := [fsBold];
-      AddProperty(TCSS.FontSizeProp(CSSFont.Size + 2));
-      AddProperty(TCSS.MarginProp(4, 0, 4, 0));
-      AddProperty(TCSS.PaddingProp(4, 0, 4, 0));
-      AddProperty(TCSS.BackgroundColorProp(clEggBlurbHeadingBg));
-      AddProperty(TCSS.BorderProp(cssBottom, 1, cbsSolid, clBorder));
-    end;
-    with CSSBuilder.AddSelector('#more-info') do
-    begin
-      AddProperty(TCSS.BackgroundColorProp(clEggMoreInfoBg));
-      AddProperty(TCSS.BorderProp(cssAll, 1, cbsSolid, clEggMoreInfoBorder));
-    end;
   finally
     FreeAndNil(CSSFont);
   end;

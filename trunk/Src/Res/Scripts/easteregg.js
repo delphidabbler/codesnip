@@ -9,227 +9,153 @@
  * $Date$
  *
  * JavaScript code used to perform animations in program's easter egg.
+ * Requires jQuery and lite version of jQuery Cycle plug-in.
  */
 
 
-// -----------------------------------------------------------------------------
-// Initialisation
-// -----------------------------------------------------------------------------
+// Main function called when DOM has loaded. Runs prelinary animations up to
+// when introductory page is shown on unfolded screen
+$(document).ready(function(){
 
-/*
- * Performs initialisation. Called when document has loaded.
- * return void.
- */
-function init() {
-  preload();
-  beginAnim();
+  var spt = null;  // showPrompt timeout
+
+  $("#screen-top").click(function(){
+    // screen top click => open screen
+    // prevent or stop any prompt animations
+    if ( spt != null )
+      clearTimeout(spt);
+    stopPrompt();
+    // disable click on screen top: this is a one time only event
+    $("#screen-top").off();
+    $("#screen-top").css("cursor", "default");
+    // unfolds out the screen: moves top and middle elements simultaneously,
+    // then displays intro page on unfolded screen
+    $("#screen-middle").animate({top: 48, height: 304}, 2000);
+    $("#screen-top").animate(
+      {top: 26},
+      2000,
+      '',
+      function() {
+        showIntro();
+        showCancelButton();
+      }
+    );
+  });
+  //
+  // show a prompt if user doesn't click anything in specified time
+  spt = setTimeout(showPrompt, 3500);
+});
+
+// Display introductory page on unfloded screen, along with slideshow start
+// button.
+function showIntro() {
+  var pulse = 150;
+
+  setRollover("#start", "play-btn.png", "play-btn-hover.png");
+  $("#start").click(function() {
+    // Start button clicked:
+    // disable further clicks: this is a one-time action
+    $("#start").off();
+    // switch of title text in pop-up window
+    $("#start").attr("title", "");
+    $("#start").css("cursor", "default");
+    // fade out intro text and start slide show
+    $("#intro").fadeOut(500, slideShow);
+  });
+  $("#intro").fadeIn(1200);
 }
 
-
-// -----------------------------------------------------------------------------
-// Support functions
-// -----------------------------------------------------------------------------
-
-/*
- * Preloads image required for rollover button.
- * @return void.
- */
-function preload() {
-  img = new Image();
-  img.src = 'cancel-glow.png';
+// Prepare and display cancel button in unfloded screen
+function showCancelButton() {
+  setRollover("#cancel-btn", "cancel.png", "cancel-glow.png");
+  $("#cancel-btn").click(function() {
+    // clear events and switch of title (may be popped up)
+    $(this).off();
+    $(this).attr("title", "");
+    // return true to allow event to bubble up to dialogue box to permit it to
+    // close
+    return true;
+  });
+  $("#cancel-btn").fadeIn(1200);
 }
 
-/*
- * Sets source URL of an image.
- * @param id ID of image.
- * @param src URL of required image.
- * @return void.
- */
-function setImage(id, src) {
-  document.getElementById(id).src = src;
+// Runs slide show
+function slideShow() {
+  $("#slideshow").fadeIn(1000).cycle({
+    fx: "fade",
+    timeout: 4000,
+    speed: 2500
+  });
 }
 
-/*
- * Displays or hides an HTML element.
- * @param id ID of element.
- * @param show Flag true to show element or false to hide it.
- * @return void.
- */
-function showElem(id, show) {
-  if ( show )
-    document.getElementById(id).style.display = 'block';
-  else
-    document.getElementById(id).style.display = 'none';
+// Runs prompt animation telling user where to click to display content
+function showPrompt() {
+  var text = $("#click-prompt");
+  var arrow = $("#click-arrow");
+  var jigHi = 245;
+  var jigLo = 265;
+  var jigTime = 150;
+  // display arrow pointing at screen top and jiggle it, then display promt
+  // text
+  arrow.css("top", jigLo);
+  arrow
+    .fadeIn(200)
+    // first jiggle
+    .animate({top: jigHi}, jigTime)
+    .animate({top: jigLo}, jigTime)
+    .animate({top: jigHi}, jigTime)
+    .animate({top: jigLo}, jigTime)
+    .animate({top: jigHi}, jigTime)
+    .animate({top: jigLo}, jigTime)
+    .animate({top: jigHi}, jigTime)
+    .animate({top: jigLo}, jigTime)
+    .delay(1500)
+    // second jiggle
+    .animate({top: jigHi}, jigTime)
+    .animate({top: jigLo}, jigTime)
+    .animate({top: jigHi}, jigTime)
+    .animate({top: jigLo}, jigTime)
+    .animate({top: jigHi}, jigTime)
+    .animate({top: jigLo}, jigTime)
+    .animate({top: jigHi}, jigTime)
+    .animate(
+      {top: jigLo},
+      jigTime,
+      function(){
+        // show prompt text above arrow
+        text.css(
+          "top",
+          parseInt(arrow.css("top")) - parseInt(text.css("height")) - 6
+        );
+        text.delay(1000).fadeIn(1000);
+      }
+    );
 }
 
-/*
- * Sets the top of an HTML element in pixels.
- * @param id ID of element.
- * @param top Top of element in pixels.
- * @return void.
- */
-function setElemTop(id, top) {
-  document.getElementById(id).style.top = top + 'px';
+// Stops any running prompt animation and hides related elements
+function stopPrompt() {
+  $("#click-prompt").stop();
+  $("#click-arrow").stop();
+  $("#click-prompt").hide();
+  $("#click-arrow").hide();
+  // following is required to stop arrow from appearing when screen is
+  // expanding: don't understand why this happens
+  $("#click-arrow").css("width", "0");
 }
 
-
-// -----------------------------------------------------------------------------
-// Begin animation
-// -----------------------------------------------------------------------------
-
-/*
- * Begins animation by displaying "click me" image after a pause.
- * @return void.
- */
-function beginAnim() {
-  window.setTimeout('showClickMe(true)', 2500);
-}
-
-
-// -----------------------------------------------------------------------------
-// Animation that displays and hides the "click me" div
-// -----------------------------------------------------------------------------
-
-var clickMeHidden = false;    // inhibits display of "click me" image when true
-
-/*
- * Shows or hides "click me" image providing display not inhibited.
- * @param show Shows image if true and hides if false. Image always hidden if
- *   clickMeHidden is true.
- * @return void.
- */
-function showClickMe(show) {
-  if ( show && !clickMeHidden )
-    showElem('click-me', true);
-  else
-    showElem('click-me', false);
-}
-
-/*
- * Permanently hides "click me" image.
- * @return void.
- */
-function hideClickMe() {
-  clickMeHidden = true;
-  showClickMe(false);
-}
-
-
-// -----------------------------------------------------------------------------
-// Animation that breaks the easter egg apart and reveals cancel button
-// -----------------------------------------------------------------------------
-
-// values controlling movement of egg part images
-var topEggTop = 50;           // current position of top egg image
-var topEggTopEnd = 0;         // final position of top egg image
-var bottomEggTop = 50;        // current position of bottom egg image
-var bottomEggTopEnd = 100;    // final position of bottom egg image
-var eggMoveStep = 5;          // increment used to move egg images
-var eggMoveDelay = 25;        // delay between moving egg images
-
-/*
- * Break egg apart. Hide "click me" image and begins the animation.
- * @return void.
- */
-function breakEgg() {
-  hideClickMe();
-  moveEggImages();
-}
-
-/*
- * Animation that moves images showing two halves of easter egg apart then
- * starts next animation
- * @return void.
-*/
-function moveEggImages() {
-  // increment / decroment top position of images
-  if ( topEggTop - eggMoveStep > topEggTopEnd )
-    topEggTop -= eggMoveStep;
-  else
-    topEggTop = topEggTopEnd;
-  if ( bottomEggTop + eggMoveStep < bottomEggTopEnd )
-    bottomEggTop += eggMoveStep;
-  else
-    bottomEggTop = bottomEggTopEnd;
-  // move the images
-  setElemTop('egg-top', topEggTop);
-  setElemTop('egg-bottom', bottomEggTop);
-  if ( (topEggTop > topEggTopEnd) || (bottomEggTop < bottomEggTopEnd) )
-    // there's further to go, call this routine again after delay
-    window.setTimeout('moveEggImages()', eggMoveDelay);
-  else {
-    // finished: change cursor to normal and start next animation
-    document.getElementById('egg-top').style.cursor  = 'auto';
-    document.getElementById('egg-bottom').style.cursor  = 'auto';
-    stretchBlurb();
-  }
-}
-
-
-// -----------------------------------------------------------------------------
-// Animation that appears to roll "paper" for blurb out of bottom half of egg
-// -----------------------------------------------------------------------------
-
-// values controlling stretch of blurb div
-var blurbTopStart = 360;      // initial top of div
-var blurbTopFinal = 100;      // final top of div
-var blurbStartHeight = 20;    // height of div before stretch
-var blurbTop = blurbTopStart; // current top of div
-var stretchDelay = 15;        // delay between stretching steps
-var stretchStep = 2;          // increment used for stretch steps
-
-/*
- * Animation that stretch div that displays the blurb by moving its top
- * up the screen then starts next animation.
- * @return void.
- */
-function stretchBlurb() {
-  // move to new top position
-  if ( blurbTop > blurbTopFinal )
-    blurbTop -= stretchStep;
-  else
-    blurbTop = blurbTopFinal;
-  setElemTop('blurb', blurbTop);
-  document.getElementById('blurb').style.height
-    = (blurbStartHeight + blurbTopStart - blurbTop) + 'px';
-  if ( blurbTop > blurbTopFinal )
-    // more to do, call this routine again after delay
-    window.setTimeout('stretchBlurb()', stretchDelay);
-  else {
-    // finished: start next animation
-    showElem('cancel', true);
-    setElemTop('cancel', blurbTop + 4);
-    scrollBlurb();
-  }
-}
-
-
-// -----------------------------------------------------------------------------
-// Animation scrolls the blurb up its "paper". Continues forever.// -----------------------------------------------------------------------------
-
-// values controlling scrolling of blurb div
-var scrollTop = -1;       // current position of scroll top
-var scrollDelay = 40;     // delay between scrolling steps
-
-/*
- * Continually scrolls blurb contained in blurb div. Also displays links
- * when all blurb has scrolled.
- * @return void.
- */
-function scrollBlurb() {
-  document.getElementById('blurb').scrollTop += 1;
-  var curTop = document.getElementById('blurb').scrollTop;
-  if ( curTop != scrollTop ) {
-    // not reached end of scroll yet: keep going after delay
-    scrollTop = curTop;
-    window.setTimeout('scrollBlurb()', scrollDelay);
-  }
-  else {
-    // read end of scroll: display additional info then restart scroll
-    showElem('more-info', true);
-    document.getElementById('blurb').scrollTop = 0;
-    scrollTop = -1;
-    window.setTimeout('scrollBlurb()', scrollDelay);
-  }
+// Sets rollover images for elements matching given CSS selector.
+function setRollover(selector, normalImg, hoverImg) {
+  $(selector).on(
+    "mouseout",
+    function () {
+      $(this).attr("src", normalImg);
+    }
+  );
+  $(selector).on(
+    "mousemove",
+    function () {
+      $(this).attr("src", hoverImg);
+    }
+  );
 }
 

@@ -24,136 +24,82 @@
     <title>
       dlg-easter-egg
     </title>
-    <link rel="stylesheet" type="text/css" href="easteregg.css"; />
+
+    <link rel="stylesheet" href="easteregg.css" />
+
+    <script type="text/javascript" src="jquery-1.8.0.min.js"></script>
+    <script type="text/javascript" src="jquery.cycle.lite.js"></script>
     <script type="text/javascript" src="easteregg.js"></script>
+
   </head>
 
+  <body>
+    <!-- slideshow screen component images -->
+    <img id="screen-top" class="screen" src="screen-top.png" />
+    <img id="screen-middle" class="screen" src="screen-middle.png" />
+    <img id="screen-bottom" class="screen" src="screen-bottom.png" />
 
-  <body onload="init();">
+    <!-- main cancel button image -->
+    <img id="cancel-btn" src="cancel.png" title="Close" />
 
-    <!-- Two halves of the easter egg - they slide apart, start off closed -->
-    <div class="egg" id="egg-top" style="top:50px;z-index:1;">
-      <img
-        src="easter-egg-top.png"
-        class="egg"
-        onclick="breakEgg();return false;"
-      />
-    </div>
-    <div class="egg" id="egg-bottom" style="top:50px;z-index:8;">
-      <img
-        src="easter-egg-bottom.png"
-        class="egg"
-        onclick="breakEgg();return false;"
-      />
-    </div>
+    <!-- elements used to prompt user to unfold screen -->
+    <img id="click-arrow" src="prompt-arrow.png" />
+    <div id="click-prompt">Click the handle!</div>
 
-    <!-- Cancel image, positioned relative to browser window. Click event is
-         handled in owning Delphi form -->
-    <div
-      id="cancel"
-      style="z-index:20;"
-    >
-      <img
-        id="cancel-btn"
-        src="cancel.png"
-        title="Close"
-        onmousemove="setImage('cancel-btn', 'cancel-glow.png');"
-        onmouseout="setImage('cancel-btn', 'cancel.png');"
-      />
-    </div>
-
-    <!-- Click me image that appears above closed egg -->
-    <div id="click-me" style="z-index:12;">
-      <img
-        src="click-me.png"
-        onclick="breakEgg();return false;"
-      />
-    </div>
-
-    <!-- Content of scrolling text div -->
-    <div id="blurb" style="z-index:4;">
-
-      <!-- Padding that keeps content hidden before animation starts -->
-      <div class="padding" style="height:250px;">&nbsp;</div>
-
-      <!-- Main content -->
+    <!-- introductory page content -->
+    <div id="intro">
       <h1>
-        So who is DelphiDabbler?
+        Bonnie &amp; Clyde's
       </h1>
-
       <p>
-        Here's me, Peter Johnson, aka DelphiDabbler, on holiday in Somerset, UK,
-        in 2009, peeling from sunburn. Taken by my darling wife.
+        <img src="doggy-pics.png" />
       </p>
-
-      <p class="photo">
-        <img
-          src="pj.jpg"
-          style="width:300px;height:204px;"
-        />
-      </p>
-
-      <h1>
-        My Other Passion
-      </h1>
-
       <p>
-        I have another passion when I'm not Delphi-dabbling and that's
-        classic and sports cars &ndash; &quot;hairy chested&quot; British
-        sports cars being my particular favourites.
+        <img id="start" src="play-btn.png" title="Start" />
       </p>
-
-      <p class="photo">
-        <img
-          src="tvr.jpg"
-          style="width:300px;height:153px;"
-        />
-      </p>
-
       <p>
-        This is my 1996 <em>TVR Chimaera 400</em>. It leaks and uses a too much
-        petrol, but it ain't half fun! Seen here on a rare sunny day in
-        Somerset, with the roof panel off. Yep, that explains the burnt
-        forehead!
+        Press ESC to finish.
       </p>
-
-      <p>
-        <em>TVRs</em> sum up the British sports car thing for me &ndash; they
-        were hand built in a small factory in Blackpool that was run on a
-        shoestring. But those guys had a hell of a feel for what makes an
-        entertaining sports car.
-      </p>
-
-      <p class="esc">
-        <strong>Press <em>ESC</em> to close.</strong>
-      </p>
-
-      <!-- Padding that allows end of content to scroll off top of div -->
-      <div class="padding" style="height:300px;">&nbsp;</div>
-
     </div>
-    <!-- End of scrolling div -->
 
-    <!-- Links that appear in bottom egg after text has scrolled up once -->
-    <div id="more-info" style="display:none;z-index:10;">
-      <div>
-        <a
-          href="http://www.delphidabbler.com/background"
-          class="external-link"
-        >More about DelphiDabbler</a>
+    <!-- slideshow content -->
+    <div id="slideshow">
+     <div id="slide-1">
+        <img src="dogs-1.jpg" />
+        <div class="caption">
+          Bonnie &amp; Clyde.<br />
+          Our late companions.
+        </div>
       </div>
-      <div style="margin-top:0.5em;">
-        <a
-          href="http://en.wikipedia.org/wiki/TVR"
-          class="external-link"
-        >More about TVRs</a>
+      <div id="slide-2">
+        <img src="dogs-2.jpg" />
+        <div class="caption">
+          Bonnie<br />
+          The lights are on but no-one's home.
+        </div>
       </div>
-      <div style="margin-top:0.5em;">
-        ESC to close
+      <div id="slide-3">
+        <img src="dogs-3.jpg" />
+        <div class="caption">
+          Clyde<br />
+          Resting between bouts of mischief!
+        </div>
+      </div>
+      <div id="slide-4">
+        <a
+          class="external-link"
+          href="http://www.flickr.com/photos/delphidabbler/sets/72157631306758128/"
+        ><img src="dogs-4.jpg" /></a>
+        <div class="caption">
+          More pics on
+          <a
+            class="external-link"
+            href="http://www.flickr.com/photos/delphidabbler/sets/72157631306758128/"
+          >Flickr</a>...
+        </div>
       </div>
     </div>
 
   </body>
 
 </html>
-
