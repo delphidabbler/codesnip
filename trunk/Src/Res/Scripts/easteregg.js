@@ -65,9 +65,9 @@ function showIntro() {
   $("#intro").fadeIn(1200);
 }
 
-// Prepare and display cancel button in unfloded screen
+// Prepare and display cancel button in unfolded screen
 function showCancelButton() {
-  setRollover("#cancel-btn", "cancel.png", "cancel-glow.png");
+  setRollover("#cancel-btn", "cancel-btn.png", "cancel-btn-hover.png");
   $("#cancel-btn").click(function() {
     // clear events and switch of title (may be popped up)
     $(this).off();

@@ -131,8 +131,8 @@ Res\Img\symbol-exclamation.png
 Res\Img\icon.gif
 
 # easter egg
-Res\Img\cancel.png
-Res\Img\cancel-glow.png
+Res\Img\Egg\cancel-btn.png
+Res\Img\Egg\cancel-btn-hover.png
 Res\Img\Egg\screen-top.png
 Res\Img\Egg\screen-middle.png
 Res\Img\Egg\screen-bottom.png
