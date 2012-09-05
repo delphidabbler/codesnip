@@ -10,7 +10,7 @@
 # Manifest file used to generate HTML.res resource file.
 
 
-# Dialog box templates and fixed code
+# Dialogue box templates and fixed code
 # ===================================
 
 # about box
@@ -28,16 +28,16 @@ Res\Scripts\3rdParty\jquery.cycle.lite.js
 # compiler error log
 Res\HTML\dlg-comperror-tplt.html
 
-# donate dialog
+# donate dialogue
 Res\HTML\dlg-donate.html
 
 # email privacy information for display in frames
 Res\HTML\frm-emailprivacy.html
 
-# active text preview dialogue
+# active text preview dialogueue
 Res\HTML\dlg-activetext-preview-tplt.html
 
-# news dialog
+# news dialogue
 Res\HTML\dlg-rssnews.html
 
 
@@ -124,7 +124,7 @@ Res\Img\symbol-information.png
 Res\Img\symbol-exclamation.png
 
 
-# dialog box images
+# dialogue box images
 # -----------------
 
 # about box - CodeSnip icon
@@ -146,6 +146,6 @@ Res\Img\Egg\play-btn-hover.png
 Res\Img\Egg\doggy-pics.png
 Res\Img\Egg\blue-paper.png
 
-# donate dialog - £ sign image
+# donate dialogue - £ sign image
 Res\Img\pound-sign.png
 
