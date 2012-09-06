@@ -86,20 +86,8 @@ Res\HTML\welcome-tplt.html
 # action links
 # ------------
 
-# download / update database
-Res\Img\download.gif
-
 # display quick start help
 Res\Img\help.gif
-
-# show test unit
-Res\Img\viewunit.gif
-
-# comfigure compilers
-Res\Img\configcomp.gif
-
-# test compile
-Res\Img\compile.gif
 
 # edit snippet
 Res\Img\editsnippet.gif
@@ -115,13 +103,6 @@ Res\Img\led-green.png
 Res\Img\led-off.png
 Res\Img\led-red.png
 Res\Img\led-yellow.png
-
-
-# warning and information "icons"
-# -------------------------------
-
-Res\Img\symbol-information.png
-Res\Img\symbol-exclamation.png
 
 
 # dialogue box images
