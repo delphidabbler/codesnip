@@ -50,7 +50,6 @@ type
     frRTF: TRTFPreviewFrame;
     frHTML: THTMLPreviewFrame;
     frText: TTextPreviewFrame;
-    ilPreview: TImageList;
     miCopy: TMenuItem;
     miSelectAll: TMenuItem;
     mnuPreview: TPopupMenu;

@@ -68,7 +68,6 @@ type
     edName: TEdit;
     edSourceCode: TMemo;
     edUnit: TEdit;
-    ilMain: TImageList;
     lbCompilers: TListBox;
     lblCategories: TLabel;
     lblCompilers: TLabel;
