@@ -39,7 +39,6 @@ type
     actConvertToPlainText: TAction;
     actConvertToREML: TAction;
     tcEditMode: TTabControl;
-    ilEditor: TImageList;
     actCut: TEditCut;
     actCopy: TEditCopy;
     actPaste: TEditPaste;

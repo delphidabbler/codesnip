@@ -199,7 +199,6 @@ type
     splitVert: TSplitter;
     tbarMain: TToolBar;
     tbAddSnippet: TToolButton;
-    tbCopy: TToolButton;
     tbDeleteSnippet: TToolButton;
     tbEditSnippet: TToolButton;
     tbFindClear: TToolButton;
@@ -214,7 +213,6 @@ type
     tbSaveUnit: TToolButton;
     tbSelectSnippets: TToolButton;
     tbSpacer1: TToolButton;
-    tbSpacer2: TToolButton;
     tbSpacer3: TToolButton;
     tbSpacer4: TToolButton;
     tbSpacer5: TToolButton;
