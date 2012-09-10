@@ -142,25 +142,10 @@ uses
   // Delphi
   SysUtils, Windows, Menus,
   // Project
-  UAppInfo, UBaseObjects, UFontHelper, UKeysHelper, UMenus, UNulFormAligner,
-  UStrUtils;
+  UAppInfo, UBaseObjects, UClassHelpers, UFontHelper, UKeysHelper, UMenus,
+  UNulFormAligner, UStrUtils;
 
 {$R *.dfm}
-
-type
-  ///  <summary>Class helper that provides information about, and access to, the
-  ///  protected PopupMenu property of TControl.</summary>
-  TControlHelper = class helper for TControl
-  public
-    ///  <summary>Gets reference to pop-up menu assigned to protected PopupMenu
-    ///  property.</summary>
-    function GetPopupMenu: TPopupMenu;
-    ///  <summary>Checks if protected PopupMenu property is assigned.</summary>
-    function HasPopupMenu: Boolean;
-    ///  <summary>Refreshes control's action. Any changes in action that affect
-    ///  state of control are reflected in control.</summary>
-    procedure RefreshAction;
-  end;
 
 { TBaseForm }
 
@@ -315,24 +300,6 @@ end;
 procedure TBaseForm.WMAfterShow(var Msg: TMessage);
 begin
   AfterShowForm;
-end;
-
-{ TControlHelper }
-
-function TControlHelper.GetPopupMenu: TPopupMenu;
-begin
-  Result := PopupMenu;
-end;
-
-function TControlHelper.HasPopupMenu: Boolean;
-begin
-  Result := Assigned(PopupMenu);
-end;
-
-procedure TControlHelper.RefreshAction;
-begin
-  if Assigned(Action) then
-    ActionChange(Action, False);
 end;
 
 end.
