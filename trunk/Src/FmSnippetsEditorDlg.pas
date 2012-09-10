@@ -26,9 +26,9 @@ uses
   // Project
   ActiveText.UMain, Compilers.UGlobals, DB.USnippet, FmGenericOKDlg,
   FrBrowserBase, FrFixedHTMLDlg, FrHTMLDlg, UBaseObjects, UCategoryListAdapter,
-  UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, ULEDImageList,
-  UMemoCaretPosDisplayMgr, UMemoHelper, USnipKindListAdapter,
-  USnippetsChkListMgr, UUnitsChkListMgr, FmSnippetsEditorDlg.FrActiveTextEditor;
+  UCompileMgr, UCompileResultsLBMgr, UCSSBuilder, UMemoCaretPosDisplayMgr,
+  UMemoHelper, USnipKindListAdapter, USnippetsChkListMgr, UUnitsChkListMgr,
+  FmSnippetsEditorDlg.FrActiveTextEditor;
 
 
 type
@@ -56,8 +56,8 @@ type
     btnAddUnit: TButton;
     btnDependencies: TButton;
     btnCompile: TButton;
-    btnSetAllQuery: TBitBtn;
-    btnSetAllSuccess: TBitBtn;
+    btnSetAllQuery: TButton;
+    btnSetAllSuccess: TButton;
     btnViewExtra: TButton;
     btnViewTestUnit: TButton;
     cbCategories: TComboBox;
@@ -150,7 +150,6 @@ type
     fUnitsCLBMgr: TUnitsChkListMgr; // Manages units check list box
     fCompilersLBMgr:
       TCompileResultsLBMgr;         // Manages compilers list box
-    fImages: TLEDImageList;         // Image list containing LEDs
     fSourceMemoHelper: TMemoHelper; // Helper for working with source code memo
     fMemoCaretPosDisplayMgr: TMemoCaretPosDisplayMgr;
                                     // Manages display of memo caret positions
@@ -695,9 +694,7 @@ begin
   fCompilersLBMgr := TCompileResultsLBMgr.Create(
     lbCompilers, fCompileMgr.Compilers
   );
-  fImages := TLEDImageList.Create(Self);
   fSourceMemoHelper := TMemoHelper.Create(edSourceCode);
-  alMain.Images := fImages;
 end;
 
 procedure TSnippetsEditorDlg.FormDestroy(Sender: TObject);

@@ -19,7 +19,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       Top = 0
       Width = 662
       Height = 504
-      ActivePage = tsReferences
+      ActivePage = tsCode
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
@@ -359,32 +359,30 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           ItemHeight = 28
           TabOrder = 0
         end
-        object btnSetAllSuccess: TBitBtn
+        object btnSetAllSuccess: TButton
           Left = 203
           Top = 22
           Width = 141
           Height = 25
           Action = actSetAllSuccess
-          Caption = 'Set All To &Success'
           DoubleBuffered = True
           ParentDoubleBuffered = False
           TabOrder = 1
         end
         object btnCompile: TButton
-          Left = 203
+          Left = 204
           Top = 84
           Width = 140
           Height = 25
           Action = actCompile
           TabOrder = 3
         end
-        object btnSetAllQuery: TBitBtn
+        object btnSetAllQuery: TButton
           Left = 203
           Top = 53
           Width = 141
           Height = 25
           Action = actSetAllQuery
-          Caption = 'Set All To &Query'
           DoubleBuffered = True
           ParentDoubleBuffered = False
           TabOrder = 2
