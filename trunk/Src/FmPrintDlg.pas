@@ -200,6 +200,9 @@ var
   TxtRect: TRect;     // rectangle bounding the printer name text
   PrnName: string;    // name of printer being displayed
   TextH: Integer;     // height of printer name text in combo canvas
+const
+  // Map of normal and default printer images indexes in image list.
+  PrinterImgIds: array[Boolean] of Integer = (24, 40);
 begin
   // Record various useful values
   Combo := Control as TComboBox;
@@ -240,7 +243,7 @@ begin
   // standard printer glyph is at index 0: Ord(False)
   // default printer glyph is at index 1: Ord(True)
   ilPrinters.Draw(
-    Canvas, ImgRect.Left, ImgRect.Top, Ord(IsDefaultPrinter(PrnName))
+    Canvas, ImgRect.Left, ImgRect.Top, PrinterImgIds[IsDefaultPrinter(PrnName)]
   );
 
   // Draw printer name
