@@ -49,6 +49,9 @@ type
     ///  <summary>Action handler that displays RSS feed in default web browser.
     ///  </summary>
     procedure actRSSFeedExecute(Sender: TObject);
+    ///  <summary>Form creation handler. Loads image list from resources.
+    ///  </summary>
+    procedure FormCreate(Sender: TObject);
   strict private
     ///  <summary>Loads news from RSS feed, converts to HTML and displays in
     ///  browser control.</summary>
@@ -85,7 +88,7 @@ type
     ///  <summary>Initialises form's controls.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
     procedure InitForm; override;
-    ///  <summary>Loads new from RSS feed after form is displayed.</summary>
+    ///  <summary>Loads news from RSS feed after form is displayed.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
     procedure AfterShowForm; override;
   public
@@ -101,10 +104,11 @@ implementation
 
 uses
   // Delphi
-  SysUtils, ExtActns,
+  SysUtils, ExtActns, Windows, Graphics,
   // Project
-  FmPreferencesDlg, FrNewsPrefs, UCtrlArranger, UHTMLDetailUtils, UHTMLUtils,
-  UIStringList, UPreferences, UStrUtils, Web.UInfo, Web.UXMLRequestor;
+  FmPreferencesDlg, FrNewsPrefs, UClassHelpers, UCtrlArranger, UHTMLDetailUtils,
+  UHTMLUtils, UIStringList, UPreferences, UStrUtils, Web.UInfo,
+  Web.UXMLRequestor;
 
 {$R *.dfm}
 
@@ -269,6 +273,12 @@ begin
     finally
       Free;
     end;
+end;
+
+procedure TNewsDlg.FormCreate(Sender: TObject);
+begin
+  ilActions.LoadFromResource(RT_RCDATA, 'ACTIONIMAGES', 16, clFuchsia);
+  RefreshActions; // ensure control glyphs are updated with loaded images
 end;
 
 function TNewsDlg.GetMaxNewsAge: Integer;
