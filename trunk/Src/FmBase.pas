@@ -73,9 +73,6 @@ type
     ///  or any of its parent controls.</summary>
     procedure ActivateContextMenu;
   strict protected
-    ///  <summary>Refreshes all controls to reflect any changes in associated
-    ///  actions.</summary>
-    procedure RefreshActions;
     ///  <summary>Overrides window creation parameters to set window class name
     ///  to that provided by virtual WindowClassName method.</summary>
     procedure CreateParams(var Params: TCreateParams); override;
@@ -270,15 +267,6 @@ begin
   Assert(Supports(Self, INoPublicConstruct), ClassName + '.InternalCreate: '
     + 'Form''s protected constructor can''t be called');
   inherited Create(AOwner);
-end;
-
-procedure TBaseForm.RefreshActions;
-var
-  Idx: Integer; // loops through all controls
-begin
-  for Idx := 0 to Pred(ComponentCount) do
-    if Components[Idx] is TControl then
-      (Components[Idx] as TControl).RefreshAction;
 end;
 
 function TBaseForm.WindowClassName: string;

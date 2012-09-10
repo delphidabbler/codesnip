@@ -35,6 +35,9 @@ type
     ///  <summary>Refreshes control's action. Any changes in action that affect
     ///  state of control are reflected in control.</summary>
     procedure RefreshAction;
+    ///  <summary>Refreshes all owned controls to reflect any changes in their
+    ///  associated actions.</summary>
+    procedure RefreshActions;
   end;
 
 type
@@ -85,6 +88,15 @@ procedure TControlHelper.RefreshAction;
 begin
   if Assigned(Action) then
     ActionChange(Action, False);
+end;
+
+procedure TControlHelper.RefreshActions;
+var
+  Idx: Integer; // loops through all controls
+begin
+  for Idx := 0 to Pred(ComponentCount) do
+    if Components[Idx] is TControl then
+      (Components[Idx] as TControl).RefreshAction;
 end;
 
 { TImageListHelper }
