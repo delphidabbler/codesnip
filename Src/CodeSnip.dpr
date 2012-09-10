@@ -250,6 +250,7 @@ uses
   UHTMLTemplate in 'UHTMLTemplate.pas',
   UHTMLUtils in 'UHTMLUtils.pas',
   UHTTPProtocol in 'UHTTPProtocol.pas',
+  UImageListHelper in 'UImageListHelper.pas',
   UImageTags in 'UImageTags.pas',
   UIniDataLoader in 'UIniDataLoader.pas',
   UInitialLetter in 'UInitialLetter.pas',
