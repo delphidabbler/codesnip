@@ -234,7 +234,7 @@ end;
 constructor TCompilersDlgSearchDirsFrame.Create(AOwner: TComponent);
 begin
   inherited;
-  ilActions.LoadFromResource(RT_RCDATA, 'ACTIONS', 16, clFuchsia);
+  ilActions.LoadFromResource(RT_RCDATA, 'ACTIONIMAGES', 16, clFuchsia);
   RefreshActions;
 end;
 
