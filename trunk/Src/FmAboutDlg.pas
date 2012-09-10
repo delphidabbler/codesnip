@@ -252,6 +252,7 @@ procedure TAboutDlg.ConfigForm;
     }
   begin
     Result := TPathInfoBox.CreateParented(tsPaths.Handle);
+    Result.Parent := tsPaths;
     Result.SetBounds(8, 8, tsPaths.ClientWidth - 16, 0);
     Result.Caption := Caption;
     Result.Path := Path;
@@ -577,7 +578,7 @@ begin
   fPathLbl.EllipsisPosition := epPathEllipsis;
   fPathLbl.Width := Self.Width - 16;
   fPathLbl.Caption := ' ';
-  fPathLbl.Transparent := False;
+  fPathLbl.Transparent := True;
   fPathLbl.ShowHint := True;
   // Create and setup view button
   fViewBtn := TButton.Create(Self);
