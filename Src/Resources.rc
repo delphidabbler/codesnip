@@ -32,6 +32,13 @@ EMBARCADERO BITMAP "Res/Img/Embarcadero.bmp"
 */
 LEDS RCDATA "Res/Img/LEDs32.bmp"
 
+/*
+  Images used for program's actions in menus, toolbars, buttons etc.
+  Note: added to RCDATA instead of BITMAP resources since the resource compiler
+  doesn't recognise the 32 bit bitmap file type, which this is.
+*/
+ACTIONIMAGES RCDATA "Res/Img/ActionImages.bmp"
+
 
 /*
   Check boxes used in treeviews
