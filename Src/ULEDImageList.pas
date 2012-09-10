@@ -58,7 +58,7 @@ implementation
 
 uses
   // Project
-  UImageListHelper;
+  UClassHelpers;
 
 
 {

@@ -375,6 +375,7 @@
 			<DCCReference Include="UBrowseProtocol.pas"/>
 			<DCCReference Include="UCategoryAction.pas"/>
 			<DCCReference Include="UCategoryListAdapter.pas"/>
+			<DCCReference Include="UClassHelpers.pas"/>
 			<DCCReference Include="UClipboardHelper.pas"/>
 			<DCCReference Include="UCodeImportExport.pas"/>
 			<DCCReference Include="UCodeImportMgr.pas"/>
@@ -441,7 +442,6 @@
 			<DCCReference Include="UHTMLTemplate.pas"/>
 			<DCCReference Include="UHTMLUtils.pas"/>
 			<DCCReference Include="UHTTPProtocol.pas"/>
-			<DCCReference Include="UImageListHelper.pas"/>
 			<DCCReference Include="UImageTags.pas"/>
 			<DCCReference Include="UIniDataLoader.pas"/>
 			<DCCReference Include="UInitialLetter.pas"/>

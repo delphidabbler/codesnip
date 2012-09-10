@@ -8,12 +8,11 @@
  * $Rev$
  * $Date$
  *
- * Provides a class helper for TCustomImageList that adds a method to load
- * images from any resource type.
+ * Provides various class helpers for VCL classes.
 }
 
 
-unit UImageListHelper;
+unit UClassHelpers;
 
 
 interface
