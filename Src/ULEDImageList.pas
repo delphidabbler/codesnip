@@ -42,7 +42,7 @@ type
       }
   public
     constructor Create(AOwner: TComponent); override;
-      {Class constructor. Sets up object and reads images from resources.
+      {Constructor. Sets up object and reads images from resources.
       }
     procedure Draw(const Canvas: TCanvas; const TopLeft: TPoint;
       const CompRes: TCompileResult); overload;
@@ -55,6 +55,10 @@ type
 
 
 implementation
+
+uses
+  // Project
+  UImageListHelper;
 
 
 {
@@ -88,61 +92,12 @@ begin
 end;
 
 constructor TLEDImageList.Create(AOwner: TComponent);
-  {Class constructor. Sets up object and reads images from resources.
+  {Constructor. Sets up object and reads images from resources.
   }
-var
-  BmpStrip: TBitmap;    // strip containg all bitmaps from resources
-  LEDBmp: TBitmap;      // a bitmap of a single LED
-  RS: TResourceStream;  // stream used to resources
-  LeftOffset: Integer;  // left offset of a bitmap in "strip"
-  TopOffset: Integer;   // top offset of a bitmap in "strip"
 begin
   inherited;
-  // Set required size of images in image list
-  Width := 18;
-  Height := 18;
-  // Load "strip" of all LED bitmaps from resources.
-  // note that we load from RCDATA since bitmap is 32 bit and resource compiler
-  // won't recognise this as valid if placed in a BITMAP resource
-  BmpStrip := TBitmap.Create;
-  try
-    RS := TResourceStream.Create(HInstance, 'LEDS', RT_RCDATA);
-    try
-      BmpStrip.LoadFromStream(RS);
-    finally
-      FreeAndNil(RS);
-    end;
-    // Split strip up into individual bitmaps and load them into image list
-    // create bitmap of correct size and bit depth: we re-use it for each bitmap
-    LEDBmp := TBitmap.Create;
-    try
-      LEDBmp.Width := Width;
-      LEDBmp.Height := Height;
-      LEDBmp.PixelFormat := BmpStrip.PixelFormat;
-      // scan across then down bitmaps: works for 1*4 or 2*2 bitmaps
-      TopOffset := 0;
-      while TopOffset < BmpStrip.Height do
-      begin
-        LeftOffset := 0;
-        while LeftOffset < BmpStrip.Width do
-        begin
-          // copy the bitmap from the "strip"
-          LEDBmp.Canvas.CopyRect(
-            Rect(0, 0, Width, Height),
-            BmpStrip.Canvas,
-            Bounds(LeftOffset, TopOffset, Width, Height)
-          );
-          Self.AddMasked(LEDBmp, clFuchsia);
-          Inc(LeftOffset, Width);
-        end;
-        Inc(TopOffset, Height);
-      end;
-    finally
-      FreeAndNil(LEDBmp);
-    end;
-  finally
-    FreeAndNil(BmpStrip);
-  end;
+  // Loads images: uses class helper method from TImageListHelper
+  LoadFromResource(RT_RCDATA, 'LEDS', 18, clFuchsia);
 end;
 
 procedure TLEDImageList.Draw(const Canvas: TCanvas; const TopLeft: TPoint;
