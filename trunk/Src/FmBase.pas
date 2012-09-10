@@ -73,6 +73,9 @@ type
     ///  or any of its parent controls.</summary>
     procedure ActivateContextMenu;
   strict protected
+    ///  <summary>Refreshes all controls to reflect any changes in associated
+    ///  actions.</summary>
+    procedure RefreshActions;
     ///  <summary>Overrides window creation parameters to set window class name
     ///  to that provided by virtual WindowClassName method.</summary>
     procedure CreateParams(var Params: TCreateParams); override;
@@ -154,6 +157,9 @@ type
     function GetPopupMenu: TPopupMenu;
     ///  <summary>Checks if protected PopupMenu property is assigned.</summary>
     function HasPopupMenu: Boolean;
+    ///  <summary>Refreshes control's action. Any changes in action that affect
+    ///  state of control are reflected in control.</summary>
+    procedure RefreshAction;
   end;
 
 { TBaseForm }
@@ -281,6 +287,15 @@ begin
   inherited Create(AOwner);
 end;
 
+procedure TBaseForm.RefreshActions;
+var
+  Idx: Integer; // loops through all controls
+begin
+  for Idx := 0 to Pred(ComponentCount) do
+    if Components[Idx] is TControl then
+      (Components[Idx] as TControl).RefreshAction;
+end;
+
 function TBaseForm.WindowClassName: string;
 var
   PostfixName: string;  // Postfix to name, based on form's class name
@@ -312,6 +327,12 @@ end;
 function TControlHelper.HasPopupMenu: Boolean;
 begin
   Result := Assigned(PopupMenu);
+end;
+
+procedure TControlHelper.RefreshAction;
+begin
+  if Assigned(Action) then
+    ActionChange(Action, False);
 end;
 
 end.
