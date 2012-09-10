@@ -24,7 +24,7 @@ uses
   Buttons, StdCtrls, Forms, Controls, ExtCtrls, Classes,
   // Project
   FmGenericViewDlg, FrBrowserBase, FrRSSNews, UBaseObjects, UExceptions, URSS20,
-  UXMLDocumentEx;
+  UXMLDocumentEx, ActnList, ImgList;
 
 
 type
@@ -34,18 +34,21 @@ type
     Dialog box that displays news items from CodeSnip's RSS news feed.
   }
   TNewsDlg = class(TGenericViewDlg, INoPublicConstruct)
+    actConfig: TAction;
+    actRSSFeed: TAction;
+    alMain: TActionList;
+    btnConfig: TButton;
     btnRSSFeed: TBitBtn;
     frmHTML: TRSSNewsFrame;
+    ilActions: TImageList;
     lblDays: TLabel;
     pnlTop: TPanel;
-    btnConfig: TButton;
-    ///  <summary>RSS Feed button click handler. Displays RSS feed in default
-    ///  web browser.</summary>
-    procedure btnRSSFeedClick(Sender: TObject);
-    ///  <summary>Change button click handler. Displays news prefs page of
+    ///  <summary>Configure action handler. Displays news prefs page of
     ///  Preferences dialog box to enable number of days to display in news
-    ///  feed to be changed.</summary>
-    procedure btnConfigClick(Sender: TObject);
+    procedure actConfigExecute(Sender: TObject);
+    ///  <summary>Action handler that displays RSS feed in default web browser.
+    ///  </summary>
+    procedure actRSSFeedExecute(Sender: TObject);
   strict private
     ///  <summary>Loads news from RSS feed, converts to HTML and displays in
     ///  browser control.</summary>
@@ -108,6 +111,31 @@ uses
 
 { TNewsDlg }
 
+procedure TNewsDlg.actConfigExecute(Sender: TObject);
+var
+  CurrentNewsAge: Integer;
+begin
+  CurrentNewsAge := GetMaxNewsAge;
+  if TPreferencesDlg.Execute(Self, [TNewsPrefsFrame]) then
+  begin
+    if CurrentNewsAge <> GetMaxNewsAge then
+      LoadNews;
+  end;
+end;
+
+procedure TNewsDlg.actRSSFeedExecute(Sender: TObject);
+var
+  BrowseAction: TBrowseURL; // action that displays RSS feed URL in browser
+begin
+  BrowseAction := TBrowseURL.Create(nil);
+  try
+    BrowseAction.URL := TWebInfo.NewsFeedURL(GetMaxNewsAge);
+    BrowseAction.Execute;
+  finally
+    BrowseAction.Free;
+  end;
+end;
+
 procedure TNewsDlg.AfterShowForm;
 begin
   LoadNews;
@@ -120,31 +148,6 @@ begin
   lblDays.Left := 0;
   pnlTop.ClientHeight := TCtrlArranger.TotalControlHeight(pnlTop) + 8;
   btnRSSFeed.Top := btnClose.Top;
-end;
-
-procedure TNewsDlg.btnConfigClick(Sender: TObject);
-var
-  CurrentNewsAge: Integer;
-begin
-  CurrentNewsAge := GetMaxNewsAge;
-  if TPreferencesDlg.Execute(Self, [TNewsPrefsFrame]) then
-  begin
-    if CurrentNewsAge <> GetMaxNewsAge then
-      LoadNews;
-  end;
-end;
-
-procedure TNewsDlg.btnRSSFeedClick(Sender: TObject);
-var
-  BrowseAction: TBrowseURL; // action that displays RSS feed URL in browser
-begin
-  BrowseAction := TBrowseURL.Create(nil);
-  try
-    BrowseAction.URL := TWebInfo.NewsFeedURL(GetMaxNewsAge);
-    BrowseAction.Execute;
-  finally
-    BrowseAction.Free;
-  end;
 end;
 
 procedure TNewsDlg.ConfigForm;
