@@ -46,6 +46,7 @@ type
     procedure btnSetupClick(Sender: TObject);
     procedure cbPrintersDrawItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
+    procedure FormCreate(Sender: TObject);
   strict private
     procedure PopulatePrinterList;
       {Stores name of each installed printer in combo box and selects default
@@ -78,8 +79,8 @@ uses
   // Delphi
   Printers, Graphics,
   // Project
-  FmPreferencesDlg, FrPrintingPrefs, UConsts, UMessageBox, UPageSetupDlgMgr,
-  UPrintInfo, UStructs, UStrUtils;
+  FmPreferencesDlg, FrPrintingPrefs, UClassHelpers, UConsts, UMessageBox,
+  UPageSetupDlgMgr, UPrintInfo, UStructs, UStrUtils;
 
 
 {$R *.dfm}
@@ -269,6 +270,12 @@ begin
     finally
       Free;
     end;
+end;
+
+procedure TPrintDlg.FormCreate(Sender: TObject);
+begin
+  inherited;
+  ilPrinters.LoadFromResource(RT_RCDATA, 'ACTIONIMAGES', 16, clFuchsia);
 end;
 
 procedure TPrintDlg.InitForm;

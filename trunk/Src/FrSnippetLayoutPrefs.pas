@@ -83,7 +83,9 @@ implementation
 
 uses
   // Delphi
-  FmPreferencesDlg, UCtrlArranger;
+  Windows, Graphics,
+  // Project
+  FmPreferencesDlg, UClassHelpers, UCtrlArranger;
 
 {$R *.dfm}
 
@@ -255,6 +257,8 @@ var
   SKInfo: TSnippetKindInfo;
 begin
   inherited;
+  ilFrame.LoadFromResource(RT_RCDATA, 'ACTIONIMAGES', 16, clFuchsia);
+  RefreshActions;
   HelpKeyword := 'SnippetLayoutPrefs';
   fPageStructs := TSnippetPageStructures.Create;
   for SKInfo in TSnippetKindInfoList.Items do

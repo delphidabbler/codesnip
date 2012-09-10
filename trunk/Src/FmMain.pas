@@ -405,15 +405,15 @@ implementation
 
 uses
   // Delphi
-  Windows,
+  Windows, Graphics,
   // Project
   DB.UCategory, DB.UMain, DB.USnippet, FmSplash, FmTrappedBugReportDlg,
-  FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo, UCodeShareMgr,
-  UCommandBars, UConsts, UCopyInfoMgr, UCopySourceMgr, UDatabaseLoader,
-  UDatabaseLoaderUI, UDetailTabAction, UEditSnippetAction, UExceptions,
-  UHelpMgr, UHistoryMenus, UKeysHelper, UMessageBox, UNotifier, UNulDropTarget,
-  UPrintMgr, UQuery, USaveSnippetMgr, USaveUnitMgr, USelectionIOMgr, UUserDBMgr,
-  UView, UViewItemAction, UWBExternal, Web.UInfo;
+  FmWaitDlg, IntfFrameMgrs, UActionFactory, UAppInfo, UClassHelpers,
+  UCodeShareMgr, UCommandBars, UConsts, UCopyInfoMgr, UCopySourceMgr,
+  UDatabaseLoader, UDatabaseLoaderUI, UDetailTabAction, UEditSnippetAction,
+  UExceptions, UHelpMgr, UHistoryMenus, UKeysHelper, UMessageBox, UNotifier,
+  UNulDropTarget, UPrintMgr, UQuery, USaveSnippetMgr, USaveUnitMgr,
+  USelectionIOMgr, UUserDBMgr, UView, UViewItemAction, UWBExternal, Web.UInfo;
 
 
 {$R *.dfm}
@@ -1466,6 +1466,10 @@ var
 begin
   try
     inherited;
+    // Set up action image list
+    ilMain.LoadFromResource(RT_RCDATA, 'ACTIONIMAGES', 16, clFuchsia);
+    RefreshActions;
+
     // Set window caption
     Application.Title := TAppInfo.ProgramCaption;
     Caption := TAppInfo.ProgramCaption;
