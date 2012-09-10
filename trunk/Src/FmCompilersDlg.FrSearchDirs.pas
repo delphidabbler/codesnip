@@ -94,6 +94,7 @@ type
     ///  </summary>
     procedure Initialise; override;
   public
+    constructor Create(AOwner: TComponent); override;
     ///  <summary>Arranges controls in frame.</summary>
     procedure ArrangeControls; override;
     ///  <summary>Updates current compiler object with edited information.
@@ -107,9 +108,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils,
+  SysUtils, Windows, Graphics,
   // Project
-  UBrowseForFolderDlg, UCtrlArranger, UStrUtils;
+  UBrowseForFolderDlg, UClassHelpers, UCtrlArranger, UStrUtils;
 
 {$R *.dfm}
 
@@ -228,6 +229,13 @@ begin
     edPath.Text := lbPaths.Items[lbPaths.ItemIndex]
   else
     edPath.Text := '';
+end;
+
+constructor TCompilersDlgSearchDirsFrame.Create(AOwner: TComponent);
+begin
+  inherited;
+  ilActions.LoadFromResource(RT_RCDATA, 'ACTIONS', 16, clFuchsia);
+  RefreshActions;
 end;
 
 procedure TCompilersDlgSearchDirsFrame.Initialise;
