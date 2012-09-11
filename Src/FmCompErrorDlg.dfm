@@ -59,24 +59,18 @@ inherited CompErrorDlg: TCompErrorDlg
       Font.Height = -11
       Font.Name = 'Tahoma'
       Font.Style = []
-      Images = ilCompilers
       StartMargin = 4
       SoftTop = True
       Style = tsSoftTabs
       TabPosition = tpTop
       OnChange = tsCompilersChange
-      OnGetImageIndex = tsCompilersGetImageIndex
     end
   end
   inherited btnHelp: TButton
     Visible = False
   end
-  object ilCompilers: TImageList
-    Left = 16
-    Top = 48
-  end
   object alTabs: TActionList
-    Left = 48
+    Left = 16
     Top = 48
     object actNextTab: TAction
       Tag = 1
