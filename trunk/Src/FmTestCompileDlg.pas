@@ -25,10 +25,8 @@ uses
   ULEDImageList;
 
 type
-  ///  <summary>
-  ///  Implements a dialog box that test compiles a snippet and displays the
-  ///  results.
-  ///  </summary>
+  ///  <summary>Implements a dialogue box that test compiles a snippet and
+  ///  displays the results.</summary>
   TTestCompileDlg = class(TGenericViewDlg, INoPublicConstruct)
     sbCompilers: TScrollBox;
     lblSnippetName: TLabel;
@@ -40,7 +38,7 @@ type
     actScrollLineDown: TAction;
     btnViewErrors: TButton;
     actViewErrors: TAction;
-    ///  <summary>Instantiates owned object and notes dialog initialising.
+    ///  <summary>Instantiates owned object and notes dialogue initialising.
     ///  </summary>
     procedure FormCreate(Sender: TObject);
     ///  <summary>Tidies up form: frees owned object.</summary>
@@ -55,7 +53,7 @@ type
     procedure actScrollLineDownExecute(Sender: TObject);
     ///  <summary>Updates enabled state of View Errors action.</summary>
     procedure actViewErrorsUpdate(Sender: TObject);
-    ///  <summary>Displays any compile errors in dialog box.</summary>
+    ///  <summary>Displays any compile errors in a dialogue box.</summary>
     procedure actViewErrorsExecute(Sender: TObject);
   strict private
     type
@@ -70,7 +68,7 @@ type
           fCompileResult: TCompileResult;
         class var
           ///  <summary>Reference to image list containing images of compile
-          ///  result LED.</summary>
+          ///  result LEDs.</summary>
           fLEDs: TLEDImageList;
       strict private
         ///  <summary>Write accessor for Compiler property.</summary>
@@ -99,8 +97,9 @@ type
         ///  <summary>Object constructor override. Sets default property values.
         ///  </summary>
         constructor Create(AOwner: TComponent); override;
-        ///  <summary>Override of inherited method to ignore any given height
-        ///  and replace it with calculated height.</summary>
+        ///  <summary>Override of inherited method to set bounds of control.
+        ///  Ignores height AHeight and replaces it with calculated height.
+        ///  </summary>
         procedure SetBounds(ALeft, ATop, AWidth, AHeight: Integer); override;
         ///  <summary>Reference to compiler whose info is displayed.</summary>
         property Compiler: ICompiler read fCompiler write SetCompiler;
@@ -120,11 +119,12 @@ type
       fCompileMgr: TCompileMgr;
       ///  <summary>List of compiler controls to be displayed.</summary>
       fCompilerCtrlList: TCompilerCtrls;
-      ///  <summary>Flag true if form is initialising. Set to false after
+      ///  <summary>Flag that informs if form is initialising, i.e. performing
+      ///  test compile. Set to True when form is created and to False after
       ///  compilation complete and results displayed.</summary>
       fInitialising: Boolean;
-    ///  <summary>Creates all required compiler controls and stores in list.
-    ///  </summary>
+    ///  <summary>Creates all required compiler controls and stores them in
+    ///  list.</summary>
     procedure CreateCompilerCtrls;
     ///  <summary>Displays results of test compilation.</summary>
     procedure DisplayCompileResults(const Compilers: ICompilers);
@@ -140,7 +140,7 @@ type
     ///  <remarks>Called from ancestor class.</remarks>
     procedure AfterShowForm; override;
   public
-    ///  <summary>Displays dialog box that performs test compilation and
+    ///  <summary>Displays dialogue box that performs test compilation and
     ///  displays results.</summary>
     ///  <param name="AOwner">TComponent [in] Reference to any owning control.
     ///  </param>
@@ -372,20 +372,16 @@ end;
 
 function TTestCompileDlg.TCompilerCtrl.GetHeight: Integer;
 const
-  CompilerGlyphHeight = 24; // estimated height of compiler glyph
-  Padding = 4;              // padding applied to calculated height
+  Padding = 4;  // padding applied to calculated height
 begin
   if not Assigned(fCompiler) then
     Exit(0);
-  Result := Max(
-    CompilerGlyphHeight, Max(Canvas.TextHeight(fCompiler.GetName), fLEDs.Height)
-  ) + Padding;
+  Result := Max(Canvas.TextHeight(fCompiler.GetName), fLEDs.Height) + Padding;
 end;
 
 procedure TTestCompileDlg.TCompilerCtrl.Paint;
 const
-  GlyphLeftOffset = 4;          // left offset of any compiler glyph
-  NameLeftOffset = 28;          // left offset of compiler name text
+  NameLeftOffset = 4;           // left offset of compiler name text
   LEDLeftMargin = 4;            // margin before LED image (after divider)
   LEDRightMargin = 6;           // margin after LED image
   DividerLeftMargin = 2;        // margin before divider bar (after name)
@@ -397,15 +393,13 @@ var
   DividerLeftOffset: Integer;   // left offset of divider bar in control
   DividerRect: TRect;           // rectangle used to display divider bar
   BoundsRect: TRect;            // control's bounding rectangle (control coords)
-  Glyph: TBitmap;               // reference to any compiler glyph
-  Name: string;                 // name of compiler
+  CompilerName: string;         // name of compiler
 begin
   inherited;
   if not Assigned(fCompiler) then
     Exit;
 
-  Glyph := fCompiler.GetGlyph;
-  Name := fCompiler.GetName;
+  CompilerName := fCompiler.GetName;
 
   // Calculate widths and offsets that depend on control width
   LEDLeftOffset := Width - LEDRightMargin - fLEDs.Width;
@@ -415,28 +409,14 @@ begin
   Canvas.Font := Font;
   Canvas.Brush.Color := Color;
 
-  // Draw compiler glyph, if any
-  if Assigned(Glyph) then
-    Canvas.BrushCopy(
-      Bounds(
-        GlyphLeftOffset,
-        (Height - Glyph.Height) div 2,
-        Glyph.Width,
-        Glyph.Height
-      ),
-      Glyph,
-      Rect(0, 0, Glyph.Width, Glyph.Height),
-      clFuchsia
-    );
-
   // Draw compiler name
   NameRect := Bounds(
     NameLeftOffset,
-    (Height - Canvas.TextHeight(Name)) div 2,
+    (Height - Canvas.TextHeight(CompilerName)) div 2,
     MaxNameWidth,
-    Canvas.TextHeight(Name)
+    Canvas.TextHeight(CompilerName)
   );
-  Canvas.TextRect(NameRect, Name, [tfLeft, tfNoPrefix]);
+  Canvas.TextRect(NameRect, CompilerName, [tfLeft, tfNoPrefix]);
 
   // Draw divider
   DividerRect := Bounds(DividerLeftOffset, 0, DividerWidth, Height - 3);
