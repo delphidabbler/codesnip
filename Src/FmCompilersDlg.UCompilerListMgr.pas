@@ -8,10 +8,10 @@
  * $Rev$
  * $Date$
  *
- * Implements a class that manages display of compiler names and glyphs in an
- * owner draw list box.
+ * Implements a class that manages display of compiler names in an owner draw
+ * list box.
  *
- * This is a helper class for TCompilersDlg.
+ * This is a helper unit for TCompilersDlg.
 }
 
 
@@ -29,16 +29,13 @@ uses
 
 
 type
-  ///  <summary>
-  ///  Manages display of compiler names and glyphs in an owner draw list box.
+  ///  <summary>Manages display of compiler names in an owner draw list box.
   ///  </summary>
-  ///  <remarks>
-  ///  This is a helper class for TCompilersDlg.
-  ///  </remarks>
+  ///  <remarks>This is a helper class for TCompilersDlg.</remarks>
   TCompilerListMgr = class(TObject)
   strict private
     ///  <summary>Reference to managed list box.</summary>
-    ///  <remarks>Must be owenr draw.</remarks>
+    ///  <remarks>Must be owner draw.</remarks>
     fLB: TListBox;
     ///  <summary>List of compilers to be displayed in list box.</summary>
     fCompilers: ICompilers;
@@ -57,12 +54,12 @@ type
     ///  with selected list item.</summary>
     function GetSelected: ICompiler;
   public
-    ///  <summary>Object constructor. Sets up object for given list box control
-    ///  and list of compilers.</summary>
+    ///  <summary>Constructs object to manage given list box and compiler list.
+    ///  </summary>
     constructor Create(const LB: TListBox; const Compilers: ICompilers);
     ///  <summary>Initialises list box to display required compilers.</summary>
-    ///  <remarks>This initialisation has to be performed when host for is
-    ///  shown and not before.</remarks>
+    ///  <remarks>This initialisation has to be performed when host is shown and
+    ///  not before.</remarks>
     procedure Initialise;
     ///  <summary>Refreshes display of entire list.</summary>
     procedure Refresh; overload;
@@ -117,9 +114,9 @@ var
   CompID: TCompilerID;  // loops thru supported compilers
 begin
   inherited;
-  // Add empty list items: one per supported compiler
-  // (note we don't need item text since we handle drawing of list items
-  // ourselves and get display details from compiler objects
+  // Add empty list items - one per supported compiler. Note we don't need item
+  // text since we handle drawing of list items ourselves and get details from
+  // compiler objects.
   for CompID := Low(TCompilerID) to High(TCompilerID) do
     fLB.Items.Add('');
   // Select first compiler in list and trigger selection event for it
@@ -135,59 +132,31 @@ end;
 procedure TCompilerListMgr.LBDrawItemHandler(Control: TWinControl;
   Index: Integer; Rect: TRect; State: TOwnerDrawState);
 var
-  LB: TListBox;         // list box being drawn
+  LB: TListBox;         // reference to list box being drawn
   TxtExtent: TSize;     // extent of text to be displayed
   ItemRect: TRectEx;    // rectangle bounding the item being drawn
-  ImgRect: TRectEx;     // bounding rectangle of any glyph
   TxtRect: TRectEx;     // bounding rectangle of text to be drawn
-  Bmp: TBitmap;         // reference to bitmap to be displayed (or nil if none)
-  DrawHeight: Integer;  // total height of drawing (text below bitmap)
   Compiler: ICompiler;  // reference to compiler associated with list item
 begin
-  // Copy item rectangle as extended rect
+  LB := Control as TListBox;
   ItemRect := Rect;
 
-  // Get reference to list box control
-  LB := Control as TListBox;
-
-  // Get reference to compiler object associated with list item and its bitmap
+  // Compiler object associated with list item
   Compiler := fCompilers[TCompilerID(Index)];
-  Bmp := Compiler.GetGlyph;
 
-  // Set font style: bold if compiler available
+  // Use bold font if compiler available
   if Compiler.IsAvailable then
     LB.Canvas.Font.Style := [fsBold]
   else
     LB.Canvas.Font.Style := [];
 
-  // Calculate display rectangles for text and any bitmap
+  // Calculate display rectangles for text
   TxtExtent := LB.Canvas.TextExtent(Compiler.GetName);
-  if Assigned(Bmp) then
-  begin
-    // Bitmap included: bitmap drawn above text and bounding box or both centred
-    // horizontally and vertically
-    DrawHeight := TxtExtent.cy + 2 + Bmp.Height;
-    ImgRect := TRectEx.CreateBounds(
-      (ItemRect.Left + ItemRect.Right - Bmp.Width) div 2,
-      (ItemRect.Top + ItemRect.Bottom - DrawHeight) div 2,
-      Bmp.Width,
-      Bmp.Height
-    );
-    TxtRect := TRectEx.CreateBounds(
-      (ItemRect.Left + ItemRect.Right - TxtExtent.cx) div 2,
-      ImgRect.Bottom + 2,
-      TxtExtent
-    );
-  end
-  else
-  begin
-    // No bitmap: text centred vertically and horizontally
-    TxtRect := TRectEx.CreateBounds(
-      (ItemRect.Left + ItemRect.Right - TxtExtent.cx) div 2,
-      (ItemRect.Top + ItemRect.Bottom - TxtExtent.cy) div 2,
-      TxtExtent
-    );
-  end;
+  TxtRect := TRectEx.CreateBounds(
+    (ItemRect.Left + ItemRect.Right - TxtExtent.cx) div 2,
+    (ItemRect.Top + ItemRect.Bottom - TxtExtent.cy) div 2,
+    TxtExtent
+  );
 
   // Erase background
   LB.Canvas.Pen.Color := LB.Color;
@@ -217,10 +186,8 @@ begin
     // No highlighting: just ensure font colour correct
     LB.Canvas.Font.Color := LB.Font.Color;
 
-  // Draw text and any bitamp
+  // Draw text
   LB.Canvas.TextOut(TxtRect.Left, TxtRect.Top, Compiler.GetName);
-  if Assigned(Bmp) then
-    LB.Canvas.BrushCopy(ImgRect, Bmp, Bmp.Canvas.ClipRect, clFuchsia);
 
   // Draw separator line if item not last one
   if Index < Pred(LB.Count) then

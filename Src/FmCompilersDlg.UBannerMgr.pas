@@ -8,10 +8,10 @@
  * $Rev$
  * $Date$
  *
- * Implements a class that manages display of a compiler name and glyph in a
- * paint box.
+ * Implements a class that manages display of a compiler name on a gradient
+ * filled background in a paint box.
  *
- * This is a helper class for TCompilersDlg.
+ * This is a helper unit for TCompilersDlg.
 }
 
 
@@ -29,12 +29,9 @@ uses
 
 
 type
-  ///  <summary>
-  ///  Manages display of compiler name and glyph in a paint box.
-  ///  </summary>
-  ///  <remarks>
-  ///  This is is a helper class for TCompilersDlg.
-  ///  </remarks>
+  ///  <summary>Manages display of a compiler name on a gradient filled
+  ///  background in a paint box.</summary>
+  ///  <remarks>This is is a helper class for TCompilersDlg.</remarks>
   TCompilerBannerMgr = class(TObject)
   strict private
     ///  <summary>Paint box control being managed.</summary>
@@ -47,17 +44,16 @@ type
     ///  <summary>Handles paint box's OnPaint event by displaying details of
     ///  compiler specified by Compiler property.</summary>
     procedure PaintHandler(Sender: TObject);
-    ///  <summary>Draws compiler name and optional glyph.</summary>
+    ///  <summary>Draws compiler name on gradient filled background.</summary>
     ///  <param name="Canvas">TCanvas [in] Canvas on which to draw.</param>
     ///  <param name="Rect">TRectEx [in] Bounding rectangle of drawing.</param>
     procedure RenderCompilerTitle(const Canvas: TCanvas; const Rect: TRectEx);
   public
-    ///  <summary>Object constructor. Records and sets up given paint box.
-    ///  </summary>
+    ///  <summary>Constructs object for use with given paint box.</summary>
     constructor Create(const PB: TPaintBox);
     ///  <summary>Causes display in paint box to be redrawn.</summary>
     procedure Refresh;
-    ///  <summary>Compiler whose details are to be displayed.</summary>
+    ///  <summary>Compiler whose name is to be displayed.</summary>
     property Compiler: ICompiler read fCompiler write SetCompiler;
   end;
 
@@ -106,63 +102,39 @@ end;
 procedure TCompilerBannerMgr.RenderCompilerTitle(const Canvas: TCanvas;
   const Rect: TRectEx);
   const
-    cLeftMargin = 2;  // margin between edge of canvas and logo or text
-    cLogoPadding = 6; // padding between logo and text
+    LeftMargin = 4;  // margin between edge of canvas and logo or text
   var
-    GradColor1: TColor;     // primary gradient colour
-    GradColor2: TColor;     // secondary gradient colour
-    CompilerLogo: TBitmap;  // glyph of compiler logo or nil
-    CompilerName: string;   // name of compiler to be displayed
-    XOffset: Integer;       // X offset at which next left-aligned drawing done
+    GradColour1: TColor;     // primary gradient colour
+    GradColour2: TColor;     // secondary gradient colour
+    CompilerName: string;    // name of compiler to be displayed
   begin
     CompilerName := fCompiler.GetName;
-    CompilerLogo := fCompiler.GetGlyph;
 
-    // Set up colors and font style for title: depends on compiler availability
+    // set up colours and font style for title: depends on compiler availability
     if fCompiler.IsAvailable then
     begin
-      GradColor1 := clActiveCaption;
-      GradColor2 := clGradientActiveCaption;
+      GradColour1 := clActiveCaption;
+      GradColour2 := clGradientActiveCaption;
       Canvas.Font.Style := [fsBold];
       Canvas.Font.Color := clCaptionText;
     end
     else
     begin
-      GradColor1 := clInactiveCaption;
-      GradColor2 := clGradientInactiveCaption;
+      GradColour1 := clInactiveCaption;
+      GradColour2 := clGradientInactiveCaption;
       Canvas.Font.Style := [fsBold];
       Canvas.Font.Color := clInactiveCaptionText;
     end;
 
-    // Draw gradient filled background rectangle
-    GradientFillCanvas(Canvas, GradColor1, GradColor2, Rect, gdHorizontal);
+    // draw gradient filled background rectangle
+    GradientFillCanvas(Canvas, GradColour1, GradColour2, Rect, gdHorizontal);
 
-    // Ensure that all further drawing on background is transparent
+    // ensure that all further drawing on background is transparent
     Canvas.Brush.Style := bsClear;
 
-    // Draw compiler logo (if present)
-    XOffset := Rect.Left + cLeftMargin;
-    if Assigned(CompilerLogo) then
-    begin
-      // draw the bitmap
-      Canvas.BrushCopy(
-        TRectEx.CreateBounds(
-          XOffset,
-          (Rect.Height - CompilerLogo.Height) div 2,
-          CompilerLogo.Width,
-          CompilerLogo.Height
-        ),
-        CompilerLogo,
-        CompilerLogo.Canvas.ClipRect,
-        clFuchsia // all logo glyphs have fuschia background
-      );
-      // we need to offset text to right of logo
-      XOffset := XOffset + CompilerLogo.Width + cLogoPadding;
-    end;
-
-    // Draw compiler name text, left aligned and vertically centred
+    // draw compiler name text, left aligned and vertically centred
     Canvas.TextOut(
-      XOffset,
+      Rect.Left + LeftMargin,
       (Rect.Height - Canvas.TextHeight(CompilerName)) div 2,
       CompilerName
     );
@@ -175,3 +147,4 @@ begin
 end;
 
 end.
+

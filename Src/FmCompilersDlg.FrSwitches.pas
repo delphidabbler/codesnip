@@ -96,8 +96,8 @@ procedure TCompilersDlgSwitchesFrame.ArrangeControls;
 begin
   TCtrlArranger.SetLabelHeights(Self);
   edSwitch.Top := TCtrlArranger.BottomOf(lblSwitch, 4);
-  lblSwitches.Top := TCtrlArranger.BottomOf(edSwitch, 8);
-  lblExplainSwitches.Top := TCtrlArranger.BottomOf(btnDelete, 8);
+  lblSwitches.Top := TCtrlArranger.BottomOf(edSwitch, 16);
+  lblExplainSwitches.Top := TCtrlArranger.BottomOf(btnDelete, 12);
   lbSwitches.Top := lblExplainSwitches.Top;
   lblSwitches.Top := lbSwitches.Top - lblSwitches.Height - 4;
 end;

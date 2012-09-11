@@ -8,9 +8,9 @@ inherited CompilersDlg: TCompilersDlg
   TextHeight = 13
   inherited pnlBody: TPanel
     Width = 449
-    Height = 249
+    Height = 260
     ExplicitWidth = 449
-    ExplicitHeight = 249
+    ExplicitHeight = 260
     object pbBanner: TPaintBox
       Left = 128
       Top = 0
@@ -29,11 +29,11 @@ inherited CompilersDlg: TCompilersDlg
       Left = 0
       Top = 0
       Width = 121
-      Height = 244
+      Height = 256
       Style = lbOwnerDrawFixed
       Ctl3D = True
       IntegralHeight = True
-      ItemHeight = 48
+      ItemHeight = 36
       ParentCtl3D = False
       TabOrder = 0
     end
@@ -41,17 +41,18 @@ inherited CompilersDlg: TCompilersDlg
       Left = 127
       Top = 29
       Width = 321
-      Height = 212
+      Height = 227
       ActivePage = tsCompiler
       TabOrder = 1
       OnMouseDown = pcCompilerMouseDown
       object tsCompiler: TTabSheet
         Caption = 'Compiler'
+        ExplicitHeight = 184
         inline frmCompiler: TCompilersDlgCompilerFrame
           Left = 0
           Top = 0
           Width = 313
-          Height = 184
+          Height = 199
           Align = alClient
           TabOrder = 0
           ExplicitHeight = 184
@@ -64,11 +65,12 @@ inherited CompilersDlg: TCompilersDlg
       object tsSwitches: TTabSheet
         Caption = 'Switches'
         ImageIndex = 2
+        ExplicitHeight = 184
         inline frmSwitches: TCompilersDlgSwitchesFrame
           Left = 0
           Top = 0
           Width = 313
-          Height = 184
+          Height = 199
           Align = alClient
           TabOrder = 0
           ExplicitHeight = 184
@@ -81,11 +83,12 @@ inherited CompilersDlg: TCompilersDlg
       object tsSearchDirs: TTabSheet
         Caption = 'Search Paths'
         ImageIndex = 3
+        ExplicitHeight = 184
         inline frmSearchDirs: TCompilersDlgSearchDirsFrame
           Left = 0
           Top = 0
           Width = 313
-          Height = 184
+          Height = 199
           Align = alClient
           TabOrder = 0
           ExplicitHeight = 184
@@ -102,15 +105,12 @@ inherited CompilersDlg: TCompilersDlg
       object tsLog: TTabSheet
         Caption = 'Output Log'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
+        ExplicitHeight = 184
         inline frmLog: TCompilersDlgLogFrame
           Left = 0
           Top = 0
           Width = 313
-          Height = 184
+          Height = 199
           Align = alClient
           TabOrder = 0
           ExplicitHeight = 184
