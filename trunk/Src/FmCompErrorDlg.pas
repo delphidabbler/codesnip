@@ -29,17 +29,13 @@ uses
 
 type
 
-  ///  <summary>
-  ///  Implements a dialog box that displays error and warning logs from last
-  ///  test compilation.
-  ///  </summary>
-  ///  <remarks>
-  ///  It is an error if there are no compiler warnings or errors.
+  ///  <summary>Implements a dialogue box that displays error and warning logs
+  ///  from last test compilation.</summary>
+  ///  <remarks>It is an error if there are no compiler warnings or errors.
   ///  </remarks>
   TCompErrorDlg = class(TGenericViewDlg, INoPublicConstruct)
     frmHTML: THTMLTpltDlgFrame;
     tsCompilers: TTabSet;
-    ilCompilers: TImageList;
     alTabs: TActionList;
     actNextTab: TAction;
     actPrevTab: TAction;
@@ -56,27 +52,23 @@ type
     ///  Enables / disables actions that cycle through displayed tags.</summary>
     procedure TabShortcutUpdate(Sender: TObject);
     /// <summary>OnChange event handler for tabset. Displays warnings or errors
-    ///  for newly specified by NewTab parameter.</summary>
+    ///  for compiler related to tab specified by NewTab parameter.</summary>
     ///  <remarks>Tab change is always permitted.</remarks>
     procedure tsCompilersChange(Sender: TObject; NewTab: Integer;
       var AllowChange: Boolean);
-    ///  <summary>Handles tabset's OnGetImageIndex event. Sets ImageIndex to
-    ///  index of compiler glyph in image list for given tab index.</summary>
-    procedure tsCompilersGetImageIndex(Sender: TObject; TabIndex: Integer;
-      var ImageIndex: Integer);
   strict private
     type
-      ///  <summary>Class that analyses compiler logs and extract information
-      ///  required to be displayed in dialog box.</summary>
+      ///  <summary>Class that analyses compiler logs and extracts information
+      ///  required to be displayed in dialogue box.</summary>
       TCompilerLog = class(TObject)
       strict private
-        ///  <summary>Reference to compiler whose log being used.</summary>
+        ///  <summary>Reference to compiler whose log being processed.</summary>
         fCompiler: ICompiler;
         ///  <summary>Records analysed log.</summary>
         fLog: TStrings;
-        ///  <summary>Value of Staus property.</summary>
+        ///  <summary>Value of Status property.</summary>
         fStatus: string;
-        ///  <summary>Analyses compiler log file, extracting require
+        ///  <summary>Analyses compiler log file, extracting required
         ///  information.</summary>
         procedure AnalyseLog;
       public
@@ -84,7 +76,7 @@ type
         constructor Create(Compiler: ICompiler);
         ///  <summary>Tears down object.</summary>
         destructor Destroy; override;
-        ///  <summary>Renders list of required log entries as HTML.</summary>
+        ///  <summary>Renders log entries as HTML.</summary>
         function LogListHTML: string;
         ///  <summary>Text describing log status. Warning or error.</summary>
         property Status: string read fStatus;
@@ -95,11 +87,8 @@ type
     ///  <summary>List of compilers for which errors or warnings are to be
     ///  displayed.</summary>
     fRequiredCompilers: TList<ICompiler>;
-    ///  <summary>Maps compiler ids to index of compiler images in image list.
-    ///  </summary>
-    fCompGlyphIndexes: array[TCompilerId] of Integer;
     ///  <summary>Gets vertical space required to display warnings or error
-    ///  messages in pixels.</summary>
+    ///  messages, in pixels.</summary>
     ///  <remarks>Calculates maximum height of mesages for each required
     ///  compiler.</remarks>
     function GetHTMLHeight: Integer;
@@ -115,7 +104,7 @@ type
     ///  <summary>Arranges controls on form.</summary>
     ///  <remarks>Called from ancestor class.</remarks>
     procedure ArrangeForm; override;
-    ///  <summary>Initialises HTML frame and Sets UI font for tab set tabs.
+    ///  <summary>Initialises HTML frame and sets UI font for tab set tabs.
     ///  </summary>
     ///  <remarks>Called from ancestor class.</remarks>
     procedure ConfigForm; override;
@@ -123,7 +112,7 @@ type
     ///  <remarks>Called from ancestor class.</remarks>
     procedure InitForm; override;
   public
-    ///  <summary>Shows a dialog box that displays error and warning logs for
+    ///  <summary>Shows a dialogue box that displays error and warning logs for
     ///  each compiler that reported errors or warnings when test compiling a
     ///  snippet. There is a tab for each compiler.</summary>
     ///  <param name="AOwner">TComponent [in] Component that owns this form.
@@ -165,7 +154,7 @@ uses
 
 
 resourcestring
-  // Strings for display in dialog
+  // Strings for display in dialogue
   sLogStatusWarning   = 'Warning';
   sLogStatusWarnings  = 'Warnings';
   sLogStatusError     = 'Error';
@@ -177,7 +166,7 @@ resourcestring
 procedure TCompErrorDlg.ArrangeForm;
 begin
   pnlBody.Height := GetHTMLHeight + GetTabsetHeight;
-  // set size of dialog
+  // set size of dialogue
   inherited;
 end;
 
@@ -244,20 +233,11 @@ end;
 procedure TCompErrorDlg.InitForm;
 var
   Compiler: ICompiler;  // references each required compiler
-  Glyph: TBitmap;       // each compiler glyph
 begin
   inherited;
   tsCompilers.Tabs.Clear;
   for Compiler in fRequiredCompilers do
-  begin
-    Glyph := Compiler.GetGlyph;
-    if Assigned(Glyph) then
-      fCompGlyphIndexes[Compiler.GetID] :=
-        ilCompilers.AddMasked(Glyph, Glyph.Canvas.Pixels[0, 0])
-    else
-      fCompGlyphIndexes[Compiler.GetID] := -1;
     tsCompilers.Tabs.Add(' ' + Compiler.GetName + ' ');
-  end;
   tsCompilers.TabIndex := 0;
   LoadHTML(fRequiredCompilers[tsCompilers.TabIndex]);
 end;
@@ -307,12 +287,6 @@ procedure TCompErrorDlg.tsCompilersChange(Sender: TObject; NewTab: Integer;
   var AllowChange: Boolean);
 begin
   LoadHTML(fRequiredCompilers[NewTab]);
-end;
-
-procedure TCompErrorDlg.tsCompilersGetImageIndex(Sender: TObject;
-  TabIndex: Integer; var ImageIndex: Integer);
-begin
-  ImageIndex := fCompGlyphIndexes[fRequiredCompilers[TabIndex].GetID];
 end;
 
 { TCompErrorDlg.TCompilerLog }
