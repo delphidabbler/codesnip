@@ -15,8 +15,8 @@ inherited CompilersDlgSwitchesFrame: TCompilersDlgSwitchesFrame
     WordWrap = True
   end
   object lblSwitches: TLabel
-    Left = 4
-    Top = 45
+    Left = 3
+    Top = 52
     Width = 46
     Height = 13
     Caption = '&Switches:'
@@ -39,10 +39,10 @@ inherited CompilersDlgSwitchesFrame: TCompilersDlgSwitchesFrame
     OnClick = btnDefSwitchesClick
   end
   object lbSwitches: TListBox
-    Left = 4
-    Top = 62
+    Left = 3
+    Top = 69
     Width = 142
-    Height = 95
+    Height = 121
     IntegralHeight = True
     ItemHeight = 13
     TabOrder = 1
