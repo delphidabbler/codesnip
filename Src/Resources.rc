@@ -49,13 +49,13 @@ MODIFIED BITMAP "Res/Img/Modified.bmp"
 /*
   Splash screen image
 */
-SPLASHIMAGE RCDATA "Res/Img/Splash.gif"
+SPLASHIMAGE RCDATA "Res/Img/Branding/Splash.gif"
 
 
 /*
   Program's icon
 */
-MAINICON ICON "Res/Img/CodeSnip.ico"
+MAINICON ICON "Res/Img/Branding/CodeSnip.ico"
 
 
 /*
