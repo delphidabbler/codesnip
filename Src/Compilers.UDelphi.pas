@@ -42,14 +42,9 @@ type
         @return Delphi version number.
       }
   protected
-    function GlyphResourceName: string; override;
-      {Name of any resource containing a "glyph" bitmap for a compiler.
-        @return Resource name or '' if the compiler has no glyph.
-      }
-  protected
     function InstallationRegKey: string; override;
-      {Returns name of registry key where records compiler's installation path
-      is recorded.
+      {Returns name of registry key where compiler's installation path is
+      recorded.
         @return Name of key.
       }
     { IClonable }
@@ -132,24 +127,8 @@ begin
   Result := Format(sDelphiName, [CompilerIDToVerNum]);
 end;
 
-function TDelphiCompiler.GlyphResourceName: string;
-  {Name of any resource containing a "glyph" bitmap for a compiler.
-    @return Resource name or '' if the compiler has no glyph.
-  }
-begin
-  case GetID of
-    ciD2, ciD3: Result := 'DELPHI2AND3';
-    ciD4: Result := 'DELPHI4';
-    ciD5: Result := 'DELPHI5';
-    ciD6: Result := 'DELPHI6';
-    ciD7: Result := 'DELPHI7';
-    else raise EBug.Create(ClassName + '.GlyphResourceName: Invalid ID');
-  end;
-end;
-
 function TDelphiCompiler.InstallationRegKey: string;
-  {Returns name of registry key where records compiler's installation path
-  is recorded.
+  {Returns name of registry key where compiler's installation path is recorded.
     @return Name of key.
   }
 begin
