@@ -14,18 +14,6 @@
 
 
 /*
-  Images representing Delphi compilers
-*/
-DELPHI2AND3 BITMAP "Res/Img/Delphi2_3.bmp"
-DELPHI4 BITMAP "Res/Img/Delphi4.bmp"
-DELPHI5 BITMAP "Res/Img/Delphi5.bmp"
-DELPHI6 BITMAP "Res/Img/Delphi6.bmp"
-DELPHI7 BITMAP "Res/Img/Delphi7.bmp"
-BDS BITMAP "Res/Img/BDS.bmp"
-EMBARCADERO BITMAP "Res/Img/Embarcadero.bmp"
-
-
-/*
   Images representing compiler results as "LEDs"
   Note: added to RCDATA instead of BITMAP resources since the resource compiler
   doesn't recognise the 32 bit bitmap file type, which this is.
