@@ -42,10 +42,6 @@ type
         @return Required major version number.
       }
   strict protected
-    function GlyphResourceName: string; override;
-      {Name of any resource containing a "glyph" bitmap for a compiler.
-        @return Resource name or '' if the compiler has no glyph.
-      }
     function InstallationRegKey: string; override;
       {Returns name of registry key where records compiler's installation path
       is recorded.
@@ -137,18 +133,6 @@ begin
       Result := sDelphiXE2
     else
       Result := Format(sCompilerName, [ProductVersion]);
-  end;
-end;
-
-function TBDSCompiler.GlyphResourceName: string;
-  {Name of any resource containing a "glyph" bitmap for a compiler.
-    @return Resource name or '' if the compiler has no glyph.
-  }
-begin
-  case GetID of
-    ciD2005w32, ciD2006w32, ciD2007, ciD2009w32: Result := 'BDS';
-    ciD2010, ciDXE, ciDXE2: Result := 'EMBARCADERO';
-    else raise EBug.Create(ClassName + '.GlyphResourceName: Invalid ID');
   end;
 end;
 

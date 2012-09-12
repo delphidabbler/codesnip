@@ -9,7 +9,7 @@
  * $Date$
  *
  * Abstract base class for classes that control and provide information about
- * compilers. Provides common functionality and specialised exception.
+ * compilers. Also provides a specialised exception class.
 }
 
 
@@ -43,8 +43,6 @@ type
       {Stores compiler log prefix strings for parsing log file}
     fLastCompileResult: TCompileResult;
       {Result of last compilation}
-    fBitmap: TBitmap;
-      {Glyph reprenting compiler: nil if no glyph}
     fSwitches: string;
       {User defined command line switches}
     fSearchDirs: ISearchDirs;
@@ -87,10 +85,6 @@ type
       {Encoding used for text output by compiler. Descendants can override.
         @return System default ANSI encoding type.
       }
-    function GlyphResourceName: string; virtual;
-      {Name of any resource containing a "glyph" bitmap for a compiler.
-        @return Resource name or '' if the compiler has no glyph.
-      }
     function SearchDirParams: string; virtual; abstract;
       {One of more parameters that define any search directories to be passed
       to compiler on command line.
@@ -108,10 +102,6 @@ type
     function GetIDString: string; virtual; abstract;
       {Provides a non-localisable string that identifies the compiler.
         @return Compiler id string.
-      }
-    function GetGlyph: TBitmap;
-      {Returns reference to any 18x18 bitmap associated with the compiler.
-        @return Reference to bitmap or nil if there is no such bitmap.
       }
     function IsAvailable: Boolean;
       {Tells whether the compiler is installed on this computer and made
@@ -205,14 +195,14 @@ type
       }
   public
     constructor Create;
-      {Class constructor. Sets up object.
+      {Object constructor. Sets up object.
       }
     constructor CreateCopy(const Obj: TCompilerBase);
       {Copy constructor. Creates a new object that is copy of another object.
         @param Obj [in] Compiler object to copy.
       }
     destructor Destroy; override;
-      {Class destructor. Tears down object.
+      {Object destructor. Tears down object.
       }
   end;
 
@@ -228,7 +218,7 @@ type
       {Value of Compiler property}
   public
     constructor Create(const E: ECompilerRunner; const Compiler: string);
-      {Class constructor. Creates exception instance from another exception.
+      {Object constructor. Creates exception instance from another exception.
         @param E [in] Instance of exception that provides information about why
           compiler failed to run.
         @param Compiler [in] Name of compiler that failed to run.
@@ -414,7 +404,6 @@ destructor TCompilerBase.Destroy;
   }
 begin
   fCompileLog.Free;
-  fBitmap.Free;
   inherited;
 end;
 
@@ -496,20 +485,6 @@ begin
   Result := fExecFile;
 end;
 
-function TCompilerBase.GetGlyph: Graphics.TBitmap;
-  {Returns reference to any 18x18 bitmap associated with the compiler.
-    @return Reference to bitmap or nil if there is no such bitmap.
-  }
-begin
-  if not Assigned(fBitmap) and (GlyphResourceName <> '') then
-  begin
-    // Bitmap not yet created: create it and load from resources
-    fBitmap := Graphics.TBitmap.Create;
-    fBitmap.LoadFromResourceName(HInstance, GlyphResourceName);
-  end;
-  Result := fBitmap;
-end;
-
 function TCompilerBase.GetLastCompileResult: TCompileResult;
   {Informs of result of last compilation by this compiler.
     @return Result of last compilation or crQuery of compiler not available.
@@ -545,15 +520,6 @@ function TCompilerBase.GetSwitches: string;
   }
 begin
   Result := fSwitches;
-end;
-
-function TCompilerBase.GlyphResourceName: string;
-  {Name of any resource containing a "glyph" bitmap for a compiler.
-    @return Resource name or '' if the compiler has no glyph.
-  }
-begin
-  // Assume no glyph: descendants override
-  Result := '';
 end;
 
 function TCompilerBase.HasErrorsOrWarnings: Boolean;
@@ -699,7 +665,7 @@ end;
 
 constructor ECompilerError.Create(const E: ECompilerRunner;
   const Compiler: string);
-  {Class constructor. Creates exception instance from another exception.
+  {Object constructor. Creates exception instance from another exception.
     @param E [in] Instance of exception that provides information about why
       compiler failed to run.
     @param Compiler [in] Name of compiler that failed to run.

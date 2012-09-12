@@ -140,10 +140,6 @@ type
       {Provides a non-localisable string that identifies the compiler.
         @return Compiler Id string.
       }
-    function GetGlyph: TBitmap;
-      {Returns reference to any 18x18 bitmap associated with the compiler.
-        @return Reference to bitmap or nil if there is no associated bitmap.
-      }
     function IsAvailable: Boolean;
       {Tells whether the compiler is installed on this computer and made
       available to CodeSnip.
