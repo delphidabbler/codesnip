@@ -328,7 +328,7 @@ License & Disclaimer
 CodeSnip is made available under the terms of the Mozilla Public License v2.0.
 The license is explained in full in the file License.html that is installed with
 CodeSnip. A summary of the license can be viewed from the "Help | License" menu
-option or from the About Box by clicking the "End User License Agreement" link.
+option.
 
 CodeSnip is supplied on an "AS IS" basis, WITHOUT WARRANTY OF ANY KIND, either
 express or implied. See License.html for details.
