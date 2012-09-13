@@ -4,6 +4,30 @@
 ; $Date$
 ; ------------------------------------------------------------------------------
 
+Release v4.0 RC of XX September 2012
+Internal CodeSnip version 3.99.3
++ UI changes:
+  - Welcome page completely revised. It is now split into sections, most of which provide some useful info. It is no longer a program overview.
+  - Many changes to glyphs used in menus and toolbar.
+  - Removed some images that relate to trade marks: in particular PayPal Donate button and Delphi compiler icons previously displayed next to compiler names in various places in UI.
+  - No clicking noise is now issued by UI when main display changes in some circumstances.
+  - Links to external commands and to other snippets re-styled.
+  - Revised and updated program's main icon.
++ Bugs:
+  - #3566426 (http://bit.ly/OmbwTB): About Box Paths Page displays wrongly when Themes off.
++ New Easter Egg.
++ Refactoring and internal code changes, including:
+  - Revised the "external" object that communicates with JavaScript in browser controls.
++ Documentation updated, including:
+  - Help file updated.
++ Changed License:
+  - Excutable version EULA changed to Mozilla Public License v2.0.
+  - Most original source code changed to Mozilla Public License v2.0 from v1.1.
+  - An abbreviated version of license now displayed by installer and license help topic.
+  - License information consolidated into new License.html file.
+  - About box changed accordingly.
+
+
 Release v4.0 beta 2 of 25 August 2012
 Internal CodeSnip version 3.99.2
 + Bug fixes:
