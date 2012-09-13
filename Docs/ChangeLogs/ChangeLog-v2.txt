@@ -1,7 +1,14 @@
 ; ------------------------------------------------------------------------------
-; Change Log for CodeSnip Release 2
+; This Source Code Form is subject to the terms of the Mozilla Public License,
+; v. 2.0. If a copy of the MPL was not distributed with this file, You can
+; obtain one at http://mozilla.org/MPL/2.0/
+;
+; Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+;
 ; $Rev$
 ; $Date$
+;
+; Change Log for CodeSnip Release 2
 ; ------------------------------------------------------------------------------
 
 Un-released v2.4.1 of 13 May 2009
