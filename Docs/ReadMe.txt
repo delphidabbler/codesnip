@@ -151,8 +151,8 @@ CodeSnip's installation program is named codesnip-setup-4.x.x.exe, where x.x
 is the program's minor version number. The install program may be distributed in
 a zip file. If this is the case then extract the install program.
 
-*** NOTE. Thid release candidate version of CodeSnip 4 has a slightly different
-    setup file name: codesnip-setup-4.0-RC.
+*** NOTE. This release candidate version of CodeSnip 4 has a slightly different
+    setup file name: codesnip-setup-4.0-RC.x where x is a number.
 
 Close any running instance of CodeSnip, double click the install program then
 follow the on-screen instructions.
