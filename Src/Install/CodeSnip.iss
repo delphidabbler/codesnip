@@ -43,9 +43,10 @@
 #define AppURL WebURL + "software/codesnip"
 #define InstUninstDir "Uninst"
 
-; For v4 alpha and beta versions only, set version number here
-#define AppVersion "4.0-beta.2"
-#define RealVersion "3.99.2"
+; For v4 release alpha, beta and release candidates only,
+; set version number here
+#define AppVersion "4.0-RC.1"
+#define RealVersion "3.999.1"
 
 ; Creates name of setup file from app name, version and any special build string
 #define CreateSetupName(str fn) \
@@ -77,7 +78,7 @@ SolidCompression=true
 InternalCompressLevel=ultra
 OutputDir={#OutDir}
 OutputBaseFilename={#SetupName}
-; VersionInfoVersion changed for v4 alpha and beta versions only
+; VersionInfoVersion changed for v4 alpha, beta and release candidates only
 ;VersionInfoVersion={#AppVersion}
 VersionInfoVersion={#RealVersion}
 VersionInfoCompany={#Company}
