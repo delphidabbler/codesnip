@@ -11,29 +11,27 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
-Release v4.0 RC of XX September 2012
+Release v4.0 RC 1 of 14 September 2012
 Internal CodeSnip version 3.99.3
 + UI changes:
-  - Welcome page completely revised. It is now split into sections, most of which provide some useful info. It is no longer a program overview.
+  - Welcome page completely revised. Instead of a program overview the page now describes the state of the databases and available compilers and displays help links and a donation request. There are also some links to the about box, news and program updates.
   - Many changes to glyphs used in menus and toolbar.
-  - Removed some images that relate to trade marks: in particular PayPal Donate button and Delphi compiler icons previously displayed next to compiler names in various places in UI.
-  - No clicking noise is now issued by UI when main display changes in some circumstances.
+  - Removed some images that relate to trade marks, i.e. PayPal Donate button and Delphi compiler icons.
+  - No clicking noise is now issued by UI in response to user interaction with Details pane.
   - Links to external commands and to other snippets re-styled.
   - Revised and updated program's main icon.
-+ Bugs:
-  - #3566426 (http://bit.ly/OmbwTB): About Box Paths Page displays wrongly when Themes off.
-+ New Easter Egg.
-+ Refactoring and internal code changes, including:
-  - Revised the "external" object that communicates with JavaScript in browser controls.
-+ Documentation updated, including:
-  - Help file updated.
++ Fixed bug #3566426 (http://bit.ly/OmbwTB): About Box Paths Page displays wrongly when themes not available.
++ Added support for Delphi XE3 compiler. Implements feature request #3566346 (http://bit.ly/SIVpS2).
++ Completely new Easter Egg.
++ Refactoring and internal code changes, including a revision of the "external" object that communicates with JavaScript in browser controls.
 + Changed License:
-  - Excutable version EULA changed to Mozilla Public License v2.0.
+  - EULA for excutable code changed to Mozilla Public License v2.0.
   - Most original source code changed to Mozilla Public License v2.0 from v1.1.
-  - An abbreviated version of license now displayed by installer and license help topic.
-  - License information consolidated into new License.html file.
-  - About box changed accordingly.
-
+  - Only an abbreviated version of the license is now displayed by the installer and in the help file.
+  - License information has been consolidated into a new file: License.html.
++ About box changed re new license and changes in required and voluntary acknowledgements and credits.
++ Help file updated.
++ Documentation updated.
 
 Release v4.0 beta 2 of 25 August 2012
 Internal CodeSnip version 3.99.2
