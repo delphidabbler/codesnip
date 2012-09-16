@@ -138,6 +138,8 @@ begin
       Result := 'DXE';
     ciDXE2:
       Result := 'DXE2';
+    ciDXE3:
+      Result := 'DXE3';
     else raise EBug.Create(ClassName + '.GetIDString: Invalid ID');
   end;
 end;
@@ -150,12 +152,15 @@ resourcestring
   sCompilerName = 'Delphi %d';  // template for name of compiler
   sDelphiXE = 'Delphi XE';      // name of Delphi XE compiler
   sDelphiXE2 = 'Delphi XE2';    // name of Delphi XE2 compiler
+  sDelphiXE3 = 'Delphi XE3';    // name of Delphi XE3 compiler
 begin
   case GetID of
     ciDXE:
       Result := sDelphiXE;
     ciDXE2:
-      Result := sDelphiXE2
+      Result := sDelphiXE2;
+    ciDXE3:
+      Result := sDelphiXE3;
     else
       Result := Format(sCompilerName, [ProductVersion]);
   end;
@@ -168,7 +173,7 @@ function TBDSCompiler.GlyphResourceName: string;
 begin
   case GetID of
     ciD2005w32, ciD2006w32, ciD2007, ciD2009w32: Result := 'BDS';
-    ciD2010, ciDXE, ciDXE2: Result := 'EMBARCADERO';
+    ciD2010, ciDXE, ciDXE2, ciDXE3: Result := 'EMBARCADERO';
     else raise EBug.Create(ClassName + '.GlyphResourceName: Invalid ID');
   end;
 end;
@@ -187,6 +192,7 @@ begin
     ciD2010   : Result := '\SOFTWARE\CodeGear\BDS\7.0';
     ciDXE     : Result := '\Software\Embarcadero\BDS\8.0';
     ciDXE2    : Result := '\Software\Embarcadero\BDS\9.0';
+    ciDXE3    : Result := '\Software\Embarcadero\BDS\10.0';
     else raise EBug.Create(ClassName + '.InstallationRegKey: Invalid ID');
   end;
 end;
@@ -204,6 +210,7 @@ begin
     ciD2010:    Result := 2010;
     ciDXE:      Result := 2011;
     ciDXE2:     Result := 2012;
+    ciDXE3:     Result := 2013;
     else raise EBug.Create(ClassName + '.ProductVersion: Invalid ID');
   end;
 end;
