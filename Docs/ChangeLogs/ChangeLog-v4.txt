@@ -11,8 +11,13 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.0 RC 2 of 17 September 2012
+Internal CodeSnip version 3.999.2
++ Fixed serious bug #3568515 (http://bit.ly/Oy2Q7g): Duplicating a snippet with a display name causes crash.
++ Minor update to licensing information and about box credits.
+
 Release v4.0 RC 1 of 14 September 2012
-Internal CodeSnip version 3.99.3
+Internal CodeSnip version 3.999.1
 + UI changes:
   - Welcome page completely revised. Instead of a program overview the page now describes the state of the databases and available compilers and displays help links and a donation request. There are also some links to the about box, news and program updates.
   - Many changes to glyphs used in menus and toolbar.
