@@ -1,0 +1,386 @@
+; ------------------------------------------------------------------------------
+; This Source Code Form is subject to the terms of the Mozilla Public License,
+; v. 2.0. If a copy of the MPL was not distributed with this file, You can
+; obtain one at http://mozilla.org/MPL/2.0/
+;
+; Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+;
+; $Rev$
+; $Date$
+;
+; Change Log for CodeSnip Release 1
+; ------------------------------------------------------------------------------
+
+Release v1.9.4 of 01 September 2008
++ Improved handling of errors encountered when running compilers.
++ Provided checks for invalid compiler exe files in Config Compilers dialogue box.
++ Added enumerator to Compilers object.
++ Made ECodeSnip exceptions and descendants clonable when copying between threads.
+
+Un-released v1.9.3 of 24 August 2008
++ Fixed bug in the database updater which could cause a deleted local file not to be noticed and not replaced.
+
+Un-released v1.9.2 of 24 August 2008
++ Changed method used to generate program key. No longer uses MAC Address, since code to find this fails on Windows Vista.
++ Refactored to remove knowledge of how contributor information and database are stored from TAppInfo class.
++ Revised code that manages contributors so that storage details are private to the classes.
+
+Un-released v1.9.1 of 24 August 2008
++ Rebuilt CodeSnip and install helper program with Delphi 2006:
++ Modified CodeSnip source to compile without warnings.
++ Replaced deprecated library calls with alternatives.
+
+Release v1.9 of 14 August 2008
++ Changed so that all user accounts use the same database rather than having their own copy. Database now stored in common application data folder, along with registration information. Per-user configuration information remains in per-user application data folder in renamed file.
++ Installer can now optionally preserve data stored in database and configuration file used by earlier versions of the program. This involves creating new config files and moving the database.
++ Updated help file re these changes.
+
+Un-released v1.8.11 of 11 August 2008
++ Removed duplicate compiler glyph resources and modified compiler handling code accordingly.
+
+Un-released v1.8.10 of 11 August 2008
++ Refactored various units to use extended theme support.
++ Fixed redraw bug in tree views that use check boxes: check boxes were redrawing in wrong state when themes changed.
++ Improved support for theme changes. Theme manager now gets notified of changes directly from Windows.
++ Suppressed un-necessary compiler warnings.
+
+Un-released v1.8.9 of 10 August 2008
++ Modified Select Compiler dialogue box (opened from Configure Compiler dialogue) and Choose Element Colour dialogue (opened from Preferences dialogue) to be aligned correctly over dialogues, work correctly with Vista task bar and support help keywords.
++ Select Compiler file open dialogue now defaults to display any current compiler executable.
++ Choose Element Colour dialogue box now uses UK English and has custom title.
++ Added help topics for Select Compiler and Choose Element Colour dialogues.
+
+Release v1.8.8 of 16 June 2008
++ Changed to make application minimisation, task bar preview window, and appearance in "Flip 3D" task switching display correctly on Windows Vista.
++ Provided work-around for Delphi's Alt key bug on XP and Vista (CodeGear Quality Central bug report #374030).
+
+Un-released v1.8.7 of 05 June 2008
++ Made selected tabs in information and detail pane persistent.
++ Fixed bug in build script.
+
+Un-released v1.8.6 of 02 June 2008
++ Fixed lock-up that could occur when displaying wait dialogue box while background tasks execute. Previous attempt to fix this problem failed.
++ Changed "marquee" that is displayed in wait dialogue box to appear correctly on Vista.
+
+Release v1.8.5 of 30 May 2008
++ Fixed bug that was causing Save Snippet and Save Unit dialogue boxes to ignore file type
+ selected by user, always outputting default file type.
++ Deleted some unused source code.
++ Removed option to install a desktop icon from installer. Also refactored install script to conform to current Inno Setup standards.
+
+Release v1.8.4 of 22 April 2008
++ Added manifest resource to ensure compatibility with Windows Vista and to use Vista themes.
++ Fixed border problem in web update dialogue box and about box when displayed under Vista / IE7 browser control.
++ Prevented selection of text in previews displayed in preferences dialogue box.
++ Updated Setup script to use macros.
++ Modified Build batch file to work with Windows SDK 2008.
+
+Un-released v1.8.3 of 05 November 2007
++ Refactored dynamic CSS generation code.
+
+Un-released v1.8.2 of 04 November 2007
++ Refactored assignable interfaced objects.
+
+Release v1.8.1 of 04 November 2007
++ Made changes to browser control and URL handling.
+
+Un-released v1.8 of 04 November 2007
++ Added pop-up context menus to main display's detail pane.
+
+Un-released v1.7.7 of 29 October 2007
++ Modified code of compiler wait dialogue box and splash screen to try to prevent bug that occasionally prevent the dialogue from closing, locking up application.
+
+Un-released v1.7.6 of 18 October 2007
++ Shift-clicking links in the main display and some dialogue boxes was starting Internet Explorer. Fixed so that Internet Explorer is no longer started and shift-clicking external links now starts default browser.
+
+Un-released v1.7.5 of 17 October 2007
++ Modified Preferences dialogue box:
+  - Refactored code that displays measurement units.
+  - Preview on Source Code tab now takes on appearance of source code highlighter defined on Syntax Highlighter tab.
++ Changed format of ini file that stores persistent settings so that source code highlighter preferences are now stored in Prefs section of ini file rather than own section.
++ Customised installer to update existing ini files to revised version.
+
+Release v1.7.4 of 14 October 2007
++ Fixed display bug when selecting routines following a text search.
++ Improved text search algorithm to permit search strings containing punctuation characters.
++ Fixed typo in the "About The Database" section of the About box.
+
+Release v1.7.3 of 27 September 2007
++ Improved alignment of dialogue boxes and splash screen over owning forms. Alignment code substantially refactored.
++ Added support for multiple monitors.
+
+Release v1.7.2 of 24 September 2007
++ Fixed bug that was preventing wait dialogue box from displaying during long compilations.
+
+Un-released v1.7.1 of 22 September 2007
++ Added list of testers to credits section of Database tab in About box.
++ Added new help menu item that displays privacy statement.
++ Rearranged help menu items.
++ Updated help file re changes to help menu.
+
+Release v1.7 of 08 September 2007
++ Added new facility to print information about selected routines, with page setup and printer configuration.
++ Added new "general" tab (sets default measurement units) and "printing" tab (to set printing defaults) to preferences dialogue box.
++ Changed format of ini file that stores persistent settings.
++ Updated help file to reflect changes.
++ Customised installer to update existing ini files to revised version.
+
+Un-released v1.6.4 of 02 July 2007
++ Corrected typos in generated source code header comments.
++ Added support for embedding titles in generated documents where document supports title meta data.
++ Added suggested file name to save unit and save snippets dialogue boxes.
++ Refactored code in syntax highlighter that generates XHTML.
+
+Un-released v1.6.3 of 13 May 2007
++ Added support for selecting and copying text displayed in preview dialogue.
++ Changed so that each document type displayed in preview dialogue box has same margins.
++ Updated help file re changes to preview dialogue box.
+
+Un-released v1.6.2 of 12 May 2007
++ Updated to use revised news data format provided by web service.
++ Update from Web dialogue box now displays number of news items along with page number of currently displayed item.
+
+Release v1.6.1 of 09 May 2007
++ Fixed bug that allowed user to select a different routine while compiling another causing display to get out sync.
+
+Release v1.6 of 08 May 2007
++ Added support for Delphi 2007 compiler.
++ Updated help file re new compiler support.
+
+Release v1.5.13 of 04 March 2007
++ Fixed bug from v1.5.11 where Tools | Register CodeSnip and View | Show/Hide Test Unit menu options were permanently disabled.
++ Fixed bug from v1.5.9 where showing and hiding test units from menus was out of sync with links in compiler check pane.
+
+Release v1.5.12 of 01 March 2007
++ Made long operations (loading database and compiling test units) execute in threads.
++ Changed to display wait dialogue while updated database is being loaded.
++ Made progress meters displayed in wait dialogues update more smoothly.
+
+Release v1.5.11 of 25 February 2007
++ Added splash screen displayed when program is loading.
++ Main window, menu and toolbar is now disabled when program is initialising and when updated database is loading.
++ Program window is now centred on screen first time it is run and program is now never started minimized.
+
+Un-released v1.5.10 of 17 February 2007
++ Refactored code that handles web browser controls. Moved various pieces of code that manipulates and queries browser controls into central UI and IO manager classes. Also added helper classes to manipulate HTML documents and browser controls.
++ Some code made redundant by above changes was removed.
++ Lightened and centralised colours used to highlight text search results.
+
+Un-released v1.5.9 of 16 February 2007
++ Refactoring update. Revised code that manages the main display, i.e overview and details panes.
+
+Release v1.5.8 of 16 February 2007
++ Fixed bug in view history where selecting an item from the history list could cause a crash after database has been updated. This was fixed by clearing the history list after updating the database.
++ Now clears the main display before re-displaying an updated database to prevent an item from the old version of the database being selected.
+
+Un-released v1.5.7 of 12 February 2007
++ Refactored, relocated and extended use of some utility routines, resulting in some other minor changes:
+  - All error and information message boxes now have properly terminated sentences.
+  - Generated XHTML less likely to contain illegal characters.
+
+Un-released v1.5.6 of 11 February 2007
++ Modified about dialogue box to display information about the Code Snippets Database in addition to the program. The two kinds of information are displayed in two tabs.
++ Added code to get list of database contributors from a file downloaded with database updates.
+
+Un-released v1.5.5 of 11 February 2007
++ Made keyboard interaction with application more consistent:
+  - Made browser controls activate and focus properly when user tabs into them.
+  - Fixed tab order problems in main display and about dialogue box so that only controls that may need to receive user input are now activated by tabbing.
+  - Links displayed in browser controls are always now included in tab sequence and can be activated by Ctrl+Return when focused.
+  - Fixed inconsistency in tab sets in overview and details pane responded inconsistently to Ctrl+Tab and Shift+Ctrl+Tab.
++ Changed browser control respond to activation via the mouse to be the same as for the keyboard.
+
+Release v1.5.4 of 09 February 2007
++ Added disclaimers re database code to generated units and snippets and to program's welcome page.
++ Made slight modifications to source code generation code.
+
+Release v1.5.3 of 08 February 2007
++ Refactored and rationalised code in main form and moved some code into help classes.
++ Revised code that performs customisation, auto-sizing and alignment of forms and dialogue boxes.
++ Standardised execution method of dialogue boxes.
+
+Un-released v1.5.2 of 04 February 2007
++ Refactored help manager system to make it easier to swap in new help systems in future.
++ Modified help handlers in forms to remove redundant code.
++ Modified how help menu items call help topics.
+
+Un-released v1.5.1 of 04 February 2007
++ Refactored handling of database searches by creating new global query object to store information about current query on database.
++ Changed relevant code to use the new object and deleted resulting redundant code.
++ Made some other minor code improvements and modifications.
+
+Un-released v1.5 of 03 February 2007
++ Made status bar display database and search information along with other prompts in addition to displaying hints.
+
+Un-released v1.4.6 of 17 December 2006
++ Made minor changes to appearance:
+  - Changed some colours to system colours from hard-wired colors.
+  - Changed help links in main display from blue to green.
+  - Removed text highlighting from welcome page.
+
+Un-released v1.4.5 of 04 December 2006
++ Refactored code that generates test units. As a consequence names of test units displayed in Compiler Check pane have been corrected to the actual names used in test compilations.
+
+Release v1.4.4 of 04 December 2006
++ Added new menu item to View menu that toggles visibility of test units in the compiler check tab.
++ Changed glyph used for link that performs same action in compiler check tab and made image change depending on visibility of test unit.
+
+Un-released v1.4.3 of 03 December 2006
++ Changed information pane to load routines dynamically via DHTML rather than reloading document each time.
++ Refactored DHTML code and detail frames that support DHTML.
++ Refactored routine HTML generation code.
++ Rationalised some dynamic CSS generating code.
++ Revised information pane's underlying HTML code.
+
+Un-released v1.4.2 of 03 December 2006
++ Corrected alignment of About and Compiler Errors dialogue boxes over main form.
+
+Un-released v1.4.1 of 03 December 2006
++ Fixed bug where Test Compile menu option and tool button were always enabled and could cause an assertion failure when no routine was selected or no compilers were available.
+
+Un-released v1.4 of 03 December 2006
++ Revised display in compiler check pane. Now lists database and test results side by side.
++ Changed routine compiler check page to be updated dynamically (using JavaScript) when routine selection changes rather than always reloading page.
++ Modified some JavaScript support code.
++ Fixed potential bug in compiler code.
++ Updated help file re changes to Compiler Check tab.
++ Fixed a typo and index error in help file.
+
+Un-released v1.3.5 of 01 December 2006
++ Changed to display a border-less message dialogue during long test compilations. The dialogue is not displayed for shorter compilations.
++ Updated help file re above and fixed an error in the search menu topic.
+
+Un-released v1.3.4 of 26 November 2006
++ Refactored JavaScript used to interface between main program and HTML display.
++ Centralised generation of JavaScript in main code.
+
+Un-released v1.3.3 of 25 November 2006
++ Refactored handling of CSS and XHTML:
+  - Changed way CSS is provided to enable use of system font and colours.
+  - Tidied source HTML documents to remove illegal XHTML strict attributes and to remove hard-wired colours.
+
+Release v1.3.2 of 24 November 2006
++ Made program remember whether test units are displayed or hidden until end of session.
+
+Un-released v1.3.1 of 21 November 2006
++ Made minor modification to appearance of Configure Compilers dialogue box.
+
+Un-released v1.3 of 18 November 2006
++ Added facility to sign up to CodeSnip mailing list on-line.
++ Corrected further typos in registration wizard.
++ Updated help file re mailing list sign-up, changed privacy statement and added license to contents page.
+
+Release v1.2.5 of 16 November 2006
++ Corrected and modified text displayed on last page of Registration Wizard when user elects to join mailing list.
+
+Un-released v1.2.4 of 14 November 2006
++ Changed about box and help menu to display end user license agreement in help file rather than separate text file.
++ Added license topic and made related changes to help file.
+
+Un-released v1.2.3 of 12 November 2006
++ Fixed incorrect glyph used for Show All search menu item and tool button.
++ Moved Tools | Preferences menu option to top of Tools menu.
+
+Un-released v1.2.2 of 12 November 2006
++ Added hot tracking to tree view check boxes used in Select Routines dialogue box when Windows XP themes are enabled.
+
+Un-released v1.2.1 of 11 November 2006
++ Refactoring release:
+  - Method used to construct and use help file changed.
+  - Moved code that detects HTML and RTF files to appropriate utility units.
+  - Streamlined code in preview dialogue box.
+
+Release v1.2 of 11 November 2006
++ Changed syntax highlighter used to format units and code snippets to be able to read custom settings from persistent storage.
++ Added Syntax Highlighter tab to preferences dialogue box to enable users to customise the font, style and colours used by the syntax highlighter.
++ Modified preferences dialogue box's Source Code tab to display a preview of routines using various comment styles.
++ Updated help file re revised preferences dialogue box.
+
+Un-released v1.1.2 of 07 November 2006
++ Refactoring release:
+  - Added code to generate CSS properties.
+  - Added new classes to generate RTF code.
+  - Re-implemented RTF highlighted code.
++ Now generates much smaller RTF export files.
+
+Un-released v1.1.1 of 31 October 2006
++ Changed Select Routines dialogue to use XP style check boxes when XP themes active and custom check boxes when XP themes inactive.
+
+Release v1.1 of 30 October 2006
++ Added ability to generate and save whole Pascal unit containing currently selected routines.
++ Added new search that can find all routines cross-referenced by a given routine.
++ Added ability to manually select routines that are displayed in overview pane.
++ Added shortcut key and changed glyph for File | Save Snippet option / tool button.
++ Updated way source code preferences are stored. Broke backwards compatibility with previous storage method, so upgraders may loose settings.
++ Made minor changes to preferences dialogue box.
++ Word-wrapped long uses lists in generated units.
++ Refactored code that determines type of exported files.
++ Refactored and expanded code that deals with source code exporting.
++ Fixed some minor bugs:
+  - Previews of large rich text documents were displaying RTF source instead of rendering document.
+  - Assertion failure could (rarely) happen when displaying message boxes without specifying parent form.
+  - Saving snippets in a file without supplying a file extension could silently overwrite existing files.
+  - Comment style was being ignored when generating a unit.
++ Updated help file:
+  - Added new topics, index entries and TOC entries for new features.
+  - Updated some existing topics to refer to new features.
+  - Revised and corrected several existing help topics.
+
+Un-released v1.0.3 of 26 October 2006
++ Refactored various parts of source code. No changes to program's functionality. Details are:
+  - Standardised all singleton objects on interface based implementation.
+  - Centralised code that gets location of license file.
+  - Standardised links that trigger JavaScript in some HTML resources.
+  - Changed bug report dialogue box to descend from common wizard dialogue box.
+
+Release v1.0.2 of 25 October 2006
++ Changed so that links from program to external web pages display in default browser rather than IE.
++ Refactored code that displays license text file in external application.
++ Reworded some of welcome screen and added links to on-line database.
++ Refactored some JavaScript code that works with main display HTML and web browser code.
++ Made minor changes to hints displayed in status bar when cursor is over links.
+
+Release v1.0.1 of 14 October 2006
++ Fixed problem in web update that caused program to crash on Windows 9x platforms.
+
+Release v1.0 of 09 June 2006
++ Version 1 release.
++ Revised About Box text and appearance and added link that displays license file.
++ Refactored and renamed some code.
++ Made minor changes to appearance and effect of Configure Compilers dialogue box.
++ Fixed potential bug displaying JavaScript error dialogue if help called from links in main display fail.
++ Made some literal strings resource strings.
++ Made calls to help system fail gracefully on machines without HTML Help installed.
++ Modified code that reads program's version information.
++ Added important compiler directives.
++ Standardised appearance of all groups of action links in main display.
++ Added Help menu item to display license and to access CodeSnip web page.
++ Moved bug report and registration menu options from Help to Tools menu.
++ Updated and help file re new commands, corrected some errors and re-styled menu help sections.
++ Created installer using Inno Setup.
++ Added new batch file to build program.
++ Fully commented code.
++ Changed to new end user license agreement for the executable program. The program remains open source.
+
+Release v1.0 RC 3 of 01 May 2006
+Internal CodeSnip version 0.12.0
++ 3rd release candidate for the v1.0 release.
++ Updated to use v4 of update web service that uses completely new update protocol. Significant changes to code were needed to achieve this.
++ Redesigned update dialogue box accordingly.
++ Added ability to update dialogue to display latest CodeSnip news delivered as part update process.
++ Updated help file re changes to update dialogue box.
+
+Release v1.0 RC 2 of 16 April 2006
+Internal CodeSnip version 0.11.3
++ 2nd release candidate for the v1.0 release.
++ Fixed bug where user could drag and drop files onto web browser controls and file contents would overwrite the display.
+
+Release v1.0 RC 1 of 11 April 2006
+Internal CodeSnip version 0.11.2
+Changes relate to v0.11.1 Beta
++ 1st release candidate for the v1.0 release.
++ Updated help file:
+  - Ensured that external links display in a web browser window rather than in the help window.
+  - Added additional internal links to some help topics.
++ Fixed compiler warnings.
++ Removed some redundant code.
