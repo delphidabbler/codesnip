@@ -62,14 +62,13 @@ type
   TInstallInfo = class(TObject)
   strict private
     const
-      ///  <summary>ID earliest version of CodeSnip.</summary>
-      FirstVersionID = piOriginal;
       ///  <summary>ID of current version of CodeSnip.</summary>
-      CurrentVersionID = piv4;
+      CurrentVersionID = High(TInstallId);
       ///  <summary>Array mapping install IDs to relative paths to user config
       ///  file for for that installation version.</summary>
-      ConfigFileNames: array[FirstVersionID..CurrentVersionID] of string =
+      ConfigFileNames: array[Low(TInstallId)..CurrentVersionID] of string =
         (
+          '',
           'DelphiDabbler\CodeSnip\CodeSnip.ini',
           'DelphiDabbler\CodeSnip\User.ini',
           'DelphiDabbler\CodeSnip\User.ini',
@@ -78,8 +77,9 @@ type
         );
       ///  <summary>Array mapping install IDs to relative paths to user database
       ///  directories for for that installation version.</summary>
-      DatabaseDirs: array[FirstVersionID..CurrentVersionID] of string =
+      DatabaseDirs: array[Low(TInstallId)..CurrentVersionID] of string =
         (
+          '',
           '',
           '',
           'DelphiDabbler\CodeSnip\UserData',
