@@ -357,6 +357,7 @@ begin
       end
     )
   );
+  fSnippetList.PermitDuplicates := True;
 end;
 
 destructor TGroupItem.Destroy;
