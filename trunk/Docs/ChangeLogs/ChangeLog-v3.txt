@@ -11,6 +11,14 @@
 ; Change Log for CodeSnip Release 3
 ; ------------------------------------------------------------------------------
 
+Release v3.11.0 of 17 September 2012
++ Added support for Delphi XE3 compiler. Implements feature request #3566345 (http://bit.ly/OvbBPp).
++ Bug fixes:
+  - #3561713 (http://bit.ly/QEYRFx): The Category view in the Overview pane sometimes appears fully expanded when it is expected to be fully collapsed.
+  - #3566430 (http://bit.ly/U1KnGZ): About Box Paths Page displays wrongly when themes not available.
++ Updated documentation re changes.
++ Updated help file re changes.
+
 Release v3.10.5 of 21 August 2012
 + Fixed bugs:
   - #3559257 (http://bit.ly/Qc8Fqu): Compile Results accessed from menu can get out of sync.
