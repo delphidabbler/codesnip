@@ -1,14 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Web.UDBDownloadMgr.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements a class that interfaces with a web service to update the database.
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that interfaces with a web service to update the database.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Web.UDBDownloadMgr.pas, formerly UDownloadMgr.pas then
+ * NsWebServices.UDBDownloadMgr.pas.
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -22,7 +44,7 @@ uses
   // Delphi
   Classes,
   // Project
-  UEncodings, UURIParams, Web.UExceptions, Web.UStdWebService;
+  UURIParams, Web.UExceptions, Web.UStdWebService;
 
 
 type
@@ -40,6 +62,10 @@ type
         @except Raises EDBDownloadMgr exceptions based on given exception.
       }
     procedure GetStdParams(const Params: TURIParams);
+      {Adds standard "progid" and "version" commands and their parameters to
+      given parameter object.
+        @param Params [in] Object that recieves standard parameters.
+      }
     procedure PostStdCommand(const Cmd: string; const Response: TStrings);
       {Sends command to server that includes standard parameters that are sent
       with all commands, i.e. "progid" and "version".
@@ -84,11 +110,13 @@ type
           for download.
         @return File count.
       }
-    function GetDatabase(const WantProgress: Boolean = False): TEncodedData;
+    procedure GetDatabase(const Stream: TStream;
+      const WantProgress: Boolean = False);
       {Gets whole code snippets database from web server.
+        @param Stream [in] Stream to receive downloaded database. Database
+          files are encoded into stream.
         @param WantProgresss [in] Flag true if OnProgress event to be triggered
           for download.
-        @return Downloaded data with encoding info.
       }
     constructor Create;
       {Class constructor. Initialises service.
@@ -132,11 +160,11 @@ uses
   // Delphi
   SysUtils,
   // Project
-  UAppInfo, UConsts, UStrUtils, USystemInfo, Web.UCharEncodings, Web.UInfo;
+  UAppInfo, UConsts, UEncodings, USystemInfo, Web.UInfo;
 
 
 {
-  Web service notes: codesnip-updt.php v5
+  Web service notes: codesnip-updt.php v4
   =======================================
 
   This web service enables CodeSnip to check if updated files are available in
@@ -146,13 +174,13 @@ uses
     cmd=<command> [<params>]
   where <params> is a list of parameters in form param-name=param-value.
 
-  All responses from the v5 service have two parts:
+  All responses from the v4 service have two parts:
   + Successful responses have '0' on first line followed by optional lines of
     data resulting from command.
   + Error responses have +ve error code on first line and error message on 2nd
     line.
 
-  The web service expects a user agent of "DelphiDabbler-CodeSnip-Updater-v5"
+  The web service expects a user agent of "DelphiDabbler-CodeSnip-Updater-v4"
   and will return a 403 "Forbidden" error if this is not provided.
 
   Table of Commands
@@ -198,13 +226,16 @@ uses
   +-----------+-------+----------------------+---------------------------------+
   If any other command (or no command) is specified then error code
   CSUPDT_ERR_CMD (1) is returned.
+
+  The filecount command was only implemented from v1.9.3 of CodeSnip and v4.10
+  of the web service.
 }
 
 
 const
   // Web service info
   cScriptName = 'codesnip-updt.php';                  // script name
-  cUserAgent = 'DelphiDabbler-CodeSnip-Updater-v5';   // user agent string
+  cUserAgent = 'DelphiDabbler-CodeSnip-Updater-v4';  // user agent string
 
 
 resourcestring
@@ -245,35 +276,41 @@ begin
   Response := TStringList.Create;
   try
     PostStdCommand('filecount', Response);
-    if not TryStrToInt(StrTrim(Response.Text), Result) then
+    if not TryStrToInt(Trim(Response.Text), Result) then
       raise EWebServiceFailure.Create(sBadFileCount);
   finally
-    Response.Free;
+    FreeAndNil(Response);
   end;
 end;
 
-function TDBDownloadMgr.GetDatabase(const WantProgress: Boolean): TEncodedData;
+procedure TDBDownloadMgr.GetDatabase(const Stream: TStream;
+  const WantProgress: Boolean);
   {Gets whole code snippets database from web server.
+    @param Stream [in] Stream to receive downloaded database. Database files are
+      encoded into stream.
     @param WantProgresss [in] Flag true if OnProgress event to be triggered for
       download.
-    @return Downloaded data with encoding info.
   }
 var
   Response: TStringList;  // response from server
+  ResBytes: TBytes;       // response as Windows-1252 byte stream
 begin
   Self.WantProgress := WantProgress;
   Response := TStringList.Create;
   try
     PostStdCommand('getdatabase', Response);
-    Result := TEncodedData.Create(
-      Response.Text, TWebCharEncodings.GetEncodingType(ResponseCharSet)
-    );
+    ResBytes := Windows1252BytesOf(Response.Text);
+    Stream.WriteBuffer(ResBytes[0], Length(ResBytes));
   finally
-    Response.Free;
+    FreeAndNil(Response);
   end;
 end;
 
 procedure TDBDownloadMgr.GetStdParams(const Params: TURIParams);
+  {Adds standard "progid" and "version" commands and their parameters to given
+  parameter object.
+    @param Params [in] Object that recieves standard parameters.
+  }
 begin
   Params.Add('progid', TAppInfo.ProgramKey);
   Params.Add('version', TAppInfo.ProgramReleaseVersion);
@@ -320,9 +357,9 @@ begin
   Response := TStringList.Create;
   try
     PostStdCommand('lastupdate', Response);
-    Result := StrTrim(Response.Text);
+    Result := Trim(Response.Text);
   finally
-    Response.Free;
+    FreeAndNil(Response);
   end;
 end;
 
@@ -339,7 +376,7 @@ begin
   try
     PostStdCommand('logoff', Response);   // No response data expected
   finally
-    Response.Free;
+    FreeAndNil(Response);
   end;
 end;
 

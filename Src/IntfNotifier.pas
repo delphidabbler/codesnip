@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * IntfNotifier.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Defines interfaces to set up and use the notifier object that triggers
+ * actions in response to user initiated events in the GUI.
  *
  * $Rev$
  * $Date$
  *
- * Defines interfaces to set up and use the notifier object that triggers
- * actions in response to user initiated events in the GUI.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is IntfNotifier.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -38,17 +59,23 @@ type
     procedure UpdateDbase;
       {Updates database.
       }
-    procedure DisplaySnippet(const SnippetName: WideString;
-      UserDefined: WordBool; NewTab: WordBool);
-      {Displays a named snippey.
-        @param SnippetName [in] Name of snippet to display.
-        @param UserDefined [in] Whether snippet is user defined.
-        @param NewTab [in] Whether to display in new tab in detail pane.
+    procedure DisplayRoutine(const RoutineName: WideString;
+      UserDefined: WordBool);
+      {Displays a named routine.
+        @param RoutineName [in] Name of routine to display.
+        @param UserDefined [in] Whether routine is user defined.
       }
-    procedure DisplayCategory(const CatID: WideString; NewTab: WordBool);
+    procedure DisplayCategory(const CatID: WideString);
       {Displays an identified category.
         @param CatID [in] Id of category to display.
-        @param NewTab [in] Whether to display in new tab in detail pane.
+      }
+    procedure CompileRoutine;
+      {Compiles the current routine.
+      }
+    procedure ViewCompilerLog(Ver: SYSINT);
+      {Displays a compiler log.
+        @param Ver [in] Version of Delphi for which we need to display log. Ver
+          is the ordinal value of the required compiler version enumerated type.
       }
     procedure ShowHint(const Hint: WideString);
       {Displays a hint.
@@ -57,11 +84,9 @@ type
     procedure ConfigCompilers;
       {Displays configure compilers dialog box.
       }
-    procedure ShowViewItem(View: IView; const NewTab: Boolean);
+    procedure ShowViewItem(const ViewItem: TViewItem);
       {Displays a view item.
         @param ViewItem [in] View item to display.
-        @param NewTab [in] Flag indicates whether view is to be displayed in
-          new tab.
       }
     procedure ChangeOverviewStyle(const Style: Integer);
       {Changes display style of overview pane.
@@ -71,24 +96,15 @@ type
       {Changes displayed pane in detail display area.
         @param Pane [in] Required new pane.
       }
-    procedure EditSnippet(const SnippetName: WideString);
-      {Edits a snippet.
-        @param SnippetName [in] Name of snippet. Must be user defined.
+    procedure ShowTestUnit;
+      {Displays test unit.
+      }
+    procedure EditRoutine(const RoutineName: WideString);
+      {Edits a routine.
+        @param RoutineName [in] Name of routine. Must be user defined.
       }
     procedure Donate;
       {Displays donate dialog box.
-      }
-    procedure NewSnippet;
-      {Opens Snippets Editor ready to create a new snippet.
-      }
-    procedure ShowNews;
-      {Shows news items from CodeSnip news feed.
-      }
-    procedure CheckForUpdates;
-      {Checks for program updates.
-      }
-    procedure ShowAboutBox;
-      {Displays the program's About box.
       }
   end;
 
@@ -104,8 +120,17 @@ type
       {Sets action triggered when user requests database update.
         @param Action [in] Required action.
       }
-    procedure SetDisplaySnippetAction(const Action: TBasicAction);
-      {Sets action triggered when a named snippet is requested to be displayed.
+    procedure SetDisplayRoutineAction(const Action: TBasicAction);
+      {Sets action triggered when a named routine is requested to be displayed.
+        @param Action [in] Required action.
+      }
+    procedure SetCompileRoutineAction(const Action: TBasicAction);
+      {Sets action triggered when user wants to test-compile the current
+      routine.
+        @param Action [in] Required action.
+      }
+    procedure SetViewCompilerLogAction(const Action: TBasicAction);
+      {Sets action triggered when user wants to view a compiler log.
         @param Action [in] Required action.
       }
     procedure SetShowHintAction(const Action: TBasicAction);
@@ -129,38 +154,29 @@ type
         @param Actions [in] Dynamic array of required actions: one per display
           style.
       }
-    procedure SetDetailPaneChangeAction(const Action: TBasicAction);
-      {Sets action that us triggered when different detail panes are required
+    procedure SetDetailPaneChangeActions(const Actions: array of TBasicAction);
+      {Sets actions that are triggered when different detail panes are required
       to be shown.
+        @param Actions [in] Dynamic array of required actions: one per detail
+          display tab.
+      }
+    procedure SetShowTestUnitAction(const Action: TBasicAction);
+      {Sets action triggered where displays a test unit.
         @param Action [in] Required action.
       }
-    procedure SetEditSnippetAction(const Action: TBasicAction);
-      {Sets action triggered when user requests a user defined snippet is to be
+    procedure SetEditRoutineAction(const Action: TBasicAction);
+      {Sets action triggered when user requests a user defined routine is to be
       edited.
         @param Action [in] Required action.
       }
     procedure SetDonateAction(const Action: TBasicAction);
       {Sets action triggered when user requests that the donate dialog box is
-      displayed.
+      displays.
         @param Action [in] Required action.
       }
     procedure SetDisplayCategoryAction(const Action: TBasicAction);
       {Sets actions triggered when a category is requested to be displayed.
         @param Action [in] Required action.
-      }
-    procedure SetNewSnippetAction(const Action: TBasicAction);
-      {Sets action triggered when user requests that the Snippets Editor is
-      opened ready to create a new snippet.
-      }
-    procedure SetNewsAction(const Action: TBasicAction);
-      {Sets action triggered when user requests that news items from CodeSnip
-      news feed are displayed.
-      }
-    procedure SetCheckForUpdatesAction(const Action: TBasicAction);
-      {Sets action triggered when user requests a check for program updates.
-      }
-    procedure SetAboutBoxAction(const Action: TBasicAction);
-      {Sets action triggered when user requests that the About box is displayed.
       }
   end;
 

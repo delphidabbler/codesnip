@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * UOverviewTreeState.pas
  *
  * Implements a class that maintains the expansion state of a set of section
  * nodes from the overview tree view. The class can record the current state and
  * restore it later.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UOverviewTreeState.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -24,24 +45,51 @@ uses
   // Delphi
   ComCtrls, Generics.Collections,
   // Project
-  UView;
+  UView, USnippetIDs, USnippets;
 
 
 type
 
-  ///  <summary>
-  ///  Class that records state of a section (level 0) node in the overview
-  ///  pane's treeview.
-  ///  </summary>
+  {
+  TViewInfo:
+    Records identifying information about a view item without storing any
+    object contained in the view item. The actual object can be freed between
+    saving and restoring the tree state causing a crash, hence we only store
+    the view item's "key" value.
+    Can't clone the object contained in a view item because TRoutine and
+    TCategory don't permit it.
+    *** NOTE: This is a hack to fix a long standing bug. Not the cleanest fix,
+    but it works and I've found a more elegant solution for v4!
+  }
+  TViewInfo = class(TObject)
+  strict private
+    // Kind of view this info relates to
+    fViewKind: TViewKind;
+    // Fields recording info about view item. Which one is used depends on kind
+    // of view. None are used for vkNone and vkWelcome.
+    fCatID: string;
+    fSnipKindID: TSnippetKind;
+    fAlphaID: Char;
+    fSnippetID: TSnippetID;
+  public
+    // Creates view info object for a view item. Values recorded depend on kind
+    // of view item.
+    constructor Create(View: TViewItem);
+    // Checks if this view info object's key info matches that of a view item.
+    function IsEqual(View: TViewItem): Boolean;
+  end;
+
+  {
+  TOverviewTreeSectionState:
+    Class that records the state of an overview pane section node.
+  }
   TOverviewTreeSectionState = class(TObject)
   strict private
     var
-      /// <summary>Value of Expanded property.</summary>
-      fExpanded: Boolean;
-      /// <summary>Value of ViewKey property.</summary>
-      fViewKey: IViewKey;
+      fExpanded: Boolean;     // Value of Expanded property
+      fViewInfo: TViewInfo;   // Value of ViewInfo property
   public
-    constructor Create(ViewKey: IViewKey; const Expanded: Boolean);
+    constructor Create(const ViewItem: TViewItem; const Expanded: Boolean);
       {Constructor. Sets up object.
         @param ViewItem [in] View item represented by section node.
         @param Expended [in] True if node is expanded, False if not.
@@ -51,10 +99,9 @@ type
       }
     property Expanded: Boolean read fExpanded;
       {Whether section node is expanded}
-    property ViewKey: IViewKey read fViewKey;
+    property ViewInfo: TViewInfo read fViewInfo;
+      {Info about view item displayed by section node}
   end;
-
-type
 
   {
   TOverviewTreeState:
@@ -77,7 +124,7 @@ type
       fTV: TTreeView;                   // Reference to treeview
       fSections: TSectionStates;        // List of section state objects
       fRestoreState: TResorationState;  // Current restoration state of tree
-    function FindSection(ViewKey: IViewKey;
+    function FindSection(const ViewItem: TViewItem;
       out FoundSection: TOverviewTreeSectionState): Boolean;
       {Finds a section object that references a specified view item.
         @param ViewItem [in] View item being searched for.
@@ -112,13 +159,15 @@ implementation
 
 
 uses
+  // Delphi
+  SysUtils,
   // Project
   UPreferences, UViewItemTreeNode;
 
 
 { TOverviewTreeSectionState }
 
-constructor TOverviewTreeSectionState.Create(ViewKey: IViewKey;
+constructor TOverviewTreeSectionState.Create(const ViewItem: TViewItem;
   const Expanded: Boolean);
   {Constructor. Sets up object.
     @param ViewItem [in] View item represented by section node.
@@ -126,7 +175,7 @@ constructor TOverviewTreeSectionState.Create(ViewKey: IViewKey;
   }
 begin
   inherited Create;
-  fViewKey := ViewKey;
+  fViewInfo := TViewInfo.Create(ViewItem);
   fExpanded := Expanded;
 end;
 
@@ -134,7 +183,7 @@ destructor TOverviewTreeSectionState.Destroy;
   {Destructor. Tears down object.
   }
 begin
-  fViewKey := nil;
+  fViewInfo.Free;
   inherited;
 end;
 
@@ -162,7 +211,7 @@ begin
   inherited;
 end;
 
-function TOverviewTreeState.FindSection(ViewKey: IViewKey;
+function TOverviewTreeState.FindSection(const ViewItem: TViewItem;
   out FoundSection: TOverviewTreeSectionState): Boolean;
   {Finds a section object that references a specified view item.
     @param ViewItem [in] View item being searched for.
@@ -176,7 +225,7 @@ begin
   FoundSection := nil;
   for Section in fSections do
   begin
-    if Section.ViewKey.IsEqual(ViewKey) then
+    if Section.ViewInfo.IsEqual(ViewItem) then
     begin
       FoundSection := Section;
       Exit(True);
@@ -209,10 +258,8 @@ begin
     begin
       for Node in fTV.Items do
       begin
-        if IsSectionNode(Node) and
-          FindSection(
-            (Node as TViewItemTreeNode).ViewItem.GetKey, Section
-          ) then
+        if IsSectionNode(Node)
+          and FindSection((Node as TViewItemTreeNode).ViewItem, Section) then
           Node.Expanded := Section.Expanded;
       end;
     end;
@@ -231,7 +278,7 @@ procedure TOverviewTreeState.SaveState;
     }
   begin
     fSections.Add(
-      TOverviewTreeSectionState.Create(Node.ViewItem.GetKey, Node.Expanded)
+      TOverviewTreeSectionState.Create(Node.ViewItem, Node.Expanded)
     );
   end;
   // ---------------------------------------------------------------------------
@@ -247,6 +294,38 @@ begin
   end;
   // note that tree must be restored from this saved state
   fRestoreState := rsAsSaved;
+end;
+
+{ TViewInfo }
+
+constructor TViewInfo.Create(View: TViewItem);
+begin
+  inherited Create;
+  fViewKind := View.Kind;
+  case fViewKind of
+    vkRoutine: fSnippetID := View.Routine.ID;
+    vkCategory: fCatID := View.Category.Category;
+    vkSnipKind: fSnipKindID := View.SnippetKind.Kind;
+    vkAlphabet: fAlphaID := View.AlphaChar.Letter;
+  end;
+end;
+
+function TViewInfo.IsEqual(View: TViewItem): Boolean;
+begin
+  if View.Kind <> fViewKind then
+    Exit(False);
+  case fViewKind of
+    vkRoutine:
+      Result := View.Routine.ID = fSnippetID;
+    vkCategory:
+      Result := AnsiSameText(View.Category.Category, fCatID);
+    vkSnipKind:
+      Result := View.SnippetKind.Kind = fSnipKindID;
+    vkAlphabet:
+      Result := View.AlphaChar.Letter = fAlphaID;
+    else
+      Result := True;
+  end;
 end;
 
 end.

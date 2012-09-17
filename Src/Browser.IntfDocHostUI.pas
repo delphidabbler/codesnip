@@ -1,17 +1,38 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Browser.IntfDocHostUI.pas
  *
  * Interfaces, records and constants used when hosting the IE WebBrowser Control
  * or automating IE to replace the menus, toolbars, and context menus. The
  * content of the unit is based on Microsoft UI documentation from MSDN. Not all
  * the structures and constants are used in CodeSnip.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Browser.IntfDocHostUI.pas, formerly IntfUIHandlers.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -32,109 +53,106 @@ const
     Set of flags that indicate the capabilities of an IDocHostUIHandler
     implementation. They are used in a TDocHostUIInfo record.
   }
-  DOCHOSTUIFLAG_DIALOG = $00000001;
+  DOCHOSTUIFLAG_DIALOG                          = $00000001;
     {Disables selection of text in form}
-  DOCHOSTUIFLAG_DISABLE_HELP_MENU = $00000002;
+  DOCHOSTUIFLAG_DISABLE_HELP_MENU               = $00000002;
     {MSHTML does not add the Help menu item to the container's menu}
-  DOCHOSTUIFLAG_NO3DBORDER = $00000004;
+  DOCHOSTUIFLAG_NO3DBORDER                      = $00000004;
     {MSHTML does not use 3-D borders on any frames or framesets. To turn the
     border off on only the outer frameset use DOCHOSTUIFLAG_NO3DOUTERBORDER}
-  DOCHOSTUIFLAG_SCROLL_NO = $00000008;
+  DOCHOSTUIFLAG_SCROLL_NO                       = $00000008;
     {MSHTML does not have scroll bars}
-  DOCHOSTUIFLAG_DISABLE_SCRIPT_INACTIVE = $00000010;
+  DOCHOSTUIFLAG_DISABLE_SCRIPT_INACTIVE         = $00000010;
     {MSHTML does not execute any script when loading pages}
-  DOCHOSTUIFLAG_OPENNEWWIN = $00000020;
+  DOCHOSTUIFLAG_OPENNEWWIN                      = $00000020;
     {MSHTML opens a site in a new window when a link is clicked rather than
     browse to the new site using the same browser window}
-  DOCHOSTUIFLAG_DISABLE_OFFSCREEN = $00000040;
+  DOCHOSTUIFLAG_DISABLE_OFFSCREEN               = $00000040;
     {Not implemented}
-  DOCHOSTUIFLAG_FLAT_SCROLLBAR = $00000080;
+  DOCHOSTUIFLAG_FLAT_SCROLLBAR                  = $00000080;
     {MSHTML uses flat scroll bars for any user interface (UI) it displays}
-  DOCHOSTUIFLAG_DIV_BLOCKDEFAULT = $00000100;
+  DOCHOSTUIFLAG_DIV_BLOCKDEFAULT                = $00000100;
     {MSHTML inserts the div tag if a return is entered in edit mode. Without
     this flag, MSHTML will use the p tag}
-  DOCHOSTUIFLAG_ACTIVATE_CLIENTHIT_ONLY = $00000200;
+  DOCHOSTUIFLAG_ACTIVATE_CLIENTHIT_ONLY         = $00000200;
     {MSHTML only becomes UI active if the mouse is clicked in the client area of
     the window. It does not become UI active if the mouse is clicked on a
     nonclient area, such as a scroll bar}
-  DOCHOSTUIFLAG_OVERRIDEBEHAVIORFACTORY = $00000400;
+  DOCHOSTUIFLAG_OVERRIDEBEHAVIORFACTORY         = $00000400;
     {MSHTML consults the host before retrieving a behavior from the URL
     specified on the page. If the host does not support the behavior, MSHTML
     does not proceed to query other hosts or instantiate the behavior itself,
     even for behaviors developed in script (HTML Components (HTCs))}
-  DOCHOSTUIFLAG_CODEPAGELINKEDFONTS = $00000800;
+  DOCHOSTUIFLAG_CODEPAGELINKEDFONTS             = $00000800;
     {IE5 or later. Provides font selection compatibility for Outlook Express. If
     the flag is enabled, the displayed characters are inspected to determine
     whether the current font supports the code page. If disabled, the current
     font is used, even if it does not contain a glyph for the character. This
     flag assumes that the user is using IE5 and OE4.0}
-  DOCHOSTUIFLAG_URL_ENCODING_DISABLE_UTF8 = $00001000;
+  DOCHOSTUIFLAG_URL_ENCODING_DISABLE_UTF8       = $00001000;
     {IE5 or later. Controls how nonnative URLs are transmitted over the
     Internet. Nonnative refers to characters outside the multibyte encoding of
     the URL. If this flag is set, the URL is not submitted to the server in
     UTF-8 encoding}
-  DOCHOSTUIFLAG_URL_ENCODING_ENABLE_UTF8 = $00002000;
+  DOCHOSTUIFLAG_URL_ENCODING_ENABLE_UTF8        = $00002000;
     {IE5 or later. Controls how nonnative URLs are transmitted over the
     Internet. Nonnative refers to characters outside the multibyte encoding of
     the URL. If this flag is set, the URL is submitted to the server in
     UTF-8 encoding}
-  DOCHOSTUIFLAG_ENABLE_FORMS_AUTOCOMPLETE = $00004000;
+  DOCHOSTUIFLAG_ENABLE_FORMS_AUTOCOMPLETE       = $00004000;
     {IE5 or later. This flag enables the AutoComplete feature for forms in the
     hosted browser. The Intelliforms feature is only turned on if the user has
     previously enabled it. If the user has turned the AutoComplete feature off
     for forms, it is off whether this flag is specified or not}
-  DOCHOSTUIFLAG_ENABLE_INPLACE_NAVIGATION = $00010000;
+  DOCHOSTUIFLAG_ENABLE_INPLACE_NAVIGATION       = $00010000;
     {IE5 or later. This flag enables the host to specify that navigation should
     happen in place. This means that applications hosting MSHTML directly can
     specify that navigation happen in the application's window. For instance,
     if this flag is set, you can click a link in HTML mail and navigate in the
     mail instead of opening a new IE window}
-  DOCHOSTUIFLAG_IME_ENABLE_RECONVERSION = $00020000;
+  DOCHOSTUIFLAG_IME_ENABLE_RECONVERSION         = $00020000;
     {IE5 or later. During initialization, the host can set this flag to enable
     Input Method Editor (IME) reconversion, allowing computer users to employ
     IME reconversion while browsing Web pages}
-  DOCHOSTUIFLAG_THEME = $00040000;
+  DOCHOSTUIFLAG_THEME                           = $00040000;
     {IE6 or later. Specifies that the hosted browser should use themes for pages
     it displays}
-  DOCHOSTUIFLAG_NOTHEME = $00080000;
+  DOCHOSTUIFLAG_NOTHEME                         = $00080000;
     {IE6 or later. Specifies that the hosted browser should not use themes for
     pages it displays}
-  DOCHOSTUIFLAG_NOPICS = $00100000;
+  DOCHOSTUIFLAG_NOPICS                          = $00100000;
     {IE6 or later. Disables PICS ratings for the hosted browser}
-  DOCHOSTUIFLAG_NO3DOUTERBORDER = $00200000;
+  DOCHOSTUIFLAG_NO3DOUTERBORDER                 = $00200000;
     {IE6 or later. Turns off any 3-D border on the outermost frame or frameset
     only. To turn borders off on all frame sets, use DOCHOSTUIFLAG_NO3DBORDER}
-  DOCHOSTUIFLAG_DISABLE_EDIT_NS_FIXUP = $00400000;
+  DOCHOSTUIFLAG_DISABLE_EDIT_NS_FIXUP           = $00400000;
     {IE6 or later. Disables the automatic correction of namespaces when editing
     HTML elements}
-  DOCHOSTUIFLAG_LOCAL_MACHINE_ACCESS_CHECK = $00800000;
+  DOCHOSTUIFLAG_LOCAL_MACHINE_ACCESS_CHECK      = $00800000;
     {IE6 or later. Prevents Web sites in the Internet zone from accessing files
     in the Local Machine zone}
-  DOCHOSTUIFLAG_DISABLE_UNTRUSTEDPROTOCOL = $01000000;
+  DOCHOSTUIFLAG_DISABLE_UNTRUSTEDPROTOCOL       = $01000000;
     {IE6 or later. Turns off untrusted protocols. Untrusted protocols include
     ms-its, ms-itss, its, and mk:@msitstore}
-  DOCHOSTUIFLAG_HOST_NAVIGATES = $02000000;
+  DOCHOSTUIFLAG_HOST_NAVIGATES                  = $02000000;
     {IE7 or later. Indicates that navigation is delegated to the host,
     otherwise MSHTML will perform navigation. This flag is used primarily for
     non-HTML document types}
-  DOCHOSTUIFLAG_ENABLE_REDIRECT_NOTIFICATION = $04000000;
+  DOCHOSTUIFLAG_ENABLE_REDIRECT_NOTIFICATION    = $04000000;
     {IE7 or later. An additional DWebBrowserEvents2::BeforeNavigate2 event is
     fired when redirect navigations occur}
-  DOCHOSTUIFLAG_USE_WINDOWLESS_SELECTCONTROL = $08000000;
+  DOCHOSTUIFLAG_USE_WINDOWLESS_SELECTCONTROL    = $08000000;
     {IE7 or later. The Document Object Model (DOM) is used to create native
     "windowless" select controls that can be visually layered under other
     elements}
-  DOCHOSTUIFLAG_USE_WINDOWED_SELECTCONTROL = $10000000;
+  DOCHOSTUIFLAG_USE_WINDOWED_SELECTCONTROL      = $10000000;
     {IE7 or later. Creates standard Microsoft Win32 "windowed" select and
     drop-down controls}
-  DOCHOSTUIFLAG_ENABLE_ACTIVEX_INACTIVATE_MODE = $20000000;
+  DOCHOSTUIFLAG_ENABLE_ACTIVEX_INACTIVATE_MODE  = $20000000;
     {IE6 for Windows XP Service Pack 2 (SP2) and later. Requires user activation
     for Microsoft ActiveX controls and Java Applets embedded within a web page.
     When a control is inactive, it does not respond to user input; however, it
     can perform operations that do not involve interaction}
-  DOCHOSTUIFLAG_DPI_AWARE = $40000000;
-    {IE8. Causes layout engine to calculate document pixels as 96 dots per inch.
-    Normally, a document pixel is the same size as a screen pixel}
 
   DOCHOSTUIFLAG_BROWSER = DOCHOSTUIFLAG_DISABLE_HELP_MENU
     or DOCHOSTUIFLAG_DISABLE_SCRIPT_INACTIVE;
@@ -145,11 +163,11 @@ const
     Used in a TDocHostUIInfo record. Later versions of the web browser control
     ignore these values.
   }
-  DOCHOSTUIDBLCLK_DEFAULT = 0;
+  DOCHOSTUIDBLCLK_DEFAULT         = 0;
     {Perform the default action}
-  DOCHOSTUIDBLCLK_SHOWPROPERTIES = 1;
+  DOCHOSTUIDBLCLK_SHOWPROPERTIES  = 1;
     {Show the item's properties}
-  DOCHOSTUIDBLCLK_SHOWCODE = 2;
+  DOCHOSTUIDBLCLK_SHOWCODE        = 2;
     {Show the page's source}
 
   {
@@ -164,19 +182,19 @@ const
   {
     Browser context menu command ids.
   }
-  CONTEXT_MENU_DEFAULT = 0;
+  CONTEXT_MENU_DEFAULT      = 0;
     {Default menu}
-  CONTEXT_MENU_IMAGE = 1;
+  CONTEXT_MENU_IMAGE        = 1;
     {Menu displayed when image right clicked}
-  CONTEXT_MENU_CONTROL = 2;
+  CONTEXT_MENU_CONTROL      = 2;
     {Menu displayed when an input control is right clicked}
-  CONTEXT_MENU_TABLE = 3;
+  CONTEXT_MENU_TABLE        = 3;
     {Menu displayed for a table}
-  CONTEXT_MENU_TEXTSELECT = 4;
+  CONTEXT_MENU_TEXTSELECT   = 4;
     {Menu displayed when selected text is right clicked}
-  CONTEXT_MENU_ANCHOR = 5;
+  CONTEXT_MENU_ANCHOR       = 5;
     {Menu displayed when a link is right clcked}
-  CONTEXT_MENU_UNKNOWN = 6;
+  CONTEXT_MENU_UNKNOWN      = 6;
     {Unknown menu id}
 
 
@@ -403,7 +421,7 @@ type
           if we don't supply a IDataObject, even if we fail or return S_FALSE.
         @return S_OK if the data object is replaced, or S_FALSE if not.
       }
-  end;
+    end;
 
   {
   ICustomDoc:

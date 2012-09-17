@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Compilers.UBDS.pas
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Class that controls and provides information about Borland CodeGear and
+ * Embarcadero "BDS" Win32 compilers.
  *
  * $Rev$
  * $Date$
  *
- * Class that controls and provides information about Borland CodeGear and
- * Embarcadero "BDS" Win32 compilers.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Compilers.UBDS.pas, formerly UBDSCompiler.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -42,6 +63,10 @@ type
         @return Required major version number.
       }
   strict protected
+    function GlyphResourceName: string; override;
+      {Name of any resource containing a "glyph" bitmap for a compiler.
+        @return Resource name or '' if the compiler has no glyph.
+      }
     function InstallationRegKey: string; override;
       {Returns name of registry key where records compiler's installation path
       is recorded.
@@ -138,6 +163,18 @@ begin
       Result := sDelphiXE3;
     else
       Result := Format(sCompilerName, [ProductVersion]);
+  end;
+end;
+
+function TBDSCompiler.GlyphResourceName: string;
+  {Name of any resource containing a "glyph" bitmap for a compiler.
+    @return Resource name or '' if the compiler has no glyph.
+  }
+begin
+  case GetID of
+    ciD2005w32, ciD2006w32, ciD2007, ciD2009w32: Result := 'BDS';
+    ciD2010, ciDXE, ciDXE2, ciDXE3: Result := 'EMBARCADERO';
+    else raise EBug.Create(ClassName + '.GlyphResourceName: Invalid ID');
   end;
 end;
 

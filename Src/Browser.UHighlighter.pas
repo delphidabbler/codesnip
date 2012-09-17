@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Browser.UHighlighter.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Class that highlights text in web browser that match a search criteria.
  *
  * $Rev$
  * $Date$
  *
- * Class that highlights text in web browser that match a search criteria.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Browser.UHighlighter.pas, formerly UWBHighlighter.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -124,7 +145,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Browser.UControlHelper, IntfCommon, UColours, UCSSUtils, UHTMLDOMHelper,
+  Browser.UControlHelper, IntfCommon, UColours, UCSSUtils, UHTMLDocHelper,
   UHTMLUtils;
 
 
@@ -186,7 +207,7 @@ var
   Range: IHTMLTxtRange;       // HTML range to be searched for the word
   SpanAttrs: IHTMLAttributes; // attributes of generated span tag
 begin
-  Range := THTMLDOMHelper.CreateBodyTextRange(fWebBrowser.Document);
+  Range := THTMLDocHelper.CreateBodyTextRange(fWebBrowser.Document);
   Assert(Assigned(Range),
     ClassName + '.HighlightWord: Can''t create body text range');
   Result := 0;
@@ -197,7 +218,8 @@ begin
     if IsRangeInSearchSection(Range) then
     begin
       // Apply highlight to found text by spanning it with highlight style
-      SpanAttrs := THTMLAttributes.Create('style', fHighLightStyle);
+      SpanAttrs := THTMLAttributes.Create;
+      SpanAttrs.Add('style', fHighLightStyle);
       Range.pasteHTML(MakeCompoundTag('span', SpanAttrs, Range.htmlText));
       Inc(Result);
     end
@@ -309,10 +331,10 @@ begin
   fHighlightStyle := '';
   if fHighlightBackColor <> clNone then
     fHighlightStyle := fHighlightStyle +
-      TCSS.BackgroundColorProp(fHighlightBackColor);
+      CSSBackgroundColorProp(fHighlightBackColor);
   if fHighlightTextColor <> clNone then
     fHighlightStyle := fHighlightStyle +
-      TCSS.ColorProp(fHighlightTextColor);
+      CSSColorProp(fHighlightTextColor);
 end;
 
 end.

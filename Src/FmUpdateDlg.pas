@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmUpdateDlg.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Dialog box that updates the CodeSnip database from web.
  *
  * $Rev$
  * $Date$
  *
- * Implements a dialogue box that updates the CodeSnip database from web.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmUpdateDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -56,7 +77,7 @@ type
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure FormDestroy(Sender: TObject);
     procedure btnNewsClick(Sender: TObject);
-  strict private
+  private
     fProgressBarMgr: TMemoProgBarMgr; // Displays progress bar in progress memo
     fDataUpdated: Boolean;            // Flag true if any data was updated
     fCancelled: Boolean;              // Flag true if user cancelled update
@@ -66,7 +87,7 @@ type
         @param Msg [in/out] Not used.
       }
     function GetDataDir: string;
-      {Returns directory where data files stored.
+      {Returns directory where data files stored and ensures it exists.
         @return Data directory.
       }
     procedure UpdateStatusHandler(Sender: TObject; Status: TUpdateStatus;
@@ -124,7 +145,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  FmNewsDlg, UAppInfo, UColours, UConsts, UCtrlArranger, UStrUtils, UUtils;
+  FmNewsDlg, UAppInfo, UColours, UConsts, UCtrlArranger, UUtils;
 
 
 {$R *.dfm}
@@ -328,11 +349,12 @@ begin
 end;
 
 function TUpdateDlg.GetDataDir: string;
-  {Returns directory where data files stored.
+  {Returns directory where data files stored and ensures it exists.
     @return Data directory.
   }
 begin
   Result := TAppInfo.AppDataDir;
+  EnsureFolders(Result);
 end;
 
 procedure TUpdateDlg.HeadlineMsg(const Msg: string;
@@ -365,7 +387,7 @@ begin
       // Error message: show in warning text colour followed by extra error
       // info. Make sure headline ends in one space to separate headline from
       // error message
-      lblHeadline.Caption := StrTrimRight(lblHeadline.Caption) + ' ';
+      lblHeadline.Caption := TrimRight(lblHeadline.Caption) + ' ';
       lblHeadline.Font.Color := clWarningText;
       TCtrlArranger.MoveToRightOf(lblHeadline, lblError);
       lblError.Top := lblHeadline.Top;

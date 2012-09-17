@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FmPrintDlg.pas
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements a print dialog box class.
  *
  * $Rev$
  * $Date$
  *
- * Implements a print dialogue box.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FmPrintDlg.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2007-2011 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -46,7 +67,6 @@ type
     procedure btnSetupClick(Sender: TObject);
     procedure cbPrintersDrawItem(Control: TWinControl; Index: Integer;
       Rect: TRect; State: TOwnerDrawState);
-    procedure FormCreate(Sender: TObject);
   strict private
     procedure PopulatePrinterList;
       {Stores name of each installed printer in combo box and selects default
@@ -77,10 +97,10 @@ implementation
 
 uses
   // Delphi
-  Printers, Graphics,
+  SysUtils, Printers, Graphics,
   // Project
-  FmPreferencesDlg, FrPrintingPrefs, UClassHelpers, UConsts, UMessageBox,
-  UPageSetupDlgMgr, UPrintInfo, UStructs, UStrUtils;
+  FmPreferencesDlg, FrPrintingPrefs, UConsts, UMessageBox, UPageSetupDlgMgr,
+  UPrintInfo, UStructs;
 
 
 {$R *.dfm}
@@ -179,7 +199,7 @@ procedure TPrintDlg.cbPrintersDrawItem(Control: TWinControl; Index: Integer;
       try
         // Check printer name against default
         Printer.PrinterIndex := -1; // this selects default printer
-        Result := StrSameText(PrnName, Printer.Printers[Printer.PrinterIndex]);
+        Result := AnsiSameText(PrnName, Printer.Printers[Printer.PrinterIndex]);
       finally
         // Restore selected printer index
         Printer.PrinterIndex := OldPrinterIdx;
@@ -201,9 +221,6 @@ var
   TxtRect: TRect;     // rectangle bounding the printer name text
   PrnName: string;    // name of printer being displayed
   TextH: Integer;     // height of printer name text in combo canvas
-const
-  // Map of normal and default printer images indexes in image list.
-  PrinterImgIds: array[Boolean] of Integer = (24, 40);
 begin
   // Record various useful values
   Combo := Control as TComboBox;
@@ -244,7 +261,7 @@ begin
   // standard printer glyph is at index 0: Ord(False)
   // default printer glyph is at index 1: Ord(True)
   ilPrinters.Draw(
-    Canvas, ImgRect.Left, ImgRect.Top, PrinterImgIds[IsDefaultPrinter(PrnName)]
+    Canvas, ImgRect.Left, ImgRect.Top, Ord(IsDefaultPrinter(PrnName))
   );
 
   // Draw printer name
@@ -270,12 +287,6 @@ begin
     finally
       Free;
     end;
-end;
-
-procedure TPrintDlg.FormCreate(Sender: TObject);
-begin
-  inherited;
-  ilPrinters.LoadFromResource(RT_RCDATA, 'ACTIONIMAGES', 16, clFuchsia);
 end;
 
 procedure TPrintDlg.InitForm;

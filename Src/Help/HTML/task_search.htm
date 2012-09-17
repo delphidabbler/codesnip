@@ -1,15 +1,26 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * ***** BEGIN LICENSE BLOCK *****
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Version: MPL 1.1
  *
- * $Rev$
- * $Date$
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
  *
- * Help topic describing how to search the database.
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is task_search.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 <html>
   <head>
@@ -30,22 +41,13 @@
     </p>
     <p>
       Once a search is performed only those snippets matching the search
-      criteria are displayed.
+      criteria are displayed. A second search will reset the previous search.
     </p>
     <p>
-      Text and compiler searches can be configured to either operate on any
-      previous search results, effectively refining that search or to operate on
-      the whole database, discarding any previous search results.
-    </p>
-    <p>
-      Cross reference searches and manual selections always operate on the whole
-      database with any existing search results discarded.
-    </p>
-    <p>
-      Serach results can be discarded by clicking the
+      Restore the full database after a search by clicking the
       <img alt="Show All button" src="../images/FindClear.gif" class="glyph">
       <em>Show All</em> toolbar button or by selecting <em>Search | Show
-      All</em>. Following this all snippets are displayed.
+      All</em>.
     </p>
     <h2>
       Text search
@@ -55,7 +57,7 @@
       <img alt="Find Text button" src="../images/FindText.gif" class="glyph">
       <em>Find Text</em> toolbar button (or select <em>Search | Find Text</em>)
       and enter the search text in the
-      <a href="dlg_findtext.htm">Find Text Dialogue Box</a>.
+      <a href="dlg_findtext.htm">Find Text Dialog Box</a>.
     </p>
     <h2>
       Compiler search
@@ -69,7 +71,7 @@
         class="glyph"
       > <em>Find Compiler</em> toolbar button (or select <em>Search | Find
       Compiler</em>) and enter the search criteria in the
-      <a href="dlg_findcompiler.htm">Find Compiler Dialogue Box</a>.
+      <a href="dlg_findcompiler.htm">Find Compiler Dialog Box</a>.
     </p>
     <h2>
       Cross-reference search
@@ -84,8 +86,8 @@
     <p>
       To run the search select a snippet in the
       <a href="overview_pane.htm">Overview Pane</a> then select <em>Search |
-      Find Cross Refs</em> and configure the search in the
-      <a href="dlg_findxrefs.htm">Find Cross References</a> dialogue box.
+      Find Cross Refs</em> and configure the search in the 
+      <a href="dlg_findxrefs.htm">Find Cross References</a> dialog box.
     </p>
     <h2>
       Manual selection
@@ -99,28 +101,13 @@
       > <em>Select Snippets</em> toolbar button (or selecting <em>Search |
       Select Snippets</em>) you can explicitly choose which snippets are to be
       displayed in the <a href="overview_pane.htm">Overview Pane</a>. This is
-      done in the <a href="dlg_selectroutines.htm">Select Snippets</a> dialogue
+      done in the <a href="dlg_selectroutines.htm">Select Snippets</a> dialog
       box by simply placing a check mark next to the required snippets.
     </p>
     <p>
       The main purpose of this option is to select snippets for inclusion in a
       generated Pascal unit. See the <a href="task_generateunit.htm">Generate
       Unit</a> task for information about generating a unit.
-    </p>
-    <h2>
-      Saved Searches
-    </h2>
-    <p>
-      The results of a search can be saved to disk using the <em>File | Save
-      Selection</em> menu option. These search results can be loaded from disk
-      and any matching snippets selected. Doing this replaces any existing
-      search results.
-    </p>
-    <p>
-      Note that the search criteria are not saved, just the details of the
-      snippets that were included in the search results. If any snippets from a
-      saved search result have been deleted when a result set is loaded, any
-      references to deleted snippets are ignored.
     </p>
   </body>
 </html>

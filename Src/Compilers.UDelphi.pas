@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Compilers.UDelphi.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Class that controls and provides information about the Delphi v2-7 compilers.
  *
  * $Rev$
  * $Date$
  *
- * Class that controls and provides information about the Delphi v2-7 compilers.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Compilers.UDelphi.pas, formerly UDelphiCompiler.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -35,16 +56,21 @@ type
     ICompiler,            // this is a compiler
     ICompilerAutoDetect   // can auto detect compiler exec file path
   )
-  strict private
+  private
     function CompilerIDToVerNum: Integer;
       {Converts the compiler ID that defines the compiler to the Delphi version
       number.
         @return Delphi version number.
       }
   protected
+    function GlyphResourceName: string; override;
+      {Name of any resource containing a "glyph" bitmap for a compiler.
+        @return Resource name or '' if the compiler has no glyph.
+      }
+  protected
     function InstallationRegKey: string; override;
-      {Returns name of registry key where compiler's installation path is
-      recorded.
+      {Returns name of registry key where records compiler's installation path
+      is recorded.
         @return Name of key.
       }
     { IClonable }
@@ -127,8 +153,24 @@ begin
   Result := Format(sDelphiName, [CompilerIDToVerNum]);
 end;
 
+function TDelphiCompiler.GlyphResourceName: string;
+  {Name of any resource containing a "glyph" bitmap for a compiler.
+    @return Resource name or '' if the compiler has no glyph.
+  }
+begin
+  case GetID of
+    ciD2, ciD3: Result := 'DELPHI2AND3';
+    ciD4: Result := 'DELPHI4';
+    ciD5: Result := 'DELPHI5';
+    ciD6: Result := 'DELPHI6';
+    ciD7: Result := 'DELPHI7';
+    else raise EBug.Create(ClassName + '.GlyphResourceName: Invalid ID');
+  end;
+end;
+
 function TDelphiCompiler.InstallationRegKey: string;
-  {Returns name of registry key where compiler's installation path is recorded.
+  {Returns name of registry key where records compiler's installation path
+  is recorded.
     @return Name of key.
   }
 begin

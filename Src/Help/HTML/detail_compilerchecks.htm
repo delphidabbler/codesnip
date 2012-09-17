@@ -1,0 +1,181 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is detail_compilerchecks.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s):
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Compiler Check Tab
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <h1>
+      <a name="detail_compilerchecks"></a>Compiler Check Tab
+    </h1>
+    <p>
+      The <em>Compiler Check</em> tab is used to test compile the currently
+      selected snippet. If no snippet is selected this tab displays no
+      information. When a snippet is selected the tab displays a table of
+      information about compilation results. The table columns are:
+    </p>
+    <ul>
+      <li>
+        <em>Compiler</em> &ndash; Lists supported compilers. Unavailable
+        compilers are greyed out.
+      </li>
+      <li>
+      	<em>Compilation Results per Database</em> &ndash; Displays
+        &quot;LEDs&quot; (described below) to indicate the compiler
+        compatability recorded in the database.
+      </li>
+      <li>
+      	<em>Compilation Results per Test</em> &ndash; This column displays
+        results of test compilations carried out locally using available
+        compilers. Again &quot;LEDs&quot; are used to indicate the results.
+        Initially all LEDs are greyed out, indicating no test compilation has
+        been performed. After a test has been run the LEDs change to reflect the
+        results.
+      </li>
+    </ul>
+    <p>
+      Click the
+      <img
+        src="../Images/TestCompile.gif"
+        alt="Test Compile Snippet glyph"
+        class="glyph"
+      > <em>Test Compile Snippet</em> link in the option box to test compile the
+      snippet with all available compilers. You can also initiate tests using
+      the <em>Database | Test Compile</em> menu option or the
+      <img
+        src="../Images/TestCompile.gif"
+        alt="Test Compile button"
+        class="glyph"
+      > <em>Test Compile</em> button. The results of the test compilation will
+      then be displayed as described above. Any compilation that results in
+      compiler warnings or errors will cause a link to be displayed that can be
+      clicked to display the warnings or errors.
+      <strong>Note:</strong> this option is not available if the snippet is 
+      <a href="snippet_freeform.htm">freeform</a>.
+    </p>
+    <p>
+      The LEDs used to indicate compiler results have the following meaning.
+    </p>
+    <table cellspacing="0" cellpadding="0" class="indent">
+      <tr>
+        <td style="width:18px;vertical-align:top;">
+          <img
+            alt="Green LED"
+            src="../images/LEDGreen.png"
+            style="width:18px;height:18px;border:0;"
+          >
+        </td>
+        <td style="vertical-align:top;">
+          Compiled successfully.
+        </td>
+      </tr>
+      <tr>
+        <td style="width:18px;vertical-align:top;">
+          <img
+            alt="Yellow LED"
+            src="../images/LEDYellow.png"
+            style="width:18px;height:18px;border:0;"
+          >
+        </td>
+        <td style="vertical-align:top;">
+          Compiled with warnings.
+        </td>
+      </tr>
+      <tr>
+        <td style="width:18px;vertical-align:top;">
+          <img
+            alt="Red LED"
+            src="../images/LEDRed.png"
+            style="width:18px;height:18px;border:0;"
+          >
+        </td>
+        <td style="vertical-align:top;">
+          Failed to compile.
+        </td>
+      </tr>
+      <tr>
+        <td style="width:18px;vertical-align:top;">
+          <img
+            alt="Grey LED"
+            src="../images/LEDOff.png"
+            style="width:18px;height:18px;border:0;"
+          >
+        </td>
+        <td style="vertical-align:top;">
+          Not tested (database column) or compiler not available (test column).
+        </td>
+      </tr>
+    </table>
+    <p>
+      If <em>CodeSnip</em> has not been configured to work with any compilers a
+      message will be displayed to that effect and the
+      <img
+        src="../Images/TestCompile.gif"
+        alt="Test Compile glyph"
+        class="glyph"
+      > <em>Test Compile Snippet</em> link will be not be displayed. Use the
+      <a href="dlg_configcompilers.htm">Configure Compilers</a> dialog box to
+      set up your compilers. This can be accessed from the
+      <img
+        src="../Images/ConfigCompilers.gif"
+        alt="Configure Compilers glyph"
+        class="glyph"
+      > <em>Configure Compilers</em> link that appears in the option box.
+    </p>
+    <p>
+      In order to test compile a snippet <em>CodeSnip</em> generates a Pascal
+      unit containing the snippet along with any other snippets it depends on.
+      The test unit can be displayed in a dialog box by using the
+      <img
+        src="../Images/ViewUnit.gif"
+        alt="Display Test Unit glyph"
+        class="glyph"
+      > <em>Display Test Unit</em> link.
+    </p>
+    <p>
+      Should the &quot;Compiled with warnings&quot; indicator appear for any
+      Delphi compiler from Delphi 6 upwards you may be able to suppress the
+      warnings by configuring <em>CodeSnip</em>'s code generator to emit
+      suitable compiler directives. Use the
+      <a href="dlg_prefs_codegen.htm">Code Generation</a> tab of the
+      <a href="dlg_preferences.htm">Preferences</a> dialog box (<em>Tools |
+      Preferences</em> menu option) to do this.
+    </p>
+    <p>
+      <strong>See also:</strong> <a
+       href="about_compiler_checks.htm">About Compiler Checks</a>.
+    </p>
+  </body>
+</html>

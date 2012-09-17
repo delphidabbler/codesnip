@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * USnippetIDs.pas
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Defines a record that uniquely indentifies a snippet in the database, along
+ * with an object that maintains a list of snippet ID records.
  *
  * $Rev$
  * $Date$
  *
- * Defines a record that uniquely indentifies a snippet in the database, along
- * with an object that maintains a list of snippet ID records.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is USnippetIDs.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -28,121 +49,129 @@ uses
 
 type
 
-  ///  <summary>Record that uniquely identifies a code snippet. Specifies name
-  ///  and flag indicating whether snippet is user-defined.</summary>
+  {
+  TSnippetID:
+    Record that uniquely identifies a code snippet. Specifies name and flag
+    indicating if snippet is user-defined.
+  }
   TSnippetID = record
-  strict private
-    var
-      ///  <summary>Value of Name property.</summary>
-      fName: string;
-      ///  <summary>Value of UserDefined property.</summary>
-      fUserDefined: Boolean;
-  public
-    ///  <summary>Name of snippet.</summary>
-    property Name: string read fName write fName;
-
-    ///  <summary>Whether snippet is user defined.</summary>
-    property UserDefined: Boolean read fUserDefined write fUserDefined;
-
-    ///  <summary>Creates a record with given property values.</summary>
+    Name: string;           // Name of snippet
+    UserDefined: Boolean;   // Whether snippet is user-defined
     constructor Create(const AName: string; const AUserDefined: Boolean);
-
-    ///  <summary>Creates copy of given snippet ID</summary>
+      {Record constructor. Sets initial field values.
+        @param AName [in] Required snippet name.
+        @paran AUserDefined [in] Indicates if snippet is user defined.
+      }
     constructor Clone(const Src: TSnippetID);
-
-    ///  <summary>Compares this record with another.</summary>
-    ///  <param name="SID">TSnippetID [in] Snippet ID to compare with.</param>
-    ///  <returns>Integer. 0 if records are same, -ve if this record less than
-    ///  SID or +ve if this record greater than SID.</returns>
-    function CompareTo(const SID: TSnippetID): Integer;
-
-    ///  <summary>Compares two snippet names.</summary>
-    ///  <param name="Left">string [in] First name.</param>
-    ///  <param name="Right">string [in] Second name.</param>
-    ///  <result>Integer. 0 if names are same, -ve if Left is less than Right or
-    ///  +ve Left is greater than Right.</result>
-    class function CompareNames(const Left, Right: string): Integer; static;
-
-    ///  <summary>Overload of equality operator for two TSnippetIDs.</summary>
+      {Clone constructor. Sets this snippet ID to be a copy of another record.
+        @param Src [in] Record to copy.
+      }
+    function Compare(const SID: TSnippetID): Integer;
+      {Compares this record to another one.
+        @param SID [in] Record to be compared to this one.
+        @return 0 if records are the same, -ve if this record is "less" than
+          than SID or +ve if this record is greater than SID.
+      }
     class operator Equal(const SID1, SID2: TSnippetID): Boolean;
-
-    ///  <summary>Overload of inequality operator for two TSnippetIDs.</summary>
+      {Overload for = operator.
+        @param SID1 [in] First record to be compared.
+        @param SID2 [in] Second record to be compared.
+        @return True if SID1 and SID2 are equal, False if not.
+      }
     class operator NotEqual(const SID1, SID2: TSnippetID): Boolean;
+      {Overload for <> operator.
+        @param SID1 [in] First record to be compared.
+        @param SID2 [in] Second record to be compared.
+        @return True if SID1 and SID2 are not equal, False if equal.
+      }
   end;
 
-type
-  ///  <summary>Interface supported by objects that implement a list of
-  ///  TSnippetID records.</summary>
+  {
+  ISnippetIDList:
+    Interface supported by objects that implement a list of TSnippetID records.
+  }
   ISnippetIDList = interface(IInterface)
     ['{238CFDCC-E84E-4D29-9BC6-10FBCECBC4FA}']
-    ///  <summary>Gets new list enumerator.</summary>
     function GetEnumerator: TEnumerator<TSnippetID>;
-    ///  <summary>Clears the list.</summary>
+      {Gets a new enumerator for the list.
+        @return Reference to initialised enumerator.
+      }
     procedure Clear;
-    ///  <summary>Adds given snippet ID to list and returns its index in list.
-    ///  </summary>
+      {Clears the list.
+      }
     function Add(const SnippetID: TSnippetID): Integer;
-    ///  <summary>Checks if list contains given snippet ID.</summary>
-    function Contains(const SnippetID: TSnippetID): Boolean;
-    ///  <summary>Returns number of snippet ID records in list.</summary>
+      {Adds a snippet ID record to the list.
+        @param SnippetID [in] Snippet ID to be added to the list.
+        @return Index of added ID in list.
+      }
     function Count: Integer;
-    ///  <summary>Gets snippet ID record from list by index.</summary>
+      {Gets number of snippet ID records in the list.
+        @return Number of items in list.
+      }
     function GetItem(Idx: Integer): TSnippetID;
-    ///  <summary>Stores snippet ID record in list at specified index.</summary>
+      {Gets a snippet ID from list by index.
+        @param Idx [in] Index of required ID in list.
+        @return Required item.
+      }
     procedure SetItem(Idx: Integer; const Value: TSnippetID);
-    ///  <summary>Provides read/write access to snippet IDs by index.</summary>
+      {Stores a snippet ID in list at a specified index.
+        @param Idx [in] Index where ID is to be stored.
+        @param Value [in] Snippet ID to be stored.
+      }
     property Items[Idx: Integer]: TSnippetID
       read GetItem write SetItem; default;
+      {Provides access to IDs in list by index}
   end;
 
-type
-  ///  <summary>Implements a list of snippet identification records.</summary>
+  {
+  TSnippetIDList:
+    Implements a list of snippet identification records.
+  }
   TSnippetIDList = class(TInterfacedObject, ISnippetIDList, IAssignable)
   strict private
     var
-      ///  <summary>Internal list if snippet ID records.</summary>
-      fList: TList<TSnippetID>;
-  public
-    ///  <summary>Constructs empty list object.</summary>
-    constructor Create;
-
-    ///  <summary>Destroys object.</summary>
-    destructor Destroy; override;
-
-    ///  <summary>Gets new list enumerator.</summary>
-    ///  <remarks>Method of ISnippetIDList.</remarks>
+      fList: TList<TSnippetID>; // Internal list of snippet ID records
+  protected
+    { ISnippetIDList methods }
     function GetEnumerator: TEnumerator<TSnippetID>;
-
-    ///  <summary>Clears the list.</summary>
-    ///  <remarks>Method of ISnippetIDList.</remarks>
+      {Gets a new enumerator for the list.
+        @return Reference to initialised enumerator.
+      }
     procedure Clear;
-
-    ///  <summary>Adds given snippet ID to list and returns its index in list.
-    ///  </summary>
-    ///  <remarks>Method of ISnippetIDList.</remarks>
+      {Clears the list.
+      }
     function Add(const SnippetID: TSnippetID): Integer;
-
-    ///  <summary>Checks if list contains given snippet ID.</summary>
-    ///  <remarks>Method of ISnippetIDList.</remarks>
-    function Contains(const SnippetID: TSnippetID): Boolean;
-
-    ///  <summary>Returns number of snippet ID records in list.</summary>
-    ///  <remarks>Method of ISnippetIDList.</remarks>
+      {Adds a snippet ID to the list.
+        @param SnippetID [in] Snippet ID to be added to the list.
+        @return Index of added ID in list.
+      }
     function Count: Integer;
-
-    ///  <summary>Gets snippet ID record from list by index.</summary>
-    ///  <remarks>Method of ISnippetIDList.</remarks>
+      {Gets number of snippet IDs in the list.
+        @return Number of items in list.
+      }
     function GetItem(Idx: Integer): TSnippetID;
-
-    ///  <summary>Stores snippet ID record in list at specified index.</summary>
-    ///  <remarks>Method of ISnippetIDList.</remarks>
+      {Gets a snippet ID from list by index.
+        @param Idx [in] Index of required ID in list.
+        @return Required item.
+      }
     procedure SetItem(Idx: Integer; const Value: TSnippetID);
-
-    ///  <summary>Copies properties of given list to this one.</summary>
-    ///  <param name="Src">IInterface [in] List whose properties are to be
-    ///  copied. Src must support ISnippetIDList.</param>
-    ///  <remarks>Method of IAssignable.</remarks>
+      {Stores a snippet ID in list at a specified index.
+        @param Idx [in] Index where ID is to be stored.
+        @param Value [in] Snippet ID to be stored.
+      }
+    { IAssignable methods }
     procedure Assign(const Src: IInterface);
+      {Sets this list to be a copy of another list.
+        @param Src [in] List to be assigned to this one. Must support
+          ISnippetIDList.
+      }
+  public
+    constructor Create;
+      {Constructor. Sets up empty list object.
+      }
+    destructor Destroy; override;
+      {Destructor. Tears down object.
+      }
   end;
 
 
@@ -151,42 +180,57 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Generics.Defaults,
-  // Project
-  UStrUtils;
+  SysUtils, Generics.Defaults;
 
 
 { TSnippetID }
 
 constructor TSnippetID.Clone(const Src: TSnippetID);
+  {Clone constructor. Sets this snippet ID to be a copy of another record.
+    @param Src [in] Record to copy.
+  }
 begin
   Create(Src.Name, Src.UserDefined);
 end;
 
-class function TSnippetID.CompareNames(const Left, Right: string): Integer;
+function TSnippetID.Compare(const SID: TSnippetID): Integer;
+  {Compares this record to another one.
+    @param SID [in] Record to be compared to this one.
+    @return 0 if records are the same, -ve if this record is "less" than
+      than SID or +ve if this record is greater than SID.
+  }
 begin
-  Result := StrCompareText(Left, Right);
-end;
-
-function TSnippetID.CompareTo(const SID: TSnippetID): Integer;
-begin
-  Result := CompareNames(Name, SID.Name);
+  Result := AnsiCompareText(Name, SID.Name);
   if Result = 0 then
     Result := Ord(UserDefined) - Ord(SID.UserDefined);
 end;
 
 constructor TSnippetID.Create(const AName: string; const AUserDefined: Boolean);
+  {Record constructor. Sets initial field values.
+    @param AName [in] Required snippet name.
+    @paran AUserDefined [in] Indicates if snippet is user defined.
+  }
 begin
-  fName := AName;
-  fUserDefined := AUserDefined;
+  Name := AName;
+  UserDefined := AUserDefined;
 end;
 
 class operator TSnippetID.Equal(const SID1, SID2: TSnippetID): Boolean;
+  {Overload for = operator.
+    @param SID1 [in] First record to be compared.
+    @param SID2 [in] Second record to be compared.
+    @return True if SID1 and SID2 are equal, False if not.
+  }
 begin
-  Result := SID1.CompareTo(SID2) = 0;
+  Result := SID1.Compare(SID2) = 0;
 end;
 
 class operator TSnippetID.NotEqual(const SID1, SID2: TSnippetID): Boolean;
+  {Overload for <> operator.
+    @param SID1 [in] First record to be compared.
+    @param SID2 [in] Second record to be compared.
+    @return True if SID1 and SID2 are not equal, False if equal.
+  }
 begin
   Result := not (SID1 = SID2);
 end;
@@ -194,11 +238,19 @@ end;
 { TSnippetIDList }
 
 function TSnippetIDList.Add(const SnippetID: TSnippetID): Integer;
+  {Adds a snippet ID to the list.
+    @param SnippetID [in] Snippet ID to be added to the list.
+    @return Index of added ID in list.
+  }
 begin
   Result := fList.Add(SnippetID);
 end;
 
 procedure TSnippetIDList.Assign(const Src: IInterface);
+  {Sets this list to be a copy of another list.
+    @param Src [in] List to be assigned to this one. Must support
+      ISnippetIDList.
+  }
 var
   SrcID: TSnippetID;  // references each ID in source
 begin
@@ -210,50 +262,65 @@ begin
 end;
 
 procedure TSnippetIDList.Clear;
+  {Clears the list.
+  }
 begin
   fList.Clear;
 end;
 
-function TSnippetIDList.Contains(const SnippetID: TSnippetID): Boolean;
-begin
-  Result := fList.Contains(SnippetID);
-end;
-
 function TSnippetIDList.Count: Integer;
+  {Gets number of snippet IDs in the list.
+    @return Number of items in list.
+  }
 begin
   Result := fList.Count;
 end;
 
 constructor TSnippetIDList.Create;
+  {Constructor. Sets up empty list object.
+  }
 begin
   inherited;
   fList := TList<TSnippetID>.Create(
     TDelegatedComparer<TSnippetID>.Create(
       function(const Left, Right: TSnippetID): Integer
       begin
-        Result := Left.CompareTo(Right);
+        Result := Left.Compare(Right);
       end
     )
   );
 end;
 
 destructor TSnippetIDList.Destroy;
+  {Destructor. Tears down object.
+  }
 begin
   fList.Free;
   inherited;
 end;
 
 function TSnippetIDList.GetEnumerator: TEnumerator<TSnippetID>;
+  {Gets a new enumerator for the list.
+    @return Reference to initialised enumerator.
+  }
 begin
   Result := fList.GetEnumerator;
 end;
 
 function TSnippetIDList.GetItem(Idx: Integer): TSnippetID;
+  {Gets a snippet ID from list by index.
+    @param Idx [in] Index of required ID in list.
+    @return Required item.
+  }
 begin
   Result := fList[Idx];
 end;
 
 procedure TSnippetIDList.SetItem(Idx: Integer; const Value: TSnippetID);
+  {Stores a snippet ID in list at a specified index.
+    @param Idx [in] Index where ID is to be stored.
+    @param Value [in] Snippet ID to be stored.
+  }
 begin
   fList[Idx] := Value;
 end;

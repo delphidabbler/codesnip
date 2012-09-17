@@ -1,16 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FrNewsPrefs.pas
  *
- * Copyright (C) 2011-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements a frame that allows user to set preferences that relate to news
+ * items. Designed for use as one of the tabs in the preferences dialog box.
  *
  * $Rev$
  * $Date$
  *
- * Implements a frame that allows user to set preferences that relate to news
- * items.
- * Designed for use as one of the tabs in the Preferences dialogue box.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FrNewsPrefs.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2011 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -51,11 +71,6 @@ type
       {Called when page is deactivated. Stores information entered by user.
         @param Prefs [in] Object used to store information.
       }
-    ///  <summary>Checks if preference changes require that main window UI is
-    ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing. Always
-    ///  returns False because these preferences never affect UI.</remarks>
-    function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
@@ -137,11 +152,6 @@ class function TNewsPrefsFrame.Index: Byte;
   }
 begin
   Result := 50;
-end;
-
-function TNewsPrefsFrame.UIUpdated: Boolean;
-begin
-  Result := False;
 end;
 
 initialization

@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * USettings.pas
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements class that can store application settings in application wide and
+ * per user persistent storage.
  *
  * $Rev$
  * $Date$
  *
- * Implements class that can store application settings in application wide and
- * per user persistent storage.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is USettings.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -195,14 +216,14 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Classes, IniFiles, IOUtils,
-  // Project
-  UAppInfo, UEncryptor, UExceptions, UHexUtils, UIOUtils;
+  SysUtils, Classes, IniFiles,
+  // 3rd party
+  UAppInfo, UEncryptor, UExceptions, UHexUtils, UUtils;
 
 
 var
   // Private global variable: stores reference to settings singleton object
-  pvtSettings: ISettings = nil;
+  pvtSettings: ISettings;
 
 
 type
@@ -252,7 +273,7 @@ type
   TIniSettings = class(TIniSettingsBase,
     ISettings
   )
-  strict private
+  private
     function CreateSection(const SectionID: TSettingsSectionId;
       const SubSection: string): ISettingsSection;
       {Creates object representing a section of the ini file.
@@ -294,7 +315,7 @@ type
   TIniSettingsSection = class(TIniSettingsBase,
     ISettingsSection
   )
-  strict private
+  private
     fSectionName: string;         // Name of section
     fStorage: TSettingsStorageId; // Id of storage to be used
     fValues: TStringList;         // Stores section's data as name=value pairs
@@ -403,8 +424,6 @@ function Settings: ISettings;
     @return Reference to singleton.
   }
 begin
-  if not Assigned(pvtSettings) then
-    pvtSettings := TIniSettings.Create as ISettings;
   Result := pvtSettings;
 end;
 
@@ -441,8 +460,8 @@ constructor TIniSettingsBase.Create;
 begin
   inherited;
   // Ensure storage directories exist
-  TDirectory.CreateDirectory(TAppInfo.UserAppDir);
-  TDirectory.CreateDirectory(TAppInfo.CommonAppDir);
+  EnsureFolders(TAppInfo.UserAppDir);
+  EnsureFolders(TAppInfo.CommonAppDir);
 end;
 
 function TIniSettingsBase.CreateIniFile(
@@ -451,14 +470,8 @@ function TIniSettingsBase.CreateIniFile(
     @param Id [in] Id of storage for which object is required.
     @return TIniFile instance.
   }
-var
-  FileName: string; // name if ini file
 begin
-  FileName := StorageName(Storage);
-  if not TFile.Exists(FileName) then
-    // create empty Unicode text file with BOM to force Win API to write Unicode
-    TFileIO.WriteAllText(FileName, '', TEncoding.Unicode, True);
-  Result := TIniFile.Create(FileName);
+  Result := TIniFile.Create(StorageName(Storage));
 end;
 
 function TIniSettingsBase.StorageName(
@@ -468,11 +481,12 @@ function TIniSettingsBase.StorageName(
     @return Required storage name.
   }
 begin
+  // We only support one storage: ssUser
   case Storage of
     ssUser:
-      Result := TAppInfo.UserAppDir + '\User.config';
+      Result := TAppInfo.UserAppDir + '\User.3.ini';
     ssCommon:
-      Result := TAppInfo.CommonAppDir + '\Common.config';
+      Result := TAppInfo.CommonAppDir + '\Common.ini';
     else
       raise EBug.Create(ClassName + '.StorageName: unknown storage type');
   end;
@@ -777,6 +791,16 @@ begin
   for Idx := 0 to Pred(Value.Count) do
     SetItemValue(Format(ItemFmt, [Idx]), Value[Idx]);
 end;
+
+initialization
+
+// Initialise settings singletion
+pvtSettings := TIniSettings.Create as ISettings;
+
+finalization
+
+// Free the singleton
+pvtSettings := nil;
 
 end.
 

@@ -1,13 +1,36 @@
-# This Source Code Form is subject to the terms of the Mozilla Public License,
-# v. 2.0. If a copy of the MPL was not distributed with this file, You can
-# obtain one at http://mozilla.org/MPL/2.0/
+# ------------------------------------------------------------------------------
+# Makefile
 #
-# Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+# Makefile for the whole project.
 #
 # $Rev$
 # $Date$
 #
-# Makefile for the CodeSnip project.
+# ***** BEGIN LICENSE BLOCK *****
+#
+# Version: MPL 1.1
+#
+# The contents of this file are subject to the Mozilla Public License Version
+# 1.1 (the "License"); you may not use this file except in compliance with the
+# License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+#
+# Software distributed under the License is distributed on an "AS IS" basis,
+# WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+# the specific language governing rights and limitations under the License.
+#
+# The Original Code is Makefile
+#
+# The Initial Developer of the Original Code is Peter Johnson
+# (http://www.delphidabbler.com/).
+#
+# Portions created by the Initial Developer are Copyright (C) 2009 Peter
+# Johnson. All Rights Reserved.
+#
+# Contributors:
+#   NONE
+#
+# ***** END LICENSE BLOCK *****
+# ------------------------------------------------------------------------------
 
 
 # Set bin path: required by Common.mak
@@ -26,9 +49,6 @@ HTMLRES = "$(HTMLRESROOT)\HTMLRes.exe"
 HTMLRES = HTMLRes
 !endif
 
-!ifdef INNOSETUP_U
-INNOSETUP = $(INNOSETUP_U)
-!endif
 !ifdef INNOSETUP
 ISCC = "$(INNOSETUP)\ISCC.exe"
 !else
@@ -62,8 +82,8 @@ MIDL = @echo *** IGNORING MIDL
 # Default is to build everything and release
 everything: config exes setup release
 
-# Builds CodeSnip exe file + help
-exes: codesnip help
+# Builds all exe files + help
+exes: codesnip installhelper help
 
 # Build CodeSnip executable
 codesnip: typelib resources autogen pascal
@@ -79,9 +99,20 @@ config:
   @if exist Exe rmdir /S /Q Exe
   @if exist Release rmdir /S /Q Release
   @mkdir Bin
+  @mkdir Bin\InstallHelper
   @mkdir Exe
   @mkdir Release
   @cd Src
+  # Config install helper
+  @cd InstallHelper
+  @$(MAKE) config
+  @cd ..
+
+# Build install helper executable
+installhelper: 
+  @cd InstallHelper
+  @$(MAKE) exe
+  @cd ..
 
 # Builds CodeSnip pascal files and links program
 pascal: CodeSnip.exe
@@ -100,7 +131,7 @@ HTML.res: HTML.hrc
   @$(HTMLRES) -mHTML.hrc -o$(BIN)\HTML.res -r -q
 
 # Compiles type library from IDL
-typelib:
+typelib:  
   @$(MIDL) .\ExternalObj.idl /tlb $(BIN)\ExternalObj.tlb /I "$(MSSDK)\Include"
 
 # Builds setup program
@@ -109,7 +140,7 @@ setup:
   @$(ISCC) Install\CodeSnip.iss
 
 # Creates auto generated files
-autogen:
+autogen: 
   @$(TLIBIMP) -P+ -Ps+ -D.\AutoGen -FtIntfExternalObj $(BIN)\ExternalObj.tlb
   @if exist .\AutoGen\IntfExternalObj.dcr del .\AutoGen\IntfExternalObj.dcr
 

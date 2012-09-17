@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UJavaScriptUtils.pas
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Utilities that assist when working with JavaScript.
  *
  * $Rev$
  * $Date$
  *
- * Utilities that assist when working with JavaScript.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UJavaScriptUtils.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -39,7 +60,7 @@ uses
   // Delphi
   SysUtils, Classes,
   // Project
-  UConsts, UExceptions, UStrUtils;
+  UConsts, UExceptions, UHTMLDocHelper, UUtils;
 
 
 function CEscapeStr(const S: string; const EscapeChars,
@@ -69,7 +90,7 @@ begin
   EscCount := 0;
   for Idx := 1 to Length(S) do
   begin
-    if StrContainsStr(S[Idx], EscapableChars) then
+    if SysUtils.AnsiPos(S[Idx], EscapableChars) > 0 then
       Inc(EscCount);
   end;
   // Set size of result string and get pointer to it
@@ -78,7 +99,7 @@ begin
   // Replace escapable chars with the escaped version
   for Idx := 1 to Length(S) do
   begin
-    EscCharPos := StrPos(S[Idx], EscapableChars);
+    EscCharPos := SysUtils.AnsiPos(S[Idx], EscapableChars);
     if EscCharPos > 0 then
     begin
       PRes^ := cEscChar;
@@ -119,7 +140,7 @@ begin
   Result :=
     cQuote +
     CEscapeStr(
-      StrUnixLineBreaks(S),   // convert CRLF to LF
+      UUtils.UnixLineBreaks(S),   // convert CRLF to LF
       cEscapeChars,
       cEscapableChars
     ) +
@@ -192,7 +213,7 @@ begin
       ParamList.Add(Param);
     end;
     // Build function name and parameter list
-    Result := FnName + '(' + StrJoin(ParamList, ', ') + ')';
+    Result := FnName + '(' + JoinStr(ParamList, ', ') + ')';
   finally
     FreeAndNil(ParamList);
   end;

@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Hiliter.UAttrs.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements classes that define attributes of syntax highlighters.
  *
  * $Rev$
  * $Date$
  *
- * Implements classes that define attributes of syntax highlighters.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Hiliter.UAttrs.pas, formerly UHiliteAttrs.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -109,13 +130,9 @@ type
     IAssignable   // defines object assignment
   )
   strict private
-    var
-      fElemAttrs: TList<IHiliteElemAttrs>;  // List of element attributes
-      fFontSize: Integer;                   // Size of font in points
-      fFontName: string;                    // Name of font
-    const
-      cDefFontName = 'Courier New'; // Default font name
-      cDefFontSize = 9;             // Default font size
+    var fElemAttrs: TList<IHiliteElemAttrs>;  // List of element attributes
+    var fFontSize: Integer;                   // Size of font in points
+    var fFontName: string;                    // Name of font
   protected // do not make strict
     { IHiliteAttrs methods }
     function GetFontName: string;
@@ -134,9 +151,6 @@ type
       {Sets size of font to use for all output.
         @param AFontSize [in] Required font size in points.
       }
-    procedure ResetDefaultFont;
-      {Resets font name and size to default value.
-      }
     function GetElement(const Elem: THiliteElement): IHiliteElemAttrs;
       {Gets the attributes of a highlighter element.
         @param Elem [in] Required element.
@@ -150,6 +164,8 @@ type
         @except EBug raised if Src is incompatible with this object.
       }
   public
+    const cDefFontName = 'Courier New'; // Default font name
+    const cDefFontSize = 9;             // Default font size
     constructor Create;
       {Object constructor. Sets up and intialises object.
       }
@@ -296,14 +312,6 @@ function THiliteAttrs.GetFontSize: Integer;
   }
 begin
   Result := fFontSize;
-end;
-
-procedure THiliteAttrs.ResetDefaultFont;
-  {Resets font name and size to default value.
-  }
-begin
-  SetFontName(cDefFontName);
-  SetFontSize(cDefFontSize);
 end;
 
 procedure THiliteAttrs.SetFontName(const AFontName: string);
@@ -574,7 +582,8 @@ begin
         Result[Elem].ForeColor := clNone;
   end;
   // Ensure we use required printing fonts
-  Result.ResetDefaultFont;
+  Result.FontName := THiliteAttrs.cDefFontName;
+  Result.FontSize := THiliteAttrs.cDefFontSize;
 end;
 
 class function THiliteAttrsFactory.CreateUserAttrs: IHiliteAttrs;

@@ -1,17 +1,38 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * UWindowSettings.pas
  *
  * Implements a class that can save and record position of main window along
  * with some window widgets.
  *
  * Requires DelphiDabbler Window State Components v5.3 of later.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UWindowSettings.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -40,6 +61,7 @@ type
     var
       fSplitterPos: Integer;      // Value of SplitterPos property
       fOverviewTab: Integer;      // Value of OverviewTab property
+      fDetailTab: Integer;        // Value of DetailTab property
     const
       cDefLeftPanelWidth  = 186;  // Default width of left hand panel
   strict protected
@@ -92,6 +114,9 @@ type
     property OverviewTab: Integer
       read fOverviewTab write fOverviewTab;
       {Index of selected tab in overview pane}
+    property DetailTab: Integer
+      read fDetailTab write fDetailTab;
+      {Index of selected tab in detail pane}
   end;
 
 
@@ -157,6 +182,7 @@ begin
     State := Ord(wsNormal);   // we don't allow minimized: use normal
   fSplitterPos := StrToIntDef(Section.ItemValues['SplitterPos'], fSplitterPos);
   fOverviewTab := StrToIntDef(Section.ItemValues['OverviewTab'], fOverviewTab);
+  fDetailTab := StrToIntDef(Section.ItemValues['DetailTab'], fDetailTab);
 end;
 
 procedure TWindowSettings.SaveWdwState(const Left, Top, Width, Height,
@@ -182,6 +208,7 @@ begin
   Section.ItemValues['State'] := IntToStr(State);
   Section.ItemValues['SplitterPos'] := IntToStr(fSplitterPos);
   Section.ItemValues['OverviewTab'] := IntToStr(fOverviewTab);
+  Section.ItemValues['DetailTab'] := IntToStr(fDetailTab);
   Section.Save;
 end;
 

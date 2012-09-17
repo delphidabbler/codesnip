@@ -6,6 +6,18 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
   DesignSize = (
     393
     326)
+  object lblNotice: TLabel
+    Left = 0
+    Top = 301
+    Width = 393
+    Height = 18
+    Alignment = taCenter
+    Anchors = [akLeft, akTop, akRight]
+    AutoSize = False
+    Caption = 
+      'Changes will be reflected in the main display only when you rest' +
+      'art CodeSnip.'
+  end
   object gbElements: TGroupBox
     Left = 0
     Top = 95

@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UStatusBarMgr.pas
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements class that manages display of status information and hints in a
+ * status bar.
  *
  * $Rev$
  * $Date$
  *
- * Implements class that manages display of status information and hints in a
- * status bar.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UStatusBarMgr.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -36,7 +57,7 @@ type
       fStatusBar: TStatusBar;
         {Reference to managed status bar}
       fSearchGlyph: TBitmap;
-        {Stores reference to glyph used to indicate kind of latest search}
+        {Stores reference to glyph used to indicate kind of current search}
       fModifiedGlyph: TBitmap;
         {Stores glyph displayed when user database has been modified}
       fSearchInfoVisible: Boolean;
@@ -106,7 +127,7 @@ implementation
   + Panel[0]: Displays database statistics or a simple prompt. Status bar
     default drawing is used. When a simple prompty is displayed Panel[1] and
     Panel[2] are hidden.
-  + Panel[1]: Displays information about latest search. A glyph indicating
+  + Panel[1]: Displays information about current search. A glyph indicating
     search type is displayed. The panel is owner-drawn.
   + Panel[2]: Displays a modification flag and glyph if user defined database
     has been modified since last save. Nothing is displayed when database is
@@ -124,7 +145,7 @@ uses
   // Delphi
   SysUtils, Forms,
   // Project
-  DB.UMain, UQuery, USearch, UStructs;
+  UQuery, USearch, USnippets, UStructs;
 
 
 { TStatusBarMgr }
@@ -308,13 +329,13 @@ begin
   // method is called by the status bar to draw the panel.
 
   // Store text describing search result
-  if Query.LatestSearch.IsNul then
+  if Query.CurrentSearch.IsNul then
     fStatusBar.Panels[cSearchPanel].Text := sNoSearch
   else
     fStatusBar.Panels[cSearchPanel].Text
       := Format(sSearchActive, [Query.Selection.Count]);
-  // Store glyph that indicates latest search type
-  fSearchGlyph.Assign((Query.LatestSearch.Criteria as ISearchUIInfo).Glyph);
+  // Store glyph that indicates current search type
+  fSearchGlyph.Assign((Query.CurrentSearch.Criteria as ISearchUIInfo).Glyph);
   // Ensure search info panel of status bar is displayed
   fSearchInfoVisible := True;
   // Force status bar to repaint itself
@@ -349,9 +370,9 @@ resourcestring
   sWithUserInfo = '%0:d snippets (%2:d user defined) in %1:d categories';
 begin
   // Calculate database stats
-  TotalSnippets := Database.Snippets.Count;
-  TotalUserSnippets := Database.Snippets.Count(True);
-  TotalCategories := Database.Categories.Count;
+  TotalSnippets := Snippets.Routines.Count;
+  TotalUserSnippets := Snippets.Routines.Count(True);
+  TotalCategories := Snippets.Categories.Count;
   // Build display text and display it
   if TotalUserSnippets = 0 then
     DisplayText := Format(sNoUserInfo, [TotalSnippets, TotalCategories])
@@ -371,7 +392,7 @@ begin
   // status bar to draw the panel.
 
   // We hide message if database not updated
-  fUserDBInfoVisible := (Database as IDatabaseEdit).Updated;
+  fUserDBInfoVisible := (Snippets as ISnippetsEdit).Updated;
   fStatusBar.Repaint;
 end;
 

@@ -1,16 +1,4 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
-<!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
- *
- * CodeSnip help table of contents file.
--->
 <HTML>
 <HEAD>
 <meta name="GENERATOR" content="Microsoft&reg; HTML Help Workshop 4.1">
@@ -41,6 +29,14 @@
 			<LI> <OBJECT type="text/sitemap">
 				<param name="Name" value="Detail Pane">
 				<param name="Local" value="HTML\detail_pane.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Information Tab">
+				<param name="Local" value="HTML\detail_information.htm">
+				</OBJECT>
+			<LI> <OBJECT type="text/sitemap">
+				<param name="Name" value="Compiler Checks Tab">
+				<param name="Local" value="HTML\detail_compilerchecks.htm">
 				</OBJECT>
 		</UL>
 		<LI> <OBJECT type="text/sitemap">
@@ -74,20 +70,8 @@
 			<param name="Local" value="HTML\menu_search.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Snippets Menu">
-			<param name="Local" value="HTML\menu_snippets.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Categories Menu">
-			<param name="Local" value="HTML\menu_categories.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Database Menu">
 			<param name="Local" value="HTML\menu_database.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Compile Menu">
-			<param name="Local" value="HTML\menu_compile.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Tools Menu">
@@ -158,23 +142,15 @@
 			<param name="Local" value="HTML\snippet_routine.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
+			<param name="Name" value="Type Definitions">
+			<param name="Local" value="HTML\snippet_type.htm">
+			</OBJECT>
+		<LI> <OBJECT type="text/sitemap">
 			<param name="Name" value="Constants">
 			<param name="Local" value="HTML\snippet_constant.htm">
 			</OBJECT>
 		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Simple Types">
-			<param name="Local" value="HTML\snippet_type.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Classes and Advanced Records">
-			<param name="Local" value="HTML\snippet_class.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Units">
-			<param name="Local" value="HTML\snippet_unit.htm">
-			</OBJECT>
-		<LI> <OBJECT type="text/sitemap">
-			<param name="Name" value="Freeform">
+			<param name="Name" value="Freeform Snippets">
 			<param name="Local" value="HTML\snippet_freeform.htm">
 			</OBJECT>
 	</UL>
