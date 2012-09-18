@@ -45,8 +45,8 @@
 
 ; For v4 release alpha, beta and release candidates only,
 ; set version number here
-#define AppVersion "4.0-RC.2"
-#define RealVersion "3.999.2"
+#define AppVersion "4.0-RC.3"
+#define RealVersion "3.999.3"
 
 ; Creates name of setup file from app name, version and any special build string
 #define CreateSetupName(str fn) \
