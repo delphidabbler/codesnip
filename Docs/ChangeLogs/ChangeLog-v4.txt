@@ -11,6 +11,10 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.0 RC 3 of 18 September 2012
+Internal CodeSnip version 3.999.3
++ Fixed serious bug #3568628 (http://bit.ly/V5NX0H): CodeSnip faulting at startup after fresh install with no previous v3 installation.
+
 Release v4.0 RC 2 of 17 September 2012
 Internal CodeSnip version 3.999.2
 + Fixed serious bug #3568515 (http://bit.ly/Oy2Q7g): Duplicating a snippet with a display name causes crash.
