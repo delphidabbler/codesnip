@@ -35,12 +35,6 @@ type
     ///  compilation result.</summary>
     class function ImageTag(const CompRes: TCompileResult): string;
     ///  <summary>Returns a description of given compile result.</summary>
-    class function CompileResultDesc(const CompRes: TCompileResult): string;
-    ///  <summary>Returns URL of image representing given compile result.
-    ///  </summary>
-    class function ImageResURL(const CompRes: TCompileResult): string;
-    ///  <summary>Returns HTML of a table cell containing name of given
-    ///  compiler.</summary>
     class function NameCell(const Compiler: ICompiler): string;
     ///  <summary>Returns HTML of a table cell containing an image that
     ///  indicates given compile result.</summary>
@@ -71,8 +65,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, UConsts, UHTMLUtils, UHTMLDetailUtils, UIStringList,
-  UJavaScriptUtils, UResourceUtils, UStrUtils;
+  Compilers.UCompilers, UConsts, UCSSUtils, UHTMLUtils, UHTMLDetailUtils,
+  UIStringList, UJavaScriptUtils, UResourceUtils, UStrUtils;
 
 
 resourcestring
@@ -100,12 +94,6 @@ const
 
 
 { TCompResHTML }
-
-class function TCompResHTML.CompileResultDesc(const CompRes: TCompileResult):
-  string;
-begin
-  Result := CompResImgInfo[CompRes].Title;
-end;
 
 class function TCompResHTML.CompileResultsTableRows(Compilers: ICompilers;
   const CompileResults: TCompileResults): string;
@@ -169,20 +157,26 @@ begin
   );
 end;
 
-class function TCompResHTML.ImageResURL(const CompRes: TCompileResult):
-  string;
-begin
-  Result := MakeResourceURL(CompResImgInfo[CompRes].ResName);
-end;
-
 class function TCompResHTML.ImageTag(const CompRes: TCompileResult): string;
+var
+  Attrs: IHTMLAttributes; // image's attributes
 begin
-  Result := UHTMLUtils.ImageTag(
-    ImageResURL(CompRes),
-    CompileResultDesc(CompRes),
-    CompResImgWidth,
-    CompResImgHeight
+  // Create attributes
+  Attrs := THTMLAttributes.Create;
+  Attrs.Add('src', MakeResourceURL(CompResImgInfo[CompRes].ResName));
+  Attrs.Add(
+    'style',
+    TIStringList.Create(
+      [
+        TCSS.VerticalAlignProp(cvaTop),
+        TCSS.WidthProp(CompResImgWidth),
+        TCSS.HeightProp(CompResImgHeight)
+      ]
+    )
   );
+  Attrs.Add('title', CompResImgInfo[CompRes].Title);
+  // Create tag
+  Result := MakeTag('img', ttSimple, Attrs);
 end;
 
 class function TCompResHTML.NameCell(const Compiler: ICompiler): string;
