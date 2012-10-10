@@ -27,6 +27,15 @@ uses
   UIStringList, USnippetIDs;
 
 type
+  ///  <summary>Enumeration providing information about the level to which a
+  ///  snippet has been tested.</summary>
+  TSnippetTestInfo = (
+    stiNone,              // snippet has not been tested
+    stiBasic,             // snippet has had some basic testing
+    stiAdvanced           // snippet has had advanced (unit) testing
+  );
+
+type
 
   {
   TSnippetData:
@@ -41,6 +50,7 @@ type
     DisplayName: string;                  // Snippet's display name
     Extra: IActiveText;                   // Extra text used to describe snippet
     CompilerResults: TCompileResults;     // Compilation results
+    TestInfo: TSnippetTestInfo;           // Test information
     procedure Init;
       {Initialises record by setting default values for fields.
       }
@@ -105,6 +115,7 @@ type
     fCompatibility: TCompileResults;        // Snippet's compiler compatibility
     fUserDefined: Boolean;                  // If this snippet is user-defined
     fHiliteSource: Boolean;                 // If source is syntax highlighted
+    fTestInfo: TSnippetTestInfo;            // Level of testing of snippet
     function GetID: TSnippetID;
       {Gets snippet's unique ID.
         @return Required ID.
@@ -167,6 +178,8 @@ type
       {Additional information about snippet}
     property Compatibility: TCompileResults read fCompatibility;
       {Compiler compatibilty of this snippet}
+    property TestInfo: TSnippetTestInfo read fTestInfo;
+      {Describes level of testing carried out on snippet}
     property Units: TStringList read fUnits;
       {List of units used by snippet}
     property Depends: TSnippetList read fDepends;
@@ -462,6 +475,7 @@ begin
   fDisplayName := Data.DisplayName;
   fExtra := TActiveTextFactory.CloneActiveText(Data.Extra);
   fCompatibility := Data.CompilerResults;
+  fTestInfo := Data.TestInfo;
 end;
 
 { TSnippetEx }
@@ -488,6 +502,7 @@ begin
   Result.DisplayName := GetDisplayNameValue;
   Result.Extra := TActiveTextFactory.CloneActiveText(Extra);
   Result.CompilerResults := Compatibility;
+  Result.TestInfo := TestInfo;
 end;
 
 function TSnippetEx.GetReferences: TSnippetReferences;
@@ -820,6 +835,7 @@ begin
   // Self.Extra = nil and Src.Extra = nil
   Extra := TActiveTextFactory.CloneActiveText(Src.Extra);
   CompilerResults := Src.CompilerResults;
+  TestInfo := Src.TestInfo;
 end;
 
 procedure TSnippetData.Init;
@@ -837,6 +853,7 @@ begin
   Extra := TActiveTextFactory.CreateActiveText;
   for CompID := Low(TCompilerID) to High(TCompilerID) do
     CompilerResults[CompID] := crQuery;
+  TestInfo := stiNone;
 end;
 
 { TSnippetReferences }

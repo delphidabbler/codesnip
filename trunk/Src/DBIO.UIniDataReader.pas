@@ -232,6 +232,7 @@ const
   cSnipFileName = 'Snip';             // name of snippet's snippet file
   cStdFormatName = 'StandardFormat';  // whether snippet in std format
   cKindName = 'Kind';                 // kind of snippet
+  cTestInfoName = 'TestInfo';         // snippet's testing information
   cCompilerIDNames:                   // snippet's compiler results for each
     array[TCompilerID] of string = (
     'Delphi2', 'Delphi3', 'Delphi4', 'Delphi5', 'Delphi6', 'Delphi7',
@@ -434,7 +435,7 @@ var
       if CompRes = '' then
         CompRes := '?';
       case CompRes[1] of
-        'W', // warning result now treated as success: see notes above
+        'W', // warning result now treated as success
         'Y': Result[CompID] := crSuccess;
         'N': Result[CompID] := crError;
         else Result[CompID] := crQuery;
@@ -469,6 +470,20 @@ var
   begin
     Result := CatIni.ReadString(Snippet, cDisplayName, '');
   end;
+
+  ///  <summary>Get's snippet's test info from ini file.</summary>
+  function GetTestInfoProperty: TSnippetTestInfo;
+  var
+    Str: string;  // string value read from ini file
+  begin
+    Str := CatIni.ReadString(Snippet, cTestInfoName, 'basic');
+    if StrSameText(Str, 'basic') then
+      Result := stiBasic
+    else if StrSameText(Str, 'advanced') then
+      Result := stiAdvanced
+    else // Str = 'none' or any invalid value
+      Result := stiNone;
+  end;
   // ---------------------------------------------------------------------------
 
 begin
@@ -485,6 +500,7 @@ begin
     Props.DisplayName := GetDisplayNameProperty;
     Props.SourceCode := GetSourceCodeProperty;
     Props.CompilerResults := GetCompilerResultsProperty;
+    Props.TestInfo := GetTestInfoProperty;
     // all snippets from main database are Pascal and use syntax highlighter:
     // there is no entry in data files to switch this on or off
     Props.HiliteSource := True;
