@@ -88,6 +88,9 @@ type
     function CompileResults: string;
     ///  <summary>Returns HTML of link to snippet.</summary>
     function SnippetALink: string; overload;
+    ///  <summary>Returns an image tag referenceing the image used to display
+    ///  the snippet's test information.</summary>
+    function TestingImage: string;
   end;
 
 
@@ -100,7 +103,8 @@ uses
   // Project
   ActiveText.UHTMLRenderer, DB.UMain, DB.USnippetKind, Hiliter.UAttrs,
   Hiliter.UGlobals, Hiliter.UHiliters, UCompResHTML, UHTMLBuilder,
-  UHTMLDetailUtils, UHTMLUtils, UIStringList, UJavaScriptUtils, UStrUtils;
+  UHTMLDetailUtils, UHTMLUtils, UIStringList, UJavaScriptUtils, UResourceUtils,
+  UStrUtils;
 
 
 { TSnippetHTML }
@@ -244,6 +248,32 @@ begin
   finally
     Builder.Free;
   end;
+end;
+
+function TSnippetHTML.TestingImage: string;
+resourcestring
+  sTestingNone = 'Untested'#13#10'Use with care';
+  sTestingBasic = 'Passed simple tests';
+  sTestingAdvanced = 'Passed advanced / unit testing';
+const
+  ImgWidth = 16;
+  ImgHeight = 16;
+  ImgSrcs: array[TSnippetTestInfo] of record
+    ResName: string;    // name of image resource
+    Title: string;      // value of image tag title attribute
+  end =(
+    (ResName: 'testing-none.png';     Title: sTestingNone),
+    (ResName: 'testing-basic.png';    Title: sTestingBasic),
+    (ResName: 'testing-advanced.png'; Title: sTestingAdvanced)
+  );
+var
+  Attrs: IHTMLAttributes; // image's attributes
+begin
+  Attrs := THTMLAttributes.Create;
+  Attrs.Add('src', MakeResourceURL(ImgSrcs[fSnippet.TestInfo].ResName));
+  Attrs.Add('title', MakeSafeHTMLText(ImgSrcs[fSnippet.TestInfo].Title));
+  Attrs.Add('class', 'testing-img');
+  Result := MakeTag('img', ttSimple, Attrs);
 end;
 
 function TSnippetHTML.Units: string;

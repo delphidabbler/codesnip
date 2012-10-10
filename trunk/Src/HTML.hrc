@@ -101,8 +101,15 @@ Res\Img\led-off.png
 Res\Img\led-red.png
 Res\Img\led-yellow.png
 
+# test results
+# ------------
+
+Res\Img\testing-none.png
+Res\Img\testing-basic.png
+Res\Img\testing-advanced.png
+
 # dialogue box images
-# -----------------
+# -------------------
 
 # about box - CodeSnip icon
 Res\Img\Branding\icon.gif
