@@ -186,5 +186,9 @@
 		<param name="Name" value="FAQs">
 		<param name="Local" value="HTML\faqs.htm">
 		</OBJECT>
+	<LI> <OBJECT type="text/sitemap">
+		<param name="Name" value="What's New In CodeSnip 4">
+		<param name="Local" value="HTML\new.htm">
+		</OBJECT>
 </UL>
 </BODY></HTML>
