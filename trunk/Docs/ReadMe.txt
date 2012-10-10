@@ -8,123 +8,18 @@ DELPHIDABBLER CODESNIP v4 README
 What is CodeSnip?
 ================================================================================
 
-DelphiDabbler CodeSnip is a Delphi code snippets repository. It can download and
-display snippets from the online DelphiDabbler CodeSnip database as well as
+DelphiDabbler CodeSnip 4 is a Delphi code snippets repository. It can download
+and display snippets from the online DelphiDabbler CodeSnip database as well as
 maintain a database of user-defined snippets.
 
 It displays details of each snippet in the database and can test-compile them
-with each installed Win32 version of Delphi from v2 to XE3 and Free Pascal.
+with each installed Win32 version of Delphi from v2 to XE3 along with Free
+Pascal.
 
-Compilable Pascal units containing selected snippets can be created.
+Compilable Pascal units can be created that contain selected snippets.
 
-
-About this v4 release candidate
-================================================================================
-
-Overview
---------
-
-This is a release candidate for CodeSnip v4. It is feature-complete. Look and
-feel is pretty much complete and will only change significantly in response to
-any user feedback.
-
-If you accept the default install path, or specify a unique install path it will
-install alongside any v3 release and will not affect the v3 release in any way.
-
-If you have not created a user database using any of the v4 preview or beta
-releases the program will offer to copy over any user defined snippets from a
-pre-existing v3 and can preserve most if not all settings. Any v4 preview or
-earlier beta release will be overwritten.
-
-Any user defined snippets you edit will not be reflected in any v3 installation
-and any settings you change won't affect the v3 install.
-
-Nearly all the file formats have been changed from v3, so export and backup
-files are not compatible with v3 and earlier. Don't expect any backups or
-export files you create to work with v3. However files created by v3 can be read
-by v4.
-
-If you have been using one of the CodeSnip 4 previews this version will attempt
-to bring forward all settings from that. If you don't want to do that, follow
-the instructions the installer displays when it detects that a preview release
-was installed.
-
-Copies of the DelphiDabbler online Code Snippets database are stored in a
-different location to v3, so updating the database from v4 will not update the
-database used by v3 and vice versa.
-
-File formats are now fixed and will not change before the final release of
-CodeSnip 4, so that program WILL be able to read files created by this version.
-
-DO NOT try to return to a v4.0 preview or beta release after installing this
-release candidate.
-
-New Features
-------------
-
-New features of v4 worth trying out are:
-
-* New "unit" and "class" snippet types that can include complete units and
-  classes (and advanced records) in the database. Both can be test compiled
-  and classes and advanced records can also be included in generated units. Read
-  up on these in the help file - see the Snippet Kinds help topic.
-
-* Snippets from both the main and user databases can now be duplicated. This is
-  very useful if you have created a snippet and want to create another one that
-  shares a lot of the source code, dependencies etc. Just duplicate the first
-  one with a new name and edit it as required. It saves a lot of time. There's a
-  second use where you can duplicate a snippet from the main database under the
-  same name and make any tweaks you like to the new version: duplicate snippets
-  are always editable.
-
-* The new multi-tab display can show more than one snippet, category etc. in the
-  main display. Control click items in the overview pane to display them in a
-  new tab in the detail pane. Alternatively select View | New Tab (Ctrl+T) to
-  display a new empty tab that can display selected items. Press Ctrl+F4 to
-  close a tab.
-
-* Results of test compilations (F9) now appear in a dialogue box.
-
-* You can specify the paths to be searched by the Delphi compilers when looking
-  for used units. This lets you compile snippets that use units other than those
-  provided in the VCL and RTL. For example you can specify a path to the Indy
-  components to compile them. Use the Compilers dialogue box to set the paths on
-  a per-compiler basis.
-
-* You can use Unicode source code.
-
-* The structure of snippet pages in the details pane is now customisable:
-  various page elements can be omitted and the order of elements can be changed.
-  Each snippet type has its own page customisation. The colours used for Snippet
-  and other headings can now be customised.
-
-* Snippets can now have a "display name" that can contain any characters and
-  does not need to be unique. Snippet descriptions can now be formatted and
-  contain multiple paragraphs.
-
-* The number of compilers that appear in the compiler results table in the
-  display pane can now be determined by the user, so you can omit those that are
-  of no interest to you.
-
-* There is a new option on the Tools menu that checks availability of new
-  versions of CodeSnip. Note though that this does not report new betas, only
-  final releases.
-
-* The Welcome page has been completely redesigned in the hope of provided more
-  useful information about the databases and program.
-
-For other features of v4 please read the change log for this release and all
-earlier betas and previews at http://delphidabbler.com/software/codesnip/log?v=4
-
-Bugs and Feature Requests
--------------------------
-
-Please report bugs at http://www.delphidabbler.com/url/codesnip-bugs mentioning
-the program version you are using (see the about box for details).
-
-Request new features at http://www.delphidabbler.com/url/codesnip-featurereq.
-No more new features will be implemented in release 4.0, but they will be
-considered for other v4.x point releases.
+The new features of the program can be found in "What's New In CodeSnip 4" topic
+in the program's help file.
 
 
 Installation
@@ -151,9 +46,6 @@ CodeSnip's installation program is named codesnip-setup-4.x.x.exe, where x.x
 is the program's minor version number. The install program may be distributed in
 a zip file. If this is the case then extract the install program.
 
-*** NOTE. This release candidate version of CodeSnip 4 has a slightly different
-    setup file name: codesnip-setup-4.0-RC.x where x is a number.
-
 Close any running instance of CodeSnip, double click the install program then
 follow the on-screen instructions.
 
@@ -166,8 +58,8 @@ The installer makes the following changes to your system:
 + Files required by the uninstaller are stored in the main installation's Uninst
   sub-folder.
 
-+ The program's uninstall information is registered with the "Add / Remove
-  Programs" (a.k.a "Programs and Features") control panel applet.
++ The program's uninstall information is registered with the "Programs and
+  Features" (a.k.a. "Add / Remove Programs") control panel applet.
 
 + A program group may be created in the start menu (optional).
 
@@ -180,6 +72,26 @@ The installer makes the following changes to your system:
   folder is used to store any user defined snippets. This happens only for the
   user installing the program. Other users will have different default folders
   and config files created when they first run CodeSnip.
+
+If you are updating to CodeSnip 4 from version 3 or earlier, CodeSnip will give
+you the option of bringing forward your old settings and / or user defined
+database. This happens the first time v4 is run for each user. Unlike with
+earlier versions the installer does not do this.
+
+
+Uninstallation
+================================================================================
+
+CodeSnip can be uninstalled via "Add/Remove Programs" (a.k.a "Programs and
+Features") from the Windows Control Panel or by choosing "Uninstall
+DelphiDabbler CodeSnip" from the program's start menu group.
+
+Administrator privileges will be required to uninstall CodeSnip. Windows Vista
+and Windows 7 with UAC prompts enabled will prompt for an admin password if
+necessary.
+
+The uninstall program will delete the main database but will leave the user
+defined database intact.
 
 
 Downloading the Database
@@ -237,21 +149,6 @@ registered.
 
 On systems with multiple users, only one user needs to register. Once this is
 done the program will show as registered regardless of which user is logged on.
-
-
-Uninstallation
-================================================================================
-
-CodeSnip can be uninstalled via "Add/Remove Programs" (a.k.a "Programs and
-Features") from the Windows Control Panel or by choosing "Uninstall
-DelphiDabbler CodeSnip" from the program's start menu group.
-
-Administrator privileges will be required to uninstall CodeSnip. Windows Vista
-and Windows 7 with UAC prompts enabled will prompt for an admin password if
-necessary.
-
-The uninstall program will delete the main database but will leave the user
-defined database intact.
 
 
 Updating the Database
