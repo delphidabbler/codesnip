@@ -53,8 +53,6 @@ type
         @return Required active text object. Will be an empty object if REML is
           empty string.
       }
-    class function BuildActiveText(REMLBlocks: IStringList): IActiveText;
-      overload;
     class function BuildREMLMarkup(const ActiveText: IActiveText): string;
       {Creates REML markup from an active text object using latest version.
         @param ActiveText [in] Active text object used to generate markup.
@@ -223,16 +221,6 @@ begin
   end;
   if BlockState = bsWithout then
     Result.AddElem(TActiveTextFactory.CreateActionElem(ekPara, fsClose));
-end;
-
-class function TSnippetExtraHelper.BuildActiveText(REMLBlocks: IStringList):
-  IActiveText;
-var
-  Block: string;  // eack block of REML in string list
-begin
-  Result := TActiveTextFactory.CreateActiveText;
-  for Block in REMLBlocks do
-    Result.Append(BuildActiveText(Block));
 end;
 
 class function TSnippetExtraHelper.BuildREMLMarkup(
