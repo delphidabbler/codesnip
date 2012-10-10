@@ -239,11 +239,8 @@ end;
 
 function TSnippetsActiveTextEdFrame.REMLToActiveText(const Text: string):
   IActiveText;
-var
-  Paras: IStringList;
 begin
-  Paras := TIStringList.Create(Text, EOL2, False, True);
-  Result := TSnippetExtraHelper.BuildActiveText(Paras);
+  Result := TSnippetExtraHelper.BuildActiveText(StrTrim(Text));
 end;
 
 procedure TSnippetsActiveTextEdFrame.SetActiveText(Value: IActiveText);
