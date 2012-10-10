@@ -399,9 +399,5 @@
 		<param name="Name" value="view menu">
 		<param name="Local" value="HTML\menu_view.htm">
 		</OBJECT>
-	<LI> <OBJECT type="text/sitemap">
-		<param name="Name" value="welcome">
-		<param name="Local" value="HTML\welcome.htm">
-		</OBJECT>
 </UL>
 </BODY></HTML>
