@@ -179,17 +179,6 @@ function MakeCompoundTag(const TagName: string;
     @return Required compound tag.
   }
 
-function ImageTag(const Src, Title: string;
-  const Width, Height: Integer; const Id: string = ''): string;
-  {Returns <img> tag for image with given attributes. Image is top aligned.
-    @param Src [in] URL of image file. Should be URL encoded by caller.
-    @param Title [in] Image title.
-    @param Width [in] Image width in pixels. Stored in "style" attribute.
-    @param Height [in] Image height in pixels. Stored in "style" attribute.
-    @param Id [in] Image's id (optional).
-    @return Required image tag.
-  }
-
 
 implementation
 
@@ -287,39 +276,6 @@ function MakeCompoundTag(const TagName: string;
   }
 begin
   Result := MakeCompoundTag(TagName, nil, InnerHTML);
-end;
-
-function ImageTag(const Src, Title: string;
-  const Width, Height: Integer; const Id: string = ''): string;
-  {Returns <img> tag for image with given attributes. Image is top aligned.
-    @param Src [in] URL of image file. Should be URL encoded by caller.
-    @param Title [in] Image title.
-    @param Width [in] Image width in pixels. Stored in "style" attribute.
-    @param Height [in] Image height in pixels. Stored in "style" attribute.
-    @param Id [in] Image's id (optional).
-    @return Required image tag.
-  }
-var
-  Attrs: IHTMLAttributes; // image's attributes
-begin
-  // Create attributes
-  Attrs := THTMLAttributes.Create;
-  Attrs.Add('src', Src);
-  Attrs.Add(
-    'style',
-    TIStringList.Create(
-      [
-        TCSS.VerticalAlignProp(cvaTop),
-        TCSS.WidthProp(Width),
-        TCSS.HeightProp(Height)
-      ]
-    )
-  );
-  Attrs.Add('title', Title);
-  if Id <> '' then
-    Attrs.Add('id', Id);
-  // Create tag
-  Result := MakeTag('img', ttSimple, Attrs);
 end;
 
 { THTMLAttributes }
