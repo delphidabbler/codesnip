@@ -144,3 +144,12 @@ pre {
 #footer a:hover {
   border-bottom: 1px dotted grey;
 }
+
+.testing-img {
+  float: right;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  margin: 2px 0 0 8px;
+}
+

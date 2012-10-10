@@ -434,6 +434,9 @@ begin
   else
     Tplt.ResolvePlaceholderHTML('SnippetCSSClass', 'maindb');
   Tplt.ResolvePlaceholderHTML(
+    'TestingInfo', TCSS.BlockDisplayProp(not GetSnippet.UserDefined)
+  );
+  Tplt.ResolvePlaceholderHTML(
     'EditLink', TCSS.BlockDisplayProp(GetSnippet.UserDefined)
   );
   Tplt.ResolvePlaceholderText(
@@ -441,6 +444,8 @@ begin
   );
   SnippetHTML := TSnippetHTML.Create(GetSnippet);
   try
+    if not GetSnippet.UserDefined then
+      Tplt.ResolvePlaceholderHTML('TestingInfoImg', SnippetHTML.TestingImage);
     Tplt.ResolvePlaceholderHTML('SnippetName', SnippetHTML.SnippetName);
   finally
     SnippetHTML.Free;
