@@ -155,6 +155,7 @@ FPC=&lt;Y|N|Q|W&gt;
 Extra=&lt;extra-info-REML&gt;
 StandardFormat=&lt;0|1&gt;
 Kind=&lt;freeform|routine|type|const|class|unit&gt;
+TestInfo=&lt;none|basic|advanced&gt;
 MinVer=&lt;version-number&gt;</pre>
 
 <p>
@@ -415,6 +416,32 @@ MinVer=&lt;version-number&gt;</pre>
       <em>Kind</em> = &quot;freeform&quot;. If neither <em>Kind</em> nor
       <em>StandardFormat</em> are present then <em>Kind</em> defaults to
       &quot;routine&quot;.
+    </div>
+  </dd>
+  <dt>
+    <em>TestInfo</em>
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Testing information for snippets. This value was supported from CodeSnip
+      v4.0. Valid values are:
+    </div>
+    <ul class="unspaced">
+      <li>
+        &quot;none&quot; &ndash; the snippet has not been tested
+      </li>
+      <li>
+        &quot;basic&quot; &ndash; the snippet has passed some simple testing
+      </li>
+      <li>
+        &quot;advanced&quot; &ndash; the snippet has passed more advanced
+        testing, usually unit tests
+      </li>
+    </ul>
+    <div class="half-spaced">
+      If <em>TestInfo</em> is not present then its value defaults to
+      &quot;basic&quot;. This is because, until the release of CodeSnip v4.0,
+      all snippets had undergone at least basic testing.
     </div>
   </dd>
   <dt>
