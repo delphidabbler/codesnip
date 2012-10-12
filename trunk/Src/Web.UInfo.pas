@@ -76,11 +76,11 @@ type
       {Local web server (for tests)}
     const DelphiDabblerHomeURL = WebsiteURL + '/';
       {DelphiDabbler site home page}
-    const ProgramHomeURL = WebsiteURL + '/software/codesnip';
+    const ProgramHomeURL = WebsiteURL + '/url/codesnip-home';
       {CodeSnip's home page on DelphiDabbler.com}
-    const ProgramDownloadURL = ProgramHomeURL + '/download';
+    const ProgramDownloadURL = WebsiteURL + '/url/codesnip-download';
       {CodeSnip's download page of DelphiDabbler.com}
-    const DatabaseURL = WebsiteURL + '/codesnip';
+    const DatabaseURL = WebsiteURL + '/url/csdb';
       {Online Code Snippets database on DelphiDabbler.com}
     const ContactPageURL = WebsiteURL + '/contact';
       {Contact page on DelphiDabbler.com}
