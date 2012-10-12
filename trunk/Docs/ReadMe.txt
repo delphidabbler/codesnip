@@ -8,9 +8,10 @@ DELPHIDABBLER CODESNIP v4 README
 What is CodeSnip?
 ================================================================================
 
-DelphiDabbler CodeSnip 4 is a Delphi code snippets repository. It can download
-and display snippets from the online DelphiDabbler CodeSnip database as well as
-maintain a database of user-defined snippets.
+DelphiDabbler CodeSnip 4 is a code snippets repository targetted at the Pascal /
+Delphi programming languages. It can download and display code snippets from the
+online DelphiDabbler Code Snippets database as well as maintain a database of
+user-defined snippets.
 
 It displays details of each snippet in the database and can test-compile them
 with each installed Win32 version of Delphi from v2 to XE3 along with Free
@@ -18,7 +19,7 @@ Pascal.
 
 Compilable Pascal units can be created that contain selected snippets.
 
-The new features of the program can be found in "What's New In CodeSnip 4" topic
+Features new to CodeSnip 4 are listed in the "What's New In CodeSnip 4" topic
 in the program's help file.
 
 
@@ -27,9 +28,8 @@ Installation
 
 IMPORTANT NOTES:
 
-1) CodeSnip requires Windows 2000 or later. It cannot be installed on Windows
-   95, 98, Me, NT3.51 or NT4. It also requires MS Internet Explorer V6 or later,
-   but IE 8, 9 or 10 are strongly recommended.
+1) CodeSnip requires Windows 2000 or later. It also requires MS Internet
+   Explorer V6 or later, but IE 8, 9 or 10 are strongly recommended.
 
 2) You will need administrator privileges to run the setup program. If you are
    using a non-admin user account on Windows 2000 or XP you should run setup as
@@ -39,21 +39,20 @@ IMPORTANT NOTES:
 
 3) CodeSnip v4 will install alongside any v3 or earlier release that may already
    be installed. If you want to replace the earlier version simply uninstall it
-   in the usual way. Uninstalling v3 will not delete any existing main database
-   used by v4.
+   in the usual way. Uninstalling v3 or earlier after installing v4 will have no
+   adverse affect on v4.
 
 CodeSnip's installation program is named codesnip-setup-4.x.x.exe, where x.x
 is the program's minor version number. The install program may be distributed in
-a zip file. If this is the case then extract the install program.
+a zip file.
 
-Close any running instance of CodeSnip, double click the install program then
-follow the on-screen instructions.
+Close any running instance of CodeSnip, run the install program then follow the
+on-screen instructions.
 
 The installer makes the following changes to your system:
 
 + The main program's executable file and documentation are installed into the
-  chosen install folder (the %ProgramFiles%\DelphiDabbler\CodeSnip-4 folder by
-  default).
+  chosen install folder (%ProgramFiles%\DelphiDabbler\CodeSnip-4 by default).
 
 + Files required by the uninstaller are stored in the main installation's Uninst
   sub-folder.
@@ -64,58 +63,65 @@ The installer makes the following changes to your system:
 + A program group may be created in the start menu (optional).
 
 + A %ProgramData%\DelphiDabbler\CodeSnip.4 folder is created. A configuration
-  file is stored in the folder. Once the database is downloaded, it will be
+  file is stored in the folder. If the online database is downloaded, it will be
   stored in a "Database" sub-folder (see below).
 
-+ A %AppData%\DelphiDabbler\CodeSnip.4 folder is also created. This is used to
++ An %AppData%\DelphiDabbler\CodeSnip.4 folder is also created. This is used to
   hold a file that stores per-user configuration data. A "UserDatabase" sub-
-  folder is used to store any user defined snippets. This happens only for the
-  user installing the program. Other users will have different default folders
-  and config files created when they first run CodeSnip.
+  folder is used to store any user defined snippets. These folders are created
+  when CodeSnip is first run.
 
 If you are updating to CodeSnip 4 from version 3 or earlier, CodeSnip will give
 you the option of bringing forward your old settings and / or user defined
-database. This happens the first time v4 is run for each user. Unlike with
-earlier versions the installer does not do this.
+database. This happens the first time v4 is run for each user.
 
 
 Uninstallation
 ================================================================================
 
-CodeSnip can be uninstalled via "Add/Remove Programs" (a.k.a "Programs and
-Features") from the Windows Control Panel or by choosing "Uninstall
+CodeSnip can be uninstalled via "Programs and Features" (a.k.a. "Add/Remove
+Programs") from the Windows Control Panel or by choosing "Uninstall
 DelphiDabbler CodeSnip" from the program's start menu group.
 
 Administrator privileges will be required to uninstall CodeSnip. Windows Vista
 and Windows 7 with UAC prompts enabled will prompt for an admin password if
 necessary.
 
-The uninstall program will delete the main database but will leave the user
-defined database intact.
+The uninstall program will delete any local copy of the online Code Snippets
+database but will leave any user defined database and configuration data intact.
+To remove user defined databases and configuration data, delete the
+%AppData%\DelphiDabbler\CodeSnip.4 directory and all its contents for each user
+who ran CodeSnip.
 
 
-Downloading the Database
+Downloading & Updating the Code Snippets Database
 ================================================================================
 
-The online DelphiDabblet Code Snippets database is not installed with the
-program. However, an older installation may be present. Setup will try to use
-any older installation's database if possible. When setup completes it checks
-for a database and puts up a message if none is present.
+The online DelphiDabbler Code Snippets database is not installed with the
+program. However, if an older installation is present setup will give the option
+to carry it forward if possible. When setup completes it checks for the presence
+of the database and puts up a message if it is not present.
 
-When CodeSnip is first run it detects if there is no database and displays
-message to that effect in its main window. A link is displayed that can be used
-to download the database from the DelphiDabbler website. Once this is done the
-required files are stored in the %ProgramData%\DelphiDabbler\CodeSnip.4\Database
-folder.
+CodeSnip's start-up screen shows details of any installed databases. If there is
+no copy of the online database a link is displayed that enables the database to
+be installed.
+
+From time to time you should check for updates to the online code snippets
+database. This is done by selecting the program's "Database | Update From Web"
+menu option.
+
+You can get to know about updates by subscribing to the CodeSnip RSS feed (see
+below).
+
+Updates will apply to all users of the computer.
 
 
 Configuring CodeSnip to Work With Your Compilers
 ================================================================================
 
-A feature of CodeSnip is the ability to test compile snippets in its main
-database with any installed Windows 32 version of Delphi and FreePascal. User
-defined snippets can also be test compiled providing some simple rules are
-followed.
+A feature of CodeSnip is its ability to test compile snippets with any installed
+Windows 32 version of Delphi and FreePascal. User defined snippets can also be
+test compiled providing some simple rules are followed.
 
 When CodeSnip is first installed it knows nothing about the available compilers
 and so test compilations cannot be performed. You must tell CodeSnip about the
@@ -131,10 +137,9 @@ dialogue" in the help file index).
 
 Each user can configure compilers differently.
 
-Delphi XE2 and XE3 may need to be configured to search the namespaces containing
-any required units. This is explaned in the Add/Edit Snippet Dialogue Box help
-topic. Alternatively see the FAQ at
-http://wiki.delphidabbler.com/index.php/FAQs/CodeSnipAppUsing#FAQ7
+Delphi XE2 and XE3 may need to be configured to search for required units in the
+correct namespaces. This is explaned in the Add/Edit Snippet Dialogue Box help
+topic and in the FAQ at http://delphidabbler.com/url/codesnip-and-xe2.
 
 
 Registration
@@ -151,19 +156,6 @@ On systems with multiple users, only one user needs to register. Once this is
 done the program will show as registered regardless of which user is logged on.
 
 
-Updating the Database
-================================================================================
-
-From time to time you should check for updates to the online code snippets
-database. This is done by selecting the program's "Database | Update From Web"
-menu option.
-
-You can get to know about updates by subscribing to the CodeSnip RSS feed (see
-below).
-
-Updates will apply to all users of the computer.
-
-
 Updating the Program
 ================================================================================
 
@@ -171,10 +163,10 @@ You can use the "Tools | Check For Program Updates" menu option to find out if
 an updated version of CodeSnip is available. If so you will be directed to a
 page on delphidabbler.com from where the updated program can be downloaded.
 
-Note that new betas and previews are not normally notified using this method.
-You will need to keep an eye of the CodeSnip news feed to find out when these
-programs are released. Use the "Help | CodeSnip News" menu option to see the
-news, or subscribe to the feed in your news reader - see below for details.
+Beta and preview releases are not normally notified using this method. You will
+need to keep an eye of the CodeSnip news feed to find out when these programs
+are released. Use the "Help | CodeSnip News" menu option to see the news, or
+subscribe to the feed in your news reader - see below for details.
 
 
 Known Installation and Upgrading Issues
@@ -184,21 +176,21 @@ Known Installation and Upgrading Issues
   updating from any v2 or earlier release.
 
   You will need to redo any customisation using the Syntax Highlighter tab of
-  the Preferences dialogue box.
+  the Preferences dialogue box displayed from the "Tools | Preferences" menu
+  option.
 
 + If you are updating from v3.6.0 or earlier and have set up a password
-  protected proxy server for internet access you will need to re-enter the
-  password since it will have been lost. This is because the format for storing
-  passwords changed at v3.6.1.
+  protected proxy server for internet access your password will have been lost.
+  This is because the format for storing passwords changed at v3.6.1.
 
   To re-enter your proxy password use the Proxy Server Configuration dialogue
-  box.
+  box displayed from the "Tools | Proxy Server" menu option.
 
 + Your source code formatting preferences will have been lost if you are
   updating from v1.7.4 or earlier.
 
   You will need to reconfigure them using the Code Formatting tab of the
-  Preferences dialogue box.
+  Preferences dialogue box displayed from the "Tools | Preferences" menu option.
 
 + If you are updating from v1.8.11 or earlier and have registered CodeSnip your
   registration information will have been lost.
@@ -213,7 +205,7 @@ RSS News Feed
 
 You can get notified of all updates to the CodeSnip program and to the database
 by subscribing to the Code Snippets RSS Feed at
-http://www.delphidabbler.com/feeds/site-news-feed?id=codesnip.
+http://delphidabbler.com/feeds/site-news-feed?id=codesnip.
 
 The latest news from this feed can also be displayed from the program's "Help |
 CodeSnip News" menu option.
@@ -239,25 +231,30 @@ Source Code
 ================================================================================
 
 The source code of the latest version of CodeSnip can be downloaded from
-http://www.delphidabbler.com/software/codesnip/download.
+http://delphidabbler.com/url/codesnip-download.
 
 The current development source tree and snapshots of all releases from v3.0
 onwards can be viewed and downloaded from SourgeForge at
 http://codesnip.svn.sourceforge.net/viewvc/codesnip/.
 
 Subversion users can checkout code from
-https://codesnip.svn.sourceforge.net/svnroot/codesnip. You will usually checkout
-the "trunk" branch (development branch) or one of the stable releases listed in
-the "tags" branch. There is also a maintenance branch for the v3.x releases in
-the "branches/3.x" branch.
+https://codesnip.svn.sourceforge.net/svnroot/codesnip.
+
+You will usually checkout the "trunk" branch (development branch) or one of the
+stable releases listed in the "tags" branch. There are also maintenances
+branches for v3 and v4 releases in the "branches" branch.
 
 Ready zipped source code archives of the current release and all earlier
 versions back to v3.0.0 can be downloaded from the CodeSnip Files page on
 SourceForge.net at https://sourceforge.net/projects/codesnip/files/
 
-The original source code is released under the Mozilla Public license v2.0
-(see http://www.mozilla.org/MPL/) and other open source licenses. See the file
-"License.html" in the "Docs" directory of the repository for full licensing
+NOTE: Some SourceForge URLs are likely to change in due course. If you find the
+given URLs don't work please let the author know using the contact page at
+http://delphidabbler.com/contact so that you can be sent the revised URLS.
+
+The original source code of v4 is released under the Mozilla Public license
+v2.0 (see http://www.mozilla.org/MPL/) and other open source licenses. See the
+file "License.html" in the "Docs" directory of the repository for full licensing
 information.
 
 
@@ -267,10 +264,10 @@ Bugs
 Please do report any bugs you find.
 
 Bugs are recorded in Tracker on SourceForge. View the reported and fixed bugs
-via http://www.delphidabbler.com/url/codesnip-bugs which redirects to
-SourceForge. You can also access the bug tracker from CodeSnip by using the
-"Tools | Report Bug Online" menu option then following the link that appears in
-the resulting dialogue box.
+via http://delphidabbler.com/url/codesnip-bugs which redirects to SourceForge.
+You can also access the bug tracker from CodeSnip by using the "Tools | Report
+Bug Online" menu option then following the link that appears in the resulting
+dialogue box.
 
 If you wish to report a bug, please check the current reports on Tracker. If
 your bug hasn't already been reported or fixed please add a report using the
@@ -291,7 +288,7 @@ Having said that, it takes time and money to maintain CodeSnip and the online
 database. So if you wish to make a contribution it will be most welcome.
 
 Payment in pounds sterling can be made via this address -
-http://www.delphidabbler.com/url/donate-cs - which redirects to a secure PayPal
+http://delphidabbler.com/url/donate-cs - which redirects to a secure PayPal
 page.
 
 
@@ -299,18 +296,17 @@ Feedback
 ================================================================================
 
 If you want to suggest new features please use the feature request tracker at
-http://www.delphidabbler.com/url/codesnip-featurereq which redirects to
-SourceForge.
+http://delphidabbler.com/url/codesnip-featurereq which redirects to SourceForge.
 
 Any other comments can be sent using the contact page at
-http://www.delphidabbler.com/contact
+http://delphidabbler.com/contact.
 
 
 FAQs
 ================================================================================
 
 There are Frequently Asked Questions pages for CodeSnip on the web, at
-http://www.delphidabbler.com/url/codesnip-faq
+http://delphidabbler.com/url/codesnip-faq.
 
 
 Contribute to the Database
@@ -320,7 +316,7 @@ Please do contribute Pascal snippets to the on-line Code Snippets database.
 
 You can submit routines from your user-defined snippets database using the
 "Snippets | Submit Routines" menu option. Otherwise please send your code via
-the DelphiDabbler contact page at http://www.delphidabbler.com/contact
+the DelphiDabbler contact page at http://delphidabbler.com/contact.
 
 
 Thanks
@@ -334,13 +330,13 @@ Thanks to:
 + geoffsmith82 and an anonymous contributor for information about getting
   CodeSnip to work with Delphi XE2.
 
-+ The authors of various pieces of source code and images used by the program.
-  See the program's about box or License.html for details.
++ The authors of the third party source code and images used by the program. See
+  the program's about box or License.html for details.
 
 + Various contributors to the Code Snippets database. Names of contributors are
   listed in the program's About Box (use the "Help | About" menu option then
-  select the "About the Database" tab). If the list is empty then update the
-  database.
+  select the "About the Database" tab). If the list is empty then updating the
+  Code Snippets Database will download the details.
 
 
 ================================================================================
