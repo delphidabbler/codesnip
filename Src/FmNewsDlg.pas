@@ -277,6 +277,7 @@ end;
 
 procedure TNewsDlg.FormCreate(Sender: TObject);
 begin
+  inherited;
   ilActions.LoadFromResource(RT_RCDATA, 'ACTIONIMAGES', 16, clFuchsia);
   RefreshActions; // ensure control glyphs are updated with loaded images
 end;
