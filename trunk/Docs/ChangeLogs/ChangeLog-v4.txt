@@ -11,6 +11,21 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.0.0 of 12 October 2012
+Final v4 release.
+See also changes from alpha, beta and release candidates below for details of changes since v3.9.3.
++ New glyphs that describes level of testing applied to snippets from online Code Snippets Database now appear in top right of detail pane.
++ Changed main window caption and task bar entry to include version number "4" after program name.
++ Fixed bugs:
+  - #3572382 (http://bit.ly/OnEtNY): Automatic conversion of blank lines to paragraphs in REML markup editor gets confused if block level tags are already present.
+  - Unreported: Controls in News dialogue box do not use correct font.
++ A little refactoring.
++ Updated help file:
+  - Modified re recent changes
+  - Added new "What's new" topic giving details of changes in v4. Implements feature request #3567490 (http://bit.ly/RgQx0W).
+  - Renamed "Welcome" page as "Overview".
++ Updated documentation, including read-me file.
+
 Release v4.0 RC 3 of 18 September 2012
 Internal CodeSnip version 3.999.3
 + Fixed serious bug #3568628 (http://bit.ly/V5NX0H): CodeSnip faulting at startup after fresh install with no previous v3 installation.
