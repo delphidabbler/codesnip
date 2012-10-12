@@ -15,7 +15,7 @@
 ;   GetStringFileInfo - gets requested version info string from an executable
 ;   GetFileProductVersion - gets product version info string from an executable
 
-; Deletes "Release " from beginning of S
+; Deletes "Release " from beginning of string S
 #define DeleteToVerStart(str S) \
   /* assumes S begins with "Release " followed by version as x.x.x */ \
   Local[0] = Copy(S, Len("Release ") + 1, 99), \
@@ -42,11 +42,6 @@
 #define WebURL "http://" + WebAddress + "/"
 #define AppURL WebURL + "software/codesnip"
 #define InstUninstDir "Uninst"
-
-; For v4 release alpha, beta and release candidates only,
-; set version number here
-#define AppVersion "4.0-RC.3"
-#define RealVersion "3.999.3"
 
 ; Creates name of setup file from app name, version and any special build string
 #define CreateSetupName(str fn) \
@@ -78,9 +73,7 @@ SolidCompression=true
 InternalCompressLevel=ultra
 OutputDir={#OutDir}
 OutputBaseFilename={#SetupName}
-; VersionInfoVersion changed for v4 alpha, beta and release candidates only
-;VersionInfoVersion={#AppVersion}
-VersionInfoVersion={#RealVersion}
+VersionInfoVersion={#AppVersion}
 VersionInfoCompany={#Company}
 VersionInfoDescription=Installer for {#AppName}
 VersionInfoTextVersion=Release {#AppVersion}
