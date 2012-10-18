@@ -62,13 +62,20 @@ VIED = "$(VIEDROOT)\VIEd.exe" -makerc
 VIED = VIEd.exe -makerc
 !endif
 
+# Command line options
+!ifdef PORTABLE
+DELPHIDEFINES = "-DPORTABLE"
+!else
+DELPHIDEFINES =
+!endif
+
 # Implicit rules
 
 # Delphi projects are assumed to contain required output and search path
 # locations in the project options .cfg file.
 .dpr.exe:
   @echo +++ Compiling Delphi Project $< +++
-  @$(DCC32) $< -B -U"$(INDY10)"
+  @$(DCC32) $< -B -U"$(INDY10)" $(DELPHIDEFINES)
 
 # Resource files are compiled to the directory specified by BIN macro, which
 # must have been set by the caller.

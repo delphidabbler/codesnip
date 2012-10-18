@@ -85,6 +85,10 @@ config:
 
 # Builds CodeSnip pascal files and links program
 pascal: CodeSnip.exe
+!ifdef PORTABLE
+  -@copy ..\Exe\CodeSnip.exe ..\Exe\CodeSnip-p.exe /Y
+  -@del ..\Exe\CodeSnip.exe
+!endif
 
 # Builds help file
 help:
