@@ -52,11 +52,7 @@ type
       {Name of program displayed in main window and task bar caption}
     const FullProgramName = CompanyName + ' ' + ProgramName;
       {Full name of program, including company name}
-    {$IFNDEF PORTABLE}
     const ProgramID = 'codesnip';
-    {$ELSE}
-    const ProgramID = 'codesnip-p';
-    {$ENDIF}
       {Machine readable identifier of program}
     class function UserAppDir: string;
       {Gets the CodeSnip data directory stored within the user's application
