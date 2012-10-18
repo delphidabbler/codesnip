@@ -42,13 +42,21 @@ type
   public
     const CompanyName = 'DelphiDabbler';
       {Name of "company" that owns this program}
+    {$IFNDEF PORTABLE}
     const ProgramName = 'CodeSnip';
+    {$ELSE}
+    const ProgramName = 'CodeSnip-p';
+    {$ENDIF}
       {Name of program}
     const ProgramCaption = ProgramName + ' 4';
       {Name of program displayed in main window and task bar caption}
     const FullProgramName = CompanyName + ' ' + ProgramName;
       {Full name of program, including company name}
+    {$IFNDEF PORTABLE}
     const ProgramID = 'codesnip';
+    {$ELSE}
+    const ProgramID = 'codesnip-p';
+    {$ENDIF}
       {Machine readable identifier of program}
     class function UserAppDir: string;
       {Gets the CodeSnip data directory stored within the user's application
@@ -138,7 +146,11 @@ class function TAppInfo.AppDataDir: string;
     @return Full path to database sub directory.
   }
 begin
+  {$IFNDEF PORTABLE}
   Result := CommonAppDir + '\Database';
+  {$ELSE}
+  Result := CommonAppDir + '\CSDB';
+  {$ENDIF}
 end;
 
 class function TAppInfo.AppExeDir: string;
@@ -163,7 +175,11 @@ class function TAppInfo.CommonAppDir: string;
     @return Full path to common application data directory.
   }
 begin
+  {$IFNDEF PORTABLE}
   Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.4';
+  {$ELSE}
+  Result := AppExeDir + '\AppData';
+  {$ENDIF}
 end;
 
 class function TAppInfo.GenerateKey: string;
@@ -292,7 +308,11 @@ class function TAppInfo.UserAppDir: string;
     @return Full path to per-user application data directory.
   }
 begin
+  {$IFNDEF PORTABLE}
   Result := TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip.4';
+  {$ELSE}
+  Result := CommonAppDir;
+  {$ENDIF}
 end;
 
 class function TAppInfo.UserDataDir: string;
@@ -300,7 +320,11 @@ class function TAppInfo.UserDataDir: string;
     @return Full path to database sub directory.
   }
 begin
+  {$IFNDEF PORTABLE}
   Result := UserAppDir + '\UserDatabase';
+  {$ELSE}
+  Result := UserAppDir + '\UserDB';
+  {$ENDIF}
 end;
 
 end.
