@@ -39,9 +39,13 @@ interface
     - Config file: %AppData%\DelphiDabbler\CodeSnip\User.3.ini
     - Database directory: %AppData%\DelphiDabbler\CodeSnip\UserData.3
 
-  + From v4.0:
+  + From v4.0 (standard version):
     - Config file: %AppData%\DelphiDabbler\CodeSnip.4\User.config
     - Database directory: %AppData%\DelphiDabbler\CodeSnip.4\UserDatabase
+  + From v4.0 (portable version):
+    - Config file: <exe-dir>\AppData\User.config
+    - Database directory: <exe-dir>\AppData\UserDB
+    where <exe-dir> is the directory from which the program is executing.
 }
 
 type
