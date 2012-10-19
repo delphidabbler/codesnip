@@ -519,6 +519,7 @@
 			<DCCReference Include="USnippetValidator.pas"/>
 			<DCCReference Include="USourceFileInfo.pas"/>
 			<DCCReference Include="USourceGen.pas"/>
+			<DCCReference Include="UStartUp.pas"/>
 			<DCCReference Include="UStatusBarMgr.pas"/>
 			<DCCReference Include="UStringReader.pas"/>
 			<DCCReference Include="UStructs.pas"/>

@@ -328,6 +328,7 @@ uses
   USnippetValidator in 'USnippetValidator.pas',
   USourceFileInfo in 'USourceFileInfo.pas',
   USourceGen in 'USourceGen.pas',
+  UStartUp in 'UStartUp.pas',
   UStatusBarMgr in 'UStatusBarMgr.pas',
   UStringReader in 'UStringReader.pas',
   UStructs in 'UStructs.pas',
@@ -395,7 +396,7 @@ begin
   ReportMemoryLeaksOnShutdown := DebugHook <> 0;
   Application.Initialize;
   Application.MainFormOnTaskBar := True;
-  TFirstRunMgr.Execute;
+  TStartUp.Execute;
   SplashForm := TSplashForm.Create(Application);
   SplashForm.Show;
   Application.ModalPopupMode := pmAuto;
