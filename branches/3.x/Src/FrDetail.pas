@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -273,6 +273,8 @@ begin
   for Idx := 0 to Pred(pcDetail.PageCount) do
     if Supports(TabToPane(Idx), IViewItemDisplayMgr) then
       (TabToPane(Idx) as IViewItemDisplayMgr).Display(View, Force);
+  if Assigned(fNotifier) then
+    fNotifier.ShowHint('');   // ugly fix for bug #3577408
 end;
 
 procedure TDetailFrame.DisplayCompileResults(const ACompilers: ICompilers);
