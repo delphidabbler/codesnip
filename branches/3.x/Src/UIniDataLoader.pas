@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -145,12 +145,8 @@ type
         Checks if application version is not equal to <version>.
       #if-ver-lt <version>
         Checks if application version is less than <version>.
-      #if-ver-lte <version>
-        Checks if application version is less than or equal to <version>.
       #if-ver-gt <version>
         Checks if application version is greater than <version>.
-      #if-ver-gte <version>
-        Checks if application version is greater than or equal to <version>.
       #if-ver-inrange <version-lo> <version-hi>
         Checks if application version is in the range of versions specified from
         <version-lo> to <version-hi>, inclusive.
@@ -184,9 +180,7 @@ type
       cIfVerEQ       = cPreProcPrefix + 'if-ver-eq';      // appver = param
       cIfVerNEQ      = cPreProcPrefix + 'if-ver-neq';     // appver <> param
       cIfVerLT       = cPreProcPrefix + 'if-ver-lt';      // appver < param
-      cIfVerLTE      = cPreProcPrefix + 'if-ver-lte';     // appver <= param
       cIfVerGT       = cPreProcPrefix + 'if-ver-gt';      // appver > param
-      cIfVerGTE      = cPreProcPrefix + 'if-ver-gte';     // appver >= param
       cIfVerInRange  = cPreProcPrefix + 'if-ver-inrange'; // appver in range
     class function ProcessVerEQ(const Lines: IStringList;
       var LineIdx: Integer): IStringList;
@@ -215,29 +209,11 @@ type
         @param LineIdx [in/out] In: index of current line before processing.
           Out: index of last line processed.
       }
-    class function ProcessVerLTE(const Lines: IStringList;
-      var LineIdx: Integer): IStringList;
-      {Processes a ifverlte pre-processor directive. Includes lines before endif
-      directive only if condition is met, i.e. app version is less than or equal
-      to version specified in directive.
-        @param Lines [in] Lines of ini file.
-        @param LineIdx [in/out] In: index of current line before processing.
-          Out: index of last line processed.
-      }
     class function ProcessVerGT(const Lines: IStringList;
       var LineIdx: Integer): IStringList;
       {Processes a ifvergt pre-processor directive. Includes lines before endif
       directive only if condition is met, i.e. app version is greater than
       version specified in directive.
-        @param Lines [in] Lines of ini file.
-        @param LineIdx [in/out] In: index of current line before processing.
-          Out: index of last line processed.
-      }
-    class function ProcessVerGTE(const Lines: IStringList;
-      var LineIdx: Integer): IStringList;
-      {Processes a ifvergte pre-processor directive. Includes lines before endif
-      directive only if condition is met, i.e. app version is greater than or
-      equal to less than version specified in directive.
         @param Lines [in] Lines of ini file.
         @param LineIdx [in/out] In: index of current line before processing.
           Out: index of last line processed.
@@ -269,25 +245,11 @@ type
         @param Ver2 [in] Second version number to compare.
         @return True if Ver1 > Ver2, False if not.
       }
-    class function CompareGTE(Ver1, Ver2: TVersionNumber): Boolean;
-      {Compares two version numbers to check if first is greater than or equal
-      to second.
-        @param Ver1 [in] First version number to compare.
-        @param Ver2 [in] Second version number to compare.
-        @return True if Ver1 >= Ver2, False if not.
-      }
     class function CompareLT(Ver1, Ver2: TVersionNumber): Boolean;
       {Compares two version numbers to check if first is less than second.
         @param Ver1 [in] First version number to compare.
         @param Ver2 [in] Second version number to compare.
         @return True if Ver1 < Ver2, False if not.
-      }
-    class function CompareLTE(Ver1, Ver2: TVersionNumber): Boolean;
-      {Compares two version numbers to check if first is less than or equal to
-      second.
-        @param Ver1 [in] First version number to compare.
-        @param Ver2 [in] Second version number to compare.
-        @return True if Ver1 <= Ver2, False if not.
       }
     class function ProcessVerCompare(const Lines: IStringList;
       var LineIdx: Integer; const CompareFn: TVerCompareMethod): IStringList;
@@ -503,18 +465,6 @@ begin
   Result := Ver1 > Ver2;
 end;
 
-class function TDatabasePreprocessor.CompareGTE(Ver1,
-  Ver2: TVersionNumber): Boolean;
-  {Compares two version numbers to check if first is greater than or equal to
-  second.
-    @param Ver1 [in] First version number to compare.
-    @param Ver2 [in] Second version number to compare.
-    @return True if Ver1 >= Ver2, False if not.
-  }
-begin
-  Result := Ver1 >= Ver2;
-end;
-
 class function TDatabasePreprocessor.CompareLT(Ver1,
   Ver2: TVersionNumber): Boolean;
   {Compares two version numbers to check if first is less than second.
@@ -524,18 +474,6 @@ class function TDatabasePreprocessor.CompareLT(Ver1,
   }
 begin
   Result := Ver1 < Ver2;
-end;
-
-class function TDatabasePreprocessor.CompareLTE(Ver1,
-  Ver2: TVersionNumber): Boolean;
-  {Compares two version numbers to check if first is less than or equal to
-  second.
-    @param Ver1 [in] First version number to compare.
-    @param Ver2 [in] Second version number to compare.
-    @return True if Ver1 <= Ver2, False if not.
-  }
-begin
-  Result := Ver1 <= Ver2;
 end;
 
 class function TDatabasePreprocessor.CompareNEQ(Ver1,
@@ -567,12 +505,8 @@ begin
     // Check for pre-processor instructions
     if AnsiStartsStr(cIfVerLT, Line) then
       Result.Add(ProcessVerLT(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerLTE, Line) then
-      Result.Add(ProcessVerLTE(Lines, LineIdx))
     else if AnsiStartsStr(cIfVerGT, Line) then
       Result.Add(ProcessVerGT(Lines, LineIdx))
-    else if AnsiStartsStr(cIfVerGTE, Line) then
-      Result.Add(ProcessVerGTE(Lines, LineIdx))
     else if AnsiStartsStr(cIfVerInRange, Line) then
       Result.Add(ProcessVerInRange(Lines, LineIdx))
     else if AnsiStartsStr(cIfVerEQ, Line) then
@@ -652,19 +586,6 @@ begin
   Result := ProcessVerCompare(Lines, LineIdx, CompareGT);
 end;
 
-class function TDatabasePreprocessor.ProcessVerGTE(const Lines: IStringList;
-  var LineIdx: Integer): IStringList;
-  {Processes a ifvergte pre-processor directive. Includes lines before endif
-  directive only if condition is met, i.e. app version is greater than or equal
-  to less than version specified in directive.
-    @param Lines [in] Lines of ini file.
-    @param LineIdx [in/out] In: index of current line before processing. Out:
-      index of last line processed.
-  }
-begin
-  Result := ProcessVerCompare(Lines, LineIdx, CompareGTE);
-end;
-
 class function TDatabasePreprocessor.ProcessVerInRange(const Lines: IStringList;
   var LineIdx: Integer): IStringList;
   {Processes ifverinrange pre-processor directive. Includes lines before endif
@@ -707,19 +628,6 @@ class function TDatabasePreprocessor.ProcessVerLT(const Lines: IStringList;
   }
 begin
   Result := ProcessVerCompare(Lines, LineIdx, CompareLT);
-end;
-
-class function TDatabasePreprocessor.ProcessVerLTE(const Lines: IStringList;
-  var LineIdx: Integer): IStringList;
-  {Processes a ifverlte pre-processor directive. Includes lines before endif
-  directive only if condition is met, i.e. app version is less than or equal to
-  version specified in directive.
-    @param Lines [in] Lines of ini file.
-    @param LineIdx [in/out] In: index of current line before processing. Out:
-      index of last line processed.
-  }
-begin
-  Result := ProcessVerCompare(Lines, LineIdx, CompareLTE);
 end;
 
 class function TDatabasePreprocessor.ProcessVerNEQ(const Lines: IStringList;
