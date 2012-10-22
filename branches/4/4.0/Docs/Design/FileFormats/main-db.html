@@ -514,10 +514,11 @@ MinVer=&lt;version-number&gt;</pre>
     Checks if application version is less than &lt;version&gt;.
   </dd>
   <dt>
-    <em>if-ver-lte &lt;version&gt;</em>
+    <del><em>if-ver-lte &lt;version&gt;</em></del>
   </dt>
   <dd>
-    Checks if application version is less than or equal to &lt;version&gt;.
+    <del>Checks if application version is less than or equal to
+    &lt;version&gt;.</del> &dagger;
   </dd>
   <dt>
     <em>if-ver-gt &lt;version&gt;</em>
@@ -526,10 +527,11 @@ MinVer=&lt;version-number&gt;</pre>
     Checks if application version is greater than &lt;version&gt;.
   </dd>
   <dt>
-    <em>if-ver-gte &lt;version&gt;</em>
+    <del><em>if-ver-gte &lt;version&gt;</em></del>
   </dt>
   <dd>
-    Checks if application version is greater than or equal to &lt;version&gt;.
+    <del>Checks if application version is greater than or equal to
+    &lt;version&gt;.</del> &dagger;
   </dd>
   <dt>
     <em>if-ver-inrange &lt;version-lo&gt; &lt;version-hi&gt;</em>
@@ -546,6 +548,17 @@ MinVer=&lt;version-number&gt;</pre>
     text is only evaluated if the if-xxx instruction evaluates true.
   </dd>
 </dl>
+
+<p>
+  &dagger; Due to a bug going back to <em>CodeSnip</em> v3.0 <em>if-ver-gte</em>
+  and <em>if-ver-lte</em> have never worked correctly: they have always been
+  interpreted as <em>if-ver-gt</em> and <em>if-ver-lt</em> respectively. A fix
+  to this could now cause more problems than it solves in older version of
+  <em>CodeSnip</em>, so the implementation of the directives has been removed
+  from later versions of the program and all occurrences of the directives in
+  the database have been replaced by suitable <em>if-ver-inrange</em>
+  directives.
+</p>
 
 <p>
   In all cases version numbers are dotted quads of the form X.X.X.X where X is
