@@ -157,8 +157,15 @@ end;
 
 class function TSnippetHTML.JSALink(const JSFn, CSSClass, Text: string):
   string;
+var
+  Attrs: IHTMLAttributes;
 begin
-  Result := TextLink('', JSFn, '', TIStringList.Create(CSSClass), Text);
+  Attrs := THTMLAttributes.Create([
+    THTMLAttribute.Create('href', '#'),
+    THTMLAttribute.Create('onclick', JSFn + '; return false;'),
+    THTMLAttribute.Create('class', CSSClass)
+  ]);
+  Result := MakeCompoundTag('a', Attrs, MakeSafeHTMLText(Text));
 end;
 
 function TSnippetHTML.RenderActiveText(ActiveText: IActiveText): string;

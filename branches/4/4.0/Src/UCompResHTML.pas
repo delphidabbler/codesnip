@@ -143,15 +143,15 @@ begin
       'td',
       MakeSafeHTMLText(sMessage)
       + ' ' +
-      TextLink(
-        'help:AllCompilersHidden',
-        '',
-        '',
-        TIStringList.Create('help-link'),
-        sHelpText
+      MakeCompoundTag(
+        'a',
+        THTMLAttributes.Create([
+          THTMLAttribute.Create('href', 'help:AllCompilersHidden'),
+          THTMLAttribute.Create('class', 'help-link')
+        ]),
+        MakeSafeHTMLText(sHelpText)
       )
-      +
-      '.'
+      + '.'
     )
   );
 end;
