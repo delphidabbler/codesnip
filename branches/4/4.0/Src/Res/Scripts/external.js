@@ -15,23 +15,6 @@
 
 
 /*
- * Calls external object to get host application to clear any current hint from
- * the status bar.
- */
-function clearHint() {
-  external.ShowHint('');
-}
-
-/*
- * Calls external object to get host application to display a hint in the status
- * bar.
- *  @param string hint [in] Hint to be displayed.
- */
-function showHint(hint) {
-  external.ShowHint(hint);
-}
-
-/*
  * Calls external object to get host application to display Configure Compilers
  * dialog box.
  *  @return False.
