@@ -49,12 +49,10 @@ type
     ///  JavaScript.</summary>
     ///  <param name="JSFn">string [in] Javascript function to be called when
     ///  link is clicked.</param>
-    ///  <param name="Hint">string [in] Hint to be displayed when mouse rolls
-    ///  over link.</param>
     ///  <param name="CSSClass">string [in] CSS class of link.</param>
     ///  <param name="Text">string [in] Text to be displayed in link.</param>
     ///  <returns>string. Required HTML.</returns>
-    class function JSALink(const JSFn, Hint, CSSClass, Text: string): string;
+    class function JSALink(const JSFn, CSSClass, Text: string): string;
   public
     ///  <summary>Object constructor. Sets up object to provide HTML for given
     ///  snippet.</summary>
@@ -110,8 +108,6 @@ uses
 { TSnippetHTML }
 
 function TSnippetHTML.Category: string;
-resourcestring
-  sCategoryHint = 'Display "%s" category';  // long hint
 var
   Cat: TCategory; // category that snippet belongs to
 begin
@@ -120,7 +116,6 @@ begin
   Result := StrMakeSentence(
     JSALink(
       JSLiteralFunc('displayCategory', [Cat.ID]),
-      Format(sCategoryHint, [Cat.Description]),
       'category-link',
       Cat.Description
     )
@@ -160,10 +155,10 @@ begin
   Result := RenderActiveText(fSnippet.Extra);
 end;
 
-class function TSnippetHTML.JSALink(const JSFn, Hint, CSSClass, Text: string):
+class function TSnippetHTML.JSALink(const JSFn, CSSClass, Text: string):
   string;
 begin
-  Result := TextLink('', JSFn, '|' + Hint, TIStringList.Create(CSSClass), Text);
+  Result := TextLink('', JSFn, '', TIStringList.Create(CSSClass), Text);
 end;
 
 function TSnippetHTML.RenderActiveText(ActiveText: IActiveText): string;
@@ -205,14 +200,10 @@ begin
 end;
 
 class function TSnippetHTML.SnippetALink(const Snippet: TSnippet): string;
-resourcestring
-  // Long hint
-  sSnippetHint = 'Display "%s"';  // long hint
 begin
   // Create javascript link enclosing snippet name
   Result := JSALink(
     JSLiteralFunc('displaySnippet', [Snippet.Name, Snippet.UserDefined]),
-    Format(sSnippetHint, [Snippet.DisplayName]),
     'snippet-link',
     Snippet.DisplayName
   );
