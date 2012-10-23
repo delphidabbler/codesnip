@@ -43,10 +43,6 @@ function TextLink(const URL, JSFn, Hint: string; Classes: IStringList;
     @return Complete <a> tag.
   }
 
-///  <summary>Creates HTML attrubites required to produce a roll-over hint with
-///  given name.</summary>
-function RollOverHintAttrs(const Hint: string): IHTMLAttributes;
-
 
 implementation
 
@@ -86,12 +82,10 @@ const
 var
   Attrs: IHTMLAttributes; // tag's attributes
   ShortHint: string;      // short hint from Hint param
-  LongHint: string;       // long hint from Hint param
 begin
   Attrs := THTMLAttributes.Create;
   // Decode hint string into short and long hints (separated by '|' )
   ShortHint := GetShortHint(Hint);
-  LongHint := GetLongHint(Hint);
   // Determine href attribute from URL param
   if URL <> '' then
     Attrs.Add('href', URL)
@@ -106,24 +100,8 @@ begin
   // Set onclick event if JavaScript function provided
   if JSFn <> '' then
     Attrs.Add('onclick', JSFnWithFalseReturn(JSFn));
-  // Set onmouseover and onmouseout to external ShowHint if long hint provided
-  if LongHint <> '' then
-    Attrs.Append(RollOverHintAttrs(LongHint));
   // Build and return the tag
   Result := MakeTag('a', ttOpen, Attrs);
-end;
-
-function RollOverHintAttrs(const Hint: string): IHTMLAttributes;
-begin
-  Result := THTMLAttributes.Create;
-  if Hint = '' then
-    Exit;
-  Result.Add(
-    'onmouseover', JSFnWithFalseReturn(JSLiteralFunc('showHint', [Hint]))
-  );
-  Result.Add(
-    'onmouseout', JSFnWithFalseReturn(JSLiteralFunc('clearHint', []))
-  );
 end;
 
 function TextLink(const URL, JSFn, Hint: string; Classes: IStringList;

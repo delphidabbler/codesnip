@@ -147,10 +147,9 @@ begin
     end;
   LinkAttrs := function(Elem: IActiveTextActionElem): IHTMLAttributes
     begin
-      Result := RollOverHintAttrs(
-        Elem.Attrs[TActiveTextAttrNames.Link_URL]
+      Result := THTMLAttributes.Create(
+        'href', Elem.Attrs[TActiveTextAttrNames.Link_URL]
       );
-      Result.Add('href', Elem.Attrs[TActiveTextAttrNames.Link_URL]);
     end;
   for ElemKind := Low(TActiveTextActionElemKind) to
     High(TActiveTextActionElemKind) do
