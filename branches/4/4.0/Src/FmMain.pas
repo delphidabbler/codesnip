@@ -351,10 +351,6 @@ type
         @param Sender [in] Action triggering this event. Must be a
           TEditSnippetAction.
       }
-    procedure ActBrowserHintExecute(Sender: TObject);
-      {Displays hint from browser hint action in status bar.
-        @param Sender [in] Not used.
-      }
     procedure ActSelectDetailTabExecute(Sender: TObject);
       {Selects a tab in the detail pane.
         @param Sender [in] Action triggering this event
@@ -453,14 +449,6 @@ procedure TMainForm.actBackupDatabaseExecute(Sender: TObject);
   }
 begin
   TUserDBMgr.BackupDatabase;
-end;
-
-procedure TMainForm.ActBrowserHintExecute(Sender: TObject);
-  {Displays hint from browser hint action in status bar.
-    @param Sender [in] Action triggering this event.
-  }
-begin
-  DisplayHint((Sender as THintAction).Hint);
 end;
 
 procedure TMainForm.actBugReportExecute(Sender: TObject);
