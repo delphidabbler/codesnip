@@ -28,7 +28,7 @@ function TextLink(const URL, JSFn, Hint: string; Classes: IStringList;
   const Text: string): string;
   {Creates an <a>..</a> link surrounding some text.
     @param URL [in] URL accessed by link. Should be url encoded. Setting URL to
-      '' creates a link to "javascript:void(0);".
+      '' creates a link to "#".
     @param JSFn [in] JavaScript code called in tag's onclick event. Setting to
       JSFn to '' prevents onclick event being used. When set the onclick event
       returns false.
@@ -65,7 +65,7 @@ function AOpenTag(const URL, JSFn, Hint: string;
   Classes: IStringList): string;
   {Creates an opening <a> tag with specified properties.
     @param URL [in] URL accessed by link. Should be url encoded. Setting URL to
-      '' creates a link to "javascript:void(0);".
+      '' creates a link to "#".
     @param JSFn [in] JavaScript code called in the tag's onclick event. Setting
       to '' prevents the onclick event being used. When set the onclick event
       returns false.
@@ -78,7 +78,7 @@ function AOpenTag(const URL, JSFn, Hint: string;
     @return Required opening <a> tag.
   }
 const
-  cVoid = 'javascript:void(0);';  // used as nul href
+  cVoid = '#'; // used for empty href
 var
   Attrs: IHTMLAttributes; // tag's attributes
   ShortHint: string;      // short hint from Hint param
@@ -108,7 +108,7 @@ function TextLink(const URL, JSFn, Hint: string; Classes: IStringList;
   const Text: string): string;
   {Creates an <a>..</a> link surrounding some text.
     @param URL [in] URL accessed by link. Should be url encoded. Setting URL to
-      '' creates a link to "javascript:void(0);".
+      '' creates a link to "#".
     @param JSFn [in] JavaScript code called in the tag's onclick event. Setting
       to '' prevents the onclick event being used. When set the onclick event
       returns false.
