@@ -125,7 +125,6 @@ resourcestring
   sHeading = 'No compiler results available';
   sMessage = 'Results for all compilers have been hidden.';
   sHelpText = 'More information';
-  sHelpHint = 'View explanatory help topic';
 begin
   Result := MakeCompoundTag(
     'tr',
@@ -147,7 +146,7 @@ begin
       TextLink(
         'help:AllCompilersHidden',
         '',
-        '|' + sHelpHint,
+        '',
         TIStringList.Create('help-link'),
         sHelpText
       )
