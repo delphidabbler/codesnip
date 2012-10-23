@@ -101,8 +101,7 @@ uses
   // Project
   ActiveText.UHTMLRenderer, DB.UMain, DB.USnippetKind, Hiliter.UAttrs,
   Hiliter.UGlobals, Hiliter.UHiliters, UCompResHTML, UHTMLBuilder,
-  UHTMLDetailUtils, UHTMLUtils, UIStringList, UJavaScriptUtils, UResourceUtils,
-  UStrUtils;
+  UHTMLUtils, UIStringList, UJavaScriptUtils, UResourceUtils, UStrUtils;
 
 
 { TSnippetHTML }

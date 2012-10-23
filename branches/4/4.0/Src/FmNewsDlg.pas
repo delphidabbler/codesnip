@@ -106,9 +106,8 @@ uses
   // Delphi
   SysUtils, ExtActns, Windows, Graphics,
   // Project
-  FmPreferencesDlg, FrNewsPrefs, UClassHelpers, UCtrlArranger, UHTMLDetailUtils,
-  UHTMLUtils, UIStringList, UPreferences, UStrUtils, Web.UInfo,
-  Web.UXMLRequestor;
+  FmPreferencesDlg, FrNewsPrefs, UClassHelpers, UCtrlArranger, UHTMLUtils,
+  UIStringList, UPreferences, UStrUtils, Web.UInfo, Web.UXMLRequestor;
 
 {$R *.dfm}
 

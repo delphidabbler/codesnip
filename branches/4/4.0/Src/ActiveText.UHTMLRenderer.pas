@@ -90,7 +90,7 @@ implementation
 
 uses
   // Project
-  UColours, UCSSUtils, UFontHelper, UHTMLDetailUtils, UIStringList;
+  UColours, UCSSUtils, UFontHelper, UIStringList;
 
 
 { TActiveTextHTML }

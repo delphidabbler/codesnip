@@ -65,8 +65,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, UConsts, UCSSUtils, UHTMLUtils, UHTMLDetailUtils,
-  UIStringList, UJavaScriptUtils, UResourceUtils, UStrUtils;
+  Compilers.UCompilers, UConsts, UCSSUtils, UHTMLUtils, UIStringList,
+  UJavaScriptUtils, UResourceUtils, UStrUtils;
 
 
 resourcestring
