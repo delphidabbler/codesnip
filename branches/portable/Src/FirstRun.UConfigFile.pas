@@ -60,6 +60,7 @@ type
     ///  <summary>Checks if program version in config file is same as current
     ///  program version.</summary>
     function IsCurrentProgramVer: Boolean; overload;
+    {$IFNDEF PORTABLE}
     ///  <summary>Updates config file currently in original (pre v1.9) format to
     ///  current format.</summary>
     procedure UpdateFromOriginal;
@@ -69,14 +70,15 @@ type
     function HasProxyPassword: Boolean;
     ///  <summary>Deletes proxy password entry.</summary>
     procedure DeleteProxyPassword;
-    ///  <summary>Adds Prefs:CodeGen section along with default data.</summary>
-    procedure CreateDefaultCodeGenEntries;
     ///  <summary>Updates Prefs:CodeGen section from format prior to version 9
     ///  to version 9 format.</summary>
     procedure UpdateCodeGenEntries;
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
     procedure DeleteDetailsPaneIndex;
+    {}{$ENDIF}
+    ///  <summary>Adds Prefs:CodeGen section along with default data.</summary>
+    procedure CreateDefaultCodeGenEntries;
     ///  <summary>Stamp config file with current program and file versions.
     ///  </summary>
     procedure Stamp;
@@ -182,36 +184,44 @@ begin
   TFileIO.WriteAllText(fCfgFileName, '', TEncoding.Unicode, True);
 end;
 
+{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteDetailsPaneIndex;
 begin
   if not TFile.Exists(fCfgFileName) then
     CreateNewFile;
   DeleteIniKey('MainWindow', 'DetailTab', fCfgFileName);
 end;
+{$ENDIF}
 
+{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteHighligherPrefs;
 begin
   if not TFile.Exists(fCfgFileName) then
     CreateNewFile;
   DeleteIniSection('Prefs:Hiliter', fCfgFileName);
 end;
+{$ENDIF}
 
+{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.DeleteProxyPassword;
 begin
   if not TFile.Exists(fCfgFileName) then
     CreateNewFile;
   SetIniString('ProxyServer', 'Password', '', fCfgFileName);
 end;
+{$ENDIF}
 
 function TUserConfigFileUpdater.FileVer: Integer;
 begin
   Result := GetIniInt('IniFile', 'Version', 1, fCfgFileName);
 end;
 
+{$IFNDEF PORTABLE}
 function TUserConfigFileUpdater.HasProxyPassword: Boolean;
 begin
   Result := GetIniString('ProxyServer', 'Password', '', fCfgFileName) <> '';
 end;
+{$ENDIF}
 
 function TUserConfigFileUpdater.IsCurrentProgramVer: Boolean;
 begin
@@ -237,6 +247,7 @@ begin
   );
 end;
 
+{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.UpdateCodeGenEntries;
 begin
   // Key that determines if warnings are emitted changes from SwitchOffWarnings
@@ -256,7 +267,9 @@ begin
   else
     SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, fCfgFileName);
 end;
+{$ENDIF}
 
+{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.UpdateFromOriginal;
 var
   I: Integer; // loops thru all highlight elements
@@ -281,6 +294,7 @@ begin
   // Main window's overview tabs changed at v3: so we reset to 0 (default)
   SetIniInt('MainWindow', 'OverviewTab', 0, fCfgFileName);
 end;
+{$ENDIF}
 
 end.
 

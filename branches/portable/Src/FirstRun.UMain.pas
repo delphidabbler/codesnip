@@ -57,9 +57,11 @@ type
       ///  <summary>Object used to copy forward older versions of user database.
       ///  </summary>
       fDatabase: TUserDatabaseUpdater;
+    {$IFNDEF PORTABLE}
     ///  <summary>Checks if config file uses earlier format for storing proxy
     ///  server passwords.</summary>
     function HasOldStyleProxyPwd: Boolean;
+    {}{$ENDIF}
   public
     ///  <summary>Constructs object and owned object.</summary>
     constructor Create;
@@ -124,9 +126,14 @@ implementation
 
 uses
   // Delphi
-  SysUtils, IOUtils, Forms,
+  SysUtils, IOUtils, Forms
+  {$IFNDEF PORTABLE}
   // Project
+  ,
   FirstRun.FmV4ConfigDlg;
+  {$ELSE}
+  ;
+  {$ENDIF}
 
 
 { TFirstRun }
@@ -173,10 +180,12 @@ begin
   inherited;
 end;
 
+{$IFNDEF PORTABLE}
 function TFirstRun.HasOldStyleProxyPwd: Boolean;
 begin
   Result := (fConfigFile.FileVer <= 6) and fConfigFile.HasProxyPassword;
 end;
+{$ENDIF}
 
 function TFirstRun.HaveOldCfgFile: Boolean;
 begin
@@ -196,6 +205,8 @@ end;
 procedure TFirstRun.UpdateCfgFile(out Changes: TFirstRunCfgChangeSet);
 begin
   Changes := [];
+
+  {$IFNDEF PORTABLE}
   case fInstallInfo.InstallID of
     piOriginal:
     begin
@@ -218,17 +229,22 @@ begin
       end;
     end;
   end;
+  {$ENDIF}
+
   if fConfigFile.FileVer < 6 then
     // User ini file versions before 6 don't have the Prefs:CodeGen section and
     // default entries for predefined warnings.
-    // NOTE: This works for a new config file providing it has not been stamped.
+    // NOTE: This works for a new config file providing it has not been stamped:
+    // we rely on this for portable version.
     fConfigFile.CreateDefaultCodeGenEntries;
 
+  {$IFNDEF PORTABLE}
   if fConfigFile.FileVer < 9 then
   begin
     fConfigFile.DeleteDetailsPaneIndex; // can be v8 file even tho not supported
     fConfigFile.UpdateCodeGenEntries;
   end;
+  {$ENDIF}
 
   fConfigFile.Stamp;
 end;
@@ -249,8 +265,10 @@ begin
   begin
     FR := TFirstRun.Create;
     try
+      {$IFNDEF PORTABLE}
       if FR.HaveOldCfgFile or FR.HaveOldUserDB then
         TV4ConfigDlg.Execute(Application, FR);
+      {$ENDIF}
       if not CfgFileExists then
       begin
         FR.CreateEmptyCfgFile;

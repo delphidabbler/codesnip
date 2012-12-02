@@ -53,10 +53,12 @@ type
   ///  can be detected.</summary>
   TInstallId = (
     piNone,       // CodeSnip not installed
+    {$IFNDEF PORTABLE}
     piOriginal,   // "original" installation up to v1.8.11
     piV1_9,       // v1.9 to v1.9.4
     piV2,         // all v2 versions
     piV3,         // all v3 versions
+    {$ENDIF}
     piV4          // from v4.0 (including alpha & beta code v3.98.x & v3.99.x
   );
 
@@ -72,23 +74,33 @@ type
       ///  file for for that installation version.</summary>
       ConfigFileNames: array[Low(TInstallId)..CurrentVersionID] of string =
         (
+          {$IFNDEF PORTABLE}
           '',
           'DelphiDabbler\CodeSnip\CodeSnip.ini',
           'DelphiDabbler\CodeSnip\User.ini',
           'DelphiDabbler\CodeSnip\User.ini',
           'DelphiDabbler\CodeSnip\User.3.ini',
           'DelphiDabbler\CodeSnip.4\User.config'
+          {$ELSE}
+          '',
+          'AppData\User.config'
+          {$ENDIF}
         );
       ///  <summary>Array mapping install IDs to relative paths to user database
       ///  directories for for that installation version.</summary>
       DatabaseDirs: array[Low(TInstallId)..CurrentVersionID] of string =
         (
+          {$IFNDEF PORTABLE}
           '',
           '',
           '',
           'DelphiDabbler\CodeSnip\UserData',
           'DelphiDabbler\CodeSnip\UserData.3',
           'DelphiDabbler\CodeSnip.4\UserDatabase'
+          {$ELSE}
+          '',
+          'AppData\UserDB'
+          {$ENDIF}
         );
     var
       ///  <summary>Value of InstallID property.</summary>
@@ -142,6 +154,9 @@ uses
   // Delphi
   SysUtils, IOUtils,
   // Project
+  {$IFDEF PORTABLE}
+  UAppInfo,
+  {$ENDIF}
   UIOUtils, UStrUtils, USystemInfo;
 
 
@@ -178,6 +193,7 @@ begin
   if TFile.Exists(MakeFullPath(ConfigFileNames[piV4]))
     and not IsEmptyUnicodeCfgFile(MakeFullPath(ConfigFileNames[piV4])) then
     fInstallID := piV4
+  {$IFNDEF PORTABLE}
   else if TFile.Exists(MakeFullPath(ConfigFileNames[piV3])) then
     fInstallID := piV3
   else if TDirectory.Exists(MakeFullPath(DatabaseDirs[piV2])) then
@@ -186,20 +202,29 @@ begin
     fInstallID := piV1_9
   else if TFile.Exists(MakeFullPath(ConfigFileNames[piOriginal])) then
     fInstallID := piOriginal
+  {$ENDIF}
   else
     fInstallID := piNone;
 end;
 
 function TInstallInfo.IsPreviousUserConfigFileANSI: Boolean;
 begin
+  {$IFNDEF PORTABLE}
   Result := fInstallID <= piV3;
+  {$ELSE}
+  Result := False;
+  {$ENDIF}
 end;
 
 class function TInstallInfo.MakeFullPath(const Name: string): string;
 begin
   if Name = '' then
     Exit('');
+  {$IFNDEF PORTABLE}
   Result := IncludeTrailingPathDelimiter(TSystemFolders.PerUserAppData) + Name;
+  {$ELSE}
+  Result := IncludeTrailingPathDelimiter(TAppInfo.AppExeDir) + Name;
+  {$ENDIF}
 end;
 
 function TInstallInfo.PreviousUserConfigFileName: string;
