@@ -54,6 +54,9 @@ type
       ///  <summary>Object that interogates and updates user's config file.
       ///  </summary>
       fUserConfigFile: TUserConfigFileUpdater;
+      ///  <summary>Object that interogates and updates common config file.
+      ///  </summary>
+      fCommonConfigFile: TCommonConfigFileUpdater;
       ///  <summary>Object used to copy forward older versions of user database.
       ///  </summary>
       fDatabase: TUserDatabaseUpdater;
@@ -162,6 +165,9 @@ begin
   fUserConfigFile := TUserConfigFileUpdater.Create(
     fInstallInfo.CurrentUserConfigFileName
   );
+  fCommonConfigFile := TCommonConfigFileUpdater.Create(
+    fInstallInfo.CurrentCommonConfigFileName
+  );
   fDatabase := TUserDatabaseUpdater.Create(
     fInstallInfo.CurrentUserDatabaseDir
   );
@@ -175,6 +181,7 @@ end;
 destructor TFirstRun.Destroy;
 begin
   fDatabase.Free;
+  fCommonConfigFile.Free;
   fUserConfigFile.Free;
   fInstallInfo.Free;
   inherited;
@@ -247,6 +254,10 @@ begin
   {$ENDIF}
 
   fUserConfigFile.Stamp;
+  // NOTE: strictly speaking we only need to stamp common config file in
+  // portable version. Installer does this in normal version. However, it does
+  // no harm to stamp this file twice - belt and braces!
+  fCommonConfigFile.Stamp;
 end;
 
 { TFirstRunMgr }
