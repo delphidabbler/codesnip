@@ -67,8 +67,10 @@ directory. There are several such files:
   This is a DelphiDabbler library. The MPL 1.1 / GPL 2.0 / LGPL 2.1 tri license
   applies. It derives from the RSA Data Security, Inc. MD5 Message-Digest
   Algorithm. See below for the MD5 copyright notice.
-+ PJStreamWrapper.pas, PJSysInfo.pas, PJVersionInfo.pas, PJWdwState.pas
-  These are DelphiDabbler libraries: the Mozilla Public License applies.
++ PJStreamWrapper.pas, PJVersionInfo.pas, PJWdwState.pas
+  These are DelphiDabbler libraries: the Mozilla Public License v1.1 applies.
++ PJSysInfo.pas
+  This is a DelphiDabbler library. The Mozilla Public License v2.0 applies.
 + UEncrypt.pas
   Public domain.
 
