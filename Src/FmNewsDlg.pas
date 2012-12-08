@@ -106,9 +106,8 @@ uses
   // Delphi
   SysUtils, ExtActns, Windows, Graphics,
   // Project
-  FmPreferencesDlg, FrNewsPrefs, UClassHelpers, UCtrlArranger, UHTMLDetailUtils,
-  UHTMLUtils, UIStringList, UPreferences, UStrUtils, Web.UInfo,
-  Web.UXMLRequestor;
+  FmPreferencesDlg, FrNewsPrefs, UClassHelpers, UCtrlArranger, UHTMLUtils,
+  UIStringList, UPreferences, UStrUtils, Web.UInfo, Web.UXMLRequestor;
 
 {$R *.dfm}
 
@@ -200,22 +199,23 @@ procedure TNewsDlg.DisplayNews(const RSS: TRSS20);
   resourcestring
     sNoTitle = 'Untitled';  // text used when no title
   var
-    Title: string;  // title text
-    Link: string;   // item's URL used for link
+    TitleHTML: string;  // title text
+    URL: string;        // item's URL used for link
   begin
-    Title := StrTrim(Item.Title);
-    if Title = '' then
-      Title := sNoTitle;
-    Link := StrTrim(Item.Link);
-    if Link = '' then
-      Result := MakeSafeHTMLText(Title)
+    TitleHTML := MakeSafeHTMLText(StrTrim(Item.Title));
+    if TitleHTML = '' then
+      TitleHTML := MakeSafeHTMLText(sNoTitle);
+    URL := StrTrim(Item.Link);
+    if URL = '' then
+      Result := TitleHTML
     else
-      Result := TextLink(
-        Link,
-        '',
-        '',
-        TIStringList.Create('external-link'),
-        Title
+      Result := MakeCompoundTag(
+        'a',
+        THTMLAttributes.Create([
+          THTMLAttribute.Create('href', URL),
+          THTMLAttribute.Create('class', 'external-link')
+        ]),
+        TitleHTML
       );
     Result := MakeCompoundTag('strong', Result);
   end;
