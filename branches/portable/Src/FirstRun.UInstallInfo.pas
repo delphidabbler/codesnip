@@ -109,7 +109,7 @@ type
     ///  absolute path by pre-prending the user's application data folder.
     ///  </summary>
     ///  <remarks>If Name = '' then '' is returned.</remarks>
-    class function MakeFullPath(const Name: string): string;
+    class function MakeFullUserPath(const Name: string): string;
     ///  <summary>Detects latest version of CodeSnip for which user data can be
     ///  found and sets InstallID property accordingly.</summary>
     procedure DetectInstall;
@@ -170,12 +170,12 @@ end;
 
 class function TInstallInfo.CurrentUserConfigFileName: string;
 begin
-  Result := MakeFullPath(UserConfigFileNames[CurrentVersionID]);
+  Result := MakeFullUserPath(UserConfigFileNames[CurrentVersionID]);
 end;
 
 class function TInstallInfo.CurrentUserDatabaseDir: string;
 begin
-  Result := MakeFullPath(DatabaseDirs[CurrentVersionID]);
+  Result := MakeFullUserPath(DatabaseDirs[CurrentVersionID]);
 end;
 
 procedure TInstallInfo.DetectInstall;
@@ -190,17 +190,17 @@ procedure TInstallInfo.DetectInstall;
   end;
 
 begin
-  if TFile.Exists(MakeFullPath(UserConfigFileNames[piV4]))
-    and not IsEmptyUnicodeCfgFile(MakeFullPath(UserConfigFileNames[piV4])) then
+  if TFile.Exists(MakeFullUserPath(UserConfigFileNames[piV4])) and not
+    IsEmptyUnicodeCfgFile(MakeFullUserPath(UserConfigFileNames[piV4])) then
     fInstallID := piV4
   {$IFNDEF PORTABLE}
-  else if TFile.Exists(MakeFullPath(ConfigFileNames[piV3])) then
+  else if TFile.Exists(MakeFullUserPath(UserConfigFileNames[piV3])) then
     fInstallID := piV3
-  else if TDirectory.Exists(MakeFullPath(DatabaseDirs[piV2])) then
+  else if TDirectory.Exists(MakeFullUserPath(DatabaseDirs[piV2])) then
     fInstallID := piV2
-  else if TFile.Exists(MakeFullPath(ConfigFileNames[piV1_9])) then
+  else if TFile.Exists(MakeFullUserPath(UserConfigFileNames[piV1_9])) then
     fInstallID := piV1_9
-  else if TFile.Exists(MakeFullPath(ConfigFileNames[piOriginal])) then
+  else if TFile.Exists(MakeFullUserPath(UserConfigFileNames[piOriginal])) then
     fInstallID := piOriginal
   {$ENDIF}
   else
@@ -216,7 +216,7 @@ begin
   {$ENDIF}
 end;
 
-class function TInstallInfo.MakeFullPath(const Name: string): string;
+class function TInstallInfo.MakeFullUserPath(const Name: string): string;
 begin
   if Name = '' then
     Exit('');
@@ -229,12 +229,12 @@ end;
 
 function TInstallInfo.PreviousUserConfigFileName: string;
 begin
-  Result := MakeFullPath(UserConfigFileNames[fInstallID]);
+  Result := MakeFullUserPath(UserConfigFileNames[fInstallID]);
 end;
 
 function TInstallInfo.PreviousUserDatabaseDir: string;
 begin
-  Result := MakeFullPath(DatabaseDirs[fInstallID]);
+  Result := MakeFullUserPath(DatabaseDirs[fInstallID]);
 end;
 
 function TInstallInfo.PreviousUserDatabaseFileName: string;
