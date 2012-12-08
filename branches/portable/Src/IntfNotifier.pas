@@ -50,10 +50,6 @@ type
         @param CatID [in] Id of category to display.
         @param NewTab [in] Whether to display in new tab in detail pane.
       }
-    procedure ShowHint(const Hint: WideString);
-      {Displays a hint.
-        @param Hint [in] Hint to be displayed.
-      }
     procedure ConfigCompilers;
       {Displays configure compilers dialog box.
       }
@@ -106,11 +102,6 @@ type
       }
     procedure SetDisplaySnippetAction(const Action: TBasicAction);
       {Sets action triggered when a named snippet is requested to be displayed.
-        @param Action [in] Required action.
-      }
-    procedure SetShowHintAction(const Action: TBasicAction);
-      {Sets action triggered when user moves mouse over hot links etc. that
-      cause hints to be displayed.
         @param Action [in] Required action.
       }
     procedure SetConfigCompilersAction(const Action: TBasicAction);

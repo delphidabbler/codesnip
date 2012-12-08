@@ -45,13 +45,6 @@ type
         @return Reference to newly created action.
       }
   public
-    class function CreateHintAction(const AOwner: TComponent;
-      const OnExecHandler: TNotifyEvent = nil): TBasicAction;
-      {Creates a Hint action and sets OnExecute handler if provided.
-        @param AOwner [in] Owner of action.
-        @param OnExecHandler [in] Handler for action's OnExecute event.
-        @return Reference to newly created action.
-      }
     class function CreateSnippetAction(const AOwner: TComponent;
       const OnExecHandler: TNotifyEvent = nil): TBasicAction;
       {Creates a Snippet action and sets OnExecute handler if provided.
@@ -157,17 +150,6 @@ class function TActionFactory.CreateEditSnippetAction(const AOwner: TComponent;
   }
 begin
   Result := CreateAction(TEditSnippetAction, AOwner, OnExecHandler);
-end;
-
-class function TActionFactory.CreateHintAction(const AOwner: TComponent;
-  const OnExecHandler: TNotifyEvent): TBasicAction;
-  {Creates a Hint action and sets OnExecute handler if provided.
-    @param AOwner [in] Owner of action.
-    @param OnExecHandler [in] Handler for action's OnExecute event.
-    @return Reference to newly created action.
-  }
-begin
-  Result := CreateAction(THintAction, AOwner, OnExecHandler);
 end;
 
 class function TActionFactory.CreateLinkAction(const AOwner: TComponent;

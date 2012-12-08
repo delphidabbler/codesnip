@@ -268,14 +268,26 @@
 
 <ul class="spaced">
   <li>
-    The path to <code>CL.exe</code>. This will probably be in a sub folder
-    of a MS Visual Studio installation folder. For example
-    <code>C:\Program Files\Microsoft Visual Studio 9.0\VC\bin</code>.
+    <div>
+      The path to <code>CL.exe</code>. This will probably be in a sub folder
+      of a MS Visual Studio installation folder. For example:
+    </div>
+<pre class="indent">C:\Program Files\Microsoft Visual Studio 9.0\VC\bin</pre>
+    <div>
+      or
+    </div>
+<pre class="indent">C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin</pre>
   </li>
   <li>
-    The Common Visual studio binary directory where <code>mspdb**.dll</code>
-    is located. For example
-    <code>C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE</code>.
+    <div>
+      The Common Visual studio binary directory where <code>mspdb**.dll</code>
+      is located. For example:
+    </div>
+<pre class="indent">C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE</pre>
+    <div>
+      or
+    </div>
+<pre class="indent">C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE</pre>
   </li>
 </ul>
 
@@ -293,9 +305,9 @@
 </p>
 
 <pre class="indent">if not "%PATHSET%" == "" goto end
-set MSSDK=C:\Program Files\Microsoft SDKs\Windows\v6.1
-set PATH=%PATH%;C:\Program Files\Microsoft Visual Studio 9.0\VC\bin
-set PATH=%PATH%;C:\Program Files\Microsoft Visual Studio 9.0\Common7\IDE
+set MSSDK=C:\Program Files\Microsoft SDKs\Windows\v7.1
+set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin
+set PATH=%PATH%;C:\Program Files (x86)\Microsoft Visual Studio 10.0\Common7\IDE
 set PATHSET=1
 :end</pre>
 
@@ -368,7 +380,8 @@ set PATHSET=1
 
 <p>
   The Unicode version on the Inno setup command line compiler is needed to
-  create <em>CodeSnip</em>'s install program. v5.5.1 (u) or later is required.
+  create <em>CodeSnip</em>'s install program. v5.5.2 (u) or later is required.
+  Earlier (Unicode) versions may work, but this is not guaranteed.
 </p>
 
 <p>

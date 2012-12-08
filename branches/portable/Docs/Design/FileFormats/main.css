@@ -113,6 +113,11 @@ code {
   font-family: "Courier New", Courier, monospace;
 }
 
+del {
+  text-decoration: line-through;
+  color: gray;
+}
+
 a:link {
   color: #336;
   text-decoration: underline;

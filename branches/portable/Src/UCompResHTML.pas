@@ -65,8 +65,8 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, UConsts, UCSSUtils, UHTMLUtils, UHTMLDetailUtils,
-  UIStringList, UJavaScriptUtils, UResourceUtils, UStrUtils;
+  Compilers.UCompilers, UConsts, UCSSUtils, UHTMLUtils, UIStringList,
+  UJavaScriptUtils, UResourceUtils, UStrUtils;
 
 
 resourcestring
@@ -125,7 +125,6 @@ resourcestring
   sHeading = 'No compiler results available';
   sMessage = 'Results for all compilers have been hidden.';
   sHelpText = 'More information';
-  sHelpHint = 'View explanatory help topic';
 begin
   Result := MakeCompoundTag(
     'tr',
@@ -144,15 +143,15 @@ begin
       'td',
       MakeSafeHTMLText(sMessage)
       + ' ' +
-      TextLink(
-        'help:AllCompilersHidden',
-        '',
-        '|' + sHelpHint,
-        TIStringList.Create('help-link'),
-        sHelpText
+      MakeCompoundTag(
+        'a',
+        THTMLAttributes.Create([
+          THTMLAttribute.Create('href', 'help:AllCompilersHidden'),
+          THTMLAttribute.Create('class', 'help-link')
+        ]),
+        MakeSafeHTMLText(sHelpText)
       )
-      +
-      '.'
+      + '.'
     )
   );
 end;
