@@ -1,15 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Web.UDownloadMonitor.pas
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Manages download progress reporting for objects that interact with web
+ * service.
  *
  * $Rev$
  * $Date$
  *
- * Manages download progress reporting for objects that interact with web
- * service.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Web.UDownloadMonitor.pas, formerly UDownloadMonitor.pas
+ * then NsWebServices.UDownloadMonitor.pas.
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -61,7 +83,7 @@ type
     Manages download progress reporting for web service object.
   }
   TDownloadMonitor = class(TObject)
-  strict private
+  private
     fCallback: TDownloadMonitorCallback;
       {Reference to method called to notify changes in download state}
     fBytesExpected: Integer;

@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * Hiliter.UCSS.pas
  *
  * Defines a class that generates CSS code to enable syntax highlighted source
  * to be displayed in HTML. CSS code uses a highlighter's attributes. Access to
  * CSS class names is also provided.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Hiliter.UCSS.pas, formerly UHiliterCSS.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -34,7 +55,7 @@ type
     is also provided.
   }
   THiliterCSS = class(TObject)
-  strict private
+  private
     fHiliteAttrs: IHiliteAttrs;
       {Highlighter for which CSS is to be generated}
     procedure BuildElemCSS(const Elem: THiliteElement;
@@ -87,8 +108,8 @@ begin
   // Add font definition in main class
   with CSSBuilder.AddSelector('.' + GetMainCSSClassName) do
   begin
-    AddProperty(TCSS.FontFamilyProp(fHiliteAttrs.FontName, cfgMonoSpace));
-    AddProperty(TCSS.FontSizeProp(fHiliteAttrs.FontSize));
+    AddProperty(CSSFontFamilyProp(fHiliteAttrs.FontName, cfgMonoSpace));
+    AddProperty(CSSFontSizeProp(fHiliteAttrs.FontSize));
   end;
   // Add font style and colour definitions for each element
   for Elem := Low(THiliteElement) to High(THiliteElement) do
@@ -111,10 +132,10 @@ begin
     with CSSBuilder.AddSelector('.' + GetElemCSSClassName(Elem)) do
     begin
       if ElemAttr.ForeColor <> clNone then
-        AddProperty(TCSS.ColorProp(ElemAttr.ForeColor));
-      AddProperty(TCSS.FontWeightProp(ElemAttr.FontStyle));
-      AddProperty(TCSS.FontStyleProp(ElemAttr.FontStyle));
-      AddProperty(TCSS.TextDecorationProp(ElemAttr.FontStyle));
+        AddProperty(CSSColorProp(ElemAttr.ForeColor));
+      AddProperty(CSSFontWeightProp(ElemAttr.FontStyle));
+      AddProperty(CSSFontStyleProp(ElemAttr.FontStyle));
+      AddProperty(CSSTextDecorationProp(ElemAttr.FontStyle));
     end;
   end;
 end;

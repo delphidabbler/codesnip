@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UCompileMgr.pas
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Provides object that manage test compilation and assoicated UI, display of
+ * compilation results via a callback and and compiler configuration.
  *
  * $Rev$
  * $Date$
  *
- * Provides objects that manage test compilation and assoicated UI, display of
- * compilation results via a callback and and compiler configuration.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UCompileMgr.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -23,7 +44,7 @@ uses
   // Delphi
   Classes, Controls,
   // Project
-  Compilers.UGlobals, DB.USnippet, UView;
+  Compilers.UGlobals, USnippets, UView;
 
 
 type
@@ -35,7 +56,6 @@ type
   }
   TCompileResultDisplay = procedure(const Compilers: ICompilers) of object;
 
-type
   {
   TCompileMgr:
     Object that performs test compilations and display of compile errors and
@@ -43,18 +63,18 @@ type
   }
   TCompileMgr = class(TComponent)
   strict private
-    fLastCompiledSnippet: TSnippet; // Value of LastCompiledSnippet property
+    fLastCompiledRoutine: TRoutine; // Value of LastCompiledRoutine property
     fCompilers: ICompilers;         // Value of Compilers property
-    ///  <summary>Handles database change events. Clears test compilation if
-    ///  related snippet is changed or deleted.</summary>
-    ///  <param name="Sender">TObject [in] Object that triggered event. Not
-    ///  used.</param>
-    ///  <param name="EvtInfo">IInterface [in] Object that carries information
-    ///  about the database change event.</param>
     procedure DBChangeEventHandler(Sender: TObject; const EvtInfo: IInterface);
+      {Handles database change events. Clears text compilation for every
+      database change event.
+        @param Sender [in] Not used.
+        @param EvtInfo [in] Object that carries information about the database 
+          change event.
+       }
   strict protected
-    property LastCompiledSnippet: TSnippet read fLastCompiledSnippet;
-      {Last compiled snippet. May not be added to Snippets object}
+    property LastCompiledRoutine: TRoutine read fLastCompiledRoutine;
+      {Last compiled routine. May not be added to Snippets object}
   public
     constructor Create(AOwner: TComponent); override;
       {Class constructor. Sets up object.
@@ -67,14 +87,14 @@ type
       {Checks if any compilers are set up to work with CodeSnip.
         @return True if at least one compiler is available, False otherwise.
       }
-    procedure Compile(const UIParent: TWinControl; const Snippet: TSnippet;
+    procedure Compile(const UIParent: TWinControl; const Routine: TRoutine;
       const DisplayProc: TCompileResultDisplay = nil);
-      {Test compiles a snippet and then displays the compilation results. Shows
+      {Test compiles a routine and then displays the compilation results. Shows
       a wait dialog box if compilation takes a long time.
         @param UIParent [in] Control that parents any wait window that is
           displayed. Wait window aligned above this control.
-        @param Snippet [in] Snippet to be compiled. Stored in
-          LastCompiledSnippet property.
+        @param Routine [in] Routine to be compiled. Stored in
+          LastCompiledRoutine property.
         @param DisplayProc [in] Callback method called to display compilation
           results.
       }
@@ -85,7 +105,12 @@ type
       }
     procedure ShowErrors;
       {Shows dialog box containing all errors and warnings for last compiled
-      snippet.
+      routine.
+      }
+    procedure ShowError(const CompilerID: TCompilerID);
+      {Shows compile error or warning for last compiled routine on a specified
+      compiler.
+        @param CompilerID [in] Id of compiler whose errors are to be displayed.
       }
     property Compilers: ICompilers read fCompilers;
       {Compilers object to be used to perform compilation}
@@ -98,12 +123,12 @@ type
   }
   TMainCompileMgr = class(TCompileMgr)
   public
-    function CanCompile(View: IView): Boolean;
+    function CanCompile(const View: TViewItem): Boolean;
       {Checks if the object represented by a view item can be test compiled.
         @param View [in] View item to test.
         @return True if view can be compiled, False otherwise.
       }
-    function IsLastCompiledView(View: IView): Boolean;
+    function IsLastCompiledView(const View: TViewItem): Boolean;
       {Checks if the object represented by a view item is the last one that was
       test compiled.
         @param View [in] View item to test.
@@ -125,33 +150,32 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UCompilers, DB.UMain, FmCompErrorDlg, FmCompilersDlg,
-  UTestCompileUI;
+  Compilers.UCompilers, FmCompErrorDlg, FmCompilersDlg, UTestCompileUI;
 
 
 { TCompileMgr }
 
 procedure TCompileMgr.Compile(const UIParent: TWinControl;
-  const Snippet: TSnippet; const DisplayProc: TCompileResultDisplay);
-  {Test compiles a snippet and then displays the compilation results. Shows a
+  const Routine: TRoutine; const DisplayProc: TCompileResultDisplay);
+  {Test compiles a routine and then displays the compilation results. Shows a
   wait dialog box if compilation takes a long time.
     @param UIParent [in] Control that parents any wait window that is displayed.
       Wait window aligned above this control.
-    @param Snippet [in] Snippet to be compiled. Stored in LastCompiledSnippet
+    @param Routine [in] Routine to be compiled. Stored in LastCompiledRoutine
        property.
     @param DisplayProc [in] Callback method called to display compilation
       results.
   }
 begin
-  Assert(Assigned(Snippet), ClassName + '.Compile: Snippet is nil');
-  // Compile snippet and optionally display result
-  TTestCompileUI.Execute(UIParent, fCompilers, Snippet);
+  Assert(Assigned(Routine), ClassName + '.Compile: Routine is nil');
+  // Compile routine and optionally display result
+  TTestCompileUI.Execute(UIParent, fCompilers, Routine);
   if Assigned(DisplayProc) then
     DisplayProc(fCompilers);
-  // Copy snippet to LastCompiledSnippet property
-  fLastCompiledSnippet.Free;
-  fLastCompiledSnippet := (Database as IDatabaseEdit).CreateTempSnippet(
-    Snippet
+  // Copy routine to LastCompiledRoutine property
+  FreeAndNil(fLastCompiledRoutine);
+  fLastCompiledRoutine := (Snippets as ISnippetsEdit).CreateTempRoutine(
+    Routine
   );
 end;
 
@@ -162,34 +186,30 @@ constructor TCompileMgr.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
   fCompilers := TCompilersFactory.CreateAndLoadCompilers;
-  Database.AddChangeEventHandler(DBChangeEventHandler);
+  Snippets.AddChangeEventHandler(DBChangeEventHandler);
 end;
 
 procedure TCompileMgr.DBChangeEventHandler(Sender: TObject;
   const EvtInfo: IInterface);
-var
-  EventInfo: IDatabaseChangeEventInfo;  // information about the event
+  {Handles database change events. Clears text compilation for every database
+  change event.
+    @param Sender [in] Not used.
+    @param EvtInfo [in] Object that carries information about the database
+      change event.
+   }
 begin
-  if not Assigned(fLastCompiledSnippet) then
-    Exit;
-  EventInfo := EvtInfo as IDatabaseChangeEventInfo;
-  if not (EventInfo.Kind in [evBeforeSnippetChange, evBeforeSnippetDelete]) then
-    Exit;
-  Assert(EventInfo.Info is TSnippet,
-    ClassName + '.DBChangeEventHandler: EventInfo is not TSnippet');
-  if (EventInfo.Info as TSnippet).IsEqual(fLastCompiledSnippet) then
-    // Snippet being changed is last compiled snippet: free and nil it so to
-    // ensure incorrect results can't be viewed.
-    FreeAndNil(fLastCompiledSnippet);
+  if Assigned(fLastCompiledRoutine)
+    and ((EvtInfo as ISnippetChangeEventInfo).Kind = evChangeBegin) then
+    FreeAndNil(fLastCompiledRoutine);
 end;
 
 destructor TCompileMgr.Destroy;
   {Class destructor. Tears down object.
   }
 begin
-  Database.RemoveChangeEventHandler(DBChangeEventHandler);
-  fLastCompiledSnippet.Free;
-  fCompilers := nil;
+  Snippets.RemoveChangeEventHandler(DBChangeEventHandler);
+  FreeAndNil(fLastCompiledRoutine);
+  fCompilers := nil;  // release compilers object
   inherited;
 end;
 
@@ -219,32 +239,46 @@ begin
   end;
 end;
 
+procedure TCompileMgr.ShowError(const CompilerID: TCompilerID);
+  {Shows compile error or warning for last compiled routine on a specified
+  compiler.
+    @param CompilerID [in] Id of compiler whose errors are to be displayed.
+  }
+var
+  Compiler: ICompiler;  // reference to required compiler
+begin
+  Compiler := fCompilers[CompilerID];
+  Assert(Compiler.HasErrorsOrWarnings,
+    ClassName + '.ShowError: Compiler has no errors or warnings');
+  Assert(Assigned(fLastCompiledRoutine),
+    ClassName + '.ShowError: LastCompiledRoutine is nil');
+  TCompErrorDlg.Execute(Owner, fLastCompiledRoutine.ID, Compiler);
+end;
+
 procedure TCompileMgr.ShowErrors;
   {Shows dialog box containing all errors and warnings for last compiled
-  snippet.
+  routine.
   }
 begin
   Assert(HaveErrors,
     ClassName + '.ShowErrors: No compilers have errors or warnings');
-  Assert(Assigned(fLastCompiledSnippet),
-    ClassName + '.ShowErrors: LastCompiledSnippet is nil');
-  TCompErrorDlg.Execute(Owner, fLastCompiledSnippet, fCompilers);
+  Assert(Assigned(fLastCompiledRoutine),
+    ClassName + '.ShowErrors: LastCompiledRoutine is nil');
+  TCompErrorDlg.Execute(Owner, fLastCompiledRoutine.ID, fCompilers);
 end;
 
 { TMainCompileMgr }
 
-function TMainCompileMgr.CanCompile(View: IView): Boolean;
+function TMainCompileMgr.CanCompile(const View: TViewItem): Boolean;
   {Checks if the object represented by a view item can be test compiled.
     @param View [in] View item to test.
     @return True if view can be compiled, False otherwise.
   }
-var
-  SnippetView: ISnippetView;  // view as snippet view if supported
 begin
   Result := Assigned(View)
     and HaveCompilers
-    and Supports(View, ISnippetView, SnippetView)
-    and SnippetView.Snippet.CanCompile;
+    and (View.Kind = vkRoutine)
+    and View.Routine.CanCompile;
 end;
 
 function TMainCompileMgr.ConfigCompilers: Boolean;
@@ -256,19 +290,15 @@ begin
   Result := TCompilersDlg.Execute(Owner, Compilers);
 end;
 
-function TMainCompileMgr.IsLastCompiledView(View: IView): Boolean;
+function TMainCompileMgr.IsLastCompiledView(const View: TViewItem): Boolean;
   {Checks if the object represented by a view item is the last one that was test
   compiled.
     @param View [in] View item to test.
     @return True if view represents last object to be compiled, False otherwise.
   }
-var
-  SnippetView: ISnippetView;  // view as snippet view if supported
 begin
-  Result := Assigned(View)
-    and Assigned(LastCompiledSnippet)
-    and Supports(View, ISnippetView, SnippetView)
-    and SnippetView.Snippet.IsEqual(LastCompiledSnippet);
+  Result := Assigned(View) and (View.Kind = vkRoutine) and
+    Assigned(LastCompiledRoutine) and View.Routine.IsEqual(LastCompiledRoutine);
 end;
 
 end.

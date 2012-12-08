@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Compilers.UGlobals.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Declares various types that describe the compiler and compilation results and
+ * defines interfaces to compiler objects.
  *
  * $Rev$
  * $Date$
  *
- * Declares various types that describe the compiler and compilation results and
- * defines interfaces to compiler objects.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Compilers.UGlobals.pas, formerly IntfCompilers.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2011 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -36,23 +57,21 @@ type
     ciD2007,                            // Delphi 2007 for Win32
     ciD2009w32,                         // Delphi 2009 Win32 personality
     ciD2010,                            // Delphi 2010
-    ciDXE,                              // Delphi XE
-    ciDXE2,                             // Delphi XE2
-    ciDXE3,                             // Delphi XE3
+    ciDXE, ciDXE2, ciDXE3,              // Delphi XE to XE3
     ciFPC                               // Free Pascal
   );
 
 const
   // Sets grouping compiler ids into compiler types
-  cClassicDelphiCompilers =   // Classic Borland / Inprise Delphi
-    [ciD2, ciD3, ciD4, ciD5, ciD6, ciD7];
-  cBDSCompilers =             // BDS based compilers
-    [
-      ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010,
-      ciDXE, ciDXE2, ciDXE3
-    ];
-  cFreePascalCompilers =      // Free Pascal
-    [ciFPC];
+  cClassicDelphiCompilers = [ // Classic Borland / Inprise Delphi
+    ciD2, ciD3, ciD4, ciD5, ciD6, ciD7
+  ];
+  cBDSCompilers = [           // BDS based compilers
+    ciD2005w32, ciD2006w32, ciD2007, ciD2009w32, ciD2010, ciDXE, ciDXE2, ciDXE3
+  ];
+  cFreePascalCompilers = [    // Free Pascal
+    ciFPC
+  ];
 
 type
 
@@ -104,26 +123,6 @@ type
     cfErrors      // filter out anything that is not an error message
   );
 
-type
-  ///  <summary>
-  ///  Interface to list of directories to be searched by a compiler when
-  ///  looking for files.
-  ///  </summary>
-  ISearchDirs = interface(IInterface)
-    ['{77CAFAC1-9B0F-4244-9FFF-A9FB4EBDEE8B}']
-    ///  <summary>Creates and returns enumerator for directories list.</summary>
-    function GetEnumerator: TEnumerator<string>;
-    ///  <summary>Adds a new search directory to list.</summary>
-    procedure Add(const DirName: string);
-    ///  <summary>Clears list.</summary>
-    procedure Clear;
-    ///  <summary>Checks if list is empty.</summary>
-    function IsEmpty: Boolean;
-    ///  <summary>Returns an array containing the names of all directories in
-    ///  the list.</summary>
-    function ToStrings: TArray<string>;
-  end;
-
   {
   ICompiler:
     Interface that must be supported by any object that represents a compiler.
@@ -143,6 +142,10 @@ type
     function GetIDString: string;
       {Provides a non-localisable string that identifies the compiler.
         @return Compiler Id string.
+      }
+    function GetGlyph: TBitmap;
+      {Returns reference to any 18x18 bitmap associated with the compiler.
+        @return Reference to bitmap or nil if there is no associated bitmap.
       }
     function IsAvailable: Boolean;
       {Tells whether the compiler is installed on this computer and made
@@ -169,14 +172,6 @@ type
       {Sets user defined switches.
         @param Switches [in] Required switches separated by commas.
       }
-    function GetSearchDirs: ISearchDirs;
-      {Returns copy of list of search directories used by compiler.
-        @return Required list of directories.
-      }
-    procedure SetSearchDirs(Dirs: ISearchDirs);
-      {Stores a copy of given list of search directories.
-        @param Dirs [in] List of search directories.
-      }
     function GetLogFilePrefixes: TCompLogPrefixes;
       {Returns prefixes used in interpreting error, fatal error and warning
       conditions in log files.
@@ -186,16 +181,6 @@ type
       {Records prefixes used in interpreting error, fatal error and warning
       conditions in log files.
         @param Prefixes [in] Array of required prefix strings.
-      }
-    function GetDisplayable: Boolean;
-      {Returns flag indicating if compiler is displayable, i.e. compile results
-      for it are to be displayed in UI etc.
-        @return Boolean flag.
-      }
-    procedure SetDisplayable(const Flag: Boolean);
-      {Sets a flag indicating if compiler is displayable, i.e. compile results
-      for it are to be displayed in UI etc.
-        @param Flag [in] Requried value.
       }
     function Compile(const Path, Project: string): TCompileResult;
       {Compiles a project and returns result of compilation. Records result of
@@ -238,7 +223,7 @@ type
 
   {
   ICompilers:
-    Interface implemented by an object that maintans a list of all compilers
+    Interface implemented by an object tha maintans a list of all compilers
     supported by the program.
   }
   ICompilers = interface(IInterface)
@@ -270,10 +255,6 @@ type
       read GetAvailableCount;
       {Number of compilers installed on this computer and made available to
       program}
-    function HaveDisplayable: Boolean;
-      {Checks if any compilers are displayable.
-        @return True if at least one compiler is displayable, False otherwise.
-      }
   end;
 
   {

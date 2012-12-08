@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * FrPrintingPrefs.pas
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements a frame that allows user to set printing preferences. Designed for
+ * use as one of the tabs in the preferences dialog box.
  *
  * $Rev$
  * $Date$
  *
- * Implements a frame that allows user to set printing preferences. Designed for
- * use as one of the tabs in the Preferences dialogue box.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is FrPrintingPrefs.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2007-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -71,11 +92,6 @@ type
       {Called when page is deactivated. Stores information entered by user.
         @param Prefs [in] Object used to store information.
       }
-    ///  <summary>Checks if preference changes require that main window UI is
-    ///  updated.</summary>
-    ///  <remarks>Called when dialog box containing frame is closing. Always
-    ///  returns False because these preferences never affect UI.</remarks>
-    function UIUpdated: Boolean; override;
     procedure ArrangeControls; override;
       {Arranges controls on frame. Called after frame has been sized.
       }
@@ -97,11 +113,10 @@ implementation
 
 uses
   // Delphi
-  SysUtils, Windows, Graphics, Math, ComCtrls,
+  SysUtils, StrUtils, Windows, Graphics, Math, ComCtrls,
   // Project
   FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UHiliters, IntfCommon, UConsts,
-  UEncodings, UKeysHelper, UPrintInfo, URTFBuilder, URTFStyles, URTFUtils,
-  UStrUtils, UUtils;
+  UEncodings, UKeysHelper, UPrintInfo, URTFBuilder, URTFUtils, UUtils;
 
 
 {$R *.dfm}
@@ -120,12 +135,11 @@ type
       {Reference to richedit control used to render preview}
     fHiliteAttrs: IHiliteAttrs;
       {Attributes of syntax highlighter to use to render preview}
-    procedure HiliteSource(const UseColor, SyntaxPrint: Boolean;
-      Builder: TRTFBuilder);
+    function HiliteSource(const UseColor, SyntaxPrint: Boolean): string;
       {Generates sample highlighted source code.
         @param UseColor [in] Whether to use colour or mono highlighter.
         @param SyntaxPrint [in] Whether source code to be highlighted.
-        @param Builder [in] Object that receives highlighted source code.
+        @return Suitably highlighted source code.
       }
   public
     constructor Create(const RE: TRichEdit; const HiliteAttrs: IHiliteAttrs);
@@ -157,7 +171,7 @@ begin
   // Update the caption to show current units
   gpMargins.Caption := Format(
     ' ' + sMarginCaption + ' ',
-    [StrToLower(UMeasurement.UnitName(Prefs.MeasurementUnits))]
+    [AnsiLowerCase(UMeasurement.UnitName(Prefs.MeasurementUnits))]
   );
 
   // Update entries in margins edit boxes
@@ -311,11 +325,6 @@ begin
     KeyErrorBeep;
 end;
 
-function TPrintingPrefsFrame.UIUpdated: Boolean;
-begin
-  Result := False;
-end;
-
 { TPrintingPrefsPreview }
 
 constructor TPrintingPrefsPreview.Create(const RE: TRichEdit;
@@ -337,6 +346,9 @@ procedure TPrintingPrefsPreview.Generate(const UseColor, SyntaxPrint: Boolean);
     @param UseColor [in] Whether preview to be in colour or monochrome.
     @param SyntaxPrint [in] Whether preview source code to be syntax hilited.
   }
+const
+  // Placeholder to be replaced by source code
+  cPlaceholder = '[[%SourceCode%]]';
 resourcestring
   // Heading and dummy paragraph text
   sHeading = 'Sample';
@@ -344,11 +356,11 @@ resourcestring
 var
   Builder: TRTFBuilder; // object used to assemble required RTF code
 begin
-  Builder := TRTFBuilder.Create(0); // use default code page
+  Builder := TRTFBuilder.Create;
   try
     // Set global document font and paragraph spacing
     Builder.FontTable.Add('Tahoma', rgfSwiss, 0);
-    Builder.SetParaSpacing(TRTFParaSpacing.Create(0.0, 2.0));
+    Builder.SetParaSpacing(0, 2);
     // Add heading text
     Builder.BeginGroup;
     Builder.SetFontSize(10);
@@ -360,22 +372,28 @@ begin
     Builder.SetFontSize(9);
     Builder.AddText(sBodyText);
     Builder.EndPara;
-    // Add highlighted source code
-    HiliteSource(UseColor, SyntaxPrint, Builder);
+    // Add placeholder for source code
+    Builder.AddText(cPlaceholder);
     Builder.EndPara;
     // Load document into rich edit
-    TRichEditHelper.Load(fRe, Builder.Render);
+    RTFLoadFromString(fRE, Builder.AsString);
   finally
     FreeAndNil(Builder);
   end;
+  // Merge in source code
+  fRE.SelStart := fRE.FindText(cPlaceholder, 0, MaxInt, []);
+  fRE.SelLength := Length(cPlaceholder);
+  RTFInsertString(
+    fRE, StringToASCIIString(HiliteSource(UseColor, SyntaxPrint))
+  );
 end;
 
-procedure TPrintingPrefsPreview.HiliteSource(const UseColor,
-  SyntaxPrint: Boolean; Builder: TRTFBuilder);
+function TPrintingPrefsPreview.HiliteSource(const UseColor,
+  SyntaxPrint: Boolean): string;
   {Generates sample highlighted source code.
     @param UseColor [in] Whether to use colour or mono highlighter.
     @param SyntaxPrint [in] Whether source code to be highlighted.
-    @param Builder [in] Object that receives highlighted source code.
+    @return Suitably highlighted source code.
   }
 const
   // Sample source code displayed in preview
@@ -385,8 +403,8 @@ const
     + '  ShowMessage(''Bar'');' + EOL
     + 'end;';
 var
-  Attrs: IHiliteAttrs;        // highlighter attributes
-  Renderer: IHiliteRenderer;  // renders highlighted code as RTF
+  Hiliter: ISyntaxHiliter;  // highlighter object
+  Attrs: IHiliteAttrs;      // highlighter attributes
 begin
   // Determine which highlighter to use depending on options
   if not SyntaxPrint then
@@ -396,8 +414,8 @@ begin
     // user-defined highlighter, maybe in mono
     Attrs := THiliteAttrsFactory.CreatePrintAttrs(fHiliteAttrs, UseColor);
   // Perform highlighting
-  Renderer := TRTFHiliteRenderer.Create(Builder, Attrs);
-  TSyntaxHiliter.Hilite(cSourceCode, Renderer);
+  Hiliter := TSyntaxHiliterFactory.CreateHiliter(hkRTF);
+  Result := Hiliter.Hilite(cSourceCode, Attrs);
 end;
 
 initialization

@@ -1,14 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Web.UBaseWebService.pas
  *
- * Copyright (C) 2010-2012, Peter Johnson (www.delphidabbler.com).
+ * Provides a base class for all classes that access web services.
  *
  * $Rev$
  * $Date$
  *
- * Provides a base class for all classes that access web services.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Web.UBaseWebService.pas. formerly
+ * NsWebServices.UBase.pas.
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -44,11 +66,12 @@ type
     interaction with web services.
   }
   TBaseWebService = class(TObject)
-  strict private
+  private
     fHTTP: THTTPEx;                         // Class used for HTTP requests
     fScriptURI: string;                     // URI of web service
     fOnProgress: TWebServiceProgressEvent;  // OnProgress event handler
     fWantProgress: Boolean;                 // Value of WantProgress property
+  strict private
     procedure DoPostParams(const Params: TURIParams;
       const PostProc: TProc<TStream>);
       {Helper method that assists in performing POST requests that send encoded
@@ -63,10 +86,6 @@ type
         @param Params [in] Parameters to append to URI as query string. May be
           empty or nil.
         @return Required URI.
-      }
-    function GetResponseCharSet: string;
-      {Read accessor for ResponseCharSet property.
-        @return Character set used by last HTTP response.
       }
   strict protected
     property WantProgress: Boolean read fWantProgress write fWantProgress;
@@ -108,12 +127,6 @@ type
         @param Data [in] Data to be posted. Must not be nil.
         @return Response as text, decoded according to response header.
       }
-    function PostText(const Data: TBytes): string; overload;
-      {Performs a POST request on web service sending data from a byte array and
-      returns response as text.
-        @param Data [in] Data to be posted.
-        @return Response as text, decoded according to response header.
-      }
     function PostRaw(const Params: TURIParams): TBytes; overload;
       {Performs a POST request on web service sending query strings and returns
       response as raw data.
@@ -131,13 +144,6 @@ type
       {Performs a POST request on web service sending data from a stream and
       stores response in a string list.
         @param Data [in] Data to be posted. Must not be nil.
-        @param Strings [in] String list that receives response.
-      }
-    procedure PostStrings(const Data: TBytes; const Strings: TStrings);
-      overload;
-      {Performs a POST request on web service sending data from a byte array and
-      stores response in a string list.
-        @param Data [in] Data to be posted.
         @param Strings [in] String list that receives response.
       }
     procedure PostStrings(const Params: TURIParams; const Strings: TStrings);
@@ -159,17 +165,10 @@ type
       read fOnProgress write fOnProgress;
       {Event that can be triggered to monitor progress of downloads. Event is
       only triggered when WantProgress property is true}
-    property ResponseCharSet: string read GetResponseCharSet;
-      {Character set used for last response from web server}
   end;
 
 
 implementation
-
-
-uses
-  // Project
-  UStrUtils;
 
 
 { TBaseWebService }
@@ -256,14 +255,6 @@ begin
   Result := fHTTP.GetRaw(BuildURI(Params));
 end;
 
-function TBaseWebService.GetResponseCharSet: string;
-  {Read accessor for ResponseCharSet property.
-    @return Character set used by last HTTP response.
-  }
-begin
-  Result := fHTTP.ResponseCharSet;
-end;
-
 procedure TBaseWebService.GetStrings(const Strings: TStrings);
   {Performs a GET request on web service and stores response in string list.
     @params Strings [in] String list that receives response.
@@ -280,7 +271,7 @@ procedure TBaseWebService.GetStrings(const Params: TURIParams;
       nil.
   }
 begin
-  Strings.Text := StrTrim(GetText(Params));
+  Strings.Text := Trim(GetText(Params));
 end;
 
 function TBaseWebService.GetText(const Params: TURIParams = nil): string;
@@ -335,18 +326,7 @@ procedure TBaseWebService.PostStrings(const Params: TURIParams;
     @param Strings [in] String list that receives response.
   }
 begin
-  Strings.Text := StrTrim(PostText(Params));
-end;
-
-procedure TBaseWebService.PostStrings(const Data: TBytes;
-  const Strings: TStrings);
-  {Performs a POST request on web service sending data from a byte array and
-  stores response in a string list.
-    @param Data [in] Data to be posted.
-    @param Strings [in] String list that receives response.
-  }
-begin
-  Strings.Text := StrTrim(PostText(Data));
+  Strings.Text := Trim(PostText(Params));
 end;
 
 procedure TBaseWebService.PostStrings(const Data: TStream;
@@ -357,7 +337,7 @@ procedure TBaseWebService.PostStrings(const Data: TStream;
     @param Strings [in] String list that receives response.
   }
 begin
-  Strings.Text := StrTrim(PostText(Data));
+  Strings.Text := Trim(PostText(Data));
 end;
 
 function TBaseWebService.PostText(const Params: TURIParams): string;
@@ -379,16 +359,6 @@ begin
   Result := RetVal;
 end;
 
-function TBaseWebService.PostText(const Data: TBytes): string;
-  {Performs a POST request on web service sending data from a byte array and
-  returns response as text.
-    @param Data [in] Data to be posted.
-    @return Response as text, decoded according to response header.
-  }
-begin
-  Result := fHTTP.PostText(fScriptURI, Data);
-end;
-
 function TBaseWebService.PostText(const Data: TStream): string;
   {Performs a POST request on web service sending data from a stream and returns
   response as text.
@@ -401,7 +371,7 @@ begin
   SetLength(RequestData, Data.Size);
   Data.Position := 0;
   Data.ReadBuffer(Pointer(RequestData)^, Data.Size);
-  Result := PostText(RequestData);
+  Result := fHTTP.PostText(fScriptURI, RequestData);
 end;
 
 end.

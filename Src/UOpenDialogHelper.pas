@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UOpenDialogHelper.pas
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Helper routines for use when working with standard windows open and save file
+ * dialog boxes.
  *
  * $Rev$
  * $Date$
  *
- * Helper routines for use when working with standard windows open and save file
- * dialog boxes.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UOpenDialogHelper.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -68,7 +89,7 @@ uses
   // Delphi
   SysUtils, Classes, Windows, Dlgs, CommDlg,
   // Project
-  UStrUtils, UUtils;
+  UUtils;
 
 
 function FilterIndexToExt(const Dlg: TOpenDialog): string;
@@ -85,7 +106,7 @@ begin
   try
     // Split filter string into parts (divided by | chars):
     // even number indexes are descriptions and odd indexes are extensions
-    StrExplode(Dlg.Filter, '|', FilterParts);
+    ExplodeStr(Dlg.Filter, '|', FilterParts);
     Result := ExtractFileExt(FilterParts[2 * (Dlg.FilterIndex - 1) + 1]);
   finally
     FreeAndNil(FilterParts);
@@ -114,7 +135,7 @@ begin
   try
     // Split filter string into parts (divided by | chars):
     // even number indexes are descriptions and odd indexes are extensions
-    StrExplode(FilterStr, '|', FilterParts);
+    ExplodeStr(FilterStr, '|', FilterParts);
     // Record only extensions (every 2nd entry starting at index 1)
     Extensions := TStringList.Create;
     Idx := 1;
@@ -150,7 +171,7 @@ begin
   if (ExtractFileExt(Dlg.FileName) = '') and (Dlg.Filter <> '') then
   begin
     DefaultExt := FilterIndexToExt(Dlg);
-    if not StrContainsStr('*', DefaultExt) then
+    if AnsiPos('*', DefaultExt) = 0 then
       Result := Result + DefaultExt;
   end;
 end;

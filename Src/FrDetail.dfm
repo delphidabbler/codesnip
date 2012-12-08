@@ -6,49 +6,80 @@ inherited DetailFrame: TDetailFrame
       ExplicitWidth = 40
     end
   end
-  inline frmDetailView: TDetailViewFrame
-    Left = 0
-    Top = 50
-    Width = 318
-    Height = 188
-    Align = alClient
-    TabOrder = 2
-    TabStop = True
-    ExplicitTop = 50
-    ExplicitWidth = 318
-    ExplicitHeight = 188
-    inherited pnlBrowser: TPanel
-      Width = 318
-      Height = 188
-      ExplicitWidth = 318
-      ExplicitHeight = 188
-      inherited wbBrowser: TWebBrowser
-        Width = 318
-        Height = 188
-        ExplicitWidth = 318
-        ExplicitHeight = 188
-        ControlData = {
-          4C000000DE2000006E1300000000000000000000000000000000000000000000
-          000000004C000000000000000000000001000000E0D057007335CF11AE690800
-          2B2E126208000000000000004C0000000114020000000000C000000000000046
-          8000000000000000000000000000000000000000000000000000000000000000
-          00000000000000000100000000000000000000000000000000000000}
-      end
-    end
-  end
-  object tcViews: TTabControl
+  object pcDetail: TPageControl
     Left = 0
     Top = 27
     Width = 318
-    Height = 23
-    Align = alTop
-    PopupMenu = mnuTabs
+    Height = 211
+    ActivePage = tsCompiler
+    Align = alClient
     TabOrder = 1
-    OnChange = tcViewsChange
-    OnMouseDown = tcViewsMouseDown
-  end
-  object mnuTabs: TPopupMenu
-    Left = 144
-    Top = 104
+    OnChange = pcDetailChange
+    OnMouseDown = pcDetailMouseDown
+    object tsInfo: TTabSheet
+      Caption = 'Information'
+      inline frmInfo: TInfoFrame
+        Left = 0
+        Top = 0
+        Width = 310
+        Height = 183
+        Align = alClient
+        TabOrder = 0
+        TabStop = True
+        ExplicitWidth = 310
+        ExplicitHeight = 183
+        inherited pnlBrowser: TPanel
+          Width = 310
+          Height = 183
+          ExplicitWidth = 310
+          ExplicitHeight = 183
+          inherited wbBrowser: TWebBrowser
+            Width = 310
+            Height = 183
+            ExplicitWidth = 312
+            ExplicitHeight = 185
+            ControlData = {
+              4C0000000A200000EA1200000000000000000000000000000000000000000000
+              000000004C000000000000000000000001000000E0D057007335CF11AE690800
+              2B2E126208000000000000004C0000000114020000000000C000000000000046
+              8000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000100000000000000000000000000000000000000}
+          end
+        end
+      end
+    end
+    object tsCompiler: TTabSheet
+      Caption = 'Compiler Check'
+      ImageIndex = 1
+      inline frmCompCheck: TCompCheckFrame
+        Left = 0
+        Top = 0
+        Width = 310
+        Height = 183
+        Align = alClient
+        TabOrder = 0
+        TabStop = True
+        ExplicitWidth = 310
+        ExplicitHeight = 183
+        inherited pnlBrowser: TPanel
+          Width = 310
+          Height = 183
+          ExplicitWidth = 310
+          ExplicitHeight = 183
+          inherited wbBrowser: TWebBrowser
+            Width = 310
+            Height = 183
+            ExplicitWidth = 312
+            ExplicitHeight = 185
+            ControlData = {
+              4C0000000A200000EA1200000000000000000000000000000000000000000000
+              000000004C000000000000000000000001000000E0D057007335CF11AE690800
+              2B2E126200000000000000004C0000000114020000000000C000000000000046
+              8000000000000000000000000000000000000000000000000000000000000000
+              00000000000000000100000000000000000000000000000000000000}
+          end
+        end
+      end
+    end
   end
 end

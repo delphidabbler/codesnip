@@ -1,15 +1,26 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * ***** BEGIN LICENSE BLOCK *****
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Version: MPL 1.1
  *
- * $Rev$
- * $Date$
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
  *
- * Help topic describing constant snippet kind.
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is snippet_constant.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 <html>
   <head>
@@ -47,14 +58,12 @@
   cRangeMin = 1;
   cIntArray: array[cRangeMin..cRangeMax] of Integer = (42, 56, 99);</pre>
     <p>
-      Constant snippets may refer to other
-      <a href="snippet_type.htm">simple type</a> definitions,
-      <a href="snippet_class.htm">class &amp; advanced record</a> definitions
-      or constants, providing they are defined in Delphi units or elsewhere in
-      the database. The snippet's units and dependencies references should
-      indicate where to find the other types and constants. Constants may not
-      reference <a href="snippet_routine.htm">routine</a>,
-      <a href="snippet_unit.htm">unit</a> or
+      Constant snippets may refer to other 
+      <a href="snippet_type.htm">type definitions</a> or constants, providing
+      they are defined in Delphi units or elsewhere in the database. The
+      snippet's units and dependencies references should indicate where to
+      find the other types and constants. Constants may not reference
+      <a href="snippet_routine.htm">routines</a> or 
       <a href="snippet_freeform.htm">freeform</a> snippets.
     </p>
   </body>

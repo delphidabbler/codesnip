@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UAppInfo.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Class that provides information about the application.
  *
  * $Rev$
  * $Date$
  *
- * Class that provides information about the application.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UAppInfo.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -44,8 +65,6 @@ type
       {Name of "company" that owns this program}
     const ProgramName = 'CodeSnip';
       {Name of program}
-    const ProgramCaption = ProgramName + ' 4';
-      {Name of program displayed in main window and task bar caption}
     const FullProgramName = CompanyName + ' ' + ProgramName;
       {Full name of program, including company name}
     const ProgramID = 'codesnip';
@@ -128,7 +147,7 @@ uses
   // DelphiDabbler library
   PJMD5,
   // Project
-  USettings, UStrUtils, USystemID, USystemInfo, UVersionInfo;
+  USettings, USystemID, USystemInfo, UVersionInfo;
 
 
 { TAppInfo }
@@ -138,7 +157,7 @@ class function TAppInfo.AppDataDir: string;
     @return Full path to database sub directory.
   }
 begin
-  Result := CommonAppDir + '\Database';
+  Result := CommonAppDir + '\Data';
 end;
 
 class function TAppInfo.AppExeDir: string;
@@ -163,7 +182,7 @@ class function TAppInfo.CommonAppDir: string;
     @return Full path to common application data directory.
   }
 begin
-  Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip.4';
+  Result := TSystemFolders.CommonAppData + '\DelphiDabbler\CodeSnip';
 end;
 
 class function TAppInfo.GenerateKey: string;
@@ -171,7 +190,7 @@ class function TAppInfo.GenerateKey: string;
     @return Required key.
   }
 begin
-  Result := StrToUpper(
+  Result := UpperCase(
     TPJMD5.Calculate(
       USystemID.SystemIDStr, TEncoding.ASCII
     )
@@ -225,7 +244,7 @@ begin
   begin
     // Key not present: create and store it
     Result := GenerateKey;
-    Section.ItemValues['Key'] := Result;
+    Section.ItemValues['Key'] := Result;                  
     Section.Save;
   end;
 end;
@@ -236,9 +255,9 @@ class function TAppInfo.ProgramReleaseInfo: string;
     @return Release information.
   }
 begin
-  Result := StrTrim(TVersionInfo.ProductVersionStr);
-  if StrTrim(TVersionInfo.SpecialBuildStr) <> '' then
-    Result := Result + '-' + StrTrim(TVersionInfo.SpecialBuildStr);
+  Result := Trim(TVersionInfo.ProductVersionStr);
+  if Trim(TVersionInfo.SpecialBuildStr) <> '' then
+    Result := Result + '-' + Trim(TVersionInfo.SpecialBuildStr);   
 end;
 
 class function TAppInfo.ProgramReleaseVersion: string;
@@ -271,7 +290,7 @@ var
 begin
   Section := Settings.ReadSection(ssApplication);
   Section.ItemValues['RegCode'] := Code;
-  Section.ItemValues['RegName'] := Name;
+  Section.ItemValues['RegName'] := Name;                   
   Section.Save;
 end;
 
@@ -292,7 +311,7 @@ class function TAppInfo.UserAppDir: string;
     @return Full path to per-user application data directory.
   }
 begin
-  Result := TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip.4';
+  Result := TSystemFolders.PerUserAppData + '\DelphiDabbler\CodeSnip';
 end;
 
 class function TAppInfo.UserDataDir: string;
@@ -300,7 +319,7 @@ class function TAppInfo.UserDataDir: string;
     @return Full path to database sub directory.
   }
 begin
-  Result := UserAppDir + '\UserDatabase';
+  Result := UserAppDir + '\UserData.3';
 end;
 
 end.

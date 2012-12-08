@@ -1,16 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
- *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
- *
- * $Rev$
- * $Date$
+ * UUnitsChkListMgr.pas
  *
  * Implements class that manages check list box controls that display lists of
  * Delphi units. Builds expandable list, sets check marks for specified units
  * and gets list of checked units.
+ *
+ * $Rev$
+ * $Date$
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UUnitsChkListMgr.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2012 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -36,7 +57,7 @@ type
     checked units.
   }
   TUnitsChkListMgr = class(TObject)
-  strict private
+  private
     fCLB: TCheckListBox;    // Check list box being managed
     procedure InitStandardUnits;
       {Initialises unit list with standard units that are always available.
@@ -165,16 +186,16 @@ procedure TUnitsChkListMgr.InitStandardUnits;
   }
 const
   // list of standard units
-  StdUnits: array[1..10] of string = (
+  cStdUnits: array[1..10] of string = (
     'SysUtils', 'Classes', 'Controls', 'Messages',
     'Windows', 'Graphics', 'Types', 'ShlObj', 'ShellAPI', 'ActiveX'
   );
 var
-  StdUnit: string;  // each standard unit in list
+  Idx: Integer; // loops thru all standard units
 begin
   fCLB.Clear;
-  for StdUnit in StdUnits do
-    fCLB.Items.Add(StdUnit);
+  for Idx := Low(cStdUnits) to High(cStdUnits) do
+    fCLB.Items.Add(cStdUnits[Idx]);
 end;
 
 function TUnitsChkListMgr.IsValidUnitName(const UnitName: string): Boolean;
@@ -187,3 +208,4 @@ begin
 end;
 
 end.
+

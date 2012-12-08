@@ -1,15 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * IntfFrameMgrs.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Declares interfaces, constants and enumerations that are supported or needed
+ * by frames and other classes that manage display of, and user interaction
+ * with, various parts of CodeSnip's UI.
  *
  * $Rev$
  * $Date$
  *
- * Declares interfaces, constants and enumerations required to manage various
- * parts of CodeSnip's UI.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is IntfFrameMgrs.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2012 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -23,199 +45,254 @@ uses
   // Delphi
   SHDocVw, ActiveX,
   // Project
-  Browser.IntfDocHostUI, DB.USnippet, Compilers.UGlobals, UCommandBars, UView;
+  Browser.IntfDocHostUI, Compilers.UGlobals, UCommandBars, USnippets, UView;
 
 
 const
-  // Indexes of tabs in Overview Pane
-  cCategorisedTab = 0;
-  cAlphabeticTab = 1;
-  cKindTab = 2; // snippet kind tab
+  // Constants that index tabs in overview pane
+  cCategorisedTab = 0;    // categorised tab
+  cAlphabeticTab = 1;     // alphabetical tab
+  cKindTab = 2;           // snippet kind tab
 
-  // Identifiers for Overview Pane's command bars
-  cOverviewToolBar: TCommandBarID = 1;
+  // Constants that index tabs in detail pane
+  cInfoTab = 0;           // detail information tab
+  cCompCheckTab = 1;      // compiler check tab
+
+  // Constants that identify command bars in overview pane
+  // toolbar
+  cOverviewToolBar: TCommandBarID =  1;
+  // popup menu
   cOverviewPopupMenu: TCommandBarID = 2;
 
-  // Identifiers for Detail Pane's main view command bars
+  // Constants that identify command bars in detail pane
+  // default menu
   cDetailPopupMenuDefault: TCommandBarID = CONTEXT_MENU_DEFAULT;
+  // mouse over image control
   cDetailPopupMenuImage: TCommandBarID = CONTEXT_MENU_IMAGE;
+  // mouse over HTML control
   cDetailPopupMenuControl: TCommandBarID = CONTEXT_MENU_CONTROL;
+  // mouse over HTML table
   cDetailPopupMenuTable: TCommandBarID = CONTEXT_MENU_TABLE;
+  // mouse over selected table
   cDetailPopupMenuTextSelect: TCommandBarID = CONTEXT_MENU_TEXTSELECT;
+  // mouse over HTML anchor
   cDetailPopupMenuAnchor: TCommandBarID = CONTEXT_MENU_ANCHOR;
+  // unknown menu
   cDetailPopupMenuUnknown: TCommandBarID = CONTEXT_MENU_UNKNOWN;
+  // first and last ids
   cDetailPopupMenuFirst = CONTEXT_MENU_DEFAULT;
   cDetailPopupMenuLast = CONTEXT_MENU_UNKNOWN;
 
-  // Set of all Detail Pane popup menu command bars
-  cDetailPopupMenuIDs: TCommandBarIDs =
-    [cDetailPopupMenuFirst..cDetailPopupMenuLast];
-
-  // Identifier for Detail Pane's tab set command bar
-  // (must be different to all cDetailPopupMenuXXX constants)
-  cDetailTabSetPopupMenu = Succ(cDetailPopupMenuLast);
-
-
-////////////////////////////////////////////////////////////////////////////////
-// Interfaces that deal with display of snippets and other views              //
-////////////////////////////////////////////////////////////////////////////////
 
 type
-  ///  <summary>Interface that defines methods for use in managing tab sets.
-  ///  </summary>
+
+  //////////////////////////////////////////////////////////////////////////////
+  // Display manager interfaces
+  //
+  // These interfaces define methods for managing the display of the various
+  // panes in the user interface.
+  //
+  // ITabbedDisplayMgr
+  //   Implemented by panes that support tab sets.
+  //
+  // IOverviewDisplayMgr
+  //   Implemented by panes that can display and select snippets.
+  //
+  // IViewItemDisplayMgr
+  //   Implemented by panes that display a view item in detail
+  //
+  // ICompCheckDisplayMgr
+  //   Implemented by panes that can display test compile related information.
+  //
+  // IWBDisplayMgr
+  //   Implemented by panes that host a web browser control.
+  //
+  //////////////////////////////////////////////////////////////////////////////
+
+  {
+  ITabbedDisplayMgr:
+    Interface implemented by panes that support tab sets.
+  }
   ITabbedDisplayMgr = interface(IInterface)
     ['{5445BF4F-0A02-48E6-A6FA-AE0FFC2F9939}']
-    ///  <summary>Select tab with given index in set.</summary>
     procedure SelectTab(const TabIdx: Integer);
-    ///  <summary>Get index of currently selected tab.</summary>
+      {Selects tab with specified index.
+        @param TabIdx [in] Index of tab to be selected.
+      }
     function SelectedTab: Integer;
-    ///  <summary>Switch to next tab in sequence or go to first tab if current
-    ///  tab is last.</summary>
+      {Returns index of currently selected tab.
+        @return Required tab index.
+      }
     procedure NextTab;
-    ///  <summary>Switch to previous tab in sequence or go to last tab if
-    ///  current tab is first.</summary>
+      {Switches to next tab, or return to first tab if current tab is last.
+      }
     procedure PreviousTab;
+      {Switches to previous tab, or return to last tab if current tab is first.
+      }
   end;
 
-type
-  ///  <summary>Interface that defines operations on Detail Pane relating to
-  ///  display of views in one or more tabs.</summary>
-  IDetailPaneDisplayMgr = interface(IInterface)
-    ['{79F8BCAB-4C3F-4935-B5BF-9E5B9B32D88A}']
-    /// <summary>Return currently selected view.</summary>
-    function SelectedView: IView;
-    ///  <summary>Select detail pane tab with given index.</summary>
-    procedure SelectTab(const TabIdx: Integer);
-    ///  <summary>Find index of tab displaying given view or -1 if no such tab.
-    ///  </summary>
-    function FindTab(ViewKey: IViewKey): Integer;
-    ///  <summary>Display given view in tab with given index.</summary>
-    procedure Display(View: IView; const TabIdx: Integer);
-    ///  <summary>Reload the currently displayed views.</summary>
-    procedure Reload;
-    ///  <summary>Close all tabs and delete all views.</summary>
-    procedure Clear;
-    ///  <summary>Create a new tab displaying given view and return its index.
-    ///  </summary>
-    function CreateTab(View: IView): Integer;
-    ///  <summary>Check if tab set is empty, i.e. there are no tabs displayed.
-    ///  </summary>
-    function IsEmptyTabSet: Boolean;
-    ///  <summary>Close tab at given index.</summary>
-    procedure CloseTab(const TabIdx: Integer);
-    ///  <summary>Close all tabs, or all except selected tabs, depending on
-    ///  whether KeepSelected is False or True, respectively.</summary>
-    procedure CloseMultipleTabs(const KeepSelected: Boolean);
-  end;
-
-type
-  ///  <summary>Enumeration describing the various expand / collapse operations
-  ///  on the nodes of a tree view.</summary>
+  {
+  TTreeNodeAction:
+    Enumeration that describes the different expand/collapse operations of tree
+    views.
+  }
   TTreeNodeAction = (
-    taExpandNode,   // expand selected node
-    taExpandAll,    // expand all nodes
-    taCollapseNode, // collapse selected node
-    taCollapseAll   // collapse all nodes
-    );
+    taExpandNode,     // expand selected node
+    taExpandAll,      // expand all nodes
+    taCollapseNode,   // collapse selected node
+    taCollapseAll     // collapse all nodes
+  );
 
-type
-  ///  <summary>Interface that defines operations on Overview Pane relating to
-  ///  manipulation of, and interaction with, tree view that lists and groups
-  ///  snippets.</summary>
+  {
+  IOverviewDisplayMgr:
+    Interface implemented by panes that can display and select snippets.
+  }
   IOverviewDisplayMgr = interface(IInterface)
     ['{AD5D5A0F-E7D3-4173-A4F9-04D43909B0F5}']
-    ///  <summary>Initialise frame with given tab selected.</summary>
     procedure Initialise(const TabIdx: Integer);
-    ///  <summary>Display given list of snippets in the current overview tab.
-    ///  </summary>
-    ///  <remarks>If given snippet list is same as that displayed it may not
-    ///  be redisplayed unless Force parameter is True.</remarks>
-    procedure Display(const SnippetList: TSnippetList; const Force: Boolean);
-    ///  <summary>Clear the display.</summary>
+      {Initialise frame with specified tab selected.
+        @param TabIdx [in] Index of required tab.
+      }
+    procedure Display(const RoutineList: TRoutineList);
+      {Displays the snippets in the current overview tab.
+        @param RoutineList [in] List of snippets to be displayed.
+      }
     procedure Clear;
-    ///  <summary>Select given view item in tree view.</summary>
-    ///  <remarks>Pass a nil parameter to deselect current selection.</remarks>
-    procedure SelectItem(ViewItem: IView);
-    ///  <summary>Update expand / collapse state of tree nodes as specified by
-    ///  State.</summary>
+      {Clears the display.
+      }
+    procedure SelectItem(const ViewItem: TViewItem);
+      {Select a view item in the overview pane.
+        @param ViewItem [in] Item to be selected. Pass nil to deselect current
+          item.
+      }
     procedure UpdateTreeState(const State: TTreeNodeAction);
-    ///  <summary>Check if tree view can support the expand / collapse request
-    ///  specified in State.</summary>
+      {Update expand / collapse state of nodes in a treeview.
+        @param State [in] Required expand / collapse state.
+      }
     function CanUpdateTreeState(const State: TTreeNodeAction): Boolean;
-    ///  <summary>Save current expand / collapse state of tree view.
-    ///  </summary>
+      {Checks if a tree view can support a node expand / collapse request.
+        @param State [in] Expand / collapse state being queried.
+        @return True if request can be fulfilled by treeview, False if not.
+      }
     procedure SaveTreeState;
-    ///  <summary>Restore expand / collapse state of treeview to last save
-    ///  state.</summary>
+      {Saves current expansion state of treeview in memory.
+      }
     procedure RestoreTreeState;
+      {Restores last saved treeview expansion state from memory.
+      }
   end;
 
-type
-  ///  <summary>Interface that defines operations on Detail Pane relating to
-  ///  display of a view item in detail.</summary>
+  {
+  IWBDisplayMgr:
+    Interface implemented by panes that host a web browser control.
+  }
+  IWBDisplayMgr = interface(IInterface)
+    ['{DE875803-D856-402C-BC3D-DBF79A0670D7}']
+    procedure Activate;
+      {Activates the frame (when it is shown).
+      }
+    procedure Deactivate;
+      {Deactivates the frame (when it is hidden).
+      }
+  end;
+
+  {
+  IViewItemDisplayMgr:
+    Interface implemented by panes that display a view item in detail.
+  }
   IViewItemDisplayMgr = interface(IInterface)
     ['{1FE68233-1AD7-44C3-A6C0-3974E0C0455E}']
-    ///  <summary>Display detailed information about given view. Set Reload to
-    ///  to force display to be re-loaded.</summary>
-    procedure Display(View: IView; Reload: Boolean);
+    procedure Display(const View: TViewItem; const Force: Boolean = False);
+      {Displays detailed information for a view. Pass nil to clear.
+        @param View [in] Information about item to view.
+        @param Force [in] Forces view item to be re-displayed even if not
+          changed.
+      }
+  end;
+
+  {
+  ICompCheckDisplayMgr:
+    Interface implemented by panes that can display test compile related
+    information.
+  }
+  ICompCheckDisplayMgr = interface(IInterface)
+    ['{E4E9B05D-E53C-4448-946D-750BDA45328C}']
+    procedure DisplayCompileResults(const ACompilers: ICompilers);
+      {Displays results of test compilation in pane.
+        @param ACompilers [in] Compilers object containing required results.
+      }
   end;
 
 
-////////////////////////////////////////////////////////////////////////////////
-// Other pane-related interfaces                                              //
-////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
+  // Other pane-related interfaces
+  //////////////////////////////////////////////////////////////////////////////
 
-type
-  ///  <summary>Interface that defines methods implemented by frames that
-  ///  support copying to the clipboard.</summary>
+  {
+  IClipboardMgr:
+    Defines methods implemented by frames that can copy to the Windows
+    clipboard.
+  }
   IClipboardMgr = interface(IInterface)
     ['{328EF9CA-5510-4D77-A570-7F499C0CFA79}']
-    ///  <summary>Check whether anything can currently be copied to the
-    ///  clipboard.</summary>
     function CanCopy: Boolean;
-    ///  <summary>Copy data to clipboard.</summary>
-    ///  <remarks>Behaviour when there is no available data is not defined.
-    ///  </remarks>
+      {Checks whether text can be copied to clipboard from frame.
+        @return True if text can be copied.
+      }
     procedure CopyToClipboard;
+      {Copies selected text to clipboard.
+      }
   end;
 
-type
-  ///  <summary>Interface that defines methods implemented by frames that
-  ///  support selection of text.</summary>
+  {
+  ISelectionMgr:
+    Defines methods implemented by frames that can select text.
+  }
   ISelectionMgr = interface(IInterface)
     ['{70FEFF07-75B5-4A82-A903-3A1B096E1D7C}']
-    ///  <summary>Check whether any text can currently be selected.</summary>
     function CanSelectAll: Boolean;
-    ///  <summary>Selects all text.</summary>
-    ///  <remarks>Behaviour when no text can be selected is not defined.
-    ///  </remarks>
+      {Checks whether text can be selected in frame.
+        @return True if text can be selected.
+      }
     procedure SelectAll;
+      {Selects all text in active control of frame.
+      }
   end;
 
-type
-  ///  <summary>Interface that defines operations supported by frames that
-  ///  can customise the behaviour of a hosted web browser control.</summary>
+  {
+  IWBCustomiser:
+    Defines methods implemented by frames that customise the behaviour of the
+    web browser control.
+  }
   IWBCustomiser = interface(IInterface)
     ['{B46CDC61-EC43-43E3-838C-73AB8F150E46}']
-    ///  <summary>Use the given object to extend the browser control's 'external
-    ///  object'.</summary>
-    procedure SetExternalObj(Obj: IDispatch);
-    ///  <summary>Use the given object to handle drag-drop operations for the
-    ///  browser control.</summary>
-    procedure SetDragDropHandler(Obj: IDropTarget);
+    procedure SetExternalObj(const Obj: IDispatch);
+      {Provides an object that is used to extend a web browser's external
+      object.
+        @param Obj [in] External browser object extender.
+      }
+    procedure SetDragDropHandler(const Obj: IDropTarget);
+      {Provides an object used by web browser control to handle drag-drop
+      operations.
+        @param Obj [in] Drag-drop handler.
+      }
   end;
 
-type
-  ///  <summary>Interface the defines operations supported by frames to provide
-  ///  information about the state of the UI.</summary>
+  {
+  IPaneInfo:
+    Interface supported by pane objects to provide information about the state
+    of the GUI.
+  }
   IPaneInfo = interface(IInterface)
     ['{AB826763-0589-440D-B849-BE70C6E152D0}']
-    ///  <summary>Check if the frame, or one of its child controls, is currently
-    ///  interactive with the user.</summary>
-    ///  <remarks>This can mean a child control has input focus or a browser
-    ///  control's UI is active.</remarks>
     function IsInteractive: Boolean;
+      {Checks if pane, or one of its child controls, is currently interactive
+      with user. This can mean a child control has input focus or a browser
+      control's UI is active.
+        @return True if pane or a child control is interactive, False if not.
+      }
   end;
+
 
 implementation
 

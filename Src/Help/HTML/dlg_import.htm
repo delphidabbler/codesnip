@@ -1,15 +1,26 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
 <!--
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * ***** BEGIN LICENSE BLOCK *****
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Version: MPL 1.1
  *
- * $Rev$
- * $Date$
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
  *
- * Help topic for Import Wizard dialogue box.
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is dlg_import.htm
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2008-2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * ***** END LICENSE BLOCK *****
 -->
 <html>
   <head>
@@ -17,7 +28,7 @@
      http-equiv="Content-Type"
      content="text-html; charset=Windows-1252">
     <title>
-      Import Wizard
+      Import Snippets Dialog Box
     </title>
     <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
   </head>
@@ -26,152 +37,35 @@
      type="application/x-oleobject"
      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
     >
-      <param name="ALink Name" value="CodeImportDlg">
+      <param name="ALink Name" value="ImportFileDlg">
     </object>
     <h1>
-      <a name="dlg_import"></a>Import Wizard
+      <a name="dlg_import"></a>Import Snippets Dialog Box
     </h1>
     <p>
-      This wizard is used to import user defined snippets from a file exported
-      by another user. It is accessed from the <em>Snippets | Import
-      Snippets</em> menu option.
+      This dialog box is used to import user defined snippets from a
+      <em>CodeSnip</em> export files received from other <em>CodeSnip</em> users
+      into the user defined database. The dialog box is opened from the
+      <em>Database | Import Snippets</em> menu option.
     </p>
     <p>
-      The different pages of the wizard are discussed below. You can cancel the
-      import any time the <em>Cancel</em> button is enabled.
-    </p>
-    <h2>
-      First page
-    </h2>
-    <p>
-      This is simply an introductory page that describes the wizard. Click the
-      <em>Next</em> button to display the <em>Choose import file</em> page.
-    </p>
-    <h2>
-      &quot;Choose import file&quot; page
-    </h2>
-    <p>
-      This page is used to specify the file you want to import. Enter the file
-      name in the <em>Open import file</em> edit box.
+      The dialog box is a standard windows dialog box. Choose the required
+      import file from it. Start the import by clicking <em>OK</em>. The import
+      can be cancelled by clicking <em>Cancel</em>.
     </p>
     <p>
-      Alternatively, the required file can be chosen from the standard Windows
-      <a
-        href="dlg_importfile.htm"
-      >Import File</a> dialogue box. Click the ellipsis button to the right of
-      the edit control to display it. The name of the selected file is copied to
-      the <em>Open import file</em> edit box.
+      On clicking <em>OK</em> the import process starts. If any of the imported
+      snippets has a name that clashes with a snippet in the existing
+      user database then a subsidiary dialog box is displayed querying whether
+      to overwrite the existing snippet, skip importing the snippet, rename the
+      imported snippet or cancel the whole import. If you choose to rename a
+      snippet the a further dialog box is displayed where the new name can be
+      entered.
     </p>
     <p>
-      Files exported from <em>CodeSnip</em> usually have a .csexp extension.
-    </p>
-    <p>
-      Once a suitable file has be specified click the <em>Next</em> button to
-      load the file and move to the next page of the wizard. The database is
-      not updated at this stage, so if you made a mistake you can return to this
-      page and choose another file.
-    </p>
-    <h2>
-      &quot;User information&quot; page
-    </h2>
-    <p>
-      <strong>Note:</strong> This page is not shown if the selected import file
-      does not contain any user information.
-    </p>
-    <p>
-      The <em>User information</em> page simply displays any information that
-      the person who created the file provided. There are three items of
-      information that may be present:
-    </p>
-    <ol>
-      <li>
-        <em>Name</em> - the name or nickname of the person who created the file.
-      </li>
-      <li>
-        <em>Email</em> - the email address of the person who created the file.
-      </li>
-      <li>
-        <em>Comments</em> - any comments about the content of the file.
-      </li>
-    </ol>
-    <p>
-      Any of these items of information can be empty. Comments are for
-      information only but the name and email will be added to the end of the
-      imported snippet's <em>Extra</em> information field. This will be in the
-      form &quot;Contributed by Name &ltEmail&gt;&quot;.
-    </p>
-    <p>
-      Click <em>Next</em> to go to the next page.
-    </p>
-    <h2>
-      &quot;Edit import and update database&quot; page
-    </h2>
-    <p>
-      This page lets you rename or reject any of the imported snippets before
-      adding them to the database.
-    </p>
-    <p>
-      Each snippet in the import file is listed in a grid. The columns are:
-    </p>
-    <ul>
-      <li>
-        <em>Snippet Name</em><br>
-        This is the name of the snippet in the import file, i.e. the name of the
-        snippet in the file exporter's database. Clear the check box next to the
-        snippet if you don't want to import it.
-      </li>
-      <li>
-        <em>Import Using Name</em><br>
-        This is that name that will be used for the snippet when it is imported.
-        If there is already a snippet in your database with the same name as
-        that given in the <em>Snippet Name</em> column, the entry in this column
-        will have been altered to make it unique in your database. Any names in
-        this column can be edited (see below).
-      </li>
-      <li>
-        <em>Action</em><br>
-        This column describes what will happen to this snippet when the database
-        is updated. It will either be &quot;Import&quot; if the snippet will be
-        imported (check box checked) or &quot;Skip&quot; if the snippet will not
-        be imported (check box cleared).
-      </li>
-    </ul>
-    <p>
-      Selecting one of the rows in the grid copies the snippet name from the
-      <em>Import Using Name</em> column into the <em>Selected Snippet</em> edit
-      control. You can rename the snippet by entering a new name here then
-      clicking the <em>Rename</em> button. The new name is validated before
-      being displayed in the grid. You can't use the name of a snippet that is
-      already in your user database or is the name one of the other snippets in
-      the import list.
-    </p>
-    <p>
-      When you are ready to perform the import click the <em>Update</em> button
-      to update the database. There will be a pause while the snippets are
-      imported then the final wizard page will be displayed.
-    </p>
-    <p>
-      The newly imported snippets will be located in the &quot;Imported
-      Snippets&quot; database category ready for you to move or edit them.
-    </p>
-    <p>
-      <strong>Note:</strong> Once the <em>Update</em> button has been clicked
-      you can't cancel or undo the update.
-    </p>
-    <p>
-      If no snippets have been selected an error message will be displayed when
-      the <em>Update</em> button is clicked.
-    </p>
-    <h2>
-      &quot;Import complete&quot; page
-    </h2>
-    <p>
-      This page is displayed once the database update has completed. It simply
-      lists the names of the snippets that have been imported.
-    </p>
-    <p>
-      Close the wizard by clicking the <em>Finish</em> button. Note that the
-      <em>Back</em> button is disabled because you can't undo the update.
+      When the import completes a message box is displayed giving the names of
+      the imported snippets. If no snippets are imported a message box informs
+      you of this.
     </p>
   </body>
 </html>

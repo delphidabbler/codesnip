@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UHTMLUtils.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Utility functions, interfaces and classes used to generate HTML.
  *
  * $Rev$
  * $Date$
  *
- * Utility functions, interfaces and classes used to generate HTML.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UHTMLUtils.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -20,7 +41,7 @@ interface
 
 uses
   // Delphi
-  Classes, Graphics, Generics.Collections,
+  Classes, Graphics,
   // Project
   UIStringList;
 
@@ -57,42 +78,22 @@ type
         @param Values [in] String list of attribute values. If not assigned or
           empty, attribute is not added.
       }
-    procedure Append(Attrs: IHTMLAttributes);
-      {Appends all given attributes to these attributes. Any attributes with
-      same name as an existing attribute overwrite the existing one.
-        @param Attrs [in] Attributes to be appended.
-      }
   end;
-
-type
-  // Type that stores the name / value pairs of an HTML attribute
-  THTMLAttribute = TPair<string,string>;
 
   {
   THTMLAttributes:
     Class that can build a list of HTML tag attributes and render them.
   }
   THTMLAttributes = class(TInterfacedObject, IHTMLAttributes)
-  strict private
+  private
     fAttrs: TStringList;
       {Maintains list of attributes as name=value pairs}
   public
     constructor Create; overload;
-      {Object constructor. Sets up empty object.
-      }
-    constructor Create(const Name, Value: string); overload;
-      {Object constructor. Sets up object containing a single named attribute.
-        @param Name [in] Name of attribute.
-        @param Value [in] Value of attribute. If '' attribute is not added.
-      }
-    constructor Create(Attrs: array of THTMLAttribute); overload;
-      {Object constructor. Sets up object containing zero or more named
-      attributes.
-        @param Attrs [in] Array of attributes represented by THTMLAttribute
-          records.
+      {Class constructor. Sets up object.
       }
     destructor Destroy; override;
-      {Object destructor. Tears down object.
+      {Class destructor. Tears down object.
       }
     { IHTMLAttributes methods }
     function IsEmpty: Boolean;
@@ -118,88 +119,11 @@ type
         @param Values [in] String list of attribute values. If not assigned or
           empty, attribute is not added.
       }
-    procedure Append(Attrs: IHTMLAttributes);
-      {Appends all given attributes to these attributes. Any attributes with
-      same name as an existing attribute overwrite the existing one.
-        @param Attrs [in] Attributes to be appended.
-      }
   end;
-
-type
-  ///  <summary>
-  ///  Container for static methods that generate HTML tags and entities.
-  ///  </summary>
-  THTML = record
-  strict private
-    ///  <summary>Generates either an HTML start tag or a simple tag with given
-    ///  name and attributes.</summary>
-    ///  <param name="Name">string [in] Tag name.</param>
-    ///  <param name="Attrs">IHTMLAttributes [in] Attributes to include in tag.
-    ///  May be nil if no attributes are required.</param>
-    ///  <param name="IsSimple">Boolean [in] Flag indicating whether tag is to
-    ///  be simple (True) or the start of a compound tag (False).</param>
-    ///  <returns>string. Required tag.</returns>
-    class function TagWithAttrs(const Name: string; Attrs: IHTMLAttributes;
-      const IsSimple: Boolean): string; static;
-
-  public
-    ///  <summary>Generates an opening HTML tag.</summary>
-    ///  <param name="Name">string [in] Name of tag.</param>
-    ///  <param name="Attrs">IHTMLAttributes [in] Optional tag attributes. Omit
-    ///  or set to nil if no attributes are required.</param>
-    ///  <returns>String. Required tag.</returns>
-    ///  <remarks>Example tag: &lt;p class=&quot;ident&quot;&gt;</remarks>
-    class function OpeningTag(const Name: string; Attrs: IHTMLAttributes = nil):
-      string; static;
-
-    ///  <summary>Generates a closing HTML tag.</summary>
-    ///  <param name="Name">string [in] Name of tag.</param>
-    ///  <returns>String. Required tag.</returns>
-    ///  <remarks>Example tag: &lt;/p&gt;</remarks>
-    class function ClosingTag(const Name: string): string; static;
-
-    ///  <summary>Generates a simple HTML tag.</summary>
-    ///  <param name="Name">string [in] Name of tag.</param>
-    ///  <param name="Attrs">IHTMLAttributes [in] Optional tag attributes. Omit
-    ///  or set to nil if no attributes are required.</param>
-    ///  <returns>String. Required tag.</returns>
-    ///  <remarks>Example tag: &lt;img class=&quot;glyph&quot; /&gt;</remarks>
-    class function SimpleTag(const Name: string; Attrs: IHTMLAttributes = nil):
-      string; static;
-
-    ///  <summary>Surrounds the given HTML in a HTML tag pair.</summary>
-    ///  <param name="Name">string [in] Name of tag.</param>
-    ///  <param name="Attrs">IHTMLAttributes [in] Required attributes of tag.
-    ///  </param>
-    ///  <param name="InnerHTML">string [in] HTML that is to be enclosed within
-    ///  the tag pair.</param>
-    ///  <returns>String. Required tag.</returns>
-    class function CompoundTag(const Name: string; Attrs: IHTMLAttributes;
-      const InnerHTML: string): string; overload; static;
-
-    ///  <summary>Surrounds the given HTML in a HTML tag pair. The opening tag
-    ///  has no attributes.</summary>
-    ///  <param name="Name">string [in] Name of tag.</param>
-    ///  <param name="InnerHTML">string [in] HTML that is to be enclosed within
-    ///  the tag pair.</param>
-    ///  <returns>String. Required tag.</returns>
-    class function CompoundTag(const Name, InnerHTML: string): string; overload;
-      static;
-
-    ///  <summary>Encodes the given string replacing any HTML-incompatible
-    ///  characters with character entities.</summary>
-    class function Entities(const Text: string): string; static;
-  end;
-
-
-// TODO: Replace all calls to MakeXXXX routines with calls to THTML methods
 
 function MakeSafeHTMLText(TheText: string): string;
   {Encodes a string so that any HTML-incompatible characters are replaced with
   suitable character entities.
-  NOTE: HTML returned by this method does not have non-ASCII characters from
-  #127 converted to entities, therefore the HTML can only be saved to Unicode or
-  UTF8 format files.
     @param TheText [in] Text to be encoded.
     @return Encoded text.
   }
@@ -216,7 +140,7 @@ type
   );
 
 function MakeTag(const TagName: string; const TagType: THTMLTagType;
-  Attrs: IHTMLAttributes = nil): string;
+  const Attrs: IHTMLAttributes = nil): string;
   {Generates an (X)HTML tag.
     @param TagName [in] Name of tag. Always output in lower case.
     @param TagType [in] Type of tag: open or close compound tag or simple tag.
@@ -226,7 +150,7 @@ function MakeTag(const TagName: string; const TagType: THTMLTagType;
     @return HTML safe tag.
   }
 
-function MakeCompoundTag(const TagName: string; Attrs: IHTMLAttributes;
+function MakeCompoundTag(const TagName: string; const Attrs: IHTMLAttributes;
   const InnerHTML: string): string; overload;
   {Generates a compound (X)HTML tag with its opening tag, inner HTML and closing
   tag.
@@ -248,23 +172,55 @@ function MakeCompoundTag(const TagName: string;
     @return Required compound tag.
   }
 
+function ImageTag(const Src, Title: string;
+  const Width, Height: Integer; const Id: string = ''): string;
+  {Returns <img> tag for image with given attributes. Image is top aligned.
+    @param Src [in] URL of image file. Should be URL encoded by caller.
+    @param Title [in] Image title.
+    @param Width [in] Image width in pixels. Stored in "style" attribute.
+    @param Height [in] Image height in pixels. Stored in "style" attribute.
+    @param Id [in] Image's id (optional).
+    @return Required image tag.
+  }
+
+function ColorToHTML(const Color: TColor): string;
+  {Converts a Delphi TColor value into a string suitable for use in HTML or CSS
+  code. Any system colors (like clBtnFace) are mapped to the actual colour
+  according to the current Windows settings.
+    @param Color [in] Colour value to be converted.
+    @return HTML/CSS code for colour.
+  }
+
+function IsValidHTMLCode(const Content: string): Boolean;
+  {Checks if document content is valid HTML.
+    @param Content [in] Document content to be checked.
+    @return True if valid HTML.
+  }
+
 
 implementation
 
 
 uses
   // Delphi
-  SysUtils, Windows,
+  SysUtils, StrUtils, Windows,
   // Project
-  UCSSUtils, UExceptions, UStrUtils, UURIEncode;
+  UCSSUtils, UExceptions, UURIEncode;
 
+
+function IsValidHTMLCode(const Content: string): Boolean;
+  {Checks if document content is valid HTML.
+    @param Content [in] Document content to be checked.
+    @return True if valid HTML.
+  }
+begin
+  Result := AnsiContainsText(Content, '<html') and
+    AnsiContainsText(Content, '</html>');
+end;
 
 function MakeSafeHTMLText(TheText: string): string;
   {Encodes a string so that any HTML-incompatible characters are replaced with
   suitable character entities.
-  NOTE: HTML returned by this method does not have non-ASCII characters from
-  #127 converted to entities, therefore the HTML can only be saved to Unicode or
-  UTF8 format files.
     @param TheText [in] Text to be encoded.
     @return Encoded text.
   }
@@ -284,7 +240,7 @@ begin
         Result := Result + '&quot;';
       else
       begin
-        if (Ch < #32) and not CharInSet(Ch, [#10, #13]) then
+        if (Ch < #32) or (Ch >= #127) then
           Result := Result + '&#' + IntToStr(Ord(Ch)) + ';'
         else
           Result := Result + Ch;
@@ -293,7 +249,7 @@ begin
 end;
 
 function MakeTag(const TagName: string; const TagType: THTMLTagType;
-  Attrs: IHTMLAttributes = nil): string;
+  const Attrs: IHTMLAttributes = nil): string;
   {Generates an (X)HTML tag.
     @param TagName [in] Name of tag. Always output in lower case.
     @param TagType [in] Type of tag: open or close compound tag or simple tag.
@@ -304,10 +260,10 @@ function MakeTag(const TagName: string; const TagType: THTMLTagType;
   }
 begin
   if TagType = ttClose then
-    Result := '</' + StrToLower(TagName) + '>'
+    Result := '</' + AnsiLowerCase(TagName) + '>'
   else
   begin
-    Result := '<' + StrToLower(TagName);
+    Result := '<' + AnsiLowerCase(TagName);
     if Assigned(Attrs) and (not Attrs.IsEmpty) then
       Result := Result + ' ' + Attrs.RenderSafe;
     if TagType = ttOpen then
@@ -317,7 +273,7 @@ begin
   end;
 end;
 
-function MakeCompoundTag(const TagName: string; Attrs: IHTMLAttributes;
+function MakeCompoundTag(const TagName: string; const Attrs: IHTMLAttributes;
   const InnerHTML: string): string;
   {Generates a compound (X)HTML tag with its opening tag, inner HTML and closing
   tag.
@@ -347,76 +303,50 @@ begin
   Result := MakeCompoundTag(TagName, nil, InnerHTML);
 end;
 
-{ THTML }
-
-class function THTML.ClosingTag(const Name: string): string;
-begin
-  Result := '</' + StrToLower(Name) + '>';
-end;
-
-class function THTML.CompoundTag(const Name: string; Attrs: IHTMLAttributes;
-  const InnerHTML: string): string;
-begin
-  Result := OpeningTag(Name, Attrs) + InnerHTML + ClosingTag(Name);
-end;
-
-class function THTML.CompoundTag(const Name, InnerHTML: string): string;
-begin
-  Result := CompoundTag(Name, nil, InnerHTML);
-end;
-
-class function THTML.Entities(const Text: string): string;
+function ImageTag(const Src, Title: string;
+  const Width, Height: Integer; const Id: string = ''): string;
+  {Returns <img> tag for image with given attributes. Image is top aligned.
+    @param Src [in] URL of image file. Should be URL encoded by caller.
+    @param Title [in] Image title.
+    @param Width [in] Image width in pixels. Stored in "style" attribute.
+    @param Height [in] Image height in pixels. Stored in "style" attribute.
+    @param Id [in] Image's id (optional).
+    @return Required image tag.
+  }
 var
-  Ch: Char;           // each character in Text
-  SB: TStringBuilder; // used to build the result string
+  Attrs: IHTMLAttributes; // image's attributes
 begin
-  SB := TStringBuilder.Create;
-  try
-    for Ch in Text do
-    begin
-      case Ch of
-        '<':
-          SB.Append('&lt;');
-        '>':
-          SB.Append('&gt;');
-        '&':
-          SB.Append('&amp;');
-        '"':
-          SB.Append('&quot;');
-        #0..#9, #11, #12, #14..#31:
-          SB.Append('&#' + IntToStr(Ord(Ch)) + ';')
-        else
-          SB.Append(Ch);
-      end;
-    end;
-    Result := SB.ToString;
-  finally
-    SB.Free;
-  end;
+  // Create attributes
+  Attrs := THTMLAttributes.Create;
+  Attrs.Add('src', Src);
+  Attrs.Add(
+    'style',
+    TIStringList.Create(
+      [CSSVerticalAlignProp(cvaTop), CSSWidthProp(Width), CSSHeightProp(Height)]
+    )
+  );
+  Attrs.Add('title', Title);
+  if Id <> '' then
+    Attrs.Add('id', Id);
+  // Create tag
+  Result := MakeTag('img', ttSimple, Attrs);
 end;
 
-class function THTML.OpeningTag(const Name: string;
-  Attrs: IHTMLAttributes): string;
+function ColorToHTML(const Color: TColor): string;
+  {Converts a Delphi TColor value into a string suitable for use in HTML or CSS
+  code. Any system colors (like clBtnFace) are mapped to the actual colour
+  according to the current Windows settings.
+    @param Color [in] Colour value to be converted.
+    @return HTML/CSS code for colour.
+  }
+var
+  ColorRGB: Integer;  // RGB code for the colour
 begin
-  Result := TagWithAttrs(Name, Attrs, False);
-end;
-
-class function THTML.SimpleTag(const Name: string;
-  Attrs: IHTMLAttributes): string;
-begin
-  Result := TagWithAttrs(Name, Attrs, True);
-end;
-
-class function THTML.TagWithAttrs(const Name: string; Attrs: IHTMLAttributes;
-  const IsSimple: Boolean): string;
-begin
-  Result := '<' + StrToLower(Name);
-  if Assigned(Attrs) and (not Attrs.IsEmpty) then
-    Result := Result + ' ' + Attrs.RenderSafe;
-  if IsSimple then
-    Result := Result + ' />'
-  else
-    Result := Result + ' />';
+  ColorRGB := ColorToRGB(Color);  // this translates system colours to actual
+  Result := Format(
+    '#%0.2X%0.2X%0.2X',
+    [GetRValue(ColorRGB), GetGValue(ColorRGB), GetBValue(ColorRGB)]
+  );
 end;
 
 { THTMLAttributes }
@@ -441,57 +371,19 @@ begin
     Add(Name, Values.GetText(' ', False));
 end;
 
-procedure THTMLAttributes.Append(Attrs: IHTMLAttributes);
-  {Appends all given attributes to these attributes. Any attributes with
-  same name as an existing attribute overwrite the existing one.
-    @param Attrs [in] Attributes to be appended.
-  }
-var
-  Idx: Integer;
-  AttrsObj: THTMLAttributes;
-begin
-  if not Assigned(Attrs) or Attrs.IsEmpty then
-    Exit;
-  AttrsObj := Attrs as THTMLAttributes;
-  for Idx := 0 to Pred(AttrsObj.fAttrs.Count) do
-    Add(AttrsObj.fAttrs.Names[Idx], AttrsObj.fAttrs.ValueFromIndex[Idx]);
-end;
-
 constructor THTMLAttributes.Create;
-  {Object constructor. Sets up empty object.
+  {Class constructor. Sets up object.
   }
 begin
   inherited Create;
   fAttrs := TStringList.Create;
 end;
 
-constructor THTMLAttributes.Create(const Name, Value: string);
-  {Object constructor. Sets up object containing a single named attribute.
-    @param Name [in] Name of attribute.
-    @param Value [in] Value of attribute. If '' attribute is not added.
-  }
-begin
-  Create;
-  Add(Name, Value);
-end;
-
-constructor THTMLAttributes.Create(Attrs: array of THTMLAttribute);
-  {Object constructor. Sets up object containing zero or more named attributes.
-    @param Attrs [in] Array of attributes represented by THTMLAttribute records.
-  }
-var
-  Attr: THTMLAttribute; // each attribute
-begin
-  Create;
-  for Attr in Attrs do
-    Add(Attr.Key, Attr.Value);
-end;
-
 destructor THTMLAttributes.Destroy;
-  {Object destructor. Tears down object.
+  {Class destructor. Tears down object.
   }
 begin
-  fAttrs.Free;
+  FreeAndNil(fAttrs);
   inherited;
 end;
 
@@ -508,14 +400,14 @@ function THTMLAttributes.Render: string;
     @return Text representation of attributes.
   }
 var
-  Idx: Integer; // loops thru each attribute
+  Idx: Integer;
 begin
   Result := '';
   for Idx := 0 to Pred(fAttrs.Count) do
     Result := Result + Format(
       ' %0:s="%1:s"', [fAttrs.Names[Idx], fAttrs.ValueFromIndex[Idx]]
     );
-  Result := StrTrimLeft(Result);
+  Result := TrimLeft(Result);
 end;
 
 function THTMLAttributes.RenderSafe: string;
@@ -534,7 +426,7 @@ begin
         MakeSafeHTMLText(fAttrs.ValueFromIndex[Idx])
       ]
     );
-  Result := StrTrimLeft(Result);
+  Result := TrimLeft(Result);
 end;
 
 end.

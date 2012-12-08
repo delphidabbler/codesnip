@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UCompileResultsLBMgr.pas
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Defines classes that manages display, editing and interaction with a list box
+ * that displays compiler results.
  *
  * $Rev$
  * $Date$
  *
- * Defines classes that manages display and interaction with a list box that
- * displays compiler results.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UCompileResultsLBMgr.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -40,7 +61,7 @@ type
       {
       TCompilerInfo:
         Class that records information about a snippet's compilation results.
-        Resulting objects are stored in list box item's Objects[] array.
+        Resulting objects are stored in list box items Objects[] array.
       }
       TCompilerInfo = class(TObject)
       strict private
@@ -49,7 +70,7 @@ type
       public
         constructor Create(const CompilerID: TCompilerID;
           const CompileResult: TCompileResult);
-          {Object constructor. Sets up and initialises object.
+          {Class constructor. Sets up and initialises object.
             @param CompilerID [in] Id of compiler that result applies to.
             @param CompileResult [in] Compiler result for compiler.
           }
@@ -66,8 +87,7 @@ type
       fLastHotDropDown: TRectEx;        // Bounds of last drop down highlighted
       fDropDownBtns: TDropDownButtons;  // Provides drop down button glyphs
     procedure PopulateListBox;
-      {Adds details of each compiler to list box. Compile result is set to
-      'unknown'.
+      {Adds details of each compiler to list box with unknown compile results.
       }
     function IndexOf(const CompID: TCompilerID): Integer;
       {Finds index of list item corresponding to a compiler.
@@ -99,8 +119,8 @@ type
     procedure DrawItem(Control: TWinControl; Index: Integer; Rect: TRect;
       State: TOwnerDrawState);
       {OnDrawItem event handler for managed list box. Custom draws compiler list
-      item to name of compiler, current compile result 'LED' and a drop-down
-      button.
+      item to show compiler glyph, name of compiler, current compile result
+      "LED" and a drop-down button.
         @param Control [in] Reference to list box that triggered event. Must be
           the managed control.
         @param Index [in] Index of list item being drawn.
@@ -168,12 +188,12 @@ type
       }
   public
     constructor Create(LB: TListBox; const Compilers: ICompilers);
-      {Object constructor. Sets up manager for a list box.
+      {Class constructor. Sets up manager for a list box.
         @param LB [in] Listbox to be managed.
         @param Compilers [in] Compilers to be displayed in listbox.
       }
     destructor Destroy; override;
-      {Object destructor. Tears down object.
+      {Class destructor. Tears down object.
       }
     procedure SetCompileResults(const Res: TCompileResults); overload;
       {Sets the compile results displayed by the list box. All items are set.
@@ -224,7 +244,7 @@ type
   public
     constructor Create(AOwner: TComponent; const ACompRes: TCompileResult;
       const AClickEventHandler: TNotifyEvent); reintroduce;
-      {Object constructor. Creates menu item for a compile result.
+      {Class constructor. Creates menu item for a compile result.
         @param AOwner [in] Component that owns this menu item.
         @param ACompRes [in] Associated compile result. Determines caption and
           displayed image.
@@ -252,7 +272,7 @@ type
       }
   public
     constructor Create(AOwner: TComponent); override;
-      {Object constructor. Creates menu and populates it with items for all
+      {Class constructor. Creates menu and populates it with items for all
       possible compile results.
         @param AOwner [in] Component that owns the menu.
       }
@@ -266,7 +286,7 @@ type
 
 constructor TCompileResultsLBMgr.Create(LB: TListBox;
   const Compilers: ICompilers);
-  {Object constructor. Sets up manager for a list box.
+  {Class constructor. Sets up manager for a list box.
     @param LB [in] Listbox to be managed.
     @param Compilers [in] Compilers to be displayed in listbox.
   }
@@ -297,10 +317,11 @@ begin
   fLEDImages := TLEDImageList.Create(LB);
   // record that no drop down button is under mouse
   fLastHotDropDown.MakeEmpty;
+
 end;
 
 destructor TCompileResultsLBMgr.Destroy;
-  {Object destructor. Tears down object.
+  {Class destructor. Tears down object.
   }
 var
   Idx: Integer;     // loops through all list items
@@ -319,7 +340,8 @@ end;
 procedure TCompileResultsLBMgr.DrawItem(Control: TWinControl; Index: Integer;
   Rect: TRect; State: TOwnerDrawState);
   {OnDrawItem event handler for managed list box. Custom draws compiler list
-  item to name of compiler, current compile result 'LED' and a drop-down button.
+  item to show compiler glyph, name of compiler, current compile result "LED"
+  and a drop-down button.
     @param Control [in] Reference to list box that triggered event. Must be the
       managed control.
     @param Index [in] Index of list item being drawn.
@@ -331,6 +353,8 @@ var
   CompInfo: TCompilerInfo;  // info about compile result associated with item
   Text: string;             // text to be displayed
   TextRect: TRect;          // rectangle in which to display text
+  CompGlyph: TBitmap;       // gylph associated with compiler
+  GlyphRect: TRect;         // rectangle in which to display compiler glyph
   DropDownRect: TRect;      // rectangle in which to display drop-down "button"
   LEDRect: TRectEx;         // rectangle in which to display LED glyph
 begin
@@ -343,7 +367,7 @@ begin
   // Display text
   Text := fLB.Items[Index];
   TextRect := TRectEx.Create(
-    Rect.Left + 2,
+    Rect.Left + 24,
     (Rect.Bottom + Rect.Top - Cvs.TextHeight(Text)) div 2,
     Rect.Right - 24,
     Rect.Bottom
@@ -353,7 +377,24 @@ begin
   else
     Cvs.Font.Color := fLB.Font.Color;
   Cvs.TextRect(TextRect, Text, [tfLeft, tfNoPrefix, tfEndEllipsis, tfTop]);
-  // Display compile result "LED"
+  // Display any compiler glyph
+  CompGlyph := fCompilers[CompInfo.CompilerID].GetGlyph;
+  if Assigned(CompGlyph) then
+  begin
+    GlyphRect := TRectEx.CreateBounds(
+      Rect.Left + 2,
+      (Rect.Bottom + Rect.Top - CompGlyph.Height) div 2,
+      CompGlyph.Width,
+      CompGlyph.Height
+    );
+    Cvs.BrushCopy(
+      GlyphRect,
+      CompGlyph,
+      TRectEx.Create(0, 0, CompGlyph.Width, CompGlyph.Height),
+      clFuchsia
+    );
+  end;
+  // Display compile result "LED": assumes image index = Ord(CompileResult)
   LEDRect := GetLEDBounds(Rect);
   fLEDImages.Draw(Cvs, LEDRect.TopLeft, CompInfo.CompileResult);
   // Display drop-down glyph
@@ -524,7 +565,7 @@ begin
   if not DDBounds.ContainsPoint(MousePos) then
     Exit;
   ShowPopupMenu(ItemIdx);
-end;
+end;  
 
 procedure TCompileResultsLBMgr.MouseLeave(Sender: TObject);
   {Handles list box's OnMouseLeave event. Redisplays any drop down button that
@@ -599,12 +640,12 @@ begin
 end;
 
 procedure TCompileResultsLBMgr.PopulateListBox;
-  {Adds details of each compiler to list box. Compile result is set to
-  'unknown'.
+  {Adds details of each compiler to list box with unknown compile results.
   }
 var
   Compiler: ICompiler;  // each supported compiler
 begin
+  // Display all compilers
   for Compiler in fCompilers do
     fLB.Items.AddObject(
       Compiler.GetName,
@@ -661,7 +702,7 @@ procedure TCompileResultsLBMgr.ShowPopupMenu(const ItemIdx: Integer);
   }
 var
   DropDownBmpBounds: TRectEx; // bounds of list item's drop down button
-  PopupPos: TPoint;           // point on screen where menu pops up
+  PopupPos: TPoint;           // point on screen where menu is popup
 begin
   // display right aligned menu below drop down button
   DropDownBmpBounds := GetDropDownBmpBounds(fLB.ItemRect(ItemIdx));
@@ -681,7 +722,7 @@ end;
 
 constructor TCompileResultsLBMgr.TCompilerInfo.Create(
   const CompilerID: TCompilerID; const CompileResult: TCompileResult);
-  {Object constructor. Sets up and initialises object.
+  {Class constructor. Sets up and initialises object.
     @param CompilerID [in] Id of compiler that result applies to.
     @param CompileResult [in] Compiler result for compiler.
   }
@@ -695,7 +736,7 @@ end;
 
 constructor TCompResMenuItem.Create(AOwner: TComponent;
   const ACompRes: TCompileResult; const AClickEventHandler: TNotifyEvent);
-  {Object constructor. Creates menu item for a compile result.
+  {Class constructor. Creates menu item for a compile result.
     @param AOwner [in] Component that owns this menu item.
     @param ACompRes [in] Associated compile result. Determines caption and
       displayed image.
@@ -726,7 +767,7 @@ end;
 { TCompResSelectMenu }
 
 constructor TCompResSelectMenu.Create(AOwner: TComponent);
-  {Object constructor. Creates menu and populates it with items for all possible
+  {Class constructor. Creates menu and populates it with items for all possible
   compile results.
     @param AOwner [in] Component that owns the menu.
   }

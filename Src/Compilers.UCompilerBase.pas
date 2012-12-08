@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * Compilers.UCompilerBase.pas
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Abstract base class for classes that control and provide information about
+ * compilers. Provides common functionality and specialised exception.
  *
  * $Rev$
  * $Date$
  *
- * Abstract base class for classes that control and provide information about
- * compilers. Also provides a specialised exception class.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is Compilers.UCompilerBase.pas, formerly UCompilerBase.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2005-2010 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -23,7 +44,7 @@ uses
   // Delphi
   SysUtils, Classes, Graphics,
   // Project
-  Compilers.UGlobals, Compilers.URunner, UExceptions, UEncodings;
+  Compilers.UGlobals, Compilers.URunner, UExceptions;
 
 
 type
@@ -43,12 +64,10 @@ type
       {Stores compiler log prefix strings for parsing log file}
     fLastCompileResult: TCompileResult;
       {Result of last compilation}
+    fBitmap: TBitmap;
+      {Glyph reprenting compiler: nil if no glyph}
     fSwitches: string;
       {User defined command line switches}
-    fSearchDirs: ISearchDirs;
-      {List of compiler search directories}
-    fDisplayable: Boolean;
-      {Indicates whether compiler's results are to be displayed in UI etc}
     function CommandLineSwitches: string;
       {Generate list of space separated switches for compiler command line.
         @return Required list.
@@ -81,14 +100,9 @@ type
       {Initializes object.
       }
   protected
-    function CompilerOutputEncoding: TEncodingType; virtual;
-      {Encoding used for text output by compiler. Descendants can override.
-        @return System default ANSI encoding type.
-      }
-    function SearchDirParams: string; virtual; abstract;
-      {One of more parameters that define any search directories to be passed
-      to compiler on command line.
-        @return Required space separated parameter(s).
+    function GlyphResourceName: string; virtual;
+      {Name of any resource containing a "glyph" bitmap for a compiler.
+        @return Resource name or '' if the compiler has no glyph.
       }
     { ICompiler methods }
     function GetName: string; virtual; abstract;
@@ -102,6 +116,10 @@ type
     function GetIDString: string; virtual; abstract;
       {Provides a non-localisable string that identifies the compiler.
         @return Compiler id string.
+      }
+    function GetGlyph: TBitmap;
+      {Returns reference to any 18x18 bitmap associated with the compiler.
+        @return Reference to bitmap or nil if there is no such bitmap.
       }
     function IsAvailable: Boolean;
       {Tells whether the compiler is installed on this computer and made
@@ -129,14 +147,6 @@ type
       {Sets user defined switches.
         @param Switches [in] Required switches separated by commas.
       }
-    function GetSearchDirs: ISearchDirs;
-      {Returns copy of list of search directories used by compiler.
-        @return Required list of directories.
-      }
-    procedure SetSearchDirs(Dirs: ISearchDirs);
-      {Stores a copy of given list of search directories.
-        @param Dirs [in] List of search directories.
-      }
     function GetLogFilePrefixes: TCompLogPrefixes;
       {Returns prefixes used in interpreting error, fatal error and warning
       conditions in log files.
@@ -146,16 +156,6 @@ type
       {Records prefixes used in interpreting error, fatal error and warning
       conditions in log files.
         @param Prefixes [in] Array of required prefix strings.
-      }
-    function GetDisplayable: Boolean;
-      {Returns flag indicating if compiler is displayable, i.e. compile results
-      for it are to be displayed in UI etc.
-        @return Boolean flag.
-      }
-    procedure SetDisplayable(const Flag: Boolean);
-      {Sets a flag indicating if compiler is displayable, i.e. compile results
-      for it are to be displayed in UI etc.
-        @param Flag [in] Requried value.
       }
     function Compile(const Path, Project: string): TCompileResult;
       {Compiles a project and returns result of compilation. Records result of
@@ -195,14 +195,14 @@ type
       }
   public
     constructor Create;
-      {Object constructor. Sets up object.
+      {Class constructor. Sets up object.
       }
     constructor CreateCopy(const Obj: TCompilerBase);
       {Copy constructor. Creates a new object that is copy of another object.
         @param Obj [in] Compiler object to copy.
       }
     destructor Destroy; override;
-      {Object destructor. Tears down object.
+      {Class destructor. Tears down object.
       }
   end;
 
@@ -218,7 +218,7 @@ type
       {Value of Compiler property}
   public
     constructor Create(const E: ECompilerRunner; const Compiler: string);
-      {Object constructor. Creates exception instance from another exception.
+      {Class constructor. Creates exception instance from another exception.
         @param E [in] Instance of exception that provides information about why
           compiler failed to run.
         @param Compiler [in] Name of compiler that failed to run.
@@ -242,7 +242,7 @@ implementation
 
 uses
   // Project
-  Compilers.USearchDirs, IntfCommon, UStrUtils, UUtils;
+  UUtils;
 
 
 const
@@ -260,14 +260,13 @@ function TCompilerBase.BuildCommandLine(const Project, Path: string): string;
   }
 begin
   Result := Format(
-    '"%0:s" %1:s %2:s %3:s',
+    '"%0:s" %1:s %2:s',
     [
-      fExecFile,                              // compiler exe
+      fExecFile,                              // compile exe
       LongToShortFilePath(
         IncludeTrailingPathDelimiter(Path)
       ) + Project,                            // path to project
-      CommandLineSwitches,                    // command line switches
-      SearchDirParams                         // search directory param(s)
+      CommandLineSwitches                     // command line switches
     ]
   );
 end;
@@ -278,18 +277,10 @@ procedure TCompilerBase.BuildCompileLog(const CompilerOutput: TStream);
     @param CompilerOutput [in] Stream containing compiler output.
   }
 var
-  Index: Integer;       // index into error string list
-  Encoding: TEncoding;  // encoding used by compiler for its output
+  Index: Integer;   // index into error string list
 begin
-  // Load log file into string list: compiler output is expected to have
-  // encoding of type provided by CompilerOutputEncoding method.
-  CompilerOutput.Position := 0;
-  Encoding := TEncodingHelper.GetEncoding(CompilerOutputEncoding);
-  try
-    fCompileLog.LoadFromStream(CompilerOutput, Encoding);
-  finally
-    TEncodingHelper.FreeEncoding(Encoding);
-  end;
+  // Load log file into string list
+  fCompileLog.LoadFromStream(CompilerOutput);
   // Strip out any blank lines
   Index := 0;
   while (Index < fCompileLog.Count) do
@@ -314,12 +305,12 @@ begin
   // Get list of params from string
   Params := TStringList.Create;
   try
-    StrExplode(GetSwitches, ',', Params, False);
+    ExplodeStr(GetSwitches, ',', Params, False);
     // Process each param: any containing spaces get quoted
     for Idx := 0 to Pred(Params.Count) do
     begin
       Param := Params[Idx];
-      if StrContainsStr(' ', Param) then
+      if AnsiPos(' ', Param) > 0 then
         Param := '"' + Param + '"';
       // params are space separated
       if Result <> '' then
@@ -327,7 +318,7 @@ begin
       Result := Result + Param;
     end;
   finally
-    Params.Free;
+    FreeAndNil(Params);
   end;
 end;
 
@@ -348,7 +339,7 @@ begin
   if Res = 0 then
   begin
     // no error code: could be clear compile or could have warnings
-    if StrContainsStr(fPrefixes[cpWarning], fCompileLog.Text) then
+    if AnsiPos(fPrefixes[cpWarning], fCompileLog.Text) > 0 then
       Result := crWarning
     else
       Result := crSuccess;
@@ -359,18 +350,8 @@ begin
   fLastCompileResult := Result;
 end;
 
-function TCompilerBase.CompilerOutputEncoding: TEncodingType;
-  {Encoding used for text output by compiler. Descendants can override.
-    @return System default ANSI encoding type.
-  }
-begin
-  // Best assumption for compiler output is ANSI default code page. Don't know
-  // this for sure, but it seems reasonable.
-  Result := etSysDefault;
-end;
-
 constructor TCompilerBase.Create;
-  {Object constructor. Sets up object.
+  {Class constructor. Sets up object.
   }
 begin
   inherited;
@@ -380,7 +361,6 @@ begin
   fSwitches := GetDefaultSwitches;
   fExecFile := '';
   fLastCompileResult := crQuery;
-  fDisplayable := True;
 end;
 
 constructor TCompilerBase.CreateCopy(const Obj: TCompilerBase);
@@ -395,15 +375,14 @@ begin
   fSwitches := Obj.fSwitches;
   fExecFile := Obj.fExecFile;
   fLastCompileResult := Obj.fLastCompileResult;
-  fSearchDirs := Obj.GetSearchDirs;
-  fDisplayable := Obj.GetDisplayable;
 end;
 
 destructor TCompilerBase.Destroy;
-  {Object destructor. Tears down object.
+  {Class destructor. Tears down object.
   }
 begin
-  fCompileLog.Free;
+  FreeAndNil(fCompileLog);
+  FreeAndNil(fBitmap);
   inherited;
 end;
 
@@ -417,18 +396,18 @@ function TCompilerBase.ExecuteCompiler(const CommandLine,
   }
 var
   CompilerRunner: TCompilerRunner;  // object that executes compiler
-  CompilerOutput: TStream;          // stream that captures compiler output
+  OutStm: TStream;                  // stream that captures compiler output
 begin
   Result := 0;  // keeps compiler quiet
   CompilerRunner := nil;
   // Create stream to capture compiler output
-  CompilerOutput := TMemoryStream.Create;
+  OutStm := TMemoryStream.Create;
   try
     // Perform compilation
     CompilerRunner := TCompilerRunner.Create;
     try
       Result := CompilerRunner.Execute(
-        CommandLine, ExcludeTrailingPathDelimiter(Path), CompilerOutput
+        CommandLine, ExcludeTrailingPathDelimiter(Path), OutStm
       );
     except
       on E: ECompilerRunner do
@@ -437,10 +416,11 @@ begin
         raise;
     end;
     // Interpret compiler output
-    BuildCompileLog(CompilerOutput);
+    OutStm.Position := 0;
+    BuildCompileLog(OutStm);
   finally
-    CompilerRunner.Free;
-    CompilerOutput.Free;
+    FreeAndNil(CompilerRunner);
+    FreeAndNil(OutStm);
   end;
 end;
 
@@ -458,7 +438,7 @@ begin
   for Line in fCompileLog do
   begin
     // Check if Msg is in current line
-    Pos := StrPos(Msg, Line);
+    Pos := AnsiPos(Msg, Line);
     if Pos > 0 then
     begin
       // Line required: add line without message to output string list
@@ -468,21 +448,26 @@ begin
   end;
 end;
 
-function TCompilerBase.GetDisplayable: Boolean;
-  {Returns flag indicating if compiler is displayable, i.e. compile results for
-  it are to be displayed in UI etc.
-    @return Boolean flag.
-  }
-begin
-  Result := fDisplayable;
-end;
-
 function TCompilerBase.GetExecFile: string;
   {Returns full path to compiler's executable file.
     @return Required path.
   }
 begin
   Result := fExecFile;
+end;
+
+function TCompilerBase.GetGlyph: Graphics.TBitmap;
+  {Returns reference to any 18x18 bitmap associated with the compiler.
+    @return Reference to bitmap or nil if there is no such bitmap.
+  }
+begin
+  if not Assigned(fBitmap) and (GlyphResourceName <> '') then
+  begin
+    // Bitmap not yet created: create it and load from resources
+    fBitmap := Graphics.TBitmap.Create;
+    fBitmap.LoadFromResourceName(HInstance, GlyphResourceName);
+  end;
+  Result := fBitmap;
 end;
 
 function TCompilerBase.GetLastCompileResult: TCompileResult;
@@ -505,14 +490,6 @@ begin
   Result := fPrefixes;
 end;
 
-function TCompilerBase.GetSearchDirs: ISearchDirs;
-  {Returns copy of list of search directories used by compiler.
-    @return Required list of directories.
-  }
-begin
-  Result := (fSearchDirs as IClonable).Clone as ISearchDirs;
-end;
-
 function TCompilerBase.GetSwitches: string;
   {Returns user-defined swtches to be used by compiler.
     @return Required switches separated by commas. On creation these are default
@@ -520,6 +497,15 @@ function TCompilerBase.GetSwitches: string;
   }
 begin
   Result := fSwitches;
+end;
+
+function TCompilerBase.GlyphResourceName: string;
+  {Name of any resource containing a "glyph" bitmap for a compiler.
+    @return Resource name or '' if the compiler has no glyph.
+  }
+begin
+  // Assume no glyph: descendants override
+  Result := '';
 end;
 
 function TCompilerBase.HasErrorsOrWarnings: Boolean;
@@ -535,7 +521,6 @@ procedure TCompilerBase.Initialize;
   }
 begin
   fCompileLog := TStringList.Create;
-  fSearchDirs := TSearchDirs.Create;
 end;
 
 function TCompilerBase.IsAvailable: Boolean;
@@ -590,19 +575,10 @@ begin
   try
     Log(Filter, SL);
     // Concatenate log lines into string and return it
-    Result := StrTrim(SL.Text);
+    Result := Trim(SL.Text);
   finally
     SL.Free;
   end;
-end;
-
-procedure TCompilerBase.SetDisplayable(const Flag: Boolean);
-  {Sets a flag indicating if compiler is displayable, i.e. compile results for
-  it are to be displayed in UI etc.
-    @param Flag [in] Requried value.
-  }
-begin
-  fDisplayable := Flag;
 end;
 
 procedure TCompilerBase.SetExecFile(const Value: string);
@@ -628,14 +604,6 @@ begin
     else
       // no prefix set: use default value
       fPrefixes[Idx] := cPrefixDefaults[Idx];
-end;
-
-procedure TCompilerBase.SetSearchDirs(Dirs: ISearchDirs);
-  {Stores a copy of given list of search directories.
-    @param Dirs [in] List of search directories.
-  }
-begin
-  fSearchDirs := (Dirs as IClonable).Clone as ISearchDirs;
 end;
 
 procedure TCompilerBase.SetSwitches(const Switches: string);
@@ -665,7 +633,7 @@ end;
 
 constructor ECompilerError.Create(const E: ECompilerRunner;
   const Compiler: string);
-  {Object constructor. Creates exception instance from another exception.
+  {Class constructor. Creates exception instance from another exception.
     @param E [in] Instance of exception that provides information about why
       compiler failed to run.
     @param Compiler [in] Name of compiler that failed to run.

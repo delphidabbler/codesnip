@@ -1,14 +1,35 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * UPreferences.pas
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Implements a singletion object that exposes and persists user preferences.
  *
  * $Rev$
  * $Date$
  *
- * Implements a singletion object that exposes and persists user preferences.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is UPreferences.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2006-2011 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -19,21 +40,19 @@ interface
 
 
 uses
-  // Delphi
-  Graphics,
   // Project
-  Hiliter.UGlobals, UIStringList, UMeasurement, UPrintInfo,
-  USnippetPageStructure, USourceFileInfo, USourceGen, UWarnings;
+  Hiliter.UGlobals, UIStringList, UMeasurement, UPrintInfo, USourceFileInfo,
+  USourceGen, UWarnings;
 
 
 type
+
   // Possible values for startup state of overview treeview.
   TOverviewStartState = (
     ossExpanded,  // start treeview fully expanded
     ossCollapsed  // start treeview fully collapsed
   );
 
-type
   {
   IPreferences:
     Interface to object that exposes and persists user preferences.
@@ -41,16 +60,16 @@ type
   IPreferences = interface(IInterface)
     ['{381B9A92-B528-47E1-AC04-90E1FFFDADA7}']
     function GetSourceCommentStyle: TCommentStyle;
-      {Gets style of commenting used to describe snippets in generated code.
+      {Gets style of commenting used to describe routines in generated code.
         @return Current commenting style.
       }
     procedure SetSourceCommentStyle(const Value: TCommentStyle);
-      {Sets style of commenting to be used describe snippets in generated code.
+      {Sets style of commenting to be used describe routines in generated code.
         @param Value [in] Required commenting style.
       }
     property SourceCommentStyle: TCommentStyle
       read GetSourceCommentStyle write SetSourceCommentStyle;
-      {Commenting style used to describe snippets in generated source code}
+      {Commenting style used to describe routines in generated source code}
 
     function GetSourceDefaultFileType: TSourceFileType;
       {Gets current default file extension / type used when writing code
@@ -102,72 +121,6 @@ type
     property OverviewStartState: TOverviewStartState
       read GetOverviewStartState write SetOverviewStartState;
       {Startup state of overview treeview}
-
-    function GetShowEmptySections: Boolean;
-      {Gets flag that indicates whether empty sections are displayed in overview
-      pane.
-        @returns Flag value.
-      }
-    procedure SetShowEmptySections(const Value: Boolean);
-      {Sets flag that indicates whether empty sections are displayed in overview
-      pane.
-        @param Value [in] New flag value.
-      }
-    property ShowEmptySections: Boolean
-      read GetShowEmptySections write SetShowEmptySections;
-      {Indicates whether empty sections are displayed in overview pane}
-
-    function GetShowNewSnippetsInNewTabs: Boolean;
-      {Gets flag that indicates whether new snippets and categories are
-      displayed in new tabs in details pane.
-        @returns Flag value.
-      }
-    procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
-      {Sets flag that indicates whether new snippets and categories are
-      displayed in new tabs in details pane.
-        @param Value [in] New flag value.
-      }
-    property ShowNewSnippetsInNewTabs: Boolean
-      read GetShowNewSnippetsInNewTabs write SetShowNewSnippetsInNewTabs;
-      {Indicates whether new snippets and ca-tegories are displayed in new tabs
-      in details pane}
-
-    ///  <summary>Gets heading colour for specified database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
-    ///  <returns>TColor. Required colour.</returns>
-    function GetDBHeadingColour(UserDefined: Boolean): TColor;
-    ///  <summary>Sets heading colour for specified database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
-    ///  <param name="Value">TColor [in] Required heading colour.</param>
-    procedure SetDBHeadingColour(UserDefined: Boolean;
-      const Value: TColor);
-    ///  <summary>Records colour to be used for headings of items from either
-    ///  main database (UserDefined=False) or user database (UserDefined=True).
-    ///  </summary>
-    property DBHeadingColours[UserDefined: Boolean]: TColor
-      read GetDBHeadingColour write SetDBHeadingColour;
-
-    ///  <summary>Gets custom colours for headings for specified database.
-    ///  </summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
-    ///  <returns>IStringList. String list containing custom colours.</returns>
-    function GetDBHeadingCustomColours(UserDefined: Boolean): IStringList;
-    ///  <summary>Sets custom colours for headings for specified database.
-    ///  </summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
-    ///  <param name="Value">IStringList [in] String list containing custom
-    ///  colours.</returns>
-    procedure SetDBHeadingCustomColours(UserDefined: Boolean;
-      Value: IStringList);
-    ///  <summary>Records custom colours for headings of items from either main
-    ///  database (UserDefined=False) or user database (UserDefined=True).
-    ///  </summary>
-    property DBHeadingCustomColours[UserDefined: Boolean]: IStringList
-      read GetDBHeadingCustomColours write SetDBHeadingCustomColours;
 
     function GetPrinterOptions: TPrintOptions;
       {Gets print options.
@@ -241,17 +194,6 @@ type
     property NewsAge: Integer
       read GetNewsAge write SetNewsAge;
       {Maximum age of news items to be displayed}
-
-    ///  <summary>Gets information about snippet detail page customisations.
-    ///  </summary>
-    function GetPageStructures: TSnippetPageStructures;
-    ///  <summary>Updates information describing snippet detail page
-    ///  customisations.</summary>
-    procedure SetPageStructures(PageStructures: TSnippetPageStructures);
-    ///  <summary>Information about snippet detail page customisations.
-    ///  </summary>
-    property PageStructures: TSnippetPageStructures
-      read GetPageStructures write SetPageStructures;
   end;
 
 
@@ -269,8 +211,7 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Hiliter.UAttrs, Hiliter.UPersist, IntfCommon, UExceptions, UColours,
-  USettings;
+  Hiliter.UAttrs, Hiliter.UPersist, IntfCommon, UExceptions, USettings;
 
 
 type
@@ -290,20 +231,13 @@ type
     fSourceDefaultFileType: TSourceFileType;
       {Default file extension / type used when writing code snippets to file}
     fSourceCommentStyle: TCommentStyle;
-      {Commenting style used to describe snippets in generated source code}
+      {Commenting style used to describe routines in generated source code}
     fSourceSyntaxHilited: Boolean;
       {Indicates whether generated source is highlighted by default}
     fMeasurementUnits: TMeasurementUnits;
       {Measurement unit in use by application}
     fOverviewStartState: TOverviewStartState;
       {Startup state of overview treeview}
-    fShowEmptySections: Boolean;
-      {Indicates whether empty sections are displayed in overview pane}
-    fShowNewSnippetsInNewTabs: Boolean;
-      {Indicates whether new snippets and categories are displayed in new tabs
-      in details pane}
-    fDBHeadingColours: array[Boolean] of TColor;
-    fDBHeadingCustomColours: array[Boolean] of IStringList;
     fPrinterOptions: TPrintOptions;
       {Default print options}
     fPrinterPageMargins: TPageMargins;
@@ -316,15 +250,14 @@ type
       {Information about warnings to be inhibited by code generator}
     fNewsAge: Integer;
       {Maximum age of news items in days}
-    fPageStructures: TSnippetPageStructures;
   protected // do not make strict
     { IPreferences methods }
     function GetSourceCommentStyle: TCommentStyle;
-      {Gets style of commenting used to describe snippets in generated code.
+      {Gets style of commenting used to describe routines in generated code.
         @return Current commenting style.
       }
     procedure SetSourceCommentStyle(const Value: TCommentStyle);
-      {Sets style of commenting to be used describe snippets in generated code.
+      {Sets style of commenting to be used describe routines in generated code.
         @param Value [in] Required commenting style.
       }
     function GetSourceDefaultFileType: TSourceFileType;
@@ -362,59 +295,6 @@ type
       {Sets startup state of overview tree view.
         @param Value [in] Required startup state.
       }
-    function GetShowEmptySections: Boolean;
-      {Gets flag that indicates whether empty sections are displayed in overview
-      pane.
-        @returns Flag value.
-      }
-    procedure SetShowEmptySections(const Value: Boolean);
-      {Sets flag that indicates whether empty sections are displayed in overview
-      pane.
-        @param Value [in] New flag value.
-      }
-    function GetShowNewSnippetsInNewTabs: Boolean;
-      {Gets flag that indicates whether new snippets and categories are
-      displayed in new tabs in details pane.
-        @returns Flag value.
-      }
-    procedure SetShowNewSnippetsInNewTabs(const Value: Boolean);
-      {Sets flag that indicates whether new snippets and categories are
-      displayed in new tabs in details pane.
-        @param Value [in] New flag value.
-      }
-
-    ///  <summary>Gets heading colour for specified database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
-    ///  <returns>TColor. Required colour.</returns>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetDBHeadingColour(UserDefined: Boolean): TColor;
-
-    ///  <summary>Sets heading colour for specified database.</summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
-    ///  <param name="Value">TColor [in] Required heading colour.</param>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetDBHeadingColour(UserDefined: Boolean;
-      const Value: TColor);
-
-    ///  <summary>Gets custom colours for headings for specified database.
-    ///  </summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
-    ///  <returns>IStringList. String list containing custom colours.</returns>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetDBHeadingCustomColours(UserDefined: Boolean): IStringList;
-
-    ///  <summary>Sets custom colours for headings for specified database.
-    ///  </summary>
-    ///  <param name="UserDefined">Boolean [in] Required database: True for user
-    ///  database and False for main database.</param>
-    ///  <param name="Value">IStringList [in] String list containing custom
-    ///  colours.</returns>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetDBHeadingCustomColours(UserDefined: Boolean;
-      Value: IStringList);
     function GetPrinterOptions: TPrintOptions;
       {Gets print options.
         @return Print options.
@@ -464,16 +344,6 @@ type
       {Sets maximum age of news items to be displayed.
         @param Age [in] Required age in days.
       }
-
-    ///  <summary>Gets information about snippet detail page customisations.
-    ///  </summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    function GetPageStructures: TSnippetPageStructures;
-    ///  <summary>Updates information describing snippet detail page
-    ///  customisations.</summary>
-    ///  <remarks>Method of IPreferences.</remarks>
-    procedure SetPageStructures(PageStructures: TSnippetPageStructures);
-
     { IAssignable method }
     procedure Assign(const Src: IInterface);
       {Assigns properties of a given object to this object.
@@ -484,7 +354,6 @@ type
     constructor Create;
       {Class constructor. Sets up object.
       }
-    destructor Destroy; override;
   end;
 
   {
@@ -507,8 +376,6 @@ type
       cHiliter = 'Hiliter';
       cCodeGenerator = 'CodeGen';
       cNews = 'News';
-      cDisplay = 'Display';
-      cPageStructures = 'SnippetPageStructure';
     class var fInstance: IPreferences;
       {Stores reference to singleton instance of this class}
     class function GetInstance: IPreferences; static;
@@ -564,19 +431,12 @@ begin
   Self.fSourceSyntaxHilited := SrcPref.SourceSyntaxHilited;
   Self.fMeasurementUnits := SrcPref.MeasurementUnits;
   Self.fOverviewStartState := SrcPref.OverviewStartState;
-  Self.fShowEmptySections := SrcPref.ShowEmptySections;
-  Self.fShowNewSnippetsInNewTabs := SrcPref.ShowNewSnippetsInNewTabs;
-  Self.fDBHeadingColours[False] := SrcPref.DBHeadingColours[False];
-  Self.fDBHeadingCustomColours[False] := SrcPref.DBHeadingCustomColours[False];
-  Self.fDBHeadingColours[True] := SrcPref.DBHeadingColours[True];
-  Self.fDBHeadingCustomColours[True] := SrcPref.DBHeadingCustomColours[True];
   Self.fPrinterOptions := SrcPref.PrinterOptions;
   Self.fPrinterPageMargins := SrcPref.PrinterPageMargins;
   Self.SetHiliteAttrs(SrcPref.HiliteAttrs);
   Self.SetCustomHiliteColours(SrcPref.CustomHiliteColours);
   Self.SetWarnings(SrcPref.Warnings);
   Self.SetNewsAge(SrcPref.NewsAge);
-  Self.SetPageStructures(SrcPref.PageStructures);
 end;
 
 constructor TPreferences.Create;
@@ -584,19 +444,10 @@ constructor TPreferences.Create;
   }
 begin
   inherited Create;
+  // Create object to record syntax highlighter
   fHiliteAttrs := THiliteAttrsFactory.CreateDefaultAttrs;
   fHiliteCustomColours := TIStringList.Create;
   fWarnings := TWarnings.Create;
-  fDBHeadingCustomColours[False] := TIStringList.Create;
-  fDBHeadingCustomColours[True] := TIStringList.Create;
-  fPageStructures := TSnippetPageStructures.Create;
-  TDefaultPageStructures.SetDefaults(fPageStructures);
-end;
-
-destructor TPreferences.Destroy;
-begin
-  fPageStructures.Free;
-  inherited;
 end;
 
 function TPreferences.GetCustomHiliteColours: IStringList;
@@ -605,17 +456,6 @@ function TPreferences.GetCustomHiliteColours: IStringList;
   }
 begin
   Result := fHiliteCustomColours;
-end;
-
-function TPreferences.GetDBHeadingColour(UserDefined: Boolean): TColor;
-begin
-  Result := fDBHeadingColours[UserDefined];
-end;
-
-function TPreferences.GetDBHeadingCustomColours(
-  UserDefined: Boolean): IStringList;
-begin
-  Result := fDBHeadingCustomColours[UserDefined];
 end;
 
 function TPreferences.GetHiliteAttrs: IHiliteAttrs;
@@ -650,11 +490,6 @@ begin
   Result := fOverviewStartState;
 end;
 
-function TPreferences.GetPageStructures: TSnippetPageStructures;
-begin
-  Result := fPageStructures;
-end;
-
 function TPreferences.GetPrinterOptions: TPrintOptions;
   {Gets print options.
     @return Print options.
@@ -671,18 +506,8 @@ begin
   Result := fPrinterPageMargins;
 end;
 
-function TPreferences.GetShowEmptySections: Boolean;
-begin
-  Result := fShowEmptySections;
-end;
-
-function TPreferences.GetShowNewSnippetsInNewTabs: Boolean;
-begin
-  Result := fShowNewSnippetsInNewTabs;
-end;
-
 function TPreferences.GetSourceCommentStyle: TCommentStyle;
-  {Gets style of commenting used to describe snippets in generated code.
+  {Gets style of commenting used to describe routines in generated code.
     @return Current commenting style.
   }
 begin
@@ -719,19 +544,6 @@ begin
   fHiliteCustomColours := Colours;
 end;
 
-
-procedure TPreferences.SetDBHeadingColour(UserDefined: Boolean;
-  const Value: TColor);
-begin
-  fDBHeadingColours[UserDefined] := Value;
-end;
-
-procedure TPreferences.SetDBHeadingCustomColours(UserDefined: Boolean;
-  Value: IStringList);
-begin
-  fDBHeadingCustomColours[UserDefined] := Value;
-end;
-
 procedure TPreferences.SetHiliteAttrs(const Attrs: IHiliteAttrs);
   {Sets new user defined syntax highlighter.
     @param Attrs [in] New highlighter attributes.
@@ -764,12 +576,6 @@ begin
   fOverviewStartState := Value;
 end;
 
-procedure TPreferences.SetPageStructures(
-  PageStructures: TSnippetPageStructures);
-begin
-  fPageStructures.Assign(PageStructures);
-end;
-
 procedure TPreferences.SetPrinterOptions(const Options: TPrintOptions);
   {Sets default print options.
     @param Options [in] New print options.
@@ -786,18 +592,8 @@ begin
   fPrinterPageMargins := Margins;
 end;
 
-procedure TPreferences.SetShowEmptySections(const Value: Boolean);
-begin
-  fShowEmptySections := Value;
-end;
-
-procedure TPreferences.SetShowNewSnippetsInNewTabs(const Value: Boolean);
-begin
-  fShowNewSnippetsInNewTabs := Value;
-end;
-
 procedure TPreferences.SetSourceCommentStyle(const Value: TCommentStyle);
-  {Sets style of commenting to be used describe snippets in generated code.
+  {Sets style of commenting to be used describe routines in generated code.
     @param Value [in] Required commenting style.
   }
 begin
@@ -844,19 +640,12 @@ begin
   NewPref.SourceSyntaxHilited := Self.fSourceSyntaxHilited;
   NewPref.MeasurementUnits := Self.fMeasurementUnits;
   NewPref.OverviewStartState := Self.fOverviewStartState;
-  NewPref.ShowEmptySections := Self.fShowEmptySections;
-  NewPref.ShowNewSnippetsInNewTabs := Self.fShowNewSnippetsInNewTabs;
-  NewPref.DBHeadingColours[False] := Self.fDBHeadingColours[False];
-  NewPref.DBHeadingCustomColours[False] := Self.fDBHeadingCustomColours[False];
-  NewPref.DBHeadingColours[True] := Self.fDBHeadingColours[True];
-  NewPref.DBHeadingCustomColours[True] := Self.fDBHeadingCustomColours[True];
   NewPref.PrinterOptions := Self.fPrinterOptions;
   NewPref.PrinterPageMargins := Self.fPrinterPageMargins;
   NewPref.HiliteAttrs := Self.GetHiliteAttrs;
   NewPref.CustomHiliteColours := Self.GetCustomHiliteColours;
   NewPref.Warnings := Self.GetWarnings;
   NewPref.NewsAge := Self.fNewsAge;
-  NewPref.PageStructures := Self.fPageStructures;
 end;
 
 constructor TPreferencesPersist.Create;
@@ -878,29 +667,8 @@ begin
   fMeasurementUnits := TMeasurementUnits(
     StrToIntDef(Storage.ItemValues['Units'], Ord(DefaultMeasurementUnits))
   );
-
-  // Read display section
-  Storage := Settings.ReadSection(ssPreferences, cDisplay);
   fOverviewStartState := TOverviewStartState(
     StrToIntDef(Storage.ItemValues['OverviewStartState'], Ord(ossExpanded))
-  );
-  fShowEmptySections := Boolean(
-    StrToIntDef(Storage.ItemValues['ShowEmptySections'], Ord(False))
-  );
-  fShowNewSnippetsInNewTabs := Boolean(
-    StrToIntDef(Storage.ItemValues['ShowNewSnippetsInNewTabs'], Ord(False))
-  );
-  fDBHeadingColours[False] := TColor(
-    StrToIntDef(Storage.ItemValues['MainDBHeadingColour'], clMainSnippet)
-  );
-  fDBHeadingColours[True] := TColor(
-    StrToIntDef(Storage.ItemValues['UserDBHeadingColour'], clUserSnippet)
-  );
-  fDBHeadingCustomColours[False] := Storage.GetStrings(
-    'MainDBHeadingCustomColourCount', 'MainDBHeadingCustomColour%d'
-  );
-  fDBHeadingCustomColours[True] := Storage.GetStrings(
-    'UserDBHeadingCustomColourCount', 'UserDBHeadingCustomColour%d'
   );
 
   // Read source code section
@@ -945,10 +713,6 @@ begin
   // Read news section
   Storage := Settings.ReadSection(ssPreferences, cNews);
   fNewsAge := StrToIntDef(Storage.ItemValues['MaxAge'], cDefNewsAge);
-
-  // Read page structure section
-  Storage := Settings.ReadSection(ssPreferences, cPageStructures);
-  TSnippetPageStructuresPersist.Load(Storage, fPageStructures);
 end;
 
 destructor TPreferencesPersist.Destroy;
@@ -961,34 +725,8 @@ begin
   // Write general section
   Storage := Settings.EmptySection(ssPreferences, cGeneral);
   Storage.ItemValues['Units'] := IntToStr(Ord(fMeasurementUnits));
-  Storage.Save;
-
-  // Write display section
-  Storage := Settings.EmptySection(ssPreferences, cDisplay);
   Storage.ItemValues['OverviewStartState'] := IntToStr(
     Ord(fOverviewStartState)
-  );
-  Storage.ItemValues['ShowEmptySections'] := IntToStr(
-    Ord(fShowEmptySections)
-  );
-  Storage.ItemValues['ShowNewSnippetsInNewTabs'] := IntToStr(
-    Ord(fShowNewSnippetsInNewTabs)
-  );
-  Storage.ItemValues['MainDBHeadingColour'] := IntToStr(
-    fDBHeadingColours[False]
-  );
-  Storage.ItemValues['UserDBHeadingColour'] := IntToStr(
-    fDBHeadingColours[True]
-  );
-  Storage.SetStrings(
-    'MainDBHeadingCustomColourCount',
-    'MainDBHeadingCustomColour%d',
-    fDBHeadingCustomColours[False]
-  );
-  Storage.SetStrings(
-    'UserDBHeadingCustomColourCount',
-    'UserDBHeadingCustomColour%d',
-    fDBHeadingCustomColours[True]
   );
   Storage.Save;
 
@@ -1033,10 +771,6 @@ begin
   Storage := Settings.EmptySection(ssPreferences, cNews);
   Storage.ItemValues['MaxAge'] := IntToStr(fNewsAge);
   Storage.Save;
-
-  // Write page structure section
-  Storage := Settings.EmptySection(ssPreferences, cPageStructures);
-  TSnippetPageStructuresPersist.Save(Storage, fPageStructures);
 
   inherited;
 end;

@@ -1,15 +1,36 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * USnippetsTVDraw.pas
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Provides an abstract base class that can render tree nodes representing
+ * snippets in a tree view.
  *
  * $Rev$
  * $Date$
  *
- * Provides an abstract base class that can render tree nodes representing
- * snippets in a tree view.
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ *
+ * The Original Code is USnippetsTVDraw.pas
+ *
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ *
+ * Portions created by the Initial Developer are Copyright (C) 2009 Peter
+ * Johnson. All Rights Reserved.
+ *
+ * Contributor(s)
+ *   NONE
+ *
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -55,7 +76,7 @@ type
     procedure CustomDrawItem(Sender: TCustomTreeView; Node: TTreeNode;
       State: TCustomDrawState; var DefaultDraw: Boolean);
       {Handles event triggered when a snippets tree view item is to be
-      displayed. Draws nodes depending on whether group heading, snippet, user
+      displayed. Draws nodes depending on whether category, routine, user
       defined, selected or focussed.
         @param Sender [in] Reference to treeview being drawn.
         @param Node [in] Node to be displayed.
@@ -73,7 +94,7 @@ uses
   // Delphi
   Graphics,
   // Project
-  UColours, UPreferences;
+  UColours;
 
 
 { TSnippetsTVDraw }
@@ -81,8 +102,8 @@ uses
 procedure TSnippetsTVDraw.CustomDrawItem(Sender: TCustomTreeView;
   Node: TTreeNode; State: TCustomDrawState; var DefaultDraw: Boolean);
   {Handles event triggered when a snippets tree view item is to be displayed.
-  Draws nodes depending on whether group heading, snippet, user defined,
-  selected or focussed.
+  Draws nodes depending on whether category, routine, user defined, selected or
+  focussed.
     @param Sender [in] Reference to treeview being drawn.
     @param Node [in] Node to be displayed.
     @param State [in] State of node.
@@ -118,13 +139,15 @@ begin
       if IsErrorNode(Node) then
         // colour unselected error nodes differently
         TV.Canvas.Font.Color := clWarningText
+      else if IsUserDefinedNode(Node) then
+        // colour unselected user defined snippets differently
+        TV.Canvas.Font.Color := clUserRoutine
       else
-        TV.Canvas.Font.Color :=
-          Preferences.DBHeadingColours[IsUserDefinedNode(Node)];
+        TV.Canvas.Font.Color := TV.Font.Color;
       TV.Canvas.Brush.Color := TV.Color;
     end;
     if IsSectionHeadNode(Node) then
-      // make header items bold
+      // make header (category) items bold
       TV.Canvas.Font.Style := [fsBold];
     DefaultDraw := True;
   end;
