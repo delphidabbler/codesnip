@@ -39,7 +39,7 @@ type
     events to application.
   }
   TWBExternal = class(TAutoIntfObject,
-    IWBExternal10,// browser external object's methods
+    IWBExternal11,// browser external object's methods
     ISetNotifier  // sets object used to notify app of events
     )
   strict private
@@ -48,7 +48,7 @@ type
       {Gets application to handle current exception.
       }
   protected // do not make strict
-    { IWBExternal10: defined in type library }
+    { IWBExternal11: defined in type library }
     procedure UpdateDbase; safecall;
       {Updates database from internet.
       }
@@ -58,10 +58,6 @@ type
         @param SnippetName [in] Name of snippet to display.
         @param UserDefined [in] Whether snippet is user defined.
         @param NewTab [in] Whether to display in new tab in detail pane.
-      }
-    procedure ShowHint(const Hint: WideString); safecall;
-      {Displays a hint.
-        @param Hint [in] Hint to be displayed.
       }
     procedure ConfigCompilers; safecall;
       {Displays the Configure Compilers dialog box.
@@ -149,7 +145,7 @@ begin
   ExeName := TAppInfo.AppExeFilePath;
   OleCheck(LoadTypeLib(PWideChar(ExeName), TypeLib));
   // Create the object using type library
-  inherited Create(TypeLib, IWBExternal10);
+  inherited Create(TypeLib, IWBExternal11);
 end;
 
 procedure TWBExternal.DisplayCategory(const CatID: WideString;
@@ -239,19 +235,6 @@ begin
   try
     if Assigned(fNotifier) then
       fNotifier.ShowAboutBox;
-  except
-    HandleException;
-  end;
-end;
-
-procedure TWBExternal.ShowHint(const Hint: WideString);
-  {Displays a hint.
-    @param Hint [in] Hint to be displayed.
-  }
-begin
-  try
-    if Assigned(fNotifier) then
-      fNotifier.ShowHint(Hint);
   except
     HandleException;
   end;

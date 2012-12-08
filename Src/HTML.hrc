@@ -50,12 +50,6 @@ Res\HTML\dlg-rssnews.html
 # style sheet
 Res\CSS\detail.css
 
-# javascript "constants"
-Res\Scripts\detail-consts.js
-
-# general routines for use in any detail pane
-Res\Scripts\detail.js
-
 # routines that call external object
 Res\Scripts\external.js
 
