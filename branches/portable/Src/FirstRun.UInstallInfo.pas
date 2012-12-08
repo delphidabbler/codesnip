@@ -72,7 +72,7 @@ type
       CurrentVersionID = High(TInstallId);
       ///  <summary>Array mapping install IDs to relative paths to user config
       ///  file for for that installation version.</summary>
-      ConfigFileNames: array[Low(TInstallId)..CurrentVersionID] of string =
+      UserConfigFileNames: array[Low(TInstallId)..CurrentVersionID] of string =
         (
           {$IFNDEF PORTABLE}
           '',
@@ -170,7 +170,7 @@ end;
 
 class function TInstallInfo.CurrentUserConfigFileName: string;
 begin
-  Result := MakeFullPath(ConfigFileNames[CurrentVersionID]);
+  Result := MakeFullPath(UserConfigFileNames[CurrentVersionID]);
 end;
 
 class function TInstallInfo.CurrentUserDatabaseDir: string;
@@ -190,8 +190,8 @@ procedure TInstallInfo.DetectInstall;
   end;
 
 begin
-  if TFile.Exists(MakeFullPath(ConfigFileNames[piV4]))
-    and not IsEmptyUnicodeCfgFile(MakeFullPath(ConfigFileNames[piV4])) then
+  if TFile.Exists(MakeFullPath(UserConfigFileNames[piV4]))
+    and not IsEmptyUnicodeCfgFile(MakeFullPath(UserConfigFileNames[piV4])) then
     fInstallID := piV4
   {$IFNDEF PORTABLE}
   else if TFile.Exists(MakeFullPath(ConfigFileNames[piV3])) then
@@ -229,7 +229,7 @@ end;
 
 function TInstallInfo.PreviousUserConfigFileName: string;
 begin
-  Result := MakeFullPath(ConfigFileNames[fInstallID]);
+  Result := MakeFullPath(UserConfigFileNames[fInstallID]);
 end;
 
 function TInstallInfo.PreviousUserDatabaseDir: string;
