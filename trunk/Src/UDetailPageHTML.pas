@@ -69,9 +69,9 @@ uses
   // Delphi
   SysUtils,
   // Project
-  Compilers.UGlobals, Compilers.UCompilers,
-  DB.UMain, DB.USnippet, UCSSUtils, UHTMLDetailUtils, UHTMLTemplate, UHTMLUtils,
-  UJavaScriptUtils, UQuery, USnippetHTML, USnippetPageHTML, UStrUtils;
+  Compilers.UGlobals, Compilers.UCompilers, DB.UMain, DB.USnippet, UCSSUtils,
+  UHTMLTemplate, UHTMLUtils, UJavaScriptUtils, UQuery, USnippetHTML,
+  USnippetPageHTML, UStrUtils;
 
 
 type

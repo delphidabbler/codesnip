@@ -351,10 +351,6 @@ type
         @param Sender [in] Action triggering this event. Must be a
           TEditSnippetAction.
       }
-    procedure ActBrowserHintExecute(Sender: TObject);
-      {Displays hint from browser hint action in status bar.
-        @param Sender [in] Not used.
-      }
     procedure ActSelectDetailTabExecute(Sender: TObject);
       {Selects a tab in the detail pane.
         @param Sender [in] Action triggering this event
@@ -363,10 +359,6 @@ type
       {Handles events that inform of changes to database.
         @param Sender [in] Not used.
         @para EvtInfo [in] Object providing information about the event.
-      }
-    procedure DisplayHint(const Hint: string);
-      {Displays hint in status bar using status bar manager.
-        @param Hint [in] Hint to be displayed.
       }
     procedure HandleExceptions(Sender: TObject; E: Exception);
       {Handles untrapped application-level exceptions.
@@ -453,14 +445,6 @@ procedure TMainForm.actBackupDatabaseExecute(Sender: TObject);
   }
 begin
   TUserDBMgr.BackupDatabase;
-end;
-
-procedure TMainForm.ActBrowserHintExecute(Sender: TObject);
-  {Displays hint from browser hint action in status bar.
-    @param Sender [in] Action triggering this event.
-  }
-begin
-  DisplayHint((Sender as THintAction).Hint);
 end;
 
 procedure TMainForm.actBugReportExecute(Sender: TObject);
@@ -1322,7 +1306,8 @@ procedure TMainForm.appEventsHint(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  DisplayHint(Application.Hint);
+  if Assigned(fStatusBarMgr) then
+    fStatusBarMgr.ShowHint(Application.Hint);
 end;
 
 procedure TMainForm.DBChangeHandler(Sender: TObject; const EvtInfo: IInterface);
@@ -1339,15 +1324,6 @@ begin
   end;
   // Display updated database stats and search results in status bar
   fStatusBarMgr.Update;
-end;
-
-procedure TMainForm.DisplayHint(const Hint: string);
-  {Displays hint in status bar using status bar manager.
-    @param Hint [in] Hint to be displayed.
-  }
-begin
-  if Assigned(fStatusBarMgr) then
-    fStatusBarMgr.ShowHint(Hint);
 end;
 
 procedure TMainForm.DoSearchFilter(const Search: USearch.ISearch;
@@ -1509,9 +1485,6 @@ begin
       SetUpdateDbaseAction(actUpdateDbase);
       SetDisplaySnippetAction(TActionFactory.CreateSnippetAction(Self));
       SetDisplayCategoryAction(TActionFactory.CreateCategoryAction(Self));
-      SetShowHintAction(
-        TActionFactory.CreateHintAction(Self, ActBrowserHintExecute)
-      );
       SetConfigCompilersAction(actCompilers);
       SetShowViewItemAction(
         TActionFactory.CreateViewItemAction(Self, ActViewItemExecute)

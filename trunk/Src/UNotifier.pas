@@ -44,8 +44,6 @@ type
       {Action that triggers database update}
     fDisplaySnippetAction: TBasicAction;
       {Action that causes a named snippet to be displayed}
-    fShowHintAction: TBasicAction;
-      {Action that causes a hint to be displayed}
     fConfigCompilersAction: TBasicAction;
       {Action that displays configure compiler dialog box}
     fShowViewItemAction: TBasicAction;
@@ -85,10 +83,6 @@ type
       {Displays an identified category.
         @param CatID [in] Id of category to display.
         @param NewTab [in] Whether to display in new tab in detail pane.
-      }
-    procedure ShowHint(const Hint: WideString);
-      {Displays a hint.
-        @param Hint [in] Hint to be displayed.
       }
     procedure ConfigCompilers;
       {Displays configure compilers dialog box.
@@ -133,11 +127,6 @@ type
       }
     procedure SetDisplaySnippetAction(const Action: TBasicAction);
       {Sets action triggered when a named snippet is requested to be displayed.
-        @param Action [in] Required action.
-      }
-    procedure SetShowHintAction(const Action: TBasicAction);
-      {Sets action triggered when user moves mouse over hot links etc. that
-      cause hints to be displayed.
         @param Action [in] Required action.
       }
     procedure SetConfigCompilersAction(const Action: TBasicAction);
@@ -401,17 +390,6 @@ begin
     fOverviewStyleChangeActions[Idx] := Actions[Idx];
 end;
 
-procedure TNotifier.SetShowHintAction(const Action: TBasicAction);
-  {Sets action triggered when user moves mouse over hot links etc. that cause
-  hints to be displayed.
-    @param Action [in] Required action.
-  }
-begin
-  Assert(Action is THintAction,                            
-    ClassName + '.SetShowHintAction: Action is not THintAction');
-  fShowHintAction := Action;
-end;
-
 procedure TNotifier.SetShowViewItemAction(const Action: TBasicAction);
   {Sets action triggered when user requests a view item is displayed.
     @param Action [in] Required action.
@@ -433,19 +411,6 @@ procedure TNotifier.ShowAboutBox;
 begin
   if Assigned(fAboutBoxAction) then
     fAboutBoxAction.Execute;
-end;
-
-procedure TNotifier.ShowHint(const Hint: WideString);
-  {Displays a hint.
-    @param Hint [in] Hint to be displayed.
-  }
-begin
-  if Assigned(fShowHintAction) then
-  begin
-    // record hint text in action
-    (fShowHintAction as THintAction).Hint := Hint;
-    fShowHintAction.Execute;
-  end;
 end;
 
 procedure TNotifier.ShowNews;

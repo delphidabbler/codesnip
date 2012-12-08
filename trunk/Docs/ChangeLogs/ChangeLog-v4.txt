@@ -11,6 +11,15 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.0.1 of 08 December 2012
++ Fixed bug #3578652 (http://bit.ly/RXIwBC): Pre-processor directive errors in main db ini files by removing support for problematic directives.
++ Rolling mouse over links in detail pane no longer displays a hint in the status bar. This change fixes bug #3577407 (http://bit.ly/VeSVGg): Clicking detail pane snippet link leaves hint in status bar.
++ Windows no longer scale automatically when screen DPI differs from that on design system. This fixes bugs #3591818 (http://bit.ly/TvNaUL) "Strange window behaviour in Windows 7" and bug #3591820 (http://bit.ly/SEH6dO) "Incorrect font size used for some bold text".
++ Update operating system detection code to detect W0ndows 8 & 2012 server.
++ Some refactoring and some redundant code removed.
++ Updated documentation.
++ Updated help topic that describes main display.
+
 Release v4.0.0 of 12 October 2012
 Final v4 release.
 See also changes from alpha, beta and release candidates below for details of changes since v3.9.3.
