@@ -63,9 +63,8 @@ type
     ///  <summary>Checks if program version in config file is same as current
     ///  program version.</summary>
     function IsCurrentProgramVer: Boolean; overload;
-    ///  <summary>Stamp config file with current program and file versions.
-    ///  </summary>
-    procedure Stamp;
+    ///  <summary>Stamps config file with current and file version.</summary>
+    procedure Stamp; virtual;
   end;
 
 type
@@ -102,6 +101,12 @@ type
     {}{$ENDIF}
     ///  <summary>Adds Prefs:CodeGen section along with default data.</summary>
     procedure CreateDefaultCodeGenEntries;
+    ///  <summary>Stamps config file with current program and file versions.
+    ///  </summary>
+    ///  <remarks>Note that the user config file has program version written to
+    ///  a different section to common config file, hence need for overridden
+    ///  methods.</remarks>
+    procedure Stamp; override;
   end;
 
 type
@@ -116,6 +121,13 @@ type
   strict protected
     ///  <summary>Returns current common config file version.</summary>
     class function GetFileVersion: Integer; override;
+  public
+    ///  <summary>Stamps config file with current program and file versions.
+    ///  </summary>
+    ///  <remarks>Note that the user config file has program version written to
+    ///  a different section to common config file, hence need for overridden
+    ///  methods.</remarks>
+    procedure Stamp; override;
   end;
 
 
@@ -201,9 +213,6 @@ begin
   if not TFile.Exists(fCfgFileName) then
     CreateNewFile;
   SetIniInt('IniFile', 'Version', GetFileVersion, fCfgFileName);
-  SetIniString(
-    'IniFile', 'ProgramVersion', TAppInfo.ProgramReleaseVersion, fCfgFileName
-  );
 end;
 
 { TUserConfigFileUpdater }
@@ -288,6 +297,14 @@ begin
 end;
 {$ENDIF}
 
+procedure TUserConfigFileUpdater.Stamp;
+begin
+  inherited;
+  SetIniString(
+    'IniFile', 'ProgramVersion', TAppInfo.ProgramReleaseVersion, CfgFileName
+  );
+end;
+
 {$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.UpdateCodeGenEntries;
 begin
@@ -342,6 +359,14 @@ end;
 class function TCommonConfigFileUpdater.GetFileVersion: Integer;
 begin
   Result := FileVersion;
+end;
+
+procedure TCommonConfigFileUpdater.Stamp;
+begin
+  inherited;
+  SetIniString(
+    'Application', 'Version', TAppInfo.ProgramReleaseVersion, CfgFileName
+  );
 end;
 
 end.
