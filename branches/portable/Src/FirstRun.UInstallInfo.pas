@@ -141,6 +141,9 @@ type
     ///  <remarks>This can be current version's database file if present.
     ///  </remarks>
     function PreviousUserDatabaseFileName: string;
+    ///  <summary>Returns full path to common config file for current version of
+    ///  CodeSnip.</summary>
+    function CurrentCommonConfigFileName: string;
     ///  <summary>ID of latest CodeSnip install found.</summary>
     ///  <remarks>This is ID of latest version for which user data can be found.
     ///  </remarks>
@@ -154,10 +157,7 @@ uses
   // Delphi
   SysUtils, IOUtils,
   // Project
-  {$IFDEF PORTABLE}
-  UAppInfo,
-  {$ENDIF}
-  UIOUtils, UStrUtils, USystemInfo;
+  UAppInfo, UIOUtils, UStrUtils, USystemInfo;
 
 
 { TInstallInfo }
@@ -166,6 +166,12 @@ constructor TInstallInfo.Create;
 begin
   inherited Create;
   DetectInstall;
+end;
+
+function TInstallInfo.CurrentCommonConfigFileName: string;
+begin
+  Result := IncludeTrailingPathDelimiter(TAppInfo.CommonAppDir)
+    + 'Common.config';
 end;
 
 class function TInstallInfo.CurrentUserConfigFileName: string;
