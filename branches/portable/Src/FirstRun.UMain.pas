@@ -261,7 +261,7 @@ begin
     FR := TFirstRun.Create;
     try
       {$IFNDEF PORTABLE}
-      if FR.HaveOldCfgFile or FR.HaveOldUserDB then
+      if FR.HaveOldUserCfgFile or FR.HaveOldUserDB then
         TV4ConfigDlg.Execute(Application, FR);
       {$ENDIF}
       if not UserCfgFileExists then
