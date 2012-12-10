@@ -34,24 +34,27 @@
     </h2>
     <p>
       <em>CodeSnip</em> stores some personal information in two configuration
-      files:
+      files. The location of the files differs depending on whether you are
+      using the standard or portable edition.
     </p>
     <h3>
       <code style="text-decoration:underline;">Common.config</code>
     </h3>
     <p>
       <code>Common.config</code> is located in the in the
-      <code>%ProgramData%\DelphiDabbler\CodeSnip.4</code> folder.
+      <code>%ProgramData%\DelphiDabbler\CodeSnip.4</code> folder for the
+      standard edition or in the <code>AppData</code> sub folder of the install
+      directory for the portable edition.
     </p>
     <p>
       The data that is stored in <code>Common.config</code> includes:
     </p>
     <ul class="unspaced">
       <li>
-        A unique 32 digit hexadecimal key based on attributes of your computer.
+        A unique 32 digit key based on attributes of your computer.
       </li>
       <li>
-        A 32 digit hexadecimal registration key (registered programs only).
+        A 32 digit registration key (registered programs only).
       </li>
       <li>
         The registered user name or nickname (registered programs only).
@@ -66,7 +69,9 @@
     </h3>
     <p>
       <code>User.config</code> is found in the current user's
-      <code>%AppData%\DelphiDabbler\CodeSnip.4</code> folder.
+      <code>%AppData%\DelphiDabbler\CodeSnip.4</code> folder for the standard
+      edition or in the <code>AppData</code> sub folder of the install directory
+      for the portable edition.
     </p>
     <p>
       The file stores several user-specific application data
