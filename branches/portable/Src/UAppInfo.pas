@@ -192,6 +192,9 @@ begin
       USystemID.SystemIDStr, TEncoding.ASCII
     )
   );
+  {$IFDEF PORTABLE}
+  Result := 'P:' + StrSliceRight(Result, Length(Result) - 2);
+  {$ENDIF}
 end;
 
 class function TAppInfo.HelpFileName: string;

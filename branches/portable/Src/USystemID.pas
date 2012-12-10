@@ -32,6 +32,9 @@ uses
   // Delphi
   SysUtils, Windows,
   // Project
+  {$IFDEF PORTABLE}
+  UAppInfo,
+  {$ENDIF}
   USystemInfo;
 
 
@@ -104,6 +107,15 @@ var
   Drive: Byte;    // loops through all drive numbers
   Serial: DWORD;  // serial number of a hard diak
 begin
+  {$IFDEF PORTABLE}
+  // Get serial for removable disk if possible. Fall thru and get hard disk if
+  // not.
+  Serial := HardDiskSerial(
+    IncludeTrailingPathDelimiter(ExtractFileDrive(TAppInfo.AppExeDir))
+  );
+  if Serial <> 0 then
+    Exit(TOSInfo.ProductID + IntToHex(Serial, 8));
+  {$ENDIF}
   // Append serial number of first fixed hard drive as 8 digit hex string
   for Drive := 0 to 25 do
   begin
