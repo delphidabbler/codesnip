@@ -14,8 +14,14 @@
 Release v4.0.1 portable edition, beta 1 of 12 December 2012
 Internal CodeSnip version 4.0.1.213
 + Modified edition of Release v4.0.1 that can run from a writeable removable medium without writing files or registry on host computer. This implements feature request #3577431 (http://bit.ly/UxvUj0).
-+ Several internal and visible changes to identify portable edition.
-+ Has no installer.
++ Changes that apply only to portable version:
+  - Changed executable file name to CodeSnip-p.exe.
+  - Program caption to identify as portable version.
+  - Data directories changed to be sub-directories of executable program directory.
+  - Changed common file dialogue boxes to working directory by default.
+  - First run processing no longer gives option to import old settings or existing user databases.
+  - No set up program.
++ Code base modified to conditionally compile either portable or standard edition.
 + Updated documentation, including privacy statement.
 
 Release v4.0.1 of 08 December 2012
