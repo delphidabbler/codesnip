@@ -48,7 +48,11 @@ type
     const ProgramName = 'CodeSnip-p';
     {$ENDIF}
       {Name of program}
-    const ProgramCaption = ProgramName + ' 4';
+    {$IFNDEF PORTABLE}
+    const ProgramCaption = 'CodeSnip 4';
+    {$ELSE}
+    const ProgramCaption = 'CodeSnip 4 (Portable Edition)';
+    {$ENDIF}
       {Name of program displayed in main window and task bar caption}
     const FullProgramName = CompanyName + ' ' + ProgramName;
       {Full name of program, including company name}
