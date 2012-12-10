@@ -1,0 +1,105 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2011-2012, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic for Test Compile Results dialogue box.
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Test Compile Results Dialogue Box
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+      type="application/x-oleobject"
+      classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="TestCompileDlg">
+    </object>
+    <h1>
+      <a name="dlg_testcompile"></a>Test Compile Results Dialogue Box
+    </h1>
+    <p>
+      This dialogue box is displayed when the user test compiles a selected
+      snippet, either by selecting the <em>Compile | Test Compile Snippet</em>
+      menu option, pressing <span class="smallcaps">F9</span> or clicking the
+      <img alt="Toolbar icon" src="../images/TestCompile.gif" class="glyph">
+      toolbar button.
+    </p>
+    <p>
+      As soon as the dialogue box appears the test compilation begins, using all
+      configured compilers. The dialogue box is disabled until the compilation
+      completes. A &quot;Wait&quot; message may be displayed if the compilation
+      takes more than about 1/2 second.
+    </p>
+    <p>
+      Once the compilations have finished the results are displayed in the
+      <em>Results for</em> list. There is one LED next to the name of each
+      compiler. The LEDs have the following meanings.
+    </p>
+    <table cellspacing="0" cellpadding="0" class="indent">
+      <tr>
+        <td style="width:18px;vertical-align:top;">
+          <img
+            alt="Green LED"
+            src="../images/LEDGreen.png"
+            style="width:18px;height:18px;border:0;"
+          >
+        </td>
+        <td style="vertical-align:top;">
+          Compiled successfully.
+        </td>
+      </tr>
+      <tr>
+        <td style="width:18px;vertical-align:top;">
+          <img
+            alt="Yellow LED"
+            src="../images/LEDYellow.png"
+            style="width:18px;height:18px;border:0;"
+          >
+        </td>
+        <td style="vertical-align:top;">
+          Compiled with warnings.
+        </td>
+      </tr>
+      <tr>
+        <td style="width:18px;vertical-align:top;">
+          <img
+            alt="Red LED"
+            src="../images/LEDRed.png"
+            style="width:18px;height:18px;border:0;"
+          >
+        </td>
+        <td style="vertical-align:top;">
+          Failed to compile.
+        </td>
+      </tr>
+    </table>
+    <p>
+      If you have several compilers configured, you may need to scroll the
+      display to see all the results.
+    </p>
+    <p>
+      If there were any compiler errors or warnings then the <em>View Errors
+      &amp; Warnings</em> button will be enabled. Clicking this button displays
+      a dialogue box that lists details of all errors and warnings by compiler.
+      You can also display this information from the <em>Compile | View Compile
+      Errors</em> menu option after closing this dialogue box.
+    </p>
+    <p>
+      See <a href="about_compiler_checks.htm">About Compiler Checks</a> for more
+      information about test compiling snippets.
+    </p>
+  </body>
+</html>
+
