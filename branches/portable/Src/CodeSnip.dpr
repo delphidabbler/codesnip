@@ -384,10 +384,14 @@ uses
   Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
 
 // Include resources
-{$Resource ExternalObj.tlb} // Type library file
-{$Resource HTML.res}        // HTML resources
-{$Resource VCodeSnip.res}   // Version information resource
-{$Resource Resources.res}   // All other resources.
+{$Resource ExternalObj.tlb}       // Type library file
+{$Resource HTML.res}              // HTML resources
+{$IFNDEF PORTABLE}
+{$Resource VCodeSnip.res}         // Version information resource (normal)
+{$ELSE}
+{$Resource VCodeSnipPortable.res} // Version information resource (portable)
+{$ENDIF}
+{$Resource Resources.res}         // All other resources.
 
 {$Include CompilerDefines.inc}
 
