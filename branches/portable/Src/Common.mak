@@ -71,12 +71,6 @@ DELPHIDEFINES =
 
 # Implicit rules
 
-# Delphi projects are assumed to contain required output and search path
-# locations in the project options .cfg file.
-.dpr.exe:
-  @echo +++ Compiling Delphi Project $< +++
-  @$(DCC32) $< -B -U"$(INDY10)" $(DELPHIDEFINES)
-
 # Resource files are compiled to the directory specified by BIN macro, which
 # must have been set by the caller.
 .rc.res:
