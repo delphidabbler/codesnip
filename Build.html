@@ -80,10 +80,15 @@
 </p>
 
 <p>
+  The are currently two editions of <em>CodeSnip</em>: the standard edition and
+  the portable edition. They both share the same code base and the different
+  editions are created using conditional compilation. These instructions show
+  how to build either edition.
+</p>
+
+<p>
   The Delphi 2010 IDE can be used to modify the source and to perform test
-  builds. Final builds should be built using the provided makefile, but you
-  can get away with using the IDE if you don't change any resources or the
-  type library.
+  builds. Final builds should be created using the provided makefile.
 </p>
 
 <h2>
@@ -400,6 +405,12 @@ set PATHSET=1
   the correct version of Inno Setup is expected to be on the path.
 </p>
 
+<p>
+  <strong>Note:</strong> Inno Setup is not required if you are creating only the
+  portable edition of <em>CodeSnip</em> since that edition does not have an
+  install program.
+</p>
+
 <h3>
   Microsoft HTML Help Compiler (HHC)
 </h3>
@@ -429,6 +440,11 @@ set PATHSET=1
 <p>
   The program is expected to be on the path unless its install directory is
   specified by the <code>ZIPROOT</code> environment variable.
+</p>
+
+<p>
+  <strong>Note:</strong> You do not need Zip if you do not intend to create
+  release files.
 </p>
 
 <h2>
@@ -683,7 +699,7 @@ set PATHSET=1
 
 <p>
   Once <code>Make config</code> has completed your folder structure should
-  have acquired the following new folders:
+  have acquired the following new folders, if they weren't present already:
 </p>
 
 <pre>./
@@ -699,12 +715,15 @@ set PATHSET=1
   ...</pre>
 
 <p>
-  If the <code>Bin</code>, <code>Exe</code> and <code>Release</code> folders
-  already existed they will have been emptied.
+  If the <code>Bin</code> folder already existed, it will have been emptied.
   In addition, <code>Make</code> will have created a <code>.cfg</code> file from
   template in the <code>Src</code> folder. This <code>.cfg</code> file is needed
   for DCC32 to run correctly. The file will be ignored by Subversion.
 </p>
+
+<h4>
+  Using the Delphi IDE
+</h4>
 
 <p>
   If you are intending to use the Delphi IDE to compile code, you should also
@@ -722,8 +741,22 @@ set PATHSET=1
 </p>
 
 <p>
-  You are now ready to build the source. If you want to modify the source
-  now's the time to do it.
+  If you wish to build the portable edition of <em>CodeSnip</em> you also need
+  to do:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE resources</pre>
+
+<p>
+  and define the <code>PORTABLE</code> conditional define in <em>Project
+  Options</em>. The standard name for the portable exe file is
+  <code>CodeSnip-p.exe</code>, but the IDE will generate
+  <code>CodeSnip.exe</code>. You can rename the file manually.
+</p>
+
+<p>
+  Note that building with the make file insted of the IDE performs all the above
+  steps automatically.
 </p>
 
 <h3 id="nomidl">
@@ -821,6 +854,11 @@ set PATHSET=1
 </h2>
 
 <p>
+  This section guides you through building <em>CodeSnip</em> from the command
+  line, not from the IDE.
+</p>
+
+<p>
   You have several options:
 </p>
 
@@ -876,9 +914,29 @@ set PATHSET=1
 <span class="prompt">&gt;</span> Make pascal</pre>
 
 <p>
-  The <em>CodeSnip</em> executable will be placed in the <code>Exe</code>
-  folder.
+  The <em>CodeSnip</em> executable, named <code>CodeSnip.exe</code> will be
+  placed in the <code>Exe</code> folder.
 </p>
+
+<h4>
+  Portable edition
+</h4>
+
+<p>
+  To build the portable edition of <em>CodeSnip</em> you must either define the
+  <code>PORTABLE</code> environment variable or do:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE codesnip</pre>
+
+<p>
+  Again the executable is placed in the <code>Exe</code> folder, but this time
+  it is named <code>CodeSnip-p.exe</code>
+</p>
+
+<h4>
+  Building without MIDL
+</h4>
 
 <p>
   If you are building without MIDL, and have a suitable copy of
@@ -947,21 +1005,42 @@ set PATHSET=1
   this <code>CodeSnip-Setup-x.x.x-SPECIALBUILD</code>.
 </p>
 
+<h4>
+  Portable edition
+</h4>
+
+<p>
+  <em>CodeSnip</em>'s portable edition does not use a setup file so <code>Make
+  setup</code> does nothing except print a message if it is run when the
+  <code>PORTABLE</code> symbol is defined.
+</p>
+
 <h3>
   Build the Release Zip File
 </h3>
 
 <p>
-  Once the setup file has been compiled you can create a zip file containing
-  the setup file along with <code>ReadMe.txt</code> from the <code>Docs</code>
-  directory. If either file is missing the build fails. Build the release by
-  doing:
+  Make can create zip files containing the files that are included in a release.
+</p>
+
+<h4>
+  Standard edition
+</h4>
+
+<p>
+  The release file for the standard edition of <em>CodeSnip</em> includes the
+  setup file along with  <code>ReadMe.txt</code> from the <code>Docs</code>
+  directory. Both must be present.
+</p>
+
+<p>
+  Build the release by doing:
 </p>
 
 <pre class="cmd"><span class="prompt">&gt;</span> Make release</pre>
 
 <p>
-  By default the release file is called <code>dd-codesnip.zip</code>. You can
+  By default the release file is named <code>dd-codesnip.zip</code>. You can
   change this name by defining the <code>RELEASEFILENAME</code> macro or
   enviroment variable. For example, you can name the file
   <code>MyRelease.zip</code> by doing:
@@ -969,12 +1048,45 @@ set PATHSET=1
 
 <pre class="cmd"><span class="prompt">&gt;</span> Make -DRELEASEFILENAME=MyRelease.zip release</pre>
 
+<h4>
+  Portable edition
+</h4>
+
+<p>
+  The release file for the portable edition includes the portable executable
+  file, <code>CodeSnip-p.exe</code>, the help file <code>CodeSnip.chm</code> and
+  several files from the <code>Docs</code> directory. All must be present.
+</p>
+
+<p>
+  Build the portable release by doing:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE release</pre>
+
+<p>
+  By default the release file is named <code>dd-codesnip-portable.zip</code>.
+  You can change this name by defining the <code>RELEASEFILENAME</code> macro or
+  enviroment variable. For example, you can name the file
+  <code>MyPortableRelease.zip</code> by doing:
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE -DRELEASEFILENAME=MyPortableRelease.zip release</pre>
+
+<p>
+  <strong>Warning:</strong> If you are building both the standard and portable
+  releases with custom file names, make sure you supply a different value of
+  the <code>RELEASEFILENAME</code> macro for each release, otherwise the last
+  built release will overwrite the first.
+</p>
+
+
 <h3>
   Build and Release Everything
 </h3>
 
 <p>
-  You can do a clean build of everything, and generate the release zip file
+  You can do a complete build of everything, and generate the release zip file
   simply by doing:
 </p>
 
@@ -994,6 +1106,16 @@ set PATHSET=1
   available since <code>Make config</code> will delete any <code>.tlb</code>
   file you may have placed in the <code>Bin</code> directory.
 </p>
+
+<h4>
+  Portable edition
+</h4>
+
+<p>
+  To perform a complete build of the portable edition of <em>CodeSnip</em> do
+</p>
+
+<pre class="cmd"><span class="prompt">&gt;</span> Make -DPORTABLE</pre>
 
 <h3>
   Clean Up

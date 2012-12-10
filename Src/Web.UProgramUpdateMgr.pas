@@ -61,7 +61,7 @@ var
 begin
   Params := TURIParams.Create;
   try
-    Params.Add('id', TAppInfo.ProgramID);
+    Params.Add('id', 'codesnip');
     Params.Add('ver', TAppInfo.ProgramReleaseVersion);
     Response := TStringList.Create;
     try
@@ -82,7 +82,7 @@ var
 begin
   Params := TURIParams.Create;
   try
-    Params.Add('id', TAppInfo.ProgramID);
+    Params.Add('id', 'codesnip');
     Response := TStringList.Create;
     try
       PostCommand('version', Params, Response);

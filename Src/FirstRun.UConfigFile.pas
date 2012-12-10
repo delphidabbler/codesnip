@@ -22,7 +22,7 @@ interface
 type
   ///  <summary>Class that manages the updating of older config files to the
   ///  current format. Missing files will also be created.</summary>
-  TUserConfigFileUpdater = class(TObject)
+  TConfigFileUpdater = class abstract(TObject)
   strict private
     var
       ///  <summary>Name of config file.</summary>
@@ -32,10 +32,13 @@ type
     procedure CopyANSIFile(const SrcFileName: string);
     ///  <summary>Copies a Unicode config file from SrcFileName.</summary>
     procedure CopyUnicodeFile(const SrcFileName: string);
-  public
-    const
-      ///  <summary>Current user config file version.</summary>
-      FileVersion = 9;
+  strict protected
+    ///  <summary>Returns current config file version.</summary>
+    ///  <remarks>Descendant classes must override to provide value.</remarks>
+    class function GetFileVersion: Integer; virtual; abstract;
+    ///  <summary>Name of config file.</summary>
+    ///  <remarks>For use in descandant classes.</remarks>
+    property CfgFileName: string read fCfgFileName;
   public
     ///  <summary>Constructs object to operate on given config file.</summary>
     ///  <remarks>Given file may or may not exist.</remarks>
@@ -60,6 +63,26 @@ type
     ///  <summary>Checks if program version in config file is same as current
     ///  program version.</summary>
     function IsCurrentProgramVer: Boolean; overload;
+    ///  <summary>Stamps config file with current and file version.</summary>
+    procedure Stamp; virtual;
+  end;
+
+type
+  ///  <summary>Config file updater class for use with per-user config file.
+  ///  </summary>
+  ///  <remarks>Provides current user config file version along with additional
+  ///  functionality to TConfigFileUpdater that is relevant only to per-user
+  ///  config files.</remarks>
+  TUserConfigFileUpdater = class(TConfigFileUpdater)
+  strict private
+    const
+      ///  <summary>Current user config file version.</summary>
+      FileVersion = 9;
+  strict protected
+    ///  <summary>Returns current user config file version.</summary>
+    class function GetFileVersion: Integer; override;
+  public
+    {$IFNDEF PORTABLE}
     ///  <summary>Updates config file currently in original (pre v1.9) format to
     ///  current format.</summary>
     procedure UpdateFromOriginal;
@@ -69,17 +92,42 @@ type
     function HasProxyPassword: Boolean;
     ///  <summary>Deletes proxy password entry.</summary>
     procedure DeleteProxyPassword;
-    ///  <summary>Adds Prefs:CodeGen section along with default data.</summary>
-    procedure CreateDefaultCodeGenEntries;
     ///  <summary>Updates Prefs:CodeGen section from format prior to version 9
     ///  to version 9 format.</summary>
     procedure UpdateCodeGenEntries;
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
     procedure DeleteDetailsPaneIndex;
-    ///  <summary>Stamp config file with current program and file versions.
+    {}{$ENDIF}
+    ///  <summary>Adds Prefs:CodeGen section along with default data.</summary>
+    procedure CreateDefaultCodeGenEntries;
+    ///  <summary>Stamps config file with current program and file versions.
     ///  </summary>
-    procedure Stamp;
+    ///  <remarks>Note that the user config file has program version written to
+    ///  a different section to common config file, hence need for overridden
+    ///  methods.</remarks>
+    procedure Stamp; override;
+  end;
+
+type
+  ///  <summary>Config file updater class for use with common config file.
+  ///  </summary>
+  ///  <remarks>Provides current common config file version.</remarks>
+  TCommonConfigFileUpdater = class(TConfigFileUpdater)
+  strict private
+    const
+      ///  <summary>Current common config file version.</summary>
+      FileVersion = 6;
+  strict protected
+    ///  <summary>Returns current common config file version.</summary>
+    class function GetFileVersion: Integer; override;
+  public
+    ///  <summary>Stamps config file with current program and file versions.
+    ///  </summary>
+    ///  <remarks>Note that the user config file has program version written to
+    ///  a different section to common config file, hence need for overridden
+    ///  methods.</remarks>
+    procedure Stamp; override;
   end;
 
 
@@ -93,9 +141,9 @@ uses
   FirstRun.UIniFile, UAppInfo, UIOUtils, UStrUtils;
 
 
-{ TUserConfigFileUpdater }
+{ TConfigFileUpdater }
 
-procedure TUserConfigFileUpdater.CopyANSIFile(const SrcFileName: string);
+procedure TConfigFileUpdater.CopyANSIFile(const SrcFileName: string);
 var
   Lines: TStringDynArray;  // lines of text read from ANSI .ini file
 begin
@@ -109,7 +157,7 @@ begin
   TFileIO.WriteAllLines(fCfgFileName, Lines, TEncoding.Unicode, True);
 end;
 
-procedure TUserConfigFileUpdater.CopyFile(const SrcFileName: string;
+procedure TConfigFileUpdater.CopyFile(const SrcFileName: string;
   const IsAnsi: Boolean);
 begin
   if SrcFileName <> '' then
@@ -121,7 +169,7 @@ begin
   end;
 end;
 
-procedure TUserConfigFileUpdater.CopyUnicodeFile(const SrcFileName: string);
+procedure TConfigFileUpdater.CopyUnicodeFile(const SrcFileName: string);
 begin
   if StrSameText(SrcFileName, fCfgFileName) then
     Exit;
@@ -129,96 +177,29 @@ begin
   TFileIO.CopyFile(SrcFileName, fCfgFileName);
 end;
 
-constructor TUserConfigFileUpdater.Create(const CfgFileName: string);
+constructor TConfigFileUpdater.Create(const CfgFileName: string);
 begin
   inherited Create;
   fCfgFileName := CfgFileName;
 end;
 
-procedure TUserConfigFileUpdater.CreateDefaultCodeGenEntries;
-begin
-  if not TFile.Exists(fCfgFileName) then
-    CreateNewFile;
-  SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, fCfgFileName);
-  SetIniInt('Prefs:CodeGen', 'WarningCount', 8, fCfgFileName);
-  // We don't set warning state: it defaults to required "off" value
-  SetIniString(
-    'Prefs:CodeGen', 'Warning0.Symbol', 'UNSAFE_TYPE', fCfgFileName
-  );
-  SetIniString('Prefs:CodeGen', 'Warning0.MinCompiler', '15.00', fCfgFileName);
-  SetIniString(
-    'Prefs:CodeGen', 'Warning1.Symbol', 'UNSAFE_CAST', fCfgFileName
-  );
-  SetIniString('Prefs:CodeGen', 'Warning1.MinCompiler', '15.00', fCfgFileName);
-  SetIniString(
-    'Prefs:CodeGen', 'Warning2.Symbol', 'UNSAFE_CODE', fCfgFileName
-  );
-  SetIniString('Prefs:CodeGen', 'Warning2.MinCompiler', '15.00', fCfgFileName);
-  SetIniString(
-    'Prefs:CodeGen', 'Warning3.Symbol', 'SYMBOL_PLATFORM', fCfgFileName
-  );
-  SetIniString('Prefs:CodeGen','Warning3.MinCompiler', '14.00', fCfgFileName);
-  SetIniString(
-    'Prefs:CodeGen', 'Warning4.Symbol', 'SYMBOL_DEPRECATED', fCfgFileName
-  );
-  SetIniString('Prefs:CodeGen', 'Warning4.MinCompiler', '14.00', fCfgFileName);
-  SetIniString(
-    'Prefs:CodeGen', 'Warning5.Symbol', 'SYMBOL_LIBRARY', fCfgFileName
-  );
-  SetIniString('Prefs:CodeGen', 'Warning5.MinCompiler', '14.00', fCfgFileName);
-  SetIniString(
-    'Prefs:CodeGen', 'Warning6.Symbol', 'IMPLICIT_STRING_CAST', fCfgFileName
-  );
-  SetIniString('Prefs:CodeGen', 'Warning6.MinCompiler', '20.00', fCfgFileName);
-  SetIniString(
-    'Prefs:CodeGen', 'Warning7.Symbol', 'EXPLICIT_STRING_CAST', fCfgFileName
-  );
-  SetIniString('Prefs:CodeGen', 'Warning7.MinCompiler', '20.00', fCfgFileName);
-end;
-
-procedure TUserConfigFileUpdater.CreateNewFile;
+procedure TConfigFileUpdater.CreateNewFile;
 begin
   ForceDirectories(ExtractFileDir(fCfgFileName));
   TFileIO.WriteAllText(fCfgFileName, '', TEncoding.Unicode, True);
 end;
 
-procedure TUserConfigFileUpdater.DeleteDetailsPaneIndex;
-begin
-  if not TFile.Exists(fCfgFileName) then
-    CreateNewFile;
-  DeleteIniKey('MainWindow', 'DetailTab', fCfgFileName);
-end;
-
-procedure TUserConfigFileUpdater.DeleteHighligherPrefs;
-begin
-  if not TFile.Exists(fCfgFileName) then
-    CreateNewFile;
-  DeleteIniSection('Prefs:Hiliter', fCfgFileName);
-end;
-
-procedure TUserConfigFileUpdater.DeleteProxyPassword;
-begin
-  if not TFile.Exists(fCfgFileName) then
-    CreateNewFile;
-  SetIniString('ProxyServer', 'Password', '', fCfgFileName);
-end;
-
-function TUserConfigFileUpdater.FileVer: Integer;
+function TConfigFileUpdater.FileVer: Integer;
 begin
   Result := GetIniInt('IniFile', 'Version', 1, fCfgFileName);
 end;
 
-function TUserConfigFileUpdater.HasProxyPassword: Boolean;
-begin
-  Result := GetIniString('ProxyServer', 'Password', '', fCfgFileName) <> '';
-end;
-
-function TUserConfigFileUpdater.IsCurrentProgramVer: Boolean;
+function TConfigFileUpdater.IsCurrentProgramVer: Boolean;
 begin
   Result := IsCurrentProgramVer(fCfgFileName);
 end;
 
-class function TUserConfigFileUpdater.IsCurrentProgramVer(
+class function TConfigFileUpdater.IsCurrentProgramVer(
   const CfgFileName: string): Boolean;
 var
   CfgProgVer: string;  // program version from config file
@@ -227,41 +208,131 @@ begin
   Result := CfgProgVer = TAppInfo.ProgramReleaseVersion;
 end;
 
-procedure TUserConfigFileUpdater.Stamp;
+procedure TConfigFileUpdater.Stamp;
 begin
   if not TFile.Exists(fCfgFileName) then
     CreateNewFile;
-  SetIniInt('IniFile', 'Version', FileVersion, fCfgFileName);
+  SetIniInt('IniFile', 'Version', GetFileVersion, fCfgFileName);
+end;
+
+{ TUserConfigFileUpdater }
+
+procedure TUserConfigFileUpdater.CreateDefaultCodeGenEntries;
+begin
+  if not TFile.Exists(CfgFileName) then
+    CreateNewFile;
+  SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, CfgFileName);
+  SetIniInt('Prefs:CodeGen', 'WarningCount', 8, CfgFileName);
+  // We don't set warning state: it defaults to required "off" value
   SetIniString(
-    'IniFile', 'ProgramVersion', TAppInfo.ProgramReleaseVersion, fCfgFileName
+    'Prefs:CodeGen', 'Warning0.Symbol', 'UNSAFE_TYPE', CfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning0.MinCompiler', '15.00', CfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning1.Symbol', 'UNSAFE_CAST', CfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning1.MinCompiler', '15.00', CfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning2.Symbol', 'UNSAFE_CODE', CfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning2.MinCompiler', '15.00', CfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning3.Symbol', 'SYMBOL_PLATFORM', CfgFileName
+  );
+  SetIniString('Prefs:CodeGen','Warning3.MinCompiler', '14.00', CfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning4.Symbol', 'SYMBOL_DEPRECATED', CfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning4.MinCompiler', '14.00', CfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning5.Symbol', 'SYMBOL_LIBRARY', CfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning5.MinCompiler', '14.00', CfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning6.Symbol', 'IMPLICIT_STRING_CAST', CfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning6.MinCompiler', '20.00', CfgFileName);
+  SetIniString(
+    'Prefs:CodeGen', 'Warning7.Symbol', 'EXPLICIT_STRING_CAST', CfgFileName
+  );
+  SetIniString('Prefs:CodeGen', 'Warning7.MinCompiler', '20.00', CfgFileName);
+end;
+
+{$IFNDEF PORTABLE}
+procedure TUserConfigFileUpdater.DeleteDetailsPaneIndex;
+begin
+  if not TFile.Exists(CfgFileName) then
+    CreateNewFile;
+  DeleteIniKey('MainWindow', 'DetailTab', CfgFileName);
+end;
+{$ENDIF}
+
+{$IFNDEF PORTABLE}
+procedure TUserConfigFileUpdater.DeleteHighligherPrefs;
+begin
+  if not TFile.Exists(CfgFileName) then
+    CreateNewFile;
+  DeleteIniSection('Prefs:Hiliter', CfgFileName);
+end;
+{$ENDIF}
+
+{$IFNDEF PORTABLE}
+procedure TUserConfigFileUpdater.DeleteProxyPassword;
+begin
+  if not TFile.Exists(CfgFileName) then
+    CreateNewFile;
+  SetIniString('ProxyServer', 'Password', '', CfgFileName);
+end;
+{$ENDIF}
+
+class function TUserConfigFileUpdater.GetFileVersion: Integer;
+begin
+  Result := FileVersion;
+end;
+
+{$IFNDEF PORTABLE}
+function TUserConfigFileUpdater.HasProxyPassword: Boolean;
+begin
+  Result := GetIniString('ProxyServer', 'Password', '', CfgFileName) <> '';
+end;
+{$ENDIF}
+
+procedure TUserConfigFileUpdater.Stamp;
+begin
+  inherited;
+  SetIniString(
+    'IniFile', 'ProgramVersion', TAppInfo.ProgramReleaseVersion, CfgFileName
   );
 end;
 
+{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.UpdateCodeGenEntries;
 begin
   // Key that determines if warnings are emitted changes from SwitchOffWarnings
   // to EmitWarnDirs.
-  if not TFile.Exists(fCfgFileName) then
+  if not TFile.Exists(CfgFileName) then
     CreateNewFile;
-  if IniKeyExists('Prefs:CodeGen', 'SwitchOffWarnings', fCfgFileName) then
+  if IniKeyExists('Prefs:CodeGen', 'SwitchOffWarnings', CfgFileName) then
   begin
     SetIniInt(
       'Prefs:CodeGen',
       'EmitWarnDirs',
-      GetIniInt('Prefs:CodeGen', 'SwitchOffWarnings', 0, fCfgFileName),
-      fCfgFileName
+      GetIniInt('Prefs:CodeGen', 'SwitchOffWarnings', 0, CfgFileName),
+      CfgFileName
     );
-    DeleteIniKey('Prefs:CodeGen', 'SwitchOffWarnings', fCfgFileName);
+    DeleteIniKey('Prefs:CodeGen', 'SwitchOffWarnings', CfgFileName);
   end
   else
-    SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, fCfgFileName);
+    SetIniInt('Prefs:CodeGen', 'EmitWarnDirs', 0, CfgFileName);
 end;
+{$ENDIF}
 
+{$IFNDEF PORTABLE}
 procedure TUserConfigFileUpdater.UpdateFromOriginal;
 var
   I: Integer; // loops thru all highlight elements
 begin
-  if not TFile.Exists(fCfgFileName) then
+  if not TFile.Exists(CfgFileName) then
     CreateNewFile;
   // Delete unwanted sections:
   // - Application section: now in common config file
@@ -272,14 +343,30 @@ begin
   //   different default style and main display uses that style, therefore
   //   section's HiliteOutput (pre v1.7.5) and Prefs:Hiliter (v1.7.5 and later)
   //   deleted.
-  DeleteIniSection('Application', fCfgFileName);
-  DeleteIniSection('SourceOutput', fCfgFileName);
-  DeleteIniSection('HiliteOutput', fCfgFileName);
+  DeleteIniSection('Application', CfgFileName);
+  DeleteIniSection('SourceOutput', CfgFileName);
+  DeleteIniSection('HiliteOutput', CfgFileName);
   for I := 0 to 11 do
-    DeleteIniSection('HiliteOutput:Elem' + IntToStr(I), fCfgFileName);
+    DeleteIniSection('HiliteOutput:Elem' + IntToStr(I), CfgFileName);
   DeleteHighligherPrefs;
   // Main window's overview tabs changed at v3: so we reset to 0 (default)
-  SetIniInt('MainWindow', 'OverviewTab', 0, fCfgFileName);
+  SetIniInt('MainWindow', 'OverviewTab', 0, CfgFileName);
+end;
+{$ENDIF}
+
+{ TCommonConfigFileUpdater }
+
+class function TCommonConfigFileUpdater.GetFileVersion: Integer;
+begin
+  Result := FileVersion;
+end;
+
+procedure TCommonConfigFileUpdater.Stamp;
+begin
+  inherited;
+  SetIniString(
+    'Application', 'Version', TAppInfo.ProgramReleaseVersion, CfgFileName
+  );
 end;
 
 end.

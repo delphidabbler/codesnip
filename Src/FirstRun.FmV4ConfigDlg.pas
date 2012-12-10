@@ -209,7 +209,7 @@ end;
 
 function TV4ConfigDlg.ConfigFileAvailable: Boolean;
 begin
-  Result := fFirstRun.HaveOldCfgFile;
+  Result := fFirstRun.HaveOldUserCfgFile;
 end;
 
 procedure TV4ConfigDlg.ConfigForm;
@@ -463,8 +463,8 @@ begin
   Actions := GetUpdateActions;
   if uaCopyCfgFile in Actions then
   begin
-    fFirstRun.BringForwardCfgFile;
-    fFirstRun.UpdateCfgFile(fCfgChanges);
+    fFirstRun.BringForwardUserCfgFile;
+    fFirstRun.UpdateUserCfgFile(fCfgChanges);
   end;
   if uaCopyUserDB in Actions then
     fFirstRun.BringForwardUserDB;

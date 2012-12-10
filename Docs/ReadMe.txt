@@ -23,24 +23,46 @@ Features new to CodeSnip 4 are listed in the "What's New In CodeSnip 4" topic
 in the program's help file.
 
 
+CodeSnip Editions
+================================================================================
+
+There are two different editions of CodeSnip 4 available:
+
++ The standard edition, which is installed on the user's computer using an
+  installer and which records its presence in the registry and stores data in
+  the system's application and user data directories.
+
++ The portable edition that can be run from any writeable removable storage
+  medium (e.g. a USB memory stick) that makes no changes to the host computer.
+  This edition has no installer and is simply copied onto the required medium.
+
+You can run both the standard and portable editions together on the same
+computer and even run them at the same time. However, each edition maintains its
+own settings and keeps its own copies of the snippets databases. To share user
+defined snippets you must export them from one edition and import into the
+other. CodeSnip provides no mechanism for keeping them synchronised.
+
+
 Installation
 ================================================================================
 
-IMPORTANT NOTES:
+CodeSnip requires Windows 2000 or later. It also requires MS Internet Explorer
+V6 or later, but IE 8, 9 or 10 are strongly recommended.
 
-1) CodeSnip requires Windows 2000 or later. It also requires MS Internet
-   Explorer V6 or later, but IE 8, 9 or 10 are strongly recommended.
+Installing the Standard Edition
+-------------------------------
 
-2) You will need administrator privileges to run the setup program. If you are
-   using a non-admin user account on Windows 2000 or XP you should run setup as
-   administrator. By default Windows Vista and Windows 7 will require an admin
-   password if running as a standard user and setup will attempt to elevate the
-   process. If UAC prompts are disabled you must run setup as administrator.
+You will need administrator privileges to run the setup program for the standard
+edition. If you are using a non-admin user account on Windows 2000 or XP you
+should run setup as administrator. By default Windows Vista and Windows 7 will
+require an admin password if running as a standard user and setup will attempt
+to elevate the process. If UAC prompts are disabled you must run setup as
+administrator.
 
-3) CodeSnip v4 will install alongside any v3 or earlier release that may already
-   be installed. If you want to replace the earlier version simply uninstall it
-   in the usual way. Uninstalling v3 or earlier after installing v4 will have no
-   adverse affect on v4.
+CodeSnip v4 will install alongside any v3 or earlier release that may already be
+installed. If you want to replace the earlier version simply uninstall it in the
+usual way. Uninstalling v3 or earlier after installing v4 will have no adverse
+affect on v4.
 
 CodeSnip's installation program is named codesnip-setup-4.x.x.exe, where x.x
 is the program's minor version number. The install program may be distributed in
@@ -75,9 +97,38 @@ If you are updating to CodeSnip 4 from version 3 or earlier, CodeSnip will give
 you the option of bringing forward your old settings and / or user defined
 database. This happens the first time v4 is run for each user.
 
+Installing the Portable Edition
+-------------------------------
+
+The portable edition of CodeSnip 4 is distributed in a zip file that contains
+the program executable, the help file and various documentation files.
+
+Install the program using the following steps:
+
+1) Mount the storage medium on which you want to install CodeSnip.
+
+2) Create a folder on the storage medium in which to "install" CodeSnip.
+
+3) Copy the files CodeSnip-p.exe (the executable program) and CodeSnip.chm
+   (the help file) into the folder you created.
+
+   CodeSnip does not need the other files included in the zip file in order to
+   run, but you may find them useful. Copy them if you wish.
+
+Run the program by double clicking it. When it first runs it will created two
+sub-directories within the folder where you installed the program. These will
+be named AppData and UserData. Do not remove these directories or alter any of
+the contents. CodeSnip uses them to store configuration data along with your
+code snippets.
+
+No files are written to the host computer and the registry is not modified.
+
 
 Uninstallation
 ================================================================================
+
+Unistalling the Standard Edition
+--------------------------------
 
 CodeSnip can be uninstalled via "Programs and Features" (a.k.a. "Add/Remove
 Programs") from the Windows Control Panel or by choosing "Uninstall
@@ -93,14 +144,22 @@ To remove user defined databases and configuration data, delete the
 %AppData%\DelphiDabbler\CodeSnip.4 directory and all its contents for each user
 who ran CodeSnip.
 
+Unistalling the Portable Edition
+--------------------------------
+
+Simply delete the folder where you installed CodeSnip and all its contents.
+
+Be aware that any snippets you have created will be lost. If you want to keep
+them for use in another CodeSnip installation either export them or back up the
+user database before deleting the folder. See the help file for details of how
+to do this.
+
 
 Downloading & Updating the Code Snippets Database
 ================================================================================
 
 The online DelphiDabbler Code Snippets database is not installed with the
-program. However, if an older installation is present setup will give the option
-to carry it forward if possible. When setup completes it checks for the presence
-of the database and puts up a message if it is not present.
+program.
 
 CodeSnip's start-up screen shows details of any installed databases. If there is
 no copy of the online database a link is displayed that enables the database to
@@ -113,7 +172,16 @@ menu option.
 You can get to know about updates by subscribing to the CodeSnip RSS feed (see
 below).
 
-Updates will apply to all users of the computer.
+Standard Edition Only
+---------------------
+
+When installing the standard edition, the setup program will detect if an older
+database installation is present and will give the option to carry it forward.
+When setup completes it checks for the presence of the database and puts up a
+message if it is not present.
+
+Database updates will apply to all users of the computer the next time they
+start CodeSnip.
 
 
 Configuring CodeSnip to Work With Your Compilers
@@ -152,8 +220,13 @@ To register click the "Tools | Register CodeSnip" menu item and follow the
 wizard. If this menu option is not displayed then the program has already been
 registered.
 
-On systems with multiple users, only one user needs to register. Once this is
-done the program will show as registered regardless of which user is logged on.
+On systems with multiple users using the standard edition, only one user needs
+to register. Once this is done the program will show as registered regardless of
+which user is logged on.
+
+When using the portable edition, uninstalling the program looses registration
+data. If the portable edition is installed on more than one device then each
+copy must be registered separately.
 
 
 Updating the Program
@@ -229,6 +302,8 @@ KIND, either express or implied. The code is used entirely at you own risk.
 
 Source Code
 ================================================================================
+
+The standard and portable editions of CodeSnip share the same source code.
 
 The source code of the latest version of CodeSnip can be downloaded from
 http://delphidabbler.com/url/codesnip-download.

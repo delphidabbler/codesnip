@@ -327,6 +327,7 @@ uses
   USnippetValidator in 'USnippetValidator.pas',
   USourceFileInfo in 'USourceFileInfo.pas',
   USourceGen in 'USourceGen.pas',
+  UStartUp in 'UStartUp.pas',
   UStatusBarMgr in 'UStatusBarMgr.pas',
   UStringReader in 'UStringReader.pas',
   UStructs in 'UStructs.pas',
@@ -383,10 +384,14 @@ uses
   Web.UXMLRequestor in 'Web.UXMLRequestor.pas';
 
 // Include resources
-{$Resource ExternalObj.tlb} // Type library file
-{$Resource HTML.res}        // HTML resources
-{$Resource VCodeSnip.res}   // Version information resource
-{$Resource Resources.res}   // All other resources.
+{$Resource ExternalObj.tlb}       // Type library file
+{$Resource HTML.res}              // HTML resources
+{$IFNDEF PORTABLE}
+{$Resource VCodeSnip.res}         // Version information resource (normal)
+{$ELSE}
+{$Resource VCodeSnipPortable.res} // Version information resource (portable)
+{$ENDIF}
+{$Resource Resources.res}         // All other resources.
 
 {$Include CompilerDefines.inc}
 
@@ -394,7 +399,7 @@ begin
   ReportMemoryLeaksOnShutdown := DebugHook <> 0;
   Application.Initialize;
   Application.MainFormOnTaskBar := True;
-  TFirstRunMgr.Execute;
+  TStartUp.Execute;
   SplashForm := TSplashForm.Create(Application);
   SplashForm.Show;
   Application.ModalPopupMode := pmAuto;
