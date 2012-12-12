@@ -157,7 +157,7 @@ inherited HiliterPrefsFrame: THiliterPrefsFrame
     Width = 146
     Height = 25
     Anchors = [akTop, akRight]
-    Caption = '&Use Predefined Styles'
+    Caption = 'Use &Predefined Styles'
     DoubleBuffered = True
     Glyph.Data = {
       F6000000424DF600000000000000760000002800000010000000100000000100
