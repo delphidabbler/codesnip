@@ -138,8 +138,8 @@ procedure TRenameCategoryDlg.ConfigForm;
   }
 resourcestring
   // Prompts
-  sCatPrompt = 'Select category to be renamed:';
-  sDescPrompt = 'Enter a new description for the category:';
+  sCatPrompt = 'Select &category to be renamed:';
+  sDescPrompt = 'Enter a new &description for the category:';
 begin
   inherited;
   // Set the required prompt text in frames
