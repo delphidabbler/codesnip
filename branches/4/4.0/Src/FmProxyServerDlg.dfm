@@ -74,7 +74,7 @@ inherited ProxyServerDlg: TProxyServerDlg
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clRed
         Font.Height = -13
-        Font.Name = 'MS Sans Serif'
+        Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
       end
@@ -87,7 +87,7 @@ inherited ProxyServerDlg: TProxyServerDlg
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clRed
         Font.Height = -13
-        Font.Name = 'MS Sans Serif'
+        Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
       end
@@ -100,7 +100,7 @@ inherited ProxyServerDlg: TProxyServerDlg
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clRed
         Font.Height = -13
-        Font.Name = 'MS Sans Serif'
+        Font.Name = 'Tahoma'
         Font.Style = []
         ParentFont = False
       end

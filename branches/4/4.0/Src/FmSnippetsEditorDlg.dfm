@@ -67,7 +67,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
-          Font.Name = 'MS Sans Serif'
+          Font.Name = 'Tahoma'
           Font.Style = [fsUnderline]
           ParentFont = False
           OnClick = lblSnippetKindHelpClick
@@ -102,7 +102,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Top = 224
           Width = 647
           Height = 225
-          Font.Charset = ANSI_CHARSET
+          Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'Courier New'
@@ -411,7 +411,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
-            Font.Name = 'MS Sans Serif'
+            Font.Name = 'Tahoma'
             Font.Style = [fsUnderline]
             ParentFont = False
             OnClick = lblViewCompErrsClick

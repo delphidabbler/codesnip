@@ -12,7 +12,7 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
-      Font.Name = 'MS Sans Serif'
+      Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
     end
@@ -32,7 +32,7 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clPurple
       Font.Height = -11
-      Font.Name = 'MS Sans Serif'
+      Font.Name = 'Tahoma'
       Font.Style = []
       ParentFont = False
       WordWrap = True
@@ -110,7 +110,7 @@ inherited TrappedBugReportDlg: TTrappedBugReportDlg
     Font.Charset = DEFAULT_CHARSET
     Font.Color = clWindowText
     Font.Height = -11
-    Font.Name = 'MS Sans Serif'
+    Font.Name = 'Tahoma'
     Font.Style = [fsBold]
     ParentFont = False
     TabOrder = 1
