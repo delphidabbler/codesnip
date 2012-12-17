@@ -1,7 +1,7 @@
 inherited ProxyServerDlg: TProxyServerDlg
   Caption = 'Proxy Server Configuration'
   ExplicitWidth = 474
-  ExplicitHeight = 354
+  ExplicitHeight = 356
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -14,7 +14,7 @@ inherited ProxyServerDlg: TProxyServerDlg
       Top = 0
       Width = 169
       Height = 17
-      Caption = 'Use proxy server'
+      Caption = '&Use proxy server'
       TabOrder = 0
       OnClick = cbUseProxyClick
     end
@@ -28,17 +28,17 @@ inherited ProxyServerDlg: TProxyServerDlg
       object lblIPAddress: TLabel
         Left = 11
         Top = 28
-        Width = 88
+        Width = 91
         Height = 13
-        Caption = 'Server IP Address:'
+        Caption = 'Server IP &Address:'
         FocusControl = edIPAddress
       end
       object lblPort: TLabel
         Left = 11
         Top = 59
-        Width = 73
+        Width = 79
         Height = 13
-        Caption = 'Port (0..65535):'
+        Caption = '&Port (0..65535):'
         FocusControl = edPort
       end
       object lblUserName: TLabel
@@ -46,29 +46,29 @@ inherited ProxyServerDlg: TProxyServerDlg
         Top = 89
         Width = 56
         Height = 13
-        Caption = 'User Name:'
+        Caption = 'User &Name:'
         FocusControl = edUserName
       end
       object lblPassword1: TLabel
         Left = 11
         Top = 119
-        Width = 49
+        Width = 50
         Height = 13
-        Caption = 'Password:'
+        Caption = 'Pass&word:'
         FocusControl = edPassword1
       end
       object lblPassword2: TLabel
         Left = 11
         Top = 150
-        Width = 93
+        Width = 96
         Height = 13
-        Caption = 'Re-enter Password:'
+        Caption = '&Re-enter Password:'
         FocusControl = edPassword2
       end
       object lblIPAddressReq: TLabel
         Left = 242
         Top = 29
-        Width = 5
+        Width = 8
         Height = 16
         Caption = '*'
         Font.Charset = DEFAULT_CHARSET
@@ -81,7 +81,7 @@ inherited ProxyServerDlg: TProxyServerDlg
       object lblPortReq: TLabel
         Left = 180
         Top = 58
-        Width = 5
+        Width = 8
         Height = 16
         Caption = '*'
         Font.Charset = DEFAULT_CHARSET
@@ -94,7 +94,7 @@ inherited ProxyServerDlg: TProxyServerDlg
       object lblReqSymbol: TLabel
         Left = 11
         Top = 185
-        Width = 5
+        Width = 8
         Height = 16
         Caption = '*'
         Font.Charset = DEFAULT_CHARSET
@@ -107,7 +107,7 @@ inherited ProxyServerDlg: TProxyServerDlg
       object lblReqExplain: TLabel
         Left = 22
         Top = 187
-        Width = 72
+        Width = 78
         Height = 13
         Caption = '= required field.'
       end
