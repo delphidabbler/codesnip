@@ -308,7 +308,7 @@ begin
   // method is called by the status bar to draw the panel.
 
   // Store text describing search result
-  if Query.LatestSearch.IsNul then
+  if Query.LatestSearch.Criteria.IsNull then
     fStatusBar.Panels[cSearchPanel].Text := sNoSearch
   else
     fStatusBar.Panels[cSearchPanel].Text

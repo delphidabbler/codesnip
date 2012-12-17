@@ -191,7 +191,10 @@ function TQuery.ApplySearch(Search: ISearch; const Refine: Boolean):
   }
 begin
   Assert(Assigned(Search), ClassName + '.ApplySearch: Search is nil');
-  Assert(not Search.IsNul, ClassName + '.ApplySearch: Search can''t be null');
+  Assert(Assigned(Search.Criteria),
+    ClassName + '.ApplySearch: Search.Criteria is nil');
+  Assert(not Search.Criteria.IsNull,
+    ClassName + '.ApplySearch: Search can''t be null');
 
   if IsSearchActive and not Refine then
     Reset;
