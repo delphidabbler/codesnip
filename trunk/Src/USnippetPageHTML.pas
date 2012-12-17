@@ -16,104 +16,175 @@
 
 unit USnippetPageHTML;
 
-// TODO: Rationalise this page with USnippetHTML and UDetailPageHTML
 
 interface
 
+
 uses
+  // Project
   DB.USnippet, USnippetHTML, USnippetPageStructure;
 
+
 type
+  ///  <summary>Advanced record use to render a "page" of HTML containing all
+  ///  required fragments of a snippet.</summary>
+  ///  <remarks>This is not strictly a complete HTML page, just the user-
+  ///  configured fragments of page. Constant page elements are rendered
+  ///  elsewhere.</remarks>
   TSnippetPageHTML = record
   public
+    ///  <summary>Renders HTML description of given snippet, using the fragments
+    ///  specified in preferences.</summary>
     class function Render(const Snippet: TSnippet): string; static;
   end;
 
 type
+  ///  <summary>Base class for classes that render a snippet fragment as HTML.
+  ///  </summary>
+  ///  <remarks>Each sub class renders a different fragment of snippet
+  ///  information and must return it via overridden ToString method.</remarks>
   TSnippetHTMLFragment = class abstract(TObject)
   strict private
     var
+      ///  <summary>Value of SnippetHTML property.</summary>
       fSnippetHTML: TSnippetHTML;
   strict protected
+    ///  <summary>Object that renders snippet information in HTML.</summary>
+    ///  <remarks>For use in sub-classes.</remarks>
     property SnippetHTML: TSnippetHTML read fSnippetHTML;
   public
+    ///  <summary>Constructs object to render fragment of given snippet.
+    ///  </summary>
     constructor Create(Snippet: TSnippet);
+    ///  <summary>Destroys fragement object.</summary>
     destructor Destroy; override;
   end;
 
 type
+  ///  <summary>Factory used to instantiate objects used to generate HTML
+  ///  fragments describing a snippet.</summary>
   TSnippetHTMLFragmentFactory = record
   public
+    ///  <summary>Generates a TSnippetHTMLFragment instance used to specify a
+    ///  specified fragment of a specified snippet.</summary>
+    ///  <param name="FragKind">TSnippetPagePartId [in] Id of required fragment.
+    ///  </param>
+    ///  <param name="Snippet">TSnippet [in] Snippet for which fragment is to be
+    ///  rendered.</param>
+    ///  <returns>TSnippetHTMLFragment. Required renderer object.</returns>
+    ///  <remarks>Caller is responsible for freeing returned object.</remarks>
     class function Create(FragKind: TSnippetPagePartId; Snippet: TSnippet):
       TSnippetHTMLFragment; static;
   end;
 
+
 implementation
 
+
 uses
+  // Delphi
   SysUtils,
+  // Project
   UHTMLUtils, UPreferences;
+
 
 type
   TSnippetHTMLFragmentClass = class of TSnippetHTMLFragment;
 
 type
+  ///  <summary>Base class for classes that render HTML describing a snippet
+  ///  fragment comprising fixed prefix text following by some snippet
+  ///  information.</summary>
   TPrefixedSnippetHTMLFragment = class abstract(TSnippetHTMLFragment)
   strict protected
+    ///  <summary>Renders required prefixed HTML.</summary>
+    ///  <param name="Prefix">string [in] Prefix as valid HTML text.</param>
+    ///  <param name="Id">string [in] Unique id of HTML that spans Content.
+    ///  </param>
+    ///  <param name="Content">string [in] Snippet dependant content, as valid
+    ///  HTML text.</param>
+    ///  <returns>string. Required HTML.</returns>
     class function Render(const Prefix, Id, Content: string): string;
   end;
 
 type
+  ///  <summary>Class that renders "Description" HTML fragment for a snippet.
+  ///  </summary>
   TSnippetDescHTMLFragment = class(TSnippetHTMLFragment)
   public
+    ///  <summary>Renders "Description" fragment as HTML.</summary>
     function ToString: string; override;
   end;
 
 type
+  ///  <summary>Class that renders "Source Code" HTML fragment for a snippet.
+  ///  </summary>
   TSnippetSourceCodeHTMLFragment = class(TSnippetHTMLFragment)
   public
+    ///  <summary>Renders "Source Code" fragment as HTML.</summary>
     function ToString: string; override;
   end;
 
 type
+  ///  <summary>Class that renders "Type" HTML fragment for a snippet.
+  ///  </summary>
   TSnippetKindHTMLFragment = class(TPrefixedSnippetHTMLFragment)
   public
+    ///  <summary>Renders "Type" fragment as HTML.</summary>
     function ToString: string; override;
   end;
 
 type
+  ///  <summary>Class that renders "Category" HTML fragment for a snippet.
+  ///  </summary>
   TSnippetCategoryHTMLFragment = class(TPrefixedSnippetHTMLFragment)
   public
+    ///  <summary>Renders "Category" fragment as HTML.</summary>
     function ToString: string; override;
   end;
 
 type
+  ///  <summary>Class that renders "Required Units List" HTML fragment for a
+  ///  snippet.</summary>
   TSnippetUnitsHTMLFragment = class(TPrefixedSnippetHTMLFragment)
   public
+    ///  <summary>Renders "Required Units List" fragment as HTML.</summary>
     function ToString: string; override;
   end;
 
 type
+  ///  <summary>Class that renders "Required Snippets List" HTML fragment for a
+  ///  snippet.</summary>
   TSnippetDependsHTMLFragment = class(TPrefixedSnippetHTMLFragment)
   public
+    ///  <summary>Renders "Required Snippets List" fragment as HTML.</summary>
     function ToString: string; override;
   end;
 
 type
+  ///  <summary>Class that renders "Cross Reference List" HTML fragment for a
+  ///  snippet.</summary>
   TSnippetXRefsHTMLFragment = class(TPrefixedSnippetHTMLFragment)
   public
+    ///  <summary>Renders "Cross Reference List" fragment as HTML.</summary>
     function ToString: string; override;
   end;
 
 type
+  ///  <summary>Class that renders "Compile Results Table" HTML fragment for a
+  ///  snippet.</summary>
   TSnippetCompileResultsHTMLFragment = class(TSnippetHTMLFragment)
   public
+    ///  <summary>Renders "Compile Results Table" fragment as HTML.</summary>
     function ToString: string; override;
   end;
 
 type
+  ///  <summary>Class that renders "Extra Information" HTML fragment for a
+  ///  snippet.</summary>
   TSnippetExtraHTMLFragment = class(TSnippetHTMLFragment)
   public
+    ///  <summary>Renders "Extra Information" fragment as HTML.</summary>
     function ToString: string; override;
   end;
 
