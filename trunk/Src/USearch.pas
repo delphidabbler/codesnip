@@ -358,8 +358,10 @@ type
     indicate whether a given snippet matches a search by overriding the Match
     method.
   }
-  TSearch = class abstract(TInterfacedObject)
-    function GetCriteria: ISearchCriteria; virtual; abstract;
+  TSearch = class sealed(TInterfacedObject, ISearch)
+  strict private
+    var
+      fCriteria: ISearchCriteria;
   protected
     { ISearch methods }
     function Execute(const InList, FoundList: TSnippetList): Boolean;
@@ -369,135 +371,9 @@ type
         @param FoundList [in] List of snippets that match the search criteria.
         @return True if some snippets were found or false if search failed.
       }
-  end;
-
-  {
-  TCompilerSearch:
-    Class that finds snippets depending on how they compile with specified
-    compilers.
-  }
-  TCompilerSearch = class(TSearch, ISearch)
-  strict private
-    fCriteria: ICompilerSearchCriteria;
-      {Search criteria}
-  protected
-    { ISearch methods not defined in base class }
-    function GetCriteria: ISearchCriteria; override;
-      {Read accessor for Criteria property.
-        @return Criteria to be applied to search.
-      }
-  public
-    constructor Create(const Criteria: ICompilerSearchCriteria);
-      {Class constructor. Sets up compiler search.
-        @param Critera [in] Criteria for this search.
-      }
-  end;
-
-  {
-  TTextSearch:
-    Class that finds snippets that match specified text.
-  }
-  TTextSearch = class(TSearch, ISearch)
-  strict private
-    fCriteria: ITextSearchCriteria;
-      {Search criteria}
-  protected
-    { ISearch methods not defined in base class }
-    function GetCriteria: ISearchCriteria; override;
-      {Read accessor for Criteria property.
-        @return Criteria to be applied to search.
-      }
-  public
-    constructor Create(const Criteria: ITextSearchCriteria);
-      {Class constructor. Sets up text search.
-        @param Critera [in] Criteria for this search.
-      }
-  end;
-
-  {
-  TSelectionSearch:
-    Class that selects snippets specified in a list.
-  }
-  TSelectionSearch = class(TSearch, ISearch)
-  strict private
-    fCriteria: ISelectionSearchCriteria;
-      {Search criteria}
-  protected
-    { ISearch methods not defined in base class }
-    function GetCriteria: ISearchCriteria; override;
-      {Read accessor for Criteria property.
-        @return Criteria to be applied to search.
-      }
-  public
-    constructor Create(const Criteria: ISelectionSearchCriteria);
-      {Class constructor. Sets up selection search.
-        @param Critera [in] Criteria for this search.
-      }
-  end;
-
-  TStoredSelectionSearch = class(TSearch, ISearch)
-  strict private
-    fCriteria: IStoredSelectionSearchCriteria;
-      {Search criteria}
-  protected
-    { ISearch methods not defined in base class }
-    function GetCriteria: ISearchCriteria; override;
-      {Read accessor for Criteria property.
-        @return Criteria to be applied to search.
-      }
-  public
-    constructor Create(const Criteria: IStoredSelectionSearchCriteria);
-      {Class constructor. Sets up selection search.
-        @param Critera [in] Criteria for this search.
-      }
-  end;
-
-  {
-  TXRefSearch:
-    Class that searches for snippets cross-referenced by a specified snippet.
-  }
-  TXRefSearch = class(TSearch, ISearch)
-  strict private
-    fCriteria: IXRefSearchCriteria;
-      {Search criteria}
-  protected
-    { ISearch methods not defined in base class }
-    function GetCriteria: ISearchCriteria; override;
-      {Read accessor for Criteria property.
-        @return Criteria to be applied to search.
-      }
-  public
-    constructor Create(const Criteria: IXRefSearchCriteria);
-      {Class constructor. Sets up cross-reference search.
-        @param Critera [in] Criteria for this search.
-      }
-  end;
-
-  {
-  TNulSearch:
-    Class that finds all snippets - a nul search.
-  }
-  TNulSearch = class(TInterfacedObject, ISearch)
-  strict private
-    fCriteria: ISearchCriteria;
-      {Search criteria}
-  protected
-    { ISearch methods }
     function GetCriteria: ISearchCriteria;
-      {Read accessor for Criteria property.
-        @return Criteria to be applied to search.
-      }
-    function Execute(const InList, FoundList: TSnippetList): Boolean;
-      {Executes the search, determining which of a list of snippets match the
-      search criteria.
-        @param InList [in] List of snippets that the search is applied to.
-        @param FoundList [in] List of snippets that match the search criteria.
-        @return True if some snippets were found or false if search failed.
-      }
   public
-    constructor Create;
-      {Class constructor. Sets up nul search.
-      }
+    constructor Create(const Criteria: ISearchCriteria);
   end;
 
   {
@@ -758,6 +634,13 @@ type
 
 { TSearch }
 
+constructor TSearch.Create(const Criteria: ISearchCriteria);
+begin
+  Assert(Assigned(Criteria), ClassName + '.Create: Criteria is nil');
+  inherited Create;
+  fCriteria := Criteria;
+end;
+
 function TSearch.Execute(const InList, FoundList: TSnippetList): Boolean;
   {Executes the search, determining which of a list of snippets match the search
   criteria.
@@ -779,101 +662,7 @@ begin
   Result := FoundList.Count > 0;
 end;
 
-{ TCompilerSearch }
-
-constructor TCompilerSearch.Create(const Criteria: ICompilerSearchCriteria);
-  {Class constructor. Sets up compiler search.
-    @param Critera [in] Criteria for this search.
-  }
-begin
-  Assert(Assigned(Criteria), ClassName + '.Create: Criteria is nil');
-  inherited Create;
-  // Record search criteria
-  fCriteria := Criteria;
-end;
-
-function TCompilerSearch.GetCriteria: ISearchCriteria;
-  {Read accessor for Criteria property.
-    @return Criteria to be applied to search.
-  }
-begin
-  Result := fCriteria;
-end;
-
-{ TTextSearch }
-
-constructor TTextSearch.Create(const Criteria: ITextSearchCriteria);
-  {Class constructor. Sets up text search.
-    @param Critera [in] Criteria for this search.
-  }
-begin
-  Assert(Assigned(Criteria), ClassName + '.Create: Criteria is nil');
-  inherited Create;
-  // Record search criteria
-  fCriteria := Criteria;
-end;
-
-function TTextSearch.GetCriteria: ISearchCriteria;
-  {Read accessor for Criteria property.
-    @return Criteria to be applied to search.
-  }
-begin
-  Result := fCriteria;
-end;
-
-{ TSelectionSearch }
-
-constructor TSelectionSearch.Create(const Criteria: ISelectionSearchCriteria);
-  {Class constructor. Sets up selection search.
-    @param Critera [in] Criteria for this search.
-  }
-begin
-  Assert(Assigned(Criteria), ClassName + '.Create: Criteria is nil');
-  inherited Create;
-  // Record search criteria
-  fCriteria := Criteria;
-end;
-
-function TSelectionSearch.GetCriteria: ISearchCriteria;
-  {Read accessor for Criteria property.
-    @return Criteria to be applied to search.
-  }
-begin
-  Result := fCriteria;
-end;
-
-{ TStoredSelectionSearch }
-
-constructor TStoredSelectionSearch.Create(
-  const Criteria: IStoredSelectionSearchCriteria);
-begin
-  Assert(Assigned(Criteria), ClassName + '.Create: Criteria is nil');
-  inherited Create;
-  fCriteria := Criteria;
-end;
-
-function TStoredSelectionSearch.GetCriteria: ISearchCriteria;
-begin
-  Result := fCriteria;
-end;
-
-{ TXRefSearch }
-
-constructor TXRefSearch.Create(const Criteria: IXRefSearchCriteria);
-  {Class constructor. Sets up cross-reference search.
-    @param Critera [in] Criteria for this search.
-  }
-begin
-  Assert(Assigned(Criteria), ClassName + '.Create: Criteria is nil');
-  inherited Create;
-  // Record search criteria
-  fCriteria := Criteria;
-end;
-
-function TXRefSearch.GetCriteria: ISearchCriteria;
-  {Read accessor for Criteria property.
-    @return Criteria to be applied to search.
-  }
+function TSearch.GetCriteria: ISearchCriteria;
 begin
   Result := fCriteria;
 end;
@@ -900,42 +689,6 @@ begin
     fBitmap.LoadFromResourceName(HInstance, GlyphResourceName);
   end;
   Result := fBitmap;
-end;
-
-{ TNulSearch }
-
-constructor TNulSearch.Create;
-  {Class constructor. Sets up nul search.
-  }
-begin
-  inherited Create;
-  // Create nul search criteria object
-  fCriteria := TNulSearchCriteria.Create;
-end;
-
-function TNulSearch.Execute(const InList, FoundList: TSnippetList): Boolean;
-  {Executes the search, determining which of a list of snippets match the
-  search criteria.
-    @param InList [in] List of snippets that the search is applied to.
-    @param FoundList [in] List of snippets that match the search criteria.
-    @return True if some snippets were found or false if search failed.
-  }
-begin
-  Assert(Assigned(InList), ClassName + '.Execute: InList is nil');
-  Assert(Assigned(FoundList), ClassName + '.Execute: FoundList is nil');
-  Assert(InList <> FoundList, ClassName + '.Execute: InList = FoundList');
-  // Nul search finds all items: simply copy source list to found list
-  FoundList.Assign(InList);
-  // Return true unless there are no snippets in original
-  Result := InList.Count > 0;
-end;
-
-function TNulSearch.GetCriteria: ISearchCriteria;
-  {Read accessor for Criteria property.
-    @return Criteria to be applied to search.
-  }
-begin
-  Result := fCriteria;
 end;
 
 { TCompilerSearchCriteria }
@@ -1444,7 +1197,7 @@ class function TSearchFactory.CreateCompilerSearch(
     @return ISearch interface to compiler search object instance.
   }
 begin
-  Result := TCompilerSearch.Create(Criteria);
+  Result := TSearch.Create(Criteria);
 end;
 
 class function TSearchFactory.CreateNulSearch: ISearch;
@@ -1452,7 +1205,7 @@ class function TSearchFactory.CreateNulSearch: ISearch;
     @return ISearch interface to nul search object instance.
   }
 begin
-  Result := TNulSearch.Create;
+  Result := TSearch.Create(TNulSearchCriteria.Create);
 end;
 
 class function TSearchFactory.CreateSelectionSearch(
@@ -1462,13 +1215,13 @@ class function TSearchFactory.CreateSelectionSearch(
     @return ISearch interface to selection search object instance.
   }
 begin
-  Result := TSelectionSearch.Create(Criteria);
+  Result := TSearch.Create(Criteria);
 end;
 
 class function TSearchFactory.CreateStoredSelectionSearch(
   const Criteria: IStoredSelectionSearchCriteria): ISearch;
 begin
-  Result := TStoredSelectionSearch.Create(Criteria);
+  Result := TSearch.Create(Criteria);
 end;
 
 class function TSearchFactory.CreateTextSearch(
@@ -1478,7 +1231,7 @@ class function TSearchFactory.CreateTextSearch(
     @return ISearch interface to text search object instance.
   }
 begin
-  Result := TTextSearch.Create(Criteria);
+  Result := TSearch.Create(Criteria);
 end;
 
 class function TSearchFactory.CreateXRefSearch(
@@ -1488,7 +1241,7 @@ class function TSearchFactory.CreateXRefSearch(
     @return ISearch interface to cross-reference search object instance.
   }
 begin
-  Result := TXRefSearch.Create(Criteria);
+  Result := TSearch.Create(Criteria);
 end;
 
 { TSearchCriteriaFactory }
