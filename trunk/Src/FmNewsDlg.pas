@@ -169,8 +169,8 @@ begin
   ErrHeadingAttrs := THTMLAttributes.Create('class', 'error-heading');
   ErrMessageAttrs := THTMLAttributes.Create('class', 'error-message');
   frmHTML.DisplayContent(
-    MakeCompoundTag('p', ErrHeadingAttrs, MakeSafeHTMLText(sErrorHeading)) +
-    MakeCompoundTag('p', ErrMessageAttrs, MakeSafeHTMLText(E.Message))
+    THTML.CompoundTag('p', ErrHeadingAttrs, THTML.Entities(sErrorHeading)) +
+    THTML.CompoundTag('p', ErrMessageAttrs, THTML.Entities(E.Message))
   );
 end;
 
@@ -187,7 +187,7 @@ var
 begin
   HTMLAttrs := THTMLAttributes.Create('class', 'message');
   frmHTML.DisplayContent(
-    MakeCompoundTag('p', HTMLAttrs, MakeSafeHTMLText(Msg))
+    THTML.CompoundTag('p', HTMLAttrs, THTML.Entities(Msg))
   );
 end;
 
@@ -202,14 +202,14 @@ procedure TNewsDlg.DisplayNews(const RSS: TRSS20);
     TitleHTML: string;  // title text
     URL: string;        // item's URL used for link
   begin
-    TitleHTML := MakeSafeHTMLText(StrTrim(Item.Title));
+    TitleHTML := THTML.Entities(StrTrim(Item.Title));
     if TitleHTML = '' then
-      TitleHTML := MakeSafeHTMLText(sNoTitle);
+      TitleHTML := THTML.Entities(sNoTitle);
     URL := StrTrim(Item.Link);
     if URL = '' then
       Result := TitleHTML
     else
-      Result := MakeCompoundTag(
+      Result := THTML.CompoundTag(
         'a',
         THTMLAttributes.Create([
           THTMLAttribute.Create('href', URL),
@@ -217,7 +217,7 @@ procedure TNewsDlg.DisplayNews(const RSS: TRSS20);
         ]),
         TitleHTML
       );
-    Result := MakeCompoundTag('strong', Result);
+    Result := THTML.CompoundTag('strong', Result);
   end;
 
   ///  Renders given RSS new item's description as HTML.
@@ -230,7 +230,7 @@ procedure TNewsDlg.DisplayNews(const RSS: TRSS20);
     Description := StrTrim(Item.Description);
     if Description = '' then
       Description := sNoDescription;
-    Result := MakeSafeHTMLText(Description);
+    Result := THTML.Entities(Description);
   end;
 
 var
@@ -239,19 +239,19 @@ var
 begin
   SB := TStringBuilder.Create;
   try
-    SB.AppendLine(MakeTag('dl', ttOpen));
+    SB.AppendLine(THTML.OpeningTag('dl'));
     for Item in RSS do
     begin
-      SB.AppendLine(MakeTag('dt', ttOpen));
-      SB.AppendLine(MakeCompoundTag('div', TitleHTML(Item)));
+      SB.AppendLine(THTML.OpeningTag('dt'));
+      SB.AppendLine(THTML.CompoundTag('div', TitleHTML(Item)));
       if Item.PubDateAsText <> '' then
         SB.AppendLine(
-          MakeCompoundTag('div', MakeSafeHTMLText(DateTimeToStr(Item.PubDate)))
+          THTML.CompoundTag('div', THTML.Entities(DateTimeToStr(Item.PubDate)))
         );
-      SB.AppendLine(MakeTag('dt', ttClose));
-      SB.AppendLine(MakeCompoundTag('dd', DescriptionHTML(Item)));
+      SB.AppendLine(THTML.ClosingTag('dt'));
+      SB.AppendLine(THTML.CompoundTag('dd', DescriptionHTML(Item)));
     end;
-    SB.AppendLine(MakeTag('dl', ttClose));
+    SB.AppendLine(THTML.ClosingTag('dl'));
     frmHTML.DisplayContent(SB.ToString);
   finally
     SB.Free;

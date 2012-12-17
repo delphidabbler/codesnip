@@ -137,10 +137,10 @@ end;
 class function TPrefixedSnippetHTMLFragment.Render(const Prefix, Id,
   Content: string): string;
 begin
-  Result := MakeCompoundTag(
+  Result := THTML.CompoundTag(
     'p',
-    MakeCompoundTag('strong', Prefix) + ' ' +
-      MakeCompoundTag('span', THTMLAttributes.Create('id', Id), Content)
+    THTML.CompoundTag('strong', Prefix) + ' ' +
+      THTML.CompoundTag('span', THTMLAttributes.Create('id', Id), Content)
   );
 end;
 
@@ -148,7 +148,7 @@ end;
 
 function TSnippetDescHTMLFragment.ToString: string;
 begin
-  Result := MakeCompoundTag(
+  Result := THTML.CompoundTag(
     'div', THTMLAttributes.Create('id', 'description'), SnippetHTML.Description
   );
 end;
@@ -157,7 +157,7 @@ end;
 
 function TSnippetSourceCodeHTMLFragment.ToString: string;
 begin
-  Result := MakeCompoundTag(
+  Result := THTML.CompoundTag(
     'div', THTMLAttributes.Create('id', 'sourcecode'), SnippetHTML.SourceCode
   );
 end;
@@ -211,7 +211,7 @@ end;
 
 function TSnippetCompileResultsHTMLFragment.ToString: string;
 begin
-  Result := MakeCompoundTag(
+  Result := THTML.CompoundTag(
     'table',
     THTMLAttributes.Create(
       [
@@ -228,7 +228,7 @@ end;
 
 function TSnippetExtraHTMLFragment.ToString: string;
 begin
-  Result := MakeCompoundTag(
+  Result := THTML.CompoundTag(
     'div', THTMLAttributes.Create('id', 'extra'), SnippetHTML.Extra
   );
 end;

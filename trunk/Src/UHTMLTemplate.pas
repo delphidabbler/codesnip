@@ -108,7 +108,7 @@ procedure THTMLTemplate.ResolvePlaceholderText(const Placeholder, Text: string);
     @param Text [in] Plain text to replace placeholder.
   }
 begin
-  ResolvePlaceholderHTML(Placeholder, MakeSafeHTMLText(Text));
+  ResolvePlaceholderHTML(Placeholder, THTML.Entities(Text));
 end;
 
 end.

@@ -145,22 +145,22 @@ resourcestring
 
 procedure THTMLBuilder.AddText(const Text: string);
 begin
-  fBodyInner.Append(MakeSafeHTMLText(Text));
+  fBodyInner.Append(THTML.Entities(Text));
 end;
 
 function THTMLBuilder.BodyTag: string;
 begin
-  Result := MakeCompoundTag(cBodyTag, EOL + HTMLFragment + EOL);
+  Result := THTML.CompoundTag(cBodyTag, EOL + HTMLFragment + EOL);
 end;
 
 procedure THTMLBuilder.ClosePre;
 begin
-  fBodyInner.Append(MakeTag(cPreTag, ttClose));
+  fBodyInner.Append(THTML.ClosingTag(cPreTag));
 end;
 
 procedure THTMLBuilder.CloseSpan;
 begin
-  fBodyInner.Append(MakeTag(cSpanTag, ttClose));
+  fBodyInner.Append(THTML.ClosingTag(cSpanTag));
 end;
 
 constructor THTMLBuilder.Create;
@@ -185,10 +185,10 @@ end;
 
 function THTMLBuilder.HeadTag: string;
 begin
-  Result := MakeCompoundTag(
+  Result := THTML.CompoundTag(
     cHeadTag,
     EOL
-      + MakeCompoundTag(cTitleTag, MakeSafeHTMLText(Title))
+      + THTML.CompoundTag(cTitleTag, THTML.Entities(Title))
       + EOL
       + InlineStyleSheet
   );
@@ -225,7 +225,7 @@ function THTMLBuilder.HTMLTag: string;
   // ---------------------------------------------------------------------------
 
 begin
-  Result := MakeCompoundTag(
+  Result := THTML.CompoundTag(
     cHTMLTag,
     HTMLAttrs,
     EOL + HeadTag + EOL + BodyTag + EOL
@@ -240,7 +240,7 @@ begin
   begin
     Attrs := THTMLAttributes.Create('type', 'text/css');
     Result := EOL
-      + MakeCompoundTag(cStyleTag, Attrs, EOL + fCSS + EOL)
+      + THTML.CompoundTag(cStyleTag, Attrs, EOL + fCSS + EOL)
       + EOL;
   end
   else
@@ -261,12 +261,12 @@ end;
 
 procedure THTMLBuilder.OpenPre(const ClassName: string);
 begin
-  fBodyInner.Append(MakeTag(cPreTag, ttOpen, MakeClassAttr(ClassName)));
+  fBodyInner.Append(THTML.OpeningTag(cPreTag, MakeClassAttr(ClassName)));
 end;
 
 procedure THTMLBuilder.OpenSpan(const ClassName: string);
 begin
-  fBodyInner.Append(MakeTag(cSpanTag, ttOpen, MakeClassAttr(ClassName)));
+  fBodyInner.Append(THTML.OpeningTag(cSpanTag, MakeClassAttr(ClassName)));
 end;
 
 end.

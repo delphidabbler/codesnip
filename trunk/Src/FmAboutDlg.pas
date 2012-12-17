@@ -303,15 +303,15 @@ begin
     begin
       for Contributor in Contributors do
         Result := Result
-          + MakeCompoundTag('div', MakeSafeHTMLText(Contributor))
+          + THTML.CompoundTag('div', THTML.Entities(Contributor))
           + EOL;
     end
     else
     begin
       // List couldn't be found: display warning message
       DivAttrs := THTMLAttributes.Create('class', 'warning');
-      Result := MakeCompoundTag(
-        'div', DivAttrs, MakeSafeHTMLText(sNoContributors)
+      Result := THTML.CompoundTag(
+        'div', DivAttrs, THTML.Entities(sNoContributors)
       );
     end;
   finally
@@ -482,17 +482,17 @@ var
   SpanAttrs: IHTMLAttributes; // attributes of span tag
 begin
   if TAppInfo.IsRegistered then
-    Result := MakeSafeHTMLText(
+    Result := THTML.Entities(
       Format(sRegisteredMessage, [TAppInfo.RegisteredUser])
     )
   else
   begin
     SpanAttrs := THTMLAttributes.Create('class', 'warning');
     Result :=
-      MakeCompoundTag(
-        'span', SpanAttrs, MakeSafeHTMLText(sUnregisteredMessage)
+      THTML.CompoundTag(
+        'span', SpanAttrs, THTML.Entities(sUnregisteredMessage)
       ) +
-      MakeSafeHTMLText(' ' + sRegistrationPrompt);
+      THTML.Entities(' ' + sRegistrationPrompt);
   end;
 end;
 
