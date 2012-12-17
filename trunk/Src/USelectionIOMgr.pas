@@ -166,7 +166,7 @@ begin
   Criteria := TSearchCriteriaFactory.CreateStoredSelectionSearchCriteria(
     SnippetIDs
   );
-  Search := TSearchFactory.CreateStoredSelectionSearch(Criteria);
+  Search := TSearchFactory.CreateSearch(Criteria);
   Result := True;
 end;
 

@@ -271,7 +271,7 @@ begin
   fSearchParams.Logic := SearchCriteria.Logic;
   fSearchParams.Compilers := SearchCriteria.Compilers;
   // Create search object from the entered criteria
-  fSearch := TSearchFactory.CreateCompilerSearch(SearchCriteria);
+  fSearch := TSearchFactory.CreateSearch(SearchCriteria);
   // Record search scope
   fRefinePreviousSearch := rgScope.ItemIndex = 0
 end;
