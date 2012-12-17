@@ -45,11 +45,17 @@ type
 
   {
   ISearchCriteria:
-    Base do-nothing interface for all search criteria. Enables all types of
+    Base interface for all search criteria. Enables all types of
     search criteria to be passed to any search object.
   }
   ISearchCriteria = interface(IInterface)
     ['{C0F8DD70-ED30-4293-98B7-F1DD07AFAD54}']
+    function Match(const Snippet: TSnippet): Boolean;
+      {Checks whether a snippet matches the search criteria.
+        @param Snippet [in] Snippet to be tested.
+        @return True if snippet matches criteria, false if not.
+      }
+    function IsNull: Boolean;
   end;
 
   {
@@ -387,11 +393,6 @@ type
         @param FoundList [in] List of snippets that match the search criteria.
         @return True if some snippets were found or false if search failed.
       }
-    function IsNul: Boolean;
-      {Checks if search is a nul search, i.e. it finds all snippets.
-        @return False. Assumes only non-nul search classes will be descended
-          from this class.
-      }
   end;
 
   {
@@ -411,6 +412,7 @@ type
       }
   protected
     { ISearch methods not defined in base class }
+    function IsNul: Boolean;
     function GetCriteria: ISearchCriteria;
       {Read accessor for Criteria property.
         @return Criteria to be applied to search.
@@ -438,6 +440,7 @@ type
       }
   protected
     { ISearch methods not defined in base class }
+    function IsNul: Boolean;
     function GetCriteria: ISearchCriteria;
       {Read accessor for Criteria property.
         @return Criteria to be applied to search.
@@ -463,6 +466,7 @@ type
         @param Snippet [in] Snippet to be tested.
         @return True if snippet matches criteria, false if not.
       }
+    function IsNul: Boolean;
   protected
     { ISearch methods not defined in base class }
     function GetCriteria: ISearchCriteria;
@@ -492,6 +496,7 @@ type
       {Read accessor for Criteria property.
         @return Criteria to be applied to search.
       }
+    function IsNul: Boolean;
   public
     constructor Create(const Criteria: IStoredSelectionSearchCriteria);
       {Class constructor. Sets up selection search.
@@ -507,31 +512,6 @@ type
   strict private
     fCriteria: IXRefSearchCriteria;
       {Search criteria}
-    fXRefs: TSnippetList;
-      {List of all cross-referenced snippets per current criteria}
-    function AddToXRefs(const Snippet: TSnippet): Boolean;
-      {Adds snippet to list of cross-references if not already in list.
-        @param Snippet [in] Snippet to add to list.
-        @return True if snippet added or false if snippet was already in list.
-      }
-    procedure ReferenceRequired(const Snippet: TSnippet);
-      {Adds all a snippet's required snippets to cross-reference list. These
-      references are only added if appropriate search option is set.
-        @param Snippet [in] Snippet whose required snippets are to be added to
-          x-ref list.
-      }
-    procedure ReferenceSeeAlso(const Snippet: TSnippet);
-      {Adds all a snippet's "see also" snippets to cross-reference list. These
-      references are only added if appropriate search option is set.
-        @param Snippet [in] Snippet whose "see also" snippets are to be added to
-          x-ref list.
-      }
-    procedure ReferenceSnippet(const Snippet: TSnippet);
-      {Adds a snippet to cross-reference list if it is not already present. Also
-      recursively adds the snippet's all its cross-referenced snippets if
-      appropriate search options are set.
-        @param Snippet [in] Snippet to add to x-ref list.
-      }
   strict protected
     function Match(const Snippet: TSnippet): Boolean; override;
       {Checks whether a snippet matches the search criteria.
@@ -544,13 +524,11 @@ type
       {Read accessor for Criteria property.
         @return Criteria to be applied to search.
       }
+    function IsNul: Boolean;
   public
     constructor Create(const Criteria: IXRefSearchCriteria);
       {Class constructor. Sets up cross-reference search.
         @param Critera [in] Criteria for this search.
-      }
-    destructor Destroy; override;
-      {Class destructor. Tears down object.
       }
   end;
 
@@ -634,6 +612,8 @@ type
       }
   protected
     { ICompilerSearchCriteria methods }
+    function Match(const Snippet: TSnippet): Boolean;
+    function IsNull: Boolean;
     function GetCompilers: TCompilerSearchCompilers;
       {Read accessor for Compilers property.
         @return Set of compilers to be included in search.
@@ -681,6 +661,8 @@ type
       }
   protected
     { ITextSearchCriteria methods }
+    function Match(const Snippet: TSnippet): Boolean;
+    function IsNull: Boolean;
     function GetWords: TStrings;
       {Read accessor for Words property.
         @return List of words to be searched for.
@@ -728,6 +710,8 @@ type
       }
   protected
     { ISelectionSearchCriteria methods }
+    function Match(const Snippet: TSnippet): Boolean;
+    function IsNull: Boolean;
     function GetSelectedItems: ISnippetIDList;
       {Read accessor for SelectedItems property.
         @return List of snippets to be selected in search.
@@ -755,6 +739,8 @@ type
       }
   protected
     { ISelectionSearchCriteria methods }
+    function Match(const Snippet: TSnippet): Boolean;
+    function IsNull: Boolean;
     function GetSelectedItems: ISnippetIDList;
       {Read accessor for SelectedItems property.
         @return List of snippets to be selected in search.
@@ -781,6 +767,12 @@ type
       {Snippet to which search of cross-references applies}
     fOptions: TXRefSearchOptions;
       {Set of poptions controlling XRef search}
+    fXRefs: TSnippetList;
+    function AddToXRefs(const Snippet: TSnippet): Boolean;
+    procedure ReferenceRequired(const Snippet: TSnippet);
+    procedure ReferenceSnippet(const Snippet: TSnippet);
+    procedure ReferenceSeeAlso(const Snippet: TSnippet);
+    procedure Initialise;
   strict protected
     function GlyphResourceName: string; override;
       {Provides name of required glyph bitmap in resources.
@@ -788,6 +780,8 @@ type
       }
   protected
     { IXRefSearchCriteria methods }
+    function Match(const Snippet: TSnippet): Boolean;
+    function IsNull: Boolean;
     function GetBaseSnippet: TSnippet;
       {Read accessor for BaseSnippet property.
         @return Reference to initiating snippet.
@@ -804,6 +798,7 @@ type
           searched.
         @param Options [in] Set of options conrtolling search.
       }
+    destructor Destroy; override;
   end;
 
   {
@@ -817,6 +812,8 @@ type
     ISearchUIInfo
     )
   strict protected
+    function Match(const Snippet: TSnippet): Boolean;
+    function IsNull: Boolean;
     function GlyphResourceName: string; override;
       {Provides name of required glyph bitmap in resources.
         @return Name of bitmap resource.
@@ -847,14 +844,14 @@ begin
   Result := FoundList.Count > 0;
 end;
 
-function TSearch.IsNul: Boolean;
-  {Checks if search is a nul search, i.e. it finds all snippets.
-    @return False. Assumes only non-nul search classes will be descended from
-      this class.
-  }
-begin
-  Result := False;
-end;
+//function TSearch.IsNul: Boolean;
+//  {Checks if search is a nul search, i.e. it finds all snippets.
+//    @return False. Assumes only non-nul search classes will be descended from
+//      this class.
+//  }
+//begin
+//  Result := False;
+//end;
 
 { TCompilerSearch }
 
@@ -877,53 +874,18 @@ begin
   Result := fCriteria;
 end;
 
+function TCompilerSearch.IsNul: Boolean;
+begin
+  Result := fCriteria.IsNull;
+end;
+
 function TCompilerSearch.Match(const Snippet: TSnippet): Boolean;
   {Checks whether a snippet matches the search criteria.
     @param Snippet [in] Snippet to be tested.
     @return True if snippet matches criteria, false if not.
   }
-const
-  // Maps compiler search option onto set of compiler results it describes
-  cCompatMap: array[TCompilerSearchOption] of set of TCompileResult = (
-    [crSuccess, crWarning],   // soCompileOK,
-    [crSuccess],              // soCompileNoWarn,
-    [crWarning],              // soCompileWarn,
-    [crError],                // soCompileFail,
-    [crQuery]                 // soUnkown
-  );
-
-  // Checks if a snippet's compiler result for given compiler ID matches
-  // expected results.
-  function CompatibilityMatches(const CompID: TCompilerID): Boolean;
-  begin
-    Result := Snippet.Compatibility[CompID] in cCompatMap[fCriteria.Option];
-  end;
-
-var
-  CompID: TCompilerID;  // loops thru supported compilers
 begin
-  if fCriteria.Logic = slOr then
-  begin
-    // Find any compiler: we return true as soon as any compiler compatibility
-    // matches
-    Result := False;
-    for CompID in fCriteria.Compilers do
-    begin
-      if CompatibilityMatches(CompID) then
-        Exit(True);
-    end;
-  end
-  else {fLogic = slAnd}
-  begin
-    // Find all compilers: we return false as soon as any compiler compatibility
-    // doesn't match
-    Result := True;
-    for CompID in fCriteria.Compilers do
-    begin
-      if not CompatibilityMatches(CompID) then
-        Exit(False);
-    end;
-  end;
+  Result := fCriteria.Match(Snippet);
 end;
 
 { TTextSearch }
@@ -947,12 +909,350 @@ begin
   Result := fCriteria;
 end;
 
+function TTextSearch.IsNul: Boolean;
+begin
+  Result := fCriteria.IsNull;
+end;
+
 function TTextSearch.Match(const Snippet: TSnippet): Boolean;
   {Checks whether a snippet matches the search criteria.
     @param Snippet [in] Snippet to be tested.
     @return True if snippet matches criteria, false if not.
   }
+begin
+  Result := fCriteria.Match(Snippet);
+end;
 
+{ TSelectionSearch }
+
+constructor TSelectionSearch.Create(const Criteria: ISelectionSearchCriteria);
+  {Class constructor. Sets up selection search.
+    @param Critera [in] Criteria for this search.
+  }
+begin
+  Assert(Assigned(Criteria), ClassName + '.Create: Criteria is nil');
+  inherited Create;
+  // Record search criteria
+  fCriteria := Criteria;
+end;
+
+function TSelectionSearch.GetCriteria: ISearchCriteria;
+  {Read accessor for Criteria property.
+    @return Criteria to be applied to search.
+  }
+begin
+  Result := fCriteria;
+end;
+
+function TSelectionSearch.IsNul: Boolean;
+begin
+  Result := fCriteria.IsNull;
+end;
+
+function TSelectionSearch.Match(const Snippet: TSnippet): Boolean;
+  {Checks whether a snippet matches the search criteria.
+    @param Snippet [in] Snippet to be tested.
+    @return True if snippet matches criteria, false if not.
+  }
+begin
+  Result := fCriteria.Match(Snippet);
+end;
+
+{ TStoredSelectionSearch }
+
+constructor TStoredSelectionSearch.Create(
+  const Criteria: IStoredSelectionSearchCriteria);
+begin
+  Assert(Assigned(Criteria), ClassName + '.Create: Criteria is nil');
+  inherited Create;
+  fCriteria := Criteria;
+end;
+
+function TStoredSelectionSearch.GetCriteria: ISearchCriteria;
+begin
+  Result := fCriteria;
+end;
+
+function TStoredSelectionSearch.IsNul: Boolean;
+begin
+  Result := fCriteria.IsNull;
+end;
+
+function TStoredSelectionSearch.Match(const Snippet: TSnippet): Boolean;
+begin
+  Result := fCriteria.Match(Snippet);
+end;
+
+{ TXRefSearch }
+
+constructor TXRefSearch.Create(const Criteria: IXRefSearchCriteria);
+  {Class constructor. Sets up cross-reference search.
+    @param Critera [in] Criteria for this search.
+  }
+begin
+  Assert(Assigned(Criteria), ClassName + '.Create: Criteria is nil');
+  inherited Create;
+  // Record search criteria
+  fCriteria := Criteria;
+end;
+
+function TXRefSearch.GetCriteria: ISearchCriteria;
+  {Read accessor for Criteria property.
+    @return Criteria to be applied to search.
+  }
+begin
+  Result := fCriteria;
+end;
+
+function TXRefSearch.IsNul: Boolean;
+begin
+  Result := fCriteria.IsNull;
+end;
+
+function TXRefSearch.Match(const Snippet: TSnippet): Boolean;
+  {Checks whether a snippet matches the search criteria.
+    @param Snippet [in] Snippet to be tested.
+    @return True if snippet matches criteria, false if not.
+  }
+begin
+  // We have already set up list of x-ref snippets: simply look up snippet in it
+  Result := fCriteria.Match(Snippet);
+end;
+
+{ TBaseSearchCriteria }
+
+destructor TBaseSearchCriteria.Destroy;
+  {Class destructor. Tears down object.
+  }
+begin
+  FreeAndNil(fBitmap);
+  inherited;
+end;
+
+function TBaseSearchCriteria.Glyph: TBitmap;
+  {Provides a glyph to be used to indicate kind of search.
+    @return Reference to a bitmap storing glyph.
+  }
+begin
+  if not Assigned(fBitmap) then
+  begin
+    // Bitmap not yet created: create it and load from resources
+    fBitmap := TBitmap.Create;
+    fBitmap.LoadFromResourceName(HInstance, GlyphResourceName);
+  end;
+  Result := fBitmap;
+end;
+
+{ TNulSearch }
+
+constructor TNulSearch.Create;
+  {Class constructor. Sets up nul search.
+  }
+begin
+  inherited Create;
+  // Create nul search criteria object
+  fCriteria := TNulSearchCriteria.Create;
+end;
+
+function TNulSearch.Execute(const InList, FoundList: TSnippetList): Boolean;
+  {Executes the search, determining which of a list of snippets match the
+  search criteria.
+    @param InList [in] List of snippets that the search is applied to.
+    @param FoundList [in] List of snippets that match the search criteria.
+    @return True if some snippets were found or false if search failed.
+  }
+begin
+  Assert(Assigned(InList), ClassName + '.Execute: InList is nil');
+  Assert(Assigned(FoundList), ClassName + '.Execute: FoundList is nil');
+  Assert(InList <> FoundList, ClassName + '.Execute: InList = FoundList');
+  // Nul search finds all items: simply copy source list to found list
+  FoundList.Assign(InList);
+  // Return true unless there are no snippets in original
+  Result := InList.Count > 0;
+end;
+
+function TNulSearch.GetCriteria: ISearchCriteria;
+  {Read accessor for Criteria property.
+    @return Criteria to be applied to search.
+  }
+begin
+  Result := fCriteria;
+end;
+
+function TNulSearch.IsNul: Boolean;
+  {Checks if search is a nul search, i.e. it finds all snippets.
+    @return True.
+  }
+begin
+  Result := fCriteria.IsNull;
+end;
+
+{ TCompilerSearchCriteria }
+
+constructor TCompilerSearchCriteria.Create(
+  const Compilers: TCompilerSearchCompilers; const Logic: TSearchLogic;
+  const Option: TCompilerSearchOption);
+  {Class consructor. Sets up object with specified property values.
+    @param Compilers [in] Set of compilers to be included in search.
+    @param Logic [in] Search logic to be used: AND or OR.
+    @param Option [in] Determines compilation outcome to be searched for.
+  }
+begin
+  inherited Create;
+  // Store properties
+  fCompilers := Compilers;
+  fLogic := Logic;
+  fOption := Option;
+end;
+
+function TCompilerSearchCriteria.GetCompilers: TCompilerSearchCompilers;
+  {Read accessor for Compilers property.
+    @return Set of compilers to be included in search.
+  }
+begin
+  Result := fCompilers;
+end;
+
+function TCompilerSearchCriteria.GetLogic: TSearchLogic;
+  {Read accessor for Logic property.
+    @return Search logic to be used: AND or OR.
+  }
+begin
+  Result := fLogic;
+end;
+
+function TCompilerSearchCriteria.GetOption: TCompilerSearchOption;
+  {Read accessor for Option property.
+    @return Option determining the compilation outcome to be searched for.
+  }
+begin
+  Result := fOption;
+end;
+
+function TCompilerSearchCriteria.GlyphResourceName: string;
+  {Provides name of required glyph bitmap in resources.
+    @return Name of bitmap resource.
+  }
+begin
+  Result := 'COMPILERSEARCH';
+end;
+
+function TCompilerSearchCriteria.IsNull: Boolean;
+begin
+  Result := False;
+end;
+
+function TCompilerSearchCriteria.Match(const Snippet: TSnippet): Boolean;
+const
+  // Maps compiler search option onto set of compiler results it describes
+  cCompatMap: array[TCompilerSearchOption] of set of TCompileResult = (
+    [crSuccess, crWarning],   // soCompileOK,
+    [crSuccess],              // soCompileNoWarn,
+    [crWarning],              // soCompileWarn,
+    [crError],                // soCompileFail,
+    [crQuery]                 // soUnkown
+  );
+
+  // Checks if a snippet's compiler result for given compiler ID matches
+  // expected results.
+  function CompatibilityMatches(const CompID: TCompilerID): Boolean;
+  begin
+    Result := Snippet.Compatibility[CompID] in cCompatMap[fOption];
+  end;
+
+var
+  CompID: TCompilerID;  // loops thru supported compilers
+begin
+  if fLogic = slOr then
+  begin
+    // Find any compiler: we return true as soon as any compiler compatibility
+    // matches
+    Result := False;
+    for CompID in fCompilers do
+    begin
+      if CompatibilityMatches(CompID) then
+        Exit(True);
+    end;
+  end
+  else {fLogic = slAnd}
+  begin
+    // Find all compilers: we return false as soon as any compiler compatibility
+    // doesn't match
+    Result := True;
+    for CompID in fCompilers do
+    begin
+      if not CompatibilityMatches(CompID) then
+        Exit(False);
+    end;
+  end;
+end;
+
+{ TTextSearchCriteria }
+
+constructor TTextSearchCriteria.Create(const Words: string;
+  const Logic: TSearchLogic; const Options: TTextSearchOptions);
+  {Class constructor. Sets up object with specified property values.
+    @param Words [in] Words to be searched for, separated by spaces.
+    @param Logic [in] Search logic to be used: AND or OR.
+    @param Options [in] Set of options used to modify how search is performed.
+  }
+begin
+  Assert(Words <> '', ClassName + '.Create: Words is empty string');
+  inherited Create;
+  // Store properties
+  fLogic := Logic;
+  fOptions := Options;
+  // store each search word as entry in string list
+  fWords := TStringList.Create;
+  StrExplode(StrCompressWhiteSpace(Words), ' ', fWords);
+end;
+
+destructor TTextSearchCriteria.Destroy;
+  {Class destructor. Tears down object.
+  }
+begin
+  fWords.Free;
+  inherited;
+end;
+
+function TTextSearchCriteria.GetLogic: TSearchLogic;
+  {Read accessor for Logic property.
+    @return Search logic to be used: AND or OR.
+  }
+begin
+  Result := fLogic;
+end;
+
+function TTextSearchCriteria.GetOptions: TTextSearchOptions;
+  {Read accessor for Options property.
+    @return Set of options used to modify how search is performed.
+  }
+begin
+  Result := fOptions;
+end;
+
+function TTextSearchCriteria.GetWords: TStrings;
+  {Read accessor for Words property.
+    @return List of words to be searched for.
+  }
+begin
+  Result := fWords;
+end;
+
+function TTextSearchCriteria.GlyphResourceName: string;
+  {Provides name of required glyph bitmap in resources.
+    @return Name of bitmap resource.
+  }
+begin
+  Result := 'TEXTSEARCH';
+end;
+
+function TTextSearchCriteria.IsNull: Boolean;
+begin
+  Result := False;
+end;
+
+function TTextSearchCriteria.Match(const Snippet: TSnippet): Boolean;
   // ---------------------------------------------------------------------------
   function NormaliseSearchText(const RawText: string): string;
     {Converts the text to be searched into a standard format.
@@ -1030,7 +1330,7 @@ function TTextSearch.Match(const Snippet: TSnippet): Boolean;
       end;
       Result := ' ' + StrJoin(Words, ' ', False) + ' '
         + StrJoin(ExtraWords, ' ', False) + ' ';
-      if not (soMatchCase in fCriteria.Options) then
+      if not (soMatchCase in fOptions) then
         Result := StrToLower(Result);
     finally
       ExtraWords.Free;
@@ -1047,9 +1347,9 @@ function TTextSearch.Match(const Snippet: TSnippet): Boolean;
     }
   begin
     Result := Word;
-    if not (soMatchCase in fCriteria.Options) then
+    if not (soMatchCase in fOptions) then
       Result := StrToLower(Result);
-    if soWholeWord in fCriteria.Options then
+    if soWholeWord in fOptions then
       Result := ' ' + Result + ' ';
   end;
   // ---------------------------------------------------------------------------
@@ -1065,11 +1365,11 @@ begin
     ' ' + StrMakeSentence(Snippet.Extra.ToString) +
     ' '
   );
-  if fCriteria.Logic = slOr then
+  if fLogic = slOr then
   begin
     // Find any of words in search text: return True as soon as any word matches
     Result := False;
-    for SearchWord in fCriteria.Words do
+    for SearchWord in fWords do
       if StrContainsStr(NormaliseSearchWord(SearchWord), SearchText) then
         Exit(True);
   end
@@ -1078,343 +1378,10 @@ begin
     // Find all words in search text: return False as soon as any word doesn't
     // match
     Result := True;
-    for SearchWord in fCriteria.Words do
+    for SearchWord in fWords do
       if not StrContainsStr(NormaliseSearchWord(SearchWord), SearchText) then
         Exit(False);
   end;
-end;
-
-{ TSelectionSearch }
-
-constructor TSelectionSearch.Create(const Criteria: ISelectionSearchCriteria);
-  {Class constructor. Sets up selection search.
-    @param Critera [in] Criteria for this search.
-  }
-begin
-  Assert(Assigned(Criteria), ClassName + '.Create: Criteria is nil');
-  inherited Create;
-  // Record search criteria
-  fCriteria := Criteria;
-end;
-
-function TSelectionSearch.GetCriteria: ISearchCriteria;
-  {Read accessor for Criteria property.
-    @return Criteria to be applied to search.
-  }
-begin
-  Result := fCriteria;
-end;
-
-function TSelectionSearch.Match(const Snippet: TSnippet): Boolean;
-  {Checks whether a snippet matches the search criteria.
-    @param Snippet [in] Snippet to be tested.
-    @return True if snippet matches criteria, false if not.
-  }
-begin
-  Result := fCriteria.SelectedItems.Contains(Snippet.ID);
-end;
-
-{ TStoredSelectionSearch }
-
-constructor TStoredSelectionSearch.Create(
-  const Criteria: IStoredSelectionSearchCriteria);
-begin
-  Assert(Assigned(Criteria), ClassName + '.Create: Criteria is nil');
-  inherited Create;
-  fCriteria := Criteria;
-end;
-
-function TStoredSelectionSearch.GetCriteria: ISearchCriteria;
-begin
-  Result := fCriteria;
-end;
-
-function TStoredSelectionSearch.Match(const Snippet: TSnippet): Boolean;
-begin
-  Result := fCriteria.SelectedItems.Contains(Snippet.ID);
-end;
-
-{ TXRefSearch }
-
-function TXRefSearch.AddToXRefs(const Snippet: TSnippet): Boolean;
-  {Adds snippet to list of cross-references if not already in list.
-    @param Snippet [in] Snippet to add to list.
-    @return True if snippet added or false if snippet was already in list.
-  }
-begin
-  Result := not fXRefs.Contains(Snippet);
-  if Result then
-    fXRefs.Add(Snippet);
-end;
-
-constructor TXRefSearch.Create(const Criteria: IXRefSearchCriteria);
-  {Class constructor. Sets up cross-reference search.
-    @param Critera [in] Criteria for this search.
-  }
-begin
-  Assert(Assigned(Criteria), ClassName + '.Create: Criteria is nil');
-  inherited Create;
-  // Record search criteria
-  fCriteria := Criteria;
-  // Create and populate list of cross-referenced snippets
-  fXRefs := TSnippetList.Create;
-  // reference required and "see also" snippets
-  // these methods do nothing if appropriate search options not set
-  ReferenceRequired(fCriteria.BaseSnippet);
-  ReferenceSeeAlso(fCriteria.BaseSnippet);
-  // add base snippet if appropriate search option set
-  if soIncludeSnippet in fCriteria.Options then
-    AddToXRefs(fCriteria.BaseSnippet);
-end;
-
-destructor TXRefSearch.Destroy;
-  {Class destructor. Tears down object.
-  }
-begin
-  FreeAndNil(fXRefs);
-  inherited;
-end;
-
-function TXRefSearch.GetCriteria: ISearchCriteria;
-  {Read accessor for Criteria property.
-    @return Criteria to be applied to search.
-  }
-begin
-  Result := fCriteria;
-end;
-
-function TXRefSearch.Match(const Snippet: TSnippet): Boolean;
-  {Checks whether a snippet matches the search criteria.
-    @param Snippet [in] Snippet to be tested.
-    @return True if snippet matches criteria, false if not.
-  }
-begin
-  // We have already set up list of x-ref snippets: simply look up snippet in it
-  Result := fXRefs.Contains(Snippet);
-end;
-
-procedure TXRefSearch.ReferenceRequired(const Snippet: TSnippet);
-  {Adds all a snippet's required snippets to cross-reference list. These
-  references are only added if appropriate search option is set.
-    @param Snippet [in] Snippet whose required snippets are to be added to x-ref
-      list.
-  }
-var
-  Idx: Integer; // loops thru all required snippets
-begin
-  if soRequired in fCriteria.Options then
-    for Idx := 0 to Pred(Snippet.Depends.Count) do
-      ReferenceSnippet(Snippet.Depends[Idx]);
-end;
-
-procedure TXRefSearch.ReferenceSnippet(const Snippet: TSnippet);
-  {Adds a snippet to cross-reference list if it is not already present. Also
-  recursively adds the snippet's all its cross-referenced snippets if
-  appropriate search options are set.
-    @param Snippet [in] Snippet to add to x-ref list.
-  }
-begin
-  // Add snippet to list if not present. Quit if snippet already referenced.
-  if not AddToXRefs(Snippet) then
-    Exit;
-  // Recurse required snippets if specified in options
-  if soRequiredRecurse in fCriteria.Options then
-    ReferenceRequired(Snippet);
-  // Recurse "see also" snippets if specified in options
-  if soSeeAlsoRecurse in fCriteria.Options then
-    ReferenceSeeAlso(Snippet);
-end;
-
-procedure TXRefSearch.ReferenceSeeAlso(const Snippet: TSnippet);
-  {Adds all a snippet's "see also" snippets to cross-reference list. These
-  references are only added if appropriate search option is set.
-    @param Snippet [in] Snippet whose "see also" snippets are to be added to
-      x-ref list.
-  }
-var
-  Idx: Integer; // loops thru all "see also" snippets
-begin
-  if soSeeAlso in fCriteria.Options then
-    for Idx := 0 to Pred(Snippet.XRef.Count) do
-      ReferenceSnippet(Snippet.XRef[Idx]);
-end;
-
-{ TBaseSearchCriteria }
-
-destructor TBaseSearchCriteria.Destroy;
-  {Class destructor. Tears down object.
-  }
-begin
-  FreeAndNil(fBitmap);
-  inherited;
-end;
-
-function TBaseSearchCriteria.Glyph: TBitmap;
-  {Provides a glyph to be used to indicate kind of search.
-    @return Reference to a bitmap storing glyph.
-  }
-begin
-  if not Assigned(fBitmap) then
-  begin
-    // Bitmap not yet created: create it and load from resources
-    fBitmap := TBitmap.Create;
-    fBitmap.LoadFromResourceName(HInstance, GlyphResourceName);
-  end;
-  Result := fBitmap;
-end;
-
-{ TNulSearch }
-
-constructor TNulSearch.Create;
-  {Class constructor. Sets up nul search.
-  }
-begin
-  inherited Create;
-  // Create nul search criteria object
-  fCriteria := TNulSearchCriteria.Create;
-end;
-
-function TNulSearch.Execute(const InList, FoundList: TSnippetList): Boolean;
-  {Executes the search, determining which of a list of snippets match the
-  search criteria.
-    @param InList [in] List of snippets that the search is applied to.
-    @param FoundList [in] List of snippets that match the search criteria.
-    @return True if some snippets were found or false if search failed.
-  }
-begin
-  Assert(Assigned(InList), ClassName + '.Execute: InList is nil');
-  Assert(Assigned(FoundList), ClassName + '.Execute: FoundList is nil');
-  Assert(InList <> FoundList, ClassName + '.Execute: InList = FoundList');
-  // Nul search finds all items: simply copy source list to found list
-  FoundList.Assign(InList);
-  // Return true unless there are no snippets in original
-  Result := InList.Count > 0;
-end;
-
-function TNulSearch.GetCriteria: ISearchCriteria;
-  {Read accessor for Criteria property.
-    @return Criteria to be applied to search.
-  }
-begin
-  Result := fCriteria;
-end;
-
-function TNulSearch.IsNul: Boolean;
-  {Checks if search is a nul search, i.e. it finds all snippets.
-    @return True.
-  }
-begin
-  Result := True;
-end;
-
-{ TCompilerSearchCriteria }
-
-constructor TCompilerSearchCriteria.Create(
-  const Compilers: TCompilerSearchCompilers; const Logic: TSearchLogic;
-  const Option: TCompilerSearchOption);
-  {Class consructor. Sets up object with specified property values.
-    @param Compilers [in] Set of compilers to be included in search.
-    @param Logic [in] Search logic to be used: AND or OR.
-    @param Option [in] Determines compilation outcome to be searched for.
-  }
-begin
-  inherited Create;
-  // Store properties
-  fCompilers := Compilers;
-  fLogic := Logic;
-  fOption := Option;
-end;
-
-function TCompilerSearchCriteria.GetCompilers: TCompilerSearchCompilers;
-  {Read accessor for Compilers property.
-    @return Set of compilers to be included in search.
-  }
-begin
-  Result := fCompilers;
-end;
-
-function TCompilerSearchCriteria.GetLogic: TSearchLogic;
-  {Read accessor for Logic property.
-    @return Search logic to be used: AND or OR.
-  }
-begin
-  Result := fLogic;
-end;
-
-function TCompilerSearchCriteria.GetOption: TCompilerSearchOption;
-  {Read accessor for Option property.
-    @return Option determining the compilation outcome to be searched for.
-  }
-begin
-  Result := fOption;
-end;
-
-function TCompilerSearchCriteria.GlyphResourceName: string;
-  {Provides name of required glyph bitmap in resources.
-    @return Name of bitmap resource.
-  }
-begin
-  Result := 'COMPILERSEARCH';
-end;
-
-{ TTextSearchCriteria }
-
-constructor TTextSearchCriteria.Create(const Words: string;
-  const Logic: TSearchLogic; const Options: TTextSearchOptions);
-  {Class constructor. Sets up object with specified property values.
-    @param Words [in] Words to be searched for, separated by spaces.
-    @param Logic [in] Search logic to be used: AND or OR.
-    @param Options [in] Set of options used to modify how search is performed.
-  }
-begin
-  Assert(Words <> '', ClassName + '.Create: Words is empty string');
-  inherited Create;
-  // Store properties
-  fLogic := Logic;
-  fOptions := Options;
-  // store each search word as entry in string list
-  fWords := TStringList.Create;
-  StrExplode(StrCompressWhiteSpace(Words), ' ', fWords);
-end;
-
-destructor TTextSearchCriteria.Destroy;
-  {Class destructor. Tears down object.
-  }
-begin
-  fWords.Free;
-  inherited;
-end;
-
-function TTextSearchCriteria.GetLogic: TSearchLogic;
-  {Read accessor for Logic property.
-    @return Search logic to be used: AND or OR.
-  }
-begin
-  Result := fLogic;
-end;
-
-function TTextSearchCriteria.GetOptions: TTextSearchOptions;
-  {Read accessor for Options property.
-    @return Set of options used to modify how search is performed.
-  }
-begin
-  Result := fOptions;
-end;
-
-function TTextSearchCriteria.GetWords: TStrings;
-  {Read accessor for Words property.
-    @return List of words to be searched for.
-  }
-begin
-  Result := fWords;
-end;
-
-function TTextSearchCriteria.GlyphResourceName: string;
-  {Provides name of required glyph bitmap in resources.
-    @return Name of bitmap resource.
-  }
-begin
-  Result := 'TEXTSEARCH';
 end;
 
 { TSelectionSearchCriteria }
@@ -1446,6 +1413,16 @@ begin
   Result := 'SELECTIONSEARCH';
 end;
 
+function TSelectionSearchCriteria.IsNull: Boolean;
+begin
+  Result := False;
+end;
+
+function TSelectionSearchCriteria.Match(const Snippet: TSnippet): Boolean;
+begin
+  Result := fSelectedItems.Contains(Snippet.ID);
+end;
+
 { TStoredSelectionSearchCriteria }
 
 constructor TStoredSelectionSearchCriteria.Create(
@@ -1466,7 +1443,24 @@ begin
   Result := 'STOREDSELECTIONSEARCH';
 end;
 
+function TStoredSelectionSearchCriteria.IsNull: Boolean;
+begin
+  Result := False;
+end;
+
+function TStoredSelectionSearchCriteria.Match(const Snippet: TSnippet): Boolean;
+begin
+  Result := fSelectedItems.Contains(Snippet.ID);
+end;
+
 { TXRefSearchCriteria }
+
+function TXRefSearchCriteria.AddToXRefs(const Snippet: TSnippet): Boolean;
+begin
+  Result := not fXRefs.Contains(Snippet);
+  if Result then
+    fXRefs.Add(Snippet);
+end;
 
 constructor TXRefSearchCriteria.Create(const BaseSnippet: TSnippet;
   const Options: TXRefSearchOptions);
@@ -1479,6 +1473,12 @@ begin
   inherited Create;
   fBaseSnippet := BaseSnippet;
   fOptions := Options;
+end;
+
+destructor TXRefSearchCriteria.Destroy;
+begin
+  fXRefs.Free;
+  inherited;
 end;
 
 function TXRefSearchCriteria.GetBaseSnippet: TSnippet;
@@ -1505,6 +1505,65 @@ begin
   Result := 'XREFSEARCH';
 end;
 
+procedure TXRefSearchCriteria.Initialise;
+begin
+  Assert(Assigned(fXRefs), ClassName + '.Initialise: fXRefs is nil');
+  Assert(fXRefs.Count = 0, ClassName + '.Initialise: fXRefs not empty');
+  ReferenceRequired(fBaseSnippet);
+  ReferenceSeeAlso(fBaseSnippet);
+  if soIncludeSnippet in fOptions then
+    AddToXRefs(fBaseSnippet);
+end;
+
+function TXRefSearchCriteria.IsNull: Boolean;
+begin
+  Result := False;
+end;
+
+function TXRefSearchCriteria.Match(const Snippet: TSnippet): Boolean;
+begin
+  // Check if cross references are still to be calcaluted and do it if so
+  // We do this here to avoid the overhead if just using object to store / read
+  // persistent settings.
+  if not Assigned(fXRefs) then
+  begin
+    fXRefs := TSnippetList.Create;
+    Initialise;
+  end;
+  Result := fXRefs.Contains(Snippet);
+end;
+
+procedure TXRefSearchCriteria.ReferenceRequired(const Snippet: TSnippet);
+var
+  Idx: Integer; // loops thru all required snippets
+begin
+  if soRequired in fOptions then
+    for Idx := 0 to Pred(Snippet.Depends.Count) do
+      ReferenceSnippet(Snippet.Depends[Idx]);
+end;
+
+procedure TXRefSearchCriteria.ReferenceSeeAlso(const Snippet: TSnippet);
+var
+  Idx: Integer; // loops thru all "see also" snippets
+begin
+  if soSeeAlso in fOptions then
+    for Idx := 0 to Pred(Snippet.XRef.Count) do
+      ReferenceSnippet(Snippet.XRef[Idx]);
+end;
+
+procedure TXRefSearchCriteria.ReferenceSnippet(const Snippet: TSnippet);
+begin
+  // Add snippet to list if not present. Quit if snippet already referenced.
+  if not AddToXRefs(Snippet) then
+    Exit;
+  // Recurse required snippets if specified in options
+  if soRequiredRecurse in fOptions then
+    ReferenceRequired(Snippet);
+  // Recurse "see also" snippets if specified in options
+  if soSeeAlsoRecurse in fOptions then
+    ReferenceSeeAlso(Snippet);
+end;
+
 { TNulSearchCriteria }
 
 function TNulSearchCriteria.GlyphResourceName: string;
@@ -1513,6 +1572,16 @@ function TNulSearchCriteria.GlyphResourceName: string;
   }
 begin
   Result := 'NULSEARCH';
+end;
+
+function TNulSearchCriteria.IsNull: Boolean;
+begin
+  Result := True;
+end;
+
+function TNulSearchCriteria.Match(const Snippet: TSnippet): Boolean;
+begin
+  Result := True;
 end;
 
 { TSearchFactory }
