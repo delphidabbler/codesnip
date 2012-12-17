@@ -114,7 +114,7 @@ procedure TDeleteCategoryDlg.ConfigForm;
   }
 resourcestring
   // Prompt text for frame
-  sPrompt = 'Select category to be deleted:';
+  sPrompt = 'Select &category to be deleted:';
 begin
   inherited;
   frmCategories.OnChange := SelectionChangeHandler;

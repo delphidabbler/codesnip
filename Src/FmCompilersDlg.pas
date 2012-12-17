@@ -108,7 +108,8 @@ implementation
 
 uses
   // Project
-  Compilers.UCompilers, IntfCommon, UCtrlArranger, UExeFileType, UMessageBox;
+  Compilers.UCompilers, IntfCommon, UCtrlArranger, UExeFileType, UFontHelper,
+  UMessageBox;
 
 
 {$R *.dfm}
@@ -273,6 +274,7 @@ begin
   fCompListMgr := TCompilerListMgr.Create(lbCompilers, fLocalCompilers);
   fCompListMgr.OnSelect := CompilerSelectHandler;
 
+  TFontHelper.SetDefaultBaseFont(pbBanner.Font, False);
   fBannerMgr := TCompilerBannerMgr.Create(pbBanner);
 
   fFrames := TArray<TCompilersDlgBaseFrame>.Create(

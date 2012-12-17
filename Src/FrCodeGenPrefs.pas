@@ -101,9 +101,10 @@ type
     ///  version number of selected compiler in associated edit control.
     ///  </summary>
     procedure PreDefCompilerMenuClick(Sender: TObject);
-    ///  <summary>Handles clicks on warnings list view. Copies details of
-    ///  selected warning into controls, ready for editing.</summary>
-    procedure LVWarningsClick(Sender: TObject);
+    ///  <summary>Handles selection of an item in warnings list view. Copies
+    ///  details of selected warning into controls, ready for editing.</summary>
+    procedure LVWarningsSelected(Sender: TObject; Item: TListItem;
+      Selected: Boolean);
     ///  <summary>Specifies that TWarningListItem is to be used to create new
     ///  list view items.</summary>
     procedure LVWarningsCreateItemClass(Sender: TCustomListView;
@@ -512,7 +513,7 @@ begin
       Caption := sStateColCaption;
       Width := 50;
     end;
-    OnClick := LVWarningsClick;
+    OnSelectItem := LVWarningsSelected;
     OnCompare := LVWarningsCompare;
     OnCreateItemClass := LVWarningsCreateItemClass;
   end;
@@ -611,13 +612,6 @@ begin
     Result := LI.SubItems[Idx - 1];
 end;
 
-procedure TCodeGenPrefsFrame.LVWarningsClick(Sender: TObject);
-begin
-  if not Assigned(fLVWarnings.Selected) then
-    Exit;
-  UpdateControls;
-end;
-
 procedure TCodeGenPrefsFrame.LVWarningsCompare(Sender: TObject; Item1,
   Item2: TListItem; Data: Integer; var Compare: Integer);
 begin
@@ -632,6 +626,13 @@ procedure TCodeGenPrefsFrame.LVWarningsCreateItemClass(Sender: TCustomListView;
   var ItemClass: TListItemClass);
 begin
   ItemClass := TWarningListItem;
+end;
+
+procedure TCodeGenPrefsFrame.LVWarningsSelected(Sender: TObject;
+  Item: TListItem; Selected: Boolean);
+begin
+  if Selected and Assigned(fLVWarnings.Selected) then
+    UpdateControls;
 end;
 
 procedure TCodeGenPrefsFrame.PopulateLV;

@@ -1,7 +1,7 @@
 inherited FindTextDlg: TFindTextDlg
   Caption = 'Find Text'
   ExplicitWidth = 474
-  ExplicitHeight = 354
+  ExplicitHeight = 356
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -12,7 +12,7 @@ inherited FindTextDlg: TFindTextDlg
     object lblFindText: TLabel
       Left = 0
       Top = 4
-      Width = 56
+      Width = 60
       Height = 13
       Caption = '&Text to find:'
       FocusControl = cbFindText
@@ -41,11 +41,11 @@ inherited FindTextDlg: TFindTextDlg
       Top = 80
       Width = 143
       Height = 77
-      Caption = 'Search logic'
+      Caption = 'Search &logic'
       ItemIndex = 1
       Items.Strings = (
-        'Fi&nd all words'
-        'Find any wo&rd')
+        'Find all words'
+        'Find any word')
       TabOrder = 1
       TabStop = True
     end
@@ -54,14 +54,14 @@ inherited FindTextDlg: TFindTextDlg
       Top = 80
       Width = 143
       Height = 77
-      Caption = 'Options'
+      Caption = '&Options'
       TabOrder = 2
       object cbCaseSensitive: TCheckBox
         Left = 8
         Top = 50
         Width = 118
         Height = 17
-        Caption = '&Case sensitive'
+        Caption = 'Case sensitive'
         TabOrder = 1
       end
       object cbWholeWords: TCheckBox
@@ -69,7 +69,7 @@ inherited FindTextDlg: TFindTextDlg
         Top = 21
         Width = 118
         Height = 17
-        Caption = '&Whole words only'
+        Caption = 'Whole words only'
         TabOrder = 0
       end
     end
@@ -78,7 +78,7 @@ inherited FindTextDlg: TFindTextDlg
       Top = 163
       Width = 302
       Height = 77
-      Caption = 'Search scope'
+      Caption = 'Search &scope'
       ItemIndex = 0
       Items.Strings = (
         'Refine existing search'
