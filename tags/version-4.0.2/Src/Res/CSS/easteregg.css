@@ -1,0 +1,143 @@
+/*
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Cascading style sheet used to format HTML displayed in program's easter egg.
+ */
+
+
+/* styling for body including defaults
+   NOTE: font family must be set externally */
+
+body {
+  background-color: transparent;
+  background-image: url('blue-paper.png');
+  color: #3333cc;
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+}
+
+/* styling for segments of slide screen image: sets starting positions for
+   animation (ending positions shown in comments) */
+
+.screen {
+  display: block;
+  position: absolute;
+  left: 16px;
+}
+
+#screen-top {
+  top: 320px;       /* 26px; */
+  width: 510px;
+  height: 23px;
+  z-index: 30;
+  cursor: pointer;
+}
+
+#screen-middle {
+  top: 343px;       /* 48px; */
+  width: 510px;
+  height: 10px;     /* 304px; */
+  z-index: 20;
+}
+
+#screen-bottom {
+  top: 352px;
+  width: 510px;
+  height: 270px;
+  z-index: 25;
+}
+
+/* styling for introductory text and play button displayed after slide screen
+   has expanded */
+
+#intro {
+  position: absolute;
+  top: 52px;
+  left: 39px;
+  width: 384px;
+  height: 200px;
+  padding: 40px;
+  text-align: center;
+  vertical-align: center;
+  z-index: 60;
+  display: none;
+  background-color: transparent;
+}
+
+#intro h1 {
+  font-weight: bold;
+  font-style: italic;
+  font-size: 24px;
+  margin: 0 0 0 18px;
+}
+
+#intro p {
+  margin: 12px 0;
+  padding: 0;
+}
+
+#start {
+  cursor: pointer;
+  font-style: italic;
+}
+
+/* styling for slideshow */
+
+#slideshow {
+  position: relative;
+  width: 300px;
+  top: 62px;
+  margin: 24px auto;
+  z-index: 100;
+  background-color: #773333;
+  display: none;
+}
+
+#slideshow .caption {
+  margin-top: 8px;
+  text-align: center;
+}
+
+/* styling for prompt and animated arrow that appear as a hint on how to expand
+   slide screen */
+#click-prompt {
+  position: absolute;
+  width: 300px;
+  left: 121px;
+  top: 0px;         /* actual value set by script */
+  display: none;
+  text-align: center;
+  vertical-align: center;
+}
+
+#click-arrow {
+  position: absolute;
+  width: 32px;
+  height: 50px;
+  left: 255px;
+  top: 0px;         /* actual value set by script */
+  display: none;
+}
+
+/* styling for cancel button that appears at top right of slide screen once it
+   has expanded */
+
+#cancel-btn {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 56px;
+  left: 486px;
+  display: none;
+  z-index: 100;
+  cursor: pointer;
+}
+
