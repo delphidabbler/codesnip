@@ -656,9 +656,6 @@ procedure TOverviewFrame.tcDisplayStyleChange(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
-  { TODO: create a Tab Manager object that triggers Changing and / or Change
-          events regardless of how tab is changed. This manager class could
-          implement ITabbedDisplayMgr on behalf of frame.}
   NotifyTabChange;
 end;
 
