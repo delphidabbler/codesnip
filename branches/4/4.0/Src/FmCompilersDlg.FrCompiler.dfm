@@ -50,7 +50,7 @@ inherited CompilersDlgCompilerFrame: TCompilersDlgCompilerFrame
     Top = 88
     Width = 273
     Height = 17
-    Caption = 'Display results for this compiler in details pane'
+    Caption = 'Display &results for this compiler in details pane'
     TabOrder = 3
   end
 end
