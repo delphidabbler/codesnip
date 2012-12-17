@@ -215,7 +215,6 @@ uses
   UDetailPageHTML in 'UDetailPageHTML.pas',
   UDetailPageLoader in 'UDetailPageLoader.pas',
   UDetailTabAction in 'UDetailTabAction.pas',
-  UDHTML in 'UDHTML.pas',
   UDialogMgr in 'UDialogMgr.pas',
   UDispatchList in 'UDispatchList.pas',
   UDlgHelper in 'UDlgHelper.pas',

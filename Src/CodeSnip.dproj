@@ -404,7 +404,6 @@
 			<DCCReference Include="UDetailPageHTML.pas"/>
 			<DCCReference Include="UDetailPageLoader.pas"/>
 			<DCCReference Include="UDetailTabAction.pas"/>
-			<DCCReference Include="UDHTML.pas"/>
 			<DCCReference Include="UDialogMgr.pas"/>
 			<DCCReference Include="UDispatchList.pas"/>
 			<DCCReference Include="UDlgHelper.pas"/>
