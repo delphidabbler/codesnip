@@ -226,7 +226,7 @@ begin
   fSearchParams.Logic := SearchCriteria.Logic;
   fSearchParams.Options := SearchCriteria.Options;
   // Create search object from the entered criteria
-  fSearch := TSearchFactory.CreateTextSearch(SearchCriteria);
+  fSearch := TSearchFactory.CreateSearch(SearchCriteria);
   // Record search scope
   fRefinePreviousSearch := rgScope.ItemIndex = 0
 end;

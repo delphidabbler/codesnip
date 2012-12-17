@@ -255,32 +255,7 @@ type
   }
   TSearchFactory = class(TNoConstructObject)
   public
-    class function CreateCompilerSearch(
-      const Criteria: ICompilerSearchCriteria): ISearch;
-      {Creates a compiler search object.
-        @param Criteria [in] Criteria to apply to search.
-        @return ISearch interface to compiler search object instance.
-      }
-    class function CreateTextSearch(
-      const Criteria: ITextSearchCriteria): ISearch;
-      {Creates a text search object.
-        @param Criteria [in] Criteria to apply to sarch.
-        @return ISearch interface to text search object instance.
-      }
-    class function CreateSelectionSearch(
-      const Criteria: ISelectionSearchCriteria): ISearch;
-      {Creates a selection search object.
-        @param Criteria [in] Criteria to apply to search.
-        @return ISearch interface to selection search object instance.
-      }
-    class function CreateStoredSelectionSearch(
-      const Criteria: IStoredSelectionSearchCriteria): ISearch;
-    class function CreateXRefSearch(
-      const Criteria: IXRefSearchCriteria): ISearch;
-      {Creates a cross-reference search object.
-        @param Criteria [in] Criteria to apply to search.
-        @return ISearch interface to cross-reference search object instance.
-      }
+    class function CreateSearch(Criteria: ISearchCriteria): ISearch;
     class function CreateNulSearch: ISearch;
       {Creates a nul search object.
         @return ISearch interface to nul search object instance.
@@ -1190,56 +1165,15 @@ end;
 
 { TSearchFactory }
 
-class function TSearchFactory.CreateCompilerSearch(
-  const Criteria: ICompilerSearchCriteria): ISearch;
-  {Creates a compiler search object.
-    @param Criteria [in] Criteria to apply to search.
-    @return ISearch interface to compiler search object instance.
-  }
-begin
-  Result := TSearch.Create(Criteria);
-end;
-
 class function TSearchFactory.CreateNulSearch: ISearch;
   {Creates a nul search object.
     @return ISearch interface to nul search object instance.
   }
 begin
-  Result := TSearch.Create(TNulSearchCriteria.Create);
+  Result := CreateSearch(TNulSearchCriteria.Create);
 end;
 
-class function TSearchFactory.CreateSelectionSearch(
-  const Criteria: ISelectionSearchCriteria): ISearch;
-  {Creates a selection search object.
-    @param Criteria [in] Criteria to apply to search.
-    @return ISearch interface to selection search object instance.
-  }
-begin
-  Result := TSearch.Create(Criteria);
-end;
-
-class function TSearchFactory.CreateStoredSelectionSearch(
-  const Criteria: IStoredSelectionSearchCriteria): ISearch;
-begin
-  Result := TSearch.Create(Criteria);
-end;
-
-class function TSearchFactory.CreateTextSearch(
-  const Criteria: ITextSearchCriteria): ISearch;
-  {Creates a text search object.
-    @param Criteria [in] Criteria to apply to sarch.
-    @return ISearch interface to text search object instance.
-  }
-begin
-  Result := TSearch.Create(Criteria);
-end;
-
-class function TSearchFactory.CreateXRefSearch(
-  const Criteria: IXRefSearchCriteria): ISearch;
-  {Creates a cross-reference search object.
-    @param Criteria [in] Criteria to apply to search.
-    @return ISearch interface to cross-reference search object instance.
-  }
+class function TSearchFactory.CreateSearch(Criteria: ISearchCriteria): ISearch;
 begin
   Result := TSearch.Create(Criteria);
 end;

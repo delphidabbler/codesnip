@@ -156,7 +156,7 @@ begin
     frmSelect.SelectedSnippets
   );
   // Create search object from the entered criteria
-  fSearch := TSearchFactory.CreateSelectionSearch(SearchCriteria);
+  fSearch := TSearchFactory.CreateSearch(SearchCriteria);
 end;
 
 procedure TSelectionSearchDlg.btnSelectAllClick(Sender: TObject);

@@ -209,7 +209,7 @@ begin
   // Persist the search criteria
   fSearchParams.Options := SearchCriteria.Options;
   // Create search object from the entered criteria
-  fSearch := TSearchFactory.CreateXRefSearch(SearchCriteria);
+  fSearch := TSearchFactory.CreateSearch(SearchCriteria);
 end;
 
 procedure TFindXRefsDlg.ConfigForm;
