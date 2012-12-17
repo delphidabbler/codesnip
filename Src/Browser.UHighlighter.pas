@@ -198,7 +198,7 @@ begin
     begin
       // Apply highlight to found text by spanning it with highlight style
       SpanAttrs := THTMLAttributes.Create('style', fHighLightStyle);
-      Range.pasteHTML(MakeCompoundTag('span', SpanAttrs, Range.htmlText));
+      Range.pasteHTML(THTML.CompoundTag('span', SpanAttrs, Range.htmlText));
       Inc(Result);
     end
     else

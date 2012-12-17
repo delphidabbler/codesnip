@@ -326,10 +326,10 @@ end;
 
 function TNewTabPageHTML.Generate: string;
 begin
-  Result := MakeCompoundTag(
+  Result := THTML.CompoundTag(
     'div',
     THTMLAttributes.Create('id', 'newtab'),
-    MakeSafeHTMLText(View.Description)
+    THTML.Entities(View.Description)
   );
 end;
 
@@ -351,11 +351,9 @@ begin
   UserDBCount := Database.Snippets.Count(True);
   Tplt.ResolvePlaceholderHTML(
     'HaveUserDB', TCSS.BlockDisplayProp(UserDBCount > 0)
-//    'HaveUserDB', TCSS.BlockDisplayProp(False)
   );
   Tplt.ResolvePlaceholderHTML(
     'NoUserDB', TCSS.BlockDisplayProp(UserDBCount <= 0)
-//    'NoUserDB', TCSS.BlockDisplayProp(True)
   );
   Tplt.ResolvePlaceholderText(
     'UserDBCount', IntToStr(UserDBCount)
@@ -364,11 +362,9 @@ begin
   MainDBCount := Database.Snippets.Count(False);
   Tplt.ResolvePlaceholderHTML(
     'HaveMainDB', TCSS.BlockDisplayProp(MainDBCount > 0)
-//    'HaveMainDB', TCSS.BlockDisplayProp(False)
   );
   Tplt.ResolvePlaceholderHTML(
     'NoMainDB', TCSS.BlockDisplayProp(MainDBCount <= 0)
-//    'NoMainDB', TCSS.BlockDisplayProp(True)
   );
   Tplt.ResolvePlaceholderText(
     'MainDBCount', IntToStr(MainDBCount)
@@ -377,20 +373,18 @@ begin
   Compilers := TCompilersFactory.CreateAndLoadCompilers;
   Tplt.ResolvePlaceholderHTML(
     'HaveCompilers', TCSS.BlockDisplayProp(Compilers.AvailableCount > 0)
-//    'HaveCompilers', TCSS.BlockDisplayProp(False)
   );
   Tplt.ResolvePlaceholderHTML(
     'NoCompilers', TCSS.BlockDisplayProp(Compilers.AvailableCount <= 0)
-//    'NoCompilers', TCSS.BlockDisplayProp(True)
   );
   CompilerList := TStringBuilder.Create;
   try
     for Compiler in Compilers do
       if Compiler.IsAvailable then
         CompilerList.AppendLine(
-          MakeCompoundTag(
+          THTML.CompoundTag(
             'li',
-            MakeSafeHTMLText(Compiler.GetName)
+            THTML.Entities(Compiler.GetName)
           )
         );
     Tplt.ResolvePlaceholderHTML('CompilerList', CompilerList.ToString);
@@ -406,9 +400,9 @@ resourcestring
   sBody = 'The database has been updated successfully.';
 begin
   Result :=
-    MakeCompoundTag('h1', View.Description)
+    THTML.CompoundTag('h1', View.Description)
     +
-    MakeCompoundTag('p', sBody);
+    THTML.CompoundTag('p', sBody);
 end;
 
 { TSnippetInfoPageHTML }
@@ -502,14 +496,14 @@ begin
   DescCellAttrs := THTMLAttributes.Create('class', 'desc');
   SnippetHTML := TSnippetHTML.Create(Snippet);
   try
-    Result := MakeCompoundTag(
+    Result := THTML.CompoundTag(
       'tr',
-      MakeCompoundTag(
+      THTML.CompoundTag(
         'td',
         NameCellAttrs,
         SnippetHTML.SnippetALink
       )
-      + MakeCompoundTag('td', DescCellAttrs, SnippetHTML.Description)
+      + THTML.CompoundTag('td', DescCellAttrs, SnippetHTML.Description)
     );
   finally
     SnippetHTML.Free;

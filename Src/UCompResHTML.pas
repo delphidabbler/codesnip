@@ -102,8 +102,8 @@ var
   Compiler: ICompiler;  // each supported compiler
 begin
   // Initialise HTML for two rows of table and resulting table HTML
-  Row1 := MakeTag('tr', ttOpen);
-  Row2 := MakeTag('tr', ttOpen);
+  Row1 := THTML.OpeningTag('tr');
+  Row2 := THTML.OpeningTag('tr');
   // Add to each table row for each compiler: compiler name in row 1 and LED
   // image representing compile result in row 2
   for Compiler in Compilers do
@@ -114,8 +114,8 @@ begin
     Row2 := Row2 + ResultCell(CompileResults[Compiler.GetID]) + EOL;
   end;
   // Close the two rows
-  Row1 := Row1 + MakeTag('tr', ttClose);
-  Row2 := Row2 + MakeTag('tr', ttClose);
+  Row1 := Row1 + THTML.ClosingTag('tr');
+  Row2 := Row2 + THTML.ClosingTag('tr');
   // Return HTML of two rows
   Result := Row1 + Row2;
 end;
@@ -126,30 +126,30 @@ resourcestring
   sMessage = 'Results for all compilers have been hidden.';
   sHelpText = 'More information';
 begin
-  Result := MakeCompoundTag(
+  Result := THTML.CompoundTag(
     'tr',
-    MakeCompoundTag(
+    THTML.CompoundTag(
       'th',
-      MakeCompoundTag(
+      THTML.CompoundTag(
         'span',
         THTMLAttributes.Create('class', 'warning'),
-        MakeSafeHTMLText(sHeading)
+        THTML.Entities(sHeading)
       )
     )
   ) +
-  MakeCompoundTag(
+  THTML.CompoundTag(
     'tr',
-    MakeCompoundTag(
+    THTML.CompoundTag(
       'td',
-      MakeSafeHTMLText(sMessage)
+      THTML.Entities(sMessage)
       + ' ' +
-      MakeCompoundTag(
+      THTML.CompoundTag(
         'a',
         THTMLAttributes.Create([
           THTMLAttribute.Create('href', 'help:AllCompilersHidden'),
           THTMLAttribute.Create('class', 'help-link')
         ]),
-        MakeSafeHTMLText(sHelpText)
+        THTML.Entities(sHelpText)
       )
       + '.'
     )
@@ -175,7 +175,7 @@ begin
   );
   Attrs.Add('title', CompResImgInfo[CompRes].Title);
   // Create tag
-  Result := MakeTag('img', ttSimple, Attrs);
+  Result := THTML.SimpleTag('img', Attrs);
 end;
 
 class function TCompResHTML.NameCell(const Compiler: ICompiler): string;
@@ -184,14 +184,14 @@ var
 begin
   // Any spaces in compiler name replaced by <br /> tags
   CompilerNameHTML := StrReplace(
-    MakeSafeHTMLText(Compiler.GetName), ' ', MakeTag('br', ttSimple)
+    THTML.Entities(Compiler.GetName), ' ', THTML.SimpleTag('br')
   );
-  Result := MakeCompoundTag('th', CompilerNameHTML);
+  Result := THTML.CompoundTag('th', CompilerNameHTML);
 end;
 
 class function TCompResHTML.ResultCell(const CompRes: TCompileResult): string;
 begin
-  Result := MakeCompoundTag('td', ImageTag(CompRes));
+  Result := THTML.CompoundTag('td', ImageTag(CompRes));
 end;
 
 class function TCompResHTML.TableRows(const CompileResults: TCompileResults):

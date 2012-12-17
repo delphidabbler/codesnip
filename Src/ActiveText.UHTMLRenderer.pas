@@ -116,7 +116,7 @@ end;
 
 procedure TActiveTextHTML.FinaliseRender;
 begin
-  fBuilder.AppendLine(MakeTag('div', ttClose));
+  fBuilder.AppendLine(THTML.ClosingTag('div'));
 end;
 
 procedure TActiveTextHTML.InitialiseRender;
@@ -127,7 +127,7 @@ begin
     WrapperClassAttr := THTMLAttributes.Create('class', fCSSStyles.WrapperClass)
   else
     WrapperClassAttr := nil;
-  fBuilder.AppendLine(MakeTag('div', ttOpen, WrapperClassAttr));
+  fBuilder.AppendLine(THTML.OpeningTag('div', WrapperClassAttr));
 end;
 
 procedure TActiveTextHTML.InitialiseTagInfoMap;
@@ -165,7 +165,7 @@ end;
 function TActiveTextHTML.MakeClosingTag(const Elem: IActiveTextActionElem):
   string;
 begin
-  Result := MakeTag(fTagInfoMap[Elem.Kind].Name, ttClose);
+  Result := THTML.ClosingTag(fTagInfoMap[Elem.Kind].Name);
 end;
 
 function TActiveTextHTML.MakeOpeningTag(const Elem: IActiveTextActionElem):
@@ -180,7 +180,7 @@ begin
       Attrs := THTMLAttributes.Create;
     Attrs.Add('class', fCSSStyles.ElemClasses[Elem.Kind])
   end;
-  Result := MakeTag(fTagInfoMap[Elem.Kind].Name, ttOpen, Attrs);
+  Result := THTML.OpeningTag(fTagInfoMap[Elem.Kind].Name, Attrs);
 end;
 
 function TActiveTextHTML.Render(ActiveText: IActiveText): string;
@@ -240,7 +240,7 @@ procedure TActiveTextHTML.RenderTextElem(Elem: IActiveTextTextElem);
 begin
   if not fInBlock then
     Exit;
-  fBuilder.Append(MakeSafeHTMLText(Elem.Text));
+  fBuilder.Append(THTML.Entities(Elem.Text));
 end;
 
 { TActiveTextHTML.TCSSStyles }
