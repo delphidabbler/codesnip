@@ -19,7 +19,8 @@ inherited GeneralPrefsFrame: TGeneralPrefsFrame
       Top = 24
       Width = 157
       Height = 13
-      Caption = 'Preferred units of measurement:'
+      Caption = 'Preferred units of &measurement:'
+      FocusControl = cbUnits
     end
     object cbUnits: TComboBox
       Left = 168

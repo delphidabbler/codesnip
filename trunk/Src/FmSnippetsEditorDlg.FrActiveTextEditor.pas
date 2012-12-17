@@ -57,6 +57,7 @@ type
     procedure actConvertToPlainTextUpdate(Sender: TObject);
     procedure actConvertToREMLUpdate(Sender: TObject);
     procedure tcEditModeChange(Sender: TObject);
+    procedure FrameEnter(Sender: TObject);
   public
     type
       TEditMode = (emPlainText, emREML, emAuto);
@@ -150,6 +151,11 @@ end;
 procedure TSnippetsActiveTextEdFrame.Clear;
 begin
   edText.Clear;
+end;
+
+procedure TSnippetsActiveTextEdFrame.FrameEnter(Sender: TObject);
+begin
+  edText.SetFocus;
 end;
 
 function TSnippetsActiveTextEdFrame.GetActiveText: IActiveText;

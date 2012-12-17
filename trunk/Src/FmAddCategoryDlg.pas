@@ -115,7 +115,7 @@ procedure TAddCategoryDlg.ConfigForm;
   }
 resourcestring
   // Prompt text for frame
-  sPrompt = 'Enter a category description:';
+  sPrompt = 'Enter a category &description:';
 begin
   inherited;
   frmDescription.Prompt := sPrompt;

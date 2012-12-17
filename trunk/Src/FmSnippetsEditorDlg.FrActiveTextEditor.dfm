@@ -7,6 +7,7 @@ object SnippetsActiveTextEdFrame: TSnippetsActiveTextEdFrame
   ParentBackground = False
   ParentColor = False
   TabOrder = 0
+  OnEnter = FrameEnter
   object edText: TMemo
     Left = 0
     Top = 0

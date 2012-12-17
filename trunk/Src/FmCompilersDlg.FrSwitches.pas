@@ -147,7 +147,6 @@ procedure TCompilersDlgSwitchesFrame.lbSwitchesClick(Sender: TObject);
 begin
   edSwitch.Text := lbSwitches.Items[lbSwitches.ItemIndex];
   UpdateSwitchButtons;
-  edSwitch.SetFocus;
 end;
 
 procedure TCompilersDlgSwitchesFrame.PopulateSwitchList(const Switches: string);

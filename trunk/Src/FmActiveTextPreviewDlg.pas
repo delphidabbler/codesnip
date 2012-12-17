@@ -168,8 +168,9 @@ var
 resourcestring
   // Button captions for choice dialog box
   sClose = 'Close';
-  sViewLink = 'View Link';
-  // Text to display in choice dialog box
+  sViewLink = '&View Link';
+  // Title & text to display in choice dialog box
+  sDlgTitle = 'Link Information';
   sDlgText = 'Link URL:' + EOL2 + '%s';
 const
   cCloseRes = mrCancel; // modal result of choice dialog's close button
@@ -192,7 +193,8 @@ begin
       [
         TMessageBoxButton.Create(sClose, cCloseRes, True, True),
         TMessageBoxButton.Create(sViewLink, cViewLinkRes)
-      ]
+      ],
+      sDlgTitle
     ) = cViewLinkRes then
     begin
       // User wants to view link: use protocol handler to display it

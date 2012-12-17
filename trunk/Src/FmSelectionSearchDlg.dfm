@@ -1,7 +1,7 @@
 inherited SelectionSearchDlg: TSelectionSearchDlg
   Caption = 'Select Snippets'
   ExplicitWidth = 474
-  ExplicitHeight = 354
+  ExplicitHeight = 356
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -83,7 +83,7 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
       Top = 174
       Width = 82
       Height = 25
-      Caption = 'Expand Tree'
+      Caption = 'E&xpand Tree'
       TabOrder = 5
       OnClick = btnExpandAllClick
     end
@@ -92,7 +92,7 @@ inherited SelectionSearchDlg: TSelectionSearchDlg
       Top = 205
       Width = 82
       Height = 25
-      Caption = 'Collapse Tree'
+      Caption = 'C&ollapse Tree'
       TabOrder = 6
       OnClick = btnCollapseAllClick
     end

@@ -104,7 +104,6 @@ uses
   FmDonateDlg in 'FmDonateDlg.pas' {DonateDlg},
   FmDuplicateSnippetDlg in 'FmDuplicateSnippetDlg.pas' {DuplicateSnippetDlg},
   FmEasterEgg in 'FmEasterEgg.pas' {EasterEggForm},
-  FmEditTextDlg in 'FmEditTextDlg.pas' {EditTextDlg},
   FmFindCompilerDlg in 'FmFindCompilerDlg.pas' {FindCompilerDlg},
   FmFindTextDlg in 'FmFindTextDlg.pas' {FindTextDlg},
   FmFindXRefsDlg in 'FmFindXRefsDlg.pas' {FindXRefsDlg},

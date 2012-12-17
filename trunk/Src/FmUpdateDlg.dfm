@@ -6,7 +6,7 @@ inherited UpdateDlg: TUpdateDlg
   ClientHeight = 344
   OnCloseQuery = FormCloseQuery
   ExplicitWidth = 474
-  ExplicitHeight = 370
+  ExplicitHeight = 372
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -29,7 +29,7 @@ inherited UpdateDlg: TUpdateDlg
     object lblError: TLabel
       Left = 0
       Top = 0
-      Width = 61
+      Width = 62
       Height = 13
       Cursor = crHandPoint
       Caption = 'details below'
@@ -38,14 +38,14 @@ inherited UpdateDlg: TUpdateDlg
     object lblHeadline: TLabel
       Left = 0
       Top = 0
-      Width = 64
+      Width = 62
       Height = 13
       Alignment = taCenter
       Caption = 'lblHeadline'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -11
-      Font.Name = 'MS Sans Serif'
+      Font.Name = 'Tahoma'
       Font.Style = [fsBold]
       ParentFont = False
       Visible = False
@@ -95,7 +95,7 @@ inherited UpdateDlg: TUpdateDlg
     Top = 304
     Width = 91
     Height = 25
-    Caption = 'Latest News...'
+    Caption = 'Latest &News...'
     TabOrder = 1
     OnClick = btnNewsClick
   end
