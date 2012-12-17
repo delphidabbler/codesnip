@@ -54,11 +54,6 @@ inherited CompErrorDlg: TCompErrorDlg
       Align = alTop
       DitherBackground = False
       EndMargin = 4
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -11
-      Font.Name = 'Tahoma'
-      Font.Style = []
       StartMargin = 4
       SoftTop = True
       Style = tsSoftTabs

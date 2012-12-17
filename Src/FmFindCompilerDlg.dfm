@@ -3,7 +3,7 @@ inherited FindCompilerDlg: TFindCompilerDlg
   Top = 121
   Caption = 'Find Compiler'
   ExplicitWidth = 474
-  ExplicitHeight = 354
+  ExplicitHeight = 356
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -14,7 +14,7 @@ inherited FindCompilerDlg: TFindCompilerDlg
     object lblCompilerVer: TLabel
       Left = 0
       Top = 0
-      Width = 48
+      Width = 50
       Height = 13
       Caption = '&Compilers:'
       FocusControl = lbCompilerVers
@@ -22,7 +22,7 @@ inherited FindCompilerDlg: TFindCompilerDlg
     object lblCriteria: TLabel
       Left = 168
       Top = 0
-      Width = 35
+      Width = 39
       Height = 13
       Caption = 'C&riteria:'
       FocusControl = cbCriteria
@@ -51,11 +51,11 @@ inherited FindCompilerDlg: TFindCompilerDlg
       Top = 59
       Width = 165
       Height = 82
-      Caption = 'Search logic'
+      Caption = 'Search &logic'
       ItemIndex = 1
       Items.Strings = (
-        '&Find all compilers'
-        'Fi&nd any compiler')
+        'Find all compilers'
+        'Find any compiler')
       TabOrder = 4
       TabStop = True
     end
@@ -82,7 +82,7 @@ inherited FindCompilerDlg: TFindCompilerDlg
       Top = 159
       Width = 165
       Height = 82
-      Caption = 'Search scope'
+      Caption = 'Search &scope'
       ItemIndex = 0
       Items.Strings = (
         'Refine existing search'

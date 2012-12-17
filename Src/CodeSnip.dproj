@@ -150,9 +150,6 @@
 			<DCCReference Include="FmEasterEgg.pas">
 				<Form>EasterEggForm</Form>
 			</DCCReference>
-			<DCCReference Include="FmEditTextDlg.pas">
-				<Form>EditTextDlg</Form>
-			</DCCReference>
 			<DCCReference Include="FmFindCompilerDlg.pas">
 				<Form>FindCompilerDlg</Form>
 			</DCCReference>

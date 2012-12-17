@@ -5,7 +5,7 @@ inherited NewsDlg: TNewsDlg
   ClientHeight = 387
   Position = poDesigned
   ExplicitWidth = 474
-  ExplicitHeight = 413
+  ExplicitHeight = 415
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -89,7 +89,7 @@ inherited NewsDlg: TNewsDlg
     Width = 89
     Height = 25
     Action = actRSSFeed
-    Caption = 'RSS Feed'
+    Caption = '&RSS Feed'
     DoubleBuffered = True
     ParentDoubleBuffered = False
     ParentShowHint = False
@@ -105,12 +105,12 @@ inherited NewsDlg: TNewsDlg
     Left = 168
     Top = 192
     object actRSSFeed: TAction
-      Caption = 'RSS Feed'
+      Caption = '&RSS Feed'
       ImageIndex = 45
       OnExecute = actRSSFeedExecute
     end
     object actConfig: TAction
-      Caption = 'Change...'
+      Caption = '&Change...'
       OnExecute = actConfigExecute
     end
   end

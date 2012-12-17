@@ -6,7 +6,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
   ClientWidth = 738
   Position = poDesigned
   ExplicitWidth = 744
-  ExplicitHeight = 604
+  ExplicitHeight = 606
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -29,14 +29,15 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object lblDescription: TLabel
           Left = 0
           Top = 73
-          Width = 56
+          Width = 57
           Height = 13
           Caption = '&Description:'
+          FocusControl = frmDescription
         end
         object lblSourceCode: TLabel
           Left = 0
           Top = 204
-          Width = 64
+          Width = 63
           Height = 13
           Caption = '&Source code:'
           FocusControl = edSourceCode
@@ -52,7 +53,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object lblCategories: TLabel
           Left = 0
           Top = 183
-          Width = 45
+          Width = 49
           Height = 13
           Caption = '&Category:'
           FocusControl = cbCategories
@@ -60,14 +61,14 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object lblSnippetKindHelp: TLabel
           Left = 330
           Top = 146
-          Width = 118
+          Width = 117
           Height = 13
           Cursor = crHandPoint
           Caption = 'What are Snippet Kinds?'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -11
-          Font.Name = 'MS Sans Serif'
+          Font.Name = 'Tahoma'
           Font.Style = [fsUnderline]
           ParentFont = False
           OnClick = lblSnippetKindHelpClick
@@ -102,7 +103,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Top = 224
           Width = 647
           Height = 225
-          Font.Charset = ANSI_CHARSET
+          Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
           Font.Height = -12
           Font.Name = 'Courier New'
@@ -169,6 +170,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Width = 85
           Height = 25
           Action = actViewDescription
+          Caption = 'Previe&w...'
           TabOrder = 3
         end
         object edDisplayName: TEdit
@@ -194,7 +196,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object lblXRefs: TLabel
           Left = 3
           Top = 3
-          Width = 82
+          Width = 87
           Height = 13
           Caption = 'Cross-&references:'
           FocusControl = clbXRefs
@@ -202,7 +204,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object lblDepends: TLabel
           Left = 228
           Top = 3
-          Width = 72
+          Width = 71
           Height = 13
           Caption = 'De&pendencies:'
           FocusControl = clbDepends
@@ -210,7 +212,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object lblUnits: TLabel
           Left = 452
           Top = 3
-          Width = 27
+          Width = 28
           Height = 13
           Caption = '&Units:'
           FocusControl = clbUnits
@@ -273,9 +275,10 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object lblExtra: TLabel
           Left = 3
           Top = 3
-          Width = 81
+          Width = 87
           Height = 13
           Caption = 'E&xtra information:'
+          FocusControl = frmExtra
         end
         object lblExtraCaretPos: TLabel
           Left = 560
@@ -327,7 +330,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object lblCompilers: TLabel
           Left = 3
           Top = 3
-          Width = 91
+          Width = 93
           Height = 13
           Caption = 'Set &compile results:'
           FocusControl = lbCompilers
@@ -335,7 +338,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         object lblCompileShortcuts: TLabel
           Left = 203
           Top = 3
-          Width = 45
+          Width = 46
           Height = 13
           Caption = 'Shortcuts'
         end
@@ -411,7 +414,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -11
-            Font.Name = 'MS Sans Serif'
+            Font.Name = 'Tahoma'
             Font.Style = [fsUnderline]
             ParentFont = False
             OnClick = lblViewCompErrsClick
@@ -476,11 +479,11 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       OnUpdate = actViewErrorsUpdate
     end
     object actDependencies: TAction
-      Caption = 'View Dependencies...'
+      Caption = 'View &Dependencies...'
       OnExecute = actDependenciesExecute
     end
     object actViewExtra: TAction
-      Caption = 'Preview...'
+      Caption = 'Previe&w...'
       OnExecute = actViewExtraExecute
       OnUpdate = actViewExtraUpdate
     end

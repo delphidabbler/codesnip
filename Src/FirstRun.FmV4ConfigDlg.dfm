@@ -6,19 +6,15 @@ inherited V4ConfigDlg: TV4ConfigDlg
   Position = poDesigned
   OnCloseQuery = FormCloseQuery
   ExplicitWidth = 565
-  ExplicitHeight = 433
+  ExplicitHeight = 435
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
     inherited pcWizard: TPageControl
-      ActivePage = tsConfigFile
+      ActivePage = tsUserDB
       object tsIntro: TTabSheet
         Caption = 'tsIntro'
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblIntro1: TLabel
           Left = 0
           Top = 3
@@ -91,7 +87,7 @@ inherited V4ConfigDlg: TV4ConfigDlg
           Top = 56
           Width = 369
           Height = 17
-          Caption = 'Preserve preferences from previous version'
+          Caption = 'Preserve &preferences from previous version'
           Checked = True
           State = cbChecked
           TabOrder = 0
@@ -101,10 +97,6 @@ inherited V4ConfigDlg: TV4ConfigDlg
         Caption = 'tsUserDB'
         ImageIndex = 2
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblUserDB1: TLabel
           Left = 0
           Top = 3
@@ -134,7 +126,7 @@ inherited V4ConfigDlg: TV4ConfigDlg
           Top = 66
           Width = 369
           Height = 17
-          Caption = 'Copy existing database'
+          Caption = 'Copy existing &database'
           Checked = True
           State = cbChecked
           TabOrder = 0
@@ -144,10 +136,6 @@ inherited V4ConfigDlg: TV4ConfigDlg
         Caption = 'tsSummary'
         ImageIndex = 3
         TabVisible = False
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblSummaryPrefix: TLabel
           Left = 0
           Top = 3
@@ -182,10 +170,6 @@ inherited V4ConfigDlg: TV4ConfigDlg
         Caption = 'tsFinish'
         ImageIndex = 4
         TabVisible = False
-        ExplicitLeft = 8
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblFinish1: TLabel
           Left = 0
           Top = 3

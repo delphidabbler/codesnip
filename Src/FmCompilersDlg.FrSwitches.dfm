@@ -28,6 +28,7 @@ inherited CompilersDlgSwitchesFrame: TCompilersDlgSwitchesFrame
     Width = 90
     Height = 13
     Caption = 'Add or &edit switch:'
+    FocusControl = edSwitch
   end
   object btnDefSwitches: TButton
     Left = 232
@@ -79,7 +80,7 @@ inherited CompilersDlgSwitchesFrame: TCompilersDlgSwitchesFrame
     Top = 38
     Width = 65
     Height = 25
-    Caption = 'D&elete'
+    Caption = 'De&lete'
     TabOrder = 4
     OnClick = btnDeleteClick
   end
