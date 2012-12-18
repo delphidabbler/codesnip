@@ -152,7 +152,7 @@ var
 begin
   inherited;
   // Create search criteria for all selected snippets
-  SearchCriteria := TSearchCriteriaFactory.CreateSelectionSearchCriteria(
+  SearchCriteria := TSearchCriteriaFactory.CreateManualSelectionSearchCriteria(
     frmSelect.SelectedSnippets
   );
   // Create search object from the entered criteria

@@ -153,7 +153,7 @@ var
   FileName: string;
   Reader: TSelectionFileReader;
   SnippetIDs: ISnippetIDList;
-  Criteria: IStoredSelectionSearchCriteria;
+  Criteria: ISelectionSearchCriteria;
 begin
   if not GetLoadFileName(FileName) then
     Exit(False);
