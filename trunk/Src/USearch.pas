@@ -356,7 +356,7 @@ type
     Abstract base class for all search criteria objects that implements
     ISearchUIInfo.
   }
-  TBaseSearchCriteria = class(TInterfacedObject)
+  TBaseSearchCriteria = class abstract(TInterfacedObject)
   strict private
     fBitmap: TBitmap;
       {Stores bitmap of glyph associated with search type}
@@ -477,22 +477,13 @@ type
       }
   end;
 
-  {
-  TSelectionSearchCriteria:
-    Search criteria for selection searches. Stores names of items to be
-    selected.
-  }
-  TSelectionSearchCriteria = class(TBaseSearchCriteria,
-    ISearchCriteria,
-    ISelectionSearchCriteria,
-    ISearchUIInfo
-  )
+  TBaseSelectionSearchCriteria = class abstract(TBaseSearchCriteria)
   strict private
     var
       fSelectedItems: ISnippetIDList;
         {List snippets ids to be selected in search}
   strict protected
-    function GlyphResourceName: string; override;
+    function GlyphResourceName: string; override; abstract;
       {Provides name of required glyph bitmap in resources.
         @return Name of bitmap resource.
       }
@@ -511,32 +502,32 @@ type
       }
   end;
 
-  TStoredSelectionSearchCriteria = class(TBaseSearchCriteria,
+  {
+  TSelectionSearchCriteria:
+    Search criteria for selection searches. Stores names of items to be
+    selected.
+  }
+  TSelectionSearchCriteria = class(TBaseSelectionSearchCriteria,
     ISearchCriteria,
-    IStoredSelectionSearchCriteria,
+    ISelectionSearchCriteria,
     ISearchUIInfo
   )
-  strict private
-    var
-      fSelectedItems: ISnippetIDList;
-        {List snippets ids to be selected in search}
-  strict protected
+  public
     function GlyphResourceName: string; override;
       {Provides name of required glyph bitmap in resources.
         @return Name of bitmap resource.
       }
-  protected
-    { ISelectionSearchCriteria methods }
-    function Match(const Snippet: TSnippet): Boolean;
-    function IsNull: Boolean;
-    function GetSelectedItems: ISnippetIDList;
-      {Read accessor for SelectedItems property.
-        @return List of snippets to be selected in search.
-      }
+  end;
+
+  TStoredSelectionSearchCriteria = class(TBaseSelectionSearchCriteria,
+    ISearchCriteria,
+    IStoredSelectionSearchCriteria,
+    ISearchUIInfo
+  )
   public
-    constructor Create(const SelectedItems: ISnippetIDList);
-      {Class constructor. Sets up object with specified property values.
-        @param SelectedItems [in] List of snippets to be selected in search.
+    function GlyphResourceName: string; override;
+      {Provides name of required glyph bitmap in resources.
+        @return Name of bitmap resource.
       }
   end;
 
@@ -963,26 +954,32 @@ begin
   end;
 end;
 
-{ TSelectionSearchCriteria }
+{ TBaseSelectionSearchCriteria }
 
-constructor TSelectionSearchCriteria.Create(
+constructor TBaseSelectionSearchCriteria.Create(
   const SelectedItems: ISnippetIDList);
-  {Class constructor. Sets up object with specified property values.
-    @param SelectedItems [in] List of snippets to be selected in search.
-  }
 begin
   inherited Create;
   fSelectedItems := TSnippetIDList.Create;
   (fSelectedItems as IAssignable).Assign(SelectedItems);
 end;
 
-function TSelectionSearchCriteria.GetSelectedItems: ISnippetIDList;
-  {Read accessor for SelectedItems property.
-    @return List of snippets to be selected in search.
-  }
+function TBaseSelectionSearchCriteria.GetSelectedItems: ISnippetIDList;
 begin
   Result := fSelectedItems;
 end;
+
+function TBaseSelectionSearchCriteria.IsNull: Boolean;
+begin
+  Result := False;
+end;
+
+function TBaseSelectionSearchCriteria.Match(const Snippet: TSnippet): Boolean;
+begin
+  Result := fSelectedItems.Contains(Snippet.ID);
+end;
+
+{ TSelectionSearchCriteria }
 
 function TSelectionSearchCriteria.GlyphResourceName: string;
   {Provides name of required glyph bitmap in resources.
@@ -992,44 +989,11 @@ begin
   Result := 'SELECTIONSEARCH';
 end;
 
-function TSelectionSearchCriteria.IsNull: Boolean;
-begin
-  Result := False;
-end;
-
-function TSelectionSearchCriteria.Match(const Snippet: TSnippet): Boolean;
-begin
-  Result := fSelectedItems.Contains(Snippet.ID);
-end;
-
 { TStoredSelectionSearchCriteria }
-
-constructor TStoredSelectionSearchCriteria.Create(
-  const SelectedItems: ISnippetIDList);
-begin
-  inherited Create;
-  fSelectedItems := TSnippetIDList.Create;
-  (fSelectedItems as IAssignable).Assign(SelectedItems);
-end;
-
-function TStoredSelectionSearchCriteria.GetSelectedItems: ISnippetIDList;
-begin
-  Result := fSelectedItems;
-end;
 
 function TStoredSelectionSearchCriteria.GlyphResourceName: string;
 begin
   Result := 'STOREDSELECTIONSEARCH';
-end;
-
-function TStoredSelectionSearchCriteria.IsNull: Boolean;
-begin
-  Result := False;
-end;
-
-function TStoredSelectionSearchCriteria.Match(const Snippet: TSnippet): Boolean;
-begin
-  Result := fSelectedItems.Contains(Snippet.ID);
 end;
 
 { TXRefSearchCriteria }
