@@ -337,7 +337,8 @@ type
   strict private
     var
       fCriteria: ISearchCriteria;
-  protected
+  public
+    constructor Create(const Criteria: ISearchCriteria);
     { ISearch methods }
     function Execute(const InList, FoundList: TSnippetList): Boolean;
       {Executes the search, determining which of a list of snippets match the
@@ -347,8 +348,6 @@ type
         @return True if some snippets were found or false if search failed.
       }
     function GetCriteria: ISearchCriteria;
-  public
-    constructor Create(const Criteria: ISearchCriteria);
   end;
 
   {
@@ -358,8 +357,9 @@ type
   }
   TBaseSearchCriteria = class abstract(TInterfacedObject)
   strict private
-    fBitmap: TBitmap;
-      {Stores bitmap of glyph associated with search type}
+    var
+      fBitmap: TBitmap;
+        {Stores bitmap of glyph associated with search type}
   strict protected
     function GlyphResourceName: string; virtual; abstract;
       {Provides name of required glyph bitmap in resources.
@@ -369,6 +369,7 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
+    { ISearchUIInfo method }
     function Glyph: TBitmap;
       {Provides a glyph to be used to indicate kind of search.
         @return Reference to a bitmap storing glyph.
@@ -387,21 +388,29 @@ type
     ISearchUIInfo
     )
   strict private
-    fCompilers: TCompilerSearchCompilers;
-      {Compilers to include in search}
-    fLogic: TSearchLogic;
-      {Search logic}
-    fOption: TCompilerSearchOption;
-      {Compile result option}
+    var
+      fCompilers: TCompilerSearchCompilers;
+        {Compilers to include in search}
+      fLogic: TSearchLogic;
+        {Search logic}
+      fOption: TCompilerSearchOption;
+        {Compile result option}
   strict protected
     function GlyphResourceName: string; override;
       {Provides name of required glyph bitmap in resources.
         @return Name of bitmap resource.
       }
-  protected
+  public
+    constructor Create(const Compilers: TCompilerSearchCompilers;
+      const Logic: TSearchLogic; const Option: TCompilerSearchOption);
+      {Class consructor. Sets up object with specified property values.
+        @param Compilers [in] Set of compilers to be included in search.
+        @param Logic [in] Search logic to be used: AND or OR.
+        @param Option [in] Determines compilation outcome to be searched for.
+      }
     { ICompilerSearchCriteria methods }
-    function Match(const Snippet: TSnippet): Boolean;
-    function IsNull: Boolean;
+    function Match(const Snippet: TSnippet): Boolean;  // & ISearchCriteria
+    function IsNull: Boolean;                          // & ISearchCriteria
     function GetCompilers: TCompilerSearchCompilers;
       {Read accessor for Compilers property.
         @return Set of compilers to be included in search.
@@ -413,14 +422,6 @@ type
     function GetOption: TCompilerSearchOption;
       {Read accessor for Option property.
         @return Option determining the compilation outcome to be searched for.
-      }
-  public
-    constructor Create(const Compilers: TCompilerSearchCompilers;
-      const Logic: TSearchLogic; const Option: TCompilerSearchOption);
-      {Class consructor. Sets up object with specified property values.
-        @param Compilers [in] Set of compilers to be included in search.
-        @param Logic [in] Search logic to be used: AND or OR.
-        @param Option [in] Determines compilation outcome to be searched for.
       }
   end;
 
@@ -436,32 +437,17 @@ type
     ISearchUIInfo
     )
   strict private
-    fWords: TStrings;
-      {List of search words}
-    fLogic: TSearchLogic;
-      {Search logic}
-    fOptions: TTextSearchOptions;
-      {Text search options}
+    var
+      fWords: TStrings;
+        {List of search words}
+      fLogic: TSearchLogic;
+        {Search logic}
+      fOptions: TTextSearchOptions;
+        {Text search options}
   strict protected
     function GlyphResourceName: string; override;
       {Provides name of required glyph bitmap in resources.
         @return Name of bitmap resource.
-      }
-  protected
-    { ITextSearchCriteria methods }
-    function Match(const Snippet: TSnippet): Boolean;
-    function IsNull: Boolean;
-    function GetWords: TStrings;
-      {Read accessor for Words property.
-        @return List of words to be searched for.
-      }
-    function GetLogic: TSearchLogic;
-      {Read accessor for Logic property.
-        @return Search logic to be used: AND or OR.
-      }
-    function GetOptions: TTextSearchOptions;
-      {Read accessor for Options property.
-        @return Set of options used to modify how search is performed.
       }
   public
     constructor Create(const Words: string; const Logic: TSearchLogic;
@@ -475,6 +461,21 @@ type
     destructor Destroy; override;
       {Class destructor. Tears down object.
       }
+    { ITextSearchCriteria methods }
+    function Match(const Snippet: TSnippet): Boolean; // & ISearchCriteria
+    function IsNull: Boolean;                         // & ISearchCriteria
+    function GetWords: TStrings;
+      {Read accessor for Words property.
+        @return List of words to be searched for.
+      }
+    function GetLogic: TSearchLogic;
+      {Read accessor for Logic property.
+        @return Search logic to be used: AND or OR.
+      }
+    function GetOptions: TTextSearchOptions;
+      {Read accessor for Options property.
+        @return Set of options used to modify how search is performed.
+      }
   end;
 
   TBaseSelectionSearchCriteria = class abstract(TBaseSearchCriteria)
@@ -487,18 +488,17 @@ type
       {Provides name of required glyph bitmap in resources.
         @return Name of bitmap resource.
       }
-  protected
-    { ISelectionSearchCriteria methods }
-    function Match(const Snippet: TSnippet): Boolean;
-    function IsNull: Boolean;
-    function GetSelectedItems: ISnippetIDList;
-      {Read accessor for SelectedItems property.
-        @return List of snippets to be selected in search.
-      }
   public
     constructor Create(const SelectedItems: ISnippetIDList);
       {Class constructor. Sets up object with specified property values.
         @param SelectedItems [in] List of snippets to be selected in search.
+      }
+    { ISelectionSearchCriteria methods }
+    function Match(const Snippet: TSnippet): Boolean; // & ISearchCriteria
+    function IsNull: Boolean;                         // & ISearchCriteria
+    function GetSelectedItems: ISnippetIDList;
+      {Read accessor for SelectedItems property.
+        @return List of snippets to be selected in search.
       }
   end;
 
@@ -512,7 +512,7 @@ type
     ISelectionSearchCriteria,
     ISearchUIInfo
   )
-  public
+  strict protected
     function GlyphResourceName: string; override;
       {Provides name of required glyph bitmap in resources.
         @return Name of bitmap resource.
@@ -524,7 +524,7 @@ type
     IStoredSelectionSearchCriteria,
     ISearchUIInfo
   )
-  public
+  strict protected
     function GlyphResourceName: string; override;
       {Provides name of required glyph bitmap in resources.
         @return Name of bitmap resource.
@@ -542,11 +542,12 @@ type
     ISearchUIInfo
   )
   strict private
-    fBaseSnippet: TSnippet;
-      {Snippet to which search of cross-references applies}
-    fOptions: TXRefSearchOptions;
-      {Set of poptions controlling XRef search}
-    fXRefs: TSnippetList;
+    var
+      fBaseSnippet: TSnippet;
+        {Snippet to which search of cross-references applies}
+      fOptions: TXRefSearchOptions;
+        {Set of poptions controlling XRef search}
+      fXRefs: TSnippetList;
     function AddToXRefs(const Snippet: TSnippet): Boolean;
     procedure ReferenceRequired(const Snippet: TSnippet);
     procedure ReferenceSnippet(const Snippet: TSnippet);
@@ -557,18 +558,6 @@ type
       {Provides name of required glyph bitmap in resources.
         @return Name of bitmap resource.
       }
-  protected
-    { IXRefSearchCriteria methods }
-    function Match(const Snippet: TSnippet): Boolean;
-    function IsNull: Boolean;
-    function GetBaseSnippet: TSnippet;
-      {Read accessor for BaseSnippet property.
-        @return Reference to initiating snippet.
-      }
-    function GetOptions: TXRefSearchOptions;
-      {Read accessor for Options property.
-        @return Set of options controlling XRef search.
-      }
   public
     constructor Create(const BaseSnippet: TSnippet;
       const Options: TXRefSearchOptions);
@@ -578,6 +567,17 @@ type
         @param Options [in] Set of options conrtolling search.
       }
     destructor Destroy; override;
+    { IXRefSearchCriteria methods }
+    function Match(const Snippet: TSnippet): Boolean; // & ISearchCriteria
+    function IsNull: Boolean;                         // & ISearchCriteria
+    function GetBaseSnippet: TSnippet;
+      {Read accessor for BaseSnippet property.
+        @return Reference to initiating snippet.
+      }
+    function GetOptions: TXRefSearchOptions;
+      {Read accessor for Options property.
+        @return Set of options controlling XRef search.
+      }
   end;
 
   {
@@ -590,12 +590,14 @@ type
     ISearchUIInfo
     )
   strict protected
-    function Match(const Snippet: TSnippet): Boolean;
-    function IsNull: Boolean;
     function GlyphResourceName: string; override;
       {Provides name of required glyph bitmap in resources.
         @return Name of bitmap resource.
       }
+  public
+    { ISearchCriteria methods }
+    function Match(const Snippet: TSnippet): Boolean;
+    function IsNull: Boolean;
   end;
 
 { TSearch }
