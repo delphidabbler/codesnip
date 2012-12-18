@@ -9,7 +9,7 @@ inherited MainForm: TMainForm
   Menu = mnuMain
   OnResize = FormResize
   ExplicitWidth = 621
-  ExplicitHeight = 500
+  ExplicitHeight = 502
   PixelsPerInch = 96
   TextHeight = 13
   object sbStatusBar: TStatusBar
@@ -716,6 +716,7 @@ inherited MainForm: TMainForm
       Category = 'View'
       Caption = 'Collapse All'
       Hint = 'Collapse All|Collapse all sections in the Overview pane'
+      ImageIndex = 47
       OnExecute = ActTreeStateChangeExecute
       OnUpdate = ActTreeStateChangeUpdate
     end
@@ -723,6 +724,7 @@ inherited MainForm: TMainForm
       Category = 'View'
       Caption = 'Expand All'
       Hint = 'Expand All|Expand all sections in the Overview pane'
+      ImageIndex = 46
       OnExecute = ActTreeStateChangeExecute
       OnUpdate = ActTreeStateChangeUpdate
     end

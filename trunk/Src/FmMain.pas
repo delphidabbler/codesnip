@@ -1585,8 +1585,8 @@ begin
     begin
       SetImages(ilMain);
       // add toolbar actions (in reverse order we want them!)
-      AddAction(actCollapseNode, cOverviewToolBar);
-      AddAction(actExpandNode, cOverviewToolBar);
+      AddAction(actCollapseTree, cOverviewToolBar);
+      AddAction(actExpandTree, cOverviewToolBar);
       // add popup menu actions
       AddAction(actViewDependencies, cOverviewPopupMenu);
       AddSpacer(cOverviewPopupMenu);
