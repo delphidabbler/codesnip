@@ -21,7 +21,7 @@ interface
 
 uses
   // Delphi
-  Classes, Windows {for inlining}, Graphics,
+  Classes, Graphics,
   // Project
   Compilers.UGlobals, DB.USnippet, UBaseObjects, USnippetIDs;
 
@@ -293,7 +293,7 @@ uses
   // Delphi
   SysUtils, Character,
   // Project
-  ActiveText.UMain, IntfCommon, UStrUtils;
+  IntfCommon, UStrUtils;
 
 
 type
@@ -626,7 +626,7 @@ end;
 
 destructor TBaseSearchFilter.Destroy;
 begin
-  FreeAndNil(fBitmap);
+  fBitmap.Free;
   inherited;
 end;
 
