@@ -155,23 +155,6 @@ type
   end;
 
 type
-  // TODO: Delete this intf and use identical ISelectionSearchCriteria instead
-  {
-  IStoredSelectionSearchCriteria:
-    Search criteria for stored snippet selection searches. Stores list of
-    snippets to be selected.
-  }
-  IStoredSelectionSearchCriteria = interface(ISearchCriteria)
-    ['{6FA6AC34-439B-4744-ACBC-1836EE140EB6}']
-    function GetSelectedItems: ISnippetIDList;
-      {Read accessor for SelectedItems property.
-        @return List of snippets to be selected in search.
-      }
-    property SelectedItems: ISnippetIDList read GetSelectedItems;
-      {List of snippets to be selected in search}
-  end;
-
-type
   ///  <summary>Permitted options that can be used to customise an XRef search.
   ///  </summary>
   TXRefSearchOption = (
@@ -278,24 +261,21 @@ type
       const Logic: TSearchLogic; const Options: TTextSearchOptions):
       ITextSearchCriteria;
     ///  <summary>Creates and returns a search filter that selects from a given
-    ///  list of snippets.</summary>
-    ///  <param name="SelectedItems">ISnippetIDList [in] List ids of snippets to
-    ///  be included in search.</param>
-    ///  <returns>ISelectionSearchCriteria. Interface to filter object.
-    ///  </returns>
-    class function CreateSelectionSearchCriteria(
-      const SelectedItems: ISnippetIDList): ISelectionSearchCriteria; overload;
-    ///  <summary>Creates and returns a search filter that selects from a given
-    ///  list of snippets.</summary>
+    ///  list of snippets provided by a user.</summary>
     ///  <param name="SelectedItems">TSnippetList [in] List of snippets to be
     ///  included in search.</param>
     ///  <returns>ISelectionSearchCriteria. Interface to filter object.
     ///  </returns>
-    class function CreateSelectionSearchCriteria(
-      const SelectedSnippets: TSnippetList): ISelectionSearchCriteria; overload;
-    // TODO: remove the next method
+    class function CreateManualSelectionSearchCriteria(
+      const SelectedSnippets: TSnippetList): ISelectionSearchCriteria;
+    ///  <summary>Creates and returns a search filter that selects from a given
+    ///  list of snippets provided from file.</summary>
+    ///  <param name="SelectedItems">TSnippetList [in] List of snippets to be
+    ///  included in search.</param>
+    ///  <returns>ISelectionSearchCriteria. Interface to filter object.
+    ///  </returns>
     class function CreateStoredSelectionSearchCriteria(
-      const SelectedSnippets: ISnippetIDList): IStoredSelectionSearchCriteria;
+      const SelectedSnippets: ISnippetIDList): ISelectionSearchCriteria;
     ///  <summary>Creates and returns a cross-reference search filter object.
     ///  </summary>
     ///  <param name="BaseSnippet">TSnippet [in] Snippet whose cross references
@@ -516,7 +496,7 @@ type
   ///  this search type.</remarks>
   TStoredSelectionSearchCriteria = class(TBaseSelectionSearchCriteria,
     ISearchCriteria,
-    IStoredSelectionSearchCriteria,
+    ISelectionSearchCriteria,
     ISearchUIInfo
   )
   strict protected
@@ -1089,7 +1069,7 @@ begin
   Result := TCompilerSearchCriteria.Create(Compilers, Logic, Option);
 end;
 
-class function TSearchCriteriaFactory.CreateSelectionSearchCriteria(
+class function TSearchCriteriaFactory.CreateManualSelectionSearchCriteria(
   const SelectedSnippets: TSnippetList): ISelectionSearchCriteria;
 var
   SnippetIDs: ISnippetIDList; // snippet id list
@@ -1101,14 +1081,8 @@ begin
   Result := TSelectionSearchCriteria.Create(SnippetIDs);
 end;
 
-class function TSearchCriteriaFactory.CreateSelectionSearchCriteria(
-  const SelectedItems: ISnippetIDList): ISelectionSearchCriteria;
-begin
-  Result := TSelectionSearchCriteria.Create(SelectedItems);
-end;
-
 class function TSearchCriteriaFactory.CreateStoredSelectionSearchCriteria(
-  const SelectedSnippets: ISnippetIDList): IStoredSelectionSearchCriteria;
+  const SelectedSnippets: ISnippetIDList): ISelectionSearchCriteria;
 begin
   Result := TStoredSelectionSearchCriteria.Create(SelectedSnippets);
 end;
