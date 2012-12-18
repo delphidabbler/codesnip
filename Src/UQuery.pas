@@ -191,9 +191,9 @@ function TQuery.ApplySearch(Search: ISearch; const Refine: Boolean):
   }
 begin
   Assert(Assigned(Search), ClassName + '.ApplySearch: Search is nil');
-  Assert(Assigned(Search.Criteria),
-    ClassName + '.ApplySearch: Search.Criteria is nil');
-  Assert(not Search.Criteria.IsNull,
+  Assert(Assigned(Search.Filter),
+    ClassName + '.ApplySearch: Search.Filter is nil');
+  Assert(not Search.Filter.IsNull,
     ClassName + '.ApplySearch: Search can''t be null');
 
   if IsSearchActive and not Refine then
@@ -239,7 +239,7 @@ begin
   if fActiveSearches.Count > 0 then
     Result := fActiveSearches.Last
   else
-    Result := TSearchFactory.CreateNulSearch;
+    Result := TSearchFactory.CreateNullSearch;
 end;
 
 class function TQuery.GetInstance: IQuery;

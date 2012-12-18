@@ -84,7 +84,7 @@ type
       {Displays dialog and returns search object based on entered criteria.
         @param AOwner [in] Component that owns this dialog.
         @param SelectedSnippets [in] Default list of selected snippets.
-        @param ASearch [out] Search to be performed if user OKs. Has criteria
+        @param ASearch [out] Search to be performed if user OKs. Has filter
           that causes all snippets selected by user to be returned by search.
           Set to nil if user cancels.
         @return True if user OKs and false if user cancels.
@@ -148,15 +148,15 @@ procedure TSelectionSearchDlg.btnOKClick(Sender: TObject);
     @param Sender [in] Not used.
   }
 var
-  SearchCriteria: ISelectionSearchCriteria; // user's search criteria
+  Filter: ISelectionSearchFilter; // search filter
 begin
   inherited;
-  // Create search criteria for all selected snippets
-  SearchCriteria := TSearchCriteriaFactory.CreateManualSelectionSearchCriteria(
+  // Create search filter for all selected snippets
+  Filter := TSearchFilterFactory.CreateManualSelectionSearchFilter(
     frmSelect.SelectedSnippets
   );
   // Create search object from the entered criteria
-  fSearch := TSearchFactory.CreateSearch(SearchCriteria);
+  fSearch := TSearchFactory.CreateSearch(Filter);
 end;
 
 procedure TSelectionSearchDlg.btnSelectAllClick(Sender: TObject);
@@ -192,7 +192,7 @@ class function TSelectionSearchDlg.Execute(const AOwner: TComponent;
   {Displays dialog and returns search object based on entered criteria.
     @param AOwner [in] Component that owns this dialog.
     @param SelectedSnippets [in] Default list of selected snippets.
-    @param ASearch [out] Search to be performed if user OKs. Has criteria that
+    @param ASearch [out] Search to be performed if user OKs. Has filter that
       causes all snippets selected by user to be returned by search. Set to nil
       if user cancels.
     @return True if user OKs and false if user cancels.

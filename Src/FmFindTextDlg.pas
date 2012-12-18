@@ -8,7 +8,7 @@
  * $Rev$
  * $Date$
  *
- * Implements a dialog boxue that is used to select criteria for text searches.
+ * Implements a dialogue box that is used to select criteria for text searches.
  *
  * Also defines a class that is used to persist the last chosen search criteria.
 }
@@ -182,7 +182,7 @@ begin
 end;
 
 procedure TFindTextDlg.btnOKClick(Sender: TObject);
-  {OK button click event handler. Creates and records search criteria.
+  {OK button click event handler. Creates search object and records criteria.
     @param Sender [in] Not used.
   }
 
@@ -212,21 +212,21 @@ procedure TFindTextDlg.btnOKClick(Sender: TObject);
   // ---------------------------------------------------------------------------
 
 var
-  SearchCriteria: ITextSearchCriteria;  // user's search criteria
+  Filter: ITextSearchFilter;  // search filter
 begin
   inherited;
-  // Create search criteria object containing info from dialog controls
-  SearchCriteria := TSearchCriteriaFactory.CreateTextSearchCriteria(
+  // Create search filter object containing info from dialog controls
+  Filter := TSearchFilterFactory.CreateTextSearchFilter(
     cbFindText.Text,
     ParseLogicControls,
     ParseOptionsControls
   );
   // Record search params in persistent store
   fSearchParams.AddHistoryItem(cbFindText.Text);
-  fSearchParams.Logic := SearchCriteria.Logic;
-  fSearchParams.Options := SearchCriteria.Options;
-  // Create search object from the entered criteria
-  fSearch := TSearchFactory.CreateSearch(SearchCriteria);
+  fSearchParams.Logic := Filter.Logic;
+  fSearchParams.Options := Filter.Options;
+  // Create search object
+  fSearch := TSearchFactory.CreateSearch(Filter);
   // Record search scope
   fRefinePreviousSearch := rgScope.ItemIndex = 0
 end;

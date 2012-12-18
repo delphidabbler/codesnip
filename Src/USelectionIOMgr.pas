@@ -153,7 +153,7 @@ var
   FileName: string;
   Reader: TSelectionFileReader;
   SnippetIDs: ISnippetIDList;
-  Criteria: ISelectionSearchCriteria;
+  Filter: ISelectionSearchFilter;
 begin
   if not GetLoadFileName(FileName) then
     Exit(False);
@@ -163,10 +163,10 @@ begin
   finally
     Reader.Free;
   end;
-  Criteria := TSearchCriteriaFactory.CreateStoredSelectionSearchCriteria(
+  Filter := TSearchFilterFactory.CreateStoredSelectionSearchFilter(
     SnippetIDs
   );
-  Search := TSearchFactory.CreateSearch(Criteria);
+  Search := TSearchFactory.CreateSearch(Filter);
   Result := True;
 end;
 

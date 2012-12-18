@@ -95,11 +95,10 @@ type
           highlighted.
         @except EBug raised if browser control does not contain a HTML document.
       }
-    function HighlightSearchResults(
-      const Criteria: ITextSearchCriteria): Integer;
+    function HighlightSearchResults(const Filter: ITextSearchFilter): Integer;
       {Searches for and highlights all text in document within defined search
       sections that match search criteria.
-        @param Criteria [in] Provides information about a text search.
+        @param Filter [in] Provides information about a text search.
         @return Number of words highlighted.
       }
     property SearchSectionIDs: IStringList
@@ -151,25 +150,25 @@ begin
 end;
 
 function TWBHighlighter.HighlightSearchResults(
-  const Criteria: ITextSearchCriteria): Integer;
+  const Filter: ITextSearchFilter): Integer;
   {Searches for and highlights all text in document within defined search
   sections that match search criteria.
-    @param Criteria [in] Provides information about a text search.
+    @param Filter [in] Provides information about a text search.
     @return Number of words highlighted.
   }
 var
-  Idx: Integer;             // loops thru all words in text search criteria
+  Idx: Integer;             // loops thru all words in text search
   FindFlags: Integer;       // flags that control how browser searches for text
 begin
   Result := 0;
-  if Assigned(Criteria) then
+  if Assigned(Filter) then
   begin
     // Convert search options into bit mask that controls text search in web
     // browser control
-    FindFlags := SearchOptionsToFlags(Criteria.Options);
+    FindFlags := SearchOptionsToFlags(Filter.Options);
     // Highlight each search word
-    for Idx := 0 to Pred(Criteria.Words.Count) do
-      Result := Result + HighlightWord(Criteria.Words[Idx], FindFlags);
+    for Idx := 0 to Pred(Filter.Words.Count) do
+      Result := Result + HighlightWord(Filter.Words[Idx], FindFlags);
   end;
 end;
 

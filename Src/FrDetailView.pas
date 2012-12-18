@@ -70,9 +70,9 @@ type
     ///  popup position.</param>
     procedure PopupMenuHandler(Sender: TObject; PopupPos: TPoint;
       const MenuID: DWORD; var Handled: Boolean; const Obj: IDispatch);
-    ///  <summary>Highlights words in current document that match given text
-    ///  search criteria.</summary>
-    procedure HighlightSearchResults(const Criteria: ITextSearchCriteria);
+    ///  <summary>Highlights words in current document that match criteria of
+    ///  given search filter.</summary>
+    procedure HighlightSearchResults(const Filter: ITextSearchFilter);
   strict protected
     ///  <summary>Generates CSS classes specific to HTML displayed in this pane.
     ///  </summary>
@@ -284,7 +284,7 @@ end;
 
 procedure TDetailViewFrame.Display(View: IView; Reload: Boolean);
 var
-  TextSearchCriteria: ITextSearchCriteria;  // criteria for any text search
+  Filter: ITextSearchFilter;  // text search filter containing criteria
 begin
   // Load view's HTML into browser control
   fPageLoader.LoadPage(View, Reload);
@@ -293,22 +293,21 @@ begin
   // If we're viewing a snippet and there's an active text search, highlight
   // text that matches search
   if Supports(View, ISnippetView) and
-    Supports(
-      Query.LatestSearch.Criteria, ITextSearchCriteria, TextSearchCriteria
-    ) then
-    HighlightSearchResults(TextSearchCriteria);
+    Supports(Query.LatestSearch.Filter, ITextSearchFilter, Filter)
+    then
+    HighlightSearchResults(Filter);
   // Ensure top of newly loaded document is displayed
   MoveToDocTop;
 end;
 
 procedure TDetailViewFrame.HighlightSearchResults(
-  const Criteria: ITextSearchCriteria);
+  const Filter: ITextSearchFilter);
 var
   Highlighter: TWBHighlighter;  // object used to perform highlighting
 begin
-  Assert(Assigned(Criteria),
-    ClassName + '.HighlightSearchResults: Criteria is nil');
-  Assert(Supports(Criteria, ITextSearchCriteria),
+  Assert(Assigned(Filter),
+    ClassName + '.HighlightSearchResults: Filter is nil');
+  Assert(Supports(Filter, ITextSearchFilter),
     ClassName + '.HighlightSearchResults: There is no current text search');
   // Create and configure highlighter object
   Highlighter := TWBHighlighter.Create(wbBrowser);
@@ -320,7 +319,7 @@ begin
     Highlighter.SearchSectionIDs.Add('description');
     Highlighter.SearchSectionIDs.Add('sourcecode');
     Highlighter.SearchSectionIDs.Add('extra');
-    Highlighter.HighlightSearchResults(Criteria);
+    Highlighter.HighlightSearchResults(Filter);
   finally
     Highlighter.Free;
   end;
