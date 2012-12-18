@@ -308,13 +308,13 @@ begin
   // method is called by the status bar to draw the panel.
 
   // Store text describing search result
-  if Query.LatestSearch.Criteria.IsNull then
+  if Query.LatestSearch.Filter.IsNull then
     fStatusBar.Panels[cSearchPanel].Text := sNoSearch
   else
     fStatusBar.Panels[cSearchPanel].Text
       := Format(sSearchActive, [Query.Selection.Count]);
   // Store glyph that indicates latest search type
-  fSearchGlyph.Assign((Query.LatestSearch.Criteria as ISearchUIInfo).Glyph);
+  fSearchGlyph.Assign((Query.LatestSearch.Filter as ISearchUIInfo).Glyph);
   // Ensure search info panel of status bar is displayed
   fSearchInfoVisible := True;
   // Force status bar to repaint itself

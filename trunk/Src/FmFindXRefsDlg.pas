@@ -73,7 +73,7 @@ type
       {Displays dialog and returns search object based on entered criteria.
         @param AOwner [in] Component that owns this dialog.
         @param Snippet [in] Snippet whose cross references are to be found.
-        @param ASearch [out] Search to be performed if user OKs. Has criteria
+        @param ASearch [out] Search to be performed if user OKs. Has filter
           that causes specified cross references be returned by search. Set to
           nil if user cancels.
         @return True if user OKs and search object created or false if user
@@ -200,16 +200,16 @@ procedure TFindXRefsDlg.btnOKClick(Sender: TObject);
   // ---------------------------------------------------------------------------
 
 var
-  SearchCriteria: IXRefSearchCriteria;  // user's search criteria
+  Filter: IXRefSearchFilter;  // search filter
 begin
-  // Create search criteria from entries made in dialog box
-  SearchCriteria := TSearchCriteriaFactory.CreateXRefSearchCriteria(
+  // Create search filter from entries made in dialog box
+  Filter := TSearchFilterFactory.CreateXRefSearchFilter(
     fSnippet, GetOptionsFromUI
   );
   // Persist the search criteria
-  fSearchParams.Options := SearchCriteria.Options;
-  // Create search object from the entered criteria
-  fSearch := TSearchFactory.CreateSearch(SearchCriteria);
+  fSearchParams.Options := Filter.Options;
+  // Create search object
+  fSearch := TSearchFactory.CreateSearch(Filter);
 end;
 
 procedure TFindXRefsDlg.ConfigForm;
@@ -235,7 +235,7 @@ class function TFindXRefsDlg.Execute(const AOwner: TComponent;
   {Displays dialog and returns search object based on entered criteria.
     @param AOwner [in] Component that owns this dialog.
     @param Snippet [in] Snippet whose cross references are to be found.
-    @param ASearch [out] Search to be performed if user OKs. Has criteria that
+    @param ASearch [out] Search to be performed if user OKs. Has filter that
       causes specified cross references be returned by search. Set to nil if
       user cancels.
     @return True if user OKs and search object created or false if user cancels

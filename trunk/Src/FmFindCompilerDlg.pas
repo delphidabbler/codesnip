@@ -260,18 +260,18 @@ procedure TFindCompilerDlg.btnOKClick(Sender: TObject);
   // ---------------------------------------------------------------------------
 
 var
-  SearchCriteria: ICompilerSearchCriteria;  // user's search criteria
+  Filter: ICompilerSearchFilter;  // search filter
 begin
-  // Create search criteria from entries made in dialog box
-  SearchCriteria := TSearchCriteriaFactory.CreateCompilerSearchCriteria(
+  // Create search filter from entries made in dialog box
+  Filter := TSearchFilterFactory.CreateCompilerSearchFilter(
     GetCompilerVersions, GetLogic, GetOption
   );
   // Persist the search criteria
-  fSearchParams.Option := SearchCriteria.Option;
-  fSearchParams.Logic := SearchCriteria.Logic;
-  fSearchParams.Compilers := SearchCriteria.Compilers;
-  // Create search object from the entered criteria
-  fSearch := TSearchFactory.CreateSearch(SearchCriteria);
+  fSearchParams.Option := Filter.Option;
+  fSearchParams.Logic := Filter.Logic;
+  fSearchParams.Compilers := Filter.Compilers;
+  // Create search object from filter
+  fSearch := TSearchFactory.CreateSearch(Filter);
   // Record search scope
   fRefinePreviousSearch := rgScope.ItemIndex = 0
 end;
