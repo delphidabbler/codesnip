@@ -89,6 +89,10 @@ type
     procedure DeleteSelectedItem;
     ///  <summary>Restores default unit list.</summary>
     procedure RestoreDefaults;
+    ///  <summary>Clears checks from all items in list box.</summary>
+    procedure ClearChecks;
+    ///  <summary>Tests if any items in list box are checked.</summary>
+    function HasCheckedItems: Boolean;
   end;
 
 
@@ -112,6 +116,14 @@ begin
   if (Idx < 0) or (Idx >= fCLB.Count) then
     Exit(False);
   Result := not fReservedUnits.Contains(fCLB.Items[Idx]);
+end;
+
+procedure TUnitsChkListMgr.ClearChecks;
+var
+  Idx: Integer; // loops through all items in check list box
+begin
+  for Idx := 0 to Pred(fCLB.Count) do
+    fCLB.Checked[Idx] := False;
 end;
 
 function TUnitsChkListMgr.ContainsUnit(const UnitName: string): Boolean;
@@ -154,6 +166,16 @@ begin
   for Idx := 0 to Pred(fCLB.Items.Count) do
     if fCLB.Checked[Idx] then
       Result.Add(fCLB.Items[Idx]);
+end;
+
+function TUnitsChkListMgr.HasCheckedItems: Boolean;
+var
+  Idx: Integer; // lopps thru each item in check list box
+begin
+  for Idx  := 0 to Pred(fCLB.Count) do
+    if fCLB.Checked[Idx] then
+      Exit(True);
+  Result := False;
 end;
 
 procedure TUnitsChkListMgr.IncludeUnit(const UnitName: string;

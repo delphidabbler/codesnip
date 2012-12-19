@@ -193,10 +193,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsReferences: TTabSheet
         Caption = 'References'
         ImageIndex = 1
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblXRefs: TLabel
           Left = 3
           Top = 3
@@ -326,10 +322,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       object tsCompileResults: TTabSheet
         Caption = 'Compile Results'
         ImageIndex = 3
-        ExplicitLeft = 0
-        ExplicitTop = 0
-        ExplicitWidth = 0
-        ExplicitHeight = 0
         object lblCompilers: TLabel
           Left = 3
           Top = 3
@@ -461,8 +453,13 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       OnExecute = actAddUnitExecute
       OnUpdate = actAddUnitUpdate
     end
+    object actClearUnits: TAction
+      Caption = 'Deselect All Units'
+      OnExecute = actClearUnitsExecute
+      OnUpdate = actClearUnitsUpdate
+    end
     object actDeleteUnit: TAction
-      Caption = 'Delete Unit'
+      Caption = 'Delete Selected Unit'
       OnExecute = actDeleteUnitExecute
       OnUpdate = actDeleteUnitUpdate
     end
@@ -495,12 +492,12 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       OnExecute = actViewDependenciesExecute
     end
     object actClearDependencies: TAction
-      Caption = 'Clear All Dependencies'
+      Caption = 'Deselect All Dependencies'
       OnExecute = actClearDependenciesExecute
       OnUpdate = actClearDependenciesUpdate
     end
     object actClearXRefs: TAction
-      Caption = 'Clear All Cross References'
+      Caption = 'Deselect All Cross-References'
       OnExecute = actClearXRefsExecute
       OnUpdate = actClearXRefsUpdate
     end
@@ -595,6 +592,12 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
   object mnuUnits: TPopupMenu
     Left = 496
     Top = 344
+    object miClearUnits: TMenuItem
+      Action = actClearUnits
+    end
+    object miSpacer3: TMenuItem
+      Caption = '-'
+    end
     object miDeleteUnit: TMenuItem
       Action = actDeleteUnit
     end

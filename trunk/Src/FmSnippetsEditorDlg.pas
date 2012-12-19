@@ -118,6 +118,9 @@ type
     miDeleteUnit: TMenuItem;
     actRestoreUnits: TAction;
     miRestoreUnits: TMenuItem;
+    actClearUnits: TAction;
+    miClearUnits: TMenuItem;
+    miSpacer3: TMenuItem;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -153,6 +156,8 @@ type
     procedure actDeleteUnitUpdate(Sender: TObject);
     procedure actDeleteUnitExecute(Sender: TObject);
     procedure actRestoreUnitsExecute(Sender: TObject);
+    procedure actClearUnitsExecute(Sender: TObject);
+    procedure actClearUnitsUpdate(Sender: TObject);
   strict private
     fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
@@ -312,6 +317,16 @@ end;
 procedure TSnippetsEditorDlg.actClearDependenciesUpdate(Sender: TObject);
 begin
   actClearDependencies.Enabled := fDependsCLBMgr.HasCheckedItems;
+end;
+
+procedure TSnippetsEditorDlg.actClearUnitsExecute(Sender: TObject);
+begin
+  fUnitsCLBMgr.ClearChecks;
+end;
+
+procedure TSnippetsEditorDlg.actClearUnitsUpdate(Sender: TObject);
+begin
+  actClearUnits.Enabled := fUnitsCLBMgr.HasCheckedItems;
 end;
 
 procedure TSnippetsEditorDlg.actClearXRefsExecute(Sender: TObject);
