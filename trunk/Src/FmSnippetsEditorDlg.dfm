@@ -19,7 +19,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       Top = 0
       Width = 662
       Height = 504
-      ActivePage = tsCode
+      ActivePage = tsReferences
       Align = alClient
       TabOrder = 0
       OnChange = pcMainChange
