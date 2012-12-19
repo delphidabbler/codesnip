@@ -43,9 +43,6 @@ type
       in check list box are ignored.
         @param Snippet [in] Snippet to be checked.
       }
-    procedure ClearChecks;
-      {Clears all checks from items in check list box.
-      }
     procedure DrawItem(Control: TWinControl;
       Index: Integer; Rect: TRect; State: TOwnerDrawState);
       {OnDrawItem event handler for associated check list box. Draws user
@@ -86,6 +83,9 @@ type
         @param SnipList [in] List of snippets to check. Snippets not in check
           list box are ignored.
       }
+    procedure ClearChecks;
+      {Clears all checks from items in check list box.
+      }
     procedure GetCheckedSnippets(const SnipList: TSnippetList); overload;
       {Gets all checked snippets in check list box.
         @param SnipList [in] List that receives checked snippets objects.
@@ -94,6 +94,7 @@ type
       {Gets all checked snippets in check list box.
         @param SnipList [in] List that receives ids of checked snippets.
       }
+    function HasCheckedItems: Boolean;
   end;
 
 
@@ -224,6 +225,16 @@ begin
   for Idx := 0 to Pred(fCLB.Count) do
     if fCLB.Checked[Idx] then
       SnipList.Add((fCLB.Items.Objects[Idx] as TSnippet).ID);
+end;
+
+function TSnippetsChkListMgr.HasCheckedItems: Boolean;
+var
+  Idx: Integer; // lopps thru each item in check list box
+begin
+  for Idx  := 0 to Pred(fCLB.Count) do
+    if fCLB.Checked[Idx] then
+      Exit(True);
+  Result := False;
 end;
 
 procedure TSnippetsChkListMgr.GetCheckedSnippets(
