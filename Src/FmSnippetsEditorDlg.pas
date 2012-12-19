@@ -554,17 +554,17 @@ begin
 
   // tsReferences
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf(clbXRefs, 6), [edUnit, btnAddUnit]
+    TCtrlArranger.BottomOf(clbXRefs, 8), [edUnit, btnAddUnit]
   );
 
   // tsComments
   frmExtra.Width := tsComments.ClientWidth - 8;
+  frmExtra.Height := clbDepends.Height;
   TCtrlArranger.AlignLefts([lblExtra, frmExtra, btnViewExtra], 3);
   TCtrlArranger.AlignVCentres(3, [lblExtra, lblExtraCaretPos]);
   TCtrlArranger.AlignRights([frmExtra, lblExtraCaretPos]);
   TCtrlArranger.MoveBelow([lblExtra, lblExtraCaretPos], frmExtra, 4);
-  frmExtra.Height := clbDepends.Height;
-  TCtrlArranger.MoveBelow(frmExtra, btnViewExtra, 12);
+  TCtrlArranger.MoveBelow(frmExtra, btnViewExtra, 8);
 
   // tsCompileResults
   lblViewCompErrsKey.Top := TCtrlArranger.BottomOf(lblViewCompErrs);
