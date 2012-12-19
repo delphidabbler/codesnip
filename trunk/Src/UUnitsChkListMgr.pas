@@ -75,9 +75,9 @@ type
     ///  <param name="Checked">Boolean [in] Determines whether each unit is to
     ///  be checked.</param>
     procedure IncludeUnits(const Units: TStrings; const Checked: Boolean);
-    ///  <summary>Gets a list of names of all checked units in list box.
+    ///  <summary>Returns a list of names of all checked units in list box.
     ///  </summary>
-    procedure GetCheckedUnits(const Strings: IStringList);
+    function GetCheckedUnits: IStringList;
     ///  <summary>Checks if currently selected unit can be removed from list.
     ///  </summary>
     ///  <remarks>Returns False if there is no selection.</remarks>
@@ -146,14 +146,14 @@ begin
   inherited;
 end;
 
-procedure TUnitsChkListMgr.GetCheckedUnits(const Strings: IStringList);
+function TUnitsChkListMgr.GetCheckedUnits: IStringList;
 var
   Idx: Integer; // loops through all listbox items
 begin
-  Strings.Clear;
+  Result := TIStringList.Create;
   for Idx := 0 to Pred(fCLB.Items.Count) do
     if fCLB.Checked[Idx] then
-      Strings.Add(fCLB.Items[Idx]);
+      Result.Add(fCLB.Items[Idx]);
 end;
 
 procedure TUnitsChkListMgr.IncludeUnit(const UnitName: string;
@@ -215,9 +215,8 @@ var
   U: string;                  // each unit in CheckedUnits
   Idx: Integer;               // index of each U in restored list
 begin
-  CheckedUnits := TIStringList.Create;
   // record any checked and SelectedUnit units
-  GetCheckedUnits(CheckedUnits);
+  CheckedUnits := GetCheckedUnits;
   if fCLB.ItemIndex >= 0 then
     SelectedUnit := fCLB.Items[fCLB.ItemIndex]
   else
