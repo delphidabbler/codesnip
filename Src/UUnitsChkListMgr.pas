@@ -37,15 +37,20 @@ type
   }
   TUnitsChkListMgr = class(TObject)
   strict private
-    fCLB: TCheckListBox;    // Check list box being managed
-    procedure InitStandardUnits;
-      {Initialises unit list with standard units that are always available.
+    var
+      fCLB: TCheckListBox;          // Check list box being managed
+      fReservedUnits: IStringList;
+      fDefaultUnits: IStringList;
+    procedure InitList;
+      {Initialises unit list reserved and any stored units.
       }
+    procedure SaveList;
   public
     constructor Create(const CLB: TCheckListBox);
       {Class constructor. Sets up object to manage a specified check list box.
         @param CLB [in] Check list box to be managed.
       }
+    destructor Destroy; override;
     function IsValidUnitName(const UnitName: string): Boolean;
       {Checks if a unit name is valid.
         @param UnitName [in] Unit name to be checked.
@@ -85,7 +90,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils;
+  SysUtils,
+  // Project
+  USettings;
 
 
 { TUnitsChkListMgr }
@@ -106,7 +113,19 @@ constructor TUnitsChkListMgr.Create(const CLB: TCheckListBox);
 begin
   inherited Create;
   fCLB := CLB;
-  InitStandardUnits;
+  fReservedUnits := TIStringList.Create(
+    ['SysUtils', 'Classes', 'Windows', 'Graphics']
+  );
+  fDefaultUnits := TIStringList.Create(
+    ['Controls', 'Messages', 'Types', 'ShlObj', 'ShellAPI', 'ActiveX', 'Math']
+  );
+  InitList;
+end;
+
+destructor TUnitsChkListMgr.Destroy;
+begin
+  SaveList;
+  inherited;
 end;
 
 procedure TUnitsChkListMgr.GetCheckedUnits(const Strings: IStringList);
@@ -160,21 +179,20 @@ begin
     IncludeUnit(UnitName, Checked);
 end;
 
-procedure TUnitsChkListMgr.InitStandardUnits;
+procedure TUnitsChkListMgr.InitList;
   {Initialises unit list with standard units that are always available.
   }
-const
-  // list of standard units
-  StdUnits: array[1..10] of string = (
-    'SysUtils', 'Classes', 'Controls', 'Messages',
-    'Windows', 'Graphics', 'Types', 'ShlObj', 'ShellAPI', 'ActiveX'
-  );
 var
-  StdUnit: string;  // each standard unit in list
+  StoredUnits: IStringList;
+  Storage: ISettingsSection;
 begin
-  fCLB.Clear;
-  for StdUnit in StdUnits do
-    fCLB.Items.Add(StdUnit);
+  fReservedUnits.CopyTo(fCLB.Items, True);
+  Storage := Settings.ReadSection(ssUnits);
+  StoredUnits := Storage.GetStrings('Count', 'Unit%d');
+  if StoredUnits.Count > 0 then
+    StoredUnits.CopyTo(fCLB.Items, False)
+  else
+    fDefaultUnits.CopyTo(fCLB.Items, False);
 end;
 
 function TUnitsChkListMgr.IsValidUnitName(const UnitName: string): Boolean;
@@ -186,4 +204,20 @@ begin
   Result := IsValidIdent(UnitName, True); // allow dots in unit name
 end;
 
+procedure TUnitsChkListMgr.SaveList;
+var
+  Storage: ISettingsSection;
+  U: string;
+  CustomUnits: IStringList;
+begin
+  CustomUnits := TIStringList.Create;
+  for U in fCLB.Items do
+    if not fReservedUnits.Contains(U) then
+      CustomUnits.Add(U);
+  Storage := Settings.EmptySection(ssUnits);
+  Storage.SetStrings('Count', 'Unit%d', CustomUnits);
+  Storage.Save;
+end;
+
 end.
+
