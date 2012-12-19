@@ -28,17 +28,13 @@ uses
 
 
 type
-
-  {
-  TUnitsChkListMgr:
-    Manages check list box controls that display lists of Delphi units. Builds
-    expandable list, sets check marks for specified units and gets list of
-    checked units.
-  }
+  ///  <summary>Manages check list box controls that display lists of Delphi
+  ///  units. Unit list is persisted.</summary>
   TUnitsChkListMgr = class(TObject)
   strict private
     var
-      fCLB: TCheckListBox;          // Check list box being managed
+      ///  <summary>Check list box being managed.</summary>
+      fCLB: TCheckListBox;
       ///  <summary>List of reserved unit names.</summary>
       ///  <remarks>Deafult units can't be deleted from list.</remarks>
       fReservedUnits: IStringList;
@@ -57,44 +53,31 @@ type
     ///  <summary>Saves any non-reserved units to storage.</summary>
     procedure SaveList;
   public
+    ///  <summary>Constructs manager object for given check list box and loads
+    ///  units from persistent storage.</summary>
     constructor Create(const CLB: TCheckListBox);
-      {Class constructor. Sets up object to manage a specified check list box.
-        @param CLB [in] Check list box to be managed.
-      }
     ///  <summary>Destroys manager object and updates persistent storage.
     ///  </summary>
     destructor Destroy; override;
+    ///  <summary>Checks if given unit name is valid.</summary>
     function IsValidUnitName(const UnitName: string): Boolean;
-      {Checks if a unit name is valid.
-        @param UnitName [in] Unit name to be checked.
-        @return True if UnitName is valid, False if not.
-      }
+    ///  <summary>Checks if given unit name is contained in the list.</summary>
     function ContainsUnit(const UnitName: string): Boolean;
-      {Checks if a unit is contained in the list.
-        @param UnitName [in] Name of unit to check.
-        @return True if unit in list, False if not.
-      }
+    ///  <summary>Ensures that a unit name is included in the list.</summary>
+    ///  <param name="UnitName">string [in] Name of unit to be included. It is
+    ///  added to the list unless already present.</param>
+    ///  <param name="Checked">Boolean [in] Determines whether named unit is to
+    ///  be checked.</param>
     procedure IncludeUnit(const UnitName: string; const Checked: Boolean);
-      {Ensures that a unit is present in the check list and sets or clears the
-      associated check mark.
-        @param UnitName [in] Name of unit that must be in list. Added if not
-          already present.
-        @param Checked [in] Flag indicating whether to check (True) or clear
-          (False) the unit's check mark.
-      }
+    ///  <summary>Ensures all the given units are include in the list.</summary>
+    ///  <param name="Units">TStrings [in] List of unit names to be included.
+    ///  Each is added to the list unless already present.</param>
+    ///  <param name="Checked">Boolean [in] Determines whether each unit is to
+    ///  be checked.</param>
     procedure IncludeUnits(const Units: TStrings; const Checked: Boolean);
-      {Ensures that a list of units are all present in the check list and sets
-      or clears the associated check marks.
-        @param Units [in] List of names of units that must be in list. Units are
-        added if not already present.
-        @param Checked [in] Flag indicating whether to check (True) or clear
-          (False) all the units' check marks.
-      }
+    ///  <summary>Gets a list of names of all checked units in list box.
+    ///  </summary>
     procedure GetCheckedUnits(const Strings: IStringList);
-      {Gets names of all checked units list box.
-        @param Strings [in] Received list of checked unit names. List overwrites
-          any previous entries in Strings.
-      }
     ///  <summary>Checks if currently selected unit can be removed from list.
     ///  </summary>
     ///  <remarks>Returns False if there is no selection.</remarks>
@@ -132,18 +115,11 @@ begin
 end;
 
 function TUnitsChkListMgr.ContainsUnit(const UnitName: string): Boolean;
-  {Checks if a unit is contained in the list.
-    @param UnitName [in] Name of unit to check.
-    @return True if unit in list, False if not.
-  }
 begin
   Result := fCLB.Items.IndexOf(UnitName) >= 0;
 end;
 
 constructor TUnitsChkListMgr.Create(const CLB: TCheckListBox);
-  {Class constructor. Sets up object to manage a specified check list box.
-    @param CLB [in] Check list box to be managed.
-  }
 begin
   inherited Create;
   fCLB := CLB;
@@ -171,10 +147,6 @@ begin
 end;
 
 procedure TUnitsChkListMgr.GetCheckedUnits(const Strings: IStringList);
-  {Gets names of all checked units list box.
-    @param Strings [in] Received list of checked unit names. List overwrites any
-      previous entries in Strings.
-  }
 var
   Idx: Integer; // loops through all listbox items
 begin
@@ -186,13 +158,6 @@ end;
 
 procedure TUnitsChkListMgr.IncludeUnit(const UnitName: string;
   const Checked: Boolean);
-  {Ensures that a unit is present in the check list and sets or clears the
-  associated check mark.
-    @param UnitName [in] Name of unit that must be in list. Added if not already
-      present.
-    @param Checked [in] Flag indicating whether to check (True) or clear (False)
-      the unit's check mark.
-  }
 var
   UnitIndex: Integer; // index of unit name in list (-1 if not found)
 begin
@@ -207,13 +172,6 @@ end;
 
 procedure TUnitsChkListMgr.IncludeUnits(const Units: TStrings;
   const Checked: Boolean);
-  {Ensures that a list of units are all present in the check list and sets or
-  clears the associated check marks.
-    @param Units [in] List of names of units that must be in list. Units are
-    added if not already present.
-    @param Checked [in] Flag indicating whether to check (True) or clear (False)
-      all the units' check marks.
-  }
 var
   UnitName: string; // name of each unit in list
 begin
@@ -222,8 +180,6 @@ begin
 end;
 
 procedure TUnitsChkListMgr.InitList;
-  {Initialises unit list with standard units that are always available.
-  }
 var
   StoredUnits: IStringList;
   Storage: ISettingsSection;
@@ -241,10 +197,6 @@ begin
 end;
 
 function TUnitsChkListMgr.IsValidUnitName(const UnitName: string): Boolean;
-  {Checks if a unit name is valid.
-    @param UnitName [in] Unit name to be checked.
-    @return True if UnitName is valid, False if not.
-  }
 begin
   Result := IsValidIdent(UnitName, True); // allow dots in unit name
 end;
