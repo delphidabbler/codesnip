@@ -44,7 +44,7 @@ type
     actCompile: TAction;
     actCopy: TEditCopy;
     actCut: TEditCut;
-    actDependencies: TAction;
+    actViewDependencies: TAction;
     actPaste: TEditPaste;
     actSelectAll: TEditSelectAll;
     actSetAllQuery: TAction;
@@ -54,7 +54,6 @@ type
     actViewExtra: TAction;
     actViewTestUnit: TAction;
     btnAddUnit: TButton;
-    btnDependencies: TButton;
     btnCompile: TButton;
     btnSetAllQuery: TButton;
     btnSetAllSuccess: TButton;
@@ -107,11 +106,18 @@ type
     lblDisplayName: TLabel;
     edDisplayName: TEdit;
     chkUseHiliter: TCheckBox;
+    actClearDependencies: TAction;
+    actClearXRefs: TAction;
+    mnuDependencies: TPopupMenu;
+    mnuXRefs: TPopupMenu;
+    miClearXRefs: TMenuItem;
+    miClearDependencies: TMenuItem;
+    miViewDependencies: TMenuItem;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
     procedure actCompileUpdate(Sender: TObject);
-    procedure actDependenciesExecute(Sender: TObject);
+    procedure actViewDependenciesExecute(Sender: TObject);
     procedure actSetAllQueryExecute(Sender: TObject);
     procedure actSetAllSuccessExecute(Sender: TObject);
     procedure actViewErrorsExecute(Sender: TObject);
@@ -135,6 +141,10 @@ type
       Shift: TShiftState; X, Y: Integer);
     procedure actViewDescriptionExecute(Sender: TObject);
     procedure actViewDescriptionUpdate(Sender: TObject);
+    procedure actClearDependenciesExecute(Sender: TObject);
+    procedure actClearXRefsExecute(Sender: TObject);
+    procedure actClearDependenciesUpdate(Sender: TObject);
+    procedure actClearXRefsUpdate(Sender: TObject);
   strict private
     fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
@@ -286,6 +296,26 @@ begin
     and clbUnits.Enabled;
 end;
 
+procedure TSnippetsEditorDlg.actClearDependenciesExecute(Sender: TObject);
+begin
+  fDependsCLBMgr.ClearChecks;
+end;
+
+procedure TSnippetsEditorDlg.actClearDependenciesUpdate(Sender: TObject);
+begin
+  actClearDependencies.Enabled := fDependsCLBMgr.HasCheckedItems;
+end;
+
+procedure TSnippetsEditorDlg.actClearXRefsExecute(Sender: TObject);
+begin
+  fXRefsCLBMgr.ClearChecks;
+end;
+
+procedure TSnippetsEditorDlg.actClearXRefsUpdate(Sender: TObject);
+begin
+  actClearXRefs.Enabled := fXRefsCLBMgr.HasCheckedItems;
+end;
+
 procedure TSnippetsEditorDlg.actCompileExecute(Sender: TObject);
   {Test compiles edited snippet and updates compilers from test result.
     @param Sender [in] Not used.
@@ -330,7 +360,23 @@ begin
     and (fSnipKindList.SnippetKind(cbKind.ItemIndex) <> skFreeform);
 end;
 
-procedure TSnippetsEditorDlg.actDependenciesExecute(Sender: TObject);
+procedure TSnippetsEditorDlg.actSetAllQueryExecute(Sender: TObject);
+  {Sets all compiler results to "query".
+    @param Sender [in] Not used.
+  }
+begin
+  SetAllCompilerResults(crQuery);
+end;
+
+procedure TSnippetsEditorDlg.actSetAllSuccessExecute(Sender: TObject);
+  {Sets all compiler results to "success".
+    @param Sender [in] Not used.
+  }
+begin
+  SetAllCompilerResults(crSuccess);
+end;
+
+procedure TSnippetsEditorDlg.actViewDependenciesExecute(Sender: TObject);
   {Displays dependencies for currently edited snippet, per entries in
   "Dependencies" check list box.
     @param Sender [in] Not used.
@@ -351,22 +397,6 @@ begin
   finally
     FreeAndNil(DependsList);
   end;
-end;
-
-procedure TSnippetsEditorDlg.actSetAllQueryExecute(Sender: TObject);
-  {Sets all compiler results to "query".
-    @param Sender [in] Not used.
-  }
-begin
-  SetAllCompilerResults(crQuery);
-end;
-
-procedure TSnippetsEditorDlg.actSetAllSuccessExecute(Sender: TObject);
-  {Sets all compiler results to "success".
-    @param Sender [in] Not used.
-  }
-begin
-  SetAllCompilerResults(crSuccess);
 end;
 
 procedure TSnippetsEditorDlg.actViewDescriptionExecute(Sender: TObject);
@@ -524,7 +554,7 @@ begin
 
   // tsReferences
   TCtrlArranger.AlignVCentres(
-    TCtrlArranger.BottomOf(clbXRefs, 6), [btnDependencies, edUnit, btnAddUnit]
+    TCtrlArranger.BottomOf(clbXRefs, 6), [edUnit, btnAddUnit]
   );
 
   // tsComments
@@ -533,6 +563,7 @@ begin
   TCtrlArranger.AlignVCentres(3, [lblExtra, lblExtraCaretPos]);
   TCtrlArranger.AlignRights([frmExtra, lblExtraCaretPos]);
   TCtrlArranger.MoveBelow([lblExtra, lblExtraCaretPos], frmExtra, 4);
+  frmExtra.Height := clbDepends.Height;
   TCtrlArranger.MoveBelow(frmExtra, btnViewExtra, 12);
 
   // tsCompileResults

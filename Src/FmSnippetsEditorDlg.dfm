@@ -221,52 +221,46 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Left = 3
           Top = 22
           Width = 217
-          Height = 368
+          Height = 420
           IntegralHeight = True
           ItemHeight = 13
+          PopupMenu = mnuXRefs
           TabOrder = 0
         end
         object clbDepends: TCheckListBox
           Left = 228
           Top = 22
           Width = 217
-          Height = 368
+          Height = 420
           IntegralHeight = True
           ItemHeight = 13
+          PopupMenu = mnuDependencies
           TabOrder = 1
         end
         object clbUnits: TCheckListBox
-          Left = 451
-          Top = 24
-          Width = 198
-          Height = 368
+          Left = 453
+          Top = 22
+          Width = 197
+          Height = 420
           IntegralHeight = True
           ItemHeight = 13
-          TabOrder = 3
+          TabOrder = 2
         end
         object edUnit: TEdit
           Left = 452
-          Top = 398
+          Top = 441
           Width = 117
           Height = 21
           PopupMenu = mnuEditCtrls
-          TabOrder = 4
+          TabOrder = 3
         end
         object btnAddUnit: TButton
           Left = 575
-          Top = 396
+          Top = 441
           Width = 75
           Height = 25
           Action = actAddUnit
-          TabOrder = 5
-        end
-        object btnDependencies: TButton
-          Left = 228
-          Top = 409
-          Width = 141
-          Height = 25
-          Action = actDependencies
-          TabOrder = 2
+          TabOrder = 4
         end
       end
       object tsComments: TTabSheet
@@ -344,7 +338,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
         end
         object lblCompResDesc: TLabel
           Left = 3
-          Top = 349
+          Top = 405
           Width = 166
           Height = 60
           AutoSize = False
@@ -357,7 +351,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Left = 3
           Top = 22
           Width = 166
-          Height = 312
+          Height = 373
           Style = lbOwnerDrawFixed
           ItemHeight = 28
           TabOrder = 0
@@ -478,9 +472,9 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       OnExecute = actViewErrorsExecute
       OnUpdate = actViewErrorsUpdate
     end
-    object actDependencies: TAction
+    object actViewDependencies: TAction
       Caption = 'View &Dependencies...'
-      OnExecute = actDependenciesExecute
+      OnExecute = actViewDependenciesExecute
     end
     object actViewExtra: TAction
       Caption = 'Previe&w...'
@@ -527,6 +521,16 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       OnExecute = actViewDescriptionExecute
       OnUpdate = actViewDescriptionUpdate
     end
+    object actClearDependencies: TAction
+      Caption = 'Clear All Dependencies'
+      OnExecute = actClearDependenciesExecute
+      OnUpdate = actClearDependenciesUpdate
+    end
+    object actClearXRefs: TAction
+      Caption = 'Clear All Cross References'
+      OnExecute = actClearXRefsExecute
+      OnUpdate = actClearXRefsUpdate
+    end
   end
   object mnuEditCtrls: TPopupMenu
     Left = 86
@@ -551,6 +555,23 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
     end
     object miUndo: TMenuItem
       Action = actUndo
+    end
+  end
+  object mnuDependencies: TPopupMenu
+    Left = 264
+    Top = 344
+    object miClearDependencies: TMenuItem
+      Action = actClearDependencies
+    end
+    object miViewDependencies: TMenuItem
+      Action = actViewDependencies
+    end
+  end
+  object mnuXRefs: TPopupMenu
+    Left = 80
+    Top = 336
+    object miClearXRefs: TMenuItem
+      Action = actClearXRefs
     end
   end
 end
