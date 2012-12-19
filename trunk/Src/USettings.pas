@@ -157,7 +157,8 @@ type
     ssApplication,        // info about the application
     ssPreferences,        // info about program preferences
     ssUserInfo,           // info about user
-    ssProxyServer         // info about any proxy server
+    ssProxyServer,        // info about any proxy server
+    ssUnits               // list of default units
   );
 
   {
@@ -427,7 +428,8 @@ const
     ssCommon,   // ssApplication
     ssUser,     // ssPreferences
     ssUser,     // ssUserInfo
-    ssUser      // ssProxyServer
+    ssUser,     // ssProxyServer
+    ssUser      // ssUnits
   );
 begin
   Result := cSectionStorageMap[Section];
@@ -535,7 +537,8 @@ const
     'Application',      // ssApplication
     'Prefs',            // ssPreferences
     'UserInfo',         // ssUserInfo
-    'ProxyServer'       // ssProxyServer
+    'ProxyServer',      // ssProxyServer
+    'UnitList'          // ssUnits
   );
 begin
   Result := cSectionNames[Id];
