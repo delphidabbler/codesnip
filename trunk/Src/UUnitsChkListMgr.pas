@@ -22,7 +22,7 @@ interface
 
 uses
   // Delphi
-  Classes, CheckLst,
+  Classes, CheckLst, Controls,
   // Project
   UIStringList;
 
@@ -39,17 +39,30 @@ type
   strict private
     var
       fCLB: TCheckListBox;          // Check list box being managed
+      ///  <summary>List of reserved unit names.</summary>
+      ///  <remarks>Deafult units can't be deleted from list.</remarks>
       fReservedUnits: IStringList;
+      ///  <summary>List of default unit names.</summary>
+      ///  <remarks>Default units are those non-reserved units added to list
+      ///  when user has not specified any units or requests restoration of
+      ///  defaults.</remarks>
       fDefaultUnits: IStringList;
+    ///  <summary>Traps check list box's OnMouseDown event to ensure right
+    ///  click selects list item under mouse.</summary>
+    procedure MouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    ///  <summary>Initialises unit list with reserved and any stored units.
+    ///  </summary>
     procedure InitList;
-      {Initialises unit list reserved and any stored units.
-      }
+    ///  <summary>Saves any non-reserved units to storage.</summary>
     procedure SaveList;
   public
     constructor Create(const CLB: TCheckListBox);
       {Class constructor. Sets up object to manage a specified check list box.
         @param CLB [in] Check list box to be managed.
       }
+    ///  <summary>Destroys manager object and updates persistent storage.
+    ///  </summary>
     destructor Destroy; override;
     function IsValidUnitName(const UnitName: string): Boolean;
       {Checks if a unit name is valid.
@@ -82,6 +95,17 @@ type
         @param Strings [in] Received list of checked unit names. List overwrites
           any previous entries in Strings.
       }
+    ///  <summary>Checks if currently selected unit can be removed from list.
+    ///  </summary>
+    ///  <remarks>Returns False if there is no selection.</remarks>
+    function CanDeleteSelectedItem: Boolean;
+    ///  <summary>Deletes currently selected unot from list if possible.
+    ///  </summary>
+    ///  <remarks>Does nothing if no selection or if selected unit can't be
+    ///  deleted.</remarks>
+    procedure DeleteSelectedItem;
+    ///  <summary>Restores default unit list.</summary>
+    procedure RestoreDefaults;
   end;
 
 
@@ -96,6 +120,16 @@ uses
 
 
 { TUnitsChkListMgr }
+
+function TUnitsChkListMgr.CanDeleteSelectedItem: Boolean;
+var
+  Idx: Integer;
+begin
+  Idx := fCLB.ItemIndex;
+  if (Idx < 0) or (Idx >= fCLB.Count) then
+    Exit(False);
+  Result := not fReservedUnits.Contains(fCLB.Items[Idx]);
+end;
 
 function TUnitsChkListMgr.ContainsUnit(const UnitName: string): Boolean;
   {Checks if a unit is contained in the list.
@@ -113,6 +147,7 @@ constructor TUnitsChkListMgr.Create(const CLB: TCheckListBox);
 begin
   inherited Create;
   fCLB := CLB;
+  fCLB.OnMouseDown := MouseDown;
   fReservedUnits := TIStringList.Create(
     ['SysUtils', 'Classes', 'Windows', 'Graphics']
   );
@@ -120,6 +155,13 @@ begin
     ['Controls', 'Messages', 'Types', 'ShlObj', 'ShellAPI', 'ActiveX', 'Math']
   );
   InitList;
+end;
+
+procedure TUnitsChkListMgr.DeleteSelectedItem;
+begin
+  if not CanDeleteSelectedItem then
+    Exit;
+  fCLB.Items.Delete(fCLB.ItemIndex);
 end;
 
 destructor TUnitsChkListMgr.Destroy;
@@ -188,9 +230,12 @@ var
 begin
   fReservedUnits.CopyTo(fCLB.Items, True);
   Storage := Settings.ReadSection(ssUnits);
-  StoredUnits := Storage.GetStrings('Count', 'Unit%d');
-  if StoredUnits.Count > 0 then
-    StoredUnits.CopyTo(fCLB.Items, False)
+  if Storage.ItemCount > 0 then
+  begin
+    StoredUnits := Storage.GetStrings('Count', 'Unit%d');
+    if StoredUnits.Count > 0 then
+      StoredUnits.CopyTo(fCLB.Items, False);
+  end
   else
     fDefaultUnits.CopyTo(fCLB.Items, False);
 end;
@@ -202,6 +247,40 @@ function TUnitsChkListMgr.IsValidUnitName(const UnitName: string): Boolean;
   }
 begin
   Result := IsValidIdent(UnitName, True); // allow dots in unit name
+end;
+
+procedure TUnitsChkListMgr.MouseDown(Sender: TObject; Button: TMouseButton;
+  Shift: TShiftState; X, Y: Integer);
+begin
+  if Button <> mbLeft then
+    fCLB.ItemIndex := fCLB.ItemAtPos(Point(X, Y), True);
+end;
+
+procedure TUnitsChkListMgr.RestoreDefaults;
+var
+  CheckedUnits: IStringList;  // list of checked units before restoration
+  SelectedUnit: string;       // name of any selected unit before restoration
+  U: string;                  // each unit in CheckedUnits
+  Idx: Integer;               // index of each U in restored list
+begin
+  CheckedUnits := TIStringList.Create;
+  // record any checked and SelectedUnit units
+  GetCheckedUnits(CheckedUnits);
+  if fCLB.ItemIndex >= 0 then
+    SelectedUnit := fCLB.Items[fCLB.ItemIndex]
+  else
+    SelectedUnit := '';
+  // replace list box contents with default
+  fReservedUnits.CopyTo(fCLB.Items, True);  // overwrites existing list
+  fDefaultUnits.CopyTo(fCLB.Items, False);
+  // restore any checks and selected item if still present
+  for U in CheckedUnits do
+  begin
+    Idx := fCLB.Items.IndexOf(U);
+    if Idx >= 0 then
+      fCLB.Checked[Idx] := True;
+  end;
+  fCLB.ItemIndex := fCLB.Items.IndexOf(SelectedUnit);
 end;
 
 procedure TUnitsChkListMgr.SaveList;
