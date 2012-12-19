@@ -244,6 +244,7 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
           Height = 420
           IntegralHeight = True
           ItemHeight = 13
+          PopupMenu = mnuUnits
           TabOrder = 2
         end
         object edUnit: TEdit
@@ -452,6 +453,15 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       OnExecute = actAddUnitExecute
       OnUpdate = actAddUnitUpdate
     end
+    object actDeleteUnit: TAction
+      Caption = 'Delete Unit'
+      OnExecute = actDeleteUnitExecute
+      OnUpdate = actDeleteUnitUpdate
+    end
+    object actRestoreUnits: TAction
+      Caption = 'Restore Default Units'
+      OnExecute = actRestoreUnitsExecute
+    end
     object actCompile: TAction
       Caption = '&Test Compile'
       ShortCut = 120
@@ -475,6 +485,16 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
     object actViewDependencies: TAction
       Caption = 'View &Dependencies...'
       OnExecute = actViewDependenciesExecute
+    end
+    object actClearDependencies: TAction
+      Caption = 'Clear All Dependencies'
+      OnExecute = actClearDependenciesExecute
+      OnUpdate = actClearDependenciesUpdate
+    end
+    object actClearXRefs: TAction
+      Caption = 'Clear All Cross References'
+      OnExecute = actClearXRefsExecute
+      OnUpdate = actClearXRefsUpdate
     end
     object actViewExtra: TAction
       Caption = 'Previe&w...'
@@ -521,16 +541,6 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
       OnExecute = actViewDescriptionExecute
       OnUpdate = actViewDescriptionUpdate
     end
-    object actClearDependencies: TAction
-      Caption = 'Clear All Dependencies'
-      OnExecute = actClearDependenciesExecute
-      OnUpdate = actClearDependenciesUpdate
-    end
-    object actClearXRefs: TAction
-      Caption = 'Clear All Cross References'
-      OnExecute = actClearXRefsExecute
-      OnUpdate = actClearXRefsUpdate
-    end
   end
   object mnuEditCtrls: TPopupMenu
     Left = 86
@@ -572,6 +582,16 @@ inherited SnippetsEditorDlg: TSnippetsEditorDlg
     Top = 336
     object miClearXRefs: TMenuItem
       Action = actClearXRefs
+    end
+  end
+  object mnuUnits: TPopupMenu
+    Left = 496
+    Top = 344
+    object miDeleteUnit: TMenuItem
+      Action = actDeleteUnit
+    end
+    object miRestoreUnits: TMenuItem
+      Action = actRestoreUnits
     end
   end
 end

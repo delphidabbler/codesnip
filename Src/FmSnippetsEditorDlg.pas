@@ -113,6 +113,11 @@ type
     miClearXRefs: TMenuItem;
     miClearDependencies: TMenuItem;
     miViewDependencies: TMenuItem;
+    mnuUnits: TPopupMenu;
+    actDeleteUnit: TAction;
+    miDeleteUnit: TMenuItem;
+    actRestoreUnits: TAction;
+    miRestoreUnits: TMenuItem;
     procedure actAddUnitExecute(Sender: TObject);
     procedure actAddUnitUpdate(Sender: TObject);
     procedure actCompileExecute(Sender: TObject);
@@ -145,6 +150,9 @@ type
     procedure actClearXRefsExecute(Sender: TObject);
     procedure actClearDependenciesUpdate(Sender: TObject);
     procedure actClearXRefsUpdate(Sender: TObject);
+    procedure actDeleteUnitUpdate(Sender: TObject);
+    procedure actDeleteUnitExecute(Sender: TObject);
+    procedure actRestoreUnitsExecute(Sender: TObject);
   strict private
     fSnippet: TSnippet;             // Snippet being edited: nil for new snippet
     fCatList: TCategoryListAdapter; // Accesses sorted list of categories
@@ -358,6 +366,21 @@ procedure TSnippetsEditorDlg.actCompileUpdate(Sender: TObject);
 begin
   (Sender as TAction).Enabled := fCompileMgr.HaveCompilers
     and (fSnipKindList.SnippetKind(cbKind.ItemIndex) <> skFreeform);
+end;
+
+procedure TSnippetsEditorDlg.actDeleteUnitExecute(Sender: TObject);
+begin
+  fUnitsCLBMgr.DeleteSelectedItem;
+end;
+
+procedure TSnippetsEditorDlg.actDeleteUnitUpdate(Sender: TObject);
+begin
+  actDeleteUnit.Enabled := fUnitsCLBMgr.CanDeleteSelectedItem;
+end;
+
+procedure TSnippetsEditorDlg.actRestoreUnitsExecute(Sender: TObject);
+begin
+  fUnitsCLBMgr.RestoreDefaults;
 end;
 
 procedure TSnippetsEditorDlg.actSetAllQueryExecute(Sender: TObject);
