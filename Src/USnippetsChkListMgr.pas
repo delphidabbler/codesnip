@@ -90,9 +90,9 @@ type
       {Gets all checked snippets in check list box.
         @param SnipList [in] List that receives checked snippets objects.
       }
-    procedure GetCheckedSnippets(const SnipList: ISnippetIDList); overload;
+    function GetCheckedSnippets: ISnippetIDList; overload;
       {Gets all checked snippets in check list box.
-        @param SnipList [in] List that receives ids of checked snippets.
+        @returns List that receives ids of checked snippets.
       }
     function HasCheckedItems: Boolean;
   end;
@@ -214,30 +214,6 @@ begin
 end;
 
 procedure TSnippetsChkListMgr.GetCheckedSnippets(
-  const SnipList: ISnippetIDList);
-  {Gets all checked snippets in check list box.
-    @param SnipList [in] List that receives ids of checked snippets.
-  }
-var
-  Idx: Integer; // loops through all items in list box
-begin
-  SnipList.Clear;
-  for Idx := 0 to Pred(fCLB.Count) do
-    if fCLB.Checked[Idx] then
-      SnipList.Add((fCLB.Items.Objects[Idx] as TSnippet).ID);
-end;
-
-function TSnippetsChkListMgr.HasCheckedItems: Boolean;
-var
-  Idx: Integer; // lopps thru each item in check list box
-begin
-  for Idx  := 0 to Pred(fCLB.Count) do
-    if fCLB.Checked[Idx] then
-      Exit(True);
-  Result := False;
-end;
-
-procedure TSnippetsChkListMgr.GetCheckedSnippets(
   const SnipList: TSnippetList);
   {Gets all checked snippets in check list box.
     @param SnipList [in] List that receives checked snippets objects.
@@ -249,6 +225,29 @@ begin
   for Idx := 0 to Pred(fCLB.Count) do
     if fCLB.Checked[Idx] then
       SnipList.Add(fCLB.Items.Objects[Idx] as TSnippet);
+end;
+
+function TSnippetsChkListMgr.GetCheckedSnippets: ISnippetIDList;
+  {Gets all checked snippets in check list box.
+    @returns List that receives ids of checked snippets.
+  }
+var
+  Idx: Integer; // loops through all items in list box
+begin
+  Result := TSnippetIDList.Create;
+  for Idx := 0 to Pred(fCLB.Count) do
+    if fCLB.Checked[Idx] then
+      Result.Add((fCLB.Items.Objects[Idx] as TSnippet).ID);
+end;
+
+function TSnippetsChkListMgr.HasCheckedItems: Boolean;
+var
+  Idx: Integer; // lopps thru each item in check list box
+begin
+  for Idx  := 0 to Pred(fCLB.Count) do
+    if fCLB.Checked[Idx] then
+      Exit(True);
+  Result := False;
 end;
 
 procedure TSnippetsChkListMgr.Restore;
