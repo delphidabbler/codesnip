@@ -247,8 +247,25 @@
           Select any units that this snippet requires in order to compile using
           this list box. Required units must be specified if test compilation is
           to be attempted. A selection of common units is provided, along with
-          any units already associated with the snippet. More units can be added
-          to the list &ndash; see below.
+          any units already associated with the snippet.
+        </div>
+        <div>
+          If the unit you need is not in the list box simply enter its name in
+          the edit box next to the <em>Add Unit</em> button and click the
+          button.
+        </div>
+        <div>
+          Each unit you use is remembered and will appear in the list box in
+          future. If the list box is getting too full you can remove most units
+          by right clicking them and selecting <em>Delete Selected Unit</em>
+          from the context menu. Note that the <code>SysUtils</code>,
+          <code>Classes</code>, <code>Windows</code> and <code>Graphics</code>
+          units cannot be deleted.
+        </div>
+        <div>
+          The list box's context menu also gives options to restore the unit
+          list to it's &quot;factory&quot; default and to deselect all the units
+          in the list.
         </div>
         <div>
           Units are &quot;used&quot; in the order they appear in the list. If
@@ -256,10 +273,10 @@
           identifiers in the source code with the unit name, e.g.
           <code>Graphics.TBitmap</code>.
         </div>
-        <div>
+        <div class="bordered">
           If you intend to test compile your snippet with Delphi XE2 or XE3 you
-          will need to make sure it is configured to search the namespaces
-          containing the units you list here. Do this in the
+          will need to make sure the compiler is configured to search the
+          namespaces containing the units you list here. Do this in the
           <a href="dlg_configcompilers.htm">Configure Compilers</a> dialogue
           box. Use the <em>Command Line</em> tab to enter an <code>-NS</code>
           &quot;switch&quot; that has a semi-colon separated list of namespaces
@@ -275,21 +292,6 @@
           <strong>Notes:</strong> <a href="snippet_unit.htm">Unit snippets</a>
           must declare their used units in the unit source code, so this list
           box is disabled when the snippet kind is <em>unit</em>.
-        </div>
-      </li>
-      <li>
-        <div>
-          <em>Add Unit</em> edit box and button
-        </div>
-        <div>
-          If additional units are required in the <em>Units</em> check list box
-          type the name of the unit in the edit box and click the <em>Add
-          Unit</em> button. The unit will be added to the <em>Units</em> check
-          list box and its check box will be checked.
-        </div>
-        <div>
-          This button is disabled for <a href="snippet_unit.htm">unit
-          snippets</a>.
         </div>
       </li>
     </ul>
