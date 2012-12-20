@@ -40,6 +40,12 @@ type
   ///  <remarks>Must be supported by all search filters.</remarks>
   ISearchFilter = interface(IInterface)
     ['{C0F8DD70-ED30-4293-98B7-F1DD07AFAD54}']
+    ///  <summary>Performs any required initialisation of the filter before a
+    ///  search is commenced.</summary>
+    procedure Initialise;
+    ///  <summary>Performs any required tidying up of filter after a search
+    ///  finishes.</summary>
+    procedure Finalise;
     ///  <summary>Checks whether the given snippet matches the filter's search
     ///  criteria, returning True if so or False if not.</summary>
     function Match(const Snippet: TSnippet): Boolean;
@@ -338,6 +344,21 @@ type
     ///  </summary>
     ///  <remarks>Method of ISearchUIInfo.</remarks>
     function Glyph: TBitmap;
+    ///  <summary>Called to initialise filter before a search is commenced.
+    ///  </summary>
+    ///  <remarks>
+    ///  <para>Does nothing in this base implementation. Descendants needing
+    ///  the functionality must override.</para>
+    ///  <para>Method of ISearchFilter.</para>
+    ///  </remarks>
+    procedure Initialise; virtual;
+    ///  <summary>Called to tidy up of filter after a search finishes.</summary>
+    ///  <remarks>
+    ///  <para>Does nothing in this base implementation. Descendants needing
+    ///  the functionality must override.</para>
+    ///  <para>Method of ISearchFilter.</para>
+    ///  </remarks>
+    procedure Finalise; virtual;
   end;
 
 type
@@ -370,13 +391,11 @@ type
       const Logic: TSearchLogic; const Option: TCompilerSearchOption);
     ///  <summary>Checks whether the given snippet matches the filter's search
     ///  criteria, returning True if so or False if not.</summary>
-    ///  <remarks>Method of ISearchFilter and ICompilerSearchFilter.
-    ///  </remarks>
+    ///  <remarks>Method of ISearchFilter.</remarks>
     function Match(const Snippet: TSnippet): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns False.
     ///  </summary>
-    ///  <remarks>Method of ISearchFilter and ICompilerSearchFilter.
-    ///  </remarks>
+    ///  <remarks>Method of ISearchFilter.</remarks>
     function IsNull: Boolean;
     ///  <summary>Returns sets of compilers to be included in search.</summary>
     ///  <remarks>Method of ICompilerSearchFilter.</remarks>
@@ -421,13 +440,11 @@ type
     destructor Destroy; override;
     ///  <summary>Checks whether the given snippet matches the filter's search
     ///  criteria, returning True if so or False if not.</summary>
-    ///  <remarks>Method of ISearchFilter and ITextSearchFilter.
-    ///  </remarks>
+    ///  <remarks>Method of ISearchFilter.</remarks>
     function Match(const Snippet: TSnippet): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns False.
     ///  </summary>
-    ///  <remarks>Method of ISearchFilter and ITextSearchFilter.
-    ///  </remarks>
+    ///  <remarks>Method of ISearchFilter.</remarks>
     function IsNull: Boolean;
     ///  <summary>Returns list of words to be searched for.</summary>
     ///  <remarks>Method of ITextSearchFilter.</remarks>
@@ -457,15 +474,13 @@ type
     ///  <param name="SelectedItems">ISnippetIDList [in] List of snippets to be
     ///  selected in search.</param>
     constructor Create(const SelectedItems: ISnippetIDList);
-    ///  <summary>Checks whether the given snippet matches the filter's search
+     ///  <summary>Checks whether the given snippet matches the filter's search
     ///  criteria, returning True if so or False if not.</summary>
-    ///  <remarks>Method of ISearchFilter and ISelectionSearchFilter.
-    ///  </remarks>
+    ///  <remarks>Method of ISearchFilter.</remarks>
     function Match(const Snippet: TSnippet): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns False.
     ///  </summary>
-    ///  <remarks>Method of ISearchFilter and ISelectionSearchFilter.
-    ///  </remarks>
+    ///  <remarks>Method of ISearchFilter.</remarks>
     function IsNull: Boolean;
     ///  <summary>Returns list of snippets to be selected in search.</summary>
     ///  <remarks>Method of ISelectionSearchFilter.</remarks>
@@ -536,9 +551,6 @@ type
     ///  Also recursively adds the snippet's all its cross-referenced snippets
     ///  if appropriate search options are set.</summary>
     procedure ReferenceSnippet(const Snippet: TSnippet);
-    ///  <summary>Initialises x-ref list with all required snippets.</summary>
-    ///  <remarks>Must only be called once when x-ref list is empty.</remarks>
-    procedure Initialise;
   strict protected
     ///  <summary>Returns resource id of glyph bitmap.</summary>
     function GlyphResourceName: string; override;
@@ -552,15 +564,21 @@ type
       const Options: TXRefSearchOptions);
     ///  <summary>Destroys filter object.</summary>
     destructor Destroy; override;
+    ///  <summary>Called to initialise filter before a search is commenced.
+    ///  Prepares list of XRefs.</summary>
+    ///  <remarks>Method of ISearchFilter.</remarks>
+    procedure Initialise; override;
+    ///  <summary>Called to tidy up of filter after a search finishes. Clears
+    ///  list of XRefs.</summary>
+    ///  <remarks>Method of ISearchFilter.</remarks>
+    procedure Finalise; override;
     ///  <summary>Checks whether the given snippet matches the filter's search
     ///  criteria, returning True if so or False if not.</summary>
-    ///  <remarks>Method of ISearchFilter and IXRefSearchFilter.
-    ///  </remarks>
+    ///  <remarks>Method of ISearchFilter.</remarks>
     function Match(const Snippet: TSnippet): Boolean;
     ///  <summary>Indicates whether the object is a null filter. Returns False.
     ///  </summary>
-    ///  <remarks>Method of ISearchFilter and IXRefSearchFilter.
-    ///  </remarks>
+    ///  <remarks>Method of ISearchFilter.</remarks>
     function IsNull: Boolean;
     ///  <summary>Returns snippet whose cross references are to be searched.
     ///  </summary>
@@ -611,9 +629,14 @@ begin
   Assert(InList <> FoundList, ClassName + '.Execute: InList = FoundList');
 
   FoundList.Clear;
-  for Snippet in InList do
-    if GetFilter.Match(Snippet) then
-      FoundList.Add(Snippet);
+  GetFilter.Initialise;
+  try
+    for Snippet in InList do
+      if GetFilter.Match(Snippet) then
+        FoundList.Add(Snippet);
+  finally
+    GetFilter.Finalise;
+  end;
   Result := FoundList.Count > 0;
 end;
 
@@ -630,6 +653,11 @@ begin
   inherited;
 end;
 
+procedure TBaseSearchFilter.Finalise;
+begin
+  // Do nothing
+end;
+
 function TBaseSearchFilter.Glyph: TBitmap;
 begin
   if not Assigned(fBitmap) then
@@ -639,6 +667,11 @@ begin
     fBitmap.LoadFromResourceName(HInstance, GlyphResourceName);
   end;
   Result := fBitmap;
+end;
+
+procedure TBaseSearchFilter.Initialise;
+begin
+  // Do nothing
 end;
 
 { TCompilerSearchFilter }
@@ -947,12 +980,18 @@ begin
   inherited Create;
   fBaseSnippet := BaseSnippet;
   fOptions := Options;
+  fXRefs := TSnippetList.Create;
 end;
 
 destructor TXRefSearchFilter.Destroy;
 begin
   fXRefs.Free;
   inherited;
+end;
+
+procedure TXRefSearchFilter.Finalise;
+begin
+  fXRefs.Clear;
 end;
 
 function TXRefSearchFilter.GetBaseSnippet: TSnippet;
@@ -973,7 +1012,7 @@ end;
 procedure TXRefSearchFilter.Initialise;
 begin
   Assert(Assigned(fXRefs), ClassName + '.Initialise: fXRefs is nil');
-  Assert(fXRefs.Count = 0, ClassName + '.Initialise: fXRefs not empty');
+  fXRefs.Clear;
   ReferenceRequired(fBaseSnippet);
   ReferenceSeeAlso(fBaseSnippet);
   if soIncludeSnippet in fOptions then
