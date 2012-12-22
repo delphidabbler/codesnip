@@ -44,6 +44,7 @@ type
     gbSourceCode: TGroupBox;
     lblCommentStyle: TLabel;
     lblSnippetFileType: TLabel;
+    chkTruncateComments: TCheckBox;
     procedure cbCommentStyleChange(Sender: TObject);
     procedure cbSnippetFileTypeChange(Sender: TObject);
   strict private
@@ -113,7 +114,7 @@ uses
   SysUtils, Math,
   // Project
   FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UFileHiliter, Hiliter.UHiliters,
-  IntfCommon, UConsts, UEncodings, UGraphicUtils, URTFUtils;
+  IntfCommon, UConsts, UCtrlArranger, UEncodings, UGraphicUtils, URTFUtils;
 
 
 {$R *.dfm}
@@ -175,6 +176,7 @@ begin
   // Update control values per settings
   SelectSourceFileType(Prefs.SourceDefaultFileType);
   SelectCommentStyle(Prefs.SourceCommentStyle);
+  chkTruncateComments.Checked := Prefs.TruncateSourceComments;
   chkSyntaxHighlighting.Checked := Prefs.SourceSyntaxHilited;
   (fHiliteAttrs as IAssignable).Assign(Prefs.HiliteAttrs);
   fHiliteAttrs.ResetDefaultFont;
@@ -193,10 +195,13 @@ begin
     StringExtent(lblCommentStyle.Caption, lblCommentStyle.Font).cx,
     StringExtent(lblSnippetFileType.Caption, lblSnippetFileType.Font).cx
   ) + 8;
-  cbCommentStyle.Left := Col2Left;
-  frmPreview.Left := Col2Left;
-  cbSnippetFileType.Left := Col2Left;
-  chkSyntaxHighlighting.Left := Col2Left;
+  TCtrlArranger.AlignLefts(
+    [
+      cbCommentStyle, frmPreview, cbSnippetFileType, chkSyntaxHighlighting,
+      chkTruncateComments
+    ],
+    Col2Left
+  );
 end;
 
 procedure TSourcePrefsFrame.cbCommentStyleChange(Sender: TObject);
@@ -204,6 +209,7 @@ procedure TSourcePrefsFrame.cbCommentStyleChange(Sender: TObject);
     @param Sender [in] Not used.
   }
 begin
+  UpdateControlState;
   UpdatePreview;
 end;
 
@@ -244,6 +250,7 @@ procedure TSourcePrefsFrame.Deactivate(const Prefs: IPreferences);
   }
 begin
   Prefs.SourceCommentStyle := GetCommentStyle;
+  Prefs.TruncateSourceComments := chkTruncateComments.Checked;
   Prefs.SourceDefaultFileType := GetSourceFileType;
   Prefs.SourceSyntaxHilited := chkSyntaxHighlighting.Checked;
 end;
@@ -320,6 +327,7 @@ procedure TSourcePrefsFrame.UpdateControlState;
 begin
   chkSyntaxHighlighting.Enabled :=
     TFileHiliter.IsHilitingSupported(GetSourceFileType);
+  chkTruncateComments.Enabled := GetCommentStyle <> csNone;
 end;
 
 procedure TSourcePrefsFrame.UpdatePreview;
