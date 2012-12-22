@@ -218,10 +218,7 @@ var
   RawSource: string;      // raw source code
   Hiliter: TFileHiliter;  // object used to highlight source code
 begin
-  // TODO: change dlg to have truncate source comments check box?
-  RawSource := GenerateSource(
-    fSaveDlg.CommentStyle, Preferences.TruncateSourceComments
-  );
+  RawSource := GenerateSource(fSaveDlg.CommentStyle, fSaveDlg.TruncateComments);
   // Highlight the raw source as required
   Hiliter := TFileHiliter.Create(
     fSaveDlg.UseSyntaxHiliting and IsHilitingSupported(FileType),
@@ -291,6 +288,7 @@ begin
   fSaveDlg.Title := GetDlgTitle;
   fSaveDlg.HelpKeyword := GetDlgHelpKeyword;
   fSaveDlg.CommentStyle := Preferences.SourceCommentStyle;
+  fSaveDlg.TruncateComments := Preferences.TruncateSourceComments;
   fSaveDlg.UseSyntaxHiliting := Preferences.SourceSyntaxHilited;
   fSaveDlg.OnPreview := PreviewHandler;
   fSaveDlg.OnHiliteQuery := HiliteQueryHandler;
