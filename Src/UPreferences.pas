@@ -52,6 +52,17 @@ type
       read GetSourceCommentStyle write SetSourceCommentStyle;
       {Commenting style used to describe snippets in generated source code}
 
+    ///  <summary>Gets flag that determines whether multi paragraph source code
+    ///  is truncated to first paragraph in source code comments.</summary>
+    function GetTruncateSourceComments: Boolean;
+    ///  <summary>Sets flag that determines whether multi paragraph source code
+    ///  is truncated to first paragraph in source code comments.</summary>
+    procedure SetTruncateSourceComments(const Value: Boolean);
+    ///  <summary>Flag determining whether multi paragraph source code is
+    ///  truncated to first paragraph in source code comments.</summary>
+    property TruncateSourceComments: Boolean
+      read GetTruncateSourceComments write SetTruncateSourceComments;
+
     function GetSourceDefaultFileType: TSourceFileType;
       {Gets current default file extension / type used when writing code
       snippets to file.
@@ -291,6 +302,7 @@ type
       {Default file extension / type used when writing code snippets to file}
     fSourceCommentStyle: TCommentStyle;
       {Commenting style used to describe snippets in generated source code}
+    fTruncateSourceComments: Boolean;
     fSourceSyntaxHilited: Boolean;
       {Indicates whether generated source is highlighted by default}
     fMeasurementUnits: TMeasurementUnits;
@@ -327,6 +339,17 @@ type
       {Sets style of commenting to be used describe snippets in generated code.
         @param Value [in] Required commenting style.
       }
+
+    ///  <summary>Gets flag that determines whether multi paragraph source code
+    ///  is truncated to first paragraph in source code comments.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    function GetTruncateSourceComments: Boolean;
+
+    ///  <summary>Sets flag that determines whether multi paragraph source code
+    ///  is truncated to first paragraph in source code comments.</summary>
+    ///  <remarks>Method of IPreferences.</remarks>
+    procedure SetTruncateSourceComments(const Value: Boolean);
+
     function GetSourceDefaultFileType: TSourceFileType;
       {Gets current default file extension / type used when writing code
       snippets to file.
@@ -469,6 +492,7 @@ type
     ///  </summary>
     ///  <remarks>Method of IPreferences.</remarks>
     function GetPageStructures: TSnippetPageStructures;
+
     ///  <summary>Updates information describing snippet detail page
     ///  customisations.</summary>
     ///  <remarks>Method of IPreferences.</remarks>
@@ -561,6 +585,7 @@ begin
   // Copy the data
   Self.fSourceDefaultFileType := SrcPref.SourceDefaultFileType;
   Self.fSourceCommentStyle := SrcPref.SourceCommentStyle;
+  Self.fTruncateSourceComments := SrcPref.TruncateSourceComments;
   Self.fSourceSyntaxHilited := SrcPref.SourceSyntaxHilited;
   Self.fMeasurementUnits := SrcPref.MeasurementUnits;
   Self.fOverviewStartState := SrcPref.OverviewStartState;
@@ -706,6 +731,11 @@ begin
   Result := fSourceSyntaxHilited;
 end;
 
+function TPreferences.GetTruncateSourceComments: Boolean;
+begin
+  Result := fTruncateSourceComments;
+end;
+
 function TPreferences.GetWarnings: IWarnings;
 begin
   Result := fWarnings;
@@ -718,7 +748,6 @@ procedure TPreferences.SetCustomHiliteColours(const Colours: IStringList);
 begin
   fHiliteCustomColours := Colours;
 end;
-
 
 procedure TPreferences.SetDBHeadingColour(UserDefined: Boolean;
   const Value: TColor);
@@ -821,6 +850,11 @@ begin
   fSourceSyntaxHilited := Value;
 end;
 
+procedure TPreferences.SetTruncateSourceComments(const Value: Boolean);
+begin
+  fTruncateSourceComments := Value;
+end;
+
 procedure TPreferences.SetWarnings(Warnings: IWarnings);
 begin
   (fWarnings as IAssignable).Assign(Warnings);
@@ -841,6 +875,7 @@ begin
   NewPref := Result as IPreferences;
   NewPref.SourceDefaultFileType := Self.fSourceDefaultFileType;
   NewPref.SourceCommentStyle := Self.fSourceCommentStyle;
+  NewPref.TruncateSourceComments := Self.fTruncateSourceComments;
   NewPref.SourceSyntaxHilited := Self.fSourceSyntaxHilited;
   NewPref.MeasurementUnits := Self.fMeasurementUnits;
   NewPref.OverviewStartState := Self.fOverviewStartState;
@@ -910,6 +945,9 @@ begin
   );
   fSourceCommentStyle := TCommentStyle(
     StrToIntDef(Storage.ItemValues['CommentStyle'], Ord(csAfter))
+  );
+  fTruncateSourceComments := Boolean(
+    StrToIntDef(Storage.ItemValues['TruncateComments'], Ord(False))
   );
   fSourceSyntaxHilited := Boolean(
     StrToIntDef(Storage.ItemValues['UseSyntaxHiliting'], Ord(False))
@@ -996,6 +1034,9 @@ begin
   Storage := Settings.EmptySection(ssPreferences, cSourceCode);
   Storage.ItemValues['FileType'] := IntToStr(Ord(fSourceDefaultFileType));
   Storage.ItemValues['CommentStyle'] := IntToStr(Ord(fSourceCommentStyle));
+  Storage.ItemValues['TruncateComments'] := IntToStr(
+    Ord(fTruncateSourceComments)
+  );
   Storage.ItemValues['UseSyntaxHiliting'] := IntToStr(
     Ord(fSourceSyntaxHilited)
   );
