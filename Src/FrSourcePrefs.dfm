@@ -10,7 +10,7 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
     Left = 0
     Top = 0
     Width = 393
-    Height = 181
+    Height = 201
     Anchors = [akLeft, akTop, akRight]
     Caption = ' Source code formatting '
     TabOrder = 0
@@ -24,7 +24,7 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
     end
     object cbCommentStyle: TComboBox
       Left = 122
-      Top = 20
+      Top = 19
       Width = 198
       Height = 21
       Style = csDropDownList
@@ -48,10 +48,18 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
         ExplicitHeight = 123
       end
     end
+    object chkTruncateComments: TCheckBox
+      Left = 8
+      Top = 175
+      Width = 233
+      Height = 17
+      Caption = 'Truncate comments to one paragraph'
+      TabOrder = 2
+    end
   end
   object gbFileFormat: TGroupBox
     Left = 0
-    Top = 187
+    Top = 207
     Width = 393
     Height = 81
     Anchors = [akLeft, akTop, akRight]
