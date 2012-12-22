@@ -70,7 +70,7 @@ LANGUAGE LANG_NEUTRAL , SUBLANG_NEUTRAL
     Hidden static control required by Windows to extend dialog. Dialog is
     extended by difference between dialog size and size of this static control
   */
-  LTEXT "", 1119, 0, 0, 0, 88, SS_LEFT | WS_CHILD | NOT WS_VISIBLE | WS_GROUP
+  LTEXT "", 1119, 0, 0, 0, 84, SS_LEFT | WS_CHILD | NOT WS_VISIBLE | WS_GROUP
 }
 
 
