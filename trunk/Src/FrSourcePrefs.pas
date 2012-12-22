@@ -114,7 +114,7 @@ uses
   SysUtils, Math,
   // Project
   FmPreferencesDlg, Hiliter.UAttrs, Hiliter.UFileHiliter, Hiliter.UHiliters,
-  IntfCommon, UConsts, UCtrlArranger, UEncodings, UGraphicUtils, URTFUtils;
+  IntfCommon, UConsts, UCtrlArranger, URTFUtils;
 
 
 {$R *.dfm}
@@ -191,10 +191,26 @@ procedure TSourcePrefsFrame.ArrangeControls;
 var
   Col2Left: Integer;  // position of second column of controls
 begin
+  TCtrlArranger.AlignVCentres(20, [lblCommentStyle, cbCommentStyle]);
+  TCtrlArranger.MoveBelow([lblCommentStyle, cbCommentStyle], frmPreview, 8);
+  TCtrlArranger.MoveBelow(frmPreview, chkTruncateComments, 8);
+  gbSourceCode.ClientHeight := TCtrlArranger.TotalControlHeight(gbSourceCode)
+    + 10;
+
+  TCtrlArranger.AlignVCentres(20, [lblSnippetFileType, cbSnippetFileType]);
+  TCtrlArranger.MoveBelow(
+    [lblSnippetFileType, cbSnippetFileType], chkSyntaxHighlighting, 8
+  );
+  gbFileFormat.ClientHeight := TCtrlArranger.TotalControlHeight(gbFileFormat)
+    + 10;
+
+  TCtrlArranger.MoveBelow(gbSourceCode, gbFileFormat, 8);
+
+  TCtrlArranger.AlignLefts([lblCommentStyle, lblSnippetFileType], 8);
   Col2Left := Max(
-    StringExtent(lblCommentStyle.Caption, lblCommentStyle.Font).cx,
-    StringExtent(lblSnippetFileType.Caption, lblSnippetFileType.Font).cx
-  ) + 8;
+    TCtrlArranger.RightOf(lblCommentStyle),
+    TCtrlArranger.RightOf(lblSnippetFileType)
+  ) + 12;
   TCtrlArranger.AlignLefts(
     [
       cbCommentStyle, frmPreview, cbSnippetFileType, chkSyntaxHighlighting,
