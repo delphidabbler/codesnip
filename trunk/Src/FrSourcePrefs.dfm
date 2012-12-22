@@ -53,7 +53,7 @@ inherited SourcePrefsFrame: TSourcePrefsFrame
       Top = 175
       Width = 233
       Height = 17
-      Caption = 'Truncate comments to one paragraph'
+      Caption = '&Truncate comments to one paragraph'
       TabOrder = 2
     end
   end
