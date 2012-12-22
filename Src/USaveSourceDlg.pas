@@ -65,6 +65,10 @@ type
       fLblCommentStyle: TLabel;
       ///  <summary>Combo box used to select commenting style.</summary>
       fCmbCommentStyle: TComboBox;
+      ///  <summary>Check box that determines whether a snippet's comment is
+      ///  truncated to first paragraph of description or uses whole
+      ///  description.</summary>
+      fChkTruncateComment: TCheckBox;
       ///  <summary>Check box that toggles syntax highlighting.</summary>
       fChkSyntaxHilite: TCheckBox;
       ///  <summary>Label for encoding combo box.</summary>
@@ -77,6 +81,9 @@ type
       fPreviewBtn: TButton;
       ///  <summary>Style of commenting to be used in source code.</summary>
       fCommentStyle: TCommentStyle;
+      ///  <summary>Whether snippet comments are to be truncated to a single
+      ///  paragraph.</summary>
+      fTruncateComments: Boolean;
       ///  <summary>Event handler for OnPreview event.</summary>
       fOnPreview: TNotifyEvent;
       ///  <summary>Event handler for OnHiliteQuery event.</summary>
@@ -104,8 +111,11 @@ type
     ///  box.</remarks>
     procedure EncodingChange(Sender: TObject);
     ///  <summary>Updates value of UseSyntaxHiliting property per state of
-    ///  dialog box controls.</summary>
+    ///  dialogue box controls.</summary>
     procedure UpdateSyntaxHiliting;
+    ///  <summary>Updates value of TruncateComments property per state of
+    ///  dialogue box controls.</summary>
+    procedure UpdateCommentTruncation;
     ///  <summary>Selects item in comment style combo box that matches value of
     ///  CommentStyle property.</summary>
     procedure UpdateCommentStyle;
@@ -171,6 +181,10 @@ type
     ///  <summary>Gets and sets the selected commenting style.</summary>
     property CommentStyle: TCommentStyle
       read fCommentStyle write fCommentStyle;
+    ///  <summary>Gets and sets the value of the comment truncation check box.
+    ///  </summary>
+    property TruncateComments: Boolean
+      read fTruncateComments write fTruncateComments;
     ///  <summary>Flag true if syntax highlighting is to be used when saving /
     ///  previewing source code. This is case when check box is checked and
     ///  selected file type supports highlighting. Set the property to check the
@@ -212,6 +226,7 @@ resourcestring
   sLblCommentStyle = 'Comment style:';
   sLblEncoding = 'File Encoding:';
   sChkSyntaxHilite = 'Use syntax highlighting';
+  sChkTruncateComment = 'Truncate comments to 1st paragraph';
   sBtnPreview = '&Preview...';
   sBtnHelp = '&Help';
   // Default encoding name
@@ -281,6 +296,11 @@ begin
   fLblCommentStyle.Parent := fPanel;
   fLblCommentStyle.Caption := sLblCommentStyle;
 
+  // check box that determines if comments are truncated to 1st paragraph
+  fChkTruncateComment := TCheckBox.Create(Self);
+  fChkTruncateComment.Parent := fPanel;
+  fChkTruncateComment.Caption := sChkTruncateComment;
+
   // combo box used to select commenting style
   fCmbCommentStyle := TComboBox.Create(Self);
   fCmbCommentStyle.Parent := fPanel;
@@ -333,8 +353,8 @@ end;
 
 procedure TSaveSourceDlg.DoClose;
 begin
-  // Update value of SyntaxHiliting property
   UpdateSyntaxHiliting;
+  UpdateCommentTruncation;
   inherited DoClose;
   // Hide any hint left on screen
   Application.HideHint;
@@ -380,19 +400,16 @@ begin
   // bounds of OK button (used to size buttons we add)
   ButtonBounds := GetDlgCtrlRect(IDOK);
 
-  // Set up TPanel that holds all newly added controls
   GetClientRect(Handle, PanelBounds);       // first size to whole client area
   PanelBounds.Top := StaticBounds.Bottom;   // set top to below hidden ctrl
   fPanel.BoundsRect := PanelBounds;
   fPanel.ParentWindow := Handle;            // make dlg parent of panel
 
-  // Align syntax highlight check box file type combo
   fChkSyntaxHilite.Left := FileTypeCmbBounds.Left;
   fChkSyntaxHilite.Top := 0;
   fChkSyntaxHilite.Width := FileTypeCmbBounds.Width;
   fChkSyntaxHilite.Checked := fUseSyntaxHiliting;
 
-  // Size and align comment style combo box with file type combo box
   fCmbCommentStyle.Left := FileTypeCmbBounds.Left;
   fCmbCommentStyle.Top := fChkSyntaxHilite.Top + fChkSyntaxHilite.Height + 6;
   fCmbCommentStyle.Width := FileTypeCmbBounds.Width;
@@ -408,16 +425,19 @@ begin
   end;
   UpdateCommentStyle;
 
+  fChkTruncateComment.Left := FileTypeCmbBounds.Left;
+  fChkTruncateComment.Top := fCmbCommentStyle.Top + fCmbCommentStyle.Height + 8;
+  fChkTruncateComment.Width := FileTypeCmbBounds.Width;
+  fChkTruncateComment.Checked := fTruncateComments;
+
   fCmbEncoding.Left := FileTypeCmbBounds.Left;
-  fCmbEncoding.Top := fCmbCommentStyle.Top + fCmbCommentStyle.Height + 8;
+  fCmbEncoding.Top := fChkTruncateComment.Top + fChkTruncateComment.Height + 8;
   fCmbEncoding.Width := FileTypeCmbBounds.Width * 3 div 4;
 
-  // Align comment style label within group box
   fLblCommentStyle.Left := FileTypeLblBounds.Left;
   fLblCommentStyle.Top := fCmbCommentStyle.Top +
     (fCmbCommentStyle.Height - fLblCommentStyle.Height) div 2;
 
-  // Align encoding label
   fLblEncoding.Left := FileTypeLblBounds.Left;;
   fLblEncoding.Top := fCmbEncoding.Top +
     (fCmbEncoding.Height - fLblEncoding.Height) div 2;;
@@ -533,6 +553,7 @@ end;
 procedure TSaveSourceDlg.PreviewClickHandler(Sender: TObject);
 begin
   UpdateSyntaxHiliting;
+  UpdateCommentTruncation;
   if Assigned(fOnPreview) then
     fOnPreview(Self);
 end;
@@ -561,6 +582,11 @@ begin
     if TCommentStyle(fCmbCommentStyle.Items.Objects[Idx]) = fCommentStyle then
       fCmbCommentStyle.ItemIndex := Idx;
   end;
+end;
+
+procedure TSaveSourceDlg.UpdateCommentTruncation;
+begin
+  fTruncateComments := fChkTruncateComment.Checked;
 end;
 
 procedure TSaveSourceDlg.UpdateSyntaxHiliting;
