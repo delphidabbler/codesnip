@@ -130,7 +130,9 @@ end;
 
 class function TCopySnippetMgr.GenerateSourceCode(View: IView): string;
 begin
-  Result := TSnippetSourceGen.Generate(View, Preferences.SourceCommentStyle);
+  Result := TSnippetSourceGen.Generate(
+    View, Preferences.SourceCommentStyle, Preferences.TruncateSourceComments
+  );
 end;
 
 end.
