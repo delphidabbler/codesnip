@@ -54,10 +54,12 @@ type
         @return Required description.
       }
     class function FormatSnippetComment(const Style: TCommentStyle;
-      const Text: IActiveText): string;
+      const TruncateComments: Boolean; const Text: IActiveText): string;
       {Formats a snippet's comment text as Pascal comment according to
       commenting style.
         @param Style [in] Desired commenting style.
+        @param TruncateComments [in] Whether comments are to be truncated to
+          just first line of multi line snippet descriptions.
         @param Text [in] Active text of comment. Ignored if Style = csNone.
         @return Formatted comment. Empty string if Style = csNone.
       }
@@ -175,23 +177,29 @@ type
       }
     function UnitAsString(const UnitName: string;
       const CommentStyle: TCommentStyle = csNone;
+      const TruncateComments: Boolean = False;
       const HeaderComments: IStringList = nil): string;
       {Generates source code of a unit containing all specified snippets and
       any additional snippets depended upon by the included snippets.
         @param UnitName [in] Name of unit.
         @param CommentStyle [in] Style of commenting used in documenting
           snippets.
+        @param TruncateComments [in] Whether comments are to be truncated to
+          just first line of multi line snippet descriptions.
         @param HeaderComments [in] List of comments to be included at top of
           unit.
         @return Unit source code.
       }
     function IncFileAsString(const CommentStyle: TCommentStyle = csNone;
+      const TruncateComments: Boolean = False;
       const HeaderComments: IStringList = nil): string;
       {Generates source code of an include file containing all specified
       routines and notes in comments which units, types, consts and other
       routines are also required.
         @param CommentStyle [in] Style of commenting used in documenting
           snippets.
+        @param TruncateComments [in] Whether comments are to be truncated to
+          just first line of multi line snippet descriptions.
         @param HeaderComments [in] List of comments to be included at top of
           snippet.
         @return Source code of include file.
@@ -243,9 +251,11 @@ type
         @param Body [out] Remainder of routine without prototype.
       }
     class function RenderDescComment(CommentStyle: TCommentStyle;
-      const Routine: TSnippet): string;
+      const TruncateComments: Boolean; const Routine: TSnippet): string;
       {Creates comment in required style that contains routine's description.
         @param CommentStyle [in] Required commenting style.
+        @param TruncateComments [in] Whether comments are to be truncated to
+          just first line of multi line snippet descriptions.
         @param Routine [in] Routine for which comments required.
         @return Formatted comments.
       }
@@ -256,21 +266,25 @@ type
         @return Routine prototype.
       }
     class function FormatRoutinePrototype(const Routine: TSnippet;
-      CommentStyle: TCommentStyle = csNone): string;
+      CommentStyle: TCommentStyle; const TruncateComments: Boolean): string;
       {Formats a routine's prototype, documented by the routine's description in
       a comment.
         @param Routine [in] Routine whose prototype is to be formatted.
         @param CommentStyle [in] Style of commenting used in documenting
           routine.
+        @param TruncateComments [in] Whether comments are to be truncated to
+          just first line of multi line snippet descriptions.
         @return Formatted prototype.
       }
     class function FormatRoutine(CommentStyle: TCommentStyle;
-      const Routine: TSnippet): string;
+      const TruncateComments: Boolean; const Routine: TSnippet): string;
       {Formats a routine's whole source code, documented by the routine's
       description in a comment.
-        @param Routine [in] Routine whose source code is to be formatted.
         @param CommentStyle [in] Style of commenting used in documenting
           routine.
+        @param TruncateComments [in] Whether comments are to be truncated to
+          just first line of multi line snippet descriptions.
+        @param Routine [in] Routine whose source code is to be formatted.
         @return Formatted prototype.
       }
   end;
@@ -291,22 +305,26 @@ type
         @param Body [out] Remainder of constant or type without keyword.
       }
     class function RenderDescComment(CommentStyle: TCommentStyle;
-      const ConstOrType: TSnippet): string;
+      const TruncateComments: Boolean; const ConstOrType: TSnippet): string;
       {Creates comment in required style that contains constant or type's
       description.
         @param CommentStyle [in] Required commenting style.
+        @param TruncateComments [in] Whether comments are to be truncated to
+          just first line of multi line snippet descriptions.
         @param ConstOrType [in] Constant or type for which comments required.
         @return Formatted comments.
       }
   public
     class function FormatConstOrType(CommentStyle: TCommentStyle;
-      const ConstOrType: TSnippet): string;
+      const TruncateComments: Boolean; const ConstOrType: TSnippet): string;
       {Formats a constant or type's source code, documented by the snippet's
       description in a comment.
-        @param ConstOrType [in] Constant or type whose source code is to be
-          formatted.
         @param CommentStyle [in] Style of commenting used in documenting
           constant or type.
+        @param TruncateComments [in] Whether comments are to be truncated to
+          just first line of multi line snippet descriptions.
+        @param ConstOrType [in] Constant or type whose source code is to be
+          formatted.
         @return Formatted prototype.
       }
   end;
@@ -314,9 +332,11 @@ type
   TClassFormatter = class(TNoConstructObject)
   strict private
     class function RenderDescComment(CommentStyle: TCommentStyle;
-      const Snippet: TSnippet): string;
+      const TruncateComments: Boolean; const Snippet: TSnippet): string;
       {Creates comment in required style that contains class' description.
         @param CommentStyle [in] Required commenting style.
+        @param TruncateComments [in] Whether comments are to be truncated to
+          just first line of multi line snippet descriptions.
         @param Snippet [in] Class for which comments required.
         @return Formatted comments.
       }
@@ -333,7 +353,7 @@ type
       Defn: string);
   public
     class function FormatClassDeclaration(CommentStyle: TCommentStyle;
-      const Snippet: TSnippet): string;
+      const TruncateComments: Boolean; const Snippet: TSnippet): string;
     class function FormatClassDefinition(const Snippet: TSnippet): string;
   end;
 
@@ -356,12 +376,14 @@ begin
 end;
 
 function TSourceGen.IncFileAsString(const CommentStyle: TCommentStyle;
-  const HeaderComments: IStringList): string;
+  const TruncateComments: Boolean; const HeaderComments: IStringList): string;
   {Generates source code of an include file containing all specified routines
   and notes in comments which units, types, consts and other routines are also
   required.
     @param CommentStyle [in] Style of commenting used in documenting
       snippets.
+    @param TruncateComments [in] Whether comments are to be truncated to just
+      first line of multi line snippet descriptions.
     @param HeaderComments [in] List of comments to be included at top of
       snippet.
     @return Source code of include file.
@@ -438,7 +460,9 @@ begin
           Writer.AppendLine('// ' + sXRefRoutines);
           FirstForward := False;
         end;
-        Writer.AppendLine(TRoutineFormatter.FormatRoutinePrototype(Snippet));
+        Writer.AppendLine(
+          TRoutineFormatter.FormatRoutinePrototype(Snippet, csNone, False)
+        );
         Writer.AppendLine('  forward;');
         ForwardWritten := True;
       end;
@@ -451,7 +475,7 @@ begin
     begin
       Snippet := fSourceAnalyser.IntfRoutines[Idx];
       Writer.AppendLine(
-        TRoutineFormatter.FormatRoutine(CommentStyle, Snippet)
+        TRoutineFormatter.FormatRoutine(CommentStyle, TruncateComments, Snippet)
       );
       if Idx < Pred(fSourceAnalyser.IntfRoutines.Count) then
         Writer.AppendLine;
@@ -495,11 +519,14 @@ end;
 
 function TSourceGen.UnitAsString(const UnitName: string;
   const CommentStyle: TCommentStyle = csNone;
+  const TruncateComments: Boolean = False;
   const HeaderComments: IStringList = nil): string;
   {Generates source code of a unit containing all specified routines and
   routines depended upon by the included routines.
     @param UnitName [in] Name of unit.
     @param CommentStyle [in] Style of commenting used in documenting routines.
+    @param TruncateComments [in] Whether comments are to be truncated to just
+      first line of multi line snippet descriptions.
     @param HeaderComments [in] List of comments to be included at top of unit.
     @return Unit source code.
   }
@@ -554,11 +581,15 @@ begin
       case Snippet.Kind of
         skTypeDef, skConstant:
           Writer.AppendLine(
-            TConstAndTypeFormatter.FormatConstOrType(CommentStyle, Snippet)
+            TConstAndTypeFormatter.FormatConstOrType(
+              CommentStyle, TruncateComments, Snippet
+            )
           );
         skClass:
           Writer.AppendLine(
-            TClassFormatter.FormatClassDeclaration(CommentStyle, Snippet)
+            TClassFormatter.FormatClassDeclaration(
+              CommentStyle, TruncateComments, Snippet
+            )
           );
       end;
       Writer.AppendLine;
@@ -568,7 +599,9 @@ begin
     for Snippet in fSourceAnalyser.IntfRoutines do
     begin
       Writer.AppendLine(
-        TRoutineFormatter.FormatRoutinePrototype(Snippet, CommentStyle)
+        TRoutineFormatter.FormatRoutinePrototype(
+          Snippet, CommentStyle, TruncateComments
+        )
       );
       Writer.AppendLine;
     end;
@@ -591,7 +624,9 @@ begin
     // routine source code
     for Snippet in fSourceAnalyser.AllRoutines do
     begin
-      Writer.AppendLine(TRoutineFormatter.FormatRoutine(CommentStyle, Snippet));
+      Writer.AppendLine(
+        TRoutineFormatter.FormatRoutine(CommentStyle, TruncateComments, Snippet)
+      );
       Writer.AppendLine;
     end;
 
@@ -820,12 +855,14 @@ begin
   Result := StrTrim(Result);
 end;
 
-class function TRoutineFormatter.FormatRoutine(
-  CommentStyle: TCommentStyle; const Routine: TSnippet): string;
+class function TRoutineFormatter.FormatRoutine(CommentStyle: TCommentStyle;
+  const TruncateComments: Boolean; const Routine: TSnippet): string;
   {Formats a routine's whole source code, documented by the routine's
   description in a comment.
-    @param Routine [in] Routine whose source code is to be formatted.
     @param CommentStyle [in] Style of commenting used in documenting routine.
+    @param TruncateComments [in] Whether comments are to be truncated to just
+      first line of multi line snippet descriptions.
+    @param Routine [in] Routine whose source code is to be formatted.
     @return Formatted prototype.
   }
 var
@@ -838,14 +875,17 @@ begin
     begin
       // Format is: routine prototype - comment - routine body
       Split(Routine, Prototype, Body);
-      Result := StrTrim(Prototype) + EOL +
-        RenderDescComment(CommentStyle, Routine) + EOL +
-        StrTrim(Body);
+      Result := StrTrim(Prototype)
+        + EOL
+        + RenderDescComment(CommentStyle, TruncateComments, Routine)
+        + EOL
+        + StrTrim(Body);
     end;
     csBefore:
       // Format is: comment - routine
-      Result := RenderDescComment(CommentStyle, Routine) + EOL +
-        StrTrim(Routine.SourceCode);
+      Result := RenderDescComment(CommentStyle, TruncateComments, Routine)
+        + EOL
+        + StrTrim(Routine.SourceCode);
     else
       // No commenting: just return source code
       Result := StrTrim(Routine.SourceCode);
@@ -853,11 +893,13 @@ begin
 end;
 
 class function TRoutineFormatter.FormatRoutinePrototype(const Routine: TSnippet;
-  CommentStyle: TCommentStyle): string;
+  CommentStyle: TCommentStyle; const TruncateComments: Boolean): string;
   {Formats a routine's prototype, documented by the routine's description in a
   comment.
     @param Routine [in] Routine whose prototype is to be formatted.
     @param CommentStyle [in] Style of commenting used in documenting routine.
+    @param TruncateComments [in] Whether comments are to be truncated to just
+      first line of multi line snippet descriptions.
     @return Formatted prototype.
   }
 var
@@ -871,12 +913,14 @@ begin
   case CommentStyle of
     csAfter:
       // comments follow prototype
-      Result := Prototype + EOL +
-        RenderDescComment(CommentStyle, Routine);
+      Result := Prototype
+        + EOL
+        + RenderDescComment(CommentStyle, TruncateComments, Routine);
     csBefore:
       // comments preceed prototype
-      Result := RenderDescComment(CommentStyle, Routine) + EOL +
-        Prototype;
+      Result := RenderDescComment(CommentStyle, TruncateComments, Routine)
+        + EOL
+        + Prototype;
     else
       // no comments: just return prototype
       Result := Prototype;
@@ -884,9 +928,12 @@ begin
 end;
 
 class function TRoutineFormatter.RenderDescComment(
-  CommentStyle: TCommentStyle; const Routine: TSnippet): string;
+  CommentStyle: TCommentStyle; const TruncateComments: Boolean;
+  const Routine: TSnippet): string;
   {Creates comment in required style that contains routine's description.
     @param CommentStyle [in] Required commenting style.
+    @param TruncateComments [in] Whether comments are to be truncated to just
+      first line of multi line snippet descriptions.
     @param Routine [in] Routine for which comments required.
     @return Formatted comments.
   }
@@ -895,7 +942,7 @@ begin
     ClassName + '.RenderDescComment: Routine must have kind skRoutine');
   // Format the output
   Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, Routine.Description
+    CommentStyle, TruncateComments, Routine.Description
   );
 end;
 
@@ -991,13 +1038,16 @@ end;
 { TConstAndTypeFormatter }
 
 class function TConstAndTypeFormatter.FormatConstOrType(
-  CommentStyle: TCommentStyle; const ConstOrType: TSnippet): string;
+  CommentStyle: TCommentStyle; const TruncateComments: Boolean;
+  const ConstOrType: TSnippet): string;
   {Formats a constant or type's source code, documented by the snippet's
   description in a comment.
-    @param ConstOrType [in] Constant or type whose source code is to be
-      formatted.
     @param CommentStyle [in] Style of commenting used in documenting constant or
       type.
+    @param TruncateComments [in] Whether comments are to be truncated to just
+      first line of multi line snippet descriptions.
+    @param ConstOrType [in] Constant or type whose source code is to be
+      formatted.
     @return Formatted prototype.
   }
 var
@@ -1012,7 +1062,7 @@ begin
     csNone:
       Result := StrTrim(ConstOrType.SourceCode);
     csBefore:
-      Result := RenderDescComment(CommentStyle, ConstOrType)
+      Result := RenderDescComment(CommentStyle, TruncateComments, ConstOrType)
         + EOL
         + StrTrim(ConstOrType.SourceCode);
     csAfter:
@@ -1021,7 +1071,7 @@ begin
       if Keyword <> '' then
         Result := Keyword
           + EOL
-          + RenderDescComment(CommentStyle, ConstOrType)
+          + RenderDescComment(CommentStyle, TruncateComments, ConstOrType)
           + EOL
           + Body
       else
@@ -1031,10 +1081,13 @@ begin
 end;
 
 class function TConstAndTypeFormatter.RenderDescComment(
-  CommentStyle: TCommentStyle; const ConstOrType: TSnippet): string;
+  CommentStyle: TCommentStyle; const TruncateComments: Boolean;
+  const ConstOrType: TSnippet): string;
   {Creates comment in required style that contains constant or type's
   description.
     @param CommentStyle [in] Required commenting style.
+    @param TruncateComments [in] Whether comments are to be truncated to just
+      first line of multi line snippet descriptions.
     @param ConstOrType [in] Constant or type for which comments required.
     @return Formatted comments.
   }
@@ -1043,7 +1096,7 @@ begin
     ClassName + '.RenderDescComment: ConstOrType must have kind skTypeDef or '
       + 'skConstant');
   Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, ConstOrType.Description
+    CommentStyle, TruncateComments, ConstOrType.Description
   );
 end;
 
@@ -1160,31 +1213,43 @@ begin
 end;
 
 class function TSourceComments.FormatSnippetComment(const Style: TCommentStyle;
-  const Text: IActiveText): string;
+  const TruncateComments: Boolean; const Text: IActiveText): string;
   {Formats a snippet's comment text as Pascal comment according to commenting
   style.
     @param Style [in] Desired commenting style.
+    @param TruncateComments [in] Whether comments are to be truncated to just
+      first line of multi line snippet descriptions.
     @param Text [in] Active text of comment. Ignored if Style = csNone.
     @return Formatted comment. Empty string if Style = csNone.
   }
 var
   Renderer: TActiveTextTextRenderer;
+  PlainText: string;
+  Lines: IStringList;
 begin
   Renderer := TActiveTextTextRenderer.Create;
   try
     Renderer.DisplayURLs := False;
+    PlainText := Renderer.Render(Text);
+    if TruncateComments then
+    begin
+      // use first non-empty paragraph of Text as comment
+      Lines := TIStringList.Create(PlainText, string(sLineBreak), False);
+      if Lines.Count > 0 then
+        PlainText := Lines[0];
+    end;
     case Style of
       csNone:
         Result := '';
       csBefore:
         Result := '{'
           + EOL
-          + FormatCommentLines(Renderer.Render(Text), cIndent)
+          + FormatCommentLines(PlainText, cIndent)
           + EOL
           + '}';
       csAfter:
         Result := FormatCommentLines(
-          '{' + Renderer.Render(Text) + '}', cIndent
+          '{' + PlainText + '}', cIndent
         );
     end;
   finally
@@ -1195,7 +1260,8 @@ end;
 { TClassFormatter }
 
 class function TClassFormatter.FormatClassDeclaration(
-  CommentStyle: TCommentStyle; const Snippet: TSnippet): string;
+  CommentStyle: TCommentStyle; const TruncateComments: Boolean;
+  const Snippet: TSnippet): string;
 var
   Dummy: string;
   Decl: string;
@@ -1207,7 +1273,7 @@ begin
     csNone:
       Result := StrTrim(Decl);
     csBefore:
-      Result := RenderDescComment(CommentStyle, Snippet)
+      Result := RenderDescComment(CommentStyle, TruncateComments, Snippet)
         + EOL
         + StrTrim(Decl);
     csAfter:
@@ -1215,7 +1281,7 @@ begin
       if RemoveKeywordFromDecl(Decl, DeclBody) then
         Result := 'type'
           + EOL
-          + RenderDescComment(CommentStyle, Snippet)
+          + RenderDescComment(CommentStyle, TruncateComments, Snippet)
           + EOL
           + DeclBody
       else
@@ -1246,10 +1312,10 @@ begin
 end;
 
 class function TClassFormatter.RenderDescComment(CommentStyle: TCommentStyle;
-  const Snippet: TSnippet): string;
+  const TruncateComments: Boolean; const Snippet: TSnippet): string;
 begin
   Result := TSourceComments.FormatSnippetComment(
-    CommentStyle, Snippet.Description
+    CommentStyle, TruncateComments, Snippet.Description
   );
 end;
 

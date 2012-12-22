@@ -47,9 +47,12 @@ type
       {Creates and stores header comments to be written to head of snippet.
         @return String list containing comments.
       }
-    function DoGenerate(const CommentStyle: TCommentStyle): string;
+    function DoGenerate(const CommentStyle: TCommentStyle;
+      const TruncateComments: Boolean): string;
       {Generates source code for included snippets.
         @param CommentStyle [in] Style of commenting to use in source code.
+        @param TruncateComments [in] Whether to truncate multi paragraph
+          snippet description to first paragraph in comments.
         @return Required source code.
       }
   strict protected
@@ -68,11 +71,13 @@ type
         @return True if View is a routine snippet or a category that contains
           routine snippets for current query.
       }
-    class function Generate(View: IView; const CommentStyle: TCommentStyle):
-      string;
+    class function Generate(View: IView; const CommentStyle: TCommentStyle;
+      const TruncateComments: Boolean): string;
       {Generates source code of all routine snippets or categories in a view.
         @param View [in] View containing required snippet(s).
         @param CommentStyle [in] Style of commenting to use in source code.
+        @param TruncateComments [in] Whether to truncate multi paragraph
+          snippet description to first paragraph in comments.
         @return Required source code.
       }
   end;
@@ -156,27 +161,33 @@ begin
   inherited;
 end;
 
-function TSnippetSourceGen.DoGenerate(
-  const CommentStyle: TCommentStyle): string;
+function TSnippetSourceGen.DoGenerate(const CommentStyle: TCommentStyle;
+  const TruncateComments: Boolean): string;
   {Generates source code for included snippets.
     @param CommentStyle [in] Style of commenting to use in source code.
+    @param TruncateComments [in] Whether to truncate multi paragraph snippet
+      description to first paragraph in comments.
     @return Required source code.
   }
 begin
-  Result := fGenerator.IncFileAsString(CommentStyle, BuildHeaderComments);
+  Result := fGenerator.IncFileAsString(
+    CommentStyle, TruncateComments, BuildHeaderComments
+  );
 end;
 
 class function TSnippetSourceGen.Generate(View: IView;
-  const CommentStyle: TCommentStyle): string;
+  const CommentStyle: TCommentStyle; const TruncateComments: Boolean): string;
   {Generates source code of all routine snippets or categories in a view.
     @param View [in] View containing required snippet(s).
     @param CommentStyle [in] Style of commenting to use in source code.
+    @param TruncateComments [in] Whether to truncate multi paragraph snippet
+      description to first paragraph in comments.
     @return Required source code.
   }
 begin
   with InternalCreate(View) do
     try
-      Result := DoGenerate(CommentStyle);
+      Result := DoGenerate(CommentStyle, TruncateComments);
     finally
       Free;
     end;

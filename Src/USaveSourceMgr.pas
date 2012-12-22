@@ -105,8 +105,12 @@ type
     ///  <summary>Generates raw, un-highlighted, source code.</summary>
     ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to be
     ///  used in source code.</param>
+    ///  <param name="TruncateComments">Boolean [in] Whether comments are to be
+    ///  truncated to just first line of multi line snippet descriptions.
+    ///  </param>
     ///  <returns>String containing generated source code.</returns>
-    function GenerateSource(const CommentStyle: TCommentStyle): string;
+    function GenerateSource(const CommentStyle: TCommentStyle;
+      const TruncateComments: Boolean): string;
       virtual; abstract;
     ///  <summary>Checks if a file name is valid for the kind of file being
     ///  saved.</summary>
@@ -214,7 +218,10 @@ var
   RawSource: string;      // raw source code
   Hiliter: TFileHiliter;  // object used to highlight source code
 begin
-  RawSource := GenerateSource(fSaveDlg.CommentStyle);
+  // TODO: change dlg to have truncate source comments check box?
+  RawSource := GenerateSource(
+    fSaveDlg.CommentStyle, Preferences.TruncateSourceComments
+  );
   // Highlight the raw source as required
   Hiliter := TFileHiliter.Create(
     fSaveDlg.UseSyntaxHiliting and IsHilitingSupported(FileType),

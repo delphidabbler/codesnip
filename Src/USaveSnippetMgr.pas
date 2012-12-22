@@ -56,8 +56,11 @@ type
     ///  <summary>Generates raw, un-highlighted, source code.</summary>
     ///  <param name="CommentStyle">TCommentStyle [in] Style of commenting to be
     ///  used in source code.</param>
+    ///  <param name="TruncateComments">Boolean [in] Indicates whether multi
+    ///  paragraph comments are to be truncated to first paragraph.</param>
     ///  <returns>String containing generated source code.</returns>
-    function GenerateSource(const CommentStyle: TCommentStyle): string;
+    function GenerateSource(const CommentStyle: TCommentStyle;
+      const TruncateComments: Boolean): string;
       override;
     ///  <summary>Checks if a file name is valid for the kind of file being
     ///  saved.</summary>
@@ -127,10 +130,10 @@ begin
     end;
 end;
 
-function TSaveSnippetMgr.GenerateSource(const CommentStyle: TCommentStyle):
-  string;
+function TSaveSnippetMgr.GenerateSource(const CommentStyle: TCommentStyle;
+  const TruncateComments: Boolean): string;
 begin
-  Result := TSnippetSourceGen.Generate(fView, CommentStyle);
+  Result := TSnippetSourceGen.Generate(fView, CommentStyle, TruncateComments);
 end;
 
 function TSaveSnippetMgr.GetDefaultFileName: string;
