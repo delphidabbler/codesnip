@@ -35,7 +35,7 @@ type
   public
     const
       ///  <summary>Current user config file version.</summary>
-      FileVersion = 9;
+      FileVersion = 10;
   public
     ///  <summary>Constructs object to operate on given config file.</summary>
     ///  <remarks>Given file may or may not exist.</remarks>
@@ -72,7 +72,7 @@ type
     ///  <summary>Adds Prefs:CodeGen section along with default data.</summary>
     procedure CreateDefaultCodeGenEntries;
     ///  <summary>Updates Prefs:CodeGen section from format prior to version 9
-    ///  to version 9 format.</summary>
+    ///  to version 9 and later format.</summary>
     procedure UpdateCodeGenEntries;
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
