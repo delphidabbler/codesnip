@@ -556,39 +556,29 @@ set PATHSET=1
         <div>
           Check out the source using the following command:
         </div>
-        <pre class="cmd"><span class="prompt">&gt;</span> svn co https://codesnip.svn.sourceforge.net/svnroot/codesnip/trunk PATH</pre>
+        <pre class="cmd"><span class="prompt">&gt;</span> svn checkout http://codesnip.googlecode.com/svn/trunk/ PATH</pre>
         <div>
-          Where <code>PATH</code> is the directory where you want to
-          place the working copy. You will not be able to commit
-          changes unless you join the project as a contributor.
+          Where <code>PATH</code> is the directory where you want to place the
+          working copy. You will not be able to commit changes unless you join
+          the project, when a different check out URL is used.
         </div>
       </li>
       <li>
         <div>
           Export the code using this command:
         </div>
-        <pre class="cmd"><span class="prompt">&gt;</span>svn export https://codesnip.svn.sourceforge.net/svnroot/codesnip/trunk PATH</pre>
+        <pre class="cmd"><span class="prompt">&gt;</span> svn export http://codesnip.googlecode.com/svn/trunk/ PATH</pre>
         <div>
-          where <code>PATH</code> is the directory where you wish to
-          store the code.
+          where <code>PATH</code> is the directory where you wish to store the
+          code.
         </div>
       </li>
-
     </ul>
     <div class="spaced">
-      These commands get code from the current development tree. To get
-      the code of a suitable stable release replace <code>trunk</code>
-      with <code>tags/XXXX</code> where <code>XXX</code> specifies the
-      version.
+      These commands get code from the repository trunk. To get the code of a
+      stable release replace <code>trunk</code> with <code>tags/XXXX</code>
+      where <code>XXX</code> specifies the version.
     </div>
-
-  </li>
-  <li>
-    Download a suitable source tarball from the SourceForge repo. To get the
-    current development tree go to <a
-      href="http://codesnip.svn.sourceforge.net/viewvc/codesnip/trunk/"
-    >http://codesnip.svn.sourceforge.net/viewvc/codesnip/trunk/</a> and
-    click the <em>Download GNU tarball</em> link.
   </li>
   <li>
     Download source files for the current many older releases from the <a
