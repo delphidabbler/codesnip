@@ -230,27 +230,9 @@ KIND, either express or implied. The code is used entirely at you own risk.
 Source Code
 ================================================================================
 
-The source code of the latest version of CodeSnip can be downloaded from
-http://delphidabbler.com/url/codesnip-download.
-
-The current development source tree and snapshots of all releases from v3.0
-onwards can be viewed and downloaded from SourgeForge at
-http://codesnip.svn.sourceforge.net/viewvc/codesnip/.
-
-Subversion users can checkout code from
-https://codesnip.svn.sourceforge.net/svnroot/codesnip.
-
-You will usually checkout the "trunk" branch (development branch) or one of the
-stable releases listed in the "tags" branch. There are also maintenances
-branches for v3 and v4 releases in the "branches" branch.
-
-Ready zipped source code archives of the current release and all earlier
-versions back to v3.0.0 can be downloaded from the CodeSnip Files page on
-SourceForge.net at https://sourceforge.net/projects/codesnip/files/
-
-NOTE: Some SourceForge URLs are likely to change in due course. If you find the
-given URLs don't work please let the author know using the contact page at
-http://delphidabbler.com/contact so that you can be sent the revised URLS.
+CodeSnip's source code is freely available. For details of how to obtain the
+source see the FAQ at
+http://wiki.delphidabbler.com/index.php/FAQs/CodeSnipAppSource#FAQ1
 
 The original source code of v4 is released under the Mozilla Public license
 v2.0 (see http://www.mozilla.org/MPL/) and other open source licenses. See the
@@ -263,15 +245,16 @@ Bugs
 
 Please do report any bugs you find.
 
-Bugs are recorded in Tracker on SourceForge. View the reported and fixed bugs
-via http://delphidabbler.com/url/codesnip-bugs which redirects to SourceForge.
+Bugs are recorded in tracker software. View the reported and fixed bugs via
+http://delphidabbler.com/url/codesnip-bugs (this redirects to the tracker page).
+
 You can also access the bug tracker from CodeSnip by using the "Tools | Report
 Bug Online" menu option then following the link that appears in the resulting
 dialogue box.
 
-If you wish to report a bug, please check the current reports on Tracker. If
-your bug hasn't already been reported or fixed please add a report using the
-"Add new" link on Tracker.
+If you wish to report a bug, please check the current reports on the bug
+tracker. If your bug hasn't already been reported or fixed please add a report
+using the "Add new" link on Tracker.
 
 Please note that versions 1 and 2 of CodeSnip are no longer supported, so don't
 report bugs for those versions. You should update the program first and only
@@ -295,8 +278,8 @@ page.
 Feedback
 ================================================================================
 
-If you want to suggest new features please use the feature request tracker at
-http://delphidabbler.com/url/codesnip-featurereq which redirects to SourceForge.
+If you want to suggest new features please use the feature request tracker
+accessed from  http://delphidabbler.com/url/codesnip-featurereq.
 
 Any other comments can be sent using the contact page at
 http://delphidabbler.com/contact.
