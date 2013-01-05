@@ -12,6 +12,14 @@
 ; ------------------------------------------------------------------------------
 
 Release v4.1.0 of xx January 2013
++ This is the first to made available in both standard and portable editions, compiled from a common code base. The portable edition differs from the standard as follows (per update log for release v4.0.1 portable beta 1):
+  - Executable file name is CodeSnip-p.exe.
+  - Program caption identifies program as portable version.
+  - Data directories are sub-directories of executable program directory.
+  - Common file dialogue boxes default to program's working directory.
+  - First run processing does not give the option to import old settings or existing user databases.
+  - Different version information and program identifier format.
+  - There is no set up program.
 + Changes to snippets editor:
   - Added context menus to cross-references and dependencies check box lists. Both have menu item to clear list. Dependencies list has item to view dependencies. Implements feature request #3560960 (http://bit.ly/U83Swh).
   - Deleted "View Dependencies" button now that its functionality is now on context menu.
@@ -25,7 +33,9 @@ Release v4.1.0 of xx January 2013
 + Per-user confuration file format changed: bumped file version to 10.
 + Some refactoring.
 + Help file updated re changes.
-+ Updated documentation, especially re changes to source code repository and bug / feature request trackers.
++ Updated documentation:
+  - Re changes to source code repository and bug / feature request trackers.
+  - Re portable version.
 
 Release v4.0.2 of 17 December 2012
 + Improvements to keyboard handling:
@@ -41,10 +51,11 @@ Internal CodeSnip version 4.0.1.213
 + Modified edition of Release v4.0.1 that can run from a writeable removable medium without writing files or registry on host computer. This implements feature request #3577431 (http://bit.ly/UxvUj0).
 + Changes that apply only to portable version:
   - Changed executable file name to CodeSnip-p.exe.
-  - Program caption to identify as portable version.
+  - Program caption changed to identify as portable version.
   - Data directories changed to be sub-directories of executable program directory.
   - Changed common file dialogue boxes to working directory by default.
   - First run processing no longer gives option to import old settings or existing user databases.
+  - Different version information and program identifier format.
   - No set up program.
 + Code base modified to conditionally compile either portable or standard edition.
 + Updated documentation, including privacy statement.
