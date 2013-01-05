@@ -11,6 +11,22 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.1.0 of xx January 2013
++ Changes to snippets editor:
+  - Added context menus to cross-references and dependencies check box lists. Both have menu item to clear list. Dependencies list has item to view dependencies. Implements feature request #3560960 (http://bit.ly/U83Swh).
+  - Deleted "View Dependencies" button now that its functionality is now on context menu.
+  - Enlarged various controls on all except "Code" tab.
+  - Units listed on "References" tab is now persistent. Units can be removed, defaults restored and selection cleared via a new context menu. Implements feature request #3560962 (http://bit.ly/UM0c0B).
++ New source code formatting option added to only use first paragraph of a snippet description as snippet comment in generated code. This is configured via "Code Formatting" tab of "Preferences" dialogue box and / or from relevant "Save" dialogue boxes. Implements feature request #3560647 (http://bit.ly/UQrDax).
++ Changed mini-toolbar in overview pane to expand / collapse all overview tree view instead of just selected node. Implements feature request #3560646 (http://bit.ly/UOUQTr).
++ Reimplemented database search engine.
++ Some external links modified that will seamlessly accommodate future changes in destination URLs.
++ Changed some glyphs used in menus.
++ Per-user confuration file format changed: bumped file version to 10.
++ Some refactoring.
++ Help file updated re changes.
++ Updated documentation, especially re changes to source code repository and bug / feature request trackers.
+
 Release v4.0.2 of 17 December 2012
 + Improvements to keyboard handling:
   - Fixed some keyboard focus bugs.
