@@ -371,5 +371,13 @@ initialization
 
 Dialogs.UseLatestCommonDialogs := False;
 
+{$IFNDEF PORTABLE}
+// Default to My Docs for file dialogues in standard version
+Dialogs.ForceCurrentDirectory := False;
+{$ELSE}
+// Default to program working directory for file dialogues in portable version
+Dialogs.ForceCurrentDirectory := True;
+{$ENDIF}
+
 end.
 

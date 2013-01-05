@@ -8,18 +8,22 @@ PRIVACY STATEMENT FOR DELPHIDABBLER CODESNIP
 Offline Privacy
 ================================================================================
 
-CodeSnip stores some personal information in two configuration files:
+CodeSnip stores some personal information in two configuration files. The
+location of the files differs depending on whether you are using the standard or
+portable edition.
 
 
 Common.config
 --------------------------------------------------------------------------------
 
-Common.config is located in the %ProgramData%\DelphiDabbler\CodeSnip.4 folder.
+Common.config is located in the %ProgramData%\DelphiDabbler\CodeSnip.4 folder
+for the standard edition or in the AppData sub folder of the install directory
+for the portable edition.
 
 The data that is stored in Common.config includes:
 
-    * A unique 32 digit hexadecimal key based on attributes of your computer.
-    * A 32 digit hexadecimal registration key (registered programs only).
+    * A unique 32 digit key based on attributes of your computer.
+    * A 32 digit registration key (registered programs only).
     * The registered user name or nickname (registered programs only).
 
 The data that is used to create the hexidecimal keys cannot be recovered from
@@ -30,7 +34,8 @@ User.config
 --------------------------------------------------------------------------------
 
 User.config is found in the current user's %AppData%\DelphiDabbler\CodeSnip.4
-folder.
+folder for the standard edition or in the AppData sub folder of the install
+directory for the portable edition.
 
 The file stores several user-specific application data settings such as your
 preferences. The only personal information is as follows:
