@@ -15,11 +15,34 @@
 BIN = ..\Bin
 EXE = ..\Exe
 
-!include Common.mak
+# Check for required environment variables
 
-# Define macros for all tools that are not common
+!ifdef DELPHI2010
+DELPHIROOT = $(DELPHI2010)
+!endif
+!ifndef DELPHIROOT
+!error DELPHIROOT or DELPHI2010 environment variable required.
+!endif
+
+!ifndef INDY10
+!error INDY10 environment variable required.
+!endif
+
+# Define macros for required tools
 
 TLIBIMP = "$(DELPHIROOT)\Bin\TLibImp.exe"
+
+MAKE = "$(MAKEDIR)\Make.exe" -$(MAKEFLAGS)
+
+DCC32 = "$(DELPHIROOT)\Bin\DCC32.exe"
+
+BRCC32 = "$(DELPHIROOT)\Bin\BRCC32.exe"
+
+!ifdef VIEDROOT
+VIED = "$(VIEDROOT)\VIEd.exe" -makerc
+!else
+VIED = VIEd.exe -makerc
+!endif
 
 !ifdef HTMLRESROOT
 HTMLRES = "$(HTMLRESROOT)\HTMLRes.exe"
@@ -60,6 +83,28 @@ MIDL = "$(MSSDK)\Bin\MIDL.exe"
 MIDL = @echo *** IGNORING MIDL
 !endif
 
+# Command line options
+!ifdef PORTABLE
+DELPHIDEFINES = "-DPORTABLE"
+!else
+DELPHIDEFINES =
+!endif
+
+# Implicit rules
+
+# Resource files are compiled to the directory specified by BIN macro, which
+# must have been set by the caller.
+.rc.res:
+  @echo +++ Compiling Resource file $< +++
+  @$(BRCC32) $< -fo$(BIN)\$(@F)
+
+# Version info files are compiled by VIEd. A temporary .rc file is left behind
+.vi.rc:
+  @echo +++ Compiling Version Info file $< +++
+  @$(VIED) .\$<
+
+# Explicit rules
+
 # Default is to build everything and release
 everything: config exes setup release
 
@@ -99,7 +144,6 @@ CodeSnip.exe:
   @if exist $(EXE)\$(@F).bak copy $(EXE)\$(@F).bak $(EXE)\$(@F)
   @if exist $(EXE)\$(@F).bak del $(EXE)\$(@F).bak
 !endif
-
 
 # Builds help file
 help:
