@@ -4,7 +4,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -25,7 +25,8 @@
     </h1>
     <p>
       <em>CodeSnip</em> v4 is a substantial update over previous versions.
-      Here is a list of key new features of this version.
+      Here is a list of key new features of this version. All new features were
+      introduced in v4.0 unless otherwise noted.
     </p>
     <h2>
       Database Changes
@@ -73,6 +74,14 @@
         <a href="dlg_preferences.htm">Preferences</a> dialogue box.
       </li>
       <li>
+        <strong>[v4.1]</strong> There is also finer control over the comments
+        written to exported snippets and units, in that snippet comments can be
+        restricted to display only the first paragraph of multi-paragraph
+        snippet descriptions. Select this option from the
+        <a href="dlg_prefs_sourcecode.htm">Code Formatting</a> tab of the
+        <a href="dlg_preferences.htm">Preferences</a> dialogue box.
+      </li>
+      <li>
         The names of referenced units may now contain dots so that Delphi
         namespaces can be used.
       </li>
@@ -99,6 +108,12 @@
         <a href="dlg_prefs_snippetlayout.htm">Snippet Layout</a> tab of the
         <a href="dlg_preferences.htm">Preferences</a> dialogue box to do the
         customisation.
+      </li>
+      <li>
+        <strong>[v4.1]</strong> The list of required units displayed on the
+        <em>References</em> tab of the <a href="dlg_editsnippet.htm">Snippets
+        Editor</a>, is now persistent and can be edited. (The rest of the
+        <em>References</em> received a makeover at the same time).
       </li>
       <li>
         The number of compilers that appear in the compile results table in the
@@ -195,6 +210,16 @@
       Other Features
     </h2>
     <ul class="spaced">
+      <li>
+        <strong>[v4.1]</strong> <em>CodeSnip</em> is now available in both
+        <em>standard</em> and <em>portable</em> editions. The former is the
+        normal version which is designed to run on one computer and be able to
+        maintain difference user databases for each logged on user. The new
+        <em>portable</em> edition will run from removable storage and maintains
+        a single copy of the main and user database on the same storage device.
+        This make it suitable for use by a single user on more than one
+        computer.
+      </li>
       <li>
         There is a new option on the <em>Tools</em> menu that checks
         availability of new versions of CodeSnip.
