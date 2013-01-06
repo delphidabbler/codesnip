@@ -32,7 +32,7 @@ Release v4.1.0 of 06 January 2013
 + Changed some glyphs used in menus.
 + Per-user confuration file format changed: bumped file version to 10.
 + Some refactoring.
-+ Help file updated re changes.
++ Help file updated re changes & added privacy statement to TOC.
 + Updated documentation:
   - Re changes to source code repository and bug / feature request trackers.
   - Re portable version.
