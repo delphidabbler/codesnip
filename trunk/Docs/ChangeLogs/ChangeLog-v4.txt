@@ -3,7 +3,7 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at http://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+; Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
 ;
 ; $Rev$
 ; $Date$
@@ -11,14 +11,14 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
-Release v4.1.0 of xx January 2013
-+ This is the first to made available in both standard and portable editions, compiled from a common code base. The portable edition differs from the standard as follows (per update log for release v4.0.1 portable beta 1):
+Release v4.1.0 of 06 January 2013
++ This is the first non-beta release to made available in both standard and portable editions, compiled from a common code base. The portable edition differs from the standard as follows (as per release v4.0.1 portable beta 1):
   - Executable file name is CodeSnip-p.exe.
   - Program caption identifies program as portable version.
   - Data directories are sub-directories of executable program directory.
   - Common file dialogue boxes default to program's working directory.
   - First run processing does not give the option to import old settings or existing user databases.
-  - Different version information and program identifier format.
+  - Different version information and program identifier.
   - There is no set up program.
 + Changes to snippets editor:
   - Added context menus to cross-references and dependencies check box lists. Both have menu item to clear list. Dependencies list has item to view dependencies. Implements feature request #3560960 (http://bit.ly/U83Swh).
