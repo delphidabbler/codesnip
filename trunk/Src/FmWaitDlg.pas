@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -92,7 +92,7 @@ begin
   inherited;
   // Update label font to use UI default font: it is set to have bold style,
   // which is preserved. We also have to ensure label is correct size
-  TFontHelper.SetDefaultBaseFont(lblCaption.Font, False);
+  TFontHelper.SetDefaultBaseFont(lblCaption.Font);
   lblCaption.Height := StringExtent(lblCaption.Caption, lblCaption.Font).cy;
   // Create and locate marquee
   fMarquee := TMarquee.Create(Self);

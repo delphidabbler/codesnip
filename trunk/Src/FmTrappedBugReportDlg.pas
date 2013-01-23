@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -136,9 +136,9 @@ procedure TTrappedBugReportDlg.ConfigForm;
 begin
   inherited;
   // set required label fonts
-  TFontHelper.SetDefaultBaseFont(lblIntro.Font, False);
-  TFontHelper.SetDefaultBaseFont(lblBugInfo.Font, False);
-  TFontHelper.SetDefaultBaseFont(btnTerminate.Font, False);
+  TFontHelper.SetDefaultBaseFont(lblIntro.Font);
+  TFontHelper.SetDefaultBaseFont(lblBugInfo.Font);
+  TFontHelper.SetDefaultBaseFont(btnTerminate.Font);
   // display the exception's message
   lblBugInfo.Caption := fErrorObj.Message;
 end;

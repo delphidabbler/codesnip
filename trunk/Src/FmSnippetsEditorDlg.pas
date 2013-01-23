@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -664,9 +664,9 @@ begin
   inherited;
   // Set colour and actions of link labels
   lblSnippetKindHelp.Font.Color := clHelpLink;
-  TFontHelper.SetDefaultBaseFont(lblSnippetKindHelp.Font, False);
+  TFontHelper.SetDefaultBaseFont(lblSnippetKindHelp.Font);
   lblViewCompErrs.Font.Color := clCommandLink;
-  TFontHelper.SetDefaultBaseFont(lblViewCompErrs.Font, False);
+  TFontHelper.SetDefaultBaseFont(lblViewCompErrs.Font);
   lblViewCompErrs.Caption := actViewErrors.Caption;
   lblViewCompErrsKey.Caption :=
     '(' + ShortcutToText(actViewErrors.ShortCut) + ')';

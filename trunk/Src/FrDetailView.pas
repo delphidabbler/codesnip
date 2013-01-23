@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -151,14 +151,14 @@ begin
     // Set body style to use program's font and window colour
     with CSSBuilder.AddSelector('body') do
     begin
-      TFontHelper.SetContentFont(CSSFont, True);
+      TFontHelper.SetContentFont(CSSFont);
       AddProperty(TCSS.FontProps(CSSFont));
       AddProperty(TCSS.BackgroundColorProp(clWindow));
     end;
     // Set table to use required font
     with CSSBuilder.AddSelector('table') do
     begin
-      TFontHelper.SetContentFont(CSSFont, True);
+      TFontHelper.SetContentFont(CSSFont);
       AddProperty(TCSS.FontProps(CSSFont));
       AddProperty(TCSS.BackgroundColorProp(clBorder));
     end;
@@ -168,7 +168,7 @@ begin
     // Sets H1 heading font size and border
     with CSSBuilder.AddSelector('h1') do
     begin
-      TFontHelper.SetContentFont(CSSFont, True);
+      TFontHelper.SetContentFont(CSSFont);
       CSSFont.Size := CSSFont.Size + 2;
       CSSFont.Style := [fsBold];
       AddProperty(TCSS.FontProps(CSSFont));
@@ -177,14 +177,14 @@ begin
     // Sets H2 heading font size and border
     with CSSBuilder.AddSelector('h2') do
     begin
-      TFontHelper.SetContentFont(CSSFont, True);
+      TFontHelper.SetContentFont(CSSFont);
       CSSFont.Style := [fsBold];
       AddProperty(TCSS.FontProps(CSSFont));
     end;
     // Set H2 heading font for use in rendered active text
     with CSSBuilder.AddSelector('.active-text h2') do
     begin
-      TFontHelper.SetContentFont(CSSFont, True);
+      TFontHelper.SetContentFont(CSSFont);
       CSSFont.Style := [fsBold];
       CSSFont.Size := CSSFont.Size + 1;
       AddProperty(TCSS.FontProps(CSSFont));
@@ -192,7 +192,7 @@ begin
     // Set H2 heading font for use in rendered active text in snippet list table
     with CSSBuilder.AddSelector('.snippet-list .active-text h2') do
     begin
-      TFontHelper.SetContentFont(CSSFont, True);
+      TFontHelper.SetContentFont(CSSFont);
       CSSFont.Style := [fsBold];
       AddProperty(TCSS.FontProps(CSSFont));
     end;
@@ -206,7 +206,7 @@ begin
     // Sets CSS for style of New Tab text
     with CSSBuilder.AddSelector('#newtab') do
     begin
-      TFontHelper.SetContentFont(CSSFont, True);
+      TFontHelper.SetContentFont(CSSFont);
       CSSFont.Size := 36;
       CSSFont.Color := clNewTabText;
       AddProperty(TCSS.FontProps(CSSFont));
