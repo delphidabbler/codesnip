@@ -130,10 +130,6 @@ type
       information.
         @return Version number string in form 9.9.9.9.
       }
-    class function LegalCopyrightStr: string;
-      {Gets copyright information from string table.
-        @return Required copyright information.
-      }
     class function SpecialBuildStr: string;
       {Gets special build information from string table.
         @return Required copyright information.
@@ -163,19 +159,6 @@ begin
     try
       // casts TPJVersionNumber directly to string
       Result := FileVersionNumber;
-    finally
-      Free;
-    end;
-end;
-
-class function TVersionInfo.LegalCopyrightStr: string;
-  {Gets copyright information from string table.
-    @return Required copyright information.
-  }
-begin
-  with TPJVersionInfo.Create(nil) do
-    try
-      Result := LegalCopyright;
     finally
       Free;
     end;
