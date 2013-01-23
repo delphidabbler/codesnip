@@ -397,7 +397,11 @@ begin
   ReportMemoryLeaksOnShutdown := DebugHook <> 0;
   Application.Initialize;
   Application.MainFormOnTaskBar := True;
-  TStartUp.Execute;
+  if not TStartUp.Execute then
+  begin
+    Application.Terminate;
+    Exit;
+  end;
   SplashForm := TSplashForm.Create(Application);
   SplashForm.Show;
   Application.ModalPopupMode := pmAuto;
