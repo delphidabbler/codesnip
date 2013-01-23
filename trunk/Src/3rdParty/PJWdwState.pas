@@ -1,39 +1,14 @@
-{ 
- * PJWdwState.pas
+{
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
  *
- * DelphiDabbler Window state components.
+ * Copyright (C) 1999-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- *
- * ***** BEGIN LICENSE BLOCK *****
- *
- * Version: MPL 1.1
- *
- * The contents of this file are subject to the Mozilla Public License Version
- * 1.1 (the "License"); you may not use this file except in compliance with the
- * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
- *
- * Software distributed under the License is distributed on an "AS IS" basis,
- * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
- * the specific language governing rights and limitations under the License.
- *
- * The Original Code is PJWdwState.pas from the Window State Components.
- *
- * The Initial Developer of the Original Code is Peter Johnson
- * (http://www.delphidabbler.com/).
- *
- * Portions created by the Initial Developer are Copyright (C) 1999-2009 Peter
- * Johnson. All Rights Reserved.
- *
- * Contributor(s):
- *   Stefan Winter
- *   Enrico Bortolazzi
- *   Bruce J Miller
- *   Craig Symons
- *
- * ***** END LICENSE BLOCK *****
+ * DelphiDabbler Window state components.
 }
 
 
@@ -58,6 +33,16 @@ unit PJWdwState;
 {$IFDEF VER140} // Delphi 6
   {$UNDEF WARNDIRS}
 {$ENDIF}
+{$UNDEF RTLNAMESPACES}
+{$UNDEF TSCROLLSTYLEMOVED}
+{$IFDEF CONDITIONALEXPRESSIONS}
+  {$IF CompilerVersion >= 23.0} // Delphi XE2
+    {$DEFINE RTLNAMESPACES}
+  {$IFEND}
+  {$IF CompilerVersion >= 24.0} // Delphi XE3
+    {$DEFINE TSCROLLSTYLEMOVED}
+  {$IFEND}
+{$ENDIF}
 
 
 interface
@@ -65,21 +50,24 @@ interface
 
 uses
   // Delphi
+  {$IFDEF RTLNAMESPACES}
+  System.Classes, Vcl.Controls, Winapi.Messages, Winapi.Windows, Vcl.Forms,
+  System.SysUtils, System.Win.Registry;
+  {$ELSE}
   Classes, Controls, Messages, Windows, Forms, SysUtils, Registry;
+  {$ENDIF}
 
 
 const
-  // Custom message used internally
+  // Custom messages used internally
   // instructs component to set window state (normal, minimized or maximized)
   PJM_SETWDWSTATE = WM_USER + 0;
   // instructs MDI child components they can restore their windows
   PJM_RESTOREMDICHILD = WM_USER + 1;
 
-
 type
 
   TPJCustomWdwState = class;
-
 
   {
   TPJWdwStateHook:
@@ -118,13 +106,11 @@ type
       }
   end;
 
-
   {
   EPJCustomWdwState:
     Type of exception raised by TPJCustomWdwState.
   }
   EPJCustomWdwState = class(Exception);
-
 
   {
   TPJWdwStateReadEvent:
@@ -152,7 +138,6 @@ type
   TPJWdwStateReadEvent = procedure(Sender: TObject; var Left, Top, Width,
     Height, State: Integer) of object;
 
-
   {
   TPJWdwStateOptions
     Set of values that are stored in the component's Options property.
@@ -165,7 +150,6 @@ type
                       // (work area is desktop or MDI client area for MDI child
                       // windows)
   );
-
 
   {
   TPJCustomWdwState:
@@ -180,6 +164,10 @@ type
       {Value of MinimizeDelay property}
     fOnReadWdwState: TPJWdwStateReadEvent;
       {Event handler for OnReadWdwState event}
+    fOnAfterWindowSized: TNotifyEvent;
+      {Event handler for OnAfterWindowSized event}
+    fOnAfterWindowRestored: TNotifyEvent;
+      {Event handler for OnAfterWindowRestored event}
     fOptions: TPJWdwStateOptions;
       {Value of Options property}
     fHook: TPJWdwStateHook;
@@ -345,7 +333,7 @@ type
       }
     procedure Restore;
       {Reads window placement and state from storage and set up the window's
-      size, positions and state as required.
+      size, position and state as required.
       }
     procedure Save;
       {Save window placement, size and state to storage.
@@ -375,8 +363,15 @@ type
       or if certain stored values are ignored. See the TPJWdwStateOptions type
       definition for details. Including/excluding the woIgnoreState value is the
       same as setting IgnoreState to true or false respectively}
+    property OnAfterWindowSized: TNotifyEvent
+      read fOnAfterWindowSized write fOnAfterWindowSized;
+      {Event triggered immediately after window has been sized, but before it
+      has been restored}
+    property OnAfterWindowRestored: TNotifyEvent
+      read fOnAfterWindowRestored write fOnAfterWindowRestored;
+      {Event triggered immediately after window has been restored to required
+      state}
   end;
-
 
   {
   TPJWdwStateData:
@@ -390,7 +385,6 @@ type
     State: Integer;   // state of window (ordinal value of TWindowState value)
   end;
 
-
   {
   TPJWdwStateReadData:
     Type of event triggered by TPJUserWdwState when window state data is
@@ -403,7 +397,6 @@ type
   TPJWdwStateReadData = procedure(Sender: TObject; var Data: TPJWdwStateData)
     of object;
 
-
   {
   TPJWdwStateSaveData:
     Type of event triggered by TPJUserWdwState when window state data is
@@ -413,7 +406,6 @@ type
   }
   TPJWdwStateSaveData = procedure(Sender: TObject; const Data: TPJWdwStateData)
     of object;
-
 
   {
   TPJUserWdwState:
@@ -469,7 +461,6 @@ type
       not handled window state is not saved}
   end;
 
-
   {
   TPJWdwStateGetIniData:
     Type of event that is triggered just before ini file is accessed. It allows
@@ -480,7 +471,6 @@ type
         change this value.
   }
   TPJWdwStateGetIniData = procedure(var IniFilename, Section: string) of object;
-
 
   {
   TPJWdwState:
@@ -569,7 +559,6 @@ type
       this event is handled then IniFileName and Section properties are ignored}
   end;
 
-
   {
   TPJWdwStateGetRegData:
     Type of event that is triggered just before registry is accessed. It allows
@@ -582,7 +571,6 @@ type
   TPJWdwStateGetRegData = procedure(var RootKey: HKEY;
     var SubKey: string) of object;
 
-
   {
   TPJWdwStateRegAccessEvent:
     Type of event that is triggered after registry is opened, ready for access.
@@ -593,7 +581,6 @@ type
         stored and can be used to read / write additional data.
   }
   TPJWdwStateRegAccessEvent = procedure(const Reg: TRegistry) of object;
-
 
   {
   TPJRegWdwState:
@@ -697,7 +684,15 @@ implementation
 
 uses
   // Delphi
+  {$IFDEF RTLNAMESPACES}
+  System.IniFiles, Winapi.MultiMon, Vcl.StdCtrls
+  {$IFDEF TSCROLLSTYLEMOVED}
+  , System.UITypes
+  {$ENDIF}
+  ;
+  {$ELSE}
   IniFiles, MultiMon, StdCtrls;
+  {$ENDIF}
 
 
 { Component registration routine }
@@ -711,7 +706,6 @@ begin
     [TPJWdwState, TPJRegWdwState, TPJUserWdwState]
   );
 end;
-
 
 { TPJWdwStateHook }
 
@@ -764,7 +758,6 @@ begin
   inherited;
 end;
 
-
 { TPJCustomWdwState }
 
 resourcestring
@@ -777,7 +770,6 @@ resourcestring
   sErrSingleInstance = 'TPJCustomWdwState.Create():'#13#10
     + 'Only one window state component is permitted on a  form: %s is already '
     + 'present on %s.';
-
 
 function TPJCustomWdwState.CanRestoreMDIChild: Boolean;
   {Checks if an MDI child form can be restored.
@@ -1097,11 +1089,14 @@ begin
     // Notify any MDI child forms that this form has been restored
     DispatchMDIChildMessages;
   end;
+  // Trigger event to inform that window has been restored
+  if Assigned(fOnAfterWindowRestored) then
+    fOnAfterWindowRestored(Self);
 end;
 
 procedure TPJCustomWdwState.Restore;
   {Reads window placement and state from storage and set up the window's size,
-  positions and state as required.
+  position and state as required.
   }
 
   //----------------------------------------------------------------------------
@@ -1205,9 +1200,9 @@ begin
         Scrollbars := WindowScrollbars(MDIParent.ClientHandle);
         GetClientRect(MDIParent.ClientHandle, WorkArea);
         if Scrollbars in [ssHorizontal, ssBoth] then
-          Inc(WorkArea.Bottom, GetSystemMetrics(Windows.SM_CXHSCROLL));
+          Inc(WorkArea.Bottom, GetSystemMetrics(SM_CXHSCROLL));
         if Scrollbars in [ssVertical, ssBoth] then
-          Inc(WorkArea.Right, GetSystemMetrics(Windows.SM_CYHSCROLL));
+          Inc(WorkArea.Right, GetSystemMetrics(SM_CYHSCROLL));
       end
       else
         // Can't read parent form (possibly because it has no TPJCustomWdwState
@@ -1231,7 +1226,7 @@ begin
     end;
 
     // Adjust window if we have got a work area
-    if not Windows.IsRectEmpty(WorkArea) then
+    if not IsRectEmpty(WorkArea) then
     begin
       // Resize window if too wide or high if resizing permitted
       if Width > WorkArea.Right - WorkArea.Left then
@@ -1258,13 +1253,16 @@ begin
   Pl.Length := SizeOf(TWindowPlacement);
   Pl.rcNormalPosition.Left := Left;
   Pl.rcNormalPosition.Top := Top;
-  Pl.rcNormalPosition.Right := Left+Width;
-  Pl.rcNormalPosition.Bottom := Top+Height;
+  Pl.rcNormalPosition.Right := Left + Width;
+  Pl.rcNormalPosition.Bottom := Top + Height;
   Pl.showCmd := SW_SHOW;      // needed when restore called late in start-up
   // Finally, set the actual size. This call allows for task bar etc.
   {$IFDEF WARNDIRS}{$WARN UNSAFE_CODE OFF}{$ENDIF}
   SetWindowPlacement(fWindow.Handle, @Pl);
   {$IFDEF WARNDIRS}{$WARN UNSAFE_CODE ON}{$ENDIF}
+  // Trigger event to inform that window has been sized
+  if Assigned(fOnAfterWindowSized) then
+    fOnAfterWindowSized(Self);
 
   // Set window state
 
@@ -1350,7 +1348,6 @@ begin
     Save;
   inherited;
 end;
-
 
 { TPJWdwState }
 
@@ -1475,7 +1472,6 @@ begin
   else
     fSection := Value;
 end;
-
 
 { TPJRegWdwState }
 
@@ -1632,7 +1628,6 @@ begin
   else
     fSubKey := Value;
 end;
-
 
 { TPJUserWdwState }
 
