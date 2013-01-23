@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -228,7 +228,6 @@ class procedure TFontHelper.SetContentFont(const Font: TFont;
     @param ForceTrueType [in] Whether content font must be true type.
   }
 begin
-  Assert(TOSInfo.IsWinNT, ClassName + '.SetContentFont: NT platform required');
   // Set default content font, size and style
   Font.Name := DefaultContentFontName;
   Font.Size := DefaultContentFontSize;
@@ -290,7 +289,6 @@ class procedure TFontHelper.SetDefaultFont(const Font: TFont;
     @param ForceTrueType [in] Whether content font must be true type.
   }
 begin
-  Assert(TOSInfo.IsWinNT, ClassName + '.SetDefaultFont: NT platform required');
   // Set default font, size and style
   Font.Name := DefaultFontName;
   Font.Size := DefaultFontSize;
