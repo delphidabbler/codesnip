@@ -101,10 +101,6 @@ type
       {Gets version number of program's executable file.
         @return Version number as dotted quad.
       }
-    class function ProgramCopyright: string;
-      {Gets program's copyright information.
-        @return Copyright details.
-      }
     class function ProgramKey: string;
       {Gets program's unique identifying key. This key should be different on
       each installation. If key does not exist it is created.
@@ -211,14 +207,6 @@ class function TAppInfo.IsRegistered: Boolean;
   }
 begin
   Result := RegistrationCode <> '';
-end;
-
-class function TAppInfo.ProgramCopyright: string;
-  {Gets program's copyright information.
-    @return Copyright details.
-  }
-begin
-  Result := TVersionInfo.LegalCopyrightStr;
 end;
 
 class function TAppInfo.ProgramFileVersion: string;
