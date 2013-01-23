@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -226,7 +226,7 @@ begin
   fCtrlStateMgr := TControlStateMgr.Create(Self);
   // Set form font to OS default font. This will be used by all descendants and
   // controls that have ParentFont true.
-  TFontHelper.SetDefaultFont(Self.Font, False);
+  TFontHelper.SetDefaultFont(Self.Font);
 end;
 
 procedure TBaseForm.FormDestroy(Sender: TObject);

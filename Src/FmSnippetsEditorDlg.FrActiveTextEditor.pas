@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -281,12 +281,12 @@ begin
     emPlainText:
     begin
       tcEditMode.TabIndex := 0;
-      TFontHelper.SetDefaultFont(edText.Font, True);
+      TFontHelper.SetDefaultFont(edText.Font);
     end;
     emREML:
     begin
       tcEditMode.TabIndex := 1;
-      TFontHelper.SetDefaultMonoFont(edText.Font, True);
+      TFontHelper.SetDefaultMonoFont(edText.Font);
     end;
   end;
 end;
