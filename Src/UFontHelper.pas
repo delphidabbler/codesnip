@@ -89,9 +89,6 @@ type
         @return Handle to cloned font. Caller is responsible for releasing the
           handle.
       }
-  public
-    const
-      DefaultMonoFontName = 'Courier New';      // Default mono font name
   strict private
     const
       DefaultFontName = 'MS Sans Serif';        // Default font name
@@ -113,6 +110,8 @@ type
       XPContentFontName = 'Verdana';            // XP content font name
       XPContentFontSize                         // XP content font size
         = DefaultContentFontSize;
+
+      DefaultMonoFontName = 'Courier New';      // Default mono font name
       DefaultTTMonoFontName                     // Default TT mono font
         = DefaultMonoFontName;
       DefaultMonoFontSize = 8;                  // Default mono font size
