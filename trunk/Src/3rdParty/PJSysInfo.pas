@@ -1512,7 +1512,7 @@ end;
 class function TPJOSInfo.RegisteredOrganisation: string;
 begin
   Result := GetRegistryString(
-    HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[IsWinNT], 'RegisteredOrganisation'
+    HKEY_LOCAL_MACHINE, CurrentVersionRegKeys[IsWinNT], 'RegisteredOrganization'
   );
 end;
 
