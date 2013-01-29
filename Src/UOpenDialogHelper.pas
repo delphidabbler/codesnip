@@ -60,6 +60,13 @@ function ExtToFilterIndex(const FilterStr, Ext: string;
       in list.
   }
 
+function FileOpenEditedFileNameWithExt(const Dlg: TOpenDialog): string;
+  {Gets full path to the file that is currently entered in a file open dialog
+  box, with default extension added if necessary.
+    @param Dlg [in] Dialog box for which file name is required.
+    @return Required file path.
+  }
+
 
 implementation
 
@@ -204,6 +211,27 @@ begin
     Exit;
   if IsBaseFileName(Result) then
     Result := IncludeTrailingPathDelimiter(FileOpenFolderPath(Dlg)) + Result;
+end;
+
+function FileOpenEditedFileNameWithExt(const Dlg: TOpenDialog): string;
+  {Gets full path to the file that is currently entered in a file open dialog
+  box, with default extension added if necessary.
+    @param Dlg [in] Dialog box containing required file name and extension info.
+    @return File name, with default extension if (1) file name has no extension,
+      (2) current filter is not *.* (3) dialog has a filter string.
+  }
+var
+  DefaultExt: string; // default extension for current filter
+begin
+  Result := FileOpenEditedFileName(Dlg);
+  if Result = '' then
+    Exit;
+  if (ExtractFileExt(Result) = '') and (Dlg.Filter <> '') then
+  begin
+    DefaultExt := FilterIndexToExt(Dlg);
+    if not StrContainsStr('*', DefaultExt) then
+      Result := Result + DefaultExt;
+  end;
 end;
 
 end.
