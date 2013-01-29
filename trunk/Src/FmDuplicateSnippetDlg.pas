@@ -22,18 +22,19 @@ uses
   // Delphi
   SysUtils, Controls, StdCtrls, ExtCtrls, Classes,
   // Project
-  DB.UCategory, DB.USnippet, FmGenericOKDlg, UBaseObjects, UCategoryListAdapter,
+  DB.USnippet, FmGenericOKDlg, UBaseObjects, UCategoryListAdapter,
   UIStringList;
 
 
 type
   TDuplicateSnippetDlg = class(TGenericOKDlg, INoPublicConstruct)
-    lblUniqueName: TLabel;
+    cbCategory: TComboBox;
+    chkEdit: TCheckBox;
+    edDisplayName: TEdit;
     edUniqueName: TEdit;
     lblCategory: TLabel;
-    cbCategory: TComboBox;
     lblDisplayName: TLabel;
-    edDisplayName: TEdit;
+    lblUniqueName: TLabel;
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -66,8 +67,8 @@ uses
   // Delphi
   Math,
   // Project
-  DB.UMain, UCtrlArranger, UExceptions, UMessageBox, USnippetValidator,
-  UStructs, UStrUtils;
+  DB.UCategory, DB.UMain, UCtrlArranger, UExceptions, UMessageBox,
+  USnippetValidator, UStructs, UStrUtils, UUserDBMgr;
 
 {$R *.dfm}
 
@@ -80,7 +81,7 @@ begin
   TCtrlArranger.AlignLefts(
     [
       lblUniqueName, lblDisplayName, lblCategory, edUniqueName, edDisplayName,
-      cbCategory
+      cbCategory, chkEdit
     ],
     0
   );
@@ -91,6 +92,7 @@ begin
   TCtrlArranger.MoveBelow(lblDisplayName, edDisplayName, 4);
   TCtrlArranger.MoveBelow(edDisplayName, lblCategory, 8);
   TCtrlArranger.MoveBelow(lblCategory, cbCategory, 4);
+  TCtrlArranger.MoveBelow(cbCategory, chkEdit, 20);
 
   pnlBody.ClientWidth := Max(
     TCtrlArranger.TotalControlWidth(pnlBody) + 8,
@@ -230,6 +232,8 @@ end;
 
 procedure TDuplicateSnippetDlg.FormDestroy(Sender: TObject);
 begin
+  if (ModalResult = mrOK) and chkEdit.Checked then
+    TUserDBMgr.EditSnippet(StrTrim(edUniqueName.Text));
   inherited;
   fCatList.Free;
 end;

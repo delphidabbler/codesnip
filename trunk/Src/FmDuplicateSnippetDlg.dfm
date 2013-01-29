@@ -5,10 +5,10 @@ inherited DuplicateSnippetDlg: TDuplicateSnippetDlg
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Width = 200
-    Height = 177
-    ExplicitWidth = 200
-    ExplicitHeight = 177
+    Width = 222
+    Height = 185
+    ExplicitWidth = 222
+    ExplicitHeight = 185
     object lblUniqueName: TLabel
       Left = 0
       Top = 0
@@ -36,15 +36,16 @@ inherited DuplicateSnippetDlg: TDuplicateSnippetDlg
     object edUniqueName: TEdit
       Left = 0
       Top = 19
-      Width = 200
+      Width = 222
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
+      ExplicitWidth = 200
     end
     object cbCategory: TComboBox
       Left = 0
       Top = 123
-      Width = 200
+      Width = 222
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akTop, akRight]
@@ -53,10 +54,21 @@ inherited DuplicateSnippetDlg: TDuplicateSnippetDlg
     object edDisplayName: TEdit
       Left = 0
       Top = 67
-      Width = 200
+      Width = 222
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 1
+      ExplicitWidth = 200
+    end
+    object chkEdit: TCheckBox
+      Left = 0
+      Top = 160
+      Width = 222
+      Height = 17
+      Anchors = [akLeft, akTop, akRight]
+      Caption = '&Edit in Snippets Editor'
+      TabOrder = 3
+      ExplicitWidth = 200
     end
   end
   inherited btnHelp: TButton
