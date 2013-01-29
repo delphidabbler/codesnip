@@ -14,7 +14,7 @@
 
 program CodeSnip;
 
-{$Include CompilerDefines.inc}
+{$Include CompilerChecks.inc}
 
 {$ALIGN 8}
 {$APPTYPE GUI}

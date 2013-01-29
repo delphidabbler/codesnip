@@ -8,8 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Include file that defines symbols used for conditional compilation and checks
- * defined symbols to determine if CodeSnip can be compiled.
+ * Include file that checks details of compiler to determine whether or not
+ * CodeSnip can be compiled.
 }
 
 {
