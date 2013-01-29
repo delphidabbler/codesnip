@@ -49,8 +49,12 @@ uses
   SysUtils, Dialogs,
   // Project
   DB.USnippet, UConsts, UMessageBox, UOpenDialogEx, UOpenDialogHelper,
-  UQuery, USaveDialogEx, USelectionIOHandler, USnippetIDs;
+  UQuery, USaveDialogEx, USnippetIDListIOHandler, USnippetIDs;
 
+const
+  ///  <summary>Watermark for selection files. Uses characters that will be
+  ///  interpreted wrongly if the file is not in UTF8 format.</summary>
+  SelectionFileWatermark = #$25BA + ' CodeSnip Selections v1 ' + #$25C4;
 
 { TSelectionIOMgr }
 
@@ -151,13 +155,13 @@ class function TSelectionIOMgr.LoadSelectionSearch(out Search: ISearch):
   Boolean;
 var
   FileName: string;
-  Reader: TSelectionFileReader;
+  Reader: TSnippetIDListFileReader;
   SnippetIDs: ISnippetIDList;
   Filter: ISelectionSearchFilter;
 begin
   if not GetLoadFileName(FileName) then
     Exit(False);
-  Reader := TSelectionFileReader.Create;
+  Reader := TSnippetIDListFileReader.Create(SelectionFileWatermark);
   try
     SnippetIDs := Reader.ReadFile(FileName);
   finally
@@ -173,13 +177,13 @@ end;
 class procedure TSelectionIOMgr.SaveCurrentSelection;
 var
   FileName: string;
-  Writer: TSelectionFileWriter;
+  Writer: TSnippetIDListFileWriter;
   SnippetIDs: ISnippetIDList;
   Snippet: TSnippet;
 begin
   if not GetSaveFileName(FileName) then
     Exit;
-  Writer := TSelectionFileWriter.Create;
+  Writer := TSnippetIDListFileWriter.Create(SelectionFileWatermark);
   try
     SnippetIDs := TSnippetIDList.Create;
     for Snippet in Query.Selection do

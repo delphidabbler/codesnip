@@ -493,7 +493,6 @@
 			<DCCReference Include="USaveSourceMgr.pas"/>
 			<DCCReference Include="USaveUnitMgr.pas"/>
 			<DCCReference Include="USearch.pas"/>
-			<DCCReference Include="USelectionIOHandler.pas"/>
 			<DCCReference Include="USelectionIOMgr.pas"/>
 			<DCCReference Include="USettings.pas"/>
 			<DCCReference Include="UShowCaseCtrl.pas"/>
