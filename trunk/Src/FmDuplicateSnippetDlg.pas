@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -28,10 +28,12 @@ uses
 
 type
   TDuplicateSnippetDlg = class(TGenericOKDlg, INoPublicConstruct)
-    lblNewName: TLabel;
-    edNewName: TEdit;
+    lblUniqueName: TLabel;
+    edUniqueName: TEdit;
     lblCategory: TLabel;
     cbCategory: TComboBox;
+    lblDisplayName: TLabel;
+    edDisplayName: TEdit;
     procedure btnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -74,17 +76,27 @@ uses
 procedure TDuplicateSnippetDlg.ArrangeForm;
 begin
   TCtrlArranger.SetLabelHeights(Self);
-  edNewName.Top := TCtrlArranger.BottomOf(lblNewName, 4);
-  lblCategory.Top := TCtrlArranger.BottomOf(edNewName, 8);
-  cbCategory.Top := TCtrlArranger.BottomOf(lblCategory, 4);
+
+  TCtrlArranger.AlignLefts(
+    [
+      lblUniqueName, lblDisplayName, lblCategory, edUniqueName, edDisplayName,
+      cbCategory
+    ],
+    0
+  );
+
+  lblUniqueName.Top := 0;
+  TCtrlArranger.MoveBelow(lblUniqueName, edUniqueName, 4);
+  TCtrlArranger.MoveBelow(edUniqueName, lblDisplayName, 8);
+  TCtrlArranger.MoveBelow(lblDisplayName, edDisplayName, 4);
+  TCtrlArranger.MoveBelow(edDisplayName, lblCategory, 8);
+  TCtrlArranger.MoveBelow(lblCategory, cbCategory, 4);
 
   pnlBody.ClientWidth := Max(
-    Max(
-      TCtrlArranger.RightOf(lblNewName),
-      TCtrlArranger.RightOf(lblCategory)
-    ),
+    TCtrlArranger.TotalControlWidth(pnlBody) + 8,
     TCtrlArranger.RightOf(btnHelp) - btnOK.Left
   );
+
   // Arrange inherited controls and size the form
   inherited;
 end;
@@ -152,7 +164,10 @@ var
   SnippetCat: TCategory;
 begin
   inherited;
-  edNewName.Text := UniqueSnippetName(fSnippet.Name);
+  edUniqueName.Text := UniqueSnippetName(fSnippet.Name);
+  edDisplayName.Text := StrIf(
+    StrSameStr(fSnippet.Name, fSnippet.DisplayName), '', fSnippet.DisplayName
+  );
   fCatList.ToStrings(cbCategory.Items);
   SnippetCat := Database.Categories.Find(fSnippet.Category);
   if Assigned(SnippetCat) then
@@ -164,11 +179,12 @@ end;
 function TDuplicateSnippetDlg.UniqueSnippetName(const BaseName: string): string;
 var
   ExistingNames: IStringList;
-  Postfix: Cardinal;      // number to be appended to name to make unique
+  Postfix: Cardinal;
 begin
   ExistingNames := DisallowedNames;
   if not ExistingNames.Contains(BaseName) then
     Exit(BaseName);
+  // BaseName exists: find number to append to it to make name unique
   Postfix := 1;
   repeat
     Inc(PostFix);
@@ -177,10 +193,16 @@ begin
 end;
 
 procedure TDuplicateSnippetDlg.UpdateDatabase;
+var
+  UniqueName: string;
+  DisplayName: string;
 begin
+  UniqueName := StrTrim(edUniqueName.Text);
+  DisplayName := StrTrim(edDisplayName.Text);
   (Database as IDatabaseEdit).DuplicateSnippet(
     fSnippet,
-    StrTrim(edNewName.Text),
+    UniqueName,
+    StrIf(StrSameStr(UniqueName, DisplayName), '', DisplayName),
     fCatList.CatID(cbCategory.ItemIndex)
   );
 end;
@@ -193,9 +215,9 @@ resourcestring
   sNoCategory = 'You must choose a category';
 begin
   if not TSnippetValidator.ValidateName(
-    StrTrim(edNewName.Text), True, ErrMsg, ErrSel
+    StrTrim(edUniqueName.Text), True, ErrMsg, ErrSel
   ) then
-    raise EDataEntry.Create(ErrMsg, edNewName, ErrSel);
+    raise EDataEntry.Create(ErrMsg, edUniqueName, ErrSel);
   if cbCategory.ItemIndex = -1 then
     raise EDataEntry.Create(sNoCategory, cbCategory);
 end;
