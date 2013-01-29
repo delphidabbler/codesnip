@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -204,8 +204,8 @@ type
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
-    function DuplicateSnippet(const Snippet: TSnippet; const Name: string;
-      const CatID: string): TSnippet;
+    function DuplicateSnippet(const Snippet: TSnippet;
+      const UniqueName, DisplayName: string; const CatID: string): TSnippet;
     function CreateTempSnippet(const SnippetName: string;
       const Data: TSnippetEditData): TSnippet; overload;
       {Creates a new temporary snippet without adding it to the Snippets
@@ -458,8 +458,8 @@ type
         @param Data [in] Record storing new snippet's properties and references.
         @return Reference to new snippet.
       }
-    function DuplicateSnippet(const Snippet: TSnippet; const Name: string;
-      const CatID: string): TSnippet;
+    function DuplicateSnippet(const Snippet: TSnippet;
+      const UniqueName, DisplayName: string; const CatID: string): TSnippet;
     function CreateTempSnippet(const SnippetName: string;
       const Data: TSnippetEditData): TSnippet; overload;
       {Creates a new temporary user defined snippet without adding it to the
@@ -760,13 +760,14 @@ begin
 end;
 
 function TDatabase.DuplicateSnippet(const Snippet: TSnippet;
-  const Name: string; const CatID: string): TSnippet;
+  const UniqueName, DisplayName: string; const CatID: string): TSnippet;
 var
   Data: TSnippetEditData;
 begin
   Data := (Snippet as TSnippetEx).GetEditData;
   Data.Props.Cat := CatID;
-  Result := AddSnippet(Name, Data);
+  Data.Props.DisplayName := DisplayName;
+  Result := AddSnippet(UniqueName, Data);
 end;
 
 function TDatabase.GetCategories: TCategoryList;
