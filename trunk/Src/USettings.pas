@@ -158,7 +158,8 @@ type
     ssPreferences,        // info about program preferences
     ssUserInfo,           // info about user
     ssProxyServer,        // info about any proxy server
-    ssUnits               // list of default units
+    ssUnits,              // list of default units
+    ssDuplicateSnippet    // persistent settings from Duplicate Snippets dlg
   );
 
   {
@@ -429,7 +430,8 @@ const
     ssUser,     // ssPreferences
     ssUser,     // ssUserInfo
     ssUser,     // ssProxyServer
-    ssUser      // ssUnits
+    ssUser,     // ssUnits
+    ssUser      // ssDuplicateSnippet
   );
 begin
   Result := cSectionStorageMap[Section];
@@ -538,7 +540,8 @@ const
     'Prefs',            // ssPreferences
     'UserInfo',         // ssUserInfo
     'ProxyServer',      // ssProxyServer
-    'UnitList'          // ssUnits
+    'UnitList',         // ssUnits
+    'DuplicateSnippet'  // ssDuplicateSnippet
   );
 begin
   Result := cSectionNames[Id];
