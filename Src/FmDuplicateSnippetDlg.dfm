@@ -1,5 +1,7 @@
 inherited DuplicateSnippetDlg: TDuplicateSnippetDlg
   Caption = 'DuplicateSnippetDlg'
+  ExplicitWidth = 474
+  ExplicitHeight = 356
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -7,37 +9,52 @@ inherited DuplicateSnippetDlg: TDuplicateSnippetDlg
     Height = 177
     ExplicitWidth = 200
     ExplicitHeight = 177
-    object lblNewName: TLabel
+    object lblUniqueName: TLabel
       Left = 0
       Top = 0
-      Width = 188
+      Width = 173
       Height = 13
-      Caption = 'Enter a &name for the duplicated snippet:'
-      FocusControl = edNewName
+      Caption = '&Unique name for duplicated snippet:'
+      FocusControl = edUniqueName
     end
     object lblCategory: TLabel
       Left = 0
-      Top = 56
-      Width = 181
+      Top = 104
+      Width = 49
       Height = 13
-      Caption = 'Choose &category for duplicate snippet:'
+      Caption = '&Category:'
       FocusControl = cbCategory
     end
-    object edNewName: TEdit
+    object lblDisplayName: TLabel
+      Left = 0
+      Top = 48
+      Width = 67
+      Height = 13
+      Caption = '&Display name:'
+      FocusControl = edDisplayName
+    end
+    object edUniqueName: TEdit
       Left = 0
       Top = 19
       Width = 200
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
-      ExplicitWidth = 201
     end
     object cbCategory: TComboBox
       Left = 0
-      Top = 75
+      Top = 123
       Width = 200
       Height = 21
       Style = csDropDownList
+      Anchors = [akLeft, akTop, akRight]
+      TabOrder = 2
+    end
+    object edDisplayName: TEdit
+      Left = 0
+      Top = 67
+      Width = 200
+      Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 1
     end
