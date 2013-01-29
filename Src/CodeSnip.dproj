@@ -505,6 +505,7 @@
 			<DCCReference Include="USnippetDoc.pas"/>
 			<DCCReference Include="USnippetExtraHelper.pas"/>
 			<DCCReference Include="USnippetHTML.pas"/>
+			<DCCReference Include="USnippetIDListIOHandler.pas"/>
 			<DCCReference Include="USnippetIDs.pas"/>
 			<DCCReference Include="USnippetPageHTML.pas"/>
 			<DCCReference Include="USnippetPageStructure.pas"/>
