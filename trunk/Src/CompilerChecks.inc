@@ -10,40 +10,32 @@
  *
  * Include file that checks details of compiler to determine whether or not
  * CodeSnip can be compiled.
+ *
+ * CodeSnip can be complied only if the following conditions are met:
+ *
+ *   o Compiler is Delphi 2010 or later.
+ *   o Target platform is Windows 32 bit.
+ *   o Program is not being compiled as a console application.
 }
 
-{
-  Explanation of symbols:
-
-  CanCompile
-    Defined if compiler can be used to compile CodeSnip. Compilation halts with
-    a fatal error if this symbol is not defined. This is a custom symbol.
-    
-  WIN32
-    Defined only if target platform is 32 bit Windows. This is a predefined
-    symbol.
-  
-  CONSOLE
-    Defined if program is being compiled as a console application. This is a
-    predefined symbol.
- }
-
-{$UNDEF CanCompile}
-
+// Check for supported compiler
+{$UNDEF SupportedCompiler}
 {$IFDEF CONDITIONALEXPRESSIONS}
   {$IF CompilerVersion >= 21.0} // Delphi 2010 and later
-    {$DEFINE CanCompile}
+    {$DEFINE SupportedCompiler}
   {$IFEND}
 {$ENDIF}
-
-{$IFNDEF CanCompile}
+{$IFNDEF SupportedCompiler}
   {$MESSAGE FATAL 'CodeSnip requires Delphi 2010 or later to compile'}
 {$ENDIF}
 
+// Check for Windows 32 bit target platform
 {$IFNDEF WIN32}
   {$MESSAGE FATAL 'CodeSnip must be built as a 32 bit Windows application'}
 {$ENDIF}
 
+// Check not being compiled as a console application
 {$IFDEF CONSOLE}
   {$MESSAGE FATAL 'CodeSnip cannot be compiled as a console application'}
 {$ENDIF}
+
