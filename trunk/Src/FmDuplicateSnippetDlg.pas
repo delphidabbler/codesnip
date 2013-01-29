@@ -39,9 +39,22 @@ type
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   strict private
+    type
+      TPersistentOptions = class(TObject)
+      strict private
+        var
+          fEditSnippetOnClose: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+        property EditSnippetOnClose: Boolean
+          read fEditSnippetOnClose write fEditSnippetOnClose;
+      end;
+  strict private
     var
       fSnippet: TSnippet;
       fCatList: TCategoryListAdapter;
+      fOptions: TPersistentOptions;
     function DisallowedNames: IStringList;
     function UniqueSnippetName(const BaseName: string): string;
     procedure ValidateData;
@@ -67,7 +80,7 @@ uses
   // Delphi
   Math,
   // Project
-  DB.UCategory, DB.UMain, UCtrlArranger, UExceptions, UMessageBox,
+  DB.UCategory, DB.UMain, UCtrlArranger, UExceptions, UMessageBox, USettings,
   USnippetValidator, UStructs, UStrUtils, UUserDBMgr;
 
 {$R *.dfm}
@@ -176,6 +189,7 @@ begin
     cbCategory.ItemIndex := cbCategory.Items.IndexOf(SnippetCat.Description)
   else
     cbCategory.ItemIndex := -1;
+  chkEdit.Checked := fOptions.EditSnippetOnClose;
 end;
 
 function TDuplicateSnippetDlg.UniqueSnippetName(const BaseName: string): string;
@@ -228,14 +242,43 @@ procedure TDuplicateSnippetDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   fCatList := TCategoryListAdapter.Create(Database.Categories);
+  fOptions := TPersistentOptions.Create;
 end;
 
 procedure TDuplicateSnippetDlg.FormDestroy(Sender: TObject);
 begin
   if (ModalResult = mrOK) and chkEdit.Checked then
     TUserDBMgr.EditSnippet(StrTrim(edUniqueName.Text));
+  fOptions.EditSnippetOnClose := chkEdit.Checked;
   inherited;
+  fOptions.Free;
   fCatList.Free;
 end;
 
+{ TDuplicateSnippetDlg.TPersistentOptions }
+
+constructor TDuplicateSnippetDlg.TPersistentOptions.Create;
+var
+  Section: ISettingsSection;
+begin
+  inherited Create;
+  Section := Settings.ReadSection(ssDuplicateSnippet);
+  fEditSnippetOnClose := Boolean(
+    StrToIntDef(Section.ItemValues['EditSnippetOnClose'], Ord(False))
+  );
+end;
+
+destructor TDuplicateSnippetDlg.TPersistentOptions.Destroy;
+var
+  Section: ISettingsSection;
+begin
+  Section := Settings.EmptySection(ssDuplicateSnippet);
+  Section.ItemValues['EditSnippetOnClose'] := IntToStr(
+    Ord(fEditSnippetOnClose)
+  );
+  Section.Save;
+  inherited;
+end;
+
 end.
+
