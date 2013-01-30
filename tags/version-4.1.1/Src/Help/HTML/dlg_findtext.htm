@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic for Find Text dialogue box.
+-->
+<html>
+  <head>
+    <meta
+     name="generator"
+     content="HTML Tidy, see www.w3.org">
+    <meta
+     http-equiv="Content-Type"
+     content="text-html; charset=Windows-1252">
+    <title>
+      Find Text Dialogue Box
+    </title>
+    <link
+     rel="stylesheet"
+     href="../css/codesnip.css"
+     type="text/css">
+  </head>
+  <body>
+    <object
+     type="application/x-oleobject"
+     classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e">
+      <param
+       name="ALink Name"
+       value="FindTextDlg">
+    </object>
+    <h1>
+      <a name="dlg_findtext"></a>Find Text Dialogue Box
+    </h1>
+    <p>
+      Use this dialogue box to find snippets containing specified text. The
+      dialogue is displayed from the <em>Search | Find Text</em> menu option.
+    </p>
+    <p>
+      Enter the text you want to search for in the <em>Text to find</em> combo
+      box.
+    </p>
+    <p>
+      When more than one search word is entered you have a choice of whether to
+      search for snippets containing all the words, or any of them. You specify
+      which of these options you want by choosing the relevant radio button in
+      the <em>Search logic</em> group box. For example, choosing the <em>Find
+      all words</em> option and searching for &quot;Foo Bar&quot; would match
+      the text &quot;Foo and Bar&quot; but would not match &quot;Foo&quot; or
+      &quot;Bar&quot;. Choosing <em>Find and word</em> instead and again
+      searching for &quot;Foo Bar&quot; would match all the previous examples.
+    </p>
+    <p>
+      There are two more options for further refining the search:
+    </p>
+    <ol>
+      <li>
+        Use the <em>Whole words only</em> check box to ensure that the search
+        only looks up words that exactly match those specified. If the check box
+        is cleared then words containing the specified text will also be found.
+        For example when the check box is ticked search for &quot;Foo&quot; will
+        not match &quot;FooBar&quot;, but when the check box is cleared, the two
+        words will match.
+      </li>
+      <li>
+        Make the search case sensitive by checking the <em>Case sensitive</em>
+        check box. In this case searching for &quot;Foo&quot; would only match
+        the exact text and would not match &quot;foo&quot or &quot;FOO&quot;.
+        If the check box is cleared then case is ignored. Now searching for
+        &quot;Foo;&quot; will match both &quot;foo&quot and &quot;FOO&quot;.
+      </li>
+    </ol>
+    <p>
+      You have the option of finding text across the whole database or, if you
+      have run another search, searching only the snippets selected by the
+      previous search, and so refining that search. The <em>Search scope</em>
+      group box is used to decide which course of action to take.
+    </p>
+    <p>
+      If you choose to search the whole database any previous search is
+      abandoned before this search is run. This means that if no snippets are
+      found matching your search criteria, the previous search is lost and the
+      whole database will be selected. On the other hand if you choose to refine
+      a search and this search fails to find any snippets, the earlier search
+      remains unchanged.
+    </p>
+    <p>
+      The <em>Search scope</em> group box is disabled if there was no existing
+      search when this dialogue box was opened, and the search operates on the
+      entire database.
+    </p>
+  </body>
+</html>
+
