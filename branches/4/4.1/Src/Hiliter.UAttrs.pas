@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -72,12 +72,6 @@ type
         @param UseColour [in] Flag indicating whether colour required. When
           False all colour information is removed.
         @return New instance of highlighter adapted for printing.
-      }
-    class function CreateDisplayAttrs: IHiliteAttrs;
-      {Creates a highlighter object to use to render source code in the main
-      display. Based on user defined highlighter but with program's default mono
-      font.
-        @return Highlighter instance.
       }
     class function CreatePredefinedAttrs(
       const Style: TPredefinedHiliteStyle): IHiliteAttrs;
@@ -412,27 +406,6 @@ class function THiliteAttrsFactory.CreateDefaultAttrs: IHiliteAttrs;
   }
 begin
   Result := THiliteAttrsFactory.CreatePredefinedAttrs(hsDelphi2006);
-end;
-
-class function THiliteAttrsFactory.CreateDisplayAttrs: IHiliteAttrs;
-  {Creates a highlighter object to use to render source code in the main
-  display. Based on user defined highlighter but with program's default mono
-  font.
-    @return Highlighter instance.
-  }
-var
-  Font: TFont;  // display mono font
-begin
-  Result := CreateUserAttrs;
-  // Ensure we use required mono display font
-  Font := TFont.Create;
-  try
-    TFontHelper.SetDefaultMonoFont(Font, True);
-    Result.FontName := Font.Name;
-    Result.FontSize := Font.Size;
-  finally
-    Font.Free;
-  end;
 end;
 
 class function THiliteAttrsFactory.CreateNulAttrs: IHiliteAttrs;
