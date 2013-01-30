@@ -212,7 +212,7 @@ begin
       AddProperty(TCSS.FontProps(CSSFont));
     end;
     // Sets text styles and colours used by syntax highlighter
-    HiliteAttrs := THiliteAttrsFactory.CreateDisplayAttrs;
+    HiliteAttrs := THiliteAttrsFactory.CreateUserAttrs;
     with THiliterCSS.Create(HiliteAttrs) do
       try
         BuildCSS(CSSBuilder);
