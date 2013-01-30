@@ -546,8 +546,6 @@ begin
       for Elem := Low(THiliteElement) to High(THiliteElement) do
         Result[Elem].ForeColor := clNone;
   end;
-  // Ensure we use required printing fonts
-  Result.ResetDefaultFont;
 end;
 
 class function THiliteAttrsFactory.CreateUserAttrs: IHiliteAttrs;
