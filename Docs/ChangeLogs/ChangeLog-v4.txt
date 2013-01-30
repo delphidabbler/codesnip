@@ -3,13 +3,21 @@
 ; v. 2.0. If a copy of the MPL was not distributed with this file, You can
 ; obtain one at http://mozilla.org/MPL/2.0/
 ;
-; Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+; Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
 ;
 ; $Rev$
 ; $Date$
 ;
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
+
+Release v4.1.1 of 30 January 2013
++ Fixed bugs:
+  - #68 (http://bit.ly/WxG6LC): Comments missing in unit / code generation for some types.
+  - #70 (http://bit.ly/WAYEHN): Changing syntax highlighter font has no effect in main display.
+  - #71 (http://bit.ly/14v9i9v): Option to select monochrome printing not working properly.
+  - Unreported: Changing syntax highlighter font has no effect when printing or when copying text to clipboard as RTF (related to bug #70).
++ Updated help file re syntax highlighter changes.
 
 Release v4.1.0 of 06 January 2013
 + This is the first non-beta release to made available in both standard and portable editions, compiled from a common code base. The portable edition differs from the standard as follows (as per release v4.0.1 portable beta 1):
@@ -48,7 +56,7 @@ Release v4.0.2 of 17 December 2012
 
 Release v4.0.1 portable edition, beta 1 of 12 December 2012
 Internal CodeSnip version 4.0.1.213
-+ Modified edition of Release v4.0.1 that can run from a writeable removable medium without writing files or registry on host computer. This implements feature request #3577431 (http://bit.ly/UxvUj0).
++ Modified version of Release v4.0.1 that can run from a writeable removable medium without writing files or registry on host computer. This implements feature request #3577431 (http://bit.ly/UxvUj0).
 + Changes that apply only to portable version:
   - Changed executable file name to CodeSnip-p.exe.
   - Program caption changed to identify as portable version.

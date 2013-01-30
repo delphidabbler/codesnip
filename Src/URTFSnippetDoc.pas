@@ -155,7 +155,7 @@ begin
   fBuilder := TRTFBuilder.Create(0);  // Use default code page
   // Set up font table
   fBuilder.FontTable.Add(MainFontName, rgfSwiss, 0);
-  fBuilder.FontTable.Add(MonoFontName, rgfModern, 0);
+  fBuilder.FontTable.Add(fHiliteAttrs.FontName, rgfModern, 0);
   // set up colour table
   fBuilder.ColourTable.Add(clWarningText);
   fBuilder.ColourTable.Add(clVarText);
