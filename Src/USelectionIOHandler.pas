@@ -3,63 +3,63 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Provides objects that can read and write files containing snippet ID lists.
+ * Provides objects that can read and write snippet selection files.
 }
 
 
-unit USnippetIDListIOHandler;
+unit USelectionIOHandler;
 
 
 interface
 
 
 uses
+  // Delphi
   SysUtils,
+  // Project
   UExceptions, UIStringList, USnippetIDs;
 
 
 type
 
-  TSnippetIDListFileReader = class(TObject)
+  TSelectionFileReader = class(TObject)
   strict private
     var
-      fWatermark: string;
       fSnippetIDs: ISnippetIDList;
       ///  <summary>Lines of text from file.</summary>
       ///  <remarks>Must be stripped of blank lines.</remarks>
       fLines: IStringList;
     procedure Parse;
   public
-    constructor Create(const Watermark: string);
+    constructor Create;
     function ReadFile(const FileName: string): ISnippetIDLIst;
   end;
 
 type
 
-  ESnippetIDListFileReader = class(ECodeSnip);
+  ESelectionFileReader = class(ECodeSnip);
 
 type
 
-  TSnippetIDListFileWriter = class(TObject)
+  TSelectionFileWriter = class(TObject)
   strict private
     var
-      fWatermark: string;
       fBuilder: TStringBuilder;
     procedure CreateContent(const SnippetIDs: ISnippetIDList);
   public
-    constructor Create(const Watermark: string);
+    constructor Create;
     destructor Destroy; override;
     procedure WriteFile(const FileName: string; SnippetIDs: ISnippetIDList);
   end;
 
 type
 
-  ESnippetIDListFileWriter = class(ECodeSnip);
+  ESelectionFileWriter = class(ECodeSnip);
 
 
 implementation
@@ -72,19 +72,23 @@ uses
   UConsts, UIOUtils, UStrUtils;
 
 
-{ TSnippetIDListFileReader }
+const
+  ///  <summary>File watermark. Uses characters that will be interpreted wrongly
+  ///  if not UTF8 format.</summary>
+  SelectionFileWatermark = #$25BA + ' CodeSnip Selections v1 ' + #$25C4;
 
-constructor TSnippetIDListFileReader.Create(const Watermark: string);
+{ TSelectionFileReader }
+
+constructor TSelectionFileReader.Create;
 begin
   inherited Create;
   fSnippetIDs := TSnippetIDList.Create;
   fLines := TIStringList.Create;
-  fWatermark := Watermark;
 end;
 
-procedure TSnippetIDListFileReader.Parse;
+procedure TSelectionFileReader.Parse;
 resourcestring
-  sBadFileFormat = 'Invalid snippet ID list file format';
+  sBadFileFormat = 'Invalid selection file format';
   sMissingName = 'Snippet name missing on line' + EOL2 + '"%s"';
   sMissingUserDef = 'Snippet database specifier missing on line'
     + EOL2 + '"%s"';
@@ -97,8 +101,8 @@ var
   UserDefInt: Integer;  // user defined value of each snippet as integer
 begin
   fSnippetIDs.Clear;
-  if (fLines.Count <= 1) or (fLines[0] <> fWatermark) then
-    raise ESnippetIDListFileReader.Create(sBadFileFormat);
+  if (fLines.Count <= 1) or (fLines[0] <> SelectionFileWatermark) then
+    raise ESelectionFileReader.Create(sBadFileFormat);
   fLines.Delete(0);
   for Line in fLines do
   begin
@@ -106,18 +110,17 @@ begin
     Name := StrTrim(Name);
     UserDefStr := StrTrim(UserDefStr);
     if Name = '' then
-      raise ESnippetIDListFileReader.CreateFmt(sMissingName, [Line]);
+      raise ESelectionFileReader.CreateFmt(sMissingName, [Line]);
     if UserDefStr = '' then
-      raise ESnippetIDListFileReader.CreateFmt(sMissingUserDef, [Line]);
+      raise ESelectionFileReader.CreateFmt(sMissingUserDef, [Line]);
     if not TryStrToInt(UserDefStr, UserDefInt)
       or not (UserDefInt in [0, 1]) then
-      raise ESnippetIDListFileReader.CreateFmt(sBadUserDef, [Line]);
+      raise ESelectionFileReader.CreateFmt(sBadUserDef, [Line]);
     fSnippetIDs.Add(TSnippetID.Create(Name, Boolean(UserDefInt)));
   end;
 end;
 
-function TSnippetIDListFileReader.ReadFile(const FileName: string):
-  ISnippetIDLIst;
+function TSelectionFileReader.ReadFile(const FileName: string): ISnippetIDLIst;
 begin
   try
     fLines.SetText(
@@ -128,9 +131,9 @@ begin
     );
   except
     on E: EStreamError do
-      raise ESnippetIDListFileReader.Create(E);
+      raise ESelectionFileReader.Create(E);
     on E: EIOUtils do
-      raise ESnippetIDListFileReader.Create(E);
+      raise ESelectionFileReader.Create(E);
     else
       raise;
   end;
@@ -138,22 +141,20 @@ begin
   Result := fSnippetIDs;
 end;
 
-{ TSnippetIDListFileWriter }
+{ TSelectionFileWriter }
 
-constructor TSnippetIDListFileWriter.Create(const Watermark: string);
+constructor TSelectionFileWriter.Create;
 begin
   inherited Create;
   fBuilder := TStringBuilder.Create;
-  fWatermark := Watermark;
 end;
 
-procedure TSnippetIDListFileWriter.CreateContent(
-  const SnippetIDs: ISnippetIDList);
+procedure TSelectionFileWriter.CreateContent(const SnippetIDs: ISnippetIDList);
 var
   SnippetID: TSnippetID;
 begin
   fBuilder.Clear;
-  fBuilder.AppendLine(fWatermark);
+  fBuilder.AppendLine(SelectionFileWatermark);
   for SnippetID in SnippetIDs do
   begin
     fBuilder.Append(SnippetID.Name);
@@ -165,13 +166,13 @@ begin
   end;
 end;
 
-destructor TSnippetIDListFileWriter.Destroy;
+destructor TSelectionFileWriter.Destroy;
 begin
   fBuilder.Free;
   inherited;
 end;
 
-procedure TSnippetIDListFileWriter.WriteFile(const FileName: string;
+procedure TSelectionFileWriter.WriteFile(const FileName: string;
   SnippetIDs: ISnippetIDList);
 begin
   CreateContent(SnippetIDs);
@@ -179,10 +180,11 @@ begin
     TFileIO.WriteAllText(FileName, fBuilder.ToString, TEncoding.UTF8, True);
   except
     on E: EStreamError do
-      raise ESnippetIDListFileWriter.Create(E);
+      raise ESelectionFileWriter.Create(E);
     else
       raise;
   end;
 end;
 
 end.
+

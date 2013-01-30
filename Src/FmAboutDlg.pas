@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -511,7 +511,7 @@ begin
   begin
     ContentFont := TFont.Create;
     try
-      TFontHelper.SetContentFont(ContentFont);
+      TFontHelper.SetContentFont(ContentFont, True);
       AddProperty(TCSS.FontProps(ContentFont));
       if ThemeServicesEx.ThemesEnabled then
         AddProperty(TCSS.BackgroundColorProp(ThemeServicesEx.GetTabBodyColour));
@@ -590,7 +590,7 @@ begin
   fViewBtn.Hint := sViewBtnHint;
   fViewBtn.ShowHint := True;
   // Ensure correct default font is used
-  TFontHelper.SetDefaultBaseFont(Font);
+  TFontHelper.SetDefaultBaseFont(Font, True);
   // Size and arrange controls
   ReArrange;
 end;

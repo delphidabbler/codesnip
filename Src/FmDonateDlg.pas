@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -92,7 +92,7 @@ procedure TDonateDlg.ConfigForm;
   }
 begin
   inherited;
-  TFontHelper.SetDefaultBaseFont(btnDoDonate.Font);
+  TFontHelper.SetDefaultBaseFont(btnDoDonate.Font, False);
   frmContent.OnBuildCSS := UpdateCSS;
   frmContent.Initialise('dlg-donate.html');
 end;
@@ -129,7 +129,7 @@ begin
   // Build content font and apply to HTML frame
   ContentFont := TFont.Create;
   try
-    TFontHelper.SetContentFont(ContentFont);
+    TFontHelper.SetContentFont(ContentFont, True);  // font must be true type
     with CSSBuilder.Selectors['body'] do
     begin
       AddProperty(TCSS.FontProps(ContentFont));

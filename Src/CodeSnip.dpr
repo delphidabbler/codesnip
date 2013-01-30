@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -13,8 +13,6 @@
 
 
 program CodeSnip;
-
-{$Include CompilerChecks.inc}
 
 {$ALIGN 8}
 {$APPTYPE GUI}
@@ -306,6 +304,7 @@ uses
   USaveSourceMgr in 'USaveSourceMgr.pas',
   USaveUnitMgr in 'USaveUnitMgr.pas',
   USearch in 'USearch.pas',
+  USelectionIOHandler in 'USelectionIOHandler.pas',
   USelectionIOMgr in 'USelectionIOMgr.pas',
   USettings in 'USettings.pas',
   UShowCaseCtrl in 'UShowCaseCtrl.pas',
@@ -317,7 +316,6 @@ uses
   USnippetDoc in 'USnippetDoc.pas',
   USnippetExtraHelper in 'USnippetExtraHelper.pas',
   USnippetHTML in 'USnippetHTML.pas',
-  USnippetIDListIOHandler in 'USnippetIDListIOHandler.pas',
   USnippetIDs in 'USnippetIDs.pas',
   USnippetPageHTML in 'USnippetPageHTML.pas',
   USnippetPageStructure in 'USnippetPageStructure.pas',
@@ -393,15 +391,13 @@ uses
 {$ENDIF}
 {$Resource Resources.res}         // All other resources.
 
+{$Include CompilerDefines.inc}
+
 begin
   ReportMemoryLeaksOnShutdown := DebugHook <> 0;
   Application.Initialize;
   Application.MainFormOnTaskBar := True;
-  if not TStartUp.Execute then
-  begin
-    Application.Terminate;
-    Exit;
-  end;
+  TStartUp.Execute;
   SplashForm := TSplashForm.Create(Application);
   SplashForm.Show;
   Application.ModalPopupMode := pmAuto;

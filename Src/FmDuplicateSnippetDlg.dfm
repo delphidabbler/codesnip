@@ -1,74 +1,45 @@
 inherited DuplicateSnippetDlg: TDuplicateSnippetDlg
   Caption = 'DuplicateSnippetDlg'
-  ExplicitWidth = 474
-  ExplicitHeight = 356
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
-    Width = 222
-    Height = 185
-    ExplicitWidth = 222
-    ExplicitHeight = 185
-    object lblUniqueName: TLabel
+    Width = 200
+    Height = 177
+    ExplicitWidth = 200
+    ExplicitHeight = 177
+    object lblNewName: TLabel
       Left = 0
       Top = 0
-      Width = 173
+      Width = 188
       Height = 13
-      Caption = '&Unique name for duplicated snippet:'
-      FocusControl = edUniqueName
+      Caption = 'Enter a &name for the duplicated snippet:'
+      FocusControl = edNewName
     end
     object lblCategory: TLabel
       Left = 0
-      Top = 104
-      Width = 49
+      Top = 56
+      Width = 181
       Height = 13
-      Caption = '&Category:'
+      Caption = 'Choose &category for duplicate snippet:'
       FocusControl = cbCategory
     end
-    object lblDisplayName: TLabel
-      Left = 0
-      Top = 48
-      Width = 67
-      Height = 13
-      Caption = '&Display name:'
-      FocusControl = edDisplayName
-    end
-    object edUniqueName: TEdit
+    object edNewName: TEdit
       Left = 0
       Top = 19
-      Width = 222
+      Width = 200
       Height = 21
       Anchors = [akLeft, akTop, akRight]
       TabOrder = 0
-      ExplicitWidth = 200
+      ExplicitWidth = 201
     end
     object cbCategory: TComboBox
       Left = 0
-      Top = 123
-      Width = 222
+      Top = 75
+      Width = 200
       Height = 21
       Style = csDropDownList
       Anchors = [akLeft, akTop, akRight]
-      TabOrder = 2
-    end
-    object edDisplayName: TEdit
-      Left = 0
-      Top = 67
-      Width = 222
-      Height = 21
-      Anchors = [akLeft, akTop, akRight]
       TabOrder = 1
-      ExplicitWidth = 200
-    end
-    object chkEdit: TCheckBox
-      Left = 0
-      Top = 160
-      Width = 222
-      Height = 17
-      Anchors = [akLeft, akTop, akRight]
-      Caption = '&Edit in Snippets Editor'
-      TabOrder = 3
-      ExplicitWidth = 200
     end
   end
   inherited btnHelp: TButton

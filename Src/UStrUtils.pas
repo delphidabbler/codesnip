@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2011-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2011-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -224,11 +224,6 @@ function StrWrap(const Paras: TStrings; const MaxLineLen, Margin: Integer;
 ///  <remarks>Trailing white space is ignored when detecting full stops etc.
 ///  </remarks>
 function StrMakeSentence(const Str: UnicodeString): UnicodeString;
-
-///  <summary>Returns one of two strings, TrueStr or FalseStr, depending on
-///  value of given Condition.</summary>
-function StrIf(const Condition: Boolean; const TrueStr, FalseStr: string):
-  string;
 
 
 implementation
@@ -757,15 +752,6 @@ begin
   finally
     SB.Free;
   end;
-end;
-
-function StrIf(const Condition: Boolean; const TrueStr, FalseStr: string):
-  string;
-begin
-  if Condition then
-    Result := TrueStr
-  else
-    Result := FalseStr;
 end;
 
 end.

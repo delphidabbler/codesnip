@@ -25,17 +25,13 @@ uses
 type
 
   TStartUp = record
-  strict private
-    class procedure ErrorMessage(const Msg: string); static;
   public
-    class function Execute: Boolean; static;
+    class procedure Execute; static;
   end;
 
 implementation
 
 uses
-  // Delphi
-  Windows,
   {$IFDEF PORTABLE}
   // Delphi
   IOUtils,
@@ -43,42 +39,16 @@ uses
   UAppInfo, UUtils,
   {$ENDIF}
   // Project
-  FirstRun.UMain, UConsts, USystemInfo;
+  FirstRun.UMain;
 
 { TStartUp }
 
-class procedure TStartUp.ErrorMessage(const Msg: string);
-resourcestring
-  sTitle = 'CodeSnip';
-  sPrefix = 'CODESNIP CANNOT START!';
-begin
-  MessageBeep(MB_ICONERROR);
-  MessageBox(0, PChar(sPrefix + EOL2 + Msg), PChar(sTitle), MB_OK);
-end;
-
-class function TStartUp.Execute: Boolean;
-resourcestring
-  sOSError = 'Windows 2000 or later is required';
-  sIEError = 'Internet Explorer v6 or later is required.';
+class procedure TStartUp.Execute;
 {$IFDEF PORTABLE}
 var
   WorkingDir: string;
 {$ENDIF}
 begin
-
-  if not TOSInfo.IsWinNT or not TOSInfo.CheckReportedOS(TOSInfo.Win2K) then
-  begin
-    ErrorMessage(sOSError);
-    Exit(False);
-  end;
-  if TOSInfo.BrowserVer < 6 then
-  begin
-    ErrorMessage(sIEError);
-    Exit(False);
-  end;
-
-  Result := True;
-
   TFirstRunMgr.Execute;
 
   {$IFDEF PORTABLE}

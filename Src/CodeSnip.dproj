@@ -493,6 +493,7 @@
 			<DCCReference Include="USaveSourceMgr.pas"/>
 			<DCCReference Include="USaveUnitMgr.pas"/>
 			<DCCReference Include="USearch.pas"/>
+			<DCCReference Include="USelectionIOHandler.pas"/>
 			<DCCReference Include="USelectionIOMgr.pas"/>
 			<DCCReference Include="USettings.pas"/>
 			<DCCReference Include="UShowCaseCtrl.pas"/>
@@ -504,7 +505,6 @@
 			<DCCReference Include="USnippetDoc.pas"/>
 			<DCCReference Include="USnippetExtraHelper.pas"/>
 			<DCCReference Include="USnippetHTML.pas"/>
-			<DCCReference Include="USnippetIDListIOHandler.pas"/>
 			<DCCReference Include="USnippetIDs.pas"/>
 			<DCCReference Include="USnippetPageHTML.pas"/>
 			<DCCReference Include="USnippetPageStructure.pas"/>

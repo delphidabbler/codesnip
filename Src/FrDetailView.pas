@@ -151,14 +151,14 @@ begin
     // Set body style to use program's font and window colour
     with CSSBuilder.AddSelector('body') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
+      TFontHelper.SetContentFont(CSSFont, True);
       AddProperty(TCSS.FontProps(CSSFont));
       AddProperty(TCSS.BackgroundColorProp(clWindow));
     end;
     // Set table to use required font
     with CSSBuilder.AddSelector('table') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
+      TFontHelper.SetContentFont(CSSFont, True);
       AddProperty(TCSS.FontProps(CSSFont));
       AddProperty(TCSS.BackgroundColorProp(clBorder));
     end;
@@ -168,7 +168,7 @@ begin
     // Sets H1 heading font size and border
     with CSSBuilder.AddSelector('h1') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
+      TFontHelper.SetContentFont(CSSFont, True);
       CSSFont.Size := CSSFont.Size + 2;
       CSSFont.Style := [fsBold];
       AddProperty(TCSS.FontProps(CSSFont));
@@ -177,14 +177,14 @@ begin
     // Sets H2 heading font size and border
     with CSSBuilder.AddSelector('h2') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
+      TFontHelper.SetContentFont(CSSFont, True);
       CSSFont.Style := [fsBold];
       AddProperty(TCSS.FontProps(CSSFont));
     end;
     // Set H2 heading font for use in rendered active text
     with CSSBuilder.AddSelector('.active-text h2') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
+      TFontHelper.SetContentFont(CSSFont, True);
       CSSFont.Style := [fsBold];
       CSSFont.Size := CSSFont.Size + 1;
       AddProperty(TCSS.FontProps(CSSFont));
@@ -192,7 +192,7 @@ begin
     // Set H2 heading font for use in rendered active text in snippet list table
     with CSSBuilder.AddSelector('.snippet-list .active-text h2') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
+      TFontHelper.SetContentFont(CSSFont, True);
       CSSFont.Style := [fsBold];
       AddProperty(TCSS.FontProps(CSSFont));
     end;
@@ -206,13 +206,13 @@ begin
     // Sets CSS for style of New Tab text
     with CSSBuilder.AddSelector('#newtab') do
     begin
-      TFontHelper.SetContentFont(CSSFont);
+      TFontHelper.SetContentFont(CSSFont, True);
       CSSFont.Size := 36;
       CSSFont.Color := clNewTabText;
       AddProperty(TCSS.FontProps(CSSFont));
     end;
     // Sets text styles and colours used by syntax highlighter
-    HiliteAttrs := THiliteAttrsFactory.CreateDisplayAttrs;
+    HiliteAttrs := THiliteAttrsFactory.CreateUserAttrs;
     with THiliterCSS.Create(HiliteAttrs) do
       try
         BuildCSS(CSSBuilder);

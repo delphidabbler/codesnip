@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2012-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -49,12 +49,8 @@ uses
   SysUtils, Dialogs,
   // Project
   DB.USnippet, UConsts, UMessageBox, UOpenDialogEx, UOpenDialogHelper,
-  UQuery, USaveDialogEx, USnippetIDListIOHandler, USnippetIDs;
+  UQuery, USaveDialogEx, USelectionIOHandler, USnippetIDs;
 
-const
-  ///  <summary>Watermark for selection files. Uses characters that will be
-  ///  interpreted wrongly if the file is not in UTF8 format.</summary>
-  SelectionFileWatermark = #$25BA + ' CodeSnip Selections v1 ' + #$25C4;
 
 { TSelectionIOMgr }
 
@@ -95,7 +91,7 @@ var
 
 begin
   Dlg := Sender as TSaveDialogEx;
-  FileSpec := FileOpenEditedFileNameWithExt(Dlg);
+  FileSpec := FileOpenFileNameWithExt(Dlg);
   CanClose := not FileExists(FileSpec) or QueryOverwrite;
 end;
 
@@ -155,13 +151,13 @@ class function TSelectionIOMgr.LoadSelectionSearch(out Search: ISearch):
   Boolean;
 var
   FileName: string;
-  Reader: TSnippetIDListFileReader;
+  Reader: TSelectionFileReader;
   SnippetIDs: ISnippetIDList;
   Filter: ISelectionSearchFilter;
 begin
   if not GetLoadFileName(FileName) then
     Exit(False);
-  Reader := TSnippetIDListFileReader.Create(SelectionFileWatermark);
+  Reader := TSelectionFileReader.Create;
   try
     SnippetIDs := Reader.ReadFile(FileName);
   finally
@@ -177,13 +173,13 @@ end;
 class procedure TSelectionIOMgr.SaveCurrentSelection;
 var
   FileName: string;
-  Writer: TSnippetIDListFileWriter;
+  Writer: TSelectionFileWriter;
   SnippetIDs: ISnippetIDList;
   Snippet: TSnippet;
 begin
   if not GetSaveFileName(FileName) then
     Exit;
-  Writer := TSnippetIDListFileWriter.Create(SelectionFileWatermark);
+  Writer := TSelectionFileWriter.Create;
   try
     SnippetIDs := TSnippetIDList.Create;
     for Snippet in Query.Selection do

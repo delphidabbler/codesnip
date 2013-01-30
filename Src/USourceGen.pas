@@ -296,12 +296,12 @@ type
   }
   TConstAndTypeFormatter = class(TNoConstructObject)
   strict private
-    class procedure Split(const ConstOrType: TSnippet; out Keyword,
+    class procedure Split(const ConstOrType: TSnippet; out Prefix,
       Body: string);
-      {Splits source code of a type or constant into the keyword ("const" or
-      "type") and definition itself (body code).
+      {Splits source code of a type or constant into the prefix (text up to
+      "const" or "type") and definition itself (body code).
         @param ConstOrType [in] Constant or type whose source code to be split.
-        @param Keyword [out] "const" or "type" keyword.
+        @param Prefix [out] Text up to "const" or "type" keyword.
         @param Body [out] Remainder of constant or type without keyword.
       }
     class function RenderDescComment(CommentStyle: TCommentStyle;
@@ -1101,45 +1101,71 @@ begin
 end;
 
 class procedure TConstAndTypeFormatter.Split(const ConstOrType: TSnippet;
-  out Keyword, Body: string);
-  {Splits source code of a type or constant into the keyword ("const" or
-  "type") and definition itself (body code).
+  out Prefix, Body: string);
+  {Splits source code of a type or constant into the prefix (text up to "const"
+  or "type") and definition itself (body code).
     @param ConstOrType [in] Constant or type whose source code to be split.
-    @param Keyword [out] "const" or "type" keyword.
+    @param Prefix [out] Text up to "const" or "type" keyword.
     @param Body [out] Remainder of constant or type without keyword.
   }
 
   // ---------------------------------------------------------------------------
   procedure SplitAtKeyword(const SourceCode, KW: string;
-    out Keyword, Body: string);
-    {Splits an introductory keyword from following source code.
+    out Prefix, Body: string);
+    {Splits an introductory prefix (up to KW) from following source code.
       @param SourceCode [in] Source code to be split.
-      @param KW [in] Introductory keyword.
-      @param Keyword [out] Set to KW if KW is present, otherwise ''.
-      @param Body [out] Source code that follows keyword if KW is present,
+      @param KW [in] Introductory keyord.
+      @param Prefix [out] Set to KW if KW is present, otherwise ''.
+      @param Body [out] Source code that follows prefix if KW is present,
         otherwise set to SourceCode.
     }
+  var
+    Lexer: THilitePasLexer;       // parses Pascal code
+    PrefixCode: TStringBuilder;   // records prefix code
+  const
+    SkipTokens = [tkComment, tkCompilerDir, tkWhitespace, tkEOL];
+    WhiteSpaceTokens = [tkWhitespace, tkEOL];
+  resourcestring
+    sTypeKwdError = '"%s" must be first keyword in source code';
   begin
-    if StrStartsStr(KW, SourceCode) then
-    begin
-      // KW starts SourceCode - perform split
-      Keyword := KW;
-      Body := '  ' + StrTrim(Copy(SourceCode, Length(KW) + 1, MaxInt));
-    end
-    else
-    begin
-      // KW not present - can't split
-      Keyword := '';
-      Body := SourceCode;
+    Lexer := THilitePasLexer.Create(SourceCode);
+    try
+      PrefixCode := TStringBuilder.Create;
+      try
+        while Lexer.NextToken in SkipTokens do
+          PrefixCode.Append(Lexer.TokenStr);
+        if (Lexer.Token = tkKeyword) and StrSameText(Lexer.TokenStr, KW) then
+        begin
+          PrefixCode.Append(Lexer.TokenStr);
+          Prefix := StrTrimRight(PrefixCode.ToString);
+          while Lexer.NextToken in WhiteSpaceTokens do
+            PrefixCode.Append(Lexer.TokenStr);
+          Body := '  ' +
+            StrTrim(
+              StrSliceRight(
+                SourceCode, Length(SourceCode) - Length(PrefixCode.ToString)
+              )
+            );
+        end
+        else
+        begin
+          Prefix := '';
+          Body := SourceCode;
+        end;
+      finally
+        PrefixCode.Free;
+      end;
+    finally
+      Lexer.Free;
     end;
   end;
   // ---------------------------------------------------------------------------
 
 begin
   if ConstOrType.Kind = skConstant then
-    SplitAtKeyword(ConstOrType.SourceCode, 'const', Keyword, Body)
+    SplitAtKeyword(ConstOrType.SourceCode, 'const', Prefix, Body)
   else // if ConstOrType.Kind = skTypeDef
-    SplitAtKeyword(ConstOrType.SourceCode, 'type', Keyword, Body)
+    SplitAtKeyword(ConstOrType.SourceCode, 'type', Prefix, Body)
 end;
 
 { TSourceComments }

@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -33,6 +33,11 @@ type
   }
   TFontHelper = class(TNoConstructObject)
   strict private
+    class function IsTrueTypeFont(const Font: TFont): Boolean;
+      {Checks if a font is a true type font.
+        @param Font [in] Font to be checked.
+        @return True if Font is true type, False if not.
+      }
     class function FontExists(const FontName: string): Boolean;
       {Checks if named font exists on sytem.
         @param FontName [in] Name of required font.
@@ -48,26 +53,34 @@ type
         @param List [in] Receives list of font sizes. Cleared before sizes
           added.
       }
-    class procedure SetDefaultFont(const Font: TFont);
+    class procedure SetDefaultFont(const Font: TFont;
+      const ForceTrueType: Boolean);
       {Sets a font to be the default UI font for the underlying operating
       system.
         @param Font [in] Font to be set.
+        @param ForceTrueType [in] Whether content font must be true type.
       }
-    class procedure SetDefaultBaseFont(const BaseFont: TFont);
+    class procedure SetDefaultBaseFont(const BaseFont: TFont;
+      const ForceTrueType: Boolean);
       {Updates a font to use the face of the underlying operating system. Style,
       colour etc are preserved and point size may be adjusted to retain relative
       size to base font.
         @param Font [in] Font to be updated.
+        @param ForceTrueType [in] Whether content font must be true type.
       }
-    class procedure SetContentFont(const Font: TFont);
+    class procedure SetContentFont(const Font: TFont;
+      const ForceTrueType: Boolean);
       {Sets a font to be the appropriate content font for the underlying
       operating system.
         @param Font [in] Font to be set.
+        @param ForceTrueType [in] Whether content font must be true type.
       }
-    class procedure SetDefaultMonoFont(const Font: TFont);
+    class procedure SetDefaultMonoFont(const Font: TFont;
+      const ForceTrueType: Boolean);
       {Sets a font to be used as the default mono spaced font used by the
       program.
         @param Font [in] Font to be set.
+        @param ForceTrueType [in] Whether font must be true type.
       }
     class function CloneFontHandle(const Handle: THandle): THandle;
       {Clones a font described by a font handle. Takes a copy of the specified
@@ -76,12 +89,18 @@ type
         @return Handle to cloned font. Caller is responsible for releasing the
           handle.
       }
+  public
+    const
+      DefaultMonoFontName = 'Courier New';      // Default mono font name
   strict private
     const
-      DefaultFontName = 'Arial';                // Default font name
+      DefaultFontName = 'MS Sans Serif';        // Default font name
+      DefaultTTFontName = 'Arial';              // Default TT font name
       DefaultFontSize = 8;                      // Default font size
 
       DefaultContentFontName = DefaultFontName; // Default content font name
+      DefaultTTContentFontName                  // Default TT content font name
+        = DefaultTTFontName;
       DefaultContentFontSize = DefaultFontSize; // Default content font size
 
       VistaFontName = 'Segoe UI';               // Vista default font name
@@ -94,8 +113,8 @@ type
       XPContentFontName = 'Verdana';            // XP content font name
       XPContentFontSize                         // XP content font size
         = DefaultContentFontSize;
-
-      DefaultMonoFontName = 'Courier New';      // Default mono font name
+      DefaultTTMonoFontName                     // Default TT mono font
+        = DefaultMonoFontName;
       DefaultMonoFontSize = 8;                  // Default mono font size
   end;
 
@@ -150,6 +169,25 @@ begin
   Result := Screen.Fonts.IndexOf(FontName) >= 0;
 end;
 
+class function TFontHelper.IsTrueTypeFont(const Font: TFont): Boolean;
+  {Checks if a font is a true type font.
+    @param Font [in] Font to be checked.
+    @return True if Font is true type, False if not.
+  }
+var
+  DC: HDC;          // device context in which font is selected
+  TM: TTextMetric;  // text metrics for font in DC
+begin
+  DC := CreateDisplayDC;
+  try
+    SelectObject(DC, Font.Handle);
+    GetTextMetrics(DC, TM);
+    Result := (TM.tmPitchAndFamily and TMPF_TRUETYPE) = TMPF_TRUETYPE;
+  finally
+    DeleteDC(DC);
+  end;
+end;
+
 class procedure TFontHelper.ListCommonFontSizes(const List: TStrings);
   {Lists all commonly used font sizes.
     @param List [in] Receives list of font sizes. Cleared before sizes added.
@@ -182,41 +220,49 @@ begin
   end;
 end;
 
-class procedure TFontHelper.SetContentFont(const Font: TFont);
+class procedure TFontHelper.SetContentFont(const Font: TFont;
+  const ForceTrueType: Boolean);
   {Sets a font to be the appropriate content font for the underlying operating
   system.
     @param Font [in] Font to be set.
+    @param ForceTrueType [in] Whether content font must be true type.
   }
 begin
+  Assert(TOSInfo.IsWinNT, ClassName + '.SetContentFont: NT platform required');
   // Set default content font, size and style
   Font.Name := DefaultContentFontName;
   Font.Size := DefaultContentFontSize;
   Font.Style := [];
   if TOSInfo.CheckReportedOS(TOSInfo.WinVista) then
   begin
-    // We have Vista or later - use Calibri if installed
+    // We have Vista - use Calibri if installed
     if FontExists(VistaContentFontName) then
     begin
       Font.Name := VistaContentFontName;
       Font.Size := VistaContentFontSize;
     end;
   end
-  else
+  else if TOSInfo.CheckReportedOS(TOSInfo.Win2K) then
   begin
-    // Earlier OS than Vista (i.e. 2000 or XP)
+    // We have Win 2K or XP - use Verdana if installed
     if FontExists(XPContentFontName) then
     begin
       Font.Name := XPContentFontName;
       Font.Size := XPContentFontSize;
     end;
   end;
+  // Force font to true type if required and necessary
+  if ForceTrueType and not IsTrueTypeFont(Font) then
+    Font.Name := DefaultTTContentFontName;
 end;
 
-class procedure TFontHelper.SetDefaultBaseFont(const BaseFont: TFont);
+class procedure TFontHelper.SetDefaultBaseFont(const BaseFont: TFont;
+  const ForceTrueType: Boolean);
   {Updates a font to use the face of the underlying operating system. Style,
   colour etc are preserved and point size may be adjusted to retain relative
   size to base font.
     @param Font [in] Font to be updated.
+    @param ForceTrueType [in] Whether content font must be true type.
   }
 var
   DefaultFont: TFont;   // default font per OS
@@ -225,7 +271,7 @@ begin
   // Create default font
   DefaultFont := TFont.Create;
   try
-    SetDefaultFont(DefaultFont);
+    SetDefaultFont(DefaultFont, ForceTrueType);
     // font delta is difference between normal default font size and that used
     // on a specific OS (e.g. Vista uses Segoe UI 9 rather than MS Sans Serif 8)
     FontDelta := DefaultFont.Size - DefaultFontSize;
@@ -237,41 +283,52 @@ begin
   end;
 end;
 
-class procedure TFontHelper.SetDefaultFont(const Font: TFont);
+class procedure TFontHelper.SetDefaultFont(const Font: TFont;
+  const ForceTrueType: Boolean);
   {Sets a font to be the default UI font for the underlying operating system.
     @param Font [in] Font to be set.
+    @param ForceTrueType [in] Whether content font must be true type.
   }
 begin
+  Assert(TOSInfo.IsWinNT, ClassName + '.SetDefaultFont: NT platform required');
   // Set default font, size and style
   Font.Name := DefaultFontName;
   Font.Size := DefaultFontSize;
   Font.Style := [];
   if TOSInfo.CheckReportedOS(TOSInfo.WinVista) then
   begin
-    // Vista or later
+    // We have Vista - use Segoe UI if installed
     if FontExists(VistaFontName) then
     begin
       Font.Name := VistaFontName;
       Font.Size := VistaFontSize;
     end;
   end
-  else
+  else if TOSInfo.CheckReportedOS(TOSInfo.Win2K) then
   begin
-    // Earlier OS than Vista (i.e. 2000 or XP)
+    // We have Win 2K or XP - use Tahoma if installed
     if FontExists(XPFontName) then
     begin
       Font.Name := XPFontName;
       Font.Size := XPFontSize;
     end;
   end;
+  // Force font to true type if required and necessary
+  if ForceTrueType and not IsTrueTypeFont(Font) then
+    Font.Name := DefaultTTFontName;
 end;
 
-class procedure TFontHelper.SetDefaultMonoFont(const Font: TFont);
+class procedure TFontHelper.SetDefaultMonoFont(const Font: TFont;
+  const ForceTrueType: Boolean);
   {Sets a font to be used as the default mono spaced font used by the program.
     @param Font [in] Font to be set to default mono font.
+    @param ForceTrueType [in] Whether font must be true type.
   }
 begin
-  Font.Name := DefaultMonoFontName;
+  if ForceTrueType then
+    Font.Name := DefaultTTMonoFontName
+  else
+    Font.Name := DefaultMonoFontName;
   Font.Size := DefaultMonoFontSize;
   Font.Style := [];
 end;

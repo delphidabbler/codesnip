@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -140,9 +140,9 @@ procedure TProxyServerDlg.ConfigForm;
   }
 begin
   inherited;
-  TFontHelper.SetDefaultBaseFont(lblIPAddressReq.Font);
-  TFontHelper.SetDefaultBaseFont(lblPortReq.Font);
-  TFontHelper.SetDefaultBaseFont(lblReqSymbol.Font);
+  TFontHelper.SetDefaultBaseFont(lblIPAddressReq.Font, False);
+  TFontHelper.SetDefaultBaseFont(lblPortReq.Font, False);
+  TFontHelper.SetDefaultBaseFont(lblReqSymbol.Font, False);
   if TOSInfo.IsVistaOrLater then
   begin
     edPassword1.PasswordChar := '•';

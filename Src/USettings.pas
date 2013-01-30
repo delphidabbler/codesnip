@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -158,8 +158,7 @@ type
     ssPreferences,        // info about program preferences
     ssUserInfo,           // info about user
     ssProxyServer,        // info about any proxy server
-    ssUnits,              // list of default units
-    ssDuplicateSnippet    // persistent settings from Duplicate Snippets dlg
+    ssUnits               // list of default units
   );
 
   {
@@ -430,8 +429,7 @@ const
     ssUser,     // ssPreferences
     ssUser,     // ssUserInfo
     ssUser,     // ssProxyServer
-    ssUser,     // ssUnits
-    ssUser      // ssDuplicateSnippet
+    ssUser      // ssUnits
   );
 begin
   Result := cSectionStorageMap[Section];
@@ -540,8 +538,7 @@ const
     'Prefs',            // ssPreferences
     'UserInfo',         // ssUserInfo
     'ProxyServer',      // ssProxyServer
-    'UnitList',         // ssUnits
-    'DuplicateSnippet'  // ssDuplicateSnippet
+    'UnitList'          // ssUnits
   );
 begin
   Result := cSectionNames[Id];

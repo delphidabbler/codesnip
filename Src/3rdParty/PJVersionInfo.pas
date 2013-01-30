@@ -1,15 +1,37 @@
 {
- * This Source Code Form is subject to the terms of the Mozilla Public License,
- * v. 2.0. If a copy of the MPL was not distributed with this file, You can
- * obtain one at http://mozilla.org/MPL/2.0/
+ * PJVersionInfo.pas
  *
- * Copyright (C) 1998-2013, Peter Johnson (www.delphidabbler.com).
+ * Version Information Component (32 bit). The component reads version
+ * information from files.
  *
  * $Rev$
  * $Date$
  *
- * Version Information Component. The component reads version information from
- * executable files.
+ *
+ * ***** BEGIN LICENSE BLOCK *****
+ *
+ * Version: MPL 1.1
+ *
+ * The contents of this file are subject to the Mozilla Public License Version
+ * 1.1 (the "License"); you may not use this file except in compliance with the
+ * License. You may obtain a copy of the License at http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS" basis,
+ * WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License for
+ * the specific language governing rights and limitations under the License.
+ * 
+ * The Original Code is PJVersionInfo.pas.
+ * 
+ * The Initial Developer of the Original Code is Peter Johnson
+ * (http://www.delphidabbler.com/).
+ * 
+ * Portions created by the Initial Developer are Copyright (C) 1998-2010 Peter
+ * Johnson. All Rights Reserved.
+ * 
+ * Contributor(s):
+ *   Roland Beduerftig (C++ builder compatibility)
+ * 
+ * ***** END LICENSE BLOCK *****
 }
 
 
@@ -23,12 +45,9 @@ unit PJVersionInfo;
 // * Supports_AdvancedRecords - Defined if advanced records with record methods,
 //                              operator overloads etc. supported (Delphi 2006
 //                              and later).
-// * Supports_RTLNameSpaces   - Defined if Delphi RTL / VCL unit references
-//                              should be qualified with namespaces.
 {$DEFINE Supports_Assert}
 {$DEFINE Supports_ResourceString}
 {$UNDEF Supports_AdvancedRecords}
-{$UNDEF Supports_RTLNameSpaces}
 {$IFDEF VER90} // Delphi 2
   {$UNDEF Supports_Assert}
   {$UNDEF Supports_ResourceString}
@@ -41,9 +60,6 @@ unit PJVersionInfo;
   {$IF CompilerVersion >= 18.0}   // >= Delphi 2006
     {$DEFINE Supports_AdvancedRecords}
   {$IFEND}
-  {$IF CompilerVersion >= 23.0} // Delphi XE2
-    {$DEFINE Supports_RTLNameSpaces}
-  {$IFEND}
 {$ENDIF}
 
 interface
@@ -51,11 +67,7 @@ interface
 
 uses
   // Delphi
-  {$IFDEF Supports_RTLNameSpaces}
-  Winapi.Windows, System.Classes;
-  {$ELSE}
   Windows, Classes;
-  {$ENDIF}
 
 
 type
@@ -307,12 +319,8 @@ implementation
 
 
 uses
-  {$IFDEF Supports_RTLNameSpaces}
-  System.SysUtils;
-  {$ELSE}
   // Delphi
   SysUtils;
-  {$ENDIF}
 
 
 procedure Register;
