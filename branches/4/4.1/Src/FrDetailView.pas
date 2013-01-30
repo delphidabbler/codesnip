@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -212,7 +212,7 @@ begin
       AddProperty(TCSS.FontProps(CSSFont));
     end;
     // Sets text styles and colours used by syntax highlighter
-    HiliteAttrs := THiliteAttrsFactory.CreateDisplayAttrs;
+    HiliteAttrs := THiliteAttrsFactory.CreateUserAttrs;
     with THiliterCSS.Create(HiliteAttrs) do
       try
         BuildCSS(CSSBuilder);
