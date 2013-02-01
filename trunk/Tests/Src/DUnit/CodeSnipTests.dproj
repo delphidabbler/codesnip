@@ -37,6 +37,8 @@
 			<DCCReference Include="TestUBaseObjects.pas"/>
 			<DCCReference Include="..\..\..\Src\USingleton.pas"/>
 			<DCCReference Include="TestUSingleton.pas"/>
+			<DCCReference Include="TestUContainers.pas"/>
+			<DCCReference Include="..\..\..\Src\UContainers.pas"/>
 			<BuildConfiguration Include="Base">
 				<Key>Base</Key>
 			</BuildConfiguration>
