@@ -3,12 +3,12 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements a base class for dialogue boxes that have both OK and Cancel
+ * Implements a base class for modal dialogue boxes that have both OK and Cancel
  * buttons.
 }
 
@@ -23,21 +23,21 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericDlg;
+  FmGenericModalDlg, FmGenericDlg;
 
 
 type
 
   {
   TGenericOKDlg:
-    Generic OK dialog box used as a base class for dialog boxes that permit
-    editing of data. It adds OK and Cancel buttons to the form that close the
-    dialog box with the appropriate modal result.
+    Generic OK dialogue box used as a base class for modal dialogue boxes that
+    permit editing of data. It adds OK and Cancel buttons to the form that close
+    the dialogue box with the appropriate modal result.
   }
-  TGenericOKDlg = class(TGenericDlg)
+  TGenericOKDlg = class(TGenericModalDlg)
     btnCancel: TButton;
     btnOK: TButton;
-  protected
+  strict protected
     procedure ArrangeForm; override;
       {Positions OK and Cancel buttons.
       }

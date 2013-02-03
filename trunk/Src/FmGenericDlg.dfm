@@ -1,12 +1,11 @@
 inherited GenericDlg: TGenericDlg
   Left = 215
   Top = 123
-  BorderStyle = bsDialog
   Caption = 'GenericDlg'
-  ClientHeight = 328
-  ClientWidth = 468
-  ExplicitWidth = 320
-  ExplicitHeight = 240
+  ClientHeight = 336
+  ClientWidth = 458
+  ExplicitWidth = 474
+  ExplicitHeight = 374
   PixelsPerInch = 96
   TextHeight = 13
   object bvlBottom: TBevel
