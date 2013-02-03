@@ -111,6 +111,7 @@ uses
   FmFindXRefsDlg in 'FmFindXRefsDlg.pas' {FindXRefsDlg},
   FmGenericDlg in 'FmGenericDlg.pas' {GenericDlg},
   FmGenericModalDlg in 'FmGenericModalDlg.pas' {GenericModalDlg},
+  FmGenericNonModalDlg in 'FmGenericNonModalDlg.pas' {GenericNonModalDlg},
   FmGenericOKDlg in 'FmGenericOKDlg.pas' {GenericOKDlg},
   FmGenericViewDlg in 'FmGenericViewDlg.pas' {GenericViewDlg},
   FmHelpAware in 'FmHelpAware.pas' {HelpAwareForm},
