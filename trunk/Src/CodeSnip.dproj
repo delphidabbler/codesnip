@@ -165,6 +165,9 @@
 			<DCCReference Include="FmGenericModalDlg.pas">
 				<Form>GenericModalDlg</Form>
 			</DCCReference>
+			<DCCReference Include="FmGenericNonModalDlg.pas">
+				<Form>GenericNonModalDlg</Form>
+			</DCCReference>
 			<DCCReference Include="FmGenericOKDlg.pas">
 				<Form>GenericOKDlg</Form>
 			</DCCReference>
