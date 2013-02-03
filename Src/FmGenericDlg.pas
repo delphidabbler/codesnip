@@ -3,12 +3,12 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements an abstract base class for all the program's dialogue boxes.
+ * Implements a base class for all the program's dialogue boxes.
 }
 
 
@@ -29,24 +29,16 @@ type
 
   {
   TGenericDlg:
-    Generic abstract base class for dialog boxes. Displays and handles help
-    button and sizes the dialog form and arranges controls. Also handles ESC key
-    presses and provides a help button.
+    Implements a base class for all the program's dialogue boxes, whether modal
+    or mode-less. Displays and handles help button, sizes the dialogue form and
   }
   TGenericDlg = class(THelpAwareForm)
     bvlBottom: TBevel;
     btnHelp: TButton;
     pnlBody: TPanel;
     procedure btnHelpClick(Sender: TObject);
-    procedure FormKeyDown(Sender: TObject; var Key: Word;
-      Shift: TShiftState);
     procedure FormCreate(Sender: TObject);
-  protected
-    function ModalResultOnEsc: Integer; virtual; abstract;
-      {Gets modal result returned from dialog when user presses ESC key. Set
-      to mrNone to disable special handling of ESC key.
-        @return Required modal result.
-      }
+  strict protected
     procedure ArrangeForm; virtual;
       {Positions controls and sets form size according to body panel dimensions.
       }
@@ -136,25 +128,6 @@ procedure TGenericDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   TDlgHelper.SetDlgParentToOwner(Self);
-end;
-
-procedure TGenericDlg.FormKeyDown(Sender: TObject; var Key: Word;
-  Shift: TShiftState);
-  {Checks for escape key press, with no modifiers, and closes dialog with a
-  descendant supplied modal result. If modal result is mrNone then dialog is
-  not closed.
-    @param Sender [in] Not used.
-    @param Key [in/out] Key pressed.
-    @param Shift [in] Modifier keys pressed.
-  }
-begin
-  inherited;
-  if (Key = VK_ESCAPE) and (Shift = []) then
-  begin
-    // Setting ModalResult to a value <> mrNone closes the form. ShowModal
-    // returns the assigned value.
-    ModalResult := ModalResultOnEsc;
-  end
 end;
 
 function TGenericDlg.GetAligner: IFormAligner;

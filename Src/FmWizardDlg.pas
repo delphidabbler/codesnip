@@ -8,7 +8,7 @@
  * $Rev$
  * $Date$
  *
- * Base class for multi-page "wizard" dialogue boxes.
+ * Base class for multi-page modal "wizard" dialogue boxes.
 }
 
 
@@ -22,16 +22,16 @@ uses
   // Delphi
   ComCtrls, StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericDlg;
+  FmGenericModalDlg, FmGenericDlg;
 
 
 type
 
   {
   TWizardDlg:
-    Base class for multi-page "wizard" dialog boxes.
+    Base class for multi-page modal "wizard" dialog boxes.
   }
-  TWizardDlg = class(TGenericDlg)
+  TWizardDlg = class(TGenericModalDlg)
     btnBack: TButton;
     btnNext: TButton;
     btnCancel: TButton;

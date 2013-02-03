@@ -110,6 +110,7 @@ uses
   FmFindTextDlg in 'FmFindTextDlg.pas' {FindTextDlg},
   FmFindXRefsDlg in 'FmFindXRefsDlg.pas' {FindXRefsDlg},
   FmGenericDlg in 'FmGenericDlg.pas' {GenericDlg},
+  FmGenericModalDlg in 'FmGenericModalDlg.pas' {GenericModalDlg},
   FmGenericOKDlg in 'FmGenericOKDlg.pas' {GenericOKDlg},
   FmGenericViewDlg in 'FmGenericViewDlg.pas' {GenericViewDlg},
   FmHelpAware in 'FmHelpAware.pas' {HelpAwareForm},

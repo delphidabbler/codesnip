@@ -3,12 +3,13 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements a base class for dialogue boxes that have a single Close button.
+ * Implements a base class for modal dialogue boxes that have a single Close
+ * button.
 }
 
 
@@ -22,20 +23,20 @@ uses
   // Delphi
   StdCtrls, Controls, ExtCtrls, Classes,
   // Project
-  FmGenericDlg;
+  FmGenericModalDlg, FmGenericDlg;
 
 
 type
 
   {
   TGenericViewDlg:
-    Generic OK dialog box used as a base class for dialog boxes that permit
-    viewing rather then editing of data. Adds a Close button that closes the
-    dialog box.
+    Generic OK dialogue box used as a base class for modal dialogue boxes that
+    permit viewing rather then editing of data. Adds a Close button that closes
+    the dialogue box.
   }
-  TGenericViewDlg = class(TGenericDlg)
+  TGenericViewDlg = class(TGenericModalDlg)
     btnClose: TButton;
-  protected
+  strict protected
     procedure ArrangeForm; override;
       {Positions controls and sets form size according to body panel dimensions.
       }

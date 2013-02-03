@@ -4,6 +4,8 @@ inherited WizardDlg: TWizardDlg
   Caption = 'WizardDlg'
   ClientHeight = 407
   ClientWidth = 559
+  ExplicitWidth = 320
+  ExplicitHeight = 240
   PixelsPerInch = 96
   TextHeight = 13
   inherited pnlBody: TPanel
@@ -20,7 +22,7 @@ inherited WizardDlg: TWizardDlg
       object lblHead: TLabel
         Left = 8
         Top = 9
-        Width = 56
+        Width = 47
         Height = 16
         Caption = 'lblHead'
         Font.Charset = DEFAULT_CHARSET
