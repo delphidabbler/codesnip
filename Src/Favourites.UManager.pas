@@ -82,7 +82,7 @@ var
 
   function EvtInfoToSnippetID: TSnippetID;
   begin
-    Result := (EventInfo as TSnippet).ID;
+    Result := (EventInfo.Info as TSnippet).ID;
   end;
 
 begin
