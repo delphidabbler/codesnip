@@ -15,5 +15,6 @@ inherited GenericNonModalDlg: TGenericNonModalDlg
     Default = True
     ModalResult = 1
     TabOrder = 2
+    OnClick = btnCloseClick
   end
 end

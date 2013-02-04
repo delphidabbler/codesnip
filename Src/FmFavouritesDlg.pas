@@ -40,7 +40,6 @@ type
     actDisplay: TAction;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure btnCloseClick(Sender: TObject);
     procedure actDisplayUpdate(Sender: TObject);
     procedure actDisplayExecute(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
@@ -191,12 +190,6 @@ begin
   pnlBody.ClientWidth := TCtrlArranger.TotalControlWidth(pnlBody) + 4;
   pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody);
   inherited;
-end;
-
-procedure TFavouritesDlg.btnCloseClick(Sender: TObject);
-begin
-  // TODO: Move this event handler into base class
-  Close;
 end;
 
 class procedure TFavouritesDlg.Close;
