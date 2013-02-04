@@ -72,6 +72,9 @@
 			<DCCReference Include="DBIO.UIniDataReader.pas"/>
 			<DCCReference Include="DBIO.UNulDataReader.pas"/>
 			<DCCReference Include="DBIO.UXMLDataIO.pas"/>
+			<DCCReference Include="Favourites.UManager.pas"/>
+			<DCCReference Include="Favourites.UFavourites.pas"/>
+			<DCCReference Include="Favourites.UPersist.pas"/>
 			<DCCReference Include="FirstRun.FmV4ConfigDlg.pas">
 				<Form>V4ConfigDlg</Form>
 			</DCCReference>
@@ -149,6 +152,9 @@
 			</DCCReference>
 			<DCCReference Include="FmEasterEgg.pas">
 				<Form>EasterEggForm</Form>
+			</DCCReference>
+			<DCCReference Include="FmFavouritesDlg.pas">
+				<Form>FavouritesDlg</Form>
 			</DCCReference>
 			<DCCReference Include="FmFindCompilerDlg.pas">
 				<Form>FindCompilerDlg</Form>
