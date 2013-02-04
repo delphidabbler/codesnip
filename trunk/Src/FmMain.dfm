@@ -866,6 +866,19 @@ inherited MainForm: TMainForm
       OnExecute = actCloseAllDetailsTabsExecute
       OnUpdate = actCloseDetailsTabsUpdate
     end
+    object actFavourites: TAction
+      Category = 'Snippets'
+      Caption = 'Show Favourites...'
+      Hint = 'Show Favourites|Display Favourites Dialogue Box'
+      OnExecute = actFavouritesExecute
+    end
+    object actAddFavourite: TAction
+      Category = 'Snippets'
+      Caption = 'Add To Favourites'
+      ShortCut = 41030
+      OnExecute = actAddFavouriteExecute
+      OnUpdate = actAddFavouriteUpdate
+    end
   end
   object mnuMain: TMainMenu
     Images = ilMain
@@ -1050,6 +1063,15 @@ inherited MainForm: TMainForm
       end
       object miSubmit: TMenuItem
         Action = actSubmit
+      end
+      object miSpacer19: TMenuItem
+        Caption = '-'
+      end
+      object miAddFavourite: TMenuItem
+        Action = actAddFavourite
+      end
+      object miFavourites: TMenuItem
+        Action = actFavourites
       end
     end
     object miCategories: TMenuItem

@@ -24,9 +24,9 @@ uses
   SysUtils, Menus, ExtActns, StdActns, Classes, ActnList, ImgList, Controls,
   Forms, ExtCtrls, ComCtrls, ToolWin, Messages, AppEvnts,
   // Project
-  FmHelpAware, FrDetail, FrOverview, FrTitled, IntfNotifier, UCompileMgr,
-  UDialogMgr, UHistory, UMainDisplayMgr, USearch, UStatusBarMgr,
-  UWindowSettings;
+  Favourites.UManager, FmHelpAware, FrDetail, FrOverview, FrTitled,
+  IntfNotifier, UCompileMgr, UDialogMgr, UHistory, UMainDisplayMgr, USearch,
+  UStatusBarMgr, UWindowSettings;
 
 
 type
@@ -234,6 +234,11 @@ type
     actCloseUnselectedDetailsTabs: TAction;
     actCloseAllDetailsTabs: TAction;
     miCloseAllDetailsTabs: TMenuItem;
+    actFavourites: TAction;
+    miSpacer19: TMenuItem;
+    miFavourites: TMenuItem;
+    actAddFavourite: TAction;
+    miAddFavourite: TMenuItem;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
@@ -327,6 +332,9 @@ type
     procedure actProgramUpdatesExecute(Sender: TObject);
     procedure actCloseUnselectedDetailsTabsExecute(Sender: TObject);
     procedure actCloseAllDetailsTabsExecute(Sender: TObject);
+    procedure actFavouritesExecute(Sender: TObject);
+    procedure actAddFavouriteExecute(Sender: TObject);
+    procedure actAddFavouriteUpdate(Sender: TObject);
   strict private
     fIsAppRegistered: Boolean;        // Flag noting if app is registered
     fNotifier: INotifier;             // Notififies app of user-initiated events
@@ -336,6 +344,7 @@ type
     fStatusBarMgr: TStatusBarMgr;     // Manages status bar display
     fDialogMgr: TDialogMgr;           // Manages display of dialog boxes
     fCompileMgr: TMainCompileMgr;     // Manages test compilations
+    fFavouritesMgr: TFavouritesManager; // Manages favourites
     procedure ActViewItemExecute(Sender: TObject);
       {Displays a requested view item and records in history.
         @param Sender [in] Action triggering this event. Must be a
@@ -429,6 +438,18 @@ procedure TMainForm.actAddCategoryExecute(Sender: TObject);
   }
 begin
   TUserDBMgr.AddCategory;
+end;
+
+procedure TMainForm.actAddFavouriteExecute(Sender: TObject);
+begin
+  fFavouritesMgr.AddFavourite(fMainDisplayMgr.CurrentView);
+end;
+
+procedure TMainForm.actAddFavouriteUpdate(Sender: TObject);
+begin
+  (Sender as TAction).Enabled := fFavouritesMgr.CanAddFavourite(
+    fMainDisplayMgr.CurrentView
+  );
 end;
 
 procedure TMainForm.actAddSnippetExecute(Sender: TObject);
@@ -644,6 +665,14 @@ procedure TMainForm.actExportCodeExecute(Sender: TObject);
   }
 begin
   TCodeShareMgr.ExportCode(fMainDisplayMgr.CurrentView);
+end;
+
+procedure TMainForm.actFavouritesExecute(Sender: TObject);
+  {Displays Favourites non-modal dialogue box.
+    @param Sender [in] Not used.
+  }
+begin
+  fFavouritesMgr.ShowDialogue;
 end;
 
 procedure TMainForm.actFindClearExecute(Sender: TObject);
@@ -1404,6 +1433,7 @@ begin
   // Free owned objects
   fHistory.Free;
   fMainDisplayMgr.Free;
+  fFavouritesMgr.Free;
   // fStatusBarMgr MUST be nilled: otherwise it can be called after status bar
   // control has been freed and so cause AV when trying to use the control
   FreeAndNil(fStatusBarMgr);
@@ -1624,6 +1654,11 @@ begin
         end;
       end
     );
+
+    // Create favourites manager
+    // *** Must be done AFTER database has loaded ***
+    fFavouritesMgr := TFavouritesManager.Create(fNotifier);
+
     fMainDisplayMgr.ShowWelcomePage;
   finally
     // Ready to start using app: request splash form closes and enable form
