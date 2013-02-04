@@ -35,6 +35,8 @@ type
     ///  <summary>Traps key down events on form. Closes dialogue box if
     ///  unshifted ESC key detected.</summary>
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
+    ///  <summary>Handles clicks on Close button by closing form.</summary>
+    procedure btnCloseClick(Sender: TObject);
   strict protected
     ///  <summary>Positions controls and sizes dialogue box form.</summary>
     ///  <remarks>This override positions Close button in addition to inherited
@@ -67,6 +69,11 @@ begin
     TCtrlArranger.MoveToLeftOf(btnHelp, btnClose, 4)
   else
     btnClose.Left := btnHelp.Left;
+end;
+
+procedure TGenericNonModalDlg.btnCloseClick(Sender: TObject);
+begin
+  Close;
 end;
 
 procedure TGenericNonModalDlg.FormKeyDown(Sender: TObject; var Key: Word;
