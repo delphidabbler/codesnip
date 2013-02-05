@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2005-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2005-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -339,12 +339,14 @@ type
     fIsAppRegistered: Boolean;        // Flag noting if app is registered
     fNotifier: INotifier;             // Notififies app of user-initiated events
     fHistory: THistory;               // Maintains a history of the items viewed
-    fWindowSettings: TWindowSettings; // Saves and restores main window settings
+    fWindowSettings: TMainWindowSettings;
+                                      // Saves and restores main window settings
     fMainDisplayMgr: TMainDisplayMgr; // Manages the main display output
     fStatusBarMgr: TStatusBarMgr;     // Manages status bar display
     fDialogMgr: TDialogMgr;           // Manages display of dialog boxes
     fCompileMgr: TMainCompileMgr;     // Manages test compilations
-    fFavouritesMgr: TFavouritesManager; // Manages favourites
+    fFavouritesMgr: TFavouritesManager;
+                                      // Manages favourites
     procedure ActViewItemExecute(Sender: TObject);
       {Displays a requested view item and records in history.
         @param Sender [in] Action triggering this event. Must be a
@@ -1445,9 +1447,9 @@ procedure TMainForm.FormResize(Sender: TObject);
   }
 begin
   inherited;
-  if pnlLeft.Width > ClientWidth - TWindowSettings.MinRightPanelWidth
+  if pnlLeft.Width > ClientWidth - TMainWindowSettings.MinRightPanelWidth
     - splitVert.Width then
-    pnlLeft.Width := ClientWidth - TWindowSettings.MinRightPanelWidth
+    pnlLeft.Width := ClientWidth - TMainWindowSettings.MinRightPanelWidth
       - splitVert.Width;
 end;
 
@@ -1483,7 +1485,7 @@ begin
       Caption := Caption + ' [' + TWebInfo.LocalHost + ']';
 
     // Restore window settings
-    fWindowSettings := TWindowSettings.CreateStandAlone(Self);     // auto-freed
+    fWindowSettings := TMainWindowSettings.CreateStandAlone(Self); // auto-freed
     fWindowSettings.Restore;                                // sizes main window
     pnlLeft.Width := fWindowSettings.SplitterPos;
 
@@ -1712,8 +1714,8 @@ procedure TMainForm.splitVertCanResize(Sender: TObject;
     @param Accept [in/out] Set false if splitter cannot resize the control.
   }
 begin
-  if (NewSize < TWindowSettings.MinLeftPanelWidth)
-    or (NewSize > ClientWidth - TWindowSettings.MinRightPanelWidth) then
+  if (NewSize < TMainWindowSettings.MinLeftPanelWidth)
+    or (NewSize > ClientWidth - TMainWindowSettings.MinRightPanelWidth) then
     Accept := False;
 end;
 
