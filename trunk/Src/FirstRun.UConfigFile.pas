@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -95,6 +95,9 @@ type
     ///  <summary>Updates Prefs:CodeGen section from format prior to version 9
     ///  to version 9 and later format.</summary>
     procedure UpdateCodeGenEntries;
+    ///  <summary>Effectively renames MainWindow section used prior to version
+    ///  11 as WindowState:MainForm.</summary>
+    procedure RenameMainWindowSection;
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
     procedure DeleteDetailsPaneIndex;
@@ -296,6 +299,57 @@ begin
   Result := GetIniString('ProxyServer', 'Password', '', CfgFileName) <> '';
 end;
 {$ENDIF}
+
+procedure TUserConfigFileUpdater.RenameMainWindowSection;
+begin
+  if not TFile.Exists(CfgFileName) then
+    Exit;
+  if not IniSectionExists('MainWindow', CfgFileName) then
+    Exit;
+  SetIniInt(
+    'WindowState:MainForm',
+    'Left',
+    GetIniInt('MainWindow', 'Left', 0, CfgFileName),
+    CfgFileName
+  );
+  SetIniInt(
+    'WindowState:MainForm',
+    'Top',
+    GetIniInt('MainWindow', 'Top', 0, CfgFileName),
+    CfgFileName
+  );
+  SetIniInt(
+    'WindowState:MainForm',
+    'Width',
+    GetIniInt('MainWindow', 'Width', 0, CfgFileName),
+    CfgFileName
+  );
+  SetIniInt(
+    'WindowState:MainForm',
+    'Height',
+    GetIniInt('MainWindow', 'Height', 0, CfgFileName),
+    CfgFileName
+  );
+  SetIniInt(
+    'WindowState:MainForm',
+    'State',
+    GetIniInt('MainWindow', 'State', 0, CfgFileName),
+    CfgFileName
+  );
+  SetIniInt(
+    'WindowState:MainForm',
+    'SplitterPos',
+    GetIniInt('MainWindow', 'SplitterPos', 0, CfgFileName),
+    CfgFileName
+  );
+  SetIniInt(
+    'WindowState:MainForm',
+    'OverviewTab',
+    GetIniInt('MainWindow', 'OverviewTab', 0, CfgFileName),
+    CfgFileName
+  );
+  DeleteIniSection('MainWindow', CfgFileName);
+end;
 
 procedure TUserConfigFileUpdater.Stamp;
 begin

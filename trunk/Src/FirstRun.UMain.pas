@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2008-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2008-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -252,6 +252,9 @@ begin
     fUserConfigFile.UpdateCodeGenEntries;
   end;
   {$ENDIF}
+
+  if fUserConfigFile.FileVer < 11 then
+    fUserConfigFile.RenameMainWindowSection;
 
   fUserConfigFile.Stamp;
   // NOTE: strictly speaking we only need to stamp common config file in
