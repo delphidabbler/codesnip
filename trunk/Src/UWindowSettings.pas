@@ -162,7 +162,7 @@ begin
   Left := (WorkArea.Width - Width) div 2;
   Top := (WorkArea.Height - Height) div 2;
   // Read values from storage
-  Section := Settings.ReadSection(ssMainWindow);
+  Section := Settings.ReadSection(ssWindowState, Owner.Name);
   Left := StrToIntDef(Section.ItemValues['Left'], Left);
   Top := StrToIntDef(Section.ItemValues['Top'], Top);
   Width := StrToIntDef(Section.ItemValues['Width'], Width);
@@ -189,7 +189,7 @@ procedure TWindowSettings.SaveWdwState(const Left, Top, Width, Height,
 var
   Section: ISettingsSection;  // object used to access persistent storage
 begin
-  Section := Settings.ReadSection(ssMainWindow);
+  Section := Settings.ReadSection(ssWindowState, Owner.Name);
   Section.ItemValues['Left'] := IntToStr(Left);
   Section.ItemValues['Top'] := IntToStr(Top);
   Section.ItemValues['Width'] := IntToStr(Width);
