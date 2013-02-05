@@ -3,13 +3,13 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2006-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2006-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
  *
- * Implements a class that can save and record position of main window along
- * with some window widgets.
+ * Implements classes that can save and record position of a window and any
+ * moveable window widgets.
  *
  * Requires DelphiDabbler Window State Components v5.3 of later.
 }
@@ -33,7 +33,7 @@ type
   {
   TWindowSettings:
     Class that can save and record position of main window along with some of
-    window's widgets.
+    the window's widgets.
   }
   TWindowSettings = class(TPJCustomWdwState)
   strict private
@@ -83,7 +83,7 @@ type
       MinLeftPanelWidth  = 160; // minimum width of left panel
       MinRightPanelWidth = 300; // minimum width of right panel
     constructor Create(AOwner: TComponent); override;
-      {Class constructor. Sets up object and default property values.
+      {Object constructor. Sets up object and default property values.
         @param AOwner [in] Owning component (must be a TForm).
       }
     property SplitterPos: Integer
@@ -127,6 +127,8 @@ constructor TWindowSettings.Create(AOwner: TComponent);
     @param AOwner [in] Owning component (must be a TForm).
   }
 begin
+  Assert(Assigned(AOwner), ClassName + '.Create: AOwner is nil');
+  Assert(AOwner.Name <> '', ClassName + '.Create: AOwner.Name is empty string');
   inherited;
   AutoSaveRestore := False;           // need to call Save and Restore manually
   Options := [woFitWorkArea];         // keep main window inside work area
