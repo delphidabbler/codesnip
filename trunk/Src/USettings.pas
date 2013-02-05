@@ -160,7 +160,8 @@ type
     ssProxyServer,        // info about any proxy server
     ssUnits,              // list of default units
     ssDuplicateSnippet,   // persistent settings from Duplicate Snippets dlg
-    ssFavourites          // persistent settings from Favourites dlg
+    ssFavourites,         // persistent settings from Favourites dlg
+    ssWindowState         // info about the size and state of various windows
   );
 
   {
@@ -433,7 +434,8 @@ const
     ssUser,     // ssProxyServer
     ssUser,     // ssUnits
     ssUser,     // ssDuplicateSnippet
-    ssUser      // ssFavourites
+    ssUser,     // ssFavourites
+    ssUser      // ssWindowState
   );
 begin
   Result := cSectionStorageMap[Section];
@@ -544,7 +546,8 @@ const
     'ProxyServer',      // ssProxyServer
     'UnitList',         // ssUnits
     'DuplicateSnippet', // ssDuplicateSnippet
-    'Favourites'        // ssFavourites
+    'Favourites',       // ssFavourites
+    'WindowState'       // ssWindowState
   );
 begin
   Result := cSectionNames[Id];

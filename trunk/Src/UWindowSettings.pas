@@ -94,6 +94,21 @@ type
       {Index of selected tab in overview pane}
   end;
 
+type
+  TDlgWindowSettings = class(TPJCustomWdwState)
+  strict private
+    var
+      fFixedSize: Boolean;
+  strict protected
+    procedure ReadWdwState(var Left, Top, Width, Height, State: Integer);
+      override;
+    procedure SaveWdwState(const Left, Top, Width, Height, State: Integer);
+      override;
+  public
+    constructor Create(AOwner: TComponent); override;
+    property FixedSize: Boolean read fFixedSize write fFixedSize default True;
+  end;
+
 
 implementation
 
@@ -182,6 +197,53 @@ begin
   Section.ItemValues['State'] := IntToStr(State);
   Section.ItemValues['SplitterPos'] := IntToStr(fSplitterPos);
   Section.ItemValues['OverviewTab'] := IntToStr(fOverviewTab);
+  Section.Save;
+end;
+
+{ TDlgWindowSettings }
+
+constructor TDlgWindowSettings.Create(AOwner: TComponent);
+begin
+  Assert(Assigned(AOwner), ClassName + '.Create: AOwner is nil');
+  Assert(AOwner.Name <> '', ClassName + '.Create: AOwner.Name is empty string');
+  inherited;
+  AutoSaveRestore := False;           // need to call Save and Restore manually
+  Options := [woFitWorkArea];         // keep main window inside work area
+  fFixedSize := True;
+end;
+
+procedure TDlgWindowSettings.ReadWdwState(var Left, Top, Width, Height,
+  State: Integer);
+var
+  Section: ISettingsSection;  // object used to access persistent storage
+begin
+  // Assume that dialogue box has been aligned in default position when this
+  // method called.
+  Section := Settings.ReadSection(ssWindowState, Owner.Name);
+  Left := StrToIntDef(Section.ItemValues['Left'], Left);
+  Top := StrToIntDef(Section.ItemValues['Top'], Top);
+  if not fFixedSize then
+  begin
+    Width := StrToIntDef(Section.ItemValues['Width'], Width);
+    Height := StrToIntDef(Section.ItemValues['Height'], Height);
+  end;
+  State := Ord(wsNormal); // we don't allow minimized or maximized for dialogues
+end;
+
+procedure TDlgWindowSettings.SaveWdwState(const Left, Top, Width, Height,
+  State: Integer);
+var
+  Section: ISettingsSection;  // object used to access persistent storage
+begin
+  Section := Settings.ReadSection(ssWindowState, Owner.Name);
+  Section.ItemValues['Left'] := IntToStr(Left);
+  Section.ItemValues['Top'] := IntToStr(Top);
+  // Never save state and only save size if dialogue not fixed size
+  if not fFixedSize then
+  begin
+    Section.ItemValues['Width'] := IntToStr(Width);
+    Section.ItemValues['Height'] := IntToStr(Height);
+  end;
   Section.Save;
 end;
 
