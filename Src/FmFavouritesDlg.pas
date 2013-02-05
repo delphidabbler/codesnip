@@ -26,7 +26,7 @@ uses
   // 3rd party
   LVEx,
   // Project
-  FmGenericNonModalDlg, Favourites.UFavourites, IntfNotifier;
+  FmGenericNonModalDlg, Favourites.UFavourites, IntfNotifier, UWindowSettings;
 
 
 type
@@ -66,6 +66,7 @@ type
       fFavourites: TFavourites;
       fNotifier: INotifier;
       fOptions: TPersistentOptions;
+      fWindowSettings: TDlgWindowSettings;
     class var
       fInstance: TFavouritesDlg;
     ///  <summary>Specifies that a TFavouriteListItem is to be used to create
@@ -303,6 +304,7 @@ begin
   inherited;
   CreateLV;
   fOptions := TPersistentOptions.Create;
+  fWindowSettings := TDlgWindowSettings.CreateStandAlone(Self);
 end;
 
 procedure TFavouritesDlg.FormDestroy(Sender: TObject);
@@ -310,12 +312,14 @@ begin
   fFavourites.RemoveListener(FavouritesListener);
   fOptions.DisplayInNewTabs := chkNewTab.Checked;
   fOptions.Free;
+  fWindowSettings.Save;
   inherited;
 end;
 
 procedure TFavouritesDlg.InitForm;
 begin
   inherited;
+  fWindowSettings.Restore;
   PopulateLV;
   chkNewTab.Checked := fOptions.DisplayInNewTabs;
 end;
