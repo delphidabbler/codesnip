@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2009-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2009-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -47,7 +47,7 @@ type
       TAligner = class(TInterfacedObject, IFormAligner)
       protected // do not make strict
         procedure AlignForm(const AForm: TCustomForm);
-          {Aligns splash form over main form.
+          {Aligns easter eff form over main form.
             @param AForm [in] Form to be aligned.
           }
       end;
@@ -229,7 +229,7 @@ end;
 { TEasterEggForm.TAligner }
 
 procedure TEasterEggForm.TAligner.AlignForm(const AForm: TCustomForm);
-  {Aligns splash form over main form.
+  {Aligns easter egg form over main form.
     @param AForm [in] Form to be aligned.
   }
 var
