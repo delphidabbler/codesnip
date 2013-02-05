@@ -187,7 +187,6 @@ uses
 constructor TMainWindowSettings.Create(AOwner: TComponent);
 begin
   Assert(Assigned(AOwner), ClassName + '.Create: AOwner is nil');
-  Assert(AOwner.Name <> '', ClassName + '.Create: AOwner.Name is empty string');
   inherited;
   AutoSaveRestore := False;           // need to call Save and Restore manually
   Options := [woFitWorkArea];         // keep main window inside work area
@@ -205,7 +204,9 @@ begin
   Left := (WorkArea.Width - Width) div 2;
   Top := (WorkArea.Height - Height) div 2;
   // Read values from storage
-  Section := Settings.ReadSection(ssWindowState, Owner.Name);
+  // ** Don't use Owner.Name for sub-section: breaks sub-classed code that needs
+  //    main form settings.
+  Section := Settings.ReadSection(ssWindowState, 'MainForm');
   Left := StrToIntDef(Section.ItemValues['Left'], Left);
   Top := StrToIntDef(Section.ItemValues['Top'], Top);
   Width := StrToIntDef(Section.ItemValues['Width'], Width);
@@ -222,7 +223,9 @@ procedure TMainWindowSettings.SaveWdwState(const Left, Top, Width, Height,
 var
   Section: ISettingsSection;  // object used to access persistent storage
 begin
-  Section := Settings.ReadSection(ssWindowState, Owner.Name);
+  // ** Don't use Owner.Name for sub-section: breaks sub-classed code that needs
+  //    main form settings.
+  Section := Settings.ReadSection(ssWindowState, 'MainForm');
   Section.ItemValues['Left'] := IntToStr(Left);
   Section.ItemValues['Top'] := IntToStr(Top);
   Section.ItemValues['Width'] := IntToStr(Width);
