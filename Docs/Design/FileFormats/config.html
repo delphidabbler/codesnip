@@ -628,65 +628,6 @@
 </dl>
 
 <h4>
-  [MainWindow] section
-</h4>
-
-<p>
-  Records the state and size of the main window and some of its UI controls.
-</p>
-
-<p>
-  Name / Value pairs:
-</p>
-
-<dl class="indent">
-  <dt>
-    <strong>Left</strong> (Integer)
-  </dt>
-  <dd>
-    Location of left side of window on screen in pixels.
-  </dd>
-  <dt>
-    <strong>Top</strong> (Integer)
-  </dt>
-  <dd>
-    Location of top of window on screen in pixels.
-  </dd>
-  <dt>
-    <strong>Width</strong> (Integer)
-  </dt>
-  <dd>
-    Width of window in pixels.
-  </dd>
-  <dt>
-    <strong>Height</strong> (Integer)
-  </dt>
-  <dd>
-    Height of window in pixels.
-  </dd>
-  <dt>
-    <strong>State</strong> (Integer)
-  </dt>
-  <dd>
-    Value of that describes state of window: 0 &rArr; normal state; 1 &rArr;
-    minimized; 2 &rArr; maximized.
-  </dd>
-  <dt>
-    <strong>SplitterPos</strong> (Integer)
-  </dt>
-  <dd>
-    Position of vertical splitter control in main window, in pixels from left of
-    window client area.
-  </dd>
-  <dt>
-    <strong>OverviewTab</strong> (Integer)
-  </dt>
-  <dd>
-    Index of selected tab in overview pane.
-  </dd>
-</dl>
-
-<h4>
   [Prefs:CodeGen] section
 </h4>
 
@@ -1213,9 +1154,22 @@
 </h4>
 
 <p>
-  There is one of these section for each windows that stores its state and size
-  in the config file. <em>XXX</em> is replaced by a unique name representing the
-  window.
+  There is one of these section for each window that stores its state and size
+  in the config file. <em>XXX</em> is a sub-section placeholder and is replaced
+  by a unique name representing the window whose state is stored.
+</p>
+
+<p>
+  Some windows also store custom information in their sub-section that is not
+  used in all sub-sections.
+</p>
+
+<h5>
+  Common values
+</h5>
+
+<p>
+  These values do, or can, appear in any sub-section.
 </p>
 
 <p>
@@ -1269,6 +1223,34 @@
       Not used for dialogue boxes and other windows that are always displayed in
       the normal state.
     </div>
+  </dd>
+</dl>
+
+<h5>
+  [WindowState:MainForm] sub-section
+</h5>
+
+<p>
+  These values are used only in the <em>MainForm</em> sub-section.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>SplitterPos</strong> (Integer)
+  </dt>
+  <dd>
+    Position of vertical splitter control in main window, in pixels from left
+    of window client area.
+  </dd>
+  <dt>
+    <strong>OverviewTab</strong> (Integer)
+  </dt>
+  <dd>
+    Index of selected tab in overview pane.
   </dd>
 </dl>
 
