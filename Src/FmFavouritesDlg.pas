@@ -21,7 +21,7 @@ interface
 
 uses
   // Delphi
-  Classes, ActnList, StdCtrls, Controls, ExtCtrls, Forms, ComCtrls,
+  Classes, ActnList, StdCtrls, Controls, ExtCtrls, Forms, ComCtrls, Types,
   Generics.Collections {must be listed after Classes},
   // 3rd party
   LVEx,
@@ -79,6 +79,10 @@ type
     procedure LVFavouritesCompare(Sender: TObject; Item1, Item2: TListItem;
       Data: Integer; var Compare: Integer);
     procedure LVDoubleClick(Sender: TObject);
+    procedure LVCustomDrawItem(Sender: TCustomListView; Item: TListItem;
+      State: TCustomDrawState; var DefaultDraw: Boolean);
+    procedure LVCustomDrawSubItem(Sender: TCustomListView; Item: TListItem;
+      SubItem: Integer; State: TCustomDrawState; var DefaultDraw: Boolean);
     ///  <summary>Returns text of list item LI in column specified by Idx.
     ///  </summary>
     ///  <remarks>Idx = 0 returns list item's caption while Idx > 0 returns text
@@ -106,9 +110,9 @@ implementation
 
 uses
   // Delphi
-  SysUtils, DateUtils,
+  SysUtils, DateUtils, Windows, Graphics,
   // Project
-  UCtrlArranger, UMessageBox, USettings, UStrUtils;
+  UCtrlArranger, UMessageBox, UPreferences, USettings, UStructs, UStrUtils;
 
 {$R *.dfm}
 
@@ -166,7 +170,6 @@ var
   LI: TFavouriteListItem;
 begin
   LI := fLVFavs.Selected as TFavouriteListItem;
-  // TODO: Give user choice of whether to display in new tab or not
   fNotifier.DisplaySnippet(
     LI.Favourite.SnippetID.Name,
     LI.Favourite.SnippetID.UserDefined,
@@ -185,11 +188,7 @@ var
   LI: TFavouriteListItem;
 begin
   LI := fLVFavs.Items.Add as TFavouriteListItem;
-  // TODO: change LV to owner draw and display snippets in correct colours
-  if Favourite.SnippetID.UserDefined then
-    LI.Caption := Favourite.SnippetID.Name + ' (user)'
-  else
-    LI.Caption := Favourite.SnippetID.Name + ' (main)';
+  LI.Caption := Favourite.SnippetID.Name;
   if IsToday(Favourite.LastAccessed) then
     LI.SubItems.Add(TimeToStr(Favourite.LastAccessed))
   else
@@ -232,7 +231,6 @@ begin
   with fLVFavs do
   begin
     Parent := pnlBody;
-    // TODO: make this owner draw
     Height := 240;
     Width := 360;
     HideSelection := False;
@@ -255,6 +253,8 @@ begin
     OnDblClick := LVDoubleClick;
     OnCompare := LVFavouritesCompare;
     OnCreateItemClass := LVFavouriteCreateItemClass;
+    OnCustomDrawItem := LVCustomDrawItem;
+    OnCustomDrawSubItem := LVCustomDrawSubItem;
   end;
 end;
 
@@ -329,6 +329,23 @@ begin
   Result := Assigned(fInstance) and fInstance.Visible;
 end;
 
+procedure TFavouritesDlg.LVCustomDrawItem(Sender: TCustomListView;
+  Item: TListItem; State: TCustomDrawState; var DefaultDraw: Boolean);
+var
+  UserDefined: Boolean;
+begin
+  UserDefined := (Item as TFavouriteListItem).Favourite.SnippetID.UserDefined;
+  fLVFavs.Canvas.Font.Color := Preferences.DBHeadingColours[UserDefined];
+end;
+
+procedure TFavouritesDlg.LVCustomDrawSubItem(Sender: TCustomListView;
+  Item: TListItem; SubItem: Integer; State: TCustomDrawState;
+  var DefaultDraw: Boolean);
+begin
+  fLVFavs.Canvas.Font.Color := clNone;  // required to force later colour change
+  fLVFavs.Canvas.Font.Color := clWindowText;
+end;
+
 procedure TFavouritesDlg.LVDoubleClick(Sender: TObject);
 begin
   actDisplay.Execute;
@@ -347,16 +364,11 @@ var
 begin
   Fav1 := (Item1 as TFavouriteListItem).Favourite;
   Fav2 := (Item2 as TFavouriteListItem).Favourite;
-
   case fLVFavs.SortColumn of
     0:
-    begin
       Compare := Fav1.SnippetID.CompareTo(Fav2.SnippetID);
-    end;
     1:
-    begin
       Compare := CompareDateTime(Fav1.LastAccessed, Fav2.LastAccessed);
-    end;
   end;
   if fLVFavs.SortOrder = soDown then
     Compare := -Compare;
