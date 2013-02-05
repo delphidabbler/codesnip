@@ -11,7 +11,7 @@ inherited FavouritesDlg: TFavouritesDlg
       Height = 25
       Action = actDisplay
       Caption = '&Display'
-      TabOrder = 0
+      TabOrder = 1
     end
     object btnDelete: TButton
       Left = 293
@@ -20,7 +20,7 @@ inherited FavouritesDlg: TFavouritesDlg
       Height = 25
       Action = actDelete
       Caption = '&Remove'
-      TabOrder = 1
+      TabOrder = 2
     end
     object btnDeleteAll: TButton
       Left = 293
@@ -29,11 +29,16 @@ inherited FavouritesDlg: TFavouritesDlg
       Height = 25
       Action = actDeleteAll
       Caption = '&Clear All'
-      TabOrder = 2
+      TabOrder = 3
     end
-  end
-  inherited btnClose: TButton
-    OnClick = btnCloseClick
+    object chkNewTab: TCheckBox
+      Left = 0
+      Top = 261
+      Width = 209
+      Height = 17
+      Caption = 'Open favourites in new &tabs'
+      TabOrder = 0
+    end
   end
   object alDlg: TActionList
     Left = 416

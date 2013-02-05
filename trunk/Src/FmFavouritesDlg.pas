@@ -38,6 +38,7 @@ type
     actDelete: TAction;
     actDeleteAll: TAction;
     actDisplay: TAction;
+    chkNewTab: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actDisplayUpdate(Sender: TObject);
@@ -152,7 +153,9 @@ begin
   LI := fLVFavs.Selected as TFavouriteListItem;
   // TODO: Give user choice of whether to display in new tab or not
   fNotifier.DisplaySnippet(
-    LI.Favourite.SnippetID.Name, LI.Favourite.SnippetID.UserDefined, True
+    LI.Favourite.SnippetID.Name,
+    LI.Favourite.SnippetID.UserDefined,
+    chkNewTab.Checked
   );
   fFavourites.Touch(LI.Favourite.SnippetID);
 end;
@@ -182,11 +185,12 @@ end;
 procedure TFavouritesDlg.ArrangeForm;
 begin
   TCtrlArranger.AlignTops([fLVFavs, btnDisplay], 0);
-  fLVFavs.Left := 0;
+  TCtrlArranger.AlignLefts([fLVFavs, chkNewTab], 0);
   TCtrlArranger.AlignLefts(
     [btnDisplay, btnDelete, btnDeleteAll],
     TCtrlArranger.RightOf(fLVFavs, 8)
   );
+  TCtrlArranger.MoveBelow(fLVFavs, chkNewTab, 8);
   pnlBody.ClientWidth := TCtrlArranger.TotalControlWidth(pnlBody) + 4;
   pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody);
   inherited;
@@ -219,7 +223,8 @@ begin
     HideSelection := False;
     ReadOnly := True;
     RowSelect := True;
-    TabOrder := 2;
+    TabOrder := 0;
+    TabStop := True;
     ViewStyle := vsReport;
     SortImmediately := False;
     with Columns.Add do
