@@ -5,6 +5,9 @@ inherited GenericNonModalDlg: TGenericNonModalDlg
   ClientWidth = 468
   PixelsPerInch = 96
   TextHeight = 13
+  inherited btnHelp: TButton
+    TabOrder = 2
+  end
   object btnClose: TButton
     Left = 232
     Top = 304
@@ -14,7 +17,7 @@ inherited GenericNonModalDlg: TGenericNonModalDlg
     Caption = 'Close'
     Default = True
     ModalResult = 1
-    TabOrder = 2
+    TabOrder = 1
     OnClick = btnCloseClick
   end
 end
