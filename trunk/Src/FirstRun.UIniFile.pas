@@ -66,6 +66,12 @@ procedure DeleteIniSection(const Section, FileName: string);
 ///  <param name="FileName">string [in] Name of ini file.</param>
 procedure DeleteIniKey(const Section, Key, FileName: string);
 
+///  <summary>Checks if a section exists in an ini file.</summary>
+///  <param name="Section">string [in] Ini file section to be deleted.</param>
+///  <param name="FileName">string [in] Name of ini file.</param>
+///  <returns>Boolean. True if section exists, False if not.</returns>
+function IniSectionExists(const Section, FileName: string): Boolean;
+
 ///  <summary>Checks if a key exists in an ini file.</summary>
 ///  <param name="Section">string [in] Ini file section containing key.</param>
 ///  <param name="Key">string [in] Name of required key.</param>
@@ -164,6 +170,18 @@ begin
   Ini := TIniFile.Create(FileName);
   try
     Result := Ini.ValueExists(Section, Key);
+  finally
+    Ini.Free;
+  end;
+end;
+
+function IniSectionExists(const Section, FileName: string): Boolean;
+var
+  Ini: TIniFile;
+begin
+  Ini := TIniFile.Create(FileName);
+  try
+    Result := Ini.SectionExists(Section);
   finally
     Ini.Free;
   end;
