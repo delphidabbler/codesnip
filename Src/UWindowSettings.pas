@@ -8,8 +8,8 @@
  * $Rev$
  * $Date$
  *
- * Implements classes that can save and record position of a window and any
- * moveable window widgets.
+ * Implements classes that can save and record position of a window along with
+ * information about any window widgets.
  *
  * Requires DelphiDabbler Window State Components v5.3 of later.
 }
@@ -29,83 +29,145 @@ uses
 
 
 type
-
-  {
-  TMainWindowSettings:
-    Class that can save and record position of main window along with some of
-    the window's widgets.
-  }
+  ///  <summary>Class that can save and record the position of the main program
+  ///  window along with some of the windows widgets.</summary>
   TMainWindowSettings = class(TPJCustomWdwState)
   strict private
     var
-      fSplitterPos: Integer;      // Value of SplitterPos property
-      fOverviewTab: Integer;      // Value of OverviewTab property
+      ///  <summary>Value of SplitterPos property.</summary>
+      fSplitterPos: Integer;
+      ///  <summary>Value of OverviewTab property.</summary>
+      fOverviewTab: Integer;
     const
-      cDefLeftPanelWidth  = 186;  // Default width of left hand panel
+      ///  <summary>Default width of form's left hand panel.</summary>
+      cDefLeftPanelWidth  = 186;
+
   strict protected
+    ///  <summary>Reads window size, position and state from persistent settings
+    ///  along with information about some main window widgets, setting the
+    ///  appropriate properties.</summary>
+    ///  <remarks>If persistent information is not present the window defaults
+    ///  to its designed size and is placed at centre of work area.</remarks>
+    ///  <param name="Left">Integer [in/out] Location of left hand side of
+    ///  window. Input value is ignored. Set to value read from persistent
+    ///  storage if available, otherwise set to a value that centres window
+    ///  horizontally in work area.</param>
+    ///  <param name="Top">Integer [in/out] Location of top of window. Input
+    ///  value is ignored. Set to value read from persistent storage if
+    ///  available, otherwise set to a value that centres window vertically in
+    ///  work area.</param>
+    ///  <param name="Width">Integer [in/out] Width of window. Designed width is
+    ///  passed in. Set to width read from persistent storage if available,
+    ///  otherwise left unchanged.</param>
+    ///  <param name="Height">Integer [in/out] Height of window. Designed height
+    ///  is passed in. Set to height read from persistent storage if available,
+    ///  otherwise left unchanged.</param>
+    ///  <param name="State">Integer [in/out] State of window (ordinal value of
+    ///  TWindowState enumeration). Designed state is pased in. Set to state
+    ///  read from persistent storage if available, otherwise left unchanged.
+    ///  Any minimized state is ignored and normal state used in its place.
+    ///  </param>
     procedure ReadWdwState(var Left, Top, Width, Height, State: Integer);
       override;
-      {Reads window state from persistent local settings. Also reads information
-      about location, size and state of other main window widgets and sets
-      appropriate property. If persistent storage not present window defaults to
-      designed size and is placed at centre of work area.
-        @param Left [in/out] Location of left hand side of window. Designed
-          value passed in. Set to value from persistent storage if available,
-          otherwise set to a value that centres window horizontally in work
-          area.
-        @param Top [in/out] Location of top of window. Designed value passed in.
-          Set to value from persistent storage if available, otherwise set to a
-          value that centres window vertically in work area.
-        @param Width [in/out] Width of window. Passed in as designed width. Set
-          to width from persistent storage if available, otherwise unchanged.
-        @param Height [in/out] Height of window. Passed in as designed height.
-          Set to height from persistent storage if available, otherwise
-          unchanged.
-        @param State [in/out] State of window (ordinal value of TWindowState
-          enumeration). Passed in as designed state. Set to state from
-          persistent storage if available, otherwise unchanged.
-      }
+
+    ///  <summary>Writes window size, position and state to persistent settings
+    ///  along with information about some window widgets stored in the
+    ///  associated properties.</summary>
+    ///  <param name="Left">Integer [in] Location of left hand side of window.
+    ///  </param>
+    ///  <param name="Top">Integer [in] Location of top of window.</param>
+    ///  <param name="Width">Integer [in] Width of window.</param>
+    ///  <param name="Height">Integer [in] Height of window.</param>
+    ///  <param name="State">Integer [in] State of window (ordinal value of
+    ///  TWindowState enumeration).</param>
     procedure SaveWdwState(const Left, Top, Width, Height, State: Integer);
       override;
-      {Writes window state to persistent local settings. Also writes information
-      about location, size and state of other main window widgets per associated
-      property values.
-        @param Left [in] Location of left hand side of window.
-        @param Top [in] Location of top of window.
-        @param Width [in] Width of window.
-        @param Height [in] Height of window.
-        @param State [in] State of window (ordinal value of TWindowState
-          enumeration). If state is minimized this is ignored and normal state
-          used.
-      }
+
   public
     const
-      MinLeftPanelWidth  = 160; // minimum width of left panel
-      MinRightPanelWidth = 300; // minimum width of right panel
+      ///  <summary>Minimum width of left panel.</summary>
+      MinLeftPanelWidth  = 160;
+      ///  <summary>Minimum width of right panel.</summary>
+      MinRightPanelWidth = 300;
+
+  public
+    ///  <summary>Creates and sets up component and default property values.
+    ///  </summary>
+    ///  <param name="AOwner">TComponent [in] Owner of this component. AOwner
+    ///  must not be nil and must have a non-empty Name property.</param>
+    ///  <remarks>AOwner should be the form whose size, position and state are
+    ///  to be recorded.</remarks>
     constructor Create(AOwner: TComponent); override;
-      {Object constructor. Sets up object and default property values.
-        @param AOwner [in] Owning component (must be a TForm).
-      }
+
+    ///  <summary>Position of main window's vertical splitter.</summary>
     property SplitterPos: Integer
       read fSplitterPos write fSplitterPos default cDefLeftPanelWidth;
-      {Position of main window's vertical splitter}
+
+    ///  <summary>Index of selected tab in overview pane.</summary>
     property OverviewTab: Integer
       read fOverviewTab write fOverviewTab;
-      {Index of selected tab in overview pane}
   end;
 
 type
+  ///  <summary>Class that can save and record the position of a dialogue box
+  ///  window.</summary>
   TDlgWindowSettings = class(TPJCustomWdwState)
   strict private
     var
+      ///  <summary>Value of FixedSize property.</summary>
       fFixedSize: Boolean;
+
   strict protected
+    ///  <summary>Reads window size and, optionally, position from persistent
+    ///  settings.</summary>
+    ///  <remarks>If persistent information is not present the window defaults
+    ///  to its designed size and is located relative to its owner window
+    ///  according to its aligner.</remarks>
+    ///  <param name="Left">Integer [in/out] Location of left hand side of
+    ///  window. Input value is as set by window's aligner. Set to value read
+    ///  from persistent storage if available, otherwise unchanged.</param>
+    ///  <param name="Top">Integer [in/out] Location of top of window. Input
+    ///  value is as set by window's aligner. Set to value read from persistent
+    ///  storage if available, otherwise unchanged.</param>
+    ///  <param name="Width">Integer [in/out] Width of window. Designed width is
+    ///  passed in. Set to width read from persistent storage if available AND
+    ///  FixedSize property is False, otherwise left unchanged.</param>
+    ///  <param name="Height">Integer [in/out] Height of window. Designed height
+    ///  is passed in. Set to height read from persistent storage if available
+    ///  AND FixedSize property is False, otherwise left unchanged.</param>
+    ///  <param name="State">Integer [in/out] State of window (ordinal value of
+    ///  TWindowState enumeration). Input value is ignored. Always set to
+    ///  wsNormal.</param>
     procedure ReadWdwState(var Left, Top, Width, Height, State: Integer);
       override;
+
+    ///  <summary>Writes window size and, optionally, position to persistent
+    ///  settings.</summary>
+    ///  <param name="Left">Integer [in] Location of left hand side of window.
+    ///  </param>
+    ///  <param name="Top">Integer [in] Location of top of window.</param>
+    ///  <param name="Width">Integer [in] Width of window. Ignored if FixedSize
+    ///  is True.</param>
+    ///  <param name="Height">Integer [in] Height of window. Ignored if
+    ///  FxiedSize is True.</param>
+    ///  <param name="State">Integer [in] State of window (ordinal value of
+    ///  TWindowState enumeration). Ignored.</param>
     procedure SaveWdwState(const Left, Top, Width, Height, State: Integer);
       override;
+
   public
+    ///  <summary>Creates and sets up component and default property values.
+    ///  </summary>
+    ///  <param name="AOwner">TComponent [in] Owner of this component. AOwner
+    ///  must not be nil and must have a non-empty Name property.</param>
+    ///  <remarks>AOwner should be the form whose size and, optionally, position
+    ///  are to be recorded.</remarks>
     constructor Create(AOwner: TComponent); override;
+
+    ///  <summary>Determines if dialogue box is to be treated as fixed (True) or
+    ///  variable (False) size.</summary>
+    ///  <remarks>When True width and height information are not written to
+    ///  persistent storage, or are ignored if present.</remarks>
     property FixedSize: Boolean read fFixedSize write fFixedSize default True;
   end;
 
@@ -123,9 +185,6 @@ uses
 { TMainWindowSettings }
 
 constructor TMainWindowSettings.Create(AOwner: TComponent);
-  {Class constructor. Sets up object and default property values.
-    @param AOwner [in] Owning component (must be a TForm).
-  }
 begin
   Assert(Assigned(AOwner), ClassName + '.Create: AOwner is nil');
   Assert(AOwner.Name <> '', ClassName + '.Create: AOwner.Name is empty string');
@@ -137,24 +196,6 @@ end;
 
 procedure TMainWindowSettings.ReadWdwState(var Left, Top, Width, Height,
   State: Integer);
-  {Reads window state from persistent local settings. Also reads information
-  about location, size and state of other main window widgets and sets
-  appropriate property. If persistent storage not present window defaults to
-  designed size and is placed at centre of work area.
-    @param Left [in/out] Location of left hand side of window. Designed value
-      passed in. Set to value from persistent storage if available, otherwise
-      set to a value that centres window horizontally in work area.
-    @param Top [in/out] Location of top of window. Designed value passed in. Set
-      to value from persistent storage if available, otherwise set to a value
-      that centres window vertically in work area.
-    @param Width [in/out] Width of window. Passed in as designed width. Set to
-      width from persistent storage if available, otherwise unchanged.
-    @param Height [in/out] Height of window. Passed in as designed height. Set
-      to height from persistent storage if available, otherwise unchanged.
-    @param State [in/out] State of window (ordinal value of TWindowState
-      enumeration). Passed in as designed state. Set to state from persistent
-      storage if available, otherwise unchanged.
-  }
 var
   Section: ISettingsSection;  // object used to access persistent storage
   WorkArea: TRectEx;          // screen's workarea
@@ -178,16 +219,6 @@ end;
 
 procedure TMainWindowSettings.SaveWdwState(const Left, Top, Width, Height,
   State: Integer);
-  {Writes window state to persistent local settings. Also writes information
-  about location, size and state of other main window widgets per assoicated
-  property values.
-    @param Left [in] Location of left hand side of window.
-    @param Top [in] Location of top of window.
-    @param Width [in] Width of window.
-    @param Height [in] Height of window.
-    @param State [in] State of window (ordinal value of TWindowState
-      enumeration). If state is minimized this is ignored and normal state used.
-  }
 var
   Section: ISettingsSection;  // object used to access persistent storage
 begin
