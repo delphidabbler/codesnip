@@ -1208,6 +1208,70 @@
   </dd>
 </dl>
 
+<h4>
+  [WindowState:<em>XXX</em>] sections
+</h4>
+
+<p>
+  There is one of these section for each windows that stores its state and size
+  in the config file. <em>XXX</em> is replaced by a unique name representing the
+  window.
+</p>
+
+<p>
+  Name / Value pairs:
+</p>
+
+<dl class="indent">
+  <dt>
+    <strong>Left</strong> (Integer)
+  </dt>
+  <dd>
+    Location of left side of window on screen in pixels.
+  </dd>
+  <dt>
+    <strong>Top</strong> (Integer)
+  </dt>
+  <dd>
+    Location of top of window on screen in pixels.
+  </dd>
+  <dt>
+    <strong>Width</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Width of window in pixels.
+    </div>
+    <div class="half-spaced">
+      Not used for fixed size windows.
+    </div>
+  </dd>
+  <dt>
+    <strong>Height</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Height of window in pixels.
+    </div>
+    <div class="half-spaced">
+      Not used for fixed size windows.
+    </div>
+  </dd>
+  <dt>
+    <strong>State</strong> (Integer)
+  </dt>
+  <dd>
+    <div class="half-spaced">
+      Value of that describes state of window: 0 &rArr; normal state; 1 &rArr;
+      minimized; 2 &rArr; maximized.
+    </div>
+    <div class="half-spaced">
+      Not used for dialogue boxes and other windows that are always displayed in
+      the normal state.
+    </div>
+  </dd>
+</dl>
+
 </body>
 
 </html>
