@@ -149,7 +149,6 @@ type
     Ids of valid sections within application's persistent storage.
   }
   TSettingsSectionId = (
-    ssMainWindow,         // info about main window
     ssFindText,           // info about last text search
     ssFindCompiler,       // info about last compiler search
     ssFindXRefs,          // info about last XRef search
@@ -423,7 +422,6 @@ function TSettingsBase.SectionStorage(
 const
   // Map of known sections onto storage that contains them
   cSectionStorageMap: array[TSettingsSectionId] of TSettingsStorageId = (
-    ssUser,     // ssMainWindow
     ssUser,     // ssFindText
     ssUser,     // ssFindCompiler
     ssUser,     // ssFindXRefs
@@ -535,7 +533,6 @@ function TIniSettings.SectionName(const Id: TSettingsSectionId;
 const
   // Map of section ids to names
   cSectionNames: array[TSettingsSectionId] of string = (   
-    'MainWindow',       // ssMainWindow
     'FindText',         // ssFindText
     'FindCompiler',     // ssFindCompiler
     'FindXRefs',        // ssFindXRefs
