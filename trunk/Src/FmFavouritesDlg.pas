@@ -49,10 +49,23 @@ type
     procedure actDeleteAllUpdate(Sender: TObject);
     procedure actDeleteAllExecute(Sender: TObject);
   strict private
+    type
+      TPersistentOptions = class(TObject)
+      strict private
+        var
+          fDisplayInNewTabs: Boolean;
+      public
+        constructor Create;
+        destructor Destroy; override;
+        property DisplayInNewTabs: Boolean
+          read fDisplayInNewTabs write fDisplayInNewTabs;
+      end;
+  strict private
     var
       fLVFavs: TListViewEx;
       fFavourites: TFavourites;
       fNotifier: INotifier;
+      fOptions: TPersistentOptions;
     class var
       fInstance: TFavouritesDlg;
     ///  <summary>Specifies that a TFavouriteListItem is to be used to create
@@ -78,6 +91,7 @@ type
   strict protected
     procedure ConfigForm; override;
     procedure ArrangeForm; override;
+    procedure InitForm; override;
   public
     class procedure Display(AOwner: TComponent; const Favourites: TFavourites;
       Notifier: INotifier);
@@ -93,7 +107,7 @@ uses
   // Delphi
   SysUtils, DateUtils,
   // Project
-  UCtrlArranger, UMessageBox, UStrUtils;
+  UCtrlArranger, UMessageBox, USettings, UStrUtils;
 
 {$R *.dfm}
 
@@ -253,7 +267,6 @@ begin
   if not fInstance.Visible then
   begin
     fInstance.Show;
-    fInstance.PopulateLV;
   end;
   fInstance.SetFocus;
 end;
@@ -289,12 +302,22 @@ procedure TFavouritesDlg.FormCreate(Sender: TObject);
 begin
   inherited;
   CreateLV;
+  fOptions := TPersistentOptions.Create;
 end;
 
 procedure TFavouritesDlg.FormDestroy(Sender: TObject);
 begin
   fFavourites.RemoveListener(FavouritesListener);
+  fOptions.DisplayInNewTabs := chkNewTab.Checked;
+  fOptions.Free;
   inherited;
+end;
+
+procedure TFavouritesDlg.InitForm;
+begin
+  inherited;
+  PopulateLV;
+  chkNewTab.Checked := fOptions.DisplayInNewTabs;
 end;
 
 class function TFavouritesDlg.IsDisplayed: Boolean;
@@ -364,6 +387,29 @@ procedure TFavouritesDlg.ReSortLV;
 begin
   if fLVFavs.SortColumn <> -1 then
     fLVFavs.CustomSort(nil, fLVFavs.SortColumn);
+end;
+
+{ TFavouritesDlg.TPersistentOptions }
+
+constructor TFavouritesDlg.TPersistentOptions.Create;
+var
+  Section: ISettingsSection;
+begin
+  inherited Create;
+  Section := Settings.ReadSection(ssFavourites);
+  fDisplayInNewTabs := Boolean(
+    StrToIntDef(Section.ItemValues['DisplayInNewTabs'], Ord(False))
+  );
+end;
+
+destructor TFavouritesDlg.TPersistentOptions.Destroy;
+var
+  Section: ISettingsSection;
+begin
+  Section := Settings.EmptySection(ssFavourites);
+  Section.ItemValues['DisplayInNewTabs'] := IntToStr(Ord(fDisplayInNewTabs));
+  Section.Save;
+  inherited;
 end;
 
 end.
