@@ -34,7 +34,7 @@ body {
   color: #336;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5 {
   font-family: Georgia, Garamond, "Times New Roman", Times, serif;
   font-weight: bold;
   color: navy;
@@ -61,6 +61,10 @@ h3 {
 h4 {
   margin: 0.5em 0 0 0;
   font-size: 12pt;
+}
+h5 {
+  margin: 0.5em 0 0 0;
+  font-size: 10pt;
 }
 
 p,
