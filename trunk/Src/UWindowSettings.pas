@@ -31,11 +31,11 @@ uses
 type
 
   {
-  TWindowSettings:
+  TMainWindowSettings:
     Class that can save and record position of main window along with some of
     the window's widgets.
   }
-  TWindowSettings = class(TPJCustomWdwState)
+  TMainWindowSettings = class(TPJCustomWdwState)
   strict private
     var
       fSplitterPos: Integer;      // Value of SplitterPos property
@@ -68,7 +68,7 @@ type
     procedure SaveWdwState(const Left, Top, Width, Height, State: Integer);
       override;
       {Writes window state to persistent local settings. Also writes information
-      about location, size and state of other main window widgets per assoicated
+      about location, size and state of other main window widgets per associated
       property values.
         @param Left [in] Location of left hand side of window.
         @param Top [in] Location of top of window.
@@ -120,9 +120,9 @@ uses
   USettings, UStructs;
 
 
-{ TWindowSettings }
+{ TMainWindowSettings }
 
-constructor TWindowSettings.Create(AOwner: TComponent);
+constructor TMainWindowSettings.Create(AOwner: TComponent);
   {Class constructor. Sets up object and default property values.
     @param AOwner [in] Owning component (must be a TForm).
   }
@@ -135,7 +135,7 @@ begin
   fSplitterPos := cDefLeftPanelWidth; // default splitter position
 end;
 
-procedure TWindowSettings.ReadWdwState(var Left, Top, Width, Height,
+procedure TMainWindowSettings.ReadWdwState(var Left, Top, Width, Height,
   State: Integer);
   {Reads window state from persistent local settings. Also reads information
   about location, size and state of other main window widgets and sets
@@ -176,7 +176,7 @@ begin
   fOverviewTab := StrToIntDef(Section.ItemValues['OverviewTab'], fOverviewTab);
 end;
 
-procedure TWindowSettings.SaveWdwState(const Left, Top, Width, Height,
+procedure TMainWindowSettings.SaveWdwState(const Left, Top, Width, Height,
   State: Integer);
   {Writes window state to persistent local settings. Also writes information
   about location, size and state of other main window widgets per assoicated
