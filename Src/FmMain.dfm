@@ -870,6 +870,7 @@ inherited MainForm: TMainForm
       Category = 'Snippets'
       Caption = 'Show Favourites...'
       Hint = 'Show Favourites|Display Favourites Dialogue Box'
+      ShortCut = 115
       OnExecute = actFavouritesExecute
     end
     object actAddFavourite: TAction
