@@ -140,8 +140,13 @@ inherited MainForm: TMainForm
       Top = 0
       Action = actSaveDatabase
     end
-    object tbSpacer5: TToolButton
+    object tbFavourites: TToolButton
       Left = 361
+      Top = 0
+      Action = actAddFavourite
+    end
+    object tbSpacer5: TToolButton
+      Left = 384
       Top = 0
       Width = 8
       Caption = 'tbSpacer5'
@@ -149,12 +154,12 @@ inherited MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbTestCompile: TToolButton
-      Left = 369
+      Left = 392
       Top = 0
       Action = actTestCompile
     end
     object tbSpacer6: TToolButton
-      Left = 392
+      Left = 415
       Top = 0
       Width = 8
       Caption = 'tbSpacer6'
@@ -162,12 +167,12 @@ inherited MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbUpdateDbase: TToolButton
-      Left = 400
+      Left = 423
       Top = 0
       Action = actUpdateDbase
     end
     object tbSpacer4: TToolButton
-      Left = 423
+      Left = 446
       Top = 0
       Width = 8
       Caption = 'tbSpacer4'
@@ -175,7 +180,7 @@ inherited MainForm: TMainForm
       Style = tbsSeparator
     end
     object tbHelpContents: TToolButton
-      Left = 431
+      Left = 454
       Top = 0
       Action = actHelpContents
     end
@@ -869,13 +874,14 @@ inherited MainForm: TMainForm
     object actFavourites: TAction
       Category = 'Snippets'
       Caption = 'Show Favourites...'
-      Hint = 'Show Favourites|Display Favourites Dialogue Box'
+      Hint = 'Show Favourites|Display Favourites dialogue box'
       ShortCut = 115
       OnExecute = actFavouritesExecute
     end
     object actAddFavourite: TAction
       Category = 'Snippets'
       Caption = 'Add To Favourites'
+      Hint = 'Add to Favourites|Make the selected snippet a Favourite'
       ImageIndex = 48
       ShortCut = 41030
       OnExecute = actAddFavouriteExecute

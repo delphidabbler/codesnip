@@ -239,6 +239,7 @@ type
     miFavourites: TMenuItem;
     actAddFavourite: TAction;
     miAddFavourite: TMenuItem;
+    tbFavourites: TToolButton;
     procedure actAboutExecute(Sender: TObject);
     procedure actAddCategoryExecute(Sender: TObject);
     procedure actAddSnippetExecute(Sender: TObject);
