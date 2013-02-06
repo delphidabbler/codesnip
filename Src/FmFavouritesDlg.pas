@@ -26,6 +26,7 @@ uses
   // 3rd party
   LVEx,
   // Project
+  USnippetIDs,
   FmGenericNonModalDlg, Favourites.UFavourites, IntfNotifier, UWindowSettings;
 
 
@@ -113,6 +114,7 @@ type
     procedure FadeTo(const EndTransparency: Byte);
     procedure FadeIn;
     procedure FadeOut;
+    function FindListItem(const SnippetID: TSnippetID): TListItem;
   strict protected
     procedure ConfigForm; override;
     procedure ArrangeForm; override;
@@ -188,14 +190,17 @@ end;
 procedure TFavouritesDlg.actDisplayExecute(Sender: TObject);
 var
   LI: TFavouriteListItem;
+  SelectedSnippet: TSnippetID;
 begin
   LI := fLVFavs.Selected as TFavouriteListItem;
+  SelectedSnippet := LI.Favourite.SnippetID;
   fNotifier.DisplaySnippet(
-    LI.Favourite.SnippetID.Name,
-    LI.Favourite.SnippetID.UserDefined,
+    SelectedSnippet.Name,
+    SelectedSnippet.UserDefined,
     chkNewTab.Checked
   );
-  fFavourites.Touch(LI.Favourite.SnippetID);
+  fFavourites.Touch(SelectedSnippet);
+  fLVFavs.Selected := FindListItem(SelectedSnippet);
 end;
 
 procedure TFavouritesDlg.actDisplayUpdate(Sender: TObject);
@@ -323,20 +328,46 @@ procedure TFavouritesDlg.FavouritesListener(Sender: TObject;
   const EvtInfo: IInterface);
 var
   Evt: IFavouritesChangeEventInfo;
+  SelectedSnippet: TSnippetID;
+  HaveSelection: Boolean;
 begin
   Evt := EvtInfo as IFavouritesChangeEventInfo;
   case Evt.Action of
     cnAdded:
     begin
+      HaveSelection := Assigned(fLVFavs.Selected);
+      if HaveSelection then
+        SelectedSnippet :=
+          (fLVFavs.Selected as TFavouriteListItem).Favourite.SnippetID;
       AddLVItem(Evt.Favourite);
       ReSortLV;
+      if HaveSelection then
+        fLVFavs.Selected := FindListItem(SelectedSnippet);
     end;
     cnRemoved:
     begin
+      HaveSelection := Assigned(fLVFavs.Selected);
+      if HaveSelection then
+        SelectedSnippet :=
+          (fLVFavs.Selected as TFavouriteListItem).Favourite.SnippetID;
       RemoveLVItem(Evt.Favourite);
       ReSortLV;
+      if HaveSelection and (Evt.Favourite.SnippetID <> SelectedSnippet) then
+        fLVFavs.Selected := FindListItem(SelectedSnippet);
     end;
   end;
+end;
+
+function TFavouritesDlg.FindListItem(const SnippetID: TSnippetID): TListItem;
+var
+  LI: TListItem;
+begin
+  for LI in fLVFavs.Items do
+  begin
+    if (LI as TFavouriteListItem).Favourite.SnippetID = SnippetID then
+      Exit(LI);
+  end;
+  Result := nil;
 end;
 
 procedure TFavouritesDlg.FormActivate(Sender: TObject);
