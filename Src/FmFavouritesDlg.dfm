@@ -4,6 +4,8 @@ inherited FavouritesDlg: TFavouritesDlg
   OnActivate = FormActivate
   OnClose = FormClose
   OnDeactivate = FormDeactivate
+  ExplicitWidth = 474
+  ExplicitHeight = 374
   PixelsPerInch = 96
   TextHeight = 13
   object lblTransparency: TLabel [1]
@@ -72,8 +74,6 @@ inherited FavouritesDlg: TFavouritesDlg
     TabOrder = 1
     TickStyle = tsNone
     OnChange = tbTransparencyChange
-    OnEnter = tbTransparencyEnter
-    OnExit = tbTransparencyExit
     OnKeyDown = tbTransparencyKeyDown
     OnKeyUp = tbTransparencyKeyUp
   end
@@ -95,12 +95,5 @@ inherited FavouritesDlg: TFavouritesDlg
       OnExecute = actDeleteAllExecute
       OnUpdate = actDeleteAllUpdate
     end
-  end
-  object timerTrackbar: TTimer
-    Enabled = False
-    Interval = 250
-    OnTimer = timerTrackbarTimer
-    Left = 224
-    Top = 176
   end
 end
