@@ -1,8 +1,19 @@
 inherited FavouritesDlg: TFavouritesDlg
+  AlphaBlend = True
   Caption = 'Favourites'
+  OnActivate = FormActivate
   OnClose = FormClose
+  OnDeactivate = FormDeactivate
   PixelsPerInch = 96
   TextHeight = 13
+  object lblTransparency: TLabel [1]
+    Left = 8
+    Top = 309
+    Width = 70
+    Height = 13
+    Caption = 'Tr&ansparency:'
+    FocusControl = tbTransparency
+  end
   inherited pnlBody: TPanel
     object btnDisplay: TButton
       Left = 293
@@ -40,6 +51,32 @@ inherited FavouritesDlg: TFavouritesDlg
       TabOrder = 0
     end
   end
+  inherited btnHelp: TButton
+    TabOrder = 3
+  end
+  inherited btnClose: TButton
+    TabOrder = 2
+  end
+  object tbTransparency: TTrackBar
+    Left = 95
+    Top = 304
+    Width = 100
+    Height = 25
+    Max = 255
+    Min = 128
+    Position = 160
+    PositionToolTip = ptBottom
+    SelEnd = 255
+    SelStart = 128
+    ShowSelRange = False
+    TabOrder = 1
+    TickStyle = tsNone
+    OnChange = tbTransparencyChange
+    OnEnter = tbTransparencyEnter
+    OnExit = tbTransparencyExit
+    OnKeyDown = tbTransparencyKeyDown
+    OnKeyUp = tbTransparencyKeyUp
+  end
   object alDlg: TActionList
     Left = 416
     Top = 152
@@ -58,5 +95,12 @@ inherited FavouritesDlg: TFavouritesDlg
       OnExecute = actDeleteAllExecute
       OnUpdate = actDeleteAllUpdate
     end
+  end
+  object timerTrackbar: TTimer
+    Enabled = False
+    Interval = 250
+    OnTimer = timerTrackbarTimer
+    Left = 224
+    Top = 176
   end
 end
