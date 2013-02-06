@@ -42,7 +42,6 @@ type
     chkNewTab: TCheckBox;
     tbTransparency: TTrackBar;
     lblTransparency: TLabel;
-    timerTrackbar: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actDisplayUpdate(Sender: TObject);
@@ -55,13 +54,10 @@ type
     procedure FormActivate(Sender: TObject);
     procedure FormDeactivate(Sender: TObject);
     procedure tbTransparencyChange(Sender: TObject);
-    procedure timerTrackbarTimer(Sender: TObject);
     procedure tbTransparencyKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
     procedure tbTransparencyKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure tbTransparencyExit(Sender: TObject);
-    procedure tbTransparencyEnter(Sender: TObject);
   strict private
     type
       TPersistentOptions = class(TObject)
@@ -85,6 +81,7 @@ type
       fOptions: TPersistentOptions;
       fWindowSettings: TDlgWindowSettings;
       fTrackBarKeyDown: Boolean;
+      fTrackBarMouseDown: Boolean;
     class var
       fInstance: TFavouritesDlg;
     ///  <summary>Specifies that a TFavouriteListItem is to be used to create
@@ -115,6 +112,10 @@ type
     procedure FadeIn;
     procedure FadeOut;
     function FindListItem(const SnippetID: TSnippetID): TListItem;
+    procedure TBTransparencyMouseDown(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
+    procedure TBTransparencyMouseUp(Sender: TObject; Button: TMouseButton;
+      Shift: TShiftState; X, Y: Integer);
   strict protected
     procedure ConfigForm; override;
     procedure ArrangeForm; override;
@@ -151,6 +152,13 @@ type
     ///  <summary>Favourite associated with list item.</summary>
     property Favourite: TFavourite read fFavourite write fFavourite;
   end;
+
+type
+  ///  <summary>Hack to enable OnMouseUp and OnMouseDown events of TTrackBar to
+  ///  be set.</summary>
+  ///  <remarks>For some reason these events are protected in TTrackBar.
+  ///  </remarks>
+  TTrackBarHack = class(TTrackBar);
 
 { TFavouritesDlg }
 
@@ -248,6 +256,8 @@ procedure TFavouritesDlg.ConfigForm;
 begin
   inherited;
   fFavourites.AddListener(FavouritesListener);
+  TTrackBarHack(tbTransparency).OnMouseDown := TBTransparencyMouseDown;
+  TTrackBarHack(tbTransparency).OnMouseUp := TBTransparencyMouseUp;
 end;
 
 procedure TFavouritesDlg.CreateLV;
@@ -500,40 +510,36 @@ end;
 
 procedure TFavouritesDlg.tbTransparencyChange(Sender: TObject);
 begin
-  FadeOut;
-  timerTrackbar.Enabled := True;
-end;
-
-procedure TFavouritesDlg.tbTransparencyEnter(Sender: TObject);
-begin
-  FadeOut;
-end;
-
-procedure TFavouritesDlg.tbTransparencyExit(Sender: TObject);
-begin
-  FadeIn;
+  if fTrackBarKeyDown or fTrackBarMouseDown then
+    AlphaBlendValue := tbTransparency.Position;
 end;
 
 procedure TFavouritesDlg.tbTransparencyKeyDown(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
   fTrackBarKeyDown := True;
+  FadeOut;
 end;
 
 procedure TFavouritesDlg.tbTransparencyKeyUp(Sender: TObject; var Key: Word;
   Shift: TShiftState);
 begin
+  FadeIn;
   fTrackBarKeyDown := False;
 end;
 
-procedure TFavouritesDlg.timerTrackbarTimer(Sender: TObject);
+procedure TFavouritesDlg.TBTransparencyMouseDown(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
 begin
-  if Active
-    and (AlphaBlendValue < 255)
-    and (Mouse.Capture <> tbTransparency.Handle)
-    and not fTrackBarKeyDown then
-    FadeIn;
-  timerTrackbar.Enabled := False;
+  FadeOut;
+  fTrackBarMouseDown := True;
+end;
+
+procedure TFavouritesDlg.TBTransparencyMouseUp(Sender: TObject;
+  Button: TMouseButton; Shift: TShiftState; X, Y: Integer);
+begin
+  fTrackBarMouseDown := False;
+  FadeIn;
 end;
 
 { TFavouritesDlg.TPersistentOptions }
