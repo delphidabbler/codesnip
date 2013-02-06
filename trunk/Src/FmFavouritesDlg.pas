@@ -39,6 +39,9 @@ type
     actDeleteAll: TAction;
     actDisplay: TAction;
     chkNewTab: TCheckBox;
+    tbTransparency: TTrackBar;
+    lblTransparency: TLabel;
+    timerTrackbar: TTimer;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actDisplayUpdate(Sender: TObject);
@@ -48,17 +51,30 @@ type
     procedure actDeleteExecute(Sender: TObject);
     procedure actDeleteAllUpdate(Sender: TObject);
     procedure actDeleteAllExecute(Sender: TObject);
+    procedure FormActivate(Sender: TObject);
+    procedure FormDeactivate(Sender: TObject);
+    procedure tbTransparencyChange(Sender: TObject);
+    procedure timerTrackbarTimer(Sender: TObject);
+    procedure tbTransparencyKeyDown(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure tbTransparencyKeyUp(Sender: TObject; var Key: Word;
+      Shift: TShiftState);
+    procedure tbTransparencyExit(Sender: TObject);
+    procedure tbTransparencyEnter(Sender: TObject);
   strict private
     type
       TPersistentOptions = class(TObject)
       strict private
         var
           fDisplayInNewTabs: Boolean;
+          fInactiveAlphaBlendValue: Byte;
       public
         constructor Create;
         destructor Destroy; override;
         property DisplayInNewTabs: Boolean
           read fDisplayInNewTabs write fDisplayInNewTabs;
+        property InactiveAlphaBlendValue: Byte
+          read fInactiveAlphaBlendValue write fInactiveAlphaBlendValue;
       end;
   strict private
     var
@@ -67,6 +83,7 @@ type
       fNotifier: INotifier;
       fOptions: TPersistentOptions;
       fWindowSettings: TDlgWindowSettings;
+      fTrackBarKeyDown: Boolean;
     class var
       fInstance: TFavouritesDlg;
     ///  <summary>Specifies that a TFavouriteListItem is to be used to create
@@ -93,6 +110,9 @@ type
     procedure AddLVItem(const Favourite: TFavourite);
     procedure RemoveLVItem(const Favourite: TFavourite);
     procedure FavouritesListener(Sender: TObject; const EvtInfo: IInterface);
+    procedure FadeTo(const EndTransparency: Byte);
+    procedure FadeIn;
+    procedure FadeOut;
   strict protected
     procedure ConfigForm; override;
     procedure ArrangeForm; override;
@@ -208,6 +228,9 @@ begin
   pnlBody.ClientWidth := TCtrlArranger.TotalControlWidth(pnlBody) + 4;
   pnlBody.ClientHeight := TCtrlArranger.TotalControlHeight(pnlBody);
   inherited;
+  TCtrlArranger.AlignLefts([pnlBody, lblTransparency]);
+  TCtrlArranger.MoveToRightOf(lblTransparency, tbTransparency, 4);
+  TCtrlArranger.AlignTops([btnClose, lblTransparency, tbTransparency]);
 end;
 
 class procedure TFavouritesDlg.Close;
@@ -272,6 +295,30 @@ begin
   fInstance.SetFocus;
 end;
 
+procedure TFavouritesDlg.FadeIn;
+begin
+  FadeTo(High(Byte));
+end;
+
+procedure TFavouritesDlg.FadeOut;
+begin
+  FadeTo(tbTransparency.Position);
+end;
+
+procedure TFavouritesDlg.FadeTo(const EndTransparency: Byte);
+var
+  Step: Int8;
+begin
+  Step := -1;
+  if AlphaBlendValue < EndTransparency then
+    Step := -Step;
+  while AlphaBlendValue <> EndTransparency do
+  begin
+    AlphaBlendValue := AlphaBlendValue + Step;
+    Sleep(2);
+  end;
+end;
+
 procedure TFavouritesDlg.FavouritesListener(Sender: TObject;
   const EvtInfo: IInterface);
 var
@@ -292,6 +339,11 @@ begin
   end;
 end;
 
+procedure TFavouritesDlg.FormActivate(Sender: TObject);
+begin
+  FadeIn;
+end;
+
 procedure TFavouritesDlg.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   inherited;
@@ -305,12 +357,19 @@ begin
   CreateLV;
   fOptions := TPersistentOptions.Create;
   fWindowSettings := TDlgWindowSettings.CreateStandAlone(Self);
+  AlphaBlendValue := High(Byte);
+end;
+
+procedure TFavouritesDlg.FormDeactivate(Sender: TObject);
+begin
+  FadeOut;
 end;
 
 procedure TFavouritesDlg.FormDestroy(Sender: TObject);
 begin
   fFavourites.RemoveListener(FavouritesListener);
   fOptions.DisplayInNewTabs := chkNewTab.Checked;
+  fOptions.InactiveAlphaBlendValue := tbTransparency.Position;
   fOptions.Free;
   fWindowSettings.Save;
   inherited;
@@ -322,6 +381,9 @@ begin
   fWindowSettings.Restore;
   PopulateLV;
   chkNewTab.Checked := fOptions.DisplayInNewTabs;
+  tbTransparency.OnChange := nil;
+  tbTransparency.Position := fOptions.InactiveAlphaBlendValue;
+  tbTransparency.OnChange := tbTransparencyChange;
 end;
 
 class function TFavouritesDlg.IsDisplayed: Boolean;
@@ -405,6 +467,44 @@ begin
     fLVFavs.CustomSort(nil, fLVFavs.SortColumn);
 end;
 
+procedure TFavouritesDlg.tbTransparencyChange(Sender: TObject);
+begin
+  FadeOut;
+  timerTrackbar.Enabled := True;
+end;
+
+procedure TFavouritesDlg.tbTransparencyEnter(Sender: TObject);
+begin
+  FadeOut;
+end;
+
+procedure TFavouritesDlg.tbTransparencyExit(Sender: TObject);
+begin
+  FadeIn;
+end;
+
+procedure TFavouritesDlg.tbTransparencyKeyDown(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  fTrackBarKeyDown := True;
+end;
+
+procedure TFavouritesDlg.tbTransparencyKeyUp(Sender: TObject; var Key: Word;
+  Shift: TShiftState);
+begin
+  fTrackBarKeyDown := False;
+end;
+
+procedure TFavouritesDlg.timerTrackbarTimer(Sender: TObject);
+begin
+  if Active
+    and (AlphaBlendValue < 255)
+    and (Mouse.Capture <> tbTransparency.Handle)
+    and not fTrackBarKeyDown then
+    FadeIn;
+  timerTrackbar.Enabled := False;
+end;
+
 { TFavouritesDlg.TPersistentOptions }
 
 constructor TFavouritesDlg.TPersistentOptions.Create;
@@ -416,6 +516,9 @@ begin
   fDisplayInNewTabs := Boolean(
     StrToIntDef(Section.ItemValues['DisplayInNewTabs'], Ord(False))
   );
+  fInactiveAlphaBlendValue := StrToIntDef(
+    Section.ItemValues['InactiveAlphaBlendValue'], 160)
+  ;
 end;
 
 destructor TFavouritesDlg.TPersistentOptions.Destroy;
@@ -424,6 +527,9 @@ var
 begin
   Section := Settings.EmptySection(ssFavourites);
   Section.ItemValues['DisplayInNewTabs'] := IntToStr(Ord(fDisplayInNewTabs));
+  Section.ItemValues['InactiveAlphaBlendValue'] := IntToStr(
+    fInactiveAlphaBlendValue
+  );
   Section.Save;
   inherited;
 end;
