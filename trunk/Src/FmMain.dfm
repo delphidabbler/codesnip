@@ -876,6 +876,7 @@ inherited MainForm: TMainForm
     object actAddFavourite: TAction
       Category = 'Snippets'
       Caption = 'Add To Favourites'
+      ImageIndex = 48
       ShortCut = 41030
       OnExecute = actAddFavouriteExecute
       OnUpdate = actAddFavouriteUpdate
