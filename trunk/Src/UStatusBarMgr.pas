@@ -3,7 +3,7 @@
  * v. 2.0. If a copy of the MPL was not distributed with this file, You can
  * obtain one at http://mozilla.org/MPL/2.0/
  *
- * Copyright (C) 2007-2012, Peter Johnson (www.delphidabbler.com).
+ * Copyright (C) 2007-2013, Peter Johnson (www.delphidabbler.com).
  *
  * $Rev$
  * $Date$
@@ -150,6 +150,7 @@ begin
   fStatusBar.AutoHint := False;
   // Enable owner drawing for second panel in status bar
   fStatusBar.OnDrawPanel := DrawPanel;
+  fStatusBar.Panels[cDBPanel].Style := psOwnerDraw;
   fStatusBar.Panels[cSearchPanel].Style := psOwnerDraw;
   fStatusBar.Panels[cUserPanel].Style := psOwnerDraw;
   fStatusBar.Panels[cUserPanel].Text := sModified;
@@ -226,6 +227,8 @@ begin
   // Clear the panel
   StatusBar.Canvas.FillRect(Rect);
   case Panel.ID of
+    cDBPanel:
+      DrawTextInPanel(2, 2, Panel.Text);
     cSearchPanel:
     begin
       // We do nothing else if there's no glyph or search info not to be shown
@@ -241,9 +244,7 @@ begin
         Exit;
       DrawGlyphInPanel(fModifiedGlyph, clWhite);
       DrawTextInPanel(fModifiedGlyph.Width + 6, 12, Panel.Text);
-    end
-    else
-      // Do nothing: we only support drawing of second panel (Panel.ID=1)
+    end;
   end;
 end;
 
@@ -340,26 +341,31 @@ procedure TStatusBarMgr.ShowSnippetsInfo;
   }
 var
   TotalSnippets: Integer;     // number of snippets in database
-  TotalUserSnippets: Integer; // number of user-defined snippets in database
   TotalCategories: Integer;   // total number of categories
-  DisplayText: string;        // text to display in database
 resourcestring
-  // status bar messages
-  sNoUserInfo = '%0:d snippets in %1:d categories';
-  sWithUserInfo = '%0:d snippets (%2:d user defined) in %1:d categories';
+  // status bar message strings
+  sSnippet = 'snippet';
+  sSnippets = 'snippets';
+  sCategory = 'category';
+  sCategories = 'categories';
+  sStats = '%0:d %1:s in %2:d %3:s';
+const
+  SnippetsStr: array[Boolean] of string = (sSnippet, sSnippets);
+  CategoriesStr: array[Boolean] of string = (sCategory, sCategories);
 begin
   // Calculate database stats
   TotalSnippets := Database.Snippets.Count;
-  TotalUserSnippets := Database.Snippets.Count(True);
   TotalCategories := Database.Categories.Count;
   // Build display text and display it
-  if TotalUserSnippets = 0 then
-    DisplayText := Format(sNoUserInfo, [TotalSnippets, TotalCategories])
-  else
-    DisplayText := Format(
-      sWithUserInfo, [TotalSnippets, TotalCategories, TotalUserSnippets]
-    );
-  fStatusBar.Panels[cDBPanel].Text := DisplayText;
+  fStatusBar.Panels[cDBPanel].Text := Format(
+    sStats,
+    [
+      TotalSnippets,
+      SnippetsStr[TotalSnippets <> 1],
+      TotalCategories,
+      CategoriesStr[TotalCategories <> 1]
+    ]
+  );
 end;
 
 procedure TStatusBarMgr.ShowUserDBInfo;
