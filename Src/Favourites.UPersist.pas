@@ -8,37 +8,57 @@
  * $Rev$
  * $Date$
  *
- * Defines a class that can persist a list of favourites to and from a file on
- * a per user basis.
+ * Defines an advanced record that can persist a list of favourites to and from
+ * a file on a per user basis.
 }
 
 
 unit Favourites.UPersist;
 
+
 interface
 
+
 uses
+  // Project
   Favourites.UFavourites, UExceptions;
 
+
 type
+  ///  <summary>Type of exception raised by TFavouritesPersist.</summary>
   EFavouritesPersist = class(ECodeSnip);
 
 type
+  ///  <summary>Persists a list of favourites to and from a file in the current
+  ///  user's application data directory.</summary>
   TFavouritesPersist = record
   strict private
     const
+      ///  <summary>Watermark that is present one the first line of a valid
+      ///  favourites file.</summary>
       Watermark = #$25BA + ' CodeSnip Favourites v1 ' + #$25C4;
+  strict private
+    ///  <summary>Returns fully specified name of the favourites file.</summary>
     class function FavouritesFileName: string; static;
   public
+    ///  <summary>Saves all favourites from given favourites list to file.
+    ///  </summary>
     class procedure Save(Favourites: TFavourites); static;
+    ///  <summary>Loads all favourites from file into given favourites list.
+    ///  </summary>
     class procedure Load(Favourites: TFavourites); static;
   end;
 
+
 implementation
 
+
 uses
+  // Delphi
   SysUtils, IOUtils, Classes,
+  /// Project
   DB.UMain, UAppInfo, UConsts, UIOUtils, UIStringList, USnippetIDs, UStrUtils;
+
 
 { TFavouritesPersist }
 
@@ -130,3 +150,4 @@ begin
 end;
 
 end.
+
