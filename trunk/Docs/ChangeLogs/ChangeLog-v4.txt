@@ -11,6 +11,22 @@
 ; Change Log for CodeSnip Release 4
 ; ------------------------------------------------------------------------------
 
+Release v4.2.0 of 07 February 2013
++ Added support for "favourite" snippets. Implements feature request #37 (http://bit.ly/12unShW):
+  - Any displayed snippet can be flagged as a favourite via a menu option or toolbar button.
+  - A new non-modal dialogue box can now be displayed alongside the CodeSnip window for easy selection and management of favourite snippets.
++ Changes to Duplicate Snippets dialogue box:
+  - Display name of duplicate snippet can be edited. Implements feature request #64 (http://bit.ly/14TdUGF).
+  - Snippets Editor can be opened immediately the Duplicate Snippet dialogue box closes to edit the duplicated snippet. Implements feature request #65 (http://bit.ly/UBlt2Y).
++ Status bar changed: first panel now displays no category information, but displays both total number of snippets and number of snippets in each database.
++ Fixed unreported bug in save dialogue boxes where overwrite permission requests could be displayed erroneously.
++ Program closes gracefully if run on unsupported versions.
++ Updated some 3rd party code to latest available versions.
++ Some refactoring.
++ Per-user configuration file format changed to v11 which is not fully compatible with older versions of CodeSnip.
++ Updated help file re changes in Duplicate Snippets dialogue box and addition of support for Favourites.
++ Updated documentation.
+
 Release v4.1.1 of 30 January 2013
 + Fixed bugs:
   - #68 (http://bit.ly/WxG6LC): Comments missing in unit / code generation for some types.
@@ -38,7 +54,7 @@ Release v4.1.0 of 06 January 2013
 + Reimplemented database search engine.
 + Some external links modified that will seamlessly accommodate future changes in destination URLs.
 + Changed some glyphs used in menus.
-+ Per-user confuration file format changed: bumped file version to 10.
++ Per-user configuration file format changed: bumped file version to 10.
 + Some refactoring.
 + Help file updated re changes & added privacy statement to TOC.
 + Updated documentation:
@@ -116,7 +132,7 @@ Internal CodeSnip version 3.999.1
 + Completely new Easter Egg.
 + Refactoring and internal code changes, including a revision of the "external" object that communicates with JavaScript in browser controls.
 + Changed License:
-  - EULA for excutable code changed to Mozilla Public License v2.0.
+  - EULA for executable code changed to Mozilla Public License v2.0.
   - Most original source code changed to Mozilla Public License v2.0 from v1.1.
   - Only an abbreviated version of the license is now displayed by the installer and in the help file.
   - License information has been consolidated into a new file: License.html.
@@ -141,7 +157,7 @@ Internal CodeSnip version 3.99.2
   - #3560317 (http://bit.ly/PUcEgV): The caption of the Active Text preview dialogue box refers to "Extra" text when it is used to preview a snippet's description.
   - #3560521 (http://bit.ly/RG7Jlw): The state of the Overview tree often doesn't restore correctly after a database update.
   - #3560958 (http://bit.ly/TX7M9V): Snippets are not sorted correctly (i.e. on display name) in the Overview pane.
-  - #3561014 (http://bit.ly/PEFgXY): The current view in the Display pane is not cleared, wven though all tabs are closed, when the database is re-loading.
+  - #3561014 (http://bit.ly/PEFgXY): The current view in the Display pane is not cleared, even though all tabs are closed, when the database is re-loading.
   - #3561047 (http://bit.ly/Pf5L5v): The Category view in the Overview pane sometimes appears fully expanded when it is expected to be fully collapsed.
   - Untracked: Removed "(v4 preview)" text that had been left in main window title bar.
   - Untracked: Minor accelerator key related problems in the Preferences dialogue box.
@@ -197,11 +213,11 @@ Internal CodeSnip version 3.99.1
   - Formatting of REML code improved when re-displayed.
 + Bug fixes:
   - Bug #3536331 fixed (http://bit.ly/KQTYc3): words at the end of some paragraphs in a snippet's extra information were not being found in "whole word only" searches.
-  - Fixed unreported file parsing bug that occured when loading a saved snippet selection from disk.
+  - Fixed unreported file parsing bug that occurred when loading a saved snippet selection from disk.
 + Changed Delphi compiler detection so that compilers can be detected by examining current user registry key in addition to local machine registry key. This enables Delphis that were installed for a given user only to be detected.
 + Improved error handling when reading and writing snippet selection files.
 + User database and export file formats updated to v6.
-+ Per-user confuration file format changes: bumped file version to v9.
++ Per-user configuration file format changes: bumped file version to v9.
 + Major changes to installer:
   - Now always brings forward any earlier common config files if needed.
   - Per user configuration files are now ignored: they are handled by main program (see below).
@@ -283,7 +299,7 @@ Changes relate to v3.9.3
   - Some additions and changes to main window navigation keys.
   - Main window and task bar captions changed.
   - Some dialogue boxes tweaked.
-  - Compiler configuration dialogue box heavliy revised to support default compiler paths.
+  - Compiler configuration dialogue box heavily revised to support default compiler paths.
   - "About" dialogue box paths tab display improved.
   - Compile error dialogue box display standardised.
   - Splash screen updated.
@@ -300,7 +316,7 @@ Changes relate to v3.9.3
   - Database now supports Unicode Delphi source code.
   - Unicode Delphi identifiers can now be used for snippet names.
   - Export and backup file formats updated: new formats are not backward compatible but older versions can still be imported.
-  - Code submission service now supports Unicode souce code.
+  - Code submission service now supports Unicode source code.
   - Database updates now use v5 of delphidabbler.com web update service with revised checksum handling.
 + Unicode support:
   - Program now fully supports Unicode internally.
