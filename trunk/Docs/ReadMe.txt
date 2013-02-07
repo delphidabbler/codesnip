@@ -89,9 +89,10 @@ The installer makes the following changes to your system:
   stored in a "Database" sub-folder (see below).
 
 + An %AppData%\DelphiDabbler\CodeSnip.4 folder is also created. This is used to
-  hold a file that stores per-user configuration data. A "UserDatabase" sub-
-  folder is used to store any user defined snippets. These folders are created
-  when CodeSnip is first run.
+  hold a file that stores per-user configuration data and, sometimes, another
+  file that records any favourite snippets. A "UserDatabase" sub-folder is used
+  to store any user defined snippets. These folders are created when CodeSnip is
+  first run.
 
 If you are updating to CodeSnip 4 from version 3 or earlier, CodeSnip will give
 you the option of bringing forward your old settings and / or user defined
@@ -139,10 +140,10 @@ and Windows 7 with UAC prompts enabled will prompt for an admin password if
 necessary.
 
 The uninstall program will delete any local copy of the online Code Snippets
-database but will leave any user defined database and configuration data intact.
-To remove user defined databases and configuration data, delete the
-%AppData%\DelphiDabbler\CodeSnip.4 directory and all its contents for each user
-who ran CodeSnip.
+database but will leave any user defined database, configuration data and
+favourites intact. To remove user defined databases and configuration data,
+delete the %AppData%\DelphiDabbler\CodeSnip.4 directory and all its contents for
+each user who ran CodeSnip.
 
 Unistalling the Portable Edition
 --------------------------------
@@ -271,6 +272,11 @@ Known Installation and Upgrading Issues
   You can check this by displaying the About dialogue box. If it displays a
   Register CodeSnip button the program is not registered. You can (re)register
   if you wish by clicking the button.
+
++ If you have updated to CodeSnip v4.2 or later from any earlier v4 release, and
+  then run the earlier version of the program again, its saved main window
+  state, size, position and layout will have been lost and the program will
+  display in its default size.
 
 
 RSS News Feed
