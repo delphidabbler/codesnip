@@ -31,99 +31,233 @@ uses
 
 
 type
+  ///  <summary>Implements a non-modal dialogue box that displays and manages
+  ///  the user's favourite snippets.</summary>
+  ///  <remarks>By default the dialog box fades to semi-transparency when it is
+  ///  not active and returns to full opacity when activated.</remarks>
   TFavouritesDlg = class(TGenericNonModalDlg)
-    alDlg: TActionList;
-    btnDisplay: TButton;
-    btnDelete: TButton;
-    btnDeleteAll: TButton;
     actDelete: TAction;
     actDeleteAll: TAction;
     actDisplay: TAction;
+    alDlg: TActionList;
+    btnDelete: TButton;
+    btnDeleteAll: TButton;
+    btnDisplay: TButton;
     chkNewTab: TCheckBox;
-    tbTransparency: TTrackBar;
     lblTransparency: TLabel;
-    procedure FormCreate(Sender: TObject);
-    procedure FormClose(Sender: TObject; var Action: TCloseAction);
-    procedure actDisplayUpdate(Sender: TObject);
-    procedure actDisplayExecute(Sender: TObject);
-    procedure FormDestroy(Sender: TObject);
-    procedure actDeleteUpdate(Sender: TObject);
-    procedure actDeleteExecute(Sender: TObject);
-    procedure actDeleteAllUpdate(Sender: TObject);
+    tbTransparency: TTrackBar;
+    ///  <summary>Clears all favourites.</summary>
+    ///  <remarks>Prompts user for permission before proceeding.</remarks>
     procedure actDeleteAllExecute(Sender: TObject);
+    ///  <summary>Disables DeleteAll action iff there are no favourites.
+    ///  </summary>
+    procedure actDeleteAllUpdate(Sender: TObject);
+    ///  <summary>Removes favourite selected in list view from list.</summary>
+    procedure actDeleteExecute(Sender: TObject);
+    ///  <summary>Enables Delete action iff a favourite is selected in list
+    ///  view.</summary>
+    procedure actDeleteUpdate(Sender: TObject);
+    ///  <summary>Displays favourite selected in list view.</summary>
+    procedure actDisplayExecute(Sender: TObject);
+    ///  <summary>Enables Display action iff a favourite is selected in list
+    ///  view.</summary>
+    procedure actDisplayUpdate(Sender: TObject);
+    ///  <summary>Fades form to full opacity when dialogue box is activated.
+    ///  </summary>
     procedure FormActivate(Sender: TObject);
+    ///  <summary>Causes form's object instance to be automatically freed when
+    ///  closed.</summary>
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    ///  <summary>Sets default property values when form created.</summary>
+    procedure FormCreate(Sender: TObject);
+    ///  <summary>Fades form to specified transparency when dialogue box is
+    ///  de-activated.</summary>
     procedure FormDeactivate(Sender: TObject);
+    ///  <summary>Saves form's window state before it is destroyed.</summary>
+    procedure FormDestroy(Sender: TObject);
+    ///  <summary>Adjusts form transparency when transparency trackbar changes,
+    ///  per new trackbar position.</summary>
     procedure tbTransparencyChange(Sender: TObject);
+    ///  <summary>Records that a key has been pressed over the transparency
+    ///  trackbar and fades the form down to the transparency specified by the
+    ///  trackbar.</summary>
     procedure tbTransparencyKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
+    ///  <summary>Records that the currently depressed key has been released
+    ///  over trackbar and fades the form back up to full opacity.</summary>
     procedure tbTransparencyKeyUp(Sender: TObject; var Key: Word;
       Shift: TShiftState);
   strict private
     type
+      ///  <summary>Class used to read and store persistent options in settings
+      ///  </summary>
       TPersistentOptions = class(TObject)
       strict private
         var
+          ///  <summary>Value of DisplayInNewTabs property.</summary>
           fDisplayInNewTabs: Boolean;
+          ///  <summary>Value of InactiveAlphaBlendValue property.</summary>
           fInactiveAlphaBlendValue: Byte;
       public
+        ///  <summary>Constructs object and reads options from settings.
+        ///  </summary>
         constructor Create;
+        ///  <summary>Writes options to settings then destroys object.</summary>
         destructor Destroy; override;
+        ///  <summary>Specifies whether selected favourites are to be displayed
+        ///  in new tabs in main window's detail pane or not.</summary>
         property DisplayInNewTabs: Boolean
           read fDisplayInNewTabs write fDisplayInNewTabs;
+        ///  <summary>Stores alpha blend value that determines transparency of
+        ///  deactivated form.</summary>
         property InactiveAlphaBlendValue: Byte
           read fInactiveAlphaBlendValue write fInactiveAlphaBlendValue;
       end;
   strict private
     var
+      ///  <summary>Custom list view control used to display favourites.
+      ///  </summary>
       fLVFavs: TListViewEx;
+      ///  <summary>Object encapsulating favourites.</summary>
       fFavourites: TFavourites;
+      ///  <summary>Notifier object used to request display of snippets in main
+      ///  form.</summary>
       fNotifier: INotifier;
+      ///  <summary>Form's persistent options.</summary>
       fOptions: TPersistentOptions;
+      ///  <summary>Object used to read / write window position.</summary>
       fWindowSettings: TDlgWindowSettings;
+      ///  <summary>Flag indicating if a key is currently pressed when
+      ///  transparency trackbar has keyboard focus.</summary>
       fTrackBarKeyDown: Boolean;
+      ///  <summary>Flag indicating if mouse is currently pressed over
+      ///  transparency trackbar.</summary>
       fTrackBarMouseDown: Boolean;
     class var
+      ///  <summary>Reference to dialogue box form instance.</summary>
+      ///  <remarks>Set to nil if there is no instance of the form.</remarks>
       fInstance: TFavouritesDlg;
-    ///  <summary>Specifies that a TFavouriteListItem is to be used to create
-    ///  new list view items.</summary>
+  strict private
+    ///  <summary>Specifies list item class to be used to create list view items.
+    ///  </summary>
+    ///  <param name="Sender">TCustomListView [in] List view control for which
+    ///  list item class is required.</param>
+    ///  <param name="ItemClass">TListItemClass [in/out] Set to required class:
+    ///  TFavouriteListItem in all cases.</param>
     procedure LVFavouriteCreateItemClass(Sender: TCustomListView;
       var ItemClass: TListItemClass);
-    ///  <summary>Compares two list items, Item1 and Item2, using text contained
-    ///  in row specified Data parameter, recording result of comparison in
-    ///  Compare parameter.</summary>
+
+    ///  <summary>Compares two list items, Item1 and Item2 and records the
+    ///  result of the comparison in the Compare parameter.</summary>
+    ///  <remarks>Comparison depends on which column of data is being sorted.
+    ///  </remarks>
     procedure LVFavouritesCompare(Sender: TObject; Item1, Item2: TListItem;
       Data: Integer; var Compare: Integer);
+
+    ///  <summary>Handles double clicks on list view items by causing the
+    ///  associated favourite's snippet to be displayed.</summary>
     procedure LVDoubleClick(Sender: TObject);
+
+    ///  <summary>Overrides default drawing of given list viewed item caption by
+    ///  ensuring the associated favourite's snippet display name is rendered in
+    ///  correct colour.</summary>
+    ///  <remarks>Colour used depends on if snippet is user defined.</remarks>
     procedure LVCustomDrawItem(Sender: TCustomListView; Item: TListItem;
       State: TCustomDrawState; var DefaultDraw: Boolean);
+
+    ///  <summary>Ensures that given list view sub item is drawn in correct
+    ///  colour.</summary>
+    ///  <remarks>Colour is reverted to window text rather than colour set in
+    ///  LVCustomDrawItem method.</remarks>
     procedure LVCustomDrawSubItem(Sender: TCustomListView; Item: TListItem;
       SubItem: Integer; State: TCustomDrawState; var DefaultDraw: Boolean);
-    ///  <summary>Returns text of list item LI in column specified by Idx.
-    ///  </summary>
-    ///  <remarks>Idx = 0 returns list item's caption while Idx > 0 returns text
-    ///  of SubItem[Idx-1].</remarks>
+
+    ///  <summary>Creates and initialises properties of custom list view control
+    ///  used for displaying favourites.</summary>
     procedure CreateLV;
+
+    ///  <summary>Displays all favourites in favourites list view.</summary>
     procedure PopulateLV;
+
+    ///  <summary>Resorts favourites list view according to current sort column.
+    ///  </summary>
     procedure ReSortLV;
+
+    ///  <summary>Adds given favourite to favourites list view.</summary>
     procedure AddLVItem(const Favourite: TFavourite);
+
+    ///  <summary>Removes given favourite from favourites list view.</summary>
+    ///  <remarks>Does nothing if favourite is not in list view.</remarks>
     procedure RemoveLVItem(const Favourite: TFavourite);
+
+    ///  <summary>Listener method that receives and acts on change events
+    ///  triggered by favourites object.</summary>
+    ///  <param name="Sender">TObject [in] Reference to favourites object that
+    ///  triggered event.</param>
+    ///  <param name="EvtInfo">IInterface [in] Reference to object that carries
+    ///  information about the event.</param>
+    ///  <remarks>EvtInfo will always support the IFavouritesChangeEventInfo
+    ///  interface.</remarks>
     procedure FavouritesListener(Sender: TObject; const EvtInfo: IInterface);
+
+    ///  <summary>Changes the transparency old the form from its current level
+    ///  to the given new transparency level.</summary>
+    ///  <remarks>The change in transparency is done in steps to make it appear
+    ///  animated.</remarks>
     procedure FadeTo(const EndTransparency: Byte);
+
+    ///  <summary>Fades the form in from its transparent state to full opacity.
+    ///  </summary>
     procedure FadeIn;
+
+    ///  <summary>Fades the form from its current transparency to the level
+    ///  indicated by the transparency trackbar.</summary>
     procedure FadeOut;
+
+    ///  <summary>Finds the list item associated with the favourite that has the
+    ///  given snippet ID.</summary>
+    ///  <remarks>Returns nil if no mathcing list item exists.</remarks>
     function FindListItem(const SnippetID: TSnippetID): TListItem;
+
+    ///  <summary>Records that a mouse button has been pressed over the
+    ///  transparency trackbar and fades the form down to the transparency
+    ///  specified by the trackbar.</summary>
     procedure TBTransparencyMouseDown(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+
+    ///  <summary>Records that the currently depressed mouse button has been
+    ///  released over the trackbar and fades the form back up to full
+    ///  opacity.</summary>
     procedure TBTransparencyMouseUp(Sender: TObject; Button: TMouseButton;
       Shift: TShiftState; X, Y: Integer);
+
   strict protected
+    ///  <summary>Configures some of the form's objects.</summary>
     procedure ConfigForm; override;
+
+    ///  <summary>Arranges and aligns the form's controls.</summary>
     procedure ArrangeForm; override;
+
+    ///  <summary>Initialises form's controls and restores last window position.
+    ///  </summary>
     procedure InitForm; override;
+
   public
+    ///  <summary>Displays and intialises the dialogue box non-modally, or re-activates it if
+    ///  already displayed.</summary>
+    ///  <param name="AOwner">TComponent [in] Reference to any owning component.
+    ///  May be nil.</param>
+    ///  <param name="Favourites">TFavourites [in] Reference to favourites
+    ///  object to be displayed or managed.</param>
+    ///  <param name="Notifier">INotifier [in] Reference to notifier object used
+    ///  to cause a favourite snippet to be displayed in main window.</param>
     class procedure Display(AOwner: TComponent; const Favourites: TFavourites;
       Notifier: INotifier);
+
+    ///  <summary>Closes the dialogue box, freeing any form instance.</summary>
     class procedure Close;
+
+    ///  <summary>Checks if the form is currently displayed.</summary>
     class function IsDisplayed: Boolean;
   end;
 
@@ -159,6 +293,7 @@ type
   ///  <remarks>For some reason these events are protected in TTrackBar.
   ///  </remarks>
   TTrackBarHack = class(TTrackBar);
+
 
 { TFavouritesDlg }
 
