@@ -103,14 +103,13 @@ implementation
   ------------------------------------------------------------------------------
   Status bar has three panels (indexed 0..2) used as follows:
 
-  + Panel[0]: Displays database statistics or a simple prompt. Status bar
-    default drawing is used. When a simple prompty is displayed Panel[1] and
-    Panel[2] are hidden.
+  + Panel[0]: Displays database statistics: total number of snippets and
+    categories.
   + Panel[1]: Displays information about latest search. A glyph indicating
-    search type is displayed. The panel is owner-drawn.
+    search type is displayed.
   + Panel[2]: Displays a modification flag and glyph if user defined database
     has been modified since last save. Nothing is displayed when database is
-    not modified. The panel is owner-drawn.
+    not modified.
 
   The status bar is also used to display hints when the mouse passes over
   various UI elements. This is done by switching the status bar into SimplePanel
@@ -302,7 +301,12 @@ procedure TStatusBarMgr.ShowSearchInfo;
 resourcestring
   // Text displayed in search panel
   sNoSearch = 'All snippets selected';
-  sSearchActive = '%d snippets selected';
+  sSearchActiveS = '%d snippet selected';
+  sSearchActiveP = '%d snippets selected';
+const
+  SearchActiveStr: array[Boolean] of string = (sSearchActiveS, sSearchActiveP);
+var
+  SelectionCount: Integer;  // Number of snippets selected in query
 begin
   // This method does not directly display the information, but records it and
   // causes the status bar to update itself using the stored data. The DrawPanel
@@ -312,8 +316,11 @@ begin
   if Query.LatestSearch.Filter.IsNull then
     fStatusBar.Panels[cSearchPanel].Text := sNoSearch
   else
+  begin
+    SelectionCount := Query.Selection.Count;
     fStatusBar.Panels[cSearchPanel].Text
-      := Format(sSearchActive, [Query.Selection.Count]);
+      := Format(SearchActiveStr[SelectionCount <> 1], [Query.Selection.Count]);
+  end;
   // Store glyph that indicates latest search type
   fSearchGlyph.Assign((Query.LatestSearch.Filter as ISearchUIInfo).Glyph);
   // Ensure search info panel of status bar is displayed
