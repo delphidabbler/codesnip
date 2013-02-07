@@ -103,8 +103,8 @@ implementation
   ------------------------------------------------------------------------------
   Status bar has three panels (indexed 0..2) used as follows:
 
-  + Panel[0]: Displays database statistics: total number of snippets and
-    categories.
+  + Panel[0]: Displays database statistics: total number of snippets in each
+    database.
   + Panel[1]: Displays information about latest search. A glyph indicating
     search type is displayed.
   + Panel[2]: Displays a modification flag and glyph if user defined database
@@ -348,29 +348,28 @@ procedure TStatusBarMgr.ShowSnippetsInfo;
   }
 var
   TotalSnippets: Integer;     // number of snippets in database
-  TotalCategories: Integer;   // total number of categories
+  TotalUserSnippets: Integer; // number of snippets in user database
+  TotalMainSnippets: Integer; // number of snippets in main database
 resourcestring
   // status bar message strings
   sSnippet = 'snippet';
   sSnippets = 'snippets';
-  sCategory = 'category';
-  sCategories = 'categories';
-  sStats = '%0:d %1:s in %2:d %3:s';
+  sStats = '%0:d %1:s (%2:d main / %3:d user defined)';
 const
   SnippetsStr: array[Boolean] of string = (sSnippet, sSnippets);
-  CategoriesStr: array[Boolean] of string = (sCategory, sCategories);
 begin
   // Calculate database stats
   TotalSnippets := Database.Snippets.Count;
-  TotalCategories := Database.Categories.Count;
+  TotalUserSnippets := Database.Snippets.Count(True);
+  TotalMainSnippets := TotalSnippets - TotalUserSnippets;
   // Build display text and display it
   fStatusBar.Panels[cDBPanel].Text := Format(
     sStats,
     [
       TotalSnippets,
       SnippetsStr[TotalSnippets <> 1],
-      TotalCategories,
-      CategoriesStr[TotalCategories <> 1]
+      TotalMainSnippets,
+      TotalUserSnippets
     ]
   );
 end;
