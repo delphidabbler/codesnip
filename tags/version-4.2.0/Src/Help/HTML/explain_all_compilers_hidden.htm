@@ -1,0 +1,126 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<!--
+ * This Source Code Form is subject to the terms of the Mozilla Public License,
+ * v. 2.0. If a copy of the MPL was not distributed with this file, You can
+ * obtain one at http://mozilla.org/MPL/2.0/
+ *
+ * Copyright (C) 2012, Peter Johnson (www.delphidabbler.com).
+ *
+ * $Rev$
+ * $Date$
+ *
+ * Help topic that explains why compiler results table can be empty in detail
+ * pane.
+-->
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text-html; charset=Windows-1252">
+    <title>
+      Explain All Compiler Results Hidden
+    </title>
+    <link rel="stylesheet" href="../css/codesnip.css" type="text/css">
+  </head>
+  <body>
+    <object
+     type="application/x-oleobject"
+     classid="clsid:1e2a7bd0-dab9-11d0-b93a-00c04fc99f9e"
+    >
+      <param name="ALink Name" value="AllCompilersHidden">
+    </object>
+    <h1>
+      <a name="dlg_export"></a>All Compiler Results Hidden: Explanation
+    </h1>
+    <p>
+      If you see a message similar to this
+    </p>
+    <table cellspacing="0" cellpadding="4" class="indent">
+      <tr>
+        <th
+          class="warning"
+          style="border:1px gray solid; background-color:#eee;"
+        >
+          No compiler results available
+        </th>
+      </tr>
+      <tr>
+        <td
+          style="border:1px gray solid; border-top:none;"
+        >
+          Results for all compilers have been hidden. <a
+            href="#"
+            title="Example link - goes nowhere"
+          >More information</a>.
+        </td>
+      </tr>
+    </table>
+    <p>
+      in the <a
+        href="detail_pane.htm"
+      >Details Pane</a> when viewing a snippet it means that you have the
+      snippet view set up to display a table of compiler results but have
+      configured the compilers so that none of them display in the table.
+    </p>
+    <p>
+      There are two possible solutions, depending on whether you compiler
+      results to be displayed or not.
+    </p>
+    <h2>
+      Display compiler results
+    </h2>
+    <p>
+      Assuming you do want compiler results displayed you need to tell
+      <em>CodeSnip</em> enable this in the <a
+        href="dlg_configcompilers.htm"
+      >Configure Compilers</a> dialogue box.
+    </p>
+    <p>
+      Display the dialogue box from the <em>Tools | Configure Compilers</em>
+      menu option. Using the list of compilers on the left of the display select
+      a compiler whose compile results you want to see displayed in the <a
+        href="detail_pane.htm"
+      >Details Pane</a> and, making sure the <em>Compiler</em> tab is selected,
+      tick the <em>Display results for this compiler in details pane</em> check
+      box. Repeat this step for each compiler whose results you want to display.
+    </p>
+    <p>
+      When you have done, close the dialogue box using the <em>OK</em> button.
+      If you are currently displaying a snippet the display will change and the
+      above message will be replaced by a table of the required compiler
+      results.
+    </p>
+    <h2>
+      Hide all compiler results
+    </h2>
+    <p>
+      If it was you intention to hide all compiler results you should not switch
+      off the display of individual compiler results in the
+      <em>Configure Compilers</em> dialogue box, but should instead remove the
+      <em>Compiler Results Table</em> component from the page layout of each
+      snippet type using the <a
+        href="dlg_prefs_snippetlayout.htm"
+      >Snippet Layout</a> tab of the <a
+        href="dlg_preferences.htm"
+      >Preferences</a> dialogue box.
+    </p>
+    <p>
+      Display the dialogue box from the <em>Tools | Preferences</em> menu option
+      and select the <em>Snippet Layout</em> tab. Select a page layout from the
+      <em>Edit page layout for snippet kind</em> drop-down list. Check to see if
+      the <em>Compiler Results Table</em> component is listed in the
+      <em>Displayed page components</em> list box. If so, select it and click
+      the <img
+        alt="Left button"
+        src="../Images/ArrowLeft.png"
+        class="glyph"
+      > button, or press <span
+        class="smallcaps"
+      >Ctrl+Left</span>, to remove the component from the page. Repeat this for
+      all snippet kinds, selecting each in turn from the drop-down list.
+    </p>
+    <p>
+      Close the dialogue box by pressing <em>OK</em>. If you are displaying a
+      snippet the display should change and the above message should disappear.
+    </p>
+  </body>
+</html>
+
