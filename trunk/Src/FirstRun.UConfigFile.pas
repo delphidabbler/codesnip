@@ -95,13 +95,13 @@ type
     ///  <summary>Updates Prefs:CodeGen section from format prior to version 9
     ///  to version 9 and later format.</summary>
     procedure UpdateCodeGenEntries;
-    ///  <summary>Effectively renames MainWindow section used prior to version
-    ///  11 as WindowState:MainForm.</summary>
-    procedure RenameMainWindowSection;
     ///  <summary>Deletes unused key that determines detail pane index.
     ///  </summary>
     procedure DeleteDetailsPaneIndex;
     {}{$ENDIF}
+    ///  <summary>Effectively renames MainWindow section used prior to version
+    ///  11 as WindowState:MainForm.</summary>
+    procedure RenameMainWindowSection;
     ///  <summary>Adds Prefs:CodeGen section along with default data.</summary>
     procedure CreateDefaultCodeGenEntries;
     ///  <summary>Stamps config file with current program and file versions.
