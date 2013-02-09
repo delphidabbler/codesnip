@@ -53,14 +53,11 @@ end;
 
 procedure TestTDBCookie.TestHash;
 var
-  C1, C2, CNul: TDBCookie;
+  C1, C2: TDBCookie;
 begin
   C1 := TDBCookie.Create;
   C2 := C1;
-  CNul := TDBCookie.CreateNul;
   Check(C1.Hash = C2.Hash, 'Expected C1.Hash to be same as C2.Hash');
-  Check(C1.Hash <> 0, 'Expected C1.Hash to be non-zero');
-  Check(CNul.Hash = 0, 'Expected CNul Hash to be zero');
 end;
 
 procedure TestTDBCookie.TestNul;
@@ -94,3 +91,4 @@ initialization
   // Register test case with the test runner
   RegisterTest(TestTDBCookie.Suite);
 end.
+

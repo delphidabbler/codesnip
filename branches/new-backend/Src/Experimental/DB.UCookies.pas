@@ -105,14 +105,8 @@ begin
 end;
 
 function TDBCookie.Hash: Integer;
-  {Gets hash of cookie. Hash of nul cookie guaranteed to be zero and of non-nul
-  cookie to be non-zero.
-  }
 begin
-  if not IsNul then
-    Result := Integer(Value)
-  else
-    Result := 0;
+  Result := Integer(Value); // simply truncate cookie value to integer
 end;
 
 function TDBCookie.IsNul: Boolean;
