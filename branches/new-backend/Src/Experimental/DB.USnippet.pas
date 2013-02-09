@@ -46,18 +46,12 @@ type
   strict private
     fName: string;
     fUserDefined: Boolean;
-    class function Compare(Key1, Key2: TDBSnippetKey): Integer; static;
   public
     constructor Create(const AName: string; const AUserDefined: Boolean);
     property Name: string read fName;
     property UserDefined: Boolean read fUserDefined;
-    function CompareTo(const AKey: TDBSnippetKey): Integer;
     class operator Equal(Key1, Key2: TDBSnippetKey): Boolean;
     class operator NotEqual(Key1, Key2: TDBSnippetKey): Boolean;
-    class operator GreaterThan(Key1, Key2: TDBSnippetKey): Boolean;
-    class operator GreaterThanOrEqual(Key1, Key2: TDBSnippetKey): Boolean;
-    class operator LessThan(Key1, Key2: TDBSnippetKey): Boolean;
-    class operator LessThanOrEqual(Key1, Key2: TDBSnippetKey): Boolean;
   end;
 
   TDBSnippetKeys = TArray<TDBSnippetKey>;
@@ -126,29 +120,6 @@ end;
 
 { TDBSnippetKey }
 
-class function TDBSnippetKey.Compare(Key1, Key2: TDBSnippetKey): Integer;
-begin
-  Result := AnsiCompareText(Key1.Name, Key2.Name);
-  if Result = 0 then
-    case Key1.UserDefined of
-      False:
-        case Key2.UserDefined of
-          False: Exit(EqualsValue);
-          True: Exit(LessThanValue);
-        end;
-      True:
-        case Key2.UserDefined of
-          False: Exit(GreaterThanValue);
-          True: Exit(EqualsValue);
-        end;
-    end;
-end;
-
-function TDBSnippetKey.CompareTo(const AKey: TDBSnippetKey): Integer;
-begin
-  Result := Compare(Self, AKey);
-end;
-
 constructor TDBSnippetKey.Create(const AName: string;
   const AUserDefined: Boolean);
 begin
@@ -158,34 +129,14 @@ end;
 
 class operator TDBSnippetKey.Equal(Key1, Key2: TDBSnippetKey): Boolean;
 begin
-  Result := Compare(Key1, Key2) = 0;
-end;
-
-class operator TDBSnippetKey.GreaterThan(Key1, Key2: TDBSnippetKey): Boolean;
-begin
-  Result := Compare(Key1, Key2) > 0;
-end;
-
-class operator TDBSnippetKey.GreaterThanOrEqual(Key1,
-  Key2: TDBSnippetKey): Boolean;
-begin
-  Result := Compare(Key1, Key2) >= 0;
-end;
-
-class operator TDBSnippetKey.LessThan(Key1, Key2: TDBSnippetKey): Boolean;
-begin
-  Result := Compare(Key1, Key2) < 0;
-end;
-
-class operator TDBSnippetKey.LessThanOrEqual(Key1,
-  Key2: TDBSnippetKey): Boolean;
-begin
-  Result := Compare(Key1, Key2) <= 0;
+  if not AnsiSameText(Key1.Name, Key2.Name) then
+    Exit(False);
+  Result := Key1.UserDefined = Key2.UserDefined;
 end;
 
 class operator TDBSnippetKey.NotEqual(Key1, Key2: TDBSnippetKey): Boolean;
 begin
-  Result := Compare(Key1, Key2) <> 0;
+  Result := not (Key1 = Key2);
 end;
 
 { TDBSnippetData }

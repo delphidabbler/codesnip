@@ -21,7 +21,6 @@ type
   published
     procedure TestCreate;
     procedure TestEqualityOperators;
-    procedure TestCompareTo;
   end;
 
   // Test methods for record TDBSnippetData
@@ -48,25 +47,6 @@ uses
   SysUtils, UTestHelpers;
 
 { TestTDBSnippetKey }
-
-procedure TestTDBSnippetKey.TestCompareTo;
-var
-  K1, K2, K3, K4: TDBSnippetKey;
-begin
-  K1 := TDBSnippetKey.Create('AAAA', True);
-  K2 := TDBSnippetKey.Create('BBBB', True);
-  K3 := TDBSnippetKey.Create('BBBB', False);
-  K4 := TDBSnippetKey.Create('BBBB', False);
-
-  Check(K1.CompareTo(K2) < 0);
-  Check(K2.CompareTo(K1) > 0);
-  Check(K1.CompareTo(K3) < 0);
-  Check(K3.CompareTo(K1) > 0);
-  Check(K2.CompareTo(K3) > 0);
-  Check(K3.CompareTo(K2) < 0);
-  Check(K3.CompareTo(K4) = 0);
-  Check(K4.CompareTo(K3) = 0);
-end;
 
 procedure TestTDBSnippetKey.TestCreate;
 var
@@ -97,31 +77,15 @@ begin
   K5 := TDBSnippetKey.Create('CCCC', True);
 
   CheckFalse(K1 = K2);
-  CheckFalse(K1 > K2);
-  CheckFalse(K1 >= K2);
-  CheckTrue(K1 < K2);
-  CheckTrue(K1 <= K2);
   CheckTrue(K1 <> K2);
 
   CheckFalse(K5 = K4);
-  CheckTrue(K5 > K4);
-  CheckTrue(K5 >= K4);
-  CheckFalse(K5 < K4);
-  CheckFalse(K5 <= K4);
   CheckTrue(K5 <> K4);
 
   CheckTrue(K3 = K4);
-  CheckFalse(K3 > K4);
-  CheckTrue(K3 >= K4);
-  CheckFalse(K3 < K4);
-  CheckTrue(K3 <= K4);
   CheckFalse(K3 <> K4);
 
   CheckFalse(K2 = K3);
-  CheckTrue(K2 > K3);
-  CheckTrue(K2 >= K3);
-  CheckFalse(K2 < K3);
-  CheckFalse(K2 <= K3);
   CheckTrue(K2 <> K3);
 end;
 
