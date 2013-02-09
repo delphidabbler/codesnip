@@ -20,7 +20,6 @@ type
   published
     procedure TestCreate;
     procedure TestEqualityOperators;
-    procedure TestCompareTo;
     procedure TestImplicitTSnippetKindCast;
   end;
 
@@ -42,32 +41,6 @@ uses
 
 { TestTDBSnippetKindGroupKey }
 
-procedure TestTDBSnippetKindGroupKey.TestCompareTo;
-var
-  K0, K1, K2, K2a, K3: TDBSnippetKindGroupKey;
-begin
-  K0 := TDBSnippetKindGroupKey.Create(skRoutine);
-  K1 := TDBSnippetKindGroupKey.Create(skConstant);
-  K2 := TDBSnippetKindGroupKey.Create(skType);
-  K2a := TDBSnippetKindGroupKey.Create(skType);
-  K3 := TDBSnippetKindGroupKey.Create(skFreeform);
-
-  Check(K0.CompareTo(K1) < 0);
-  Check(K0.CompareTo(K2) < 0);
-  Check(K0.CompareTo(K3) < 0);
-  Check(K1.CompareTo(K0) > 0);
-  Check(K1.CompareTo(K2) < 0);
-  Check(K1.CompareTo(K3) < 0);
-  Check(K2.CompareTo(K0) > 0);
-  Check(K2.CompareTo(K1) > 0);
-  Check(K2.CompareTo(K3) < 0);
-  Check(K3.CompareTo(K0) > 0);
-  Check(K3.CompareTo(K1) > 0);
-  Check(K3.CompareTo(K2) > 0);
-  Check(K2.CompareTo(K2a) = 0);
-  Check(K2a.CompareTo(K2) = 0);
-end;
-
 procedure TestTDBSnippetKindGroupKey.TestCreate;
 var
   K: TDBSnippetKindGroupKey;
@@ -76,8 +49,8 @@ begin
   Check(K.Kind = skRoutine);
   K := TDBSnippetKindGroupKey.Create(skConstant);
   Check(K.Kind = skConstant);
-  K := TDBSnippetKindGroupKey.Create(skType);
-  Check(K.Kind = skType);
+  K := TDBSnippetKindGroupKey.Create(skTypeDef);
+  Check(K.Kind = skTypeDef);
   K := TDBSnippetKindGroupKey.Create(skFreeform);
   Check(K.Kind = skFreeform);
 end;
@@ -87,29 +60,17 @@ var
   K0, K2, K2a, K3: TDBSnippetKindGroupKey;
 begin
   K0 := TDBSnippetKindGroupKey.Create(skRoutine);
-  K2 := TDBSnippetKindGroupKey.Create(skType);
-  K2a := TDBSnippetKindGroupKey.Create(skType);
+  K2 := TDBSnippetKindGroupKey.Create(skTypeDef);
+  K2a := TDBSnippetKindGroupKey.Create(skTypeDef);
   K3 := TDBSnippetKindGroupKey.Create(skFreeform);
 
   CheckFalse(K0 = K3);
-  CheckFalse(K0 > K3);
-  CheckFalse(K0 >= K3);
-  CheckTrue(K0 < K3);
-  CheckTrue(K0 <= K3);
   CheckTrue(K0 <> K3);
 
   CheckFalse(K3 = K2);
-  CheckTrue(K3 > K2);
-  CheckTrue(K3 >= K2);
-  CheckFalse(K3 < K2);
-  CheckFalse(K3 <= K2);
   CheckTrue(K3 <> K2);
 
   CheckTrue(K2 = K2a);
-  CheckFalse(K2 > K2a);
-  CheckTrue(K2 >= K2a);
-  CheckFalse(K2 < K2a);
-  CheckTrue(K2 <= K2a);
   CheckFalse(K2 <> K2a);
 end;
 
@@ -146,19 +107,19 @@ var
 resourcestring
   sRoutine = 'Routine';
   sConstant = 'Constant';
-  sType = 'Type';
+  sType = 'Type Definition';
   sFreeform = 'Freeform';
 begin
   O0 := nil;  O1 := nil;  O2 := nil;  O3 := nil;
   try
     O0 := CreateObject(skRoutine);
     O1 := CreateObject(skConstant);
-    O2 := CreateObject(skType);
+    O2 := CreateObject(skTypeDef);
     O3 := CreateObject(skFreeform);
 
     Check(O0.Key.Kind = skRoutine, 'Expected O0.Key.Kind = skRoutine');
     Check(O1.Key.Kind = skConstant, 'Expected O1.Key.Kind = skConstant');
-    Check(O2.Key.Kind = skType, 'Expected O2.Key.Kind = skType');
+    Check(O2.Key.Kind = skTypeDef, 'Expected O2.Key.Kind = skType');
     Check(O3.Key.Kind = skFreeform, 'Expected O3.Key.Kind = skFreeform');
 
     Check(O0.DisplayName = sRoutine, 'Expected O0.DisplayName = ' + sRoutine);

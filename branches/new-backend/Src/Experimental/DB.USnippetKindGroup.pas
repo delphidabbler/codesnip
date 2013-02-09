@@ -49,14 +49,8 @@ type
   public
     constructor Create(AKind: TDBSnippetKind);
     property Kind: TDBSnippetKind read fKind;
-    function CompareTo(const AKey: TDBSnippetKindGroupKey): Integer;
     class operator Equal(Key1, Key2: TDBSnippetKindGroupKey): Boolean;
     class operator NotEqual(Key1, Key2: TDBSnippetKindGroupKey): Boolean;
-    class operator GreaterThan(Key1, Key2: TDBSnippetKindGroupKey): Boolean;
-    class operator GreaterThanOrEqual(Key1, Key2: TDBSnippetKindGroupKey):
-      Boolean;
-    class operator LessThan(Key1, Key2: TDBSnippetKindGroupKey): Boolean;
-    class operator LessThanOrEqual(Key1, Key2: TDBSnippetKindGroupKey): Boolean;
     // cast to TDBSnippetKind
     class operator Implicit(Key: TDBSnippetKindGroupKey): TDBSnippetKind;
   end;
@@ -78,12 +72,15 @@ implementation
 resourcestring
   sRoutine = 'Routine';
   sConstant = 'Constant';
-  sType = 'Type';
+  sTypeDef = 'Type Definition';
   sFreeform = 'Freeform';
+  sUnit = 'Unit';
+  sClass = 'Class / Advanced Record';
+
 
 const
   DBSnippetKindDisplayNames: array[TDBSnippetKind] of string = (
-    sRoutine, sConstant, sType, sFreeform
+    sFreeform, sRoutine, sConstant, sTypeDef, sUnit, sClass
   );
 
 { TDBSnippetKindGroup }
@@ -107,12 +104,6 @@ begin
   Result := Ord(Key1.Kind) - Ord(Key2.Kind);
 end;
 
-function TDBSnippetKindGroupKey.CompareTo(
-  const AKey: TDBSnippetKindGroupKey): Integer;
-begin
-  Result := Compare(Self, AKey);
-end;
-
 constructor TDBSnippetKindGroupKey.Create(AKind: TDBSnippetKind);
 begin
   fKind := AKind;
@@ -121,19 +112,7 @@ end;
 class operator TDBSnippetKindGroupKey.Equal(Key1,
   Key2: TDBSnippetKindGroupKey): Boolean;
 begin
-  Result := Compare(Key1, Key2) = 0;
-end;
-
-class operator TDBSnippetKindGroupKey.GreaterThan(Key1,
-  Key2: TDBSnippetKindGroupKey): Boolean;
-begin
-  Result := Compare(Key1, Key2) > 0;
-end;
-
-class operator TDBSnippetKindGroupKey.GreaterThanOrEqual(Key1,
-  Key2: TDBSnippetKindGroupKey): Boolean;
-begin
-  Result := Compare(Key1, Key2) >= 0;
+  Result := Key1.Kind = Key2.Kind;
 end;
 
 class operator TDBSnippetKindGroupKey.Implicit(
@@ -142,22 +121,10 @@ begin
   Result := Key.Kind;
 end;
 
-class operator TDBSnippetKindGroupKey.LessThan(Key1,
-  Key2: TDBSnippetKindGroupKey): Boolean;
-begin
-  Result := Compare(Key1, Key2) < 0;
-end;
-
-class operator TDBSnippetKindGroupKey.LessThanOrEqual(Key1,
-  Key2: TDBSnippetKindGroupKey): Boolean;
-begin
-  Result := Compare(Key1, Key2) <= 0;
-end;
-
 class operator TDBSnippetKindGroupKey.NotEqual(Key1,
   Key2: TDBSnippetKindGroupKey): Boolean;
 begin
-  Result := Compare(Key1, Key2) <> 0;
+  Result := Key1.Kind <> Key2.Kind;
 end;
 
 end.

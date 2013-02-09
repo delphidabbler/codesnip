@@ -24,7 +24,7 @@
  * The Initial Developer of the Original Code is Peter Johnson
  * (http://www.delphidabbler.com/).
  *
- * Portions created by the Initial Developer are Copyright (C) 2010 Peter
+ * Portions created by the Initial Developer are Copyright (C) 2010-2013 Peter
  * Johnson. All Rights Reserved.
  *
  * Contributor(s)
@@ -39,13 +39,19 @@ unit DB.UConsts;
 interface
 
 type
+  ///  <summary>
+  ///  Enumeration of various supported kinds of snippets.
+  ///  </summary>
   TDBSnippetKind = (
-    skRoutine,
-    skConstant,
-    skType,
-    skFreeform
+    skFreeform,   // free-form code - not in any of other supported formats
+    skRoutine,    // procedure or function in standard format
+    skConstant,   // constant definition in standard format
+    skTypeDef,    // type definition in standard format
+    skUnit,       // complete source code unit
+    skClass       // Delphi class or record with methods
   );
 
 implementation
 
 end.
+

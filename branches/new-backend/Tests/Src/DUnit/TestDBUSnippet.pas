@@ -176,7 +176,7 @@ begin
   A.Name := 'AName';
   A.UserDefined := True;
   A.Description := 'A Description';
-  A.Kind := skType;
+  A.Kind := skTypeDef;
   // ...
 
   B.Name := 'AnotherName';
@@ -196,7 +196,7 @@ begin
   Check(B.Name = 'AName');
   Check(B.UserDefined = True);
   Check(B.Description = 'A Description');
-  Check(B.Kind = skType);
+  Check(B.Kind = skTypeDef);
   // ...
 end;
 
