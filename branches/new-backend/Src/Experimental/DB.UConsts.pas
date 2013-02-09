@@ -39,16 +39,24 @@ unit DB.UConsts;
 interface
 
 type
-  ///  <summary>
-  ///  Enumeration of various supported kinds of snippets.
+  ///  <summary>Enumeration of different data sources recorded in database.
   ///  </summary>
+  TDBDataSource = (
+    dsCodeSnip,   // DelphiDabbler Code Snippets database
+    dsLocalUser,  // local user defined database
+    // TODO: remove dsSWAG if this proposal doesn't go ahead
+    dsSWAG        // SWAG database
+  );
+
+type
+  ///  <summary>Enumeration of various supported kinds of snippets.</summary>
   TDBSnippetKind = (
     skFreeform,   // free-form code - not in any of other supported formats
     skRoutine,    // procedure or function in standard format
     skConstant,   // constant definition in standard format
-    skTypeDef,    // type definition in standard format
+    skTypeDef,    // simple type definition in standard format
     skUnit,       // complete source code unit
-    skClass       // Delphi class or record with methods
+    skClass       // Delphi class or advanced record
   );
 
 implementation
