@@ -52,9 +52,9 @@ type
   public
     class function CreateNul: TDBCookie; static;
     class function Create: TDBCookie; static;
-    class operator Equal(const C1, C2: TDBCookie): Boolean;
-    class operator NotEqual(const C1, C2: TDBCookie): Boolean;
-    function Hash: Integer;
+    class operator Equal(const C1, C2: TDBCookie): Boolean; inline;
+    class operator NotEqual(const C1, C2: TDBCookie): Boolean; inline;
+    function Hash: Integer; inline;
     function IsNul: Boolean;
     class procedure Reset; static;
   end;
@@ -68,8 +68,8 @@ type
     class var fCookieValue: UInt64;
   public
     const NulCookieValue = UInt64(0);
-    class function GetCookieValue: UInt64;
-    class procedure Reset;
+    class function GetCookieValue: UInt64; inline;
+    class procedure Reset; inline;
   end;
 
 
