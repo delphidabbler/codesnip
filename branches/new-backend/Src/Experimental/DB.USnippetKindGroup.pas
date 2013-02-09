@@ -45,7 +45,6 @@ type
   TDBSnippetKindGroupKey = record
   strict private
     fKind: TDBSnippetKind;
-    class function Compare(Key1, Key2: TDBSnippetKindGroupKey): Integer; static;
   public
     constructor Create(AKind: TDBSnippetKind);
     property Kind: TDBSnippetKind read fKind;
@@ -97,12 +96,6 @@ begin
 end;
 
 { TDBSnippetKindGroupKey }
-
-class function TDBSnippetKindGroupKey.Compare(Key1,
-  Key2: TDBSnippetKindGroupKey): Integer;
-begin
-  Result := Ord(Key1.Kind) - Ord(Key2.Kind);
-end;
 
 constructor TDBSnippetKindGroupKey.Create(AKind: TDBSnippetKind);
 begin
