@@ -43,9 +43,7 @@ type
   ///  </summary>
   TDBDataSource = (
     dsCodeSnip,   // DelphiDabbler Code Snippets database
-    dsLocalUser,  // local user defined database
-    // TODO: remove dsSWAG if this proposal doesn't go ahead
-    dsSWAG        // SWAG database
+    dsLocalUser   // local user defined database
   );
 
 type
